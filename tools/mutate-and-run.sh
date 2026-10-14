@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-# mutate-and-run.sh — generic mutation runner (tameshi-shokunin, r4-2, TAMESHI-R4-2).
+# mutate-and-run.sh — generic mutation runner (tameshi-shokunin, r7-1, TAMESHI-T7-1).
 #
 # Channels: r3-2 (TAMESHI-R3-2) shipped the runner; r4-2 (TAMESHI-R4-2) adds
 # --regression, this tool's own kill-rate regression gate (contract below);
 # r6 (TAMESHI-T6-4) hardens --selftest with the r6 meta-sweep's surviving
-# comparator mutants (corpus/knowledge/self-hardening-r6.md).
+# comparator mutants (corpus/knowledge/self-hardening-r6.md); r7-1
+# (TAMESHI-T7-1) turns --regression into the fleet leg ledger — every recorded
+# mutation case replayed at its pinned original revision, materialized from its
+# repo's git object store (`git show <rev>:<path>`, immune to working-tree
+# drift), with each leg's recorded kill-rate as its expectation.
 #
 # Plan anchors: r3-2 = plans/round-3.plan.md:6-7 — "the method ships as tameshi's
 # own runnable tool (tools/mutate-and-run.sh: inject->run->restore with
@@ -65,27 +69,40 @@
 # Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
 # 64 usage error.
 #
-# --regression (r4-2) — this tool's own gate: re-runs BOTH worked cases. Case
-# js = corpus/knowledge/mutation-case-kimi-census.md §1 (control green, 10
-# defects, killed 8 / survived 2, kill-rate 80 %); case bash =
-# corpus/knowledge/mutation-case-kagi-census.md §1 (same headline). Both defect
-# specs are embedded below (cut from the notes' §7 reproduce blocks; all 20
-# @old strings re-verified count==1 against the live pinned bytes, 2026-10-14).
-# Each case runs as a full CLI sub-invocation of this tool over a fresh copy of
-# the pinned fleet artifact; the fleet trees are read-only (each case's sweep
-# log carries its own MUTATE_RESTORE proof). Recorded revision pins — js
-# 83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426, bash
-# 275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f; a live
-# mismatch is a SETUP refusal (the recorded table is revision-tied).
-# Stated band, per case (identical for both): |killed - 8| <= 1 defect · at most
-# 1 defect verdict may differ from the recorded table · defects exactly 10 ·
-# inconclusive 0 · control green · MUTATE_RESTORE: OK required. Inside the band
-# is PASS; outside it is FAIL. Exit map (--regression): 0 all cases PASS ·
-# 1 >= 1 case FAIL (measured table out of band) · 2 a case could not be
-# verified — missing artifact, pin mismatch, sweep setup refusal — with no FAIL.
-# Lines: REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_SWEEP /
-# REGRESSION_TABLE / REGRESSION_DEFECT (one per differing row) / REGRESSION_CASE /
-# REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
+# --regression (r4-2; r7-1 leg ledger) — the fleet's recorded mutation cases,
+# replayed as legs. Each leg carries its recorded revision pin and its recorded
+# verdict table; the recorded kill-rate is the leg's expectation:
+#   js-kimi-census       kumitate-shokunin/scripts/kimi-census.mjs   8/10 (80 %)
+#   bash-surface-census  kagi-shokunin/corpus/surface-census.sh      8/10 (80 %)
+#   bash-tsukuroi-census tsukuroi-shokunin/tools/tsukuroi-census.sh  6/10 (60 %)
+#   bash-mado-verify     mado-shokunin/tools/mado-verify.sh          4/10 (40 %)
+# Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+# mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
+# mutation-case-mado-verify.md §1. All four defect specs are embedded below
+# (cut from those notes' §7/§8/§9 reproduce manifests; all 40 @old strings
+# re-verified count==1 against the pinned bytes, 2026-10-14).
+# r7-1: the target is NOT read from the fleet working tree. Each leg is
+# materialized from its repo's git object store — `git show <rev>:<path>` — so
+# a working tree that has drifted past the recorded revision (tsukuroi and
+# mado: their pins are ancestors of HEAD) or carries uncommitted edits cannot
+# move a replay. The materialized copy's sha256 must equal the recorded pin;
+# a missing repo/rev/blob or a pin mismatch is a SETUP refusal, never a pass.
+# Each leg then runs as a full CLI sub-invocation of this tool over the
+# materialized copy; the fleet trees are never written.
+# Stated expectation: ledger legs are byte-pinned replays, so their expectation
+# is exact — 0 verdict flips (every measured row must equal the recorded
+# table), killed-delta 0, defects exactly the recorded count, inconclusive 0,
+# control green, MUTATE_RESTORE: OK. The r4-2 tolerance (|killed-recorded| <= 1
+# and at most 1 verdict flip) remains the default for fixture-mode cases and is
+# exercised by --selftest. Inside the stated expectation is PASS; outside it is
+# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+# table outside its expectation) · 2 a case could not be verified — missing
+# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL. Lines:
+# REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_EXPECT /
+# REGRESSION_PIN (one per leg: git source + pinned target sha256; the sweep's
+# own MUTATE_TOOL line carries the tool pin) / REGRESSION_SWEEP /
+# REGRESSION_TABLE / REGRESSION_DEFECT (one per differing row) / REGRESSION_CASE
+# / REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
 # /tmp/tameshi-r4-2-regression.XXXXXX by default; removed on PASS unless --keep,
 # kept on FAIL/SETUP, never removed when --workdir was given. In this mode
 # --target/--defects/--suite/--label are refused (usage error).
@@ -103,15 +120,19 @@
 # PASS, band-edge PASS at killed-delta 1 / flips 1, doctored table FAIL, an
 # unmeasured recorded entry FAIL, an unrecorded measured row FAIL, a DEGRADED
 # sub-sweep FAIL on inconclusive=1, a fully-matching all-killed table PASS, pin
-# mismatch and missing target SETUP). Scratch is removed on PASS, kept on FAIL
-# for inspection.
+# mismatch and missing target SETUP; r7-1 adds, over a throwaway git repo, the
+# ledger engine: git-materialized replay PASS, drift-immune replay of the
+# pinned blob, blob/pin mismatch and unresolvable revision SETUP, and the
+# exact-tolerance arm where one flipped recorded entry FAILs). Scratch is
+# removed on PASS, kept on FAIL for inspection.
 #
-# Dependencies: bash, python3 (byte-exact edit + spec parse), coreutils
-# (sha256sum, mktemp, timeout, cp, date).
+# Dependencies: bash, python3 (byte-exact edit + spec parse), git (--regression
+# materialization + the selftest's ledger-engine cases), coreutils (sha256sum,
+# mktemp, timeout, cp, date).
 
 set -u -o pipefail
 
-VERSION='mutate-and-run.sh r4-2 (tameshi-shokunin, 2026-10-14)'
+VERSION='mutate-and-run.sh r7-1 (tameshi-shokunin, 2026-10-14)'
 SELF=$(readlink -f "${BASH_SOURCE[0]}")
 
 MODE=run
@@ -149,13 +170,16 @@ Options:
   --tail N         output tail lines shown per run (default: 8)
   --keep           --regression only: keep the scratch root also on PASS
 
---regression re-runs both worked cases (JS round 2, bash round 3) over fresh
-copies of the pinned fleet artifacts and asserts each recorded 10-defect table
-reproduces within the stated band (killed 8 +/- 1, at most 1 verdict flip, count
-exactly 10, inconclusive 0, control green, restore OK). Exit: 0 all in band ·
-1 out of band · 2 cannot verify (missing artifact / pin mismatch / setup
-refusal). Fleet trees are never written. See the file header for the full
-contract, evidence layout, and suite-command semantics.
+--regression replays every recorded mutation case as a leg (js-kimi-census,
+bash-surface-census, bash-tsukuroi-census, bash-mado-verify) at its pinned
+original revision, materialized from the repo's git object store
+(`git show <rev>:<path>` — immune to working-tree drift; a missing
+repo/rev/blob or a pin mismatch is a SETUP refusal). Each leg must reproduce
+its recorded verdict table exactly: the recorded kill-rate is the leg's
+expectation (flips 0, killed-delta 0, count exactly 10, inconclusive 0, control
+green, restore OK). Exit: 0 all legs PASS · 1 >= 1 leg out of band · 2 cannot
+verify (missing repo/rev/blob / pin mismatch / setup refusal). Fleet trees are
+never written. See the file header for the full contract and evidence layout.
 
 Spec format v1 (one directive per line; '#' comments; blank lines ignored):
   @defect <id> | <description>
@@ -472,17 +496,31 @@ run_sweep() {
 
 # --------------------------------------------------------------- regression
 
-# Recorded expectations for --regression. Anchors: corpus/knowledge/
-# mutation-case-kimi-census.md §1 (js — control green, killed D1,D3-D9,
-# survived D2,D10, kill-rate 80 % at :29) and mutation-case-kagi-census.md §1
-# (bash — control green, killed B1-B4,B6-B9, survived B5,B10, kill-rate 80 %
-# at :50-53). The specs below are those notes' §7 reproduce edits, byte-matched
-# to the round-3 audit spec files and re-verified count==1 against the live
-# pinned bytes on 2026-10-14.
+# Recorded expectations for --regression (r7-1 leg ledger). Anchors:
+# corpus/knowledge/mutation-case-kimi-census.md §1 (js — control green, killed
+# D1,D3-D9, survived D2,D10, kill-rate 80 % at :29),
+# mutation-case-kagi-census.md §1 (bash — control green, killed B1-B4,B6-B9,
+# survived B5,B10, kill-rate 80 % at :50-53),
+# mutation-case-tsukuroi-census.md §1 (bash — control green, killed B1-B6,
+# survived B7-B10, kill-rate 60 % at :69-70),
+# mutation-case-mado-verify.md §1 (bash — control green, killed D1,D2,D4,D6,
+# survived D3,D5,D7-D9,R1, kill-rate 40 % at :61-62). The specs below are those
+# notes' §7/§8/§9 reproduce manifests, re-verified count==1 against the pinned
+# blobs on 2026-10-14. REV_* = the git revision each leg's bytes are
+# materialized from (`git show <rev>:<repo path>`).
 PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+REV_JS=175de6ba2e9e904010411b19cab27e0af9aad3d4
 PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+REV_BASH=fecee8743e52eb8fb5fbb40782934cb619a1a96e
+PIN_TSUKUROI=084951be50bcbfee5e3f22de3c270d87131550ea1ce8264a557a34c5809c78c5
+REV_TSUKUROI=165307fe4746a8807b02ec4a7d7ecac0368454a6
+PIN_MADO=d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13
+REV_MADO=eead56b20ad2b28299ae4fa623d52a99b44c743c
 TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
 TABLE_BASH='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:SURVIVED,B6:KILLED,B7:KILLED,B8:KILLED,B9:KILLED,B10:SURVIVED'
+TABLE_TSUKUROI='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:KILLED,B6:KILLED,B7:SURVIVED,B8:SURVIVED,B9:SURVIVED,B10:SURVIVED'
+TABLE_MADO='D1:KILLED,D2:KILLED,D3:SURVIVED,D4:KILLED,D5:SURVIVED,D6:KILLED,D7:SURVIVED,D8:SURVIVED,D9:SURVIVED,R1:SURVIVED'
+FLEET_ROOT=''   # set by run_regression; regression_case_git resolves repos from it
 
 table_lookup() { # <table ID:V,...> <id> -> verdict, or '-' when the id is absent
   local pair
@@ -593,16 +631,153 @@ EOT
 @old         "${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"
 @new         "${#SCAN_DIR[@]}" "$N_ABSENT" "$N_ABSENT" "$N_SKIP"
 EOT
-  [[ -s "$d/js-kimi-census.spec" && -s "$d/bash-surface-census.spec" ]]
+  # r7-1 leg 3: tsukuroi tools/tsukuroi-census.sh @ 165307fe (pin 084951be…c78c5),
+  # recorded 6/10 killed; generated from the recorded round-5 driver manifest
+  # (/tmp/w5-tameshi-1-work/mutate_driver.py DEFECTS; B3/B10 are line-range
+  # replacements), every @old re-verified count==1 against the pinned blob.
+  cat >"$d/bash-tsukuroi-census.spec" <<'EOT'
+@defect B1 | tsukuroi-census.sh:473
+@old     if [ "$smi" != ok ]; then
+@new     if [ "$smi" == ok ]; then
+
+@defect B2 | tsukuroi-census.sh:281
+@old   if [ "$s_rc" -ne 0 ] && [ "$s_rc" -ne 1 ]; then
+@new   if [ "$s_rc" -ne 0 ] && [ "$s_rc" -ne 2 ]; then
+
+@defect B3 | tsukuroi-census.sh:434-452
+@old   # kerr == 0 is only a pass if the ring really has data; an empty ring cannot be told\n  # apart from a clean one, and must never be quoted as a fake HEALTHY.\n  if [ "$kerr" -eq 0 ]; then\n    if [ "$ring" = 'journalctl-k' ]; then\n      cap "$JOURNALCTL" -k -b -o json --no-pager\n      if [ "$CAP_RC" -ne 0 ] || [ "$(nlines "$CAP_OUT")" -eq 0 ]; then\n        DRV_V=BLOCKED\n        DRV_NOTE='kernel ring empty/unreadable (journalctl -k -b lists no kernel entries)'\n        return\n      fi\n    else\n      cap "$DMESG"\n      if [ "$CAP_RC" -ne 0 ] || [ "$(nlines "$CAP_OUT")" -eq 0 ]; then\n        DRV_V=BLOCKED\n        DRV_NOTE='kernel ring empty/unreadable (dmesg lists no records)'\n        return\n      fi\n    fi\n  fi\n
+@new 
+
+@defect B4 | tsukuroi-census.sh:578
+@old       /"SYSLOG_IDENTIFIER":"kernel"|"_TRANSPORT":"kernel"/ { k++; next }
+@new       /"_TRANSPORT":"kernel"/ { k++; next }
+
+@defect B5 | tsukuroi-census.sh:615
+@old       drift=$((drift + 1))
+@new       drift=$((drift + 2))
+
+@defect B6 | tsukuroi-census.sh:210
+@old   if [ "$(rank "$2")" -gt "$(rank "$1")" ]; then printf '%s' "$2"; else printf '%s' "$1"; fi
+@new   if [ "$(rank "$2")" -lt "$(rank "$1")" ]; then printf '%s' "$2"; else printf '%s' "$1"; fi
+
+@defect B7 | tsukuroi-census.sh:160
+@old SAMPLE_N=${TSUKUROI_SAMPLE_N:-8}
+@new SAMPLE_N=${TSUKUROI_SAMPLE_N:-9}
+
+@defect B8 | tsukuroi-census.sh:935
+@old       *) printf 'tsukuroi-census: unknown argument: %s\\n' "$1" >&2; usage >&2; exit 2 ;;
+@new       *) printf 'tsukuroi-census: unknown argument: %s\\n' "$1" >&2; usage >&2; exit 1 ;;
+
+@defect B9 | tsukuroi-census.sh:967
+@old     "$roll" "$PKG_V" "$SYS_V" "$DRV_V" "$JRN_V"
+@new     "$roll" "$SYS_V" "$PKG_V" "$DRV_V" "$JRN_V"
+
+@defect B10 | tsukuroi-census.sh:487-493
+@old   else\n    if [ "$smi" = ok ] && [ "$mods" -gt 0 ]; then\n      nv='present(pci inventory unreadable)'\n    else\n      DRV_V=BLOCKED\n      modnote='PCI inventory unreadable and no positive nvidia evidence — cannot assess read-only'\n    fi\n
+@new   else\n    nv='absent(pci_10de=0)'\n
+EOT
+  # r7-1 leg 4: mado tools/mado-verify.sh @ eead56b (pin d7edaab4…d0e13),
+  # recorded 4/10 killed; the recorded round-6 spec file verbatim (/tmp/
+  # w6-tameshi-mado-verify/spec/mado-verify.defects.spec), every @old
+  # re-verified count==1 against the pinned blob.
+  cat >"$d/bash-mado-verify.spec" <<'EOT'
+# defect spec v1 — T6-1 service sweep, target mado-shokunin/tools/mado-verify.sh
+# pin: sha256 d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13
+# clause map: A verdict token · B UNKNOWN-never-CLEAN · C exit map · D declared-plane census
+#             E sha comparison · F reader fallback
+
+@defect D1 | clause A: file-plane CLEAN verdict token renamed (CLEAN -> OK)
+@old MADO_VERIFY: CLEAN (%s pass, %s notes; file plane only
+@new MADO_VERIFY: OK (%s pass, %s notes; file plane only
+
+@defect D2 | clause B: UNKNOWN guard dropped from the CLEAN test
+@old if [ "$FAIL" = 0 ] && [ "$UNKNOWN" = 0 ]; then
+@new if [ "$FAIL" = 0 ]; then
+
+@defect D3 | clause B: skipped live layer row reports PASS instead of SKIP
+@old     row hypr-live live.plane SKIP "live layer skipped ($live_skipped_reason) — file plane only"
+@new     row hypr-live live.plane PASS "live layer skipped ($live_skipped_reason) — file plane only"
+
+@defect D4 | clause C: DIVERGED path exits 0
+@old "$reason"\nexit 1
+@new "$reason"\nexit 0
+
+@defect D5 | clause C: failing --selftest returns 1 not 2
+@old   return 2
+@new   return 1
+
+@defect D6 | clause D: xdph dropped from the 12-conf local inventory
+@old (hyprland bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage autostart envs xdph)
+@new (hyprland bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage autostart envs)
+
+@defect D7 | clause D: include-graph count test -ne -> -lt (extra source lines tolerated)
+@old if [ "${#got[@]}" -ne "${#EXPECT[@]}" ]; then
+@new if [ "${#got[@]}" -lt "${#EXPECT[@]}" ]; then
+
+@defect D8 | clause E: hyprland.conf sha pin comparison always "matches"
+@old if [ "$sha" = "4f52854a3c14" ]; then
+@new if [ -n "$sha" ]; then
+
+@defect D9 | clause E: read-only boundary comparison always reads byte-identical
+@old if [ "$after" = "$before" ]; then
+@new if [ -n "$after" ]; then
+
+@defect R1 | clause F: tomllib-unavailable arm reads PASS not UNKNOWN
+@old     row walker walker.config UNKNOWN "python3 tomllib unavailable — cannot parse TOML"
+@new     row walker walker.config PASS "python3 tomllib unavailable — cannot parse TOML"
+EOT
+  [[ -s "$d/js-kimi-census.spec" && -s "$d/bash-surface-census.spec" \
+     && -s "$d/bash-tsukuroi-census.spec" && -s "$d/bash-mado-verify.spec" ]]
 }
 
 regression_case() {
   # <name> <target> <pin-sha> <spec> <suite> <recorded-table> <case-workdir>
-  # Fresh sweep of <spec> against <target> through this same tool (a full CLI
-  # sub-invocation), then a comparison of the measured verdict table against
-  # the recorded table within the stated band. Writes <case-workdir>/sweep.log.
-  # Returns 0 PASS · 1 FAIL (out of band) · 2 SETUP (cannot verify).
+  #   [<repo> <rev> <path-in-repo>] [<killed-tol> <flips-tol>]
+  # When <repo>/<rev>/<path> are given (r7-1), the target is NOT the file at
+  # <target>: the pinned blob is materialized from that repo's git object store
+  # (`git show <rev>:<path>`) into <case-workdir>/target.<basename> and every
+  # check below reads the materialized copy, so a drifted or dirty working tree
+  # cannot move the replay. Without them the target is used as given (fixture
+  # mode). Tolerance defaults to the r4-2 band (BAND_KILLED / BAND_FLIPS); the
+  # ledger legs pass 0 0 (exact: every measured row must equal the recorded
+  # table). Fresh sweep of <spec> against the target through this same tool (a
+  # full CLI sub-invocation), then a comparison of the measured verdict table
+  # against the recorded table within the stated tolerance. Writes
+  # <case-workdir>/sweep.log. Returns 0 PASS · 1 FAIL (outside the expectation)
+  # · 2 SETUP (cannot verify).
   local name=$1 target=$2 pin=$3 spec=$4 suite=$5 table=$6 cwd=$7
+  local repo=${8-} rev=${9-} path=${10-} ktol=${11-} ftol=${12-}
+  [[ -n "$ktol" ]] || ktol=$BAND_KILLED
+  [[ -n "$ftol" ]] || ftol=$BAND_FLIPS
+  mkdir -p "$cwd" || {
+    printf 'REGRESSION_CASE %s: SETUP (cannot create case workdir: %s)\n' "$name" "$cwd"
+    return 2
+  }
+  if [[ -n "$repo" ]]; then
+    command -v git >/dev/null 2>&1 || {
+      printf 'REGRESSION_CASE %s: SETUP (git missing; cannot materialize the pinned revision)\n' "$name"
+      return 2
+    }
+    if ! git -C "$repo" rev-parse --verify --quiet "${rev}^{commit}" >/dev/null; then
+      printf 'REGRESSION_CASE %s: SETUP (revision not found: %s@%s)\n' "$name" "$repo" "$rev"
+      return 2
+    fi
+    if ! git -C "$repo" cat-file -e "${rev}:${path}" 2>/dev/null; then
+      printf 'REGRESSION_CASE %s: SETUP (path not in revision: %s@%s:%s)\n' "$name" "$repo" "$rev" "$path"
+      return 2
+    fi
+    local dst="$cwd/target.$(basename "$path")"
+    if ! git -C "$repo" show "${rev}:${path}" >"$dst" 2>"$cwd/git-show.err"; then
+      printf 'REGRESSION_CASE %s: SETUP (git show failed: %s@%s:%s; see %s)\n' \
+        "$name" "$repo" "$rev" "$path" "$cwd/git-show.err"
+      return 2
+    fi
+    target=$dst
+    printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s sha256=%s\n' \
+      "$name" "$repo" "$rev" "$path" "$pin"
+  else
+    printf 'REGRESSION_PIN %s: source=file target=%s sha256=%s\n' "$name" "$target" "$pin"
+  fi
   local tsha
   if [[ ! -f "$target" ]]; then
     printf 'REGRESSION_CASE %s: SETUP (target missing: %s)\n' "$name" "$target"
@@ -610,14 +785,10 @@ regression_case() {
   fi
   tsha=$(sha_of "$target")
   if [[ "$tsha" != "$pin" ]]; then
-    printf 'REGRESSION_CASE %s: SETUP (pin mismatch: recorded=%s live=%s target=%s)\n' \
+    printf 'REGRESSION_CASE %s: SETUP (pin mismatch: recorded=%s materialized=%s source=%s)\n' \
       "$name" "$pin" "$tsha" "$target"
     return 2
   fi
-  mkdir -p "$cwd" || {
-    printf 'REGRESSION_CASE %s: SETUP (cannot create case workdir: %s)\n' "$name" "$cwd"
-    return 2
-  }
 
   local rc
   bash "$SELF" --target "$target" --defects "$spec" --suite "$suite" \
@@ -684,8 +855,8 @@ regression_case() {
 
   local delta=$((killed - exp_killed)) reasons=''
   [[ $delta -lt 0 ]] && delta=$((0 - delta))
-  (( delta > BAND_KILLED )) && reasons="$reasons killed-delta=$delta"
-  (( flips > BAND_FLIPS )) && reasons="$reasons flips=$flips"
+  (( delta > ktol )) && reasons="$reasons killed-delta=$delta"
+  (( flips > ftol )) && reasons="$reasons flips=$flips"
   (( inconcl > 0 )) && reasons="$reasons inconclusive=$inconcl"
   (( total != exp_total )) && reasons="$reasons defects=$total-recorded=$exp_total"
   [[ $ctl -eq 1 ]] || reasons="$reasons control-not-green"
@@ -697,11 +868,24 @@ regression_case() {
   printf 'REGRESSION_WORKDIR %s: %s\n' "$name" "$cwd"
   if [[ -z "$reasons" ]]; then
     printf 'REGRESSION_CASE %s: PASS (band: killed-delta<=%s flips<=%s inconclusive=0 defects=%s)\n' \
-      "$name" "$BAND_KILLED" "$BAND_FLIPS" "$exp_total"
+      "$name" "$ktol" "$ftol" "$exp_total"
     return 0
   fi
   printf 'REGRESSION_CASE %s: FAIL (out of band:%s; log: %s)\n' "$name" "$reasons" "$cwd/sweep.log"
   return 1
+}
+
+regression_case_git() {
+  # <name> <fleet-relative-target> <pin> <rev> <spec> <suite> <recorded-table>
+  #   <case-workdir>
+  # Ledger leg (r7-1): repo = the target's top-level directory under FLEET_ROOT,
+  # path = the rest of the fleet-relative path. The leg replays at its recorded
+  # pin with an exact expectation (killed-delta 0 / flips 0) — a byte-pinned
+  # replay admits no drift.
+  local name=$1 rel=$2 pin=$3 rev=$4 spec=$5 suite=$6 table=$7 cwd=$8
+  local repo="$FLEET_ROOT/${rel%%/*}" path="${rel#*/}"
+  regression_case "$name" "$FLEET_ROOT/$rel" "$pin" "$spec" "$suite" "$table" "$cwd" \
+    "$repo" "$rev" "$path" 0 0
 }
 
 run_regression() {
@@ -713,9 +897,11 @@ run_regression() {
   command -v python3 >/dev/null 2>&1 || die_setup 'python3 missing'
   command -v sha256sum >/dev/null 2>&1 || die_setup 'sha256sum missing'
   command -v mktemp >/dev/null 2>&1 || die_setup 'mktemp missing'
+  command -v git >/dev/null 2>&1 \
+    || die_setup 'git missing (--regression materializes each leg from its repo object store)'
 
-  local fleet_root root specs auto=0
-  fleet_root=$(dirname "$(dirname "$(dirname "$SELF")")")
+  local root specs auto=0
+  FLEET_ROOT=$(dirname "$(dirname "$(dirname "$SELF")")")
   if [[ -z "$WORKDIR" ]]; then
     root=$(mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX) || die_setup 'mktemp -d failed'
     auto=1
@@ -729,42 +915,59 @@ run_regression() {
 
   printf 'REGRESSION_TOOL: %s sha256=%s\n' "$SELF" "$(sha_of "$SELF")"
   printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  printf 'REGRESSION_BAND: killed-delta<=%s flips<=%s inconclusive=0 defects=exact (recorded: js killed=%s/%s, bash killed=%s/%s)\n' \
-    "$BAND_KILLED" "$BAND_FLIPS" \
+  printf 'REGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=%s flips<=%s\n' \
+    "$BAND_KILLED" "$BAND_FLIPS"
+  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s\n' \
     "$(table_count "$TABLE_JS" KILLED)" "$(table_total "$TABLE_JS")" \
-    "$(table_count "$TABLE_BASH" KILLED)" "$(table_total "$TABLE_BASH")"
+    "$(table_count "$TABLE_BASH" KILLED)" "$(table_total "$TABLE_BASH")" \
+    "$(table_count "$TABLE_TSUKUROI" KILLED)" "$(table_total "$TABLE_TSUKUROI")" \
+    "$(table_count "$TABLE_MADO" KILLED)" "$(table_total "$TABLE_MADO")"
 
-  local st_js st_bash
-  regression_case js-kimi-census \
-    "$fleet_root/kumitate-shokunin/scripts/kimi-census.mjs" "$PIN_JS" \
+  local st_js st_kagi st_tsu st_mado
+  regression_case_git js-kimi-census \
+    'kumitate-shokunin/scripts/kimi-census.mjs' "$PIN_JS" "$REV_JS" \
     "$specs/js-kimi-census.spec" 'node "$MUTANT" --selftest' "$TABLE_JS" \
     "$root/js-kimi-census"
   st_js=$?
-  regression_case bash-surface-census \
-    "$fleet_root/kagi-shokunin/corpus/surface-census.sh" "$PIN_BASH" \
+  regression_case_git bash-surface-census \
+    'kagi-shokunin/corpus/surface-census.sh' "$PIN_BASH" "$REV_BASH" \
     "$specs/bash-surface-census.spec" 'bash "$MUTANT" --selftest' "$TABLE_BASH" \
     "$root/bash-surface-census"
-  st_bash=$?
+  st_kagi=$?
+  regression_case_git bash-tsukuroi-census \
+    'tsukuroi-shokunin/tools/tsukuroi-census.sh' "$PIN_TSUKUROI" "$REV_TSUKUROI" \
+    "$specs/bash-tsukuroi-census.spec" 'bash "$MUTANT" --selftest' "$TABLE_TSUKUROI" \
+    "$root/bash-tsukuroi-census"
+  st_tsu=$?
+  regression_case_git bash-mado-verify \
+    'mado-shokunin/tools/mado-verify.sh' "$PIN_MADO" "$REV_MADO" \
+    "$specs/bash-mado-verify.spec" 'bash "$MUTANT" --selftest' "$TABLE_MADO" \
+    "$root/bash-mado-verify"
+  st_mado=$?
 
-  local nfail=0 nsetup=0
-  [[ $st_js -eq 1 ]] && nfail=$((nfail + 1))
-  [[ $st_bash -eq 1 ]] && nfail=$((nfail + 1))
-  [[ $st_js -eq 2 ]] && nsetup=$((nsetup + 1))
-  [[ $st_bash -eq 2 ]] && nsetup=$((nsetup + 1))
+  local nlegs=4 npass=0 nfail=0 nsetup=0 st
+  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado"; do
+    case $st in
+      0) npass=$((npass + 1)) ;;
+      1) nfail=$((nfail + 1)) ;;
+      *) nsetup=$((nsetup + 1)) ;;
+    esac
+  done
 
   if [[ $nfail -gt 0 ]]; then
-    printf 'REGRESSION: FAIL (cases=2 passed=%s failed=%s setup=%s)\n' \
-      "$((2 - nfail - nsetup))" "$nfail" "$nsetup"
+    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\n' \
+      "$nlegs" "$npass" "$nfail" "$nsetup"
     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
     exit 1
   fi
   if [[ $nsetup -gt 0 ]]; then
-    printf 'REGRESSION: SETUP (cases=2 passed=%s cannot-verify=%s)\n' "$((2 - nsetup))" "$nsetup"
+    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\n' \
+      "$nlegs" "$npass" "$nsetup"
     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
     exit 2
   fi
-  printf 'REGRESSION: PASS (cases=2 passed=2; band killed-delta<=%s flips<=%s)\n' \
-    "$BAND_KILLED" "$BAND_FLIPS"
+  printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+    "$nlegs" "$npass"
   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
     printf 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)\n' "$root"
     rm -rf "$root"
@@ -1038,6 +1241,64 @@ EOT
   grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg9.out"
   st 'all-killed PASS line exact' $?
   [[ "$(sha_of "$fx/target.sh")" == "$s_before" ]]; st 'fixture target byte-identical after the r6 hardening cases' $?
+
+  # r7-1 (TAMESHI-T7-1) ledger engine: a leg materialized from a git object
+  # store reads the pinned blob, not the working tree (drift-immune), verifies
+  # the blob against the pin, and carries an exact expectation — one flipped
+  # entry of a recorded table fails loudly.
+  local grepo="$root/fleet/fakerepo" grev saved_fleet
+  mkdir -p "$grepo"
+  cp "$fx/target.sh" "$grepo/target.sh"
+  git -C "$grepo" init -q
+  git -C "$grepo" add -A
+  git -C "$grepo" -c user.name=tameshi -c user.email=tameshi@selftest -c commit.gpgsign=false \
+    commit -q -m selftest-fixture
+  grev=$(git -C "$grepo" rev-parse HEAD)
+  saved_fleet=$FLEET_ROOT
+  FLEET_ROOT="$root/fleet"
+
+  regression_case_git fixture-git fakerepo/target.sh "$s_before" "$grev" \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/git-pass" >"$root/rg10.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'ledger leg: git-materialized replay PASSes at exact tolerance' $?
+  grep -qF 'REGRESSION_PIN fixture-git: source=git' "$root/rg10.out"
+  st 'ledger leg pin line names the git source' $?
+  grep -qF 'REGRESSION_CASE fixture-git: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=2)' "$root/rg10.out"
+  st 'ledger leg PASS line shows the exact tolerance' $?
+
+  printf '# working-tree drift after the pin\n' >>"$grepo/target.sh"
+  regression_case_git fixture-git fakerepo/target.sh "$s_before" "$grev" \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/git-drift" >"$root/rg11.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'drifted working tree does not move a git-pinned leg' $?
+  grep -qF "sha256=$s_before" "$rg/git-drift/sweep.log"
+  st 'drifted leg swept the pinned blob bytes (not the tree)' $?
+
+  regression_case_git fixture-git fakerepo/target.sh \
+    0000000000000000000000000000000000000000000000000000000000000000 "$grev" \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/git-pin" >"$root/rg12.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 2 ]]; st 'ledger leg pin mismatch is SETUP (exit 2)' $?
+  grep -qF 'REGRESSION_CASE fixture-git: SETUP (pin mismatch:' "$root/rg12.out"
+  st 'ledger leg pin mismatch named' $?
+
+  regression_case_git fixture-git fakerepo/target.sh "$s_before" \
+    0000000000000000000000000000000000000000 \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/git-rev" >"$root/rg13.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 2 ]]; st 'ledger leg unresolvable revision is SETUP (exit 2)' $?
+  grep -qF 'REGRESSION_CASE fixture-git: SETUP (revision not found:' "$root/rg13.out"
+  st 'ledger leg missing revision named' $?
+
+  FLEET_ROOT="$saved_fleet"
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:KILLED,S:KILLED' "$rg/exact-flip" '' '' '' 0 0 >"$root/rg14.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 1 ]]; st 'exact expectation: one flipped entry FAILs loudly' $?
+  grep -qF 'REGRESSION_DEFECT fixture S: measured=SURVIVED recorded=KILLED' "$root/rg14.out"
+  st 'exact expectation flip names the flipped row' $?
+  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1 flips=1;' "$root/rg14.out"
+  st 'exact expectation flip reports killed-delta=1 flips=1' $?
 
   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?

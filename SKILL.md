@@ -917,3 +917,92 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
   porcelain-clean; an independent audit lane re-cut the same 10 defects with
   its own driver and reproduced 4 killed / 6 survived
   (`/tmp/w6-aud-t6-work/presweep-174248.txt`, 2026-10-14).
+
+## The leg ledger — replay, receipt, and how it is read (round 7, measured)
+
+Round 7 turns `--regression` from the tool's two-case self-check into the
+fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
+pinned original revision. Four legs at this revision — `js-kimi-census`
+(r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
+`bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
+— each with its recorded kill-rate as its expectation
+(`tools/mutate-and-run.sh:72-109`, :511-522). The ledger is the receipt
+tameshi's records cite for kill-rate claims; the standing per-gate rate rows
+are `corpus/knowledge/fleet-kill-rate-ledger.md`.
+
+### Using the ledger
+
+- **One command replays every leg.** `bash tools/mutate-and-run.sh
+  --regression [--workdir DIR] [--keep]` — default scratch is a fresh
+  `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`, removed on PASS unless
+  `--keep`, kept on FAIL/SETUP, never removed when `--workdir` was given. Exit
+  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify
+  (`tools/mutate-and-run.sh:72-109`, :891-975).
+- **Each leg's bytes come from the repo's git object store, not the working
+  tree.** `git show <rev>:<path>` materializes the pinned blob into the case
+  workdir and its sha256 must equal the recorded pin (`:733-791`; the
+  `REGRESSION_PIN` line names repo + rev + path + pin). A sibling tree that
+  has drifted past the recorded revision — tsukuroi's and mado's pins are
+  ancestors of their HEADs today — or carries uncommitted edits cannot move a
+  replay; a missing repo/rev/blob or a pin mismatch is a SETUP refusal before
+  any suite runs.
+- **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
+  (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)` with the
+  executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
+  (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
+  to each leg's pinned bytes.
+- **Contribution contract — what a case carries to become a leg.** A case is
+  a pinned file set: fleet-relative target path + git revision + sha256 pin; a
+  defect spec (one exact single edit per defect, `@old` unique in the pinned
+  bytes, `@new != @old`); a one-command hermetic suite run with `$MUTANT` that
+  exercises the copy and prints its own executed count and verdict; and the
+  recorded verdict table, which is the leg's expectation — exact for ledger
+  legs. The four legs above are the measured carriage of exactly this set
+  (pins/revisions/tables `:511-522`; specs `:550-728`; leg registry
+  `:927-944`). (U) A fleet-contributed case is not yet exercised; the ledger's
+  case set is tameshi-carried at this revision.
+
+### Reading a receipt — the discipline
+
+1. **Read the block, not the last line.** `REGRESSION_TOOL` ·
+   `REGRESSION_DATE` · `REGRESSION_BAND` · `REGRESSION_EXPECT` · one
+   `REGRESSION_PIN` per leg · per leg one `REGRESSION_SWEEP` +
+   `REGRESSION_TABLE` + `REGRESSION_CASE` · `REGRESSION_DEFECT` rows for
+   differences · `REGRESSION_WORKDIR` · the closing `REGRESSION:
+   PASS|FAIL|SETUP` line.
+2. **PASS is exact for ledger legs.** Every case line `PASS (band:
+   killed-delta<=0 flips<=0 inconclusive=0 defects=10)` and every
+   `REGRESSION_TABLE … match=10/10 … flips=0`; the closing line's
+   `cases=4 passed=4`. Measured instance (T7-1, 2026-10-14; replayed by this
+   lane under the same revision `cf41efaa…`): four legs, all `match=10/10 …
+   flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
+   killed-delta<=0 flips<=0)`, rc 0.
+3. **FAIL names its rows.** `REGRESSION_DEFECT <leg> <id>: measured=…
+   recorded=…` (an `ABSENT` on either side counts), `REGRESSION_TABLE …
+   flips=n`, and the case's `REGRESSION_CASE … FAIL (out of band: …)`. A
+   doctored table was measured caught: `REGRESSION_DEFECT js-kimi-census D1:
+   measured=KILLED recorded=SURVIVED` → `match=9/10 … flips=1` →
+   `REGRESSION_CASE js-kimi-census: FAIL (out of band: killed-delta=1
+   flips=1)` (negative run, `/tmp/w7-tameshi-1/flip-run.out`). Quote the rows,
+   never the word; never hand-re-sweep to "confirm" a FAIL — the replay goes
+   through the ledger and the divergence is the finding.
+4. **SETUP is not a verdict.** A missing repo/rev/blob, a pin mismatch, or a
+   refused sub-sweep means *cannot verify* — never a pass, never a suite
+   failure; the fix is the environment (repo/rev/pin), never a
+   re-interpretation of the recorded table.
+5. **The ledger proves the instrument, not the gates.** A leg PASS says the
+   tool reproduces the recorded table on the pinned bytes; it does not say the
+   gate protects anything today. The rates live in
+   `fleet-kill-rate-ledger.md` with their composition and revision — and a
+   rate is never implied to hold at a later revision than its sweep pin.
+6. **Attesting a sibling's claim uses the same discipline** (round-7
+   attestation leg): replay the declared pins read-only, return the receipt —
+   or name the missing piece; the sibling's note is never edited
+   (`plans/round-7.plan.md:11-15`).
+7. **The ledger's own arms are selftested.** `bash tools/mutate-and-run.sh
+   --selftest` → `MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0 at
+   `cf41efaa…` — including a git-materialized replay passing at exact
+   tolerance, a drifted working tree not moving a git-pinned leg, pin
+   mismatch / unresolvable revision as SETUP, and a single flipped entry
+   failing loudly. The r4-2 tolerance (`killed-delta<=1 flips<=1`) remains the
+   fixture-mode default and is exercised by the selftest only.
