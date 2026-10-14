@@ -231,3 +231,77 @@ inside its own errata block; `2026-10-13-r5-01-riscv-bypass.md:62` matches on
 "re-verify:" inside a heading; `2026-10-13-r3-keyed-archive-carriers.md:112`
 and `2026-10-13-r4u-05-wakaru-oom.md:152` are `verified-at:` stamps on
 `source:`-based candidates. U1 is partially explained, still open.
+
+## Errata (round 4)
+
+Applied 2026-10-14 by ERR-T — the round-4 tameshi errata sweep (read every
+corpus note's headers/pins; re-resolved each against live state; append-only;
+nothing above this block is edited). Sweep scratch `/tmp/w4-errt-sweep/`.
+Re-measured held before the findings below, so no errata was needed for them:
+the kaidoku census counts (72 knowledge files; `verify:` 468 vs `verified-at:`
+467; same four mismatched files), the w6/w7/w8 closeout tallies (3×5/5,
+3×5/5, 2×6/6 + 1×5/5), PROTOCOL.md:430-431, the `.ufo/waves/kaidoku-r5/01–03`
+audit files, and the audio/g3d/`.ufo/reports` line refs (spot-checked
+unchanged). Sibling-note pins also re-resolved held (no appends made there):
+kumitate 62/42/60/102/39/43 all exit 0 with unchanged sha256s; kagi 250
+selftest cases + `--falsify` `caught=16/18 failed=2` + stamps recompute
+`ok=56` + `tcase` counts 1/1/0/0/0/1; kimi-census `83016d45…` (mtime
+2026-10-13 18:53:12.694); surface-census `275d8294…`; SKILL.md `dd2f4dee…`
+(still the live revision, `/tmp` snapshot matches); kumitate `175de6ba` / kagi
+`fecee87`; the executor scratch and both mutation-case scratch trees intact.
+
+**V-R4-1 (measured — the D-block's substrate moved; state pins refreshed).**
+`game-dev-2d-shokunin` is no longer at the extension's read revision: HEAD
+`9fb50aa9…` → **`1275746cedfa314246755a81b4ab60e57075df98`** ("r73 report-last
++ simplifier-fold …", 2026-10-14 12:51:17 −0300), **10 commits** since;
+`git status --porcelain` **15 → 30** lines. Re-measured against the current
+tree: `find corpus/live -maxdepth 1 -name '*verifier*' | wc -l` **51 → 56**;
+`ls reports | grep -cE '^round-'` **11 → 15** (round-60…round-74; the
+read-empty `round-70/` now holds reports); flat `rN-*` = 428 held (max flat
+round r59 held); `ls corpus/lessons | grep -icE 'verifier|non-author'` = 107
+held; `wc -l LOG.md` **778 → 863** (additions-only), `grep -c 'AGREE'`
+**9 → 12**, `grep -n 'AGREE' … | tail` was `:667, :722` → now `:840, :860`.
+The D9 line's two then-untracked reports are committed (r68-verifier /
+r68-boundary, landed in r70 `16d003c`), and the r69/r70 scratch it listed as
+untracked is now tracked (2,620 `corpus/live` files match `r69-|r70-`). New
+porcelain carries r73/r74 seat scratch ×18, `reports/round-74/`, three
+`reports/round-71/r71-*.md`, r72-simplifier snapshot entries and one
+`__pycache__`. All D-block cited lines still resolve: LOG.md
+:611/:614-615/:631/:636/:722/:744-746/:771-773 and SCORECARD.md
+:24/:34/:52/:61-64/:74 re-read to the quoted content — both files' diffs since
+`9fb50aa9` are additions-only (`85/0`, `37/0`); `corpus/fixtures/run_battery.py`
+is not in the diff, so its cited lines hold; the r68-verifier scratch still
+carries three run dirs + both recompute instruments. The extension's
+prediction was not falsified: r70–r73 all carry `rNN-verifier.md`. The same
+stale revision text also sits in this repo's `corpus/README.md:12` (round-3
+coverage-map row) — flagged, not edited (outside this sweep's write scope).
+Commands: `git -C game-dev-2d-shokunin rev-parse HEAD`; `status --porcelain`;
+`diff --numstat 9fb50aa9..HEAD -- LOG.md SCORECARD.md`; the find/ls/grep
+counts above.
+
+**V-R4-2 (measured — tameshi SHONEN.md moved under the P5 citation).** §1 P5's
+parenthetical "(tameshi SHONEN.md:14 pins this line)" no longer resolves. At
+`3da686c` (round-1 commit, the census's own wave) `SHONEN.md:14` was "Header
+pins: PROTOCOL.md lines 419-428 (seed), lines 430 (mark spec)."; the round-2 /
+round-3 rewrites (last commit `53e74a8`, 2026-10-14 13:01:03) moved the pin to
+the last line — current `SHONEN.md:36` carries it verbatim, and `:14` is now
+inside the end-to-end box ("`cmp`-verified pristine byte copy…").
+PROTOCOL.md:419-428 and :430-431 re-read held. Command: `sed -n '14p;36p'
+tameshi-shokunin/SHONEN.md`; `git -C tameshi-shokunin show 3da686c:SHONEN.md`.
+
+**V-R4-3 (measured — two cited anchors re-resolved on frozen files;
+corrections recorded).** Neither target file moved, so these are citation
+corrections rather than drift — kept because a re-resolving reader lands wrong:
+(a) P10's "(adjacency axis AXES.md:15)" and §2's "axes table AXES.md:5-13" do
+not resolve — on the file (unchanged since `e867f78`, 2026-10-13 16:47:03;
+worktree clean) the six-axis table is **`AXES.md:9-16`** (depth :11, coverage
+:12, operability :13, freshness :14, calibration :15, **adjacency :16**), and
+`:5` is the intro's last line ("fleet-level axes."). Correct ranges: adjacency
+= `:16`, table = `:9-16`. (b) P4's `spec.json:15` seat label "(audio r67
+author prompt)" — `:15` is the **audio-scout** prompt (Brief:
+`tasks/audio-scout.txt`); audio-author is `:21`. The quoted invariant ("all
+102 prior ledger rows + receipts byte-stable") does sit at `:15`, and in all 8
+audio-seat prompts (:15/:21/:27/:33/:39/:45/:51/:57); the quote resolves, the
+seat label is corrected. Command: `sed -n '9,16p' AXES.md` + `git show
+e867f78:AXES.md`; `grep -n '"prompt"' spec.json` + per-prompt Brief grep;
+`grep -c '102 prior' spec.json` → 8.

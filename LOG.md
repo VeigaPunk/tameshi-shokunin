@@ -300,3 +300,4 @@
   execution) is the natural no-oral-context completion; SKILL's band table
   still carries the ≥2-lane generality bar — a third gate (or a fleet
   lane adopting the tool) is the next depth move.
+- 2026-10-14 — round 4 (training r3): arm-class matrix (JS+bash cases) + round-gate static projection (§13); mutate-and-run --regression mode; VER-T1 cross-verified row E CONFIRMED with 2 precision errata (chmod enumeration :608/:654, JS wording scope). Axis moved: calibration. Verifiers: VER-T1 | matrix disagree-where-it-disagrees is the finding; row E exactly 1 instance in 20 (B5, proven unreached by one-row probe). 32-lane wave (27+1+4 after an alibaba filter failure rerouted 4 lanes to hyper — recorded).

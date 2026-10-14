@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-# mutate-and-run.sh — generic mutation runner (tameshi-shokunin, round 3, TAMESHI-R3-2).
+# mutate-and-run.sh — generic mutation runner (tameshi-shokunin, r4-2, TAMESHI-R4-2).
 #
-# Plan anchor: plans/round-3.plan.md:6-7 — "the method ships as tameshi's own
-# runnable tool (tools/mutate-and-run.sh: inject->run->restore with byte-identity
-# proof)". Method provenance: corpus/knowledge/mutation-case-kimi-census.md
+# Channels: r3-2 (TAMESHI-R3-2) shipped the runner; r4-2 (TAMESHI-R4-2) adds
+# --regression, this tool's own kill-rate regression gate (contract below).
+#
+# Plan anchors: r3-2 = plans/round-3.plan.md:6-7 — "the method ships as tameshi's
+# own runnable tool (tools/mutate-and-run.sh: inject->run->restore with
+# byte-identity proof)"; r4-2 = plans/round-4.plan.md:9-10 — "mutate-and-run.sh
+# gains a --regression mode (re-run both cases as a kill-rate regression gate for
+# the tool itself)". Method provenance: corpus/knowledge/mutation-case-kimi-census.md
 # §0-§1 — every mutant is a fresh copy of a pinned pristine; one exact edit per
 # copy with a uniqueness assert; a green control run; killed/survived recorded
 # per defect; sha256 before/after as the restore proof; a kill-rate headline.
@@ -55,26 +60,53 @@
 #   MUTATE: DONE|DEGRADED (target=… defects=… killed=… survived=… inconclusive=… kill-rate=…%)
 #   MUTATE: SETUP (<reason>)   — refused before/instead of a sweep
 #
-# Exit map: 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
+# Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
 # 64 usage error.
+#
+# --regression (r4-2) — this tool's own gate: re-runs BOTH worked cases. Case
+# js = corpus/knowledge/mutation-case-kimi-census.md §1 (control green, 10
+# defects, killed 8 / survived 2, kill-rate 80 %); case bash =
+# corpus/knowledge/mutation-case-kagi-census.md §1 (same headline). Both defect
+# specs are embedded below (cut from the notes' §7 reproduce blocks; all 20
+# @old strings re-verified count==1 against the live pinned bytes, 2026-10-14).
+# Each case runs as a full CLI sub-invocation of this tool over a fresh copy of
+# the pinned fleet artifact; the fleet trees are read-only (each case's sweep
+# log carries its own MUTATE_RESTORE proof). Recorded revision pins — js
+# 83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426, bash
+# 275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f; a live
+# mismatch is a SETUP refusal (the recorded table is revision-tied).
+# Stated band, per case (identical for both): |killed - 8| <= 1 defect · at most
+# 1 defect verdict may differ from the recorded table · defects exactly 10 ·
+# inconclusive 0 · control green · MUTATE_RESTORE: OK required. Inside the band
+# is PASS; outside it is FAIL. Exit map (--regression): 0 all cases PASS ·
+# 1 >= 1 case FAIL (measured table out of band) · 2 a case could not be
+# verified — missing artifact, pin mismatch, sweep setup refusal — with no FAIL.
+# Lines: REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_SWEEP /
+# REGRESSION_TABLE / REGRESSION_DEFECT (one per differing row) / REGRESSION_CASE /
+# REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
+# /tmp/tameshi-r4-2-regression.XXXXXX by default; removed on PASS unless --keep,
+# kept on FAIL/SETUP, never removed when --workdir was given. In this mode
+# --target/--defects/--suite/--label are refused (usage error).
 #
 # Evidence: workdir keeps pristine copy, mutant files, evidence/<id>.out full
 # logs, evidence/control.out, defects.tsv (id/line/desc), results.tsv (per
 # defect: verdict/exit/duration/mutant-sha256/desc), spec.copy; the path is
-# printed as MUTATE_EVIDENCE. Default: mktemp -d /tmp/tameshi-r3-2-run.XXXXXX.
+# printed as MUTATE_EVIDENCE. Default: mktemp -d /tmp/tameshi-r4-2-run.XXXXXX.
 #
 # --selftest is hermetic: it builds a tiny fixture target + mini-suite + four
-# specs under /tmp/tameshi-r3-2-selftest.XXXXXX and self-checks control-green,
+# specs under /tmp/tameshi-r4-2-selftest.XXXXXX and self-checks control-green,
 # one kill, one survivor, exact kill-rate line, restore proof, DEGRADED path,
-# and refusal paths (duplicate old string, unknown escape, no-op edit, missing
-# --target, usage). Scratch is removed on PASS, kept on FAIL for inspection.
+# refusal paths (duplicate old string, unknown escape, no-op edit, missing
+# --target, usage), and the --regression engine on the same fixture (in-band
+# PASS, doctored table FAIL, pin mismatch and missing target SETUP). Scratch is
+# removed on PASS, kept on FAIL for inspection.
 #
 # Dependencies: bash, python3 (byte-exact edit + spec parse), coreutils
 # (sha256sum, mktemp, timeout, cp, date).
 
 set -u -o pipefail
 
-VERSION='mutate-and-run.sh r3-2 (tameshi-shokunin, 2026-10-14)'
+VERSION='mutate-and-run.sh r4-2 (tameshi-shokunin, 2026-10-14)'
 SELF=$(readlink -f "${BASH_SOURCE[0]}")
 
 MODE=run
@@ -85,6 +117,9 @@ WORKDIR=''
 LABEL=''
 TIMEOUT_S=300
 TAIL_N=8
+BAND_KILLED=1   # --regression: |killed - recorded| tolerance, per case
+BAND_FLIPS=1    # --regression: max verdict differences vs the recorded table
+KEEP=0          # --regression: keep the scratch root also on PASS
 
 usage() {
   cat <<'EOF'
@@ -92,6 +127,7 @@ mutate-and-run.sh — generic mutation runner (tameshi-shokunin)
 
 Usage:
   mutate-and-run.sh --target FILE --defects SPEC --suite CMD [options]
+  mutate-and-run.sh --regression [--workdir DIR] [--keep]
   mutate-and-run.sh --selftest
   mutate-and-run.sh --help
 
@@ -102,10 +138,19 @@ Inputs:
                    artifact under test (the pristine copy for the control run)
 
 Options:
-  --workdir DIR    evidence/work dir (default: mktemp -d /tmp/tameshi-r3-2-run.XXXXXX)
+  --workdir DIR    evidence/work dir (default: mktemp -d /tmp/tameshi-r4-2-run.XXXXXX)
   --label NAME     name for the report (default: basename of the target)
   --timeout N      seconds per suite run (default: 300)
   --tail N         output tail lines shown per run (default: 8)
+  --keep           --regression only: keep the scratch root also on PASS
+
+--regression re-runs both worked cases (JS round 2, bash round 3) over fresh
+copies of the pinned fleet artifacts and asserts each recorded 10-defect table
+reproduces within the stated band (killed 8 +/- 1, at most 1 verdict flip, count
+exactly 10, inconclusive 0, control green, restore OK). Exit: 0 all in band ·
+1 out of band · 2 cannot verify (missing artifact / pin mismatch / setup
+refusal). Fleet trees are never written. See the file header for the full
+contract, evidence layout, and suite-command semantics.
 
 Spec format v1 (one directive per line; '#' comments; blank lines ignored):
   @defect <id> | <description>
@@ -113,9 +158,8 @@ Spec format v1 (one directive per line; '#' comments; blank lines ignored):
   @new <text>          exact replacement (may be empty)
   escapes: \n \t \r \\; any other backslash sequence is refused.
 
-Verdicts per defect: KILLED | SURVIVED | INCONCLUSIVE. Exit map: 0 done ·
-1 done-with-inconclusive · 2 setup/refusal · 64 usage. See the file header for
-the full contract, evidence layout, and suite-command semantics.
+Verdicts per defect: KILLED | SURVIVED | INCONCLUSIVE. Exit map (run): 0 done ·
+1 done-with-inconclusive · 2 setup/refusal · 64 usage.
 EOF
 }
 
@@ -322,7 +366,7 @@ run_sweep() {
   SPEC_ABS=$(readlink -f "$SPEC")
 
   if [[ -z "$WORKDIR" ]]; then
-    WORKDIR=$(mktemp -d /tmp/tameshi-r3-2-run.XXXXXX) || die_setup 'mktemp -d failed'
+    WORKDIR=$(mktemp -d /tmp/tameshi-r4-2-run.XXXXXX) || die_setup 'mktemp -d failed'
   else
     mkdir -p "$WORKDIR" || die_setup "cannot create workdir: $WORKDIR"
   fi
@@ -421,11 +465,315 @@ run_sweep() {
   exit 0
 }
 
+# --------------------------------------------------------------- regression
+
+# Recorded expectations for --regression. Anchors: corpus/knowledge/
+# mutation-case-kimi-census.md §1 (js — control green, killed D1,D3-D9,
+# survived D2,D10, kill-rate 80 % at :29) and mutation-case-kagi-census.md §1
+# (bash — control green, killed B1-B4,B6-B9, survived B5,B10, kill-rate 80 %
+# at :50-53). The specs below are those notes' §7 reproduce edits, byte-matched
+# to the round-3 audit spec files and re-verified count==1 against the live
+# pinned bytes on 2026-10-14.
+PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
+TABLE_BASH='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:SURVIVED,B6:KILLED,B7:KILLED,B8:KILLED,B9:KILLED,B10:SURVIVED'
+
+table_lookup() { # <table ID:V,...> <id> -> verdict, or '-' when the id is absent
+  local pair
+  for pair in ${1//,/ }; do
+    if [[ "${pair%%:*}" == "$2" ]]; then
+      printf '%s' "${pair#*:}"
+      return 0
+    fi
+  done
+  printf '%s' '-'
+}
+
+table_count() { # <table> <verdict> -> how many entries carry that verdict
+  local pair n=0
+  for pair in ${1//,/ }; do
+    if [[ "${pair#*:}" == "$2" ]]; then n=$((n + 1)); fi
+  done
+  printf '%s' "$n"
+}
+
+table_total() { # <table> -> number of entries
+  local pair n=0
+  for pair in ${1//,/ }; do n=$((n + 1)); done
+  printf '%s' "$n"
+}
+
+regression_specs() { # <dir> — write the two embedded case specs
+  local d=$1
+  cat >"$d/js-kimi-census.spec" <<'EOT'
+@defect D1 | kimi-census.mjs:105
+@old kind: 'dir', counted: 18 },
+@new kind: 'dir', counted: 17 },
+
+@defect D2 | kimi-census.mjs:378
+@old findings.slice(0, 6).map
+@new findings.slice(0, 5).map
+
+@defect D3 | kimi-census.mjs:332
+@old       if (!e.children.includes(n)) {
+@new       if (e.children.includes(n)) {
+
+@defect D4 | kimi-census.mjs:351-353
+@old   for (const n of strays) {\n    err('UNLISTED', n, `${n} sits at the root and is not declared by the frozen K1–K5 set`);\n  }\n
+@new 
+
+@defect D5 | kimi-census.mjs:255
+@old       const present = gens.length > 0;
+@new       const present = true;
+
+@defect D6 | kimi-census.mjs:124
+@old kind: 'file', secret: true, modeFloor: 0o600 },
+@new kind: 'file', secret: true, modeFloor: 0o644 },
+
+@defect D7 | kimi-census.mjs:306
+@old (mode & m.modeFloor) !== m.modeFloor
+@new (mode & m.modeFloor) === 0
+
+@defect D8 | kimi-census.mjs:396
+@old   return 2;\n
+@new   return 1;\n
+
+@defect D9 | kimi-census.mjs:292
+@old         ? (m.kind === 'dir' ? kind === 'dir' : isLeaf(kind))
+@new         ? (m.kind === 'dir' ? kind === 'dir' : kind === 'file')
+
+@defect D10 | kimi-census.mjs:145
+@old const FROZEN = { K1: 3, K2: 25, K3: 9, K4: 9, K5: 3 };
+@new const FROZEN = { K1: 3, K2: 24, K3: 9, K4: 9, K5: 3 };
+EOT
+  cat >"$d/bash-surface-census.spec" <<'EOT'
+@defect B1 | surface-census.sh:241
+@old   [[ ${#SCAN_DIR[@]} -eq 0 ]] && return 0
+@new   [[ ${#SCAN_DIR[@]} -ne 0 ]] && return 0
+
+@defect B2 | surface-census.sh:435
+@old             elif [[ "$got" -ge "$floor" ]]; then printf 'SHAPE OK       %s rows %s %s >= %s\\n' "$p" "$tbl" "$got" "$floor"
+@new             elif [[ "$got" -gt "$floor" ]]; then printf 'SHAPE OK       %s rows %s %s >= %s\\n' "$p" "$tbl" "$got" "$floor"
+
+@defect B3 | surface-census.sh:229
+@old       if [[ -n "$want_mode" && "$want_mode" != "$mode" ]]; then
+@new       if [[ -n "$want_mode" && "$want_mode" == "$mode" ]]; then
+
+@defect B4 | surface-census.sh:200-204
+@old     if [[ "$live" == "symlink" ]]; then\n      printf 'SURFACE LINK     %s (declared %s)\\n' "$p" "$kind"\n      N_LINK=$((N_LINK + 1)); FAILED=1\n      continue\n    fi\n
+@new 
+
+@defect B5 | surface-census.sh:214-217
+@old            if [[ "$kind" == "exec" && ! -x "$abs" ]]; then\n             printf 'SURFACE DIVERGED %s (declared exec, no execute bit)\\n' "$p"\n             N_DIVERGED=$((N_DIVERGED + 1)); FAILED=1; continue\n           fi ;;\n
+@new            ;;\n
+
+@defect B6 | surface-census.sh:371
+@old         if head -c "$(( ${#value} + 1 ))" "$abs" | cmp -s - "$MAGIC_EXPECT"; then
+@new         if head -c "${#value}" "$abs" | cmp -s - "$MAGIC_EXPECT"; then
+
+@defect B7 | surface-census.sh:405-406
+@old             printf 'SHAPE UNVERIFIED %s %s (%s)\\n' "$p" "$assertion" "${S_ERR_A[$p]}"\n            N_UNVERIFIED=$((N_UNVERIFIED + 1)); FAILED=1
+@new             printf 'SHAPE UNVERIFIED %s %s (%s)\\n' "$p" "$assertion" "${S_ERR_A[$p]}"\n            N_UNVERIFIED=$((N_UNVERIFIED + 2)); FAILED=1
+
+@defect B8 | surface-census.sh:85
+@old die() { printf 'surface-census: %s\\n' "$1" >&2; exit 2; }
+@new die() { printf 'surface-census: %s\\n' "$1" >&2; exit 1; }
+
+@defect B9 | surface-census.sh:191
+@old       if [[ "$cls" == "runtime" ]]; then
+@new       if [[ "$cls" == "asset" ]]; then
+
+@defect B10 | surface-census.sh:862
+@old         "${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"
+@new         "${#SCAN_DIR[@]}" "$N_ABSENT" "$N_ABSENT" "$N_SKIP"
+EOT
+  [[ -s "$d/js-kimi-census.spec" && -s "$d/bash-surface-census.spec" ]]
+}
+
+regression_case() {
+  # <name> <target> <pin-sha> <spec> <suite> <recorded-table> <case-workdir>
+  # Fresh sweep of <spec> against <target> through this same tool (a full CLI
+  # sub-invocation), then a comparison of the measured verdict table against
+  # the recorded table within the stated band. Writes <case-workdir>/sweep.log.
+  # Returns 0 PASS · 1 FAIL (out of band) · 2 SETUP (cannot verify).
+  local name=$1 target=$2 pin=$3 spec=$4 suite=$5 table=$6 cwd=$7
+  local tsha
+  if [[ ! -f "$target" ]]; then
+    printf 'REGRESSION_CASE %s: SETUP (target missing: %s)\n' "$name" "$target"
+    return 2
+  fi
+  tsha=$(sha_of "$target")
+  if [[ "$tsha" != "$pin" ]]; then
+    printf 'REGRESSION_CASE %s: SETUP (pin mismatch: recorded=%s live=%s target=%s)\n' \
+      "$name" "$pin" "$tsha" "$target"
+    return 2
+  fi
+  mkdir -p "$cwd" || {
+    printf 'REGRESSION_CASE %s: SETUP (cannot create case workdir: %s)\n' "$name" "$cwd"
+    return 2
+  }
+
+  local rc
+  bash "$SELF" --target "$target" --defects "$spec" --suite "$suite" \
+    --workdir "$cwd" --label "$name" --timeout "$TIMEOUT_S" --tail "$TAIL_N" \
+    >"$cwd/sweep.log" 2>&1
+  rc=$?
+  printf 'REGRESSION_SWEEP %s: %s\n' "$name" \
+    "$(grep -m1 '^MUTATE: ' "$cwd/sweep.log" || printf 'no MUTATE line (sweep exit=%s)' "$rc")"
+  if [[ $rc -eq 2 ]]; then
+    printf 'REGRESSION_CASE %s: SETUP (sweep refused; log: %s)\n' "$name" "$cwd/sweep.log"
+    return 2
+  fi
+  if [[ $rc -ne 0 && $rc -ne 1 ]]; then
+    printf 'REGRESSION_CASE %s: FAIL (sweep exit=%s, expected 0 or 1; log: %s)\n' \
+      "$name" "$rc" "$cwd/sweep.log"
+    return 1
+  fi
+  local rtsv="$cwd/results.tsv"
+  if [[ ! -f "$rtsv" ]]; then
+    printf 'REGRESSION_CASE %s: FAIL (no results table; sweep exit=%s; log: %s)\n' \
+      "$name" "$rc" "$cwd/sweep.log"
+    return 1
+  fi
+
+  local id v rest want seen='' total=0 killed=0 survived=0 inconcl=0 flips=0 matches=0
+  local diffs='' pair eid
+  while IFS=$'\t' read -r id v rest; do
+    [[ -n "$id" ]] || continue
+    [[ "$id" == 'id' && "$v" == 'verdict' ]] && continue   # results.tsv header row
+    total=$((total + 1))
+    seen="$seen $id"
+    case $v in
+      KILLED) killed=$((killed + 1)) ;;
+      SURVIVED) survived=$((survived + 1)) ;;
+      *) inconcl=$((inconcl + 1)) ;;
+    esac
+    want=$(table_lookup "$table" "$id")
+    if [[ "$want" == '-' ]]; then
+      flips=$((flips + 1))
+      diffs+="REGRESSION_DEFECT $name $id: measured=$v recorded=ABSENT"$'\n'
+    elif [[ "$want" != "$v" ]]; then
+      flips=$((flips + 1))
+      diffs+="REGRESSION_DEFECT $name $id: measured=$v recorded=$want"$'\n'
+    else
+      matches=$((matches + 1))
+    fi
+  done <"$rtsv"
+  for pair in ${table//,/ }; do
+    eid=${pair%%:*}
+    case " $seen " in
+      *" $eid "*) ;;
+      *)
+        flips=$((flips + 1))
+        diffs+="REGRESSION_DEFECT $name $eid: measured=ABSENT recorded=${pair#*:}"$'\n'
+        ;;
+    esac
+  done
+
+  local exp_total exp_killed ctl=0 restore=0
+  exp_total=$(table_total "$table")
+  exp_killed=$(table_count "$table" KILLED)
+  grep -q '^CONTROL: GREEN ' "$cwd/sweep.log" && ctl=1
+  grep -q '^MUTATE_RESTORE: OK ' "$cwd/sweep.log" && restore=1
+
+  local delta=$((killed - exp_killed)) reasons=''
+  [[ $delta -lt 0 ]] && delta=$((0 - delta))
+  (( delta > BAND_KILLED )) && reasons="$reasons killed-delta=$delta"
+  (( flips > BAND_FLIPS )) && reasons="$reasons flips=$flips"
+  (( inconcl > 0 )) && reasons="$reasons inconclusive=$inconcl"
+  (( total != exp_total )) && reasons="$reasons defects=$total-recorded=$exp_total"
+  [[ $ctl -eq 1 ]] || reasons="$reasons control-not-green"
+  [[ $restore -eq 1 ]] || reasons="$reasons restore-not-ok"
+
+  [[ -n "$diffs" ]] && printf '%s' "$diffs"
+  printf 'REGRESSION_TABLE %s: match=%s/%s recorded-killed=%s measured-killed=%s survived=%s inconclusive=%s flips=%s\n' \
+    "$name" "$matches" "$exp_total" "$exp_killed" "$killed" "$survived" "$inconcl" "$flips"
+  printf 'REGRESSION_WORKDIR %s: %s\n' "$name" "$cwd"
+  if [[ -z "$reasons" ]]; then
+    printf 'REGRESSION_CASE %s: PASS (band: killed-delta<=%s flips<=%s inconclusive=0 defects=%s)\n' \
+      "$name" "$BAND_KILLED" "$BAND_FLIPS" "$exp_total"
+    return 0
+  fi
+  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; log: %s)\n' "$name" "$reasons" "$cwd/sweep.log"
+  return 1
+}
+
+run_regression() {
+  if [[ -n "$TARGET$SPEC$SUITE$LABEL" ]]; then
+    usage_exit '--regression takes no --target/--defects/--suite/--label'
+  fi
+  (( TIMEOUT_S > 0 )) || usage_exit '--timeout must be a positive integer'
+  (( TAIL_N > 0 )) || usage_exit '--tail must be a positive integer'
+  command -v python3 >/dev/null 2>&1 || die_setup 'python3 missing'
+  command -v sha256sum >/dev/null 2>&1 || die_setup 'sha256sum missing'
+  command -v mktemp >/dev/null 2>&1 || die_setup 'mktemp missing'
+
+  local fleet_root root specs auto=0
+  fleet_root=$(dirname "$(dirname "$(dirname "$SELF")")")
+  if [[ -z "$WORKDIR" ]]; then
+    root=$(mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX) || die_setup 'mktemp -d failed'
+    auto=1
+  else
+    root=$WORKDIR
+    mkdir -p "$root" || die_setup "cannot create workdir: $root"
+  fi
+  specs="$root/specs"
+  mkdir -p "$specs" || die_setup "cannot create specs dir: $specs"
+  regression_specs "$specs" || die_setup 'cannot write the embedded case specs'
+
+  printf 'REGRESSION_TOOL: %s sha256=%s\n' "$SELF" "$(sha_of "$SELF")"
+  printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf 'REGRESSION_BAND: killed-delta<=%s flips<=%s inconclusive=0 defects=exact (recorded: js killed=%s/%s, bash killed=%s/%s)\n' \
+    "$BAND_KILLED" "$BAND_FLIPS" \
+    "$(table_count "$TABLE_JS" KILLED)" "$(table_total "$TABLE_JS")" \
+    "$(table_count "$TABLE_BASH" KILLED)" "$(table_total "$TABLE_BASH")"
+
+  local st_js st_bash
+  regression_case js-kimi-census \
+    "$fleet_root/kumitate-shokunin/scripts/kimi-census.mjs" "$PIN_JS" \
+    "$specs/js-kimi-census.spec" 'node "$MUTANT" --selftest' "$TABLE_JS" \
+    "$root/js-kimi-census"
+  st_js=$?
+  regression_case bash-surface-census \
+    "$fleet_root/kagi-shokunin/corpus/surface-census.sh" "$PIN_BASH" \
+    "$specs/bash-surface-census.spec" 'bash "$MUTANT" --selftest' "$TABLE_BASH" \
+    "$root/bash-surface-census"
+  st_bash=$?
+
+  local nfail=0 nsetup=0
+  [[ $st_js -eq 1 ]] && nfail=$((nfail + 1))
+  [[ $st_bash -eq 1 ]] && nfail=$((nfail + 1))
+  [[ $st_js -eq 2 ]] && nsetup=$((nsetup + 1))
+  [[ $st_bash -eq 2 ]] && nsetup=$((nsetup + 1))
+
+  if [[ $nfail -gt 0 ]]; then
+    printf 'REGRESSION: FAIL (cases=2 passed=%s failed=%s setup=%s)\n' \
+      "$((2 - nfail - nsetup))" "$nfail" "$nsetup"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    exit 1
+  fi
+  if [[ $nsetup -gt 0 ]]; then
+    printf 'REGRESSION: SETUP (cases=2 passed=%s cannot-verify=%s)\n' "$((2 - nsetup))" "$nsetup"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    exit 2
+  fi
+  printf 'REGRESSION: PASS (cases=2 passed=2; band killed-delta<=%s flips<=%s)\n' \
+    "$BAND_KILLED" "$BAND_FLIPS"
+  if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+    printf 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)\n' "$root"
+    rm -rf "$root"
+  else
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+  fi
+  exit 0
+}
+
 # ------------------------------------------------------------------ selftest
 
 selftest() {
   local root
-  root=$(mktemp -d /tmp/tameshi-r3-2-selftest.XXXXXX) || {
+  root=$(mktemp -d /tmp/tameshi-r4-2-selftest.XXXXXX) || {
     printf 'MUTATE_SELFTEST: 0/1 pass\nVERDICT: FAIL (mktemp)\n'
     exit 1
   }
@@ -574,8 +922,47 @@ EOT
   grep -q '^DEFECT S: SURVIVED (exit=0' "$out5"; st 'survivor still recorded under DEGRADED' $?
   grep -qxF 'MUTATE: DEGRADED (target=fixture defects=2 killed=0 survived=1 inconclusive=1 kill-rate=0%)' "$out5"; st 'degraded summary exact' $?
 
+  # --regression engine on this fixture (the band is the one stated in the file
+  # header): in-band PASS, doctored recorded-table FAIL, pin / target SETUP.
+  local rg="$root/regression" st_rg
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:KILLED,S:SURVIVED' "$rg/pass" >"$root/rg1.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'regression engine passes an in-band fixture' $?
+  grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg1.out"
+  st 'regression fixture PASS line exact' $?
+  grep -qxF 'REGRESSION_TABLE fixture: match=2/2 recorded-killed=1 measured-killed=1 survived=1 inconclusive=0 flips=0' "$root/rg1.out"
+  st 'regression fixture table line exact' $?
+
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:SURVIVED,S:KILLED' "$rg/flip" >"$root/rg2.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 1 ]]; st 'regression engine fails a doctored table' $?
+  grep -qF 'REGRESSION_DEFECT fixture K: measured=KILLED recorded=SURVIVED' "$root/rg2.out"
+  st 'doctored table names K (measured vs recorded)' $?
+  grep -qF 'REGRESSION_DEFECT fixture S: measured=SURVIVED recorded=KILLED' "$root/rg2.out"
+  st 'doctored table names S (measured vs recorded)' $?
+  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: flips=2' "$root/rg2.out"
+  st 'out-of-band FAIL names flips=2' $?
+
+  regression_case fixture "$fx/target.sh" 0000000000000000000000000000000000000000000000000000000000000000 \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/pin" >"$root/rg3.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 2 ]]; st 'regression pin mismatch is SETUP (exit 2)' $?
+  grep -qF 'REGRESSION_CASE fixture: SETUP (pin mismatch:' "$root/rg3.out"
+  st 'pin mismatch named' $?
+
+  regression_case fixture "$root/no-such-target" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:KILLED,S:SURVIVED' "$rg/missing" >"$root/rg4.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 2 ]]; st 'regression missing target is SETUP (exit 2)' $?
+  grep -qF 'REGRESSION_CASE fixture: SETUP (target missing:' "$root/rg4.out"
+  st 'missing target named' $?
+  [[ "$(sha_of "$fx/target.sh")" == "$s_before" ]]; st 'fixture target byte-identical after regression fixture runs' $?
+
   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+  bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?
 
   printf 'MUTATE_SELFTEST: %s/%s pass\n' "$((cases - failed))" "$cases"
   if [[ "$failed" -eq 0 ]]; then
@@ -598,7 +985,9 @@ while [[ $# -gt 0 ]]; do
     --label) need_val "$@"; LABEL=$2; shift 2 ;;
     --timeout) need_val "$@"; TIMEOUT_S=$2; shift 2 ;;
     --tail) need_val "$@"; TAIL_N=$2; shift 2 ;;
+    --keep) KEEP=1; shift ;;
     --selftest) MODE=selftest; shift ;;
+    --regression) MODE=regression; shift ;;
     --help | -h) MODE=help; shift ;;
     *) usage_exit "unknown argument: $1" ;;
   esac
@@ -607,5 +996,6 @@ done
 case "$MODE" in
   help) usage; exit 0 ;;
   selftest) selftest ;;
+  regression) run_regression ;;
   run) run_sweep ;;
 esac
