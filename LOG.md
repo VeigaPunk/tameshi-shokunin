@@ -307,3 +307,84 @@
 - 2026-10-14 — round 8 (training r7): cases 5+6: kagi checklist-run (47%, third co-extensive instance, 15/15 pre-registered predictions) + kumitate claims-check; ledger at 6 gates; the re-sweep cadence note. Axis: coverage. Verifiers: VER-T8 | AUD-T8.
 - 2026-10-14 — round 9 (training r8): the cadence tick fired: 4/4 legs PASS; drift chains recorded (tsukuroi/mado r8 commits resolved the transients); the 4-vs-6 leg cut named for the tool owner; the service limits note (what tameshi refuses and why). Axis: operability. Verifiers: VER-T9 | peer pin-read corroboration.
 - 2026-10-14 — round 10 (training r9): the operator runbook (511 lines, cold-readable, exercised receipts); the leg cut resolved (6-leg regression); the service standing-state boundary table. Axis: operability. Verifiers: VER-T10 cold-reader | AUD-T10.
+- 2026-10-14 — round 11 (training r10, the arc's final round): the close — the
+  pre-announced tick fired, the schedule is handed across, the ten-round
+  record completes. Planned as a ufo-round-plan (`plans/round-11.plan.md`,
+  300 L / `068578f1…`, committed inside round-10's landing `606716f` @
+  21:28:23Z — the announcement, leg 1). ONE move, operability terminal, three
+  legs: the pre-announced tick · the operator schedule · the 10-of-10 record +
+  discharge. Same dispatch shape as rounds 1–10 — the lane deliverables in
+  this repo ARE the wave record (no `.ufo/waves/tameshi-r11-*` directory);
+  lane roles below from file credits + scratch names [U — the dispatch itself
+  was not visible to this scribe].
+  Tick (leg 1) — executed exactly as announced; five independent firings:
+  T11-4 21:32:35Z (first; `--regression` `REGRESSION_DATE 21:32:40Z`) ·
+  T11-3 (regression 21:33:55Z) · T11-1 21:35:54Z · SCR-T11 21:36:27Z ·
+  AUD-T11 21:37:16Z — every read **4 current · 2 stale · 0 drift** (tsukuroi
+  `084951be…` → live `10452443…` @ `af8adf1`; mado `d7edaab4…` → `93e43f8f…`
+  @ `f7bfc9f`; all six = HEAD blobs, recorded revs ancestors of HEAD, trees
+  clean at every read); tool pulse `--selftest` **80/80** rc 0 and six-leg
+  `--regression` **`PASS (cases=6 passed=6; ledger legs exact:
+  killed-delta<=0 flips<=0)`** at `75ed934d…` (**held** — the r10-2
+  revision), every leg exact (`match=10/10` legs 1–4/6, `match=15/15` leg 5,
+  `flips=0`). Appointment pair: announced `068578f1…` @ `606716f`
+  (21:28:23Z) → first firing 21:32:35Z, **Δ +4 m 12 s** — announced, not
+  unannounced; the committed bytes = the live bytes (AUD-T11 claim A
+  CONFIRMED). AUD-T11's independent leg-check beyond the tool's own selftest:
+  **`LEGCHECK: PASS (6/6 legs clean)`**, 65/65 mutants re-applied
+  byte-identical.
+  Schedule (leg 2) — `corpus/knowledge/closeout-r11.md` §2.5 (T11-1;
+  `cea3352a…`, 420 L, untracked at close) carries the schedule as landed: the
+  command set; fire classes (round boundary · opt-in request · owner-committed
+  gate move · re-pin), each with who fires it + where the receipt lands;
+  readings `current|stale|drift` · tool `held|moved`; triggers T1–T3 + the
+  re-pin rule; the tick series 1–4 each with its own receipt (19:15:14Z ·
+  20:00:34Z · 20:52:19Z · 21:32:35Z); the gap series **45 m 20 s · 51 m 45 s ·
+  40 m 16 s** (boundary-bound, not clock-bound; recomputed exact by the
+  audit); and the interval **`[U]` — set and kept by the seat the handoff
+  names, not the lanes'** (`plans/round-11.plan.md:96-103`). No daemon, no
+  timer; a table + receipts.
+  Closeout (leg 3) — `corpus/knowledge/closeout-r11.md` (T11-1): the ten
+  rounds restated with no cell re-adjudicated (§1, `:42-59`), the service as
+  it stands (§2: tool · six-leg ledger · opt-in protocol · limits · schedule ·
+  boundary), handed-across vs lane-owned (§3), the named debts each anchored
+  (§4: the tsukuroi clause-site pattern; the 4-vs-6 → 6-leg resolution
+  receipt; the rest of the ledger), three executed spot-checks (§5), sources
+  (§6), unknowns (§7).
+  Also landed: `plans/completion-evidence.md` (PACK-T; rounds 2–11 one line
+  each + SHONEN status + the debt table — the parent's audit input;
+  `:27-41`); `SKILL.md` final-pointers section (T11-4: +100/−1 → 1 461 L /
+  `bfbdd2fd…` — the standing map, the boundary readings, what stays open);
+  `corpus/lessons/round-10.md` (T11-2; the runbook lesson — the register's
+  first entry).
+  AUD-T11 (read-only) → `reports/r11-aud-t11.md` (**new**; `03b18ee4…`,
+  194 `wc -l`): 12-row verdict table — **CONFIRMED ×12** (the closeout
+  landed + stable ×4 samples; the appointment pair; the executed set = the
+  announced set; the tick series; the six-leg re-run `cases=6 passed=6`
+  21:34:12Z; the zero-debt check 9/9 open with no false closure; §2/§1/§6
+  spot-checks), two minor findings recorded not repaired (F1: tick 1's cell
+  renders `—` while its cited receipt carries the 4·2·0 reading; F2: §2.6's
+  visibility counts restated without an as-of — re-run drift 17/27, direction
+  holds); declared contamination; `reports/r10-ver-t10.md` still absent.
+  Scribe (SCR-T11, this entry; scratch `/tmp/w11-scr-t11/`): re-ran the pulse
+  and the six-case read itself — `--selftest` 80/80 rc 0; `--regression`
+  `cases=6 passed=6` (`REGRESSION_DATE 21:34:27Z`, tool `75ed934d…`); pin
+  read 21:36:27Z → 4 · 2 · 0, agreeing cell-for-cell with the four lanes;
+  poll 60 s × 30 samples, `POLL DONE 2026-10-14T22:04:16Z` (`poll.log`);
+  SCORECARD round-11 row + the ten-training-rounds verdict table (rounds
+  2–11) completed — the final row anchored to the tick receipts + the
+  closeout + the audit.
+  Open at close (each anchored): the two `stale` successor rows — **no
+  appended rows at this write**, the ledger byte-identical `2f25c51e…`
+  (closeout §4.3; AUD-T11 debt-check #1); the ledger's §1 "cases 1 and 2
+  only" text + the six-leg registry row; the runbook's four-leg lines (ER-R3
+  open); the census §5 instrument re-pin errata; the coverage rows
+  (`corpus/README.md`, 20 L); the fresh-executor sufficiency table
+  (`reports/r10-ver-t10.md` absent); tsukuroi's 9 un-exercised clause sites
+  (owner's; closure at its live revision `[U]`); the attestation leg (protocol
+  U1) + the fleet-contributed case + third-lane adoption; the queue's ten
+  surveyed-but-unmeasured gates; all registers' unknowns (ledger U1–U9,
+  protocol U1–U6, limits U1–U5); the interval / adoption / driver `[U]`s.
+  Axis: operability (terminal — the close). Verifiers: AUD-T11 (12-row
+  verdict table, CONFIRMED ×12) | VER-T11 (poll lane; `reports/r11-ver-t11.md`
+  not landed at this write — the state, not smoothed).

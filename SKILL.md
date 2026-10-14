@@ -1361,3 +1361,102 @@ anchors as read at `75ed934d…`, the sha governs):
   ledger by ER-2 (`:281`, four legs); a ledger row recording the six-leg
   registry is the ledger owner's follow-on — this page records the registry as
   measured at `r10-2`, and no ledger cell is edited from here.
+
+## Final pointers — the standing map at the arc's close (round 11, measured)
+
+Round 11 (training r10) is the arc's final round (`plans/round-11.plan.md:13`);
+the LOG's rows name each round's training number — `round 4 (training r3)` …
+`round 10 (training r9)` (`LOG.md:303-309`) — so this one is training r10 [I]. This
+section adds no gate measurement of its own beyond the two executions under
+*boundary readings* below; its job is the one thing the round sections never put
+in one place: **where everything stands** — one pointer per standing artifact,
+this boundary's own reads, the reader's entry points, and what the close leaves
+open. Nothing here claims promotion or retirement: the arc ends, the service
+remains, run by whoever the handoff names (`plans/round-11.plan.md:20-25`), and
+the boundary tick this round runs was pre-announced in that plan (leg 1;
+committed at `606716f`) before the wave existed — its announced-vs-fired pair
+lands in the round's record, not here.
+
+### The map — where a reader enters, artifact by artifact
+
+| Artifact | Holds | Read it when |
+|---|---|---|
+| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`:1294-1297`) |
+| `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per gate — suite, rate + composition, survivors, last sweep + pin; §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
+| `corpus/knowledge/service-limits.md` | the refusals, detail of record; this page carries the compact rendering (`:1246-1270`) | an intake question needs a refusal line |
+| `corpus/knowledge/service-optin-protocol.md` | request shape, the re-pin rule, read-only guarantees, report shape, boundaries | your lane wants a sweep — or receives one |
+| `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
+| `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
+| `corpus/knowledge/mutation-case-*.md` (six) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
+| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry, git-materialized replay) | any sweep or replay |
+| `corpus/README.md` | the coverage map — one row per note, holds + sources | checking what the corpus holds |
+| `plans/round-N.plan.md`, `plans/round-N-record-draft.md` | each round's plan and record by convention; the round-11 record lands there; the completion pack (`plans/completion-evidence.md`, this wave, uncommitted at this write) collects the per-round lines and debts | auditing a round's receipts |
+| `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
+
+### Boundary readings, executed by this lane
+
+Two executions, nothing else measured here; scratch `/tmp/w11-t11-4-ev/`.
+
+**Pin read** — the round-8 command set (`:1021-1053`), 2026-10-14T21:32:35Z:
+
+```
+case                 recorded-rev live-HEAD  relation  rec-pin  live-blob
+js-kimi-census       175de6ba     175de6ba   current   83016d45 83016d45
+bash-surface-census  fecee874     fecee874   current   275d8294 275d8294
+bash-tsukuroi-census 165307fe     af8adf15   stale     084951be 10452443
+bash-mado-verify     eead56b2     f7bfc9fe   stale     d7edaab4 93e43f8f
+bash-checklist-run   fecee874     fecee874   current   7e5ec98b 7e5ec98b
+js-claims-check      175de6ba     175de6ba   current   e9a21b44 e9a21b44
+```
+
+4 × `current` · 2 × `stale` · 0 × `drift`; all six paths porcelain-clean, tool
+`held` at `75ed934d…` (`sha256sum`, vs the revision the round-10 receipts ran
+under, `:1332-1344`). Both `stale` cells are their repos' committed HEAD blobs,
+so T1 fired (`:1069-1090`): tsukuroi `084951be…` → `10452443…` (HEAD
+`af8adf15` — the cell moved again since round 10's read of `c396662e…`;
+recorded, not re-interpreted) and mado `d7edaab4…` → `93e43f8f…` (HEAD
+`f7bfc9fe`). The re-pin rule leaves the recorded tables untouched; successor
+rows land appended in the ledger (`:1230-1244`) — open at this write.
+
+**Tool pulse** — same scratch, `--selftest` then `--regression`
+(`REGRESSION_DATE 2026-10-14T21:32:40Z`):
+
+- `--selftest` → `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0
+  (`selftest.log`).
+- `--regression` → six legs, all exact: `match=10/10` (legs 1–4, 6),
+  `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`; killed
+  8/8/6/4/7/7; closing `REGRESSION: PASS (cases=6 passed=6; ledger legs
+  exact: killed-delta<=0 flips<=0)`, rc 0; tool `75ed934d…` before and after
+  (`regression.log`; workdir kept `/tmp/w11-t11-4-run/regression`).
+
+The replay is drift-immune, re-verified at the close: legs 3–4 matched
+byte-exact while their substrates read `stale` — the git-materialized blobs
+ran, never the working trees (`:1324-1331`).
+
+### Where to enter — four readers
+
+- **The operator** (the seat the handoff names): `operator-runbook.md` §0; the
+  cadence is its §6, and the round's schedule additions land with it
+  (`plans/round-11.plan.md:80-103`). No lane declares a clock interval — the
+  ticks so far are boundary-bound, and the interval is that seat's `[U]`.
+- **A lane wanting a sweep**: the opt-in protocol for the request shape, then
+  this page's recipe (`:131`) and its worked appendices A/B.
+- **An auditor**: the ledger row → its case note → `--regression` at the
+  recorded revisions; read the receipt block, not the last line (`:965-1008`).
+- **The successor seat**: `service-standing-state.md`, then the ledger's
+  unknowns and the runbook's §10.
+
+### What stays open — named, never closed by prose
+
+- **The interval** — the operator's `[U]` (above).
+- **Whether any fleet driver invokes the tick with no lane acting** — round
+  8's own `[U]` (`:1017-1019`), unchanged.
+- **Whether the operator adopts the schedule** — `[U]`, recorded as such.
+- **The two successor rows** (T1 fired again at this read) **and the ledger
+  row for the six-leg registry** (`:1359-1363`) — open at this write.
+- **The unknowns at their homes** — the ledger's U-list, the protocol's
+  U1–U5, `service-limits.md` §5 — carried, not closed here.
+
+Append-only to the last line: nothing above this section was edited by this
+write; the recorded tables stand at their revisions, and a reader on a
+differing revision re-resolves rather than trusts.
