@@ -384,3 +384,292 @@ for f in cite-check surface-probe round-gate proxy-check claims-check kimi-censu
 
 (none yet — new entries go below this line, never edits above per
 `corpus/QUALITY.md` item 4)
+
+## Service receipt (round 6, T6-2) — the mado engagement: outcome + queue update (append-only)
+
+Appended 2026-10-14 by lane T6-2; scope: this file only; nothing above this
+block is edited. This block is the receipt for the first engagement of §5's
+standing offer — it is not an erratum, and it lands below the errata
+placeholder line per that line's own instruction (no erratum entries yet).
+The engagement: **mado opted in** (`mado-shokunin/plans/round-6.plan.md:(a)`);
+tameshi ran the sweep **for** the lane (the service form §5 offers, as opposed
+to round 5's tsukuroi self-service). Provider record:
+`corpus/knowledge/mutation-case-mado-verify.md` (T6-1; 323 `wc -l`, sha256
+`f2d53d495e6c1d8b2c18e7bc0eac54955d477455958b10866c5f8712b2086bf3`). Owner
+record: `mado-shokunin/corpus/knowledge/gate-mutation-proof.md` (M6-1; 167
+`wc -l`, sha256
+`716836ca1bf3484a30cd9e08b9765398c804351efeffbde95c2863ab4ae95ddf`) plus the
+two watch-arm notes (`omarchy-drift-watch.md`, `remaining-planes-census.md`).
+Anchors O/I/U as §0; shas sha256, first-16 unless full.
+
+### R.1 The service run — what the sweep found (O)
+
+- **Target (pinned).** `mado-shokunin/tools/mado-verify.sh` @
+  `d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13` — 45334 B,
+  1098 newlines (the 1099th line carries no trailing newline), mtime
+  `2026-10-14 14:08:57.107811568 -0300`; the round-5 gate as landed, unchanged
+  through the run (sha before = after).
+- **Suite.** `bash "$MUTANT" --selftest` — the gate's own hermetic selftest on
+  the mutant copy; control output `MADO_SELFTEST: 28/28 assertions passed`,
+  exit 0. Fixtures under `mktemp -d`; scenario C starves PATH so no live
+  substrate or compositor is touched (note :44-49).
+- **Tool (the revision the run is tied to).** `tools/mutate-and-run.sh` @
+  `597e141989065e038a1c2b35359ab3d20b565d3c959c2eec64166ecb1ff6331b` — §5's
+  pin, carried by both run logs (`MUTATE_TOOL`, `REGRESSION_TOOL`); the tool
+  has since moved (R.3 deviation 2).
+- **Spec.** 10 single-edit defects, clause-mapped to the gate's declared
+  contracts — A verdict token · B UNKNOWN-never-CLEAN · C exit map · D
+  declared-plane census · E sha comparison · F reader fallback; every `@old`
+  count==1 pre-verified; composition stated before the run: 4 defects at
+  in-surface assertion sites (D1, D2, D4, D6), 6 at predicted-unasserted seams
+  (D3, D5, D7, D8, D9, R1) (note :66-72).
+- **Outcome.** `CONTROL: GREEN (exit=0)`; **killed 4 / survived 6 /
+  inconclusive 0 → kill-rate 40 %**; `MUTATE_RESTORE: OK` (target sha before =
+  after = pin); headline `MUTATE: DONE (target=mado-verify.sh defects=10
+  killed=4 survived=6 inconclusive=0 kill-rate=40%)`. 11 runs in 5.26 s wall
+  against a 300 s per-run timeout.
+
+| # | clause | single edit (site on the pin) | verdict | suite evidence (tail) |
+|---|---|---|---|---|
+| D1 | A | `MADO_VERIFY: CLEAN` token → `OK` (`:1088`) | **KILLED** (exit 2) | `27 passed, 1 failed — A: CLEAN verdict (missing: MADO_VERIFY: CLEAN)` |
+| D2 | B | UNKNOWN guard dropped from the verdict test (`:1086`) | **KILLED** (exit 2) | `25 passed, 3 failed`; `C: exit 1 (got '0' want '1')`; `C: no fake CLEAN (unexpected: … CLEAN)` |
+| D3 | B | live-skip row `SKIP` → `PASS` (`:588`) | SURVIVED (exit 0) | `28/28 assertions passed` |
+| D4 | C | DIVERGED path `exit 1` → `exit 0` (`:1099`) | **KILLED** (exit 2) | `26 passed, 2 failed`; `B/C: exit 1 (got '0' want '1')` |
+| D5 | C | failing `--selftest` `return 2` → `1` (`:429`) | SURVIVED (exit 0) | green run never enters the failure path |
+| D6 | D | `xdph` dropped from the 12-conf inventory (`:522`) | **KILLED** (exit 2) | `27 passed, 1 failed`; `B (want row hypr.local.inventory FAIL)` |
+| D7 | D | include-count test `-ne` → `-lt` (`:484`) | SURVIVED (exit 0) | no fixture carries an 18th source line |
+| D8 | E | sha-pin compare always "matches" (`:574`) | SURVIVED (exit 0) | row is a NOTE; no assert reads it |
+| D9 | E | boundary compare always true (`:738`) | SURVIVED (exit 0) | asserted only in the PASS direction |
+| R1 | F | tomllib arm `UNKNOWN` → `PASS` (`:651`) | SURVIVED (exit 0) | `PY_TOML=1` on this host; arm unreachable in-suite |
+
+- **Reading the split (O/I).** In-surface 4/4 killed, out-of-surface 0/6 —
+  the suite's assertion set and its kill set are co-extensive on this spec;
+  the 40 % rate is composition, not a suite regression (note :66-72, §4). The
+  highest-yield unasserted surface named: the live plane — 106 `row` sites,
+  51 of them under `hypr-live`, of which the suite executes two guard rows and
+  none of the body (note §3.2). D9 (boundary row asserted only in its PASS
+  direction) is a new arm-class shape — no earlier tameshi case produced it.
+- **Pre-registration held (O).** The predicted table — `predictions.txt`,
+  written before the run — named 4 killed / 6 survived and six survivor
+  classes; per-defect verdicts matched **10/10**, the four predicted kill
+  mechanisms are the measured ones, and the six classes are the six survivors
+  (note :73, :187-189).
+- **Survivor non-equivalence probes (O; note §2, scratch `probe/`).** Six
+  probes, each building an input the suite's fixtures do not: P3 (D3: fake
+  PASS row read by a counts consumer), P5 (D5: no-op `sed` makes the selftest
+  fail — pristine exit 2 vs mutant exit 1), P7 (D7: an undeclared 18th
+  `source` line → **verdict flips to CLEAN**), P8 (D8: pin detail text claims
+  a match it never checked), P9 (D9: a real mid-run change to a plane file →
+  **reported byte-identical, CLEAN exit 0**), PR1 (R1: PATH wrapper without
+  tomllib → UNKNOWN → PASS). Every survivor is a real behaviour change, not an
+  equivalent edit.
+- **REGRESSION status (O).** `REGRESSION: PASS (cases=2 passed=2; band
+  killed-delta<=1 flips<=1)` at 17:44:28Z under the same tool revision — the
+  harness's own gate over the two **embedded** cases (`js-kimi-census` 8/10,
+  `bash-surface-census` 8/10, both `match=10/10`, flips=0). This engagement's
+  table is **not** embedded, so its kill-rate claim does not yet carry a
+  `REGRESSION` line over itself; embedding needs a tool edit and is recorded
+  as a follow-up for the tool-owner lane (note §6).
+- **Independent re-run (O).** AUD-T6 re-cut the same 10 defects with its own
+  driver (no harness) and reproduced the table: `AUD-T6 RE-RUN: defects=10
+  killed=4 survived=6 inconclusive=0`, per-defect verdicts and mutant shas
+  identical to the service table (`/tmp/w6-aud-t6-work/`: driver `mrun.py`,
+  `presweep-independent-1743Z.txt`, formal D2/D9 `formal-rerun-175044Z.txt`,
+  pinned-copy shas in `pre-hashes.txt`).
+- **Evidence of record.** Provider scratch `/tmp/w6-tameshi-mado-verify/`:
+  `sweep.log`, `sweep/results.tsv` (10 rows + mutant shas),
+  `sweep/evidence/<id>.out`, `sweep/pristine.mado-verify.sh` (= the pin),
+  `spec/mado-verify.defects.spec`, `predictions.txt`, `probe/` + `probe.log`,
+  `regression/` + `regression.log`.
+
+### R.2 The owner's half — its own 15-defect run, the hardening it landed, and the re-run (O)
+
+- mado's own lane (M6-1) cut a **15-defect spec** on the same pinned revision
+  in parallel (`/tmp/w6-mado-m61/sweep/`): control `28/28 assertions passed`;
+  **killed 8 / survived 7** (D01–D04, D06, D07, D10, D11 killed; D05, D08,
+  D09, D12–D15 survived).
+- Cross-check of the two specs on shared edit sites (O): verdicts agree where
+  the edits coincide — CLEAN-token rename killed in both (T6-1 D1 / M6-1 D01,
+  identical mutant sha `ec60ae5c8f82…`); DIVERGED→exit 0 killed in both (D4 /
+  D03); census drop killed in both (D6 / D07); tomllib arm survived in both
+  (R1 / D09). Where the edits differ the verdicts differ honestly: the
+  boundary compare as always-true survived (T6-1 D9) while its flip `=`→`!=`
+  was killed (M6-1 D10, `A: zero FAIL rows (got '1' want '0')`) — different
+  edits, not a contradiction. The two rates (40 % vs 8/15) cover different
+  defect sets and are not averaged here.
+- **Hardening landed (O).** The owner hardened its own gate in-round — the
+  live `mado-shokunin/tools/mado-verify.sh` is
+  `c4c1afb75dd1c8aa4d8ff9b808ddbeb2a05ac0e3ab1095dd7d067cff1a625171` —
+  1186 lines / 50126 B, mtime `2026-10-14 14:55:16 -03`, working tree ` M`
+  (uncommitted at write time) — a **+88 / −0 line addition** to the pin, all
+  inside `selftest()` (`git diff --numstat`; no verify-path edit), landed from
+  the owner's final candidate (`/tmp/w6-mado-m61/final/mado-verify-final.sh`;
+  the live file differs from it by one blank line). Added asserts aim at
+  exactly the survivor classes: row-detail + counts-agreement helpers
+  (`st_row_detail`, `st_counts_agree`, counting PASS/FAIL/UNKNOWN/SKIP/NOTE),
+  the scenario-A `live.plane SKIP` row, the `hypr.file.sha_pin` NOTE detail
+  (measured prefix + the round-1 pin), counts agreement in A/B/C, the
+  scenario-D usage contract, and four new scenarios — E (python3 absent →
+  UNKNOWN, never CLEAN), F (a failing selftest must exit 2, nested guard),
+  H (an undeclared extra `source` → include graph FAIL, exact census),
+  I (a plane change mid-run → `boundary.readonly` FAIL). Selftest count per the
+  owner: 28 → 53 (this receipt ran no selftest against the revision — a third
+  concurrent run was deliberately not started; note U4's scratch-namespace
+  incident is the precedent).
+- **Re-run of tameshi's exact spec on the hardened revision (O,
+  owner-measured).** Spec = byte copy of the provider's, sha256
+  `c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8` (this
+  lane re-verified the equality); harness `b56c6e57…`; control `MADO_SELFTEST:
+  53/53 assertions passed`; **killed 10 / survived 0 / inconclusive 0 →
+  kill-rate 100 %**; `MUTATE_RESTORE: OK` (target sha `c4c1afb7…` before =
+  after). The six survivors of R.1 are each killed by a newly added case; the
+  four already-killed defects stay killed and fire in more scenarios (D2 ×6,
+  D4 ×5). Reading: this is a **directed repair** — the suite was extended
+  against exactly these defects, so 100 % is expected, not an independent
+  rate (the tsukuroi hardening precedent, tested from the strong side).
+- **Residuals recorded unabsorbed (O; owner note §3).** rc-6 arm dead code
+  (`row_from_rc` `6) … UNKNOWN`, reachable by no check; an equivalent edit
+  survives by construction); the **exit-flatten family** (a suite-failure exit
+  flattened to 0 runs red in-suite but is green to an exit-only harness — a
+  harness boundary, stated as such); the live-plane body (51 sites,
+  provider recommendation #1) still unexercised; two out-of-band usage exits
+  (`--root` without value, bad `MADO_VERIFY_LIVE`) still read-through at the
+  hardened revision. No widening ships unproven.
+- The round's widening (b)/(c) landed as *notes* gated on the proof by their
+  own §0 (`omarchy-drift-watch.md`: ships as "a companion note + arm spec, not
+  as a gate edit from this lane"; `remaining-planes-census.md`: "adds no gate
+  rows"), and the owner's note re-pins the gate for downstream stages to the
+  hardened identity (§5 there).
+
+### R.3 The cross-lane service protocol, as it actually ran (O/I)
+
+- **Opt-in (O).** The customer lane's own plan pre-registers the engagement
+  (harness read-only; defect spec per declared clause; suite = the gate's own
+  selftest exercising `$MUTANT`; evidence = per-defect verdicts + kill-rate +
+  control + restore), and the provider note opens by quoting that opt-in
+  (`mutation-case-mado-verify.md:3-11`). No lane was drafted; no queue
+  position was assigned. The contract this run formalized now sits on the
+  SKILL page: "The mutation service — running a sweep for an opting-in lane
+  (round 6, measured)" (`SKILL.md:794-918`; the page was still being written
+  while this receipt was drafted — sha is point-in-time, see S3) — opt-in
+  items, ordered fail-closed protocol, boundaries, report shape.
+- **Read-only (O).** Provider writes stayed in scratch; the harness ran on
+  byte copies only; `MUTATE_RESTORE: OK` proves target bytes unmoved; the
+  gate's selftest reads no live path. The provider note also records the
+  service's provable negative: its writes never touched the substrate; a
+  shared selftest scratch namespace showed foreign
+  `/tmp/w5-mado-m52-selftest.*` directories from concurrent writers (≥37 seen
+  by the provider, 44 at the owner's cleanup — attribution unknown; untouched
+  by the provider, its own 8 paths removed; the owner removed its 90).
+- **Owner-hardens (O).** All six survivors returned as recommendations, ranked
+  by yield with the measured mutant each would kill (note §8, 7 items); the
+  provider wrote no patch. The owner then hardened its own gate *and re-ran
+  the same spec* (R.2): 10/10 killed, residuals listed unabsorbed. Gate repair
+  stayed the owner's own act (PROVINCE.md:16-18); the service's tables are
+  tied to the pre-hardening pin and none of them is overwritten by the
+  owner's re-run.
+- **Deviations from §5's text and the round plan, recorded not smoothed.**
+  1. The first engagement was **not** the queue head (cite-check). mado — a
+     gate that did not exist when §5 was written (§6: mado `tools/` empty at
+     census) — opted in first. The queue's expected-yield ordering was not
+     tested by this engagement; the provider note says the same
+     (`mutation-case-mado-verify.md:219-222`).
+  2. **The harness drifted mid-round, by a concurrent (sanctioned)
+     self-hardening lane.** The sweep and the regression run are tied to tool
+     `597e1419…` (both logs pin it); re-pin at 17:46:15Z: `b56c6e57…`, 46850 B,
+     mtime 14:46:08. Cause (O, in-repo): T6-4's own-gate hardening —
+     `self-hardening-r6.md`, `git diff --stat` vs R1 = +83/−4 lines in three
+     hunks, comparator behaviour proven identical (probe identity R1 ≡ R2).
+     Every number in the service run is tied to R1; the owner's re-run is tied
+     to R2 (its note pins both).
+  3. The provider ran a 10-defect service sweep; the owner ran its own
+     15-defect sweep on the same revision in parallel, then re-ran the
+     provider's 10-defect spec on its hardened revision; §5's one-table-per-
+     sweep shape held per sweep, not per engagement.
+  4. Method-page revision: §5's quoted pin `dd2f4dee…` / 665 lines is the
+     round-3/4 revision (`git show 53e74a8:SKILL.md` = `dd2f4dee…`),
+     superseded by the round-5 commit `e0c453e` and again in this round (the
+     service section above). This receipt re-measures rather than re-quotes.
+
+### R.4 The updated offer queue (O, ordered by §5's rule — most static protection last)
+
+Measured fleet-wide to date (one row per sweep; not averaged across
+compositions): kimi-census (kumitate) **8/10** (r2) · surface-census (kagi)
+**8/10** (r3) · tsukuroi-census **6/10** (r5; the owner hardened 26 → 35
+selftest cases afterward, its own revision) · mado-verify **4/10** on the r5
+pin (r6, service, this receipt) + **10/10 on the hardened r6 revision** (owner
+re-run of the same spec — directed repair) + 8/15 on the owner's own 15-defect
+pre-sweep. The mado r5-pin point is the first below the 50–80 % band; cause
+per the provider's §4 is composition (4 in-surface defects — all killed; 6
+out-of-surface — none), which is the tsukuroi band amendment tested from the
+other side. Bands stay as amended; no floor is claimed.
+
+Still unmeasured, kumitate's five, order unchanged from §5:
+
+| Gate | State now | Sweep prerequisite |
+|---|---|---|
+| cite-check | **probe only** — PREP-T6 cut 4 defects (1 killed: drift-gate drop → 61/62; 3 CLI-accounting survivors: aggregate-verdict collapse, n/n summary counts, CLI exit fail-open), `MUTATE_RESTORE: OK`, kumitate tree clean; a full sweep is not recorded at this write | hermetic 62-case run on a copy; the integration group stays a declared skip |
+| surface-probe | unmeasured | hermetic |
+| round-gate | unmeasured | hermetic |
+| proxy-check | unmeasured | hermetic |
+| claims-check | unmeasured | hermetic |
+
+Cross-refs beyond the six (§6 scope, refreshed read-only today): kagi — five
+of six still unmeasured (surface-census 8/10; pins unchanged `275d8294…` /
+`078a2601…`); tsukuroi — measured (r5), gate since hardened by the owner; mado
+— measured across two revisions (this receipt), downstream pins re-pointed to
+the hardened identity by the owner's note §5; tabi `tools/` still absent (`ls
+tabi-shokunin/tools` → No such file or directory, rc=2). Out of the census
+universe (sightings only, not queued, not surveyed): kake
+`scripts/{freshness-sweep,probe-delta}.mjs`, kama
+`tools/{kama-probe,test-snapshot}.sh`, kotoba `verifiers/*` — file existence
+is O; their gate-ness and measurement state are U until a survey admits them.
+
+### R.5 Pins and spot-checks (this append; scratch `/tmp/w6-tameshi-t62/`)
+
+- S1 — target pin and its hardening: the sweep's copies
+  (`sweep/pristine.…`, the owner's scratch copy) all hash to `d7edaab4…d0e13`,
+  45334 B; the live `mado-verify.sh` is the owner's hardened `c4c1afb7…625171`,
+  50126 B / 1186 lines (re-measured at write time).
+- S2 — tallies on the evidence of record: `grep -c KILLED` → 4,
+  `grep -c SURVIVED` → 6 on `sweep/results.tsv`; `sweep.log` carries
+  `MUTATE_RESTORE: OK (… before=d7edaab4… after=d7edaab4… pristine-sha256=
+  d7edaab4…)` and the `kill-rate=40%` headline; `predictions.txt` names the
+  same 10 defect ids; `regression.log` carries `REGRESSION: PASS (cases=2
+  passed=2 …)`; provider note sha re-measured = `f2d53d49…`; owner note sha
+  re-measured = `716836ca…`, and its re-run spec sha = the provider's
+  (`c7ee75b9…`, re-verified); the audit's reproduction file ends `AUD-T6
+  RE-RUN: defects=10 killed=4 survived=6 inconclusive=0`.
+- S3 — drift and queue anchors: tool re-pin now `b56c6e57…` (R2) vs the run's
+  `597e1419…` (R1, both logs); `ls kumitate-shokunin/scripts/` → the six
+  `.mjs`; `sha256sum kagi-shokunin/corpus/{surface-census,scope-gate}.sh` →
+  `275d8294a94e9eb7…` / `078a260184e25282…` (unchanged); tabi tools absent;
+  the owner's final candidate exists at `/tmp/w6-mado-m61/final/`; `SKILL.md`
+  sha re-measured at write time (point-in-time — the page was still being
+  written; the round record carries its final revision).
+- S4 — this append: `sha256sum` before = `adeb3070cf7ed705…` (28842 B, 385
+  `wc -l`); after-write sha and the re-read head/tail of this block are
+  reported in the lane's report (self-reference impossible inside the file);
+  nothing above this block is edited.
+
+### R.6 Unknowns and landing state at write time
+
+- Provider note `mutation-case-mado-verify.md`: **landed** (323 lines, sha
+  `f2d53d49…`; the R.1 numbers are read from it and its scratch).
+- Owner proof `gate-mutation-proof.md`: **landed** (167 `wc -l`, sha
+  `716836ca…`, 14:59 -03) — it carries the owner's 15-defect table, the
+  hardening, the 10/10 re-run, the residuals, and the re-pin. The hardened
+  gate revision is uncommitted at write time.
+- AUD-T6 independent re-run: reproduced 4 killed / 6 survived with verdicts
+  and mutant shas identical (R.1); the lane's own report not read here.
+  VER-T6 verification artifacts exist (`/tmp/w6-ver-t6/evidence/`,
+  D5-focused); no verdict read at write time.
+- Tool drift (R.3 deviation 2): reproduction of the R.1 table under R2
+  (`b56c6e57…`) was measured by the owner on the hardened revision (10/10),
+  but tameshi's own R.1 table was not re-cut under R2 — remains U here.
+- The hardened revision is measured only against the same spec it was
+  hardened against (directed repair, 10/10); an independent defect set
+  against it, and its committed state, are U at this write.
+- §8 U4–U7 stand: the 50 % band interior, cross-host stability, and
+  coordinated multi-edit rewrites remain unmeasured fleet-wide; this receipt
+  adds no rate beyond the rows named in R.4.

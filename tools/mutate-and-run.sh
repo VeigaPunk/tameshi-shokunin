@@ -2,7 +2,9 @@
 # mutate-and-run.sh — generic mutation runner (tameshi-shokunin, r4-2, TAMESHI-R4-2).
 #
 # Channels: r3-2 (TAMESHI-R3-2) shipped the runner; r4-2 (TAMESHI-R4-2) adds
-# --regression, this tool's own kill-rate regression gate (contract below).
+# --regression, this tool's own kill-rate regression gate (contract below);
+# r6 (TAMESHI-T6-4) hardens --selftest with the r6 meta-sweep's surviving
+# comparator mutants (corpus/knowledge/self-hardening-r6.md).
 #
 # Plan anchors: r3-2 = plans/round-3.plan.md:6-7 — "the method ships as tameshi's
 # own runnable tool (tools/mutate-and-run.sh: inject->run->restore with
@@ -93,13 +95,16 @@
 # defect: verdict/exit/duration/mutant-sha256/desc), spec.copy; the path is
 # printed as MUTATE_EVIDENCE. Default: mktemp -d /tmp/tameshi-r4-2-run.XXXXXX.
 #
-# --selftest is hermetic: it builds a tiny fixture target + mini-suite + four
+# --selftest is hermetic: it builds a tiny fixture target + mini-suites + four
 # specs under /tmp/tameshi-r4-2-selftest.XXXXXX and self-checks control-green,
 # one kill, one survivor, exact kill-rate line, restore proof, DEGRADED path,
 # refusal paths (duplicate old string, unknown escape, no-op edit, missing
 # --target, usage), and the --regression engine on the same fixture (in-band
-# PASS, doctored table FAIL, pin mismatch and missing target SETUP). Scratch is
-# removed on PASS, kept on FAIL for inspection.
+# PASS, band-edge PASS at killed-delta 1 / flips 1, doctored table FAIL, an
+# unmeasured recorded entry FAIL, an unrecorded measured row FAIL, a DEGRADED
+# sub-sweep FAIL on inconclusive=1, a fully-matching all-killed table PASS, pin
+# mismatch and missing target SETUP). Scratch is removed on PASS, kept on FAIL
+# for inspection.
 #
 # Dependencies: bash, python3 (byte-exact edit + spec parse), coreutils
 # (sha256sum, mktemp, timeout, cp, date).
@@ -959,6 +964,80 @@ EOT
   grep -qF 'REGRESSION_CASE fixture: SETUP (target missing:' "$root/rg4.out"
   st 'missing target named' $?
   [[ "$(sha_of "$fx/target.sh")" == "$s_before" ]]; st 'fixture target byte-identical after regression fixture runs' $?
+
+  # r6 (TAMESHI-T6-4) hardening — the r6 meta-sweep's survivor cases (mutants of
+  # the comparator above; corpus/knowledge/self-hardening-r6.md §1-§3) pin the
+  # band edges and accounting arms the r4-2 fixtures never exercised: in-band
+  # boundary (killed-delta 1 / flips 1 still PASS), a recorded entry the
+  # measurement lacks, a measured row the table lacks, a DEGRADED sub-sweep
+  # (rc=1 is table-compared, not rejected), and a fully-matching all-killed
+  # table (recorded-killed is read from the KILLED column).
+  local suite_strict
+  suite_strict="bash '$fx/suite-strict.sh' \"\$MUTANT\""
+  cat >"$fx/suite-strict.sh" <<'EOT'
+#!/usr/bin/env bash
+# mini-suite variant: asserts both the add() result and the banner string
+set -u
+t=${1:?suite: target path required}
+rc=0
+bash "$t" add 2 2 | grep -qx 4 || rc=1
+bash "$t" banner | grep -qx 'fixture-target v1' || rc=1
+exit $rc
+EOT
+  chmod +x "$fx/suite-strict.sh"
+
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:KILLED,S:KILLED' "$rg/edge" >"$root/rg5.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'band edge (1 flip / killed-delta 1) still PASSes' $?
+  grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg5.out"
+  st 'band-edge PASS line exact' $?
+  grep -qxF 'REGRESSION_TABLE fixture: match=1/2 recorded-killed=2 measured-killed=1 survived=1 inconclusive=0 flips=1' "$root/rg5.out"
+  st 'band-edge table line exact' $?
+
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:KILLED,S:KILLED,Z:KILLED' "$rg/unmeasured" >"$root/rg6.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 1 ]]; st 'recorded entry the measurement lacks FAILs' $?
+  grep -qF 'REGRESSION_DEFECT fixture Z: measured=ABSENT recorded=KILLED' "$root/rg6.out"
+  st 'unmeasured recorded entry named (measured=ABSENT)' $?
+  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=2 flips=2 defects=2-recorded=3;' "$root/rg6.out"
+  st 'unmeasured-entry FAIL line exact' $?
+
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \
+    'K:KILLED' "$rg/unrecorded" >"$root/rg7.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 1 ]]; st 'measured row the table lacks FAILs' $?
+  grep -qF 'REGRESSION_DEFECT fixture S: measured=SURVIVED recorded=ABSENT' "$root/rg7.out"
+  st 'unrecorded measured row named (recorded=ABSENT)' $?
+  grep -qxF 'REGRESSION_TABLE fixture: match=1/1 recorded-killed=1 measured-killed=1 survived=1 inconclusive=0 flips=1' "$root/rg7.out"
+  st 'unrecorded-row table line exact' $?
+  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: defects=2-recorded=1;' "$root/rg7.out"
+  st 'unrecorded-row FAIL line exact' $?
+
+  local rg_timeout=$TIMEOUT_S
+  TIMEOUT_S=2
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_hang" \
+    'K:KILLED,S:SURVIVED' "$rg/degraded" >"$root/rg8.out" 2>&1
+  st_rg=$?
+  TIMEOUT_S=$rg_timeout
+  [[ $st_rg -eq 1 ]]; st 'DEGRADED sub-sweep (rc=1) is table-compared' $?
+  grep -qF 'REGRESSION_DEFECT fixture K: measured=INCONCLUSIVE recorded=KILLED' "$root/rg8.out"
+  st 'degraded sweep names the inconclusive row' $?
+  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: inconclusive=1;' "$root/rg8.out"
+  st 'degraded-sweep FAIL line names inconclusive=1' $?
+  grep -qxF 'REGRESSION_TABLE fixture: match=1/2 recorded-killed=1 measured-killed=0 survived=1 inconclusive=1 flips=1' "$root/rg8.out"
+  st 'degraded-sweep table line exact' $?
+
+  regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_strict" \
+    'K:KILLED,S:KILLED' "$rg/all-killed" >"$root/rg9.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'all-killed table (full match, zero flips) PASSes' $?
+  grep -qxF 'REGRESSION_TABLE fixture: match=2/2 recorded-killed=2 measured-killed=2 survived=0 inconclusive=0 flips=0' "$root/rg9.out"
+  st 'all-killed table line exact (recorded-killed=2)' $?
+  grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg9.out"
+  st 'all-killed PASS line exact' $?
+  [[ "$(sha_of "$fx/target.sh")" == "$s_before" ]]; st 'fixture target byte-identical after the r6 hardening cases' $?
 
   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?

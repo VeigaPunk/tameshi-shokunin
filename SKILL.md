@@ -790,3 +790,130 @@ would add a table row and move nothing. It earns its round only by being one of:
 6. **Re-runs of B7/B8/B9 against `aae45531` successors** — the hardening left
    three holes demonstrably open; whether they stay open is the live test of
    the "add a case" repair.
+
+## The mutation service — running a sweep for an opting-in lane (round 6, measured)
+
+Rounds 2–5 measured three fleet gates at tameshi's hand; round 6 turns the
+method outward as the service the fleet census offered
+(`fleet-suite-census.md:249-291`): an opting-in lane brings its own gate, the
+service sweeps it hermetically and read-only, and returns a kill-rate table
+plus recommendations — absorption stays with the owner lane. The first
+engagement is **mado** (`corpus/knowledge/mutation-case-mado-verify.md:3-11`);
+the run below is the worked instance this section formalizes, and the contract
+it satisfies is the round-6 plan's measure clause (`plans/round-6.plan.md:30-34`:
+pinned revision, one-command hermetic suite, recommendations-only).
+
+### The opt-in contract — what the lane brings
+
+1. **A pinned revision** — committed bytes of the gate with sha256, size, line
+   count, mtime, and a porcelain-clean sibling tree at open. Mado's pin:
+   sha256 `d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13`,
+   45334 B, 1098 newlines (the 1099th line carries no trailing newline). A
+   moved substrate needs a re-pin, never a re-interpretation of the old table.
+2. **A one-command hermetic suite** invocable against a copy — mado's gate
+   takes `bash "$MUTANT" --selftest`; it must exercise the copy it is handed
+   (mado's selftest re-enters `$0`), print its own executed count and verdict
+   (`MADO_SELFTEST: 28/28 assertions passed` on green), and read no live path
+   (`mutation-case-mado-verify.md:44-49`).
+3. **A clause-mapped defect spec** — one single-edit defect per declared
+   contract clause, pre-registered `expect: killed|survived`. Mado's: 10
+   defects over six clauses — A verdict token · B UNKNOWN-never-CLEAN · C exit
+   map · D declared-plane census · E sha comparison · F reader fallback
+   (`mutation-case-mado-verify.md:51-55`).
+4. Nothing else. The service never edits, repairs or re-pins the gate; a
+   needed change is a recommendation to the owner (round-6 anti-claim,
+   `plans/round-6.plan.md:23-25`).
+
+### The protocol — ordered, fail-closed
+
+All writes in scratch, through the pinned harness `tools/mutate-and-run.sh`
+(the mado run's revision `597e1419…ff6331b`, 1001 lines; every run log carries
+its own `MUTATE_TOOL` pin):
+
+```bash
+bash tools/mutate-and-run.sh --target <gate> --defects <spec> \
+     --suite 'bash "$MUTANT" --selftest' --workdir <scratch>
+```
+
+1. **Pin + pristine.** The target is copied to a pinned pristine; every mutant
+   is a fresh byte copy; the original is never a write target.
+2. **Spec parse + uniqueness.** Every `@old` must occur exactly once, asserted
+   **before any suite run**; `@new == @old` is refused. Any spec failure is
+   `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
+3. **Control first.** The unmutated copy must run green; a red control exits 2
+   (kills could not be attributed).
+4. **One mutant per defect**, one suite run each: KILLED (suite exit ≠ 0) /
+   SURVIVED (exit 0) / INCONCLUSIVE (timeout 124, or 126/127 not runnable).
+5. **Restore re-check.** Target sha256 before = after — `MUTATE_RESTORE:
+   OK|DRIFT`.
+6. **Headline + evidence.** `MUTATE: DONE (… killed=… survived=…
+   inconclusive=… kill-rate=…%)`; exit 0, DEGRADED exit 1 on any inconclusive.
+   The evidence dir keeps pristine, every mutant, `evidence/<id>.out`,
+   `results.tsv`, `spec.copy` (`MUTATE_EVIDENCE: <dir>`).
+
+Pre-register the expected table before the run: T6-1 wrote its 10 verdict
+predictions and six survivor classes first, and the prediction held 10/10
+(`mutation-case-mado-verify.md:73, :187-189`).
+
+### The boundaries — what a service run is not
+
+- **Single-edit mutants only** — coordinated rewrites are unmeasured (matrix
+  row F); a rate is bounded by its defect vocabulary.
+- **Hermetic suites only** — no substrate-drift claim; results are
+  per-revision and per-host (census §5 scope, `fleet-suite-census.md:288-291`).
+- **Read-only** — target sha before = after and the sibling tree stays
+  porcelain-clean; the provable negative is "the service's writes never
+  touched the gate" (`mutation-case-mado-verify.md:57-59`).
+- **Findings kept, never smoothed.** A survivor is a gap named with its class;
+  a low kill rate is a report, not a service failure. Mado's 40 % is the
+  first point below the 50-80 band, and it reads as composition (4 in-surface
+  + 6 out-of-surface, measured 4/4 and 0/6), not as a suite regression
+  (`mutation-case-mado-verify.md:66-72`).
+- **Recommendations-only** — absorption stays with the owner; no acceptance
+  means the recommendation is recorded unabsorbed
+  (`mutation-case-mado-verify.md:237-238, :240-260`).
+- **The harness itself is pinned per run.** The mado round saw the tool move
+  mid-round by a concurrent lane (re-pin `b56c6e57…`); every number stays tied
+  to the executed revision and the drift is recorded, not smoothed
+  (`mutation-case-mado-verify.md:17-23`).
+- **Sensitivity, not truth** — a sweep measures what the suite can detect,
+  never whether the gate's verdicts are right
+  (`mutation-case-mado-verify.md:229-230`).
+
+### The report shape — what the opting-in lane receives
+
+- pins: target sha256/size/lines, tool sha256, suite command + control line,
+  spec clause map;
+- the kill-rate table: control + one row per defect (id, clause, exact edit
+  site, exit, verdict, failing-case labels for kills, verbatim from
+  `evidence/<id>.out`);
+- **survivor non-equivalence probes**: each survivor re-run on an input
+  outside the suite's fixtures that exercises the mutated surface, pristine
+  vs mutant outputs recorded (`mutation-case-mado-verify.md:103-115`);
+- restore proof `MUTATE_RESTORE: OK` (sha before = after) + the tree-clean
+  check;
+- recommendation + named unknowns, as a corpus note; the note is the only
+  fleet file the run writes (`mutation-case-mado-verify.md:8-9`), and its
+  reproduce block rebuilds the sweep (`:262-293`).
+
+### The mado run (T6-1, 2026-10-14) — measured
+
+Target `mado-shokunin/tools/mado-verify.sh` @ `d7edaab4…d0e13`; tool
+`597e1419…`; suite `bash "$MUTANT" --selftest`; control `MADO_SELFTEST:
+28/28 assertions passed`, exit 0. **10 defects → 4 killed / 6 survived,
+kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
+(`mutation-case-mado-verify.md:57-63`).
+
+- Killed (4): D1 verdict token · D2 UNKNOWN guard · D4 DIVERGED exit · D6
+  census drop — each on the scenario that names it (`:77-89`).
+- Survived (6), each with its probe reading (`:103-115`): D3 skip-row
+  `SKIP`→`PASS` (row + counts differ: `pass=17 skip=1` → `pass=18 skip=0`);
+  D5 failure-path exit 2→1 (unobservable on a green run; identical failure
+  block); D7 count tolerance `-ne`→`-lt` (undeclared 18th source: pristine
+  DIVERGED → mutant CLEAN); D8 sha-pin NOTE text (`drifted` → `matches`);
+  D9 boundary proof (a real mid-run change: pristine DIVERGED → mutant
+  CLEAN); R1 tomllib arm (fake `PASS` on an unverifiable row).
+- `MUTATE_RESTORE: OK` — target sha256 before = after; fleet tree
+  porcelain-clean; an independent audit lane re-cut the same 10 defects with
+  its own driver and reproduced 4 killed / 6 survived
+  (`/tmp/w6-aud-t6-work/presweep-174248.txt`, 2026-10-14).
