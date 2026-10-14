@@ -542,6 +542,69 @@ countermeasure that makes the error visible on the page is quoting the line
 verbatim in the survey, not merely citing it — a wrong number under a quoted line
 is checkable by eye; a wrong number alone is not.
 
+### Errata (round 2)
+
+Applied 2026-10-14 by TAMESHI-R2-2 from the wave-1 review trail (the wave's
+audits re-verified anchors+counts — commit `3da686c`; wave record LOG.md:42-48
+and the carried round-2 items LOG.md:64-66; per plans/round-2.plan.md:10).
+Append-only: nothing above is edited; new entries go to the bottom of this
+list. Round-2 re-measurements were run by this lane 2026-10-14 (scratch
+`/tmp/tameshi-r2-2-work/`).
+
+**G-R2-1 (measured — corrected pin, §1).** The table's `claim-ledger.sh` row
+reads `79294` bytes / sha256 first16 `357fb24554cd0447`; the live file at the
+committed revision is **`79301` / `93c5827202b9cdec`** (1319 lines held). The
+surveyed bytes were an intermediate dirty-tree state that was never committed
+(`git cat-file -t 357fb24554cd0447` → fatal: not a valid object name); the
+substrate then moved again at 09:58:55 (mtime), and the lane committed at
+10:05:10 — HEAD `fecee874` (round-18, tree now clean) — with
+`corpus/stamps.tsv:4` re-pinned to the new sha/bytes. The other five §1 rows
+held on re-measure (sha256 first16: surface-census `275d8294a94e9eb7`,
+drift-pins `c138d34c7f0dfe95`, op-ref-probe `509f084ad33229db`,
+checklist-run `7e5ec98b9e1d0afa`, scope-gate `078a260184e25282`; byte sizes
+44212/19088/28660/24697/55002 held). Command: `sha256sum corpus/*.sh;
+stat -c %s corpus/*.sh; git -C kagi-shokunin log -1 --format='%h %ci'`.
+
+**G-R2-2 (measured — corrected citation, §9 item 4).** §9 item 4 cites
+`claim-ledger.sh:53-56` for the last-non-empty-line rule; on the current
+bytes :53-56 = the `entry`/`docs` usage paragraph, :26-28 = the rule — the
+same correction ER-1 made to §4.1 but which §9 retained.
+Command: `sed -n '26,28p' corpus/claim-ledger.sh` (rule present),
+`sed -n '53,56p' …` (not the rule).
+
+**G-R2-3 (measured — corrected count, §3.3).** "22 denied verbs" → **23**: the
+regex carries 23 alternatives, and the note's own parenthetical lists all 23
+(op, the-janitor, git, rm, mv, cp, chmod, chown, curl, wget, sudo, ssh, scp,
+systemctl, tmux, kill, pkill, dd, truncate, shred, ln, rsync, tar). Command:
+`grep '^DENY_WORD_RE=' corpus/claim-ledger.sh | grep -oE '\(op\|[^)]*\)' |
+tr '|' '\n' | wc -l` → 23.
+
+**G-R2-4 (measured — held, re-verified set).** Six `--selftest` runs exit 0:
+16/13/29/34/61/97 (surface-census, drift-pins, op-ref-probe, checklist-run,
+scope-gate, claim-ledger) = 250 held (§2). `--falsify` exit 1 →
+`SCOPE_FALSIFY: FAIL (caught=16/18 failed=2)` with the same two
+`FALSIFY FAIL … SCOPE BREADTH-EXCEEDS` lines and the same live breadth tens
+(§6 F-1 held; `~/.local/bin/the-janitor` still absent, so R16-03 still defers;
+`README.md:43` still says unqualified "18/18"). POLICY code-line counts held
+10/24/11/1/0/0 (totals 17/26/13/2/0/0, §3.3); data rows held
+35/22/15/20/16/4/35/56 (§1 fn1); stamps recompute `ok=56 stale=0 missing=0
+nohash=0` (§5.3); README anchors :33/:36/:40/:43/:63/:69 still carry
+34/13/16/61/97/29 (§5.1); F-2 `tcase` counts still 1/1/0/0/0/1
+(first-token/metachar/inline-shell/backslash/empty-quotes/denied-verb, §6b).
+
+**G-R2-5 (measured/inferred — §8.1 [UNK] discharged).** The mid-survey writer
+is identified in round 2: the next commit touching `claim-ledger.sh`/
+`stamps.tsv` is kagi's own round-18 `fecee87` (2026-10-14 10:05:10, "two lane
+defects fixed (census selftest hermeticity, indistinguishable claim
+failure)"); **[INF]** the 09:54-09:58 writes were that in-flight round-18
+work, not another lane.
+
+**G-R2-6 (judgment — wave-record position, §6b/§8.2).** Carried, not absorbed
+(LOG.md:64-66): live verdicts remain unmeasured for five of six gates, and
+F-2's two-lines-per-path fix stays a recommendation to the sibling lane
+(PROVINCE.md:16-18 — tameshi never edits a sibling's gate). G-R2-4 confirms
+the three refusal paths are still asserted by no case.
+
 ---
 
 ## 11. Secret handling — positive statement

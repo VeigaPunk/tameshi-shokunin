@@ -109,6 +109,79 @@ disabled or attacked mechanism makes exactly the targeted cases fail.
   suites' own code against regressions (gates-survey-kumitate.md:144-156,
   320-331).
 
+## Mutation-bar decision table — kill-rate bands (round 2, measured)
+
+The corpus's first measured kill-rate: the 43-case hermetic suite of
+`kumitate-shokunin/scripts/kimi-census.mjs` against 10 single-edit mutants →
+**8/10 killed (80 %)**; control `43/43 pass`, the suite count held on every
+mutant run, no inconclusive run (mutation-case-kimi-census.md:29-37). The case
+sits on the 50-80/>80 boundary, so that boundary reading is the worked one; the
+bands below carry the admission decision.
+
+| Kill rate | What the suite is | Admission reading |
+|---|---|---|
+| **>80 %** | load-bearing: most plausible defects die, each on named cases | cite it as the surface's proof-of-catching; classes outside the injected vocabulary stay named (mutation-case-kimi-census.md:109-144) |
+| **50-80 %** | partially load-bearing: survivors are measured, not assumed | cite it only with the survivors table attached; every survivor is a gap until a case pins it (mutation-case-kimi-census.md:44-53) |
+| **<50 %** | nominal: green is a count, not a catch | never cite it as protection; the round admits anyway — the survivors table IS the finding (`plans/round-2.plan.md:8-9`; mutation-case-kimi-census.md:29-33) |
+
+Rules:
+
+- **Bands are a report convention, not a pass/fail gate.** An 8/10 admits, and so
+  does a <50 % — with the gap recorded in the table, not softened
+  (mutation-case-kimi-census.md:29-37, :185-191). (U: the corpus holds one
+  kill-rate measurement; the 50 % crossover itself is unmeasured, and PROVINCE's
+  ≥2-lane rule gates calling the method fleet-general, PROVINCE.md:16-17.)
+- **Inject in a copy; one exact edit per fresh copy.** Every mutant is a copy
+  under `/tmp/tameshi-r2-1-work/`; the driver asserts each old string occurs
+  exactly once (`all unique`) before writing; no defect compounds with another;
+  the original stays read-only (mutation-case-kimi-census.md:22-25, :148-166).
+  Runs are `--selftest` or `--root` pointed under /tmp only — no live tree read
+  (mutation-case-kimi-census.md:4-7).
+- **Restore exact bytes, proven by hash.** Original sha256 before = after
+  (`83016d45…4f426`), size and mtime unchanged, `git status --porcelain --
+  <path>` empty (mutation-case-kimi-census.md:34-35). A sweep without this proof
+  has no recorded substrate result.
+- **Defect taxonomy — inject one per class, and read which class the suite can
+  see:**
+  - *off-by-one / table desync*: D1 `counted: 18 → 17` (kimi-census.mjs:105)
+    killed on 16 cases; D2 `findings.slice(0, 6)` → `slice(0, 5)`
+    (kimi-census.mjs:378) **survived** — the truncation boundary is never
+    exercised (max findings in any suite run = 2 against a cap of 6) and the
+    DRIFT asserts are prefix-only (kimi-census.mjs:498)
+    (mutation-case-kimi-census.md:44-45, :82-92).
+  - *inverted condition*: D3 `!e.children.includes(n)` → `includes(n)`
+    (kimi-census.mjs:332) killed on 16 cases — a green fixture flips to
+    all-UNLISTED, so the exact baseline catches it
+    (mutation-case-kimi-census.md:46, :74-76).
+  - *dropped arm*: D4, the root-stray reporting loop deleted
+    (kimi-census.mjs:351-353), killed on exactly the three root-enum cases; D5,
+    chain presence `gens.length > 0` → `true` (kimi-census.mjs:255), killed on
+    one case (mutation-case-kimi-census.md:47-48, :61-65).
+  - *wrong pin / unasserted constant*: D6, `server.token` floor `0o600` →
+    `0o644` (kimi-census.mjs:124), killed on 2 cases; D10, `FROZEN.K2 25 → 24`
+    (kimi-census.mjs:145) **survived** — only `frozen.K5` is asserted
+    (kimi-census.mjs:526); the FAMILY/frozen lines are reported, never read
+    (mutation-case-kimi-census.md:49, :53, :94-99).
+  - the case's widened classes: D7 weakened floor predicate, D8 wrong
+    fail-closed exit, D9 weakened secrecy kind pin — all killed on exactly
+    their arm's cases (mutation-case-kimi-census.md:50-52, :66-73).
+- **A survivor is a finding; a kill names its case set.** D2/D10 live on
+  reported-but-unasserted surfaces — the assert vocabulary pins behavior, not
+  reporting completeness (mutation-case-kimi-census.md:101-107); a kill quoted
+  without its failing labels is unverified (mutation-case-kimi-census.md:59-76).
+- **When mutation testing is not worth it.** (a) Defects already caught by the
+  green baseline or an exact verdict-line assert need no mutant budget — D1/D3
+  die on the same 16 cases (mutation-case-kimi-census.md:74-76); mutants pay
+  where the asserts cannot look (D2/D10). (b) A suite that never runs in the
+  path that matters yields no signal: cite-check's mutation control is
+  integration-gated and never runs under `--selftest`
+  (gates-survey-kumitate.md:51-58). (c) Mutation measures the suite, not the
+  substrate — live-tree drift needs a live gate
+  (mutation-case-kimi-census.md:206-207). (d) Single-edit mutants say nothing
+  about coordinated rewrites or timing (mutation-case-kimi-census.md:195-199);
+  the sweep is cheap here (7.0 s for 11 runs, :30) but that cost profile is
+  host-local (U; mutation-case-kimi-census.md:204-205).
+
 ## No-permissiveness audit recipe
 
 Goal: prove a change did not make anything pass by absence — no finding went

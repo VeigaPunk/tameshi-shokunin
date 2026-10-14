@@ -104,3 +104,130 @@ game lanes — the AGREE-tally encoding:
 - U6 — sampling: one verifier report read in full (g2d r68); other waves via LOG/report summaries; kaidoku audits A/B read, C/consistency only partially.
 - U7 — Sol adjudicator reports and promotion gates skimmed only; outside this census's output.
 - Errata: none yet (append-only; this is the file's first version).
+<!-- corpus entry (extension) — tameshi-shokunin round 2, lane TAMESHI-R2-4, appended 2026-10-14. Assignment: read the game-dev-2d-shokunin verifier machinery (verifier scratch under corpus/live/rNN-*-verifier*/, SCORECARD.md / LOG.md AGREE loop, reports/round-NN/rNN-verifier.md) and document its mutation/verification discipline as the census's fourth pattern. Append-only: everything above this comment is byte-untouched; this lane wrote ONLY this file (LOG.md append left to the parent — same known-gap precedent as :5-8). Substrate read read-only: game-dev-2d-shokunin/ (LOG.md, SCORECARD.md, reports/, corpus/); secrets: none read. Commands under "Verification (extension)". -->
+
+## 4. Fourth pattern (appended 2026-10-14, TAMESHI-R2-4) — game-dev-2d-shokunin verifier machinery: the mutation/verification discipline
+
+The census holds three pattern blocks so far: the shared verifier shape P1–P10 (§1) and two lane-specific encodings (§2: kaidoku audit blocks; game-lanes AGREE tally). This is the fourth: the machinery-level discipline underneath game-dev-2d's AGREE tally — how its verifier replays, how mutations are run, and where falsification goes. It complements §2 (:76-83 records the tally's vocabulary/seat set/schema), not restates it. Single-lane evidence (game-dev-2d-shokunin only) — NOT general per PROVINCE.md:15-16; labels as §1 (OBSERVATION / INFERENCE / UNKNOWN); sub-ids D1–D10 avoid colliding with P1–P10.
+
+### D0 — The loop, restated with the lane's own anchors (OBSERVATION)
+- Wave form: 8-seat leaf wave (`reports/round-NN/rNN-{scout,author,critic,reviewer,simplifier,scribe,baseline,boundary}.md`, disjoint scratch, sole tracked writer = author) → wave-2 named non-author verifier → Sol per-axis adjudicator → ADMIT/HOLD → report-last commit. game-dev-2d-shokunin/LOG.md:611 (r64 wave), :631 (r66, "+ non-author verifier"), :722 (r68 "**AGREE 5/5** on `f754546`").
+- Verdict language is per-claim AGREE / DISAGREE-as-worded: r62 "**AGREE on all checked claims**" LOG.md:595; r63 "**AGREE on all five claims**" LOG.md:605; r64 "claims 2,3,4a,4b AGREE; 1+5 DISAGREE-as-worded pre-fix → resolved by landing the verified bytes" LOG.md:615.
+- Same shape through r68; r69's verifier seat died and the record says so (see D8). Lane-log counts (this lane's commands below): 9 `AGREE` / 1 `DISAGREE` lines in LOG.md.
+
+### D1 — The verifier replays committed BYTES; if the commit lacks the change, that is the finding (OBSERVATION)
+- r64: work commit `a32920b` "does NOT contain the proposed mutation" — it touches 858 files, all `corpus/live/`/`reports/` (`git show … | grep -vc …` → 0); `a32920b:corpus/fixtures/run_battery.py` sha256 byte-identical to parent `a7e0cb1`; the gate code existed only as uncommitted worktree state (sha `66a18a00…`) game-dev-2d-shokunin/reports/round-64/r64-verifier.md:11-19.
+- The verifier materialized the committed tree into `corpus/live/r64-verifier/pretree/fixtures/` and ran the mandated battery against it → exit 0, PASS 96/96, NO `probe_while_live_signature_gate` row (receipt `pretree-runs/20261014T021648730172Z/verdicts.json`) r64-verifier.md:26-31; verdicts: claim 1 DISAGREE as worded (:35), claim 5 mutation scope DISAGREE (:102), "**Claims 2, 3, 4: AGREE. Claims 1 and 5: DISAGREE**" (:136).
+- Routine rounds check provenance up front: "Executed runner == committed blob … The bytes I executed ARE the committed bytes" reports/round-65/r65-verifier.md:10-18; r68 "Committed file identity re-pinned before any run … byte-equal to the author's declared post-diff hashes" reports/round-68/r68-verifier.md:5-9.
+- r68 also proves no tracked writes: `git status corpus/fixtures/` empty before AND after all replays; the battery copies fixtures into `runs/<stamp>/scratch` (corpus/fixtures/run_battery.py:124-142) and writes only there; `corpus/knowledge/seed.md` untouched r68-verifier.md:132-139.
+- Closing record: fix commit `5265da6` "landed the exact verified blob `66a18a00`" LOG.md:614.
+
+### D2 — Mutants and faults are scratch-only fixtures of the runner itself (OBSERVATION)
+- `--probe-failing` = "also mutate scratch scene B and prove detection" corpus/fixtures/run_battery.py:110; implementation edits the scratch copy (`scratch/scene_b.tscn`, marker `"B"`→`"BROKEN"`) and executes `mutant_broken_scene_route` (expects exit 2 + `chain incomplete`) and `mutant_level_collision_removed` run_battery.py:2423-2429.
+- r1: "targeted broken-scene mutation with exit 2 and `chain incomplete`" LOG.md:12; the named non-author "independently reran 15/15 PASS, confirmed targeted exit-2 mutant" LOG.md:14.
+- Mutants are counted inside battery totals: "31 base CASES + 2 scratch mutations = 33 ordinary records" LOG.md:162; "50/50 PASS = 39 ordinary + 2 mutants + 9 opt-in" LOG.md:264.
+- `--fault-injection` is a separate isolated probe family ("isolated executor fault probes (separate from seeded battery)") run_battery.py:111; its raw record keeps deliberate inner FAILs — r23: "inner hang and unrelated diagnostic remain deliberate FAIL; raw `r23-fault-verifier.json`" LOG.md:232.
+
+### D3 — Suite sensitivity is proven by DISABLING the guard in a disposable copy: the intended assertion must FAIL (OBSERVATION)
+- r9: "Verifier disabled shared unrelated-error filtering in disposable scratch runner: all four probe meta verdicts FAIL and battery exit 1" LOG.md:89.
+- r11: "Two disposable `/tmp` sabotages (disable ERROR filter or suppress extra emission) each make meta FAIL/overall exit 1" LOG.md:109.
+- r14: "Scratch disable-warning-check runner mutation makes meta and battery FAIL" LOG.md:141.
+- r16: "Scratch-only expected-low-bound and receipt-list saboteurs each fail at clamp assertion" LOG.md:162; r23/r24: "Disposable scratch sabotage of authored limit similarly failed intended assertion" LOG.md:232, :242.
+- A dedicated wave seat exists for this: `mutation-reviewer` — r20 "read-only mutation sensitivity plan, own scratch only" LOG.md:197; r23 "scratch-only authored-left sabotage" LOG.md:227; r24 (:237); r27 (:269).
+- INFERENCE: the discipline is per-guard binary (disable the mechanism → the intended failure must surface), not a defect-corpus kill rate; no survived/killed tally was found (U8). Contrast: tameshi's round-2 plan measures a kill-rate on kumitate kimi-census (tameshi-shokunin/plans/round-2.plan.md:3-9), and the kumitate survey found "no kill-rate harness; no fault injection against the gate's own code" there (tameshi-shokunin/corpus/knowledge/gates-survey-kumitate.md:59-61, :278-281). D3 is the "binary guard-disable" tier a mutation bar can cite.
+
+### D4 — A detected mutant must survive spoof attempts; engine errors never count as detection (OBSERVATION)
+- `classify_mutant` requires the mutant's exact expected signature AND the positive PASS string absent run_battery.py:367-379; with `--probe-unrelated-error` the mutant is re-classified against injected-line, same-line-suffix and same-line-prefix spoofs, and the probe verdicts PASS only if `detected and not injected_detected and not suffix_detected and not prefix_detected` run_battery.py:381-390.
+- "A script/parse error never counts as intended mutant detection" run_battery.py:451-453.
+- Meta discrimination counts ride with the verdicts: r65 "29/29 discriminations" SCORECARD.md:34; r68 "discriminations 20→24 all True" SCORECARD.md:61 and "24/24 discriminations" SCORECARD.md:64.
+
+### D5 — Flagged probes are opt-in and proven inert when unflagged (OBSERVATION)
+- r68: flagless run dir contains NO `midlineforge-ladder-verdicts.json` and NO `probe_midlineforge_ladder` row; grep of flagless stdout finds zero `midline-offset` references; bare midlineforge arm unchanged r68-verifier.md:132-138.
+- "opt-in flags only; flagless 88/88 unchanged; classifiers byte-identical since r65" SCORECARD.md:62; r67 "additive probe … prior 88 rows stable" SCORECARD.md:52.
+
+### D6 — The verifier writes its OWN instruments and recomputes from spec, not from the author's mirrors (OBSERVATION)
+- r68: own timing spike `corpus/live/r68-verifier/spike/proj/v_timing_probe.gd` + `run_timing.py`, "independent of the author's spike", 33 runs, own numbers (gap 200–201 ms; effective nominal bound ≈[0,~198)) r68-verifier.md:59-75.
+- Clause map recomputed by `corpus/live/r68-verifier/recompute_clauses.py` — "my own reimplementation of both classifiers' clause logic …, not run_battery's mirrors" — 9/9 rows r68-verifier.md:84-93.
+- Cross-run row comparison via `corpus/live/r68-verifier/compare_verdicts.py`; "0 mismatches in all five comparisons" after an explicit volatile scrub list (pids, elapsed/timing fields, run-dir paths, ASLR addresses, concat interleave order, a 4th-decimal wobble, one `provenance_only_line_diff`) r68-verifier.md:19-29.
+
+### D7 — The regression fence is a field-tuple row diff against prior receipts (OBSERVATION)
+- 7-field criterion (script, flags, expected_exit, actual_exit, signature, verdict, error) r68-verifier.md:19-21.
+- r65 "97 prior rows 0-mismatch on 7-field tuples, own `/proc` corroboration" SCORECARD.md:34; r67 "prior 88 rows stable" SCORECARD.md:52; r68 "prior 0-mismatch ×5" SCORECARD.md:64.
+
+### D8 — Falsification and failed verification are first-class, kept in the record (OBSERVATION)
+- r64 DISAGREE-as-worded → "resolved by landing the verified bytes" LOG.md:615; SCORECARD.md:24 ("1+5 DISAGREE-as-worded on pre-fix commit `a32920b` … resolved by follow-up commit landing the verified blob").
+- r68: declared grid "falsified as written (~80× resolution overstated — critic) and recorded honestly; the measured bound … is what landed" SCORECARD.md:64.
+- r69: verifier seat "never survived rate limits" (5 respawns) — operator adjudicator replay recorded instead LOG.md:744-746, :771-773; SCORECARD.md:74.
+- r27: a critic scratch mutation false-passed — recorded as "an adverse limit on arbitrary mutated-fixture provenance, not present in tracked source" LOG.md:270; "Do not claim arbitrary mutation resistance or signal provenance under malicious fixture edits" LOG.md:273; the later verifier confirms the tracked fixture "contains neither direct receiver invocation nor manual `pressed.emit`" LOG.md:274.
+- INFERENCE: mutation evidence is scoped to the tracked source's real code path; a mutation that only works by rewriting the fixture is not admitted as evidence about the source.
+
+### D9 — Receipts: where a replay can find them (OBSERVATION; one INFERENCE)
+- Latest form is retained in-tree verifier scratch: at read time `corpus/live/r68-verifier/` holds 3 timestamped run dirs, per-flag battery stdout/stderr, `compare_verdicts.py`, `recompute_clauses.py`, `spike/`, `fixtures-status-before/mid.txt`; r64's scratch holds `pretree/fixtures/` + `pretree-runs/` (this lane's `find`, below).
+- `corpus/lessons/` carries per-round receipts `rN-…-verifier.json` (early era) then `rN-…-non-author.json`; the listing shows 107 such files, spanning r2–r61 (last: `r61-crash-non-author.json`; none r62+ there) — commands below.
+- INFERENCE: the receipt form migrated from lessons-JSON to in-tree scratch + report tables somewhere r62–r68; the exact migration commit was not chased (U9).
+- Path caveat for other census lanes: older LOG entries write paths as `.shokunin/game-dev-2d/corpus/fixtures/run_battery.py`; the current repo root has no `.shokunin/` dir and the file is `corpus/fixtures/run_battery.py`; the lane worktree was reached via symlink `~/Projects/prymeagnt/game-dev-2d/.shokunin/game-dev-2d` → `/home/vgpnk/Projects/shokunin/game-dev-2d-shokunin` (r64-verifier.md:4-6). Drop the `.shokunin/game-dev-2d/` prefix for repo-root anchors.
+- Report-form note: `reports/` mixes flat `rN-*` files (max flat round = r59) with 11 `round-NN/` dirs (round-60…round-70); the r70 dir was empty at read (`ls`, below).
+
+### D10 — The verifier declares its own bounds and non-writes (OBSERVATION)
+- r68: "No commits, no tracked-file writes, no subagents. Scratch only under `corpus/live/r68-verifier/`." r68-verifier.md:151-152; "Bounds of this verification" block at :141-150.
+- r64: "No commits/push/merge/stash/checkout; wrote only this report + `corpus/live/r64-verifier/`" r64-verifier.md:5-8.
+
+### Predictions from this block (INFERENCE)
+- The next admitted round should carry `reports/round-NN/rNN-verifier.md` with per-claim AGREE/DISAGREE on a named commit; a round admitted without one falsifies D0/D1 as stated. (At append time `reports/round-70/` exists but is empty; r70 scratch dirs are untracked — observation.)
+- If a future verifier report omits the "executed bytes == committed bytes" provenance check or the prior-row 0-mismatch statement, the loop has drifted.
+
+### Verification (extension)
+- `wc -l` LOG.md → 778; `grep -c 'AGREE'` → 9; `grep -c 'DISAGREE'` → 1; `grep -n "AGREE" … | tail` → :667, :722.
+- `grep -n "HEADLINE\|DISAGREE\|materialized"` reports/round-64/r64-verifier.md → :11, :27, :35, :102, :136.
+- `find corpus/live/r68-verifier -maxdepth 2` → 3 run dirs + `compare_verdicts.py` + `recompute_clauses.py` + `spike/` (`run_timing.py`, `timing-results.json`) + `battery*/fixtures-status*.txt`; `find corpus/live -maxdepth 1 -name '*verifier*' | wc -l` → 51.
+- `ls corpus/lessons | grep -icE 'verifier|non-author'` → 107 (r2…r61; last `r61-crash-non-author.json`).
+- `ls reports | grep -cE '^r[0-9]+-'` → 428; `ls reports | grep -cE '^round-'` → 11; max flat round r59 (ls pipeline).
+- `git -C game-dev-2d-shokunin rev-parse HEAD` → `9fb50aa992cca6cb0bb1ce51ed2f891c09d85abb` ("r69 report-last: ADMIT — gap-relative referent pinned by crossed cells"); `git status --porcelain` → 15 lines: 13 untracked `corpus/live/{r69,r70}-*/` scratch dirs + 2 untracked reports (`reports/round-68/r68-boundary.md`, `reports/round-68/r68-verifier.md`).
+- Post-write state check (lane end): recorded in the appended lane-end note below.
+
+### Unknowns (extension)
+- U8 — no survived/killed defect corpus or kill-rate metric found in this lane; its sabotage evidence is binary per guard. Whether any earlier round ran one was not exhaustively searched (grep scope: `mutation|mutant|sabotage`).
+- U9 — the receipt-form migration point (lessons-JSON → in-tree scratch) between r61 and r64; not chased.
+- U10 — the report-form switch from flat `rN-*` (through r59) to `round-NN/` (from round-60); the commit/decision that made the switch not chased.
+- U11 — the sabotage instruments ("disposable" `/tmp` scratch runner) are not retained by design; whether any sabotaged copy survives for re-execution was not checked.
+- U12 — r69 has no `r69-verifier.md`; the operator replay is recorded only in LOG/SCORECARD/adjudicator; whether raw artifacts for it exist was not checked.
+- U13 — verifier seat routing (`openai-codex/gpt-6-luna`, "free-model rate limits", 5 respawns) is as the LOG says; the routing machinery was not inspected.
+- Errata (extension): none at append time (append new errata blocks below; never rewrite).
+<!-- lane-end note (TAMESHI-R2-4) — appended 2026-10-14 after the checks below -->
+
+Lane-end checks (TAMESHI-R2-4): the section's first write lacked a leading newline, so its header comment rendered glued to the pre-existing final line (:106 `Errata: none yet …`); repaired same day by inserting one newline before the comment. Proof the original is untouched: `head -c 16536 corpus/knowledge/verification-patterns-fleet.md | sha256sum` → `df4ab192509fafc02bdd2450f54fe864730f29429298f9f93a5bc361ef06ba3e`, byte-identical to the pre-write file. Post-write `git -C tameshi-shokunin status --porcelain` → ` M corpus/knowledge/verification-patterns-fleet.md` + pre-existing `?? plans/`. File at this check: 194 lines (`wc -l`), 105 pre-write; this note appends after the check (the lane handoff carries the final count). Substrate: `git -C game-dev-2d-shokunin status --porcelain` unchanged (15 untracked entries before and after this lane; no tracked file modified). No scratch written (none needed; the /tmp namespace was unused).
+
+## Errata (round 2)
+
+Applied 2026-10-14 by TAMESHI-R2-2 from the wave-1 review trail (wave record
+LOG.md:42-48 and the carried round-2 items LOG.md:66-67; per
+plans/round-2.plan.md:10). Appended below the TAMESHI-R2-4 extension above —
+nothing above this block is edited. Round-2 re-measurements were run by this
+lane 2026-10-14 (scratch `/tmp/tameshi-r2-2-work/`).
+
+**V-R2-1 (measured — held).** The kaidoku census numbers re-measured on the
+current corpus (unmoved since the census; newest entry mtime 05:11): 72
+knowledge files; 468 `verify:` vs 467 `verified-at:`; the same four
+count-mismatched files (2026-10-13-r2-firmware-probe 7/6,
+2026-10-13-r3-keyed-archive-carriers 3/4, 2026-10-13-r4u-05-wakaru-oom 3/4,
+2026-10-13-r5-01-riscv-bypass 9/7). Commands: `ls
+kaidoku-shokunin/corpus/knowledge/*.md | wc -l`; `grep -rn "verify:" … |
+wc -l`; `grep -rn "verified-at:" … | wc -l`; per-file loop.
+
+**V-R2-2 (measured — held).** The w6/w7/w8 closeout AGREE tallies re-grepped
+identically: w6 3×5/5; w7 3×5/5; w8 2×6/6 + 1×5/5 (w8 g2d = 5/5). Command:
+`grep -o '"verifier": "AGREE [0-9]/[0-9]"'
+.ufo/waves/shokunin-train-20261014-w{6,7,8}/closeout.json | sort | uniq -c`.
+
+**V-R2-3 (judgment — wave-record position, §3).** U1/U2 remain the recorded
+decidable round-2 audit predictions (LOG.md:66-67). The round-2 fleet-note
+lane (TAMESHI-R2-4, extension above) added the game-dev-2d pattern block
+D1-D10 with its own U8-U13 and did not discharge U1/U2 — they stay open.
+
+**V-R2-4 (measured — U1 first reading).** The four count-mismatches read as
+grep-shape artifacts, not missing evidence (first reading only, not the full
+chase): `2026-10-13-r2-firmware-probe.md:113` is a "Corrected verify:" line
+inside its own errata block; `2026-10-13-r5-01-riscv-bypass.md:62` matches on
+"re-verify:" inside a heading; `2026-10-13-r3-keyed-archive-carriers.md:112`
+and `2026-10-13-r4u-05-wakaru-oom.md:152` are `verified-at:` stamps on
+`source:`-based candidates. U1 is partially explained, still open.

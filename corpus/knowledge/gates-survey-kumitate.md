@@ -333,3 +333,50 @@ against the text line via `lastLine(t).includes('members=…')` +
 ## Errata (append-only)
 
 (none yet)
+
+## Errata (round 2)
+
+Applied 2026-10-14 by TAMESHI-R2-2 from the wave-1 review trail (the wave's
+audits re-verified anchors+counts — commit `3da686c`; wave record LOG.md:42-48
+and the carried round-2 items LOG.md:61-64; per plans/round-2.plan.md:10).
+Append-only: nothing above this block is edited. Round-2 re-measurements were
+run by this lane 2026-10-14 (scratch `/tmp/tameshi-r2-2-work/`).
+
+**K-R2-1 (measured — held, no drift).** All six executed counts re-verified on
+the current scripts (byte-stable since the survey; the §0 mtimes still match),
+each `--selftest` exit 0: cite-check `62/62 cases passed (hermetic)`,
+surface-probe `42/42 cases passed`, round-gate `ROUND_GATE_SELFTEST: 60/60
+pass`, proxy-check `PROXY_SELFTEST: 102/102 pass`, claims-check
+`CLAIMS_SELFTEST: 39/39 pass`, kimi-census `KIMI_CENSUS_SELFTEST: 43/43 pass`;
+every closing `VERDICT: PASS`. Round-2 pin record (the note quotes mtimes,
+not hashes): sha256 first16 — cite-check `40573448330f52fb`, surface-probe
+`148cbf85ce4c7682`, round-gate `f890e277af83a78f`, proxy-check
+`a052ddb97a0b6f84`, claims-check `e9a21b441f1216bf`, kimi-census
+`83016d45049b009a`. Command: per gate, `node scripts/<gate>.mjs --selftest`
+from `kumitate-shokunin/`, plus `sha256sum scripts/<gate>.mjs`.
+
+**K-R2-2 (measured — corrected anchor ranges, §7 item 2).** The
+claims-check meta-check pair is at `claims-check.mjs:851-852` — the note's
+`846-851` starts five lines early (a prior case's closing `});`) and ends at
+the first of the two checks; the kimi-census pair is at
+`kimi-census.mjs:841-842` — the note's `836-840` covers the
+`missingKinds`/`missingArms` setup filters but neither `check(...)` line. The
+other three ranges' start lines resolve exactly (surface-probe :1432-1435,
+round-gate :1487-1493, proxy-check :2269-2276). Command: `grep -n "every
+finding kind fired by the suite\|every fail-closed arm fired by the suite"
+scripts/claims-check.mjs scripts/kimi-census.mjs`.
+
+**K-R2-3 (measured — held, §7 item 1).** The mutation-control census
+re-checked with the `SKILL.md` false hits excluded (`grep -inE
+"mutant|mutation|kill" <f> | grep -viE "skill"`): cite-check matches only its
+mutation copy (:78 prose, :2372-2384 case, :2383 detail); claims-check only
+the :827 check name ("kind-blind mutants fail here"); surface-probe,
+round-gate, proxy-check and kimi-census return nothing. No gate ships a
+kill-rate harness as of 2026-10-14 — the census claim stands.
+
+**K-R2-4 (judgment — wave-record position, §9 items 1-2).** The two carried
+items stand recorded, not absorbed in round 2 (sibling gates stay
+sibling-owned, PROVINCE.md): cite-check's integration group was not executed
+(`--integrations` needs the live tree) and round-gate's `INTERNAL_ERROR`
+fail-closed arm has no hermetic case. This errata changes neither claim;
+both remain open until kumitate's own lane acts.
