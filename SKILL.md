@@ -1268,3 +1268,96 @@ divergence between the two is the finding, never smoothed.
 
 Anchors re-resolved 2026-10-14 on the live bytes; a reader on a differing revision
 re-resolves rather than trusts.
+
+## The operator's runbook and the six-leg regression (round 10, measured)
+
+Round 7 made `--regression` the ledger's replay gate; rounds 8–9 left two
+named gaps: the registry ran four legs with cases 5–6 "still not embedded —
+named debt" (`:1226-1228`), and the operator the arc was built for had no
+single entry point. Round 10 closes both — the runbook lands (T10-1, this
+round), and the leg cut resolves as an **embedding** of cases 5–6 (T10-2),
+never a re-cut.
+
+### The operator's runbook — `corpus/knowledge/operator-runbook.md`
+
+- **What it is.** One operator-facing document (`e1e349b6…` / 511 L / 31 416 B,
+  uncommitted worktree file at this read; the sha governs): the tool, the
+  six-case ledger, the opt-in protocol, the refusals, the cadence, and the
+  regression mode — the loop runnable without oral context. It adds no gate
+  measurement of its own; every line restates an anchored source.
+- **Section map.** §0 quick start (the operator loop in one block) · §1 the
+  service in one page · §2 the tool · §3 the six-case ledger · §4 the opt-in
+  protocol · §5 the limits · §6 the cadence (tick, reading map, triggers
+  T1–T3) · §7 the regression mode · §8 the operator's full loop (commissioning
+  to append) · §9 that lane's executed receipts · §10 unknowns carried ·
+  append-only errata.
+- **Pointer, not a second home.** Its own rule: where it and an anchored
+  source diverge, the anchored source governs — the same rendering/divergence
+  rule this page applies to `service-limits.md` (`:1250-1254`).
+- **Its receipts were executed at `cf41efaa…` (r7-1, four legs)** — §7's
+  embedding-status line and §9's receipts were run there; its errata ER-R1/ER-R2
+  record the r10-2 edit in motion and name the T2 remedy (re-run under the new
+  revision, record both pins). The receipt below is that T2 record.
+
+### The six-leg regression — usage and this round's receipt
+
+At tool revision `75ed934d…` (`VERSION` = `mutate-and-run.sh r10-2`, 1 642 L;
+uncommitted worktree file at this write), `--regression` replays **six**
+embedded legs (list `tools/mutate-and-run.sh:85-89`; sources `:90-97`;
+pins/tables `:550-559`; specs `:766`, `:841`; registry `:1132-1141` — line
+anchors as read at `75ed934d…`, the sha governs):
+
+| # | leg | target | recorded rev | recorded rate |
+|---|---|---|---|---|
+| 1 | `js-kimi-census` | kumitate `scripts/kimi-census.mjs` | `175de6ba` | 8/10 = 80 % |
+| 2 | `bash-surface-census` | kagi `corpus/surface-census.sh` | `fecee874` | 8/10 = 80 % |
+| 3 | `bash-tsukuroi-census` | tsukuroi `tools/tsukuroi-census.sh` | `165307fe` | 6/10 = 60 % |
+| 4 | `bash-mado-verify` | mado `tools/mado-verify.sh` | `eead56b2` | 4/10 = 40 % |
+| 5 | `bash-checklist-run` | kagi `corpus/checklist-run.sh` | `fecee874` | 7/15 = 47 % |
+| 6 | `js-claims-check` | kumitate `scripts/claims-check.mjs` | `175de6ba` | 7/10 = 70 % |
+
+- **Command, unchanged.** `bash tools/mutate-and-run.sh --regression
+  [--workdir DIR] [--keep]`; default scratch
+  `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`, removed on PASS unless
+  `--keep`, kept on FAIL/SETUP, never removed when `--workdir` was given. Exit
+  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:115-119`).
+- **Where the bytes come from.** Each leg materializes from its repo's git
+  object store at its recorded revision (`git show <rev>:<path>`) and the copy's
+  sha256 must equal the recorded pin; a missing repo/rev/blob or a pin mismatch
+  is a SETUP refusal before any suite runs. r10-2 also mirrors the blob's mode:
+  a `100755` blob is `chmod +x`'d after materialization (`:104-106`, `:932-960`)
+  — kagi's checklist gate re-execs itself in its selftest, `git show` carries no
+  mode, and the leg refuses as SETUP without the bit (measured while the cut was
+  made; the added selftest arms at `:1488-1527` cover the mirror).
+- **Receipt, executed by this lane** (independent of the tool owner's; the
+  owner's own run at the same revision, 21:00:24Z, closes identically),
+  2026-10-14T21:02:39Z, tool `75ed934d…` before and after, scratch
+  `/tmp/w10-t10-4-ev/` (regression workdir kept):
+  - `--selftest` → `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0 —
+    added arms include the exec-bit mirror and an embedded-ledger check that
+    the six specs parse and agree with their recorded tables.
+  - `--regression` → six legs, all exact: `match=10/10` (legs 1–4, 6),
+    `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`; closing
+    `REGRESSION: PASS (cases=6 passed=6; ledger legs exact: killed-delta<=0
+    flips<=0)`, rc 0. Each `REGRESSION_PIN` line now carries the blob's
+    `mode=` beside repo/rev/path/sha256, and `REGRESSION_EXPECT` lists six
+    recorded rates.
+- **The supersessions stay append-only.** The round-7 section's "Four legs at
+  this revision" (`:925-929`) and the round-9 receipt's `cases=4`
+  (`:1218-1222`) stand at `cf41efaa…`; the round-9 caveat that cases 5–6 were
+  "still not embedded — named debt" (`:1226-1228`; ER-4 caveat (a)) is resolved
+  at `r10-2` by embedding the recorded T8-1/T8-2 spec files (their 25 `@old`
+  strings re-verified `count==1` against the pinned blobs) — the recorded
+  tables are never edited and each leg's expectation is the rate its note
+  recorded.
+- **Reading a receipt** stays the round-7 discipline (`:965-1008`): read the
+  block, not the last line; PASS is exact for ledger legs; FAIL names its
+  `REGRESSION_DEFECT` rows; SETUP is not a verdict (fix the environment, never
+  re-interpret a recorded table). The runbook's §7 is the operator's rendering
+  of this command; on a differing revision the tool bytes and the run you
+  executed govern.
+- **Named debt, not smoothed.** The ledger's §1 embedding text still reads
+  "cases 1 and 2 only" (`fleet-kill-rate-ledger.md:85-88`), superseded in the
+  ledger by ER-2 (`:281`, four legs); a ledger row recording the six-leg
+  registry is the ledger owner's follow-on — this page records the registry as
+  measured at `r10-2`, and no ledger cell is edited from here.
