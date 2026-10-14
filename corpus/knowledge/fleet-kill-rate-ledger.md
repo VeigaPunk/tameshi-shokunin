@@ -268,3 +268,49 @@ mado `tools/mado-verify.sh` re-measured unchanged at `c4c1afb7…` (O). No rate
 in §1–§4 is re-cut by this entry; the moved cells are read-only observations,
 and a reader needing current live identities should re-run §6 S1's
 `sha256sum` set. New errata entries go below this one.
+
+**ER-2 — the fifth and sixth cases land: kagi `corpus/checklist-run.sh` and kumitate `scripts/claims-check.mjs` — six gates measured (O; appended 2026-10-14 by T8-3, tameshi round 8).** Two independent sweeps ran this round — service form, targets read-only, predictions pre-registered before each run, one scratch per lane (`/tmp/w8-tameshi-t81/`, `/tmp/w8-t8-2-claims/`); each note is its run's only fleet file. §1's table is not edited; these rows are the append U9's own rule prescribes (`:235-237`; the update rule `:170-172`). Columns per §0.
+
+| # | Gate (owner · file) | Suite (at sweep) | Kill-rate (composition) | Survivors (measured classes) | Hardened | Last sweep · target pin · driver |
+|---|---|---|---|---|---|---|
+| 5 | kagi · `corpus/checklist-run.sh` | 34 cases | **7/15 (47 %)** — 7 kill-aimed (7/7) + 8 hole-aimed (0/8) | A1, B1, B3, C1, D1, E2, F2, G1 — (a) 2: C1, F2 · (b) 6: A1, B1, B3, D1, E2, G1; new mechanisms: CLI fail-open (G1), output-capture loss (E2), deny-list re-openable (B3) | **no** — recommendations only; owner = kagi | r8 · `7e5ec98b9e1d0afa` (506 L / 24 697 B = kagi HEAD `fecee87` blob) · harness copy `cf41efaa…` (r7-1) via `/tmp`, live path unchanged |
+| 6 | kumitate · `scripts/claims-check.mjs` | 39 checks | **7/10 (70 %)** — 6 kill-aimed (6/6) + 4 hole-aimed (1/4) | D7 (cap `slice(0, 6)`→`5` — the kimi D2 site, independently re-measured), D8 (assert-blind threshold — new sub-shape; probe P8 flips the verdict), D9 (unreached arm — first JS instance) | **no** — recommendations stay owner-side | r8 · `e9a21b441f1216bf` (925 newlines / 48 265 B = kumitate HEAD `175de6b` blob) · harness `cf41efaa…` (r7-1) |
+
+- **Rate sequence, appended to §4's** (`:134-137`): 80 % (kimi r2) · 80 % (kagi r3) · 60 % (tsukuroi r5) · 40 % (mado r6) · **47 % (kagi checklist r8)** · **70 % (kumitate claims r8)**. Composition binds each rate, as §0 states: the co-extensive shape has a third measured instance (row 5, 7/7+0/8, after mado 4/4+0/6 and tsukuroi 6/6+0/4), and row 6's 6/6+1/4 is the first pre-registered hole-aimed mutant measured killed (D10; the prediction was wrong in the safe direction — T8-2 E1). No cross-gate comparison is made or implied.
+- **§3 supersession (cells, not edits).** The §3 queue rows `claims-check` (`:111`) and `checklist-run` (`:121`) said "unmeasured by sweep"; rows 5/6 are the measurements that supersede those cells — §3's tables stay as written. Eight queue rows stand: kumitate's cite-check, surface-probe, round-gate, proxy-check; kagi's drift-pins, op-ref-probe, scope-gate, claim-ledger.
+- **§5 / ER-1 supersession (embedding + tool).** §5's "cases=2 at this write" and ER-1 item 1's in-flight revision are superseded: the harness at `cf41efaa8be5f52d…` (r7-1; 1 341 L / 61 632 B) carries **four** materialized legs and passes them at the exact band — `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, every leg `match=10/10 flips=0` (O: T8-2's run 2026-10-14T19:14:16Z, `mutation-case-kumitate-claims.md` §6; corroborated `reports/r7-aud-t7.md` §1). U3 (`:221-223`) narrows: the tsukuroi and mado tables now ARE re-verified by the harness's own `--regression` — at their recorded pins, under `cf41efaa…`; the candidates' live revisions are not what the legs replay (pin read in ER-3).
+- **Named follow-ups (not edits, not written here).** Cases 5/6 are not embedded in `--regression`: T8-2 E3 records the target pin / suite / spec for the tool's owner, and T8-1 U5 leaves the leg-cut decision to the same owner — rows 5/6 therefore carry no `REGRESSION` line over themselves. The r3 census's "hermetic fallback" wording is superseded by case 5 (T8-1 U7), and census §5's instrument pin (`597e1419…`, `:251-262`) sits two revisions behind the live tool — a re-pin errata item for the census owner.
+- **Sources pinned at this append (re-measured immediately before the write):** `corpus/knowledge/mutation-case-kagi-checklist.md` @ `43da70e6…` (367 `wc -l`; unterminated final line / 22 952 B); `corpus/knowledge/mutation-case-kumitate-claims.md` @ `3da1312e…` (409 `wc -l`; unterminated final line / 29 236 B). Cells above are the notes' own §2/§6 hand-off rows; case 5's note self-identifies as the third service engagement (`PROVINCE.md:14-18` absorption rule).
+
+**ER-3 — the re-sweep cadence: when an owner requests one, and what comes back (policy + executed pin read; appended 2026-10-14 by T8-3).** U9 (`:235-237`) recorded this ledger's update as "a convention, not a mechanism". The mechanism is three triggers, stated from the owner's side, plus one mechanical pin read that says which trigger fired. It governs the six measured rows above; a first sweep of an unmeasured §3 gate is not a re-sweep.
+
+*The pin read (one command set per case, run at the boundary — the executed instance follows):*
+
+    sha256sum <gate-file>                                # vs the case row's recorded pin
+    git -C <owner-repo> show HEAD:<path> | sha256sum     # is the recorded revision the HEAD blob?
+    git -C <owner-repo> status --porcelain -- <path>     # working tree vs HEAD
+
+*Readings.* **current** — recorded pin = live file = HEAD blob, tree clean (the row's pin still names the object; a re-sweep is a fresh reading, not a repair). **stale** — the recorded revision is an ancestor of the live gate; the substrate moved after the sweep (trigger 3). **drift** — the working tree differs from its HEAD (a writer is on the gate; wait for the commit, then re-pin). The read is hygiene and a trigger reading, not a replay guard: the harness's legs materialize from git blobs (`git show <rev>:<path>`), so a drifted tree cannot move a materialized leg (`reports/r7-aud-t7.md` §2–§3).
+
+Executed at this append, 2026-10-14T19:21:00Z (all six rows; rows 3/4 show the trigger live — both substrates moved mid-round):
+
+| # | case | recorded pin | live | HEAD blob | worktree | reading |
+|---|---|---|---|---|---|---|
+| 1 | kimi-census | `83016d45…` | `83016d45…` | `83016d45…` | clean | current |
+| 2 | surface-census | `275d8294…` | `275d8294…` | `275d8294…` | clean | current |
+| 3 | tsukuroi-census | `084951be…` | `bba6cdf6…` (1 472 L) | `bba6cdf6…` | clean | **stale** |
+| 4 | mado-verify | `d7edaab4…` | `dc864c6a…` (2 186 L) | `90d50cdd…` | dirty | **stale + drift** |
+| 5 | checklist-run | `7e5ec98b…` | `7e5ec98b…` | `7e5ec98b…` | clean | current |
+| 6 | claims-check | `e9a21b44…` | `e9a21b44…` | `e9a21b44…` | clean | current |
+
+*Triggers — an owner should request a re-sweep when any one holds:*
+
+1. **After hardening.** Any owner edit that absorbs a survivor (or otherwise changes the gate) supersedes the swept revision: the recorded table is a measurement at the old pin, and the owner's own spec re-run closes *that spec* (directed repair, §0) — an independent re-sweep (fresh or extended spec) is the new independent reading. Precedents: tsukuroi 26 → 35 cases, B10 closed / B7–B9 open (§1.3); mado 28 → 53 assertions, same spec 10/10 (§1.4).
+2. **After suite changes.** Any change to the suite's executed case set moves the composition the rate is bound to (§0; tsukuroi E3) — the old rate's comparability lapses even where the gate's behaviour is unchanged. Recorded instance: mado 28 → 53.
+3. **On substrate drift.** The pin read above reads stale or drift. A moved substrate needs a **re-pin**, never a re-interpretation of the old table — the request shape already carries this (`service-optin-protocol.md:59-62`); both revisions stay in the record.
+
+*What a re-sweep is, and what comes back.* The service protocol's request shape (`service-optin-protocol.md:54-107`): pinned revision · hermetic one-command suite invocable on a copy · clause-mapped single-edit spec with pre-registered expectations. The run is read-only to the substrate, the note is the only fleet file written, and the outcome lands **as an appended row or errata block in this ledger** — never as an edit of §1–§4. A re-sweep measures the live revision; the old row stands as its revision's record; a rate never travels (per-revision, per-host; §0); `moved=0` is recorded, never manufactured.
+
+*What the cadence is not.* No daemon and no timer: the ledger stays the standing view + this policy + the pin read as an executed command at a round boundary; who runs it remains the dispatcher's call ([O] no round created a background process; [U] whether a fleet driver would invoke it unaided). Divergence between a cadence re-sweep and an owner's own receipt is the FINDING (per-revision, per-host scope) — never smoothed.
+
+New errata entries go below this one.

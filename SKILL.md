@@ -1006,3 +1006,148 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md`.
    mismatch / unresolvable revision as SETUP, and a single flipped entry
    failing loudly. The r4-2 tolerance (`killed-delta<=1 flips<=1`) remains the
    fixture-mode default and is exercised by the selftest only.
+
+## The re-sweep cadence and the six-case confidence statement (round 8, measured)
+
+Round 7 left its own gap open in writing: "this ledger's update cadence is a
+convention, not a mechanism" (`corpus/knowledge/fleet-kill-rate-ledger.md:235-237`,
+U9). Round 8 closes it by measurement: **the cadence is a pin read executed at the
+tick** — three readings per case, three triggers, one re-pin rule — and the same
+tick read is the ground the six-case confidence statement below stands on. No
+daemon, no timer: "standing" is the ledger + the policy + an executed command at
+the round boundary; whether any fleet driver would ever invoke the command with
+no lane acting stays [U].
+
+### The tick and the pin read
+
+- **The tick is the round boundary.** The fleet driver idiom ends a lane's round
+  on a report file and ticks 450 s (`scripts/shokunin-watchdog.sh:3-5`), and its
+  lane map does not name tameshi (`:14`) — tameshi's tick is its own round series
+  [I].
+- **Per case, two readings:** the target's relation to the fleet's live bytes
+  (`current` / `stale` / `drift`) and the tool's relation to the last run
+  (`held` / `moved`):
+
+| Reading | Rule | What it means |
+|---|---|---|
+| `current` | `git show HEAD:<path>` sha256 == the recorded pin | the swept bytes are the gate's live blob |
+| `stale` | the recorded revision is an ancestor of HEAD and the live blob differs | the gate moved past the recorded revision; the table's revision is historical, the table is not wrong |
+| `drift` | the worktree differs from its HEAD (`git status --porcelain -- <path>` non-empty, or the live file's sha ≠ the HEAD blob's) | uncommitted bytes; a reading for ledger hygiene — round 7's `git show <rev>:<path>` replay is already immune to it |
+| tool `held` / `moved` | the harness sha == / ≠ the sha on the last `REGRESSION_TOOL` / `MUTATE_TOOL` line | the instrument moved since the table was measured |
+
+Executed instance — this lane, tick 2026-10-14T19:15:14Z, host `plazir27`, tool
+`cf41efaa…` (`sha256sum tools/mutate-and-run.sh`), scratch
+`/tmp/w8-tameshi-t84/pin-read.txt`:
+
+```
+case                     recorded rev   live HEAD   relation   pin vs live blob
+js-kimi-census           175de6ba       175de6ba    current    83016d45 == 83016d45
+bash-surface-census      fecee874       fecee874    current    275d8294 == 275d8294
+bash-tsukuroi-census     165307fe       aa136d69    stale      084951be != bba6cdf6
+bash-mado-verify         eead56b2       0c20a76f    stale      d7edaab4 != 90d50cdd
+kagi checklist-run       HEAD (r8)      fecee874    current    7e5ec98b == 7e5ec98b
+kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21b44
+```
+
+4 × `current` · 2 × `stale` · 0 × `drift`; tool `held`; all six worktrees clean
+(0 porcelain lines on every path) *at the tick*.
+
+- **Re-read six minutes later (19:20:29Z) — a live `drift`:** mado's in-flight
+  round-8 edit (`git status --porcelain -- tools/mado-verify.sh` → ` M`; live file
+  `dc864c6a…`, 99,716 B, mtime 16:19:40, vs HEAD blob `90d50cdd…`) moves that
+  path to `stale` **and** `drift`; every other row reads as above. The pin read is
+  a timestamped observation, re-run at the next tick — never carried as a
+  standing claim.
+
+- **Falsifiers, aimed at the reader** (scratch, read-only; the engine's own
+  doctored-pin refusal is a different arm, selftested
+  `MUTATE_SELFTEST: 67/67`): a case whose row points at a superseded blob reads
+  `stale` (tsukuroi and mado above); a scratch copy of a live gate with one line
+  appended reads `drift` (`/tmp/w8-tameshi-t84/drift-demo.txt`; substrate 0
+  porcelain lines after); an untouched case reads `current`.
+
+### Triggers T1–T3 and the re-pin rule
+
+- **T1 — a case reads `stale`** → re-measure at the live revision, or record the
+  STALE cell with its reason; **never an edit of the recorded table**. Live
+  instances today: tsukuroi `084951be…` (6/10) → live `bba6cdf6…`; mado
+  `d7edaab4…` (4/10) → live `90d50cdd…`.
+- **T2 — the harness sha ≠ the revision a case's table was measured under** →
+  re-run the reproduction under the new revision and record both pins. Precedent:
+  the mado spec re-cut under `b56c6e57…` with identical verdicts and mutant shas
+  (`mutation-case-mado-verify.md:17-23`); the harness itself moved four times in
+  one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`)
+  and no recorded table was re-interpreted for it.
+- **T3 — an owner lane records a re-run at a new revision** → an appended row;
+  §1–§4 are never edited (`fleet-kill-rate-ledger.md:170-173`).
+- **The re-pin rule.** A moved pin is never re-interpreted against the new bytes
+  (:811-812). The old table stays; the moved case lands at its newest revision
+  with both shas and the delta, appended. `moved=0 stale=0` is a complete
+  outcome, recorded as such — drift is never manufactured by re-cutting cases.
+  The replay receipt at this revision (this lane, 19:15:54Z, rc 0):
+  `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0
+  flips<=0)`, every leg `match=10/10 … flips=0` — the recorded tables hold at
+  their own pinned blobs regardless of the live drift above.
+
+### Six-case confidence statement (round 8, measured)
+
+The case set at this write: the four embedded legs plus the two queue gates
+entering in round 8.
+
+| # | case (author · file) | language | suite | rate · composition | revision |
+|---|---|---|---|---|---|
+| 1 | js-kimi-census (kumitate · `scripts/kimi-census.mjs`) | node ESM | 43 | 8/10 = 80 % · 10 kill-aimed | r2 · `83016d45…` |
+| 2 | bash-surface-census (kagi · `corpus/surface-census.sh`) | bash | 16 | 8/10 = 80 % · 10 kill-aimed | r3 · `275d8294…` |
+| 3 | bash-tsukuroi-census (tsukuroi · `tools/tsukuroi-census.sh`) | bash | 26 | 6/10 = 60 % · 6 kill + 4 hole | r5 · `084951be…` |
+| 4 | bash-mado-verify (mado · `tools/mado-verify.sh`) | bash | 28 | 4/10 = 40 % · 4 in + 6 out | r6 · `d7edaab4…` |
+| 5 | kagi `corpus/checklist-run.sh` (T8-1) | bash | 34 | 7/15 = 47 % · 7 kill + 8 hole | r8 · `7e5ec98b…` |
+| 6 | kumitate `scripts/claims-check.mjs` (T8-2) | node ESM | 39 | 7/10 = 70 % · 6 kill + 4 hole | r8 · `e9a21b44…` |
+
+Cases 5–6 were measured this round in the lanes' own scratch (controls
+`CHECKLIST_SELFTEST: PASS (34 cases)` and `CLAIMS_SELFTEST: 39/39 pass`;
+`MUTATE_RESTORE: OK` both; tool `cf41efaa…`; runs under
+`/tmp/w8-tameshi-t81/sweep/` and `/tmp/w8-t8-2-claims/work/`), and both notes
+landed while this section was being written:
+`corpus/knowledge/mutation-case-kagi-checklist.md` and
+`corpus/knowledge/mutation-case-kumitate-claims.md` (both still being appended by
+their own lanes — re-read a note's header rather than quoting a size). The ledger
+rows and any `--regression` leg for either are follow-ups the notes themselves
+name (claims note E3) — **the ledger rows are the authority once they land, and
+an unlanded leg is named debt, never assumed**.
+
+**State the real diversity — language is the weakest axis here.** Six cases, but
+**two language classes** (node ESM ×2, bash ×4 — shebangs read from the pinned
+bytes: `#!/usr/bin/env node` ×2, `#!/usr/bin/env bash` ×4), **four author lanes**
+(kumitate ×2, kagi ×2, tsukuroi, mado) and **gate grammars that stay per-gate,
+not per-language** (five measured families over the six gates: kumitate's two
+node gates share `*_SELFTEST: n/m pass` + `FAIL` rows; kagi's two bash gates
+differ — `ok-case`/`bad-case … got …` + `SELFTEST:` vs `checklist-selftest: …` +
+`CHECKLIST_SELFTEST:`; tsukuroi `PASS <label> (exit N, VERDICT)`; mado `n/n
+assertions`). A "five languages/authors" reading is not supported by the measured
+roster: the case set multiplies by *author and gate shape*, not by language —
+round 8's two additions are one bash gate and one node gate, both
+already-measured language classes, and the round-3/5 finding already placed the
+differences in kill width and composition, not in language. Counting tameshi's
+own harness meta-sweep (ledger §2) would add a seventh *artifact* and a fifth
+*author* — a boundary item, not a case. Count what varies: authors (four), gate
+grammars (five families), and composition, which binds every rate above.
+
+Against the round-5 three-case statement (this page's "Third case…" section) the
+six-case reading moves only where measurement moved:
+
+- **Holds, more instances:** reported-but-unasserted / asserted-stem-vs-remainder
+  — the checklist note classifies `C1` (`UNMATCHED-ITEM`) and `F2` (`--only …
+  failed=0`) as family (a) and six more as unreached inputs
+  (`mutation-case-kagi-checklist.md:180-194`); the claims note's `D7` reproduces
+  kimi's `slice(0, 6)` cap on a second kumitate gate, and its `D8` is a new
+  sub-shape — a threshold the case is named for and cannot see
+  (`mutation-case-kumitate-claims.md:285-291`). Rates bind to composition, and
+  the band now reads 40 / 47 / 60 / 70 / 80 / 80.
+- **Amended by the sixth case:** unreached-arm survivors — `D9` is the class's
+  **first JS instance** (claims note Row E, `:249-254`), so the round-5 reading
+  ("two bash instances, still zero JS") no longer stands; the class reading is
+  now "an instance in each language class", still per-arm and not generalized.
+- **Unknown in all six:** coordinated rewrites; cross-host stability; the 50 %
+  crossover; the two round-8 notes' own unknowns.
+- **Read the method, not the rate** — at six cases the constant remains the
+  survivor taxonomy and the composition rule, not the headline percentage.
