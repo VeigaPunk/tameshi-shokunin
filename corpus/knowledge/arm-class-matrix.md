@@ -495,4 +495,31 @@ porcelain-empty after; no scratch files).**
    `^[A-Za-z][A-Za-z0-9-]*$` accepts `not-a-lane` (node, §13.6 #4).
 3. **Floor arithmetic** — the suite's report templates re-evaluated with `Buffer.byteLength`
    via `node -` (no file written): `fxThin(5)` = 25 B; `fxMentions(10,'round-1')` = 1059 B
-   (r8's report); all other read reports 1119–2100 B. Interval [26, 1059] stands (§13.4).
+   (r8's report); all other read reports 1119–2100 B. Interval [26, 1059] stands (§13.4).## Errata (round 5) — VER-T1 cross-check landing (append-only)
+
+Applied 2026-10-14 by lane T5-2; scope: this file only; nothing above this block
+is edited. Source: **VER-T1**, the round-4 independent cross-check of row E
+(verdict: row E CONFIRMED — exactly 1 unreached-arm instance of 20; scratch
+`/tmp/w4-ver-t1-crosscheck/` + `/tmp/w4h-ver-t1-mut/`; cited in the round-4
+`LOG.md` entry). Entry **E3**.
+
+E3 (precision — §6 chmod enumeration completeness). §6's B5 paragraph states
+"the only chmod sites are `:521-588`, `:704-717`, `:768`" (live line 185). That
+enumeration is incomplete. O — re-measured live by T5-2 on the pinned bytes
+(`kagi-shokunin/corpus/surface-census.sh` @ sha256 `275d8294…53009f`, held
+before and after this append): `grep -n chmod` finds **15** sites — `:521`,
+`:546`, `:571`, `:588`, `:608`, `:654`, `:704`, `:706`, `:707`, `:708`, `:709`,
+`:713`, `:715`, `:717`, `:768`. The two omitted sites — `:608` (`chmod 600
+"$S/op.env"`) and `:654` (`chmod 600 "$S/present.env"`) — sit inside the
+`verbs()` probes (`:465-693`), between the cited ranges. Corrected enumeration:
+**`:521-588`, `:608`, `:654`, `:704-717`, `:768`**. The load-bearing conclusion
+is unchanged: no site touches the exec row's file or strips +x — the only
+`exec`-kind census row is `$HOME/.local/bin/the-janitor` (built at `chmod 755`,
+`:707`; `-x ` occurs once, `:214`, inside the arm B5 deletes) — so B5 stays
+fixture-absent/unreached and every verdict cell in §0-§9 stands. (The same
+incompleteness was independently reached by AUD-T1's audit of this file, its
+finding F2 — cited for the record.) Recorded here per the append-only discipline
+rather than editing §6; §12 unchanged.
+
+Companion VER-T1 erratum ("unreached" JS wording scope) lands in
+`knowledge/mutation-case-kimi-census.md` (E2 there).

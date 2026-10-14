@@ -664,3 +664,129 @@ prints `ok=0` where pristine prints `ok=1` (mutation-case-kagi-census.md:111-122
 :251-253). After: `sha256sum pristine.sh` still `275d8294…53009f`; size/mtime
 unchanged; kagi `git status` clean for the path; scratch copy `cmp`-identical
 (mutation-case-kagi-census.md:54-56).
+
+## Third case — cross-author confirmation (round 5, measured)
+
+Rounds 2–3 measured two gates of one lane's craft (kumitate JS, kagi bash); round
+4 re-cut their 20 mutants into the arm-class matrix, rows A–G
+(`corpus/knowledge/arm-class-matrix.md`; its round-5 errata block carries
+VER-T1's chmod enumeration fix and the JS "unreached" wording scope, `:498-525`).
+Round 5 moves the **author axis**: the third gate is
+`tsukuroi-shokunin/tools/tsukuroi-census.sh` — a four-plane host-health census
+(bash, 977 lines, sha256 `084951be…c78c5` at measurement) written by a different
+lane, in a third suite dialect: per-case `PASS <label> (exit N, VERDICT)` /
+`FAIL <label>: …` lines asserting exit + verdict word + ERE evidence substrings,
+plus two per-case structural guards (fixture tree byte-identical after the run;
+`host=fixture-host` host-read guard), summary
+`TSUKUROI_CENSUS_SELFTEST: PASS (26 cases, 26 passed, 0 failed)`
+(`corpus/knowledge/mutation-case-tsukuroi-census.md:63-66`). The anti-claim was
+pre-registered — a wildly divergent kill profile amends the matrix, recorded not
+smoothed (`plans/round-5.plan.md:9-10`). It diverged: **6/10 killed (60 %)** — the
+first measurement inside the 50-80 % band, and the first case that amends a row.
+
+**Incident, headline not appendix** (`mutation-case-tsukuroi-census.md:9-35`): the
+substrate moved mid-run — a concurrent lane (tsukuroi's own S5-1) hardened the
+tool at 14:06:23 (+56 lines, 0 deletions, 9 new selftest cases, 26 → 35). So the
+assigned "original sha256 before = after" claim is **unsatisfiable**; every
+measured cell still sits on the frozen pre-hardening copy (sha re-verified at the
+end), and the provable negative is "this lane's writes never touched the
+substrate". §6 replays the four survivors on the hardened revision: B10 killed by
+a new case; B7/B8/B9 still survive it.
+
+**Third kill-rate table** (control green rc 0, 1.77 s; 11 runs in 19.6 s; every
+run enumerated `(26 cases, …)`, none inconclusive; composition 6 kill-aimed + 4
+hole-aimed — `mutation-case-tsukuroi-census.md:63-79, :86-102`):
+
+| Mutant | Class | Site | Verdict | Failing cases (count) |
+|---|---|---|---|---|
+| B1 | inverted condition (nvidia guard) | `:473` | killed | 2 — healthy-gpu, blocked-gpu (case 15 token-only; exit matched) |
+| B2 | boundary, rc tolerance {0,1}→{0,2} | `:281` | killed | 3 — backup-only, sample-drift, sample-error (case 13 token-only) |
+| B3 | dropped fail-closed arm (empty-ring) | `:434-452` | killed | 1 — empty-ring (`exit 0 wanted 2`) |
+| B4 | weakened kind pin (journal classifier) | `:578` | killed | 1 — boot-errors (exact class tally) |
+| B5 | off-by-one count (drift `+1`→`+2`) | `:615` | killed | 1 — timer-drift (`timer_drift=1` tripwire) |
+| B6 | behavior predicate (rollup `worse()`) | `:210` | killed | 21 — every non-HEALTHY case |
+| B7 | boundary / cap unreached (`SAMPLE_N` 8→9) | `:160` | **survived** | 26/26; probe: 9-package input samples 9 (pristine 8) |
+| B8 | wrong exit-code mapping, out-of-band | `:935` | **survived** | 26/26; probe: `--bogus` rc=1 (pristine rc=2) |
+| B9 | reported-but-unasserted verdict fields | `:967` | **survived** | 26/26; probe: `packages=HEALTHY systemd=DEGRADED` under a DEGRADED verdict |
+| B10 | unreached arm (PCI-unreadable) | `:487-493` | **survived** | 26/26; probe: pristine BLOCKED → mutant HEALTHY |
+
+Calibration: pre-registration held 10/10 on verdicts **and** 10/10 on failing-case
+counts — the first of the three sweeps with no miss, credited to parsing the case
+grammar before writing the defects (`mutation-case-tsukuroi-census.md:74-75,
+:282-287`).
+
+**Matrix hold — three cases, seven rows** (r5 cells are that note's measured
+readings; `mutation-case-tsukuroi-census.md:200-266`):
+
+| Row | JS r2 | bash r3 | bash r5 (third author) | 3-case reading |
+|---|---|---|---|---|
+| A verdict paths | D2 survives on the tail | B10 survives on summary fields | B9 survives on roll fields | **holds** — asserted stem protected (all 6 kills read through it), unasserted remainder not; new shape: the one full-roll-line assert sits on the all-HEALTHY fixture where a field swap is invisible |
+| B fail-closed arms | D8 killed (exit-2 cases) | B8 killed (2 cases) | B3 killed (1); **B8 survives** (`:935`, no case) | **amended** — exit-map protection is bound to *executed refusal paths*, not the artifact; three gates, three exit-map philosophies for the same epistemic class |
+| C counts | D1/D6/D7 killed | B2/B7 killed | B5 killed (1) | **holds** — asserted counts die (third exact-count tripwire `timer_drift=1`); cap reachability is per-cap (B7: fixture 4 vs cap 8) |
+| D reported-unasserted | D2, D10 survive | B10 survives | B9 survives + §3.1 field inventory | **holds, 3rd author** — the only class surviving in all three; here it sits in verdict *products*, not just a summary tail |
+| E unreached arms | none (D4/D5 reached) | B5 survives | B10 survives; §3.2 static inventory | **promoted toward pattern, still proposed** — 2 bash instances + inventory, zero JS instances; repair shape (add a case per arm) consistent |
+| F coordinated edits | unprobed | unprobed | unprobed (10 single edits) | **unknown in all three** (U1 each) |
+| G behavior predicates | D3/D9 killed | B1/B3/B6/B9 killed | B1/B4/B6 killed | **holds 9/9 across three gates**; width amendment: B6 kills 21/26 — width follows mutant placement (distance to the shared exit channel), not language |
+
+**What the third data point changed** (each measured; none smoothed):
+
+1. **The 80 % headline was composition, not method — bind every rate to its
+   composition.** 80 / 80 / 60 at compositions 6-kill+4-hole (this case): a rate
+   quoted without kill-aimed vs hole-aimed is not comparable across sweeps (E3,
+   `mutation-case-tsukuroi-census.md:295-299`). The bands table's 50-80 % row is
+   now the measured one, superseding the "band interiors unprobed" (U) — >80 %
+   and <50 % stay unprobed, and the 50 % crossover is still unmeasured.
+2. **Row B is narrower than the pair admitted.** "Fail-closed exit-map
+   protected" holds only per executed refusal path: B8's out-of-band usage
+   refusal (`:935`) has no case and survives a 2→1 flip. The exit-2 *species*
+   also differ by author: JS environment failure, kagi malformed-data, tsukuroi
+   cannot-assess / cannot-tell-clean-from-empty.
+3. **Row E's second instance landed — and the class still is not admitted.** B10
+   (PCI-unreadable, probe: pristine BLOCKED vs mutant HEALTHY) reproduces B5's
+   shape in another author's bash gate; with §3.2's dozen static arms the class
+   now has a repair recipe, but both instances are bash and no JS instance
+   exists, so it stays *proposed*.
+4. **Width is not a language property.** Round 3's near-singleton bash reading
+   is inverted by B6 (21/26, the widest bash kill yet): the rollup edit sits on
+   the shared exit channel every case asserts. Read width off placement, never
+   off language.
+5. **A hardening response was measured for the first time.** The concurrent
+   S5-1 lane's 9 new cases closed exactly one of this case's four holes (B10)
+   and left three open (B7's default site, B8, B9) on revision `aae45531`
+   (`:305-320`) — and a concurrent, quoted-not-read sweep converged on 8/9 of
+   the same hole classes (E4, corroboration not double-counting).
+6. **Two suite mechanisms went unattacked:** the per-case fixture-non-mutation
+   and host-override guards, and the whole systemd plane (no mutant, U3) —
+   their load-bearing status is unknown.
+
+**Three-case confidence statement** (PROVINCE's two-independent-lanes bar,
+`PROVINCE.md:15-16`; three authors, three dialects, two languages):
+
+- **Admitted with third-gate support:** reported-but-unasserted surfaces /
+  asserted-stem-vs-remainder (3 gates); asserted counts and floors (3 gates);
+  behavior predicates caught (9/9 across three gates); fail-closed exit-map
+  protection **as narrowed** (case-coverage-bound).
+- **Proposed:** unreached-arm survivors — 2 bash instances, no JS instance.
+- **Unknown in all three:** coordinated edits (row F); rates >80 % and <50 %;
+  the 50 % crossover; cross-host stability; the structural guards above.
+- **Read the method, not the rate:** across three authors the constant is the
+  survivor taxonomy (unasserted data / unreached arms / unmapped paths), not
+  the headline percentage.
+
+**What a fourth case would need to show.** A fourth bash sibling at 60-80 %
+would add a table row and move nothing. It earns its round only by being one of:
+
+1. **A second JS-family gate** — the author axis now has three points, the
+   language axis one. A JS gate separates author from language behind width and
+   survivor composition (a JS rollup-shaped mutant would test this section's
+   placement reading).
+2. **A coordinated-rewrite mutant** (row F's first entry) on any pinned suite.
+3. **An unreached-arm instance in JS** — the one datum that would admit row E.
+4. **A kill rate outside [50, 80]**, or a suite whose full-verdict-line pin sits
+   on a discriminating fixture (row A's new shape) — does that gap close with a
+   stricter pin style, or merely move?
+5. **Mutants against the structural guards** (fixture non-mutation, host
+   override, fail-closed token enums) and a systemd-plane mutant (U3).
+6. **Re-runs of B7/B8/B9 against `aae45531` successors** — the hardening left
+   three holes demonstrably open; whether they stay open is the live test of
+   the "add a case" repair.

@@ -301,3 +301,4 @@
   still carries the ≥2-lane generality bar — a third gate (or a fleet
   lane adopting the tool) is the next depth move.
 - 2026-10-14 — round 4 (training r3): arm-class matrix (JS+bash cases) + round-gate static projection (§13); mutate-and-run --regression mode; VER-T1 cross-verified row E CONFIRMED with 2 precision errata (chmod enumeration :608/:654, JS wording scope). Axis moved: calibration. Verifiers: VER-T1 | matrix disagree-where-it-disagrees is the finding; row E exactly 1 instance in 20 (B5, proven unreached by one-row probe). 32-lane wave (27+1+4 after an alibaba filter failure rerouted 4 lanes to hyper — recorded).
+- 2026-10-14 — round 5 (training r4): 3rd mutation case (tsukuroi gate, cross-author): 6/10 killed, matrix amended per arm-class evidence (not smoothed); VER-T1 errata landed; fleet-suite census note. Axis: depth. Verifiers: 60% third profile vs 80/80 — divergence IS the finding; hardening-gap replay (S5-1 closed 1/4 survivors).

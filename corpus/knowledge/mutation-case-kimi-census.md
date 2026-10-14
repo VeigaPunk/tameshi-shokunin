@@ -204,4 +204,35 @@ modes*, not the edit: credentials 0o500 vs floor 0o700 and server.token 0o400 vs
 - U5 — kill-rate stability across node versions/hosts: measured only on node v24.21.0,
   this host, 2026-10-14.
 - U6 — nothing here measures the suite against *substrate* drift; a hermetic suite never
-  reads the live tree by construction.
+  reads the live tree by construction.## Errata (round 5) — VER-T1 cross-check landing (append-only)
+
+Applied 2026-10-14 by lane T5-2; scope: this file only; nothing above this block
+is edited. Source: **VER-T1**, the round-4 independent cross-check of the
+arm-class matrix's row E ("Unreached arms"), against the pinned bytes of
+`kumitate-shokunin/scripts/kimi-census.mjs` @ sha256 `83016d45…4f426` (scratch
+`/tmp/w4h-ver-t1-mut/`; cited in the round-4 `LOG.md` entry). Entry **E2**.
+
+E2 (precision — "unreached" wording scope for this JS case). VER-T1 re-cut the
+two JS arm-deletion mutants independently (D4 → 40/43 on exactly the three
+root-enum labels; D5 → 42/43 on the singleton chain label — both identical to
+§1), and re-measured the D2 boundary with its own probe: 28 text-mode verify
+runs, findings distribution `0×8, 1×19, 2×1`, max **2** vs the cap of 6
+(`:378`; the cap and the prefix-based DRIFT assert `:498` re-read live by T5-2
+on the pinned sha). Two readings the numbers support must be kept apart:
+
+1. the ≥6-findings truncation region is **fixture-unreached** — no suite run
+   reaches the boundary, so the region is absent from the fixture set, not
+   merely under-asserted; and
+2. D2's survival is **assert-caused, not unreachability-caused** — the DRIFT
+   assert is prefix-based (`:498`), so even a 6-finding fixture would not pin
+   the `+N more` tail. D2 remains a reported-but-unasserted survivor (matrix
+   rows A/D), **not** an instance of the unreached-arm class; that class's sole
+   instance among the 20 mutants is bash B5.
+
+Wording consequence: matrix §6's literal "Nothing in the JS case is an arm no
+fixture reaches" overstates as written — any such generalization must be scoped
+to the probed arm-deletion mutants (D4/D5). Cited here because the JS case's
+evidence originates in this note; this is a scope note only — no verdict, cell,
+or count in §0-§6 above changes, and §5's E1 stands. Companion VER-T1 erratum
+(chmod enumeration `:608`/`:654`) lands in `knowledge/arm-class-matrix.md`
+(E3 there).
