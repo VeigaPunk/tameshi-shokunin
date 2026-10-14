@@ -170,3 +170,133 @@
   kill-rate method fleet-general — a second-gate sweep is the natural
   round-3 depth move; game lanes' binary guard-disable (fleet D3) vs this
   round's measured kill-rate give the mutation bar its two named tiers.
+- 2026-10-14 — round 3: probation wave 3 (probation-completing), planned as a
+  ufo-round-plan (`plans/round-3.plan.md`, ufo-round-plan-v1 — axis move
+  depth(cross-language generality) + operability(first tool); falsifiable
+  claim pre-registered with its anti-claim: a wild bash-vs-JS kill-rate
+  divergence IS the finding). Same dispatch shape as rounds 1–2 — lane
+  write-scopes left this LOG to the scribe; the lane deliverables in this
+  repo ARE the wave record (observation, rounds 1–2 precedent). Content
+  lanes:
+  TAMESHI-R3-1 → `corpus/knowledge/mutation-case-kagi-census.md` (258
+  `wc -l` lines, final line unterminated): the second measured kill-rate,
+  first bash gate — kagi `surface-census.sh`'s 16-case selftest vs 10
+  single-edit mutants (fresh /tmp copies, one exact edit each, count==1
+  gate; kagi tree never written, restore proof sha `275d8294…53009f`
+  before=after, mtime + porcelain clean) → **8/10 killed (80 %)**, no
+  inconclusive run, suite count held on every run, 11.0 s for 11 runs;
+  survivors B5 (deleted exec x-bit arm — **fixture-absent arm**, a survivor
+  class round 2 did not have; non-equivalence probe: mutant prints
+  `SURFACE OK … (exec 644)` where pristine prints `SURFACE DIVERGED`,
+  exit 0 vs 1) and B10 (CLEAN-summary `ok=` arg swapped — reported-never-read,
+  same family as round-2 D10); B4's kill is token-only (deleted symlink arm
+  keeps exit=1, dies on the `SURFACE LINK` token assert); gate choice proven
+  hermetic on this host (fixtures under `mktemp -d`; verbs cases 15/16
+  `skip-case … substrate-absent` — `the-janitor` off PATH, kagi's own
+  round-18 repair, kagi LOG.md:741-744); errata E1 — failing-case *counts*
+  predicted 6/10 (case 04 is a second exit-0 green fixture, kept as a
+  calibration miss, same shape as round-2 E1); cross-language §4 resolves
+  the plan's anti-claim: same headline rate, narrower bash kill width
+  (max 3/16 vs JS up to 16/43 — per-case fresh fixtures + exit+token asserts
+  vs shared fixtures + exact-line asserts), shared survivor class
+  reported-but-unasserted data (D2/D10, B10), bash-only unreached-arm class
+  (B5); U1–U6.
+  TAMESHI-R3-2 → `tools/mutate-and-run.sh` (611 lines, r3-2): tameshi's
+  first tool — the method ships as a generic inject→run→restore runner:
+  spec v1 fail-closed parsing (count==1 asserted before any suite run,
+  no-op edit refused, escape allowlist `\n \t \r \\`, CR refused), pinned
+  pristine + fresh byte-copy mutants, green-control gate before any mutant
+  run, KILLED / SURVIVED / INCONCLUSIVE (124/126/127) per defect,
+  `MUTATE_RESTORE: OK|DRIFT` byte-identity proof, evidence workdir, exit
+  map 0/1/2/64; hermetic selftest (own fixture + mini-suite under
+  `/tmp/tameshi-r3-2-selftest.*`, removed on PASS) — **24/24 pass**.
+  TAMESHI-R3-3 → `SKILL.md` round-3 distillation (+421 → 665 lines, no lane
+  header; lane id inferred from dispatch shape per round-1 precedent — its
+  scratch holds `SKILL.draft.md` + a sha-poll script): the method as an
+  executable recipe — 10 numbered steps pin→note (hermetic-control proof,
+  committed-bytes pin, count==1 uniqueness gate, one-edit-per-fresh-copy
+  runs, verdict adjudication incl. token-only kills, survivor
+  non-equivalence probes, restore proof, note format), defect-entry
+  template + 6 exact-string rules + a 12-row class catalog with per-class
+  JS **and** bash evidence columns, restore-discipline checklist, the
+  measured cross-language divergence section, and Appendix A/B — complete
+  reproduce specs for both cases (driver + manifest + expected outputs);
+  the claim "an executor with no oral context can run either case from this
+  page alone" is pre-registered in the file header.
+  TAMESHI-R3-4 → `corpus/knowledge/executor-test-sufficiency.md` (211
+  `wc -l` lines, final line unterminated): the no-oral-context executor
+  test (SHONEN box 3 evidence) — an executor with no tameshi context beyond
+  `SKILL.md` @ `dd2f4dee…3753` reproduced one killed mutant end-to-end
+  (D5: control green 43/43 first try, kill `42/43 FAIL` with exactly
+  Appendix A's singleton failing case `MEMBER_MISSING … presence is gated`,
+  all 10 manifest strings byte-exact and unique, restore pin held);
+  per-step sufficiency verdicts recorded (7× SUFFICIENT, 2× SUFFICIENT
+  (latitude), 1× ADDITIVE-IMPROVISATION — the single-mutant `--only`
+  subset, 1× NOT EXERCISED, 1× ADAPTED); contamination statement §1 (read
+  SKILL.md + target only; even skipped the generic AGENTS.md reminder to
+  stay uncontaminated); U6 noted no independent re-verification at write
+  time — closed below by the audit replays.
+  Audits (round-3b batch, non-author verifiers, evidence retained under
+  their scratch namespaces):
+  TAMESHI-B1 — rebuilt bash mutants B1/B5/B10 from a pristine byte copy
+  (`cmp`-verified) with its own driver (`mutate_b110.py`, count==1 asserts):
+  control `SELFTEST: PASS (16 cases)`, B1 killed `SELFTEST: FAIL (1/16
+  cases)`, B5/B10 green `PASS (16 cases)` — the note's kill rows and both
+  survivor rows replay.
+  TAMESHI-B2 — re-ran the executor's exact target through the shipped tool:
+  spec = Appendix A's D5 entry, result `D5 KILLED` 42/43 with the same
+  singleton failing case and mutant sha `b0dfe1a7…0668` identical to B3's
+  sweep and the executor's note (R3-4 U6 closed).
+  TAMESHI-B3 — full 10-defect sweeps on BOTH cases through the tool
+  (`dsweep` + `bsweep`): `MUTATE: DONE (… killed=8 survived=2
+  inconclusive=0 kill-rate=80 %)` on both targets, every per-defect verdict
+  and failing-case count identical to both notes' tables (B1 1/16, B2 2/16,
+  B3 3/16, B4 1/16, B6 2/16, B7 1/16, B8 2/16, B9 2/16; D1 27/43, D3 27/43,
+  D4 40/43, D5 42/43, D6 41/43, D7 41/43, D8 40/43, D9 41/43),
+  `MUTATE_RESTORE: OK` ×2, tool sha `d8abee52…eda68` = the committed
+  revision.
+  Scribe verification (this entry, TAMESHI-B4, all re-run 2026-10-14; logs
+  under `/tmp/tameshi-b4-r3b-verify/`): both fleet selftests green (`bash
+  kagi-shokunin/corpus/surface-census.sh --selftest` → `SELFTEST: PASS
+  (16 cases)` exit 0 with skip-cases 15/16 substrate-absent, kagi tree
+  porcelain-empty before/after; `node kumitate-shokunin/scripts/
+  kimi-census.mjs --selftest` → `KIMI_CENSUS_SELFTEST: 43/43 pass` /
+  `VERDICT: PASS` exit 0); pins held (`sha256sum` → SKILL.md
+  `dd2f4dee…3753` = the executor's executed revision, tool `d8abee52…eda68`
+  = the audited revision, kimi-census `83016d45…4f426`, surface-census
+  `275d8294…53009f`); note tallies (`grep -cF '**killed**'` → 8,
+  `'**survived**'` → 2, table rows → 11); anchors byte-exact (`sed -n
+  '241p;214p;862p;85p'` on the pinned gate = the four cited edit sites);
+  independent re-sweep through the tool from a spec cut from the pinned
+  artifact (`python3` builder asserts every count==1) → `CONTROL: GREEN`,
+  B1–B9 killed with failing counts 1/2/3/1/2/1/2/2 of 16 exactly as the
+  note's table, B5+B10 `PASS (16 cases)`, `MUTATE_RESTORE: OK` before=after,
+  `MUTATE: DONE (target=surface-census-b4 defects=10 killed=8 survived=2
+  inconclusive=0 kill-rate=80 %)`, exit 0; tool selftest 24/24; executor
+  evidence dir present (`results.json`: control_green true, D5 killed,
+  node v24.21.0).
+  SCORECARD round-3 moves: depth improved (second kill-rate on a second
+  language — same 80 % headline, divergence finding in kill width +
+  survivor composition; counting commands in the move-log row), operability
+  improved (first tool, selftest 24/24, both fleet cases reproduced through
+  it; counting commands in the move-log row).
+  SHONEN.md boxes updated with the audit lanes as named non-author
+  verifiers (`[x]` per PROTOCOL.md mark spec — each box cites its verifier's
+  retained evidence): SKILL craft → TAMESHI-B3 (appendix manifests replayed
+  end-to-end through the tool), end-to-end task → TAMESHI-B1 (independent
+  driver replay of the bash case's control + kill + both survivors),
+  no-oral-context → TAMESHI-B2 (the executor's D5 kill re-run through the
+  tool, same verdict + same mutant sha), PROVINCE accuracy → TAMESHI-B3
+  (`MUTATE_RESTORE: OK` ×2, both sibling trees porcelain-clean — read-only
+  discipline held by every lane that touched a substrate).
+  Carried to round 4 (recommendations, not absorbed): kumitate integration
+  groups + round-gate `INTERNAL_ERROR` arm, kagi live verdicts 5/6 + F-2's
+  two-lines-per-path fix — still sibling-owned; bash U2/U3 (verbs-path
+  mutants are host-gated) and U4 (fallback `checklist-run.sh` unmeasured);
+  both cases' U1 (coordinated multi-edit rewrites) and U5 (cross-host
+  stability); the 50 % crossover remains unprobed — both measurements sit
+  at 80 %, so the band interiors are still unmeasured; the executor's U3
+  (full-sweep driver run from SKILL.md alone, survivor probes, Appendix B
+  execution) is the natural no-oral-context completion; SKILL's band table
+  still carries the ≥2-lane generality bar — a third gate (or a fleet
+  lane adopting the tool) is the next depth move.
