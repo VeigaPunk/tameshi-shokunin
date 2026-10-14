@@ -314,3 +314,51 @@ Executed at this append, 2026-10-14T19:21:00Z (all six rows; rows 3/4 show the t
 *What the cadence is not.* No daemon and no timer: the ledger stays the standing view + this policy + the pin read as an executed command at a round boundary; who runs it remains the dispatcher's call ([O] no round created a background process; [U] whether a fleet driver would invoke it unaided). Divergence between a cadence re-sweep and an owner's own receipt is the FINDING (per-revision, per-host scope) — never smoothed.
 
 New errata entries go below this one.
+
+**ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by T9-1, tameshi round 9; `plans/round-9.plan.md` leg 1).** ER-3 landed the cadence as policy + one executed read; this is the policy's first invocation at a round boundary — the receipt. No §1–§4 cell is edited; the moved cells are append-only readings, old tables stand at their revisions, and a moved pin is never re-interpreted.
+
+*Tick — exact command set and scratch.* Per case, ER-3's command set verbatim (`sha256sum <gate-file>`; `git -C <repo> show HEAD:<path> | sha256sum`; `git -C <repo> status --porcelain -- <path>`) plus the ancestor check `git -C <repo> merge-base --is-ancestor <rev> HEAD`; then the harness itself: `bash tools/mutate-and-run.sh --selftest` and `bash tools/mutate-and-run.sh --regression --workdir /tmp/w9-tameshi-t91/regression`. Scratch `/tmp/w9-tameshi-t91/` (`tick.log` = both harness runs; `pin-read.log` = the raw six-case read, second pass 20:00:29Z). Tool at the tick `cf41efaa8be5f52d…` (1 341 L / 61 632 B, r7-1): **held** vs ER-2's pin (`:281`).
+
+*Pin read (executed at the tick, 19:58Z; second raw pass 20:00:29Z, same readings):*
+
+| # | case | recorded pin @ recorded rev | live | live = HEAD blob | worktree · recorded rev ancestor | reading |
+|---|---|---|---|---|---|---|
+| 1 | kimi-census | `83016d45…` @ `175de6ba` | `83016d45…` | yes | clean · yes | current |
+| 2 | surface-census | `275d8294…` @ `fecee874` | `275d8294…` | yes | clean · yes | current |
+| 3 | tsukuroi-census | `084951be…` @ `165307fe` | `bba6cdf6…` (1 472 L / 73 919 B) | yes | clean · yes | **stale** |
+| 4 | mado-verify | `d7edaab4…` @ `eead56b2` | `7da4ec50…` (2 887 L / 131 612 B) | yes | clean · yes | **stale** |
+| 5 | checklist-run | `7e5ec98b…` @ `fecee874` | `7e5ec98b…` | yes | clean · yes | current |
+| 6 | claims-check | `e9a21b44…` @ `175de6ba` | `e9a21b44…` | yes | clean · yes | current |
+
+Headline as measured: `LEDGER: 6 cases in; target current=4 stale=2 drift=0; tool held (cf41efaa…)`. Rows 3/4 are the two ER-3 already read `stale` (row 4 additionally `drift`); mado's `drift` reading is closed — the worktree is clean at this read and the edit is now a commit (below). Rows 1/2/5/6 read `current`, unchanged since ER-3.
+
+*Drift events recorded (trigger 3 · date · old → new · cause where readable).* Both repos' round-8 commits are stamped 2026-10-14T19:55:09Z — after ER-3's read, before this tick. Mado's commit carried the gate edit; tsukuroi's is the scribe's land (its gate path was last moved by round 7).
+
+- **row 3, tsukuroi `tools/tsukuroi-census.sh`** — `084951be…` @ `165307fe` (round 4) → **`bba6cdf6…`** @ HEAD `72b038d` (round-8 commit). Readable blob chain: `084951be` (`165307fe`) → `aae45531` (`da95290`, round 5, 17:33:30Z — the owner hardening §1.3 already records as its replay revision) → `bba6cdf6` (`aa136d6`, round 7, 19:06:31Z). Commit messages are round-generic; the writers are the owner's own lanes.
+- **row 4, mado `tools/mado-verify.sh`** — `d7edaab4…` @ `eead56b2` (round 5) → **`7da4ec50…`** @ HEAD `12c8f08` (round-8 commit). Chain: `d7edaab4` (`eead56b2`) → `c4c1afb7` (`c8f6667`, round 6, 18:17:26Z — the hardening §1.4 records) → `90d50cdd` (`0c20a76`, round 7, 19:06:31Z) → `7da4ec50` (`12c8f08`). The working-tree transients already on record — `6ea07110…` (round-9 plan [O]) and `dc864c6a…` (ER-3) — resolved into the committed `7da4ec50`; `drift` is superseded by `stale`, not left open.
+- [U] what each moved revision's mechanisms do — whether the recorded verdict/survivor classes reproduce at `bba6cdf6…` / `7da4ec50…` — is unmeasured here; that is this round's re-sweep work (its own appended rows), not this receipt.
+
+*Regression re-run — the instrument's own gate (receipt; workdirs `/tmp/w9-tameshi-t91/regression/` kept).* `MUTATE_SELFTEST: 67/67 pass` · `VERDICT: PASS`, rc 0. `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, rc 0, `REGRESSION_DATE: 2026-10-14T19:58:18Z`; every leg git-materialized at its recorded rev, `MUTATE_RESTORE: OK` per leg (target-sha256 before = after = the pinned bytes):
+
+| leg | materialized rev | pin sha256 | sweep | table line | case |
+|---|---|---|---|---|---|
+| js-kimi-census | `175de6ba…` | `83016d45…` | 8/10 (80 %) | `match=10/10 … flips=0` | PASS |
+| bash-surface-census | `fecee874…` | `275d8294…` | 8/10 (80 %) | `match=10/10 … flips=0` | PASS |
+| bash-tsukuroi-census | `165307fe…` | `084951be…` | 6/10 (60 %) | `match=10/10 … flips=0` | PASS |
+| bash-mado-verify | `eead56b2…` | `d7edaab4…` | 4/10 (40 %) | `match=10/10 … flips=0` | PASS |
+
+Two measured caveats, stated not smoothed: (a) the tool embeds **4** legs — cases 5/6 (checklist-run, claims-check) carry no `REGRESSION` line at `cf41efaa…`; the leg-cut decision stands with the tool owner (ER-2's named hand-offs, `:282`), nothing re-cut to manufacture a line; (b) the legs replay recorded pins while live gates 3/4 read `stale` — a git-materialized leg cannot be moved by a drifted tree (the tool's own selftest arms: "drifted working tree does not move a git-pinned leg"; "drifted leg swept the pinned blob bytes, not the tree"), so this PASS is a statement about the recorded revisions, not the live files.
+
+*What this tick closes, and what it does not.* U9 gets its first executed firing: the tick ran at a round boundary, the six-cell read and both drift events are appended, and the engine re-passed at the revision ER-2 pinned. It closes nothing else: the re-sweeps of the two `stale` cases land as their own rows, no rate is re-cut, `stale=2` is the reading — a tick that read `stale=0` would be as complete. Sibling trees read-only, clean before and after (kumitate `175de6b` · kagi `fecee87` · tsukuroi `72b038d` · mado `12c8f08`). A divergence between this tick and any owner's receipt is the FINDING, never smoothed.
+
+New errata entries go below this one.
+
+**ER-4 addendum — post-tick continuation: both moved gates read worktree-dirty again, minutes after the tick (O; appended 2026-10-14 by T9-1; ER-1's post-write-drift precedence).** The tick read the two moved cells clean/`stale`; at the read below both owners' gates carry uncommitted edits again. No ER-4 cell is re-cut — both readings are true at their timestamps, and the working revisions are moving: re-read before quoting. [I] the writers are the owners' own round-9 lanes — their `plans/round-9-record-draft.md` files and tsukuroi's `corpus/knowledge/aur-drift-receipt-r9.md` land in the same minutes, and tameshi lanes never write sibling gates (`PROVINCE.md`).
+
+- **tsukuroi `tools/tsukuroi-census.sh`** — worktree `5d16378d…` (1 535 L / 79 432 B, mtime 20:02:42Z), `git diff --numstat` +63/−0 vs HEAD blob `bba6cdf6…` → reading **stale + drift** (ER-4 row 3 read `stale`, clean).
+- **mado `tools/mado-verify.sh`** — worktree `5b6ace8e…` (3 076 L / 141 461 B, mtime 20:02:38Z), +196/−7 vs HEAD blob `7da4ec50…` → reading **stale + drift** (ER-4 row 4 read `stale`, clean).
+- Tool re-read at 20:02Z: `cf41efaa8be5f52d…`, mtime 15:29:01 −03:00 — still **held**; ER-4's regression receipt stands as the tick's record.
+
+Consequence for the cadence: trigger T3 is live again on both legs; any re-sweep must pin the revision it measures (the moved substrate's re-pin rule, ER-3) and never re-interpret a moving file. `drift` here is a reading, not a defect — the owners are editing their own gates.
+
+New errata entries go below this one.

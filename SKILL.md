@@ -1151,3 +1151,120 @@ six-case reading moves only where measurement moved:
   crossover; the two round-8 notes' own unknowns.
 - **Read the method, not the rate** — at six cases the constant remains the
   survivor taxonomy and the composition rule, not the headline percentage.
+
+## The cadence's first scheduled tick, and the service's limits (round 9, measured)
+
+Round 8 landed the cadence as policy + a demonstrated pin read; round 9 runs it at
+a round boundary — the mechanism's **first scheduled tick** — and lands the piece
+an intake decision needs beside it: **what tameshi refuses to mutation-test**.
+No daemon, no timer: the tick is the round-8 section's command, executed and
+pasted below; whether a fleet driver would ever invoke it with no lane acting
+stays [U] (`:1019`).
+
+### The tick, executed
+
+Pin read at the round-9 boundary, **2026-10-14T20:00:34Z** (host `plazir27`;
+scratch `/tmp/w9-tameshi-t93/pin-read-final.txt`; recorded pins/revisions are the
+harness's `PIN_*`/`REV_*` for the four embedded legs
+(`tools/mutate-and-run.sh:511-518`), and the r8 notes' pins for cases 5–6):
+
+```
+case                     recorded-rev live-HEAD    anc      pin==live live==HEADblob worktree   reading
+js-kimi-census           175de6ba     175de6ba     yes      83016d45==83016d45 83016d45==83016d45 clean      current
+bash-surface-census      fecee874     fecee874     yes      275d8294==275d8294 275d8294==275d8294 clean      current
+bash-tsukuroi-census     165307fe     72b038da     yes      084951be==bba6cdf6 bba6cdf6==bba6cdf6 clean      stale
+bash-mado-verify         eead56b2     12c8f08a     yes      d7edaab4==7da4ec50 7da4ec50==7da4ec50 clean      stale
+kagi-checklist-run       fecee874     fecee874     yes      7e5ec98b==7e5ec98b 7e5ec98b==7e5ec98b clean      current
+kumitate-claims-check    175de6ba     175de6ba     yes      e9a21b44==e9a21b44 e9a21b44==e9a21b44 clean      current
+```
+
+4 × `current` · 2 × `stale` · 0 × `drift`; tool **held** at `cf41efaa…`
+(`sha256sum tools/mutate-and-run.sh`); all four sibling trees porcelain-clean
+(0 lines each) *at the tick*. Both `stale` cells are their repos' committed HEAD
+blobs — no drift at this read: tsukuroi-census `084951be…` → `bba6cdf6…`
+(HEAD `72b038da`), mado-verify `d7edaab4…` → `7da4ec50…` (HEAD `12c8f08a`). The
+round-8 tick read mado's cell as `90d50cdd…` (clean) and, six minutes later,
+`dc864c6a…` (dirty); that in-flight edit is now committed as `7da4ec50…` — the
+drift closed into a `stale` cell. The tick is a **timestamped observation,
+re-run at the next boundary** — never carried as a standing claim.
+
+Falsifier, aimed at the reader (scratch copy, `/tmp/w9-tameshi-t93/falsifier/`):
+the same script with js-kimi-census's recorded pin replaced by a superseded sha
+(`084951be…`) reads `stale`, while the row as recorded reads `current` — same
+substrate, same moment; the reading follows the row's pin, not the substrate's
+history.
+
+The ledger carries its own record of this same tick — **ER-4**
+(`corpus/knowledge/fleet-kill-rate-ledger.md:318-353`), appended independently by
+the tick lane (T9-1): the same six readings (its second raw pass 20:00:29Z), both
+drift-event chains (`084951be…` → `bba6cdf6…`; `d7edaab4…` → `7da4ec50…`), and the
+same regression receipt — two records of one tick, kept un-merged and agreeing.
+
+Re-read two minutes later (**20:03:34Z**, same scratch): both moving cells now
+read `stale + drift` — tsukuroi's worktree `b54f5732…` vs its HEAD blob
+`bba6cdf6…`, mado's `31364115…` vs `7da4ec50…`, both ` M` on
+`git status --porcelain`; the owners' own round-9 lanes are editing their gates
+(ER-4's addendum, `:354-360`, records the same continuation at 20:02Z with its
+then-current shas). The tick's clean reading stands at its timestamp; a moving
+file is never re-interpreted, and any re-sweep must pin the revision it measures
+(T3).
+
+### The receipt at this boundary
+
+Run at the tick (this lane; `--selftest` 19:58:49Z, `--regression`
+`REGRESSION_DATE 2026-10-14T19:58:59Z`; logs `/tmp/w9-tameshi-t93/selftest.txt`,
+`/tmp/w9-tameshi-t93/regression.txt`):
+
+- `--selftest` → `MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0.
+- `--regression` → 4 legs, each `match=10/10 … flips=0` (killed 8/8/6/4),
+  closing `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
+  killed-delta<=0 flips<=0)`, rc 0, tool `cf41efaa…`; workdir kept
+  `/tmp/w9-tameshi-t93/regression`.
+
+The legs replay their pinned blobs — git-materialized
+(`tools/mutate-and-run.sh:733-791`), so the two `stale` substrates cannot move
+them; re-verified at this boundary, since all four legs matched while cases 3–4
+read `stale`. Cases 5–6 are still not embedded: their rows carry no `REGRESSION`
+line — named debt, not smoothed (`fleet-kill-rate-ledger.md:282`).
+
+### The re-pin semantics, as executed
+
+- **T1 fired for two cases.** The rule is the round-8 section's (`:1069-1090`):
+  re-measure at the live revision, or record the STALE cell with its reason —
+  never an edit of the recorded table.
+- **The intake precondition round 8 named is present, not errata.** The opt-in
+  protocol carries the re-pin rule — "A moved substrate needs a re-pin, never a
+  re-interpretation of the old table"
+  (`corpus/knowledge/service-optin-protocol.md:59-62`) — cited here.
+- **What a re-sweep produces lands appended.** The outcome is an appended row in
+  `fleet-kill-rate-ledger.md` (append-only), the recorded tables byte-identical;
+  a rate never travels to a later revision. ER-4 and its addendum name the
+  re-sweeps of the two moved cases as follow-on rows — open at this write (the
+  addendum reads them `stale + drift`), and an unlanded leg is named debt, never
+  assumed.
+
+### The service's limits — what tameshi refuses to mutation-test
+
+The cadence applies this table at intake. Each refusal carries a measured anchor —
+a refusal without an anchor is not written; the table states refusals, it does not
+adjudicate them. (Anchors `:…` are this page; the others are repo-relative.) The
+standalone note `corpus/knowledge/service-limits.md` (T9-2, this round) carries
+the same rows as the detail of record — verbatim anchor quotes, the trigger column
+and the intake-precondition check; this page is the compact rendering, and a
+divergence between the two is the finding, never smoothed.
+
+| # | Refusal | What it means | Anchor |
+|---|---|---|---|
+| a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:26-30`; `fleet-suite-census.md:277-286` |
+| b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:813-817`; `:840-844` |
+| c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:823-825` |
+| d | Live substrates / sessions | never read; a live-plane probe is a PATH-level stub, never the session | `service-optin-protocol.md:129-132` |
+| e | Credential material / endpoint health | out of province — report, never absorb | `PROVINCE.md:14-18`, `:20` |
+| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:879-881`; `fleet-suite-census.md:288-291` |
+| g | Coordinated multi-edit rewrites | outside the defect vocabulary — no rate claimed | `fleet-kill-rate-ledger.md:220` (U2) |
+| h | The exit-flatten family | a harness boundary — named, not fixed | `service-optin-protocol.md:267-269` |
+| i | A directed-repair re-run presented as a rate | recorded as directed repair, not an independent rate | `fleet-kill-rate-ledger.md:35-36` |
+| j | Foreign scratch | never removed | `service-optin-protocol.md:86-91` |
+
+Anchors re-resolved 2026-10-14 on the live bytes; a reader on a differing revision
+re-resolves rather than trusts.
