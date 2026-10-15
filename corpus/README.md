@@ -18,3 +18,19 @@
 
 See `QUALITY.md` (admits only falsifiable, source-cited claims;
 rejection kept as evidence of taste).
+
+## Fleet round lessons
+
+| Entry | Admitted / rejected | Evidence |
+|---|---|---|
+| `lessons/round-1.md` — fleet round-1, distinct from the historical training arc | Admitted: canonical, durable lane assertions; rejected: same-lane promotion authority and broad current cold-read credit from one historical JS mutant. Outside admit/reject review remains open. | `../reports/round-1-calibration.md`; `../LOG.md` fleet round-1 entries |
+
+Fleet round-1 status: **local calibration correction retained; formal
+admission blocked**, not a completed training round. The current exact-32
+plan is validated but undispatched because existing role aliases do not
+realize the operator contract. The lesson's ER-I1 and the audit's
+`## Interactive continuation` distinguish inherited claims from fresh
+local checks. Full outputs, exits and exact route/receipt prerequisites
+are retained under `../.ufo/evidence/fleet-round-1/`; authoritative local
+handoff: `../.ufo/continuation/fleet-round-1.md`.
+

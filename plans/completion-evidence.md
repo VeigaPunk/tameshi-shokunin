@@ -154,3 +154,36 @@ Sources read by this lane (all read-only): `LOG.md`, `SCORECARD.md`,
 `reports/r7-aud-t7.md` … `reports/r10-aud-t10.md`, `corpus/README.md`,
 `corpus/knowledge/{fleet-kill-rate-ledger,service-optin-protocol,service-limits}.md`,
 and `git log`/`git status` in this repo.
+
+## Fleet round-1 correction — 2026-10-15
+
+The historical SHONEN-status interpretation at lines 44–59 is superseded by
+`reports/round-1-calibration.md#box-1` through `#box-4` and that audit's
+historical-independence correction. TAMESHI-B1/B2/B3/B4 remain historical
+run lineage, not independent promotion authority: a dispatched subagent is
+still the lane (`../PROTOCOL.md:63–68`). Temporary logs are not durable
+closure evidence (`../PROTOCOL.md:340–343`).
+
+The same correction applies to the promotion-authority interpretation in
+`LOG.md:237–249,283–290`, `plans/round-11.plan.md:23–25`, and the
+mark-count confirmation in `reports/r11-aud-t11.md:140`. Those historical
+bytes and reported run outcomes remain unchanged; no current promotion
+is inferred from them. Current SHONEN marks: three lane assertions and an
+unchecked no-oral-context box. A historical single-JS-mutant exercise is
+not current full-sweep/bash cold-read evidence. The bounded calibration
+move does not reopen or renumber the completed training arc.
+
+### Interactive continuation admission hold — 2026-10-15
+
+The correction above is retained as local work, not a completed fleet
+round. `SCORECARD.md`'s interactive-continuation section records the
+bounded per-axis delta and the formal dispatch block. The predecessor's
+nine-seat report does not meet the current exact-32 contract; the
+canonical planner validated 32 distinct audit scopes, but the existing
+role-to-alias bindings cannot realize the requested routes. No specialist
+was dispatched under substitute bindings and no native judgment or
+promotion is inferred. Fresh local gate/CLI evidence and exact unblocks:
+`reports/round-1-calibration.md#interactive-continuation--blocked-dispatch-local-correction-retained`
+and `.ufo/evidence/fleet-round-1/`. The launch counter still earns no
+verified-round credit. Continue through the local handoff in a fresh
+authorized session, never a second round inside this one.

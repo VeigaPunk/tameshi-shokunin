@@ -54,3 +54,100 @@ pack, `plans/completion-evidence.md:27-41`.
 Round-11's own commit is the landing that carries this file (no hash exists at
 this write; HEAD `606716f`); the round's receipts ride the record above, and
 its open items are named in the round-11 row — never closed by prose.
+
+## Current axes — fleet round-1 baseline
+
+The historical move log above predates this fleet round. It contains no
+0–10 axis scores; these bounded, reproducible local rubrics establish them
+without retrospectively grading the training arc.
+
+| Axis | Score (0–10) | Evidence / counting rule | Measured commit | Last-change round |
+|---|---|---|---|---|
+| depth | 6 | One point per recorded mutation case listed in the tool's pinned replay ledger, capped at 10. `tools/mutate-and-run.sh:84-89`; command D below. This measures documented case depth, not newly executed cases. | `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d` | fleet round-1 baseline |
+| calibration | 0 | Two points per correctly restrained, durable-evidence-linked promotion assertion (`[~]`), capped at 8; the remaining 2 require independent promotion review of all boxes. Baseline has four `[x]` marks attributed to tameshi's own dispatched agents, not independent verifiers. `SHONEN.md:5-34`; command C below. | `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d` | fleet round-1 baseline |
+
+Commands, run from this repo with `REV` set to the measured commit:
+
+```sh
+# D: recorded ledger case count = depth score (cap 10).
+git show "$REV:tools/mutate-and-run.sh" | python3 -c 'import re,sys; n=len(re.findall(r"^#   (?:js|bash)-\S+\s+\S+\s+\d+/\d+",sys.stdin.read(),re.M)); print("recorded_cases="+str(n)+" depth_score="+str(min(10,n)))'
+# C: mark census only; this upper bound awards no evidence/authority credit.
+git show "$REV:SHONEN.md" | python3 -c 'import re,sys; m=re.findall(r"^- \[([x~ ])\] ",sys.stdin.read(),re.M); print("boxes="+str(len(m))+" checked="+str(m.count("x"))+" asserted="+str(m.count("~"))+" untouched="+str(m.count(" "))+" asserted_mark_upper_bound="+str(min(8,2*m.count("~"))))'
+```
+
+**Planned:** calibration — replace unsupported completion claims with the
+canonical four-box checklist and durable, explicitly lane-authored evidence.
+Falsification: any retained `[x]` without independent provenance, any changed
+box wording, or any unresolved evidence pointer defeats the claim.
+
+**Retired:** none. Other axes in the historical log remain historical
+observations, not newly assigned axes or new round moves.
+
+## Fleet round-1 interactive continuation — local delta, admission blocked
+
+The baseline table above remains the reproducible **pre-round** record.
+The historical training arc remains intact. The driver's launch counter
+does not advance a verified-round count. This attempt continues the
+unfinished fleet round 1; it is not historical round 12 or fleet round 2.
+No numeric score is awarded as a substitute for the verdicts below.
+
+Measurement: `.ufo/evidence/fleet-round-1/calibration-acceptance.json`
+contains the exact command/program, baseline object
+`284ab0f0b8b989ee73d9c00c0c0df0a59757af8d`, candidate-file check and
+complete output. Baseline canonical rows false / four `[x]` / zero
+durable checklist links; candidate canonical rows true /
+`[~], [~], [ ], [~]` / four resolving links, comparison exit 0.
+Semantic source support was read separately and is retained in
+`reports/round-1-calibration.md#interactive-continuation--blocked-dispatch-local-correction-retained`.
+The content commit measured is cited by hash in the post-content local
+report `.ufo/reports/round-1/tameshi.md`, not guessed in this file.
+
+| Axis | Local candidate verdict | Evidence / bound |
+|---|---|---|
+| calibration (LIVE target) | improved | Unsupported independent marks withdrawn; source-linked assertions retained only within their actual scope; full cold-read box remains unchecked. Mechanical comparison plus bounded source review above. |
+| depth (LIVE guardrail) | unchanged | Runner and six recorded mutation cases unchanged; no newly measured gate. |
+| coverage | unchanged | No new domain surface admitted; the 32 audit scopes are a plan, not coverage. |
+| operability | unchanged | Existing runner passes own 80-case selftest and actual two-defect CLI scenario; no tool change or new capability claimed. |
+| freshness | unchanged | Local source rereads only; no re-pin, sibling live census or historical replay claimed. |
+| adjacency | unchanged | Existing method/product boundary retained; out-of-scope routing/config defects reported, not absorbed. |
+
+| Learning trend | Local verdict | Evidence / missing authority |
+|---|---|---|
+| expansion | unchanged | Corrections, not new knowledge on previously uncovered ground. |
+| quality | improved | Broad cold-read and independent-authority claims explicitly superseded by narrower durable evidence; historical bytes retained. |
+| discernment | unprovable-but-better | Admits/rejects documented, but no non-author spot-check of at least one admit and one reject. Lane-owned checks do not satisfy that criterion. |
+
+**Round admission: BLOCKED.** Existing live role aliases and connector
+fallback do not realize the operator contract. Exact evidence:
+`.ufo/evidence/fleet-round-1/route-bindings.json` and
+`live-seat-bindings.txt`. Canonical wave `plan` validated 32 distinct
+tasks, exit 0; neither `run` nor native `task` was invoked under wrong
+bindings. The inherited nine-seat batch cannot substitute. No completed
+or verified-round increment, promotion, native verdict or saturation is
+claimed; one observed blocked attempt is not three consecutive blocks.
+
+**Planned / concrete unblock:** preserve calibration as the lowest LIVE
+axis while this round is incomplete. Authorized route owner supplies
+content -> `@m_composer`, audits -> `@m_grok`, connector ->
+`@m_antigravity` with `@m_zfl` fallback; a fresh L1 session then
+reconciles this handoff and dispatches exactly the complete canonical
+32-scope payload before claiming a sound round. Independent admit/reject
+review and current full cold-read proof remain separate evidence debts.
+Receipt applicability must be bound to real dispatch metadata, never an
+invented task key or arbitrary configuration digest.
+
+**Retired:** none. The at-least-100 verified-round target is unchanged;
+neither a launch count nor this blocked local correction counts toward
+it without the required applicable evidence.
+
+Verification erratum for the local candidate: the initial 05:10:40Z
+CLI evidence used repo-local scratch and is rejected as nonconforming
+to `SKILL.md:25-28`, despite its valid output. The corrected actual CLI
+run at 05:14:49Z uses a fresh `/tmp/tameshi-r1-…` namespace; full
+command/program/output, runner exit 0, driver exit 0 and independent
+byte-identity assertion are retained in
+`.ufo/evidence/fleet-round-1/cli-smoke-canonical.json`. The audit's
+scratch erratum and lesson ER-I2 preserve this self-caught failure.
+That corrected run is the operative smoke evidence for the table above;
+the valid selftest is unchanged. Admission remains blocked.
+

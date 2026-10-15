@@ -11,8 +11,8 @@ measured — round 2 JS, round 3 bash, both 8/10 killed — and this page carrie
 the method as an executable recipe: numbered steps from pin to restore proof,
 defect templates with exact-string guidance, kill-rate bands, restore
 discipline, the measured bash-vs-JS divergences, and complete reproduce specs
-for both cases (Appendix A / Appendix B). An executor with no oral context can
-run either case from this page alone.
+for both cases (Appendix A / Appendix B). Historical cold-read proof covers
+one JS mutant only; current full-sweep/bash sufficiency remains unverified.
 
 ## Standing rules
 
@@ -128,11 +128,11 @@ disabled or attacked mechanism makes exactly the targeted cases fail.
   suites' own code against regressions (gates-survey-kumitate.md:144-156,
   320-331).
 
-## Mutation-sweep recipe — numbered, executable from this page alone
+## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
 
 Runs a suite's own code through one-exact-edit mutants and measures what it
-catches. Every step below is replayable by an agent with no other context; the
-two worked cases (Appendix A JS, Appendix B bash) are the calibration.
+catches. The recipe is intended to be self-contained; observed cold-read proof
+covers one historical JS mutant, not full sweeps, survivor probes or bash.
 Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
 
 1. **Pick the target and prove its control.** The suite must run hermetically
@@ -1460,3 +1460,18 @@ ran, never the working trees (`:1324-1331`).
 Append-only to the last line: nothing above this section was edited by this
 write; the recorded tables stand at their revisions, and a reader on a
 differing revision re-resolves rather than trusts.
+
+## Promotion-evidence calibration — fleet round-1
+
+This lane's current checklist is `SHONEN.md`, not the historical training
+closeout. Its supporting audit is `reports/round-1-calibration.md#box-1`.
+Tameshi-dispatched reviewers remain part of tameshi for promotion authority
+(`../PROTOCOL.md:63–68`); a different agent name does not justify `[x]`.
+Lane assertions use `[~]` with durable evidence, not temporary logs.
+
+Box 3 remains `[ ]`: `corpus/knowledge/executor-test-sufficiency.md:160–184`
+establishes a historical single-JS-mutant exercise, not a current full cold-read.
+The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;
+it is not a cold-reader exercise or an outside promotion/admission review.
+The source audit rejects the broader claim rather than upgrading its confidence.
+See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.

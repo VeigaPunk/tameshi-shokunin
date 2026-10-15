@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node",
+    "-e",
+    "<program below>"
+  ],
+  "program": "const fs=require('node:fs'), cp=require('node:child_process');\nconst protocol=fs.readFileSync('/home/vgpnk/Projects/kimi-shokunin/skills/shokunin/protocol/PROTOCOL.md','utf8');\nconst seed=protocol.slice(protocol.indexOf('The canonical \\x60SHONEN.md\\x60 seed')).split('\\n').filter(l=>/^    - \\[ \\] /.test(l)).map(l=>l.slice(4));\nif(seed.length!==4) throw new Error('canonical seed unavailable');\nconst baseline=cp.execFileSync('git',['show','284ab0f0b8b989ee73d9c00c0c0df0a59757af8d:SHONEN.md'],{encoding:'utf8'});\nconst candidate=fs.readFileSync('SHONEN.md','utf8');\nfunction check(text,label){const lines=text.trimEnd().split('\\n');const rows=lines.filter(l=>/^- \\[[x~ ]\\] /.test(l));const canonical=rows.length===4&&rows.every((l,i)=>l.replace(/^(- \\[)[x~ ](\\] )/,'$1 $2')===seed[i]);const marks=rows.map(l=>l[3]);let links=0;for(let i=0;i<lines.length;i++){if(!/^- \\[[x~ ]\\] /.test(lines[i]))continue;const next=lines[i+1]||'';const match=/^  \\[[^\\]]+\\]\\(([^#)]+)#([^)]*)\\)$/.exec(next);if(!match)continue;const path=match[1],anchor=match[2];if(path.startsWith('/')||path.includes('..')||path.startsWith('local:'))continue;if(fs.existsSync(path)){const body=fs.readFileSync(path,'utf8');const anchors=body.split('\\n').filter(l=>/^#{1,6} /.test(l)).map(l=>l.replace(/^#{1,6} /,'').toLowerCase().replace(/[^a-z0-9 -]/g,'').replace(/ /g,'-'));if(anchors.includes(anchor))links++;}}\nconst pass=canonical&&JSON.stringify(marks)==='[\"~\",\"~\",\" \",\"~\"]'&&links===4;\nconsole.log('CALIBRATION_'+label+': '+(pass?'PASS':'FAIL')+' (canonical='+canonical+' marks='+JSON.stringify(marks)+' durable-links='+links+'/4 independent-promotion=false full-cold-read=false)');return pass;}\nconst before=check(baseline,'BASELINE'),after=check(candidate,'CANDIDATE');\nif(before||!after)process.exitCode=1;\n",
+  "exitCode": 0,
+  "stdout": "CALIBRATION_BASELINE: FAIL (canonical=false marks=[\"x\",\"x\",\"x\",\"x\"] durable-links=0/4 independent-promotion=false full-cold-read=false)\nCALIBRATION_CANDIDATE: PASS (canonical=true marks=[\"~\",\"~\",\" \",\"~\"] durable-links=4/4 independent-promotion=false full-cold-read=false)\n",
+  "stderr": "",
+  "scope": "Author-local document admission check. Semantic source ranges were separately inspected with read. Not a permanent test, outside spot-check or native judgment."
+}

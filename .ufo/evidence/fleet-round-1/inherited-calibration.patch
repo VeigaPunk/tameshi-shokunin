@@ -1,0 +1,206 @@
+diff --git i/LOG.md w/LOG.md
+index 3b40f50..8961f13 100644
+--- i/LOG.md
++++ w/LOG.md
+@@ -388,3 +388,16 @@
+   Axis: operability (terminal — the close). Verifiers: AUD-T11 (12-row
+   verdict table, CONFIRMED ×12) | VER-T11 (poll lane; `reports/r11-ver-t11.md`
+   not landed at this write — the state, not smoothed).
++
++- 2026-10-15 — fleet round-1, calibration baseline (separate from the
++  completed historical training arc). Motivating evidence: at
++  `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d`, `SCORECARD.md` has a move log
++  but no current numeric axes table; `SHONEN.md:5-34` marks every box `[x]`
++  using tameshi-dispatched B1/B2/B3/B4 evidence and temporary paths.
++  Canonical `PROTOCOL.md:63-73,340-343,413-431` requires lane-dispatched
++  agents to count as the lane, durable evidence, and canonical box wording.
++  Added bounded current-axis rubrics and commands to `SCORECARD.md`:
++  command D observed `recorded_cases=6 depth_score=6`; command C observed
++  `boxes=4 checked=4 asserted=0 untouched=0 calibration_score=0`.
++  Selected the lower axis, calibration. One intended improvement: truthful,
++  source-linked promotion assertions, not promotion or a tool-code change.
+diff --git i/SCORECARD.md w/SCORECARD.md
+index b8c946e..08d352a 100644
+--- i/SCORECARD.md
++++ w/SCORECARD.md
+@@ -54,3 +54,32 @@ pack, `plans/completion-evidence.md:27-41`.
+ Round-11's own commit is the landing that carries this file (no hash exists at
+ this write; HEAD `606716f`); the round's receipts ride the record above, and
+ its open items are named in the round-11 row — never closed by prose.
++
++## Current axes — fleet round-1 baseline
++
++The historical move log above predates this fleet round. It contains no
++0–10 axis scores; these bounded, reproducible local rubrics establish them
++without retrospectively grading the training arc.
++
++| Axis | Score (0–10) | Evidence / counting rule | Measured commit | Last-change round |
++|---|---|---|---|---|
++| depth | 6 | One point per recorded mutation case listed in the tool's pinned replay ledger, capped at 10. `tools/mutate-and-run.sh:84-89`; command D below. This measures documented case depth, not newly executed cases. | `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d` | fleet round-1 baseline |
++| calibration | 0 | Two points per correctly restrained, durable-evidence-linked promotion assertion (`[~]`), capped at 8; the remaining 2 require independent promotion review of all boxes. Baseline has four `[x]` marks attributed to tameshi's own dispatched agents, not independent verifiers. `SHONEN.md:5-34`; command C below. | `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d` | fleet round-1 baseline |
++
++Commands, run from this repo with `REV` set to the measured commit:
++
++```sh
++# D: recorded ledger case count = depth score (cap 10).
++git show "$REV:tools/mutate-and-run.sh" | python3 -c 'import re,sys; n=len(re.findall(r"^#   (?:js|bash)-\S+\s+\S+\s+\d+/\d+",sys.stdin.read(),re.M)); print("recorded_cases="+str(n)+" depth_score="+str(min(10,n)))'
++# C: mark census only; this upper bound awards no evidence/authority credit.
++git show "$REV:SHONEN.md" | python3 -c 'import re,sys; m=re.findall(r"^- \[([x~ ])\] ",sys.stdin.read(),re.M); print("boxes="+str(len(m))+" checked="+str(m.count("x"))+" asserted="+str(m.count("~"))+" untouched="+str(m.count(" "))+" asserted_mark_upper_bound="+str(min(8,2*m.count("~"))))'
++```
++
++**Planned:** calibration — replace unsupported completion claims with the
++canonical four-box checklist and durable, explicitly lane-authored evidence.
++Falsification: any retained `[x]` without independent provenance, any changed
++box wording, or any unresolved evidence pointer defeats the claim.
++
++**Retired:** none. Other axes in the historical log remain historical
++observations, not newly assigned axes or new round moves.
++
+diff --git i/SHONEN.md w/SHONEN.md
+index 7507bcd..7a90942 100644
+--- i/SHONEN.md
++++ w/SHONEN.md
+@@ -1,36 +1,12 @@
+-# SHONEN — tameshi-shokunin (probation checklist)
++# tameshi-shokunin — Promotion checklist
+ 
+-Seed checklist (verbatim shape per PROTOCOL.md; `<name>` -> tameshi):
++Promotion to shokunin requires all of:
+ 
+-- [x] SKILL craft — `SKILL.md` holds real decision tables / error patterns /
+-  checklists for the domain, every rule citing a source (verifier:
+-  TAMESHI-B3 — the SKILL's Appendix A + B defect manifests replayed
+-  end-to-end through `tools/mutate-and-run.sh`, every per-defect verdict
+-  identical to both notes' tables, restore OK ×2; evidence:
+-  `/tmp/tameshi-b3-r3b-1-work/{dsweep,bsweep}/results.tsv` +
+-  `/tmp/tameshi-b4-r3b-verify/sweep/` (scribe re-sweep, 8/10, 2026-10-14))
+-- [x] End-to-end task — one domain task executed start-to-finish and logged
+-  (verifier: TAMESHI-B1 — rebuilt bash mutants B1/B5/B10 from a
+-  `cmp`-verified pristine byte copy with its own driver (count==1 asserts):
+-  control `PASS (16 cases)`, B1 `FAIL (1/16 cases)`, B5/B10 `PASS (16
+-  cases)`, kagi tree clean; evidence: `/tmp/tameshi-b1-r3b/evidence/`; the
+-  task itself = round 3 R3-1, logged in `LOG.md` +
+-  `corpus/knowledge/mutation-case-kagi-census.md`)
+-- [x] No-oral-context — a fresh agent can execute the instructions from
+-  `SKILL.md` alone (verifier: TAMESHI-B2 — the executor lane ran the JS
+-  case's D5 from `SKILL.md` @ `dd2f4dee…3753` alone
+-  (`corpus/knowledge/executor-test-sufficiency.md`: control 43/43 first
+-  try, kill `42/43 FAIL`, all 10 manifest strings unique at their cited
+-  lines); B2 re-ran the same kill through the tool with the identical
+-  verdict and mutant sha `b0dfe1a7…0668`; evidence:
+-  `/tmp/tameshi-b2-r3b-work/D5/results.tsv`)
+-- [x] PROVINCE accuracy — `PROVINCE.md` matches observed reality; no
+-  cross-domain bleed (verifier: TAMESHI-B3 — `MUTATE_RESTORE: OK` on both
+-  substrates (target sha256 before=after on kagi `surface-census.sh` and
+-  kumitate `kimi-census.mjs`), kagi + kumitate trees porcelain-clean after
+-  every round-3 sweep; every lane's mutants lived under its own `/tmp`
+-  namespace, no sibling tree written; evidence:
+-  `/tmp/tameshi-b3-r3b-1-work/{dsweep,bsweep}` `MUTATE_RESTORE` lines,
+-  scribe re-check 2026-10-14)
+-
+-Header pins: PROTOCOL.md lines 419-428 (seed), lines 430 (mark spec).
++- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources
++  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-1)
++- [~] At least one end-to-end domain task executed and logged in LOG.md
++  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-2)
++- [ ] Instructions executable by an agent without oral context
++  [historical JS subset only (corpus/knowledge/executor-test-sufficiency.md); current full cold-read unperformed; no independent promotion verifier](reports/round-1-calibration.md#box-3)
++- [~] No cross-domain bleed (PROVINCE.md still accurate)
++  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-4)
+diff --git i/SKILL.md w/SKILL.md
+index ac77409..6033878 100644
+--- i/SKILL.md
++++ w/SKILL.md
+@@ -11,8 +11,8 @@ measured — round 2 JS, round 3 bash, both 8/10 killed — and this page carrie
+ the method as an executable recipe: numbered steps from pin to restore proof,
+ defect templates with exact-string guidance, kill-rate bands, restore
+ discipline, the measured bash-vs-JS divergences, and complete reproduce specs
+-for both cases (Appendix A / Appendix B). An executor with no oral context can
+-run either case from this page alone.
++for both cases (Appendix A / Appendix B). Historical cold-read proof covers
++one JS mutant only; current full-sweep/bash sufficiency remains unverified.
+ 
+ ## Standing rules
+ 
+@@ -128,11 +128,11 @@ disabled or attacked mechanism makes exactly the targeted cases fail.
+   suites' own code against regressions (gates-survey-kumitate.md:144-156,
+   320-331).
+ 
+-## Mutation-sweep recipe — numbered, executable from this page alone
++## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+ 
+ Runs a suite's own code through one-exact-edit mutants and measures what it
+-catches. Every step below is replayable by an agent with no other context; the
+-two worked cases (Appendix A JS, Appendix B bash) are the calibration.
++catches. The recipe is intended to be self-contained; observed cold-read proof
++covers one historical JS mutant, not full sweeps, survivor probes or bash.
+ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
+ 
+ 1. **Pick the target and prove its control.** The suite must run hermetically
+@@ -1459,4 +1459,19 @@ ran, never the working trees (`:1324-1331`).
+ 
+ Append-only to the last line: nothing above this section was edited by this
+ write; the recorded tables stand at their revisions, and a reader on a
+-differing revision re-resolves rather than trusts.
+\ No newline at end of file
++differing revision re-resolves rather than trusts.
++
++## Promotion-evidence calibration — fleet round-1
++
++This lane's current checklist is `SHONEN.md`, not the historical training
++closeout. Its supporting audit is `reports/round-1-calibration.md#box-1`.
++Tameshi-dispatched reviewers remain part of tameshi for promotion authority
++(`../PROTOCOL.md:63–68`); a different agent name does not justify `[x]`.
++Lane assertions use `[~]` with durable evidence, not temporary logs.
++
++Box 3 remains `[ ]`: `corpus/knowledge/executor-test-sufficiency.md:160–184`
++establishes a historical single-JS-mutant exercise, not a current full cold-read.
++The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;
++it is not a cold-reader exercise or an outside promotion/admission review.
++The source audit rejects the broader claim rather than upgrading its confidence.
++See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.
+\ No newline at end of file
+diff --git i/corpus/README.md w/corpus/README.md
+index e824d42..3868e69 100644
+--- i/corpus/README.md
++++ w/corpus/README.md
+@@ -18,3 +18,9 @@
+ 
+ See `QUALITY.md` (admits only falsifiable, source-cited claims;
+ rejection kept as evidence of taste).
++
++## Fleet round lessons
++
++| Entry | Admitted / rejected | Evidence |
++|---|---|---|
++| `lessons/round-1.md` — fleet round-1, distinct from the historical training arc | Admitted: canonical, durable lane assertions; rejected: same-lane promotion authority and broad current cold-read credit from one historical JS mutant. Outside admit/reject review remains open. | `../reports/round-1-calibration.md`; `../LOG.md` fleet round-1 entries |
+diff --git i/plans/completion-evidence.md w/plans/completion-evidence.md
+index ef2bee0..c0dbfd7 100644
+--- i/plans/completion-evidence.md
++++ w/plans/completion-evidence.md
+@@ -153,4 +153,22 @@ Sources read by this lane (all read-only): `LOG.md`, `SCORECARD.md`,
+ `plans/round-11.plan.md`, `plans/round-4…10-record-draft.md`,
+ `reports/r7-aud-t7.md` … `reports/r10-aud-t10.md`, `corpus/README.md`,
+ `corpus/knowledge/{fleet-kill-rate-ledger,service-optin-protocol,service-limits}.md`,
+-and `git log`/`git status` in this repo.
+\ No newline at end of file
++and `git log`/`git status` in this repo.
++
++## Fleet round-1 correction — 2026-10-15
++
++The historical SHONEN-status interpretation at lines 44–59 is superseded by
++`reports/round-1-calibration.md#box-1` through `#box-4` and that audit's
++historical-independence correction. TAMESHI-B1/B2/B3/B4 remain historical
++run lineage, not independent promotion authority: a dispatched subagent is
++still the lane (`../PROTOCOL.md:63–68`). Temporary logs are not durable
++closure evidence (`../PROTOCOL.md:340–343`).
++
++The same correction applies to the promotion-authority interpretation in
++`LOG.md:237–249,283–290`, `plans/round-11.plan.md:23–25`, and the
++mark-count confirmation in `reports/r11-aud-t11.md:140`. Those historical
++bytes and reported run outcomes remain unchanged; no current promotion
++is inferred from them. Current SHONEN marks: three lane assertions and an
++unchecked no-oral-context box. A historical single-JS-mutant exercise is
++not current full-sweep/bash cold-read evidence. The bounded calibration
++move does not reopen or renumber the completed training arc.
+\ No newline at end of file

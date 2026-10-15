@@ -388,3 +388,121 @@
   Axis: operability (terminal — the close). Verifiers: AUD-T11 (12-row
   verdict table, CONFIRMED ×12) | VER-T11 (poll lane; `reports/r11-ver-t11.md`
   not landed at this write — the state, not smoothed).
+
+- 2026-10-15 — fleet round-1, calibration baseline (separate from the
+  completed historical training arc). Motivating evidence: at
+  `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d`, `SCORECARD.md` has a move log
+  but no current numeric axes table; `SHONEN.md:5-34` marks every box `[x]`
+  using tameshi-dispatched B1/B2/B3/B4 evidence and temporary paths.
+  Canonical `PROTOCOL.md:63-73,340-343,413-431` requires lane-dispatched
+  agents to count as the lane, durable evidence, and canonical box wording.
+  Added bounded current-axis rubrics and commands to `SCORECARD.md`:
+  command D observed `recorded_cases=6 depth_score=6`; command C observed
+  `boxes=4 checked=4 asserted=0 untouched=0 calibration_score=0`.
+  Selected the lower axis, calibration. One intended improvement: truthful,
+  source-linked promotion assertions, not promotion or a tool-code change.
+
+- 2026-10-15 — fleet round-1 interactive continuation, **blocked at
+  dispatch; no completed-round credit**. Motivation: inherited HEAD
+  `284ab0f0b8b989ee73d9c00c0c0df0a59757af8d` closes the historical
+  training arc, while this separate fleet calibration round left six
+  tracked paths dirty plus an untracked lesson/audit. The entry inventory
+  and inherited diff are retained under `.ufo/evidence/fleet-round-1/`;
+  native session bodies were neither opened nor committed.
+  The current WWKD is `.ufo/plans/fleet-round-1-interactive-wwkd.md`.
+  Re-read canonical UFO run-logic §§0/4.3/5 and shokunin's ordered
+  protocol/appendix/mission/axes/corpus/learning inputs. Operator
+  exact-32, no-push and repo-local report directions supersede the old
+  headless prompt. Driver counter 1 is not a completed-round count.
+
+  Lowest LIVE axis: calibration, selected from SCORECARD's current
+  assigned baseline, not historical terminal rows. Reconciled inherited
+  SHONEN/skill/audit/lesson/pack corrections: four unsupported promotion
+  marks become three bounded lane assertions and an unchecked
+  cold-reader box. Historical LOG/pack/round-11 independence claims
+  remain byte-preserved and are explicitly superseded by the audit's
+  authority correction. No promotion or outside spot-check is claimed.
+  Direct source reads supported the table/error/checklist, historical
+  task and method/product boundary; the historical one-JS-mutant note
+  explicitly does not support a current full-sweep/bash cold-read.
+
+  Dispatch prerequisite failed without a model probe: the global
+  routing metadata and live `cfg://task/agentModelOverrides` retain
+  generic `@m_mid/@m_fast/@m_strong` seats instead of the required
+  content `@m_composer`, audit `@m_grok`, connector `@m_antigravity`
+  bindings; the connector chain lacks the configured `@m_zfl` target.
+  Exact role-by-role observation:
+  `.ufo/evidence/fleet-round-1/route-bindings.json` and
+  `live-seat-bindings.txt`. No config changes, route substitutions or
+  new routing overlays. The canonical planner validated exactly 32
+  distinct, substantive scopes with exit 0, saved under
+  `.ufo/waves/fleet-round-1-interactive/`. No rendered `run`, registry,
+  task batch or specialist completion is claimed. The predecessor's
+  nine-seat narrative is not compliance with this dispatch.
+
+  Own verification, not recalled output:
+  `calibration-acceptance.json` records baseline FAIL
+  (`canonical=false marks=["x","x","x","x"] durable-links=0/4`)
+  versus candidate PASS
+  (`canonical=true marks=["~","~"," ","~"] durable-links=4/4`);
+  comparison exit 0. `selftest.json` captures all 80 case lines and
+  `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, exit 0.
+  `cli-smoke.json` captures the real mutation CLI at 05:10:40Z:
+  green control, `wrong-value` KILLED (exit 1), `unread-value` SURVIVED
+  (exit 0), `MUTATE_RESTORE: OK` with identical full hashes, and
+  `MUTATE: DONE (target=fleet-round-1-interactive-smoke defects=2 killed=1 survived=1 inconclusive=0 kill-rate=50%)`,
+  exit 0. These files retain commands, complete output and exit codes.
+  This is a bounded fixture task, not a new fleet rate, whole cold-read,
+  live-gate census or native judgment. The owned runner is unchanged at
+  `75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5`;
+  no sibling regression was run. The reported red Phase 0 was not
+  rerun merely to confirm it.
+
+  Local candidate axes: calibration improved; depth, coverage,
+  operability, freshness and adjacency unchanged. Learning: expansion
+  unchanged, quality improved, discernment unprovable-but-better.
+  Formal admission is **blocked**, not a scalar pass or a completed
+  round: exact-32 route realization and outside evidence remain debt.
+  `corpus/lessons/round-1.md` ER-I1 corrects stale line references and
+  the old invalid `unprovable` token append-only. Route owner must bind
+  the requested existing aliases before authorized fresh-session
+  redispatch; an independent reviewer must check at least one admit
+  and one reject; a scoped fresh executor must separately establish
+  current full cold-read sufficiency. All are named, not closed by
+  prose. Shared ledgers and source/host remediation stay owner-only.
+
+
+  Receipt/interactive-surface observation for this same attempt:
+  `.ufo/evidence/fleet-round-1/receipt-applicability.json` records own
+  Sighting mission `m_53a61cfda7e640978585bebb05a4686a`, run/session
+  `shk-tameshi-interactive-20261015T050057Z`, status running,
+  dispatch kind `argv` with only `argv/kind` keys, and no taskKey or
+  receiptPath in its metadata. Launch metadata contains only lane/cwd/
+  run/session/mission/pane/time, not a receipt acceptance bag. The
+  canonical receipt CLI requires real task identity and dispatch-time
+  prompt/config/report bindings; no arbitrary task key or global-config
+  digest was substituted. No receipt was minted or validated and no
+  Sighting completion was invoked. Integrator must supply an applicable
+  dispatch contract before mint/expected-field validation. The direct
+  pane-shape command returned `%6 node /dev/pts/6 0`, exit 0: an alive
+  interactive pane, not round-completion evidence. Owned smoke scratch
+  was removed after its full output was persisted. Corpus index and
+  completion pack now point explicitly to this admission hold.
+
+
+  Scratch-policy correction before commit (same attempt): the 05:10:40Z
+  `.ufo/scratch` CLI run contradicted `SKILL.md:25-28`. Its complete
+  output remains in `cli-smoke.json` as **nonconforming**, not accepted
+  craft proof; later deletion did not cure the error. Corrected only the
+  namespace and repeated the real CLI in a fresh
+  `/tmp/tameshi-r1-interactive-4oejhl9z/`, 05:14:49Z, at the same
+  runner SHA. `cli-smoke-canonical.json` retains the self-contained
+  reproduction and full output: control green; `wrong-value` KILLED
+  exit 1; `unread-value` SURVIVED exit 0; `MUTATE_RESTORE: OK` with
+  identical hashes; `MUTATE: DONE (target=fleet-round-1-interactive-canonical-smoke defects=2 killed=1 survived=1 inconclusive=0 kill-rate=50%)`;
+  runner exit 0, assertion-driver exit 0. Temporary files removed after
+  capture. The audit's scratch erratum, lesson ER-I2 and SCORECARD
+  explicitly supersede the earlier run for admission. No repeat of the
+  valid selftest or the reported Phase 0 failure. This correction does
+  not remove the dispatch or receipt blockers.
+
