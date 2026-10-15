@@ -506,3 +506,24 @@
   valid selftest or the reported Phase 0 failure. This correction does
   not remove the dispatch or receipt blockers.
 
+
+- 2026-10-15 — fleet round-1 blocked handoff publication. Owned content
+  landed as `cd31c6b7e4ee6becf32f1eedf874f1bdda8d5ac6` with explicit
+  pathspecs and the tameshi lane identity, no push. Only after that
+  landing, wrote `.ufo/reports/round-1/tameshi.md` with the exact
+  measured content commit, complete gate/operative-smoke verdict lines
+  and exits, all six local axis verdicts, three learning verdicts,
+  SHONEN assessment and owner-specific unblocks. Wrote the fresh-session
+  handoff `.ufo/continuation/fleet-round-1.md` and `.json`.
+  Report and handoff retain the initial nonconforming scratch run and
+  identify `cli-smoke-canonical.json` as operative evidence. They
+  explicitly withhold verified-round credit, native judgment, receipt
+  acceptance and Sighting completion: required role aliases are absent,
+  and the direct interactive launch exposes no applicable receipt task
+  contract. The operator's at-least-100 verified-round target is
+  unchanged. This is one observed blocked attempt, not saturation or a
+  proven three-consecutive-block stop. No second round was started;
+  current pane and native session runtime remain preserved for the
+  operator. Shared ledgers/reports and route/receipt setup remain the
+  fleet integrator's responsibility.
+
