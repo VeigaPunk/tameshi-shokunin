@@ -547,3 +547,27 @@ saturation line + stagnation window N on its next round per `AXES.md`
 No axis claim was made by this change and no score moved; nothing was
 re-measured, re-adjudicated, or back-filled — purely additive.
 
+
+## 2026-10-17 — readable front door
+
+Root README was absent. `bash tools/mutate-and-run.sh --selftest` is named in that script's header. SHONEN.md boxes are `[~]` or `[ ]` with no independent promotion verifier.
+
+Corpus index: `corpus/README.md` is line-cited (including lines 3-26 and the kagi-survey line cites) and was not edited. `corpus/knowledge/`, `corpus/lessons/`, evidence, fixtures, and earlier LOG entries were not rewrapped.
+
+Lint fixes (line counts of existing content unchanged):
+- SKILL.md (final newline)
+- plans/round-10-record-draft.md (final newline)
+- plans/round-10.plan.md (final newline)
+- plans/round-11.plan.md (final newline)
+- plans/round-4-record-draft.md (final newline)
+- plans/round-5-record-draft.md (final newline)
+- plans/round-6.plan.md (final newline)
+- plans/round-7.plan.md (final newline)
+- plans/round-8-record-draft.md (final newline)
+- plans/round-9-record-draft.md (final newline)
+- plans/round-9.plan.md (final newline)
+
+Lint left in place:
+- plans/round-8.plan.md: missing final newline; sha256 pinned in plans/round-7-record-draft.md
+
+Devin: a search for `devin.ai` in this repo found no URL to edit. No wiki URL was added.
