@@ -547,3 +547,12 @@ saturation line + stagnation window N on its next round per `AXES.md`
 No axis claim was made by this change and no score moved; nothing was
 re-measured, re-adjudicated, or back-filled — purely additive.
 
+
+## 2026-10-17 — root README
+
+Motivating evidence: no root `README.md`. The page follows `PROVINCE.md`
+(method only; two lanes before a general claim; siblings' gates stay
+theirs), `SKILL.md` (the cold-read limit), `SHONEN.md` (lane assertions,
+no independent promotion verifier), and the header of
+`tools/mutate-and-run.sh` (inject, run, byte-identical restore,
+`--regression` from git objects). No Devin wiki URL exists in this repo.
