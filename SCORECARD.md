@@ -151,3 +151,23 @@ scratch erratum and lesson ER-I2 preserve this self-caught failure.
 That corrected run is the operative smoke evidence for the table above;
 the valid selftest is unchanged. Admission remains blocked.
 
+## Capabilities
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| — none yet — | | | |
+
+Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
+
+## Saturation
+
+The lane's saturation line + stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.
+
+## Planned
+
+Populated by the lane at each round start per the `SCORECARD.md` contract (`AXES.md` §SCORECARD.md contract); no entries declared by this rollout.
+
+## Retired
+
+- none retired; record with justification when an axis is retired.
+

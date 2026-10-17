@@ -527,3 +527,23 @@
   operator. Shared ledgers/reports and route/receipt setup remain the
   fleet integrator's responsibility.
 
+## 2026-10-16 — protocol conformance: SCORECARD contract fields
+
+Operator amendment rollout (fleet-root `84bade0`, 2026-10-16): appended
+the standalone SCORECARD contract sections the file did not already carry
+as recordable sections.
+
+Already present: axes — the real score table under `## Current axes —
+fleet round-1 baseline`; `planned` and `retired` existed only as nested
+inline labels (`**Planned:**` / `**Retired:**`) inside the historical and
+blocked-state sections, so standalone `## Planned` and `## Retired`
+sections were appended too.
+
+Added: `## Capabilities` (repertoire-table scaffold, no rows — none enter
+through this rollout) and `## Saturation` (the lane declares its
+saturation line + stagnation window N on its next round per `AXES.md`
+§The stagnation nudge); neither is asserted by this conformance change.
+
+No axis claim was made by this change and no score moved; nothing was
+re-measured, re-adjudicated, or back-filled — purely additive.
+
