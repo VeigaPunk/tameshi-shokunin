@@ -547,3 +547,9 @@ saturation line + stagnation window N on its next round per `AXES.md`
 No axis claim was made by this change and no score moved; nothing was
 re-measured, re-adjudicated, or back-filled — purely additive.
 
+## 2026-10-17 — repository README
+
+- **Trigger.** The repository root had no `README.md`.
+- **Evidence.** Method-versus-product boundary is `PROVINCE.md`. Recipe and the measured-case limit are the opening of `SKILL.md`. Runner contract is the header of `tools/mutate-and-run.sh`. Ran `bash tools/mutate-and-run.sh --selftest` on 2026-10-17: `MUTATE_SELFTEST: 80/80 pass`, exit 0.
+- **Action.** Added `README.md`. Corpus indexes were not edited. No Devin wiki URL was present.
+- **Outcome.** No axis claim; no score moved.
