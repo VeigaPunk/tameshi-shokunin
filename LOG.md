@@ -547,3 +547,12 @@ saturation line + stagnation window N on its next round per `AXES.md`
 No axis claim was made by this change and no score moved; nothing was
 re-measured, re-adjudicated, or back-filled — purely additive.
 
+
+- 2026-10-17 — README: Devin wiki link. Operator directive (2026-10-17):
+  insert the Devin wiki link into the README header of every repository
+  with a generated wiki. `README.md` was created (lane-header convention)
+  with a `**Wiki:**` link to
+  https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/tameshi-shokunin?branch=master
+  in the merged PR #2 — this entry is the change's required evidence record,
+  appended retroactively after the merge. Documentation-only change; no
+  round run, no axis moved.
