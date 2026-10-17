@@ -547,3 +547,8 @@ saturation line + stagnation window N on its next round per `AXES.md`
 No axis claim was made by this change and no score moved; nothing was
 re-measured, re-adjudicated, or back-filled — purely additive.
 
+## 2026-10-17 — root README added
+
+- **Trigger.** Operator request for a repository front door. This checkout had no root `README.md`.
+- **Action.** Added `README.md` from `PROVINCE.md` (method only, two-lane rule, no sibling edits) and `tools/mutate-and-run.sh` header (`--selftest`, `--regression` via `git show <rev>:<path>`). Fleet mint note withholds the roster row.
+- **Non-claims.** No Devin wiki URL existed here and none was added. No axis claim, no score change, runner not executed. Not a craft round.
