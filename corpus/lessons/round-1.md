@@ -470,3 +470,21 @@ read-only); blob sha256 prefixes re-derived in the same command:
   verifier; the Critic seat's view is "candidate, scope-incomplete".
 - **ER-K8 — S038–S039 unused.** Reserved for own-work rows; never
   written; the merge-assigned rows start at S040 by plan. Never reused.
+
+### Non-author adjudication and post-review fixes (orchestrator, 2026-10-19)
+
+Outside verdict on this round (orchestrator; not a lane seat):
+reviewer — admit with conditions; critic — **K2 admit**, **K1 reject
+as measured**: the cold-read covered only Appendix A + B with
+reconstructed Appendix B probes, so the box-3 increment is not earned.
+Recorded as a disagreement with the lane's Gate admit of the box-3
+move (`## Gate — kaika continuation`); the lesson it teaches is
+already criterion-shaped by ER-K7 — a mark's evidence covers the
+mark's whole wording or the mark does not score. Fixes, append-only:
+`SCORECARD.md` post-review corrections (calibration pinned 6 without
+box 3; measured-commit cells → `121696b`; K2 pointer → census v2);
+`corpus/README.md` F1/F2 `held` → `partly held`; `corpus/SOURCES.md`
+`## Id allocation` (S038–S039 retired, never reused); quality trend
+`unchanged`, not `improved`. No `SOURCES.md` row cell changed (no
+status/recheck/used-by edit, so no old→new entries owed). No new
+claims.

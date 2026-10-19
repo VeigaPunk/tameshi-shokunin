@@ -201,6 +201,38 @@ v2: `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0,
 25 (informational); mutation-tested (a planted violation →
 `SOURCES_CENSUS: VIOLATIONS`). The capability row's census is v2.
 
+Post-review corrections (same round, orchestrator adjudication
+2026-10-19 — non-author; reviewer: admit with conditions; critic: K2
+admit, K1 reject as measured). Append-only; the rows above stay as
+written and are superseded here:
+
+- **K1 re-pinned without the box-3 increment.** The cold-read covered
+  only Appendix A + B, with Appendix B survivor-probe fixtures
+  reconstructed by the seat; the box-3 `[ ]`→`[~]` move is **not
+  earned** and scores 0. Box 3 stays `[~]` as a scope-noted lane
+  assertion (`SHONEN.md:9-10`), carried as an unscored mark. Verified
+  calibration work this round: `QUALITY.md` criteria 5 → 10 (each
+  citing its `## Mistakes` row) and the box-4 overreach fix
+  (`PROVINCE.md` appended Core/Frontier/Adjacent). **Calibration
+  pinned 6** = boxes 1, 2, 4 restrained `[~]` × 2 (rubric of command C,
+  box 3 excluded), measured on `121696b`; the inherited `0 → 6` from
+  `cd31c6b` is the part admitted, counted once. Saturation note above
+  ("calibration pinned 0, candidate 8 pending") is superseded: pinned 6.
+- **Measured-commit cells corrected.** K1 and K2 were measured on
+  `121696bf92db813f75f792be8590cf2c2c98edb1` (not "hash in the
+  report" / "same"). K1 command: command C with `REV=121696b` →
+  `boxes=4 checked=0 asserted=4 untouched=0 asserted_mark_upper_bound=8`
+  (mark census only; the pin is 6 per the bullet above).
+- **K2 pointer corrected.** K2's counting command is
+  `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` (exit 0,
+  `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`), not the v1
+  `sources-census.sh` named in the K2 row. Fleet census:
+  `TZ=UTC bash …/fleet-census/scripts/sources-census.sh validate <worktree>`
+  → `tameshi-shokunin ok`, exit 0. K2 admitted.
+- Axis verdicts: calibration improved (0 → 6 pinned); all others
+  unchanged. Trends: expansion improved; **quality unchanged** (not
+  improved); discernment per the orchestrator's adjudication.
+
 ## Capabilities
 
 | Capability | What it can now do | Evidence pointer | First-working round |

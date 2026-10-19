@@ -101,3 +101,21 @@ header citing a `mined` `SOURCES.md` row.
   sufficiency unverified; `../reports/round-1-kaika-coldread.md` has
   since measured Appendix A + B. Left unedited so the cold-read stays
   bound to the executed bytes; the next `SKILL.md` edit re-runs it.
+
+## Frontier — status correction (fleet round 1, post-review, appended)
+
+The `## Frontier` table above marks F1 and F2 `held (round 1)`;
+superseded here (orchestrator adjudication, 2026-10-19) — both are
+**partly held**:
+
+- **F1 — partly held.** Score semantics and the six-case recomputation
+  are admitted; report interop is not: no ledger leg was emitted as
+  schema JSON or validated (`jsonschema` unavailable), and NoCoverage
+  candidates stay U.
+- **F2 — partly held.** One JS leg measured (8 on-witness / 0
+  accidental); the witness declaration was partly contaminated
+  (`knowledge/witness-scoped-kill-verdict.md` E1), and no bash leg was
+  measured.
+
+A ground reads `held` only when its next move in the table is
+measured.

@@ -629,3 +629,16 @@ marked stale (not edited — the cold-read binds to those bytes); witness
 entry erratum E1 (declared-witness, partly contaminated). Critic seat
 verdicts: K1 holds-with-defects (scope-incomplete candidate 8); K2 failed
 as first claimed, re-measured after these fixes.
+
+## 2026-10-19 — fleet round 1, post-review fixes (orchestrator adjudication)
+
+Non-author adjudication: K2 admitted; K1 rejected as measured (box-3
+increment not earned — Appendix A + B only, reconstructed probes).
+Calibration re-pinned 6 without box 3 (boxes 1, 2, 4 restrained;
+QUALITY 5 → 10 and the box-4 fix are the verified work); box 3 stays
+`[~]` with its scope note, unscored. F1/F2 relabelled `partly held`;
+S038–S039 allocation recorded (retired, never reused); SCORECARD
+measured-commit cells → `121696b`, K2 pointer → census v2. Quality
+trend corrected to `unchanged` (the earlier entry said `improved`).
+Fleet census `TZ=UTC … sources-census.sh validate` → ok, exit 0.
+All appended; `corpus/lessons/round-1.md` final section.

@@ -119,3 +119,13 @@ the six opened this round moved to rows S040–S046 and left this list).
 - *Fuzzing with Agents? Generators Are All You Need* — https://arxiv.org/abs/2604.01442.
 - HypoFuzz — https://hypofuzz.com/.
 - *What Are Developers Actually Discussing When Visual Regression Tests Fail?* — https://arxiv.org/abs/2608.07020 (adjacent UI domain).
+
+## Id allocation
+
+- S001–S030: W1 ART lead ids, re-opened this round (all 30 rowed).
+- S031–S039: reserved for own-work / pinned-gate rows; **S031–S037
+  used; S038–S039 allocated, never written, retired — never reused or
+  renumbered** (lesson `round-1.md` ER-K8). A census gap at S038–S039
+  is this note, not a lost row.
+- S040–S046: merge-assigned rows from the round-1 frontier lead sweep.
+- Next unused id: S047.
