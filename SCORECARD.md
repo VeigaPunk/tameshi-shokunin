@@ -187,11 +187,25 @@ entries) was withdrawn before landing — see `corpus/lessons/round-1.md`
 | freshness | unchanged (unpinned) | 37 sources re-opened live with recheck cadences; no rubric pinned |
 | adjacency | unchanged | `PROVINCE.md` Adjacent appended; nothing absorbed |
 
+Phase-2 corrections (same round, after the lane's Reviewer and Critic
+seats re-ran every command on `c7986cd`; `corpus/lessons/round-1.md`
+ER-K5…ER-K8): K1's numbers re-ran identical; the box-3 line is now
+scope-bounded (Appendix A + B sweep recipe only, via the runner, B
+probe fixtures reconstructed) and the Critic seat rates the `8` a
+scope-incomplete candidate. K2's "contract census clean" holds for
+contract v1 only; the run's extra H4 id-cite block printed 25 links
+for own/gate rows S031–S037 (path-cited by pre-registry entries) and
+those rows lacked Gate quotes. Fixed by the Gate addendum and census
+v2: `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0,
+`SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`, strict id-cite
+25 (informational); mutation-tested (a planted violation →
+`SOURCES_CENSUS: VIOLATIONS`). The capability row's census is v2.
+
 ## Capabilities
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census.sh` → 44 rows, contract checks clean; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, 44 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; `corpus/SOURCES.md` | fleet round 1 (kaika) |
 | mutation sweep runner | inject → run → restore single-edit mutants with a green-control gate, verdict lines and byte-identity proof | `bash tools/mutate-and-run.sh --selftest` → `MUTATE_SELFTEST: 80/80 pass`, exit 0 (`.ufo/evidence/kaika-round-1/capability-demo/h1a-selftest-host.stdout`) | historical round 3 (`SCORECARD.md:16`); re-demonstrated fleet round 1 |
 | six-leg regression ledger | replay every recorded mutation case at its pinned blob; exact expectation | `bash tools/mutate-and-run.sh --regression` → `REGRESSION: PASS (cases=6 passed=6 …)`, exit 0 (`…/capability-demo/h1b-regression.stdout`) | historical round 7 (four legs) / round 10 (six); re-demonstrated fleet round 1 |
 

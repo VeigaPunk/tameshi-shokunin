@@ -610,3 +610,22 @@ MISSION.md's commit-then-push.
   (2 entries on uncovered ground, mined rows, map rows); quality
   improved (13 → 0 unindexed notes; box-4 overreach corrected); discernment
   pending the non-author spot-check.
+
+## 2026-10-19 — fleet round 1, phase-2 corrections (same round)
+
+Reviewer and Critic seats re-ran every counting command on `c7986cd`:
+command C (`284ab0f` bound 0, `4eb4cf3` bound 6, `c7986cd` bound 8),
+command D (6) and the census row/tier/status counts all re-ran
+identical; no knowledge file changed or deleted; `SKILL.md` sha256
+`33e3009c…` unchanged; every pre-existing file append-only apart from
+SHONEN lines 9-12 and the capabilities placeholder row. Findings fixed
+by append (`corpus/lessons/round-1.md` ER-K5…ER-K8): K2's census claim
+held for contract v1 only — the extra H4 id-cite block printed 25
+own/gate links, and S031–S037 lacked Gate quotes → Gate addendum +
+census v2 (`.ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0,
+`SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`, mutation-tested);
+box-3 line narrowed to its executed scope; `SKILL.md:14-15`/`:133-135`
+marked stale (not edited — the cold-read binds to those bytes); witness
+entry erratum E1 (declared-witness, partly contaminated). Critic seat
+verdicts: K1 holds-with-defects (scope-incomplete candidate 8); K2 failed
+as first claimed, re-measured after these fixes.

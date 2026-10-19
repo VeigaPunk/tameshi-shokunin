@@ -419,3 +419,54 @@ quote · location; sha256 of each fetched body in
   route failed at capacity. Re-dispatched as fresh seats, with scratch
   dirs of dead seats declared off-limits; the cold-read ran on the
   `labrat` role route. No dead seat's output is used.
+
+### Gate addendum — own/gate rows S031–S037 (contract rule 1)
+
+The Critic seat (phase 2) found the seven own/gate rows admitted with no
+Gate quote, contrary to contract v1 rule 1. Fetch records, opened
+2026-10-19 by `git show <commit>:<path>` (sibling object stores,
+read-only); blob sha256 prefixes re-derived in the same command:
+
+| id | source @ commit | accessed | quote (≤25 words) | location |
+|---|---|---|---|---|
+| S031 | `tools/mutate-and-run.sh` @ `4eb4cf3` | 2026-10-19 | "the fleet's recorded mutation cases, replayed as legs. Each leg carries its recorded revision pin" | `tools/mutate-and-run.sh:80-81` |
+| S032 | `kumitate-shokunin/scripts/kimi-census.mjs` @ `175de6ba` (`83016d45…`) | 2026-10-19 | "kimi-census.mjs — the Kimi Code CLI substrate census gate (contract `kumitate-kimi-census-v1`)." | blob lines 3-4 |
+| S033 | `kagi-shokunin/corpus/surface-census.sh` @ `fecee874` (`275d8294…`) | 2026-10-19 | "Nothing detected a surface disappearing, changing kind/mode" | blob lines 4-5 |
+| S034 | `tsukuroi-shokunin/tools/tsukuroi-census.sh` @ `165307fe` (`084951be…`) | 2026-10-19 | "Answers exactly one question, read-only" | blob line 7 |
+| S035 | `mado-shokunin/tools/mado-verify.sh` @ `eead56b2` (`d7edaab4…`) | 2026-10-19 | "mado-verify.sh — mado-shokunin config-plane verdict gate (v1, round 5 / M5-2)" | blob line 3 |
+| S036 | `kagi-shokunin/corpus/checklist-run.sh` @ `fecee874` (`7e5ec98b…`) | 2026-10-19 | "This gate binds every item to exactly one row of" (then `corpus/checklist.tsv`, line 9) | blob lines 6-7 |
+| S037 | `kumitate-shokunin/scripts/claims-check.mjs` @ `175de6ba` (`e9a21b44…`) | 2026-10-19 | "claims-check.mjs — the member-claims gate (contract `kumitate-claims-v1`)." | blob line 3 |
+
+### Errata — kaika continuation, phase-2 findings (append-only)
+
+- **ER-K5 — `SKILL.md` status sentences now stale.** `SKILL.md:14-15`
+  ("current full-sweep/bash sufficiency remains unverified") and
+  `:133-135` say what this round's cold-read
+  (`../../reports/round-1-kaika-coldread.md`) has since measured for
+  Appendix A + B. Marked here and in `corpus/README.md` `## Known gaps`;
+  not edited this round, so box 3 stays bound to the executed bytes
+  (`git show 4eb4cf3:SKILL.md | sha256sum` → `33e3009c…0f81`). Owner:
+  the round that next edits `SKILL.md`, which must re-run the cold-read.
+- **ER-K6 — K2 census wording.** `SCORECARD.md`, `LOG.md` and the
+  capability row say "contract census clean": true for contract v1's
+  census, but the Critic and Reviewer seats read the run's extra H4
+  block (id-cite, fleet critic H4, not contract v1) as part of it — it
+  printed 25 `no-id-cite` links, all own/gate rows S031–S037 whose
+  used-by entries predate the registry and cite the source by path.
+  Census v2 (`../../.ufo/evidence/kaika-round-1/sources-census-v2.sh`)
+  separates contract checks from H4, reports strict id-cite as
+  informational (25), gates on id-or-path (0 violations), exits non-zero
+  on any gated violation, and was mutation-tested (a mined row pointed at
+  a file citing neither → `SOURCES_CENSUS: VIOLATIONS`). Also missing
+  at landing: the Gate quotes for S031–S037 (addendum above).
+- **ER-K7 — box 3 line breadth.** The Reviewer seat found the box-3
+  evidence line broader than the run: the sweep used
+  `tools/mutate-and-run.sh` plus the seat's own uniqueness checker, not
+  the appendices' python driver; Appendix B's survivor-probe fixtures
+  were reconstructed from the gate's input contract; the
+  no-permissiveness audit recipe (`SKILL.md:466-495`) and the
+  fail-closed taxonomy (`:497-525`) were not exercised. The line now
+  says so. Whether `[~]` holds at that scope is for the non-author
+  verifier; the Critic seat's view is "candidate, scope-incomplete".
+- **ER-K8 — S038–S039 unused.** Reserved for own-work rows; never
+  written; the merge-assigned rows start at S040 by plan. Never reused.

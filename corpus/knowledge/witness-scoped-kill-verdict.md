@@ -56,3 +56,10 @@ The preregistration was contaminated: before declarations, a recursive grep over
 ## Errata (append-only)
 
 None.
+
+- E1 (2026-10-19, L1 integration, Reviewer seat finding): the heading
+  "Pre-registered experiment" overstates. The declaration was hashed
+  before the run, but an unscoped grep exposed historical outcomes first
+  (Unknowns above), so read it as **declared-witness, partly
+  contaminated** — not a blind pre-registration. The measured split is
+  unchanged.

@@ -96,3 +96,8 @@ header citing a `mined` `SOURCES.md` row.
 - **Stale ledger successors** — tsukuroi and mado legs read `stale`
   (`knowledge/fleet-kill-rate-ledger.md`); re-sweeps owed (freshness).
 - **Operator runbook four-leg lines** (ER-R3) still open.
+- **`SKILL.md` status sentences stale** (`lessons/round-1.md` ER-K5):
+  `SKILL.md:14-15` and `:133-135` still call full-sweep/bash
+  sufficiency unverified; `../reports/round-1-kaika-coldread.md` has
+  since measured Appendix A + B. Left unedited so the cold-read stays
+  bound to the executed bytes; the next `SKILL.md` edit re-runs it.
