@@ -547,3 +547,66 @@ saturation line + stagnation window N on its next round per `AXES.md`
 No axis claim was made by this change and no score moved; nothing was
 re-measured, re-adjudicated, or back-filled — purely additive.
 
+
+## 2026-10-19 — fleet round 1 closes (kaika continuation, steered round 1)
+
+Worktree `.tower/worktrees/kaika/tameshi-shokunin` (branch `kaika/round`,
+base `4eb4cf3`); orchestrator steer table assigns round 1. Fleet report
+`.ufo/reports/round-1/tameshi.md` was absent and this LOG had not closed
+round 1 — no collision. The blocked attempt's declared calibration claim
+is adjudicated once here; the route/receipt prerequisites of
+`.ufo/continuation/fleet-round-1.md` are superseded by the kaika binding
+(route table assigns models by role; non-author verification follows
+landing). No push: the standing operator "No push" rule overrides
+MISSION.md's commit-then-push.
+
+- L2 swarm: one batched call of 10 seats (planner, connector, 3
+  executors, scribe, scout, labrat, reviewer, critic) after two
+  `Background job limit reached (100)` refusals. Provider exhaustion
+  killed three seats (`resource_exhausted`); re-dispatched fresh, dead
+  seats' scratch declared off-limits; a reassigned-route cold-read seat
+  failed at capacity and the cold-read ran on the `labrat` route
+  (lesson ER-K4).
+- **K1 calibration (lowest axis).** Cold-read of `SKILL.md` @ `33e3009c`
+  from the page alone: `COLDREAD: SUFFICIENT (appendixA=8/10
+  recorded=8/10 appendixB=8/10 recorded=8/10 blocking-gaps=0
+  wrong-expectations=0 survivors-probed=4/4)` —
+  `reports/round-1-kaika-coldread.md`, evidence
+  `.ufo/evidence/kaika-round-1/coldread/`. SHONEN box 3 `[ ]` → `[~]`
+  (wording unchanged; scope bound in the evidence line). Box 4 evidence
+  line notes the appended PROVINCE correction (Reviewer seat found the
+  "Owns" list omitted the tsukuroi and mado gates). Mistakes mined:
+  `corpus/lessons/round-1.md` `## Mistakes` (MK-1…MK-11, 5 unlearned
+  classes) → `QUALITY.md` criteria 6–10, each citing its row.
+- **K2 capability `sources-registry`.** `corpus/SOURCES.md`: 44 rows,
+  37 external sources re-opened this round with fetch hashes
+  (`sources-opened.tsv`), 7 own/gate rows anchored path @ commit; contract
+  census clean (`sources-census-final.txt`). Two entries admitted on
+  frontier ground and mining 5 external rows:
+  `knowledge/mutation-score-semantics.md` (F1; six cases recomputed,
+  t = 0 → Stryker score = tameshi rate on every recorded case) and
+  `knowledge/witness-scoped-kill-verdict.md` (F2; pre-registered split
+  8 killed-on-witness / 0 accidental / 2 survived = recorded 8/10;
+  declaration not blind, recorded).
+- Re-verification (freshness readings, not a claim): `--selftest`
+  80/80 PASS; `--regression` six legs PASS; selftest identical under
+  `env -i LANG=C TZ=UTC` (H3); one control per sweep (H2) →
+  `.ufo/evidence/kaika-round-1/capability-demo/`. Sibling incident seen by
+  the cold-read: kumitate `scripts/kimi-census.mjs` worktree edited
+  mid-sweep by its owner; the pinned blob `175de6ba` still reads
+  `83016d45…`, so the measured table binds to the pin.
+- Contract repair (appended, no line moved): `corpus/README.md` coverage
+  addendum (13 unindexed notes + 2 new → 0 unindexed), `## Sources`,
+  `## Frontier` F1–F10, `## Known gaps`; `PROVINCE.md` Core / Frontier /
+  Adjacent; `SCORECARD.md` claims, capabilities (3 rows), saturation
+  line 8/10 + window N = 2, round-2 planned.
+- Withdrawn before landing: K3 coverage claim (Critic seat: same-round
+  rubric, header proxy, depends on K2). Deferred as named debt:
+  provenance headers on the 19 pre-round entries (would shift cited
+  lines); `SKILL.md` untouched so the cold-read binds to its bytes.
+- Verdicts are self-verdicts pending the orchestrator's non-author
+  verification: calibration improved (candidate 8, pinned 0 until
+  reviewed); all other axes unchanged. Trends: expansion improved
+  (2 entries on uncovered ground, mined rows, map rows); quality
+  improved (13 → 0 unindexed notes; box-4 overreach corrected); discernment
+  pending the non-author spot-check.

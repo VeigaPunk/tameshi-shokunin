@@ -151,11 +151,49 @@ scratch erratum and lesson ER-I2 preserve this self-caught failure.
 That corrected run is the operative smoke evidence for the table above;
 the valid selftest is unchanged. Admission remains blocked.
 
+## Fleet round 1 — kaika continuation (2026-10-19): claims and measurements
+
+This closes the open fleet round 1 above (steered round 1,
+orchestrator steer table). Its declared calibration claim comes first
+and is adjudicated **once**: the `0 → 6` part landed in `cd31c6b`
+(the blocked attempt of this same round) and is inherited, not
+re-landed; this round adds box 3. The blocked-section prerequisites
+are superseded by the kaika binding (route table assigns models by
+role; non-author verification is the orchestrator's after landing).
+Self-verdicts below are **pending non-author verification**; no score
+is pinned on self-attestation.
+
+| # | Claim | Type | Axis | Before | After | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| K1 | SHONEN restraint + box 3 by a full cold-read of Appendix A + B | axis move (lowest axis) | calibration | pinned 0 at `284ab0f` (`checked=4 asserted=0` → bound 0); `4eb4cf3` bound 6 | `checked=0 asserted=4 untouched=0 asserted_mark_upper_bound=8` — candidate 8 (lane cap); final 2 need independent promotion review | command C above, `REV=<round commit>` | round-1 kaika commit (hash in `.ufo/reports/round-1/tameshi.md`, fleet ledger) |
+| K2 | `sources-registry`: opened, tiered, rechecked source rows that mine into admitted entries | capability acquisition | — (per-axis verdicts below) | no `corpus/SOURCES.md`; 0 external URLs in `SKILL.md PROVINCE.md corpus` (ART §1.2 sweep) | 44 rows (A 37 · B 5 · C 2; mined 12 · queued 29 · rejected 3); every contract census check clean; 2 admitted entries cite 5 mined external rows | `bash .ufo/evidence/kaika-round-1/sources-census.sh` | same |
+
+K1 evidence: `reports/round-1-kaika-coldread.md` (`COLDREAD: SUFFICIENT
+(appendixA=8/10 recorded=8/10 appendixB=8/10 recorded=8/10
+blocking-gaps=0 wrong-expectations=0 survivors-probed=4/4)`, `SKILL.md`
+sha256 `33e3009c…0f81`, unchanged by this round); lesson `## Mistakes`
+and `QUALITY.md` 6–10. K2 evidence: `corpus/SOURCES.md`,
+`.ufo/evidence/kaika-round-1/sources-opened.tsv` (37 fetch records),
+`sources-census-final.txt`. A third claim (coverage via frontier
+entries) was withdrawn before landing — see `corpus/lessons/round-1.md`
+`## Gate — kaika continuation`.
+
+| Axis | Self-verdict (pending non-author) | Evidence / bound |
+|---|---|---|
+| calibration | improved (candidate) | K1 |
+| depth | unchanged | command D → `recorded_cases=6 depth_score=6`; no new ledger leg |
+| coverage | unchanged (unpinned) | F1/F2 entries admitted as knowledge; no coverage claim |
+| operability | unchanged | runner unchanged; re-demonstrated (`.ufo/evidence/kaika-round-1/capability-demo/`) |
+| freshness | unchanged (unpinned) | 37 sources re-opened live with recheck cadences; no rubric pinned |
+| adjacency | unchanged | `PROVINCE.md` Adjacent appended; nothing absorbed |
+
 ## Capabilities
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| — none yet — | | | |
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census.sh` → 44 rows, contract checks clean; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+| mutation sweep runner | inject → run → restore single-edit mutants with a green-control gate, verdict lines and byte-identity proof | `bash tools/mutate-and-run.sh --selftest` → `MUTATE_SELFTEST: 80/80 pass`, exit 0 (`.ufo/evidence/kaika-round-1/capability-demo/h1a-selftest-host.stdout`) | historical round 3 (`SCORECARD.md:16`); re-demonstrated fleet round 1 |
+| six-leg regression ledger | replay every recorded mutation case at its pinned blob; exact expectation | `bash tools/mutate-and-run.sh --regression` → `REGRESSION: PASS (cases=6 passed=6 …)`, exit 0 (`…/capability-demo/h1b-regression.stdout`) | historical round 7 (four legs) / round 10 (six); re-demonstrated fleet round 1 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -163,9 +201,29 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 
 The lane's saturation line + stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.
 
+Declared fleet round 1 (kaika): **saturation line 8/10** on each owned
+axis — calibration's lane-attainable cap is 8, the last 2 need
+independent review; depth is capped at 10 recorded cases. **Stagnation
+window N = 2** completed rounds without a capability entering the
+table. Policy choices, not observations; the nudge does not fire now
+(depth 6 < 8; calibration pinned 0, candidate 8 pending).
+
 ## Planned
 
 Populated by the lane at each round start per the `SCORECARD.md` contract (`AXES.md` §SCORECARD.md contract); no entries declared by this rollout.
+
+Round 2 (declared fleet round 1, kaika):
+
+1. **freshness** — re-sweep the two `stale` ledger legs (tsukuroi,
+   mado) at live revisions and pin a freshness rubric. Before: pin
+   read 4 current · 2 stale · 0 drift → after 6 · 0 · 0. Count:
+   `grep -c 'stale' corpus/knowledge/fleet-kill-rate-ledger.md` plus the
+   tool's pin read.
+2. **capability (frontier F3)** — repeated-control determinism gate:
+   one control per sweep (`…/capability-demo/README.md` H2) → N ≥ 3
+   byte-identical controls or a named mismatch.
+3. **depth** — witness-scoped split on a bash leg (surface-census)
+   recorded as a ledger case. Before: command D 6 → after 7.
 
 ## Retired
 

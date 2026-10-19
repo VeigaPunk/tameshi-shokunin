@@ -1,0 +1,78 @@
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/tameshi-shokunin/tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+MUTATE_DATE: 2026-10-19T22:05:38Z
+MUTATE_TARGET: /tmp/tameshi-r1-coldread5-998226/src/pristine.mjs sha256=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426 bytes=43273
+MUTATE_SPEC: /tmp/tameshi-r1-coldread5-998226/spec-A.txt defects=10
+CONTROL: GREEN (exit=0 duration-ms=713 pristine-sha256=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426)
+  | KIMI_CENSUS_SELFTEST: 43/43 pass
+  | VERDICT: PASS
+DEFECT D1: KILLED (exit=1 duration-ms=693) kimi-census.mjs:105
+  | FAIL MEMBER_MISSING: the K5 member rc-qrcode.png removed (49 → 48)
+  |      exit=1 last=KIMI_CENSUS: DRIFT (UNLISTED agents/secondary/; MEMBER_MISSING rc-qrcode.png) kinds=[UNLISTED,MEMBER_MISSING]
+  | FAIL K5 is presence + kind only: content changes are never a finding (CLEAN)
+  |      exit=1 last=KIMI_CENSUS: DRIFT (UNLISTED agents/secondary/)
+  | FAIL the explicit `verify` verb is accepted
+  |      exit=1 last=KIMI_CENSUS: DRIFT (UNLISTED agents/secondary/) kinds=[UNLISTED]
+  | KIMI_CENSUS_SELFTEST: 27/43 pass
+  | VERDICT: FAIL
+DEFECT D2: SURVIVED (exit=0 duration-ms=701) kimi-census.mjs:378
+  | KIMI_CENSUS_SELFTEST: 43/43 pass
+  | VERDICT: PASS
+DEFECT D3: KILLED (exit=1 duration-ms=701) kimi-census.mjs:332
+  | FAIL MEMBER_MISSING: the K5 member rc-qrcode.png removed (49 → 48)
+  |      exit=1 last=KIMI_CENSUS: DRIFT (MEMBER_MISSING rc-qrcode.png; UNLISTED plugins/installed.json; UNLISTE kinds=[MEMBER_MISSING,UNLISTED,UNLISTED,UNLISTED]
+  | FAIL K5 is presence + kind only: content changes are never a finding (CLEAN)
+  |      exit=1 last=KIMI_CENSUS: DRIFT (UNLISTED plugins/installed.json; UNLISTED plugins/managed; U
+  | FAIL the explicit `verify` verb is accepted
+  |      exit=1 last=KIMI_CENSUS: DRIFT (UNLISTED plugins/installed.json; UNLISTED plugins/managed; UNLISTED plugins/mana kinds=[UNLISTED,UNLISTED,UNLISTED]
+  | KIMI_CENSUS_SELFTEST: 27/43 pass
+  | VERDICT: FAIL
+DEFECT D4: KILLED (exit=1 duration-ms=699) kimi-census.mjs:351-353
+  | FAIL UNLISTED: a planted undeclared root child → exit 1, and it is not counted as a member
+  |      exit=0 kinds=[] strays=["notes.txt"] members=49
+  | FAIL UNLISTED: a hidden root child is gated too (the root arm reads the raw listing)
+  |      exit=0 kinds=[]
+  | FAIL root enum is orthogonal to counted-dir drift (both arms fire on one run)
+  |      exit=1 listed=[agents/secondary/]
+  | KIMI_CENSUS_SELFTEST: 40/43 pass
+  | VERDICT: FAIL
+DEFECT D5: KILLED (exit=1 duration-ms=691) kimi-census.mjs:255
+  | FAIL MEMBER_MISSING: the drift chain vanished entirely (presence is gated)
+  |      exit=0 last=KIMI_CENSUS: CLEAN (members=49 checked=49 chain=0 info=4) kinds=[]
+  | KIMI_CENSUS_SELFTEST: 42/43 pass
+  | VERDICT: FAIL
+DEFECT D6: KILLED (exit=1 duration-ms=720) kimi-census.mjs:124
+  | FAIL SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)
+  |      exit=1 last=KIMI_CENSUS: DRIFT (SHAPE_DRIFT server.token) kinds=[SHAPE_DRIFT]
+  | FAIL secrecy: server.token is a FIFO → still CLEAN, no read (would block forever)
+  |      exit=1 signal=null last=KIMI_CENSUS: DRIFT (SHAPE_DRIFT server.token)
+  | KIMI_CENSUS_SELFTEST: 41/43 pass
+  | VERDICT: FAIL
+DEFECT D7: KILLED (exit=1 duration-ms=689) kimi-census.mjs:306
+  | FAIL SHAPE_DRIFT: credentials/ below its 0700 floor
+  |      exit=0 last=KIMI_CENSUS: CLEAN (members=49 checked=49 chain=3 info=4) kinds=[]
+  | FAIL SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)
+  |      exit=0 last=KIMI_CENSUS: CLEAN (members=49 checked=49 chain=3 info=4) kinds=[]
+  | KIMI_CENSUS_SELFTEST: 41/43 pass
+  | VERDICT: FAIL
+DEFECT D8: KILLED (exit=1 duration-ms=679) kimi-census.mjs:396
+  | FAIL KIMI_ROOT_MISSING: --root /nonexistent → exit 2, no scored zero
+  |      exit=1 last=KIMI_CENSUS: FAIL-CLOSED (KIMI_ROOT_MISSING --root /nonexistent is absent)
+  | FAIL KIMI_ROOT_MISSING: an unreadable root → exit 2 (fail-closed, never a zero)
+  |      exit=1 last=KIMI_CENSUS: FAIL-CLOSED (KIMI_ROOT_MISSING --root /tmp/kumitate-kimi-census-selftest-wm39
+  | FAIL --json fail-closed carries the same token and no totals
+  |      exit=1 verdict=FAIL-CLOSED fatal=KIMI_ROOT_MISSING
+  | KIMI_CENSUS_SELFTEST: 40/43 pass
+  | VERDICT: FAIL
+DEFECT D9: KILLED (exit=1 duration-ms=687) kimi-census.mjs:292
+  | FAIL secrecy: server.token is a FIFO → still CLEAN, no read (would block forever)
+  |      exit=1 signal=null last=KIMI_CENSUS: DRIFT (SHAPE_DRIFT server.token)
+  | FAIL secrecy: a dangling symlink token is never followed (lstat-only → CLEAN)
+  |      exit=1 last=KIMI_CENSUS: DRIFT (SHAPE_DRIFT server.token) kinds=[SHAPE_DRIFT]
+  | KIMI_CENSUS_SELFTEST: 41/43 pass
+  | VERDICT: FAIL
+DEFECT D10: SURVIVED (exit=0 duration-ms=683) kimi-census.mjs:145
+  | KIMI_CENSUS_SELFTEST: 43/43 pass
+  | VERDICT: PASS
+MUTATE_RESTORE: OK (target-sha256 before=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426 after=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426 pristine-sha256=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426)
+MUTATE_EVIDENCE: /tmp/tameshi-r1-coldread5-998226/workA
+MUTATE: DONE (target=appendixA defects=10 killed=8 survived=2 inconclusive=0 kill-rate=80%)

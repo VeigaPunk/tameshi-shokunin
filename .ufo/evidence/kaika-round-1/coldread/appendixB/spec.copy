@@ -1,0 +1,40 @@
+# Appendix B manifest, transcribed from SKILL.md Appendix B (snapshot 33e3009c…)
+@defect B1 | surface-census.sh:241
+@old   [[ ${#SCAN_DIR[@]} -eq 0 ]] && return 0
+@new   [[ ${#SCAN_DIR[@]} -ne 0 ]] && return 0
+
+@defect B2 | surface-census.sh:435
+@old             elif [[ "$got" -ge "$floor" ]]; then printf 'SHAPE OK       %s rows %s %s >= %s\\n' "$p" "$tbl" "$got" "$floor"
+@new             elif [[ "$got" -gt "$floor" ]]; then printf 'SHAPE OK       %s rows %s %s >= %s\\n' "$p" "$tbl" "$got" "$floor"
+
+@defect B3 | surface-census.sh:229
+@old       if [[ -n "$want_mode" && "$want_mode" != "$mode" ]]; then
+@new       if [[ -n "$want_mode" && "$want_mode" == "$mode" ]]; then
+
+@defect B4 | surface-census.sh:200-204
+@old     if [[ "$live" == "symlink" ]]; then\n      printf 'SURFACE LINK     %s (declared %s)\\n' "$p" "$kind"\n      N_LINK=$((N_LINK + 1)); FAILED=1\n      continue\n    fi\n
+@new
+
+@defect B5 | surface-census.sh:214-217
+@old            if [[ "$kind" == "exec" && ! -x "$abs" ]]; then\n             printf 'SURFACE DIVERGED %s (declared exec, no execute bit)\\n' "$p"\n             N_DIVERGED=$((N_DIVERGED + 1)); FAILED=1; continue\n           fi ;;\n
+@new            ;;\n
+
+@defect B6 | surface-census.sh:371
+@old         if head -c "$(( ${#value} + 1 ))" "$abs" | cmp -s - "$MAGIC_EXPECT"; then
+@new         if head -c "${#value}" "$abs" | cmp -s - "$MAGIC_EXPECT"; then
+
+@defect B7 | surface-census.sh:405-406
+@old             printf 'SHAPE UNVERIFIED %s %s (%s)\\n' "$p" "$assertion" "${S_ERR_A[$p]}"\n            N_UNVERIFIED=$((N_UNVERIFIED + 1)); FAILED=1
+@new             printf 'SHAPE UNVERIFIED %s %s (%s)\\n' "$p" "$assertion" "${S_ERR_A[$p]}"\n            N_UNVERIFIED=$((N_UNVERIFIED + 2)); FAILED=1
+
+@defect B8 | surface-census.sh:85
+@old die() { printf 'surface-census: %s\\n' "$1" >&2; exit 2; }
+@new die() { printf 'surface-census: %s\\n' "$1" >&2; exit 1; }
+
+@defect B9 | surface-census.sh:191
+@old       if [[ "$cls" == "runtime" ]]; then
+@new       if [[ "$cls" == "asset" ]]; then
+
+@defect B10 | surface-census.sh:862
+@old         "${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"
+@new         "${#SCAN_DIR[@]}" "$N_ABSENT" "$N_ABSENT" "$N_SKIP"

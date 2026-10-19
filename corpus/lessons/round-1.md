@@ -262,3 +262,160 @@ or reported Phase 0 failure was rerun to confirm an already known result.
 This corrects the namespace failure, not the independent-review,
 current full cold-read, exact-routing or receipt prerequisites.
 
+
+## Mistakes (kaika continuation, 2026-10-19)
+
+Mined from the lane's own record — rejected, erratum-carrying and
+debt-carrying rounds — per the kaika W1 STATE dossier §4–§5
+(`/home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/fleet-ledger/.ufo/waves/kaika-w1/tameshi-state.md:59-107`,
+a non-author read-only sweep; every pointer below was re-resolved by the
+lane at 2026-10-19 in worktree base `4eb4cf3`). No landed row records a
+`harmed` verdict (`grep -c 'harmed' LOG.md` → 0 at base) and no honest-stop
+round exists; the blocked fleet round-1 dispatch is one blocked attempt
+(`LOG.md:524-525`). Format: class · evidence pointer · captured-by
+criterion or `none` · fix.
+
+| # | Class | Evidence pointer | Captured by | Fix |
+|---|---|---|---|---|
+| MK-1 | Citation drift: line cites transcribed from a stripped view | `corpus/knowledge/gates-survey-kagi.md:508-543` (ER-1, 16 wrong-line cites) | `QUALITY.md` 2 + `SKILL.md` re-resolve rule | none needed |
+| MK-2 | Pre-registered prediction wrong, kept only by author habit (round 2, D7) | `corpus/knowledge/mutation-case-kimi-census.md:185`; `LOG.md:90` | none — no criterion binds a *prediction* (vs a claim) to its executed outcome | `QUALITY.md` 6 |
+| MK-3 | Same class repeated one round later (round 3, failing-case counts) | `corpus/knowledge/mutation-case-kagi-census.md:186`; `LOG.md:196-198` ("same shape as round-2 E1") | none (repeat of MK-2) | `QUALITY.md` 6 |
+| MK-4 | Index lags the corpus: knowledge files land without coverage-map rows | `corpus/lessons/round-10.md:175-176` (9 rows / 6 of 16 notes); at base 9 rows / 6 of 19 notes — `grep -cE '^\| \`knowledge/' corpus/README.md` → 9 | none — `CORPUS.md` bars *premature* rows only | `QUALITY.md` 7 |
+| MK-5 | Executed verification never landed as a report | `LOG.md:368`, `:383`, `:389` (`reports/r10-ver-t10.md`, `reports/r11-ver-t11.md` absent); principle already stated `corpus/lessons/round-10.md:129` | none — stated as a lesson, never a bar | `QUALITY.md` 8 |
+| MK-6 | Evidence retained only under `/tmp`, later lost | `corpus/knowledge/executor-test-sufficiency.md:14-18` (evidence under `/tmp/tameshi-r3-4-work/`); `ls -d /tmp/tameshi-r3-4-work` → `No such file or directory` 2026-10-19; fleet rule `PROTOCOL.md:341-343` | fleet `PROTOCOL.md` only; the lane's own scratch rule (`SKILL.md:25-28`) sends scratch to `/tmp` and says nothing about copying evidence out | `QUALITY.md` 9 |
+| MK-7 | Entries admitted without provenance header or recheck cadence | 19/19 entries: `for f in corpus/knowledge/*.md; do head -5 "$f" \| grep -c '^source:'; done \| sort \| uniq -c` → `19 0` at base; canonical `CORPUS.md` §Layout | none — `QUALITY.md` 2 demands an anchor, not the header form or a recheck | `QUALITY.md` 10 (new entries); old entries: named debt, see below |
+| MK-8 | Substrate moved mid-run | `plans/round-5-record-draft.md:108` (incident I1) | `corpus/lessons/round-10.md` lesson 3; ledger drift semantics | none needed |
+| MK-9 | Scratch-namespace miss | ER-I2 above | `SKILL.md:25-28` | none needed (ER-I2) |
+| MK-10 | Overreach: one historical JS mutant read as whole-skill cold-read capability | `## Gate` rejected-1 above | `QUALITY.md` 1/3 | none needed |
+| MK-11 | Same-lane authority claimed as independent | `## Gate` rejected-2..4 above | `PROVINCE.md:15-16`; fleet `LEARNING.md` | none needed |
+
+Unlearned classes this round: MK-2/3, MK-4, MK-5, MK-6, MK-7 → five
+criteria appended to `QUALITY.md` (6–10), each citing its row here.
+
+MK-7 repair limit (named debt, not a rewrite): prepending three header
+lines to the 19 existing entries would shift every `path:line` cite into
+them (the ER-1 lesson, MK-1), harming depth and calibration evidence.
+The 19 old entries keep their bytes; the header bar binds new entries
+from this round on. Route chosen for the old ones is an operator call
+(round report, L0 questions).
+
+## Gate — kaika continuation (2026-10-19)
+
+Candidates this round, admitted and rejected with reasons. The
+non-author spot-check (≥1 admit, ≥1 reject) is the orchestrator's after
+landing; lane seats (Reviewer, Critic) are still the lane and are not it.
+Spot-check result: **pending** — recorded here when it lands, as an
+appended entry.
+
+**Admitted**
+
+- `knowledge/mutation-score-semantics.md` (F1) — clears `QUALITY.md`
+  1–10: formulas recomputed with arithmetic shown, five sources
+  re-opened with hashes (`.ufo/evidence/kaika-round-1/score-semantics/opened.tsv`),
+  O/I/U separated, NoCoverage kept U, rejected rule kept, header present.
+- `knowledge/witness-scoped-kill-verdict.md` (F2) — pre-registered split
+  (declaration sha256 `32241b02…e9dd` at 22:05:45Z, sweep at 22:07:13Z),
+  8 killed-on-witness / 0 accidental / 2 survived = recorded 8/10;
+  contamination recorded (an unscoped grep exposed historical outcomes
+  before declaration — the split is **not blind**, and the entry says so).
+- `SOURCES.md` rows S001–S030, S040–S045 (re-opened this round, table
+  below) and own/gate rows S031–S037 (anchored by path @ commit with
+  blob sha256; no quote — the source is the lane's own re-runnable
+  output or a pinned sibling blob).
+- SHONEN box 3 `[ ]` → `[~]` (lane assertion): `../../reports/round-1-kaika-coldread.md`
+  — `COLDREAD: SUFFICIENT (appendixA=8/10 recorded=8/10 appendixB=8/10 recorded=8/10 blocking-gaps=0 wrong-expectations=0 survivors-probed=4/4)`
+  against `SKILL.md` sha256 `33e3009c…0f81` (unchanged this round).
+  Scope bound kept in the box line: service, cadence and runbook
+  sections not exercised.
+
+**Rejected (kept)**
+
+- S029 mutate4bash, S030 LLMShot (re-opened; reasons and flips in the
+  rows), S046 pbt-bibliography (community index, not primary support).
+- Rule "count Timeout as a kill" (Stryker's) — no denominator evidence
+  (`SKILL.md:191-193`, `:208-209`); kept as a comparison only.
+- Claim K3 "coverage 0 → 2 frontier grounds held" — withdrawn before
+  landing on the Critic seat's findings: the rubric was pinned in the
+  same round it moved, a header-count proxy is gameable, and the
+  entries depend on K2's mined rows (not causally separable). The two
+  entries stay admitted as knowledge (expansion trend) and as the
+  demonstration that K2's registry mines into admitted entries.
+- Folding decision-table rows into `SKILL.md` this round — rejected:
+  any `SKILL.md` edit would move the bytes the cold-read executed
+  (`33e3009c…`) and re-open box 3.
+- Header repair on the 19 pre-round entries — rejected as a rewrite
+  that shifts cited lines (MK-7).
+
+**Status changes (contract rule 2, old → new):** S005 `queued` → `mined`
+(used-by `corpus/knowledge/mutation-score-semantics.md`); S006 used-by
+gained `corpus/knowledge/mutation-score-semantics.md`. Both before the
+round commit; no committed row changed.
+
+**Fetch records for every new external row** (URL · access UTC · ≤25-word
+quote · location; sha256 of each fetched body in
+`../../.ufo/evidence/kaika-round-1/sources-opened.tsv`):
+
+| id | URL | accessed | quote | location |
+|---|---|---|---|---|
+| S001 | https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/ | 2026-10-19T21:43:50Z | Mutation score detected / valid * 100 | §Metrics, docs page fetched 2026-10-19 |
+| S002 | https://raw.githubusercontent.com/stryker-mutator/mutation-testing-elements/master/packages/report-schema/src/mutation-testing-report-schema.json | 2026-10-19T21:43:50Z | enum: ["Killed", "Survived", "NoCoverage", "CompileError", "RuntimeError", "Timeout", "Ignored", "Pending"] | mutation-testing-report-schema.json:92 (MutantStatus), master |
+| S003 | https://stryker-mutator.io/docs/stryker-js/incremental/ | 2026-10-19T21:43:50Z | Any other changes to your environment are not detected, such as ... changes to environment variables, changes to .snap files | §Limitations, docs page fetched 2026-10-19 |
+| S004 | https://mutants.rs/using-results.html | 2026-10-19T21:43:50Z | This is inconclusive about test coverage and no action is needed | §Mutant outcomes (unviable), mutants.rs fetched 2026-10-19 |
+| S005 | https://raw.githubusercontent.com/boxed/mutmut/main/HISTORY.rst | 2026-10-19T21:43:50Z | Fix mutants stopped by the CPU-time limit being reported as killed instead of timed out | HISTORY.rst:23 (§3.8.0), main |
+| S006 | https://github.com/BWBama85/shmutant | 2026-10-19T21:43:50Z | The suite went red, but not on its witness. Caught by accident, not by the assertion that claims to cover it. | README §The three verdicts; page currentOid 7eefc73010ad6342b80e3ed43915503e02c90618 |
+| S007 | https://arxiv.org/abs/2501.12862 | 2026-10-19T21:43:50Z | an LLM-based equivalent mutant detection agent that achieves a precision of 0.79 and a recall of 0.47 | Abstract, arXiv:2501.12862v1 (submitted 2025-01-22) |
+| S008 | https://arxiv.org/abs/2102.11378 | 2026-10-19T21:43:50Z | more than 24,000 developers on more than 1,000 projects | Abstract, arXiv:2102.11378v2 (last revised 2021-02-26) |
+| S009 | https://discovery.ucl.ac.uk/id/eprint/1499169/ | 2026-10-19T21:43:50Z | TCE can discard more than 7% and 21% of all the mutants as being equivalent and duplicated mutants respectively. | Abstract, UCL Discovery eprint 1499169 (ICSE 2015), page fetched 2026-10-19 |
+| S010 | https://discovery.ucl.ac.uk/id/eprint/1508136/ | 2026-10-19T21:43:50Z | Type I errors occur, for arbitrary experiments that fail to take countermeasures, approximately 62% of the time | Abstract, UCL Discovery eprint 1508136 (ISSTA 2016), page fetched 2026-10-19 |
+| S011 | https://mir.cs.illinois.edu/awshi2/publications/ISSTA2019.pdf | 2026-10-19T21:43:51Z | mutation scores vary by four percentage points on average between repeated executions, and 9% of mutant-test pairs have an unknown status | Abstract, ISSTA 2019 PDF p.1, fetched 2026-10-19 |
+| S012 | https://arxiv.org/abs/2608.17214 | 2026-10-19T21:43:50Z | An expectation is specification-anchored when composed from values fixed outside the code under mutation, and state-anchored when it flows, directly or transitively, from that code. | Abstract, arXiv:2608.17214v1 (submitted 2026-08-17) |
+| S013 | https://jestjs.io/docs/cli | 2026-10-19T21:43:51Z | Discover and print all test suites and test names without executing them | §Options, --collectTests, Jest docs Version 30.5 |
+| S014 | https://insta.rs/docs/advanced/ | 2026-10-19T21:43:51Z | auto: the default. no for CI environments or new otherwise | §Controlling Snapshot Updating, insta docs fetched 2026-10-19 |
+| S015 | https://bitheap.org/cram/ | 2026-10-19T21:43:51Z | LANG, LC_ALL, and LANGUAGE are set to C. TZ is set to GMT. | §Usage, environment resets, bitheap.org/cram fetched 2026-10-19 |
+| S016 | https://raw.githubusercontent.com/rogpeppe/go-internal/master/testscript/doc.go | 2026-10-19T21:43:51Z | Each script runs in a fresh temporary work directory tree, available to scripts as $WORK. | testscript/doc.go:56, master |
+| S017 | https://bats-core.readthedocs.io/en/stable/writing-tests.html | 2026-10-19T21:43:51Z | In focus mode, the exit code of successful runs will be overridden to 1 | §Special tags, Focusing on tests with bats:focus tag, stable docs |
+| S018 | https://hypothesis.readthedocs.io/en/latest/reference/api.html | 2026-10-19T21:43:51Z | If the CI environment variable is set to any value, the ci profile is active by default | §Settings, Built-in profiles, latest docs fetched 2026-10-19 |
+| S019 | https://harrisongoldste.in/papers/icse24-pbt-in-practice.pdf | 2026-10-19T21:43:52Z | using data from 30 in-depth interviews with experienced users of PBT at Jane Street | Abstract, ICSE 2024 PDF p.1, fetched 2026-10-19 |
+| S020 | https://homepages.dcc.ufmg.br/~mtov/pub/2027-esem-pbt-python.pdf | 2026-10-19T21:45:13Z | only 18.23% were fully automatable, while most required partial adaptation (30.05%) or were incompatible (51.72%) | Abstract, EMSE 2026 paper; authors' copy opened because the Springer DOI page served an anti-bot challenge |
+| S021 | https://arxiv.org/abs/2510.09907 | 2026-10-19T21:43:51Z | 56\% were valid bugs and 32\% were valid bugs that we would report to maintainers | Abstract, arXiv:2510.09907v1 (submitted 2025-10-10) |
+| S022 | https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2020.13 | 2026-10-19T21:43:52Z | we apply it internally, to the sequence of random choices made during generation | Abstract, LIPIcs ECOOP 2020 (DOI 10.4230/LIPIcs.ECOOP.2020.13) |
+| S023 | https://github.com/DRMacIver/shrinkray | 2026-10-19T21:43:51Z | they're only accepted if your interestingness test still passes, so a bad model costs time but never correctness | README §LLM mode; page currentOid 5fe6ee135d732e4b7758b3dbe3d91428523018fb |
+| S024 | https://www.fuzzingbook.org/html/Reducer.html | 2026-10-19T21:43:52Z | one first has to build a Runner whose outcome is FAIL if the precise error occurs | §Delta Debugging, fuzzingbook.org fetched 2026-10-19 |
+| S025 | https://mir.cs.illinois.edu/marinov/publications/LuoETAL14FlakyTestsAnalysis.pdf | 2026-10-19T21:43:52Z | Most flaky tests (78%) are flaky the first time they are written | §Findings F.2, FSE 2014 PDF p.2, fetched 2026-10-19 |
+| S026 | https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html | 2026-10-19T21:43:52Z | about 1.5% of all test runs reporting a "flaky" result | post body, published 2016-05-27, fetched 2026-10-19 |
+| S027 | https://arxiv.org/abs/2602.19098 | 2026-10-19T21:43:51Z | We identified a total of 65 environmental flaky projects | Abstract, arXiv:2602.19098v1 (submitted 2026-02-22) |
+| S028 | https://bazel.build/reference/test-encyclopedia | 2026-10-19T21:43:52Z | writing any of the strings PASS or FAIL to stdout has no significance to the test runner | §Role of the test runner, bazel.build fetched 2026-10-19 |
+| S029 | https://github.com/lukasa1993/mutate4bash | 2026-10-19T21:43:52Z | Timeouts, invalid syntax, and compile errors return status 1; surviving mutants return status 2 | README; page currentOid 01cb2d872edadc72c3ff9a7bd8405fe099b49953 |
+| S030 | https://arxiv.org/abs/2507.10062 | 2026-10-19T21:43:52Z | This paper introduces LLMShot, a novel framework that leverages Vision-Language Models (VLMs) | Abstract, arXiv:2507.10062v2 (v1 2025-07-14, last revised 2025-07-24) |
+| S040 | https://o-parry.github.io/papers/2021a.pdf | 2026-10-19T21:47:33Z | Tests that fail inconsistently, without changes to the code under test, are described as flaky. | Abstract, p. 17:1 (author copy of TOSEM 2021) |
+| S041 | https://pitest.org/quickstart/incremental_analysis/ | 2026-10-19T21:47:33Z | With the exception of 4), all these optimisations introduce a degree of potential error into the analysis. | Incremental analysis, paragraph after the optimisation list |
+| S042 | https://arxiv.org/abs/2103.07189 | 2026-10-19T21:47:33Z | our analyses further provide evidence that mutants are indeed coupled with real faults. | Abstract |
+| S043 | https://homes.cs.washington.edu/~rjust/publ/mutants_real_faults_fse_2014.pdf | 2026-10-19T21:47:33Z | The results show a statistically significant correlation between mutant detection and real fault detection, independently of code coverage. | Abstract |
+| S044 | https://arxiv.org/pdf/2404.09952 | 2026-10-19T21:47:33Z | We find LLMorpheus to be capable of producing mutants that resemble existing bugs that cannot be produced by StrykerJS | Abstract, p. 1 (arXiv v2) |
+| S045 | https://blog.nelhage.com/post/two-kinds-of-testing/ | 2026-10-19T21:47:33Z | This change didn't break anything that was previously known to work. | section Novelty |
+| S046 | https://github.com/ngernest/pbt-bibliography | 2026-10-19T21:47:33Z | This bibliography aims to cover the literature on property-based testing (PBT) à la Haskell QuickCheck. | README opening paragraph |
+
+## Errata — kaika continuation (append-only)
+
+- **ER-K1 — Gate rejected-4 vs criteria 6–10.** `## Gate` above rejected
+  "a new QUALITY criterion without a lesson behind it" and said QUALITY
+  was unchanged by that lesson. Both stand for that lesson. This round
+  appends criteria 6–10, each citing a `## Mistakes` row (MK-2…MK-7) —
+  the lesson the earlier rejection said was missing. Not a reversal;
+  flagged by the Reviewer seat as an unreconciled contradiction.
+- **ER-K2 — `SKILL.md` pointers.** `SKILL.md:462` cites `PROVINCE.md:16-17`;
+  the generality rule is at `PROVINCE.md:15-16`. `SKILL.md:1469`'s
+  `../PROTOCOL.md` resolves from the lane's main checkout, not from a
+  `.tower` worktree. Recorded, not repaired: `SKILL.md` stays byte-stable
+  this round (box 3 binding).
+- **ER-K3 — box 4 evidence.** The Reviewer seat found box 4's "PROVINCE.md
+  still accurate" overreached: the "Owns" list omits the tsukuroi and
+  mado gates the lane measured in rounds 5–6. Corrected by an appended
+  `PROVINCE.md` section (Core / Frontier / Adjacent), lines 1-20
+  unchanged; box 4 stays `[~]`.
+- **ER-K4 — provider exhaustion.** Three L2 seats (cold-read, score
+  semantics, witness) died on a provider rate limit
+  (`resource_exhausted`); a second cold-read on a reassigned executor
+  route failed at capacity. Re-dispatched as fresh seats, with scratch
+  dirs of dead seats declared off-limits; the cold-read ran on the
+  `labrat` role route. No dead seat's output is used.

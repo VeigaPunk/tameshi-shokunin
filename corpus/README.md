@@ -34,3 +34,65 @@ local checks. Full outputs, exits and exact route/receipt prerequisites
 are retained under `../.ufo/evidence/fleet-round-1/`; authoritative local
 handoff: `../.ufo/continuation/fleet-round-1.md`.
 
+
+## Coverage map — addendum (fleet round 1, appended 2026-10-19)
+
+Appended, not inserted: the rows above keep their line numbers. Closes
+the lagging-index debt (`lessons/round-1.md` MK-4, `QUALITY.md` 7):
+before this addendum 13 of 19 notes had no row —
+`for f in corpus/knowledge/*.md; do b=${f##*/}; grep -qF "knowledge/$b" corpus/README.md || echo "$b"; done | wc -l` → 13 at `4eb4cf3`.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/arm-class-matrix.md` | JS + bash mutation-case arm-completeness matrix (round 4) | `mutation-case-kimi-census.md`; `mutation-case-kagi-census.md` |
+| `knowledge/closeout-r11.md` | the training arc's closeout: service boundary, handoff, carried debts; no new gate measurement | `plans/round-11.plan.md`; `SCORECARD.md`; `LOG.md` |
+| `knowledge/fleet-kill-rate-ledger.md` | standing per-gate view: suite size, kill rate, survivor classes, sweep date, pin; stale successor rows open | the six mutation-case notes; S031 |
+| `knowledge/fleet-suite-census.md` | static suite-vs-arm census of fleet gates (meta-checks, mutation controls, integration groups); the service offer | kumitate `scripts/`; kagi `corpus/*check*.sh` |
+| `knowledge/mutation-case-kagi-checklist.md` | case 5: kagi `checklist-run.sh` 7/15 (47 %), copy-only harness | S036; `service-optin-protocol.md` |
+| `knowledge/mutation-case-kumitate-claims.md` | case 6: kumitate `claims-check.mjs` 7/10 (70 %), byte copies only | S037 |
+| `knowledge/mutation-case-mado-verify.md` | case 4: mado `mado-verify.sh` 4/10 (40 %), owner opt-in, in-surface vs out-of-surface | S035 |
+| `knowledge/mutation-case-tsukuroi-census.md` | case 3: tsukuroi `tsukuroi-census.sh` 6/10 (60 %), cross-author; incident I1 | S034 |
+| `knowledge/operator-runbook.md` | operator runbook for the runner, ledger, opt-in, limits, cadence, regression (four-leg lines: ER-R3 open) | S031; ledger; opt-in; limits notes |
+| `knowledge/self-hardening-r6.md` | meta-sweep of the runner's own `--regression` comparator; selftest hardened | S031 |
+| `knowledge/service-limits.md` | intake refusal table: what the service will not sweep, and why | `fleet-suite-census.md`; `SKILL.md` |
+| `knowledge/service-optin-protocol.md` | engagement protocol: request, non-writes, owner responsibility, report shape | `fleet-suite-census.md`; case notes |
+| `knowledge/service-standing-state.md` | artifact-boundary table, fleet-visible vs lane-owned; no measurement | `SCORECARD.md`; `LOG.md`; `SKILL.md` |
+| `knowledge/mutation-score-semantics.md` — round 1, frontier F1 | verdict vocabulary map tameshi ↔ Stryker ↔ cargo-mutants ↔ mutmut ↔ shmutant; tameshi k/(k+s) vs Stryker detected/valid, equal iff no timeouts; all six recorded cases recomputed (t = 0 → identical rates); NoCoverage candidates left U; "timeout counts as a kill" rejected | S001, S002, S004, S005, S006 |
+| `knowledge/witness-scoped-kill-verdict.md` — round 1, frontier F2 | shmutant's witness grammar vs tameshi's guards; pre-registered witness split of js-kimi-census: 8 killed-on-witness / 0 accidental / 2 survived, declaration hashed before the run (blindness partial, recorded) | S006; evidence `../.ufo/evidence/kaika-round-1/witness/` |
+
+## Sources
+
+Where this lane learns: `SOURCES.md` (registry per kaika contract v1 —
+tiers, recheck cadence, paths, search log, unopened leads).
+
+## Frontier
+
+Ground not yet held. Zero-hit sweep (non-author ART dossier,
+`fleet-ledger/.ufo/waves/kaika-w1/tameshi-art.md:44`, run 2026-10-19 at
+`4eb4cf3`): all 12 patterns → `files=0 lines=0`. A ground moves to
+`held` only through an admitted `knowledge/` entry with a `source:`
+header citing a `mined` `SOURCES.md` row.
+
+| id | ground | candidate sources | status | next falsifiable move (before → after) |
+|---|---|---|---|---|
+| F1 | external mutation-score semantics + report interop | S001, S002, S004, S005 | held (round 1) — `knowledge/mutation-score-semantics.md` | emit one ledger leg as schema JSON and validate it (validator unavailable this round: U) |
+| F2 | witness-scoped kill verdicts / bash mutation tooling | S006 | held (round 1) — `knowledge/witness-scoped-kill-verdict.md` | the same split on a bash leg (surface-census): undefined → k_witness + k_accidental = 8 |
+| F3 | determinism precondition, flaky-aware verdicts | S004, S011, S025, S026, S027, S040 | open | one control per sweep (`.ufo/evidence/kaika-round-1/capability-demo/README.md` H2) → N ≥ 3 byte-identical controls, or a named mismatch |
+| F4 | golden / snapshot fixture discipline | S013, S014, S015, S016, S017, S045 | open | update paths that write expected values without an explicit flag: unmeasured → counted per surveyed gate |
+| F5 | hermetic environment normalization | S015, S016, S028 | open | runner selftest host vs `env -i LANG=C TZ=UTC`: identical (H3, round 1) → the six gate selftests measured the same way |
+| F6 | fixture minimization for survivors | S022, S023, S024 | open | B5 probe fixture size: unmeasured → reduced size + kill check |
+| F7 | incremental re-sweep granularity | S003, S004, S005, S008, S041 | open | pin-level cadence only → per-leg reuse decisions classified |
+| F8 | oracle anchoring as a survivor class | S012 | open | 0 test-oracle lines → one survivor classified against an independently anchored expectation |
+| F9 | LLM-era mutant generation + equivalence | S007, S009, S043, S044 | open | no LLM-specific search run yet (U) → bounded pilot with an independent outcome check |
+| F10 | PBT generators for gate fixtures | S018, S019, S020, S021 | open | no PBT fixture method → one generator against a named fixture gate |
+
+## Known gaps
+
+- **Provenance headers on the 19 pre-round entries** (`lessons/round-1.md`
+  MK-7): 0 of 19 open with `source:`/`verified-at:`/`recheck:` —
+  `for f in corpus/knowledge/*.md; do head -5 "$f" | grep -c '^source:'; done | sort | uniq -c` → `19 0` at `4eb4cf3`. Prepending
+  would shift every `path:line` cite into them; left as named debt,
+  route is an operator call. New entries carry the header (2 of 21 now).
+- **Stale ledger successors** — tsukuroi and mado legs read `stale`
+  (`knowledge/fleet-kill-rate-ledger.md`); re-sweeps owed (freshness).
+- **Operator runbook four-leg lines** (ER-R3) still open.
