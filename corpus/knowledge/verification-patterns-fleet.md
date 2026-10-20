@@ -305,3 +305,5 @@ audio-seat prompts (:15/:21/:27/:33/:39/:45/:51/:57); the quote resolves, the
 seat label is corrected. Command: `sed -n '9,16p' AXES.md` + `git show
 e867f78:AXES.md`; `grep -n '"prompt"' spec.json` + per-prompt Brief grep;
 `grep -c '102 prior' spec.json` → 8.
+
+**ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** Lane and owner repos are jj-colocated, so git HEAD is detached at the working-copy commit's parent and may differ from the branch tip (S061). Every active instruction above that reads `HEAD` (`show HEAD:<path>`, ancestor of HEAD, worktree vs HEAD, `git archive HEAD`) now reads the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`) or an explicit 40-hex revision; dated records above are not re-interpreted. Canonical rule: `SKILL.md:1027-1035`, `operator-runbook.md` ER-R3.

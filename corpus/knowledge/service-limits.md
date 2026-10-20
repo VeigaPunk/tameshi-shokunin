@@ -275,3 +275,5 @@ the final bytes; a reader on any later revision re-resolves.
 No claim in §1–§5 is re-cut by this entry; the moved cells are read-only observations, and the SKILL rendering still agrees with this note's table (row ids a–j, same refusals). A third party appending here is normal: the block is errata, append-only.
 
 New errata entries go below this one.
+
+**ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** Lane and owner repos are jj-colocated, so git HEAD is detached at the working-copy commit's parent and may differ from the branch tip (S061). Every active instruction above that reads `HEAD` (`show HEAD:<path>`, ancestor of HEAD, worktree vs HEAD, `git archive HEAD`) now reads the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`) or an explicit 40-hex revision; dated records above are not re-interpreted. Canonical rule: `SKILL.md:1027-1035`, `operator-runbook.md` ER-R3.

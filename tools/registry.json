@@ -1,0 +1,642 @@
+{
+  "schema": "tameshi-entry-registry-v1",
+  "rows": [
+    {
+      "name": "repeat-control-snapshot-clean",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "repeat-control-snapshot-mismatch",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate/mismatch"
+      ],
+      "expect": {
+        "exit": 1
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "repeat-control-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "bash-witness-count",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        "tools/bash-witness-study.py",
+        "count"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "unresolved\tnone"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1504",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "bash-witness-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/bash-witness-study.py",
+        "selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "WITNESS_SELFTEST:"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1504",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "pin-disposition-read",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        "tools/pin-disposition.py",
+        "--manifest",
+        ".ufo/evidence/round-13/pin-manifest.json",
+        "--root",
+        "/home/vgpnk/Projects/shokunin"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"unavailable\": 0"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1552",
+      "status": "active",
+      "tags": [
+        "baseline",
+        "fleet-live"
+      ],
+      "external": true
+    },
+    {
+      "name": "pin-disposition-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/pin-disposition.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1552",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "witness-metadata-check",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/witness-metadata.py",
+        "--check",
+        "--companion",
+        ".ufo/evidence/round-13/witness-metadata.json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "metadata_consistent"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1553",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "witness-metadata-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/witness-metadata.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1553",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round17",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-17/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"status\": \"clean\"",
+          "\"effective\": 11",
+          "\"superseded\": 1"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1681",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round17-before",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-17/dispositions-before.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"expectation\": \"producer_before\"",
+          "\"status\": \"failed\""
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round14-superseded",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-14/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1681",
+      "status": "superseded",
+      "superseded_by": "evidence-disposition-round17",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "evidence-disposition-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1681",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-frozen",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "context_consistent"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-missing-env",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--receipt",
+        ".ufo/evidence/round-15/frozen/context-missing-env/receipt.json",
+        "--expected",
+        ".ufo/evidence/round-15/frozen/context-missing-env/expected.json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "missing_injected_environment"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-mapping-suffix",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--receipt",
+        ".ufo/evidence/round-15/frozen/mapping-suffix/receipt.json",
+        "--expected",
+        ".ufo/evidence/round-15/frozen/mapping-suffix/expected.json"
+      ],
+      "expect": {
+        "exit": 1
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "mutate-and-run-selftest",
+      "kind": "selftest",
+      "argv": [
+        "bash",
+        "tools/mutate-and-run.sh",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MUTATE_SELFTEST:",
+          "VERDICT: PASS"
+        ]
+      },
+      "timeout_s": 180,
+      "source": "SKILL.md@98bea7d:1810",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "mutate-and-run-regression",
+      "kind": "gate",
+      "argv": [
+        "bash",
+        "tools/mutate-and-run.sh",
+        "--regression"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "REGRESSION: PASS"
+        ]
+      },
+      "timeout_s": 900,
+      "source": "SKILL.md@98bea7d:1810",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "measure-round16-rev",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/measure.py",
+        "--rev",
+        "HEAD",
+        "--repo",
+        "."
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"calibration_restraint_score\":",
+          "\"coldread\":"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1811",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "measure-round16-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST:"
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1811",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "assemble-round16-selftest",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: all checks passed"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1812",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "reattribute-round16-selftest",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/attribution/reattribute.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1813",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "sources-census",
+      "kind": "gate",
+      "argv": [
+        "bash",
+        ".ufo/evidence/kaika-round-1/sources-census-v2.sh"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SCORECARD.md@98bea7d:240",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "verify-round15",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-15/verify.py",
+        "--rev",
+        "7650fe4db89f3a706aed63d048ac47e02289cc72"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "measure-historical-preserved: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SCORECARD.md@98bea7d:247",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ],
+      "external": true
+    },
+    {
+      "name": "registry-check-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/registry-check.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 180,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "measure-round17-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST:"
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "trace-inputs-round17-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/coldread/trace-inputs.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "assemble-round17-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: all checks passed"
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 
 Question answered: for each of the six recorded mutation-ledger legs, does the
 current worktree content still equal the full sha256 pin recorded by
-tools/mutate-and-run.sh, and what does the repo's HEAD carry?
+tools/mutate-and-run.sh, and what does the repo's branch tip carry?
 
 What this tool does NOT answer: whether a recorded mutation result may be
 reused. Every row carries result_reuse=not_established. Byte identity of the
@@ -39,8 +39,16 @@ Per leg the JSON carries:
   pinned    original recorded evidence: commit, expected sha256, the sha256
             actually observed at that commit (blob_sha256), status
             verified|mismatch|unavailable, reason
-  head      current HEAD commit, the sha256 of the path's blob at HEAD
-            (present|absent|not_blob|unavailable), reason
+  head      the lane branch resolved the way scripts/hyaku/jj-lane.sh
+            detect_branch does (:53-65): an attached HEAD wins; a detached
+            HEAD (jj colocated working copy) falls back to
+            refs/remotes/origin/HEAD's branch, then refs/heads/master, then
+            refs/heads/main, then the first local branch. `commit` is that
+            branch's tip, `blob_sha256` the path's blob at the tip
+            (present|absent|not_blob|unavailable), `head_differs_from_branch`
+            whether raw HEAD commit != tip, `branch` the resolved name
+            (null when no local branch exists; then commit stays raw HEAD
+            and head_differs_from_branch is null).
   worktree  absolute path, current working-tree sha256, status
             unchanged|changed|unavailable (content_status mirrors it), reason
   content_status  unchanged | changed | unavailable (raw bytes only)
@@ -61,9 +69,10 @@ verified pinned evidence (the manifest digest equals the blob at the recorded
 commit), and byte equality with expected_sha256. A missing repo, path, commit or
 blob, a pin/digest disagreement, a symlink or a non-regular file can never be
 `unchanged`; those classify as `unavailable` with a reason. A readable file
-whose bytes differ from a verified pin is `changed`. Current HEAD may differ
-from the pinned commit while the content is still `unchanged`; HEAD is reported
-separately and never substituted for the worktree observation.
+whose bytes differ from a verified pin is `changed`. The branch tip may
+differ from the pinned commit while the content is still `unchanged`; the
+branch tip is reported separately and never substituted for the worktree
+observation.
 
 Exit map: 0 observations emitted, including drift and unavailable legs (this is
 a probe, not a gate) · 2 could-not-evaluate invalid input (usage, missing/
@@ -71,14 +80,15 @@ unreadable/schema-invalid manifest, fleet root not a directory), still emitted
 as a JSON error document on stdout.
 
 Read-only guarantees: the tool never writes to a target repo or worktree. Git is
-used only through read-only plumbing (`rev-parse`, `cat-file`), never `status`,
-`diff` or `hash-object`; the index, filters and hooks are never invoked.
-Inherited GIT_* variables are scrubbed, optional locks are disabled, global and
+used only through read-only plumbing (`rev-parse`, `symbolic-ref`,
+`show-ref`, `for-each-ref`, `cat-file`), never `status`, `diff` or
+`hash-object`; the index, filters and hooks are never invoked. Inherited
+GIT_* variables are scrubbed, optional locks are disabled, global and
 system git config are bypassed, argv lists are used (no shell), and each git
 call is bounded by a timeout. A repo must prove its own identity
 (`git rev-parse --show-toplevel` equal to the leg repo's real path) so a
-missing sibling cannot silently borrow the fleet root's super-repo HEAD. The
-worktree file must be a regular file (lstat + O_NOFOLLOW) whose real path stays
+missing sibling cannot silently borrow the fleet root's super-repo HEAD.
+The worktree file must be a regular file (lstat + O_NOFOLLOW) whose real path stays
 inside the leg repo, so a symlink cannot leak an arbitrary file's digest.
 
 Dependencies: python3 (stdlib only), git.
@@ -96,7 +106,7 @@ import subprocess
 import sys
 import tempfile
 
-VERSION = "pin-disposition.py r13 (tameshi-shokunin, 2026-10-20)"
+VERSION = "pin-disposition.py r17 (tameshi-shokunin, 2026-10-20)"
 SELF = os.path.realpath(__file__)
 
 SCHEMA = "pin-disposition-v1"
@@ -311,19 +321,109 @@ def pinned_observation(repo_real, commit, path, expected):
     return result
 
 
+def detect_branch(repo_real):
+    """Mirror scripts/hyaku/jj-lane.sh detect_branch (:53-65), read-only.
+
+    Attached HEAD yields its short name. A detached HEAD (the jj colocated
+    working-copy state this fleet lives in) falls back to the branch
+    refs/remotes/origin/HEAD points at, then refs/heads/master, then
+    refs/heads/main, then the first local branch. Returns (branch, reason):
+    branch is the short name or None; reason is a git_run failure string or
+    None (unresolvable-without-error also returns (None, None)).
+    """
+    proc, reason = git_run(repo_real, ["symbolic-ref", "-q", "--short", "HEAD"])
+    if reason:
+        return None, reason
+    if proc.returncode == 0:
+        branch = proc.stdout.decode("utf-8", "replace").strip()
+        if branch:
+            return branch, None
+    proc, reason = git_run(
+        repo_real, ["symbolic-ref", "-q", "refs/remotes/origin/HEAD"]
+    )
+    if reason:
+        return None, reason
+    if proc.returncode == 0:
+        ref = proc.stdout.decode("utf-8", "replace").strip()
+        prefix = "refs/remotes/origin/"
+        if ref.startswith(prefix) and ref[len(prefix):]:
+            return ref[len(prefix):], None
+    for candidate in ("master", "main"):
+        proc, reason = git_run(
+            repo_real,
+            ["show-ref", "-q", "--verify", "refs/heads/" + candidate],
+        )
+        if reason:
+            return None, reason
+        if proc.returncode == 0:
+            return candidate, None
+    proc, reason = git_run(
+        repo_real,
+        ["for-each-ref", "--format=%(refname:short)", "refs/heads/"],
+    )
+    if reason:
+        return None, reason
+    if proc.returncode == 0:
+        for line in proc.stdout.decode("utf-8", "replace").splitlines():
+            branch = line.strip()
+            if branch:
+                return branch, None
+    return None, None
+
+
 def head_observation(repo_real, path):
-    """Resolve current HEAD and the sha256 of <path>'s blob at HEAD."""
-    result = {"commit": None, "blob_sha256": None, "status": "unavailable", "reason": None}
+    """Resolve the lane branch tip and the sha256 of <path>'s blob at it.
+
+    `commit` is the resolved branch tip, not raw HEAD: a jj colocated repo
+    leaves HEAD detached on the working-copy commit, which can sit ahead of
+    the branch. `head_differs_from_branch` records that divergence. When no
+    local branch exists at all, `commit` falls back to raw HEAD and the two
+    new fields stay null so the probe degrades instead of failing.
+    """
+    result = {
+        "branch": None,
+        "commit": None,
+        "blob_sha256": None,
+        "status": "unavailable",
+        "reason": None,
+        "head_differs_from_branch": None,
+    }
     proc, reason = git_run(
         repo_real, ["rev-parse", "--verify", "--quiet", "--end-of-options", "HEAD^{commit}"]
     )
     if reason:
         result["reason"] = reason
         return result
-    commit = proc.stdout.decode("utf-8", "replace").strip()
-    if proc.returncode != 0 or not commit:
+    head_commit = proc.stdout.decode("utf-8", "replace").strip()
+    if proc.returncode != 0 or not head_commit:
         result["reason"] = "head_missing"
         return result
+    branch, reason = detect_branch(repo_real)
+    if reason:
+        result["reason"] = reason
+        return result
+    commit = head_commit
+    if branch is not None:
+        result["branch"] = branch
+        proc, run_reason = git_run(
+            repo_real,
+            [
+                "rev-parse",
+                "--verify",
+                "--quiet",
+                "--end-of-options",
+                "refs/heads/" + branch + "^{commit}",
+            ],
+        )
+        if run_reason:
+            result["reason"] = run_reason
+            return result
+        tip = proc.stdout.decode("utf-8", "replace").strip()
+        if proc.returncode != 0 or not tip:
+            result["reason"] = "branch_tip_missing"
+            return result
+        commit = tip
+        result["head_differs_from_branch"] = head_commit != tip
     result["commit"] = commit
     obj = commit + ":" + path
     proc, run_reason = git_run(repo_real, ["cat-file", "-t", obj])
@@ -419,10 +519,12 @@ def evaluate_leg(root_real, entry):
             "reason": repo_reason,
         }
         row["head"] = {
+            "branch": None,
             "commit": None,
             "blob_sha256": None,
             "status": "unavailable",
             "reason": repo_reason,
+            "head_differs_from_branch": None,
         }
         row["worktree"] = {
             "path": os.path.join(root_real, repo, *path.split("/")),
@@ -1170,6 +1272,46 @@ def selftest():
             ["--manifest", base_path, "--root", os.path.join(scratch, "no-such-root")],
             2,
             verify_error("invalid_root", "fleet root"),
+        )
+
+        # Detached HEAD one commit ahead of master with different file bytes:
+        # the head observation must read the branch tip (master), not raw
+        # HEAD. This is the jj colocated state JjAuditTameshi.md §1.2/:317,
+        # §2.3 and §5 R2 flag for this lane.
+        mado = os.path.join(fleet, "mado-shokunin")
+        os.makedirs(mado)
+        git(mado, ["init", "-q"])
+        git(mado, ["symbolic-ref", "HEAD", "refs/heads/master"])
+        put(os.path.join(mado, "tools", "mado-verify.sh"), SELFTEST_V1)
+        git(mado, ["add", "."])
+        git(mado, ["commit", "-q", "-m", "master-tip"])
+        mado_master_tip = git(mado, ["rev-parse", "HEAD"])
+        put(os.path.join(mado, "tools", "mado-verify.sh"), SELFTEST_V2)
+        git(mado, ["checkout", "-q", "--detach", "HEAD"])
+        git(mado, ["commit", "-q", "-am", "detached-ahead"])
+        mado_detached = git(mado, ["rev-parse", "HEAD"])
+        detached = copy.deepcopy(base)
+        for entry in detached["legs"]:
+            if entry["leg"] == "bash-mado-verify":
+                entry["pinned_commit"] = mado_master_tip
+        detached_path = write_manifest("detached-head", detached)
+        case(
+            "detached-head-uses-branch-tip",
+            ["--manifest", detached_path, "--root", fleet],
+            0,
+            lambda payload: verify_leg(
+                payload,
+                "bash-mado-verify",
+                [
+                    ("branch", field(rows_by_leg(payload)["bash-mado-verify"], "head", "branch"), "master"),
+                    ("head-commit", field(rows_by_leg(payload)["bash-mado-verify"], "head", "commit"), mado_master_tip),
+                    ("head-status", field(rows_by_leg(payload)["bash-mado-verify"], "head", "status"), "present"),
+                    ("head-sha", field(rows_by_leg(payload)["bash-mado-verify"], "head", "blob_sha256"), SELFTEST_V1_SHA256),
+                    ("differs", field(rows_by_leg(payload)["bash-mado-verify"], "head", "head_differs_from_branch"), True),
+                    ("detached-distinct", mado_detached != mado_master_tip, True),
+                    ("worktree-sha", field(rows_by_leg(payload)["bash-mado-verify"], "worktree", "sha256"), SELFTEST_V2_SHA256),
+                ],
+            ),
         )
     except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
         print("SELFTEST: COULD_NOT_EVALUATE ({}; fixtures kept at {})".format(exc, scratch))

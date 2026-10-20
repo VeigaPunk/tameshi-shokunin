@@ -1,0 +1,449 @@
+{
+ "schema": "tameshi-registry-before-manual-v1",
+ "measured_rev": "98bea7da5801f4bc58e4187690ee1687c8a5061f",
+ "clone": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin (fleet-mirror: siblings symlinked next to clone)",
+ "run_at_utc": "2026-10-20T15:28Z",
+ "note": "info-disposition-before is an informational historical-recipe row, not a registered entry; all other rows are registered entry/selftest commands or SCORECARD Capabilities evidence commands. SCORECARD capability rows referencing mutate --selftest/--regression, repeat-control --selftest, pin-disposition --selftest, witness-metadata --selftest, evidence-disposition --selftest are covered by those runs (identical argv).",
+ "rows": [
+  {
+   "name": "r12-repeat-control-entry",
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/tmp/tameshi-r17w1-X13-a4vypf/r12-controls",
+    "--",
+    "bash",
+    "-c",
+    "printf controls-match"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 clean; 1 failed; 2 and 64 could-not-evaluate",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "REPEAT_COMPARE identical=yes runs=3",
+    "REPEAT_OUT /tmp/tameshi-r17w1-X13-a4vypf/r12-controls",
+    "REPEAT_CONTROL: controls_match"
+   ],
+   "stdout_bytes": 424
+  },
+  {
+   "name": "r12-repeat-control-snapshot",
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--snapshot",
+    ".ufo/evidence/round-12/ControlGate"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 clean; 1 failed; 2 and 64 could-not-evaluate",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.02,
+   "key_stdout": [
+    "SNAPSHOT_EXPECTED id=controls_match exit=0",
+    "SNAPSHOT_OBSERVED id=controls_match exit=0",
+    "REPEAT_CONTROL: controls_match"
+   ],
+   "stdout_bytes": 294
+  },
+  {
+   "name": "r12-repeat-control-selftest",
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "self-test command; SCORECARD: PASS (29 cases), exit 0",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.71,
+   "key_stdout": [
+    "SELFTEST_CASE snapshot-committed-stable PASS (expected=controls_match/0 observed=controls_match/0)",
+    "SELFTEST_CASE snapshot-committed-mismatch PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)",
+    "SELFTEST: PASS (29 cases)"
+   ],
+   "stdout_bytes": 2936
+  },
+  {
+   "name": "r12-witness-count",
+   "argv": [
+    "python3",
+    "tools/bash-witness-study.py",
+    "count"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage/could-not-evaluate",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.04,
+   "key_stdout": [
+    "counts\tkilled_on_witness=8\taccidental=0\tsurvived=2\tinconclusive=0\ttotal=10\twitness_classified=10",
+    "declared_none\tB5,B10",
+    "unresolved\tnone"
+   ],
+   "stdout_bytes": 1755
+  },
+  {
+   "name": "r12-witness-selftest",
+   "argv": [
+    "python3",
+    "tools/bash-witness-study.py",
+    "selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "self-test command of the same registry row",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.05,
+   "key_stdout": [
+    "  check count refuses summary/raw mismatch           ok",
+    "WITNESS_SELFTEST: 41/41 pass",
+    "VERDICT: PASS"
+   ],
+   "stdout_bytes": 2381
+  },
+  {
+   "name": "r13-pin-disposition-entry",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--manifest",
+    ".ufo/evidence/round-13/pin-manifest.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 observations, including changed/unavailable; 2 invalid input/could-not-evaluate; selftest 1 failed",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.06,
+   "key_stdout": [
+    "    }",
+    "  ]",
+    "}"
+   ],
+   "stdout_bytes": 7031
+  },
+  {
+   "name": "r13-pin-disposition-selftest",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "self-test command; SCORECARD: 18/18 PASS0, exit 0",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.69,
+   "key_stdout": [
+    "SELFTEST_CASE missing-manifest PASS (exit=2 expects=2 4 literal checks)",
+    "SELFTEST_CASE invalid-root PASS (exit=2 expects=2 4 literal checks)",
+    "SELFTEST: PASS (18/18)"
+   ],
+   "stdout_bytes": 1323
+  },
+  {
+   "name": "r13-witness-metadata-check",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--check",
+    "--companion",
+    ".ufo/evidence/round-13/witness-metadata.json"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 metadata_consistent/clean; 1 metadata_inconsistent/failed; 2 input_unavailable or snapshot_tampered/could-not-evaluate, including usage",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "WITNESS_METADATA: metadata_consistent reason=ok exit=0 companion=/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin/.ufo/evidence/round-13/witness-metadata.json inputs=summary,declaration,declared,rerun_summary"
+   ],
+   "stdout_bytes": 213
+  },
+  {
+   "name": "r13-witness-metadata-selftest",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "self-test command; SCORECARD: selftest 39/39 PASS0",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 1.3,
+   "key_stdout": [
+    "SELFTEST_CASE missing-digest-red expected=snapshot_tampered/companion_digest_invalid/2 observed=snapshot_tampered/companion_digest_invalid/2 exit=2 OK",
+    "SELFTEST_CASE unpinned-digest-red expected=snapshot_tampered/companion_digest_unpinned/2 observed=snapshot_tampered/companion_digest_unpinned/2 exit=2 OK",
+    "SELFTEST: PASS 39/39"
+   ],
+   "stdout_bytes": 6002
+  },
+  {
+   "name": "r15-context-capture-check",
+   "argv": [
+    "python3",
+    "tools/context-capture.py",
+    "--check"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 clean (`context_consistent`); 1 failed stable finding ID (e.g. `missing_injected_environment`); 2 and 64 could-not-evaluate",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "CONTEXT: OK (id=context_consistent receipt=.ufo/evidence/round-14/context-receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=0 findings=0)"
+   ],
+   "stdout_bytes": 178
+  },
+  {
+   "name": "r15-context-capture-selftest",
+   "argv": [
+    "python3",
+    "tools/context-capture.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "self-test command of the same registry row",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 1.24,
+   "key_stdout": [
+    "SELFTEST_CASE hermetic-no-lane-path OK default lane root absent from subprocess output",
+    "SELFTEST_CASE hermetic-temp-only OK no unexpected temp-root entries",
+    "SELFTEST: PASS (49/49)"
+   ],
+   "stdout_bytes": 5201
+  },
+  {
+   "name": "r15-disposition-entry-as-written",
+   "argv": [
+    "python3",
+    "tools/evidence-disposition.py",
+    "--root",
+    ".",
+    "--dispositions",
+    ".ufo/evidence/round-14/dispositions.json",
+    "--json"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "registered cell: `(since round 16 the runner input moved, so `--root .` returns 2 `expected_input_digest_mismatch` by design; use `--root` on `git archive 28aeef4` extracted to /tmp -> 0 clean)`; verdict map: 0 clean; 1 failed; 2 and 64 could-not-evaluate",
+   "exit": 2,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "  \"tool\": \"evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)\",",
+    "  \"tool_sha256\": \"1609a9df970dcde345b4eceadd35d34d016ba0e3f5c3c02415b51592d42d2d95\"",
+    "}"
+   ],
+   "stdout_bytes": 844
+  },
+  {
+   "name": "r15-disposition-entry-archived-root",
+   "argv": [
+    "python3",
+    "tools/evidence-disposition.py",
+    "--root",
+    "/tmp/tameshi-r17w1-X13-a4vypf/archive-28aeef4",
+    "--dispositions",
+    ".ufo/evidence/round-14/dispositions.json",
+    "--json"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "registered maintained route: `--root` at an extracted `git archive 28aeef4` -> 0 clean",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "  \"tool\": \"evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)\",",
+    "  \"tool_sha256\": \"1609a9df970dcde345b4eceadd35d34d016ba0e3f5c3c02415b51592d42d2d95\"",
+    "}"
+   ],
+   "stdout_bytes": 5976
+  },
+  {
+   "name": "r15-disposition-selftest",
+   "argv": [
+    "python3",
+    "tools/evidence-disposition.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "self-test command; SCORECARD: PASS 34/34 exit 0",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.9,
+   "key_stdout": [
+    "SELFTEST_CASE usage-selftest-extra PASS (exit=64 expects=64)",
+    "SELFTEST_CASE argv-never-executed PASS (marker absent=True)",
+    "SELFTEST: PASS (34/34)"
+   ],
+   "stdout_bytes": 2069
+  },
+  {
+   "name": "r16-mutate-selftest",
+   "argv": [
+    "bash",
+    "tools/mutate-and-run.sh",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "selftest 0 pass / 1 fail",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 5.17,
+   "key_stdout": [
+    "PASS --regression refuses --target (exit 64)",
+    "MUTATE_SELFTEST: 83/83 pass",
+    "VERDICT: PASS"
+   ],
+   "stdout_bytes": 3753
+  },
+  {
+   "name": "r16-mutate-regression",
+   "argv": [
+    "bash",
+    "tools/mutate-and-run.sh",
+    "--regression"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "regression 0 PASS . 1 FAIL . 2 SETUP . 64 usage",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 114.91,
+   "key_stdout": [
+    "REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)",
+    "REGRESSION: PASS (cases=7 passed=7; ledger legs exact: killed-delta<=0 flips<=0)",
+    "REGRESSION_WORKDIR: /tmp/tameshi-r4-2-regression.lFoN94 (removed on PASS; --keep retains)"
+   ],
+   "stdout_bytes": 5619
+  },
+  {
+   "name": "r16-measure-rev",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-16/measure.py",
+    "--rev",
+    "98bea7da5801f4bc58e4187690ee1687c8a5061f"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 measured . 2 rev/blob missing . 64 usage",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.04,
+   "key_stdout": [
+    "    }",
+    "  }",
+    "}"
+   ],
+   "stdout_bytes": 1110
+  },
+  {
+   "name": "r16-measure-selftest",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-16/measure.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "selftest leg of the same probe row: 0 ok",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.75,
+   "key_stdout": [
+    "PASS exit64-unknown-arg ",
+    "PASS exit2-no-repo ",
+    "MEASURE_SELFTEST: 38/38 pass (scratch /tmp/tameshi-r16-CRMeasure-epklwo5a)"
+   ],
+   "stdout_bytes": 1065
+  },
+  {
+   "name": "r16-assemble-selftest",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-16/coldread/assemble.py",
+    "--selftest"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "0 every bucket covered . 1 a bucket uncovered or a report rejected . 2 usage (argparse) or an invalid override",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "  [ok] wrong-sha replace rejected (exit 2) got 2",
+    "  [ok] preamble first-line heading tolerated got 0",
+    "SELFTEST: all checks passed"
+   ],
+   "stdout_bytes": 1416
+  },
+  {
+   "name": "cap-sources-census",
+   "argv": [
+    "bash",
+    ".ufo/evidence/kaika-round-1/sources-census-v2.sh"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "exit 0, 44 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 0.06,
+   "key_stdout": [
+    "== B2 id-or-path cite (must print nothing)",
+    "== VERDICT",
+    "SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)"
+   ],
+   "stdout_bytes": 1863
+  },
+  {
+   "name": "cap-context-verify",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-15/verify.py",
+    "--rev",
+    "7650fe4db89f3a706aed63d048ac47e02289cc72"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "exit0, copied-source CLI selftest 49/49, registered frozen0, missing-env1, tamper2, usage64",
+   "exit": 0,
+   "timed_out": false,
+   "elapsed_s": 1.75,
+   "key_stdout": [
+    "measure-historical-preserved: PASS all_baseline_bytes_preserved=1 changed=[]",
+    "sources-census: PASS exit=0 (expected 0)",
+    "sources-census-ok-line: PASS ok line present"
+   ],
+   "stdout_bytes": 5193
+  },
+  {
+   "name": "info-disposition-before",
+   "argv": [
+    "python3",
+    "tools/evidence-disposition.py",
+    "--root",
+    ".",
+    "--dispositions",
+    ".ufo/evidence/round-14/dispositions-before.json",
+    "--json"
+   ],
+   "cwd": "/tmp/tameshi-r17w1-X13-a4vypf/fleet/tameshi-shokunin",
+   "registered_outcome": "r14 recipe step 2 (historical): must fail the unresolved producer_before assertion -> exit 1",
+   "exit": 2,
+   "timed_out": false,
+   "elapsed_s": 0.03,
+   "key_stdout": [
+    "  \"tool\": \"evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)\",",
+    "  \"tool_sha256\": \"1609a9df970dcde345b4eceadd35d34d016ba0e3f5c3c02415b51592d42d2d95\"",
+    "}"
+   ],
+   "stdout_bytes": 844
+  }
+ ]
+}

@@ -382,3 +382,5 @@ effective plus one explicitly superseded; the superseded raw contains
 mismatch stays visible. The new checker selftest passes34/34 after two
 fixture-only corrections; initial18-of34 failures remain in
 `verification.json`. No oracle, target suite or mutation sweep was rerun.
+
+**ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** Lane and owner repos are jj-colocated, so git HEAD is detached at the working-copy commit's parent and may differ from the branch tip (S061). Every active instruction above that reads `HEAD` (`show HEAD:<path>`, ancestor of HEAD, worktree vs HEAD, `git archive HEAD`) now reads the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`) or an explicit 40-hex revision; dated records above are not re-interpreted. Canonical rule: `SKILL.md:1027-1035`, `operator-runbook.md` ER-R3.

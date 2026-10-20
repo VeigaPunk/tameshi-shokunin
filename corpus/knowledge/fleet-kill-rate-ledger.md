@@ -416,3 +416,5 @@ Wave-2 correction (LedgerMatrixAppend, DepthCritic): the block above calls the
 queue "§5". The queue row that said `unmeasured` is this file's §3 (`:109`),
 and the offer queue is `fleet-suite-census.md` §5 (`:283`). Measuring the gate
 was tameshi's own read-only case; it did not drain the service queue.
+
+**ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** Lane and owner repos are jj-colocated, so git HEAD is detached at the working-copy commit's parent and may differ from the branch tip (S061). Every active instruction above that reads `HEAD` (`show HEAD:<path>`, ancestor of HEAD, worktree vs HEAD, `git archive HEAD`) now reads the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`) or an explicit 40-hex revision; dated records above are not re-interpreted. Canonical rule: `SKILL.md:1027-1035`, `operator-runbook.md` ER-R3.

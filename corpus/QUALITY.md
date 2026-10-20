@@ -121,3 +121,38 @@ Each criterion cites the mistake it learns from
     fixture does not discriminate.
     (`lessons/round-16.md`, attribution rows; w2 AttrCritic2, MutateReattribute;
     `.ufo/evidence/round-16/attribution/selftest-mutants.json`)
+
+## Criteria appended — round 17
+
+23. Cold-read credit is keyed to what the read ran against, not only to the
+    bucket's bytes. Every credited ledger entry carries non-empty `inputs`
+    (lane path → sha256); each input must still be a regular blob with that
+    sha at the measured rev, and an entry that executed commands must name
+    committed trace receipts whose inputs it covers. A failing entry whose
+    inputs still verify vetoes the bucket. Shown able to fail: the round-14
+    bucket is credited at `e69b488` and uncredited (`input-drift:tools/mutate-and-run.sh`)
+    at `09ee1d0` under `.ufo/evidence/round-17/measure.py`.
+    (`lessons/round-16-verifier-spotcheck.md` §2, routed R16-C2b; S058, S059)
+24. Editing an instrument that a registered gate pins means running that
+    gate's registered entry command before landing. An outcome that changes
+    is re-pinned or superseded by an appended manifest in the same round —
+    "by design" may describe the mechanism, never excuse the outcome — and
+    every mention of the old outcome is swept in that round.
+    (`lessons/round-16-verifier-spotcheck.md` §3, routed R16-OP1 and R16-C2a;
+    `.ufo/evidence/round-17/op1-redbefore-98bea7d.txt`)
+25. The no-harm monitor runs every active registered entry command
+    (`python3 tools/registry-check.py --rev REV`), not only selftests, and
+    grades each row against the outcome its capability was admitted with.
+    A row leaves `active` only as `superseded` with a `superseded_by` row,
+    and still runs. The monitor runs in a clone, never writing the lane.
+    (`lessons/round-16-verifier-spotcheck.md` §3, routed R16-MON1;
+    `.ufo/waves/round-17/w1/V02ToolsNoHarmScope.md`, K04RegistrySelfFulfilling.md)
+26. A receipt found stale gets a dated correction appended in the round that
+    finds it, naming both digests and their revisions; the original line is
+    never rewritten. (`lessons/round-16-verifier-spotcheck.md` §6 item 5, routed R16-EV1)
+27. Every lane tool that runs git — selftest fixtures included — scrubs the
+    inherited `GIT_*` environment first, and its selftest proves it with a
+    canary repository named by an exported `GIT_DIR` that must stay
+    unchanged. An unscrubbed fixture commit moved the live lane's HEAD and
+    index in round 17 wave 1. (`lessons/round-17.md`, environment-leak
+    mistake; S063)

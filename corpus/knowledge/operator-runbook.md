@@ -46,11 +46,11 @@ sha256sum tools/mutate-and-run.sh
 bash tools/mutate-and-run.sh --selftest
 bash tools/mutate-and-run.sh --regression --workdir /tmp/<scratch>/regression
 
-# (3) the six-case pin read — per case, ER-3's exact command set
+# (3) the six-case pin read — per case; <tip> = the owner's branch tip `refs/heads/<branch>` (`../scripts/hyaku/jj-lane.sh state <owner-repo>`, field local=; never HEAD — ER-R3)
 sha256sum <gate-file>                                    # live vs the recorded pin
-git -C <owner-repo> show HEAD:<path> | sha256sum         # is the recorded revision the HEAD blob?
+git -C <owner-repo> show <tip>:<path> | sha256sum        # is the recorded revision the branch-tip blob?
 git -C <owner-repo> status --porcelain -- <path>         # worktree vs HEAD
-git -C <owner-repo> merge-base --is-ancestor <REV> HEAD  # moved past the recorded revision?
+git -C <owner-repo> merge-base --is-ancestor <REV> <tip> # moved past the recorded revision?
 
 # (4) read it: per case current|stale|drift, tool held|moved (§6), then the
 #     trigger table T1–T3; append-only on the ledger — never edit §1–§4.
@@ -278,9 +278,9 @@ any fleet driver would invoke it with no lane acting (`SKILL.md:1017-1019`).
 
 | reading | rule | meaning |
 |---|---|---|
-| `current` | `git show HEAD:<path>` sha == recorded pin | swept bytes are the gate's live blob |
-| `stale` | recorded revision is an ancestor of HEAD, live blob differs | gate moved past the recorded revision; the table is historical, not wrong |
-| `drift` | worktree differs from HEAD (porcelain non-empty, or live sha ≠ HEAD blob sha) | uncommitted bytes; a hygiene reading — git-materialized replays are already immune |
+| `current` | `git show <tip>:<path>` sha == recorded pin (`<tip>` = branch tip, not HEAD) | swept bytes are the gate's live blob |
+| `stale` | recorded revision is an ancestor of `<tip>`, live blob differs | gate moved past the recorded revision; the table is historical, not wrong |
+| `drift` | worktree differs from the branch tip (porcelain non-empty, or live sha ≠ tip blob sha) | uncommitted bytes; a hygiene reading — git-materialized replays are already immune |
 | tool `held` / `moved` | harness sha == / ≠ the sha on the last `REGRESSION_TOOL`/`MUTATE_TOOL` line | the instrument moved since the table was measured |
 
 **Triggers — what to do** (`SKILL.md:1069-1090`):
@@ -295,7 +295,7 @@ any fleet driver would invoke it with no lane acting (`SKILL.md:1017-1019`).
 - **The re-pin rule:** a moved pin is never re-interpreted against the new
   bytes; both revisions stay in the record; `moved=0 stale=0` is a complete
   outcome, recorded as such (drift is never manufactured by re-cutting
-  cases). A `drift` reading waits for the commit, then re-pins
+  cases). A `drift` reading waits for the owner's jj-lane commit (cite the pushed hash), then re-pins
   (`SKILL.md:1083-1086`; `fleet-kill-rate-ledger.md:293`, `:310`;
   `service-optin-protocol.md:59-62`).
 
@@ -412,7 +412,7 @@ Sources: `SKILL.md:921-1008`; `tools/mutate-and-run.sh:72-109`, `:150-182`;
 2. **On `stale`:** no action on the recorded table; either re-measure the live
    revision (a new sweep at the new pin) or append a STALE cell with its
    reason; both revisions stay in the record (T1, §6).
-3. **On `drift`:** wait for the commit, then re-pin; nothing is re-interpreted
+3. **On `drift`:** wait for the owner's jj-lane commit (cite the pushed hash), then re-pin; nothing is re-interpreted
    against a moving file (§6, `service-limits.md` row c).
 4. **On tool `moved`:** re-run the reproduction under the new revision and
    record both pins (T2).
@@ -510,3 +510,5 @@ own timestamp, and no number above is re-interpreted. The remedy is unchanged:
 the T2 step, once the edit lands (per ER-1's own rule, "re-read before
 quoting", `fleet-kill-rate-ledger.md:259`). The receipts' executed revision
 (`cf41efaa…`) is unaffected.
+
+**ER-R3 — jj-era reading of "HEAD" (round 17, 2026-10-20).** Lane and owner repos are jj-colocated: git HEAD is detached at the working-copy commit's parent (`@-`), not necessarily the branch tip (S061). Wherever this runbook's commands or the §6 reading map named HEAD, they now read the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`); cited hashes are the helper's landed/pushed hash. The 2026-10-14 executed tables and ER-R1/ER-R2 are records and are not re-interpreted. Same rule: `SKILL.md:1027-1035`, `fleet-kill-rate-ledger.md` ER-jj.

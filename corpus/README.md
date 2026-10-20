@@ -235,3 +235,22 @@ frontier item moves to Core: the cold-read is calibration evidence, and F8
 needs a mutant-side survivor probe tied to an independently anchored
 expectation. Round 16 records mutant-side probes, but against SurvivorPrep's
 pristine-derived expectations only.
+
+## Round 17 — live-tree re-pin, entry-command monitor, input-keyed cold-read credit
+
+Appended; rows above keep their line numbers. QUALITY 7: the new note gets
+its row in the same round.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/input-keyed-coldread-credit.md` | a cold-read credit holds only while every input the read ran against keeps its sha256 as a blob at the measured rev; trace receipts bind executed commands to inputs; a failing read with verified inputs vetoes; red-before on the round-14 bucket (credited at `e69b488`, `input-drift:tools/mutate-and-run.sh` at `09ee1d0`); limits of an open trace | S058, S059, S060, S064; `lessons/round-16-verifier-spotcheck.md` §2, §6 |
+
+Superseded readings, dated, not rewritten: the round-16 block's statement that
+the round-16 ledger is "the full-page cold-read ledger" was wrong at `09ee1d0`
+on the round-14 bucket (sha-only credit); the round-17 ledger
+`.ufo/evidence/round-17/coldread/ledger.json` replaces it under the
+input-keyed rule. Line 95's header count ("2 of 21") is stale: at round 17,
+6 of 25 knowledge notes open with `source:` (count:
+`for f in knowledge/*.md; do head -1 "$f" | grep -q '^source:' && echo; done | wc -l`).
+No frontier row moves: F7 stays open (the v2 disposition and the credit rule are
+unchanged-input reuse predicates, not per-leg reuse classification).

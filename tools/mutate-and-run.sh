@@ -245,6 +245,47 @@ sha_of() {
   printf '%s' "$h"
 }
 
+# r17 (TAMESHI-R17) GIT_* scrub (N01 F1/F14; R04's 12:29 lane clobber). Every
+# git call in this tool goes through git_clean: a caller-exported GIT_DIR /
+# GIT_WORK_TREE / GIT_INDEX_FILE (git hooks, `git rebase -x`, editor or jj
+# integrations) otherwise redirects `git -C <fixture>` writes into the caller's
+# repository. R04 ran `GIT_DIR=<lane>/.git bash tools/mutate-and-run.sh
+# --selftest` and the fixture `init/add/commit` sequence committed into the live
+# lane and rewrote its index. The unset list is derived from the live
+# environment, so every GIT_* name is scrubbed, including ones not spelled out
+# here (GIT_CONFIG_*, GIT_AUTHOR_*, GIT_TRACE*, …).
+git_clean() {
+  local -a scrub=()
+  local name
+  while IFS= read -r name; do
+    [[ -n "$name" ]] && scrub+=(-u "$name")
+  done < <(env | sed -n 's/^\(GIT_[A-Za-z0-9_]*\)=.*/\1/p')
+  if [[ ${#scrub[@]} -gt 0 ]]; then
+    env "${scrub[@]}" git "$@"
+  else
+    git "$@"
+  fi
+}
+
+# fixture_commit <repo> <message> [<path>...] — the selftest's fixture history
+# builder: init (idempotent), stage everything (or the named paths), commit with
+# the fixture identity, print the commit id. All steps go through git_clean, so
+# the selftest's canary arm can re-run this exact step under an exported GIT_DIR
+# and prove it cannot land outside <repo>.
+fixture_commit() {
+  local r=$1 msg=$2
+  shift 2
+  git_clean -C "$r" init -q || return 1
+  if [[ $# -gt 0 ]]; then
+    git_clean -C "$r" add -- "$@" || return 1
+  else
+    git_clean -C "$r" add -A || return 1
+  fi
+  git_clean -C "$r" -c user.name=tameshi -c user.email=tameshi@selftest -c commit.gpgsign=false \
+    commit -q -m "$msg" || return 1
+  git_clean -C "$r" rev-parse HEAD
+}
+
 print_tail() {
   local f=$1 n
   n=$(wc -l < "$f")
@@ -998,16 +1039,31 @@ regression_case() {
       printf 'REGRESSION_CASE %s: SETUP (git missing; cannot materialize the pinned revision)\n' "$name"
       return 2
     }
-    if ! git -C "$repo" rev-parse --verify --quiet "${rev}^{commit}" >/dev/null; then
+    # r17 (TAMESHI-R17) repo-identity guard — port of tools/pin-disposition.py
+    # repo_identity (:235-265). `git -C` climbs to a parent repository when the
+    # lane dir has no .git of its own (the fleet root is itself a git repo), so
+    # every rev:path read below would silently resolve in the super-repo's
+    # object store. Require the dir's own toplevel — realpath on both sides so
+    # a symlinked fleet path still compares equal — before any rev-addressed
+    # read. (jj-audit R1: JjAuditTameshi.md §1.1, §2.2, §5.)
+    local repo_real repo_top
+    repo_real=$(realpath "$repo" 2>/dev/null) || repo_real=''
+    repo_top=$(git_clean -C "$repo" rev-parse --show-toplevel 2>/dev/null) || repo_top=''
+    if [[ -z "$repo_real" || -z "$repo_top" || "$(realpath "$repo_top" 2>/dev/null)" != "$repo_real" ]]; then
+      printf 'REGRESSION_CASE %s: SETUP (repo_identity_mismatch: %s is not its own repository; toplevel=%s)\n' \
+        "$name" "$repo" "${repo_top:-unresolved}"
+      return 2
+    fi
+    if ! git_clean -C "$repo" rev-parse --verify --quiet "${rev}^{commit}" >/dev/null; then
       printf 'REGRESSION_CASE %s: SETUP (revision not found: %s@%s)\n' "$name" "$repo" "$rev"
       return 2
     fi
-    if ! git -C "$repo" cat-file -e "${rev}:${path}" 2>/dev/null; then
+    if ! git_clean -C "$repo" cat-file -e "${rev}:${path}" 2>/dev/null; then
       printf 'REGRESSION_CASE %s: SETUP (path not in revision: %s@%s:%s)\n' "$name" "$repo" "$rev" "$path"
       return 2
     fi
     local dst="$cwd/target.$(basename "$path")" blob_mode
-    if ! git -C "$repo" show "${rev}:${path}" >"$dst" 2>"$cwd/git-show.err"; then
+    if ! git_clean -C "$repo" show "${rev}:${path}" >"$dst" 2>"$cwd/git-show.err"; then
       printf 'REGRESSION_CASE %s: SETUP (git show failed: %s@%s:%s; see %s)\n' \
         "$name" "$repo" "$rev" "$path" "$cwd/git-show.err"
       return 2
@@ -1016,7 +1072,7 @@ regression_case() {
     # whose gate re-execs itself (checklist-run.sh's selftest runs "$SELF")
     # needs the recorded exec bit, so mirror it from the blob: 100755 -> +x,
     # 100644 stays as written. Bytes (and thus the pin check) are unaffected.
-    if ! blob_mode=$(git -C "$repo" ls-tree "$rev" -- "$path" | awk '{print $1}'); then
+    if ! blob_mode=$(git_clean -C "$repo" ls-tree "$rev" -- "$path" | awk '{print $1}'); then
       printf 'REGRESSION_CASE %s: SETUP (cannot read the blob mode: %s@%s:%s)\n' \
         "$name" "$repo" "$rev" "$path"
       return 2
@@ -1527,11 +1583,7 @@ EOT
   local grepo="$root/fleet/fakerepo" grev saved_fleet
   mkdir -p "$grepo"
   cp "$fx/target.sh" "$grepo/target.sh"
-  git -C "$grepo" init -q
-  git -C "$grepo" add -A
-  git -C "$grepo" -c user.name=tameshi -c user.email=tameshi@selftest -c commit.gpgsign=false \
-    commit -q -m selftest-fixture
-  grev=$(git -C "$grepo" rev-parse HEAD)
+  grev=$(fixture_commit "$grepo" selftest-fixture)
   saved_fleet=$FLEET_ROOT
   FLEET_ROOT="$root/fleet"
 
@@ -1586,12 +1638,9 @@ printf 'EXEC_FIXTURE: PASS\n'
 exit 0
 EOT
   chmod +x "$grepo/exec.sh"
-  git -C "$grepo" add exec.sh
-  git -C "$grepo" -c user.name=tameshi -c user.email=tameshi@selftest -c commit.gpgsign=false \
-    commit -q -m selftest-fixture-exec
   local grev_exec exec_sha
-  grev_exec=$(git -C "$grepo" rev-parse HEAD)
-  exec_sha=$(git -C "$grepo" show "$grev_exec:exec.sh" | sha256sum | cut -d' ' -f1)
+  grev_exec=$(fixture_commit "$grepo" selftest-fixture-exec exec.sh)
+  exec_sha=$(git_clean -C "$grepo" show "$grev_exec:exec.sh" | sha256sum | cut -d' ' -f1)
   cat >"$fx/exec.spec" <<'EOT'
 @defect K | the self-check now greps the empty file (exit 1)
 @old grep -qF "$MAGIC" "$0" || exit 1
@@ -1621,12 +1670,9 @@ printf 'EXEC_FIXTURE: PASS\n'
 exit 0
 EOT
   chmod 644 "$grepo/noexec.sh"
-  git -C "$grepo" add noexec.sh
-  git -C "$grepo" -c user.name=tameshi -c user.email=tameshi@selftest -c commit.gpgsign=false \
-    commit -q -m selftest-fixture-noexec
   local grev_noexec noexec_sha
-  grev_noexec=$(git -C "$grepo" rev-parse HEAD)
-  noexec_sha=$(git -C "$grepo" show "$grev_noexec:noexec.sh" | sha256sum | cut -d' ' -f1)
+  grev_noexec=$(fixture_commit "$grepo" selftest-fixture-noexec noexec.sh)
+  noexec_sha=$(git_clean -C "$grepo" show "$grev_noexec:noexec.sh" | sha256sum | cut -d' ' -f1)
   regression_case_git fixture-noexec fakerepo/noexec.sh "$noexec_sha" "$grev_noexec" \
     "$fx/exec.spec" '"$MUTANT" --selftest' 'K:KILLED,S:SURVIVED' "$rg/git-noexec" >"$root/rg16.out" 2>&1
   st_rg=$?
@@ -1635,6 +1681,87 @@ EOT
   st 'no-exec leg pin line carries mode=100644' $?
   grep -qF 'control run on the pristine copy is red (exit=126' "$rg/git-noexec/sweep.log"
   st 'no-exec leg refusal names the red control (exit=126)' $?
+
+  # r17 (TAMESHI-R17) repo-identity guard (port of pin-disposition.py
+  # repo_identity; jj-audit R1, JjAuditTameshi.md §1.1/§2.2/§5): a "lane" dir
+  # with no .git inside a git super-repo must be refused, not silently read
+  # from the super-repo's object store. Refuse-arm: super-repo $root/fleet2
+  # holds target.sh committed at BOTH the repo root and nogit/ (so `git show
+  # rev:target.sh` finds the root blob while `git ls-tree rev -- target.sh`,
+  # which is CWD-relative, finds nogit/target.sh) and a subdir nogit/ without
+  # .git — regression_case pointed at nogit exits 2 with
+  # repo_identity_mismatch. Without the guard the same call materializes the
+  # super-repo's blob, sweeps green, and both arms of this case fail.
+  # Accept-arm: fakerepo (own .git) reaches materialization past the guard —
+  # proven by the pinned blob read succeeding and no mismatch line.
+  local super="$root/fleet2/super" srev
+  mkdir -p "$super/nogit"
+  cp "$fx/target.sh" "$super/target.sh"
+  cp "$fx/target.sh" "$super/nogit/target.sh"
+  srev=$(fixture_commit "$super" selftest-superrepo)
+
+  regression_case fixture-nogit "$super/nogit/target.sh" "$s_before" \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/nogit" \
+    "$super/nogit" "$srev" target.sh 0 0 >"$root/rg17.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 2 ]]; st 'repo-identity guard: no-.git dir inside super-repo refused (exit 2)' $?
+  grep -qF 'REGRESSION_CASE fixture-nogit: SETUP (repo_identity_mismatch:' "$root/rg17.out"
+  st 'repo-identity guard: refusal names repo_identity_mismatch' $?
+
+  regression_case fixture-ownrepo "$grepo/target.sh" "$s_before" \
+    "$fx/spec-ok.spec" "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/ownrepo" \
+    "$grepo" "$grev" target.sh 0 0 >"$root/rg18.out" 2>&1
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'repo-identity guard: a real repo passes (exit 0)' $?
+  grep -qF 'REGRESSION_CASE fixture-ownrepo: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=2)' "$root/rg18.out"
+  st 'repo-identity guard: accepted leg ran at exact tolerance' $?
+  if grep -qF 'repo_identity_mismatch' "$root/rg18.out"; then
+    st 'repo-identity guard: accepted leg emits no mismatch line' 1
+  else
+    st 'repo-identity guard: accepted leg emits no mismatch line' 0
+  fi
+
+  # r17 (TAMESHI-R17) GIT_* scrub, canary arm (N01 F1/F14; R04's 12:29 lane
+  # clobber): every git call must ignore a caller-exported GIT_DIR. A canary
+  # repo is base-committed, its .git is exported as GIT_DIR, and the exact
+  # fixture-commit helper is re-run on a fresh dir. Green: the fixture gets its
+  # own history and the canary's HEAD/refs/status are unchanged. Red (scrub
+  # removed): the fixture commit lands in the canary — its HEAD and refs move,
+  # its index/worktree go dirty, and the fixture dir never becomes a repo.
+  local canary="$root/canary" cdr="$root/canary-fixture"
+  local canary_head canary_refs canary_status cd_head
+  mkdir -p "$canary"
+  printf 'canary\n' >"$canary/marker"
+  canary_head=$(fixture_commit "$canary" selftest-canary)
+  canary_refs=$(git_clean -C "$canary" for-each-ref --format='%(refname) %(objectname)')
+  canary_status=$(git_clean -C "$canary" status --porcelain)
+  mkdir -p "$cdr"
+  printf 'fixture\n' >"$cdr/one.txt"
+  ( export GIT_DIR="$canary/.git"; fixture_commit "$cdr" selftest-leak >/dev/null )
+  st 'GIT_* scrub: fixture commit under an exported GIT_DIR succeeds' $?
+  cd_head=$(git_clean -C "$cdr" rev-parse HEAD 2>/dev/null) || cd_head=''
+  [[ -n "$cd_head" && "$cd_head" != "$canary_head" ]]
+  st 'GIT_* scrub: fixture wrote its own history' $?
+  [[ "$(git_clean -C "$canary" rev-parse HEAD)" == "$canary_head" ]]
+  st 'GIT_* scrub: canary HEAD unchanged' $?
+  [[ "$(git_clean -C "$canary" for-each-ref --format='%(refname) %(objectname)')" == "$canary_refs" ]]
+  st 'GIT_* scrub: canary refs unchanged' $?
+  [[ -z "$canary_status" && "$(git_clean -C "$canary" status --porcelain)" == "$canary_status" ]]
+  st 'GIT_* scrub: canary index/worktree unchanged' $?
+
+  # Read side (N01 F14): `--show-toplevel` alone does not catch a leaked
+  # GIT_DIR (observed: it still reports the worktree under -C), so the scrub is
+  # what keeps rev-addressed reads in the requested repo. The pinned rev exists
+  # only in $grepo; with the scrub the leg passes, without it the read lands in
+  # the canary and refuses as `revision not found` (SETUP 2).
+  ( export GIT_DIR="$canary/.git"
+    regression_case fixture-env-read "$grepo/target.sh" "$s_before" "$fx/spec-ok.spec" \
+      "$suite_good" 'K:KILLED,S:SURVIVED' "$rg/env-read" \
+      "$grepo" "$grev" target.sh 0 0 >"$root/rg19.out" 2>&1 )
+  st_rg=$?
+  [[ $st_rg -eq 0 ]]; st 'GIT_* scrub: rev-addressed reads ignore an exported GIT_DIR (exit 0)' $?
+  grep -qF 'REGRESSION_CASE fixture-env-read: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=2)' "$root/rg19.out"
+  st 'GIT_* scrub: env-independent read ran at exact tolerance' $?
 
   FLEET_ROOT="$saved_fleet"
   regression_case fixture "$fx/target.sh" "$s_before" "$fx/spec-ok.spec" "$suite_good" \

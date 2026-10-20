@@ -18,6 +18,44 @@ Disposition schema `evidence-dispositions-v1`:
    "inputs": {<lane-relative path>: <64 lowercase hex sha256>, ...},
    "rows": [effective | superseded, ...]}
 
+  Schema `evidence-dispositions-v2` (round-17 R16-OP1) keeps every v1 field
+  and adds:
+    "supersedes": lane-relative path of the v1 manifest this document
+      supersedes; informational, and it must itself be pinned in `inputs`.
+    "historical_inputs": {<lane-relative path>: {"rev": <40-hex commit>,
+      "reason": <text>}}. For each declared path the expected-input bytes are
+      read with `git -C <root> cat-file blob --end-of-options <rev>:<path>`
+      instead of the live file, after a repo-identity guard (realpath of
+      `git -C <root> rev-parse --show-toplevel` must equal realpath(root)).
+      Keys must start with `tools/` (lane instruments move by design; evidence
+      never) and must appear in expected.json's `inputs`; the blob digest must
+      still equal the expected pin. Every other input keeps live-tree
+      integrity-first verification. The payload adds
+      `expected_inputs_historical` {path: rev}.
+      Failure ids (exit 2): historical_input_forbidden,
+      historical_input_unknown, historical_input_unavailable,
+      expected_input_digest_mismatch, historical_input_unneeded,
+      historical_input_uncommitted, supersedes_mismatch.
+
+  v2 guards (round-17 hardening):
+    G1 historical_input_unneeded: a waived path whose live bytes still equal
+       the expected pin must not be waived (the waiver set is derived from
+       observed drift, not author choice).
+    G2 historical_input_uncommitted: the live bytes of a waived path must equal
+       HEAD:<path>; an uncommitted worktree edit, a symlink, or deletion while
+       HEAD still has the path is tampering. A committed deletion is allowed.
+    G3 rev must resolve to exactly that commit id (tree/blob/HEAD/branch/abbrev
+       rejected) and be an ancestor of HEAD, else historical_input_unavailable.
+    G4 every git subprocess scrubs all inherited GIT_* variables and sets
+       GIT_NO_REPLACE_OBJECTS=1, GIT_GRAFT_FILE=/dev/null,
+       GIT_CONFIG_NOSYSTEM=1, GIT_CONFIG_GLOBAL=/dev/null; the root must be a
+       non-shallow work tree whose --absolute-git-dir is <root>/.git.
+    G5 the tree entry must be a 100644/100755 blob; bytes are read, never text.
+    G6 text mode prints one `HISTORICAL <path> rev=<rev> sha256=<sha>` line per
+       waiver; JSON carries expected_inputs_historical (and historical_text).
+    G7 `supersedes` must name a v1 manifest with this document's expected_file
+       and rows, whose inputs are pinned identically (supersedes_mismatch).
+
   effective row keys are exactly:
       name, state="effective", receipt, check
     name and check must be the same string; the check must exist in the named
@@ -88,12 +126,15 @@ import tempfile
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
 
-VERSION = "evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)"
+VERSION = "evidence-disposition.py r17.1 (tameshi-shokunin, 2026-10-20): hardened v2 historical inputs"
 SELF = os.path.realpath(__file__)
 
 SCHEMA = "evidence-dispositions-v1"
+SCHEMA_V2 = "evidence-dispositions-v2"
+SCHEMAS = (SCHEMA, SCHEMA_V2)
 RESULT_SCHEMA = "evidence-disposition-result-v1"
 HEX64 = re.compile(r"[0-9a-f]{64}")
+HEX40 = re.compile(r"[0-9a-f]{40}")
 
 EXPECTATION_FIELDS = frozenset(
     ("exit", "contains", "id", "reason", "rows", "statuses", "result_reuse")
@@ -132,6 +173,11 @@ exit 64  usage error
 
 Receipt/raw_receipt values are lane-relative paths pinned in `inputs`. The tool
 never executes receipt argv. `--selftest` builds isolated /tmp fixtures.
+evidence-dispositions-v2 manifests add `supersedes` (pinned v1 manifest path)
+and `historical_inputs` (tools/* expected inputs read as git blobs at the
+declared rev after a repo-identity guard). A waiver is refused when the live
+bytes still equal the pin (historical_input_unneeded) or differ from HEAD
+(historical_input_uncommitted); revs must be commits ancestral to HEAD.
 """
 
 
@@ -310,6 +356,206 @@ def read_dispositions(path):
         raise CouldNotEvaluate("path_rejected", "dispositions: not a regular file")
     return read_regular(path, "dispositions")
 
+# ------------------------------------------------- historical input reading
+
+# G4: every git subprocess runs without inherited GIT_* state, without replace
+# refs and without grafts, so environment/replace/graft attacks cannot rewrite
+# the bytes this gate reads.
+GIT_ENV_OVERRIDES = {
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_GRAFT_FILE": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+}
+
+
+def _stderr_text(proc):
+    if proc.stderr is None:
+        return ""
+    if isinstance(proc.stderr, bytes):
+        return proc.stderr.decode("utf-8", "replace").strip()
+    return str(proc.stderr).strip()
+
+
+def git_environment():
+    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+    env.update(GIT_ENV_OVERRIDES)
+    return env
+
+
+def git_call(lane, argv, timeout=30):
+    """Hermetic git subprocess (bytes, never text)."""
+    try:
+        return subprocess.run(
+            ["git", "-C", str(lane)] + list(argv),
+            capture_output=True,
+            env=git_environment(),
+            timeout=timeout,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "git {}: {}".format(argv[0], exc),
+        )
+
+
+def _git_failure(proc, action):
+    return CouldNotEvaluate(
+        "historical_input_unavailable",
+        "{}: {}".format(action, _stderr_text(proc) or "exit {}".format(proc.returncode)),
+    )
+
+
+def verify_repo(lane):
+    """G4 identity/topology guard: <lane> is its own non-shallow work tree."""
+    proc = git_call(lane, ["rev-parse", "--absolute-git-dir", "--show-toplevel"])
+    if proc.returncode != 0:
+        raise _git_failure(proc, "root is not inside a git work tree")
+    lines = proc.stdout.decode("utf-8", "replace").splitlines()
+    if len(lines) != 2:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "rev-parse --absolute-git-dir --show-toplevel returned {!r}".format(lines),
+        )
+    git_dir, toplevel = lines
+    lane_real = os.path.realpath(str(lane))
+    if os.path.realpath(toplevel) != lane_real:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "root is not the toplevel of its own work tree "
+            "(git reports {!r})".format(toplevel),
+        )
+    if os.path.realpath(git_dir) != os.path.join(lane_real, ".git"):
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "git dir {!r} is not <root>/.git".format(git_dir),
+        )
+    proc = git_call(lane, ["rev-parse", "--is-shallow-repository"])
+    if proc.returncode != 0 or proc.stdout.decode("utf-8", "replace").strip() != "false":
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "root is a shallow repository; historical blobs are not provable",
+        )
+
+
+def resolve_historical_rev(lane, rev):
+    """G3: rev is exactly that commit id and a commit ancestor of HEAD."""
+    proc = git_call(lane, ["rev-parse", "--verify", "--end-of-options", rev + "^{commit}"])
+    resolved = proc.stdout.decode("utf-8", "replace").strip()
+    if proc.returncode != 0 or resolved != rev:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "rev {!r} does not resolve to that commit (got {!r})".format(rev, resolved),
+        )
+    proc = git_call(lane, ["merge-base", "--is-ancestor", "--end-of-options", rev, "HEAD"])
+    if proc.returncode != 0:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "rev {} is not an ancestor of HEAD".format(rev),
+        )
+
+
+TREE_MODES = ("100644", "100755")
+
+
+def tree_entry(lane, rev, path):
+    """(mode, type, object id) for <path> at <rev>, or None when absent."""
+    proc = git_call(lane, ["ls-tree", "-z", "--full-tree", rev, "--", path])
+    if proc.returncode != 0:
+        raise _git_failure(proc, "ls-tree {}:{}".format(rev, path))
+    records = [item for item in proc.stdout.split(b"\0") if item]
+    if not records:
+        return None
+    if len(records) != 1:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "{}: ambiguous tree entries at {}".format(path, rev),
+        )
+    meta, _, name = records[0].partition(b"\t")
+    fields = meta.decode("utf-8", "replace").split()
+    if len(fields) != 3 or name.decode("utf-8", "replace") != path:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "{}: unparsable tree entry at {}".format(path, rev),
+        )
+    return fields[0], fields[1], fields[2]
+
+
+def read_blob(lane, object_id, path):
+    proc = git_call(lane, ["cat-file", "blob", object_id])
+    if proc.returncode != 0:
+        raise _git_failure(proc, "{}: blob {} unavailable".format(path, object_id))
+    return proc.stdout
+
+
+def live_regular_bytes(lane, path):
+    """Live bytes only when every component is a real directory/file."""
+    current = Path(lane)
+    for part in PurePosixPath(path).parts:
+        current = current / part
+        try:
+            st = os.lstat(current)
+        except OSError:
+            return None
+        if stat.S_ISLNK(st.st_mode):
+            return None
+    if not stat.S_ISREG(st.st_mode):
+        return None
+    try:
+        return read_regular(current, "historical_input")
+    except CouldNotEvaluate:
+        return None
+
+
+def check_historical_waiver(lane, path, pin):
+    """G1/G2: the waiver must be needed and the live move must be committed."""
+    live = live_regular_bytes(lane, path)
+    if live is not None and sha256_bytes(live) == pin:
+        raise CouldNotEvaluate(
+            "historical_input_unneeded",
+            "{}: live bytes still equal the expected pin; the waiver is unnecessary".format(path),
+        )
+    head = tree_entry(lane, "HEAD", path)
+    if live is None:
+        if head is not None:
+            raise CouldNotEvaluate(
+                "historical_input_uncommitted",
+                "{}: live path is absent or not a regular file but HEAD has an entry".format(path),
+            )
+        return
+    if head is None:
+        raise CouldNotEvaluate(
+            "historical_input_uncommitted",
+            "{}: live path is not present at HEAD".format(path),
+        )
+    if head[1] != "blob":
+        raise CouldNotEvaluate(
+            "historical_input_uncommitted",
+            "{}: HEAD entry is a {} not a blob".format(path, head[1]),
+        )
+    if sha256_bytes(read_blob(lane, head[2], path)) != sha256_bytes(live):
+        raise CouldNotEvaluate(
+            "historical_input_uncommitted",
+            "{}: live bytes differ from HEAD:{}".format(path, path),
+        )
+
+
+def historical_blob(lane, rev, path):
+    """G5: regular blob (100644/100755) bytes at <rev>, never text."""
+    entry = tree_entry(lane, rev, path)
+    if entry is None:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "{}: absent at rev {}".format(path, rev),
+        )
+    mode, kind, object_id = entry
+    if kind != "blob" or mode not in TREE_MODES:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "{}: tree entry mode {} type {} is not a regular blob".format(path, mode, kind),
+        )
+    return read_blob(lane, object_id, path)
+
 
 # ------------------------------------------------------------- schema checks
 
@@ -330,6 +576,45 @@ def validate_inputs(raw_inputs):
             )
         pinned[canonical] = digest
     return pinned
+
+
+def validate_historical_inputs(raw):
+    """v2 historical_inputs: tools/* paths read from a pinned git revision."""
+    if not isinstance(raw, dict):
+        raise CouldNotEvaluate(
+            "dispositions_field_invalid", "historical_inputs must be an object"
+        )
+    historical = {}
+    for key, entry in raw.items():
+        canonical = str(canonical_relative(key, "historical_input"))
+        if canonical in historical:
+            raise CouldNotEvaluate(
+                "path_rejected", "duplicate historical input {}".format(canonical)
+            )
+        if not canonical.startswith("tools/"):
+            raise CouldNotEvaluate(
+                "historical_input_forbidden",
+                "{}: historical inputs must be tools/* paths".format(canonical),
+            )
+        if not isinstance(entry, dict):
+            raise CouldNotEvaluate(
+                "dispositions_field_invalid",
+                "{}: historical input must be an object with rev and reason".format(canonical),
+            )
+        rev = entry.get("rev")
+        if not isinstance(rev, str) or not HEX40.fullmatch(rev):
+            raise CouldNotEvaluate(
+                "dispositions_field_invalid",
+                "{}: rev must be 40 lowercase hex characters".format(canonical),
+            )
+        reason = entry.get("reason")
+        if not isinstance(reason, str) or not reason.strip():
+            raise CouldNotEvaluate(
+                "dispositions_field_invalid",
+                "{}: reason must be a non-empty string".format(canonical),
+            )
+        historical[canonical] = rev
+    return historical
 
 
 def receipt_canonical(value, expected_rel):
@@ -1116,10 +1401,35 @@ def emit_result(payload, as_json):
                 finding["id"], finding["expectation"] or "-", finding["detail"]
             )
         )
+    for line in payload.get("historical_text", ()):
+        sys.stdout.write(line + "\n")
     return payload["exit"]
 
 
 # ----------------------------------------------------------------- run mode
+
+
+def check_supersedes_lineage(dispositions, supersedes_rel, expected_rel, pinned, input_bytes):
+    """G7: `supersedes` must name a v1 manifest this document actually extends."""
+    doc = parse_json_object(input_bytes[supersedes_rel], "supersedes")
+    problems = []
+    if doc.get("schema") != SCHEMA:
+        problems.append("superseded document schema is not {!r}".format(SCHEMA))
+    if doc.get("expected_file") != expected_rel:
+        problems.append("superseded expected_file differs")
+    if doc.get("rows") != dispositions.get("rows"):
+        problems.append("superseded rows differ from this document's rows")
+    superseded_inputs = doc.get("inputs")
+    if not isinstance(superseded_inputs, dict):
+        problems.append("superseded inputs is not an object")
+    else:
+        for key, digest in superseded_inputs.items():
+            if pinned.get(key) != digest:
+                problems.append("superseded input {} is not pinned identically".format(key))
+    if problems:
+        raise CouldNotEvaluate("supersedes_mismatch", "; ".join(problems))
+
+
 
 
 def run_mode(root, dispositions_path, as_json):
@@ -1130,11 +1440,25 @@ def run_mode(root, dispositions_path, as_json):
     dispositions_file = Path(dispositions_path)
     raw_dispositions = read_dispositions(dispositions_file)
     dispositions = parse_json_object(raw_dispositions, "dispositions")
-    if dispositions.get("schema") != SCHEMA:
+    schema = dispositions.get("schema")
+    if schema not in SCHEMAS:
+        # v1-visible text: this detail must stay byte-identical to r14.
         raise CouldNotEvaluate(
             "schema_mismatch",
             "dispositions schema must be {!r}".format(SCHEMA),
         )
+
+    supersedes_rel = None
+    historical = {}
+    if schema == SCHEMA_V2:
+        supersedes_value = dispositions.get("supersedes")
+        if not isinstance(supersedes_value, str):
+            raise CouldNotEvaluate(
+                "dispositions_field_invalid",
+                "supersedes must be a lane-relative path string",
+            )
+        supersedes_rel = str(canonical_relative(supersedes_value, "supersedes"))
+        historical = validate_historical_inputs(dispositions.get("historical_inputs"))
 
     expected_rel = str(canonical_relative(dispositions.get("expected_file"), "expected_file"))
     pinned = validate_inputs(dispositions.get("inputs"))
@@ -1149,6 +1473,11 @@ def run_mode(root, dispositions_path, as_json):
             raise CouldNotEvaluate(
                 "input_unpinned", "required receipt {} is not pinned in inputs".format(canonical)
             )
+    if schema == SCHEMA_V2 and supersedes_rel not in pinned:
+        raise CouldNotEvaluate(
+            "input_unpinned",
+            "supersedes document {} is not pinned in inputs".format(supersedes_rel),
+        )
 
     rows = validate_rows(dispositions.get("rows"), expected_rel, pinned)
 
@@ -1176,20 +1505,45 @@ def run_mode(root, dispositions_path, as_json):
             )
         input_bytes[canonical] = data
 
+    if schema == SCHEMA_V2:
+        check_supersedes_lineage(
+            dispositions, supersedes_rel, expected_rel, pinned, input_bytes
+        )
+
     expected = parse_json_object(input_bytes[expected_rel], "expected")
     checks, expected_inputs = validate_expected(expected)
 
     # Every original expected.inputs digest is verified in full before any
     # predicate runs; a changed historical input is not evaluation material.
+    # v2 historical_inputs are classified BEFORE any live read of those paths:
+    # a waived path is never opened through safe_file/read_regular here.
+    historical_unknown = sorted(set(historical) - set(expected_inputs))
+    if historical_unknown:
+        raise CouldNotEvaluate(
+            "historical_input_unknown",
+            "not in expected.inputs: {}".format(", ".join(historical_unknown)),
+        )
+    historical_shas = {}
+    if historical:
+        verify_repo(lane)
+        for rev in sorted(set(historical.values())):
+            resolve_historical_rev(lane, rev)
+        for canonical in sorted(historical):
+            check_historical_waiver(lane, canonical, expected_inputs[canonical])
     for canonical in sorted(expected_inputs):
-        path = safe_file(lane, canonical, "expected_input")
-        data = read_regular(path, "expected_input")
+        if canonical in historical:
+            data = historical_blob(lane, historical[canonical], canonical)
+        else:
+            path = safe_file(lane, canonical, "expected_input")
+            data = read_regular(path, "expected_input")
         actual = sha256_bytes(data)
         if actual != expected_inputs[canonical]:
             raise CouldNotEvaluate(
                 "expected_input_digest_mismatch",
                 "{}: observed {} expects {}".format(canonical, actual, expected_inputs[canonical]),
             )
+        if canonical in historical:
+            historical_shas[canonical] = actual
 
     receipt_maps, receipt_docs = load_receipts(used_receipts, input_bytes)
     records, findings, informational = evaluate_dispositions(
@@ -1222,6 +1576,17 @@ def run_mode(root, dispositions_path, as_json):
     payload["informational"] = {"receipt_only_checks": informational}
     payload["inputs_verified"] = sorted(pinned)
     payload["expected_inputs_verified"] = sorted(expected_inputs)
+    if schema == SCHEMA_V2:
+        payload["supersedes"] = supersedes_rel
+        payload["expected_inputs_historical"] = {
+            canonical: historical[canonical] for canonical in sorted(historical)
+        }
+        payload["historical_text"] = [
+            "HISTORICAL {} rev={} sha256={}".format(
+                canonical, historical[canonical], historical_shas[canonical]
+            )
+            for canonical in sorted(historical)
+        ]
     return emit_result(payload, as_json)
 
 
@@ -1229,6 +1594,13 @@ def run_mode(root, dispositions_path, as_json):
 
 SELFTEST_ORACLE_PY = b"# tameshi round-14 oracle fixture (never executed)\n"
 SELFTEST_FIXTURE_INPUT = b"pinned-input\n"
+SELFTEST_TOOL_REL = "tools/pinned-tool.py"
+SELFTEST_TOOL_V1 = b"# pinned tool fixture v1\n"
+SELFTEST_TOOL_V2 = b"# pinned tool fixture v2 (drifted live)\n"
+SELFTEST_TOOL_OTHER = b"# pinned tool fixture other rev (unexpected bytes)\n"
+SELFTEST_TOOL_CRLF = b"#!/bin/sh\r\necho crlf-fixture\r\n"
+SELFTEST_V1_REL = "docs/v1-manifest.json"
+SELFTEST_V1_DOC = b'{"schema": "evidence-dispositions-v1"}\n'
 
 
 def _json_bytes(value):
@@ -1250,6 +1622,8 @@ def _build_lane(lane, marker, variant):
     evidence.mkdir(parents=True, exist_ok=True)
     fixture_input = lane / "fixtures" / "input.txt"
     _write_bytes(fixture_input, SELFTEST_FIXTURE_INPUT)
+    tool_bytes = variant.get("tool_bytes", SELFTEST_TOOL_V1)
+    _write_bytes(lane / "tools" / "pinned-tool.py", tool_bytes)
     oracle_py = evidence / "producer-oracle.py"
     _write_bytes(oracle_py, SELFTEST_ORACLE_PY)
     oracle_input_digest = _sha(SELFTEST_ORACLE_PY)
@@ -1277,6 +1651,7 @@ def _build_lane(lane, marker, variant):
         "inputs": {
             "fixtures/input.txt": _sha(SELFTEST_FIXTURE_INPUT),
             ".ufo/evidence/round-13/producer-oracle.py": oracle_input_digest,
+            "tools/pinned-tool.py": _sha(tool_bytes),
         },
         "expected_checks": expected_checks,
     }
@@ -1426,6 +1801,7 @@ def _build_lane(lane, marker, variant):
         "ver_rel": ".ufo/evidence/round-13/verification.json",
         "oracle_rel": ".ufo/evidence/round-13/producer-oracle-repair.json",
         "fixture_rel": "fixtures/input.txt",
+        "tool_rel": SELFTEST_TOOL_REL,
     }
 
 
@@ -1503,6 +1879,183 @@ def _dispositions(fx, rows):
     }
 
 
+def _dispositions_v2(fx, rows, historical=None, supersedes_rel=None, pin_supersedes=True,
+                     supersedes_doc=None):
+    """v2 manifest: v1 fields plus `supersedes` and `historical_inputs`."""
+    document = _dispositions(fx, rows)
+    document["schema"] = SCHEMA_V2
+    if supersedes_rel is not None:
+        if supersedes_rel == SELFTEST_V1_REL:
+            doc = supersedes_doc if supersedes_doc is not None else _dispositions(fx, rows)
+            _write_bytes(fx["lane"] / SELFTEST_V1_REL, _json_bytes(doc))
+        if pin_supersedes:
+            document["inputs"][supersedes_rel] = _sha(
+                (fx["lane"] / supersedes_rel).read_bytes()
+            )
+    document["supersedes"] = supersedes_rel
+    document["historical_inputs"] = historical or {}
+    return document
+
+
+def _git(lane, *argv):
+    proc = subprocess.run(
+        ["git", "-C", str(lane)] + list(argv), capture_output=True, timeout=30
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(
+            "git {} failed: {}".format(argv[0], _stderr_text(proc))
+        )
+    return proc.stdout
+
+
+def _git_raw(argv):
+    proc = subprocess.run(argv, capture_output=True, timeout=120)
+    if proc.returncode != 0:
+        raise RuntimeError("{} failed: {}".format(argv, _stderr_text(proc)))
+    return proc.stdout
+
+
+def _git_head(lane):
+    return _git(lane, "rev-parse", "HEAD").decode("ascii").strip()
+
+
+def _git_commit_all(lane, message):
+    _git(lane, "add", "-A")
+    _git(
+        lane,
+        "-c",
+        "user.email=selftest@example.invalid",
+        "-c",
+        "user.name=selftest",
+        "commit",
+        "-qm",
+        message,
+    )
+    return _git_head(lane)
+
+
+def _git_init_commit(lane, message="fixture commit"):
+    _git(lane, "init", "-q")
+    return _git_commit_all(lane, message)
+
+
+def _setup_hist_clean(fx):
+    """Pinned bytes at rev A, then the instrument move committed at HEAD."""
+    lane = fx["lane"]
+    rev_a = _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "round-16 committed instrument move")
+    fx["hist_rev"] = rev_a
+
+
+def _setup_hist_other(fx):
+    """Unexpected committed bytes at rev B (the declared historical rev)."""
+    lane = fx["lane"]
+    _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_OTHER)
+    rev_b = _git_commit_all(lane, "unexpected committed bytes")
+    fx["hist_rev"] = rev_b
+
+
+def _setup_hist_unneeded(fx):
+    """Live bytes still equal the pin: the waiver must be refused."""
+    fx["hist_rev"] = _git_init_commit(fx["lane"], "round-13 pinned tools")
+
+
+def _setup_hist_uncommitted(fx):
+    """Worktree edit of a waived path, never committed."""
+    lane = fx["lane"]
+    rev_a = _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    fx["hist_rev"] = rev_a
+
+
+def _setup_hist_missing_object(fx):
+    """Rev D deleted the path; HEAD later restored it as a moved tool."""
+    lane = fx["lane"]
+    _git_init_commit(lane, "round-13 pinned tools")
+    os.remove(lane / SELFTEST_TOOL_REL)
+    rev_d = _git_commit_all(lane, "delete pinned tool")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "restore as a moved tool")
+    fx["hist_rev"] = rev_d
+
+
+def _setup_hist_dangling(fx):
+    """A commit that exists but is not an ancestor of HEAD."""
+    lane = fx["lane"]
+    _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "committed instrument move")
+    tree = _git(lane, "rev-parse", "HEAD^{tree}").decode().strip()
+    dangling = _git(lane, "commit-tree", tree, "-m", "forged: not on master").decode().strip()
+    fx["hist_rev"] = dangling
+
+
+def _setup_hist_tree(fx):
+    """A tree object id is not a commit."""
+    lane = fx["lane"]
+    _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "committed instrument move")
+    fx["hist_rev"] = _git(lane, "rev-parse", "HEAD^{tree}").decode().strip()
+
+
+def _setup_hist_replace(fx):
+    """A replace ref rewrites HEAD; only GIT_NO_REPLACE_OBJECTS restores truth."""
+    lane = fx["lane"]
+    rev_a = _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "committed instrument move")
+    fake_tree = _git(lane, "rev-parse", rev_a + "^{tree}").decode().strip()
+    fake = _git(lane, "commit-tree", fake_tree, "-m", "replace fake").decode().strip()
+    _git(lane, "replace", "HEAD", fake)
+    fx["hist_rev"] = rev_a
+
+
+def _setup_committed_deletion(fx):
+    """Pinned bytes at rev A; HEAD holds a committed deletion of the path."""
+    lane = fx["lane"]
+    rev_a = _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "committed instrument move")
+    os.remove(lane / SELFTEST_TOOL_REL)
+    _git_commit_all(lane, "committed deletion of the moved tool")
+    fx["hist_rev"] = rev_a
+
+
+def _setup_gitdir_env(fx):
+    """A foreign GIT_DIR/GIT_WORK_TREE exported into the tool's environment."""
+    _setup_hist_clean(fx)
+    lane = fx["lane"]
+    foreign = lane.parent / (lane.name + "-foreign")
+    _write_bytes(foreign / "seed.txt", b"foreign\n")
+    _git_init_commit(foreign, "foreign repo")
+    fx["env_extra"] = {
+        "GIT_DIR": str(foreign / ".git"),
+        "GIT_WORK_TREE": str(lane),
+    }
+
+
+def _setup_shallow(fx):
+    """A shallow clone: historical blobs are not provable."""
+    lane = fx["lane"]
+    src = lane.parent / (lane.name + "-src")
+    os.rename(str(lane), str(src))
+    rev = _git_init_commit(src, "shallow source")
+    _git_raw(["git", "clone", "--depth", "1", "--quiet", "file://" + str(src), str(lane)])
+    fx["hist_rev"] = rev
+
+
+def _setup_crlf(fx):
+    """Pinned CRLF bytes at rev A; HEAD holds different committed bytes."""
+    lane = fx["lane"]
+    rev_a = _git_init_commit(lane, "crlf pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_OTHER)
+    _git_commit_all(lane, "committed instrument move")
+    fx["hist_rev"] = rev_a
+
+
 def _status_for(exit_code):
     return {0: "clean", 1: "failed", 2: "could_not_evaluate"}.get(exit_code)
 
@@ -1523,7 +2076,11 @@ def selftest():
             failed.append(name)
             print("SELFTEST_CASE {} FAIL ({})".format(name, detail))
 
-    def run_cli(lane, dispositions_path):
+    def run_cli(lane, dispositions_path, env_extra=None):
+        env = None
+        if env_extra:
+            env = dict(os.environ)
+            env.update(env_extra)
         return subprocess.run(
             [
                 sys.executable,
@@ -1537,14 +2094,18 @@ def selftest():
             capture_output=True,
             text=True,
             timeout=120,
+            env=env,
             cwd=str(lane),
         )
 
     def case(name, expected_exit, expected_ids, variant=None, rows_kwargs=None,
-             rows_override=None, raw_dispositions=None, mutate=None, informational_checks=None):
+             rows_override=None, raw_dispositions=None, mutate=None,
+             informational_checks=None, git_setup=None):
         lane = scratch / ("case-" + name)
         try:
             fx = _build_lane(lane, marker, variant or {})
+            if git_setup is not None:
+                git_setup(fx)
             rows = rows_override if rows_override is not None else _rows(fx, **(rows_kwargs or {}))
             if raw_dispositions is not None:
                 produced = raw_dispositions(fx)
@@ -1557,7 +2118,7 @@ def selftest():
             _write_bytes(dispositions_path, dispositions_bytes)
             if mutate is not None:
                 mutate(fx)
-            proc = run_cli(lane, dispositions_path)
+            proc = run_cli(lane, dispositions_path, fx.get("env_extra"))
         except Exception as exc:  # fixture setup or process failure
             record(name, False, "setup/process error: {}: {}".format(type(exc).__name__, exc))
             return
@@ -1824,6 +2385,349 @@ def selftest():
         rows_kwargs={"extra_rows": [_effective("ghost", "../verification.json", "ghost")]},
         rows_override=None,
     )
+
+    # v2 (evidence-dispositions-v2) cases.
+    hist_reason = "round-13 pinned instrument moved; read committed bytes"
+
+    def _hist(fx, entries):
+        built = {}
+        for path, spec in entries.items():
+            built[path] = {
+                "rev": fx["hist_rev"] if spec["rev"] is None else spec["rev"],
+                "reason": spec["reason"],
+            }
+        return built
+
+    case(
+        "v2-clean-historical",
+        0,
+        [],
+        git_setup=_setup_hist_clean,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+        informational_checks=["argv_marker"],
+    )
+    case(
+        "v2-historical-digest-mismatch",
+        2,
+        ["expected_input_digest_mismatch"],
+        git_setup=_setup_hist_other,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-unknown",
+        2,
+        ["historical_input_unknown"],
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical={
+                "tools/unknown.py": {
+                    "rev": "0" * 40,
+                    "reason": hist_reason,
+                }
+            },
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-forbidden",
+        2,
+        ["historical_input_forbidden"],
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical={
+                "fixtures/input.txt": {
+                    "rev": "0" * 40,
+                    "reason": hist_reason,
+                }
+            },
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-unavailable-rev",
+        2,
+        ["historical_input_unavailable"],
+        git_setup=_setup_hist_clean,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical={
+                SELFTEST_TOOL_REL: {"rev": "f" * 40, "reason": hist_reason}
+            },
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-unavailable-object",
+        2,
+        ["historical_input_unavailable"],
+        git_setup=_setup_hist_missing_object,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-unneeded",
+        2,
+        ["historical_input_unneeded"],
+        git_setup=_setup_hist_unneeded,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-uncommitted",
+        2,
+        ["historical_input_uncommitted"],
+        git_setup=_setup_hist_uncommitted,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-dangling",
+        2,
+        ["historical_input_unavailable"],
+        git_setup=_setup_hist_dangling,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-tree-id",
+        2,
+        ["historical_input_unavailable"],
+        git_setup=_setup_hist_tree,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-historical-replace-ref",
+        0,
+        [],
+        git_setup=_setup_hist_replace,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+        informational_checks=["argv_marker"],
+    )
+    case(
+        "v2-gitdir-env",
+        0,
+        [],
+        git_setup=_setup_gitdir_env,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+        informational_checks=["argv_marker"],
+    )
+    case(
+        "v2-shallow-repo",
+        2,
+        ["historical_input_unavailable"],
+        git_setup=_setup_shallow,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-blob-bytes-crlf",
+        0,
+        [],
+        variant={"tool_bytes": SELFTEST_TOOL_CRLF},
+        git_setup=_setup_crlf,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+        informational_checks=["argv_marker"],
+    )
+    case(
+        "v2-committed-deletion",
+        0,
+        [],
+        git_setup=_setup_committed_deletion,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+        informational_checks=["argv_marker"],
+    )
+    case(
+        "v2-supersedes-rows-mismatch",
+        2,
+        ["supersedes_mismatch"],
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            supersedes_rel=SELFTEST_V1_REL,
+            supersedes_doc=_dispositions(fx, _rows(fx, drop=("alpha",))),
+        ),
+    )
+    case(
+        "v1-extra-keys-tolerated",
+        0,
+        [],
+        raw_dispositions=lambda fx: dict(
+            _dispositions(fx, _rows(fx)),
+            supersedes="docs/ignored.json",
+            historical_inputs={},
+        ),
+        informational_checks=["argv_marker"],
+    )
+    case(
+        "v2-live-mismatch-nonhistorical-tool",
+        2,
+        ["expected_input_digest_mismatch"],
+        git_setup=_setup_hist_clean,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical={},
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+    )
+    case(
+        "v2-live-mismatch-nonhistorical-fixture",
+        2,
+        ["expected_input_digest_mismatch"],
+        git_setup=_setup_hist_clean,
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            historical=_hist(
+                fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+            ),
+            supersedes_rel=SELFTEST_V1_REL,
+        ),
+        mutate=lambda fx: (fx["lane"] / fx["fixture_rel"]).write_bytes(b"changed\n"),
+    )
+    case(
+        "v2-supersedes-unpinned",
+        2,
+        ["input_unpinned"],
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            supersedes_rel=SELFTEST_V1_REL,
+            pin_supersedes=False,
+        ),
+    )
+    case(
+        "v2-supersedes-missing",
+        2,
+        ["dispositions_field_invalid"],
+        raw_dispositions=lambda fx: _dispositions_v2(
+            fx,
+            _rows(fx),
+            supersedes_rel=None,
+        ),
+    )
+
+    # v2 identity guard: --root inside a foreign super-repo without its own
+    # .git must report historical_input_unavailable before any blob read.
+    lane_outer = scratch / "case-v2-identity-outer"
+    lane_nested = lane_outer / "nested" / "root"
+    try:
+        fx_nested = _build_lane(lane_nested, marker, {})
+        nested_rows = _rows(fx_nested)
+        nested_manifest = _dispositions_v2(
+            fx_nested,
+            nested_rows,
+            historical={
+                SELFTEST_TOOL_REL: {"rev": "0" * 40, "reason": hist_reason}
+            },
+            supersedes_rel=SELFTEST_V1_REL,
+        )
+        nested_dispositions = (
+            lane_nested / ".ufo" / "evidence" / "round-13" / "dispositions.json"
+        )
+        _write_bytes(nested_dispositions, _json_bytes(nested_manifest))
+        _git_init_commit(lane_outer, "foreign super-repo")
+        proc_nested = run_cli(lane_nested, nested_dispositions)
+        ids_nested = []
+        try:
+            ids_nested = sorted(
+                finding["id"] for finding in json.loads(proc_nested.stdout)["findings"]
+            )
+        except ValueError:
+            pass
+        record(
+            "v2-identity-guard",
+            proc_nested.returncode == 2 and ids_nested == ["historical_input_unavailable"],
+            "exit={} ids={!r}".format(proc_nested.returncode, ids_nested),
+        )
+    except Exception as exc:
+        record(
+            "v2-identity-guard",
+            False,
+            "setup/process error: {}: {}".format(type(exc).__name__, exc),
+        )
 
     # Usage errors: exit 64 with no JSON contract.
     for usage_name, argv in (

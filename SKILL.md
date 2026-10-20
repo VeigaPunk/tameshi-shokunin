@@ -1024,15 +1024,15 @@ no lane acting stays [U].
   on a report file and ticks 450 s (`scripts/shokunin-watchdog.sh:3-5`), and its
   lane map does not name tameshi (`:14`) — tameshi's tick is its own round series
   [I].
-- **Per case, two readings:** the target's relation to the fleet's live bytes
-  (`current` / `stale` / `drift`) and the tool's relation to the last run
-  (`held` / `moved`):
+- **Per case, two readings:** the target's relation to each repo's branch-tip bytes
+  (`current` / `stale` / `drift`; `<branch>` per `detect_branch`,
+  `../scripts/hyaku/jj-lane.sh:53-65`) and the tool's relation to the last run (`held` / `moved`):
 
 | Reading | Rule | What it means |
 |---|---|---|
-| `current` | `git show HEAD:<path>` sha256 == the recorded pin | the swept bytes are the gate's live blob |
-| `stale` | the recorded revision is an ancestor of HEAD and the live blob differs | the gate moved past the recorded revision; the table's revision is historical, the table is not wrong |
-| `drift` | the worktree differs from its HEAD (`git status --porcelain -- <path>` non-empty, or the live file's sha ≠ the HEAD blob's) | uncommitted bytes; a reading for ledger hygiene — round 7's `git show <rev>:<path>` replay is already immune to it |
+| `current` | `tip=$(git rev-parse --verify --quiet --end-of-options "refs/heads/<branch>^{commit}")`; `git show <tip>:<path>` sha256 == the recorded pin (unresolvable `<branch>` → SETUP rc 2; path absent at the tip → the equality fails) | the swept bytes are the repo's branch-tip blob — never a jj working-copy `HEAD` (`@-`), which no remote has (round 17) |
+| `stale` | the recorded revision is an ancestor of `refs/heads/<branch>` and the branch-tip blob differs | the gate moved past the recorded revision; the table's revision is historical, the table is not wrong |
+| `drift` | the live file's sha ≠ the `refs/heads/<branch>` blob's, or `git status --porcelain -- <path>` is non-empty (a clean porcelain is not tip evidence: jj's exported working-copy commit `HEAD` can hold the bytes) | uncommitted/unpushed bytes; a reading for ledger hygiene — round 7's `git show <rev>:<path>` replay is already immune to it |
 | tool `held` / `moved` | the harness sha == / ≠ the sha on the last `REGRESSION_TOOL` / `MUTATE_TOOL` line | the instrument moved since the table was measured |
 
 Executed instance — this lane, tick 2026-10-14T19:15:14Z, host `plazir27`, tool
@@ -1509,7 +1509,7 @@ not blind: their author inherited prior source/spec exposure. The bash study
 deepens one recorded case, never a seventh independently measured gate.
 
 Calibration correction to the historical promotion paragraph above:
-`SHONEN.md` box 3 currently carries a scope-bounded `[~]`, not `[ ]`;
+`SHONEN.md` box 3 carried a scope-bounded `[~]` at round 12, not `[ ]`;
 `corpus/lessons/round-1-verifier-spotcheck.md` excludes it from the score.
 Appending this registry does not extend the earlier Appendix A/B cold-read
 to new material or establish full-page instruction sufficiency.
@@ -1533,7 +1533,7 @@ Recipe from this lane root:
 
 1. Read the source-backed scope and `not_compared` list before the result.
 2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
-   observes only hashes and git metadata. Retain stdout with its sibling HEAD
+   observes only hashes and git metadata. Retain stdout with its sibling branch-tip
    commits before treating it as a dated reading. It executes no sibling gate.
 3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json`
    checks the new companion against digest-anchored frozen sources.
@@ -1578,12 +1578,12 @@ These instructions add no full-page cold-read or independent promotion credit.
 Recipe, from this lane root:
 1. Read the historical expectations and raw observations before accepting a
    later summary; distinguish twelve expected rows from thirteen pinned inputs.
-2. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
-   must fail the unresolved producer_before assertion. A matching exit1 is
-   insufficient.
-3. Run the same command with `dispositions.json`: the only repair is that
-   row's explicit supersession, retaining raw receipt/check and both passing
-   mechanism replacements. Every original expectation remains accounted for.
+2. **Historical (round 14, runner `75ed934d…`):** at `--root .` both manifests now return 2
+   `expected_input_digest_mismatch` (the runner moved in round 16). Replay with cwd = an extracted
+   `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
+   → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).
+3. The same command with `dispositions.json` → 0: the only repair is that row's explicit supersession,
+   keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section.
 4. `.ufo/evidence/round-14/verification-final.json` retains the corrected
    selftest and frozen before/after outcomes; `verification.json` retains the
    initial18-of34 fixture failures rather than disguising them as green.
@@ -1598,7 +1598,7 @@ Recipe, from this lane root:
 
 | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
-| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` | 0 clean; 1 failed semantic expectations; 2 could-not-evaluate invalid/missing/tampered inputs; 64 usage | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (historical; live entry since round 17: `.ufo/evidence/round-17/dispositions.json`) | 0 clean; 1 failed semantic expectations; 2 could-not-evaluate invalid/missing/tampered inputs; 64 usage | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
 | archived invocation context capture | historical gate, not active | do not run; retained source `.ufo/evidence/round-14/capture-context.py` only | historical outcomes retained, not an active verdict map | historical helper-only controls do not satisfy the standalone gate selftest | unchanged round13 pin manifest and context receipt | archive bytes read-only; no supported invocation | tameshi |
 
 The disposition manifest is configured authority, not cryptographic proof of
@@ -1678,7 +1678,7 @@ scalar.
 | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
 | retained invocation-context gate | gate | `python3 tools/context-capture.py --check` (frozen round-14 clean receipt); `--check --receipt FILE --expected FILE` for a caller-pinned retained receipt | 0 clean (`context_consistent`); 1 failed stable finding ID (e.g. `missing_injected_environment`); 2 and 64 could-not-evaluate (receipt/expected missing, malformed or tampered, e.g. `snapshot_tampered`; 64 `usage_error`) | `python3 tools/context-capture.py --selftest` | frozen clean receipt `.ufo/evidence/round-14/context-receipt.json` sha256 `05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a` and its built-in id/exit pin in tool; expected-pin schema `tameshi-context-expected-v1` (`receipt_sha256`/`id`/`exit`) for other retained receipts; negative fixture `context-missing-env.json` sha256 `1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208`; literal selftest exit/finding pairs in tool | check reads receipt/expected bytes and its own source for a reported digest, writes nothing, never opens recorded root paths or executes stored argv; selftest writes isolated temporary fixtures only; archived round-14 bytes retained | tameshi |
-| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (since round 16 the runner input moved, so `--root .` returns 2 `expected_input_digest_mismatch` by design; use `--root` on `git archive 28aeef4` extracted to /tmp → 0 clean) | 0 clean; 1 failed semantic expectations; 2 and 64 could-not-evaluate (invalid, missing or tampered inputs; 64 usage) | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (**superseded in round 17**: since round 16 this command returns 2 `expected_input_digest_mismatch` at `--root .` because the runner input moved; the 0-clean outcome is restored only by re-pinning, not by relabelling. Live entry: `--dispositions .ufo/evidence/round-17/dispositions.json` → 0, see the round-17 re-pin section; frozen replay: cwd = extracted `git archive 28aeef4` → 0) | 0 clean; 1 failed semantic expectations; 2 and 64 could-not-evaluate (invalid, missing or tampered inputs; 64 usage) | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
 
 The maintained gate's expected values are configured authority, not
 cryptographic proof of author authenticity; a clean check replays recorded
@@ -1811,3 +1811,93 @@ lane assertion (`[~]`), never an independent `[x]`.
 | `.ufo/evidence/round-16/measure.py` | probe | `python3 .ufo/evidence/round-16/measure.py --rev REV` · `--selftest` | 0 measured · 2 rev/blob missing · 64 usage |
 | `.ufo/evidence/round-16/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` | 0 every bucket covered · 1 a bucket uncovered or a report rejected · 2 usage (argparse) or an invalid override |
 | `.ufo/evidence/round-16/attribution/reattribute.py` | probe | `python3 .ufo/evidence/round-16/attribution/reattribute.py --selftest` | 0 corrected rule passes the oracle · 1 it fails |
+## Live-tree re-pin and entry-command monitor — round 17
+
+Sources: `corpus/lessons/round-16-verifier-spotcheck.md` §3 and §6 (routed
+R16-OP1, R16-MON1); S062 (`git rev-parse --show-toplevel`), S063 (git
+repository discovery and `GIT_*` environment), S061 (jj leaves Git `HEAD`
+detached at `@-`). This section restores the round-14 capability's live
+verdict and adds the monitor that would have caught its loss. It claims no
+new mutation case and no promotion credit.
+
+| Evidence condition | Decision | Error pattern / limit |
+|---|---|---|
+| A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
+| A waived path's live bytes differ from `HEAD:<path>` | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| The waiver rev is a tree id, dangling, not an ancestor, shallow, or reached through replace refs, grafts or an inherited `GIT_DIR` | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance |
+| A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
+| A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
+| A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
+| A repo path has no `.git` of its own inside a git super-repo | Runner regression leg: SETUP `repo_identity_mismatch`, exit 2 | Without the guard git silently answers from the parent repo's objects |
+
+Recipe, from this lane root (round-13/14 evidence bytes stay immutable):
+
+1. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions-before.json --json`
+   → 1 `failed`, the `producer_before` expectation unresolved (`"expectation": "producer_before"`).
+2. The same command with `.ufo/evidence/round-17/dispositions.json` → 0 `clean`,
+   `"effective": 11`, `"superseded": 1`; text mode prints one `HISTORICAL <path> rev=<rev> sha256=<sha>` line per waived instrument.
+3. `python3 tools/registry-check.py --rev <40-hex lane commit>` replays every row of
+   `tools/registry.json` in a scratch clone (siblings symlinked beside it) and ends with
+   `REGISTRY_CHECK: held=N/M superseded=K`. Grade an older rev with `--registry <current registry file>`.
+   Run it with `--rev`, never on the live tree: some rows write receipts into their root.
+4. Read a sibling's or this lane's committed bytes at the branch tip `refs/heads/<branch>`
+   (`tools/pin-disposition.py` head rows carry `branch` and `head_differs_from_branch`), never at `HEAD`.
+
+### Round-17 gate/probe registry — re-pin and monitor
+
+| Name | Kind | Command | Exits |
+|---|---|---|---|
+| `tools/evidence-disposition.py` (v2 manifests) | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions.json --json` · `--selftest` | 0 clean · 1 failed expectations · 2 could not evaluate (invalid, missing, tampered or unprovenanced input) · 64 usage |
+| `tools/registry-check.py` | gate | `python3 tools/registry-check.py --rev REV [--registry PATH] [--tag TAG] [--json]` · `--selftest` | 0 every active row held · 1 a row differs · 2 registry invalid, rev unresolvable or clone failed · 64 usage |
+| `tools/mutate-and-run.sh` (guard + scrub) | gate | `bash tools/mutate-and-run.sh --selftest` · `--regression` | as the round-16 row; a borrowed repo identity is SETUP 2 |
+| `tools/pin-disposition.py` (branch tip) | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` · `--selftest` | as the round-13 row |
+
+## Input-keyed cold-read credit — round 17
+
+Sources: `corpus/lessons/round-16-verifier-spotcheck.md` §2 and §6 (routed
+R16-C2b, R16-C2c); S058 (verifying traces: rebuild when a recorded dependency
+hash differs), S059 and S064 (a cache hit is sound only for inputs in its key),
+S060 (strace sees files opened by name). Knowledge:
+`corpus/knowledge/input-keyed-coldread-credit.md`.
+
+**Correction of round 16.** The round-16 full-page assertion (section above,
+"Every bucket of this page was read…") was wrong at `09ee1d0` on one bucket:
+`## Effective expectation reconciliation — round 14` kept a sha-only credit
+while the runner it executes against moved, and its recipe then exited 2. The
+errata section's "line count of every edited section unchanged" also missed one
+section: `### Round-15 gate/probe registry` grew from 30 to 31 lines. Both
+statements stay as written; this paragraph supersedes them.
+
+| Evidence condition | Decision | Error pattern / limit |
+|---|---|---|
+| A ledger entry's recorded input still has its sha256 as a regular blob at the measured rev | Input verified | Inputs are lane paths; sibling and git-object reads are recorded as external and never credited |
+| Any recorded input drifted, vanished, or is a tree/symlink | The entry does not credit (`input-drift:`, `input-missing:`, `input-not-blob:`) | A section whose bytes did not change still loses credit |
+| An entry has no inputs, or executed commands without committed trace receipts | No credit (`inputs-unrecorded`, `traces-unrecorded`, `trace-missing:`) | Applies to `record` and `instruction` entries alike |
+| A failing entry for the bucket still has verified inputs | Veto: the bucket is uncovered | One passing read never launders a failing one |
+| A trace opened a file in the live lane while the root was a clone | No credit (`live-lane-read:`) | The read was not of the recorded revision |
+
+Recipe for one bucket, cold:
+
+1. Clone the lane at a 40-hex commit into a fleet-mirror layout
+   (`W=$(mktemp -d); mkdir $W/fleet`, symlink each sibling `*-shokunin` repo into
+   `$W/fleet/`, `git clone -q <lane> $W/fleet/tameshi-shokunin`, `git -C … checkout -q --detach <rev>`).
+2. Run every command the bucket names under
+   `python3 .ufo/evidence/round-17/coldread/trace-inputs.py --root $W/fleet/tameshi-shokunin --out <receipt.json> -- <argv…>`;
+   the receipt lists the tracked files opened (`inputs`), untracked opens, and external fleet files.
+3. Record the verdict block (schema `tameshi-coldread-report-v2`) with the receipts' inputs plus every lane
+   file opened by hand, then `python3 .ufo/evidence/round-17/coldread/assemble.py --reports <dir> --out <ledger>`.
+4. `python3 .ufo/evidence/round-17/measure.py --rev REV` → `coldread.box3_full_page` and
+   `calibration_restraint_score`. A cited number comes only from this form, with no `--ledger-file`,
+   `--ledger-rev` or `--inputs-overlay` (the output's `overrides_used` is then false).
+
+Limits: an open trace does not see environment variables, stat-only probes,
+reads on inherited descriptors or network; a seat can still omit a command.
+The rule makes a recorded read checkable, not complete.
+
+### Round-17 gate/probe registry — input-keyed credit
+
+| Name | Kind | Command | Exits |
+|---|---|---|---|
+| `.ufo/evidence/round-17/measure.py` | probe | `python3 .ufo/evidence/round-17/measure.py --rev REV` · `--selftest` | 0 measured · 2 rev, blob or ledger missing, forbidden overlay field · 64 usage |
+| `.ufo/evidence/round-17/coldread/trace-inputs.py` | probe | `python3 .ufo/evidence/round-17/coldread/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | 0 traced (the command's exit is in the receipt) · 2 strace unavailable or the command never executed · 64 usage |
+| `.ufo/evidence/round-17/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-17/coldread/assemble.py --reports DIR --out FILE [--expect-skill-sha SHA]` · `--selftest` | 0 every bucket covered, no report rejected · 1 a bucket uncovered or a report rejected · 2 usage (argparse) |
