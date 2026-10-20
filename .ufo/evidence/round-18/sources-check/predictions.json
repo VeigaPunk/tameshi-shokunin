@@ -1,0 +1,65 @@
+{
+  "schema": "tameshi-r18-preregistration-v1",
+  "target": "kumitate-shokunin/scripts/sources-check.mjs",
+  "rev": "0acb7752d19058b953ebbeba253b1e35f6548de5",
+  "pin_sha256": "6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f",
+  "spec_sha256": "c8d24cb4b6b1a372543764fc27c9d16f65510a29fed1045bedb2863ce2408c91",
+  "suite_sha256": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b",
+  "suite": "h=\"$WORKDIR/sandbox-$DEFECT_ID\"; mkdir -p \"$h/home\" \"$h/tmp\" && cd \"$h\" && exec env -i PATH=\"$PATH\" HOME=\"$h/home\" TMPDIR=\"$h/tmp\" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES=\"$h\" node \"$MUTANT\" --selftest",
+  "predictions": {
+    "K_KIND": {
+      "prediction": "KILLED",
+      "selftest_case": "TIER_ENUM: fixture reports kind with expected exit",
+      "reason": "The TIER_ENUM fixture asserts both the error exit and the TIER_ENUM kind, so changing its emission to KIND_ENUM fails that case."
+    },
+    "S_KIND": {
+      "prediction": "SURVIVED",
+      "selftest_case": "every declared finding kind fires in a fixture (one-sided; no case asserts that observed kinds are all declared)",
+      "reason": "Removing RECHECK_OVERDUE from FINDING_KINDS does not alter emission, and the coverage check only tests declared kinds against observed kinds."
+    },
+    "K_EXIT": {
+      "prediction": "KILLED",
+      "selftest_case": "invalid/missing option value uses usage exit 64",
+      "reason": "The usage fixture requires status 64, while the mutant returns 65 for parse errors."
+    },
+    "S_VERDICT": {
+      "prediction": "SURVIVED",
+      "selftest_case": "DRIFT fixtures assert exit and finding kind; none asserts the final DRIFT verdict line",
+      "reason": "The mutant changes only the final DRIFT text, while selftest assertions read finding kinds and exits; CLEAN and fail-closed lines remain unchanged."
+    },
+    "K_STRICT": {
+      "prediction": "KILLED",
+      "selftest_case": "--strict promotes warnings to drift",
+      "reason": "The strict warning fixture expects USED_BY_ASYMMETRY with exit 1, but the mutant leaves warn findings unpromoted."
+    },
+    "K_CLOSED": {
+      "prediction": "KILLED",
+      "selftest_case": "SOURCES_MISSING: fail-closed exit 2",
+      "reason": "The missing-SOURCES fixture pins the SOURCES_MISSING kind in the final verdict, which the mutant changes to READ_FAILED."
+    },
+    "K_ROWS": {
+      "prediction": "KILLED",
+      "selftest_case": "frozen awk census parity: rows, malformed, duplicate ids",
+      "reason": "Doubling each valid-row increment makes the JS row count disagree with the awk census, and the clean fixture also pins rows=1."
+    },
+    "S_DUP_LINE": {
+      "prediction": "SURVIVED",
+      "selftest_case": "ID_DUPLICATE: fixture reports kind with expected exit (line number is not asserted)",
+      "reason": "The mutant changes only the reported duplicate line number; fixture and parity checks assert duplicate kind/count, not its location."
+    },
+    "S_ENTRY_COUNT": {
+      "prediction": "SURVIVED",
+      "selftest_case": "--json prints one parseable contract object (checks rows only; positive entriesWithSource is not pinned)",
+      "reason": "The doubled entriesWithSource value is reported in JSON/text but no selftest asserts its positive value."
+    },
+    "S_FILE_READ": {
+      "prediction": "SURVIVED",
+      "selftest_case": "READ_FAILED: fail-closed exit 2 (fixture exercises directory-read failure, not per-file read failure)",
+      "reason": "The mutant changes only the per-entry read catch, which no fixture reaches; the existing READ_FAILED fixture fails earlier at readdirSync."
+    }
+  },
+  "composition": {
+    "kill_aimed": 5,
+    "hole_aimed": 5
+  }
+}
