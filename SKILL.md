@@ -1395,7 +1395,7 @@ lands in the round's record, not here.
 
 ### Boundary readings, executed by this lane
 
-Two executions, nothing else measured here; scratch `/tmp/w11-t11-4-ev/`.
+Two executions, nothing else measured here; scratch `/tmp/w11-t11-4-ev/` (gone — round-18 correction: replay the tool at `606716f`, sha256 `75ed934d…`; round-18 wave 2 reproduced `80/80` and `cases=6 passed=6` there, `.ufo/waves/round-18/w2/CR30.md`).
 
 **Pin read** — the round-8 command set (`:1021-1053`), 2026-10-14T21:32:35Z:
 
