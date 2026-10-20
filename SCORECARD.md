@@ -643,3 +643,46 @@ Next intended claim: none pre-claimed. Open debts: `corpus/lessons/round-17.md`
 (selftest survivors, `bash-witness-study.py` env scrub behind a waiver,
 registry-check timeout hardening, evidence-disposition G2/G3 HEAD vs branch
 tip, knowledge entry §5 exit sentence).
+
+## Round 18 — eighth recorded case and bounded routed-defect closure (2026-10-20)
+
+Two claims, distinct axes. Depth 7 was the lowest owned numeric axis;
+calibration 8 is a no-harm monitor, not an additional claim or promotion.
+
+| Claim | Axis / type | Before → after | Score delta | Evidence / counting command | Measured revision |
+|---|---|---|---|---|---|
+| C1 eighth recorded case `js-sources-check` | depth; axis move | recorded cases 7 → 8; header/calls/tuples 8/8/8; regression cases=8 passed=8; new case 5/10 killed, 10/10 predictions held | 7 → 8, pending non-author closure | command D at :73; `python3 .ufo/evidence/round-18/measure.py --rev REV`; `.ufo/evidence/round-18/final/regression.stdout`; `corpus/knowledge/mutation-case-kumitate-sources-check.md` and its errata | before `183f87b899e6cae46be98d251cbc87fb5118f6ca`; strict after `a85f7107c4167cd9968248722256fcaf617fc30c` |
+| C2 eleven named routed defects | operability; unscored axis move | ruler v2 base open=11/11 → open=0 closed=11; seven exact guard-removal mutants killed with green pristine controls, jj G2/G3 mismatch, timeout NaN/Infinity and setsid/setpgid, bash-witness repository-env leak | n/a; unit is named defect probes, not a scalar | `python3 .ufo/evidence/round-18/defect-probes.py --rev REV`; `c2-probes-v2-183f87b.txt`, `c2-probes-v2-e08271a.txt`, `final/probes.stdout` | before `183f87b`; after `e08271a`; final tools `921ef8077440f90d092aab4b9fdc750a45de1224` |
+
+Final registry: 31/31 active held, four superseded, using
+`python3 tools/registry-check.py --rev 5923d89ac491ec3d296905561a8ab0faf3fda65a --json`
+in a branch-aligned scratch mirror (`final/registry-branch-aligned.stdout`).
+The earlier 32/32 with three superseded rows was before the historical
+round-17 trace collector row was explicitly superseded by the promoted tool.
+Raw failed final attempts remain: the missing S076 citation, then a stale
+scratch branch whose refs did not contain the graded commit.
+
+Strict no-harm count at `a85f7107c4167cd9968248722256fcaf617fc30c`:
+`python3 .ufo/evidence/round-18/measure.py --rev REV --explain`, exit 0,
+60/60, box3 full page, restraint 8, `overrides_used=false`
+(`final/measure-final-60.json`). The intermediate 59/60 is retained.
+Seventeen final sections were completed by the L1 after provider
+cancellations; this is not an independent or entirely blind cold-read.
+It verifies the narrower input-keyed predicate, not required-command coverage.
+
+| Axis / trend | Lane verdict | Bound |
+|---|---|---|
+| depth / quality | improved, depth 8 | C1 and bounded tool fixes; historical receipts unchanged |
+| calibration / discernment | unchanged score 8; discernment improved | surviving mutants, false prose and intermediate failures disclosed and corrected |
+| coverage / expansion | expansion improved; coverage unchanged | two knowledge notes and S008 mined; no F1–F10 ground moved |
+| freshness / adjacency | unchanged | no successor sweep; kumitate gates read-only; owner recommendations only |
+
+Open next-round work: 18 newly surviving mutations (3 registry, 3 disposition,
+2 trace, 10 bash-witness); P08 non-master and P11 object-directory canaries;
+round-16 measure GIT_* leak through direct invocation (registered wrapper
+scrubs); registry adopted-orphan ownership and same-tick PID reuse;
+unconfined git-env-canary tool; load-sensitive tsukuroi regression leg;
+unimplemented required-command binding and duplicated measurement helpers.
+Helper-owned live-Git recovery is fleet scope, routed in L0 (fleet `36500aa`).
+No capability or promotion is pre-claimed; planned next claim is failure-backed
+coverage on these named residuals, with the saturation nudge evaluated afresh.

@@ -1113,3 +1113,33 @@ metadata and its failure are preserved; production gate source is unchanged.
   - `[lane assertion, full page: round-16 cold-read of every SKILL.md bucket (preamble + every heading outside code fences) by lane-dispatched seats, instructions executed in /tmp, records re-anchored, wrong expectations repaired and re-read; ledger .ufo/evidence/round-16/coldread/ledger.json, counted by .ufo/evidence/round-16/measure.py; supersedes the round-1 Appendix A + B-only scope (reports/round-1-kaika-coldread.md); no independent promotion verifier](.ufo/evidence/round-16/coldread/ledger.json)`
   - `Correction (round 17, routed R16-C2c): the round-16 full-page assertion above was wrong at 09ee1d0 on one bucket, `## Effective expectation reconciliation — round 14`: its credit was sha-only, its runner input had moved (`75ed934d…` → `0673d2e5…`), and its recipe exited 2 instead of the recorded 1/0 (corpus/lessons/round-16-verifier-spotcheck.md §2). Round 17 keys every credit to the recorded input digests and re-reads the page; lane assertion, no independent promotion verifier: [round-17 input-keyed cold-read ledger](.ufo/evidence/round-17/coldread/ledger.json)`
   - `[lane assertion, no independent promotion verifier; PROVINCE.md Core list corrected by append (tsukuroi and mado gates), fleet round 1](reports/round-1-calibration.md#box-4)`
+- Final strict input-keyed measurement: `a85f7107c4167cd9968248722256fcaf617fc30c`,
+  60/60 sections, calibration restraint 8, depth 8, no overrides
+  (`.ufo/evidence/round-18/final/measure-final-60.json`); intermediate
+  59/60 retained. Seventeen sections were finished by the L1 after provider
+  cancellations, explicitly not blind or independent (`w3/L1Residual.md`).
+- Final runnable outcomes: regression 8/8, case-7 and case-8 sweeps 5/10 each,
+  historical four-leg replay 4/4; probes 0/11 open; registry 31/31 active held
+  and four superseded (branch-aligned sandbox). Selftests: registry48,
+  disposition63, witness43, trace30, measure98, assemble80.
+  Raw census-citation and stale-scratch-branch failures remain under
+  `.ufo/evidence/round-18/final/`, not relabelled as passing runs.
+- Two validated waves: 73 build + 93 falsify = 166 new seats. After later
+  corpus appends invalidated reads, 38 existing reviewer identities were
+  resumed individually, not a third validated wave; this exceeds the
+  addendum's ≤8 ordinary-residual-seat shape and is a conformance defect.
+  Fifteen jobs were eventually cancelled, including SiblingImpact; retained
+  outputs were reused only after validation. Parent reported Anthropic429;
+  individual cancellation messages do not establish a provider error for
+  each seat. None was replaced.
+- Incident: RerunC2After created and removed an empty live-lane `.ro-test`
+  (its report records 17:29:07–27); some seats ran live `git status` without
+  `--no-optional-locks`. These are not sanctioned workflow. No ad hoc
+  recovery plumbing was used in round18; fleet misroot sweep found only
+  unrelated watchdog/state files.
+- Sources 62→76 (A54→67, B6→7, C2; mined35→48, queued24→23,
+  rejected3→5). Start/end validation exit0; four new duplicate-URL warnings
+  are explicit superseding correction rows. F1–F10 unchanged.
+- Tool acquisition: scout S19 used ephemeral npm `npx -y c8` for coverage;
+  cache metadata reports c8 12.0.0. No persistent L1 install or pacman
+  transaction. Open debts are in SCORECARD round18 and the lesson.
