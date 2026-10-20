@@ -744,3 +744,80 @@ All appended; `corpus/lessons/round-1.md` final section.
   SCORECARD now records both falsifiable deltas, measured content hash,
   demonstrated capability row and honest scalar deltas 0. This metadata
   commit and the fleet report carry the already measured content pointer.
+
+## Round 13 — pin disposition and provenance correction (2026-10-20)
+
+- Declared C1 depth (six-leg current-content disposition; F7) and C2
+  calibration (digest-anchored companion repair for the exposed
+  declaration's null kind): `.ufo/evidence/round-13/claims.json`.
+  Initial worktree was clean at `546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50`;
+  no inherited lane-authored files were present. Neither claim changes
+  the six recorded mutation cases, scalar depth6/calibration6 or SHONEN.
+- Motivating outside evidence:
+  `corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3.
+  This entry explicitly corrects the brittle
+  `scripts/hyaku/lane-addendum.md:33-36` citation in the round-12 entry
+  and lesson: use `scripts/hyaku/lane-addendum.md`, Campaign addendum
+  item 2, **Planner seat (orchestrator ruling 2026-10-19,
+  kama/tsukuroi r11–12 L0 lines)**. L1 is canonical planner;
+  `PlanningDataWalk` supplies the bounded revenger data walk. The
+  historical line-number citations remain immutable, superseded here.
+- A validated 32-seat wave was dispatched unchanged in one task call:
+  `.ufo/waves/round-13/{spec,dispatch,spawn,assignments,record}.json`;
+  `w1/swarm-registry.json`. Explicit absolute seat destinations avoid
+  round-12's fleet-root write mistake. No routing/config edits or models.
+- S003 and S041 primary URLs were reopened this round. S003/S041
+  status queued→mined and used-by —→the new F7 knowledge path;
+  recheck unchanged. S047 corrects S041's conflation of reuse,
+  prioritisation and an unimplemented optimisation; no immutable
+  registry cell was overwritten. `corpus/lessons/round-13.md` Gate
+  carries quotes and transitions. QUALITY14 captures the outside
+  provenance defect, not an invented promotion criterion.
+- Plan disposition: SCORECARD's intended freshness re-sweep is not
+  represented as executed. This round instead acquires the source-backed
+  F7 content-disposition method on tied-lowest depth and repairs the
+  outside-routed provenance defect on calibration. Existing manual
+  six-row pin readings were never absent: the date-named absence in the
+  initial claim is explicitly refined in `claims.json`. The new method
+  and observed identities, not a constant reuse label or new date, carry
+  C1. Stale-successor mutation sweeps remain future owner-opted-in work.
+- Correction to the preceding “avoid” wording: the validated renderer
+  still appended relative `Report:` trailers, despite absolute body/context
+  paths. Those explicit paths mitigate the known defect; they did not
+  repair the renderer. Main confirmed during this round that the
+  operator-layer future prompt now explicitly resolves trailers under
+  the lane repo. Current validated payload remains unchanged.
+- Root-cause repair accompanies the new companion: `build_summary`
+  now reads top-level `declaration.kind`, with a literal expected-kind
+  assertion in the existing producer selftest. Frozen observations
+  keep the original producer SHA and null. The companion covers the
+  canonical summary only and explicitly names the historical rerun null
+  outside its normalization scope.
+- Integrated verification after all seat owners completed:
+  `.ufo/evidence/round-13/verification.json`, `expected.json`,
+  `verification-verdict.json`. Pin selftest18/18 and metadata selftest39/39
+  pass, exit0. Real pin read: six verified old blobs, content changed3/
+  unchanged3/unavailable0, all reuse not_established, at full recorded
+  sibling HEADs; end-window timestamp 2026-10-20T04:59:26Z.
+  Ledger ER-5 appends that reading; kimi joins the two named successor
+  mutation-sweep debts. A changed content observation is not called an
+  ancestry-proven stale state or a fresh kill rate.
+- C2 red-before evidence is failure-specific: old-null companion
+  exits1 normalized_kind_null, corrected companion exits0. Initial
+  producer mutant failed from relocated runner path, not the target
+  assertion; that attempt is retained and excluded. The same corrected
+  `producer-oracle.py` then observes nested-getter mutant 40/41 FAIL1
+  versus top-level getter 41/41 PASS0, with the exact kind assertion
+  changing from FAIL to ok. `producer-oracle-repair.json` supersedes
+  only the failed placement experiment. Current witness check/count
+  remain clean at ten classifications 8/0/2/0.
+- Frozen round12 evidence, runner and SHONEN compare unchanged to
+  baseline; sibling indexes stay unchanged during the probe, GIT_DIR
+  poisoning leaves observations equal, metadata emit agrees semantically.
+  S048 further narrows S047 to object-neutral item4 prioritisation; both
+  are correction rows for one PIT URL, not new source diversity.
+- End source census exits0 with W04 duplicate-URL warnings for those
+  append-only correction rows (`sources-after.json`); start census exits0
+  with no warnings (`claims.json`). No tool installs/updates by L1 or seats.
+  No sibling gate execution, no `[x]`, no rank change and no full-page
+  cold-read claim. Round13 non-author admission/sampling remains external.

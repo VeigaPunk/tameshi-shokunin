@@ -784,7 +784,7 @@ def build_summary(evidence: Path, declaration: dict, declared_sha: str, facts: d
         "declaration": {
             "path": DECLARED_NAME,
             "sha256": declared_sha,
-            "kind": declaration.get("declared", {}).get("kind"),
+            "kind": declaration.get("kind"),
             "disclosure": declaration.get("disclosure"),
         },
         "inputs": declaration.get("inputs"),
@@ -1535,9 +1535,13 @@ def cmd_selftest(args) -> int:
         qsweep, qctl, _ = build_sweep(qev / SWEEP_DIR)
         qrows, _ = collect_results(qsweep, declared_expected(), qctl)
         qsummary = build_summary(
-            qev, {"declared": {"sha256": qdigest}, "inputs": {}}, qdigest,
+            qev, {"kind": "declared-witness mapping (not a blind preregistration)",
+                  "declared": {"sha256": qdigest}, "inputs": {}}, qdigest,
             {"target_sha256": "a" * 64},
             {"exit": 0, "cli_log": "sweep/cli.log"}, qctl, qrows, "complete")
+        check("summary preserves top-level exposed declaration kind",
+              qsummary["declaration"]["kind"] ==
+              "declared-witness mapping (not a blind preregistration)")
         write_json(qev / SUMMARY_NAME, qsummary)
         qns = argparse.Namespace(evidence=str(qev))
         qbuf = io.StringIO()

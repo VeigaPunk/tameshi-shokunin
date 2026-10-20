@@ -1,0 +1,75 @@
+{
+  "schema": "tameshi-round13-evidence-v1",
+  "baseline": "546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50",
+  "inputs": {
+    ".ufo/evidence/round-12/BashWitness/summary.json": "acc01268cb5fb00985be7bf1c6711f6f97131ff20ae0020bbde1819bae4547b9",
+    ".ufo/evidence/round-12/BashWitness/declaration.json": "e8d2024ad13e021c5b7c41a66b881225beb9e0b30190833f0ab2310cf3670901",
+    ".ufo/evidence/round-12/BashWitness/declared.tsv": "0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3",
+    ".ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json": "6726421fde88e8d2aff4c9d0ff4a4fdce9b1d4651da50b89f2bf29f65a22a5f0",
+    "tools/pin-disposition.py": "297253971dab3a558b470a04162b9d768287844dc0e81bf41a1f9f263ff14f11",
+    "tools/witness-metadata.py": "df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4",
+    "tools/bash-witness-study.py": "49e9e5e20b73f115626fb4f81aac9b238e0f01811230c4fd0ff726c1f350ad80",
+    "tools/mutate-and-run.sh": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5",
+    ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+    ".ufo/evidence/round-13/witness-metadata.json": "463282270a04bd46f4a0522ff6a349b77d268ede47725c4e1c52ca892210bd8d",
+    ".ufo/evidence/round-13/witness-metadata-old-null.json": "28067a1cb76b14677a26d86dadad8699177cf7eb1212140f3f06e9537a0b11c3",
+    ".ufo/evidence/round-13/producer-before.py": "592c5c3de86a684fbb694d3aa8dd4c1e2b62263e7a50d72a9169092ad3fab9a0",
+    ".ufo/evidence/round-13/producer-oracle.py": "d5ae0bd4d4f75a461e7105b63eb737d249c3d09ffc15a3bfeb7aecea21ccd38b"
+  },
+  "expected_checks": {
+    "pin_selftest": {
+      "exit": 0,
+      "contains": "SELFTEST: PASS (18/18)"
+    },
+    "metadata_selftest": {
+      "exit": 0,
+      "contains": "SELFTEST: PASS 39/39"
+    },
+    "metadata_old_null": {
+      "exit": 1,
+      "id": "metadata_inconsistent",
+      "reason": "normalized_kind_null"
+    },
+    "metadata_corrected": {
+      "exit": 0,
+      "id": "metadata_consistent"
+    },
+    "producer_before": {
+      "exit": 1,
+      "contains": "summary preserves top-level exposed declaration kind"
+    },
+    "producer_before_oracle": {
+      "exit": 1,
+      "contains": "summary preserves top-level exposed declaration kind FAIL"
+    },
+    "producer_after_oracle": {
+      "exit": 0,
+      "contains": "WITNESS_SELFTEST: 41/41 pass"
+    },
+    "producer_after": {
+      "exit": 0,
+      "contains": "WITNESS_SELFTEST: 41/41 pass"
+    },
+    "witness_check": {
+      "exit": 0,
+      "contains": "WITNESS_CHECK: CLEAN"
+    },
+    "witness_count": {
+      "exit": 0,
+      "contains": "witness_classified=10"
+    },
+    "pin_live": {
+      "exit": 0,
+      "rows": 6,
+      "statuses": {
+        "unchanged": 3,
+        "changed": 3,
+        "unavailable": 0
+      },
+      "result_reuse": "not_established"
+    },
+    "source_census": {
+      "exit": 0
+    }
+  }
+}

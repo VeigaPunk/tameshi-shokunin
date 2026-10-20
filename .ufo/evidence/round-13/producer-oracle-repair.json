@@ -1,0 +1,42 @@
+{
+  "schema": "tameshi-round13-producer-oracle-repair-v1",
+  "supersedes": "verification.json producer_before: path-layout crash is NOT red-before evidence",
+  "oracle_sha256": "d5ae0bd4d4f75a461e7105b63eb737d249c3d09ffc15a3bfeb7aecea21ccd38b",
+  "single_delta": "build_summary kind getter nested declared.kind -> top-level kind; identical new literal regression check retained in both sources",
+  "checks": [
+    {
+      "name": "producer_before_oracle",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-13/producer-oracle.py",
+        "--source",
+        ".ufo/evidence/round-13/producer-before.py",
+        "--runner",
+        "tools/mutate-and-run.sh"
+      ],
+      "started_at": "2026-10-20T05:00:00.756121+00:00",
+      "exit": 1,
+      "expected_exit": 1,
+      "stdout": "  check extract_spec picks the census heredoc        ok\n  check parse_spec id/desc/literals                  ok\n  check runner_pins reads both constants             ok\n  check runner_pins refuses a short PIN_BASH with a named error ok\n  check unescape maps \\n                             ok\n  check spec_precheck flags a non-unique literal     ok\n  check control log: 14 exercised + 2 expected skips + terminal 16 ok\n  check dump lines never count as labels             ok\n  check killed-on-witness when a declared case fails ok\n  check accidental when no declared case fails       ok\n  check declared NONE red is accidental              ok\n  check green with full denominator survives         ok\n  check no SELFTEST line is inconclusive             ok\n  check non-terminal SELFTEST line is inconclusive   ok\n  check odd denominator is inconclusive              ok\n  check incomplete numbering is inconclusive         ok\n  check unexpected skip label is inconclusive        ok\n  check green with failing cases is inconclusive     ok\n  check runner INCONCLUSIVE is inconclusive          ok\n  check duplicate spec id refuses                    ok\n  check FAIL without denominator is inconclusive, not a crash ok\n  check unknown verdict is inconclusive              ok\n  check duplicate case label is inconclusive         ok\n  check PASS summary with a bad case is inconclusive ok\n  check KILLED with exit 0 is inconclusive           ok\n  check usage error exits 64                         ok\n  check declared.tsv round-trip keeps NONE rows      ok\n  check untampered declared.tsv verifies             ok\n  check planted tamper refuses with a named error    ok\n  check collect_results recomputes ten survived rows ok\n  check duplicate result id refuses                  ok\n  check unknown result id refuses                    ok\n  check verdict/exit mismatch refuses                ok\n  check mutant digest mismatch refuses               ok\n  check check CLEAN on a full-manifest fixture       ok\n  check missing manifest refuses                     ok\n  check pruned manifest is not CLEAN                 ok\n  check summary tamper is detected                   ok\n  check summary preserves top-level exposed declaration kind FAIL\n  check count recomputes rows and matches summary    ok\n  check count refuses summary/raw mismatch           ok\nWITNESS_SELFTEST: 40/41 pass\nVERDICT: FAIL\n",
+      "stderr": "",
+      "exit_matches": true
+    },
+    {
+      "name": "producer_after_oracle",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-13/producer-oracle.py",
+        "--source",
+        "tools/bash-witness-study.py",
+        "--runner",
+        "tools/mutate-and-run.sh"
+      ],
+      "started_at": "2026-10-20T05:00:00.820293+00:00",
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": "  check extract_spec picks the census heredoc        ok\n  check parse_spec id/desc/literals                  ok\n  check runner_pins reads both constants             ok\n  check runner_pins refuses a short PIN_BASH with a named error ok\n  check unescape maps \\n                             ok\n  check spec_precheck flags a non-unique literal     ok\n  check control log: 14 exercised + 2 expected skips + terminal 16 ok\n  check dump lines never count as labels             ok\n  check killed-on-witness when a declared case fails ok\n  check accidental when no declared case fails       ok\n  check declared NONE red is accidental              ok\n  check green with full denominator survives         ok\n  check no SELFTEST line is inconclusive             ok\n  check non-terminal SELFTEST line is inconclusive   ok\n  check odd denominator is inconclusive              ok\n  check incomplete numbering is inconclusive         ok\n  check unexpected skip label is inconclusive        ok\n  check green with failing cases is inconclusive     ok\n  check runner INCONCLUSIVE is inconclusive          ok\n  check duplicate spec id refuses                    ok\n  check FAIL without denominator is inconclusive, not a crash ok\n  check unknown verdict is inconclusive              ok\n  check duplicate case label is inconclusive         ok\n  check PASS summary with a bad case is inconclusive ok\n  check KILLED with exit 0 is inconclusive           ok\n  check usage error exits 64                         ok\n  check declared.tsv round-trip keeps NONE rows      ok\n  check untampered declared.tsv verifies             ok\n  check planted tamper refuses with a named error    ok\n  check collect_results recomputes ten survived rows ok\n  check duplicate result id refuses                  ok\n  check unknown result id refuses                    ok\n  check verdict/exit mismatch refuses                ok\n  check mutant digest mismatch refuses               ok\n  check check CLEAN on a full-manifest fixture       ok\n  check missing manifest refuses                     ok\n  check pruned manifest is not CLEAN                 ok\n  check summary tamper is detected                   ok\n  check summary preserves top-level exposed declaration kind ok\n  check count recomputes rows and matches summary    ok\n  check count refuses summary/raw mismatch           ok\nWITNESS_SELFTEST: 41/41 pass\nVERDICT: PASS\n",
+      "stderr": "",
+      "exit_matches": true
+    }
+  ]
+}

@@ -1513,3 +1513,49 @@ Calibration correction to the historical promotion paragraph above:
 `corpus/lessons/round-1-verifier-spotcheck.md` excludes it from the score.
 Appending this registry does not extend the earlier Appendix A/B cold-read
 to new material or establish full-page instruction sufficiency.
+
+## Pin disposition and provenance correction — round 13
+
+Sources: S003 and PIT precision correction S047 (historical S041 retained);
+`corpus/knowledge/incremental-pin-disposition.md`; outside routed
+`corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3;
+runtime receipts in `.ufo/evidence/round-13/`.
+
+| Observation | Decision | Limit |
+|---|---|---|
+| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
+| Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
+| All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
+| Frozen summary kind is null but its top-level declaration is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
+
+Recipe from this lane root:
+
+1. Read the source-backed scope and `not_compared` list before the result.
+2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+   observes only hashes and git metadata. Retain stdout with its sibling HEAD
+   commits before treating it as a dated reading. It executes no sibling gate.
+3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json`
+   checks the new companion against digest-anchored frozen sources.
+4. The original round-12 summary and rerun summary retain their historical
+   null fields. The companion normalizes the canonical summary only; the
+   rerun null is explicitly outside its normalized scope. The producer's
+   wrong-nesting bug is fixed separately for future summary generation;
+   its regression selftest asserts the exact top-level exposed kind.
+5. Do not rerun a sibling's gate to obtain closure evidence. A non-author
+   closure verifies committed receipts and their measured revision.
+
+### Round-13 gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| six-leg content disposition | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` | 0 observations, including changed/unavailable; 2 invalid input/could-not-evaluate; selftest 1 failed | `python3 tools/pin-disposition.py --selftest` | `.ufo/evidence/round-13/pin-manifest.json`; canonical leg mapping and literal selftest labels in tool | normal mode read-only lane/sibling files and git; selftest isolated temp repos only | tameshi |
+| exposed witness provenance companion | gate | `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json` | 0 metadata_consistent/clean; 1 metadata_inconsistent/failed; 2 input_unavailable or snapshot_tampered/could-not-evaluate, including usage | `python3 tools/witness-metadata.py --selftest` | literal frozen input digests and expected kind/disclosure in tool; companion expected verdict; `.ufo/evidence/round-13/expected.json` | check read-only lane inputs; selftest isolated temp trees only | tameshi |
+
+No registry row changes rank, SHONEN authority, or the six recorded cases.
+The historical summary's producer SHA names the producer that actually ran,
+not the repaired current producer. No old evidence hash is regenerated.
+PIT source clarification: S048 supersedes S047's object-specific
+paraphrase; retain only the supported distinction “item 4 is
+prioritisation, not a reuse skip”. No test-versus-mutation pronoun claim
+is needed by this method.

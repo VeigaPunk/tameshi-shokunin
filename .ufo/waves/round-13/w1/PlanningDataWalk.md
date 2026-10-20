@@ -1,0 +1,39 @@
+# PlanningDataWalk — round 13 bounded data walk
+
+**Axes:** depth (F7, per-leg content dispositions) and calibration (the routed summary metadata defect). **Role:** advisory revenger walk only; L1 remains the canonical planner/integrator. **Scope:** read-only source/evidence inspection and hashes; no gate, test, build, or sibling code was executed; no tools were installed.
+
+## Reconstructed before → after
+
+- **Depth / C1.** Round-13 `claims.json:5` says before: the six recorded legs have no explicit current-content disposition; after: each has pinned/HEAD/worktree SHA comparisons and `result_reuse=not_established`. `before.json:4-6` records `pin_dispositions:null` and baseline `546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50`. The authoritative six leg names and recorded rates are `tools/mutate-and-run.sh:80-103`; exact revision/hash pins are `:542-553`. This is a content-state census, not a re-sweep, result-cache authorization, rate update, or seventh case. The expected axis scalar remains 6 (`claims.json:5`; rubric `SCORECARD.md:64-75`).
+- **Calibration / C2.** Round-13 `claims.json:6` says before: acknowledged `summary.declaration.kind=null`, no normalized companion; after: a new digest-anchored companion validates the disclosed non-blind kind, while an old-null companion fails the same gate. Scalar stays 6; no promotion credit. `before.json:2,4-5` pins the frozen summary digest and records `metadata_companion:null`.
+
+The inherited `SCORECARD.md:262-273` “Round 2” plan is not this round’s contract: it proposed re-sweeps of stale legs and incorrectly counted a bash witness split as depth `6→7`. Round-12 `claims.json:12` calls that plan stale; `corpus/lessons/round-12.md:23` rejects a witness reanalysis as a seventh independent gate. F7’s current falsifiable frontier text is `corpus/README.md:84`: pin-level cadence → per-leg reuse decisions classified. Do not revive the old prediction or imply a new kill-rate.
+
+## One observed unchanged-content leg: `bash-surface-census`
+
+Runner pin: `kagi-shokunin/corpus/surface-census.sh`, revision `fecee8743e52eb8fb5fbb40782934cb619a1a96e`, SHA-256 `275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f` (`mutate-and-run.sh:544-545`). Read-only facts observed here: Kagi HEAD `c2cab35bc92e57e39e5489bac3386db078345b3f`; `git show <pinned-rev>:corpus/surface-census.sh`, `git show HEAD:corpus/surface-census.sh`, and the current worktree file all hash to that recorded SHA-256. Thus this target’s bytes match despite HEAD being a different commit. This is a target-file content observation only, not a clean-tree claim.
+
+The disposition must still say `result_reuse=not_established`: target-byte identity does not establish identity of environment, dependencies, suite/command context, or other inputs. Any report that calls this “safe reuse,” treats the matching hash as a new sweep, or attributes a current kill-rate to it falsifies the scoped claim. Missing/unreadable inputs must not be labeled unchanged; all six rows must preserve their exact recorded pin identities and distinguish current HEAD/blob from worktree content.
+
+## One metadata null: provenance and correction boundary
+
+Frozen `BashWitness/declaration.json:6-15` has top-level kind `declared-witness mapping (not a blind preregistration)` and a disclosure recording prior exposure; the nested `declared` object has no `kind`. `tools/bash-witness-study.py:784-788` builds the summary and reads `declaration.get("declared", {}).get("kind")` but copies the top-level disclosure. The declaration writer at `:870-882` places `kind` at the top level and does not put it under `declared`. That wrong-path read explains the frozen `summary.json:12-16` null; this is a metadata projection defect, not evidence that the declaration lacked its value. The intended normalized value is the exact top-level kind; disclosure and prior-exposure wording must remain intact, never be upgraded to blind/preregistered.
+
+Minimum repair boundary: write only the new `.ufo/evidence/round-13/witness-metadata.json` from a new `tools/witness-metadata.py`; bind it to SHA-256 of the original round-12 `summary.json`, `declaration.json`, and referenced `declared.tsv`. Preserve the old nested null as a historical fact in the companion/check result, but derive normalized kind from the frozen top-level kind and validate the disclosure. Do not rewrite or re-hash any frozen round-12 file or change `tools/bash-witness-study.py` as a shortcut.
+
+Read-only hashes measured here: `summary.json` `acc01268cb5fb00985be7bf1c6711f6f97131ff20ae0020bbde1819bae4547b9`; `declaration.json` `e8d2024ad13e021c5b7c41a66b881225beb9e0b30190833f0ab2310cf3670901`; `declared.tsv` `0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3`. These match the frozen summary anchor in round-13 `before.json` and declaration evidence.
+
+## Minimal artifacts and falsifiers for L1
+
+1. **C1:** keep `tools/mutate-and-run.sh` as the source of the six pins; add `tools/pin-disposition.py` plus `.ufo/evidence/round-13/pin-manifest.json`. Require exactly the six unique recorded legs, pinned rev/path/digest, current HEAD commit/blob digest, worktree digest/content status, and literal `result_reuse=not_established` for every row. Falsify on an omitted/duplicate leg, invented/mismatched pin, missing digest/status, missing input classified unchanged, or any reuse/sweep/rate/seventh-case claim.
+2. **C2:** add `tools/witness-metadata.py` plus `.ufo/evidence/round-13/witness-metadata.json`; keep all three round-12 inputs byte-identical. The companion must bind their digests, carry the literal non-blind kind and disclosure from `declaration.json`, and reject an old-null/incorrect-kind candidate. Falsify if nested null is treated as authoritative, disclosure is omitted/altered, prior exposure is erased, any input digest mismatch passes, or any frozen round-12 bytes change.
+
+**Exact checks for L1 after those files land (not run here):**
+
+- `python3 tools/pin-disposition.py --selftest` — expect exit 0 and literal expected findings for unchanged, changed HEAD, dirty worktree, missing file/repo/blob, malformed digest, and duplicate leg. Then `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` — expect exit 0 and six complete rows, all `result_reuse=not_established`; separately cross-check every pin against `mutate-and-run.sh:542-553`.
+- `python3 tools/witness-metadata.py --selftest` — expect old-null `metadata_inconsistent`/exit 1; corrected companion `metadata_consistent`/exit 0; tampered input digest and malformed JSON `snapshot_tampered` or unavailable/exit 2; wrong kind and absent/changed disclosure `metadata_inconsistent`/exit 1. Then `python3 tools/witness-metadata.py --check` — expect exit 0 `metadata_consistent` only for the digest-matched companion.
+- Preserve/confirm prior evidence with `sha256sum .ufo/evidence/round-12/BashWitness/summary.json .ufo/evidence/round-12/BashWitness/declaration.json .ufo/evidence/round-12/BashWitness/declared.tsv` against the three hashes above; then `python3 tools/bash-witness-study.py --evidence .ufo/evidence/round-12/BashWitness check` and `python3 tools/bash-witness-study.py --evidence .ufo/evidence/round-12/BashWitness count` (read-only consistency checks, not a fresh sweep). Do not substitute `tools/mutate-and-run.sh --regression`: F7 here records content dispositions, not six new gate executions.
+
+## Confidence and method limits
+
+Confidence high on the stale-plan correction, six-leg identities, observed surface-census target hashes, and null producer/data path (direct local reads plus read-only hashes). The LSP device is unavailable (`read xd://lsp` returned “No such tool”); these are textual source anchors, not LSP reference/implementation results. No sibling gate, test, selftest, or implementation was exercised; checks above are L1 recommendations, not passes.

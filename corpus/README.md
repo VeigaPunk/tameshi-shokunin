@@ -144,3 +144,35 @@ Round-12 lane-dispatched review is not its replacement. Full-page box-3
 sufficiency is still unearned; historical cold-read receipts apply only to
 their pinned SKILL bytes. The append-only round-12 registry adds no
 full-page cold-read or promotion credit.
+
+## Round 13 — F7 content disposition and outside-review correction
+
+| Note / frontier | Scope | Source / evidence |
+|---|---|---|
+| `knowledge/incremental-pin-disposition.md` / F7 | Structured six-leg pinned/HEAD/worktree content observation and the explicit boundary `result_reuse=not_established`; no target gate runs and no new rate | S003, S041, correction S047; `.ufo/evidence/round-13/pin-dispositions.json` |
+| Frozen bash provenance correction / calibration | New companion metadata normalizes the exposed declaration's kind without rewriting round-12 evidence; original null stays historical | `lessons/round-13.md`; `.ufo/evidence/round-13/witness-metadata.json`; QUALITY14 |
+
+F7 advances from pin-cadence prose to a bounded machine-readable
+disposition method, not a full incremental result cache. Environment,
+dependencies, invocation and fixture inputs are not certified by content
+identity. The stale-successor **mutation re-sweeps** remain open; a new
+pin reading does not discharge them. F1 interop, legacy provenance headers,
+runbook corrections and current full-page cold-read/box3 remain debt.
+No frontier is moved wholesale to province Core.
+
+The “newest outside review” sentence in the round-12 block is superseded:
+`lessons/round-12-verifier-spotcheck.md` is now the latest outside admit/reject
+sample and admits bounded C1/C2 of that round. It is not a round-13 sample
+or promotion authority. Its lane-routed null-kind defect and brittle planner
+citation are corrected in this round's new evidence and named-heading
+lesson; operator-owned orchestration defects remain routed to the operator.
+
+Final round-13 evidence is executed, not predicted:
+`verification.json`, `producer-oracle-repair.json`, `verification-verdict.json`.
+The content observation is changed3/unchanged3/unavailable0 at the recorded
+HEADs (`pin-dispositions.json`); the historical two-successor debt now also
+includes kimi's changed target (`fleet-kill-rate-ledger.md`, ER-5).
+The full F7 per-leg **reuse-decision** frontier remains open; only the
+content-disposition prerequisite is acquired. PIT row S048 supersedes
+S047's object-specific wording without claiming a new opened source.
+Both new registry rows are corrections to the same PIT URL.

@@ -362,3 +362,40 @@ New errata entries go below this one.
 Consequence for the cadence: trigger T3 is live again on both legs; any re-sweep must pin the revision it measures (the moved substrate's re-pin rule, ER-3) and never re-interpret a moving file. `drift` here is a reading, not a defect — the owners are editing their own gates.
 
 New errata entries go below this one.
+
+## ER-5 — round-13 structured content disposition (2026-10-20)
+
+Executed:
+`python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+→ exit 0; `pin-dispositions.json` records 6 legs, unchanged3/changed3/
+unavailable0, with `result_reuse=not_established` on every row.
+Full command/stdout and input digests:
+`.ufo/evidence/round-13/verification.json`, `expected.json`;
+source method: S003 and S048,
+`incremental-pin-disposition.md`.
+
+`observed_at=2026-10-20T04:59:26Z` marks the end of a sequential read
+window, not an atomic fleet snapshot or each row's instant. Every row
+records the HEAD actually read and both HEAD/worktree SHA256 values.
+
+| Leg | Observed owner HEAD | HEAD = worktree SHA256, abbreviated | Content vs original recorded pin |
+|---|---|---|---|
+| js-kimi-census | `1770305fae20826b39905a8251ddeca6b4957ac4` | `5e8d591324064fff` | changed |
+| bash-surface-census | `c2cab35bc92e57e39e5489bac3386db078345b3f` | `275d8294a94e9eb7` | unchanged |
+| bash-tsukuroi-census | `9574a189a758251da5957eee8ff0f38ba2d03c7f` | `d17d32a35946c71c` | changed |
+| bash-mado-verify | `59cfbdc3ab5e7b6aaf68f86e1b2ae8d51c938b1e` | `037b05dcd3f86e12` | changed |
+| bash-checklist-run | `c2cab35bc92e57e39e5489bac3386db078345b3f` | `7e5ec98b9e1d0afa` | unchanged |
+| js-claims-check | `1770305fae20826b39905a8251ddeca6b4957ac4` | `e9a21b441f1216bf` | unchanged |
+
+All six original blobs verified against the configured manifest pins.
+This is byte-content status only: mode, environment, dependencies,
+runner/spec context and invocation are explicitly not compared. The
+manifest is a committed configured baseline, not a cryptographically
+authenticated external authority. Changing it changes the baseline.
+
+This corrects the **current use**, not the dated truth, of the old
+four-current/two-stale reading. Kimi's target has also changed; its
+successor sweep joins the existing tsukuroi/mado successor debt.
+The probe does not evaluate ancestry, so `changed` is not relabelled
+`stale` by inference here. It runs no sibling suite, closes no mutation
+re-sweep and produces no new kill-rate or recorded case.

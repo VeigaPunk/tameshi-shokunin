@@ -44,3 +44,14 @@ Each criterion cites the mistake it learns from
     an Appendix A/B cold-read cannot earn full-page box-3 score credit.
     (`lessons/round-1-verifier-spotcheck.md`, Adjudication;
     `lessons/round-12.md`, attribution mistake)
+
+## Criteria appended — round 13
+
+14. A normalized provenance field must agree with its digest-anchored
+    declaration source and preserve its prior-exposure disclosure.
+    Missing or null companion metadata is not a clean normalization;
+    retain the frozen faulty observation and add a separately checked
+    correction. The same checker must reject the old-null companion and
+    accept the kind-only repair.
+    (`lessons/round-13.md`, reference-drift mistake; outside routed
+    `lessons/round-12-verifier-spotcheck.md`, Routed defects item 3)
