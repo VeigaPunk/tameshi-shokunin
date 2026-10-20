@@ -33,9 +33,12 @@ Sequence (every subprocess stdout/stderr/exit retained in verification.json):
       the declared mapping. Existing frozen files are digest-verified, never
       silently overwritten.
   5.  Same-path --selftest contrast: baseline historical probe bytes and REV
-      gate bytes each written to the SAME temp script path and invoked with
-      the SAME argv; only file bytes differ. Expected: old exits 64
-      (unsupported argument), new exits 0 with SELFTEST: PASS (n/n).
+      gate bytes each written to the SAME temp script path
+      <scratch>/lane/tools/candidate.py (the lane/tools layout keeps the
+      tool's own DEFAULT_LANE_ROOT distinct from its selftest mkdtemp
+      fixtures, so the hermetic-no-lane-path check reads truthfully) and
+      invoked with the SAME argv; only file bytes differ. Expected: old
+      exits 64 (unsupported argument), new exits 0 with SELFTEST: PASS (n/n).
   6.  Same-path usage-class proof: PREFIX gate bytes then REV gate bytes at
       the SAME temp path with the SAME argv
       '--check --expected <valid pin file> --receipt --json'. The pre-fix
@@ -59,9 +62,13 @@ Sequence (every subprocess stdout/stderr/exit retained in verification.json):
       expected_verdict_mismatch/1); REV satisfies it (mapping_mismatch/1).
   9.  measure.py --rev BASELINE -> before.json, --rev REV -> after.json.
  10.  Source census end receipt -> sources-after.json.
- 11.  verification.json collects every command and check; exit 0 only when
-      all observed outcomes equal their pinned expectations. Unexpected
-      outcomes are recorded and produce a nonzero exit after receipts write.
+ 11.  verification.json (first attempt) or verification-N.json (later
+      attempts; attempt-N/ carries that run's expected/before/after/
+      sources-after receipts while the shared frozen/ inputs stay immutable)
+      collects every command and check; exit 0 only when all observed
+      outcomes equal their pinned expectations. Unexpected outcomes are
+      recorded and produce a nonzero exit after receipts write; scratch is
+      removed in a finally.
 
 This runner never executes retained receipt argv, never opens the historical
 probe's main/evaluate paths, and never claims environment or dependency
@@ -73,6 +80,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -125,8 +133,8 @@ PRESERVE_PATHS = (
 )
 
 CHECKS = []
+SCRATCH = None
 COMMAND_TIMEOUT = 300
-ID_TOKEN_RE = re.compile(r"id=([a-z_]+)")
 
 
 def sha256_bytes(data):
@@ -302,6 +310,7 @@ def build_mapping_suffix_fixture(clean_data):
 
 
 def main():
+    global SCRATCH
     parser = argparse.ArgumentParser(
         description="Round-15 integrated L1 verification runner.")
     parser.add_argument(
@@ -309,43 +318,53 @@ def main():
         help="committed revision carrying the final tools/context-capture.py")
     args = parser.parse_args()
 
-    try:
-        run_verification(args.rev)
-    except SystemExit as exc:  # write refusals still retain a receipt
-        record_check(
-            "runner-write-refusal", False,
-            "SystemExit: {}".format(exc))
-    except Exception as exc:  # retain receipts even on unexpected failure
-        record_check(
-            "runner-internal-error", False,
-            "{}: {}".format(type(exc).__name__, exc))
-    failures = [entry["name"] for entry in CHECKS if not entry["passed"]]
-    payload = {
-        "schema": "tameshi-round15-verification-v1",
-        "runner": VERIFY_REL,
-        "requested_rev": args.rev,
-        "baseline_revision": BASELINE,
-        "prefix_revision": PREFIX_REV,
-        "checks": CHECKS,
-        "failed_checks": failures,
-        "passed": not failures,
-        "scope": ("retained-receipt gate replay on committed bytes; no live "
-                  "historical capture, no receipt argv execution, no sibling "
-                  "gate"),
-    }
-    # Never overwrite a prior run's receipt: a failed verification.json stays
-    # inspectable; a later attempt lands as verification-N.json.
+    # Never overwrite a prior run's receipts: the failed first artifacts stay
+    # inspectable at the root/attempt-1 level; later attempts land in
+    # attempt-N/ with the verdict receipt named verification-N.json.
     destination = EVIDENCE / "verification.json"
     serial = 1
     while destination.exists():
         serial += 1
         destination = EVIDENCE / "verification-{}.json".format(serial)
-    payload["receipt_file"] = destination.name
-    write_json_exclusive(destination, payload)
-    return 0 if not failures else 1
+    artifact_dir = (EVIDENCE if serial == 1
+                    else EVIDENCE / "attempt-{}".format(serial))
+    try:
+        try:
+            run_verification(args.rev, artifact_dir)
+        except SystemExit as exc:  # write refusals still retain a receipt
+            record_check(
+                "runner-write-refusal", False,
+                "SystemExit: {}".format(exc))
+        except Exception as exc:  # retain receipts even on unexpected failure
+            record_check(
+                "runner-internal-error", False,
+                "{}: {}".format(type(exc).__name__, exc))
+        failures = [entry["name"] for entry in CHECKS if not entry["passed"]]
+        payload = {
+            "schema": "tameshi-round15-verification-v1",
+            "runner": VERIFY_REL,
+            "requested_rev": args.rev,
+            "attempt": serial,
+            "artifact_dir": str(artifact_dir.relative_to(ROOT)),
+            "receipt_file": destination.name,
+            "baseline_revision": BASELINE,
+            "prefix_revision": PREFIX_REV,
+            "checks": CHECKS,
+            "failed_checks": failures,
+            "passed": not failures,
+            "scope": ("retained-receipt gate replay on committed bytes; no "
+                      "live historical capture, no receipt argv execution, "
+                      "no sibling gate"),
+        }
+        write_json_exclusive(destination, payload)
+        return 0 if not failures else 1
+    finally:
+        if SCRATCH is not None:
+            shutil.rmtree(str(SCRATCH), ignore_errors=True)
 
 
-def run_verification(rev):
+def run_verification(rev, artifact_dir):
+    global SCRATCH
     env = tool_env()
 
     # ------------------------------------------------------------ 1. resolve
@@ -549,11 +568,14 @@ def run_verification(rev):
             "sources-census": {"exit": 0},
         },
     }
-    write_json_exclusive(EVIDENCE / "expected.json", expected_payload)
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    write_json_exclusive(artifact_dir / "expected.json", expected_payload)
 
     # -------------------------------------- 5. same-path --selftest contrast
     scratch = Path(tempfile.mkdtemp(prefix="tameshi-r15-verify-"))
-    tool_path = scratch / "candidate.py"
+    SCRATCH = scratch
+    tool_path = scratch / "lane" / "tools" / "candidate.py"
+    tool_path.parent.mkdir(parents=True)
     selftest_argv = [sys.executable, "-I", str(tool_path), "--selftest"]
     if baseline_historical is None:
         record_check("selftest-historical-unsupported", False,
@@ -752,7 +774,7 @@ def run_verification(rev):
         "measure-before",
         [sys.executable, str(measure_path), "--rev", baseline], ROOT, 0,
         env=env)
-    write_exclusive(EVIDENCE / "before.json",
+    write_exclusive(artifact_dir / "before.json",
                     proc.stdout.decode("utf-8", "replace"))
     before_doc = None
     try:
@@ -763,7 +785,7 @@ def run_verification(rev):
         "measure-after",
         [sys.executable, str(measure_path), "--rev", revision], ROOT, 0,
         env=env)
-    write_exclusive(EVIDENCE / "after.json",
+    write_exclusive(artifact_dir / "after.json",
                     proc.stdout.decode("utf-8", "replace"))
     after_doc = None
     try:
@@ -819,7 +841,7 @@ def run_verification(rev):
             for line in census_stdout.splitlines()),
         "ok line {}".format(
             "present" if "tameshi\tok" in census_stdout else "absent"))
-    write_json_exclusive(EVIDENCE / "sources-after.json", {
+    write_json_exclusive(artifact_dir / "sources-after.json", {
         "command": census_argv,
         "exit": proc.returncode,
         "stdout": census_stdout,

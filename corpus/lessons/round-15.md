@@ -135,3 +135,23 @@ seat Report trailers alone resolve under the lane.
 All findings above are static source evidence. Runtime results and measured
 revisions are recorded separately after the complete wave, never inferred
 from the reviewers' wording or their source-level “pass” judgments.
+
+## Observed integration failure — retained, not called green
+
+First integrated command:
+`python3 .ufo/evidence/round-15/verify.py --rev 0494c2442a7aab924d4c55e879ffb4b8d676ccd0`,
+exit1; `.ufo/evidence/round-15/verification.json` retains all outputs.
+Its `failed_checks` are exactly `selftest-new` and `selftest-new-full-count`;
+all gate replay, integrity, counting and census checks completed independently.
+The selftest printed `SELFTEST: FAIL (1/49 failed: hermetic-no-lane-path)`;
+the forty receipt fixtures and seven usage cases were individually OK.
+
+| Class | Evidence | Captured-by | Fix |
+|---|---|---|---|
+| fixture-layout | first verification selftest-new argv uses `<scratch>/candidate.py`; maintained tool's two-parent root therefore becomes `/tmp`, which honestly triggers its lane-path guard | QUALITY17 isolated public-CLI rule; real selftest exposed an integration error that source-only reviews did not catch | Place the byte-identical old/new candidates at the same `<scratch>/lane/tools/candidate.py`, preserving the actual maintained tool's layout; retain first run and attempt-local expectations/results. Production gate bytes stay unchanged. |
+
+The original scratch `/tmp/tameshi-r15-verify-4pexcuhm` was removed by L1
+after retaining all raw output in the repo. The new verifier owns its cleanup.
+No command was rerun merely to confirm this failure; the harness repair is
+required before another integrated invocation. The first static count receipt
+is not promoted into evidence of a passing selftest.

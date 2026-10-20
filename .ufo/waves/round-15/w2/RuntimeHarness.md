@@ -113,6 +113,26 @@ None.
 
 `python3 .ufo/evidence/round-15/verify.py --rev <final-commit>` once, after
 committing the final `tools/context-capture.py` (must equal pin
-`c4a1d165…601726`). Expect exit 0; artifacts: `verification.json`,
-`expected.json`, `before.json`, `after.json`, `sources-after.json`,
-`frozen/{context-clean,context-missing-env,mapping-suffix}/{receipt,expected}.json`.
+`c4a1d165…601726`). First-attempt artifacts are preserved; the rerun writes
+`verification-2.json` plus `attempt-2/{expected,before,after,sources-after}.json`.
+Shared immutable inputs: `frozen/{context-clean,context-missing-env,mapping-suffix}/{receipt,expected}.json`.
+
+## Post-run repair (after failed L1 run 0494c244)
+
+L1's initial run failed only `selftest-new`: the copied tool at
+`scratch/candidate.py` made its `DEFAULT_LANE_ROOT=/tmp`, which is a prefix
+of the selftest's own `mkdtemp` root, tripping `hermetic-no-lane-path`.
+Repairs, none executed:
+
+- Temp layout is now `<scratch>/lane/tools/candidate.py` (parents created);
+  same path for old and new bytes; tool source unchanged (pin c4a1d165…).
+- Attempt-local outputs: first run wrote `verification.json`,
+  `expected.json`, `before.json`, `after.json`, `sources-after.json` at the
+  round-15 root and is preserved. A rerun computes serial N from existing
+  `verification[-N].json`, writes `verification-N.json` at the root and
+  `attempt-N/{expected,before,after,sources-after}.json`; the payload names
+  `artifact_dir`. Shared `frozen/` inputs stay immutable digest-verified.
+- `main` removes the scratch tree in `finally` (the initial run's
+  `/tmp/tameshi-r15-verify-4pexcuhm` is L1's to remove).
+
+No production gate, expected IDs, or pin values changed.

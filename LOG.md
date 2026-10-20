@@ -968,3 +968,18 @@ All appended; `corpus/lessons/round-1.md` final section.
   from C1 proof. No tool install/update occurred; all pacman transactions
   became operator-paused before wave2. Integrated measured results follow
   as a new log entry, without rewriting this pre-execution record.
+
+### Round 15 integration failure and fixture repair
+
+The first integrated command at `0494c2442a7aab924d4c55e879ffb4b8d676ccd0`
+exited1, not green: `.ufo/evidence/round-15/verification.json` records
+42/44 checks passing, failed selftest-new and its full-count check.
+All49 selftest records ran; its one failure is hermetic-no-lane-path.
+The verifier copied the tool to `<scratch>/candidate.py`, making the tool's
+two-parent lane root `/tmp`; this is a bad integration fixture, not a reason
+to suppress the honest guard. The harness must use
+`<scratch>/lane/tools/candidate.py` for both old/new source bytes.
+The lesson's new fixture-layout mistake records the observed failure and
+repair; old raw outputs and expected pins remain intact. Actual frozen
+clean0/missing-env1/tamper2/usage64, mapping oracle and source census0
+completed in that same failed run and are not erased.
