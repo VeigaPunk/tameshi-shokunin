@@ -1,0 +1,34 @@
+# IntentCutover — round-15 W2
+
+## Axes and conclusion
+
+- **Historical integrity:** preserved at the recorded byte identity.
+- **Active gate/call routing:** bounded agreement; the maintained entry is a retained-receipt gate, not the archived no-argument probe.
+- **CLI/selftest contract:** statically aligned with Routed defect 5, including exit 64 as could-not-evaluate.
+- **Capability honesty:** current claim and registry do not claim a new public live-capture mode.
+
+**Conclusion:** On the maintained source and current authoritative registry/claim, the check-only cutover closes the routed classification and interface defect without presenting a new live capture capability. This is a static review, not evidence that the gate or selftest ran. Residual pre-integration W1 text still describes no-argument capture and must not be treated as current capability evidence (see below).
+
+## Evidence chain
+
+1. **What defect 5 routed.** `corpus/lessons/round-14-verifier-spotcheck.md:160` says the round-14 `capture-context.py` compared persisted expected source digests/mappings and returned mismatch/exit 1, therefore met the Gate standard; it required gate classification, isolated public-CLI self-invocation with expected exits/stable IDs, and an explicit 64 class. The historical source confirms the distinction: `.ufo/evidence/round-14/capture-context.py:553-580` implements `decide()` as `mismatch, 1` or `ok, 0`; `:605-643` makes no-argument invocation perform that capture and writes its receipt, while usage returns 64.
+
+2. **Historical bytes remain separate.** The archived source remains at `.ufo/evidence/round-14/capture-context.py`; read-only `sha256sum` returned `7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89`, matching the old receipt's `tool_sha256` and the digest declared by `SKILL.md:1633-35`. The retained round-14 receipt hash was `05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a`, matching the frozen pin in `tools/context-capture.py:136-144` and current registry. This demonstrates the currently read historical files match their recorded identities; I did not compare a Git baseline or claim the maintained tool authenticates historical authorship.
+
+3. **The maintained command is a real, separate check-only interface.** `tools/context-capture.py:1-14,252-276` says it does not capture, execute the probe/git, or read live lane inputs. `parse_argv()`/`main()` at `:2023-2116` expose only `--check`, `--selftest`, `--json`, `--receipt`, `--expected`, and help; no arguments and unsupported modes return `usage_error`/64. `run_check()` at `:1298-1345` reads either the fixed frozen round-14 receipt with built-in digest/id/exit pins, or the caller-named receipt plus expected-pin file; it hashes the receipt before parsing and re-derives its recorded comparison, environment, positive-control, source, mapping, and verdict fields. The receipt's stored argv/root strings are not dispatched or opened by this flow.
+
+4. **No shim or active probe alias observed.** The `tools/` listing contains `context-capture.py`, not a second `tools/capture-context.py`; the maintained module does not import or `runpy` the historical script. A literal search of the maintained tool's process/alias tokens found only `subprocess.run` in `SelftestHarness.run()` (`:1602-09`), which runs `SELF`—the maintained tool itself. The archived file remains a directly addressable historical artifact, not a forwarding shim. `SKILL.md:1633-41` explicitly marks it archived, supersedes its old no-argument recipe and historical probe row, and says round-14 receipts are read-only.
+
+5. **Self-invocation and exit classes are present in source, not exercised here.** `SelftestHarness` creates a `mkdtemp` root and case directories (`:1572-89`); `check_case()` invokes the public maintained CLI as a Python subprocess against synthetic receipt/expected files and checks process exit, JSON exit, primary finding ID, and a findings list (`:1611-73`). `usage_case()` checks exit 64 and the stable `usage_error` token (`:1684-99`); the test cases include clean `context_consistent/0`, mismatch IDs with exit 1, malformed/unavailable inputs with exit 2, and usage/64 (`:1728-2002`). The code declares `64 usage / could-not-evaluate invocation` (`:86-97,266-276`), while `SKILL.md:1669-75,1681` maps both 2 and 64 to could-not-evaluate. `SKILL.md:1677-82` has a round-15 active `gate` row with `--check` and `--selftest`; its round-14 `probe` row remains in the historical section rather than being silently rewritten. `claims.json:6-14`, `integration-decisions.json:2-9`, `corpus/README.md:195-203`, and `corpus/SOURCES.md:60` bound C1 to retained-receipt replay/selftest and expressly distinguish this from a new live experiment.
+
+## Callsite and claim boundary
+
+The literal path/command search found the active registry row in `SKILL.md` using `tools/context-capture.py --check`, plus the tool's own selftest and the round-15 measurement script's static path/registry counters (`.ufo/evidence/round-15/measure.py:28-43,212-235,265-300`). It found no active production caller dispatching `.ufo/evidence/round-14/capture-context.py`. Old invocations remain in round-14 historical reports and in pre-integration round-15 W1 artifacts. In particular, `w1/FrozenEvidence.md:13` describes a separate normal live capture, and `w1/ClaimEvidence.md:110-11` lists no-argument capture/replay as an expected-but-missing item. Those are stale planning/review artifacts, not behavior of the delivered tool; the current claim, integration decisions, maintained source, and active registry supersede them. I notified `TameshiR15` of this documentation discrepancy.
+
+The current contract therefore does **not** preclaim live capture: the maintained CLI has no capture mode, and its no-argument path is usage/64. The historical capture capability remains in the preserved round-14 artifact only. I did not infer a new round-15 receipt or live experiment from source declarations.
+
+## Limits and confidence
+
+`read xd://lsp` returned “No such tool” (the mounted-tool inventory has no LSP device), so references/callers were checked by literal source search only; that is not semantic call-graph proof of every possible invocation. Static review covered `AGENTS.md`, the round-14 routed lesson, historical and maintained scripts, current `SKILL.md`, round-15 `measure.py`, C1/integration declarations, round-15 lesson, corpus README/SOURCES, and the named W1 artifacts. No gate, selftest, build, test, or formatter was executed. No tools were installed or updated.
+
+**Confidence:** high on the source-level check-only contract, recorded historical hashes, and current registry/claim wording; moderate on complete callsite absence because LSP/reference analysis was unavailable and the search is textual.

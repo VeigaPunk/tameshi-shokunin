@@ -55,8 +55,9 @@ rows only, and a row is a claim opened in the round that writes it.
 | S046 | Property-Based Testing Bibliography — https://github.com/ngernest/pbt-bibliography | community | C | F10 — PBT fixture-generation practice | README opening paragraph; main branch as accessed 2026-10-19 | REJECTED: a community bibliography is a discovery index, not primary or reproducible support for an F10 fixture practice; flip: a cited primary source opened from it supplies an operational technique | rejected | 2026-10-19 | 90d | — |
 | S047 | Incremental analysis (PIT docs), precision correction — https://pitest.org/quickstart/incremental_analysis/ | docs | A | PIT's documented experimental incremental-analysis assumptions, not a general reuse guarantee | §Incremental analysis, numbered optimisations 1–5 and dependency paragraphs; accessed 2026-10-20, page version unstated | supersedes S041 — the dependency assumption is unproven; item 4 prioritises an old killing test, while proposed item 5 is not yet implemented; the potential-error sentence covers optimisations, not only live result-reuse skips | mined | 2026-10-20 | 90d | corpus/knowledge/incremental-pin-disposition.md |
 | S048 | Incremental analysis (PIT docs), object-neutral precision — https://pitest.org/quickstart/incremental_analysis/ | docs | A | PIT's item-4 prioritisation distinction without resolving an ambiguous pronoun | §Incremental analysis, numbered items 4–5 and dependency paragraphs; accessed 2026-10-20, page version unstated | supersedes S047 — item 4 is prioritisation rather than a reuse skip; no claim here resolves its pronoun to test versus mutation; item 5 is explicitly not yet implemented and the dependency assumption remains unproven | mined | 2026-10-20 | 90d | corpus/knowledge/incremental-pin-disposition.md |
-| S049 | Python subprocess environment mapping — https://docs.python.org/3/library/subprocess.html | docs | A | Python subprocess.run env argument semantics, not proof of a particular historical environment | Using the subprocess Module, run() env paragraph; Python 3.15.0 docs served 2026-10-20 | Explicit env mappings define child environment rather than merely documenting an intended injection; retain the bounded override with the observed command | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md, corpus/knowledge/incremental-pin-disposition.md |
+| S049 | Python subprocess environment mapping — https://docs.python.org/3/library/subprocess.html | docs | A | Python subprocess.run env argument semantics, not proof of a particular historical environment | Using the subprocess Module, run() env paragraph; Python 3.15.0 docs served 2026-10-20 | Explicit env mappings define child environment rather than merely documenting an intended injection; retain the bounded override with the observed command | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md, corpus/knowledge/incremental-pin-disposition.md, corpus/lessons/round-15.md |
 | S050 | Effective expectation reconciliation — tools/evidence-disposition.py | own-work | A | Replay of the lane's configured round-13 expected predicates with explicit raw-observation supersession, not author authentication | docstring lines10–13 and CLI r14 at measured commit6431478; .ufo/evidence/round-14/verification-final.json | Every original expectation stays effective or explicitly superseded; the retained setup crash cannot gain mechanism credit from exit agreement alone | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md |
+| S051 | Retained context-receipt gate — tools/context-capture.py | own-work | A | Byte-pinned retained context-receipt verdict replay with isolated public-CLI self-invocation, not live command execution or authentication | r15 docstring lines9–14 and Modes lines16–28; opened2026-10-20 | A persisted-expectation verdict is a gate; replay re-derives bounded raw fields and does not execute retained argv | mined | 2026-10-20 | on-release | corpus/lessons/round-15.md |
 
 ## Paths
 
@@ -127,6 +128,11 @@ rows only, and a row is a claim opened in the round that writes it.
   identified2/screened2/included2/excluded0. Stop: primary documentation
   answers the invocation contract; neither source proves an experiment ran.
   Quotes and scope are recorded in `corpus/lessons/round-14.md`, Gate.
+- 2026-10-20 — **round-15 explicit child invocation**. Reopened S049 official
+  Python subprocess docs, run() env paragraph; identified1/screened1/included1/
+  excluded0. Stop: the primary API source supports explicit subprocess setup;
+  runtime fixtures, not documentation, must demonstrate the context gate.
+
 
 ## Leads (unopened)
 
@@ -162,4 +168,5 @@ the six opened this round moved to rows S040–S046 and left this list).
 - S048: object-neutral clarification of S047; same PIT URL, no new source.
 - S049: round-14 Python child-environment contract, not historical setup proof.
 - S050: round-14 own-work effective-expectation gate, measured at6431478.
-- Next unused id: S051.
+- S051: round-15 maintained retained-context gate; historical producer preserved.
+- Next unused id: S052.

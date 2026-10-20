@@ -6,8 +6,8 @@ a caller-supplied digest, still reproduce the same verdict after every derived
 fact is RE-DERIVED from the receipt's raw fields — or does the retained record
 disagree with its own raw observation?
 
-This is the promoted, active replacement for the archived round-14
-`.ufo/evidence/round-14/capture-context.py` probe. It does not capture, does
+This is the promoted, active replacement for the archived round-14 context
+gate `.ufo/evidence/round-14/capture-context.py`. It does not capture, does
 not execute the probe or git, and does not read live lane inputs. Check mode
 writes nothing; the only writes are --selftest fixtures under mkdtemp.
 Frozen mode reads only the archived round-14 receipt named by the built-in
@@ -24,8 +24,10 @@ Modes:
       expected.id / expected.exit.
   --selftest
       Run the real CLI by subprocess against isolated synthetic fixtures under
-      tempfile.mkdtemp(), pinning literal expected ids and exits. No live lane
-      path is read or written; fixtures are removed in a finally block.
+      /tmp (tempfile.mkdtemp(dir="/tmp")), pinning literal expected ids and
+      exits. Each subprocess reads its own tool source only to report
+      tool_sha256; no live domain inputs or live lane path are read, and no
+      temp tool copy is made. Fixtures are removed in a finally block.
   -h, --help
       Print usage.
 
@@ -40,7 +42,8 @@ Raw-field re-derivation (the stored derived booleans are never trusted):
     JSON keys rejected); the baseline document must be a six-leg ok
     pin-disposition-v1 document; the canonical payload is compared after
     removing ONLY the top-level observed_at; the comparable digests, equal,
-    raw_stdout_equal, observed_at and error values are recomputed;
+    raw_stdout_equal, observed_at and error values are recomputed (digests and
+    the payload flag are null on a recorded injected-run failure);
   * environment: injected_env must be exactly {"GIT_DIR": POISON_PATH} and
     env_delta_keys exactly ["GIT_DIR"]; baseline_has_GIT_DIR is False;
   * runs: argv/cwd equality and the env delta are recomputed from the raw
@@ -96,13 +99,25 @@ Exit map:
       mismatch, retained invalid-input record, or an unexpected internal error
   64  usage / could-not-evaluate invocation
 
+Pinned-verdict precedence: `expected_verdict_mismatch` becomes the primary
+finding and converts a clean 0 into 1; on an exit-1 or exit-2 result it is a
+secondary finding and the primary class/exit is preserved. Tamper, malformed
+and other could-not-evaluate results never become exit 1.
+
 Bounded scope: the digest pin is the integrity authority; the tool's declared
 tool_sha256 is reported, not treated as authentication. A passing check is not
 proof that the historical commands were re-executed, nor a claim about
-environment, dependency, fixture or suite identity. The archived round-14
-script is never imported and its main/evaluate/write paths are never used.
+environment, dependency, fixture or suite identity. Each file is read once and
+the pinned digest is compared with the same bytes that are parsed; no locking or
+directory-integrity guarantee is claimed, and a concurrent writer is outside
+this contract. The archived round-14 script is never imported and its
+main/evaluate/write paths are never used.
 
-Dependencies: python3 (stdlib). No credentials are read.
+Dependencies: python3 (stdlib). Frozen mode and --selftest read only the
+configured archived receipt and synthetic temp fixtures. Explicit mode reads
+the caller-selected receipt and expected JSON with the caller's permissions;
+callers must select non-secret receipt/expected files. No credential probe is
+executed and no ambient environment is dumped.
 """
 
 import copy
@@ -248,6 +263,9 @@ CALL_KEYS = frozenset(
      "table_constant")
 )
 EXPECTED_KEYS = frozenset(("schema", "receipt_sha256", "id", "exit"))
+KNOWN_ARGUMENTS = frozenset(
+    ("--check", "--selftest", "--json", "--receipt", "--expected", "-h",
+     "--help"))
 
 USAGE = """usage: context-capture.py --check [--receipt FILE --expected FILE] [--json]
        context-capture.py --selftest
@@ -261,7 +279,9 @@ The gate re-derives comparison, environment, run, positive-control, source and
 runner-mapping facts from raw retained fields; stored status/exit/reasons and
 summary booleans are never trusted. It does not capture, execute the probe,
 read live lane inputs, or write during check; frozen mode reads only the
-archived receipt named by the built-in pin.
+archived receipt named by the built-in pin. Explicit mode reads only the
+caller-selected receipt and expected JSON with the caller's permissions; select
+non-secret files. No credential probe is executed.
 
 exit 0   clean retained receipt (id=context_consistent)
 exit 1   re-derived or pinned-verdict mismatch (a matched exit-1 pin still
@@ -321,7 +341,7 @@ def parse_json_strict(raw, finding_id, label):
         raise CouldNotEvaluate(finding_id, label + " is not UTF-8")
     try:
         document = json.loads(text, object_pairs_hook=_no_duplicate_keys)
-    except ValueError as exc:
+    except (ValueError, RecursionError) as exc:
         raise CouldNotEvaluate(
             finding_id, "{} is not strict JSON: {}".format(label, exc))
     return document
@@ -533,7 +553,7 @@ def validate_environment(environment):
         if type(injected) is dict:
             for key, value in injected.items():
                 require_string(key, "environment.injected_env key")
-                require_string(value, "environment.injected_env[{}]".format(key))
+                require_string(value, "environment.injected_env[{!r}]".format(key))
     require_string(environment["baseline_policy"], "environment.baseline_policy")
     require_string(environment["injected_policy"], "environment.injected_policy")
     require_strings(environment["env_delta_keys"], "environment.env_delta_keys")
@@ -595,8 +615,16 @@ def validate_comparison(comparison):
                     "comparison.{} is null without a recorded error".format(field))
         else:
             require_hex(comparison[field], "comparison." + field, HEX64)
-    require_bool(comparison["payload_tool_sha256_matches_disk"],
-                 "comparison.payload_tool_sha256_matches_disk")
+    payload_match = comparison["payload_tool_sha256_matches_disk"]
+    if payload_match is None:
+        if comparison["error"] is None:
+            raise CouldNotEvaluate(
+                "receipt_structure_invalid",
+                "comparison.payload_tool_sha256_matches_disk is null without "
+                "a recorded error")
+    else:
+        require_bool(payload_match,
+                     "comparison.payload_tool_sha256_matches_disk")
     require_bool(comparison["equal"], "comparison.equal")
     return comparison
 
@@ -614,7 +642,7 @@ def validate_positive_control(control):
         control["env_additions"], "positive_control.env_additions")
     for key, value in additions.items():
         require_string(key, "positive_control.env_additions key")
-        require_string(value, "positive_control.env_additions[{}]".format(key))
+        require_string(value, "positive_control.env_additions[{!r}]".format(key))
     require_env_delta(control["env_delta"], "positive_control.env_delta")
     return control
 
@@ -756,7 +784,7 @@ def validate_mapping(mapping):
 def embedded_json(text, finding_id, label):
     try:
         document = json.loads(text, object_pairs_hook=_no_duplicate_keys)
-    except ValueError as exc:
+    except (ValueError, RecursionError) as exc:
         raise CouldNotEvaluate(
             finding_id, "{} is not strict JSON: {}".format(label, exc))
     return document
@@ -1042,7 +1070,16 @@ def recompute_mapping(mapping, findings):
     for leg in legs:
         name = leg["leg"]
         manifest = leg["manifest"]
-        suffix = leg["declared_variable_suffix"]
+        canonical_suffix = EXPECTED_SUFFIX.get(name)
+        stored_suffix = leg["declared_variable_suffix"]
+        if canonical_suffix is None:
+            problems.append(
+                "leg {!r} is not a configured six-leg name".format(name))
+        elif stored_suffix != canonical_suffix:
+            problems.append(
+                "leg {!r} declared_variable_suffix {!r} is not the canonical "
+                "{!r}".format(name, stored_suffix, canonical_suffix))
+        suffix = canonical_suffix
         header = leg["runner_header"]
         call = leg["runner_call"]
         checks = {check: False for check in CHECK_NAMES}
@@ -1051,7 +1088,7 @@ def recompute_mapping(mapping, findings):
                 header["leg"] == name
                 and header["repo"] == manifest["repo"]
                 and header["path"] == manifest["path"])
-        if call is not None:
+        if call is not None and suffix is not None:
             checks["leg_call_matches_manifest"] = (
                 call["leg"] == name
                 and call["repo"] == manifest["repo"]
@@ -1071,13 +1108,13 @@ def recompute_mapping(mapping, findings):
         for check in CHECK_NAMES:
             if leg["checks"][check] is not checks[check]:
                 problems.append(
-                    "leg {} check {} recorded {!r} but raw fields recompute "
+                    "leg {!r} check {!r} recorded {!r} but raw fields recompute "
                     "{!r}".format(name, check, leg["checks"][check],
                                   checks[check]))
         if leg["match"] is not match:
             problems.append(
-                "leg {} match recorded {!r} but checks recompute {!r}".format(
-                    name, leg["match"], match))
+                "leg {!r} match recorded {!r} but checks recompute {!r}"
+                .format(name, leg["match"], match))
     runner_order = mapping["runner_leg_order"]
     manifest_order = mapping["manifest_leg_order"]
     leg_set_equal = set(runner_order) == set(manifest_order)
@@ -1245,6 +1282,11 @@ def make_result(mode, status, finding_id, code, findings, receipt_path,
     }
 
 
+def _one_line(value):
+    """Fold CR/LF so retained text cannot forge a verdict line."""
+    return str(value).replace("\r", "\\r").replace("\n", "\\n")
+
+
 def emit(result, as_json):
     if as_json:
         sys.stdout.write(json.dumps(result, sort_keys=True) + "\n")
@@ -1253,12 +1295,13 @@ def emit(result, as_json):
              "invalid_input": "INVALID"}[result["status"]]
     sys.stdout.write(
         "CONTEXT: {} (id={} receipt={} sha256={} exit={} findings={})\n".format(
-            label, result["id"], result["receipt"]["path"],
+            label, result["id"], _one_line(result["receipt"]["path"]),
             result["receipt"]["sha256"] or "<none>", result["exit"],
             len(result["findings"])))
     for finding in result["findings"]:
         sys.stdout.write(
-            "FINDING {} {}\n".format(finding["id"], finding["detail"]))
+            "FINDING {} {}\n".format(
+                _one_line(finding["id"]), _one_line(finding["detail"])))
     return result["exit"]
 
 
@@ -1578,7 +1621,8 @@ SELFTEST_ENV = {
 
 class SelftestHarness:
     def __init__(self):
-        self.root = tempfile.mkdtemp(prefix="context-capture-selftest-")
+        self.root = tempfile.mkdtemp(prefix="context-capture-selftest-",
+                                     dir="/tmp")
         self.passed = 0
         self.failed = []
         self.outputs = []
@@ -1611,7 +1655,8 @@ class SelftestHarness:
     def check_case(self, name, receipt, expected_id, expected_exit,
                    receipt_bytes=None, write_receipt=True,
                    expected_override=None, write_expected=True,
-                   expected_ids=None):
+                   expected_ids=None, expected_bytes=None,
+                   expected_match=True):
         directory = self.case_dir(name)
         receipt_path = os.path.join(directory, "receipt.json")
         expected_path = os.path.join(directory, "expected.json")
@@ -1621,7 +1666,9 @@ class SelftestHarness:
         if write_receipt:
             with open(receipt_path, "wb") as handle:
                 handle.write(receipt_bytes)
-        if expected_override is None:
+        if expected_bytes is not None:
+            expected_document = None
+        elif expected_override is None:
             expected_document = {
                 "schema": EXPECTED_SCHEMA,
                 "receipt_sha256": sha256_bytes(receipt_bytes),
@@ -1631,9 +1678,13 @@ class SelftestHarness:
         else:
             expected_document = expected_override
         if write_expected:
-            with open(expected_path, "w", encoding="utf-8") as handle:
-                json.dump(expected_document, handle, sort_keys=True)
-                handle.write("\n")
+            if expected_bytes is not None:
+                with open(expected_path, "wb") as handle:
+                    handle.write(expected_bytes)
+            else:
+                with open(expected_path, "w", encoding="utf-8") as handle:
+                    json.dump(expected_document, handle, sort_keys=True)
+                    handle.write("\n")
         proc = self.run(
             [sys.executable, "-I", SELF, "--check", "--receipt", receipt_path,
              "--expected", expected_path, "--json"],
@@ -1662,9 +1713,20 @@ class SelftestHarness:
             ok = ok and type(payload) is dict
             ok = ok and payload.get("receipt", {}).get("sha256") == sha256_bytes(
                 receipt_bytes)
+        ids = [finding.get("id") for finding in (findings or [])
+               if type(finding) is dict]
+        if expected_match is not None:
+            observed_match = (
+                payload.get("verdict_matches_expected")
+                if type(payload) is dict else None)
+            ok = ok and observed_match is expected_match
+            if expected_match:
+                ok = ok and "expected_verdict_mismatch" not in ids
+            else:
+                ok = ok and "expected_verdict_mismatch" in ids
+        else:
+            ok = ok and "expected_verdict_mismatch" not in ids
         if expected_ids is not None:
-            ids = [finding.get("id") for finding in (findings or [])
-                   if type(finding) is dict]
             ok = ok and all(item in ids for item in expected_ids)
         self.record(
             name, ok,
@@ -1699,8 +1761,7 @@ class SelftestHarness:
 
     def finish(self):
         lane_leak = any(
-            DEFAULT_LANE_ROOT in text for text in self.outputs
-        ) if DEFAULT_LANE_ROOT not in self.root else False
+            DEFAULT_LANE_ROOT in text for text in self.outputs)
         self.record(
             "hermetic-no-lane-path", not lane_leak,
             "default lane root absent from subprocess output"
@@ -1734,7 +1795,11 @@ def run_selftest_cases(harness):
         return document
 
     clean = mutate(lambda document: None)
-    harness.check_case("clean", clean, "context_consistent", 0)
+    clean_bytes = (json.dumps(
+        clean, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    clean_digest = sha256_bytes(clean_bytes)
+    harness.check_case("clean", clean, "context_consistent", 0,
+                       receipt_bytes=clean_bytes)
 
     missing_env = mutate(
         lambda document: document["environment"].pop("injected_env"))
@@ -1742,6 +1807,16 @@ def run_selftest_cases(harness):
         "missing-injected-env", missing_env, "missing_injected_environment", 1,
         expected_ids=["missing_injected_environment",
                       "receipt_verdict_mismatch"])
+
+    harness.check_case(
+        "tampered-before-semantic", missing_env, "snapshot_tampered", 2,
+        expected_override={
+            "schema": EXPECTED_SCHEMA,
+            "receipt_sha256": clean_digest,
+            "id": "context_consistent",
+            "exit": 0,
+        },
+        expected_match=False)
 
     null_env = mutate(
         lambda document: document["environment"].update({"injected_env": None}))
@@ -1781,6 +1856,43 @@ def run_selftest_cases(harness):
         "payload-digest-lie", mutate(payload_digest_lie),
         "comparison_tool_digest_mismatch", 1)
 
+    def injected_run_failed(document):
+        document["runs"]["injected"]["exit"] = 128
+        document["runs"]["injected"]["stdout"] = ""
+        comparison = document["comparison"]
+        comparison["observed_at"]["injected"] = None
+        comparison["baseline_comparable_sha256"] = None
+        comparison["injected_comparable_sha256"] = None
+        comparison["payload_tool_sha256_matches_disk"] = None
+        comparison["equal"] = False
+        comparison["error"] = (
+            "injected probe run produced no JSON document (exit=128)")
+        comparison["raw_stdout_equal"] = False
+        document["status"] = "mismatch"
+        document["exit"] = 1
+        document["reasons"] = ["fixture: injected run failed"]
+    harness.check_case(
+        "injected-run-failed", mutate(injected_run_failed),
+        "comparison_mismatch", 1)
+
+    def injected_deep_malformed(document):
+        document["runs"]["injected"]["stdout"] = "[" * 6000 + "]" * 6000
+        comparison = document["comparison"]
+        comparison["observed_at"]["injected"] = None
+        comparison["baseline_comparable_sha256"] = None
+        comparison["injected_comparable_sha256"] = None
+        comparison["payload_tool_sha256_matches_disk"] = None
+        comparison["equal"] = False
+        comparison["error"] = (
+            "injected probe run produced no JSON document (exit=0)")
+        comparison["raw_stdout_equal"] = False
+        document["status"] = "mismatch"
+        document["exit"] = 1
+        document["reasons"] = ["fixture: injected document is unparsable"]
+    harness.check_case(
+        "injected-deep-malformed", mutate(injected_deep_malformed),
+        "comparison_mismatch", 1)
+
     def control_ineffective(document):
         document["positive_control"]["injected"]["exit"] = 0
         document["positive_control"]["injected"]["stderr"] = ""
@@ -1803,6 +1915,16 @@ def run_selftest_cases(harness):
         "control-flag-lie", mutate(control_flag_lie),
         "positive_control_ineffective", 1)
 
+    def control_exit_zero_poison(document):
+        document["positive_control"]["injected"]["exit"] = 0
+        document["status"] = "mismatch"
+        document["exit"] = 1
+        document["reasons"] = [
+            "fixture: exit zero under a truthful poison marker"]
+    harness.check_case(
+        "control-exit-zero-poison", mutate(control_exit_zero_poison),
+        "positive_control_ineffective", 1)
+
     def mapping_check_lie(document):
         document["mapping"]["legs"][0]["pin_value"] = "0" * 64
         document["status"] = "mismatch"
@@ -1810,6 +1932,35 @@ def run_selftest_cases(harness):
         document["reasons"] = ["fixture: mapping check lies"]
     harness.check_case(
         "mapping-check-lie", mutate(mapping_check_lie), "mapping_mismatch", 1)
+
+    mapping_failed = mutate(mapping_check_lie)
+    mapping_failed_bytes = (json.dumps(
+        mapping_failed, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    harness.check_case(
+        "mapping-failed-wrong-pin", mapping_failed, "mapping_mismatch", 1,
+        receipt_bytes=mapping_failed_bytes,
+        expected_override={
+            "schema": EXPECTED_SCHEMA,
+            "receipt_sha256": sha256_bytes(mapping_failed_bytes),
+            "id": "comparison_mismatch",
+            "exit": 1,
+        },
+        expected_match=False,
+        expected_ids=["mapping_mismatch", "expected_verdict_mismatch"])
+
+    def mapping_suffix_swap(document):
+        js = document["mapping"]["legs"][0]
+        bash = document["mapping"]["legs"][1]
+        js["declared_variable_suffix"] = bash["declared_variable_suffix"]
+        js["pin_value"] = bash["pin_value"]
+        js["rev_value"] = bash["rev_value"]
+        js["runner_call"]["pin_constant"] = bash["runner_call"]["pin_constant"]
+        js["runner_call"]["rev_constant"] = bash["runner_call"]["rev_constant"]
+        js["runner_call"]["table_constant"] = (
+            bash["runner_call"]["table_constant"])
+    harness.check_case(
+        "mapping-suffix-swap", mutate(mapping_suffix_swap),
+        "mapping_mismatch", 1)
 
     def mapping_constant_swap(document):
         leg = document["mapping"]["legs"][0]
@@ -1853,6 +2004,24 @@ def run_selftest_cases(harness):
         document["reasons"] = ["fixture: runner declaration lies"]
     harness.check_case(
         "runner-source-lie", mutate(runner_source_lie),
+        "runner_source_digest_mismatch", 1)
+
+    def probe_flag_false_equal(document):
+        document["sources"]["probe"]["matches_declared"] = False
+        document["status"] = "mismatch"
+        document["exit"] = 1
+        document["reasons"] = ["fixture: probe flag false with equal digest"]
+    harness.check_case(
+        "probe-flag-false-equal", mutate(probe_flag_false_equal),
+        "probe_source_digest_mismatch", 1)
+
+    def runner_flag_false_equal(document):
+        document["sources"]["runner"]["matches_manifest_declaration"] = False
+        document["status"] = "mismatch"
+        document["exit"] = 1
+        document["reasons"] = ["fixture: runner flag false with equal digest"]
+    harness.check_case(
+        "runner-flag-false-equal", mutate(runner_flag_false_equal),
         "runner_source_digest_mismatch", 1)
 
     truthy_matches = mutate(
@@ -1910,11 +2079,12 @@ def run_selftest_cases(harness):
             "receipt_sha256": "0" * 64,
             "id": "context_consistent",
             "exit": 0,
-        })
+        },
+        expected_match=False)
 
     harness.check_case(
         "expected-missing", clean, "expected_missing", 2,
-        write_expected=False)
+        write_expected=False, expected_match=None)
 
     harness.check_case(
         "expected-invalid", clean, "expected_invalid", 2,
@@ -1923,17 +2093,18 @@ def run_selftest_cases(harness):
             "receipt_sha256": "0" * 64,
             "id": "context_consistent",
             "exit": 0,
-        })
+        },
+        expected_match=None)
 
     harness.check_case(
         "expected-verdict-mismatch", clean, "expected_verdict_mismatch", 1,
         expected_override={
             "schema": EXPECTED_SCHEMA,
-            "receipt_sha256": sha256_bytes(
-                (json.dumps(clean, indent=2, sort_keys=True) + "\n").encode()),
+            "receipt_sha256": clean_digest,
             "id": "comparison_mismatch",
             "exit": 1,
-        })
+        },
+        expected_match=False)
 
     def stored_verdict_lie(document):
         document["status"] = "mismatch"
@@ -1986,7 +2157,18 @@ def run_selftest_cases(harness):
             "receipt_sha256": "not-a-digest",
             "id": "context_consistent",
             "exit": 0,
-        })
+        },
+        expected_match=None)
+
+    duplicate_expected = (
+        '{"schema": "tameshi-context-expected-v1", '
+        '"receipt_sha256": "' + clean_digest + '", '
+        '"receipt_sha256": "' + clean_digest + '", '
+        '"id": "context_consistent", "exit": 0}').encode("utf-8")
+    harness.check_case(
+        "expected-duplicate-key", clean, "expected_invalid", 2,
+        receipt_bytes=clean_bytes, expected_bytes=duplicate_expected,
+        expected_match=None)
 
     baseline_unusable = mutate(
         lambda document: document["runs"]["baseline"].update({"stdout": "{}"}))
@@ -1998,23 +2180,30 @@ def run_selftest_cases(harness):
         "usage-receipt-without-expected", ["--check", "--receipt", "receipt.json"])
     harness.usage_case(
         "usage-expected-without-receipt", ["--check", "--expected", "expected.json"])
+    harness.usage_case(
+        "usage-receipt-final-missing",
+        ["--check", "--expected", "expected.json", "--receipt"])
+    harness.usage_case(
+        "usage-receipt-flag-as-value",
+        ["--check", "--expected", "expected.json", "--receipt", "--json"])
     harness.usage_case("usage-unknown-flag", ["--check", "--bogus"])
     harness.usage_case("usage-selftest-extra", ["--selftest", "--json"])
 
 
 def run_selftest():
-    harness = SelftestHarness()
+    harness = None
     try:
-        try:
-            run_selftest_cases(harness)
-        except Exception as exc:  # setup failure is loud but never a traceback
-            sys.stdout.write(
-                "SELFTEST: FAIL (setup error: {}: {})\n".format(
-                    type(exc).__name__, exc))
-            return 2
+        harness = SelftestHarness()
+        run_selftest_cases(harness)
         return harness.finish()
+    except Exception as exc:  # setup failure is loud but never a traceback
+        sys.stdout.write(
+            "SELFTEST: FAIL (setup error: {}: {})\n".format(
+                type(exc).__name__, exc))
+        return 2
     finally:
-        shutil.rmtree(harness.root, ignore_errors=True)
+        if harness is not None:
+            shutil.rmtree(harness.root, ignore_errors=True)
 
 
 # ------------------------------------------------------------------------ CLI
@@ -2053,6 +2242,10 @@ def parse_argv(argv):
             value = argv[index + 1]
             if not value:
                 raise UsageError(argument + " has an empty value")
+            if value in KNOWN_ARGUMENTS:
+                raise UsageError(
+                    argument + " cannot take a recognized flag as its value: "
+                    + value)
             index += 2
             if argument == "--receipt":
                 if receipt is not None:

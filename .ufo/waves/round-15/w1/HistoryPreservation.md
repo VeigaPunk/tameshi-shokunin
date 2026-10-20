@@ -1,0 +1,28 @@
+# HistoryPreservation — round-14 receipt source identity
+
+## Axes in scope
+
+- **Calibration / provenance:** distinguish a receipt’s self-reported source digest from an independently configured digest pin.
+- **Historical integrity:** preserve round-14 source, receipt, and non-author closure note as historical bytes.
+- **Operability:** make the maintained round-15 command able to reject an untrusted retained receipt without re-running its recorded argv.
+
+## Evidence chain and reconstructed intent
+
+1. Round-14’s wave contract defined `capture-context.py` as a *prospective* receipt producer: it was to record the explicit `GIT_DIR` injection, source/manifest digests, and six-leg mapping. The contract distinguishes this context receipt from frozen round-13 expectation reconciliation and says it is not retrospective repair (`.ufo/waves/round-14/spec.json:3`). The historical script says the same: it captures a bounded environment comparison and static mapping, makes no leg-execution/result-reuse claim, and is prospective rather than a replacement for round-13 evidence (`.ufo/evidence/round-14/capture-context.py:11-29`).
+
+2. The old receipt’s top-level `tool_sha256` is the digest of the harness itself, but its origin is self-observation: `base_receipt()` hashes `SELF` and stores the result (`capture-context.py:414-420`). The retained receipt records `7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89` (`.ufo/evidence/round-14/context-receipt.json:1-5`). By contrast, `comparison_block()` checks the two *pin-probe payloads’* `tool_sha256` values against the on-disk probe digest (`capture-context.py:350-391`); `decide()` checks that probe pin, the runner’s manifest pin, environment, control, and mapping (`capture-context.py:553-580`). It does **not** compare the harness’s own top-level digest to a trusted pin.
+
+3. There is a separate round-14 source pin: `expected-runtime.json` and `expected-runtime-final.json` list the old script path with the same `7313e9…` digest (`.ufo/evidence/round-14/expected-runtime.json:2-14`; `.ufo/evidence/round-14/expected-runtime-final.json:2-14`). The round-14 closure note says it independently remeasured the pinned inputs at both the measured and delivered revisions, including the capture script (`corpus/lessons/round-14-verifier-spotcheck.md:82-85`). It also explicitly bounds these pins as configured authority, not authentication (`:96`). This is the provenance chain that can detect drift when the retained pin is honored; the self-digest inside the receipt alone cannot prevent or detect rewriting the source and receipt together.
+
+4. The same outside note routes the harness’s gate classification and missing explicit exit-64 registry class as round-15 conformance work (`corpus/lessons/round-14-verifier-spotcheck.md:160-162`). The old source supports that classification: `decide()` returns exit 1 for persisted source-pin or mapping mismatches, and `main()` writes the receipt and returns that verdict (`capture-context.py:553-643`). This does not convert the historical run into a new claim or authorize changing its record.
+
+## Exact minimum correction and boundary
+
+- **Do not edit or overwrite** `.ufo/evidence/round-14/capture-context.py`, `.ufo/evidence/round-14/context-receipt.json`, either round-14 runtime pin, or `corpus/lessons/round-14-verifier-spotcheck.md`. Treat `7313e9…` as the historical configured source digest; do not regenerate it from the promoted tool or describe the receipt’s self-digest as a tamper lock.
+- In the new active `tools/context-capture.py`, keep the old bounded `decide`/comparison/mapping semantics. If implementing the round-15 retained-receipt snapshot check, compare the retained receipt’s declared old source digest (and, when checking the old source bytes, their digest) against a separately retained expected snapshot, not a value freshly derived from the same mutable source/receipt. A mismatch must be “could not evaluate” (exit 2), with the round-15 stable finding `snapshot_tampered`; it must not be reported as a clean or semantic mismatch (exit 1). The R15 tool must write prospective output only under round 15.
+- The minimum hermetic discriminating case is an isolated fixture with a valid snapshot/receipt pair, then a one-byte change to the snapshot-bound source (or the pinned digest) while leaving the original expected pin unchanged. Invoke the **public CLI** on the fixture and assert literal exit `2` plus exactly `snapshot_tampered`. No recorded receipt argv, live round-14 paths, network, or out-of-temp writes are needed for this case. Do not claim it was executed here.
+- The pin provides drift detection only relative to its retained authority. It does not physically prevent mutation, authenticate its author, or prove broad environment/dependency/suite identity. Keep the historical round-14 experiment bounded to its recorded GIT_DIR comparison and static mapping; add no new environment or result-reuse claims.
+
+## Method and confidence
+
+Direct source/JSON/spec/closure-note reads only; no gates, selftests, probes, builds, or verification were executed; no tools installed or updated. The LSP device was unavailable (`read xd://lsp` returned “No such tool”); source claims above are grounded in the read source ranges, not grep-based semantic proof. Confidence is **high** on what the code and pins contain and **high** that the self-hash alone is not enforcement; the authenticity and trust of a configured digest remain explicitly limited as stated above.

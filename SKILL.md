@@ -1589,19 +1589,117 @@ Recipe, from this lane root:
    initial18-of34 fixture failures rather than disguising them as green.
    The revision measured is recorded separately.
    A non-author closure reads committed evidence, never executes sibling gates.
-5. `python3 .ufo/evidence/round-14/capture-context.py` is an opt-in prospective
-   probe with read-only sibling reads; it writes only its new round14 receipt.
-   It is not required for replaying the frozen expectation verdict and never
-   repairs the undocumented historical injection by inference.
+5. **Archived experiment, not an entry point:** the round14
+   `capture-context.py` produced the retained context receipt and must not be
+   run again because its historical output path replaces that frozen receipt.
+   Use the maintained retained-only gate in the round15 registry below.
 
-### Round-14 gate/probe registry
+### Round-14 historical registry — superseded by round 15
 
 | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
 | effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` | 0 clean; 1 failed semantic expectations; 2 could-not-evaluate invalid/missing/tampered inputs; 64 usage | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
-| invocation context capture | probe | `python3 .ufo/evidence/round-14/capture-context.py` | 0 bounded experiment/mappings agree; 1 observed mismatch or failed control; 2 could-not-evaluate setup | no standalone selftest; integrated negative receipt and injection controls retained in round14 verification | unchanged round13 pin manifest, runner and probe digests in context receipt; explicit GIT_DIR override | read-only lane/sibling data and read-only git; writes only new round14 context receipt | tameshi |
+| archived invocation context capture | historical gate, not active | do not run; retained source `.ufo/evidence/round-14/capture-context.py` only | historical outcomes retained, not an active verdict map | historical helper-only controls do not satisfy the standalone gate selftest | unchanged round13 pin manifest and context receipt | archive bytes read-only; no supported invocation | tameshi |
 
 The disposition manifest is configured authority, not cryptographic proof of
 author authenticity. Receipt replay proves its recorded predicates, not that
 every historical command was independently re-executed. Unmapped receipt-only
 checks do not acquire new expected rows by being mentioned in a summary.
+
+## Context gate classification and explicit exit classes — round 15
+
+Sources: S051 (maintained retained-context gate, opened this round),
+S049 (explicit child invocation), `corpus/lessons/round-15.md` (Gate and
+Mistakes), and `corpus/lessons/round-14-verifier-spotcheck.md`, Routed
+defects item 5; `PROTOCOL.md` §Gate standard. This appendix corrects the
+active registry classification and exit classes. Runtime observations are
+retained separately in `.ufo/evidence/round-15/verification.json`;
+entry commands here are declarations, not an outside admission.
+It adds no successor sweep, seventh recorded case, promotion credit,
+outside-admission authority, author authentication, new live-capture
+capability or environment-independence claim.
+
+**Classification correction.** The round-14 instrument
+`.ufo/evidence/round-14/capture-context.py` compares the pin probe's two
+documents (only top-level `observed_at` excluded), an exact environment delta
+and a positive git control, persists probe/runner source digests against the
+round-13 `expected.json` and `pin-manifest.json`, and checks the runner's six
+leg mappings; `decide()` returns `ok`/exit0 or `mismatch`/exit1
+(`:2-31`, `:553-580`, `:605-643`). Verdict behavior over persisted
+expectations is a **gate** under §Gate standard, not a probe. The round-14
+registry history is retained above with an inline archive marker, not a callable entry.
+
+**Archive status.** That historical script is **archived, not active**: its
+bytes stay at sha256 `7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89`,
+it is not an entry point, the maintained gate never invokes it, and its noarg
+prospective-capture guidance is superseded. This supersedes round-14 recipe
+step 5 and the historical registry row above; both are now marked archive-only.
+The maintained
+gate is `tools/context-capture.py`; the active use is retained-receipt replay,
+not a new live experiment. Round-14 receipts are read-only inputs, never
+regenerated.
+
+**Retained-check semantics.** The maintained command replays a retained
+receipt against an expected pin—built in for the frozen clean receipt,
+caller-supplied through `--receipt`/`--expected` otherwise—checks the required
+structure, and re-derives each predicate from the stored raw fields. The
+receipt is data: check mode never executes retained argv, never opens a
+recorded root path and never reruns the git or probe experiment. It must not
+trust the receipt's stored summary booleans or stored `status`/`exit`/`reasons`:
+absent, wrongly typed, duplicate-key or contradicting fields are findings,
+never a clean pass. The negative retained fixture
+`.ufo/evidence/round-14/context-missing-env.json` (sha256
+`1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208`) is
+the discriminating counterpart: passed with a caller-committed expected pin
+(schema `tameshi-context-expected-v1`) naming `missing_injected_environment`
+and exit1, it must fail at exit1; the clean retained receipt (sha256
+`05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a`) is the
+exit0 counterpart and the tool's built-in frozen default. Selftest inputs are
+synthetic fixtures, distinct from these retained files.
+
+| Evidence condition | Decision | Limit |
+|---|---|---|
+| Retained receipt digest matches the pinned expectation and every required raw predicate and structure agrees | `clean`, exit0 | Proves only the retained receipt's recorded and re-derived facts under its declared scope; never that stored argv was re-executed |
+| A re-derived predicate, source digest, control or mapping disagrees | `failed`, exit1 with the stable finding ID (the missing-environment case keeps `missing_injected_environment`) | A named predicate failure; never relabel it a probe observation, a retry-until-green, or a substantive environment finding |
+| Missing, unreadable, wrongly typed, duplicate-key or non-UTF-8 input; edited frozen snapshot; unavailable setup | Could not evaluate, exit2 with a stable kind, no traceback as a verdict | No compared verdict from absent or edited bytes; an edited snapshot is integrity failure, not semantic mismatch |
+| Usage error or an undeclared nonzero code | Could not evaluate, exit64 for usage, no receipt written | Usage is lane vocabulary mapped to could-not-evaluate, not a failed experiment |
+| Historical round-14 receipt interpreted | Bounded observation of one declared `GIT_DIR` injection and six static mappings | No leg or suite execution, result reuse, concurrent sibling stability, global environment independence, or retrospective repair of round-13's undocumented setup |
+
+**Exit classes.** Both active gates share three classes over four exit codes: `0` clean,
+`1` failed, `2` and `64` could-not-evaluate (`2` invalid, unavailable or
+tampered input/setup; `64` usage, no receipt); an undeclared nonzero code also
+reads as could-not-evaluate. This corrects the disposition row's former
+`64 usage` wording and the context row's former probe label and absence of 64;
+it changes no historical command outcome, the round-14 admission, or the C1
+scalar.
+
+### Round-15 gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| retained invocation-context gate | gate | `python3 tools/context-capture.py --check` (frozen round-14 clean receipt); `--check --receipt FILE --expected FILE` for a caller-pinned retained receipt | 0 clean (`context_consistent`); 1 failed stable finding ID (e.g. `missing_injected_environment`); 2 and 64 could-not-evaluate (receipt/expected missing, malformed or tampered, e.g. `snapshot_tampered`; 64 `usage_error`) | `python3 tools/context-capture.py --selftest` | frozen clean receipt `.ufo/evidence/round-14/context-receipt.json` sha256 `05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a` and its built-in id/exit pin in tool; expected-pin schema `tameshi-context-expected-v1` (`receipt_sha256`/`id`/`exit`) for other retained receipts; negative fixture `context-missing-env.json` sha256 `1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208`; literal selftest exit/finding pairs in tool | check reads receipt/expected bytes and its own source for a reported digest, writes nothing, never opens recorded root paths or executes stored argv; selftest writes isolated temporary fixtures only; archived round-14 bytes retained | tameshi |
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` | 0 clean; 1 failed semantic expectations; 2 and 64 could-not-evaluate (invalid, missing or tampered inputs; 64 usage) | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+
+The maintained gate's expected values are configured authority, not
+cryptographic proof of author authenticity; a clean check replays recorded
+predicates and pinned digest binding, never a re-execution of stored argv and
+never a fresh measurement. Selftest green is capability only; the frozen
+retained replay is the committed-input evidence of the Gate standard's "Two
+evidences", and neither is an outside-admission sample. No row here changes
+rank, SHONEN authority, the six recorded cases, or the archived round-12–14
+bytes; no sibling gate is registered or executed by this lane, and no
+successor sweep or seventh case is claimed.
+
+Explicit mode reads caller-selected files with caller permissions; use only
+non-secret receipt and expected JSON. Paths can follow filesystem symlinks:
+digest binding verifies the bytes read, not filesystem-origin authenticity
+or a race-free confinement boundary. Selftest reads its own source for the
+reported tool digest, not live domain artifacts. Pre-integration wave1
+capture/root-override recipes are superseded by this retained-only cutover;
+they are advisory planning, never public capture-capability evidence.
+
+Could-not-evaluate takes precedence over a mismatched expected verdict: an
+edited snapshot or unavailable input stays exit2, with any expectation
+disagreement secondary. A clean result with a wrong id/exit pin becomes
+failed/exit1. Help exits0 only as a non-verdict informational mode; selftest
+exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation.

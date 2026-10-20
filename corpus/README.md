@@ -191,3 +191,19 @@ full-page cold-read/box3. New selftests and a checked context do not substitute
 for an independent outside admit/reject sample or promotion.
 The previous latest-review statement is superseded: round13's outside closure
 is now the newest sample. It admits round13's bounded claims, not round14.
+
+## Round 15 — context classification and standalone verdict boundary
+
+The historical round14 capture script/receipt above remain frozen evidence,
+not an active probe recipe. `lessons/round-14-verifier-spotcheck.md` Routed
+defects5 correctly classifies persisted-expectation comparisons as a gate;
+`lessons/round-15.md` and QUALITY17 record that correction. Maintained
+`../tools/context-capture.py` checks retained receipts without executing
+their argv or reading sibling trees. Its public isolated selftest and
+digest-bound frozen runs are separate evidences, not a new live experiment.
+
+This is same-ground calibration work, not a new uncovered knowledge entry,
+whole-F7 result reuse, F1 interop or a successor mutation sweep. Legacy
+provenance headers, runbook corrections and current-page cold-read/box3
+remain open. The newest outside sample is now the round14 verifier note;
+it admits round14's bounded C1, not round15 or promotion.

@@ -944,3 +944,27 @@ All appended; `corpus/lessons/round-1.md` final section.
   headers, operator runbook repair and current-page cold-read remain open.
   This is no seventh recorded mutation case and earns no SHONEN points.
   Same-lane reviewers advise; only separate non-author closure admits.
+- S051 entered only after opening the maintained tool (r15 source at
+  `bca5deb`, docstring9–14); its literal write-scope quote and S049 used-by
+  old→new change are in the lesson Gate. No source row is expansion by itself.
+- Build66 and falsify32 seats were validated then dispatched as one unchanged
+  task payload per wave; specs/dispatches/assignments/registries are under
+  `.ufo/waves/round-15/`. Total98. L1 is planner; connector data walk is not
+  a planner-role bypass. Ten build seats died at the Cursor quota boundary;
+  no replacement identities. Main alone changed future routing.
+- Pre-repair maintained source `0ed784e0…` is preserved by `bca5deb`.
+  Wave2 found flag-as-value classification, canonical mapping suffix trust,
+  ambient TMPDIR leakage, nullable failed-injection metadata, parser
+  recursion classification, and diagnostic newline issues; the single
+  source owner integrated bounded repairs and targeted CLI fixtures.
+  Detailed static findings and rejected scope inflation are in the lesson's
+  Same-round falsification section. No static prediction is a run result.
+- The maintained gate is retained-only; old live-capture instructions are
+  inline archive markers, not supported commands. It reads receipt/expected
+  bytes plus its own source hash, never retained argv or recorded roots.
+  Could-not-evaluate2 takes precedence over secondary pin mismatch.
+- Mid-flight helper/probe exceptions by SpecClean, SpecMismatch, SpecTypes,
+  SpecEnvironment and SpecMapping are disclosed in the lesson and excluded
+  from C1 proof. No tool install/update occurred; all pacman transactions
+  became operator-paused before wave2. Integrated measured results follow
+  as a new log entry, without rewriting this pre-execution record.

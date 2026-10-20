@@ -71,3 +71,14 @@ Each criterion cites the mistake it learns from
     documented experiment succeeds.
     (`lessons/round-14.md`, missing-setup mistake; outside
     `lessons/round-13-verifier-spotcheck.md`, Routed defects item2; S049)
+
+## Criteria appended — round 15
+
+17. Classify an instrument by its behavior, not its label: comparing persisted
+    expectations and returning a mismatch verdict makes it a gate. Its public
+    isolated self-invocation asserts literal exits and stable finding IDs;
+    helper-only controls are not a standalone selftest. Explicitly classify
+    every nonzero exit, including usage, and retain the unsupported old
+    invocation alongside the same-command repaired result.
+    (`lessons/round-15.md`, gate-misclassification and exit-class-ambiguity;
+    outside `lessons/round-14-verifier-spotcheck.md`, Routed defects5)
