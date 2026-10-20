@@ -7,7 +7,7 @@ description: "Domain specialist — verification-fixture craft. Rank: shonen (pr
 
 verification-fixture craft playbook. Rounds 1–3 built the corpus from measured
 surfaces; every rule below earns a cited source. The first two mutation cases
-— round 2 JS, round 3 bash, both 8/10 killed — are worked here (seven recorded since round 16), and this page carries
+— round 2 JS, round 3 bash, both 8/10 killed — are worked here (eight recorded since round 18), and this page carries
 the method as an executable recipe: numbered steps from pin to restore proof,
 defect templates with exact-string guidance, kill-rate bands, restore
 discipline, the measured bash-vs-JS divergences, and complete reproduce specs
@@ -922,7 +922,7 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
 
 Round 7 turns `--regression` from the tool's two-case self-check into the
 fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
-pinned original revision. Four legs at that revision (r7-1; seven since round 16) — `js-kimi-census`
+pinned original revision. Four legs at that revision (r7-1; eight since round 18) — `js-kimi-census`
 (r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
 `bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
 — each with its recorded kill-rate as its expectation
@@ -947,7 +947,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md`.
   replay; a missing repo/rev/blob or a pin mismatch is a SETUP refusal before
   any suite runs.
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
-  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16) with the
+  (cases=N passed=N; …)` (N=4 at r7-1, 8 since round 18) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
@@ -1025,8 +1025,8 @@ no lane acting stays [U].
   then did not name tameshi (`:14`); since fleet-2 the lanes live in `shokunin.conf`, which names tameshi
   (round 17). Tameshi's tick is still its own round series [I].
 - **Per case, two readings:** the target's relation to each repo's branch-tip bytes
-  (`current` / `stale` / `drift`; `<branch>` per `detect_branch`,
-  `../scripts/hyaku/jj-lane.sh:53-65`) and the tool's relation to the last run (`held` / `moved`):
+  (`current` / `stale` / `drift`; `<branch>` = the `branch=` field of
+  `../scripts/hyaku/jj-lane.sh state <repo>` (function `detect_branch()` by name; line anchors into the helper move)) and the tool's relation to the last run (`held` / `moved`):
 
 | Reading | Rule | What it means |
 |---|---|---|
@@ -1387,8 +1387,8 @@ lands in the round's record, not here.
 | `corpus/knowledge/service-optin-protocol.md` | request shape, the re-pin rule, read-only guarantees, report shape, boundaries | your lane wants a sweep — or receives one |
 | `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
-| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
-| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16; git-materialized replay) | any sweep or replay |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
+| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18; git-materialized replay) | any sweep or replay |
 | `corpus/README.md` | the coverage map — one row per note, holds + sources | checking what the corpus holds |
 | `plans/round-N.plan.md`, `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, this wave, uncommitted at this write) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
@@ -1882,12 +1882,12 @@ Recipe for one bucket, cold:
    (`W=$(mktemp -d); mkdir $W/fleet`, symlink each sibling `*-shokunin` repo into
    `$W/fleet/`, `git clone -q <lane> $W/fleet/tameshi-shokunin`, `git -C … checkout -q --detach <rev>`).
 2. Run every command the bucket names under
-   `python3 .ufo/evidence/round-17/coldread/trace-inputs.py --root $W/fleet/tameshi-shokunin --out <receipt.json> -- <argv…>`;
+   `python3 tools/trace-inputs.py --root $W/fleet/tameshi-shokunin --out <receipt.json> -- <argv…>` (round 18; same CLI and receipt as the round-17 copy);
    the receipt lists the tracked files opened (`inputs`), untracked opens, and external fleet files.
 3. Record the verdict block (schema `tameshi-coldread-report-v2`) with the receipts' inputs plus every lane
-   file opened by hand, then `python3 .ufo/evidence/round-17/coldread/assemble.py --reports <dir> --out <ledger>`.
+   file opened by hand, then `python3 .ufo/evidence/round-18/coldread/assemble.py --reports <dir> --carry <prior ledger> --out <ledger>`.
 4. Commit the ledger and every receipt it names together, with no recorded input changed after the reads,
-   then `python3 .ufo/evidence/round-17/measure.py --rev REV` → `coldread.box3_full_page` and `calibration_restraint_score`.
+   then `python3 .ufo/evidence/round-18/measure.py --rev REV` → `coldread.box3_full_page` and `calibration_restraint_score`.
    A cited number uses no `--ledger-file`/`--ledger-rev`/`--inputs-overlay` (`overrides_used` false).
 
 Limits: an open trace does not see environment variables, stat-only probes,
@@ -1901,3 +1901,32 @@ The rule makes a recorded read checkable, not complete.
 | `.ufo/evidence/round-17/measure.py` | probe | `python3 .ufo/evidence/round-17/measure.py --rev REV` · `--selftest` | 0 measured (a missing default ledger is 0 with reason `no-ledger`) · 2 rev or required blob missing, an explicit `--ledger-file`/`--ledger-rev` unreadable, a forbidden overlay field · 64 usage |
 | `.ufo/evidence/round-17/coldread/trace-inputs.py` | probe | `python3 .ufo/evidence/round-17/coldread/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | 0 traced (the command's exit is in the receipt) · 2 strace unavailable or the command never executed · 64 usage; `--selftest` 0 pass, 1 a case failed — it fails under an outer tracer (nested ptrace is refused), so never wrap it |
 | `.ufo/evidence/round-17/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-17/coldread/assemble.py --reports DIR --out FILE [--expect-skill-sha SHA]` · `--selftest` | 0 every bucket covered, no report rejected · 1 a bucket uncovered, a report rejected, or no report found · 2 usage (argparse) |
+
+## Eighth recorded case — round 18
+
+kumitate `scripts/sources-check.mjs` at rev `0acb7752d19058b953ebbeba253b1e35f6548de5`
+(blob sha256 `6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f`, 897 lines,
+mode 100755) is ledger leg `js-sources-check`: 5/10 killed, 10/10 predictions held. The
+spec and predictions were committed (`93d22aa`) before any mutant ran; the suite is the
+hermetic `env -i` form of case 7 (`.ufo/evidence/round-18/sources-check/suite.txt`); eight
+pristine controls were byte-identical (`.ufo/evidence/round-18/sources-check/control/`).
+Entry: `corpus/knowledge/mutation-case-kumitate-sources-check.md`. Replay:
+`bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-sources-check: PASS`,
+`cases=8 passed=8`.
+
+| Survivor class in this case | What the suite does not pin | Fix belongs to |
+|---|---|---|
+| one-sided kind coverage (`S_KIND`) | observed kinds ⊆ declared kinds | kumitate |
+| verdict-line text (`S_VERDICT`) | the final `SOURCES_CHECK: DRIFT (...)` line | kumitate |
+| line attribution, counters, read-failure kind (`S_DUP_LINE`, `S_ENTRY_COUNT`, `S_FILE_READ`) | detail text and non-row counters | kumitate |
+
+### Round-18 gate/probe registry — routed-defect closure
+
+| Name | Kind | Command | Exits / rule |
+|---|---|---|---|
+| `.ufo/evidence/round-18/defect-probes.py` | probe | `python3 .ufo/evidence/round-18/defect-probes.py --rev REV` · `--selftest` | 0 measured (`DEFECT_PROBES: open=N closed=M total=11`) · 2 a probe errored, a pristine selftest was red, or an anchor was not unique · 64 usage. A guard probe is `closed` only when the pristine selftest exits 0 and the guard-removal mutant exits nonzero; children run under bwrap with the fleet read-only |
+| `tools/registry-check.py` (round 18) | gate | unchanged CLI | `timeout_s` must be a finite positive number (`NaN`/`Infinity` literals refused at parse) → 2 naming the row; every descendant of a row (including one that called `setsid`/`setpgid`) is killed at timeout and after the row exits; pipe draining is bounded |
+| `tools/evidence-disposition.py` (round 18) | gate | unchanged CLI | G2/G3 read one anchor commit: `refs/heads/<lane.branch or attached branch>`; a jj-colocated repo with no `lane.branch` → 2; a detached non-jj clone (`registry-check --rev`) anchors on the checked-out commit only when a branch or remote-tracking ref contains it. Never bare `HEAD` (jj leaves `HEAD` at `@-`) |
+| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; its pinned round-13 bytes are read from `4acc607` through `.ufo/evidence/round-18/dispositions.json` (the round-17 manifests are superseded) |
+| `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | as the round-17 copy (which stays byte-identical as evidence); its selftest now fails when the O_RDWR exclusion, the private pycache prefix, or the root-execve requirement is removed |
+| `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |

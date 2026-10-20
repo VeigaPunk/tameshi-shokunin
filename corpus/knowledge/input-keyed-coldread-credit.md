@@ -73,3 +73,75 @@ checkable, not complete.
 `coldread.box3_full_page`, `coldread.sections_covered`, per-section `reason`,
 and `calibration_restraint_score`; `overrides_used` must be false for a cited
 number. Exits: 0 measured, 2 rev/blob/ledger missing, 64 usage.
+
+## Errata — round 18 (R17-KNOW-EXIT, entry-local)
+
+Scope: corrects §5 (line 75) and the `measure-*.json` citation in §2 (lines
+45–48) as published at 183f87b899e6cae46be98d251cbc87fb5118f6ca. Lines 1–75
+are unchanged. The round-17 evidence bytes they cite are retained, not
+rewritten.
+
+### 1. The §5 exit sentence (line 75) is false for a missing ledger
+
+Line 75 reads "Exits: 0 measured, 2 rev/blob/ledger missing, 64 usage." The
+ledger half is wrong. The true split at 183f87b899e6cae46be98d251cbc87fb5118f6ca:
+
+- Missing **default** ledger (`.ufo/evidence/round-17/coldread/ledger.json`
+  absent at REV): not an error. It is a measured `no-ledger` state. Every
+  section gets `reason: "no-ledger"`, `coldread.reasons` is
+  `{"no-ledger": N}`, and the exit is 0.
+- Missing **explicit** ledger: `--ledger-file` unreadable, or `--ledger-rev
+  REV:PATH` with an absent rev or blob, exits 2.
+- Exit 2 also covers a missing `rev`, a missing required blob, and an
+  unreadable or forbidden-field `--inputs-overlay`.
+
+Source (`.ufo/evidence/round-17/measure.py`): the no-ledger branch is
+`measure.py:535-553` (`return out` at 553); the default-ledger path is
+`measure.py:1545-1547`; the explicit-ledger exits are `measure.py:1520-1543`;
+the overlay exits are `measure.py:1554-1592`; `return 0` is `measure.py:1598`.
+The tool's own usage text states the same split at `measure.py:93-95`.
+
+Observed: `.ufo/evidence/round-17/redbefore/measure-98bea7d-strict.json`
+records `ledger_present: false`, `overrides_used: false`,
+`coldread.reasons: {"no-ledger": 54}`, and no `error` key. The default ledger
+is absent at 98bea7d. The receipt does not record an exit code; exit 0 follows
+from the return at `measure.py:1598`.
+
+### 2. The `measure-*.json` citation in §2 is narrowed
+
+The glob `redbefore/measure-*.json` matches four receipts. Three are overlay
+runs (`overrides_used: true`, `inputs_overlay_merged: 1`,
+`trace_gate: "legacy"`):
+
+- `redbefore/measure-e69b488.json`: "Effective expectation reconciliation —
+  round 14" is `credited`.
+- `redbefore/measure-09ee1d0.json`: `input-drift:tools/mutate-and-run.sh`.
+- `redbefore/measure-98bea7d.json`: `input-drift:tools/mutate-and-run.sh`.
+
+`redbefore/measure-98bea7d-strict.json` is not an overlay run. It has
+`overrides_used: false` and `trace_gate: "strict"`. At 98bea7d the default
+ledger is absent, so it reports all 54 sections as `no-ledger` and does not
+show the bucket at all. It evidences the absent-default behaviour in §1, not
+the input-drift demonstration. "Those runs use `--inputs-overlay`" holds for
+the three overlay files only.
+
+### 3. R17-CMD-BIND: the narrower claim
+
+The input-keyed rule binds credit to the recorded **inputs**. It does not bind
+trace **argv** to the bucket's declared or required commands.
+
+- Bound: each trace receipt's `inputs` must be covered by the entry's recorded
+  `inputs` with a matching sha256 (`trace-input-unrecorded:`,
+  `trace-input-drift:`; `measure.py:403-412`). An entry with
+  `commands_executed_count > 0` needs at least one committed receipt in strict
+  mode (`measure.py:368-380`).
+- Not bound: `measure.py` never reads a receipt's `argv`. The only receipt-argv
+  reference is the selftest fixture at `measure.py:773`. It also never reads
+  `coldread/bucket-commands.json` (zero references at 183f87b). For example,
+  `coldread/traces/CR01/1.json` records a `git -C … show <rev>:SKILL.md |
+  sha256sum` argv, and nothing compares that argv with the bucket's declared
+  commands.
+
+So the rule shows that a recorded read ran against the recorded bytes. It is
+not a command-coverage proof, and it does not show that the declared commands
+ran. The §4 limit "A seat can still skip a command" is the operative statement.

@@ -63,13 +63,14 @@ TABLE_BASH per-defect KILLED/SURVIVED entries (surfaced by a pin grep).  No
 per-defect *witness* classification of this leg existed before this run; the
 mapping is hashed before execution and is never rewritten after results.
 
-Environment scrub: THE_JANITOR_BIN, SQLITE3_BIN, CENSUS_BREAK, DEEP and
-ONEPASSWORD_BROWSER_SUPPORT are removed from the sweep environment (each is
-read by the pinned gate and can change behavior), the resolved
-`the-janitor`/`sqlite3` PATH facts are recorded in summary.json, and a
-`the-janitor` found on PATH refuses the sweep so the selftest cannot reach a
-real op/custody surface.  REV_BASH must be an exact 40-hex git id and
-materialization runs `git show --end-of-options`.
+Environment scrub: every child process drops inherited `GIT_*` variables, then
+sets `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`. The sweep
+environment additionally removes THE_JANITOR_BIN, SQLITE3_BIN, CENSUS_BREAK,
+DEEP and ONEPASSWORD_BROWSER_SUPPORT (each is read by the pinned gate and can
+change behavior). The resolved `the-janitor`/`sqlite3` PATH facts are recorded
+in summary.json, and a `the-janitor` found on PATH refuses the sweep so the
+selftest cannot reach a real op/custody surface. REV_BASH must be an exact
+40-hex git id and materialization runs `git show --end-of-options`.
 
 Usage errors exit 64 (the probe contract), not argparse's default 2.
 """
@@ -329,6 +330,15 @@ def spec_precheck(defects: list, target_text: str) -> dict:
     }
 
 
+def git_clean_env() -> dict:
+    """Remove inherited Git settings, then pin safe configuration sources."""
+    env = {name: value for name, value in os.environ.items()
+           if not name.startswith("GIT_")}
+    env["GIT_CONFIG_GLOBAL"] = "/dev/null"
+    env["GIT_CONFIG_NOSYSTEM"] = "1"
+    return env
+
+
 def materialize_target(kagi: Path, rev: str) -> bytes:
     if not re.fullmatch(r"[0-9a-f]{40}", rev or ""):
         raise Cannot(f"revision is not an exact 40-hex git id: {rev!r}")
@@ -337,7 +347,7 @@ def materialize_target(kagi: Path, rev: str) -> bytes:
     proc = subprocess.run(
         ["git", "-C", str(kagi), "show", "--end-of-options",
          f"{rev}:{TARGET_GIT_PATH}"],
-        capture_output=True, check=False)
+        capture_output=True, check=False, env=git_clean_env())
     if proc.returncode != 0:
         raise Cannot(f"git show {rev}:{TARGET_GIT_PATH} failed: "
                      f"{proc.stderr.decode('utf-8', 'replace').strip()}")
@@ -570,7 +580,7 @@ def ensure_target_and_spec(evidence: Path, declaration: dict, kagi: Path) -> dic
 
 
 def sweep_env() -> dict:
-    env = dict(os.environ)
+    env = git_clean_env()
     for name in SCRUB_ENV:
         env.pop(name, None)
     return env
@@ -578,7 +588,7 @@ def sweep_env() -> dict:
 
 def env_facts() -> dict:
     return {
-        "scrubbed": list(SCRUB_ENV),
+        "scrubbed": ["GIT_*", *SCRUB_ENV],
         "the_janitor_on_path": shutil.which("the-janitor"),
         "sqlite3_on_path": shutil.which("sqlite3"),
         "path": os.environ.get("PATH", ""),
@@ -1227,8 +1237,104 @@ def cmd_selftest(args) -> int:
             failed += 1
             print(f"  check {name:<44} FAIL")
 
-    root = Path(tempfile.mkdtemp(prefix="bash-witness-selftest."))
+    private_root = Path(tempfile.mkdtemp(
+        prefix="bash-witness-selftest-private.", dir="/tmp"))
+    assert private_root.resolve(strict=True) == private_root
+    root = None
     try:
+        root = Path(tempfile.mkdtemp(
+            prefix="bash-witness-selftest.", dir=private_root))
+        assert root.resolve(strict=True) == root
+        # A hostile inherited Git selection must not redirect either child Git
+        # invocation to the canary repository. Both launch paths are exercised
+        # with GIT_DIR and GIT_WORK_TREE exported and distinct fixture repos.
+        def fixture_repo(name: str, contents: bytes) -> tuple:
+            repo = root / name
+            repo.mkdir()
+            target = repo / TARGET_GIT_PATH
+            target.parent.mkdir(parents=True)
+            target.write_bytes(contents)
+            safe_env = git_clean_env()
+            subprocess.run(
+                ["git", "-c", "core.hooksPath=/dev/null",
+                 "-C", str(repo), "init", "--quiet"],
+                check=True, env=safe_env,
+                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            subprocess.run(
+                ["git", "-c", "core.hooksPath=/dev/null",
+                 "-C", str(repo), "add", "--", TARGET_GIT_PATH],
+                check=True, env=safe_env,
+                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            subprocess.run(
+                ["git", "-c", "core.hooksPath=/dev/null",
+                 "-C", str(repo), "-c", "user.name=fixture",
+                 "-c", "user.email=fixture@example.invalid", "commit",
+                 "--quiet", "-m", "fixture"],
+                check=True, env=safe_env,
+                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            revision = subprocess.run(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"],
+                check=True, capture_output=True, env=safe_env,
+            ).stdout.decode("ascii").strip()
+            return repo, revision
+
+        materialize_ok = sweep_ok = False
+        saved_runner = RUNNER
+        saved_which = shutil.which
+        saved_env = {
+            name: os.environ.get(name)
+            for name in ("GIT_DIR", "GIT_WORK_TREE", "WITNESS_CANARY_REPO")
+        }
+        try:
+            fixture, revision = fixture_repo(
+                "git-fixture", b"fixture target bytes\n")
+            canary, _ = fixture_repo("git-canary", b"canary target bytes\n")
+            probe_runner = root / "git-canary-runner.sh"
+            probe_runner.write_text(
+                "#!/bin/bash\n"
+                "set -eu\n"
+                "git -C \"$WITNESS_CANARY_REPO\" rev-parse --show-toplevel\n",
+                encoding="utf-8")
+            os.environ["GIT_DIR"] = str(canary / ".git")
+            os.environ["GIT_WORK_TREE"] = str(canary)
+            os.environ["WITNESS_CANARY_REPO"] = str(fixture)
+
+            try:
+                materialize_ok = (
+                    materialize_target(fixture, revision)
+                    == b"fixture target bytes\n")
+            except (Cannot, OSError, subprocess.SubprocessError):
+                materialize_ok = False
+
+            globals()["RUNNER"] = probe_runner
+            shutil.which = lambda name: None if name == "the-janitor" else saved_which(name)
+            try:
+                sweep = run_sweep(root / "canary-evidence",
+                                  root / "canary-sweep", 30, 4)
+                sweep_ok = (
+                    sweep["exit"] == 0
+                    and str(fixture) in
+                    (root / "canary-sweep" / "cli.log").read_text(encoding="utf-8")
+                    and str(canary) not in
+                    (root / "canary-sweep" / "cli.log").read_text(encoding="utf-8")
+                )
+            except (Cannot, OSError, subprocess.SubprocessError):
+                sweep_ok = False
+        except (OSError, subprocess.SubprocessError):
+            materialize_ok = sweep_ok = False
+        finally:
+            globals()["RUNNER"] = saved_runner
+            shutil.which = saved_which
+            for name, value in saved_env.items():
+                if value is None:
+                    os.environ.pop(name, None)
+                else:
+                    os.environ[name] = value
+        check("GIT_DIR/GIT_WORK_TREE cannot redirect materialization",
+              materialize_ok)
+        check("GIT_DIR/GIT_WORK_TREE cannot redirect sweep",
+              sweep_ok)
+
         # spec extraction + parse on a synthetic runner
         runner = (
             "#!/bin/bash\n"
@@ -1568,7 +1674,11 @@ def cmd_selftest(args) -> int:
         print("VERDICT: FAIL")
         return EXIT_FAIL
     finally:
-        shutil.rmtree(root, ignore_errors=True)
+        if root is not None:
+            assert root.resolve(strict=True) == root
+            shutil.rmtree(root, ignore_errors=True)
+        assert private_root.resolve(strict=True) == private_root
+        shutil.rmtree(private_root, ignore_errors=True)
 
 
 class UsageParser(argparse.ArgumentParser):

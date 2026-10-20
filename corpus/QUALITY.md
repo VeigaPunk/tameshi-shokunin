@@ -165,3 +165,131 @@ Each criterion cites the mistake it learns from
     lands with an appended disposition waiver in a later round and stays open
     debt until then. Criterion 27 applies to every other lane git caller.
     (`.ufo/waves/round-17/w2/QualityCriteriaReview.md`; `lessons/round-17.md`)
+
+## Criteria appended — round 18
+
+Each criterion turns one routed item of
+`lessons/round-17-verifier-spotcheck.md` §7 into a falsifiable rule. Each
+states its rule, what captured the failure, and the check that can fail.
+Criteria 1–28 are unchanged; criterion 28's open debt is not closed here.
+
+29. A lane guard is a check whose removal changes a verdict on some input.
+    It counts as behaviorally covered only when removing its code makes the
+    owning `--selftest` exit nonzero. Code existence is not coverage. A
+    one-defect removal that leaves the selftest at exit 0 is a surviving
+    mutant; the owner either adds a killing selftest case in its next round
+    or names the mutant equivalent, with its reason, in the mutation report.
+    Captured by: round-17 wave 2 reports `.ufo/waves/round-17/w2/MutateDispositionV2.md`
+    (G3 tag-object and G5 symlink-mode survived), `MutateRegistryCheck.md`
+    (detached-checkout and short-rev regex survived) and `MutateTraceInputs.md`
+    (trace O_RDWR, pycache-prefix and execve survived).
+    Check that can fail: apply each named removal to the owner's tool at the
+    cited rev; the owning `--selftest` must exit nonzero for every one. Exit 0
+    keeps that guard open debt.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 3, R17-GUARD-COVERAGE)
+30. A lane-state comparison reads the resolved branch tip
+    `refs/heads/<branch>`, never bare `HEAD`. In a jj-colocated repository
+    HEAD can differ from the branch tip, so a HEAD comparison can pass or fail
+    for the wrong reason. A closure that observes HEAD = master proves that
+    state only, not jj states in general.
+    Captured by: `tools/evidence-disposition.py` at 183f87b states G2 and G3
+    against HEAD (`:45-48`, `:179-180`) and implements G3 as
+    `merge-base --is-ancestor rev HEAD` in `resolve_historical_rev` (`:441-451`).
+    Check that can fail: a fixture from `jj git init --colocate` in /tmp whose
+    HEAD differs from the branch tip; the verdict must follow the branch tip,
+    and the same fixture must fail a HEAD-based copy of the tool.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 5, R17-JJ-GUARDS)
+31. A numeric config value read from a registry or manifest is finite and
+    positive before use. NaN, Infinity, -Infinity and booleans are rejected
+    with exit 2 naming the row and field. At timeout, every descendant of the
+    row is killed, including one that called `setsid` and left the row's
+    process group. A process still alive after the tool returns is a failure.
+    Captured by: `tools/registry-check.py` at 183f87b; the positive check
+    (`:221-227`, `ts <= 0`) admits NaN and infinity; `load_registry` (`:273`)
+    parses at `:281` with plain `json.loads`, which accepts `NaN` and `Infinity`; the
+    timeout path signals only the process group (`_kill_group`, `:306-322`,
+    called at `:386`).
+    Check that can fail: registry rows with `timeout_s` set to the JSON literal
+    `NaN` and to `Infinity` must each exit 2 naming `timeout_s`; a row that
+    starts `setsid` on a long-lived child must leave no live descendant after
+    `registry-check` returns.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 6, R17-TIMEOUT)
+32. Every lane subprocess that may run git, including read-only `git show`,
+    selftest fixtures and fixture scripts, removes every inherited `GIT_*`
+    variable before it spawns. The scrub is proven by a selftest whose canary
+    repository is named by an exported `GIT_DIR` (and `GIT_WORK_TREE`) and must
+    stay byte-unchanged. A pinned tool's scrub fix lands only through an
+    appended disposition waiver or manifest. The pinned bytes are not edited,
+    and the old pin is marked superseded, not deleted.
+    Captured by: `tools/bash-witness-study.py` at 183f87b has no `GIT_*`
+    environment scrub (its only `GIT_` substrings are the identifier
+    `TARGET_GIT_PATH`, lines 97, 339, 342, 359, 887); its `git show`
+    subprocess runs at `:337-342` with inherited environment. Its round-13 pin is in
+    `.ufo/evidence/round-13/expected.json:11`
+    (`49e9e5e20b73f115626fb4f81aac9b238e0f01811230c4fd0ff726c1f350ad80`).
+    Check that can fail: export `GIT_DIR` at a canary and run the tool's
+    selftest and its read-only path; the canary must be unchanged and the tool
+    must read its intended repository. Removing the scrub from a staged copy
+    must fail that case. Until the migration lands, the pinned sha must still
+    match the file at the pinned rev.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 4, R17-GIT-ENV; criterion 28)
+33. Input-keyed credit (criterion 23) is evidence about the inputs a read ran
+    against, not about the commands it ran. A claim that holes or commands are
+    "covered", "closed" or "all run" binds each declared command to an argv in a
+    committed trace receipt whose inputs cover the entry. Without that binding
+    the entry says only "input-keyed evidence" and names the commands it did
+    not trace.
+    Captured by: the round-17 K02 claim that holes 1–4 were all closed; the
+    closure routed it as an overclaim and named two remedies: bind trace argv
+    to the required commands, or narrow the claim to input-keyed evidence
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 2).
+    Check that can fail: compare the declared command set of each entry with
+    the union of its receipts' argv. A declared command absent from every argv,
+    or a "closed" sentence over an input-keyed-only entry, fails. Deleting one
+    command from a fixture receipt must flip the verdict.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 2, R17-CMD-BIND; criterion 23)
+34. A citation into a file that moves, or that the lane does not own, is
+    anchored by function or symbol name and the cited rev. A line range is a
+    secondary aid. A bare line anchor into such a file expires with the next
+    edit to that file. A paragraph anchor names a quoted sentence or a heading.
+    Captured by: `detect_branch` moved to line 115 in fleet `5d8a3b5`, while
+    SKILL:1029 and five ER-jj/R3 knowledge notes still cite lines 53–65. S060's
+    stat-only inference and S061's paragraph anchor were imprecise.
+    Check that can fail: at the cited rev, `git show REV:<path> | grep -n <name>`
+    must find the cited definition inside the cited range. A line-only anchor
+    into a moving file fails.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 7, R17-CITATIONS)
+35. A correction to a landed entry (an exit sentence, a count, a citation, a
+    footer or a SHONEN correction) is an appended, dated erratum. It names the
+    false text, its replacement and both revisions. The original bytes are never
+    rewritten in place, and a SOURCES footer update is a literal append: it
+    deletes no line. Where the stale text sits in a file the lane does not own,
+    the lane appends its own erratum and routes the owner's substitution as a
+    finding; it does not edit that file. This extends criterion 26 from receipts
+    to corpus prose; criterion 4 (admission bar) already requires append-only
+    errata.
+    Captured by: the false exit sentence in the round-17 knowledge entry that §7 item 1 names;
+    over-broad `measure-*.json` citation; operator-runbook substitutions named by
+    an appended ER-R3 but made in place; a SOURCES footer edit that was not a
+    pure append; and SHONEN correction prose beyond the single-evidence-line
+    format.
+    Check that can fail: `git diff --numstat REV_OLD REV_NEW -- <append-only file>`
+    must report zero deleted lines for an erratum-only change. The named erratum
+    must exist in the file under its own dated heading.
+    (`lessons/round-17-verifier-spotcheck.md` §7 items 1 and 7, R17-KNOW-EXIT and R17-CITATIONS / CORRECTION-MECHANICS)
+36. A stray write that moves a live lane repository (HEAD, a ref, the index or
+    an object) by a process other than the lane's intended writer is preserved,
+    not repaired by ad hoc plumbing. The lane first captures the reflog,
+    `fsck --full`, ref and index state, and a canary result into the round's
+    evidence directory. Restoration is performed only by a fleet- or
+    operator-owned helper with a named procedure. A seat or lane tool issues no
+    git write (`update-ref`, `read-tree`, `reset`, `symbolic-ref`, `checkout`,
+    `commit`) to repair it outside a /tmp sandbox. The incident is routed to the
+    owner as a finding.
+    Captured by: round 17 wave 1, when a seat's fixture commits moved the live
+    HEAD through a `GIT_DIR` leak. The L1's `read-tree` and `update-ref` repair
+    bypassed the helper-only writer rule (`lessons/round-17-verifier-spotcheck.md` §2).
+    Check that can fail: the incident record's repair transcript contains no
+    live write verb from the list above, and the saved reflog is a prefix of
+    the current `git reflog` output.
+    (`lessons/round-17-verifier-spotcheck.md` §7 item 8, R17-INCIDENT)

@@ -69,3 +69,15 @@ Wave-2 correction to the round-16 append above (ProvinceAppend): "only the
 round-6 mado run was a service run" holds for the round-5/6 pair only. The
 round-8 kagi checklist sweep is also recorded as service form
 (`corpus/knowledge/mutation-case-kagi-checklist.md:1,5-9`).
+
+## Core — round 18 append (2026-10-20)
+
+Appended; lines above are unchanged. The recorded mutation legs are now
+**eight**. The eighth is kumitate `scripts/sources-check.mjs` (rev
+`0acb7752d19058b953ebbeba253b1e35f6548de5`, blob sha256
+`6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f`), ledger leg
+`js-sources-check`, probed read-only as a kumitate `scripts/*` primary surface
+(lines 7-11); kumitate owns the gate and its contract `kumitate-sources-v1`
+(kumitate `PROVINCE.md:15`). Not a service run; no opt-in needed. Survivor
+recommendations travel to kumitate in the round report; tameshi never edits
+the gate.

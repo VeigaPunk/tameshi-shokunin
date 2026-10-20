@@ -42,10 +42,15 @@ Disposition schema `evidence-dispositions-v1`:
        the expected pin must not be waived (the waiver set is derived from
        observed drift, not author choice).
     G2 historical_input_uncommitted: the live bytes of a waived path must equal
-       HEAD:<path>; an uncommitted worktree edit, a symlink, or deletion while
-       HEAD still has the path is tampering. A committed deletion is allowed.
+       that path in the run's committed anchor A; an uncommitted worktree edit,
+       a symlink, or deletion while A still has the path is tampering. A
+       committed deletion is allowed.
     G3 rev must resolve to exactly that commit id (tree/blob/HEAD/branch/abbrev
-       rejected) and be an ancestor of HEAD, else historical_input_unavailable.
+       rejected) and be an ancestor of the same anchor A, else
+       historical_input_unavailable.
+    Anchor A is refs/heads/<lane.branch> or an attached local branch tip when
+    bound. An unbound jj workspace is refused; an unbound detached non-jj
+    harness uses HEAD only when a local or remote-tracking ref contains it.
     G4 every git subprocess scrubs all inherited GIT_* variables and sets
        GIT_NO_REPLACE_OBJECTS=1, GIT_GRAFT_FILE=/dev/null,
        GIT_CONFIG_NOSYSTEM=1, GIT_CONFIG_GLOBAL=/dev/null; the root must be a
@@ -113,6 +118,7 @@ line, ROW lines and FINDING lines.
 CLI:
   evidence-disposition.py --root LANE --dispositions FILE [--json]
   evidence-disposition.py --selftest
+Selftest also requires `jj` for its isolated colocated-repository cases.
 """
 
 import hashlib
@@ -126,7 +132,7 @@ import tempfile
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
 
-VERSION = "evidence-disposition.py r17.1 (tameshi-shokunin, 2026-10-20): hardened v2 historical inputs"
+VERSION = "evidence-disposition.py r18 (tameshi-shokunin, 2026-10-20): branch-tip v2 historical inputs"
 SELF = os.path.realpath(__file__)
 
 SCHEMA = "evidence-dispositions-v1"
@@ -176,8 +182,9 @@ never executes receipt argv. `--selftest` builds isolated /tmp fixtures.
 evidence-dispositions-v2 manifests add `supersedes` (pinned v1 manifest path)
 and `historical_inputs` (tools/* expected inputs read as git blobs at the
 declared rev after a repo-identity guard). A waiver is refused when the live
-bytes still equal the pin (historical_input_unneeded) or differ from HEAD
-(historical_input_uncommitted); revs must be commits ancestral to HEAD.
+bytes still equal the pin (historical_input_unneeded) or differ from the
+selected committed anchor (historical_input_uncommitted); revs must be commits
+ancestral to that same anchor.
 """
 
 
@@ -438,8 +445,88 @@ def verify_repo(lane):
         )
 
 
-def resolve_historical_rev(lane, rev):
-    """G3: rev is exactly that commit id and a commit ancestor of HEAD."""
+def _commit_of(lane, revision):
+    """Return a canonical 40-hex commit id, or None when revision is unavailable."""
+    proc = git_call(
+        lane,
+        ["rev-parse", "--verify", "--quiet", "--end-of-options", revision + "^{commit}"],
+    )
+    commit = proc.stdout.decode("utf-8", "replace").strip()
+    if proc.returncode != 0 or not HEX40.fullmatch(commit):
+        return None
+    return commit
+
+
+def resolve_historical_anchor(lane):
+    """Resolve one committed anchor shared by G2 and G3."""
+    proc = git_call(lane, ["config", "--get", "lane.branch"])
+    if proc.returncode not in (0, 1):
+        raise _git_failure(proc, "cannot read lane.branch")
+    branch = proc.stdout.decode("utf-8", "replace").strip() if proc.returncode == 0 else ""
+    if not branch:
+        proc = git_call(lane, ["symbolic-ref", "-q", "HEAD"])
+        if proc.returncode == 0:
+            ref = proc.stdout.decode("utf-8", "replace").strip()
+            prefix = "refs/heads/"
+            if ref.startswith(prefix):
+                branch = ref[len(prefix):]
+        elif proc.returncode != 1:
+            raise _git_failure(proc, "cannot resolve HEAD branch")
+
+    if branch:
+        branch_ref = "refs/heads/" + branch
+        proc = git_call(lane, ["check-ref-format", branch_ref])
+        if proc.returncode != 0:
+            raise CouldNotEvaluate(
+                "historical_input_unavailable",
+                "invalid local lane branch {!r}".format(branch),
+            )
+        commit = _commit_of(lane, branch_ref)
+        if commit is None:
+            raise CouldNotEvaluate(
+                "historical_input_unavailable",
+                "lane branch {} does not resolve to a commit".format(branch_ref),
+            )
+        return branch_ref, commit
+
+    if os.path.lexists(str(lane / ".jj")):
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "jj workspace without a lane.branch binding has no authoritative tip",
+        )
+
+    commit = _commit_of(lane, "HEAD")
+    if commit is None:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable", "HEAD does not resolve to a commit"
+        )
+    proc = git_call(
+        lane,
+        [
+            "for-each-ref",
+            "--contains",
+            commit,
+            "--format=%(refname)",
+            "refs/heads/",
+            "refs/remotes/",
+        ],
+    )
+    if proc.returncode != 0:
+        raise _git_failure(proc, "cannot find a ref containing detached HEAD")
+    containing_refs = [
+        ref for ref in proc.stdout.decode("utf-8", "replace").splitlines()
+        if ref and not ref.endswith("/HEAD")
+    ]
+    if not containing_refs:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "detached HEAD {} is on no branch or remote-tracking branch".format(commit),
+        )
+    return "HEAD", commit
+
+
+def resolve_historical_rev(lane, rev, anchor_label, anchor_commit):
+    """G3: rev is exactly that commit id and an ancestor of anchor_commit."""
     proc = git_call(lane, ["rev-parse", "--verify", "--end-of-options", rev + "^{commit}"])
     resolved = proc.stdout.decode("utf-8", "replace").strip()
     if proc.returncode != 0 or resolved != rev:
@@ -447,12 +534,16 @@ def resolve_historical_rev(lane, rev):
             "historical_input_unavailable",
             "rev {!r} does not resolve to that commit (got {!r})".format(rev, resolved),
         )
-    proc = git_call(lane, ["merge-base", "--is-ancestor", "--end-of-options", rev, "HEAD"])
+    proc = git_call(
+        lane,
+        ["merge-base", "--is-ancestor", "--end-of-options", rev, anchor_commit],
+    )
     if proc.returncode != 0:
         raise CouldNotEvaluate(
             "historical_input_unavailable",
-            "rev {} is not an ancestor of HEAD".format(rev),
+            "rev {} is not an ancestor of {} ({})".format(rev, anchor_label, anchor_commit),
         )
+
 
 
 TREE_MODES = ("100644", "100755")
@@ -507,36 +598,38 @@ def live_regular_bytes(lane, path):
         return None
 
 
-def check_historical_waiver(lane, path, pin):
-    """G1/G2: the waiver must be needed and the live move must be committed."""
+def check_historical_waiver(lane, path, pin, anchor_label, anchor_commit):
+    """G1/G2: the waiver must be needed and committed at the shared anchor."""
     live = live_regular_bytes(lane, path)
     if live is not None and sha256_bytes(live) == pin:
         raise CouldNotEvaluate(
             "historical_input_unneeded",
             "{}: live bytes still equal the expected pin; the waiver is unnecessary".format(path),
         )
-    head = tree_entry(lane, "HEAD", path)
+    anchor_entry = tree_entry(lane, anchor_commit, path)
     if live is None:
-        if head is not None:
+        if anchor_entry is not None:
             raise CouldNotEvaluate(
                 "historical_input_uncommitted",
-                "{}: live path is absent or not a regular file but HEAD has an entry".format(path),
+                "{}: live path is absent or not a regular file but {} has an entry".format(
+                    path, anchor_label
+                ),
             )
         return
-    if head is None:
+    if anchor_entry is None:
         raise CouldNotEvaluate(
             "historical_input_uncommitted",
-            "{}: live path is not present at HEAD".format(path),
+            "{}: live path is not present at {}".format(path, anchor_label),
         )
-    if head[1] != "blob":
+    if anchor_entry[1] != "blob":
         raise CouldNotEvaluate(
             "historical_input_uncommitted",
-            "{}: HEAD entry is a {} not a blob".format(path, head[1]),
+            "{}: {} entry is a {} not a blob".format(path, anchor_label, anchor_entry[1]),
         )
-    if sha256_bytes(read_blob(lane, head[2], path)) != sha256_bytes(live):
+    if sha256_bytes(read_blob(lane, anchor_entry[2], path)) != sha256_bytes(live):
         raise CouldNotEvaluate(
             "historical_input_uncommitted",
-            "{}: live bytes differ from HEAD:{}".format(path, path),
+            "{}: live bytes differ from {}:{}".format(path, anchor_label, path),
         )
 
 
@@ -1526,10 +1619,17 @@ def run_mode(root, dispositions_path, as_json):
     historical_shas = {}
     if historical:
         verify_repo(lane)
+        anchor_label, anchor_commit = resolve_historical_anchor(lane)
         for rev in sorted(set(historical.values())):
-            resolve_historical_rev(lane, rev)
+            resolve_historical_rev(lane, rev, anchor_label, anchor_commit)
         for canonical in sorted(historical):
-            check_historical_waiver(lane, canonical, expected_inputs[canonical])
+            check_historical_waiver(
+                lane,
+                canonical,
+                expected_inputs[canonical],
+                anchor_label,
+                anchor_commit,
+            )
     for canonical in sorted(expected_inputs):
         if canonical in historical:
             data = historical_blob(lane, historical[canonical], canonical)
@@ -1932,6 +2032,22 @@ def _git_raw(argv):
         raise RuntimeError("{} failed: {}".format(argv, _stderr_text(proc)))
     return proc.stdout
 
+def _jj(lane, *argv):
+    env = _selftest_git_env()
+    env["HOME"] = str(lane.parent)
+    env["XDG_CONFIG_HOME"] = str(lane.parent / "jj-config")
+    env.pop("JJ_CONFIG", None)
+    proc = subprocess.run(
+        ["jj"] + list(argv),
+        cwd=str(lane),
+        capture_output=True,
+        timeout=120,
+        env=env,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError("jj {} failed: {}".format(" ".join(argv), _stderr_text(proc)))
+    return proc.stdout
+
 
 def _git_head(lane):
     return _git(lane, "rev-parse", "HEAD").decode("ascii").strip()
@@ -2018,6 +2134,158 @@ def _setup_hist_tree(fx):
     _git_commit_all(lane, "committed instrument move")
     fx["hist_rev"] = _git(lane, "rev-parse", "HEAD^{tree}").decode().strip()
 
+def _setup_hist_tag(fx):
+    """An annotated tag object peeling to an ancestor commit is not a commit id."""
+    lane = fx["lane"]
+    rev_a = _git_init_commit(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "round-16 committed instrument move")
+    _git(lane, "tag", "-a", "selftest-pinned", "-m", "annotated pin", rev_a)
+    fx["hist_rev"] = _git(
+        lane, "rev-parse", "refs/tags/selftest-pinned"
+    ).decode("ascii").strip()
+
+
+def _setup_hist_symlink(fx):
+    """A symlink blob whose link text equals the pin is not a regular tool blob."""
+    lane = fx["lane"]
+    tool = lane / SELFTEST_TOOL_REL
+    tool.unlink()
+    os.symlink(SELFTEST_TOOL_V1.decode("utf-8"), tool)
+    rev_a = _git_init_commit(lane, "symlink-pinned tool")
+    tool.unlink()
+    _write_bytes(tool, SELFTEST_TOOL_V2)
+    _git_commit_all(lane, "regular moved tool")
+    fx["hist_rev"] = rev_a
+
+
+def _jj_init_fixture_repo(fx, record_lane_branch):
+    lane = fx["lane"]
+    _git(lane, "init", "-q", "-b", "master")
+    rev_a = _git_commit_all(lane, "round-13 pinned tools")
+    if record_lane_branch:
+        _git(lane, "config", "lane.branch", "master")
+    _jj(lane, "git", "init", "--colocate", ".")
+    _jj(
+        lane, "--ignore-working-copy", "config", "set", "--repo",
+        "snapshot.auto-track", '"none()"',
+    )
+    _jj(lane, "--ignore-working-copy", "config", "set", "--repo", "user.name", "selftest")
+    _jj(
+        lane, "--ignore-working-copy", "config", "set", "--repo",
+        "user.email", "selftest@example.invalid",
+    )
+    return rev_a
+
+
+def _jj_commit_tool(lane, payload, message):
+    _write_bytes(lane / SELFTEST_TOOL_REL, payload)
+    _jj(lane, "file", "track", "--", SELFTEST_TOOL_REL)
+    _jj(lane, "commit", "-m", message)
+    return _jj(lane, "log", "--no-graph", "-r", "@-", "-T", "commit_id").decode(
+        "ascii"
+    ).strip()
+
+
+def _setup_hist_jj_prebookmark(fx):
+    """A JJ content commit moves HEAD while the lane bookmark still has old bytes."""
+    lane = fx["lane"]
+    rev_a = _jj_init_fixture_repo(fx, record_lane_branch=True)
+    _jj(lane, "new", rev_a)
+    _jj_commit_tool(lane, SELFTEST_TOOL_V2, "waived tool move")
+    head = _git_head(lane)
+    branch_tip = _git(lane, "rev-parse", "refs/heads/master").decode("ascii").strip()
+    head_ref = subprocess.run(
+        ["git", "-C", str(lane), "symbolic-ref", "-q", "HEAD"],
+        capture_output=True,
+        env=_selftest_git_env(),
+        timeout=30,
+    )
+    if head_ref.returncode != 1 or head == branch_tip or branch_tip != rev_a:
+        raise RuntimeError(
+            "JJ pre-bookmark fixture mismatch: HEAD={}, master={}, HEAD-ref-exit={}".format(
+                head, branch_tip, head_ref.returncode
+            )
+        )
+    fx["hist_rev"] = rev_a
+
+
+def _setup_hist_jj_branch_tip(fx):
+    """A JJ HEAD at an older commit has a distinct branch tip containing the pin rev."""
+    lane = fx["lane"]
+    rev_a = _jj_init_fixture_repo(fx, record_lane_branch=True)
+    _jj(lane, "new", rev_a)
+    moved = _jj_commit_tool(lane, SELFTEST_TOOL_V2, "waived tool move")
+    _jj(lane, "bookmark", "set", "master", "-r", moved)
+    historical = _jj_commit_tool(lane, SELFTEST_TOOL_V1, "pinned input revision")
+    branch_tip = _jj_commit_tool(lane, SELFTEST_TOOL_V2, "branch-tip tool move")
+    _jj(lane, "bookmark", "set", "master", "-r", branch_tip)
+    _jj(lane, "--ignore-working-copy", "edit", historical)
+    head = _git_head(lane)
+    actual_tip = _git(lane, "rev-parse", "refs/heads/master").decode("ascii").strip()
+    head_ref = subprocess.run(
+        ["git", "-C", str(lane), "symbolic-ref", "-q", "HEAD"],
+        capture_output=True,
+        env=_selftest_git_env(),
+        timeout=30,
+    )
+    if head_ref.returncode != 1 or head == actual_tip or actual_tip != branch_tip:
+        raise RuntimeError(
+            "JJ branch-tip fixture mismatch: HEAD={}, master={}, HEAD-ref-exit={}".format(
+                head, actual_tip, head_ref.returncode
+            )
+        )
+    if _git(lane, "show", "HEAD:" + SELFTEST_TOOL_REL) != SELFTEST_TOOL_V2:
+        raise RuntimeError("JJ HEAD fixture does not carry the moved tool bytes")
+    if _git(lane, "show", "refs/heads/master:" + SELFTEST_TOOL_REL) != SELFTEST_TOOL_V2:
+        raise RuntimeError("JJ branch tip does not carry the moved tool bytes")
+    if _git(lane, "show", historical + ":" + SELFTEST_TOOL_REL) != SELFTEST_TOOL_V1:
+        raise RuntimeError("JJ historical fixture does not carry the pinned bytes")
+    fx["hist_rev"] = historical
+
+
+def _setup_hist_jj_unbound(fx):
+    """A detached colocated JJ workspace without lane.branch has no anchor."""
+    lane = fx["lane"]
+    rev_a = _jj_init_fixture_repo(fx, record_lane_branch=False)
+    _git(lane, "checkout", "--detach", rev_a)
+    fx["hist_rev"] = rev_a
+
+
+def _setup_hist_registry_clone(fx):
+    """A detached harness clone anchors at HEAD, not its later remote tip."""
+    lane = fx["lane"]
+    _git(lane, "init", "-q", "-b", "master")
+    pin_rev = _git_commit_all(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    checked_out_rev = _git_commit_all(lane, "registry checked-out rev")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_OTHER)
+    _git_commit_all(lane, "waived tool moved after checked-out rev")
+
+    source = lane.parent / (lane.name + "-source")
+    os.rename(str(lane), str(source))
+    _git_raw(
+        ["git", "clone", "--no-hardlinks", "--quiet", str(source), str(lane)]
+    )
+    _git(lane, "checkout", "--quiet", "--detach", checked_out_rev)
+    _git(lane, "branch", "-D", "master")
+    if _git(lane, "show", "HEAD:" + SELFTEST_TOOL_REL) != SELFTEST_TOOL_V2:
+        raise RuntimeError("registry clone HEAD does not carry checked-out tool bytes")
+    if _git(lane, "show", "refs/remotes/origin/master:" + SELFTEST_TOOL_REL) != SELFTEST_TOOL_OTHER:
+        raise RuntimeError("registry clone remote tip does not carry later tool bytes")
+    fx["hist_rev"] = pin_rev
+
+
+def _setup_hist_no_published_ref(fx):
+    """Detached non-jj HEAD without a containing ref is unavailable."""
+    lane = fx["lane"]
+    _git(lane, "init", "-q", "-b", "master")
+    rev_a = _git_commit_all(lane, "round-13 pinned tools")
+    _write_bytes(lane / SELFTEST_TOOL_REL, SELFTEST_TOOL_V2)
+    tip = _git_commit_all(lane, "committed instrument move")
+    _git(lane, "checkout", "--detach", tip)
+    _git(lane, "branch", "-D", "master")
+    fx["hist_rev"] = rev_a
 
 def _setup_hist_replace(fx):
     """A replace ref rewrites HEAD; only GIT_NO_REPLACE_OBJECTS restores truth."""
@@ -2166,6 +2434,22 @@ def selftest():
             detail for flag, detail in checks if not flag
         )
         record(name, ok, detail)
+
+    def historical_case(name, expected_exit, expected_ids, git_setup):
+        case(
+            name,
+            expected_exit,
+            expected_ids,
+            git_setup=git_setup,
+            raw_dispositions=lambda fx: _dispositions_v2(
+                fx,
+                _rows(fx),
+                historical=_hist(
+                    fx, {SELFTEST_TOOL_REL: {"rev": None, "reason": hist_reason}}
+                ),
+                supersedes_rel=SELFTEST_V1_REL,
+            ),
+        )
 
     ver = ".ufo/evidence/round-13/verification.json"
     oracle = ".ufo/evidence/round-13/producer-oracle-repair.json"
@@ -2560,6 +2844,44 @@ def selftest():
             ),
             supersedes_rel=SELFTEST_V1_REL,
         ),
+    )
+
+    historical_case(
+        "v2-historical-tag-object",
+        2,
+        ["historical_input_unavailable"],
+        _setup_hist_tag,
+    )
+    historical_case(
+        "v2-jj-prebookmark-branch-tip",
+        2,
+        ["historical_input_uncommitted"],
+        _setup_hist_jj_prebookmark,
+    )
+    historical_case("v2-jj-branch-tip", 0, [], _setup_hist_jj_branch_tip)
+    historical_case(
+        "v2-jj-without-lane-branch",
+        2,
+        ["historical_input_unavailable"],
+        _setup_hist_jj_unbound,
+    )
+    historical_case(
+        "v2-registry-clone-detached-anchor",
+        0,
+        [],
+        _setup_hist_registry_clone,
+    )
+    historical_case(
+        "v2-detached-no-published-ref",
+        2,
+        ["historical_input_unavailable"],
+        _setup_hist_no_published_ref,
+    )
+    historical_case(
+        "v2-historical-symlink-mode",
+        2,
+        ["historical_input_unavailable"],
+        _setup_hist_symlink,
     )
     case(
         "v2-historical-replace-ref",

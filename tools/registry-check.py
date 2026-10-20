@@ -36,6 +36,12 @@ counted in `superseded=K`. A row holds when its exit equals expect.exit AND
 every stdout_contains needle appears in stdout (literal, case-sensitive,
 ANDed, over the retained tail) AND, under --rev, its argv names no absolute
 path under the live fleet root (`non_hermetic_argv`).
+On Linux, timeout cleanup marks this process as a child subreaper before rows
+start, then signals only row-owned `/proc` identities through pidfds after
+rechecking start time and ancestry. Process-group changes do not affect this
+walk; a double-forked descendant cannot reparent past the subreaper. Descendants
+that change UID may become unreadable or unkillable, and start-time granularity
+leaves a same-tick PID-reuse residual.
 
 Per-row lines and trailer (fixed):
 
@@ -76,8 +82,10 @@ unreadable/invalid, root or rev missing, clone failure, --only/--tag miss) ·
 Dependencies: python3 stdlib; git only for --rev (and --selftest's fixtures).
 """
 
+import ctypes
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -96,6 +104,11 @@ NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SOURCE_RE = re.compile(r"^[^@]+@[0-9a-f]{7,40}:[0-9]+(-[0-9]+)?$")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 TAIL_BYTES = 4096
+CHILD_SUBREAPER_PRCTL = 36
+CLEANUP_TERM_GRACE_S = 0.2
+CLEANUP_FORCE_TIMEOUT_S = 0.5
+PIPE_DRAIN_TIMEOUT_S = 0.5
+_CHILD_SUBREAPER_ENABLED = False
 
 USAGE = (
     "usage: registry-check.py [--root DIR] [--rev REV] [--registry PATH]\n"
@@ -219,12 +232,21 @@ def registry_errors(data):
                     f"{where}.expect.stdout_contains must be a list of strings"
                 )
         ts = row.get("timeout_s")
-        if (
-            isinstance(ts, bool)
-            or not isinstance(ts, (int, float))
-            or ts <= 0
-        ):
-            errors.append(f"{where}.timeout_s must be a positive number")
+        timeout_valid = (
+            not isinstance(ts, bool) and isinstance(ts, (int, float))
+        )
+        if timeout_valid:
+            try:
+                timeout_valid = math.isfinite(ts) and ts > 0
+            except OverflowError:
+                timeout_valid = False
+        if not timeout_valid:
+            timeout_owner = (
+                f"{where} ({name!r})" if isinstance(name, str) else where
+            )
+            errors.append(
+                f"{timeout_owner}.timeout_s must be a finite positive number"
+            )
         source = row.get("source")
         if not isinstance(source, str) or not SOURCE_RE.match(source):
             errors.append(
@@ -270,6 +292,51 @@ def registry_errors(data):
     return errors
 
 
+class _NonFiniteJSONConstant(ValueError):
+    def __init__(self, constant):
+        self.constant = constant
+        super().__init__(f"non-finite JSON number {constant}")
+
+
+def _reject_json_constant(constant):
+    raise _NonFiniteJSONConstant(constant)
+
+
+def _json_marker_path(value, marker, path):
+    if value is marker:
+        return path
+    if isinstance(value, dict):
+        for key, child in value.items():
+            found = _json_marker_path(child, marker, f"{path}.{key}")
+            if found is not None:
+                return found
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            found = _json_marker_path(child, marker, f"{path}[{index}]")
+            if found is not None:
+                return found
+    return None
+
+
+def _nonfinite_location(text, marker):
+    """Locate a rejected constant in a row for a useful validation error."""
+    try:
+        data = json.loads(text, parse_constant=lambda _constant: marker)
+    except ValueError:
+        return None
+    rows = data.get("rows") if isinstance(data, dict) else None
+    if not isinstance(rows, list):
+        return None
+    for index, row in enumerate(rows):
+        path = _json_marker_path(row, marker, f"rows[{index}]")
+        if path is None:
+            continue
+        if isinstance(row, dict) and isinstance(row.get("name"), str):
+            return f"{path} (row {row['name']!r})"
+        return path
+    return None
+
+
 def load_registry(path):
     """Return (rows, data, error). error is a string on could-not-evaluate."""
     try:
@@ -278,7 +345,18 @@ def load_registry(path):
     except OSError as exc:
         return None, None, f"registry unreadable: {path}: {exc}"
     try:
-        data = json.loads(raw.decode("utf-8"))
+        text = raw.decode("utf-8")
+        data = json.loads(text, parse_constant=_reject_json_constant)
+    except _NonFiniteJSONConstant as exc:
+        marker = object()
+        location = _nonfinite_location(text, marker)
+        where = f"{location}: " if location else ""
+        return (
+            None,
+            None,
+            f"registry invalid: {path}: {where}"
+            f"non-finite JSON number {exc.constant}",
+        )
     except (UnicodeDecodeError, ValueError) as exc:
         return None, None, f"registry invalid: {path}: {exc}"
     errors = registry_errors(data)
@@ -303,24 +381,245 @@ def _tail(raw):
     return raw[-TAIL_BYTES:].decode("utf-8", errors="replace")
 
 
-def _kill_group(proc):
-    """SIGTERM the row's process group, then SIGKILL after a short grace."""
-    try:
-        pgid = os.getpgid(proc.pid)
-    except ProcessLookupError:
+def _enable_child_subreaper():
+    """Require Linux subreaper and pidfd support before starting any row."""
+    global _CHILD_SUBREAPER_ENABLED
+    if _CHILD_SUBREAPER_ENABLED:
         return
+    if sys.platform != "linux":
+        raise OSError("descendant cleanup requires Linux child-subreaper support")
+    if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
+        raise OSError("descendant cleanup requires pidfd support")
+    libc = ctypes.CDLL(None, use_errno=True)
     try:
-        os.killpg(pgid, signal.SIGTERM)
-    except ProcessLookupError:
-        return
+        prctl = libc.prctl
+    except AttributeError as exc:
+        raise OSError("prctl is unavailable") from exc
+    prctl.argtypes = [
+        ctypes.c_int,
+        ctypes.c_ulong,
+        ctypes.c_ulong,
+        ctypes.c_ulong,
+        ctypes.c_ulong,
+    ]
+    prctl.restype = ctypes.c_int
+    if prctl(CHILD_SUBREAPER_PRCTL, 1, 0, 0, 0) != 0:
+        error = ctypes.get_errno() or 1
+        raise OSError(error, os.strerror(error))
+    _CHILD_SUBREAPER_ENABLED = True
+
+
+def _read_proc_stat(pid):
+    """Return (ppid, starttime, state) for one Linux process leader."""
     try:
-        proc.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        pass
+        with open(f"/proc/{pid}/stat", encoding="ascii", errors="replace") as fh:
+            text = fh.read()
+    except OSError:
+        return None
+    close = text.rfind(")")
+    if close < 0:
+        return None
+    fields = text[close + 1:].split()
+    if len(fields) <= 19:
+        return None
     try:
-        os.killpg(pgid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
+        return int(fields[1]), int(fields[19]), fields[0]
+    except ValueError:
+        return None
+
+
+def _process_snapshot():
+    """Read process leaders only; `/proc/<pid>/task` threads are not targets."""
+    processes = {}
+    try:
+        entries = os.scandir("/proc")
+    except OSError:
+        return processes
+    with entries:
+        for entry in entries:
+            if not entry.name.isdecimal():
+                continue
+            pid = int(entry.name)
+            stat = _read_proc_stat(pid)
+            if stat is not None:
+                processes[pid] = stat
+    return processes
+
+
+def _direct_child_identities():
+    """Snapshot pre-existing children so cleanup never claims another row."""
+    processes = _process_snapshot()
+    if os.getpid() not in processes:
+        raise OSError("cannot inspect the checker in /proc")
+    return frozenset(
+        (pid, starttime)
+        for pid, (ppid, starttime, _state) in processes.items()
+        if ppid == os.getpid()
+    )
+
+
+def _row_identity_is_owned(pid, starttime, proc_pid, proc_starttime,
+                           baseline_children):
+    """Check current ancestry back to this row or a newly adopted row child."""
+    current = pid
+    seen = set()
+    while current not in seen:
+        seen.add(current)
+        stat = _read_proc_stat(current)
+        if stat is None:
+            return False
+        ppid, observed_starttime, _state = stat
+        if current == pid and observed_starttime != starttime:
+            return False
+        if current == proc_pid:
+            return (
+                proc_starttime is not None
+                and observed_starttime == proc_starttime
+            )
+        if ppid == os.getpid():
+            return (current, observed_starttime) not in baseline_children
+        current = ppid
+    return False
+
+
+def _row_owned_processes(proc, baseline_children, proc_starttime):
+    """Find this row's live and zombie process identities, excluding siblings."""
+    owned = []
+    for pid, (_ppid, starttime, state) in _process_snapshot().items():
+        if _row_identity_is_owned(
+            pid, starttime, proc.pid, proc_starttime, baseline_children
+        ):
+            owned.append((pid, starttime, state))
+    return owned
+
+
+def _signal_process_identity(pid, starttime, signum, in_row_scope,
+                             read_stat=None):
+    """Signal one process only after start-time and ownership revalidation."""
+    if read_stat is None:
+        read_stat = _read_proc_stat
+    stat = read_stat(pid)
+    if stat is None or stat[1] != starttime or not in_row_scope():
+        return False
+    try:
+        pidfd = os.pidfd_open(pid, 0)
+    except OSError:
+        return False
+    try:
+        stat = read_stat(pid)
+        if stat is None or stat[1] != starttime or not in_row_scope():
+            return False
+        signal.pidfd_send_signal(pidfd, signum)
+        return True
+    except OSError:
+        return False
+    finally:
+        os.close(pidfd)
+
+
+def _signal_row_processes(proc, baseline_children, proc_starttime, signum):
+    for pid, starttime, state in _row_owned_processes(
+        proc, baseline_children, proc_starttime
+    ):
+        if state == "Z":
+            continue
+        in_row_scope = lambda pid=pid, starttime=starttime: (
+            _row_identity_is_owned(
+                pid, starttime, proc.pid, proc_starttime, baseline_children
+            )
+        )
+        _signal_process_identity(pid, starttime, signum, in_row_scope)
+
+
+def _reap_row_children(proc, baseline_children, proc_starttime):
+    """Reap only zombie children adopted from the current row."""
+    for pid, starttime, state in _row_owned_processes(
+        proc, baseline_children, proc_starttime
+    ):
+        if pid == proc.pid or state != "Z":
+            continue
+        stat = _read_proc_stat(pid)
+        if (
+            stat is None
+            or stat[0] != os.getpid()
+            or stat[1] != starttime
+            or not _row_identity_is_owned(
+                pid, starttime, proc.pid, proc_starttime, baseline_children
+            )
+        ):
+            continue
+        try:
+            os.waitpid(pid, os.WNOHANG)
+        except (ChildProcessError, ProcessLookupError):
+            pass
+
+
+def _row_cleanup_pending(proc, baseline_children, proc_starttime):
+    for pid, starttime, state in _row_owned_processes(
+        proc, baseline_children, proc_starttime
+    ):
+        if state != "Z":
+            return True
+        if pid != proc.pid:
+            stat = _read_proc_stat(pid)
+            if stat is not None and stat[0] == os.getpid():
+                return True
+    return False
+
+
+def _cleanup_row(proc, baseline_children, proc_starttime):
+    """Boundedly terminate and reap all visible process descendants of a row."""
+    term_deadline = time.monotonic() + CLEANUP_TERM_GRACE_S
+    while True:
+        _signal_row_processes(
+            proc, baseline_children, proc_starttime, signal.SIGTERM
+        )
+        try:
+            proc.wait(timeout=0)
+        except subprocess.TimeoutExpired:
+            pass
+        _reap_row_children(proc, baseline_children, proc_starttime)
+        if not _row_cleanup_pending(proc, baseline_children, proc_starttime):
+            return True
+        if time.monotonic() >= term_deadline:
+            break
+        time.sleep(0.01)
+
+    kill_deadline = time.monotonic() + CLEANUP_FORCE_TIMEOUT_S
+    while True:
+        _signal_row_processes(
+            proc, baseline_children, proc_starttime, signal.SIGKILL
+        )
+        try:
+            proc.wait(timeout=0)
+        except subprocess.TimeoutExpired:
+            pass
+        _reap_row_children(proc, baseline_children, proc_starttime)
+        if not _row_cleanup_pending(proc, baseline_children, proc_starttime):
+            return True
+        if time.monotonic() >= kill_deadline:
+            return False
+        time.sleep(0.01)
+
+
+def _bounded_communicate(proc, previous_timeout=None):
+    """Drain output under a bound even if an escaped descendant holds a pipe."""
+    try:
+        return proc.communicate(timeout=PIPE_DRAIN_TIMEOUT_S)
+    except subprocess.TimeoutExpired as exc:
+        stdout_raw = exc.output
+        stderr_raw = exc.stderr
+        if previous_timeout is not None:
+            stdout_raw = stdout_raw or previous_timeout.output
+            stderr_raw = stderr_raw or previous_timeout.stderr
+        for stream in (proc.stdout, proc.stderr):
+            if stream is not None:
+                stream.close()
+        try:
+            proc.wait(timeout=PIPE_DRAIN_TIMEOUT_S)
+        except subprocess.TimeoutExpired:
+            pass
+        return stdout_raw or b"", stderr_raw or b""
 
 
 def _argv_outside_fleet(argv, fleet_root):
@@ -365,6 +664,8 @@ def run_row(row, cwd, fleet_root=None):
         fragment["non_hermetic_argv"] = outside
     started = time.monotonic()
     try:
+        _enable_child_subreaper()
+        baseline_children = _direct_child_identities()
         proc = subprocess.Popen(
             row["argv"],
             cwd=cwd,
@@ -379,27 +680,46 @@ def run_row(row, cwd, fleet_root=None):
         fragment["held"] = False
         fragment["error"] = str(exc)
         return fragment
+    root_stat = _read_proc_stat(proc.pid)
+    proc_starttime = root_stat[1] if root_stat is not None else None
     try:
         stdout_raw, stderr_raw = proc.communicate(timeout=row["timeout_s"])
+    except subprocess.TimeoutExpired as timeout_exc:
+        leader_finished = proc.poll() is not None
+        cleanup_ok = _cleanup_row(
+            proc, baseline_children, proc_starttime
+        )
+        stdout_raw, stderr_raw = _bounded_communicate(proc, timeout_exc)
+        if not leader_finished:
+            fragment["got"] = "timeout"
+            fragment["held"] = False
+            fragment["elapsed_s"] = round(time.monotonic() - started, 3)
+            fragment["stdout_tail"] = _tail(stdout_raw or b"")
+            fragment["stderr_tail"] = _tail(stderr_raw or b"")
+            if not cleanup_ok:
+                fragment["cleanup_error"] = (
+                    "row descendants remain after bounded cleanup"
+                )
+            return fragment
         got = proc.returncode
-    except subprocess.TimeoutExpired:
-        _kill_group(proc)
-        stdout_raw, stderr_raw = proc.communicate()
-        fragment["got"] = "timeout"
-        fragment["held"] = False
-        fragment["elapsed_s"] = round(time.monotonic() - started, 3)
-        fragment["stdout_tail"] = _tail(stdout_raw or b"")
-        fragment["stderr_tail"] = _tail(stderr_raw or b"")
-        return fragment
+    else:
+        got = proc.returncode
+        cleanup_ok = _cleanup_row(
+            proc, baseline_children, proc_starttime
+        )
     stdout_text = (stdout_raw or b"").decode("utf-8", errors="replace")
     missing = [n for n in needles if n not in stdout_text]
     fragment["got"] = got
-    fragment["held"] = got == expected_exit and not missing
+    fragment["held"] = got == expected_exit and not missing and cleanup_ok
     fragment["elapsed_s"] = round(time.monotonic() - started, 3)
     fragment["stdout_tail"] = _tail(stdout_raw)
     fragment["stderr_tail"] = _tail(stderr_raw)
     if missing:
         fragment["stdout_missing"] = missing
+    if not cleanup_ok:
+        fragment["cleanup_error"] = (
+            "row descendants remain after bounded cleanup"
+        )
     return fragment
 
 
@@ -641,6 +961,40 @@ def selftest():
         out = raw.decode("utf-8", errors="replace")
         return all(w in out for w in wants)
 
+    def process_identity_code(path):
+        return (
+            "stat_fields = open(f'/proc/{os.getpid()}/stat', "
+            "encoding='ascii').read().rsplit(')', 1)[1].split()\n"
+            f"with open({path!r}, 'w') as identity_file:\n"
+            "    identity_file.write(f'{os.getpid()} {stat_fields[19]}')\n"
+        )
+
+    def read_process_identity(path):
+        try:
+            with open(path, encoding="ascii") as fh:
+                pid, starttime = (int(part) for part in fh.read().split())
+            return pid, starttime
+        except (OSError, ValueError):
+            return None
+
+    def process_identity_present(identity):
+        if identity is None:
+            return False
+        pid, starttime = identity
+        stat = _read_proc_stat(pid)
+        return stat is not None and stat[1] == starttime
+
+    def stop_test_process(identity):
+        if identity is None:
+            return
+        pid, starttime = identity
+        in_scope = lambda: (
+            (stat := _read_proc_stat(pid)) is not None
+            and stat[1] == starttime
+        )
+        _signal_process_identity(pid, starttime, signal.SIGKILL, in_scope)
+
+
     def git(args, cwd=None, extra_env=None):
         env = git_env()
         if extra_env:
@@ -792,6 +1146,120 @@ def selftest():
             and not os.path.exists(marker),
             f"exit={proc.returncode} marker={os.path.exists(marker)}",
         )
+
+        def run_escape_case(name, escape_call):
+            pid_path = os.path.join(scratch, f"{name}.pid")
+            ready_path = os.path.join(scratch, f"{name}.ready")
+            marker_path = os.path.join(scratch, f"{name}.marker")
+            escape_code = (
+                "import os,time\n"
+                f"{escape_call}\n"
+                + process_identity_code(pid_path)
+                + f"with open({ready_path!r}, 'w') as fh:\n"
+                "    fh.write('ready')\n"
+                "time.sleep(5)\n"
+                f"with open({marker_path!r}, 'w') as fh:\n"
+                "    fh.write('survived')\n"
+            )
+            parent_code = (
+                "import os, subprocess, sys, time\n"
+                "subprocess.Popen([sys.executable, '-c', %r])\n"
+                "deadline = time.monotonic() + 3\n"
+                f"while not os.path.exists({ready_path!r}) and "
+                "time.monotonic() < deadline:\n"
+                "    time.sleep(0.01)\n"
+                f"if not os.path.exists({ready_path!r}):\n"
+                "    raise SystemExit(3)\n"
+                "time.sleep(30)\n"
+            ) % escape_code
+            registry = write_registry(
+                f"reg-{name}.json",
+                [row(name, parent_code, 0, timeout=1)],
+            )
+            started = time.monotonic()
+            result = run_child(["--root", lane, "--registry", registry])
+            elapsed = time.monotonic() - started
+            identity = read_process_identity(pid_path)
+            survivor = process_identity_present(identity)
+            marker_exists = os.path.exists(marker_path)
+            record(
+                name,
+                result.returncode == 1
+                and check_lines(
+                    result,
+                    [f"ROW {name} expect=0 got=timeout differs",
+                     "REGISTRY_CHECK: held=0/1"],
+                )
+                and identity is not None
+                and not survivor
+                and not marker_exists
+                and elapsed < 3.5,
+                f"exit={result.returncode} elapsed={elapsed:.3f}s "
+                f"survivor={survivor} marker={marker_exists}",
+            )
+            if survivor:
+                stop_test_process(identity)
+
+        run_escape_case("timeout-kills-setsid-pipe", "os.setsid()")
+        run_escape_case(
+            "timeout-kills-setpgid-pipe", "os.setpgid(0, 0)"
+        )
+
+        daemon_pid_path = os.path.join(scratch, "daemon-exit.pid")
+        daemon_ready_path = os.path.join(scratch, "daemon-exit.ready")
+        daemon_code = (
+            "import os,time\n"
+            "if os.fork() == 0:\n"
+            "    devnull = os.open(os.devnull, os.O_WRONLY)\n"
+            "    os.dup2(devnull, 1)\n"
+            "    os.dup2(devnull, 2)\n"
+            "    os.setsid()\n"
+            "    if os.fork():\n"
+            "        os._exit(0)\n"
+            "    stat_fields = open("
+            "f'/proc/{os.getpid()}/stat', encoding='ascii'"
+            ").read().rsplit(')', 1)[1].split()\n"
+            f"    with open({daemon_pid_path!r}, 'w') as identity_file:\n"
+            "        identity_file.write("
+            "f'{os.getpid()} {stat_fields[19]}')\n"
+            f"    with open({daemon_ready_path!r}, 'w') as fh:\n"
+            "        fh.write('ready')\n"
+            "    time.sleep(20)\n"
+            "    os._exit(0)\n"
+            "else:\n"
+            "    deadline = time.monotonic() + 3\n"
+            f"    while not os.path.exists({daemon_ready_path!r}) "
+            "and time.monotonic() < deadline:\n"
+            "        time.sleep(0.01)\n"
+            f"    if not os.path.exists({daemon_ready_path!r}):\n"
+            "        raise SystemExit(3)\n"
+            "    print('daemon-parent-done')\n"
+        )
+        daemon_registry = write_registry(
+            "reg-daemon-exit.json",
+            [row("daemon-exit", daemon_code, 0,
+                 ["daemon-parent-done"], timeout=5)],
+        )
+        daemon_result = run_child(
+            ["--root", lane, "--registry", daemon_registry]
+        )
+        daemon_identity = read_process_identity(daemon_pid_path)
+        daemon_survivor = process_identity_present(daemon_identity)
+        record(
+            "normal-exit-kills-double-fork",
+            daemon_result.returncode == 0
+            and check_lines(
+                daemon_result,
+                ["ROW daemon-exit expect=0 got=0 held",
+                 "REGISTRY_CHECK: held=1/1"],
+            )
+            and daemon_identity is not None
+            and not daemon_survivor,
+            f"exit={daemon_result.returncode} "
+            f"survivor={daemon_survivor}",
+        )
+        if daemon_survivor:
+            stop_test_process(daemon_identity)
 
         # --- behavioural cases -------------------------------------------
         reg_held = write_registry(
@@ -1003,6 +1471,112 @@ def selftest():
         record("unreadable-registry", proc.returncode == 2,
                f"exit={proc.returncode}")
 
+        short_source = row(
+            "short-source-revision", "print('short-source-accepted')", 0
+        )
+        short_source["source"] = "tools/registry-check.py@a:1"
+        proc = run_child(
+            ["--root", lane,
+             "--registry", write_registry(
+                 "reg-short-source.json", [short_source]
+             )]
+        )
+        record(
+            "short-source-revision",
+            proc.returncode == 2 and check_lines(proc, ["source", "7-40 hex rev"]),
+            f"exit={proc.returncode}",
+        )
+
+        for case, token, error in (
+            ("timeout-nan", "NaN", "non-finite JSON number"),
+            ("timeout-infinity", "Infinity", "non-finite JSON number"),
+            ("timeout-negative-infinity", "-Infinity",
+             "non-finite JSON number"),
+            ("timeout-overflow", "1e999", "finite positive number"),
+            ("timeout-boolean", "true", "finite positive number"),
+        ):
+            invalid_timeout = row(case, "print('should-not-run')", 0)
+            raw = json.dumps(
+                {"schema": SCHEMA, "rows": [invalid_timeout]}
+            ).replace(
+                '"timeout_s": 30', f'"timeout_s": {token}', 1
+            )
+            registry = write_registry(
+                f"reg-{case}.json", [], raw=raw
+            )
+            proc = run_child(["--root", lane, "--registry", registry])
+            record(
+                case,
+                proc.returncode == 2
+                and check_lines(proc, [case, "timeout_s", error]),
+                f"exit={proc.returncode}",
+            )
+
+        class FakePipe:
+            def __init__(self):
+                self.closed = False
+
+            def close(self):
+                self.closed = True
+
+        class FakeTimedProcess:
+            def __init__(self):
+                self.stdout = FakePipe()
+                self.stderr = FakePipe()
+                self.communicate_timeout = None
+                self.wait_timeout = None
+
+            def communicate(self, timeout=None):
+                self.communicate_timeout = timeout
+                if timeout is None:
+                    return b"", b""
+                raise subprocess.TimeoutExpired(
+                    ["fake"], timeout, output=b"partial", stderr=b"partial-err"
+                )
+
+            def wait(self, timeout=None):
+                self.wait_timeout = timeout
+                raise subprocess.TimeoutExpired(["fake"], timeout)
+
+        fake_process = FakeTimedProcess()
+        drained = _bounded_communicate(fake_process)
+        record(
+            "bounded-pipe-drain",
+            fake_process.communicate_timeout == PIPE_DRAIN_TIMEOUT_S
+            and fake_process.wait_timeout == PIPE_DRAIN_TIMEOUT_S
+            and fake_process.stdout.closed
+            and fake_process.stderr.closed
+            and drained == (b"partial", b"partial-err"),
+            f"communicate_timeout={fake_process.communicate_timeout} "
+            f"wait_timeout={fake_process.wait_timeout}",
+        )
+
+        original_pidfd_open = os.pidfd_open
+        original_pidfd_send_signal = signal.pidfd_send_signal
+        original_close = os.close
+        stale_reads = iter((1234, 1235))
+        fake_signals = []
+        try:
+            os.pidfd_open = lambda _pid, _flags=0: 999999
+            signal.pidfd_send_signal = (
+                lambda pidfd, signum: fake_signals.append((pidfd, signum))
+            )
+            os.close = lambda _fd: None
+            rejected = not _signal_process_identity(
+                987654, 1234, signal.SIGKILL, lambda: True,
+                read_stat=lambda _pid: (os.getpid(), next(stale_reads), "S"),
+            )
+        finally:
+            os.pidfd_open = original_pidfd_open
+            signal.pidfd_send_signal = original_pidfd_send_signal
+            os.close = original_close
+        record(
+            "pidfd-revalidates-starttime",
+            rejected and not fake_signals,
+            f"stale_identity_rejected={rejected} signals={len(fake_signals)}",
+        )
+
+
         # --- --rev cases ---------------------------------------------------
         proc = run_child(["--root", git_lane, "--rev", "0" * 40])
         record(
@@ -1018,6 +1592,26 @@ def selftest():
         ):
             proc = run_child(["--root", git_lane, "--rev", bad_rev])
             record(label, proc.returncode == 2, f"exit={proc.returncode}")
+
+        detached_row = row("detached-head", "", 1)
+        detached_row["argv"] = ["git", "symbolic-ref", "-q", "HEAD"]
+        detached_registry = write_registry(
+            "reg-detached-head.json", [detached_row]
+        )
+        proc = run_child(
+            ["--root", git_lane, "--rev", rev,
+             "--registry", detached_registry]
+        )
+        record(
+            "rev-clone-detached",
+            proc.returncode == 0
+            and check_lines(
+                proc,
+                ["ROW detached-head expect=1 got=1 held",
+                 "REGISTRY_CHECK: held=1/1 superseded=0"],
+            ),
+            f"exit={proc.returncode}",
+        )
 
         proc = run_child(["--root", git_lane, "--rev", rev])
         record(

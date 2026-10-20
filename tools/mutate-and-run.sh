@@ -12,7 +12,8 @@
 # (TAMESHI-T10-2) resolves the round-8 leg cut — cases 5/6 (kagi
 # `corpus/checklist-run.sh`, kumitate `scripts/claims-check.mjs`) embedded as
 # the fifth and sixth legs; r16 (TAMESHI-R16) adds the seventh measured gate,
-# kumitate `scripts/round-gate.mjs`, as the js-round-gate leg.
+# kumitate scripts/round-gate.mjs, as js-round-gate; r18 adds the eighth measured
+# leg, kumitate scripts/sources-check.mjs, as js-sources-check.
 #
 # Plan anchors: r3-2 = plans/round-3.plan.md:6-7 — "the method ships as tameshi's
 # own runnable tool (tools/mutate-and-run.sh: inject->run->restore with
@@ -78,7 +79,7 @@
 # Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
 # 64 usage error.
 #
-# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven) — the fleet's
+# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight) — the fleet's
 # mutation cases, replayed as legs. Each leg carries its recorded revision pin
 # and its recorded verdict table; the recorded kill-rate is the leg's
 # expectation:
@@ -89,18 +90,22 @@
 #   bash-checklist-run    kagi-shokunin/corpus/checklist-run.sh       7/15 (47 %)
 #   js-claims-check       kumitate-shokunin/scripts/claims-check.mjs  7/10 (70 %)
 #   js-round-gate         kumitate-shokunin/scripts/round-gate.mjs    5/10 (50 %)
+#   js-sources-check      kumitate-shokunin/scripts/sources-check.mjs 5/10 (50 %)
 # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
 # mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
 # mutation-case-mado-verify.md §1, mutation-case-kagi-checklist.md §2,
-# mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1
-# (leg 7's spec, predictions.json sha e99b87eb…, committed e69b488 before the
-# sweep; arm-class-matrix.md §13 is only the projection it drew on). All
-# seven defect specs are embedded below (legs 1–4 cut from those notes'
+# mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1,
+# .ufo/evidence/round-18/sources-check/sources-check.defects.spec (leg 8).
+# Leg 8's spec is the round-18 pre-registration committed in 93d22aa before
+# any mutant ran; its table is the measured 2026-10-20 sweep (19:41Z,
+# .ufo/evidence/round-18/sources-check/sweep/sweep.txt; 10/10 predictions held).
+# All eight defect specs are embedded below (legs 1–4 cut from those notes'
 # §7/§8/§9 reproduce manifests, all 40 @old strings re-verified count==1
 # against the pinned bytes 2026-10-14; legs 5–6 are the recorded T8-1/T8-2
 # spec files, their 25 @old strings re-verified count==1 against the pinned
 # blobs at r10-2; leg 7's spec is the pre-registered round-16 spec verbatim
-# and its table is the measured 2026-10-20 sweep).
+# and its table is the measured 2026-10-20 sweep; leg 8 likewise: the round-18
+# pre-registered spec verbatim and its measured sweep table).
 # r7-1: the target is NOT read from the fleet working tree. Each leg is
 # materialized from its repo's git object store — `git show <rev>:<path>` — so
 # a working tree that has drifted past the recorded revision (tsukuroi and
@@ -147,9 +152,9 @@
 # throwaway git repo, the ledger engine: git-materialized replay PASS,
 # drift-immune replay of the pinned blob, blob/pin mismatch and unresolvable
 # revision SETUP, and the exact-tolerance arm where one flipped recorded entry
-# FAILs; r10-2 adds the embedded-ledger sweep (r16 extends it to seven legs):
-# the leg specs are written and parsed, and each recorded table's ids, total
-# and killed count are checked
+# FAILs; r10-2 adds the embedded-ledger sweep (r16 extends it to seven legs;
+# r18 extends it to eight): the leg specs are written and parsed, and each recorded
+# table's ids, total and killed count are checked
 # against its own spec, plus the exec-bit mirror arms (a blob committed 100755
 # runs a self-exec suite; the same bytes committed 100644 are refused at their
 # red control) — hermetic, no fleet path read). Scratch is removed on PASS,
@@ -199,9 +204,9 @@ Options:
   --tail N         output tail lines shown per run (default: 8)
   --keep           --regression only: keep the scratch root also on PASS
 
---regression replays every recorded mutation case as a leg (js-kimi-census,
-bash-surface-census, bash-tsukuroi-census, bash-mado-verify,
-bash-checklist-run, js-claims-check, js-round-gate) at its pinned original
+--regression replays every recorded mutation case as a leg:
+(js-kimi-census, bash-surface-census, bash-tsukuroi-census, bash-mado-verify,
+bash-checklist-run, js-claims-check, js-round-gate, js-sources-check) at its pinned
 revision, materialized from the repo's git object store (`git show
 <rev>:<path>` — immune to working-tree drift; a missing repo/rev/blob or a pin
 mismatch is a SETUP refusal). Each leg must reproduce its recorded verdict table exactly:
@@ -603,6 +608,8 @@ PIN_CLAIMS=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
 REV_CLAIMS=175de6ba2e9e904010411b19cab27e0af9aad3d4
 PIN_ROUNDGATE=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
 REV_ROUNDGATE=364f1d5954158ef8844bca4a5fef57b05d2f2ca5
+PIN_SOURCESCHECK=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
+REV_SOURCESCHECK=0acb7752d19058b953ebbeba253b1e35f6548de5
 TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
 TABLE_BASH='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:SURVIVED,B6:KILLED,B7:KILLED,B8:KILLED,B9:KILLED,B10:SURVIVED'
 TABLE_TSUKUROI='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:KILLED,B6:KILLED,B7:SURVIVED,B8:SURVIVED,B9:SURVIVED,B10:SURVIVED'
@@ -610,6 +617,7 @@ TABLE_MADO='D1:KILLED,D2:KILLED,D3:SURVIVED,D4:KILLED,D5:SURVIVED,D6:KILLED,D7:S
 TABLE_CHECKLIST='A1:SURVIVED,A2:KILLED,B1:SURVIVED,B2:KILLED,B3:SURVIVED,B4:KILLED,C1:SURVIVED,C2:KILLED,D1:SURVIVED,D2:KILLED,E1:KILLED,E2:SURVIVED,F1:KILLED,F2:SURVIVED,G1:SURVIVED'
 TABLE_CLAIMS='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:SURVIVED,D8:SURVIVED,D9:SURVIVED,D10:KILLED'
 TABLE_ROUNDGATE='A1:KILLED,A3:KILLED,B1:KILLED,E3:KILLED,C1060:KILLED,C1059:SURVIVED,A2:SURVIVED,B2:SURVIVED,CKIND:SURVIVED,E1:SURVIVED'
+TABLE_SOURCESCHECK='K_KIND:KILLED,S_KIND:SURVIVED,K_EXIT:KILLED,S_VERDICT:SURVIVED,K_STRICT:KILLED,K_CLOSED:KILLED,K_ROWS:KILLED,S_DUP_LINE:SURVIVED,S_ENTRY_COUNT:SURVIVED,S_FILE_READ:SURVIVED'
 FLEET_ROOT=''   # set by run_regression; regression_case_git resolves repos from it
 
 table_lookup() { # <table ID:V,...> <id> -> verdict, or '-' when the id is absent
@@ -637,7 +645,7 @@ table_total() { # <table> -> number of entries
   printf '%s' "$n"
 }
 
-regression_specs() { # <dir> — write the seven embedded case specs
+regression_specs() { # <dir> — write the eight embedded case specs
   local d=$1
   cat >"$d/js-kimi-census.spec" <<'EOT'
 @defect D1 | kimi-census.mjs:105
@@ -1003,10 +1011,69 @@ EOT
 @old   if (typeof envSrc === 'string' && envSrc.trim() !== '') return resolve(envSrc);
 @new   if (typeof envSrc === 'string' && envSrc.trim() !== '') return resolve(SRC_CANDIDATES[0]);
 EOT
+  # r18 leg 8: the pre-registered spec, verbatim (committed 93d22aa).
+  cat >"$d/js-sources-check.spec" <<'EOT'
+# tameshi round-18 C1 — PRE-REGISTERED mutation spec for kumitate scripts/sources-check.mjs
+# rev 0acb7752d19058b953ebbeba253b1e35f6548de5 · blob sha256 6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f · 897 lines · mode 100755
+# Suite: guarded hermetic `node "$MUTANT" --selftest`; verdict oracle = exit status only.
+# Predictions were fixed before any mutant run. Composition: 5 kill-aimed / 5 hole-aimed.
+# Matrix axes: finding-kind coverage, exit map, verdict line, strict/warn promotion,
+# fail-closed paths, and count/census parity. Each @old occurs exactly once in the pinned bytes.
+
+# PREDICT KILLED — TIER_ENUM's fixture asserts the emitted finding kind and exit.
+@defect K_KIND | change TIER_ENUM emission to KIND_ENUM; fixture expects TIER_ENUM
+@old add('error', 'TIER_ENUM', 'corpus/SOURCES.md', row.line, `id=${id} tier=${row.tier}`);
+@new add('error', 'KIND_ENUM', 'corpus/SOURCES.md', row.line, `id=${id} tier=${row.tier}`);
+
+# PREDICT SURVIVED — the coverage check iterates only the declared enum; removing a declared kind does not change emitted behavior.
+@defect S_KIND | drop RECHECK_OVERDUE from the declaration; one-sided kind coverage remains green
+@old   'RECHECK_OVERDUE',
+@new
+
+# PREDICT KILLED — invalid/missing option fixtures assert the usage exit code 64.
+@defect K_EXIT | usage error exit 64 becomes 65
+@old return 64;
+@new return 65;
+
+# PREDICT SURVIVED — DRIFT fixtures assert exit and finding kind, not the final verdict text.
+@defect S_VERDICT | alter the final DRIFT verdict line spelling
+@old SOURCES_CHECK: DRIFT (${driftKinds.join(',')})
+@new SOURCES_CHECK: DRIFT [${driftKinds.join(',')}]
+
+# PREDICT KILLED — strict warning fixture expects USED_BY_ASYMMETRY with exit 1.
+@defect K_STRICT | strict no longer promotes warn findings to errors
+@old strict && finding.severity === 'warn'
+@new strict && finding.severity === 'error'
+
+# PREDICT KILLED — the missing-SOURCES fixture pins SOURCES_MISSING and its exit-2 verdict.
+@defect K_CLOSED | missing SOURCES.md maps to the wrong fail-closed kind
+@old return failClosed('SOURCES_MISSING', 'corpus/SOURCES.md is absent');
+@new return failClosed('READ_FAILED', 'corpus/SOURCES.md is absent');
+
+# PREDICT KILLED — frozen awk census parity compares the JS rows count to the shell census.
+@defect K_ROWS | each valid source row is double-counted
+@old counts.rows += 1;
+@new counts.rows += 2;
+
+# PREDICT SURVIVED — duplicate findings are counted, but no selftest asserts their line number.
+@defect S_DUP_LINE | report duplicate IDs one line late
+@old add('error', 'ID_DUPLICATE', 'corpus/SOURCES.md', index + 1, `id=${id}`);
+@new add('error', 'ID_DUPLICATE', 'corpus/SOURCES.md', index + 2, `id=${id}`);
+
+# PREDICT SURVIVED — entriesWithSource appears in reports but no selftest pins its positive count.
+@defect S_ENTRY_COUNT | double the count of source-header entries
+@old counts.entriesWithSource += 1;
+@new counts.entriesWithSource += 2;
+
+# PREDICT SURVIVED — the read-failed fixture hits the directory-read catch, not this per-file read arm.
+@defect S_FILE_READ | classify a per-entry knowledge read failure as SOURCES_MISSING
+@old return failClosed('READ_FAILED', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+@new return failClosed('SOURCES_MISSING', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+EOT
   [[ -s "$d/js-kimi-census.spec" && -s "$d/bash-surface-census.spec" \
      && -s "$d/bash-tsukuroi-census.spec" && -s "$d/bash-mado-verify.spec" \
      && -s "$d/bash-checklist-run.spec" && -s "$d/js-claims-check.spec" \
-     && -s "$d/js-round-gate.spec" ]]
+     && -s "$d/js-round-gate.spec" && -s "$d/js-sources-check.spec" ]]
 }
 
 regression_case() {
@@ -1233,16 +1300,17 @@ run_regression() {
   printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   printf 'REGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=%s flips<=%s\n' \
     "$BAND_KILLED" "$BAND_FLIPS"
-  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s\n' \
+  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s\n' \
     "$(table_count "$TABLE_JS" KILLED)" "$(table_total "$TABLE_JS")" \
     "$(table_count "$TABLE_BASH" KILLED)" "$(table_total "$TABLE_BASH")" \
     "$(table_count "$TABLE_TSUKUROI" KILLED)" "$(table_total "$TABLE_TSUKUROI")" \
     "$(table_count "$TABLE_MADO" KILLED)" "$(table_total "$TABLE_MADO")" \
     "$(table_count "$TABLE_CHECKLIST" KILLED)" "$(table_total "$TABLE_CHECKLIST")" \
     "$(table_count "$TABLE_CLAIMS" KILLED)" "$(table_total "$TABLE_CLAIMS")" \
-    "$(table_count "$TABLE_ROUNDGATE" KILLED)" "$(table_total "$TABLE_ROUNDGATE")"
+    "$(table_count "$TABLE_ROUNDGATE" KILLED)" "$(table_total "$TABLE_ROUNDGATE")" \
+    "$(table_count "$TABLE_SOURCESCHECK" KILLED)" "$(table_total "$TABLE_SOURCESCHECK")"
 
-  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate
+  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate st_sourcescheck
   regression_case_git js-kimi-census \
     'kumitate-shokunin/scripts/kimi-census.mjs' "$PIN_JS" "$REV_JS" \
     "$specs/js-kimi-census.spec" 'node "$MUTANT" --selftest' "$TABLE_JS" \
@@ -1278,9 +1346,14 @@ run_regression() {
     "$specs/js-round-gate.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES="$h" node "$MUTANT" --selftest' "$TABLE_ROUNDGATE" \
     "$root/js-round-gate"
   st_roundgate=$?
+  regression_case_git js-sources-check \
+    'kumitate-shokunin/scripts/sources-check.mjs' "$PIN_SOURCESCHECK" "$REV_SOURCESCHECK" \
+    "$specs/js-sources-check.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES="$h" node "$MUTANT" --selftest' "$TABLE_SOURCESCHECK" \
+    "$root/js-sources-check"
+  st_sourcescheck=$?
 
-  local nlegs=7 npass=0 nfail=0 nsetup=0 st
-  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate"; do
+  local nlegs=8 npass=0 nfail=0 nsetup=0 st
+  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck"; do
     case $st in
       0) npass=$((npass + 1)) ;;
       1) nfail=$((nfail + 1)) ;;
@@ -1773,8 +1846,8 @@ EOT
   grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1 flips=1;' "$root/rg14.out"
   st 'exact expectation flip reports killed-delta=1 flips=1' $?
 
-  # r10-2 (TAMESHI-T10-2) leg-cut resolution; r16 adds leg 7: the seven
-  # embedded legs' specs and recorded tables must agree with each other —
+  # r10-2 resolved the embedded-ledger cut; r16 adds leg 7 and r18 leg 8.
+  # The eight embedded legs' specs and recorded tables must agree with each other —
   # parse OK, the table's ids are
   # exactly the spec's ids, and the recorded total / killed counts are the ones
   # the leg set carries. Hermetic: the specs come from this tool's own
@@ -1784,8 +1857,8 @@ EOT
   local ltot_exp lkill_exp le_ok lk_list lk_ids lk_tbl_ids
   mkdir -p "$lspecs"
   regression_specs "$lspecs" 2>"$root/ledger-specs.err"
-  st 'embedded leg specs: seven files written' $?
-  # r16: leg-count agreement (MutateLeg w2 survivors (b)/(c)): the selftest's
+  st 'embedded leg specs: eight files written' $?
+  # r16/r18: leg-count agreement (MutateLeg w2 survivors (b)/(c)): the selftest's
   # leg tuples, the regression call sites, the written spec files and the
   # declared nlegs must all be the same number, so a leg dropped from any one
   # list fails here instead of shrinking the selftest silently.
@@ -1793,8 +1866,8 @@ EOT
   lcalls=$(grep -cE '^  regression_case_git (js|bash)-' "$SELF")
   lfiles=$(find "$lspecs" -maxdepth 1 -name '*.spec' | wc -l)
   lnlegs=$(sed -n 's/^  local nlegs=\([0-9][0-9]*\) .*/\1/p' "$SELF")
-  [[ "$lcalls" -eq 7 && "$lfiles" -eq 7 && "$lnlegs" -eq 7 ]]
-  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 7)" $?
+  [[ "$lcalls" -eq 8 && "$lfiles" -eq 8 && "$lnlegs" -eq 8 ]]
+  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 8)" $?
   lent=(
     'js-kimi-census:js-kimi-census.spec:TABLE_JS:10:8'
     'bash-surface-census:bash-surface-census.spec:TABLE_BASH:10:8'
@@ -1803,9 +1876,10 @@ EOT
     'bash-checklist-run:bash-checklist-run.spec:TABLE_CHECKLIST:15:7'
     'js-claims-check:js-claims-check.spec:TABLE_CLAIMS:10:7'
     'js-round-gate:js-round-gate.spec:TABLE_ROUNDGATE:10:5'
+    'js-sources-check:js-sources-check.spec:TABLE_SOURCESCHECK:10:5'
   )
-  [[ ${#lent[@]} -eq 7 ]]
-  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 7)" $?
+  [[ ${#lent[@]} -eq 8 ]]
+  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 8)" $?
   for le in "${lent[@]}"; do
     IFS=: read -r lname lfile ltbl ltot_exp lkill_exp <<<"$le"
     le_ok=1

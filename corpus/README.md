@@ -254,3 +254,20 @@ input-keyed rule. Line 95's header count ("2 of 21") is stale: at round 17,
 `for f in knowledge/*.md; do head -1 "$f" | grep -q '^source:' && echo; done | wc -l`).
 No frontier row moves: F7 stays open (the v2 disposition and the credit rule are
 unchanged-input reuse predicates, not per-leg reuse classification).
+
+## Round 18 — eighth recorded case, routed-defect closure
+
+Appended; rows above keep their line numbers. QUALITY 7: each new note gets
+its row in the same round.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/mutation-case-kumitate-sources-check.md` | case 8: kumitate `scripts/sources-check.mjs` @ `0acb775`, 5/10 killed, 10/10 pre-registered predictions held, deterministic control; ledger leg `js-sources-check` | S001, S008; `lessons/round-18.md` |
+| `knowledge/guard-kill-closure.md` | a guard is covered only when its removal mutant is killed with a green pristine control; jj `HEAD` vs branch-tip anchoring; non-finite JSON refusal; descendant kill after `setsid`; `GIT_*` prefix scrub and pinned-tool migration | S065, S066, S068, S069, S070, S072, S073, S074 |
+
+Superseded readings, dated, not rewritten: the round-16/17 blocks above say
+seven recorded cases; there are eight since round 18. The round-17 entry's §5
+exit sentence is corrected by its appended erratum (round 18). No frontier row
+moves to Core: F3's determinism control is measured for case 8 only
+(`.ufo/evidence/round-18/sources-check/control/`, 8 byte-identical runs), not
+per surveyed gate.
