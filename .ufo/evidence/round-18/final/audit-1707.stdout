@@ -1,0 +1,61 @@
+SECTION 1707 1752
+## Errata — round 16 full-page cold-read
+
+Round 16 cold-read every section of this page (snapshot sha256
+`97cf436b…3580`, 51 buckets = preamble + 50 headings outside code fences)
+with 30 cold-read seats (CR01–CR27, three of them with a/b replicas); reports
+`.ufo/waves/round-16/w1/CR*.md`, re-reads `w2/RR*.md` and `w3/RX*.md`, ledger
+`.ufo/evidence/round-16/coldread/ledger.json` (assembled from those reports by
+`coldread/assemble.py`; it holds the merged verdict and gap counts per bucket).
+The page edits are in-place repairs, and so are this table's own cells: a
+later row's corrections of an earlier row stay visible in git
+(`git log -p -- SKILL.md`), not as appended rows. Wrong expectations were repaired
+in place with the line count of every edited section unchanged (except `### Round-15 gate/probe registry`, +1 blank separator; see the round-17 section), so every
+`SKILL.md:<line>` self-anchor still resolves; the old wording stays in git
+(`git show e69b488:SKILL.md`, sha256 `97cf436b…`; also
+`.ufo/evidence/round-16/coldread/SKILL.snapshot.md`). Repairs:
+
+| Snapshot line | Was | Now | Found by |
+|---|---|---|---|
+| 15 | cold-read proof covers one JS mutant only; sufficiency unverified | points here | CRCritic1 |
+| 134-135 | observed cold-read proof covers one historical JS mutant | round 16 executed the recipe end to end (CR04a, CR04b) | CRCritic1 |
+| 63 | live gate "exit lattice 0/1/2 (usage 64)" | kagi folds usage/setup into 2; 64 is kumitate's hermetic usage code (`claim-ledger.sh --bogus-flag` → 2, `claims-check.mjs --bogus-flag` → 64) | CR02 |
+| 271-272 | a two-space substring "produces a *different mutant*" | it yields the byte-identical mutant; the full line keeps `count == 1` robust | CR05 |
+| 278-280 | `${n}` said to appear in the two notes' manifests | `${n}` is in Appendix A's D4 on this page; the notes carry the other three tokens | CR05 |
+| 360-361 | D1/D3 "die on the same 16 cases" | 16 cases each, 14 shared | CR06 |
+| 505 | 22 denied verbs | 23 (`claim-ledger.sh:164`) | CR10 |
+| 513-515 | surface-probe and cite-check exit-2 paths "uncovered" | each asserts one CLI `--src` exit-2 arm; no arm accounting beyond it | CR10 |
+| 925 | "Four legs at this revision" | dated: four at r7-1, seven since round 16 | CR16 |
+| 949-950 | receipt literal `cases=4` | `cases=N`, N per revision | CR16 |
+| 1390, 1393 | mutation-case notes "(six)"; round-11 record "lands" in `plans/` | dated count; no separate round-11 record file exists (the wave deliverables are the record) | CR23, RR08 (w2) |
+| 1472 | "Box 3 remains `[ ]`" | dated: `[ ]` at that write, `[~]` since | CRCritic1, CRCritic2 |
+| 1614 | `PROTOCOL.md` §Gate standard | `../PROTOCOL.md` (fleet root; the lane holds none) | CR27 |
+| 3, 9-10 | unquoted frontmatter `description:` (strict YAML rejects the second `: `); "Two mutation cases are now measured" | quoted; the first two cases are worked here, seven recorded since round 16 | RR01 (w2) |
+| 1346 | quotes "Four legs at this revision" at `:925-929` | notes that line 925 is dated since round 16 | WholePage (w2) |
+| 1391 | "six-leg registry" | six at round 11, seven since round 16 | RR08, RR11 (w2) |
+| round-15 registry, disposition row | `--root .` said to exit 0 | since round 16 the runner input moved: `--root .` → 2 `expected_input_digest_mismatch` by design; run with `--root` at an extracted `git archive 28aeef4`, from the lane root → 0 | RR10 (w2) |
+| round-16 registry, assemble row | "64 usage" | argparse usage exits 2 | RR13 (w2) |
+
+Minor gaps (non-blocking; named in the seat reports, counted in the ledger): dead `/tmp`
+evidence paths in records of rounds 6–9; anchors written as tool sha256 values
+rather than git revisions (`cf41efaa…`, `597e1419…`); Appendix B survivor-probe
+fixture contents are not spelled out (seats rebuilt them from the gate's
+header schema); `git status --porcelain` on a sibling may take its index lock —
+prefer `git --no-optional-locks -C <repo> status --porcelain`; round-7 section
+`tools/mutate-and-run.sh:<line>` anchors predate later growth of the tool
+(CR16, RR07); nested check [51] of round-gate's selftest records itself as a
+skip-as-pass (`round-gate.mjs:1381-1382`).
+OPEN .ufo/evidence/round-16/coldread/SKILL.snapshot.md sha256=97cf436b669ea445abe36cf6757202eec1c2a4bad2814b07f4159bb9dc623580 bytes=118906
+OPEN .ufo/evidence/round-16/coldread/ledger.json sha256=b84151a35f0cefa0716f3dd200a183dee5badc7be09ba1bac11d61283f70623c bytes=106380
+OPEN .ufo/evidence/round-18/final/registry-branch-aligned.stdout sha256=6502cb387613b08c64f0be73f41ff094575639f952ad1f2c4c8e76834d5517c4 bytes=96815
+OPEN .ufo/evidence/round-18/final/probes.stdout sha256=d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0 bytes=4111
+OPEN .ufo/evidence/round-18/final/regression.stdout sha256=226be3d529337dc87334b0e7c55a012fb0793865570565b84471aab6d836acfe bytes=6390
+OPEN .ufo/evidence/round-18/final/case8.stdout sha256=b4f264c375833f3c65d3ea00606851df58edc6c575617d4034f08ccfdf63694b bytes=7765
+OPEN .ufo/evidence/round-18/final/case7.stdout sha256=e649866e5194fe54a6773582551e7fb83a33bafb0cfd661ba6b71bb8da9c7ceb bytes=14841
+OPEN .ufo/evidence/round-18/final/historical.stdout sha256=9050c284e68d6538ebedfc6a084fc0b4529fd50a691c72d9f7a4e570fa214590 bytes=6358
+OPEN .ufo/evidence/round-18/final/context.stdout sha256=337aa6d8b19b2a82ed7de8854bf39a964076126c72bcc0b51798eca6bb134994 bytes=178
+OPEN .ufo/evidence/round-18/final/disposition.stdout sha256=596975d456657c8d683b6cae4382bdc958cda0084a2cd54d4b979957f55048e4 bytes=6906
+OPEN .ufo/evidence/round-18/final/before.stdout sha256=e279b328de7d08631de687a0ad587943ca0a9eecba3c046adeb31b44f7a25b0d bytes=6309
+OPEN .ufo/evidence/round-18/final/repeat.stdout sha256=9cd7809032b2a970bdc19577c57757e2d91e7e14f360cb37f5105eb3a0c3c21e bytes=423
+OPEN .ufo/evidence/round-18/final/checks.json sha256=fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d bytes=2411
+VERIFIED actual execution receipts; ancestor runs have the same instrument blobs as the read revision

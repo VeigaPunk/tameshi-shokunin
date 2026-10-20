@@ -1,0 +1,81 @@
+SECTION 1754 1804
+## Seventh recorded case and full-page cold-read — round 16
+
+**The seventh case.** kumitate `scripts/round-gate.mjs` at rev `364f1d5`
+(blob sha256 `f890e277…a834d3e9`, 60-case hermetic `--selftest`) against 10
+single-edit mutants → **5/10 killed (50 %)**, control green, 0 inconclusive,
+`MUTATE_RESTORE: OK`; every one of the 10 predictions, committed in `e69b488`
+before the sweep, held. Detail of record:
+`corpus/knowledge/mutation-case-kumitate-round-gate.md`. The case is ledger leg
+`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18).
+
+Reproduce it (read-only on kumitate; scratch in `/tmp`):
+
+```sh
+W=$(mktemp -d /tmp/tameshi-r16-rg.XXXXXX)
+git -C ~/Projects/shokunin/kumitate-shokunin show 364f1d5954158ef8844bca4a5fef57b05d2f2ca5:scripts/round-gate.mjs > "$W/round-gate.mjs"
+sha256sum "$W/round-gate.mjs"   # f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
+E=.ufo/evidence/round-16/round-gate
+bash tools/mutate-and-run.sh --target "$W/round-gate.mjs" --defects "$E/round-gate.defects.spec" \
+  --suite "$(cat "$E/suite.txt")" --label js-round-gate --workdir "$W/work"
+# expect: CONTROL: GREEN ... MUTATE: DONE (... killed=5 survived=5 inconclusive=0 kill-rate=50%)
+```
+
+Rules this case adds:
+
+- **Scrub the environment of a suite that shells out to git.** round-gate's
+  fixtures run `git` with the inherited environment: an exported `GIT_DIR`
+  makes the pristine control commit into that repository, and a `TMPDIR`
+  inside a work tree turns the control red. Run the suite under `env -i` with
+  its own `HOME` and `TMPDIR` (the string in `suite.txt`); the ledger leg
+  carries the same string. This scrubs; it does not confine: a hostile mutant
+  can still write outside its directory or reach the network (GuardAudit,
+  round 16) — use `bwrap` when mutants are untrusted.
+- **Grade by exit, not by stdout bytes**, when the suite prints `mkdtemp`
+  names: three pristine runs differ byte-for-byte yet exit 0 every time, so a
+  repeated-control byte comparison reports `controls_mismatch` (exit 1) for a
+  deterministic verdict. `tools/mutate-and-run.sh` grades on exit only.
+- **Test a projected interval at its edge.** The round-4 projection said any
+  `REPORT_MIN_BYTES` in [26, 1059] keeps every fixture verdict; the mutant at
+  1059 survived and the one at 1060 was killed by the 1059-byte fixture. A
+  midpoint edit would not have tested the bound.
+- **Show each survivor is not equivalent off-suite** before calling it a gap:
+  run the survivor-probe harness (`$E/survivor-probes/probes.mjs`, probe ids in
+  the case note) on the pristine copy (exit 0) and on the mutant (exit 1).
+
+**The full-page cold-read.** Every bucket of this page was read by a seat
+that saw only the page and what it names; instructions were executed in
+`/tmp`, records re-anchored. The errata section above lists what it found and
+repaired; repaired and new sections were re-read by fresh seats (wave 2, then a residual check). The counting
+command: `python3 .ufo/evidence/round-16/measure.py --rev REV` (field
+`coldread.box3_full_page`). Lane seats are the lane: this earns the box-3
+lane assertion (`[~]`), never an independent `[x]`.
+OPEN corpus/knowledge/mutation-case-kumitate-round-gate.md sha256=1b907c8d2c756134783604b604b3dd0a65b0a5fcb0f5a82e5d24b037b82aeaec bytes=9791
+source: S053 kumitate `scripts/round-gate.mjs` @ 364f1d5954158ef8844bca4a5fef57b05d2f2ca5 (blob sha256 f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9), read-only; S052 Stryker supported mutators; S056 PIT mutators; S057 Papadakis et al. survey §5.3.1; projection `corpus/knowledge/arm-class-matrix.md` §13 (round 4)
+TAIL  write outside its directory,
+  overwrite a sibling mutant, or reach the network. The ten mutants here are
+  single-edit, non-hostile edits, and RerunSweep reproduced every mutant
+  sha256. `bwrap` confinement (tested by GuardAudit) is the next step for
+  untrusted mutants. The runner does not log the suite string; it is
+  retained in `suite.txt`, `predictions.json` and the leg.
+- Recommendations for the owner, reported and not absorbed: a `--tracked`
+  missing-reports-dir fixture (B2), a full-line pin on rt8 (A3), a detail-tail
+  assert on one fail-closed fixture (A2), a set-value `UFO_SRC` fixture (E1),
+  a point pin of the floor constant (C1059), and an `observed ⊆ enum` check
+  (CKIND).
+
+OPEN .ufo/evidence/round-16/round-gate/predictions.json sha256=bb344eee3b034d774a829042717dc5c78517edcf8ef5f369831bc2fae0f70bc1 bytes=4016
+OPEN .ufo/evidence/round-16/round-gate/round-gate.defects.spec sha256=e99b87ebc16f045f43ffb31354e2fc2879d2be3a8504d4274239249b93ef11c4 bytes=4320
+OPEN tools/mutate-and-run.sh sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b bytes=97200
+OPEN .ufo/evidence/round-18/final/registry-branch-aligned.stdout sha256=6502cb387613b08c64f0be73f41ff094575639f952ad1f2c4c8e76834d5517c4 bytes=96815
+OPEN .ufo/evidence/round-18/final/probes.stdout sha256=d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0 bytes=4111
+OPEN .ufo/evidence/round-18/final/regression.stdout sha256=226be3d529337dc87334b0e7c55a012fb0793865570565b84471aab6d836acfe bytes=6390
+OPEN .ufo/evidence/round-18/final/case8.stdout sha256=b4f264c375833f3c65d3ea00606851df58edc6c575617d4034f08ccfdf63694b bytes=7765
+OPEN .ufo/evidence/round-18/final/case7.stdout sha256=e649866e5194fe54a6773582551e7fb83a33bafb0cfd661ba6b71bb8da9c7ceb bytes=14841
+OPEN .ufo/evidence/round-18/final/historical.stdout sha256=9050c284e68d6538ebedfc6a084fc0b4529fd50a691c72d9f7a4e570fa214590 bytes=6358
+OPEN .ufo/evidence/round-18/final/context.stdout sha256=337aa6d8b19b2a82ed7de8854bf39a964076126c72bcc0b51798eca6bb134994 bytes=178
+OPEN .ufo/evidence/round-18/final/disposition.stdout sha256=596975d456657c8d683b6cae4382bdc958cda0084a2cd54d4b979957f55048e4 bytes=6906
+OPEN .ufo/evidence/round-18/final/before.stdout sha256=e279b328de7d08631de687a0ad587943ca0a9eecba3c046adeb31b44f7a25b0d bytes=6309
+OPEN .ufo/evidence/round-18/final/repeat.stdout sha256=9cd7809032b2a970bdc19577c57757e2d91e7e14f360cb37f5105eb3a0c3c21e bytes=423
+OPEN .ufo/evidence/round-18/final/checks.json sha256=fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d bytes=2411
+VERIFIED actual execution receipts; ancestor runs have the same instrument blobs as the read revision
