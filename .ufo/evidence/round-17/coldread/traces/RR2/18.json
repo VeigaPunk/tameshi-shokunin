@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=/tmp/tameshi-r17w3-RR2-hnbkmZ; C=$W/fleet/tameshi-shokunin; F=/home/vgpnk/Projects/shokunin; S=$W/scratch18; rm -rf $S; mkdir -p $S/pinrepo; cd $S/pinrepo\necho \"=== A. reading rules in a scratch repo ===\"\ngit init -q -b master . && git config user.email rr2@invalid && git config user.name rr2 && printf \"gate v1\\n\" > gate.txt && git add gate.txt && git commit -qm pin\nPIN=$(sha256sum < gate.txt | cut -c1-8); REC=$(git rev-parse HEAD)\ntip=$(git rev-parse --verify --quiet --end-of-options \"refs/heads/master^{commit}\"); echo \"current: rev-parse rc=$? tip blob $(git show $tip:gate.txt | sha256sum | cut -c1-8) == pin $PIN\"\nprintf \"gate v2\\n\" >> gate.txt && git commit -qam move && tip=$(git rev-parse --verify --quiet --end-of-options \"refs/heads/master^{commit}\")\ngit merge-base --is-ancestor $REC $tip && echo \"stale: recorded rev is ancestor of tip; tip blob $(git show $tip:gate.txt | sha256sum | cut -c1-8) != pin $PIN\"\ngit rev-parse --verify --quiet --end-of-options \"refs/heads/nope^{commit}\"; echo \"unresolvable <branch>: rev-parse rc=$? (page: SETUP rc 2)\"\ngit show \"$tip:absent.txt\" >/dev/null 2>&1; echo \"path absent at tip: git show rc=$? -> equality fails\"\nprintf \"local edit\\n\" >> gate.txt; echo \"drift (uncommitted): live $(sha256sum < gate.txt | cut -c1-8) vs tip blob $(git show $tip:gate.txt | sha256sum | cut -c1-8); porcelain lines $(git status --porcelain -- gate.txt | wc -l)\"\ngit checkout -q -- gate.txt; echo \"restored: porcelain lines $(git status --porcelain -- gate.txt | wc -l)\"\ngit checkout -q --detach && printf \"jj-style @- commit\\n\" >> gate.txt && git commit -qam wc && echo \"drift (detached HEAD commit, jj @- analogue): porcelain lines $(git status --porcelain -- gate.txt | wc -l); live $(sha256sum < gate.txt | cut -c1-8) vs refs/heads/master blob $(git show refs/heads/master:gate.txt | sha256sum | cut -c1-8); HEAD on branch: $(git merge-base --is-ancestor HEAD refs/heads/master && echo yes || echo no)\"\necho \"=== B. corpus records of the T2 re-cut ===\"\ncd $C; echo \"--- service-optin-protocol.md:232 ---\"; sed -n \"232p\" corpus/knowledge/service-optin-protocol.md; echo \"--- operator-runbook.md:289-293 ---\"; sed -n \"289,293p\" corpus/knowledge/operator-runbook.md\necho \"=== C. full ids and blob sha256 for external pins ===\"\nfor r in 17c1fad 67a3123 14df5b9; do echo \"fleet $(git -C $F rev-parse $r^{commit})\"; done\necho \"fleet:17c1fad:scripts/shokunin-watchdog.sh $(git -C $F show 17c1fad:scripts/shokunin-watchdog.sh | sha256sum | cut -d\" \" -f1)\"\necho \"fleet:67a3123:scripts/hyaku/jj-lane.sh $(git -C $F show 67a3123:scripts/hyaku/jj-lane.sh | sha256sum | cut -d\" \" -f1)\"\nfor t in kumitate:175de6ba:scripts/kimi-census.mjs kumitate:175de6ba:scripts/claims-check.mjs kagi:fecee874:corpus/surface-census.sh kagi:fecee874:corpus/checklist-run.sh tsukuroi:165307fe:tools/tsukuroi-census.sh tsukuroi:aa136d69:tools/tsukuroi-census.sh mado:eead56b2:tools/mado-verify.sh mado:0c20a76f:tools/mado-verify.sh kumitate:master:scripts/kimi-census.mjs tsukuroi:master:tools/tsukuroi-census.sh mado:master:tools/mado-verify.sh kagi:master:corpus/checklist-run.sh; do IFS=: read -r R V P <<< \"$t\"; D=$F/$R-shokunin; full=$(git -C $D rev-parse \"$V^{commit}\"); echo \"$R-shokunin@$full:$P $(git -C $D show $full:$P | sha256sum | cut -d\" \" -f1)\"; done\nfor v in b58b26fbeba8fd972e1d31ac8a9175a81e333b32 44947154c23772f766f9f5439090fb5c7ad76e46 9f1d3c339a7094968041c7708a65dbf7eab9fae6; do echo \"tameshi@$v:tools/mutate-and-run.sh $(git -C $C show $v:tools/mutate-and-run.sh | sha256sum | cut -d\" \" -f1)\"; done; echo done"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-ndiyrkan/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/knowledge/operator-runbook.md": "531571cb110fdafb57b9abe5a6532ddceaf5fcdea582d8081f1eb3391ae97397",
+    "corpus/knowledge/service-optin-protocol.md": "84d0c1547eed257d921b832468d6f010bcca331e8ce67ed378852d7993da8e0e"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 159
+}

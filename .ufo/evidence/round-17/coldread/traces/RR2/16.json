@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=/tmp/tameshi-r17w3-RR2-hnbkmZ; C=$W/fleet/tameshi-shokunin; F=/home/vgpnk/Projects/shokunin\necho \"=== A. kumitate/kagi: any commit between the stated tick HEAD and the tick (19:15:14Z)? ===\"\necho \"kumitate: [$(git -C $F/kumitate-shokunin log --all --format=\"%h %cI\" --since=2026-10-14T09:56:20Z --until=2026-10-14T19:15:14Z | tr \"\\n\" \" \")]\"\necho \"kagi: [$(git -C $F/kagi-shokunin log --all --format=\"%h %cI\" --since=2026-10-14T13:05:11Z --until=2026-10-14T19:15:14Z | tr \"\\n\" \" \")]\"\necho \"tsukuroi: [$(git -C $F/tsukuroi-shokunin log --all --format=\"%h %cI\" --since=2026-10-14T19:06:32Z --until=2026-10-14T19:15:14Z | tr \"\\n\" \" \")] mado: [$(git -C $F/mado-shokunin log --all --format=\"%h %cI\" --since=2026-10-14T19:06:32Z --until=2026-10-14T19:15:14Z | tr \"\\n\" \" \")]\"\necho \"=== B. falsifier on a clean live gate (kagi corpus/checklist-run.sh) ===\"\nK=$F/kagi-shokunin; P=corpus/checklist-run.sh; S=$W/scratch16; rm -rf $S; mkdir -p $S; kb=$(git -C $K show refs/heads/master:$P | sha256sum | cut -c1-8)\ncp $K/$P $S/untouched.txt; cp $K/$P $S/drift-demo.txt; printf \"# one appended line\\n\" >> $S/drift-demo.txt\nu=$(sha256sum < $S/untouched.txt | cut -c1-8); d=$(sha256sum < $S/drift-demo.txt | cut -c1-8)\necho \"untouched copy $u vs master blob $kb -> $([ $u = $kb ] && echo current || echo drift); copy+1 line $d vs $kb -> $([ $d = $kb ] && echo current || echo drift); kagi porcelain on $P after: $(git -C $K --no-optional-locks status --porcelain -- $P | wc -l)\"\necho \"=== C. fleet-root derivation: cf41efaa (lane 9f1d3c33) vs current ===\"\ngit -C $C show 9f1d3c339a7094968041c7708a65dbf7eab9fae6:tools/mutate-and-run.sh | grep -n -E \"FLEET_ROOT=|FLEET=|/home/vgpnk|SELF=|dirname\" | head -8\necho \"--- current ---\"; grep -n -E \"FLEET_ROOT=|FLEET=|/home/vgpnk|SELF=\" $C/tools/mutate-and-run.sh | head -8\necho \"--- cf41efaa doctored/selftest arms ---\"; git -C $C show 9f1d3c339a7094968041c7708a65dbf7eab9fae6:tools/mutate-and-run.sh | grep -n -E \"doctored|pin mismatch is SETUP\" | head -6; echo done"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-bxealbkn/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "fb6d86d59b5c9285864c9ebfa19d5a6f8938e91c47877a6d25b451a1da03001a"
+  },
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/checklist-run.sh": "7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 24
+}

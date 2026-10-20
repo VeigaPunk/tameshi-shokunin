@@ -1,0 +1,43 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "F=/home/vgpnk/Projects/shokunin; C=/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin; S=/tmp/tameshi-r17w3-RR2-hnbkmZ/scratch15; rm -rf $S; mkdir -p $S\nbr(){ local b; b=$(git -C $1 config --get lane.branch); if [ -z \"$b\" ]; then for c in master main; do git -C $1 rev-parse --verify --quiet --end-of-options \"refs/heads/$c^{commit}\" >/dev/null && { b=$c; break; }; done; fi; echo $b; }\necho \"=== 1. watchdog @17c1fad date + tameshi mentions; live watchdog conf use ===\"\ngit -C $F show -s --format=\"%h %cI %s\" 17c1fad | cut -c1-120\necho \"tameshi mentions in watchdog @17c1fad: $(git -C $F show 17c1fad:scripts/shokunin-watchdog.sh | grep -c tameshi)\"\ngrep -n -E \"shokunin\\.conf|LANES\" $F/scripts/shokunin-watchdog.sh | head -6\necho \"=== 2. jj-lane.sh v1 @67a3123 :53-65 ===\"\ngit -C $F show 67a3123:scripts/hyaku/jj-lane.sh | sed -n \"53,65p\"\necho \"=== 2b. live jj-lane.sh :85-140 ===\"\nsed -n \"85,140p\" $F/scripts/hyaku/jj-lane.sh\necho \"=== 2c. dates ===\"\ngit -C $F show -s --format=\"fleet %h %cI\" 67a3123 14df5b9\ngit -C $C show -s --format=\"lane %h %cI\" 2a22adeb7d1de5e7189e62ce41ac679d71a97b44 0ff273448ac4e62893c9b28a4cea7c580712df19\necho \"=== 3. sibling identity ===\"\nfor R in kumitate kagi tsukuroi mado; do D=$F/$R-shokunin; echo \"--- $R lane.branch=$(git -C $D config --get lane.branch || echo unset) jj=$([ -d $D/.jj ] && echo yes || echo no) HEAD=$(git -C $D rev-parse --short=8 HEAD) sym=$(git -C $D symbolic-ref -q --short HEAD || echo detached) branch=$(br $D)\"; git -C $D for-each-ref --format=\"  %(refname) %(objectname:short=8) %(committerdate:iso-strict)\" refs/heads refs/remotes | head -6; echo \"  remote refs containing HEAD: $(git -C $D branch -r --contains HEAD 2>/dev/null | tr -d \" \" | tr \"\\n\" \" \")\"; done\necho \"=== 4. pin read now (page rules) ===\"\nfor t in kumitate:scripts/kimi-census.mjs:175de6ba:83016d45 kagi:corpus/surface-census.sh:fecee874:275d8294 tsukuroi:tools/tsukuroi-census.sh:165307fe:084951be mado:tools/mado-verify.sh:eead56b2:d7edaab4 kagi:corpus/checklist-run.sh:fecee874:7e5ec98b kumitate:scripts/claims-check.mjs:175de6ba:e9a21b44; do\n IFS=: read -r R P REC PIN <<< \"$t\"; D=$F/$R-shokunin; b=$(br $D)\n tip=$(git -C $D rev-parse --verify --quiet --end-of-options \"refs/heads/$b^{commit}\")\n tb=$(git -C $D show \"$tip:$P\" 2>/dev/null | sha256sum | cut -c1-8); hb=$(git -C $D show \"HEAD:$P\" 2>/dev/null | sha256sum | cut -c1-8); lf=$(sha256sum < $D/$P | cut -c1-8)\n pc=$(git -C $D --no-optional-locks status --porcelain -- $P | wc -l); anc=$(git -C $D merge-base --is-ancestor $REC $tip && echo yes || echo no)\n rel=current; [ \"$tb\" != \"$PIN\" ] && { [ $anc = yes ] && rel=stale || rel=other; }; { [ \"$lf\" != \"$tb\" ] || [ \"$pc\" -gt 0 ]; } && rel=\"$rel+drift\"\n echo \"$R $P branch=$b tip=${tip:0:8} rec=$REC pin=$PIN tipblob=$tb HEADblob=$hb live=$lf porcelain=$pc rec<=tip:$anc -> $rel\"\ndone\necho \"=== 5. tick-window commits 2026-10-14 18:30Z..20:00Z (all refs) ===\"\nfor R in kumitate kagi tsukuroi mado; do D=$F/$R-shokunin; echo \"--- $R\"; git -C $D log --all --format=\"%h %cI %s\" --since=2026-10-14T18:30:00Z --until=2026-10-14T20:00:00Z | cut -c1-110 | head -12; done\nfor x in tsukuroi:72b038d tsukuroi:aa136d69 mado:12c8f08 mado:0c20a76f kumitate:175de6ba kagi:fecee874; do R=${x%%:*}; c=${x#*:}; echo \"$R $c $(git -C $F/$R-shokunin show -s --format=%cI $c 2>&1 | head -1)\"; done\necho \"ancestry 165307fe<=aa136d69: $(git -C $F/tsukuroi-shokunin merge-base --is-ancestor 165307fe aa136d69 && echo yes || echo no); eead56b2<=0c20a76f: $(git -C $F/mado-shokunin merge-base --is-ancestor eead56b2 0c20a76f && echo yes || echo no)\"\necho \"=== 6. dc864c6a in mado-verify.sh history ===\"\nM=$F/mado-shokunin; n=0; for c in $(git -C $M log --all --format=%h -- tools/mado-verify.sh); do n=$((n+1)); s=$(git -C $M show $c:tools/mado-verify.sh 2>/dev/null | sha256sum | cut -c1-8); [ \"$s\" = dc864c6a ] && echo \"HIT $c bytes=$(git -C $M show $c:tools/mado-verify.sh | wc -c) newlines=$(git -C $M show $c:tools/mado-verify.sh | wc -l) $(git -C $M show -s --format=%cI $c)\"; done; echo \"searched $n commits\"\necho \"=== 7. falsifier on a live sibling gate (scratch copy, read-only) ===\"\nP=tools/mado-verify.sh; mbr=$(br $M); mb=$(git -C $M show \"refs/heads/$mbr:$P\" | sha256sum | cut -c1-8); cp $M/$P $S/drift-demo.txt; printf \"# one appended line\\n\" >> $S/drift-demo.txt; dc=$(sha256sum < $S/drift-demo.txt | cut -c1-8)\necho \"scratch copy+1 line: $dc vs refs/heads/$mbr blob $mb -> $([ \"$dc\" != \"$mb\" ] && echo drift || echo equal)\"\necho \"porcelain lines on mado $P after: $(git -C $M --no-optional-locks status --porcelain -- $P | wc -l)\"\necho \"=== 8. pin-read tool in lane tools/? ===\"\ngit -C $C ls-tree --name-only 0ff273448ac4e62893c9b28a4cea7c580712df19 tools/ | tr \"\\n\" \" \"; echo; git -C $C grep -l -i -E \"pin.read\" 0ff273448ac4e62893c9b28a4cea7c580712df19 -- tools | head; echo done"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-izu4llek/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/checklist-run.sh": "7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/surface-census.sh": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/claims-check.mjs": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/kimi-census.mjs": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.gitignore": "d949e4ef14286bcc34282c15538a4a023a6c74d436cba3dae0f5155239d8f817",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-verify.sh": "071d39d99aa94d9e3d0c0a8c9d9e9e98b4bc79b51af0703e4dba774f85f7c75d",
+    "/home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh": "3369dc27b4909a9d1c2def774b128fb4a8cb71953ac9b12de4c8519b9024e421",
+    "/home/vgpnk/Projects/shokunin/scripts/shokunin-watchdog.sh": "04a3a2148efad2cd1be9bff2496cac520ab14597cab978eca241771226bb8d85",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/.gitignore": "65e9a6838b253022bd43ee70918dcf5f6d920cb9c2e80b91ccfb15e8e54ee027",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/tsukuroi-census.sh": "d17d32a35946c71c1fc195e36178aa383f4a04d7172cc579b6e9e25fa537f27e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 291
+}

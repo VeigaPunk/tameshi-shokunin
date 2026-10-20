@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "F=/home/vgpnk/Projects/shokunin; sweep(){ R=$1; shift; for p in \"$@\"; do rev=${p%%:*}; pin=${p##*:}; git -C $R cat-file -e $rev^{commit} 2>/dev/null || continue; git -C $R ls-tree -r $rev | while read -r mode typ id path; do s=$(git -C $R cat-file blob $id | sha256sum | cut -c1-8); [ \"$s\" = \"$pin\" ] && echo \"HIT $(basename $R) $rev pin $pin -> $path\"; done; done; }; sweep $F/kumitate-shokunin 175de6ba:83016d45 175de6ba:e9a21b44; sweep $F/kagi-shokunin fecee874:275d8294 fecee874:7e5ec98b; sweep $F/tsukuroi-shokunin 165307fe:084951be aa136d69:bba6cdf6; sweep $F/mado-shokunin eead56b2:d7edaab4 0c20a76f:90d50cdd; echo \"=== moved-again check (branch tips) ===\"; for x in tsukuroi-shokunin:tools/tsukuroi-census.sh:bba6cdf6 mado-shokunin:tools/mado-verify.sh:90d50cdd; do R=${x%%:*}; rest=${x#*:}; P=${rest%%:*}; old=${rest##:*}; B=$(git -C $F/$R rev-parse --verify --quiet --end-of-options \"refs/heads/master^{commit}\"); [ -z \"$B\" ] && B=$(git -C $F/$R rev-parse --verify --quiet --end-of-options \"refs/heads/main^{commit}\"); cur=$(git -C $F/$R show \"$B:$P\" 2>/dev/null | sha256sum | cut -c1-8); echo \"$R tip ${B:0:8} blob $P = $cur (was $old; moved-again if differ)\"; done; echo done"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-buu7xoxb/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 1369
+}

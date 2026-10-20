@@ -57,3 +57,40 @@ closure's duty; not claimed here.
 | environment leak | wave 1, 12:29:33: seat R04 ran `GIT_DIR=<live lane>/.git bash tools/mutate-and-run.sh --selftest` from a `/tmp` clone; the selftest's fixture commits landed in the live lane (HEAD detached at `e16adb7`, index = 3 fixture files). L1 restored HEAD and index (`git read-tree 98bea7d`, `update-ref --no-deref HEAD 98bea7d`, reflog message names the repair); no file bytes were lost (`w1/R04ReviewContractB.md`, `w1/N01TraceGitSafety.md`) | none (round-16 G5 scrubbed the suite string only, not the selftest fixtures) | QUALITY 27. Runner `git_clean()`/`fixture_commit()` scrub every inherited `GIT_*`; the selftest's canary case (exported `GIT_DIR` to a canary) fails on the unscrubbed mutant (89/95, canary HEAD moved) and passes 95/95 on the landed runner; registry-check, measure, trace-inputs, assemble and evidence-disposition scrub too, each with a decoy/canary selftest case |
 | jj HEAD semantics | `tools/pin-disposition.py:318` read sibling `HEAD^{commit}` (`JjAuditTameshi.md` §2.3); `.ufo/evidence/round-17/jj/head-vs-branch.sh` on the committed tool exits 1 (reads the detached commit's bytes) | none | Branch-tip resolution (`detect_branch`), head rows carry `branch` and `head_differs_from_branch`; selftest case `detached-head-uses-branch-tip`; SKILL.md:1027-1035 and four knowledge entries read the branch tip (S061) |
 | repo identity | `tools/mutate-and-run.sh` read `git -C "$repo"` with no identity check; a lane dir without `.git` inside the fleet super-repo is answered from the super-repo (`JjAuditTameshi.md` §2.2, S062) | none | `repo_identity_mismatch` SETUP guard; the guard-removed mutant fails the new selftest case (86/88 at first build) |
+
+## Same-round falsification (wave 2) and residual
+
+Wave 2: 99 seats (58 cold reads, 41 attacks) at `eb7838b`. Seven m_opus
+seats died on provider errors and were not respawned: CriticC1, CriticC2,
+CriticNoHarm, CriticSeparability, RegistryProvenance, SentinelLanded (429),
+SentinelTraceEscape (Devin quota). What held: RerunOP1 and TamperV2Matrix
+(17/17 tamper rows exit 2 with the stated ids; v1 path byte-equal), RerunC2Before
+(22/23, only the disposition capability differs) and RerunC2After (23/23
+baseline, 28/28 full, superseded 1), RerunRunnerGuard (95/95, cases=7, canary
+`.git` digest unchanged under an exported `GIT_DIR`), RerunPinBranch (fixture
+exit 1 on the old tool, 0 on the landed one), RerunRedBefore, NoHarmSelftests
+(16/16 entry points green, strictly additive counts), SiblingImpact (no sibling
+gate pins the moved bytes; mado's live regression passed on the landed runner),
+all seven source re-opens, RerunCensus.
+
+Additional mistakes found by wave 2:
+
+| Class | Evidence pointer | Captured-by | Fix and falsification |
+|---|---|---|---|
+| producer/consumer drift | `w2/ReviewMeasureV2Code.md`: measure checked receipt `external` for live-lane reads while trace-inputs writes them to `live_lane_reads`; a real offending receipt was credited | none (selftest fixture used the impossible shape) | measure/assemble read `live_lane_reads`; a live read is bound only when it is a `.git/` read or the bytes equal the blob at the rev (`live-lane-read-bound` selftest case; the old real-shape fixture now fails as `live-lane-read:`) |
+| class dodge | `w2/LessonReview.md` finding 1: a zero-command `record` entry with any verified input credited a bucket at a committed rev | G5 claimed K02 hole 2 closed — wrong | `commands-unrecorded`: an entry credits only with commands_executed_count>0 and committed traces; selftest `record-zero-cmd-commands-unrecorded` |
+| stale present tense | wave 2 found 7 wrong expectations: CR13 (POLICY exit shape), CR27 (fleet lane map), CR28 (T1 live cells, replay receipt), CR51 (selftest exit sentence), CR54 (round-16 assemble exits), CR57/CR58 (missing-ledger exit, step-3/4 commit ordering) | the full-page cold read itself | repaired in place, line counts kept; buckets queued for residual fresh reads |
+| hermeticity of a selftest | `registry-check --rev` (scrubbed env, `GIT_CONFIG_GLOBAL=/dev/null`) turned `evidence-disposition --selftest` red: fixture `commit-tree` had no identity | the monitor itself (QUALITY 25 worked as designed) | `_selftest_git_env()` pins identity and scrubs `GIT_*`; fixed in `eb7838b` |
+| false criterion | `w2/QualityCriteriaReview.md`: QUALITY 27 false as landed (`bash-witness-study.py` and the jj fixture did not scrub) | the criterion's own red-before demand | QUALITY 28 correction; fixture now scrubs and proves it on a canary; `bash-witness-study.py` scrub is open debt (pinned by round-13 `expected.json`) |
+| seat-caused lane damage | see `## Mistakes`, environment leak | — | — |
+
+Open, named, not closed by prose: selftest survivors (MutateDispositionV2: G3
+tag-object and G5 symlink-mode guards; MutateRegistryCheck: detached-checkout
+and short-rev source regex; MutateTraceInputs: O_RDWR exclusion, pycache prefix,
+execve guard — each guard's behaviour is correct, the selftests do not pin it);
+registry-check NaN/Infinity `timeout_s` crash and setsid-escapable timeout
+(ReviewRegistryCheckCode); evidence-disposition G2/G3 compare against `HEAD`,
+not the branch tip (HeadSweepRecheck); knowledge entry
+`input-keyed-coldread-credit.md` §5 states a missing ledger exits 2 (it exits 0
+`no-ledger`); duplicated sectionizer/path predicates across measure and assemble
+(SimplifyNewTools); `bash-witness-study.py:337-341` env scrub.

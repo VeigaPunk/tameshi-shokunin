@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "F=/home/vgpnk/Projects/shokunin; pairs=\"175de6ba:83016d45 fecee874:275d8294 165307fe:084951be aa136d69:bba6cdf6 eead56b2:d7edaab4 0c20a76f:90d50cdd fecee874:7e5ec98b 175de6ba:e9a21b44\"; for R in $F/*-shokunin; do RN=$(basename $R); for p in $pairs; do rev=${p%%:*}; pin=${p##*:}; if git -C $R cat-file -e $rev^{commit} 2>/dev/null; then hit=$(git -C $R ls-tree -r $rev 2>/dev/null | grep \" blob $pin\" | head -2); if [ -n \"$hit\" ]; then echo \"HIT $RN $rev pin ${pin}: $(echo $hit | sed \"s/\\t/ | /g\")\"; fi; fi; done; done; echo \"=== rev resolution map ===\"; for rev in 175de6ba fecee874 165307fe aa136d69 eead56b2 0c20a76f; do where=\"\"; for R in $F/*-shokunin; do git -C $R cat-file -e $rev^{commit} 2>/dev/null && where=\"$where $(basename $R)\"; done; echo \"$rev resolves in:$where\"; done; echo done"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-vt_n4z0q/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/HEAD": "3917900e5317f83b7ad7486a75ad3bcea52a5b59547d151f67ef0741dc24e3d1",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/config": "825c0d3a8e1213deee06b43f6ea2b19ea5adb7e0ff92c33192e02c1d35149a61",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/pack/multi-pack-index": "bb4cb2892f48b4710ea22f65cef318dd45b956f637ec3927b0854c042f9efb5e",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/packed-refs": "b3e322a09b82bfa10b5136754fd199e8588d39416b8c843a592ec31792e27a5d"
+  },
+  "dropped_home_count": 906
+}

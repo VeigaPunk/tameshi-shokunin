@@ -1,0 +1,43 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "\ntick() { # repo path recorded-rev recorded-pin\n  r=\"$1\"; p=\"$2\"; rec=\"$3\"; pin=\"$4\"; d=\"/tmp/tameshi-r17w3-RR3-DeW0UG/fleet/$r\"\n  tip=$(git -C \"$d\" rev-parse --verify --quiet --end-of-options \"refs/heads/master^{commit}\") || { echo \"$1 SETUP rc2\"; return; }\n  recblob=$(git -C \"$d\" show \"$rec:$p\" 2>/dev/null | sha256sum | cut -c1-8) || recblob=MISSING\n  tipblob=$(git -C \"$d\" show \"$tip:$p\" 2>/dev/null | sha256sum | cut -c1-8) || tipblob=MISSING\n  liveblob=$(sha256sum \"$d/$p\" 2>/dev/null | cut -c1-8) || liveblob=MISSING\n  if git -C \"$d\" merge-base --is-ancestor \"$rec\" \"$tip\" 2>/dev/null; then anc=yes; else anc=no; fi\n  dr=$(git -C \"$d\" status --porcelain -- \"$p\" | wc -l)\n  [ \"$liveblob\" = \"$tipblob\" ] || dr=$((dr+1))\n  if [ \"$rec\" = \"$tip\" ]; then rel=current; elif [ \"$anc\" = yes ] && [ \"$pin\" != \"$tipblob\" ]; then rel=stale; else rel=mixed; fi\n  printf \"%-22s %s rec:%s tip:%s live:%s pin==tip:%s anc:%s porc:%s %s\\n\" \"$r/$p\" \"${rec:0:8}\" \"$recblob\" \"$tipblob\" \"$liveblob\" \"$([ \"$pin\" = \"$tipblob\" ] && echo == || echo !=)\" \"$anc\" \"$dr\" \"$rel\"\n}\ntick kumitate-shokunin scripts/kimi-census.mjs    175de6ba2e9e904010411b19cab27e0af9aad3d4 83016d45\ntick kagi-shokunin      corpus/surface-census.sh  fecee8743e52eb8fb5fbb40782934cb619a1a96e 275d8294\ntick tsukuroi-shokunin  tools/tsukuroi-census.sh  165307fe4746a8807b02ec4a7d7ecac0368454a6 084951be\ntick mado-shokunin      tools/mado-verify.sh      eead56b20ad2b28299ae4fa623d52a99b44c743c d7edaab4\ntick kagi-shokunin      corpus/checklist-run.sh   fecee8743e52eb8fb5fbb40782934cb619a1a96e 7e5ec98b\ntick kumitate-shokunin  scripts/claims-check.mjs  175de6ba2e9e904010411b19cab27e0af9aad3d4 e9a21b44\nsha256sum /tmp/tameshi-r17w3-RR3-DeW0UG/fleet/tameshi-shokunin/tools/mutate-and-run.sh\ndate -u +%Y-%m-%dT%H:%M:%SZ\n"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR3-DeW0UG/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR3-DeW0UG/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-uvcixo4h/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "fb6d86d59b5c9285864c9ebfa19d5a6f8938e91c47877a6d25b451a1da03001a"
+  },
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/checklist-run.sh": "7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/surface-census.sh": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/claims-check.mjs": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/kimi-census.mjs": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.gitignore": "d949e4ef14286bcc34282c15538a4a023a6c74d436cba3dae0f5155239d8f817",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-verify.sh": "071d39d99aa94d9e3d0c0a8c9d9e9e98b4bc79b51af0703e4dba774f85f7c75d",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/.gitignore": "65e9a6838b253022bd43ee70918dcf5f6d920cb9c2e80b91ccfb15e8e54ee027",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/tsukuroi-census.sh": "d17d32a35946c71c1fc195e36178aa383f4a04d7172cc579b6e9e25fa537f27e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 84
+}

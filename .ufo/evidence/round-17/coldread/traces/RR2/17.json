@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=/tmp/tameshi-r17w3-RR2-hnbkmZ; C=$W/fleet/tameshi-shokunin; F=/home/vgpnk/Projects/shokunin; export TMPDIR=$W/tmp; rm -rf $TMPDIR; mkdir -p $TMPDIR\necho \"=== C. current harness --regression (lane 0ff2734) start $(date -u +%T)Z tool $(sha256sum < $C/tools/mutate-and-run.sh | cut -c1-16) ===\"\n( cd $C && bash tools/mutate-and-run.sh --regression ) > $W/reg-current.out 2>&1; echo \"rc=$? end $(date -u +%T)Z\"\ngrep -E \"^REGRESSION|^REGRESSION_CASE|^MUTATE_RESTORE|match=\" $W/reg-current.out | cut -c1-230 | head -40\necho \"=== D. cf41efaa harness (lane 9f1d3c33) in fleet2 mirror ===\"\nrm -rf $W/fleet2; mkdir -p $W/fleet2; for s in $F/*-shokunin; do [ \"$s\" = $F/tameshi-shokunin ] || ln -s \"$s\" $W/fleet2/; done\ngit clone -q $C $W/fleet2/tameshi-shokunin && git -C $W/fleet2/tameshi-shokunin checkout -q --detach 9f1d3c339a7094968041c7708a65dbf7eab9fae6; echo \"fleet2 HEAD $(git -C $W/fleet2/tameshi-shokunin rev-parse --short=8 HEAD) tool $(sha256sum < $W/fleet2/tameshi-shokunin/tools/mutate-and-run.sh | cut -c1-16)\"\n( cd $W/fleet2/tameshi-shokunin && bash tools/mutate-and-run.sh --selftest ) > $W/st-cf41.out 2>&1; echo \"cf41efaa selftest rc=$? $(date -u +%T)Z\"; grep -E \"^MUTATE_SELFTEST|^VERDICT\" $W/st-cf41.out; grep -E \"FAIL\" $W/st-cf41.out | head -5\n( cd $W/fleet2/tameshi-shokunin && bash tools/mutate-and-run.sh --regression ) > $W/reg-cf41.out 2>&1; echo \"cf41efaa regression rc=$? $(date -u +%T)Z\"\ngrep -E \"^REGRESSION|^REGRESSION_CASE|^MUTATE_RESTORE|match=\" $W/reg-cf41.out | cut -c1-230 | head -40\necho \"=== E. current harness --selftest ===\"\n( cd $C && bash tools/mutate-and-run.sh --selftest ) > $W/st-current.out 2>&1; echo \"current selftest rc=$? $(date -u +%T)Z\"; grep -E \"^MUTATE_SELFTEST|^VERDICT\" $W/st-current.out; grep -E \"FAIL\" $W/st-current.out | head -5\necho \"=== F. clone hygiene after runs ===\"; echo \"clone porcelain lines: $(git -C $C status --porcelain | wc -l)\"; echo done"
+  ],
+  "cwd": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w3-RR2-hnbkmZ/fleet/tameshi-shokunin",
+  "rev": "0ff273448ac4e62893c9b28a4cea7c580712df19",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-fhzbduce/pycache"
+    }
+  },
+  "inputs": {
+    ".gitignore": "0f699af0108f1ac4f43cd5f61c9151896b8328ec7edd0adf4ca1c638a2441116",
+    "tools/mutate-and-run.sh": "fb6d86d59b5c9285864c9ebfa19d5a6f8938e91c47877a6d25b451a1da03001a"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 5734
+}
