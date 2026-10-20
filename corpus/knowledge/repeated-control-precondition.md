@@ -101,3 +101,14 @@ fixture by mistake; `verification.json` records that honest failed oracle
 and `verification-final.json` replaces only its repaired rows.
 The other passing checks were not rerun merely to prettify the evidence.
 No finite-sample or cross-host reliability claim is added.
+
+## Round 16 note (append-only)
+
+§3.1's runner pin (`75ed934d…`, six legs at `:84-89`) was true at round 12.
+At round 16 the runner gained a seventh leg (sha256 `89722ddb…`, legs at
+`:85-91`). `repeat-control.py` is unchanged. Round 16 also observed a
+deterministic-exit target whose stdout is not byte-stable: kumitate
+round-gate's selftest prints `mkdtemp` names. On that target the gate's
+unnormalized byte policy returns `controls_mismatch` (exit 1) even though the
+exit verdict is stable. That is the gate's declared scope, not a defect (see
+`mutation-case-kumitate-round-gate.md` §0).

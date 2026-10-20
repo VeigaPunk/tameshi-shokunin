@@ -58,6 +58,12 @@ rows only, and a row is a claim opened in the round that writes it.
 | S049 | Python subprocess environment mapping — https://docs.python.org/3/library/subprocess.html | docs | A | Python subprocess.run env argument semantics, not proof of a particular historical environment | Using the subprocess Module, run() env paragraph; Python 3.15.0 docs served 2026-10-20 | Explicit env mappings define child environment rather than merely documenting an intended injection; retain the bounded override with the observed command | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md, corpus/knowledge/incremental-pin-disposition.md, corpus/lessons/round-15.md |
 | S050 | Effective expectation reconciliation — tools/evidence-disposition.py | own-work | A | Replay of the lane's configured round-13 expected predicates with explicit raw-observation supersession, not author authentication | docstring lines10–13 and CLI r14 at measured commit6431478; .ufo/evidence/round-14/verification-final.json | Every original expectation stays effective or explicitly superseded; the retained setup crash cannot gain mechanism credit from exit agreement alone | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md |
 | S051 | Retained context-receipt gate — tools/context-capture.py | own-work | A | Byte-pinned retained context-receipt verdict replay with isolated public-CLI self-invocation, not live command execution or authentication | r15 docstring lines9–14 and Modes lines16–28; opened2026-10-20 | A persisted-expectation verdict is a gate; replay re-derives bounded raw fields and does not execute retained argv | mined | 2026-10-20 | on-release | corpus/lessons/round-15.md |
+| S052 | Supported mutators (Stryker Mutator docs) — https://stryker-mutator.io/docs/mutation-testing-elements/supported-mutators/ | docs | A | StrykerJS's named single-edit operator classes for JS mutant selection | §Supported mutators opening paragraph and §Support table @ page fetched 2026-10-20 (Docusaurus build, last-modified 2026-10-19; no commit pin exposed) | names the JS single-edit operator families a mutant set is drawn from (equality, conditional, string literal, boolean, array declaration) and which StrykerJS does not support (assignment expression) | mined | 2026-10-20 | 180d | corpus/knowledge/mutation-case-kumitate-round-gate.md |
+| S053 | kumitate `scripts/round-gate.mjs` (fleet gate, read-only) — kumitate-shokunin/scripts/round-gate.mjs | code | A | the gate's own selftest/verdict behaviour at the measured revision | :2-21, :45-48, :635, :677-681 @ 364f1d5 (blob sha256 f890e277…d3e9) | a green verdict from this lane-local pre-check asserts nothing fleet-wide; its 60-case hermetic selftest is the suite a mutation case measures | mined | 2026-10-20 | 180d | corpus/knowledge/mutation-case-kumitate-round-gate.md |
+| S054 | Diátaxis: the compass — https://diataxis.fr/compass/ | docs | A | separating instruction (how-to) content from record/reference content at section granularity | §The compass ¶22 @ page fetched 2026-10-20, Last-Modified 2026-08-06 | classify a page section by asking whether it informs action or cognition; action sections are executed by a cold reader, cognition sections are re-anchored | mined | 2026-10-20 | 180d | corpus/lessons/round-16.md |
+| S055 | doctest — Test interactive Python examples — https://docs.python.org/3/library/doctest.html | docs | A | executable documentation examples | module introduction, first bullet @ Python 3.15.0 documentation, fetched 2026-10-20 | a documented example is a checkable claim: run it as written and compare with the shown output | mined | 2026-10-20 | on-release | corpus/lessons/round-16.md |
+| S056 | Mutation operators (PIT docs) — https://pitest.org/quickstart/mutators/ | docs | A | PIT's own operator definitions for Java bytecode mutation (boundary, negation, return values) | §CONDITIONALS_BOUNDARY @ page fetched 2026-10-20 (version unstated; sha256 a31331da…) | the boundary operator moves a relational operator to its boundary counterpart, the shape of round-16's interval-edge pair; transfers to JS only as text-level boundary edits | mined | 2026-10-20 | 180d | corpus/knowledge/mutation-case-kumitate-round-gate.md |
+| S057 | Mutation Testing Advances: An Analysis and Survey (Papadakis, Kintis, Zhang, Jia, Le Traon, Harman; Advances in Computers 112, 2019; author preprint) — https://discovery.ucl.ac.uk/id/eprint/10056704/1/survey.pdf | paper | B | equivalent-mutant problem and mutant selection (survey scope) | §5.3.1 p. 29 @ preprint dated 2017-12-14 (published text not reached; DOI 10.1016/bs.adcom.2018.03.015) | an equivalent mutant cannot be detected in general, so a survivor needs an off-suite non-equivalence witness or an explicit unreachability argument | mined | 2026-10-20 | 365d | corpus/knowledge/mutation-case-kumitate-round-gate.md |
 
 ## Paths
 
@@ -133,6 +139,14 @@ rows only, and a row is a claim opened in the round that writes it.
   excluded0. Stop: the primary API source supports explicit subprocess setup;
   runtime fixtures, not documentation, must demonstrate the context gate.
 
+- 2026-10-20 — **round-16 seventh case and full-page cold-read**. Opened
+  Stryker supported-mutators, PIT mutators, kumitate round-gate.mjs @364f1d5,
+  Diátaxis compass/how-to/reference, Python doctest, and the Papadakis et al.
+  mutation survey; identified6/screened6/included6/excluded0. The survey's
+  published chapter (ScienceDirect) returned 403; the UCL author preprint was
+  opened instead and is tiered B with that limit. Stop: each claim (operator
+  choice, target behaviour, equivalent-mutant handling, section classification,
+  executable examples) has one opened primary or tiered source.
 
 ## Leads (unopened)
 
@@ -169,4 +183,5 @@ the six opened this round moved to rows S040–S046 and left this list).
 - S049: round-14 Python child-environment contract, not historical setup proof.
 - S050: round-14 own-work effective-expectation gate, measured at6431478.
 - S051: round-15 maintained retained-context gate; historical producer preserved.
-- Next unused id: S052.
+- S052–S057: round-16 rows (C1 operator/target/equivalence sources; C2 cold-read classification and executable-example sources).
+- Next unused id: S058.

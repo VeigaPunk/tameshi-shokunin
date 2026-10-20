@@ -11,7 +11,8 @@
 # drift), with each leg's recorded kill-rate as its expectation; r10-2
 # (TAMESHI-T10-2) resolves the round-8 leg cut — cases 5/6 (kagi
 # `corpus/checklist-run.sh`, kumitate `scripts/claims-check.mjs`) embedded as
-# the fifth and sixth legs, completing the six measured gates in this ledger.
+# the fifth and sixth legs; r16 (TAMESHI-R16) adds the seventh measured gate,
+# kumitate `scripts/round-gate.mjs`, as the js-round-gate leg.
 #
 # Plan anchors: r3-2 = plans/round-3.plan.md:6-7 — "the method ships as tameshi's
 # own runnable tool (tools/mutate-and-run.sh: inject->run->restore with
@@ -77,7 +78,7 @@
 # Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
 # 64 usage error.
 #
-# --regression (r4-2; r7-1 leg ledger; r10-2 six legs) — the fleet's recorded
+# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven) — the fleet's
 # mutation cases, replayed as legs. Each leg carries its recorded revision pin
 # and its recorded verdict table; the recorded kill-rate is the leg's
 # expectation:
@@ -87,14 +88,18 @@
 #   bash-mado-verify      mado-shokunin/tools/mado-verify.sh          4/10 (40 %)
 #   bash-checklist-run    kagi-shokunin/corpus/checklist-run.sh       7/15 (47 %)
 #   js-claims-check       kumitate-shokunin/scripts/claims-check.mjs  7/10 (70 %)
+#   js-round-gate         kumitate-shokunin/scripts/round-gate.mjs    5/10 (50 %)
 # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
 # mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
 # mutation-case-mado-verify.md §1, mutation-case-kagi-checklist.md §2,
-# mutation-case-kumitate-claims.md §1. All six defect specs are embedded below
-# (legs 1–4 cut from those notes' §7/§8/§9 reproduce manifests, all 40 @old
-# strings re-verified count==1 against the pinned bytes 2026-10-14; legs 5–6
-# are the recorded T8-1/T8-2 spec files, their 25 @old strings re-verified
-# count==1 against the pinned blobs at r10-2).
+# mutation-case-kumitate-claims.md §1; leg 7's predictions are pre-registered
+# in corpus/knowledge/arm-class-matrix.md §13 (before any mutant run). All
+# seven defect specs are embedded below (legs 1–4 cut from those notes'
+# §7/§8/§9 reproduce manifests, all 40 @old strings re-verified count==1
+# against the pinned bytes 2026-10-14; legs 5–6 are the recorded T8-1/T8-2
+# spec files, their 25 @old strings re-verified count==1 against the pinned
+# blobs at r10-2; leg 7's spec/table are L1-substituted placeholders pending
+# the measured sweep).
 # r7-1: the target is NOT read from the fleet working tree. Each leg is
 # materialized from its repo's git object store — `git show <rev>:<path>` — so
 # a working tree that has drifted past the recorded revision (tsukuroi and
@@ -141,8 +146,9 @@
 # throwaway git repo, the ledger engine: git-materialized replay PASS,
 # drift-immune replay of the pinned blob, blob/pin mismatch and unresolvable
 # revision SETUP, and the exact-tolerance arm where one flipped recorded entry
-# FAILs; r10-2 adds the embedded-ledger sweep: the six leg specs are written
-# and parsed, and each recorded table's ids, total and killed count are checked
+# FAILs; r10-2 adds the embedded-ledger sweep (r16 extends it to seven legs):
+# the leg specs are written and parsed, and each recorded table's ids, total
+# and killed count are checked
 # against its own spec, plus the exec-bit mirror arms (a blob committed 100755
 # runs a self-exec suite; the same bytes committed 100644 are refused at their
 # red control) — hermetic, no fleet path read). Scratch is removed on PASS,
@@ -194,10 +200,10 @@ Options:
 
 --regression replays every recorded mutation case as a leg (js-kimi-census,
 bash-surface-census, bash-tsukuroi-census, bash-mado-verify,
-bash-checklist-run, js-claims-check) at its pinned original revision,
-materialized from the repo's git object store (`git show <rev>:<path>` —
-immune to working-tree drift; a missing repo/rev/blob or a pin mismatch is a
-SETUP refusal). Each leg must reproduce its recorded verdict table exactly:
+bash-checklist-run, js-claims-check, js-round-gate) at its pinned original
+revision, materialized from the repo's git object store (`git show
+<rev>:<path>` — immune to working-tree drift; a missing repo/rev/blob or a pin
+mismatch is a SETUP refusal). Each leg must reproduce its recorded verdict table exactly:
 the recorded kill-rate is the leg's expectation (flips 0, killed-delta 0,
 count exactly the recorded defect count, inconclusive 0, control green, restore
 OK). Exit: 0 all legs PASS · 1 >= 1 leg out of band · 2 cannot verify (missing
@@ -537,7 +543,9 @@ run_sweep() {
 # pinned blobs on 2026-10-14); legs 5–6 are the recorded T8-1/T8-2 spec files
 # (/tmp/w8-tameshi-t81/checklist.spec; /tmp/w8-t8-2-claims/spec/
 # claims-check.defects.spec), re-verified count==1 against the pinned blobs at
-# r10-2. REV_* = the git revision each leg's bytes are materialized from
+# r10-2; leg 7 (js-round-gate) is measured this round — its spec and table are
+# L1-substituted placeholders. REV_* = the git revision each leg's bytes are
+# materialized from
 # (`git show <rev>:<repo path>`).
 PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 REV_JS=175de6ba2e9e904010411b19cab27e0af9aad3d4
@@ -551,12 +559,15 @@ PIN_CHECKLIST=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf
 REV_CHECKLIST=fecee8743e52eb8fb5fbb40782934cb619a1a96e
 PIN_CLAIMS=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
 REV_CLAIMS=175de6ba2e9e904010411b19cab27e0af9aad3d4
+PIN_ROUNDGATE=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
+REV_ROUNDGATE=364f1d5954158ef8844bca4a5fef57b05d2f2ca5
 TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
 TABLE_BASH='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:SURVIVED,B6:KILLED,B7:KILLED,B8:KILLED,B9:KILLED,B10:SURVIVED'
 TABLE_TSUKUROI='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:KILLED,B6:KILLED,B7:SURVIVED,B8:SURVIVED,B9:SURVIVED,B10:SURVIVED'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:SURVIVED,D4:KILLED,D5:SURVIVED,D6:KILLED,D7:SURVIVED,D8:SURVIVED,D9:SURVIVED,R1:SURVIVED'
 TABLE_CHECKLIST='A1:SURVIVED,A2:KILLED,B1:SURVIVED,B2:KILLED,B3:SURVIVED,B4:KILLED,C1:SURVIVED,C2:KILLED,D1:SURVIVED,D2:KILLED,E1:KILLED,E2:SURVIVED,F1:KILLED,F2:SURVIVED,G1:SURVIVED'
 TABLE_CLAIMS='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:SURVIVED,D8:SURVIVED,D9:SURVIVED,D10:KILLED'
+TABLE_ROUNDGATE='A1:KILLED,A3:KILLED,B1:KILLED,E3:KILLED,C1060:KILLED,C1059:SURVIVED,A2:SURVIVED,B2:SURVIVED,CKIND:SURVIVED,E1:SURVIVED'
 FLEET_ROOT=''   # set by run_regression; regression_case_git resolves repos from it
 
 table_lookup() { # <table ID:V,...> <id> -> verdict, or '-' when the id is absent
@@ -584,7 +595,7 @@ table_total() { # <table> -> number of entries
   printf '%s' "$n"
 }
 
-regression_specs() { # <dir> — write the two embedded case specs
+regression_specs() { # <dir> — write the seven embedded case specs
   local d=$1
   cat >"$d/js-kimi-census.spec" <<'EOT'
 @defect D1 | kimi-census.mjs:105
@@ -886,9 +897,74 @@ EOT
 @old join(homedir(), 'Projects', 'ufo-fsd-alpha'),\n  join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),
 @new join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),\n  join(homedir(), 'Projects', 'ufo-fsd-alpha'),
 EOT
+  # r16 leg 7: kumitate scripts/round-gate.mjs @ 364f1d5 (pin f890e277…d3e9),
+  # swept this round with 10 single-edit mutants (5/10 killed, 10/10 predictions
+  # held); the body below is the pre-registered spec, verbatim
+  # (.ufo/evidence/round-16/round-gate/round-gate.defects.spec, sha256 e99b87eb…,
+  # committed e69b488 before the sweep). Suite: the guarded env -i sandbox.
+  cat >"$d/js-round-gate.spec" <<'EOT'
+# tameshi round-16 C1 — PRE-REGISTERED mutation spec for kumitate scripts/round-gate.mjs
+# rev 364f1d5954158ef8844bca4a5fef57b05d2f2ca5 · blob sha256 f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9 · 1511 lines
+# Suite (guarded, RGSentinel): see suite.txt beside this file. Verdict oracle = exit status only
+# (KILLED = exit not in {0,124,126,127}); stdout is not byte-deterministic (mkdtemp names, RGControl).
+# Predictions are fixed here BEFORE any mutant run; composition 5 kill-aimed / 5 hole-aimed.
+# Sources: corpus/knowledge/arm-class-matrix.md §13 (projection, round 4) + wave-1 seat fragments
+# (.ufo/waves/round-16/w1/RGSpec{A,B,C,E}.spec). Operator classes: S052 (Stryker supported mutators).
+
+# PREDICT KILLED — parseVerdict full-line anchored regex :862-868; all 10 call sites assert v!==null (matrix §13.2; RGSpecA)
+@defect A1 | verdict path: audit/close verdict fields lane/checks reordered (:677) (predict KILLED)
+@old (round=${round} lane=${opts.lane} checks=${items.length}
+@new (round=${round} checks=${items.length} lane=${opts.lane}
+
+# PREDICT KILLED — rt1 :1411 and rt2 :1426 full-line regexes fail; rt8 prefix regex :1481 stays green (matrix §13.2; RGSpecA)
+@defect A3 | verdict path: tracked verdict tail errors/warnings reordered (:575-576) (predict KILLED)
+@old lines.push(`ROUND_GATE: ${verdict} (mode=tracked checked=${checked}`\n      + ` errors=${errors} warnings=${warnings})`);
+@new lines.push(`ROUND_GATE: ${verdict} (mode=tracked checked=${checked}`\n      + ` warnings=${warnings} errors=${errors})`);
+
+# PREDICT KILLED — fcA :1188 pins (REPORTS_DIR_MISSING); jFc :1283 pins findings[0].kind (matrix §13.3; RGSpecB)
+@defect B1 | fail-closed token: main-path REPORTS_DIR_MISSING site emits MAIN_REPO_NOT_GIT (:647) (predict KILLED)
+@old return failClosed(opts, mode, 'REPORTS_DIR_MISSING',
+@new return failClosed(opts, mode, 'MAIN_REPO_NOT_GIT',
+
+# PREDICT KILLED — rt3 :1432-1438 files exactly one report and pins exit 2 + token (matrix §13.3/§13.8; RGSpecE, RGMatrix D3)
+@defect E3 | predicate boundary: NO_FILED_REPORTS threshold filed.length < 2 -> < 1 (:535) (predict KILLED)
+@old if (filed.length < 2) {
+@new if (filed.length < 1) {
+
+# PREDICT KILLED — r8 report is 1059 B (matrix §13.4/§13.10 #3; RGMatrix, RGSpecC); 1060 makes it thin -> r8 kind list changes
+@defect C1060 | count floor: REPORT_MIN_BYTES 1024 -> 1060, one past the projected interval [26,1059] (:167) (predict KILLED)
+@old const REPORT_MIN_BYTES = 1024;
+@new const REPORT_MIN_BYTES = 1060;
+
+# PREDICT SURVIVED — matrix §13.4: a single edit to any integer in [26,1059] changes no fixture verdict (projected, PU1)
+@defect C1059 | count floor: REPORT_MIN_BYTES 1024 -> 1059, the upper edge of the projected interval [26,1059] (:167) (predict SURVIVED)
+@old const REPORT_MIN_BYTES = 1024;
+@new const REPORT_MIN_BYTES = 1059;
+
+# PREDICT SURVIVED — every fail-closed assert pins the (TOKEN) or a needle the prefix preserves (matrix §13.2/§13.5 #1; RGSpecA)
+@defect A2 | reported-unread: FAIL-CLOSED detail tail decorated with "detail: " (:617) (predict SURVIVED)
+@old ROUND_GATE: FAIL-CLOSED (${token}) ${detail}
+@new ROUND_GATE: FAIL-CLOSED (${token}) detail: ${detail}
+
+# PREDICT SURVIVED — no --tracked fixture with a missing reports dir (matrix §13.3, §13.6 #2; RGSpecB)
+@defect B2 | unreached species: tracked-mode REPORTS_DIR_MISSING site emits MAIN_REPO_NOT_GIT (:527) (predict SURVIVED)
+@old return failClosed(opts, 'tracked', 'REPORTS_DIR_MISSING',
+@new return failClosed(opts, 'tracked', 'MAIN_REPO_NOT_GIT',
+
+# PREDICT SURVIVED — meta-check reads enum minus observed only; shrinking the enum cannot fail it (matrix §13.4 one-sided count; RGSpecC)
+@defect CKIND | meta-check blindness: TREE_DIRTY dropped from FINDING_KINDS (:175) (predict SURVIVED)
+@old   'TREE_DIRTY', 'UNPUSHED', 'REPORT_UNTRACKED',
+@new   'UNPUSHED', 'REPORT_UNTRACKED',
+
+# PREDICT SURVIVED — cleanEnv deletes UFO_SRC; fixtures set only UFO_SRC:"" (matrix §13.6 #5; RGSpecE)
+@defect E1 | unreached arm: UFO_SRC set-value branch resolves the canonical candidate instead (:163) (predict SURVIVED)
+@old   if (typeof envSrc === 'string' && envSrc.trim() !== '') return resolve(envSrc);
+@new   if (typeof envSrc === 'string' && envSrc.trim() !== '') return resolve(SRC_CANDIDATES[0]);
+EOT
   [[ -s "$d/js-kimi-census.spec" && -s "$d/bash-surface-census.spec" \
      && -s "$d/bash-tsukuroi-census.spec" && -s "$d/bash-mado-verify.spec" \
-     && -s "$d/bash-checklist-run.spec" && -s "$d/js-claims-check.spec" ]]
+     && -s "$d/bash-checklist-run.spec" && -s "$d/js-claims-check.spec" \
+     && -s "$d/js-round-gate.spec" ]]
 }
 
 regression_case() {
@@ -1100,15 +1176,16 @@ run_regression() {
   printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   printf 'REGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=%s flips<=%s\n' \
     "$BAND_KILLED" "$BAND_FLIPS"
-  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s\n' \
+  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s\n' \
     "$(table_count "$TABLE_JS" KILLED)" "$(table_total "$TABLE_JS")" \
     "$(table_count "$TABLE_BASH" KILLED)" "$(table_total "$TABLE_BASH")" \
     "$(table_count "$TABLE_TSUKUROI" KILLED)" "$(table_total "$TABLE_TSUKUROI")" \
     "$(table_count "$TABLE_MADO" KILLED)" "$(table_total "$TABLE_MADO")" \
     "$(table_count "$TABLE_CHECKLIST" KILLED)" "$(table_total "$TABLE_CHECKLIST")" \
-    "$(table_count "$TABLE_CLAIMS" KILLED)" "$(table_total "$TABLE_CLAIMS")"
+    "$(table_count "$TABLE_CLAIMS" KILLED)" "$(table_total "$TABLE_CLAIMS")" \
+    "$(table_count "$TABLE_ROUNDGATE" KILLED)" "$(table_total "$TABLE_ROUNDGATE")"
 
-  local st_js st_kagi st_tsu st_mado st_checklist st_claims
+  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate
   regression_case_git js-kimi-census \
     'kumitate-shokunin/scripts/kimi-census.mjs' "$PIN_JS" "$REV_JS" \
     "$specs/js-kimi-census.spec" 'node "$MUTANT" --selftest' "$TABLE_JS" \
@@ -1139,9 +1216,14 @@ run_regression() {
     "$specs/js-claims-check.spec" 'node "$MUTANT" --selftest' "$TABLE_CLAIMS" \
     "$root/js-claims-check"
   st_claims=$?
+  regression_case_git js-round-gate \
+    'kumitate-shokunin/scripts/round-gate.mjs' "$PIN_ROUNDGATE" "$REV_ROUNDGATE" \
+    "$specs/js-round-gate.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES="$h" node "$MUTANT" --selftest' "$TABLE_ROUNDGATE" \
+    "$root/js-round-gate"
+  st_roundgate=$?
 
-  local nlegs=6 npass=0 nfail=0 nsetup=0 st
-  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims"; do
+  local nlegs=7 npass=0 nfail=0 nsetup=0 st
+  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate"; do
     case $st in
       0) npass=$((npass + 1)) ;;
       1) nfail=$((nfail + 1)) ;;
@@ -1563,8 +1645,9 @@ EOT
   grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1 flips=1;' "$root/rg14.out"
   st 'exact expectation flip reports killed-delta=1 flips=1' $?
 
-  # r10-2 (TAMESHI-T10-2) leg-cut resolution: the six embedded legs' specs and
-  # recorded tables must agree with each other — parse OK, the table's ids are
+  # r10-2 (TAMESHI-T10-2) leg-cut resolution; r16 adds leg 7: the seven
+  # embedded legs' specs and recorded tables must agree with each other —
+  # parse OK, the table's ids are
   # exactly the spec's ids, and the recorded total / killed counts are the ones
   # the leg set carries. Hermetic: the specs come from this tool's own
   # regression_specs; no fleet path is read (count==1 against the pinned bytes
@@ -1573,7 +1656,7 @@ EOT
   local ltot_exp lkill_exp le_ok lk_list lk_ids lk_tbl_ids
   mkdir -p "$lspecs"
   regression_specs "$lspecs" 2>"$root/ledger-specs.err"
-  st 'embedded leg specs: six files written' $?
+  st 'embedded leg specs: seven files written' $?
   lent=(
     'js-kimi-census:js-kimi-census.spec:TABLE_JS:10:8'
     'bash-surface-census:bash-surface-census.spec:TABLE_BASH:10:8'
@@ -1581,6 +1664,7 @@ EOT
     'bash-mado-verify:bash-mado-verify.spec:TABLE_MADO:10:4'
     'bash-checklist-run:bash-checklist-run.spec:TABLE_CHECKLIST:15:7'
     'js-claims-check:js-claims-check.spec:TABLE_CLAIMS:10:7'
+    'js-round-gate:js-round-gate.spec:TABLE_ROUNDGATE:10:5'
   )
   for le in "${lent[@]}"; do
     IFS=: read -r lname lfile ltbl ltot_exp lkill_exp <<<"$le"

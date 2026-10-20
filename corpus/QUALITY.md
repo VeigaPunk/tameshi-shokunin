@@ -82,3 +82,24 @@ Each criterion cites the mistake it learns from
     invocation alongside the same-command repaired result.
     (`lessons/round-15.md`, gate-misclassification and exit-class-ambiguity;
     outside `lessons/round-14-verifier-spotcheck.md`, Routed defects5)
+
+## Criteria appended — round 16
+
+18. An attributed finding ID comes from the stream's terminal structured
+    verdict, cross-checked against the process exit, never from the first
+    token match in mixed help and verdict text. The repair keeps any prior
+    structured branch (JSON) unchanged. The same command must reject the old
+    attribution and accept the repair on the same retained bytes, including a
+    forged-line fixture. The faulty receipt is corrected by an appended
+    record, never rewritten.
+    (`lessons/round-16.md`, attribution mistakes; outside
+    `lessons/round-15-verifier-spotcheck.md`, Routed defects 2)
+19. A seat note lands under the lane root or reaches the L1 as a message.
+    Every per-seat prompt names the L1 as `agent://<id>`; a bare id is a file
+    path. The round's misroot sweep checks fleet-root entries with no
+    pathspec, and it must flag the archived round-15 bytes.
+    (`lessons/round-16.md`, landing mistake)
+20. An instrument that seats execute in a wave is not edited in place during
+    that wave. Changes are staged at a separate path and installed after the
+    readers finish, and every receipt names the instrument sha it ran.
+    (`lessons/round-16.md`, scope mistake)

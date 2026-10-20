@@ -1,0 +1,86 @@
+
+## P1 — FAIL-CLOSED detail tail + stderr diagnostic (:615) :: FAIL (1)
+  PASS  exit 2
+        expected: 2
+        got     : 2
+  FAIL  stdout is exactly one FAIL-CLOSED line with full detail tail
+        expected: "ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\\n"
+        got     : "ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) detail: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\n"
+  PASS  stderr is exactly the diagnostic line
+        expected: "round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\\n"
+        got     : "round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\n"
+  PASS  fail-closed JSON top-level key set == 13 frozen keys
+        expected: checks,citations,contract,durationMs,errors,findings,lane,mode,repo,reportsDir,round,verdict,warnings
+        got     : checks,citations,contract,durationMs,errors,findings,lane,mode,repo,reportsDir,round,verdict,warnings
+  PASS  fail-closed JSON citations block is all-default
+        expected: checked=0, all lists [], both probeable null
+        got     : {"checked":0,"external":[],"unresolved":[],"notAncestor":[],"unverifiable":[],"mainProbeable":null,"originProbeable":null}
+  PASS  --json fail-closed body: checks=[] and finding detail == text tail
+        expected: checks=[] detail="--reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent"
+        got     : checks=0 detail="--reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent"
+
+[
+  {
+    "id": "P1",
+    "arm": "FAIL-CLOSED detail tail + stderr diagnostic (:615)",
+    "note": "suite fcA/jFc read the token only; this pins detail tail and the stderr line",
+    "assertions": [
+      {
+        "name": "exit 2",
+        "ok": true,
+        "expected": "2",
+        "got": "2"
+      },
+      {
+        "name": "stdout is exactly one FAIL-CLOSED line with full detail tail",
+        "ok": false,
+        "expected": "\"ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\\\\n\"",
+        "got": "\"ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) detail: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\\n\""
+      },
+      {
+        "name": "stderr is exactly the diagnostic line",
+        "ok": true,
+        "expected": "\"round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\\\\n\"",
+        "got": "\"round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\\n\""
+      },
+      {
+        "name": "fail-closed JSON top-level key set == 13 frozen keys",
+        "ok": true,
+        "expected": "checks,citations,contract,durationMs,errors,findings,lane,mode,repo,reportsDir,round,verdict,warnings",
+        "got": "checks,citations,contract,durationMs,errors,findings,lane,mode,repo,reportsDir,round,verdict,warnings"
+      },
+      {
+        "name": "fail-closed JSON citations block is all-default",
+        "ok": true,
+        "expected": "checked=0, all lists [], both probeable null",
+        "got": "{\"checked\":0,\"external\":[],\"unresolved\":[],\"notAncestor\":[],\"unverifiable\":[],\"mainProbeable\":null,\"originProbeable\":null}"
+      },
+      {
+        "name": "--json fail-closed body: checks=[] and finding detail == text tail",
+        "ok": true,
+        "expected": "checks=[] detail=\"--reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\"",
+        "got": "checks=0 detail=\"--reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\""
+      }
+    ],
+    "run": {
+      "argv": [
+        "--round",
+        "5",
+        "--repo",
+        "/tmp/tameshi-r16-L1-probe.u1wNpe/p1/lane",
+        "--reports-dir",
+        "/tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports"
+      ],
+      "status": 2,
+      "stdout": "ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) detail: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\n",
+      "stderr": "round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\n"
+    },
+    "control": {
+      "json": {
+        "status": 2,
+        "stderr": "round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tameshi-r16-L1-probe.u1wNpe/p1/absent-reports is absent\n"
+      }
+    },
+    "ok": false
+  }
+]

@@ -523,3 +523,25 @@ rather than editing §6; §12 unchanged.
 
 Companion VER-T1 erratum ("unreached" JS wording scope) lands in
 `knowledge/mutation-case-kimi-census.md` (E2 there).
+
+## Errata — round 16: §13 projection measured (append-only)
+
+§13 was a projection ("no mutant was cut", `:300-303`; PU1 `:475`). Round 16
+cut ten mutants on the same bytes (`f890e277…d3e9`, rev `364f1d5`); see
+`mutation-case-kumitate-round-gate.md`. Measured: §13.2 full-line vs prefix
+pins (A1 and A3 killed, rt8 green under A3); §13.3 species asymmetry (B1
+killed, B2 survived); §13.4 interval [26,1059] (1059 survived, 1060 killed);
+§13.4 one-sided meta-check (CKIND survived); §13.5 #1 detail tail (A2
+survived); §13.6 #5 `UFO_SRC` (E1 survived). The ten pre-registered
+predictions all held.
+
+Wave-1 re-reads of §13 at the same bytes (RGMatrix, RGSource1) found these
+corrections; they stay readings, not measurements:
+
+- The meta-check equality is at `:1490` (block `:1487-1493`), not `:1489`.
+- §13.6 omits five arms that no fixture reaches: `:401`, `:425`, `:436`,
+  `:477`, and the main-external citation branch `:377-378`. So §13.1's "every
+  arm statically covered" for REPORT_UNTRACKED is false (`:477`).
+- `:370` is false: rt3 (`:1436`) pins the NO_FILED_REPORTS detail tail.
+- `:445-446` is false: `parseArgs` (`:630`) runs before the selftest dispatch
+  (`:635`), so the nested `KUMITATE_LANE` does reach env validation.

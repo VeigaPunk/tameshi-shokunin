@@ -1,0 +1,56 @@
+{
+  "command_rows": 14,
+  "corrections": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "/tmp/tameshi-r15-verify-bcmjaf6y/lane/tools/candidate.py",
+        "--check",
+        "--expected",
+        "/tmp/tameshi-r15-verify-bcmjaf6y/usage-proof/expected.json",
+        "--receipt",
+        "--json"
+      ],
+      "expected_exit": 64,
+      "name": "usage-proof-new",
+      "observed_exit": 64,
+      "recorded_observed_id": "context_consistent",
+      "rederived_new_id": "usage_error",
+      "rederived_old_id": "context_consistent",
+      "verdict_line": "CONTEXT: USAGE_ERROR (id=usage_error exit=64)"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "/tmp/tameshi-r15-verify-bcmjaf6y/lane/tools/candidate.py",
+        "--check",
+        "--receipt",
+        "receipt.json"
+      ],
+      "expected_exit": 64,
+      "name": "gate-usage",
+      "observed_exit": 64,
+      "recorded_observed_id": "context_consistent",
+      "rederived_new_id": "usage_error",
+      "rederived_old_id": "context_consistent",
+      "verdict_line": "CONTEXT: USAGE_ERROR (id=usage_error exit=64)"
+    }
+  ],
+  "coverage_changes": [],
+  "notes": "rows in corrections asserted only expected_exit plus a separate stderr_token 'id=usage_error' in verify.py (lines 552, 558); their recorded observed_id was never oracle-compared, so receipts stayed green while the attribution field was wrong",
+  "old_rule_fidelity_failures": [],
+  "repair": "round-15 routed defect 2: verify.py first-id= token extraction attributed help-text ids instead of the terminal structured verdict",
+  "round": 16,
+  "rules": {
+    "new": "verify.py JSON branch unchanged; text rows: last full-line CONTEXT: verdict whose exit= equals the process exit; verdicts on both streams -> null",
+    "old": "verify.py:138 ID_TOKEN_RE plus verify.py:196-210: JSON-last-line id when stdout_is_result_json, else first id=([a-z_]+) in stdout then stderr"
+  },
+  "schema": "tameshi-attribution-correction-v1",
+  "source_receipt": {
+    "mutated": false,
+    "path": ".ufo/evidence/round-15/verification-3.json",
+    "sha256": "3c419055723319f50611eb7d2fa3de46e4d4c37fb405267609eee80aecc7d8ce"
+  }
+}

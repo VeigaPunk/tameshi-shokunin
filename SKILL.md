@@ -12,7 +12,7 @@ the method as an executable recipe: numbered steps from pin to restore proof,
 defect templates with exact-string guidance, kill-rate bands, restore
 discipline, the measured bash-vs-JS divergences, and complete reproduce specs
 for both cases (Appendix A / Appendix B). Historical cold-read proof covers
-one JS mutant only; current full-sweep/bash sufficiency remains unverified.
+one JS mutant only; round 16 adds a full-page cold-read (Errata — round 16).
 
 ## Standing rules
 
@@ -60,7 +60,7 @@ differing revision re-resolves rather than trusts.
 | Shape | Answers | Runs against | Green means (and only means) | Source |
 |---|---|---|---|---|
 | **Hermetic suite** (`--selftest`) | does the tool's own machinery work | fixtures under `mkdtemp` only, cleaned in `finally`; no live path read | every asserted case fired on generated data; passes in any repo state | gates-survey-kumitate.md:19-31 |
-| **Live gate** (default mode) | what the current substrate state is | the live host/tree, read-only | measured counts on the verdict line; exit lattice 0/1/2 (usage 64) | gates-survey-kagi.md:24-31, 75-88 |
+| **Live gate** (default mode) | what the current substrate state is | the live host/tree, read-only | measured counts on the verdict line; exit lattice 0/1/2 (kagi folds usage/setup into 2; 64 is kumitate's hermetic usage code) | gates-survey-kagi.md:24-31, 75-88 |
 | **Audit lane** | do claims about a named revision still hold | retained outputs + the committed revision | per-claim verdict (`CONFIRMED`/`UNVERIFIABLE`); byte-identity first | verification-patterns-fleet.md:28-35, 69-74 |
 
 Rules:
@@ -131,8 +131,8 @@ disabled or attacked mechanism makes exactly the targeted cases fail.
 ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
 
 Runs a suite's own code through one-exact-edit mutants and measures what it
-catches. The recipe is intended to be self-contained; observed cold-read proof
-covers one historical JS mutant, not full sweeps, survivor probes or bash.
+catches. The recipe is intended to be self-contained; round 16's full-page
+cold-read executed it end to end (two seats; Errata — round 16).
 Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
 
 1. **Pick the target and prove its control.** The suite must run hermetically
@@ -268,16 +268,16 @@ expect:  killed|survived — because <which cases should see it and how>
    `all unique` required. Re-derive on any substrate movement.
 2. **Include the full line when indentation disambiguates.** Round 2 D3 is
    `      if (!e.children.includes(n)) {` with six leading spaces in the driver
-   — a two-space substring also occurs once, but produces a *different mutant*
-   and different bytes. Exact means exact.
+   — a two-space substring also occurs once and yields the byte-identical mutant;
+   the full line keeps `count == 1` robust when nearby code moves.
 3. **One behavior per edit; minimal edit wins.** A defect that changes two
    mechanisms cannot be read for which class the suite saw
    (mutation-case-kimi-census.md:22-25).
 4. **Literal replacement, never regex.** Use `str.replace(old, new, 1)` (both
    drivers). Code carries regex metacharacters — `(mode & m.modeFloor)`,
-   `${n}`, `slice(0, 6)`, `[[ "$got" -ge "$floor" ]]` all appear in the two
-   manifests (mutation-case-kimi-census.md:156-166;
-   mutation-case-kagi-census.md:218-236); a regex substitution silently
+   `${n}`, `slice(0, 6)`, `[[ "$got" -ge "$floor" ]]` appear in the manifests
+   (mutation-case-kimi-census.md:156-166; mutation-case-kagi-census.md:218-236;
+   `${n}` in Appendix A's D4 below); a regex substitution silently
    mis-scopes on them. If a line editor must be used, escape metacharacters or
    prefer literal-mode tools.
 5. **Byte-level exactness:** preserve quoting, spacing, and the trailing
@@ -358,7 +358,7 @@ Rules:
   (mutation-case-kimi-census.md:59-76).
 - **When mutation testing is not worth it.** (a) Defects already caught by the
   green baseline or an exact verdict-line assert need no mutant budget — D1/D3
-  die on the same 16 cases (mutation-case-kimi-census.md:74-76); mutants pay
+  die on 16 cases each, 14 shared (mutation-case-kimi-census.md:74-76); mutants pay
   where the asserts cannot look (D2/D10/B5/B10). (b) A suite that never runs in
   the path that matters yields no signal: cite-check's mutation control is
   integration-gated and never runs under `--selftest`
@@ -502,7 +502,7 @@ Exit 2 is not one class. A red run means different things — read the arm:
 |---|---|---|---|
 | **SETUP** — cannot measure | input missing/unusable (`--src` gone, `op` absent, fixture dir not a dir) | exit 2, a named line before any effect (`ADJACENCY_SCOPE: SETUP (…)`), never a bare death | gates-survey-kagi.md:93-99 |
 | **Malformed committed data** | a census row / declaration is malformed | census `die`s exit 2 ("not a verdict"); scope-gate accumulates `BAD-ROW` → `DEFECT` exit 1 — opposite calls, both deliberate | gates-survey-kagi.md:100-106 |
-| **POLICY** — refused before the effect | the act would leak/overstep: non-regular or `op://`-carrying op-side paths; claim rows outside a 5-verb allowlist (quote-stripped before matching; 22 denied verbs); nested self-audit; stamp-set shrink without `--prune`; checklist rows naming `op.env`; hashing a no-hash path | exit 2, structural, before exec | gates-survey-kagi.md:107-138 |
+| **POLICY** — refused before the effect | the act would leak/overstep: non-regular or `op://`-carrying op-side paths; claim rows outside a 5-verb allowlist (quote-stripped before matching; 23 denied verbs); nested self-audit; stamp-set shrink without `--prune`; checklist rows naming `op.env`; hashing a no-hash path | exit 2, structural, before exec | gates-survey-kagi.md:107-138 |
 | **Zero-work** | the gate would report over nothing | refused; a gate that measures nothing must not exit 0 | gates-survey-kagi.md:139-143 |
 | **Deferral** | substrate absent for a `[substrate]`-tagged row | `DEFER … reason=substrate-absent`, counted, not executed, never FAIL; guards: tag lives in the data file, both-paths selftest | gates-survey-kagi.md:187-197 |
 
@@ -511,8 +511,8 @@ Rules:
 - **Declare arms as tokens and prove coverage — or say it is unproven.** Proxy
   12/12 arms fired; claims 5/5; kimi-census 1 token, 3 cases; round-gate 7
   declared / 6 fired (`INTERNAL_ERROR` uncovered); surface-probe and cite-check
-  have no token enum, so their exit-2 paths are uncovered until a case asserts
-  them (gates-survey-kumitate.md:287-292).
+  have no token enum: each asserts one CLI `--src` exit-2 arm, the rest of their
+  exit-2 paths have no arm accounting (gates-survey-kumitate.md:287-292).
 - **Name the arm in the verdict:** `FAIL-CLOSED (TOKEN)`, never a free-form
   string; where no enum exists the suite can neither declare nor assert arm
   coverage (gates-survey-kumitate.md:106-118).
@@ -922,7 +922,7 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
 
 Round 7 turns `--regression` from the tool's two-case self-check into the
 fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
-pinned original revision. Four legs at this revision — `js-kimi-census`
+pinned original revision. Four legs at that revision (r7-1; seven since round 16) — `js-kimi-census`
 (r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
 `bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
 — each with its recorded kill-rate as its expectation
@@ -947,7 +947,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md`.
   replay; a missing repo/rev/blob or a pin mismatch is a SETUP refusal before
   any suite runs.
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
-  (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)` with the
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
@@ -1387,10 +1387,10 @@ lands in the round's record, not here.
 | `corpus/knowledge/service-optin-protocol.md` | request shape, the re-pin rule, read-only guarantees, report shape, boundaries | your lane wants a sweep — or receives one |
 | `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
-| `corpus/knowledge/mutation-case-*.md` (six) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
 | `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry, git-materialized replay) | any sweep or replay |
 | `corpus/README.md` | the coverage map — one row per note, holds + sources | checking what the corpus holds |
-| `plans/round-N.plan.md`, `plans/round-N-record-draft.md` | each round's plan and record by convention; the round-11 record lands there; the completion pack (`plans/completion-evidence.md`, this wave, uncommitted at this write) collects the per-round lines and debts | auditing a round's receipts |
+| `plans/round-N.plan.md`, `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10); the round-11 record landed in `corpus/knowledge/closeout-r11.md`; the completion pack (`plans/completion-evidence.md`, this wave, uncommitted at this write) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
 
 ### Boundary readings, executed by this lane
@@ -1469,7 +1469,7 @@ Tameshi-dispatched reviewers remain part of tameshi for promotion authority
 (`../PROTOCOL.md:63–68`); a different agent name does not justify `[x]`.
 Lane assertions use `[~]` with durable evidence, not temporary logs.
 
-Box 3 remains `[ ]`: `corpus/knowledge/executor-test-sufficiency.md:160–184`
+Box 3 was `[ ]` at this write (`[~]` since; Errata — round 16): `executor-test-sufficiency.md:160–184`
 establishes a historical single-JS-mutant exercise, not a current full cold-read.
 The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;
 it is not a cold-reader exercise or an outside promotion/admission review.
@@ -1611,7 +1611,7 @@ checks do not acquire new expected rows by being mentioned in a summary.
 Sources: S051 (maintained retained-context gate, opened this round),
 S049 (explicit child invocation), `corpus/lessons/round-15.md` (Gate and
 Mistakes), and `corpus/lessons/round-14-verifier-spotcheck.md`, Routed
-defects item 5; `PROTOCOL.md` §Gate standard. This appendix corrects the
+defects item 5; `../PROTOCOL.md` §Gate standard. This appendix corrects the
 active registry classification and exit classes. Effective runtime evidence is
 `.ufo/evidence/round-15/verification-3.json`; the two earlier failed harness
 receipts remain retained history, not green evidence or outside admission.
@@ -1703,3 +1703,94 @@ edited snapshot or unavailable input stays exit2, with any expectation
 disagreement secondary. A clean result with a wrong id/exit pin becomes
 failed/exit1. Help exits0 only as a non-verdict informational mode; selftest
 exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation.
+
+## Errata — round 16 full-page cold-read (append-only)
+
+Round 16 cold-read every section of this page (snapshot sha256
+`97cf436b…3580`, 51 buckets = preamble + 50 headings outside code fences)
+with 30 lane seats; reports `.ufo/waves/round-16/w1/CR*.md`, ledger
+`.ufo/evidence/round-16/coldread/ledger.json`. Wrong expectations were repaired
+in place with the line count of every edited section unchanged, so every
+`SKILL.md:<line>` self-anchor still resolves; the old wording stays in git
+(`git show 97cf436b…` is the snapshot blob at commit `e69b488`). Repairs:
+
+| Snapshot line | Was | Now | Found by |
+|---|---|---|---|
+| 15 | cold-read proof covers one JS mutant only; sufficiency unverified | points here | CRCritic1 |
+| 134-135 | observed cold-read proof covers one historical JS mutant | round 16 executed the recipe end to end (CR04a, CR04b) | CRCritic1 |
+| 61 | live gate "exit lattice 0/1/2 (usage 64)" | kagi folds usage/setup into 2; 64 is kumitate's hermetic usage code (`claim-ledger.sh --bogus-flag` → 2, `claims-check.mjs --bogus-flag` → 64) | CR02 |
+| 269-270 | a two-space substring "produces a *different mutant*" | it yields the byte-identical mutant; the full line keeps `count == 1` robust | CR05 |
+| 277-279 | `${n}` said to appear in the two notes' manifests | `${n}` is in Appendix A's D4 on this page; the notes carry the other three tokens | CR05 |
+| 360-361 | D1/D3 "die on the same 16 cases" | 16 cases each, 14 shared | CR06 |
+| 505 | 22 denied verbs | 23 (`claim-ledger.sh:164`) | CR10 |
+| 513-515 | surface-probe and cite-check exit-2 paths "uncovered" | each asserts one CLI `--src` exit-2 arm; no arm accounting beyond it | CR10 |
+| 925 | "Four legs at this revision" | dated: four at r7-1, seven since round 16 | CR16 |
+| 949-950 | receipt literal `cases=4` | `cases=N`, N per revision | CR16 |
+| 1388, 1392 | mutation-case notes "(six)"; round-11 record "lands" in `plans/` | dated count; the record is `corpus/knowledge/closeout-r11.md` | CR23 |
+| 1472 | "Box 3 remains `[ ]`" | dated: `[ ]` at that write, `[~]` since | CRCritic1, CRCritic2 |
+| 1614 | `PROTOCOL.md` §Gate standard | `../PROTOCOL.md` (fleet root; the lane holds none) | CR27 |
+
+Minor gaps (non-blocking, kept as named debt in the ledger): dead `/tmp`
+evidence paths in records of rounds 6–9; anchors written as tool sha256 values
+rather than git revisions (`cf41efaa…`, `597e1419…`); Appendix B survivor-probe
+fixture contents are not spelled out (seats rebuilt them from the gate's
+header schema); `git status --porcelain` on a sibling may take its index lock —
+prefer `git --no-optional-locks -C <repo> status --porcelain`.
+
+## Seventh recorded case and full-page cold-read — round 16
+
+**The seventh case.** kumitate `scripts/round-gate.mjs` at rev `364f1d5`
+(blob sha256 `f890e277…a834d3e9`, 60-case hermetic `--selftest`) against 10
+single-edit mutants → **5/10 killed (50 %)**, control green, 0 inconclusive,
+`MUTATE_RESTORE: OK`; every one of the 10 predictions, committed in `e69b488`
+before the sweep, held. Detail of record:
+`corpus/knowledge/mutation-case-kumitate-round-gate.md`. The case is ledger leg
+`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7`).
+
+Reproduce it (read-only on kumitate; scratch in `/tmp`):
+
+```sh
+W=$(mktemp -d /tmp/tameshi-r16-rg.XXXXXX)
+git -C ~/Projects/shokunin/kumitate-shokunin show 364f1d5954158ef8844bca4a5fef57b05d2f2ca5:scripts/round-gate.mjs > "$W/round-gate.mjs"
+sha256sum "$W/round-gate.mjs"   # f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
+E=.ufo/evidence/round-16/round-gate
+bash tools/mutate-and-run.sh --target "$W/round-gate.mjs" --defects "$E/round-gate.defects.spec" \
+  --suite "$(cat "$E/suite.txt")" --label js-round-gate --workdir "$W/work"
+# expect: CONTROL: GREEN ... MUTATE: DONE (... killed=5 survived=5 inconclusive=0 kill-rate=50%)
+```
+
+Rules this case adds:
+
+- **Sandbox a suite that shells out to git.** round-gate's fixtures run `git`
+  with the inherited environment: an exported `GIT_DIR` makes the pristine
+  control commit into that repository, and a `TMPDIR` inside a work tree turns
+  the control red. Run the suite under `env -i` with its own `HOME` and
+  `TMPDIR` (the string in `suite.txt`); the ledger leg carries the same string.
+- **Grade by exit, not by stdout bytes**, when the suite prints `mkdtemp`
+  names: three pristine runs differ byte-for-byte yet exit 0 every time, so a
+  repeated-control byte comparison reports `controls_mismatch` (exit 1) for a
+  deterministic verdict. `tools/mutate-and-run.sh` grades on exit only.
+- **Test a projected interval at its edge.** The round-4 projection said any
+  `REPORT_MIN_BYTES` in [26, 1059] keeps every fixture verdict; the mutant at
+  1059 survived and the one at 1060 was killed by the 1059-byte fixture. A
+  midpoint edit would not have tested the bound.
+- **Show each survivor is not equivalent off-suite** before calling it a gap:
+  run the survivor-probe harness (`$E/survivor-probes/probes.mjs`, probe ids in
+  the case note) on the pristine copy (exit 0) and on the mutant (exit 1).
+
+**The full-page cold-read.** Every bucket of this page was read by a seat
+that saw only the page and what it names; instructions were executed in
+`/tmp`, records re-anchored. The errata section above lists what it found and
+repaired; repaired and new sections were re-read in wave 2. The counting
+command: `python3 .ufo/evidence/round-16/measure.py --rev REV` (field
+`coldread.box3_full_page`). Lane seats are the lane: this earns the box-3
+lane assertion (`[~]`), never an independent `[x]`.
+
+### Round-16 gate/probe registry
+
+| Name | Kind | Command | Exits |
+|---|---|---|---|
+| `tools/mutate-and-run.sh` | gate | `bash tools/mutate-and-run.sh --selftest` · `--regression` | selftest 0 pass / 1 fail; regression 0 PASS · 1 FAIL · 2 SETUP · 64 usage |
+| `.ufo/evidence/round-16/measure.py` | probe | `python3 .ufo/evidence/round-16/measure.py --rev REV` · `--selftest` | 0 measured · 2 rev/blob missing · 64 usage |
+| `.ufo/evidence/round-16/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` | 0 every bucket covered · 1 a bucket uncovered or a report rejected · 64 usage |
+| `.ufo/evidence/round-16/attribution/reattribute.py` | probe | `python3 .ufo/evidence/round-16/attribution/reattribute.py --selftest` | 0 corrected rule passes the oracle · 1 it fails |

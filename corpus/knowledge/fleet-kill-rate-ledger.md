@@ -399,3 +399,15 @@ successor sweep joins the existing tsukuroi/mado successor debt.
 The probe does not evaluate ancestry, so `changed` is not relabelled
 `stale` by inference here. It runs no sibling suite, closes no mutation
 re-sweep and produces no new kill-rate or recorded case.
+
+## Round 16 — seventh row appended (2026-10-20)
+
+Appended; nothing above is edited. The row for kumitate `round-gate.mjs` in
+the §5 queue said `unmeasured`. It is measured now:
+
+| gate | suite | rate (composition) | survivors | sweep | pin |
+|---|---|---|---|---|---|
+| kumitate `scripts/round-gate.mjs` (leg `js-round-gate`) | `--selftest`, 60 checks, under the `env -i` guard | **5/10 (50 %)**; 5 kill-aimed / 5 hole-aimed, 10/10 predictions held | C1059 floor edge, A2 fail-closed detail tail, B2 tracked species, CKIND enum shrink (equivalent for gate behaviour), E1 `UFO_SRC` set-value | 2026-10-20T13:40:15Z, runner `75ed934d…` | rev `364f1d5`, sha256 `f890e277…d3e9` |
+
+Detail of record: `mutation-case-kumitate-round-gate.md`. Receipt: `REGRESSION:
+PASS (cases=7 passed=7 …)` at runner `89722ddb…`.

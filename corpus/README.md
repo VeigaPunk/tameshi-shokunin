@@ -215,3 +215,23 @@ registered frozen0, explicit missing-env1/tamper2/usage64. The earlier two
 failed harness receipts remain history; the lesson explains the copied-tool
 layout and dropped-regex repairs. S051 enters as own-work support, and no
 new `knowledge/` ground or external admission is inferred from this replay.
+
+## Round 16 — seventh recorded case and full-page cold-read
+
+Appended; rows above keep their line numbers. QUALITY 7: the new note gets
+its row in the same round.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/mutation-case-kumitate-round-gate.md` | case 7: kumitate `round-gate.mjs` 5/10 (50 %), 10/10 pre-registered predictions held; projected floor interval [26,1059] confirmed at its edge (1059 survives, 1060 killed); guarded `env -i` suite; ledger leg `js-round-gate` (`--regression` cases=7) | S053, S052, S056, S057; `arm-class-matrix.md` §13 |
+
+Superseded readings, dated, not rewritten: rows 47 and 49 above (the arm-class
+matrix and the kill-rate ledger) describe six recorded cases; there are seven
+since round 16. Row 15's prior box-3 evidence (partial) and the four
+"full-page cold-read / box 3 open" sentences at lines 143-146, 160, 190 and 207
+are superseded by `.ufo/evidence/round-16/coldread/ledger.json`, the full-page
+cold-read ledger (lane assertion, no independent promotion review). No
+frontier item moves to Core: the cold-read is calibration evidence, and F8
+needs a mutant-side survivor probe tied to an independently anchored
+expectation. Round 16 records mutant-side probes, but against SurvivorPrep's
+pristine-derived expectations only.
