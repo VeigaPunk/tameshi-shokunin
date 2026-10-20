@@ -888,6 +888,27 @@ def _selftest():
         check("relaxing override rejected (exit 2)", code4 == 2,
               "got %d" % code4)
 
+        # round-16 w2 MutateAssemble survivors: executed-ok with minor gaps
+        # downgrades; an equal-rank "stricter" override is rejected.
+        check("minor_gaps downgrade executed-ok -> gap-minor",
+              effective_verdict({"verdict": "executed-ok",
+                                 "minor_gaps": ["x"]}) == "gap-minor")
+        ov_equal = os.path.join(td, "ov_equal.json")
+        json.dump(
+            {"overrides": [
+                {"sha256": secs_pre[1]["sha256"], "verdict": "gap-blocking",
+                 "reason": "equal rank is not stricter"}
+            ]},
+            open(ov_equal, "w"),
+        )
+        code4b = main(
+            ["--skill", sk_pre, "--skill", sk_post, "--out", out,
+             "--override", ov_equal, os.path.join(td, "seat*.md")],
+            stdout=io.StringIO(),
+        )
+        check("equal-rank override rejected (exit 2)", code4b == 2,
+              "got %d" % code4b)
+
         # Override: stricter mode applies.
         ov_strict = os.path.join(td, "ov_strict.json")
         json.dump(

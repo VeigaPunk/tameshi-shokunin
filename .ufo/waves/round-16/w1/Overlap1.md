@@ -215,3 +215,5 @@ for n in harness-integrity gate-evidence rlm-dispatch; do
 ```
 
 Every result above was observed in this session via these or equivalent commands (scratch paths differ); the manifest content is byte-identical to §3. Outputs quoted above are verbatim, truncated only where marked `…`.
+
+Erratum (2026-10-20, appended): §2's sweep comment at :34 wrongly lists game-dev-3d among lanes lacking SKILL.md — `game-dev-3d-shokunin/SKILL.md` exists and is tracked (`git -C game-dev-3d-shokunin ls-files --error-unmatch SKILL.md` rc=0); the absent set is audio, game-dev-2d, revenger (3 lanes), so 18/21 lanes carry SKILL.md, consistent with :47 and §9, and no §4–§9 row depends on the erroneous comment.

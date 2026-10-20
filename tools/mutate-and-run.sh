@@ -92,14 +92,15 @@
 # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
 # mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
 # mutation-case-mado-verify.md §1, mutation-case-kagi-checklist.md §2,
-# mutation-case-kumitate-claims.md §1; leg 7's predictions are pre-registered
-# in corpus/knowledge/arm-class-matrix.md §13 (before any mutant run). All
+# mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1
+# (leg 7's spec, predictions.json sha e99b87eb…, committed e69b488 before the
+# sweep; arm-class-matrix.md §13 is only the projection it drew on). All
 # seven defect specs are embedded below (legs 1–4 cut from those notes'
 # §7/§8/§9 reproduce manifests, all 40 @old strings re-verified count==1
 # against the pinned bytes 2026-10-14; legs 5–6 are the recorded T8-1/T8-2
 # spec files, their 25 @old strings re-verified count==1 against the pinned
-# blobs at r10-2; leg 7's spec/table are L1-substituted placeholders pending
-# the measured sweep).
+# blobs at r10-2; leg 7's spec is the pre-registered round-16 spec verbatim
+# and its table is the measured 2026-10-20 sweep).
 # r7-1: the target is NOT read from the fleet working tree. Each leg is
 # materialized from its repo's git object store — `git show <rev>:<path>` — so
 # a working tree that has drifted past the recorded revision (tsukuroi and
@@ -543,8 +544,8 @@ run_sweep() {
 # pinned blobs on 2026-10-14); legs 5–6 are the recorded T8-1/T8-2 spec files
 # (/tmp/w8-tameshi-t81/checklist.spec; /tmp/w8-t8-2-claims/spec/
 # claims-check.defects.spec), re-verified count==1 against the pinned blobs at
-# r10-2; leg 7 (js-round-gate) is measured this round — its spec and table are
-# L1-substituted placeholders. REV_* = the git revision each leg's bytes are
+# r10-2; leg 7 (js-round-gate) was measured in round 16 — its spec is the
+# pre-registered spec verbatim, its table the measured sweep. REV_* = the git revision each leg's bytes are
 # materialized from
 # (`git show <rev>:<repo path>`).
 PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
@@ -1657,6 +1658,16 @@ EOT
   mkdir -p "$lspecs"
   regression_specs "$lspecs" 2>"$root/ledger-specs.err"
   st 'embedded leg specs: seven files written' $?
+  # r16: leg-count agreement (MutateLeg w2 survivors (b)/(c)): the selftest's
+  # leg tuples, the regression call sites, the written spec files and the
+  # declared nlegs must all be the same number, so a leg dropped from any one
+  # list fails here instead of shrinking the selftest silently.
+  local lcalls lfiles lnlegs
+  lcalls=$(grep -cE '^  regression_case_git (js|bash)-' "$SELF")
+  lfiles=$(find "$lspecs" -maxdepth 1 -name '*.spec' | wc -l)
+  lnlegs=$(sed -n 's/^  local nlegs=\([0-9][0-9]*\) .*/\1/p' "$SELF")
+  [[ "$lcalls" -eq 7 && "$lfiles" -eq 7 && "$lnlegs" -eq 7 ]]
+  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 7)" $?
   lent=(
     'js-kimi-census:js-kimi-census.spec:TABLE_JS:10:8'
     'bash-surface-census:bash-surface-census.spec:TABLE_BASH:10:8'
@@ -1666,6 +1677,8 @@ EOT
     'js-claims-check:js-claims-check.spec:TABLE_CLAIMS:10:7'
     'js-round-gate:js-round-gate.spec:TABLE_ROUNDGATE:10:5'
   )
+  [[ ${#lent[@]} -eq 7 ]]
+  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 7)" $?
   for le in "${lent[@]}"; do
     IFS=: read -r lname lfile ltbl ltot_exp lkill_exp <<<"$le"
     le_ok=1

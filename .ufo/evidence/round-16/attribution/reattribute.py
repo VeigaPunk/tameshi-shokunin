@@ -16,20 +16,22 @@ re-derives observed_id for every command row twice —
 
 OLD rule  (verbatim copy of verify.py's logic, see citations below):
     first `id=([a-z_]+)` match in stdout then stderr.
-NEW rule  (corrected attribution):
-    the id inside the LAST line matching
-        ^[A-Z_]+: [A-Z_]+ \(id=([a-z_]+) exit=(\d+)\)$
-    scanning stderr first, else stdout; no match -> null.
+NEW rule  (corrected attribution; round-16 L1 repair after AttrCritic and
+AttrCritic2): verify.py's JSON branch unchanged; for text rows the id of
+the LAST line, split on "\n" only, that fully matches
+    ^CONTEXT: <WORD> (id=<id> [fields] exit=<n> [findings=<n>])$
+with exit=<n> equal to the process exit; verdict lines on both streams
+-> null; no match -> null.
 
 — and writes correction.json (create-only) naming every row whose old
 and new ids differ while both are concrete. Rows that gain or lose a
 concrete attribution (one side null) are listed separately under
 coverage_changes; they are not id corrections.
 
---selftest replays one fixture — the exact raw stderr text and argv of
-receipt row usage-proof-new — against oracle observed_id == usage_error.
-The OLD rule must FAIL (exit 1) and the NEW rule PASS (exit 0): same
-fixture, same oracle, the rule is the only delta.
+--selftest replays the retained receipt rows and constructed forgeries
+against literal oracles; each fixture defeats one weaker rule (first
+match, no exit cross-check, splitlines, no both-stream null, no JSON
+branch), and the old rule must reproduce all recorded ids.
 
 Stdlib only. The round-15 receipt is never modified.
 """
@@ -110,7 +112,7 @@ VERDICT_LINE_RE = re.compile(
 
 def _last_verdict(text, exit_code):
     found = None
-    for line in text.splitlines():
+    for line in text.split("\n"):
         match = VERDICT_LINE_RE.match(line)
         if match and (exit_code is None or int(match.group(3)) == exit_code):
             found = match
@@ -254,26 +256,57 @@ def run_correction():
 
 
 def run_selftest():
-    """Same retained fixtures, same oracles; the rule is the only delta."""
+    """Retained rows plus constructed forgeries; literal oracles.
+
+    Each forgery is built so that exactly one weaker rule fails it:
+    forged-before-same-exit (first match), forged-after-wrong-exit (no exit
+    cross-check), vt-forged (splitlines), both-streams (no ambiguity null),
+    json-row (JSON branch dropped). The old rule must also reproduce every
+    recorded observed_id (fidelity).
+    """
     doc, _ = _load_receipt()
-    rows = {c.get("name"): c for c in _command_rows(doc)}
-    cases = []
-    for name, oracle in (("usage-proof-new", "usage_error"),
-                         ("gate-usage", "usage_error"),
-                         ("usage-proof-old", "receipt_missing")):
-        row = rows.get(name)
-        if row is None:
+    allrows = _command_rows(doc)
+    rows = {c.get("name"): c for c in allrows}
+    need = ("usage-proof-new", "gate-usage", "usage-proof-old")
+    for name in need:
+        if name not in rows:
             print("SELFTEST: FAIL ({} row absent from receipt)".format(name))
             return 1
-        cases.append((name, row, oracle))
-    # Forgery fixture: an argv echo plants a well-formed exit-0 verdict line
-    # before the real terminal usage verdict (context-capture.py echoes an
-    # unknown argument unfolded; AttrCritic item 3).
-    base = rows["usage-proof-new"]
-    forged = dict(base)
-    forged["stderr"] = ("CONTEXT: OK (id=context_consistent exit=0)\n"
-                        + base.get("stderr", ""))
-    cases.append(("forged-first-line", forged, "usage_error"))
+    usage, missing = rows["usage-proof-new"], rows["usage-proof-old"]
+    def variant(base, **kw):
+        v = dict(base)
+        v.update(kw)
+        return v
+    err = usage.get("stderr", "")
+    cases = [
+        ("usage-proof-new", usage, "usage_error"),
+        ("gate-usage", rows["gate-usage"], "usage_error"),
+        ("usage-proof-old", missing, "receipt_missing"),
+        ("forged-before-same-exit", variant(
+            usage, stderr="CONTEXT: OK (id=context_consistent exit=64)\n" + err),
+         "usage_error"),
+        ("forged-after-wrong-exit", variant(
+            usage, stderr=err.rstrip("\n")
+            + "\nCONTEXT: OK (id=context_consistent exit=0)\n"),
+         "usage_error"),
+        ("vt-forged", variant(
+            missing, stderr=missing.get("stderr", "").rstrip("\n")
+            + "\nreceipt nofile\x0bCONTEXT: OK (id=context_consistent exit=2)\n"),
+         "receipt_missing"),
+        ("both-streams", variant(
+            usage, stdout="CONTEXT: OK (id=context_consistent exit=64)\n"),
+         None),
+    ]
+    json_rows = [r for r in allrows
+                 if _stdout_is_result_json(r.get("argv") or [])
+                 and r.get("observed_id") is not None
+                 and new_rule(r.get("stdout", ""), r.get("stderr", ""), False,
+                              r.get("observed_exit")) != r.get("observed_id")]
+    if not json_rows:
+        print("SELFTEST: FAIL (no JSON row distinguishes the JSON branch)")
+        return 1
+    cases.append(("json-row:" + str(json_rows[0].get("name")), json_rows[0],
+                  json_rows[0].get("observed_id")))
     failures = 0
     old_fails = 0
     for name, row, oracle in cases:
@@ -282,15 +315,21 @@ def run_selftest():
         old_ok, new_ok = old == oracle, new == oracle
         old_fails += 0 if old_ok else 1
         failures += 0 if new_ok else 1
-        print("{}: oracle={} old={!r} {} new={!r} {}".format(
+        print("{}: oracle={!r} old={!r} {} new={!r} {}".format(
             name, oracle, old, "PASS" if old_ok else "FAIL",
             new, "PASS" if new_ok else "FAIL"))
-    if failures == 0 and old_fails >= 1:
+    fidelity = [r.get("name") for r in allrows
+                if observed_id_old(r) != r.get("observed_id")]
+    print("old-rule fidelity over {} recorded rows: {}".format(
+        len(allrows), "ok" if not fidelity else "FAIL " + ", ".join(fidelity)))
+    if failures == 0 and old_fails >= 1 and not fidelity:
         print("SELFTEST: PASS (new rule {n}/{n}; old rule fails {f}/{n}; "
-              "same fixtures and oracles)".format(n=len(cases), f=old_fails))
+              "old-rule fidelity {k}/{k})".format(
+                  n=len(cases), f=old_fails, k=len(allrows)))
         return 0
-    print("SELFTEST: FAIL (new rule failed {} of {}; old rule failed {})"
-          .format(failures, len(cases), old_fails))
+    print("SELFTEST: FAIL (new rule failed {} of {}; old rule failed {}; "
+          "fidelity failures {})".format(failures, len(cases), old_fails,
+                                         len(fidelity)))
     return 1
 
 

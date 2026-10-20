@@ -1,0 +1,54 @@
+{
+ "tool_sha256": "eaf564e42629634e21bc2ee1aa70932a1024d721eba664f8ed892640590015c1",
+ "mutants": {
+  "first-match": {
+   "verdict": "KILLED",
+   "last_line": "SELFTEST: FAIL (new rule failed 1 of 8; old rule failed 5; fidelity failures 0)",
+   "edit": {
+    "old": "        if match and (exit_code is None or int(match.group(3)) == exit_code):\n            found = match",
+    "new": "        if match and (exit_code is None or int(match.group(3)) == exit_code) and found is None:\n            found = match"
+   }
+  },
+  "no-exit-check": {
+   "verdict": "KILLED",
+   "last_line": "SELFTEST: FAIL (new rule failed 1 of 8; old rule failed 5; fidelity failures 0)",
+   "edit": {
+    "old": "(exit_code is None or int(match.group(3)) == exit_code)",
+    "new": "True"
+   }
+  },
+  "splitlines": {
+   "verdict": "KILLED",
+   "last_line": "SELFTEST: FAIL (new rule failed 1 of 8; old rule failed 5; fidelity failures 0)",
+   "edit": {
+    "old": "for line in text.split(\"\\n\"):\n        match = VERDICT_LINE_RE",
+    "new": "for line in text.splitlines():\n        match = VERDICT_LINE_RE"
+   }
+  },
+  "no-both-null": {
+   "verdict": "KILLED",
+   "last_line": "SELFTEST: FAIL (new rule failed 1 of 8; old rule failed 5; fidelity failures 0)",
+   "edit": {
+    "old": "    if on_err is not None and on_out is not None:\n        return None\n",
+    "new": ""
+   }
+  },
+  "no-json-branch": {
+   "verdict": "KILLED",
+   "last_line": "SELFTEST: FAIL (new rule failed 1 of 8; old rule failed 5; fidelity failures 0)",
+   "edit": {
+    "old": "    if stdout_is_result_json:\n        try:\n            result_doc = json.loads(stdout.strip().splitlines()[-1])\n        except (ValueError, IndexError):\n            result_doc = None\n        if type(result_doc) is dict and result_doc.get(\"id\") is not None:\n            return result_doc.get(\"id\")\n    on_err",
+    "new": "    on_err"
+   }
+  },
+  "stdout-first": {
+   "verdict": "SURVIVED",
+   "last_line": "SELFTEST: PASS (new rule 8/8; old rule fails 5/8; old-rule fidelity 14/14)",
+   "edit": {
+    "old": "    found = on_err or on_out",
+    "new": "    found = on_out or on_err"
+   }
+  }
+ },
+ "note": "stdout-first survives and is equivalent: with verdicts on both streams mapped to null, at most one stream contributes, so precedence cannot change the result."
+}

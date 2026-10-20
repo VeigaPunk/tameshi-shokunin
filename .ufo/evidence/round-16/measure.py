@@ -135,8 +135,24 @@ def sectionize(raw):
 
 
 def shonen_boxes(raw):
-    """Return [(mark, full_line)] for each `- [m] ` checklist line, in order."""
-    return BOX_RE.findall(raw.decode('utf-8', 'surrogateescape'))
+    """Return [(mark, block)] per `- [m] ` checklist box, in order.
+
+    A box's block is its own line plus the indented continuation lines right
+    under it (SHONEN.md carries each box's evidence link on the continuation
+    line). Round-16 L1 repair: the first version returned the box line only,
+    so a link on the continuation line was never seen.
+    """
+    out, open_box = [], False
+    for line in raw.decode('utf-8', 'surrogateescape').split('\n'):
+        match = BOX_RE.match(line)
+        if match:
+            out.append([match.group(1), line])
+            open_box = True
+        elif open_box and line[:1] in (' ', '\t') and line.strip():
+            out[-1][1] += '\n' + line
+        else:
+            open_box = False
+    return [tuple(b) for b in out]
 
 
 def sources_census(raw):
@@ -257,6 +273,14 @@ def measure(repo, rev):
     skill = blob(repo, rev, 'SKILL.md')
     sources = sources_census(blob(repo, rev, 'corpus/SOURCES.md'))
     legs = LEG_RE.findall(runner.decode('utf-8', 'surrogateescape'))
+    rtext = runner.decode('utf-8', 'surrogateescape')
+    # Guardrail (round-16 w2 DepthCritic): command D counts header comment
+    # lines only; report whether the header, the regression call sites and
+    # the selftest leg tuples agree, and how many distinct gate paths the
+    # header names. These fields do not change depth_score.
+    leg_calls = len(re.findall(r'^  regression_case_git (?:js|bash)-', rtext, re.M))
+    leg_tuples = len(re.findall(r"^    '(?:js|bash)-[^:]+:[^:]+\.spec:TABLE_", rtext, re.M))
+    gate_paths = re.findall(r'^#   (?:js|bash)-\S+\s+(\S+)\s+\d+/\d+', rtext, re.M)
     cr = coldread(skill, blob(repo, rev, LEDGER_PATH))
     box3_marked = len(marks) >= 3 and marks[2] == '~'
     box3_link = len(boxes) >= 3 and BOX3_LINK in boxes[2][1]
@@ -268,6 +292,12 @@ def measure(repo, rev):
         'recorded_cases': len(legs),
         'depth_score': min(10, len(legs)),
         'ledger_legs': legs,
+        'ledger_guardrail': {
+            'header_legs': len(legs), 'regression_calls': leg_calls,
+            'selftest_tuples': leg_tuples,
+            'lists_agree': len(legs) == leg_calls == leg_tuples,
+            'unique_recorded_gates': len(set(gate_paths)),
+        },
         'shonen': {
             'boxes': len(marks),
             'marks': marks,
@@ -317,6 +347,10 @@ SHONEN_TEXT = '\n'.join([
     '- [~] box four',
 ]) + '\n'
 SHONEN_NOLINK_TEXT = SHONEN_TEXT.replace(SHONEN_BOX3, '- [~] box three')
+SHONEN_CONT_TEXT = SHONEN_TEXT.replace(
+    SHONEN_BOX3, '- [~] box three\n  [lane assertion](.ufo/evidence/round-16/coldread/ledger.json)')
+SHONEN_WRONGBOX_TEXT = SHONEN_NOLINK_TEXT.replace(
+    '- [~] box four', '- [~] box four\n  [link](.ufo/evidence/round-16/coldread/ledger.json)')
 RUNNER_TEXT = '\n'.join([
     '#!/bin/sh',
     '# ledger legs:',
@@ -526,6 +560,27 @@ def selftest():
           and out['coldread']['box3_full_page'] is True
           and out['calibration_restraint_score'] == 8)
 
+    # --- round-16 w2 MutateMeasure survivors -----------------------------------
+    # (a) an unknown class is never credited
+    unk = json.loads(ledger_json())
+    unk['entries'][3]['class'] = 'frobnicate'
+    write_file(repo, LEDGER_PATH, json.dumps(unk) + '\n')
+    out = json.loads(call_measure(repo, commit(repo, 'unknown class')).stdout)
+    check('unknown-class-nocredit', out['calibration_restraint_score'] == 6
+          and out['coldread']['missing'][0]['reason'] == 'class:frobnicate')
+    # (b) a record cannot pass as executed-ok
+    rx = json.loads(ledger_json())
+    rx['entries'][3]['class'] = 'record'
+    write_file(repo, LEDGER_PATH, json.dumps(rx) + '\n')
+    out = json.loads(call_measure(repo, commit(repo, 'record executed-ok')).stdout)
+    check('record-executed-ok-nocredit', out['calibration_restraint_score'] == 6
+          and out['coldread']['missing'][0]['reason']
+          == 'verdict-class:executed-ok/record')
+    # (c) whitespace-only trailing lines are stripped before hashing
+    a = sectionize(b'# A\nbody\n   \n\t\n')[0]['sha256']
+    check('trailing-whitespace-stripped',
+          a == hashlib.sha256(b'# A\nbody').hexdigest())
+
     # --- case: SHONEN box-3 line lacks the ledger link -> 6 ---------------------
     write_file(repo, LEDGER_PATH, ledger_json())
     write_file(repo, 'SHONEN.md', SHONEN_NOLINK_TEXT)
@@ -535,6 +590,20 @@ def selftest():
     check('nolink-flag', out['shonen']['box3_ledger_link'] is False
           and out['shonen']['box3_points'] is False)
     check('nolink-score-6', out['calibration_restraint_score'] == 6)
+
+    # --- case: link on box 3's indented continuation line -> 8 -----------------
+    write_file(repo, 'SHONEN.md', SHONEN_CONT_TEXT)
+    rev_cont = commit(repo, 'box3 link on continuation line')
+    out = json.loads(call_measure(repo, rev_cont).stdout)
+    check('contlink-score-8', out['shonen']['box3_ledger_link'] is True
+          and out['calibration_restraint_score'] == 8)
+
+    # --- case: link only under box 4 -> box 3 not credited (6) -----------------
+    write_file(repo, 'SHONEN.md', SHONEN_WRONGBOX_TEXT)
+    rev_wrong = commit(repo, 'link under box 4 only')
+    out = json.loads(call_measure(repo, rev_wrong).stdout)
+    check('wrongbox-score-6', out['shonen']['box3_ledger_link'] is False
+          and out['calibration_restraint_score'] == 6)
 
     # --- literal expected exits -------------------------------------------------
     os.remove(os.path.join(repo, 'SHONEN.md'))
