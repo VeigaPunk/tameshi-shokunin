@@ -151,7 +151,9 @@ def child_environment(extra=None):
     if SANDBOX_ROOT is None:
         raise ProbeError("sandbox root is not initialized")
     env = {
-        "PATH": "/usr/bin:/bin",
+        # r18 L1 ruler fix (v2): the owning selftests' jj fixtures need jj,
+        # which lives outside /usr/bin on this host; add only its directory.
+        "PATH": ((os.path.dirname(JJ_COMMAND) + ":") if JJ_COMMAND else "") + "/usr/bin:/bin",
         "HOME": "/mnt/home",
         "XDG_CONFIG_HOME": "/mnt/xdg",
         "XDG_CACHE_HOME": "/mnt/home/.cache",
@@ -477,6 +479,10 @@ def probe_jj_head_vs_bookmark(root, scratch):
     jj_env = scrubbed_env({"HOME": str(jj_home), "XDG_CONFIG_HOME": str(jj_xdg)})
     jj_call(["git", "init", "--colocate"], fixture, jj_env)
     git_call(["-C", str(fixture), "config", "core.hooksPath", "/dev/null"], fixture)
+    # r18 L1 ruler fix (v2): bind the fixture like a real lane — the jj-lane
+    # helper's `init` writes `git config lane.branch <branch>` — so a tool that
+    # refuses unbound jj repos is still graded on the HEAD-vs-tip question.
+    git_call(["-C", str(fixture), "config", "lane.branch", "master"], fixture)
     jj_call(["config", "set", "--repo", "user.name", "Tameshi probe"], fixture, jj_env)
     jj_call(["config", "set", "--repo", "user.email", "probe@invalid"], fixture, jj_env)
     jj_call(["commit", "-m", "pinned A"], fixture, jj_env)
