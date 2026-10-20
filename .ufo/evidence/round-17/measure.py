@@ -58,7 +58,8 @@ Credit rule (v2, fail-closed), evaluated per ledger entry in order:
      the entry's inputs with equal sha256 (`trace-input-unrecorded:<p>` for a
      key absent from the entry; `trace-input-drift:<p>` for a shared key with
      a different digest), whose `external` names no path under the live lane
-     root, and whose `live_lane_reads` map is empty (`live-lane-read:<p>`); a
+     root, and whose `live_lane_reads` are bound to REV (`.git/` reads, or a blob with the
+     recorded sha at REV; else `live-lane-read:<p>`); a
      missing/blobless trace is `trace-missing:<p>`, an unparseable or
      wrong-schema one `trace-invalid:<p>`. An entry with commands>0 and no
      traces is `traces-unrecorded` in strict mode.
@@ -412,13 +413,42 @@ def trace_reason(repo, rev, entry, strict):
         live_reads = receipt.get('live_lane_reads')
         if isinstance(live_reads, dict) and live_reads:
             for key in sorted(live_reads, key=str):
-                return 'live-lane-read:%s' % key
+                if not live_read_bound(repo, rev, key, live_reads[key]):
+                    return 'live-lane-read:%s' % key
         external = receipt.get('external')
         if isinstance(external, dict):
             for key in sorted(external, key=str):
-                if under_live_lane(key):
+                if under_live_lane(key) and not live_read_bound(
+                        repo, rev, key, external[key]):
                     return 'live-lane-read:%s' % key
     return None
+
+
+def live_read_bound(repo, rev, path, digest):
+    """A read of the live lane counts as a read of REV only when it is bound.
+
+    Round-17 wave-2 refinement: object-store/ref reads under the lane's
+    `.git/` come from rev-addressed commands (`git show REV:path`) and are
+    accepted as such; any other live file is accepted only when it is a
+    regular blob at REV with exactly the recorded sha256 (the bytes read are
+    the measured bytes). Everything else stays `live-lane-read:`.
+    """
+    if not isinstance(path, str) or not isinstance(digest, str):
+        return False
+    root = os.path.realpath(LIVE_LANE_ROOT)
+    real = os.path.realpath(path)
+    if not (real == root or real.startswith(root + os.sep)):
+        return False
+    rel = os.path.relpath(real, root).replace(os.sep, '/')
+    if rel == '.git' or rel.startswith('.git/'):
+        return True
+    if not canonical_lane_path(rel):
+        return False
+    mode = ls_tree_mode(repo, rev, rel)
+    if mode is None or mode not in BLOB_MODES:
+        return False
+    raw = cat_file_blob(repo, rev, rel)
+    return raw is not None and hashlib.sha256(raw).hexdigest() == digest
 
 
 def entry_failure(entry):
@@ -731,6 +761,7 @@ TRACE_BAD_PATH = '.ufo/evidence/round-17/coldread/traces/bad.json'
 TRACE_EXTRA_PATH = '.ufo/evidence/round-17/coldread/traces/extra.json'
 TRACE_LIVE_PATH = '.ufo/evidence/round-17/coldread/traces/live.json'
 TRACE_EXT_PATH = '.ufo/evidence/round-17/coldread/traces/live-ext.json'
+TRACE_LIVE_BOUND_PATH = '.ufo/evidence/round-17/coldread/traces/live-bound.json'
 TRACE_DRIFT_PATH = '.ufo/evidence/round-17/coldread/traces/drift.json'
 SYMLINK_PATH = 'link-syn'
 
@@ -897,6 +928,10 @@ def selftest():
     write_file(repo, TRACE_EXT_PATH, trace_receipt(
         {INPUT_FILE: INPUT_V1_SHA},
         external={os.path.join(LIVE_LANE_ROOT, 'SKILL.md'): 'c' * 64}))
+    write_file(repo, TRACE_LIVE_BOUND_PATH, trace_receipt(
+        {INPUT_FILE: INPUT_V1_SHA},
+        live_lane_reads={os.path.join(LIVE_LANE_ROOT, INPUT_FILE): INPUT_V1_SHA,
+                         os.path.join(LIVE_LANE_ROOT, '.git/HEAD'): 'd' * 64}))
     os.symlink(INPUT_FILE, os.path.join(repo, SYMLINK_PATH))
     rev_base = commit(repo, 'base, no ledger')
 
@@ -1212,6 +1247,16 @@ def selftest():
     out = json.loads(call_measure(repo, commit(repo, 'trace external live lane')).stdout)
     check('live-lane-read-external', out['coldread']['reasons']
           == {'live-lane-read:%s' % os.path.join(LIVE_LANE_ROOT, 'SKILL.md'): 4})
+
+    # A live read bound to REV (same bytes as the blob, or a .git/ object/ref
+    # read by a rev-addressed command) is accepted (round-17 wave-2 refinement).
+    bound = json.loads(ledger_json())
+    for e in bound['entries']:
+        e['traces'] = [TRACE_LIVE_BOUND_PATH]
+    write_file(repo, LEDGER_PATH, json.dumps(bound) + '\n')
+    out = json.loads(call_measure(repo, commit(repo, 'trace live reads bound')).stdout)
+    check('live-lane-read-bound', out['coldread']['sections_covered'] == 4,
+          str(out['coldread'].get('reasons')))
 
     # --- hardening: fail-closed aggregation ------------------------------------
     # (a) a clean entry never launders a failing one, in either order.

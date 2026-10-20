@@ -458,10 +458,18 @@ def load_trace_receipt(repo, spec, read_rev):
             "trace-rev-mismatch:%s: receipt rev %r != read_rev %s"
             % (spec, data.get("rev"), read_rev)
         )
-    if data.get("live_lane_reads"):
+    live = data.get("live_lane_reads") or {}
+    if not isinstance(live, dict):
+        raise Reject("trace-receipt-malformed:%s: 'live_lane_reads' must be an object" % spec)
+    unbound = [p for p in sorted(live) if not live_read_bound(repo, read_rev, p, live[p])]
+    if unbound:
+        # Round-17 wave-2 refinement: a live-lane read is accepted only when it
+        # is a `.git/` object/ref read (rev-addressed command) or the bytes read
+        # equal the regular blob at read_rev; any other live read is a read of
+        # a different tree than the one recorded.
         raise Reject(
-            "trace-live-lane-read:%s: %d live-lane read(s) recorded"
-            % (spec, len(data["live_lane_reads"]))
+            "trace-live-lane-read:%s: %d unbound live-lane read(s), first %s"
+            % (spec, len(unbound), unbound[0])
         )
     out = {"path": path}
     for field in ("inputs", "external"):
@@ -525,11 +533,17 @@ def check_external_lane(repo, externals, start):
     for k in externals:
         lane_key = False
         if "@" in k and ":" in k and k.index("@") < k.rindex(":"):
-            # repo@rev:path — check the repo spec for lane naming.
+            # repo@rev:path — check the repo spec for lane naming. A lane read
+            # pinned to a full 40-hex commit is immutable (the wave contract's
+            # `tameshi@<rev>:<path>` form for files the L1 appends after the
+            # reads), so it stays external; any other lane spec is rejected.
             spec = k[: k.index("@")]
+            rev_part = k[k.index("@") + 1: k.index(":", k.index("@"))]
             base = spec if spec.startswith("/") else os.path.join(fleet, spec)
             real = os.path.realpath(base)
             lane_key = real == root or real.startswith(root + os.sep)
+            if lane_key and re.fullmatch(r"[0-9a-f]{40}", rev_part):
+                lane_key = False
         elif k.startswith("/"):
             real = os.path.realpath(k)
             lane_key = real == root or real.startswith(root + os.sep)
@@ -550,6 +564,26 @@ def check_external_lane(repo, externals, start):
             raise Reject(
                 "section start=%s: external-input-lane:%s" % (start, k)
             )
+
+
+LIVE_LANE_ROOT = "/home/vgpnk/Projects/shokunin/tameshi-shokunin"
+
+
+def live_read_bound(repo, rev, path, digest):
+    """Same rule as measure.py: `.git/` reads, or a blob at rev with the sha."""
+    if not isinstance(path, str) or not isinstance(digest, str):
+        return False
+    root = os.path.realpath(LIVE_LANE_ROOT)
+    real = os.path.realpath(path)
+    if not (real == root or real.startswith(root + os.sep)):
+        return False
+    rel = os.path.relpath(real, root).replace(os.sep, "/")
+    if rel == ".git" or rel.startswith(".git/"):
+        return True
+    if canonical_path_reason(rel) is not None:
+        return False
+    raw = blob_at(repo, rev, rel)
+    return raw is not None and hashlib.sha256(raw).hexdigest() == digest
 
 
 def apply_trace_binding(repo, s, read_rev, cache):
@@ -1604,7 +1638,7 @@ def _selftest():
             mkreport("S", skill_sha, rev_new,
                      [sec(1, "executed-ok",
                           external_inputs={
-                              repo + "@%s:SKILL.md" % rev_new: "a" * 64,
+                              repo + "@%s:SKILL.md" % rev_new[:12]: "a" * 64,
                           })]),
         )
         check("reason abs-repo@rev lane",
@@ -1614,11 +1648,25 @@ def _selftest():
             mkreport("S", skill_sha, rev_new,
                      [sec(1, "executed-ok",
                           external_inputs={
-                              "repo@%s:SKILL.md" % rev_new: "a" * 64,
+                              "repo@%s:SKILL.md" % rev_new[:12]: "a" * 64,
                           })]),
         )
         check("reason rel-repo@rev lane",
               "external-input-lane" in r, r)
+        # A lane read pinned to a full 40-hex commit is immutable: accepted.
+        p_ok = os.path.join(rej_dir, "external-lane-pinned-ok.md")
+        with open(p_ok, "w") as f:
+            f.write(mkreport("S", skill_sha, rev_new,
+                             [sec(1, "executed-ok",
+                                  external_inputs={
+                                      "repo@%s:SKILL.md" % rev_new: "a" * 64,
+                                  })]))
+        c_ok = main(["--reports", p_ok, "--repo", repo, "--out", out],
+                    stdout=io.StringIO())
+        led_ok = json.load(open(out))
+        check("accept: lane read pinned to a 40-hex rev",
+              not led_ok["_meta"]["reports_rejected"],
+              str(led_ok["_meta"]["reports_rejected"]))
         link = os.path.join(td, "lane-link")
         if not os.path.exists(link):
             os.symlink(repo, link)
