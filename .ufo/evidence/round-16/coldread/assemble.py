@@ -57,9 +57,11 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_SKILL = os.path.join(HERE, "SKILL.snapshot.md")
 DEFAULT_OUT = os.path.join(HERE, "ledger.json")
+# round-16 w3 RX8: HERE is .ufo/evidence/round-16/coldread, so the wave
+# dirs are three levels up (.ufo/), not two.
 DEFAULT_GLOBS = [
-    os.path.join(HERE, "..", "..", "waves", "round-16", "w1", "*.md"),
-    os.path.join(HERE, "..", "..", "waves", "round-16", "w2", "*.md"),
+    os.path.join(HERE, "..", "..", "..", "waves", "round-16", w, "*.md")
+    for w in ("w1", "w2", "w3")
 ]
 
 SCHEMA = "tameshi-coldread-ledger-v1"

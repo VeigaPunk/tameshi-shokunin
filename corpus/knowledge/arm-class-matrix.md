@@ -545,3 +545,8 @@ corrections; they stay readings, not measurements:
 - `:370` is false: rt3 (`:1436`) pins the NO_FILED_REPORTS detail tail.
 - `:445-446` is false: `parseArgs` (`:630`) runs before the selftest dispatch
   (`:635`), so the nested `KUMITATE_LANE` does reach env validation.
+
+Wave-2 correction (LedgerMatrixAppend R2): §13.5 #1's "detail tail … read by
+nothing" is too broad for the same reason as the `:370` correction above.
+rt3 pins the NO_FILED_REPORTS tail. The A2 measurement holds for the other
+fail-closed tails.

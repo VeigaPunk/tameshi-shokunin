@@ -411,3 +411,8 @@ the §5 queue said `unmeasured`. It is measured now:
 
 Detail of record: `mutation-case-kumitate-round-gate.md`. Receipt: `REGRESSION:
 PASS (cases=7 passed=7 …)` at runner `89722ddb…`.
+
+Wave-2 correction (LedgerMatrixAppend, DepthCritic): the block above calls the
+queue "§5". The queue row that said `unmeasured` is this file's §3 (`:109`),
+and the offer queue is `fleet-suite-census.md` §5 (`:283`). Measuring the gate
+was tameshi's own read-only case; it did not drain the service queue.

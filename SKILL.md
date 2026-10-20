@@ -1704,12 +1704,17 @@ disagreement secondary. A clean result with a wrong id/exit pin becomes
 failed/exit1. Help exits0 only as a non-verdict informational mode; selftest
 exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation.
 
-## Errata — round 16 full-page cold-read (append-only)
+## Errata — round 16 full-page cold-read
 
 Round 16 cold-read every section of this page (snapshot sha256
 `97cf436b…3580`, 51 buckets = preamble + 50 headings outside code fences)
-with 30 lane seats; reports `.ufo/waves/round-16/w1/CR*.md`, ledger
-`.ufo/evidence/round-16/coldread/ledger.json`. Wrong expectations were repaired
+with 30 cold-read seats (CR01–CR27, three of them with a/b replicas); reports
+`.ufo/waves/round-16/w1/CR*.md`, re-reads `w2/RR*.md` and `w3/RX*.md`, ledger
+`.ufo/evidence/round-16/coldread/ledger.json` (assembled from those reports by
+`coldread/assemble.py`; it holds the merged verdict and gap counts per bucket).
+The page edits are in-place repairs, and so are this table's own cells: a
+later row's corrections of an earlier row stay visible in git
+(`git log -p -- SKILL.md`), not as appended rows. Wrong expectations were repaired
 in place with the line count of every edited section unchanged, so every
 `SKILL.md:<line>` self-anchor still resolves; the old wording stays in git
 (`git show e69b488:SKILL.md`, sha256 `97cf436b…`; also
@@ -1727,16 +1732,16 @@ in place with the line count of every edited section unchanged, so every
 | 513-515 | surface-probe and cite-check exit-2 paths "uncovered" | each asserts one CLI `--src` exit-2 arm; no arm accounting beyond it | CR10 |
 | 925 | "Four legs at this revision" | dated: four at r7-1, seven since round 16 | CR16 |
 | 949-950 | receipt literal `cases=4` | `cases=N`, N per revision | CR16 |
-| 1390, 1393 | mutation-case notes "(six)"; round-11 record "lands" in `plans/` | dated count; no separate round-11 record file exists (the wave deliverables are the record) | CR23, RR08 |
+| 1390, 1393 | mutation-case notes "(six)"; round-11 record "lands" in `plans/` | dated count; no separate round-11 record file exists (the wave deliverables are the record) | CR23, RR08 (w2) |
 | 1472 | "Box 3 remains `[ ]`" | dated: `[ ]` at that write, `[~]` since | CRCritic1, CRCritic2 |
 | 1614 | `PROTOCOL.md` §Gate standard | `../PROTOCOL.md` (fleet root; the lane holds none) | CR27 |
-| 2, 9-10 | unquoted frontmatter `description:` (strict YAML rejects the second `: `); "Two mutation cases are now measured" | quoted; the first two cases are worked here, seven recorded since round 16 | RR01 |
-| 1346 | quotes "Four legs at this revision" at `:925-929` | notes that line 925 is dated since round 16 | WholePage |
-| 1391 | "six-leg registry" | six at round 11, seven since round 16 | RR08, RR11 |
-| round-15 registry, disposition row | `--root .` said to exit 0 | since round 16 the runner input moved: `--root .` → 2 `expected_input_digest_mismatch` by design; run on `git archive 28aeef4` → 0 | RR10 |
-| round-16 registry, assemble row | "64 usage" | argparse usage exits 2 | RR13 |
+| 3, 9-10 | unquoted frontmatter `description:` (strict YAML rejects the second `: `); "Two mutation cases are now measured" | quoted; the first two cases are worked here, seven recorded since round 16 | RR01 (w2) |
+| 1346 | quotes "Four legs at this revision" at `:925-929` | notes that line 925 is dated since round 16 | WholePage (w2) |
+| 1391 | "six-leg registry" | six at round 11, seven since round 16 | RR08, RR11 (w2) |
+| round-15 registry, disposition row | `--root .` said to exit 0 | since round 16 the runner input moved: `--root .` → 2 `expected_input_digest_mismatch` by design; run with `--root` at an extracted `git archive 28aeef4`, from the lane root → 0 | RR10 (w2) |
+| round-16 registry, assemble row | "64 usage" | argparse usage exits 2 | RR13 (w2) |
 
-Minor gaps (non-blocking, kept as named debt in the ledger): dead `/tmp`
+Minor gaps (non-blocking; named in the seat reports, counted in the ledger): dead `/tmp`
 evidence paths in records of rounds 6–9; anchors written as tool sha256 values
 rather than git revisions (`cf41efaa…`, `597e1419…`); Appendix B survivor-probe
 fixture contents are not spelled out (seats rebuilt them from the gate's

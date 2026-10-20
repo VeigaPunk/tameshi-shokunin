@@ -1,5 +1,5 @@
 source: S053 kumitate `scripts/round-gate.mjs` @ 364f1d5954158ef8844bca4a5fef57b05d2f2ca5 (blob sha256 f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9), read-only; S052 Stryker supported mutators; S056 PIT mutators; S057 Papadakis et al. survey §5.3.1; projection `corpus/knowledge/arm-class-matrix.md` §13 (round 4)
-verified-at: 2026-10-20, sweep 13:40:15Z, tameshi commit e69b488 (pre-registration) and the round-16 landing commit
+verified-at: 2026-10-20, sweep 13:40:15Z (pre-registration e69b488); re-run in wave 2 (RerunSweep, RR12, RR12b) at c699c8c
 recheck: `bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-round-gate: PASS`; `git -C kumitate-shokunin show 364f1d5:scripts/round-gate.mjs | sha256sum` → f890e277…d3e9
 
 # Mutation case 7 — kumitate `scripts/round-gate.mjs` (round 16)
@@ -39,8 +39,9 @@ sha256 `e99b87eb…11c4` equals the sweep's `spec.copy`. Composition: 5
 kill-aimed (A1, A3, B1, E3, C1060) and 5 hole-aimed (C1059, A2, B2, CKIND, E1),
 drawn from matrix §13 and the wave-1 seat fragments
 (`.ufo/waves/round-16/w1/RGSpec{A,B,C,E}.spec`). Operator families follow S052
-(string literal, equality/boundary, array declaration, conditional) and S056's
-boundary operator. Rejected candidates and reasons are in
+(string literal, equality, array declaration, conditional); the C1059/C1060
+edge pair borrows the shape of S056's boundary operator by analogy (it moves
+a floor constant, not a relational operator). Rejected candidates and reasons are in
 `predictions.json` → `rejected_candidates`. One example: the `INTERNAL_ERROR`
 token edit was dropped because no input reaches that catch-all (SurvivorPrep
 P12), so a survivor there would be equivalent by unreachability and say
@@ -69,8 +70,11 @@ Evidence: `.ufo/evidence/round-16/round-gate/sweep/` (`results.tsv`,
 Every kill also fails check [51], the hermeticity check, which re-runs the whole
 selftest nested and reports its tally (A1 50/60, A3 and B1 58/60, C1060 and E3
 59/60). That makes [51] a duplicate witness, not an independent assert. No
-check was skipped in any run: `env -i` leaves `KUMITATE_ROUND_GATE_NESTED`
-unset, so the control is 60/60 with no skips.
+check was skipped in any graded run: `env -i` leaves
+`KUMITATE_ROUND_GATE_NESTED` unset, so the control is 60/60 with no skips.
+The nested run inside [51] does skip itself and counts the skip as a pass
+(`round-gate.mjs:1381-1382`, `:1498`); the nested tallies above therefore
+equal 60 minus the outer failures other than [51] (KillWidthAudit).
 
 ## 3. What the case measures
 
@@ -103,7 +107,7 @@ pristine copy and on the mutant copy:
 | A2 | P1b (remaining tails) | exit 0 | exit 1 |
 | B2 | P6 (tracked `REPORTS_DIR_MISSING`) | exit 0 | exit 1 |
 | E1 | P9 (`UFO_SRC` set-value) | exit 0 | exit 1 |
-| C1059 | report sized in [1024, 1058] | wave-2 seat `C1059Probe` | — |
+| C1059 | a 1040-byte round report (`c1059-probe.sh`, wave-2 seat C1059Probe) | exit 0, CLEAN | exit 1, `REPORT_THIN (bytes=1040)` |
 | CKIND | none; equivalent for gate behaviour (§3) | — | — |
 
 S057 states the general limit: deciding whether a mutant is equivalent is
@@ -113,12 +117,18 @@ explicit equivalence argument.
 ## 5. Ledger leg
 
 `js-round-gate` is the seventh leg of `tools/mutate-and-run.sh --regression`.
-It holds the pin, rev, the spec above verbatim, the table
-`A1:K A3:K B1:K E3:K C1060:K C1059:S A2:S B2:S CKIND:S E1:S`, and the guarded
-suite. Receipt at runner sha256 `89722ddb…5594`:
+It holds the pin, rev, the spec above verbatim, the table (stored as
+`A1:KILLED,…,E1:SURVIVED`; five killed, five survived as in §2), and the
+guarded suite. The sweep itself ran under runner sha256 `75ed934d…adc5`
+(before the leg was embedded). Wave 2 re-ran it under the landed runner and
+got identical verdicts and mutant sha256s (RerunSweep). The final runner
+adds a leg-count agreement check: a leg dropped from the selftest tuples
+fails it (`.ufo/evidence/round-16/round-gate/legcount-redbefore-mutant.txt`).
+Receipt at the final runner:
 `REGRESSION: PASS (cases=7 passed=7; ledger legs exact: killed-delta<=0 flips<=0)`,
-rc 0. `--selftest` → `MUTATE_SELFTEST: 81/81 pass` (80 before; the leg-cut check
-gained the seventh tuple). Both receipts are in
+rc 0. `--selftest` → `MUTATE_SELFTEST: 83/83 pass` (80 before round 16: +1
+seventh tuple, +2 leg-count agreement checks); the receipts name the runner
+sha they ran. Both receipts are in
 `.ufo/evidence/round-16/round-gate/runner-{regression,selftest}.txt`.
 
 ## 6. Limits
@@ -128,6 +138,13 @@ gained the seventh tuple). Both receipts are in
 - 50 % mixes kill-aimed and hole-aimed defects by design; prediction accuracy
   (10/10) and kill rate are separate readings. Do not compare this rate with
   cases 1–6 without that composition.
+- The guard scrubs the environment; it does not confine. In wave 2,
+  GuardAudit showed a hostile mutant can still write outside its directory,
+  overwrite a sibling mutant, or reach the network. The ten mutants here are
+  single-edit, non-hostile edits, and RerunSweep reproduced every mutant
+  sha256. `bwrap` confinement (tested by GuardAudit) is the next step for
+  untrusted mutants. The runner does not log the suite string; it is
+  retained in `suite.txt`, `predictions.json` and the leg.
 - Recommendations for the owner, reported and not absorbed: a `--tracked`
   missing-reports-dir fixture (B2), a full-line pin on rt8 (A3), a detail-tail
   assert on one fail-closed fixture (A2), a set-value `UFO_SRC` fixture (E1),

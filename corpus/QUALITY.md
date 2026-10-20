@@ -103,3 +103,21 @@ Each criterion cites the mistake it learns from
     that wave. Changes are staged at a separate path and installed after the
     readers finish, and every receipt names the instrument sha it ran.
     (`lessons/round-16.md`, scope mistake)
+
+21. Supersedes criterion 20's last clause ("every receipt names the instrument
+    sha it ran"). A retained receipt carries the instrument's sha256 beside it
+    in the same file, because the runner's `--selftest` prints none
+    (`.ufo/evidence/round-16/round-gate/runner-selftest.txt` ends with the
+    sha line). Criterion 20's no-in-place-edit rule stands; it recurred once
+    in wave 2 (`measure.py` repaired after dispatch), and that wave's
+    attackers read the committed bytes, so no verdict mixed the two.
+    (`lessons/round-16.md`, scope and vacuous rows; w2 QualityReview,
+    MistakeAudit)
+22. Supersedes criterion 18's proof clause. An attribution repair's selftest
+    must defeat each weaker rule it claims to exclude, one fixture per rule:
+    first match, no exit cross-check, a line split wider than the emitter's,
+    both-stream ambiguity, and a missing structured branch. A mutant that
+    survives is named as equivalent with its reason. One forged-first-line
+    fixture does not discriminate.
+    (`lessons/round-16.md`, attribution rows; w2 AttrCritic2, MutateReattribute;
+    `.ufo/evidence/round-16/attribution/selftest-mutants.json`)

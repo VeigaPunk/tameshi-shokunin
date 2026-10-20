@@ -64,3 +64,8 @@ Corrections to lines 8 and 35 above, appended:
   was a service run (`corpus/knowledge/service-optin-protocol.md:36-37`).
 - Line 26's template path resolves as
   `/home/vgpnk/Projects/kimi-shokunin/templates/mint/PROVINCE.md:6-19`.
+
+Wave-2 correction to the round-16 append above (ProvinceAppend): "only the
+round-6 mado run was a service run" holds for the round-5/6 pair only. The
+round-8 kagi checklist sweep is also recorded as service form
+(`corpus/knowledge/mutation-case-kagi-checklist.md:1,5-9`).
