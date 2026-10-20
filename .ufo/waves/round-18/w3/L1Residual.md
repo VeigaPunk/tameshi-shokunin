@@ -1,6 +1,6 @@
 # L1 residual verification — not independent/blind
 
-After provider cancellations, the L1 finished 16 sections. The executed sweep, historical replay, controls, gates, selftests and probes are retained under `.ufo/evidence/round-18/final/`; each section receipt opens its exact page bytes and source files, validates those actual outputs, and binds the input hashes. No lane/sibling Git state was mutated. These are bounded input-keyed records, not argv/required-command completeness proof.
+Seventeen final sections verified by the L1 after provider cancellations. Real executed command outputs are retained under `.ufo/evidence/round-18/final/`; fresh traces bind the final section and source-file bytes. This is input-keyed evidence, not complete required-command coverage.
 
 ```json
 {
@@ -839,6 +839,60 @@ After provider cancellations, the L1 finished 16 sections. The executed sweep, h
       "external_inputs": {},
       "traces": [
         ".ufo/evidence/round-18/coldread/traces/L1/audit-1925.json"
+      ]
+    },
+    {
+      "start": 1069,
+      "heading": "### Triggers T1\u2013T3 and the re-pin rule",
+      "class": "instruction",
+      "verdict": "gap-minor",
+      "blocking_gaps": [],
+      "wrong_expectations": [],
+      "minor_gaps": [
+        "L1 residual verification, not blind. Historical scratch timestamps remain uncorroborated; actual current regression passed and pinned case-7 RerunSweep record supports the corrected T2 precedent."
+      ],
+      "commands_executed": [
+        "Pinned source plus actual execution-output audit: .ufo/evidence/round-18/coldread/traces/L1/audit-1069.json"
+      ],
+      "opened": [
+        "corpus/knowledge/fleet-kill-rate-ledger.md",
+        "corpus/knowledge/mutation-case-mado-verify.md",
+        "corpus/knowledge/mutation-case-kumitate-round-gate.md",
+        ".ufo/evidence/round-16/round-gate/runner-regression.txt",
+        "tools/mutate-and-run.sh",
+        ".ufo/evidence/round-18/final/registry-branch-aligned.stdout",
+        ".ufo/evidence/round-18/final/probes.stdout",
+        ".ufo/evidence/round-18/final/regression.stdout",
+        ".ufo/evidence/round-18/final/case8.stdout",
+        ".ufo/evidence/round-18/final/case7.stdout",
+        ".ufo/evidence/round-18/final/historical.stdout",
+        ".ufo/evidence/round-18/final/context.stdout",
+        ".ufo/evidence/round-18/final/disposition.stdout",
+        ".ufo/evidence/round-18/final/before.stdout",
+        ".ufo/evidence/round-18/final/repeat.stdout",
+        ".ufo/evidence/round-18/final/checks.json"
+      ],
+      "inputs": {
+        ".ufo/evidence/round-16/round-gate/runner-regression.txt": "630c3806e106af550d4afc6cd79bf2b0846472530a33772038df443db6e591e4",
+        ".ufo/evidence/round-18/final/before.stdout": "e279b328de7d08631de687a0ad587943ca0a9eecba3c046adeb31b44f7a25b0d",
+        ".ufo/evidence/round-18/final/case7.stdout": "e649866e5194fe54a6773582551e7fb83a33bafb0cfd661ba6b71bb8da9c7ceb",
+        ".ufo/evidence/round-18/final/case8.stdout": "b4f264c375833f3c65d3ea00606851df58edc6c575617d4034f08ccfdf63694b",
+        ".ufo/evidence/round-18/final/checks.json": "fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d",
+        ".ufo/evidence/round-18/final/context.stdout": "337aa6d8b19b2a82ed7de8854bf39a964076126c72bcc0b51798eca6bb134994",
+        ".ufo/evidence/round-18/final/disposition.stdout": "596975d456657c8d683b6cae4382bdc958cda0084a2cd54d4b979957f55048e4",
+        ".ufo/evidence/round-18/final/historical.stdout": "9050c284e68d6538ebedfc6a084fc0b4529fd50a691c72d9f7a4e570fa214590",
+        ".ufo/evidence/round-18/final/probes.stdout": "d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0",
+        ".ufo/evidence/round-18/final/registry-branch-aligned.stdout": "6502cb387613b08c64f0be73f41ff094575639f952ad1f2c4c8e76834d5517c4",
+        ".ufo/evidence/round-18/final/regression.stdout": "226be3d529337dc87334b0e7c55a012fb0793865570565b84471aab6d836acfe",
+        ".ufo/evidence/round-18/final/repeat.stdout": "9cd7809032b2a970bdc19577c57757e2d91e7e14f360cb37f5105eb3a0c3c21e",
+        "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+        "corpus/knowledge/mutation-case-kumitate-round-gate.md": "1b907c8d2c756134783604b604b3dd0a65b0a5fcb0f5a82e5d24b037b82aeaec",
+        "corpus/knowledge/mutation-case-mado-verify.md": "f2d53d495e6c1d8b2c18e7bc0eac54955d477455958b10866c5f8712b2086bf3",
+        "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+      },
+      "external_inputs": {},
+      "traces": [
+        ".ufo/evidence/round-18/coldread/traces/L1/audit-1069.json"
       ]
     }
   ]
