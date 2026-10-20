@@ -55,3 +55,19 @@ Each criterion cites the mistake it learns from
     accept the kind-only repair.
     (`lessons/round-13.md`, reference-drift mistake; outside routed
     `lessons/round-12-verifier-spotcheck.md`, Routed defects item 3)
+
+## Criteria appended — round 14
+
+15. Every retained expectation is explicitly effective or superseded by named,
+    checked replacement evidence. A setup error with the expected exit code
+    is not proof of the intended assertion; the same reconciliation command
+    must reject the unresolved original row and accept the disposition-only
+    repair without rewriting its raw observation.
+    (`lessons/round-14.md`, stale-expectation mistake; outside
+    `lessons/round-13-verifier-spotcheck.md`, Routed defects item1)
+16. An environment-injection claim retains its bounded non-secret overrides
+    beside argv, cwd and outcome; comparison names every excluded volatile
+    field. An undocumented historical setup stays unproven even when a new
+    documented experiment succeeds.
+    (`lessons/round-14.md`, missing-setup mistake; outside
+    `lessons/round-13-verifier-spotcheck.md`, Routed defects item2; S049)

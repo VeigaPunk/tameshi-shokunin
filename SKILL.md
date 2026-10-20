@@ -1559,3 +1559,47 @@ PIT source clarification: S048 supersedes S047's object-specific
 paraphrase; retain only the supported distinction “item 4 is
 prioritisation, not a reuse skip”. No test-versus-mutation pronoun claim
 is needed by this method.
+
+## Effective expectation reconciliation — round 14
+
+Sources: `corpus/lessons/round-13-verifier-spotcheck.md`, Routed defects1–3;
+S049 (Python child-environment contract), S003 Limitations, and
+`corpus/knowledge/incremental-pin-disposition.md`, empirical correction8.
+These instructions add no full-page cold-read or independent promotion credit.
+
+| Evidence condition | Decision | Error pattern / limit |
+|---|---|---|
+| Expected exit agrees but the intended assertion is absent | Failed expectation, not mechanism proof | A FileNotFoundError before the assertion is a setup failure |
+| A stale expected row is replaced by later evidence | Keep its raw observation and explicitly supersede the row | Both named oracle replacements must themselves be effective and pass; never silently drop a row |
+| Snapshot input or receipt bytes differ from their pinned digest | Could-not-evaluate | Do not reinterpret an edited receipt as a new historical verdict |
+| A new context experiment explicitly records its child override | Read only that new experiment's outcome | Documentation or output equality cannot recover an omitted historical environment |
+| A content probe agrees under one GIT_DIR injection | Bounded scrub observation | Not general hermeticity, safe result reuse, target execution or a fresh mutation rate |
+
+Recipe, from this lane root:
+1. Read the historical expectations and raw observations before accepting a
+   later summary; distinguish twelve expected rows from thirteen pinned inputs.
+2. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
+   must fail the unresolved producer_before assertion. A matching exit1 is
+   insufficient.
+3. Run the same command with `dispositions.json`: the only repair is that
+   row's explicit supersession, retaining raw receipt/check and both passing
+   mechanism replacements. Every original expectation remains accounted for.
+4. `.ufo/evidence/round-14/verification.json` retains executed selftest and
+   frozen before/after outcomes; the revision measured is recorded separately.
+   A non-author closure reads committed evidence, never executes sibling gates.
+5. `python3 .ufo/evidence/round-14/capture-context.py` is an opt-in prospective
+   probe with read-only sibling reads; it writes only its new round14 receipt.
+   It is not required for replaying the frozen expectation verdict and never
+   repairs the undocumented historical injection by inference.
+
+### Round-14 gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` | 0 clean; 1 failed semantic expectations; 2 could-not-evaluate invalid/missing/tampered inputs; 64 usage | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+| invocation context capture | probe | `python3 .ufo/evidence/round-14/capture-context.py` | 0 bounded experiment/mappings agree; 1 observed mismatch or failed control; 2 could-not-evaluate setup | no standalone selftest; integrated negative receipt and injection controls retained in round14 verification | unchanged round13 pin manifest, runner and probe digests in context receipt; explicit GIT_DIR override | read-only lane/sibling data and read-only git; writes only new round14 context receipt | tameshi |
+
+The disposition manifest is configured authority, not cryptographic proof of
+author authenticity. Receipt replay proves its recorded predicates, not that
+every historical command was independently re-executed. Unmapped receipt-only
+checks do not acquire new expected rows by being mentioned in a summary.

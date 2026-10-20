@@ -830,3 +830,34 @@ All appended; `corpus/lessons/round-1.md` final section.
   mined15→19/queued26→24/rejected3 unchanged, malformed0→0.
   SCORECARD records both capability demonstrations and zero scalar deltas;
   this measurement-metadata commit does not pretend to measure itself.
+
+## Round 14 — effective expectations and recorded context (2026-10-20)
+
+- Declared one calibration capability claim C1 at baseline
+  `d6809df7775338f000e44c8a916067b8866867fb`:
+  `.ufo/evidence/round-14/claims.json`. Depth and calibration tie at6;
+  calibration is a lowest non-retired axis. No scalar change, new mutation
+  case, safe verdict reuse, freshness successor sweep or promotion is claimed.
+- Motivating evidence: non-author
+  `corpus/lessons/round-13-verifier-spotcheck.md`, Routed defects1–3.
+  The old expected producer_before assertion still points to a setup crash;
+  documented injection metadata is absent; knowledge section6 remains a
+  dated pre-integration account. New explicit dispositions, prospective
+  context evidence and append-only empirical correction address those gaps.
+- Initial lane status was clean; closure-authored previous spot-check is
+  immutable and not inherited lane debt. One validated 32-seat wave:
+  `.ufo/waves/round-14/{spec,dispatch,spawn,assignments,record}.json`.
+  Actual context resolves every relative Report trailer beneath this lane.
+  L1 holds planner; PlannerDataWalk is connector advisory, not another planner.
+  Registry record initially refused an absolute registry path; corrected
+  relative path succeeded without changing the validated dispatch or roles.
+- Baseline count command
+  `python3 .ufo/evidence/round-14/measure.py --rev d6809df7775338f000e44c8a916067b8866867fb`
+  exited0: gate0, historical expected rows12, disposition coverage0,
+  cases6, calibration restraint6, raw setup exit1 and target assertion absent.
+  Full output: `.ufo/evidence/round-14/before.json`; start source census0
+  with the two disclosed W04 correction-URL warnings: `sources-before.json`.
+- Opened Python subprocess docs (S049) and reopened S003 Limitations.
+  Primary docs support explicit child-environment semantics and omitted
+  context, not retrospective proof. QUALITY15–16 cite the outside-routed
+  mistakes; `corpus/lessons/round-14.md` retains the gate and limitations.

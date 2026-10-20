@@ -176,3 +176,18 @@ The full F7 per-leg **reuse-decision** frontier remains open; only the
 content-disposition prerequisite is acquired. PIT row S048 supersedes
 S047's object-specific wording without claiming a new opened source.
 Both new registry rows are corrections to the same PIT URL.
+
+## Round 14 — effective evidence, not rewritten history
+
+| Maintained ground | Addition / correction | Evidence |
+|---|---|---|
+| calibration of retained expectations | Complete twelve-row effective/superseded ledger; the failed raw setup observation remains visible rather than being granted mechanism credit by exit code | `lessons/round-14.md`; `../tools/evidence-disposition.py`; `../.ufo/evidence/round-14/dispositions.json` |
+| `knowledge/incremental-pin-disposition.md`, empirical correction8 | Final round13 receipt backlink and S048 object-neutral guidance supersede only the dated pre-integration status; original section6 remains historical | existing mined S003/S048, new S049; prior outside `lessons/round-13-verifier-spotcheck.md` |
+| explicit invocation context | Prospective GIT_DIR experiment and runner/manifest mapping receipt; no invented historical injection setup | `../.ufo/evidence/round-14/capture-context.py`; completed runtime evidence is appended to the round14 lesson |
+
+This round does not complete whole-F7 verdict reuse, F1 interop, any successor
+mutation sweep, legacy provenance-header repair, runbook repair or current
+full-page cold-read/box3. New selftests and a checked context do not substitute
+for an independent outside admit/reject sample or promotion.
+The previous latest-review statement is superseded: round13's outside closure
+is now the newest sample. It admits round13's bounded claims, not round14.

@@ -55,6 +55,7 @@ rows only, and a row is a claim opened in the round that writes it.
 | S046 | Property-Based Testing Bibliography — https://github.com/ngernest/pbt-bibliography | community | C | F10 — PBT fixture-generation practice | README opening paragraph; main branch as accessed 2026-10-19 | REJECTED: a community bibliography is a discovery index, not primary or reproducible support for an F10 fixture practice; flip: a cited primary source opened from it supplies an operational technique | rejected | 2026-10-19 | 90d | — |
 | S047 | Incremental analysis (PIT docs), precision correction — https://pitest.org/quickstart/incremental_analysis/ | docs | A | PIT's documented experimental incremental-analysis assumptions, not a general reuse guarantee | §Incremental analysis, numbered optimisations 1–5 and dependency paragraphs; accessed 2026-10-20, page version unstated | supersedes S041 — the dependency assumption is unproven; item 4 prioritises an old killing test, while proposed item 5 is not yet implemented; the potential-error sentence covers optimisations, not only live result-reuse skips | mined | 2026-10-20 | 90d | corpus/knowledge/incremental-pin-disposition.md |
 | S048 | Incremental analysis (PIT docs), object-neutral precision — https://pitest.org/quickstart/incremental_analysis/ | docs | A | PIT's item-4 prioritisation distinction without resolving an ambiguous pronoun | §Incremental analysis, numbered items 4–5 and dependency paragraphs; accessed 2026-10-20, page version unstated | supersedes S047 — item 4 is prioritisation rather than a reuse skip; no claim here resolves its pronoun to test versus mutation; item 5 is explicitly not yet implemented and the dependency assumption remains unproven | mined | 2026-10-20 | 90d | corpus/knowledge/incremental-pin-disposition.md |
+| S049 | Python subprocess environment mapping — https://docs.python.org/3/library/subprocess.html | docs | A | Python subprocess.run env argument semantics, not proof of a particular historical environment | Using the subprocess Module, run() env paragraph; Python 3.15.0 docs served 2026-10-20 | Explicit env mappings define child environment rather than merely documenting an intended injection; retain the bounded override with the observed command | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md, corpus/knowledge/incremental-pin-disposition.md |
 
 ## Paths
 
@@ -119,6 +120,13 @@ rows only, and a row is a claim opened in the round that writes it.
   Stop: the declared two claims have primary support and explicit bounds;
   no broader statistical reliability claim is pursued.
 
+- 2026-10-20 — **round-14 bounded receipt-source reopen**. Question: what does
+  an explicit Python child environment establish, and what does a content pin
+  omit? Opened Python subprocess docs (new S049) and S003 Limitations;
+  identified2/screened2/included2/excluded0. Stop: primary documentation
+  answers the invocation contract; neither source proves an experiment ran.
+  Quotes and scope are recorded in `corpus/lessons/round-14.md`, Gate.
+
 ## Leads (unopened)
 
 Bullets only — a lead is not evidence and never a row (`tameshi-art.md` leads;
@@ -151,4 +159,5 @@ the six opened this round moved to rows S040–S046 and left this list).
 - S040–S046: merge-assigned rows from the round-1 frontier lead sweep.
 - S047: round-13 precision correction to S041; original row retained.
 - S048: object-neutral clarification of S047; same PIT URL, no new source.
-- Next unused id: S049.
+- S049: round-14 Python child-environment contract, not historical setup proof.
+- Next unused id: S050.

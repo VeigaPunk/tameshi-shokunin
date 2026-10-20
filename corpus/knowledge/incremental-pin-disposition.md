@@ -310,3 +310,57 @@ observed; the check belongs to the receipt's reader.
   landing in the same wave; this entry names the invariants, not the
   implementation.
 - **No errata** at this write.
+
+## 8. Empirical correction and backlink — round 14 (2026-10-20)
+
+This addendum supersedes only section6's **deferred-at-write** status and
+section7's concurrent-artifact/no-errata-at-write wording as a description of
+present knowledge. Those dated bytes remain intact. The final round13
+receipt was opened this round:
+`.ufo/evidence/round-13/pin-dispositions.json`, measured content commit
+`4acc607dfd79f19d508bd50cdd06b77269fccd1d`, delivered
+`7dd16d9bdd15ef64228297e76e3b1bee690efde8`; non-author closure:
+`corpus/lessons/round-13-verifier-spotcheck.md`, C1.
+
+Recorded end-window `observed_at`: `2026-10-20T04:59:26Z`. Static read
+command:
+`python3 -c 'import json; x=json.load(open(".ufo/evidence/round-13/pin-dispositions.json")); print(x["observed_at"], x["counts"]); print([(r["leg"],r["content_status"],r["result_reuse"]) for r in x["legs"]])'`.
+It records legs6, unchanged3, changed3, unavailable0:
+
+| Leg | Historical content state | Historical reuse |
+|---|---|---|
+| js-kimi-census | changed | not_established |
+| bash-surface-census | unchanged | not_established |
+| bash-tsukuroi-census | changed | not_established |
+| bash-mado-verify | changed | not_established |
+| bash-checklist-run | unchanged | not_established |
+| js-claims-check | unchanged | not_established |
+
+These are observation-time HEADs and worktree bytes retained in the receipt,
+not current sibling states or newly executed target tests. All six old blob
+digests and recorded HEAD digests were independently re-derived by the
+outside round13 closure. Explicit runner/manifest value mapping and
+prospective invocation context are separate round14 artifacts; no absence
+from the historical receipt is silently filled in.
+
+Source guidance correction: **S048 supersedes S047's object-specific
+paraphrase**, including section1's “whose class or killing test changed”
+gloss. The supported operational distinction is item4 **prioritisation, not
+a reuse skip**; no pronoun referent is resolved here. S041/S047 remain
+visible history, not the newest guidance. S003's reopened Limitations still
+names environment/dependency/snapshot omissions; no hash-only reuse licence.
+
+Historical setup correction: round13 lesson's claim that an injected
+GIT_DIR changed nothing except observation time is not fully supported by
+the retained row. Both retained stdout values are actually identical,
+including their timestamp; no injected_env or cwd was persisted. Equality
+is observed; the historical injection setup remains unproven. Round14's new
+context capture, if clean, establishes only its own documented experiment.
+S049 explains Python's explicit env mapping; it is not proof of either run.
+
+The stale producer_before expected assertion remains raw history. Read
+`.ufo/evidence/round-14/dispositions.json` and its checker receipt for its
+effective/superseded status; exit1 alone does not make its FileNotFoundError
+the intended mechanism failure. See `corpus/lessons/round-14.md`, Gate and
+Mistakes, and QUALITY15–16. No target re-sweep, new rate, seventh case,
+whole-F7 completion, blind preregistration or promotion follows.
