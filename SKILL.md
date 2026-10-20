@@ -971,9 +971,9 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
    differences · `REGRESSION_WORKDIR` · the closing `REGRESSION:
    PASS|FAIL|SETUP` line.
 2. **PASS is exact for ledger legs.** Every case line `PASS (band:
-   killed-delta<=0 flips<=0 inconclusive=0 defects=10)` and every
-   `REGRESSION_TABLE … match=10/10 … flips=0`; the closing line's
-   `cases=4 passed=4`. Measured instance (T7-1, 2026-10-14; replayed by this
+   killed-delta<=0 flips<=0 inconclusive=0 defects=D)` and every
+   `REGRESSION_TABLE … match=D/D … flips=0`; the closing line's
+   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18). Measured instance (T7-1, 2026-10-14; replayed by this
    lane under the same revision `cf41efaa…`): four legs, all `match=10/10 …
    flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
    killed-delta<=0 flips<=0)`, rc 0.

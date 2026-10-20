@@ -100,3 +100,20 @@ Mistakes made this round (mined from wave 2; same columns):
   registry-check adopted-orphan signalling (SentinelKillCode);
   `git-env-canary.py` runs rows without isolation (SentinelProbeEnvelope);
   simplifications (SimplifyRound18) deferred.
+
+## Gate addendum — correction rows and final checks (2026-10-20)
+
+| Row | URL | Accessed | Quote (location) |
+|---|---|---|---|
+| S075 | https://man7.org/linux/man-pages/man1/strace.1.html | 2026-10-20 | "Traces only the specified set of system calls." (§Filtering, `-e trace=syscall_set`; supersedes S060's anchor) |
+| S076 | https://docs.jj-vcs.dev/latest/git-compatibility/ | 2026-10-20 | "Convince jj to update .git/HEAD to point to the working-copy commit's parent" (§Converting, recipe comment; detached-HEAD prose is §Colocated ¶3; supersedes S061's anchor) |
+| S077 | https://man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html | 2026-10-20 | "When a process becomes orphaned (i.e., its immediate parent terminates), then that process will be reparented to the nearest still living ancestor subreaper." (§DESCRIPTION ¶2; supersedes S068's anchor) |
+| S078 | https://man7.org/linux/man-pages/man2/open.2.html | 2026-10-20 | "These request opening the file read-only, write-only, or read/write, respectively." (§DESCRIPTION access modes; supersedes S072's O_TRUNC overstatement) |
+
+These four mined correction rows cite this lesson. S001, S052, S056 and S057
+used-by each changed from their previous value to that value plus
+`corpus/knowledge/mutation-case-kumitate-sources-check.md`; all other cells
+of those rows stayed unchanged. The final census is 76 rows
+(A67 B7 C2; mined48 queued23 rejected5), not the earlier 72-row snapshot.
+The final registered census first failed because this lesson did not literally
+cite S076; this Gate addendum repairs that missing back-reference.
