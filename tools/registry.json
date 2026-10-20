@@ -215,10 +215,11 @@
       },
       "timeout_s": 60,
       "source": "SKILL.md@98bea7d:1681",
-      "status": "active",
+      "status": "superseded",
       "tags": [
         "baseline"
-      ]
+      ],
+      "superseded_by": "evidence-disposition-round18"
     },
     {
       "name": "evidence-disposition-round17-before",
@@ -241,9 +242,64 @@
       },
       "timeout_s": 60,
       "source": "SKILL.md@98bea7d:1806",
-      "status": "active",
+      "status": "superseded",
       "tags": [
         "new-r17"
+      ],
+      "superseded_by": "evidence-disposition-round18-before"
+    },
+    {
+      "name": "evidence-disposition-round18",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-18/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"status\": \"clean\"",
+          "\"effective\": 11",
+          "\"superseded\": 1"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@58e5d53:1923-1932",
+      "status": "active",
+      "tags": [
+        "baseline",
+        "new-r18"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round18-before",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-18/dispositions-before.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"expectation\": \"producer_before\"",
+          "\"status\": \"failed\""
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@58e5d53:1923-1932",
+      "status": "active",
+      "tags": [
+        "new-r18"
       ]
     },
     {
@@ -264,7 +320,7 @@
       "timeout_s": 60,
       "source": "SKILL.md@98bea7d:1681",
       "status": "superseded",
-      "superseded_by": "evidence-disposition-round17",
+      "superseded_by": "evidence-disposition-round18",
       "tags": [
         "baseline"
       ]
@@ -637,6 +693,87 @@
       "tags": [
         "new-r17"
       ]
+    },
+    {
+      "name": "trace-inputs-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/trace-inputs.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "timeout_s": 120,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "measure-round18-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST: "
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "assemble-round18-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "defect-probes-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/defect-probes.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
     }
   ]
 }
