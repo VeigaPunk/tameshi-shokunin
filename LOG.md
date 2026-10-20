@@ -1053,3 +1053,31 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Mistakes mined into `corpus/lessons/round-16.md` (10 rows) → QUALITY 18–22.
 - Waves: w1 68 seats, w2 67 seats, residual 8 + 1 (one job-cap refusal before
   the last seat), round total 144, 0 dead seats.
+
+### Round 17 — live-tree re-pin, entry-command monitor, input-keyed cold-read (2026-10-20)
+
+- Repair-first after round 16 closed rejected-harmed; routed R16-OP1, C2a, C2b,
+  C2c, EV1, MON1 all worked; jj findings fixed (repo-identity guard, GIT_*
+  scrub, branch-tip head observation) or declined with reasons (lesson G8, G9).
+- C1 calibration 6→8 (pending non-author): input-keyed credit
+  (`.ufo/evidence/round-17/measure.py`) — an entry credits only with verified
+  lane inputs, committed trace receipts (`coldread/trace-inputs.py`, strace) and
+  no live failing veto. Full page re-read: wave 2 58 cold reads at `eb7838b`;
+  7 wrong expectations repaired; 10 buckets re-read fresh in w3 at `0ff2734`.
+  `measure.py --rev e3827ee` → 58/58, box3 true, restraint 8, overrides false.
+- C2 operability: `--root . --dispositions .ufo/evidence/round-17/dispositions.json`
+  → 0 clean (red-before at `98bea7d` exit 2); `tools/registry-check.py` over
+  `tools/registry.json` graded at `98bea7d` 22/23 → `eb7838b` 23/23 baseline,
+  28/28 full, superseded 1.
+- R16-EV1 receipt correction appended; SHONEN box-3 correction appended; the
+  round-14 recipe marked historical with the working archived invocation.
+- Incident: a wave-1 seat ran the runner selftest with `GIT_DIR` exported to
+  the live lane; three fixture commits moved the lane HEAD/index. The L1
+  restored HEAD and index to `98bea7d` (no file bytes lost) and the runner now
+  scrubs `GIT_*` (QUALITY 27, 28).
+- Sources S058–S064 (7 rows, tier A, mined). Census start/end exit 0 (W04 for
+  S047/S048 only).
+- Waves: w1 67 seats, w2 99 seats (one job-cap refusal, retried), residual w3
+  8 seats (one job-cap refusal; five seats hit provider 429 and were resumed
+  under their own identities). Dead seats: 7 in w2 (m_opus 429 / Devin quota).
+  Round total 174.

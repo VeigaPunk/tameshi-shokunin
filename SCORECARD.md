@@ -592,3 +592,54 @@ W04 warnings.
 Next intended claim: none pre-claimed. Open debts are named in
 `corpus/lessons/round-16.md` (six older legs not env-scrubbed; `bwrap`
 confinement; successor sweeps).
+
+## Round 17 — live-tree re-pin, entry-command monitor, input-keyed cold-read (2026-10-20)
+
+Repair-first round after round 16 closed rejected-harmed
+(`corpus/lessons/round-16-verifier-spotcheck.md`). Two claims on two axes.
+C1 works **calibration 6**, the lowest owned numeric axis (the closure ruled
+round 16's 6→8 not earned). C2 works **operability**, which the closure graded
+harmed; this lane keeps no 0–10 operability score, so C2's unit is
+"registered baseline rows held / total", never converted into a score. No
+stagnation waiver, retirement or new axis.
+
+| Claim | Axis / type | Falsifiable before → after | Score delta | Evidence | Measured commit |
+|---|---|---|---|---|---|
+| C1 input-keyed full-page cold-read | calibration; axis move | under the input-keyed rule (`.ufo/evidence/round-17/measure.py --rev REV`, no overrides, strict trace gate): `98bea7d` 0/54 credited, `box3_full_page` false, restraint 6 → `e3827ee` 58/58, true, restraint 8; red-before on the round-14 bucket: credited at `e69b488`, `input-drift:tools/mutate-and-run.sh` at `09ee1d0` (overlay demonstration) | calibration 6 → 8 (lane cap; pending non-author) | `.ufo/evidence/round-17/coldread/ledger.json` (68 entries; 58 w2 + 8 w3 seat reports, every credited entry bound to committed trace receipts); `c1-measure-98bea7d.json`, `c1-measure-e3827ee.json`; `redbefore/`; S058, S059, S060, S064 | `e3827ee67d58673e1e9a1141ba1c8333125f4de8` |
+| C2 registered outcomes restored + monitor | operability; axis move (restoration of the round-16 harm plus a new monitor) | `python3 tools/registry-check.py --rev REV --registry <round-17 registry> --tag baseline`: `98bea7d` held 22/23 (the disposition capability differs: no live-clean-capable command) → `eb7838b` 23/23 (superseded old round-14 row reported, expect 0 got 2); full registry 28/28 | n/a (unit: rows held) | `tools/registry-check.py`, `tools/registry.json`; `.ufo/evidence/round-17/c2-before-98bea7d….json`, `c2-after-eb7838b.json`; OP1 red-before `op1-redbefore-98bea7d.txt` → green `op1-green-*` | `eb7838b16490ca7ba17ea3242ade76a61f744af2` |
+
+Separability: C2's counting command reads no cold-read ledger and C1's reads
+no registry. C1's receipts record the tool bytes they ran against, so a C1 read
+taken without C2's tool changes would have keyed to the old bytes and still
+verified; C2's rows hold without any ledger. Sourced claim: C1 (S058, S059,
+S060, S064); C2's jj fixes rest on S061–S063.
+
+Box 3 stays `[~]` (lane assertion). SHONEN box 3 carries an appended
+correction of the round-16 overclaim (R16-C2c) and links the round-17 ledger.
+The 8 is a lane measurement pending the separate non-author closure.
+
+| Axis | Round-17 lane verdict | Bound |
+|---|---|---|
+| calibration | improved, 6 → 8 (pending non-author) | C1; QUALITY 23–28 |
+| operability | improved (restored + monitor) | C2; registry baseline 22/23 → 23/23; no-harm rerun 16/16 entry points green (w2 NoHarmSelftests) |
+| depth | unchanged, 7 | command D `recorded_cases=7`; legs/calls/tuples 7/7/7; `--regression` cases=7 PASS |
+| coverage | unchanged | no frontier ground moved (F7 stays open) |
+| freshness | unchanged | no successor sweep; S058–S064 newly opened, not a freshness rubric move |
+| adjacency | unchanged | siblings read-only; no sibling gate pins the moved bytes (w2 SiblingImpact) |
+
+Capability counts in the table above are dated literals. At round 17:
+mutation sweep runner selftest 95/95 (row says 80/80); six-leg regression is
+seven legs, `cases=7` (row says 6); pin-disposition 19/19 (18/18);
+evidence-disposition 56/56 (34/34). The rows stay as written; this line
+supersedes their counts.
+
+Corrections, appended (round-16 rows above stay as written): `:571` and
+`:586` (calibration 6 → 8, 54/54) did not hold — the non-author closure
+returned 6, and under the input-keyed rule the round-16 ledger credits 0/54;
+`:588` ("operability unchanged") — the closure graded operability harmed;
+round 17's C2 is the repair.
+
+Next intended claim: none pre-claimed. Open debts: `corpus/lessons/round-17.md`
+(selftest survivors, `bash-witness-study.py` env scrub behind a waiver,
+registry-check timeout hardening, evidence-disposition G2/G3 HEAD vs branch
+tip, knowledge entry §5 exit sentence).
