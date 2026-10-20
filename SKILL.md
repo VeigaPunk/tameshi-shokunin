@@ -502,7 +502,7 @@ Exit 2 is not one class. A red run means different things — read the arm:
 |---|---|---|---|
 | **SETUP** — cannot measure | input missing/unusable (`--src` gone, `op` absent, fixture dir not a dir) | exit 2, a named line before any effect (`ADJACENCY_SCOPE: SETUP (…)`), never a bare death | gates-survey-kagi.md:93-99 |
 | **Malformed committed data** | a census row / declaration is malformed | census `die`s exit 2 ("not a verdict"); scope-gate accumulates `BAD-ROW` → `DEFECT` exit 1 — opposite calls, both deliberate | gates-survey-kagi.md:100-106 |
-| **POLICY** — refused before the effect | the act would leak/overstep: non-regular or `op://`-carrying op-side paths; claim rows outside a 5-verb allowlist (quote-stripped before matching; 23 denied verbs); nested self-audit; stamp-set shrink without `--prune`; checklist rows naming `op.env`; hashing a no-hash path | exit 2, structural, before exec | gates-survey-kagi.md:107-138 |
+| **POLICY** — refused before the effect | the act would leak/overstep: non-regular or `op://`-carrying op-side paths; claim rows outside a 5-verb allowlist (quote-stripped before matching; 23 denied verbs); nested self-audit; stamp-set shrink without `--prune`; checklist rows naming `op.env`; hashing a no-hash path | refused before exec: exit 2 structural, except `drift-pins.sh`, which prints the POLICY line and returns its DRIFT verdict, exit 1 (`drift-pins.sh:142-148`, `:252-258`; round 17) | gates-survey-kagi.md:107-138 |
 | **Zero-work** | the gate would report over nothing | refused; a gate that measures nothing must not exit 0 | gates-survey-kagi.md:139-143 |
 | **Deferral** | substrate absent for a `[substrate]`-tagged row | `DEFER … reason=substrate-absent`, counted, not executed, never FAIL; guards: tag lives in the data file, both-paths selftest | gates-survey-kagi.md:187-197 |
 
@@ -1021,9 +1021,9 @@ no lane acting stays [U].
 ### The tick and the pin read
 
 - **The tick is the round boundary.** The fleet driver idiom ends a lane's round
-  on a report file and ticks 450 s (`scripts/shokunin-watchdog.sh:3-5`), and its
-  lane map does not name tameshi (`:14`) — tameshi's tick is its own round series
-  [I].
+  on a report file and ticks 450 s (round 8: `scripts/shokunin-watchdog.sh:3-5` at fleet `17c1fad`); its lane map
+  then did not name tameshi (`:14`); since fleet-2 the lanes live in `shokunin.conf`, which names tameshi
+  (round 17). Tameshi's tick is still its own round series [I].
 - **Per case, two readings:** the target's relation to each repo's branch-tip bytes
   (`current` / `stale` / `drift`; `<branch>` per `detect_branch`,
   `../scripts/hyaku/jj-lane.sh:53-65`) and the tool's relation to the last run (`held` / `moved`):
@@ -1070,8 +1070,8 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
 
 - **T1 — a case reads `stale`** → re-measure at the live revision, or record the
   STALE cell with its reason; **never an edit of the recorded table**. Live
-  instances today: tsukuroi `084951be…` (6/10) → live `bba6cdf6…`; mado
-  `d7edaab4…` (4/10) → live `90d50cdd…`.
+  instances at round 8 (2026-10-14): tsukuroi `084951be…` (6/10) → `bba6cdf6…`; mado
+  `d7edaab4…` (4/10) → `90d50cdd…` (both have moved again since; re-read, never carry).
 - **T2 — the harness sha ≠ the revision a case's table was measured under** →
   re-run the reproduction under the new revision and record both pins. Precedent:
   the mado spec re-cut under `b56c6e57…` with identical verdicts and mutant shas
@@ -1084,7 +1084,7 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
   (:811-812). The old table stays; the moved case lands at its newest revision
   with both shas and the delta, appended. `moved=0 stale=0` is a complete
   outcome, recorded as such — drift is never manufactured by re-cutting cases.
-  The replay receipt at this revision (this lane, 19:15:54Z, rc 0):
+  The round-8 replay receipt (tool `cf41efaa…`, four legs; 19:15:54Z, rc 0):
   `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0
   flips<=0)`, every leg `match=10/10 … flips=0` — the recorded tables hold at
   their own pinned blobs regardless of the live drift above.
@@ -1701,8 +1701,8 @@ they are advisory planning, never public capture-capability evidence.
 Could-not-evaluate takes precedence over a mismatched expected verdict: an
 edited snapshot or unavailable input stays exit2, with any expectation
 disagreement secondary. A clean result with a wrong id/exit pin becomes
-failed/exit1. Help exits0 only as a non-verdict informational mode; selftest
-exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation.
+failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest
+exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation (the disposition selftest: 0 pass, 1 case failure or an uncaught setup traceback; round 17).
 
 ## Errata — round 16 full-page cold-read
 
@@ -1809,7 +1809,7 @@ lane assertion (`[~]`), never an independent `[x]`.
 |---|---|---|---|
 | `tools/mutate-and-run.sh` | gate | `bash tools/mutate-and-run.sh --selftest` · `--regression` | selftest 0 pass / 1 fail; regression 0 PASS · 1 FAIL · 2 SETUP · 64 usage |
 | `.ufo/evidence/round-16/measure.py` | probe | `python3 .ufo/evidence/round-16/measure.py --rev REV` · `--selftest` | 0 measured · 2 rev/blob missing · 64 usage |
-| `.ufo/evidence/round-16/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` | 0 every bucket covered · 1 a bucket uncovered or a report rejected · 2 usage (argparse) or an invalid override |
+| `.ufo/evidence/round-16/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` | 0 every bucket covered (a rejected report is printed, not counted) · 1 a bucket uncovered · 2 usage (argparse), an invalid override or a heading mismatch (round 17) |
 | `.ufo/evidence/round-16/attribution/reattribute.py` | probe | `python3 .ufo/evidence/round-16/attribution/reattribute.py --selftest` | 0 corrected rule passes the oracle · 1 it fails |
 ## Live-tree re-pin and entry-command monitor — round 17
 
@@ -1886,9 +1886,9 @@ Recipe for one bucket, cold:
    the receipt lists the tracked files opened (`inputs`), untracked opens, and external fleet files.
 3. Record the verdict block (schema `tameshi-coldread-report-v2`) with the receipts' inputs plus every lane
    file opened by hand, then `python3 .ufo/evidence/round-17/coldread/assemble.py --reports <dir> --out <ledger>`.
-4. `python3 .ufo/evidence/round-17/measure.py --rev REV` → `coldread.box3_full_page` and
-   `calibration_restraint_score`. A cited number comes only from this form, with no `--ledger-file`,
-   `--ledger-rev` or `--inputs-overlay` (the output's `overrides_used` is then false).
+4. Commit the ledger and every receipt it names together, with no recorded input changed after the reads,
+   then `python3 .ufo/evidence/round-17/measure.py --rev REV` → `coldread.box3_full_page` and `calibration_restraint_score`.
+   A cited number uses no `--ledger-file`/`--ledger-rev`/`--inputs-overlay` (`overrides_used` false).
 
 Limits: an open trace does not see environment variables, stat-only probes,
 reads on inherited descriptors or network; a seat can still omit a command.
@@ -1898,6 +1898,6 @@ The rule makes a recorded read checkable, not complete.
 
 | Name | Kind | Command | Exits |
 |---|---|---|---|
-| `.ufo/evidence/round-17/measure.py` | probe | `python3 .ufo/evidence/round-17/measure.py --rev REV` · `--selftest` | 0 measured · 2 rev, blob or ledger missing, forbidden overlay field · 64 usage |
-| `.ufo/evidence/round-17/coldread/trace-inputs.py` | probe | `python3 .ufo/evidence/round-17/coldread/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | 0 traced (the command's exit is in the receipt) · 2 strace unavailable or the command never executed · 64 usage |
-| `.ufo/evidence/round-17/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-17/coldread/assemble.py --reports DIR --out FILE [--expect-skill-sha SHA]` · `--selftest` | 0 every bucket covered, no report rejected · 1 a bucket uncovered or a report rejected · 2 usage (argparse) |
+| `.ufo/evidence/round-17/measure.py` | probe | `python3 .ufo/evidence/round-17/measure.py --rev REV` · `--selftest` | 0 measured (a missing default ledger is 0 with reason `no-ledger`) · 2 rev or required blob missing, an explicit `--ledger-file`/`--ledger-rev` unreadable, a forbidden overlay field · 64 usage |
+| `.ufo/evidence/round-17/coldread/trace-inputs.py` | probe | `python3 .ufo/evidence/round-17/coldread/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | 0 traced (the command's exit is in the receipt) · 2 strace unavailable or the command never executed · 64 usage; `--selftest` 0 pass, 1 a case failed — it fails under an outer tracer (nested ptrace is refused), so never wrap it |
+| `.ufo/evidence/round-17/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-17/coldread/assemble.py --reports DIR --out FILE [--expect-skill-sha SHA]` · `--selftest` | 0 every bucket covered, no report rejected · 1 a bucket uncovered, a report rejected, or no report found · 2 usage (argparse) |

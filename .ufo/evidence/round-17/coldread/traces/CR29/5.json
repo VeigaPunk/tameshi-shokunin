@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -u\nwhile read -r repo path prefix; do R=/home/vgpnk/Projects/shokunin/$repo; echo \"== $repo $path want=$prefix\"; found=0; for c in $(git -C \"$R\" rev-list --all -- \"$path\" 2>/dev/null); do s=$(git -C \"$R\" cat-file -p \"$c:$path\" 2>/dev/null | sha256sum | cut -d\" \" -f1); case \"$s\" in $prefix*) echo \"MATCH commit=$c sha256=$s\"; found=1;; esac; done; [ $found -eq 0 ] && echo \"NO-COMMIT-MATCH\"; done <<EOF\nkumitate-shokunin scripts/kimi-census.mjs 83016d45\nkagi-shokunin corpus/surface-census.sh 275d8294\ntsukuroi-shokunin tools/tsukuroi-census.sh 084951be\nmado-shokunin tools/mado-verify.sh d7edaab4\nkagi-shokunin corpus/checklist-run.sh 7e5ec98b\nkumitate-shokunin scripts/claims-check.mjs e9a21b44\nEOF"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR29-MGy5Ug/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w2-CR29-MGy5Ug/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 1,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-_8yog8bo/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 108
+}

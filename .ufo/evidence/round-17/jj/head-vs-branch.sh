@@ -1,12 +1,13 @@
 #!/bin/bash
 # head-vs-branch.sh — jj-colocation hazard fixture for tools/pin-disposition.py
-# (tameshi-shokunin, round 17, wave 1).
+# (tameshi-shokunin, round 17; wave-1 build, follow-up-2 GIT_* scrub).
 #
 # Reproduces JjAuditTameshi.md §2.3: under jj colocation, git HEAD can be a
 # detached jj working-copy snapshot commit (jj's `@-`) one commit ahead of the
 # `master` bookmark, carrying unbookmarked bytes. pin-disposition.py's
-# head_observation resolves `HEAD^{commit}` verbatim, so on a jj-worked lane it
-# can report snapshot bytes as the repo's "current" head.
+# head_observation at rev 98bea7d resolved `HEAD^{commit}` verbatim, so on a
+# jj-worked lane it reports snapshot bytes as the repo's "current" head; the
+# landed (eb7838b) tool resolves the branch tip instead.
 #
 # Fixture (all under mktemp in /tmp, removed on exit):
 #   $SCRATCH/fleet/                     fleet root (a plain dir; leg repos are
@@ -23,13 +24,20 @@
 # rejects manifests that omit a leg) but pin unavailable placeholders; their
 # rows are irrelevant to the verdict.
 #
+# Harness hygiene (round-17 lesson S063 / 12:29:33 incident): every inherited
+# GIT_* variable is unset before the first fixture git call — an exported
+# GIT_DIR otherwise redirects `git -C` so fixture commits land in the victim
+# repo. Only the deliberately re-pinned variables below are then exported.
+# After init the fixture asserts `git rev-parse --absolute-git-dir` resolves
+# under $SCRATCH.
+#
 # Usage: head-vs-branch.sh <path to pin-disposition.py>
-# Exit:  0  tool's head observation used master's tip commit (v1 bytes)
-#        1  tool's head observation used the detached HEAD commit (v2 bytes) —
-#           red: unpushed snapshot bytes are reported as the repo head
+# Exit:  0  tool's head observation used master's tip (commit V1C, v1 bytes)
+#        1  tool's head observation used the detached HEAD commit or its v2
+#           bytes — red: unpushed snapshot state is reported as the repo head
 #        2  setup or evaluation failure (fixture could not be built, the tool
-#           did not emit a usable observation document, or head.commit matched
-#           neither fixture commit)
+#           did not emit a usable observation document, or head.* matched
+#           neither fixture commit/blob pair)
 
 set -u
 
@@ -42,7 +50,7 @@ if [ ! -f "$TOOL" ]; then
     echo "SETUP-FAIL: tool not found: $TOOL" >&2
     exit 2
 fi
-for dep in git python3 sha256sum; do
+for dep in git python3 sha256sum realpath; do
     if ! command -v "$dep" >/dev/null 2>&1; then
         echo "SETUP-FAIL: dependency missing: $dep" >&2
         exit 2
@@ -53,8 +61,29 @@ SCRATCH=$(mktemp -d /tmp/tameshi-r17-jj-head-XXXXXX) || {
     echo "SETUP-FAIL: mktemp failed" >&2
     exit 2
 }
+SCRATCH_REAL=$(realpath -- "$SCRATCH")
 cleanup() { rm -rf "$SCRATCH"; }
 trap cleanup EXIT
+
+# --- GIT_* scrub -----------------------------------------------------------
+# Unset every inherited GIT_* variable (list derived from `env`, per the
+# S063 lesson: GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE/GIT_OBJECT_DIRECTORY/
+# GIT_COMMON_DIR redirect or corrupt fixture git calls). This runs before any
+# fixture git invocation; the pins re-exported next are the only GIT_* this
+# script intends.
+while IFS='=' read -r _git_name _git_rest; do
+    case "$_git_name" in
+        GIT_*) unset "$_git_name" ;;
+    esac
+done < <(env)
+unset _git_name _git_rest
+
+# Deliberate pins: no host hooks, templates, or global/system config, fixed
+# committer identity, no prompts.
+export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 \
+    GIT_AUTHOR_NAME=head-vs-branch GIT_AUTHOR_EMAIL=fixture@example.invalid \
+    GIT_COMMITTER_NAME=head-vs-branch GIT_COMMITTER_EMAIL=fixture@example.invalid
+GIT=(git -c init.templateDir="$SCRATCH/git-templates" -c core.hooksPath="$SCRATCH/git-hooks" -c commit.gpgsign=false)
 
 FLEET="$SCRATCH/fleet"
 REPO="$FLEET/kagi-shokunin"
@@ -63,6 +92,20 @@ LEG="bash-surface-census"
 mkdir -p "$FLEET" "$SCRATCH/git-templates" "$SCRATCH/git-hooks" "$REPO/corpus" || {
     echo "SETUP-FAIL: cannot create fixture dirs" >&2
     exit 2
+}
+
+assert_gitdir_under_scratch() {
+    local d
+    d=$("${GIT[@]}" -C "$REPO" rev-parse --absolute-git-dir 2>/dev/null) || {
+        echo "SETUP-FAIL: rev-parse --absolute-git-dir failed in fixture repo" >&2
+        exit 2
+    }
+    d=$(realpath -- "$d")
+    case "$d" in
+        "$SCRATCH_REAL"/*) : ;;
+        *) echo "SETUP-FAIL: fixture git dir escapes scratch: $d not under $SCRATCH_REAL" >&2
+           exit 2 ;;
+    esac
 }
 
 V1='#!/bin/sh
@@ -76,17 +119,11 @@ exit 0
 printf '%s' "$V1" > "$REPO/$RELPATH"
 V1_SHA=$(sha256sum "$REPO/$RELPATH" | cut -d' ' -f1)
 
-# Hermetic fixture git: no host hooks, templates, global/system config, or
-# inherited GIT_* state leaks into the fixture repo.
-export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 \
-    GIT_AUTHOR_NAME=head-vs-branch GIT_AUTHOR_EMAIL=fixture@example.invalid \
-    GIT_COMMITTER_NAME=head-vs-branch GIT_COMMITTER_EMAIL=fixture@example.invalid
-GIT=(git -c init.templateDir="$SCRATCH/git-templates" -c core.hooksPath="$SCRATCH/git-hooks" -c commit.gpgsign=false)
-
 if ! "${GIT[@]}" -C "$REPO" init -q -b master; then
     echo "SETUP-FAIL: git init failed" >&2
     exit 2
 fi
+assert_gitdir_under_scratch
 if ! (cd "$REPO" && "${GIT[@]}" add -A && "${GIT[@]}" commit -q -m "v1: master tip"); then
     echo "SETUP-FAIL: v1 commit failed" >&2
     exit 2
@@ -113,6 +150,7 @@ HEAD_DETACHED=$("${GIT[@]}" -C "$REPO" rev-parse HEAD) || {
     echo "SETUP-FAIL: cannot resolve detached HEAD" >&2
     exit 2
 }
+assert_gitdir_under_scratch
 if "${GIT[@]}" -C "$REPO" symbolic-ref -q HEAD >/dev/null; then
     echo "SETUP-FAIL: HEAD is attached, fixture invalid" >&2
     exit 2
@@ -159,8 +197,9 @@ if [ "$TOOL_EXIT" -ne 0 ]; then
     exit 2
 fi
 
-# Extract the exercised leg's head/pinned/worktree fields.
-read -r HEAD_COMMIT HEAD_BLOB HEAD_STATUS PINNED_COMMIT WORKTREE_SHA <<EOF
+# Extract the exercised leg's head/pinned/worktree fields (head.branch exists
+# on landed tools, null on the 98bea7d tool).
+read -r HEAD_COMMIT HEAD_BLOB HEAD_STATUS HEAD_BRANCH PINNED_COMMIT WORKTREE_SHA <<EOF
 $(python3 - "$OUT" "$LEG" <<'PY'
 import json, sys
 try:
@@ -172,25 +211,30 @@ try:
     print(head.get("commit") or "null",
           head.get("blob_sha256") or "null",
           head.get("status") or "null",
+          head.get("branch") or "null",
           pinned.get("commit") or "null",
           worktree.get("sha256") or "null")
 except Exception:
-    print("null null null null null")
+    print("null null null null null null")
 PY
 )
 EOF
 
 echo "OBSERVED leg=$LEG"
-echo "OBSERVED head.commit=$HEAD_COMMIT head.status=$HEAD_STATUS head.blob_sha256=$HEAD_BLOB"
+echo "OBSERVED head.commit=$HEAD_COMMIT head.branch=$HEAD_BRANCH head.status=$HEAD_STATUS head.blob_sha256=$HEAD_BLOB"
 echo "OBSERVED pinned.commit=$PINNED_COMMIT worktree.sha256=$WORKTREE_SHA"
 
-if [ "$HEAD_COMMIT" = "$MASTER_TIP" ]; then
+# "Used master's tip" = reported commit AND blob are the branch tip's pair.
+# "Used HEAD" = reported commit is the detached snapshot commit or the
+# reported blob carries v2-only bytes (covers a mixed tool that names the
+# branch tip but hashes HEAD's blob).
+if [ "$HEAD_COMMIT" = "$MASTER_TIP" ] && [ "$HEAD_BLOB" = "$V1_SHA" ]; then
     echo "VERDICT: head observation used master's tip ($MASTER_TIP, v1 bytes) — branch-safe"
     exit 0
 fi
-if [ "$HEAD_COMMIT" = "$HEAD_DETACHED" ]; then
-    echo "VERDICT: head observation used detached HEAD ($HEAD_DETACHED, v2 bytes) — jj @- snapshot reported as repo head (JjAuditTameshi.md §2.3)"
+if [ "$HEAD_COMMIT" = "$HEAD_DETACHED" ] || [ "$HEAD_BLOB" = "$V2_SHA" ]; then
+    echo "VERDICT: head observation used detached HEAD state (commit=$HEAD_COMMIT blob=$HEAD_BLOB, v2 bytes) — jj @- snapshot reported as repo head (JjAuditTameshi.md §2.3)"
     exit 1
 fi
-echo "SETUP-FAIL: head.commit=$HEAD_COMMIT matches neither master tip nor detached HEAD" >&2
+echo "SETUP-FAIL: head commit/blob pair ($HEAD_COMMIT / $HEAD_BLOB) matches neither fixture pair" >&2
 exit 2

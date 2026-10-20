@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -u; K=/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/surface-census.sh; R=/home/vgpnk/Projects/shokunin/kagi-shokunin; S=/tmp/tameshi-r17w2-CR10-tsJ1uZ/scratch/edit_one.py; D=/tmp/tameshi-r17w2-CR10-tsJ1uZ/scratch/work; rm -rf \"$D\"; mkdir -p \"$D\"; b_sha=$(sha256sum \"$K\" | cut -d\" \" -f1); b_size=$(stat -c %s \"$K\"); b_mtime=$(stat -c %Y \"$K\"); b_rev=$(git -C \"$R\" --no-optional-locks rev-parse HEAD); b_st=$(git -C \"$R\" --no-optional-locks status --porcelain -- corpus/surface-census.sh); echo \"BEFORE sha=$b_sha size=$b_size mtime=$b_mtime rev=$b_rev status=[$b_st]\"; cp -p \"$K\" \"$D/pristine.sh\"; cmp \"$K\" \"$D/pristine.sh\" && echo CMP_PRISTINE_OK; cp -p \"$D/pristine.sh\" \"$D/mutant-B8.sh\"; python3 \"$S\" \"$D/mutant-B8.sh\"; a_sha=$(sha256sum \"$K\" | cut -d\" \" -f1); a_size=$(stat -c %s \"$K\"); a_mtime=$(stat -c %Y \"$K\"); a_rev=$(git -C \"$R\" --no-optional-locks rev-parse HEAD); a_st=$(git -C \"$R\" --no-optional-locks status --porcelain -- corpus/surface-census.sh); echo \"AFTER sha=$a_sha size=$a_size mtime=$a_mtime rev=$a_rev status=[$a_st]\"; if [ \"$b_sha\" = \"$a_sha\" ] && [ \"$b_size\" = \"$a_size\" ] && [ \"$b_mtime\" = \"$a_mtime\" ] && [ \"$b_rev\" = \"$a_rev\" ] && [ \"$b_st\" = \"$a_st\" ]; then echo IDENTICAL_OK; else echo DRIFT; fi; cmp \"$K\" \"$D/pristine.sh\" && echo CMP_AFTER_OK; cmp -s \"$K\" \"$D/mutant-B8.sh\" || echo MUTANT_DIFFERS_OK"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR10-tsJ1uZ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w2-CR10-tsJ1uZ/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-db23o3fp/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/surface-census.sh": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 10
+}

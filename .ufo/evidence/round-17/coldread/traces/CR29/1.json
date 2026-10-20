@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -u\nprintf \"%s\\n\" \"kumitate-shokunin 83016d45 scripts/kimi-census.mjs\" \"kagi-shokunin 275d8294 corpus/surface-census.sh\" \"tsukuroi-shokunin 084951be tools/tsukuroi-census.sh\" \"mado-shokunin d7edaab4 tools/mado-verify.sh\" \"kagi-shokunin 7e5ec98b corpus/checklist-run.sh\" \"kumitate-shokunin e9a21b44 scripts/claims-check.mjs\" | while read -r repo rev path; do R=/home/vgpnk/Projects/shokunin/$repo; if full=$(git -C \"$R\" rev-parse --verify \"$rev^{commit}\" 2>/dev/null); then blob=$(git -C \"$R\" show \"$rev:$path\" 2>/dev/null); if [ -z \"$blob\" ]; then echo \"$repo $rev -> $full | $path | MISSING\"; else s=$(printf \"%s\\n\" \"$blob\" | sha256sum | cut -d\" \" -f1); l1=$(printf \"%s\\n\" \"$blob\" | head -1); echo \"$repo $rev -> $full | $path | sha256=$s | line1=$l1\"; fi; else echo \"$repo $rev -> UNRESOLVED\"; fi; done"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR29-MGy5Ug/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w2-CR29-MGy5Ug/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-ntn2sdju/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 12
+}

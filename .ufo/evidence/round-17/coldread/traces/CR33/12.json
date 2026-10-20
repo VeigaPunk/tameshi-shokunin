@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport subprocess\nC='/tmp/tameshi-r17w2-CR33-HQgW7D/fleet/tameshi-shokunin'\npath='corpus/knowledge/fleet-kill-rate-ledger.md'\nlog=subprocess.run(['git','-C',C,'log','--format=%H','--',path],capture_output=True,text=True).stdout.split()\nfor c in log:\n    p=subprocess.run(['git','-C',C,'show',c+'^:'+path],capture_output=True)\n    old=p.stdout if p.returncode==0 else b''\n    new=subprocess.run(['git','-C',C,'show',c+':'+path],capture_output=True).stdout\n    ok = new.startswith(old) or new.startswith(old.rstrip(b'\\n')+b'\\n')\n    print(c[:12], 'parent_rc', p.returncode, 'old', len(old), 'new', len(new), 'append_prefix', ok)\n"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR33-HQgW7D/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w2-CR33-HQgW7D/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-6zjo7s6k/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 45
+}

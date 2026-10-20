@@ -156,3 +156,12 @@ Each criterion cites the mistake it learns from
     unchanged. An unscrubbed fixture commit moved the live lane's HEAD and
     index in round 17 wave 1. (`lessons/round-17.md`, environment-leak
     mistake; S063)
+28. Correction to criterion 27 (round 17 wave 2, QualityCriteriaReview): as
+    landed it was false for two git callers — `tools/bash-witness-study.py:337-341`
+    (read-only `git show`, no env scrub; an exported `GIT_DIR` redirects the read)
+    and `.ufo/evidence/round-17/jj/head-vs-branch.sh` (fixture commits leaked into
+    a canary). The fixture script now scrubs `GIT_*` and proves it on a canary;
+    `bash-witness-study.py` is pinned by round-13 `expected.json`, so its scrub
+    lands with an appended disposition waiver in a later round and stays open
+    debt until then. Criterion 27 applies to every other lane git caller.
+    (`.ufo/waves/round-17/w2/QualityCriteriaReview.md`; `lessons/round-17.md`)

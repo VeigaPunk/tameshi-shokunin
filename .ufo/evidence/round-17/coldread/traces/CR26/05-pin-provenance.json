@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "sed -n '285,287p' /tmp/tameshi-r17w2-CR26-bfrGmn/fleet/tameshi-shokunin/corpus/knowledge/fleet-kill-rate-ledger.md; echo '== recorded-pin provenance in owner repos (bounded: 300 blobs/path) =='; for spec in kumitate-shokunin:scripts/kimi-census.mjs:83016d45 kagi-shokunin:corpus/surface-census.sh:275d8294 tsukuroi-shokunin:tools/tsukuroi-census.sh:084951be mado-shokunin:tools/mado-verify.sh:d7edaab4 kagi-shokunin:corpus/checklist-run.sh:7e5ec98b kumitate-shokunin:scripts/claims-check.mjs:e9a21b44; do repo=$(echo $spec | cut -d: -f1); rest=$(echo $spec | cut -d: -f2-); path=${rest%:*}; pin=${rest##*:}; n=0; found=NONE; for obj in $(git -C $repo rev-list --all --objects -- $path | awk '{print $1}' | sort -u | head -300); do n=$((n+1)); h=$(git -C $repo cat-file -p $obj | sha256sum | cut -d' ' -f1); case $h in $pin*) found=\"$obj $h\"; break;; esac; done; echo \"$repo $path pin=$pin scanned=$n found=$found\"; done"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR26-bfrGmn/fleet",
+  "root": "/tmp/tameshi-r17w2-CR26-bfrGmn/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-02t4g6gz/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "ac7f69d928e5ba0fb687821c2a2c0900e1375a8454901a285874735e35c21033"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 240
+}

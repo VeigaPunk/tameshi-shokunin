@@ -28,7 +28,7 @@ worktree access) and prints one JSON object:
                    box3_full_page, and the SHONEN box-3 block at REV contains
                    `.ufo/evidence/round-17/coldread/ledger.json`)
   sources          corpus/SOURCES.md census: rows matching
-                   `^\|\s*S[0-3]{3,}\s*\|`… (see sources_census)
+                   `^\\|\\s*S[0-9]{3,}\\s*\\|` (see sources_census)
 
 Credit rule (v2, fail-closed), evaluated per ledger entry in order:
 
@@ -39,7 +39,12 @@ Credit rule (v2, fail-closed), evaluated per ledger entry in order:
   2. class gate (unchanged from v1): instruction credits on
      executed-ok|gap-minor with commands_executed_count>=1; record credits on
      verified-record|gap-minor.
-  3. input gate, class-independent and applied to EVERY credited entry:
+  3. commands gate, class-independent: an entry credits only when
+     commands_executed_count>0 AND it lists >=1 committed trace; a
+     zero-command record cannot credit (`commands-unrecorded`), closing the
+     record-class free-read hole (K02 hole 2). Malformed counts are
+     `malformed-entry`.
+  4. input gate, class-independent and applied to EVERY credited entry:
      `inputs` minus the ignored keys (SKILL.md and the round-17 ledger path,
      which the section sha and the ledger itself already cover) must be
      non-empty; every key must be a canonical lane-relative path (no leading
@@ -48,22 +53,22 @@ Credit rule (v2, fail-closed), evaluated per ledger entry in order:
      (directory/symlink/gitlink → `input-not-blob:<p>`, absent/renamed/
      untracked → `input-missing:<p>`); and `sha256(git cat-file blob
      REV:<p>)` must equal the recorded value (`input-drift:<p>`).
-  4. trace gate: when `traces` is non-empty (or always for an entry with
-     commands_executed_count>0 in strict mode) each trace path must resolve
-     at REV to a blob whose JSON schema is `tameshi-trace-inputs-v1`, whose
-     `inputs` are a subset of the entry's inputs with equal sha256
-     (`trace-input-unrecorded:<p>`), and whose `external` must not name a
-     path under the live lane root (`live-lane-read:<p>`); a missing/blobless
-     trace is `trace-missing:<p>`, an unparseable or wrong-schema one
-     `trace-invalid:<p>`. An entry with commands>0 and no traces is
-     `traces-unrecorded` in strict mode.
+  5. trace gate: each trace path listed must resolve at REV to a blob whose
+     JSON schema is `tameshi-trace-inputs-v1`, whose `inputs` are a subset of
+     the entry's inputs with equal sha256 (`trace-input-unrecorded:<p>` for a
+     key absent from the entry; `trace-input-drift:<p>` for a shared key with
+     a different digest), whose `external` names no path under the live lane
+     root, and whose `live_lane_reads` map is empty (`live-lane-read:<p>`); a
+     missing/blobless trace is `trace-missing:<p>`, an unparseable or
+     wrong-schema one `trace-invalid:<p>`. An entry with commands>0 and no
+     traces is `traces-unrecorded` in strict mode.
      Strict mode applies when no override flag was given (the cited number).
      With --ledger-file/--ledger-rev/--inputs-overlay the run is a measurement
      aid (`overrides_used: true`, `trace_gate: "legacy"`): declared traces are
      still validated, but absent traces do not block credit (this is what
      lets a legacy red-before run credit at its read rev). A claim must never
      use overrides.
-  5. aggregation, fail-closed: a section is covered iff at least one entry
+  6. aggregation, fail-closed: a section is covered iff at least one entry
      credits AND no veto-eligible entry exists whose inputs still all verify
      at REV (an entry with drifted/missing inputs is stale and does not veto;
      absent/empty inputs cannot prove staleness, so they veto). A clean entry
@@ -84,8 +89,9 @@ of --ledger-rev are rejected when option-like (exit 64) and resolved with
 unresolvable); `revision` reports the resolved 40-hex commit and every blob
 read uses it. Default --repo is the git toplevel containing this file.
 
-Exits: 0 ok · 2 rev/blob/ledger/overlay missing or unparseable required
-input · 64 usage.
+Exits: 0 measured (a missing default ledger is a measured `no-ledger` state,
+not an error) · 2 rev/required-blob missing, explicit --ledger-file/
+--ledger-rev unreadable, or overlay unreadable/forbidden-field · 64 usage.
 
 `--selftest` builds synthetic git repos in mkdtemp (fixture git runs with a
 GIT_*-free environment) and proves the ported v1 cases plus every hardening
@@ -399,8 +405,14 @@ def trace_reason(repo, rev, entry, strict):
         for key in sorted(rec_inputs, key=str):
             if key in IGNORED_INPUTS:
                 continue
-            if key not in view or view[key] != rec_inputs[key]:
+            if key not in view:
                 return 'trace-input-unrecorded:%s' % key
+            if view[key] != rec_inputs[key]:
+                return 'trace-input-drift:%s' % key
+        live_reads = receipt.get('live_lane_reads')
+        if isinstance(live_reads, dict) and live_reads:
+            for key in sorted(live_reads, key=str):
+                return 'live-lane-read:%s' % key
         external = receipt.get('external')
         if isinstance(external, dict):
             for key in sorted(external, key=str):
@@ -471,11 +483,12 @@ def entry_reason(repo, rev, entry, strict):
     reason = entry_credit_reason(entry)
     if reason is not None:
         return reason
+    if json_int(entry.get('commands_executed_count', 0)) == 0:
+        return 'commands-unrecorded'
     reason = input_reason(repo, rev, entry)
     if reason is not None:
         return reason
     return trace_reason(repo, rev, entry, strict)
-
 
 def entry_is_stale(repo, rev, entry):
     """True when at least one recorded input fails to verify at REV.
@@ -717,10 +730,13 @@ TRACE_PATH = '.ufo/evidence/round-17/coldread/traces/syn.json'
 TRACE_BAD_PATH = '.ufo/evidence/round-17/coldread/traces/bad.json'
 TRACE_EXTRA_PATH = '.ufo/evidence/round-17/coldread/traces/extra.json'
 TRACE_LIVE_PATH = '.ufo/evidence/round-17/coldread/traces/live.json'
+TRACE_EXT_PATH = '.ufo/evidence/round-17/coldread/traces/live-ext.json'
+TRACE_DRIFT_PATH = '.ufo/evidence/round-17/coldread/traces/drift.json'
 SYMLINK_PATH = 'link-syn'
 
 
-def trace_receipt(inputs, external=None, schema=TRACE_SCHEMA):
+def trace_receipt(inputs, external=None, live_lane_reads=None,
+                  schema=TRACE_SCHEMA):
     return json.dumps({
         'schema': schema,
         'argv': ['cat', INPUT_FILE],
@@ -730,6 +746,7 @@ def trace_receipt(inputs, external=None, schema=TRACE_SCHEMA):
         'exit': 0,
         'inputs': inputs,
         'external': external or {},
+        'live_lane_reads': live_lane_reads or {},
     }) + '\n'
 
 
@@ -872,7 +889,12 @@ def selftest():
     write_file(repo, TRACE_BAD_PATH, '{"schema": "other", "inputs": {}}\n')
     write_file(repo, TRACE_EXTRA_PATH, trace_receipt(
         {INPUT_FILE: INPUT_V1_SHA, 'corpus/SOURCES.md': 'b' * 64}))
+    write_file(repo, TRACE_DRIFT_PATH, trace_receipt(
+        {INPUT_FILE: INPUT_V2_SHA}))
     write_file(repo, TRACE_LIVE_PATH, trace_receipt(
+        {INPUT_FILE: INPUT_V1_SHA},
+        live_lane_reads={os.path.join(LIVE_LANE_ROOT, 'SKILL.md'): 'c' * 64}))
+    write_file(repo, TRACE_EXT_PATH, trace_receipt(
         {INPUT_FILE: INPUT_V1_SHA},
         external={os.path.join(LIVE_LANE_ROOT, 'SKILL.md'): 'c' * 64}))
     os.symlink(INPUT_FILE, os.path.join(repo, SYMLINK_PATH))
@@ -990,9 +1012,9 @@ def selftest():
           out['calibration_restraint_score'] == 6
           and out['coldread']['missing'][0]['reason']
           == 'verdict-class:verified-record/instruction')
-
-    # --- case: record + verified-record + zero commands + valid input -> 8 ------
-    # The class-independent input gate is satisfied by evidence, not commands.
+    # --- case: record + verified-record + zero commands -> commands-unrecorded --
+    # The commands gate is class-independent: a zero-command record can no
+    # longer credit (K02 hole 2 / LessonReview F1), even with verified inputs.
     rec = json.loads(ledger_json(commands=0, inputs_mode='default'))
     for e in rec['entries']:
         e['class'] = 'record'
@@ -1000,10 +1022,10 @@ def selftest():
     write_file(repo, LEDGER_PATH, json.dumps(rec) + '\n')
     rev_rec = commit(repo, 'record verified-record zero commands with input')
     out = json.loads(call_measure(repo, rev_rec).stdout)
-    check('record-zero-cmd-input-credited',
-          out['coldread']['sections_covered'] == 4
-          and out['coldread']['box3_full_page'] is True
-          and out['calibration_restraint_score'] == 8)
+    check('record-zero-cmd-commands-unrecorded',
+          out['calibration_restraint_score'] == 6
+          and out['coldread']['reasons'] == {'commands-unrecorded': 4}
+          and out['coldread']['sections_covered'] == 0)
 
     # --- case: record + verified-record + zero commands + NO inputs -> 6 --------
     rec = json.loads(ledger_json(commands=0, inputs_mode='none'))
@@ -1014,7 +1036,19 @@ def selftest():
     out = json.loads(call_measure(repo, commit(repo, 'record no inputs')).stdout)
     check('record-zero-cmd-no-input-uncredited',
           out['calibration_restraint_score'] == 6
-          and out['coldread']['reasons'] == {'inputs-unrecorded': 4})
+          and out['coldread']['reasons'] == {'commands-unrecorded': 4})
+
+    # --- case: record + verified-record + commands + trace + input -> 8 ---------
+    rec = json.loads(ledger_json())
+    for e in rec['entries']:
+        e['class'] = 'record'
+        e['verdict'] = 'verified-record'
+    write_file(repo, LEDGER_PATH, json.dumps(rec) + '\n')
+    out = json.loads(call_measure(repo, commit(repo, 'record with commands')).stdout)
+    check('record-with-commands-credited',
+          out['coldread']['sections_covered'] == 4
+          and out['coldread']['box3_full_page'] is True
+          and out['calibration_restraint_score'] == 8)
 
     # --- round-16 w2 MutateMeasure survivors -----------------------------------
     # (a) an unknown class is never credited
@@ -1157,10 +1191,26 @@ def selftest():
 
     bad_trace = json.loads(ledger_json())
     for e in bad_trace['entries']:
+        e['traces'] = [TRACE_DRIFT_PATH]
+    write_file(repo, LEDGER_PATH, json.dumps(bad_trace) + '\n')
+    out = json.loads(call_measure(repo, commit(repo, 'trace digest mismatch')).stdout)
+    check('trace-input-drift', out['coldread']['reasons']
+          == {'trace-input-drift:%s' % INPUT_FILE: 4})
+
+    bad_trace = json.loads(ledger_json())
+    for e in bad_trace['entries']:
         e['traces'] = [TRACE_LIVE_PATH]
     write_file(repo, LEDGER_PATH, json.dumps(bad_trace) + '\n')
-    out = json.loads(call_measure(repo, commit(repo, 'trace live lane read')).stdout)
+    out = json.loads(call_measure(repo, commit(repo, 'trace live lane reads')).stdout)
     check('live-lane-read', out['coldread']['reasons']
+          == {'live-lane-read:%s' % os.path.join(LIVE_LANE_ROOT, 'SKILL.md'): 4})
+
+    bad_trace = json.loads(ledger_json())
+    for e in bad_trace['entries']:
+        e['traces'] = [TRACE_EXT_PATH]
+    write_file(repo, LEDGER_PATH, json.dumps(bad_trace) + '\n')
+    out = json.loads(call_measure(repo, commit(repo, 'trace external live lane')).stdout)
+    check('live-lane-read-external', out['coldread']['reasons']
           == {'live-lane-read:%s' % os.path.join(LIVE_LANE_ROOT, 'SKILL.md'): 4})
 
     # --- hardening: fail-closed aggregation ------------------------------------
@@ -1261,6 +1311,14 @@ def selftest():
         f.write(json.dumps(inject))
     res = call_measure(repo, rev_drift, '--inputs-overlay', inject_path)
     check('overlay-field-forbidden', res.returncode == 2
+          and 'overlay-field-forbidden' in res.stdout, res.stdout[:200])
+    verdict_only = [{'start': 19, 'skill_sha256': 'deadbeef',
+                     'verdict': 'executed-ok'}]
+    verdict_path = os.path.join(tmp, 'overlay-verdict.json')
+    with open(verdict_path, 'w') as f:
+        f.write(json.dumps(verdict_only))
+    res = call_measure(repo, rev_drift, '--inputs-overlay', verdict_path)
+    check('overlay-verdict-only-forbidden', res.returncode == 2
           and 'overlay-field-forbidden' in res.stdout, res.stdout[:200])
     trace_overlay = [{'start': 19, 'skill_sha256': 'deadbeef',
                       'traces': [TRACE_PATH]}]

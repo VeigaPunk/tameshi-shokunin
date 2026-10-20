@@ -3,7 +3,7 @@
 Built `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-17/coldread/assemble.py`
 per interface contract C, ported from the round-16 assembler where sound.
 
-File sha256: `d525c1807d5536983ff7cf154eb9849d24cc6373012720d23ba601a1df508aa3` (1637 lines, stdlib only).
+File sha256: `36ed62bc8dac8ff6702a4b2bbbbce9b642c2bc6af588dd4c97b0288c8636e3fe` (1894 lines, stdlib only).
 
 ## Behavior implemented
 
@@ -172,3 +172,64 @@ Final file sha256: `d525c1807d5536983ff7cf154eb9849d24cc6373012720d23ba601a1df50
   must exist, per L1's wording.
 - No git writes were run in the live lane; the hardened selftest's git writes
   are confined to its mkdtemp repo, and every git call scrubs `GIT_*`.
+
+## Follow-up 2
+
+L1 follow-up 2 (`w2/ReviewAssembleV2Code.md` findings F1, F2's
+`live_lane_reads` part, F3, F5, F6). Edited the same file; no other lane
+file written. Final sha256:
+`36ed62bc8dac8ff6702a4b2bbbbce9b642c2bc6af588dd4c97b0288c8636e3fe` (1894 lines).
+
+### Changes
+
+1. **F1 — read_rev before the page cache.** `rev_ok(repo, rev)` now runs for
+   every report before `pages.get(sha)`; a cached page can no longer launder
+   an unresolvable `read_rev`. A second report citing the same page sha at a
+   rev that does not contain it is rejected `page-not-at-read_rev`.
+2. **F2 (`live_lane_reads`).** A receipt carrying a non-empty
+   `live_lane_reads` map rejects its report as
+   `trace-live-lane-read:<receipt>`; an empty/absent map is accepted.
+3. **F3 — external/lane naming in any form.** `check_external_lane` now
+   examines the `repo@rev:path` spec *before* the absolute-path branch: the
+   repo spec (absolute or fleet-relative name) and every absolute path are
+   realpath-resolved and rejected when under the lane root
+   (`external-input-lane`), so `/lane@rev:file`, `lane-name@rev:file` and
+   symlinked paths are caught. Bare relative keys resolve against the lane
+   root (lane → reject) or are `external-input-shape`.
+4. **F5 — zero resolved reports.** When `reports_loaded` is empty (no files
+   matched, or every report rejected), the tool prints
+   `no reports resolved: 0 loaded, N rejected` and exits 1.
+5. **F6 — `.` components.** `canonical_path_reason` now also rejects `.`
+   components (`dot-component`) and non-UTF-8 keys (`non-utf8`), matching
+   measure.py's `canonical_lane_path`.
+
+### Verification (commands, exits)
+
+- `python3 .ufo/evidence/round-17/coldread/assemble.py --selftest` →
+  **76/76 `[ok]`, `SELFTEST: all checks passed`, exit 0**. New cases:
+  `cached-sha report still rev-checked (valid,bogus)` and `(bogus,valid)`
+  (both exit 1, `read_rev … unresolvable`), `page-not-at-read_rev rejection`,
+  `trace-live-lane` → `trace-live-lane-read:traces/live-lane.json`,
+  `empty live_lane_reads accepted`, `external-lane-abs-repo`,
+  `external-lane-rel-repo`, `external-lane-symlink` (all `external-input-lane`),
+  `non-lane repo@rev external accepted`, `dot-input` →
+  `noncanonical-input … (dot-component)`, `zero reports exit 1` and
+  `all-rejected exits 1` (both print `no reports resolved`).
+- Dry run against the real lane at `98bea7d…` →
+  `coverage: 54/54 buckets covered`, `rejected reports: none`, **exit 0**;
+  `_meta.reports_resolved: 2`, `inputs_dropped: ["SKILL.md"]` still emitted.
+- `python3 -c "ast.parse(...)"` → `parse ok`.
+
+### Notes for L1
+
+- F4 (assemble accepts worktree/absolute receipts the measure requires to be
+  committed at REV) is outside this fix list — receipts are still resolved
+  against `--repo`'s worktree, and `measure.py` is the divergent side;
+  flagged here as an unresolved integration point, not silently deferred.
+- F7 (falsy `inputs: []` accepted as `{}`) and F8 (empty `traces` key removed)
+  remain open; F9 (exempt set hardcoded) is unchanged by design.
+
+## Verdict
+
+built — w2 review items (F1, F2-live_lane_reads, F3, F5, F6) implemented;
+selftest 76/76 exit 0, dry run 54/54 exit 0.

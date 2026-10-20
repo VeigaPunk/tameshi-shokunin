@@ -227,3 +227,50 @@ git writes confined there), crafted ledger committed, live measure run with
 - No tool installs (python3/git only).
 
 Verdict: built (hardened; acceptance progression reproduced).
+
+## Follow-up 2 — wave-2 fixes (ReviewMeasureV2Code, MutateMeasureV2, LessonReview F1)
+
+### File
+
+- `.ufo/evidence/round-17/measure.py`
+  - new sha256: `1cac0db8755dd4cf6626cf14edc42ad67cda08d8a5bbe40ea8604d83828e87a5`
+  - 1550 lines; `python3 -c "import ast"` parses clean.
+
+### Fixes (mapped)
+
+| # | mandate | implementation |
+|---|---|---|
+| 1 | `live_lane_reads` receipt field must uncredit | `trace_reason` returns `live-lane-read:<p>` for any non-empty `live_lane_reads` map (sorted first key), plus the existing `external` check. Selftest fixture `TRACE_LIVE_PATH` now emits the real producer shape (`live_lane_reads`, matching `trace-inputs.py:683-684`); `TRACE_EXT_PATH` keeps the external shape and `live-lane-read-external` still proves the external arm. |
+| 2 | commands gate, class-independent (K02 hole 2 / LessonReview F1) | `entry_reason` returns `commands-unrecorded` for `commands_executed_count == 0` (every class; a zero-command record can no longer credit), after the class gate and before the input gate. Traces-committed still required only in strict mode, preserving the legacy red-before. |
+| 3 | kill the two mutation survivors | M4: trace receipt key present but digest differs → new `trace-input-drift:<path>` (`entry['inputs'][key] != receipt['inputs'][key]`); selftest `trace-input-drift` (receipt `drift.json` pins `INPUT_V2_SHA`). M6: overlay item containing only `verdict` → exit 2 `overlay-field-forbidden`; selftest `overlay-verdict-only-forbidden`. |
+| 4 | docstring | sources regex `[0-3]` → `[0-9]`; exits summary now says missing default ledger is a measured `no-ledger` (exit 0), exit 2 only for rev/required-blob missing, explicit `--ledger-file`/`--ledger-rev` unreadable, or overlay unreadable/forbidden-field. |
+
+### Selftest
+
+```
+$ python3 .ufo/evidence/round-17/measure.py --selftest
+MEASURE_SELFTEST: 93/93 pass (scratch /tmp/tameshi-r17-MeasureV2-bduz1uv3)
+```
+
+exit 0. New/changed checks: `record-zero-cmd-commands-unrecorded` (was
+`record-zero-cmd-input-credited`, now expects `commands-unrecorded` ×4 and
+0 covered), `record-zero-cmd-no-input-uncredited` (also `commands-unrecorded`),
+`record-with-commands-credited` (record + verified-record + commands>0 + valid
+trace + valid input → 4/4, 8), `trace-input-drift`, `live-lane-read` (real
+producer shape), `live-lane-read-external`, `overlay-verdict-only-forbidden`.
+
+### Red-before rerun (L1's exact commands)
+
+```
+$ for r in 98bea7d e69b488 09ee1d0: measure.py --rev <R> --ledger-rev 98bea7d:…round-16/ledger.json --inputs-overlay …/legacy-r14-inputs.json
+exit=0 each
+diff -q vs committed .ufo/evidence/round-17/redbefore/measure-*.json
+IDENTICAL 98bea7d / e69b488 / 09ee1d0 / strict
+```
+
+Byte-identical outputs — no field I changed affects these runs (the r14 entry
+has commands>0 so it passes the new commands gate; no receipt carries
+`live_lane_reads`). The r14 bucket still reads `credited` at `e69b488` and
+`input-drift:tools/mutate-and-run.sh` at `09ee1d0`/tip.
+
+Verdict: built (wave-2 hardening applied; K02 hole 2 closed, live-lane-read reachable via producer receipts).

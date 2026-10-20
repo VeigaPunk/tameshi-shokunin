@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -u; R=/home/vgpnk/Projects/shokunin/tameshi-shokunin; F=$R/.ufo/waves/round-17/w2/CR29.md; echo \"fences:\"; grep -c \"^\\`\\`\\`json\" $F; python3 - \"$F\" <<PY\nimport json,re,sys\nt=open(sys.argv[1]).read()\nblocks=re.findall(r\"\\`\\`\\`json\\n(.*?)\\n\\`\\`\\`\",t,re.S)\nprint(\"json blocks:\",len(blocks))\nd=json.loads(blocks[-1])\nprint(\"schema:\",d[\"schema\"],\"seat:\",d[\"seat\"],\"rev:\",d[\"read_rev\"][:12])\ns=d[\"sections\"][0]\nprint(\"start:\",s[\"start\"],\"class:\",s[\"class\"],\"verdict:\",s[\"verdict\"])\nprint(\"inputs:\",len(s[\"inputs\"]),\"external:\",len(s[\"external_inputs\"]),\"traces:\",len(s[\"traces\"]),\"minor:\",len(s[\"minor_gaps\"]))\nprint(\"skill_sha_ok:\",d[\"skill_sha256\"]==\"b1bd20aee58a0bd241e257f69e3610f3b8c2b805b2ebbb18f48b8e3184bf9d09\")\nimport os\nmiss=[p for p in s[\"traces\"] if not os.path.exists(os.path.join(\"/home/vgpnk/Projects/shokunin/tameshi-shokunin\",p))]\nprint(\"missing traces:\",miss)\nPY"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR29-MGy5Ug/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w2-CR29-MGy5Ug/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-j_afd3mv/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-17/w2/CR29.md": "a2ae053b995ccc95b3de1559c9e1ca07c23dc370f349008af23c722d3d8314b1"
+  },
+  "dropped_home_count": 0
+}

@@ -34,26 +34,32 @@ and forces exit 1; other reports still assemble):
   section start (heading line, or 1 for the preamble) of the resolved page,
   or a heading that mismatches the page's heading text at that start.
 
-Round-17 hardening (R05 §5 A4/A5 + L1 follow-up):
+Round-17 hardening (R05 §5 A4/A5 + L1 follow-ups 1–2):
   - A4 trace binding: every traces[] path must resolve against the repo
     worktree (absolute receipts are taken as given), carry schema
-    tameshi-trace-inputs-v1 and rev == read_rev; its `inputs`/`external` maps
-    are unioned into the section's maps, and a path declared with two
-    different sha256 is rejected as `trace-conflict:<path>`. An observation
-    that ran commands without any receipt is rejected
+    tameshi-trace-inputs-v1, rev == read_rev, and empty live_lane_reads; its
+    `inputs`/`external` maps are unioned into the section's maps, and a path
+    declared with two different sha256 is rejected as `trace-conflict:<path>`.
+    An observation that ran commands without any receipt is rejected
     (`trace-receipt-missing`).
+  - read_rev is validated for EVERY report (resolves to a commit in --repo),
+    before the page cache; a page sha cited at a rev that does not contain it
+    is rejected (`page-not-at-read_rev`).
   - Exempt inputs: `SKILL.md` and the in-flight round-17 ledger are dropped
     from `inputs` (recorded per entry as `inputs_dropped`) so a page edit or
     the assembler's own output cannot manufacture input-drift.
-  - Canonical inputs: absolute, `./`-prefixed, `..`-containing, `.git`-
-    containing or empty-component keys are `noncanonical-input` rejections.
-  - A5 external/lane separation: an `external_inputs` key must be an
-    absolute path or `repo@rev:path`; an absolute path under the lane root is
-    rejected `external-input-lane`.
+  - Canonical inputs: absolute, `./`-prefixed, `.`/`..`-component, `.git`-
+    component or empty-component keys are `noncanonical-input` rejections.
+  - A5 external/lane separation (w2 F3): an `external_inputs` key must be an
+    absolute path or `repo@rev:path`; any form that realpath-resolves under
+    the lane root (absolute path, `<lane-abs-or-name>@<rev>:…` repo spec, or
+    symlinked path) is rejected `external-input-lane`.
   - Fail-closed grouping: failing observations (verdict gap-blocking,
     wrong-expectation, not-executed, or any blocking_gaps/wrong_expectations)
     are kept in their own entries so a clean observation cannot launder them
     during aggregation (R05 F1; the measure vetoes).
+  - Zero resolved reports (no files or every report rejected) exits 1 with a
+    message instead of emitting an empty ledger as success.
   - Every git subprocess runs with all GIT_* variables scrubbed, so an
     exported GIT_DIR/GIT_WORK_TREE cannot redirect reads or writes to another
     repository (the round-17 lane-clobber incident).
@@ -379,11 +385,20 @@ def _check_str_list(v, name, start):
 
 
 def canonical_path_reason(key):
-    """Why `key` is not a canonical lane-relative path, or None."""
+    """Why `key` is not a canonical lane-relative path, or None.
+
+    Matches measure.py's canonical_lane_path: no absolute, no `./`-prefix,
+    no `.`, `..` or `.git` components, no empty components, no NUL, and the
+    key must encode as UTF-8.
+    """
     if not isinstance(key, str) or not key:
         return "empty"
     if "\0" in key:
         return "nul"
+    try:
+        key.encode("utf-8")
+    except UnicodeEncodeError:
+        return "non-utf8"
     if key.startswith("/"):
         return "absolute"
     if key.startswith("./"):
@@ -391,6 +406,8 @@ def canonical_path_reason(key):
     parts = key.split("/")
     if any(p == ".." for p in parts):
         return "parent-component"
+    if any(p == "." for p in parts):
+        return "dot-component"
     if any(p == ".git" for p in parts):
         return "git-component"
     if any(p == "" for p in parts):
@@ -441,6 +458,11 @@ def load_trace_receipt(repo, spec, read_rev):
             "trace-rev-mismatch:%s: receipt rev %r != read_rev %s"
             % (spec, data.get("rev"), read_rev)
         )
+    if data.get("live_lane_reads"):
+        raise Reject(
+            "trace-live-lane-read:%s: %d live-lane read(s) recorded"
+            % (spec, len(data["live_lane_reads"]))
+        )
     out = {"path": path}
     for field in ("inputs", "external"):
         raw = data.get(field) or {}
@@ -486,23 +508,47 @@ def merge_receipt_map(target, incoming, spec, dropped):
 
 
 def check_external_lane(repo, externals, start):
-    """R05 A5: an external input must not name a file under the lane root.
+    """R05 A5 + w2 F3: no external_inputs key may name the live lane.
 
-    Allowed shapes are an absolute path or `repo@rev:path`; anything else is
-    ambiguous (a lane-relative key filed as external would escape the input
-    gate).
+    Allowed key shapes are an absolute path or `repo@rev:path`. A key names
+    the lane when:
+      - it is an absolute path whose realpath resolves under the lane root,
+      - it is `spec@rev:path` whose spec's realpath resolves under the lane
+        root (absolute specs are taken as given; relative specs resolve
+        against the lane's parent directory, i.e. the fleet root, so the
+        lane's own directory name is caught), or
+      - it is anything else that realpath-resolves under the lane root.
+    Symlinks are resolved throughout (`os.path.realpath`).
     """
     root = os.path.realpath(repo)
+    fleet = os.path.dirname(root)
     for k in externals:
-        if k.startswith("/"):
+        lane_key = False
+        if "@" in k and ":" in k and k.index("@") < k.rindex(":"):
+            # repo@rev:path — check the repo spec for lane naming.
+            spec = k[: k.index("@")]
+            base = spec if spec.startswith("/") else os.path.join(fleet, spec)
+            real = os.path.realpath(base)
+            lane_key = real == root or real.startswith(root + os.sep)
+        elif k.startswith("/"):
             real = os.path.realpath(k)
-            if real == root or real.startswith(root + os.sep):
-                raise Reject(
-                    "section start=%s: external-input-lane:%s" % (start, k)
-                )
-        elif "@" not in k or ":" not in k:
+            lane_key = real == root or real.startswith(root + os.sep)
+        elif "@" in k or ":" in k:
+            # Malformed repo@rev:path (e.g. `x@y` without `:`).
             raise Reject(
                 "section start=%s: external-input-shape:%s" % (start, k)
+            )
+        else:
+            # Plain relative key: lane if it resolves inside the lane.
+            real = os.path.realpath(os.path.join(root, k))
+            lane_key = real.startswith(root + os.sep)
+            if not lane_key:
+                raise Reject(
+                    "section start=%s: external-input-shape:%s" % (start, k)
+                )
+        if lane_key:
+            raise Reject(
+                "section start=%s: external-input-lane:%s" % (start, k)
             )
 
 
@@ -670,17 +716,19 @@ def assemble(repo, report_paths):
             continue
         sha = rep["skill_sha256"]
         rev = rep["read_rev"]
+        # F1 (w2 review): validate read_rev for EVERY report, before the page
+        # cache — a cached page must not launder an unresolvable read point.
+        if not rev_ok(repo, rev):
+            rejected.append(
+                {
+                    "report": path,
+                    "seat": rep["seat"],
+                    "reason": "read_rev %s unresolvable in repo" % rev,
+                }
+            )
+            continue
         page = pages.get(sha)
         if page is None:
-            if not rev_ok(repo, rev):
-                rejected.append(
-                    {
-                        "report": path,
-                        "seat": rep["seat"],
-                        "reason": "read_rev %s unresolvable in repo" % rev,
-                    }
-                )
-                continue
             resolved = resolve_page(repo, rev, sha)
             if resolved is None:
                 rejected.append(
@@ -702,6 +750,20 @@ def assemble(repo, report_paths):
                 "first_line": ptext.split("\n", 1)[0] if ptext else "",
             }
             pages[sha] = page
+        elif page["rev"] != rev:
+            # Same page sha cited at another rev: the blob must exist at the
+            # cited read point too (same sha => identical text, so the cached
+            # section map stays valid).
+            if resolve_page(repo, rev, sha) is None:
+                rejected.append(
+                    {
+                        "report": path,
+                        "seat": rep["seat"],
+                        "reason": "page-not-at-read_rev: no blob at rev %s "
+                        "has sha256 %s" % (rev, sha),
+                    }
+                )
+                continue
         # Validate section starts/headings against this page.
         bad = None
         for s in rep["sections"]:
@@ -991,13 +1053,16 @@ def _selftest():
         trace_dir = os.path.join(repo, "traces")
         os.makedirs(trace_dir, exist_ok=True)
 
-        def write_receipt(name, rev=None, schema=TRACE_SCHEMA, **kw):
+        def write_receipt(name, rev=None, schema=TRACE_SCHEMA,
+                          live_lane_reads=None, **kw):
             payload = {
                 "schema": schema,
                 "rev": rev_new if rev is None else rev,
                 "inputs": kw.get("inputs", {}),
                 "external": kw.get("external", {}),
             }
+            if live_lane_reads is not None:
+                payload["live_lane_reads"] = live_lane_reads
             with open(os.path.join(trace_dir, name), "w") as f:
                 json.dump(payload, f)
 
@@ -1005,6 +1070,11 @@ def _selftest():
         write_receipt("t2.json", inputs={"tools/second.py": "d" * 64})
         write_receipt("bad-schema.json", schema="not-a-trace")
         write_receipt("old-rev.json", rev=rev_old)
+        write_receipt(
+            "live-lane.json",
+            live_lane_reads={os.path.join(repo, "SKILL.md"): "a" * 64},
+        )
+        write_receipt("no-live-lane.json", live_lane_reads={})
 
         heads = {s["start"]: s["heading"] for s in secs}
         heads[1] = ""
@@ -1443,6 +1513,184 @@ def _selftest():
             run_git(decoy, "rev-parse", "HEAD").strip() == decoy_head,
         )
 
+        # ---- w2 review follow-up cases ----------------------------------
+        # F1: read_rev validated for every report, before the page cache.
+        bogus = os.path.join(td, "bogus.md")
+        with open(bogus, "w") as f:
+            f.write(
+                mkreport(
+                    "SeatBogus", skill_sha, "1" * 40,
+                    [sec(1, "executed-ok", heading="")],
+                )
+            )
+        code = main(
+            ["--reports", r1, bogus, "--repo", repo, "--out", out],
+            stdout=io.StringIO(),
+        )
+        led = json.load(open(out))
+        reasons = led["_meta"]["reports_rejected"]
+        check(
+            "cached-sha report still rev-checked (valid,bogus)",
+            code == 1 and len(reasons) == 1
+            and "unresolvable" in reasons[0]["reason"],
+            "code=%d reasons=%s" % (code, reasons),
+        )
+        code = main(
+            ["--reports", bogus, r1, "--repo", repo, "--out", out],
+            stdout=io.StringIO(),
+        )
+        led = json.load(open(out))
+        reasons = led["_meta"]["reports_rejected"]
+        check(
+            "cached-sha report still rev-checked (bogus,valid)",
+            code == 1 and len(reasons) == 1
+            and "unresolvable" in reasons[0]["reason"],
+            "code=%d reasons=%s" % (code, reasons),
+        )
+        # Same page sha cited at a rev that does not contain it.
+        bogus2 = os.path.join(td, "bogus2.md")
+        with open(bogus2, "w") as f:
+            f.write(
+                mkreport(
+                    "SeatBogus2", skill_sha, rev_old,
+                    [sec(1, "executed-ok", heading="")],
+                )
+            )
+        code = main(
+            ["--reports", r1, bogus2, "--repo", repo, "--out", out],
+            stdout=io.StringIO(),
+        )
+        led = json.load(open(out))
+        reasons = led["_meta"]["reports_rejected"]
+        check(
+            "page-not-at-read_rev rejection",
+            code == 1 and len(reasons) == 1
+            and reasons[0]["reason"].startswith("page-not-at-read_rev"),
+            "code=%d reasons=%s" % (code, reasons),
+        )
+
+        # live_lane_reads: non-empty rejects, empty dict accepted.
+        r = rej_case(
+            "trace-live-lane",
+            mkreport("S", skill_sha, rev_new,
+                     [sec(1, "executed-ok", commands_executed=["c"],
+                          traces=["traces/live-lane.json"])]),
+        )
+        check("reason trace-live-lane-read",
+              r.startswith("trace-live-lane-read"), r)
+        ok_ll = os.path.join(td, "okll.md")
+        with open(ok_ll, "w") as f:
+            f.write(
+                mkreport(
+                    "SeatLL", skill_sha, rev_new,
+                    [sec(1, "executed-ok", commands_executed=["c"],
+                         traces=["traces/no-live-lane.json"])],
+                )
+            )
+        code = main(
+            ["--reports", ok_ll, "--repo", repo, "--out", out],
+            stdout=io.StringIO(),
+        )
+        led = json.load(open(out))
+        check(
+            "empty live_lane_reads accepted",
+            code == 1 and led["_meta"]["reports_rejected"] == [],
+            "code=%d" % code,
+        )
+
+        # external_inputs naming the lane in any form.
+        r = rej_case(
+            "external-lane-abs-repo",
+            mkreport("S", skill_sha, rev_new,
+                     [sec(1, "executed-ok",
+                          external_inputs={
+                              repo + "@%s:SKILL.md" % rev_new: "a" * 64,
+                          })]),
+        )
+        check("reason abs-repo@rev lane",
+              "external-input-lane" in r, r)
+        r = rej_case(
+            "external-lane-rel-repo",
+            mkreport("S", skill_sha, rev_new,
+                     [sec(1, "executed-ok",
+                          external_inputs={
+                              "repo@%s:SKILL.md" % rev_new: "a" * 64,
+                          })]),
+        )
+        check("reason rel-repo@rev lane",
+              "external-input-lane" in r, r)
+        link = os.path.join(td, "lane-link")
+        if not os.path.exists(link):
+            os.symlink(repo, link)
+        r = rej_case(
+            "external-lane-symlink",
+            mkreport("S", skill_sha, rev_new,
+                     [sec(1, "executed-ok",
+                          external_inputs={
+                              link + "/SKILL.md": "a" * 64,
+                          })]),
+        )
+        check("reason symlink lane",
+              "external-input-lane" in r, r)
+        # A sibling name (not the lane) under the fleet root is accepted.
+        os.makedirs(os.path.join(td, "sibling"), exist_ok=True)
+        sib = os.path.join(td, "sib.md")
+        with open(sib, "w") as f:
+            f.write(
+                mkreport(
+                    "SeatSib", skill_sha, rev_new,
+                    [sec(1, "executed-ok",
+                         external_inputs={
+                             "sibling@%s:x" % "0" * 40: "a" * 64,
+                         })],
+                )
+            )
+        code = main(
+            ["--reports", sib, "--repo", repo, "--out", out],
+            stdout=io.StringIO(),
+        )
+        led = json.load(open(out))
+        check(
+            "non-lane repo@rev external accepted",
+            code == 1 and led["_meta"]["reports_rejected"] == [],
+            "code=%d" % code,
+        )
+
+        # `.` input components rejected like `..`.
+        r = rej_case(
+            "dot-input",
+            mkreport("S", skill_sha, rev_new,
+                     [sec(1, "executed-ok",
+                          inputs={"tools/./x.py": "a" * 64})]),
+        )
+        check("reason dot-component",
+              "noncanonical-input" in r and "dot-component" in r, r)
+
+        # Zero resolved reports -> exit 1 with a message.
+        bufz = io.StringIO()
+        code = main(
+            [
+                "--reports", os.path.join(td, "nomatch-*.md"),
+                "--repo", repo, "--out", out,
+            ],
+            stdout=bufz,
+        )
+        check(
+            "zero reports exit 1",
+            code == 1 and "no reports resolved" in bufz.getvalue(),
+            "code=%d out=%s" % (code, bufz.getvalue().strip()[-60:]),
+        )
+        bufz = io.StringIO()
+        code = main(
+            ["--reports", bogus, "--repo", repo, "--out", out],
+            stdout=bufz,
+        )
+        check(
+            "all-rejected exits 1",
+            code == 1 and "no reports resolved" in bufz.getvalue(),
+            "code=%d" % code,
+        )
+
         # ---- coverage gap -> exit 1 with uncovered headings printed
         buf2 = io.StringIO()
         code = main(
@@ -1601,6 +1849,7 @@ def _finish(a, out, entries, meta, pages):
                 if uncovered
                 else "expected-page-unresolvable"
             ),
+            reports_resolved=len(meta["reports_loaded"]),
         ),
     }
     try:
@@ -1627,6 +1876,14 @@ def _finish(a, out, entries, meta, pages):
             )
         else:
             print_summary(a.out, result, uncovered)
+    if not meta["reports_loaded"]:
+        with contextlib.redirect_stdout(out):
+            print(
+                "no reports resolved: 0 loaded, %d rejected — refusing to "
+                "emit an empty ledger as success"
+                % len(meta["reports_rejected"])
+            )
+        return 1
     failed = bool(meta["reports_rejected"]) or missing_all
     if uncovered is not None:
         failed = failed or bool(uncovered["missing"])

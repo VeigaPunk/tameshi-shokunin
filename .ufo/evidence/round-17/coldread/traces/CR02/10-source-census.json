@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport re,subprocess\nt=subprocess.run(['git','show','eb7838b16490ca7ba17ea3242ade76a61f744af2:SKILL.md'],capture_output=True,text=True).stdout.splitlines()\nfence=False; inl=False\nbullets=[]; cited=[]\ncite=re.compile(r'(?:\\.md|\\.sh|\\.mjs|\\.py|\\.json|README|PROVINCE|SCORECARD|PROTOCOL|corpus/|plans/|tools/|\\.ufo/|\\(round\\s*\\d|\\(I\\)|\\(measured)')\nfor i,l in enumerate(t,1):\n    if l.startswith('```'):\n        fence=not fence; continue\n    if fence: continue\n    if l.startswith('## '): inl=True; continue\n    if inl and re.match(r'^[-*] ',l):\n        bullets.append(i)\n        if cite.search(l): cited.append(i)\nunc=[b for b in bullets if b not in set(cited)]\nprint('bullets_outside_fences',len(bullets),'with_source_token',len(cited),'without',len(unc))\nprint('uncited_lines',unc[:40])\n"
+  ],
+  "cwd": "/tmp/tameshi-r17w2-CR02-NoIV6o/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r17w2-CR02-NoIV6o/fleet/tameshi-shokunin",
+  "rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-b6z93qej/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 3
+}
