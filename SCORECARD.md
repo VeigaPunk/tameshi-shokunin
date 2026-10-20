@@ -244,6 +244,7 @@ written and are superseded here:
 | six-leg content-disposition probe | emit configured-pin, committed-HEAD and worktree SHA observations for every recorded leg, while explicitly withholding verdict reuse | `python3 tools/pin-disposition.py --selftest` → 18/18 PASS0; real read changed3/unchanged3/unavailable0; `.ufo/evidence/round-13/verification.json`, `pin-dispositions.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
 | exposed witness provenance correction | validate a new digest-anchored non-blind companion without rewriting frozen observations; prevent wrong-nesting in future producer output | metadata selftest39/39 PASS0; null-only companion FAIL1/corrected PASS0; producer same-oracle40/41 FAIL1→41/41 PASS0; `.ufo/evidence/round-13/producer-oracle-repair.json`, `verification-verdict.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
 | effective expectation reconciliation | account for every historical expected row, reject an exit-only setup crash, and preserve that raw failure under a checked explicit oracle supersession | `python3 tools/evidence-disposition.py --selftest` → PASS34/34 exit0; same checker before FAIL1/contains_missing→after CLEAN0, eleven effective+one superseded; `.ufo/evidence/round-14/verification-final.json`, S050; executable measurement6431478 | round14; lane demonstrated, separate outside admission pending |
+| retained invocation-context gate | re-derive bounded raw receipt predicates, check byte-pinned frozen receipts, and distinguish semantic mismatch from unavailable/tampered input through a standalone public-CLI selftest | `python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72` → exit0, copied-source CLI selftest49/49, registered frozen0, missing-env1, tamper2, usage64; `.ufo/evidence/round-15/verification-3.json`; S051 | round15; lane demonstrated, separate non-author admission pending |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -478,3 +479,73 @@ Gate. End census0, disclosed S047/S048 W04 warnings unchanged.
 These counts demonstrate complete retained account and capability artifact,
 not authority or a proof from file existence alone. Actual discriminating
 runtime proof is separately pinned at6431478 in `verification-final.json`.
+
+## Round 15 — context gate classification and failure-backed replay
+
+C1 works calibration6, tied with depth6 for lowest among this lane's owned
+numeric axes. Other axes below are no-harm monitors, not newly assigned
+scores. No stagnation waiver, retirement or promotion credit.
+
+| Claim | Axis / type | Falsifiable before → after | Score delta | Measured evidence |
+|---|---|---|---|---|
+| C1 retained context gate | calibration; capability | active maintained gate0→1; standalone selftest artifact0→1; explicit64 classes0→2; unsupported old same-path selftest64→new0 with49/49; frozen clean0 and missing-env1 remain discriminated | 6→6, delta0 | S051, QUALITY17; `verification-3.json`, `attempt-3/{before,after,expected}.json`; measured7650fe4 below |
+
+Counting command for both revisions:
+`python3 .ufo/evidence/round-15/measure.py --rev REV`, exit0 each.
+Before `a9cf4da78f2514c7bedd91a850a88590009d7df0`;
+after `7650fe4db89f3a706aed63d048ac47e02289cc72`.
+The script's text-presence counters are structural, not selftest proof;
+the multiline self-invocation-line heuristic remains0 and is not credited.
+Actual subprocess proof is retained separately.
+
+Integrated command:
+`python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72`,
+exit0, all44 retained checks pass. The selftest is run from byte-identical
+source copied to `<scratch>/lane/tools/candidate.py`, not falsely described
+as the registered-path argv. Its summary is `SELFTEST: PASS (49/49)`.
+The registered `tools/context-capture.py --check --json` command is separately
+executed in the same run and returns0/context_consistent.
+
+Same-path/same-argv flag-as-value proof: pre-repair maintained source
+`bca5deb2f61f4235d7f5baac71219c55459f29b5` returns2/receipt_missing;
+final source returns64/usage_error. Same frozen mapping fixture and CLI:
+old id expected_verdict_mismatch/1 fails the literal mapping_mismatch/1
+oracle; new id mapping_mismatch/1 satisfies it. Oracle FAIL1→PASS0, not
+an exit-only proof. No retained argv, sibling gate or historical capture ran.
+
+Failed integration is retained, not amended away: `verification.json` at
+0494c244 has42/44 checks passing and the bad copied-tool layout triggers
+hermetic-no-lane-path; `verification-2.json` at b2550559 records the
+accidentally dropped ID_TOKEN_RE declaration. Only the harness layout and
+diagnostic declaration were repaired; production gate SHA stays
+`c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726`.
+The third run's expectations/count/census live under `attempt-3/`.
+
+Guardrails from the same counting command: recorded cases6→6, calibration
+restraint6→6 (boxes1/2/4, box3 excluded); all599 historical evidence paths
+preserved, changed0/added0. Runner and frozen summary retain their published
+SHA values. SHONEN and prior outside lesson remain byte-identical.
+Sources48→49, A41→42/B5→5/C2→2, mined21→22/queued24→24/rejected3→3;
+S051 is A/own-work, not uncovered knowledge. Census before0/end0 with
+unchanged disclosed S047/S048 W04 warnings.
+
+| Axis | Round15 lane verdict | Bound |
+|---|---|---|
+| calibration | improved; scalar6 unchanged | C1, grounded QUALITY17 and failure-backed retained replay |
+| depth | unchanged; scalar6 | no seventh recorded case or new target depth |
+| coverage | unchanged | no new uncovered knowledge or whole-F7 completion |
+| operability | unchanged | C1 credited once to calibration; runner unchanged |
+| freshness | unchanged | no owner-approved current successor sweep executed |
+| adjacency | unchanged | own retained-receipt craft only; no sibling execution or ownership |
+
+Trends: expansion unchanged; quality improved; discernment improved via the
+prior outside disagreement becoming a grounded criterion and failure-backed
+fix. Current-round independent admit/reject sampling and admission remain
+the separate non-author closure duty. All SHONEN boxes stay restrained;
+box3 is unscored. The prior round14 outside closure already admitted its
+bounded C1; dated pending wording in its old table row is historical.
+Saturation8/window2 unchanged; no waiver claimed.
+
+Next intended claim remains freshness: one owner-approved clean-current
+successor spec and bounded sweep, or an explicit intake refusal. No next
+round number, future capability or new rate is preclaimed.

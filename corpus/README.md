@@ -207,3 +207,11 @@ whole-F7 result reuse, F1 interop or a successor mutation sweep. Legacy
 provenance headers, runbook corrections and current-page cold-read/box3
 remain open. The newest outside sample is now the round14 verifier note;
 it admits round14's bounded C1, not round15 or promotion.
+
+Effective round15 evidence is
+`../.ufo/evidence/round-15/verification-3.json`, measured at
+`7650fe4db89f3a706aed63d048ac47e02289cc72`: selftest49/49,
+registered frozen0, explicit missing-env1/tamper2/usage64. The earlier two
+failed harness receipts remain history; the lesson explains the copied-tool
+layout and dropped-regex repairs. S051 enters as own-work support, and no
+new `knowledge/` ground or external admission is inferred from this replay.

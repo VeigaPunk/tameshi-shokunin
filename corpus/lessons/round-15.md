@@ -164,3 +164,60 @@ regex declaration. L1 restored that exact declaration; production gate bytes
 and literal expected IDs/exits remain unchanged. `attempt-2/expected.json`
 and the failed second receipt stay intact. This is another observed harness
 failure, not a source-gate failure or a passing verification.
+
+## Completed execution and bounded verdict
+
+Executed:
+`python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72`,
+exit0. Effective receipt `verification-3.json` names all44 passing checks,
+no failed_checks; associated `attempt-3/expected.json` pins source/input
+bytes and literal verdicts before the run. Earlier failed receipts stay
+unchanged.
+
+- Same temp path `<scratch>/lane/tools/candidate.py`, same `--selftest`
+  argv, historical archived bytes64→maintained bytes0; actual summary
+  `SELFTEST: PASS (49/49)`. Forty receipt fixtures, seven usage cases, two
+  meta checks; this is not a full-domain hermeticity proof.
+- Actual registered-path `tools/context-capture.py --check --json`
+  returns0/context_consistent against its built-in frozen pin.
+- Explicit frozen clean0/context_consistent, missing-env1/
+  missing_injected_environment, tampered2/snapshot_tampered and usage64/
+  usage_error all match their pinned outcomes. An expected negative stays
+  exit1, not relabelled clean.
+- Same flag-as-value command with only source bytes changed:
+  pre-repair maintained source2/receipt_missing→final64/usage_error.
+- The literal mapping_mismatch/1 oracle fails on pre-repair maintained
+  source (id expected_verdict_mismatch/1) and passes on final source
+  (id mapping_mismatch/1): oracle FAIL1→PASS0 on the same frozen input.
+  This is stable-finding discrimination, not exit-only agreement.
+- Same `measure.py --rev REV` command returns0 for baselinea9cf4da and
+  measured7650fe4: maintained gate0→1, standalone artifact0→1,
+  explicit64 classes0→2. Cases6→6, restraint6→6; all599 historical
+  evidence paths preserved, changed0/added0; runner/summary/SHONEN/old
+  outside lesson pins unchanged.
+- Sources48→49; A41→42/B5/C2 unchanged; mined21→22/queued24/rejected3
+  unchanged. Both initial and final census exit0 with the same S047/S048
+  W04 duplicate-URL warnings. Source growth is not uncovered knowledge.
+
+The direct command, raw outputs, copied-source argv and measured revision are
+all explicit; no claim that the selftest argv used the registered path.
+The register's default frozen mode was separately exercised at that path.
+No historical capture, retained argv or sibling gate ran.
+The verifier cleaned its third scratch; the original stray scratch was
+already removed by L1.
+
+C1 lane-verifies: calibration improved via capability, scalar6→6; other
+axes unchanged. Trends: expansion unchanged, quality improved, discernment
+improved through the prior outside-routed mistake becoming QUALITY17 and
+failure-backed behavior. Current-round non-author admission and admit/reject
+sampling remain separate closure duties; all SHONEN marks remain `[~]`,
+box3 unscored. No new L0 question. Tool installs/updates: none.
+
+Wave accounting command/output is retained in
+`.ufo/evidence/round-15/wave-counts.json`: build66 (56 completed,10 quota
+failed;57 reports includes the uncredited partial SiblingOverlap), falsify32
+(all completed,32 reports), round98 identities. Build role mix executor19/
+scout13/connector2/reviewer12/critic8/sentinel4/revenger4/scribe4; falsify
+executor1/connector2/reviewer10/critic10/sentinel4/revenger1/scribe4.
+L1 canonical planner plus bounded connector data-walk; no model parameter,
+replacement identity, extra swarm or routing mutation.

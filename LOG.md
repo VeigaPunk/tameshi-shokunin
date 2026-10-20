@@ -988,3 +988,35 @@ failed before substantive gate replay: `verification-2.json` retains the
 missing `ID_TOKEN_RE` NameError introduced by the harness-layout repair.
 L1 restored only that existing regex declaration. Attempt2 expectation
 metadata and its failure are preserved; production gate source is unchanged.
+
+### Round 15 completed measurement — C1 verified within the lane
+
+- Executed `python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72`,
+  exit0; `.ufo/evidence/round-15/verification-3.json` retains44/44 checks
+  and `SELFTEST: PASS (49/49)`. Source remainsC4a1d165…; the two failed
+  harness runs are unchanged records, not converted to green.
+- Same temp path/argv selftest: archived bytes64→maintained0. The actual
+  registered default frozen `--check --json` runs separately and returns0.
+  Explicit frozen clean0/missing-env1/tamper2/usage64 match literal IDs.
+  Same-source-only flag-as-value proof2/receipt_missing→64/usage_error;
+  same frozen mapping input makes the literal mapping_mismatch/1 oracle
+  FAIL1 on bca5deb→PASS0 on final source. No stored argv or sibling gate ran.
+- Counts at the same command `measure.py --rev REV`, baselinea9cf4da→
+  measured7650fe4, exit0 each: active maintained gate0→1, standalone
+  artifact0→1, explicit64 classes0→2; cases6→6/restraint6→6;
+  historical paths599 preserved, changed0/added0. Source rows48→49,
+  A41→42/B5/C2 stable, mined21→22/queued24/rejected3 stable.
+  Evidence: `attempt-3/{before,after,expected,sources-after}.json`.
+- Initial and final source census exit0, same disclosed S047/S048 W04
+  warnings. S051 is own-work same-ground capability, not uncovered knowledge.
+  SCORECARD capability/round15 row now carries the measured hash and counts;
+  scalar calibration6 unchanged, no new promotion points.
+- Lane verdicts: calibration improved; depth/coverage/operability/freshness/
+  adjacency unchanged. Trends expansion unchanged, quality improved,
+  discernment improved via grounded outside-routed learning. Current-round
+  non-author admission/sampling remain external; all SHONEN `[~]`.
+- Validated dispatch count command/output: `wave-counts.json`, build66+
+  falsify32=98;10 build quota failures, no replacement identities;57 build
+  report files include one failed partial,32 falsify reports complete.
+  No tool installs, new L0 question, source gate mutation after verification,
+  or claim of a new live-capture/successor-sweep result.

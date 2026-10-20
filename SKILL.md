@@ -1612,9 +1612,9 @@ Sources: S051 (maintained retained-context gate, opened this round),
 S049 (explicit child invocation), `corpus/lessons/round-15.md` (Gate and
 Mistakes), and `corpus/lessons/round-14-verifier-spotcheck.md`, Routed
 defects item 5; `PROTOCOL.md` §Gate standard. This appendix corrects the
-active registry classification and exit classes. Runtime observations are
-retained separately in `.ufo/evidence/round-15/verification.json`;
-entry commands here are declarations, not an outside admission.
+active registry classification and exit classes. Effective runtime evidence is
+`.ufo/evidence/round-15/verification-3.json`; the two earlier failed harness
+receipts remain retained history, not green evidence or outside admission.
 It adds no successor sweep, seventh recorded case, promotion credit,
 outside-admission authority, author authentication, new live-capture
 capability or environment-independence claim.
