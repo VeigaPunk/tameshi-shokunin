@@ -1,0 +1,41 @@
+# ReportScribe probe capture — round 12 w1 (read-only; no suite, no build, no install)
+# captured: 2026-10-20T02:14:10Z
+$ git rev-parse HEAD
+18ad5d050ef4bcd830fe513825baed878f025024
+$ git branch --show-current
+master
+$ git status --short
+?? .ufo/evidence/round-12/
+?? .ufo/waves/round-12/
+$ git log -3 --format='%h %s'
+18ad5d0 Integrate remote documentation; preserve local round log
+a21e910 round-1 verifier spot-check (integrator, kaika): non-author admit/reject sample + adjudication
+01b358c round-1: post-review fixes
+$ python3 --version
+Python 3.14.7
+$ test -e tools/repeat-control.py
+absent
+$ ls tools
+mutate-and-run.sh
+$ sha256sum .ufo/waves/round-12/spec.json .ufo/waves/round-12/dispatch.json
+e13d92af643cf4fb0a20c82f64cfaf6a1873e0dcda717d2a2c7b276926891cc2  .ufo/waves/round-12/spec.json
+18d3626dffb5087a960f3ea8bc97f6e636b2340a06bfabe7c85f45d1dbd82b7e  .ufo/waves/round-12/dispatch.json
+$ grep -n 'stale' corpus/knowledge/fleet-kill-rate-ledger.md | grep -E '^(301|302|328|329|358|359):' 
+301:| 3 | tsukuroi-census | `084951be…` | `bba6cdf6…` (1 472 L) | `bba6cdf6…` | clean | **stale** |
+302:| 4 | mado-verify | `d7edaab4…` | `dc864c6a…` (2 186 L) | `90d50cdd…` | dirty | **stale + drift** |
+328:| 3 | tsukuroi-census | `084951be…` @ `165307fe` | `bba6cdf6…` (1 472 L / 73 919 B) | yes | clean · yes | **stale** |
+329:| 4 | mado-verify | `d7edaab4…` @ `eead56b2` | `7da4ec50…` (2 887 L / 131 612 B) | yes | clean · yes | **stale** |
+358:- **tsukuroi `tools/tsukuroi-census.sh`** — worktree `5d16378d…` (1 535 L / 79 432 B, mtime 20:02:42Z), `git diff --numstat` +63/−0 vs HEAD blob `bba6cdf6…` → reading **stale + drift** (ER-4 row 3 read `stale`, clean).
+359:- **mado `tools/mado-verify.sh`** — worktree `5b6ace8e…` (3 076 L / 141 461 B, mtime 20:02:38Z), +196/−7 vs HEAD blob `7da4ec50…` → reading **stale + drift** (ER-4 row 4 read `stale`, clean).
+$ grep -c 'Round admission: BLOCKED' SCORECARD.md
+1
+$ grep -n '^## ' SCORECARD.md
+7:## Move log
+26:## The ten training rounds — verdict table (rounds 2–11 = training r1–r10)
+58:## Current axes — fleet round-1 baseline
+86:## Fleet round-1 interactive continuation — local delta, admission blocked
+154:## Fleet round 1 — kaika continuation (2026-10-19): claims and measurements
+236:## Capabilities
+246:## Saturation
+257:## Planned
+274:## Retired

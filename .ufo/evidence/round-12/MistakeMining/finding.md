@@ -1,0 +1,23 @@
+# Scope/provenance mining — round 12
+
+**Status:** lane-local candidate, not an admission or independent review. Axes: depth + calibration. Historical bytes are preserved; this note does not amend them.
+
+## One candidate row
+
+| Class | Evidence | Captured by | Fix candidate |
+|---|---|---|---|
+| **Evidence-scope laundering:** a statement can overstate what an evidence artifact proves when prior exposure, tested subset, revision, or sample count is dropped in downstream wording. This is a common failure shape across the two historical cases below; the causal unification is an inference, not a demonstrated common cause. | **Witness case:** `.ufo/evidence/kaika-round-1/witness/README.md:15-23` records a declaration hash/time before the sweep *and* a preceding unscoped search that showed D2/D10 survivor and D5 killed results plus the D5 failure phrase. `corpus/knowledge/witness-scoped-kill-verdict.md:54,60-65` discloses this and append-only E1 corrects the heading to “declared-witness, partly contaminated,” not blind preregistration. **Box-3 case:** `corpus/knowledge/executor-test-sufficiency.md:3-8,52-54,155-167` says the executed scope was one D5 JS mutant on one pinned SKILL revision; Appendix B and the full sweep were not exercised. `corpus/lessons/round-1.md:70-84,114-120` and `reports/round-1-calibration.md:132-165` record that this was once projected into a current whole-SKILL cold-read claim, reject that projection, and retain the historical decision. | The existing bar already catches the scope overclaim after review: `corpus/QUALITY.md:3-8` requires falsifiable, sourced claims, separation of observation/inference/unknown, append-only errata, and retained rejections. Case-level capture exists in witness erratum E1 and the box-3 rejection (lesson MK-10); `QUALITY.md:15-17` separately requires prediction outcomes, but does not by itself record what outcome-bearing context was seen before a declaration. | For future claims, carry a compact evidence envelope into the claim: (1) exact tested scope/revision/sample count and exclusions; (2) prior outcome-bearing context exposure before any prospective declaration, explicitly classified as unexposed / partly contaminated / unknown; and (3) wording no broader than that envelope. A pre-run hash establishes byte identity/time ordering only, not blindness. A finite repeated-control match establishes equality only for the observed N runs, not determinism. Reuse the existing quality bar; do not add a general rule or rewrite the historical records from this single-lane mining.
+
+## Observations, inference, unknowns
+
+- **Observation:** The witness artifact expressly reports that historical outcomes and a failure phrase were visible before the declaration; it also records the declaration's pre-sweep timestamp/hash (`README.md:18-23`). E1 already makes the proper correction (`witness-scoped-kill-verdict.md:60-65`). The split result need not be reclassified because of this exposure; the already-retained record labels the declaration partly contaminated.
+- **Observation:** The original cold-read source measured one JS D5 kill and expressly excludes a full 10-defect sweep and Appendix B (`executor-test-sufficiency.md:52-54,155-167`). The historical broad box claim is rejected in the report and lesson. Current `SHONEN.md:9-10` is already scope-bounded to the separate fleet-round-1 cold-read and is not evidence that the older assertion was true.
+- **Inference:** Both records illustrate projection beyond evidence context: prior exposure is omitted by “blind” wording, or limited scope is omitted by “whole/current” wording. The reports do not establish that these had the same cause.
+- **Unknown:** No new, independent reviewer has adjudicated either historical correction here. This work cannot establish whether other undisclosed contexts were seen, or whether any future finite run set is deterministic.
+
+## Boundary and provenance
+
+- `S006` remains the registered source for witness verdict semantics; no `SOURCES.md` change is proposed.
+- The current frontier rows F2/F3 are context only; this note does not claim either frontier row newly held, does not alter any of the existing six gate legs, and does not count this reanalysis as another independent gate.
+- Only the separate report and the files in this seat's evidence directory are owned here. No production, corpus, source-registry, historical evidence, or sibling path was edited.
+- The prescribed `lsp` device is unavailable: a documentation request to `xd://lsp` returned “No such tool.” This analysis therefore uses the literal `read` citations above, not grep as semantic proof and not LSP-derived call-site claims.

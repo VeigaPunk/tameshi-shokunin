@@ -1,0 +1,21 @@
+# bash-witness-study — declared witness mapping (frozen before the sweep)
+# seat: BashWitness · round: round-12 · leg: bash-surface-census (pinned)
+# target: pristine.sh sha256=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f (kagi-shokunin@fecee8743e52eb8fb5fbb40782934cb619a1a96e corpus/surface-census.sh)
+# spec:   bash-surface-census.spec sha256=d2ad3f29ff206cca56a5c2718d53ece9407f74f602909a2203934b8279707741 (heredoc of tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5)
+# suite:  bash "$MUTANT" --selftest · declared total 16 cases (2 verbs cases skip when the-janitor is absent)
+# rule: killed-on-witness iff a full-denominator red run fails >=1 declared
+#       case; accidental iff red with none; survived iff green with the
+#       full denominator; inconclusive otherwise.
+# kind: declared-witness mapping, NOT a blind preregistration (disclosure
+#       in declaration.json and the evidence README).
+# fields: defect<TAB>witness<TAB>rationale   (witness = comma list or NONE)
+B1	undeclared-file	verify_unlisted early-return flips to `-ne 0`, so the SURFACE UNLISTED sweep is skipped whenever scan dirs exist (pristine.sh:241). Only `undeclared-file` plants an undeclared child in a declared scan dir and asserts exit 1 + token SURFACE UNLISTED; the clean tree has no unlisted child, so no other case's pass condition depends on the sweep.
+B2	clean,runtime-absent	rows_min `-ge`->`-gt` (pristine.sh:435) breaks the equality boundary got==floor. The intact-db cases pin that boundary (part rows 1 vs floor 1): `clean` (exit 0 + SURFACE OK) and `runtime-absent` (exit 0). `row-floor` exercises 0<1, which fails under both operators, so it cannot witness this change.
+B3	crosscheck-disagree,clean	crosscheck `!=`->`==` (pristine.sh:229) flags agreement instead of disagreement. `crosscheck-disagree` builds baseline 644 vs census 600 and asserts exit 1 + SURFACE CROSSCHECK (mutant passes silently); `clean` carries baseline 600 == census 600 and asserts exit 0 (mutant flags it). Both cases drive the mutated branch.
+B4	symlink-swap	the symlink guard is deleted (pristine.sh:200-204), so the declared-exec symlink falls through to the live-kind check and prints SURFACE DIVERGED (live symlink) instead of SURFACE LINK. `symlink-swap` asserts exit 1 + token SURFACE LINK. No other case creates a symlink.
+B5	NONE	the exec-bit arm is deleted (pristine.sh:214-217). NONE: no selftest case creates a declared-exec path that is a regular file without the execute bit — the only exec path (.local/bin/the-janitor) is created 755, and `symlink-swap` is intercepted by the earlier symlink guard. Fixture-absent arm: no assertion can witness this mutation.
+B6	clean,runtime-absent	magic compare `head -c ${#value}+1` -> `${#value}` (pristine.sh:371) makes the 15-byte read no longer match the 16-byte expected file, so the positive magic path fails on the real sqlite header (`SQLite format 3\0`): `clean` and `runtime-absent` assert exit 0 there. Note `sqlite-magic-prefix-only` (the case built for the NUL contract) still passes under the mutant — a 15-byte read still differs from the 16-byte expected — so it cannot witness this change.
+B7	sqlite-unavailable	N_UNVERIFIED += 2 (pristine.sh:405-406) changes only the summary count; the three sqlite-dependent shape rows print unverified=6 instead of 3. `sqlite-unavailable` is the only case asserting the DRIFT line token `unverified=3`.
+B8	malformed-row,fused-shape-row	die() exits 1 instead of 2 (pristine.sh:85). The two refusal cases that assert exit 2 go red: `malformed-row` (bad kind) and `fused-shape-row` (too many fields). Both route through die().
+B9	asset-gone,runtime-absent	the missing-path class test flips `runtime`->`asset` (pristine.sh:191), swapping GONE (failure) and ABSENT (not a failure) for missing paths. `asset-gone` asserts exit 1 + SURFACE GONE for the missing asset (mutant prints ABSENT, exit 0); `runtime-absent` asserts exit 0 for the missing runtime file (mutant prints GONE, exit 1).
+B10	NONE	the CLEAN summary's ok= argument becomes $N_ABSENT (pristine.sh:862). NONE: no selftest case asserts the CLEAN summary line's ok= field; the `clean` case's token SURFACE OK is matched by per-path SURFACE OK lines, which the mutation does not touch.

@@ -1,0 +1,38 @@
+SELFTEST surfaces+shapes
+ok-case  01 clean                              exit=0 SURFACE OK
+ok-case  02 mode-drift                         exit=1 SURFACE DIVERGED
+ok-case  03 asset-gone                         exit=1 SURFACE GONE
+ok-case  04 runtime-absent                     exit=0 SHAPE ABSENT
+ok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED
+ok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK
+ok-case  07 symlink-swap                       exit=1 SURFACE LINK
+ok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE
+ok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE
+bad-case 10 sqlite-unavailable                 exit=1
+    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)
+    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)
+    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)
+    | SURFACE OK       $STATE/client.lock (file 600)
+    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)
+    | SURFACE OK       $STATE/xdg-data (dir 700)
+    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)
+    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)
+    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)
+    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)
+    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)
+    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600
+    | SHAPE UNVERIFIED $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables_min (sqlite3 unavailable: /tmp/tmp.OBI9rJ510j/no-such-sqlite3)
+    | SHAPE UNVERIFIED $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables_required (sqlite3 unavailable: /tmp/tmp.OBI9rJ510j/no-such-sqlite3)
+    | SHAPE UNVERIFIED $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows_min (sqlite3 unavailable: /tmp/tmp.OBI9rJ510j/no-such-sqlite3)
+    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600
+    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1
+    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)
+    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=0 shape=0 unverified=6 ok=10 absent=0 skipped=0)
+ok-case  11 required-table-gone                exit=1 missing tables
+ok-case  12 row-floor                          exit=1 rows part 0
+ok-case  13 malformed-row                      exit=2 bad kind
+ok-case  14 fused-shape-row                    exit=2 fused-row refused
+SELFTEST verbs
+skip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)
+skip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)
+SELFTEST: FAIL (1/16 cases)

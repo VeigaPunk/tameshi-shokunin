@@ -1,0 +1,8 @@
+probe2.py P1-P7 (observed in-session, P8 deadlocks by design; run under timeout 30 -> rc=124):
+P1 text=True CRLF -> b"x\n"
+P2 text=True CR-only -> b"x\ny"
+P3 text=True 0xff strict -> UnicodeDecodeError (invalid start byte)
+P4 kill -9 child returncode -9; shell $? 137
+P5 missing binary FileNotFoundError errno2; non-exec file PermissionError errno13; directory argv0 PermissionError errno13
+P6 child exit 64 returned as data 64
+P7 cat stdin=DEVNULL -> b""

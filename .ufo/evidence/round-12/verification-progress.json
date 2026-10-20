@@ -1,0 +1,172 @@
+[
+  {
+    "name": "repeat-control-selftest",
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/repeat-control.py",
+      "--selftest"
+    ],
+    "expected_exit": 0,
+    "required_stdout": "SELFTEST: PASS",
+    "observed_exit": 0,
+    "stdout": "SELFTEST_CASE stable PASS (expected=controls_match/0 observed=controls_match/0 saved-bytes-ok)\nSELFTEST_CASE mismatch-stdout PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-run3-only PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-newline-only PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-stderr PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-exit PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-nonzero-exits PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE nonzero-baseline PASS (expected=baseline_nonzero/2 observed=baseline_nonzero/2)\nSELFTEST_CASE child127-baseline PASS (expected=baseline_nonzero/2 observed=baseline_nonzero/2)\nSELFTEST_CASE command-unavailable-enoent PASS (expected=command_unavailable/2 observed=command_unavailable/2)\nSELFTEST_CASE command-unavailable-eacces PASS (expected=command_unavailable/2 observed=command_unavailable/2)\nSELFTEST_CASE command-unavailable-enoexec PASS (expected=command_unavailable/2 observed=command_unavailable/2)\nSELFTEST_CASE invalid-runs-2 PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-runs-1 PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-runs-0 PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-runs-abc PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-missing-separator PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-existing-out PASS (expected=invalid_usage/64 observed=invalid_usage/64 refused-out-untouched)\nSELFTEST_CASE stdin-devnull PASS (expected=controls_match/0 observed=controls_match/0 stdin-devnull-ok)\nSELFTEST_CASE snapshot-pass PASS (expected=controls_match/0 observed=controls_match/0)\nSELFTEST_CASE snapshot-mismatch-pass PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE snapshot-tamper-byte PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-missing PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-unlisted PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-duplicate-key PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-manifest-symlink PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-observation-symlink PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-committed-stable PASS (expected=controls_match/0 observed=controls_match/0)\nSELFTEST_CASE snapshot-committed-mismatch PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST: PASS (29 cases)\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "frozen-match",
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/repeat-control.py",
+      "--snapshot",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-12/ControlGate"
+    ],
+    "expected_exit": 0,
+    "required_stdout": "REPEAT_CONTROL: controls_match",
+    "observed_exit": 0,
+    "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25\nSNAPSHOT_INPUTS 9 verified\nSNAPSHOT_EXPECTED id=controls_match exit=0\nSNAPSHOT_OBSERVED id=controls_match exit=0\nREPEAT_CONTROL: controls_match\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "frozen-mismatch",
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/repeat-control.py",
+      "--snapshot",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-12/ControlGate/mismatch"
+    ],
+    "expected_exit": 1,
+    "required_stdout": "REPEAT_CONTROL: controls_mismatch",
+    "observed_exit": 1,
+    "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25\nSNAPSHOT_INPUTS 9 verified\nSNAPSHOT_EXPECTED id=controls_mismatch exit=1\nSNAPSHOT_OBSERVED id=controls_mismatch exit=1\nREPEAT_CONTROL: controls_mismatch\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "real-pristine-three-controls",
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/repeat-control.py",
+      "--runs",
+      "3",
+      "--out",
+      "/tmp/tameshi-r12-integrated-kkp7con7/real-controls",
+      "--",
+      "env",
+      "-u",
+      "THE_JANITOR_BIN",
+      "-u",
+      "SQLITE3_BIN",
+      "-u",
+      "CENSUS_BREAK",
+      "-u",
+      "DEEP",
+      "bash",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-12/BashWitness/pristine.sh",
+      "--selftest"
+    ],
+    "expected_exit": 0,
+    "required_stdout": "REPEAT_CONTROL: controls_match",
+    "observed_exit": 0,
+    "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25\nREPEAT_RUN 1 exit=0 stdout-bytes=1202 stderr-bytes=0\nREPEAT_RUN 2 exit=0 stdout-bytes=1202 stderr-bytes=0\nREPEAT_RUN 3 exit=0 stdout-bytes=1202 stderr-bytes=0\nREPEAT_COMPARE identical=yes runs=3\nREPEAT_OUT /tmp/tameshi-r12-integrated-kkp7con7/real-controls\nREPEAT_CONTROL: controls_match\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "red-before-single-control-mutant",
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-12/FailureOracle/verify_gate.py",
+      "--gate",
+      "/tmp/tameshi-r12-integrated-kkp7con7/single-control-mutant.py",
+      "--out",
+      "/tmp/tameshi-r12-integrated-kkp7con7/red-before",
+      "--expect",
+      "controls_mismatch"
+    ],
+    "expected_exit": 1,
+    "required_stdout": "VERDICT: FAIL",
+    "observed_exit": 1,
+    "stdout": "expected_finding=controls_mismatch\nexpected_exit=1\nobserved_exit=0\nexpected_finding_observed=false\ngate_stdout=b'REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=6429bd7edb4a310a8b155c0b187e136acc48d4a78fd6179b16f5c7b30fccfe0d\\nREPEAT_RUN 1 exit=0 stdout-bytes=8 stderr-bytes=0\\nREPEAT_COMPARE identical=yes runs=3\\nREPEAT_OUT /tmp/tameshi-r12-integrated-kkp7con7/red-before/gate-runs\\nREPEAT_CONTROL: controls_match\\n'\ngate_stderr=b''\nVERDICT: FAIL\n",
+    "stderr": "",
+    "passed": true,
+    "only_delta": "for index in range(1, runs + 1):\n        record = run_once(command, index, out_dir) -> for index in range(1, 2): (mutant only)"
+  },
+  {
+    "name": "green-after-restored-repetition",
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-12/FailureOracle/verify_gate.py",
+      "--gate",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/repeat-control.py",
+      "--out",
+      "/tmp/tameshi-r12-integrated-kkp7con7/green-after",
+      "--expect",
+      "controls_mismatch"
+    ],
+    "expected_exit": 0,
+    "required_stdout": "VERDICT: PASS",
+    "observed_exit": 1,
+    "stdout": "expected_finding=controls_mismatch\nexpected_exit=1\nobserved_exit=0\nexpected_finding_observed=false\ngate_stdout=b'REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25\\nREPEAT_RUN 1 exit=0 stdout-bytes=8 stderr-bytes=0\\nREPEAT_RUN 2 exit=0 stdout-bytes=8 stderr-bytes=0\\nREPEAT_RUN 3 exit=0 stdout-bytes=8 stderr-bytes=0\\nREPEAT_COMPARE identical=yes runs=3\\nREPEAT_OUT /tmp/tameshi-r12-integrated-kkp7con7/green-after/gate-runs\\nREPEAT_CONTROL: controls_match\\n'\ngate_stderr=b''\nVERDICT: FAIL\n",
+    "stderr": "",
+    "passed": false,
+    "only_delta": "for index in range(1, runs + 1):\n        record = run_once(command, index, out_dir) -> for index in range(1, 2): (mutant only)"
+  },
+  {
+    "name": "runner-selftest",
+    "argv": [
+      "bash",
+      "tools/mutate-and-run.sh",
+      "--selftest"
+    ],
+    "expected_exit": 0,
+    "required_stdout": "MUTATE_SELFTEST: 80/80 pass",
+    "observed_exit": 0,
+    "stdout": "PASS sweep exits 0\nPASS control green on pristine\nPASS kill classified (K)\nPASS survivor classified (S)\nPASS kill tail shows the failing case\nPASS kill-rate summary exact\nPASS restore line OK\nPASS fixture target byte-identical after sweep\nPASS results.tsv = header + one row per defect\nPASS duplicate old string refuses (exit 2)\nPASS refusal names the defect\nPASS refusal reports the old-string count\nPASS refusal is a SETUP verdict\nPASS no suite run before refusal\nPASS unknown escape refuses (exit 2)\nPASS unknown escape named\nPASS no-op edit refuses (exit 2)\nPASS no-op edit named\nPASS inconclusive run exits 1\nPASS timeout classified inconclusive\nPASS survivor still recorded under DEGRADED\nPASS degraded summary exact\nPASS regression engine passes an in-band fixture\nPASS regression fixture PASS line exact\nPASS regression fixture table line exact\nPASS regression engine fails a doctored table\nPASS doctored table names K (measured vs recorded)\nPASS doctored table names S (measured vs recorded)\nPASS out-of-band FAIL names flips=2\nPASS regression pin mismatch is SETUP (exit 2)\nPASS pin mismatch named\nPASS regression missing target is SETUP (exit 2)\nPASS missing target named\nPASS fixture target byte-identical after regression fixture runs\nPASS band edge (1 flip / killed-delta 1) still PASSes\nPASS band-edge PASS line exact\nPASS band-edge table line exact\nPASS recorded entry the measurement lacks FAILs\nPASS unmeasured recorded entry named (measured=ABSENT)\nPASS unmeasured-entry FAIL line exact\nPASS measured row the table lacks FAILs\nPASS unrecorded measured row named (recorded=ABSENT)\nPASS unrecorded-row table line exact\nPASS unrecorded-row FAIL line exact\nPASS DEGRADED sub-sweep (rc=1) is table-compared\nPASS degraded sweep names the inconclusive row\nPASS degraded-sweep FAIL line names inconclusive=1\nPASS degraded-sweep table line exact\nPASS all-killed table (full match, zero flips) PASSes\nPASS all-killed table line exact (recorded-killed=2)\nPASS all-killed PASS line exact\nPASS fixture target byte-identical after the r6 hardening cases\nPASS ledger leg: git-materialized replay PASSes at exact tolerance\nPASS ledger leg pin line names the git source\nPASS ledger leg PASS line shows the exact tolerance\nPASS drifted working tree does not move a git-pinned leg\nPASS drifted leg swept the pinned blob bytes (not the tree)\nPASS ledger leg pin mismatch is SETUP (exit 2)\nPASS ledger leg pin mismatch named\nPASS ledger leg unresolvable revision is SETUP (exit 2)\nPASS ledger leg missing revision named\nPASS ledger leg: exec bit mirrored (self-exec gate runs)\nPASS exec-bit leg pin line carries mode=100755\nPASS exec-bit leg PASSes at the exact tolerance\nPASS no-exec blob invoked directly is SETUP (exit 2)\nPASS no-exec leg pin line carries mode=100644\nPASS no-exec leg refusal names the red control (exit=126)\nPASS exact expectation: one flipped entry FAILs loudly\nPASS exact expectation flip names the flipped row\nPASS exact expectation flip reports killed-delta=1 flips=1\nPASS embedded leg specs: six files written\nPASS embedded leg js-kimi-census: spec and recorded table agree\nPASS embedded leg bash-surface-census: spec and recorded table agree\nPASS embedded leg bash-tsukuroi-census: spec and recorded table agree\nPASS embedded leg bash-mado-verify: spec and recorded table agree\nPASS embedded leg bash-checklist-run: spec and recorded table agree\nPASS embedded leg js-claims-check: spec and recorded table agree\nPASS help exits 0\nPASS missing --target exits 64\nPASS --regression refuses --target (exit 64)\nMUTATE_SELFTEST: 80/80 pass\nVERDICT: PASS\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "runner-six-leg-regression",
+    "argv": [
+      "bash",
+      "tools/mutate-and-run.sh",
+      "--regression"
+    ],
+    "expected_exit": 0,
+    "required_stdout": "REGRESSION: PASS",
+    "observed_exit": 0,
+    "stdout": "REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5\nREGRESSION_DATE: 2026-10-20T03:57:58Z\nREGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=1 flips<=1\nREGRESSION_EXPECT: recorded kill-rates \u2014 js-kimi-census=8/10 bash-surface-census=8/10 bash-tsukuroi-census=6/10 bash-mado-verify=4/10 bash-checklist-run=7/15 js-claims-check=7/10\nREGRESSION_PIN js-kimi-census: source=git repo=/home/vgpnk/Projects/shokunin/kumitate-shokunin rev=175de6ba2e9e904010411b19cab27e0af9aad3d4 path=scripts/kimi-census.mjs mode=100644 sha256=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426\nREGRESSION_SWEEP js-kimi-census: MUTATE: DONE (target=js-kimi-census defects=10 killed=8 survived=2 inconclusive=0 kill-rate=80%)\nREGRESSION_TABLE js-kimi-census: match=10/10 recorded-killed=8 measured-killed=8 survived=2 inconclusive=0 flips=0\nREGRESSION_WORKDIR js-kimi-census: /tmp/tameshi-r4-2-regression.YWa0yD/js-kimi-census\nREGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)\nREGRESSION_PIN bash-surface-census: source=git repo=/home/vgpnk/Projects/shokunin/kagi-shokunin rev=fecee8743e52eb8fb5fbb40782934cb619a1a96e path=corpus/surface-census.sh mode=100755 sha256=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f\nREGRESSION_SWEEP bash-surface-census: MUTATE: DONE (target=bash-surface-census defects=10 killed=8 survived=2 inconclusive=0 kill-rate=80%)\nREGRESSION_TABLE bash-surface-census: match=10/10 recorded-killed=8 measured-killed=8 survived=2 inconclusive=0 flips=0\nREGRESSION_WORKDIR bash-surface-census: /tmp/tameshi-r4-2-regression.YWa0yD/bash-surface-census\nREGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)\nREGRESSION_PIN bash-tsukuroi-census: source=git repo=/home/vgpnk/Projects/shokunin/tsukuroi-shokunin rev=165307fe4746a8807b02ec4a7d7ecac0368454a6 path=tools/tsukuroi-census.sh mode=100755 sha256=084951be50bcbfee5e3f22de3c270d87131550ea1ce8264a557a34c5809c78c5\nREGRESSION_SWEEP bash-tsukuroi-census: MUTATE: DONE (target=bash-tsukuroi-census defects=10 killed=6 survived=4 inconclusive=0 kill-rate=60%)\nREGRESSION_TABLE bash-tsukuroi-census: match=10/10 recorded-killed=6 measured-killed=6 survived=4 inconclusive=0 flips=0\nREGRESSION_WORKDIR bash-tsukuroi-census: /tmp/tameshi-r4-2-regression.YWa0yD/bash-tsukuroi-census\nREGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)\nREGRESSION_PIN bash-mado-verify: source=git repo=/home/vgpnk/Projects/shokunin/mado-shokunin rev=eead56b20ad2b28299ae4fa623d52a99b44c743c path=tools/mado-verify.sh mode=100755 sha256=d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13\nREGRESSION_SWEEP bash-mado-verify: MUTATE: DONE (target=bash-mado-verify defects=10 killed=4 survived=6 inconclusive=0 kill-rate=40%)\nREGRESSION_TABLE bash-mado-verify: match=10/10 recorded-killed=4 measured-killed=4 survived=6 inconclusive=0 flips=0\nREGRESSION_WORKDIR bash-mado-verify: /tmp/tameshi-r4-2-regression.YWa0yD/bash-mado-verify\nREGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)\nREGRESSION_PIN bash-checklist-run: source=git repo=/home/vgpnk/Projects/shokunin/kagi-shokunin rev=fecee8743e52eb8fb5fbb40782934cb619a1a96e path=corpus/checklist-run.sh mode=100755 sha256=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf\nREGRESSION_SWEEP bash-checklist-run: MUTATE: DONE (target=bash-checklist-run defects=15 killed=7 survived=8 inconclusive=0 kill-rate=47%)\nREGRESSION_TABLE bash-checklist-run: match=15/15 recorded-killed=7 measured-killed=7 survived=8 inconclusive=0 flips=0\nREGRESSION_WORKDIR bash-checklist-run: /tmp/tameshi-r4-2-regression.YWa0yD/bash-checklist-run\nREGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)\nREGRESSION_PIN js-claims-check: source=git repo=/home/vgpnk/Projects/shokunin/kumitate-shokunin rev=175de6ba2e9e904010411b19cab27e0af9aad3d4 path=scripts/claims-check.mjs mode=100755 sha256=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b\nREGRESSION_SWEEP js-claims-check: MUTATE: DONE (target=js-claims-check defects=10 killed=7 survived=3 inconclusive=0 kill-rate=70%)\nREGRESSION_TABLE js-claims-check: match=10/10 recorded-killed=7 measured-killed=7 survived=3 inconclusive=0 flips=0\nREGRESSION_WORKDIR js-claims-check: /tmp/tameshi-r4-2-regression.YWa0yD/js-claims-check\nREGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)\nREGRESSION: PASS (cases=6 passed=6; ledger legs exact: killed-delta<=0 flips<=0)\nREGRESSION_WORKDIR: /tmp/tameshi-r4-2-regression.YWa0yD (removed on PASS; --keep retains)\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "witness-integrity",
+    "argv": [
+      "/usr/bin/python3",
+      "tools/bash-witness-study.py",
+      "check"
+    ],
+    "expected_exit": 0,
+    "required_stdout": null,
+    "observed_exit": 0,
+    "stdout": "WITNESS_CHECK: CLEAN (declared.tsv sha256=0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3, 96 files covered, 95 manifest entries)\n",
+    "stderr": "",
+    "passed": true
+  },
+  {
+    "name": "witness-count",
+    "argv": [
+      "/usr/bin/python3",
+      "tools/bash-witness-study.py",
+      "count"
+    ],
+    "expected_exit": 0,
+    "required_stdout": null,
+    "observed_exit": 0,
+    "stdout": "declared\t0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3\t/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-12/BashWitness/declared.tsv\ncontrol\texit=0\tdenominator=16\texercised=14\tskipped=2\tskip=verbs-sandboxed,verbs-break-injection\nrow\tB1\tKILLED\texit=1\tdeclared=undeclared-file\tfailed=undeclared-file\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB2\tKILLED\texit=1\tdeclared=clean,runtime-absent\tfailed=clean,runtime-absent\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB3\tKILLED\texit=1\tdeclared=crosscheck-disagree,clean\tfailed=clean,runtime-absent,crosscheck-disagree\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB4\tKILLED\texit=1\tdeclared=symlink-swap\tfailed=symlink-swap\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB5\tSURVIVED\texit=0\tdeclared=NONE\tfailed=-\tdenominator=16\texercised=14\tskipped=2\tclass=survived\nrow\tB6\tKILLED\texit=1\tdeclared=clean,runtime-absent\tfailed=clean,runtime-absent\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB7\tKILLED\texit=1\tdeclared=sqlite-unavailable\tfailed=sqlite-unavailable\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB8\tKILLED\texit=1\tdeclared=malformed-row,fused-shape-row\tfailed=malformed-row,fused-shape-row\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB9\tKILLED\texit=1\tdeclared=asset-gone,runtime-absent\tfailed=asset-gone,runtime-absent\tdenominator=16\texercised=14\tskipped=2\tclass=killed-on-witness\nrow\tB10\tSURVIVED\texit=0\tdeclared=NONE\tfailed=-\tdenominator=16\texercised=14\tskipped=2\tclass=survived\ncounts\tkilled_on_witness=8\taccidental=0\tsurvived=2\tinconclusive=0\ttotal=10\twitness_classified=10\ndeclared_none\tB5,B10\nunresolved\tnone\n",
+    "stderr": "",
+    "passed": true
+  }
+]

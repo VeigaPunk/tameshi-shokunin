@@ -1,0 +1,40 @@
+PROBE P1a argparse-type-error exit=2 (contract usage=64)
+PROBE P1b argparse --help exit=0 (same as controls_match=0)
+PROBE P1c argparse prefix '--ru' -> abbrev-accepted
+PROBE P2 argv=['--runs', '3', '--out', 'd', '--', 'echo', '--out', 'x'] -> runs=3 out=d cmd=['--', 'echo', '--out', 'x']
+PROBE P2 argv=['--runs', '3', '--out', 'd', 'echo', '--runs', '9'] -> runs=3 out=d cmd=['echo', '--runs', '9']
+PROBE P2 argv=['--runs', '3', '--out', 'd', '--', '--', 'x'] -> runs=3 out=d cmd=['--', '--', 'x']
+PROBE P3 int('3')=3
+PROBE P3 int(' 3 ')=3
+PROBE P3 int('+3')=3
+PROBE P3 int('3_0')=30
+PROBE P3 int('٣')=3
+PROBE P3 int('03')=3
+PROBE P4a uncaught exception exit=1 (same as controls_mismatch=1)
+PROBE P4b uncaught json error exit=1
+PROBE P4c uncaught KeyboardInterrupt returncode=-2 (shell sees 128+2)
+PROBE P5 missing: FileNotFoundError errno=2
+PROBE P5 not-exec: PermissionError errno=13
+PROBE P5 no-shebang: OSError errno=8
+PROBE P5 directory: PermissionError errno=13
+PROBE P5 empty-argv0: PermissionError errno=13
+PROBE P5w wrapped missing (env X) exit=127 -> nonzero baseline, not exec error
+PROBE P5m self-deleting command runs=[0, 'FileNotFoundError', 'FileNotFoundError']
+PROBE P6 SIGKILL child returncode=-9 (negative; shell form would be 137)
+PROBE P7a child exits at once, run() returned after 4.0s stdout=b'hi\n'
+PROBE P7b timeout=1 with grandchild on pipe -> raised after 1.0s
+PROBE P8 bytes at run end=b'hi\n' bytes 1.5s later=b'hi\nlate\n'
+PROBE P9 filecmp.cmp(shallow default) on different bytes same size+mtime -> True; shallow=False -> False
+PROBE P10a open('wb') via planted symlink -> victim now 'gate bytes\n'
+PROBE P10b open('xb') refused planted symlink (FileExistsError)
+PROBE P10c os.mkdir(existing --out) -> FileExistsError (refusal available without rmtree)
+PROBE P10d reused --out keeps stale entries ['run-4.stdout', 'verdict.json'] beside a new --runs 3 set
+PROBE P11 find over cwd with --out inside cwd: distinct stdout across 3 runs = 3 (1 means match)
+PROBE P12 argv=b'a b|$HOME|*|' joined+shell=b''
+PROBE P13 os.path.join('SNAP','/etc/hostname') -> '/etc/hostname'
+PROBE P13 os.path.join('SNAP','../outside') -> 'outside'
+PROBE P13 os.path.join('SNAP','run-1.stdout/../../x') -> 'x'
+PROBE P13s git-committable symlink in snapshot: islink=True open() follows -> reads outside DIR
+PROBE P14 file+manifest co-edited: in-dir digest check passes=True
+PROBE DONE scratch=/tmp/tameshi-r12-gatesec.3jjxrxn9
+exit=0

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decoupled Attribution-Precondition Decision Table (C1 x C2)",
+  "round": 12,
+  "axes": ["depth", "calibration"],
+  "precondition_gate": "C1: repeat-control (tools/repeat-control.py)",
+  "attribution_classifier": "C2: witness-split (tools/bash-witness-study.py / S006 grammar)",
+  "matrix": [
+    {
+      "c1_finding": "controls_match",
+      "c1_exit": 0,
+      "c2_outcome": "killed-on-witness",
+      "joint_verdict": "ATTRIBUTED_KILL",
+      "valid_attribution": true,
+      "enters_witness_rate": true,
+      "enters_aggregate_rate": true,
+      "epistemic_status": "Valid causal detection: baseline observed repeatable and green (N>=3); mutant failed on pre-registered witness assertion."
+    },
+    {
+      "c1_finding": "controls_match",
+      "c1_exit": 0,
+      "c2_outcome": "accidental",
+      "joint_verdict": "ACCIDENTAL_KILL",
+      "valid_attribution": true,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": true,
+      "epistemic_status": "Valid collateral detection: baseline observed repeatable and green (N>=3); mutant detected, but not on pre-registered witness assertion."
+    },
+    {
+      "c1_finding": "controls_match",
+      "c1_exit": 0,
+      "c2_outcome": "survived",
+      "joint_verdict": "CONFIRMED_SURVIVOR",
+      "valid_attribution": true,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Valid test gap: baseline observed repeatable and green (N>=3); suite passed despite mutation."
+    },
+    {
+      "c1_finding": "controls_match",
+      "c1_exit": 0,
+      "c2_outcome": "inconclusive",
+      "joint_verdict": "BENCHMARK_INCONCLUSIVE",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Execution anomaly on valid baseline: timeout, crash, or missing denominator. Excluded from score denominators per Tameshi policy."
+    },
+    {
+      "c1_finding": "controls_mismatch",
+      "c1_exit": 1,
+      "c2_outcome": "killed-on-witness",
+      "joint_verdict": "SPURIOUS_KILL_HAZARD",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Attribution rejected: baseline exhibits exit or stream divergence (flakiness/nondeterminism). Witness match cannot be causally attributed to mutant."
+    },
+    {
+      "c1_finding": "controls_mismatch",
+      "c1_exit": 1,
+      "c2_outcome": "accidental",
+      "joint_verdict": "SPURIOUS_FAILURE_HAZARD",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Attribution rejected: baseline exhibits exit or stream divergence. Failure cannot be distinguished from ambient harness instability."
+    },
+    {
+      "c1_finding": "controls_mismatch",
+      "c1_exit": 1,
+      "c2_outcome": "survived",
+      "joint_verdict": "FRAGILE_SURVIVOR",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Unreliable survival: baseline is unstable. Suite passing is conditional on non-deterministic state."
+    },
+    {
+      "c1_finding": "controls_mismatch",
+      "c1_exit": 1,
+      "c2_outcome": "inconclusive",
+      "joint_verdict": "UNSTABLE_INCONCLUSIVE",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Double failure: baseline unstable and mutant run failed to complete."
+    },
+    {
+      "c1_finding": "baseline_nonzero",
+      "c1_exit": 2,
+      "c2_outcome": "*",
+      "joint_verdict": "COULD_NOT_EVALUATE_BASELINE_DIRTY",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Could not evaluate: unmutated control exits non-zero. All mutant outcomes are causally ungrounded (S006: 'A red result would prove nothing')."
+    },
+    {
+      "c1_finding": "command_unavailable",
+      "c1_exit": 2,
+      "c2_outcome": "*",
+      "joint_verdict": "COULD_NOT_EVALUATE_SETUP_FAULT",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Could not evaluate: binary missing, permissions lacking, or shebang broken at execve."
+    },
+    {
+      "c1_finding": "snapshot_tampered",
+      "c1_exit": 2,
+      "c2_outcome": "*",
+      "joint_verdict": "COULD_NOT_EVALUATE_INTEGRITY_COMPROMISED",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Could not evaluate: fixture digests altered or extra/missing files detected in committed snapshot."
+    },
+    {
+      "c1_finding": "invalid_usage",
+      "c1_exit": 64,
+      "c2_outcome": "*",
+      "joint_verdict": "COULD_NOT_EVALUATE_USAGE_ERROR",
+      "valid_attribution": false,
+      "enters_witness_rate": false,
+      "enters_aggregate_rate": false,
+      "epistemic_status": "Could not evaluate: invalid CLI arguments, run count N<3, or syntax error."
+    }
+  ]
+}

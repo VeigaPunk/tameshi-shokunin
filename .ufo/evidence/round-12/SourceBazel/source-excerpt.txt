@@ -1,0 +1,33 @@
+# Evidence: S028 Test Encyclopedia (Bazel)
+# Target: https://bazel.build/reference/test-encyclopedia
+# Fetched: 2026-10-20T02:15:01Z (UTC)
+# SHA-256 (HTML): 30992fd116d331f8935aa26797c124dfaf7e05cf9a21921ed0d6427c1920f0e1
+# SHA-256 (Markdown alternate): f139999d707935244f73c26ca1bf8f1b7253dbf9722327e11a978be51fbca429
+
+---
+Section: Role of the test runner
+Anchor: #role-test-runner
+Verbatim Quote:
+"From the point of view of the test runner, each test is a program which can be invoked with execve(). There may be other ways to execute tests; for example, an IDE might allow the execution of Java tests in-process. However, the result of running the test as a standalone process must be considered authoritative. If a test process runs to completion and terminates normally with an exit code of zero, the test has passed. Any other result is considered a test failure. In particular, writing any of the strings PASS or FAIL to stdout has no significance to the test runner."
+
+"If the main process of a test exits, but some of its children are still running, the test runner should consider the run complete and count it as a success or failure based on the exit code observed from the main process. The test runner may kill any stray processes. Tests should not leak processes in this fashion."
+
+---
+Section: Initial conditions
+Anchor: #initial-conditions
+Verbatim Quote:
+"When executing a test, the test runner must establish certain initial conditions.
+
+The test runner must invoke each test with the path to the test executable in argv[0]. This path must be relative and beneath the test's current directory (which is in the runfiles tree, see below). The test runner should not pass any other arguments to a test unless the user explicitly requests it."
+
+"File descriptor 0 (stdin) shall be open for reading, but what it is attached to is unspecified. Tests must not read from it. File descriptors 1 (stdout) and 2 (stderr) shall be open for writing, but what they are attached to is unspecified. It could be a terminal, a pipe, a regular file, or anything else to which characters can be written. They may share an entry in the open file table (meaning that they cannot seek independently). Tests should not inherit any other open file descriptors."
+
+---
+Section: Purpose of tests
+Anchor: #purpose-of-tests
+Verbatim Quote:
+"Therefore the outcome of a test must depend only on:
+* source files on which the test has a declared dependency
+* products of the build system on which the test has a declared dependency
+* resources whose behavior is guaranteed by the test runner to remain constant
+Currently, such behavior is not enforced. However, test runners reserve the right to add such enforcement in the future."

@@ -1,0 +1,147 @@
+ISSTA ’19, July 15ś19, 2019, Beijing, China
+
+August Shi, Jonathan Bell, and Darko Marinov
+
+the test passes), we now refer to the status of such mutants as
+łunknownž. The status of these mutant executions are unknown because the mutant is not covered during the execution; if there is no
+test execution that covers the mutant, then the overall status of that
+mutant is also unknown. Although this approach is not guaranteed
+to find all unknown mutants, it has no false positivesÐall mutants
+reported as łunknownž should be truly treated as unknown. From
+our experiments, we find that about 4% of mutants are unknown,
+while 9% of test executions on mutants have an unknown status.
+The differences might appear small, but such differences can misguide techniques that rely on mutant detection.
+We propose a set of changes to traditional mutation testing
+to increase the reliability of mutation testing in the presence of
+flaky tests. First, we propose to obtain stable coverage for each
+test, guiding mutation generation to generate more mutants that
+can be covered by the tests. Second, we propose, when running
+tests on each mutant, to rerun tests that do not cover the mutant
+when they should be able to cover the mutated part based on earlier
+coverage collection; by rerunning until the test covers the mutant
+we can obtain a more reliable result for the execution of the test on
+the mutant. We also propose using different isolation strategies to
+increase the likelihood of the test covering the mutant. Finally, we
+propose prioritizing tests run (and rerun) per mutant as to ensure
+both faster and more reliable mutation testing results.
+This paper makes the following contributions:
+• Motivating Study: We show that even for tests that do not
+appear flaky in terms of the test outcome, the coverage of
+each test can often vary non-deterministically.
+• Resilient Mutation Testing: We propose techniques to
+improve the resilience of mutation testing that: (1) improve
+coverage collection to inform mutant generation of more
+possible mutants, (2) force reruns of tests on mutants not
+covered to obtain reliable mutant killing results, and (3) prioritize tests for faster yet also more reliable mutation testing.
+• Evaluation: We evaluate the improvements from these techniques, yielding concrete suggestions for mutation testing
+tool builders (and users) for improving mutation testing.
+• Tool and dataset: We make all our modifications to PIT,
+our dataset of coverage, test results, and mutation results
+publicly available for other researchers [37].
+
+2
+
+1 public void run () {
+2
+long startTime = System . currentTimeMillis () ;
+3
+boolean isWaiting ;
+4
+synchronized ( this ) {
+5
+long timeLeft = timeout 6
+( System . currentTimeMillis () - startTime ) ;
+7
+isWaiting = timeLeft > 0;
+8
+while (! stopped && isWaiting ) {
+9
+try {
+10
+wait ( timeLeft ) ;
+11
+} catch ( final InterruptedException e ) {
+12
+}
+13
+timeLeft = timeout 14
+( System . currentTimeMillis () - startTime ) ;
+15
+isWaiting = timeLeft > 0;
+16
+}
+17
+}
+18
+// notify the listeners outside of the
+19
+// synchronized block ( see EXEC -60)
+20
+if (! isWaiting ) {
+21
+fireTimeoutOccured () ;
+22
+}
+23 }
+
+Listing 1: Example demonstrating flakiness in coverage
+run method is called, then the first evaluation of line 8 evaluates
+to false, and the loop body is not executed (lines 9-15). Note that
+the code is correct regardless of whether lines 9-15 are executed;
+the execution of the loop body only indicates that the Watchdog will
+wait and check again later. To understand the effect of this specific
+non-determinism, we execute every test in this project ten times,
+recording how often each statement is covered by each test. In this
+case, there are nine tests that cover these lines, but of those nine,
+only four tests cover these lines all ten times Ð the rest demonstrate
+flaky behavior, not executing these lines in all executions.
+Since these lines might be non-deterministically (flakily) covered
+by each test, a mutation that is applied to any of these lines might
+never even be executed. It is easy to imagine a test that would kill a
+mutant that mutated lines 9-15 if and only if the test executes those
+lines. Hence, on some executions, the mutant is killed (because it is
+covered) and on others it survives (because it is not covered).
+
+2.1
+
+Motivating Study
+
+While recent work has examined how often statement coverage
+changes between different versions of code [17], no prior work has
+considered the flakiness of coverage in a single version of a program. To gauge the scope of this problem, we analyze the statement
+coverage of 30 open-source projects selected from projects recently
+studied in the context of flaky tests [6, 45].
+For each project, we collect the statement coverage of each test
+using the popular Java mutation testing tool, PIT [7, 8]. Then, we
+collect the coverage of each test 16 more times, isolating each
+test run in its own JVM, to reduce flakiness imposed by test-order
+dependencies [4, 5, 11, 15, 49]. Prior work [31, 45] found 10 reruns
+effective at finding flaky tests, and we choose a number at least that
+many to give us a higher chance of exposing flakiness. We measure
+non-determinism in coverage as the number of statements with at
+least one test that does not always cover (or not) that statement.
+Table 1 shows the results of this analysis. We observe no test
+failures in any of the runs, and hence, to the casual observer, there
+are no flaky tests. However, we find many statements are nondeterministically covered Ð in the case of cloudera.oryx, 74% of
+
+BACKGROUND AND MOTIVATION
+
+Most prior research on flaky tests has focused on detecting when
+the outcome (passing or failing) of a test is flaky [6, 39, 45]. However,
+in the context of mutation testing, a flaky test might impact the
+mutation testing process even if its flakiness does not change the
+result of a test. More subtle variations in program behavior Ð such
+as the set of statements covered by a test, or the path that the test
+follows Ð might vary from execution-to-execution. These tests
+might never appear flaky to a developer (if they always pass), but
+nonetheless can result in non-deterministic mutation testing results.
+Consider the code in Listing 1, which exhibits non-determinism
+in the Apache Commons-Exec project (taken from the class Watchdog
+from revision 39250d73). Many tests call this method, running it in
+a separate thread to observe whether a task has finished within a
+timeout window Ð if not, and the task has not yet timed out, then
+the Watchdog waits and tries again. If the task finishes before the
+
+113
+
+

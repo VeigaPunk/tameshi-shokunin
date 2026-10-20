@@ -1,0 +1,66 @@
+{
+  "schema": "tameshi-r12-sibling-overlap-v1",
+  "generated_at": "2026-10-20T02:16:00Z",
+  "seat": "SiblingOverlap",
+  "role": "connector",
+  "anchors": {
+    "province_adjacent": "PROVINCE.md:44-48",
+    "province_refuses": "PROVINCE.md:14-20",
+    "service_limits": "corpus/knowledge/service-limits.md:44-55",
+    "fleet_patterns_d4_d6": "corpus/knowledge/verification-patterns-fleet.md:139-152",
+    "shokunin_conf_lanes": "/home/vgpnk/Projects/shokunin/shokunin.conf:44-59,80-84",
+    "repeat_control_contract": ".ufo/waves/round-12/spec.json:3"
+  },
+  "boundaries": {
+    "engine_flakiness": {
+      "owner_lanes": ["audio-shokunin", "game-dev-2d-shokunin", "game-dev-3d-shokunin"],
+      "observed_sources": ["frame timing jitter", "audio buffer wobbles", "ASLR memory addresses", "GPU/engine logs", "thread scheduling"],
+      "precedent_mechanism": "game-dev-2d compare_verdicts explicit volatile scrub list (verification-patterns-fleet.md:151)",
+      "tameshi_contract": "repeat-control.py raw byte comparison; do not normalize bytes; no flakiness cured or determinism proven",
+      "boundary_rule": "Strict refusal of in-gate normalization. Volatile scrubbing must occur in caller adapter. Unscrubbed engine jitter produces controls_mismatch (exit 1) and is routed to game lane.",
+      "province_citation": "PROVINCE.md:48 ('engine-specific nondeterminism (game lanes)')"
+    },
+    "product_ownership": {
+      "owner_lanes": ["kumitate-shokunin", "kagi-shokunin", "tsukuroi-shokunin", "mado-shokunin", "tabi-shokunin"],
+      "tameshi_contract": "baseline_nonzero (exit 2, could-not-evaluate); controls_match (exit 0); controls_mismatch (exit 1)",
+      "boundary_rule": "Tameshi verifies repeatable execution of the control command; it refuses product semantics (whether gate's real-world verdicts are true). Nonzero baseline halts evaluation immediately; tameshi never patches or diagnoses sibling product logic.",
+      "province_citation": "PROVINCE.md:14-18 ('Refuses: product domains — every lane's gate remains its own... Never edits a sibling's gate code')"
+    },
+    "secrets_and_health": {
+      "owner_lanes": ["kagi-shokunin", "kama-shokunin"],
+      "boundary_rule": "Commands passed to repeat-control.py must be shape-clean and hermetic; credential material (kagi) and live endpoint health (kama) must never be captured into numbered stdout/stderr artifacts.",
+      "province_citation": "PROVINCE.md:18,45-46 ('Credential material (→ kagi), endpoint health (→ kama)')"
+    }
+  },
+  "precedence_synthesis": {
+    "case_all_nonzero": {
+      "vector": [1, 1, 1],
+      "finding_id": "baseline_nonzero",
+      "exit": 2,
+      "class": "could-not-evaluate",
+      "routing": "Route to product owner: baseline fixture fails cleanly; evaluation refused."
+    },
+    "case_divergent_nonzero": {
+      "vector": [0, 1, 0],
+      "finding_id": "controls_mismatch",
+      "exit": 1,
+      "class": "failed",
+      "routing": "Route to product owner: observable instability across pristine runs is a failed control gate."
+    },
+    "case_stderr_divergence": {
+      "vector": [0, 0, 0],
+      "stderr_diff": true,
+      "finding_id": "controls_mismatch",
+      "exit": 1,
+      "class": "failed",
+      "routing": "Route to owner: unscrubbed telemetry or diagnostic divergence across runs."
+    },
+    "case_unexecutable": {
+      "vector": ["ENOENT"],
+      "finding_id": "command_unavailable",
+      "exit": 2,
+      "class": "could-not-evaluate",
+      "routing": "Route to caller: environment/invocation failure."
+    }
+  }
+}

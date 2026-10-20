@@ -1,0 +1,13 @@
+python 3.14.7 | scratch /tmp/snapreview-6yp75dx7
+
+| case | digest-only | strict sketch | anchor/aux | note |
+|---|---|---|---|---|
+| A pristine | pass | pass | - | frozen match baseline |
+| B edit listed input | snapshot_tampered | snapshot_tampered | - | both detect |
+| C unlisted file added | pass | snapshot_tampered | - | digest-only is blind to additions |
+| D listed input deleted | snapshot_tampered | snapshot_tampered | - | naive reaches BAD only via OSError |
+| E input+pin rewritten | pass | pass | MISMATCH | digest-only passes; only an external anchor on expected.json detects |
+| F duplicate inputs key | pass | snapshot_tampered | first-pin=good -> BAD | parsers disagree on the pin; strict must refuse duplicates |
+| G empty inputs | pass | snapshot_tampered | - | zero inputs must not verify |
+| H pre-run check | pass | pass | child rc=0 | clean before runs |
+| H post-run recheck | not performed | snapshot_tampered | data sha changed | drift during runs must be snapshot_tampered, not controls_match |

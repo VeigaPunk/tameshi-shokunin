@@ -651,3 +651,84 @@ All appended; `corpus/lessons/round-1.md` final section.
   in the merged PR #2 — this entry is the change's required evidence record,
   appended retroactively after the merge. Documentation-only change; no
   round run, no axis moved.
+
+## Round 12 — declared calibration capability and depth attribution (2026-10-20 UTC)
+
+- Motivation: the admitted round-1 outside review kept calibration at 6 and excluded box 3 (`corpus/lessons/round-1-verifier-spotcheck.md:17`). The inherited plan named F3 repeated controls and F2 bash witness analysis. C1 acquires a standalone repeated pristine-control gate; C2 deepens the existing bash leg's witness evidence. Declaration, baseline and separability: `.ufo/evidence/round-12/claims.json`, `before.json`, `before-with-score-exclusions.json`.
+- Before source census executed: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` → `tameshi ok /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md`, exit 0 (`.ufo/evidence/round-12/sources-before.txt`). Counter: 44 rows, A=37/B=5/C=2, mined=12/queued=29/rejected=3, malformed=0. No inherited uncommitted lane or operator work.
+- One validated 32-seat batch, three distinct production executors plus read-only/disjoint source, adversarial, evidence, boundary and review seats: `.ufo/waves/round-12/{spec,dispatch,assignments,record-result}.json`, `w1/swarm-registry.json`. Payload dispatched unchanged in one task call. Planner mapping follows the current host ruling `scripts/hyaku/lane-addendum.md:33-36`: L1 owns planning, ClaimSkeleton provides supplemental review, MistakeMining the revenger data walk. Role routing uses the host, no model pins/config edits.
+- Guardrails actually run: `bash tools/mutate-and-run.sh --selftest` → `MUTATE_SELFTEST: 80/80 pass`, `VERDICT: PASS`, exit 0 (`.ufo/evidence/round-12/runner-selftest.txt`); `bash tools/mutate-and-run.sh --regression` → six pinned legs PASS, zero verdict flips, exit 0 (`runner-regression.txt`). The existing runner remains unchanged; C1 does not retrofit repeated controls into those historical legs.
+- Source and frontier work: re-opened S004/S006/S026; source scouts also opened S011/S028/S040. Mutable-field ledger and located quotes in `corpus/lessons/round-12.md`; registry rows are not padded. New knowledge/evidence will be admitted only at the exercised scope, with F3 sample equality never called determinism.
+- Reviews found historical witness-source omissions; append-only E2/E3 in `corpus/knowledge/witness-scoped-kill-verdict.md` distinguish whole-token source grammar from the exact-line adapter and retain the passing-alternative error. Evidence: `.ufo/waves/round-12/w1/WitnessSourceReview.md`. No historical output/declaration rewritten.
+- Measurement correction: `.ufo/evidence/round-12/measure.py` explicitly scores restrained boxes 1/2/4 and excludes box 3, reproducing 6; it also reports unique gate paths, preventing duplicate documentation rows from masquerading as independent cases. Depth and calibration stay 6 (delta 0); the improvements are measured repertoire/detail, not invented scalar points. New claim commands and the final measured revision are recorded below after runtime verification.
+
+## Round 12 — in-session inheritance and integration (2026-10-20)
+
+- The “no inherited work” sentence in the initial round-12 entry describes
+  the headless attempt's start, not this continuation. Its termination
+  digest and retained/uncommitted path inventory are preserved in
+  `corpus/lessons/round-12.md`, In-session inheritance resolution.
+  This continuation retains the lane-authored work under round 12;
+  no aggregator/operator-owned file is edited or swept into the commit.
+- Resumed wave: `.ufo/waves/round-12/spec-w2.json`, `dispatch-w2.json`,
+  `assignments-w2.json`, `record-w2.json`, `w2/swarm-registry.json`.
+  One validator-approved unchanged 32-seat task call, no model parameter;
+  L1 holds canonical planner. This follows the inherited 32-seat wave,
+  for 64 seats in the same round. The failed registry-record CLI attempts
+  performed no dispatch; the successful record result is retained.
+- Outside-review disagreement learned: `QUALITY.md` criterion 13 now
+  explicitly bars full-page box-3 credit from the partial Appendix A/B
+  cold-read (`corpus/lessons/round-1-verifier-spotcheck.md`).
+  New criteria 11–12 bind finite control samples and frozen, exposure-
+  disclosed witness declarations to the round-12 mistake rows.
+- Documentation integration: appended round-12 decision table and registry
+  in `SKILL.md`, coverage/frontier addendum in `corpus/README.md`,
+  and corrected the three-source search subset to the six opened rows in
+  `corpus/SOURCES.md`. The historical runner, scalar rubrics, SHONEN marks
+  and cited cold-read receipts are not silently rewritten or extended.
+- The stale planned “depth 6 → 7” is rejected: bash witness attribution is
+  detail on one existing gate. Command C prints only a mark upper bound;
+  the pinned calibration 6 follows the outside adjudication excluding
+  box 3, reproduced by `.ufo/evidence/round-12/measure.py`.
+- Snapshot review ruling and inherited evidence limitations are recorded
+  in the lesson, not hidden by claiming all reviewer recommendations
+  were adopted. Lane reviewers are still not independent admission.
+
+- ControlFinish completed the inherited control gate and both missing frozen
+  `expected.json` files. Review-driven fixes: duplicate manifest-key refusal,
+  regular-file manifest validation, strict expected-exit type, explicit
+  `/tmp` selftest scratch, existing-output refusal test, nonzero-difference
+  precedence test, and refused-stream error handling. Exact changes and
+  known residuals: `.ufo/waves/round-12/w2/ControlFinish.md`.
+  No runtime pass is inferred from that code handoff.
+
+- Main integration replay, after both implementation seats completed:
+  `.ufo/evidence/round-12/verification-final.json` retains 29-case control
+  selftest PASS, stable/mismatch frozen verdicts, three matching real bash
+  controls, runner 80/80 PASS, six-leg regression PASS, witness check/count
+  clean. The initial selftest failed on the inherited stable/stable.sh
+  fixture-path mismatch; the one-line path fix was followed by the passing
+  replay. Failed evidence-driver anchor/stable-fixture attempts remain in
+  `integration-failure.txt` and `verification.json`; only repaired oracle
+  rows were re-exercised in `oracle-repair.json`. A single-control mutant
+  fails the identical changing-fixture mismatch oracle; restored repetition
+  passes. This is the mistake fix's red-before proof, not a model-only claim.
+- WitnessFinish completed the pinned study and integrity repairs:
+  `.ufo/waves/round-12/w2/WitnessFinish.md`, canonical
+  `.ufo/evidence/round-12/BashWitness/summary.json`.
+  Count: 8 on-witness / 0 accidental / 2 survived / 0 inconclusive,
+  ten classified, no unresolved; 14 exercised + 2 skipped slots. Six
+  specific and two generic-only hits; B3 extra failure disclosed. Declaration
+  was exposed, not blind. Initial revision-parser refusal and post-sweep
+  KeyError are retained/named; immutable declarations survived classifier
+  repairs and the actual ten-classification rerun agreed.
+- Source frontier: final census exit 0 (`sources-after.txt`); unchanged 44
+  rows / tiers A37 B5 C2, mined12→15, queued29→26, rejected3 unchanged.
+  Scope and mutable-field transitions are in the lesson, including the
+  later S026 article-body quote. New F3 knowledge and registry are indexed;
+  F2 remains bounded, no province Core takeover. No tools installed/updated.
+- All claim/per-axis verdicts are lane evidence pending external admission.
+  Scalar depth and calibration remain 6; all other axes unchanged. Trends:
+  expansion improved (sourced F3 capability), quality improved (source/
+  evidence repairs), discernment improved (outside disagreement learned in
+  criterion13), without pretending a fresh outside round-12 sample exists.

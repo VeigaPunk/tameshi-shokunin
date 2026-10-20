@@ -1,0 +1,28 @@
+T1 trailing newline: stdout=DIFFER stderr=MATCH exit=MATCH (out b'x\n' vs b'x'; err b'' vs b'') expect=DIFFER -> OK
+T2 CRLF vs LF: stdout=DIFFER stderr=MATCH exit=MATCH (out b'x\r\n' vs b'x\n'; err b'' vs b'') expect=DIFFER -> OK
+T3 empty vs single newline: stdout=DIFFER stderr=MATCH exit=MATCH (out b'' vs b'\n'; err b'' vs b'') expect=DIFFER -> OK
+T4 empty vs empty: stdout=MATCH stderr=MATCH exit=MATCH (out b'' vs b''; err b'' vs b'') expect=MATCH -> OK
+T5 trailing space: stdout=DIFFER stderr=MATCH exit=MATCH (out b'a ' vs b'a'; err b'' vs b'') expect=DIFFER -> OK
+T6 NUL-only vs empty: stdout=DIFFER stderr=MATCH exit=MATCH (out b'\x00' vs b''; err b'' vs b'') expect=DIFFER -> OK
+T7 NUL vs no-NUL: stdout=DIFFER stderr=MATCH exit=MATCH (out b'a\x00b' vs b'ab'; err b'' vs b'') expect=DIFFER -> OK
+T8 NUL differs at tail: stdout=DIFFER stderr=MATCH exit=MATCH (out b'a\x00b' vs b'a\x00c'; err b'' vs b'') expect=DIFFER -> OK
+T9 invalid UTF-8 bytes: stdout=DIFFER stderr=MATCH exit=MATCH (out b'\xff' vs b'\xfe'; err b'' vs b'') expect=DIFFER -> OK
+T10 stderr-only diff: stdout=MATCH stderr=DIFFER exit=MATCH (out b'same\n' vs b'same\n'; err b'e1\n' vs b'e2\n') expect=DIFFER(stderr) -> OK
+T11 stdout-only diff: stdout=DIFFER stderr=MATCH exit=MATCH (out b'a\n' vs b'b\n'; err b'e\n' vs b'e\n') expect=DIFFER(stdout) -> OK
+T12 stderr same, stdout same: stdout=MATCH stderr=MATCH exit=MATCH (out b'a\n' vs b'a\n'; err b'e\n' vs b'e\n') expect=MATCH -> OK
+T13 stderr empty vs newline: stdout=MATCH stderr=DIFFER exit=MATCH (out b'a\n' vs b'a\n'; err b'' vs b'\n') expect=DIFFER(stderr) -> OK
+
+# naive-comparison traps (must NOT be used by the gate)
+T1: strip-eq=True text-mode-eq=False truthy-eq=True
+T2: strip-eq=True text-mode-eq=False truthy-eq=True
+T3: strip-eq=True text-mode-eq=False truthy-eq=False
+T6: strip-eq=False text-mode-eq=False truthy-eq=False
+T7: strip-eq=False text-mode-eq=False truthy-eq=True
+T9: strip-eq=False text-mode-eq=UnicodeDecodeError truthy-eq=True
+T1: bash-$(..)-eq=True (b'x' vs b'x')
+T3: bash-$(..)-eq=True (b'' vs b'')
+T6: bash-$(..)-eq=True (b'' vs b'')
+T7: bash-$(..)-eq=True (b'ab' vs b'ab')
+
+PROBE_FAILURES=0
+probe.py exit=0

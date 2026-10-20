@@ -1475,3 +1475,41 @@ The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;
 it is not a cold-reader exercise or an outside promotion/admission review.
 The source audit rejects the broader claim rather than upgrading its confidence.
 See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.
+
+## Repeated controls and gate registry — round 12
+
+Source: S004/S026 and `corpus/knowledge/repeated-control-precondition.md`;
+runtime evidence: `.ufo/evidence/round-12/verification-final.json`.
+This is a standalone precondition check, not a change to the six-leg runner.
+
+| Observation | Decision | Bound |
+|---|---|---|
+| Three or more zero-exit controls match on raw stdout and stderr | `controls_match` | Only this finite sample matched; not a determinism proof |
+| Any available controls differ in exit or either stream | `controls_mismatch` | Do not attribute a later red suite solely to the mutant |
+| Equal nonzero controls, or command unavailable | Could not evaluate baseline | No mutation kill-rate claim |
+
+Recipe: choose a pristine command; put evidence outside any tree it inspects;
+run `python3 tools/repeat-control.py --runs 3 --out /tmp/tameshi-r12-controls-UNIQUE -- COMMAND ARG...`;
+retain raw observations before interpreting the finding. The output directory
+must not exist. Caller owns timeout policy; hanging commands yield no verdict.
+Do not retry until green, normalize output, or interpret a finite match as proof
+of reliability. Command stdout/stderr may contain sensitive data: choose a
+non-secret fixture command before retaining evidence.
+
+### Gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| repeated pristine controls | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...` or `--snapshot DIR` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/repeat-control.py --selftest` | `.ufo/evidence/round-12/ControlGate/expected.json`, `mismatch/expected.json`; literal expected IDs/exits in tool selftest | fresh caller-selected DIR; isolated `/tmp/tameshi-r12-*` selftest; snapshot read-only | tameshi |
+| bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage/could-not-evaluate | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `/tmp/tameshi-r12-*`; sibling object store read-only | tameshi |
+
+Registry scope is these round-12 instruments; no new conformance assertion is
+made about the historical runner. Witness declarations are integrity-frozen,
+not blind: their author inherited prior source/spec exposure. The bash study
+deepens one recorded case, never a seventh independently measured gate.
+
+Calibration correction to the historical promotion paragraph above:
+`SHONEN.md` box 3 currently carries a scope-bounded `[~]`, not `[ ]`;
+`corpus/lessons/round-1-verifier-spotcheck.md` excludes it from the score.
+Appending this registry does not extend the earlier Appendix A/B cold-read
+to new material or establish full-page instruction sufficiency.

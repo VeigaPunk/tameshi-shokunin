@@ -63,3 +63,29 @@ None.
   (Unknowns above), so read it as **declared-witness, partly
   contaminated** — not a blind pre-registration. The measured split is
   unchanged.
+
+- E2 (round 12, lane-internal source review; `.ufo/waves/round-12/w1/WitnessSourceReview.md`): the abbreviated `baseline` quote above is not the full source definition. S006 also includes red-or-aborted runs and optional `SHMUTANT_COUNTS=1` completeness checks. Its implementation grammar requires a whole-token witness in a `FAIL: ` line; the tameshi experiment instead matches complete `FAIL <label>` lines and permits any-of alternatives. These are different adapter rules, not equivalent implementations.
+- E3 (round 12, same review): D6's second declared alternative describes a passing expectation; the recorded classification still has a different matching alternative. Keep the declaration unchanged and read the historical split as the retained experiment's result, not as independently established by S006. The old classifier was not retained as a runnable script. Receipt fetch times differ by 35 seconds; matching source digests establish byte identity, not which timestamp is canonical. Current source access is recorded in `corpus/lessons/round-12.md`.
+
+## Round 12 — existing bash leg, case-level attribution
+
+S006 was re-opened this round; source access and adapter limitations are in
+`../lessons/round-12.md`. The existing pinned bash-surface-census leg now
+has a declared mapping and raw failing labels at
+`.ufo/evidence/round-12/BashWitness/` (repo root).
+`python3 tools/bash-witness-study.py count` reports:
+`killed_on_witness=8 accidental=0 survived=2 inconclusive=0 total=10`,
+`witness_classified=10`, `unresolved=none`. Control has 16 printed slots:
+14 exercised and 2 skipped verbs cases, not 16 executed assertions.
+
+The observed eight hits comprise six specific-case hits and two
+generic-only hits (B2/B6: clean/runtime-absent). B3 additionally failed
+runtime-absent outside its declared alternatives. This is case-label
+association, not proof of assertion-level causality. B5/B10 were declared
+NONE with prior recorded-outcome exposure; their survival is not
+out-of-sample validation. Declaration sha256:
+`0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3`.
+The declaration was not changed after outcomes; classifier repairs
+followed an initial post-sweep KeyError, whose raw log is retained.
+`rerun-20261020T035435Z/` agreed on all ten classifications without
+overwriting the canonical summary. No new independent gate is counted.

@@ -1,0 +1,43 @@
+# cmd: python3 .ufo/evidence/round-12/ControlThreats/probes.py --legs /home/vgpnk/Projects/shokunin
+# date: 2026-10-20T02:16:05Z python=Python 3.14.7 node=v24.21.0 bash=5.2.37(1)-release
+PROBE P3-text-mode-crlf-equals-lf: True
+PROBE P3-bytes-mode-crlf-equals-lf: False
+PROBE P3-strip-hides-trailing-newline: True
+PROBE P4-spawn-missing: FileNotFoundError errno=2
+PROBE P4-spawn-not-executable: PermissionError errno=13
+PROBE P4-spawn-no-shebang-exec-format: OSError errno=8
+PROBE P4-spawn-directory: PermissionError errno=13
+PROBE P4-wrapped-bash-c-missing: spawned exit=127
+PROBE P4-wrapped-bash-c-noexec: spawned exit=126
+PROBE P5-sigkill-returncode: -9
+PROBE P5-exit-256-returncode: 0
+PROBE P6-cold-first-run-exits: [1, 0, 0]
+PROBE P6-cold-first-run-stdout: [b'cold\n', b'warm\n', b'warm\n']
+PROBE P6-second-invocation-warm-triple-identical: True
+PROBE P7-cat-inherited-stdin-stdout: b'payload'
+PROBE P7-cat-devnull-stdout: b''
+PROBE P8-split-stdout: b'out\nout2\n'
+PROBE P8-split-stderr: b'err\n'
+PROBE P8-merged: b'out\nerr\nout2\n'
+PROBE P2-date-epoch-seconds-identical-triples: 50/50
+PROBE P2-date-nanoseconds-identical-triples: 0/50
+PROBE P1-flake10-all-zero-triples: 223/300 measured; model (1-p)^3=0.729
+PROBE P9-js-kimi-census: pin-ok exits=[0, 0, 0] stdout-sha=['4e01b92d91eb', '4e01b92d91eb', '4e01b92d91eb'] stderr-bytes=[0, 0, 0] diffs=none
+PROBE P9-bash-surface-census: pin-ok exits=[0, 0, 0] stdout-sha=['09c21ee26b8b', '09c21ee26b8b', '09c21ee26b8b'] stderr-bytes=[0, 0, 0] diffs=none
+PROBE P9-bash-tsukuroi-census: pin-ok exits=[0, 0, 0] stdout-sha=['0d66197fafa8', '0d66197fafa8', '0d66197fafa8'] stderr-bytes=[0, 0, 0] diffs=none
+PROBE P9-bash-mado-verify: pin-ok exits=[0, 0, 0] stdout-sha=['0f931f7c3833', '0f931f7c3833', '0f931f7c3833'] stderr-bytes=[0, 0, 0] diffs=none
+PROBE P9-bash-checklist-run: pin-ok exits=[1, 1, 1] stdout-sha=['6431a7bd85cd', '6431a7bd85cd', '6431a7bd85cd'] stderr-bytes=[0, 0, 0] diffs=none
+PROBE P9-js-claims-check: pin-ok exits=[0, 0, 0] stdout-sha=['fad714158897', 'fad714158897', 'fad714158897'] stderr-bytes=[0, 0, 0] diffs=none
+# probes-exit=0
+
+## Errata (append-only) — 2026-10-20T02:17:02Z
+# P9-bash-checklist-run exits=[1,1,1] above is a PROBE CONSTRUCTION ERROR, not a red leg:
+# probes.py wrote the blob without its git mode; the blob is 100755
+#   (git -C ../kagi-shokunin ls-tree fecee874 corpus/checklist-run.sh -> 100755 blob 78f2c45e...)
+# and its selftest re-invokes the artifact directly; every case reported 'exit 126'.
+# The runner restores the bit (tools/mutate-and-run.sh:942-956) and copies with cp -p (:431).
+# Re-run with chmod 755, same bytes, same argv/env shape, 3 runs:
+#   run1 rc=0 out=b03bc148509b errbytes=0
+#   run2 rc=0 out=b03bc148509b errbytes=0
+#   run3 rc=0 out=b03bc148509b errbytes=0   (last line: CHECKLIST_SELFTEST: PASS (34 cases))
+# Discriminator: file mode, outside argv and outside a byte sha256 pin.

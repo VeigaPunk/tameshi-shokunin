@@ -119,3 +119,28 @@ superseded here (orchestrator adjudication, 2026-10-19) — both are
 
 A ground reads `held` only when its next move in the table is
 measured.
+
+## Round 12 — coverage and frontier resolution
+
+| Note / frontier | Lane-asserted scope; outside admission pending | Source / evidence |
+|---|---|---|
+| `knowledge/repeated-control-precondition.md` / F3 | A standalone exact-tuple repeated-control gate; a clean result is finite sample agreement, not proof of determinism or a flaky-test cure | S004, S026; `tools/repeat-control.py`; `.ufo/evidence/round-12/verification-final.json` |
+| `knowledge/witness-scoped-kill-verdict.md` / F2 | Historical source-semantics corrections E2/E3; the existing bash leg's declared-witness study is retained separately, not a new recorded gate | S006; `.ufo/evidence/round-12/BashWitness/summary.json`; `lessons/round-12.md` |
+
+F3's original next move is the repeated-control capability, not the stronger
+word “determinism” in its heading. F2 keeps the partial-blindness limitation:
+source/spec exposure was inherited, and a before-run hash does not erase it.
+F1 remains partly held; the old freshness and provenance-header debts remain
+open. The earlier absent-bash sentence at lines 115–118 is a round-1
+snapshot, superseded only for the round-12 evidence above.
+F2 remains partly held in the broad sense of bash mutation tooling; this
+study does not add selector-based execution or certify assertion-level
+causality. F3's named finite-sample capability is the claimed advancement,
+not a universal determinism guarantee. Neither row changes province Core
+by self-attestation.
+
+The newest outside review remains `lessons/round-1-verifier-spotcheck.md`.
+Round-12 lane-dispatched review is not its replacement. Full-page box-3
+sufficiency is still unearned; historical cold-read receipts apply only to
+their pinned SKILL bytes. The append-only round-12 registry adds no
+full-page cold-read or promotion credit.

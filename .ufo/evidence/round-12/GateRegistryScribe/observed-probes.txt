@@ -1,0 +1,54 @@
+# observed at 2026-10-20T02:14:13Z; read-only probes, no tests run
+HEAD=18ad5d050ef4bcd830fe513825baed878f025024
+spec.json sha256=e13d92af643cf4fb0a20c82f64cfaf6a1873e0dcda717d2a2c7b276926891cc2
+mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+ABSENT  tools/repeat-control.py
+ABSENT  .ufo/evidence/round-12/ControlGate/expected.json
+PRESENT .ufo/evidence/round-12
+--- exit-code anchors in tools/mutate-and-run.sh
+77:# Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
+115:# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+213:Verdicts per defect: KILLED | SURVIVED | INCONCLUSIVE. Exit map (run): 0 done ·
+218:usage_exit() {
+221:  exit 64
+224:die_setup() {
+226:  exit 2
+513:    exit 1
+517:  exit 0
+739:@old "$reason"\nexit 1
+740:@new "$reason"\nexit 0
+1156:    exit 1
+1162:    exit 2
+1172:  exit 0
+1181:    exit 1
+1224:  printf 'FIXTURE_SELFTEST: %s/%s pass\nVERDICT: PASS\n' "$cases" "$cases"; exit 0
+1226:printf 'FIXTURE_SELFTEST: %s/%s pass\nVERDICT: FAIL\n' "$((cases-fails))" "$cases"; exit 1
+1235:exit 0
+1500:[[ "${1:-}" == --selftest ]] || exit 1
+1501:grep -qF "$MAGIC" "$0" || exit 1
+1503:exit 0
+1514:@old grep -qF "$MAGIC" "$0" || exit 1
+1515:@new grep -qF "$MAGIC" /dev/null || exit 1
+1535:[[ "${1:-}" == --selftest ]] || exit 1
+1536:grep -qF "$MAGIC" "$0" || exit 1
+1538:exit 0
+1606:  bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?
+1612:    exit 0
+1615:  exit 1
+--- regression exit map comment
+# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+# table outside its expectation) · 2 a case could not be verified — missing
+# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL. Lines:
+# REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_EXPECT /
+# REGRESSION_PIN (one per leg: git source + pinned target sha256; the sweep's
+--- selftest tail
+  printf 'MUTATE_SELFTEST: %s/%s pass\n' "$((cases - failed))" "$cases"
+  if [[ "$failed" -eq 0 ]]; then
+    printf 'VERDICT: PASS\n'
+    rm -rf "$root"
+    exit 0
+  fi
+  printf 'VERDICT: FAIL (scratch kept: %s)\n' "$root"
+  exit 1
+--- interface sentence in spec.json context
+New gate interface: python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG... . Run exact argv with stdin DEVNULL; save numbered stdout/stderr and exit; do not normalize bytes. Gate final stable finding IDs: controls_match exit0 clean; controls_mismatch exit1 failed; baseline_nonzero and command_unavailable exit2 could-not-evaluate; invalid usage exit64 could-not-evaluate. --selftest uses isolated fixtures and exact IDs/exits; --snapshot DIR validates committed input digests and expected ID/exit, tamper exit2 snapshot_tampered. No edits to exi

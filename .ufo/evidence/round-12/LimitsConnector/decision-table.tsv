@@ -1,0 +1,13 @@
+scenario	exits	stdout_equal	stderr_equal	repeat_control_id	repeat_control_exit	runner_analogy	service_limits_row	semantic_class
+stable_green	[0,0,0]	true	true	controls_match	0	CONTROL: GREEN (exit=0)	admitted (clean)	clean
+flaky_exit	[0,1,0]	true	true	controls_mismatch	1	CONTROL: GREEN (1st run) -> Spurious Kill (2nd run)	refused at intake	failed (stability)
+flaky_stdout	[0,0,0]	false	true	controls_mismatch	1	CONTROL: GREEN (blind to stdout variance)	refused at intake	failed (stability)
+flaky_stderr	[0,0,0]	true	false	controls_mismatch	1	CONTROL: GREEN (blind to stderr variance)	refused at intake	failed (stability)
+persistent_nonzero_identical	[1,1,1]	true	true	baseline_nonzero	2	CONTROL: RED (exit 2 setup)	refusal (b: red control)	could-not-evaluate
+persistent_nonzero_varying_exit	[1,2,1]	true	true	baseline_nonzero (proposed)	2	CONTROL: RED (exit 2 setup)	refusal (b: red control)	could-not-evaluate
+persistent_nonzero_varying_err	[1,1,1]	true	false	baseline_nonzero (proposed)	2	CONTROL: RED (exit 2 setup)	refusal (b: red control)	could-not-evaluate
+intermittent_timeout	[0,124,0]	false	false	controls_mismatch	1	CONTROL: GREEN (1st run) -> INCONCLUSIVE (mutant run)	refused at intake	failed (stability)
+persistent_timeout	[124,124,124]	true	true	baseline_nonzero	2	CONTROL: RED (exit 2 setup)	refusal (b: red control)	could-not-evaluate
+exec_missing	[ENOENT]	false	false	command_unavailable	2	MUTATE: SETUP (exit 2 setup)	refusal (b: unrunnable)	could-not-evaluate
+exec_noexec	[EACCES]	false	false	command_unavailable	2	MUTATE: SETUP (exit 2 setup)	refusal (b: unrunnable)	could-not-evaluate
+invalid_args	[]	false	false	invalid_usage	64	usage_exit (exit 64)	refusal (usage error)	could-not-evaluate

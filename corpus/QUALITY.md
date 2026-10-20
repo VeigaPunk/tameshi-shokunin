@@ -28,3 +28,19 @@ Each criterion cites the mistake it learns from
     `recheck:`; an external source enters through a `SOURCES.md` row
     opened in the round that writes it (tiers: `SOURCES.md`, contract
     v1); a tier-C row is never sole support. (MK-7)
+
+## Criteria appended — round 12
+
+11. A repeated-control clean verdict names its finite sample and compares
+    raw exit/stdout/stderr tuples; it never proves determinism. Its
+    counterexample must defeat a one-control observation and trigger the
+    same committed mismatch oracle after the repair.
+    (`lessons/round-12.md`, vacuous mistake)
+12. A frozen witness declaration records prior exposure and checks integrity
+    before replay. Report all declared defects, unresolved denominators and
+    accidental kills; reanalyzing an existing artifact is not a new gate.
+    (`lessons/round-12.md`, attribution mistake)
+13. Promotion restraint remains separate from partial procedure exercises:
+    an Appendix A/B cold-read cannot earn full-page box-3 score credit.
+    (`lessons/round-1-verifier-spotcheck.md`, Adjudication;
+    `lessons/round-12.md`, attribution mistake)
