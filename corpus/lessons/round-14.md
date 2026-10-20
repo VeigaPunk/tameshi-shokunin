@@ -174,3 +174,13 @@ retained runtime run. The final harness was simplified1522→647 lines before
 measurement; discarded extra rate/count/third-authority/diff machinery is not
 a claimed capability. All32 seat reports are advisory, many explicitly
 contract-only; no claim that early seats reviewed code absent at their read.
+
+Static counting completed against committed tree
+`4d409d796ad8f9bf2aa8d380489da9e7d6cb9ca1`: same `measure.py --rev REV`
+command as baseline, exit0 each. `before.json`/`after-committed.json`:
+gate0→1, disposition coverage0→12, effective0→11/superseded0→1;
+cases6 and calibration restraint6 unchanged; source rows46→48,
+A39→41/B5/C2 unchanged, mined19→21/queued24/rejected3 unchanged.
+The end census in `sources-after.json` exits0 with the same S047/S048 W04
+duplicate-URL correction warnings as `sources-before.json` (exit0).
+This is same-ground capability learning, not new uncovered knowledge.

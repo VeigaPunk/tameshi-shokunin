@@ -911,3 +911,13 @@ All appended; `corpus/lessons/round-1.md` final section.
   unchanged. Trends: expansion unchanged; quality improved; discernment
   improved by grounded outside-routed learning. Separate round14 non-author
   admission/sampling remains pending; no SHONEN, promotion or province change.
+- Static delivered-tree count measured
+  `4d409d796ad8f9bf2aa8d380489da9e7d6cb9ca1` with the same
+  `python3 .ufo/evidence/round-14/measure.py --rev REV` command as baseline,
+  exit0 each: gate0→1, disposition coverage0→12, effective0→11/
+  superseded0→1, original expected12 unchanged, cases6 and restraint6
+  unchanged. Source rows46→48, A39→41/B5/C2 stable, mined19→21/
+  queued24/rejected3 stable. `after-committed.json`; SCORECARD's committed
+  counting receipt names both revisions and keeps scalar delta0.
+  `correction-sweep.txt` preserves the touched-file superseded-mention sweep;
+  historical clauses remain explicitly superseded, not silently rewritten.

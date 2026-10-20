@@ -453,3 +453,28 @@ Saturation8/window2 unchanged.
 Next intended claim remains freshness: accept one owner-opted-in,
 clean-current-revision successor spec and execute a bounded sweep, or retain
 an honest intake refusal. No next round or outcome is preclaimed.
+
+### Round14 committed-tree counting receipt
+
+Same command:
+`python3 .ufo/evidence/round-14/measure.py --rev REV`, exit0 each.
+Before `d6809df7775338f000e44c8a916067b8866867fb` (`before.json`);
+after `4d409d796ad8f9bf2aa8d380489da9e7d6cb9ca1`
+(`after-committed.json`). This appended metadata is not claimed to measure
+its own later commit.
+
+Gate artifact0→1; disposition name coverage0→12;
+effective rows0→11/superseded0→1; original expected rows12→12.
+Recorded cases6→6, calibration restraint6→6; original setup exit1 and
+missing mechanism assertion remain unchanged. Frozen summary and runner
+SHA256 values in both outputs match exactly. Scalar delta remains0.
+
+Source rows46→48; tiers A39→41/B5→5/C2→2;
+statuses mined19→21/queued24→24/rejected3→3. Added by tier: A2 (docs1,
+own-work1), B0/C0. No existing mutable field changed; S049's same-round
+used-by expansion and S050's draft cadence correction are logged in lesson
+Gate. End census0, disclosed S047/S048 W04 warnings unchanged.
+
+These counts demonstrate complete retained account and capability artifact,
+not authority or a proof from file existence alone. Actual discriminating
+runtime proof is separately pinned at6431478 in `verification-final.json`.
