@@ -135,6 +135,7 @@ PRESERVE_PATHS = (
 CHECKS = []
 SCRATCH = None
 COMMAND_TIMEOUT = 300
+ID_TOKEN_RE = re.compile(r"id=([a-z_]+)")
 
 
 def sha256_bytes(data):

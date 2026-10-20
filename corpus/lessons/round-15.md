@@ -155,3 +155,12 @@ after retaining all raw output in the repo. The new verifier owns its cleanup.
 No command was rerun merely to confirm this failure; the harness repair is
 required before another integrated invocation. The first static count receipt
 is not promoted into evidence of a passing selftest.
+
+Second integrated command at `b2550559b495e622f537877c7999bb3899da30c8`
+exited1 before substantive gate replay: `verification-2.json` records
+`runner-internal-error: NameError: name 'ID_TOKEN_RE' is not defined`.
+The attempt-local harness edit accidentally removed its existing diagnostic
+regex declaration. L1 restored that exact declaration; production gate bytes
+and literal expected IDs/exits remain unchanged. `attempt-2/expected.json`
+and the failed second receipt stay intact. This is another observed harness
+failure, not a source-gate failure or a passing verification.

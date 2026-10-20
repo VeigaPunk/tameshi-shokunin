@@ -983,3 +983,8 @@ The lesson's new fixture-layout mistake records the observed failure and
 repair; old raw outputs and expected pins remain intact. Actual frozen
 clean0/missing-env1/tamper2/usage64, mapping oracle and source census0
 completed in that same failed run and are not erased.
+Second integrated attempt at `b2550559b495e622f537877c7999bb3899da30c8`
+failed before substantive gate replay: `verification-2.json` retains the
+missing `ID_TOKEN_RE` NameError introduced by the harness-layout repair.
+L1 restored only that existing regex declaration. Attempt2 expectation
+metadata and its failure are preserved; production gate source is unchanged.

@@ -136,3 +136,10 @@ Repairs, none executed:
   `/tmp/tameshi-r15-verify-4pexcuhm` is L1's to remove).
 
 No production gate, expected IDs, or pin values changed.
+
+Second run (b255055…) failed `runner-internal-error`: my SCRATCH repair
+edit accidentally dropped the `ID_TOKEN_RE = re.compile(r'id=([a-z_]+)')`
+global (the edit tool warned about the dropped line and it was missed).
+L1 restored it as a 1-line fix after COMMAND_TIMEOUT; preserved
+`verification-2.json` and `attempt-2/` receipts remain. No further script
+edits from this seat.
