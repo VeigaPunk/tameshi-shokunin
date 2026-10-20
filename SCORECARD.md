@@ -241,6 +241,8 @@ written and are superseded here:
 | mutation sweep runner | inject → run → restore single-edit mutants with a green-control gate, verdict lines and byte-identity proof | `bash tools/mutate-and-run.sh --selftest` → `MUTATE_SELFTEST: 80/80 pass`, exit 0 (`.ufo/evidence/kaika-round-1/capability-demo/h1a-selftest-host.stdout`) | historical round 3 (`SCORECARD.md:16`); re-demonstrated fleet round 1 |
 | six-leg regression ledger | replay every recorded mutation case at its pinned blob; exact expectation | `bash tools/mutate-and-run.sh --regression` → `REGRESSION: PASS (cases=6 passed=6 …)`, exit 0 (`…/capability-demo/h1b-regression.stdout`) | historical round 7 (four legs) / round 10 (six); re-demonstrated fleet round 1 |
 | repeated pristine-control gate | observe N≥3 exact exit/stdout/stderr tuples, distinguish mismatch from unavailable/uniform-nonzero baseline, validate digest-pinned observation snapshots | `python3 tools/repeat-control.py --selftest` → PASS (29 cases), exit 0; real bash controls match; red-before loop mutant fails the same mismatch oracle, restored loop passes; `.ufo/evidence/round-12/verification-final.json`, `oracle-repair.json`; measured `9df9212d33dc2dbda133e88f28ad47bb08839a5b` | round 12; lane demonstrated, outside admission pending |
+| six-leg content-disposition probe | emit configured-pin, committed-HEAD and worktree SHA observations for every recorded leg, while explicitly withholding verdict reuse | `python3 tools/pin-disposition.py --selftest` → 18/18 PASS0; real read changed3/unchanged3/unavailable0; `.ufo/evidence/round-13/verification.json`, `pin-dispositions.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
+| exposed witness provenance correction | validate a new digest-anchored non-blind companion without rewriting frozen observations; prevent wrong-nesting in future producer output | metadata selftest39/39 PASS0; null-only companion FAIL1/corrected PASS0; producer same-oracle40/41 FAIL1→41/41 PASS0; `.ufo/evidence/round-13/producer-oracle-repair.json`, `verification-verdict.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -326,3 +328,68 @@ and unscored. Saturation 8 and stagnation window 2 remain; no retirement.
 Next intended claim: freshness — measure and disposition the existing
 stale-successor ledger debt at actual pinned revisions. This is a plan,
 not a round-13 execution or pre-claimed outcome.
+
+## Round 13 — measured claims (2026-10-20)
+
+The previous intended freshness sweep is not reported as executed.
+C1 works tied-lowest **depth6** through a capability acquisition and
+source-backed technical detail; C2 independently works **calibration6**
+through the outside-routed provenance fix. No scalar changes or retirement.
+
+Same counting command on both revisions:
+`python3 .ufo/evidence/round-13/measure.py --rev REV`.
+Before `546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50`, output
+`before-final.json`; after/measured content
+`4acc607dfd79f19d508bd50cdd06b77269fccd1d`, output
+`after-committed.json`. The earlier `before.json` used the initial,
+smaller output schema; `before-final.json` is the comparable measurement.
+
+| Claim | Axis / type | Measured before → after | Score delta | Lane verdict / proof | Measured commit |
+|---|---|---|---|---|---|
+| C1 structured content disposition | depth; capability acquisition, F7 prerequisite | pin_probe_artifact0→1; current record absent→six re-derivable observations, unchanged3/changed3/unavailable0 | 6→6, delta0; detail is not another independent case | improved; selftest18/18 PASS0, six actual pins verified; S003/S048 knowledge and ledger ER-5 | `4acc607dfd79f19d508bd50cdd06b77269fccd1d` |
+| C2 provenance repair | calibration; capability plus root-cause correction | checker0→1, companion absent→present; canonical normalized kind null→exact exposed top-level string in new companion; original frozen summary SHA unchanged | 6→6, delta0; box3 excluded, no promotion credit | improved; selftest39/39 PASS0; same checker old-null FAIL1→corrected PASS0; identical producer oracle40/41 FAIL1→41/41 PASS0 | `4acc607dfd79f19d508bd50cdd06b77269fccd1d` |
+
+C1's initial date-named absence was not a substantive before-state:
+`claims.json` preserves the measurement refinement. Historical manual
+six-row content readings already existed (last carried4current/2stale).
+The acquisition is the runnable structured method and sourced F7 detail,
+not six observations falsely claimed new or the constant reuse label.
+The observed content states cannot establish safe verdict reuse; the
+manifest is configured authority, not adversarial baseline authentication.
+
+C2 repairs future summary generation and normalizes only the canonical
+historical summary by addition. The rerun null remains named raw history
+and is digest-checked, not normalized. The original tool SHA in frozen
+evidence is intentionally not the repaired current tool's SHA.
+The initial misplaced-producer crash is retained and excluded from proof;
+only `producer-oracle-repair.json` shows the named assertion failing.
+
+Guardrails from both count outputs: recorded_cases6, unique_recorded_gates6,
+calibration_restraint_score6 (boxes1/2/4, excluding3), frozen canonical
+summary SHA `acc01268cb5fb00985be7bf1c6711f6f97131ff20ae0020bbde1819bae4547b9`.
+These scalar/mark counts are not a fresh outside promotion review.
+
+Sources: rows44→46; A37→39/B5→5/C2→2;
+mined15→19/queued26→24/rejected3→3, malformed0→0 — same counting
+command/revisions above. Two opened URLs, not four new sources:
+S003/S041 mined and S047/S048 append-only corrections to that same PIT
+URL. End census0 carries disclosed W04 duplicate-URL warnings.
+
+| Axis | Round-13 lane verdict | Bound |
+|---|---|---|
+| depth | improved; scalar6 unchanged | C1 source-backed six-leg detail and demonstrated capability |
+| calibration | improved; scalar6 unchanged | C2, QUALITY14, outside-routed mistake; no promotion points |
+| coverage | unchanged | F7 prerequisite knowledge indexed; full reuse frontier stays open |
+| operability | unchanged | old runner unchanged; new capability serves C1/C2 rather than separate axis claim |
+| freshness | unchanged | no successor mutation-sweep verdict; three changed targets now named |
+| adjacency | unchanged | siblings read-only; no product-gate ownership absorbed |
+
+Admission and current admit/reject sampling remain separate non-author
+closure duties. All SHONEN marks remain `[~]`, box3 scope-limited and
+unscored. Saturation8/window2 unchanged; a capability enters this round,
+so no stagnation waiver is claimed.
+
+Next intended claim: freshness — prepare one owner-opted-in successor
+sweep at an actual current pinned revision (kimi now joins tsukuroi/mado
+debt), including explicit spec remapping and a retained run, or an honest
+intake refusal. This is a plan, not an execution or future round claim.

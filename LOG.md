@@ -821,3 +821,12 @@ All appended; `corpus/lessons/round-1.md` final section.
   with no warnings (`claims.json`). No tool installs/updates by L1 or seats.
   No sibling gate execution, no `[x]`, no rank change and no full-page
   cold-read claim. Round13 non-author admission/sampling remains external.
+- Measured content committed as `4acc607dfd79f19d508bd50cdd06b77269fccd1d`.
+  `python3 .ufo/evidence/round-13/measure.py --rev REV` ran against baseline
+  `546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50` and that content commit,
+  exit0 each. `before-final.json`/`after-committed.json`: pin tool0→1,
+  checker0→1, companion absent→present, cases6→6, unique gates6→6,
+  calibration6→6; sources44→46, tiers A37→39/B5/C2 unchanged,
+  mined15→19/queued26→24/rejected3 unchanged, malformed0→0.
+  SCORECARD records both capability demonstrations and zero scalar deltas;
+  this measurement-metadata commit does not pretend to measure itself.
