@@ -1897,9 +1897,27 @@ def _dispositions_v2(fx, rows, historical=None, supersedes_rel=None, pin_superse
     return document
 
 
+def _selftest_git_env():
+    # Fixture git calls never inherit GIT_* (an exported GIT_DIR would commit
+    # into a foreign repo) and never depend on the caller's global identity.
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update(
+        GIT_CONFIG_NOSYSTEM="1",
+        GIT_CONFIG_GLOBAL="/dev/null",
+        GIT_AUTHOR_NAME="selftest",
+        GIT_AUTHOR_EMAIL="selftest@invalid",
+        GIT_COMMITTER_NAME="selftest",
+        GIT_COMMITTER_EMAIL="selftest@invalid",
+    )
+    return env
+
+
 def _git(lane, *argv):
     proc = subprocess.run(
-        ["git", "-C", str(lane)] + list(argv), capture_output=True, timeout=30
+        ["git", "-C", str(lane)] + list(argv),
+        capture_output=True,
+        timeout=30,
+        env=_selftest_git_env(),
     )
     if proc.returncode != 0:
         raise RuntimeError(
@@ -1909,7 +1927,7 @@ def _git(lane, *argv):
 
 
 def _git_raw(argv):
-    proc = subprocess.run(argv, capture_output=True, timeout=120)
+    proc = subprocess.run(argv, capture_output=True, timeout=120, env=_selftest_git_env())
     if proc.returncode != 0:
         raise RuntimeError("{} failed: {}".format(argv, _stderr_text(proc)))
     return proc.stdout
