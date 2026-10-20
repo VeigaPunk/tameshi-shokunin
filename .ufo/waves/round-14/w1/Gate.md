@@ -284,3 +284,31 @@ the pinned bytes (`input_digest_mismatch`) before any predicate.
    resolved to an absolute lane. No LSP operation was used (a single new stdlib
    file did not require symbol lookup/refactor); no LSP availability probe was
    made. No tools were installed or updated.
+
+## Fix after L1 integration run (append-only)
+
+L1 ran actual content commit `0c6e36d` and reported: real
+`dispositions-before.json` exits 1 with exactly `expected_contains_missing` on
+`producer_before`; real `dispositions.json` exits 0 clean; harness check 0.
+The `--selftest` run was 18/34 and exposed two fixture-only root causes.
+Production semantics and every literal expected finding ID were left unchanged.
+
+1. **`clean-superseded` carried an extra `expected_contains_missing` into the
+   default-row cases.** Root cause: the fixture `gamma` expectation is
+   `contains: "GAMMA_OK"` plus structured `id`/`reason`, but its receipt stdout
+   was a JSON object without `GAMMA_OK`, so `contains` failed in every case that
+   used the default rows. Fix: the fixture gamma stdout now includes
+   `"marker":"GAMMA_OK"` inside the same JSON object; `contains` and
+   `id`/`reason` both pass. No expectation was removed or weakened.
+2. **`duplicate-json-key` raised `KeyError: '"schema"'` while building the
+   fixture.** Root cause: `str.format` interpreted the leading JSON
+   `{"schema":...` as a replacement field; only `{{}}` had been escaped. Fix:
+   the fixture is now literal string concatenation with the expected-file path
+   inserted, no format fields. It still contains a duplicate `schema` key and
+   still expects `dispositions_json_invalid` exit 2.
+
+These edits are confined to selftest fixture construction. `evaluate_expectation`,
+the supersession policy, oracle binding, all path/digest/type guards, and the
+expected finding-ID sets are unchanged. This seat did not rerun `--selftest`;
+L1 should pin the new commit, rerun, and record the actual tally. The failed
+raw selftest receipt from the `0c6e36d` run remains unchanged.

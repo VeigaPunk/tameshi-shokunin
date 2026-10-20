@@ -861,3 +861,30 @@ All appended; `corpus/lessons/round-1.md` final section.
   Primary docs support explicit child-environment semantics and omitted
   context, not retrospective proof. QUALITY15–16 cite the outside-routed
   mistakes; `corpus/lessons/round-14.md` retains the gate and limitations.
+- Initial measured implementation commit:
+  `0c6e36d0bd2fd98077de4cff4c90c6f467c2e1fb`.
+  Input pins were declared before execution in
+  `.ufo/evidence/round-14/expected-runtime.json`, expected outcomes in
+  `expected-outcomes.json`. Main integrated run retained in
+  `verification.json`: constructed all-effective ledger exits1, exactly
+  producer_before/expected_contains_missing; sole-row supersession exits0,
+  eleven effective plus one superseded, raw mismatch retained. Historical
+  oracle receipts were read, not re-executed; no new producer repair is claimed.
+- The prospective context capture exits0 at the same content commit:
+  exact GIT_DIR delta, equal raw JSON (timestamps also equal), excluding only
+  observed_at, plain-git control0→128, six explicit mappings all true.
+  `context-receipt.json` is new round14 evidence, not retrospective proof
+  of round13's missing setup. L1 excluded unavailable baseline legs and
+  required a nonzero injected plain-git control before this measurement.
+- That integrated run exposed a real gate-selftest failure:18 of34 cases
+  failed, including a common fixture contains mismatch and a malformed
+  duplicate-key fixture formatter. The failing full stdout is durable in
+  `verification.json`, not a pass. Gate owner was resumed to fix only the
+  fixture root causes, never to relax expected finding IDs or production
+  semantics. Final corrective evidence is recorded separately.
+- Scope clarifications: C1 claims only the new reconciliation capability;
+  context capture and empirical knowledge backlink address routed items2–3
+  without separate axis credit. The previous freshness plan receives bounded
+  intake refusal (`w1/FreshnessIntake.md` sections7.1–7.4), not a re-sweep.
+  Operator-owned closure-checker debt and all earlier carried lane debts
+  remain open. No sibling gate or runner was executed.

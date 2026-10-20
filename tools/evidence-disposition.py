@@ -1311,7 +1311,10 @@ def _build_lane(lane, marker, variant):
             "name": "gamma",
             "argv": ["python3", "-c", "raise SystemExit(0)"],
             "exit": 0,
-            "stdout": json.dumps({"id": "gamma_ok", "reason": "ok", "exit": 0}) + "\n",
+            "stdout": json.dumps(
+                {"id": "gamma_ok", "reason": "ok", "exit": 0, "marker": "GAMMA_OK"}
+            )
+            + "\n",
             "stderr": "",
         },
         {
@@ -1808,8 +1811,10 @@ def selftest():
         2,
         ["dispositions_json_invalid"],
         raw_dispositions=lambda fx: (
-            '{"schema":"evidence-dispositions-v1","schema":"evidence-dispositions-v1",'
-            '"expected_file":"{}","inputs":{{}},"rows":[]}}'.format(fx["expected_rel"])
+            '{"schema":"evidence-dispositions-v1",'
+            '"schema":"evidence-dispositions-v1",'
+            '"expected_file":"' + fx["expected_rel"] + '",'
+            '"inputs":{},"rows":[]}'
         ).encode("utf-8"),
     )
     case(
