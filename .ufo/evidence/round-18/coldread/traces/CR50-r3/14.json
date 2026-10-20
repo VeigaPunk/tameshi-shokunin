@@ -1,0 +1,63 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR50-ETaWBM",
+    "/tmp/tameshi-r18w2-CR50-ETaWBM",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR50-ETaWBM/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/home/vgpnk/.local/bin:/usr/bin:/bin",
+    "HOME=/tmp/tameshi-r18w2-CR50-ETaWBM/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR50-ETaWBM/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "W=/tmp/tameshi-r18w2-CR50-ETaWBM",
+    "C=/tmp/tameshi-r18w2-CR50-ETaWBM/fleet/tameshi-shokunin",
+    "REV=4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+    "bash",
+    "-c",
+    "python3 .ufo/evidence/round-18/coldread/assemble.py --carry .ufo/evidence/round-17/coldread/ledger.json > \"$W/logs/assemble-carry.txt\" 2>&1; rc=$?; echo \"assemble --carry default --out exit=$rc\"; grep -E \"ledger written|coverage:|uncovered headings|no reports\" \"$W/logs/assemble-carry.txt\" | head -10; python3 - <<\"PY\"\nimport json\nold=json.load(open(\".ufo/evidence/round-17/coldread/ledger.json\")); new=json.load(open(\".ufo/evidence/round-18/coldread/ledger.json\")); oe=new[\"entries\"][:new[\"_meta\"][\"carried_entries\"]]; pe=old[\"entries\"]\nstrip=lambda x:{k:v for k,v in x.items() if k!=\"carried_from\"}\nprint(\"prior\",len(pe),\"carried\",len(oe),\"meta\",new[\"_meta\"].get(\"carried_entries\"))\nprint(\"equal ignoring carried_from\",len(oe)==len(pe) and all(strip(a)==b for a,b in zip(oe,pe)))\nprint(\"carried_from\",sorted({e.get(\"carried_from\") for e in oe}))\nprint(\"uncovered\",len(new[\"_meta\"].get(\"uncovered\") or []),\"coverage_basis\",new[\"_meta\"].get(\"carry_coverage_basis\"))\nPY"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR50-ETaWBM/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR50-ETaWBM/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR50-ETaWBM/tmp/trace-inputs-run-bf5jpso6/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-17/coldread/ledger.json": "381583c20b49b0904d976713184d6c6c9051a7425a257bf20bdb601afbf21aca",
+    ".ufo/evidence/round-18/coldread/assemble.py": "bf7c12f7b69dcdb004c7df546cd9655f6f1264ebb3e5565810a673c42dba5a0a"
+  },
+  "untracked": {
+    ".ufo/evidence/round-18/coldread/ledger.json": "39a74efa32051c51c76dfeacaf9bd666c2d781cebb1d32334439ac1b645f0cd9"
+  },
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

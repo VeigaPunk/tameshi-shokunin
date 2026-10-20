@@ -1,0 +1,39 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "python3 - <<\"PY\"\nimport hashlib\nfrom pathlib import Path\nfiles=[\"SKILL.md\",\"tools/mutate-and-run.sh\",\"corpus/knowledge/operator-runbook.md\",\"corpus/knowledge/fleet-kill-rate-ledger.md\",\"corpus/knowledge/mutation-case-kagi-checklist.md\",\"corpus/knowledge/mutation-case-kumitate-claims.md\",\"tools/registry.json\",\"corpus/knowledge/closeout-r11.md\"]\nfor f in files:\n b=Path(f).read_bytes(); print(\"SHA256\",f,hashlib.sha256(b).hexdigest())\nif True:\n b=Path(\"SKILL.md\").read_text().splitlines(); s=\"\\\\n\".join(b[1271:1279]); print(\"SECTION_NO_TRAILING_NL\",hashlib.sha256(s.encode()).hexdigest())\nPY\nprintf \"\\\\n-- DIFF --\\\\n\"; git diff --unified=2 01d586ddbc5fcd78659557c4e93a6ee8517b87d1 4acdeac9e482b4379d9c99290feb1d9546a67eb2 -- tools/mutate-and-run.sh corpus/knowledge/operator-runbook.md corpus/knowledge/fleet-kill-rate-ledger.md corpus/knowledge/mutation-case-kagi-checklist.md corpus/knowledge/mutation-case-kumitate-claims.md tools/registry.json corpus/knowledge/closeout-r11.md; printf \"\\\\n-- SELECTED FINAL LINES --\\\\n\"; python3 - <<\"PY\"\nfrom pathlib import Path\nfor f,ranges in {\"tools/mutate-and-run.sh\":[(1,28),(80,120),(169,170),(827,828),(902,903)],\"corpus/knowledge/operator-runbook.md\":[(1,12),(169,177),(358,378),(444,462),(486,516)],\"corpus/knowledge/fleet-kill-rate-ledger.md\":[(85,90),(272,284),(350,353),(403,423)],\"corpus/knowledge/closeout-r11.md\":[(288,320)],\"tools/registry.json\":[(1,10)]}.items():\n print(\"FILE\",f); lines=Path(f).read_text().splitlines()\n for a,b in ranges:\n  for n in range(a,min(b,len(lines))+1): print(f\"{n}:{lines[n-1]}\")\nPY"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR28-L0hKlt/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR28-L0hKlt/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-ttk43u2o/pycache"
+    }
+  },
+  "inputs": {
+    "SKILL.md": "c996e9dd87da361fb4e3771f7dc9ec72b468791743328434878bfc6e01d14011",
+    "corpus/knowledge/closeout-r11.md": "cea3352aa60eb51b51e2722fdb820cac19cd1514670df931212904e826940265",
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "corpus/knowledge/mutation-case-kagi-checklist.md": "43da70e675b8a482c942fddf6360d84970cf0c29ee648039e11b3b819ae739e7",
+    "corpus/knowledge/mutation-case-kumitate-claims.md": "3da1312e0a624ca565dc243fd0cb6f19968c1672f57066fbd4d2ad2bdf8045d9",
+    "corpus/knowledge/operator-runbook.md": "8b2e185ff011f6cfc2aee187ff1c2a1f8120e410c00f4b67eb6c7f1ebabb6859",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b",
+    "tools/registry.json": "3e6785ee90fcf75f7147ffdb8bee72ef0bce54343803604df857951cc279f1e6"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 3
+}

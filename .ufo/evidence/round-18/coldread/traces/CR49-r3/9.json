@@ -1,0 +1,31 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -euo pipefail; K=/home/vgpnk/Projects/shokunin/kumitate-shokunin; REV=0acb7752d19058b953ebbeba253b1e35f6548de5; P=scripts/sources-check.mjs; echo \"== PIN\"; git -C \"$K\" --no-optional-locks ls-tree \"$REV\" -- \"$P\"; git -C \"$K\" --no-optional-locks show \"$REV:$P\" | sha256sum; git -C \"$K\" --no-optional-locks show \"$REV:$P\" | wc -l; git -C \"$K\" --no-optional-locks show \"$REV:$P\" | wc -c; echo \"== PREREG\"; git show --format=\"%H%n%aI%n%cI%n%s\" --stat 93d22aa; git merge-base --is-ancestor 93d22aa 4acdeac9e482b4379d9c99290feb1d9546a67eb2 && echo \"PRE-REG is ancestor of read rev\"; for p in .ufo/evidence/round-18/sources-check/sources-check.defects.spec .ufo/evidence/round-18/sources-check/predictions.json .ufo/evidence/round-18/sources-check/suite.txt .ufo/evidence/round-18/sources-check/control.txt .ufo/evidence/round-18/sources-check/sweep/sweep.txt; do echo \"FIRST ADD $p: $(git log --diff-filter=A --format=%h -- $p)\"; done; echo \"== LEG8\"; grep -n \"PIN_SOURCESCHECK\\|REV_SOURCESCHECK\\|TABLE_SOURCESCHECK\\|regression_case_git js-sources-check\" tools/mutate-and-run.sh"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w3-CR49-xYfC5Q/tmp/trace-inputs-run-ctk42vww/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

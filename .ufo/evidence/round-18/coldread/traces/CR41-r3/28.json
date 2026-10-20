@@ -1,0 +1,28 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import hashlib,json,os,subprocess,sys\nC='/tmp/tameshi-r18w2-CR41-gG5PgX/fleet/tameshi-shokunin'; p=C+'/.ufo/evidence/round-14/context-receipt.json'; b=open(p,'rb').read()\ntry:\n changed=b.replace(b'2026-10-20T06:35:01Z',b'2026-10-20T06:35:02Z',1)\n assert changed!=b\n open(p,'wb').write(changed)\n q=subprocess.run([sys.executable,'tools/context-capture.py','--check','--json'],cwd=C,env={k:v for k,v in os.environ.items() if not k.startswith('GIT_')},capture_output=True,text=True)\n j=json.loads(q.stdout)\n print('child_exit',q.returncode,'id',j['id'],'status',j['status'],'findings',[x['id'] for x in j['findings']],'traceback', 'Traceback' in q.stderr)\nfinally:\n open(p,'wb').write(b)\nprint('restored_sha',hashlib.sha256(open(p,'rb').read()).hexdigest())\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR41-gG5PgX/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR41-gG5PgX/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-lym9wd86/pycache"
+    }
+  },
+  "inputs": {
+    "tools/context-capture.py": "c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

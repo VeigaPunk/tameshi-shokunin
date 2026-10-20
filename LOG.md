@@ -1081,3 +1081,35 @@ metadata and its failure are preserved; production gate source is unchanged.
   8 seats (one job-cap refusal; five seats hit provider 429 and were resumed
   under their own identities). Dead seats: 7 in w2 (m_opus 429 / Devin quota).
   Round total 174.
+
+### Round 18 — eighth recorded case, routed-defect closure (2026-10-20)
+
+- Motivation: `corpus/lessons/round-17-verifier-spotcheck.md` §7 routed eight
+  items; depth 7 was the lowest owned numeric axis. Claims: C1 depth 7→8
+  (case 8, kumitate `scripts/sources-check.mjs` @ `0acb775`, leg
+  `js-sources-check`), C2 operability (the eleven routed tool defects closed
+  with failure-backed selftests). Calibration 8 is a no-harm monitor.
+- C1: spec + predictions committed `93d22aa` before any mutant; sweep 5/10
+  killed, 10/10 predictions held; leg 8 landed in `58e5d53`; command D 7 → 8;
+  `--regression` `cases=8 passed=8` (w2 RerunC1, CR21, CR22, CR49); survivors
+  probed off-suite (four non-equivalent, S_KIND help-only); ledger row
+  appended (`corpus/knowledge/fleet-kill-rate-ledger.md`, round-18 block);
+  entry `corpus/knowledge/mutation-case-kumitate-sources-check.md` (S001, S008).
+- C2: ruler `.ufo/evidence/round-18/defect-probes.py` committed with its base
+  receipt (`aee4f36`, open=11/11) before any fix; v1 errored at the tip on two
+  ruler defects (`c2-probes-e08271a.txt`, retained); v2 base open=11, tip
+  open=0 (`c2-probes-v2-*.txt`); fixes in `tools/{evidence-disposition,registry-check,bash-witness-study,trace-inputs}.py`;
+  registry 32/32 held (3 superseded) at `e08271a` and `01d586d`; round-18
+  disposition manifests supersede round 17's (bash-witness waiver at `4acc607`).
+  Bounded: P08/P11/P09 breadth limits and 18 mutation survivors are round-19 debt.
+- Corrections (R17-KNOW-EXIT, R17-CMD-BIND, R17-CITATIONS): appended errata in
+  `input-keyed-coldread-credit.md`, round-17 lesson, five ER-jj2 notes; QUALITY
+  29–36 plus wave-2 corrections; SOURCES S065–S074 (+S075–S078 supersede rows);
+  SKILL.md wrong expectations repaired in place (line counts kept).
+- R17-INCIDENT: preserved; recovery-helper need routed to L0
+  (`.ufo/l0-questions.md`, fleet `36500aa`).
+- SHONEN.md regenerated in the canonical seed form (PROTOCOL.md:446); the
+  removed lines are preserved here verbatim (183f87b SHONEN.md:10, :11, :13):
+  - `[lane assertion, full page: round-16 cold-read of every SKILL.md bucket (preamble + every heading outside code fences) by lane-dispatched seats, instructions executed in /tmp, records re-anchored, wrong expectations repaired and re-read; ledger .ufo/evidence/round-16/coldread/ledger.json, counted by .ufo/evidence/round-16/measure.py; supersedes the round-1 Appendix A + B-only scope (reports/round-1-kaika-coldread.md); no independent promotion verifier](.ufo/evidence/round-16/coldread/ledger.json)`
+  - `Correction (round 17, routed R16-C2c): the round-16 full-page assertion above was wrong at 09ee1d0 on one bucket, `## Effective expectation reconciliation — round 14`: its credit was sha-only, its runner input had moved (`75ed934d…` → `0673d2e5…`), and its recipe exited 2 instead of the recorded 1/0 (corpus/lessons/round-16-verifier-spotcheck.md §2). Round 17 keys every credit to the recorded input digests and re-reads the page; lane assertion, no independent promotion verifier: [round-17 input-keyed cold-read ledger](.ufo/evidence/round-17/coldread/ledger.json)`
+  - `[lane assertion, no independent promotion verifier; PROVINCE.md Core list corrected by append (tsukuroi and mado gates), fleet round 1](reports/round-1-calibration.md#box-4)`

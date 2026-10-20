@@ -1,0 +1,39 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import hashlib,json,pathlib; p=pathlib.Path(\".\"); load=lambda n:json.loads((p/n).read_text()); exp=load(\".ufo/evidence/round-13/expected.json\"); before=load(\".ufo/evidence/round-14/dispositions-before.json\"); d14=load(\".ufo/evidence/round-14/dispositions.json\"); d17=load(\".ufo/evidence/round-17/dispositions.json\"); d18=load(\".ufo/evidence/round-18/dispositions.json\"); pinhash=hashlib.sha256((p/\".ufo/evidence/round-13/pin-manifest.json\").read_bytes()).hexdigest(); ctx=load(\".ufo/evidence/round-14/context-receipt.json\"); src=(p/\".ufo/evidence/round-14/capture-context.py\").read_text(); print(\"expected_input_count\",len(exp[\"inputs\"])); print(\"round14_before_pins_equal\",before[\"inputs\"]==d14[\"inputs\"]); print(\"round13_pin_manifest_sha_matches_expected\", exp[\"inputs\"][\".ufo/evidence/round-13/pin-manifest.json\"]==pinhash); print(\"context_receipt_pin_sha_matches\",ctx[\"sources\"][\"manifest\"][\"sha256\"]==pinhash); print(\"context_receipt_status_exit\",ctx[\"status\"],ctx[\"exit\"]); print(\"round18_supersedes\",d18[\"supersedes\"]); print(\"round17_bash_witness_waiver\", \"tools/bash-witness-study.py\" in d17.get(\"historical_inputs\",{})); print(\"round18_bash_witness_waiver\",d18.get(\"historical_inputs\",{}).get(\"tools/bash-witness-study.py\",{}).get(\"rev\")); print(\"current_bash_sha\",hashlib.sha256((p/\"tools/bash-witness-study.py\").read_bytes()).hexdigest()); print(\"expected_bash_sha\",exp[\"inputs\"][\"tools/bash-witness-study.py\"]); print(\"capture_has_selftest_flag\", \"--selftest\" in src)"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR40-UZgvgp/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR40-UZgvgp/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR40-UZgvgp/tmp/trace-inputs-run-3gbzh0la/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/expected.json": "a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336",
+    ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+    ".ufo/evidence/round-14/capture-context.py": "7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89",
+    ".ufo/evidence/round-14/context-receipt.json": "05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a",
+    ".ufo/evidence/round-14/dispositions-before.json": "a7a965bbf0f28a1ed2951c1f762f16d1957aab0b95b1384e2b4ab801e0a89725",
+    ".ufo/evidence/round-14/dispositions.json": "77faac587f7c0c984d0d91a4096d3539467d422c15060b09f7c734c6d2809005",
+    ".ufo/evidence/round-17/dispositions.json": "55cf1b5d2f7f7a153035362752e5f08f0bc49c2f504bbced501d5a884736a05f",
+    ".ufo/evidence/round-18/dispositions.json": "9caa2f76dcc36265bb11b58baa397b1015a91b086db63d203ab16020a1fc2676",
+    "tools/bash-witness-study.py": "8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

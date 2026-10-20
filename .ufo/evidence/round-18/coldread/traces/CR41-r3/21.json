@@ -1,0 +1,28 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,hashlib,copy,os\nC='/tmp/tameshi-r18w2-CR41-gG5PgX/fleet/tameshi-shokunin'; S='/tmp/tameshi-r18w2-CR41-gG5PgX/scratch-r3'\nraw=open(C+'/.ufo/evidence/round-14/context-receipt.json','rb').read(); clean=json.loads(raw)\ndef save(name, payload, pinid='context_consistent', pinexit=0, pinsha=None):\n rp=S+'/'+name+'.receipt.json'; ep=S+'/'+name+'.expected.json'\n b=payload if isinstance(payload,bytes) else (json.dumps(payload,indent=2)+'\\n').encode()\n open(rp,'wb').write(b)\n sha=pinsha or hashlib.sha256(b).hexdigest()\n json.dump({'schema':'tameshi-context-expected-v1','receipt_sha256':sha,'id':pinid,'exit':pinexit},open(ep,'w'))\n print(name,hashlib.sha256(b).hexdigest(),rp,ep)\nd=copy.deepcopy(clean); d['comparison']['equal']=False; save('boolean-lie',d)\nd=copy.deepcopy(clean); del d['comparison']; save('missing-field',d)\nd=copy.deepcopy(clean); d['comparison']['equal']='true'; save('wrong-type',d)\n# duplicate top-level status key in otherwise clean, precisely digest-pinned\nsave('duplicate-key', b'{\\n  \"status\": \"ok\",\\n'+raw[2:])\n# current clean receipt with a deliberately incorrect pinned receipt digest\nsave('tampered-digest',raw,pinsha='0'*64)\n# clean content but incorrect expected verdict pair\nsave('wrong-expected',raw,pinid='missing_injected_environment',pinexit=1)\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR41-gG5PgX/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR41-gG5PgX/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-zzxiv76h/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-14/context-receipt.json": "05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

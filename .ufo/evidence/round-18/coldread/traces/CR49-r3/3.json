@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import os,hashlib,re; root=\".ufo/evidence/round-18/sources-check/survivor-probes\";\nfor ident in [\"S_VERDICT\",\"S_DUP_LINE\",\"S_ENTRY_COUNT\",\"S_FILE_READ\",\"S_KIND\"]:\n d=os.path.join(root,ident); print(\"\\n###\",ident);\n for name in sorted(os.listdir(d)):\n  p=os.path.join(d,name)\n  if os.path.isfile(p):\n   b=open(p,\"rb\").read(); text=b.decode(\"utf-8\",\"replace\"); print(\"FILE\",name,\"bytes\",len(b),\"sha\",hashlib.sha256(b).hexdigest())\n   if name.endswith(\"transcript.md\"):\n    for line in text.splitlines():\n     if (line.startswith(\"# \") or \"Verdict:\" in line or \"Result:\" in line or \"non-equivalent\" in line.lower() or \"equivalent\" in line.lower() or \"exit=\" in line and (\"DEFECT\" in line or \"PROBE_VERDICT\" in line or \"REPEAT\" in line) or \"only changed line\" in line or \"diff -u\" in line or \"promised by the contract\" in line or \"not expressly specified\" in line): print(\" \",line[:350])\n   elif \"S_FILE_READ\" == ident and name==\"probe-suite.sh\": print(\"  probe-suite sha\",hashlib.sha256(b).hexdigest(),\"contains 4 witnesses:\",all(x.encode() in b for x in [b\"clean\",b\"eacces\",b\"enoent\",b\"enametoolong\"]))\n   elif ident==\"S_KIND\" and name in (\"pristine-help.txt\",\"mutant-help.txt\"):\n    rows=[x for x in text.splitlines() if x.startswith(\"findings:\")]; print(\" \",rows[0] if rows else \"no findings line\")\n   elif ident==\"S_KIND\" and name in (\"pristine-check.json\",\"mutant-check.json\"):\n    print(\"  json\",text.strip())"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 1,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w3-CR49-xYfC5Q/tmp/trace-inputs-run-kk11tyo0/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_DUP_LINE/transcript.md": "8a14cc4b9b82d5de5892f783c84bc2db75756e86b4ef1eda62da9d5b2553761f",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_ENTRY_COUNT/transcript.md": "a8562d4b4a94e8f49c9177557bae3da87dc1d840d45c3667a20be6566abc2c1c",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/cov-count.mjs": "c94e20651c9b766645bdedbc15e5fb2d9adb78ad198ffcfebeae4f6405d46aab",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe-suite.sh": "08a985916bb5599b4d140e371c3b4dd0368fd519deb18e0da540d5a5a84c978f",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_VERDICT/transcript.md": "beb59fded44da2ebae224a249922b9c684154d866d214759db132a3494140dd6"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

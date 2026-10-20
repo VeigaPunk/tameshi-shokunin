@@ -1,0 +1,60 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -o pipefail; K=/home/vgpnk/Projects/shokunin/kumitate-shokunin; REV=0acb7752d19058b953ebbeba253b1e35f6548de5; P=scripts/sources-check.mjs; echo \"== PIN\"; git -C \"$K\" --no-optional-locks ls-tree \"$REV\" -- \"$P\"; git -C \"$K\" --no-optional-locks show \"$REV:$P\" | sha256sum; git -C \"$K\" --no-optional-locks show \"$REV:$P\" | wc -l; git -C \"$K\" --no-optional-locks show \"$REV:$P\" | wc -c; echo \"== PREREG\"; git show --format=\"%H%n%aI%n%cI%n%s\" --stat 93d22aa; git merge-base --is-ancestor 93d22aa 4acdeac9e482b4379d9c99290feb1d9546a67eb2 && echo \"PRE-REG is ancestor of read rev\"; for p in .ufo/evidence/round-18/sources-check/sources-check.defects.spec .ufo/evidence/round-18/sources-check/predictions.json .ufo/evidence/round-18/sources-check/suite.txt .ufo/evidence/round-18/sources-check/control.txt .ufo/evidence/round-18/sources-check/sweep/sweep.txt; do echo \"FIRST ADD $p: $(git log --diff-filter=A --format=%h -- $p)\"; done; echo \"== HASHES\"; sha256sum .ufo/evidence/round-18/sources-check/sources-check.defects.spec .ufo/evidence/round-18/sources-check/predictions.json .ufo/evidence/round-18/sources-check/suite.txt .ufo/evidence/round-18/sources-check/control.txt .ufo/evidence/round-18/sources-check/sweep/sweep.txt .ufo/evidence/round-18/sources-check/control/repeat-hashes.json; echo \"== SWEEP KEY\"; grep -E \"^(MUTATE_DATE|MUTATE_TARGET|MUTATE: DONE|SWEEP_CONTEXT_COMMIT|SWEEP_SPEC_SHA256|PREDICTION_MATCH|MEASURED_KILL_RATE|SWEEP_TARGET_RECHECK)\" .ufo/evidence/round-18/sources-check/sweep/sweep.txt; echo \"== 8 CONTROLS\"; cd .ufo/evidence/round-18/sources-check/control/repeat; sha256sum run-*.stdout run-*.stderr run-*.exit; printf \"exits=\"; cat run-*.exit | tr \"\\n\" \" \"; echo; echo \"== LEG8\"; grep -n \"PIN_SOURCESCHECK\\|REV_SOURCESCHECK\\|TABLE_SOURCESCHECK\\|js-sources-check\" ../../../../tools/mutate-and-run.sh | tail -10"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 2,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w3-CR49-xYfC5Q/tmp/trace-inputs-run-0oyaew_a/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-18/sources-check/control.txt": "74061bdf3d1f6bfe5a066c5c454678ae8647d2c5d123f6d4bea182093158d1a0",
+    ".ufo/evidence/round-18/sources-check/control/repeat-hashes.json": "79d94d2756a9639cd2999c741af200f16237969a11e8869d4106b79e7bf6bb37",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-1.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-2.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-3.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-4.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-4.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-4.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-5.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-5.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-5.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-6.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-6.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-6.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-7.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-7.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-7.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-8.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-8.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/control/repeat/run-8.stdout": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+    ".ufo/evidence/round-18/sources-check/predictions.json": "5749a27a92c862278a2c77307496f2b80b3c6619c6125def0ea0066b7252d35f",
+    ".ufo/evidence/round-18/sources-check/sources-check.defects.spec": "c8d24cb4b6b1a372543764fc27c9d16f65510a29fed1045bedb2863ce2408c91",
+    ".ufo/evidence/round-18/sources-check/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b",
+    ".ufo/evidence/round-18/sources-check/sweep/sweep.txt": "4ba2a595668439e6ca77bdb26fb462e71e88fe9079a50a77ea9e7d7ff2586097"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import os,hashlib; root=\".ufo/evidence/round-18/sources-check/survivor-probes\";\nfor ident in [\"S_VERDICT\",\"S_DUP_LINE\",\"S_ENTRY_COUNT\",\"S_FILE_READ\",\"S_KIND\"]:\n d=os.path.join(root,ident); print(\"\\n###\",ident);\n for name in sorted(os.listdir(d)):\n  p=os.path.join(d,name)\n  if os.path.isfile(p):\n   b=open(p,\"rb\").read(); text=b.decode(\"utf-8\",\"replace\"); print(\"FILE\",name,\"bytes\",len(b),\"sha\",hashlib.sha256(b).hexdigest())\n   if name.endswith(\"transcript.md\"):\n    for line in text.splitlines():\n     if line.startswith(\"# \") or \"Verdict:\" in line or \"Result:\" in line or \"non-equivalent\" in line.lower() or \"equivalent\" in line.lower() or \"MUTATE: DONE\" in line or \"PROBE_VERDICT\" in line or \"promised by the contract\" in line or \"not expressly specified\" in line or \"difference\" in line and \"observable\" in line: print(\" \",line[:350])\n   if ident==\"S_FILE_READ\" and name==\"probe-suite.sh\": print(\"  4-witness identifiers:\", [x for x in [\"clean\",\"eacces\",\"enoent\",\"enametoolong\"] if x.encode() in b])\n   if ident==\"S_KIND\" and name in (\"pristine-help.txt\",\"mutant-help.txt\"):\n    for line in text.splitlines():\n     if line.startswith(\"findings:\"): print(\" \",line)\n   if ident==\"S_KIND\" and name in (\"pristine-check.json\",\"mutant-check.json\"): print(\"  JSON byte hash\",hashlib.sha256(b).hexdigest())"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR49-xYfC5Q/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w3-CR49-xYfC5Q/tmp/trace-inputs-run-uvgx7tyo/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_DUP_LINE/transcript.md": "8a14cc4b9b82d5de5892f783c84bc2db75756e86b4ef1eda62da9d5b2553761f",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_ENTRY_COUNT/transcript.md": "a8562d4b4a94e8f49c9177557bae3da87dc1d840d45c3667a20be6566abc2c1c",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/cov-count.mjs": "c94e20651c9b766645bdedbc15e5fb2d9adb78ad198ffcfebeae4f6405d46aab",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe-suite.sh": "08a985916bb5599b4d140e371c3b4dd0368fd519deb18e0da540d5a5a84c978f",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe.sh": "6e9973b9ae92c23ada1346fd88259e36b2f3bd1f842d75ac9b0d8f475055adf2",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/transcript.txt": "3b74a6c85a033315774871891f7a54e8ecde9dfcb29fba8cb2caca194226f175",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/witness-manifest.txt": "26b12ea676867ca4ea3709a1dea04b9f95c691180001424bc39232d3078f1e9a",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/witness-walk.py": "6ab10a56b4e99e778e08c97cb4ecaf98e48cad76d2b6003b74f3ef696e5a67e9",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/mutant-check.json": "4666ccc69425289143cb81156fc382ddaffdc42f98a61ef5596ebd12d1f617a0",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/mutant-check.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/mutant-help.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/mutant-help.txt": "55b9fc15f833c6c5d4aa0982e2b6f05a8c3ae63e428b6eb97ee4feb5c97e7578",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/pristine-check.json": "4666ccc69425289143cb81156fc382ddaffdc42f98a61ef5596ebd12d1f617a0",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/pristine-check.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/pristine-help.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/pristine-help.txt": "f1d41678d8478f08089abc6650be113aae3271151ae72ee632a4250e23949bb1",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_KIND/transcript.md": "3ff5c723a4a602fbfc0cf79c621a10a9cc7466c850e1a29f657481c7f0b46ed9",
+    ".ufo/evidence/round-18/sources-check/survivor-probes/S_VERDICT/transcript.md": "beb59fded44da2ebae224a249922b9c684154d866d214759db132a3494140dd6"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

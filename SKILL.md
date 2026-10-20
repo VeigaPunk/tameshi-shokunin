@@ -928,7 +928,7 @@ pinned original revision. Four legs at that revision (r7-1; seven since round 16
 — each with its recorded kill-rate as its expectation
 (`tools/mutate-and-run.sh@9f1d3c3:72-109`, `:511-522`; at round 18 the recorded tables sit at `:597-620`). The ledger
 is the receipt tameshi's records cite for kill-rate claims; the standing per-gate rate rows
-are `corpus/knowledge/fleet-kill-rate-ledger.md` (seven rows; case 8's row is owed — round-18 debt).
+are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 block).
 
 ### Using the ledger
 
@@ -1022,7 +1022,7 @@ no lane acting stays [U].
 
 - **The tick is the round boundary.** The fleet driver idiom ends a lane's round
   on a report file and ticks 450 s (round 8: `scripts/shokunin-watchdog.sh:3-5` at fleet `17c1fad`); its lane map
-  then did not name tameshi (`:14`); since fleet-2 the lanes live in `shokunin.conf`, which names tameshi
+  then did not name tameshi (`:14`); since `5efb4114` (2026-10-19) the lanes live in `shokunin.conf`, which names tameshi
   (round 17). Tameshi's tick is still its own round series [I].
 - **Per case, two readings:** the target's relation to each repo's branch-tip bytes
   (`current` / `stale` / `drift`; `<branch>` = the `branch=` field of
@@ -1200,7 +1200,7 @@ the tick lane (T9-1): the same six readings (its second raw pass 20:00:29Z), bot
 drift-event chains (`084951be…` → `bba6cdf6…`; `d7edaab4…` → `7da4ec50…`), and the
 same regression receipt — two records of one tick, kept un-merged and agreeing.
 
-Re-read two minutes later (**20:03:34Z**, same scratch): both moving cells now
+Re-read three minutes later (**20:03:34Z**, same scratch): both moving cells now
 read `stale + drift` — tsukuroi's worktree `b54f5732…` vs its HEAD blob
 `bba6cdf6…`, mado's `31364115…` vs `7da4ec50…`, both ` M` on
 `git status --porcelain`; the owners' own round-9 lanes are editing their gates

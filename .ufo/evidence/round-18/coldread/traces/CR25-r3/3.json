@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "echo \"== tool at 4acdeac9\"; sha256sum tools/mutate-and-run.sh; wc -l tools/mutate-and-run.sh; echo \"== tool diff 01d586dd..4acdeac9\"; git diff --stat 01d586ddbc5fcd78659557c4e93a6ee8517b87d1 4acdeac9e482b4379d9c99290feb1d9546a67eb2 -- tools/mutate-and-run.sh; echo \"(empty = unchanged)\"; echo \"== read-rev tools/mutate-and-run.sh:733-791 (first/last lines)\"; awk \"NR>=733 && NR<=736 {printf \\\"%d:%s\\n\\\", NR, \\$0}\" tools/mutate-and-run.sh; awk \"NR>=788 && NR<=791 {printf \\\"%d:%s\\n\\\", NR, \\$0}\" tools/mutate-and-run.sh; echo \"== mechanism location\"; grep -nE \"^regression_case\\(\\)|^regression_case_git\\(\\)|^run_regression\\(\\)|^local nlegs=|REGRESSION_DATE: %s\" tools/mutate-and-run.sh; echo \"== embedded legs at read rev\"; grep -oE \"^  regression_case_git [a-z0-9-]+\" tools/mutate-and-run.sh | awk \"{print \\$2}\" | paste -sd, -; echo \"== ledger at 4acdeac9\"; sha256sum corpus/knowledge/fleet-kill-rate-ledger.md; wc -l corpus/knowledge/fleet-kill-rate-ledger.md; echo \"== ledger history since 01d586dd\"; git log --format=\"%h %cI %s\" 01d586ddbc5fcd78659557c4e93a6ee8517b87d1..4acdeac9e482b4379d9c99290feb1d9546a67eb2 -- corpus/knowledge/fleet-kill-rate-ledger.md | cut -c1-90; echo \"== :282 content at 4acdeac9\"; awk \"NR==282\" corpus/knowledge/fleet-kill-rate-ledger.md | cut -c1-220; echo \"== Named follow-ups line number now\"; grep -n \"Named follow-ups\" corpus/knowledge/fleet-kill-rate-ledger.md | cut -c1-80; echo \"== ledger basenames tracked at 4acdeac9\"; git ls-tree -r --name-only 4acdeac9e482b4379d9c99290feb1d9546a67eb2 | grep -E \"(^|/)fleet-kill-rate-ledger\\.md$\"; echo \"== :282 same text as b8eb96e :282?\"; if [ \"$(git show b8eb96e:corpus/knowledge/fleet-kill-rate-ledger.md | awk \"NR==282\")\" = \"$(awk \"NR==282\" corpus/knowledge/fleet-kill-rate-ledger.md)\" ]; then echo LINE282_SAME; else echo LINE282_DIFFERENT; fi"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR25-BQXTpF/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR25-BQXTpF/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-1ufhw6i0/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 12
+}

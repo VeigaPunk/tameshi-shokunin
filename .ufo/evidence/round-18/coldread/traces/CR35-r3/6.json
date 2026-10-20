@@ -1,0 +1,43 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "jq -r \"\\\"passed=\\(.passed) tool_sha=\\(.tool_sha256) checks=\\(.checks|length) checks_passed=\\([.checks[]|select(.passed and .expected_exit==.observed_exit)]|length)\\\"\" .ufo/evidence/round-12/verification-final.json; sha256sum .ufo/evidence/round-12/verification-final.json tools/repeat-control.py; jq -r \".checks[]|select(.name==\\\"real-pristine-three-controls\\\")|.stdout\" .ufo/evidence/round-12/verification-final.json; cat .ufo/evidence/round-12/replayed-controls/finding.txt; for s in stdout stderr exit; do cmp .ufo/evidence/round-12/replayed-controls/run-1.$s .ufo/evidence/round-12/replayed-controls/run-2.$s && cmp .ufo/evidence/round-12/replayed-controls/run-1.$s .ufo/evidence/round-12/replayed-controls/run-3.$s && echo \"$s identical\"; done"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR35-fMJ5SO/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR35-fMJ5SO/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-fjg29_wa/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-12/replayed-controls/finding.txt": "cf6e03d9c01464c65c111023bec1021241d35e19e12ed2bb2c316cbc9b9772cb",
+    ".ufo/evidence/round-12/replayed-controls/run-1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-12/replayed-controls/run-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-12/replayed-controls/run-1.stdout": "09c21ee26b8b8b16618fe68a30043c612811da6bf008840a7a85bd3bce8a2fca",
+    ".ufo/evidence/round-12/replayed-controls/run-2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-12/replayed-controls/run-2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-12/replayed-controls/run-2.stdout": "09c21ee26b8b8b16618fe68a30043c612811da6bf008840a7a85bd3bce8a2fca",
+    ".ufo/evidence/round-12/replayed-controls/run-3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".ufo/evidence/round-12/replayed-controls/run-3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".ufo/evidence/round-12/replayed-controls/run-3.stdout": "09c21ee26b8b8b16618fe68a30043c612811da6bf008840a7a85bd3bce8a2fca",
+    ".ufo/evidence/round-12/verification-final.json": "9f3d117af3b613d0a00b7d0a623d31136e36f53cb6fcb5626e42cf0c6e022201",
+    "tools/repeat-control.py": "296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 2
+}

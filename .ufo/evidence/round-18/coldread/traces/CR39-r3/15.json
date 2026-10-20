@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,subprocess,hashlib; p=\".ufo/evidence/round-18/\"; b=json.load(open(p+\"dispositions-before.json\")); a=json.load(open(p+\"dispositions.json\")); e=json.load(open(\".ufo/evidence/round-13/expected.json\")); rb={x[\"name\"]:x for x in b[\"rows\"]}; ra={x[\"name\"]:x for x in a[\"rows\"]}; print(\"row_count\",len(b[\"rows\"]),len(a[\"rows\"]),\"row names/order equal\",[x[\"name\"] for x in b[\"rows\"]]==[x[\"name\"] for x in a[\"rows\"]]); print(\"before/after producer_before states\",rb[\"producer_before\"][\"state\"],ra[\"producer_before\"][\"state\"]); print(\"after raw retained\",ra[\"producer_before\"][\"raw_receipt\"]==rb[\"producer_before\"][\"receipt\"],ra[\"producer_before\"][\"raw_check\"]==rb[\"producer_before\"][\"check\"],\"replacements\",ra[\"producer_before\"][\"superseded_by\"]); print(\"replacement states\",[(n,ra[n][\"state\"],ra[n][\"check\"]==n) for n in ra[\"producer_before\"][\"superseded_by\"]]); print(\"historical input paths\",sorted(a[\"historical_inputs\"])); print(\"historical revs\",sorted({x[\"rev\"] for x in a[\"historical_inputs\"].values()})); print(\"round14 superseded by\",a[\"supersedes\"]); r=subprocess.run([\"git\",\"ls-tree\",\"HEAD\",\"--\",\"corpus/lessons/round-13-verifier-spotcheck.md\"],capture_output=True,text=True); print(\"lesson existence only\",r.stdout.strip());\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR39-89tIso/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR39-89tIso/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w3-CR39-89tIso/tmp/trace-inputs-run-ic9io5o2/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/expected.json": "a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336",
+    ".ufo/evidence/round-18/dispositions-before.json": "dc948a5ee1bab7a89e21ef4d75b620a430559ae0b2b64573f7c2bcacbc4deb65",
+    ".ufo/evidence/round-18/dispositions.json": "9caa2f76dcc36265bb11b58baa397b1015a91b086db63d203ab16020a1fc2676"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

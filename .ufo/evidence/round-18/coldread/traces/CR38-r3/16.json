@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "echo \"-- pin-disposition history: commit and file sha\"; for c in $(git log --format=%H -- tools/pin-disposition.py); do printf \"%s %s\\n\" \"$c\" \"$(git show $c:tools/pin-disposition.py | sha256sum | cut -c1-64)\"; done\necho \"-- find runner object matching historical manifest sha\"; for c in $(git log --format=%H -- tools/mutate-and-run.sh); do s=$(git show $c:tools/mutate-and-run.sh | sha256sum | cut -c1-64); if [ \"$s\" = 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5 ]; then printf \"%s %s\\n\" \"$c\" \"$s\"; break; fi; done\necho \"-- final runner sha\"; sha256sum tools/mutate-and-run.sh\necho \"-- final source sha\"; sha256sum corpus/SOURCES.md\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR38-r3-yLagln/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR38-r3-yLagln/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR38-r3-yLagln/tmp/trace-inputs-run-pokqt0ba/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/SOURCES.md": "018ee9a86500efc6d07ea141d20c7de6b2ec76e5e808ffbf12508ada46a84e0e",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

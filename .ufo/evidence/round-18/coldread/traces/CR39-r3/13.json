@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,subprocess; p=\".ufo/evidence/round-14/\"; v=json.load(open(p+\"verification.json\")); f=json.load(open(p+\"verification-final.json\")); verdict=json.load(open(p+\"verification-verdict.json\"));\nfor label,d in ((\"initial\",v),(\"final\",f)):\n print(label,\"measured\",d[\"measured_commit\"])\n for c in d[\"checks\"]:\n  if c[\"name\"]==\"disposition_selftest\": print(c[\"name\"],\"exit\",c[\"exit\"],\"expected\",c[\"expected_exit\"],\"tail\",c[\"stdout\"].strip().splitlines()[-1])\n  elif c[\"name\"] in (\"unresolved_before\",\"resolved_after\"): print(c[\"name\"],\"exit\",c[\"exit\"],\"expected\",c[\"expected_exit\"])\nprint(\"final supersedes\",f[\"supersedes\"]); print(\"verdict measured\",verdict[\"measured_commit\"])\na=\"/tmp/tameshi-r18w3-CR39-89tIso/archive-28aeef4\"\nfor name,disp in ((\"unresolved_before\",\"dispositions-before.json\"),(\"resolved_after\",\"dispositions.json\")):\n frozen=json.loads(next(c for c in f[\"checks\"] if c[\"name\"]==name)[\"stdout\"])\n r=subprocess.run([\"python3\",\"tools/evidence-disposition.py\",\"--root\",\".\",\"--dispositions\",p+disp,\"--json\"],cwd=a,capture_output=True,text=True)\n live=json.loads(r.stdout); x=dict(frozen); y=dict(live); x.pop(\"root\"); y.pop(\"root\")\n print(name,\"replay exit\",r.returncode,\"frozen exit\",frozen[\"exit\"],\"payload_equal_except_root\",x==y)\nprint(\"verdict checks\",verdict[\"checks\"])\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR39-89tIso/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR39-89tIso/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w3-CR39-89tIso/tmp/trace-inputs-run-haaycu7r/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-14/verification-final.json": "e904e6938a123de55db492f7d04c1e18087c1783128ab9ed96e55d93c3ef52f2",
+    ".ufo/evidence/round-14/verification-verdict.json": "9a6eadde16339ff6da0821c808496e8a9007a3e0fa8d74e4c6dfcfac1204d46c",
+    ".ufo/evidence/round-14/verification.json": "1d480a0ddd0cd8a801d0ae38f7d774b6d772c8d0910bf6200c3e666696532939"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

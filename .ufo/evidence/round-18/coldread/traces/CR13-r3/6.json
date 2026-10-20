@@ -1,0 +1,59 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w3-CR13-KDcpzA",
+    "/tmp/tameshi-r18w3-CR13-KDcpzA",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w3-CR13-KDcpzA/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w3-CR13-KDcpzA/home",
+    "TMPDIR=/tmp/tameshi-r18w3-CR13-KDcpzA/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "for s in absent dup noop mixed; do bash tools/mutate-and-run.sh --target \"$1/s/gate.sh\" --defects \"$1/s/$s.spec\" --suite 'touch \"$WORKDIR/suite-ran.$DEFECT_ID\"; bash \"$MUTANT\" --selftest' --workdir \"$1/s/refuse-$s\" >\"$1/s/refuse-$s.log\" 2>&1; rc=$?; grep -E \"^(APPLY FAIL|spec:|MUTATE: SETUP|MUTATE: (DONE|DEGRADED))\" \"$1/s/refuse-$s.log\"; printf \"[%s] exit=%s markers=%s headline=%s\\n\" \"$s\" \"$rc\" \"$(find \"$1/s/refuse-$s\" -name 'suite-ran.*' | wc -l)\" \"$(grep -cE '^MUTATE: (DONE|DEGRADED)' \"$1/s/refuse-$s.log\")\"; done; bash tools/mutate-and-run.sh --target \"$1/s/gate.sh\" --defects \"$1/s/done.spec\" --suite 'touch \"$WORKDIR/suite-ran.$DEFECT_ID\"; bash \"$MUTANT\" --selftest; exit 5' --workdir \"$1/s/red\" >\"$1/s/red.log\" 2>&1; rc=$?; grep -E \"^(CONTROL:|MUTATE: SETUP|MUTATE: (DONE|DEGRADED))\" \"$1/s/red.log\"; echo \"[red] exit=$rc markers=$(find \"$1/s/red\" -name 'suite-ran.*' | wc -l) mutant-outs=$(find \"$1/s/red/evidence\" -type f ! -name control.out | wc -l)\"; cp -p \"$1/s/gate.sh\" \"$1/s/alias/defects.tsv\"; bash tools/mutate-and-run.sh --target \"$1/s/alias/defects.tsv\" --defects \"$1/s/done.spec\" --suite 'bash \"$MUTANT\" --selftest' --workdir \"$1/s/alias\" >\"$1/s/alias.log\" 2>&1; rc=$?; grep -E \"^(MUTATE_RESTORE:|MUTATE: SETUP|MUTATE: (DONE|DEGRADED))\" \"$1/s/alias.log\"; echo \"[alias] exit=$rc original-hash=$(sha256sum \"$1/s/alias/defects.tsv\" | cut -c1-16) pristine-hash=$(sha256sum \"$1/s/alias/pristine.defects.tsv\" | cut -c1-16)\"",
+    "_",
+    "/tmp/tameshi-r18w3-CR13-KDcpzA"
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR13-KDcpzA/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR13-KDcpzA/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-jswasnlr/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "echo \"== blame of 1212-1228 at 4acdeac9\"; git blame --porcelain -L 1212,1228 4acdeac9e482b4379d9c99290feb1d9546a67eb2 -- SKILL.md | grep -E \"^[0-9a-f]{40} \" | cut -c1-40 | sort -u | while read c; do git log -1 --format=\"%H %cI %s\" $c; done; echo \"== tool blob history to 4acdeac9\"; for c in $(git log --format=%H 4acdeac9e482b4379d9c99290feb1d9546a67eb2 -- tools/mutate-and-run.sh | head -6); do printf \"%s %s tool=%s L=%s B=%s\\n\" \"$(git log -1 --format=\"%h %cI\" $c)\" \"$(git log -1 --format=%s $c | cut -c1-46)\" \"$(git show $c:tools/mutate-and-run.sh | sha256sum | cut -c1-16)\" \"$(git show $c:tools/mutate-and-run.sh | wc -l)\" \"$(git show $c:tools/mutate-and-run.sh | wc -c)\"; done; echo \"== tick logs/workdir named by the record\"; for p in /tmp/w9-tameshi-t93 /tmp/w9-tameshi-t93/selftest.txt /tmp/w9-tameshi-t93/regression.txt /tmp/w9-tameshi-t93/regression; do [ -e \"$p\" ] && echo \"present $p\" || echo \"absent $p\"; done; echo \"== full revs and tool/ledger sha256\"; for c in 9f1d3c3 606716f; do r=$(git rev-parse $c); printf \"%s %s tool_sha256=%s\\n\" \"$r\" \"$(git log -1 --format=%cI $r)\" \"$(git show $r:tools/mutate-and-run.sh | sha256sum | cut -d\" \" -f1)\"; done; git diff --quiet 9f1d3c3 b8eb96e -- tools/mutate-and-run.sh && echo \"tools/mutate-and-run.sh identical 9f1d3c3..b8eb96e\""
+  ],
+  "cwd": "/tmp/tameshi-r18w3-CR25-BQXTpF/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w3-CR25-BQXTpF/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-58mq9oqd/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 117
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "env",
+    "-u",
+    "GIT_DIR",
+    "-u",
+    "GIT_WORK_TREE",
+    "-u",
+    "GIT_INDEX_FILE",
+    "-u",
+    "GIT_COMMON_DIR",
+    "bash",
+    "-c",
+    "set -eu; for spec in \"tsukuroi-shokunin 165307fe\" \"mado-shokunin eead56b2\"; do set -- $spec; repo=\"/tmp/tameshi-r18w2-CR17-r3-b3Poq1/fleet/$1\"; rev=$2; branch=$(git -C \"$repo\" symbolic-ref -q --short HEAD || git -C \"$repo\" symbolic-ref -q --short refs/remotes/origin/HEAD || true); branch=${branch#origin/}; test -n \"$branch\"; tip=$(git -C \"$repo\" rev-parse --verify \"refs/heads/$branch\"); if git -C \"$repo\" merge-base --is-ancestor \"$rev\" \"$tip\"; then rc=0; else rc=$?; fi; printf \"%s rev=%s tip=%s branch=%s ancestor_rc=%s\\n\" \"$1\" \"$(git -C \"$repo\" rev-parse \"$rev\")\" \"$tip\" \"$branch\" \"$rc\"; test \"$rc\" -eq 0; done"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR17-r3-b3Poq1/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR17-r3-b3Poq1/fleet/tameshi-shokunin",
+  "rev": "4acdeac9e482b4379d9c99290feb1d9546a67eb2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-z9iet991/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 26
+}
