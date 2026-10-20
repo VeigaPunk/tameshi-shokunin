@@ -549,3 +549,46 @@ Saturation8/window2 unchanged; no waiver claimed.
 Next intended claim remains freshness: one owner-approved clean-current
 successor spec and bounded sweep, or an explicit intake refusal. No next
 round number, future capability or new rate is preclaimed.
+
+## Round 16 — seventh recorded case and full-page cold-read (2026-10-20)
+
+Two claims on the two tied-lowest owned axes (depth 6, calibration 6). No
+stagnation waiver, retirement or new capability row. Both claims are axis
+moves measured by one counting command; each verifies without the other
+(C1 changes the runner ledger; C2 changes SKILL.md, SHONEN box 3's link and
+the cold-read ledger).
+
+Counting command, same on both revisions:
+`python3 .ufo/evidence/round-16/measure.py --rev REV` (exit 0 each).
+Before `28aeef498cc070c3183271b709bc79d344ff547a`; measured `09ee1d099190918ec388019bb79afbb6b93f1ff2`. Outputs:
+`.ufo/evidence/round-16/measure-28aeef4.json`, `measure-09ee1d0.json`
+(and the intermediate `measure-3490708.json`: 53/54 buckets before the
+errata re-read). Command D (`SCORECARD.md:73`) gives the same depth numbers.
+
+| Claim | Axis / type | Falsifiable before → after | Score delta | Evidence | Measured commit |
+|---|---|---|---|---|---|
+| C1 seventh recorded case `js-round-gate` | depth; axis move | recorded ledger cases 6 → 7 (kumitate `round-gate.mjs` @364f1d5, 5/10 killed, 10/10 predictions committed in `e69b488` before the sweep); `--regression` cases 6 → 7 PASS; header/calls/tuples agree 7/7/7, unique gates 7 | depth 6 → 7 | `corpus/knowledge/mutation-case-kumitate-round-gate.md`; `.ufo/evidence/round-16/round-gate/`; S052, S053, S056, S057 | `09ee1d099190918ec388019bb79afbb6b93f1ff2` |
+| C2 full-page SKILL cold-read | calibration; axis move | box-3 full-page coverage 0/51 (no ledger) → 54/54 buckets at the measured page sha `906fb649…`; SHONEN box-3 link to the ledger false → true | calibration 6 → 8 (lane cap; the last 2 need independent promotion review) | `.ufo/evidence/round-16/coldread/ledger.json` (75 entries over 4 page versions); `w1/CR*`, `w2/RR*`, `w2/Replica*`, `w3/RX*`; S054, S055 | `09ee1d099190918ec388019bb79afbb6b93f1ff2` |
+
+Box 3 stays `[~]` (lane assertion). Lane-dispatched seats are the lane, so
+this earns the box-3 lane-assertion points only, never an `[x]`. The 8 is a
+lane measurement pending the separate non-author closure; it is not pinned
+on self-attestation.
+
+Guardrails from the same command: SHONEN marks `~ ~ ~ ~` unchanged; sources
+49 → 55 (A 42→47, B 5→6, C 2→2; mined 22→28, queued 24, rejected 3,
+malformed 0). Census start/end exit 0, with the same disclosed S047/S048
+W04 warnings.
+
+| Axis | Round-16 lane verdict | Bound |
+|---|---|---|
+| depth | improved, 6 → 7 | C1 |
+| calibration | improved, 6 → 8 (pending non-author) | C2; QUALITY 18–22 from mined mistakes |
+| coverage | unchanged | case 7 is on Core ground (kumitate `scripts/*`); no frontier move |
+| operability | unchanged | all nine lane selftests green (ToolsNoHarm). Runner selftest 80 → 83 (leg tuple + leg-count checks). The round-14 disposition gate now exits 2 at `--root .` by design, because its pinned runner input moved; its archived-root form exits 0 (RR10, RX5) |
+| freshness | unchanged | no successor sweep of the stale legs |
+| adjacency | unchanged | kumitate read-only (C1Overlap); owner recommendations reported, not absorbed |
+
+Next intended claim: none pre-claimed. Open debts are named in
+`corpus/lessons/round-16.md` (six older legs not env-scrubbed; `bwrap`
+confinement; successor sweeps).

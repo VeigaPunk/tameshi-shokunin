@@ -1020,3 +1020,36 @@ metadata and its failure are preserved; production gate source is unchanged.
   report files include one failed partial,32 falsify reports complete.
   No tool installs, new L0 question, source gate mutation after verification,
   or claim of a new live-capture/successor-sweep result.
+
+### Round 16 — seventh recorded case and full-page cold-read (2026-10-20)
+
+- C1 depth 6→7: kumitate `scripts/round-gate.mjs` @364f1d5 (blob f890e277…)
+  swept with 10 single-edit mutants under an `env -i` guarded suite. Result
+  5/10 killed, control green, 0 inconclusive, restore OK; all 10 predictions
+  held. The predictions were committed in `e69b488` (10:39:59-03:00, pushed)
+  before the sweep at 10:40:15-03:00. The case is embedded as ledger leg 7:
+  `--regression` → `REGRESSION: PASS (cases=7 passed=7 …)`, selftest 83/83.
+  Re-run independently in wave 2 (RerunSweep, RR12, RR12b, RX7) with
+  identical verdicts and mutant sha256s. Survivor non-equivalence: A2/B2/E1
+  probes and the C1059 1040-byte probe (pristine 0 / mutant 1); CKIND is
+  argued equivalent for gate behaviour.
+- C2 calibration 6→8: every bucket of SKILL.md was cold-read by lane seats
+  (wave 1: 30 seats on 51 buckets). 13 wrong or stale statements were
+  repaired in place, line-preserving, and recorded in the page's errata
+  table. Repaired and new buckets were re-read by fresh seats in wave 2 (17)
+  and in a residual check (8 + 1). Ledger
+  `.ufo/evidence/round-16/coldread/ledger.json`: 75 entries, 54/54 buckets
+  of the measured page. SHONEN box 3 stays `[~]` and links the ledger.
+- Measured: `measure.py --rev 28aeef4` → cases 6, restraint 6;
+  `--rev 09ee1d0` → cases 7, restraint 8, coldread 54/54. Sources 49→55.
+- Routed defects (round-15 spot-check): 1, the sibling-overlap scan, is
+  credited (`w1/Overlap1.md`, 23/23 lanes, manifest
+  `.ufo/evidence/round-16/Overlap1/`, replay drift shown honestly). 2, usage
+  attribution, is repaired append-only
+  (`.ufo/evidence/round-16/attribution/`: `correction.json` names exactly
+  `usage-proof-new` and `gate-usage`; the selftest has 8 fixtures and kills
+  5 of 6 weaker-rule mutants; the survivor is equivalent; round-15 evidence
+  is byte-identical).
+- Mistakes mined into `corpus/lessons/round-16.md` (10 rows) → QUALITY 18–22.
+- Waves: w1 68 seats, w2 67 seats, residual 8 + 1 (one job-cap refusal before
+  the last seat), round total 144, 0 dead seats.

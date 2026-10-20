@@ -102,3 +102,13 @@ one ordinary task call) covered the 9 buckets changed after wave 2.
   cold-read contract left "page-named but never-open" files to each seat's
   judgement (ContamA, ContamB), and seats split on it. No ledger verdict
   flips either way.
+- The residual re-read found one more minor gap (RX9): the "line count of
+  every edited section unchanged" statement is one section short, because
+  `### Round-15 gate/probe registry` gained a trailing blank line when the
+  round-16 sections were appended. Anchors are unaffected (AnchorCheck
+  22/22).
+- RX1 first labelled the preamble (a record) `executed-ok`. At the L1's
+  request it appended a corrected block (`verified-record`) giving its
+  reason. No other seat verdict was changed.
+- The final errata re-read seat was refused once by the session job cap
+  (100) and dispatched on the retry (`spawn4-errata.json`).
