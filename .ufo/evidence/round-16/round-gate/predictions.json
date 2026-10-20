@@ -1,0 +1,74 @@
+{
+ "schema": "tameshi-r16-preregistration-v1",
+ "target": "kumitate-shokunin/scripts/round-gate.mjs",
+ "rev": "364f1d5954158ef8844bca4a5fef57b05d2f2ca5",
+ "pin_sha256": "f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9",
+ "spec_sha256": "e99b87ebc16f045f43ffb31354e2fc2879d2be3a8504d4274239249b93ef11c4",
+ "suite": "h=\"$WORKDIR/sandbox-$DEFECT_ID\"; mkdir -p \"$h/home\" \"$h/tmp\" && cd \"$h\" && exec env -i PATH=\"$PATH\" HOME=\"$h/home\" TMPDIR=\"$h/tmp\" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES=\"$h\" node \"$MUTANT\" --selftest",
+ "predictions": {
+  "A1": {
+   "prediction": "KILLED",
+   "desc": "verdict path: audit/close verdict fields lane/checks reordered (:677)",
+   "basis": "parseVerdict full-line anchored regex :862-868; all 10 call sites assert v!==null (matrix \u00a713.2; RGSpecA)"
+  },
+  "A3": {
+   "prediction": "KILLED",
+   "desc": "verdict path: tracked verdict tail errors/warnings reordered (:575-576)",
+   "basis": "rt1 :1411 and rt2 :1426 full-line regexes fail; rt8 prefix regex :1481 stays green (matrix \u00a713.2; RGSpecA)"
+  },
+  "B1": {
+   "prediction": "KILLED",
+   "desc": "fail-closed token: main-path REPORTS_DIR_MISSING site emits MAIN_REPO_NOT_GIT (:647)",
+   "basis": "fcA :1188 pins (REPORTS_DIR_MISSING); jFc :1283 pins findings[0].kind (matrix \u00a713.3; RGSpecB)"
+  },
+  "E3": {
+   "prediction": "KILLED",
+   "desc": "predicate boundary: NO_FILED_REPORTS threshold filed.length < 2 -> < 1 (:535)",
+   "basis": "rt3 :1432-1438 files exactly one report and pins exit 2 + token (matrix \u00a713.3/\u00a713.8; RGSpecE, RGMatrix D3)"
+  },
+  "C1060": {
+   "prediction": "KILLED",
+   "desc": "count floor: REPORT_MIN_BYTES 1024 -> 1060, one past the projected interval [26,1059] (:167)",
+   "basis": "r8 report is 1059 B (matrix \u00a713.4/\u00a713.10 #3; RGMatrix, RGSpecC); 1060 makes it thin -> r8 kind list changes"
+  },
+  "C1059": {
+   "prediction": "SURVIVED",
+   "desc": "count floor: REPORT_MIN_BYTES 1024 -> 1059, the upper edge of the projected interval [26,1059] (:167)",
+   "basis": "matrix \u00a713.4: a single edit to any integer in [26,1059] changes no fixture verdict (projected, PU1)"
+  },
+  "A2": {
+   "prediction": "SURVIVED",
+   "desc": "reported-unread: FAIL-CLOSED detail tail decorated with \"detail: \" (:617)",
+   "basis": "every fail-closed assert pins the (TOKEN) or a needle the prefix preserves (matrix \u00a713.2/\u00a713.5 #1; RGSpecA)"
+  },
+  "B2": {
+   "prediction": "SURVIVED",
+   "desc": "unreached species: tracked-mode REPORTS_DIR_MISSING site emits MAIN_REPO_NOT_GIT (:527)",
+   "basis": "no --tracked fixture with a missing reports dir (matrix \u00a713.3, \u00a713.6 #2; RGSpecB)"
+  },
+  "CKIND": {
+   "prediction": "SURVIVED",
+   "desc": "meta-check blindness: TREE_DIRTY dropped from FINDING_KINDS (:175)",
+   "basis": "meta-check reads enum minus observed only; shrinking the enum cannot fail it (matrix \u00a713.4 one-sided count; RGSpecC)"
+  },
+  "E1": {
+   "prediction": "SURVIVED",
+   "desc": "unreached arm: UFO_SRC set-value branch resolves the canonical candidate instead (:163)",
+   "basis": "cleanEnv deletes UFO_SRC; fixtures set only UFO_SRC:\"\" (matrix \u00a713.6 #5; RGSpecE)"
+  }
+ },
+ "composition": {
+  "kill_aimed": 5,
+  "hole_aimed": 5
+ },
+ "rejected_candidates": {
+  "RGD-B3": "INTERNAL_ERROR token: catch-all uninhabited by any input (SurvivorPrep) \u2014 survivor would be equivalent-by-unreachability, uninformative",
+  "RGC-PASS-COUNT": "selftest summary numerator: same reported-unread class as A2, budget",
+  "RGD1": "fail-closed stderr detail: same detail-tail family as A2",
+  "RGD2": "durationMs constant 0: timing value, near-equivalent on fast fixtures",
+  "RGD3": "citations.mainProbeable null: reported-unread class D already carried by A2; budget",
+  "RGE-2": "dirValue --- guard: same unreached usage family as E1; budget",
+  "RGC-THIN-FLOOR(512)": "replaced by the sharper interval-edge pair C1059/C1060 (RGCritic F5)"
+ },
+ "registered_at_utc": "2026-10-20T13:39:42Z"
+}
