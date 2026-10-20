@@ -1,0 +1,31 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport json\nd=json.load(open(\"tools/registry.json\"))\nrows=d[\"rows\"]; by={r[\"name\"]:r for r in rows}\nst={}\nfor r in rows: st[r[\"status\"]]=st.get(r[\"status\"],0)+1\nprint(\"statuses=\",st)\nbad=[]\nfor r in rows:\n    if r[\"status\"]!=\"active\":\n        t=r.get(\"superseded_by\")\n        ok = r[\"status\"]==\"superseded\" and t in by and by[t][\"status\"]==\"active\"\n        print(\"NONACTIVE\",r[\"name\"],\"status=\",r[\"status\"],\"superseded_by=\",t,\"target_status=\",by.get(t,{}).get(\"status\"),\"ok=\",ok)\n        if not ok: bad.append(r[\"name\"])\n    elif \"superseded_by\" in r: bad.append(r[\"name\"]+\":active-with-superseded_by\")\nprint(\"invariant_violations=\",bad)\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR46-Pravyu/tmp/trace-inputs-run-5wnqr46m/pycache"
+    }
+  },
+  "inputs": {
+    "tools/registry.json": "d2d1972e398074d1e4bc1298eb75f6b69e2395b16c81b130a62a377a182ab2ad"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

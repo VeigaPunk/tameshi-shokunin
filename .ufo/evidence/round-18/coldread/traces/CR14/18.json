@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "cd /tmp/tameshi-r18w2-CR14-hw9T6g/regr; tot=0; bad=0; for leg in */; do leg=${leg%/}; p=$(ls $leg/pristine.* 2>/dev/null | head -1); [ -n \"$p\" ] || { echo \"$leg no-pristine\"; continue; }; for m in $leg/mutant-*; do h=$(diff -U0 \"$p\" \"$m\" | grep -c \"^@@\"); l=$(diff \"$p\" \"$m\" | grep -c \"^[<>]\"); tot=$((tot+1)); [ \"$h\" = 1 ] || { bad=$((bad+1)); echo \"MULTI-HUNK $m hunks=$h lines=$l\"; }; done; printf \"%s mutants=%s hunks/lines: %s\\n\" \"$leg\" \"$(ls $leg/mutant-* | wc -l)\" \"$(for m in $leg/mutant-*; do printf \"%s/%s \" \"$(diff -U0 \"$p\" \"$m\" | grep -c \"^@@\")\" \"$(diff \"$p\" \"$m\" | grep -c \"^[<>]\")\"; done)\"; done; echo \"TOTAL mutants=$tot multi_hunk=$bad\"; echo ----; grep -h -E \"MADO_SELFTEST|CONTROL\" bash-mado-verify/evidence/control.out bash-mado-verify/sweep.log | head -5; awk -F\"\\t\" \"{print \\$1, \\$2, \\$3, \\$4}\" bash-mado-verify/results.tsv"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR14-hw9T6g/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR14-hw9T6g/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-w89ir4k9/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

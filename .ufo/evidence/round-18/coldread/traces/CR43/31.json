@@ -1,0 +1,34 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport json, os, re, subprocess, sys\nC = sys.argv[1]; REV = \"01d586ddbc5fcd78659557c4e93a6ee8517b87d1\"\nsys.path.insert(0, os.path.join(C, \".ufo/evidence/round-16/coldread\")); import assemble\nled = json.load(open(os.path.join(C, \".ufo/evidence/round-16/coldread/ledger.json\")))\nskipped = [re.sub(r\".*/waves/round-16/\", \"\", p if isinstance(p, str) else json.dumps(p)) for p in led[\"_meta\"][\"reports_skipped\"]]\nprint(\"CRSentinel skipped by ledger:\", any(\"w1/CRSentinel.md\" in s for s in skipped), \"| loaded:\", any(\"CRSentinel\" in p for p in led[\"_meta\"][\"reports_loaded\"]))\nfor rel in (\"w3/RX6.md\", \"w3/RX7.md\", \"w1/CRSentinel.md\"):\n    raw = subprocess.run([\"git\", \"--no-optional-locks\", \"-C\", C, \"show\", REV + \":.ufo/waves/round-16/\" + rel], check=True, capture_output=True).stdout.decode()\n    p = assemble.extract_json_block(raw)\n    d = json.loads(p) if p else None\n    gaps = [] if not isinstance(d, dict) else [(f, s.get(\"start\"), g) for s in d.get(\"sections\", []) for f in (\"minor_gaps\", \"blocking_gaps\", \"wrong_expectations\") for g in (s.get(f) or [])]\n    hit = [(f, st, g[:120]) for f, st, g in gaps if re.search(r\"round-gate|1381|\\[51\\]|no-optional-locks|index lock|index\\.lock\", g)]\n    print(rel, \"json_block:\", d is not None, \"gap_entries:\", len(gaps), \"matching round-gate/[51]/lock:\", hit)\n",
+    "/tmp/tameshi-r18w2-CR43-0UR32s/fleet/tameshi-shokunin"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR43-0UR32s/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR43-0UR32s/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-afh1x1yn/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/coldread/assemble.py": "9ee9264aabe9f474b4ecf7cfa52b4d50274ee4a6b82d06df36812a006eb0a156",
+    ".ufo/evidence/round-16/coldread/ledger.json": "b84151a35f0cefa0716f3dd200a183dee5badc7be09ba1bac11d61283f70623c"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 9
+}

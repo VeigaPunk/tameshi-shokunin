@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "echo \"lines@606716f=$(git show 606716f:SKILL.md | wc -l) runbook@606716f-sha=$(git show 606716f:corpus/knowledge/operator-runbook.md | sha256sum | cut -c1-16)\"; git show 606716f:corpus/knowledge/operator-runbook.md | grep -n -o -E \"SKILL\\.md:12(4[6-9]|5[0-4])-12[5-6][0-9]\" | sort -u; git diff -U0 --no-color 606716f 284ab0f -- SKILL.md | grep \"^@@\" | sed -E \"s/^(@@ [^@]+ @@).*/\\1/\" | python3 -c \"\nimport sys,re\nh=[]\nfor l in sys.stdin:\n    m=re.match(r\\\"@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@\\\",l)\n    h.append((int(m[1]),int(m[2] if m[2] is not None else 1),int(m[3]),int(m[4] if m[4] is not None else 1)))\nprint(\\\"hunks 606716f..284ab0f:\\\",h)\n\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR31-4DfrJw/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR31-4DfrJw/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-jzkuh7fn/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 12
+}

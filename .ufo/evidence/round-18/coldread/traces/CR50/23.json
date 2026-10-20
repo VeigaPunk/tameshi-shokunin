@@ -1,0 +1,57 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR50-Mqlchq",
+    "/tmp/tameshi-r18w2-CR50-Mqlchq",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR50-Mqlchq/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/home/vgpnk/.local/bin:/usr/bin:/bin",
+    "HOME=/tmp/tameshi-r18w2-CR50-Mqlchq/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR50-Mqlchq/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "python3",
+    "-c",
+    "\nimport os, subprocess, sys\nW=\"/tmp/tameshi-r18w2-CR50-Mqlchq\"; C=W+\"/fleet/tameshi-shokunin\"; D=W+\"/rc-bound\"; os.makedirs(D+\"/root\", exist_ok=True)\nSRC=\"tools/registry-check.py@01d586ddbc5fcd78659557c4e93a6ee8517b87d1:1\"\nfor tok in (\"2147483\", \"2147483.647\", \"2147483.648\", \"2147484\", \"86400\"):\n    p=D+\"/reg-%s.json\"%tok\n    open(p,\"w\").write(\"{\\\"schema\\\":\\\"tameshi-entry-registry-v1\\\",\\\"rows\\\":[{\\\"name\\\":\\\"bound\\\",\\\"kind\\\":\\\"probe\\\",\\\"argv\\\":[\\\"/usr/bin/true\\\"],\\\"expect\\\":{\\\"exit\\\":0},\\\"timeout_s\\\":%s,\\\"source\\\":\\\"%s\\\",\\\"status\\\":\\\"active\\\"}]}\"%(tok,SRC))\n    r=subprocess.run([sys.executable,C+\"/tools/registry-check.py\",\"--root\",D+\"/root\",\"--registry\",p],capture_output=True,stdin=subprocess.DEVNULL,timeout=60)\n    out=(r.stdout+r.stderr).decode()\n    last=[l for l in out.splitlines() if l.strip()][-1]\n    print(\"BOUND timeout_s=%-12s exit=%d traceback=%s last=%s\" % (tok, r.returncode, \"Traceback\" in out, last[:160]))\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR50-Mqlchq/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR50-Mqlchq/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR50-Mqlchq/tmp/trace-inputs-run-mcbqa8hs/pycache"
+    }
+  },
+  "inputs": {
+    "tools/registry-check.py": "e072fd3995ca1df1477613f009193e20f3797bc4673ee3045a04afb9927c2899"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

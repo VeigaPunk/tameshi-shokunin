@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=284ab0f0b8b989ee73d9c00c0c0df0a59757af8d; R=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; L=corpus/knowledge/fleet-kill-rate-ledger.md; P=corpus/knowledge/service-optin-protocol.md; echo \"== protocol U6 line last-touch (hash only) + ancestry\"; h=$(git blame -l -L 273,273 $R -- $P | cut -c1-40); git log -1 --format=\"%H %ad %s\" --date=iso $h; git merge-base --is-ancestor $h $W && echo \"  U6 present before/at W\"; echo \"== protocol U-ids @W\"; git show $W:$P | grep -o -E \"^- \\*\\*U[0-9]+\\*\\*\" | tr \"\\n\" \" \"; echo; echo \"== ledger @R: successor / T1 / six-leg / registry (line numbers only)\"; grep -n -E \"successor|\\bT1\\b|six-leg|registry\" $L | cut -d: -f1 | tr \"\\n\" \" \"; echo; echo \"== CONTENT-BLIND SKILL.md probes @R (counts / line numbers only; no text)\"; S() { git show $R:SKILL.md; }; printf \"lines 1017-1019: [U] count=%s; round-8 token count=%s\\n\" \"$(S | sed -n 1017,1019p | grep -o -F \"[U]\" | wc -l)\" \"$(S | sed -n 1017,1019p | grep -o -i -E \"round 8|round-8|r8\\b\" | wc -l)\"; printf \"lines 1359-1363: six-leg count=%s registry count=%s ledger count=%s\\n\" \"$(S | sed -n 1359,1363p | grep -o -i \"six-leg\" | wc -l)\" \"$(S | sed -n 1359,1363p | grep -o -i \"registry\" | wc -l)\" \"$(S | sed -n 1359,1363p | grep -o -i \"ledger\" | wc -l)\"; printf \"lines 1-1448 with interval+[U]: \"; S | sed -n 1,1448p | grep -n -F \"[U]\" | grep -i \"interval\" | cut -d: -f1 | tr \"\\n\" \" \"; echo; printf \"lines 1-1448 with schedule+[U]: \"; S | sed -n 1,1448p | grep -n -F \"[U]\" | grep -i \"schedule\" | cut -d: -f1 | tr \"\\n\" \" \"; echo; printf \"lines 1-1448 with word T1: \"; S | sed -n 1,1448p | grep -n -w \"T1\" | cut -d: -f1 | tr \"\\n\" \" \"; echo; printf \"lines 1-1448 with successor: \"; S | sed -n 1,1448p | grep -n -i \"successor\" | cut -d: -f1 | tr \"\\n\" \" \"; echo"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-xslt4gcc/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "1c06c6ba1eee45dd2aed540c9d70e2e361d05d9f82acc43afe64c8964ef38611"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 39
+}

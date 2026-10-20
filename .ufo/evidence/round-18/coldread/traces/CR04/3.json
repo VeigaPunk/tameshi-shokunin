@@ -1,0 +1,31 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport hashlib,subprocess,sys\nb=subprocess.run([\"git\",\"-C\",sys.argv[1],\"show\",\"01d586ddbc5fcd78659557c4e93a6ee8517b87d1:SKILL.md\"],capture_output=True,check=True).stdout\nL=b.decode().split(\"\\n\")\nsec=L[29:56]\ntarget=\"293fd76b1cb91cca7ba664f59c2ff2872cd9cb7c162b0f19796b52b37eda38b1\"\nv={\"30-56 lf-terminated\":\"\\n\".join(sec)+\"\\n\",\"30-56 no final lf\":\"\\n\".join(sec),\"30-56 plus one blank line\":\"\\n\".join(sec)+\"\\n\\n\",\"30-56 rstrip+lf\":\"\\n\".join(sec).rstrip()+\"\\n\"}\nfor k,t in v.items():\n    h=hashlib.sha256(t.encode()).hexdigest(); print(k,h,\"MATCH\" if h==target else \"-\")\n",
+    "/tmp/tameshi-r18w2-CR04-JjdZnf/fleet/tameshi-shokunin"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR04-JjdZnf/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR04-JjdZnf/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-6j_47fmo/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 3
+}

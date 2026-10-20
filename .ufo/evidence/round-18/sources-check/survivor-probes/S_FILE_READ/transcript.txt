@@ -1,0 +1,240 @@
+# S_FILE_READ survivor probe transcript (tameshi r18 w2, seat SurvivorSFILEREAD)
+# outer command (host shell, uid 1000): bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --bind /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2 /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2 --unshare-net --die-with-parent --chdir /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2 env -i PATH=$PATH HOME=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/home TMPDIR=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/tmp GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 LC_ALL=C bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe.sh /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run
+
+## 0 environment
+date-utc: 2026-10-20T20:41:12Z
+uid=1000 gid=1000 workdir-fs=xfs
+node v24.21.0 at /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node; Python 3.14.8; kernel 7.2.11-arch1-1
+env names: GIT_CONFIG_GLOBAL GIT_CONFIG_NOSYSTEM HOME LC_ALL PATH PWD SHLVL TMPDIR _ 
+
+## 1 materialize pinned inputs (git object stores only)
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0acb7752d19058b953ebbeba253b1e35f6548de5:scripts/sources-check.mjs > /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs
+target: 100755 blob 6b57424fc5a213a01015beaceb97de47a67967f0	scripts/sources-check.mjs sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f lines=897
+pin-match: yes (6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f)
+tameshi@01d586ddbc5fcd78659557c4e93a6ee8517b87d1:tools/mutate-and-run.sh sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b
+tameshi@01d586ddbc5fcd78659557c4e93a6ee8517b87d1:.ufo/evidence/round-18/sources-check/suite.txt sha256=6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b
+tameshi@01d586ddbc5fcd78659557c4e93a6ee8517b87d1:.ufo/evidence/round-18/sources-check/sources-check.defects.spec sha256=c8d24cb4b6b1a372543764fc27c9d16f65510a29fed1045bedb2863ce2408c91
+S_FILE_READ.spec (cut verbatim from the registered spec) sha256=9c8e7ea3106a6e5ee01e39591f2c1822db45aa538fff5ef41e897d3e64c8b680 lines=3
+  spec | @defect S_FILE_READ | classify a per-entry knowledge read failure as SOURCES_MISSING
+  spec | @old return failClosed('READ_FAILED', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+  spec | @new return failClosed('SOURCES_MISSING', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+probe-dir probe.sh sha256=6e9973b9ae92c23ada1346fd88259e36b2f3bd1f842d75ac9b0d8f475055adf2
+probe-dir probe-suite.sh sha256=08a985916bb5599b4d140e371c3b4dd0368fd519deb18e0da540d5a5a84c978f
+probe-dir cov-count.mjs sha256=c94e20651c9b766645bdedbc15e5fb2d9adb78ad198ffcfebeae4f6405d46aab
+probe-dir fixture/corpus/SOURCES.md sha256=981bd0eb7d5ef8e8400eb8fdaadc773ff5798fabca2cffc88e6ef9d5f52f143c
+probe-dir fixture/corpus/knowledge/alpha.md sha256=4568a06e3dd7904d2d0593dadf5d204c20bcf1116f2822903e19bafdb0fc255e
+
+## 2 contract and code anchors in the pinned target (cat -n)
+    39	 * Verdict (the final text-mode stdout line):
+    40	 *   SOURCES_CHECK: CLEAN (rows=N tiers=A:a,B:b,C:c status=queued:q,mined:m,rejected:r entries_with_source=k legacy=l)
+    41	 *   SOURCES_CHECK: DRIFT (<kind list>)
+    42	 *   SOURCES_CHECK: FAIL-CLOSED (<kind>)
+    43	 * Exit map: 0 clean (warnings are advisory) · 1 drift (`--strict` promotes warnings)
+    44	 *           · 2 fail-closed · 64 usage. `--json` prints one JSON object instead.
+   116	const FAIL_CLOSED_KINDS = ['SOURCES_MISSING', 'SELF_NOT_A_DIR', 'READ_FAILED'];
+   168	function failClosed(kind, detail) {
+   169	  return { failClosed: { kind, detail }, findings: [], counts: null, info: null };
+   170	}
+   181	  try { sourcesStat = statSync(sourcesPath); } catch (error) {
+   182	    if (error?.code === 'ENOENT') return failClosed('SOURCES_MISSING', 'corpus/SOURCES.md is absent');
+   183	    return failClosed('READ_FAILED', `cannot inspect corpus/SOURCES.md (${error?.code ?? 'unknown error'})`);
+   184	  }
+   185	  if (!sourcesStat.isFile()) return failClosed('READ_FAILED', 'corpus/SOURCES.md is not a readable file');
+   186	
+   187	  let sourceText;
+   188	  try { sourceText = readFileSync(sourcesPath, 'utf8'); } catch (error) {
+   189	    return failClosed('READ_FAILED', `cannot read corpus/SOURCES.md (${error?.code ?? 'unknown error'})`);
+   341	  const knowledgeDir = join(opts.self, 'corpus', 'knowledge');
+   342	  let knowledgeFiles;
+   343	  try {
+   344	    knowledgeFiles = readdirSync(knowledgeDir, { withFileTypes: true })
+   345	      .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+   346	      .map((entry) => entry.name)
+   347	      .sort();
+   348	  } catch (error) {
+   349	    return failClosed('READ_FAILED', `cannot read corpus/knowledge (${error?.code ?? 'unknown error'})`);
+   350	  }
+   351	
+   352	  for (const name of knowledgeFiles) {
+   353	    const relPath = `corpus/knowledge/${name}`;
+   354	    let text;
+   355	    try { text = readFileSync(join(knowledgeDir, name), 'utf8'); } catch (error) {
+   356	      return failClosed('READ_FAILED', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+   357	    }
+   443	function emitResult(result, opts) {
+   444	  if (result.failClosed) {
+   445	    const { kind, detail } = result.failClosed;
+   446	    if (opts.json) {
+   447	      process.stdout.write(`${JSON.stringify({ schema: CONTRACT, verdict: 'FAIL-CLOSED', exitCode: 2, failClosed: { kind, detail }, findings: [], counts: null })}\n`);
+   448	    } else {
+   449	      process.stdout.write(`SOURCES  fail-closed  ${kind}  ${scrub(detail)}\n`);
+   450	      process.stdout.write(`SOURCES_CHECK: FAIL-CLOSED (${kind})\n`);
+   451	    }
+   452	    return 2;
+
+## 3 harness, registered suite (suite.txt): the recorded S_FILE_READ row
+$ bash /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/mutate-and-run.sh --target /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs --defects /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/S_FILE_READ.spec --suite "$(cat /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/suite.txt)" --workdir /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/run-suite --timeout 120 --tail 3
+[exit=0]
+MUTATE_TOOL: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/mutate-and-run.sh sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b
+MUTATE_DATE: 2026-10-20T20:41:12Z
+MUTATE_TARGET: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f bytes=43497
+MUTATE_SPEC: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/S_FILE_READ.spec defects=1
+CONTROL: GREEN (exit=0 duration-ms=2568 pristine-sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f)
+  | PASS frozen awk census parity: rows, malformed, duplicate ids: node=4/1/1 awk=4/1/1
+  | SOURCES_SELFTEST: 46/46 pass
+  | VERDICT: PASS
+DEFECT S_FILE_READ: SURVIVED (exit=0 duration-ms=2571) classify a per-entry knowledge read failure as SOURCES_MISSING
+  | PASS frozen awk census parity: rows, malformed, duplicate ids: node=4/1/1 awk=4/1/1
+  | SOURCES_SELFTEST: 46/46 pass
+  | VERDICT: PASS
+MUTATE_RESTORE: OK (target-sha256 before=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f after=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f pristine-sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f)
+MUTATE_EVIDENCE: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/run-suite
+MUTATE: DONE (target=sources-check.mjs defects=1 killed=0 survived=1 inconclusive=0 kill-rate=0%)
+
+## 4 harness, off-suite probe (probe-suite.sh): same mutant construction
+$ bash /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/mutate-and-run.sh --target /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs --defects /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/S_FILE_READ.spec --suite 'bash '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe-suite.sh' "$MUTANT"' --workdir /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/run-probe --timeout 120 --tail 13
+[exit=0]
+MUTATE_TOOL: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/mutate-and-run.sh sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b
+MUTATE_DATE: 2026-10-20T20:41:18Z
+MUTATE_TARGET: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f bytes=43497
+MUTATE_SPEC: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/S_FILE_READ.spec defects=1
+CONTROL: GREEN (exit=0 duration-ms=886 pristine-sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f)
+  | PROBE clean text: exit=0 stdout-sha256=e451a82857ce6ccc37e4feed14de58aab2f3ff1b0b10eeb3ef39650845337c6c stderr-bytes=0 final=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+  | PROBE clean json: exit=0 stdout-sha256=1a8f966f53bc24b34804fd21455634662651a9dd9bddd6332a63a5410e2bf727 verdict=CLEAN exitCode=0 failClosed.kind=-
+  | PROBE clean: PASS (pristine expectation exit=0 final=SOURCES_CHECK: CLEAN (rows=1 ...) json=CLEAN/0)
+  | PROBE eacces text: exit=2 stdout-sha256=3b8a071de209765bb0aa8af56f17659597b6715cfc05d0186036d04ec2b0fe40 stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+  | PROBE eacces json: exit=2 stdout-sha256=3e654924452d0877d3404a241934714987458f148816e4d8d800b93a85061f9d verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED
+  | PROBE eacces: PASS (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+  | PROBE enoent text: exit=2 stdout-sha256=9f83729d177d510fc6cc16c64ec8cd2b9afd81091b1cf52ce4222cfd7b4bdf4a stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+  | PROBE enoent json: exit=2 stdout-sha256=eed2e23c0a9783e64135f5acdb6a71b121668178275e48fdcfd22fef267c3ef2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED
+  | PROBE enoent: PASS (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+  | PROBE enametoolong text: exit=2 stdout-sha256=8a3a33e595be9903f14522751950adfbdcaaa4d9537c6dacd025af1d54bb5131 stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+  | PROBE enametoolong json: exit=2 stdout-sha256=58c1ab10d55e055d31337d84092184ba48ddd238e531d1874fe018e78ec63124 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED
+  | PROBE enametoolong: PASS (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+  | PROBE_VERDICT: PASS (4/4 witnesses keep the pristine outputs)
+DEFECT S_FILE_READ: KILLED (exit=1 duration-ms=943) classify a per-entry knowledge read failure as SOURCES_MISSING
+  | PROBE clean text: exit=0 stdout-sha256=e451a82857ce6ccc37e4feed14de58aab2f3ff1b0b10eeb3ef39650845337c6c stderr-bytes=0 final=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+  | PROBE clean json: exit=0 stdout-sha256=1a8f966f53bc24b34804fd21455634662651a9dd9bddd6332a63a5410e2bf727 verdict=CLEAN exitCode=0 failClosed.kind=-
+  | PROBE clean: PASS (pristine expectation exit=0 final=SOURCES_CHECK: CLEAN (rows=1 ...) json=CLEAN/0)
+  | PROBE eacces text: exit=2 stdout-sha256=72f7362638528b672c45fe5712aea8b06fab8b3204726eba965a6fcaf37c6f58 stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+  | PROBE eacces json: exit=2 stdout-sha256=922af6e080d7323475c12b6b364850f09247e9faab2555ca7314bc15c562cdd4 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING
+  | PROBE eacces: FAIL (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+  | PROBE enoent text: exit=2 stdout-sha256=01f407ca2ba66f84867d618213dd4b71aeaae077b8bd019bf180d7c726958aeb stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+  | PROBE enoent json: exit=2 stdout-sha256=8f64903e2641355d09f9bf711dc5cc1a5c3d7a8bf0f7df0774901cd3cf845ca1 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING
+  | PROBE enoent: FAIL (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+  | PROBE enametoolong text: exit=2 stdout-sha256=145dc6f00343d44af0f0ede822e3c1cfaa41ad093baa8cebe1a444a71cbc65bf stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+  | PROBE enametoolong json: exit=2 stdout-sha256=c38cef8e8973d8da33e0e2a6fcb58ad71a3df1527639c1266ac0ae23f01eb717 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING
+  | PROBE enametoolong: FAIL (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+  | PROBE_VERDICT: FAIL (1/4 witnesses keep the pristine outputs)
+MUTATE_RESTORE: OK (target-sha256 before=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f after=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f pristine-sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f)
+MUTATE_EVIDENCE: /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/run-probe
+MUTATE: DONE (target=sources-check.mjs defects=1 killed=1 survived=0 inconclusive=0 kill-rate=100%)
+
+## 5 mutant identity
+run-suite mutant sha256=67cb07e9e6952c223c26193575047b9c5bb82be874137abba80a4fcf5fe94ba0
+run-probe mutant sha256=67cb07e9e6952c223c26193575047b9c5bb82be874137abba80a4fcf5fe94ba0
+id	verdict	exit	duration-ms	mutant-sha256
+S_FILE_READ	SURVIVED	0	2571	67cb07e9e6952c223c26193575047b9c5bb82be874137abba80a4fcf5fe94ba0
+id	verdict	exit	duration-ms	mutant-sha256
+S_FILE_READ	KILLED	1	943	67cb07e9e6952c223c26193575047b9c5bb82be874137abba80a4fcf5fe94ba0
+$ diff /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/run-probe/mutant-S_FILE_READ.sources-check.mjs
+356c356
+<       return failClosed('READ_FAILED', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+---
+>       return failClosed('SOURCES_MISSING', `cannot read ${relPath} (${error?.code ?? 'unknown error'})`);
+[exit=1]
+
+## 6 side by side on every witness (SHOW=1): pristine, then mutant
+$ SHOW=1 bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe-suite.sh /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs
+[exit=0]
+PROBE clean text: exit=0 stdout-sha256=e451a82857ce6ccc37e4feed14de58aab2f3ff1b0b10eeb3ef39650845337c6c stderr-bytes=0 final=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PROBE clean json: exit=0 stdout-sha256=1a8f966f53bc24b34804fd21455634662651a9dd9bddd6332a63a5410e2bf727 verdict=CLEAN exitCode=0 failClosed.kind=-
+  text | SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+  json | {"schema":"kumitate-sources-v1","verdict":"CLEAN","exitCode":0,"findings":[],"totals":{"errors":0,"warnings":0},"counts":{"rows":1,"tiers":{"A":1,"B":0,"C":0},"status":{"queued":0,"mined":1,"rejected":0},"entriesWithSource":1,"legacy":0},"info":{"legacyEntriesWithoutHeader":0}}
+PROBE clean: PASS (pristine expectation exit=0 final=SOURCES_CHECK: CLEAN (rows=1 ...) json=CLEAN/0)
+PROBE eacces text: exit=2 stdout-sha256=3b8a071de209765bb0aa8af56f17659597b6715cfc05d0186036d04ec2b0fe40 stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+PROBE eacces json: exit=2 stdout-sha256=3e654924452d0877d3404a241934714987458f148816e4d8d800b93a85061f9d verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED
+  text | SOURCES  fail-closed  READ_FAILED  cannot read corpus/knowledge/alpha.md (EACCES)
+  text | SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+  json | {"schema":"kumitate-sources-v1","verdict":"FAIL-CLOSED","exitCode":2,"failClosed":{"kind":"READ_FAILED","detail":"cannot read corpus/knowledge/alpha.md (EACCES)"},"findings":[],"counts":null}
+PROBE eacces: PASS (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+PROBE enoent text: exit=2 stdout-sha256=9f83729d177d510fc6cc16c64ec8cd2b9afd81091b1cf52ce4222cfd7b4bdf4a stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+PROBE enoent json: exit=2 stdout-sha256=eed2e23c0a9783e64135f5acdb6a71b121668178275e48fdcfd22fef267c3ef2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED
+  text | SOURCES  fail-closed  READ_FAILED  cannot read corpus/knowledge/�.md (ENOENT)
+  text | SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+  json | {"schema":"kumitate-sources-v1","verdict":"FAIL-CLOSED","exitCode":2,"failClosed":{"kind":"READ_FAILED","detail":"cannot read corpus/knowledge/�.md (ENOENT)"},"findings":[],"counts":null}
+PROBE enoent: PASS (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+PROBE enametoolong text: exit=2 stdout-sha256=8a3a33e595be9903f14522751950adfbdcaaa4d9537c6dacd025af1d54bb5131 stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+PROBE enametoolong json: exit=2 stdout-sha256=58c1ab10d55e055d31337d84092184ba48ddd238e531d1874fe018e78ec63124 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED
+  text | SOURCES  fail-closed  READ_FAILED  cannot read corpus/knowledge/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.md (ENAMETOOLONG)
+  text | SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+  json | {"schema":"kumitate-sources-v1","verdict":"FAIL-CLOSED","exitCode":2,"failClosed":{"kind":"READ_FAILED","detail":"cannot read corpus/knowledge/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.md (ENAMETOOLONG)"},"findings":[],"counts":null}
+PROBE enametoolong: PASS (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+PROBE_VERDICT: PASS (4/4 witnesses keep the pristine outputs)
+$ SHOW=1 bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe-suite.sh /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/run-probe/mutant-S_FILE_READ.sources-check.mjs
+[exit=1]
+PROBE clean text: exit=0 stdout-sha256=e451a82857ce6ccc37e4feed14de58aab2f3ff1b0b10eeb3ef39650845337c6c stderr-bytes=0 final=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PROBE clean json: exit=0 stdout-sha256=1a8f966f53bc24b34804fd21455634662651a9dd9bddd6332a63a5410e2bf727 verdict=CLEAN exitCode=0 failClosed.kind=-
+  text | SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+  json | {"schema":"kumitate-sources-v1","verdict":"CLEAN","exitCode":0,"findings":[],"totals":{"errors":0,"warnings":0},"counts":{"rows":1,"tiers":{"A":1,"B":0,"C":0},"status":{"queued":0,"mined":1,"rejected":0},"entriesWithSource":1,"legacy":0},"info":{"legacyEntriesWithoutHeader":0}}
+PROBE clean: PASS (pristine expectation exit=0 final=SOURCES_CHECK: CLEAN (rows=1 ...) json=CLEAN/0)
+PROBE eacces text: exit=2 stdout-sha256=72f7362638528b672c45fe5712aea8b06fab8b3204726eba965a6fcaf37c6f58 stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+PROBE eacces json: exit=2 stdout-sha256=922af6e080d7323475c12b6b364850f09247e9faab2555ca7314bc15c562cdd4 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING
+  text | SOURCES  fail-closed  SOURCES_MISSING  cannot read corpus/knowledge/alpha.md (EACCES)
+  text | SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+  json | {"schema":"kumitate-sources-v1","verdict":"FAIL-CLOSED","exitCode":2,"failClosed":{"kind":"SOURCES_MISSING","detail":"cannot read corpus/knowledge/alpha.md (EACCES)"},"findings":[],"counts":null}
+PROBE eacces: FAIL (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+PROBE enoent text: exit=2 stdout-sha256=01f407ca2ba66f84867d618213dd4b71aeaae077b8bd019bf180d7c726958aeb stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+PROBE enoent json: exit=2 stdout-sha256=8f64903e2641355d09f9bf711dc5cc1a5c3d7a8bf0f7df0774901cd3cf845ca1 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING
+  text | SOURCES  fail-closed  SOURCES_MISSING  cannot read corpus/knowledge/�.md (ENOENT)
+  text | SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+  json | {"schema":"kumitate-sources-v1","verdict":"FAIL-CLOSED","exitCode":2,"failClosed":{"kind":"SOURCES_MISSING","detail":"cannot read corpus/knowledge/�.md (ENOENT)"},"findings":[],"counts":null}
+PROBE enoent: FAIL (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+PROBE enametoolong text: exit=2 stdout-sha256=145dc6f00343d44af0f0ede822e3c1cfaa41ad093baa8cebe1a444a71cbc65bf stderr-bytes=0 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+PROBE enametoolong json: exit=2 stdout-sha256=c38cef8e8973d8da33e0e2a6fcb58ad71a3df1527639c1266ac0ae23f01eb717 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING
+  text | SOURCES  fail-closed  SOURCES_MISSING  cannot read corpus/knowledge/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.md (ENAMETOOLONG)
+  text | SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+  json | {"schema":"kumitate-sources-v1","verdict":"FAIL-CLOSED","exitCode":2,"failClosed":{"kind":"SOURCES_MISSING","detail":"cannot read corpus/knowledge/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.md (ENAMETOOLONG)"},"findings":[],"counts":null}
+PROBE enametoolong: FAIL (pristine expectation exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED) json=FAIL-CLOSED/2/READ_FAILED)
+PROBE_VERDICT: FAIL (1/4 witnesses keep the pristine outputs)
+
+## 7 V8 block coverage of the pristine: registered suite vs probe (every fail-closed return site + the per-entry read)
+$ cd /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-suite && env -i PATH=$PATH HOME=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-suite/home TMPDIR=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-suite/tmp LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-suite NODE_V8_COVERAGE=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-suite/cov node /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs --selftest   # suite.txt sandbox + NODE_V8_COVERAGE
+[exit=0] SOURCES_SELFTEST: 46/46 pass VERDICT: PASS 
+COVERAGE script=file:///tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs coverage-files=43 processes-with-script=43
+COVERAGE line=175 offset=8474 count=0 processes-executing=0 needle=is not a directory
+COVERAGE line=177 offset=8531 count=1 processes-executing=1 needle=return failClosed(
+COVERAGE line=182 offset=8821 count=1 processes-executing=1 needle=corpus/SOURCES.md is absent
+COVERAGE line=183 offset=8890 count=0 processes-executing=0 needle=cannot inspect corpus/SOURCES.md
+COVERAGE line=185 offset=8995 count=0 processes-executing=0 needle=return failClosed(
+COVERAGE line=189 offset=9204 count=0 processes-executing=0 needle=cannot read corpus/SOURCES.md (
+COVERAGE line=349 offset=15818 count=1 processes-executing=1 needle=cannot read corpus/knowledge (
+COVERAGE line=355 offset=16009 count=37 processes-executing=37 needle=readFileSync(join(knowledgeDir, name)
+COVERAGE line=356 offset=16115 count=0 processes-executing=0 needle=cannot read ${relPath}
+[exit=0]
+$ NODE_V8_COVERAGE=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-probe/cov TMPDIR=/tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/cov-probe/tmp bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/sources-check/survivor-probes/S_FILE_READ/probe-suite.sh /tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs
+[exit=0] PROBE_VERDICT: PASS (4/4 witnesses keep the pristine outputs)
+COVERAGE script=file:///tmp/tameshi-r18w2-SurvivorSFILEREAD-vmVcH2/run/in/sources-check.mjs coverage-files=12 processes-with-script=8
+COVERAGE line=175 offset=8474 count=0 processes-executing=0 needle=is not a directory
+COVERAGE line=177 offset=8531 count=0 processes-executing=0 needle=return failClosed(
+COVERAGE line=182 offset=8821 count=0 processes-executing=0 needle=corpus/SOURCES.md is absent
+COVERAGE line=183 offset=8890 count=0 processes-executing=0 needle=cannot inspect corpus/SOURCES.md
+COVERAGE line=185 offset=8995 count=0 processes-executing=0 needle=return failClosed(
+COVERAGE line=189 offset=9204 count=0 processes-executing=0 needle=cannot read corpus/SOURCES.md (
+COVERAGE line=349 offset=15818 count=0 processes-executing=0 needle=cannot read corpus/knowledge (
+COVERAGE line=355 offset=16009 count=12 processes-executing=8 needle=readFileSync(join(knowledgeDir, name)
+COVERAGE line=356 offset=16115 count=6 processes-executing=6 needle=cannot read ${relPath}
+[exit=0]
+
+## 8 summary (derived from the logs above)
+registered suite: CONTROL: GREEN (exit=0 duration-ms=2568 pristine-sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f) DEFECT S_FILE_READ: SURVIVED (exit=0 duration-ms=2571) classify a per-entry knowledge read failure as SOURCES_MISSING 
+probe suite:      CONTROL: GREEN (exit=0 duration-ms=886 pristine-sha256=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f) DEFECT S_FILE_READ: KILLED (exit=1 duration-ms=943) classify a per-entry knowledge read failure as SOURCES_MISSING 
+pristine kinds/exit per mode vs mutant (stdout sha256 fields dropped):
+  eacces text: pristine[exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)] mutant[exit=2 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)]
+  eacces json: pristine[exit=2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED] mutant[exit=2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING]
+  enoent text: pristine[exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)] mutant[exit=2 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)]
+  enoent json: pristine[exit=2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED] mutant[exit=2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING]
+  enametoolong text: pristine[exit=2 final=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)] mutant[exit=2 final=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)]
+  enametoolong json: pristine[exit=2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=READ_FAILED] mutant[exit=2 verdict=FAIL-CLOSED exitCode=2 failClosed.kind=SOURCES_MISSING]
+
+# [outer bwrap exit=0]

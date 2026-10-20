@@ -1,0 +1,31 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "python3 -c \"\nimport json\nprobe={\\\"schema\\\":\\\"tameshi-entry-registry-v1\\\",\\\"rows\\\":[{\\\"name\\\":\\\"cr46-layout-probe\\\",\\\"kind\\\":\\\"probe\\\",\\\"argv\\\":[\\\"bash\\\",\\\"-c\\\",\\\"echo cwd=\\$(pwd); echo head=\\$(git rev-parse HEAD); echo symref_rc=\\$(git symbolic-ref -q HEAD >/dev/null; echo \\$?); for e in ../*; do if [ -L \\$e ]; then echo link \\$(basename \\$e); else echo dir \\$(basename \\$e); fi; done | sort | uniq -c | sort -rn | head -3; echo n_links=\\$(find .. -maxdepth 1 -type l | wc -l)\\\"],\\\"expect\\\":{\\\"exit\\\":0,\\\"stdout_contains\\\":[\\\"cwd=\\\"]},\\\"timeout_s\\\":30,\\\"source\\\":\\\"SKILL.md@01d586d:1840\\\",\\\"status\\\":\\\"active\\\"}]}\njson.dump(probe,open(\\\"/tmp/tameshi-r18w2-CR46-Pravyu/fx/man/layout-registry.json\\\",\\\"w\\\"))\n\"; python3 tools/registry-check.py --rev 01d586ddbc5fcd78659557c4e93a6ee8517b87d1 --registry /tmp/tameshi-r18w2-CR46-Pravyu/fx/man/layout-registry.json --json > /tmp/tameshi-r18w2-CR46-Pravyu/fx/layout.json 2>/tmp/tameshi-r18w2-CR46-Pravyu/fx/layout.err; echo \"registry_check_exit=$?\"; cat /tmp/tameshi-r18w2-CR46-Pravyu/fx/layout.err; python3 -c \"\nimport json\nd=json.load(open(\\\"/tmp/tameshi-r18w2-CR46-Pravyu/fx/layout.json\\\"))\nprint(\\\"rev_resolved=\\\",d.get(\\\"rev_resolved\\\"))\nr=d[\\\"rows\\\"][0]; print(\\\"probe_stdout=\\\",(r.get(\\\"stdout_tail\\\") or r.get(\\\"stdout\\\")))\n\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR46-Pravyu/tmp/trace-inputs-run-vwejf6hn/pycache"
+    }
+  },
+  "inputs": {
+    "tools/registry-check.py": "e072fd3995ca1df1477613f009193e20f3797bc4673ee3045a04afb9927c2899"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

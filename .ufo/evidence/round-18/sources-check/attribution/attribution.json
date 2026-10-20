@@ -1,0 +1,515 @@
+{
+  "schema": "tameshi-r18w2-killed-attribution-v1",
+  "seat": "KilledAttribution",
+  "read_rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "target": {
+    "repo": "kumitate-shokunin",
+    "rev": "0acb7752d19058b953ebbeba253b1e35f6548de5",
+    "path": "scripts/sources-check.mjs",
+    "git_blob": "6b57424fc5a213a01015beaceb97de47a67967f0",
+    "mode": "100755",
+    "sha256": "6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f",
+    "lines": 897,
+    "bytes": 43497
+  },
+  "inputs": {
+    ".ufo/evidence/round-18/sources-check/sources-check.defects.spec": "c8d24cb4b6b1a372543764fc27c9d16f65510a29fed1045bedb2863ce2408c91",
+    ".ufo/evidence/round-18/sources-check/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b",
+    ".ufo/evidence/round-18/sources-check/predictions.json": "5749a27a92c862278a2c77307496f2b80b3c6619c6125def0ea0066b7252d35f",
+    ".ufo/evidence/round-18/sources-check/sweep/sweep.txt": "4ba2a595668439e6ca77bdb26fb462e71e88fe9079a50a77ea9e7d7ff2586097",
+    ".ufo/evidence/round-18/sources-check/control.txt": "74061bdf3d1f6bfe5a066c5c454678ae8647d2c5d123f6d4bea182093158d1a0",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "environment": {
+    "node": "v24.21.0 (/run/user/1000/fnm_multishells/4348_1792501188326/bin/node -> /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node)",
+    "awk": "/usr/bin/awk GNU Awk 5.4.1",
+    "grep": "/usr/bin/grep GNU grep 3.12-modified",
+    "sh": "/usr/bin/sh GNU bash 5.3.20",
+    "bwrap": "bubblewrap 0.13.1",
+    "kernel": "linux 7.2.11-arch1-1",
+    "envelope": "bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --bind $W $W --unshare-net --die-with-parent --chdir $W env -i PATH=<P> HOME=$W/home TMPDIR=$W/tmp GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 LC_ALL=C MUTANT=<mutant> WORKDIR=<wd> DEFECT_ID=<id> timeout 300 bash -c \"$(cat suite.txt)\"",
+    "noawk_path": "symlink farm of every executable on the host PATH (first match wins, 4084 entries) minus *awk* names: /usr/bin/awk /usr/bin/gawk /usr/bin/gawk-5.4.1 /usr/bin/gawkbug; probe: command -v awk -> absent"
+  },
+  "control": {
+    "host": {
+      "exit": 0,
+      "selftest": "SOURCES_SELFTEST: 46/46 pass",
+      "verdict": "VERDICT: PASS",
+      "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/CONTROL.stdout",
+      "stdout_sha256": "e0880a5a2bed0bba3d1a08583ac9e9d95db8f259d5a563f877b7f27544665e5f",
+      "stderr_bytes": 0,
+      "failing_checks": [],
+      "skipped_checks": []
+    },
+    "noawk": {
+      "exit": 0,
+      "selftest": "SOURCES_SELFTEST: 45/45 pass",
+      "verdict": "VERDICT: PASS",
+      "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/CONTROL.noawk.stdout",
+      "stdout_sha256": "145c81c5d398d5190688cf4986f8aef95b11c84b5eb627893309b79d6ddbeac8",
+      "stderr_bytes": 0,
+      "failing_checks": [],
+      "skipped_checks": [
+        {
+          "label": "frozen awk census parity: rows, malformed, duplicate ids",
+          "stdout_line": 46,
+          "detail": "awk is unavailable"
+        }
+      ]
+    },
+    "host_stdout_equals_w1_control_txt": true,
+    "w1_control_out_equal": true
+  },
+  "tool_sweep": {
+    "command": "bash tools/mutate-and-run.sh --target $W/pin/sources-check.mjs --defects <spec> --suite \"$(cat suite.txt)\" --workdir $W/toolsweep --tail 200 (same bwrap envelope, host PATH)",
+    "exit": 0,
+    "summary": "MUTATE: DONE (target=sources-check.mjs defects=10 killed=5 survived=5 inconclusive=0 kill-rate=50%)",
+    "report": ".ufo/evidence/round-18/sources-check/attribution/toolsweep/toolsweep.txt",
+    "results_tsv": ".ufo/evidence/round-18/sources-check/attribution/toolsweep/results.tsv"
+  },
+  "defects": {
+    "K_KIND": {
+      "prediction": "KILLED",
+      "predicted_selftest_case": "TIER_ENUM: fixture reports kind with expected exit",
+      "mutation_site": "kumitate scripts/sources-check.mjs@0acb7752:293",
+      "diff": ".ufo/evidence/round-18/sources-check/attribution/diffs/K_KIND.diff",
+      "mutant_sha256": "8d3e017cb1b6024f55e5c898c3ee59064192f4b26a13c26fc446e64bce8a1e89",
+      "mutant_sha256_equals_tool_sweep": true,
+      "host_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 43/46 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_KIND.stdout",
+        "stdout_sha256": "7bdfc3706b22659e4bab8a01991e6c14ab8918501f9090afa48a8ccb00a090aa",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "TIER_ENUM: fixture reports kind with expected exit",
+            "stdout_line": 8,
+            "detail": "exit=1 kinds=[KIND_ENUM] last=SOURCES_CHECK: DRIFT (KIND_ENUM)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:669 (case row 614; expectKind 575-581, kind+exit assert 579)"
+          },
+          {
+            "label": "1-3-space indented invalid registry rows report their field and tier findings",
+            "stdout_line": 27,
+            "detail": "exit=1 empty=3 tier=0 last=SOURCES_CHECK: DRIFT (ROW_FIELD_EMPTY,KIND_ENUM)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:694 (assert 710: tierFindings===3)"
+          },
+          {
+            "label": "every declared finding kind fires in a fixture",
+            "stdout_line": 37,
+            "detail": "unfired=[TIER_ENUM]",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:785 (missingKinds 784)"
+          }
+        ],
+        "skipped_checks": []
+      },
+      "tool_sweep_full_output_sha256_equal": true,
+      "recorded_sweep_tail_equals_last8": true,
+      "recorded_sweep_tail_shows_predicted_case": false,
+      "recorded_sweep_tail_range": ".ufo/evidence/round-18/sources-check/sweep/sweep.txt:20-28",
+      "predicted_case_failed": true,
+      "predicted_case_sole_failure": false,
+      "failing_check_count": 3,
+      "unpredicted_failing_checks": [
+        "1-3-space indented invalid registry rows report their field and tier findings",
+        "every declared finding kind fires in a fixture"
+      ],
+      "noawk_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 42/45 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_KIND.noawk.stdout",
+        "stdout_sha256": "cee7bae8529f957363249f2d734bd54f360097b1a749435983c1d4a6fa13cd6e",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "TIER_ENUM: fixture reports kind with expected exit",
+            "stdout_line": 8,
+            "detail": "exit=1 kinds=[KIND_ENUM] last=SOURCES_CHECK: DRIFT (KIND_ENUM)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:669 (case row 614; expectKind 575-581, kind+exit assert 579)"
+          },
+          {
+            "label": "1-3-space indented invalid registry rows report their field and tier findings",
+            "stdout_line": 27,
+            "detail": "exit=1 empty=3 tier=0 last=SOURCES_CHECK: DRIFT (ROW_FIELD_EMPTY,KIND_ENUM)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:694 (assert 710: tierFindings===3)"
+          },
+          {
+            "label": "every declared finding kind fires in a fixture",
+            "stdout_line": 37,
+            "detail": "unfired=[TIER_ENUM]",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:785 (missingKinds 784)"
+          }
+        ],
+        "skipped_checks": [
+          {
+            "label": "frozen awk census parity: rows, malformed, duplicate ids",
+            "stdout_line": 49,
+            "detail": "awk is unavailable"
+          }
+        ]
+      },
+      "noawk_failing_set_equals_host_minus_parity": true,
+      "killed_with_awk_hidden": true,
+      "w1_sweep_evidence": {
+        "path": "/tmp/tameshi-r4-2-run.ZIz4V0/evidence/K_KIND.out (ephemeral /tmp dir named at sweep.txt:111)",
+        "sha256": "7bdfc3706b22659e4bab8a01991e6c14ab8918501f9090afa48a8ccb00a090aa",
+        "equals_full_stdout": true,
+        "mutant_sha256_equals_w1_results_tsv": true
+      }
+    },
+    "K_EXIT": {
+      "prediction": "KILLED",
+      "predicted_selftest_case": "invalid/missing option value uses usage exit 64",
+      "mutation_site": "kumitate scripts/sources-check.mjs@0acb7752:492",
+      "diff": ".ufo/evidence/round-18/sources-check/attribution/diffs/K_EXIT.diff",
+      "mutant_sha256": "c416a4eae1bde471ddd77da4203d51bda0fd3d38b01ec0d6ae87ace3463f5bd3",
+      "mutant_sha256_equals_tool_sweep": true,
+      "host_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 44/46 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_EXIT.stdout",
+        "stdout_sha256": "188ccd81279300ef8bcf9ce818d1d97c879681066fcdf0382a7228117e27573d",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "invalid/missing option value uses usage exit 64",
+            "stdout_line": 43,
+            "detail": "exit=65",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:827 (assert 829: status 64)"
+          },
+          {
+            "label": "unknown option uses usage exit 64",
+            "stdout_line": 45,
+            "detail": "exit=65",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:831 (assert 833: status 64)"
+          }
+        ],
+        "skipped_checks": []
+      },
+      "tool_sweep_full_output_sha256_equal": true,
+      "recorded_sweep_tail_equals_last8": true,
+      "recorded_sweep_tail_shows_predicted_case": true,
+      "recorded_sweep_tail_range": ".ufo/evidence/round-18/sources-check/sweep/sweep.txt:38-46",
+      "predicted_case_failed": true,
+      "predicted_case_sole_failure": false,
+      "failing_check_count": 2,
+      "unpredicted_failing_checks": [
+        "unknown option uses usage exit 64"
+      ],
+      "noawk_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 43/45 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_EXIT.noawk.stdout",
+        "stdout_sha256": "8d9a67ac0f709ae867803a72631c226f70b66308ac7821c9f39c839ffd1bbc40",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "invalid/missing option value uses usage exit 64",
+            "stdout_line": 43,
+            "detail": "exit=65",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:827 (assert 829: status 64)"
+          },
+          {
+            "label": "unknown option uses usage exit 64",
+            "stdout_line": 45,
+            "detail": "exit=65",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:831 (assert 833: status 64)"
+          }
+        ],
+        "skipped_checks": [
+          {
+            "label": "frozen awk census parity: rows, malformed, duplicate ids",
+            "stdout_line": 48,
+            "detail": "awk is unavailable"
+          }
+        ]
+      },
+      "noawk_failing_set_equals_host_minus_parity": true,
+      "killed_with_awk_hidden": true,
+      "w1_sweep_evidence": {
+        "path": "/tmp/tameshi-r4-2-run.ZIz4V0/evidence/K_EXIT.out (ephemeral /tmp dir named at sweep.txt:111)",
+        "sha256": "188ccd81279300ef8bcf9ce818d1d97c879681066fcdf0382a7228117e27573d",
+        "equals_full_stdout": true,
+        "mutant_sha256_equals_w1_results_tsv": true
+      }
+    },
+    "K_STRICT": {
+      "prediction": "KILLED",
+      "predicted_selftest_case": "--strict promotes warnings to drift",
+      "mutation_site": "kumitate scripts/sources-check.mjs@0acb7752:434",
+      "diff": ".ufo/evidence/round-18/sources-check/attribution/diffs/K_STRICT.diff",
+      "mutant_sha256": "fa65a865bf5fa6b5547d651bd0be0cd8d22390dd53dcdbbea7aefaf6aa25eaf8",
+      "mutant_sha256_equals_tool_sweep": true,
+      "host_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 45/46 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_STRICT.stdout",
+        "stdout_sha256": "5711b9b6150b2487575b948155a04b21892298856dbe2c76dd28681c9f0825eb",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "--strict promotes warnings to drift",
+            "stdout_line": 40,
+            "detail": "exit=0 kinds=[USED_BY_ASYMMETRY] last=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:1,mined:0,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:807 (assert 809: USED_BY_ASYMMETRY + exit 1)"
+          }
+        ],
+        "skipped_checks": []
+      },
+      "tool_sweep_full_output_sha256_equal": true,
+      "recorded_sweep_tail_equals_last8": true,
+      "recorded_sweep_tail_shows_predicted_case": false,
+      "recorded_sweep_tail_range": ".ufo/evidence/round-18/sources-check/sweep/sweep.txt:56-64",
+      "predicted_case_failed": true,
+      "predicted_case_sole_failure": true,
+      "failing_check_count": 1,
+      "unpredicted_failing_checks": [],
+      "noawk_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 44/45 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_STRICT.noawk.stdout",
+        "stdout_sha256": "c433fa1269a5d229768f3ed243d61fadc7117fcb876875333aa369b51cdd34fe",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "--strict promotes warnings to drift",
+            "stdout_line": 40,
+            "detail": "exit=0 kinds=[USED_BY_ASYMMETRY] last=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:1,mined:0,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:807 (assert 809: USED_BY_ASYMMETRY + exit 1)"
+          }
+        ],
+        "skipped_checks": [
+          {
+            "label": "frozen awk census parity: rows, malformed, duplicate ids",
+            "stdout_line": 47,
+            "detail": "awk is unavailable"
+          }
+        ]
+      },
+      "noawk_failing_set_equals_host_minus_parity": true,
+      "killed_with_awk_hidden": true,
+      "w1_sweep_evidence": {
+        "path": "/tmp/tameshi-r4-2-run.ZIz4V0/evidence/K_STRICT.out (ephemeral /tmp dir named at sweep.txt:111)",
+        "sha256": "5711b9b6150b2487575b948155a04b21892298856dbe2c76dd28681c9f0825eb",
+        "equals_full_stdout": true,
+        "mutant_sha256_equals_w1_results_tsv": true
+      }
+    },
+    "K_CLOSED": {
+      "prediction": "KILLED",
+      "predicted_selftest_case": "SOURCES_MISSING: fail-closed exit 2",
+      "mutation_site": "kumitate scripts/sources-check.mjs@0acb7752:182",
+      "diff": ".ufo/evidence/round-18/sources-check/attribution/diffs/K_CLOSED.diff",
+      "mutant_sha256": "26ce5f93b0d3a8c26aecf364bc35740f0242edddffd8a605fe5e2e77b19ef3e0",
+      "mutant_sha256_equals_tool_sweep": true,
+      "host_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 44/46 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_CLOSED.stdout",
+        "stdout_sha256": "9bb5ecfcaa07c891ab1b765d6df4e2c9f7e0f4c42cfe78812da3f39b473a7f0e",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "SOURCES_MISSING: fail-closed exit 2",
+            "stdout_line": 37,
+            "detail": "exit=2 last=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:797 (arm 793; assert 800: exit 2 + FAIL-CLOSED (SOURCES_MISSING))"
+          },
+          {
+            "label": "every fail-closed arm fires in a fixture",
+            "stdout_line": 40,
+            "detail": "unfired=[SOURCES_MISSING]",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:804 (missingArms 803; seen-set 799)"
+          }
+        ],
+        "skipped_checks": []
+      },
+      "tool_sweep_full_output_sha256_equal": true,
+      "recorded_sweep_tail_equals_last8": true,
+      "recorded_sweep_tail_shows_predicted_case": false,
+      "recorded_sweep_tail_range": ".ufo/evidence/round-18/sources-check/sweep/sweep.txt:65-73",
+      "predicted_case_failed": true,
+      "predicted_case_sole_failure": false,
+      "failing_check_count": 2,
+      "unpredicted_failing_checks": [
+        "every fail-closed arm fires in a fixture"
+      ],
+      "noawk_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 43/45 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_CLOSED.noawk.stdout",
+        "stdout_sha256": "34fc08970499adf13ef52b19ee18e48f9f4d48f80d4de466dbb421f8593b2364",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "SOURCES_MISSING: fail-closed exit 2",
+            "stdout_line": 37,
+            "detail": "exit=2 last=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:797 (arm 793; assert 800: exit 2 + FAIL-CLOSED (SOURCES_MISSING))"
+          },
+          {
+            "label": "every fail-closed arm fires in a fixture",
+            "stdout_line": 40,
+            "detail": "unfired=[SOURCES_MISSING]",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:804 (missingArms 803; seen-set 799)"
+          }
+        ],
+        "skipped_checks": [
+          {
+            "label": "frozen awk census parity: rows, malformed, duplicate ids",
+            "stdout_line": 48,
+            "detail": "awk is unavailable"
+          }
+        ]
+      },
+      "noawk_failing_set_equals_host_minus_parity": true,
+      "killed_with_awk_hidden": true,
+      "w1_sweep_evidence": {
+        "path": "/tmp/tameshi-r4-2-run.ZIz4V0/evidence/K_CLOSED.out (ephemeral /tmp dir named at sweep.txt:111)",
+        "sha256": "9bb5ecfcaa07c891ab1b765d6df4e2c9f7e0f4c42cfe78812da3f39b473a7f0e",
+        "equals_full_stdout": true,
+        "mutant_sha256_equals_w1_results_tsv": true
+      }
+    },
+    "K_ROWS": {
+      "prediction": "KILLED",
+      "predicted_selftest_case": "frozen awk census parity: rows, malformed, duplicate ids",
+      "mutation_site": "kumitate scripts/sources-check.mjs@0acb7752:247",
+      "diff": ".ufo/evidence/round-18/sources-check/attribution/diffs/K_ROWS.diff",
+      "mutant_sha256": "d2d18a6a3320b1413018a4d1b61cf6b0a85353492d6514f81a87bd0a44208e4d",
+      "mutant_sha256_equals_tool_sweep": true,
+      "host_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 41/46 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_ROWS.stdout",
+        "stdout_sha256": "0b7daae8dfde17e7bccf728b0df23cacf8ad752e762ca9e15cdee1962777db91",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "clean fixture returns CLEAN",
+            "stdout_line": 1,
+            "detail": "exit=0 last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:587 (assert 589: rows=1 prefix)"
+          },
+          {
+            "label": "1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+            "stdout_line": 26,
+            "detail": "exit=0 last=SOURCES_CHECK: CLEAN (rows=8 tiers=A:4,B:0,C:0 status=queued:3,mined:1,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:675 (assert 690: rows=4 prefix)"
+          },
+          {
+            "label": "--json prints one parseable contract object",
+            "stdout_line": 43,
+            "detail": "exit=0 verdict=CLEAN rows=2",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:813 (assert 816: counts.rows===1)"
+          },
+          {
+            "label": "S1000 is accepted and counted",
+            "stdout_line": 45,
+            "detail": "exit=0 last=SOURCES_CHECK: CLEAN (rows=4 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:822 (assert 824: rows=2 prefix)"
+          },
+          {
+            "label": "frozen awk census parity: rows, malformed, duplicate ids",
+            "stdout_line": 50,
+            "detail": "node=8/1/1 awk=4/1/1",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:840 (awk gate 853 -> SKIP 861; parity compare 866)"
+          }
+        ],
+        "skipped_checks": []
+      },
+      "tool_sweep_full_output_sha256_equal": true,
+      "recorded_sweep_tail_equals_last8": true,
+      "recorded_sweep_tail_shows_predicted_case": true,
+      "recorded_sweep_tail_range": ".ufo/evidence/round-18/sources-check/sweep/sweep.txt:74-82",
+      "predicted_case_failed": true,
+      "predicted_case_sole_failure": false,
+      "failing_check_count": 5,
+      "unpredicted_failing_checks": [
+        "clean fixture returns CLEAN",
+        "1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+        "--json prints one parseable contract object",
+        "S1000 is accepted and counted"
+      ],
+      "noawk_run": {
+        "exit": 1,
+        "selftest": "SOURCES_SELFTEST: 41/45 pass",
+        "verdict": "VERDICT: FAIL",
+        "stdout": ".ufo/evidence/round-18/sources-check/attribution/runs/K_ROWS.noawk.stdout",
+        "stdout_sha256": "59d3cdeb5841fd90085514d0a63b6693b02621f246795ad5d0269f3298a85284",
+        "stderr_bytes": 0,
+        "failing_checks": [
+          {
+            "label": "clean fixture returns CLEAN",
+            "stdout_line": 1,
+            "detail": "exit=0 last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:587 (assert 589: rows=1 prefix)"
+          },
+          {
+            "label": "1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+            "stdout_line": 26,
+            "detail": "exit=0 last=SOURCES_CHECK: CLEAN (rows=8 tiers=A:4,B:0,C:0 status=queued:3,mined:1,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:675 (assert 690: rows=4 prefix)"
+          },
+          {
+            "label": "--json prints one parseable contract object",
+            "stdout_line": 43,
+            "detail": "exit=0 verdict=CLEAN rows=2",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:813 (assert 816: counts.rows===1)"
+          },
+          {
+            "label": "S1000 is accepted and counted",
+            "stdout_line": 45,
+            "detail": "exit=0 last=SOURCES_CHECK: CLEAN (rows=4 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)",
+            "source": "kumitate scripts/sources-check.mjs@0acb7752:822 (assert 824: rows=2 prefix)"
+          }
+        ],
+        "skipped_checks": [
+          {
+            "label": "frozen awk census parity: rows, malformed, duplicate ids",
+            "stdout_line": 50,
+            "detail": "awk is unavailable"
+          }
+        ]
+      },
+      "noawk_failing_set_equals_host_minus_parity": true,
+      "killed_with_awk_hidden": true,
+      "w1_sweep_evidence": {
+        "path": "/tmp/tameshi-r4-2-run.ZIz4V0/evidence/K_ROWS.out (ephemeral /tmp dir named at sweep.txt:111)",
+        "sha256": "0b7daae8dfde17e7bccf728b0df23cacf8ad752e762ca9e15cdee1962777db91",
+        "equals_full_stdout": true,
+        "mutant_sha256_equals_w1_results_tsv": true
+      }
+    }
+  },
+  "totals": {
+    "killed_defects": 5,
+    "predicted_case_failed": 5,
+    "predicted_case_sole_failure": 1,
+    "failing_checks_total": 13,
+    "unpredicted_failing_checks_total": 8,
+    "recorded_sweep_tail_shows_predicted_case": 2,
+    "killed_with_awk_hidden": 5
+  },
+  "k_rows_awk_dependency": {
+    "depends_on_awk": false,
+    "host": "SOURCES_SELFTEST: 41/46 pass exit=1",
+    "noawk": "SOURCES_SELFTEST: 41/45 pass exit=1",
+    "noawk_parity_status": "SKIP (awk is unavailable) — excluded from the denominator (46 -> 45)",
+    "surviving_killers_without_awk": [
+      "clean fixture returns CLEAN",
+      "1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+      "--json prints one parseable contract object",
+      "S1000 is accepted and counted"
+    ]
+  }
+}

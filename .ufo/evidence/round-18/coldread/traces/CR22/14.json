@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "for c in $(git log --format=%h 01d586ddbc5fcd78659557c4e93a6ee8517b87d1 -- tools/mutate-and-run.sh); do s=$(git show $c:tools/mutate-and-run.sh 2>/dev/null | sha256sum | cut -c1-16); n=$(git show $c:tools/mutate-and-run.sh 2>/dev/null | wc -l); echo \"$c $s $n\"; done | grep -E \"cf41efaa|b56c6e57|13d2fbfc\" ; echo \"--- first commit carrying cf41efaa:\"; for c in $(git log --reverse --format=%h 01d586ddbc5fcd78659557c4e93a6ee8517b87d1 -- tools/mutate-and-run.sh); do s=$(git show $c:tools/mutate-and-run.sh | sha256sum | cut -c1-16); [ \"$s\" = cf41efaa8be5f52d ] && { git log -1 --format=\"%h %ci %s\" $c; git show $c:tools/mutate-and-run.sh | wc -lc; git show $c:tools/mutate-and-run.sh | grep -cE \"^  regression_case_git \"; }; done"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR22-2zRLDB/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR22-2zRLDB/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 1,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-7nn1r_l9/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 96
+}

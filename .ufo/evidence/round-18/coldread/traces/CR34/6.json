@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=284ab0f0b8b989ee73d9c00c0c0df0a59757af8d; R=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; for rg in 1017,1019 1359,1363 1,1448; do a=$(git show $W:SKILL.md | sed -n ${rg}p | sha256sum | cut -c1-16); b=$(git show $R:SKILL.md | sed -n ${rg}p | sha256sum | cut -c1-16); printf \"lines %-10s @W=%s @R=%s %s\\n\" $rg $a $b \"$([ $a = $b ] && echo IDENTICAL || echo DIFFER)\"; done; echo \"== last-touch commits of anchor lines @R (hashes only)\"; for rg in 1017,1019 1359,1363; do echo \"-- $rg\"; git blame -l -n -L $rg $R -- SKILL.md | cut -c1-40,41-47 | sed -E \"s/^([0-9a-f]{40}) +([0-9]+).*/\\1 orig=\\2/\"; done; echo \"== line count of total diff W..R in 1-1448 (numstat-like, content-blind)\"; diff <(git show $W:SKILL.md | sed -n 1,1448p) <(git show $R:SKILL.md | sed -n 1,1448p) | grep -E \"^[0-9]+(,[0-9]+)?[acd][0-9]+(,[0-9]+)?$\" | tr \"\\n\" \" \"; echo"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-rhegv4_e/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 30
+}

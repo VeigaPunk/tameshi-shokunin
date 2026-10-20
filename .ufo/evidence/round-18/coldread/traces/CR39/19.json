@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport json\nr=json.load(open(\".ufo/evidence/round-14/context-receipt.json\"))\ne=r[\"environment\"]; pc=r[\"positive_control\"]; cm=r[\"comparison\"]\nprint(\"new experiment records child override: injected_env\", e[\"injected_env\"], \"env_delta_keys\", e[\"env_delta_keys\"], \"baseline_has_GIT_DIR\", e[\"baseline_has_GIT_DIR\"])\nprint(\"comparison equal\", cm[\"equal\"], \"raw_stdout_equal\", cm[\"raw_stdout_equal\"], \"exclusions\", cm[\"exclusions\"])\nprint(\"positive control exits baseline->injected:\", pc[\"baseline\"][\"exit\"], \"->\", pc[\"injected\"][\"exit\"], \"effective\", pc[\"effective\"])\nprint(\"result_reuse\", r[\"result_reuse\"], \"|\", r[\"result_reuse_reason\"])\nprint(\"not_compared\", r[\"not_compared\"])\nv=json.load(open(\".ufo/evidence/round-13/verification.json\"))\nc={x[\"name\"]:x for x in v[\"checks\"]}\nprint(\"r13 pin_env_scrub keys\", sorted(c[\"pin_env_scrub\"]), \"| has env/cwd field:\", any(k in c[\"pin_env_scrub\"] for k in (\"env\",\"injected_env\",\"cwd\")))\nprint(\"r13 pin_env_scrub argv == pin_live argv:\", c[\"pin_env_scrub\"][\"argv\"]==c[\"pin_live\"][\"argv\"], \"| stdout identical:\", c[\"pin_env_scrub\"][\"stdout\"]==c[\"pin_live\"][\"stdout\"])\nvd=json.load(open(\".ufo/evidence/round-14/verification-verdict.json\"))\nprint(\"round-14 verdict limits:\", vd[\"limits\"])\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR39-HFoTRo/tmp/trace-inputs-run-7hqlbesu/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/verification.json": "a02718e976382696b59f49e044b05af3d05fb0d5c964e4d218bfc6a2a033f06f",
+    ".ufo/evidence/round-14/context-receipt.json": "05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a",
+    ".ufo/evidence/round-14/verification-verdict.json": "9a6eadde16339ff6da0821c808496e8a9007a3e0fa8d74e4c6dfcfac1204d46c"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

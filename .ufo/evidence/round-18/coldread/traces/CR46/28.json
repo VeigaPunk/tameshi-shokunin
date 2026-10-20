@@ -1,0 +1,40 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "python3 -c \"\nimport json\nd=json.load(open(\\\"tools/registry.json\\\"))\nr=[r for r in d[\\\"rows\\\"] if r[\\\"name\\\"]==\\\"pin-disposition-read\\\"][0]\nprint(\\\"pin-disposition-read row keys:\\\",sorted(r),\\\"external=\\\",json.dumps(r.get(\\\"external\\\")))\n\"; python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin > /tmp/tameshi-r18w2-CR46-Pravyu/fx/pin-live.json; echo \"pin_disposition_exit=$?\"; python3 -c \"\nimport json,subprocess,hashlib,os\nd=json.load(open(\\\"/tmp/tameshi-r18w2-CR46-Pravyu/fx/pin-live.json\\\"))\nprint(\\\"counts=\\\",json.dumps(d.get(\\\"counts\\\")), \\\"status=\\\",d.get(\\\"status\\\"))\nenv={k:v for k,v in os.environ.items() if not k.startswith(\\\"GIT_\\\")}\nfor L in d[\\\"legs\\\"]:\n    h=L[\\\"head\\\"]\n    print(\\\"LEG\\\",L[\\\"leg\\\"],L[\\\"repo\\\"],L[\\\"path\\\"],\\\"head=\\\",json.dumps(h,sort_keys=True),\\\"content_status=\\\",L.get(\\\"content_status\\\"))\n    repo=os.path.join(\\\"/home/vgpnk/Projects/shokunin\\\",L[\\\"repo\\\"])\n    g=lambda *a: subprocess.run([\\\"git\\\",\\\"--no-optional-locks\\\",\\\"-C\\\",repo]+list(a),capture_output=True,env=env)\n    raw_head=g(\\\"rev-parse\\\",\\\"HEAD\\\").stdout.decode().strip()\n    sym=g(\\\"symbolic-ref\\\",\\\"-q\\\",\\\"HEAD\\\")\n    br=h.get(\\\"branch\\\")\n    tip=g(\\\"rev-parse\\\",\\\"refs/heads/%s\\\"%br).stdout.decode().strip() if br else None\n    blob=g(\\\"cat-file\\\",\\\"blob\\\",\\\"refs/heads/%s:%s\\\"%(br,L[\\\"path\\\"])) if br else None\n    bsha=hashlib.sha256(blob.stdout).hexdigest() if blob is not None and blob.returncode==0 else None\n    hb=g(\\\"cat-file\\\",\\\"blob\\\",\\\"HEAD:%s\\\"%L[\\\"path\\\"])\n    hsha=hashlib.sha256(hb.stdout).hexdigest() if hb.returncode==0 else None\n    print(\\\"   CHECK raw_HEAD=%s symref_rc=%d jj=%s tip=%s head_differs_recomputed=%s tool=%s tip_blob=%s tool_blob=%s match=%s HEAD_blob_eq_tip_blob=%s\\\"%(raw_head, sym.returncode, os.path.isdir(repo+\\\"/.jj\\\"), tip, (raw_head!=tip) if tip else None, h.get(\\\"head_differs_from_branch\\\"), (bsha or \\\"\\\")[:16], (h.get(\\\"blob_sha256\\\") or \\\"\\\")[:16], bsha==h.get(\\\"blob_sha256\\\"), hsha==bsha))\n\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR46-Pravyu/tmp/trace-inputs-run-lrbj3zag/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+    "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c",
+    "tools/registry.json": "d2d1972e398074d1e4bc1298eb75f6b69e2395b16c81b130a62a377a182ab2ad"
+  },
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/checklist-run.sh": "7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/surface-census.sh": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/claims-check.mjs": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/kimi-census.mjs": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-verify.sh": "050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/tsukuroi-census.sh": "d17d32a35946c71c1fc195e36178aa383f4a04d7172cc579b6e9e25fa537f27e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

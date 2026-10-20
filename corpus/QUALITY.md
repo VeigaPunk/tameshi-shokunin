@@ -293,3 +293,38 @@ Criteria 1–28 are unchanged; criterion 28's open debt is not closed here.
     live write verb from the list above, and the saved reflog is a prefix of
     the current `git reflog` output.
     (`lessons/round-17-verifier-spotcheck.md` §7 item 8, R17-INCIDENT)
+
+## Corrections appended — round 18 wave 2 (2026-10-20)
+
+Criteria 29–36 above stay as written; these corrections narrow them after
+the non-author wave-2 review (`.ufo/waves/round-18/w2/ReviewQuality18.md`,
+`ReviewAppendOnly.md`, `ReviewGuardKillEntry.md`).
+
+- **32 (GIT_* scrub) is not yet true for every registered tool.**
+  `.ufo/evidence/round-16/measure.py` (historical evidence bytes, two active
+  registry rows) still passes inherited `GIT_*` to git; with only `GIT_DIR`
+  exported its selftest commits into the exported repo. `registry-check`
+  scrubs before every row, so the registered path is safe; a direct run is
+  not. Open, routed to round 19 (migrate the rows to a scrubbed wrapper; never
+  edit the round-16 bytes).
+- **35 (append-only) — round 18 broke it twice and repaired one.** The
+  `corpus/SOURCES.md` footer line `Next unused id: S065.` was replaced in
+  `58e5d53`; it is restored and the new pointer appended after wave 2. The
+  `SHONEN.md` regeneration replaced lines in place: PROTOCOL.md:446 requires
+  the canonical seed verbatim, so SHONEN is the one file this criterion
+  exempts; its removed prose is preserved verbatim in the round-18 LOG entry.
+  The criterion's numstat check applies to append-only corpus files and
+  `LOG.md`, not to `SKILL.md` or `SHONEN.md`.
+- **36 (incident preservation) — the reflog check pointed the wrong way.**
+  `git reflog` prints newest first, so a saved copy is a suffix of later
+  output; the falsifiable check is that a saved copy of `.git/logs/HEAD` is a
+  byte prefix of the current file.
+- **33 (command binding) — the binding clause is a future rule.** Nothing in
+  the round-18 kit compares declared commands with receipt argv; until a
+  failure-backed implementation lands, 33 only forbids calling input-keyed
+  credit command coverage.
+- **29–31 (what the round-18 probes certify).** The probes are bounded:
+  P08 binds `master`, P11 exports `GIT_DIR`/`GIT_WORK_TREE` only, P09 tries the
+  two literals. Wave-2 mutation testing left 18 survivors in the new code
+  (3 registry-check, 3 evidence-disposition, 2 trace-inputs, 10 bash-witness
+  scrub/config); each is a named round-19 coverage gap under criterion 29.

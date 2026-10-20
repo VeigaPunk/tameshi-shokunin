@@ -271,3 +271,11 @@ exit sentence is corrected by its appended erratum (round 18). No frontier row
 moves to Core: F3's determinism control is measured for case 8 only
 (`.ufo/evidence/round-18/sources-check/control/`, 8 byte-identical runs), not
 per surveyed gate.
+
+Corrections appended after round-18 wave 2 (2026-10-20): the round-17 row
+above ("trace receipts bind executed commands to inputs") means the receipts
+record the inputs a recorded command opened; the rule never binds receipt
+argv to the commands a bucket requires, so it is not command coverage
+(QUALITY 33; `knowledge/input-keyed-coldread-credit.md` erratum). The
+round-18 row's "knowledge/guard-kill-closure.md" also cites S077/S078, the
+round-18 correction rows for S068's anchor and S072's teaches.

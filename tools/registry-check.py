@@ -101,6 +101,10 @@ REPORT_SCHEMA = "tameshi-registry-check-report-v1"
 KINDS = frozenset({"gate", "probe", "selftest"})
 STATUSES = frozenset({"active", "superseded"})
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+# Round-18 wave-2 fix (ReviewSkillDiff F1): a finite timeout of 2147484 s or more
+# overflows Popen.communicate()'s C timeout and crashed with exit 1 (a row
+# "differs"), so the registry caps it; one day is far above any row's need.
+MAX_TIMEOUT_S = 86400
 SOURCE_RE = re.compile(r"^[^@]+@[0-9a-f]{7,40}:[0-9]+(-[0-9]+)?$")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 TAIL_BYTES = 4096
@@ -237,7 +241,9 @@ def registry_errors(data):
         )
         if timeout_valid:
             try:
-                timeout_valid = math.isfinite(ts) and ts > 0
+                timeout_valid = (
+                    math.isfinite(ts) and 0 < ts <= MAX_TIMEOUT_S
+                )
             except OverflowError:
                 timeout_valid = False
         if not timeout_valid:
@@ -246,6 +252,7 @@ def registry_errors(data):
             )
             errors.append(
                 f"{timeout_owner}.timeout_s must be a finite positive number"
+                f" <= {MAX_TIMEOUT_S}"
             )
         source = row.get("source")
         if not isinstance(source, str) or not SOURCE_RE.match(source):
@@ -752,7 +759,10 @@ def clone_lane_at_rev(root, rev, sha):
     root_real = os.path.realpath(root)
     fleet_root = os.path.dirname(root_real)
     env = git_env()
-    work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir="/tmp")
+    try:
+        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir="/tmp")
+    except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+        raise RuntimeError(f"cannot create clone scratch under /tmp: {exc}") from exc
     try:
         fleet = os.path.join(work, "fleet")
         os.mkdir(fleet)
@@ -1494,6 +1504,8 @@ def selftest():
              "non-finite JSON number"),
             ("timeout-overflow", "1e999", "finite positive number"),
             ("timeout-boolean", "true", "finite positive number"),
+            ("timeout-too-large", "2147484", "finite positive number"),
+            ("timeout-float-huge", "1e308", "finite positive number"),
         ):
             invalid_timeout = row(case, "print('should-not-run')", 0)
             raw = json.dumps(

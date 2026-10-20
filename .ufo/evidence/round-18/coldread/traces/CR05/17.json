@@ -1,0 +1,67 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--tmpfs",
+    "/home/vgpnk",
+    "--ro-bind",
+    "/home/vgpnk/Projects/shokunin",
+    "/home/vgpnk/Projects/shokunin",
+    "--tmpfs",
+    "/run/user/1000",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR05-rTUMuh",
+    "/tmp/tameshi-r18w2-CR05-rTUMuh",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR05-rTUMuh/probe/p17",
+    "env",
+    "-i",
+    "PATH=/usr/local/bin:/usr/bin",
+    "HOME=/tmp/tameshi-r18w2-CR05-rTUMuh/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR05-rTUMuh/tmp17",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "set -u; CL=$1; R=$2; B=$(printf \"\\x60\"); rm -rf \"$R\"; mkdir -p \"$R/corpus/knowledge\" \"$R/corpus/lessons\"; printf \"EXPECTED\\n\" >\"$R/corpus/ok.txt\"; for f in AGENTS.md LOG.md PROVINCE.md SCORECARD.md SHONEN.md SKILL.md; do printf \"EXPECTED\\n\" >\"$R/$f\"; done; printf \"EXPECTED\\n\" >\"$R/corpus/README.md\"; SHA=$(sha256sum \"$R/corpus/ok.txt\" | cut -d\" \" -f1); printf \"corpus/ok.txt\\t%s\\t1\\t9\\n\" \"$SHA\" >\"$R/stamps.tsv\"; printf \"R1-01\\tgrep -c EXPECTED corpus/ok.txt\\t^1\\$\\t0\\t5\\tcoldread\\n\" >\"$R/claims-r.tsv\"; six() { local f=$1; shift; { printf \"## Round 1 \u2014 pre-move\\n\\n| Axis | Score | Evidence |\\n|---|---|---|\\n\"; for ax in depth coverage operability freshness calibration adjacency; do printf \"| %s | 7 | %s |\\n\" \"$ax\" \"$1\"; shift; done; } >\"$f\"; }; P=\"${B}corpus/ok.txt${B}\"; I=\"${B}R1-01${B}\"; six \"$R/sc-ok.md\" \"$P\" \"$I\" \"$I\" \"$I\" \"$I\" \"$I\"; six \"$R/sc-vacuous.md\" \"$P\" \"$P\" \"$P\" \"$P\" \"$P\" \"$P\"; printf \"# scorecard with no round tables at all\\n\" >\"$R/sc-empty.md\"; for sc in sc-ok sc-empty sc-vacuous; do out=$(bash \"$CL\" cells --root \"$R\" --claims \"$R/claims-r.tsv\" --stamps \"$R/stamps.tsv\" --scorecard \"$R/$sc.md\" --docs \"$R/$sc.md\" 2>&1); e=$?; echo \"== cells --scorecard $sc.md exit=$e\"; printf \"%s\\n\" \"$out\" | tail -n 2 | cut -c1-200; done",
+    "_",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/claim-ledger.sh",
+    "/tmp/tameshi-r18w2-CR05-rTUMuh/kagi-fx"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR05-rTUMuh/probe/p17",
+  "root": "/tmp/tameshi-r18w2-CR05-rTUMuh/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-xasuc8a4/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/claim-ledger.sh": "93c5827202b9cdecd6874e75c5dac5281eeae07eddeeff3883bd0da14bfbcd29"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

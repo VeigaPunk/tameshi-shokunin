@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "P=606716f703f7699af458476a31fc78ddc9bf552c; W=284ab0f0b8b989ee73d9c00c0c0df0a59757af8d; R=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; echo \"== byte after parent prefix in write (91419th):\"; git show $W:SKILL.md | head -c 91419 | tail -c1 | od -An -c; echo \"== write file is byte-prefix of R?\"; n=$(git show $W:SKILL.md | wc -c); cmp <(git show $W:SKILL.md) <(git show $R:SKILL.md | head -c $n) && echo \"PREFIX-EQUAL bytes=$n\"; printf \"== R byte %s: \" $((n+1)); git show $R:SKILL.md | head -c $((n+1)) | tail -c1 | od -An -c; echo \"== section text @W vs @R (1449-1462)\"; diff <(git show $W:SKILL.md | sed -n 1449,1462p) <(git show $R:SKILL.md | sed -n 1449,1462p | head -c -1) && echo SECTION-IDENTICAL; echo \"== commits touching SKILL.md lines 1-1462 after W (via -L, hashes only)\"; git log --format=%H $W..$R -L1,1462:SKILL.md --no-patch | grep -E \"^[0-9a-f]{40}$\" | sort -u | while read h; do git log -1 --format=\"%H %ad %s\" --date=iso $h; done; echo \"== cd31c6b hunk headers (stripped)\"; git show -U0 --format= --no-color cd31c6b7e4ee6becf32f1eedf874f1bdda8d5ac6 -- SKILL.md | grep \"^@@\" | sed \"s/ @@.*/ @@/\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-hz2a0wzh/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 45
+}

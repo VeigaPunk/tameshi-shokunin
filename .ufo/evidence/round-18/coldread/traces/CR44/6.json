@@ -1,0 +1,58 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/stmp",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR44-Ez7Ttp/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR44-Ez7Ttp/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "set -u\nX=/tmp/tameshi-r18w2-CR44-Ez7Ttp/hz; rm -rf \"$X\"; mkdir -p \"$X\"\nE=.ufo/evidence/round-16/round-gate\ngit -C ~/Projects/shokunin/kumitate-shokunin show 364f1d5954158ef8844bca4a5fef57b05d2f2ca5:scripts/round-gate.mjs > \"$X/round-gate.mjs\"\nsha256sum \"$X/round-gate.mjs\"\ncnt() { git -C \"$1\" rev-list --all --count 2>/dev/null || echo 0; }\necho \"## (a) exported GIT_DIR, inherited environment (no env -i)\"\ngit init -q \"$X/victim\" && git -C \"$X/victim\" -c user.name=v -c user.email=v@v commit -q --allow-empty -m seed\necho \"victim commits before: $(cnt \"$X/victim\")\"\nmkdir -p \"$X/a/home\" \"$X/a/tmp\"\n( cd \"$X/a\" && export GIT_DIR=\"$X/victim/.git\" HOME=\"$X/a/home\" TMPDIR=\"$X/a/tmp\" && node \"$X/round-gate.mjs\" --selftest > \"$X/a/out.txt\" 2>&1; echo \"selftest exit=$?\" )\necho \"victim commits after: $(cnt \"$X/victim\")\"\ngit -C \"$X/victim\" log --all --format='  %s' | head -5\ngrep -m1 'ROUND_GATE_SELFTEST:' \"$X/a/out.txt\"\necho \"## (a') same exported GIT_DIR, guarded suite.txt string\"\ngit init -q \"$X/victim2\" && git -C \"$X/victim2\" -c user.name=v -c user.email=v@v commit -q --allow-empty -m seed\n( export GIT_DIR=\"$X/victim2/.git\" MUTANT=\"$X/round-gate.mjs\" WORKDIR=\"$X/a2\" DEFECT_ID=GUARD && bash -c \"$(cat \"$E/suite.txt\")\" > \"$X/a2.out\" 2>&1; echo \"guarded selftest exit=$?\" )\necho \"victim2 commits after (seed only = 1): $(cnt \"$X/victim2\")\"\ngrep -m1 'ROUND_GATE_SELFTEST:' \"$X/a2.out\"\necho \"## (b) TMPDIR inside a git work tree, env -i without the ceiling\"\ngit init -q \"$X/wt\" && mkdir -p \"$X/wt/tmp\" \"$X/b/home\"\n( cd \"$X/b\" && env -i PATH=\"$PATH\" HOME=\"$X/b/home\" TMPDIR=\"$X/wt/tmp\" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 node \"$X/round-gate.mjs\" --selftest > \"$X/b/out.txt\" 2>&1; echo \"selftest exit=$?\" )\ngrep -E '^\\s*FAIL|ROUND_GATE_SELFTEST:' \"$X/b/out.txt\" | cut -c1-220\necho \"## (b') sandbox inside the same work tree, guarded suite.txt string\"\n( export MUTANT=\"$X/round-gate.mjs\" WORKDIR=\"$X/wt/work\" DEFECT_ID=GUARD && bash -c \"$(cat \"$E/suite.txt\")\" > \"$X/b2.out\" 2>&1; echo \"guarded selftest exit=$?\" )\ngrep -m1 'ROUND_GATE_SELFTEST:' \"$X/b2.out\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-wqaa6wje/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/round-gate/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 756
+}

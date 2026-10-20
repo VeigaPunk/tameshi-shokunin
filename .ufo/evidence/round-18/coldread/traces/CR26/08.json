@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "P=corpus/knowledge/fleet-kill-rate-ledger.md; D=/tmp/tameshi-r18w2-CR26-KDnj6A/tmp/ledger; mkdir -p $D; prev=; for c in 9f1d3c3 c611d5d b8eb96e 4acc607 c699c8c 3490708 2a22ade 58e5d53 01d586ddbc5fcd78659557c4e93a6ee8517b87d1; do git show $c:$P > $D/$c; s=$(stat -c%s $D/$c); last=$(tail -c1 $D/$c | od -An -c | tr -d \" \"); if [ -n \"$prev\" ]; then ps=$(stat -c%s $D/$prev); if cmp -s -n $ps $D/$prev $D/$c; then r=PREFIX-OK; else r=PREFIX-BROKEN; fi; else r=first; fi; echo \"$c size=$s lastbyte=[$last] sha=$(sha256sum < $D/$c | cut -c1-16) vs-prev=$r\"; prev=$c; done"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR26-KDnj6A/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR26-KDnj6A/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-55d6h9z8/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 27
+}

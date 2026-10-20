@@ -371,7 +371,7 @@ def under_live_lane(path):
 
 
 def trace_reason(repo, rev, entry, strict):
-    """Bind commands to committed trace receipts; None when satisfied/na.
+    """Bind recorded inputs to committed trace receipts (never argv to commands); None when satisfied/na.
 
     Strict mode (no overrides: the cited number) requires >=1 receipt for an
     entry with commands_executed_count>0. Legacy mode (measurement aid) skips

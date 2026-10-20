@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "python3 -c \"import json;d=json.load(open('.ufo/evidence/round-12/BashWitness/summary.json'));print('summary.tool=',json.dumps(d.get('tool')));print('summary.keys=',sorted(d))\"\npython3 -c \"import json;d=json.load(open('.ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json'));print('rerun.tool=',json.dumps(d.get('tool')))\"\nsha256sum tools/bash-witness-study.py .ufo/evidence/round-13/producer-before.py .ufo/evidence/round-13/producer-oracle.py\necho \"-- producer history (commit, committer date, sha256 of tools/bash-witness-study.py at commit)\"\nfor c in $(git log --format=%H -- tools/bash-witness-study.py); do printf \"%s %s %s\\n\" \"$c\" \"$(git log -1 --format=%cI $c)\" \"$(git show $c:tools/bash-witness-study.py | sha256sum | cut -c1-64)\"; done\ngit log --diff-filter=A --format=\"summary.json added in %H %cI %s\" -- .ufo/evidence/round-12/BashWitness/summary.json\ngit log --diff-filter=A --format=\"rerun summary added in %H %cI %s\" -- .ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR38-DESy2w/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR38-DESy2w/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR38-DESy2w/tmp/trace-inputs-run-b1s2rs84/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json": "6726421fde88e8d2aff4c9d0ff4a4fdce9b1d4651da50b89f2bf29f65a22a5f0",
+    ".ufo/evidence/round-12/BashWitness/summary.json": "acc01268cb5fb00985be7bf1c6711f6f97131ff20ae0020bbde1819bae4547b9",
+    ".ufo/evidence/round-13/producer-before.py": "592c5c3de86a684fbb694d3aa8dd4c1e2b62263e7a50d72a9169092ad3fab9a0",
+    ".ufo/evidence/round-13/producer-oracle.py": "d5ae0bd4d4f75a461e7105b63eb737d249c3d09ffc15a3bfeb7aecea21ccd38b",
+    "tools/bash-witness-study.py": "8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

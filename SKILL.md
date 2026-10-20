@@ -7,12 +7,12 @@ description: "Domain specialist — verification-fixture craft. Rank: shonen (pr
 
 verification-fixture craft playbook. Rounds 1–3 built the corpus from measured
 surfaces; every rule below earns a cited source. The first two mutation cases
-— round 2 JS, round 3 bash, both 8/10 killed — are worked here (eight recorded since round 18), and this page carries
+— round 2 JS, round 3 bash, both 8/10 killed — are worked here (seven recorded since round 16; eight since round 18), and this page carries
 the method as an executable recipe: numbered steps from pin to restore proof,
 defect templates with exact-string guidance, kill-rate bands, restore
 discipline, the measured bash-vs-JS divergences, and complete reproduce specs
-for both cases (Appendix A / Appendix B). Historical cold-read proof covers
-one JS mutant only; round 16 adds a full-page cold-read (Errata — round 16).
+for both cases (Appendix A / Appendix B). Historical cold-read proof: fleet round 1 re-ran all 10+10
+Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a full-page cold-read (Errata — round 16).
 
 ## Standing rules
 
@@ -836,8 +836,8 @@ bash tools/mutate-and-run.sh --target <gate> --defects <spec> \
 ```
 
 1. **Pin + pristine.** The target is copied to a pinned pristine; every mutant
-   is a fresh byte copy; the original is never a write target.
-2. **Spec parse + uniqueness.** Every `@old` must occur exactly once, asserted
+   is a fresh byte copy; the original is never a write target unless `--workdir` is its own directory (keep scratch apart).
+2. **Spec parse + uniqueness.** Every `@old` must occur exactly once (non-overlapping count), asserted
    **before any suite run**; `@new == @old` is refused. Any spec failure is
    `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
 3. **Control first.** The unmutated copy must run green; a red control exits 2
@@ -890,8 +890,8 @@ predictions and six survivor classes first, and the prediction held 10/10
 - **survivor non-equivalence probes**: each survivor re-run on an input
   outside the suite's fixtures that exercises the mutated surface, pristine
   vs mutant outputs recorded (`mutation-case-mado-verify.md:103-115`);
-- restore proof `MUTATE_RESTORE: OK` (sha before = after) + the tree-clean
-  check;
+- restore proof `MUTATE_RESTORE: OK` (sha before = after; the tool emits no
+  separate tree-clean check — round-18 correction);
 - recommendation + named unknowns, as a corpus note; the note is the only
   fleet file the run writes (`mutation-case-mado-verify.md:8-9`), and its
   reproduce block rebuilds the sweep (`:262-293`).
@@ -922,13 +922,13 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
 
 Round 7 turns `--regression` from the tool's two-case self-check into the
 fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
-pinned original revision. Four legs at that revision (r7-1; eight since round 18) — `js-kimi-census`
+pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18) — `js-kimi-census`
 (r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
 `bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
 — each with its recorded kill-rate as its expectation
-(`tools/mutate-and-run.sh:72-109`, :511-522). The ledger is the receipt
-tameshi's records cite for kill-rate claims; the standing per-gate rate rows
-are `corpus/knowledge/fleet-kill-rate-ledger.md`.
+(`tools/mutate-and-run.sh@9f1d3c3:72-109`, `:511-522`; at round 18 the recorded tables sit at `:597-620`). The ledger
+is the receipt tameshi's records cite for kill-rate claims; the standing per-gate rate rows
+are `corpus/knowledge/fleet-kill-rate-ledger.md` (seven rows; case 8's row is owed — round-18 debt).
 
 ### Using the ledger
 
@@ -947,7 +947,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md`.
   replay; a missing repo/rev/blob or a pin mismatch is a SETUP refusal before
   any suite runs.
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
-  (cases=N passed=N; …)` (N=4 at r7-1, 8 since round 18) with the
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
@@ -1026,7 +1026,7 @@ no lane acting stays [U].
   (round 17). Tameshi's tick is still its own round series [I].
 - **Per case, two readings:** the target's relation to each repo's branch-tip bytes
   (`current` / `stale` / `drift`; `<branch>` = the `branch=` field of
-  `../scripts/hyaku/jj-lane.sh state <repo>` (function `detect_branch()` by name; line anchors into the helper move)) and the tool's relation to the last run (`held` / `moved`):
+  `../scripts/hyaku/jj-lane.sh state <repo>` (git config `lane.branch` first, else function `detect_branch()`; cite by name, line anchors into the helper move)) and the tool's relation to the last run (`held` / `moved`):
 
 | Reading | Rule | What it means |
 |---|---|---|
@@ -1073,9 +1073,9 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
   instances at round 8 (2026-10-14): tsukuroi `084951be…` (6/10) → `bba6cdf6…`; mado
   `d7edaab4…` (4/10) → `90d50cdd…` (both have moved again since; re-read, never carry).
 - **T2 — the harness sha ≠ the revision a case's table was measured under** →
-  re-run the reproduction under the new revision and record both pins. Precedent:
-  the mado spec re-cut under `b56c6e57…` with identical verdicts and mutant shas
-  (`mutation-case-mado-verify.md:17-23`); the harness itself moved four times in
+  re-run the reproduction under the new revision and record both pins. Precedent
+  (corrected round 18): round 16's RerunSweep under runner `0673d2e5…` reproduced case 7;
+  mado under `b56c6e57…` was never re-cut (U, `mutation-case-mado-verify.md:17-23`); the harness itself moved four times in
   one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`)
   and no recorded table was re-interpreted for it.
 - **T3 — an owner lane records a re-run at a new revision** → an appended row;
@@ -1247,7 +1247,7 @@ line — named debt, not smoothed (`fleet-kill-rate-ledger.md:282`).
 
 The cadence applies this table at intake. Each refusal carries a measured anchor —
 a refusal without an anchor is not written; the table states refusals, it does not
-adjudicate them. (Anchors `:…` are this page; the others are repo-relative.) The
+adjudicate them. (Anchors `:…` are this page; `PROVINCE.md` is repo-relative; other bare note names are under `corpus/knowledge/`.) The
 standalone note `corpus/knowledge/service-limits.md` (T9-2, this round) carries
 the same rows as the detail of record — verbatim anchor quotes, the trigger column
 and the intake-precondition check; this page is the compact rendering, and a
@@ -1259,8 +1259,8 @@ divergence between the two is the finding, never smoothed.
 | b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:813-817`; `:840-844` |
 | c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:823-825` |
 | d | Live substrates / sessions | never read; a live-plane probe is a PATH-level stub, never the session | `service-optin-protocol.md:129-132` |
-| e | Credential material / endpoint health | out of province — report, never absorb | `PROVINCE.md:14-18`, `:20` |
-| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:879-881`; `fleet-suite-census.md:288-291` |
+| e | Credential material / endpoint health | out of province — report, never absorb | `PROVINCE.md:14-18`, `PROVINCE.md:20` |
+| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:879-881`; `fleet-kill-rate-ledger.md:156-158` |
 | g | Coordinated multi-edit rewrites | outside the defect vocabulary — no rate claimed | `fleet-kill-rate-ledger.md:220` (U2) |
 | h | The exit-flatten family | a harness boundary — named, not fixed | `service-optin-protocol.md:267-269` |
 | i | A directed-repair re-run presented as a rate | recorded as directed repair, not an independent rate | `fleet-kill-rate-ledger.md:35-36` |
@@ -1436,8 +1436,8 @@ ran, never the working trees (`:1324-1331`).
 ### Where to enter — four readers
 
 - **The operator** (the seat the handoff names): `operator-runbook.md` §0; the
-  cadence is its §6, and the round's schedule additions land with it
-  (`plans/round-11.plan.md:80-103`). No lane declares a clock interval — the
+  cadence is its §6; the round-11 schedule additions landed in `corpus/knowledge/closeout-r11.md:155-213`,
+  not in the runbook (planned at `plans/round-11.plan.md:80-103`). No lane declares a clock interval — the
   ticks so far are boundary-bound, and the interval is that seat's `[U]`.
 - **A lane wanting a sweep**: the opt-in protocol for the request shape, then
   this page's recipe (`:131`) and its worked appendices A/B.
@@ -1583,7 +1583,7 @@ Recipe, from this lane root:
    `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
    → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).
 3. The same command with `dispositions.json` → 0: the only repair is that row's explicit supersession,
-   keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section.
+   keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section (round-18 manifests since then).
 4. `.ufo/evidence/round-14/verification-final.json` retains the corrected
    selftest and frozen before/after outcomes; `verification.json` retains the
    initial18-of34 fixture failures rather than disguising them as green.
@@ -1598,7 +1598,7 @@ Recipe, from this lane root:
 
 | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
-| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (historical; live entry since round 17: `.ufo/evidence/round-17/dispositions.json`) | 0 clean; 1 failed semantic expectations; 2 could-not-evaluate invalid/missing/tampered inputs; 64 usage | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (historical; live entry since round 18: `.ufo/evidence/round-18/dispositions.json`; round 17's now exits 2, bash-witness moved) | 0 clean; 1 failed semantic expectations; 2 could-not-evaluate invalid/missing/tampered inputs; 64 usage | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
 | archived invocation context capture | historical gate, not active | do not run; retained source `.ufo/evidence/round-14/capture-context.py` only | historical outcomes retained, not an active verdict map | historical helper-only controls do not satisfy the standalone gate selftest | unchanged round13 pin manifest and context receipt | archive bytes read-only; no supported invocation | tameshi |
 
 The disposition manifest is configured authority, not cryptographic proof of
@@ -1678,7 +1678,7 @@ scalar.
 | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
 | retained invocation-context gate | gate | `python3 tools/context-capture.py --check` (frozen round-14 clean receipt); `--check --receipt FILE --expected FILE` for a caller-pinned retained receipt | 0 clean (`context_consistent`); 1 failed stable finding ID (e.g. `missing_injected_environment`); 2 and 64 could-not-evaluate (receipt/expected missing, malformed or tampered, e.g. `snapshot_tampered`; 64 `usage_error`) | `python3 tools/context-capture.py --selftest` | frozen clean receipt `.ufo/evidence/round-14/context-receipt.json` sha256 `05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a` and its built-in id/exit pin in tool; expected-pin schema `tameshi-context-expected-v1` (`receipt_sha256`/`id`/`exit`) for other retained receipts; negative fixture `context-missing-env.json` sha256 `1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208`; literal selftest exit/finding pairs in tool | check reads receipt/expected bytes and its own source for a reported digest, writes nothing, never opens recorded root paths or executes stored argv; selftest writes isolated temporary fixtures only; archived round-14 bytes retained | tameshi |
-| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (**superseded in round 17**: since round 16 this command returns 2 `expected_input_digest_mismatch` at `--root .` because the runner input moved; the 0-clean outcome is restored only by re-pinning, not by relabelling. Live entry: `--dispositions .ufo/evidence/round-17/dispositions.json` → 0, see the round-17 re-pin section; frozen replay: cwd = extracted `git archive 28aeef4` → 0) | 0 clean; 1 failed semantic expectations; 2 and 64 could-not-evaluate (invalid, missing or tampered inputs; 64 usage) | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (**superseded in round 17**: since round 16 this command returns 2 `expected_input_digest_mismatch` at `--root .` because the runner input moved; the 0-clean outcome is restored only by re-pinning, not by relabelling. Live entry: `--dispositions .ufo/evidence/round-18/dispositions.json` → 0 (round 17's now 2), see the round-17 re-pin section; frozen replay: cwd = extracted `git archive 28aeef4` → 0) | 0 clean; 1 failed semantic expectations; 2 and 64 could-not-evaluate (invalid, missing or tampered inputs; 64 usage) | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
 
 The maintained gate's expected values are configured authority, not
 cryptographic proof of author authenticity; a clean check replays recorded
@@ -1715,7 +1715,7 @@ with 30 cold-read seats (CR01–CR27, three of them with a/b replicas); reports
 The page edits are in-place repairs, and so are this table's own cells: a
 later row's corrections of an earlier row stay visible in git
 (`git log -p -- SKILL.md`), not as appended rows. Wrong expectations were repaired
-in place with the line count of every edited section unchanged, so every
+in place with the line count of every edited section unchanged (except `### Round-15 gate/probe registry`, +1 blank separator; see the round-17 section), so every
 `SKILL.md:<line>` self-anchor still resolves; the old wording stays in git
 (`git show e69b488:SKILL.md`, sha256 `97cf436b…`; also
 `.ufo/evidence/round-16/coldread/SKILL.snapshot.md`). Repairs:
@@ -1759,7 +1759,7 @@ single-edit mutants → **5/10 killed (50 %)**, control green, 0 inconclusive,
 `MUTATE_RESTORE: OK`; every one of the 10 predictions, committed in `e69b488`
 before the sweep, held. Detail of record:
 `corpus/knowledge/mutation-case-kumitate-round-gate.md`. The case is ledger leg
-`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7`).
+`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18).
 
 Reproduce it (read-only on kumitate; scratch in `/tmp`):
 
@@ -1823,18 +1823,18 @@ new mutation case and no promotion credit.
 | Evidence condition | Decision | Error pattern / limit |
 |---|---|---|
 | A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
-| A waived path's live bytes differ from `HEAD:<path>` | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
 | The waiver rev is a tree id, dangling, not an ancestor, shallow, or reached through replace refs, grafts or an inherited `GIT_DIR` | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance |
 | A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
 | A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
-| A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
+| A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git (round 18 adds `bash-witness-study.py`; historical `.ufo/evidence/round-16/measure.py` still does not — run it only through `registry-check`, which scrubs) | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
 | A repo path has no `.git` of its own inside a git super-repo | Runner regression leg: SETUP `repo_identity_mismatch`, exit 2 | Without the guard git silently answers from the parent repo's objects |
 
 Recipe, from this lane root (round-13/14 evidence bytes stay immutable):
 
-1. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions-before.json --json`
+1. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json` (round 18; round 17's two now exit 2)
    → 1 `failed`, the `producer_before` expectation unresolved (`"expectation": "producer_before"`).
-2. The same command with `.ufo/evidence/round-17/dispositions.json` → 0 `clean`,
+2. The same command with `.ufo/evidence/round-18/dispositions.json` → 0 `clean`,
    `"effective": 11`, `"superseded": 1`; text mode prints one `HISTORICAL <path> rev=<rev> sha256=<sha>` line per waived instrument.
 3. `python3 tools/registry-check.py --rev <40-hex lane commit>` replays every row of
    `tools/registry.json` in a scratch clone (siblings symlinked beside it) and ends with
@@ -1847,7 +1847,7 @@ Recipe, from this lane root (round-13/14 evidence bytes stay immutable):
 
 | Name | Kind | Command | Exits |
 |---|---|---|---|
-| `tools/evidence-disposition.py` (v2 manifests) | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions.json --json` · `--selftest` | 0 clean · 1 failed expectations · 2 could not evaluate (invalid, missing, tampered or unprovenanced input) · 64 usage |
+| `tools/evidence-disposition.py` (v2 manifests) | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json` (round 18; the round-17 manifest now exits 2) · `--selftest` | 0 clean · 1 failed expectations · 2 could not evaluate (invalid, missing, tampered or unprovenanced input) · 64 usage |
 | `tools/registry-check.py` | gate | `python3 tools/registry-check.py --rev REV [--registry PATH] [--tag TAG] [--json]` · `--selftest` | 0 every active row held · 1 a row differs · 2 registry invalid, rev unresolvable or clone failed · 64 usage |
 | `tools/mutate-and-run.sh` (guard + scrub) | gate | `bash tools/mutate-and-run.sh --selftest` · `--regression` | as the round-16 row; a borrowed repo identity is SETUP 2 |
 | `tools/pin-disposition.py` (branch tip) | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` · `--selftest` | as the round-13 row |
@@ -1874,7 +1874,7 @@ statements stay as written; this paragraph supersedes them.
 | Any recorded input drifted, vanished, or is a tree/symlink | The entry does not credit (`input-drift:`, `input-missing:`, `input-not-blob:`) | A section whose bytes did not change still loses credit |
 | An entry has no inputs, or executed commands without committed trace receipts | No credit (`inputs-unrecorded`, `traces-unrecorded`, `trace-missing:`) | Applies to `record` and `instruction` entries alike |
 | A failing entry for the bucket still has verified inputs | Veto: the bucket is uncovered | One passing read never launders a failing one |
-| A trace opened a file in the live lane while the root was a clone | No credit (`live-lane-read:`) | The read was not of the recorded revision |
+| A trace opened a file in the live lane while the root was a clone | No credit (`live-lane-read:`) unless the read is under `.git/` or its bytes equal the blob at the read rev (`measure.py` docstring) | Such a read was not of the recorded revision |
 
 Recipe for one bucket, cold:
 
@@ -1912,21 +1912,23 @@ hermetic `env -i` form of case 7 (`.ufo/evidence/round-18/sources-check/suite.tx
 pristine controls were byte-identical (`.ufo/evidence/round-18/sources-check/control/`).
 Entry: `corpus/knowledge/mutation-case-kumitate-sources-check.md`. Replay:
 `bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-sources-check: PASS`,
-`cases=8 passed=8`.
+`cases=8 passed=8`. Wave 2 probed all five survivors off-suite: four are non-equivalent, `S_KIND`
+differs only in `--help` output (entry errata ER8-2).
 
 | Survivor class in this case | What the suite does not pin | Fix belongs to |
 |---|---|---|
 | one-sided kind coverage (`S_KIND`) | observed kinds ⊆ declared kinds | kumitate |
 | verdict-line text (`S_VERDICT`) | the final `SOURCES_CHECK: DRIFT (...)` line | kumitate |
-| line attribution, counters, read-failure kind (`S_DUP_LINE`, `S_ENTRY_COUNT`, `S_FILE_READ`) | detail text and non-row counters | kumitate |
+| line attribution, counters (`S_DUP_LINE`, `S_ENTRY_COUNT`) | detail text and non-row counters | kumitate |
+| per-entry read-failure kind (`S_FILE_READ`) | no fixture reaches the per-entry read-failure branch (the `READ_FAILED` fixture fails at the directory read) | kumitate |
 
 ### Round-18 gate/probe registry — routed-defect closure
 
 | Name | Kind | Command | Exits / rule |
 |---|---|---|---|
-| `.ufo/evidence/round-18/defect-probes.py` | probe | `python3 .ufo/evidence/round-18/defect-probes.py --rev REV` · `--selftest` | 0 measured (`DEFECT_PROBES: open=N closed=M total=11`) · 2 a probe errored, a pristine selftest was red, or an anchor was not unique · 64 usage. A guard probe is `closed` only when the pristine selftest exits 0 and the guard-removal mutant exits nonzero; children run under bwrap with the fleet read-only |
-| `tools/registry-check.py` (round 18) | gate | unchanged CLI | `timeout_s` must be a finite positive number (`NaN`/`Infinity` literals refused at parse) → 2 naming the row; every descendant of a row (including one that called `setsid`/`setpgid`) is killed at timeout and after the row exits; pipe draining is bounded |
-| `tools/evidence-disposition.py` (round 18) | gate | unchanged CLI | G2/G3 read one anchor commit: `refs/heads/<lane.branch or attached branch>`; a jj-colocated repo with no `lane.branch` → 2; a detached non-jj clone (`registry-check --rev`) anchors on the checked-out commit only when a branch or remote-tracking ref contains it. Never bare `HEAD` (jj leaves `HEAD` at `@-`) |
+| `.ufo/evidence/round-18/defect-probes.py` | probe | `python3 .ufo/evidence/round-18/defect-probes.py --rev REV` · `--selftest` | 0 measured (`DEFECT_PROBES: open=N closed=M total=11`) · 2 a probe errored, a pristine selftest was red, or an anchor was not unique · 64 usage. A guard probe is `closed` only when the pristine selftest exits 0 and the guard-removal mutant exits nonzero; children run under bwrap with the fleet read-only; never wrap it in `tools/trace-inputs.py` (P05–P07 run that tool's selftest, and nested ptrace is refused → 2) |
+| `tools/registry-check.py` (round 18) | gate | unchanged CLI | `timeout_s` must be a finite number in (0, 86400] (`NaN`/`Infinity` literals refused at parse; a larger finite value used to crash `communicate()` with exit 1) → 2 naming the row; descendants of a row (including ones that called `setsid`/`setpgid`) are killed at timeout and after the row exits, and pipe draining is bounded — limits: a descendant that changes UID may be unkillable, same-tick PID reuse is not excluded, and an orphan adopted from a pre-existing checker child can be signalled (`.ufo/waves/round-18/w2/SentinelKillCode.md`); survivors fail the row with `cleanup_error` |
+| `tools/evidence-disposition.py` (round 18) | gate | unchanged CLI (`--selftest` now needs `jj` on PATH) | G2/G3 read one anchor commit: `refs/heads/<lane.branch or attached branch>`; a jj-colocated repo with detached HEAD and no `lane.branch` → 2; a detached non-jj clone (`registry-check --rev`) anchors on its checked-out commit only when a branch or remote-tracking ref contains it. HEAD is never read as the tip in a bound lane (jj leaves `HEAD` at `@-`) |
 | `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; its pinned round-13 bytes are read from `4acc607` through `.ufo/evidence/round-18/dispositions.json` (the round-17 manifests are superseded) |
 | `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | as the round-17 copy (which stays byte-identical as evidence); its selftest now fails when the O_RDWR exclusion, the private pycache prefix, or the root-execve requirement is removed |
-| `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |
+| `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim plus a `carried_from` key; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |

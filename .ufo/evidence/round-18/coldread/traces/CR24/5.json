@@ -1,0 +1,57 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR24-1fU4hQ",
+    "/tmp/tameshi-r18w2-CR24-1fU4hQ",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR24-1fU4hQ/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR24-1fU4hQ/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR24-1fU4hQ/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "F=/home/vgpnk/Projects/shokunin; eval \"$(grep -E \"^(PIN|REV)_(JS|BASH|TSUKUROI|MADO|CHECKLIST|CLAIMS)=\" tools/mutate-and-run.sh)\"; row() { name=$1 repo=$2 path=$3 rev=$4 pin=$5 lh=$6 hb=$7 hpin=$8 hrev=$9; g=\"git -C $F/$repo\"; r=$($g rev-parse --verify -q \"$rev^{commit}\") || r=MISSING; l=$($g rev-parse --verify -q \"$lh^{commit}\") || l=MISSING; ps=$($g show \"$r:$path\" | sha256sum | cut -d\" \" -f1); hs=$($g show \"$l:$path\" | sha256sum | cut -d\" \" -f1); if $g merge-base --is-ancestor \"$r\" \"$l\"; then anc=yes; else anc=no; fi; [ \"$r\" = \"$hrev\" ] && rm=yes || rm=no; [ \"$ps\" = \"$hpin\" ] && pm=yes || pm=no; case $ps in $pin*) pt=yes;; *) pt=no;; esac; case $hs in $hb*) ht=yes;; *) ht=no;; esac; [ \"$ps\" = \"$hs\" ] && rd=current || rd=stale; printf \"%s repo=%s path=%s\\n  recorded-rev=%s (harness REV match=%s) live-HEAD=%s anc=%s\\n  sha256(rev:path)=%s table-pin=%s prefix-match=%s harness-PIN match=%s\\n  sha256(liveHEAD:path)=%s table-HEADblob=%s prefix-match=%s reading(if clean)=%s\\n\" \"$name\" \"$repo\" \"$path\" \"$r\" \"$rm\" \"$l\" \"$anc\" \"$ps\" \"$pin\" \"$pt\" \"$pm\" \"$hs\" \"$hb\" \"$ht\" \"$rd\"; }; row js-kimi-census kumitate-shokunin scripts/kimi-census.mjs 175de6ba 83016d45 175de6ba 83016d45 \"$PIN_JS\" \"$REV_JS\"; row bash-surface-census kagi-shokunin corpus/surface-census.sh fecee874 275d8294 fecee874 275d8294 \"$PIN_BASH\" \"$REV_BASH\"; row bash-tsukuroi-census tsukuroi-shokunin tools/tsukuroi-census.sh 165307fe 084951be 72b038da bba6cdf6 \"$PIN_TSUKUROI\" \"$REV_TSUKUROI\"; row bash-mado-verify mado-shokunin tools/mado-verify.sh eead56b2 d7edaab4 12c8f08a 7da4ec50 \"$PIN_MADO\" \"$REV_MADO\"; row kagi-checklist-run kagi-shokunin corpus/checklist-run.sh fecee874 7e5ec98b fecee874 7e5ec98b \"$PIN_CHECKLIST\" \"$REV_CHECKLIST\"; row kumitate-claims-check kumitate-shokunin scripts/claims-check.mjs 175de6ba e9a21b44 175de6ba e9a21b44 \"$PIN_CLAIMS\" \"$REV_CLAIMS\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR24-1fU4hQ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR24-1fU4hQ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-yg_yj4h0/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

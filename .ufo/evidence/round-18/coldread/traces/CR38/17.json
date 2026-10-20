@@ -1,0 +1,40 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "for f in .ufo/evidence/round-12/BashWitness/summary.json .ufo/evidence/round-12/BashWitness/declaration.json .ufo/evidence/round-12/BashWitness/declared.tsv .ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json .ufo/evidence/round-13/expected.json .ufo/evidence/round-13/witness-metadata.json .ufo/evidence/round-13/witness-metadata-old-null.json .ufo/evidence/round-13/pin-manifest.json .ufo/evidence/round-13/producer-before.py .ufo/evidence/round-13/producer-oracle.py; do echo \"== $f sha256=$(sha256sum < $f | cut -c1-64) commits=$(git log --format=%h -- $f | tr '\\n' ' ')\"; done\necho \"-- baseline commit in expected.json:\"; git cat-file -t 546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50; git log -1 --format='%H %cI %s' 546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50\necho \"-- tools/pin-disposition.py sha at each commit:\"; for c in $(git log --format=%H -- tools/pin-disposition.py); do printf \"%s %s %s\\n\" \"$c\" \"$(git log -1 --format=%cI $c)\" \"$(git show $c:tools/pin-disposition.py | sha256sum | cut -c1-64)\"; done\necho \"-- tools/witness-metadata.py sha at each commit:\"; for c in $(git log --format=%H -- tools/witness-metadata.py); do printf \"%s %s %s\\n\" \"$c\" \"$(git log -1 --format=%cI $c)\" \"$(git show $c:tools/witness-metadata.py | sha256sum | cut -c1-64)\"; done\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR38-DESy2w/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR38-DESy2w/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR38-DESy2w/tmp/trace-inputs-run-2b8zmtd2/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-12/BashWitness/declaration.json": "e8d2024ad13e021c5b7c41a66b881225beb9e0b30190833f0ab2310cf3670901",
+    ".ufo/evidence/round-12/BashWitness/declared.tsv": "0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3",
+    ".ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json": "6726421fde88e8d2aff4c9d0ff4a4fdce9b1d4651da50b89f2bf29f65a22a5f0",
+    ".ufo/evidence/round-12/BashWitness/summary.json": "acc01268cb5fb00985be7bf1c6711f6f97131ff20ae0020bbde1819bae4547b9",
+    ".ufo/evidence/round-13/expected.json": "a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336",
+    ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+    ".ufo/evidence/round-13/producer-before.py": "592c5c3de86a684fbb694d3aa8dd4c1e2b62263e7a50d72a9169092ad3fab9a0",
+    ".ufo/evidence/round-13/producer-oracle.py": "d5ae0bd4d4f75a461e7105b63eb737d249c3d09ffc15a3bfeb7aecea21ccd38b",
+    ".ufo/evidence/round-13/witness-metadata-old-null.json": "28067a1cb76b14677a26d86dadad8699177cf7eb1212140f3f06e9537a0b11c3",
+    ".ufo/evidence/round-13/witness-metadata.json": "463282270a04bd46f4a0522ff6a349b77d268ede47725c4e1c52ca892210bd8d"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

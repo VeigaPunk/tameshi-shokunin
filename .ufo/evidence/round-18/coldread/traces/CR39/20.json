@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport subprocess,hashlib,json\ndef git(*a): return subprocess.run([\"git\"]+list(a),capture_output=True).stdout\npins=json.load(open(\".ufo/evidence/round-13/expected.json\"))[\"inputs\"]\nfor p in sorted(k for k in pins if k.startswith(\"tools/\")):\n    live=hashlib.sha256(open(p,\"rb\").read()).hexdigest()\n    revs=git(\"log\",\"--reverse\",\"--format=%H\",\"28aeef498cc070c3183271b709bc79d344ff547a..HEAD\",\"--\",p).decode().split()\n    if not revs:\n        print(p,\"unchanged since 28aeef4; live==pin:\",live==pins[p]); continue\n    first=revs[0]\n    subj=git(\"log\",\"-1\",\"--format=%s\",first).decode().strip()[:40]\n    at=hashlib.sha256(git(\"show\",first+\":\"+p)).hexdigest(); par=hashlib.sha256(git(\"show\",first+\"^:\"+p)).hexdigest()\n    print(p,\"| pin\",pins[p][:12],\"| live\",live,\"| first change\",first,\"(\",subj,\") at\",at[:12],\"parent==pin:\",par==pins[p])\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR39-HFoTRo/tmp/trace-inputs-run-1hjf17rm/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/expected.json": "a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336",
+    "tools/bash-witness-study.py": "8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b",
+    "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c",
+    "tools/witness-metadata.py": "df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

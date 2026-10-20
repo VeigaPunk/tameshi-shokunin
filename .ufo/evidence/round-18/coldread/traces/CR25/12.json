@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "echo \"== tick logs/workdir named by the record\"; for p in /tmp/w9-tameshi-t93 /tmp/w9-tameshi-t93/selftest.txt /tmp/w9-tameshi-t93/regression.txt /tmp/w9-tameshi-t93/regression; do if [ -e \"$p\" ]; then echo \"present $p\"; else echo \"absent $p\"; fi; done; echo \"== full revs and tool/ledger blob sha256\"; for c in 9f1d3c3 b8eb96e 606716f; do r=$(git rev-parse $c); printf \"%s %s tool_sha256=%s ledger_sha256=%s\\n\" \"$r\" \"$(git log -1 --format=%cI $r)\" \"$(git show $r:tools/mutate-and-run.sh | sha256sum | cut -d\" \" -f1)\" \"$(git show $r:corpus/knowledge/fleet-kill-rate-ledger.md | sha256sum | cut -d\" \" -f1)\"; done; echo \"== tool unchanged between 9f1d3c3 and b8eb96e?\"; git diff --quiet 9f1d3c3 b8eb96e -- tools/mutate-and-run.sh && echo \"tools/mutate-and-run.sh identical 9f1d3c3..b8eb96e\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR25-dB9GvI/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR25-dB9GvI/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-vzyn2buq/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 35
+}

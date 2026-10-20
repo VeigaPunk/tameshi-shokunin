@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport json,subprocess\np=\".ufo/evidence/round-14/\"\nA=\"/tmp/tameshi-r18w2-CR39-HFoTRo/arch-28aeef4\"\nv=json.load(open(p+\"verification.json\")); f=json.load(open(p+\"verification-final.json\"))\ndef show(name,d):\n    print(\"==\",name,\"schema\",d[\"schema\"],\"measured_commit\",d[\"measured_commit\"])\n    for c in d[\"checks\"]:\n        last=c[\"stdout\"].strip().splitlines()[-1] if c[\"name\"] in (\"disposition_selftest\",\"context_capture\") else \"\"\n        print(\"  \",c[\"name\"],\"exit\",c[\"exit\"],\"expected_exit\",c[\"expected_exit\"],\"|\",last[:170])\nshow(\"verification.json\",v); show(\"verification-final.json\",f)\nprint(\"final.supersedes:\", f[\"supersedes\"])\nprint(\"final.context_capture:\", f[\"context_capture\"])\nprint(\"verification.json note:\", v[\"note\"])\nprint(\"final tool pin == 28aeef4 tool:\", f[\"input_sha256\"][\"tools/evidence-disposition.py\"])\nfor name,disp in ((\"unresolved_before\",\"dispositions-before.json\"),(\"resolved_after\",\"dispositions.json\")):\n    frozen=json.loads(next(c for c in f[\"checks\"] if c[\"name\"]==name)[\"stdout\"])\n    r=subprocess.run([\"python3\",\"tools/evidence-disposition.py\",\"--root\",\".\",\"--dispositions\",p+disp,\"--json\"],cwd=A,capture_output=True,text=True)\n    rep=json.loads(r.stdout)\n    fz=dict(frozen); rp=dict(rep); fr=fz.pop(\"root\"); rr=rp.pop(\"root\")\n    print(name,\"archive replay exit\",r.returncode,\"frozen exit\",frozen[\"exit\"],\"| payload identical except root:\",fz==rp,\"| frozen root\",fr)\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR39-HFoTRo/tmp/trace-inputs-run-fe57yakc/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-14/verification-final.json": "e904e6938a123de55db492f7d04c1e18087c1783128ab9ed96e55d93c3ef52f2",
+    ".ufo/evidence/round-14/verification.json": "1d480a0ddd0cd8a801d0ae38f7d774b6d772c8d0910bf6200c3e666696532939"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

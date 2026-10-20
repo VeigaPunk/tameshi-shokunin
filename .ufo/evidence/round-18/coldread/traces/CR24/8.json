@@ -1,0 +1,68 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR24-1fU4hQ",
+    "/tmp/tameshi-r18w2-CR24-1fU4hQ",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR24-1fU4hQ/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR24-1fU4hQ/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR24-1fU4hQ/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "F=/home/vgpnk/Projects/shokunin; eval \"$(grep -E \"^(PIN|REV)_(JS|BASH|TSUKUROI|MADO|CHECKLIST|CLAIMS)=\" tools/mutate-and-run.sh)\"; reading() { r=\"\"; [ \"$1\" = \"$2\" ] || r=stale; if [ \"$2\" != \"$3\" ] || [ -n \"$4\" ]; then r=\"${r:+$r + }drift\"; fi; echo \"${r:-current}\"; }; echo \"host=$(hostname) now=$(date -u +%FT%TZ)\"; echo \"== falsifier (tick substrate = js-kimi-census blob at recorded live-HEAD 175de6ba, clean per record):\"; s=$(git -C $F/kumitate-shokunin show 175de6ba2e9e904010411b19cab27e0af9aad3d4:scripts/kimi-census.mjs | sha256sum | cut -d\" \" -f1); echo \"  as recorded  pin=${PIN_JS:0:8} live=${s:0:8} -> $(reading $PIN_JS $s $s \"\")\"; echo \"  falsifier    pin=${PIN_TSUKUROI:0:8} live=${s:0:8} -> $(reading $PIN_TSUKUROI $s $s \"\")\"; echo \"== re-sweep now (pinned: HEAD shown per repo; read-only):\"; row() { g=\"git -C $F/$2 --no-optional-locks\"; h=$($g rev-parse HEAD); $g merge-base --is-ancestor \"$5\" \"$h\" && a=yes || a=no; lv=$(sha256sum \"$F/$2/$3\" | cut -d\" \" -f1); hb=$($g show \"$h:$3\" | sha256sum | cut -d\" \" -f1); st=$($g status --porcelain -- \"$3\"); printf \"  %-22s HEAD=%s anc=%s pin=%s live=%s HEADblob=%s porcelain=[%s] -> %s\\n\" \"$1\" \"${h:0:12}\" \"$a\" \"${4:0:8}\" \"${lv:0:8}\" \"${hb:0:8}\" \"$st\" \"$(reading $4 $lv $hb \"$st\")\"; }; row js-kimi-census kumitate-shokunin scripts/kimi-census.mjs $PIN_JS $REV_JS; row bash-surface-census kagi-shokunin corpus/surface-census.sh $PIN_BASH $REV_BASH; row bash-tsukuroi-census tsukuroi-shokunin tools/tsukuroi-census.sh $PIN_TSUKUROI $REV_TSUKUROI; row bash-mado-verify mado-shokunin tools/mado-verify.sh $PIN_MADO $REV_MADO; row kagi-checklist-run kagi-shokunin corpus/checklist-run.sh $PIN_CHECKLIST $REV_CHECKLIST; row kumitate-claims-check kumitate-shokunin scripts/claims-check.mjs $PIN_CLAIMS $REV_CLAIMS"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR24-1fU4hQ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR24-1fU4hQ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-2ve1niwy/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/checklist-run.sh": "7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/surface-census.sh": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/claims-check.mjs": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/kimi-census.mjs": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.gitignore": "d949e4ef14286bcc34282c15538a4a023a6c74d436cba3dae0f5155239d8f817",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-verify.sh": "050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/.gitignore": "65e9a6838b253022bd43ee70918dcf5f6d920cb9c2e80b91ccfb15e8e54ee027",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/tsukuroi-census.sh": "d17d32a35946c71c1fc195e36178aa383f4a04d7172cc579b6e9e25fa537f27e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

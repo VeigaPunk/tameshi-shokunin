@@ -1,0 +1,34 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport json\np=\".ufo/evidence/round-14/\"\na=json.load(open(p+\"dispositions-before.json\")); b=json.load(open(p+\"dispositions.json\"))\nar=a.pop(\"rows\"); br=b.pop(\"rows\")\nprint(\"top-level fields identical (schema/expected_file/inputs):\", a==b)\nprint(\"row names/order identical:\", [x[\"name\"] for x in ar]==[x[\"name\"] for x in br], len(ar), len(br))\nprint(\"changed rows:\", [x[\"name\"] for x,y in zip(ar,br) if x!=y])\nold=next(x for x in ar if x[\"name\"]==\"producer_before\"); new=next(x for x in br if x[\"name\"]==\"producer_before\")\nprint(\"old row:\", old)\nprint(\"new keys:\", sorted(new), \"state:\", new[\"state\"])\nprint(\"raw_receipt==old receipt:\", new[\"raw_receipt\"]==old[\"receipt\"], \"; raw_check==old check:\", new[\"raw_check\"]==old[\"check\"])\nprint(\"superseded_by:\", new[\"superseded_by\"])\nrep={x[\"name\"]:x for x in br}\nfor r in new[\"superseded_by\"]:\n    print(\" replacement\", r, \"state\", rep[r][\"state\"], \"check==name\", rep[r][\"check\"]==r, \"receipt\", rep[r][\"receipt\"])\nprint(\"rows superseded:\", sum(x[\"state\"]==\"superseded\" for x in br), \"effective:\", sum(x[\"state\"]==\"effective\" for x in br))\no=json.load(open(\".ufo/evidence/round-13/producer-oracle-repair.json\"))\ne=json.load(open(\".ufo/evidence/round-13/expected.json\"))\nprint(\"oracle receipt supersedes:\", str(o[\"supersedes\"])[:160])\nprint(\"oracle_sha256 == expected pin producer-oracle.py:\", o[\"oracle_sha256\"]==e[\"inputs\"][\".ufo/evidence/round-13/producer-oracle.py\"])\nchecks=o[\"checks\"] if isinstance(o[\"checks\"],list) else [dict(v,name=k) for k,v in o[\"checks\"].items()]\nfor c in checks:\n    x=e[\"expected_checks\"].get(c[\"name\"])\n    if x: print(\" oracle check\", c[\"name\"], \"exit\", c[\"exit\"], \"expected\", x[\"exit\"], \"contains present\", x[\"contains\"] in c.get(\"stdout\",\"\"))\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR39-HFoTRo/tmp/trace-inputs-run-szmfjxy_/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/expected.json": "a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336",
+    ".ufo/evidence/round-13/producer-oracle-repair.json": "df83a72994a93cd8d38c5c228ed85f2ed6d978ebb86a7fb260db51b34dfbef8d",
+    ".ufo/evidence/round-14/dispositions-before.json": "a7a965bbf0f28a1ed2951c1f762f16d1957aab0b95b1384e2b4ab801e0a89725",
+    ".ufo/evidence/round-14/dispositions.json": "77faac587f7c0c984d0d91a4096d3539467d422c15060b09f7c734c6d2809005"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

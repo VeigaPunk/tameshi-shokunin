@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "for s in /tmp/tameshi-r18w2-CR33-wWgmuG/fleet/*-shokunin; do n=$(basename $s); for ref in $(git -C $s for-each-ref --format=\"%(refname)\" refs/heads/); do git -C $s grep -I -n -i -E \"clock[- ]interval|tick[- ]interval|tick (every|cadence)|interval (cell|is)|tameshi.{0,80}(interval|cron|hourly|daily|every [0-9])|(interval|cron|hourly|daily).{0,80}tameshi|pin[- ]read.{0,60}(every|interval|cron)\" \"$ref\" -- . \":!*.json\" \":!*.jsonl\" \":!*.log\" 2>/dev/null | sed \"s|^|$n |\" | cut -c1-300; done; done; echo \"== fleet MANIFEST.json interval keys\"; grep -n -i -E \"\\\"[a-z_]*interval[a-z_]*\\\"|cron\" /home/vgpnk/Projects/shokunin/MANIFEST.json | cut -c1-200; echo \"rc=$?\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR33-wWgmuG/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR33-wWgmuG/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-1qesi36w/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/MANIFEST.json": "7d2c1640bbe2dcf8454495d6efd785bf0ebbc22a4f6cbe7f5fd44391b0122932"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 168
+}

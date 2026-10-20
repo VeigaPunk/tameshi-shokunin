@@ -1,0 +1,29 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "RR=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; E=.ufo/evidence/round-18/sources-check; g(){ git --no-optional-locks \"$@\"; }; g show --stat=200 --format=\"commit %H%nauthor-date %aI%ncommitter-date %cI%nsubject %s\" 93d22aa; g merge-base --is-ancestor 93d22aa $RR && echo \"ANCESTRY: 93d22aa is an ancestor of $RR\"; g merge-base --is-ancestor 183f87b 93d22aa && echo \"ANCESTRY: 183f87b is an ancestor of 93d22aa\"; for p in sources-check.defects.spec predictions.json suite.txt control.txt sweep/sweep.txt control/repeat-hashes.json control/repeat/run-1.stdout control/repeat/run-8.stdout; do echo \"FIRST_ADD $p: $(g log --diff-filter=A --format=\"%h %cI\" $RR -- $E/$p)\"; done; echo \"DIFF 93d22aa..$RR on pre-registered files (empty = unchanged):\"; g diff --stat 93d22aa $RR -- $E/sources-check.defects.spec $E/predictions.json $E/suite.txt $E/control.txt; echo \"(end diff)\"; echo \"TOOLS_LEG_AT_93d22aa: [$(g grep -l js-sources-check 93d22aa -- tools)]\"; echo \"TOOLS_LEG_AT_183f87b: [$(g grep -l js-sources-check 183f87b -- tools)]\"; echo \"TOOLS_LEG_AT_READ_REV: [$(g grep -l js-sources-check $RR -- tools)]\"; echo \"RUNNER_FIRST_LEG8_COMMIT: $(g log --format=\"%h %cI %s\" -S js-sources-check $RR -- tools/mutate-and-run.sh | cut -c1-120)\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR49-cHBEBm/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR49-cHBEBm/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR49-cHBEBm/tmp/trace-inputs-run-tc8vig1q/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

@@ -1,0 +1,18 @@
+# witness manifest: the probe-suite.sh witness builder (its PYEOF block, extracted verbatim) run once into a scratch dir;
+# paths relative to each witness --self; names as Python bytes literals; content sha256 or the open() errno;
+# entries are stat/opened relative to their directory fd (os.fwalk), so the >PATH_MAX entry is listable
+WITNESS clean --self-length=58 expected-detail=-
+  b'corpus/SOURCES.md' mode=0o644 size=399 abs-path-length=76 sha256=981bd0eb7d5ef8e8400eb8fdaadc773ff5798fabca2cffc88e6ef9d5f52f143c
+  b'corpus/knowledge/alpha.md' mode=0o644 size=114 abs-path-length=84 sha256=4568a06e3dd7904d2d0593dadf5d204c20bcf1116f2822903e19bafdb0fc255e
+WITNESS eacces --self-length=59 expected-detail=cannot read corpus/knowledge/alpha.md (EACCES)
+  b'corpus/SOURCES.md' mode=0o644 size=399 abs-path-length=77 sha256=981bd0eb7d5ef8e8400eb8fdaadc773ff5798fabca2cffc88e6ef9d5f52f143c
+  b'corpus/knowledge/alpha.md' mode=0o0 size=114 abs-path-length=85 open-error=Permission denied
+WITNESS enoent --self-length=59 expected-detail=cannot read corpus/knowledge/�.md (ENOENT)
+  b'corpus/SOURCES.md' mode=0o644 size=399 abs-path-length=77 sha256=981bd0eb7d5ef8e8400eb8fdaadc773ff5798fabca2cffc88e6ef9d5f52f143c
+  b'corpus/knowledge/alpha.md' mode=0o644 size=114 abs-path-length=85 sha256=4568a06e3dd7904d2d0593dadf5d204c20bcf1116f2822903e19bafdb0fc255e
+  b'corpus/knowledge/\xff.md' mode=0o644 size=114 abs-path-length=81 sha256=4568a06e3dd7904d2d0593dadf5d204c20bcf1116f2822903e19bafdb0fc255e
+WITNESS enametoolong --self-length=3883 expected-detail=cannot read corpus/knowledge/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.md (ENAMETOOLONG)
+  b'corpus/SOURCES.md' mode=0o644 size=399 abs-path-length=3901 sha256=981bd0eb7d5ef8e8400eb8fdaadc773ff5798fabca2cffc88e6ef9d5f52f143c
+  b'corpus/knowledge/alpha.md' mode=0o644 size=114 abs-path-length=3909 sha256=4568a06e3dd7904d2d0593dadf5d204c20bcf1116f2822903e19bafdb0fc255e
+  b'corpus/knowledge/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.md' mode=0o644 size=114 abs-path-length=4154 sha256=4568a06e3dd7904d2d0593dadf5d204c20bcf1116f2822903e19bafdb0fc255e
+PC_PATH_MAX(/tmp)=4096

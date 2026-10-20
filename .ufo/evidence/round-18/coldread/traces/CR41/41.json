@@ -1,0 +1,28 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json\nr=json.load(open('tools/registry.json'))\nprint('schema',r['schema'],'rows',len(r['rows']))\nprint('rows invoking capture-context.py:',sum(1 for x in r['rows'] if any('capture-context' in a for a in x['argv'])))\nfor x in r['rows']:\n    if any('context-capture' in a or 'evidence-disposition' in a for a in x['argv']):\n        print(x['name'],x['kind'],x['status'],' '.join(x['argv']),'expect_exit=',x['expect'].get('exit'))\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR41-8cPBzW/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR41-8cPBzW/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-b9yophzz/pycache"
+    }
+  },
+  "inputs": {
+    "tools/registry.json": "d2d1972e398074d1e4bc1298eb75f6b69e2395b16c81b130a62a377a182ab2ad"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

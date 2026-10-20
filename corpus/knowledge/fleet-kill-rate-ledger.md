@@ -420,3 +420,18 @@ was tameshi's own read-only case; it did not drain the service queue.
 **ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** Lane and owner repos are jj-colocated, so git HEAD is detached at the working-copy commit's parent and may differ from the branch tip (S061). Every active instruction above that reads `HEAD` (`show HEAD:<path>`, ancestor of HEAD, worktree vs HEAD, `git archive HEAD`) now reads the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`) or an explicit 40-hex revision; dated records above are not re-interpreted. Canonical rule: `SKILL.md:1027-1035`, `operator-runbook.md` ER-R3.
 
 **ER-jj2 (round 18, 2026-10-20; append-only).** The line anchor `../scripts/hyaku/jj-lane.sh:53-65` in the ER-jj note above is stale: that range is the `usage()` help text, not the branch resolver. The resolver the note means is the function `detect_branch()` in `scripts/hyaku/jj-lane.sh` (fleet root); it returns a branch name (the attached HEAD's branch, else `origin/HEAD`), and the tip is still `refs/heads/<branch>`. Cite it by function name, not by line. This block corrects only the anchor: the reading rule above is unchanged and dated records are not re-interpreted.
+
+## Round 18 — eighth row appended (2026-10-20)
+
+Appended; nothing above is edited. kumitate `scripts/sources-check.mjs` was not
+in the §3 queue (it landed in kumitate `1a8eed5`, after the queue was written);
+it is measured now:
+
+| gate | suite | rate (composition) | survivors | sweep | pin |
+|---|---|---|---|---|---|
+| kumitate `scripts/sources-check.mjs` (leg `js-sources-check`) | `--selftest`, 46 checks, under the `env -i` guard | **5/10 (50 %)**; 5 kill-aimed / 5 hole-aimed, 10/10 predictions held | S_KIND declaration shrink (help-output only), S_VERDICT DRIFT line spelling, S_DUP_LINE duplicate line, S_ENTRY_COUNT entries_with_source, S_FILE_READ per-entry read-failure kind | 2026-10-20T19:41:29Z, runner `fb6d86d5…`; spec and predictions committed in `93d22aa` before it | rev `0acb775`, sha256 `6a293a72…258f` |
+
+Detail of record: `mutation-case-kumitate-sources-check.md` (survivor probes in
+its ER8-2). Receipt: `REGRESSION: PASS (cases=8 passed=8 …)` at the landed
+runner (`.ufo/waves/round-18/w2/RerunC1.md`). Tameshi's own read-only case; it
+did not drain the service queue.

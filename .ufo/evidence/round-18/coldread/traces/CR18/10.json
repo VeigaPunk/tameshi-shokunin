@@ -1,0 +1,58 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR18-gOr7WN",
+    "/tmp/tameshi-r18w2-CR18-gOr7WN",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR18-gOr7WN/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.local/share/omarchy/bin:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR18-gOr7WN/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR18-gOr7WN/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "echo \"## regression call sites (all ledger legs, exact band 0 0):\"; awk '/^run_regression\\(\\)/,/^}/' tools/mutate-and-run.sh | grep -c \"^  regression_case_git \"; grep -n \"^regression_case_git() {\" -A 12 tools/mutate-and-run.sh | grep -n \"\\\"\\$path\\\" 0 0\"; echo \"## band defaults / no band flag:\"; grep -n \"^BAND_KILLED=\\|^BAND_FLIPS=\" tools/mutate-and-run.sh; grep -c -- \"--band\" tools/mutate-and-run.sh; echo \"## FAIL row format (read rev, then tool cf41efaa @ 9f1d3c33):\"; grep -n \"FAIL (out of band:%s; log: %s)\" tools/mutate-and-run.sh; git show 9f1d3c339a7094968041c7708a65dbf7eab9fae6:tools/mutate-and-run.sh | grep -n \"FAIL (out of band:%s; log: %s)\"; echo \"## block line order (read rev):\"; grep -n \"printf .REGRESSION\" tools/mutate-and-run.sh; echo \"## live sibling bytes vs ledger pins (PASS = pinned bytes, not today):\"; sha256sum ../mado-shokunin/tools/mado-verify.sh ../tsukuroi-shokunin/tools/tsukuroi-census.sh ../kumitate-shokunin/scripts/kimi-census.mjs ../kumitate-shokunin/scripts/sources-check.mjs; grep -n \"^PIN_MADO=\\|^PIN_TSUKUROI=\\|^PIN_JS=\\|^PIN_SOURCESCHECK=\" tools/mutate-and-run.sh"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR18-gOr7WN/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR18-gOr7WN/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-879m2wke/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/kimi-census.mjs": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs": "6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-verify.sh": "050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/tsukuroi-census.sh": "d17d32a35946c71c1fc195e36178aa383f4a04d7172cc579b6e9e25fa537f27e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

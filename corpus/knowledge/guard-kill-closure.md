@@ -134,3 +134,36 @@ Scope of the collector's own reads. A traced collector's own open is not recorde
 - Not run: no after-landing probe run, no `registry-check --json` held count at the landed tip, no canary run after the scrub lands.
 
 After-measurement (PENDING, filled by L1). `defect-probes.py --rev <branch tip>` open/closed count: PENDING. `tools/registry-check.py --rev <branch tip> --json` held count: PENDING. Staged-to-landed diff for each §4–§6 item: PENDING.
+
+## Errata — round 18 wave 2 (2026-10-20, append-only)
+
+Appended after the non-author wave-2 reads at `01d586ddbc5fcd78659557c4e93a6ee8517b87d1`
+(`.ufo/waves/round-18/w2/ReviewGuardKillEntry.md`); the lines above stay as written.
+
+- **EG-1 measured, no longer PENDING.** Ruler v2 (`.ufo/evidence/round-18/defect-probes.py`):
+  base `183f87b` open=11/11 (`c2-probes-v2-183f87b.txt`), tip `e08271a` and
+  `01d586d` open=0/11 (`c2-probes-v2-e08271a.txt`; w2 RerunC2After, RerunC2Before).
+  Registry at `e08271a` and `01d586d`: 32/32 held, 3 superseded (w2 RegistryNoHarm).
+  The v1 tip run errored on two ruler defects and is retained (`c2-probes-e08271a.txt`).
+- **EG-2 §2 anchor rule as landed.** "Never HEAD" holds for a bound lane
+  (`lane.branch` set, or HEAD attached). An unbound jj workspace with detached
+  HEAD is refused (exit 2); an unbound detached non-jj clone (what
+  `registry-check --rev` makes) anchors on its checked-out commit only when a
+  local branch or remote-tracking ref contains it. A P08-style fixture must bind
+  `lane.branch` as the jj-lane helper's `init` does; ruler v2 does.
+- **EG-3 what "closed" certifies (bounded).** P08 binds `master`, so a fix that
+  hardcodes `master` instead of reading `lane.branch` also closes it (63/63
+  selftest); P11 exports only `GIT_DIR`/`GIT_WORK_TREE`, so a three-name unset
+  instead of the prefix filter also closes it (43/43). P09 exercises the two
+  literals; a finite `timeout_s` ≥ 2147484 crashed the round-18 build with exit
+  1 and is capped at 86400 after wave 2. These are named survivor classes for
+  round 19, together with the wave-2 mutation survivors
+  (`.ufo/waves/round-18/w2/Mutate{RegistryCheck,Disposition,TraceInputs,BashWitness}18.md`:
+  3 + 3 + 2 + 10).
+- **EG-4 sources.** S072's teaches overstated O_TRUNC; S078 supersedes it.
+  S068's anchor is §DESCRIPTION ¶2; S077 supersedes it. Both new rows are
+  round-18 corrections (`corpus/SOURCES.md`); this entry's claims rest on the
+  O_RDWR access-mode sentence and the unchanged reparenting quote. The probe
+  prints failing case names for P01–P04 only; for P05–P07 it prints the tally.
+  The round-18 `dispositions-before.json` exit 1 is the registered negative
+  control (`producer_before`), not a defect.

@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=284ab0f0b8b989ee73d9c00c0c0df0a59757af8d; R=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; L=corpus/knowledge/fleet-kill-rate-ledger.md; echo \"== CONTENT-BLIND: last-touch of SKILL.md 1390-1393 @R (hash + subject only)\"; git blame -l -L 1390,1393 $R -- SKILL.md | cut -c1-40 | sort -u | while read h; do git log -1 --format=\"%h %ad %s\" --date=short $h | cut -c1-120; done; echo \"== CONTENT-BLIND: table-row line numbers in 1364-1448 @W\"; git show $W:SKILL.md | sed -n 1364,1448p | grep -n \"^|\" | cut -d: -f1 | while read n; do printf \"%s \" $((n+1363)); done; echo; echo \"== CONTENT-BLIND: adopt / [U] line numbers in 1364-1448 @R\"; printf \"adopt: \"; git show $R:SKILL.md | sed -n 1364,1448p | grep -n -i \"adopt\" | cut -d: -f1 | while read n; do printf \"%s \" $((n+1363)); done; echo; printf \"[U]: \"; git show $R:SKILL.md | sed -n 1364,1448p | grep -n -F \"[U]\" | cut -d: -f1 | while read n; do printf \"%s \" $((n+1363)); done; echo; echo \"== ledger @R line 398 (named home re-resolution)\"; sed -n 396,400p $L | cut -c1-400; echo \"== ledger line 398 last-touch\"; git blame -l -L 398,398 $R -- $L | cut -c1-40 | while read h; do git log -1 --format=\"%h %ad %s\" --date=short $h | cut -c1-120; done"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-nvttvxdp/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "1c06c6ba1eee45dd2aed540c9d70e2e361d05d9f82acc43afe64c8964ef38611"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 27
+}

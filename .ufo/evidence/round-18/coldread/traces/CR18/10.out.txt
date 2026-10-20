@@ -1,0 +1,52 @@
+## regression call sites (all ledger legs, exact band 0 0):
+8
+11:1271-    "$repo" "$rev" "$path" 0 0
+## band defaults / no band flag:
+180:BAND_KILLED=1   # --regression: |killed - recorded| tolerance, per case
+181:BAND_FLIPS=1    # --regression: max verdict differences vs the recorded table
+0
+## FAIL row format (read rev, then tool cf41efaa @ 9f1d3c33):
+1257:  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; log: %s)\n' "$name" "$reasons" "$cwd/sweep.log"
+874:  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; log: %s)\n' "$name" "$reasons" "$cwd/sweep.log"
+## block line order (read rev):
+1101:    printf 'REGRESSION_CASE %s: SETUP (cannot create case workdir: %s)\n' "$name" "$cwd"
+1106:      printf 'REGRESSION_CASE %s: SETUP (git missing; cannot materialize the pinned revision)\n' "$name"
+1120:      printf 'REGRESSION_CASE %s: SETUP (repo_identity_mismatch: %s is not its own repository; toplevel=%s)\n' \
+1125:      printf 'REGRESSION_CASE %s: SETUP (revision not found: %s@%s)\n' "$name" "$repo" "$rev"
+1129:      printf 'REGRESSION_CASE %s: SETUP (path not in revision: %s@%s:%s)\n' "$name" "$repo" "$rev" "$path"
+1134:      printf 'REGRESSION_CASE %s: SETUP (git show failed: %s@%s:%s; see %s)\n' \
+1143:      printf 'REGRESSION_CASE %s: SETUP (cannot read the blob mode: %s@%s:%s)\n' \
+1148:      printf 'REGRESSION_CASE %s: SETUP (empty blob mode: %s@%s:%s)\n' \
+1154:        printf 'REGRESSION_CASE %s: SETUP (cannot restore the exec bit on %s)\n' "$name" "$dst"
+1159:    printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s mode=%s sha256=%s\n' \
+1162:    printf 'REGRESSION_PIN %s: source=file target=%s sha256=%s\n' "$name" "$target" "$pin"
+1166:    printf 'REGRESSION_CASE %s: SETUP (target missing: %s)\n' "$name" "$target"
+1171:    printf 'REGRESSION_CASE %s: SETUP (pin mismatch: recorded=%s materialized=%s source=%s)\n' \
+1181:  printf 'REGRESSION_SWEEP %s: %s\n' "$name" \
+1184:    printf 'REGRESSION_CASE %s: SETUP (sweep refused; log: %s)\n' "$name" "$cwd/sweep.log"
+1188:    printf 'REGRESSION_CASE %s: FAIL (sweep exit=%s, expected 0 or 1; log: %s)\n' \
+1194:    printf 'REGRESSION_CASE %s: FAIL (no results table; sweep exit=%s; log: %s)\n' \
+1249:  printf 'REGRESSION_TABLE %s: match=%s/%s recorded-killed=%s measured-killed=%s survived=%s inconclusive=%s flips=%s\n' \
+1251:  printf 'REGRESSION_WORKDIR %s: %s\n' "$name" "$cwd"
+1253:    printf 'REGRESSION_CASE %s: PASS (band: killed-delta<=%s flips<=%s inconclusive=0 defects=%s)\n' \
+1257:  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; log: %s)\n' "$name" "$reasons" "$cwd/sweep.log"
+1299:  printf 'REGRESSION_TOOL: %s sha256=%s\n' "$SELF" "$(sha_of "$SELF")"
+1300:  printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+1301:  printf 'REGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=%s flips<=%s\n' \
+1303:  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s\n' \
+1365:    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\n' \
+1367:    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+1371:    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\n' \
+1373:    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+1376:  printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+1379:    printf 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)\n' "$root"
+1382:    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+## live sibling bytes vs ledger pins (PASS = pinned bytes, not today):
+050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1  ../mado-shokunin/tools/mado-verify.sh
+d17d32a35946c71c1fc195e36178aa383f4a04d7172cc579b6e9e25fa537f27e  ../tsukuroi-shokunin/tools/tsukuroi-census.sh
+5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0  ../kumitate-shokunin/scripts/kimi-census.mjs
+6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f  ../kumitate-shokunin/scripts/sources-check.mjs
+597:PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+601:PIN_TSUKUROI=084951be50bcbfee5e3f22de3c270d87131550ea1ce8264a557a34c5809c78c5
+603:PIN_MADO=d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13
+611:PIN_SOURCESCHECK=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f

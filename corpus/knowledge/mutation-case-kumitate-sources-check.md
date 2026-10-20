@@ -217,3 +217,48 @@ is pending the L1 install.
   (used-by `mutation-score-semantics.md`) and S052, S056, S057 (used-by
   `mutation-case-kumitate-round-gate.md`) need this entry added to used-by. The
   coverage-map row and LOG entry are routed under QUALITY 7.
+
+## Errata — round 18 wave 2 (2026-10-20, append-only)
+
+Appended after the non-author wave-2 reads at `01d586ddbc5fcd78659557c4e93a6ee8517b87d1`;
+the lines above stay as written.
+
+- **ER8-1 install and sources.** The leg is installed in `tools/mutate-and-run.sh`
+  since `58e5d53` (§0 "untracked" and §5 "not installed at base" describe the
+  pre-landing state). S008 is `mined` since `58e5d53`, with this entry as its
+  used-by; S001, S052, S056 and S057 list this entry in used-by since round 18.
+  Replay at `01d586d`: `REGRESSION: PASS (cases=8 passed=8)`, leg 8
+  `match=10/10 flips=0` (`.ufo/waves/round-18/w2/RerunC1.md`, `CR21.md`, `CR22.md`).
+- **ER8-2 §4 survivors probed off-suite** (`.ufo/evidence/round-18/sources-check/survivor-probes/<ID>/`):
+
+  | ID | Off-suite input | Pristine vs mutant | Reading |
+  |---|---|---|---|
+  | S_VERDICT | fixture with one KIND_ENUM row | final line `DRIFT (KIND_ENUM)` vs `DRIFT [KIND_ENUM]` | non-equivalent; breaks the header's line contract (`sources-check.mjs:39-44`) |
+  | S_DUP_LINE | duplicate-id fixture | `ID_DUPLICATE` at `SOURCES.md:8` vs `:9` (text and `--json` line) | non-equivalent |
+  | S_ENTRY_COUNT | one source-headed entry | `entries_with_source=1` vs `2` (text and `counts.entriesWithSource`) | non-equivalent; the count is in the header contract |
+  | S_FILE_READ | readable SOURCES.md + one unreadable/unopenable knowledge entry | `FAIL-CLOSED (READ_FAILED)` vs `(SOURCES_MISSING)`, both exit 2 | non-equivalent; the kind mapping is code-only, not in the header |
+  | S_KIND | RECHECK_OVERDUE fixture | corpus output byte-identical; only `--help`'s kind list differs | equivalent on corpus output; distinguishable on help output only |
+
+  Four of five survivors are suite gaps with a distinguishing input; S_KIND is
+  a declaration-only gap. Recommendations travel to kumitate (`.ufo/waves/round-18/w2/KumitateRouting.md`: six additive selftest checks, each killing one survivor on a copy).
+- **ER8-3 kill attribution** (`.ufo/evidence/round-18/sources-check/attribution/`):
+  every predicted killing case fails for its mutant (5/5); K_STRICT's is the only
+  failing check. §6's statement that K_ROWS's kill depends on host awk is wrong:
+  with awk hidden from PATH the parity check SKIPs and K_ROWS still dies on four
+  row-count checks (41/45). The *predicted* case for K_ROWS is the one host-dependent check.
+- **ER8-4 ruler note.** Command D counts header lines only; an extra comment line
+  would raise it without a leg (`.ufo/waves/round-18/w2/RerunC1.md` M2). The
+  round-17/18 measure's `ledger_guardrail` (header legs = regression calls =
+  selftest tuples, 8/8/8 at `01d586d`) is the cross-check to cite with it.
+- **ER8-5 further corrections** (`.ufo/waves/round-18/w2/ReviewCase8Entry.md`):
+  the "S066 record" mentions (`:1`, `:80`) mean the wave-1 draft file
+  `.ufo/waves/round-18/sources/S066-B02SrcGoogleMutation.md`, whose quote now
+  backs registry row **S008**; registry row S066 is RFC 8259 and is not cited
+  here. "44 of 46 checks assert (exit, kind) only" (`:123`) is false: at most 32
+  do, 14 assert other output. Case 7's `suite.txt` is byte-identical to this
+  case's, not only the same shape. The control hash ends `…5e5f`. The L1 check
+  receipt `.ufo/evidence/round-18/leg8-L1-check.txt` was taken with a staged
+  runner whose leg-8 suite string was still the bare `node "$MUTANT" --selftest`
+  (fixed before landing); the landed runner's replay is the wave-2 evidence in
+  ER8-1. `SKILL.md:605`, `:629-630`, `LOG.md:1496-1498` and `SCORECARD.md:1616`
+  in §3/§6 are kumitate's files.

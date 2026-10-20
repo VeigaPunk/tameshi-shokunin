@@ -1,0 +1,58 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/stmp",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR44-Ez7Ttp/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR44-Ez7Ttp/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "set -u\nX=/tmp/tameshi-r18w2-CR44-Ez7Ttp/rep; rm -rf \"$X\"; mkdir -p \"$X\"\nE=.ufo/evidence/round-16/round-gate\ngit -C ~/Projects/shokunin/kumitate-shokunin show 364f1d5954158ef8844bca4a5fef57b05d2f2ca5:scripts/round-gate.mjs > \"$X/round-gate.mjs\"\nsha256sum \"$X/round-gate.mjs\"\nfor k in 1 2 3; do\n  ( export MUTANT=\"$X/round-gate.mjs\" WORKDIR=\"$X/work\" DEFECT_ID=CTL && bash -c \"$(cat \"$E/suite.txt\")\" > \"$X/run$k.out\" 2> \"$X/run$k.err\"; echo \"run$k exit=$?\" )\n  rm -rf \"$X/work\"\ndone\nsha256sum \"$X\"/run?.out\nwc -c \"$X\"/run?.err | tail -1\ngrep -c '^PASS  \\[' \"$X/run1.out\"; grep -m1 'ROUND_GATE_SELFTEST:' \"$X/run1.out\"\ncmp -s \"$X/run1.out\" \"$X/run2.out\" && echo \"run1==run2 bytes\" || echo \"run1!=run2 bytes\"\ncmp -s \"$X/run2.out\" \"$X/run3.out\" && echo \"run2==run3 bytes\" || echo \"run2!=run3 bytes\"\ncmp -s \"$X/run1.out\" \"$X/run3.out\" && echo \"run1==run3 bytes\" || echo \"run1!=run3 bytes\"\necho \"differing lines run1 vs run2: $(diff \"$X/run1.out\" \"$X/run2.out\" | grep -c '^<')\"\ndiff \"$X/run1.out\" \"$X/run2.out\" | grep '^<' | head -2 | cut -c1-200"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-e2eyuv2m/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/round-gate/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 708
+}

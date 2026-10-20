@@ -1,0 +1,39 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport re,os\nfor f in sorted(os.listdir(\"tools\")):\n    p=os.path.join(\"tools\",f)\n    if not os.path.isfile(p) or f.endswith(\".json\"): continue\n    s=open(p,encoding=\"utf-8\",errors=\"replace\").read()\n    git_calls=len(re.findall(r\"[\\[\\(\\\"\\x27 ]git[\\\"\\x27]?[ ,]|\\bgit -C\\b|\\\"git\\\"|\\x27git\\x27\", s))\n    scrub=len(re.findall(r\"startswith\\([\\\"\\x27]GIT_|env -u GIT_|unset GIT_|GIT_\\*|compgen -e|k\\.startswith\\(\\\"GIT_\\\"\\)|not k.startswith\", s))\n    print(\"%-24s git_refs=%-4d scrub_refs=%-3d\" % (f, git_calls, scrub))\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR46-Pravyu/tmp/trace-inputs-run-szekuipw/pycache"
+    }
+  },
+  "inputs": {
+    "tools/bash-witness-study.py": "8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12",
+    "tools/context-capture.py": "c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726",
+    "tools/evidence-disposition.py": "66655a3a692b587fd0a6dc3f2cf0edd766a824eb86280753d0bd57efeecc1f44",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b",
+    "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c",
+    "tools/registry-check.py": "e072fd3995ca1df1477613f009193e20f3797bc4673ee3045a04afb9927c2899",
+    "tools/repeat-control.py": "296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25",
+    "tools/trace-inputs.py": "fb1d81f67551fb04e9e447cbc706ef5cc9cfd5208169004184b24ab15f3f2636",
+    "tools/witness-metadata.py": "df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

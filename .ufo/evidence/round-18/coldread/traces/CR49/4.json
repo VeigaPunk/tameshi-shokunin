@@ -1,0 +1,36 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import hashlib, json, re\nS = open(\"tools/mutate-and-run.sh\", encoding=\"utf-8\").read()\nE = \".ufo/evidence/round-18/sources-check/\"\nspec = open(E + \"sources-check.defects.spec\", encoding=\"utf-8\").read()\nsuite = open(E + \"suite.txt\", encoding=\"utf-8\").read()\npred = json.load(open(E + \"predictions.json\", encoding=\"utf-8\"))\nsweep = open(E + \"sweep/sweep.txt\", encoding=\"utf-8\").read()\nc7 = open(\".ufo/evidence/round-16/round-gate/suite.txt\", encoding=\"utf-8\").read()\nsha = lambda s: hashlib.sha256(s.encode()).hexdigest()\nm = re.search(r\"cat >\\\"\\$d/js-sources-check\\.spec\\\" <<'EOT'\\n(.*?)\\nEOT\\n\", S, re.S)\nemb = (m.group(1) + \"\\n\") if m else None\nprint(\"EMBEDDED_SPEC_FOUND\", bool(m), \"line\", S[:m.start()].count(\"\\n\") + 1 if m else None)\nprint(\"EMBEDDED_SPEC_EQ_PREREGISTERED\", emb == spec, \"emb_sha\", emb and sha(emb), \"prereg_sha\", sha(spec))\nlegs = {}\nfor mm in re.finditer(r\"regression_case_git (\\S+) \\\\\\n\\s+'([^']+)' \\\"\\$(PIN_\\w+)\\\" \\\"\\$(REV_\\w+)\\\" \\\\\\n\\s+\\\"\\$specs/(\\S+)\\\" '([^']*)' \\\"\\$(TABLE_\\w+)\\\"\", S):\n    legs[mm.group(1)] = dict(path=mm.group(2), pin=mm.group(3), rev=mm.group(4), spec=mm.group(5), suite=mm.group(6), table=mm.group(7))\nprint(\"LEGS\", len(legs), \" \".join(legs))\nL, R7 = legs[\"js-sources-check\"], legs[\"js-round-gate\"]\nprint(\"LEG8\", L[\"path\"], L[\"pin\"], L[\"rev\"], L[\"spec\"], L[\"table\"])\nprint(\"LEG8_SUITE_EQ_SUITE_TXT\", L[\"suite\"] == suite.rstrip(\"\\n\"), \"suite_txt_trailing_newline\", suite.endswith(\"\\n\"))\nprint(\"LEG8_SUITE_EQ_LEG7_SUITE\", L[\"suite\"] == R7[\"suite\"])\nprint(\"CASE7_SUITE_TXT_EQ_CASE8_SUITE_TXT\", c7 == suite, \"case7_sha\", sha(c7))\nprint(\"CASE7_SUITE_TXT\", repr(c7))\nprint(\"CASE7_HAS_ENV_I\", \"env -i\" in c7, \"CASE8_HAS_ENV_I\", \"env -i\" in suite)\nv = dict(re.findall(r\"^(PIN_SOURCESCHECK|REV_SOURCESCHECK|TABLE_SOURCESCHECK)=(\\S+)$\", S, re.M))\nprint(\"PIN_SOURCESCHECK\", v[\"PIN_SOURCESCHECK\"]); print(\"REV_SOURCESCHECK\", v[\"REV_SOURCESCHECK\"])\ntable = dict(p.split(\":\") for p in v[\"TABLE_SOURCESCHECK\"].strip(\"'\").split(\",\"))\nprint(\"TABLE_KILLED\", sum(x == \"KILLED\" for x in table.values()), \"/\", len(table), \"SURVIVED\", \",\".join(k for k, x in table.items() if x == \"SURVIVED\"))\nP = {k: d[\"prediction\"] for k, d in pred[\"predictions\"].items()}\nmeas = dict(re.findall(r\"^DEFECT (\\S+): (KILLED|SURVIVED|INCONCLUSIVE)\", sweep, re.M))\nprint(\"PREDICTIONS_HELD_VS_SWEEP\", sum(P[k] == meas.get(k) for k in P), \"/\", len(P))\nprint(\"TABLE_EQ_SWEEP\", table == meas, \"TABLE_EQ_PREDICTIONS\", table == P)\nprint(\"PRED_SPEC_SHA_EQ\", pred[\"spec_sha256\"] == sha(spec), \"PRED_SUITE_SHA_EQ\", pred[\"suite_sha256\"] == sha(suite), \"PRED_SUITE_EQ_SUITE_TXT\", pred[\"suite\"] == suite.rstrip(\"\\n\"))\nfor k in (\"MUTATE_DATE\", \"SWEEP_CONTEXT_COMMIT\", \"SWEEP_SPEC_SHA256\", \"SWEEP_TARGET_RECHECK\", \"PREDICTION_MATCH\", \"MEASURED_KILL_RATE\"):\n    print(k, re.search(r\"^\" + k + r\": (.*)$\", sweep, re.M).group(1))\nprint(re.search(r\"^MUTATE: .*$\", sweep, re.M).group(0))\nprint(re.search(r\"^CONTROL: .*$\", sweep, re.M).group(0))"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR49-cHBEBm/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR49-cHBEBm/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR49-cHBEBm/tmp/trace-inputs-run-xtvlh05a/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/round-gate/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b",
+    ".ufo/evidence/round-18/sources-check/predictions.json": "5749a27a92c862278a2c77307496f2b80b3c6619c6125def0ea0066b7252d35f",
+    ".ufo/evidence/round-18/sources-check/sources-check.defects.spec": "c8d24cb4b6b1a372543764fc27c9d16f65510a29fed1045bedb2863ce2408c91",
+    ".ufo/evidence/round-18/sources-check/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b",
+    ".ufo/evidence/round-18/sources-check/sweep/sweep.txt": "4ba2a595668439e6ca77bdb26fb462e71e88fe9079a50a77ea9e7d7ff2586097",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

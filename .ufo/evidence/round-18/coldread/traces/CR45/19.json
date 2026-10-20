@@ -1,0 +1,31 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "A=.ufo/evidence/round-16/coldread/assemble.py; F=/tmp/tameshi-r18w2-CR45-sUQfki/asm; run(){ label=$1; shift; python3 $A --skill $F/skill.md --out $F/ledger-$label.json \"$@\" >$F/$label.out 2>$F/$label.err; rc=$?; printf \"CASE %s exit=%s\\n\" \"$label\" \"$rc\"; sed \"s/^/  out| /\" $F/$label.out; sed \"s/^/  err| /\" $F/$label.err; }; run full $F/r_full.md; run full+rejected $F/r_full.md $F/r_bad.md; run half $F/r_half.md; run mismatch $F/r_full.md $F/r_mismatch.md; run badoverride --override $F/ov_noreason.json $F/r_full.md; python3 -c \"import json,sys; d=json.load(open(sys.argv[1])); m=d[\\\"_meta\\\"]; print(\\\"full+rejected meta: covered=%d/%d rejected=%s loaded=%d\\\" % (m[\\\"sections_covered\\\"], m[\\\"sections_total\\\"], [r[\\\"seat\\\"] for r in m[\\\"reports_rejected\\\"]], len(m[\\\"reports_loaded\\\"])))\" $F/ledger-full+rejected.json"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR45-sUQfki/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR45-sUQfki/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR45-sUQfki/tmp/trace-inputs-run-7qz9mpqp/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/coldread/assemble.py": "9ee9264aabe9f474b4ecf7cfa52b4d50274ee4a6b82d06df36812a006eb0a156"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

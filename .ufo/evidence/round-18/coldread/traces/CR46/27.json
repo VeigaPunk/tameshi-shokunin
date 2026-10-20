@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /tmp/tameshi-r18w2-CR46-Pravyu/fleet > /tmp/tameshi-r18w2-CR46-Pravyu/fx/pin.json; echo \"pin_disposition_exit=$?\"; python3 -c \"\nimport json,subprocess,hashlib,os\nd=json.load(open(\\\"/tmp/tameshi-r18w2-CR46-Pravyu/fx/pin.json\\\"))\nprint(\\\"top_keys=\\\",sorted(d))\nlegs=d.get(\\\"legs\\\") or d.get(\\\"rows\\\")\nprint(\\\"n_legs=\\\",len(legs), \\\"unavailable_count=\\\", json.dumps(d.get(\\\"counts\\\") or d.get(\\\"summary\\\")))\nenv={k:v for k,v in os.environ.items() if not k.startswith(\\\"GIT_\\\")}\nfor L in legs:\n    h=L[\\\"head\\\"]\n    print(\\\"LEG\\\",L[\\\"leg\\\"],\\\"repo=\\\",L[\\\"repo\\\"],\\\"path=\\\",L[\\\"path\\\"],\\\"head=\\\",json.dumps(h,sort_keys=True), \\\"content_status=\\\",L.get(\\\"content_status\\\"))\n    repo=os.path.join(\\\"/tmp/tameshi-r18w2-CR46-Pravyu/fleet\\\",L[\\\"repo\\\"])\n    g=lambda *a: subprocess.run([\\\"git\\\",\\\"-C\\\",repo]+list(a),capture_output=True,env=env)\n    raw_head=g(\\\"rev-parse\\\",\\\"HEAD\\\").stdout.decode().strip()\n    sym=g(\\\"symbolic-ref\\\",\\\"-q\\\",\\\"HEAD\\\")\n    br=h.get(\\\"branch\\\")\n    tip=g(\\\"rev-parse\\\",\\\"refs/heads/%s\\\"%br).stdout.decode().strip() if br else None\n    blob=g(\\\"cat-file\\\",\\\"blob\\\",\\\"refs/heads/%s:%s\\\"%(br,L[\\\"path\\\"])) if br else None\n    bsha=hashlib.sha256(blob.stdout).hexdigest() if blob is not None and blob.returncode==0 else None\n    print(\\\"   CHECK raw_HEAD=%s symref_rc=%d tip=%s head_differs_recomputed=%s tool_head_differs=%s tip_blob_sha=%s tool_blob_sha=%s match=%s\\\"%(raw_head, sym.returncode, tip, (raw_head!=tip) if tip else None, h.get(\\\"head_differs_from_branch\\\"), bsha, h.get(\\\"blob_sha256\\\"), bsha==h.get(\\\"blob_sha256\\\")))\n\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR46-Pravyu/tmp/trace-inputs-run-df1c22mx/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+    "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

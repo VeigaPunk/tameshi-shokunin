@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "\nfor f in verification.json verification-final.json context-receipt.json; do\n  echo \"$f added_in=$(git log --diff-filter=A --format=%h -- .ufo/evidence/round-14/$f) parent_of_adding_commit=$(git log --diff-filter=A --format=%P -- .ufo/evidence/round-14/$f)\"\ndone\npython3 -c 'import json\nfor f in (\"verification.json\",\"verification-final.json\",\"verification-verdict.json\"):\n    print(f, \"measured_commit\", json.load(open(\".ufo/evidence/round-14/\"+f))[\"measured_commit\"])'\ngit merge-base --is-ancestor 64314783836bb0d05ad06a774d7310fd3a23b5bd HEAD && echo \"measured 6431478 ancestor of read rev: yes\"\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR39-HFoTRo/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR39-HFoTRo/tmp/trace-inputs-run-h11qn9g8/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-14/verification-final.json": "e904e6938a123de55db492f7d04c1e18087c1783128ab9ed96e55d93c3ef52f2",
+    ".ufo/evidence/round-14/verification-verdict.json": "9a6eadde16339ff6da0821c808496e8a9007a3e0fa8d74e4c6dfcfac1204d46c",
+    ".ufo/evidence/round-14/verification.json": "1d480a0ddd0cd8a801d0ae38f7d774b6d772c8d0910bf6200c3e666696532939"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

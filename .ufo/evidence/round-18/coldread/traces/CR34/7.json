@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=284ab0f0b8b989ee73d9c00c0c0df0a59757af8d; R=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; for h in c611d5d52d1dfe9bf1184768ba4aef4e414a4a0f 606716f703f7699af458476a31fc78ddc9bf552c; do git log -1 --format=\"%H %ad %s\" --date=iso $h; git merge-base --is-ancestor $h $W && echo \"  ancestor-of-W: yes\"; done; echo \"== service-limits.md tracked paths @W\"; git ls-tree -r --name-only $W | grep -F service-limits; echo \"== service-limits.md tracked paths @R\"; git ls-tree -r --name-only $R | grep -F service-limits; echo \"== corpus/knowledge/service-limits.md @W vs @R\"; a=$(git show $W:corpus/knowledge/service-limits.md | sha256sum | cut -c1-64); b=$(git show $R:corpus/knowledge/service-limits.md | sha256sum | cut -c1-64); echo \"W=$a\"; echo \"R=$b\"; sha256sum corpus/knowledge/service-limits.md; echo \"== headings @R\"; grep -n -E \"^#{1,4} \" corpus/knowledge/service-limits.md; echo \"== commits touching it W..R\"; git log --format=\"%H %ad %s\" --date=iso $W..$R -- corpus/knowledge/service-limits.md"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-pdlha4mc/pycache"
+    }
+  },
+  "inputs": {
+    "corpus/knowledge/service-limits.md": "4fa8f039cdc446e63cf82dde9d9e718fafe4f85e212b8100f02706bec35730f0"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 27
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "DEC=/tmp/tameshi-r18w2-CR46-Pravyu/fx/decoy-reg; rm -rf $DEC; git init -q -b master $DEC && echo decoy > $DEC/f && git -C $DEC add f && git -c user.name=cr46 -c user.email=cr46@invalid -C $DEC commit -q -m decoy; before=\"$(git -C $DEC rev-parse HEAD) idx=$(sha256sum $DEC/.git/index | cut -c1-16)\"; echo \"control_unscrubbed_git: $(GIT_DIR=$DEC/.git git -C . rev-parse --verify -q 01d586ddbc5fcd78659557c4e93a6ee8517b87d1^{commit} || echo rev-not-found-via-inherited-GIT_DIR)\"; GIT_DIR=$DEC/.git GIT_WORK_TREE=$DEC GIT_INDEX_FILE=$DEC/.git/index python3 tools/registry-check.py --rev 01d586ddbc5fcd78659557c4e93a6ee8517b87d1 --only evidence-disposition-round18; echo \"registry_check_exit=$?\"; after=\"$(git -C $DEC rev-parse HEAD) idx=$(sha256sum $DEC/.git/index | cut -c1-16)\"; echo \"decoy_before=[$before] decoy_after=[$after] unchanged=$([ \"$before\" = \"$after\" ] && echo yes || echo NO) decoy_commits=$(git -C $DEC rev-list --count HEAD)\""
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR46-Pravyu/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/tameshi-r18w2-CR46-Pravyu/tmp/trace-inputs-run-pyy8z1lb/pycache"
+    }
+  },
+  "inputs": {
+    "tools/registry-check.py": "e072fd3995ca1df1477613f009193e20f3797bc4673ee3045a04afb9927c2899"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

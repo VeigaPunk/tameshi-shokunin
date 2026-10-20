@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "P=606716f703f7699af458476a31fc78ddc9bf552c; W=284ab0f0b8b989ee73d9c00c0c0df0a59757af8d; H=\"### What stays open \u2014 named, never closed by prose\"; for r in $P $W; do printf \"%s lines=%s bytes=%s lastbyte=\" ${r:0:8} \"$(git show $r:SKILL.md | wc -l)\" \"$(git show $r:SKILL.md | wc -c)\"; git show $r:SKILL.md | tail -c1 | od -An -c; printf \"  heading_at=\"; git show $r:SKILL.md | grep -n -F -x \"$H\" | cut -d: -f1 | tr \"\\n\" \" \"; echo; done; echo \"== write hunks (headers only)\"; git show -U0 --format= $W -- SKILL.md | grep \"^@@\"; echo \"== write numstat\"; git show --numstat --format= $W -- SKILL.md; echo \"== parent is byte-prefix of write?\"; n=$(git show $P:SKILL.md | wc -c); cmp <(git show $P:SKILL.md) <(git show $W:SKILL.md | head -c $n) && echo \"PREFIX-EQUAL bytes=$n\"; echo \"== files touched by write\"; git show --stat --format= $W | tail -n 3"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR34-1E2NXJ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-ty26w5it/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 42
+}

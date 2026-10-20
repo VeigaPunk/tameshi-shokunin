@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "cd /tmp/tameshi-r18w2-CR11-dzYPvQ/work/evidence && for f in B1 B2 B3 B4 B5; do echo \"== $f\"; grep \"^FAIL \" $f.selftest.txt | cut -c1-230; done; echo \"== B6 distinct diagnostics\"; grep \"^FAIL \" B6.selftest.txt | sed -E \"s/^FAIL ([^:]+: [^;]*); output.*/\\1/\" | sed -E \"s/^.*: (exit [0-9] wanted [0-9])$/\\1/\" | sort | uniq -c; echo \"== every run summary\"; grep -h \"^TSUKUROI_CENSUS_SELFTEST\" control.selftest.txt B*.selftest.txt | sort | uniq -c; echo \"== counts of HEALTHY/DEGRADED/BLOCKED expectations in pinned check() calls\"; grep -oE \"^  check .* [012] (HEALTHY|DEGRADED|BLOCKED)\" ../pristine.sh | grep -oE \"(HEALTHY|DEGRADED|BLOCKED)$\" | sort | uniq -c; echo \"== zero-argument invocation in check()\"; sed -n \"766p\" ../pristine.sh; sha256sum ../pristine.sh ../hardened-aae45531.sh ../succ-af8adf1.sh ../succ-70fede2.sh results.json"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR11-dzYPvQ/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR11-dzYPvQ/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-hybq2h2b/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

@@ -1,0 +1,59 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/stmp",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR44-Ez7Ttp/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR44-Ez7Ttp/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "set -u\nR=$(ls -d /tmp/tameshi-r16-rg.*)\nE=.ufo/evidence/round-16/round-gate; P=$E/survivor-probes/probes.mjs\nX=/tmp/tameshi-r18w2-CR44-Ez7Ttp/probes; rm -rf \"$X\"; mkdir -p \"$X\"\nsha256sum \"$R/work/pristine.round-gate.mjs\" \"$R/work/mutant-A2.round-gate.mjs\" \"$R/work/mutant-B2.round-gate.mjs\" \"$R/work/mutant-E1.round-gate.mjs\" | cut -c1-16,65-\nrun() { # id probe gate tag\n  GATE=\"$3\" FXROOT=\"$X/fx-$1-$2-$4\" node \"$P\" \"$2\" > \"$X/$1-$2-$4.log\" 2>&1; local rc=$?\n  echo \"$1 $2 $4 exit=$rc :: $(grep -m1 '^## ' \"$X/$1-$2-$4.log\")\"\n}\nfor sp in A2:P1 A2:P1b B2:P6 E1:P9; do id=${sp%%:*}; pr=${sp#*:}\n  run \"$id\" \"$pr\" \"$R/work/pristine.round-gate.mjs\" pristine\n  run \"$id\" \"$pr\" \"$R/work/mutant-$id.round-gate.mjs\" mutant\ndone\necho \"## C1059: c1059-probe.sh (case note \u00a74; writes its two logs beside itself in this /tmp clone)\"\nbash \"$E/survivor-probes/c1059-probe.sh\" > \"$X/c1059.stdout\" 2> \"$X/c1059.stderr\"; echo \"c1059-probe.sh exit=$?\"\ngrep -E '^(exit=|ROUND_GATE)' \"$E/survivor-probes/c1059-pristine.log\" | sed 's/^/pristine: /'\ngrep -E '^(exit=|ROUND_GATE)' \"$E/survivor-probes/c1059-mutant.log\" | sed 's/^/mutant:   /'"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-_nlk0j7u/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/round-gate/survivor-probes/c1059-probe.sh": "ee03b939a4659574256226008d3a8d3b423fc950dc2981332f13f18ec0741b25",
+    ".ufo/evidence/round-16/round-gate/survivor-probes/probes.mjs": "131c2835b1b5ce5fab60960fbca864c444d2cd75c19f08da410616e49bd332fb"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 67
+}

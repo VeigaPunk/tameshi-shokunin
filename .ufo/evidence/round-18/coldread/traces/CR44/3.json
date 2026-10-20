@@ -1,0 +1,58 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/stmp",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+    "env",
+    "-i",
+    "PATH=/run/user/1000/fnm_multishells/4348_1792501188326/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2768_1792501039009/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1588_1792501031875/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+    "HOME=/tmp/tameshi-r18w2-CR44-Ez7Ttp/home",
+    "TMPDIR=/tmp/tameshi-r18w2-CR44-Ez7Ttp/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "bash",
+    "-c",
+    "\nR=01d586ddbc5fcd78659557c4e93a6ee8517b87d1; E=.ufo/evidence/round-16/round-gate; K=~/Projects/shokunin/kumitate-shokunin\necho \"## e69b488 identity\"; git show -s --format=\"%H committer=%cI author=%aI %s\" e69b488\ngit merge-base --is-ancestor e69b488 $R && echo \"e69b488 is an ancestor of read rev\"\necho \"## pre-registered files at e69b488 vs read rev\"\nfor f in round-gate.defects.spec predictions.json suite.txt; do printf \"%s e69b488=%s read-rev=%s\\n\" $f \"$(git show e69b488:$E/$f | sha256sum | cut -c1-64)\" \"$(git show $R:$E/$f | sha256sum | cut -c1-64)\"; done\necho \"## sweep evidence is absent at e69b488 and added later\"\ngit cat-file -e e69b488:$E/sweep/results.tsv 2>/dev/null && echo \"results.tsv present at e69b488\" || echo \"results.tsv absent at e69b488\"\ngit log --diff-filter=A --format=\"results.tsv added in %h committer=%cI\" -- $E/sweep/results.tsv\ngrep -m1 \"^MUTATE_DATE:\" $E/sweep/sweep.log\necho \"## kumitate pin\"\ngit -C $K rev-parse \"364f1d5^{commit}\"\ngit -C $K show 364f1d5:scripts/round-gate.mjs | sha256sum\ngit -C $K show 364f1d5:scripts/round-gate.mjs | wc -lc\ngit -C $K log -1 --format=\"last-touching commit of scripts/round-gate.mjs at HEAD: %H\" HEAD -- scripts/round-gate.mjs\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR44-Ez7Ttp/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-0a6fcdvq/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-16/round-gate/sweep/sweep.log": "03e82be78d25550370b829c6be48360f82906f5db135520c33b33a41f917b969"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

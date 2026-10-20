@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport hashlib,subprocess\nb=subprocess.run([\"git\",\"show\",\"01d586ddbc5fcd78659557c4e93a6ee8517b87d1:SKILL.md\"],capture_output=True,check=True).stdout\nL=b.split(b\"\\n\")\nwant=\"279f6681d8267106e3dc06df2534a9882ecd4f4735989020d40528306baad70c\"\nfor a in (1435,1436):\n  for e in range(1444,1452):\n    for tail in (b\"\",b\"\\n\"):\n      body=b\"\\n\".join(L[a-1:e])+tail\n      h=hashlib.sha256(body).hexdigest()\n      if h==want: print(\"MATCH lines %d-%d trailing_newline=%s\"%(a,e,bool(tail)))\nprint(\"blank_1448=%s\"%(L[1447].strip()==b\"\"))\n"
+  ],
+  "cwd": "/tmp/tameshi-r18w2-CR33-wWgmuG/fleet/tameshi-shokunin",
+  "root": "/tmp/tameshi-r18w2-CR33-wWgmuG/fleet/tameshi-shokunin",
+  "rev": "01d586ddbc5fcd78659557c4e93a6ee8517b87d1",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-1_a1yt26/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 3
+}
