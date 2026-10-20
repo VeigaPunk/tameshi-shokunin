@@ -921,3 +921,26 @@ All appended; `corpus/lessons/round-1.md` final section.
   counting receipt names both revisions and keeps scalar delta0.
   `correction-sweep.txt` preserves the touched-file superseded-mention sweep;
   historical clauses remain explicitly superseded, not silently rewritten.
+
+## Round 15 — context verdict means gate (2026-10-20)
+
+- C1 calibration capability at baseline
+  `a9cf4da78f2514c7bedd91a850a88590009d7df0`, tied-lowest6 with depth6,
+  scalar6 unchanged: outside `corpus/lessons/round-14-verifier-spotcheck.md`
+  Routed defects5 identifies the context instrument's gate behavior,
+  helper-only controls and ambiguous exit64 classes.
+  Declaration `.ufo/evidence/round-15/claims.json`; motivating source
+  `capture-context.py:553-580` compares persisted expectations and returns1.
+- Preserve the historical round14 script and its pinned receipts. The
+  maintained `tools/context-capture.py` receives public isolated CLI
+  self-invocation and retained-receipt replay; active SKILL registry describes
+  actual behavior, not the old probe label. QUALITY17 learns the outside
+  defect (`corpus/lessons/round-15.md`, Mistakes).
+- S049 official Python subprocess docs re-opened2026-10-20, run() env
+  paragraph; explicit child setup is source-backed, actual fixture behavior
+  requires retained runtime proof. Source changes and limits are in the
+  lesson Gate. No historical injection is newly proved.
+- Freshness successor sweeps, whole-F7 reuse, F1 interop, legacy provenance
+  headers, operator runbook repair and current-page cold-read remain open.
+  This is no seventh recorded mutation case and earns no SHONEN points.
+  Same-lane reviewers advise; only separate non-author closure admits.
