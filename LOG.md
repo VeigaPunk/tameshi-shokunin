@@ -732,3 +732,15 @@ All appended; `corpus/lessons/round-1.md` final section.
   expansion improved (sourced F3 capability), quality improved (source/
   evidence repairs), discernment improved (outside disagreement learned in
   criterion13), without pretending a fresh outside round-12 sample exists.
+
+- Measured content landed as `9df9212d33dc2dbda133e88f28ad47bb08839a5b`.
+  Re-executed `python3 .ufo/evidence/round-12/measure.py --rev
+  9df9212d33dc2dbda133e88f28ad47bb08839a5b` → artifact1,
+  witness_classified10, no unresolved, recorded_cases6, calibration6,
+  source_rows44 (mined15/queued26/rejected3), exit 0;
+  retained `after-committed.json`. Baseline same command against
+  `18ad5d050ef4bcd830fe513825baed878f025024` is
+  `resumed-before.json` (artifact0, absent summary, cases6/calibration6).
+  SCORECARD now records both falsifiable deltas, measured content hash,
+  demonstrated capability row and honest scalar deltas 0. This metadata
+  commit and the fleet report carry the already measured content pointer.

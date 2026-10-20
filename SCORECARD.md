@@ -240,6 +240,7 @@ written and are superseded here:
 | sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, 44 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; `corpus/SOURCES.md` | fleet round 1 (kaika) |
 | mutation sweep runner | inject → run → restore single-edit mutants with a green-control gate, verdict lines and byte-identity proof | `bash tools/mutate-and-run.sh --selftest` → `MUTATE_SELFTEST: 80/80 pass`, exit 0 (`.ufo/evidence/kaika-round-1/capability-demo/h1a-selftest-host.stdout`) | historical round 3 (`SCORECARD.md:16`); re-demonstrated fleet round 1 |
 | six-leg regression ledger | replay every recorded mutation case at its pinned blob; exact expectation | `bash tools/mutate-and-run.sh --regression` → `REGRESSION: PASS (cases=6 passed=6 …)`, exit 0 (`…/capability-demo/h1b-regression.stdout`) | historical round 7 (four legs) / round 10 (six); re-demonstrated fleet round 1 |
+| repeated pristine-control gate | observe N≥3 exact exit/stdout/stderr tuples, distinguish mismatch from unavailable/uniform-nonzero baseline, validate digest-pinned observation snapshots | `python3 tools/repeat-control.py --selftest` → PASS (29 cases), exit 0; real bash controls match; red-before loop mutant fails the same mismatch oracle, restored loop passes; `.ufo/evidence/round-12/verification-final.json`, `oracle-repair.json`; measured `9df9212d33dc2dbda133e88f28ad47bb08839a5b` | round 12; lane demonstrated, outside admission pending |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -275,3 +276,53 @@ Round 2 (declared fleet round 1, kaika):
 
 - none retired; record with justification when an axis is retired.
 
+
+## Round 12 — measured claims (steered round 12, 2026-10-20)
+
+The old round-2 plan above supplied F3/F2 starting points, not permission
+to add a seventh ledger leg. Freshness successor re-sweeps are not claimed.
+The “6 → 7” prediction is rejected and superseded: reanalysis of the same
+bash target is depth within a case, not a new independent case.
+
+Counting command, run from this repo on both revisions:
+`python3 .ufo/evidence/round-12/measure.py --rev REV`.
+Before: `18ad5d050ef4bcd830fe513825baed878f025024`;
+after/measured content: `9df9212d33dc2dbda133e88f28ad47bb08839a5b`.
+Exact outputs: `.ufo/evidence/round-12/resumed-before.json` and
+`after-committed.json`. This metadata commit records that already
+measured content; it does not pretend to measure itself.
+
+| Claim | Axis / type | Falsifiable before → after | Score delta | Verdict / evidence | Measured commit |
+|---|---|---|---|---|---|
+| C1 repeated pristine controls | calibration; capability acquisition (F3) | repeat-control artifact 0 → 1, accompanied by executed 29-case CLI selftest, frozen match/mismatch, three actual matching bash controls and failing single-control mutant | calibration 6 → 6, delta 0; capability gained, no promotion points | improved, lane-measured; `verification-final.json`, `oracle-repair.json`, `SKILL.md` gate registry | `9df9212d33dc2dbda133e88f28ad47bb08839a5b` |
+| C2 bash witness detail | depth; axis move on existing case (F2) | bash summary absent / classified defects 0 → 10, 8 witness hits / 0 accidental / 2 survived / 0 inconclusive; 14 exercised + 2 skipped case slots | depth 6 → 6, delta 0; six independent ledger cases remain six | improved, bounded case-label attribution; six specific hits, two generic-only, one extra B3 failure; `BashWitness/summary.json`, main `check`/`count` in final verification receipt | `9df9212d33dc2dbda133e88f28ad47bb08839a5b` |
+
+Both owned axes tie at 6; C2 works the lowest depth axis. C1 may be
+read as capability acquisition without forcing the historical
+promotion-restraint score to count a tool. Their runtime commands are
+independent; C2 does not import or invoke C1. Neither is a blind
+prediction test or a proof of assertion-level causality.
+
+Scalar commands D and C remain historical: D prints recorded_cases=6;
+C prints asserted_mark_upper_bound=8, not the pinned score. The outside
+round-1 adjudication excludes box 3; measure.py reports scored boxes
+1/2/4 and calibration_restraint_score=6. Marks are not a fresh authority
+or source-support check. The unique-gate count is a reported guardrail,
+not automatic duplicate-proofing of command D.
+
+| Axis | Round-12 lane verdict | Bound |
+|---|---|---|
+| depth | improved (detail), scalar unchanged 6 | C2; no new recorded case |
+| calibration | improved (capability), scalar unchanged 6 | C1 and learned criterion13; no independent promotion credit |
+| coverage | unchanged | new F3 knowledge indexed, no numerical coverage claim |
+| operability | unchanged | runner unchanged; 80-case selftest and six-leg regression PASS |
+| freshness | unchanged | no stale-successor re-pin claimed |
+| adjacency | unchanged | sibling target/object store read-only; no province takeover |
+
+Admission remains pending separate non-author closure and admit/reject
+sampling. All four SHONEN marks stay `[~]`; box 3 stays scope-limited
+and unscored. Saturation 8 and stagnation window 2 remain; no retirement.
+
+Next intended claim: freshness — measure and disposition the existing
+stale-successor ledger debt at actual pinned revisions. This is a plan,
+not a round-13 execution or pre-claimed outcome.
