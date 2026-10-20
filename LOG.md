@@ -642,3 +642,12 @@ measured-commit cells → `121696b`, K2 pointer → census v2. Quality
 trend corrected to `unchanged` (the earlier entry said `improved`).
 Fleet census `TZ=UTC … sources-census.sh validate` → ok, exit 0.
 All appended; `corpus/lessons/round-1.md` final section.
+
+- 2026-10-17 — README: Devin wiki link. Operator directive (2026-10-17):
+  insert the Devin wiki link into the README header of every repository
+  with a generated wiki. `README.md` was created (lane-header convention)
+  with a `**Wiki:**` link to
+  https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/tameshi-shokunin?branch=master
+  in the merged PR #2 — this entry is the change's required evidence record,
+  appended retroactively after the merge. Documentation-only change; no
+  round run, no axis moved.
