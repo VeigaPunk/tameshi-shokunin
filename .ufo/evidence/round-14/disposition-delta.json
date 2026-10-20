@@ -1,0 +1,14 @@
+{
+  "name": "sole_disposition_delta",
+  "argv": [
+    "python3",
+    "-c",
+    "import json\nfrom pathlib import Path\np=Path(\".ufo/evidence/round-14\")\na=json.loads((p/\"dispositions-before.json\").read_text())\nb=json.loads((p/\"dispositions.json\").read_text())\nar=a.pop(\"rows\");br=b.pop(\"rows\")\nassert a==b\nchanged=[x[\"name\"] for x,y in zip(ar,br,strict=True) if x!=y]\nassert changed==[\"producer_before\"]\nold=next(x for x in ar if x[\"name\"]==\"producer_before\")\nnew=next(x for x in br if x[\"name\"]==\"producer_before\")\nassert old[\"receipt\"]==new[\"raw_receipt\"] and old[\"check\"]==new[\"raw_check\"]\nprint(json.dumps({\"top_level_pins_unchanged\":True,\"changed_rows\":changed,\"original_observation_binding_preserved\":True,\"expected_rows\":len(br)},sort_keys=True))\n"
+  ],
+  "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "started_at": "2026-10-20T06:41:29.771843+00:00",
+  "exit": 0,
+  "expected_exit": 0,
+  "stdout": "{\"changed_rows\": [\"producer_before\"], \"expected_rows\": 12, \"original_observation_binding_preserved\": true, \"top_level_pins_unchanged\": true}\n",
+  "stderr": ""
+}

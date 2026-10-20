@@ -243,6 +243,7 @@ written and are superseded here:
 | repeated pristine-control gate | observe N≥3 exact exit/stdout/stderr tuples, distinguish mismatch from unavailable/uniform-nonzero baseline, validate digest-pinned observation snapshots | `python3 tools/repeat-control.py --selftest` → PASS (29 cases), exit 0; real bash controls match; red-before loop mutant fails the same mismatch oracle, restored loop passes; `.ufo/evidence/round-12/verification-final.json`, `oracle-repair.json`; measured `9df9212d33dc2dbda133e88f28ad47bb08839a5b` | round 12; lane demonstrated, outside admission pending |
 | six-leg content-disposition probe | emit configured-pin, committed-HEAD and worktree SHA observations for every recorded leg, while explicitly withholding verdict reuse | `python3 tools/pin-disposition.py --selftest` → 18/18 PASS0; real read changed3/unchanged3/unavailable0; `.ufo/evidence/round-13/verification.json`, `pin-dispositions.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
 | exposed witness provenance correction | validate a new digest-anchored non-blind companion without rewriting frozen observations; prevent wrong-nesting in future producer output | metadata selftest39/39 PASS0; null-only companion FAIL1/corrected PASS0; producer same-oracle40/41 FAIL1→41/41 PASS0; `.ufo/evidence/round-13/producer-oracle-repair.json`, `verification-verdict.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
+| effective expectation reconciliation | account for every historical expected row, reject an exit-only setup crash, and preserve that raw failure under a checked explicit oracle supersession | `python3 tools/evidence-disposition.py --selftest` → PASS34/34 exit0; same checker before FAIL1/contains_missing→after CLEAN0, eleven effective+one superseded; `.ufo/evidence/round-14/verification-final.json`, S050; executable measurement6431478 | round14; lane demonstrated, separate outside admission pending |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -393,3 +394,62 @@ Next intended claim: freshness — prepare one owner-opted-in successor
 sweep at an actual current pinned revision (kimi now joins tsukuroi/mado
 debt), including explicit spec remapping and a retained run, or an honest
 intake refusal. This is a plan, not an execution or future round claim.
+
+## Round 14 — measured calibration capability (2026-10-20)
+
+C1 works **calibration6**, tied with depth6 for lowest non-retired axis.
+No stagnation waiver, retirement, scalar inflation or additional axis claim.
+The intended freshness successor sweep instead receives the contract's
+honest intake refusal: `.ufo/waves/round-14/w1/FreshnessIntake.md`,
+sections7.1–7.4. Its bounded scans found no current service request, kimi's
+old D10 anchor absent, mado's old anchors duplicated, and tsukuroi in flight.
+That observed intake state is not a statement that siblings cannot advance.
+Clean committed target bytes, an owner request and current unique mapped
+spec remain prerequisites; successor sweep debt is not closed.
+
+| Claim | Axis / type | Falsifiable before → after | Score delta | Evidence and measured revision |
+|---|---|---|---|---|
+| C1 effective expectation reconciliation | calibration; capability acquisition | no complete disposition tool/ledger → gate and twelve accounted rows; constructed all-effective ledger11 pass+1 fail → eleven effective pass+one explicit valid supersession; one raw contains mismatch remains visible | 6→6, delta0; no promotion points | same checker `--root . --dispositions FILE --json`, before exit1/expected_contains_missing and after exit0; selftest34/34 PASS0; S050 and `verification-final.json`; executable/content measured6431478 |
+
+Executable measurement commit:
+`6431478` (full hash in `expected-runtime-final.json` and
+`verification-final.json`). Same static counting command for baseline and
+delivered tree: `python3 .ufo/evidence/round-14/measure.py --rev REV`;
+`before.json` is the actual historical baseline. `dispositions-before.json`
+is constructed this round to expose the unresolved row, not a historical
+file or a new producer-fix experiment. Baseline and delivered static counts
+are appended after the committed-tree measurement below.
+
+Initial code at `0c6e36d0bd2fd98077de4cff4c90c6f467c2e1fb` already
+reconciled the real frozen rows but failed18 of34 own selftest fixtures.
+`verification.json` retains that failure. Two fixture construction repairs
+(the missing GAMMA_OK marker and JSON-brace formatting) leave production
+predicates and literal expected IDs unchanged; the same selftest then passes
+34/34. No failed output was erased or silently called a pass.
+
+Prospective context capture at0c6e36d exits0: explicit bounded GIT_DIR
+override, plain-git control0→128, equal raw JSON including the timestamp,
+normalization excluding only observed_at, six header/PIN/REV/call mappings
+all true. It is not C1's counting oracle, a retrospective r13 setup proof
+or evidence of broad environment independence. `context-receipt.json`.
+
+| Axis | Round14 lane verdict | Bound |
+|---|---|---|
+| depth | unchanged, scalar6 | no new target detail or seventh recorded mutation case |
+| calibration | improved, scalar6 | C1 verified capability; QUALITY15–16 learn prior outside-routed defects |
+| coverage | unchanged | no new covered target surface or whole-frontier completion |
+| operability | unchanged | C1 capability credited once, not another independent axis move |
+| freshness | unchanged | intake refusal, not a successor execution or new rate |
+| adjacency | unchanged | sibling reads only; product gate ownership remains with owners |
+
+Trend verdicts: expansion unchanged (existing ground, not new admitted
+knowledge); quality improved (stale expectation and deferred empirical
+account corrected by addition); discernment improved (prior outside
+disagreement becomes grounded QUALITY15–16 and a failure-backed checker).
+Current-round non-author admit/reject sampling and admission remain pending
+separate closure. All SHONEN boxes stay `[~]`; box3 stays unscored.
+Saturation8/window2 unchanged.
+
+Next intended claim remains freshness: accept one owner-opted-in,
+clean-current-revision successor spec and execute a bounded sweep, or retain
+an honest intake refusal. No next round or outcome is preclaimed.

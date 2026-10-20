@@ -1584,8 +1584,10 @@ Recipe, from this lane root:
 3. Run the same command with `dispositions.json`: the only repair is that
    row's explicit supersession, retaining raw receipt/check and both passing
    mechanism replacements. Every original expectation remains accounted for.
-4. `.ufo/evidence/round-14/verification.json` retains executed selftest and
-   frozen before/after outcomes; the revision measured is recorded separately.
+4. `.ufo/evidence/round-14/verification-final.json` retains the corrected
+   selftest and frozen before/after outcomes; `verification.json` retains the
+   initial18-of34 fixture failures rather than disguising them as green.
+   The revision measured is recorded separately.
    A non-author closure reads committed evidence, never executes sibling gates.
 5. `python3 .ufo/evidence/round-14/capture-context.py` is an opt-in prospective
    probe with read-only sibling reads; it writes only its new round14 receipt.

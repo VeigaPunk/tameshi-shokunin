@@ -32,6 +32,15 @@ Mutable-field change after the empirical addendum landed: S049 used-by
 corpus/knowledge/incremental-pin-disposition.md`; status mined→mined and
 recheck on-release→on-release. No immutable registry cell changed.
 
+S050 was opened this round at `tools/evidence-disposition.py`, docstring
+lines10–13, versionr14; located quote (five words): “It never executes receipt
+argv.” Access2026-10-20. Own-work source path replaces an external URL for this
+row, per contractv1. The scoped claim C1 rests on S050 and its demonstrated
+command outcomes, not Python documentation pretending to prove reconciliation.
+S050 enters A/own-work, mined, used-by this lesson; the draft cadence
+on-change→on-release is recorded here, before source-row landing. No immutable
+cell or earlier row was rewritten; next unused idS051.
+
 Candidates and bounded decisions:
 - Admit a complete explicit disposition for each of the twelve historical
   expected checks, preserving the raw setup crash and replacing its proof
@@ -118,3 +127,50 @@ using its required relative path succeeded. Dispatch payload was not changed.
 Initial lane state was clean; non-author-owned historical closure lesson is
 untouched. Tool-install disclosures and integrated runtime results are
 recorded in the appended completion section, not predicted here.
+
+## Completed execution and effective source — round 14
+
+Executed content revisions:
+- Initial implementation `0c6e36d0bd2fd98077de4cff4c90c6f467c2e1fb`:
+  `verification.json`. Real frozen before exits1, after0; context capture0.
+  Own selftest fails18 of34 cases. Those failures remain visible.
+- Corrected executable revision6431478 (full hash in
+  `expected-runtime-final.json`): `verification-final.json`.
+  Same `python3 tools/evidence-disposition.py --selftest` now prints
+  `SELFTEST: PASS (34/34)`, exit0. Only two fixture construction errors changed:
+  absent GAMMA_OK marker and raw-JSON brace formatting. Production predicates
+  and literal fixture finding IDs did not change.
+- Same checker with the two constructed ledgers: before has12 effective,
+  11 pass/1 fail, exit1, exactly producer_before/expected_contains_missing;
+  after has11 effective passing plus1 superseded, exit0/findings0.
+  The superseded record still carries raw_expectation_failed=true and the
+  original contains mismatch. Both named mechanism replacements are checked
+  against their own original expectations, not executed anew.
+- `context-receipt.json` records actual GIT_DIR override, same argv/cwd,
+  raw stdout equality (including timestamps), normalization exclusions exactly
+  [observed_at], and plain-git poison control exit0→128. Six complete mappings
+  each have five true checks: header, PIN name/value, REV name/value, call
+  repo/path, constant-name identity. Both pin probe runs exit0.
+  This finite experiment does not test valid-repo redirects or all variables.
+- `guardrails.json` records the same bounded context oracle accepting the
+  actual receipt (exit0/context_setup_recorded) and rejecting a missing-only
+  injected_env field (exit1/missing_injected_environment). An equal-valued
+  REV_BASH→REV_CHECKLIST call-token swap is independently rejected by the
+  mapping parser. These controls earn no new mutation-rate or target-case count.
+- Historical integrity command in `guardrails.json` exits0 over all round12/
+  round13 evidence, old tools/runner, SHONEN and the non-author closure lesson.
+
+C1 lane verdict: calibration improved via verified capability, scalar6→6.
+All other axis verdicts unchanged. Expansion unchanged (no new uncovered
+knowledge ground); quality improved through effective-account and empirical
+correction; discernment improved through prior outside-routed mistakes becoming
+grounded QUALITY15–16 and failure-backed discrimination. Current-round
+independent sampling/admission remains external; no subagent is its verifier.
+
+Tool installs/updates: none. Conformance disclosure: ReceiptHarness reported
+an AST parse and plain-git design control before L1 integration despite the
+wave's no-mid-flight-check instruction. Those do not substitute for L1's
+retained runtime run. The final harness was simplified1522→647 lines before
+measurement; discarded extra rate/count/third-authority/diff machinery is not
+a claimed capability. All32 seat reports are advisory, many explicitly
+contract-only; no claim that early seats reviewed code absent at their read.

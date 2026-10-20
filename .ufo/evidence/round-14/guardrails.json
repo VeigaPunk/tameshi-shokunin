@@ -1,0 +1,76 @@
+{
+  "schema": "tameshi-round14-guardrails-v1",
+  "measured_commit": "64314783836bb0d05ad06a774d7310fd3a23b5bd",
+  "checks": [
+    {
+      "name": "context_setup_positive",
+      "argv": [
+        "python3",
+        "-c",
+        "import json,sys\nr=json.load(open(sys.argv[1]))\ne=r.get(\"environment\",{})\nok=e.get(\"injected_env\")=={\"GIT_DIR\":\"/nonexistent/tameshi-round14-poison\"} and e.get(\"env_delta_keys\")==[\"GIT_DIR\"] and e.get(\"baseline_has_GIT_DIR\") is False\nprint(\"context_setup_recorded\" if ok else \"missing_injected_environment\")\nsys.exit(0 if ok else 1)\n",
+        ".ufo/evidence/round-14/context-receipt.json"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "started_at": "2026-10-20T06:40:01.357291+00:00",
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": "context_setup_recorded\n",
+      "stderr": ""
+    },
+    {
+      "name": "context_setup_missing_field",
+      "argv": [
+        "python3",
+        "-c",
+        "import json,sys\nr=json.load(open(sys.argv[1]))\ne=r.get(\"environment\",{})\nok=e.get(\"injected_env\")=={\"GIT_DIR\":\"/nonexistent/tameshi-round14-poison\"} and e.get(\"env_delta_keys\")==[\"GIT_DIR\"] and e.get(\"baseline_has_GIT_DIR\") is False\nprint(\"context_setup_recorded\" if ok else \"missing_injected_environment\")\nsys.exit(0 if ok else 1)\n",
+        ".ufo/evidence/round-14/context-missing-env.json"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "started_at": "2026-10-20T06:40:01.367704+00:00",
+      "exit": 1,
+      "expected_exit": 1,
+      "stdout": "missing_injected_environment\n",
+      "stderr": ""
+    },
+    {
+      "name": "runner_variable_swap_discriminator",
+      "argv": [
+        "python3",
+        "-c",
+        "import json,runpy,sys\nfrom pathlib import Path\nh=runpy.run_path(\".ufo/evidence/round-14/capture-context.py\")\nr=Path(\"tools/mutate-and-run.sh\").read_text()\nm=json.loads(Path(\".ufo/evidence/round-13/pin-manifest.json\").read_text())[\"legs\"]\np=h[\"parse_runner_mapping\"](r)\nassert h[\"mapping_block\"](p,m)[\"all_match\"]\nbody=h[\"RUN_REGRESSION_RE\"].search(r)\nassert body is not None\nold=body.group(\"body\")\nassert old.count('\"$REV_BASH\"')==1\nmutated=old.replace('\"$REV_BASH\"','\"$REV_CHECKLIST\"',1)\nr=r[:body.start(\"body\")]+mutated+r[body.end(\"body\"):]\nout=h[\"mapping_block\"](h[\"parse_runner_mapping\"](r),m)\nrow=next(x for x in out[\"legs\"] if x[\"leg\"]==\"bash-surface-census\")\nassert not out[\"all_match\"] and not row[\"checks\"][\"constant_names_match_leg\"]\nprint(\"runner_variable_swap_rejected: equal REV values do not hide wrong binding\")\n"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "started_at": "2026-10-20T06:40:01.378060+00:00",
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": "runner_variable_swap_rejected: equal REV values do not hide wrong binding\n",
+      "stderr": ""
+    },
+    {
+      "name": "historical_integrity",
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "d6809df7775338f000e44c8a916067b8866867fb",
+        "--",
+        ".ufo/evidence/round-12",
+        ".ufo/evidence/round-13",
+        "tools/pin-disposition.py",
+        "tools/witness-metadata.py",
+        "tools/bash-witness-study.py",
+        "tools/mutate-and-run.sh",
+        "SHONEN.md",
+        "corpus/lessons/round-13-verifier-spotcheck.md"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "started_at": "2026-10-20T06:40:01.436747+00:00",
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "same_context_oracle": true,
+  "historical_output_never_rewritten": true
+}

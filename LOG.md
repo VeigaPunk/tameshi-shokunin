@@ -888,3 +888,26 @@ All appended; `corpus/lessons/round-1.md` final section.
   intake refusal (`w1/FreshnessIntake.md` sections7.1–7.4), not a re-sweep.
   Operator-owned closure-checker debt and all earlier carried lane debts
   remain open. No sibling gate or runner was executed.
+- Corrected executable measurement:
+  `64314783836bb0d05ad06a774d7310fd3a23b5bd`,
+  `.ufo/evidence/round-14/verification-final.json`: same selftest now
+  PASS34/34 exit0; real before still exits1 with exactly one named mismatch;
+  real after exits0 with11 effective passing plus1 valid supersession.
+  `disposition-delta.json` independently confirms only producer_before's
+  row changes and retains its original raw receipt/check binding.
+- `guardrails.json` retains the same context oracle accepting the documented
+  receipt and failing a missing-only injected_env field; a REV_BASH token
+  replaced with equal-valued REV_CHECKLIST is rejected by name identity.
+  Historical integrity exits0. These are discriminator checks, not new target
+  mutation cases. Gate/probe registry lives in SKILL's round14 section.
+- S050 enters as an opened, measured own-work source for C1; its literal
+  no-receipt-argv-execution quote and scoped claim are in the lesson Gate.
+  End source census exits0 with the same two W04 correction-URL warnings:
+  `.ufo/evidence/round-14/sources-after.json`. No tool installs/updates.
+  ReceiptHarness disclosed an AST parse and design git-control probe before
+  integration despite the no-mid-flight-check instruction; only retained
+  L1 runtime evidence supports the final claim. All32 reports are retained.
+- Lane verdicts: calibration improved, scalar6 unchanged; all other axes
+  unchanged. Trends: expansion unchanged; quality improved; discernment
+  improved by grounded outside-routed learning. Separate round14 non-author
+  admission/sampling remains pending; no SHONEN, promotion or province change.

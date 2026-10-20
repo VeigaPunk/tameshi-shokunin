@@ -364,3 +364,21 @@ effective/superseded status; exit1 alone does not make its FileNotFoundError
 the intended mechanism failure. See `corpus/lessons/round-14.md`, Gate and
 Mistakes, and QUALITY15–16. No target re-sweep, new rate, seventh case,
 whole-F7 completion, blind preregistration or promotion follows.
+
+### Round14 execution backlink (after integration)
+
+The conditional context wording above is now resolved for the actual round14
+run only: `.ufo/evidence/round-14/context-receipt.json` reports statusok/exit0,
+documented GIT_DIR override, plain-git control0→128 and equal raw JSON,
+including its timestamp. Six runner/manifest mappings have all five checks
+true. `guardrails.json` retains a missing-injection-field rejection and an
+equal-valued REV variable-name swap discriminator. This does not reconstruct
+round13's absent setup.
+
+The effective ledger is separately measured:
+`verification-final.json` and `disposition-delta.json` under the same
+round14 directory. All twelve expected rows are accounted for, eleven
+effective plus one explicitly superseded; the superseded raw contains
+mismatch stays visible. The new checker selftest passes34/34 after two
+fixture-only corrections; initial18-of34 failures remain in
+`verification.json`. No oracle, target suite or mutation sweep was rerun.
