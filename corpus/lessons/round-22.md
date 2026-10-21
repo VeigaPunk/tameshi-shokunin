@@ -101,3 +101,36 @@ local harness observations, not provider signatures or retroactive execution.
 The eight-predicate gate still grades the frozen declared bundle rather than
 pretending that this supplemental corroboration is its authenticated input.
 Original round21 bytes and frozen round22 ruler remain unchanged.
+
+## Erratum — premature final-receipt citations (2026-10-21)
+
+SourceReview, RulerReview and MonitorReview correctly found that this
+lesson's original Mistakes row and the knowledge entry's `verified-at:`
+line cited `final/verification.json` before it existed at66a25ab/e4da41c.
+Those statements were premature, not executed evidence. The final receipt
+must land as a later actual observation; it never retroactively existed at
+those revisions. Original citing bytes are preserved, this erratum names
+their chronology defect, and current re-verification is read from the
+receipt's actual measured revision/interval rather than the earlier prose.
+
+The same reviews identified invalid source-anchor syntax on the two new
+tools/registry.json rows. The repair binds each to the already-landed
+`SKILL.md@66a25abf9a07f99df6f8584044a83a21349706a1:1997`, and adds the
+wrong-count expected-red row. Deep JSON now maps RecursionError to
+could-not-evaluate2. Sixteen supplemental committed public-CLI fixtures
+cover schema/accounting invariants beyond the unchanged eight-predicate
+claim. These maintenance cases are not added to the C1 denominator.
+
+MonitorReview's proposed new round22 source selector is not adopted:
+the strict existing round21 selector can measure its default ledger after
+new entries are appended, retaining every prior entry. SHONEN's pointer
+continues resolving to that exact ledger. A new selector/alias would not
+improve credit provenance. The actual source re-anchors and final strict
+monitor, not this design decision, must demonstrate no-harm.
+
+Fresh attacks total26, not64; four ordinary critic seats examined the new
+gate, ruler, corpus and monitor contract rather than padding a second swarm.
+All4 completed; the64-seat build wave actually completed44/dead20.
+The20 failures are16 reviewer free-model quota errors,3 Codex-capacity
+executors and1 Haiku429 scribe. Original callbacks, not report counts,
+determine those statuses; no identity was replaced or restarted.

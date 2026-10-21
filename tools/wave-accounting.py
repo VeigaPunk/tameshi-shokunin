@@ -11,6 +11,9 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import os
+import subprocess
+import tempfile
 import sys
 
 
@@ -133,21 +136,57 @@ def run(bundle_path, expected_path):
         result, code = evaluate(decode(data))
         result['bundle_sha256'] = digest
         return result, code
-    except (OSError, ValueError, TypeError, UnicodeError) as exc:
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError) as exc:
         return {'finding_ids': ['INVALID_INPUT'], 'error': str(exc)}, 2
 
 
 def selftest():
-    # Expected IDs and fixtures are frozen independently of evaluate(). Each
-    # case launches this public CLI in a private temporary directory.
-    path = Path(__file__).resolve().parent.parent / '.ufo/evidence/round-22/measure.py'
-    spec = importlib.util.spec_from_file_location('round22_frozen_measure', path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    result, code = module.measure(Path(__file__).resolve().parent.parent)
+    # The original eight expectations remain frozen, independently of
+    # evaluate(). Supplemental fixtures cover the other shipped guards.
+    root = Path(__file__).resolve().parent.parent
+    try:
+        path = root / '.ufo/evidence/round-22/measure.py'
+        spec = importlib.util.spec_from_file_location('round22_frozen_measure', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        result, code = module.measure(root)
+        cases = decode((root / '.ufo/evidence/round-22/accounting-extra-cases.json').read_bytes())['cases']
+        outcomes = []
+        env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+        with tempfile.TemporaryDirectory(prefix='tameshi-r22-accounting-') as directory:
+            work = Path(directory)
+            for case in cases:
+                raw = case['raw'].encode()
+                (work / 'bundle.json').write_bytes(raw)
+                (work / 'expected.json').write_text(json.dumps({
+                    'schema': 'wave-accounting-expected-v1',
+                    'bundle_sha256': hashlib.sha256(raw).hexdigest(),
+                }))
+                run = subprocess.run([
+                    sys.executable, str(Path(__file__).resolve()),
+                    '--bundle', str(work / 'bundle.json'),
+                    '--expected', str(work / 'expected.json'), '--json',
+                ], capture_output=True, text=True, env=env, timeout=15)
+                observed = decode(run.stdout)
+                ok = run.returncode == case['expected_exit']
+                if case['expected_finding'] is None:
+                    ok = ok and observed.get('finding_ids') == [] and observed.get('total') == {
+                        'seats': 2, 'completed': 1, 'dead': 1}
+                else:
+                    ok = ok and case['expected_finding'] in observed.get('finding_ids', [])
+                outcomes.append((case['name'], ok))
+    except (OSError, ValueError, TypeError, KeyError, UnicodeError,
+            RecursionError, subprocess.TimeoutExpired) as exc:
+        print('FINDING: SELFTEST_UNAVAILABLE ' + str(exc))
+        return 2
     for case in result.get('cases', []):
         print('ACCOUNTING_CASE ' + case['name'] + (' ok' if case['discriminated'] else ' FAIL'))
     print('ACCOUNTING_SELFTEST: ' + str(result['discriminated']) + '/8 pass')
+    for name, ok in outcomes:
+        print('ACCOUNTING_EXTRA_CASE ' + name + (' ok' if ok else ' FAIL'))
+    good = sum(ok for _, ok in outcomes)
+    print('ACCOUNTING_EXTRA_SELFTEST: ' + str(good) + '/' + str(len(cases)) + ' pass')
+    code = code if code else (0 if good == len(cases) else 1)
     print('FINDING: ' + ('SELFTEST_PASS' if code == 0 else 'SELFTEST_FAIL'))
     return code
 

@@ -60,3 +60,10 @@ and retained wait recoveries have now been copied into
 records146 matching identity/status/role observations. This repairs retention,
 not authentication. It neither rewrites the old outcome files nor enlarges
 the frozen eight-predicate claim denominator.
+
+Erratum2026-10-21: the original `verified-at:` line cited the planned final
+receipt before it existed in66a25ab/e4da41c. It is superseded for timing:
+only the later real `.ufo/evidence/round-22/final/verification.json`
+provides executed verification at its named measured commit and interval.
+The earlier source declaration and raw callback observations remain valid;
+no past verification is fabricated. See the dated round22 lesson erratum.

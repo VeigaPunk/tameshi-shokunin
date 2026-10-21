@@ -1995,4 +1995,14 @@ name/agent/role; our own evidence does not authenticate provider telemetry.
 | Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
 | `tools/wave-accounting.py` | gate | `python3 tools/wave-accounting.py --bundle .ufo/evidence/round-22/bundle.json --expected .ufo/evidence/round-22/expected.json --json` | 0 clean; 1 failed invariant; 2 malformed/unavailable/tampered input, could-not-evaluate; 64 usage, could-not-evaluate | `python3 tools/wave-accounting.py --selftest` | digest-pinned round22 bundle/expected.json, wrong-count bundle/expected pair; eight literal public-CLI rejection fixtures in frozen round22 measure.py | read-only input; isolated selftest temporary files only | tameshi |
-| `.ufo/evidence/round-22/measure.py` | gate/counter | `python3 .ufo/evidence/round-22/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin` | 0 eight predicates discriminated with green control; 1 incomplete/absent capability; 2 control/setup could-not-evaluate; argparse usage2 could-not-evaluate | owning gate's `--selftest` launches these same frozen public-CLI fixtures | contract.json eight named cases; tool-absent before.json | isolated temporary bundle/expected pairs only | tameshi |
+
+The frozen round22 `measure.py` is this gate's original eight-fixture
+counter/oracle, not an independent second green. Supplemental isolated
+public-CLI fixtures cover16 further schema/accounting guards without
+changing that frozen claim denominator. The wrong-count entry uses the
+same gate with `wrong-count-bundle.json` and `wrong-count-expected.json`;
+its persisted expected verdict is1/TOTAL_MISMATCH. Raw harness
+`failed (exit N)` statuses were normalized to `failed` when projecting
+the bundle; the gate deliberately consumes the normalized declared schema,
+not arbitrary raw callback text. Normal `--help` exits0 as help, not a
+measured accounting verdict.
