@@ -1295,3 +1295,51 @@ metadata and its failure are preserved; production gate source is unchanged.
   remain depth8/calibration8, all SHONEN marks~. Expansion unchanged,
   quality improved bounded, discernment improved. Final evidence and
   both64-seat report populations are committed before the fleet report.
+
+### Round 20 — frozen instruments and receipt-window calibration (2026-10-21)
+
+- Trigger: ADMITTED round19's outside review
+  `corpus/lessons/round-19-verifier-spotcheck.md:164-175` routes the repeated
+  QUALITY20 in-wave edit failure, ambiguous instrument wording and S049's
+  date-basis clarification. This round does not redo round19.
+- Declared C1: calibration, six frozen predicates 0/6→6/6, numeric8→8.
+  Contract and two staged instruments already landed at
+  `6fd220bce3705498d1d1054e99e3cae73c203751`; replacement coordinator
+  TameshiR20-3 inherits them unchanged and owns the same claimed round.
+  `.ufo/evidence/round-20/contract.json` pins the population and identities;
+  baseline is `c144dcd807166dfc275c1ac2936fd2fa4b678bda`.
+- The inherited uncommitted specs/validator outputs had no assigned seats.
+  The replacement dispatched one validated72-seat batch and recorded IDs
+  in `.ufo/waves/round-20/w1/swarm-registry.json`. L1 holds the canonical
+  planner; roles route through the host table, with no model parameter.
+  Dead seats are recorded, never replaced. Frozen stage files are not edited.
+- QUALITY41 mines the repeat enforcement failure without superseding
+  QUALITY20/21's no-in-place-edit or same-file identity requirements.
+  `corpus/lessons/round-20.md` records reject/admit boundaries and the
+  distinction between metadata validation and producer authentication.
+- Appended round19 lesson erratum names each historical instrument SHA and
+  the distinct wave2 frozen ruler; preserves all original observations.
+  S049 was reopened at its primary Python documentation URL. Only its
+  used-by cell gains the round20 lesson; immutable identity/date stay intact.
+- No promotion, new frontier/knowledge admission, numeric score increase or
+  guard-survivor closure is claimed. All eighteen earlier survivors remain
+  open. Fleet tooling, sibling gates, host routing/configuration and MANIFEST
+  remain outside this lane's write scope.
+- All original build readers ended before byte-identical gate installation
+  (`.ufo/waves/round-20/original-outcomes.json`:24 completed,48 dead).
+  Three peer notifications later woke dead identities; their supplemental
+  work is not counted as a green original seat or used to erase a death.
+  A06's successful identity separately implemented the new maintained ruler
+  wrapper in a private clone. It does not change either frozen stage file.
+  The wrapper adds public isolated CLI selftests and scrubbed execution;
+  its runner digest stays separate from the underlying instrument digest.
+- A08 confirms committer-time freeze ordering; the final dispatch record
+  uses the persisted child-session header rather than the initial registry
+  upper bound. C01's ignored `install_window`/`expectations` fields are
+  explicitly descriptive, not enforced schema. E07 reconstructs historical
+  SHA96a68b60 from the committed ReceiptDesign fenced code, not a nonexistent
+  standalone blob. No historical execution is invented from that identity.
+- The inherited second-wave spec is unexecuted planning history. With only24
+  original completed reports, four new bounded integration attacks use one
+  ordinary residual batch, not a padded64-seat second wave; total76 unique
+  seats. Final verification belongs to L1 after those readers return.

@@ -1934,3 +1934,29 @@ differs only in `--help` output (entry errata ER8-2).
 | `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim plus a `carried_from` key; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |
 | `.ufo/evidence/round-19/measure.py` | gate with `--check`; otherwise measurement probe | `python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check` · `--selftest` | 0 all five frozen round-18 correction items present and receipt fields agree; 1 at least one open; 2 cannot evaluate revision/input encoding; 64 usage. Without `--check`, 0 reports the five-item count, not acceptance. Selftest isolated public-CLI snapshots, no network/Git writes; expected values in `round-19/contract.json` and ruler literals, input digests in `before.json` and revision-specific after receipt. Write scope: none outside selftest `/tmp/tameshi-r19-ruler-*`; owner tameshi. Only metadata/effective-receipt reconciliation, never producer authentication, cold-read credit or required-command coverage (QUALITY 37–39; `corpus/lessons/round-19.md`; S049). |
 | `.ufo/evidence/round-19/coldread/measure.py` | probe | `python3 .ufo/evidence/round-19/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV` · `--selftest` | Delegates unchanged credit/trace/veto/CLI rules to frozen round-18 `measure.py`, selecting round-19 `coldread/ledger.json` as default (no legacy overrides). Same exit map and input-keyed-only bound. Round-19 refreshed entries are L1-author source reads, not new blind or independent cold-read/command-coverage evidence; old entries retained verbatim. Inputs/receipt hashes are revision-pinned; external observations remain outside the credited-input predicate. Owner tameshi, read-only except inherited isolated selftest scratch. |
+
+### Round-20 gate/probe registry — frozen receipt instruments
+
+Source: `corpus/lessons/round-20.md`, QUALITY41, opened S049 for the
+explicit child-environment boundary. Original stage files and older
+receipts are historical evidence and remain byte-preserved. The active
+round20 counting entry omits the inherited unsupported `--check` spelling;
+the wrapper executes the unchanged frozen ruler and records its own digest
+separately as `runner_sha256`.
+
+| Name | Kind | Entry / self-invocation | Verdict map | Persisted values / scope / owner |
+|---|---|---|---|---|
+| `tools/receipt-window.py` | gate | `python3 tools/receipt-window.py --contract .ufo/evidence/round-20/contract.json --receipts .ufo/evidence/round-20/final/receipts.json --json`; self-invocation `python3 tools/receipt-window.py --selftest` | 0 clean; 1 failed; 2 could-not-evaluate; 64 usage/could-not-evaluate | `.ufo/evidence/round-20/contract.json` frozen/installed/historical identities, plus `public-cli-cases.json` independent synthetic expectations; read-only inputs, isolated selftest temp fixtures; owner tameshi |
+| `tools/receipt-measure.py` | gate | `python3 tools/receipt-measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json`; self-invocation `python3 tools/receipt-measure.py --selftest` | 0 clean (six predicates); 1 failed; 2 usage/could-not-evaluate | unchanged `.ufo/evidence/round-20/stage/measure.py`, frozen contract and committed revision inputs; wrapper selftest invokes public CLI over isolated Git fixtures with persisted six-item IDs/exits; no live-tree writes; owner tameshi |
+| `.ufo/evidence/round-20/coldread/measure.py` | probe | `python3 .ufo/evidence/round-20/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --explain`; self-invocation `python3 .ufo/evidence/round-20/coldread/measure.py --selftest` | unchanged frozen round18 map: 0 observed; 2 usage/could-not-evaluate; selftest 0 clean/1 failed | selects the round20 ledger using the unchanged round18 algorithm; strict default, no overrides; L1-author input-keyed source re-anchoring is not recipe execution, independent/blind cold-read, or required-command coverage; isolated package selftests; owner tameshi |
+
+Receipt-window recipe: freeze staged instrument digests before dispatch;
+do not edit them in place; install only after original readers return;
+record actual aware start/end times and instrument SHA beside the complete
+observation. With changed frozen/installed identities use `edit_interval`
+(not the inherited planning annotation `install_window`). The identity
+case validates byte membership without imposing a freshness floor.
+Historical identities are classified, not authenticated or re-executed.
+The ruler hardcodes this round's six predicates: it is not a generic
+contract-schema validator. `install_window` and `expectations` in the
+inherited contract are descriptive, not enforced schema fields.

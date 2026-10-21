@@ -7,6 +7,6 @@ Promotion to shokunin requires all of:
 - [~] At least one end-to-end domain task executed and logged in LOG.md
   [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-2)
 - [~] Instructions executable by an agent without oral context
-  [lane assertion, input-keyed monitor only; no independent promotion verifier](.ufo/evidence/round-19/coldread/ledger.json)
+  [lane assertion, input-keyed monitor only; no independent promotion verifier](.ufo/evidence/round-20/coldread/ledger.json)
 - [~] No cross-domain bleed (PROVINCE.md still accurate)
   [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-4)

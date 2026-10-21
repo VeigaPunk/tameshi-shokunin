@@ -384,3 +384,23 @@ digests, derives exact changed IDs/cells, and checks no removed IDs,
 immutable changes or net lost non-row lines. Snapshot tampering, wrong
 history or an extra claimed source ID must reopen R18-3. Lesson:
 `lessons/round-19.md`, Build-wave findings / source range addendum.
+
+## Criterion appended — round 20 (2026-10-21)
+
+41. QUALITY20's no-in-place-edit rule is unchanged; QUALITY21 still requires
+    the instrument identity beside the retained observation. Freeze staged
+    paths and their SHA-256 values before dispatch. Install only after every
+    reader returns. A receipt-window check compares the receipt's instrument
+    SHA with the persisted frozen/installed identities and rejects unknown
+    bytes. If the identities differ, a frozen measurement must end no later
+    than edit start, and an installed measurement must begin no earlier than
+    edit end. Record aware, ordered measurement intervals; classify older
+    instrument identities explicitly instead of calling them all “the frozen
+    SHA”. Equal identities are a byte-identity case, not evidence that the
+    host was continuously monitored. Captured by the repeated enforcement
+    failure in `lessons/round-19-verifier-spotcheck.md` routed item 1 and
+    `lessons/round-20.md` Mistakes. Falsifier: public receipt-window fixtures
+    for UNKNOWN_INSTRUMENT, FROZEN_AFTER_EDIT and INSTALLED_BEFORE_INSTALL
+    fail with exit 1 while unchanged before/after-boundary controls pass.
+    This validates declared receipt metadata, not producer authenticity,
+    continuous edit detection, or required-command coverage.

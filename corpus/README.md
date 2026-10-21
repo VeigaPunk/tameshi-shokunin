@@ -305,3 +305,18 @@ algorithm with a new default ledger and explicitly L1-author source
 re-anchoring for changed inputs. It does not retroactively upgrade
 historical traces, authenticate external observations, or become an
 independent promotion review. See round19 lesson `## No-harm repair`.
+
+## Round 20 — receipt-window calibration on existing ground
+
+Same-ground repair of round19's outside-routed QUALITY20 recurrence, not a
+new knowledge entry or frontier move. `lessons/round-20.md` records the six
+frozen predicates, the staged instrument identities and receipt-time window
+boundary. QUALITY41 grounds the enforcement check in the repeated mistake.
+The appended round19 erratum distinguishes each historical instrument SHA
+and S049's local/UTC date bases; original evidence remains unchanged.
+
+The latest independent review is now `lessons/round-19-verifier-spotcheck.md`,
+which ADMITTED round19 and routed these three items. It is not a round20
+admission or promotion authority. Round20's own dispatched reviews remain
+advisory. No required-command coverage, blind cold-read, successor mutation
+sweep, guard-survivor closure or F1–F10 movement is inferred.

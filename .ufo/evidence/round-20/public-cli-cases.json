@@ -1,0 +1,769 @@
+{
+  "schema": "tameshi-r20-cli-fixtures-v1",
+  "scope": "Synthetic fixtures, not historical observations or timestamps. Expectations authored independently of checker recomputation.",
+  "cases": [
+    {
+      "name": "frozen-before",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "WINDOW_OK"
+    },
+    {
+      "name": "installed-after",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "measurement_interval": {
+              "start": "2026-10-21T11:00:00Z",
+              "end": "2026-10-21T11:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "WINDOW_OK"
+    },
+    {
+      "name": "missing-sha",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "RECEIPT_MISSING_FIELD"
+    },
+    {
+      "name": "unknown-sha",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "UNKNOWN_INSTRUMENT"
+    },
+    {
+      "name": "missing-interval",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "BAD_INTERVAL"
+    },
+    {
+      "name": "reversed-interval",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:30:00Z",
+              "end": "2026-10-21T09:00:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "BAD_INTERVAL"
+    },
+    {
+      "name": "naive-time",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00",
+              "end": "2026-10-21T09:30:00"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "BAD_INTERVAL"
+    },
+    {
+      "name": "frozen-overlap",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T10:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "FROZEN_AFTER_EDIT"
+    },
+    {
+      "name": "installed-overlap",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "measurement_interval": {
+              "start": "2026-10-21T10:30:00Z",
+              "end": "2026-10-21T11:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "INSTALLED_BEFORE_INSTALL"
+    },
+    {
+      "name": "duplicate-id",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          },
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "DUPLICATE_RECEIPT_ID"
+    },
+    {
+      "name": "empty",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": []
+      },
+      "expected_exit": 1,
+      "expected_id": "NO_RECEIPTS"
+    },
+    {
+      "name": "historical-one",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "HISTORICAL_INSTRUMENT"
+    },
+    {
+      "name": "historical-two",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "HISTORICAL_INSTRUMENT"
+    },
+    {
+      "name": "identity",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "measurement_interval": {
+              "start": "2026-10-21T10:30:00Z",
+              "end": "2026-10-21T10:45:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "INSTALL_IDENTITY"
+    },
+    {
+      "name": "declared-mismatch",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            },
+            "instrument": "measure"
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "UNKNOWN_INSTRUMENT"
+    },
+    {
+      "name": "one-bad-in-file",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          },
+          {
+            "id": "bad",
+            "instrument_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "UNKNOWN_INSTRUMENT"
+    },
+    {
+      "name": "frozen-boundary",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T10:00:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "WINDOW_OK"
+    },
+    {
+      "name": "installed-boundary",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "measurement_interval": {
+              "start": "2026-10-21T11:00:00Z",
+              "end": "2026-10-21T11:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "WINDOW_OK"
+    },
+    {
+      "name": "local-offset",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "sample",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T06:00:00-03:00",
+              "end": "2026-10-21T06:30:00-03:00"
+            }
+          }
+        ]
+      },
+      "expected_exit": 0,
+      "expected_id": "WINDOW_OK"
+    },
+    {
+      "name": "whitespace-id",
+      "contract": {
+        "round": 20,
+        "instruments": {
+          "gate": {
+            "frozen_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "installed_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "edit_interval": {
+              "start": "2026-10-21T10:00:00Z",
+              "end": "2026-10-21T11:00:00Z"
+            }
+          },
+          "measure": {
+            "frozen_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "installed_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        },
+        "historical": {
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "historical-one",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": "historical-two"
+        }
+      },
+      "receipts": {
+        "receipts": [
+          {
+            "id": "  ",
+            "instrument_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "measurement_interval": {
+              "start": "2026-10-21T09:00:00Z",
+              "end": "2026-10-21T09:30:00Z"
+            }
+          }
+        ]
+      },
+      "expected_exit": 1,
+      "expected_id": "RECEIPT_MISSING_FIELD"
+    }
+  ]
+}

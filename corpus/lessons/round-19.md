@@ -344,3 +344,31 @@ measured execution does not borrow the original wave's source hash.
 No new L0 question or tool installation. Expansion unchanged; quality
 improved bounded; discernment improved through grounded corrections.
 Non-author round19 admission/promotion remains Main's duty.
+
+## Round-20 erratum — distinct instrument identities and date bases (2026-10-21)
+
+Supersedes only line 299's singular “the frozen SHA”; original round-19
+bytes and its ADMITTED verdict remain history. The three executor probes
+recorded distinct instruments, not three executions of the wave-2 ruler:
+
+| Observation | Instrument SHA-256 |
+|---|---|
+| wave-1 round-19 ruler (`w1/ReceiptDesign.md`) | `96a68b60538504a8a1b5ead9d5811a2c7bcbf8b427c5934b07e22e16c38585ef` |
+| witness tool (`w1/ReceiptFields.md`) | `8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12` |
+| witness runner (same witness receipt) | `d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b` |
+| round-18 measure (`w1/RevisionBinding.md`) | `7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37` |
+
+The separate wave-2 frozen ruler at `55e1d312c4e8ac67aefad80099bd27581ff805c9`
+is `bb651eefdbe0f85b2d01408ec61e9accebeca8041c20b70982ae698634ff5053`.
+No claim is made that all three probes pinned that ruler. The outside
+round-19 review §QUALITY20 records why the final same-ruler measurements
+remain valid despite the disclosed code-reading race.
+
+S049's immutable opened date `2026-10-20` records the original round14
+opening (historical local BRT, UTC−03:00); the lesson's `2026-10-21` UTC
+records the separate round19 reopening. E01S049Open's commit chronology
+corroborates the two rounds: original row present at `0c6e36d`, reopening
+lesson at `21e7932`. These are two events, not one access crossing midnight
+under timezone conversion. No exact access instant is inferred from commit
+time and no producer environment is reconstructed. The source row stays
+unchanged; see `round-19-verifier-spotcheck.md` routed item 3.
