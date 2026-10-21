@@ -1,0 +1,19 @@
+# FAudit131 — round 19 falsification (2026-10-21)
+
+## Axis and verdict
+A1 stdout/trace binding · A2 revision and argv attribution · A3 C1 correction scope.
+**Agree with Audit131’s strongest assertion (M1).** Its warning is valid; no evidence makes the old stdout’s final verdict computed or proves the ancestry clause. This is advisory, not round admission or closure.
+
+## Evidence and concrete falsifier
+- Reopened `.ufo/evidence/round-18/coldread/traces/L1/audit-131.json` and `final/audit-131.stdout`. The trace records `rev=a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, `exit=0`, and 17 tracked inputs. Its blob is identical at a134a09, 21e7932, and delivered 55e1d312 (6023 B; SHA-256 `ebc2c799…deae8`).
+- Plain read-only JSON/blob arithmetic: all 17 recorded hashes match `git show a9c94c5:<path>`. Rebuilding the 16-path printed transcript from the trace argv/spec and those blobs gives 11,642 B, SHA-256 `b39aa459…c541`, byte-equal to `audit-131.stdout` at 55e1d312. The `python -c` program prints its final line literally and contains no revision comparison; nine of 16 opened outputs are asserted, while seven—including `checks.json`—are only printed/hashed.
+- **Concrete falsifier of the stdout’s claim:** at a9c94c5 and 55e1d312, `final/checks.json` has the same SHA-256 (`fed3c8e6…671d`); its `bash-witness-selftest` row records argv `python3 tools/bash-witness-study.py --selftest`, exit 64, and the empty-stdout digest. Yet `audit-131.stdout:157` (captured 2026-10-20) prints “VERIFIED actual execution receipts; ancestor runs have the same instrument blobs as the read revision.” The code does not inspect that row or compare ancestor blobs. This substantiates, rather than falsifies, M1.
+
+## C1 comparison and stale boundary
+- Exact `.ufo/evidence/round-19/measure.py` at 55e1d312 is SHA-256 `bb651e…ff5053`. Its R18-4 witness check explicitly requires the old `checks.json` failure (`exit == 64`, empty stdout hash) and a separate successful, digest-bound replacement receipt; `receipt()` checks exact argv/revision/exit and stream hashes. It preserves, not rewrites, the failed row. Its `PATHS` does not include Audit131’s stdout/trace, so this corrects R18-4 but does not repair Audit131’s literal verdict.
+- The committed R18-5 receipt at 55e1d312 binds argv `…measure.py --repo … --rev 4b7c682… --explain`, revision 4b7c682…, exit 0, and matching stdout/stderr hashes. Its JSON result is 60/60, BOX3 true, restraint 8; section 131 is `credited:true`, with reasons including `input-drift:corpus/README.md` and `wrong-expectations:1`. This reproduces the measured arithmetic, not Audit131’s explicitly labeled counterfactual that removing its trace would yield 59/60; I did not run that measure.
+- The later on-disk `current-ledger-monitor-55e1d31.json` records revision/rev_input 55e1d312, strict 60/60, section 131 credited, restraint 8, and no overrides. This makes the old tip projection stale for the new selector only; it is not the same historical measure, lacks argv, and is absent from the 55e1 commit tree, so I do not treat it as authenticated execution evidence.
+- Round-19 lesson at 55e1d312, lines 146–151 (2026-10-21), says “Historical audit outputs' printed ‘ancestor runs share instrument blobs’ text is not established by their captured read commands”; it names Audit965/Audit1212/Audit1925, not Audit131. No Audit131-specific erratum was found; the report itself correctly routes M1 outside C1.
+
+## Residual risk / verification gaps
+No captured argv, tracer, old lane suite, selftest, or measure was executed. The 59/60 removal counterfactual remains unverified; the uncommitted monitor’s argv/provenance is unknown. Historical trace inputs and stdout reconstruction are verified only against the pinned a9c94c5 blobs; this does not authenticate the producer or establish arbitrary ancestry.

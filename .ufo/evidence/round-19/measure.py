@@ -31,10 +31,12 @@ CASE = 'corpus/knowledge/mutation-case-kumitate-sources-check.md'
 LESSON = 'corpus/lessons/round-18.md'
 SOURCES = 'corpus/SOURCES.md'
 OLD_CHECKS = '.ufo/evidence/round-18/final/checks.json'
+OLD_CHECKS_PIN = 'fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d'
 PROBES = '.ufo/evidence/round-18/final/probes.stdout'
+PROBES_STDERR = '.ufo/evidence/round-18/final/probes.stderr'
 WITNESS = PREFIX + 'bash-witness-selftest-complete.json'
 MEASURE = PREFIX + 'round18-final-measure.json'
-INSTRUMENT = PREFIX + 'round18-final-measure-instrument.json'
+INSTRUMENT = PREFIX + 'round18-final-measure-effective.json'
 MEASURE_SHA18 = '7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37'
 SOURCE_BEFORE = PREFIX + 'source-baseline.txt'
 SOURCE_AFTER = PREFIX + 'source-round18-final.txt'
@@ -45,6 +47,7 @@ SOURCE_PINS = {
 OLD_TALLY = '.ufo/evidence/round-18/final/bash-witness.stdout'
 PATHS = (GUARD, CASE, LESSON, SOURCES, OLD_CHECKS, PROBES, INSTRUMENT,
          SOURCE_BEFORE, SOURCE_AFTER, OLD_TALLY,
+         PROBES_STDERR,
          WITNESS, PREFIX + 'bash-witness-selftest-complete.stdout',
          PREFIX + 'bash-witness-selftest-complete.stderr', MEASURE,
          PREFIX + 'round18-final-measure.stdout',
@@ -140,10 +143,14 @@ def evaluate(data):
         note = text(GUARD).split('## Erratum R18-1', 1)[1]
         old = strict_json(data[OLD_CHECKS])['probes']
         return ('line 2' in note and 'Effective verified-at:' in note
+                and "This correction explicitly supersedes line 2's" in note
                 and PROBES in note and TOOLS18 in note and '18 mutation survivors' in note
                 and 'Landed-tip results: PENDING (filled by L1 after landing).'
                 in text(GUARD).split('## Erratum R18-1', 1)[0]
                 and old['revision'] == TOOLS18 and type(old['exit']) is int
+                and old['argv'] == ['python3', '.ufo/evidence/round-18/defect-probes.py',
+                                    '--rev', TOOLS18]
+                and data[PROBES_STDERR] == b''
                 and old['exit'] == 0 and old['stdout_sha256'] == digest(data[PROBES])
                 and b'DEFECT_PROBES: open=0 closed=11 total=11' in data[PROBES])
     def source():
@@ -161,13 +168,18 @@ def evaluate(data):
                 and source_rows[0][9].strip() == '2026-10-19'
                 and CASE in [part.strip() for part in source_rows[0][11].split(',')]
                 and 'line 1' in note and REV18 in note and 'mined' in note
+                and "This correction explicitly supersedes line 1's" in note
                 and '**queued**' in text(CASE).split('## Erratum R18-2', 1)[0])
     def arithmetic():
         note = text(LESSON).split('## Erratum R18-3', 1)[1].split('\n## ', 1)[0]
+        range_note = ' '.join(text(LESSON).split(
+            '## R18-3 range and unit clarification', 1)[1].split())
         comparison = compare_sources(data[SOURCE_BEFORE], data[SOURCE_AFTER])
         expected = {i: ['used-by'] for i in ('S001', 'S052', 'S056', 'S057')}
         expected['S008'] = ['status', 'used-by']
         return ('five deleted table lines' in note and DIFF_COMMAND in note
+                and "Line48's" in range_note
+                and 'Both statements are superseded as descriptions of the full range.' in range_note
                 and all(digest(data[path]) == pin for path, pin in SOURCE_PINS.items())
                 and comparison['changed'] == expected and comparison['changed_cells'] == 6
                 and not comparison['removed'] and not comparison['immutable_changes']
@@ -189,6 +201,8 @@ def evaluate(data):
                 and raw == data[OLD_TALLY]
                 and b'VERDICT: PASS' in raw and 'failed raw invocation' in note
                 and row.get('historical_receipt_preserved') is True
+                and isinstance(row.get('cwd_kind'), str) and bool(row['cwd_kind'].strip())
+                and digest(data[OLD_CHECKS]) == OLD_CHECKS_PIN
                 and row.get('tool_sha256') == TOOL_SHA18
                 and row.get('runner_sha256') == RUNNER_SHA18
                 and strict_json(data[OLD_CHECKS])['bash-witness-selftest']['exit'] == 64
@@ -212,6 +226,7 @@ def evaluate(data):
                 and instrument['receipt'] == MEASURE
                 and instrument['receipt_sha256'] == digest(data[MEASURE])
                 and instrument['revision'] == REV18
+                and instrument['observation'] == strict_json(data[MEASURE])
                 and instrument['instrument'] == '.ufo/evidence/round-18/measure.py'
                 and instrument['instrument_sha256'] == MEASURE_SHA18
                 and type(cold['sections_covered']) is int and cold['sections_covered'] == 60
@@ -227,25 +242,25 @@ def evaluate(data):
 
 
 def selftest():
-    # Start with actual committed-format receipts but synthetic content; fixtures
-    # are independent of the production corpus and run through the public CLI.
+    # Generated corrected receipts plus four frozen package fixtures, never the
+    # live corpus. Mutations run through the public CLI in isolated temp files.
     data = {p: '' for p in PATHS}
     data[GUARD] = ('Landed-tip results: PENDING (filled by L1 after landing).\n'
-                   '## Erratum R18-1\nline 2 Effective verified-at: '
-                   + TOOLS18 + ' 18 mutation survivors ' + PROBES)
-    data[CASE] = '**queued**\n## Erratum R18-2\nline 1 mined ' + REV18
+                   "## Erratum R18-1\nThis correction explicitly supersedes line 2's "
+                   'Effective verified-at: ' + TOOLS18 + ' 18 mutation survivors ' + PROBES)
+    data[CASE] = ("**queued**\n## Erratum R18-2\n"
+                  "This correction explicitly supersedes line 1's mined " + REV18)
     for path in SOURCE_PINS:
         data[path] = (Path(__file__).parent / Path(path).name).read_text(encoding='utf-8')
     data[SOURCES] = data[SOURCE_AFTER]
     data[LESSON] = ('deletions = the four allowed used-by cells only\n'
                     '## Erratum R18-3\nfive deleted table lines S001 S008 S052 S056 S057\n'
                     + DIFF_COMMAND + '\n## Errata R18-4 / R18-5\nfailed raw invocation; '
-                    'does not claim the receipt existed in round 18')
-    data[PROBES] = 'DEFECT_PROBES: open=0 closed=11 total=11\n'
-    data[OLD_CHECKS] = json.dumps({'probes': {'revision': TOOLS18, 'exit': 0,
-                                'stdout_sha256': digest(data[PROBES].encode())},
-                                'bash-witness-selftest': {
-                                    'exit': 64, 'stdout_sha256': digest(b'')}})
+                    'does not claim the receipt existed in round 18\n'
+                    "## R18-3 range and unit clarification\nLine48's draft.\n"
+                    'Both statements are superseded as descriptions of the full range.')
+    data[PROBES] = (Path(__file__).parent / 'probes-baseline.txt').read_text(encoding='utf-8')
+    data[OLD_CHECKS] = (Path(__file__).parent / 'checks-baseline.json').read_text(encoding='utf-8')
     data[PREFIX + 'sources-diff.txt'] = '25\t5\tcorpus/SOURCES.md\n'
     def make_receipt(path, argv, stdout):
         out, err = path[:-5] + '.stdout', path[:-5] + '.stderr'
@@ -254,6 +269,7 @@ def selftest():
             'stdout': out, 'stderr': err, 'stdout_sha256': digest(stdout.encode()),
             'stderr_sha256': digest(b''), 'historical_receipt_preserved': True,
             'tool_sha256': TOOL_SHA18, 'runner_sha256': RUNNER_SHA18,
+            'cwd_kind': 'isolated scratch clone',
             'recorded_at': '2026-10-21T06:00:00+00:00',
             'supersedes': [OLD_CHECKS + '#bash-witness-selftest',
                            PREFIX + 'bash-witness-selftest.json']})
@@ -270,6 +286,7 @@ def selftest():
                  '--explain'], json.dumps(value))
     data[INSTRUMENT] = json.dumps({
         'receipt': MEASURE, 'receipt_sha256': digest(data[MEASURE].encode()),
+        'observation': json.loads(data[MEASURE]),
         'revision': REV18, 'instrument': '.ufo/evidence/round-18/measure.py',
         'instrument_sha256': MEASURE_SHA18})
     cases = [('pristine', data, 0, [])]
@@ -286,6 +303,8 @@ def selftest():
                                     ('wrong-runner','runner_sha256','0'*64),
                                     ('backdated','recorded_at','2026-10-21T02:00:00+00:00'),
                                     ('naive-time','recorded_at','2026-10-21T06:00:00'),
+                                    ('cwd-kind-type','cwd_kind',[]),
+                                    ('cwd-kind-empty','cwd_kind','   '),
                                     ('unsuperseded','supersedes',[])]:
         mutant = dict(data); row = json.loads(mutant[WITNESS]); row[field] = replacement
         mutant[WITNESS] = json.dumps(row)
@@ -324,6 +343,7 @@ def selftest():
         mutant[MEASURE] = json.dumps(row)
         instrument = json.loads(mutant[INSTRUMENT])
         instrument['receipt_sha256'] = digest(mutant[MEASURE].encode())
+        instrument['observation'] = json.loads(mutant[MEASURE])
         mutant[INSTRUMENT] = json.dumps(instrument)
         cases.append(('measurement-' + field, mutant, 1, ['R18-5']))
     mutant = dict(data)
@@ -334,6 +354,19 @@ def selftest():
         source_lines.append(line)
     mutant[SOURCES] = '\n'.join(source_lines) + '\n'
     cases.append(('foreign-source-identity', mutant, 1, ['R18-2']))
+    mutant = dict(data); mutant[OLD_CHECKS] += '\n'
+    cases.append(('historical-bundle-byte-tamper', mutant, 1, ['R18-4']))
+    mutant = dict(data); mutant[PROBES_STDERR] = 'unexpected error\n'
+    cases.append(('probes-stderr-tamper', mutant, 1, ['R18-1']))
+    mutant = dict(data); mutant[LESSON] = mutant[LESSON].split(
+        '## R18-3 range and unit clarification', 1)[0]
+    cases.append(('missing-full-range-correction', mutant, 1, ['R18-3']))
+    for path, identifier, line in [(GUARD, 'R18-1', 2), (CASE, 'R18-2', 1)]:
+        mutant = dict(data)
+        phrase = "This correction explicitly supersedes line %d's" % line
+        mutant[path] = mutant[path].replace(phrase, phrase.replace(
+            'explicitly supersedes', 'does not explicitly supersede'))
+        cases.append(('negated-supersession-' + identifier, mutant, 1, [identifier]))
     for name, path, old, new, identifier in [
             ('wrong-effective-receipt', GUARD, PROBES,
              '.ufo/evidence/round-18/c2-probes-v2-183f87b.txt', 'R18-1'),

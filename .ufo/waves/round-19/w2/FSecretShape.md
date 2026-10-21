@@ -1,0 +1,16 @@
+# SecretShape falsifier — 2026-10-21
+
+**Verdict: DISAGREE** with treating the reported two non-common ref-shaped strings as a material private-ref exposure. Agree only that the note contains Git-ref syntax. Severity: none demonstrated; exploit path is a reader of the note, and impact requires those examples to be actual confidential ref names, which the evidence does not show.
+
+**Strongest assertion challenged:** the scan found two identifiers outside its common-ref allowlist, creating a possible private-ref disclosure.
+
+**Evidence / attribution**
+- Reopened the exact primary at frozen build revision `55e1d312c4e8ac67aefad80099bd27581ff805c9`: `corpus/knowledge/guard-kill-closure.md`. `refs/heads/master` is a fixture value (line 44, `git init -b master`); line 49 discusses resolver patterns (`refs/heads/*`, `refs/remotes/origin/HEAD`, and `<branch>` placeholder); line 51 describes a probe fixture. These are documentation examples, not evidence of a target's private refs.
+- Text-level arithmetic on that file: 7 literal `refs/...` occurrences / 4 unique strings when counting `<branch>` placeholders (line 37 once, line 44 `master`, line 49 three, line 51 `master`, line 53 placeholder). Excluding `<branch>` metavariables gives the report's 4/3 (master twice, wildcard once, origin/HEAD once). SecretShape does not preserve its regex or allowlist, so its “2 outside” classification is not independently reproducible; the report itself says privacy is unestablished.
+- The cited source is accurate but limited: `corpus/lessons/round-18-verifier-spotcheck.md` §5, lines 180–205 (opened 2026-10-21), headed “Routed defects (lane to fix next round)”; it identifies five metadata/receipt corrections, not a secret finding.
+- Correction overlooked in the report: the frozen note retains old line-2 PENDING text but appends Erratum R18-1 (lines 171–207), which supersedes it and pins the historical result to tool revision `921ef8077440f90d092aab4b9fdc750a45de1224`. The frozen `.ufo/evidence/round-19/measure.py` R18-1 predicate (lines 139–148) explicitly checks this correction and its receipt. The old line is not an unresolved current metadata defect.
+- SecretShape gives only “read-only inline Python Eval” and a root path; it records no exact scan argv, scanner source/regex, input digests, or scanned revision. Thus its result cannot be attributed to `55e1...`; the ref count above is a direct read of that frozen blob, not validation of its undocumented scan.
+
+**Concrete falsifier:** the note's alleged candidates occur in explicit fixture/resolver prose, including a wildcard and a `<branch>` metavariable; none names an observed private ref. No reader can derive a confidential identifier from these examples alone.
+
+**Smallest remediation:** no production text change on this evidence. If retaining the scan result, record the exact regex/allowlist, argv, revision, and input digests. Residual unknowns: the scanner's intended token grammar and whether any independently observed ref is confidential; neither is established here.

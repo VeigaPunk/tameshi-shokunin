@@ -1228,3 +1228,35 @@ metadata and its failure are preserved; production gate source is unchanged.
   Sibling gates/censuses are explicitly rejected as closure evidence for
   tameshi metadata defects. All64 build reports returned, none dead or
   replaced; `completion1.json` records each actual report hash/size/role.
+- Wave2 produced two real detector survivors at frozen55e1: negated
+  supersession (FReceiptDesign) and mistyped cwd-kind (FReceiptFields).
+  FRevisionBinding's rehashed rev_input mutant was killed with green
+  pristine/restored controls. Late repairs add affirmative supersession,
+  cwd-kind typing, complete legacy checks.json SHA pin, probe argv/stderr
+  checks and a required full-range line48 correction; named selftest
+  cases preserve the exact attack classes.
+- Workflow conformance defect: L1 initially edited the live ruler after
+  execution seats returned but while read-only wave2 seats remained.
+  QUALITY20 still forbids that. Frozen55e1 bytes were restored; later
+  work was staged separately and installed only after all64 original
+  wave2 seats returned. No mixed execution receipt was observed; the
+  code-reading race is disclosed in the round19 lesson.
+- R18-5 effective metadata is now round18-final-measure-effective.json:
+  the complete retained observation and instrument SHA coexist in one
+  file (QUALITY21), bound to the unchanged raw receipt. The earlier
+  pointer-only instrument companion is historical, not the current
+  effective provenance record; this is not a new replay or backdating.
+- FRoute01 caught the false S063-anchor-widening sentence introduced by
+  L1; a named guard-note erratum withdraws it and marks configuration
+  anchoring open. FMistakesDraft restores the pre-existing PROTOCOL
+  Evidence-standard/QUALITY8 prevention rules, rather than pretending
+  no rule existed. FSourceS075 corrected its mistaken frozen-annotation
+  absence; FAudit1754 withdrew a Git-blob-OID versus file-SHA-256 mixup
+  after primary reads (`digest-units.json`).
+- Added the two round19 public selftests to tools/registry.json without
+  retiring or changing existing rows: 33 active, four superseded.
+  QUALITY25's full active-entry monitor remains the final suite, not
+  merely the two new selftests. The selector's inherited test fixtures
+  and child CLI dispatch are configured for the new default ledger,
+  while frozen implementation bytes remain unchanged. Bytecode writes
+  are disabled within the selector process.

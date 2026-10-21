@@ -1,0 +1,16 @@
+# FAudit1212 — scoped falsification (2026-10-21)
+
+## Strongest assertion — agree
+Audit1212 is right that the final ancestry sentence in the retained receipt is unsupported by its recorded argv. The trace at `.ufo/evidence/round-18/coldread/traces/L1/audit-1212.json` pins `rev=a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, `exit=0`, and one `python3 -c` body. That body checks selected receipt counts/statuses and ends with `assert 'controls_match' in ...repeat.stdout`; it performs no ancestor lookup or instrument-blob comparison. The stdout’s final `VERIFIED ... ancestor runs have the same instrument blobs` line therefore exceeds those checks.
+
+Concrete falsifier tested: the candidate `repeat.stdout` is hash-pinned (`9cd78090…`) and contains `REPEAT_COMPARE identical=yes runs=3` and `REPEAT_CONTROL: controls_match` (lines 5–7), but only establishes repeat-output equality; it contains no ancestor instrument digests or comparison. The trace’s `inputs` map and receipt hashes were re-opened at delivered revision `55e1d312c4e8ac67aefad80099bd27581ff805c9`; the retained stdout hashes to `2816e2a5…` (3,551 bytes), stderr is empty, and trace hash is `4c380253…`.
+
+## C1 correction cross-check
+Round-18 verifier-spotcheck §5’s five targets include `final/checks.json`; it is the only named existing repair target among this trace’s inputs. At `55e1d312…`, `checks.json` remains exactly pinned at `fed3c8e6…`; the old trace/stdout/stderr are retained. This makes Audit1212’s conditional risk (“if” those bytes were changed) unrealized, not an overlooked current defect.
+
+The delivered `measure.py` is the exact `55e1d312…` blob (SHA-256 `bb651eef…`). Its `R18-4` predicate (lines 183–199) explicitly requires the old `checks.json` digest/failed row plus a new typed superseding receipt. That receipt records argv `python3 tools/bash-witness-study.py selftest`, revision `4b7c6823…`, exit 0, `historical_receipt_preserved=true`, and supersedes the old row; its output digest matches the retained round-18 tally. `R18-5` likewise has a recorded `round18-final-measure.json` at `4b7c6823…`, exit 0, with digest-bound output; lesson errata explicitly says it repairs missing evidence without claiming round-18 timeliness.
+
+## Arithmetic and residual gap
+Read-only JSON arithmetic reproduces baseline `0/5 corrected, 5 open` at `7243e7f…`. The retained earlier after-snapshot reports `5/5` at `21e7932…`, but its ruler hash is `c538c33d…`, unlike the delivered strengthened ruler (`bb651eef…`); it is not final same-ruler evidence. The post-strengthening final before/after count remains for L1, as scoped; I did not run the ruler or selftests. Thus no missing C1 correction is shown for Audit1212’s scoped `checks.json` concern, but current 5/5 under the final ruler is not independently established here.
+
+The ledger boundary discrepancy is benign: its end 1229 is the blank line after content through 1228; the ledger’s `7f411a1a…` section hash reproduces from lines 1212–1228 without a trailing newline. No further scoped falsifier found.

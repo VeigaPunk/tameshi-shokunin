@@ -205,3 +205,29 @@ S065–S074. Effective sources are the precise corrected paragraph/access-mode
 anchors, not the obsolete draft anchors. S063/S077/S078 used-by now list
 this entry explicitly. These are metadata reconciliations, not new guard
 behavior or new additions to the frozen five-item denominator.
+
+## Erratum R19-S063 — anchor scope (2026-10-21)
+
+The round19 sweep addendum's line198 claim “S063's anchor is widened” is
+false and is superseded here. S063 still names ENVIRONMENT VARIABLES,
+“The Git Repository”; its legitimate scope is repository discovery.
+The configuration-variable definitions quoted at line99 are under
+ENVIRONMENT VARIABLES, **other**, not that anchor. The earlier promise
+to widen S063 was not carried out; only its used-by backlink changed.
+
+R18-1's measured tool results and line-2 correction do not depend on
+that source-anchor assertion. No wider configuration-source closure is
+claimed by round19; the config paragraph's precise registry anchoring
+remains explicitly open outside the five frozen items. S063's immutable
+row is not silently rewritten. Evidence:
+`.ufo/waves/round-19/w2/FRoute01.md:13-17`, reopened official Git2.56.0
+documentation, `GIT_CONFIG_GLOBAL` / `GIT_CONFIG_NOSYSTEM` under “other”.
+
+Revision binding for the source-header/recheck clarification: the
+S063/S077/S078 used-by backlinks and the line1/line3 clarification are
+present at round19 revision
+`7af123b0e068cd5e6b651aab31a813cc170d70a2`; the underlying S077/S078
+correction rows already exist at round18 revision
+`4b7c6823a462f5ea2eafcb262275300a545f3ed7`. This identifies the metadata
+state only. It does not reverse R19-S063's explicit “anchor not widened”
+correction or assert that configuration-source anchoring is closed.

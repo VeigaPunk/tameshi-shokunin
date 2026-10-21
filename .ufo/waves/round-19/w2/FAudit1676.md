@@ -1,0 +1,17 @@
+# FAudit1676 — round-19 w2 falsification
+
+**Verdict: AGREE with Audit1676 M1; no falsifier found.** Its strongest assertion is that the historical `VERIFIED` line claims ancestry/instrument facts the recorded program does not measure. Advisory only; this is not a C1 admission.
+
+## Evidence
+
+- Source quote: `.ufo/evidence/round-18/final/audit-1676.stdout:47`, retained at `a134a09` (2026-10-20): “VERIFIED actual execution receipts; ancestor runs have the same instrument blobs as the read revision”.
+- Primary program: `.ufo/evidence/round-18/coldread/traces/L1/audit-1676.json:33`. Its full recorded Python command emits the `OPEN` rows, runs nine status/sub-string assertions, then prints the quoted line. It contains no git/ancestor lookup, instrument-blob comparison, nor receipt argv/exit/revision validation. Trace `rev` is `a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, exit 0; the trace has no stdout digest field.
+- Arithmetic reproduced read-only: stdout SHA-256 `1f9f18715f69db3d19d130b8511bca414b71fa1ab98178b03b0d390d2a6ae7a8`, 6,099 bytes / 47 LF lines / 15 `OPEN` rows. All 15 row hashes and byte counts match the trace input map and `a9c94c5` blobs; stdout lines 2–31 equal `SKILL.md@a9c94c5` lines 1676–1705. The section digest is `b814e0af…`; the ledger’s end=1706 includes an empty line 1706, so the coordinate discrepancy is real but not a content mismatch.
+- The report’s concrete failed-row consequence is confirmed: `checks.json` SHA-256 is `fed3c8e6…` at both `a9c94c5` and frozen `55e1d31`; `bash-witness-selftest` has exit 64 and empty-stdout SHA-256 `e3b0c442…`. The recorded command hashes this file but never parses it.
+- No-harm / correction boundary: the audit stdout, trace, ledger and `L1Residual.md` blobs are unchanged from `21e7932` to `55e1d31`. The exact `measure.py@55e1d31` blob (SHA-256 `bb651eefdbe0f85b2d01408ec61e9accebeca8041c20b70982ae698634ff5053`) is explicitly a five-R18-defect ruler; its `R18-4` predicate also preserves the exit-64/empty-stdout row. Its input `PATHS` does not include Audit1676’s stdout or trace, so it does not repair M1. A later uncommitted working-tree copy differs and was not used as frozen-revision evidence.
+- `corpus/lessons/round-19.md@55e1d31:146-151` already says this ancestry wording is unestablished for Audit965/Audit1212/Audit1925 and that old traces need not authenticate stdout digests; it does not name Audit1676. Thus that caveat is not a specific correction to this receipt.
+- Attribution boundary: `round18-final-measure.json` is a separate recorded old-measure receipt (`--rev 4b7c6823a462f5ea2eafcb262275300a545f3ed7`, exit 0); its stdout digest and companion instrument pin match. It reports historical restraint 8 / 60-of-60 cold-read, not a new five-defect 5/5 result. I did not run the new ruler or selftests.
+
+## Concrete falsifier and residual unknowns
+
+A falsifier for M1 would be an ancestry/instrument comparison or authenticated receipt-field check in the stored command, or a parser that validates `checks.json`; none is present. Instead, the unparsed failed row is a concrete counterexample to treating the printed `VERIFIED` as proof of valid execution receipts. Historical producer identity and actual ancestor-run execution remain unproven; C1’s final five-defect tally is outside this scoped review.

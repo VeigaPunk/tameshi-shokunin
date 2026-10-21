@@ -1,0 +1,15 @@
+# FAudit1164 — round-19 w2
+
+Target: `.ufo/waves/round-19/w1/Audit1164.md`; C1 no-harm / receipt-integrity boundary.
+
+**Verdict: AGREE on its historical conclusion; no new actionable defect found.** Strongest material assertion attacked: O6 / “C1 repairs … do not invalidate this evidence.” I checked it against delivered `55e1d312c4e8ac67aefad80099bd27581ff805c9`, not just the report's `21e7932` snapshot.
+
+**Evidence (read-only):**
+- At trace `rev=a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, all 14 hashes in `coldread/traces/L1/audit-1164.json` match `cat-file` blobs. I independently rebuilt its printed SECTION/OPEN/VERIFIED text from those blobs (did not execute the trace argv): byte-equal to `final/audit-1164.stdout`, SHA-256 `cd96fb063584045b033764b94df8fc106a6e204a0db842f80c5863b1b770d19f`, 5,764 bytes. At delivered `55e1…`, only `SKILL.md` no longer matches the trace's whole-file pin: 13/14; the `1164–1210` section still hashes to `6982b6494fc1998dd4625a0c94117896424bda73ca737d370ac8300a4dd00b16`.
+- The report's residual recheck is satisfied for the receipt trio and ledger: each has identical blobs at `21e7932` and `55e1…` (trace `d0af0495…`, stdout `cd96fb06…`, empty stderr `e3b0c442…`, ledger `d654f3d2…`). The ledger entry still identifies `read_rev=a9c94c5…`, `start=1164/end=1211`, `sha256=6982b649…`, and `inputs_dropped=["SKILL.md"]` (`coldread/ledger.json:12129-12169`).
+- Reopened `final/checks.json:45-53`: the old `bash-witness-selftest` row remains argv `--selftest`, revision `921ef807…`, exit 64, empty-stdout hash. The round-19 `measure.py` at `55e1…` (SHA-256 `bb651eefdbe0f85b2d01408ec61e9accebeca8041c20b70982ae698634ff5053`) checks this historical row is preserved and requires a separate witness receipt (`measure.py:195-213`). That receipt records argv `python3 tools/bash-witness-study.py selftest`, revision `4b7c6823…`, exit 0, matching tool/runner pins and output digest; its output says `WITNESS_SELFTEST: 43/43 pass` and `VERDICT: PASS`. This is a superseding correction, not a rewrite of the failed row.
+- The pinned round-18 measurement retained under round 19 reports 60/60 sections, restraint score 8, and section 1164–1211 credited. Thus the report's section-carry inference is supported by the recorded measurement, while numeric calibration remains unchanged.
+
+**Concrete falsifier tested:** a moved/changed section or changed round-18 receipt/ledger blob at `55e1…` would falsify continued section-level reproduction. Neither occurred. Whole-file `SKILL.md` drift does falsify any stronger claim of 14/14 *current-tree* identity, but Audit1164 scoped its 14/14 to `a9c94c5`, disclosed the later whole-file mismatch, and warned to rehash on later delivery; it is not a new missed correction.
+
+**Residual unknowns:** the trace's self-reported scratch root, actual historical process execution, and interpreter identity remain unauthenticated; rebuilt stdout proves deterministic content, not execution provenance. Audit1164 already limits its use accordingly. No LSP device was exposed; this was a text/JSON evidence review, not symbol analysis. No suites, selftests, builds, or tools were run; no installs.

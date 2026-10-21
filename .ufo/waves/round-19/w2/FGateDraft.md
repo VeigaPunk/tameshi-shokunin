@@ -1,0 +1,14 @@
+# FGateDraft — scoped falsification
+
+## Strongest assertion attacked: R18-5 receipt provenance (GateDraft lines 25, 46–50)
+**Verdict: agree with the C1 substance; disagree only with unqualified “first committed.”** At 4b7c682, `.ufo/evidence/round-18/final/measure-final-60.json` exists, but its `revision` and `rev_input` are both `a85f7107…`; the 4b7c682 parent lacks that path. The replay is correctly distinct: at delivered 55e1d312, `round18-final-measure.json` records the exact `measure.py --repo … --rev 4b7c682… --explain` argv, exit 0, revision 4b7c682, and a stdout digest matching its stream. Parsed stdout says `rev_input=4b7c682`, strict/committed ledger, 60/60, restraint 8, and no overrides. The pinned round-18 instrument SHA matches its 4b7c682 blob. Its `recorded_at` is 05:28:25.715990Z, after the delivered ruler’s 05:28:10Z freeze time. `measure.py` lines 81–99 and 214–236 specify these receipt/attribution checks; I did not execute the evaluator.
+
+**Concrete falsifier (narrow provenance wording):** `6f954badbb42a890d0ce25254264447f812aab49` also adds the identical 235,350-byte receipt blob, with the same commit timestamp as 4b7c682, though it is not an ancestor of 4b7c682. Thus “first committed in 4b7c682” is only demonstrated for the selected 4b7c682 lineage, not uniquely across all refs. `git log` restricted to 4b7c682’s ancestry returns only 4b7c682 as the add; the receipt’s substantive revision correction remains right.
+
+## Reproduced arithmetic; later correction omitted
+Read-only comparison of the named baseline and 4b7c682 `corpus/SOURCES.md` blobs reproduces `25 insertions / 5 deletions`, 62→76 rows, five replacement lines (S001/S008/S052/S056/S057), no removed IDs, and exactly six changed cells: `used-by` on four rows plus S008 `status` and `used-by`. Net deleted non-row lines: zero. The 55e1d312 `measure.py` R18-3 predicate (lines 173–194) requires those exact cells and counts; no suite or selftest was run. S049’s later round-19 `used-by` addition is separate from the 183f87b→4b7c682 range.
+
+GateDraft’s R18-3 arithmetic is correct, but its current proposed summary omits the delivered round-18 lesson’s added “R18-3 range and unit clarification” (§ lines 157–172 at 55e1d312): the five deleted lines are replacements, and the intermediate footer deletion/restoration means “net zero deleted non-row lines does not deny that intermediate append-only violation.” This is a stale/incomplete caveat, not a falsifier of the net arithmetic.
+
+## Residual risk / verification gaps
+Receipt digests and metadata bind retained bytes, not independent proof of arbitrary historical execution/authenticity. No `measure.py --check`, selftest, build, or other suite was run. No broad round admission is asserted.

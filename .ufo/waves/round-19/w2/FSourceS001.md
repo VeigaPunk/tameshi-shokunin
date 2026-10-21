@@ -1,0 +1,19 @@
+# SourceS001 — falsification findings
+
+**Axes:** source fit; frozen-revision/no-harm; R18-3 arithmetic; receipt provenance.
+
+**Strongest assertion attacked:** §5 B-1 says the then-current `arithmetic()` did not derive changed row IDs/cells or check immutable-cell and non-row deletions. §Concrete criterion 2 also left S001's delivered-revision row unverified.
+
+**Verdict:** Agree with B-1 as a timestamped observation of the working copy at 2026-10-21 05:51:57Z; disagree that it remains a delivered-revision gap. The report itself marked its observations provisional and did not inspect the final revision, so this is a stale observation, not a false claim about what it saw.
+
+**Evidence:**
+
+- Reopened the cited primary URL (2026-10-21): Stryker's Metrics section states “Mutation score detected / valid * 100”; the page defines detected as killed + timeout and excludes compile/runtime errors from valid mutants. The retained S001 capture hashes to `5295e9bb464367c8287d4d56d822b01710edd744a2445fd73a222f405e4cc450`, matching the report's recorded page hash. The source supports only Stryker's own metric semantics, not receipt or calibration rules.
+- Read explicit delivered revision `55e1d312c4e8ac67aefad80099bd27581ff805c9` (not detached HEAD). Its `measure.py` blob is `d13dc4fb7dfbed20bc6f5f31d09c3ce9e8e25d58`, equal to the working file. `compare_sources()` at :99–126 parses row identity and cells and returns changed rows/cells, removed/added IDs, immutable-cell changes, and deleted non-row lines. `arithmetic()` at :165–182 requires the exact five-row/six-cell map, no removed rows, immutable changes or deleted non-row lines, 62→76 rows, the five erratum IDs, and the `25 5` numstat.
+- Recomputed from the two SHA-pinned snapshots (`ac82b2df…c828d5` and `018ee9a8…a84e0e`): 62→76 rows; changed cells are S001 `used-by`, S008 `status` + `used-by`, S052/S056/S057 `used-by` (five changed row IDs, six cells); no removed IDs, immutable changes, or deleted non-row lines. The snapshot comparison reports additions S065–S078. The retained `sources-diff.txt:2` says `25 5 corpus/SOURCES.md`. This confirms the S001-only word-diff observation while showing the delivered ruler now checks the broader comparison.
+- The S001 registry row at `55e1…:corpus/SOURCES.md:12` is byte-identical to `7243e7f163f08978c8fd9b6c1ef67a2fefe7d190`'s row; both already list `mutation-case-kumitate-sources-check.md`. That case file's line 1 and line 90 are also identical between those revisions. Its §2 reports 5/10; lines 88–90 state inconclusive is 0 and the rate is killed/10. Thus the reopened Stryker formula supports that narrow arithmetic; it does not support any C1 receipt claim.
+- In the delivered ruler, `receipt()` (:78–96) checks exact recorded argv, pinned revision, integer exit 0, post-freeze timestamp, stdout/stderr paths and digests, and empty stderr. The expected witness and measurement argv are explicit at :184–204. This is source-code evidence about the validator, not a newly run receipt.
+
+**Concrete falsifier for a carried-forward B-1 defect:** the frozen `55e1…` ruler plus its pinned inputs yields the exact comparison above, and its `arithmetic()` predicate fails if the expected changed rows/cells or the no-immutable/no-nonrow-deletion conditions differ. No such mismatch was found.
+
+**Residual limits:** I did not execute `measure.py`, a selftest, or a new receipt; this is not independent C1 admission or a 5/5 result. `sources-diff.txt` is a two-line command/output transcript, not a structured argv receipt; historical authenticity beyond the pinned snapshot bytes is not established here. The report's O-1 (test-state teaching under an anchor that names only Mutant states/Metrics) remains separate from C1 and was not adjudicated.

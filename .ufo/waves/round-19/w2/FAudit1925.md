@@ -1,0 +1,16 @@
+# FAudit1925 — falsifier review (2026-10-21)
+
+Axes: historical assertion fidelity; C1 correction/ruler scope; receipt arithmetic.
+
+## Strongest assertion — agree
+Audit1925 §Findings #2 is right: stdout line 31 says “ancestor runs have the same instrument blobs as the read revision,” but the captured command does not establish that comparison. Trace `.ufo/evidence/round-18/coldread/traces/L1/audit-1925.json` records revision `a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, exit 0, and one `python3 -c` argv. Its program prints hashes for the 19 `spec.paths`, asserts listed receipts, then prints the ancestry sentence; it never reads ancestor revisions or compares their instrument bytes. The trace has 20 input digests (SKILL.md plus those 19 paths), no ancestor inputs, and no stdout/stderr digest fields. The linked ledger row has the same `read_rev` and links this trace. A successful exit therefore supports the listed assertions, not the final ancestry claim.
+
+## Reproduced evidence arithmetic
+Read-only JSON count: 19 paths / 20 trace inputs. `audit-1925.stdout` is 5,348 bytes, SHA-256 `c1ee0c85c7b33720b307334a61e36f2925b77b64f12563109459fdcc060eda2b`; stderr is 0 bytes, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. Trace JSON SHA-256 is `4c366eb4c2be22cdfc70285f52ebf47c48e13b89d5a8e54315039f3454514604`. Ledger `sha256` is `884b3df3741b6172a65c5ebd74b082e9044e62fbb6aec3aa4187e52318616d62`, not the stdout digest; the trace JSON has no stream-digest field. This confirms Audit1925’s separate output-hash cross-binding limitation.
+
+## C1 comparison and stale-evidence boundary
+At frozen revision `55e1d312c4e8ac67aefad80099bd27581ff805c9`, `.ufo/evidence/round-19/measure.py` matches the checked-in file (file SHA-256 `bb651eefdbe0f85b2d01408ec61e9accebeca8041c20b70982ae698634ff5053`). Its `receipt()` checks exact argv/revision/exit, timestamp, named stdout/stderr paths and SHA-256 values, and empty stderr (lines 78–96). The new `round18-final-measure.json` receipt has output hashes matching its actual stream files, but belongs to the distinct R18-5 replay at `4b7c6823a462f5ea2eafcb262275300a545f3ed7`; it does not retrofit `audit-1925.stdout`. Frozen round-19 lesson lines 146–150 explicitly recognizes Audit1925’s unsupported ancestry text and distinguishes old traces from new digest-bearing refresh receipts. That is a corroborating correction, not a falsifier of the historical finding.
+
+Concrete falsifier for this finding: a captured Audit1925 argv/input that enumerates ancestor runs and compares their instrument bytes, with a stdout digest bound to that same run. Neither is in the retained trace/ledger.
+
+Residual verification gap: `before.json` and `after-21e7932.json` each report 0/5 and 5/5, but both record ruler SHA-256 `c538c33d6d80c9299183b6ff08a21da6f557fa66f99712f38820fdce1473e18e`, unlike the frozen strengthened `measure.py` hash above. Round-19 lesson lines 123–125 says the final before/after counts use the strengthened ruler; those final same-ruler receipts were not present in the inspected evidence. This leaves final C1 arithmetic under the hardened ruler pending L1’s rerun; it does not change the Audit1925 verdict. No independent historical producer/authenticity claim is made.
