@@ -1,0 +1,48 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "startLine": 1,
+      "text": "## Findings \u2014 OutputAttack (missing stdout token / stderr laundering / `held` trust)\n\n**Artifact reviewed:** `tools/command-binding.py` (untracked, 204 lines, snapshot FAC4 \u2014 authored by a sibling mid-review; reviewed the final on-disk bytes) against frozen contract `.ufo/evidence/round-23/contract.json` and ruler `.ufo/evidence/round-23/measure.py`.\n\n**Verdict: no actionable defects on the three assigned axes.**\n\n### Per-axis evidence\n\n1. **Missing expected stdout token \u2014 CLEAN.** `evaluate()` line 105: `any(token not in receipt['stdout'] for token in required['expect'].get('stdout_contains', []))` reads only the retained `receipt['stdout']`. The ruler's `missing-stdout-token` mutation (`receipts[0].stdout=''`, contract.json:43 \u2192 `STDOUT_MISMATCH`, exit 1) is discriminated; a missing `stdout` key instead yields `INVALID_RECEIPT` (exit 2) via the shape check at line 87 \u2014 correct precedence for a malformed receipt.\n\n2. **stderr token laundering \u2014 CLEAN.** `stderr` is consulted exactly once, in the receipt shape validation (`isinstance(row.get('stderr'), str)`, line 87). It is never an operand of token matching, so a token present only in `stderr` cannot satisfy `stdout_contains`. The gate's own selftest pins this (`stderr-cannot-supply-token`, line 148). Empty-token laundering is also closed: `strings()` (line 56) rejects `''` elements in `stdout_contains`, and `receipts` can't downgrade tokens since expectations come from `requirements`, a different object.\n\n3. **`held=true` trust \u2014 CLEAN.** No `held`/`status`/`verified` key is read anywhere in `evaluate()` or the shape checks; extra receipt keys are tolerated but inert. All expectations (`argv`, `expect.exit`, `expect.stdout_contains`) are recomputed from `requirements` inside the SHA-256-pinned bundle (`check()` lines 117\u2013119), and the digest commit prevents post-hoc bundle edits (`SNAPSHOT_TAMPERED`, exit 2). The docstring's claim \"held flags \u2026 never establish execution\" (line 10) is honored by the code.\n\n### Residual risk (below defect threshold, informational)\n\n- `stdout_contains` is **optional** in `expect` (absent or `[]` is schema-valid): a requirement with zero declared tokens binds only name/argv/cwd/revision/exit, never stdout content. Not exercised by the contract population, but a requirement authored without tokens silently disables the stdout axis.\n- Token match is **raw substring** over the whole stream \u2014 `'READY'` is satisfied by `'NOTREADY'` / `'ALREADY'`. Same convention as `registry-check.py`'s `stdout_contains`; exit binding limits exploit value, but anchoring (line match) would tighten it.\n- Shape failures short-circuit before per-name findings: a malformed receipt reports `INVALID_RECEIPT` (2), masking any coexisting `DUPLICATE_COMMAND`/membership issues. Consistent with the contract's one-fault-per-case population.\n\n**Verification gaps:** none within scope \u2014 I did not execute `measure.py` (ruler runs the three assigned fact-count commands; reviewer role is static analysis), and `tools/command-binding.py` arrived mid-review so earlier partial reads were discarded and the file re-read in full.\n\n**Report note:** assignment asked for `.ufo/waves/round-23/w1/OutputAttack.md`, but the wave context forbids all file writes (\"DO NOT WRITE ANY FILE (including the renderer Report trailer)\"); per the canonical instruction hierarchy I wrote nothing \u2014 L1 persists these findings.\n\nNo installs performed; no files, git state, or fleet mutated."
+    },
+    "fileSize": 3487,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.OutputAttack"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.OutputAttack.md",
+    "rowPrefixes": false,
+    "totalLines": 25
+  },
+  "text": "## Findings \u2014 OutputAttack (missing stdout token / stderr laundering / `held` trust)\n\n**Artifact reviewed:** `tools/command-binding.py` (untracked, 204 lines, snapshot FAC4 \u2014 authored by a sibling mid-review; reviewed the final on-disk bytes) against frozen contract `.ufo/evidence/round-23/contract.json` and ruler `.ufo/evidence/round-23/measure.py`.\n\n**Verdict: no actionable defects on the three assigned axes.**\n\n### Per-axis evidence\n\n1. **Missing expected stdout token \u2014 CLEAN.** `evaluate()` line 105: `any(token not in receipt['stdout'] for token in required['expect'].get('stdout_contains', []))` reads only the retained `receipt['stdout']`. The ruler's `missing-stdout-token` mutation (`receipts[0].stdout=''`, contract.json:43 \u2192 `STDOUT_MISMATCH`, exit 1) is discriminated; a missing `stdout` key instead yields `INVALID_RECEIPT` (exit 2) via the shape check at line 87 \u2014 correct precedence for a malformed receipt.\n\n2. **stderr token laundering \u2014 CLEAN.** `stderr` is consulted exactly once, in the receipt shape validation (`isinstance(row.get('stderr'), str)`, line 87). It is never an operand of token matching, so a token present only in `stderr` cannot satisfy `stdout_contains`. The gate's own selftest pins this (`stderr-cannot-supply-token`, line 148). Empty-token laundering is also closed: `strings()` (line 56) rejects `''` elements in `stdout_contains`, and `receipts` can't downgrade tokens since expectations come from `requirements`, a different object.\n\n3. **`held=true` trust \u2014 CLEAN.** No `held`/`status`/`verified` key is read anywhere in `evaluate()` or the shape checks; extra receipt keys are tolerated but inert. All expectations (`argv`, `expect.exit`, `expect.stdout_contains`) are recomputed from `requirements` inside the SHA-256-pinned bundle (`check()` lines 117\u2013119), and the digest commit prevents post-hoc bundle edits (`SNAPSHOT_TAMPERED`, exit 2). The docstring's claim \"held flags \u2026 never establish execution\" (line 10) is honored by the code.\n\n### Residual risk (below defect threshold, informational)\n\n- `stdout_contains` is **optional** in `expect` (absent or `[]` is schema-valid): a requirement with zero declared tokens binds only name/argv/cwd/revision/exit, never stdout content. Not exercised by the contract population, but a requirement authored without tokens silently disables the stdout axis.\n- Token match is **raw substring** over the whole stream \u2014 `'READY'` is satisfied by `'NOTREADY'` / `'ALREADY'`. Same convention as `registry-check.py`'s `stdout_contains`; exit binding limits exploit value, but anchoring (line match) would tighten it.\n- Shape failures short-circuit before per-name findings: a malformed receipt reports `INVALID_RECEIPT` (2), masking any coexisting `DUPLICATE_COMMAND`/membership issues. Consistent with the contract's one-fault-per-case population.\n\n**Verification gaps:** none within scope \u2014 I did not execute `measure.py` (ruler runs the three assigned fact-count commands; reviewer role is static analysis), and `tools/command-binding.py` arrived mid-review so earlier partial reads were discarded and the file re-read in full.\n\n**Report note:** assignment asked for `.ufo/waves/round-23/w1/OutputAttack.md`, but the wave context forbids all file writes (\"DO NOT WRITE ANY FILE (including the renderer Report trailer)\"); per the canonical instruction hierarchy I wrote nothing \u2014 L1 persists these findings.\n\nNo installs performed; no files, git state, or fleet mutated."
+}

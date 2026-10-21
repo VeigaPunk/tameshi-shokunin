@@ -645,8 +645,8 @@ def _argv_outside_fleet(argv, fleet_root):
     return hits
 
 
-def run_row(row, cwd, fleet_root=None):
-    """Execute one registry row; return the report fragment."""
+def run_row(row, cwd, fleet_root=None, retain_streams=False):
+    """Execute one registry row; optionally retain complete streams for replay."""
     expect = row["expect"]
     expected_exit = expect["exit"]
     needles = expect.get("stdout_contains", [])
@@ -721,6 +721,9 @@ def run_row(row, cwd, fleet_root=None):
     fragment["elapsed_s"] = round(time.monotonic() - started, 3)
     fragment["stdout_tail"] = _tail(stdout_raw)
     fragment["stderr_tail"] = _tail(stderr_raw)
+    if retain_streams:
+        fragment["stdout"] = stdout_text
+        fragment["stderr"] = stderr_raw.decode("utf-8", errors="replace")
     if missing:
         fragment["stdout_missing"] = missing
     if not cleanup_ok:

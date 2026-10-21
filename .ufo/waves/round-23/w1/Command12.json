@@ -1,0 +1,67 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "startLine": 1,
+      "text": "Scoped findings \u2014 row `evidence-disposition-selftest` (read-only; no report file written per wave constraint; nothing executed or mutated).\n\n## Command identity a receipt gate must bind\n\n**Row** (tools/registry.json:328-348, lane HEAD 15ae602, base 28cae17):\n\n| Field | Value |\n|---|---|\n| name | `evidence-disposition-selftest` |\n| kind | `selftest` |\n| argv | `[\"python3\", \"tools/evidence-disposition.py\", \"--selftest\"]` \u2014 exact 3-element ordered list |\n| expect | `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}` |\n| timeout_s | 60 (runner metadata, not a receipt field) |\n| status | `active` (required-member) |\n\n**Expected-outcome binding** (per the frozen `command-binding-round23-v1` contract and `.ufo/evidence/round-23/measure.py` fixture shape `command-binding-v1`): a receipt must carry `name` + verbatim `argv` + `cwd` + `revision` + integer `exit` + `stdout`, where acceptance requires name match, argv list equality, cwd == bundle cwd, revision == bundle revision (base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` for this claim), `exit` integer 0 (bool/string \u2192 `INVALID_RECEIPT` exit 2, not exit-1 mismatch), and `stdout` containing the literal substring `SELFTEST: PASS` (contains, not equality; extra output allowed; `stderr` is recorded but unpinned).\n\n**Anchor**: `SKILL.md@98bea7d:1681` \u2192 `98bea7da5801f4bc58e4187690ee1687c8a5061f:SKILL.md`, inside the Round-15 gate/probe registry table \u2014 the \"effective expectation disposition\" row's Self-test column states `` `python3 tools/evidence-disposition.py --selftest` ``. Verified present at the pinned revision. It is descriptive prose: a *citation*, not an execution fact.\n\n## Concrete stand-in attack\n\nThe literal `SELFTEST: PASS` exists in `tools/evidence-disposition.py` source itself. A receipt claiming argv `[\"grep\",\"SELFTEST: PASS\",\"tools/evidence-disposition.py\"]` (or `cat` of the same file) yields real exit 0 **and** stdout containing the exact token \u2014 satisfying the entire `expect` block \u2014 without ever running the selftest. An expect-only gate (token + exit, no argv/name binding) admits it; the gate must emit `ARGV_MISMATCH` exit 1. Second variant: citing the anchor `SKILL.md@98bea7d:1681` as \"evidence the command ran\" \u2014 a source read carries no argv/cwd/revision/exit tuple at all; equating it with a receipt is precisely the source-read \u2260 execution conflation C1 forbids. Third variant: renaming the superseded sibling `evidence-disposition-round14-su\u2026\n\n## Bounded acceptance / falsifier\n\n- **Accept**: bundle at revision `28cae179\u2026`, cwd = repo root, exactly one receipt `{\"name\":\"evidence-disposition-selftest\",\"argv\":[\"python3\",\"tools/evidence-disposition.py\",\"--selftest\"],\"cwd\":<bundle cwd>,\"revision\":\"28cae179\u2026\",\"exit\":0,\"stdout\":\"\u2026SELFTEST: PASS\u2026\",\"stderr\":<any>}` \u2192 gate exit 0, `finding_ids: []`.\n- **Falsify** (each independently must reject): same receipt with argv `[\"grep\",\"SELFTEST: PASS\",\"tools/evidence-disposition.py\"]` \u2192 `ARGV_MISMATCH`/1; argv with `--selftest` plus extra flag \u2192 `ARGV_MISMATCH`/1; receipt present under sibling name `evidence-disposition-round14-superseded` but none under this name \u2192 `MEMBERSHIP_MISMATCH`/1; right argv but `revision` `b\u2026` or cwd `/other` \u2192 `REVISION_MISMATCH`/`CWD_MISMATCH`/1; `exit` 1 or missing token \u2192 `EXIT_MISMATCH`/`STDOUT_MISMATCH`/1; `exit` non-integer \u2192 `INVALID_RECEIPT`/2.\n\n## Calibration note\n\nThe gate binds receipt *fields to the frozen row*, not provenance \u2014 `measure.py` self-describes as \"ten public CLI predicates, no authenticity claim\": a fabricated receipt with perfectly matching fields is outside this gate's discrimination scope. What the gate must never accept is anything *other* than the exact name+argv+cwd+revision+outcome tuple; the source anchor and the token's literal presence in tool source make expect-only or source-read checks non-discriminating for this row.\n\n**Verification gaps**: `tools/command-binding.py` absent at HEAD (`before.json` baseline: `tool_present:false`), so gate behavior is asserted from the contract population + fixture, not observed. Registry has no stderr expectation for this row \u2014 stderr-blind pass is per contract, not a defect."
+    },
+    "fileSize": 4457,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 22,
+            "last": 22
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command12",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command12"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command12.md",
+    "rowPrefixes": false,
+    "totalLines": 33
+  },
+  "text": "Scoped findings \u2014 row `evidence-disposition-selftest` (read-only; no report file written per wave constraint; nothing executed or mutated).\n\n## Command identity a receipt gate must bind\n\n**Row** (tools/registry.json:328-348, lane HEAD 15ae602, base 28cae17):\n\n| Field | Value |\n|---|---|\n| name | `evidence-disposition-selftest` |\n| kind | `selftest` |\n| argv | `[\"python3\", \"tools/evidence-disposition.py\", \"--selftest\"]` \u2014 exact 3-element ordered list |\n| expect | `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}` |\n| timeout_s | 60 (runner metadata, not a receipt field) |\n| status | `active` (required-member) |\n\n**Expected-outcome binding** (per the frozen `command-binding-round23-v1` contract and `.ufo/evidence/round-23/measure.py` fixture shape `command-binding-v1`): a receipt must carry `name` + verbatim `argv` + `cwd` + `revision` + integer `exit` + `stdout`, where acceptance requires name match, argv list equality, cwd == bundle cwd, revision == bundle revision (base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` for this claim), `exit` integer 0 (bool/string \u2192 `INVALID_RECEIPT` exit 2, not exit-1 mismatch), and `stdout` containing the literal substring `SELFTEST: PASS` (contains, not equality; extra output allowed; `stderr` is recorded but unpinned).\n\n**Anchor**: `SKILL.md@98bea7d:1681` \u2192 `98bea7da5801f4bc58e4187690ee1687c8a5061f:SKILL.md`, inside the Round-15 gate/probe registry table \u2014 the \"effective expectation disposition\" row's Self-test column states `` `python3 tools/evidence-disposition.py --selftest` ``. Verified present at the pinned revision. It is descriptive prose: a *citation*, not an execution fact.\n\n## Concrete stand-in attack\n\nThe literal `SELFTEST: PASS` exists in `tools/evidence-disposition.py` source itself. A receipt claiming argv `[\"grep\",\"SELFTEST: PASS\",\"tools/evidence-disposition.py\"]` (or `cat` of the same file) yields real exit 0 **and** stdout containing the exact token \u2014 satisfying the entire `expect` block \u2014 without ever running the selftest. An expect-only gate (token + exit, no argv/name binding) admits it; the gate must emit `ARGV_MISMATCH` exit 1. Second variant: citing the anchor `SKILL.md@98bea7d:1681` as \"evidence the command ran\" \u2014 a source read carries no argv/cwd/revision/exit tuple at all; equating it with a receipt is precisely the source-read \u2260 execution conflation C1 forbids. Third variant: renaming the superseded sibling `evidence-disposition-round14-su\u2026\n\n## Bounded acceptance / falsifier\n\n- **Accept**: bundle at revision `28cae179\u2026`, cwd = repo root, exactly one receipt `{\"name\":\"evidence-disposition-selftest\",\"argv\":[\"python3\",\"tools/evidence-disposition.py\",\"--selftest\"],\"cwd\":<bundle cwd>,\"revision\":\"28cae179\u2026\",\"exit\":0,\"stdout\":\"\u2026SELFTEST: PASS\u2026\",\"stderr\":<any>}` \u2192 gate exit 0, `finding_ids: []`.\n- **Falsify** (each independently must reject): same receipt with argv `[\"grep\",\"SELFTEST: PASS\",\"tools/evidence-disposition.py\"]` \u2192 `ARGV_MISMATCH`/1; argv with `--selftest` plus extra flag \u2192 `ARGV_MISMATCH`/1; receipt present under sibling name `evidence-disposition-round14-superseded` but none under this name \u2192 `MEMBERSHIP_MISMATCH`/1; right argv but `revision` `b\u2026` or cwd `/other` \u2192 `REVISION_MISMATCH`/`CWD_MISMATCH`/1; `exit` 1 or missing token \u2192 `EXIT_MISMATCH`/`STDOUT_MISMATCH`/1; `exit` non-integer \u2192 `INVALID_RECEIPT`/2.\n\n## Calibration note\n\nThe gate binds receipt *fields to the frozen row*, not provenance \u2014 `measure.py` self-describes as \"ten public CLI predicates, no authenticity claim\": a fabricated receipt with perfectly matching fields is outside this gate's discrimination scope. What the gate must never accept is anything *other* than the exact name+argv+cwd+revision+outcome tuple; the source anchor and the token's literal presence in tool source make expect-only or source-read checks non-discriminating for this row.\n\n**Verification gaps**: `tools/command-binding.py` absent at HEAD (`before.json` baseline: `tool_present:false`), so gate behavior is asserted from the contract population + fixture, not observed. Registry has no stderr expectation for this row \u2014 stderr-blind pass is per contract, not a defect.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command12:raw:22-22 to read line 22 whole]"
+}

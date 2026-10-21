@@ -1540,3 +1540,26 @@ metadata and its failure are preserved; production gate source is unchanged.
   are retained; no dead seat replaced. No tool install/update occurred.
 - Open operator scope remains the inherited round18 R17-INCIDENT recovery
   procedure question; no new L0 question or fleet/sibling mutation.
+
+## Round23 — frozen required-command binding capability (2026-10-21)
+
+- C1 calibration on tied lowest axis: tool-absent0/10 at28cae179 to target10/10,
+  exact frozen command `python3 .ufo/evidence/round-23/measure.py --repo REPO_AT_REV`.
+  Initial declaration/ruler/baseline landed15ae6029625dccef2c5e6015ca7b73e027cde70a.
+  Numeric expertise is not increased; current no-harm requires later execution.
+- Motivation: historical R17-CMD-BIND overclaim, QUALITY33; old source-read
+  credit does not bind required argv. S083 and new source-headed knowledge
+  entry support a finite registry demonstration, never full-page closure.
+- Landed work: new `tools/command-binding.py`; opt-in complete streams in
+  `tools/registry-check.py`; frozen registry requirements/replay and mutation
+  evidence instruments; QUALITY46, source/index/lesson/registry-home updates.
+  Exact measured observations and commits are appended after execution.
+- Build wave64: original callbacks63 completed/1 dead (Haiku429,
+  retry-after-ms1437000), no replacement; originals at
+  `.ufo/waves/round-23/original-outcomes1.json`. All seats were read-only;
+  one RevisionAttack seat disclosed mutating jj auto-snapshots despite the
+  prohibition. No production file change is attributed to it; helper owns VCS.
+- First-wave attacks led to complete structural validation before duplicate
+  rejection, exact schema-key validation and nineteen supplemental fixtures.
+  Original draft bytes retained for actual red-before comparison; no pass
+  is inferred from a static review. Old missing argv/truncated tails stay old.

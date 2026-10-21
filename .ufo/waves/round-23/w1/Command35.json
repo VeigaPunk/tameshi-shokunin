@@ -1,0 +1,69 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "startLine": 1,
+      "text": "I didn't write `.ufo/waves/round-23/w1/Command35.md`, because this wave forbids all file writes, including the report trailer. The findings are below for L1 to persist. I ran nothing except read-only `rg`, `git show` and `sha256sum` lookups. I did not run the selftest, audit other rows, or install any tools.\n\n**The row.** The name is `receipt-measure-selftest` (`tools/registry.json:835-842`, `kind: selftest`, `timeout_s: 180`, `status: active`, tag `new-r20`).\n- **argv:** `[\"python3\", \"tools/receipt-measure.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"RECEIPT_MEASURE_SELFTEST: 10/10 pass\"]}`\n\n**The anchor.** The row's source is `SKILL.md@c51eb32f3c8588cd391907db774af0f1d3c355c6:1950`. That line is the `tools/receipt-measure.py` gate row. It names the self-invocation `python3 tools/receipt-measure.py --selftest` and the exits 0 clean, 1 failed, 2 usage. The anchor commit is also the last commit to touch `tools/receipt-measure.py` at or before base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`. The file at base and in the working tree both have SHA-256 `a67bffa9c562ee1c22e8fbd580668379b452e63df82ee6141fe54623d5931afa`.\n\n**Where the expected output comes from.**\n- `main()` reaches `selftest()` only when the arguments are exactly `[\"--selftest\"]` (lines 305-306).\n- `--selftest` mixed with any other argument returns exit 2 with a usage message (lines 307-309).\n- The total is 10: eight fixture cases, plus a usage-error check for a missing `--repo` value, plus a check that `--check` is still rejected (line 249).\n- Line 299 prints `RECEIPT_MEASURE_SELFTEST: {passed}/{total} pass` to stdout as the last line.\n- Lines 296-297 print `RECEIPT_MEASURE_RUNNER_SHA256: <sha256 of this file>` and `ROUND20_MEASURE_INSTRUMENT_SHA256: f34dc233\u20264e2d` just before it.\n- It returns 0 only when `passed == total`.\n\n**What the gate must enforce.**\n- **Command identity:**\n  - The receipt's argv must equal the row's argv exactly, element by element. Any added `-B`, flag or alternate path is a different command.\n  - The working directory must be the repo root, because the script path is relative.\n  - The receipt must come from an actual subprocess execution, not a reconstruction.\n  - The receipt must be tied to the evaluated revision. The script's digest is the strongest tie: the receipt's `RECEIPT_MEASURE_RUNNER_SHA256` line must equal the SHA-256 of `tools/receipt-measure.py` at that revision.\n- **Expected-outcome binding:**\n  - The observed exit code must be exactly 0.\n  - The literal must appear on the stdout stream, not stderr.\n  - The completion must fall within 180 seconds.\n  - These checks are evaluated against the frozen row values, not values copied into the receipt.\n- **Contract gap [INFERENCE]:** searching `.ufo/evidence/round-23/contract.json` for `receipt-measure` and `RECEIPT_MEASURE` found no matches. So the frozen contract does not itself pin this row's argv or expect; only the registry does.\n\n**How a false stand-in could pass.** The literal `RECEIPT_MEASURE_SELFTEST: 10/10 pass` appears in exactly one file in the repo, `tools/registry.json`. The script source builds the string with an f-string, so the literal never appears there.\n- **Source read:** `cat tools/registry.json` or `rg RECEIPT_MEASURE_SELFTEST tools/registry.json` exits 0 and its stdout contains the marker. A gate that checks only exit plus `stdout_contains` would accept that file read as this row's execution.\n- **Different command:** `echo 'RECEIPT_MEASURE_SELFTEST: 10/10 pass'` passes the same way.\n- **Near-identical command:** `python3 -B tools/receipt-measure.py --selftest` produces identical output but is not the registered argv.\n- **Stale receipt:** a reused round-20 receipt passes unless the runner digest is bound to the current revision.\n\n**Bounded acceptance and falsifier.**\n- **Accept** only when all of these hold:\n  - argv equals the row's argv exactly, with cwd at the repo root.\n  - exit is 0, and completion is within 180 seconds.\n  - stdout contains the marker line.\n  - stdout's `RECEIPT_MEASURE_RUNNER_SHA256` equals the digest of `tools/receipt-measure.py` at the evaluated revision. That is `a67bffa9\u20261afa` at base.\n- **Falsifier:** give the gate a synthetic receipt with argv `[\"cat\", \"tools/registry.json\"]`, exit 0, and that file's contents as stdout. Label it `receipt-measure-selftest`. The gate MUST reject it for argv mismatch and missing runner digest. If it accepts, it is equating a source read with command execution, and the C1 calibration fails.\n\n**Smallest safe correction.**\n- Make exact argv equality and a revision-bound runner digest required receipt fields, checked before evaluating `stdout_contains`.\n- Optionally tighten `stdout_contains` to a match on the last stdout line."
+    },
+    "fileSize": 4759,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command35"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command35.md",
+    "rowPrefixes": false,
+    "totalLines": 46
+  },
+  "text": "I didn't write `.ufo/waves/round-23/w1/Command35.md`, because this wave forbids all file writes, including the report trailer. The findings are below for L1 to persist. I ran nothing except read-only `rg`, `git show` and `sha256sum` lookups. I did not run the selftest, audit other rows, or install any tools.\n\n**The row.** The name is `receipt-measure-selftest` (`tools/registry.json:835-842`, `kind: selftest`, `timeout_s: 180`, `status: active`, tag `new-r20`).\n- **argv:** `[\"python3\", \"tools/receipt-measure.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"RECEIPT_MEASURE_SELFTEST: 10/10 pass\"]}`\n\n**The anchor.** The row's source is `SKILL.md@c51eb32f3c8588cd391907db774af0f1d3c355c6:1950`. That line is the `tools/receipt-measure.py` gate row. It names the self-invocation `python3 tools/receipt-measure.py --selftest` and the exits 0 clean, 1 failed, 2 usage. The anchor commit is also the last commit to touch `tools/receipt-measure.py` at or before base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`. The file at base and in the working tree both have SHA-256 `a67bffa9c562ee1c22e8fbd580668379b452e63df82ee6141fe54623d5931afa`.\n\n**Where the expected output comes from.**\n- `main()` reaches `selftest()` only when the arguments are exactly `[\"--selftest\"]` (lines 305-306).\n- `--selftest` mixed with any other argument returns exit 2 with a usage message (lines 307-309).\n- The total is 10: eight fixture cases, plus a usage-error check for a missing `--repo` value, plus a check that `--check` is still rejected (line 249).\n- Line 299 prints `RECEIPT_MEASURE_SELFTEST: {passed}/{total} pass` to stdout as the last line.\n- Lines 296-297 print `RECEIPT_MEASURE_RUNNER_SHA256: <sha256 of this file>` and `ROUND20_MEASURE_INSTRUMENT_SHA256: f34dc233\u20264e2d` just before it.\n- It returns 0 only when `passed == total`.\n\n**What the gate must enforce.**\n- **Command identity:**\n  - The receipt's argv must equal the row's argv exactly, element by element. Any added `-B`, flag or alternate path is a different command.\n  - The working directory must be the repo root, because the script path is relative.\n  - The receipt must come from an actual subprocess execution, not a reconstruction.\n  - The receipt must be tied to the evaluated revision. The script's digest is the strongest tie: the receipt's `RECEIPT_MEASURE_RUNNER_SHA256` line must equal the SHA-256 of `tools/receipt-measure.py` at that revision.\n- **Expected-outcome binding:**\n  - The observed exit code must be exactly 0.\n  - The literal must appear on the stdout stream, not stderr.\n  - The completion must fall within 180 seconds.\n  - These checks are evaluated against the frozen row values, not values copied into the receipt.\n- **Contract gap [INFERENCE]:** searching `.ufo/evidence/round-23/contract.json` for `receipt-measure` and `RECEIPT_MEASURE` found no matches. So the frozen contract does not itself pin this row's argv or expect; only the registry does.\n\n**How a false stand-in could pass.** The literal `RECEIPT_MEASURE_SELFTEST: 10/10 pass` appears in exactly one file in the repo, `tools/registry.json`. The script source builds the string with an f-string, so the literal never appears there.\n- **Source read:** `cat tools/registry.json` or `rg RECEIPT_MEASURE_SELFTEST tools/registry.json` exits 0 and its stdout contains the marker. A gate that checks only exit plus `stdout_contains` would accept that file read as this row's execution.\n- **Different command:** `echo 'RECEIPT_MEASURE_SELFTEST: 10/10 pass'` passes the same way.\n- **Near-identical command:** `python3 -B tools/receipt-measure.py --selftest` produces identical output but is not the registered argv.\n- **Stale receipt:** a reused round-20 receipt passes unless the runner digest is bound to the current revision.\n\n**Bounded acceptance and falsifier.**\n- **Accept** only when all of these hold:\n  - argv equals the row's argv exactly, with cwd at the repo root.\n  - exit is 0, and completion is within 180 seconds.\n  - stdout contains the marker line.\n  - stdout's `RECEIPT_MEASURE_RUNNER_SHA256` equals the digest of `tools/receipt-measure.py` at the evaluated revision. That is `a67bffa9\u20261afa` at base.\n- **Falsifier:** give the gate a synthetic receipt with argv `[\"cat\", \"tools/registry.json\"]`, exit 0, and that file's contents as stdout. Label it `receipt-measure-selftest`. The gate MUST reject it for argv mismatch and missing runner digest. If it accepts, it is equating a source read with command execution, and the C1 calibration fails.\n\n**Smallest safe correction.**\n- Make exact argv equality and a revision-bound runner digest required receipt fields, checked before evaluating `stdout_contains`.\n- Optionally tighten `stdout_contains` to a match on the last stdout line."
+}

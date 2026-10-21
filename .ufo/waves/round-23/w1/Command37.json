@@ -1,0 +1,60 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "startLine": 1,
+      "text": "Investigation complete \u2014 all reads only, nothing executed, no files written (wave forbids report writes; findings returned here for L1 persistence).\n\n# Command37 \u2014 registry row `env-diff-selftest` (calibration)\n\n## Row identity (tools/registry.json:855\u2013861)\n```json\n{\n  \"name\": \"env-diff-selftest\",\n  \"kind\": \"selftest\",\n  \"argv\": [\"python3\", \"tools/env-diff.py\", \"--selftest\"],\n  \"expect\": {\"exit\": 0, \"stdout_contains\": [\"ENVDIFF_SELFTEST: 9/9 pass\"]},\n  \"timeout_s\": 120,\n  \"status\": \"active\",\n  \"tags\": [\"new-r21\"],\n  \"source\": \"SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1975\"\n}\n```\n\n## Source anchor\n- Registry `source`: `SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1975`. Working-tree SKILL.md at that region (lines ~1969\u20131983) contains the instrument table whose `tools/env-diff.py` row documents self-invocation `python3 tools/env-diff.py --selftest` and the frozen nine-pins/seven-profiles scope. [INFERENCE] the frozen blob is a prior/identical revision of that table \u2014 blob identity unverified since git spawn is forbidden this wave.\n- Executable anchor of the command itself: `tools/env-diff.py` \u2014 `selftest()` at line 143; marker emission at lines 193\u2013195: `passed = sum(ok for _, ok in checks); print(f\"ENVDIFF_SELFTEST: {passed}/{len(checks)} pass\"); return 0 if passed == len(checks) else 1`.\n- Round-23 contract (`.ufo/evidence/round-23/contract.json`) contains no `env-diff` reference (grep: no match) \u2014 the gate's binding authority for this row is the registry row alone.\n\n## Command identity + expected-outcome binding a receipt gate must enforce\n1. **Exact argv, order-sensitive, 3 elements**: interpreter literally `python3` (not `python`, not an absolute path), script literally `tools/env-diff.py` relative to repo root `/home/vgpnk/Projects/shokunin/tameshi-shokunin` (cwd = repo root), flag exactly `--selftest` as sole argument.\n2. **Both expect fields conjunctively**: exit code `0` **AND** stdout containing the exact literal substring `ENVDIFF_SELFTEST: 9/9 pass`. Either alone is insufficient. Exit 0 is emitted only at line 195 when all checks pass; the marker is namespaced (`ENVDIFF_SELFTEST:`) against siblings (`ROUTEMIX_SELFTEST`, `ROUND21_MEASURE_SELFTEST`, `SELECTOR_SELFTEST`).\n3. **The literal `9` pins the check inventory**: currently 9 checks \u2014 6 probes (`invariant`, `tz`, `locale`, `home`, `columns`, `repeat`) + `missing-bwrap` + `timeout` + `pin-mismatch-public-cli`. The count is dynamic in source (`{len(checks)}`), so the registry literal is a pin that breaks if the selftest gains/loses a check \u2014 a desirable drift alarm, not an accident to relax.\n\n## Concrete false-stand-in vector (calibration target)\n**Unrelated source read standing in for execution**: `grep -h \"ENVDIFF_SELFTEST\" tools/env-diff.py` exits 0 and writes a line containing the marker template `ENVDIFF_SELFTEST: {passed}/{len(checks)} pass` to stdout \u2014 without executing the selftest even once. A gate that (a) keys `stdout_contains` on the prefix only, or (b) accepts \"anchor file read succeeds (exit 0) + marker text observed anywhere on disk\", equates evidence-of-definition with evidence-of-execution and would mint a passing receipt from a bare read. This is exactly the class the new gate exists to reject.\n**Adjacent different-command vector** (same calibration, second face): `--selftest` is `action=\"store_true\"` and dispatches at lines 212\u2013213 *before* other args are validated, so `python3 tools/env-diff.py --selftest --contract /tmp/x.json --out /tmp/y.json --jobs 9` (and the argv alias `python3 ./tools/env-diff.py --selftest`) produce byte-identical stdout and exit 0. Outcome-identical \u2260 identity-equal: an exact-argv gate must reject these as different commands.\n\n## One bounded acceptance/falsifier\n**Acceptance**: a receipt for this row is valid iff it records a process with argv exactly `[\"python3\", \"tools/env-diff.py\", \"--selftest\"]`, cwd = repo root, elapsed \u2264 120 s, exit `0`, and stdout containing exactly `ENVDIFF_SELFTEST: 9/9 pass` (marker provenance: env-diff.py:194, all 9 checks passed).\n**Falsifier**: feed the gate a receipt captured from `grep -c ENVDIFF_SELFTEST tools/env-diff.py` \u2014 it exits `0` but (i) its argv differs from the frozen row and (ii) its stdout is `1`, lacking the `9/9 pass` literal. A correctly calibrated gate must reject it on **both** axes; acceptance on either axis alone (exit-only or prefix-substring-only) demonstrates the false-stand-in bug.\n\nNo builds/tests/formatters run; no git/jj/index/config/fleet mutations; no files written. Constraint compliance: only this row and its two anchors (SKILL.md table region, tools/env-diff.py) read; other rows untouched; contract grepped once for `env-diff` (no match, scoping fact only)."
+    },
+    "fileSize": 4755,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command37"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command37.md",
+    "rowPrefixes": false,
+    "totalLines": 37
+  },
+  "text": "Investigation complete \u2014 all reads only, nothing executed, no files written (wave forbids report writes; findings returned here for L1 persistence).\n\n# Command37 \u2014 registry row `env-diff-selftest` (calibration)\n\n## Row identity (tools/registry.json:855\u2013861)\n```json\n{\n  \"name\": \"env-diff-selftest\",\n  \"kind\": \"selftest\",\n  \"argv\": [\"python3\", \"tools/env-diff.py\", \"--selftest\"],\n  \"expect\": {\"exit\": 0, \"stdout_contains\": [\"ENVDIFF_SELFTEST: 9/9 pass\"]},\n  \"timeout_s\": 120,\n  \"status\": \"active\",\n  \"tags\": [\"new-r21\"],\n  \"source\": \"SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1975\"\n}\n```\n\n## Source anchor\n- Registry `source`: `SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1975`. Working-tree SKILL.md at that region (lines ~1969\u20131983) contains the instrument table whose `tools/env-diff.py` row documents self-invocation `python3 tools/env-diff.py --selftest` and the frozen nine-pins/seven-profiles scope. [INFERENCE] the frozen blob is a prior/identical revision of that table \u2014 blob identity unverified since git spawn is forbidden this wave.\n- Executable anchor of the command itself: `tools/env-diff.py` \u2014 `selftest()` at line 143; marker emission at lines 193\u2013195: `passed = sum(ok for _, ok in checks); print(f\"ENVDIFF_SELFTEST: {passed}/{len(checks)} pass\"); return 0 if passed == len(checks) else 1`.\n- Round-23 contract (`.ufo/evidence/round-23/contract.json`) contains no `env-diff` reference (grep: no match) \u2014 the gate's binding authority for this row is the registry row alone.\n\n## Command identity + expected-outcome binding a receipt gate must enforce\n1. **Exact argv, order-sensitive, 3 elements**: interpreter literally `python3` (not `python`, not an absolute path), script literally `tools/env-diff.py` relative to repo root `/home/vgpnk/Projects/shokunin/tameshi-shokunin` (cwd = repo root), flag exactly `--selftest` as sole argument.\n2. **Both expect fields conjunctively**: exit code `0` **AND** stdout containing the exact literal substring `ENVDIFF_SELFTEST: 9/9 pass`. Either alone is insufficient. Exit 0 is emitted only at line 195 when all checks pass; the marker is namespaced (`ENVDIFF_SELFTEST:`) against siblings (`ROUTEMIX_SELFTEST`, `ROUND21_MEASURE_SELFTEST`, `SELECTOR_SELFTEST`).\n3. **The literal `9` pins the check inventory**: currently 9 checks \u2014 6 probes (`invariant`, `tz`, `locale`, `home`, `columns`, `repeat`) + `missing-bwrap` + `timeout` + `pin-mismatch-public-cli`. The count is dynamic in source (`{len(checks)}`), so the registry literal is a pin that breaks if the selftest gains/loses a check \u2014 a desirable drift alarm, not an accident to relax.\n\n## Concrete false-stand-in vector (calibration target)\n**Unrelated source read standing in for execution**: `grep -h \"ENVDIFF_SELFTEST\" tools/env-diff.py` exits 0 and writes a line containing the marker template `ENVDIFF_SELFTEST: {passed}/{len(checks)} pass` to stdout \u2014 without executing the selftest even once. A gate that (a) keys `stdout_contains` on the prefix only, or (b) accepts \"anchor file read succeeds (exit 0) + marker text observed anywhere on disk\", equates evidence-of-definition with evidence-of-execution and would mint a passing receipt from a bare read. This is exactly the class the new gate exists to reject.\n**Adjacent different-command vector** (same calibration, second face): `--selftest` is `action=\"store_true\"` and dispatches at lines 212\u2013213 *before* other args are validated, so `python3 tools/env-diff.py --selftest --contract /tmp/x.json --out /tmp/y.json --jobs 9` (and the argv alias `python3 ./tools/env-diff.py --selftest`) produce byte-identical stdout and exit 0. Outcome-identical \u2260 identity-equal: an exact-argv gate must reject these as different commands.\n\n## One bounded acceptance/falsifier\n**Acceptance**: a receipt for this row is valid iff it records a process with argv exactly `[\"python3\", \"tools/env-diff.py\", \"--selftest\"]`, cwd = repo root, elapsed \u2264 120 s, exit `0`, and stdout containing exactly `ENVDIFF_SELFTEST: 9/9 pass` (marker provenance: env-diff.py:194, all 9 checks passed).\n**Falsifier**: feed the gate a receipt captured from `grep -c ENVDIFF_SELFTEST tools/env-diff.py` \u2014 it exits `0` but (i) its argv differs from the frozen row and (ii) its stdout is `1`, lacking the `9/9 pass` literal. A correctly calibrated gate must reject it on **both** axes; acceptance on either axis alone (exit-only or prefix-substring-only) demonstrates the false-stand-in bug.\n\nNo builds/tests/formatters run; no git/jj/index/config/fleet mutations; no files written. Constraint compliance: only this row and its two anchors (SKILL.md table region, tools/env-diff.py) read; other rows untouched; contract grepped once for `env-diff` (no match, scoping fact only)."
+}

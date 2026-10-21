@@ -1,0 +1,50 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "startLine": 1,
+      "text": "All evidence gathered. Analysis complete \u2014 per the lane contract, this wave forbids report writes, so findings return in this answer.\n\n## Command14 \u2014 `context-capture-missing-env`\n\n**Row** (tameshi-shokunin/tools/registry.json:372\u2013395):\n\n| Field | Value |\n|---|---|\n| `name` | `context-capture-missing-env` |\n| `kind` | `gate` |\n| `argv` | `[\"python3\", \"tools/context-capture.py\", \"--check\", \"--receipt\", \".ufo/evidence/round-15/frozen/context-missing-env/receipt.json\", \"--expected\", \".ufo/evidence/round-15/frozen/context-missing-env/expected.json\"]` |\n| `expect` | `{\"exit\": 1, \"stdout_contains\": [\"missing_injected_environment\"]}` |\n| `timeout_s` | 60 |\n| `source` (anchor) | `SKILL.md@98bea7d:1680` |\n| `status` / `tags` | `active` / `[\"baseline\"]` |\n\n**Anchor.** `SKILL.md@98bea7d:1680` resolves: `98bea7d` is a valid commit, and line 1680 is the \"retained invocation-context gate\" row of the Round-15 gate/probe registry \u2014 it documents `--check --receipt FILE --expected FILE` for caller-pinned retained receipts, the verdict map (`1 failed` with stable finding ID e.g. `missing_injected_environment`), and pins the negative fixture `context-missing-env.json` sha256 `1ee9d09bc5\u2026208`. The anchor names the *mode*, not the frozen paths; the argv's exact receipt/expected paths are authoritative only in the registry row itself. Three sibling rows share this anchor \u2014 provenance, not identity.\n\n**Command identity.** The receipt is bound to the exact argv vector \u2014 every element, in order, relative to cwd `tameshi-shokunin`: `--check` mode, `--receipt` = the frozen missing-env receipt (sha256 `1ee9d09bc5\u2026208`, byte-identical to the round-14 negative fixture; verified on disk), `--expected` = the frozen pin (`tameshi-context-expected-v1`, `receipt_sha256` = that same digest, `id: missing_injected_environment`, `exit: 1`). No `--json` flag \u2014 output is the text form (`CONTEXT: MISMATCH (id=missing_injected_environment \u2026)` + `FINDING` lines on **stdout**; `emit()` writes only to `sys.stdout`, context-capture.py:1290\u20131305).\n\n**Expected-outcome binding.** Joint, not disjunctive: observed exit status `1` *and* literal substring `missing_injected_environment` in stdout. Both must come from the same spawned process running that argv; a receipt record citing the file's bytes or another run's log is no evidence for this row. Semantically the binding is the caller-pinned failed verdict: the tool re-derives predicates from the frozen receipt bytes, emits the stable finding ID, and exits 1 \u2014 distinct from sibling `context-capture-frozen` (same tool, no receipt args, exit 0/`context_consistent`) and `context-capture-mapping-suffix` (same shape, `exit: 1` with **no** `stdout_contains`).\n\n**Concrete false stand-in.** Grep/read of `expected.json` (which literally contains `\"id\": \"missing_injected_environment\"`) or of the source table in `tools/context-capture.py:63` yields the token as file content \u2014 a gate that equates \"the string exists in a source file\" with \"the command ran and printed it\" would green this row with zero executions and no observed exit status. A different-command variant: `python3 tools/context-capture.py --check --receipt <null-injected-env fixture> --expected <pin of missing_injected_environment>` also exits 1 and prints `missing_injected_environment` (selftest cases at :1807 and :1824 prove a second receipt emits the identical id/exit pair) \u2014 argv-path and receipt-digest binding is what excludes it.\n\n**Bounded acceptance / falsifier.** Acceptance: spawn the exact argv (cwd `tameshi-shokunin`, \u226460 s) \u2192 observed exit `1` and stdout literally containing `missing_injected_environment`; log must record the spawned argv, not just files read. Falsifier: flip one byte in the frozen `receipt.json` before the run \u2192 tool reports `snapshot_tampered` at exit `2` (could-not-evaluate precedence, SKILL.md:1701); a receipt gate that still counts that run as satisfying the row is checking neither argv-bound bytes nor the exit class. (Not executed \u2014 assignment forbids.)\n\n**Write note.** No files written: role context explicitly forbids report writes this wave (`.ufo/waves/round-23/w1/Command14.md` intentionally unwritten); findings delivered here for L1 persistence. No tools installed; no commands executed beyond reads/hashes."
+    },
+    "fileSize": 4308,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command14"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command14.md",
+    "rowPrefixes": false,
+    "totalLines": 27
+  },
+  "text": "All evidence gathered. Analysis complete \u2014 per the lane contract, this wave forbids report writes, so findings return in this answer.\n\n## Command14 \u2014 `context-capture-missing-env`\n\n**Row** (tameshi-shokunin/tools/registry.json:372\u2013395):\n\n| Field | Value |\n|---|---|\n| `name` | `context-capture-missing-env` |\n| `kind` | `gate` |\n| `argv` | `[\"python3\", \"tools/context-capture.py\", \"--check\", \"--receipt\", \".ufo/evidence/round-15/frozen/context-missing-env/receipt.json\", \"--expected\", \".ufo/evidence/round-15/frozen/context-missing-env/expected.json\"]` |\n| `expect` | `{\"exit\": 1, \"stdout_contains\": [\"missing_injected_environment\"]}` |\n| `timeout_s` | 60 |\n| `source` (anchor) | `SKILL.md@98bea7d:1680` |\n| `status` / `tags` | `active` / `[\"baseline\"]` |\n\n**Anchor.** `SKILL.md@98bea7d:1680` resolves: `98bea7d` is a valid commit, and line 1680 is the \"retained invocation-context gate\" row of the Round-15 gate/probe registry \u2014 it documents `--check --receipt FILE --expected FILE` for caller-pinned retained receipts, the verdict map (`1 failed` with stable finding ID e.g. `missing_injected_environment`), and pins the negative fixture `context-missing-env.json` sha256 `1ee9d09bc5\u2026208`. The anchor names the *mode*, not the frozen paths; the argv's exact receipt/expected paths are authoritative only in the registry row itself. Three sibling rows share this anchor \u2014 provenance, not identity.\n\n**Command identity.** The receipt is bound to the exact argv vector \u2014 every element, in order, relative to cwd `tameshi-shokunin`: `--check` mode, `--receipt` = the frozen missing-env receipt (sha256 `1ee9d09bc5\u2026208`, byte-identical to the round-14 negative fixture; verified on disk), `--expected` = the frozen pin (`tameshi-context-expected-v1`, `receipt_sha256` = that same digest, `id: missing_injected_environment`, `exit: 1`). No `--json` flag \u2014 output is the text form (`CONTEXT: MISMATCH (id=missing_injected_environment \u2026)` + `FINDING` lines on **stdout**; `emit()` writes only to `sys.stdout`, context-capture.py:1290\u20131305).\n\n**Expected-outcome binding.** Joint, not disjunctive: observed exit status `1` *and* literal substring `missing_injected_environment` in stdout. Both must come from the same spawned process running that argv; a receipt record citing the file's bytes or another run's log is no evidence for this row. Semantically the binding is the caller-pinned failed verdict: the tool re-derives predicates from the frozen receipt bytes, emits the stable finding ID, and exits 1 \u2014 distinct from sibling `context-capture-frozen` (same tool, no receipt args, exit 0/`context_consistent`) and `context-capture-mapping-suffix` (same shape, `exit: 1` with **no** `stdout_contains`).\n\n**Concrete false stand-in.** Grep/read of `expected.json` (which literally contains `\"id\": \"missing_injected_environment\"`) or of the source table in `tools/context-capture.py:63` yields the token as file content \u2014 a gate that equates \"the string exists in a source file\" with \"the command ran and printed it\" would green this row with zero executions and no observed exit status. A different-command variant: `python3 tools/context-capture.py --check --receipt <null-injected-env fixture> --expected <pin of missing_injected_environment>` also exits 1 and prints `missing_injected_environment` (selftest cases at :1807 and :1824 prove a second receipt emits the identical id/exit pair) \u2014 argv-path and receipt-digest binding is what excludes it.\n\n**Bounded acceptance / falsifier.** Acceptance: spawn the exact argv (cwd `tameshi-shokunin`, \u226460 s) \u2192 observed exit `1` and stdout literally containing `missing_injected_environment`; log must record the spawned argv, not just files read. Falsifier: flip one byte in the frozen `receipt.json` before the run \u2192 tool reports `snapshot_tampered` at exit `2` (could-not-evaluate precedence, SKILL.md:1701); a receipt gate that still counts that run as satisfying the row is checking neither argv-bound bytes nor the exit class. (Not executed \u2014 assignment forbids.)\n\n**Write note.** No files written: role context explicitly forbids report writes this wave (`.ufo/waves/round-23/w1/Command14.md` intentionally unwritten); findings delivered here for L1 persistence. No tools installed; no commands executed beyond reads/hashes."
+}

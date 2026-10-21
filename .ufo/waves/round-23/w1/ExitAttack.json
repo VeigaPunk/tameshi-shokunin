@@ -1,0 +1,62 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "startLine": 1,
+      "text": "Static trace complete; the gate's exit-type guards hold on every assigned axis except two low-severity edges. Compiling findings.\n\n**Seat: TameshiR23.ExitAttack \u2014 findings for `tools/command-binding.py` (untracked, the round-23 gate under audit) vs `.ufo/evidence/round-23/contract.json`**\n\n**Axes attacked:** bool-as-int `exit`, string/float/null `exit`, expected-red commands (declared nonzero `expect.exit`), nonzero declared exits, and `exit0=clean` gate semantics kept distinct from child exit.\n\n## Findings (by severity)\n\n**F1 \u2014 LOW: `exit` domain is any Python `int`, never range-bounded** (`tools/command-binding.py:76`, `:86`, `:103`). `type(v) is int` accepts `-1`, `300`, `2**64`, `10**100` on both `receipts[].exit` and `requirements[].expect.exit`, and `receipt['exit'] != required['expect']['exit']` then binds them. A digest-pinned bundle can declare `expect.exit: 300` and satisfy it with `receipt.exit: 300` \u2192 gate exits 0 \"clean\" for a code no `execve`/`wait` can produce (POSIX exit status is 0\u2013255; signal kills are conventionally `128+n` or Python's negative `returncode`, i.e. \u2265 \u221264). The docstring says \"integer exit,\" but a *command receipt* implies a possible process outcome. Cheap fix: bound both fields to `0 \u2264 exit \u2264 255` (or a documented `\u221264 \u2264 exit \u2264 255` if signal\u2026\n\n**F2 \u2014 LOW: duplicate-vs-invalid precedence is row-order-dependent and can flip gate code 1\u21942** (`tools/command-binding.py:88\u201393`). The receipts loop returns `(1, ['DUPLICATE_COMMAND'])` immediately at the first duplicate `name`, aborting validation of later rows. `[valid, dup, invalid-bool-exit]` \u2192 `1/DUPLICATE_COMMAND`, while `[invalid-bool-exit, dup]` \u2192 `2/INVALID_RECEIPT`. Since the contract pins exact gate exit codes (1 vs 2), a mixed corruption is classified by incidental row order rather than by severity (structural 2 should dominate semantic 1, as it does elsewhere: all shape checks precede membership). Deterministic per byte input, but a combined mutation can hide `INVALID_RECEIPT` behind a code-1 finding.\n\n## Verified-held semantics (no defect)\n\n- **bool-as-int, both directions:** `type(...) is not int` rejects `True`/`False` on receipt (`INVALID_RECEIPT`, 2 \u2014 matches contract row `bool-exit` exactly, exit 2) and on `expect.exit` (`INVALID_REQUIREMENT`, 2). Confirmed in selftest cases `bool-exit`, `bool-expected-exit`.\n- **string/float/null exits:** `'0'`, `'1'`, `0.0`, `\u22120.0`, `1e5` (float), `null` \u2192 `INVALID_RECEIPT`, 2. Selftest covers `string-exit`. No `int()`/`bool()`/comparison coercion path exists (only `!=` between two guarded ints at :103).\n- **Non-finite/oversized:** `NaN`/`Infinity` literals \u2192 `parse_constant` \u2192 `Invalid` \u2192 `INVALID_INPUT`; >4300-digit ints raise `ValueError` under CPython's digit cap \u2192 `INVALID_INPUT`.\n- **Expected red commands:** control fixture has requirement `expect.exit: 1` satisfied by receipt `exit: 1` \u2192 `evaluate` returns 0, `finding_ids: []`; selftest case `clean-with-expected-red` pins gate exit 0. Nonzero declared exits are first-class.\n- **`exit0=clean` distinctness:** gate codes are only {0 clean, 1 mismatch, 2 cannot-evaluate, 64 usage}; no path leaks a child/receipt exit into `main`'s return. `evaluate` computes its own code; `selftest` returns 0/1 independently.\n- **Digest-before-decode ordering:** `SNAPSHOT_TAMPERED` (2) precedes any parse, so a tampered bundle can't smuggle a type-confused receipt under an honest digest; appended whitespace alone trips it (selftest `tampered`).\n\n## Residual risk / gaps\n\n- `expect.stdout_contains` may legally be `[]` (`strings([], False)` passes), so a requirement can bind on argv+cwd+revision+exit only \u2014 exit-only receipts are admissible by design; worth noting since red-command observability then rests on `exit` alone.\n- Report JSON key `\"exit\"` (gate code 0/1/2/64) shares a name with receipt `\"exit\"` (child status) in adjacent pipeline layers \u2014 semantics are correctly separated internally, but a consumer reading `report.exit` as a child code would misread; a rename (`\"gate_exit\"`) would harden the boundary.\n- Selftest has no case for out-of-range int exits (e.g. `exit: 300` accepted) \u2014 if F1 is fixed, add both signs.\n- Contract `bool-exit` only exercises `False` (\u2192 2/INVALID_RECEIPT); `True` is symmetric in code but unpinned in the population \u2014 harmless, noted for completeness.\n- Only static analysis was performed per wave rules (no gate execution); the one permitted executor fact-count commands are outside this seat's scope, so findings rest on code reading plus Python type-semantics, which is sound for `type(x) is int` vs `bool`/`str`/`float`/`None`."
+    },
+    "fileSize": 4860,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 9,
+            "last": 9
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.ExitAttack",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.ExitAttack"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.ExitAttack.md",
+    "rowPrefixes": false,
+    "totalLines": 28
+  },
+  "text": "Static trace complete; the gate's exit-type guards hold on every assigned axis except two low-severity edges. Compiling findings.\n\n**Seat: TameshiR23.ExitAttack \u2014 findings for `tools/command-binding.py` (untracked, the round-23 gate under audit) vs `.ufo/evidence/round-23/contract.json`**\n\n**Axes attacked:** bool-as-int `exit`, string/float/null `exit`, expected-red commands (declared nonzero `expect.exit`), nonzero declared exits, and `exit0=clean` gate semantics kept distinct from child exit.\n\n## Findings (by severity)\n\n**F1 \u2014 LOW: `exit` domain is any Python `int`, never range-bounded** (`tools/command-binding.py:76`, `:86`, `:103`). `type(v) is int` accepts `-1`, `300`, `2**64`, `10**100` on both `receipts[].exit` and `requirements[].expect.exit`, and `receipt['exit'] != required['expect']['exit']` then binds them. A digest-pinned bundle can declare `expect.exit: 300` and satisfy it with `receipt.exit: 300` \u2192 gate exits 0 \"clean\" for a code no `execve`/`wait` can produce (POSIX exit status is 0\u2013255; signal kills are conventionally `128+n` or Python's negative `returncode`, i.e. \u2265 \u221264). The docstring says \"integer exit,\" but a *command receipt* implies a possible process outcome. Cheap fix: bound both fields to `0 \u2264 exit \u2264 255` (or a documented `\u221264 \u2264 exit \u2264 255` if signal\u2026\n\n**F2 \u2014 LOW: duplicate-vs-invalid precedence is row-order-dependent and can flip gate code 1\u21942** (`tools/command-binding.py:88\u201393`). The receipts loop returns `(1, ['DUPLICATE_COMMAND'])` immediately at the first duplicate `name`, aborting validation of later rows. `[valid, dup, invalid-bool-exit]` \u2192 `1/DUPLICATE_COMMAND`, while `[invalid-bool-exit, dup]` \u2192 `2/INVALID_RECEIPT`. Since the contract pins exact gate exit codes (1 vs 2), a mixed corruption is classified by incidental row order rather than by severity (structural 2 should dominate semantic 1, as it does elsewhere: all shape checks precede membership). Deterministic per byte input, but a combined mutation can hide `INVALID_RECEIPT` behind a code-1 finding.\n\n## Verified-held semantics (no defect)\n\n- **bool-as-int, both directions:** `type(...) is not int` rejects `True`/`False` on receipt (`INVALID_RECEIPT`, 2 \u2014 matches contract row `bool-exit` exactly, exit 2) and on `expect.exit` (`INVALID_REQUIREMENT`, 2). Confirmed in selftest cases `bool-exit`, `bool-expected-exit`.\n- **string/float/null exits:** `'0'`, `'1'`, `0.0`, `\u22120.0`, `1e5` (float), `null` \u2192 `INVALID_RECEIPT`, 2. Selftest covers `string-exit`. No `int()`/`bool()`/comparison coercion path exists (only `!=` between two guarded ints at :103).\n- **Non-finite/oversized:** `NaN`/`Infinity` literals \u2192 `parse_constant` \u2192 `Invalid` \u2192 `INVALID_INPUT`; >4300-digit ints raise `ValueError` under CPython's digit cap \u2192 `INVALID_INPUT`.\n- **Expected red commands:** control fixture has requirement `expect.exit: 1` satisfied by receipt `exit: 1` \u2192 `evaluate` returns 0, `finding_ids: []`; selftest case `clean-with-expected-red` pins gate exit 0. Nonzero declared exits are first-class.\n- **`exit0=clean` distinctness:** gate codes are only {0 clean, 1 mismatch, 2 cannot-evaluate, 64 usage}; no path leaks a child/receipt exit into `main`'s return. `evaluate` computes its own code; `selftest` returns 0/1 independently.\n- **Digest-before-decode ordering:** `SNAPSHOT_TAMPERED` (2) precedes any parse, so a tampered bundle can't smuggle a type-confused receipt under an honest digest; appended whitespace alone trips it (selftest `tampered`).\n\n## Residual risk / gaps\n\n- `expect.stdout_contains` may legally be `[]` (`strings([], False)` passes), so a requirement can bind on argv+cwd+revision+exit only \u2014 exit-only receipts are admissible by design; worth noting since red-command observability then rests on `exit` alone.\n- Report JSON key `\"exit\"` (gate code 0/1/2/64) shares a name with receipt `\"exit\"` (child status) in adjacent pipeline layers \u2014 semantics are correctly separated internally, but a consumer reading `report.exit` as a child code would misread; a rename (`\"gate_exit\"`) would harden the boundary.\n- Selftest has no case for out-of-range int exits (e.g. `exit: 300` accepted) \u2014 if F1 is fixed, add both signs.\n- Contract `bool-exit` only exercises `False` (\u2192 2/INVALID_RECEIPT); `True` is symmetric in code but unpinned in the population \u2014 harmless, noted for completeness.\n- Only static analysis was performed per wave rules (no gate execution); the one permitted executor fact-count commands are outside this seat's scope, so findings rest on code reading plus Python type-semantics, which is sound for `type(x) is int` vs `bool`/`str`/`float`/`None`.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.ExitAttack:raw:9-9 to read line 9 whole]"
+}

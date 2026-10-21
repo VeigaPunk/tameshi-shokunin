@@ -1,0 +1,50 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "startLine": 1,
+      "text": "**Finding:** row `receipt-window-selftest` can be satisfied by the wrong command. Its `expect` block is the only outcome binding, and it checks just exit 0 plus one stdout substring. That exact substring sits verbatim in `tools/registry.json`, so a plain read of the registry produces a matching `{exit 0, stdout \u2287 token}`. I did not run the command. I wrote no files, including `.ufo/waves/round-23/w1/Command34.md`, because this wave forbids report writes; L1 should persist this. I installed no tools.\n\n**The row** (`tools/registry.json`, lines 825\u2013833):\n- **Name:** `receipt-window-selftest`, kind `selftest`, status `active`, tags `[\"new-r20\"]`, `timeout_s` 60.\n- **argv:** `[\"python3\", \"tools/receipt-window.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"RECEIPT_WINDOW_SELFTEST: 20/20 pass\"]}`\n- **Source anchor:** `SKILL.md@c51eb32f3c8588cd391907db774af0f1d3c355c6:1949`. That line is the `tools/receipt-window.py` gate row naming the self-invocation `python3 tools/receipt-window.py --selftest`, with verdict map 0 clean, 1 failed, 2 could-not-evaluate, 64 usage. The same row is still at line 1949 in base `28cae179`.\n- **Producer:** `tools/receipt-window.py`, sha256 `f03ae7e91607750e2690f7819c486a3d9db03ee13f0b8cf51958462834dcf7cc`, identical at base and in the working tree. In `selftest()` (lines 244\u2013348), 18 in-memory cases plus 2 malformed-file loader cases make 20. Line 347 prints `RECEIPT_WINDOW_SELFTEST: {passed}/{total} pass`, and the function returns `EXIT_CLEAN` (0) only when every case passes, otherwise `EXIT_FAIL` (1). Exit codes are defined at line 23.\n\n**What a receipt gate must bind**\n- **Command identity:**\n  - The argv must equal all three elements exactly, in order. Extra flags such as `--json` also parse through argparse, and the token alone cannot reveal them.\n  - The cwd must be the `tameshi-shokunin` root, because `tools/receipt-window.py` is a relative path.\n  - The revision must be the frozen base `28cae179\u2026`, optionally with the script's sha256.\n  - The command name must appear exactly once, matching row membership.\n- **Expected outcome:** the exit code must be the integer 0 (not `true`), and stdout must contain the full token `RECEIPT_WINDOW_SELFTEST: 20/20 pass`. Checking only a fragment like `RECEIPT_WINDOW_SELFTEST:` would also accept `19/20 pass`. (Command 34 ran no shell commands, so any count or result here comes from file reads, not execution.)\n\n**How a stand-in passes today**\n- **Source read:** the exact needle appears verbatim in `tools/registry.json:828` and in a fixture at `tools/receipt-measure.py:143`. A receipt for `cat tools/registry.json` (or a `rg` over the repo) exits 0 with the token in stdout, which satisfies `expect`. Only the argv binding rejects it. The script's own source can't do this, since it prints an f-string rather than the literal `20/20`.\n- **Precedent of unbound receipts:** `receipt-measure.py:142\u2013143` already builds a selftest receipt as `{\"exit\": 0, \"stdout\": \"RECEIPT_WINDOW_SELFTEST: 20/20 pass\\n\"}`, with no argv, cwd or revision. That is the \"outcome-only receipt\" shape this gate must refuse.\n- **Different command:** `echo 'RECEIPT_WINDOW_SELFTEST: 20/20 pass'` passes the same way.\n\n**Acceptance and falsifier.** Accept when the receipt's argv is exactly `[\"python3\",\"tools/receipt-window.py\",\"--selftest\"]`, the cwd is the `tameshi-shokunin` root, the revision is `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`, the name appears once, the exit is the integer 0, and stdout contains the full token. Falsify with the same receipt but argv `[\"cat\",\"tools/registry.json\"]` and the real registry content as stdout: the gate MUST return exit 1 with `ARGV_MISMATCH`. Exit 0 means source-read credit is still accepted.\n\n**Impacted axes:** the contract's `argv-mismatch`, `cwd-mismatch`, `revision-mismatch` and `missing-stdout-token` cases (all of which `expect` alone cannot detect), plus `bool-exit` and `duplicate-command`.\n\n**Smallest safe correction:** compare argv first and require it to be exactly equal; check exit and stdout only after argv, cwd and revision match. Never accept a receipt because its stdout contains the token if its argv differs."
+    },
+    "fileSize": 4189,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command34"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command34.md",
+    "rowPrefixes": false,
+    "totalLines": 27
+  },
+  "text": "**Finding:** row `receipt-window-selftest` can be satisfied by the wrong command. Its `expect` block is the only outcome binding, and it checks just exit 0 plus one stdout substring. That exact substring sits verbatim in `tools/registry.json`, so a plain read of the registry produces a matching `{exit 0, stdout \u2287 token}`. I did not run the command. I wrote no files, including `.ufo/waves/round-23/w1/Command34.md`, because this wave forbids report writes; L1 should persist this. I installed no tools.\n\n**The row** (`tools/registry.json`, lines 825\u2013833):\n- **Name:** `receipt-window-selftest`, kind `selftest`, status `active`, tags `[\"new-r20\"]`, `timeout_s` 60.\n- **argv:** `[\"python3\", \"tools/receipt-window.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"RECEIPT_WINDOW_SELFTEST: 20/20 pass\"]}`\n- **Source anchor:** `SKILL.md@c51eb32f3c8588cd391907db774af0f1d3c355c6:1949`. That line is the `tools/receipt-window.py` gate row naming the self-invocation `python3 tools/receipt-window.py --selftest`, with verdict map 0 clean, 1 failed, 2 could-not-evaluate, 64 usage. The same row is still at line 1949 in base `28cae179`.\n- **Producer:** `tools/receipt-window.py`, sha256 `f03ae7e91607750e2690f7819c486a3d9db03ee13f0b8cf51958462834dcf7cc`, identical at base and in the working tree. In `selftest()` (lines 244\u2013348), 18 in-memory cases plus 2 malformed-file loader cases make 20. Line 347 prints `RECEIPT_WINDOW_SELFTEST: {passed}/{total} pass`, and the function returns `EXIT_CLEAN` (0) only when every case passes, otherwise `EXIT_FAIL` (1). Exit codes are defined at line 23.\n\n**What a receipt gate must bind**\n- **Command identity:**\n  - The argv must equal all three elements exactly, in order. Extra flags such as `--json` also parse through argparse, and the token alone cannot reveal them.\n  - The cwd must be the `tameshi-shokunin` root, because `tools/receipt-window.py` is a relative path.\n  - The revision must be the frozen base `28cae179\u2026`, optionally with the script's sha256.\n  - The command name must appear exactly once, matching row membership.\n- **Expected outcome:** the exit code must be the integer 0 (not `true`), and stdout must contain the full token `RECEIPT_WINDOW_SELFTEST: 20/20 pass`. Checking only a fragment like `RECEIPT_WINDOW_SELFTEST:` would also accept `19/20 pass`. (Command 34 ran no shell commands, so any count or result here comes from file reads, not execution.)\n\n**How a stand-in passes today**\n- **Source read:** the exact needle appears verbatim in `tools/registry.json:828` and in a fixture at `tools/receipt-measure.py:143`. A receipt for `cat tools/registry.json` (or a `rg` over the repo) exits 0 with the token in stdout, which satisfies `expect`. Only the argv binding rejects it. The script's own source can't do this, since it prints an f-string rather than the literal `20/20`.\n- **Precedent of unbound receipts:** `receipt-measure.py:142\u2013143` already builds a selftest receipt as `{\"exit\": 0, \"stdout\": \"RECEIPT_WINDOW_SELFTEST: 20/20 pass\\n\"}`, with no argv, cwd or revision. That is the \"outcome-only receipt\" shape this gate must refuse.\n- **Different command:** `echo 'RECEIPT_WINDOW_SELFTEST: 20/20 pass'` passes the same way.\n\n**Acceptance and falsifier.** Accept when the receipt's argv is exactly `[\"python3\",\"tools/receipt-window.py\",\"--selftest\"]`, the cwd is the `tameshi-shokunin` root, the revision is `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`, the name appears once, the exit is the integer 0, and stdout contains the full token. Falsify with the same receipt but argv `[\"cat\",\"tools/registry.json\"]` and the real registry content as stdout: the gate MUST return exit 1 with `ARGV_MISMATCH`. Exit 0 means source-read credit is still accepted.\n\n**Impacted axes:** the contract's `argv-mismatch`, `cwd-mismatch`, `revision-mismatch` and `missing-stdout-token` cases (all of which `expect` alone cannot detect), plus `bool-exit` and `duplicate-command`.\n\n**Smallest safe correction:** compare argv first and require it to be exactly equal; check exit and stdout only after argv, cwd and revision match. Never accept a receipt because its stdout contains the token if its argv differs."
+}

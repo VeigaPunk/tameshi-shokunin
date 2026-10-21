@@ -1,0 +1,40 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "startLine": 1,
+      "text": "**Axes:** calibration, cwd-binding correctness, deterministic replay, provenance honesty.\n\n**Counterexample:** identical argv does not establish identical execution context. For example, `[\"python3\",\"gate.py\",\"--selftest\"]` run from `/fixture/repo` and `/other` can execute different files. Matching argv, revision text, exit, and stdout must not override a cwd mismatch.\n\n**Evidence**\n- `.ufo/evidence/round-23/measure.py`: the control declares `/fixture/repo`; `cwd-mismatch` changes only receipt 0\u2019s cwd to `/other`, retaining argv and other fields. Required result: exit **1**, finding **`CWD_MISMATCH`**.\n- That predicate does **not** discriminate exact comparison from `normpath`, `abspath`, `realpath`, or trailing-slash removal. Consequently, passing it does not establish any normalization policy.\n- `tools/context-capture.py:882\u2013898` provides an existing exact-string cwd comparison convention.\n- `tools/registry-check.py:676\u2013678,869` executes commands with an explicit cwd. Its live mode uses `abspath(root_requested)`; revision mode uses a temporary clone root. Therefore, source-lane cwd and clone execution cwd are not interchangeable.\n\n**Smallest safe correction**\nSpecify cwd as an **opaque recorded string**, compared exactly against the declared bundle cwd after schema validation. Do not strip whitespace/slashes, resolve symlinks, collapse `..`, expand variables, or resolve relative paths against the validator\u2019s own cwd. Any producer-side canonicalization must happen before execution and recording, under an explicitly documented policy. Record the actual clone cwd for revision-mode runs; never relabel it as the source lane.\n\n**Bounded fixture and claim**\nKeep both receipts and requirements unchanged except receipt 0\u2019s cwd: `/fixture/repo` \u2192 `/other`; regenerate the expected bundle digest so integrity validation does not mask the semantic mismatch. Expect exit 1 with `CWD_MISMATCH`; the unchanged control must remain clean. Additional policy probes such as `/fixture/repo/` should mismatch under exact-string semantics, but are **not covered by the frozen ten predicates**.\n\nThis is a fixable specification gap, not evidence that an implemented gate already fails. Exact-string binding intentionally rejects equivalent alternate path spellings; it proves consistency with a declaration, **not actual execution, directory identity, or producer authentication**. No gate execution was performed; no files were written."
+    },
+    "fileSize": 2458,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.CwdAttack"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.CwdAttack.md",
+    "rowPrefixes": false,
+    "totalLines": 17
+  },
+  "text": "**Axes:** calibration, cwd-binding correctness, deterministic replay, provenance honesty.\n\n**Counterexample:** identical argv does not establish identical execution context. For example, `[\"python3\",\"gate.py\",\"--selftest\"]` run from `/fixture/repo` and `/other` can execute different files. Matching argv, revision text, exit, and stdout must not override a cwd mismatch.\n\n**Evidence**\n- `.ufo/evidence/round-23/measure.py`: the control declares `/fixture/repo`; `cwd-mismatch` changes only receipt 0\u2019s cwd to `/other`, retaining argv and other fields. Required result: exit **1**, finding **`CWD_MISMATCH`**.\n- That predicate does **not** discriminate exact comparison from `normpath`, `abspath`, `realpath`, or trailing-slash removal. Consequently, passing it does not establish any normalization policy.\n- `tools/context-capture.py:882\u2013898` provides an existing exact-string cwd comparison convention.\n- `tools/registry-check.py:676\u2013678,869` executes commands with an explicit cwd. Its live mode uses `abspath(root_requested)`; revision mode uses a temporary clone root. Therefore, source-lane cwd and clone execution cwd are not interchangeable.\n\n**Smallest safe correction**\nSpecify cwd as an **opaque recorded string**, compared exactly against the declared bundle cwd after schema validation. Do not strip whitespace/slashes, resolve symlinks, collapse `..`, expand variables, or resolve relative paths against the validator\u2019s own cwd. Any producer-side canonicalization must happen before execution and recording, under an explicitly documented policy. Record the actual clone cwd for revision-mode runs; never relabel it as the source lane.\n\n**Bounded fixture and claim**\nKeep both receipts and requirements unchanged except receipt 0\u2019s cwd: `/fixture/repo` \u2192 `/other`; regenerate the expected bundle digest so integrity validation does not mask the semantic mismatch. Expect exit 1 with `CWD_MISMATCH`; the unchanged control must remain clean. Additional policy probes such as `/fixture/repo/` should mismatch under exact-string semantics, but are **not covered by the frozen ten predicates**.\n\nThis is a fixable specification gap, not evidence that an implemented gate already fails. Exact-string binding intentionally rejects equivalent alternate path spellings; it proves consistency with a declaration, **not actual execution, directory identity, or producer authentication**. No gate execution was performed; no files were written."
+}

@@ -1,0 +1,45 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "startLine": 1,
+      "text": "All reads complete; wave forbids file writes, so findings are returned here for L1 to persist.\n\n## TameshiR23.Command39 \u2014 calibration: registry row `round21-measure-selftest`\n\n**Row** (tools/registry.json:874-881): `round21-measure-selftest`, kind `selftest`, status `active`, `timeout_s: 300`, tags `[\"new-r21\"]`.\n\n**Exact argv**: `[\"python3\", \"tools/round21-measure.py\", \"--selftest\"]`\n**Exact expect**: `{\"exit\": 0, \"stdout_contains\": [\"ROUND21_MEASURE_SELFTEST: 13/13 pass\"]}`\n**Anchor**: `source: \"SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1977\"` (SKILL.md tool table, pinned commit). Working-tree behavioral anchor: `tools/round21-measure.py` \u2014 `--selftest` routing at lines 148-151; marker emission at line 133 `print(f\"ROUND21_MEASURE_SELFTEST: {passed}/{len(checks)} pass\")`; exit binding at line 134 (`return 0 if passed == len(checks) else 1`); usage path exits 64. Note: in the current working tree the `tools/round21-measure.py` SKILL.md table row sits at line 1979, not 1977 \u2014 line-number drift vs. the pinned blob is expected since the anchor is commit-frozen [INFERENCE on pinned content; git reads forbidden this wave].\n\n**Command identity + expected-outcome binding a receipt gate must enforce** \u2014 all bound to one atomic execution record:\n1. Ordered argv exactly `python3` + `tools/round21-measure.py` + `--selftest`, no extra flags; cwd = tameshi-shokunin repo root (`tools/...` is relative). `--claim ... --json` on the same script is a *different command* (exits 0/1/2/64, prints JSON, never the selftest marker).\n2. Exit 0 **and** captured stdout containing the exact literal `ROUND21_MEASURE_SELFTEST: 13/13 pass` from the same run \u2014 never outcome-shape alone.\n3. The `13` is structurally `len(checks)`: exactly 13 named checks (c1-killed, c1-survived, c1-missing-anchor, c1-pristine-red, c2-complete, c2-wrong-pin, c2-missing-profile, c2-wrong-classification, c2-unmined-source, c1-unknown-rev, c1-usage, c2-unknown-rev, c2-usage). A receipt should also pin the script digest so `N/N pass` with N\u226013 (source drift) is detectable.\n\n**Concrete false stand-ins**:\n- *Unrelated source read*: a gate that accepts the anchor/digest of `tools/round21-measure.py` or the SKILL.md@370f2df:1977 table row as a receipt proves the file exists, not that the interpreter executed it \u2014 a stale/broken script whose selftest would exit 1 or 2 still \"passes\".\n- *Different command*: sibling row `round21-coldread-selector-selftest` runs `python3 .ufo/evidence/round-21/coldread/measure.py --selftest` \u2192 exit 0, `SELECTOR_SELFTEST: 12/12 pass`; a gate matching \"argv ends in `--selftest` + exit 0 + regex `\\w+: \\d+/\\d+ pass`\" accepts that run for this row. Cheapest impostor: `echo \"ROUND21_MEASURE_SELFTEST: 13/13 pass\"` satisfies exit+stdout with zero execution.\n\n**Bounded acceptance/falsifier** (one): *Accept* only a record binding (a) exact argv+repo-root cwd, (b) exit==0, (c) stdout containing the literal marker alongside 13 `MEASURE_CASE \u2026 PASS` lines and zero `FAIL` lines, plus the executed script digest. *Falsifier*: `printf 'ROUND21_MEASURE_SELFTEST: 13/13 pass\\n'` (or the coldread sibling run) yields (b)+(c) without executing the row's command \u2014 the gate must reject it via the argv/execution binding, demonstrating it never equates source reads or outcome-shaped output with this command's execution.\n\nCompliance: no commands run, no files written, no git/installs; scope limited to this row, its anchor, and the argv-targeted script's selftest region."
+    },
+    "fileSize": 3505,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command39"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command39.md",
+    "rowPrefixes": false,
+    "totalLines": 22
+  },
+  "text": "All reads complete; wave forbids file writes, so findings are returned here for L1 to persist.\n\n## TameshiR23.Command39 \u2014 calibration: registry row `round21-measure-selftest`\n\n**Row** (tools/registry.json:874-881): `round21-measure-selftest`, kind `selftest`, status `active`, `timeout_s: 300`, tags `[\"new-r21\"]`.\n\n**Exact argv**: `[\"python3\", \"tools/round21-measure.py\", \"--selftest\"]`\n**Exact expect**: `{\"exit\": 0, \"stdout_contains\": [\"ROUND21_MEASURE_SELFTEST: 13/13 pass\"]}`\n**Anchor**: `source: \"SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1977\"` (SKILL.md tool table, pinned commit). Working-tree behavioral anchor: `tools/round21-measure.py` \u2014 `--selftest` routing at lines 148-151; marker emission at line 133 `print(f\"ROUND21_MEASURE_SELFTEST: {passed}/{len(checks)} pass\")`; exit binding at line 134 (`return 0 if passed == len(checks) else 1`); usage path exits 64. Note: in the current working tree the `tools/round21-measure.py` SKILL.md table row sits at line 1979, not 1977 \u2014 line-number drift vs. the pinned blob is expected since the anchor is commit-frozen [INFERENCE on pinned content; git reads forbidden this wave].\n\n**Command identity + expected-outcome binding a receipt gate must enforce** \u2014 all bound to one atomic execution record:\n1. Ordered argv exactly `python3` + `tools/round21-measure.py` + `--selftest`, no extra flags; cwd = tameshi-shokunin repo root (`tools/...` is relative). `--claim ... --json` on the same script is a *different command* (exits 0/1/2/64, prints JSON, never the selftest marker).\n2. Exit 0 **and** captured stdout containing the exact literal `ROUND21_MEASURE_SELFTEST: 13/13 pass` from the same run \u2014 never outcome-shape alone.\n3. The `13` is structurally `len(checks)`: exactly 13 named checks (c1-killed, c1-survived, c1-missing-anchor, c1-pristine-red, c2-complete, c2-wrong-pin, c2-missing-profile, c2-wrong-classification, c2-unmined-source, c1-unknown-rev, c1-usage, c2-unknown-rev, c2-usage). A receipt should also pin the script digest so `N/N pass` with N\u226013 (source drift) is detectable.\n\n**Concrete false stand-ins**:\n- *Unrelated source read*: a gate that accepts the anchor/digest of `tools/round21-measure.py` or the SKILL.md@370f2df:1977 table row as a receipt proves the file exists, not that the interpreter executed it \u2014 a stale/broken script whose selftest would exit 1 or 2 still \"passes\".\n- *Different command*: sibling row `round21-coldread-selector-selftest` runs `python3 .ufo/evidence/round-21/coldread/measure.py --selftest` \u2192 exit 0, `SELECTOR_SELFTEST: 12/12 pass`; a gate matching \"argv ends in `--selftest` + exit 0 + regex `\\w+: \\d+/\\d+ pass`\" accepts that run for this row. Cheapest impostor: `echo \"ROUND21_MEASURE_SELFTEST: 13/13 pass\"` satisfies exit+stdout with zero execution.\n\n**Bounded acceptance/falsifier** (one): *Accept* only a record binding (a) exact argv+repo-root cwd, (b) exit==0, (c) stdout containing the literal marker alongside 13 `MEASURE_CASE \u2026 PASS` lines and zero `FAIL` lines, plus the executed script digest. *Falsifier*: `printf 'ROUND21_MEASURE_SELFTEST: 13/13 pass\\n'` (or the coldread sibling run) yields (b)+(c) without executing the row's command \u2014 the gate must reject it via the argv/execution binding, demonstrating it never equates source reads or outcome-shaped output with this command's execution.\n\nCompliance: no commands run, no files written, no git/installs; scope limited to this row, its anchor, and the argv-targeted script's selftest region."
+}

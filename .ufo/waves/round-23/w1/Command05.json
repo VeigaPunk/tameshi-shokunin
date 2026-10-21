@@ -1,0 +1,51 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "startLine": 1,
+      "text": "Row extracted and source/anchor verified. Findings (report write skipped per wave rule \u2014 Goal context: \"this wave forbids report writes\"; L1 persists these findings):\n\n## Scoped findings \u2014 `bash-witness-selftest`\n\n**Row** (registry.json lines 84\u2013104, schema `tameshi-entry-registry-v1`):\n- `name`: `bash-witness-selftest` \u00b7 `kind`: `selftest` \u00b7 `status`: `active` \u00b7 `tags`: `[baseline]`\n- `argv`: `[\"python3\", \"tools/bash-witness-study.py\", \"selftest\"]` \u2014 positional mode `selftest`, **not** `--selftest` (three sibling rows use the `--` form; this row is the outlier)\n- `expect`: `exit: 0` \u2227 `stdout_contains: [\"WITNESS_SELFTEST:\"]` \u00b7 `timeout_s: 60`\n- `source` anchor: `SKILL.md@98bea7d:1504` \u2014 verified at commit `98bea7d`: line 1504 is the \"bash declared-witness study\" registry-table row; its *Self-test command* column is exactly `python3 tools/bash-witness-study.py selftest`.\n\n**Exact command identity a receipt gate must bind.** The receipt must attest to an *executed* child process whose argv is exactly `python3 tools/bash-witness-study.py selftest` run with cwd = `tameshi-shokunin`, observed exit 0, and stdout containing the literal `WITNESS_SELFTEST:` within 60 s. The emitted line (source line 1711) is `WITNESS_SELFTEST: {cases-failed}/{cases} pass`, and exit 0 is returned only when `failed == 0` (`VERDICT: PASS` also printed); `VERDICT: FAIL` \u2192 exit 1, `Fail`/`Cannot` exceptions \u2192 exit 1/2 with marker on **stderr**, usage errors \u2192 exit 64. So `expect` binds both surfaces: exit status *and* the stdout marker \u2014 a receipt carrying only one is insufficient.\n\n**Concrete false-stand-in.** A handler that does `read` on `tools/bash-witness-study.py` would read line 1711 containing the literal `WITNESS_SELFTEST:` and could mint a receipt claiming the row satisfied without any process ever running \u2014 source reads contain the expected marker bytes, so `stdout_contains` must bind to captured child stdout, never to file content. A second cheap substitute: `python3 tools/bash-witness-study.py count` (the sibling row `bash-witness-count`) exits 0 and emits `unresolved\\tnone` but no `WITNESS_SELFTEST:` marker; and `... --selftest` (the sibling selftest convention) exits 64 via `UsageParser`. Both satisfy a gate that checks only `python3 tools/bash-witness-study.py`-prefix or exit-only receipts \u2014 exact argv-token and marker b\u2026\n\n**Bounded acceptance / falsifier.** *Accept*: a single recorded execution with argv exactly `[\"python3\",\"tools/bash-witness-study.py\",\"selftest\"]`, cwd = repo root, exit 0, stdout \u2283 `\"WITNESS_SELFTEST:\"` (optionally `VERDICT: PASS`), elapsed \u2264 60 s. *Falsify*: any of argv drift (`--selftest`, `count`, `check`), nonzero exit, marker only in stderr or absent from stdout, marker sourced from file/source content rather than process stdout, or no execution evidence at all.\n\n**Residual notes:** (a) `kind` in the row is `selftest` while the anchor table calls the instrument `probe` \u2014 the table's probe label refers to the `count` entry command; the selftest column is this row's command, so no mismatch, but a gate that binds by name alone without argv would conflate `bash-witness-selftest` with `bash-witness-count`. (b) No installs performed; pacman untouched; no commands executed against the repo beyond read/cat-file."
+    },
+    "fileSize": 3336,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 13,
+            "last": 13
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command05",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command05"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command05.md",
+    "rowPrefixes": false,
+    "totalLines": 17
+  },
+  "text": "Row extracted and source/anchor verified. Findings (report write skipped per wave rule \u2014 Goal context: \"this wave forbids report writes\"; L1 persists these findings):\n\n## Scoped findings \u2014 `bash-witness-selftest`\n\n**Row** (registry.json lines 84\u2013104, schema `tameshi-entry-registry-v1`):\n- `name`: `bash-witness-selftest` \u00b7 `kind`: `selftest` \u00b7 `status`: `active` \u00b7 `tags`: `[baseline]`\n- `argv`: `[\"python3\", \"tools/bash-witness-study.py\", \"selftest\"]` \u2014 positional mode `selftest`, **not** `--selftest` (three sibling rows use the `--` form; this row is the outlier)\n- `expect`: `exit: 0` \u2227 `stdout_contains: [\"WITNESS_SELFTEST:\"]` \u00b7 `timeout_s: 60`\n- `source` anchor: `SKILL.md@98bea7d:1504` \u2014 verified at commit `98bea7d`: line 1504 is the \"bash declared-witness study\" registry-table row; its *Self-test command* column is exactly `python3 tools/bash-witness-study.py selftest`.\n\n**Exact command identity a receipt gate must bind.** The receipt must attest to an *executed* child process whose argv is exactly `python3 tools/bash-witness-study.py selftest` run with cwd = `tameshi-shokunin`, observed exit 0, and stdout containing the literal `WITNESS_SELFTEST:` within 60 s. The emitted line (source line 1711) is `WITNESS_SELFTEST: {cases-failed}/{cases} pass`, and exit 0 is returned only when `failed == 0` (`VERDICT: PASS` also printed); `VERDICT: FAIL` \u2192 exit 1, `Fail`/`Cannot` exceptions \u2192 exit 1/2 with marker on **stderr**, usage errors \u2192 exit 64. So `expect` binds both surfaces: exit status *and* the stdout marker \u2014 a receipt carrying only one is insufficient.\n\n**Concrete false-stand-in.** A handler that does `read` on `tools/bash-witness-study.py` would read line 1711 containing the literal `WITNESS_SELFTEST:` and could mint a receipt claiming the row satisfied without any process ever running \u2014 source reads contain the expected marker bytes, so `stdout_contains` must bind to captured child stdout, never to file content. A second cheap substitute: `python3 tools/bash-witness-study.py count` (the sibling row `bash-witness-count`) exits 0 and emits `unresolved\\tnone` but no `WITNESS_SELFTEST:` marker; and `... --selftest` (the sibling selftest convention) exits 64 via `UsageParser`. Both satisfy a gate that checks only `python3 tools/bash-witness-study.py`-prefix or exit-only receipts \u2014 exact argv-token and marker b\u2026\n\n**Bounded acceptance / falsifier.** *Accept*: a single recorded execution with argv exactly `[\"python3\",\"tools/bash-witness-study.py\",\"selftest\"]`, cwd = repo root, exit 0, stdout \u2283 `\"WITNESS_SELFTEST:\"` (optionally `VERDICT: PASS`), elapsed \u2264 60 s. *Falsify*: any of argv drift (`--selftest`, `count`, `check`), nonzero exit, marker only in stderr or absent from stdout, marker sourced from file/source content rather than process stdout, or no execution evidence at all.\n\n**Residual notes:** (a) `kind` in the row is `selftest` while the anchor table calls the instrument `probe` \u2014 the table's probe label refers to the `count` entry command; the selftest column is this row's command, so no mismatch, but a gate that binds by name alone without argv would conflate `bash-witness-selftest` with `bash-witness-count`. (b) No installs performed; pacman untouched; no commands executed against the repo beyond read/cat-file.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command05:raw:13-13 to read line 13 whole]"
+}

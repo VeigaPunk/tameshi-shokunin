@@ -1,0 +1,62 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "startLine": 1,
+      "text": "## Findings \u2014 `measure-round16-rev` (advisory, read-only; no files written, command not executed)\n\n**Row identity (frozen, `tools/registry.json` lines 483\u2013505):**\n```json\n{\"name\":\"measure-round16-rev\",\"kind\":\"probe\",\"status\":\"active\",\"tags\":[\"baseline\"],\n \"argv\":[\"python3\",\".ufo/evidence/round-16/measure.py\",\"--rev\",\"HEAD\",\"--repo\",\".\"],\n \"expect\":{\"exit\":0,\"stdout_contains\":[\"\\\"calibration_restraint_score\\\":\",\"\\\"coldread\\\":\"]},\n \"timeout_s\":60,\"source\":\"SKILL.md@98bea7d:1811\"}\n```\n\n**Anchor:** `SKILL.md@98bea7d:1811` is the round-16 gate/probe registry row: `` `.ufo/evidence/round-16/measure.py` | probe | `python3 .ufo/evidence/round-16/measure.py --rev REV` \u00b7 `--selftest` | 0 measured \u00b7 2 rev/blob missing \u00b7 64 usage `` (verbatim in the worktree at line 1811; commit provenance taken as recorded \u2014 no Git process run).\n\n### Evidence\n- `measure.py` emits one `json.dumps(..., indent=2, sort_keys=True)` object with keys `revision`, `coldread`, `calibration_restraint_score`; exit 0 only after `git rev-parse HEAD^{commit}` resolves and all four required blobs exist (2 otherwise, 64 on usage). Both needles are pure key-presence assertions \u2014 they pin **no measured value**, including no revision.\n- The anchor is a **template and provenance, not the command**: it documents `--rev REV` and the `--selftest` variant, omits `--repo .`, omits both needles, and is shared by the sibling `measure-round16-selftest` row. It cannot distinguish this row from that one.\n- `--repo .` makes CWD a **semantic input**: `git -C .` measures whatever repo the receipt's CWD denotes. `--rev HEAD` is a **moving symbol**, resolved at execution. Same argv from another CWD or at another commit yields the same exit and the same two needles.\n- `DEFAULT_REPO` equals the lane root, so omitting `--repo .` is outcome-identical from the lane root; argparse also makes `--repo . --rev HEAD` outcome-identical. Only exact, ordered argv separates these.\n- Historical `measure.py` does not scrub `GIT_*`; SKILL.md:1830 says it must run through `registry-check`, which scrubs. A receipt must therefore belong to a scrubbed-env execution or argv/CWD binding is not sufficient.\n\n### Axes affected\nContract identity fidelity; runtime receipt provenance (executor-captured vs prose); verification discrimination (identity vs outcome-equivalence); substrate determinism (CWD/ref/env).\n\n### Proposed move (one, bounded)\nBind this row's receipt by the tuple **`(name, byte-exact ordered argv, execution root, resolved revision, integer exit==0, ANDed literal needles over captured stdout bytes, stdout/stderr digest)`**; treat `source` as provenance-only (must parse and exist, never credits execution); refuse normalization, flag reordering, and default substitution. Revision and execution-root go in the **receipt identity**, never into `expect` \u2014 the frozen row is not edited.\n\n### Concrete false stand-in\nOmit `--repo .`: argv is `[\"python3\",\".ufo/evidence/round-16/measure.py\",\"--rev\",\"HEAD\"]`; `DEFAULT_REPO` is exactly the lane root, so exit and both needles are identical. An outcome-matching gate credits it for `measure-round16-rev`. A source read of `SKILL.md:1811` is worse: it only names the script and exit codes, yet a prose-receipt gate would accept \u201canchor inspected\u201d as execution; the needles are recoverable from the registry row itself, so they are forgeable without running anything.\n\n### Bounded acceptance/falsifier\nFrozen fixture, zero or one execution: **accept** the receipt with the exact six-token argv, CWD = execution root, revision resolved to `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`, exit `0`, both needles present. **Falsify** with the same receipt whose argv only reorders to `[\"python3\",\".ufo/evidence/round-16/measure.py\",\"--repo\",\".\",\"--rev\",\"HEAD\"]` \u2014 argparse output and exit are identical, so the gate MUST return `ARGV_MISMATCH`/exit 1. If it passes, the gate matches outcomes, not identity. Mirror case: a `measure-round16-selftest` receipt (same script, exit 0, only `MEASURE_SELFTEST:`) must not satisfy this row.\n\n### Risks\n- Hardcoded live-root CWD equality would wrongly reject hermetic `--rev` clone replay; bind to a declared execution-root identity (lane root live, clone root under `--rev`), not the literal path.\n- Requiring resolved revision == base is an identity check, not a change to `expect`; conflating them would silently rewrite the frozen row.\n- Exact-vector binding will reject semantically equivalent invocations by design; document it so no seat \u201crepairs\u201d the argv.\n- Without an env digest or mandatory scrubbed driver, a `GIT_DIR`/`GIT_WORK_TREE`-dirty execution can match argv, CWD and revision yet measure elsewhere.\n\n### Note on the instructed Report path\nThe assignment footer says write `.ufo/waves/round-23/w1/Command19.md`, but the canonical wave context forbids writing any file and reserves persistence to L1. I did not write it; these findings are returned inline for L1 to persist. No tools installed or upgraded."
+    },
+    "fileSize": 4992,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command19"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command19.md",
+    "rowPrefixes": false,
+    "totalLines": 39
+  },
+  "text": "## Findings \u2014 `measure-round16-rev` (advisory, read-only; no files written, command not executed)\n\n**Row identity (frozen, `tools/registry.json` lines 483\u2013505):**\n```json\n{\"name\":\"measure-round16-rev\",\"kind\":\"probe\",\"status\":\"active\",\"tags\":[\"baseline\"],\n \"argv\":[\"python3\",\".ufo/evidence/round-16/measure.py\",\"--rev\",\"HEAD\",\"--repo\",\".\"],\n \"expect\":{\"exit\":0,\"stdout_contains\":[\"\\\"calibration_restraint_score\\\":\",\"\\\"coldread\\\":\"]},\n \"timeout_s\":60,\"source\":\"SKILL.md@98bea7d:1811\"}\n```\n\n**Anchor:** `SKILL.md@98bea7d:1811` is the round-16 gate/probe registry row: `` `.ufo/evidence/round-16/measure.py` | probe | `python3 .ufo/evidence/round-16/measure.py --rev REV` \u00b7 `--selftest` | 0 measured \u00b7 2 rev/blob missing \u00b7 64 usage `` (verbatim in the worktree at line 1811; commit provenance taken as recorded \u2014 no Git process run).\n\n### Evidence\n- `measure.py` emits one `json.dumps(..., indent=2, sort_keys=True)` object with keys `revision`, `coldread`, `calibration_restraint_score`; exit 0 only after `git rev-parse HEAD^{commit}` resolves and all four required blobs exist (2 otherwise, 64 on usage). Both needles are pure key-presence assertions \u2014 they pin **no measured value**, including no revision.\n- The anchor is a **template and provenance, not the command**: it documents `--rev REV` and the `--selftest` variant, omits `--repo .`, omits both needles, and is shared by the sibling `measure-round16-selftest` row. It cannot distinguish this row from that one.\n- `--repo .` makes CWD a **semantic input**: `git -C .` measures whatever repo the receipt's CWD denotes. `--rev HEAD` is a **moving symbol**, resolved at execution. Same argv from another CWD or at another commit yields the same exit and the same two needles.\n- `DEFAULT_REPO` equals the lane root, so omitting `--repo .` is outcome-identical from the lane root; argparse also makes `--repo . --rev HEAD` outcome-identical. Only exact, ordered argv separates these.\n- Historical `measure.py` does not scrub `GIT_*`; SKILL.md:1830 says it must run through `registry-check`, which scrubs. A receipt must therefore belong to a scrubbed-env execution or argv/CWD binding is not sufficient.\n\n### Axes affected\nContract identity fidelity; runtime receipt provenance (executor-captured vs prose); verification discrimination (identity vs outcome-equivalence); substrate determinism (CWD/ref/env).\n\n### Proposed move (one, bounded)\nBind this row's receipt by the tuple **`(name, byte-exact ordered argv, execution root, resolved revision, integer exit==0, ANDed literal needles over captured stdout bytes, stdout/stderr digest)`**; treat `source` as provenance-only (must parse and exist, never credits execution); refuse normalization, flag reordering, and default substitution. Revision and execution-root go in the **receipt identity**, never into `expect` \u2014 the frozen row is not edited.\n\n### Concrete false stand-in\nOmit `--repo .`: argv is `[\"python3\",\".ufo/evidence/round-16/measure.py\",\"--rev\",\"HEAD\"]`; `DEFAULT_REPO` is exactly the lane root, so exit and both needles are identical. An outcome-matching gate credits it for `measure-round16-rev`. A source read of `SKILL.md:1811` is worse: it only names the script and exit codes, yet a prose-receipt gate would accept \u201canchor inspected\u201d as execution; the needles are recoverable from the registry row itself, so they are forgeable without running anything.\n\n### Bounded acceptance/falsifier\nFrozen fixture, zero or one execution: **accept** the receipt with the exact six-token argv, CWD = execution root, revision resolved to `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`, exit `0`, both needles present. **Falsify** with the same receipt whose argv only reorders to `[\"python3\",\".ufo/evidence/round-16/measure.py\",\"--repo\",\".\",\"--rev\",\"HEAD\"]` \u2014 argparse output and exit are identical, so the gate MUST return `ARGV_MISMATCH`/exit 1. If it passes, the gate matches outcomes, not identity. Mirror case: a `measure-round16-selftest` receipt (same script, exit 0, only `MEASURE_SELFTEST:`) must not satisfy this row.\n\n### Risks\n- Hardcoded live-root CWD equality would wrongly reject hermetic `--rev` clone replay; bind to a declared execution-root identity (lane root live, clone root under `--rev`), not the literal path.\n- Requiring resolved revision == base is an identity check, not a change to `expect`; conflating them would silently rewrite the frozen row.\n- Exact-vector binding will reject semantically equivalent invocations by design; document it so no seat \u201crepairs\u201d the argv.\n- Without an env digest or mandatory scrubbed driver, a `GIT_DIR`/`GIT_WORK_TREE`-dirty execution can match argv, CWD and revision yet measure elsewhere.\n\n### Note on the instructed Report path\nThe assignment footer says write `.ufo/waves/round-23/w1/Command19.md`, but the canonical wave context forbids writing any file and reserves persistence to L1. I did not write it; these findings are returned inline for L1 to persist. No tools installed or upgraded."
+}

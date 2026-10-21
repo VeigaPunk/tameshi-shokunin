@@ -1,0 +1,65 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ],
+      "startLine": 1,
+      "text": "**The main risk for this row:** a receipt gate that only checks exit 0 plus the stdout token would accept output from a different command. The exact string `SELECTOR_SELFTEST: 12/12 pass` is also the expected output of `round21-coldread-selector-selftest` (`tools/registry.json` line 888). The gate has to key on the exact argv, not the output token.\n\nI did not run the command or write any file. The wave context forbids writes, so `.ufo/waves/round-23/w1/Command36.md` was not created; these findings are for L1 to persist. I installed no tools.\n\n**Row (`tools/registry.json` lines 845\u2013852)**\n- name: `round20-coldread-selector-selftest`, kind `selftest`, status `active`, tags `[\"new-r20\"]`, `timeout_s: 300`\n- argv: `[\"python3\", \".ufo/evidence/round-20/coldread/measure.py\", \"--selftest\"]`\n- expect: `{\"exit\": 0, \"stdout_contains\": [\"SELECTOR_SELFTEST: 12/12 pass\"]}`\n- source: `SKILL.md@4fc1b80bd73527ae9da78731a58d76ecdc6c37a6:1951`. In the current `SKILL.md`, line 1951 is the round-20 cold-read probe row. It lists this self-invocation with \"selftest 0 clean/1 failed\". It also says that re-anchoring a source by its inputs \"is not recipe execution, independent/blind cold-read, or required-command coverage\".\n\n**What the anchor code does (`measure.py`, sha256 `48927bfe\u2026fe13`)**\n- Line 103 runs `selftest()` only when the arguments are exactly `['--selftest']`. Any extra argument sends it down the selector path instead.\n- The 12 cases are 3 selector cases and 9 override-refusal cases. Line 98 prints the token from a format string, `SELECTOR_SELFTEST: {passed}/{len(outcomes)} pass`, so the literal `12/12` exists only in the output, never in the source. Exit is 0 only when all cases pass.\n- Line 21 loads and executes `.ufo/evidence/round-18/measure.py` (sha256 `7ca87a7c\u2026dd37`). That file is outside argv but changes the result.\n\n**Identity the gate must enforce**\n1. The exact argv tuple: three elements, in order, compared as strings.\n2. The working directory is the repo root, because the script path is relative.\n3. The revision is the contract base `28cae179\u2026`.\n4. Exit is the integer 0, not a boolean.\n5. stdout contains the full token, not just `SELECTOR_SELFTEST`.\n6. Exactly one receipt matches this row.\n\n**Ways something else could stand in for this row**\n- **Different command, same token.** `.ufo/evidence/round-21/coldread/measure.py` differs from the round-20 file in only four lines: the docstring, the ledger path, the temp-directory prefix and the wrapper path. Its self-test prints the identical `SELECTOR_SELFTEST: 12/12 pass`. A receipt from the round-21 command satisfies this row's whole `expect`. Only the argv comparison (`round-20` vs `round-21`) can reject it.\n- **Source read instead of execution.** `cat tools/registry.json` exits 0 and its stdout contains the literal token twice. Old receipts such as `.ufo/evidence/round-20/final/selector-targeted-recheck.stdout` also contain it. A gate that credits \"exit 0 + token present\" would accept a plain file read.\n- **Partial run.** `registry-complete.stdout` line 540 shows an earlier `SELECTOR_SELFTEST: 3/3 pass`, from the round-19 selector. A gate that checks only a token prefix or a regex would accept it.\n\n**One bounded acceptance/falsifier**\n- **Accept** a receipt only if:\n  - argv equals exactly `[\"python3\", \".ufo/evidence/round-20/coldread/measure.py\", \"--selftest\"]`;\n  - cwd is the repo root and revision is `28cae179\u2026`;\n  - `exit` is the integer 0;\n  - stdout contains the exact substring `SELECTOR_SELFTEST: 12/12 pass`;\n  - it is the only receipt for this argv.\n- **Falsifier:** give the gate a receipt with the same stdout and exit 0 but argv `[\u2026round-21/coldread/measure.py\u2026]`, or argv `[\"cat\", \"tools/registry.json\"]`. It must fail with `ARGV_MISMATCH`, or `MEMBERSHIP_MISMATCH` if the receipt is treated as an unknown command. If it passes, the gate is giving source reads or look-alike commands credit for execution.\n\n**Problems the contract doesn't cover**\n- The row name does not appear in `.ufo/evidence/round-23/contract.json`. Its 10 entries are generic fault cases (argv mismatch, wrong exit, and so on), not row-specific bindings.\n- The contract does not pin the digest of `round-18/measure.py`. If that file changes, the receipt could still pass even though the code behind the result has changed. That is a gap unless the revision binding is enforced strictly.\n\n**Smallest safe correction:** key receipts on (exact argv tuple, cwd, revision), not on the expected stdout. Optionally make the token unique per row; for example, the round-20 and round-21 self-tests could print `R20_SELECTOR_SELFTEST` and `R21_SELECTOR_SELFTEST`."
+    },
+    "fileSize": 4663,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command36"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command36.md",
+    "rowPrefixes": false,
+    "totalLines": 42
+  },
+  "text": "**The main risk for this row:** a receipt gate that only checks exit 0 plus the stdout token would accept output from a different command. The exact string `SELECTOR_SELFTEST: 12/12 pass` is also the expected output of `round21-coldread-selector-selftest` (`tools/registry.json` line 888). The gate has to key on the exact argv, not the output token.\n\nI did not run the command or write any file. The wave context forbids writes, so `.ufo/waves/round-23/w1/Command36.md` was not created; these findings are for L1 to persist. I installed no tools.\n\n**Row (`tools/registry.json` lines 845\u2013852)**\n- name: `round20-coldread-selector-selftest`, kind `selftest`, status `active`, tags `[\"new-r20\"]`, `timeout_s: 300`\n- argv: `[\"python3\", \".ufo/evidence/round-20/coldread/measure.py\", \"--selftest\"]`\n- expect: `{\"exit\": 0, \"stdout_contains\": [\"SELECTOR_SELFTEST: 12/12 pass\"]}`\n- source: `SKILL.md@4fc1b80bd73527ae9da78731a58d76ecdc6c37a6:1951`. In the current `SKILL.md`, line 1951 is the round-20 cold-read probe row. It lists this self-invocation with \"selftest 0 clean/1 failed\". It also says that re-anchoring a source by its inputs \"is not recipe execution, independent/blind cold-read, or required-command coverage\".\n\n**What the anchor code does (`measure.py`, sha256 `48927bfe\u2026fe13`)**\n- Line 103 runs `selftest()` only when the arguments are exactly `['--selftest']`. Any extra argument sends it down the selector path instead.\n- The 12 cases are 3 selector cases and 9 override-refusal cases. Line 98 prints the token from a format string, `SELECTOR_SELFTEST: {passed}/{len(outcomes)} pass`, so the literal `12/12` exists only in the output, never in the source. Exit is 0 only when all cases pass.\n- Line 21 loads and executes `.ufo/evidence/round-18/measure.py` (sha256 `7ca87a7c\u2026dd37`). That file is outside argv but changes the result.\n\n**Identity the gate must enforce**\n1. The exact argv tuple: three elements, in order, compared as strings.\n2. The working directory is the repo root, because the script path is relative.\n3. The revision is the contract base `28cae179\u2026`.\n4. Exit is the integer 0, not a boolean.\n5. stdout contains the full token, not just `SELECTOR_SELFTEST`.\n6. Exactly one receipt matches this row.\n\n**Ways something else could stand in for this row**\n- **Different command, same token.** `.ufo/evidence/round-21/coldread/measure.py` differs from the round-20 file in only four lines: the docstring, the ledger path, the temp-directory prefix and the wrapper path. Its self-test prints the identical `SELECTOR_SELFTEST: 12/12 pass`. A receipt from the round-21 command satisfies this row's whole `expect`. Only the argv comparison (`round-20` vs `round-21`) can reject it.\n- **Source read instead of execution.** `cat tools/registry.json` exits 0 and its stdout contains the literal token twice. Old receipts such as `.ufo/evidence/round-20/final/selector-targeted-recheck.stdout` also contain it. A gate that credits \"exit 0 + token present\" would accept a plain file read.\n- **Partial run.** `registry-complete.stdout` line 540 shows an earlier `SELECTOR_SELFTEST: 3/3 pass`, from the round-19 selector. A gate that checks only a token prefix or a regex would accept it.\n\n**One bounded acceptance/falsifier**\n- **Accept** a receipt only if:\n  - argv equals exactly `[\"python3\", \".ufo/evidence/round-20/coldread/measure.py\", \"--selftest\"]`;\n  - cwd is the repo root and revision is `28cae179\u2026`;\n  - `exit` is the integer 0;\n  - stdout contains the exact substring `SELECTOR_SELFTEST: 12/12 pass`;\n  - it is the only receipt for this argv.\n- **Falsifier:** give the gate a receipt with the same stdout and exit 0 but argv `[\u2026round-21/coldread/measure.py\u2026]`, or argv `[\"cat\", \"tools/registry.json\"]`. It must fail with `ARGV_MISMATCH`, or `MEMBERSHIP_MISMATCH` if the receipt is treated as an unknown command. If it passes, the gate is giving source reads or look-alike commands credit for execution.\n\n**Problems the contract doesn't cover**\n- The row name does not appear in `.ufo/evidence/round-23/contract.json`. Its 10 entries are generic fault cases (argv mismatch, wrong exit, and so on), not row-specific bindings.\n- The contract does not pin the digest of `round-18/measure.py`. If that file changes, the receipt could still pass even though the code behind the result has changed. That is a gap unless the revision binding is enforced strictly.\n\n**Smallest safe correction:** key receipts on (exact argv tuple, cwd, revision), not on the expected stdout. Optionally make the token unique per row; for example, the round-20 and round-21 self-tests could print `R20_SELECTOR_SELFTEST` and `R21_SELECTOR_SELFTEST`."
+}

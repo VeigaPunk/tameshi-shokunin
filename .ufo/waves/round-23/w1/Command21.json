@@ -1,0 +1,64 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "startLine": 1,
+      "text": "## Evidence\n\n**Row (exact, `tools/registry.json:529-546`)**\n```json\n\"name\": \"assemble-round16-selftest\", \"kind\": \"gate\",\n\"argv\": [\"python3\", \".ufo/evidence/round-16/coldread/assemble.py\", \"--selftest\"],\n\"expect\": { \"exit\": 0, \"stdout_contains\": [\"SELFTEST: all checks passed\"] },\n\"timeout_s\": 60, \"source\": \"SKILL.md@98bea7d:1812\", \"status\": \"active\", \"tags\": [\"baseline\"]\n```\n**Anchor.** `98bea7d:1812` is the Round-16 table row `.ufo/evidence/round-16/coldread/assemble.py | gate | python3 \u2026 --selftest` (verified in the pinned blob; line 1812 in the current tree too). The anchor documents the *full-run* exit column (\"0 every bucket covered \u00b7 1 a bucket uncovered or a report rejected \u00b7 2 usage\"), which does **not** describe the `--selftest` branch \u2014 that branch prints `SELFTEST: FAIL (n)`/`SELFTEST: all checks passed` and returns 1/0 (`assemble.py:998-1001`). Expected outcome must come from the row's `expect`, never from anchor prose. The selftest uses only `tempfile` (`assemble.py:700+`), writes nothing in the repo, and does not read `DEFAULT_*` \u2014 so its observable result is identical from any checkout that contains the relative p\u2026\n\n**Draft gate semantics** (`tools/command-binding.py`, untracked `??`, absent from base `28cae17` and freeze `15ae602`; `before.json` still records `tool_present:false`): name-keyed requirements, receipt must carry `name,argv,cwd,revision,exit,stdout,stderr`; `argv` is exact list equality; `cwd`/`revision` are compared **only to the bundle's own** values; `exit` must be `int`; token must be a literal substring of `stdout` only.\n\n## Axes\nA1 identity exactness (name+ordered argv+cwd+revision) \u00b7 A2 outcome binding (int exit, stdout-stream-only token) \u00b7 A3 spoof separation (source-read vs command; cross-row collisions) \u00b7 A4 contract fidelity (exactly the ten findings, exits 0/1/2) \u00b7 A5 reversibility/cost (60 s, no writes).\n\n## Binding a receipt gate must enforce\n`name == \"assemble-round16-selftest\"`; `argv` byte-for-byte `[\"python3\",\".ufo/evidence/round-16/coldread/assemble.py\",\"--selftest\"]` (no PATH resolution, no argparse abbreviation `--selft`, no extra `--out/--override`); `cwd` canonical absolute repo root; `revision` = `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`; `exit` type `int` and `== 0`; `stdout` string containing `SELFTEST: all checks passed` (stdout only; stderr cannot supply it). `timeout_s:60` is row metadata with no receipt field or finding \u2014 the gate must not invent one.\n\n## Two concrete false stand-ins\n1. **Source read.** The registry row itself (`tools/registry.json:531-540`) contains both the argv and the token, and `assemble.py:1000` prints the token. A receipt with the required argv, `exit:0`, and `stdout` copied from either read passes: `stdout` is a free string, and `expected.bundle_sha256` authenticates bytes, not provenance. The draft's `source-read-not-command` selftest actually mutates argv to `['cat','gate.py']` \u2014 it tests a different *command*, not a read; a read with the correct argv is indistinguishable. This lies outside the contract claim (\"not source-read credit or producer authentication\"); it can only be blocked by requiring runner-emitted receipts, not evidence assembly.\n2. **Different command / different checkout.** `python3 .ufo/evidence/round-17/coldread/assemble.py --selftest` is an independently active row (`assemble-round17-selftest`, `registry.json:678-697`) with a byte-identical `expect` (`SELFTEST: all checks passed`) and an identical success print (`round-17\u2026/assemble.py:1795`). Any matcher on token, basename, or `coldread/assemble.py` suffix cross-credits it; only the full relative argv separates them. A copy of the script at the same relative path in a decoy checkout is also observationally identical, because the gate compares cwd/revision only to the bundle's self-declared values \u2014 and `contract.json`'s `base_revision` never reaches the gate.\n\n## One bounded acceptance/falsifier\nClean bundle (`command-binding-v1`, revision `28cae17\u2026`, cwd `/home/vgpnk/Projects/shokunin/tameshi-shokunin`, one requirement exactly as the registry row, matching receipt with `exit:0`, `stdout:\"\u2026SELFTEST: all checks passed\\n\"`) \u2192 gate exits **0** with `finding_ids: []`. Falsifier: change only the receipt's `argv[1]` to `.ufo/evidence/round-17/coldread/assemble.py` \u2192 the gate MUST exit **1** with `ARGV_MISMATCH`; a `0` falsifies identity binding (all outcome fields still satisfy expect). Equally, a requirement rewritten to `stdout_contains: []` with empty stdout must not pass.\n\n## Proposed move (one, bounded, compatible)\nPin the contract in the verifier's `expected.json`: add **optional** `revision` and `cwd` to `command-binding-expected-v1` and have `check()` compare `bundle.revision`/`bundle.cwd` to them, emitting the existing `REVISION_MISMATCH`/`CWD_MISMATCH` (exit 1). Values are written from `contract.json:base_revision` and the canonical root \u2014 never from the bundle. This turns cwd/revision from self-consistency into contract anchoring and kills the decoy-checkout/stale-revision path for this row, without touching the ten cases. **Risks:** required fields would break `measure.py`'s `expected.json` (only schema+digest) \u2192 `INVALID_EXPECTED` 0/10; sourcing values from the bundle yields no gain; a mismatch must be exit 1 with existing findings, not exit 2/`SNAPSHOT_TAMPERE\u2026\n\nNo files written (wave is read-only; the Report trailer was not materialized), no Git/jj mutation, and the command under test was not run."
+    },
+    "fileSize": 5683,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 10,
+            "last": 28
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command21",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command21"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command21.md",
+    "rowPrefixes": false,
+    "totalLines": 30
+  },
+  "text": "## Evidence\n\n**Row (exact, `tools/registry.json:529-546`)**\n```json\n\"name\": \"assemble-round16-selftest\", \"kind\": \"gate\",\n\"argv\": [\"python3\", \".ufo/evidence/round-16/coldread/assemble.py\", \"--selftest\"],\n\"expect\": { \"exit\": 0, \"stdout_contains\": [\"SELFTEST: all checks passed\"] },\n\"timeout_s\": 60, \"source\": \"SKILL.md@98bea7d:1812\", \"status\": \"active\", \"tags\": [\"baseline\"]\n```\n**Anchor.** `98bea7d:1812` is the Round-16 table row `.ufo/evidence/round-16/coldread/assemble.py | gate | python3 \u2026 --selftest` (verified in the pinned blob; line 1812 in the current tree too). The anchor documents the *full-run* exit column (\"0 every bucket covered \u00b7 1 a bucket uncovered or a report rejected \u00b7 2 usage\"), which does **not** describe the `--selftest` branch \u2014 that branch prints `SELFTEST: FAIL (n)`/`SELFTEST: all checks passed` and returns 1/0 (`assemble.py:998-1001`). Expected outcome must come from the row's `expect`, never from anchor prose. The selftest uses only `tempfile` (`assemble.py:700+`), writes nothing in the repo, and does not read `DEFAULT_*` \u2014 so its observable result is identical from any checkout that contains the relative p\u2026\n\n**Draft gate semantics** (`tools/command-binding.py`, untracked `??`, absent from base `28cae17` and freeze `15ae602`; `before.json` still records `tool_present:false`): name-keyed requirements, receipt must carry `name,argv,cwd,revision,exit,stdout,stderr`; `argv` is exact list equality; `cwd`/`revision` are compared **only to the bundle's own** values; `exit` must be `int`; token must be a literal substring of `stdout` only.\n\n## Axes\nA1 identity exactness (name+ordered argv+cwd+revision) \u00b7 A2 outcome binding (int exit, stdout-stream-only token) \u00b7 A3 spoof separation (source-read vs command; cross-row collisions) \u00b7 A4 contract fidelity (exactly the ten findings, exits 0/1/2) \u00b7 A5 reversibility/cost (60 s, no writes).\n\n## Binding a receipt gate must enforce\n`name == \"assemble-round16-selftest\"`; `argv` byte-for-byte `[\"python3\",\".ufo/evidence/round-16/coldread/assemble.py\",\"--selftest\"]` (no PATH resolution, no argparse abbreviation `--selft`, no extra `--out/--override`); `cwd` canonical absolute repo root; `revision` = `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`; `exit` type `int` and `== 0`; `stdout` string containing `SELFTEST: all checks passed` (stdout only; stderr cannot supply it). `timeout_s:60` is row metadata with no receipt field or finding \u2014 the gate must not invent one.\n\n## Two concrete false stand-ins\n1. **Source read.** The registry row itself (`tools/registry.json:531-540`) contains both the argv and the token, and `assemble.py:1000` prints the token. A receipt with the required argv, `exit:0`, and `stdout` copied from either read passes: `stdout` is a free string, and `expected.bundle_sha256` authenticates bytes, not provenance. The draft's `source-read-not-command` selftest actually mutates argv to `['cat','gate.py']` \u2014 it tests a different *command*, not a read; a read with the correct argv is indistinguishable. This lies outside the contract claim (\"not source-read credit or producer authentication\"); it can only be blocked by requiring runner-emitted receipts, not evidence assembly.\n2. **Different command / different checkout.** `python3 .ufo/evidence/round-17/coldread/assemble.py --selftest` is an independently active row (`assemble-round17-selftest`, `registry.json:678-697`) with a byte-identical `expect` (`SELFTEST: all checks passed`) and an identical success print (`round-17\u2026/assemble.py:1795`). Any matcher on token, basename, or `coldread/assemble.py` suffix cross-credits it; only the full relative argv separates them. A copy of the script at the same relative path in a decoy checkout is also observationally identical, because the gate compares cwd/revision only to the bundle's self-declared values \u2014 and `contract.json`'s `base_revision` never reaches the gate.\n\n## One bounded acceptance/falsifier\nClean bundle (`command-binding-v1`, revision `28cae17\u2026`, cwd `/home/vgpnk/Projects/shokunin/tameshi-shokunin`, one requirement exactly as the registry row, matching receipt with `exit:0`, `stdout:\"\u2026SELFTEST: all checks passed\\n\"`) \u2192 gate exits **0** with `finding_ids: []`. Falsifier: change only the receipt's `argv[1]` to `.ufo/evidence/round-17/coldread/assemble.py` \u2192 the gate MUST exit **1** with `ARGV_MISMATCH`; a `0` falsifies identity binding (all outcome fields still satisfy expect). Equally, a requirement rewritten to `stdout_contains: []` with empty stdout must not pass.\n\n## Proposed move (one, bounded, compatible)\nPin the contract in the verifier's `expected.json`: add **optional** `revision` and `cwd` to `command-binding-expected-v1` and have `check()` compare `bundle.revision`/`bundle.cwd` to them, emitting the existing `REVISION_MISMATCH`/`CWD_MISMATCH` (exit 1). Values are written from `contract.json:base_revision` and the canonical root \u2014 never from the bundle. This turns cwd/revision from self-consistency into contract anchoring and kills the decoy-checkout/stale-revision path for this row, without touching the ten cases. **Risks:** required fields would break `measure.py`'s `expected.json` (only schema+digest) \u2192 `INVALID_EXPECTED` 0/10; sourcing values from the bundle yields no gain; a mismatch must be exit 1 with existing findings, not exit 2/`SNAPSHOT_TAMPERE\u2026\n\nNo files written (wave is read-only; the Report trailer was not materialized), no Git/jj mutation, and the command under test was not run.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command21:raw:10-10 to read line 10 whole; cut lines run to line 28, each read the same way]"
+}

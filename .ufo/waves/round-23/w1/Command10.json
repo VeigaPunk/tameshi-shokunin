@@ -1,0 +1,49 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "startLine": 1,
+      "text": "**Row analyzed:** `evidence-disposition-round18` \u2014 `tools/registry.json:252-278`.\n\n## Command identity the gate must bind\n\n- **argv (exact, ordered, 7 elements):** `[\"python3\", \"tools/evidence-disposition.py\", \"--root\", \".\", \"--dispositions\", \".ufo/evidence/round-18/dispositions.json\", \"--json\"]`\n- **cwd:** lane toplevel \u2014 `--root .` and both relative argv paths resolve against it; the round-23 contract's `CWD_MISMATCH` makes cwd part of identity.\n- **Revision:** base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` (`REVISION_MISMATCH`).\n- **Aux fields:** `kind=gate`, `status=active`, `tags=[\"baseline\",\"new-r18\"]`, `timeout_s=60`; run semantics (registry-check.py:30-38,648-693): `shell=False`, `stdin=/dev/null`, scrubbed `GIT_*` env, `PYTHONDONTWRITEBYTECODE=1`.\n\n## Expected-outcome binding\n\n`expect = {exit: 0, stdout_contains: [\"\\\"status\\\": \\\"clean\\\"\", \"\\\"effective\\\": 11\", \"\\\"superseded\\\": 1\"]}` \u2014 pass iff observed exit == 0 (int, not bool \u2192 `INVALID_RECEIPT`) **and** all three literal, case-sensitive substrings appear in captured stdout (`wrong-exit` / `missing-stdout-token`). Semantics at evidence-disposition.py:1658-1667: `status=clean` \u21d4 zero findings; `effective=11`, `superseded=1` count the v2 manifest's 12 rows (verified: dispositions.json has 11 `effective` + 1 `superseded` = `producer_before`). Note exit\u2194status is one signal, not two independent ones.\n\n## Anchor\n\n`\"source\": \"SKILL.md@58e5d53:1923-1932\"` \u2014 the \"Round-18 gate/probe registry\" table; :1931 is this tool's row (unchanged CLI; G2/G3 anchor-commit rules). The anchor pins provenance (file@rev:lines), not the argv \u2014 the registry row is the binding authority.\n\n## One concrete stand-in (falsifier)\n\n**Sibling-manifest run:** `argv=[python3, tools/evidence-disposition.py, --root, ., --dispositions, .ufo/evidence/round-17/dispositions.json, --json]` \u2014 same tool, same flags; verified round-17 manifest is also 11 effective/1 superseded, so it emits the identical signature: exit 0 + all three tokens. Only element-wise argv equality on the 6th element rejects it (`ARGV_MISMATCH`). Source-read equate: a receipt recording a *read*/sha256 of `tools/evidence-disposition.py` or of the manifest (or quoting `verification.json` check fields \u2014 the tool itself never executes receipt argv, so those are declared data, not spawns) proves input integrity only; a gate crediting it equates a source read with command execution and must reject it as `MEMBERSHIP_MISMATCH`.\n\n## Acceptance / residual weakness\n\nA receipt proves this row iff it records a spawned process: exact argv, cwd = lane toplevel at the measured rev, observed exit 0, captured stdout containing all three substrings. Bounded weakness: the binding is substring conjunction \u2014 `\"effective\": 11` is a substring of `\"effective\": 110`, and the tokens don't pin `expected_checks`/`passed`/`findings`/`tool_sha256`, so any still-clean 11/1 manifest variant satisfies it; receipt-integrity is separately covered by `INVALID_RECEIPT`/`SNAPSHOT_TAMPERED`.\n\nReport write suppressed per read-only advisory constraint (wave forbids file writes; L1 persists findings). No commands executed, no files written, no installs."
+    },
+    "fileSize": 3177,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command10"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command10.md",
+    "rowPrefixes": false,
+    "totalLines": 26
+  },
+  "text": "**Row analyzed:** `evidence-disposition-round18` \u2014 `tools/registry.json:252-278`.\n\n## Command identity the gate must bind\n\n- **argv (exact, ordered, 7 elements):** `[\"python3\", \"tools/evidence-disposition.py\", \"--root\", \".\", \"--dispositions\", \".ufo/evidence/round-18/dispositions.json\", \"--json\"]`\n- **cwd:** lane toplevel \u2014 `--root .` and both relative argv paths resolve against it; the round-23 contract's `CWD_MISMATCH` makes cwd part of identity.\n- **Revision:** base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` (`REVISION_MISMATCH`).\n- **Aux fields:** `kind=gate`, `status=active`, `tags=[\"baseline\",\"new-r18\"]`, `timeout_s=60`; run semantics (registry-check.py:30-38,648-693): `shell=False`, `stdin=/dev/null`, scrubbed `GIT_*` env, `PYTHONDONTWRITEBYTECODE=1`.\n\n## Expected-outcome binding\n\n`expect = {exit: 0, stdout_contains: [\"\\\"status\\\": \\\"clean\\\"\", \"\\\"effective\\\": 11\", \"\\\"superseded\\\": 1\"]}` \u2014 pass iff observed exit == 0 (int, not bool \u2192 `INVALID_RECEIPT`) **and** all three literal, case-sensitive substrings appear in captured stdout (`wrong-exit` / `missing-stdout-token`). Semantics at evidence-disposition.py:1658-1667: `status=clean` \u21d4 zero findings; `effective=11`, `superseded=1` count the v2 manifest's 12 rows (verified: dispositions.json has 11 `effective` + 1 `superseded` = `producer_before`). Note exit\u2194status is one signal, not two independent ones.\n\n## Anchor\n\n`\"source\": \"SKILL.md@58e5d53:1923-1932\"` \u2014 the \"Round-18 gate/probe registry\" table; :1931 is this tool's row (unchanged CLI; G2/G3 anchor-commit rules). The anchor pins provenance (file@rev:lines), not the argv \u2014 the registry row is the binding authority.\n\n## One concrete stand-in (falsifier)\n\n**Sibling-manifest run:** `argv=[python3, tools/evidence-disposition.py, --root, ., --dispositions, .ufo/evidence/round-17/dispositions.json, --json]` \u2014 same tool, same flags; verified round-17 manifest is also 11 effective/1 superseded, so it emits the identical signature: exit 0 + all three tokens. Only element-wise argv equality on the 6th element rejects it (`ARGV_MISMATCH`). Source-read equate: a receipt recording a *read*/sha256 of `tools/evidence-disposition.py` or of the manifest (or quoting `verification.json` check fields \u2014 the tool itself never executes receipt argv, so those are declared data, not spawns) proves input integrity only; a gate crediting it equates a source read with command execution and must reject it as `MEMBERSHIP_MISMATCH`.\n\n## Acceptance / residual weakness\n\nA receipt proves this row iff it records a spawned process: exact argv, cwd = lane toplevel at the measured rev, observed exit 0, captured stdout containing all three substrings. Bounded weakness: the binding is substring conjunction \u2014 `\"effective\": 11` is a substring of `\"effective\": 110`, and the tokens don't pin `expected_checks`/`passed`/`findings`/`tool_sha256`, so any still-clean 11/1 manifest variant satisfies it; receipt-integrity is separately covered by `INVALID_RECEIPT`/`SNAPSHOT_TAMPERED`.\n\nReport write suppressed per read-only advisory constraint (wave forbids file writes; L1 persists findings). No commands executed, no files written, no installs."
+}

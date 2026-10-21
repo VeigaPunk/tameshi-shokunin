@@ -451,3 +451,18 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     matching wrong-count bundle exits1/TOTAL_MISMATCH, while the identical
     statuses with corrected claimed totals exit0. The two failed-with-report
     identities remain failed in both runs; no dead identity is replaced.
+
+## Criterion appended — round 23 (2026-10-21)
+
+46. A finite required-command receipt claim freezes its requirement set
+    before execution and matches each unique name to exact ordered argv,
+    declared cwd/revision and typed expected outcomes in one retained
+    observation. Output tokens or positive source-read counts cannot fill
+    a missing command. Full-stream evidence is not reconstructed from a
+    truncated tail. The caller-owned trusted commitment pins declarations,
+    not producer authenticity. Captured by the historical R17-CMD-BIND
+    overclaim (criterion33), and `lessons/round-23.md` Mistakes. Falsifier:
+    an otherwise matching receipt with source-read argv fails1/ARGV_MISMATCH;
+    deleting a required receipt fails1/MEMBERSHIP_MISMATCH; restoring only
+    that field restores clean0. The new finite registry demonstration does
+    not close historical full-page/coldread command coverage.

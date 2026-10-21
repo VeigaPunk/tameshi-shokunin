@@ -1,0 +1,56 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "startLine": 1,
+      "text": "**Command03 \u2014 `repeat-control-selftest` binding analysis** (read-only advisory; no files written, per wave policy the Report trailer path `.ufo/waves/round-23/w1/Command03.md` is NOT created \u2014 findings returned here for L1 persistence)\n\n**Row** (`tools/registry.json:43-61`):\n- `name`: `repeat-control-selftest`, `kind`: `selftest`, `status`: `active`, `tags`: `[\"baseline\"]`, `timeout_s`: 60\n- `argv`: `[\"python3\", \"tools/repeat-control.py\", \"--selftest\"]`\n- `expect`: `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}`\n\n**Anchor**: `source: \"SKILL.md@98bea7d:1503\"` \u2014 resolves to commit `98bea7da5801f4bc58e4187690ee1687c8a5061f`; line 1503 is the round-12 gate/probe registry table row declaring `python3 tools/repeat-control.py --selftest` as the self-test command for the \"repeated pristine controls\" gate. Verified the pinned line content matches current `SKILL.md:1503`. Note: `registry.json` itself does not exist at `98bea7d` \u2014 the anchor pins the provenance doc, not the row file.\n\n**Command identity the gate must enforce** (per `registry-check.py` run semantics, lines 30-38, 648-720, and contract findings):\n1. **Exact argv tuple** \u2014 `[\"python3\", \"tools/repeat-control.py\", \"--selftest\"]` exec'd directly (`shell=False`, stdin `/dev/null`, scrubbed env). Any substitution \u2014 different script, extra arg (`--selftest` rejects further args \u2192 exit 64), different interpreter token \u2014 is `ARGV_MISMATCH`.\n2. **CWD** \u2014 lane root (or `--rev` clone root); wrong cwd \u2192 `CWD_MISMATCH` (relative `tools/repeat-control.py` would not resolve).\n3. **Revision** \u2014 receipt must derive from a run at `base_revision 28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`; stale/other-rev receipts \u2192 `REVISION_MISMATCH`.\n4. **Outcome binding** \u2014 exit is integer `0` (non-int e.g. `true` \u2192 `INVALID_RECEIPT`) AND stdout contains literal, case-sensitive substring `SELFTEST: PASS` (real emission at `repeat-control.py:858`, `SELFTEST: PASS ({total} cases)`); missing token \u2192 `STDOUT_MISMATCH`, wrong code \u2192 `EXIT_MISMATCH`, absent/duplicated row \u2192 `MEMBERSHIP_MISMATCH`/`DUPLICATE_COMMAND`.\n\n**Concrete stand-in falsifier** \u2014 the token `SELFTEST: PASS` is *not unique* to this row. Six other tools in `tools/` emit it with exit 0 on their own selftests: `registry-check.py:1813`, `bash-witness-study.py:1420`, `context-capture.py:1785`, `evidence-disposition.py:3123`, `pin-disposition.py:1329`, `witness-metadata.py:1211`. A gate that checks only (exit 0 \u2227 token) credits e.g. `python3 tools/registry-check.py --selftest` for this row \u2014 the exact `ARGV_MISMATCH` hole the contract enumerates. Separately, the literal token already sits in source/doc bytes (`SKILL.md:144,322,421,597`; `repeat-control.py:858` itself): `grep -o \"SELFTEST: PASS\" tools/repeat-control.py` exits 0 and prints the needle \u2014 a pure source read producing a byte-identical receipt with\u2026\n\n**Bounded acceptance**: credit iff the receipt records a spawned process with argv == `[\"python3\",\"tools/repeat-control.py\",\"--selftest\"]`, cwd == lane root under base `28cae179\u2026`, integer exit == 0, and captured stdout containing literal `SELFTEST: PASS` \u2014 observed execution, not file content.\n\n**Bounded falsifier**: any receipt lacking that exec provenance \u2014 a token grepped from source/docs, or exit-0+token output from a different argv (any of the six sibling selftest emitters) \u2014 MUST be rejected with the matching contract finding; membership alone or outcome alone never satisfies the binding.\n\nNo defects found in the row itself; the residual risk is gate-side: token-only or membership-only crediting. Tooling: no installs performed (analysis needed only stdlib/git/grep)."
+    },
+    "fileSize": 3756,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 16,
+            "last": 16
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command03",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command03"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command03.md",
+    "rowPrefixes": false,
+    "totalLines": 22
+  },
+  "text": "**Command03 \u2014 `repeat-control-selftest` binding analysis** (read-only advisory; no files written, per wave policy the Report trailer path `.ufo/waves/round-23/w1/Command03.md` is NOT created \u2014 findings returned here for L1 persistence)\n\n**Row** (`tools/registry.json:43-61`):\n- `name`: `repeat-control-selftest`, `kind`: `selftest`, `status`: `active`, `tags`: `[\"baseline\"]`, `timeout_s`: 60\n- `argv`: `[\"python3\", \"tools/repeat-control.py\", \"--selftest\"]`\n- `expect`: `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}`\n\n**Anchor**: `source: \"SKILL.md@98bea7d:1503\"` \u2014 resolves to commit `98bea7da5801f4bc58e4187690ee1687c8a5061f`; line 1503 is the round-12 gate/probe registry table row declaring `python3 tools/repeat-control.py --selftest` as the self-test command for the \"repeated pristine controls\" gate. Verified the pinned line content matches current `SKILL.md:1503`. Note: `registry.json` itself does not exist at `98bea7d` \u2014 the anchor pins the provenance doc, not the row file.\n\n**Command identity the gate must enforce** (per `registry-check.py` run semantics, lines 30-38, 648-720, and contract findings):\n1. **Exact argv tuple** \u2014 `[\"python3\", \"tools/repeat-control.py\", \"--selftest\"]` exec'd directly (`shell=False`, stdin `/dev/null`, scrubbed env). Any substitution \u2014 different script, extra arg (`--selftest` rejects further args \u2192 exit 64), different interpreter token \u2014 is `ARGV_MISMATCH`.\n2. **CWD** \u2014 lane root (or `--rev` clone root); wrong cwd \u2192 `CWD_MISMATCH` (relative `tools/repeat-control.py` would not resolve).\n3. **Revision** \u2014 receipt must derive from a run at `base_revision 28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`; stale/other-rev receipts \u2192 `REVISION_MISMATCH`.\n4. **Outcome binding** \u2014 exit is integer `0` (non-int e.g. `true` \u2192 `INVALID_RECEIPT`) AND stdout contains literal, case-sensitive substring `SELFTEST: PASS` (real emission at `repeat-control.py:858`, `SELFTEST: PASS ({total} cases)`); missing token \u2192 `STDOUT_MISMATCH`, wrong code \u2192 `EXIT_MISMATCH`, absent/duplicated row \u2192 `MEMBERSHIP_MISMATCH`/`DUPLICATE_COMMAND`.\n\n**Concrete stand-in falsifier** \u2014 the token `SELFTEST: PASS` is *not unique* to this row. Six other tools in `tools/` emit it with exit 0 on their own selftests: `registry-check.py:1813`, `bash-witness-study.py:1420`, `context-capture.py:1785`, `evidence-disposition.py:3123`, `pin-disposition.py:1329`, `witness-metadata.py:1211`. A gate that checks only (exit 0 \u2227 token) credits e.g. `python3 tools/registry-check.py --selftest` for this row \u2014 the exact `ARGV_MISMATCH` hole the contract enumerates. Separately, the literal token already sits in source/doc bytes (`SKILL.md:144,322,421,597`; `repeat-control.py:858` itself): `grep -o \"SELFTEST: PASS\" tools/repeat-control.py` exits 0 and prints the needle \u2014 a pure source read producing a byte-identical receipt with\u2026\n\n**Bounded acceptance**: credit iff the receipt records a spawned process with argv == `[\"python3\",\"tools/repeat-control.py\",\"--selftest\"]`, cwd == lane root under base `28cae179\u2026`, integer exit == 0, and captured stdout containing literal `SELFTEST: PASS` \u2014 observed execution, not file content.\n\n**Bounded falsifier**: any receipt lacking that exec provenance \u2014 a token grepped from source/docs, or exit-0+token output from a different argv (any of the six sibling selftest emitters) \u2014 MUST be rejected with the matching contract finding; membership alone or outcome alone never satisfies the binding.\n\nNo defects found in the row itself; the residual risk is gate-side: token-only or membership-only crediting. Tooling: no installs performed (analysis needed only stdlib/git/grep).\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command03:raw:16-16 to read line 16 whole]"
+}

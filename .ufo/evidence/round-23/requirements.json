@@ -1,0 +1,647 @@
+{
+  "registry_sha256": "ebd2e69a6c63e9c212152ea18050781ab686b0cbdaead4bb0fcbbd54d0fec92a",
+  "requirements": [
+    {
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "name": "repeat-control-snapshot-clean"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate/mismatch"
+      ],
+      "expect": {
+        "exit": 1
+      },
+      "name": "repeat-control-snapshot-mismatch"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "repeat-control-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/bash-witness-study.py",
+        "count"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "unresolved\tnone"
+        ]
+      },
+      "name": "bash-witness-count"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/bash-witness-study.py",
+        "selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "WITNESS_SELFTEST:"
+        ]
+      },
+      "name": "bash-witness-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/pin-disposition.py",
+        "--manifest",
+        ".ufo/evidence/round-13/pin-manifest.json",
+        "--root",
+        "/home/vgpnk/Projects/shokunin"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"unavailable\": 0"
+        ]
+      },
+      "name": "pin-disposition-read"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/pin-disposition.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "pin-disposition-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/witness-metadata.py",
+        "--check",
+        "--companion",
+        ".ufo/evidence/round-13/witness-metadata.json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "metadata_consistent"
+        ]
+      },
+      "name": "witness-metadata-check"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/witness-metadata.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "witness-metadata-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-18/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"status\": \"clean\"",
+          "\"effective\": 11",
+          "\"superseded\": 1"
+        ]
+      },
+      "name": "evidence-disposition-round18"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-18/dispositions-before.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"expectation\": \"producer_before\"",
+          "\"status\": \"failed\""
+        ]
+      },
+      "name": "evidence-disposition-round18-before"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "evidence-disposition-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "context_consistent"
+        ]
+      },
+      "name": "context-capture-frozen"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--receipt",
+        ".ufo/evidence/round-15/frozen/context-missing-env/receipt.json",
+        "--expected",
+        ".ufo/evidence/round-15/frozen/context-missing-env/expected.json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "missing_injected_environment"
+        ]
+      },
+      "name": "context-capture-missing-env"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--receipt",
+        ".ufo/evidence/round-15/frozen/mapping-suffix/receipt.json",
+        "--expected",
+        ".ufo/evidence/round-15/frozen/mapping-suffix/expected.json"
+      ],
+      "expect": {
+        "exit": 1
+      },
+      "name": "context-capture-mapping-suffix"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "context-capture-selftest"
+    },
+    {
+      "argv": [
+        "bash",
+        "tools/mutate-and-run.sh",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MUTATE_SELFTEST:",
+          "VERDICT: PASS"
+        ]
+      },
+      "name": "mutate-and-run-selftest"
+    },
+    {
+      "argv": [
+        "bash",
+        "tools/mutate-and-run.sh",
+        "--regression"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "REGRESSION: PASS"
+        ]
+      },
+      "name": "mutate-and-run-regression"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/measure.py",
+        "--rev",
+        "HEAD",
+        "--repo",
+        "."
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"calibration_restraint_score\":",
+          "\"coldread\":"
+        ]
+      },
+      "name": "measure-round16-rev"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST:"
+        ]
+      },
+      "name": "measure-round16-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: all checks passed"
+        ]
+      },
+      "name": "assemble-round16-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/attribution/reattribute.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "reattribute-round16-selftest"
+    },
+    {
+      "argv": [
+        "bash",
+        ".ufo/evidence/kaika-round-1/sources-census-v2.sh"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)"
+        ]
+      },
+      "name": "sources-census"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-15/verify.py",
+        "--rev",
+        "7650fe4db89f3a706aed63d048ac47e02289cc72"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "measure-historical-preserved: PASS"
+        ]
+      },
+      "name": "verify-round15"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/registry-check.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "registry-check-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST:"
+        ]
+      },
+      "name": "measure-round17-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: all checks passed"
+        ]
+      },
+      "name": "assemble-round17-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/trace-inputs.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "name": "trace-inputs-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST: "
+        ]
+      },
+      "name": "measure-round18-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "name": "assemble-round18-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/defect-probes.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "name": "defect-probes-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-19/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "name": "round19-correction-ruler-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-19/coldread/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELECTOR_SELFTEST: "
+        ]
+      },
+      "name": "round19-coldread-selector-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/receipt-window.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "RECEIPT_WINDOW_SELFTEST: 20/20 pass"
+        ]
+      },
+      "name": "receipt-window-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/receipt-measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "RECEIPT_MEASURE_SELFTEST: 10/10 pass"
+        ]
+      },
+      "name": "receipt-measure-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-20/coldread/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELECTOR_SELFTEST: 12/12 pass"
+        ]
+      },
+      "name": "round20-coldread-selector-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/env-diff.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ENVDIFF_SELFTEST: 9/9 pass"
+        ]
+      },
+      "name": "env-diff-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/wave-route-mix.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ROUTEMIX_SELFTEST: 8/8 pass"
+        ]
+      },
+      "name": "wave-route-mix-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/round21-measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ROUND21_MEASURE_SELFTEST: 13/13 pass"
+        ]
+      },
+      "name": "round21-measure-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-21/coldread/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELECTOR_SELFTEST: 12/12 pass"
+        ]
+      },
+      "name": "round21-coldread-selector-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/wave-accounting.py",
+        "--bundle",
+        ".ufo/evidence/round-22/bundle.json",
+        "--expected",
+        ".ufo/evidence/round-22/expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"completed\": 66",
+          "\"dead\": 80",
+          "\"seats\": 146",
+          "\"finding_ids\": []"
+        ]
+      },
+      "name": "wave-accounting-frozen-entry"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/wave-accounting.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ACCOUNTING_SELFTEST: 8/8 pass",
+          "ACCOUNTING_EXTRA_SELFTEST: 16/16 pass",
+          "FINDING: SELFTEST_PASS"
+        ]
+      },
+      "name": "wave-accounting-selftest"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/wave-accounting.py",
+        "--bundle",
+        ".ufo/evidence/round-22/wrong-count-bundle.json",
+        "--expected",
+        ".ufo/evidence/round-22/wrong-count-expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "TOTAL_MISMATCH",
+          "\"completed\": 66",
+          "\"dead\": 80"
+        ]
+      },
+      "name": "wave-accounting-wrong-count-entry"
+    }
+  ],
+  "schema": "command-binding-requirements-v1",
+  "source_revision": "28cae179e4dc2c1fa7f032a79cdddf0b5d862d76"
+}

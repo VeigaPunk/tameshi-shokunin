@@ -1,0 +1,96 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62
+      ],
+      "startLine": 1,
+      "text": "## Evidence\n\n**Row:** `context-capture-mapping-suffix` \u2014 `tools/registry.json:396-417`, `kind: gate`, `status: active`, `timeout_s: 60`, `tags: [baseline]`.\n\n**Exact argv (7 tokens, order-significant), `tools/registry.json:399-407`:**\n```\n[\"python3\",\"tools/context-capture.py\",\"--check\",\n \"--receipt\",\".ufo/evidence/round-15/frozen/mapping-suffix/receipt.json\",\n \"--expected\",\".ufo/evidence/round-15/frozen/mapping-suffix/expected.json\"]\n```\n**Exact expect, `:408-410`:** `{\"exit\": 1}` \u2014 exit-only; **no `stdout_contains`**. Contrast sibling `context-capture-missing-env` (`:371-395`) which declares `exit: 1` **plus** `missing_injected_environment`.\n\n**Anchor:** `source: \"SKILL.md@98bea7d:1680\"` (`registry.json:412`). SKILL.md:1680 is the round-15 table row \"retained invocation-context gate\"; it documents `--check --receipt FILE --expected FILE` and the verdict map `0 clean / 1 failed stable finding ID / 2,64 could-not-evaluate` \u2014 it never names `mapping-suffix`. The anchor is shared by **four** rows: `context-capture-frozen` (:340-370), `context-capture-missing-env` (:371-395), `context-capture-mapping-suffix` (:396-417), `context-capture-selftest` (:418-438).\n\n**What makes exit 1 meaningful (command-internal, not registry-level):**\n- `expected.json` sha256 `c5779fa69a9244b4fb3f73ad275dd251f4ed75e798d85d4838f4473fa66850da`; content `{\"schema\":\"tameshi-context-expected-v1\",\"receipt_sha256\":\"02204ef8\u2026\",\"id\":\"mapping_mismatch\",\"exit\":1}`.\n- `receipt.json` bytes hash to `02204ef8\u2026` (computed), so `context-capture.py:1366-1376` passes the digest gate.\n- But the receipt self-declares `exit: 0`, `status: ok`, `mapping.all_match: true`. Its `js-kimi-census` leg declares suffix `BASH` and `PIN_BASH/REV_BASH/TABLE_BASH` against canonical `JS` (`context-capture.py:170-177`). `recompute_mapping` (`:1066-1143`) recomputes false, recorded checks disagree, and `verify_recorded_verdict` (`:1145`) adds `receipt_verdict_mismatch`. Verdict is mismatch \u2192 exit 1; the pin declares primary id `mapping_mismatch`. Round-17 corroborates: `.ufo/waves/round-17/w1/X04RegistryRows.md:27` records this row 1\u21921 with `mapping_mismatch`.\n- Crucially, the named `receipt.json` is **an input capture of a different command**, not this row's execution: `invocation.argv = [\".ufo/evidence/round-14/capture-context.py\"]`, `runs.argv = [\"/usr/bin/python3\",\"tools/pin-disposition.py\",\u2026]`, top-level `exit: 0`. A gate that reads argv/exit out of the named receipt binds the wrong command and the wrong outcome.\n\n## Axes named\n\n- **A1** identity exactness (argv length/order/cwd/rev)\n- **A2** outcome binding = exactly the declared `expect` keys\n- **A3** non-substitutability (no source-read, sibling, or crash stand-in)\n- **A4** input-receipt vs execution-receipt separation\n- **A5** static verifiability (falsifier cheap, no re-execution needed)\n\n## Exact binding a receipt gate must enforce\n\nExecution receipt **R** for this row must record and the gate must require:\n\n1. `row == \"context-capture-mapping-suffix\"`, `kind == \"gate\"`, `status == \"active\"`.\n2. `lane_root == /home/vgpnk/Projects/shokunin/tameshi-shokunin` and `cwd == lane_root` (both fixture paths are cwd-relative).\n3. `rev == 28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` plus the frozen registry blob digest that declared the row.\n4. `argv` **list equality** with the 7 tokens above \u2014 same length, same order, no additions (`--json`), no omissions, no path normalization (recording `/usr/bin/python3` is not `python3`).\n5. `exit == 1` \u2014 the sole frozen outcome key.\n6. **Must not** require a stdout needle for this row, and **must not** use `source`/anchor as identity.\n\n## One concrete false stand-in\n\nThe sibling row `context-capture-missing-env` is a real execution of the **same script**, with the **same 7-token shape**, the **same `expect.exit: 1`**, and the **same anchor `SKILL.md@98bea7d:1680`**. It differs only in tokens 4 and 6 (`.ufo/evidence/round-15/frozen/context-missing-env/...`), and its stdout contains `missing_injected_environment` \u2014 which this row does not forbid because it declares no needle. A gate keyed by anchor, by script basename, by prefix `python3 tools/context-capture.py --check`, by row-name family, or by exit code alone accepts it as `mapping-suffix`'s receipt. Secondarily, reading `SKILL.md:1680` (\"1 failed stable finding ID\") or `expected.json` (`\"exit\": 1`) yields the same numbers with no process at all \u2014 that is source-read c\u2026\n\n## Proposed move (one bounded)\n\nBind the gate's operand as `(lane_root, rev, row_name, exact ordered argv array, cwd)` and compare `argv` by plain list equality with **zero normalization**; treat `source` as documentation only because four rows provably share it. Keep outcome validation to the declared key set (`{exit: 1}`) and record the captured `id=mapping_mismatch` as supplementary evidence, never as the frozen criterion. This separates identity from outcome: A1/A3 improve, A2 stays faithful (no invented needle), A4 forces the gate to demand its own execution receipt rather than scavenging the named input receipt's `invocation.argv`/`exit: 0`.\n\n## Risks and contradictions\n\n- **Exit-only is semantically weak:** any valid edit to `expected.json`'s `id`/`exit` (with the receipt digest `02204ef8\u2026` unchanged) still leaves process exit at 1, and a `missing_injected_environment` run also exits 1. Exit 1 does not uniquely identify `mapping_mismatch`; only argv (and, if captured, the printed id) does. Stated, not smoothed.\n- **Producer authentication is out of scope** by claim; an injected `SystemExit(1)` in the tool would satisfy exit 1.\n- If the gate consumes `registry-check` reports as \"receipts\", note its per-row fragment (`registry-check.py:651-732`) carries `name/got/held/stdout_tail/stderr_tail` but **no argv/cwd** \u2014 `ARGV_MISMATCH` is unimplementable for this row from that output.\n- Binding `expected.json`'s digest (`c5779fa6\u2026`) would close the id-drift residual but widens the frozen contract beyond the row's declared `expect`; flag as residual, do not add silently.\n- `argv[0]` resolution (`\"python3\"` vs `/usr/bin/python3`) needs an explicit documented rule; silent normalization is how a different program/tool enters.\n\n## Bounded acceptance / falsifier\n\n**Acceptance:** a receipt with the exact 7 tokens, `cwd = lane_root`, `rev = 28cae17\u2026`, frozen registry digest, `exit = 1` \u2192 held.\n\n**Falsifier (single, cheapest):** submit the `context-capture-missing-env` receipt under the `mapping-suffix` row name. Exit is 1 and the anchor matches, but the gate MUST reject it as `ARGV_MISMATCH` naming token indices 4 and 6. If it accepts, the binding is exit/anchor-keyed \u2014 unfaithful. A second one-token probe: the exact 7 tokens plus trailing `--json` (still exit 1) must also be `ARGV_MISMATCH` on length.\n\nNo command was executed, no file written (including the Report path, per the wave read-only constraint), no tool installed."
+    },
+    "fileSize": 6997,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 42,
+            "last": 42
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command15",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command15"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command15.md",
+    "rowPrefixes": false,
+    "totalLines": 62
+  },
+  "text": "## Evidence\n\n**Row:** `context-capture-mapping-suffix` \u2014 `tools/registry.json:396-417`, `kind: gate`, `status: active`, `timeout_s: 60`, `tags: [baseline]`.\n\n**Exact argv (7 tokens, order-significant), `tools/registry.json:399-407`:**\n```\n[\"python3\",\"tools/context-capture.py\",\"--check\",\n \"--receipt\",\".ufo/evidence/round-15/frozen/mapping-suffix/receipt.json\",\n \"--expected\",\".ufo/evidence/round-15/frozen/mapping-suffix/expected.json\"]\n```\n**Exact expect, `:408-410`:** `{\"exit\": 1}` \u2014 exit-only; **no `stdout_contains`**. Contrast sibling `context-capture-missing-env` (`:371-395`) which declares `exit: 1` **plus** `missing_injected_environment`.\n\n**Anchor:** `source: \"SKILL.md@98bea7d:1680\"` (`registry.json:412`). SKILL.md:1680 is the round-15 table row \"retained invocation-context gate\"; it documents `--check --receipt FILE --expected FILE` and the verdict map `0 clean / 1 failed stable finding ID / 2,64 could-not-evaluate` \u2014 it never names `mapping-suffix`. The anchor is shared by **four** rows: `context-capture-frozen` (:340-370), `context-capture-missing-env` (:371-395), `context-capture-mapping-suffix` (:396-417), `context-capture-selftest` (:418-438).\n\n**What makes exit 1 meaningful (command-internal, not registry-level):**\n- `expected.json` sha256 `c5779fa69a9244b4fb3f73ad275dd251f4ed75e798d85d4838f4473fa66850da`; content `{\"schema\":\"tameshi-context-expected-v1\",\"receipt_sha256\":\"02204ef8\u2026\",\"id\":\"mapping_mismatch\",\"exit\":1}`.\n- `receipt.json` bytes hash to `02204ef8\u2026` (computed), so `context-capture.py:1366-1376` passes the digest gate.\n- But the receipt self-declares `exit: 0`, `status: ok`, `mapping.all_match: true`. Its `js-kimi-census` leg declares suffix `BASH` and `PIN_BASH/REV_BASH/TABLE_BASH` against canonical `JS` (`context-capture.py:170-177`). `recompute_mapping` (`:1066-1143`) recomputes false, recorded checks disagree, and `verify_recorded_verdict` (`:1145`) adds `receipt_verdict_mismatch`. Verdict is mismatch \u2192 exit 1; the pin declares primary id `mapping_mismatch`. Round-17 corroborates: `.ufo/waves/round-17/w1/X04RegistryRows.md:27` records this row 1\u21921 with `mapping_mismatch`.\n- Crucially, the named `receipt.json` is **an input capture of a different command**, not this row's execution: `invocation.argv = [\".ufo/evidence/round-14/capture-context.py\"]`, `runs.argv = [\"/usr/bin/python3\",\"tools/pin-disposition.py\",\u2026]`, top-level `exit: 0`. A gate that reads argv/exit out of the named receipt binds the wrong command and the wrong outcome.\n\n## Axes named\n\n- **A1** identity exactness (argv length/order/cwd/rev)\n- **A2** outcome binding = exactly the declared `expect` keys\n- **A3** non-substitutability (no source-read, sibling, or crash stand-in)\n- **A4** input-receipt vs execution-receipt separation\n- **A5** static verifiability (falsifier cheap, no re-execution needed)\n\n## Exact binding a receipt gate must enforce\n\nExecution receipt **R** for this row must record and the gate must require:\n\n1. `row == \"context-capture-mapping-suffix\"`, `kind == \"gate\"`, `status == \"active\"`.\n2. `lane_root == /home/vgpnk/Projects/shokunin/tameshi-shokunin` and `cwd == lane_root` (both fixture paths are cwd-relative).\n3. `rev == 28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` plus the frozen registry blob digest that declared the row.\n4. `argv` **list equality** with the 7 tokens above \u2014 same length, same order, no additions (`--json`), no omissions, no path normalization (recording `/usr/bin/python3` is not `python3`).\n5. `exit == 1` \u2014 the sole frozen outcome key.\n6. **Must not** require a stdout needle for this row, and **must not** use `source`/anchor as identity.\n\n## One concrete false stand-in\n\nThe sibling row `context-capture-missing-env` is a real execution of the **same script**, with the **same 7-token shape**, the **same `expect.exit: 1`**, and the **same anchor `SKILL.md@98bea7d:1680`**. It differs only in tokens 4 and 6 (`.ufo/evidence/round-15/frozen/context-missing-env/...`), and its stdout contains `missing_injected_environment` \u2014 which this row does not forbid because it declares no needle. A gate keyed by anchor, by script basename, by prefix `python3 tools/context-capture.py --check`, by row-name family, or by exit code alone accepts it as `mapping-suffix`'s receipt. Secondarily, reading `SKILL.md:1680` (\"1 failed stable finding ID\") or `expected.json` (`\"exit\": 1`) yields the same numbers with no process at all \u2014 that is source-read c\u2026\n\n## Proposed move (one bounded)\n\nBind the gate's operand as `(lane_root, rev, row_name, exact ordered argv array, cwd)` and compare `argv` by plain list equality with **zero normalization**; treat `source` as documentation only because four rows provably share it. Keep outcome validation to the declared key set (`{exit: 1}`) and record the captured `id=mapping_mismatch` as supplementary evidence, never as the frozen criterion. This separates identity from outcome: A1/A3 improve, A2 stays faithful (no invented needle), A4 forces the gate to demand its own execution receipt rather than scavenging the named input receipt's `invocation.argv`/`exit: 0`.\n\n## Risks and contradictions\n\n- **Exit-only is semantically weak:** any valid edit to `expected.json`'s `id`/`exit` (with the receipt digest `02204ef8\u2026` unchanged) still leaves process exit at 1, and a `missing_injected_environment` run also exits 1. Exit 1 does not uniquely identify `mapping_mismatch`; only argv (and, if captured, the printed id) does. Stated, not smoothed.\n- **Producer authentication is out of scope** by claim; an injected `SystemExit(1)` in the tool would satisfy exit 1.\n- If the gate consumes `registry-check` reports as \"receipts\", note its per-row fragment (`registry-check.py:651-732`) carries `name/got/held/stdout_tail/stderr_tail` but **no argv/cwd** \u2014 `ARGV_MISMATCH` is unimplementable for this row from that output.\n- Binding `expected.json`'s digest (`c5779fa6\u2026`) would close the id-drift residual but widens the frozen contract beyond the row's declared `expect`; flag as residual, do not add silently.\n- `argv[0]` resolution (`\"python3\"` vs `/usr/bin/python3`) needs an explicit documented rule; silent normalization is how a different program/tool enters.\n\n## Bounded acceptance / falsifier\n\n**Acceptance:** a receipt with the exact 7 tokens, `cwd = lane_root`, `rev = 28cae17\u2026`, frozen registry digest, `exit = 1` \u2192 held.\n\n**Falsifier (single, cheapest):** submit the `context-capture-missing-env` receipt under the `mapping-suffix` row name. Exit is 1 and the anchor matches, but the gate MUST reject it as `ARGV_MISMATCH` naming token indices 4 and 6. If it accepts, the binding is exit/anchor-keyed \u2014 unfaithful. A second one-token probe: the exact 7 tokens plus trailing `--json` (still exit 1) must also be `ARGV_MISMATCH` on length.\n\nNo command was executed, no file written (including the Report path, per the wave read-only constraint), no tool installed.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command15:raw:42-42 to read line 42 whole]"
+}

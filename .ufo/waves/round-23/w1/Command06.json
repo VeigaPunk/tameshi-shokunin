@@ -1,0 +1,52 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "startLine": 1,
+      "text": "## Command06 \u2014 `pin-disposition-read` calibration finding\n\n**Row** (`tools/registry.json:105\u2013130`): `pin-disposition-read`, `kind: probe`, `status: active`, `tags: [baseline, fleet-live]`, `external: true`, `timeout_s: 60`.\n\n**Exact command identity (what the gate must bind)**\n- `argv` (exact ordered list): `[\"python3\", \"tools/pin-disposition.py\", \"--manifest\", \".ufo/evidence/round-13/pin-manifest.json\", \"--root\", \"/home/vgpnk/Projects/shokunin\"]`\n- `expect`: `{\"exit\": 0, \"stdout_contains\": [\"\\\"unavailable\\\": 0\"]}` \u2014 exit 0 *and* the byte-literal substring `\"unavailable\": 0`; both are required, and the substring check is conjunctive with exit, not a JSON parse.\n- Implicit bindings the contract (`command-binding-round23-v1`) forces onto this row: `cwd` = lane root `/home/vgpnk/Projects/shokunin/tameshi-shokunin` (argv[1] and the manifest arg are lane-relative; r14 receipts record `cwd_equal: true` there \u2014 `CWD_MISMATCH` covers it); run revision = receipt's measured revision (`REVISION_MISMATCH`); exactly one receipt for this row (`DUPLICATE_COMMAND`); every receipt's argv must be a member of the required set (`MEMBERSHIP_MISMATCH` for missing or unknown).\n\n**Source anchor**: `\"source\": \"SKILL.md@98bea7d:1552\"`. Resolved at `98bea7d`: line 1552 is the \"six-leg content disposition | probe\" row in the \"Round-13 gate/probe registry\" table, carrying the identical command string and verdict map \"0 observations, including changed/unavailable\". The anchor fixes the command spelling; the registry alone adds the `\"unavailable\": 0` token binding.\n\n**Concrete false stand-in**: `.ufo/evidence/round-13/pin-dispositions.json` is a committed historical stdout of this very probe \u2014 `schema: pin-disposition-v1`, `status: ok`, and line 25 contains literally `\"unavailable\": 0`. A receipt that reads/copies that file (e.g. `python3 -c 'print(open(\".ufo/evidence/round-13/pin-dispositions.json\").read())'`, or a \"source read\" credit) satisfies exit 0 + token with zero probe execution. Exact-argv equality plus cwd/revision/membership binding is what rejects it (`ARGV_MISMATCH`); anything less admits the substitution. Symmetric failure: `python3 tools/pin-disposition.py --selftest` (the sibling `pin-disposition-selftest` row) is same-interpreter/same-script, exits 0, runs only `/tmp` fixtures \u2014 crediting it to this ro\u2026\n\n**Bounded acceptance / falsifier**\n- *Accept iff* the receipt names `pin-disposition-read`, records argv elementwise-equal to the six-element list above, cwd = lane root, revision = base `28cae179\u2026`, integer `exit == 0` (bool \u2192 `INVALID_RECEIPT`, exit 2), and stdout contains the literal token.\n- *Single falsifier*: a receipt whose argv is `[\"python3\", \"tools/pin-disposition.py\", \"--selftest\"]` \u2014 or any one element changed (e.g. `--root` pointed at the lane dir instead of the fleet root) \u2014 must produce exit 1 `ARGV_MISMATCH`/unknown-command `MEMBERSHIP_MISMATCH`, not pass on token presence. A receipt echoing `pin-dispositions.json` content under a non-matching argv must fail identically; if it passes, the gate equates artifact bytes with execution \u2014 the exact defect C1 names.\n\n**Report note**: assignment text says write `.ufo/waves/round-23/w1/Command06.md`; wave context explicitly forbids any file writes this round (\"DO NOT WRITE ANY FILE (including the renderer Report trailer)\"). No file written; findings returned here for L1 persistence. No commands executed beyond read-only `git show`/`grep`/`wc`; no installs needed."
+    },
+    "fileSize": 3827,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 12,
+            "last": 12
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command06",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command06"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command06.md",
+    "rowPrefixes": false,
+    "totalLines": 18
+  },
+  "text": "## Command06 \u2014 `pin-disposition-read` calibration finding\n\n**Row** (`tools/registry.json:105\u2013130`): `pin-disposition-read`, `kind: probe`, `status: active`, `tags: [baseline, fleet-live]`, `external: true`, `timeout_s: 60`.\n\n**Exact command identity (what the gate must bind)**\n- `argv` (exact ordered list): `[\"python3\", \"tools/pin-disposition.py\", \"--manifest\", \".ufo/evidence/round-13/pin-manifest.json\", \"--root\", \"/home/vgpnk/Projects/shokunin\"]`\n- `expect`: `{\"exit\": 0, \"stdout_contains\": [\"\\\"unavailable\\\": 0\"]}` \u2014 exit 0 *and* the byte-literal substring `\"unavailable\": 0`; both are required, and the substring check is conjunctive with exit, not a JSON parse.\n- Implicit bindings the contract (`command-binding-round23-v1`) forces onto this row: `cwd` = lane root `/home/vgpnk/Projects/shokunin/tameshi-shokunin` (argv[1] and the manifest arg are lane-relative; r14 receipts record `cwd_equal: true` there \u2014 `CWD_MISMATCH` covers it); run revision = receipt's measured revision (`REVISION_MISMATCH`); exactly one receipt for this row (`DUPLICATE_COMMAND`); every receipt's argv must be a member of the required set (`MEMBERSHIP_MISMATCH` for missing or unknown).\n\n**Source anchor**: `\"source\": \"SKILL.md@98bea7d:1552\"`. Resolved at `98bea7d`: line 1552 is the \"six-leg content disposition | probe\" row in the \"Round-13 gate/probe registry\" table, carrying the identical command string and verdict map \"0 observations, including changed/unavailable\". The anchor fixes the command spelling; the registry alone adds the `\"unavailable\": 0` token binding.\n\n**Concrete false stand-in**: `.ufo/evidence/round-13/pin-dispositions.json` is a committed historical stdout of this very probe \u2014 `schema: pin-disposition-v1`, `status: ok`, and line 25 contains literally `\"unavailable\": 0`. A receipt that reads/copies that file (e.g. `python3 -c 'print(open(\".ufo/evidence/round-13/pin-dispositions.json\").read())'`, or a \"source read\" credit) satisfies exit 0 + token with zero probe execution. Exact-argv equality plus cwd/revision/membership binding is what rejects it (`ARGV_MISMATCH`); anything less admits the substitution. Symmetric failure: `python3 tools/pin-disposition.py --selftest` (the sibling `pin-disposition-selftest` row) is same-interpreter/same-script, exits 0, runs only `/tmp` fixtures \u2014 crediting it to this ro\u2026\n\n**Bounded acceptance / falsifier**\n- *Accept iff* the receipt names `pin-disposition-read`, records argv elementwise-equal to the six-element list above, cwd = lane root, revision = base `28cae179\u2026`, integer `exit == 0` (bool \u2192 `INVALID_RECEIPT`, exit 2), and stdout contains the literal token.\n- *Single falsifier*: a receipt whose argv is `[\"python3\", \"tools/pin-disposition.py\", \"--selftest\"]` \u2014 or any one element changed (e.g. `--root` pointed at the lane dir instead of the fleet root) \u2014 must produce exit 1 `ARGV_MISMATCH`/unknown-command `MEMBERSHIP_MISMATCH`, not pass on token presence. A receipt echoing `pin-dispositions.json` content under a non-matching argv must fail identically; if it passes, the gate equates artifact bytes with execution \u2014 the exact defect C1 names.\n\n**Report note**: assignment text says write `.ufo/waves/round-23/w1/Command06.md`; wave context explicitly forbids any file writes this round (\"DO NOT WRITE ANY FILE (including the renderer Report trailer)\"). No file written; findings returned here for L1 persistence. No commands executed beyond read-only `git show`/`grep`/`wc`; no installs needed.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command06:raw:12-12 to read line 12 whole]"
+}

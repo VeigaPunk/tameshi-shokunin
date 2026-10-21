@@ -1,0 +1,70 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "startLine": 1,
+      "text": "## Row and exact binding\n\n**`assemble-round17-selftest`** \u2014 `tools/registry.json:678-696`: `kind: selftest`, `status: active`, `tags: [\"new-r17\"]`, `timeout_s: 120`, `source: \"SKILL.md@98bea7d:1806\"`.\n\n```json\n\"argv\": [\"python3\", \".ufo/evidence/round-17/coldread/assemble.py\", \"--selftest\"]\n\"expect\": {\"exit\": 0, \"stdout_contains\": [\"SELFTEST: all checks passed\"]}\n```\n\nThe identity a receipt gate must enforce is the 6-tuple, not the token: name `assemble-round17-selftest`; argv element-for-element (relative path, `--selftest` as third element, no shell); cwd = lane root `/home/vgpnk/Projects/shokunin/tameshi-shokunin`; revision = frozen base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`; `type(exit) is int` and `== 0`; literal case-sensitive token **in stdout only**; exactly one receipt for the name. `kind`, `timeout_s`, and interpreter identity are outside the current binding. The success path prints the token last and returns 0; failure prints `SELFTEST: FAIL (n checks)` and returns 1 (`assemble.py:1793-1796`), so the token is discriminating *within* this script.\n\n## Anchor does not resolve to this command\n\n`SKILL.md@98bea7d:1806` at that revision is the **last section heading, `### Round-16 gate/probe registry`** \u2014 the pinned-rev census ends there (`.ufo/evidence/round-17/redbefore/measure-98bea7d.json:275,658,665`, 54 sections, rev `98bea7da5801f4bc58e4187690ee1687c8a5061f`). The row itself did not exist at that rev either (`.ufo/evidence/round-17/registry-before-manual.json`: 22 r12\u2013r16 rows, no `assemble-round17-*`). The command is declared only in the live page at `SKILL.md:1903`, under `### Round-17 gate/probe registry \u2014 input-keyed credit` (`:1897`, section `:1814`). Five new-r17 rows share the same `98bea7d:1806` anchor: it is a bulk provenance pin, not a declaration.\n\n**Contradiction, stated:** the registry's `source` contract (`<file>@<rev>:<line>`) implies the anchor names the command, but here it literally lands on the round-16 table heading \u2014 whose command (`tools/registry.json:529-543`) carries a byte-identical `expect` and differs only in `argv[1]` and `timeout_s` (60 vs 120).\n\n## Concrete false stand-in\n\nA genuine execution of the **round-16 sibling**: `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` exits 0 and prints `SELFTEST: all checks passed` (`round-16/coldread/assemble.py:1000`). It is indistinguishable by expect. If the bundle's requirement is transcribed from the row's anchor (which resolves to the round-16 section) \u2014 or matched on exit+token, `kind`, or basename `coldread/assemble.py` \u2014 the gate reports CLEAN with zero round-17 execution. The source-read variant is even cheaper: the literal token exists in `round-17/coldread/assemble.py:1795`; a read/grep yields it with no execution at all, and a receipt is only a claim. By inspection `evaluate()` compares receipt to the bundle's requirement only (`tools/command-binding.py:97-106`)\u2026\n\n## One bounded acceptance/falsifier\n\n**Acceptance:** the receipt satisfies the row only if it carries the 6-tuple above and its requirement entry was compiled from the registry row verbatim.\n\n**Falsifier (one fixture pair, no execution):** set the requirement for `assemble-round17-selftest` to the anchor-resolved round-16 command with the identical expect, and pair it with a genuine round-16 receipt (same cwd/revision). The gate MUST exit 1 with `ARGV_MISMATCH` and credit zero. If it returns exit 0 with no findings, this row's identity binding is refuted \u2014 the requirement side is unauthenticated relative to the registry.\n\n## Axes and proposed move\n\nAxes: A1 argv exactness; A2 context (cwd/revision); A3 outcome (integer exit, stdout token); A4 anti-stand-in; A5 snapshot/membership integrity; A6 provenance honesty.\n\n**Move \u2014 pin the tuple, not the anchor:** compile `requirements[]` verbatim from `tools/registry.json` rows at the frozen base revision; carry `source` as opaque provenance never parsed for argv; add the sibling-substitution pair above to the mandatory discrimination population. Record the registry bytes' sha256 in the frozen contract (not in `--expected`, so the ruler's control and ten predicates stay intact). Improves A4/A6; neutral on A1/A2/A3/A5.\n\nRisks: registry edits after compile (hence the contract-level registry digest); don't convert this into an anchor checker \u2014 all five r17 anchors would fail at once and that is separate scope; membership must exclude `superseded` rows and fail closed on duplicates; don't add executed-file digests/traces, which would breach the \"no producer authentication\" claim.\n\nVerification: static cites above; executor side (not run here) one `python3 tools/command-binding.py --bundle B --expected E --json` over the pair \u2192 expect exit 1 / `[\"ARGV_MISMATCH\"]`, with the round-23 ruler still 10/10 and control exit 0 / `[]`. No files written, no repo commands or installs performed."
+    },
+    "fileSize": 5050,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 20,
+            "last": 20
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command27",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command27"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command27.md",
+    "rowPrefixes": false,
+    "totalLines": 36
+  },
+  "text": "## Row and exact binding\n\n**`assemble-round17-selftest`** \u2014 `tools/registry.json:678-696`: `kind: selftest`, `status: active`, `tags: [\"new-r17\"]`, `timeout_s: 120`, `source: \"SKILL.md@98bea7d:1806\"`.\n\n```json\n\"argv\": [\"python3\", \".ufo/evidence/round-17/coldread/assemble.py\", \"--selftest\"]\n\"expect\": {\"exit\": 0, \"stdout_contains\": [\"SELFTEST: all checks passed\"]}\n```\n\nThe identity a receipt gate must enforce is the 6-tuple, not the token: name `assemble-round17-selftest`; argv element-for-element (relative path, `--selftest` as third element, no shell); cwd = lane root `/home/vgpnk/Projects/shokunin/tameshi-shokunin`; revision = frozen base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`; `type(exit) is int` and `== 0`; literal case-sensitive token **in stdout only**; exactly one receipt for the name. `kind`, `timeout_s`, and interpreter identity are outside the current binding. The success path prints the token last and returns 0; failure prints `SELFTEST: FAIL (n checks)` and returns 1 (`assemble.py:1793-1796`), so the token is discriminating *within* this script.\n\n## Anchor does not resolve to this command\n\n`SKILL.md@98bea7d:1806` at that revision is the **last section heading, `### Round-16 gate/probe registry`** \u2014 the pinned-rev census ends there (`.ufo/evidence/round-17/redbefore/measure-98bea7d.json:275,658,665`, 54 sections, rev `98bea7da5801f4bc58e4187690ee1687c8a5061f`). The row itself did not exist at that rev either (`.ufo/evidence/round-17/registry-before-manual.json`: 22 r12\u2013r16 rows, no `assemble-round17-*`). The command is declared only in the live page at `SKILL.md:1903`, under `### Round-17 gate/probe registry \u2014 input-keyed credit` (`:1897`, section `:1814`). Five new-r17 rows share the same `98bea7d:1806` anchor: it is a bulk provenance pin, not a declaration.\n\n**Contradiction, stated:** the registry's `source` contract (`<file>@<rev>:<line>`) implies the anchor names the command, but here it literally lands on the round-16 table heading \u2014 whose command (`tools/registry.json:529-543`) carries a byte-identical `expect` and differs only in `argv[1]` and `timeout_s` (60 vs 120).\n\n## Concrete false stand-in\n\nA genuine execution of the **round-16 sibling**: `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` exits 0 and prints `SELFTEST: all checks passed` (`round-16/coldread/assemble.py:1000`). It is indistinguishable by expect. If the bundle's requirement is transcribed from the row's anchor (which resolves to the round-16 section) \u2014 or matched on exit+token, `kind`, or basename `coldread/assemble.py` \u2014 the gate reports CLEAN with zero round-17 execution. The source-read variant is even cheaper: the literal token exists in `round-17/coldread/assemble.py:1795`; a read/grep yields it with no execution at all, and a receipt is only a claim. By inspection `evaluate()` compares receipt to the bundle's requirement only (`tools/command-binding.py:97-106`)\u2026\n\n## One bounded acceptance/falsifier\n\n**Acceptance:** the receipt satisfies the row only if it carries the 6-tuple above and its requirement entry was compiled from the registry row verbatim.\n\n**Falsifier (one fixture pair, no execution):** set the requirement for `assemble-round17-selftest` to the anchor-resolved round-16 command with the identical expect, and pair it with a genuine round-16 receipt (same cwd/revision). The gate MUST exit 1 with `ARGV_MISMATCH` and credit zero. If it returns exit 0 with no findings, this row's identity binding is refuted \u2014 the requirement side is unauthenticated relative to the registry.\n\n## Axes and proposed move\n\nAxes: A1 argv exactness; A2 context (cwd/revision); A3 outcome (integer exit, stdout token); A4 anti-stand-in; A5 snapshot/membership integrity; A6 provenance honesty.\n\n**Move \u2014 pin the tuple, not the anchor:** compile `requirements[]` verbatim from `tools/registry.json` rows at the frozen base revision; carry `source` as opaque provenance never parsed for argv; add the sibling-substitution pair above to the mandatory discrimination population. Record the registry bytes' sha256 in the frozen contract (not in `--expected`, so the ruler's control and ten predicates stay intact). Improves A4/A6; neutral on A1/A2/A3/A5.\n\nRisks: registry edits after compile (hence the contract-level registry digest); don't convert this into an anchor checker \u2014 all five r17 anchors would fail at once and that is separate scope; membership must exclude `superseded` rows and fail closed on duplicates; don't add executed-file digests/traces, which would breach the \"no producer authentication\" claim.\n\nVerification: static cites above; executor side (not run here) one `python3 tools/command-binding.py --bundle B --expected E --json` over the pair \u2192 expect exit 1 / `[\"ARGV_MISMATCH\"]`, with the round-23 ruler still 10/10 and control exit 0 / `[]`. No files written, no repo commands or installs performed.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command27:raw:20-20 to read line 20 whole]"
+}

@@ -1,0 +1,55 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "startLine": 1,
+      "text": "**Seat: TameshiR23.Command07 \u2014 row `pin-disposition-selftest` (registry.json:131\u2013151). Read-only; no command executed, no files written.**\n\n## Exact command identity and outcome binding\n\n- **Row:** `pin-disposition-selftest` \u2014 `kind: \"selftest\"`, `status: \"active\"`, `timeout_s: 60`, `tags: [\"baseline\"]`.\n- **argv (exact, ordered, complete):** `[\"python3\", \"tools/pin-disposition.py\", \"--selftest\"]` \u2014 three elements; the relative script path resolves under the lane root `tameshi-shokunin/`.\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}`.\n- **Anchor:** `\"source\": \"SKILL.md@98bea7d:1552\"` \u2014 line 1552 is the round-13 gate/probe registry table row whose Self-test column is `` `python3 tools/pin-disposition.py --selftest` `` and whose verdict map documents `selftest 1 \u2192 failed`. The anchor pins the *argv string*; the exit/stdout pair comes from the tool's documented verdict map. Anchor identity is the pinned blob `98bea7d`, not the live file \u2014 a gate comparing against the working tree alone would not detect post-pin drift.\n\nThe binding is a *conjunctive triple on one execution event*: (a) argv vector equality \u2014 all elements, in order, not subset/prefix; (b) observed exit code `0`; (c) captured stdout containing literal `SELFTEST: PASS`. Tool semantics make these co-realized: `main()` dispatches on `argv == [\"--selftest\"]` (exact equality \u2014 `--selftest` plus any other arg exits 2 via `invalid_usage`), and `selftest()` prints `SELFTEST: PASS (N/N)` + returns 0 only on zero failures (`FAIL`\u21921, `COULD_NOT_EVALUATE`\u21922). So `SELFTEST: PASS` cannot appear on a non-zero exit \u2014 but a receipt still must carry both, since a gate checking exit alone cannot distinguish `selftest()`'s success from any other exit-0 path it might wrongly admit.\n\n## Concrete false stand-in\n\nReceipt from the sibling row `pin-disposition-read` (registry.json:105\u2013130): argv `[\"python3\", \"tools/pin-disposition.py\", \"--manifest\", \".ufo/evidence/round-13/pin-manifest.json\", \"--root\", \u2026]` shares elements 0\u20131 and legitimately exits 0. A gate keying identity on interpreter+script prefix, on the script path/hash, or on \"an exit-0 receipt exists for this tool\" would let that read-mode run satisfy `pin-disposition-selftest` while the `--selftest` path never executed. Equally, a provenance receipt \u2014 reading or hashing `SKILL.md:1552` or `tools/pin-disposition.py` \u2014 contains the literal `--selftest`/`SELFTEST: PASS` strings yet is zero executions; a gate that counts source/anchor reads as receipts conflates provenance with execution, which is exactly what th\u2026\n\n## Bounded acceptance / falsifier\n\n- **Accept:** one receipt binding a single process spawn with argv exactly equal to `[\"python3\", \"tools/pin-disposition.py\", \"--selftest\"]` (no extra/missing elements), cwd = lane root, exit `0`, stdout containing `SELFTEST: PASS`, within `timeout_s: 60`.\n- **Falsify (negative control):** the gate must reject (a) the exit-0 `pin-disposition-read` receipt above, (b) any argv not exactly equal (e.g., `--selftest` plus extra flags \u2014 which the tool itself exits 2 on), and (c) any anchor/source read of `SKILL.md@98bea7d:1552` or `pin-disposition.py` presented as execution evidence.\n\n**Note on the Report trailer:** per this wave's read-only advisory constraint (no file writes; L1 persists findings), `.ufo/waves/round-23/w1/Command07.md` was not written; findings are returned here for L1 to persist."
+    },
+    "fileSize": 3468,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 14,
+            "last": 14
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command07",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command07"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command07.md",
+    "rowPrefixes": false,
+    "totalLines": 21
+  },
+  "text": "**Seat: TameshiR23.Command07 \u2014 row `pin-disposition-selftest` (registry.json:131\u2013151). Read-only; no command executed, no files written.**\n\n## Exact command identity and outcome binding\n\n- **Row:** `pin-disposition-selftest` \u2014 `kind: \"selftest\"`, `status: \"active\"`, `timeout_s: 60`, `tags: [\"baseline\"]`.\n- **argv (exact, ordered, complete):** `[\"python3\", \"tools/pin-disposition.py\", \"--selftest\"]` \u2014 three elements; the relative script path resolves under the lane root `tameshi-shokunin/`.\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}`.\n- **Anchor:** `\"source\": \"SKILL.md@98bea7d:1552\"` \u2014 line 1552 is the round-13 gate/probe registry table row whose Self-test column is `` `python3 tools/pin-disposition.py --selftest` `` and whose verdict map documents `selftest 1 \u2192 failed`. The anchor pins the *argv string*; the exit/stdout pair comes from the tool's documented verdict map. Anchor identity is the pinned blob `98bea7d`, not the live file \u2014 a gate comparing against the working tree alone would not detect post-pin drift.\n\nThe binding is a *conjunctive triple on one execution event*: (a) argv vector equality \u2014 all elements, in order, not subset/prefix; (b) observed exit code `0`; (c) captured stdout containing literal `SELFTEST: PASS`. Tool semantics make these co-realized: `main()` dispatches on `argv == [\"--selftest\"]` (exact equality \u2014 `--selftest` plus any other arg exits 2 via `invalid_usage`), and `selftest()` prints `SELFTEST: PASS (N/N)` + returns 0 only on zero failures (`FAIL`\u21921, `COULD_NOT_EVALUATE`\u21922). So `SELFTEST: PASS` cannot appear on a non-zero exit \u2014 but a receipt still must carry both, since a gate checking exit alone cannot distinguish `selftest()`'s success from any other exit-0 path it might wrongly admit.\n\n## Concrete false stand-in\n\nReceipt from the sibling row `pin-disposition-read` (registry.json:105\u2013130): argv `[\"python3\", \"tools/pin-disposition.py\", \"--manifest\", \".ufo/evidence/round-13/pin-manifest.json\", \"--root\", \u2026]` shares elements 0\u20131 and legitimately exits 0. A gate keying identity on interpreter+script prefix, on the script path/hash, or on \"an exit-0 receipt exists for this tool\" would let that read-mode run satisfy `pin-disposition-selftest` while the `--selftest` path never executed. Equally, a provenance receipt \u2014 reading or hashing `SKILL.md:1552` or `tools/pin-disposition.py` \u2014 contains the literal `--selftest`/`SELFTEST: PASS` strings yet is zero executions; a gate that counts source/anchor reads as receipts conflates provenance with execution, which is exactly what th\u2026\n\n## Bounded acceptance / falsifier\n\n- **Accept:** one receipt binding a single process spawn with argv exactly equal to `[\"python3\", \"tools/pin-disposition.py\", \"--selftest\"]` (no extra/missing elements), cwd = lane root, exit `0`, stdout containing `SELFTEST: PASS`, within `timeout_s: 60`.\n- **Falsify (negative control):** the gate must reject (a) the exit-0 `pin-disposition-read` receipt above, (b) any argv not exactly equal (e.g., `--selftest` plus extra flags \u2014 which the tool itself exits 2 on), and (c) any anchor/source read of `SKILL.md@98bea7d:1552` or `pin-disposition.py` presented as execution evidence.\n\n**Note on the Report trailer:** per this wave's read-only advisory constraint (no file writes; L1 persists findings), `.ufo/waves/round-23/w1/Command07.md` was not written; findings are returned here for L1 to persist.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command07:raw:14-14 to read line 14 whole]"
+}

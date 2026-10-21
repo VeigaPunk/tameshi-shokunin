@@ -1,0 +1,76 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ],
+      "startLine": 1,
+      "text": "## Evidence\n\n**Row (the required command identity)** \u2014 `tools/registry.json:698-718`:\n- `name`: `trace-inputs-selftest`; `kind`: `selftest`; `status`: `active`; `tags`: `[\"new-r18\"]`; `timeout_s`: 120\n- `argv`: `[\"python3\", \"tools/trace-inputs.py\", \"--selftest\"]` (exactly 3 elements, relative script path)\n- `expect`: `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: \"]}` \u2014 the token carries a **trailing space** (verified byte-exact via `cat -A` on line 709)\n- `source`: `SKILL.md@58e5d53:1923-1932`\n\n**Anchor** \u2014 at base revision the range `SKILL.md:1923-1932` is the round-18 table header plus the `defect-probes.py`, `registry-check.py`, `evidence-disposition.py`, `bash-witness-study.py` rows; the `tools/trace-inputs.py` row is at `SKILL.md:1933` (\"promoted current collector; the historical round-17 evidence copy remains unchanged, not byte-identical\"). So the anchor is a **revision-58e5d53 documentation pointer**, not the base-revision line, and it is not evidence of execution.\n\n**Source behavior** \u2014 `tools/trace-inputs.py:982-987`: `--selftest` dispatches to `selftest()` *before* the `--root`/`--out` required-argument checks, so the 3-element argv is a legal invocation; `:964-967` emits per-check lines then `SELFTEST: <passed>/<total>`, returning 0 iff `passed == len(checks)`. Line 965's format string contains the literal `SELFTEST: `, i.e. **the required stdout token exists in the source file itself**.\n\n**Two outcome-indistinguishable stand-ins in the same registry:**\n1. `trace-inputs-round17-selftest` (`registry.json:656-676`, status `superseded`) \u2014 **byte-identical `expect`**, argv differs only in element 2 (`\".ufo/evidence/round-17/coldread/trace-inputs.py\"`); that historical copy still exists (35,887 B vs current 37,359 B) and emits the same `SELFTEST: %d/%d` (`\u2026/round-17/coldread/trace-inputs.py:928`).\n2. `assemble-round18-selftest` (`registry.json:741-762`, status `active`) \u2014 **byte-identical `expect`** `{\"exit\":0,\"stdout_contains\":[\"SELFTEST: \"]}`; its output is `SELFTEST: %d/%d pass` with exit 0 (`.ufo/evidence/round-18/coldread/assemble.py:1921-1925`). `defect-probes-selftest` (`:765-783`) emits `SELFTEST: PASS`, which also contains the token.\n\n**Concrete false stand-in:** a receipt for `python3 .ufo/evidence/round-18/coldread/assemble.py --selftest` (exit 0, `SELFTEST: N/N pass`) \u2014 or for the superseded round-17 copy \u2014 satisfies this row's declared `expect` exactly. Symmetrically, a source read evidencing `tools/trace-inputs.py:965` hands the gate the literal `SELFTEST: ` token without any child process, exit status, or captured stdout. A gate whose predicate is \"evidence text contains token \u2227 evidence mentions exit 0\" cannot tell these apart, and cannot distinguish a real run from a read.\n\n**Second-order facts:** argv element 2 is relative, so identity is cwd-dependent (`/home/vgpnk/Projects/shokunin/tools/trace-inputs.py` does not exist \u2014 fleet-root cwd fails with exit 2); a different checkout with identical argv text and identical stdout would still be a different byte artifact. `--selftest --root .` also yields exit 0 and the same line (argparse bypass), so outcome-equivalence does not imply identity.\n\n## Axes\n- A1 identity binding (argv, cwd, runner bytes, revision)\n- A2 outcome binding (exit vs stdout, co-location)\n- A3 provenance separation (execution vs source read)\n- A4 membership/revision integrity (active vs superseded; anchor revision)\n- A5 contract fidelity (no findings outside the frozen population)\n\n## Proposed move\nBind credit to one **stream-provenanced receipt record**: identity = (`cwd` realpath = repo root, byte-equal 3-element argv vector, sha256 of the resolved `tools/trace-inputs.py` = blob at base `28cae179\u2026`), and evaluate `expect` **only** against that same record's captured stdout and integer exit. Never evaluate `stdout_contains` over free-form evidence or source text; a record lacking a child stdout capture and integer exit is `INVALID_RECEIPT` (exit 2), not credit. Consequences: the round-17 and assemble-round18 receipts score `ARGV_MISMATCH`/`MEMBERSHIP_MISMATCH`; arg-extended or re-spelled invocations score `ARGV_MISMATCH`; same-argv-different-checkout scores `REVISION_MISMATCH` via runner sha; a source read scores `INVALID_RECEIPT`. No new finding code\u2026\n\n## Risks / contradictions (not smoothed)\n- **The token is not a pass predicate.** A failing run prints `SELFTEST: 29/30`, which still satisfies `stdout_contains`; `exit == 0` is the only pass discriminator, so exit and stdout **must** come from the same record. Allowing exit from record A and stdout from record B reintroduces the defect.\n- **Exact argv cuts both ways.** `--selftest --root .` is outcome-identical but not the required identity; path normalization is the other trap \u2014 once you normalize, `.ufo/evidence/round-17/\u2026` and another checkout's `tools/trace-inputs.py` become plausible. Recommend no normalization and no prefix/outcome-equivalence.\n- **Anchor is not base-revision and not evidence.** `SKILL.md@58e5d53:1923-1932` diverges from the current tree (row is at 1933). A gate that validates the row through its anchor would either false-fail or credit documentation; `source` must stay metadata.\n- **Do not pin the check count.** Any literal `<total>` derived from source (a static count of `check(` sites) is itself a source read; the denominator must be read from the receipt (`passed == total` as a coherence check, never as a substitute for exit).\n- **Out of reach:** the gate validates identity + outcome shape, not producer authentication; a forged record with correct argv/cwd/exit/token is indistinguishable \u2014 consistent with the contract's explicit exclusion.\n- Optional hardening only with contract-owner sign-off: require the token to match `^SELFTEST: \\d+/\\d+$` on a captured line. That excludes the source format string `SELFTEST: %d/%d` structurally, but strengthens the declared substring predicate, so it must not be presented as the frozen requirement.\n\n## Verification\nBuild three receipt bundles against base `28cae179\u2026`: (i) exact argv/cwd, exit 0, stdout `SELFTEST: 30/30` \u2192 gate exit 0; (ii) only a source-read evidence node quoting `tools/trace-inputs.py:965` (token present, no exit/stdout stream) \u2192 exit 2 `INVALID_RECEIPT`; (iii) a valid receipt for `assemble-round18-selftest` or the superseded round-17 path (exit 0, token present) \u2192 exit 1 `ARGV_MISMATCH`/`MEMBERSHIP_MISMATCH`. Falsifier: if bundle (iii) passes, identity has collapsed into outcome matching and the gate is not enforcing this row.\n\nNo command under test was run; no files written; no tools installed. All facts above are static reads of the registry, frozen contract, and source anchors."
+    },
+    "fileSize": 6761,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 29,
+            "last": 29
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command28",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command28"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command28.md",
+    "rowPrefixes": false,
+    "totalLines": 42
+  },
+  "text": "## Evidence\n\n**Row (the required command identity)** \u2014 `tools/registry.json:698-718`:\n- `name`: `trace-inputs-selftest`; `kind`: `selftest`; `status`: `active`; `tags`: `[\"new-r18\"]`; `timeout_s`: 120\n- `argv`: `[\"python3\", \"tools/trace-inputs.py\", \"--selftest\"]` (exactly 3 elements, relative script path)\n- `expect`: `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: \"]}` \u2014 the token carries a **trailing space** (verified byte-exact via `cat -A` on line 709)\n- `source`: `SKILL.md@58e5d53:1923-1932`\n\n**Anchor** \u2014 at base revision the range `SKILL.md:1923-1932` is the round-18 table header plus the `defect-probes.py`, `registry-check.py`, `evidence-disposition.py`, `bash-witness-study.py` rows; the `tools/trace-inputs.py` row is at `SKILL.md:1933` (\"promoted current collector; the historical round-17 evidence copy remains unchanged, not byte-identical\"). So the anchor is a **revision-58e5d53 documentation pointer**, not the base-revision line, and it is not evidence of execution.\n\n**Source behavior** \u2014 `tools/trace-inputs.py:982-987`: `--selftest` dispatches to `selftest()` *before* the `--root`/`--out` required-argument checks, so the 3-element argv is a legal invocation; `:964-967` emits per-check lines then `SELFTEST: <passed>/<total>`, returning 0 iff `passed == len(checks)`. Line 965's format string contains the literal `SELFTEST: `, i.e. **the required stdout token exists in the source file itself**.\n\n**Two outcome-indistinguishable stand-ins in the same registry:**\n1. `trace-inputs-round17-selftest` (`registry.json:656-676`, status `superseded`) \u2014 **byte-identical `expect`**, argv differs only in element 2 (`\".ufo/evidence/round-17/coldread/trace-inputs.py\"`); that historical copy still exists (35,887 B vs current 37,359 B) and emits the same `SELFTEST: %d/%d` (`\u2026/round-17/coldread/trace-inputs.py:928`).\n2. `assemble-round18-selftest` (`registry.json:741-762`, status `active`) \u2014 **byte-identical `expect`** `{\"exit\":0,\"stdout_contains\":[\"SELFTEST: \"]}`; its output is `SELFTEST: %d/%d pass` with exit 0 (`.ufo/evidence/round-18/coldread/assemble.py:1921-1925`). `defect-probes-selftest` (`:765-783`) emits `SELFTEST: PASS`, which also contains the token.\n\n**Concrete false stand-in:** a receipt for `python3 .ufo/evidence/round-18/coldread/assemble.py --selftest` (exit 0, `SELFTEST: N/N pass`) \u2014 or for the superseded round-17 copy \u2014 satisfies this row's declared `expect` exactly. Symmetrically, a source read evidencing `tools/trace-inputs.py:965` hands the gate the literal `SELFTEST: ` token without any child process, exit status, or captured stdout. A gate whose predicate is \"evidence text contains token \u2227 evidence mentions exit 0\" cannot tell these apart, and cannot distinguish a real run from a read.\n\n**Second-order facts:** argv element 2 is relative, so identity is cwd-dependent (`/home/vgpnk/Projects/shokunin/tools/trace-inputs.py` does not exist \u2014 fleet-root cwd fails with exit 2); a different checkout with identical argv text and identical stdout would still be a different byte artifact. `--selftest --root .` also yields exit 0 and the same line (argparse bypass), so outcome-equivalence does not imply identity.\n\n## Axes\n- A1 identity binding (argv, cwd, runner bytes, revision)\n- A2 outcome binding (exit vs stdout, co-location)\n- A3 provenance separation (execution vs source read)\n- A4 membership/revision integrity (active vs superseded; anchor revision)\n- A5 contract fidelity (no findings outside the frozen population)\n\n## Proposed move\nBind credit to one **stream-provenanced receipt record**: identity = (`cwd` realpath = repo root, byte-equal 3-element argv vector, sha256 of the resolved `tools/trace-inputs.py` = blob at base `28cae179\u2026`), and evaluate `expect` **only** against that same record's captured stdout and integer exit. Never evaluate `stdout_contains` over free-form evidence or source text; a record lacking a child stdout capture and integer exit is `INVALID_RECEIPT` (exit 2), not credit. Consequences: the round-17 and assemble-round18 receipts score `ARGV_MISMATCH`/`MEMBERSHIP_MISMATCH`; arg-extended or re-spelled invocations score `ARGV_MISMATCH`; same-argv-different-checkout scores `REVISION_MISMATCH` via runner sha; a source read scores `INVALID_RECEIPT`. No new finding code\u2026\n\n## Risks / contradictions (not smoothed)\n- **The token is not a pass predicate.** A failing run prints `SELFTEST: 29/30`, which still satisfies `stdout_contains`; `exit == 0` is the only pass discriminator, so exit and stdout **must** come from the same record. Allowing exit from record A and stdout from record B reintroduces the defect.\n- **Exact argv cuts both ways.** `--selftest --root .` is outcome-identical but not the required identity; path normalization is the other trap \u2014 once you normalize, `.ufo/evidence/round-17/\u2026` and another checkout's `tools/trace-inputs.py` become plausible. Recommend no normalization and no prefix/outcome-equivalence.\n- **Anchor is not base-revision and not evidence.** `SKILL.md@58e5d53:1923-1932` diverges from the current tree (row is at 1933). A gate that validates the row through its anchor would either false-fail or credit documentation; `source` must stay metadata.\n- **Do not pin the check count.** Any literal `<total>` derived from source (a static count of `check(` sites) is itself a source read; the denominator must be read from the receipt (`passed == total` as a coherence check, never as a substitute for exit).\n- **Out of reach:** the gate validates identity + outcome shape, not producer authentication; a forged record with correct argv/cwd/exit/token is indistinguishable \u2014 consistent with the contract's explicit exclusion.\n- Optional hardening only with contract-owner sign-off: require the token to match `^SELFTEST: \\d+/\\d+$` on a captured line. That excludes the source format string `SELFTEST: %d/%d` structurally, but strengthens the declared substring predicate, so it must not be presented as the frozen requirement.\n\n## Verification\nBuild three receipt bundles against base `28cae179\u2026`: (i) exact argv/cwd, exit 0, stdout `SELFTEST: 30/30` \u2192 gate exit 0; (ii) only a source-read evidence node quoting `tools/trace-inputs.py:965` (token present, no exit/stdout stream) \u2192 exit 2 `INVALID_RECEIPT`; (iii) a valid receipt for `assemble-round18-selftest` or the superseded round-17 path (exit 0, token present) \u2192 exit 1 `ARGV_MISMATCH`/`MEMBERSHIP_MISMATCH`. Falsifier: if bundle (iii) passes, identity has collapsed into outcome matching and the gate is not enforcing this row.\n\nNo command under test was run; no files written; no tools installed. All facts above are static reads of the registry, frozen contract, and source anchors.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command28:raw:29-29 to read line 29 whole]"
+}

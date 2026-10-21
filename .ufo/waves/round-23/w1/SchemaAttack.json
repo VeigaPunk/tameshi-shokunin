@@ -1,0 +1,82 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "startLine": 1,
+      "text": "Investigation complete. No commands run, no files written (wave forbids writes; L1 persists this).\n\n# SchemaAttack \u2014 round-23 C1 calibration findings\n\n## Axes (godspeed)\n1. **Convention fidelity** \u2014 reuse `wave-accounting.py` primitives, no second convention.\n2. **Population coverage** \u2014 each of the 10 frozen contract cases pinned to exactly one invariant + exit.\n3. **Minimality** \u2014 two documents, stdlib-only, no new framework or third trusted input.\n4. **Fail-closedness** \u2014 integrity before parse, structure before semantics, type-exact ints.\n\n## Parser conventions extracted from `tools/wave-accounting.py`\n- **`decode()`**: `object_pairs_hook` rejects duplicate JSON keys; `parse_constant` rejects NaN/Infinity \u2192 `ValueError`. Fail-closed at the lexer level.\n- **`string()`**: nonempty-after-strip strings only; bare `isinstance(str)` where empty is legal.\n- **Type-exact ints**: `type(x) is not int` (claimed totals) \u2014 excludes `bool`, the exact convention needed to reject `exit: false`.\n- **Digest-pinned sidecar, ordered**: parse `expected` (`*-expected-v1` + lowercase-64-hex `bundle_sha256`) \u2192 compare against raw bundle bytes \u2192 **only then** decode/evaluate. Digest precedes parse: `tampered-bundle` appends `b' '` (legal JSON whitespace), so only the digest catches it \u2014 the ordering is load-bearing.\n- **Exception funnel**: `(OSError, ValueError, TypeError, UnicodeError, RecursionError)` \u2192 `INVALID_INPUT`, exit 2; structural faults never become semantic passes.\n- **Exit taxonomy**: 0 clean / 1 finding / 2 invalid-tampered / 64 usage; argparse `allow_abbrev=False`; read-only except isolated tempdir selftest; result carries `bundle_sha256` and an authority disclaimer (\"not provider authentication\").\n\n## Proposed minimal fail-closed command-bundle schema (`command-binding-v1`)\n```jsonc\n// bundle.json\n{ \"schema\": \"command-binding-v1\",            // exact string, else exit 2\n  \"revision\": \"<40 lowercase hex>\",           // checkout identity; every receipt must equal it\n  \"cwd\": \"<canonical absolute path>\",         // single execution root; receipts must equal it\n  \"requirements\": [                           // nonempty; one per required registry command\n    { \"name\": \"<unique nonempty>\",            // membership key\n      \"argv\": [\"<nonempty, order-sensitive, no shell>\"],\n      \"expect\": { \"exit\": <int, bool-excluded>,\n                  \"stdout_contains\": [\"<nonempty substrings>\"] } } ],  // optional; stdout-only\n  \"receipts\": [                               // may be empty \u2192 MEMBERSHIP_MISMATCH, not invalid\n    { \"name\": \"<must be a requirement name>\", // unknown \u2192 MEMBERSHIP_MISMATCH; dup \u2192 DUPLICATE_COMMAND\n      \"argv\": <exact copy>, \"cwd\": ==bundle.cwd, \"revision\": ==bundle.revision,\n      \"exit\": <int, bool-excluded>, \"stdout\": <any str>, \"stderr\": <any str> } ] }\n// expected.json: { \"schema\": \"command-binding-expected-v1\", \"bundle_sha256\": \"<64 hex>\" }\n```\nSpine: (1) expected schema+digest-format \u2192 digest over raw bytes (`SNAPSHOT_TAMPERED`, 2) \u2192 (2) decode bundle (dup-key/nonfinite) \u2192 structural faults are exit-2 `INVALID_*`, never coerced to pass \u2192 (3) semantic findings exit 1, else 0. Requirements mirror the registry row shape (`name`/`argv`/`expect{exit, stdout_contains}` \u2282 `tameshi-entry-registry-v1` rows), so a producer projects registry rows verbatim; the gate itself never reads `registry.json` \u2014 requirements are declared explicitly in the bundle, which is what keeps the C1 claim (\"explicit required registry command receipt binding\") literal and the gate registry-independent. No signatures, no producer authentication: receipt binding \u2260 authenticity, per the wave-accounting authority-disclaimer tradition\u2026\n\n**Contract population \u2192 invariants (1:1, no overlap):** argv-mismatch\u2192`ARGV_MISMATCH`(1, exact list equality) \u00b7 cwd\u2192`CWD_MISMATCH`(1) \u00b7 revision\u2192`REVISION_MISMATCH`(1) \u00b7 missing receipt\u2192`MEMBERSHIP_MISMATCH`(1, set inequality) \u00b7 duplicate receipt\u2192`DUPLICATE_COMMAND`(1, duplicate name) \u00b7 unknown receipt\u2192`MEMBERSHIP_MISMATCH`(1) \u00b7 wrong-exit\u2192`EXIT_MISMATCH`(1) \u00b7 missing token\u2192`STDOUT_MISMATCH`(1, substring; stderr never substitutes) \u00b7 `exit:false`\u2192`INVALID_RECEIPT`(2, type-exact int) \u00b7 tampered\u2192`SNAPSHOT_TAMPERED`(2, digest-before-parse).\n\n## Calibration notes on the live `tools/command-binding.py` (sibling WIP; appeared after base \u2014 `before.json` says `tool_present:false`)\nStatic read against ruler + conventions; **all ten cases discriminate by inspection**. Divergences/nits, none ruler-breaking:\n1. `check()` funnel omits `TypeError` (wave-accounting includes it); currently unreachable because every compared field is type-checked first \u2014 hardening nit only.\n2. `DUPLICATE_COMMAND` early-returns without evaluating remaining receipts; fail-closed (still exit 1) but coarser than wave-accounting's accumulate-all-findings style.\n3. Invalid tier is refined into `INVALID_BUNDLE/_REQUIREMENT/_RECEIPT/_EXPECTED` (all exit 2) with `INVALID_INPUT` reserved for I/O+parse \u2014 compatible with the ruler's `finding in finding_ids` check; stricter detail than wave-accounting's single `INVALID_INPUT`.\n4. Cosmetic naming asymmetry: report schema `command-binding-report-v1` vs wave-accounting's `wave-accounting-result-v1`.\n5. **Layering flag**: `contract.json` tag `command-binding-round23-v1` is the *contract's* schema tag; the bundle document must keep `command-binding-v1` (ruler fixture + gate `SCHEMA`) \u2014 do not \"unify\" them or the control case fails.\n\nEvidence: `tools/wave-accounting.py` (full), `tools/command-binding.py` (full), `.ufo/evidence/round-23/{contract.json,measure.py,before.json}` (full), `tools/registry.json` rows. No installs performed (pacman paused; nothing needed beyond repo files)."
+    },
+    "fileSize": 5771,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 36,
+            "last": 36
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.SchemaAttack",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.SchemaAttack"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.SchemaAttack.md",
+    "rowPrefixes": false,
+    "totalLines": 48
+  },
+  "text": "Investigation complete. No commands run, no files written (wave forbids writes; L1 persists this).\n\n# SchemaAttack \u2014 round-23 C1 calibration findings\n\n## Axes (godspeed)\n1. **Convention fidelity** \u2014 reuse `wave-accounting.py` primitives, no second convention.\n2. **Population coverage** \u2014 each of the 10 frozen contract cases pinned to exactly one invariant + exit.\n3. **Minimality** \u2014 two documents, stdlib-only, no new framework or third trusted input.\n4. **Fail-closedness** \u2014 integrity before parse, structure before semantics, type-exact ints.\n\n## Parser conventions extracted from `tools/wave-accounting.py`\n- **`decode()`**: `object_pairs_hook` rejects duplicate JSON keys; `parse_constant` rejects NaN/Infinity \u2192 `ValueError`. Fail-closed at the lexer level.\n- **`string()`**: nonempty-after-strip strings only; bare `isinstance(str)` where empty is legal.\n- **Type-exact ints**: `type(x) is not int` (claimed totals) \u2014 excludes `bool`, the exact convention needed to reject `exit: false`.\n- **Digest-pinned sidecar, ordered**: parse `expected` (`*-expected-v1` + lowercase-64-hex `bundle_sha256`) \u2192 compare against raw bundle bytes \u2192 **only then** decode/evaluate. Digest precedes parse: `tampered-bundle` appends `b' '` (legal JSON whitespace), so only the digest catches it \u2014 the ordering is load-bearing.\n- **Exception funnel**: `(OSError, ValueError, TypeError, UnicodeError, RecursionError)` \u2192 `INVALID_INPUT`, exit 2; structural faults never become semantic passes.\n- **Exit taxonomy**: 0 clean / 1 finding / 2 invalid-tampered / 64 usage; argparse `allow_abbrev=False`; read-only except isolated tempdir selftest; result carries `bundle_sha256` and an authority disclaimer (\"not provider authentication\").\n\n## Proposed minimal fail-closed command-bundle schema (`command-binding-v1`)\n```jsonc\n// bundle.json\n{ \"schema\": \"command-binding-v1\",            // exact string, else exit 2\n  \"revision\": \"<40 lowercase hex>\",           // checkout identity; every receipt must equal it\n  \"cwd\": \"<canonical absolute path>\",         // single execution root; receipts must equal it\n  \"requirements\": [                           // nonempty; one per required registry command\n    { \"name\": \"<unique nonempty>\",            // membership key\n      \"argv\": [\"<nonempty, order-sensitive, no shell>\"],\n      \"expect\": { \"exit\": <int, bool-excluded>,\n                  \"stdout_contains\": [\"<nonempty substrings>\"] } } ],  // optional; stdout-only\n  \"receipts\": [                               // may be empty \u2192 MEMBERSHIP_MISMATCH, not invalid\n    { \"name\": \"<must be a requirement name>\", // unknown \u2192 MEMBERSHIP_MISMATCH; dup \u2192 DUPLICATE_COMMAND\n      \"argv\": <exact copy>, \"cwd\": ==bundle.cwd, \"revision\": ==bundle.revision,\n      \"exit\": <int, bool-excluded>, \"stdout\": <any str>, \"stderr\": <any str> } ] }\n// expected.json: { \"schema\": \"command-binding-expected-v1\", \"bundle_sha256\": \"<64 hex>\" }\n```\nSpine: (1) expected schema+digest-format \u2192 digest over raw bytes (`SNAPSHOT_TAMPERED`, 2) \u2192 (2) decode bundle (dup-key/nonfinite) \u2192 structural faults are exit-2 `INVALID_*`, never coerced to pass \u2192 (3) semantic findings exit 1, else 0. Requirements mirror the registry row shape (`name`/`argv`/`expect{exit, stdout_contains}` \u2282 `tameshi-entry-registry-v1` rows), so a producer projects registry rows verbatim; the gate itself never reads `registry.json` \u2014 requirements are declared explicitly in the bundle, which is what keeps the C1 claim (\"explicit required registry command receipt binding\") literal and the gate registry-independent. No signatures, no producer authentication: receipt binding \u2260 authenticity, per the wave-accounting authority-disclaimer tradition\u2026\n\n**Contract population \u2192 invariants (1:1, no overlap):** argv-mismatch\u2192`ARGV_MISMATCH`(1, exact list equality) \u00b7 cwd\u2192`CWD_MISMATCH`(1) \u00b7 revision\u2192`REVISION_MISMATCH`(1) \u00b7 missing receipt\u2192`MEMBERSHIP_MISMATCH`(1, set inequality) \u00b7 duplicate receipt\u2192`DUPLICATE_COMMAND`(1, duplicate name) \u00b7 unknown receipt\u2192`MEMBERSHIP_MISMATCH`(1) \u00b7 wrong-exit\u2192`EXIT_MISMATCH`(1) \u00b7 missing token\u2192`STDOUT_MISMATCH`(1, substring; stderr never substitutes) \u00b7 `exit:false`\u2192`INVALID_RECEIPT`(2, type-exact int) \u00b7 tampered\u2192`SNAPSHOT_TAMPERED`(2, digest-before-parse).\n\n## Calibration notes on the live `tools/command-binding.py` (sibling WIP; appeared after base \u2014 `before.json` says `tool_present:false`)\nStatic read against ruler + conventions; **all ten cases discriminate by inspection**. Divergences/nits, none ruler-breaking:\n1. `check()` funnel omits `TypeError` (wave-accounting includes it); currently unreachable because every compared field is type-checked first \u2014 hardening nit only.\n2. `DUPLICATE_COMMAND` early-returns without evaluating remaining receipts; fail-closed (still exit 1) but coarser than wave-accounting's accumulate-all-findings style.\n3. Invalid tier is refined into `INVALID_BUNDLE/_REQUIREMENT/_RECEIPT/_EXPECTED` (all exit 2) with `INVALID_INPUT` reserved for I/O+parse \u2014 compatible with the ruler's `finding in finding_ids` check; stricter detail than wave-accounting's single `INVALID_INPUT`.\n4. Cosmetic naming asymmetry: report schema `command-binding-report-v1` vs wave-accounting's `wave-accounting-result-v1`.\n5. **Layering flag**: `contract.json` tag `command-binding-round23-v1` is the *contract's* schema tag; the bundle document must keep `command-binding-v1` (ruler fixture + gate `SCHEMA`) \u2014 do not \"unify\" them or the control case fails.\n\nEvidence: `tools/wave-accounting.py` (full), `tools/command-binding.py` (full), `.ufo/evidence/round-23/{contract.json,measure.py,before.json}` (full), `tools/registry.json` rows. No installs performed (pacman paused; nothing needed beyond repo files).\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.SchemaAttack:raw:36-36 to read line 36 whole]"
+}

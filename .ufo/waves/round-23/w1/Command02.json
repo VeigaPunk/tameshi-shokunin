@@ -1,0 +1,58 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "startLine": 1,
+      "text": "## Row: `repeat-control-snapshot-mismatch`\n\n**Registry entry** \u2014 `tools/registry.json:23-41` (schema `tameshi-entry-registry-v1`):\n\n| Field | Value |\n|---|---|\n| `name` | `repeat-control-snapshot-mismatch` |\n| `kind` | `gate` (required command class) |\n| `argv` | `[\"python3\", \"tools/repeat-control.py\", \"--snapshot\", \".ufo/evidence/round-12/ControlGate/mismatch\"]` |\n| `expect` | `{\"exit\": 1}` |\n| `timeout_s` | `60` |\n| `source` (anchor) | `SKILL.md@98bea7d:1503` \u2014 the \"repeated pristine controls\" registry row: verdict map **0 clean; 1 failed; 2 and 64 could-not-evaluate**; pinned values name `mismatch/expected.json` |\n| `status` | `active` |\n\n### Command identity a receipt gate must bind\n\n- **Exact argv equality**, element-wise, after no normalization: 4 tokens. `python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate/mismatch`. The trailing `/mismatch` path component *is* the identity \u2014 the sibling row `repeat-control-snapshot-clean` (registry.json:4-22) differs only in `--snapshot .ufo/evidence/round-12/ControlGate` and expects exit 0.\n- **CWD** = tameshi-shokunin lane root: `tools/repeat-control.py` is argv-relative, and `selftest()`/`EVIDENCE_ROOT` (`repeat-control.py:113-120`) derive from `__file__`. Same argv from a different root spawns a different program or fails \u2192 `CWD_MISMATCH` territory in the contract.\n- **Revision/membership/uniqueness**: receipt must be a real spawn record at base `28cae179e4dc\u2026` for exactly this row \u2014 present once (duplicate \u2192 `DUPLICATE_COMMAND`), absent \u2192 `MEMBERSHIP_MISMATCH`.\n- **Expected outcome**: exit **1** = `controls_mismatch` (`EXIT_BY_ID`, repeat-control.py:122-130). Exit 0/2/64 on this row is an `EXIT_MISMATCH` rejection, not a pass variant.\n- **Semantics**: snapshot mode loads `mismatch/expected.json` (`expected_id: \"controls_mismatch\"`, `expected_exit: 1`, `runs: 3`, 9 digested `run-*.{stdout,stderr,exit}` inputs; run-3.stdout digest `b52929a3\u2026` differs from run-1/2 `5223d055\u2026` while all exits/stderr are identical), verifies every input by sha256, replays classification, and exits 1. `main()`'s catch-all converts any crash to `setup_error` \u2192 exit 2, so an unexpected traceback can never masquerade as the bound exit 1.\n\n### How a stand-in can falsely satisfy it (concrete)\n\nTwo contract-violating substitutions for this row:\n\n1. **Source-read credit.** A producer hashes `mismatch/expected.json`, sees `\"expected_exit\": 1`, and records `{\"name\": \"repeat-control-snapshot-mismatch\", \"exit\": 1}` with no spawn. The read is factually consistent with the expectation, so any gate that trusts the recorded exit field \u2014 or treats \"verified the pinned file\" as evidence of execution \u2014 mints a perfect-looking receipt. Nothing in a pure file inspection distinguishes this from a real run; only a spawn-bound receipt (argv + cwd + revision + captured exit) can.\n2. **Wrong-command exit-1 receipt.** Exit 1 is not unique to this argv: the same binary in `--snapshot` mode also emits `finish(\"controls_mismatch\")` when a snapshot's replay disagrees with its committed expectation (`repeat-control.py:462-471`). So a receipt for e.g. `python3 tools/repeat-control.py --snapshot <dir-with-controls_match-committed-but-mismatching>` \u2014 or for the sibling `repeat-control-selftest` row's argv if its selftest failed \u2014 also produces exit 1 from the same tool. A gate binding only `(tool, exit)` accepts it; only exact 4-token argv equality rejects it \u2192 `ARGV_MISMATCH`.\n\n### Bounded acceptance / falsifier\n\n- **Accept:** a spawn record with argv exactly `[\"python3\",\"tools/repeat-control.py\",\"--snapshot\",\".ufo/evidence/round-12/ControlGate/mismatch\"]`, cwd = lane root, revision = `28cae179\u2026`, present exactly once, recorded exit **1** \u2014 consistent with `SNAPSHOT_OBSERVED id=controls_mismatch exit=1` matching `SNAPSHOT_EXPECTED id=controls_mismatch exit=1`.\n- **Falsifier (either rejects):** (a) a receipt whose only evidence is a digest-verified read of `mismatch/expected.json` showing `expected_exit: 1` \u2014 no spawn \u2192 `MEMBERSHIP_MISMATCH`; (b) a spawn record for `python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate` (dropped `/mismatch`, sibling row) recorded with exit 0 \u2014 wrong identity \u2192 `ARGV_MISMATCH`/`EXIT_MISMATCH`, never creditable to this row.\n\n**Residual gap worth noting for L1:** the row binds only `exit: 1`, but exit 1 has *two* internal routes (reproduced expectation vs. replay-disagrees). A stronger gate additionally pins the emitted `SNAPSHOT_EXPECTED id=controls_mismatch`/`SNAPSHOT_OBSERVED id=controls_mismatch` pair or the `expected.json` digest \u2014 the contract's `SNAPSHOT_TAMPERED` finding hints this is already in scope. No files written; report content returned inline per wave constraint."
+    },
+    "fileSize": 4782,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command02"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command02.md",
+    "rowPrefixes": false,
+    "totalLines": 35
+  },
+  "text": "## Row: `repeat-control-snapshot-mismatch`\n\n**Registry entry** \u2014 `tools/registry.json:23-41` (schema `tameshi-entry-registry-v1`):\n\n| Field | Value |\n|---|---|\n| `name` | `repeat-control-snapshot-mismatch` |\n| `kind` | `gate` (required command class) |\n| `argv` | `[\"python3\", \"tools/repeat-control.py\", \"--snapshot\", \".ufo/evidence/round-12/ControlGate/mismatch\"]` |\n| `expect` | `{\"exit\": 1}` |\n| `timeout_s` | `60` |\n| `source` (anchor) | `SKILL.md@98bea7d:1503` \u2014 the \"repeated pristine controls\" registry row: verdict map **0 clean; 1 failed; 2 and 64 could-not-evaluate**; pinned values name `mismatch/expected.json` |\n| `status` | `active` |\n\n### Command identity a receipt gate must bind\n\n- **Exact argv equality**, element-wise, after no normalization: 4 tokens. `python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate/mismatch`. The trailing `/mismatch` path component *is* the identity \u2014 the sibling row `repeat-control-snapshot-clean` (registry.json:4-22) differs only in `--snapshot .ufo/evidence/round-12/ControlGate` and expects exit 0.\n- **CWD** = tameshi-shokunin lane root: `tools/repeat-control.py` is argv-relative, and `selftest()`/`EVIDENCE_ROOT` (`repeat-control.py:113-120`) derive from `__file__`. Same argv from a different root spawns a different program or fails \u2192 `CWD_MISMATCH` territory in the contract.\n- **Revision/membership/uniqueness**: receipt must be a real spawn record at base `28cae179e4dc\u2026` for exactly this row \u2014 present once (duplicate \u2192 `DUPLICATE_COMMAND`), absent \u2192 `MEMBERSHIP_MISMATCH`.\n- **Expected outcome**: exit **1** = `controls_mismatch` (`EXIT_BY_ID`, repeat-control.py:122-130). Exit 0/2/64 on this row is an `EXIT_MISMATCH` rejection, not a pass variant.\n- **Semantics**: snapshot mode loads `mismatch/expected.json` (`expected_id: \"controls_mismatch\"`, `expected_exit: 1`, `runs: 3`, 9 digested `run-*.{stdout,stderr,exit}` inputs; run-3.stdout digest `b52929a3\u2026` differs from run-1/2 `5223d055\u2026` while all exits/stderr are identical), verifies every input by sha256, replays classification, and exits 1. `main()`'s catch-all converts any crash to `setup_error` \u2192 exit 2, so an unexpected traceback can never masquerade as the bound exit 1.\n\n### How a stand-in can falsely satisfy it (concrete)\n\nTwo contract-violating substitutions for this row:\n\n1. **Source-read credit.** A producer hashes `mismatch/expected.json`, sees `\"expected_exit\": 1`, and records `{\"name\": \"repeat-control-snapshot-mismatch\", \"exit\": 1}` with no spawn. The read is factually consistent with the expectation, so any gate that trusts the recorded exit field \u2014 or treats \"verified the pinned file\" as evidence of execution \u2014 mints a perfect-looking receipt. Nothing in a pure file inspection distinguishes this from a real run; only a spawn-bound receipt (argv + cwd + revision + captured exit) can.\n2. **Wrong-command exit-1 receipt.** Exit 1 is not unique to this argv: the same binary in `--snapshot` mode also emits `finish(\"controls_mismatch\")` when a snapshot's replay disagrees with its committed expectation (`repeat-control.py:462-471`). So a receipt for e.g. `python3 tools/repeat-control.py --snapshot <dir-with-controls_match-committed-but-mismatching>` \u2014 or for the sibling `repeat-control-selftest` row's argv if its selftest failed \u2014 also produces exit 1 from the same tool. A gate binding only `(tool, exit)` accepts it; only exact 4-token argv equality rejects it \u2192 `ARGV_MISMATCH`.\n\n### Bounded acceptance / falsifier\n\n- **Accept:** a spawn record with argv exactly `[\"python3\",\"tools/repeat-control.py\",\"--snapshot\",\".ufo/evidence/round-12/ControlGate/mismatch\"]`, cwd = lane root, revision = `28cae179\u2026`, present exactly once, recorded exit **1** \u2014 consistent with `SNAPSHOT_OBSERVED id=controls_mismatch exit=1` matching `SNAPSHOT_EXPECTED id=controls_mismatch exit=1`.\n- **Falsifier (either rejects):** (a) a receipt whose only evidence is a digest-verified read of `mismatch/expected.json` showing `expected_exit: 1` \u2014 no spawn \u2192 `MEMBERSHIP_MISMATCH`; (b) a spawn record for `python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate` (dropped `/mismatch`, sibling row) recorded with exit 0 \u2014 wrong identity \u2192 `ARGV_MISMATCH`/`EXIT_MISMATCH`, never creditable to this row.\n\n**Residual gap worth noting for L1:** the row binds only `exit: 1`, but exit 1 has *two* internal routes (reproduced expectation vs. replay-disagrees). A stronger gate additionally pins the emitted `SNAPSHOT_EXPECTED id=controls_mismatch`/`SNAPSHOT_OBSERVED id=controls_mismatch` pair or the `expected.json` digest \u2014 the contract's `SNAPSHOT_TAMPERED` finding hints this is already in scope. No files written; report content returned inline per wave constraint."
+}

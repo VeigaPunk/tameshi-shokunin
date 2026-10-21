@@ -355,3 +355,15 @@ Separate the eight synthetic rejection predicates from the actual146-seat
 round21 denominator and the two historical partial-report false positives.
 No report is deleted; callback-source integrity is not provider authentication.
 All existing frontier statuses and independent promotion limits stay unchanged.
+
+## Round23 — required-command receipt binding
+
+| Entry | Ground | Evidence |
+|---|---|---|
+| `knowledge/required-command-binding.md` | same-ground calibration; explicit finite registry requirements, not full-page closure | minedS083; `tools/command-binding.py`; `.ufo/evidence/round-23/requirements.json` and frozen ten-case ruler |
+
+The registry requirement compiler preserves exact argv/expect and its
+source revision/digest. New replay observations retain full streams and
+actual clone cwd; historical missing row metadata is never retrofilled.
+Trusted bundle consistency is not producer/provider authentication.
+No F1–F10 status changes, independent cold-read or promotion credit.

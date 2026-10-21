@@ -1,0 +1,70 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "startLine": 1,
+      "text": "Static review complete. Verdicts below are source-traced (no execution \u2014 the three assigned executor fact-count commands belong to Count* seats; my lane is read-only).\n\n## Findings\n\n**Canonical membership check \u2014 sound.** `tools/command-binding.py:93` (`evaluate()`) uses `set(receipts) != set(requirements)` after building both maps under per-name uniqueness prechecks (lines 79\u201380 `DUPLICATE_REQUIREMENT` exit 2; lines 89\u201390 `DUPLICATE_COMMAND` exit 1). No `len()`-based membership anywhere in the file (grep-confirmed: `len(receipts)`/`len(requirements)` count = 0). The missing-vs-positive-count attack is correctly discriminated: `receipts.pop()` shrinks the name set \u2192 `MEMBERSHIP_MISMATCH`, never a count verdict. Frozen `contract.json` (schema `command-binding-round23-v1`, ten items) maps 1:1 onto implemented predicates; `requirements.json` verified = the 43 `active` baseline rows of `registry-baseline.json`, unique names, argv/expect par\u2026\n\n**Coverage gaps in the frozen ten \u2014 the count/positive-count weakness is unprobed in four ways:**\n1. `missing-required-command` only ever `pop()`s the **tail**. A head-only, prefix-only, or last-receipt-only gate discriminates 10/10. A `pop(0)` probe is absent.\n2. **No pure-superset probe.** `unknown-command` conflates missing+extra in one mutation, so a containment-only gate (`set(requirements) \u2286 set(receipts)` \u2014 the literal \"positive coverage\" reading) is never rejected.\n3. **Same-count masking is only probed by rename, never by a retained duplicate.** A count-equality-plus-per-receipt-validity gate (`len ==` + valid rows, no name-set comparison) discriminates all ten yet passes a bundle where a second `one` receipt masks absent `two`.\n4. **No zero-receipts floor** (`receipts=[]` never tested) and **no clean-reorder positive control** (`[two, one]` never tested), so neither the positive-count floor nor the set-vs-list-equality semantics are pinned.\n\n**Minor contract ambiguities (not defects):**\n- No finding-precedence rule when predicates overlap. With a duplicate receipt masking a missing requirement, canonical emits `DUPLICATE_COMMAND` (early return, line 90) before `MEMBERSHIP_MISMATCH` can accrue. Any same-count-missing fixture that uses a duplicate name MUST pin this precedence or risk mis-scoring the canonical gate.\n- `MEMBERSHIP_MISMATCH` is also emitted by `tools/wave-accounting.py:109` for wave-seat bookkeeping. Per-tool scoped IDs are consistent, but any cross-tool finding aggregation conflates two populations. Informational only.\n\n## Proposed set-equality fixtures (deltas against `measure.py fixture()`, ruler style)\n\n| # | Case | Mutation | Expected | Kills |\n|---|---|---|---|---|\n| F1 | `masked-missing-duplicate` | `bundle['receipts'][1] = copy.deepcopy(bundle['receipts'][0])` | 1 / `DUPLICATE_COMMAND` (pin precedence; `MEMBERSHIP_MISMATCH` acceptable iff contract declares name-set evaluation precedes duplicate detection) | count-equality gates, `commands_executed_count`-style positive-count binding |\n| F2 | `extra-receipt-superset` | append `{'name':'other','argv':['python3','gate.py','--other'],'cwd':'/fixture/repo','revision':'a'*40,'exit':0,'stdout':'OTHER\\n','stderr':''}` | 1 / `MEMBERSHIP_MISMATCH` | containment-only (\u2286) gates |\n| F3 | `missing-first-receipt` | `bundle['receipts'].pop(0)` | 1 / `MEMBERSHIP_MISMATCH` | head/tail-only membership scans |\n| F4 | `zero-receipts` | `bundle['receipts'].clear()` | 1 / `MEMBERSHIP_MISMATCH` | vacuous-pass loops; pins \"no receipts\" as binding failure, not evaluation error |\n| F5 | `reordered-receipts` (positive control) | `bundle['receipts'].reverse()` | 0 / `[]` | positional `zip` pairing and list-equality gates; pins set semantics |\n\nAll five verified against the canonical `evaluate()` by static trace: F1\u2192`DUPLICATE_COMMAND`@90, F2/F3/F4\u2192`MEMBERSHIP_MISMATCH`@94, F5\u2192clean exit 0. Fixture JSON encoding: `encode()` (indent=2, sort_keys, trailing `\\n`); expected file pins `bundle_sha256` over those exact bytes \u2014 same pinning convention as existing cases.\n\n## Residual risk / verification gaps\n\n- No runtime verification performed (read-only lane, no execution authorization); all expected outcomes are static traces of `command-binding.py@FAC4` \u2014 corroborating peer execution or the executor lanes' counts would confirm.\n- Frozen ruler cannot be amended this wave; fixtures target a future `command-binding-round23-v2` schema revision.\n- Field-level attacks (argv/cwd/revision/exit/stdout) remain probed only on `receipts[0]`/`name 'one'` \u2014 second-row field probes are outside my missing-vs-count scope but noted for Overlap.\n- No installs performed (none needed; pacman paused per rules).\n\nReport write skipped per wave-wide no-write directive; findings delivered here for L1 persistence (`.ufo/waves/round-23/w1/MissingAttack.md` path noted but not written)."
+    },
+    "fileSize": 4866,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 5,
+            "last": 5
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.MissingAttack",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.MissingAttack"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.MissingAttack.md",
+    "rowPrefixes": false,
+    "totalLines": 36
+  },
+  "text": "Static review complete. Verdicts below are source-traced (no execution \u2014 the three assigned executor fact-count commands belong to Count* seats; my lane is read-only).\n\n## Findings\n\n**Canonical membership check \u2014 sound.** `tools/command-binding.py:93` (`evaluate()`) uses `set(receipts) != set(requirements)` after building both maps under per-name uniqueness prechecks (lines 79\u201380 `DUPLICATE_REQUIREMENT` exit 2; lines 89\u201390 `DUPLICATE_COMMAND` exit 1). No `len()`-based membership anywhere in the file (grep-confirmed: `len(receipts)`/`len(requirements)` count = 0). The missing-vs-positive-count attack is correctly discriminated: `receipts.pop()` shrinks the name set \u2192 `MEMBERSHIP_MISMATCH`, never a count verdict. Frozen `contract.json` (schema `command-binding-round23-v1`, ten items) maps 1:1 onto implemented predicates; `requirements.json` verified = the 43 `active` baseline rows of `registry-baseline.json`, unique names, argv/expect par\u2026\n\n**Coverage gaps in the frozen ten \u2014 the count/positive-count weakness is unprobed in four ways:**\n1. `missing-required-command` only ever `pop()`s the **tail**. A head-only, prefix-only, or last-receipt-only gate discriminates 10/10. A `pop(0)` probe is absent.\n2. **No pure-superset probe.** `unknown-command` conflates missing+extra in one mutation, so a containment-only gate (`set(requirements) \u2286 set(receipts)` \u2014 the literal \"positive coverage\" reading) is never rejected.\n3. **Same-count masking is only probed by rename, never by a retained duplicate.** A count-equality-plus-per-receipt-validity gate (`len ==` + valid rows, no name-set comparison) discriminates all ten yet passes a bundle where a second `one` receipt masks absent `two`.\n4. **No zero-receipts floor** (`receipts=[]` never tested) and **no clean-reorder positive control** (`[two, one]` never tested), so neither the positive-count floor nor the set-vs-list-equality semantics are pinned.\n\n**Minor contract ambiguities (not defects):**\n- No finding-precedence rule when predicates overlap. With a duplicate receipt masking a missing requirement, canonical emits `DUPLICATE_COMMAND` (early return, line 90) before `MEMBERSHIP_MISMATCH` can accrue. Any same-count-missing fixture that uses a duplicate name MUST pin this precedence or risk mis-scoring the canonical gate.\n- `MEMBERSHIP_MISMATCH` is also emitted by `tools/wave-accounting.py:109` for wave-seat bookkeeping. Per-tool scoped IDs are consistent, but any cross-tool finding aggregation conflates two populations. Informational only.\n\n## Proposed set-equality fixtures (deltas against `measure.py fixture()`, ruler style)\n\n| # | Case | Mutation | Expected | Kills |\n|---|---|---|---|---|\n| F1 | `masked-missing-duplicate` | `bundle['receipts'][1] = copy.deepcopy(bundle['receipts'][0])` | 1 / `DUPLICATE_COMMAND` (pin precedence; `MEMBERSHIP_MISMATCH` acceptable iff contract declares name-set evaluation precedes duplicate detection) | count-equality gates, `commands_executed_count`-style positive-count binding |\n| F2 | `extra-receipt-superset` | append `{'name':'other','argv':['python3','gate.py','--other'],'cwd':'/fixture/repo','revision':'a'*40,'exit':0,'stdout':'OTHER\\n','stderr':''}` | 1 / `MEMBERSHIP_MISMATCH` | containment-only (\u2286) gates |\n| F3 | `missing-first-receipt` | `bundle['receipts'].pop(0)` | 1 / `MEMBERSHIP_MISMATCH` | head/tail-only membership scans |\n| F4 | `zero-receipts` | `bundle['receipts'].clear()` | 1 / `MEMBERSHIP_MISMATCH` | vacuous-pass loops; pins \"no receipts\" as binding failure, not evaluation error |\n| F5 | `reordered-receipts` (positive control) | `bundle['receipts'].reverse()` | 0 / `[]` | positional `zip` pairing and list-equality gates; pins set semantics |\n\nAll five verified against the canonical `evaluate()` by static trace: F1\u2192`DUPLICATE_COMMAND`@90, F2/F3/F4\u2192`MEMBERSHIP_MISMATCH`@94, F5\u2192clean exit 0. Fixture JSON encoding: `encode()` (indent=2, sort_keys, trailing `\\n`); expected file pins `bundle_sha256` over those exact bytes \u2014 same pinning convention as existing cases.\n\n## Residual risk / verification gaps\n\n- No runtime verification performed (read-only lane, no execution authorization); all expected outcomes are static traces of `command-binding.py@FAC4` \u2014 corroborating peer execution or the executor lanes' counts would confirm.\n- Frozen ruler cannot be amended this wave; fixtures target a future `command-binding-round23-v2` schema revision.\n- Field-level attacks (argv/cwd/revision/exit/stdout) remain probed only on `receipts[0]`/`name 'one'` \u2014 second-row field probes are outside my missing-vs-count scope but noted for Overlap.\n- No installs performed (none needed; pacman paused per rules).\n\nReport write skipped per wave-wide no-write directive; findings delivered here for L1 persistence (`.ufo/waves/round-23/w1/MissingAttack.md` path noted but not written).\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.MissingAttack:raw:5-5 to read line 5 whole]"
+}

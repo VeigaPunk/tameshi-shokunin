@@ -1,0 +1,64 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "startLine": 1,
+      "text": "## Finding: `witness-metadata-check` receipt-gate binding\n\n**Row** \u2014 `tools/registry.json:153-174`, `\"name\": \"witness-metadata-check\"`, `\"kind\": \"gate\"`, `\"status\": \"active\"`, `\"tags\": [\"baseline\"]`, `timeout_s: 60`.\n\n**Exact command identity (argv tuple, element-ordered)**\n```\n[\"python3\", \"tools/witness-metadata.py\", \"--check\", \"--companion\", \".ufo/evidence/round-13/witness-metadata.json\"]\n```\n\n**Exact expected-outcome binding**\n```\nexpect = {\"exit\": 0, \"stdout_contains\": [\"metadata_consistent\"]}\n```\n\n**Source anchor** \u2014 `\"source\": \"SKILL.md@98bea7d:1553\"`. Verified: line 1553 of `SKILL.md` at commit `98bea7d` is the \"exposed witness provenance companion\" gate row in the Round-13 gate/probe registry table, whose Entry command cell is the literal argv above. Registry argv and anchored cell match exactly; the row at 1553 (not 1552) is the gate row \u2014 the selftest row shares the same anchor line.\n\n**What the gate must bind.** Identity = the literal five-element argv tuple *and* outcome = (exit==0, stdout contains `metadata_consistent`), observed on the same spawned process. Two structural facts make tuple-equality non-optional:\n\n1. `--companion` defaults to `DEFAULT_COMPANION_REL = \".ufo/evidence/round-13/witness-metadata.json\"` (witness-metadata.py:62, 1237-1244, 1259-1264). So `python3 tools/witness-metadata.py --check` resolves the identical companion, does identical work, emits identical output \u2014 yet is a *different command identity*. A gate enforcing exact argv rejects it; a gate keyed on \"the check ran\" silently widens the contract.\n2. `--check`, `--selftest`, `--emit` are a mutually exclusive mode group (1228-1231); the mode flag is what makes this argv a gate rather than a constructor or fixture run.\n\n**Concrete false stand-in.** `python3 tools/witness-metadata.py --emit --companion .ufo/evidence/round-13/witness-metadata.json` exits 0 (1252-1254) and prints `build_companion()` JSON, which embeds `\"expected\": {\"id\": \"metadata_consistent\", \"exit\": 0}` (108, 159-162) \u2014 stdout literally contains `metadata_consistent`. It satisfies the observable outcome binding while performing zero validation: `--emit` returns before `run_check`, reads none of the four digest-pinned frozen inputs, and never compares anything. A receipt gate that binds only (script basename, exit 0, stdout substring) \u2014 or that treats `--emit`/`--check` as interchangeable \u2014 admits a receipt for a command that validated nothing. The same forgery works from a pure *source read*: `cat .ufo/evide\u2026\n\n**Bounded acceptance.** A receipt is valid iff it records (a) the literal argv tuple equal to the row's `argv` (element-wise, no normalization, no elided `--companion`), and (b) exit 0 plus `metadata_consistent` in the *captured stdout of that spawned process* \u2014 i.e., outcome provenance is the harness's exec record, not a post-hoc file read.\n\n**Falsifier.** Present a receipt whose argv is `[\"python3\",\"tools/witness-metadata.py\",\"--emit\",\"--companion\",\".ufo/evidence/round-13/witness-metadata.json\"]` (or the `--check` form with `--companion` omitted). Both produce exit 0 + `metadata_consistent` on stdout; the first performs no validation, the second is a different command identity. If the gate accepts either, it fails the contract.\n\n**Adjacent-collision note.** `witness-metadata-selftest` (registry.json:176-195) shares `argv[0:2]` and the same anchor line (1553). The selftest's `SELFTEST: PASS` output does not contain `metadata_consistent`, so the outcome binding disambiguates it \u2014 but only if stdout matching applies to the spawned process's actual output, reinforcing that identity must be the full tuple, not a script-path prefix.\n\nPer wave constraint, no report file was written; findings delivered here for L1 persistence."
+    },
+    "fileSize": 3943,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 22,
+            "last": 22
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command08",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command08"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command08.md",
+    "rowPrefixes": false,
+    "totalLines": 30
+  },
+  "text": "## Finding: `witness-metadata-check` receipt-gate binding\n\n**Row** \u2014 `tools/registry.json:153-174`, `\"name\": \"witness-metadata-check\"`, `\"kind\": \"gate\"`, `\"status\": \"active\"`, `\"tags\": [\"baseline\"]`, `timeout_s: 60`.\n\n**Exact command identity (argv tuple, element-ordered)**\n```\n[\"python3\", \"tools/witness-metadata.py\", \"--check\", \"--companion\", \".ufo/evidence/round-13/witness-metadata.json\"]\n```\n\n**Exact expected-outcome binding**\n```\nexpect = {\"exit\": 0, \"stdout_contains\": [\"metadata_consistent\"]}\n```\n\n**Source anchor** \u2014 `\"source\": \"SKILL.md@98bea7d:1553\"`. Verified: line 1553 of `SKILL.md` at commit `98bea7d` is the \"exposed witness provenance companion\" gate row in the Round-13 gate/probe registry table, whose Entry command cell is the literal argv above. Registry argv and anchored cell match exactly; the row at 1553 (not 1552) is the gate row \u2014 the selftest row shares the same anchor line.\n\n**What the gate must bind.** Identity = the literal five-element argv tuple *and* outcome = (exit==0, stdout contains `metadata_consistent`), observed on the same spawned process. Two structural facts make tuple-equality non-optional:\n\n1. `--companion` defaults to `DEFAULT_COMPANION_REL = \".ufo/evidence/round-13/witness-metadata.json\"` (witness-metadata.py:62, 1237-1244, 1259-1264). So `python3 tools/witness-metadata.py --check` resolves the identical companion, does identical work, emits identical output \u2014 yet is a *different command identity*. A gate enforcing exact argv rejects it; a gate keyed on \"the check ran\" silently widens the contract.\n2. `--check`, `--selftest`, `--emit` are a mutually exclusive mode group (1228-1231); the mode flag is what makes this argv a gate rather than a constructor or fixture run.\n\n**Concrete false stand-in.** `python3 tools/witness-metadata.py --emit --companion .ufo/evidence/round-13/witness-metadata.json` exits 0 (1252-1254) and prints `build_companion()` JSON, which embeds `\"expected\": {\"id\": \"metadata_consistent\", \"exit\": 0}` (108, 159-162) \u2014 stdout literally contains `metadata_consistent`. It satisfies the observable outcome binding while performing zero validation: `--emit` returns before `run_check`, reads none of the four digest-pinned frozen inputs, and never compares anything. A receipt gate that binds only (script basename, exit 0, stdout substring) \u2014 or that treats `--emit`/`--check` as interchangeable \u2014 admits a receipt for a command that validated nothing. The same forgery works from a pure *source read*: `cat .ufo/evide\u2026\n\n**Bounded acceptance.** A receipt is valid iff it records (a) the literal argv tuple equal to the row's `argv` (element-wise, no normalization, no elided `--companion`), and (b) exit 0 plus `metadata_consistent` in the *captured stdout of that spawned process* \u2014 i.e., outcome provenance is the harness's exec record, not a post-hoc file read.\n\n**Falsifier.** Present a receipt whose argv is `[\"python3\",\"tools/witness-metadata.py\",\"--emit\",\"--companion\",\".ufo/evidence/round-13/witness-metadata.json\"]` (or the `--check` form with `--companion` omitted). Both produce exit 0 + `metadata_consistent` on stdout; the first performs no validation, the second is a different command identity. If the gate accepts either, it fails the contract.\n\n**Adjacent-collision note.** `witness-metadata-selftest` (registry.json:176-195) shares `argv[0:2]` and the same anchor line (1553). The selftest's `SELFTEST: PASS` output does not contain `metadata_consistent`, so the outcome binding disambiguates it \u2014 but only if stdout matching applies to the spawned process's actual output, reinforcing that identity must be the full tuple, not a script-path prefix.\n\nPer wave constraint, no report file was written; findings delivered here for L1 persistence.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command08:raw:22-22 to read line 22 whole]"
+}

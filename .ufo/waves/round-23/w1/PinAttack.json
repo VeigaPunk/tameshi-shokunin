@@ -1,0 +1,59 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "startLine": 1,
+      "text": "**Axis: calibration** \u2014 exact-byte pinning, unambiguous JSON interpretation, and truthful integrity claims.\n\n**Scope:** Static, read-only review. The frozen baseline records `tool_present: false` (`.ufo/evidence/round-23/before.json:9-11`), and the observed tools inventory contains no `command-binding.py`. The scenarios below are design findings, **not reproduced defects in a shipped gate**.\n\n### 1. High calibration risk \u2014 duplicate keys can select a favorable contract\n- **Exploit path [INFERENCE]:** Duplicate `bundle_sha256` keys make the expected file ambiguous; duplicate nested `argv`, `exit`, or `requirements` keys let different consumers interpret different command evidence. A matching digest does not remove this ambiguity.\n- **Evidence:** `tools/wave-accounting.py:23-34` already rejects duplicate keys at every object and rejects nonfinite constants. The retained round-12 analysis explicitly records parser disagreement on duplicate pins (`.ufo/evidence/round-12/SnapshotReview/probe-output.txt:10`).\n- **Impact:** A clean result could depend on first-wins versus last-wins parsing rather than a single explicit contract.\n- **Smallest remediation:** Apply one strict decoder to **both** files: UTF-8, duplicate-key rejection at every nesting level\u2014including keys equal after JSON escape decoding\u2014and rejection of `NaN`/`Infinity`. Validate expected schema and a full 64-character lowercase hexadecimal digest; do not trim, coerce, or accept prefixes.\n\n### 2. High calibration risk \u2014 normalization or rereading breaks the digest binding\n- **Exploit path [INFERENCE]:** Hashing reserialized JSON loses byte-level changes; hashing one read and parsing another can evaluate bytes different from those verified.\n- **Evidence:** The frozen ruler hashes the original bundle, then appends one space for the tamper case (`.ufo/evidence/round-23/measure.py:64-70`). Existing `wave-accounting.py:125-136` hashes and parses the same retained byte buffer.\n- **Impact:** The required tamper case could incorrectly pass, or a verdict could describe unpinned bytes.\n- **Smallest remediation:** Acquire each file once. Validate the expected document, hash the **raw bundle bytes**, compare the complete digest, and only then decode and evaluate that same bundle buffer. Never regenerate the pin during checking.\n\n### 3. Medium operational risk \u2014 input paths can cause effects before JSON validation\n- **Exploit path [INFERENCE]:** An unrestricted file read can follow a symlink or block on a FIFO before receipt validation begins.\n- **Evidence:** `tools/pin-disposition.py:453-501` provides an existing descriptor-based pattern: reject nonregular/symlink inputs, use `O_NOFOLLOW`, inspect the opened descriptor, and close it in `finally`.\n- **Impact:** A nominally read-only gate can hang or inspect an unintended target.\n- **Smallest remediation:** Open only the two explicitly supplied files; use no-follow/nonblocking opening, require regular files with `fstat` before reading, and always close descriptors. Treat retained argv and paths as data\u2014never execute or dereference them. Do **not** require CLI inputs to reside inside the repo: the frozen ruler intentionally supplies temporary-directory files (`measure.py:62-72`).\n\n### Required classification boundary\n\n| Condition | Classification |\n|---|---|\n| Valid, unambiguous expected pin; acquired raw bundle digest differs | **`SNAPSHOT_TAMPERED`, exit 2**, before bundle parsing or semantic comparisons |\n| Digest matches; bundle contains duplicate keys, invalid JSON, or invalid receipt types | Invalid receipt/input, exit 2\u2014not a digest-tamper finding |\n| Expected pin is malformed, duplicated, absent, or unreadable | Invalid input, exit 2; no trustworthy digest comparison exists |\n| Integrity and structure valid; command evidence disagrees | Applicable semantic mismatch, exit 1 |\n\nThe frozen contract mandates exact `SNAPSHOT_TAMPERED`/2 for tampered bytes and `INVALID_RECEIPT`/2 for boolean exit (`contract.json:45-53`); it does **not** freeze a separate malformed-expected finding ID.\n\n**Informational authority limit:** Changing both bundle and expected digest can remain internally consistent. This is **not a contract violation**: `contract.json:3` expressly excludes producer authentication, and the ruler repins each semantic fixture (`measure.py:65-68`). A clean result must therefore mean *consistent with the supplied pin*, never *authenticated command execution*.\n\nNo files\u2014including the report trailer\u2014were written. No commands, tests, installations, or live effects were performed."
+    },
+    "fileSize": 4580,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.PinAttack"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.PinAttack.md",
+    "rowPrefixes": false,
+    "totalLines": 36
+  },
+  "text": "**Axis: calibration** \u2014 exact-byte pinning, unambiguous JSON interpretation, and truthful integrity claims.\n\n**Scope:** Static, read-only review. The frozen baseline records `tool_present: false` (`.ufo/evidence/round-23/before.json:9-11`), and the observed tools inventory contains no `command-binding.py`. The scenarios below are design findings, **not reproduced defects in a shipped gate**.\n\n### 1. High calibration risk \u2014 duplicate keys can select a favorable contract\n- **Exploit path [INFERENCE]:** Duplicate `bundle_sha256` keys make the expected file ambiguous; duplicate nested `argv`, `exit`, or `requirements` keys let different consumers interpret different command evidence. A matching digest does not remove this ambiguity.\n- **Evidence:** `tools/wave-accounting.py:23-34` already rejects duplicate keys at every object and rejects nonfinite constants. The retained round-12 analysis explicitly records parser disagreement on duplicate pins (`.ufo/evidence/round-12/SnapshotReview/probe-output.txt:10`).\n- **Impact:** A clean result could depend on first-wins versus last-wins parsing rather than a single explicit contract.\n- **Smallest remediation:** Apply one strict decoder to **both** files: UTF-8, duplicate-key rejection at every nesting level\u2014including keys equal after JSON escape decoding\u2014and rejection of `NaN`/`Infinity`. Validate expected schema and a full 64-character lowercase hexadecimal digest; do not trim, coerce, or accept prefixes.\n\n### 2. High calibration risk \u2014 normalization or rereading breaks the digest binding\n- **Exploit path [INFERENCE]:** Hashing reserialized JSON loses byte-level changes; hashing one read and parsing another can evaluate bytes different from those verified.\n- **Evidence:** The frozen ruler hashes the original bundle, then appends one space for the tamper case (`.ufo/evidence/round-23/measure.py:64-70`). Existing `wave-accounting.py:125-136` hashes and parses the same retained byte buffer.\n- **Impact:** The required tamper case could incorrectly pass, or a verdict could describe unpinned bytes.\n- **Smallest remediation:** Acquire each file once. Validate the expected document, hash the **raw bundle bytes**, compare the complete digest, and only then decode and evaluate that same bundle buffer. Never regenerate the pin during checking.\n\n### 3. Medium operational risk \u2014 input paths can cause effects before JSON validation\n- **Exploit path [INFERENCE]:** An unrestricted file read can follow a symlink or block on a FIFO before receipt validation begins.\n- **Evidence:** `tools/pin-disposition.py:453-501` provides an existing descriptor-based pattern: reject nonregular/symlink inputs, use `O_NOFOLLOW`, inspect the opened descriptor, and close it in `finally`.\n- **Impact:** A nominally read-only gate can hang or inspect an unintended target.\n- **Smallest remediation:** Open only the two explicitly supplied files; use no-follow/nonblocking opening, require regular files with `fstat` before reading, and always close descriptors. Treat retained argv and paths as data\u2014never execute or dereference them. Do **not** require CLI inputs to reside inside the repo: the frozen ruler intentionally supplies temporary-directory files (`measure.py:62-72`).\n\n### Required classification boundary\n\n| Condition | Classification |\n|---|---|\n| Valid, unambiguous expected pin; acquired raw bundle digest differs | **`SNAPSHOT_TAMPERED`, exit 2**, before bundle parsing or semantic comparisons |\n| Digest matches; bundle contains duplicate keys, invalid JSON, or invalid receipt types | Invalid receipt/input, exit 2\u2014not a digest-tamper finding |\n| Expected pin is malformed, duplicated, absent, or unreadable | Invalid input, exit 2; no trustworthy digest comparison exists |\n| Integrity and structure valid; command evidence disagrees | Applicable semantic mismatch, exit 1 |\n\nThe frozen contract mandates exact `SNAPSHOT_TAMPERED`/2 for tampered bytes and `INVALID_RECEIPT`/2 for boolean exit (`contract.json:45-53`); it does **not** freeze a separate malformed-expected finding ID.\n\n**Informational authority limit:** Changing both bundle and expected digest can remain internally consistent. This is **not a contract violation**: `contract.json:3` expressly excludes producer authentication, and the ruler repins each semantic fixture (`measure.py:65-68`). A clean result must therefore mean *consistent with the supplied pin*, never *authenticated command execution*.\n\nNo files\u2014including the report trailer\u2014were written. No commands, tests, installations, or live effects were performed."
+}

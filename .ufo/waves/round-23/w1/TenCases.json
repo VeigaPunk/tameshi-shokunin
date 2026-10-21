@@ -1,0 +1,45 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "startLine": 1,
+      "text": "I now have complete evidence. Analysis of the ten-case population against `measure.py`'s fixture/attack/scoring logic:\n\n## Findings (advisory, read-only \u2014 no file written per wave prohibition)\n\n**F1 \u2014 `unknown-command` does not isolate the \"extra receipt\" predicate; partially redundant with `missing-required-command`.** `measure.py:45-46` renames `receipts[0].name` to `'other'`, which simultaneously removes required `'one'` *and* adds an extra. A gate implementing only required-name coverage (missing detection, `MEMBERSHIP_MISMATCH`) passes *both* cases 4 and 6 with one predicate. No case probes \"extra receipt with full coverage intact,\" so the contract's implied claim that unknown commands are rejected is unproven; effective minimal predicate count is \u22649, not 10. Evidence: `measure.py:41-46`, `contract.json:20-34`.\n\n**F2 \u2014 Per-case scoring is presence, not exclusivity: `finding in finding_ids` (`measure.py:87`).** A gate emitting the entire nine-ID vocabulary on any rejection satisfies every case \u2014 `discriminated: 10` is an upper bound, not proof of ten distinct predicates. This is an inherited, documented r22 trade-off (`round-22/w1/MalformedDesign.md:70` explicitly tolerates finding supersets), but the ten-case population must not be cited as \"ten verified predicates\" without that bound.\n\n**F3 \u2014 `duplicate-command` conflates duplicate-detection with cardinality but remains a genuine predicate.** Multiset `{one,one,two}` keeps coverage intact, so only multiplicity/count detection fires; a `len(receipts)\u2260len(requirements)` gate emitting `DUPLICATE_COMMAND` passes. Bounded \u2014 the same shortcut fails case 4 \u2014 but worth noting as the sole `extra-with-coverage` input.\n\n**F4 \u2014 Latent name-keyed binding assumption.** All field-mismatch cases (argv/cwd/revision/exit/stdout) mutate `receipts[0]` with `name: 'one'` intact; under an alternative conforming binding (argv-keyed), `argv-mismatch` would surface as `MEMBERSHIP_MISMATCH`, not `ARGV_MISMATCH`. The population is independent only under name-keyed binding; an argv-swap case would harden this.\n\n**F5 \u2014 Type-strictness and field coverage are sampled, not exhaustive.** Only `exit` gets a type probe (`bool-exit`, `measure.py:51-52`; Python `False == 0` makes this a real trap); `argv`/`cwd`/`stdout`/`revision` have no type mutations. `stderr` is carried in every receipt but never bound by `expect` nor mutated \u2014 a wholly unasserted field.\n\n**Verified (no defect):**\n- **Tool-absent baseline is honest.** `before.json` records literal `tool_present: false, discriminated: 0, cases: []`, exit 1 \u2014 no fabricated per-case failures. Confirmed `tools/command-binding.py` absent in live `tools/`; `measure.py:56-58` emits exactly that shape. Minor: exit=1 conflates tool-absent with partial-discrimination for exit-only consumers (in-band `tool_present` disambiguates).\n- **Contract \u2194 harness 1:1 consistent.** All ten `(id, finding, exit)` triples match `measure.py:12-16`; `base_revision` matches `before.json.revision`; `tampered-bundle`'s `data + b' '` (parses cleanly, digest-fails) correctly isolates the digest predicate and pins digest-before-content ordering; control pins the exact output contract (`exit 0` + `finding_ids: []`).\n- **Claim boundary honored.** All fixtures are synthetic receipts validated statically \u2014 nothing executes \u2014 consistent with \"not source-read credit or producer authentication\"; docstring's \"no authenticity claim\" is accurate.\n\n**Residual risk:** predicate analysis is static (target tool absent by design); the minimal-gate reasoning is inference from `measure.py`'s full source. Highest-value follow-up for L1: an `extra-unknown-receipt-with-full-coverage` case would disentangle F1 and make the membership pair genuinely bidirectional.\n\nInstalls: none (pacman paused; no tooling needed)."
+    },
+    "fileSize": 3836,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.TenCases"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.TenCases.md",
+    "rowPrefixes": false,
+    "totalLines": 22
+  },
+  "text": "I now have complete evidence. Analysis of the ten-case population against `measure.py`'s fixture/attack/scoring logic:\n\n## Findings (advisory, read-only \u2014 no file written per wave prohibition)\n\n**F1 \u2014 `unknown-command` does not isolate the \"extra receipt\" predicate; partially redundant with `missing-required-command`.** `measure.py:45-46` renames `receipts[0].name` to `'other'`, which simultaneously removes required `'one'` *and* adds an extra. A gate implementing only required-name coverage (missing detection, `MEMBERSHIP_MISMATCH`) passes *both* cases 4 and 6 with one predicate. No case probes \"extra receipt with full coverage intact,\" so the contract's implied claim that unknown commands are rejected is unproven; effective minimal predicate count is \u22649, not 10. Evidence: `measure.py:41-46`, `contract.json:20-34`.\n\n**F2 \u2014 Per-case scoring is presence, not exclusivity: `finding in finding_ids` (`measure.py:87`).** A gate emitting the entire nine-ID vocabulary on any rejection satisfies every case \u2014 `discriminated: 10` is an upper bound, not proof of ten distinct predicates. This is an inherited, documented r22 trade-off (`round-22/w1/MalformedDesign.md:70` explicitly tolerates finding supersets), but the ten-case population must not be cited as \"ten verified predicates\" without that bound.\n\n**F3 \u2014 `duplicate-command` conflates duplicate-detection with cardinality but remains a genuine predicate.** Multiset `{one,one,two}` keeps coverage intact, so only multiplicity/count detection fires; a `len(receipts)\u2260len(requirements)` gate emitting `DUPLICATE_COMMAND` passes. Bounded \u2014 the same shortcut fails case 4 \u2014 but worth noting as the sole `extra-with-coverage` input.\n\n**F4 \u2014 Latent name-keyed binding assumption.** All field-mismatch cases (argv/cwd/revision/exit/stdout) mutate `receipts[0]` with `name: 'one'` intact; under an alternative conforming binding (argv-keyed), `argv-mismatch` would surface as `MEMBERSHIP_MISMATCH`, not `ARGV_MISMATCH`. The population is independent only under name-keyed binding; an argv-swap case would harden this.\n\n**F5 \u2014 Type-strictness and field coverage are sampled, not exhaustive.** Only `exit` gets a type probe (`bool-exit`, `measure.py:51-52`; Python `False == 0` makes this a real trap); `argv`/`cwd`/`stdout`/`revision` have no type mutations. `stderr` is carried in every receipt but never bound by `expect` nor mutated \u2014 a wholly unasserted field.\n\n**Verified (no defect):**\n- **Tool-absent baseline is honest.** `before.json` records literal `tool_present: false, discriminated: 0, cases: []`, exit 1 \u2014 no fabricated per-case failures. Confirmed `tools/command-binding.py` absent in live `tools/`; `measure.py:56-58` emits exactly that shape. Minor: exit=1 conflates tool-absent with partial-discrimination for exit-only consumers (in-band `tool_present` disambiguates).\n- **Contract \u2194 harness 1:1 consistent.** All ten `(id, finding, exit)` triples match `measure.py:12-16`; `base_revision` matches `before.json.revision`; `tampered-bundle`'s `data + b' '` (parses cleanly, digest-fails) correctly isolates the digest predicate and pins digest-before-content ordering; control pins the exact output contract (`exit 0` + `finding_ids: []`).\n- **Claim boundary honored.** All fixtures are synthetic receipts validated statically \u2014 nothing executes \u2014 consistent with \"not source-read credit or producer authentication\"; docstring's \"no authenticity claim\" is accurate.\n\n**Residual risk:** predicate analysis is static (target tool absent by design); the minimal-gate reasoning is inference from `measure.py`'s full source. Highest-value follow-up for L1: an `extra-unknown-receipt-with-full-coverage` case would disentangle F1 and make the membership pair genuinely bidirectional.\n\nInstalls: none (pacman paused; no tooling needed)."
+}

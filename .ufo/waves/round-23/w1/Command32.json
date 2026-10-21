@@ -1,0 +1,59 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "startLine": 1,
+      "text": "I wrote no file. The wave context forbids report writes, which overrides the `Report:` trailer, so L1 needs to persist these findings to `.ufo/waves/round-23/w1/Command32.md`. I did not run the command, did not spawn Git, and installed nothing.\n\nThe row's expected stdout token, `SELFTEST: `, cannot tell this command apart from things that are not this command. A receipt gate can only credit this row by matching the exact argv, the working directory and the revision. The exit code must be the integer `0`, not a boolean.\n\n## Row\n\n- **Name:** `round19-correction-ruler-selftest`, kind `selftest`, `timeout_s` 180, status `active`, tag `new-r19` (`tools/registry.json:783-801`).\n- **argv:** `[\"python3\", \".ufo/evidence/round-19/measure.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: \"]}`\n- **Anchor:** `SKILL.md@55e1d312c4e8ac67aefad80099bd27581ff805c9:1935`. In the working tree, line 1935 is the `.ufo/evidence/round-19/measure.py` registry row, which documents the `--selftest` spelling and the exit map 0/1/2/64. That row also says the tool is \"Metadata reconciliation, not producer authentication, cold-read or required-command coverage\". [INFERENCE] The pinned commit's line 1935 has the same content. I could not check this because Git is off-limits in this wave.\n\n## What the gate must enforce\n\nThese bindings come from the population in `.ufo/evidence/round-23/contract.json`:\n\n1. **Exact argv list.** All three elements must be equal byte for byte, in order, with no path normalisation. Otherwise report `ARGV_MISMATCH`.\n2. **Working directory.** The relative script path only means something from the root of `/home/vgpnk/Projects/shokunin/tameshi-shokunin`, so cwd must equal that root. Otherwise report `CWD_MISMATCH`.\n3. **Revision.** The receipt's revision must equal the frozen `28cae179\u2026` base. Otherwise report `REVISION_MISMATCH`.\n4. **Exit code.** It must be an integer equal to `0`, and booleans must be rejected before comparing. Python's `False == 0` is true, so a missing type check would let `false` pass. A boolean exit is `INVALID_RECEIPT` (exit 2).\n5. **Stdout token.** Captured stdout must contain `SELFTEST: `. Otherwise report `STDOUT_MISMATCH`.\n6. **Membership.** Exactly one receipt must match this row. A missing receipt is `MEMBERSHIP_MISMATCH`; a second one is `DUPLICATE_COMMAND`.\n\n## Ways something else could falsely stand in for this row\n\nThe stdout token is non-discriminating, so it gives this row no identity on its own:\n\n- **A source read.** `measure.py:391` contains the literal `print(f'SELFTEST: {len(cases)-failed}/{len(cases)}')`. So `cat .ufo/evidence/round-19/measure.py`, or a read of `SKILL.md`, exits 0 with `SELFTEST: ` in stdout. A gate that checks only `expect` would credit a file read as the command having run. Only the argv check (binding 1) stops this.\n- **A different command.** The neighbouring row `round19-coldread-selector-selftest` runs `.ufo/evidence/round-19/coldread/measure.py --selftest`. That script also contains the token, and [INFERENCE] it prints it and exits 0. Its receipt would satisfy this row's `expect` exactly. The same goes for archived stdout files that already contain the token, such as `final/registry-complete.stdout` and `bash-witness-selftest-complete.stdout`.\n- **A failing run.** The token is printed even when the selftest fails, for example `SELFTEST: 3/5` followed by `return 1`. The exit code is the only pass/fail signal, so it must be checked as a real integer `0`.\n\n## Bounded acceptance and falsifier\n\n- **Accept** exactly one receipt where `argv` equals the 3-element list above, cwd equals the tameshi-shokunin root, revision equals `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`, `exit` is the integer `0` (not a boolean), and stdout contains `SELFTEST: `.\n- **Falsifier:** feed the gate a receipt that keeps a real run's stdout (with `SELFTEST: 5/5`) and exit `0`, but changes `argv[1]` to `.ufo/evidence/round-19/coldread/measure.py` or the argv to `[\"cat\", \".ufo/evidence/round-19/measure.py\"]`. The gate must exit 1 with `ARGV_MISMATCH`, or with `MEMBERSHIP_MISMATCH` if the required row is now missing. A second variant sets `\"exit\": false`; the gate must exit 2 with `INVALID_RECEIPT`. If either variant passes, the gate is giving credit for content and not for the command.\n\n**Impacted axes:** calibration (command identity versus a token that also appears in source), false provenance, and duplicate authority with the coldread sibling row. The smallest safe fix is to key credit on the argv, cwd and revision tuple, and treat `stdout_contains` as a check that is necessary but never sufficient."
+    },
+    "fileSize": 4640,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command32"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command32.md",
+    "rowPrefixes": false,
+    "totalLines": 36
+  },
+  "text": "I wrote no file. The wave context forbids report writes, which overrides the `Report:` trailer, so L1 needs to persist these findings to `.ufo/waves/round-23/w1/Command32.md`. I did not run the command, did not spawn Git, and installed nothing.\n\nThe row's expected stdout token, `SELFTEST: `, cannot tell this command apart from things that are not this command. A receipt gate can only credit this row by matching the exact argv, the working directory and the revision. The exit code must be the integer `0`, not a boolean.\n\n## Row\n\n- **Name:** `round19-correction-ruler-selftest`, kind `selftest`, `timeout_s` 180, status `active`, tag `new-r19` (`tools/registry.json:783-801`).\n- **argv:** `[\"python3\", \".ufo/evidence/round-19/measure.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: \"]}`\n- **Anchor:** `SKILL.md@55e1d312c4e8ac67aefad80099bd27581ff805c9:1935`. In the working tree, line 1935 is the `.ufo/evidence/round-19/measure.py` registry row, which documents the `--selftest` spelling and the exit map 0/1/2/64. That row also says the tool is \"Metadata reconciliation, not producer authentication, cold-read or required-command coverage\". [INFERENCE] The pinned commit's line 1935 has the same content. I could not check this because Git is off-limits in this wave.\n\n## What the gate must enforce\n\nThese bindings come from the population in `.ufo/evidence/round-23/contract.json`:\n\n1. **Exact argv list.** All three elements must be equal byte for byte, in order, with no path normalisation. Otherwise report `ARGV_MISMATCH`.\n2. **Working directory.** The relative script path only means something from the root of `/home/vgpnk/Projects/shokunin/tameshi-shokunin`, so cwd must equal that root. Otherwise report `CWD_MISMATCH`.\n3. **Revision.** The receipt's revision must equal the frozen `28cae179\u2026` base. Otherwise report `REVISION_MISMATCH`.\n4. **Exit code.** It must be an integer equal to `0`, and booleans must be rejected before comparing. Python's `False == 0` is true, so a missing type check would let `false` pass. A boolean exit is `INVALID_RECEIPT` (exit 2).\n5. **Stdout token.** Captured stdout must contain `SELFTEST: `. Otherwise report `STDOUT_MISMATCH`.\n6. **Membership.** Exactly one receipt must match this row. A missing receipt is `MEMBERSHIP_MISMATCH`; a second one is `DUPLICATE_COMMAND`.\n\n## Ways something else could falsely stand in for this row\n\nThe stdout token is non-discriminating, so it gives this row no identity on its own:\n\n- **A source read.** `measure.py:391` contains the literal `print(f'SELFTEST: {len(cases)-failed}/{len(cases)}')`. So `cat .ufo/evidence/round-19/measure.py`, or a read of `SKILL.md`, exits 0 with `SELFTEST: ` in stdout. A gate that checks only `expect` would credit a file read as the command having run. Only the argv check (binding 1) stops this.\n- **A different command.** The neighbouring row `round19-coldread-selector-selftest` runs `.ufo/evidence/round-19/coldread/measure.py --selftest`. That script also contains the token, and [INFERENCE] it prints it and exits 0. Its receipt would satisfy this row's `expect` exactly. The same goes for archived stdout files that already contain the token, such as `final/registry-complete.stdout` and `bash-witness-selftest-complete.stdout`.\n- **A failing run.** The token is printed even when the selftest fails, for example `SELFTEST: 3/5` followed by `return 1`. The exit code is the only pass/fail signal, so it must be checked as a real integer `0`.\n\n## Bounded acceptance and falsifier\n\n- **Accept** exactly one receipt where `argv` equals the 3-element list above, cwd equals the tameshi-shokunin root, revision equals `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`, `exit` is the integer `0` (not a boolean), and stdout contains `SELFTEST: `.\n- **Falsifier:** feed the gate a receipt that keeps a real run's stdout (with `SELFTEST: 5/5`) and exit `0`, but changes `argv[1]` to `.ufo/evidence/round-19/coldread/measure.py` or the argv to `[\"cat\", \".ufo/evidence/round-19/measure.py\"]`. The gate must exit 1 with `ARGV_MISMATCH`, or with `MEMBERSHIP_MISMATCH` if the required row is now missing. A second variant sets `\"exit\": false`; the gate must exit 2 with `INVALID_RECEIPT`. If either variant passes, the gate is giving credit for content and not for the command.\n\n**Impacted axes:** calibration (command identity versus a token that also appears in source), false provenance, and duplicate authority with the coldread sibling row. The smallest safe fix is to key credit on the argv, cwd and revision tuple, and treat `stdout_contains` as a check that is necessary but never sufficient."
+}

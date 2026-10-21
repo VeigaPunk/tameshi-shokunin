@@ -2006,3 +2006,26 @@ its persisted expected verdict is1/TOTAL_MISMATCH. Raw harness
 the bundle; the gate deliberately consumes the normalized declared schema,
 not arbitrary raw callback text. Normal `--help` exits0 as help, not a
 measured accounting verdict.
+
+Round23 addition (same registry section; same-ground calibration):
+`corpus/knowledge/required-command-binding.md`, minedS083 and QUALITY46.
+Source-read credit, including62/62, is not required-command coverage.
+Freeze explicit requirement names/argv/expect before execution; match
+new retained observations by name, exact argv, declared clone cwd/revision,
+integer exit and all required stdout tokens. Preserve expected-red commands.
+
+| Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| `tools/command-binding.py` | gate | `python3 tools/command-binding.py --bundle .ufo/evidence/round-23/replay/bundle.json --expected .ufo/evidence/round-23/replay/expected.json --json` | 0 clean declaration binding; 1 mismatch; 2 invalid/unavailable/tampered, could-not-evaluate; 64 usage, could-not-evaluate | `python3 tools/command-binding.py --selftest` | expected digest pins complete bundle; public fixtures include `.ufo/evidence/round-23/extra-cases.json`; frozen ten-case counter `measure.py`; source-read bundle/expected pair is expected1/ARGV_MISMATCH | read-only input; isolated selftest scratch only | tameshi |
+
+The evidence-only `round-23/replay.py` runs the frozen baseline registry
+requirements in an isolated clone using the existing registry runner's
+opt-in `retain_streams=True`; ordinary registry CLI output remains bounded.
+It checks the requirements against the pinned source registry before running.
+Invocation parameters and full decoded streams are newly retained unsigned
+observations, not retrofilled historical fields or execution authentication.
+The gate itself validates bundle-declared requirements; choosing another
+trusted expected file chooses another contract, not a provider signature.
+Ten synthetic rejection cases, the finite baseline registry replay and the
+input-keyed source monitor are separate populations. Historical R17-CMD-BIND
+full-page/ledger-consumer coverage remains open; no independent promotion.

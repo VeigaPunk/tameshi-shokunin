@@ -1,0 +1,45 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "startLine": 1,
+      "text": "# Command11 \u2014 Row `evidence-disposition-round18-before`\n\n**Row** (`tools/registry.json:279-304`): `\"name\": \"evidence-disposition-round18-before\"`, `\"kind\": \"gate\"`, `\"status\": \"active\"`, `timeout_s: 60`.\n\n**Exact argv**: `[\"python3\", \"tools/evidence-disposition.py\", \"--root\", \".\", \"--dispositions\", \".ufo/evidence/round-18/dispositions-before.json\", \"--json\"]`\n\n**Exact expect**: `{\"exit\": 1, \"stdout_contains\": [\"\\\"expectation\\\": \\\"producer_before\\\"\", \"\\\"status\\\": \\\"failed\\\"\"]}`\n\n**Source anchor**: `SKILL.md@58e5d53:1923-1932` \u2014 the Round-18 gate/probe registry table; line 1931 pins `tools/evidence-disposition.py` (round 18) semantics.\n\n## Identity the gate must bind\n1. **Execution identity**: a literal argv-vector match \u2014 not \"any run of the script\", not flag equivalents (no `--dispositions=\u2026`, no reordered/abs path spellings). The distinguishing token is `.ufo/evidence/round-18/dispositions-before.json`: the pre-fix fixture that declares `producer_before` `effective` against `round-13/verification.json`, a check whose raw receipt is a path-layout crash lacking the required `contains` string `\"summary preserves top-level exposed declaration kind\"` (`expected.json:37-40`). The tool (exit map at `evidence-disposition.py:107-111`) therefore emits a `producer_before`-scoped finding, `status: failed`, exit 1.\n2. **Provenance**: the receipt must derive from an actual child-process execution of that argv \u2014 the round-23 gate's whole premise is that a source read of `dispositions-before.json`, `SKILL.md`, or the script is not command coverage.\n\n## One concrete false-stand-in\n**Recorded-output replay**: `.ufo/evidence/round-18/final/before.stdout` is a real historical run of this exact command; I verified it already contains both required literals verbatim (plus `\"dispositions\": \".ufo/evidence/round-18/dispositions-before.json\"`). A \"receipt\" that is really `cat final/before.stdout` (or any fabricated JSON echoing the substrings) with a forced exit 1 satisfies `expect` completely without the gate script running once. Second variant: running the *same script* over `.ufo/evidence/round-14/dispositions-before.json` (exists, leaves `producer_before` effective) reproduces identical literals \u2014 same argv shape, wrong bound input.\n\n## Bounded acceptance / falsifier\n- **Falsifier**: replay `cat .ufo/evidence/round-18/final/before.stdout; exit 1` (or the round-14 `-before` argv). If the gate admits it, `expect` alone is unsound.\n- **Acceptance**: admit only a receipt that is (a) a verified execution trace of the exact argv vector (hash-anchored to `tools/evidence-disposition.py` sha256 `39ee5c5e\u2026`, which the tool itself echoes as `tool_sha256`), (b) observed exit 1, (c) stdout containing both literals **and** payload `\"dispositions\"` equal to the bound fixture path \u2014 i.e., identity-bound process provenance plus outcome, not substring presence.\n\nPer wave rules I write no report file; findings delivered here for L1 persistence."
+    },
+    "fileSize": 2974,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command11"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command11.md",
+    "rowPrefixes": false,
+    "totalLines": 22
+  },
+  "text": "# Command11 \u2014 Row `evidence-disposition-round18-before`\n\n**Row** (`tools/registry.json:279-304`): `\"name\": \"evidence-disposition-round18-before\"`, `\"kind\": \"gate\"`, `\"status\": \"active\"`, `timeout_s: 60`.\n\n**Exact argv**: `[\"python3\", \"tools/evidence-disposition.py\", \"--root\", \".\", \"--dispositions\", \".ufo/evidence/round-18/dispositions-before.json\", \"--json\"]`\n\n**Exact expect**: `{\"exit\": 1, \"stdout_contains\": [\"\\\"expectation\\\": \\\"producer_before\\\"\", \"\\\"status\\\": \\\"failed\\\"\"]}`\n\n**Source anchor**: `SKILL.md@58e5d53:1923-1932` \u2014 the Round-18 gate/probe registry table; line 1931 pins `tools/evidence-disposition.py` (round 18) semantics.\n\n## Identity the gate must bind\n1. **Execution identity**: a literal argv-vector match \u2014 not \"any run of the script\", not flag equivalents (no `--dispositions=\u2026`, no reordered/abs path spellings). The distinguishing token is `.ufo/evidence/round-18/dispositions-before.json`: the pre-fix fixture that declares `producer_before` `effective` against `round-13/verification.json`, a check whose raw receipt is a path-layout crash lacking the required `contains` string `\"summary preserves top-level exposed declaration kind\"` (`expected.json:37-40`). The tool (exit map at `evidence-disposition.py:107-111`) therefore emits a `producer_before`-scoped finding, `status: failed`, exit 1.\n2. **Provenance**: the receipt must derive from an actual child-process execution of that argv \u2014 the round-23 gate's whole premise is that a source read of `dispositions-before.json`, `SKILL.md`, or the script is not command coverage.\n\n## One concrete false-stand-in\n**Recorded-output replay**: `.ufo/evidence/round-18/final/before.stdout` is a real historical run of this exact command; I verified it already contains both required literals verbatim (plus `\"dispositions\": \".ufo/evidence/round-18/dispositions-before.json\"`). A \"receipt\" that is really `cat final/before.stdout` (or any fabricated JSON echoing the substrings) with a forced exit 1 satisfies `expect` completely without the gate script running once. Second variant: running the *same script* over `.ufo/evidence/round-14/dispositions-before.json` (exists, leaves `producer_before` effective) reproduces identical literals \u2014 same argv shape, wrong bound input.\n\n## Bounded acceptance / falsifier\n- **Falsifier**: replay `cat .ufo/evidence/round-18/final/before.stdout; exit 1` (or the round-14 `-before` argv). If the gate admits it, `expect` alone is unsound.\n- **Acceptance**: admit only a receipt that is (a) a verified execution trace of the exact argv vector (hash-anchored to `tools/evidence-disposition.py` sha256 `39ee5c5e\u2026`, which the tool itself echoes as `tool_sha256`), (b) observed exit 1, (c) stdout containing both literals **and** payload `\"dispositions\"` equal to the bound fixture path \u2014 i.e., identity-bound process provenance plus outcome, not substring presence.\n\nPer wave rules I write no report file; findings delivered here for L1 persistence."
+}

@@ -1,0 +1,89 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "startLine": 1,
+      "text": "## Axes (named, not scored)\n\n- **A1 \u2014 identity discrimination**: does a receipt prove *this* command ran (exact argv), not a source read or a look-alike invocation?\n- **A2 \u2014 outcome fidelity**: exit and stdout tokens bound to the same single receipt, with types that cannot alias.\n- **A3 \u2014 contract defensibility**: findings/exit codes agree with the frozen population, no invented dimensions, no authenticity overclaim.\n- **A4 \u2014 provenance honesty**: anchor treated as pointer, not as the requirement source.\n\n## Row under analysis (verbatim, `tools/registry.json:440-460`)\n\n```json\n{\"name\": \"mutate-and-run-selftest\", \"kind\": \"selftest\",\n \"argv\": [\"bash\", \"tools/mutate-and-run.sh\", \"--selftest\"],\n \"expect\": {\"exit\": 0, \"stdout_contains\": [\"MUTATE_SELFTEST:\", \"VERDICT: PASS\"]},\n \"timeout_s\": 180, \"source\": \"SKILL.md@98bea7d:1810\",\n \"status\": \"active\", \"tags\": [\"baseline\"]}\n```\n\n**Anchor** `SKILL.md@98bea7d:1810` (current `SKILL.md:1810`) is one markdown table cell: `` `bash tools/mutate-and-run.sh --selftest` \u00b7 `--regression` `` with exits \u201cselftest 0 pass / 1 fail; regression 0 PASS \u00b7 1 FAIL \u00b7 2 SETUP \u00b7 64 usage\u201d. Facts a gate must not lose:\n\n1. The anchor is **1:2**, not unique \u2014 `mutate-and-run-regression` (`registry.json:462`) carries the same `SKILL.md@98bea7d:1810`, so the anchor cannot be a membership key.\n2. The anchor **does not contain either stdout token**; it only states exit semantics. Tokens live in script source (`mutate-and-run.sh:1906`, `:1908`, plus fixture text `:1436`) and in unrelated prose (`SKILL.md:1003,1218,1336,1424`). An anchor-derived requirement would therefore be underdetermined and would conflate the two commands. The frozen row\u2019s `argv`/`expect` is the only authoritative binding.\n3. `kind` differs (`selftest` in registry, `gate` in the anchor table); kind is lane metadata, not identity.\n4. Anchor rev `98bea7d` \u2260 contract `base_revision` `28cae179\u2026`; receipts must bind the latter, not the anchor rev.\n\n## Binding a receipt gate MUST enforce\n\nIdentity key = (`name` == `mutate-and-run-selftest`) \u2227 exact, unnormalized array equality on `argv` = `[\"bash\",\"tools/mutate-and-run.sh\",\"--selftest\"]` \u2227 `cwd` == repo root \u2227 `revision` == `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`. No path resolution, no `./` folding, no shell-string re-splitting, no \u201csame script\u201d equivalence.\n\nOutcome key = the `stdout` field of **that same** receipt contains both literals, case-sensitively: `\"MUTATE_SELFTEST:\"` and `\"VERDICT: PASS\"`; and `exit` is a JSON integer `0` \u2014 explicitly **not `false`**. Python's `False == 0` makes the exit-0 row the one place a bool receipt silently passes a naive equality; contract case `bool-exit` requires `INVALID_RECEIPT` / exit 2, checked by type before comparison. Failing run semantics confirm the pair is jointly discriminating: mktemp failure prints `MUTATE_SELFTEST: 0/1 pass` + `VERDICT: FAIL (mktemp)`, exit 1 (`:1389-1394`). Do not tighten the token to `MUTATE_SELFTEST: 80/80 pass` \u2014 the count drifts legitimately (`SKILL.md` has 67/67 and 80/80); the colon-terminated literal is the frozen binding. `timeout_s: 18\u2026\n\nFindings/exit mapping for this row: missing requirement or unknown receipt name \u2192 `MEMBERSHIP_MISMATCH`/1; duplicate receipt \u2192 `DUPLICATE_COMMAND`/1; argv, cwd, revision, exit, or missing token \u2192 `ARGV_MISMATCH`/`CWD_MISMATCH`/`REVISION_MISMATCH`/`EXIT_MISMATCH`/`STDOUT_MISMATCH`, all exit 1; non-int (bool) exit \u2192 `INVALID_RECEIPT`/2.\n\n## Concrete false stand-in\n\n`bash -c`-free source read, at repo root, revision `28cae179\u2026`:\n\n```\ngrep -n 'MUTATE_SELFTEST:\\|VERDICT: PASS' tools/mutate-and-run.sh\n```\n\nI ran exactly this provenance grep (three target files; not the forbidden selftest): **exit 0**, and its stdout contains both `MUTATE_SELFTEST:` and `VERDICT: PASS` (lines 1392/1436/1906/1908). `cat tools/registry.json` also emits both (lines 450-451), as does reading the anchor document's prose. A gate keyed on `name` + outcome would credit this row from a receipt that never executed `--selftest`; only exact argv equality rejects it (`ARGV_MISMATCH`). A second, subtler look-alike: `bash tools/mutate-and-run.sh --keep --selftest` \u2014 the parser consumes `--keep` (`:1933`) and ignores it in selftest, so stdout and exit 0 are bit-identical to the required command, yet argv differs; it must also be `ARGV_MISMATCH`. `--regression` is not a substitute (only `REGRES\u2026\n\n## Bounded acceptance and falsifier\n\n**Acceptance**: a bundle whose sole requirement is the row above and whose sole receipt has identical `name`/`argv`, `cwd` = repo root, `revision` = `28cae179\u2026`, `exit` = integer `0`, `stdout` = `\"MUTATE_SELFTEST: 80/80 pass\\nVERDICT: PASS\\n\"` (and a matching `command-binding-expected-v1` `bundle_sha256`) \u2192 gate exits 0, `finding_ids == []`.\n\n**Falsifier**: mutate only that receipt's `argv` to `[\"grep\",\"-n\",\"MUTATE_SELFTEST:|VERDICT: PASS\",\"tools/mutate-and-run.sh\"]`, holding name, cwd, revision, `exit: 0`, and the both-token stdout constant \u2192 gate MUST exit 1 with `ARGV_MISMATCH`. Clean acceptance here is the C1 failure: a source read credited as command execution.\n\n## Risks / contradictions\n\n- The assignment\u2019s \u201cReport: write \u2026\u201d line contradicts the wave\u2019s read-only directive (\u201cDO NOT WRITE ANY FILE \u2026 L1 persists them\u201d). I resolved in favor of the prohibition and wrote nothing; these findings are returned inline for L1 to persist.\n- The gate (per `measure.py`) makes no authenticity claim and its `SNAPSHOT_TAMPERED` check only compares bundle bytes to a committed digest; a fabricated receipt with matching bytes can still name the right argv/outcome. That is an accepted limit, not a defect to paper over \u2014 do not describe the gate as proving execution.\n- Cross-row contamination is real because `VERDICT: PASS` is generic; both tokens are required precisely so the regression row, fixture output, and other selftests cannot satisfy this row.\n\n**Verification**: static reads only of `registry.json:440-460`, `SKILL.md:1800-1813` and token-bearing prose, `mutate-and-run.sh:1387-1400,1906-1940`, `.ufo/evidence/round-23/{contract.json,before.json,measure.py}`; one provenance grep. The target command was not run; no files written; no tools installed; no Git/fleet actions."
+    },
+    "fileSize": 6470,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 29,
+            "last": 41
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command17",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command17"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command17.md",
+    "rowPrefixes": false,
+    "totalLines": 55
+  },
+  "text": "## Axes (named, not scored)\n\n- **A1 \u2014 identity discrimination**: does a receipt prove *this* command ran (exact argv), not a source read or a look-alike invocation?\n- **A2 \u2014 outcome fidelity**: exit and stdout tokens bound to the same single receipt, with types that cannot alias.\n- **A3 \u2014 contract defensibility**: findings/exit codes agree with the frozen population, no invented dimensions, no authenticity overclaim.\n- **A4 \u2014 provenance honesty**: anchor treated as pointer, not as the requirement source.\n\n## Row under analysis (verbatim, `tools/registry.json:440-460`)\n\n```json\n{\"name\": \"mutate-and-run-selftest\", \"kind\": \"selftest\",\n \"argv\": [\"bash\", \"tools/mutate-and-run.sh\", \"--selftest\"],\n \"expect\": {\"exit\": 0, \"stdout_contains\": [\"MUTATE_SELFTEST:\", \"VERDICT: PASS\"]},\n \"timeout_s\": 180, \"source\": \"SKILL.md@98bea7d:1810\",\n \"status\": \"active\", \"tags\": [\"baseline\"]}\n```\n\n**Anchor** `SKILL.md@98bea7d:1810` (current `SKILL.md:1810`) is one markdown table cell: `` `bash tools/mutate-and-run.sh --selftest` \u00b7 `--regression` `` with exits \u201cselftest 0 pass / 1 fail; regression 0 PASS \u00b7 1 FAIL \u00b7 2 SETUP \u00b7 64 usage\u201d. Facts a gate must not lose:\n\n1. The anchor is **1:2**, not unique \u2014 `mutate-and-run-regression` (`registry.json:462`) carries the same `SKILL.md@98bea7d:1810`, so the anchor cannot be a membership key.\n2. The anchor **does not contain either stdout token**; it only states exit semantics. Tokens live in script source (`mutate-and-run.sh:1906`, `:1908`, plus fixture text `:1436`) and in unrelated prose (`SKILL.md:1003,1218,1336,1424`). An anchor-derived requirement would therefore be underdetermined and would conflate the two commands. The frozen row\u2019s `argv`/`expect` is the only authoritative binding.\n3. `kind` differs (`selftest` in registry, `gate` in the anchor table); kind is lane metadata, not identity.\n4. Anchor rev `98bea7d` \u2260 contract `base_revision` `28cae179\u2026`; receipts must bind the latter, not the anchor rev.\n\n## Binding a receipt gate MUST enforce\n\nIdentity key = (`name` == `mutate-and-run-selftest`) \u2227 exact, unnormalized array equality on `argv` = `[\"bash\",\"tools/mutate-and-run.sh\",\"--selftest\"]` \u2227 `cwd` == repo root \u2227 `revision` == `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`. No path resolution, no `./` folding, no shell-string re-splitting, no \u201csame script\u201d equivalence.\n\nOutcome key = the `stdout` field of **that same** receipt contains both literals, case-sensitively: `\"MUTATE_SELFTEST:\"` and `\"VERDICT: PASS\"`; and `exit` is a JSON integer `0` \u2014 explicitly **not `false`**. Python's `False == 0` makes the exit-0 row the one place a bool receipt silently passes a naive equality; contract case `bool-exit` requires `INVALID_RECEIPT` / exit 2, checked by type before comparison. Failing run semantics confirm the pair is jointly discriminating: mktemp failure prints `MUTATE_SELFTEST: 0/1 pass` + `VERDICT: FAIL (mktemp)`, exit 1 (`:1389-1394`). Do not tighten the token to `MUTATE_SELFTEST: 80/80 pass` \u2014 the count drifts legitimately (`SKILL.md` has 67/67 and 80/80); the colon-terminated literal is the frozen binding. `timeout_s: 18\u2026\n\nFindings/exit mapping for this row: missing requirement or unknown receipt name \u2192 `MEMBERSHIP_MISMATCH`/1; duplicate receipt \u2192 `DUPLICATE_COMMAND`/1; argv, cwd, revision, exit, or missing token \u2192 `ARGV_MISMATCH`/`CWD_MISMATCH`/`REVISION_MISMATCH`/`EXIT_MISMATCH`/`STDOUT_MISMATCH`, all exit 1; non-int (bool) exit \u2192 `INVALID_RECEIPT`/2.\n\n## Concrete false stand-in\n\n`bash -c`-free source read, at repo root, revision `28cae179\u2026`:\n\n```\ngrep -n 'MUTATE_SELFTEST:\\|VERDICT: PASS' tools/mutate-and-run.sh\n```\n\nI ran exactly this provenance grep (three target files; not the forbidden selftest): **exit 0**, and its stdout contains both `MUTATE_SELFTEST:` and `VERDICT: PASS` (lines 1392/1436/1906/1908). `cat tools/registry.json` also emits both (lines 450-451), as does reading the anchor document's prose. A gate keyed on `name` + outcome would credit this row from a receipt that never executed `--selftest`; only exact argv equality rejects it (`ARGV_MISMATCH`). A second, subtler look-alike: `bash tools/mutate-and-run.sh --keep --selftest` \u2014 the parser consumes `--keep` (`:1933`) and ignores it in selftest, so stdout and exit 0 are bit-identical to the required command, yet argv differs; it must also be `ARGV_MISMATCH`. `--regression` is not a substitute (only `REGRES\u2026\n\n## Bounded acceptance and falsifier\n\n**Acceptance**: a bundle whose sole requirement is the row above and whose sole receipt has identical `name`/`argv`, `cwd` = repo root, `revision` = `28cae179\u2026`, `exit` = integer `0`, `stdout` = `\"MUTATE_SELFTEST: 80/80 pass\\nVERDICT: PASS\\n\"` (and a matching `command-binding-expected-v1` `bundle_sha256`) \u2192 gate exits 0, `finding_ids == []`.\n\n**Falsifier**: mutate only that receipt's `argv` to `[\"grep\",\"-n\",\"MUTATE_SELFTEST:|VERDICT: PASS\",\"tools/mutate-and-run.sh\"]`, holding name, cwd, revision, `exit: 0`, and the both-token stdout constant \u2192 gate MUST exit 1 with `ARGV_MISMATCH`. Clean acceptance here is the C1 failure: a source read credited as command execution.\n\n## Risks / contradictions\n\n- The assignment\u2019s \u201cReport: write \u2026\u201d line contradicts the wave\u2019s read-only directive (\u201cDO NOT WRITE ANY FILE \u2026 L1 persists them\u201d). I resolved in favor of the prohibition and wrote nothing; these findings are returned inline for L1 to persist.\n- The gate (per `measure.py`) makes no authenticity claim and its `SNAPSHOT_TAMPERED` check only compares bundle bytes to a committed digest; a fabricated receipt with matching bytes can still name the right argv/outcome. That is an accepted limit, not a defect to paper over \u2014 do not describe the gate as proving execution.\n- Cross-row contamination is real because `VERDICT: PASS` is generic; both tokens are required precisely so the regression row, fixture output, and other selftests cannot satisfy this row.\n\n**Verification**: static reads only of `registry.json:440-460`, `SKILL.md:1800-1813` and token-bearing prose, `mutate-and-run.sh:1387-1400,1906-1940`, `.ufo/evidence/round-23/{contract.json,before.json,measure.py}`; one provenance grep. The target command was not run; no files written; no tools installed; no Git/fleet actions.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command17:raw:29-29 to read line 29 whole; cut lines run to line 41, each read the same way]"
+}

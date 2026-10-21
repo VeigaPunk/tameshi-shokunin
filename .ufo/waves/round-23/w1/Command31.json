@@ -1,0 +1,53 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "startLine": 1,
+      "text": "Findings are below. I did not write `.ufo/waves/round-23/w1/Command31.md`, because the wave context forbids every file write, including the Report trailer; L1 persists results. I didn't run the target command and didn't install anything.\n\n**Row:** `defect-probes-selftest` (`tools/registry.json:761-781`)\n- **kind:** `selftest`\n- **argv:** `[\"python3\", \".ufo/evidence/round-18/defect-probes.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}`\n- **other fields:** `timeout_s: 300`, `status: active`, tags `[\"new-r18\"]`\n\n**Anchor:** `SKILL.md@58e5d53:1923-1932` is the whole \"Round-18 gate/probe registry\" table. This row's line is 1927, which documents `--selftest` with exit 0. The same span is also cited by `assemble-round18-selftest` at `registry.json:759`, so it covers about six tools and doesn't pick out this row by itself.\n\n**What the command actually does:** in `defect-probes.py`, `main()` at lines 1022-1046 sends `--selftest` to `selftest()` at lines 960-1019. That runs 6 cases and prints `SELFTEST: PASS (6 cases)` with exit 0, or `SELFTEST: FAIL (...)` with exit 1. Combining `--selftest` with `--rev`, `--only` or `--json` exits 64. The working-tree file's sha256 is `99297d9645151dee948291638386f3e9189c7bab590bebda23de6e51dadebeaa`. Its last commit is `01d586d`. I didn't check this hash against base `28cae17`.\n\n**What a receipt gate must bind**\n1. **Command identity:** the receipt's argv must equal all three registry elements exactly, in order, with no extra arguments. It should run from the repo root at the frozen revision. Recording the script's content hash would catch a swapped file at the same path.\n2. **Outcome:** the expected result must come from that execution's own record: exit code exactly 0 and the captured stdout containing `SELFTEST: PASS`.\n3. **Pairing:** exit code, stdout and argv must all come from one execution record. They must not be put together from separate observations.\n\n**How something else could falsely stand in for this row**\n- **Reading the source file:** `cat .ufo/evidence/round-18/defect-probes.py` (or a grep or editor read of it) exits 0. Its output includes line 1018, `print(\"SELFTEST: PASS (%d cases)\" % len(checks))`, which contains the expected text. A gate that checks only exit code and text, or only that the path was touched, would pass this row without the selftest ever running.\n- **A different command:** at least seven other tools print the same prefix, for example `tools/registry-check.py:1813` and `tools/evidence-disposition.py:3123`. Eight registry rows expect `\"SELFTEST: PASS\"`. If the gate matches on the expected outcome instead of argv, any of those rows' receipts would satisfy this one.\n\n**Bounded acceptance and falsifier**\n- **Accept** only if the receipt's argv equals the row's argv exactly, its exit code is 0, and its own captured stdout contains `SELFTEST: PASS`.\n- **Falsifier:** give the gate a receipt whose stdout is the output of `cat .ufo/evidence/round-18/defect-probes.py`, with exit 0. It also proves the gate is broken if it accepts the receipt from `[\"python3\", \"tools/registry-check.py\", \"--selftest\"]` for this row. The gate must reject both because argv doesn't match, even though exit 0 and the stdout text both match.\n\n**Calibration notes (not defects in this row)**\n- The anchor lists exits 0, 2 and 64, but a failing selftest exits 1. That doesn't affect the gate, because the expected exit of 0 already rejects 1.\n- `\"SELFTEST: PASS\"` is a substring check, so `SELFTEST: PASS (0 cases)` would also pass. The six checks are fixed in code, so this is a tradeoff the frozen contract makes, not something a receipt gate can fix.\n\n**Impacted axes:** command identity versus source reads, false provenance from the shared anchor, and receipts from different rows colliding on the same expected text."
+    },
+    "fileSize": 3844,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command31"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command31.md",
+    "rowPrefixes": false,
+    "totalLines": 30
+  },
+  "text": "Findings are below. I did not write `.ufo/waves/round-23/w1/Command31.md`, because the wave context forbids every file write, including the Report trailer; L1 persists results. I didn't run the target command and didn't install anything.\n\n**Row:** `defect-probes-selftest` (`tools/registry.json:761-781`)\n- **kind:** `selftest`\n- **argv:** `[\"python3\", \".ufo/evidence/round-18/defect-probes.py\", \"--selftest\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"SELFTEST: PASS\"]}`\n- **other fields:** `timeout_s: 300`, `status: active`, tags `[\"new-r18\"]`\n\n**Anchor:** `SKILL.md@58e5d53:1923-1932` is the whole \"Round-18 gate/probe registry\" table. This row's line is 1927, which documents `--selftest` with exit 0. The same span is also cited by `assemble-round18-selftest` at `registry.json:759`, so it covers about six tools and doesn't pick out this row by itself.\n\n**What the command actually does:** in `defect-probes.py`, `main()` at lines 1022-1046 sends `--selftest` to `selftest()` at lines 960-1019. That runs 6 cases and prints `SELFTEST: PASS (6 cases)` with exit 0, or `SELFTEST: FAIL (...)` with exit 1. Combining `--selftest` with `--rev`, `--only` or `--json` exits 64. The working-tree file's sha256 is `99297d9645151dee948291638386f3e9189c7bab590bebda23de6e51dadebeaa`. Its last commit is `01d586d`. I didn't check this hash against base `28cae17`.\n\n**What a receipt gate must bind**\n1. **Command identity:** the receipt's argv must equal all three registry elements exactly, in order, with no extra arguments. It should run from the repo root at the frozen revision. Recording the script's content hash would catch a swapped file at the same path.\n2. **Outcome:** the expected result must come from that execution's own record: exit code exactly 0 and the captured stdout containing `SELFTEST: PASS`.\n3. **Pairing:** exit code, stdout and argv must all come from one execution record. They must not be put together from separate observations.\n\n**How something else could falsely stand in for this row**\n- **Reading the source file:** `cat .ufo/evidence/round-18/defect-probes.py` (or a grep or editor read of it) exits 0. Its output includes line 1018, `print(\"SELFTEST: PASS (%d cases)\" % len(checks))`, which contains the expected text. A gate that checks only exit code and text, or only that the path was touched, would pass this row without the selftest ever running.\n- **A different command:** at least seven other tools print the same prefix, for example `tools/registry-check.py:1813` and `tools/evidence-disposition.py:3123`. Eight registry rows expect `\"SELFTEST: PASS\"`. If the gate matches on the expected outcome instead of argv, any of those rows' receipts would satisfy this one.\n\n**Bounded acceptance and falsifier**\n- **Accept** only if the receipt's argv equals the row's argv exactly, its exit code is 0, and its own captured stdout contains `SELFTEST: PASS`.\n- **Falsifier:** give the gate a receipt whose stdout is the output of `cat .ufo/evidence/round-18/defect-probes.py`, with exit 0. It also proves the gate is broken if it accepts the receipt from `[\"python3\", \"tools/registry-check.py\", \"--selftest\"]` for this row. The gate must reject both because argv doesn't match, even though exit 0 and the stdout text both match.\n\n**Calibration notes (not defects in this row)**\n- The anchor lists exits 0, 2 and 64, but a failing selftest exits 1. That doesn't affect the gate, because the expected exit of 0 already rejects 1.\n- `\"SELFTEST: PASS\"` is a substring check, so `SELFTEST: PASS (0 cases)` would also pass. The six checks are fixed in code, so this is a tradeoff the frozen contract makes, not something a receipt gate can fix.\n\n**Impacted axes:** command identity versus source reads, false provenance from the shared anchor, and receipts from different rows colliding on the same expected text."
+}

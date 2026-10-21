@@ -1,0 +1,81 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "startLine": 1,
+      "text": "No writes performed; the census command was not run. Findings inline for L1 (the Context wave prohibition overrides the Report-path field, and that contradiction is noted below).\n\n## Evidence\n\n**Row** (tools/registry.json:570\u2013589, present unchanged at base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`):\n\n- name: `sources-census`; kind: `gate`; status: `active`; tags: `[\"baseline\"]`; timeout_s: `60`\n- argv: `[\"bash\", \".ufo/evidence/kaika-round-1/sources-census-v2.sh\"]` (2 elements, no flags)\n- expect: `{\"exit\": 0, \"stdout_contains\": [\"SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)\"]}`\n- source: `SCORECARD.md@98bea7d:240`\n\n**Anchor**: `98bea7d` = `98bea7da5801f4bc58e4187690ee1687c8a5061f`. Line 240 is the `sources-registry` capability row; it quotes the same invocation and the same verdict token verbatim. Script blob at both `98bea7d` and base is `cd7c898c7da6848784a165df03edb436b65e7bb6` (worktree sha256 `b9b75471...5a2bc3`), so script content cannot distinguish the two revisions. The script resolves `f=corpus/SOURCES.md` relative to cwd, so cwd is semantically load-bearing, not cosmetic. Contract declares `base_revision: 28cae17\u2026` and population includes `ARGV_MISMATCH`, `CWD_MISMATCH`, `REVISION_MISMATCH`, `MEMBERSHIP_MISMATCH`, `EXIT_MISMATCH`, `STDOUT_MISMATCH`, `INVALID_RECEIPT`, `SNAPSHOT_TAMPERED`.\n\n## Command identity a receipt gate must enforce\n\nA receipt is acceptable for this row only if it is one executed process invocation satisfying all of:\n\n1. `argv` equals the 2-element list `[\"bash\", \".ufo/evidence/kaika-round-1/sources-census-v2.sh\"]` element-wise (exact spelling, relative path, no extra tokens, no shell re-splitting of a single string).\n2. `cwd` equals the lane root `/home/vgpnk/Projects/shokunin/tameshi-shokunin` (the script's `corpus/SOURCES.md` is cwd-relative).\n3. `revision` equals `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` at receipt time.\n4. `exit` is the integer `0` \u2014 type-checked, because Python `False == 0` would let a boolean pass the expected-exit-zero row (contract\u2019s `bool-exit` \u2192 `INVALID_RECEIPT`, exit 2).\n5. `stdout` contains the exact literal token `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`. Presence only: the recorded run also carries `== VERDICT`, `A=37 B=5 C=2`, `count=25` B1-informational lines, so stdout equality must not be required; conversely the documented \u201c44 rows\u201d is *not* in `expect` and must not be graded.\n6. Requirement identity comes from the frozen registry row, not from the receipt bundle\u2019s self-declared `requirements`; otherwise a producer can redefine the required argv to match its own receipt.\n\n## Concrete false stand-in\n\nThe expected token is itself data sitting in two places in the tree: `SCORECARD.md:240` (the row\u2019s own anchor) and `.ufo/evidence/kaika-round-1/sources-census-v2.txt` (recorded run stdout, token appears exactly once). An unrelated *read* \u2014 e.g. `git show 98bea7d:SCORECARD.md | sed -n '240p'`, or attributing the contents of `sources-census-v2.txt` as the receipt stdout \u2014 yields exit 0 and a stdout containing the exact expected token, while the census never executes. Equally, `bash -c 'printf \"%s\\n\" \"SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)\"'` satisfies both outcome predicates with a different argv. Note the sibling v1 `sources-census.sh` emits no verdict token at all, so it fails the stdout predicate taken honestly \u2014 the anchor/evidence-text route \u2026\n\n## Bounded acceptance / falsifier\n\n- **Accept**: a bundle containing this one receipt with the six bindings above \u2192 gate returns `finding_ids: []`, exit 0.\n- **Falsify**: the same bundle with only argv replaced by `[\"bash\",\"-c\",\"printf 'SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)\\\\n'\"]`, all other fields (cwd, revision, exit 0, token stdout) untouched \u2192 gate MUST return `ARGV_MISMATCH`, exit 1, never PASS. A one-field-at-a-time twin for cwd (`/tmp`), revision (`98bea7d\u2026`), exit (`1`), stdout (`\"\"`), and a source-read record with no argv (`MEMBERSHIP_MISMATCH`, exit 1) isolates each binding; a `exit: false` twin must give `INVALID_RECEIPT`, exit 2.\n\n## Affected axes\n\nCalibration (C1) only: this converts the row from a documentation pointer into an executable identity predicate. Expansion, quality, and discernment are untouched \u2014 no capability, admission, or row population changes.\n\n## Risks\n\n- Receipt-bundle self-authorization of `requirements` would nullify the argv binding; the requirement must be loaded from the frozen registry/base revision.\n- Path canonicalization is a fork: absolute-path or symlink/wrapper acceptance weakens identity; strict relative-string equality may reject an otherwise legitimate run recorded with an absolute path. The registry literal is the safe anchor.\n- Because the script blob is identical at base and anchor, revision binding alone cannot prove the stdout is fresh; a stale stored run at anchor revision plus exact argv remains indistinguishable without execution provenance (digest of a captured receipt), which this row\u2019s `expect` does not define.\n- `timeout_s: 60` is an execution envelope, not an `expect` predicate; grading it would invent an axis the contract does not declare.\n\n## Verification\n\nWhen authorized: `python3 .ufo/evidence/round-23/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin` should report `tool_present: true`, `discriminated: 10`, exit 0 (current `before.json` shows `tool_present: false`, `0/10`), plus the row-specific twins above; the ruler\u2019s existing `argv-mismatch` case (`['cat','gate.py']` with `PASS` stdout retained) is exactly this row\u2019s failure mode in miniature. Not executed here per assignment; no files written or tools installed."
+    },
+    "fileSize": 5735,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 27,
+            "last": 27
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command23",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command23"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command23.md",
+    "rowPrefixes": false,
+    "totalLines": 47
+  },
+  "text": "No writes performed; the census command was not run. Findings inline for L1 (the Context wave prohibition overrides the Report-path field, and that contradiction is noted below).\n\n## Evidence\n\n**Row** (tools/registry.json:570\u2013589, present unchanged at base `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76`):\n\n- name: `sources-census`; kind: `gate`; status: `active`; tags: `[\"baseline\"]`; timeout_s: `60`\n- argv: `[\"bash\", \".ufo/evidence/kaika-round-1/sources-census-v2.sh\"]` (2 elements, no flags)\n- expect: `{\"exit\": 0, \"stdout_contains\": [\"SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)\"]}`\n- source: `SCORECARD.md@98bea7d:240`\n\n**Anchor**: `98bea7d` = `98bea7da5801f4bc58e4187690ee1687c8a5061f`. Line 240 is the `sources-registry` capability row; it quotes the same invocation and the same verdict token verbatim. Script blob at both `98bea7d` and base is `cd7c898c7da6848784a165df03edb436b65e7bb6` (worktree sha256 `b9b75471...5a2bc3`), so script content cannot distinguish the two revisions. The script resolves `f=corpus/SOURCES.md` relative to cwd, so cwd is semantically load-bearing, not cosmetic. Contract declares `base_revision: 28cae17\u2026` and population includes `ARGV_MISMATCH`, `CWD_MISMATCH`, `REVISION_MISMATCH`, `MEMBERSHIP_MISMATCH`, `EXIT_MISMATCH`, `STDOUT_MISMATCH`, `INVALID_RECEIPT`, `SNAPSHOT_TAMPERED`.\n\n## Command identity a receipt gate must enforce\n\nA receipt is acceptable for this row only if it is one executed process invocation satisfying all of:\n\n1. `argv` equals the 2-element list `[\"bash\", \".ufo/evidence/kaika-round-1/sources-census-v2.sh\"]` element-wise (exact spelling, relative path, no extra tokens, no shell re-splitting of a single string).\n2. `cwd` equals the lane root `/home/vgpnk/Projects/shokunin/tameshi-shokunin` (the script's `corpus/SOURCES.md` is cwd-relative).\n3. `revision` equals `28cae179e4dc2c1fa7f032a79cdddf0b5d862d76` at receipt time.\n4. `exit` is the integer `0` \u2014 type-checked, because Python `False == 0` would let a boolean pass the expected-exit-zero row (contract\u2019s `bool-exit` \u2192 `INVALID_RECEIPT`, exit 2).\n5. `stdout` contains the exact literal token `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`. Presence only: the recorded run also carries `== VERDICT`, `A=37 B=5 C=2`, `count=25` B1-informational lines, so stdout equality must not be required; conversely the documented \u201c44 rows\u201d is *not* in `expect` and must not be graded.\n6. Requirement identity comes from the frozen registry row, not from the receipt bundle\u2019s self-declared `requirements`; otherwise a producer can redefine the required argv to match its own receipt.\n\n## Concrete false stand-in\n\nThe expected token is itself data sitting in two places in the tree: `SCORECARD.md:240` (the row\u2019s own anchor) and `.ufo/evidence/kaika-round-1/sources-census-v2.txt` (recorded run stdout, token appears exactly once). An unrelated *read* \u2014 e.g. `git show 98bea7d:SCORECARD.md | sed -n '240p'`, or attributing the contents of `sources-census-v2.txt` as the receipt stdout \u2014 yields exit 0 and a stdout containing the exact expected token, while the census never executes. Equally, `bash -c 'printf \"%s\\n\" \"SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)\"'` satisfies both outcome predicates with a different argv. Note the sibling v1 `sources-census.sh` emits no verdict token at all, so it fails the stdout predicate taken honestly \u2014 the anchor/evidence-text route \u2026\n\n## Bounded acceptance / falsifier\n\n- **Accept**: a bundle containing this one receipt with the six bindings above \u2192 gate returns `finding_ids: []`, exit 0.\n- **Falsify**: the same bundle with only argv replaced by `[\"bash\",\"-c\",\"printf 'SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)\\\\n'\"]`, all other fields (cwd, revision, exit 0, token stdout) untouched \u2192 gate MUST return `ARGV_MISMATCH`, exit 1, never PASS. A one-field-at-a-time twin for cwd (`/tmp`), revision (`98bea7d\u2026`), exit (`1`), stdout (`\"\"`), and a source-read record with no argv (`MEMBERSHIP_MISMATCH`, exit 1) isolates each binding; a `exit: false` twin must give `INVALID_RECEIPT`, exit 2.\n\n## Affected axes\n\nCalibration (C1) only: this converts the row from a documentation pointer into an executable identity predicate. Expansion, quality, and discernment are untouched \u2014 no capability, admission, or row population changes.\n\n## Risks\n\n- Receipt-bundle self-authorization of `requirements` would nullify the argv binding; the requirement must be loaded from the frozen registry/base revision.\n- Path canonicalization is a fork: absolute-path or symlink/wrapper acceptance weakens identity; strict relative-string equality may reject an otherwise legitimate run recorded with an absolute path. The registry literal is the safe anchor.\n- Because the script blob is identical at base and anchor, revision binding alone cannot prove the stdout is fresh; a stale stored run at anchor revision plus exact argv remains indistinguishable without execution provenance (digest of a captured receipt), which this row\u2019s `expect` does not define.\n- `timeout_s: 60` is an execution envelope, not an `expect` predicate; grading it would invent an axis the contract does not declare.\n\n## Verification\n\nWhen authorized: `python3 .ufo/evidence/round-23/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin` should report `tool_present: true`, `discriminated: 10`, exit 0 (current `before.json` shows `tool_present: false`, `0/10`), plus the row-specific twins above; the ruler\u2019s existing `argv-mismatch` case (`['cat','gate.py']` with `PASS` stdout retained) is exactly this row\u2019s failure mode in miniature. Not executed here per assignment; no files written or tools installed.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command23:raw:27-27 to read line 27 whole]"
+}

@@ -1,0 +1,44 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "startLine": 1,
+      "text": "## Findings \u2014 `repeat-control-snapshot-clean` (registry.json:5\u201322)\n\n**Row / exact argv / expect**\n- name: `repeat-control-snapshot-clean`, kind: `gate`, status: `active`, timeout_s: 60\n- argv (4 elements, exact order): `[\"python3\", \"tools/repeat-control.py\", \"--snapshot\", \".ufo/evidence/round-12/ControlGate\"]`\n- expect: `{\"exit\": 0}` \u2014 exit code only; unlike sibling `repeat-control-selftest`, **no** `stdout_contains` binding exists for this row.\n\n**Anchor**: `\"source\": \"SKILL.md@98bea7d:1503\"` \u2014 the round-12 registry table line pinning `` `python3 tools/repeat-control.py \u2026 --snapshot DIR` `` with verdict map \"0 clean; 1 failed; 2 and 64 could-not-evaluate\" and pinned inputs `ControlGate/expected.json` + `mismatch/expected.json`.\n\n**Identity/outcome binding a receipt gate must enforce**\n1. Process identity: a spawned process whose argv equals the row's vector element-wise (not prefix/substring/normalized-paraphrase), cwd = repo root so both relative literals resolve, within `timeout_s: 60`.\n2. Outcome binding: the collected **process exit status == 0**. Semantics (repeat-control.py:449\u2013471): `snapshot_mode` loads `expected.json` (`schema repeat-control-snapshot-v1`), verifies each `run-N.{stdout,stderr,exit}` sha256 against committed `inputs`, reclassifies via `classify` (206\u2013220), and exits `EXIT_BY_ID[finding]` \u2014 0 \u27fa observed == committed `(controls_match, 0)`. Committed record observed: `expected_id=controls_match, expected_exit=0`, 9 inputs, `runs: 3`. Tamper/digest failure \u2192 exit 2; content mismatch \u2192 exit 1; usage error \u2192 64. The printed `SNAPSHOT_OBSERVED \u2026 exit=0` line is evidence, not the verdict \u2014 `expect` binds only the exit status.\n\n**Concrete false stand-in (severity: medium \u2014 gate-design risk, not a defect in the row)**\nA receipt that records *reading* `expected.json` (or this registry row, or SKILL.md:1503) and asserting `expected_exit: 0` is a document read, not a command execution: no subprocess ran, so `snapshot_tampered` (exit 2) or `controls_mismatch` (exit 1) can never be observed \u2014 a corrupted `run-2.stdout` would still \"pass.\" Equally dangerous: `python3 tools/repeat-control.py --selftest` also exits 0, so a gate matching only interpreter+script+exit, or matching the snapshot path loosely, admits a different command's receipt; `--snapshot .ufo/evidence/round-12/ControlGate/mismatch` is the sibling row bound to exit 1.\n\n**Bounded acceptance / falsifier**\n- Accept iff: receipt records spawned argv exactly `[\"python3\",\"tools/repeat-control.py\",\"--snapshot\",\".ufo/evidence/round-12/ControlGate\"]` from repo root \u226460 s **and** exit status `0`.\n- Must reject: a `--selftest` or `\u2026/mismatch` receipt (same tool, wrong argv); any file/JSON read showing `expected_exit: 0` presented as the command receipt; any nonzero/timed-out outcome matched on row name alone.\n\n**Scope notes**: only this row audited; no commands run, no files mutated. Report file `.ufo/waves/round-23/w1/Command01.md` intentionally not written \u2014 wave context forbids report writes; findings returned here for L1 persistence. No tools installed."
+    },
+    "fileSize": 3111,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command01"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command01.md",
+    "rowPrefixes": false,
+    "totalLines": 21
+  },
+  "text": "## Findings \u2014 `repeat-control-snapshot-clean` (registry.json:5\u201322)\n\n**Row / exact argv / expect**\n- name: `repeat-control-snapshot-clean`, kind: `gate`, status: `active`, timeout_s: 60\n- argv (4 elements, exact order): `[\"python3\", \"tools/repeat-control.py\", \"--snapshot\", \".ufo/evidence/round-12/ControlGate\"]`\n- expect: `{\"exit\": 0}` \u2014 exit code only; unlike sibling `repeat-control-selftest`, **no** `stdout_contains` binding exists for this row.\n\n**Anchor**: `\"source\": \"SKILL.md@98bea7d:1503\"` \u2014 the round-12 registry table line pinning `` `python3 tools/repeat-control.py \u2026 --snapshot DIR` `` with verdict map \"0 clean; 1 failed; 2 and 64 could-not-evaluate\" and pinned inputs `ControlGate/expected.json` + `mismatch/expected.json`.\n\n**Identity/outcome binding a receipt gate must enforce**\n1. Process identity: a spawned process whose argv equals the row's vector element-wise (not prefix/substring/normalized-paraphrase), cwd = repo root so both relative literals resolve, within `timeout_s: 60`.\n2. Outcome binding: the collected **process exit status == 0**. Semantics (repeat-control.py:449\u2013471): `snapshot_mode` loads `expected.json` (`schema repeat-control-snapshot-v1`), verifies each `run-N.{stdout,stderr,exit}` sha256 against committed `inputs`, reclassifies via `classify` (206\u2013220), and exits `EXIT_BY_ID[finding]` \u2014 0 \u27fa observed == committed `(controls_match, 0)`. Committed record observed: `expected_id=controls_match, expected_exit=0`, 9 inputs, `runs: 3`. Tamper/digest failure \u2192 exit 2; content mismatch \u2192 exit 1; usage error \u2192 64. The printed `SNAPSHOT_OBSERVED \u2026 exit=0` line is evidence, not the verdict \u2014 `expect` binds only the exit status.\n\n**Concrete false stand-in (severity: medium \u2014 gate-design risk, not a defect in the row)**\nA receipt that records *reading* `expected.json` (or this registry row, or SKILL.md:1503) and asserting `expected_exit: 0` is a document read, not a command execution: no subprocess ran, so `snapshot_tampered` (exit 2) or `controls_mismatch` (exit 1) can never be observed \u2014 a corrupted `run-2.stdout` would still \"pass.\" Equally dangerous: `python3 tools/repeat-control.py --selftest` also exits 0, so a gate matching only interpreter+script+exit, or matching the snapshot path loosely, admits a different command's receipt; `--snapshot .ufo/evidence/round-12/ControlGate/mismatch` is the sibling row bound to exit 1.\n\n**Bounded acceptance / falsifier**\n- Accept iff: receipt records spawned argv exactly `[\"python3\",\"tools/repeat-control.py\",\"--snapshot\",\".ufo/evidence/round-12/ControlGate\"]` from repo root \u226460 s **and** exit status `0`.\n- Must reject: a `--selftest` or `\u2026/mismatch` receipt (same tool, wrong argv); any file/JSON read showing `expected_exit: 0` presented as the command receipt; any nonzero/timed-out outcome matched on row name alone.\n\n**Scope notes**: only this row audited; no commands run, no files mutated. Report file `.ufo/waves/round-23/w1/Command01.md` intentionally not written \u2014 wave context forbids report writes; findings returned here for L1 persistence. No tools installed."
+}

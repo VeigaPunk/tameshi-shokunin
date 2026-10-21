@@ -1,0 +1,49 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "startLine": 1,
+      "text": "Findings complete. Per wave bounds (no file writes), scoped findings are returned here for L1 persistence instead of `.ufo/waves/round-23/w1/Command38.md`.\n\n## Registry row `wave-route-mix-selftest` \u2014 calibration findings\n\n**Axes (godspeed):** command-identity fidelity \u00b7 expected-outcome binding \u00b7 discriminability against stand-ins.\n\n**Row:** `wave-route-mix-selftest` \u2014 `tools/registry.json:865-873`, `kind: \"selftest\"`, `timeout_s: 30`, `status: \"active\"`, `tags: [\"new-r21\"]`.\n\n**Exact argv (grounded):** `[\"python3\", \"tools/wave-route-mix.py\", \"--selftest\"]` \u2014 interpreter `python3` from PATH, script path relative to repo root `/home/vgpnk/Projects/shokunin/tameshi-shokunin`, `--selftest` as the mode-distinguishing argument.\n**Exact expect (grounded):** `{\"exit\": 0, \"stdout_contains\": [\"ROUTEMIX_SELFTEST: 8/8 pass\"]}`.\n\n**Anchor (grounded):** `source: \"SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1976\"`. SKILL.md line 1976 is the instrument-table row for `tools/wave-route-mix.py` (kind `gate`), whose Self-invocation column is exactly `python3 tools/wave-route-mix.py --selftest`. [INFERENCE] Blob hash `370f2dff\u2026` unverified \u2014 computing it requires `git hash-object`, forbidden this wave (no Git spawn).\n\n**Command identity + outcome binding a receipt gate must enforce:**\n1. One process executed with exactly that argv, cwd = repo root; the marker must come from **that process's stdout stream**, not a file read, not stderr, not combined capture.\n2. Exit code exactly `0` **and** the literal `ROUTEMIX_SELFTEST: 8/8 pass` jointly. Source-grounded coupling (`tools/wave-route-mix.py:73-90`): `selftest()` runs exactly 8 named cases, returns `0` only when `bad` is empty, and prints `ROUTEMIX_SELFTEST: {passed}/{total} pass` \u2014 so `8/8` on stdout implies exit 0; exit 0 alone does not imply the marker. Mode binding matters: gate mode (`--spec \u2026`) prints `ROUTEMIX: OK/REFUSE \u2026` to **stderr** and never emits the selftest marker (`wave-route-mix.py:117-121`), so the expect clause is what discriminates `--selftest` from the sibling gate invocation.\n\n**Concrete false stand-in #1 (unrelated source read):** a receipt produced by `grep \"ROUTEMIX_SELFTEST: 8/8 pass\" tools/wave-route-mix.py` \u2014 exits 0 and the literal appears on stdout, but it only proves the string exists in source; the selftest never executed. A gate accepting any stdout bearing the literal, or any file-content read of SKILL.md:1976/wave-route-mix.py, conflates source reads with command execution.\n\n**Concrete false stand-in #2 (different command):** the sibling row `round21-measure-selftest` (`python3 tools/round21-measure.py --selftest`) also exits 0 with a near-identical `ROUND21_MEASURE_SELFTEST: 13/13 pass`. A gate matching exit-0 alone, a loose `SELFTEST: \\d+/\\d+ pass` regex, or ignoring argv would falsely accept it for this row. (Registry rows are adjacent: `wave-route-mix-selftest` at :864, `round21-measure-selftest` at :875.)\n\n**One bounded acceptance/falsifier:**\n- **Acceptance:** a receipt is valid iff it records execution of exactly `python3 tools/wave-route-mix.py --selftest` (cwd repo root) with observed exit `0` and the literal `ROUTEMIX_SELFTEST: 8/8 pass` captured from that process's stdout; genuine stdout also carries 8 `ROUTEMIX_CASE <name> ok` lines (names: parse-overrides, parse-aliases, balanced-ok, concentrated-fails, boundary-equal-ok, unrouted-fails, empty-fails, alias-cycle-unrouted) \u2014 usable as corroboration.\n- **Falsifier:** run `python3 -c \"print('ROUTEMIX_SELFTEST: 8/8 pass')\"` \u2014 exit 0, literal on stdout, zero `ROUTEMIX_CASE` lines, argv \u2260 row argv. A gate that accepts it as this row's receipt fails the source-read/execution distinction and must be rejected.\n\n**Compliance:** command not executed; no files written; no Git/jj/config spawned; only this row and its anchor/script audited. No tool installs performed (none needed)."
+    },
+    "fileSize": 3898,
+    "meta": {
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command38"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command38.md",
+    "rowPrefixes": false,
+    "totalLines": 26
+  },
+  "text": "Findings complete. Per wave bounds (no file writes), scoped findings are returned here for L1 persistence instead of `.ufo/waves/round-23/w1/Command38.md`.\n\n## Registry row `wave-route-mix-selftest` \u2014 calibration findings\n\n**Axes (godspeed):** command-identity fidelity \u00b7 expected-outcome binding \u00b7 discriminability against stand-ins.\n\n**Row:** `wave-route-mix-selftest` \u2014 `tools/registry.json:865-873`, `kind: \"selftest\"`, `timeout_s: 30`, `status: \"active\"`, `tags: [\"new-r21\"]`.\n\n**Exact argv (grounded):** `[\"python3\", \"tools/wave-route-mix.py\", \"--selftest\"]` \u2014 interpreter `python3` from PATH, script path relative to repo root `/home/vgpnk/Projects/shokunin/tameshi-shokunin`, `--selftest` as the mode-distinguishing argument.\n**Exact expect (grounded):** `{\"exit\": 0, \"stdout_contains\": [\"ROUTEMIX_SELFTEST: 8/8 pass\"]}`.\n\n**Anchor (grounded):** `source: \"SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1976\"`. SKILL.md line 1976 is the instrument-table row for `tools/wave-route-mix.py` (kind `gate`), whose Self-invocation column is exactly `python3 tools/wave-route-mix.py --selftest`. [INFERENCE] Blob hash `370f2dff\u2026` unverified \u2014 computing it requires `git hash-object`, forbidden this wave (no Git spawn).\n\n**Command identity + outcome binding a receipt gate must enforce:**\n1. One process executed with exactly that argv, cwd = repo root; the marker must come from **that process's stdout stream**, not a file read, not stderr, not combined capture.\n2. Exit code exactly `0` **and** the literal `ROUTEMIX_SELFTEST: 8/8 pass` jointly. Source-grounded coupling (`tools/wave-route-mix.py:73-90`): `selftest()` runs exactly 8 named cases, returns `0` only when `bad` is empty, and prints `ROUTEMIX_SELFTEST: {passed}/{total} pass` \u2014 so `8/8` on stdout implies exit 0; exit 0 alone does not imply the marker. Mode binding matters: gate mode (`--spec \u2026`) prints `ROUTEMIX: OK/REFUSE \u2026` to **stderr** and never emits the selftest marker (`wave-route-mix.py:117-121`), so the expect clause is what discriminates `--selftest` from the sibling gate invocation.\n\n**Concrete false stand-in #1 (unrelated source read):** a receipt produced by `grep \"ROUTEMIX_SELFTEST: 8/8 pass\" tools/wave-route-mix.py` \u2014 exits 0 and the literal appears on stdout, but it only proves the string exists in source; the selftest never executed. A gate accepting any stdout bearing the literal, or any file-content read of SKILL.md:1976/wave-route-mix.py, conflates source reads with command execution.\n\n**Concrete false stand-in #2 (different command):** the sibling row `round21-measure-selftest` (`python3 tools/round21-measure.py --selftest`) also exits 0 with a near-identical `ROUND21_MEASURE_SELFTEST: 13/13 pass`. A gate matching exit-0 alone, a loose `SELFTEST: \\d+/\\d+ pass` regex, or ignoring argv would falsely accept it for this row. (Registry rows are adjacent: `wave-route-mix-selftest` at :864, `round21-measure-selftest` at :875.)\n\n**One bounded acceptance/falsifier:**\n- **Acceptance:** a receipt is valid iff it records execution of exactly `python3 tools/wave-route-mix.py --selftest` (cwd repo root) with observed exit `0` and the literal `ROUTEMIX_SELFTEST: 8/8 pass` captured from that process's stdout; genuine stdout also carries 8 `ROUTEMIX_CASE <name> ok` lines (names: parse-overrides, parse-aliases, balanced-ok, concentrated-fails, boundary-equal-ok, unrouted-fails, empty-fails, alias-cycle-unrouted) \u2014 usable as corroboration.\n- **Falsifier:** run `python3 -c \"print('ROUTEMIX_SELFTEST: 8/8 pass')\"` \u2014 exit 0, literal on stdout, zero `ROUTEMIX_CASE` lines, argv \u2260 row argv. A gate that accepts it as this row's receipt fails the source-read/execution distinction and must be rejected.\n\n**Compliance:** command not executed; no files written; no Git/jj/config spawned; only this row and its anchor/script audited. No tool installs performed (none needed)."
+}

@@ -1,0 +1,52 @@
+{
+  "details": {
+    "contentType": "text/markdown",
+    "displayContent": {
+      "lineNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "startLine": 1,
+      "text": "**Row:** `context-capture-frozen` \u2014 `tools/registry.json` lines 349\u2013370 (`\"kind\": \"gate\"`, `\"status\": \"active\"`, `tags: [\"baseline\"]`, `timeout_s: 60`).\n\n**Exact binding the receipt gate must enforce**\n- **argv (exact token vector):** `[\"python3\", \"tools/context-capture.py\", \"--check\", \"--json\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"context_consistent\"]}`\n- **Anchor:** `\"source\": \"SKILL.md@98bea7d:1680\"` \u2014 the Round-15 gate/probe registry row \"retained invocation-context gate\" (verified in checkout: SKILL.md's registry table at ~1680 names `python3 tools/context-capture.py --check` as the frozen round-14 clean-receipt replay). The anchor is provenance metadata, not part of the executable identity.\n\n**Semantics that make this row distinct:** with `--check` and no `--receipt`/`--expected`, `run_check` takes `frozen` mode (`context-capture.py:1341\u20131352`): it re-hashes `.ufo/evidence/round-14/context-receipt.json` against pinned `FROZEN_RECEIPT_SHA256 = 05cb55b8\u202699c1a`, re-derives the verdict, and requires recomputed `id=\"context_consistent\"`, `exit=0` to match the built-in `FROZEN_EXPECTED_ID`/`FROZEN_EXPECTED_EXIT` pins (`:151\u2013159`, `:1377\u20131387`). `--json` selects `emit(result, as_json=True)` \u2192 a single-line `tameshi-context-gate-result-v1` JSON doc whose `\"id\"` field carries the string. A valid receipt is therefore a **(argv, exit, stdout) triple from one spawned child** \u2014 proof of execution, not proof that some artifact containing the substring was rea\u2026\n\n**How a non-execution can falsely stand in**\n1. *Source read:* the literal `context_consistent` appears at least 10 times in `tools/context-capture.py` itself (e.g. `:158`, `:294`), in SKILL.md prose, and in prior JSON receipts (`\"id\":\"context_consistent\"`). A gate that accepts \"observed text + exit 0\" without argv binding lets `grep context_consistent tools/context-capture.py` or `cat` of a retained receipt satisfy the row \u2014 the C1 contract's exact \"source read \u2260 command execution\" failure.\n2. *Different command, identical outcome signature:* `python3 tools/context-capture.py --selftest` exits 0 and writes `SELFTEST_CASE clean OK expected=context_consistent/0 observed=context_consistent/0 exit=0` to stdout (`:1637\u20131640`, `:1731\u20131735`; the \"clean\" case at `:1800\u20131802` uses synthetic fixture bytes, never the frozen receipt). It satisfies `exit=0 \u2227 stdout_contains \"context_consistent\"` perfectly without exercising the pinned-digest path. Even closer: `--check` *without* `--json` still emits `id=context_consistent` via the non-JSON emitter (`:1297`), and `--check --receipt \u2026 --expected \u2026` with a matching pin also returns `context_consistent`/0 \u2014 so **outcome alone cannot identify this row; only the exact argv vector can**.\n\n**Bounded acceptance / falsifier**\n- *Accept:* receipt records spawned argv byte-equal to the 4-element vector, child exit 0, and child stdout containing `context_consistent` (in practice the JSON line `\"id\":\"context_consistent\"`).\n- *Falsify:* reject any receipt whose recorded argv differs in any token \u2014 `--selftest`, `--check` alone, or the explicit `--receipt/--expected` form \u2014 or whose evidence is a file read / source-anchor lookup, **even when its (exit, stdout) pair matches**. Any gate keyed on outcome signature only is unsound for this row.\n\n*Note:* per wave constraints I ran nothing and wrote no file \u2014 findings above are for L1 to persist; the assigned report path `.ufo/waves/round-23/w1/Command13.md` was not written."
+    },
+    "fileSize": 3509,
+    "meta": {
+      "limits": {
+        "columnTruncated": {
+          "lines": {
+            "first": 8,
+            "last": 8
+          },
+          "maxColumn": 768,
+          "selectorBase": "agent://TameshiR23.Command13",
+          "unit": "chars"
+        }
+      },
+      "pagedSource": true,
+      "source": {
+        "type": "internal",
+        "value": "agent://TameshiR23.Command13"
+      }
+    },
+    "resolvedPath": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T03-31-39-302Z_01a15c83-baa6-76c9-b209-ce1123c6cc22/TameshiR23/TameshiR23.Command13.md",
+    "rowPrefixes": false,
+    "totalLines": 18
+  },
+  "text": "**Row:** `context-capture-frozen` \u2014 `tools/registry.json` lines 349\u2013370 (`\"kind\": \"gate\"`, `\"status\": \"active\"`, `tags: [\"baseline\"]`, `timeout_s: 60`).\n\n**Exact binding the receipt gate must enforce**\n- **argv (exact token vector):** `[\"python3\", \"tools/context-capture.py\", \"--check\", \"--json\"]`\n- **expect:** `{\"exit\": 0, \"stdout_contains\": [\"context_consistent\"]}`\n- **Anchor:** `\"source\": \"SKILL.md@98bea7d:1680\"` \u2014 the Round-15 gate/probe registry row \"retained invocation-context gate\" (verified in checkout: SKILL.md's registry table at ~1680 names `python3 tools/context-capture.py --check` as the frozen round-14 clean-receipt replay). The anchor is provenance metadata, not part of the executable identity.\n\n**Semantics that make this row distinct:** with `--check` and no `--receipt`/`--expected`, `run_check` takes `frozen` mode (`context-capture.py:1341\u20131352`): it re-hashes `.ufo/evidence/round-14/context-receipt.json` against pinned `FROZEN_RECEIPT_SHA256 = 05cb55b8\u202699c1a`, re-derives the verdict, and requires recomputed `id=\"context_consistent\"`, `exit=0` to match the built-in `FROZEN_EXPECTED_ID`/`FROZEN_EXPECTED_EXIT` pins (`:151\u2013159`, `:1377\u20131387`). `--json` selects `emit(result, as_json=True)` \u2192 a single-line `tameshi-context-gate-result-v1` JSON doc whose `\"id\"` field carries the string. A valid receipt is therefore a **(argv, exit, stdout) triple from one spawned child** \u2014 proof of execution, not proof that some artifact containing the substring was rea\u2026\n\n**How a non-execution can falsely stand in**\n1. *Source read:* the literal `context_consistent` appears at least 10 times in `tools/context-capture.py` itself (e.g. `:158`, `:294`), in SKILL.md prose, and in prior JSON receipts (`\"id\":\"context_consistent\"`). A gate that accepts \"observed text + exit 0\" without argv binding lets `grep context_consistent tools/context-capture.py` or `cat` of a retained receipt satisfy the row \u2014 the C1 contract's exact \"source read \u2260 command execution\" failure.\n2. *Different command, identical outcome signature:* `python3 tools/context-capture.py --selftest` exits 0 and writes `SELFTEST_CASE clean OK expected=context_consistent/0 observed=context_consistent/0 exit=0` to stdout (`:1637\u20131640`, `:1731\u20131735`; the \"clean\" case at `:1800\u20131802` uses synthetic fixture bytes, never the frozen receipt). It satisfies `exit=0 \u2227 stdout_contains \"context_consistent\"` perfectly without exercising the pinned-digest path. Even closer: `--check` *without* `--json` still emits `id=context_consistent` via the non-JSON emitter (`:1297`), and `--check --receipt \u2026 --expected \u2026` with a matching pin also returns `context_consistent`/0 \u2014 so **outcome alone cannot identify this row; only the exact argv vector can**.\n\n**Bounded acceptance / falsifier**\n- *Accept:* receipt records spawned argv byte-equal to the 4-element vector, child exit 0, and child stdout containing `context_consistent` (in practice the JSON line `\"id\":\"context_consistent\"`).\n- *Falsify:* reject any receipt whose recorded argv differs in any token \u2014 `--selftest`, `--check` alone, or the explicit `--receipt/--expected` form \u2014 or whose evidence is a file read / source-anchor lookup, **even when its (exit, stdout) pair matches**. Any gate keyed on outcome signature only is unsound for this row.\n\n*Note:* per wave constraints I ran nothing and wrote no file \u2014 findings above are for L1 to persist; the assigned report path `.ufo/waves/round-23/w1/Command13.md` was not written.\n\n[Some lines truncated to 768 chars. Use agent://TameshiR23.Command13:raw:8-8 to read line 8 whole]"
+}
