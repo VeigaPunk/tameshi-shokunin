@@ -1223,3 +1223,8 @@ metadata and its failure are preserved; production gate source is unchanged.
   tampered new stream's digest is no longer sufficient. Failed scratch
   chronology, identical921ef80/4b7c682 tool bytes and incomplete
   no-checkout materialization are documented without rewriting receipts.
+- W1 SiblingBoundary's namespace check ties S008 immutable cells to
+  tameshi's SHA-pinned source row; foreign own-work rows are rejected.
+  Sibling gates/censuses are explicitly rejected as closure evidence for
+  tameshi metadata defects. All64 build reports returned, none dead or
+  replaced; `completion1.json` records each actual report hash/size/role.

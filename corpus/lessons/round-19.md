@@ -208,3 +208,23 @@ no-checkout scratch materialization are explicitly documented in the
 round18 erratum. Earlier failed chronology fields confer no success.
 The final source/receipt comparison is not a claim of producer
 authentication or exhaustive adversarial coverage.
+
+SiblingBoundary's identity check is incorporated: R18-2 compares S008's
+immutable cells with tameshi's pinned round18 source row, not only its
+status/date/used-by. A foreign `own-work` row cannot become tameshi's
+paper by changing used-by. **Rejected:** using kumitate's gate or any
+sibling census as evidence for R18-1/R18-2/R18-3; those defects concern
+tameshi metadata and its own frozen source history. R18-5's sibling
+hashes are retained external observations, not current sibling state.
+The w1 MetadataDraft “kumitate-side S063” wording is a misownership;
+S063 is tameshi's row and was fixed here. S061's missing used-by backlink
+to the guard note remains a marked curation gap outside C1.
+
+W1 completion: all64 original seats returned; none replaced, none dead
+or unstarted. Reports are committed under `.ufo/waves/round-19/w1/`.
+L1 holds the frozen planner; the wave is advisory. A separate64-item
+falsifier wave attacks each concrete build report against its primary
+surface; this is not64 copies of one generic verdict. Initial after
+receipts' missing-durability flags were valid at observation time and
+are resolved only when the receipt-bearing helper commit lands, not
+by treating an untracked file as evidence.

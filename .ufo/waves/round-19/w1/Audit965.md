@@ -1,0 +1,22 @@
+# Audit965 — round-18 retained receipt (observed 2026-10-21)
+
+**Axes:** artifact integrity; execution/provenance; revision and input binding; historical applicability.
+
+**Scope:** read `.ufo/evidence/round-18/final/audit-965.stdout`, its empty `.stderr`, `.ufo/evidence/round-18/coldread/traces/L1/audit-965.json`, and only the coldread-ledger row whose `traces` contains that JSON. No receipt re-execution or broader completeness claim.
+
+## Finding — Moderate: trailing ancestor-run assertion exceeds the trace
+
+`audit-965.stdout:67` ends with “VERIFIED actual execution receipts; ancestor runs have the same instrument blobs as the read revision.” The bound `python3 -c` program in `audit-965.json:33-34` only opens the listed `SKILL.md` section and `spec.paths`; no ancestor-run input is listed and no ancestor/instrument-blob comparison is performed. It prints this sentence after its listed assertions, so the sentence is not itself evidence for the ancestor claim. This is **unsupported by this receipt**, not shown false.
+
+## Verified receipt facts
+
+- Direct command: `sha256sum .ufo/evidence/round-18/final/audit-965.stdout && wc -c < .ufo/evidence/round-18/final/audit-965.stdout` → SHA-256 `a66e51f6664933bb1dcbcd8798bdb66699cefe4fb5cdc9b9bbbf4743f8a8bdac`, 5,614 bytes. The captured `.stderr` is empty. Neither the trace nor its ledger row records a digest for `audit-965.stdout`; this is a measured content hash, not a comparison with an independently recorded expected stdout hash.
+- The trace argv binds a `bwrap` invocation (`--ro-bind / /`, a bind of `/tmp/tameshi-r18-L1-final-a2vitd82`, `--unshare-net`, `--die-with-parent`), then `env -i` and `python3 -c`. Its cwd/root are `/tmp/tameshi-r18-L1-final-a2vitd82/fleet/tameshi-shokunin`. The embedded program reads `SKILL.md` lines 965–1008, hashes/prints the specified paths, and checks these exact conditions: registry `held == total == 31`; probes contains `open=0 closed=11 total=11`; regression contains `cases=8 passed=8`; historical contains `cases=4 passed=4`; case7 and case8 each contain `killed=5 survived=5 inconclusive=0 kill-rate=50%`; disposition JSON has `status == clean`; before JSON has `status == failed`; repeat output contains `controls_match`. It is one Python command (`exit: 0` in trace; ledger `commands_executed_count: 1`), not execution of the regression tool or a full replay.
+- The trace records `rev=a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, `rev_reason=null`, and `tracked_filter=true`; the ledger row records the same `read_rev`. Trace input digests correspond to the `OPEN` lines in stdout, and the ledger row records those same 13 non-`SKILL.md` inputs. The trace additionally records the `SKILL.md` file digest; the ledger row’s `skill_sha256` matches it. The ledger’s separate section `sha256` is `8fe1cc298251c636320b65588c6ce7a6c99f2f6275d6de8e8bfbd0e79fb78850`, not the stdout digest. Trace metadata has empty `untracked`, `external`, and `live_lane_reads` maps and `dropped_home_count: 0`.
+- The ledger row is `start: 965`, `end: 1009`, class `instruction`, verdict `gap-minor`, `blocking_gaps: 0`, `wrong_expectations: 0`, `minor_gaps: 1`. The trace’s supplied `end: 1008` is used as Python’s exclusive slice bound (`lines[start-1:end]`), so it prints lines 965–1008; the ledger end value is consistent with that boundary if its range uses the usual exclusive end. The row itself does not explain the one minor gap.
+
+## C1 historical-evidence impact
+
+C1 repairs do not retroactively alter these captured stdout/stderr/trace bytes. This receipt remains evidence of the old recorded run/input set, with `read_rev` a9c94c5…. It is not evidence that a repaired revision passes: if a repair changes any hashed input (notably `tools/mutate-and-run.sh`, the fleet ledger, or the checked receipt files), its current content is outside this run’s recorded digests and needs fresh evidence. The stdout’s unsupported ancestor-run sentence remains unsupported regardless of later repairs.
+
+**Verification gap:** no independent expected stdout digest is present in the allowed pair or ledger entry; no ancestor-run comparison was available in the bound input set. No installations or additional checks were performed.

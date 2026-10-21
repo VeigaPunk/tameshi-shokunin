@@ -208,6 +208,7 @@ def evaluate(data):
         note = text(LESSON).split('## Errata R18-4 / R18-5', 1)[1]
         return (value['revision'] == REV18 and value['rev_input'] == REV18
                 and value['overrides_used'] is False and value['ledger_committed'] is True
+                and value['ledger_source'] == 'rev' and value['trace_gate'] == 'strict'
                 and instrument['receipt'] == MEASURE
                 and instrument['receipt_sha256'] == digest(data[MEASURE])
                 and instrument['revision'] == REV18
@@ -261,6 +262,7 @@ def selftest():
     data[OLD_TALLY] = data[WITNESS[:-5] + '.stdout']
     value = {'revision': REV18, 'rev_input': REV18, 'overrides_used': False,
              'ledger_committed': True, 'calibration_restraint_score': 8,
+             'ledger_source': 'rev', 'trace_gate': 'strict',
              'coldread': {'sections_covered': 60, 'sections_total': 60,
                           'box3_full_page': True}}
     make_receipt(MEASURE, ['python3', '.ufo/evidence/round-18/measure.py', '--repo',
@@ -313,6 +315,17 @@ def selftest():
     mutant = dict(data); mutant[LESSON] = mutant[LESSON].replace(
         'five deleted table lines', 'S999 five deleted table lines')
     cases.append(('extra-changed-source-id', mutant, 1, ['R18-3']))
+    for field, replacement in [('ledger_source', 'file'), ('trace_gate', 'legacy'),
+                               ('overrides_used', True), ('revision', 'a'*40)]:
+        mutant = dict(data); changed = dict(value); changed[field] = replacement
+        outpath = MEASURE[:-5] + '.stdout'
+        mutant[outpath] = json.dumps(changed)
+        row = json.loads(mutant[MEASURE]); row['stdout_sha256'] = digest(mutant[outpath].encode())
+        mutant[MEASURE] = json.dumps(row)
+        instrument = json.loads(mutant[INSTRUMENT])
+        instrument['receipt_sha256'] = digest(mutant[MEASURE].encode())
+        mutant[INSTRUMENT] = json.dumps(instrument)
+        cases.append(('measurement-' + field, mutant, 1, ['R18-5']))
     mutant = dict(data)
     source_lines = []
     for line in mutant[SOURCES].splitlines():

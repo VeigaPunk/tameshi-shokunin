@@ -1,0 +1,15 @@
+# Audit 1069 — historical receipt review
+
+Axes reviewed: receipt integrity; trace/argv binding; revision and input provenance; preservation under C1 repairs.
+
+## Findings
+
+- **Receipt digest is observed, not cross-anchored.** `sha256sum .ufo/evidence/round-18/final/audit-1069.stdout` returned `8f4db1c8f3fda366e31752e163691d3b30c10d6fa2f2ff5f3824ec2b4221f55d`. The corresponding `.stderr` is empty. Neither `.ufo/evidence/round-18/coldread/traces/L1/audit-1069.json` nor this audit's `.ufo/evidence/round-18/coldread/ledger.json` entry records that stdout digest as an expected output hash. Thus this confirms the currently retained stdout bytes' digest, not equality to an independently recorded stdout hash.
+- **Trace argv is consistent with, but does not hash-bind, the retained output.** Trace `argv` records `bwrap … env -i … python3 -c …`; its JSON argument has `start=1069`, `end=1090` and the path list. The captured output begins `SECTION 1069 1090`, lists the paths opened by that script, and ends with the self-report: “VERIFIED actual execution receipts; ancestor runs have the same instrument blobs as the read revision” (stdout line 73). Trace records `exit=0`, `cwd`/`root` equal to its `--chdir`, and these command/input facts; it has no output file path or stdout digest. The self-report is output content, not independent evidence of command completeness or of ancestor identity. No command was re-executed for this review.
+- **Revision and input pins are partly corroborated, with two ledger discrepancies.** Trace records `rev=a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, `exit=0`, `tracked_filter=true`, and hashes for its input set; ledger `read_rev` matches that revision. Trace includes a `SKILL.md` input hash, whereas the ledger entry omits it from `inputs` and lists it under `inputs_dropped`. Also, the ledger entry says `start=1069,end=1091`, while both trace and stdout say `start=1069,end=1090`. These are unresolved provenance/scope differences; the receipt pair does not resolve them. The ledger entry's `sha256=d7bd507d5963b4ca5ace0f28eb89207944776188038d52bf1c45d83d12d769d5` is not the computed stdout digest and is not labeled as one.
+
+## C1 relation and residual risk
+
+A later C1 repair on the delivered lane revision does not, by itself, retroactively invalidate these retained historical bytes or the trace's recorded run. It would compromise this record if it overwrote/rewrote the stdout, stderr, trace, or ledger commitment, or if the record were subsequently represented as measuring changed inputs. Importantly, this trace pins `a9c94c5c3a3ae857d7ee25e54fe4cf0f53fbbaa4`, not the C1 frozen baseline `7243e7f163f08978c8fd9b6c1ef67a2fefe7d190`; this receipt alone therefore does not establish a run on that C1 baseline. An ancestry relation is not established by the assigned evidence.
+
+Sources read: `.ufo/evidence/round-18/final/audit-1069.stdout` and `.stderr`; `.ufo/evidence/round-18/coldread/traces/L1/audit-1069.json`; the `audit-1069` record in `.ufo/evidence/round-18/coldread/ledger.json`. The source artifacts carry no capture date; no date or ancestry was inferred. No tools were installed.
