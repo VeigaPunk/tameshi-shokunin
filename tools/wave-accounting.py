@@ -14,6 +14,9 @@ from pathlib import Path
 import sys
 
 
+# Loading the frozen selftest oracle must not create a live-tree __pycache__.
+sys.dont_write_bytecode = True
+
 def unique_object(pairs):
     result = {}
     for key, value in pairs:
