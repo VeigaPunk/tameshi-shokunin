@@ -483,3 +483,20 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     MistakeRule). Falsifier: the retained source-read pair must still return
     1/ARGV_MISMATCH while the correct command returns 0; the 43-row replay
     cannot fail on argv by construction.
+
+## Criterion appended — round 24 (2026-10-21)
+
+48. A routed hardening gap does not count as repaired until a frozen predicate
+    for it fails at the base revision and holds after the change.
+    - The predicate must use the public detector: a selftest kill of a named
+      mutant, a pinned registry row failing on a self-consistent substituted
+      bundle, or a refusing CLI projection.
+    - A gap already caught at the base, such as round23's any-token stdout
+      mutant, stays in the denominator as a control. It does not count as a
+      repair.
+    - Superseding a registry row is append-only: `superseded` plus
+      `superseded_by`, with a new active row.
+
+    Captured by: `lessons/round-24.md` Mistakes (round23 routed defects, loss
+    of all 20 wave-2 reviewers). Falsifier: the round24 ruler gives 1/11 at
+    6a1821a and is expected to give 11/11 after the change.

@@ -161,11 +161,12 @@ def selftest():
     changed('string-exit', lambda b: b['receipts'][0].update(exit='0'), 2, 'INVALID_RECEIPT')
     changed('bool-expected-exit', lambda b: b['requirements'][0]['expect'].update(exit=False), 2, 'INVALID_REQUIREMENT')
     changed('blank-argv', lambda b: b['requirements'][0].update(argv=[]), 2, 'INVALID_REQUIREMENT')
-    fixtures = Path(__file__).resolve().parents[1] / '.ufo/evidence/round-23/extra-cases.json'
+    evidence = Path(__file__).resolve().parents[1] / '.ufo/evidence'
     try:
-        supplemental = decode(fixtures.read_bytes())['cases']
-        cases.extend((row['name'], row['bundle'], row['expected_exit'], row['finding_ids'])
-                     for row in supplemental)
+        for fixtures in (evidence / 'round-23/extra-cases.json', evidence / 'round-24/extra-cases.json'):
+            supplemental = decode(fixtures.read_bytes())['cases']
+            cases.extend((row['name'], row['bundle'], row['expected_exit'], row['finding_ids'])
+                         for row in supplemental)
     except (OSError, ValueError, KeyError, TypeError):
         print('COMMAND_BINDING_SELFTEST: fixture-unavailable')
         return 1

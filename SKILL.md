@@ -2039,3 +2039,21 @@ revision, so the replay verdict tests only exit and stdout. Argv
 discrimination rests on the source-read pair and the synthetic cases. The
 gate binds bundle-declared requirements; requirement freezing is the
 replay instrument's pre-execution check (QUALITY47).
+
+Round24 addition (same registry section; same-ground calibration):
+`corpus/knowledge/replay-projection-hardening.md`, minedS084/S085, QUALITY48.
+The round23 replay instrument stays unchanged; its successor tool refuses
+to publish a binding bundle from a rejected, cleanup-failed or over-limit
+runner row. It lists live-dependent rows, and it realpath-normalises fleet
+identity.
+
+| Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| `tools/registry-replay.py` | gate | `python3 tools/registry-replay.py --project OBS --out DIR --json`; `--run --repo LANE --rev REV --requirements FILE --registry-baseline FILE --out DIR`; `--plan --repo LANE --json` | 0 bundle published or plan printed; 1 refused (RUNNER_NOT_HELD, RUNNER_CLEANUP_FAILED, STREAM_LIMIT); 2 invalid/unavailable input, could-not-evaluate; 64 usage, could-not-evaluate | `python3 tools/registry-replay.py --selftest` | literal fixtures in the tool; frozen requirement/registry digests come from the caller's files | writes only under `--out`; rows run in a private clone whose fleet mirror symlinks live siblings | tameshi |
+
+Registry rows `command-binding-selftest-r24` (44/44), `command-binding-frozen-clean-pinned`
+and `command-binding-source-read-red-pinned` supersede the three round23 rows
+append-only. The two pinned rows also require their exact `bundle_sha256`.
+Frozen ruler: `.ufo/evidence/round-24/measure.py` (eleven predicates).
+Receipt argv, cwd and revision remain instrument-supplied, and no producer
+authentication is claimed.

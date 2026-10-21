@@ -1,0 +1,408 @@
+{
+ "schema": "command-binding-extra-cases-v1",
+ "round": 24,
+ "source": "round23 routed defects ArgvExact/MutationDesign; fixtures only, gate evaluate() unchanged",
+ "cases": [
+  {
+   "name": "argv-swapped-between-names",
+   "bundle": {
+    "schema": "command-binding-v1",
+    "revision": "1111111111111111111111111111111111111111",
+    "cwd": "/fixture/repo",
+    "requirements": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "expect": {
+       "exit": 0,
+       "stdout_contains": [
+        "CLEAN"
+       ]
+      }
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "expect": {
+       "exit": 1,
+       "stdout_contains": [
+        "REJECT"
+       ]
+      }
+     }
+    ],
+    "receipts": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 0,
+      "stdout": "CLEAN\n",
+      "stderr": ""
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 1,
+      "stdout": "REJECT\n",
+      "stderr": ""
+     }
+    ]
+   },
+   "expected_exit": 1,
+   "finding_ids": [
+    "ARGV_MISMATCH"
+   ],
+   "why": "each receipt argv belongs to some requirement, but not to its own name (kills a name-insensitive comparison)"
+  },
+  {
+   "name": "argv-case-only",
+   "bundle": {
+    "schema": "command-binding-v1",
+    "revision": "1111111111111111111111111111111111111111",
+    "cwd": "/fixture/repo",
+    "requirements": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "expect": {
+       "exit": 0,
+       "stdout_contains": [
+        "CLEAN"
+       ]
+      }
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "expect": {
+       "exit": 1,
+       "stdout_contains": [
+        "REJECT"
+       ]
+      }
+     }
+    ],
+    "receipts": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--Check"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 0,
+      "stdout": "CLEAN\n",
+      "stderr": ""
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 1,
+      "stdout": "REJECT\n",
+      "stderr": ""
+     }
+    ]
+   },
+   "expected_exit": 1,
+   "finding_ids": [
+    "ARGV_MISMATCH"
+   ],
+   "why": "case-only difference is a different argv (kills case folding)"
+  },
+  {
+   "name": "argv-padded-token",
+   "bundle": {
+    "schema": "command-binding-v1",
+    "revision": "1111111111111111111111111111111111111111",
+    "cwd": "/fixture/repo",
+    "requirements": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "expect": {
+       "exit": 0,
+       "stdout_contains": [
+        "CLEAN"
+       ]
+      }
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "expect": {
+       "exit": 1,
+       "stdout_contains": [
+        "REJECT"
+       ]
+      }
+     }
+    ],
+    "receipts": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       " --check"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 0,
+      "stdout": "CLEAN\n",
+      "stderr": ""
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 1,
+      "stdout": "REJECT\n",
+      "stderr": ""
+     }
+    ]
+   },
+   "expected_exit": 1,
+   "finding_ids": [
+    "ARGV_MISMATCH"
+   ],
+   "why": "whitespace-padded token (kills stripping)"
+  },
+  {
+   "name": "argv-repeated-flag",
+   "bundle": {
+    "schema": "command-binding-v1",
+    "revision": "1111111111111111111111111111111111111111",
+    "cwd": "/fixture/repo",
+    "requirements": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "expect": {
+       "exit": 0,
+       "stdout_contains": [
+        "CLEAN"
+       ]
+      }
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "expect": {
+       "exit": 1,
+       "stdout_contains": [
+        "REJECT"
+       ]
+      }
+     }
+    ],
+    "receipts": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check",
+       "--check"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 0,
+      "stdout": "CLEAN\n",
+      "stderr": ""
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 1,
+      "stdout": "REJECT\n",
+      "stderr": ""
+     }
+    ]
+   },
+   "expected_exit": 1,
+   "finding_ids": [
+    "ARGV_MISMATCH"
+   ],
+   "why": "repeated flag (kills de-duplication)"
+  },
+  {
+   "name": "negative-exit-mismatch",
+   "bundle": {
+    "schema": "command-binding-v1",
+    "revision": "1111111111111111111111111111111111111111",
+    "cwd": "/fixture/repo",
+    "requirements": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "expect": {
+       "exit": 0,
+       "stdout_contains": [
+        "CLEAN"
+       ]
+      }
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "expect": {
+       "exit": 1,
+       "stdout_contains": [
+        "REJECT"
+       ]
+      }
+     }
+    ],
+    "receipts": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": -9,
+      "stdout": "CLEAN\n",
+      "stderr": ""
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 1,
+      "stdout": "REJECT\n",
+      "stderr": ""
+     }
+    ]
+   },
+   "expected_exit": 1,
+   "finding_ids": [
+    "EXIT_MISMATCH"
+   ],
+   "why": "signal-style negative exit against expected 0 (kills ignoring negative exits)"
+  },
+  {
+   "name": "negative-exit-declared-match",
+   "bundle": {
+    "schema": "command-binding-v1",
+    "revision": "1111111111111111111111111111111111111111",
+    "cwd": "/fixture/repo",
+    "requirements": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "expect": {
+       "exit": 0,
+       "stdout_contains": [
+        "CLEAN"
+       ]
+      }
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "expect": {
+       "exit": -15,
+       "stdout_contains": [
+        "REJECT"
+       ]
+      }
+     }
+    ],
+    "receipts": [
+     {
+      "name": "clean",
+      "argv": [
+       "gate",
+       "--check"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": 0,
+      "stdout": "CLEAN\n",
+      "stderr": ""
+     },
+     {
+      "name": "red",
+      "argv": [
+       "gate",
+       "--bad"
+      ],
+      "cwd": "/fixture/repo",
+      "revision": "1111111111111111111111111111111111111111",
+      "exit": -15,
+      "stdout": "REJECT\n",
+      "stderr": ""
+     }
+    ]
+   },
+   "expected_exit": 0,
+   "finding_ids": [],
+   "why": "a declared negative expected exit that matches is clean; negatives are typed integers"
+  }
+ ]
+}

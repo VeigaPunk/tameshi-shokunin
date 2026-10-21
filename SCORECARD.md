@@ -1123,3 +1123,28 @@ Planned successor work, routed rather than awarded:
 - hashing the clone copy of the runner
 - realpath fleet root
 - bounded streams
+
+## Round 24 — declared command-binding hardening (2026-10-21)
+
+C1 calibration, tied lowest owned numeric axis (depth 8, calibration 8). The
+claim covers eleven frozen predicates in `.ufo/evidence/round-24/contract.json`,
+landed at e338f1bd0749a1786d95d3d3cd9572bb10757667 before any build seat:
+- K1–K3: argv swapped-between-names, case-fold and negative-exit mutants
+  killed by the public selftest;
+- K4: the any-token control;
+- K5–K6: bundle-digest pins on the two frozen registry rows;
+- K7–K11: projection refusal for not-held, cleanup-failed and over-limit
+  rows, the live-dependent listing and realpath identity.
+
+Before, at 6a1821a8897eea6e7d9669292160ec9593669409: 1/11, exit 1
+(`before.json`). K4 is already killed at base by round23's `all-of-tokens`
+case and is kept as a control.
+
+Counting command: `python3 .ufo/evidence/round-24/measure.py --repo CLONE_AT_REV`.
+Numeric expertise stays 8 (delta 0), not a fixture-count score. Source rows
+S084 and S085 are opened. Measured results are recorded below only after
+execution.
+
+| capabilities addition | What it can now do | Evidence | First-working round |
+|---|---|---|---|
+| refusing-registry-replay | replay frozen registry requirements, refuse to publish a binding bundle from rejected/cleanup-failed/over-limit rows, list live-dependent rows, realpath fleet identity | `tools/registry-replay.py`; `.ufo/evidence/round-24/` final receipts | 24 |

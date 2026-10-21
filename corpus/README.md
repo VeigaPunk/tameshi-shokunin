@@ -367,3 +367,11 @@ source revision/digest. New replay observations retain full streams and
 actual clone cwd; historical missing row metadata is never retrofilled.
 Trusted bundle consistency is not producer/provider authentication.
 No F1–F10 status changes, independent cold-read or promotion credit.
+
+## Round24 — command-binding hardening
+
+| Entry | Ground | Evidence |
+|---|---|---|
+| `knowledge/replay-projection-hardening.md` | same-ground calibration; routed round23 hardening gaps as falsifiable predicates | minedS084, S085; `tools/registry-replay.py`; `.ufo/evidence/round-24/{contract,measure}.py/json` |
+
+No F1–F10 status changes, independent cold-read or promotion credit.
