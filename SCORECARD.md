@@ -945,3 +945,19 @@ and C2's9-surface denominator. No promotion/independent-read credit.
 Wave2:75 seats,40 completed/35 provider deaths; round total146 unique
 seats,68 completed/78 dead. No dead seat was replaced. Original outcomes
 and fresh attack inventory are in `.ufo/waves/round-21/`.
+
+### Original-outcome correction (round21)
+
+The preceding40-completed/35-dead wave2 and68/78 round totals are superseded.
+Two partial reports came from failed seats: original callback status wins.
+Wave2 actually **38 completed/37 dead**; total146 unique seats,
+**66 completed/80 dead**, no replacement. Exact terminal results:
+`.ufo/waves/round-21/original-outcomes2-corrected.json`.
+
+At measured commit `40508a120ee13e6088a594decc66d2da759bd0cc`,
+the integrated battery held40/40 active (four superseded), exit0;
+current strict source-credit62/62, restraint8, depth8, no overrides.
+Evidence: `final/registry.json` and the preserved revision-specific monitor.
+This is the observed restoration8, not a new calibration claim or promotion.
+Accounting-append input drift receives a separately recorded source refresh;
+the canonical final monitor carries its actual measured revision.

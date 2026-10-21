@@ -159,3 +159,23 @@ including source hashes and section text, and retains its199-entry prefix.
 This is not a new blind cold-read or execution of every declared recipe.
 Canonical final observations and actual revisions are retained under
 `.ufo/evidence/round-21/final/`, separately from harmed A/B intermediates.
+
+## Outcome-accounting erratum (round21)
+
+The wave2 “forty returned;35 provider-dead” statement above is superseded:
+**38 completed/37 dead**, not40/35. Two failed identities wrote partial
+reports before their provider failures: ProfileBashTsukuroiCensus and
+V01WitnessTests. They remain dead, never rehabilitated by file presence.
+Round total146 unique seats is66 completed/80 dead; no replacements.
+`original-outcomes2-corrected.json` retains actual callback metadata.
+Mistake class attribution/provider; captured-by QUALITY43's dispatched≠
+completed rule and the original-outcome rule. The same census population
+exposes40 report files but only38 successful task outcomes: the corrected
+counter is shown able to reject those two false-positive completions.
+
+The first complete integrated battery really held40/40 active rows
+(four superseded), and the current strict monitor really held62/62,
+restraint8, depth8 at40508a1 after34 traced author source reads.
+This erratum changes source inputs and therefore requires its own
+recorded re-anchor before a final no-harm assertion. Prior233 ledger
+entries, including the34 real reads, remain unchanged as data.

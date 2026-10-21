@@ -1469,3 +1469,16 @@ metadata and its failure are preserved; production gate source is unchanged.
   with their actual measured revisions; older harmed receipts stay visible.
   Source reads are L1-author input re-anchors, not blind/independent
   cold-read or required-command coverage. No tool installs or new L0.
+- Outcome accounting correction: the preceding wave2 counts40/35 and total
+  68/78 counted two partial report files as completed seats. Original
+  callback statuses prove wave2 **38 completed/37 dead**, total146 seats
+  **66 completed/80 dead**. ProfileBashTsukuroiCensus and V01WitnessTests
+  remain provider-dead despite retained partial artifacts. No seat was
+  replaced. `original-outcomes2-corrected.json` preserves the actual
+  terminal results and explicitly supersedes the file-presence inference.
+- Integrated full battery at40508a1 actually held40/40 active rows,
+  four superseded, exit0. Current strict monitor at that revision actually
+  held62/62, restraint8, depth8, no overrides, after34 traced author reads.
+  This accounting correction itself changes source inputs; the canonical
+  final monitor records the separately re-anchored current state, not a
+  borrowed historical result. Original233 ledger entries are retained.
