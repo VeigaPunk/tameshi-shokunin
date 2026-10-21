@@ -1374,3 +1374,17 @@ metadata and its failure are preserved; production gate source is unchanged.
   exits0→1→0, on an isolated copy. Baseline C1 was remeasured0/6 exit1
   with the frozen instrument; the inherited --check spelling actually
   exits2 and is retained as an invocation failure, not a success receipt.
+- Observed C1 at2f1f855: corrected6/open0/total6 exit0; reverified
+  baselinec144dcd:0/6 exit1, identical frozen ruler SHA f34dc233… and
+  runner SHA a67bffa9…. The targeted repaired selector row held1/1,
+  public12/12. `registered-effective.json` explicitly combines35 passing
+  unchanged rows atdc046fac with that one row at2f1f855; it is not a
+  new all-green full-suite run. Source census exit0,76 rows unchanged,
+  only S049 used-by changed; exact commands/cells in source-invariants.json.
+- Freeze final corpus/instruction metadata before source re-anchoring.
+  Current strict no-harm evidence is the committed round20 ledger plus
+  `.ufo/evidence/round-20/final/monitor-final.json` and stdout, carrying
+  its actual measured revision. Original184 records (159+25), failed
+  expectations and failed intermediate receipts stay retained. New reads
+  are explicitly L1-author source re-anchors, not blind/independent
+  cold-read, recipe execution or required-command coverage.

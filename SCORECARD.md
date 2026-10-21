@@ -823,3 +823,32 @@ and SELECTOR_OVERRIDE_FORBIDDEN; the frozen credit algorithm is unchanged.
 Delivered strict no-harm results belong in the final receipt, not this
 failed intermediate. This bounded enforcement repair is maintenance
 within C1/no-harm, not a new axis claim or changed six-item denominator.
+
+### Observed C1 outcome
+
+Using one unchanged frozen ruler SHA
+`f34dc233eee33f4fea9a82c391bfb57ebfef8983f5c7146b4d2dc0b6b3be4e2d`
+and wrapper SHA
+`a67bffa9c562ee1c22e8fbd580668379b452e63df82ee6141fe54623d5931afa`,
+the published command above actually measured baseline
+`c144dcd807166dfc275c1ac2936fd2fa4b678bda`: corrected0/open6/total6,
+exit1 → `2f1f855975a98a59a73577a594db9abd4393cfc4`:
+corrected6/open0/total6, exit0. Receipts:
+`.ufo/evidence/round-20/final/c1-before-current.json`, `c1-after.json`,
+and their stdout/stderr files. C1's bounded lane verdict is **improved**,
+unit six named predicates. Numeric expertise is not increased.
+
+Registered verification is deliberately not misrepresented as one green
+full battery: the full run at `dc046fac5c05dda0a3d067afd25d7435c92b582a`
+held35/36, with one new selector assertion TypeError. The repaired row
+alone held1/1 at `2f1f855975a98a59a73577a594db9abd4393cfc4`,
+public selector12/12. Other new public selftests were gate20/20 and
+maintained ruler10/10; independent CLI controls20/20. The effective
+mixed-revision registry receipt names each row's observed revision.
+
+Source rows76→76, A67/B7/C2 and mined48/queued23/rejected5; only S049's
+used-by cell changed. Source/census commands and outputs are retained in
+`final/source-invariants.json`, `census-start.json` and `final/census-end.stdout`.
+All original entries and failed observations remain. The final current
+strict no-harm observation is separately retained as `final/monitor-final.stdout`
+with its measured revision; no historical60/60 is a substitute for it.

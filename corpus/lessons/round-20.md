@@ -155,3 +155,44 @@ removal probe observed pristine20/20 exit0 → mutant19/20 exit1 →
 restored20/20 exit0 (`final/guard-removal.json`), with only the frozen-window
 guard changed in the private copy. None of the eighteen prior survivors
 is exercised or closed by that new-guard probe.
+
+## Observed bounded outcome and final evidence contract
+
+C1 actually measured0/6 exit1 at baselinec144dcd →6/6 exit0 at
+`2f1f855975a98a59a73577a594db9abd4393cfc4`, with the identical frozen
+instrument SHA f34dc233… and maintained runner SHA a67bffa9…
+(`final/c1-before-current.json`, `final/c1-after.json`, full stdout/stderr).
+All eight input digests are retained by the ruler. The same fixed
+six-item population is used on both endpoints.
+
+The repaired selector row held1/1 at2f1f855, public selftest12/12.
+`final/registered-effective.json` is an explicitly derived, mixed-revision
+view of35 unchanged passing full-battery rows plus this one repaired row;
+it is **not** a newly executed36/36 full battery. The original35/36
+failure and traceback remain, as do the override-red and46/61 monitors.
+
+Sources are76→76, A67/B7/C2, mined48/queued23/rejected5; only S049
+used-by changed. The final source census exited0, with the same six W04
+duplicate-URL warnings (S047/S048/S075–S078). Exact counting command,
+source snapshots' revisions and changed cells are in
+`final/source-invariants.json`; start/end census output is retained.
+No new source row, knowledge admission or frontier movement is counted.
+
+For current no-harm maintenance, retain every prior entry, add only
+actual traced L1-author source re-reads for invalidated inputs, and run
+the unchanged credit algorithm at a committed delivered revision.
+The final receipt `final/monitor-final.json` and its stdout are the
+authority for the resulting count, score, strictness and no-override
+fields; the earlier46/61 must never be relabeled green. This is neither
+an independent/blind cold-read nor required-command coverage.
+
+All76 unique seats are accounted for: one validated72-seat build wave
+(24 original completions/48 dead) plus four successful bounded residual
+reviews. No dead seat was replaced. Later unsolicited peer-triggered
+wakeups remain supplemental, not green original seats. Tool installs:
+none. Stale-lane: this replacement owns the one already-claimed round;
+no other mission or round counter is opened by this lane.
+
+Path convention: `final/...` in this lesson abbreviates the repo-relative
+`.ufo/evidence/round-20/final/...`; build and residual seat names resolve
+under `.ufo/waves/round-20/w1/` and `.ufo/waves/round-20/residual/`.
