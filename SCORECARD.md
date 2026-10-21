@@ -906,3 +906,21 @@ no replacement. Two whole-payload job-cap refusals preceded the
 successful third identical dispatch. Evidence:
 `.ufo/waves/round-21/{original-outcomes1.json,dispatch-refusal-01.json,
 dispatch-attempt-02.json,dispatch-attempt-03.json}`.
+
+### Landed implementation measurement and harmed intermediate
+
+C1 measured at helper-landed
+`370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb`: killed18/survived0/
+inconclusive0, exit0, same frozen ruler/population as0/18 baseline.
+`.ufo/evidence/round-21/c1-after-A.json` retains exact instrument SHA,
+argv, aware interval and complete streams. C1 lane verdict improved;
+operability has no numeric expertise score.
+
+At that same revision the current strict calibration monitor actually
+reports32/62, restraint6, no overrides; depth remains8. This intermediate
+is harmed, not a claim of unchanged8. The new registry-home section
+increased the old61-section denominator to62; thirty actual sections
+are uncredited. Evidence: `monitor/current-red-A.json` under round21.
+The original199-entry prefix and historical failures stay retained;
+final no-harm requires actual provenance-labelled source re-reads and
+a separate committed-revision observation.

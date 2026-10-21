@@ -1418,3 +1418,32 @@ metadata and its failure are preserved; production gate source is unchanged.
   append probes demonstrate that tool/corpus edits invalidate source
   credit; the round must measure and repair actual affected sections,
   not borrow this historical count.
+- Landed implementation `370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb`:
+  four owning selftests (production guards unchanged), env-diff probe,
+  public counter-selftest facade, sourced F5 entry and registry-home
+  append, strict round21 ledger selector, current SHONEN link,
+  QUALITY43–44 and sourced lesson. All original199 ledger entries carried.
+- Actual C1 at that landed revision: killed18/survived0/inconclusive0,
+  exit0, same frozen instrument/population as baseline0/18; exact
+  interval/streams/SHA in `.ufo/evidence/round-21/c1-after-A.json`.
+  The command-pin and synthetic process-identity bounds are explicit.
+- Actual current calibration at the same revision is **harmed32/62,
+  restraint6**, strict/no overrides, not unchanged8. Thirty affected
+  sections require traced author source re-anchors; the new registry
+  adds one section to the original61. Evidence:
+  `.ufo/evidence/round-21/monitor/current-red-A.{json,stdout,stderr}`.
+- New metadata-bound F5 execution classifies9/9 (eight invariant,
+  one raw-output-variable); all clean exits0. Its instrument SHA,
+  actual aware interval and host runtime versions are in
+  `f5/receipt-final-production.json`. `receipt.json` selects that new
+  observation, while `receipt-initial.json` preserves the original;
+  `receipt-supersession.json` records both byte identities.
+- Registered four public selftests, sources pinned to the landed SKILL
+  registry rows1975–1978: env-diff, route-mix, measurement facade and
+  round21 current selector. Existing rows/superseded histories remain.
+- Build wave:71 seats,28 completed/43 provider deaths (26 Codex,
+  11 Haiku,5 ZAI,1 Antigravity), no replacement. Exact identities and
+  original last errors in `.ufo/waves/round-21/original-outcomes1.json`.
+  L1 completed missing code/prose work in an isolated private clone.
+  Accepted wave payload was unchanged on attempt3 after two job-cap
+  refusals; the release followed the final original reader's return.
