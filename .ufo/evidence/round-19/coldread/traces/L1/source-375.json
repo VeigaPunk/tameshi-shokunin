@@ -1,0 +1,61 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r19-refresh-97y7we9b",
+    "/tmp/tameshi-r19-refresh-97y7we9b",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r19-refresh-97y7we9b/lane",
+    "env",
+    "-i",
+    "PATH=/usr/bin:/bin",
+    "HOME=/tmp/tameshi-r19-refresh-97y7we9b/home",
+    "TMPDIR=/tmp/tameshi-r19-refresh-97y7we9b/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "python3",
+    "-c",
+    "import pathlib,hashlib,json,sys\nroot=pathlib.Path('.')\nspec=json.loads(sys.argv[1])\nlines=(root/'SKILL.md').read_text().splitlines()\nprint('SECTION',spec['start'],spec['end']); print('\\n'.join(lines[spec['start']-1:spec['end']]))\nfor path in spec['paths']:\n raw=(root/path).read_bytes()\n print('SOURCE',path,'sha256='+hashlib.sha256(raw).hexdigest(),'bytes='+str(len(raw)))\n if path in ('corpus/README.md','corpus/SOURCES.md','corpus/QUALITY.md'):\n  print('HEADER',raw.decode().splitlines()[0])\nprint('SOURCE_READ complete; no recipe argv executed; external observations not reverified')\n",
+    "{\"start\": 375, \"end\": 404, \"heading\": \"## Restore discipline \\u2014 proof the substrate never moved\", \"paths\": [\"corpus/README.md\", \"corpus/knowledge/mutation-case-kagi-census.md\", \"corpus/knowledge/mutation-case-kimi-census.md\"], \"previous_class\": \"instruction\", \"previous_minor\": 2, \"external_not_reverified\": [\"kumitate-shokunin@175de6ba2e9e904010411b19cab27e0af9aad3d4:scripts/kimi-census.mjs\", \"kagi-shokunin@fecee8743e52eb8fb5fbb40782934cb619a1a96e:corpus/surface-census.sh\"]}"
+  ],
+  "cwd": "/tmp/tameshi-r19-refresh-97y7we9b/lane",
+  "root": "/tmp/tameshi-r19-refresh-97y7we9b/lane",
+  "rev": "7af123b0e068cd5e6b651aab31a813cc170d70a2",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-ruxck8u0/pycache"
+    }
+  },
+  "inputs": {
+    "SKILL.md": "b653979ad9205d8e027a81507799ee52ee84cc91a82c777672f0bbb3f808a864",
+    "corpus/README.md": "20ab4bef2b6e9bc5e6a2bacb3b1508d035f28d2a4ae5fa32e12a6bcc518c0172",
+    "corpus/knowledge/mutation-case-kagi-census.md": "0d5dc3cd7d2d21a38a65f421adb2da28685b610be4f57d1cc3572e04119815e4",
+    "corpus/knowledge/mutation-case-kimi-census.md": "034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

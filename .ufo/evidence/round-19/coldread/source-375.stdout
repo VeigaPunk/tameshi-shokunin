@@ -1,0 +1,36 @@
+SECTION 375 404
+## Restore discipline — proof the substrate never moved
+
+The mutation sweep's strongest claim is the negative one: the substrate was
+never written. Prove it in this order:
+
+1. **Before the sweep:** sha256 (full), size, mtime, repo revision, and
+   `git status --porcelain -- <path>` empty — recorded in the note's header
+   (mutation-case-kimi-census.md:13-16; mutation-case-kagi-census.md:13-17).
+2. **All edits in scratch:** `cp -p` the artifact into the lane namespace and
+   edit only copies (mutation-case-kimi-census.md:4-7;
+   mutation-case-kagi-census.md:44-45).
+3. **After the sweep:** re-run the same checks; every value identical. Round-2
+   proof: `83016d45…4f426` before and after, 43273 B, mtime unchanged, kumitate
+   tree clean for the path (mutation-case-kimi-census.md:34-35). Round-3 proof:
+   `275d8294…53009f` before and after, 44212 B, mtime 09:47:15 unchanged, kagi
+   tree clean, and the scratch copy still `cmp`-identical to the original
+   (mutation-case-kagi-census.md:54-56).
+4. **A drift is an incident:** stop, report it as one, do not "repair" by
+   rewriting — a repair would itself be an unauthorized write.
+5. **Never restore via `git checkout`/`git restore`.** Those write to the
+   substrate; the only correct end state is *never-modified*. (I)
+6. **Retain the scratch as evidence.** Both lanes' probes re-ran from
+   `/tmp/tameshi-r2-1-work/` and `/tmp/tameshi-r3-1-work/`; each note's
+   reproduce spec rebuilds the sweep even if /tmp is wiped
+   (mutation-case-kimi-census.md §4; mutation-case-kagi-census.md §7;
+   SCORECARD round-2 verification row).
+7. **If the artifact was already dirty at pin time:** that pin is not a clean
+   baseline — record the dirty state exactly, or better, stop and re-pin a
+   committed revision (the G-R2-1 lesson, corpus/README.md round-2 addendum).
+
+SOURCE corpus/README.md sha256=20ab4bef2b6e9bc5e6a2bacb3b1508d035f28d2a4ae5fa32e12a6bcc518c0172 bytes=33312
+HEADER # tameshi-shokunin — corpus
+SOURCE corpus/knowledge/mutation-case-kagi-census.md sha256=0d5dc3cd7d2d21a38a65f421adb2da28685b610be4f57d1cc3572e04119815e4 bytes=18305
+SOURCE corpus/knowledge/mutation-case-kimi-census.md sha256=034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548 bytes=15679
+SOURCE_READ complete; no recipe argv executed; external observations not reverified
