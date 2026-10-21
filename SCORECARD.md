@@ -767,3 +767,39 @@ only four used-by cells changed, no immutable cells/removed rows/non-row loss.
 Expansion unchanged; quality improved (bounded); discernment improved.
 No promotion, axis retirement or new capability-table claim. Existing18
 guard survivors and marked source-anchor/backlink debts remain open.
+
+## Round 20 — frozen receipt-window enforcement (2026-10-21)
+
+One declared claim C1, **calibration**, tied lowest owned numeric axis
+(depth8/calibration8). The repeat QUALITY20 failure is routed by the
+ADMITTED round19 outside review; round19 is not redone. Numeric
+calibration stays8: this round counts six named receipt-hygiene predicates,
+not expertise points or independent promotion. No new capability-table
+row, axis retirement, frontier admission or guard-survivor closure.
+
+| Claim | Axis / unit | Frozen before → target | Counting command / evidence | Measured revision |
+|---|---|---|---|---|
+| C1 frozen-before-dispatch and receipt-window predicates | calibration; corrected items, score8→8 | baseline `c144dcd807166dfc275c1ac2936fd2fa4b678bda`:0/6 → target6/6 | `python3 tools/receipt-measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json`; frozen stage ruler SHA `f34dc233eee33f4fea9a82c391bfb57ebfef8983f5c7146b4d2dc0b6b3be4e2d`; `.ufo/evidence/round-20/contract.json` and final receipts | baseline above; delivered measurement recorded in the observed-outcome addendum below |
+
+The maintained wrapper supplies public isolated CLI selftests and scrubs
+inherited Git overrides; it does not alter the frozen six predicates.
+The inherited contract's `--check` command is unsupported and is
+superseded only as an invocation: use the command above, not a shim.
+Stage bytes were committed at `6fd220bce3705498d1d1054e99e3cae73c203751`
+before this replacement coordinator's dispatch. Their unchanged
+post-wave installation and new wrapper landed at
+`c51eb32f3c8588cd391907db774af0f1d3c355c6`.
+
+Current no-harm calibration will be measured with the unchanged round18
+algorithm through the round20 default-ledger selector, with no overrides;
+the historical round19 60/60 is not substituted for current evidence.
+All184 original entries are carried unchanged. New source-read entries,
+if needed, are labeled L1-author input-keyed re-anchoring, never blind or
+independent cold-read, recipe re-execution or required-command coverage.
+
+Stagnation: the dated fleet-round1 “nudge does not fire now” parenthetical
+is historical, not a current judgment (H03). This round works a tied-lowest
+axis regardless of whether the capability nudge is available; no waiver
+is needed or claimed. All eighteen round18 guard survivors remain open.
+Planned after this round: no claim pre-awarded; retain those behavioral
+gaps, successor sweeps and required-command binding as unclosed work.

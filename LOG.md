@@ -1343,3 +1343,9 @@ metadata and its failure are preserved; production gate source is unchanged.
   original completed reports, four new bounded integration attacks use one
   ordinary residual batch, not a padded64-seat second wave; total76 unique
   seats. Final verification belongs to L1 after those readers return.
+- Added three new-r20 selftest rows (receipt-window, maintained measurement
+  runner, current-ledger selector), with exact persisted exit/tally
+  expectations and registry-home anchors at pushed `c51eb32f`.
+  Existing33 active rows and four superseded rows remain; no old row is
+  retired to hide a regression. SCORECARD's round20 declaration keeps the
+  historical score at8 and names the same-ruler before/after command.

@@ -71,3 +71,28 @@ bound09:29:09.517Z. The final dispatch artifact instead retains the actual
 child-session creation header at09:28:54.741Z (`spawn-header.json`), from the
 same acknowledged72-seat batch. Both postdate the frozen contract's
 07:41:02Z **committer** time; author time is not the freeze criterion.
+
+C01SchemaComplete's ignored-field finding is retained: `install_window`
+is an inherited planning annotation, not the loader's `edit_interval`.
+Because this round installs identical bytes, it needs no edit interval;
+changed identities require a positive, aware `edit_interval`, as the gate
+explicitly checks. The six-item ruler is a round-specific instrument with
+hardcoded population/paths, not a generic schema interpreter. Its
+`expectations` annotation is not independently enforced by that ruler.
+The SKILL registry now states these bounds rather than implying otherwise.
+
+E07GitProvenance finds an important provenance asymmetry: historical
+round19 ruler SHA96a68b60 is recoverable from the committed fenced code
+at `.ufo/waves/round-19/w1/ReceiptDesign.md:53-376`, not a standalone
+`measure.py` blob in the commit walk. Classification preserves that exact
+identity; it does not pretend a standalone committed script or new
+historical replay exists. The other three identities resolve directly
+as committed tool blobs.
+
+Build dispatch outcomes are24 completed/48 dead, not a count of files.
+E07's peer notifications woke three dead identities (A01/B10/D07); later
+reports do not rehabilitate their original failures. `original-outcomes.json`
+pins the first termination; `outcomes.json` is only a later snapshot.
+The inherited unexecuted second-wave spec stays planning history. Four
+new residual integration attacks are a bounded ordinary batch, not
+replacements, and L1 completes uncovered checks directly.
