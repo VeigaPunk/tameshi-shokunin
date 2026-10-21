@@ -1,0 +1,15 @@
+{
+  "schema": "tameshi-r25-multitoken-cases-v1",
+  "purpose": "Round-23 closure routed item 1: multi-token stdout fixtures owned by the ruler itself, not delegated to the gate selftest. Each case runs through the public CLI of the gate under test (--bundle/--expected/--json).",
+  "revision": "1111111111111111111111111111111111111111",
+  "cwd": "/fixture/repo",
+  "cases": [
+    {"name": "mt-missing-first", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "BETA GAMMA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
+    {"name": "mt-missing-middle", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "ALPHA GAMMA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
+    {"name": "mt-missing-last", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "ALPHA BETA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
+    {"name": "mt-clean-reordered", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "GAMMA BETA ALPHA\n"]], "expected_exit": 0, "finding_ids": []},
+    {"name": "mt-offending-sorted-first", "requirements": [["a-bad", ["ALPHA", "BETA"], "ALPHA\n"], ["b-good", ["ALPHA", "BETA"], "ALPHA BETA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
+    {"name": "mt-offending-sorted-second", "requirements": [["a-good", ["ALPHA", "BETA"], "ALPHA BETA\n"], ["b-bad", ["ALPHA", "BETA"], "BETA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
+    {"name": "mt-clean-two-requirements", "requirements": [["a-good", ["ALPHA", "BETA"], "BETA ALPHA\n"], ["b-good", ["GAMMA", "DELTA"], "DELTA GAMMA\n"]], "expected_exit": 0, "finding_ids": []}
+  ]
+}
