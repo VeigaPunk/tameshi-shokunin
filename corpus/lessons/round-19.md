@@ -77,3 +77,99 @@ No operator teaching files were found by
 (2026-10-21: no matches). No tool was installed or updated; no pacman or
 host mutation occurred. A single L1 owns integration and the frozen planner
 seat. Wave evidence is under `.ufo/waves/round-19/`.
+
+Measured after at landed correction revision
+`21e79329f8bdcf01a62be63b3e46db4a7de6b6f9`:
+`.ufo/evidence/round-19/after-21e7932.json`, corrected=5/open=0/total=5,
+exit0. The same ruler at baseline7243e7f returned corrected0/open5/exit1.
+Every row is revision- and input-digest-bound; gate labels remain narrower
+than historical authenticity or arbitrary prose validation.
+
+## No-harm repair — current evidence is not a historical score
+
+The actual monitor at landed21e7932 returned **49/60, restraint6**:
+`current-ledger-monitor-21e7932.json`. Required corpus appends changed
+inputs of eleven buckets, including the registry section's new row.
+The earlier historical-only score8 qualification was insufficient as a
+current no-harm assertion (w1 AxisBound). This failed intermediate is
+retained, not replaced by the4b7c682 historical60/60.
+
+The repair preserves the round18 implementation and ledger byte-for-byte.
+The small `coldread/measure.py` wrapper selects a new default round19
+ledger and BOX3 evidence link, retaining the same strict trace/input/veto
+algorithm without `--ledger-*` or overlay/legacy mode. Existing entries
+are carried unchanged; affected buckets receive actual source re-reads
+and committed trace receipts. These are explicitly **L1-author
+input-keyed source re-anchoring**, not a new blind or independent cold-read,
+and not required-command coverage. External observations remain outside
+the credited-input predicate; they are never called re-verified by an
+internal input hash. A source-read gap remains named rather than becoming
+an invented command execution.
+
+This is no-harm maintenance within C1, not another claim or capability.
+QUALITY40 mines the failed intermediate. The current monitor's final
+revision/count is recorded with its own receipt after the ledger lands.
+The earlier “no current-page equivalence is claimed” statements remain
+true: input-keyed credit is the narrower measurable predicate.
+
+## Build-wave findings integrated
+
+- NegativeControls showed five corruptions that the initial ruler missed:
+  wrong effective receipt path, edited immutable S008 opened date, moving
+  diff bound, fabricated runner hash, and a backdated timestamp. The
+  hardened ruler pins the named receipt path, historical opened date,
+  exact historical diff command, independently re-derived tool/runner
+  hashes, and aware timestamps no earlier than frozen contract78b99dd.
+  These checks are bounded, not producer authentication. Initial receipts
+  remain measurements of the first ruler; final before/after measurements
+  use the same strengthened ruler and say so.
+- AxisBound's missing measurement instrument identity is supplied by a
+  separate `round18-final-measure-instrument.json` companion binding the
+  original receipt SHA and frozen instrument SHA. The original receipt is
+  not rewritten. Its source blob is `7ca87a7c…26dd37` at4b7c682.
+- MetadataDraft's second stale S008 mention (case8 line215) and the source
+  installation phrases (guard note lines99/133) receive explicit sweep
+  addenda. R18-1 supersedes only staged/PENDING markers, not technical
+  analysis in their paragraphs.
+- Captured-by correction (MistakesDraft): the failed usage invocation was
+  already covered by QUALITY15/17; the missing exact-revision receipt by
+  QUALITY2. QUALITY26/35 cover correction mechanics, not the original
+  prevention duty. The count-command reference resolves to canonical
+  `/home/vgpnk/Projects/kimi-shokunin/skills/shokunin/protocol/CORPUS.md:34`.
+  “not4b7c682” above means “not at4b7c682”. The scratch missing-runner row
+  is a new round19 mistake, distinct from the five routed items.
+- ReceiptLesson's nonzero registry row in old `final/checks.json` remains
+  a failed raw attempt at921ef80. Its distinct successful branch-aligned
+  reading is explicitly at5923d89; neither is reclassified at the other's
+  revision. This old failure was already disclosed by the round18 report
+  and verifier; it is not a sixth frozen defect.
+- Historical audit outputs' printed “ancestor runs share instrument
+  blobs” text is not established by their captured read commands
+  (Audit965/Audit1212/Audit1925). It is not reused as ancestry evidence.
+  Old traces need not authenticate stdout bytes; new refresh receipts
+  separately persist output digests. Historical one-line range mismatches
+  and external observations stay limitations, not newly earned credit.
+
+Source-sweep addendum: S063/S077/S078 `used-by` gains
+`corpus/knowledge/guard-kill-closure.md`; each status stays `mined` and
+each recheck is unchanged. Old lists: S063 `corpus/lessons/round-17.md`,
+S077/S078 `corpus/lessons/round-18.md`; new lists are exactly the old
+list plus that knowledge path. No immutable cells, added rows or tiers.
+These repair already-existing citations, not additional sourced C1 claims.
+S063 and S078 were reopened by their named w1 scouts on2026-10-21; S077
+was reopened by L1 on the same date:
+
+| Row | URL | Located quote (≤25 words) |
+|---|---|---|
+| S063 | https://git-scm.com/docs/git | “it specifies a path to use instead of the default .git for the base of the repository.” — ENVIRONMENT VARIABLES, The Git Repository, GIT_DIR |
+| S077 | https://man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html | “then that process will be reparented to the nearest still living ancestor subreaper.” — DESCRIPTION ¶2, man-pages6.19 |
+| S078 | https://man7.org/linux/man-pages/man2/open.2.html | “These request opening the file read-only, write-only, or read/write, respectively.” — DESCRIPTION access modes |
+
+Newly observed, **open outside C1**: `input-keyed-coldread-credit.md:1`
+still uses S060's obsolete `%file`/General anchors (w1 SourceS075); mark
+it stale pending a later metadata erratum, never claim metadata is repaired
+across the whole lane. S064's live page digest changed in heading markup
+only; its dated2026-10-20 row remains historical and its quoted prose
+still matches. Neither source is added as support for the five-item count.
+The lessons glob's teaching absence is path-scoped; the existing
+`corpus/knowledge/operator-runbook.md` is not absent (w1 TeachingSweep).

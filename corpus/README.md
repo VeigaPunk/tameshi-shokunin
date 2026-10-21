@@ -296,3 +296,12 @@ not independently admit round 19. Historical input-keyed60/60 at4b7c682
 is now backed by an exact-revision receipt. No current round-19 full-page
 equivalence, required-command coverage, promotion, guard-survivor closure,
 successor mutation sweep or F1–F10 frontier movement is claimed.
+
+No-harm qualification: the first round19 delivered revision21e7932
+actually measured49/60, restraint6 under the old ledger; its failed
+current-monitor receipt is retained. The maintained round19 selector
+`../.ufo/evidence/round-19/coldread/measure.py` reuses the frozen round18
+algorithm with a new default ledger and explicitly L1-author source
+re-anchoring for changed inputs. It does not retroactively upgrade
+historical traces, authenticate external observations, or become an
+independent promotion review. See round19 lesson `## No-harm repair`.

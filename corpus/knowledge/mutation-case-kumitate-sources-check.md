@@ -274,3 +274,9 @@ the historical draft wording above is not its current status. ER8-1 had
 already recorded the transition; this erratum names the stale provenance
 line it supersedes. Verify with that revision's `corpus/SOURCES.md` S008
 row, not with an assumed status inferred from this entry alone.
+
+R18-2 sweep addendum: lines 215–219's draft obligations are also superseded.
+S008 is not still `queued` with `used-by —`; S001/S052/S056/S057 already
+list this entry, and the coverage-map/LOG records landed in round18. The
+two stale S008 descriptions (line 1 and line 215) are historical, not
+separate current statuses (`w1/MetadataDraft.md`, round19).

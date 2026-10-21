@@ -1178,3 +1178,30 @@ metadata and its failure are preserved; production gate source is unchanged.
   Build wave frozen at64 seats (`.ufo/waves/round-19/spec1.json`); wave
   findings are advisory, not independent closure. No tool install/update,
   pacman transaction, host mutation or sibling gate change.
+- C1 measurement after correction landing
+  `21e79329f8bdcf01a62be63b3e46db4a7de6b6f9`: corrected5/open0/total5,
+  exit0, same ruler as corrected0/open5/exit1 baseline7243e7f; input hashes
+  and ruler identity retained in `after-21e7932.json`. Lane verdict improved
+  on named-defect unit; numeric calibration remains8.
+- No-harm correction: actual current monitor at21e7932 returned49/60,
+  restraint6; historical8 was not adequate current evidence (w1 AxisBound).
+  The intermediate remains in `current-ledger-monitor-21e7932.json`.
+  Round19 ledger-selector wrapper reuses unchanged round18 algorithms;
+  original ledger/tool remain frozen, eleven buckets receive L1-author
+  input-keyed source re-anchoring, explicitly not independent/blind reads
+  or required-command coverage. QUALITY40 records the failure and remedy.
+- W1 NegativeControls drove ruler hardening: exact effective receipt path,
+  preserved stale-header markers, immutable S008 opened date, frozen diff
+  command, independent tool/runner SHA constants and aware post-contract
+  timestamps. Initial before/after receipts are retained; final measurements
+  apply one strengthened ruler to both endpoints. Parser refusals use
+  otherwise-valid duplicate/nonfinite fixtures to avoid incidental kills.
+- Source sweep: S063/S077/S078 used-by gains guard-kill-closure.md, with
+  opened quotes and old→new lists in the round19 lesson; no added rows or
+  tier/status/recheck changes. Stale S060 anchors in
+  input-keyed-coldread-credit.md:1 remain explicitly marked open outside
+  C1. New metadata sweep addenda name case8 line215 and guard source-header
+  recheck corrections; no sixth population item.
+- Measurement instrument identity is retained additively in
+  `round18-final-measure-instrument.json`, tying original receipt SHA to
+  source SHA7ca87a7c…26dd37 at4b7c682, without rewriting the original.

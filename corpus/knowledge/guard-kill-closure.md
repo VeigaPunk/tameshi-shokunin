@@ -188,3 +188,20 @@ rows held, four superseded. These are historical revision-bound results,
 not new runs at the round-19 tip. EG-3's limits and all 18 mutation survivors
 remain open. Recheck the exact named receipts and revisions; do not replace
 them with an unpinned `<branch tip>` claim.
+
+R18-1 sweep addendum (`.ufo/waves/round-19/w1/MetadataDraft.md`,
+`AxisBound.md`): the supersession above covers only the dated
+staged/PENDING assertions, not the technical analysis in the same
+paragraphs (especially lines 118–122). EG-1 at lines 143–147 already
+resolved the older marker; it is supporting correction history, not
+another open PENDING result. Lines 99/133's conditional source-installation
+phrases are likewise historical: S063's anchor is widened and S068 exists
+at4b7c682. No new source semantics or probe breadth is inferred.
+
+Source-header/recheck clarification (round19 source sweep): line1's S068
+anchor and S072 wording are superseded by S077 and S078, as EG-4 already
+states; line3's recheck set includes correction rows S075–S078, not just
+S065–S074. Effective sources are the precise corrected paragraph/access-mode
+anchors, not the obsolete draft anchors. S063/S077/S078 used-by now list
+this entry explicitly. These are metadata reconciliations, not new guard
+behavior or new additions to the frozen five-item denominator.

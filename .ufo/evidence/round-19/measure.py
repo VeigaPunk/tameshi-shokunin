@@ -7,6 +7,7 @@ Reads revision-pinned blobs, never executes receipt argv. This is not a
 cold-read/command-coverage ruler or a general claim-admission authority.
 """
 import argparse
+import datetime
 import hashlib
 import json
 import os
@@ -18,6 +19,11 @@ import tempfile
 
 REV18 = '4b7c6823a462f5ea2eafcb262275300a545f3ed7'
 TOOLS18 = '921ef8077440f90d092aab4b9fdc750a45de1224'
+TOOL_SHA18 = '8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12'
+RUNNER_SHA18 = 'd22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b'
+FREEZE_TIME = datetime.datetime.fromisoformat('2026-10-21T02:28:10-03:00')
+DIFF_COMMAND = ('git diff --numstat 183f87b899e6cae46be98d251cbc87fb5118f6ca '
+                + REV18 + ' -- corpus/SOURCES.md')
 PREFIX = '.ufo/evidence/round-19/'
 GUARD = 'corpus/knowledge/guard-kill-closure.md'
 CASE = 'corpus/knowledge/mutation-case-kumitate-sources-check.md'
@@ -27,7 +33,9 @@ OLD_CHECKS = '.ufo/evidence/round-18/final/checks.json'
 PROBES = '.ufo/evidence/round-18/final/probes.stdout'
 WITNESS = PREFIX + 'bash-witness-selftest-complete.json'
 MEASURE = PREFIX + 'round18-final-measure.json'
-PATHS = (GUARD, CASE, LESSON, SOURCES, OLD_CHECKS, PROBES,
+INSTRUMENT = PREFIX + 'round18-final-measure-instrument.json'
+MEASURE_SHA18 = '7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37'
+PATHS = (GUARD, CASE, LESSON, SOURCES, OLD_CHECKS, PROBES, INSTRUMENT,
          WITNESS, PREFIX + 'bash-witness-selftest-complete.stdout',
          PREFIX + 'bash-witness-selftest-complete.stderr', MEASURE,
          PREFIX + 'round18-final-measure.stdout',
@@ -65,6 +73,9 @@ def receipt(data, path, argv):
     if (row.get('argv') != argv or row.get('revision') != REV18
             or type(row.get('exit')) is not int or row['exit'] != 0):
         return None
+    recorded = datetime.datetime.fromisoformat(row.get('recorded_at', ''))
+    if recorded.tzinfo is None or recorded < FREEZE_TIME:
+        return None
     for stream in ('stdout', 'stderr'):
         expected_path = path.removesuffix('.json') + '.' + stream
         if row.get(stream) != expected_path or data.get(expected_path) is None:
@@ -90,7 +101,9 @@ def evaluate(data):
         note = text(GUARD).split('## Erratum R18-1', 1)[1]
         old = strict_json(data[OLD_CHECKS])['probes']
         return ('line 2' in note and 'Effective verified-at:' in note
-                and TOOLS18 in note and '18 mutation survivors' in note
+                and PROBES in note and TOOLS18 in note and '18 mutation survivors' in note
+                and 'Landed-tip results: PENDING (filled by L1 after landing).'
+                in text(GUARD).split('## Erratum R18-1', 1)[0]
                 and old['revision'] == TOOLS18 and type(old['exit']) is int
                 and old['exit'] == 0 and old['stdout_sha256'] == digest(data[PROBES])
                 and b'DEFECT_PROBES: open=0 closed=11 total=11' in data[PROBES])
@@ -100,11 +113,15 @@ def evaluate(data):
                        if re.match(r'^\|\s*S008\s*\|', line)]
         return (len(source_rows) == 1 and len(source_rows[0]) == 13
                 and source_rows[0][8].strip() == 'mined'
+                and source_rows[0][9].strip() == '2026-10-19'
                 and CASE in [part.strip() for part in source_rows[0][11].split(',')]
-                and 'line 1' in note and REV18 in note and 'mined' in note)
+                and 'line 1' in note and REV18 in note and 'mined' in note
+                and '**queued**' in text(CASE).split('## Erratum R18-2', 1)[0])
     def arithmetic():
-        note = text(LESSON).split('## Erratum R18-3', 1)[1]
-        return ('five deleted table lines' in note
+        note = text(LESSON).split('## Erratum R18-3', 1)[1].split('\n## ', 1)[0]
+        return ('five deleted table lines' in note and DIFF_COMMAND in note
+                and 'deletions = the four allowed used-by cells only'
+                in text(LESSON).split('## Erratum R18-3', 1)[0]
                 and all(identifier in note for identifier in
                         ('S001', 'S008', 'S052', 'S056', 'S057'))
                 and re.search(r'^25\s+5\s+corpus/SOURCES\.md$',
@@ -117,6 +134,10 @@ def evaluate(data):
         return (raw is not None and b'WITNESS_SELFTEST: 43/43 pass' in raw
                 and b'VERDICT: PASS' in raw and 'failed raw invocation' in note
                 and row.get('historical_receipt_preserved') is True
+                and row.get('tool_sha256') == TOOL_SHA18
+                and row.get('runner_sha256') == RUNNER_SHA18
+                and strict_json(data[OLD_CHECKS])['bash-witness-selftest']['exit'] == 64
+                and strict_json(data[OLD_CHECKS])['bash-witness-selftest']['stdout_sha256'] == digest(b'')
                 and OLD_CHECKS + '#bash-witness-selftest' in row.get('supersedes', []))
     def measurement():
         argv = ['python3', '.ufo/evidence/round-18/measure.py', '--repo',
@@ -124,10 +145,16 @@ def evaluate(data):
                 '--explain']
         raw = receipt(data, MEASURE, argv)
         value = strict_json(raw)
+        instrument = strict_json(data[INSTRUMENT])
         cold = value['coldread']
         note = text(LESSON).split('## Errata R18-4 / R18-5', 1)[1]
         return (value['revision'] == REV18 and value['rev_input'] == REV18
                 and value['overrides_used'] is False and value['ledger_committed'] is True
+                and instrument['receipt'] == MEASURE
+                and instrument['receipt_sha256'] == digest(data[MEASURE])
+                and instrument['revision'] == REV18
+                and instrument['instrument'] == '.ufo/evidence/round-18/measure.py'
+                and instrument['instrument_sha256'] == MEASURE_SHA18
                 and type(cold['sections_covered']) is int and cold['sections_covered'] == 60
                 and type(cold['sections_total']) is int and cold['sections_total'] == 60
                 and cold['box3_full_page'] is True
@@ -144,17 +171,22 @@ def selftest():
     # Start with actual committed-format receipts but synthetic content; fixtures
     # are independent of the production corpus and run through the public CLI.
     data = {p: '' for p in PATHS}
-    data[GUARD] = '## Erratum R18-1\nline 2 Effective verified-at: ' + TOOLS18 + ' 18 mutation survivors'
-    data[CASE] = '## Erratum R18-2\nline 1 mined ' + REV18
+    data[GUARD] = ('Landed-tip results: PENDING (filled by L1 after landing).\n'
+                   '## Erratum R18-1\nline 2 Effective verified-at: '
+                   + TOOLS18 + ' 18 mutation survivors ' + PROBES)
+    data[CASE] = '**queued**\n## Erratum R18-2\nline 1 mined ' + REV18
     cells = ['S008', 'source', 'paper', 'A', 'scope', 'anchor', 'teaches',
-             'mined', '2026-10-21', 'on-release', CASE]
+             'mined', '2026-10-19', 'on-release', CASE]
     data[SOURCES] = '| ' + ' | '.join(cells) + ' |\n'
-    data[LESSON] = ('## Erratum R18-3\nfive deleted table lines S001 S008 S052 S056 S057\n'
-                    '## Errata R18-4 / R18-5\nfailed raw invocation; '
+    data[LESSON] = ('deletions = the four allowed used-by cells only\n'
+                    '## Erratum R18-3\nfive deleted table lines S001 S008 S052 S056 S057\n'
+                    + DIFF_COMMAND + '\n## Errata R18-4 / R18-5\nfailed raw invocation; '
                     'does not claim the receipt existed in round 18')
     data[PROBES] = 'DEFECT_PROBES: open=0 closed=11 total=11\n'
     data[OLD_CHECKS] = json.dumps({'probes': {'revision': TOOLS18, 'exit': 0,
-                                'stdout_sha256': digest(data[PROBES].encode())}})
+                                'stdout_sha256': digest(data[PROBES].encode())},
+                                'bash-witness-selftest': {
+                                    'exit': 64, 'stdout_sha256': digest(b'')}})
     data[PREFIX + 'sources-diff.txt'] = '25\t5\tcorpus/SOURCES.md\n'
     def make_receipt(path, argv, stdout):
         out, err = path[:-5] + '.stdout', path[:-5] + '.stderr'
@@ -162,6 +194,8 @@ def selftest():
         data[path] = json.dumps({'argv': argv, 'revision': REV18, 'exit': 0,
             'stdout': out, 'stderr': err, 'stdout_sha256': digest(stdout.encode()),
             'stderr_sha256': digest(b''), 'historical_receipt_preserved': True,
+            'tool_sha256': TOOL_SHA18, 'runner_sha256': RUNNER_SHA18,
+            'recorded_at': '2026-10-21T06:00:00+00:00',
             'supersedes': [OLD_CHECKS + '#bash-witness-selftest']})
     make_receipt(WITNESS, ['python3', 'tools/bash-witness-study.py', 'selftest'],
                  'WITNESS_SELFTEST: 43/43 pass\nVERDICT: PASS\n')
@@ -172,6 +206,10 @@ def selftest():
     make_receipt(MEASURE, ['python3', '.ufo/evidence/round-18/measure.py', '--repo',
                  '/home/vgpnk/Projects/shokunin/tameshi-shokunin', '--rev', REV18,
                  '--explain'], json.dumps(value))
+    data[INSTRUMENT] = json.dumps({
+        'receipt': MEASURE, 'receipt_sha256': digest(data[MEASURE].encode()),
+        'revision': REV18, 'instrument': '.ufo/evidence/round-18/measure.py',
+        'instrument_sha256': MEASURE_SHA18})
     cases = [('pristine', data, 0, [])]
     for index, path in enumerate((GUARD, CASE, PREFIX + 'sources-diff.txt', WITNESS, MEASURE), 1):
         mutant = dict(data); mutant[path] = ''
@@ -182,16 +220,29 @@ def selftest():
                                     ('wrong-digest','stdout_sha256','0'*64),
                                     ('wrong-path','stdout','/etc/passwd'),
                                     ('unpreserved','historical_receipt_preserved',False),
+                                    ('wrong-tool','tool_sha256','0'*64),
+                                    ('wrong-runner','runner_sha256','0'*64),
+                                    ('backdated','recorded_at','2026-10-21T02:00:00+00:00'),
+                                    ('naive-time','recorded_at','2026-10-21T06:00:00'),
                                     ('unsuperseded','supersedes',[])]:
         mutant = dict(data); row = json.loads(mutant[WITNESS]); row[field] = replacement
         mutant[WITNESS] = json.dumps(row)
         cases.append((name, mutant, 1, ['R18-4']))
     mutant = dict(data); mutant[PREFIX+'bash-witness-selftest-complete.stderr'] = 'error'
     cases.append(('stderr-tamper', mutant, 1, ['R18-4']))
-    mutant = dict(data); mutant[WITNESS] = '{"exit":0,"exit":64}'
+    mutant = dict(data); mutant[WITNESS] = '{"exit":64,' + data[WITNESS][1:]
     cases.append(('duplicate-key', mutant, 1, ['R18-4']))
-    mutant = dict(data); mutant[WITNESS] = '{"exit":NaN}'
+    mutant = dict(data); mutant[WITNESS] = data[WITNESS][:-1] + ',"unused":NaN}'
     cases.append(('nonfinite', mutant, 1, ['R18-4']))
+    for name, path, old, new, identifier in [
+            ('wrong-effective-receipt', GUARD, PROBES,
+             '.ufo/evidence/round-18/c2-probes-v2-183f87b.txt', 'R18-1'),
+            ('removed-original-metadata', GUARD, 'Landed-tip results: PENDING', '', 'R18-1'),
+            ('immutable-opened', SOURCES, '2026-10-19', '2026-10-21', 'R18-2'),
+            ('moving-diff-bound', LESSON, DIFF_COMMAND,
+             DIFF_COMMAND.replace(REV18, 'HEAD'), 'R18-3')]:
+        mutant = dict(data); mutant[path] = mutant[path].replace(old, new)
+        cases.append((name, mutant, 1, [identifier]))
     failed = 0
     with tempfile.TemporaryDirectory(prefix='tameshi-r19-ruler-', dir='/tmp') as temp:
         fixture = Path(temp) / 'snapshot.json'

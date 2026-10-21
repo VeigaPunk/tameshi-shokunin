@@ -717,3 +717,27 @@ and adjacency are unchanged; tool bytes and eight-leg mutation ledger are
 unchanged. No current-page full-read/command-completeness inference follows
 from these historical receipts. The 18 guard survivors, P08/P11 breadth
 canaries and other round18 residuals remain open, not silently retired.
+
+Measured C1 result at delivered correction revision
+`21e79329f8bdcf01a62be63b3e46db4a7de6b6f9`: corrected=5, open=0, total=5,
+exit0 (`.ufo/evidence/round-19/after-21e7932.json`, including every input
+digest and ruler SHA-256). Same ruler on baseline7243e7f: corrected0/open5,
+exit1. C1 lane verdict: **improved**, unit named defects, numeric calibration
+8→8. This does not re-score the independent-promotion ceiling or grant
+current-page cold-read credit. No axis retirement or saturation waiver.
+
+Current no-harm correction (w1 AxisBound): at21e7932 the old round18
+ledger actually measured49/60 and restraint6 (`current-ledger-monitor-21e7932.json`).
+Thus the preceding historical8 sentence alone did **not** establish current
+unchanged calibration. That intermediate is marked harmed until repaired,
+not relabeled green. C1's five-item denominator stays unchanged.
+
+Maintenance uses the unchanged round18 algorithm through
+`.ufo/evidence/round-19/coldread/measure.py`, with a round19 default ledger
+and strict trace gate, no override/legacy flags. Original ledger entries
+are retained; the eleven invalidated buckets receive provenance-labeled
+L1-author input-keyed source re-reads. This is neither independent/blind
+cold-read evidence nor required-command coverage. The final no-harm
+receipt must name its delivered revision and reproduce restraint8;
+historical4b7c682 counts cannot stand in for it. QUALITY40 / lesson
+`## No-harm repair` capture the failed intermediate.

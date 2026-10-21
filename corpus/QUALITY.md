@@ -361,3 +361,15 @@ the non-author wave-2 review (`.ufo/waves/round-18/w2/ReviewQuality18.md`,
     rejects a missing exact-final-revision measure receipt. It does not
     authenticate the historical producer or certify required-command
     coverage; those remain distinct duties (criterion 33).
+40. A historical calibration receipt is not a current no-harm monitor.
+    After corpus/instruction changes, run the input-keyed ruler at the
+    delivered revision; a lower current score is named before asserting
+    unchanged calibration. Preserve the old ledger and refresh affected
+    inputs through actual recorded source reads, with author/independent
+    provenance labeled. Do not call source re-anchoring a blind cold-read
+    or required-command coverage. Captured by round19's actual
+    `current-ledger-monitor-21e7932.json` (49/60, restraint6) and w1 AxisBound;
+    lesson `lessons/round-19.md`, No-harm repair. Falsifier: the strict
+    default-ledger command at the cited delivered revision must reproduce
+    the claimed current count with `overrides_used=false`, not a historical
+    number copied from4b7c682.
