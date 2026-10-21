@@ -803,3 +803,23 @@ axis regardless of whether the capability nudge is available; no waiver
 is needed or claimed. All eighteen round18 guard survivors remain open.
 Planned after this round: no claim pre-awarded; retain those behavioral
 gaps, successor sweeps and required-command binding as unclosed work.
+
+### Intermediate no-harm correction — before source re-anchoring
+
+The earlier “calibration stays8” sentence is a target/historical-score
+statement, **not** an observed current no-harm result. Actual default,
+strict invocation at `d0ec3c8106aeb89b8df4054250585609ad68c26e` reports
+46/61 sections, restraint6, `overrides_used=false`; retained
+`.ufo/evidence/round-20/final/monitor-red-before.stdout`. That intermediate
+is harmed until repaired. New receipts cannot borrow round19's60/60.
+
+The carried184 entries are exactly159 round18 entries plus25 round19
+L1-author source entries, all preserved as data, not184 independent reads.
+The default selector initially accepted diagnostic override flags
+(`selector-override-red-before.stdout`: exit0, overrides true, legacy
+trace mode,46/61, restraint6). The new selector now refuses all three
+override options, including abbreviations and equals forms, with exit64
+and SELECTOR_OVERRIDE_FORBIDDEN; the frozen credit algorithm is unchanged.
+Delivered strict no-harm results belong in the final receipt, not this
+failed intermediate. This bounded enforcement repair is maintenance
+within C1/no-harm, not a new axis claim or changed six-item denominator.

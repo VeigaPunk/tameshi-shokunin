@@ -404,3 +404,16 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     fail with exit 1 while unchanged before/after-boundary controls pass.
     This validates declared receipt metadata, not producer authenticity,
     continuous edit detection, or required-command coverage.
+
+42. A published “no overrides” measurement entry refuses alternative-ledger
+    and input-overlay options at its maintained CLI boundary, including
+    argparse abbreviations and equals forms, rather than relying on a
+    reviewer to notice `overrides_used=true` after credit was calculated.
+    Keep the underlying historical algorithm frozen; guard its current
+    selector. Captured by round20 ResidualCurrentMonitor and the actual
+    exit0/legacy/override red-before receipt in `lessons/round-20.md`.
+    Falsifier: the same override argv changes from accepted exit0 to
+    exit64/SELECTOR_OVERRIDE_FORBIDDEN, while ordinary strict/default
+    measurements remain available. Public tests cover all three switches
+    and their alternative spellings. This is invocation enforcement,
+    not independent cold-read or producer authentication.

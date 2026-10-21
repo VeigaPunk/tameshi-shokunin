@@ -1349,3 +1349,18 @@ metadata and its failure are preserved; production gate source is unchanged.
   Existing33 active rows and four superseded rows remain; no old row is
   retired to hide a regression. SCORECARD's round20 declaration keeps the
   historical score at8 and names the same-ruler before/after command.
+- ResidualCurrentMonitor's override finding was real: the same argv's
+  --ledger-file invocation at d0ec3c8 was accepted (exit0, overrides true,
+  legacy trace mode) before the new selector guard, then rejected with
+  exit64/SELECTOR_OVERRIDE_FORBIDDEN after it. Both stream/digest receipts
+  are retained in round20/final/. Nine negative public CLI cases augment
+  the three package cases; no frozen algorithm or six-item ruler changed.
+- Actual strict/default monitor at d0ec3c8 measured46/61, restraint6, no
+  overrides. This intermediate is harmed until repaired, not historical8.
+  SCORECARD's appended correction and QUALITY42 record the enforcement
+  lesson. The184 carried records are159 round18 plus25 round19 author
+  entries; historical wrong-expectation records are preserved.
+- Source-only residual reviews found no stronger gate promise than its
+  declared identity/freshness/authentication bounds. Missing SOURCES
+  round20 Search-log bookkeeping was appended, and two owned stage pycache
+  files were removed without changing frozen Python bytes.

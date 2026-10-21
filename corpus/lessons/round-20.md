@@ -96,3 +96,42 @@ pins the first termination; `outcomes.json` is only a later snapshot.
 The inherited unexecuted second-wave spec stays planning history. Four
 new residual integration attacks are a bounded ordinary batch, not
 replacements, and L1 completes uncovered checks directly.
+
+## Residual correction and current no-harm repair
+
+ResidualCurrentMonitor correctly found that “no overrides” was initially
+only an invocation discipline, not a CLI refusal. The actual red-before
+probe at `d0ec3c8106aeb89b8df4054250585609ad68c26e` accepted
+`--ledger-file` with exit0, `overrides_used=true`, legacy trace mode,
+46/61 sections and restraint6 (`final/selector-override-red-before.*`).
+The round20 selector now refuses ledger-file, ledger-rev and inputs-overlay,
+including argparse abbreviations and equals forms, with exit64 and stable
+SELECTOR_OVERRIDE_FORBIDDEN. Nine public-CLI cases join the original three
+package tests. The frozen round18 credit/trace/veto algorithm is unchanged.
+The registry exit map also corrects usage to64, not2.
+
+Actual strict/default current measurement at the same revision was also
+46/61, restraint6, `overrides_used=false`, `trace_gate=strict`
+(`final/monitor-red-before.stdout`). This is an honestly harmed
+intermediate, not unchanged8. Current source re-anchoring must be observed
+and retained before a final no-harm assertion. The carried184 entries are
+159 round18 records plus25 round19 author entries, not184 independent reads.
+
+Historical failing entries73 (recipe131, old supplied-range digest mismatch)
+and98 (map1380, missing eighth ledger row at its read rev) remain untouched.
+The current ledger already has the eighth row at
+`corpus/knowledge/fleet-kill-rate-ledger.md:424-437`; the new source read
+does not claim this round added it. A current normalized section digest is
+not the old incorrect assignment digest. Fresh source-only reads must name
+these distinctions; they cannot be relabeled blind recipe executions or
+erase those historical wrong-expectation observations.
+
+ResidualFrontierErrata's missing round20 search-log bullet is repaired
+under SOURCES' actual Search log with identified1/screened1/included1/
+excluded0 and its stop rationale. “Local BRT” is a historical label from
+the routed review; UTC−03:00 is the observed commit offset, not a newly
+researched civil-timezone/DST claim.
+
+ResidualRulerWrapper identified two ignored stage __pycache__ files born
+2026-10-21T06:31:56−03:00 during the build. L1 removed only those bytecode
+files and their empty directory. No frozen .py bytes were edited.

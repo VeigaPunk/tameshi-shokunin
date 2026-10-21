@@ -20,6 +20,14 @@ spec = importlib.util.spec_from_file_location('tameshi_round18_measure', IMPLEME
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 LEDGER = '.ufo/evidence/round-20/coldread/ledger.json'
+FORBIDDEN_OVERRIDES = ('--ledger-file', '--ledger-rev', '--inputs-overlay')
+
+
+def forbidden_override(arguments):
+    return next((arg for arg in arguments
+                 if arg.startswith('--') and len(arg.split('=', 1)[0]) > 2
+                 and any(flag.startswith(arg.split('=', 1)[0])
+                         for flag in FORBIDDEN_OVERRIDES)), None)
 
 
 def selftest():
@@ -76,6 +84,14 @@ def selftest():
         outcomes.append(('no-historical-ledger-fallback', run.returncode == 0
                          and result['coldread']['sections_covered'] == 0
                          and result['calibration_restraint_score'] == 6))
+        for extra in (('--ledger-file', '/none'), ('--ledger-rev', 'bad:path'),
+                      ('--inputs-overlay', '/none'), ('--ledger-file=/none',),
+                      ('--ledger-rev=bad:path',), ('--inputs-overlay=/none',),
+                      ('--i=/none',), ('--ledger-f=/none',), ('--inputs-o=/none',)):
+            run = invoke(*extra)
+            outcomes.append(('override-refused:' + extra[0],
+                             run.returncode == 64
+                             and 'SELECTOR_OVERRIDE_FORBIDDEN' in run.stderr))
     for name, ok in outcomes:
         print('CASE', name, 'PASS' if ok else 'FAIL')
     passed = sum(ok for _, ok in outcomes)
@@ -86,6 +102,10 @@ def selftest():
 if __name__ == '__main__':
     if sys.argv[1:] == ['--selftest']:
         sys.exit(selftest())
+    rejected = forbidden_override(sys.argv[1:])
+    if rejected is not None:
+        print('SELECTOR_OVERRIDE_FORBIDDEN: ' + rejected, file=sys.stderr)
+        sys.exit(64)
     module.DEFAULT_LEDGER_PATH = LEDGER
     module.LEDGER_PATH = LEDGER
     module.BOX3_LINK = LEDGER

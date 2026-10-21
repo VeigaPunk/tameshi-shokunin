@@ -179,6 +179,16 @@ rows only, and a row is a claim opened in the round that writes it.
   choice, target behaviour, equivalent-mutant handling, section classification,
   executable examples) has one opened primary or tiered source.
 
+- 2026-10-21 UTC — **round-20 explicit measurement context**. Question:
+  does an explicit subprocess env replace inherited environment, and does
+  that authenticate a historical run? Reopened S049's official Python
+  subprocess `run()` env paragraph; identified1/screened1/included1/excluded0.
+  Included only for explicit child-environment semantics; rejected the
+  inference that API documentation authenticates a historical observation.
+  Stop: the bounded API claim is answered by this primary paragraph; actual
+  execution identity/intervals remain retained runtime evidence. S049 remains
+  mined; used-by gains `corpus/lessons/round-20.md`; no new row.
+
 ## Leads (unopened)
 
 Bullets only — a lead is not evidence and never a row (`tameshi-art.md` leads;
