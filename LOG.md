@@ -1519,3 +1519,24 @@ metadata and its failure are preserved; production gate source is unchanged.
   No dead identity was replaced. Invalid registry-source anchors, premature
   receipt prose and two surrounding-revision metadata labels are corrected
   explicitly in the lesson and new receipt errata; originals are preserved.
+
+### Round22 — final observed no-harm, not historical credit (2026-10-21)
+
+- At211838e3d1df48cc03316dc119ed0ec908b0eab3: frozen counter8/8,
+  public selftest8/8 plus16/16 supplemental, full146-seat replay66/80,
+  wrong-count1/TOTAL_MISMATCH, full registry43/43 active/4 superseded.
+  `.ufo/evidence/round-22/final/verification-final.json` is the effective
+  final pack; previous receipts and metadata errata remain preserved.
+- Current strict monitor62/62, restraint8, depth8, overridesfalse actually
+  restores the47/62/score6 intermediate. Fifteen traced author source reads
+  at2808f849495befc8db50ea69360b6dd10ec92e56 were appended through211838e;
+  original234 entries retained unchanged, current249. This is input-keyed
+  source maintenance, not independent/blind cold-read or command coverage.
+- C1 calibration improved, numeric8→8/delta0; other axes unchanged in the
+  bounded monitors. Learning: expansion unchanged, quality improved,
+  discernment unchanged until independent non-author admit/reject comparison.
+- Misroot sweep showed no untracked fleet artifacts; only driver-owned
+  tracked runtime was dirty and left untouched. All68 original callbacks
+  are retained; no dead seat replaced. No tool install/update occurred.
+- Open operator scope remains the inherited round18 R17-INCIDENT recovery
+  procedure question; no new L0 question or fleet/sibling mutation.

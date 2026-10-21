@@ -993,3 +993,33 @@ and a separately observed current committed-revision result; old62/62 is not
 borrowed. Initial new-gate guard mutations killed14/16, survivorsM10/M15
 are nondiscriminating supplemental fixtures and receive a retained repair.
 Canonical executed outcomes and instrument identities are in round22 final/.
+
+### Round22 final measured verdict
+
+At211838e3d1df48cc03316dc119ed0ec908b0eab3 the unchanged frozen counting
+command `python3 .ufo/evidence/round-22/measure.py --repo REPO_AT_REV`
+actually reports discriminated8/8, exit0. Before51d49d5 tool-absent0/8,
+exit1, is absence of a runnable capability, not eight executed failing tests.
+Final gateSHA96b3038a77f895c119b6e88d8b1278effffd1cebcc7dc18e6bd7a080a1bafd8e.
+`final/verification-final.json` retains full argv, actual revision, intervals,
+instrument hashes and streams. C1 calibration verdict **improved**,
+numeric8→8/delta0; no independent promotion credit.
+
+Same measured revision: current strict source coverage62/62, restraint8,
+depth8, overridesfalse; full registered battery43/43 active,4 superseded,
+exit0. The original234 ledger entries compare equal to the249-entry prefix;
+15 new entries are actual traced L1-author source reads, not blind or
+independent cold-reads, recipe execution or required-command coverage.
+The prior47/62/score6 intermediate and invalid registry-source observation
+remain visible. Guard sweep at6b6a3ead kills16/16 with restored0, identical
+gate bytes to211838e; initial14/16 and repaired two-case receipts retained.
+The actual146-seat replay remains66 completed/80 failed, two failed seats
+with reports; wrong claimed totals fail1/TOTAL_MISMATCH, digest tampering2.
+
+No other axis is claimed or harmed in the measured monitors. Same-ground
+calibration repair means expansion unchanged; quality improved through the
+failure-backed accounting rule; discernment unchanged pending outside
+admit/reject sampling. No retirement, scalar inflation, promotion or frontier
+crossing. Next intended work remains unclosed required-command binding,
+frontier F1/F4/F6/F7/F8/F9/F10 and owner-approved successor sweeps; this row
+awards no later round or capability.
