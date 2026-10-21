@@ -373,3 +373,14 @@ the non-author wave-2 review (`.ufo/waves/round-18/w2/ReviewQuality18.md`,
     default-ledger command at the cited delivered revision must reproduce
     the claimed current count with `overrides_used=false`, not a historical
     number copied from4b7c682.
+
+Criterion38 range qualification (round19 w1 SourceCorrection): counts
+bind both their **unit and full commit range**. Over183f87b→4b7c682 there
+are five replaced table lines and six changed cells, not “four cells”;
+the four-used-by-only observation holds for58e5d53→9ee1c80 alone.
+Enforce allowed mutable cells by comparing the two pinned source tables,
+not a handwritten numstat transcript. The round19 ruler pins both snapshot
+digests, derives exact changed IDs/cells, and checks no removed IDs,
+immutable changes or net lost non-row lines. Snapshot tampering, wrong
+history or an extra claimed source ID must reopen R18-3. Lesson:
+`lessons/round-19.md`, Build-wave findings / source range addendum.

@@ -153,3 +153,49 @@ sections, restraint 8, `overrides_used=false`. Its stdout/stderr digests
 bind the new observation. This repairs missing evidence, not its original
 timeliness: it does not claim the receipt existed in round 18, nor that
 60/60 holds at any round-19 revision. The fleet report is not rewritten.
+
+## R18-3 range and unit clarification (2026-10-21, round 19)
+
+The R18-3 erratum above concerns the **net diff over the full frozen range**
+`183f87b899e6cae46be98d251cbc87fb5118f6ca` →
+`4b7c6823a462f5ea2eafcb262275300a545f3ed7`. Its five deleted table lines
+are five **replacements**, not removed source rows; rows grew 62→76.
+There are **six changed cells**: five used-by cells, plus S008's status.
+“Four cells” is not a correct alternative unit for that full range.
+
+Line48's “the only in-place row change” describes only the first stage
+through58e5d53 (S008); line79's “four allowed used-by cells” matches only
+58e5d53→9ee1c80 (S001/S052/S056/S057). Those are observations of the
+subranges, not proof of the author's causal mistake. Both statements are
+superseded as descriptions of the full range. The footer was deleted in
+58e5d53 and restored in9ee1c80; net zero deleted non-row lines does not
+deny that intermediate append-only violation.
+
+The strengthened round19 ruler reads two committed, SHA-256-pinned source
+snapshots (`source-baseline.txt`, `source-round18-final.txt`), derives row
+IDs and cell-level differences, rejects immutable-cell changes, removed
+IDs and lost non-row lines, and requires precisely the five replacements
+and six changed cells. A handwritten numstat transcript alone is
+insufficient. `.ufo/waves/round-19/w1/SourceCorrection.md` contains a separate read-only range/cell
+reconstruction; both snapshots were separately read from the named Git
+blobs by L1.
+
+## R18-4 scratch and cross-revision clarification (2026-10-21, round 19)
+
+The failed row at921ef80 and the replay at4b7c682 have identical tool SHA
+`8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12` and
+runner SHA
+`d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b`
+(`.ufo/waves/round-19/w1/ReceiptIntent.md`, `.ufo/waves/round-19/w1/Route04.md`; new receipt fields and ruler constants).
+The already-passing round18 `final/registry.stdout` witness row and
+`final/bash-witness.stdout` are also retained; the new tally is byte-equal
+to that old successful output, not fabricated to replace the failure.
+
+Round19's scratch was `git clone --no-checkout --no-local`, then explicit
+materialization of the pinned tool. It was a separate scratch clone, not
+a full checkout. The first attempt lacked its runner and failed; the
+runner was materialized into the **same** scratch clone before the
+successful attempt. The first failed receipt's supersedes/preservation
+fields express attempted chronology only and confer no effective-success
+status; only the complete receipt is effective. Nothing about the failed
+invocation is reclassified or dated backward.

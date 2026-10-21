@@ -1205,3 +1205,21 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Measurement instrument identity is retained additively in
   `round18-final-measure-instrument.json`, tying original receipt SHA to
   source SHA7ca87a7c…26dd37 at4b7c682, without rewriting the original.
+- Current default-ledger monitor atcecaefe measured60/60, restraint8,
+  no overrides (`current-ledger-monitor-cecaefe.json`), after thirteen
+  actual L1 source re-anchors: eleven initial input drifts plus the
+  SHONEN-link bucket1499 and active recipe migration bucket1855.
+  The intermediate59/60 atc5730cc remains. This is a dated input-keyed
+  observation, not blanket instruction sufficiency.
+- W1 SourceCorrection refined the arithmetic fix: full round18 range =
+  five replaced lines/six cells; four used-by cells belong only to one
+  subrange. The strengthened ruler compares SHA-pinned historical source
+  snapshots and exact IDs/cells instead of trusting a transcript.
+  QUALITY38 qualification and the appended round18 range erratum capture
+  it. Round19's four mutable used-by changes are a separate range, not
+  additional population items.
+- Route04/ReceiptIntent drove exact supersedes-list typing and equality
+  with the retained historical successful witness tally; recomputing a
+  tampered new stream's digest is no longer sufficient. Failed scratch
+  chronology, identical921ef80/4b7c682 tool bytes and incomplete
+  no-checkout materialization are documented without rewriting receipts.

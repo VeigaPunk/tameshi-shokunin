@@ -8,6 +8,7 @@ cold-read/command-coverage ruler or a general claim-admission authority.
 """
 import argparse
 import datetime
+from collections import Counter
 import hashlib
 import json
 import os
@@ -35,7 +36,15 @@ WITNESS = PREFIX + 'bash-witness-selftest-complete.json'
 MEASURE = PREFIX + 'round18-final-measure.json'
 INSTRUMENT = PREFIX + 'round18-final-measure-instrument.json'
 MEASURE_SHA18 = '7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37'
+SOURCE_BEFORE = PREFIX + 'source-baseline.txt'
+SOURCE_AFTER = PREFIX + 'source-round18-final.txt'
+SOURCE_PINS = {
+    SOURCE_BEFORE: 'ac82b2df0ffd44f4e3e74e90cdae2a2eac6bc72ed557dd428c45397f97c828d5',
+    SOURCE_AFTER: '018ee9a86500efc6d07ea141d20c7de6b2ec76e5e808ffbf12508ada46a84e0e',
+}
+OLD_TALLY = '.ufo/evidence/round-18/final/bash-witness.stdout'
 PATHS = (GUARD, CASE, LESSON, SOURCES, OLD_CHECKS, PROBES, INSTRUMENT,
+         SOURCE_BEFORE, SOURCE_AFTER, OLD_TALLY,
          WITNESS, PREFIX + 'bash-witness-selftest-complete.stdout',
          PREFIX + 'bash-witness-selftest-complete.stderr', MEASURE,
          PREFIX + 'round18-final-measure.stdout',
@@ -87,6 +96,36 @@ def receipt(data, path, argv):
     return data[row['stdout']]
 
 
+def compare_sources(before, after):
+    """Compare row identity/cells and net retained non-row lines, not subjects."""
+    fields = ('id', 'source', 'kind', 'tier', 'scope', 'anchor', 'teaches',
+              'status', 'opened', 'recheck', 'used-by')
+    def parse(raw):
+        rows, other = {}, []
+        for line in raw.decode('utf-8').splitlines():
+            if re.match(r'^\|\s*S[0-9]{3,}\s*\|', line):
+                cells = [part.strip() for part in line.split('|')[1:-1]]
+                if len(cells) != 11 or cells[0] in rows:
+                    raise ValueError('source-row-malformed-or-duplicate')
+                rows[cells[0]] = dict(zip(fields, cells))
+            else:
+                other.append(line)
+        return rows, Counter(other)
+    old, old_other = parse(before)
+    new, new_other = parse(after)
+    changes = {identifier: [f for f in fields if old[identifier][f] != new[identifier][f]]
+               for identifier in sorted(old.keys() & new.keys()) if old[identifier] != new[identifier]}
+    return {
+        'before_rows': len(old), 'after_rows': len(new),
+        'changed': changes, 'changed_cells': sum(map(len, changes.values())),
+        'removed': sorted(old.keys() - new.keys()),
+        'added': sorted(new.keys() - old.keys()),
+        'immutable_changes': [(i, f) for i, fs in changes.items() for f in fs
+                              if f not in ('status', 'recheck', 'used-by')],
+        'nonrow_deleted': list((old_other - new_other).elements()),
+    }
+
+
 def evaluate(data):
     rows = []
     def check(identifier, predicate):
@@ -111,7 +150,13 @@ def evaluate(data):
         note = text(CASE).split('## Erratum R18-2', 1)[1]
         source_rows = [line.split('|') for line in text(SOURCES).splitlines()
                        if re.match(r'^\|\s*S008\s*\|', line)]
+        pinned_rows = [line.split('|') for line in text(SOURCE_AFTER).splitlines()
+                       if re.match(r'^\|\s*S008\s*\|', line)]
         return (len(source_rows) == 1 and len(source_rows[0]) == 13
+                and len(pinned_rows) == 1 and len(pinned_rows[0]) == 13
+                and digest(data[SOURCE_AFTER]) == SOURCE_PINS[SOURCE_AFTER]
+                and all(source_rows[0][i].strip() == pinned_rows[0][i].strip()
+                        for i in (1, 2, 3, 4, 5, 6, 7, 9))
                 and source_rows[0][8].strip() == 'mined'
                 and source_rows[0][9].strip() == '2026-10-19'
                 and CASE in [part.strip() for part in source_rows[0][11].split(',')]
@@ -119,7 +164,16 @@ def evaluate(data):
                 and '**queued**' in text(CASE).split('## Erratum R18-2', 1)[0])
     def arithmetic():
         note = text(LESSON).split('## Erratum R18-3', 1)[1].split('\n## ', 1)[0]
+        comparison = compare_sources(data[SOURCE_BEFORE], data[SOURCE_AFTER])
+        expected = {i: ['used-by'] for i in ('S001', 'S052', 'S056', 'S057')}
+        expected['S008'] = ['status', 'used-by']
         return ('five deleted table lines' in note and DIFF_COMMAND in note
+                and all(digest(data[path]) == pin for path, pin in SOURCE_PINS.items())
+                and comparison['changed'] == expected and comparison['changed_cells'] == 6
+                and not comparison['removed'] and not comparison['immutable_changes']
+                and not comparison['nonrow_deleted']
+                and comparison['before_rows'] == 62 and comparison['after_rows'] == 76
+                and set(re.findall(r'\bS[0-9]{3,}\b', note)) == set(expected)
                 and 'deletions = the four allowed used-by cells only'
                 in text(LESSON).split('## Erratum R18-3', 1)[0]
                 and all(identifier in note for identifier in
@@ -132,13 +186,17 @@ def evaluate(data):
         note = text(LESSON).split('## Errata R18-4 / R18-5', 1)[1]
         row = strict_json(data[WITNESS])
         return (raw is not None and b'WITNESS_SELFTEST: 43/43 pass' in raw
+                and raw == data[OLD_TALLY]
                 and b'VERDICT: PASS' in raw and 'failed raw invocation' in note
                 and row.get('historical_receipt_preserved') is True
                 and row.get('tool_sha256') == TOOL_SHA18
                 and row.get('runner_sha256') == RUNNER_SHA18
                 and strict_json(data[OLD_CHECKS])['bash-witness-selftest']['exit'] == 64
                 and strict_json(data[OLD_CHECKS])['bash-witness-selftest']['stdout_sha256'] == digest(b'')
-                and OLD_CHECKS + '#bash-witness-selftest' in row.get('supersedes', []))
+                and type(row.get('supersedes')) is list
+                and sorted(row['supersedes']) == sorted([
+                    OLD_CHECKS + '#bash-witness-selftest',
+                    PREFIX + 'bash-witness-selftest.json']))
     def measurement():
         argv = ['python3', '.ufo/evidence/round-18/measure.py', '--repo',
                 '/home/vgpnk/Projects/shokunin/tameshi-shokunin', '--rev', REV18,
@@ -175,9 +233,9 @@ def selftest():
                    '## Erratum R18-1\nline 2 Effective verified-at: '
                    + TOOLS18 + ' 18 mutation survivors ' + PROBES)
     data[CASE] = '**queued**\n## Erratum R18-2\nline 1 mined ' + REV18
-    cells = ['S008', 'source', 'paper', 'A', 'scope', 'anchor', 'teaches',
-             'mined', '2026-10-19', 'on-release', CASE]
-    data[SOURCES] = '| ' + ' | '.join(cells) + ' |\n'
+    for path in SOURCE_PINS:
+        data[path] = (Path(__file__).parent / Path(path).name).read_text(encoding='utf-8')
+    data[SOURCES] = data[SOURCE_AFTER]
     data[LESSON] = ('deletions = the four allowed used-by cells only\n'
                     '## Erratum R18-3\nfive deleted table lines S001 S008 S052 S056 S057\n'
                     + DIFF_COMMAND + '\n## Errata R18-4 / R18-5\nfailed raw invocation; '
@@ -196,9 +254,11 @@ def selftest():
             'stderr_sha256': digest(b''), 'historical_receipt_preserved': True,
             'tool_sha256': TOOL_SHA18, 'runner_sha256': RUNNER_SHA18,
             'recorded_at': '2026-10-21T06:00:00+00:00',
-            'supersedes': [OLD_CHECKS + '#bash-witness-selftest']})
+            'supersedes': [OLD_CHECKS + '#bash-witness-selftest',
+                           PREFIX + 'bash-witness-selftest.json']})
     make_receipt(WITNESS, ['python3', 'tools/bash-witness-study.py', 'selftest'],
                  'WITNESS_SELFTEST: 43/43 pass\nVERDICT: PASS\n')
+    data[OLD_TALLY] = data[WITNESS[:-5] + '.stdout']
     value = {'revision': REV18, 'rev_input': REV18, 'overrides_used': False,
              'ledger_committed': True, 'calibration_restraint_score': 8,
              'coldread': {'sections_covered': 60, 'sections_total': 60,
@@ -234,6 +294,33 @@ def selftest():
     cases.append(('duplicate-key', mutant, 1, ['R18-4']))
     mutant = dict(data); mutant[WITNESS] = data[WITNESS][:-1] + ',"unused":NaN}'
     cases.append(('nonfinite', mutant, 1, ['R18-4']))
+    mutant = dict(data)
+    outpath = WITNESS[:-5] + '.stdout'
+    mutant[outpath] += 'tampered\n'
+    row = json.loads(mutant[WITNESS]); row['stdout_sha256'] = digest(mutant[outpath].encode())
+    mutant[WITNESS] = json.dumps(row)
+    cases.append(('rehashed-tally-tamper', mutant, 1, ['R18-4']))
+    mutant = dict(data); mutant[OLD_TALLY] = ''
+    cases.append(('missing-historical-tally', mutant, 1, ['R18-4']))
+    mutant = dict(data); row = json.loads(mutant[WITNESS])
+    row['supersedes'] = OLD_CHECKS + '#bash-witness-selftest'
+    mutant[WITNESS] = json.dumps(row)
+    cases.append(('string-supersedes', mutant, 1, ['R18-4']))
+    mutant = dict(data); mutant[SOURCE_AFTER] = mutant[SOURCE_BEFORE]
+    cases.append(('wrong-source-history', mutant, 1, ['R18-2', 'R18-3']))
+    mutant = dict(data); mutant[SOURCE_AFTER] += '\n'
+    cases.append(('source-snapshot-pin-tamper', mutant, 1, ['R18-2', 'R18-3']))
+    mutant = dict(data); mutant[LESSON] = mutant[LESSON].replace(
+        'five deleted table lines', 'S999 five deleted table lines')
+    cases.append(('extra-changed-source-id', mutant, 1, ['R18-3']))
+    mutant = dict(data)
+    source_lines = []
+    for line in mutant[SOURCES].splitlines():
+        if re.match(r'^\|\s*S008\s*\|', line):
+            cells = line.split('|'); cells[3] = ' own-work '; line = '|'.join(cells)
+        source_lines.append(line)
+    mutant[SOURCES] = '\n'.join(source_lines) + '\n'
+    cases.append(('foreign-source-identity', mutant, 1, ['R18-2']))
     for name, path, old, new, identifier in [
             ('wrong-effective-receipt', GUARD, PROBES,
              '.ufo/evidence/round-18/c2-probes-v2-183f87b.txt', 'R18-1'),
@@ -296,6 +383,8 @@ def main():
         corrected = sum(row['status'] == 'corrected' for row in rows)
         print(json.dumps({'revision': args.rev, 'ruler_sha256': digest(Path(__file__).read_bytes()),
                           'corrected': corrected, 'open': 5-corrected, 'total': 5, 'rows': rows,
+                          'source_history': (compare_sources(data[SOURCE_BEFORE], data[SOURCE_AFTER])
+                                             if data[SOURCE_BEFORE] is not None and data[SOURCE_AFTER] is not None else None),
                           'inputs': {p: digest(raw) if raw is not None else None for p, raw in data.items()}},
                          indent=2, sort_keys=True))
         return int(args.check and corrected != 5)

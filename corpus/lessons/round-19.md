@@ -173,3 +173,38 @@ only; its dated2026-10-20 row remains historical and its quoted prose
 still matches. Neither source is added as support for the five-item count.
 The lessons glob's teaching absence is path-scoped; the existing
 `corpus/knowledge/operator-runbook.md` is not absent (w1 TeachingSweep).
+
+Source range addendum (w1 SourceCorrection): the arithmetic mistake is
+also a **range mismatch**, not only a row/cell mismatch. The full frozen
+round18 range has five replacements and six changed cells (five used-by,
+one status); four used-by-only changes belong to58e5d53→9ee1c80 alone.
+Round18 lesson line48's “only in-place row change” is now explicitly
+superseded alongside line79. Net zero deleted non-row lines does not
+erase the intermediate footer deletion/restoration.
+
+R18-3's ruler now compares two separately read, committed, SHA-pinned
+historical source snapshots, reports exact row/cell deltas, and rejects
+immutable changes, removed IDs, lost non-row lines, wrong history,
+snapshot tampering and an extra claimed source ID. The old handwritten
+numstat transcript remains historical corroboration, not its oracle.
+Criterion38's range qualification records the lesson.
+
+The current-monitor maintenance needed two further source entries after
+the initial eleven: SHONEN's current ledger link invalidated bucket1499,
+and migrating the active measurement recipe to the round19 selector
+changed bucket1855. The resulting measured revision
+`cecaefe73482504a814064dd7b2242c8c0b8ad50` returned strict input-keyed
+60/60, restraint8, no overrides (`current-ledger-monitor-cecaefe.json`).
+The intervening59/60 receipt atc5730cc is also retained. Later ruler and
+lesson changes require their own current-input refresh before the final
+no-harm measurement; the cited60/60 is not asserted for a later tip.
+
+Route04/ReceiptIntent's stronger checks were incorporated: the effective
+receipt's supersedes is an exact list (not substring containment), the
+tool/runner hashes are independently pinned, and the new tally must be
+byte-equal to the retained successful round18 tally even if someone
+recomputes its local digest. Cross-revision tool identity and the
+no-checkout scratch materialization are explicitly documented in the
+round18 erratum. Earlier failed chronology fields confer no success.
+The final source/receipt comparison is not a claim of producer
+authentication or exhaustive adversarial coverage.
