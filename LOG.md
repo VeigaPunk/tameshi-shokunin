@@ -1496,3 +1496,26 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Inherited state: helper state clean, local=remote51d49d5, no lane leftovers;
   no round21 outside spotcheck file or operator teaching file existed in the
   explicit lessons glob at round start. Round21 admission is not redone.
+
+### Round22 — executed accounting capability and disclosed repair (2026-10-21)
+
+- Landed gate/corpus commits66a25abf9a07f99df6f8584044a83a21349706a1,
+  e4da41c3102f6f90b42257d4b8785335806ef954 and reviewed repair
+  11f55d64968778aaed07b001fc8b2480c38e1896. Frozen before ruler unchanged.
+- Actual at11f55d6: C1 counter8/8, replay146/66 completed/80 failed,
+  wrong-count1/TOTAL_MISMATCH, registry43/43 active/4 superseded.
+  Actual current strict source monitor47/62/restraint6 is a harmed
+  intermediate and requires real source re-anchoring, never old62/62.
+- Same-revision repaired guard sweep at6b6a3ead4c6087e2e146b847f6842ad844aad85f
+  kills16/16 with restored0; old14/16 and nondiscriminating fixture failures
+  are retained. New gate selftest uses frozen8 plus16 supplemental fixtures,
+  not24 claimed historical defects. `final/guard-mutations-final.json`.
+- SourceS082 (own-work) and same-ground knowledge entry ground the one
+  calibration claim; QUALITY45 learns the two partial-report false positives.
+  No source row is deleted; source count79→80, A70→71/B7/C2,
+  mined50→51/queued23/rejected6, census0 at both endpoints.
+- Wave1 original callbacks:64 dispatched,44 completed/20 dead; four fresh
+  residual critics all completed, total68 unique/48 completed/20 dead.
+  No dead identity was replaced. Invalid registry-source anchors, premature
+  receipt prose and two surrounding-revision metadata labels are corrected
+  explicitly in the lesson and new receipt errata; originals are preserved.

@@ -160,3 +160,35 @@ array that actually triggers this decoder's refusal, and an otherwise valid
 bundle whose duplicate schema key would be silently overwritten). A compact
 persisted depth parameter avoids retaining a200001-character line. The frozen
 eight-predicate ruler and the146-seat status vector remain unchanged.
+
+## Repaired committed-revision observations
+
+At6b6a3ead4c6087e2e146b847f6842ad844aad85f, the full same-revision
+16-guard mutation sweep now kills16/16 with restored selftest0, retained
+in `final/guard-mutations-final.json`. M10's public selftest exits2/
+could-not-evaluate when the decoder guard is removed; this is a non-green
+kill, not misreported as an assertion-exit1. The prior14/16 and two repair
+receipts remain preserved. Frozen claim counter remains8/8 at this commit.
+
+The exact same full-population argv ran against wrong then corrected caller
+totals:1/TOTAL_MISMATCH→0, while all146 statuses and both partial reports
+stayed fixed. Corresponding bundle-digest updates are consequent input pins,
+not altered status authority. The exact same deep-input argv ran old gate
+bytes→repaired bytes:1/uncaught recursion→2/INVALID_INPUT. Original streams
+are retained separately. `final/receipt-metadata-errata.json` corrects two
+common-helper surrounding-revision labels from actual argv/tool bytes; it
+does not rewrite those raw observations or pretend the old labels were right.
+
+The actual callback-corroboration command now records its argv, the two input
+hashes and output146 headers/146 seats/146 status-role agreements in
+`final/callback-corroboration-command.json`. These new durable callback copies
+are unsigned local observations. The earlier source-retention limitation is
+repaired, not converted into provider authentication.
+
+For current no-harm, use the independently recorded actual revision in
+`final/monitor-current.json` and the full battery receipt `final/registry-final.json`;
+the47/62 intermediate and earlier43/43 execution are never substitutes.
+Source re-anchors preserve the original234-entry default-ledger prefix as
+data, label L1 authorship, and do not count as blind/independent cold-reads,
+recipe execution or required-command coverage. Existing round21 selector and
+SHONEN pointer remain intentionally unchanged.

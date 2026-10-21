@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import json,re,sys; from pathlib import Path; r=Path(sys.argv[1]); b=json.loads((r/'.ufo/evidence/round-22/bundle.json').read_text()); c=json.loads((r/'.ufo/evidence/round-22/round21-callbacks.json').read_text()); headers={x['id']:dict(re.findall(r'(\\w+)=\"([^\"]*)\"',x['callback'].split('>',1)[0])) for x in c['rows']}; rows=[x for w in b['waves'] for x in w['outcomes']]; matches=sum(x['id'] in headers and headers[x['id']]['agent']==x['role'] and ('failed' if headers[x['id']]['status'].startswith('failed') else headers[x['id']]['status'])==x['status'] for x in rows); print(json.dumps({'seats':len(rows),'headers':len(headers),'status_role_agreements':matches},sort_keys=True))",
+    "/tmp/tameshi-r22-final-_irlii2t/lane"
+  ],
+  "cwd": "/tmp/tameshi-r22-final-_irlii2t/lane",
+  "revision": "6b6a3ead4c6087e2e146b847f6842ad844aad85f",
+  "measurement_interval": {
+    "start": "2026-10-21T14:03:02.253097+00:00",
+    "end": "2026-10-21T14:03:02.297780+00:00"
+  },
+  "exit": 0,
+  "stdout": "{\"headers\": 146, \"seats\": 146, \"status_role_agreements\": 146}\n",
+  "stderr": "",
+  "inputs": {
+    ".ufo/evidence/round-22/bundle.json": "dfb1027f80be935fe781ccb8c47d89639a88a9eff6e05d1b45b2a7a61845c18e",
+    ".ufo/evidence/round-22/round21-callbacks.json": "c2db7db5071d46b0062fc74b17acf4e59393427fc36f44c08ac3323e545b1cb0"
+  }
+}
