@@ -1287,3 +1287,11 @@ metadata and its failure are preserved; production gate source is unchanged.
   are retained beside registry-complete receipts. Post-fix source
   binding adds five entries: final ledger184 =159 unchanged carried
   +25 author entries on16 distinct buckets, never independent cold-read.
+- Final C1 before7243e7f0/5→32838a5 5/5, exits1→0, same ruler
+  SHA7af3e951…56cf72 (`final/checks.json`, `expectations.json`).
+  Strict current monitor at32838a5:60/60, restraint8, no overrides.
+  End census exit0,76 rows, four allowed used-by edits only; protected
+  round18 evidence/runner/kill-rate-ledger diff empty. Numeric scores
+  remain depth8/calibration8, all SHONEN marks~. Expansion unchanged,
+  quality improved bounded, discernment improved. Final evidence and
+  both64-seat report populations are committed before the fleet report.

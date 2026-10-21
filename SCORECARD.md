@@ -741,3 +741,29 @@ cold-read evidence nor required-command coverage. The final no-harm
 receipt must name its delivered revision and reproduce restraint8;
 historical4b7c682 counts cannot stand in for it. QUALITY40 / lesson
 `## No-harm repair` capture the failed intermediate.
+
+### Round19 final measured verdict
+
+C1 **improved**: baseline `7243e7f163f08978c8fd9b6c1ef67a2fefe7d190`
+corrected0/open5, exit1 → measured
+`32838a505fc9e15be5e7f6ad4335b0548d263dcd` corrected5/open0, exit0.
+Same final ruler SHA256
+`7af3e951bf67f7671954dee33aaa4dc183a642fce85cbc2d9d782085f856cf72`
+on both endpoints; counting command remains the round19 measure `--rev REV --check`.
+Receipts: `.ufo/evidence/round-19/final/checks.json`,
+`c1-before.stdout`, `c1-final.stdout`, `expectations.json`.
+
+Numeric calibration **8→8**, current no-harm measured at32838a5:
+strict input-keyed60/60, restraint8, no overrides (`monitor-final.stdout`);
+not blind/independent cold-read or command coverage. Ledger184 entries:
+159 unchanged carried +25 L1-author source entries on16 distinct buckets.
+Historical11/13/15 counts above describe earlier stages, not the final cohort.
+Full registered suite at `d7caf86110e6c6fdcc14ee7a797bda93d32e89cb`:
+33/33 active outcomes held, four superseded; new selftests43/43 and3/3,
+frozen algorithm98/98 separately. Failed setup/suite attempts are retained.
+
+Sources76→76, A67/B7/C2, mined48/queued23/rejected5, malformed0;
+only four used-by cells changed, no immutable cells/removed rows/non-row loss.
+Expansion unchanged; quality improved (bounded); discernment improved.
+No promotion, axis retirement or new capability-table claim. Existing18
+guard survivors and marked source-anchor/backlink debts remain open.

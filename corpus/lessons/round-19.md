@@ -314,3 +314,33 @@ The failure is repeated enforcement failure, not absence of a prior
 rule. QUALITY15/17 remain the precise pre-existing usage/exit rules.
 `FMistakesDraft.md` supplies the dated prior-protocol anchors; its
 advisory verdict is not independent round admission.
+
+## Final observed outcome
+
+Final same-ruler measurement: baseline7243e7f corrected0/open5/exit1 →
+`32838a505fc9e15be5e7f6ad4335b0548d263dcd` corrected5/open0/exit0;
+both use SHA7af3e951…56cf72. `final/checks.json` binds actual argv,
+revision, exits, instrument and stream digests; `final/expectations.json`
+pins the observed input maps. The old frozen-runs.json is initial-ruler
+history, not final evidence. At32838a5 the strict default-ledger monitor
+is60/60, restraint8, no overrides; final ledger184 =159 unchanged carried
++25 author entries on16 buckets. This is input-keyed credit only.
+
+The full suite atd7caf861 holds33/33 active outcomes, four superseded;
+correction-ruler selftest43/43, packaged selector3/3, frozen algorithm98/98.
+Initial strict-anchor refusal and the31/33 attempt remain in final/.
+The latter's regression lacked sibling mirrors; the selector's97/98
+failure came from copying a package as a standalone script. Its replacement
+public selftest exercises complete-package relocation/default/no-fallback;
+the original98-case algorithm suite still runs separately, with no case
+suppressed. Census start/end both exit0, rows76 unchanged; exactly four
+used-by cells changed and no immutable cells/rows were removed.
+
+All128 original seats completed with no dead/unstarted/replacement seats;
+five existing identities performed bounded residual followups, not a third
+wave. Late staging was installed at329b6dd and the temporary stage removed.
+QUALITY20's earlier in-wave edit violation remains disclosed; final
+measured execution does not borrow the original wave's source hash.
+No new L0 question or tool installation. Expansion unchanged; quality
+improved bounded; discernment improved through grounded corrections.
+Non-author round19 admission/promotion remains Main's duty.
