@@ -77,3 +77,20 @@ yet exact argv binding rejects1/ARGV_MISMATCH. A newly executed correct
 command is clean0; respective receipts are `source-read-gate-A.json` and
 `correct-command-gate-A.json`. This supplies the failure-backed discriminator
 for QUALITY46; it does not make unsigned process declarations authentic.
+
+## Erratum — round23 fresh falsification (2026-10-21)
+
+Workflow step 2 asks for an isolated checkout and actual argv/cwd/revision.
+The round23 replay met that step only partly:
+- The instrument supplied receipt argv, cwd and revision from the values it
+  executed. On that population the gate therefore checked only exit and
+  stdout.
+- Two rows, `pin-disposition-read` and `verify-round15`, read live fleet
+  state, and live sibling repos were symlinked into the clone. The replay is
+  41 revision-pinned rows plus 2 live-dependent rows, not a hermetic clone.
+
+The gate sees only the requirements declared inside the bundle. Freezing the
+requirement set is a separate obligation, carried out by `replay.py`
+comparing evidence-local `requirements.json` with `registry-baseline.json`
+before running. See QUALITY47 and `lessons/round-23.md`, "Fresh falsification
+wave"; earlier text above stays unchanged.

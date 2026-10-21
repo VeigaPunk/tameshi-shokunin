@@ -1,0 +1,130 @@
+{
+ "recorded_by": "CloseTameshi22 (reassigned round-23 L1 coordinator after TameshiR23 died); supersedes fresh-adjudication-draft.json, which stays preserved unchanged",
+ "recorded_at": "2026-10-21T15:11:17.249011+00:00",
+ "inputs": {
+  "outcomes": ".ufo/waves/round-23/original-outcomes2.json",
+  "findings": ".ufo/waves/round-23/w2/*.md (30 completed seats; Replay16 partial is a failed seat)"
+ },
+ "draft_status": "The author draft listed five accepted code/registry repairs marked not_final. None was executed before the author died. This adjudication defers all five as routed defects; it does not claim them.",
+ "accepted_now_as_corrections": [
+  {
+   "findings": [
+    "CorpusClaim F1",
+    "CwdDeclared 1",
+    "MistakeRule B"
+   ],
+   "correction": "In the 43-row replay, the instrument supplies receipt argv, cwd and revision from the same values it executes, so they are equal by construction. The population verdict tests exit and stdout only. Argv discrimination is shown only by the source-read pair (1/ARGV_MISMATCH vs 0) and the synthetic cases."
+  },
+  {
+   "findings": [
+    "CwdDeclared 2",
+    "RevisionDeclared F2",
+    "RunnerIsolation High",
+    "MistakeRule C"
+   ],
+   "correction": "The replay is not an isolated clone: pin-disposition-read and verify-round15 (external=true) read live fleet state, and the clone symlinks live sibling repos. The replay is 41 revision-pinned rows plus 2 live-dependent rows. No sibling write isolation is evidenced; replay.py writes its --out directory into the lane."
+  },
+  {
+   "findings": [
+    "MistakeRule A",
+    "TrustedRequirements E2/E4"
+   ],
+   "correction": "The gate binds bundle-declared requirements under the caller-owned expected digest. Freezing the requirement set before execution is enforced only by replay.py comparing two evidence-local files (requirements.json and registry-baseline.json). QUALITY46 narrowed by QUALITY47."
+  },
+  {
+   "findings": [
+    "MistakeRule D",
+    "RevisionDeclared F4"
+   ],
+   "correction": "The receipts at 496d212 and the delivered gate are linked by tool content digest d533dc1e (identical at 496d212 and 336565f), not by matching revision labels."
+  },
+  {
+   "findings": [
+    "MistakeRule row2"
+   ],
+   "correction": "The lesson Mistakes row 2 pointer route-mix-before.json:34/64 is a broken line anchor. The fact zai=34/64 is in line 3 (stderr). route-mix-final.json line 3 shows zai=25/64, so the rebalance is verified."
+  }
+ ],
+ "routed_not_executed": [
+  {
+   "findings": [
+    "ArgvExact"
+   ],
+   "defect": "A name-insensitive argv mutant (receipt argv in any requirement argv) is outside the ten-anchor sweep and would survive all 38 selftest cases [seat inference, not executed]. Needs a swapped-name supplemental case plus that mutant."
+  },
+  {
+   "findings": [
+    "MutationDesign"
+   ],
+   "defect": "An unexecuted negative-exit guard-weakening candidate. Its expected survival is a seat inference, not a measured survivor."
+  },
+  {
+   "findings": [
+    "RevisionDeclared F1",
+    "CorpusClaim F3"
+   ],
+   "defect": "The command-binding-frozen-clean and source-read-red registry rows do not pin bundle_sha256 literals, so a regenerated bundle and expected pair would still hold."
+  },
+  {
+   "findings": [
+    "Replay31",
+    "Replay34",
+    "CwdDeclared 2"
+   ],
+   "defect": "The replay projection drops the runner fields held, cleanup_ok, external and non_hermetic_argv. The receipt schema cannot carry a live-dependency marker."
+  },
+  {
+   "findings": [
+    "RevisionDeclared F3",
+    "CorpusClaim F2"
+   ],
+   "defect": "runner_sha256 and instrument_sha256 hash the live-tree copy of registry-check.py, not the clone copy that ran. The values are equal at 496d212, 8f66b5d and 336565f."
+  },
+  {
+   "findings": [
+    "CwdDeclared 3"
+   ],
+   "defect": "replay.py compares sibling identity by string and does not take the realpath of the fleet root. This is latent for a non-canonical --repo; the actual run used the canonical path."
+  },
+  {
+   "findings": [
+    "RunnerIsolation Medium x2"
+   ],
+   "defect": "Replay streams are retained without size bounds or redaction. No secret was observed in the inspected rows."
+  },
+  {
+   "findings": [
+    "Replay32",
+    "Replay33",
+    "Replay35",
+    "Replay36",
+    "Replay29",
+    "Replay43"
+   ],
+   "defect": "Preexisting loose stdout substring tokens in frozen rows. They are kept unchanged by the no-retrofill/frozen-argv rule."
+  }
+ ],
+ "deferral_reason": "Each code or registry repair changes tools/registry.json (an input of 58 ledger entries), replay or fixtures after the falsify wave closed. That would require a new replay, mutation sweep and source re-anchor with no fresh falsifier available: the job cap refuses spawns and dead seats are never replaced. Text corrections keep the measured claim honest without new unreviewed code.",
+ "rejected": [
+  {
+   "proposal": "Remove the stale SOURCES \"Next unused id: S083\" line (CorpusClaim nit)",
+   "reason": "The Next-unused lines are append-only by the round-18 QUALITY35 rule; S084 was appended after them."
+  },
+  {
+   "proposal": "Producer authentication, live cwd existence or revision resolution inside the generic gate",
+   "reason": "Outside the declaration-binding contract. The synthetic isolated controls deliberately use a nonexistent cwd and revision."
+  },
+  {
+   "proposal": "Tighten old stdout tokens or repair old registry anchors",
+   "reason": "This would change the frozen baseline argv/expect; the limitation is named instead."
+  }
+ ],
+ "agreements_without_change": [
+  "NoRetrofill: no old receipt was rewritten",
+  "ArgvExact/CwdDeclared: the exact-list argv and exact-string cwd comparisons have no normalization",
+  "CountRequirements: 43/43 requirement and receipt pairs match",
+  "CountSourceRows: 81 rows, +1 S083 A/mined",
+  "MeasureReplay: frozen counter 10/10, exit 0 (seat run, not persisted by the seat)",
+  "Replay21/23/24/26/28/29/30/38/40/41/42: per-row static binding confirmed"
+ ]
+}

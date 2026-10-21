@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import collections,json,re,subprocess,pathlib; p=pathlib.Path('corpus/SOURCES.md'); old=subprocess.run(['git','show','28cae179e4dc2c1fa7f032a79cdddf0b5d862d76:corpus/SOURCES.md'],check=True,capture_output=True,text=True).stdout; new=p.read_text(); parse=lambda text:{v[1].strip():[x.strip() for x in v[1:-1]] for line in text.splitlines() if re.match(r'^\\|\\s*S[0-9]{3,}\\s*\\|',line) for v in [line.split('|')]}; a,b=parse(old),parse(new); census=lambda r:{'rows':len(r),'tiers':dict(collections.Counter(v[3] for v in r.values())),'statuses':dict(collections.Counter(v[7] for v in r.values()))};print(json.dumps({'before':census(a),'after':census(b),'added':sorted(set(b)-set(a)),'removed':sorted(set(a)-set(b)),'changed_existing':sorted(k for k in a if k in b and a[k]!=b[k])},sort_keys=True))"
+  ],
+  "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "exit": 0,
+  "instrument_sha256": {
+    "corpus/SOURCES.md": "c147513d7bdca6ddddd290c5d1032323f6f082f8f4e8b874d19f58f418d6e370"
+  },
+  "measurement_interval": {
+    "end": "2026-10-21T14:52:45.268633+00:00",
+    "start": "2026-10-21T14:52:45.250593+00:00"
+  },
+  "revision": "336565fc2e70e034307ef267aaa2018572c200d3",
+  "stderr": "",
+  "stdout": "{\"added\": [\"S083\"], \"after\": {\"rows\": 81, \"statuses\": {\"mined\": 52, \"queued\": 23, \"rejected\": 6}, \"tiers\": {\"A\": 72, \"B\": 7, \"C\": 2}}, \"before\": {\"rows\": 80, \"statuses\": {\"mined\": 51, \"queued\": 23, \"rejected\": 6}, \"tiers\": {\"A\": 71, \"B\": 7, \"C\": 2}}, \"changed_existing\": [], \"removed\": []}\n"
+}

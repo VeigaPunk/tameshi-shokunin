@@ -110,3 +110,81 @@ Historical R17-CMD-BIND is the motivating overclaim under QUALITY33, not
 closed by a new43-command population. Existing stale registry source anchors
 and loose substring tokens are named old limitations; frozen argv/expect
 values are not silently strengthened or altered.
+
+## Fresh falsification wave, author death and errata (L1 reassignment)
+
+The authoring L1 TameshiR23 died at 2026-10-21T14:57:01Z. Its last four
+assistant turns were provider errors; the last, on the
+`openai-codex/gpt-6.1-sol` fallback, reads `Codex error event: This content was
+flagged for possible cybersecurity risk ... (code=cyber_policy)`. The
+orchestrator reassigned the round to CloseTameshi22, which had been the
+non-author closure of round22. It continued under the same held claim,
+tameshi23/attempt1. No refused work was rephrased or rerouted. The round23
+closure must be a different agent.
+
+Wave2 had 64 validated seats: reviewer20, connector17, critic12,
+simplifier4, revenger3, executor3, scout2, mutation-tester1, sentinel1 and
+scribe1. Of these, 30 completed and 34 are dead
+(`.ufo/waves/round-23/original-outcomes2.json`). Completion authority is
+the task-result callback delivered to the author session. The 34 dead seats
+have no callback; each child transcript ends with `Request was aborted`,
+without session_exit, when the parent ended. All 20 reviewers are among the
+dead. Replay16's partial final text is kept as `w2/Replay16.partial.md`, and
+the seat stays failed. No seat was re-dispatched, resumed or replaced.
+
+Deviations from the read-only instruction are kept on record. Replay40–43
+(simplifiers) wrote their own `w2/*.md` reports despite the no-write rule;
+their final outputs are kept beside those reports as `*.output.md`.
+CorpusClaim ran read-only git/hash commands outside its slice. L1 persisted
+the other completed outputs byte-exact (`w2-persisted-outputs.json`).
+
+Adjudication: `.ufo/waves/round-23/fresh-adjudication.json`. It supersedes,
+without editing, the author's unexecuted `fresh-adjudication-draft.json`.
+
+Erratum A (CorpusClaim, CwdDeclared, MistakeRule B). In the 43-row replay,
+the instrument copies each receipt's argv, cwd and revision from the values
+it executes, so they match by construction. That population verdict
+therefore tests only exit and stdout. The earlier line "argv parameters and
+actual clone cwd produce a clean0 binding verdict" overstated this. Argv
+discrimination is shown only by the source-read pair (1/ARGV_MISMATCH versus
+0) and by the synthetic cases.
+
+Erratum B (CwdDeclared, RevisionDeclared, RunnerIsolation). The replay was
+not isolated. `pin-disposition-read` and `verify-round15` (external=true)
+read live fleet state, and the clone symlinks the live sibling repos. The
+result is 41 revision-pinned rows plus 2 live-dependent rows. No sibling
+write isolation is evidenced, and `replay.py` writes its `--out` directory
+into the lane.
+
+Erratum C (MistakeRule A, TrustedRequirements). `tools/command-binding.py`
+validates only the requirements declared inside the bundle. The frozen
+requirement set is enforced solely by `replay.py` comparing two
+evidence-local files before execution. QUALITY47 narrows QUALITY46
+accordingly. The receipts at 496d212 and the gate delivered at 336565f are
+linked by an identical tool digest, `d533dc1e`, not by revision labels.
+
+Erratum D (MistakeRule). Mistakes row 2 cites `route-mix-before.json:34/64`.
+That file has five lines; `zai=34/64` is on line 3, in stderr.
+`route-mix-final.json` line 3 shows `zai=25/64`.
+
+Routed defects, not executed this round:
+- Two candidate mutants fall outside the ten-anchor sweep: a name-insensitive
+  argv mutant (ArgvExact) and a negative-exit mutant (MutationDesign). The
+  seats only inferred that these would survive; neither was run.
+- The frozen-clean and source-read-red registry rows do not pin their bundle
+  digests.
+- The replay projection drops the runner's held, cleanup_ok, external and
+  non_hermetic_argv fields.
+- Runner digests are taken from the live tree instead of the clone copy.
+- The fleet root is not realpath-normalised.
+- Retained streams have no size bound.
+
+Making any of these repairs would change `tools/registry.json`, the replay
+or the fixtures after the falsify wave. That in turn needs a new replay, a
+mutation sweep and source re-anchors, and no fresh falsifier is available.
+The measured claim is unchanged: the frozen ten-predicate counter and the
+declared ten-anchor sweep.
+
+| Class | Evidence pointer | Captured-by | Fix / shown able to fail |
+|---|---|---|---|
+| overclaim / declaration-copied metadata described as observed | `fresh-adjudication.json` accepted_now_as_corrections[0–1]; CorpusClaim, CwdDeclared | QUALITY3 (observation vs inference); none specific to instrument-supplied receipt fields | QUALITY47 plus Errata A/B. Not counted as a failure-backed fix: the code repair is routed. The existing argv failure-backed fix remains row1 (1/ARGV_MISMATCH→0). |

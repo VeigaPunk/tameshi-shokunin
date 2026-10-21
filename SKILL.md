@@ -2029,3 +2029,13 @@ trusted expected file chooses another contract, not a provider signature.
 Ten synthetic rejection cases, the finite baseline registry replay and the
 input-keyed source monitor are separate populations. Historical R17-CMD-BIND
 full-page/ledger-consumer coverage remains open; no independent promotion.
+
+Round23 correction (fresh falsification, appended; text above unchanged).
+The replay above is not an isolated clone. Two external rows,
+`pin-disposition-read` and `verify-round15`, read live fleet state, and the
+clone symlinks live sibling repos. The result is 41 revision-pinned rows
+plus 2 live-dependent rows. The instrument supplies receipt argv, cwd and
+revision, so the replay verdict tests only exit and stdout. Argv
+discrimination rests on the source-read pair and the synthetic cases. The
+gate binds bundle-declared requirements; requirement freezing is the
+replay instrument's pre-execution check (QUALITY47).

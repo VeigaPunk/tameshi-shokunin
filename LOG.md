@@ -1563,3 +1563,25 @@ metadata and its failure are preserved; production gate source is unchanged.
   rejection, exact schema-key validation and nineteen supplemental fixtures.
   Original draft bytes retained for actual red-before comparison; no pass
   is inferred from a static review. Old missing argv/truncated tails stay old.
+
+### Round23 — actual committed observations and restored current monitor
+
+- At496d212bc46789cdf8cafab72978bdb7f4182963 the frozen counter
+  discriminates10/10, public selftest38/38, guard sweep10/10 with green
+  pristine/restored controls. Actual baseline43-command replay holds43/43
+  and full-stream bundle binds clean0. Source-read substitution fails1/
+  ARGV_MISMATCH while the executed correct command binds clean0. These
+  are executed receipts in `.ufo/evidence/round-23/`, not static assertions.
+- Intermediate no-harm was48/62 at496d212 and47/62 at8f66b5d;
+  both harmed observations remain. Fifteen actual traced L1-author source
+  reads at8f66b5d992ffcef296d037fe4aad6c057b6422c2 append to the249-entry
+  ledger prefix, which remains equal as data. No blind/cold-read or command
+  coverage credit is assigned to those source-maintenance reads.
+- At336565fc2e70e034307ef267aaa2018572c200d3 the current strict
+  selector actually reports62/62, restraint8, depth8, overridesfalse;
+  full registered battery46/46 active,4 superseded, exit0. Canonical receipts:
+  `monitor-current-C.json` and `registry-C.json`. C1 calibration improves,
+  numeric8→8/delta0. No other axis is harmed in these bounded monitors.
+- A fresh64-item falsification wave attacks43 concrete replay rows and21
+  implementation/corpus/accounting surfaces, not replacements for the one
+  dead build seat. Its terminal outcomes and adjudication land separately.

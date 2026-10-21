@@ -466,3 +466,20 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     deleting a required receipt fails1/MEMBERSHIP_MISMATCH; restoring only
     that field restores clean0. The new finite registry demonstration does
     not close historical full-page/coldread command coverage.
+
+## Criterion appended — round 23 correction (2026-10-21)
+
+47. Narrows criterion46; 46 stays unchanged. A command-binding gate binds the
+    requirements declared inside its pinned bundle. The requirement set is
+    frozen before execution only by the replay instrument's evidence-local
+    digest/compile check, so cite that check separately. Receipt argv, cwd
+    or revision copied by the instrument from what it executes are
+    invocation parameters, not observations. A population verdict over such
+    receipts tests only exit and stdout, so argv discrimination must cite a
+    real substituted-command pair. Report rows that read live or external
+    state separately from revision-pinned rows; never call such a replay an
+    isolated clone. Captured by: `lessons/round-23.md` "Fresh falsification
+    wave", Errata A–C (CorpusClaim, CwdDeclared, RevisionDeclared,
+    MistakeRule). Falsifier: the retained source-read pair must still return
+    1/ARGV_MISMATCH while the correct command returns 0; the 43-row replay
+    cannot fail on argv by construction.

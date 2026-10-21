@@ -1063,3 +1063,15 @@ final no-harm requires actual source re-anchors and a separately recorded
 strict committed-revision result. The historical249-entry prefix is retained.
 No historical R17-CMD-BIND closure, full-page command coverage, independent
 cold-read, execution authentication or promotion is claimed.
+
+### Round23 restored current no-harm observation
+
+At336565fc2e70e034307ef267aaa2018572c200d3 the actual strict
+default-ledger measurement restores62/62 source support, restraint8,
+depth8, overridesfalse, exit0 (`monitor-current-C.json`). The complete
+registered battery holds46/46 active with4 superseded, exit0
+(`registry-C.json`). Previous48/62 and47/62 harmed observations are
+preserved. Fifteen actual source reads were appended to the unchanged
+249-entry prefix; these do not change the command-binding denominator.
+C1 calibration verdict improved; numeric8→8/delta0. The current final
+revision receipt, if later, names its own revision rather than borrowing C.
