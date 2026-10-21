@@ -135,3 +135,23 @@ researched civil-timezone/DST claim.
 ResidualRulerWrapper identified two ignored stage __pycache__ files born
 2026-10-21T06:31:56−03:00 during the build. L1 removed only those bytecode
 files and their empty directory. No frozen .py bytes were edited.
+
+## Executed verification — failed first battery retained
+
+The one complete registered battery at
+`dc046fac5c05dda0a3d067afd25d7435c92b582a` held35/36 active expectations,
+with four superseded rows still executed. The sole failing row was the
+new round20 selector selftest: L1's negative-case assertion compared a
+str finding ID with byte stderr, raising TypeError. This is a real
+integration defect, not an expected refusal. The retained
+`final/registry-complete.stdout` contains the traceback. The one-line fix
+uses a bytes literal; only that failed row needs a targeted registered
+recheck. Do not report the first battery as36/36 or relabel it green.
+
+The installed receipt gate's registered selftest was20/20 and the
+maintained six-item wrapper's public selftest10/10. Independent public CLI
+controls held20/20 (`final/public-cli-results.json`). A same-command guard
+removal probe observed pristine20/20 exit0 → mutant19/20 exit1 →
+restored20/20 exit0 (`final/guard-removal.json`), with only the frozen-window
+guard changed in the private copy. None of the eighteen prior survivors
+is exercised or closed by that new-guard probe.

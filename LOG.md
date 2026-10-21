@@ -1364,3 +1364,13 @@ metadata and its failure are preserved; production gate source is unchanged.
   declared identity/freshness/authentication bounds. Missing SOURCES
   round20 Search-log bookkeeping was appended, and two owned stage pycache
   files were removed without changing frozen Python bytes.
+- One complete registered battery atdc046fac held35/36 active expected
+  outcomes, four superseded. The new selector selftest crashed on a str
+  versus bytes stderr assertion; its traceback is retained, not marked
+  green. Fixed only the assertion's literal type; targeted registered
+  recheck follows. Other new rows passed: gate20/20, maintained ruler10/10.
+- Twenty independent public-CLI fixture expectations held, and the new
+  frozen-window guard-removal triplet observed20/20→19/20→20/20,
+  exits0→1→0, on an isolated copy. Baseline C1 was remeasured0/6 exit1
+  with the frozen instrument; the inherited --check spelling actually
+  exits2 and is retained as an invocation failure, not a success receipt.

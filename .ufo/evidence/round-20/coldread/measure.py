@@ -91,7 +91,7 @@ def selftest():
             run = invoke(*extra)
             outcomes.append(('override-refused:' + extra[0],
                              run.returncode == 64
-                             and 'SELECTOR_OVERRIDE_FORBIDDEN' in run.stderr))
+                             and b'SELECTOR_OVERRIDE_FORBIDDEN' in run.stderr))
     for name, ok in outcomes:
         print('CASE', name, 'PASS' if ok else 'FAIL')
     passed = sum(ok for _, ok in outcomes)
