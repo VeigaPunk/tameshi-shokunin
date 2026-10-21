@@ -1023,3 +1023,21 @@ admit/reject sampling. No retirement, scalar inflation, promotion or frontier
 crossing. Next intended work remains unclosed required-command binding,
 frontier F1/F4/F6/F7/F8/F9/F10 and owner-approved successor sweeps; this row
 awards no later round or capability.
+
+## Round 23 — declared required-command receipt binding (2026-10-21)
+
+C1 calibration, tied lowest owned numeric axis (depth8/calibration8):
+the ten frozen public-CLI predicates in
+`.ufo/evidence/round-23/contract.json` move tool-absent0/10 at
+28cae179e4dc2c1fa7f032a79cdddf0b5d862d76 to target10/10.
+Counting command: `python3 .ufo/evidence/round-23/measure.py --repo REPO_AT_REV`.
+The capability binds explicit registered command names, exact argv, cwd,
+revision and retained outcomes to requirements; positive source-read counts
+cannot substitute. Numeric expertise stays8, delta0, subject to actual
+current no-harm measurements. This is not full-page command coverage,
+independent cold-read, producer authentication or promotion.
+Frozen before receipt: `.ufo/evidence/round-23/before.json`, exit1.
+The real demonstration population is the43 active baseline registry rows,
+separate from ten synthetic discrimination predicates. L1 holds planner;
+one64-seat batch audits43 command contracts plus21 concrete design/count
+items, read-only, with no concurrent production writers or replacements.
