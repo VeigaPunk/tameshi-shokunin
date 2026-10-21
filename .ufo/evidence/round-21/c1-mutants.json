@@ -1,0 +1,137 @@
+{
+ "schema": "tameshi-r21-c1-mutants-v1",
+ "population": "the 18 round-18 named guard survivors (SCORECARD.md round18 'Open next-round work'; corpus/lessons/round-18.md:92); exact @old/@new copied from the round-18 wave-2 reports",
+ "frozen_before_dispatch": true,
+ "sources": {
+  "tools/bash-witness-study.py": ".ufo/waves/round-18/w2/MutateBashWitness18.md:97-196",
+  "tools/evidence-disposition.py": ".ufo/waves/round-18/w2/MutateDisposition18.md:26-38",
+  "tools/registry-check.py": ".ufo/waves/round-18/w2/MutateRegistryCheck18.md:64-170",
+  "tools/trace-inputs.py": ".ufo/waves/round-18/w2/MutateTraceInputs18.md:73-133"
+ },
+ "mutants": [
+  {
+   "id": "MB03",
+   "path": "tools/bash-witness-study.py",
+   "old": "           if not name.startswith(\"GIT_\")}",
+   "new": "           if name not in (\"GIT_DIR\", \"GIT_WORK_TREE\")}"
+  },
+  {
+   "id": "MB04",
+   "path": "tools/bash-witness-study.py",
+   "old": "    env[\"GIT_CONFIG_GLOBAL\"] = \"/dev/null\"\n",
+   "new": ""
+  },
+  {
+   "id": "MB05",
+   "path": "tools/bash-witness-study.py",
+   "old": "    env[\"GIT_CONFIG_GLOBAL\"] = \"/dev/null\"",
+   "new": "    env[\"GIT_CONFIG_GLOBAL\"] = str(REPO / \".gitconfig\")"
+  },
+  {
+   "id": "MB06",
+   "path": "tools/bash-witness-study.py",
+   "old": "    env[\"GIT_CONFIG_NOSYSTEM\"] = \"1\"",
+   "new": "    env[\"GIT_CONFIG_NOSYSTEM\"] = \"0\""
+  },
+  {
+   "id": "MB07",
+   "path": "tools/bash-witness-study.py",
+   "old": "    env[\"GIT_CONFIG_NOSYSTEM\"] = \"1\"\n",
+   "new": ""
+  },
+  {
+   "id": "MB08",
+   "path": "tools/bash-witness-study.py",
+   "old": "                [\"git\", \"-c\", \"core.hooksPath=/dev/null\",\n                 \"-C\", str(repo), \"init\", \"--quiet\"],",
+   "new": "                [\"git\",\n                 \"-C\", str(repo), \"init\", \"--quiet\"],"
+  },
+  {
+   "id": "MB09",
+   "path": "tools/bash-witness-study.py",
+   "old": "                [\"git\", \"-c\", \"core.hooksPath=/dev/null\",\n                 \"-C\", str(repo), \"add\", \"--\", TARGET_GIT_PATH],",
+   "new": "                [\"git\",\n                 \"-C\", str(repo), \"add\", \"--\", TARGET_GIT_PATH],"
+  },
+  {
+   "id": "MB10",
+   "path": "tools/bash-witness-study.py",
+   "old": "                [\"git\", \"-c\", \"core.hooksPath=/dev/null\",\n                 \"-C\", str(repo), \"-c\", \"user.name=fixture\",",
+   "new": "                [\"git\",\n                 \"-C\", str(repo), \"-c\", \"user.name=fixture\","
+  },
+  {
+   "id": "MB11",
+   "path": "tools/bash-witness-study.py",
+   "old": "            prefix=\"bash-witness-selftest.\", dir=private_root))",
+   "new": "            prefix=\"bash-witness-selftest.\", dir=private_root.parent))"
+  },
+  {
+   "id": "MB12",
+   "path": "tools/bash-witness-study.py",
+   "old": "        shutil.rmtree(private_root, ignore_errors=True)",
+   "new": "        shutil.rmtree(private_root / \"missing\", ignore_errors=True)"
+  },
+  {
+   "id": "D02",
+   "path": "tools/evidence-disposition.py",
+   "old": "branch = ref[len(prefix):]",
+   "new": "branch = \"master\""
+  },
+  {
+   "id": "D11",
+   "path": "tools/evidence-disposition.py",
+   "old": "TREE_MODES = (\"100644\", \"100755\")",
+   "new": "TREE_MODES = (\"100644\",)"
+  },
+  {
+   "id": "D12",
+   "path": "tools/evidence-disposition.py",
+   "old": "branch_ref = \"refs/heads/\" + branch",
+   "new": "branch_ref = \"refs/heads/master\""
+  },
+  {
+   "id": "R02",
+   "path": "tools/registry-check.py",
+   "old": "                    math.isfinite(ts) and 0 < ts <= MAX_TIMEOUT_S",
+   "new": "                    math.isfinite(ts) and 0 <= ts <= MAX_TIMEOUT_S",
+   "reanchored": "round-18 @old `math.isfinite(ts) and ts > 0` was rewritten by 9ee1c80 (MAX_TIMEOUT_S cap); same semantic edit (accept a zero timeout) re-anchored to the current guard before dispatch"
+  },
+  {
+   "id": "R05",
+   "path": "tools/registry-check.py",
+   "old": "            return (current, observed_starttime) not in baseline_children",
+   "new": "            return True"
+  },
+  {
+   "id": "R07",
+   "path": "tools/registry-check.py",
+   "old": "        stat = read_stat(pid)\n        if stat is None or stat[1] != starttime or not in_row_scope():",
+   "new": "        stat = read_stat(pid)\n        if stat is None or stat[1] != starttime:"
+  },
+  {
+   "id": "T04",
+   "path": "tools/trace-inputs.py",
+   "old": "    cache = os.path.join(workdir, \"pycache\")",
+   "new": "    cache = os.path.join(tempfile.gettempdir(), \"pycache\")"
+  },
+  {
+   "id": "T12",
+   "path": "tools/trace-inputs.py",
+   "old": "                out[path] = sha256_file(path)",
+   "new": "                out[path] = hashlib.sha256(path.encode(\"utf-8\", \"surrogateescape\")).hexdigest()"
+  }
+ ],
+ "selftest_argv": {
+  "tools/bash-witness-study.py": [
+   "selftest"
+  ],
+  "tools/evidence-disposition.py": [
+   "--selftest"
+  ],
+  "tools/registry-check.py": [
+   "--selftest"
+  ],
+  "tools/trace-inputs.py": [
+   "--selftest"
+  ]
+ },
+ "envelope_note": "PATH is the invoking PATH (jj lives in ~/.local/bin; round-18 disposition probe used PATH=\"$PATH\"); bash-witness uses the `selftest` subcommand (registry.json bash-witness-selftest row)"
+}

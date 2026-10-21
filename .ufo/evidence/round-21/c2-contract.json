@@ -1,0 +1,37 @@
+{
+ "schema": "tameshi-r21-c2-contract-v1",
+ "claim": "C2 coverage / capability: frontier F5 (hermetic environment normalization, corpus/README.md:82) moves to Core. Before: no committed env-differential receipt for any frozen surface (F5 open; only the round-1 H3 runner observation). After: every frozen surface below classified from executed profile tuples, a runnable tools/env-diff.py with a passing --selftest, and an admitted source-headed knowledge entry citing a mined SOURCES row.",
+ "frozen_before_dispatch": true,
+ "receipt_path": ".ufo/evidence/round-21/f5/receipt.json",
+ "receipt_schema": "tameshi-env-diff-receipt-v1",
+ "tool_path": "tools/env-diff.py",
+ "entry_path": "corpus/knowledge/hermetic-env-differential.md",
+ "required_profiles": {
+  "host": "invoking environment minus GIT_* variables",
+  "clean": "env -i PATH=<invoking PATH> HOME=<sandbox>/home TMPDIR=<sandbox>/tmp LANG=C LC_ALL=C TZ=UTC",
+  "clean_repeat": "clean, executed a second time in a fresh sandbox (repeat control; F3 boundary)",
+  "tz": "clean with TZ=Pacific/Chatham",
+  "locale": "clean with LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8",
+  "home": "clean with HOME=/nonexistent",
+  "columns": "clean with COLUMNS=20 LINES=5 TERM=dumb"
+ },
+ "tuple": "each profile records integer exit plus 64-hex stdout_sha256 and stderr_sha256 (after the tool's declared normalization, recorded in the surface's `normalization` field, possibly \"none\")",
+ "classification_rules": [
+  "clean tuple != clean_repeat tuple -> classification must be `nondeterministic`",
+  "else every profile tuple == clean tuple -> `invariant` with sensitive_to []",
+  "else -> `env-sensitive` with sensitive_to == sorted profiles whose tuple != clean"
+ ],
+ "surfaces": [
+  {"name": "tameshi-runner", "repo": "tameshi-shokunin", "rev": "08175c62d661fddf052ed10abc91313dec8eb77d", "path": "tools/mutate-and-run.sh", "interp": "bash"},
+  {"name": "js-kimi-census", "repo": "kumitate-shokunin", "rev": "175de6ba2e9e904010411b19cab27e0af9aad3d4", "path": "scripts/kimi-census.mjs", "blob_sha256": "83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426", "interp": "node"},
+  {"name": "bash-surface-census", "repo": "kagi-shokunin", "rev": "fecee8743e52eb8fb5fbb40782934cb619a1a96e", "path": "corpus/surface-census.sh", "blob_sha256": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f", "interp": "bash"},
+  {"name": "bash-tsukuroi-census", "repo": "tsukuroi-shokunin", "rev": "165307fe4746a8807b02ec4a7d7ecac0368454a6", "path": "tools/tsukuroi-census.sh", "blob_sha256": "084951be50bcbfee5e3f22de3c270d87131550ea1ce8264a557a34c5809c78c5", "interp": "bash"},
+  {"name": "bash-mado-verify", "repo": "mado-shokunin", "rev": "eead56b20ad2b28299ae4fa623d52a99b44c743c", "path": "tools/mado-verify.sh", "blob_sha256": "d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13", "interp": "bash"},
+  {"name": "bash-checklist-run", "repo": "kagi-shokunin", "rev": "fecee8743e52eb8fb5fbb40782934cb619a1a96e", "path": "corpus/checklist-run.sh", "blob_sha256": "7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf", "interp": "bash"},
+  {"name": "js-claims-check", "repo": "kumitate-shokunin", "rev": "175de6ba2e9e904010411b19cab27e0af9aad3d4", "path": "scripts/claims-check.mjs", "blob_sha256": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b", "interp": "node"},
+  {"name": "js-round-gate", "repo": "kumitate-shokunin", "rev": "364f1d5954158ef8844bca4a5fef57b05d2f2ca5", "path": "scripts/round-gate.mjs", "blob_sha256": "f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9", "interp": "node"},
+  {"name": "js-sources-check", "repo": "kumitate-shokunin", "rev": "0acb7752d19058b953ebbeba253b1e35f6548de5", "path": "scripts/sources-check.mjs", "blob_sha256": "6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f", "interp": "node"}
+ ],
+ "counting_command": "python3 .ufo/evidence/round-21/c2-count.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json",
+ "target": "classified 9/9, tool_selftest pass, f5_entry true"
+}

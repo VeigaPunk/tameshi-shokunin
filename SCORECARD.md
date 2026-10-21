@@ -852,3 +852,27 @@ used-by cell changed. Source/census commands and outputs are retained in
 All original entries and failed observations remain. The final current
 strict no-harm observation is separately retained as `final/monitor-final.stdout`
 with its measured revision; no historical60/60 is a substitute for it.
+
+## Round 21 — declared claims, frozen before dispatch (2026-10-21)
+
+**Stagnation nudge fires (first use).** Both owned numeric axes sit at the
+declared saturation line (depth 8, calibration 8; `## Saturation`, line 8/10)
+and no capability row has entered `## Capabilities` since round 15 — five
+completed rounds against window N = 2. Per `AXES.md` §The stagnation nudge
+the lowest-axis obligation is waived; this round is a frontier/capability
+round. Depth 8 and calibration 8 are no-harm monitors, not claimed.
+
+| Claim | Axis / type | Frozen before → target | Counting command | Baseline receipt |
+|---|---|---|---|---|
+| C1 kill the 18 round-18 guard survivors | operability (own gates' selftests discriminate their guards); unit named mutants, unscored | killed 0/18 (survived 18, inconclusive 0, all four pristine controls green) → each mutant killed by a named discriminating selftest case, or named equivalent with reasons | `python3 .ufo/evidence/round-21/c1-survivors.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json` | `.ufo/evidence/round-21/c1-before.{json,stderr,exit}` at `08175c62d661fddf052ed10abc91313dec8eb77d` |
+| C2 F5 hermetic env-differential → Core | coverage (frontier F5 → Core) + capability `tools/env-diff.py`; sourced claim | classified 0/9, tool selftest absent, F5 entry absent → 9/9 frozen surfaces classified from executed profile tuples, tool selftest pass, admitted entry citing a mined S### opened this round | `python3 .ufo/evidence/round-21/c2-count.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json` | `.ufo/evidence/round-21/c2-before.{json,stderr,exit}` at `08175c6` |
+
+Separability: C1 edits only the four owning tools' selftests
+(`tools/{bash-witness-study,evidence-disposition,registry-check,trace-inputs}.py`);
+C2 adds `tools/env-diff.py`, its receipt, one knowledge entry, SOURCES rows
+and README/PROVINCE appends. Neither ruler reads the other's files. One
+R02 anchor was re-anchored before dispatch (the round-18 `ts > 0` line was
+rewritten by `9ee1c80`); the same semantic edit is recorded in
+`c1-mutants.json`. Mined-mistake fix (frontier step, not a claim):
+`tools/wave-route-mix.py` refuses the round-20 wave (openai-codex 35/72 >
+0.40, exactly the 35 Codex deaths) — `.ufo/evidence/round-21/routemix-r20-spec1.*`.
