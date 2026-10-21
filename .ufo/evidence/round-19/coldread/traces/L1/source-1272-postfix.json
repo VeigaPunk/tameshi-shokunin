@@ -1,0 +1,65 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bwrap",
+    "--ro-bind",
+    "/",
+    "/",
+    "--dev",
+    "/dev",
+    "--proc",
+    "/proc",
+    "--tmpfs",
+    "/tmp",
+    "--bind",
+    "/tmp/tameshi-r19-refresh-97y7we9b",
+    "/tmp/tameshi-r19-refresh-97y7we9b",
+    "--unshare-net",
+    "--die-with-parent",
+    "--chdir",
+    "/tmp/tameshi-r19-refresh-97y7we9b/lane",
+    "env",
+    "-i",
+    "PATH=/usr/bin:/bin",
+    "HOME=/tmp/tameshi-r19-refresh-97y7we9b/home",
+    "TMPDIR=/tmp/tameshi-r19-refresh-97y7we9b/tmp",
+    "GIT_CONFIG_GLOBAL=/dev/null",
+    "GIT_CONFIG_NOSYSTEM=1",
+    "LC_ALL=C",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "python3",
+    "-c",
+    "import pathlib,hashlib,json,sys\nroot=pathlib.Path('.')\nspec=json.loads(sys.argv[1])\nlines=(root/'SKILL.md').read_text().splitlines()\nprint('SECTION',spec['start'],spec['end']); print('\\n'.join(lines[spec['start']-1:spec['end']]))\nfor path in spec['paths']:\n raw=(root/path).read_bytes()\n print('SOURCE',path,'sha256='+hashlib.sha256(raw).hexdigest(),'bytes='+str(len(raw)))\n if path in ('corpus/README.md','corpus/SOURCES.md','corpus/QUALITY.md'):\n  print('HEADER',raw.decode().splitlines()[0])\nprint('SOURCE_READ complete; no recipe argv executed; external observations not reverified')\n",
+    "{\"start\": 1272, \"end\": 1280, \"heading\": \"## The operator's runbook and the six-leg regression (round 10, measured)\", \"paths\": [\"corpus/knowledge/closeout-r11.md\", \"corpus/knowledge/fleet-kill-rate-ledger.md\", \"corpus/knowledge/mutation-case-kagi-checklist.md\", \"corpus/knowledge/mutation-case-kumitate-claims.md\", \"corpus/knowledge/operator-runbook.md\", \"tools/mutate-and-run.sh\", \"tools/registry.json\"]}"
+  ],
+  "cwd": "/tmp/tameshi-r19-refresh-97y7we9b/lane",
+  "root": "/tmp/tameshi-r19-refresh-97y7we9b/lane",
+  "rev": "d7caf86110e6c6fdcc14ee7a797bda93d32e89cb",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-o9o6xrs9/pycache"
+    }
+  },
+  "inputs": {
+    "SKILL.md": "0e3d74530bffeaf7fcd2058c693d54570f03fc72e386ff17df48e4c6663b0f7c",
+    "corpus/knowledge/closeout-r11.md": "cea3352aa60eb51b51e2722fdb820cac19cd1514670df931212904e826940265",
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "corpus/knowledge/mutation-case-kagi-checklist.md": "43da70e675b8a482c942fddf6360d84970cf0c29ee648039e11b3b819ae739e7",
+    "corpus/knowledge/mutation-case-kumitate-claims.md": "3da1312e0a624ca565dc243fd0cb6f19968c1672f57066fbd4d2ad2bdf8045d9",
+    "corpus/knowledge/operator-runbook.md": "8b2e185ff011f6cfc2aee187ff1c2a1f8120e410c00f4b67eb6c7f1ebabb6859",
+    "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b",
+    "tools/registry.json": "c5ad1de0dec88ba30da89a4b8144798be1ebcbba963239e9d48f422479b6754d"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

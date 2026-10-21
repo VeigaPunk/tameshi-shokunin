@@ -1280,3 +1280,10 @@ metadata and its failure are preserved; production gate source is unchanged.
   siblings; selector selftest explicitly exercises complete package
   relocation, configured default and no historical fallback. The unchanged
   frozen98-case suite remains separately active, not skipped.
+- Exercised final full suite atd7caf861: 33/33 active expected outcomes
+  held, four superseded rows retained/executed. New correction-ruler
+  public selftest43/43; configured selector3/3; frozen algorithm's
+  separate suite remains active. Both failed setup/completed attempts
+  are retained beside registry-complete receipts. Post-fix source
+  binding adds five entries: final ledger184 =159 unchanged carried
+  +25 author entries on16 distinct buckets, never independent cold-read.
