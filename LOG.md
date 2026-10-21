@@ -1272,3 +1272,11 @@ metadata and its failure are preserved; production gate source is unchanged.
   carried entries plus20 author entries on16 distinct buckets (179
   total). External observations remain explicitly unverified; no cold
   recipe re-execution or independent promotion credit is claimed.
+- Final-suite failures retained: initial registry setup refused parenthetical
+  prose in the strict source-anchor fields; removed only that prose.
+  The completed attempt held31/33: regression lacked sibling symlinks in
+  the verification fleet fixture, and the selector inherited a standalone
+  copy test despite being a two-file package. The fixture now mirrors
+  siblings; selector selftest explicitly exercises complete package
+  relocation, configured default and no historical fallback. The unchanged
+  frozen98-case suite remains separately active, not skipped.
