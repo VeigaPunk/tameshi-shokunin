@@ -2699,6 +2699,29 @@ def selftest():
                 "reason": spec["reason"],
             }
         return built
+    def setup_nonmaster_attached(fx):
+        _setup_hist_clean(fx)
+        _git(fx["lane"], "branch", "-m", "verification")
+
+    def setup_nonmaster_configured(fx):
+        setup_nonmaster_attached(fx)
+        _git(fx["lane"], "config", "lane.branch", "verification")
+        _git(fx["lane"], "checkout", "--detach", "-q", "HEAD")
+
+    def setup_executable_historical(fx):
+        os.chmod(fx["lane"] / SELFTEST_TOOL_REL, 0o755)
+        _setup_hist_clean(fx)
+
+    historical_case(
+        "v2-nonmaster-attached-branch", 0, [], setup_nonmaster_attached
+    )
+    historical_case(
+        "v2-nonmaster-configured-branch", 0, [], setup_nonmaster_configured
+    )
+    historical_case(
+        "v2-historical-executable-mode", 0, [], setup_executable_historical
+    )
+
 
     case(
         "v2-clean-historical",

@@ -1498,6 +1498,7 @@ def selftest():
         )
 
         for case, token, error in (
+            ("timeout-zero", "0", "finite positive number"),
             ("timeout-nan", "NaN", "non-finite JSON number"),
             ("timeout-infinity", "Infinity", "non-finite JSON number"),
             ("timeout-negative-infinity", "-Infinity",
@@ -1586,6 +1587,36 @@ def selftest():
             "pidfd-revalidates-starttime",
             rejected and not fake_signals,
             f"stale_identity_rejected={rejected} signals={len(fake_signals)}",
+        )
+
+        # Simulated identities keep these race controls deterministic and never
+        # send a signal to a host process.
+        from unittest.mock import patch
+        identity = (os.getpid(), 1234, "S")
+        with patch(__name__ + "._read_proc_stat", return_value=identity):
+            baseline_rejected = not _row_identity_is_owned(
+                987654, 1234, 987655, 1235, frozenset({(987654, 1234)})
+            )
+            adopted_owned = _row_identity_is_owned(
+                987654, 1234, 987655, 1235, frozenset()
+            )
+        record(
+            "baseline-child-preserved",
+            baseline_rejected and adopted_owned,
+            f"baseline_rejected={baseline_rejected} adopted_owned={adopted_owned}",
+        )
+        ownership = iter((True, False))
+        with patch.object(os, "pidfd_open", return_value=999999), \
+                patch.object(os, "close"), \
+                patch.object(signal, "pidfd_send_signal") as sent:
+            scope_rejected = not _signal_process_identity(
+                987654, 1234, signal.SIGKILL, lambda: next(ownership),
+                read_stat=lambda _pid: identity,
+            )
+        record(
+            "pidfd-revalidates-ownership",
+            scope_rejected and not sent.called,
+            f"ownership_change_rejected={scope_rejected} signals={sent.call_count}",
         )
 
 

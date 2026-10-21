@@ -417,3 +417,23 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     measurements remain available. Public tests cover all three switches
     and their alternative spellings. This is invocation enforcement,
     not independent cold-read or producer authentication.
+
+## Criteria appended — round 21 (2026-10-21)
+
+43. Before a large wave, inspect live capacity and resolve the seat-role
+    mix through the current primary routes. This lane's concentration guard
+    refuses a primary provider share above0.40. The threshold is a policy
+    choice motivated by round20's35/72 Codex deaths, not a measured capacity
+    guarantee; fallback overlap and availability remain separate.
+    Captured by `lessons/round-21.md` provider mistake.
+    Falsifier: `tools/wave-route-mix.py --spec .ufo/waves/round-20/spec1.json`
+    refuses exit1, while the round21 spec passes exit0; never replace a
+    provider-dead seat or count its dispatch as completed work.
+44. A frozen mutation population rechecks each exact anchor at its freeze
+    revision before dispatch. A stale anchor is explicitly re-anchored to
+    the same semantic edit with its historical rewrite named, never dropped
+    from the denominator. Captured by R02's timeout-cap rewrite in
+    `lessons/round-21.md`. Falsifier: the old round18 anchor is absent at
+    08175c6, while the documented current positive-zero-boundary anchor
+    occurs exactly once; deleting any anchor produces INCONCLUSIVE, not
+    a kill. Round21's real baseline retains18/18 unique anchors.

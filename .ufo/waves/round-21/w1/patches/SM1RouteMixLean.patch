@@ -1,0 +1,83 @@
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/wave-route-mix.py	2026-10-21 08:38:06.162744193 -0300
++++ /tmp/tameshi-r21-SM1RouteMixLean-x/wave-route-mix-lean.py	2026-10-21 09:02:23.561463777 -0300
+@@ -4,42 +4,33 @@
+ Resolves each seat's role through the operator's live OMP routing table
+ (task.agentModelOverrides -> alias -> provider/model; read-only) and refuses a
+ wave in which one primary provider would host more than --max-share of seats.
+-Round 20 lost 35/72 seats to one provider's capacity errors (Codex, 48.6 %).
+ 
+   wave-route-mix.py --spec SPEC.json [--config ~/.omp/agent/config.yml] [--max-share 0.40] [--json]
+   wave-route-mix.py --selftest
+ 
+-Exit 0 within bound; 1 a provider exceeds the bound or a role is unrouted;
+-2 unreadable spec/config; 64 usage. Never writes anything.
++Exit 0 within bound; 1 over bound or unrouted; 2 unreadable; 64 usage. Never writes.
+ """
+ import argparse, json, re, sys
+ from collections import Counter
+ from pathlib import Path
+-
+-DEFAULT_CONFIG = Path.home() / ".omp/agent/config.yml"
+ 
+ 
+ def parse_routes(text):
+     """Return (overrides role->alias, aliases alias->provider/model) from config.yml text."""
+-    overrides, aliases, section = {}, {}, None
++    overrides, aliases, section, base = {}, {}, None, 0
+     for raw in text.splitlines():
+         if not raw.strip() or raw.lstrip().startswith("#"):
+             continue
+         indent = len(raw) - len(raw.lstrip())
+         line = raw.strip()
+-        if line == "agentModelOverrides:":
+-            section, base = "ovr", indent
+-            continue
+-        if line == "modelRoles:":
+-            section, base = "alias", indent
++        if line in ("agentModelOverrides:", "modelRoles:"):
++            section, base = ("ovr" if line == "agentModelOverrides:" else "alias"), indent
+             continue
+         if section and indent <= base:
+             section = None
+         m = re.match(r'^([A-Za-z0-9_.-]+):\s*"?([^"#]+?)"?\s*$', line)
+-        if section == "ovr" and m:
+-            overrides[m.group(1)] = m.group(2).strip()
+-        elif section == "alias" and m:
+-            aliases[m.group(1)] = m.group(2).strip()
++        if m and section:
++            (overrides if section == "ovr" else aliases)[m.group(1)] = m.group(2).strip()
+     return overrides, aliases
+ 
+ 
+@@ -83,9 +74,11 @@
+         ("empty-fails", not evaluate([], o, a, 0.40)["ok"]),
+         ("alias-cycle-unrouted", provider_of("x", {"x": "@m_y"}, {"m_y": "@m_y"}) is None),
+     ]
+-    bad = [n for n, ok in cases if not ok]
++    bad = []
+     for n, ok in cases:
+         print(f"ROUTEMIX_CASE {n} {'ok' if ok else 'FAIL'}")
++        if not ok:
++            bad.append(n)
+     print(f"ROUTEMIX_SELFTEST: {len(cases) - len(bad)}/{len(cases)} pass")
+     return 0 if not bad else 1
+ 
+@@ -93,7 +86,7 @@
+ def main(argv=None):
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--spec")
+-    ap.add_argument("--config", default=str(DEFAULT_CONFIG))
++    ap.add_argument("--config", default=str(Path.home() / ".omp/agent/config.yml"))
+     ap.add_argument("--max-share", type=float, default=0.40)
+     ap.add_argument("--json", action="store_true")
+     ap.add_argument("--selftest", action="store_true")
+@@ -114,8 +107,8 @@
+         return 2
+     roles = [it.get("role") for it in spec.get("items", [])]
+     res = evaluate(roles, overrides, aliases, a.max_share)
+-    res["roles"] = dict(Counter(roles).most_common())
+     if a.json:
++        res["roles"] = dict(Counter(roles).most_common())
+         print(json.dumps(res, indent=1, sort_keys=True))
+     shares = " ".join(f"{p}={c}/{res['seats']}" for p, c in res["per_provider"].items())
+     print(f"ROUTEMIX: {'OK' if res['ok'] else 'REFUSE'} seats={res['seats']} max_share={a.max_share} {shares}"

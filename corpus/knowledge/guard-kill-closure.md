@@ -231,3 +231,43 @@ correction rows already exist at round18 revision
 `4b7c6823a462f5ea2eafcb262275300a545f3ed7`. This identifies the metadata
 state only. It does not reverse R19-S063's explicit “anchor not widened”
 correction or assert that configuration-source anchoring is closed.
+
+## Round-21 bounded survivor closure (2026-10-21)
+
+The eighteen round18 selftest survivors named in EG-3 and R18-1 are now
+discriminated by the owning selftests. Counting command:
+`python3 .ufo/evidence/round-21/c1-survivors.py --repo REPO --rev REV --json`.
+Same frozen ruler/population: baseline08175c6 killed0/survived18; first
+private implementation killed18/survived0/inconclusive0, green controls.
+Actual receipts are `c1-before-recorded.json` and `c1-private-first.json`
+under `.ufo/evidence/round-21/`; the latter is explicitly private execution
+evidence, not a landed revision claim. Final delivered-revision receipts
+are recorded separately in this round's report.
+
+| Mutants | Named discriminator |
+|---|---|
+| MB03 | scrubs inherited repository selectors |
+| MB04/MB05 | pins global Git configuration |
+| MB06/MB07 | disables system Git configuration |
+| MB08/MB09/MB10 | fixture init/add/commit pins hooks off |
+| MB11 | private child is contained |
+| MB12 | private root is removed |
+| D02/D12 | v2-nonmaster-attached-branch / v2-nonmaster-configured-branch |
+| D11 | v2-historical-executable-mode |
+| R02 | timeout-zero |
+| R05 | baseline-child-preserved |
+| R07 | pidfd-revalidates-ownership |
+| T04/T12 | pycache-prefix-private / python-read-input |
+
+Environment/config and hook-command checks exercise constructed child
+environment/argv contracts; they do not establish successful malicious
+configuration or hook execution. Process-identity race checks use
+deterministic synthetic identities and intercept signal dispatch; they
+do not claim that a real PID-reuse race was reproduced. No selftest
+hashes/greps its own source to manufacture a kill.
+
+This closes only the fixed eighteen-mutant discrimination debt. P08/P11
+broader canaries, same-tick PID reuse, historical direct-measure GIT_*
+leakage, source-anchor corrections and required-command binding remain
+separate open work. Historical failures, survivor reports and frozen
+instruments remain unchanged.

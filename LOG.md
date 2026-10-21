@@ -1388,3 +1388,33 @@ metadata and its failure are preserved; production gate source is unchanged.
   expectations and failed intermediate receipts stay retained. New reads
   are explicitly L1-author source re-anchors, not blind/independent
   cold-read, recipe execution or required-command coverage.
+
+### Round 21 — declared survivor coverage and F5 environment differential (2026-10-21)
+
+- Trigger: round18's eighteen named selftest survivors remained open through
+  admitted round20 (`SCORECARD.md:680-688,800-805`); F5 remained open
+  (`corpus/README.md:82`). The saturation8/window2 nudge fires: depth8 and
+  calibration8, no new capability-table entry since round15.
+- Declared C1 operability (named guard-mutant discrimination, unscored)
+  and C2 coverage/capability (F5 environment differential on nine pinned
+  surfaces). Their populations, counters and baseline measurements were
+  committed before any successful wave dispatch: helper landed
+  `33d03b716d3edcf1d8656d46d6df61801d232c52`.
+- Before at `08175c62d661fddf052ed10abc91313dec8eb77d`: frozen C1 ruler
+  killed0/survived18/inconclusive0, all four pristine controls green;
+  frozen C2 counter classified0/9, tool absent, entry absent.
+  `.ufo/evidence/round-21/c{1,2}-before-recorded.json` retain exact argv,
+  integer exits1, streams/digests, instrument SHA and aware ordered
+  measurement intervals; earlier compact baseline files remain.
+- Mined provider-concentration recurrence: live-route check
+  `python3 tools/wave-route-mix.py --spec .ufo/waves/round-20/spec1.json
+  --json` refuses openai-codex35/72 >0.40, exit1; own selftest8/8.
+  The validated71-seat round21 spec passes, max primary shares28/71
+  Codex and27/71 ZAI; one connector only, per Main's provider warning.
+  This measures primary-route concentration, not availability of fallbacks.
+- No-harm baseline at frozen33d03b7: current strict61/61 source credit,
+  restraint8, depth8, no overrides
+  (`.ufo/evidence/round-21/monitor/monitor-33d03b7.stdout`). Isolated
+  append probes demonstrate that tool/corpus edits invalidate source
+  credit; the round must measure and repair actual affected sections,
+  not borrow this historical count.

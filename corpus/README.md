@@ -320,3 +320,27 @@ which ADMITTED round19 and routed these three items. It is not a round20
 admission or promotion authority. Round20's own dispatched reviews remain
 advisory. No required-command coverage, blind cold-read, successor mutation
 sweep, guard-survivor closure or F1–F10 movement is inferred.
+
+## Round 21 — F5 finite environment differential
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/hermetic-env-differential.md` / F5 | source-headed method entry, S079 mined and S028 reopened; nine explicit pinned surfaces, seven profiles, raw tuple comparison and a clean repeat | `tools/env-diff.py`; `.ufo/evidence/round-21/c2-contract.json`, `f5/receipt-initial.json`; selftest9/9 |
+
+F5's finite method moves to **Core** for the six fleet-ledger gates
+(kimi-census, surface-census, tsukuroi-census, mado-verify, checklist-run,
+claims-check), the H3 reference runner, and two explicit additions
+(round-gate and sources-check). These are the nine files frozen before
+dispatch, not a retrospectively chosen denominator.
+The distinct six-suite kumitate survey also includes cite-check,
+surface-probe and proxy-check: these three are **not measured here**.
+This is finite method acquisition, not closure of every possible F5 surface
+or proof of universal hermeticity. F3 universal determinism stays open.
+
+Actual initial result: eight raw-tuple invariant, one raw-output-variable
+(round-gate random fixture directories), all nine clean controls exit0.
+Both repeated round-gate passes are green; raw variation is not flaky
+pass/fail. `lessons/round-21.md` retains the gate decisions, provider deaths,
+R02 re-anchoring and counter limits. C1's owning selftests discriminate the
+eighteen old mutants; command/environment contract pins are distinguished
+from reproduced malicious-configuration effects.

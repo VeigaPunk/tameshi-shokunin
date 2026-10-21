@@ -805,7 +805,9 @@ def selftest():
         return proc.returncode, data, (proc.stdout or b"").decode("utf-8", "replace")
 
     rc, d, _ = trace([PY, "-c", "open('a.txt').read()"])
-    check("python-read-input", rc == 0 and d and d["inputs"].get("a.txt"))
+    check("python-read-input",
+          rc == 0 and d
+          and d["inputs"].get("a.txt") == hashlib.sha256(b"alpha\n").hexdigest())
 
     rc, d, _ = trace([SH, "-c", "source s.sh"])
     check("bash-source-input", rc == 0 and d and "s.sh" in d["inputs"])
@@ -927,6 +929,8 @@ def selftest():
           rc == 0 and d
           and lines.get("PYTHONPYCACHEPREFIX") == pycache
           and pycache and os.path.isabs(pycache)
+          and os.path.basename(os.path.dirname(pycache)).startswith("trace-inputs-run-")
+          and os.path.dirname(os.path.dirname(pycache)) == os.path.realpath(scratch)
           and not under(pycache, root))
 
 

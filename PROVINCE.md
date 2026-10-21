@@ -81,3 +81,15 @@ Appended; lines above are unchanged. The recorded mutation legs are now
 (kumitate `PROVINCE.md:15`). Not a service run; no opt-in needed. Survivor
 recommendations travel to kumitate in the round report; tameshi never edits
 the gate.
+
+## Core — round 21 append (2026-10-21)
+
+F5 finite environment-differential method enters Core through
+`corpus/knowledge/hermetic-env-differential.md`, citing mined S079 and S028.
+`tools/env-diff.py` compares the frozen nine-file population under seven
+profiles; raw output variation and failed/unavailable controls remain
+distinct from environment-sensitive outcomes. The six fleet-ledger gates,
+reference runner and two later ledger gates are named in that entry and
+`corpus/README.md` round21. Unmeasured kumitate survey gates and all other
+environments remain unmeasured. No universal hermeticity or determinism
+claim follows. The method is held; sibling gate ownership is unchanged.

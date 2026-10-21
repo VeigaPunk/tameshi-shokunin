@@ -245,6 +245,7 @@ written and are superseded here:
 | exposed witness provenance correction | validate a new digest-anchored non-blind companion without rewriting frozen observations; prevent wrong-nesting in future producer output | metadata selftest39/39 PASS0; null-only companion FAIL1/corrected PASS0; producer same-oracle40/41 FAIL1→41/41 PASS0; `.ufo/evidence/round-13/producer-oracle-repair.json`, `verification-verdict.json`; measured `4acc607dfd79f19d508bd50cdd06b77269fccd1d` | round 13; lane demonstrated, outside admission pending |
 | effective expectation reconciliation | account for every historical expected row, reject an exit-only setup crash, and preserve that raw failure under a checked explicit oracle supersession | `python3 tools/evidence-disposition.py --selftest` → PASS34/34 exit0; same checker before FAIL1/contains_missing→after CLEAN0, eleven effective+one superseded; `.ufo/evidence/round-14/verification-final.json`, S050; executable measurement6431478 | round14; lane demonstrated, separate outside admission pending |
 | retained invocation-context gate | re-derive bounded raw receipt predicates, check byte-pinned frozen receipts, and distinguish semantic mismatch from unavailable/tampered input through a standalone public-CLI selftest | `python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72` → exit0, copied-source CLI selftest49/49, registered frozen0, missing-env1, tamper2, usage64; `.ufo/evidence/round-15/verification-3.json`; S051 | round15; lane demonstrated, separate non-author admission pending |
+| hermetic env-differential probe | classify the raw exit/stdout/stderr tuple of nine pinned selftests under seven explicit profiles, separating repeat variation from environmental sensitivity | `python3 tools/env-diff.py --selftest` first actual9/9; real receipt `f5/receipt-initial.json` under `.ufo/evidence/round-21/` classifies9/9 (eight invariant, one raw-output-variable); `corpus/knowledge/hermetic-env-differential.md`, S079/S081 | round21; lane demonstrated, separate non-author admission pending |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -876,3 +877,32 @@ rewritten by `9ee1c80`); the same semantic edit is recorded in
 `c1-mutants.json`. Mined-mistake fix (frontier step, not a claim):
 `tools/wave-route-mix.py` refuses the round-20 wave (openai-codex 35/72 >
 0.40, exactly the 35 Codex deaths) — `.ufo/evidence/round-21/routemix-r20-spec1.*`.
+
+### Round21 implementation observation and no-harm boundary
+
+Private implementation actually discriminates all18 mutants, with
+green owning controls (disposition66/66, registry51 cases, trace30/30,
+witnessVERDICT:PASS): `.ufo/evidence/round-21/c1-private-first.json`.
+This is explicitly private execution evidence, not a landed-revision
+measurement. Final committed-revision receipts are separate.
+
+C2's actual initial profile run is9/9 classified, all clean exits0:
+eight raw-tuple invariant and one repeated-output-variable (round-gate
+random temporary directories, not flaky pass/fail). The intended six
+are the fleet-ledger gates; the H3 runner and two later ledger gates
+are explicit additions. The distinct kumitate six-suite survey is
+not fully covered. F5 finite method moves to Core, not all possible
+environmental surfaces or universal hermeticity.
+
+The SKILL registry gains one current entry section for the new tool,
+measurement facade and selector; SHONEN only changes its evidence
+pointer to the round21 ledger. That is protocol registry maintenance,
+not a third claim. Source re-anchoring must follow current-input
+drift; neither the old61/61 nor the retained historical score8 proves
+current no-harm. Corpus/source metadata is frozen before that repair.
+
+Wave1:71 validated/dispatched seats,28 completed/43 provider deaths;
+no replacement. Two whole-payload job-cap refusals preceded the
+successful third identical dispatch. Evidence:
+`.ufo/waves/round-21/{original-outcomes1.json,dispatch-refusal-01.json,
+dispatch-attempt-02.json,dispatch-attempt-03.json}`.

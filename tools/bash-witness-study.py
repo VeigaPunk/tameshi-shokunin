@@ -1245,6 +1245,7 @@ def cmd_selftest(args) -> int:
         root = Path(tempfile.mkdtemp(
             prefix="bash-witness-selftest.", dir=private_root))
         assert root.resolve(strict=True) == root
+        check("private child is contained", root.parent == private_root)
         # A hostile inherited Git selection must not redirect either child Git
         # invocation to the canary repository. Both launch paths are exercised
         # with GIT_DIR and GIT_WORK_TREE exported and distinct fixture repos.
@@ -1277,6 +1278,37 @@ def cmd_selftest(args) -> int:
                 check=True, capture_output=True, env=safe_env,
             ).stdout.decode("ascii").strip()
             return repo, revision
+
+        from unittest.mock import patch
+        hostile_git_env = {
+            "GIT_INDEX_FILE": str(root / "foreign-index"),
+            "GIT_OBJECT_DIRECTORY": str(root / "foreign-objects"),
+            "GIT_CONFIG_GLOBAL": str(root / "foreign-config"),
+            "GIT_CONFIG_NOSYSTEM": "0",
+        }
+        with patch.dict(os.environ, hostile_git_env):
+            child_env = git_clean_env()
+        check("scrubs inherited repository selectors",
+              all(key not in child_env
+                  for key in ("GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY")))
+        check("pins global Git configuration",
+              child_env.get("GIT_CONFIG_GLOBAL") == os.devnull)
+        check("disables system Git configuration",
+              child_env.get("GIT_CONFIG_NOSYSTEM") == "1")
+        # These are command-pin contracts, not claims that init/add have a
+        # reachable hook under the already-scrubbed fixture environment.
+        with patch.object(subprocess, "run", wraps=subprocess.run) as git_calls:
+            fixture_repo("command-pin-fixture", b"command pin\n")
+        for operation in ("init", "add", "commit"):
+            commands = [
+                call.args[0] for call in git_calls.call_args_list
+                if operation in call.args[0]
+            ]
+            check(f"fixture {operation} pins hooks off",
+                  len(commands) == 1
+                  and any(commands[0][i:i + 2] ==
+                          ["-c", "core.hooksPath=/dev/null"]
+                          for i in range(len(commands[0]) - 1)))
 
         materialize_ok = sweep_ok = False
         saved_runner = RUNNER
@@ -1667,18 +1699,21 @@ def cmd_selftest(args) -> int:
         except Fail as exc:
             check("count refuses summary/raw mismatch", "mismatch" in str(exc))
 
-        print(f"WITNESS_SELFTEST: {cases - failed}/{cases} pass")
-        if failed == 0:
-            print("VERDICT: PASS")
-            return EXIT_OK
-        print("VERDICT: FAIL")
-        return EXIT_FAIL
     finally:
         if root is not None:
             assert root.resolve(strict=True) == root
             shutil.rmtree(root, ignore_errors=True)
         assert private_root.resolve(strict=True) == private_root
         shutil.rmtree(private_root, ignore_errors=True)
+    check("private root is removed", not private_root.exists())
+    if private_root.exists():
+        private_root.rmdir()
+    print(f"WITNESS_SELFTEST: {cases - failed}/{cases} pass")
+    if failed == 0:
+        print("VERDICT: PASS")
+        return EXIT_OK
+    print("VERDICT: FAIL")
+    return EXIT_FAIL
 
 
 class UsageParser(argparse.ArgumentParser):

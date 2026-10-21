@@ -1960,3 +1960,28 @@ Historical identities are classified, not authenticated or re-executed.
 The ruler hardcodes this round's six predicates: it is not a generic
 contract-schema validator. `install_window` and `expectations` in the
 inherited contract are descriptive, not enforced schema fields.
+
+### Round-21 gate/probe registry — finite environment differential
+
+Source: `corpus/lessons/round-21.md`, QUALITY43–44 and
+`corpus/knowledge/hermetic-env-differential.md` (mined S079, reopened S028).
+The frozen C1/C2 scripts and populations remain unchanged from33d03b7;
+the maintained facade supplies public isolated fixture selftests without
+rewriting those instruments. These are bounded measurements, not admission
+or execution-authentication mechanisms.
+
+| Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| `tools/env-diff.py` | probe | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out /tmp/tameshi-f5.json` | 0 all surfaces classified; 1 incomplete/failed measurement; 2 could-not-evaluate; 64 usage | `python3 tools/env-diff.py --selftest` | frozen nine pins/seven profiles in `c2-contract.json`; raw observed tuples in `f5/receipt.json`; fixtures include variant sensitivity, repeat variation and pin refusal | requested output path and isolated `/tmp/tameshi-r21-envdiff.*` only; sibling blobs read-only, no network | tameshi |
+| `tools/wave-route-mix.py` | gate | `python3 tools/wave-route-mix.py --spec .ufo/waves/round-21/spec1.json --json` | 0 clean; 1 concentration/unrouted-role failure; 2 could-not-evaluate; 64 usage | `python3 tools/wave-route-mix.py --selftest` | max-share0.40 and literal synthetic expectations; round20 refused spec/round21 accepted spec retained | none; reads operator role routes, never edits routing | tameshi |
+| `tools/round21-measure.py` | gate facade | `python3 tools/round21-measure.py --claim c1 --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json` (use `--claim c2` for F5) | 0 clean; 1 failed population; 2 could-not-evaluate; 64 usage | `python3 tools/round21-measure.py --selftest` | delegates unchanged `c1-survivors.py`/`c2-count.py`; frozen mutant/population JSON; literal fixture exits and stable finding fields in facade | isolated fixture/private clones only; no lane Git writes | tameshi |
+| `.ufo/evidence/round-21/coldread/measure.py` | probe | `python3 .ufo/evidence/round-21/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --explain` | 0 observed; 2 could-not-evaluate; 64 usage/forbidden override; selftest0 clean/1 failed | `python3 .ufo/evidence/round-21/coldread/measure.py --selftest` | selects round21 ledger, unchanged round18 algorithm and round20 strict override refusal | isolated selftest/private reads only | tameshi |
+
+C1's guard kills include child-environment/command-pin contracts and
+synthetic process identities, not demonstrated malicious hooks or PID
+reuse. C2's repeat comparison deliberately preserves random-path raw
+output variation; nine classified does not mean nine deterministic
+selftests or universal hermeticity. The frozen counter validates declared
+pins/tuple arithmetic and a source header, not producer authenticity.
+Current source re-anchors retain the199-entry prefix and label authorship;
+they are not blind/independent cold-read or required-command coverage.
