@@ -1,0 +1,59 @@
+{
+  "round": 20,
+  "attempt": 2,
+  "baseline": "c144dcd807166dfc275c1ac2936fd2fa4b678bda",
+  "frozen_at": "2026-10-21T07:40:18Z",
+  "claim": {
+    "id": "C1",
+    "axis": "calibration",
+    "unit": "QUALITY20 recurrence closed: frozen-before-dispatch instruments and a receipt-time instrument/interval gate",
+    "before": "0/6",
+    "target": "6/6"
+  },
+  "population": [
+    {"id": "contract_frozen_before_dispatch", "requires": "contract.frozen_at <= contract commit time <= wave-1 dispatch time"},
+    {"id": "staged_instruments_frozen", "requires": "staged receipt-window.py and measure.py sha256 equal their contract frozen_sha256"},
+    {"id": "installed_matches_contract", "requires": "tools/receipt-window.py sha256 equals contract installed_sha256"},
+    {"id": "selftest_receipt_clean", "requires": "committed selftest receipt exit 0 with RECEIPT_WINDOW_SELFTEST tally >= 20/20"},
+    {"id": "final_receipts_clean", "requires": "committed final receipts pass the installed gate at the delivered revision"},
+    {"id": "historical_classified", "requires": "the four historical instrument shas are classified by the installed gate"}
+  ],
+  "instruments": {
+    "receipt-window": {
+      "frozen_sha256": "f03ae7e91607750e2690f7819c486a3d9db03ee13f0b8cf51958462834dcf7cc",
+      "installed_sha256": "f03ae7e91607750e2690f7819c486a3d9db03ee13f0b8cf51958462834dcf7cc",
+      "staged_path": ".ufo/evidence/round-20/stage/receipt-window.py",
+      "install_path": "tools/receipt-window.py",
+      "install_window": {"start": "2026-10-21T07:40:18Z", "end": "2026-10-21T23:59:59Z"},
+      "note": "staged bytes frozen before dispatch; the install copies the same bytes after every wave reader returns (frozen == installed, no in-wave edit)"
+    },
+    "round20-measure": {
+      "frozen_sha256": "f34dc233eee33f4fea9a82c391bfb57ebfef8983f5c7146b4d2dc0b6b3be4e2d",
+      "installed_sha256": "f34dc233eee33f4fea9a82c391bfb57ebfef8983f5c7146b4d2dc0b6b3be4e2d",
+      "staged_path": ".ufo/evidence/round-20/stage/measure.py",
+      "install_path": ".ufo/evidence/round-20/stage/measure.py",
+      "note": "evidence-only ruler; not installed into tools/, frozen on both endpoints"
+    }
+  },
+  "historical": {
+    "96a68b60538504a8a1b5ead9d5811a2c7bcbf8b427c5934b07e22e16c38585ef": "round19-ruler-wave1",
+    "8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12": "witness-tool",
+    "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b": "witness-runner",
+    "7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37": "round18-measure"
+  },
+  "expectations": {"corrected": 6, "open": 0, "total": 6, "exit": 0},
+  "measurement": "python3 .ufo/evidence/round-20/stage/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check",
+  "dispatch_artifact": ".ufo/waves/round-20/dispatch.json",
+  "sources": [
+    "round-19 verifier spotcheck corpus/lessons/round-19-verifier-spotcheck.md @ c144dcd routed defects 1-3",
+    "QUALITY20 (no in-place instrument edit during a wave) and QUALITY21 (instrument sha beside the retained receipt)"
+  ],
+  "invariants": [
+    "historical instrument bytes are never rewritten",
+    "the 18 guard survivors remain open and are not claimed closed by this round",
+    "no promotion",
+    "no numeric calibration score increase (cap 8; last 2 need independent review)",
+    "no source row added or removed; S049 opened-date basis made explicit without changing the row",
+    "no sibling gate, fleet script, MANIFEST, or host/private credential surface is touched"
+  ]
+}
