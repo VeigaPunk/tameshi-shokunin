@@ -1,0 +1,56 @@
+SECTION 1925 1936
+### Round-18 gate/probe registry — routed-defect closure
+
+| Name | Kind | Command | Exits / rule |
+|---|---|---|---|
+| `.ufo/evidence/round-18/defect-probes.py` | probe | `python3 .ufo/evidence/round-18/defect-probes.py --rev REV` · `--selftest` | 0 measured (`DEFECT_PROBES: open=N closed=M total=11`) · 2 a probe errored, a pristine selftest was red, or an anchor was not unique · 64 usage. A guard probe is `closed` only when the pristine selftest exits 0 and the guard-removal mutant exits nonzero; children run under bwrap with the fleet read-only; never wrap it in `tools/trace-inputs.py` (P05–P07 run that tool's selftest, and nested ptrace is refused → 2) |
+| `tools/registry-check.py` (round 18) | gate | unchanged CLI | `timeout_s` must be a finite number in (0, 86400] (`NaN`/`Infinity` literals refused at parse; a larger finite value used to crash `communicate()` with exit 1) → 2 naming the row; descendants of a row (including ones that called `setsid`/`setpgid`) are killed at timeout and after the row exits, and pipe draining is bounded — limits: a descendant that changes UID may be unkillable, same-tick PID reuse is not excluded, and an orphan adopted from a pre-existing checker child can be signalled (`.ufo/waves/round-18/w2/SentinelKillCode.md`); survivors fail the row with `cleanup_error` |
+| `tools/evidence-disposition.py` (round 18) | gate | unchanged CLI (`--selftest` now needs `jj` on PATH) | G2/G3 read one anchor commit: `refs/heads/<lane.branch or attached branch>`; a jj-colocated repo with detached HEAD and no `lane.branch` → 2; a detached non-jj clone (`registry-check --rev`) anchors on its checked-out commit only when a branch or remote-tracking ref contains it. HEAD is never read as the tip in a bound lane (jj leaves `HEAD` at `@-`) |
+| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; its pinned round-13 bytes are read from `4acc607` through `.ufo/evidence/round-18/dispositions.json` (the round-17 manifests are superseded) |
+| `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | as the round-17 copy (which stays byte-identical as evidence); its selftest now fails when the O_RDWR exclusion, the private pycache prefix, or the root-execve requirement is removed |
+| `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim plus a `carried_from` key; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |
+| `.ufo/evidence/round-19/measure.py` | gate with `--check`; otherwise measurement probe | `python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check` · `--selftest` | 0 all five frozen round-18 correction items present and receipt fields agree; 1 at least one open; 2 cannot evaluate revision/input encoding; 64 usage. Without `--check`, 0 reports the five-item count, not acceptance. Selftest isolated public-CLI snapshots, no network/Git writes; expected values in `round-19/contract.json` and ruler literals, input digests in `before.json` and revision-specific after receipt. Write scope: none outside selftest `/tmp/tameshi-r19-ruler-*`; owner tameshi. Only metadata/effective-receipt reconciliation, never producer authentication, cold-read credit or required-command coverage (QUALITY 37–39; `corpus/lessons/round-19.md`; S049). |
+| `.ufo/evidence/round-19/coldread/measure.py` | probe | `python3 .ufo/evidence/round-19/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV` · `--selftest` | Delegates unchanged credit/trace/veto/CLI rules to frozen round-18 `measure.py`, selecting round-19 `coldread/ledger.json` as default (no legacy overrides). Same exit map and input-keyed-only bound. Round-19 refreshed entries are L1-author source reads, not new blind or independent cold-read/command-coverage evidence; old entries retained verbatim. Inputs/receipt hashes are revision-pinned; external observations remain outside the credited-input predicate. Owner tameshi, read-only except inherited isolated selftest scratch. |
+SOURCE .ufo/evidence/round-18/coldread/assemble.py sha256=bf7c12f7b69dcdb004c7df546cd9655f6f1264ebb3e5565810a673c42dba5a0a bytes=78662
+SOURCE .ufo/evidence/round-18/defect-probes.py sha256=99297d9645151dee948291638386f3e9189c7bab590bebda23de6e51dadebeaa bytes=45286
+SOURCE .ufo/evidence/round-18/final/bash-witness.stdout sha256=316b97139aaa2fafa1ab08c2df6471ba8dec5b4480efa1a9589ae0341e5020be bytes=2502
+SOURCE .ufo/evidence/round-18/final/before.stdout sha256=e279b328de7d08631de687a0ad587943ca0a9eecba3c046adeb31b44f7a25b0d bytes=6309
+SOURCE .ufo/evidence/round-18/final/case7.stdout sha256=e649866e5194fe54a6773582551e7fb83a33bafb0cfd661ba6b71bb8da9c7ceb bytes=14841
+SOURCE .ufo/evidence/round-18/final/case8.stdout sha256=b4f264c375833f3c65d3ea00606851df58edc6c575617d4034f08ccfdf63694b bytes=7765
+SOURCE .ufo/evidence/round-18/final/checks.json sha256=fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d bytes=2411
+SOURCE .ufo/evidence/round-18/final/context.stdout sha256=337aa6d8b19b2a82ed7de8854bf39a964076126c72bcc0b51798eca6bb134994 bytes=178
+SOURCE .ufo/evidence/round-18/final/disposition.stdout sha256=596975d456657c8d683b6cae4382bdc958cda0084a2cd54d4b979957f55048e4 bytes=6906
+SOURCE .ufo/evidence/round-18/final/historical.stdout sha256=9050c284e68d6538ebedfc6a084fc0b4529fd50a691c72d9f7a4e570fa214590 bytes=6358
+SOURCE .ufo/evidence/round-18/final/probes.stderr sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+SOURCE .ufo/evidence/round-18/final/probes.stdout sha256=d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0 bytes=4111
+SOURCE .ufo/evidence/round-18/final/registry-branch-aligned.stdout sha256=6502cb387613b08c64f0be73f41ff094575639f952ad1f2c4c8e76834d5517c4 bytes=96815
+SOURCE .ufo/evidence/round-18/final/regression.stdout sha256=226be3d529337dc87334b0e7c55a012fb0793865570565b84471aab6d836acfe bytes=6390
+SOURCE .ufo/evidence/round-18/final/repeat.stdout sha256=9cd7809032b2a970bdc19577c57757e2d91e7e14f360cb37f5105eb3a0c3c21e bytes=423
+SOURCE .ufo/evidence/round-18/measure.py sha256=7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37 bytes=76144
+SOURCE .ufo/evidence/round-19/bash-witness-selftest-complete.json sha256=1939f9f48a85ceb4d4087ce89abfe7c65c4cfb1b43a16e6ad35f86a5d46b9809 bytes=936
+SOURCE .ufo/evidence/round-19/bash-witness-selftest-complete.stderr sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+SOURCE .ufo/evidence/round-19/bash-witness-selftest-complete.stdout sha256=316b97139aaa2fafa1ab08c2df6471ba8dec5b4480efa1a9589ae0341e5020be bytes=2502
+SOURCE .ufo/evidence/round-19/checks-baseline.json sha256=fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d bytes=2411
+SOURCE .ufo/evidence/round-19/coldread/measure.py sha256=4951a990e5177270445ba2c9ded7f3edbe12b98a3c5f428e1566d362ab4ff6a3 bytes=1439
+SOURCE .ufo/evidence/round-19/contract.json sha256=4a7de023f0dd45031d8b9020c66a247f6ee4855eb11e4d04319f630d61867ccc bytes=1516
+SOURCE .ufo/evidence/round-19/measure.py sha256=7af3e951bf67f7671954dee33aaa4dc183a642fce85cbc2d9d782085f856cf72 bytes=24935
+SOURCE .ufo/evidence/round-19/probes-baseline.txt sha256=d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0 bytes=4111
+SOURCE .ufo/evidence/round-19/round18-final-measure-effective.json sha256=3fd1cf282d1b91594875d4861e206e19b28947a5d353701b15a91b91bbdd0a53 bytes=1478
+SOURCE .ufo/evidence/round-19/round18-final-measure-instrument.json sha256=3c1c8f4bac2a9c1c5bb28c82a5bfc7235ab0c33c0316bc3756bba6c7538dc90a bytes=557
+SOURCE .ufo/evidence/round-19/round18-final-measure.json sha256=a9536bfbfce1aec68b6c15e2989e57d4861415d091af325e08cef7ad78408a44 bytes=774
+SOURCE .ufo/evidence/round-19/round18-final-measure.stderr sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+SOURCE .ufo/evidence/round-19/round18-final-measure.stdout sha256=55c530bba862b891d84c7bc9ba3ad0a59ba6df967c74586d147922875d4e0ae8 bytes=235375
+SOURCE .ufo/evidence/round-19/source-baseline.txt sha256=ac82b2df0ffd44f4e3e74e90cdae2a2eac6bc72ed557dd428c45397f97c828d5 bytes=43553
+SOURCE .ufo/evidence/round-19/source-round18-final.txt sha256=018ee9a86500efc6d07ea141d20c7de6b2ec76e5e808ffbf12508ada46a84e0e bytes=55270
+SOURCE .ufo/evidence/round-19/sources-diff.txt sha256=250449a2e33dd8e20d9d9ee70d4eef67227f12757fa912d659832d094e0c5f1e bytes=147
+SOURCE corpus/SOURCES.md sha256=b684833db6b59970d99007446cc3247d1c778b92c29acd389f475a24f3ff2ebe bytes=55938
+HEADER # SOURCES — where tameshi learns
+SOURCE corpus/knowledge/guard-kill-closure.md sha256=7a3cdd3ccf8b4a3051f68609c3dc2bbb63d669364711d604ba53e6558abf74ef bytes=27662
+SOURCE corpus/knowledge/mutation-case-kumitate-sources-check.md sha256=d961a0d6645541ebec116d7a12f958426ac4561cd09e9adb6f09c9554afeea38 bytes=19820
+SOURCE corpus/lessons/round-18.md sha256=88b17f6df3290cf61d886bab322add21e863177003e1725df4f928c44b7d3159 bytes=21734
+SOURCE tools/bash-witness-study.py sha256=8dfaa25aa2713635e7363f60effb442a474ba3656d6cf2bb171c0c22432e3a12 bytes=80659
+SOURCE tools/evidence-disposition.py sha256=66655a3a692b587fd0a6dc3f2cf0edd766a824eb86280753d0bd57efeecc1f44 bytes=119851
+SOURCE tools/registry-check.py sha256=33d0d17c140a6b9662c023a3a8cfa67065e17fb8c73af20d7c8055005565aeb6 bytes=69005
+SOURCE tools/registry.json sha256=3b24907c281af75255b4ffeafed003ee8d35bce1b1ee1cdc3890348e386ec203 bytes=18031
+SOURCE tools/trace-inputs.py sha256=fb1d81f67551fb04e9e447cbc706ef5cc9cfd5208169004184b24ab15f3f2636 bytes=37123
+SOURCE_READ complete; no recipe argv executed; external observations not reverified

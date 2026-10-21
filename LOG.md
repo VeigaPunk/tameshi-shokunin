@@ -1260,3 +1260,15 @@ metadata and its failure are preserved; production gate source is unchanged.
   and child CLI dispatch are configured for the new default ledger,
   while frozen implementation bytes remain unchanged. Bytecode writes
   are disabled within the selector process.
+- Same-identity residuals at329b6dd killed both former survivors with
+  pristine/restored5 and mutant4 (only R18-1 or R18-4 open). The
+  history-preservation critic confirmed full legacy SHA pin and inline
+  observation equality. These are bounded followups, not a claim that
+  wave2 reviewed every later byte.
+- Registering the two new selftests and installing late guards moved
+  five input-keyed buckets: actual329b6dd monitor55/60, restraint6,
+  retained with argv, tool SHA, exit and both stream digests. Five real
+  source re-anchors were added; the round19 ledger now contains159
+  carried entries plus20 author entries on16 distinct buckets (179
+  total). External observations remain explicitly unverified; no cold
+  recipe re-execution or independent promotion credit is claimed.

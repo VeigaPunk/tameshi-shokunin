@@ -21,3 +21,10 @@
 ## Residual unknowns / smallest safe correction
 
 No same-file mutation was executed; the counterexample follows the current predicate and is not evidence that anyone edited the artifact. QUALITY also expressly says the ruler does not authenticate the historical producer (`QUALITY.md:360–363`); the receipt fields establish declared attribution, not independent execution provenance. Keep the failed row immutable and successor separate, but revise the report to say replacement is rejected by the exit-64 predicate and byte-preservation policy—not by a whole-file comparison in this ruler. If mechanical rejection of same-file edits is intended, pin/compare the complete `OLD_CHECKS` bytes in the evaluator.
+
+## Erratum — hardened delivered ruler (2026-10-21)
+
+The preceding mechanical counterexample is scoped to the `55e1d312…` version I initially reviewed. Re-opened explicit landed revision `329b6ddb826b16b1814b4ca87425f766c87e853d`: its `measure.py` SHA-256 is `7af3e951…f856cf72`; `OLD_CHECKS_PIN` and `witness()` now require the entire `checks.json` digest to equal `fed3c8e…671d`. Read-only SHA-256 of the original baseline blob at `7243e7f…` is exactly that pin. Thus the same-file-append counterexample no longer applies to 329b6ddb; **agree** with the report's mechanical preservation assertion for that later revision (the old failed-row replacement also fails its exit-64 check).
+
+At 329b6ddb the measurement predicate also compares the effective receipt's embedded `observation` with the raw measurement JSON; the new metadata states it is derived, not a replay or producer authentication. QUALITY 39 likewise excludes historical-producer authentication. No probe/selftest was run. This bounded review does not establish the final five-row C1 score at 329b6ddb; the 21e7932 result remains stale for that purpose.
+The earlier pin suggestion is superseded for 329b6ddb: its full-blob guard is already present.

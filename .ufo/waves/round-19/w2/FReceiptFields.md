@@ -39,3 +39,21 @@ run = subprocess.run(argv, cwd=ROOT, env=ENV, capture_output=True, timeout=30)
 - Finally restoration reported exact original snapshot bytes: `765890e0ec666bf3c784ff7baeab1659dfad94703e6a31341e440a3addf95b6f` before and after; restored receipt hash is `1939f9f48a85ceb4d4087ce89abfe7c65c4cfb1b43a16e6ad35f86a5d46b9809`. Restored detector output is byte-identical to pristine and exits 0.
 - Unknown: whether L1 intends every local ReceiptFields schema constraint, especially `cwd_kind`, to be part of C1's durable ruler contract. Concrete criterion to decide: malformed `cwd_kind` must make R18-4 open if that constraint is adopted. Existing valid receipt is not falsified.
 - No other mutations, old suites, selftests, builds, linters, formatters, installs, production edits, refs/index writes, delegation or background jobs. No tool installs/updates. Existing 18 survivors remain open; no score, cold-read, promotion or general historical-authenticity claim.
+
+## 2026-10-21 — FReceiptFields same-identity repair residual
+- Original survivor and its evidence above remain unchanged. **KILLED at repaired revision `329b6ddb826b16b1814b4ca87425f766c87e853d`**; installed and frozen ruler SHA-256 both `7af3e951bf67f7671954dee33aaa4dc183a642fce85cbc2d9d782085f856cf72`.
+- Primary surface reopened on this date: `.ufo/evidence/round-19/measure.py:195-213`; line 204 now requires string, nonblank `cwd_kind`. Agree that this repairs the assigned array-type survivor, not every possible schema defect.
+- Fresh snapshot contains all 18 final `PATHS`, read exclusively from that full repaired revision; no synthetic correction surfaces or stale fixture copy.
+- `sys.dont_write_bytecode=True` was set before source import; source imported only to obtain final `PATHS` and `WITNESS`. Sole semantic mutation remains `cwd_kind: "isolated scratch clone"` → `cwd_kind: []`; stream digests remain correct.
+- Actual investigation command: `python3 /tmp/tameshi-r19-falsify-ReceiptFields-residual-573_tkbv/probe.py`; exit 0. Full bounded code retained there.
+- Identical actual detector argv for all three runs: `["python3", "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-19/measure.py", "--snapshot", "/tmp/tameshi-r19-falsify-ReceiptFields-residual-573_tkbv/snapshot.json", "--check"]`.
+- Pristine actual: exit **0**, stdout corrected=5/open=0/total=5; open rows `[]`.
+- Mutated actual: exit **1**, stdout corrected=4/open=1/total=5; only open row `["R18-4"]`. This matches the expected failure-capable detector.
+- Restored actual: exit **0**, stdout corrected=5/open=0/total=5; open rows `[]`.
+- Pristine/restored snapshot SHA-256: `64bb0d25ae4e82308453c0b4c2d8ad351dddd67aa4434c6e36e3429a6e7073a9`.
+- Mutated snapshot SHA-256: `34501b84d9415af58b9d621654531bfaa8f2d5ecbd272f50042b6c30c4b164e3`.
+- Receipt SHA-256 before/restored: `1939f9f48a85ceb4d4087ce89abfe7c65c4cfb1b43a16e6ad35f86a5d46b9809`; mutated: `4423997bce91465867bb1cfdf369d5088d84cd77b6041b694bff963ba4b32d82`.
+- Stdout SHA-256 before/restored: `604f8c14b95b5578fb6f45e04c723e1db17c78d04fee76d80bcaeb7291a17f69`; mutated: `a1a0fa77a9c326a98ebda86be362c453e9c4f380fead9944bfce0d42c162d1da`.
+- All actual stderr strings empty; SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- Finally restoration recorded exact original snapshot bytes, with matching before/after hash above; installed tool hash unchanged. Restored stdout is byte-identical to pristine.
+- Exact raw captures: scratch `pristine.stdout`, `mutated.stdout`, `restored.stdout`, corresponding `.stderr`, and `results.json`. No other mutant, suite/selftest, production/Git write, install, or new wave; bounded residual only, no independent C1 closure.
