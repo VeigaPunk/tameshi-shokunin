@@ -1168,3 +1168,27 @@ Both are recorded as errata and QUALITY49 and routed to round25. The tool,
 fixtures and ruler were not changed after the wave. The capabilities row
 above is bounded by Errata E (publication-only stream bound) and G (input
 validation).
+
+Residual-review correction (round24): the C1 verdict is bounded by all lesson
+Errata E–P and the residual corrections, not just E–L. Explicit mechanism
+taxonomy: argv K1/K2, exit K3, digest pins K5/K6, runner-held/cleanup K7/K8,
+stream-size K9, live listing K10, identity K11 are seven moved groups;
+including unchanged stdout K4 makes eight groups. Grouping all three refusal
+predicates K7–K9 instead gives six moved/seven total. Neither grouping is a
+new measured claim; the stable unit remains eleven named predicates.
+
+The capabilities row is a bounded synthetic demonstration, not end-to-end
+replay hardening: real replay refused 0/43; rejection is shown synthetically.
+Evidence is `after.json`, `replay-command.json`, `replay-gate.json` and
+`final-verification.json` under `.ufo/evidence/round-24/`. In particular L,
+M and O qualify the row: ambient pin inputs, live receipts certified as
+ordinary receipts, and stale clean pairs surviving refusal. The consumer
+warning now appears directly in SKILL.md.
+
+Harmed intermediates are retained: bd38c02 had 47/62 and restraint 6
+(`monitor-intermediate-A.json`); 250069f had 60/62 and restraint 6
+(`monitor-intermediate-B.json`). Source re-anchors restored the bounded
+monitor; at measured 4903959, `final-verification.json` records 62/62,
+restraint 8, depth 8, overrides false, registry 47/47, census exit 0.
+Those numerical checks do not detect misleading prose; the appended
+consumer warnings and the open defects must be read alongside them.

@@ -521,3 +521,18 @@ predicate, so under 48 it does not count as a repair (lesson Erratum I).
     mutant of `registry-replay.py` leaves frozen K10 discriminated while the
     tool selftest's single-trigger `external` case fails, so K10 alone is
     not coverage of either disjunct.
+
+Round24 residual correction to 48/49 (ResQuality49): the execution note
+explicitly narrows 48: absence of a tool is new capability, not repair.
+Criterion 49 supplements QUALITY29's mutation requirement and QUALITY15's
+right-reason requirement; it does not replace either. A loop-coverage claim
+requires the offending element in both first and later positions among
+clean elements (rows or tokens); a clean-then-offending case alone misses
+last-wins mutants. Its trigger list is illustrative, not a complete taxonomy.
+Sign, truthiness and case-fold weakenings remain open under QUALITY29.
+Single-row external/non-hermetic tests discriminate M05/M06 in MutProject,
+but do not satisfy this stronger loop-position condition. The frozen K10
+still counts one conjunction fixture, not coverage of either disjunct.
+No round24 fixture implements this corrected rule; the lesson's QUALITY49
+fix is not claimed failure-backed. The already executed M05/M06 probes
+motivate the rule, not a claim that the new rule has been operationalized.

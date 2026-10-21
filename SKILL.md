@@ -2057,3 +2057,28 @@ append-only. The two pinned rows also require their exact `bundle_sha256`.
 Frozen ruler: `.ufo/evidence/round-24/measure.py` (eleven predicates).
 Receipt argv, cwd and revision remain instrument-supplied, and no producer
 authentication is claimed.
+
+Round24 correction (fresh falsification; earlier text preserved).
+The table's write-scope and exit-map cells are not reliable safety promises.
+The replay creates temporary clones; row commands can reach live siblings;
+Git hooks may run because the clone does not disable them. Writes are not
+confined to `--out`. The stream limit bounds bundle publication only:
+`observations.json` retains complete, unredacted streams before that check.
+A refused projection does not clear an older bundle/expected pair in the
+same output directory; that stale pair can still return clean from the gate.
+Malformed observations may publish a bundle the consumer rejects, and
+unavailable-input errors can escape as exit 1 rather than documented exit 2.
+Use only caller-trusted local revision code and a fresh output directory;
+neither the clone nor this gate is a sandbox or producer authentication.
+
+The replay gate covers all 43 stored receipts, including both declared-live
+rows. `revision_pinned=41` means not declared live, not self-contained:
+`mutate-and-run-regression` and `round21-measure-selftest` additionally read
+live sibling object stores. The 47-row current registry battery and the
+43-row frozen replay are different populations. `registry-replay-selftest`
+is the fourth new active registry row and expects 10/10; its tests exercise
+projection and planning, not `--run`. Public command-binding fixtures include
+both `.ufo/evidence/round-23/extra-cases.json` and the round24 counterpart.
+The superseded 38/38 row still runs, fails against 44/44, and is excluded
+from the active tally. Full limitations and evidence: `corpus/lessons/round-24.md`
+Errata E–P and residual corrections; `corpus/knowledge/replay-projection-hardening.md`.

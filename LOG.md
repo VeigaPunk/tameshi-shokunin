@@ -1629,3 +1629,17 @@ metadata and its failure are preserved; production gate source is unchanged.
   These are recorded append-only: lesson Errata E–L and the routed table,
   the knowledge-entry errata and disposition table, and QUALITY49. No tool,
   fixture, ruler or registry bytes changed after the wave.
+
+- Residual reviewers confirmed the frozen 1/11→11/11 result and exposed
+  further documentation overclaims. SCORECARD and SKILL now cite all
+  lesson Errata E–P: the gate certifies live rows, refused output can leave
+  a stale green pair, selected code is not isolated, and a superseded
+  expectation is false but unenforced. Actual replay refusal is 0/43;
+  refusal evidence is synthetic. QUALITY49 is narrowed append-only, and
+  its claimed failure-backed lesson fix is withdrawn: no conforming fixture
+  was landed. The separate missing-after-receipt mistake has an executed
+  128→0 falsifier and remains the frontier's failure-backed fix.
+- Both harms are retained: A at bd38c02 (47/62, restraint 6), B at 250069f
+  (60/62, restraint 6). At 4903959 the final receipt records 62/62,
+  restraint 8, depth 8, registry 47/47 and census exit 0. Re-anchors are
+  author source reads, not independent cold-read or recipe execution.

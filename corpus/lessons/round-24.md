@@ -218,3 +218,75 @@ sibling-name mirroring; capture-time stream bounds and redaction; a
 |---|---|---|---|
 | seat misroot | RowAudit01 wrote its report to the fleet root, at `/home/vgpnk/Projects/shokunin/.ufo/waves/round-24/w1/RowAudit01.md` (sha256 `3bc5633c…`), despite the wave context's absolute-path rule | prompt §6.3 misroot sweep | copied byte-exact into the lane (`cmp` 0) and the fleet copy removed. Shown able to fail: the sweep `git -C /home/vgpnk/Projects/shokunin status --porcelain` listed `?? .ufo/waves/round-24/`, and after removal it no longer does |
 | errata append drifted the source monitor | QUALITY.md append at 250069f → monitor 60/62, restraint 6 (`monitor-intermediate-B.json`) | strict monitor input-drift | two actual traced re-reads (`source-traces-B/`) restore 62/62 at 671a6e2. Shown able to fail: the retained B receipt |
+
+## Residual review — corrections, not additional capability claims
+
+Eight ordinary reviewer/critic seats examined the receipts and append-only
+corrections after wave 1. Their reports live under
+`.ufo/waves/round-24/residual/`. No production tool, frozen fixture or
+registry expectation was changed. The following statements supersede the
+broader wording above.
+
+- ResAfterRuler and ResErrataCritic found inconsistent mechanism grouping.
+  The eleven predicate counter remains authoritative. Splitting stream-size
+  from held/cleanup yields seven moved groups (argv, exit, digest pins,
+  held/cleanup refusal, stream-size, live listing, identity) plus unchanged
+  stdout K4. Merging all refusal returns yields six moved plus K4. Neither
+  taxonomy is an additional breadth improvement.
+- Erratum I's "never recorded until now" is false without the qualifier
+  "in round24 prose": round23 fresh-adjudication line 104 and lesson lines
+  109–112 already recorded the loose-token choice. A successor row could
+  strengthen it without retrofilling the frozen pair; no such work landed.
+- Erratum H's kagi example is not exhaustive. Both unlisted rows read
+  live sibling object stores, including kumitate, tsukuroi and mado as well
+  as kagi. RunRegistry's malformed-layout 45/47 run versus fleet-layout
+  47/47 run demonstrates the dependency; CodeLiveList independently names it.
+  The pruned-pin assertion remains refuted (actual `fecee874` resolves).
+- Separate executed from inferred results: MutFixtures, MutProject,
+  MutPlan, LabPlanLaneLink, CodeProjectInputs and CodePublish retain executed
+  probes. PredK4/8/9/10/11, the sign-blind variant in PredK3, and the
+  zero-active-tag exit in CodeSupersession are static seat inferences, not
+  additional executions by this L1. Errata F/G/P must be read with that
+  qualification. MutProject M05/M06 execute the two disjunct deletions.
+- Omitted limits are retained here: MutProject M07/M08/M09 (schema,
+  requirement-name type, stream-type guard removal) survived both detectors.
+  PredK10's sidecar-deletion and all-rows-live variants are unexecuted seat
+  inferences. ClosureCarry's dropped-token projection and CodeSelftestOracle's
+  bundle-byte/digest handoff weaknesses are also code-derived inferences.
+  No landed test validates the handoff or a two-token projected requirement.
+  K8 refines K7's label on the real runner; a nondefault-limit-always-refuses
+  mutant can pass K9 but is caught by the existing at-limit selftest
+  [seat inference, CorpusContract]. Selected revision code runs with caller
+  authority; a clone is not isolation. Duplicate observation rows can also
+  corrupt report counts (CodeProjectInputs).
+- S085's teaching cell "each" overclaims: six of eight routed items have
+  predicates; clone-runner digest is observed but unpredicated, loose tokens
+  stay open, and stream redaction is absent. Its defect text is at lines
+  53–104 within the full array at 48–106. S084's default `strict=False`
+  stops at missing components, symlink loops or OSError; the warning is not
+  restricted to missing components.
+- The QUALITY49 Mistakes row's fix is **not shown able to fail**. Its probes
+  motivate a rule but no conforming fixture was landed. The separate
+  missing-after-receipt row supplies this round's failure-backed frontier
+  fix (`git cat-file -e`: 128 at c8c5b88, 0 at 04657a6). QUALITY49 is
+  narrowed append-only to acknowledge both loop positions and QUALITY29/15.
+- ResVerdictCritic's consumer-surface criticism is accepted: SKILL now
+  directly warns about publication-only limits, unconfined writes, stale
+  green pairs, inconsistent invalid-input exits and live receipts. The
+  immutable tool docstring's original stronger assertions are not reliable.
+  SCORECARD/LOG now cite Errata E–P and both harms: A at bd38c02
+  (47/62, restraint 6), B at 250069f (60/62, restraint 6).
+- ResMonitorReanchor reproduced B and its exact prefix preservation.
+  Its reruns at 671a6e2 and 4903959 give 62/62, restraint 8. The L1 final
+  receipt at 4903959 is `final-verification.json`. Scratch paths in traces
+  are historical observations, not promises that those directories persist.
+- ResAccounting confirms 64/64/0 and exact membership. Its D1 allegation
+  about the misroot pointer is rejected: line 219 actually names the fleet
+  source `/home/vgpnk/Projects/shokunin/.ufo/waves/round-24/w1/RowAudit01.md`,
+  not the lane destination. The earlier copy/cmp/remove was observed by the
+  L1; a new sweep receipt records current absence, not a fabricated rerun
+  of the historical copy. The accounting gate validates retained declared
+  callbacks, not provider authentication.
+
+No general mutation-adequacy, producer-authentication, historical R17
+coverage or promotion claim follows from the measured eleven predicates.

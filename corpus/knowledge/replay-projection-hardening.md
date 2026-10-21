@@ -94,3 +94,26 @@ K2 (case-fold) is author-added, and K4 is a carried control.
   So the command-binding gate's clean verdict covers all 43 rows. The 41/2
   split is visible only in the replay report and `live-dependent.json`
   (CodeRunReplay).
+
+### Residual-review corrections
+
+The errata intro's "four rows" is not exhaustive: the live-list row also
+overstates its predicate. K10 combines both triggers; MutProject M05/M06
+leave it green, while independent single-trigger selftest cases fail.
+Held/cleanup fields are consumed as publication gates, not carried in
+receipts; live flags reach only the unpinned report/sidecar. The disposition
+table describes a successor-tool capability: round23's replay is unchanged.
+Runner clone-copy hashing is verified per run, not predicated; the separate
+instrument digest in replay-command.json is the live invoked script,
+verified byte-identical to its revision blob, not a self-authenticating pin.
+
+The breadth count has two valid explicit taxonomies: separating stream-size
+K9 from held/cleanup K7/K8 gives seven moved groups plus stdout K4 control;
+merging all refusal returns gives six moved groups plus control. Eleven
+predicates, ten moved, is the actual counter, not a mechanism count.
+For survivors on exit, refusal, byte counting and pin attribution consult
+lesson Erratum F and its residual correction. The stream count is UTF-8
+bytes of runner-decoded text, not raw captured process bytes.
+The loose-token limitation was already recorded in round23; successor
+rows could strengthen it without rewriting frozen requirements. It is an
+unimplemented choice here, not a prohibition.
