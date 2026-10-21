@@ -1607,3 +1607,25 @@ metadata and its failure are preserved; production gate source is unchanged.
   the strict monitor is 62/62, restraint 8, depth 8. Also at 549ede2:
   registry 46/46, C1 10/10, selftest 38/38, replay 0, source-read
   1/ARGV_MISMATCH, census 0 (`final-verification.json`).
+
+### Round24 — replacement-L1 measurement, fresh falsification wave and errata (2026-10-21)
+
+- Trigger: the round24 coordinator CloseTameshi22 died with the host session
+  (SIGHUP 13:10:51 -03) inside its wave-1 retry loop. Attempts 1–2 were
+  refused 64/64 at the 100-job cap; no seat spawned. Action: the replacement
+  L1, TameshiR24-2, dispatched the same validated 64-seat payload unchanged
+  (attempt 3: 64 spawned). It measured the frozen ruler at c8c5b88: 11/11,
+  exit 0 (`after.json`, landed 04657a6). No-harm at c8c5b88: 62/62,
+  restraint 8, depth 8; registry 47/47.
+- Motivating evidence: 64 fresh falsifiers (`.ufo/waves/round-24/w1/`).
+  They confirmed the base and after receipts, the replay gate, the pins, the
+  runner digest and the census. They found:
+  - single-fixture predicates that weaker implementations pass;
+  - a publication-only stream bound with no redaction;
+  - `--project` validation weaker than its consumer;
+  - `revision_pinned` meaning "not declared live";
+  - doc and anchor imprecision.
+
+  These are recorded append-only: lesson Errata E–L and the routed table,
+  the knowledge-entry errata and disposition table, and QUALITY49. No tool,
+  fixture, ruler or registry bytes changed after the wave.

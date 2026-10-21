@@ -500,3 +500,24 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     Captured by: `lessons/round-24.md` Mistakes (round23 routed defects, loss
     of all 20 wave-2 reviewers). Falsifier: the round24 ruler gives 1/11 at
     6a1821a and is expected to give 11/11 after the change.
+
+## Criterion appended — round 24 fresh wave (2026-10-21)
+
+QUALITY48 execution note: the round24 ruler was executed at c8c5b88: 11/11,
+exit 0 (`.ufo/evidence/round-24/after.json`). K4 is the control, so ten
+predicates moved. K7–K11 failed at base only because the tool was absent,
+so they show a new capability, not a repair. The runner-digest fix has no
+predicate, so under 48 it does not count as a repair (lesson Erratum I).
+
+49. Narrows 48. A guard with several triggers is covered only when each
+    trigger has its own single-trigger fixture. Several triggers means a
+    disjunction, a per-row loop, a byte-versus-character choice, or an
+    alias-resolution step. In a per-row fixture, the offending row comes
+    after a clean row. A predicate whose one fixture sets every trigger at
+    once counts once, for the conjunction only. Record each predicate's
+    expected failing case or finding, not just "some failure".
+    Captured by: `lessons/round-24.md` "Fresh wave 1", Erratum F (PredK7–K11,
+    MutProject, MutPlan, MutFixtures). Falsifier: the remove-external
+    mutant of `registry-replay.py` leaves frozen K10 discriminated while the
+    tool selftest's single-trigger `external` case fails, so K10 alone is
+    not coverage of either disjunct.

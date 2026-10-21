@@ -1148,3 +1148,23 @@ execution.
 | capabilities addition | What it can now do | Evidence | First-working round |
 |---|---|---|---|
 | refusing-registry-replay | replay frozen registry requirements, refuse to publish a binding bundle from rejected/cleanup-failed/over-limit rows, list live-dependent rows, realpath fleet identity | `tools/registry-replay.py`; `.ufo/evidence/round-24/` final receipts | 24 |
+
+### Round 24 — measured result and fresh-wave errata (replacement L1 TameshiR24-2)
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 command-binding hardening | calibration | 1/11, exit 1 at 6a1821a | 11/11, exit 0 at c8c5b88 | +10 predicates (K4 a control); numeric 8→8, delta 0 | `python3 .ufo/evidence/round-24/measure.py --repo CLONE_AT_REV` | c8c5b88c8e961a929cdc351b95a7074c76958909 | `.ufo/evidence/round-24/before.json`, `after.json`; seats RunRulerAfter, RunRulerBase | improved (measured), bounded by lesson Errata E–L |
+
+No-harm at c8c5b88 (`noharm-c8c5b88.json`):
+- the strict monitor gives 62/62, restraint 8, depth 8, overrides false;
+- registry 47/47 held, 7 superseded, exit 0;
+- census exit 0 (81 → 83 rows).
+
+The ten moved predicates cover seven mechanisms. K7–K11 measure the new
+`registry-replay.py` capability: its base failures are tool-absent, not
+repairs. The fresh 64-seat wave found weaker implementations that pass the
+frozen ruler (single-fixture predicates) and validation gaps in `--project`.
+Both are recorded as errata and QUALITY49 and routed to round25. The tool,
+fixtures and ruler were not changed after the wave. The capabilities row
+above is bounded by Errata E (publication-only stream bound) and G (input
+validation).
