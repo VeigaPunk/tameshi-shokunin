@@ -156,7 +156,11 @@ def selftest():
         with tempfile.TemporaryDirectory(prefix='tameshi-r22-accounting-') as directory:
             work = Path(directory)
             for case in cases:
-                raw = case['raw'].encode()
+                if "nested_arrays" in case:
+                    depth = case["nested_arrays"]
+                    raw = ("[" * depth + "0" + "]" * depth).encode()
+                else:
+                    raw = case["raw"].encode()
                 (work / 'bundle.json').write_bytes(raw)
                 (work / 'expected.json').write_text(json.dumps({
                     'schema': 'wave-accounting-expected-v1',

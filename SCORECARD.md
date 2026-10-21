@@ -246,6 +246,7 @@ written and are superseded here:
 | effective expectation reconciliation | account for every historical expected row, reject an exit-only setup crash, and preserve that raw failure under a checked explicit oracle supersession | `python3 tools/evidence-disposition.py --selftest` → PASS34/34 exit0; same checker before FAIL1/contains_missing→after CLEAN0, eleven effective+one superseded; `.ufo/evidence/round-14/verification-final.json`, S050; executable measurement6431478 | round14; lane demonstrated, separate outside admission pending |
 | retained invocation-context gate | re-derive bounded raw receipt predicates, check byte-pinned frozen receipts, and distinguish semantic mismatch from unavailable/tampered input through a standalone public-CLI selftest | `python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72` → exit0, copied-source CLI selftest49/49, registered frozen0, missing-env1, tamper2, usage64; `.ufo/evidence/round-15/verification-3.json`; S051 | round15; lane demonstrated, separate non-author admission pending |
 | hermetic env-differential probe | classify the raw exit/stdout/stderr tuple of nine pinned selftests under seven explicit profiles, separating repeat variation from environmental sensitivity | `python3 tools/env-diff.py --selftest` first actual9/9; real receipt `f5/receipt-initial.json` under `.ufo/evidence/round-21/` classifies9/9 (eight invariant, one raw-output-variable); `corpus/knowledge/hermetic-env-differential.md`, S079/S081 | round21; lane demonstrated, separate non-author admission pending |
+| callback-authoritative wave accounting | reconcile exact registered identities and terminal states while preserving failed seats' partial artifacts; reject mismatched totals and digest tampering | at11f55d64968778aaed07b001fc8b2480c38e1896: frozen counter8/8, actual146-seat replay66 completed/80 failed, wrong-count1/TOTAL_MISMATCH; `.ufo/evidence/round-22/final/verification.json`, S082 | round22; lane demonstrated, separate non-author admission pending |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -978,3 +979,17 @@ are declared evidence, not cryptographically authenticated telemetry.
 L1 holds planner. Wave1 audits all146 original identities in52 nonoverlapping
 groups plus12 concrete source/design/count attacks; no dead seat replacement.
 Measured final commits and actual no-harm outputs are recorded separately.
+
+### Round22 intermediate observation
+
+At11f55d64968778aaed07b001fc8b2480c38e1896 C1 actually discriminates8/8
+against0/8 tool-absent baseline; full declared146-seat replay is66 completed/
+80 failed, wrong-count input exits1/TOTAL_MISMATCH. Registry43/43 active,
+4 superseded. Numeric expertise is not increased.
+
+The same revision's actual current strict source monitor is47/62, restraint6,
+depth8, overridesfalse. This intermediate is harmed until source re-anchoring
+and a separately observed current committed-revision result; old62/62 is not
+borrowed. Initial new-gate guard mutations killed14/16, survivorsM10/M15
+are nondiscriminating supplemental fixtures and receive a retained repair.
+Canonical executed outcomes and instrument identities are in round22 final/.

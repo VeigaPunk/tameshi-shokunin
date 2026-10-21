@@ -134,3 +134,29 @@ All4 completed; the64-seat build wave actually completed44/dead20.
 The20 failures are16 reviewer free-model quota errors,3 Codex-capacity
 executors and1 Haiku429 scribe. Original callbacks, not report counts,
 determine those statuses; no identity was replaced or restarted.
+
+## Executed intermediate observations and mutation-derived repair
+
+At11f55d64968778aaed07b001fc8b2480c38e1896 the actual frozen C1 counter
+held8/8, public selftest8/8 plus16/16 supplemental cases, full frozen replay
+146 seats/66 completed/80 failed, wrong-count replay1/TOTAL_MISMATCH, and
+the complete registry43/43 active with4 superseded. These are separate
+executions in `final/verification.json`; selftest and counter share the
+eight-case oracle and are not independent proof.
+
+At the same commit the actual strict current-source monitor is47/62,
+restraint6, depth8, no overrides. This is a harmed intermediate, not unchanged8.
+The15 affected source buckets need actual traced reads and a later recorded
+strict committed-revision monitor. No historical62/62 substitutes for it.
+
+The initial guard mutation sweep was14 killed/2 survived of16, with pristine
+and restored controls0: `final/guard-mutations.json`. M10 recursion survived
+because Python's decoder accepted the2000-level array and the tool then
+rejected its shape anyway. M15 duplicate-key survived because its fixture
+remained an invalid bundle even after duplicate-key checking was removed.
+These are nondiscriminating fixtures, captured by QUALITY15/29, not equivalent
+guards. The repair changes only those two supplemental inputs (a100000-level
+array that actually triggers this decoder's refusal, and an otherwise valid
+bundle whose duplicate schema key would be silently overwritten). A compact
+persisted depth parameter avoids retaining a200001-character line. The frozen
+eight-predicate ruler and the146-seat status vector remain unchanged.
