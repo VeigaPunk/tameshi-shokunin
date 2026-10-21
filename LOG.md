@@ -1585,3 +1585,25 @@ metadata and its failure are preserved; production gate source is unchanged.
 - A fresh64-item falsification wave attacks43 concrete replay rows and21
   implementation/corpus/accounting surfaces, not replacements for the one
   dead build seat. Its terminal outcomes and adjudication land separately.
+
+### Round23 — fresh wave outcomes, author reassignment and final verdict
+
+- Trigger: the authoring L1 TameshiR23 ended at 14:57:01Z on a
+  `cyber_policy` provider refusal. Its wave2 seats then aborted. Action:
+  CloseTameshi22 (reassigned coordinator) collected the callbacks without
+  re-dispatching any seat. Wave2: 30 completed, 34 dead
+  (`.ufo/waves/round-23/original-outcomes2.json`). Round: 128 seats, 93
+  completed, 35 dead; wave-accounting 0/[].
+- Fresh findings exposed three overclaims; each was corrected append-only
+  (lesson Errata A–D, QUALITY47, SKILL and knowledge errata):
+  - instrument-copied receipt argv/cwd/revision were described as observed;
+  - "isolated clone" was claimed, but the replay is 41 pinned plus 2
+    live-dependent rows;
+  - the requirement set is not seen by the gate.
+
+  Eight repairs are routed (`fresh-adjudication.json`).
+- No-harm: the corrections first drifted the monitor to 59/62, restraint 6.
+  Three actual traced author source reads at 332dc89 restore it. At 549ede2
+  the strict monitor is 62/62, restraint 8, depth 8. Also at 549ede2:
+  registry 46/46, C1 10/10, selftest 38/38, replay 0, source-read
+  1/ARGV_MISMATCH, census 0 (`final-verification.json`).

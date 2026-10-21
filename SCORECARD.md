@@ -1075,3 +1075,51 @@ preserved. Fifteen actual source reads were appended to the unchanged
 249-entry prefix; these do not change the command-binding denominator.
 C1 calibration verdict improved; numeric8→8/delta0. The current final
 revision receipt, if later, names its own revision rather than borrowing C.
+
+### Round23 fresh falsification, corrections and final measured verdict
+
+The authoring L1 TameshiR23 died on a Codex `cyber_policy` refusal. Its
+fallback, gpt-6.1-sol, was the provider that refused. The round was
+reassigned to CloseTameshi22 under the same claim, tameshi23/attempt1.
+Wave2 had 64 validated seats: 30 completed and 34 dead. The dead seats have
+no callback, and each transcript ends with `Request was aborted` when the
+parent ended. The round total is 128 seats: 93 completed, 35 dead, no
+replacements. Our own gate `tools/wave-accounting.py` reconciles both waves
+to 0/[], with Replay16 the only failed-with-report seat
+(`.ufo/evidence/round-23/accounting/receipt.json`).
+
+Fresh findings were adjudicated in `.ufo/waves/round-23/fresh-adjudication.json`.
+Three changes were appended as corrections, not code (corpus lesson
+Errata A–D, QUALITY47, a SKILL.md correction and a knowledge-entry erratum):
+- The 43-row replay's receipt argv/cwd/revision are instrument-supplied, so
+  it tests only exit and stdout.
+- The replay is 41 revision-pinned rows plus 2 live-dependent rows, not an
+  isolated clone.
+- The gate binds bundle-declared requirements.
+
+Eight code/registry repairs are routed, not claimed. These corrections
+temporarily drifted the monitor to 59/62 with restraint 6
+(`monitor-intermediate-D.json`, harmed intermediate). Three actual traced
+source re-anchors then appended to the unchanged 264-entry prefix.
+
+The final measured revision is `549ede24aa9b2a6746d3973cf55dc4ceb07a5413`
+(`.ufo/evidence/round-23/final-verification.json`):
+- The frozen counter discriminates 10/10, exit 0, gate SHA d533dc1e.
+- Selftest 38/38.
+- Replay binding 0/[]; source-read 1/ARGV_MISMATCH; correct command 0.
+- Strict monitor 62/62, restraint 8, depth 8, overrides false.
+- Registry battery 46/46 active with 4 superseded, exit 0.
+- Source census exit 0.
+
+C1 calibration **improved**, numeric 8→8, delta 0; no other axis harmed.
+The ten-anchor mutation sweep (`mutations-A.json`) was not re-run because
+the tool bytes are unchanged.
+
+Planned successor work, routed rather than awarded:
+- an argv swapped-name case plus a name-insensitive mutant
+- a negative-exit mutant
+- bundle_sha256 pins in the two frozen registry rows
+- carrying the runner's held/cleanup/external fields in the replay
+- hashing the clone copy of the runner
+- realpath fleet root
+- bounded streams
