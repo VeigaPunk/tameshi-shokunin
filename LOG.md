@@ -1482,3 +1482,17 @@ metadata and its failure are preserved; production gate source is unchanged.
   This accounting correction itself changes source inputs; the canonical
   final monitor records the separately re-anchored current state, not a
   borrowed historical result. Original233 ledger entries are retained.
+
+### Round 22 — declaration: partial reports are not successful outcomes (2026-10-21)
+
+- Trigger: round21's appended outcome-accounting correction above names two
+  provider-dead seats whose partial Markdown reports caused false completions.
+- C1 calibration: eight frozen public-CLI rejection predicates0/8→8/8,
+  counter `.ufo/evidence/round-22/measure.py`, contract and actual baseline
+  receipt `before.json`. Before branch51d49d58ac81a1b4ea17607c4f2c4757ed6189ad.
+- Plan: callback-authoritative exact registry accounting, retain partial
+  artifacts and all prior failures, demonstrate historical wrong-count red
+  versus corrected input green. Numeric depth/calibration stay8 as monitors.
+- Inherited state: helper state clean, local=remote51d49d5, no lane leftovers;
+  no round21 outside spotcheck file or operator teaching file existed in the
+  explicit lessons glob at round start. Round21 admission is not redone.

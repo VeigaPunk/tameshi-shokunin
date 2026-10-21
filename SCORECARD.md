@@ -961,3 +961,20 @@ Evidence: `final/registry.json` and the preserved revision-specific monitor.
 This is the observed restoration8, not a new calibration claim or promotion.
 Accounting-append input drift receives a separately recorded source refresh;
 the canonical final monitor carries its actual measured revision.
+
+## Round 22 — declared callback-authoritative accounting (2026-10-21)
+
+C1 calibration, tied lowest owned numeric axis (depth8/calibration8).
+Frozen unit: eight named rejection predicates in
+`.ufo/evidence/round-22/contract.json`; numeric expertise stays8, not a
+fixture-count score. Before at `51d49d58ac81a1b4ea17607c4f2c4757ed6189ad`:
+tool absent, discriminated0/8, exit1 (`before.json`). Target8/8 through
+the same frozen `python3 .ufo/evidence/round-22/measure.py --repo REPO`.
+Also replay the complete retained round21 population146 against exact
+registry identities, and reject the historical report-count inference.
+This is one calibration claim plus a runnable capability; no second axis
+claim, promotion or provider-authenticity claim. Retained callback inputs
+are declared evidence, not cryptographically authenticated telemetry.
+L1 holds planner. Wave1 audits all146 original identities in52 nonoverlapping
+groups plus12 concrete source/design/count attacks; no dead seat replacement.
+Measured final commits and actual no-harm outputs are recorded separately.
