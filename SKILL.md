@@ -1887,7 +1887,7 @@ Recipe for one bucket, cold:
 3. Record the verdict block (schema `tameshi-coldread-report-v2`) with the receipts' inputs plus every lane
    file opened by hand, then `python3 .ufo/evidence/round-18/coldread/assemble.py --reports <dir> --carry <prior ledger> --out <ledger>`.
 4. Commit the ledger and every receipt it names together, with no recorded input changed after the reads,
-   then `python3 .ufo/evidence/round-18/measure.py --rev REV` → `coldread.box3_full_page` and `calibration_restraint_score`.
+   then `python3 .ufo/evidence/round-19/coldread/measure.py --rev REV` → `coldread.box3_full_page` and `calibration_restraint_score` (current default ledger; earlier round-17/18 paths below remain historical evidence).
    A cited number uses no `--ledger-file`/`--ledger-rev`/`--inputs-overlay` (`overrides_used` false).
 
 Limits: an open trace does not see environment variables, stat-only probes,
