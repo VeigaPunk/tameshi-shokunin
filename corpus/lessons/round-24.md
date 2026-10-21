@@ -188,3 +188,33 @@ sibling-name mirroring; capture-time stream bounds and redaction; a
   round23→24 bundles differ in 17 rows' bytes, none in exit codes or tokens.
   13 of the 41 "pinned" rows carry run-varying bytes, so `bundle_sha256` pins
   the stored capture only (RevBundleDiff).
+- **Erratum O — `publish()` is non-atomic and the clone runs hooks.**
+  - A stale pair left in `--out` after a refused run still passes
+    `command-binding.py` with exit 0 and `[]`, so a refused run reads as
+    green.
+  - The three files are written in sequence without temp+replace.
+  - An unusable `--out` exits 1 with a traceback.
+  - `env()` strips a caller's `GIT_CONFIG_GLOBAL`, and the clone omits
+    `core.hooksPath=/dev/null`. An operator's global post-checkout hook ran
+    and wrote outside `--out` in the seat's /tmp probe (CodePublish).
+
+  The SKILL.md row's "writes only under `--out`" is false as stated. Routed
+  to round25.
+- **Erratum P — a superseded expectation is false and unenforced.**
+  Superseded row `command-binding-selftest` still runs and fails: it expects
+  `38/38`, the tool prints `44/44`. Superseded rows do not count toward
+  `held`, so the battery stays 47/47 (`noharm-c8c5b88.json`). Other details:
+  - The successor's anchor (`fresh-adjudication.json:53-59`) cites "38
+    cases [seat inference]", not 44.
+  - `--tag new-r23` now selects zero active rows and exits 0. There is no
+    `total == 0` guard; this is round17 F5, still open.
+  - `registry-replay-selftest` is absent from `SKILL.md` (CodeSupersession).
+
+  Routed to round25.
+
+### Mistakes addendum (replacement L1)
+
+| Class | Evidence pointer | Captured-by | Fix / shown able to fail |
+|---|---|---|---|
+| seat misroot | RowAudit01 wrote its report to the fleet root, at `/home/vgpnk/Projects/shokunin/.ufo/waves/round-24/w1/RowAudit01.md` (sha256 `3bc5633c…`), despite the wave context's absolute-path rule | prompt §6.3 misroot sweep | copied byte-exact into the lane (`cmp` 0) and the fleet copy removed. Shown able to fail: the sweep `git -C /home/vgpnk/Projects/shokunin status --porcelain` listed `?? .ufo/waves/round-24/`, and after removal it no longer does |
+| errata append drifted the source monitor | QUALITY.md append at 250069f → monitor 60/62, restraint 6 (`monitor-intermediate-B.json`) | strict monitor input-drift | two actual traced re-reads (`source-traces-B/`) restore 62/62 at 671a6e2. Shown able to fail: the retained B receipt |
