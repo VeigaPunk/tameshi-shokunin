@@ -1192,3 +1192,9 @@ monitor; at measured 4903959, `final-verification.json` records 62/62,
 restraint 8, depth 8, overrides false, registry 47/47, census exit 0.
 Those numerical checks do not detect misleading prose; the appended
 consumer warnings and the open defects must be read alongside them.
+
+A third harmed intermediate C is retained at c6e827a: 59/62, restraint 6
+after the consumer-warning correction. Its three actual traced source
+reads and preserved 284-entry prefix are recorded in the C-series files.
+The post-C landing measurement is retained separately in
+`.ufo/evidence/round-24/landing-verification.json`.

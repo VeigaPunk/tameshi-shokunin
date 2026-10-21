@@ -1643,3 +1643,8 @@ metadata and its failure are preserved; production gate source is unchanged.
   (60/62, restraint 6). At 4903959 the final receipt records 62/62,
   restraint 8, depth 8, registry 47/47 and census exit 0. Re-anchors are
   author source reads, not independent cold-read or recipe execution.
+- A third harmed intermediate, C at c6e827a (59/62, restraint 6), followed
+  the consumer-warning and QUALITY49 corrections. Three actual traced reads
+  at that revision are appended with the C trace files in the same landing.
+  `monitor-intermediate-C.json` retains the harm; the final landing
+  receipt records the post-C monitor separately. No code bytes changed.
