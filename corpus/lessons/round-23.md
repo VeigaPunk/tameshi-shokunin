@@ -58,3 +58,55 @@ The frozen counter's before0/10 is absence of a capability, not ten executed
 failures. Sourced source-read62/62 and newly bound registry commands remain
 different units. Full-page completeness and execution authentication remain
 unclosed; exact string revision/cwd checks validate declarations only.
+
+## Executed build observations and review-derived repair
+
+At496d212bc46789cdf8cafab72978bdb7f4182963: frozen ruler10/10,
+public selftest38/38, ten guard mutants killed10/10 with green pristine
+and restored controls. Actual43-command revision-clone replay holds43/43;
+newly retained full decoded streams, argv parameters and actual clone cwd
+produce a clean0 binding verdict. No historical per-row metadata is filled in.
+Evidence: round23 `c1-after-A.json`, `selftest-A.json`, `mutations-A.json`,
+`replay-command-A.json`, `replay-gate-A.json`.
+
+The actual `cat tools/registry.json` command emits the same token and
+exit expected by `receipt-measure-selftest`: the outcome-only red-before
+comparison accepts it (`output-only-red-before.json`). The new exact-binding
+gate rejects1/ARGV_MISMATCH; an actual required selftest command is clean0
+(`source-read-gate-A.json`, `correct-command-gate-A.json`). Both are real
+new executions, not authentication of historical producer behavior.
+
+FalsifyInventory/DuplicateAttack found row-order-dependent duplicate versus
+invalid classification and ignored unknown expect keys. Original draft bytes
+are preserved. On the identical digest-pinned mixed-invalid bundle, old draft
+returns1/DUPLICATE_COMMAND while repaired bytes return2/INVALID_RECEIPT;
+the supplemental exact literal oracle now checks that intended classification.
+Nineteen supplemental cases add exact argv, unknown-extra, second-row,
+all-stale, multi-fault and clean-reorder controls without changing the frozen
+ten-case denominator. The frozen unknown-command case alone overlaps missing
+membership; it is not ten independent semantic mechanisms.
+
+The generic gate intentionally validates bundle-declared requirements under
+a caller-owned trusted commitment. The actual registry demonstration is linked
+by the before-execution frozen `requirements.json` and registry digest, which
+the replay instrument checks before running. Optional second authority modes
+and live Git/cwd resolution are rejected: they would add a competing method
+or break synthetic isolated controls. Changing both a trusted contract and its
+pin selects another contract, not evidence of tampering with the old one.
+
+The first actual no-harm monitor at the same commit is48/62, restraint6,
+depth8, overridesfalse; baseline28cae179 was62/62/restraint8. This intermediate
+is harmed, not unchanged8. Source re-anchoring must restore current credit
+with real recorded author reads; no historical62/62 can substitute.
+
+Build callback totals are63 completed/1 dead of64. SourceScope died on
+Haiku429 with retry-after-ms1437000; no replacement. RevisionAttack disclosed
+running mutating jj auto-snapshots despite the read-only instruction; ArgvAttack
+and FalsifyInventory disclosed out-of-slice fact commands. These instruction
+deviations are retained, not silently called compliant production writes.
+No seat-authored repo report is used as completion authority.
+
+Historical R17-CMD-BIND is the motivating overclaim under QUALITY33, not
+closed by a new43-command population. Existing stale registry source anchors
+and loose substring tokens are named old limitations; frozen argv/expect
+values are not silently strengthened or altered.

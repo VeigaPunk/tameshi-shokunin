@@ -1041,3 +1041,25 @@ The real demonstration population is the43 active baseline registry rows,
 separate from ten synthetic discrimination predicates. L1 holds planner;
 one64-seat batch audits43 command contracts plus21 concrete design/count
 items, read-only, with no concurrent production writers or replacements.
+
+### Round23 executed capability and intermediate boundary
+
+At496d212bc46789cdf8cafab72978bdb7f4182963 the unchanged frozen
+counter actually discriminates10/10, exit0; public selftest38/38, guard
+mutations killed10/survived0/inconclusive0 with pristine/restored0.
+Actual frozen43-command clone replay holds43/43; the binding gate validates
+that full-stream bundle0/[] (`replay-command-A.json`, `replay-gate-A.json`).
+The actual source-read command returns the expected stdout tokens but the
+new gate rejects1/ARGV_MISMATCH; an actual correct command is clean0.
+
+| capabilities addition | What it can now do | Evidence | First-working round |
+|---|---|---|---|
+| required-command-receipt-binding | validate a finite trusted bundle's exact named command/context/outcome declarations, with a frozen registry compiler/replay demonstration | `tools/command-binding.py`; `.ufo/evidence/round-23/{c1-after-A,replay-gate-A,source-read-gate-A}.json` | 23 |
+
+Numeric expertise stays8/delta0, not a fixture-derived score. At that same
+revision the strict current-source monitor actually drops62/62→48/62,
+restraint8→6, depth8, overridesfalse. This is a harmed intermediate;
+final no-harm requires actual source re-anchors and a separately recorded
+strict committed-revision result. The historical249-entry prefix is retained.
+No historical R17-CMD-BIND closure, full-page command coverage, independent
+cold-read, execution authentication or promotion is claimed.

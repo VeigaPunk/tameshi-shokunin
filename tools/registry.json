@@ -923,5 +923,36 @@
       "tags": ["new-r22"],
       "source": "SKILL.md@66a25abf9a07f99df6f8584044a83a21349706a1:1997"
     }
+    ,
+    {
+      "name": "command-binding-selftest",
+      "kind": "selftest",
+      "argv": ["python3", "tools/command-binding.py", "--selftest"],
+      "expect": {"exit": 0, "stdout_contains": ["COMMAND_BINDING_SELFTEST: 38/38 pass"]},
+      "timeout_s": 120,
+      "status": "active",
+      "tags": ["new-r23"],
+      "source": "SKILL.md@496d212bc46789cdf8cafab72978bdb7f4182963:2019"
+    },
+    {
+      "name": "command-binding-frozen-clean",
+      "kind": "gate",
+      "argv": ["python3", "tools/command-binding.py", "--bundle", ".ufo/evidence/round-23/replay/bundle.json", "--expected", ".ufo/evidence/round-23/replay/expected.json", "--json"],
+      "expect": {"exit": 0, "stdout_contains": ["\"finding_ids\": []"]},
+      "timeout_s": 30,
+      "status": "active",
+      "tags": ["new-r23"],
+      "source": "SKILL.md@496d212bc46789cdf8cafab72978bdb7f4182963:2019"
+    },
+    {
+      "name": "command-binding-source-read-red",
+      "kind": "gate",
+      "argv": ["python3", "tools/command-binding.py", "--bundle", ".ufo/evidence/round-23/source-read-bundle.json", "--expected", ".ufo/evidence/round-23/source-read-expected.json", "--json"],
+      "expect": {"exit": 1, "stdout_contains": ["\"finding_ids\": [\"ARGV_MISMATCH\"]"]},
+      "timeout_s": 30,
+      "status": "active",
+      "tags": ["new-r23"],
+      "source": "SKILL.md@496d212bc46789cdf8cafab72978bdb7f4182963:2019"
+    }
   ]
 }

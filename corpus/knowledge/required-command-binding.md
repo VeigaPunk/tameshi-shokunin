@@ -60,3 +60,20 @@ The ten frozen rejection predicates are synthetic capability tests, separate
 from the baseline registry population. Neither denominator is full-page recipe
 completeness, independent/blind cold-read, promotion credit or expertise-score
 inflation. Existing registry outcome semantics and supersession stay unchanged.
+
+## Executed finite demonstration (2026-10-21)
+
+At496d212bc46789cdf8cafab72978bdb7f4182963, the baseline registry
+population is43 active rows: `python3 .ufo/evidence/round-23/replay.py
+--repo REPO --rev 496d212bc46789cdf8cafab72978bdb7f4182963 --out OUT`
+actually holds43/43 and retains complete decoded stdout/stderr. The same
+bundle's gate verdict is0/[] (`replay-gate-A.json`). The ten-case counter is
+10/10, public selftest38/38 and bounded guard sweep kills10/10 with green
+pristine/restored controls (`c1-after-A.json`, `selftest-A.json`,
+`mutations-A.json`, all under `.ufo/evidence/round-23/`).
+
+An actual source read of the registry returns an expected token and exit0,
+yet exact argv binding rejects1/ARGV_MISMATCH. A newly executed correct
+command is clean0; respective receipts are `source-read-gate-A.json` and
+`correct-command-gate-A.json`. This supplies the failure-backed discriminator
+for QUALITY46; it does not make unsigned process declarations authentic.
