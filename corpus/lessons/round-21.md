@@ -121,3 +121,41 @@ The primary-share guard cannot guarantee a fallback's capacity: ZFL seats
 also failed after falling onto Codex or with ZAI429. Small primary shares
 mitigate concentration; they do not certify live capacity. No tool was
 installed or updated.
+
+## Falsification outcomes and source corrections
+
+Wave2 dispatched75 concrete fresh attacks after all original build readers
+ended:31 current section audits,18 single-mutant replays,9 independent
+profile reproductions,11 cross-invariant attacks and6 code/safety reviews.
+Forty returned;35 provider-dead seats remain dead and were not replaced.
+All18 mutant-specific replays corroborate intended discrimination and
+pristine→mutant→restored0→1→0; their reports retain the contract/race bounds.
+Independent profile reproductions corroborate available observations;
+missing reviewer work is not counted as a completed check.
+
+Section1's unsupported current probation suffix was removed. Sections131,
+375,405 and933 corrected host-gated skip accounting, unsupported historical
+metadata/no-op assertions, endpoint-proof overreach, unversioned-driver
+reproducibility, JS filesystem/prefix mechanics and moving tool citations.
+The Kagi note carries an appended named erratum rather than a silent rewrite.
+Section1925 clarifies promoted-versus-frozen collector bytes and actual
+round19 selftest inputs. Section1964 now spells the full receipt path.
+The usage64 objections in Section1938/1964 are not adopted: the PROTOCOL
+requires non-0/1 exits mapped onto could-not-evaluate, so64 is the usage code
+and that outer class, not a mistaken alias for code2.
+`review-adjudications.json` preserves each decision; peer reports/JSON,
+including their original gap counts, are untouched.
+
+F02 independently reproduced the frozen C2 counter's fabrication,
+uniform-failure and normalization weaknesses, but confirmed they are not
+present in the actual receipt: all clean exits0 with pass tails, raw
+normalization:none, matching producer/contract/pins. The producer itself
+refuses failed clean controls. This remains bounded execution evidence,
+not cryptographic producer authentication. S081's normal-exit wording
+also passed a live-source recheck.
+
+The current-source ledger records actual L1-author traced byte reads,
+including source hashes and section text, and retains its199-entry prefix.
+This is not a new blind cold-read or execution of every declared recipe.
+Canonical final observations and actual revisions are retained under
+`.ufo/evidence/round-21/final/`, separately from harmed A/B intermediates.

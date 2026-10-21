@@ -924,3 +924,24 @@ are uncredited. Evidence: `monitor/current-red-A.json` under round21.
 The original199-entry prefix and historical failures stay retained;
 final no-harm requires actual provenance-labelled source re-reads and
 a separate committed-revision observation.
+
+### Observed C2 outcome and final observation lookup
+
+C2 measured at helper-landed
+`790abd2129f153c13b471e381d454186edbde65e`: classified9/9, tool
+selftestpass, F5 entrytrue, exit0, versus baseline0/9/absent/false exit1.
+Same frozen counter/contract; `.ufo/evidence/round-21/c2-after-B.json`
+retains exact argv, actual instrument SHA, ordered interval and streams.
+C2 coverage/capability lane verdict improved; no numeric expertise increase.
+
+At B the historical current monitor was31/62, restraint6; that is not
+the final observation. Current-source credit and its actual measured
+commit are read from `.ufo/evidence/round-21/final/monitor-current.json`;
+the complete registered battery and its measured commit are in
+`final/registry.json`. Original harmed observations remain preserved.
+This keeps monitor provenance separate from C1's18-mutant denominator
+and C2's9-surface denominator. No promotion/independent-read credit.
+
+Wave2:75 seats,40 completed/35 provider deaths; round total146 unique
+seats,68 completed/78 dead. No dead seat was replaced. Original outcomes
+and fresh attack inventory are in `.ufo/waves/round-21/`.

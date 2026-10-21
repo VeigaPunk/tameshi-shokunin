@@ -1,6 +1,6 @@
 ---
 name: tameshi-shokunin
-description: "Domain specialist — verification-fixture craft. Rank: shonen (probation)."
+description: "Verification-fixture craft for 'hermetic suites', 'mutation testing', and 'gate fixtures'. Anti-trigger: product behavior or endpoint health; route those to the product lane or kama. Rank: shonen."
 ---
 
 # tameshi-shokunin
@@ -135,18 +135,18 @@ catches. The recipe is intended to be self-contained; round 16's full-page
 cold-read executed it end to end (two seats; Errata — round 16).
 Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
 
-1. **Pick the target and prove its control.** The suite must run hermetically
-   (`--selftest`) or on `--root` pointed under `/tmp` — no live path read
-   (mutation-case-kimi-census.md:4-7; the bash selftest rebuilds every fixture
-   under `mktemp -d` — mutation-case-kagi-census.md:24-26) — and it must print
-   its own executed case count and a verdict as its closing lines: kumitate
-   shape `n/m pass` + `VERDICT:` (gates-survey-kumitate.md:19-31), kagi bash
-   shape per-case lines + `SELFTEST: PASS (n cases)`
-   (mutation-case-kagi-census.md:33-35). Run the control on the pinned bytes and
-   require green: `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0
-   (mutation-case-kimi-census.md:20-21) or `SELFTEST: PASS (16 cases)`, exit 0
-   (mutation-case-kagi-census.md:42-43). A red control has no denominator —
-   stop and record it as setup failure.
+1. **Pick the target and prove its control.** Prove the actual run has no
+   live-path or host effects; `--selftest` alone does not establish hermeticity.
+   Use private `--root` fixtures and exclude or control host-gated branches
+   (mutation-case-kimi-census.md:4-7; mutation-case-kagi-census.md:24-38).
+   Require a reported case count, executed/skipped accounting, and verdict:
+   kumitate `n/m pass` + `VERDICT:` (gates-survey-kumitate.md:19-31);
+   kagi `SELFTEST: PASS (n cases)` includes its enumerated skip entries.
+   Historical controls on the pinned bytes were green:
+   `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit0
+   (mutation-case-kimi-census.md:20-21), and bash16 enumerated cases,
+   14 executed +2 skipped (mutation-case-kagi-census.md:27-35,42-43).
+   A red control has no kill denominator: stop and record setup failure.
 2. **Pin the artifact — committed bytes only.** Record: path, full sha256,
    size, line count, mtime, repo revision, and `git status --porcelain --
    <path>` empty (mutation-case-kimi-census.md:13-16;
@@ -172,26 +172,26 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    assert `count(old) == 1` in the pristine copy, print the count and first
    matching line, and require the literal line `all unique` — both lanes'
    drivers did exactly this (mutation-case-kimi-census.md:22-25;
-   mutation-case-kagi-census.md:44-47). Also assert `new != old`: a no-op edit
-   is a driver bug, not a survivor (the round-2 driver asserts
-   `replacement was a no-op`). Any count ≠ 1 aborts the sweep until the string
+   mutation-case-kagi-census.md:44-47). Require `new != old` in future drivers:
+   a no-op is a driver defect, not a survivor. The cited historical notes do
+   not establish that particular round-2 guard. Any count ≠1 aborts until the string
    is re-derived from the pinned bytes.
 6. **Run control + mutants.** Control first: run the unmutated copy, record
    stdout, exit code, summary line, duration — expect the step-1 green. Then per
    defect, one at a time: fresh copy from pristine → apply the one exact
    replacement (`str.replace(old, new, 1)`) → assert mutant sha256 ≠ pristine
    sha256 → run the suite with a timeout (300 s used in round 2, 280 s in round
-   3) → write full combined output to `evidence/<id>.selftest.txt` and exit code
-   + mutant sha256 + duration + summary to `evidence/<id>.meta.json`; aggregate
-   rows to `evidence/results.json` (mutation-case-kimi-census.md:26-28;
-   mutation-case-kagi-census.md:48-49). No defect compounds with another; a
-   mutant file is never patched or reused.
+   3). For future runs retain full streams plus exit, mutant SHA, duration
+   and summary, then aggregate the rows. Historical Kimi records stdout,
+   exit/SHA/results (mutation-case-kimi-census.md:26-28); Kagi also records
+   duration/summary (mutation-case-kagi-census.md:48-49). No defect compounds;
+   a mutant file is never patched or reused.
 7. **Adjudicate each run against the suite's own verdict.** Green = exit 0 AND
    the verdict line says PASS with the full count.
    - **Killed** = the run went red (exit ≠ 0 or the PASS verdict/line broken)
-     *and* the suite still enumerated its full case count — held on every run in
-     both sweeps (`(<n>/43`, `(<n>/16 cases)`;
-     mutation-case-kimi-census.md:30-33; mutation-case-kagi-census.md:50-53).
+     *and* the full enumerated count remains, with skipped cases distinguished.
+     Both historical sweeps held their enumerated denominators43 and16
+     (mutation-case-kimi-census.md:30-33; mutation-case-kagi-census.md:27-35,50-53).
      Collect the failing-case labels verbatim; a kill quoted without its failing
      labels is unverified (mutation-case-kimi-census.md:59-76). Bash grammar:
      `bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0`
@@ -237,11 +237,11 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
     summary lines (mutation bar above); refs pinned to the record's revision,
     re-resolved if the substrate moved.
 
-Cost profile to record with every sweep: wall time, per-run timeout, host +
-runtime versions — round 2: 7.0 s for 11 runs on node v24.21.0; round 3:
-11.0 s for 11 runs (~1.0 s each) against a 280 s per-run bound
-(mutation-case-kimi-census.md:204-205; mutation-case-kagi-census.md:50-53).
-Stability across hosts stays unknown in both (U5 each).
+Cost profile to record: wall time, per-run timeout, host/runtime versions.
+Round2:7.0s for11 runs, nodev24.21.0 (mutation-case-kimi-census.md:20-21,29-31);
+round3:11.0s for11 runs against a280s bound
+(mutation-case-kagi-census.md:50-53). Cross-host stability remains unknown:
+Kimi U5 at204-205; Kagi U5 at203-204.
 
 ## Defect-taxonomy templates and exact-string guidance
 
@@ -372,10 +372,10 @@ Rules:
   (7.0 s / 11.0 s for 11 runs) but that cost profile is host-local (U;
   mutation-case-kimi-census.md:204-205; mutation-case-kagi-census.md:203-204).
 
-## Restore discipline — proof the substrate never moved
+## Restore discipline — before/after identity, not continuous non-write proof
 
-The mutation sweep's strongest claim is the negative one: the substrate was
-never written. Prove it in this order:
+All edits must stay in scratch. Before/after fingerprints establish endpoint
+identity, not that no transient write occurred. Apply this policy in order:
 
 1. **Before the sweep:** sha256 (full), size, mtime, repo revision, and
    `git status --porcelain -- <path>` empty — recorded in the note's header
@@ -383,21 +383,21 @@ never written. Prove it in this order:
 2. **All edits in scratch:** `cp -p` the artifact into the lane namespace and
    edit only copies (mutation-case-kimi-census.md:4-7;
    mutation-case-kagi-census.md:44-45).
-3. **After the sweep:** re-run the same checks; every value identical. Round-2
-   proof: `83016d45…4f426` before and after, 43273 B, mtime unchanged, kumitate
-   tree clean for the path (mutation-case-kimi-census.md:34-35). Round-3 proof:
-   `275d8294…53009f` before and after, 44212 B, mtime 09:47:15 unchanged, kagi
-   tree clean, and the scratch copy still `cmp`-identical to the original
-   (mutation-case-kagi-census.md:54-56).
+3. **After the sweep:** require endpoint fingerprints to agree; historical
+   Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness
+   (mutation-case-kimi-census.md:34-35); no after-repo revision was recorded.
+   Kagi recorded hash275d8294…53009f,44212B, unchanged09:47:15 mtime,
+   clean path and `cmp`-identical scratch copy (mutation-case-kagi-census.md:54-56).
+   Its after-repo revision is likewise not established by those records.
 4. **A drift is an incident:** stop, report it as one, do not "repair" by
    rewriting — a repair would itself be an unauthorized write.
 5. **Never restore via `git checkout`/`git restore`.** Those write to the
    substrate; the only correct end state is *never-modified*. (I)
-6. **Retain the scratch as evidence.** Both lanes' probes re-ran from
-   `/tmp/tameshi-r2-1-work/` and `/tmp/tameshi-r3-1-work/`; each note's
-   reproduce spec rebuilds the sweep even if /tmp is wiped
-   (mutation-case-kimi-census.md §4; mutation-case-kagi-census.md §7;
-   SCORECARD round-2 verification row).
+6. **Retain durable evidence.** The historical probes reran from scratch
+   (`SCORECARD.md:13`), but the case-note commands rely on an unversioned
+   `mutate_driver.py` and do not directly rebuild after scratch loss.
+   Use the maintained `bash tools/mutate-and-run.sh --regression` ledger
+   replay for those pinned cases; it does not recover the old driver.
 7. **If the artifact was already dirty at pin time:** that pin is not a clean
    baseline — record the dirty state exactly, or better, stop and re-pin a
    committed revision (the G-R2-1 lesson, corpus/README.md round-2 addendum).
@@ -443,11 +443,11 @@ Rules (each backed by the two cases):
 - **A kill can be token-only.** B4's exit code still matched the expectation;
   only the token assert caught the deletion (mutation-case-kagi-census.md:88-91).
   Adjudicate exit AND token/verdict.
-- **Kill width is structural, not quality.** (I) The bash suite rebuilds a fresh
-  fixture per case and asserts `exit + one token` per run, so labels are
-  near-singletons; the JS suite shares in-memory fixtures and asserts exact
-  verdict lines, so one wrong predicate colours many cases
-  (mutation-case-kagi-census.md:171-175).
+- **Kill width is structural, not quality.** (I) Most bash fixture checks
+  use an exit/token pair; some assert multiple tokens and two verb cases are
+  host-gated skips. JS uses filesystem fixtures/subprocesses, DRIFT prefix
+  checks and an exact CLEAN assertion; broad predicates affect many cases
+  (mutation-case-kimi-census.md:82-89; mutation-case-kagi-census.md:27-35,171-175).
 - **Survivors sub-classify: unasserted data vs unreached arm.** JS's two
   survivors are values the asserts never read; bash keeps that class (B10) and
   adds the unreached-arm class (B5) — repair differs: assert the value vs add
@@ -458,10 +458,10 @@ Rules (each backed by the two cases):
   `'19 children, 18 declared'` and the exact CLEAN line; bash `unverified=3`
   (B7's tripwire) (mutation-case-kagi-census.md:181-182).
 - **Anti-claim verdict:** no wild divergence; (O) same headline, different gap
-  shapes. (I) two independent lanes measured → the method's two-lane generality
-  bar is met for the measured shapes (PROVINCE.md:16-17); band interiors,
-  verb-path mutants (U2) and host stability (U5) stay unknown
-  (mutation-case-kagi-census.md:193-206).
+  shapes. (I) two independent source lanes measured → the two-lane method bar
+  holds for these shapes (PROVINCE.md:15-16); this is not independent executor
+  replication. Band interiors remain unprobed (mutation-case-kagi-census.md:58-60);
+  verb-path U2 and host-stability U5 remain open (:193-206).
 
 ## No-permissiveness audit recipe
 
@@ -933,34 +933,34 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
 ### Using the ledger
 
 - **One command replays every leg.** `bash tools/mutate-and-run.sh
-  --regression [--workdir DIR] [--keep]` — default scratch is a fresh
-  `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`, removed on PASS unless
-  `--keep`, kept on FAIL/SETUP, never removed when `--workdir` was given. Exit
-  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify
-  (`tools/mutate-and-run.sh:72-109`, :891-975).
+  --regression [--workdir DIR] [--keep]` allocates a fresh default scratch
+  `/tmp/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
+  it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
+  are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
+  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`).
 - **Each leg's bytes come from the repo's git object store, not the working
   tree.** `git show <rev>:<path>` materializes the pinned blob into the case
-  workdir and its sha256 must equal the recorded pin (`:733-791`; the
-  `REGRESSION_PIN` line names repo + rev + path + pin). A sibling tree that
-  has drifted past the recorded revision — tsukuroi's and mado's pins are
-  ancestors of their HEADs today — or carries uncommitted edits cannot move a
-  replay; a missing repo/rev/blob or a pin mismatch is a SETUP refusal before
-  any suite runs.
+  workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`);
+  `REGRESSION_PIN` names repo/rev/path/pin (:1159-1160). Working-tree drift
+  does not change that blob. The old tsukuroi/mado pins are historical,
+  not a statement that their current trees match those recorded bytes.
+  A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
+  later legs still run and their statuses aggregate (:1314-1374).
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
   (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
-- **Contribution contract — what a case carries to become a leg.** A case is
-  a pinned file set: fleet-relative target path + git revision + sha256 pin; a
-  defect spec (one exact single edit per defect, `@old` unique in the pinned
-  bytes, `@new != @old`); a one-command hermetic suite run with `$MUTANT` that
-  exercises the copy and prints its own executed count and verdict; and the
-  recorded verdict table, which is the leg's expectation — exact for ledger
-  legs. The four legs above are the measured carriage of exactly this set
-  (pins/revisions/tables `:511-522`; specs `:550-728`; leg registry
-  `:927-944`). (U) A fleet-contributed case is not yet exercised; the ledger's
-  case set is tameshi-carried at this revision.
+- **Contribution contract — what a leg carries.** A pinned target path,
+  Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
+  a command exercising `$MUTANT` under controlled fixtures; enumerated,
+  executed and skipped counts distinguished; and the exact recorded verdict
+  table. Host-gated branches must be excluded/controlled or explicitly named,
+  not called hermetic merely because the flag is `--selftest`.
+  Current anchors: pins/revisions/tables `tools/mutate-and-run.sh:597-620`,
+  first-four specs :648-829, inventory :82-100, eight dispatches :1314-1356.
+  (U) The recorded case set remains tameshi-carried; no fleet-contributed
+  leg is established by this registry.
 
 ### Reading a receipt — the discipline
 
@@ -1930,9 +1930,9 @@ differs only in `--help` output (entry errata ER8-2).
 | `tools/registry-check.py` (round 18) | gate | unchanged CLI | `timeout_s` must be a finite number in (0, 86400] (`NaN`/`Infinity` literals refused at parse; a larger finite value used to crash `communicate()` with exit 1) → 2 naming the row; descendants of a row (including ones that called `setsid`/`setpgid`) are killed at timeout and after the row exits, and pipe draining is bounded — limits: a descendant that changes UID may be unkillable, same-tick PID reuse is not excluded, and an orphan adopted from a pre-existing checker child can be signalled (`.ufo/waves/round-18/w2/SentinelKillCode.md`); survivors fail the row with `cleanup_error` |
 | `tools/evidence-disposition.py` (round 18) | gate | unchanged CLI (`--selftest` now needs `jj` on PATH) | G2/G3 read one anchor commit: `refs/heads/<lane.branch or attached branch>`; a jj-colocated repo with detached HEAD and no `lane.branch` → 2; a detached non-jj clone (`registry-check --rev`) anchors on its checked-out commit only when a branch or remote-tracking ref contains it. HEAD is never read as the tip in a bound lane (jj leaves `HEAD` at `@-`) |
 | `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; its pinned round-13 bytes are read from `4acc607` through `.ufo/evidence/round-18/dispositions.json` (the round-17 manifests are superseded) |
-| `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | as the round-17 copy (which stays byte-identical as evidence); its selftest now fails when the O_RDWR exclusion, the private pycache prefix, or the root-execve requirement is removed |
+| `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | promoted current collector; the historical round-17 evidence copy remains unchanged, not byte-identical to the promoted tool. The promoted selftest discriminates removal of O_RDWR exclusion, private-cache anchoring and root-execve checks |
 | `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim plus a `carried_from` key; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |
-| `.ufo/evidence/round-19/measure.py` | gate with `--check`; otherwise measurement probe | `python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check` · `--selftest` | 0 all five frozen round-18 correction items present and receipt fields agree; 1 at least one open; 2 cannot evaluate revision/input encoding; 64 usage. Without `--check`, 0 reports the five-item count, not acceptance. Selftest isolated public-CLI snapshots, no network/Git writes; expected values in `round-19/contract.json` and ruler literals, input digests in `before.json` and revision-specific after receipt. Write scope: none outside selftest `/tmp/tameshi-r19-ruler-*`; owner tameshi. Only metadata/effective-receipt reconciliation, never producer authentication, cold-read credit or required-command coverage (QUALITY 37–39; `corpus/lessons/round-19.md`; S049). |
+| `.ufo/evidence/round-19/measure.py` | gate with `--check`; otherwise measurement probe | `python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check` · `--selftest` | 0 all five frozen correction items hold; 1 open item; 2 cannot evaluate; 64 usage. Without `--check`, 0 reports a count, not acceptance. Public-CLI selftest uses inline synthetic snapshots plus four frozen package fixtures and literal expectations (`SOURCE_PINS` binds source-baseline/source-round18-final). `contract.json` describes the population; `before.json`/after receipts are measured outputs, not selftest inputs. No network/Git writes; selftest scratch only; owner tameshi. Metadata reconciliation, not producer authentication, cold-read or required-command coverage; QUALITY37–39, lessonround19, S049. |
 | `.ufo/evidence/round-19/coldread/measure.py` | probe | `python3 .ufo/evidence/round-19/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV` · `--selftest` | Delegates unchanged credit/trace/veto/CLI rules to frozen round-18 `measure.py`, selecting round-19 `coldread/ledger.json` as default (no legacy overrides). Same exit map and input-keyed-only bound. Round-19 refreshed entries are L1-author source reads, not new blind or independent cold-read/command-coverage evidence; old entries retained verbatim. Inputs/receipt hashes are revision-pinned; external observations remain outside the credited-input predicate. Owner tameshi, read-only except inherited isolated selftest scratch. |
 
 ### Round-20 gate/probe registry — frozen receipt instruments
@@ -1972,7 +1972,7 @@ or execution-authentication mechanisms.
 
 | Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
-| `tools/env-diff.py` | probe | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out /tmp/tameshi-f5.json` | 0 all surfaces classified; 1 incomplete/failed measurement; 2 could-not-evaluate; 64 usage | `python3 tools/env-diff.py --selftest` | frozen nine pins/seven profiles in `c2-contract.json`; raw observed tuples in `f5/receipt.json`; fixtures include variant sensitivity, repeat variation and pin refusal | requested output path and isolated `/tmp/tameshi-r21-envdiff.*` only; sibling blobs read-only, no network | tameshi |
+| `tools/env-diff.py` | probe | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out /tmp/tameshi-f5.json` | 0 all surfaces classified; 1 incomplete/failed measurement; 2 could-not-evaluate; 64 usage | `python3 tools/env-diff.py --selftest` | frozen nine pins/seven profiles in `.ufo/evidence/round-21/c2-contract.json`; raw tuples in `.ufo/evidence/round-21/f5/receipt.json`; fixtures cover sensitivity, repeat variation and pin refusal | requested output and isolated `/tmp/tameshi-r21-envdiff.*`; sibling blobs read-only, no network | tameshi |
 | `tools/wave-route-mix.py` | gate | `python3 tools/wave-route-mix.py --spec .ufo/waves/round-21/spec1.json --json` | 0 clean; 1 concentration/unrouted-role failure; 2 could-not-evaluate; 64 usage | `python3 tools/wave-route-mix.py --selftest` | max-share0.40 and literal synthetic expectations; round20 refused spec/round21 accepted spec retained | none; reads operator role routes, never edits routing | tameshi |
 | `tools/round21-measure.py` | gate facade | `python3 tools/round21-measure.py --claim c1 --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --json` (use `--claim c2` for F5) | 0 clean; 1 failed population; 2 could-not-evaluate; 64 usage | `python3 tools/round21-measure.py --selftest` | delegates unchanged `c1-survivors.py`/`c2-count.py`; frozen mutant/population JSON; literal fixture exits and stable finding fields in facade | isolated fixture/private clones only; no lane Git writes | tameshi |
 | `.ufo/evidence/round-21/coldread/measure.py` | probe | `python3 .ufo/evidence/round-21/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --explain` | 0 observed; 2 could-not-evaluate; 64 usage/forbidden override; selftest0 clean/1 failed | `python3 .ufo/evidence/round-21/coldread/measure.py --selftest` | selects round21 ledger, unchanged round18 algorithm and round20 strict override refusal | isolated selftest/private reads only | tameshi |

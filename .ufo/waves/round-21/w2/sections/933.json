@@ -1,0 +1,36 @@
+{
+  "read_rev": "790abd2129f153c13b471e381d454186edbde65e",
+  "start": 933,
+  "end": 964,
+  "heading": "### Using the ledger",
+  "verdict": "blocking",
+  "blocking_gaps": 6,
+  "wrong_expectations": 3,
+  "paths_opened": [
+    "SKILL.md",
+    "tools/mutate-and-run.sh",
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "corpus/knowledge/closeout-r11.md",
+    "corpus/knowledge/operator-runbook.md",
+    ".ufo/evidence/round-18/sources-check/sweep/sweep.txt",
+    "../kumitate-shokunin/scripts/kimi-census.mjs",
+    "../kagi-shokunin/corpus/surface-census.sh",
+    "../tsukuroi-shokunin/tools/tsukuroi-census.sh",
+    "../mado-shokunin/tools/mado-verify.sh",
+    "../kagi-shokunin/corpus/checklist-run.sh",
+    "../kumitate-shokunin/scripts/claims-check.mjs",
+    "../kumitate-shokunin/scripts/round-gate.mjs",
+    "../kumitate-shokunin/scripts/sources-check.mjs"
+  ],
+  "notes": [
+    "The six cited source spans in this section are stale or incomplete at this revision: tools/mutate-and-run.sh:72-109 and :891-975 do not anchor the command/workdir/exit behavior; :733-791 is embedded tsukuroi/mado mutation-spec material, not git materialization; :511-522 is not the pin/table block; :550-728 contains only part of the four original specs; :927-944 is claims-check defect-spec material, not the leg registry. Correct current anchors: :126-136, :189-210, :1273-1384 (command, lifecycle, exit); :1104-1175 (git show, mode, pin check); :1159-1160 (REGRESSION_PIN); :1299-1311 and :1240-1255/:1376-1384 (tool hash, per-leg result and final receipt); :597-620 (pins/revisions/tables); :648-829 (the first four specs); :82-100 and :1314-1356 (registry and actual eight calls).",
+    "Wrong expectation 1: the contribution contract calls the suite hermetic and says it prints its executed count. The pinned kagi surface-census selftest has a JANITOR/PATH-dependent branch: ../kagi-shokunin/corpus/surface-census.sh:817-847 emits two skip-case entries when the handler is absent, and runs the real handler when present. The dated measurement explicitly records 16 cases as 14 hermetic plus 2 substrate-gated skip-case: corpus/knowledge/fleet-kill-rate-ledger.md:46. Its summary count includes skipped cases, so it is not an executed-only count.",
+    "Wrong expectation 2: ‘kept on FAIL/SETUP’ is unqualified. The runner checks python3, sha256sum, mktemp, and git at tools/mutate-and-run.sh:1280-1284 before allocating the default root at :1287-1293; die_setup at :236-238 exits 2 without any workdir to retain on those preflight failures. For setup after root allocation, the root is retained.",
+    "Wrong expectation 3: a missing repo/revision/blob or pin mismatch returns SETUP before that leg invokes its suite, but does not prevent other legs from running. The checks/returns are at tools/mutate-and-run.sh:1104-1175; run_regression continues to call later legs at :1314-1353 and aggregates statuses at :1355-1374. Narrow ‘before any suite runs’ to ‘before the affected leg’s suite runs.’",
+    "Historical versus current: the counts 4 at r7-1, 7 at round 16, and 8 at round 18 are explicitly historical in tools/mutate-and-run.sh:82-100; the pinned current runner has eight calls and nlegs=8 at :1314-1356. The first-four rate tables are still 8/10, 8/10, 6/10, and 4/10 at :613-616. The two sibling-HEAD claims were checked: tsukuroi pin 165307fe is an ancestor of HEAD c05af5c (merge-base rc 0), and mado pin eead56b is an ancestor of HEAD 741122d (merge-base rc 0). SHA-256 of all eight materialized target blobs matched the corresponding PIN_* values at :597-611.",
+    "The (U) contribution status remains supported at this pin by corpus/knowledge/operator-runbook.md:427-431 and corpus/knowledge/closeout-r11.md:335-339. The current runner writes eight specs in regression_specs (:648-1072) and hard-codes their calls; the old T7-2 ledger note at fleet-kill-rate-ledger.md:85-88 saying only cases 1 and 2 are embedded is stale for this revision and must not be used as current evidence.",
+    "The command is not obsolete: bash tools/mutate-and-run.sh --regression [--workdir DIR] [--keep] is present in the pinned usage at :190 and the runner at :1273 onward; it assumes invocation from the repository root. Valid-run exits 0/1/2 are as stated. Invalid CLI usage can separately exit 64.",
+    "LSP could not be used: read xd://lsp returned ‘No such tool’ and the mounted-device list has no lsp device. No status/references/definition/diagnostics were available. Text search was used only to locate ranges; findings above are grounded in direct reads of pinned source/content. No mutation recipe, regression replay, build, or test was executed.",
+    "Revision validation: HEAD and refs/heads/master both resolved to 790abd2129f153c13b471e381d454186edbde65e; merge-base --is-ancestor pinned-revision refs/heads/master returned 0. Materialized SKILL.md and mutate-and-run.sh from git show succeeded (SHA-1 object IDs 71cbd6cff4bbea7d52e89b3f74da76d461584a4d and fd1a63a3493b5a2fb2723f2fb1baae9ee7480fba respectively)."
+  ]
+}

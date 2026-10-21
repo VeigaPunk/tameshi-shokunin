@@ -257,3 +257,19 @@ Anchor spot-checks (three cited refs re-read on the pinned revision, 2026-10-14)
 `[[ ${#SCAN_DIR[@]} -eq 0 ]] && return 0`; `:214` →
 `if [[ "$kind" == "exec" && ! -x "$abs" ]]; then`; `:862` →
 `"${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"`.
+
+## Erratum R21 — fixture mechanics and reproducibility (2026-10-21)
+
+Section4's lines172–175 incorrectly inferred in-memory JS fixtures and
+generally exact verdict assertions. The pinned JS `kimi-census.mjs` at
+175de6ba uses filesystem fixtures and subprocesses (:430–460,471–512),
+DRIFT prefix checks and an exact CLEAN assertion (:495–514); this note's
+measured kill widths remain unchanged. The bash description is likewise
+bounded: most fixture cases use exit/token checks, sqlite-unavailable
+requires multiple tokens, and two verb cases are host-gated (14 executions
++2 skips on the recorded host). Width is not a quality ranking.
+The old §7 commands depend on an unversioned scratch `mutate_driver.py`;
+they do not by themselves recreate that driver after scratch loss.
+Use `bash tools/mutate-and-run.sh --regression` for the maintained pinned
+case replay. Evidence: round21 w2/Section0405.md and Section0375.md;
+original historical bytes and8/10 observation remain unchanged.

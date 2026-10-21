@@ -1447,3 +1447,25 @@ metadata and its failure are preserved; production gate source is unchanged.
   L1 completed missing code/prose work in an isolated private clone.
   Accepted wave payload was unchanged on attempt3 after two job-cap
   refusals; the release followed the final original reader's return.
+- C2 actually measured9/9, selftestpass, F5 entrytrue at
+  `790abd2129f153c13b471e381d454186edbde65e`, same frozen counter as
+  baseline0/9. Actual receipt: `.ufo/evidence/round-21/c2-after-B.json`.
+- Falsify wave75 ended40 complete/35 provider deaths; all18 individual
+  mutant attacks corroborated intended assertion failures and restored
+  controls. Fresh profile/citation reviews and original deaths are retained
+  without replacing failed build seats. Total146 seats,68 complete/78 dead.
+- Accepted current-source defects became line-count-preserving SKILL
+  corrections (sections1/131/375/405/933/1925/1964), plus an append-only
+  Kagi mechanism/reproduce erratum. Usage64 outer-class objections were
+  rejected with the PROTOCOL mapping cited, not silently relabeled.
+  Decisions: `.ufo/evidence/round-21/review-adjudications.json`.
+- Source79 rows (before76), A70/B7/C2, mined50/queued23/rejected6;
+  newS079/S080/S081, old-row mutable changes only S028/S061 used-by.
+  The missing S061 backlink predicate changes false→true; immutable
+  cells/IDs remain. `.ufo/evidence/round-21/source-invariants.json`.
+- Freeze all corpus/instruction/score metadata before actual traced
+  source re-anchoring. Final current source-credit, registered-battery and
+  invariant receipts are retained under `.ufo/evidence/round-21/final/`
+  with their actual measured revisions; older harmed receipts stay visible.
+  Source reads are L1-author input re-anchors, not blind/independent
+  cold-read or required-command coverage. No tool installs or new L0.

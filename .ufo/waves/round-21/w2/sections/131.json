@@ -1,0 +1,30 @@
+{
+  "read_rev": "790abd2129f153c13b471e381d454186edbde65e",
+  "start": 131,
+  "end": 245,
+  "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+  "verdict": "blocking",
+  "blocking_gaps": 2,
+  "wrong_expectations": 0,
+  "paths_opened": [
+    "SKILL.md",
+    "corpus/knowledge/mutation-case-kimi-census.md",
+    "corpus/knowledge/mutation-case-kagi-census.md",
+    "corpus/knowledge/gates-survey-kumitate.md",
+    "corpus/knowledge/gates-survey-kagi.md",
+    "corpus/README.md",
+    ".ufo/evidence/round-16/coldread/SKILL.snapshot.md",
+    ".ufo/waves/round-16/w1/CR04a.md",
+    ".ufo/waves/round-16/w1/CR04b.md"
+  ],
+  "notes": [
+    "The pinned repository HEAD is the requested revision; `git status --porcelain -- SKILL.md corpus/README.md` was empty. `git diff 790abd2129f153c13b471e381d454186edbde65e^ 790abd2129f153c13b471e381d454186edbde65e -- SKILL.md` had no output, so this section is existing content, not a change in that commit.",
+    "BLOCKING 1 — SKILL.md:138-145 presents `--selftest` as the hermetic route and says no live path is read. The cited Kagi note supports only that its verify/shape fixtures use a temporary root (mutation-case-kagi-census.md:24-26). Its own qualification is material: on the measured host the two verb cases skip because the handler is absent (lines 27-35), while on a handler-present host they execute the real binary and become host-dependent (lines 36-38). The historical round-3 run was hermetic on its observed host; `--selftest` is not itself a general hermeticity guarantee. Require the isolation/host-gated behavior to be established for the actual run rather than infer it from the flag.",
+    "BLOCKING 2 — SKILL.md:141-148 calls the Kagi denominator an `executed case count`, while mutation-case-kagi-census.md:33-35 explicitly says the 16 cases are 14 `ok-case` executions plus two `skip-case` entries that performed no execution. `SELFTEST: PASS (16 cases)` and the full-count condition at SKILL.md:192-194 count enumerated cases, including skips; they must not be described as 16 executed tests or full executed coverage.",
+    "NON-BLOCKING citation repair — SKILL.md:184-187 asks for combined output and per-mutant duration/summary but cites Kimi :26-28, which documents full stdout, exit code and mutant SHA, and aggregate results, not combined output or per-mutant duration/summary. Kagi :48-49 supports those additional metadata fields. Kimi :29-31 supports the 7.0 s / 11-run sweep and 300 s bound; :20-21 has the Node version. The cost sentence cites Kimi :204-205 for the 7.0 s example, but those lines are U5 host/version unknowns; the run measurement is :29-31. The final `U5 each` also needs Kagi :203-204, not just the currently cited :50-53.",
+    "NON-BLOCKING unsupported historical anchor — SKILL.md:175-177 attributes `replacement was a no-op` to the round-2 driver, but the cited Kimi :22-25 documents only uniqueness/count reporting. The current driver contract at SKILL.md:557-563 requires `new != old`, but that is not independent evidence of the historical driver's behavior; no original round-2 driver source was located in the opened repo evidence. Re-anchor or state this as a current rule rather than historical observation.",
+    "Historical claims checked: round-2 Kimi control 43/43, its pinned blob SHA/size, 8/10 result and survivor probes are supported by mutation-case-kimi-census.md:13-35, :41-53, :82-99; round-3 Kagi 16-case control, 8/10 result, timeout, and restore are supported by mutation-case-kagi-census.md:42-56. These are dated pinned observations, not universal/current target outputs. CR04b.md:25-35 and :115-126 reports a later Kimi revision with a 45/45 control and explicitly treats 43/43 as the round-2-era value.",
+    "The round-16 claim at SKILL.md:134-135 is supported by the append-only errata at :1707-1726 and the end-to-end reports CR04a.md:14-36 and CR04b.md:16-71. Those reports also classify target-path/driver-source/scratch-name details as minor usability gaps, not blocking; CR04a.md:95-115 and CR04b.md:134-147. The dirty-pin warning is accurate: corpus/README.md:11 and gates-survey-kagi.md:554-571 describe the G-R2-1 claim-ledger re-pin.",
+    "LSP status/references/definition/diagnostics could not be requested: `read xd://lsp` returned `No such tool: xd://lsp`, and the mounted-device inventory has no LSP device. Text search was used only to locate source records; findings above are grounded in direct reads of the listed sources. No mutation recipe, test, build, lint, or formatter was run. No installs or upgrades were performed."
+  ]
+}

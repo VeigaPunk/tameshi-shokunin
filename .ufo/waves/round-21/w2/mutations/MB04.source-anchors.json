@@ -1,0 +1,463 @@
+{
+  "revision": "790abd2129f153c13b471e381d454186edbde65e",
+  "path": "tools/bash-witness-study.py",
+  "sha256": "60575e62a5301bd31c8c84a4039af69fe8f845abf035b8d072975cd9ef685be9",
+  "ranges": [
+    {
+      "start": 333,
+      "end": 354,
+      "lines": [
+        {
+          "line": 333,
+          "text": "def git_clean_env() -> dict:"
+        },
+        {
+          "line": 334,
+          "text": "    \"\"\"Remove inherited Git settings, then pin safe configuration sources.\"\"\""
+        },
+        {
+          "line": 335,
+          "text": "    env = {name: value for name, value in os.environ.items()"
+        },
+        {
+          "line": 336,
+          "text": "           if not name.startswith(\"GIT_\")}"
+        },
+        {
+          "line": 337,
+          "text": "    env[\"GIT_CONFIG_GLOBAL\"] = \"/dev/null\""
+        },
+        {
+          "line": 338,
+          "text": "    env[\"GIT_CONFIG_NOSYSTEM\"] = \"1\""
+        },
+        {
+          "line": 339,
+          "text": "    return env"
+        },
+        {
+          "line": 340,
+          "text": ""
+        },
+        {
+          "line": 341,
+          "text": ""
+        },
+        {
+          "line": 342,
+          "text": "def materialize_target(kagi: Path, rev: str) -> bytes:"
+        },
+        {
+          "line": 343,
+          "text": "    if not re.fullmatch(r\"[0-9a-f]{40}\", rev or \"\"):"
+        },
+        {
+          "line": 344,
+          "text": "        raise Cannot(f\"revision is not an exact 40-hex git id: {rev!r}\")"
+        },
+        {
+          "line": 345,
+          "text": "    if not (kagi / \".git\").exists() and not (kagi / \".jj\").exists():"
+        },
+        {
+          "line": 346,
+          "text": "        raise Cannot(f\"kagi object store not found at {kagi}\")"
+        },
+        {
+          "line": 347,
+          "text": "    proc = subprocess.run("
+        },
+        {
+          "line": 348,
+          "text": "        [\"git\", \"-C\", str(kagi), \"show\", \"--end-of-options\","
+        },
+        {
+          "line": 349,
+          "text": "         f\"{rev}:{TARGET_GIT_PATH}\"],"
+        },
+        {
+          "line": 350,
+          "text": "        capture_output=True, check=False, env=git_clean_env())"
+        },
+        {
+          "line": 351,
+          "text": "    if proc.returncode != 0:"
+        },
+        {
+          "line": 352,
+          "text": "        raise Cannot(f\"git show {rev}:{TARGET_GIT_PATH} failed: \""
+        },
+        {
+          "line": 353,
+          "text": "                     f\"{proc.stderr.decode('utf-8', 'replace').strip()}\")"
+        },
+        {
+          "line": 354,
+          "text": "    return proc.stdout"
+        }
+      ]
+    },
+    {
+      "start": 1228,
+      "end": 1238,
+      "lines": [
+        {
+          "line": 1228,
+          "text": "def cmd_selftest(args) -> int:"
+        },
+        {
+          "line": 1229,
+          "text": "    cases = failed = 0"
+        },
+        {
+          "line": 1230,
+          "text": ""
+        },
+        {
+          "line": 1231,
+          "text": "    def check(name: str, ok: bool) -> None:"
+        },
+        {
+          "line": 1232,
+          "text": "        nonlocal cases, failed"
+        },
+        {
+          "line": 1233,
+          "text": "        cases += 1"
+        },
+        {
+          "line": 1234,
+          "text": "        if ok:"
+        },
+        {
+          "line": 1235,
+          "text": "            print(f\"  check {name:<44} ok\")"
+        },
+        {
+          "line": 1236,
+          "text": "        else:"
+        },
+        {
+          "line": 1237,
+          "text": "            failed += 1"
+        },
+        {
+          "line": 1238,
+          "text": "            print(f\"  check {name:<44} FAIL\")"
+        }
+      ]
+    },
+    {
+      "start": 1252,
+      "end": 1311,
+      "lines": [
+        {
+          "line": 1252,
+          "text": "        def fixture_repo(name: str, contents: bytes) -> tuple:"
+        },
+        {
+          "line": 1253,
+          "text": "            repo = root / name"
+        },
+        {
+          "line": 1254,
+          "text": "            repo.mkdir()"
+        },
+        {
+          "line": 1255,
+          "text": "            target = repo / TARGET_GIT_PATH"
+        },
+        {
+          "line": 1256,
+          "text": "            target.parent.mkdir(parents=True)"
+        },
+        {
+          "line": 1257,
+          "text": "            target.write_bytes(contents)"
+        },
+        {
+          "line": 1258,
+          "text": "            safe_env = git_clean_env()"
+        },
+        {
+          "line": 1259,
+          "text": "            subprocess.run("
+        },
+        {
+          "line": 1260,
+          "text": "                [\"git\", \"-c\", \"core.hooksPath=/dev/null\","
+        },
+        {
+          "line": 1261,
+          "text": "                 \"-C\", str(repo), \"init\", \"--quiet\"],"
+        },
+        {
+          "line": 1262,
+          "text": "                check=True, env=safe_env,"
+        },
+        {
+          "line": 1263,
+          "text": "                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)"
+        },
+        {
+          "line": 1264,
+          "text": "            subprocess.run("
+        },
+        {
+          "line": 1265,
+          "text": "                [\"git\", \"-c\", \"core.hooksPath=/dev/null\","
+        },
+        {
+          "line": 1266,
+          "text": "                 \"-C\", str(repo), \"add\", \"--\", TARGET_GIT_PATH],"
+        },
+        {
+          "line": 1267,
+          "text": "                check=True, env=safe_env,"
+        },
+        {
+          "line": 1268,
+          "text": "                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)"
+        },
+        {
+          "line": 1269,
+          "text": "            subprocess.run("
+        },
+        {
+          "line": 1270,
+          "text": "                [\"git\", \"-c\", \"core.hooksPath=/dev/null\","
+        },
+        {
+          "line": 1271,
+          "text": "                 \"-C\", str(repo), \"-c\", \"user.name=fixture\","
+        },
+        {
+          "line": 1272,
+          "text": "                 \"-c\", \"user.email=fixture@example.invalid\", \"commit\","
+        },
+        {
+          "line": 1273,
+          "text": "                 \"--quiet\", \"-m\", \"fixture\"],"
+        },
+        {
+          "line": 1274,
+          "text": "                check=True, env=safe_env,"
+        },
+        {
+          "line": 1275,
+          "text": "                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)"
+        },
+        {
+          "line": 1276,
+          "text": "            revision = subprocess.run("
+        },
+        {
+          "line": 1277,
+          "text": "                [\"git\", \"-C\", str(repo), \"rev-parse\", \"HEAD\"],"
+        },
+        {
+          "line": 1278,
+          "text": "                check=True, capture_output=True, env=safe_env,"
+        },
+        {
+          "line": 1279,
+          "text": "            ).stdout.decode(\"ascii\").strip()"
+        },
+        {
+          "line": 1280,
+          "text": "            return repo, revision"
+        },
+        {
+          "line": 1281,
+          "text": ""
+        },
+        {
+          "line": 1282,
+          "text": "        from unittest.mock import patch"
+        },
+        {
+          "line": 1283,
+          "text": "        hostile_git_env = {"
+        },
+        {
+          "line": 1284,
+          "text": "            \"GIT_INDEX_FILE\": str(root / \"foreign-index\"),"
+        },
+        {
+          "line": 1285,
+          "text": "            \"GIT_OBJECT_DIRECTORY\": str(root / \"foreign-objects\"),"
+        },
+        {
+          "line": 1286,
+          "text": "            \"GIT_CONFIG_GLOBAL\": str(root / \"foreign-config\"),"
+        },
+        {
+          "line": 1287,
+          "text": "            \"GIT_CONFIG_NOSYSTEM\": \"0\","
+        },
+        {
+          "line": 1288,
+          "text": "        }"
+        },
+        {
+          "line": 1289,
+          "text": "        with patch.dict(os.environ, hostile_git_env):"
+        },
+        {
+          "line": 1290,
+          "text": "            child_env = git_clean_env()"
+        },
+        {
+          "line": 1291,
+          "text": "        check(\"scrubs inherited repository selectors\","
+        },
+        {
+          "line": 1292,
+          "text": "              all(key not in child_env"
+        },
+        {
+          "line": 1293,
+          "text": "                  for key in (\"GIT_INDEX_FILE\", \"GIT_OBJECT_DIRECTORY\")))"
+        },
+        {
+          "line": 1294,
+          "text": "        check(\"pins global Git configuration\","
+        },
+        {
+          "line": 1295,
+          "text": "              child_env.get(\"GIT_CONFIG_GLOBAL\") == os.devnull)"
+        },
+        {
+          "line": 1296,
+          "text": "        check(\"disables system Git configuration\","
+        },
+        {
+          "line": 1297,
+          "text": "              child_env.get(\"GIT_CONFIG_NOSYSTEM\") == \"1\")"
+        },
+        {
+          "line": 1298,
+          "text": "        # These are command-pin contracts, not claims that init/add have a"
+        },
+        {
+          "line": 1299,
+          "text": "        # reachable hook under the already-scrubbed fixture environment."
+        },
+        {
+          "line": 1300,
+          "text": "        with patch.object(subprocess, \"run\", wraps=subprocess.run) as git_calls:"
+        },
+        {
+          "line": 1301,
+          "text": "            fixture_repo(\"command-pin-fixture\", b\"command pin\\n\")"
+        },
+        {
+          "line": 1302,
+          "text": "        for operation in (\"init\", \"add\", \"commit\"):"
+        },
+        {
+          "line": 1303,
+          "text": "            commands = ["
+        },
+        {
+          "line": 1304,
+          "text": "                call.args[0] for call in git_calls.call_args_list"
+        },
+        {
+          "line": 1305,
+          "text": "                if operation in call.args[0]"
+        },
+        {
+          "line": 1306,
+          "text": "            ]"
+        },
+        {
+          "line": 1307,
+          "text": "            check(f\"fixture {operation} pins hooks off\","
+        },
+        {
+          "line": 1308,
+          "text": "                  len(commands) == 1"
+        },
+        {
+          "line": 1309,
+          "text": "                  and any(commands[0][i:i + 2] =="
+        },
+        {
+          "line": 1310,
+          "text": "                          [\"-c\", \"core.hooksPath=/dev/null\"]"
+        },
+        {
+          "line": 1311,
+          "text": "                          for i in range(len(commands[0]) - 1)))"
+        }
+      ]
+    },
+    {
+      "start": 1702,
+      "end": 1716,
+      "lines": [
+        {
+          "line": 1702,
+          "text": "    finally:"
+        },
+        {
+          "line": 1703,
+          "text": "        if root is not None:"
+        },
+        {
+          "line": 1704,
+          "text": "            assert root.resolve(strict=True) == root"
+        },
+        {
+          "line": 1705,
+          "text": "            shutil.rmtree(root, ignore_errors=True)"
+        },
+        {
+          "line": 1706,
+          "text": "        assert private_root.resolve(strict=True) == private_root"
+        },
+        {
+          "line": 1707,
+          "text": "        shutil.rmtree(private_root, ignore_errors=True)"
+        },
+        {
+          "line": 1708,
+          "text": "    check(\"private root is removed\", not private_root.exists())"
+        },
+        {
+          "line": 1709,
+          "text": "    if private_root.exists():"
+        },
+        {
+          "line": 1710,
+          "text": "        private_root.rmdir()"
+        },
+        {
+          "line": 1711,
+          "text": "    print(f\"WITNESS_SELFTEST: {cases - failed}/{cases} pass\")"
+        },
+        {
+          "line": 1712,
+          "text": "    if failed == 0:"
+        },
+        {
+          "line": 1713,
+          "text": "        print(\"VERDICT: PASS\")"
+        },
+        {
+          "line": 1714,
+          "text": "        return EXIT_OK"
+        },
+        {
+          "line": 1715,
+          "text": "    print(\"VERDICT: FAIL\")"
+        },
+        {
+          "line": 1716,
+          "text": "    return EXIT_FAIL"
+        }
+      ]
+    }
+  ]
+}
