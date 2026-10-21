@@ -1,0 +1,36 @@
+### The protocol — ordered, fail-closed
+
+All writes in scratch, through the pinned harness `tools/mutate-and-run.sh`
+(the mado run's revision `597e1419…ff6331b`, 1001 lines; every run log carries
+its own `MUTATE_TOOL` pin):
+
+```bash
+bash tools/mutate-and-run.sh --target <gate> --defects <spec> \
+     --suite 'bash "$MUTANT" --selftest' --workdir <scratch>
+```
+
+1. **Pin + pristine.** The target is copied to a pinned pristine; every mutant
+   is a fresh byte copy; the original is never a write target unless `--workdir` is its own directory (keep scratch apart).
+2. **Spec parse + uniqueness.** Every `@old` must occur exactly once (non-overlapping count), asserted
+   **before any suite run**; `@new == @old` is refused. Any spec failure is
+   `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
+3. **Control first.** The unmutated copy must run green; a red control exits 2
+   (kills could not be attributed).
+4. **One mutant per defect**, one suite run each: KILLED (suite exit ≠ 0) /
+   SURVIVED (exit 0) / INCONCLUSIVE (timeout 124, or 126/127 not runnable).
+5. **Restore re-check.** Target sha256 before = after — `MUTATE_RESTORE:
+   OK|DRIFT`.
+6. **Headline + evidence.** `MUTATE: DONE (… killed=… survived=…
+   inconclusive=… kill-rate=…%)`; exit 0, DEGRADED exit 1 on any inconclusive.
+   The evidence dir keeps pristine, every mutant, `evidence/<id>.out`,
+   `results.tsv`, `spec.copy` (`MUTATE_EVIDENCE: <dir>`).
+
+Pre-register the expected table before the run: T6-1 wrote its 10 verdict
+predictions and six survivor classes first, and the prediction held 10/10
+(`mutation-case-mado-verify.md:73, :187-189`).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE corpus/knowledge/mutation-case-mado-verify.md bytes=24534 sha256=f2d53d495e6c1d8b2c18e7bc0eac54955d477455958b10866c5f8712b2086bf3
+SOURCE tools/mutate-and-run.sh bytes=97200 sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b
+SOURCE tools/trace-inputs.py bytes=37359 sha256=f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4

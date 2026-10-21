@@ -1,0 +1,48 @@
+### Round-15 gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| retained invocation-context gate | gate | `python3 tools/context-capture.py --check` (frozen round-14 clean receipt); `--check --receipt FILE --expected FILE` for a caller-pinned retained receipt | 0 clean (`context_consistent`); 1 failed stable finding ID (e.g. `missing_injected_environment`); 2 and 64 could-not-evaluate (receipt/expected missing, malformed or tampered, e.g. `snapshot_tampered`; 64 `usage_error`) | `python3 tools/context-capture.py --selftest` | frozen clean receipt `.ufo/evidence/round-14/context-receipt.json` sha256 `05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a` and its built-in id/exit pin in tool; expected-pin schema `tameshi-context-expected-v1` (`receipt_sha256`/`id`/`exit`) for other retained receipts; negative fixture `context-missing-env.json` sha256 `1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208`; literal selftest exit/finding pairs in tool | check reads receipt/expected bytes and its own source for a reported digest, writes nothing, never opens recorded root paths or executes stored argv; selftest writes isolated temporary fixtures only; archived round-14 bytes retained | tameshi |
+| effective expectation disposition | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` (**superseded in round 17**: since round 16 this command returns 2 `expected_input_digest_mismatch` at `--root .` because the runner input moved; the 0-clean outcome is restored only by re-pinning, not by relabelling. Live entry: `--dispositions .ufo/evidence/round-18/dispositions.json` → 0 (round 17's now 2), see the round-17 re-pin section; frozen replay: cwd = extracted `git archive 28aeef4` → 0) | 0 clean; 1 failed semantic expectations; 2 and 64 could-not-evaluate (invalid, missing or tampered inputs; 64 usage) | `python3 tools/evidence-disposition.py --selftest` | `.ufo/evidence/round-14/dispositions.json` and before counterpart pin historical expected/receipts; historical expected pins13 original inputs; literal isolated selftest expectations in tool | normal mode read-only lane evidence, stdout only; selftest isolated temporary fixtures | tameshi |
+
+The maintained gate's expected values are configured authority, not
+cryptographic proof of author authenticity; a clean check replays recorded
+predicates and pinned digest binding, never a re-execution of stored argv and
+never a fresh measurement. Selftest green is capability only; the frozen
+retained replay is the committed-input evidence of the Gate standard's "Two
+evidences", and neither is an outside-admission sample. No row here changes
+rank, SHONEN authority, the six recorded cases, or the archived round-12–14
+bytes; no sibling gate is registered or executed by this lane, and no
+successor sweep or seventh case is claimed.
+
+Explicit mode reads caller-selected files with caller permissions; use only
+non-secret receipt and expected JSON. Paths can follow filesystem symlinks:
+digest binding verifies the bytes read, not filesystem-origin authenticity
+or a race-free confinement boundary. Selftest reads its own source for the
+reported tool digest, not live domain artifacts. Pre-integration wave1
+capture/root-override recipes are superseded by this retained-only cutover;
+they are advisory planning, never public capture-capability evidence.
+
+Could-not-evaluate takes precedence over a mismatched expected verdict: an
+edited snapshot or unavailable input stays exit2, with any expectation
+disagreement secondary. A clean result with a wrong id/exit pin becomes
+failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest
+exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation (the disposition selftest: 0 pass, 1 case failure or an uncaught setup traceback; round 17).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE .ufo/evidence/round-14/context-receipt.json bytes=29492 sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a
+SOURCE .ufo/evidence/round-18/dispositions.json bytes=4402 sha256=9caa2f76dcc36265bb11b58baa397b1015a91b086db63d203ab16020a1fc2676
+SOURCE .ufo/evidence/round-18/final/before.stdout bytes=6309 sha256=e279b328de7d08631de687a0ad587943ca0a9eecba3c046adeb31b44f7a25b0d
+SOURCE .ufo/evidence/round-18/final/case7.stdout bytes=14841 sha256=e649866e5194fe54a6773582551e7fb83a33bafb0cfd661ba6b71bb8da9c7ceb
+SOURCE .ufo/evidence/round-18/final/case8.stdout bytes=7765 sha256=b4f264c375833f3c65d3ea00606851df58edc6c575617d4034f08ccfdf63694b
+SOURCE .ufo/evidence/round-18/final/checks.json bytes=2411 sha256=fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d
+SOURCE .ufo/evidence/round-18/final/context.stdout bytes=178 sha256=337aa6d8b19b2a82ed7de8854bf39a964076126c72bcc0b51798eca6bb134994
+SOURCE .ufo/evidence/round-18/final/disposition.stdout bytes=6906 sha256=596975d456657c8d683b6cae4382bdc958cda0084a2cd54d4b979957f55048e4
+SOURCE .ufo/evidence/round-18/final/historical.stdout bytes=6358 sha256=9050c284e68d6538ebedfc6a084fc0b4529fd50a691c72d9f7a4e570fa214590
+SOURCE .ufo/evidence/round-18/final/probes.stdout bytes=4111 sha256=d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0
+SOURCE .ufo/evidence/round-18/final/registry-branch-aligned.stdout bytes=96815 sha256=6502cb387613b08c64f0be73f41ff094575639f952ad1f2c4c8e76834d5517c4
+SOURCE .ufo/evidence/round-18/final/regression.stdout bytes=6390 sha256=226be3d529337dc87334b0e7c55a012fb0793865570565b84471aab6d836acfe
+SOURCE .ufo/evidence/round-18/final/repeat.stdout bytes=423 sha256=9cd7809032b2a970bdc19577c57757e2d91e7e14f360cb37f5105eb3a0c3c21e
+SOURCE tools/context-capture.py bytes=93939 sha256=c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726
+SOURCE tools/evidence-disposition.py bytes=120618 sha256=39ee5c5effd9bbdaafda644aada0cdb008ddee1dbfee4ac6bea93fc5a1fe51c8

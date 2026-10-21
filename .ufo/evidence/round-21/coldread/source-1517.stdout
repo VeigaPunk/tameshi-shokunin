@@ -1,0 +1,51 @@
+## Pin disposition and provenance correction — round 13
+
+Sources: S003 and PIT precision correction S047 (historical S041 retained);
+`corpus/knowledge/incremental-pin-disposition.md`; outside routed
+`corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3;
+runtime receipts in `.ufo/evidence/round-13/`.
+
+| Observation | Decision | Limit |
+|---|---|---|
+| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
+| Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
+| All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
+| Frozen summary kind is null but its top-level declaration is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
+
+Recipe from this lane root:
+
+1. Read the source-backed scope and `not_compared` list before the result.
+2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+   observes only hashes and git metadata. Retain stdout with its sibling branch-tip
+   commits before treating it as a dated reading. It executes no sibling gate.
+3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json`
+   checks the new companion against digest-anchored frozen sources.
+4. The original round-12 summary and rerun summary retain their historical
+   null fields. The companion normalizes the canonical summary only; the
+   rerun null is explicitly outside its normalized scope. The producer's
+   wrong-nesting bug is fixed separately for future summary generation;
+   its regression selftest asserts the exact top-level exposed kind.
+5. Do not rerun a sibling's gate to obtain closure evidence. A non-author
+   closure verifies committed receipts and their measured revision.
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE .ufo/evidence/round-12/BashWitness/declaration.json bytes=3029 sha256=e8d2024ad13e021c5b7c41a66b881225beb9e0b30190833f0ab2310cf3670901
+SOURCE .ufo/evidence/round-12/BashWitness/declared.tsv bytes=4304 sha256=0def0d3b370288f58048c7dfb05aec652f9a262664e9f9ce27ae8fad5e6741d3
+SOURCE .ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json bytes=18920 sha256=6726421fde88e8d2aff4c9d0ff4a4fdce9b1d4651da50b89f2bf29f65a22a5f0
+SOURCE .ufo/evidence/round-12/BashWitness/summary.json bytes=18699 sha256=acc01268cb5fb00985be7bf1c6711f6f97131ff20ae0020bbde1819bae4547b9
+SOURCE .ufo/evidence/round-13/expected.json bytes=2943 sha256=a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336
+SOURCE .ufo/evidence/round-13/pin-dispositions.json bytes=7025 sha256=210850f51040fd11d5c63711417f72fb816171a55a23d82f52f7969be711a637
+SOURCE .ufo/evidence/round-13/pin-manifest.json bytes=2667 sha256=64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6
+SOURCE .ufo/evidence/round-13/verification-verdict.json bytes=1478 sha256=1d128a44e0417eb29ca75195bc7f97b8d0ceae246f520710faf67c397ef35a4c
+SOURCE .ufo/evidence/round-13/witness-metadata-old-null.json bytes=3448 sha256=28067a1cb76b14677a26d86dadad8699177cf7eb1212140f3f06e9537a0b11c3
+SOURCE .ufo/evidence/round-13/witness-metadata.json bytes=3500 sha256=463282270a04bd46f4a0522ff6a349b77d268ede47725c4e1c52ca892210bd8d
+SOURCE corpus/SOURCES.md bytes=61090 sha256=ad3de61ae2fd3cba6bd729a2eebdd500cf65d5cf07068d0d6d00be7d13cfd35f
+SOURCE corpus/knowledge/incremental-pin-disposition.md bytes=27612 sha256=0cc87300978412e774c8768936dbbac08fe90581da762bfd5a8f20fbd6fcf0b9
+SOURCE corpus/lessons/round-12-verifier-spotcheck.md bytes=17898 sha256=6ec29ffdf3bbe2f5bbcda3405a6e0ba51c2f5d02467c681d7c892edb3feafe30
+SOURCE tools/bash-witness-study.py bytes=82389 sha256=60575e62a5301bd31c8c84a4039af69fe8f845abf035b8d072975cd9ef685be9
+SOURCE tools/mutate-and-run.sh bytes=97200 sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b
+SOURCE tools/pin-disposition.py bytes=59295 sha256=331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c
+SOURCE tools/trace-inputs.py bytes=37359 sha256=f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4
+SOURCE tools/witness-metadata.py bytes=48914 sha256=df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4

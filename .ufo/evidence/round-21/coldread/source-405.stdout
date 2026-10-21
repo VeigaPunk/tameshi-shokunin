@@ -1,0 +1,69 @@
+## Cross-language divergence — bash vs JS (round 3, measured)
+
+Round 3 repeated the sweep on a second gate of a different language class:
+kagi's `surface-census.sh` (886-line bash gate, 16-case selftest) next to round
+2's kumitate `kimi-census.mjs` (896-line node gate, 43-case selftest). The
+round pre-registered the anti-claim: a wild kill-rate divergence IS the finding
+— language-class differences in what suites protect (`plans/round-3.plan.md:8-9`).
+Measured: **the headline rate did not diverge** — both sweeps kill 8/10 (80 %),
+both held the suite count on every mutant run, neither produced an inconclusive
+run (mutation-case-kagi-census.md:162-170; mutation-case-kimi-census.md:29-37).
+The language-class differences sit elsewhere (mutation-case-kagi-census.md:164-166).
+
+| Axis | JS case (round 2) | Bash case (round 3) |
+|---|---|---|
+| artifact / lane | `kimi-census.mjs` / kumitate | `surface-census.sh` / kagi |
+| language class | node (ESM) | bash |
+| suite grammar | `n/43 pass` + `FAIL <label>` lines | `ok-case`/`bad-case`/`skip-case` lines + `SELFTEST: PASS/FAIL (n/16 cases)` |
+| abstention | none in the recorded runs | 2/16 `skip-case … substrate-absent (handler not on PATH)` — inside the count |
+| kill rate | 8/10 = 80 % | 8/10 = 80 % |
+| kill width | up to 16/43 (D1/D3, incl. the green baseline) | widest 3/16 (B3); labels near-singletons |
+| survivors | D2 truncation tail, D10 frozen constant — reported-but-unasserted | B10 `ok=` summary arg (same family) + B5 exec-x-bit arm — an arm no fixture reaches |
+| calibration | 9/10 pre-run verdict expectations (E1 D7 miss) | 10/10 verdicts, 6/10 failing-case *counts* (E1: B2/B3/B6 each gained the second green fixture) |
+| cost | 11 runs, 7.0 s | 11 runs, 11.0 s (control 1.0 s) |
+| restore pin | `83016d45…` before = after | `275d8294…` before = after |
+
+Rules (each backed by the two cases):
+
+- **Read the case grammar before the summary.** A JS kill names failing labels
+  and a collapsed pass count (`27/43 pass`); a bash kill names numbered cases
+  with the expected exit+token and the summary counts bad cases
+  (`SELFTEST: FAIL (1/16 cases)`) (mutation-case-kagi-census.md:82-103). Both
+  are "red with the count held" — never compare the two summaries numerically.
+- **Abstention is structural in the bash selftest.** 2/16 cases print
+  `skip-case … substrate-absent` and still sit inside `PASS (16 cases)`; the
+  hermetic case set is 14 + 2 substrate-gated that performed no execution. Quote
+  the case lines with the summary or the count overstates coverage
+  (mutation-case-kagi-census.md:27-35). The JS hermetic runs abstained from
+  nothing (in the recorded runs).
+- **A kill can be token-only.** B4's exit code still matched the expectation;
+  only the token assert caught the deletion (mutation-case-kagi-census.md:88-91).
+  Adjudicate exit AND token/verdict.
+- **Kill width is structural, not quality.** (I) Most bash fixture checks
+  use an exit/token pair; some assert multiple tokens and two verb cases are
+  host-gated skips. JS uses filesystem fixtures/subprocesses, DRIFT prefix
+  checks and an exact CLEAN assertion; broad predicates affect many cases
+  (mutation-case-kimi-census.md:82-89; mutation-case-kagi-census.md:27-35,171-175).
+- **Survivors sub-classify: unasserted data vs unreached arm.** JS's two
+  survivors are values the asserts never read; bash keeps that class (B10) and
+  adds the unreached-arm class (B5) — repair differs: assert the value vs add
+  the case. B5's shape matches the F-2 bypass-class hole pattern — refusal
+  paths without cases (mutation-case-kagi-census.md:176-180;
+  gates-survey-kagi.md:326-361).
+- **Exact strings are the sharpest tools in both grammars:** JS
+  `'19 children, 18 declared'` and the exact CLEAN line; bash `unverified=3`
+  (B7's tripwire) (mutation-case-kagi-census.md:181-182).
+- **Anti-claim verdict:** no wild divergence; (O) same headline, different gap
+  shapes. (I) two independent source lanes measured → the two-lane method bar
+  holds for these shapes (PROVINCE.md:15-16); this is not independent executor
+  replication. Band interiors remain unprobed (mutation-case-kagi-census.md:58-60);
+  verb-path U2 and host-stability U5 remain open (:193-206).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE PROVINCE.md bytes=5073 sha256=cd11b529784018725ec6bed757b9095f885fc127f0ba7c4021eca29f42b77a44
+SOURCE corpus/knowledge/arm-class-matrix.md bytes=40032 sha256=bd4f4a02eb66f4e25e67a1518108d1f11c45b4edf2355d1901ec54ce55359088
+SOURCE corpus/knowledge/gates-survey-kagi.md bytes=34570 sha256=4734f0a0bd28e90f78b0a766b2aa6dac8238936550e1b1b0ec3316b00e1294c6
+SOURCE corpus/knowledge/mutation-case-kagi-census.md bytes=19300 sha256=d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0
+SOURCE corpus/knowledge/mutation-case-kimi-census.md bytes=15679 sha256=034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548
+SOURCE tools/trace-inputs.py bytes=37359 sha256=f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4

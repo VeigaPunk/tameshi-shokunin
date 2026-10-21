@@ -1,0 +1,73 @@
+## Defect-taxonomy templates and exact-string guidance
+
+The classes are the injection vocabulary; read which class the suite can see.
+One defect per class per sweep, and widen beyond the measured set when the
+artifact offers a new mechanism.
+
+**Entry template (one per defect, written before any run):**
+
+```
+id:      D<n>/B<n>
+class:   <class name from the catalog>
+site:    <artifact path>:<line(s)> at pinned rev <short-sha>
+old:     <exact bytes, copied from the pinned artifact — indentation significant>
+new:     <exact bytes; EMPTY = delete the old block entirely>
+why:     <the plausible defect a real regression would introduce here>
+expect:  killed|survived — because <which cases should see it and how>
+```
+
+**Exact-string rules (each learned from a measured edit):**
+
+1. **Copy `old` from the pinned artifact, never from a note or memory.** The
+   uniqueness gate (recipe step 5) is the arbiter: `count(old) == 1`, literal
+   `all unique` required. Re-derive on any substrate movement.
+2. **Include the full line when indentation disambiguates.** Round 2 D3 is
+   `      if (!e.children.includes(n)) {` with six leading spaces in the driver
+   — a two-space substring also occurs once and yields the byte-identical mutant;
+   the full line keeps `count == 1` robust when nearby code moves.
+3. **One behavior per edit; minimal edit wins.** A defect that changes two
+   mechanisms cannot be read for which class the suite saw
+   (mutation-case-kimi-census.md:22-25).
+4. **Literal replacement, never regex.** Use `str.replace(old, new, 1)` (both
+   drivers). Code carries regex metacharacters — `(mode & m.modeFloor)`,
+   `${n}`, `slice(0, 6)`, `[[ "$got" -ge "$floor" ]]` appear in the manifests
+   (`${n}` in Appendix A's D4 below; the other three in
+   mutation-case-kimi-census.md:156-166 / mutation-case-kagi-census.md:218-236); a regex substitution silently
+   mis-scopes on them. If a line editor must be used, escape metacharacters or
+   prefer literal-mode tools.
+5. **Byte-level exactness:** preserve quoting, spacing, and the trailing
+   newline (D8's old is `  return 2;\n` — the newline is part of the edit); a
+   file whose last line has no newline stays that way (the bash gate's 887th
+   line — mutation-case-kagi-census.md:14-15). Assert mutant sha256 ≠ pristine
+   sha256 so a no-op cannot masquerade as a survivor.
+6. **Never compound, never patch after a run;** a new idea means a new defect,
+   a fresh copy, a new run id.
+
+**Class catalog (worked rows are the calibration):**
+
+| Class | Edit shape | What kills it | JS evidence (round 2) | Bash evidence (round 3) |
+|---|---|---|---|---|
+| off-by-one count / table desync | a literal count ±1 | exact-count asserts + the green baseline | D1 → 16 cases (mutation-case-kimi-census.md:44) | B7 `+1`→`+2` → 1 case (`unverified=3`) (mutation-case-kagi-census.md:73) |
+| boundary / truncation cap | slice/limit ∓1 | only a case exercising the boundary | D2 **survived** — boundary never reached (max 2 vs cap 6) (mutation-case-kimi-census.md:45, :82-92) | B2 `-ge`→`-gt`, B6 `len+1`→`len` → 2 cases each (the two exit-0 green fixtures) (mutation-case-kagi-census.md:68, :72, :95-97) |
+| inverted condition | negate a predicate | the green fixture itself flips | D3 → 16 (mutation-case-kimi-census.md:46) | B3 `!=`→`==` → 3 (the two green fixtures + case 06 crosscheck-disagree) (mutation-case-kagi-census.md:69) |
+| dropped arm | delete the arm's reporting/effect lines | exactly that arm's cases — if any exist | D4 → 3 root-enum cases; D5 → 1 (mutation-case-kimi-census.md:47-48) | B4 → 1, **token-only kill**; B5 **survived** — no case reaches the arm (mutation-case-kagi-census.md:70-71, :88-91) |
+| weakened presence gate | force a presence bool to `true` | the single no-chain tripwire | D5 → 1 (mutation-case-kimi-census.md:48) | (not injected; see B1 guard inversion → 1) |
+| guard inversion | `-eq 0` ↔ `-ne 0` | the one case with a stray child | — | B1 → 1 (case 05 undeclared-file) (mutation-case-kagi-census.md:67, :84-87) |
+| wrong constant pin | change a pinned literal (mode floor) | cases asserting the pinned value | D6 → 2 (mutation-case-kimi-census.md:49) | (mode drift covered by fixtures; not re-injected) |
+| weakened predicate semantics | change the comparison operator | fixtures whose bits discriminate | D7 → 2 (mutation-case-kimi-census.md:50) | (see B2/B3) |
+| inverted class select | swap the classes two arms select | both classes' cases | — | B9 → 2 (cases 03/04) (mutation-case-kagi-census.md:75, :102-103) |
+| wrong exit-code mapping | change a fail-closed return | the fail-closed cases | D8 → 3 (mutation-case-kimi-census.md:51) | B8 `die` 2→1 → 2 (cases 13/14) (mutation-case-kagi-census.md:74, :100-101) |
+| weakened type/kind pin | broaden a kind check | anti-read fixtures | D9 → 2 (mutation-case-kimi-census.md:52) | (symlink arm deletion B4 covers the kind branch) |
+| reported constant (display-only) | change a constant only reported | only a case that reads it | D10 **survived** (only `frozen.K5` asserted) (mutation-case-kimi-census.md:53, :94-99) | B10 **survived** (`ok=` unasserted) (mutation-case-kagi-census.md:76, :118-122) |
+
+Shared survivor classes across the two cases, named: **reported-but-unasserted
+data** (D2/D10, B10) and the bash-only **unreached/fixture-absent arm** (B5) —
+one on the report side, one on the fixture side; both are "the suite cannot
+see a real difference" (mutation-case-kimi-census.md:101-107;
+mutation-case-kagi-census.md:105-126).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE .ufo/evidence/round-17/coldread/trace-inputs.py bytes=35887 sha256=521be95581a5073e47a92aa6c77a0087f101545a9c8d69db620d910ac0953070
+SOURCE corpus/knowledge/mutation-case-kagi-census.md bytes=19300 sha256=d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0
+SOURCE corpus/knowledge/mutation-case-kimi-census.md bytes=15679 sha256=034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548

@@ -1,0 +1,37 @@
+### Using the ledger
+
+- **One command replays every leg.** `bash tools/mutate-and-run.sh
+  --regression [--workdir DIR] [--keep]` allocates a fresh default scratch
+  `/tmp/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
+  it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
+  are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
+  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`).
+- **Each leg's bytes come from the repo's git object store, not the working
+  tree.** `git show <rev>:<path>` materializes the pinned blob into the case
+  workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`);
+  `REGRESSION_PIN` names repo/rev/path/pin (:1159-1160). Working-tree drift
+  does not change that blob. The old tsukuroi/mado pins are historical,
+  not a statement that their current trees match those recorded bytes.
+  A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
+  later legs still run and their statuses aggregate (:1314-1374).
+- **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18) with the
+  executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
+  (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
+  to each leg's pinned bytes.
+- **Contribution contract — what a leg carries.** A pinned target path,
+  Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
+  a command exercising `$MUTANT` under controlled fixtures; enumerated,
+  executed and skipped counts distinguished; and the exact recorded verdict
+  table. Host-gated branches must be excluded/controlled or explicitly named,
+  not called hermetic merely because the flag is `--selftest`.
+  Current anchors: pins/revisions/tables `tools/mutate-and-run.sh:597-620`,
+  first-four specs :648-829, inventory :82-100, eight dispatches :1314-1356.
+  (U) The recorded case set remains tameshi-carried; no fleet-contributed
+  leg is established by this registry.
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE corpus/knowledge/fleet-kill-rate-ledger.md bytes=41741 sha256=13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e
+SOURCE tools/mutate-and-run.sh bytes=97200 sha256=d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b
+SOURCE tools/trace-inputs.py bytes=37359 sha256=f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4

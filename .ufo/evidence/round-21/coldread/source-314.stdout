@@ -1,0 +1,68 @@
+## Kill-rate bands — admission readings (rounds 2–3, measured)
+
+The corpus's first measured kill-rate: the 43-case hermetic suite of
+`kumitate-shokunin/scripts/kimi-census.mjs` against 10 single-edit mutants →
+**8/10 killed (80 %)**; control `43/43 pass`, the suite count held on every
+mutant run, no inconclusive run (mutation-case-kimi-census.md:29-37). Round 3's
+second measurement: the 16-case selftest of
+`kagi-shokunin/corpus/surface-census.sh` against 10 single-edit mutants →
+**8/10 killed (80 %)**; control `SELFTEST: PASS (16 cases)`, count held, no
+inconclusive run, 11.0 s for 11 runs (mutation-case-kagi-census.md:42-60).
+Both points sit on the 50-80/>80 boundary, so that boundary reading is the
+worked one; the bands below carry the admission decision.
+
+| Kill rate | What the suite is | Admission reading |
+|---|---|---|
+| **>80 %** | load-bearing: most plausible defects die, each on named cases | cite it as the surface's proof-of-catching; classes outside the injected vocabulary stay named (mutation-case-kimi-census.md:109-144) |
+| **50-80 %** | partially load-bearing: survivors are measured, not assumed | cite it only with the survivors table attached; every survivor is a gap until a case pins it (mutation-case-kimi-census.md:44-53) |
+| **<50 %** | nominal: green is a count, not a catch | never cite it as protection; the round admits anyway — the survivors table IS the finding (`plans/round-2.plan.md:8-9`; mutation-case-kimi-census.md:29-33) |
+
+Rules:
+
+- **Bands are a report convention, not a pass/fail gate.** An 8/10 admits, and so
+  does a <50 % — with the gap recorded in the table, not softened
+  (mutation-case-kimi-census.md:29-37, :185-191). (U: the 50 % crossover itself
+  is unmeasured — both measurements landed at 80 %, so the band interiors are
+  still unprobed; the divergence section carries the (I) reading on PROVINCE's
+  ≥2-lane bar, PROVINCE.md:16-17.)
+- **Inject in a copy; one exact edit per fresh copy.** Every mutant is a copy
+  under `/tmp/<lane>-r<round>-<n>-work/`; the driver asserts each old string
+  occurs exactly once (`all unique`) before writing; no defect compounds with
+  another; the original stays read-only (mutation-case-kimi-census.md:22-25,
+  :148-166; mutation-case-kagi-census.md:44-47). Runs are `--selftest` or
+  `--root` pointed under /tmp only — no live tree read
+  (mutation-case-kimi-census.md:4-7).
+- **Restore exact bytes, proven by hash.** Original sha256 before = after
+  (`83016d45…4f426` JS; `275d8294…53009f` bash), size and mtime unchanged,
+  `git status --porcelain -- <path>` empty (mutation-case-kimi-census.md:34-35;
+  mutation-case-kagi-census.md:54-56). A sweep without this proof has no
+  recorded substrate result.
+- **A survivor is a finding; a kill names its case set.** D2/D10/B10 live on
+  reported-but-unasserted surfaces; B5 on an unreached arm — the assert
+  vocabulary and the fixture set pin behavior, not completeness
+  (mutation-case-kimi-census.md:101-107; mutation-case-kagi-census.md:105-126);
+  a kill quoted without its failing labels is unverified
+  (mutation-case-kimi-census.md:59-76).
+- **When mutation testing is not worth it.** (a) Defects already caught by the
+  green baseline or an exact verdict-line assert need no mutant budget — D1/D3
+  die on 16 cases each, 14 shared (mutation-case-kimi-census.md:74-76); mutants pay
+  where the asserts cannot look (D2/D10/B5/B10). (b) A suite that never runs in
+  the path that matters yields no signal: cite-check's mutation control is
+  integration-gated and never runs under `--selftest`
+  (gates-survey-kumitate.md:51-58). (c) Mutation measures the suite, not the
+  substrate — live-tree drift needs a live gate
+  (mutation-case-kimi-census.md:206-207). (d) Single-edit mutants say nothing
+  about coordinated rewrites or timing (mutation-case-kimi-census.md:195-199;
+  mutation-case-kagi-census.md:195-196); host-gated paths stay unmutated by
+  design (the bash verbs cases skip on this host —
+  mutation-case-kagi-census.md:27-38, :197-200). The sweeps are seconds-scale
+  (7.0 s / 11.0 s for 11 runs) but that cost profile is host-local (U;
+  mutation-case-kimi-census.md:204-205; mutation-case-kagi-census.md:203-204).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE PROVINCE.md bytes=5073 sha256=cd11b529784018725ec6bed757b9095f885fc127f0ba7c4021eca29f42b77a44
+SOURCE corpus/knowledge/gates-survey-kumitate.md bytes=22018 sha256=3dca7a1a5c621bf0ec75948d0836839dec98651673bb2987861d9aa122579b0e
+SOURCE corpus/knowledge/mutation-case-kagi-census.md bytes=19300 sha256=d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0
+SOURCE corpus/knowledge/mutation-case-kimi-census.md bytes=15679 sha256=034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548
+SOURCE plans/round-2.plan.md bytes=803 sha256=8eccbbfdf0d8c2bd76ced8c9d58c40c17ea48dfeb564f598c315ea835360ccec

@@ -1,0 +1,51 @@
+## Live-tree re-pin and entry-command monitor — round 17
+
+Sources: `corpus/lessons/round-16-verifier-spotcheck.md` §3 and §6 (routed
+R16-OP1, R16-MON1); S062 (`git rev-parse --show-toplevel`), S063 (git
+repository discovery and `GIT_*` environment), S061 (jj leaves Git `HEAD`
+detached at `@-`). This section restores the round-14 capability's live
+verdict and adds the monitor that would have caught its loss. It claims no
+new mutation case and no promotion credit.
+
+| Evidence condition | Decision | Error pattern / limit |
+|---|---|---|
+| A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
+| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| The waiver rev is a tree id, dangling, not an ancestor, shallow, or reached through replace refs, grafts or an inherited `GIT_DIR` | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance |
+| A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
+| A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
+| A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git (round 18 adds `bash-witness-study.py`; historical `.ufo/evidence/round-16/measure.py` still does not — run it only through `registry-check`, which scrubs) | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
+| A repo path has no `.git` of its own inside a git super-repo | Runner regression leg: SETUP `repo_identity_mismatch`, exit 2 | Without the guard git silently answers from the parent repo's objects |
+
+Recipe, from this lane root (round-13/14 evidence bytes stay immutable):
+
+1. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json` (round 18; round 17's two now exit 2)
+   → 1 `failed`, the `producer_before` expectation unresolved (`"expectation": "producer_before"`).
+2. The same command with `.ufo/evidence/round-18/dispositions.json` → 0 `clean`,
+   `"effective": 11`, `"superseded": 1`; text mode prints one `HISTORICAL <path> rev=<rev> sha256=<sha>` line per waived instrument.
+3. `python3 tools/registry-check.py --rev <40-hex lane commit>` replays every row of
+   `tools/registry.json` in a scratch clone (siblings symlinked beside it) and ends with
+   `REGISTRY_CHECK: held=N/M superseded=K`. Grade an older rev with `--registry <current registry file>`.
+   Run it with `--rev`, never on the live tree: some rows write receipts into their root.
+4. Read a sibling's or this lane's committed bytes at the branch tip `refs/heads/<branch>`
+   (`tools/pin-disposition.py` head rows carry `branch` and `head_differs_from_branch`), never at `HEAD`.
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE .ufo/evidence/round-18/dispositions-before.json bytes=3645 sha256=dc948a5ee1bab7a89e21ef4d75b620a430559ae0b2b64573f7c2bcacbc4deb65
+SOURCE .ufo/evidence/round-18/dispositions.json bytes=4402 sha256=9caa2f76dcc36265bb11b58baa397b1015a91b086db63d203ab16020a1fc2676
+SOURCE .ufo/evidence/round-18/final/before.stdout bytes=6309 sha256=e279b328de7d08631de687a0ad587943ca0a9eecba3c046adeb31b44f7a25b0d
+SOURCE .ufo/evidence/round-18/final/case7.stdout bytes=14841 sha256=e649866e5194fe54a6773582551e7fb83a33bafb0cfd661ba6b71bb8da9c7ceb
+SOURCE .ufo/evidence/round-18/final/case8.stdout bytes=7765 sha256=b4f264c375833f3c65d3ea00606851df58edc6c575617d4034f08ccfdf63694b
+SOURCE .ufo/evidence/round-18/final/checks.json bytes=2411 sha256=fed3c8e6cba05c41d8fdcafc091328e3092e2018a42fb8a8594bd8b5815c671d
+SOURCE .ufo/evidence/round-18/final/context.stdout bytes=178 sha256=337aa6d8b19b2a82ed7de8854bf39a964076126c72bcc0b51798eca6bb134994
+SOURCE .ufo/evidence/round-18/final/disposition.stdout bytes=6906 sha256=596975d456657c8d683b6cae4382bdc958cda0084a2cd54d4b979957f55048e4
+SOURCE .ufo/evidence/round-18/final/historical.stdout bytes=6358 sha256=9050c284e68d6538ebedfc6a084fc0b4529fd50a691c72d9f7a4e570fa214590
+SOURCE .ufo/evidence/round-18/final/probes.stdout bytes=4111 sha256=d37c99e33eeb22b1b74b47b5fca26b228407792a5741bfaebc1b8be39aeb8cf0
+SOURCE .ufo/evidence/round-18/final/registry-branch-aligned.stdout bytes=96815 sha256=6502cb387613b08c64f0be73f41ff094575639f952ad1f2c4c8e76834d5517c4
+SOURCE .ufo/evidence/round-18/final/regression.stdout bytes=6390 sha256=226be3d529337dc87334b0e7c55a012fb0793865570565b84471aab6d836acfe
+SOURCE .ufo/evidence/round-18/final/repeat.stdout bytes=423 sha256=9cd7809032b2a970bdc19577c57757e2d91e7e14f360cb37f5105eb3a0c3c21e
+SOURCE tools/evidence-disposition.py bytes=120618 sha256=39ee5c5effd9bbdaafda644aada0cdb008ddee1dbfee4ac6bea93fc5a1fe51c8
+SOURCE tools/pin-disposition.py bytes=59295 sha256=331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c
+SOURCE tools/registry-check.py bytes=70430 sha256=cc4ed8e215f01a7ef3693f2f98b2973ad401047b473efb1e7b1fbea92a5d451e
+SOURCE tools/registry.json bytes=20685 sha256=90f96ebd34584b0463e07a91da147b32bde521db342b764783cb893fa1c165c5

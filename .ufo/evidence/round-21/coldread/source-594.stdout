@@ -1,0 +1,77 @@
+## Appendix B — worked example: bash case (reproduce from this page alone)
+
+Replicates TAMESHI-R3-1 (`mutation-case-kagi-census.md`); expected outcome:
+**8/10 killed (80 %)**, survivors B5/B10, control `SELFTEST: PASS (16 cases)`,
+restore pin held. Substrate read-only; all mutants under
+`/tmp/<lane>-r<round>-<n>-work/`.
+
+**Artifact pin** (verify before copying): `kagi-shokunin/corpus/surface-census.sh`
+— sha256 `275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f`,
+44212 B, 886 newlines (the 887th line carries no trailing newline), mode 755;
+kagi rev `fecee87` (`fecee8743e52eb8fb5fbb40782934cb619a1a96e`); `git -C
+kagi-shokunin status --porcelain -- corpus/surface-census.sh` empty
+(mutation-case-kagi-census.md:13-17).
+
+**Commands (order matters):**
+
+```bash
+W=/tmp/<lane>-r<round>-<n>-work
+mkdir -p "$W/evidence"
+cp -p kagi-shokunin/corpus/surface-census.sh "$W/pristine.sh"
+sha256sum "$W/pristine.sh"        # must print 275d8294…53009f
+bash "$W/pristine.sh" --selftest  # control: SELFTEST: PASS (16 cases), rc=0
+                                  # (ok-case 01..14 + skip-case 15/16,
+                                  #  both substrate-absent on this host)
+# write driver + SPECS (below), then:
+python3 "$W/mutate_driver.py" --check   # per-defect occurrences + 'all unique'
+python3 "$W/mutate_driver.py" --run     # control + B1..B10, writes evidence/
+# survivor probes (note §7 commands; run from the work dir):
+bash "$W/mutant-B5.sh"  verify --root "$W/probe/host"  --census "$W/probe/census.tsv"  --shapes "$W/probe/shapes.tsv"  --baseline "$W/probe/baseline.tsv"
+bash "$W/mutant-B10.sh" verify --root "$W/probe2/host" --census "$W/probe2/census.tsv" --shapes "$W/probe2/shapes.tsv" --baseline "$W/probe2/baseline.tsv"
+```
+
+**Driver contract:** same as Appendix A except the run command is
+`bash mutant-Bx.sh --selftest` (cwd = the work dir) and the recorded summary
+lines are the `ok-case`/`bad-case`/`skip-case`/`SELFTEST:` lines; predictions
+compared at the end; evidence files `evidence/B<n>.selftest.txt` +
+`.meta.json`; manifest below is the driver's exact literal form
+(mutation-case-kagi-census.md:208-236, :240-249).
+
+**Manifest (exact strings; Python literals as used by the round-3 driver —
+`\n` are real newlines, `\"` real quotes, `\\n` a literal backslash-n inside a
+printf format):**
+
+```python
+SPECS = [
+  ("B1", "surface-census.sh:241", '  [[ ${#SCAN_DIR[@]} -eq 0 ]] && return 0', '  [[ ${#SCAN_DIR[@]} -ne 0 ]] && return 0'),
+  ("B2", "surface-census.sh:435", '            elif [[ "$got" -ge "$floor" ]]; then printf \'SHAPE OK       %s rows %s %s >= %s\\n\' "$p" "$tbl" "$got" "$floor"', '            elif [[ "$got" -gt "$floor" ]]; then printf \'SHAPE OK       %s rows %s %s >= %s\\n\' "$p" "$tbl" "$got" "$floor"'),
+  ("B3", "surface-census.sh:229", '      if [[ -n "$want_mode" && "$want_mode" != "$mode" ]]; then', '      if [[ -n "$want_mode" && "$want_mode" == "$mode" ]]; then'),
+  ("B4", "surface-census.sh:200-204", "    if [[ \"$live\" == \"symlink\" ]]; then\n      printf 'SURFACE LINK     %s (declared %s)\\n' \"$p\" \"$kind\"\n      N_LINK=$((N_LINK + 1)); FAILED=1\n      continue\n    fi\n", ""),
+  ("B5", "surface-census.sh:214-217", "           if [[ \"$kind\" == \"exec\" && ! -x \"$abs\" ]]; then\n             printf 'SURFACE DIVERGED %s (declared exec, no execute bit)\\n' \"$p\"\n             N_DIVERGED=$((N_DIVERGED + 1)); FAILED=1; continue\n           fi ;;\n", "           ;;\n"),
+  ("B6", "surface-census.sh:371", '        if head -c "$(( ${#value} + 1 ))" "$abs" | cmp -s - "$MAGIC_EXPECT"; then', '        if head -c "${#value}" "$abs" | cmp -s - "$MAGIC_EXPECT"; then'),
+  ("B7", "surface-census.sh:405-406", "            printf 'SHAPE UNVERIFIED %s %s (%s)\\n' \"$p\" \"$assertion\" \"${S_ERR_A[$p]}\"\n            N_UNVERIFIED=$((N_UNVERIFIED + 1)); FAILED=1", "            printf 'SHAPE UNVERIFIED %s %s (%s)\\n' \"$p\" \"$assertion\" \"${S_ERR_A[$p]}\"\n            N_UNVERIFIED=$((N_UNVERIFIED + 2)); FAILED=1"),
+  ("B8", "surface-census.sh:85", "die() { printf 'surface-census: %s\\n' \"$1\" >&2; exit 2; }", "die() { printf 'surface-census: %s\\n' \"$1\" >&2; exit 1; }"),
+  ("B9", "surface-census.sh:191", '      if [[ "$cls" == "runtime" ]]; then', '      if [[ "$cls" == "asset" ]]; then'),
+  ("B10", "surface-census.sh:862", '        "${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"', '        "${#SCAN_DIR[@]}" "$N_ABSENT" "$N_ABSENT" "$N_SKIP"'),
+]
+```
+
+**Expected results (round-3 measured):** control PASS (16 cases), rc=0; B1
+FAIL 1/16 — bad-case 05 undeclared-file; B2 FAIL 2/16 — cases 01 clean, 04
+runtime-absent; B3 FAIL 3/16 — 01, 04, 06 crosscheck-disagree; B4 FAIL 1/16 —
+07 symlink-swap (token-only kill); B5 **PASS (16 cases) — survivor** (no
+selftest case reaches the deleted exec x-bit arm); B6 FAIL 2/16 — 01, 04;
+B7 FAIL 1/16 — 10 sqlite-unavailable (`unverified=3` tripwire); B8 FAIL 2/16 —
+13 malformed-row, 14 fused-shape-row; B9 FAIL 2/16 — 03 asset-gone, 04
+runtime-absent; B10 **PASS (16 cases) — survivor** (`ok=` summary arg
+unasserted); 8/10 = 80 %; 11.0 s sweep (mutation-case-kagi-census.md:62-80,
+:50-53). Non-equivalence probes: B5 prints `SURFACE OK … (exec 644)` rc=0 where
+pristine prints `SURFACE DIVERGED … (declared exec, no execute bit)` rc=1; B10
+prints `ok=0` where pristine prints `ok=1` (mutation-case-kagi-census.md:111-122,
+:251-253). After: `sha256sum pristine.sh` still `275d8294…53009f`; size/mtime
+unchanged; kagi `git status` clean for the path; scratch copy `cmp`-identical
+(mutation-case-kagi-census.md:54-56).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE corpus/knowledge/mutation-case-kagi-census.md bytes=19300 sha256=d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0

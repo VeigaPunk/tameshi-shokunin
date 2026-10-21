@@ -1,0 +1,43 @@
+### Boundary readings, executed by this lane
+
+Two executions, nothing else measured here; scratch `/tmp/w11-t11-4-ev/` (gone — round-18 correction: replay the tool at `606716f`, sha256 `75ed934d…`; round-18 wave 2 reproduced `80/80` and `cases=6 passed=6` there, `.ufo/waves/round-18/w2/CR30.md`).
+
+**Pin read** — the round-8 command set (`:1021-1053`), 2026-10-14T21:32:35Z:
+
+```
+case                 recorded-rev live-HEAD  relation  rec-pin  live-blob
+js-kimi-census       175de6ba     175de6ba   current   83016d45 83016d45
+bash-surface-census  fecee874     fecee874   current   275d8294 275d8294
+bash-tsukuroi-census 165307fe     af8adf15   stale     084951be 10452443
+bash-mado-verify     eead56b2     f7bfc9fe   stale     d7edaab4 93e43f8f
+bash-checklist-run   fecee874     fecee874   current   7e5ec98b 7e5ec98b
+js-claims-check      175de6ba     175de6ba   current   e9a21b44 e9a21b44
+```
+
+4 × `current` · 2 × `stale` · 0 × `drift`; all six paths porcelain-clean, tool
+`held` at `75ed934d…` (`sha256sum`, vs the revision the round-10 receipts ran
+under, `:1332-1344`). Both `stale` cells are their repos' committed HEAD blobs,
+so T1 fired (`:1069-1090`): tsukuroi `084951be…` → `10452443…` (HEAD
+`af8adf15` — the cell moved again since round 10's read of `c396662e…`;
+recorded, not re-interpreted) and mado `d7edaab4…` → `93e43f8f…` (HEAD
+`f7bfc9fe`). The re-pin rule leaves the recorded tables untouched; successor
+rows land appended in the ledger (`:1230-1244`) — open at this write.
+
+**Tool pulse** — same scratch, `--selftest` then `--regression`
+(`REGRESSION_DATE 2026-10-14T21:32:40Z`):
+
+- `--selftest` → `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0
+  (`selftest.log`).
+- `--regression` → six legs, all exact: `match=10/10` (legs 1–4, 6),
+  `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`; killed
+  8/8/6/4/7/7; closing `REGRESSION: PASS (cases=6 passed=6; ledger legs
+  exact: killed-delta<=0 flips<=0)`, rc 0; tool `75ed934d…` before and after
+  (`regression.log`; workdir kept `/tmp/w11-t11-4-run/regression`).
+
+The replay is drift-immune, re-verified at the close: legs 3–4 matched
+byte-exact while their substrates read `stale` — the git-materialized blobs
+ran, never the working trees (`:1324-1331`).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE tools/trace-inputs.py bytes=37359 sha256=f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4

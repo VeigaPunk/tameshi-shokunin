@@ -1,0 +1,35 @@
+## Restore discipline — before/after identity, not continuous non-write proof
+
+All edits must stay in scratch. Before/after fingerprints establish endpoint
+identity, not that no transient write occurred. Apply this policy in order:
+
+1. **Before the sweep:** sha256 (full), size, mtime, repo revision, and
+   `git status --porcelain -- <path>` empty — recorded in the note's header
+   (mutation-case-kimi-census.md:13-16; mutation-case-kagi-census.md:13-17).
+2. **All edits in scratch:** `cp -p` the artifact into the lane namespace and
+   edit only copies (mutation-case-kimi-census.md:4-7;
+   mutation-case-kagi-census.md:44-45).
+3. **After the sweep:** require endpoint fingerprints to agree; historical
+   Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness
+   (mutation-case-kimi-census.md:34-35); no after-repo revision was recorded.
+   Kagi recorded hash275d8294…53009f,44212B, unchanged09:47:15 mtime,
+   clean path and `cmp`-identical scratch copy (mutation-case-kagi-census.md:54-56).
+   Its after-repo revision is likewise not established by those records.
+4. **A drift is an incident:** stop, report it as one, do not "repair" by
+   rewriting — a repair would itself be an unauthorized write.
+5. **Never restore via `git checkout`/`git restore`.** Those write to the
+   substrate; the only correct end state is *never-modified*. (I)
+6. **Retain durable evidence.** The historical probes reran from scratch
+   (`SCORECARD.md:13`), but the case-note commands rely on an unversioned
+   `mutate_driver.py` and do not directly rebuild after scratch loss.
+   Use the maintained `bash tools/mutate-and-run.sh --regression` ledger
+   replay for those pinned cases; it does not recover the old driver.
+7. **If the artifact was already dirty at pin time:** that pin is not a clean
+   baseline — record the dirty state exactly, or better, stop and re-pin a
+   committed revision (the G-R2-1 lesson, corpus/README.md round-2 addendum).
+
+
+SOURCE-READS: byte-consuming SHA-256 observations; not recipe execution
+SOURCE corpus/README.md bytes=35727 sha256=56de81caa266cc082f94e00b9fec7a1f40fecb04192998a07fe5d3626324cdde
+SOURCE corpus/knowledge/mutation-case-kagi-census.md bytes=19300 sha256=d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0
+SOURCE corpus/knowledge/mutation-case-kimi-census.md bytes=15679 sha256=034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548
