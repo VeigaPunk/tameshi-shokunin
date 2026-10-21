@@ -328,3 +328,36 @@ the non-author wave-2 review (`.ufo/waves/round-18/w2/ReviewQuality18.md`,
   two literals. Wave-2 mutation testing left 18 survivors in the new code
   (3 registry-check, 3 evidence-disposition, 2 trace-inputs, 10 bash-witness
   scrub/config); each is a named round-19 coverage gap under criterion 29.
+
+## Criteria appended — round 19 (2026-10-21)
+
+37. A metadata correction names the exact stale provenance field and line,
+    not merely a body statement on the same subject. A preserved draft's
+    `source:` or `verified-at:` line can remain byte-identical only when a
+    dated, explicitly superseding erratum gives its effective value,
+    measured revision and evidence pointer. Audit every staged/PENDING
+    mention in the corrected entry; say which are historical, never leave
+    a second current-result implication. Captured by round-18 verifier §5
+    items 1–2; lesson `lessons/round-19.md`, Mistakes row 1. Falsifier:
+    removing R18-1 or R18-2's explicit metadata erratum independently
+    reopens that named population item in the round-19 correction ruler.
+38. A diff count names its unit: changed cells, deleted table lines and
+    deleted non-row lines are different quantities. A SOURCES mutable-cell
+    exception lists each affected row ID and checks immutable cells
+    separately; counting deletion lines does not prove cell compliance.
+    Captured by round-18 verifier §5 item 3 and round-19 Mistakes row 2.
+    Falsifier: the recorded historical diff is 25 added / 5 deleted lines,
+    IDs S001/S008/S052/S056/S057; a four-line or four-cell assertion cannot
+    satisfy the R18-3 correction, even though S008 changed two cells.
+39. A final-success claim names one effective receipt with matching argv,
+    measured revision, integer exit, retained stdout/stderr and both
+    digests. A failed usage/setup attempt stays failed and byte-preserved;
+    its successful successor explicitly names what it supersedes.
+    Timeliness is not repaired retroactively: a later replay is dated as
+    later, not presented as a receipt that already existed. Captured by
+    round-18 verifier §5 items 4–5 and round-19 Mistakes rows 3–5.
+    Falsifier: the same round-19 ruler rejects wrong argv/revision,
+    bool-as-exit, exit 64, stream tampering or missing supersession, and
+    rejects a missing exact-final-revision measure receipt. It does not
+    authenticate the historical producer or certify required-command
+    coverage; those remain distinct duties (criterion 33).

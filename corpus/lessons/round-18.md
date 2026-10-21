@@ -117,3 +117,39 @@ of those rows stayed unchanged. The final census is 76 rows
 (A67 B7 C2; mined48 queued23 rejected5), not the earlier 72-row snapshot.
 The final registered census first failed because this lesson did not literally
 cite S076; this Gate addendum repairs that missing back-reference.
+
+## Erratum R18-3 — falsifier arithmetic (2026-10-21, round 19)
+
+This correction supersedes line 79's `deletions = the four allowed used-by
+cells only`. The committed SOURCES diff has **five deleted table lines**:
+S001, S008, S052, S056 and S057. S001/S052/S056/S057 each changed `used-by`;
+S008 changed both `status` and `used-by` on one table line. A line count is
+not a cell count. Counting command:
+`git diff --numstat 183f87b899e6cae46be98d251cbc87fb5118f6ca 4b7c6823a462f5ea2eafcb262275300a545f3ed7 -- corpus/SOURCES.md`
+→ `25 5 corpus/SOURCES.md` (re-derived by the round-18 non-author spot-check,
+§3; round-19 receipt `sources-diff.txt`).
+The corrected falsifier requires exactly those five removed row IDs, no
+immutable-cell changes, and zero deleted non-row lines. The original
+four-cell statement is not a valid falsifier and is retained only as history.
+
+## Errata R18-4 / R18-5 — receipt attribution (2026-10-21, round 19)
+
+R18-4: `.ufo/evidence/round-18/final/checks.json` row
+`bash-witness-selftest` is a failed raw invocation (`--selftest`, exit 64,
+empty stdout); it is **not** the effective successful selftest receipt.
+It remains byte-identical as historical evidence. Its effective replacement
+is `.ufo/evidence/round-19/bash-witness-selftest-complete.json`, with
+`python3 tools/bash-witness-study.py selftest`, exit 0, and digest-bound
+`WITNESS_SELFTEST: 43/43 pass` output at
+`4b7c6823a462f5ea2eafcb262275300a545f3ed7`. The round-19 first scratch
+attempt lacked `tools/mutate-and-run.sh`; its failed output/receipt is also
+retained and explicitly superseded, never counted as green.
+
+R18-5: the round-18 report's final-revision 60/60 sentence lacked a committed
+receipt at that revision. `.ufo/evidence/round-19/round18-final-measure.json`
+now records the actual replay at
+`4b7c6823a462f5ea2eafcb262275300a545f3ed7`: exit 0, 60/60 input-keyed
+sections, restraint 8, `overrides_used=false`. Its stdout/stderr digests
+bind the new observation. This repairs missing evidence, not its original
+timeliness: it does not claim the receipt existed in round 18, nor that
+60/60 holds at any round-19 revision. The fleet report is not rewritten.

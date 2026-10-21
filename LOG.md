@@ -1143,3 +1143,38 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Tool acquisition: scout S19 used ephemeral npm `npx -y c8` for coverage;
   cache metadata reports c8 12.0.0. No persistent L1 install or pacman
   transaction. Open debts are in SCORECARD round18 and the lesson.
+
+### Round 19 — five routed calibration corrections (2026-10-21)
+
+- Trigger: admitted round18's outside verifier §5 routed five metadata and
+  receipt defects. The five-item population and C1 calibration claim were
+  frozen before implementation (`.ufo/evidence/round-19/contract.json`,
+  `78b99ddcbf46f06246b978c8f5d4b6720dc5f59e`). Calibration and depth were tied
+  at8; calibration's unit is fewer named defects, not a new scalar score.
+  The prior planned survivor work is deferred in favor of the newly routed
+  corrections; all 18 survivors remain named open debt.
+- Action: appended explicit R18-1 verified-at correction and R18-2 source-line
+  correction to the two knowledge entries; appended R18-3 arithmetic and
+  R18-4/R18-5 receipt errata to round18 lesson. Original bytes and failed
+  receipts remain unchanged. QUALITY37–39 and round19 lesson mine the causes.
+- Executed outcome: exact4b7c682 historical measurement, exit0, input-keyed
+  60/60, restraint8, no overrides (`round18-final-measure.json`); correct
+  `selftest` subcommand, exit0, witness43/43
+  (`bash-witness-selftest-complete.json`), in an isolated scratch clone with
+  pinned tool and runner bytes. First incomplete-scratch failure preserved
+  (`bash-witness-selftest.json`); missing runner supplied only in scratch.
+  Neither new receipt is represented as having existed in round18.
+- Ruler: `.ufo/evidence/round-19/measure.py`, one frozen five-item measurement
+  over explicit revision blobs; `--check` adds failure on an open item,
+  no receipt argv is executed. Baseline7243e7f corrected0/open5 exit1,
+  input-digest map retained (`before.json`). Public isolated CLI selftest
+  and after-revision measurement are separate from the historical replays.
+- Source: S049 official subprocess docs reopened2026-10-21; explicit env
+  and observed returncode/streams, not historical producer authentication.
+  Used-by gains round19 lesson; no added rows/tier changes, no frontier
+  advancement or new capability. Numeric scores stay depth8/calibration8,
+  historical current-page credit is not pre-claimed.
+- Integration: one L1 owns production writes and the frozen planner seat.
+  Build wave frozen at64 seats (`.ufo/waves/round-19/spec1.json`); wave
+  findings are advisory, not independent closure. No tool install/update,
+  pacman transaction, host mutation or sibling gate change.

@@ -167,3 +167,24 @@ Appended after the non-author wave-2 reads at `01d586ddbc5fcd78659557c4e93a6ee85
   prints failing case names for P01–P04 only; for P05–P07 it prints the tally.
   The round-18 `dispositions-before.json` exit 1 is the registered negative
   control (`producer_before`), not a defect.
+
+## Erratum R18-1 — verified-at metadata (2026-10-21, round 19)
+
+This correction explicitly supersedes line 2's `Landed-tip results: PENDING
+(filled by L1 after landing)` and every staged/PENDING landed-tip statement
+at lines 10, 53, 65, 91, 97, 114, 118, 120, 122, 132, 134 and 136.
+Those statements describe base `183f87b899e6cae46be98d251cbc87fb5118f6ca`,
+not the delivered round-18 tools.
+
+Effective verified-at: tool revision
+`921ef8077440f90d092aab4b9fdc750a45de1224`, measured by the committed receipt
+`.ufo/evidence/round-18/final/probes.stdout`: `DEFECT_PROBES: open=0 closed=11 total=11`.
+The receipt's SHA-256 is recorded in `final/checks.json`, row `probes`;
+the non-author spot-check independently reconciled that digest (§2 C2).
+Registry evidence is separately pinned at
+`5923d89ac491ec3d296905561a8ab0faf3fda65a` in
+`.ufo/evidence/round-18/final/registry-branch-aligned.stdout`: 31 active
+rows held, four superseded. These are historical revision-bound results,
+not new runs at the round-19 tip. EG-3's limits and all 18 mutation survivors
+remain open. Recheck the exact named receipts and revisions; do not replace
+them with an unpinned `<branch tip>` claim.

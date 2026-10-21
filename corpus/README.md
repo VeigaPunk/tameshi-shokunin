@@ -279,3 +279,20 @@ argv to the commands a bucket requires, so it is not command coverage
 (QUALITY 33; `knowledge/input-keyed-coldread-credit.md` erratum). The
 round-18 row's "knowledge/guard-kill-closure.md" also cites S077/S078, the
 round-18 correction rows for S068's anchor and S072's teaches.
+
+## Round 19 — explicit metadata corrections and effective receipt provenance
+
+Same-ground calibration repair, not a new coverage-map admission. The two
+round-18 notes now carry R18-1/R18-2 errata explicitly naming their stale
+`verified-at:` / `source:` lines. The round-18 lesson's R18-3–R18-5 errata
+correct five-line arithmetic and distinguish failed raw invocations from
+the effective successful receipt. Round-19 exact-revision replays and the
+five-item ruler live in `../.ufo/evidence/round-19/`; source S049 was reopened
+for the explicit subprocess environment/observed-output distinction.
+
+The newest independent review is `lessons/round-18-verifier-spotcheck.md`.
+It admitted round 18's bounded claims and routed these five repairs; it does
+not independently admit round 19. Historical input-keyed60/60 at4b7c682
+is now backed by an exact-revision receipt. No current round-19 full-page
+equivalence, required-command coverage, promotion, guard-survivor closure,
+successor mutation sweep or F1–F10 frontier movement is claimed.

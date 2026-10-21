@@ -686,3 +686,34 @@ unimplemented required-command binding and duplicated measurement helpers.
 Helper-owned live-Git recovery is fleet scope, routed in L0 (fleet `36500aa`).
 No capability or promotion is pre-claimed; planned next claim is failure-backed
 coverage on these named residuals, with the saturation nudge evaluated afresh.
+
+## Round 19 — five routed calibration defects (2026-10-21)
+
+One declared claim C1, calibration (tied lowest numeric owned axis at 8;
+depth also 8). Population frozen in `.ufo/evidence/round-19/contract.json`
+before corrections, landed `78b99ddcbf46f06246b978c8f5d4b6720dc5f59e`.
+Unit: five named defects durably corrected, not a numerical expertise
+increase. Calibration remains **8**, a dated historical score; independent
+promotion and a current-page cold-read are not claimed.
+
+Counting command:
+`python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check`
+with the same ruler for both revisions. At baseline
+`7243e7f163f08978c8fd9b6c1ef67a2fefe7d190`: corrected=0, open=5,
+total=5, exit1 (`.ufo/evidence/round-19/before.json`, input digests included).
+Target: corrected=5, open=0, total=5, exit0; the revision-specific after
+receipt is recorded separately after the corrections land.
+
+The five items are exactly round-18 verifier §5: header PENDING, header S008
+queued, four-vs-five source lines, failed witness invocation mislabeled final,
+and the missing exact4b7c682 measurement receipt. QUALITY37–39 mine them;
+source S049 was reopened. Append-only metadata corrections preserve original
+bytes; the raw exit64 witness row stays failed and is explicitly superseded.
+Actual historical replays now observe witness43/43 and input-keyed60/60,
+restraint8, at4b7c682, not the round19 tip.
+
+No new capability or frontier entry. Depth8, coverage, operability, freshness
+and adjacency are unchanged; tool bytes and eight-leg mutation ledger are
+unchanged. No current-page full-read/command-completeness inference follows
+from these historical receipts. The 18 guard survivors, P08/P11 breadth
+canaries and other round18 residuals remain open, not silently retired.

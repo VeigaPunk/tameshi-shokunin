@@ -262,3 +262,15 @@ the lines above stay as written.
   (fixed before landing); the landed runner's replay is the wave-2 evidence in
   ER8-1. `SKILL.md:605`, `:629-630`, `LOG.md:1496-1498` and `SCORECARD.md:1616`
   in §3/§6 are kumitate's files.
+
+## Erratum R18-2 — source metadata (2026-10-21, round 19)
+
+This correction explicitly supersedes line 1's S008 `queued` / `not yet a
+mined row` description. At delivered round-18 revision
+`4b7c6823a462f5ea2eafcb262275300a545f3ed7`, S008 is `mined`, with
+`corpus/knowledge/mutation-case-kumitate-sources-check.md` in `used-by`.
+The effective source metadata is therefore S008, paper, tier A, mined;
+the historical draft wording above is not its current status. ER8-1 had
+already recorded the transition; this erratum names the stale provenance
+line it supersedes. Verify with that revision's `corpus/SOURCES.md` S008
+row, not with an assumed status inferred from this entry alone.
