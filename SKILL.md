@@ -1985,3 +1985,14 @@ selftests or universal hermeticity. The frozen counter validates declared
 pins/tuple arithmetic and a source header, not producer authenticity.
 Current source re-anchors retain the199-entry prefix and label authorship;
 they are not blind/independent cold-read or required-command coverage.
+
+Round22 addition (same registry section; same-ground calibration repair):
+`corpus/knowledge/callback-authoritative-accounting.md`, minedS082 and
+QUALITY45. Partial reports, report prose and content verdicts do not supply
+terminal seat status. Retained declared callbacks bind exact registered
+name/agent/role; our own evidence does not authenticate provider telemetry.
+
+| Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| `tools/wave-accounting.py` | gate | `python3 tools/wave-accounting.py --bundle .ufo/evidence/round-22/bundle.json --expected .ufo/evidence/round-22/expected.json --json` | 0 clean; 1 failed invariant; 2 malformed/unavailable/tampered input, could-not-evaluate; 64 usage, could-not-evaluate | `python3 tools/wave-accounting.py --selftest` | digest-pinned round22 bundle/expected.json, wrong-count bundle/expected pair; eight literal public-CLI rejection fixtures in frozen round22 measure.py | read-only input; isolated selftest temporary files only | tameshi |
+| `.ufo/evidence/round-22/measure.py` | gate/counter | `python3 .ufo/evidence/round-22/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin` | 0 eight predicates discriminated with green control; 1 incomplete/absent capability; 2 control/setup could-not-evaluate; argparse usage2 could-not-evaluate | owning gate's `--selftest` launches these same frozen public-CLI fixtures | contract.json eight named cases; tool-absent before.json | isolated temporary bundle/expected pairs only | tameshi |

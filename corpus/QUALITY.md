@@ -437,3 +437,17 @@ history or an extra claimed source ID must reopen R18-3. Lesson:
     08175c6, while the documented current positive-zero-boundary anchor
     occurs exactly once; deleting any anchor produces INCONCLUSIVE, not
     a kill. Round21's real baseline retains18/18 unique anchors.
+
+## Criterion appended — round 22 (2026-10-21)
+
+45. A seat-completion census binds each retained terminal callback to its
+    original exact registered name, agent ID and role. A report is an
+    orthogonal artifact, possibly partial; its presence or “done” prose
+    never changes a failed callback to completed. Totals derive from the
+    status vector, not directory file count. The retained callback snapshot
+    and expected digest establish declared-input integrity, not provider
+    authenticity. Captured by `lessons/round-22.md` partial-report mistake,
+    preserved round21 outcome-accounting erratum. Falsifier: the digest-
+    matching wrong-count bundle exits1/TOTAL_MISMATCH, while the identical
+    statuses with corrected claimed totals exit0. The two failed-with-report
+    identities remain failed in both runs; no dead identity is replaced.

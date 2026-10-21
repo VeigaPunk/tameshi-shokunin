@@ -344,3 +344,14 @@ pass/fail. `lessons/round-21.md` retains the gate decisions, provider deaths,
 R02 re-anchoring and counter limits. C1's owning selftests discriminate the
 eighteen old mutants; command/environment contract pins are distinguished
 from reproduced malicious-configuration effects.
+
+## Round22 — callback-authoritative accounting
+
+| Entry | Ground | Evidence |
+|---|---|---|
+| `knowledge/callback-authoritative-accounting.md` | same-ground calibration repair, not a new frontier crossing | minedS082; `tools/wave-accounting.py`; frozen round22 bundle and expected digest |
+
+Separate the eight synthetic rejection predicates from the actual146-seat
+round21 denominator and the two historical partial-report false positives.
+No report is deleted; callback-source integrity is not provider authentication.
+All existing frontier statuses and independent promotion limits stay unchanged.
