@@ -1,0 +1,38 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,re\nfiles=['.ufo/evidence/round-13/expected.json','.ufo/evidence/round-14/verification.json','.ufo/evidence/round-14/verification-final.json','.ufo/evidence/round-14/dispositions-before.json','.ufo/evidence/round-14/dispositions.json','.ufo/evidence/round-14/capture-context.py']\nfor p in files:\n    raw=open(p,encoding='utf-8').read()\n    print('75ed934d occurrences in', p, len(re.findall('75ed934d', raw)))\nfor p in files[1:3]:\n    d=json.loads(open(p,encoding='utf-8').read())\n    print('==', p, 'input_sha256:')\n    for k,v in d['input_sha256'].items():\n        print('   ', k, v)\n    print('==', p, 'checks:')\n    for c in d['checks']:\n        out=c.get('stdout','') or ''\n        print('   ', c.get('name'), 'exit', c.get('exit'), 'expected_exit', c.get('expected_exit'), 'PASS', out.count('PASS'), 'FAIL', out.count('FAIL'))\nd=json.loads(open(files[1],encoding='utf-8').read())\nfor c in d['checks']:\n    if c.get('name')=='disposition_selftest':\n        print('--- verification.json disposition_selftest stdout (last 1500) ---')\n        print((c.get('stdout') or '')[-1500:])\nd=json.loads(open(files[2],encoding='utf-8').read())\nfor c in d['checks']:\n    if c.get('name')=='disposition_selftest':\n        print('--- verification-final.json disposition_selftest stdout (last 800) ---')\n        print((c.get('stdout') or '')[-800:])\n"
+  ],
+  "cwd": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "root": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_OPTIONAL_LOCKS",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-1y6713pf/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-13/expected.json": "a016079438e96f39b2ef025052e786626bb553068fc0d2de93b96a09e5394336",
+    ".ufo/evidence/round-14/capture-context.py": "7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89",
+    ".ufo/evidence/round-14/dispositions-before.json": "a7a965bbf0f28a1ed2951c1f762f16d1957aab0b95b1384e2b4ab801e0a89725",
+    ".ufo/evidence/round-14/dispositions.json": "77faac587f7c0c984d0d91a4096d3539467d422c15060b09f7c734c6d2809005",
+    ".ufo/evidence/round-14/verification-final.json": "e904e6938a123de55db492f7d04c1e18087c1783128ab9ed96e55d93c3ef52f2",
+    ".ufo/evidence/round-14/verification.json": "1d480a0ddd0cd8a801d0ae38f7d774b6d772c8d0910bf6200c3e666696532939"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

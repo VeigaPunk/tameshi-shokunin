@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import hashlib,subprocess,sys\nR=sys.argv[1]\nfor p in ['tools/mutate-and-run.sh','tools/bash-witness-study.py']:\n    out=subprocess.run(['git','-C',R,'log','--format=%H','--reverse','--',p],capture_output=True,text=True).stdout.split()\n    for c in out:\n        data=subprocess.run(['git','-C',R,'show',c+':'+p],capture_output=True).stdout\n        print(p, c, hashlib.sha256(data).hexdigest())\n",
+    "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin"
+  ],
+  "cwd": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "root": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_OPTIONAL_LOCKS",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-j680su8t/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 48
+}

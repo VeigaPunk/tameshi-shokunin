@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess, hashlib\np = 'corpus/knowledge/fleet-kill-rate-ledger.md'\nlog = subprocess.run(['git', 'log', '--format=%h %ad', '--date=short', '--', p], capture_output=True, text=True).stdout.splitlines()\nprint('commits_touching_ledger', len(log))\nprev = None\nfor line in reversed(log):\n    h, d = line.split(' ', 1)\n    t = subprocess.run(['git', 'show', h + ':' + p], capture_output=True, text=True).stdout\n    a = t.find('## 1. Measured'); b = t.find('## 5. The instrument')\n    blk = t[a:b] if (a >= 0 and b > a) else None\n    dig = hashlib.sha256(blk.encode()).hexdigest()[:16] if blk else 'NO-BLOCK'\n    print(h, d, dig, 'same' if dig == prev else 'CHANGED')\n    prev = dig"
+  ],
+  "cwd": "/tmp/Read23-DQ0i/fleet/tameshi-shokunin",
+  "root": "/tmp/Read23-DQ0i/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-2f8qcdmq/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 30
+}

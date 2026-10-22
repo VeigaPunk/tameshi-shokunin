@@ -225,7 +225,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    sha256 after == before, size and mtime unchanged, `git status --porcelain --
    <path>` empty (mutation-case-kimi-census.md:34-35;
    mutation-case-kagi-census.md:54-56). The sweep's edits all lived in scratch,
-   so this proves the *absence* of writes; it is the record's headline, not an
+   so this shows endpoint identity, not the absence of a transient write (SKILL.md:377-378; corrected in round 27, seat Read03); it is the record's headline, not an
    appendix. Full checklist below (Restore discipline).
 10. **Record the sweep as a note + a corpus row.** Kill-rate table (control +
     one row per defect: class, exact edit + site, exit, suite line, verdict,
@@ -460,7 +460,7 @@ Rules (each backed by the two cases):
 - **Anti-claim verdict:** no wild divergence; (O) same headline, different gap
   shapes. (I) two independent source lanes measured → the two-lane method bar
   holds for these shapes (PROVINCE.md:15-16); this is not independent executor
-  replication. Band interiors remain unprobed (mutation-case-kagi-census.md:58-60);
+  replication. Band interiors were unprobed at round 3 (both at 80 %, SKILL.md:335-339); round 5 measured 60 % inside the band (:684-685, :736-738);
   verb-path U2 and host-stability U5 remain open (:193-206).
 
 ## No-permissiveness audit recipe
@@ -667,7 +667,7 @@ unchanged; kagi `git status` clean for the path; scratch copy `cmp`-identical
 
 ## Third case — cross-author confirmation (round 5, measured)
 
-Rounds 2–3 measured two gates of one lane's craft (kumitate JS, kagi bash); round
+Rounds 2–3 measured two gates from two lanes (kumitate JS, kagi bash; corrected round 27, seat Read07); round
 4 re-cut their 20 mutants into the arm-class matrix, rows A–G
 (`corpus/knowledge/arm-class-matrix.md`; its round-5 errata block carries
 VER-T1's chmod enumeration fix and the JS "unreached" wording scope, `:498-525`).
@@ -723,7 +723,7 @@ readings; `mutation-case-tsukuroi-census.md:200-266`):
 | A verdict paths | D2 survives on the tail | B10 survives on summary fields | B9 survives on roll fields | **holds** — asserted stem protected (all 6 kills read through it), unasserted remainder not; new shape: the one full-roll-line assert sits on the all-HEALTHY fixture where a field swap is invisible |
 | B fail-closed arms | D8 killed (exit-2 cases) | B8 killed (2 cases) | B3 killed (1); **B8 survives** (`:935`, no case) | **amended** — exit-map protection is bound to *executed refusal paths*, not the artifact; three gates, three exit-map philosophies for the same epistemic class |
 | C counts | D1/D6/D7 killed | B2/B7 killed | B5 killed (1) | **holds** — asserted counts die (third exact-count tripwire `timer_drift=1`); cap reachability is per-cap (B7: fixture 4 vs cap 8) |
-| D reported-unasserted | D2, D10 survive | B10 survives | B9 survives + §3.1 field inventory | **holds, 3rd author** — the only class surviving in all three; here it sits in verdict *products*, not just a summary tail |
+| D reported-unasserted | D2, D10 survive | B10 survives | B9 survives + §3.1 field inventory | **holds, 3rd author** — survives in all three (row A also has a survivor in each; corrected round 27, seat Read07); here it sits in verdict *products*, not just a summary tail |
 | E unreached arms | none (D4/D5 reached) | B5 survives | B10 survives; §3.2 static inventory | **promoted toward pattern, still proposed** — 2 bash instances + inventory, zero JS instances; repair shape (add a case per arm) consistent |
 | F coordinated edits | unprobed | unprobed | unprobed (10 single edits) | **unknown in all three** (U1 each) |
 | G behavior predicates | D3/D9 killed | B1/B3/B6/B9 killed | B1/B4/B6 killed | **holds 9/9 across three gates**; width amendment: B6 kills 21/26 — width follows mutant placement (distance to the shared exit channel), not language |
@@ -731,7 +731,7 @@ readings; `mutation-case-tsukuroi-census.md:200-266`):
 **What the third data point changed** (each measured; none smoothed):
 
 1. **The 80 % headline was composition, not method — bind every rate to its
-   composition.** 80 / 80 / 60 at compositions 6-kill+4-hole (this case): a rate
+   composition.** 80 / 80 / 60, with the 6-kill+4-hole split recorded for this case only (the kimi and kagi notes record no split): a rate
    quoted without kill-aimed vs hole-aimed is not comparable across sweeps (E3,
    `mutation-case-tsukuroi-census.md:295-299`). The bands table's 50-80 % row is
    now the measured one, superseding the "band interiors unprobed" (U) — >80 %
@@ -770,7 +770,7 @@ readings; `mutation-case-tsukuroi-census.md:200-266`):
 - **Unknown in all three:** coordinated edits (row F); rates >80 % and <50 %;
   the 50 % crossover; cross-host stability; the structural guards above.
 - **Read the method, not the rate:** across three authors the constant is the
-  survivor taxonomy (unasserted data / unreached arms / unmapped paths), not
+  survivor taxonomy (unasserted data / unreached arms; "unmapped paths" has no source, struck in round 27, seat Read07), not
   the headline percentage.
 
 **What a fourth case would need to show.** A fourth bash sibling at 60-80 %
@@ -827,8 +827,8 @@ pinned revision, one-command hermetic suite, recommendations-only).
 ### The protocol — ordered, fail-closed
 
 All writes in scratch, through the pinned harness `tools/mutate-and-run.sh`
-(the mado run's revision `597e1419…ff6331b`, 1001 lines; every run log carries
-its own `MUTATE_TOOL` pin):
+(the mado run used revision `597e1419…ff6331b`, 1001 lines, commit `b58b26fb`; this path now holds a later revision, so pin by
+`git show b58b26fb:tools/mutate-and-run.sh`; every run log carries its own `MUTATE_TOOL` pin; corrected in round 27, seat Read08):
 
 ```bash
 bash tools/mutate-and-run.sh --target <gate> --defects <spec> \
@@ -861,12 +861,12 @@ predictions and six survivor classes first, and the prediction held 10/10
   row F); a rate is bounded by its defect vocabulary.
 - **Hermetic suites only** — no substrate-drift claim; results are
   per-revision and per-host (census §5 scope, `fleet-suite-census.md:288-291`).
-- **Read-only** — target sha before = after and the sibling tree stays
-  porcelain-clean; the provable negative is "the service's writes never
-  touched the gate" (`mutation-case-mado-verify.md:57-59`).
+- **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:808-809).
+  No-write is by design, "The target is never written" (`tools/mutate-and-run.sh:36-38`); fingerprints prove endpoint identity, not that no transient
+  write occurred (SKILL.md:377-378); sha pair at `mutation-case-mado-verify.md:57-59` (corrected in round 27 after the cold read of seat Read09).
 - **Findings kept, never smoothed.** A survivor is a gap named with its class;
-  a low kill rate is a report, not a service failure. Mado's 40 % is the
-  first point below the 50-80 band, and it reads as composition (4 in-surface
+  a low kill rate is a report, not a service failure (SKILL.md:335). Mado's 40 % is the
+  first point below the 50-80 band (`mutation-case-mado-verify.md:175-176`), and it reads as composition (4 in-surface
   + 6 out-of-surface, measured 4/4 and 0/6), not as a suite regression
   (`mutation-case-mado-verify.md:66-72`).
 - **Recommendations-only** — absorption stays with the owner; no acceptance
@@ -882,19 +882,19 @@ predictions and six survivor classes first, and the prediction held 10/10
 
 ### The report shape — what the opting-in lane receives
 
-- pins: target sha256/size/lines, tool sha256, suite command + control line,
-  spec clause map;
-- the kill-rate table: control + one row per defect (id, clause, exact edit
-  site, exit, verdict, failing-case labels for kills, verbatim from
-  `evidence/<id>.out`);
-- **survivor non-equivalence probes**: each survivor re-run on an input
-  outside the suite's fixtures that exercises the mutated surface, pristine
-  vs mutant outputs recorded (`mutation-case-mado-verify.md:103-115`);
+- pins printed by the tool: tool sha256, target sha256, control line; supplied by the lane
+  in the note (the tool does not print them): target size/lines, suite command, spec clause map;
+- the kill-rate table: control + one row per defect (id, clause, exit, verdict,
+  failing-case labels for kills, verbatim from `evidence/<id>.out`; the edit
+  site comes from the spec, not from the tool output);
+- **survivor probes**: pristine vs mutant outputs per survivor, aimed at an input
+  outside the suite's fixtures; in the mado run D3 and D8 used the suite's own clean
+  fixture (`mutation-case-mado-verify.md:103-115`, `:110`, `:113`, `:274-275`);
 - restore proof `MUTATE_RESTORE: OK` (sha before = after; the tool emits no
   separate tree-clean check — round-18 correction);
 - recommendation + named unknowns, as a corpus note; the note is the only
-  fleet file the run writes (`mutation-case-mado-verify.md:8-9`), and its
-  reproduce block rebuilds the sweep (`:262-293`).
+  fleet file the run writes (`mutation-case-mado-verify.md:8-9`); its reproduce block (`:262-293`) records the commands but does not rebuild
+  the sweep from the lane (spec under `/tmp` gone, 5 of 10 rows elided, live target not the pin; corrected in round 27 after the cold read of seat Read10).
 
 ### The mado run (T6-1, 2026-10-14) — measured
 
@@ -1074,7 +1074,7 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
   `d7edaab4…` (4/10) → `90d50cdd…` (both have moved again since; re-read, never carry).
 - **T2 — the harness sha ≠ the revision a case's table was measured under** →
   re-run the reproduction under the new revision and record both pins. Precedent
-  (corrected round 18): round 16's RerunSweep under runner `0673d2e5…` reproduced case 7;
+  (corrected round 18): round 16's RerunSweep under runner `89722ddb…` (`RerunSweep.md:19-23`; `0673d2e5…` is the later regression/selftest runner; corrected round 27, seat Read15) reproduced case 7;
   mado under `b56c6e57…` was never re-cut (U, `mutation-case-mado-verify.md:17-23`); the harness itself moved four times in
   one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`)
   and no recorded table was re-interpreted for it.
@@ -1501,11 +1501,11 @@ non-secret fixture command before retaining evidence.
 | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
 |---|---|---|---|---|---|---|---|
 | repeated pristine controls | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...` or `--snapshot DIR` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/repeat-control.py --selftest` | `.ufo/evidence/round-12/ControlGate/expected.json`, `mismatch/expected.json`; literal expected IDs/exits in tool selftest | fresh caller-selected DIR; isolated `/tmp/tameshi-r12-*` selftest; snapshot read-only | tameshi |
-| bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage/could-not-evaluate | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `/tmp/tameshi-r12-*`; sibling object store read-only | tameshi |
+| bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage only (argparse) | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `/tmp/bash-witness-selftest-private.*` (selftest only); sibling object store read-only | tameshi |
 
 Registry scope is these round-12 instruments; no new conformance assertion is
-made about the historical runner. Witness declarations are integrity-frozen,
-not blind: their author inherited prior source/spec exposure. The bash study
+made about the historical runner. Witness declarations are integrity-frozen (declaration, mapping, target, spec, summary, manifest),
+not blind: their author inherited prior source/spec exposure. The declaration's runner pin `75ed934d…` is stale at round 27 (`check` exits 1 DRIFT; `run`/`rerun` refuse, exit 2; `count` never reads the runner; seat Read25).
 deepens one recorded case, never a seventh independently measured gate.
 
 Calibration correction to the historical promotion paragraph above:
@@ -1824,7 +1824,7 @@ new mutation case and no promotion credit.
 |---|---|---|
 | A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
 | A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
-| The waiver rev is a tree id, dangling, not an ancestor, shallow, or reached through replace refs, grafts or an inherited `GIT_DIR` | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance |
+| The waiver rev is a tree id, dangling, not an ancestor, or shallow | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance. Replace refs, grafts and an inherited `GIT_DIR` are neutralized, not refused: the tool sets `GIT_NO_REPLACE_OBJECTS=1`, `GIT_GRAFT_FILE=/dev/null` and scrubs inherited `GIT_*` (`tools/evidence-disposition.py:368-390`; selftests `v2-historical-replace-ref`, `v2-gitdir-env` expect exit 0; grafts by code reading only). Corrected in round 27, seat Read32 |
 | A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
 | A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
 | A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git (round 18 adds `bash-witness-study.py`; historical `.ufo/evidence/round-16/measure.py` still does not — run it only through `registry-check`, which scrubs) | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
@@ -1912,7 +1912,7 @@ hermetic `env -i` form of case 7 (`.ufo/evidence/round-18/sources-check/suite.tx
 pristine controls were byte-identical (`.ufo/evidence/round-18/sources-check/control/`).
 Entry: `corpus/knowledge/mutation-case-kumitate-sources-check.md`. Replay:
 `bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-sources-check: PASS`,
-`cases=8 passed=8`. Wave 2 probed all five survivors off-suite: four are non-equivalent, `S_KIND`
+`cases=8 passed=8` at the round-18 runner (`cases=9 passed=9` from round 26 on, ninth leg js-cite-check; seat Read34). Wave 2 probed all five survivors off-suite: four are non-equivalent, `S_KIND`
 differs only in `--help` output (entry errata ER8-2).
 
 | Survivor class in this case | What the suite does not pin | Fix belongs to |
@@ -2074,7 +2074,7 @@ neither the clone nor this gate is a sandbox or producer authentication.
 The replay gate covers all 43 stored receipts, including both declared-live
 rows. `revision_pinned=41` means not declared live, not self-contained:
 `mutate-and-run-regression` and `round21-measure-selftest` additionally read
-live sibling object stores. The 47-row current registry battery and the
+live sibling object stores. The 47-row registry battery of round 24 (49 active rows from round 26 on; seat Read37) and the
 43-row frozen replay are different populations. `registry-replay-selftest`
 is the fourth new active registry row and expects 10/10; its tests exercise
 projection and planning, not `--run`. Public command-binding fixtures include
@@ -2105,7 +2105,7 @@ on live trees, so the leg stays hermetic-only.
 | strict threshold (`S_STRICT`) | any `--strict` run (one warning must drift) | hole; kumitate |
 | usage exit (`S_USAGE`) | the exit code of an unknown flag | hole; kumitate |
 | compare direction (`S_PIN_INCLUDES`) | a pin that is an interior slice of the digest | hole; kumitate |
-| redundant guard (`S_EMPTY_GUARD`) | nothing: equivalent code | keep it a survivor in the table and the score (Stryker cannot mark equivalents, S089); name it equivalent in the entry; do not count it as a hole |
+| redundant guard (`S_EMPTY_GUARD`) | nothing: equivalent code | keep it a survivor in the table and the score (Stryker cannot find or mark equivalents automatically, S089; seat Read38); name it equivalent in the entry; do not count it as a hole |
 
 Error pattern: an equality assert between two fixtures (`K_FENCE_TILDE`'s
 named case) cannot see a one-sided regression that makes both sides agree;

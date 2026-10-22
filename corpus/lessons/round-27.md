@@ -56,7 +56,11 @@ other eight legs' hole calls are not anchored.
    Class: calibration record. Evidence:
    `lessons/round-26-verifier-spotcheck.md:112-135` (62/62, restraint 8 →
    25/64, restraint 6) against SCORECARD's round-26 C2 row "numeric 8 → 8".
-   Captured-by: none in round 26. Fix: QUALITY 53 and the frozen counter
+   Captured-by: QUALITY 40, already in force at `d4140796`
+   (`corpus/QUALITY.md:364`), which covers asserting unchanged calibration
+   without naming the lower score; it was not applied, although the lane had
+   restraint 6 in a committed seat report one minute before the SCORECARD row
+   landed (wave seat ScribeMistakes). Fix: QUALITY 53 and the frozen counter
    `.ufo/evidence/round-27/c1-measure.py`, shown able to fail: it exits 1 with
    `box3_mismatch=1` at base `91edf9cd` (`c1-before.stdout`); the SCORECARD
    row is corrected by an appended entry.

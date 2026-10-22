@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport importlib.util, os, time\nspec = importlib.util.spec_from_file_location('rc', 'tools/registry-check.py')\nm = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)\nprint('proc_numeric_entries', sum(1 for e in os.listdir('/proc') if e.isdecimal()))\nfor k in range(3):\n    t = time.perf_counter(); snap = m._process_snapshot(); d = time.perf_counter() - t\n    print('snapshot_%d entries=%d seconds=%.4f' % (k, len(snap), d))\nt = time.perf_counter()\nfor _ in range(1000):\n    with open('/proc/self/stat', 'rb') as fh:\n        fh.read()\nd = time.perf_counter() - t\nprint('proc_self_stat_open_read_x1000 seconds=%.4f per_open_us=%.1f' % (d, d * 1000.0))\nprint('loadavg', open('/proc/loadavg').read().split()[:3])\n"
+  ],
+  "cwd": "/tmp/Read35-eYtE/fleet/tameshi-shokunin",
+  "root": "/tmp/Read35-eYtE/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-lqithg3f/pycache"
+    }
+  },
+  "inputs": {
+    "tools/registry-check.py": "cba16646902e89548060fd1b4b4fcb9e0ac8de1cb3fb02a347243912292944ad"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

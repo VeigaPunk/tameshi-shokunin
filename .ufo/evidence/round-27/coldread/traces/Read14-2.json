@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import sys,hashlib,subprocess,os; tip=sys.argv[1]; u,d=sys.argv[2],sys.argv[3]; su=hashlib.sha256(open(u,'rb').read()).hexdigest(); sd=hashlib.sha256(open(d,'rb').read()).hexdigest(); print('untouched copy sha',su,'== tip:',su==tip,'-> reading current' if su==tip else '-> reading NOT-current'); print('appended-line copy sha',sd,'!= tip:',sd!=tip,'-> reading drift' if sd!=tip else '-> reading NOT-drift'); p=subprocess.run(['git','-C','../kagi-shokunin','status','--porcelain','--','corpus/surface-census.sh'],capture_output=True,text=True,env={**os.environ,'GIT_OPTIONAL_LOCKS':'0'}); print('substrate porcelain lines after:',len(p.stdout.splitlines()),repr(p.stdout)); sys.exit(0 if (su==tip and sd!=tip and len(p.stdout.splitlines())==0) else 1)",
+    "1e697b0179547a869b73fcf966ce05dd60b07adbe7094a95d3d0a2d4102de11d",
+    "/tmp/Read14-scratch/gate-untouched.sh",
+    "/tmp/Read14-scratch/gate-drift-demo.sh"
+  ],
+  "cwd": "/tmp/Read14-r4qw/fleet/tameshi-shokunin",
+  "root": "/tmp/Read14-r4qw/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-9jnmprs9/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 3
+}

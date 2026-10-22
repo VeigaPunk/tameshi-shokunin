@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import hashlib,subprocess,sys\nR=sys.argv[1]\ndef git(*a):\n    return subprocess.run(['git','-C',R]+list(a),capture_output=True,text=True).stdout\ndef sha_at(c,p):\n    data=subprocess.run(['git','-C',R,'show',c+':'+p],capture_output=True).stdout\n    return hashlib.sha256(data).hexdigest()[:8]\nfor p in ['tools/mutate-and-run.sh','tools/bash-witness-study.py']:\n    print('== history of', p)\n    for c in git('log','--format=%H','--reverse','--',p).split():\n        print(c[:8], sha_at(c,p), git('log','-1','--format=%ad %s','--date=short',c).strip()[:150])\nprint('HEAD', p, sha_at('HEAD','tools/bash-witness-study.py'), sha_at('HEAD','tools/mutate-and-run.sh'))\nprint('28aeef4 is ancestor of HEAD:', subprocess.run(['git','-C',R,'merge-base','--is-ancestor','28aeef4','HEAD']).returncode==0)\n",
+    "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin"
+  ],
+  "cwd": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "root": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_OPTIONAL_LOCKS",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-345c7aq_/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 99
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import hashlib,subprocess,sys\nR=sys.argv[1]; W=sys.argv[2]; paths=sys.argv[3:]\nfull=subprocess.run(['git','-C',R,'rev-parse','--verify','28aeef4^{commit}'],capture_output=True,text=True).stdout.strip()\nprint('commit', full)\nfor p in paths:\n    data=subprocess.run(['git','-C',R,'show',full+':'+p],capture_output=True).stdout\n    arch=open(W+'/arch28/'+p,'rb').read()\n    g=hashlib.sha256(data).hexdigest(); a=hashlib.sha256(arch).hexdigest()\n    print(p, 'git_show_sha256', g, 'archive_sha256', a, 'equal' if g==a else 'DIFFERENT', len(data))\n",
+    "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+    "/tmp/TameshiR27-Read28-L6CK",
+    "tools/evidence-disposition.py",
+    ".ufo/evidence/round-14/dispositions-before.json",
+    ".ufo/evidence/round-14/dispositions.json",
+    ".ufo/evidence/round-13/expected.json",
+    ".ufo/evidence/round-13/verification.json",
+    ".ufo/evidence/round-13/producer-oracle-repair.json",
+    ".ufo/evidence/round-12/BashWitness/declaration.json",
+    ".ufo/evidence/round-12/BashWitness/declared.tsv",
+    ".ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/summary.json",
+    ".ufo/evidence/round-12/BashWitness/summary.json",
+    ".ufo/evidence/round-13/pin-manifest.json",
+    ".ufo/evidence/round-13/producer-before.py",
+    ".ufo/evidence/round-13/producer-oracle.py",
+    ".ufo/evidence/round-13/witness-metadata-old-null.json",
+    ".ufo/evidence/round-13/witness-metadata.json",
+    "tools/bash-witness-study.py",
+    "tools/mutate-and-run.sh",
+    "tools/pin-disposition.py",
+    "tools/witness-metadata.py"
+  ],
+  "cwd": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "root": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-mqu_6wmy/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 59
+}

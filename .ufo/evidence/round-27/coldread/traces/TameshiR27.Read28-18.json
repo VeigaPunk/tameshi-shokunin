@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json\na=json.load(open('.ufo/evidence/round-14/dispositions-before.json',encoding='utf-8'))\nb=json.load(open('.ufo/evidence/round-14/dispositions.json',encoding='utf-8'))\nprint('top-level keys equal:', sorted(a)==sorted(b))\nfor k in sorted(set(a)|set(b)):\n    if k=='rows':\n        continue\n    print(k, 'equal' if a.get(k)==b.get(k) else 'DIFFERENT')\nprint('row name order equal:', [r['name'] for r in a['rows']]==[r['name'] for r in b['rows']], len(a['rows']), len(b['rows']))\nra={r['name']:r for r in a['rows']}; rb={r['name']:r for r in b['rows']}\nfor n in ra:\n    if ra[n]!=rb.get(n):\n        print('row differs:', n, 'before', ra[n].get('state'), 'after', rb[n].get('state'), 'after keys', sorted(rb[n].keys()))\nprint('rows identical other than differing ones:', sum(1 for n in ra if ra[n]==rb.get(n)))\n"
+  ],
+  "cwd": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "root": "/tmp/TameshiR27-Read28-L6CK/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-ieee0r8y/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-14/dispositions-before.json": "a7a965bbf0f28a1ed2951c1f762f16d1957aab0b95b1384e2b4ab801e0a89725",
+    ".ufo/evidence/round-14/dispositions.json": "77faac587f7c0c984d0d91a4096d3539467d422c15060b09f7c734c6d2809005"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

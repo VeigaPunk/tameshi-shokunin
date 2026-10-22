@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "\nimport importlib.util\nspec = importlib.util.spec_from_file_location('dp', '.ufo/evidence/round-18/defect-probes.py')\nm = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(m)\nprint('PROBE_IDS', len(m.PROBE_IDS), m.PROBE_IDS[0], m.PROBE_IDS[-1])\nfor pid in sorted(m.GUARD_SPECS):\n    s = m.GUARD_SPECS[pid]\n    target = s['path'] or 'tools/trace-inputs.py'\n    text = open(target, 'rb').read()\n    print(pid, target, 'anchor_count=%d' % text.count(s['old']), 'line_spec=%s' % s['line'])\n"
+  ],
+  "cwd": "/tmp/Read35-eYtE/fleet/tameshi-shokunin",
+  "root": "/tmp/Read35-eYtE/fleet/tameshi-shokunin",
+  "rev": "2227d8338c02aa9a5fd7d95c1a41b76865ad7647",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-8ldnqd18/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-18/defect-probes.py": "99297d9645151dee948291638386f3e9189c7bab590bebda23de6e51dadebeaa",
+    "tools/evidence-disposition.py": "39ee5c5effd9bbdaafda644aada0cdb008ddee1dbfee4ac6bea93fc5a1fe51c8",
+    "tools/registry-check.py": "cba16646902e89548060fd1b4b4fcb9e0ac8de1cb3fb02a347243912292944ad",
+    "tools/trace-inputs.py": "f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}
