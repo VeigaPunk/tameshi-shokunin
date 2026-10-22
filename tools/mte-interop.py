@@ -15,10 +15,21 @@ kept regression workdir given by --workdir), then for every leg it finds:
      python `jsonschema` package);
   3. computes the official metrics with the vendored mutation-testing-metrics
      3.9.0 library (node, `calculateMetrics`), not with tameshi's own code;
-  4. compares the official mutationScore with tameshi's measured kill rate
-     killed/(killed+survived)*100 and the official killed count and valid
-     count with the leg's recorded ledger table (REGRESSION_TABLE line).
-A leg conforms only when all three comparisons hold and the schema accepts it.
+  4. judges four checks per leg:
+     schema      the official schema accepts the report;
+     ledger      official killed = recorded killed = measured killed, official
+                 survived = measured survived, official invalid = measured
+                 inconclusive, official total = defect count, runner flips 0
+                 (the leg's REGRESSION_TABLE line, not the emitted report);
+     per_mutant  every emitted status equals the mapped verdict of the same
+                 defect id in the runner's committed TABLE_* recorded table
+                 (catches balanced flips that keep the counts equal);
+     score       official mutationScore = killed/(killed+survived)*100. This
+                 one is a sanity check only: with the 1:1 mapping it holds by
+                 construction (round-25 wave seat C2Tautology).
+A leg conforms only when all four hold. Each leg line also prints the runner's
+integer kill-rate next to the official score rounded half up (information only:
+the ledger's integer percentages are rounded, e.g. 7/15 = 46.67 printed as 47).
 
 Lines: MTE_LEG <leg>: CONFORMS|FAILS (...) per leg, then
 MTE_INTEROP: PASS|FAIL legs_conforming=N/M, or MTE_INTEROP: SETUP (<reason>).
@@ -58,7 +69,13 @@ SCHEMA_MEMBER = 'package/src/mutation-testing-report-schema.json'
 STATUS = {'KILLED': 'Killed', 'SURVIVED': 'Survived', 'INCONCLUSIVE': 'RuntimeError'}
 LANGUAGE = {'.mjs': 'javascript', '.js': 'javascript', '.sh': 'shell', '.py': 'python'}
 TABLE = re.compile(r'^REGRESSION_TABLE (\S+): match=\d+/(\d+) recorded-killed=(\d+) measured-killed=(\d+) '
-                   r'survived=(\d+) inconclusive=(\d+)', re.M)
+                   r'survived=(\d+) inconclusive=(\d+) flips=(\d+)', re.M)
+# Recorded per-defect verdict tables embedded in the runner (committed bytes, not this run).
+LEG_TABLE = {'js-kimi-census': 'TABLE_JS', 'bash-surface-census': 'TABLE_BASH',
+             'bash-tsukuroi-census': 'TABLE_TSUKUROI', 'bash-mado-verify': 'TABLE_MADO',
+             'bash-checklist-run': 'TABLE_CHECKLIST', 'js-claims-check': 'TABLE_CLAIMS',
+             'js-round-gate': 'TABLE_ROUNDGATE', 'js-sources-check': 'TABLE_SOURCESCHECK'}
+KILL_RATE = re.compile(r'^MUTATE: DONE \(.* kill-rate=(\d+)%\)', re.M)
 NODE_RUNNER = r"""
 import { readFileSync } from 'node:fs';
 import { calculateMetrics } from 'mutation-testing-metrics';
@@ -200,23 +217,45 @@ def official_metrics(reports):
         return json.loads(run.stdout)
 
 
-def judge(leg, report, errors, official, recorded):
-    """recorded = (defects, recorded_killed) from the ledger table, or None."""
+def recorded_verdicts(runner_text):
+    """{leg: {defect id: KILLED|SURVIVED}} from the runner's embedded TABLE_* lines."""
+    tables = dict(re.findall(r"^(TABLE_\w+)='([^']*)'", runner_text, re.M))
+    out = {}
+    for leg, var in LEG_TABLE.items():
+        if var in tables:
+            out[leg] = dict(pair.split(':', 1) for pair in tables[var].split(','))
+    return out
+
+
+def judge(leg, report, errors, official, recorded, verdicts):
+    """recorded: the leg's REGRESSION_TABLE counts (defects, recorded_killed, measured_killed,
+    survived, inconclusive, flips) or None; verdicts: the recorded per-defect table or None.
+    Returns (ok, detail, failed check names)."""
     killed, survived, inconclusive = tameshi_counts(report)
     tameshi_score = 100.0 * killed / (killed + survived) if killed + survived else None
+    statuses = {m['id']: m['status'] for f in report['files'].values() for m in f['mutants']}
     checks = {
         'schema': not errors,
+        # sanity only: with a 1:1 Killed/Survived mapping this equality holds by construction
         'score': (tameshi_score is not None and official['mutationScore'] is not None
                   and abs(official['mutationScore'] - tameshi_score) < 1e-9),
-        'ledger': (recorded is not None and official['killed'] == recorded[1]
-                   and official['totalValid'] == recorded[0]),
+        # independent of the emitter: the runner's own measured table line for this leg
+        'ledger': (recorded is not None and recorded['flips'] == 0
+                   and official['killed'] == recorded['recorded_killed'] == recorded['measured_killed']
+                   and official['survived'] == recorded['survived']
+                   and official['totalInvalid'] == recorded['inconclusive']
+                   and official['totalMutants'] == recorded['defects']),
+        # independent of this run: the committed per-defect recorded verdict table
+        'per_mutant': (verdicts is not None and statuses == {i: STATUS.get(v) for i, v in verdicts.items()}),
     }
-    detail = ('schema=%s official_score=%s tameshi_score=%s official_killed=%s recorded_killed=%s '
-              'official_valid=%s recorded_defects=%s' % (
+    failed = sorted(k for k, v in checks.items() if not v)
+    detail = ('schema=%s official_score=%s official_killed=%s official_survived=%s official_invalid=%s '
+              'recorded=%s per_mutant=%s failed=%s' % (
                   'ok' if not errors else 'invalid:' + '|'.join(errors[:2]),
-                  official['mutationScore'], tameshi_score, official['killed'],
-                  recorded and recorded[1], official['totalValid'], recorded and recorded[0]))
-    return all(checks.values()), detail
+                  official['mutationScore'], official['killed'], official['survived'],
+                  official['totalInvalid'], recorded and '%(recorded_killed)s/%(defects)s' % recorded,
+                  'ok' if checks['per_mutant'] else 'mismatch', ','.join(failed) or 'none'))
+    return not failed, detail, failed
 
 
 def run_regression(workdir, fleet_root):
@@ -259,7 +298,10 @@ def check(args):
         else:
             workdir = Path(tempfile.mkdtemp(prefix='tameshi-mte-regression-'))
             stdout = run_regression(workdir, args.fleet_root or ROOT.parent)
-        tables = {m.group(1): (int(m.group(2)), int(m.group(3))) for m in TABLE.finditer(stdout)}
+        tables = {m.group(1): dict(zip(('defects', 'recorded_killed', 'measured_killed', 'survived',
+                                        'inconclusive', 'flips'), map(int, m.groups()[1:])))
+                  for m in TABLE.finditer(stdout)}
+        verdicts = recorded_verdicts((ROOT / 'tools/mutate-and-run.sh').read_text())
         legs = sorted(p.parent.name for p in workdir.glob('*/results.tsv'))
         if not legs:
             raise Setup('no leg results under %s' % workdir)
@@ -270,15 +312,21 @@ def check(args):
         return 2
     conforming = 0
     for leg in legs:
-        ok, detail = judge(leg, reports[leg], schema_errors(validator, reports[leg]),
-                           official[leg], tables.get(leg))
+        ok, detail, _ = judge(leg, reports[leg], schema_errors(validator, reports[leg]),
+                              official[leg], tables.get(leg), verdicts.get(leg))
         conforming += ok
-        print('MTE_LEG %s: %s (%s)' % (leg, 'CONFORMS' if ok else 'FAILS', detail))
+        sweep_log = workdir / leg / 'sweep.log'
+        rate = KILL_RATE.search(sweep_log.read_text()) if sweep_log.is_file() else None
+        k, s = official[leg]['killed'], official[leg]['survived']
+        rounding = ('runner_pct=%s official_rounded_half_up=%d' % (rate.group(1), (200 * k + k + s) // (2 * (k + s)))
+                    if rate and k + s else 'runner_pct=unavailable')
+        print('MTE_LEG %s: %s (%s %s)' % (leg, 'CONFORMS' if ok else 'FAILS', detail, rounding))
     if args.emit:
         out = Path(args.emit)
         out.mkdir(parents=True, exist_ok=True)
         for leg in legs:
             (out / ('%s.mte.json' % leg)).write_text(json.dumps(reports[leg], indent=1, sort_keys=True) + '\n')
+            shutil.copyfile(workdir / leg / 'spec.copy', out / ('%s.spec' % leg))
         (out / 'official-metrics.json').write_text(json.dumps(official, indent=1, sort_keys=True) + '\n')
     print('MTE_INTEROP: %s legs_conforming=%d/%d' % ('PASS' if conforming == len(legs) else 'FAIL',
                                                     conforming, len(legs)))
@@ -305,48 +353,79 @@ def selftest():
                  'files': {'t.py': {'language': 'python', 'source': source, 'mutants': mutants}}}
         value.update(extra)
         return value
+    def rec(defects, killed, survived, inconclusive=0, flips=0):
+        return {'defects': defects, 'recorded_killed': killed, 'measured_killed': killed,
+                'survived': survived, 'inconclusive': inconclusive, 'flips': flips}
+    V3 = {'D1': 'KILLED', 'D2': 'KILLED', 'D3': 'SURVIVED'}
     good = report([mutant('D1', 'Killed'), mutant('D2', 'Killed'), mutant('D3', 'Survived')])
     flipped = json.loads(json.dumps(good))
     flipped['files']['t.py']['mutants'][0]['status'] = 'Survived'          # tameshi says KILLED
+    balanced = report([mutant('D1', 'Killed'), mutant('D2', 'Survived', verdict='SURVIVED'),
+                       mutant('D3', 'Killed', verdict='KILLED')])             # counts equal, ids swapped
+    nocoverage = report([mutant('D1', 'Killed'), mutant('D2', 'Killed'),
+                         mutant('D3', 'NoCoverage', verdict='SURVIVED')])
     inconclusive = report([mutant('D1', 'Killed'), mutant('D2', 'RuntimeError', verdict='INCONCLUSIVE'),
                            mutant('D3', 'Survived')])
     timeout_as_kill = report([mutant('D1', 'Killed'), mutant('D2', 'Timeout', verdict='SURVIVED'),
                               mutant('D3', 'Survived')])
     no_thresholds = json.loads(json.dumps(good))
     del no_thresholds['thresholds']
+    # Emitter-level cases: a synthetic leg directory goes through the real leg_report().
+    emit_tmp = Path(tempfile.mkdtemp(prefix='tameshi-mte-selftest-'))
+    try:
+        (emit_tmp / 'pristine.target.t.py').write_text(source)
+        (emit_tmp / 'spec.copy').write_text('@defect D1 | a\n@old a = 1\n@new a = 2\n\n'
+                                            '@defect D2 | b\n@old if a == 1:\\n    ok()\n@new pass\n\n'
+                                            '@defect D3 | c\n@old ok()\n@new no()\n')
+        (emit_tmp / 'results.tsv').write_text('id\tverdict\texit\tduration-ms\tmutant-sha256\tdesc\n'
+                                              'D1\tKILLED\t1\t1\tx\ta\nD2\tINCONCLUSIVE\t124\t1\tx\tb\n'
+                                              'D3\tSURVIVED\t0\t1\tx\tc\n')
+        emitted = leg_report(emit_tmp)
+    except (Setup, OSError, ValueError, KeyError) as exc:
+        print('MTE_SELFTEST: SETUP (emitter: %s)' % exc)
+        return 2
+    finally:
+        shutil.rmtree(emit_tmp, ignore_errors=True)
+    locations = {m['id']: (m['location']['start']['line'], m['location']['start']['column'],
+                           m['location']['end']['line'], m['location']['end']['column'])
+                 for m in emitted['files']['t.py']['mutants']}
+    V_EMIT = {'D1': 'KILLED', 'D2': 'INCONCLUSIVE', 'D3': 'SURVIVED'}
     cases = [
-        ('conforming', good, (3, 2), True, None),
-        ('tameshi-vocabulary-status', report([mutant('D1', 'KILLED'), mutant('D2', 'Killed'), mutant('D3', 'Survived')]), (3, 2), False, 'schema'),
-        ('line-zero-location', report([mutant('D1', 'Killed', line=0), mutant('D2', 'Killed'), mutant('D3', 'Survived')]), (3, 2), False, 'schema'),
-        ('missing-thresholds', no_thresholds, (3, 2), False, 'schema'),
-        ('bad-schema-version', report([mutant('D1', 'Killed'), mutant('D2', 'Killed'), mutant('D3', 'Survived')], schemaVersion='3'), (3, 2), False, 'schema'),
-        ('status-flipped-vs-verdict', flipped, (3, 2), False, 'score'),
-        ('inconclusive-leaves-denominator', inconclusive, (3, 1), False, 'ledger'),
-        ('timeout-is-not-a-tameshi-kill', timeout_as_kill, (3, 1), False, 'score'),
-        ('ledger-count-mismatch', good, (3, 3), False, 'ledger'),
-        ('no-ledger-row', good, None, False, 'ledger'),
+        ('conforming', good, rec(3, 2, 1), V3, True, None),
+        ('tameshi-vocabulary-status', report([mutant('D1', 'KILLED'), mutant('D2', 'Killed'), mutant('D3', 'Survived')]), rec(3, 2, 1), V3, False, 'schema'),
+        ('line-zero-location', report([mutant('D1', 'Killed', line=0), mutant('D2', 'Killed'), mutant('D3', 'Survived')]), rec(3, 2, 1), V3, False, 'schema'),
+        ('missing-thresholds', no_thresholds, rec(3, 2, 1), V3, False, 'schema'),
+        ('bad-schema-version', report([mutant('D1', 'Killed'), mutant('D2', 'Killed'), mutant('D3', 'Survived')], schemaVersion='3'), rec(3, 2, 1), V3, False, 'schema'),
+        ('status-flipped-vs-verdict', flipped, rec(3, 2, 1), V3, False, 'per_mutant'),
+        ('balanced-flip-same-counts', balanced, rec(3, 2, 1), V3, False, 'per_mutant'),
+        ('survived-as-nocoverage', nocoverage, rec(3, 2, 1), V3, False, 'ledger'),
+        ('inconclusive-is-not-recorded-survived', inconclusive, rec(3, 1, 1, inconclusive=1), V3, False, 'per_mutant'),
+        ('timeout-is-not-a-tameshi-kill', timeout_as_kill, rec(3, 1, 2), {'D1': 'KILLED', 'D2': 'SURVIVED', 'D3': 'SURVIVED'}, False, 'score'),
+        ('ledger-count-mismatch', good, rec(3, 3, 0), V3, False, 'ledger'),
+        ('runner-flips-nonzero', good, rec(3, 2, 1, flips=1), V3, False, 'ledger'),
+        ('no-ledger-row', good, None, V3, False, 'ledger'),
+        ('no-recorded-table', good, rec(3, 2, 1), None, False, 'per_mutant'),
+        ('emitter-inconclusive-to-runtimeerror', emitted, rec(3, 1, 1, inconclusive=1), V_EMIT, True, None),
     ]
     try:
-        official = official_metrics({name: rep for name, rep, _, _, _ in cases})
+        official = official_metrics({c[0]: c[1] for c in cases})
     except Setup as exc:
         print('MTE_SELFTEST: SETUP (%s)' % exc)
         return 2
     passed = 0
-    for name, rep, recorded, want, reason in cases:
-        errors = schema_errors(validator, rep)
-        ok, detail = judge(name, rep, errors, official[name], recorded)
-        killed, survived, _ = tameshi_counts(rep)
-        t_score = 100.0 * killed / (killed + survived) if killed + survived else None
-        reasons = {'schema': bool(errors),
-                   'score': not (official[name]['mutationScore'] is not None and t_score is not None
-                                 and abs(official[name]['mutationScore'] - t_score) < 1e-9),
-                   'ledger': recorded is None or official[name]['killed'] != recorded[1]
-                             or official[name]['totalValid'] != recorded[0]}
-        good_case = ok == want and (want or reasons[reason])
+    for name, rep, recorded, verdicts, want, reason in cases:
+        ok, detail, failed = judge(name, rep, schema_errors(validator, rep), official[name], recorded, verdicts)
+        good_case = ok == want and (want or reason in failed)
         passed += good_case
         print('CASE %s %s (%s)' % (name, 'PASS' if good_case else 'FAIL', detail))
-    print('MTE_SELFTEST: %d/%d pass' % (passed, len(cases)))
-    return 0 if passed == len(cases) else 1
+    # 1-based, end-exclusive positions computed from the unique @old strings (schema Location)
+    want_loc = {'D1': (1, 1, 1, 6), 'D2': (2, 1, 3, 9), 'D3': (3, 5, 3, 9)}
+    loc_ok = locations == want_loc
+    passed += loc_ok
+    print('CASE emitter-locations %s (%s)' % ('PASS' if loc_ok else 'FAIL', locations))
+    total = len(cases) + 1
+    print('MTE_SELFTEST: %d/%d pass' % (passed, total))
+    return 0 if passed == total else 1
 
 
 class Parser(argparse.ArgumentParser):

@@ -4,12 +4,213 @@
   "revision": "1111111111111111111111111111111111111111",
   "cwd": "/fixture/repo",
   "cases": [
-    {"name": "mt-missing-first", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "BETA GAMMA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
-    {"name": "mt-missing-middle", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "ALPHA GAMMA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
-    {"name": "mt-missing-last", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "ALPHA BETA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
-    {"name": "mt-clean-reordered", "requirements": [["a-gate", ["ALPHA", "BETA", "GAMMA"], "GAMMA BETA ALPHA\n"]], "expected_exit": 0, "finding_ids": []},
-    {"name": "mt-offending-sorted-first", "requirements": [["a-bad", ["ALPHA", "BETA"], "ALPHA\n"], ["b-good", ["ALPHA", "BETA"], "ALPHA BETA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
-    {"name": "mt-offending-sorted-second", "requirements": [["a-good", ["ALPHA", "BETA"], "ALPHA BETA\n"], ["b-bad", ["ALPHA", "BETA"], "BETA\n"]], "expected_exit": 1, "finding_ids": ["STDOUT_MISMATCH"]},
-    {"name": "mt-clean-two-requirements", "requirements": [["a-good", ["ALPHA", "BETA"], "BETA ALPHA\n"], ["b-good", ["GAMMA", "DELTA"], "DELTA GAMMA\n"]], "expected_exit": 0, "finding_ids": []}
-  ]
+    {
+      "name": "mt-missing-first",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHA",
+            "BETA",
+            "GAMMA"
+          ],
+          "BETA GAMMA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-missing-middle",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHA",
+            "BETA",
+            "GAMMA"
+          ],
+          "ALPHA GAMMA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-missing-last",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHA",
+            "BETA",
+            "GAMMA"
+          ],
+          "ALPHA BETA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-clean-reordered",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHA",
+            "BETA",
+            "GAMMA"
+          ],
+          "GAMMA BETA ALPHA\n"
+        ]
+      ],
+      "expected_exit": 0,
+      "finding_ids": []
+    },
+    {
+      "name": "mt-offending-sorted-first",
+      "requirements": [
+        [
+          "a-bad",
+          [
+            "ALPHA",
+            "BETA"
+          ],
+          "ALPHA\n"
+        ],
+        [
+          "b-good",
+          [
+            "ALPHA",
+            "BETA"
+          ],
+          "ALPHA BETA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-offending-sorted-second",
+      "requirements": [
+        [
+          "a-good",
+          [
+            "ALPHA",
+            "BETA"
+          ],
+          "ALPHA BETA\n"
+        ],
+        [
+          "b-bad",
+          [
+            "ALPHA",
+            "BETA"
+          ],
+          "BETA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-clean-two-requirements",
+      "requirements": [
+        [
+          "a-good",
+          [
+            "ALPHA",
+            "BETA"
+          ],
+          "BETA ALPHA\n"
+        ],
+        [
+          "b-good",
+          [
+            "GAMMA",
+            "DELTA"
+          ],
+          "DELTA GAMMA\n"
+        ]
+      ],
+      "expected_exit": 0,
+      "finding_ids": []
+    },
+    {
+      "name": "mt-case-folded-token",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "alpha"
+          ],
+          "ALPHA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-space-insensitive-token",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHABETA"
+          ],
+          "ALPHA BETA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-punctuation-insensitive-token",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHA,"
+          ],
+          "ALPHA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    },
+    {
+      "name": "mt-newline-insensitive-token",
+      "requirements": [
+        [
+          "a-gate",
+          [
+            "ALPHA BETA"
+          ],
+          "ALPHA\nBETA\n"
+        ]
+      ],
+      "expected_exit": 1,
+      "finding_ids": [
+        "STDOUT_MISMATCH"
+      ]
+    }
+  ],
+  "amendment": "Cases 8-11 added by contract amendment 2 (before any after measurement) from wave seat MtWeakerGate: four strictly weaker token matchers (case-folded, space-stripped, punctuation-stripped, whitespace-collapsed) survived cases 1-7."
 }

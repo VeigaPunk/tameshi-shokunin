@@ -24,3 +24,20 @@
 @defect M6 | last-wins: findings reset for every requirement row
 @old         receipt, required = receipts[name], requirements[name]
 @new         findings = set(); receipt, required = receipts[name], requirements[name]
+
+# M7-M10 added by contract amendment 2 (wave seat MtWeakerGate survivors W3, W10, W11, W7).
+@defect M7 | case-folded token match
+@old if any(token not in receipt['stdout'] for token in required['expect'].get('stdout_contains', [])):
+@new if any(token.lower() not in receipt['stdout'].lower() for token in required['expect'].get('stdout_contains', [])):
+
+@defect M8 | space-stripped token match
+@old if any(token not in receipt['stdout'] for token in required['expect'].get('stdout_contains', [])):
+@new if any(token.replace(' ', '') not in receipt['stdout'].replace(' ', '') for token in required['expect'].get('stdout_contains', [])):
+
+@defect M9 | punctuation-stripped token match
+@old if any(token not in receipt['stdout'] for token in required['expect'].get('stdout_contains', [])):
+@new if any(token.strip(',.:;-_') not in receipt['stdout'] for token in required['expect'].get('stdout_contains', [])):
+
+@defect M10 | whitespace-collapsed stdout match
+@old if any(token not in receipt['stdout'] for token in required['expect'].get('stdout_contains', [])):
+@new if any(token not in ' '.join(receipt['stdout'].split()) for token in required['expect'].get('stdout_contains', [])):

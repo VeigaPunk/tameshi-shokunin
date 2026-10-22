@@ -1,0 +1,35 @@
+{
+ "amends": ".ufo/evidence/round-25/contract.json",
+ "before_any_after_measurement": true,
+ "c1_input_sha256": {
+  ".ufo/evidence/round-23/extra-cases.json": "87bffdc829ad705c9fad6c4c0495e50e1bc5c6d2af3fec04da2294fda43c1c00",
+  ".ufo/evidence/round-24/extra-cases.json": "6ad7842fa01fc205bb92f0989f87fcaa88a3b79078a9c4302647a321f359cb35",
+  ".ufo/evidence/round-25/c1-measure.py": "b18460c7ca559c18c354ce29ea4cfe60d78be3ad7c7e41abd321ba74eb1ee8b2",
+  ".ufo/evidence/round-25/c1-suite.py": "ae33a04bd0a3646ec6a879b786024861de2af1a83b1a914369f4b720e75b15f9",
+  ".ufo/evidence/round-25/guard-mutants.spec": "af5b6f6e3e8aad79898d2625c1009491893b290b1c3ff0daef8cd7da329078a3",
+  ".ufo/evidence/round-25/multitoken-cases.json": "f0a4ac803da98a3324ddc4481190dca552a559273ef40e4cee607898d10f2b59",
+  ".ufo/evidence/round-25/multitoken-mutants.spec": "8ec3f56b17ba072044cb9d2435b81b53100b795c512eaabe5f40905c8ad4454a",
+  ".ufo/waves/round-23/original-outcomes2.json": "14d9db1f68499d308cdbcd8c8fa611e0967a85fe65c49cce3e4bf6104a0412ee",
+  "tools/command-binding.py": "9230c68e53a544c517037620f32ea98528e5b5195f88fd88e976fdc8c1061d0d",
+  "tools/mutate-and-run.sh": "d22c4025e8ce38b8890bedc1eb9eb5f61366c22f4741910bbe5a942582294a8b"
+ },
+ "changes": {
+  "c1-pins.py": "new strict input-pin checker reported beside the frozen counter (P1 sha256 pins below, P2 exact defect ids, P3 34-seat population, P4 canonical seats and git-tracked report paths, P5 one SCORECARD row per item that says dispositioned)",
+  "guard-mutants.spec": "G9-G14 added: round 23 bool-exit, snapshot-pin, empty-requirements, stdout, membership and duplicate-command anchors verbatim, so all ten round-23 anchors are re-run; comment corrected (seven guards, not four, were not re-mutated in round 24)",
+  "multitoken-cases.json": "cases 8-11 added (case-folded, space-insensitive, punctuation-insensitive, newline-insensitive tokens)",
+  "multitoken-mutants.spec": "M7-M10 added (the four surviving weakenings)",
+  "tools/mte-interop.py": "judge gains ledger (official killed/survived/invalid/total versus the runner REGRESSION_TABLE line, flips 0) and per_mutant (every emitted status equals the committed TABLE_* recorded verdict of the same defect id) checks; score kept as a sanity check only; selftest 10 -> 16 cases incl. emitter-level INCONCLUSIVE->RuntimeError and exact locations; exact integer half-up rounding shown beside runner kill-rate; spec copies kept beside emitted reports"
+ },
+ "number": 2,
+ "schema": "tameshi-r25-contract-amendment-v1",
+ "tool_sha256": {
+  ".ufo/evidence/round-25/c1-pins.py": "48bfde94ed82b88be4d5e1e68fd8910f6d0a03687d56b92d2fff73db73aa261c",
+  "tools/mte-interop.py": "8c24255c9e482751772e958e5ba9a615891ca7e5dfc9426d2fb5667ceae65552"
+ },
+ "unchanged": {
+  "C1 target": "C1_ROUTED: dispositioned=3/3",
+  "C2 target": "MTE_INTEROP: PASS legs_conforming=8/8",
+  "c1-measure.py (frozen counter)": "b18460c7ca559c18c354ce29ea4cfe60d78be3ad7c7e41abd321ba74eb1ee8b2"
+ },
+ "why": "Wave seats found the frozen rulers weaker than the routed items: MtWeakerGate (four strictly weaker token matchers survive the seven fixtures), QualityCriterion and C1Framing (the guard sweep re-ran only four of round 23's ten anchors verbatim), MeasureVacuity (the counter checks no input pins), C2Tautology (score equality holds by construction; balanced flips and NoCoverage mapping pass). Every change below only adds checks; no target, claim population or counter byte changes, and nothing is removed."
+}
