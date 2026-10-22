@@ -2082,3 +2082,20 @@ both `.ufo/evidence/round-23/extra-cases.json` and the round24 counterpart.
 The superseded 38/38 row still runs, fails against 44/44, and is excluded
 from the active tally. Full limitations and evidence: `corpus/lessons/round-24.md`
 Errata E–P and residual corrections; `corpus/knowledge/replay-projection-hardening.md`.
+
+## Ninth recorded case — round 26
+
+kumitate `scripts/cite-check.mjs` at rev `1205c6621a2eccbb8ffceae86d9e7b79a7990b3a`
+(blob sha256 `40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f`, 2537 lines,
+mode 100755) is ledger leg `js-cite-check`: 5/10 killed, 10/10 verdict predictions held. The
+spec and predictions were committed (`622d31d`) before any mutant ran; the suite is the
+hermetic `env -i` form of cases 7 and 8 and runs only the gate's hermetic group (62 cases).
+Sweep: `.ufo/evidence/round-26/cite-check/sweep/sweep.txt`. Replay:
+`bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-cite-check: PASS`,
+`cases=9 passed=9`. Entry: `corpus/knowledge/mutation-case-kumitate-cite-check.md`.
+
+### Round-26 gate/probe registry — report interop
+
+| Name | Kind | Command | Exits / rule |
+|---|---|---|---|
+| `tools/mte-interop.py` | gate with `--check`; selftest | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` · `--selftest` | 0 PASS (every leg found conforms, at least one leg) · 1 FAIL · 2 SETUP (missing jsonschema, vendored package integrity, leg set not equal to the nine ledger legs) · 64 usage. Registry rows `mte-interop-selftest` (17/17) and `mte-interop-check` (9/9). Reads the runner's committed tables; writes only its own scratch and `--emit DIR`. Owner tameshi. |

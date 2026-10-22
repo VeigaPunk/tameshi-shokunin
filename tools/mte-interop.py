@@ -74,7 +74,8 @@ TABLE = re.compile(r'^REGRESSION_TABLE (\S+): match=\d+/(\d+) recorded-killed=(\
 LEG_TABLE = {'js-kimi-census': 'TABLE_JS', 'bash-surface-census': 'TABLE_BASH',
              'bash-tsukuroi-census': 'TABLE_TSUKUROI', 'bash-mado-verify': 'TABLE_MADO',
              'bash-checklist-run': 'TABLE_CHECKLIST', 'js-claims-check': 'TABLE_CLAIMS',
-             'js-round-gate': 'TABLE_ROUNDGATE', 'js-sources-check': 'TABLE_SOURCESCHECK'}
+             'js-round-gate': 'TABLE_ROUNDGATE', 'js-sources-check': 'TABLE_SOURCESCHECK',
+             'js-cite-check': 'TABLE_CITECHECK'}
 KILL_RATE = re.compile(r'^MUTATE: DONE \(.* kill-rate=(\d+)%\)', re.M)
 NODE_RUNNER = r"""
 import { readFileSync } from 'node:fs';
@@ -314,7 +315,7 @@ def check(args):
         verdicts = recorded_verdicts((ROOT / 'tools/mutate-and-run.sh').read_text())
         legs = sorted(p.parent.name for p in workdir.glob('*/results.tsv'))
         if set(legs) != set(LEG_TABLE) or set(tables) != set(LEG_TABLE):
-            raise Setup('leg set %s / table set %s differs from the eight ledger legs %s'
+            raise Setup('leg set %s / table set %s differs from the nine ledger legs %s'
                         % (legs, sorted(tables), sorted(LEG_TABLE)))
         reports = {leg: leg_report(workdir / leg) for leg in legs}
         official = official_metrics(reports)
