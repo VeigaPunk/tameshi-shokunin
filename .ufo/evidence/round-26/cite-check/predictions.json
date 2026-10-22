@@ -1,0 +1,20 @@
+{
+  "schema": "tameshi-r26-preregistration-v1",
+  "target": "kumitate-shokunin/scripts/cite-check.mjs",
+  "rev": "1205c6621a2eccbb8ffceae86d9e7b79a7990b3a",
+  "pin_sha256": "40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f",
+  "control": "62/62 cases passed (hermetic), VERDICT: PASS, exit 0 (observed 2026-10-22 before pre-registration, unmutated pin)",
+  "predicted_kill_rate": "5/10",
+  "predictions": {
+    "K_UNRESOLVED_SEV": {"prediction": "KILLED", "selftest_case": "bogus-path → UNRESOLVED error", "reason": "rec() reads SEVERITY, and the case requires severity error."},
+    "K_PIN_KIND": {"prediction": "KILLED", "selftest_case": "content pin match → OK; mismatch → PIN_MISMATCH", "reason": "rev-classified pins go to git resolution and come back REV_UNKNOWN, not OK or PIN_MISMATCH."},
+    "K_FENCE_TILDE": {"prediction": "KILLED", "selftest_case": "R16 repro: ~~~ fence gives the same result as ``` (marker-symmetric)", "reason": "a three-tilde line stops opening a fence, so the tilde fixture tokenizes differently from the backtick fixture."},
+    "K_MISSING_WORD": {"prediction": "KILLED", "selftest_case": "bare run (no --src): both candidates absent keeps the --src fail-closed arm (exit 2)", "reason": "the case requires stderr to contain '--src <dir> is missing'."},
+    "K_EMPTY_VERDICT": {"prediction": "KILLED", "selftest_case": "fail-closed: empty scan set → exit-2 condition", "reason": "with both guards removed an empty drift-free run gets verdict PASS; the case requires FAIL."},
+    "S_OOR_EDGE": {"prediction": "SURVIVED", "selftest_case": "out-of-range ref → LINE_OOR error (cites :999 of a 20-line file)", "reason": "no fixture cites exactly line n+1."},
+    "S_STRICT": {"prediction": "SURVIVED", "selftest_case": "none: no hermetic case passes --strict", "reason": "warn promotion is unasserted."},
+    "S_EMPTY_GUARD": {"prediction": "SURVIVED", "selftest_case": "fail-closed: empty scan set → exit-2 condition", "reason": "an empty scan set also has zero resolved citations, so the remaining guard still yields FAIL (co-extensive guard)."},
+    "S_USAGE": {"prediction": "SURVIVED", "selftest_case": "none: no hermetic case passes an unknown flag", "reason": "the usage exit code is unasserted."},
+    "S_PIN_INCLUDES": {"prediction": "SURVIVED", "selftest_case": "content pin match → OK; mismatch → PIN_MISMATCH", "reason": "the mismatch hex is not a substring of the real digest, so substring compare still reports PIN_MISMATCH."}
+  }
+}
