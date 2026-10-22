@@ -1,0 +1,33 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,hashlib,os\nS=\"/tmp/ReRead07-fXch/fleet\"\nenv=dict(os.environ,GIT_OPTIONAL_LOCKS=\"0\")\ndef git(repo,*a): return subprocess.run([\"git\",\"-C\",os.path.join(S,repo)]+list(a),capture_output=True,env=env)\ndef sh(b): return hashlib.sha256(b).hexdigest()\nchecks=[(\"tsukuroi-shokunin\",\"165307fe4746a8807b02ec4a7d7ecac0368454a6\",\"tools/tsukuroi-census.sh\"),\n(\"tsukuroi-shokunin\",\"aa136d69e0e4666b86782152cd1d1fa00f90a0b3\",\"tools/tsukuroi-census.sh\"),\n(\"tsukuroi-shokunin\",\"72b038da9b2b1da2a37d35e3cce2d1d7650f70be\",\"tools/tsukuroi-census.sh\"),\n(\"mado-shokunin\",\"eead56b20ad2b28299ae4fa623d52a99b44c743c\",\"tools/mado-verify.sh\"),\n(\"mado-shokunin\",\"0c20a76fa5ff985047c8ca2d455c75179c3dd0d1\",\"tools/mado-verify.sh\"),\n(\"mado-shokunin\",\"12c8f08a35537b7d53b8e0252459dec16e550079\",\"tools/mado-verify.sh\")]\nfor repo,rev,path in checks:\n    r=git(repo,\"show\",rev+\":\"+path)\n    print(\"PIN\",repo,rev[:12],path,\"rc\",r.returncode,sh(r.stdout)[:12] if r.returncode==0 else r.stderr.decode()[:160])\nfor repo,path in [(\"tsukuroi-shokunin\",\"tools/tsukuroi-census.sh\"),(\"mado-shokunin\",\"tools/mado-verify.sh\")]:\n    head=git(repo,\"rev-parse\",\"HEAD\").stdout.decode().strip()\n    r=git(repo,\"show\",\"HEAD:\"+path)\n    st=git(repo,\"status\",\"--porcelain\",\"--\",path).stdout.decode().strip()\n    print(\"HEAD\",repo,head,path,\"blob\",sh(r.stdout)[:12],\"status\",repr(st))"
+  ],
+  "cwd": "/tmp/ReRead07-fXch/fleet/tameshi-shokunin",
+  "root": "/tmp/ReRead07-fXch/fleet/tameshi-shokunin",
+  "rev": "b1cc95e1fb62532646d74e2863770c4fed0851cc",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-lni2qk2r/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.gitignore": "d949e4ef14286bcc34282c15538a4a023a6c74d436cba3dae0f5155239d8f817",
+    "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/.gitignore": "65e9a6838b253022bd43ee70918dcf5f6d920cb9c2e80b91ccfb15e8e54ee027"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 34
+}

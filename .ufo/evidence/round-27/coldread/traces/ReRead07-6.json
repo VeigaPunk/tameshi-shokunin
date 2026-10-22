@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,hashlib\nout=subprocess.run([\"git\",\"log\",\"--format=%H %aI %s\",\"--\",\"tools/mutate-and-run.sh\"],capture_output=True,text=True).stdout.splitlines()\nprint(\"commits-touching-harness\",len(out))\nfor line in out:\n    h,d,s=line.split(\" \",2)\n    b=subprocess.run([\"git\",\"show\",h+\":tools/mutate-and-run.sh\"],capture_output=True).stdout\n    print(h[:12],d,hashlib.sha256(b).hexdigest()[:12],s[:70])"
+  ],
+  "cwd": "/tmp/ReRead07-fXch/fleet/tameshi-shokunin",
+  "root": "/tmp/ReRead07-fXch/fleet/tameshi-shokunin",
+  "rev": "b1cc95e1fb62532646d74e2863770c4fed0851cc",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-86446xeu/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 33
+}

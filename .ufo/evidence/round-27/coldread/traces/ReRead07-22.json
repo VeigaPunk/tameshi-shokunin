@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,hashlib,os\nS=\"/tmp/ReRead07-fXch/fleet\"\nenv=dict(os.environ,GIT_OPTIONAL_LOCKS=\"0\")\ndef git(repo,*a): return subprocess.run([\"git\",\"-C\",os.path.join(S,repo)]+list(a),capture_output=True,env=env)\ndef sh(b): return hashlib.sha256(b).hexdigest()\nrows=[(\"tsukuroi-shokunin\",\"165307fe4746a8807b02ec4a7d7ecac0368454a6\",\"tools/tsukuroi-census.sh\"),\n(\"tsukuroi-shokunin\",\"aa136d69e0e4666b86782152cd1d1fa00f90a0b3\",\"tools/tsukuroi-census.sh\"),\n(\"tsukuroi-shokunin\",\"72b038da9b2b1da2a37d35e3cce2d1d7650f70be\",\"tools/tsukuroi-census.sh\"),\n(\"tsukuroi-shokunin\",\"af8adf15a2f5ea0be458ebc2144ca40ba4469e08\",\"tools/tsukuroi-census.sh\"),\n(\"tsukuroi-shokunin\",\"b13e991fb96972b423b868ba122187f75357368c\",\"tools/tsukuroi-census.sh\"),\n(\"mado-shokunin\",\"eead56b20ad2b28299ae4fa623d52a99b44c743c\",\"tools/mado-verify.sh\"),\n(\"mado-shokunin\",\"0c20a76fa5ff985047c8ca2d455c75179c3dd0d1\",\"tools/mado-verify.sh\"),\n(\"mado-shokunin\",\"12c8f08a35537b7d53b8e0252459dec16e550079\",\"tools/mado-verify.sh\"),\n(\"mado-shokunin\",\"8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122\",\"tools/mado-verify.sh\")]\nfor repo,rev,path in rows:\n    r=git(repo,\"show\",rev+\":\"+path)\n    print(repo+\"@\"+rev+\":\"+path, \"rc=\"+str(r.returncode), sh(r.stdout) if r.returncode==0 else r.stderr.decode()[:120])"
+  ],
+  "cwd": "/tmp/ReRead07-fXch/fleet/tameshi-shokunin",
+  "root": "/tmp/ReRead07-fXch/fleet/tameshi-shokunin",
+  "rev": "b1cc95e1fb62532646d74e2863770c4fed0851cc",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-u9hjif4p/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 27
+}

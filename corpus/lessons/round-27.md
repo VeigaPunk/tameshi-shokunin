@@ -81,3 +81,72 @@ other eight legs' hole calls are not anchored.
    none. Fix: run it from a clone whose parent holds symlinks to every
    sibling (the mirror receipt is the one committed); the earlier readings are
    kept in this lesson, not in the receipts.
+4. **Seat report written at the fleet root (misroot).** Class: write
+   scope. Evidence: wave seat Read38 first wrote its report with a relative
+   path, which landed at `/home/vgpnk/Projects/shokunin/.ufo/waves/round-27/w1/Read38.md`;
+   the seat moved it into the lane with `mv -n` and removed the two empty
+   directories (its receipts 15–16; report `.ufo/waves/round-27/w1/Read38.md`).
+   The L1 sweep (`git -C <fleet> status --porcelain`) found no tameshi file
+   left at the fleet root. Captured-by: the wave context sentence on
+   `Report:` trailer paths. Fix: none new; the context rule held for 50 of
+   51 seats and the one miss was self-corrected and disclosed.
+5. **Whole-tree `git status` under the trace collector.** Class: cold-read
+   receipt hygiene. Evidence: seats Read05, Read17, Read24, Read29 and
+   Read39 ran `git status` under the collector; the index refresh read every
+   tracked file (5,853 inputs), and the assembler merges every listed
+   receipt's inputs into the entry, so two entries carried `SCORECARD.md`,
+   `LOG.md` and the round-21 ledger and would have drifted at the L1's later
+   appends. Captured-by: the trial assembly (`assemble.py` before the
+   append). Fix: the seats renamed those receipts `EXCLUDED-*.json` and
+   dropped them from `traces`; the final assembly has no entry with those
+   paths. Shown able to fail: the trial assembly listed the two entries with
+   5,850 inputs each.
+6. **One wave-1 report did not parse.** Seat Read08's JSON block fails
+   (`Expecting ',' delimiter`, line 41), so `assemble.py` rejected it; its
+   section was corrected and re-read in the residual call anyway.
+
+## Wave findings (wave 1, 51 seats)
+
+- **Cold reads: 39 sections read at `2227d83`.** 27 credited
+  (assembled verdicts in `.ufo/evidence/round-27/coldread/assembled-w1.json`:
+  `verified-record` 3, `gap-minor` 24; three more seats reported
+  `verified-record` with minor gaps listed, which the assembler records as
+  `gap-minor`); 12 failed (`gap-blocking` 1:
+  Read09; `wrong-expectation` 11: Read03, 06, 07, 08, 10, 15, 25, 32, 34,
+  37, 38). Each failing section was corrected in SKILL.md with a pointer to
+  the seat, keeping every section's line count so the page's own line
+  citations stay valid, and the 12 corrected sections went to a residual call
+  of 8 fresh reviewer seats at `b1cc95e`.
+- **C2 attacks.** CriticAnchors: `classified=4` is necessary, not
+  sufficient; the counter cannot tell an anchored expectation from one copied
+  off the pristine run, and S_PIN_INCLUDES is held by convention only.
+  MutateC2Counter: all four counter mutants killed; a probe that compares
+  with the pristine survives once its receipt is re-bound, and a hand-edited
+  class label passes. Response: a negative-control run
+  (`f8/probe-negative-control.stdout`, `anchored_holes=0`) and an honest
+  anchor-strength count in the entry (3 header-anchored, 1 convention-only).
+  ReviewEntry: faithful, one ambiguous slice wording (fixed). ReopenSources:
+  S090 and S091 agree; S012's tier B is disputed (an original paper; the
+  registry tiers similar papers A) — append-only, left for a supersedes row
+  next round; S090's second teaches clause is a use note, not page text.
+- **Records.** CriticRecordNoHarm: SCORECARD numbers match; the round-26
+  correction cited no receipt for `40a12bf` (receipt now committed,
+  `after/c1-measure-40a12bf.stdout`) and the round-27 block did not name
+  amendment 1 (named in the measured results). ReviewQuality: QUALITY 53 and
+  54 reproduce their falsifiers but need amendments (53: trigger reading and
+  "independent" is not checkable by the counter; 54: naming a digest is not
+  provenance, the counter never recomputes a class). QUALITY.md is a traced
+  cold-read input, so the amendments are routed to round 28, not edited
+  after the reads.
+- **Open, routed.** `corpus/SOURCES.md:338` still says "Next unused id:
+  S090" (seat RerunRegistryCensus); SOURCES.md is a traced input of many
+  entries, so the one-line fix waits for a round that re-reads them. The
+  README F8 row says "independently anchored", which the entry now bounds to
+  3 of 4. Kumitate (owner, via the integrator): the round-26 routing of the
+  four cite-check holes was dropped by kumitate R39-5 (seat
+  ConnectorOverlap); kumitate's own `round-close-gate.md:204-206` is a second
+  owner anchor for S_USAGE.
+- **Next F8 move (seat ScoutLegAnchors).** Across the other eight recorded
+  legs, 35 survivors: 17 have an explicit header or usage anchor, 6 a
+  derived one, 12 none. Re-judge the 17 first; route the 12 to owners as
+  differential holes.

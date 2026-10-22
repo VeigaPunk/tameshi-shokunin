@@ -882,8 +882,8 @@ predictions and six survivor classes first, and the prediction held 10/10
 
 ### The report shape — what the opting-in lane receives
 
-- pins printed by the tool: tool sha256, target sha256, control line; supplied by the lane
-  in the note (the tool does not print them): target size/lines, suite command, spec clause map;
+- pins printed by the tool: tool sha256, target sha256 and bytes (`MUTATE_TARGET`), control line; supplied by the lane
+  in the note (the tool does not print them): target line count, suite command, spec clause map (seat ReRead06);
 - the kill-rate table: control + one row per defect (id, clause, exit, verdict,
   failing-case labels for kills, verbatim from `evidence/<id>.out`; the edit
   site comes from the spec, not from the tool output);
@@ -1075,7 +1075,7 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
 - **T2 — the harness sha ≠ the revision a case's table was measured under** →
   re-run the reproduction under the new revision and record both pins. Precedent
   (corrected round 18): round 16's RerunSweep under runner `89722ddb…` (`RerunSweep.md:19-23`; `0673d2e5…` is the later regression/selftest runner; corrected round 27, seat Read15) reproduced case 7;
-  mado under `b56c6e57…` was never re-cut (U, `mutation-case-mado-verify.md:17-23`); the harness itself moved four times in
+  mado under `b56c6e57…` was re-run once by SCR-T6, 4/10, scratch not retained (`service-optin-protocol.md:232`; the mado note keeps it U, `mutation-case-mado-verify.md:17-23`; seat ReRead07); the harness itself moved four times in
   one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`)
   and no recorded table was re-interpreted for it.
 - **T3 — an owner lane records a re-run at a new revision** → an appended row;
@@ -1084,7 +1084,7 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
   (:811-812). The old table stays; the moved case lands at its newest revision
   with both shas and the delta, appended. `moved=0 stale=0` is a complete
   outcome, recorded as such — drift is never manufactured by re-cutting cases.
-  The round-8 replay receipt (tool `cf41efaa…`, four legs; 19:15:54Z, rc 0):
+  The round-8 replay receipt (tool `cf41efaa…`, four legs; 19:14:16Z, rc 0, `fleet-kill-rate-ledger.md:281`; seat ReRead07):
   `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0
   flips<=0)`, every leg `match=10/10 … flips=0` — the recorded tables hold at
   their own pinned blobs regardless of the live drift above.
@@ -1504,8 +1504,8 @@ non-secret fixture command before retaining evidence.
 | bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage only (argparse) | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `/tmp/bash-witness-selftest-private.*` (selftest only); sibling object store read-only | tameshi |
 
 Registry scope is these round-12 instruments; no new conformance assertion is
-made about the historical runner. Witness declarations are integrity-frozen (declaration, mapping, target, spec, summary, manifest),
-not blind: their author inherited prior source/spec exposure. The declaration's runner pin `75ed934d…` is stale at round 27 (`check` exits 1 DRIFT; `run`/`rerun` refuse, exit 2; `count` never reads the runner; seat Read25).
+made about the historical runner. Witness declarations are integrity-frozen (declaration, mapping, target, spec, summary; `manifest.json` itself is not pinned, seat ReRead08),
+not blind: before declaring, their author had seen the source, the spec, the recorded aggregate outcomes and the per-defect KILLED/SURVIVED entries (`.ufo/evidence/round-12/BashWitness/declaration.json`; seat ReRead08). The declaration's runner pin `75ed934d…` is stale at round 27 (`check` exits 1 DRIFT; `run`/`rerun` refuse, exit 2; `count` never reads the runner; seat Read25, `.ufo/waves/round-27/w1/Read25.md`). The bash study
 deepens one recorded case, never a seventh independently measured gate.
 
 Calibration correction to the historical promotion paragraph above:
