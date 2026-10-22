@@ -427,3 +427,21 @@ one gate at one pin. Hole calls on the other eight recorded legs stay
 pristine-differential until anchored. Line 85's F8 row reads "open"; this
 section supersedes its status cell, and lines 234-238 above (round 16,
 pristine-derived expectations only) describe the state before this round.
+
+## Round 29 — F8 wording correction, F6 pre-registration
+
+F8 correction (round-27 spot-check routed item 4): the round-27 section
+above says the F8 next move "is measured" against "an independently
+anchored expectation". The entry `knowledge/oracle-anchored-survivors.md`
+bounds that to 3 of the 4 survivors anchored in the gate's own header
+contract and 1 held by convention only. F8 stays partly held on that
+bound.
+
+F6 (fixture minimization for survivors) is pre-registered for round 29,
+before any data: survivor B5 of the kagi surface-census leg (exec x-bit arm
+deleted), probe fixture reduced by delta debugging (S024) to a fixture that
+still kills B5 and is 1-minimal at line and file granularity. Counter
+`.ufo/evidence/round-29/c2-measure.py`; frozen predicate and controls in
+`.ufo/evidence/round-29/contract.json`. The outcome is recorded in
+`corpus/lessons/round-29.md` and in the entry the counter names, whether or
+not the target is met; this section claims no status change for F6.

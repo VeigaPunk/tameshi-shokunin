@@ -1,0 +1,40 @@
+{
+  "schema": "tameshi-round-contract-v1",
+  "round": 29,
+  "lane": "tameshi",
+  "base": "367ec0f1d79cb9b67d724f2962e7554a0841b1fc",
+  "frozen_before_data": true,
+  "frozen_at": "2026-10-23T01:12Z",
+  "claims": [
+    {
+      "id": "C1",
+      "axis": "calibration",
+      "surface": "SHONEN box 3 self-assessment against the cold-read ledger at the landed head (routed item 1 of corpus/lessons/round-28-verifier-spotcheck.md)",
+      "counter": "python3 .ufo/evidence/round-29/c1-measure.py --repo CLONE --rev REV",
+      "counter_sha256": "adaadfc6f34bd102fe0cf77f5ab5114d715e50491bddcb7a8e2f7b4f56e4c1d8",
+      "predicate_label": "C1_R29_PASS",
+      "predicate": "PASS iff the frozen round-27 counter .ufo/evidence/round-27/c1-measure.py exits 0 at REV (covered == total, restraint == 8, box3_mismatch == 0), AND the cold-read ledger at REV keeps the 371 base entries equal as data, AND every ledger entry appended after base index 370 is bound to round-29 seat evidence: each of its reports exists at REV under .ufo/waves/round-29/, holds a json block whose seat is one of the entry's seats and whose sections name the entry's start and heading, and each of its seats is a member of a committed .ufo/waves/round-29/*/swarm-registry.json at REV.",
+      "before": "C1_R29: monitor_exit=1 covered=63/64 restraint=6 box3_mismatch=1 appended=0 bound=0 prefix_equal=1 at base; PREDICATE: C1_R29_PASS=false; exit 1",
+      "target": "PREDICATE: C1_R29_PASS=true, exit 0, at the landed lane head named in the report",
+      "kill_rule": "C1_R29_PASS=false at the landed head is a miss: reported as an honest stop, never amended or re-scaled",
+      "bound": "The counter cannot tell a seat-written report from an L1-forged report plus a forged registry member; the closure can check seat transcripts."
+    },
+    {
+      "id": "C2",
+      "axis": "coverage",
+      "surface": "frontier F6 (fixture minimization for survivors), open since round 1: from no minimized survivor fixture to one committed B5 probe fixture proven killing and 1-minimal, with a source-headed entry citing S024",
+      "counter": "python3 .ufo/evidence/round-29/c2-measure.py --repo CLONE --rev REV",
+      "counter_sha256": "49173c02c663af8b4196bd166430252c7699fc5cba25d703091b821d80299694",
+      "predicate_label": "C2_F6_PASS",
+      "predicate": "PASS iff the committed fixture .ufo/evidence/round-29/f6/minimized/ at REV kills survivor B5 (the pinned kagi corpus/surface-census.sh, sha256 = PIN_BASH of tools/mutate-and-run.sh at REV, exits 1 and prints a SURFACE DIVERGED line with (declared exec, no execute bit), while the B5 mutant built from the runner's own @defect B5 spec exits 0) AND the fixture is 1-minimal (removing any one unit, i.e. one line of census.tsv, shapes.tsv or baseline.tsv or one file under host/, loses that kill) AND corpus/knowledge/survivor-fixture-minimization.md has a source: line citing S024, row S024 of corpus/SOURCES.md is mined with that entry path in used-by, and a double-quoted string of at most 25 words on a corpus/lessons/round-29.md line naming S024 occurs in the normalized text of the committed snapshot .ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html, whose sha256 that line also names.",
+      "before": "C2_F6: fixture=absent kill=0 units=0 one_minimal=0 entry_sourced=0 quote_located=0 at base; PREDICATE: C2_F6_PASS=false; exit 1",
+      "target": "PREDICATE: C2_F6_PASS=true, exit 0, at the landed lane head named in the report",
+      "unmoved_command": "the same counter at base prints fixture=absent",
+      "kill_rule": "C2_F6_PASS=false at the landed head is a miss: reported as an honest stop, never amended or re-scaled",
+      "sourced": "S024 (re-opened 2026-10-23 by the L1; snapshot sha256 3abede35b99770d2bf3d348a3481b28b9bd826395f1e0374ebf9d7e8f0a65e99)",
+      "bound": "Units are lines and host files; 1-minimal says nothing about bytes inside a line. A hand-written fixture that meets the predicate meets the claim; the delta-debugging trace is method evidence, not the counter."
+    }
+  ],
+  "controls_required_before_data": ["do-nothing", "junk", "all-false", "no-reader", "shortcut keyed on ids or labels"],
+  "input_edit_order": "All edits to corpus/SOURCES.md, corpus/README.md and corpus/QUALITY.md land in the same commit as this contract (QUALITY criterion 56); after it the round only adds new files or appends to SCORECARD.md, LOG.md, corpus/lessons/round-29.md and the cold-read ledger."
+}

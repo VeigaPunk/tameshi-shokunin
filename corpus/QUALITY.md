@@ -609,3 +609,37 @@ motivate the rule, not a claim that the new rule has been operationalized.
     prints `receipt not bound to probe and anchors bytes` and exits 1 when
     `anchor-probe.py` or `anchors.json` differs from the bytes the receipt
     names.
+
+55. Round 29. Amendments to 53 and 54 (round-27 spot-check routed item 5,
+    seat ReviewQuality, `.ufo/waves/round-27/w1/ReviewQuality.md`
+    H1, M1, M2, L2). Criterion 53 uses the crediting-entry reading: a round
+    re-reads a section when it edits an input of the entry that credits that
+    section; entries that already fail are not measured. Independence of the
+    re-reading seats is checked by reading each new entry's `seats` and
+    `reports` against the committed wave roster, not by the monitor; from
+    round 29 the claim counter checks that binding
+    (`.ufo/evidence/round-29/c1-measure.py`). External inputs are recorded,
+    not measured. For 54: naming a digest is not provenance; a claim that a
+    run happened needs a re-run at the measured revision, by the counter or
+    through a result digest the counter recomputes. Falsifier: the round-27
+    C2 receipt check passes a receipt whose digest was rewritten to the
+    current probe (ReviewQuality M1).
+
+56. Round 29. Every edit a round makes to a widely read lane file
+    (corpus/SOURCES.md, corpus/README.md, corpus/QUALITY.md, SHONEN.md)
+    lands in or before the content revision its cold reads target; after
+    that revision the round only adds new files or appends to SCORECARD.md,
+    LOG.md, its own lesson and the cold-read ledger. Captured by:
+    `lessons/round-28.md` Mistake 1 and `round-28-verifier-spotcheck.md`
+    routed item 1. Falsifier: `.ufo/evidence/round-28/append-probe.txt`
+    (one blank line appended to corpus/SOURCES.md drops 60 → 50 credited
+    sections at round-28 base).
+
+57. Round 29. A round closes against one lane head: the fleet report names
+    the final lane head, and no lane commit lands and no fleet report is
+    rewritten after the report is filed. Check: `git log --oneline
+    <report-named head>..<lane branch>` prints nothing when the closure
+    starts. Captured by: `round-28-verifier-spotcheck.md` routed item 3.
+    Falsifier: round 28 filed against `1076914a`, then landed `41da22a3`
+    and `1dde85f3` and rewrote the report `2012146` → `38ae0ff`, so the
+    check prints two commits.
