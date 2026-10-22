@@ -19,7 +19,11 @@ classified only when all of these hold at REV:
      `*_meets_anchor` fields present;
   3. the entry `corpus/knowledge/oracle-anchored-survivors.md` exists with a
      `ground: F8` line and a `source:` line naming S012, and the S012 row is
-     `mined` with opened 2026-10-22.
+     `mined` with the entry path in its `used-by` cell. (Amendment 1, before any
+     after-measurement: the frozen text required S012's `opened` cell to read
+     2026-10-22, but CORPUS.md SOURCES contract rule 2 lets only status, recheck
+     and used-by change in place; the re-open is recorded in the round-27 lesson
+     Gate instead.)
 Prints `C2_F8: survivors=4 classified=N anchored_holes=M` and one line per
 survivor. Exit 0 iff classified == 4; 1 otherwise; 2 on usage.
 """
@@ -50,7 +54,7 @@ def source_rows(text):
     for line in text.splitlines():
         cells = [c.strip() for c in line.split('|')]
         if len(cells) > 11 and re.fullmatch(r'S\d{3}', cells[1]):
-            rows[cells[1]] = {'line': line, 'status': cells[8], 'opened': cells[9]}
+            rows[cells[1]] = {'line': line, 'status': cells[8], 'opened': cells[9], 'used_by': cells[11]}
     return rows
 
 
@@ -76,7 +80,7 @@ def main():
     s012 = rows.get('S012', {})
     entry_ok = bool(entry_b) and bool(re.search(r'(?m)^ground: F8\b', entry_b.decode('utf-8'))) \
         and bool(re.search(r'(?m)^source:.*\bS012\b', entry_b.decode('utf-8'))) \
-        and s012.get('status') == 'mined' and s012.get('opened') == OPENED
+        and s012.get('status') == 'mined' and ENTRY in s012.get('used_by', '')
     anchors = json.loads(anchors_b) if anchors_b else {'survivors': []}
     receipt = json.loads(receipt_b) if receipt_b else {'results': []}
     bound = bool(receipt_b and probe_b and anchors_b) \

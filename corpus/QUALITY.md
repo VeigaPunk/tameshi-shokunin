@@ -587,3 +587,25 @@ motivate the rule, not a claim that the new rule has been operationalized.
     pass; `registry-check.py --rev a08e85c` exits 2,
     `could-not-evaluate (registry invalid: rows[54].source must be
     <file>@<7-40 hex rev>:<line> …)` (`.ufo/waves/round-26/w1/RegistryCheck.md`).
+
+53. Round 27. A round that edits a file traced as an input of a credited
+    cold-read section either has those sections cold-read again by
+    independent seats at its content revision before it lands, or declares
+    calibration harmed among its measured results. A calibration no-harm
+    reading names the strict monitor at the landed head, never an earlier
+    revision. Captured by: `lessons/round-26-verifier-spotcheck.md:112-135`
+    (62/62, restraint 8 at base → 25/64, restraint 6 at head, while the
+    measured table read "numeric 8 → 8"). Falsifier:
+    `.ufo/evidence/round-27/c1-measure.py` exits 1 with `box3_mismatch=1` at
+    `e08444d3` and at round-27 base `91edf9cd`
+    (`.ufo/evidence/round-27/c1-before.stdout`).
+
+54. Round 27. A counter that accepts a run receipt checks that the receipt
+    names the sha256 of the tool bytes and of the input bytes at the measured
+    revision; a receipt from other bytes counts as absent. Captured by:
+    `lessons/round-26-verifier-spotcheck.md:225-228` (routed item 4: the
+    round-26 C2 receipt check did not tie a receipt to the tool bytes; seat
+    MutateC2Counter). Falsifier: `.ufo/evidence/round-27/c2-measure.py`
+    prints `receipt not bound to probe and anchors bytes` and exits 1 when
+    `anchor-probe.py` or `anchors.json` differs from the bytes the receipt
+    names.

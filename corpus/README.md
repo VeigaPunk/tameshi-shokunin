@@ -414,3 +414,16 @@ No F-row changes. F3 stays open (one control per sweep). F1 stays held and
 F1b open: the emitted reports still name a target by basename with no lane or
 revision pin (routed item 4, open). C2 is a record repair of the round-25
 spot-check routed items 1–3, not new coverage.
+
+## Round 27 — frontier F8, oracle-anchored survivor classification
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/oracle-anchored-survivors.md` / F8 | source-headed entry citing S012 (re-opened and mined this round) and S090, S091 (new); the four round-26 cite-check hole survivors re-judged against expectations fixed outside the mutated code: 4 anchored holes, one of them held by convention only | `.ufo/evidence/round-27/f8/` (anchors committed before the run, receipt bound to probe and anchor digests); counter `.ufo/evidence/round-27/c2-measure.py` |
+
+F8 moves from open to **partly held**: its next move (one survivor
+classified against an independently anchored expectation) is measured, on
+one gate at one pin. Hole calls on the other eight recorded legs stay
+pristine-differential until anchored. Line 85's F8 row reads "open"; this
+section supersedes its status cell, and lines 234-238 above (round 16,
+pristine-derived expectations only) describe the state before this round.
