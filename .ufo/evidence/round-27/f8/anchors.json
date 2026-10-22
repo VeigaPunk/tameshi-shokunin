@@ -1,0 +1,56 @@
+{
+ "schema": "tameshi-f8-anchors-v1",
+ "note": "Expectations for the four round-26 cite-check suite-hole survivors, composed from values fixed outside the code under mutation (S012: specification-anchored), never from a run of the pristine or the mutant. Contract quotes are header comment lines of the pinned blob: the mutated statements are code lines, so no survivor edit can move them. External quotes are SOURCES rows opened in round 27.",
+ "repo": "kumitate-shokunin",
+ "rev": "1205c6621a2eccbb8ffceae86d9e7b79a7990b3a",
+ "path": "scripts/cite-check.mjs",
+ "blob_sha256": "40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f",
+ "survivors": [
+  {
+   "id": "S_OOR_EDGE",
+   "old": "    const bad = ref.start > n || ref.end > n;",
+   "new": "    const bad = ref.start > n + 1 || ref.end > n + 1;",
+   "witness": {"kind": "line-past-end", "lines": 20},
+   "expect": {"exit": 1, "kind": "LINE_OOR"},
+   "anchors": [
+    {"kind": "arithmetic", "statement": "the witness file is written with exactly 20 newline-terminated lines, counted by the probe from the bytes it wrote (witness_facts.newline_count), so line 21 does not exist"},
+    {"kind": "contract", "line": 61, "quote": "error UNRESOLVED LINE_OOR REV_UNKNOWN PIN_MISMATCH SYMBOL_OFF_LINE"},
+    {"kind": "contract", "line": 69, "quote": "exit 0 CLEAN · 1 DRIFT (error, or warn under --strict)"}
+   ]
+  },
+  {
+   "id": "S_STRICT",
+   "old": "  const drift = totals.error > 0 || (opts.strict && totals.warn > 0);",
+   "new": "  const drift = totals.error > 0 || (opts.strict && totals.warn > 1);",
+   "witness": {"kind": "one-orphan-ref-strict"},
+   "expect": {"exit": 1, "kind": "ORPHAN_REF"},
+   "anchors": [
+    {"kind": "contract", "line": 35, "quote": "A ref with no owner is ORPHAN_REF (warn)."},
+    {"kind": "contract", "line": 69, "quote": "1 DRIFT (error, or warn under --strict)"}
+   ]
+  },
+  {
+   "id": "S_USAGE",
+   "old": "    return 64;",
+   "new": "    return 65;",
+   "witness": {"kind": "unknown-flag"},
+   "expect": {"exit": 64},
+   "anchors": [
+    {"kind": "contract", "line": 71, "quote": "64 usage error."},
+    {"kind": "external", "source": "S090", "quote": "EX_USAGE (64) The command was used incorrectly, e.g., with the wrong number of arguments, a bad flag"}
+   ]
+  },
+  {
+   "id": "S_PIN_INCLUDES",
+   "old": "      } else if (digest.startsWith(pin.hex)) {",
+   "new": "      } else if (digest.includes(pin.hex)) {",
+   "witness": {"kind": "interior-pin"},
+   "expect": {"exit": 1, "kind": "PIN_MISMATCH"},
+   "anchors": [
+    {"kind": "contract", "line": 38, "quote": "then 7-40 hex"},
+    {"kind": "external", "source": "S091", "quote": "or a leading substring that is unique within the repository"}
+   ],
+   "anchor_strength": "convention: the header fixes only the 7-40 hex length; that a short pin names a leading substring comes from the git abbreviated-name convention (S091), applied to a content sha256 by analogy, not stated by the gate"
+  }
+ ]
+}
