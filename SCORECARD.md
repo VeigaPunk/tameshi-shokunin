@@ -1384,3 +1384,31 @@ registry". SHONEN box 3 `[~]` therefore still disagrees with the repo
 `40a12bf` reading now has its own receipt (`after/c1-measure-40a12bf.stdout`).
 Registry at `2227d83` in a fleet mirror: `held=49/49 superseded=7`
 (`after/registry-2227d83.stderr`). Census end exit 0.
+
+## Round 28 — cold-read monitor repair, second attempt (2026-10-22)
+
+L1 TameshiR28, attempt 1. One claim.
+
+- **C1 calibration (harm repair, routed by the round-27 closure item 1).**
+  Counter `python3 .ufo/evidence/round-27/c1-measure.py --repo CLONE --rev REV`
+  (frozen, byte-identical since round 27). Before at base `06b59b93`:
+  `covered=60/64 restraint=6 box3_mismatch=1`, exit 1. Target at the landed
+  head: `covered=64/64 restraint=8 box3_mismatch=0`, exit 0.
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 cold-read monitor repair | calibration | `covered=60/64 restraint=6 box3_mismatch=1`, exit 1 at 06b59b93 | `covered=60/64 restraint=6 box3_mismatch=1`, exit 1 | 0 sections; score 6 → 6 | `python3 .ufo/evidence/round-27/c1-measure.py --repo . --rev REV` | a20e2ba00e6903283faf7462993a3898d70f3853 | `.ufo/evidence/round-28/c1-after-ledger.stdout`, `monitor-a20e2ba-explain.json` | missed (honest stop) |
+
+Detail: the round's own `corpus/SOURCES.md` edit (S059 re-open) drifted 10
+credited sections, so the content revision `b05d2ee` read 50/64. 38 seats
+were dispatched (two fresh readers per uncovered section, plus falsifiers);
+12 died on a provider rate limit and 6 were still running at the 19:24Z
+cut. 12 cold-read entries were appended (ledger 354 → 366, prefix equal as
+data, `git diff --numstat` 668 added / 0 removed). The head reads 60/64:
+uncovered "Repeated controls … round 12" (one reader dead, one late),
+"Effective expectation … round 14" (the one landed entry records an input
+digest that does not match the revision), "Round-18 gate/probe registry"
+(both readers dead) and "Round-21 gate/probe registry" (one dead, one
+late). Calibration stays harmed against the pre-harm round-26 base
+(62/62, restraint 8). SHONEN marks unchanged, all `[~]`.
+No other axis claimed; no scalar changes; no retirement.

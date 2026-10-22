@@ -1709,3 +1709,16 @@ metadata and its failure are preserved; production gate source is unchanged.
   found by cold reads and corrected in SKILL.md.
 - Result C2: `C2_F8: classified=4 anchored_holes=4` at `af7b70d`; new entry
   `corpus/knowledge/oracle-anchored-survivors.md`; S012 mined, S090 and S091 new.
+
+## Round 28 — 2026-10-22 (TameshiR28, attempt 1)
+
+- Motivation, C1: round-27 closure routed item 1 (`corpus/lessons/round-27-verifier-spotcheck.md`,
+  "Routed defects" 1): four sections uncovered at `06b59b93`, monitor 60/64, restraint 6.
+- Content revision `b05d2ee`: Round-28 correction to SKILL.md "Round-21 gate/probe
+  registry" (c2-count.py reads the live lane through FLEET), S059 re-opened
+  (used-by + lesson), `Next unused id: S092` (routed item 3).
+- Found: one blank line appended to `corpus/SOURCES.md` drops the monitor
+  60 → 50 (`.ufo/evidence/round-28/append-probe.txt`; reproduced by seat MutateAppendProbe).
+- Wave 1: 38 seats, 12 dead (rate limit), 6 late at the cut; 12 cold-read entries
+  appended at `a20e2ba`. Result: 60/64, restraint 6, box3_mismatch 1 — target
+  missed, honest stop.
