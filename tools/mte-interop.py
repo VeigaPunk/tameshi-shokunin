@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Frontier F1 report interop: tameshi ledger legs as mutation-testing-elements reports.
 
-  mte-interop.py --check [--workdir DIR] [--emit DIR]
+  mte-interop.py --check [--fleet-root DIR | --workdir DIR [--regression-stdout F]] [--emit DIR]
   mte-interop.py --selftest
 
 --check runs `tools/mutate-and-run.sh --regression --keep` (or reads an existing
@@ -219,9 +219,25 @@ def judge(leg, report, errors, official, recorded):
     return all(checks.values()), detail
 
 
-def run_regression(workdir):
-    run = subprocess.run(['bash', str(ROOT / 'tools/mutate-and-run.sh'), '--regression',
-                          '--workdir', str(workdir), '--keep'], capture_output=True, text=True)
+def run_regression(workdir, fleet_root):
+    """The runner resolves sibling lanes from its own grandparent directory, so it
+    runs from a private staged fleet: a copy of this checkout's runner plus
+    read-only symlinks to the sibling repos under fleet_root."""
+    fleet_root = Path(fleet_root).resolve()
+    if not fleet_root.is_dir():
+        raise Setup('fleet root %s is not a directory' % fleet_root)
+    stage = Path(tempfile.mkdtemp(prefix='tameshi-mte-fleet-'))
+    try:
+        lane = stage / ROOT.name
+        (lane / 'tools').mkdir(parents=True)
+        shutil.copy2(ROOT / 'tools/mutate-and-run.sh', lane / 'tools/mutate-and-run.sh')
+        for sibling in fleet_root.iterdir():
+            if sibling.is_dir() and sibling.name != ROOT.name and (sibling / '.git').exists():
+                (stage / sibling.name).symlink_to(sibling)
+        run = subprocess.run(['bash', str(lane / 'tools/mutate-and-run.sh'), '--regression',
+                              '--workdir', str(workdir), '--keep'], capture_output=True, text=True)
+    finally:
+        shutil.rmtree(stage, ignore_errors=True)
     (Path(workdir) / 'regression.stdout').write_text(run.stdout)
     if run.returncode != 0:
         raise Setup('regression exit %d' % run.returncode)
@@ -242,7 +258,7 @@ def check(args):
                 else args.regression_stdout.read_text() if args.regression_stdout else ''
         else:
             workdir = Path(tempfile.mkdtemp(prefix='tameshi-mte-regression-'))
-            stdout = run_regression(workdir)
+            stdout = run_regression(workdir, args.fleet_root or ROOT.parent)
         tables = {m.group(1): (int(m.group(2)), int(m.group(3))) for m in TABLE.finditer(stdout)}
         legs = sorted(p.parent.name for p in workdir.glob('*/results.tsv'))
         if not legs:
@@ -346,10 +362,11 @@ def main():
     mode.add_argument('--selftest', action='store_true')
     parser.add_argument('--workdir', help='existing kept regression workdir (skips the live run)')
     parser.add_argument('--regression-stdout', type=Path, help='its stdout, if not inside the workdir')
+    parser.add_argument('--fleet-root', help='directory holding the sibling lane repos (default: parent of this checkout)')
     parser.add_argument('--emit', help='write the per-leg reports and official metrics here')
     args = parser.parse_args()
     if args.selftest:
-        if args.workdir or args.emit or args.regression_stdout:
+        if args.workdir or args.emit or args.regression_stdout or args.fleet_root:
             parser.error('--selftest takes no other arguments')
         return selftest()
     return check(args)
