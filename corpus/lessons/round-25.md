@@ -126,3 +126,16 @@ At `77302fa8f79144d06c1d2d2e2d2898c44b459bda`, in a fresh clone
   (QUALITY, README, SOURCES, PROVINCE, SCORECARD). SKILL.md itself is
   unchanged. Restored by actual traced L1 source reads with the round-23
   re-anchor tool at the final content revision; the result follows.
+
+Restoration and final no-harm, at `3b20f073c7305a582562cd323982991464c324f3`
+(`.ufo/evidence/round-25/after/`): at `154bf4d` the monitor still read 45/62,
+restraint 6 (`monitor-harmed-154bf4d.json`). The round-23 re-anchor tool made
+seventeen actual traced L1 source reads at `154bf4d`
+(`source-traces/`, `source-refresh-receipts.json`); the seventeen entries
+were appended to the cold-read ledger with its 287-entry byte prefix
+unchanged (`source-prefix-preservation.json`). These are author source reads,
+not independent or blind cold-reads. Final: strict monitor 62/62,
+restraint 8, depth 8, overrides false; registry held 47/47, superseded 7,
+exit 0; census exit 0 (85 rows, seven pre-existing W04 warnings); C1 counter
+3/3 and `c1-pins.py` HOLD again at this revision; `tools/mte-interop.py` is
+byte-identical to the C2 measured commit `77302fa`.
