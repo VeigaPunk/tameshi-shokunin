@@ -1,0 +1,80 @@
+{
+ "schema": "tameshi-f8-anchors-v1",
+ "note": "NEGATIVE CONTROL (round 27, after the wave-1 seat MutateC2Counter finding): each expectation is deliberately set to a value no anchor supports. A probe that judges against the anchor must report anchor-disagrees-with-pristine for every survivor; a probe that compares the mutant with the pristine would still report anchored-hole. Not part of the C2 counter.",
+ "repo": "kumitate-shokunin",
+ "rev": "1205c6621a2eccbb8ffceae86d9e7b79a7990b3a",
+ "path": "scripts/cite-check.mjs",
+ "blob_sha256": "40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f",
+ "survivors": [
+  {
+   "id": "S_OOR_EDGE",
+   "old": "    const bad = ref.start > n || ref.end > n;",
+   "new": "    const bad = ref.start > n + 1 || ref.end > n + 1;",
+   "witness": {
+    "kind": "line-past-end",
+    "lines": 20
+   },
+   "expect": {
+    "exit": 0
+   },
+   "anchors": [
+    {
+     "kind": "control",
+     "statement": "deliberately unanchored expectation"
+    }
+   ]
+  },
+  {
+   "id": "S_STRICT",
+   "old": "  const drift = totals.error > 0 || (opts.strict && totals.warn > 0);",
+   "new": "  const drift = totals.error > 0 || (opts.strict && totals.warn > 1);",
+   "witness": {
+    "kind": "one-orphan-ref-strict"
+   },
+   "expect": {
+    "exit": 0
+   },
+   "anchors": [
+    {
+     "kind": "control",
+     "statement": "deliberately unanchored expectation"
+    }
+   ]
+  },
+  {
+   "id": "S_USAGE",
+   "old": "    return 64;",
+   "new": "    return 65;",
+   "witness": {
+    "kind": "unknown-flag"
+   },
+   "expect": {
+    "exit": 2
+   },
+   "anchors": [
+    {
+     "kind": "control",
+     "statement": "deliberately unanchored expectation"
+    }
+   ]
+  },
+  {
+   "id": "S_PIN_INCLUDES",
+   "old": "      } else if (digest.startsWith(pin.hex)) {",
+   "new": "      } else if (digest.includes(pin.hex)) {",
+   "witness": {
+    "kind": "interior-pin"
+   },
+   "expect": {
+    "exit": 0
+   },
+   "anchors": [
+    {
+     "kind": "control",
+     "statement": "deliberately unanchored expectation"
+    }
+   ],
+   "anchor_strength": "convention: the header fixes only the 7-40 hex length; that a short pin names a leading substring comes from the git abbreviated-name convention (S091), applied to a content sha256 by analogy, not stated by the gate"
+  }
+ ]
+}
