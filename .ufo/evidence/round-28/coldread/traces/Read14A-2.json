@@ -1,0 +1,36 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,sys\nc=json.load(open('.ufo/evidence/round-21/c2-contract.json'))\nprint('c2 keys:',list(c))\nfor k,v in c.items():\n    if isinstance(v,list): print(k,'len',len(v))\nprint('routemix receipt ok:',json.load(open('.ufo/waves/round-21/routemix-spec1.json')).get('ok'))\nlines=open('.ufo/evidence/round-21/c2-count.py').read().splitlines()\nprint('L19:',lines[18]); print('L52:',lines[51])\nreg=json.load(open('tools/registry.json'))\nnames=[r['name'] for r in reg['rows'] if isinstance(r,dict) and 'name' in r] if 'rows' in reg else [r.get('name') for r in reg]\nprint('registry total rows:',len(reg.get('rows',reg)))\nprint('active:',sum(1 for r in reg.get('rows',reg) if r.get('status')=='active'))\nfor n in ('command-binding-selftest-r24','command-binding-frozen-clean-pinned','command-binding-source-read-red-pinned','registry-replay-selftest','pin-disposition-read','verify-round15'):\n    print(n,'present:',n in names)\nimport os\nfor f in ('.ufo/evidence/round-22/wrong-count-bundle.json','.ufo/evidence/round-22/wrong-count-expected.json'):\n    print(f,os.path.exists(f))\nm=open('.ufo/evidence/round-22/measure.py').read()\nprint('r22 fixtures ~8:',m.count('CASE')+m.count('fixture'),'markers')"
+  ],
+  "cwd": "/tmp/Read14A-c6cb/fleet/tameshi-shokunin",
+  "root": "/tmp/Read14A-c6cb/fleet/tameshi-shokunin",
+  "rev": "b05d2ee8e7f80b18428e8f38b9ad535cf9d99a1a",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-q69byw5b/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-21/c2-contract.json": "5bd7024d0357ad3fb2a4b8550fd44f8371a3eb004f29948699368bea9d4c2bbd",
+    ".ufo/evidence/round-21/c2-count.py": "9a34f77d8ae2e219c51c74d60695703ea3efe4f6745ba4b57da2dca2173520a2",
+    ".ufo/evidence/round-22/measure.py": "f833d067afd3ca17b8534fc942d6e8ed529edd3d55476802c18ea631c0678056",
+    ".ufo/waves/round-21/routemix-spec1.json": "92c1edb3fdf53ac45bb6d324c16d94b388c26960aceee53f74f6883af1b97d56",
+    "tools/registry.json": "c1b75366f1789121e6d5a4c8f6587f7519fef3bad60569ed274df8c7a681b73c"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

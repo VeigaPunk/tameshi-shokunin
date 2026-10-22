@@ -11,9 +11,9 @@ head `covered=64/64 restraint=8 box3_mismatch=0` (exit 0).
 
 - S059 re-opened: https://bazel.build/remote/caching, fetched 2026-10-22
   with `curl -sL` (HTML sha256 `9e3a2ebba08234a1b5896faaea54be7c4aea2adb3e1051037f477d8f24d42348`).
-  Located quote (§Remote Caching intro, "The remote cache stores two types
-  of data"): "The action cache, which is a map of action hashes to action
-  result metadata." (13 words). §Known issues still reads "Bazel currently
+  Located quote (page section "Overview", under "The remote cache stores two types
+  of data"; location first written as "§Remote Caching intro", corrected after seat RerunCensus): "The action cache, which is a map of action hashes to action
+  result metadata." (14 words; first written as 13, corrected after seat ReopenS059). §Known issues still reads "Bazel currently
   does not track tools outside a workspace" — the row's recorded scope holds.
 - Change log: S059 `used-by` `corpus/knowledge/input-keyed-coldread-credit.md`
   → `corpus/knowledge/input-keyed-coldread-credit.md, corpus/lessons/round-28.md`.
@@ -43,3 +43,14 @@ head `covered=64/64 restraint=8 box3_mismatch=0` (exit 0).
    (SOURCES, README, QUALITY, SHONEN) lands BEFORE the content revision the
    cold reads are run against, and run the monitor at the final landed head;
    the probe above is the failing case that shows the order matters.
+
+2. **class:** duplicate source row drafted — a new row S092 was written for
+   https://bazel.build/remote/caching, already registered as S059.
+   **evidence:** census run before the content commit printed
+   `W04 S092 duplicate url bazel.build/remote/caching across scopes`; the
+   row was removed and S059 re-opened instead (`## Gate` above; seat
+   ScribeMistakes row 2, `.ufo/waves/round-28/w1/ScribeMistakes.md`).
+   **captured-by:** the census W04 warning (a warning, exit stays 0), no
+   QUALITY criterion. **fix:** grep the URL in `corpus/SOURCES.md` before
+   drafting a row; the W04 line above is the failing case that shows the
+   check fires.
