@@ -1725,3 +1725,4 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Late reads Read04B/Read05A/Read06A assembled at `c30926e`: monitor 61/64,
   restraint 6, box3_mismatch 1. Still an honest stop.
 - Read09B assembled at `bdf0aa5`: monitor 62/64, restraint 6, box3_mismatch 1. Honest stop.
+- Read14B assembled at `41da22a`: monitor 63/64 (Round-18 registry uncovered, both readers dead). Honest stop.

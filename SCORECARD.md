@@ -1429,3 +1429,12 @@ the `b05d2ee` ledger). At `bdf0aa5e4f74273df33db62f7426a685347edb9a`:
 gate/probe registry" (both readers dead) and "Round-21 gate/probe
 registry" (one dead, one late). Net over base 60 → 62 sections; score 6 → 6.
 Target missed; honest stop.
+
+Round 28 — final reading, third pass (appended). Read14B finished at
+19:28Z and was assembled with the other 16 (ledger 354 → 371, appended from
+the `b05d2ee` ledger). At `41da22a3d85bf6b8d766ba1e4d3bc5042e205ee6`:
+`covered=63/64 restraint=6 box3_mismatch=1`, exit 1
+(`.ufo/evidence/round-28/c1-after-final3.stdout`). The Round-21 section,
+corrected this round, is now credited. Still uncovered: "Round-18 gate/probe
+registry" (both readers dead). Net over base 60 → 63; score 6 → 6. Target
+missed; honest stop.
