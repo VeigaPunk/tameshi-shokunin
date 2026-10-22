@@ -1,5 +1,5 @@
 source: S001 — https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/ — §Mutant states and §Metrics, page fetched 2026-10-19; S002 — https://raw.githubusercontent.com/stryker-mutator/mutation-testing-elements/master/packages/report-schema/src/mutation-testing-report-schema.json — MutantStatus enum and MutantResult shape, master fetched 2026-10-19; S086 — npm mutation-testing-report-schema 3.9.0 (integrity-pinned tarball in tools/vendor/, `package/src/mutation-testing-report-schema.json` member); S087 — npm mutation-testing-metrics 3.9.0 (integrity-pinned tarball in tools/vendor/, `package/src/model/metrics.ts` and `package/src/calculateMetrics.ts` members)
-verified-at: 2026-10-22; C2 counter executed at 09dc114 (tool sha256 8c24255c…): PASS 8/8, exit 0; selftest 16/16, exit 0; official metrics per leg observed (lines in `.ufo/waves/round-25/w1/DraftKnowledge.md`)
+verified-at: 2026-10-22 (refreshed round 26); tool sha256 193ea6e32f89016baffe07d41fee17074651e74d4807f7fb70dff2fbe0f72cc4 at lane a08e85c5d7f899e8a5992e20517edb1a380d79eb (nine ledger legs): `--check` PASS 9/9, exit 0 (`.ufo/evidence/round-26/after/mte-check-a08e85c.stdout`); selftest 17/17, exit 0 (`.ufo/evidence/round-26/after/mte-selftest-a08e85c.stdout`). The round-25 measured tool was sha256 8269b82f… (selftest 17/17, `.ufo/evidence/round-25/after/c2-selftest.stdout`); the line before this refresh named the earlier 09dc114 run (tool 8c24255c…, selftest 16/16).
 recheck: uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --selftest; uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin; reopen S002, S086 and S087; compare the located quotes in lessons/round-25.md
 ground: F1 — external mutation-score semantics + report interop; the report-interop half of F1 moves to Core (schema acceptance + official metrics scoring of emitted ledger-leg reports). The score equality is by construction and is a sanity check, not an independent measurement.
 
@@ -168,3 +168,13 @@ Error patterns the selftest pins (`tools/mte-interop.py --selftest`):
 (positions start at one, S086), `timeout-is-not-a-tameshi-kill`,
 `balanced-flip-same-counts` (counts agree but ids are swapped: only the
 per-defect check against the recorded table sees it), `survived-as-nocoverage`.
+
+## Round 26 append — nine legs
+
+Appended; text above is unchanged. Round 26 adds the ninth recorded leg
+`js-cite-check` (kumitate `scripts/cite-check.mjs`, 5/10), so `--check` now
+replays nine legs and its leg-set guard requires exactly those nine
+(`tools/mte-interop.py` `LEG_TABLE`). Where the text above says "eight", read
+"nine" from round 26 on. At `a08e85c` all nine legs conform
+(`.ufo/evidence/round-26/after/mte-check-a08e85c.stdout`); js-cite-check reads
+official score 50, killed 5, survived 5, per-mutant equal to `TABLE_CITECHECK`.

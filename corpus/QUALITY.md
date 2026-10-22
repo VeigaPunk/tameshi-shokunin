@@ -556,3 +556,34 @@ motivate the rule, not a claim that the new rule has been operationalized.
     "routed" qualifier fails; round 25's `c1-pins.py` refuses a disposition
     ledger with one of the 34 rows dropped (P3), shown in
     `lessons/round-25.md` `## After measurement`.
+
+51. Round 26. A knowledge entry's `verified-at` line names the sha256 of the
+    tool bytes it vouches for, the lane revision of the run, and a committed
+    receipt of that run; when the tool changes after the line is written
+    (a later amendment, a new leg), the line is refreshed in the same landing
+    and the superseded run is named, not silently dropped. An earlier seat run
+    never stands for the measured tool. Captured by:
+    `lessons/round-25-verifier-spotcheck.md:197-199` (routed item 3: the line
+    named the `09dc114` run, tool `8c24255c…`, selftest 16/16, while the
+    measured tool was `8269b82f…` with 17/17). Falsifier:
+    `.ufo/evidence/round-26/c2-measure.py` item R25-SPOT-3 reads MISMATCH at
+    base `d4140796` (`.ufo/evidence/round-26/c2-before.stdout`) and RESOLVED
+    only when the named sha prefixes the tool at the revision and a named
+    `.stdout` receipt carries the selftest count. Bound (round-26 seat
+    CriticC2): the receipt check does not tie a receipt to the tool bytes
+    that produced it.
+
+52. Round 26. Every wave context names `jj` next to git: no seat runs any
+    `jj` command (not `jj log`, not `jj st`), at the fleet root, in the lane
+    or in a clone, because by default every jj command snapshots a colocated
+    working copy and imports git refs. A registry row's `source` uses the
+    enforced `<file>@<rev>:<line>` form before it lands; a prose source makes
+    `tools/registry-check.py` refuse the whole registry. Captured by:
+    `lessons/round-25.md:83` and `round-25-verifier-spotcheck.md:204-205`
+    (seats ReReplay14 and ReOutputComplete); round-26 seat RegistryCheck.
+    Falsifier: the round-25 wave context (`.ufo/waves/round-25/spec.json`,
+    key `context`) names only "mutating jj" in the lane, which this rule
+    rejects, while the round-26 contexts (`spec-w1.json`, `spec-w2.json`)
+    pass; `registry-check.py --rev a08e85c` exits 2,
+    `could-not-evaluate (registry invalid: rows[54].source must be
+    <file>@<7-40 hex rev>:<line> …)` (`.ufo/waves/round-26/w1/RegistryCheck.md`).

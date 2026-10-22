@@ -397,3 +397,20 @@ other report formats are not covered.
 C1 is same-ground calibration (record repair of three round-23 routed items),
 not new coverage. No other F-row changes, no independent cold-read or
 promotion credit.
+
+## Round 26 — ninth recorded case, round-25 record repair
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/mutation-case-kumitate-cite-check.md` / Core (recorded legs) | source-headed entry citing mined S088 (the pinned gate) and S089 (Stryker on equivalent mutants), new this round; ninth ledger leg `js-cite-check`, 5/10 killed on the 62-case hermetic group, 10/10 verdict predictions, four survivors with off-suite witnesses and one equivalent mutant | `.ufo/evidence/round-26/cite-check/`; `.ufo/waves/round-26/w1/Probe*.md`, `CriticEquivalence.md` |
+
+Coverage map: the recorded legs are nine; `tools/mte-interop.py` judges all
+nine (line 386 above reads nine from round 26 on). The kill-rate ledger's
+cite-check cells (`knowledge/fleet-kill-rate-ledger.md`: a four-defect probe,
+1/4, and a queue row "probe only") are superseded by this full sweep; the
+ledger file itself is not edited this round.
+
+No F-row changes. F3 stays open (one control per sweep). F1 stays held and
+F1b open: the emitted reports still name a target by basename with no lane or
+revision pin (routed item 4, open). C2 is a record repair of the round-25
+spot-check routed items 1–3, not new coverage.

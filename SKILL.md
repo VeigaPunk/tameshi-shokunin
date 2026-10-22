@@ -7,7 +7,7 @@ description: "Verification-fixture craft for 'hermetic suites', 'mutation testin
 
 verification-fixture craft playbook. Rounds 1–3 built the corpus from measured
 surfaces; every rule below earns a cited source. The first two mutation cases
-— round 2 JS, round 3 bash, both 8/10 killed — are worked here (seven recorded since round 16; eight since round 18), and this page carries
+— round 2 JS, round 3 bash, both 8/10 killed — are worked here (seven recorded since round 16; eight since round 18; nine since round 26), and this page carries
 the method as an executable recipe: numbered steps from pin to restore proof,
 defect templates with exact-string guidance, kill-rate bands, restore
 discipline, the measured bash-vs-JS divergences, and complete reproduce specs
@@ -922,7 +922,7 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
 
 Round 7 turns `--regression` from the tool's two-case self-check into the
 fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
-pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18) — `js-kimi-census`
+pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26) — `js-kimi-census`
 (r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
 `bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
 — each with its recorded kill-rate as its expectation
@@ -945,9 +945,9 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
   does not change that blob. The old tsukuroi/mado pins are historical,
   not a statement that their current trees match those recorded bytes.
   A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
-  later legs still run and their statuses aggregate (:1314-1374).
+  later legs still run and their statuses aggregate (:1384-1450 since round 26).
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
-  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18) with the
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
@@ -957,8 +957,8 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
   executed and skipped counts distinguished; and the exact recorded verdict
   table. Host-gated branches must be excluded/controlled or explicitly named,
   not called hermetic merely because the flag is `--selftest`.
-  Current anchors: pins/revisions/tables `tools/mutate-and-run.sh:597-620`,
-  first-four specs :648-829, inventory :82-100, eight dispatches :1314-1356.
+  Current anchors (round 26): pins/revisions/tables `tools/mutate-and-run.sh:603-629`,
+  first-four specs :657-839, inventory :83-108, nine dispatches :1384-1428.
   (U) The recorded case set remains tameshi-carried; no fleet-contributed
   leg is established by this registry.
 
@@ -973,7 +973,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
 2. **PASS is exact for ledger legs.** Every case line `PASS (band:
    killed-delta<=0 flips<=0 inconclusive=0 defects=D)` and every
    `REGRESSION_TABLE … match=D/D … flips=0`; the closing line's
-   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18). Measured instance (T7-1, 2026-10-14; replayed by this
+   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18, N=9 since round 26). Measured instance (T7-1, 2026-10-14; replayed by this
    lane under the same revision `cf41efaa…`): four legs, all `match=10/10 …
    flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
    killed-delta<=0 flips<=0)`, rc 0.
@@ -1387,8 +1387,8 @@ lands in the round's record, not here.
 | `corpus/knowledge/service-optin-protocol.md` | request shape, the re-pin rule, read-only guarantees, report shape, boundaries | your lane wants a sweep — or receives one |
 | `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
-| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
-| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18; git-materialized replay) | any sweep or replay |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
+| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26; git-materialized replay) | any sweep or replay |
 | `corpus/README.md` | the coverage map — one row per note, holds + sources | checking what the corpus holds |
 | `plans/round-N.plan.md`, `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, this wave, uncommitted at this write) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
@@ -1759,7 +1759,7 @@ single-edit mutants → **5/10 killed (50 %)**, control green, 0 inconclusive,
 `MUTATE_RESTORE: OK`; every one of the 10 predictions, committed in `e69b488`
 before the sweep, held. Detail of record:
 `corpus/knowledge/mutation-case-kumitate-round-gate.md`. The case is ledger leg
-`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18).
+`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26).
 
 Reproduce it (read-only on kumitate; scratch in `/tmp`):
 
@@ -2093,9 +2093,26 @@ hermetic `env -i` form of cases 7 and 8 and runs only the gate's hermetic group 
 Sweep: `.ufo/evidence/round-26/cite-check/sweep/sweep.txt`. Replay:
 `bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-cite-check: PASS`,
 `cases=9 passed=9`. Entry: `corpus/knowledge/mutation-case-kumitate-cite-check.md`.
+Wave 1 probed all five survivors off-suite: four are suite holes with a
+hermetic witness each; `S_EMPTY_GUARD` is an equivalent mutant (no input can
+reach `resolved > 0` with `filesScanned == 0`). The non-hermetic
+`--integrations` group kills none of the five and is red at the pristine pin
+on live trees, so the leg stays hermetic-only.
+
+| Survivor class in this case | What the suite does not pin | Decision |
+|---|---|---|
+| line-range edge (`S_OOR_EDGE`) | a citation of exactly line n+1 | hole; fix belongs to kumitate |
+| strict threshold (`S_STRICT`) | any `--strict` run (one warning must drift) | hole; kumitate |
+| usage exit (`S_USAGE`) | the exit code of an unknown flag | hole; kumitate |
+| compare direction (`S_PIN_INCLUDES`) | a pin that is an interior slice of the digest | hole; kumitate |
+| redundant guard (`S_EMPTY_GUARD`) | nothing: equivalent code | keep it a survivor in the table and the score (Stryker cannot mark equivalents, S089); name it equivalent in the entry; do not count it as a hole |
+
+Error pattern: an equality assert between two fixtures (`K_FENCE_TILDE`'s
+named case) cannot see a one-sided regression that makes both sides agree;
+the kill came from an absolute assert on the masked region.
 
 ### Round-26 gate/probe registry — report interop
 
 | Name | Kind | Command | Exits / rule |
 |---|---|---|---|
-| `tools/mte-interop.py` | gate with `--check`; selftest | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` · `--selftest` | 0 PASS (every leg found conforms, at least one leg) · 1 FAIL · 2 SETUP (missing jsonschema, vendored package integrity, leg set not equal to the nine ledger legs) · 64 usage. Registry rows `mte-interop-selftest` (17/17) and `mte-interop-check` (9/9). Reads the runner's committed tables; writes only its own scratch and `--emit DIR`. Owner tameshi. |
+| `tools/mte-interop.py` | gate with `--check`; selftest | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` · `--selftest` | 0 PASS (every leg found conforms, at least one leg) · 1 FAIL · 2 SETUP, could-not-evaluate (for example missing jsonschema or node, vendored package integrity, unsafe tar member, runner regression or metrics failure, leg set not equal to the nine ledger legs) · 64 usage, could-not-evaluate. Registry rows `mte-interop-selftest` (17/17) and `mte-interop-check` (9/9). Reads the runner's committed tables; writes only its own scratch and `--emit DIR`. The check replays live sibling object stores, so it is not hermetic. Owner tameshi. |

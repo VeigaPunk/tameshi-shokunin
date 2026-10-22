@@ -1667,3 +1667,25 @@ metadata and its failure are preserved; production gate source is unchanged.
   round-23 registry rows, routed in `lessons/round-25.md`.
 - Harm retained and restored: the strict monitor read 45/62 at 77302fa after
   corpus edits drifted traced inputs; restored by traced re-anchors.
+
+## Round 26 — 2026-10-22 (TameshiR26, attempt 1)
+
+- C1 (depth, learning claim): ninth recorded ledger leg `js-cite-check`,
+  kumitate `scripts/cite-check.mjs` at `1205c66`. Spec and predictions
+  committed in `622d31d` before the sweep; 5/10 killed, 10/10 verdict
+  predictions held, one named witness wrong (`K_FENCE_TILDE`). Runner and
+  `tools/mte-interop.py` wired to nine legs (`a08e85c`): regression PASS 9/9,
+  interop PASS 9/9. New entry `mutation-case-kumitate-cite-check.md`, sources
+  S088 and S089. Wave-1 probes: four survivors are suite holes with hermetic
+  witnesses, `S_EMPTY_GUARD` is an equivalent mutant.
+- C2 (calibration, record repair): round-25 spot-check routed items 1–3 —
+  registry rows for `tools/mte-interop.py`, the amendment-3 correction in
+  SCORECARD and the round-25 lesson, and a refreshed `verified-at` line.
+- Routed items 4–5: still open (17 command-binding weakenings re-run, all
+  survive; 14 re-attack findings, round-24 spot-check items 2–4 and unpinned
+  emitted reports unchanged); item 5 closed in the wave contexts (QUALITY 52).
+- Harmed intermediates at `a08e85c`, retained: the strict cold-read monitor
+  read 32/64 sections, restraint 6 (runner and corpus inputs drifted, two new
+  headings), and the registry was invalid (two new rows had a prose `source`)
+  so `registry-check.py` could not evaluate; the registry was repaired
+  before the content landing, and wave 2 cold-reads the drifted sections.

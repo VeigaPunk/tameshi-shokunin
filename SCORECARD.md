@@ -1254,3 +1254,49 @@ traced inputs of 17 SKILL.md sections (`after/monitor-harmed-77302fa.json`).
 That harmed intermediate is retained. The restoration and the final monitor,
 registry and census receipts are recorded in the lesson's `## After
 measurement`.
+
+### Round 25 — correction (appended in round 26)
+
+Routed by `corpus/lessons/round-25-verifier-spotcheck.md:193-196`; nothing
+above is rewritten. The round-25 header names amendments 1 (`c9ff09f`) and 2
+(`09dc114`) only. **Amendment 3** (`.ufo/evidence/round-25/contract-amendment-3.json`)
+landed in `77302fa`, the C1 and C2 measured commit, and also precedes the
+recorded after-measurement (receipts in `154bf4d`). It only adds refusals and
+one selftest case: `c1-pins.py` P5 requires the exact row shape; the interop
+leg set must equal the ledger legs; tar members are contained; a node timeout
+is SETUP; `narrow-score-delta` makes the selftest 17 cases. Its JSON flag
+`before_any_after_measurement: true` is true for the L1's recorded receipts,
+not for seat probes: wave seats had already run the C2 counter at PASS 8/8 at
+`c9ff09f` and `09dc114`, under the weaker ruler
+(`round-25-verifier-spotcheck.md:88-95`). No target or population moved.
+
+## Round 26 — ninth recorded case and round-25 record repair (2026-10-22)
+
+L1 TameshiR26, attempt 1. Two claims, frozen in
+`.ufo/evidence/round-26/contract.json` at
+`622d31d90b1fbc55c56e91a2b012bc18d6f1421a` before any mutant ran and before
+any edit the C2 counter reads.
+
+- **C1 depth (learning claim).** Depth and calibration tie at 8 as the
+  lowest owned numeric axes; depth has headroom to 10. Ninth recorded ledger
+  leg `js-cite-check` = kumitate `scripts/cite-check.mjs` at `1205c66`.
+  Counter `python3 .ufo/evidence/round-26/c1-measure.py --repo CLONE_AT_REV`:
+  before `C1_DEPTH: recorded_cases=8 wired_legs=8 depth_score=8`, exit 1, at
+  base `d4140796` (`.ufo/evidence/round-26/c1-before.stdout`); target
+  `recorded_cases=9 wired_legs=9 depth_score=9`, exit 0. Command D (above)
+  gives the same depth score. Sourced: the entry cites S088 and S089, opened
+  this round.
+- **C2 calibration (record repair).** Mismatches between the lane's own
+  record and repo bytes for the round-25 spot-check routed items 1–3
+  (registry row for `tools/mte-interop.py`; this SCORECARD and the lesson
+  omitting amendment 3; the stale `verified-at` line). Counter
+  `python3 .ufo/evidence/round-26/c2-measure.py --repo CLONE_AT_REV`: before
+  `C2_RECORD: mismatches=3/3`, exit 1, at base
+  (`.ufo/evidence/round-26/c2-before.stdout`); target `mismatches=0/3`,
+  exit 0. Numeric calibration stays 8 (lane cap). Only item 2 is a
+  SCORECARD self-assessment row in the strict sense; items 1 and 3 are the
+  lane's SKILL registry and knowledge-entry records (seat CriticC2).
+
+Capabilities: no new row. `tools/mte-interop.py` (round 25) now has registry
+rows `mte-interop-selftest` and `mte-interop-check` and judges nine legs.
+Measured results are appended below only after execution.

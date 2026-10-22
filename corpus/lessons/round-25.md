@@ -139,3 +139,33 @@ restraint 8, depth 8, overrides false; registry held 47/47, superseded 7,
 exit 0; census exit 0 (85 rows, seven pre-existing W04 warnings); C1 counter
 3/3 and `c1-pins.py` HOLD again at this revision; `tools/mte-interop.py` is
 byte-identical to the C2 measured commit `77302fa`.
+
+## Correction (round 26)
+
+Appended 2026-10-22 in round 26, routed by
+`round-25-verifier-spotcheck.md:193-196`. Nothing above is rewritten.
+
+The `## Claims` section above names amendments 1–2 only. It omits
+**amendment 3**, which landed in `77302fa`
+(`77302fa8f79144d06c1d2d2e2d2898c44b459bda`) and also preceded the recorded
+after-measurement. Amendment 3 amends `.ufo/evidence/round-25/contract.json`;
+it adds refusals and one selftest case and changes no target, no claim
+population and no byte of the frozen counter. From
+`.ufo/evidence/round-25/contract-amendment-3.json`:
+
+- `c1-pins.py`: "P5 requires the exact row shape `| R23-ROUTED-n | dispositioned |`".
+- `tools/mte-interop.py`: "leg set and table set must equal the eight ledger
+  legs (else SETUP)"; tar members must be relative regular files or
+  directories under `package/`; node timeout gives SETUP; node presence is
+  checked before the sweep; `MTE_WORKDIR` is printed; selftest case
+  `narrow-score-delta` (17 cases).
+- Pinned tool sha256: `c1-pins.py` `7bc1929f…752f440`,
+  `tools/mte-interop.py` `8269b82f…6eb02c`, both equal to the bytes at
+  `77302fa`.
+
+Limit on the JSON flag `before_any_after_measurement: true`: it holds for
+the L1's recorded after receipts (amendment 3 at 06:26 −03 in `77302fa`,
+receipts at 06:35 in `154bf4d`). It does not cover seat probes: wave seats
+had already run the C2 counter at PASS 8/8 at `c9ff09f` and `09dc114`,
+before amendments 2 and 3, under the weaker ruler
+(`round-25-verifier-spotcheck.md:88-95`).

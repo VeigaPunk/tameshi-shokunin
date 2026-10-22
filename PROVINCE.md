@@ -103,3 +103,16 @@ ledger legs as mutation-testing-elements reports and checks them with the
 official 3.9.0 schema and metrics library. The report format and the official
 library are read-only external surfaces; the lane owns only the export method.
 NoCoverage classification stays frontier (F1b).
+
+## Core — round 26 append (2026-10-22)
+
+Appended; lines above are unchanged. The recorded mutation legs are now
+**nine**. The ninth is kumitate `scripts/cite-check.mjs` (rev
+`1205c6621a2eccbb8ffceae86d9e7b79a7990b3a`, blob sha256
+`40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f`), ledger leg
+`js-cite-check`, probed read-only as a kumitate `scripts/*` primary surface
+(lines 7-11), entry `corpus/knowledge/mutation-case-kumitate-cite-check.md`
+(S088, S089). Not a service run; no opt-in needed. Kumitate owns the gate;
+survivor recommendations travel in the round report. Line 101 above ("the
+eight recorded ledger legs") reads nine from round 26 on: `tools/mte-interop.py`
+now judges all nine.
