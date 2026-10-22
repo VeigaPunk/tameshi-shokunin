@@ -1722,3 +1722,5 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Wave 1: 38 seats, 12 dead (rate limit), 6 late at the cut; 12 cold-read entries
   appended at `a20e2ba`. Result: 60/64, restraint 6, box3_mismatch 1 — target
   missed, honest stop.
+- Late reads Read04B/Read05A/Read06A assembled at `c30926e`: monitor 61/64,
+  restraint 6, box3_mismatch 1. Still an honest stop.

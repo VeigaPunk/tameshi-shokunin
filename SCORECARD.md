@@ -1412,3 +1412,11 @@ digest that does not match the revision), "Round-18 gate/probe registry"
 late). Calibration stays harmed against the pre-harm round-26 base
 (62/62, restraint 8). SHONEN marks unchanged, all `[~]`.
 No other axis claimed; no scalar changes; no retirement.
+
+Round 28 — final reading (appended; the table row above stays as measured at
+`a20e2ba`). Three late reports (Read04B, Read05A, Read06A) finished at
+19:24Z and were assembled with the first 12 (ledger 354 → 369, appended
+from the `b05d2ee` ledger, prefix equal as data). At `c30926e38bc6204f33f33cb84248b7caf27e8324`:
+`covered=61/64 restraint=6 box3_mismatch=1`, exit 1
+(`.ufo/evidence/round-28/c1-after-final.stdout`). Net over base: 60 → 61
+sections, score 6 → 6. Target missed; honest stop.
