@@ -1315,3 +1315,51 @@ be gamed by token-bearing prose and stale receipts (seat MutateC2Counter);
 its after-value stands with the seat reviews of the actual correction text.
 No-harm readings (monitor, registry, census) are recorded in
 `corpus/lessons/round-26.md` `## After measurement`.
+
+### Round 26 — correction (appended in round 27)
+
+The round-26 measured table above, row C2, says calibration "numeric 8 → 8".
+That is wrong for the same revisions. The lane's strict cold-read monitor
+(`.ufo/evidence/round-21/coldread/measure.py`), which computes the
+calibration score of this SCORECARD's "Current axes", read restraint 8 at
+base `d4140796` and restraint 6 at `40a12bf`, `d2206cd`, `2b064cf` and the
+landed head `e08444d3` (committed receipts
+`.ufo/evidence/round-26/after/monitor-harmed-*.json`; round-26 closure
+`corpus/lessons/round-26-verifier-spotcheck.md:120-123`). Calibration was
+harmed in round 26, 8 → 6, not held at 8. The row is left as written; this
+entry supersedes its delta cell. Re-measured at round-27 base `91edf9cd`:
+`C1_MONITOR: covered=25/64 restraint=6 box3_mismatch=1`
+(`.ufo/evidence/round-27/c1-before.stdout`).
+
+## Round 27 — monitor repair and frontier F8 (2026-10-22)
+
+L1 TameshiR27, attempt 1. Two claims, frozen in
+`.ufo/evidence/round-27/contract.json` with both counters before any
+content edit of this round.
+
+- **C1 calibration (harm repair, routed by the round-26 closure item 1).**
+  Self-assessment against repo state: SHONEN box 3 is `[~]` and cites the
+  cold-read ledger, but the strict monitor credits 25 of 64 sections, so
+  that box and the repo disagree. Counter
+  `python3 .ufo/evidence/round-27/c1-measure.py --repo CLONE --rev REV`:
+  before `C1_MONITOR: covered=25/64 restraint=6 box3_mismatch=1`, exit 1,
+  at base `91edf9cd`; target `covered=T/T restraint=8 box3_mismatch=0`,
+  exit 0, at the landed lane head, where T is that head's section total.
+  Repair method: independent cold reads by fresh seats that did not write
+  the sections, at the content revision; no author re-anchor.
+- **C2 coverage, frontier F8 (learning claim, sourced).** Oracle anchoring
+  as a survivor class. The four round-26 cite-check survivors called suite
+  holes were judged by a pristine-versus-mutant differential, an
+  expectation that flows from the code under mutation. Each is re-judged
+  against an expectation composed outside that code, by an executed probe
+  whose receipt is bound to the probe and anchor bytes. Counter
+  `python3 .ufo/evidence/round-27/c2-measure.py --repo CLONE --rev REV`:
+  before `C2_F8: survivors=4 classified=0 anchored_holes=0`, exit 1, at
+  base; target `classified=4`, exit 0. The anchored-hole count is reported
+  as observed. Sourced: S012 re-opened and mined this round, plus new rows
+  for the outside anchors.
+
+Not claimed: the `--regression` leg-sum check (round-26 closure item 5)
+stays open, because `tools/mutate-and-run.sh` is a traced input of most
+cold-read entries and an edit would re-drift the sections C1 restores.
+Measured results are appended below only after execution.

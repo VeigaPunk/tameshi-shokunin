@@ -1689,3 +1689,18 @@ metadata and its failure are preserved; production gate source is unchanged.
   headings), and the registry was invalid (two new rows had a prose `source`)
   so `registry-check.py` could not evaluate; the registry was repaired
   before the content landing, and wave 2 cold-reads the drifted sections.
+
+## Round 27 — 2026-10-22 (TameshiR27, attempt 1)
+
+- Motivation, C1: the round-26 closure ruled calibration harmed
+  (`corpus/lessons/round-26-verifier-spotcheck.md:130-135`): the strict
+  monitor read 62/62, restraint 8 at `d4140796` and 25/64, restraint 6 at
+  `e08444d3`. Re-measured at base `91edf9cd`: 25/64, restraint 6, SHONEN box 3
+  mismatch 1 (`.ufo/evidence/round-27/c1-before.stdout`).
+- Motivation, C2: frontier F8 (`corpus/README.md:85`) is open with S012
+  queued since round 1. The round-26 entry calls four survivors holes on a
+  pristine-versus-mutant differential (`corpus/knowledge/mutation-case-kumitate-cite-check.md:87-93`);
+  S012 names that kind of expectation state-anchored. Before:
+  `C2_F8: survivors=4 classified=0` (`.ufo/evidence/round-27/c2-before.stdout`).
+- Routed: SCORECARD round-26 C2 row corrected by an appended entry; the
+  `--regression` leg-sum check is left open (runner edits re-drift cold reads).
