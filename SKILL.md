@@ -2083,6 +2083,24 @@ The superseded 38/38 row still runs, fails against 44/44, and is excluded
 from the active tally. Full limitations and evidence: `corpus/lessons/round-24.md`
 Errata E–P and residual corrections; `corpus/knowledge/replay-projection-hardening.md`.
 
+Round 28 correction (routed by the round-27 spot-check, item 1; fresh cold
+read ReRead03 at `b1cc95e` found this section's counters unverifiable from
+a clone; earlier text preserved). The frozen counter
+`.ufo/evidence/round-21/c2-count.py` sets `FLEET = Path("/home/vgpnk/Projects/shokunin")`
+(line 19) and reads the tameshi-runner pin through `FLEET / frozen["repo"]`
+(line 52), not through `--repo`. So `tools/round21-measure.py --claim c2`
+and its `--selftest` read the live lane's Git objects even when run from a
+clone: they are not hermetic, and a clone run does not re-verify the
+round-21 C2 result by itself. The frozen scripts stay unchanged; their
+round-21 results are the receipts under `.ufo/evidence/round-21/`, not a
+re-derivation. The facade Entry above names the live lane path: a cold
+reader should substitute its own clone for `--repo` and expect the live
+lane read just described. The write-scope cells cover writes only, not
+reads. The `tools/wave-route-mix.py` Entry reads the operator's live route
+table (`~/.omp/agent/config.yml`), so its exit today can differ from the
+retained round-21 receipt `.ufo/waves/round-21/routemix-spec1.json`
+(`ok: true`); that receipt, not a re-run, is the round-21 record.
+
 ## Ninth recorded case — round 26
 
 kumitate `scripts/cite-check.mjs` at rev `1205c6621a2eccbb8ffceae86d9e7b79a7990b3a`
