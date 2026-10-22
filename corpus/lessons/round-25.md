@@ -104,3 +104,25 @@ Bounded lookup: identified 2, screened 2, included 2, excluded 0.
   each); item 5 is fleet scope.
 - C2: suite timeouts (exit 124) are emitted as RuntimeError by convention;
   NoCoverage for the 35 recorded survivors is frontier F1b.
+
+## After measurement
+
+At `77302fa8f79144d06c1d2d2e2d2898c44b459bda`, in a fresh clone
+(`.ufo/evidence/round-25/after/`):
+
+- C1: `C1_ROUTED: dispositioned=3/3`, exit 0. `c1-pins.py`: HOLD, 0 failures,
+  10 pinned files, dispositions 20 AGREE / 14 FINDING / 0 died.
+- C2: `MTE_INTEROP: PASS legs_conforming=8/8`, exit 0 (146.7 s), every leg
+  `per_mutant=ok failed=none`; selftest 17/17. The runner's integer
+  kill-rate equals the official score rounded half up on all eight legs.
+- Negative controls in a scratch clone at the same revision: one disposition
+  row dropped gives `C1_PINS: FAIL` and `C1_ROUTED: dispositioned=2/3`; the
+  R23-ROUTED-2 row changed to "NOT dispositioned" gives `C1_PINS: FAIL` while
+  the frozen counter still says 3/3. The QUALITY 50 fix can fail; the frozen
+  counter's row test cannot see row content.
+- Harmed intermediate: the strict cold-read monitor read 45/62, restraint 6
+  (base `1f73157`: 62/62, restraint 8). Cause: input drift of 17 SKILL.md
+  sections whose traced inputs include corpus files edited this round
+  (QUALITY, README, SOURCES, PROVINCE, SCORECARD). SKILL.md itself is
+  unchanged. Restored by actual traced L1 source reads with the round-23
+  re-anchor tool at the final content revision; the result follows.

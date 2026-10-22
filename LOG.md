@@ -1648,3 +1648,22 @@ metadata and its failure are preserved; production gate source is unchanged.
   at that revision are appended with the C trace files in the same landing.
   `monitor-intermediate-C.json` retains the harm; the final landing
   receipt records the post-C monitor separately. No code bytes changed.
+
+## Round 25 — 2026-10-22 (TameshiR25, attempt 2)
+
+- Repair-first C1 (calibration): the three round-23 closure-routed items that
+  round 24 left unrecorded now carry SCORECARD rows and executed checks.
+  0/3 → 3/3 (`c1-measure.py`), input pins HOLD (`c1-pins.py`).
+- C2 (coverage, capability): `tools/mte-interop.py` exports the eight ledger
+  legs as mutation-testing-elements reports; official schema and metrics
+  3.9.0 agree, 8/8. New knowledge entry `mte-report-interop.md`, sources
+  S086 and S087, F1 report interop moves to Core, F1b NoCoverage stays open.
+- One v2 wave of 65 seats (48 attack roles), 65 completed, 0 dead. The wave
+  forced amendments 2 and 3 before measurement: four more multi-token
+  fixtures, all ten round-23 guard anchors, input pins, ledger and
+  per-defect checks, a leg-set guard.
+- Freshness re-verification: `mutate-and-run.sh --regression` PASS 8/8 legs
+  on 2026-10-22 (pins unchanged); re-attacks found 14 open defects in
+  round-23 registry rows, routed in `lessons/round-25.md`.
+- Harm retained and restored: the strict monitor read 45/62 at 77302fa after
+  corpus edits drifted traced inputs; restored by traced re-anchors.

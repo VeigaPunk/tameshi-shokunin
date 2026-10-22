@@ -1234,3 +1234,23 @@ Routed-item disposition rows (one per item; read by both counters):
 | mutation report interop | emit each recorded ledger leg as a mutation-testing-elements report, validate it with the official schema 3.9.0, score it with the official metrics library 3.9.0, and check counts and per-defect statuses against the runner's own tables | `tools/mte-interop.py --selftest`, `--check`; `corpus/knowledge/mte-report-interop.md`; S086, S087 | 25 |
 
 Measured results are appended below only after execution.
+
+### Round 25 — measured results (TameshiR25)
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 routed-item dispositions | calibration | 0/3, exit 1 at 1f73157 | 3/3, exit 0 | +3 records; numeric 8→8 | `python3 .ufo/evidence/round-25/c1-measure.py --repo CLONE_AT_REV` | 77302fa8f79144d06c1d2d2e2d2898c44b459bda | `.ufo/evidence/round-25/c1-before.json`, `after/c1-measure.stdout`; companion `c1-pins.py` HOLD 0 failures (`after/c1-pins.stdout`) | improved (measured, record repair) |
+| C2 mutation report interop | coverage | tool absent at 1f73157 (0/8) | `MTE_INTEROP: PASS legs_conforming=8/8`, exit 0; selftest 17/17 | +8 legs; capability added | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` | 77302fa8f79144d06c1d2d2e2d2898c44b459bda | `.ufo/evidence/round-25/c2-before.json`, `after/c2-check.stdout`, `after/c2-selftest.stdout`, `mte-reports/` | improved (measured) |
+
+Bounds: the C1 counter's population is three fixed labels; a SCORECARD row
+reading "NOT dispositioned" still passes the frozen counter (only `c1-pins.py`
+P5 refuses it; executed in a scratch clone, see the lesson). C2's score
+equality holds by construction; `ledger` and `per_mutant` carry the
+information.
+
+No-harm: at 77302fa the strict cold-read monitor fell from 62/62 (restraint 8)
+to 45/62 (restraint 6) because this round's edits to corpus files drifted the
+traced inputs of 17 SKILL.md sections (`after/monitor-harmed-77302fa.json`).
+That harmed intermediate is retained. The restoration and the final monitor,
+registry and census receipts are recorded in the lesson's `## After
+measurement`.

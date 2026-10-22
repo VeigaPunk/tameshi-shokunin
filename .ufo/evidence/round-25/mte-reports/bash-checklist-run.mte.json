@@ -1,0 +1,288 @@
+{
+ "files": {
+  "checklist-run.sh": {
+   "language": "shell",
+   "mutants": [
+    {
+     "description": "section never closes \u2014 the '## ' stop becomes an exact two-char header  # predict S (hole)",
+     "id": "A1",
+     "location": {
+      "end": {
+       "column": 37,
+       "line": 107
+      },
+      "start": {
+       "column": 1,
+       "line": 107
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    [[ \"$line\" == '## ' ]] && break",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "section never opens \u2014 the header gate sets in=0  # predict K",
+     "id": "A2",
+     "location": {
+      "end": {
+       "column": 65,
+       "line": 104
+      },
+      "start": {
+       "column": 1,
+       "line": 104
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "      [[ \"$line\" == '## Credential-hygiene checklist' ]] && in=0",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "id charset loosened to ^[A-Z]+[0-9]+$ (multi-letter ids accepted)  # predict S (hole)",
+     "id": "B1",
+     "location": {
+      "end": {
+       "column": 44,
+       "line": 139
+      },
+      "start": {
+       "column": 1,
+       "line": 139
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    if [[ ! \"$id\" =~ ^[A-Z]+[0-9]+$ ]]; then",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "by-hand non-space floor 20 -> 0 (padded reasons accepted)  # predict K",
+     "id": "B2",
+     "location": {
+      "end": {
+       "column": 26,
+       "line": 160
+      },
+      "start": {
+       "column": 5,
+       "line": 160
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    ((ns >= 0)) || {",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "deny list drops `the-janitor stop` (a denied surface re-opens)  # predict S (hole)",
+     "id": "B3",
+     "location": {
+      "end": {
+       "column": 96,
+       "line": 75
+      },
+      "start": {
+       "column": 46,
+       "line": 75
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "the-janitor start|the-janitor run",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "expect_exit accepts a single integer only (multi-exit rows become POLICY)  # predict K",
+     "id": "B4",
+     "location": {
+      "end": {
+       "column": 47,
+       "line": 145
+      },
+      "start": {
+       "column": 5,
+       "line": 145
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    [[ \"$exexit\" =~ ^[0-9]+$ ]]",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "UNMATCHED-ITEM never reported (condition 0 -> -1)  # predict S (hole)",
+     "id": "C1",
+     "location": {
+      "end": {
+       "column": 44,
+       "line": 226
+      },
+      "start": {
+       "column": 5,
+       "line": 226
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "((hits == -1)) && defect \"UNMATCHED-ITEM",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "DUPLICATE-ITEM threshold raised 1 -> 2 (two declarers invisible)  # predict K",
+     "id": "C2",
+     "location": {
+      "end": {
+       "column": 43,
+       "line": 227
+      },
+      "start": {
+       "column": 5,
+       "line": 227
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "((hits > 2)) && defect \"DUPLICATE-ITEM",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "floor_of truncates instead of ceiling (odd item counts)  # predict S (hole)",
+     "id": "D1",
+     "location": {
+      "end": {
+       "column": 70,
+       "line": 174
+      },
+      "start": {
+       "column": 1,
+       "line": 174
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "floor_of() { printf '%s' \"$((($1) / FLOOR_DEN))\"; }",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "ratio denominator 2 -> 1 (floor = every item)  # predict K",
+     "id": "D2",
+     "location": {
+      "end": {
+       "column": 48,
+       "line": 73
+      },
+      "start": {
+       "column": 1,
+       "line": 73
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "FLOOR_DEN=1   # floor = ceil(items / FLOOR_DEN)",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "exit-set membership becomes exact equality (A|B arms never accepted)  # predict K",
+     "id": "E1",
+     "location": {
+      "end": {
+       "column": 40,
+       "line": 264
+      },
+      "start": {
+       "column": 1,
+       "line": 264
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "      [[ \"$want\" == \"$rc\" ]] || {",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "row output captured without stderr (2>&1 dropped)  # predict S (hole)",
+     "id": "E2",
+     "location": {
+      "end": {
+       "column": 87,
+       "line": 261
+      },
+      "start": {
+       "column": 1,
+       "line": 261
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    out=$(cd \"$ROOT\" && timeout \"$ROW_TIMEOUT\" bash -c \"${R_CHECK[$i]}\") || rc=$?",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "defect path returns 0 \u2014 BROKEN still exits 0  # predict K",
+     "id": "F1",
+     "location": {
+      "end": {
+       "column": 33,
+       "line": 292
+      },
+      "start": {
+       "column": 1,
+       "line": 289
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    return 0\n  fi\n  if [[ -n \"$ONLY\" ]]; then\n    printf 'CHECKLIST_ROW: CLEAN",
+     "status": "Killed",
+     "statusReason": "tameshi verdict KILLED"
+    },
+    {
+     "description": "--only BROKEN line prints failed=0  # predict S (hole)",
+     "id": "F2",
+     "location": {
+      "end": {
+       "column": 117,
+       "line": 285
+      },
+      "start": {
+       "column": 7,
+       "line": 285
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "printf 'CHECKLIST_ROW: BROKEN (id=%s failed=0 \u2014 this is a single row, not the checklist)\\n' \"$ONLY\" \"$failed\"",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    },
+    {
+     "description": "unknown argument fail-open \u2014 exit 2 -> 0  # predict S (hole)",
+     "id": "G1",
+     "location": {
+      "end": {
+       "column": 74,
+       "line": 88
+      },
+      "start": {
+       "column": 1,
+       "line": 88
+      }
+     },
+     "mutatorName": "tameshi-hand-seeded",
+     "replacement": "    *) printf 'checklist-run: unknown argument: %s\\n' \"$1\" >&2; exit 0 ;;",
+     "status": "Survived",
+     "statusReason": "tameshi verdict SURVIVED"
+    }
+   ],
+   "source": "#!/usr/bin/env bash\n# checklist-run.sh \u2014 the credential-hygiene checklist, executable (round 15).\n#\n# `SKILL.md` \u00a7Credential-hygiene checklist holds 16 items. Until round 15 they\n# were prose: no command mapped an item to a verdict, so \"run the checklist\"\n# was reading, and the judgement/per-item split was an assertion. This gate\n# binds every item to exactly one row of\n#\n#   corpus/checklist.tsv\n#   id <TAB> class <TAB> lead <TAB> check <TAB> expect_exit <TAB> expect_last\n#      <TAB> reason <TAB> note\n#\n#   class runnable  check = shell command run with cwd = repo root and a\n#                   timeout; expect_exit = integer or `A|B|C`; expect_last = ERE\n#                   matched against the last non-blank stdout line of the check.\n#                   reason must be `-`.\n#   class by-hand   check/expect_exit/expect_last must be `-`; reason is\n#                   `<class>: <text>` with the class from a closed set and text\n#                   >= 24 chars, unique across rows. A by-hand row is a\n#                   declaration, never a silent omission.\n#   lead            an ERE matched against the text of the item the row\n#                   declares. The mapping is a bijection over the 16 items: one\n#                   row per item, one item per row. Positional guessing is not\n#                   allowed, and a row whose lead matches nothing, or an item no\n#                   row matches, is a defect.\n#\n# Verdicts  OK:  `CHECKLIST_RUN: CLEAN (items=N runnable=K by_hand=M failed=0)`\n#                `CHECKLIST_RATIO: runnable=K/N floor=F by_hand=M delegated=D direct=K-D`\n#                (`delegated` = rows whose check is `bash corpus/<gate>.sh`, i.e.\n#                 the item already had a gate; `direct` = assertions this file\n#                 introduces \u2014 the two are not the same claim)\n#           defects (exit 1): ITEM-FAIL <id> (exit a want b) \u00b7 ITEM-LASTLINE\n#                <id> (want \u2026 got \u2026) \u00b7 UNDECLARED \u00b7 EXTRA \u00b7 UNMATCHED-ITEM \u00b7\n#                UNMATCHED-LEAD \u00b7 DUPLICATE-LEAD \u00b7 DUPLICATE-REASON \u00b7\n#                RATIO (runnable=K floor=F)\n#           shape/policy (exit 2): POLICY \u00b7 SETUP (nothing executed)\n#           `--only ID` prints `CHECKLIST_ROW: CLEAN|BROKEN (id=\u2026)` instead of a\n#           checklist verdict: one row is not the checklist\n# Exit      0 clean \u00b7 1 item or declaration defect \u00b7 2 usage/setup/shape\n#\n# Secret hygiene: a row may not touch a denied surface (a POLICY check refuses\n# any `check` naming op.env, `op run|read|inject`, a handler start/stop/run or\n# the ledger gate), no row resolves a reference, and the ref-path scan prints\n# counts only \u2014 printing the matched line of that scan would be the very leak\n# the item forbids. That deny list governs a row's OWN check string: a row that\n# delegates to another gate inherits that gate's policy instead, which is\n# stated on the row (row E5 delegates to op-ref-probe.sh, the one row whose\n# delegate execs `op run` over generated plain fixtures and refuses any ref\n# token before exec).\n#\n# Usage:\n#   checklist-run.sh                 verify every row against this host\n#   checklist-run.sh --ratio         audit the declaration and print only the\n#                                    CHECKLIST_RATIO line; executes no row\n#   checklist-run.sh --list          print the declaration table, run nothing\n#   checklist-run.sh --only ID       run (or report) one row\n#   checklist-run.sh --selftest      scratch-tree proof that the gate fires\n#   checklist-run.sh --tsv F --skill F   alternate declaration/checklist (the\n#                                    selftest harness; real runs use the repo pair)\n#   checklist-run.sh --help\n# Env: CHECKLIST_TIMEOUT (seconds per row, default 240)\nset -euo pipefail\n\nSCRIPT_DIR=$(cd -- \"$(dirname -- \"${BASH_SOURCE[0]}\")\" && pwd)\nSELF=\"$SCRIPT_DIR/$(basename -- \"${BASH_SOURCE[0]}\")\"   # absolute: the selftest re-invokes itself from any cwd\nROOT=$(cd -- \"$SCRIPT_DIR/..\" && pwd)\nTSV=\"$SCRIPT_DIR/checklist.tsv\"\nSKILL=\"$ROOT/SKILL.md\"\nMODE=\"verify\"\nRATIO_ONLY=0\nONLY=\"\"\nROW_TIMEOUT=${CHECKLIST_TIMEOUT:-240}\nFLOOR_DEN=2   # floor = ceil(items / FLOOR_DEN)\nBYHAND_CLASSES='authoring-duty|runtime-behavior|cross-lane|manual-change|operator-scope'\nDENY_CHECK='op\\.env|op run|op read|op inject|the-janitor start|the-janitor stop|the-janitor run|claim-ledger\\.sh'\n\nusage() { awk 'NR > 1 && /^set -euo/ { exit } NR > 1 { sub(/^# ?/, \"\"); print }' \"${BASH_SOURCE[0]}\"; }\n\nwhile (($#)); do\n  case \"$1\" in\n    --list) MODE=\"list\" ;;\n    --ratio) MODE=\"verify\"; RATIO_ONLY=1 ;;\n    --selftest) MODE=\"selftest\" ;;\n    --only) [[ -n \"${2:-}\" ]] || { printf 'checklist-run: --only needs an id\\n' >&2; exit 2; }; ONLY=\"$2\"; shift ;;\n    --tsv) [[ -n \"${2:-}\" ]] || { printf 'checklist-run: --tsv needs a path\\n' >&2; exit 2; }; TSV=\"$2\"; shift ;;\n    --skill) [[ -n \"${2:-}\" ]] || { printf 'checklist-run: --skill needs a path\\n' >&2; exit 2; }; SKILL=\"$2\"; shift ;;\n    -h|--help) usage; exit 0 ;;\n    *) printf 'checklist-run: unknown argument: %s\\n' \"$1\" >&2; exit 2 ;;\n  esac\n  shift\ndone\n\nBAD=0\ndefect() { printf '%s\\n' \"$*\"; BAD=1; }\n\n# ---------------------------------------------------------------- items ---\n# Items live in one section of SKILL.md, one `- [ ] ` bullet each; continuation\n# lines are indented. extract_items <skill> <dir> -> count on stdout, item n in\n# <dir>/n (raw, possibly multi-line).\nextract_items() {\n  local f=$1 d=$2 line in=0 n=0\n  while IFS= read -r line || [[ -n \"$line\" ]]; do\n    if ((in == 0)); then\n      [[ \"$line\" == '## Credential-hygiene checklist' ]] && in=1\n      continue\n    fi\n    [[ \"$line\" == '## '* ]] && break\n    if [[ \"$line\" == '- [ ] '* ]]; then\n      n=$((n + 1))\n      printf '%s\\n' \"${line#- \\[ \\] }\" >\"$d/$n\"\n    elif ((n > 0)) && [[ \"$line\" == [[:space:]]* ]] && [[ -n \"${line//[[:space:]]/}\" ]]; then\n      printf '%s\\n' \"$line\" >>\"$d/$n\"\n    fi\n  done <\"$f\"\n  printf '%s' \"$n\"\n}\n\n# ---------------------------------------------------------------- rows ---\n# Parallel arrays, index 1..N. load_rows -> 0 ok, 2 shape/policy (rows skipped).\nload_rows() {\n  local line n=0 id class lead check exexit exlast reason note rt ns\n  local -a f\n  ROWS_N=0\n  if [[ ! -r \"$TSV\" ]]; then\n    printf 'SETUP checklist.tsv not readable: %s\\n' \"$TSV\"\n    return 2\n  fi\n  while IFS= read -r line || [[ -n \"$line\" ]]; do\n    [[ -z \"$line\" || \"$line\" == \\#* ]] && continue\n    IFS=$'\\t' read -r -a f <<<\"$line\"\n    if [[ ${#f[@]} -ne 8 ]]; then\n      printf 'POLICY row %s: %d columns, want 8 (id class lead check expect_exit expect_last reason note)\\n' \\\n        \"${f[0]:-<blank>}\" \"${#f[@]}\"\n      BAD=1\n      continue\n    fi\n    id=${f[0]} class=${f[1]} lead=${f[2]} check=${f[3]} exexit=${f[4]} exlast=${f[5]} reason=${f[6]} note=${f[7]}\n    n=$((n + 1))\n    if [[ ! \"$id\" =~ ^[A-Z][0-9]+$ ]]; then\n      printf 'POLICY row %d: id %q is not <letter><digits>\\n' \"$n\" \"$id\"; BAD=1\n    fi\n    case \"$class\" in\n      runnable)\n        [[ -n \"$check\" && \"$check\" != '-' ]] || { printf 'POLICY row %s: runnable row needs a check\\n' \"$id\"; BAD=1; }\n        [[ \"$exexit\" =~ ^[0-9]+(\\|[0-9]+)*$ ]] || { printf 'POLICY row %s: expect_exit %q is not N or A|B|\u2026\\n' \"$id\" \"$exexit\"; BAD=1; }\n        [[ -n \"$exlast\" && \"$exlast\" != '-' ]] || { printf 'POLICY row %s: runnable row needs expect_last\\n' \"$id\"; BAD=1; }\n        [[ \"$reason\" == '-' ]] || { printf 'POLICY row %s: runnable row must carry reason `-` (the by-hand class is for by-hand rows)\\n' \"$id\"; BAD=1; }\n        [[ -n \"$note\" && \"$note\" != '-' ]] || { printf 'POLICY row %s: runnable row needs a note saying what it verifies\\n' \"$id\"; BAD=1; }\n        if [[ \"$check\" =~ $DENY_CHECK ]]; then\n          printf 'POLICY row %s: check touches a denied surface (/%s/)\\n' \"$id\" \"$DENY_CHECK\"; BAD=1\n        fi\n        ;;\n      by-hand)\n        [[ \"$check\" == '-' && \"$exexit\" == '-' && \"$exlast\" == '-' ]] || {\n          printf 'POLICY row %s: by-hand row must carry `-` for check/expect_exit/expect_last\\n' \"$id\"; BAD=1; }\n        [[ \"$reason\" =~ ^($BYHAND_CLASSES):\\ .{24,}$ ]] || {\n          printf 'POLICY row %s: reason %q is not `<class>: <>=24 chars>` with class in (%s)\\n' \"$id\" \"$reason\" \"$BYHAND_CLASSES\"; BAD=1; }\n        rt=${reason#*: }\n        ns=$(printf '%s' \"$rt\" | tr -d '[:space:]' | wc -c); ns=${ns// /}\n        ((ns >= 20)) || {\n          printf 'POLICY row %s: reason carries only %s non-space chars \u2014 padding is not a reason\\n' \"$id\" \"$ns\"; BAD=1; }\n        [[ -n \"$note\" && \"$note\" != '-' ]] || { printf 'POLICY row %s: by-hand row needs a note saying why not mechanisable\\n' \"$id\"; BAD=1; }\n        ;;\n      *) printf 'POLICY row %s: class %q is not runnable|by-hand\\n' \"$id\" \"$class\"; BAD=1 ;;\n    esac\n    R_ID[$n]=$id; R_CLASS[$n]=$class; R_LEAD[$n]=$lead; R_CHECK[$n]=$check\n    R_EXEXIT[$n]=$exexit; R_EXLAST[$n]=$exlast; R_REASON[$n]=$reason; R_NOTE[$n]=$note\n  done <\"$TSV\"\n  ROWS_N=$n\n  ((BAD == 0)) || return 2\n  return 0\n}\n\nfloor_of() { printf '%s' \"$(((($1 + FLOOR_DEN - 1)) / FLOOR_DEN))\"; }\n\n# -------------------------------------------------------------- verify ---\nverify() {\n  local items_n i k m d line lead hits j class last out rc want fl failed=0 dup_reasons dup_ids bh_reasons dl\n  declare -a R_ID=() R_CLASS=() R_LEAD=() R_CHECK=() R_EXEXIT=() R_EXLAST=() R_REASON=() R_NOTE=()\n  ROWS_N=0\n  ITEM_DIR=$(mktemp -d)\n  trap 'rm -rf \"$ITEM_DIR\"' RETURN\n\n  [[ -r \"$SKILL\" ]] || { printf 'SETUP checklist source not readable: %s\\n' \"$SKILL\"; return 2; }\n  items_n=$(extract_items \"$SKILL\" \"$ITEM_DIR\")\n  if [[ \"$items_n\" -eq 0 ]]; then\n    printf 'SETUP no `## Credential-hygiene checklist` section with `- [ ] ` items in %s\\n' \"$SKILL\"\n    return 2\n  fi\n\n  load_rows || return 2\n\n  # ids unique\n  dup_ids=$(for ((i = 1; i <= ROWS_N; i++)); do printf '%s\\n' \"${R_ID[$i]}\"; done | sort | uniq -d) || true\n  if [[ -n \"$dup_ids\" ]]; then\n    printf 'POLICY duplicate row id: %s\\n' \"$(tr '\\n' ' ' <<<\"$dup_ids\")\"\n    return 2\n  fi\n\n  k=0 m=0\n  for ((i = 1; i <= ROWS_N; i++)); do\n    [[ \"${R_CLASS[$i]}\" == runnable ]] && k=$((k + 1)) || m=$((m + 1))\n  done\n\n  # declaration completeness: one row per item, one item per row\n  ((ROWS_N < items_n)) && defect \"UNDECLARED (items=$items_n rows=$ROWS_N)\"\n  ((ROWS_N > items_n)) && defect \"EXTRA (items=$items_n rows=$ROWS_N)\"\n\n  # lead bijection\n  for ((i = 1; i <= ROWS_N; i++)); do\n    lead=${R_LEAD[$i]}\n    hits=0\n    for ((j = 1; j <= items_n; j++)); do\n      line=$(tr '\\n' ' ' <\"$ITEM_DIR/$j\" | tr -s ' ')\n      if [[ \" $line\" =~ $lead ]]; then hits=$((hits + 1)); fi\n    done\n    ((hits == 0)) && defect \"UNMATCHED-LEAD ${R_ID[$i]} (/$lead/ matches no item)\"\n    ((hits > 1)) && defect \"DUPLICATE-LEAD ${R_ID[$i]} (/$lead/ matches $hits items)\"\n  done\n  for ((j = 1; j <= items_n; j++)); do\n    line=$(tr '\\n' ' ' <\"$ITEM_DIR/$j\" | tr -s ' ')\n    hits=0\n    for ((i = 1; i <= ROWS_N; i++)); do\n      [[ \" $line\" =~ ${R_LEAD[$i]} ]] && hits=$((hits + 1))\n    done\n    ((hits == 0)) && defect \"UNMATCHED-ITEM $j (no row declares it)\"\n    ((hits > 1)) && defect \"DUPLICATE-ITEM $j ($hits rows declare it)\"\n  done\n\n  # by-hand reasons unique\n  bh_reasons=$(for ((i = 1; i <= ROWS_N; i++)); do\n    if [[ \"${R_CLASS[$i]}\" == by-hand ]]; then printf '%s\\n' \"${R_REASON[$i]}\"; fi\n  done) || true\n  dup_reasons=$(printf '%s\\n' \"$bh_reasons\" | grep -v '^$' | sort | uniq -d) || true\n  if [[ -n \"$dup_reasons\" ]]; then\n    defect \"DUPLICATE-REASON ($(tr '\\n' '|' <<<\"$dup_reasons\"))\"\n  fi\n\n  local fl\n  fl=$(floor_of \"$items_n\")\n  dl=0\n  for ((i = 1; i <= ROWS_N; i++)); do\n    [[ \"${R_CLASS[$i]}\" == runnable ]] || continue\n    [[ \"${R_CHECK[$i]}\" =~ ^bash[[:space:]]+corpus/ ]] && dl=$((dl + 1))\n  done\n  ((k * FLOOR_DEN >= items_n)) || defect \"RATIO (runnable=$k floor=$fl items=$items_n)\"\n\n  # run the runnable rows (skipped by --ratio, which audits the declaration only)\n  local failed=0\n  if ((RATIO_ONLY)); then\n    printf 'CHECKLIST_RATIO: runnable=%s/%s floor=%s by_hand=%s delegated=%s direct=%s\\n' \\\n      \"$k\" \"$items_n\" \"$fl\" \"$m\" \"$dl\" \"$((k - dl))\"\n    if ((BAD)); then return 1; fi\n    return 0\n  fi\n  for ((i = 1; i <= ROWS_N; i++)); do\n    [[ \"${R_CLASS[$i]}\" == runnable ]] || continue\n    if [[ -n \"$ONLY\" && \"$ONLY\" != \"${R_ID[$i]}\" ]]; then continue; fi\n    want=${R_EXEXIT[$i]}\n    rc=0\n    out=$(cd \"$ROOT\" && timeout \"$ROW_TIMEOUT\" bash -c \"${R_CHECK[$i]}\" 2>&1) || rc=$?\n    last=$(printf '%s\\n' \"$out\" | awk 'NF { l = $0 } END { print l }')\n    if [[ \"$want\" == *'|'* ]]; then\n      [[ \"|$want|\" == *\"|$rc|\"* ]] || {\n        printf 'ITEM-FAIL %s (exit %s want %s)%s\\n' \"${R_ID[$i]}\" \"$rc\" \"$want\" \"$([[ $rc == 124 ]] && printf ' TIMEOUT' || true)\"\n        printf '%s\\n' \"$out\" | tail -n 6 | sed 's/^/    | /'\n        failed=$((failed + 1)); BAD=1; continue\n      }\n    elif [[ \"$rc\" != \"$want\" ]]; then\n      printf 'ITEM-FAIL %s (exit %s want %s)%s\\n' \"${R_ID[$i]}\" \"$rc\" \"$want\" \"$([[ $rc == 124 ]] && printf ' TIMEOUT' || true)\"\n      printf '%s\\n' \"$out\" | tail -n 6 | sed 's/^/    | /'\n      failed=$((failed + 1)); BAD=1; continue\n    fi\n    if ! grep -qE -- \"${R_EXLAST[$i]}\" <<<\"$last\"; then\n      printf 'ITEM-LASTLINE %s (want /%s/ got %q)\\n' \"${R_ID[$i]}\" \"${R_EXLAST[$i]}\" \"$last\"\n      printf '%s\\n' \"$out\" | tail -n 6 | sed 's/^/    | /'\n      failed=$((failed + 1)); BAD=1; continue\n    fi\n  done\n\n  printf 'CHECKLIST_RATIO: runnable=%s/%s floor=%s by_hand=%s delegated=%s direct=%s\\n' \\\n    \"$k\" \"$items_n\" \"$fl\" \"$m\" \"$dl\" \"$((k - dl))\"\n  if ((BAD)); then\n    if [[ -n \"$ONLY\" ]]; then\n      printf 'CHECKLIST_ROW: BROKEN (id=%s failed=%s \u2014 this is a single row, not the checklist)\\n' \"$ONLY\" \"$failed\"\n    else\n      printf 'CHECKLIST_RUN: BROKEN (items=%s runnable=%s by_hand=%s failed=%s)\\n' \"$items_n\" \"$k\" \"$m\" \"$failed\"\n    fi\n    return 1\n  fi\n  if [[ -n \"$ONLY\" ]]; then\n    printf 'CHECKLIST_ROW: CLEAN (id=%s \u2014 this is a single row, not the checklist)\\n' \"$ONLY\"\n  else\n    printf 'CHECKLIST_RUN: CLEAN (items=%s runnable=%s by_hand=%s failed=0)\\n' \"$items_n\" \"$k\" \"$m\"\n  fi\n  return 0\n}\n\n# ---------------------------------------------------------------- list ---\nlist_rows() {\n  local i\n  declare -a R_ID=() R_CLASS=() R_LEAD=() R_CHECK=() R_EXEXIT=() R_EXLAST=() R_REASON=() R_NOTE=()\n  ROWS_N=0\n  load_rows || return 2\n  for ((i = 1; i <= ROWS_N; i++)); do\n    if [[ \"${R_CLASS[$i]}\" == runnable ]]; then\n      printf 'ROW %s runnable lead=/%s/ exit=%s last=/%s/ :: %s\\n' \\\n        \"${R_ID[$i]}\" \"${R_LEAD[$i]}\" \"${R_EXEXIT[$i]}\" \"${R_EXLAST[$i]}\" \"${R_CHECK[$i]}\"\n    else\n      printf 'ROW %s by-hand  lead=/%s/ %s\\n' \"${R_ID[$i]}\" \"${R_LEAD[$i]}\" \"${R_REASON[$i]}\"\n    fi\n  done\n  local k=0 m=0\n  for ((i = 1; i <= ROWS_N; i++)); do\n    [[ \"${R_CLASS[$i]}\" == runnable ]] && k=$((k + 1)) || m=$((m + 1))\n  done\n  printf 'CHECKLIST_LIST: rows=%s runnable=%s by_hand=%s\\n' \"$ROWS_N\" \"$k\" \"$m\"\n}\n\nonly_row() {\n  local i\n  declare -a R_ID=() R_CLASS=() R_LEAD=() R_CHECK=() R_EXEXIT=() R_EXLAST=() R_REASON=() R_NOTE=()\n  ROWS_N=0\n  load_rows || return 2\n  for ((i = 1; i <= ROWS_N; i++)); do\n    [[ \"${R_ID[$i]}\" == \"$ONLY\" ]] || continue\n    if [[ \"${R_CLASS[$i]}\" == by-hand ]]; then\n      printf 'BY-HAND %s (%s)\\n' \"${R_ID[$i]}\" \"${R_REASON[$i]}\"\n      return 0\n    fi\n    verify\n    return $?\n  done\n  printf 'SETUP --only %s: no such row id\\n' \"$ONLY\"\n  return 2\n}\n\n# ------------------------------------------------------------ selftest ---\nselftest() {\n  local d sk tv out rc fails=0 cases=0\n  d=$(mktemp -d)\n  trap 'rm -rf \"$d\"' RETURN\n  sk=\"$d/SKILL.md\"\n  tv=\"$d/checklist.tsv\"\n\n  items6() { # a 6-item checklist section: alpha..zeta\n    {\n      printf '## Credential-hygiene checklist\\n\\nEvidence production:\\n'\n      local t\n      for t in 'alpha item text' 'beta item text' 'gamma item text' \\\n        'delta item text' 'epsilon item text' 'zeta item text'; do\n        printf -- '- [ ] %s\\n' \"$t\"\n      done\n      printf '\\n## Next section\\n'\n    } >\"$sk\"\n  }\n  row() { printf '%s\\t%s\\t%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n' \"$@\" >>\"$tv\"; }\n  c1_default() { row C1 runnable alpha 'printf \"A1: OK\\n\"' 0 '^A1: OK$' - 'alpha delegates to itself'; }\n  rest_rows() { # rest_rows [C5-reason] [C6-reason] \u2014 C2..C6, 3 runnable + 2 by-hand\n    row C2 runnable beta 'printf \"A2: OK\\n\"' 0 '^A2: OK$' - 'beta delegates to itself'\n    row C3 runnable gamma 'printf \"A3: OK\\n\"; exit 1' '0|1' '^A3: OK$' - 'gamma prints then exits 1; A|B accepts it'\n    row C4 runnable delta 'printf \"A4: OK\\n\"' 0 '^A4: OK$' - 'delta delegates to itself'\n    row C5 by-hand epsilon - - - \"${1:-authoring-duty: epsilon is a writing decision with no command shape}\" 'epsilon needs an author'\n    row C6 by-hand zeta - - - \"${2:-cross-lane: zeta is owned elsewhere and only reported, never adjudicated}\" 'zeta is foreign scope'\n  }\n  # fixture <variant>: rebuild the item section and the row file from scratch, so\n  # no case depends on a sed pattern surviving an earlier one.\n  fixture() {\n    items6\n    rm -f \"$tv\"\n    case \"$1\" in\n      clean)      c1_default; rest_rows ;;\n      slow)       row C1 runnable alpha 'sleep 5' 0 '^A1: OK$' - 'alpha sleeps past the row timeout'; rest_rows ;;\n      exit-bad)   row C1 runnable alpha 'exit 3' 0 '^A1: OK$' - 'alpha exits 3 where 0 is declared'; rest_rows ;;\n      last-bad)   row C1 runnable alpha 'printf \"A1: OK\\n\"' 0 '^A1: NOPE$' - 'alpha prints OK where NOPE is declared'; rest_rows ;;\n      reason-bad) row C1 runnable alpha 'printf \"A1: OK\\n\"' 0 '^A1: OK$' 'authoring-duty: a reason on a runnable row is a shape error' 'alpha carries a reason'; rest_rows ;;\n      dup-lead)   row C1 runnable delta 'printf \"A1: OK\\n\"' 0 '^A1: OK$' - 'alpha row declares the delta item'; rest_rows ;;\n      broad-lead) row C1 runnable 'item text' 'printf \"A1: OK\\n\"' 0 '^A1: OK$' - 'alpha row declares every item'; rest_rows ;;\n      denied)     row C1 runnable alpha 'cat op.env' 0 '^A1: OK$' - 'alpha reads a denied surface'; rest_rows ;;\n      denied-ledger) row C1 runnable alpha 'bash corpus/claim-ledger.sh verify' 0 '^A1: OK$' - 'alpha re-invokes the ledger gate'; rest_rows ;;\n      denied-run) row C1 runnable alpha 'the-janitor run -- printenv' 0 '^A1: OK$' - 'alpha execs the handler run verb'; rest_rows ;;\n      empty-output) row C1 runnable alpha 'true' 0 '^A1: OK$' - 'alpha prints nothing at all'; rest_rows ;;\n      pad-reason) c1_default; rest_rows \"authoring-duty: $(printf '%*s' 40 '')\" ;;\n      tri-exit)   row C1 runnable alpha 'printf \"A1: OK\\n\"; exit 4' '3|4|5' '^A1: OK$' - 'alpha declares a three-way exit set'; rest_rows ;;\n      class-bad)  c1_default; rest_rows; row X1 manual alpha_twin 'true' 0 '^X$' - 'class outside the set' ;;\n      short)      c1_default; rest_rows; printf 'X1\\trunnable\\talpha\\n' >>\"$tv\" ;;\n      dup-id)     c1_default; rest_rows; row C5 runnable epsilon 'printf \"A5: OK\\n\"' 0 '^A5: OK$' - 'a second row with id C5' ;;\n      short-reason) c1_default; rest_rows 'authoring-duty: too short' ;;\n      dup-reason) c1_default; rest_rows 'authoring-duty: epsilon is a writing decision with no command shape' \\\n        'authoring-duty: epsilon is a writing decision with no command shape' ;;\n      bh-check)   c1_default; rest_rows\n                  row C5 by-hand epsilon 'true' - - 'authoring-duty: epsilon is a writing decision with no command shape' 'epsilon needs an author' ;;\n      floor-breach)\n        c1_default\n        row C2 runnable beta 'printf \"A2: OK\\n\"' 0 '^A2: OK$' - 'beta delegates to itself'\n        row C3 by-hand gamma - - - 'authoring-duty: gamma is also a writing decision with no command shape' 'gamma needs an author'\n        row C4 by-hand delta - - - 'runtime-behavior: delta needs a live handler cycle and is operator scope' 'delta needs the handler'\n        row C5 by-hand epsilon - - - 'authoring-duty: epsilon is a writing decision with no command shape' 'epsilon needs an author'\n        row C6 by-hand zeta - - - 'cross-lane: zeta is owned elsewhere and only reported, never adjudicated' 'zeta is foreign scope' ;;\n      extra)      c1_default; rest_rows; row X7 runnable nosuchitem 'printf \"A7: OK\\n\"' 0 '^A7: OK$' - 'a row for an item that does not exist' ;;\n      undeclared)\n        c1_default\n        row C2 runnable beta 'printf \"A2: OK\\n\"' 0 '^A2: OK$' - 'beta delegates to itself'\n        row C3 runnable gamma 'printf \"A3: OK\\n\"; exit 1' '0|1' '^A3: OK$' - 'gamma prints then exits 1; A|B accepts it'\n        row C4 runnable delta 'printf \"A4: OK\\n\"' 0 '^A4: OK$' - 'delta delegates to itself'\n        row C5 by-hand epsilon - - - 'authoring-duty: epsilon is a writing decision with no command shape' 'epsilon needs an author' ;;\n      *) c1_default; rest_rows ;;\n    esac\n  }\n\n  run() { # run <desc> <want_exit> <want_regex> [args...]\n    local desc=$1 wex=$2 wre=$3\n    shift 3\n    cases=$((cases + 1))\n    rc=0\n    out=$(CHECKLIST_TIMEOUT=\"${CT:-240}\" \"$SELF\" --tsv \"$tv\" --skill \"$sk\" \"$@\" 2>&1) || rc=$?\n    if [[ \"$rc\" != \"$wex\" ]]; then\n      printf 'checklist-selftest: FAIL %s: exit %s want %s\\n' \"$desc\" \"$rc\" \"$wex\"\n      fails=$((fails + 1))\n    elif ! grep -qE -- \"$wre\" <<<\"$out\"; then\n      printf 'checklist-selftest: FAIL %s: no /%s/ in output\\n' \"$desc\" \"$wre\"\n      fails=$((fails + 1))\n    fi\n  }\n\n  fixture clean\n  run \"clean\"                0 'CHECKLIST_RUN: CLEAN .items=6 runnable=4 by_hand=2 failed=0.'\n  run \"ratio line\"           0 'CHECKLIST_RATIO: runnable=4/6 floor=3 by_hand=2 delegated=0 direct=4'\n  run \"list\"                 0 'CHECKLIST_LIST: rows=6 runnable=4 by_hand=2' --list\n  run \"only runnable\"        0 'CHECKLIST_ROW: CLEAN .id=C1' --only C1\n  run \"only by-hand\"         0 'BY-HAND C5 .authoring-duty: epsilon' --only C5\n  run \"only unknown\"         2 'SETUP --only NOPE' --only NOPE\n\n  fixture exit-bad\n  run \"exit mismatch\"        1 'ITEM-FAIL C1 .exit 3 want 0.'\n  fixture last-bad\n  run \"lastline mismatch\"    1 'ITEM-LASTLINE C1 .want /\\^A1: NOPE\\$/'\n  fixture slow\n  CT=1 run \"row timeout\"     1 'ITEM-FAIL C1 .*TIMEOUT'\n  fixture class-bad\n  run \"unknown class\"        2 'POLICY row X1: class manual is not runnable\\|by-hand'\n  fixture short\n  run \"short row\"            2 'POLICY row X1: 3 columns, want 8'\n  fixture dup-id\n  run \"duplicate id\"         2 'POLICY duplicate row id: C5'\n  fixture reason-bad\n  run \"runnable with reason\" 2 'POLICY row C1: runnable row must carry reason'\n  fixture bh-check\n  run \"by-hand with check\"   2 'POLICY row C5: by-hand row must carry'\n  fixture short-reason\n  run \"short reason\"         2 'POLICY row C5: reason .* is not'\n  fixture dup-reason\n  run \"duplicate reason\"     1 'DUPLICATE-REASON .authoring-duty: epsilon'\n  fixture floor-breach\n  run \"floor breach\"         1 'RATIO .runnable=2 floor=3 items=6.'\n  fixture extra\n  run \"extra row\"            1 'EXTRA .items=6 rows=7.'\n  fixture undeclared\n  run \"undeclared item\"      1 'UNDECLARED .items=6 rows=5.'\n  fixture dup-lead\n  run \"duplicate item\"       1 'DUPLICATE-ITEM 4 .2 rows declare it.'\n  fixture broad-lead\n  run \"duplicate lead\"       1 'DUPLICATE-LEAD C1 '\n  fixture denied\n  run \"denied surface\"       2 'POLICY row C1: check touches a denied surface'\n  fixture denied-ledger\n  run \"denied claim-ledger\"  2 'POLICY row C1: check touches a denied surface'\n  fixture denied-run\n  run \"denied handler run\"   2 'POLICY row C1: check touches a denied surface'\n  fixture empty-output\n  run \"empty row output\"     1 'ITEM-LASTLINE C1 .*got '\n  fixture tri-exit\n  run \"three-way exit\"       0 'CHECKLIST_RUN: CLEAN .items=6 runnable=4 by_hand=2 failed=0.'\n  fixture pad-reason\n  run \"padded reason\"        2 'POLICY row C5: reason carries only'\n  fixture clean\n  run \"ratio mode\"           0 '^CHECKLIST_RATIO: runnable=4/6 floor=3 by_hand=2 delegated=0 direct=4$' --ratio\n  fixture floor-breach\n  run \"ratio mode defect\"    1 'RATIO .runnable=2 floor=3 items=6.' --ratio\n  fixture clean\n  run \"ratio mode quiet\"     0 'CHECKLIST_RATIO' --ratio\n  # --ratio executes no row: this fixture's row would fail if it were run\n  fixture slow\n  run \"ratio mode runs no row\" 0 '^CHECKLIST_RATIO: runnable=4/6 floor=3 by_hand=2 delegated=0 direct=4$' --ratio\n\n  run \"missing tsv\"          2 'SETUP checklist.tsv not readable' --tsv \"$d/nope.tsv\"\n  printf '# no checklist here\\n## Other\\n' >\"$d/other.md\"\n  run \"missing section\"      2 'SETUP no .## Credential-hygiene checklist. section' --skill \"$d/other.md\"\n\n  fixture clean\n  run \"final clean\"          0 'CHECKLIST_RUN: CLEAN .items=6 runnable=4 by_hand=2 failed=0.'\n\n  if ((fails)); then\n    printf 'CHECKLIST_SELFTEST: FAIL (%d/%d cases)\\n' \"$fails\" \"$cases\"\n    return 1\n  fi\n  printf 'CHECKLIST_SELFTEST: PASS (%d cases)\\n' \"$cases\"\n  return 0\n}\n\ncase \"$MODE\" in\n  verify)\n    if [[ -n \"$ONLY\" ]]; then only_row; else verify; fi\n    ;;\n  list) list_rows ;;\n  selftest) selftest ;;\nesac"
+  }
+ },
+ "framework": {
+  "name": "tameshi mutate-and-run.sh"
+ },
+ "schemaVersion": "1",
+ "thresholds": {
+  "high": 80,
+  "low": 60
+ }
+}
