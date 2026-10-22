@@ -1420,3 +1420,12 @@ from the `b05d2ee` ledger, prefix equal as data). At `c30926e38bc6204f33f33cb842
 `covered=61/64 restraint=6 box3_mismatch=1`, exit 1
 (`.ufo/evidence/round-28/c1-after-final.stdout`). Net over base: 60 → 61
 sections, score 6 → 6. Target missed; honest stop.
+
+Round 28 — final reading, second pass (appended). Read09B finished at
+19:26Z and was assembled with the other 15 (ledger 354 → 370, appended from
+the `b05d2ee` ledger). At `bdf0aa5e4f74273df33db62f7426a685347edb9a`:
+`covered=62/64 restraint=6 box3_mismatch=1`, exit 1
+(`.ufo/evidence/round-28/c1-after-final2.stdout`). Uncovered: "Round-18
+gate/probe registry" (both readers dead) and "Round-21 gate/probe
+registry" (one dead, one late). Net over base 60 → 62 sections; score 6 → 6.
+Target missed; honest stop.

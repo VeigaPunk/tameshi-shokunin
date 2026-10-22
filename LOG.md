@@ -1724,3 +1724,4 @@ metadata and its failure are preserved; production gate source is unchanged.
   missed, honest stop.
 - Late reads Read04B/Read05A/Read06A assembled at `c30926e`: monitor 61/64,
   restraint 6, box3_mismatch 1. Still an honest stop.
+- Read09B assembled at `bdf0aa5`: monitor 62/64, restraint 6, box3_mismatch 1. Honest stop.
