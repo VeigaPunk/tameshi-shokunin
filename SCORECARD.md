@@ -1300,3 +1300,18 @@ any edit the C2 counter reads.
 Capabilities: no new row. `tools/mte-interop.py` (round 25) now has registry
 rows `mte-interop-selftest` and `mte-interop-check` and judges nine legs.
 Measured results are appended below only after execution.
+
+### Round 26 — measured results (TameshiR26)
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 ninth recorded case | depth | `recorded_cases=8 wired_legs=8 depth_score=8`, exit 1 at d4140796 | `recorded_cases=9 wired_legs=9 depth_score=9`, exit 0; command D `recorded_cases=9 depth_score=9` | depth 8 → 9 | `python3 .ufo/evidence/round-26/c1-measure.py --repo CLONE_AT_REV` | 40a12bf34f34977a5789e81b930303b97c4038d1 | `.ufo/evidence/round-26/c1-before.stdout`, `after/c1-measure-40a12bf.stdout`, `after/commandD-40a12bf.stdout`; regression 9/9 `cite-check/regression-worktree.stdout`; interop 9/9 `after/mte-check-a08e85c.stdout` | improved (measured) |
+| C2 round-25 record mismatches | calibration | `mismatches=3/3`, exit 1 at d4140796 | `mismatches=0/3`, exit 0 | 3 → 0 records; numeric 8 → 8 | `python3 .ufo/evidence/round-26/c2-measure.py --repo CLONE_AT_REV` | 40a12bf34f34977a5789e81b930303b97c4038d1 | `.ufo/evidence/round-26/c2-before.stdout`, `after/c2-measure-40a12bf.stdout` | improved (measured, record repair) |
+
+Bounds: C1's counter checks that the ninth leg is recorded and wired; the
+regression replay (`match=10/10`) ties its table to the pinned bytes, and a
+leg copied from another leg would pass both (seat CriticC1). C2's counter can
+be gamed by token-bearing prose and stale receipts (seat MutateC2Counter);
+its after-value stands with the seat reviews of the actual correction text.
+No-harm readings (monitor, registry, census) are recorded in
+`corpus/lessons/round-26.md` `## After measurement`.
