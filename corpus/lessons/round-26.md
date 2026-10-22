@@ -110,4 +110,44 @@ Bounded lookup: identified 4, screened 4, included 2, excluded 2.
 
 ## After measurement
 
-Filled after wave 2.
+Wave 2 (39 cold reads plus 16 falsifiers, spec `.ufo/waves/round-26/spec-w2.json`)
+was validated but not dispatched: its 55-seat gate request was still waiting at
+11:47Z, Main's wave-size steer and the 2 h freeze followed, so the request was
+cancelled. The round is one wave of 39 seats.
+
+At `40a12bf` (content landing) and `d2206cd` (SCORECARD results), fresh clones:
+
+- C1: `C1_DEPTH: recorded_cases=9 wired_legs=9 depth_score=9`, exit 0; command D
+  `recorded_cases=9 depth_score=9` (`.ufo/evidence/round-26/after/`).
+- C2: `C2_RECORD: mismatches=0/3`, exit 0.
+- Regression 9/9 PASS and interop 9/9 PASS at `a08e85c` (L1) and again in seat
+  clones (ReplicateSweep, InteropCheck, MutateInteropLegSet).
+- Registry at `40a12bf`: `held=48/49 superseded=7`; the one row that differed
+  was the new `mte-interop-check`, refused as non-hermetic because its argv
+  named the live fleet root (`after/registry-40a12bf.json`). Fixed in
+  `2b064cf` (the tool's default fleet root is the clone's own mirror);
+  `--only mte-interop-check` then reads `held=1/1`. A full registry run at the
+  final revision was not repeated.
+- Census end: exit 0, 87 rows, seven pre-existing W04 warnings
+  (`after/census-end.stdout`).
+
+**Harmed and not restored (retained, reported).** The strict cold-read monitor
+reads 62/62 sections, restraint 8 at base; 32/64, restraint 6 at `a08e85c`;
+25/64, restraint 6 at `d2206cd` and `2b064cf`
+(`after/monitor-harmed-*.json`). Cause: the runner, registry and corpus edits
+drifted the traced inputs of 37 existing sections, and two new headings have
+no entry. The planned repair was independent seat cold reads (wave 2); the
+round-23 author re-anchor tool refuses sections with no prior entry, and no
+other restoration ran. Calibration's numeric score at head therefore reads 6
+on this monitor, a harm, not a no-harm. The next round's first move is the
+wave-2 spec re-generated at its base.
+
+## Errata
+
+- The frozen contract calls cite-check "a never-measured kumitate gate". It
+  was probed once before: the kill-rate ledger records a four-defect probe,
+  1/4, and a queue row "probe only" (seat ConnectorOverlap). This round is the
+  first full recorded sweep; the contract text is wrong on that word.
+- Seats DraftQuality and DraftProvinceReadme were cancelled by the L1 after the
+  L1 had landed its own text for their items, to release the wave-1 gate
+  reservation; they are cancelled, not dead.

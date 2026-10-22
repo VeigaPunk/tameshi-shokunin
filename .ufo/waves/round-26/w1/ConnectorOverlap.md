@@ -31,6 +31,11 @@ I scanned every `*-shokunin` lane except kumitate and tameshi with `rg --hidden 
 - kama: `.ufo/waves/round-17/build/advice/ConnectTameshi.md:27`, "tameshi already measures three gate-attacking controls: "cite-check's mutation copy"…". This credits tameshi's method layer, citing tameshi `SKILL.md:110-113`. Also `round-19/build/advice/KumitateOverlap.md:41`, advising against importing the gate's pin code.
 - kengaku `corpus/evidence/round11-fleet/r11-connector.md:23`, mado `.ufo/waves/round-20/w1/reports/ConnSiblingClassifiers.md:22` and chousa `.ufo/evidence/round-1/wave-plan.json:545`: citations only.
 - Filtering the same scan for `mutat|mutant|sweep|kill` adds only the kotoba A5 "no mutation probe" line and the kama advice line.
+- Full fleet scan (all lanes plus the fleet-root `.ufo`, 938 s): it adds mori, souji and tabi, again with no measurement.
+  - mori: `.ufo/waves/round-20/build/ConnKumitate.md:17` (inventory) and `round-23/build/ConnSoujiKama.md:68` (an `ENOSPC` false positive at `cite-check.mjs:2247`).
+  - souji: `.ufo/waves/round-16/w2/ConnSiblingOverlap2.md:142,272` (registry-row grep).
+  - tabi: `.ufo/waves/round-17/w1/ConnSiblingJj.md:98` (git call sites `:1678,1866`).
+  - Fleet root: `.ufo/reports/AGGREGATE.md:929` counts the gate as a kessho "builder instance", absorbed in-province, which is a pattern credit rather than a measurement. `:1212` (D-109, OPEN) is an `--integrations` attribution defect in kumitate `SKILL.md:552-553`. The fleet-root hits matching `mutat|sweep|kill` are kumitate's own round reports (`reports/round-16/kumitate.md:234`) and aggregator sweeps that quote them.
 
 ### 3. tameshi PROVINCE
 - Lines 7-11 cover the leg: "**Owns:** … `kumitate-shokunin/scripts/*` (six gates with selftest suites + mutation controls)". Lines 15-18 cover the bound: tameshi "Never edits a sibling's gate code (read-only probes; recommendations travel in round reports)". The sweep ran on a scratch copy (`sweep.txt:3`, `MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r26/cite-check.mjs sha256=40573448…`), so it stays inside that bound.
