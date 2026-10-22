@@ -1363,3 +1363,24 @@ Not claimed: the `--regression` leg-sum check (round-26 closure item 5)
 stays open, because `tools/mutate-and-run.sh` is a traced input of most
 cold-read entries and an edit would re-drift the sections C1 restores.
 Measured results are appended below only after execution.
+
+### Round 27 — measured results (TameshiR27)
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 cold-read monitor repair | calibration | `covered=25/64 restraint=6 box3_mismatch=1`, exit 1 at 91edf9cd | `covered=60/64 restraint=6 box3_mismatch=1`, exit 1 | sections 25 → 60 of 64; numeric calibration 6 → 6 (base of round 26 was 8) | `python3 .ufo/evidence/round-27/c1-measure.py --repo CLONE --rev REV` | af7b70daf7754f1d9363669cf9bc97ec01f61f9c | `.ufo/evidence/round-27/c1-before.stdout`, `after/c1-measure-af7b70d.stdout`, ledger append receipts `coldread/append-receipt-{w1,residual}.json` | **missed target (honest stop); calibration still harmed** |
+| C2 F8 oracle-anchored survivors | coverage (frontier F8) | `classified=0`, exit 1 at 91edf9cd (frozen and amended counter) | `classified=4 anchored_holes=4`, exit 0 | 0 → 4 classified; F8 open → partly held | `python3 .ufo/evidence/round-27/c2-measure.py --repo CLONE --rev REV` (contract amendment 1, `2227d83`: S012 check reads `used-by`, not `opened`) | af7b70daf7754f1d9363669cf9bc97ec01f61f9c | `after/c2-measure-af7b70d.stdout`, `f8/receipt.json`, `f8/probe-negative-control.stdout` | improved (measured; counter necessary, not sufficient — 3 header-anchored holes, 1 convention-only) |
+
+C1 detail: 51 wave seats cold-read the 39 uncovered sections at `2227d83`;
+27 credited and 12 failed with real defects in the page. The L1 corrected
+those 12 sections (line counts kept) and 8 residual seats re-read them at
+`b1cc95e`: 8 credited, 3 `wrong-expectation` (new wording errors, two of
+them introduced by the L1's corrections), 1 `gap-blocking` after the seat
+excluded receipts that read the live lane. The 4 uncovered at the head:
+"The report shape", "Triggers T1–T3", "Gate/probe registry" (all three
+corrected again in `af7b70d`, not re-read) and "Round-21 gate/probe
+registry". SHONEN box 3 `[~]` therefore still disagrees with the repo
+(mismatch 1). Correction to the round-26 correction above: the
+`40a12bf` reading now has its own receipt (`after/c1-measure-40a12bf.stdout`).
+Registry at `2227d83` in a fleet mirror: `held=49/49 superseded=7`
+(`after/registry-2227d83.stderr`). Census end exit 0.

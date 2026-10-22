@@ -150,3 +150,18 @@ other eight legs' hole calls are not anchored.
   legs, 35 survivors: 17 have an explicit header or usage anchor, 6 a
   derived one, 12 none. Re-judge the 17 first; route the 12 to owners as
   differential holes.
+
+## After measurement
+
+At `af7b70daf7754f1d9363669cf9bc97ec01f61f9c` (fresh clone):
+
+- C1: `C1_MONITOR: covered=60/64 restraint=6 box3_mismatch=1`, exit 1
+  (`.ufo/evidence/round-27/after/c1-measure-af7b70d.stdout`). Target missed.
+  Calibration is still harmed relative to round 26's base (restraint 8).
+- C2: `C2_F8: survivors=4 classified=4 anchored_holes=4`, exit 0.
+- Census end: exit 0. Registry at `2227d83`: `held=49/49 superseded=7`.
+
+Lesson: the cold reads were worth more than the credit. They found 15 real
+defects in SKILL.md text (12 in wave 1, 3 more in the residual reads, two of
+them in the L1's own corrections). A correction made after a cold read needs
+its own cold read; one residual call could not close that loop.

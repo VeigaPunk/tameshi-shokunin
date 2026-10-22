@@ -1704,3 +1704,8 @@ metadata and its failure are preserved; production gate source is unchanged.
   `C2_F8: survivors=4 classified=0` (`.ufo/evidence/round-27/c2-before.stdout`).
 - Routed: SCORECARD round-26 C2 row corrected by an appended entry; the
   `--regression` leg-sum check is left open (runner edits re-drift cold reads).
+- Result C1: monitor 25/64 → 60/64 at `af7b70d`; target 64/64 missed, restraint
+  stays 6, calibration still harmed (honest stop). 51 + 8 seats; 15 page defects
+  found by cold reads and corrected in SKILL.md.
+- Result C2: `C2_F8: classified=4 anchored_holes=4` at `af7b70d`; new entry
+  `corpus/knowledge/oracle-anchored-survivors.md`; S012 mined, S090 and S091 new.
