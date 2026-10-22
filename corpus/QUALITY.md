@@ -536,3 +536,23 @@ still counts one conjunction fixture, not coverage of either disjunct.
 No round24 fixture implements this corrected rule; the lesson's QUALITY49
 fix is not claimed failure-backed. The already executed M05/M06 probes
 motivate the rule, not a claim that the new rule has been operationalized.
+
+50. Round 25. A claim that cites routed items (it says "routed by", or cites
+    a closure, spot-check or `routed_not_executed` list) freezes a ledger of
+    those items with its contract, before any seat. The ledger has one row
+    per item of every cited routing source, quoted with its path:line or JSON
+    pointer. Each row maps the item by identity to counted checks, or to a
+    recorded decision: deferred with an owner, declined with a reason, or
+    implemented without a check. Each counted check names its routed item, or
+    is labelled author-added or control. Matching counts never stand in for
+    matching items. An item that names an existing artifact ("re-run X", "in
+    the ruler") maps to that artifact's exact population, or names each member
+    it drops. With any item unmapped, the claim is worded covered/total of
+    the source, never "the routed items". Narrows 12 and 48; replaces neither.
+    Captured by: `lessons/round-24-verifier-spotcheck.md:34,37`;
+    `lessons/round-24.md` Erratum I; round-25 seats QualityCriterion and
+    C1Framing. Falsifier: round 24's eleven predicates against MANIFEST
+    `rounds[421].notes` leave three closure items unmapped, so its
+    "routed" qualifier fails; round 25's `c1-pins.py` refuses a disposition
+    ledger with one of the 34 rows dropped (P3), shown in
+    `lessons/round-25.md` `## After measurement`.

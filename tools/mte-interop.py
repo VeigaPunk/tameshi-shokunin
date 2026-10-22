@@ -202,7 +202,11 @@ def official_metrics(reports):
             dest.mkdir(parents=True)
             with tarfile.open(fileobj=io.BytesIO(verified_tarball(package))) as tar:
                 for member in tar.getmembers():
-                    if not member.name.startswith('package/') or '..' in Path(member.name).parts:
+                    rel = member.name[len('package/'):] if member.name.startswith('package/') else ''
+                    if member.isdir() and member.name.rstrip('/') == 'package':
+                        continue
+                    if (not rel or Path(rel).is_absolute() or '..' in Path(rel).parts
+                            or not (member.isfile() or member.isdir())):
                         raise Setup('unexpected tar member %s' % member.name)
                     if member.isfile():
                         target = dest / member.name[len('package/'):]
@@ -210,8 +214,11 @@ def official_metrics(reports):
                         target.write_bytes(tar.extractfile(member).read())
         (tmp / 'run.mjs').write_text(NODE_RUNNER)
         (tmp / 'reports.json').write_text(json.dumps(reports))
-        run = subprocess.run([node, str(tmp / 'run.mjs'), str(tmp / 'reports.json')],
-                             cwd=tmp, capture_output=True, text=True, timeout=120)
+        try:
+            run = subprocess.run([node, str(tmp / 'run.mjs'), str(tmp / 'reports.json')],
+                                 cwd=tmp, capture_output=True, text=True, timeout=120)
+        except subprocess.TimeoutExpired:
+            raise Setup('official metrics timed out after 120 s')
         if run.returncode != 0:
             raise Setup('official metrics failed: %s' % run.stderr.strip()[-200:])
         return json.loads(run.stdout)
@@ -291,20 +298,24 @@ def check(args):
         return 2
     try:
         validator = jsonschema.Draft7Validator(load_schema())
+        if not shutil.which('node'):
+            raise Setup('node not found')
         if args.workdir:
             workdir = Path(args.workdir)
             stdout = (workdir / 'regression.stdout').read_text() if (workdir / 'regression.stdout').is_file() \
                 else args.regression_stdout.read_text() if args.regression_stdout else ''
         else:
             workdir = Path(tempfile.mkdtemp(prefix='tameshi-mte-regression-'))
+            print('MTE_WORKDIR: %s (removed on PASS)' % workdir)
             stdout = run_regression(workdir, args.fleet_root or ROOT.parent)
         tables = {m.group(1): dict(zip(('defects', 'recorded_killed', 'measured_killed', 'survived',
                                         'inconclusive', 'flips'), map(int, m.groups()[1:])))
                   for m in TABLE.finditer(stdout)}
         verdicts = recorded_verdicts((ROOT / 'tools/mutate-and-run.sh').read_text())
         legs = sorted(p.parent.name for p in workdir.glob('*/results.tsv'))
-        if not legs:
-            raise Setup('no leg results under %s' % workdir)
+        if set(legs) != set(LEG_TABLE) or set(tables) != set(LEG_TABLE):
+            raise Setup('leg set %s / table set %s differs from the eight ledger legs %s'
+                        % (legs, sorted(tables), sorted(LEG_TABLE)))
         reports = {leg: leg_report(workdir / leg) for leg in legs}
         official = official_metrics(reports)
     except (Setup, OSError, ValueError, KeyError) as exc:
@@ -406,6 +417,10 @@ def selftest():
         ('no-ledger-row', good, None, V3, False, 'ledger'),
         ('no-recorded-table', good, rec(3, 2, 1), None, False, 'per_mutant'),
         ('emitter-inconclusive-to-runtimeerror', emitted, rec(3, 1, 1, inconclusive=1), V_EMIT, True, None),
+        # seat C2Mutants: a 0.5-point gap that only the score check can see (tolerance mutants)
+        ('narrow-score-delta', report([mutant('N%d' % i, 'Killed', verdict='SURVIVED' if i == 0 else None)
+                                       for i in range(200)]),
+         rec(200, 200, 0), {'N%d' % i: 'KILLED' for i in range(200)}, False, 'score'),
     ]
     try:
         official = official_metrics({c[0]: c[1] for c in cases})

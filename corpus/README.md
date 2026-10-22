@@ -375,3 +375,25 @@ No F1–F10 status changes, independent cold-read or promotion credit.
 | `knowledge/replay-projection-hardening.md` | same-ground calibration; routed round23 hardening gaps as falsifiable predicates | minedS084, S085; `tools/registry-replay.py`; `.ufo/evidence/round-24/{contract,measure}.py/json` |
 
 No F1–F10 status changes, independent cold-read or promotion credit.
+
+## Round 25 — F1 report interop, routed-item dispositions
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/mte-report-interop.md` / F1 | source-headed entry citing mined S086 and S087 (new) with S001 and S002; the tameshi-to-report mapping, what the official schema and metrics library check, the INCONCLUSIVE convention, ledger rounding, and an export decision table | `tools/mte-interop.py`; vendored `tools/vendor/*.tgz`; `.ufo/evidence/round-25/` |
+
+**F1 status correction (supersedes lines 78 and 111–114 for the report-interop
+half only).** Report interop is now held for the eight recorded ledger legs:
+each leg is emitted as a mutation-testing-elements report that the official
+3.9.0 schema accepts, and the official 3.9.0 metrics library reproduces its
+killed, survived, invalid and total counts and every per-defect status in the
+runner's committed tables. Score equality is a sanity check that holds by
+construction. The `jsonschema` validator that round 1 lacked now runs through
+`uv run --with jsonschema==4.25.1`. **F1b, open:** NoCoverage classification
+of the 35 recorded survivors (no coverage data is recorded, so
+`mutationScoreBasedOnCoveredCode` is not claimed); Stryker's own mutators and
+other report formats are not covered.
+
+C1 is same-ground calibration (record repair of three round-23 routed items),
+not new coverage. No other F-row changes, no independent cold-read or
+promotion credit.

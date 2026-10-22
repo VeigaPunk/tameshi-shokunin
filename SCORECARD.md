@@ -1198,3 +1198,39 @@ after the consumer-warning correction. Its three actual traced source
 reads and preserved 284-entry prefix are recorded in the C-series files.
 The post-C landing measurement is retained separately in
 `.ufo/evidence/round-24/landing-verification.json`.
+
+## Round 25 — routed-item dispositions and report interop (2026-10-22)
+
+Attempt 2, L1 TameshiR25 (fresh identity; attempt 1 was not resumed). Two
+claims on distinct axes, frozen in `.ufo/evidence/round-25/contract.json` at
+`2a97ec1782424f5fc0281e3ed08f89a2ee3dbdb9` before the wave; amendments 1
+(`c9ff09f`) and 2 (`09dc114`) only add checks or make the counter runnable
+from a clone, and come before any after measurement.
+
+- **C1 calibration (repair-first).** Lowest owned numeric axis, tied with
+  depth at 8. It counts mismatches between the lane's own record and the
+  routed state: round-23 closure items with no SCORECARD disposition backed by
+  an executed check. Counter `python3 .ufo/evidence/round-25/c1-measure.py
+  --repo CLONE_AT_REV`; before `C1_ROUTED: dispositioned=0/3`, exit 1, at
+  `1f73157`; target 3/3, exit 0. Companion input-pin check
+  `python3 .ufo/evidence/round-25/c1-pins.py --repo CLONE_AT_REV`. Numeric
+  calibration stays 8: this is a record repair, and the R1/R2 kills are
+  controls on an unchanged gate (QUALITY48), not gate repairs.
+- **C2 coverage, capability (frontier F1 report interop).** Counter
+  `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py
+  --check --fleet-root /home/vgpnk/Projects/shokunin`; before: tool absent at
+  `1f73157` (0/8); target `MTE_INTEROP: PASS legs_conforming=8/8`, exit 0.
+
+Routed-item disposition rows (one per item; read by both counters):
+
+| Label | State | Item (MANIFEST `rounds[421].notes`) | Executed check | Evidence |
+|---|---|---|---|---|
+| R23-ROUTED-1 | dispositioned | multi-token stdout fixture in the ruler | eleven ruler-owned fixtures (seven multi-token) through the gate's public CLI kill all ten stdout and iteration mutants M1–M10, each with an explicit `FIXTURE … FAIL` witness; control green, restore OK | `.ufo/evidence/round-25/multitoken-cases.json`, `multitoken-mutants.spec`, `c1-suite.py` |
+| R23-ROUTED-2 | dispositioned | re-run guard sweep | all ten round-23 guard anchors re-run verbatim (G1–G4, G9–G14) plus three finding-drop variants (G5–G7) and one lane-added guard (G8): 14/14 killed by the gate selftest, each with a `CASE … FAIL` witness | `.ufo/evidence/round-25/guard-mutants.spec` |
+| R23-ROUTED-3 | dispositioned | dead-falsifier coverage gap | every one of the 34 round-23 wave-2 seats that died was re-attacked by a fresh round-25 seat: 34 completed, 20 AGREE, 14 FINDING, 0 died; doctored ledgers (one row dropped, one status flipped) fail as required | `.ufo/evidence/round-25/dead-falsifier-disposition.json`; `.ufo/waves/round-25/w1/Re*.md` |
+
+| capabilities addition | What it can now do | Evidence | First-working round |
+|---|---|---|---|
+| mutation report interop | emit each recorded ledger leg as a mutation-testing-elements report, validate it with the official schema 3.9.0, score it with the official metrics library 3.9.0, and check counts and per-defect statuses against the runner's own tables | `tools/mte-interop.py --selftest`, `--check`; `corpus/knowledge/mte-report-interop.md`; S086, S087 | 25 |
+
+Measured results are appended below only after execution.

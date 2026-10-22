@@ -14,7 +14,7 @@ Checks, all over git-tracked bytes at the clone's HEAD:
   P4 every disposition row names its canonical seat TameshiR25.Re<name> (present in
      the committed wave dispatch) and, when re-attacked, the canonical git-tracked
      report path .ufo/waves/round-25/w1/Re<name>.md;
-  P5 each SCORECARD R23-ROUTED-n row is one table row that says `dispositioned`.
+  P5 each label has exactly one SCORECARD table row, and it reads `| R23-ROUTED-n | dispositioned | ...`.
 Exit 0 all hold · 1 any fails · 2 setup.
 """
 import argparse
@@ -69,8 +69,8 @@ def main():
             if r.get('report') != rel or not tracked(repo, rel):
                 failures.append('P4 %s report %s not canonical or untracked' % (r['name'], r.get('report')))
     for n in (1, 2, 3):
-        rows = re.findall(r'^\| R23-ROUTED-%d \|[^\n]*\|$' % n, scorecard, re.M)
-        if len(rows) != 1 or 'dispositioned' not in rows[0]:
+        rows = re.findall(r'^\| R23-ROUTED-%d \|[^\n]*$' % n, scorecard, re.M)
+        if len(rows) != 1 or not rows[0].startswith('| R23-ROUTED-%d | dispositioned |' % n):
             failures.append('P5 SCORECARD row R23-ROUTED-%d: %d rows' % (n, len(rows)))
     counts = {}
     for r in disp:

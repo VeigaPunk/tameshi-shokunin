@@ -93,3 +93,13 @@ reference runner and two later ledger gates are named in that entry and
 `corpus/README.md` round21. Unmeasured kumitate survey gates and all other
 environments remain unmeasured. No universal hermeticity or determinism
 claim follows. The method is held; sibling gate ownership is unchanged.
+
+## Core — round 25 append (2026-10-22)
+
+Appended; lines above are unchanged. The report-interop half of F1 enters
+Core through `corpus/knowledge/mte-report-interop.md`, citing mined S086 and
+S087 (with S001, S002). `tools/mte-interop.py` emits the eight recorded
+ledger legs as mutation-testing-elements reports and checks them with the
+official 3.9.0 schema and metrics library. The report format and the official
+library are read-only external surfaces; the lane owns only the export method.
+NoCoverage classification stays frontier (F1b).
