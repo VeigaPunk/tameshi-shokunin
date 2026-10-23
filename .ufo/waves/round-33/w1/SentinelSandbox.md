@@ -1,0 +1,36 @@
+# SentinelSandbox — C1 measurement-path review
+
+**Verdict: BLOCK wave-2 C1 measurement until the claimed sandbox is real. Severity: High.** The source does not bwrap `v1.run_tool`; that path executes mutant-derived shell on the host. Separately, the counter's `block_run` bwrap command cannot find `timeout`, so its witness probes do not execute as written.
+
+## High — untrusted runner text executes outside bwrap
+
+**Exploit path.** A held-out author can put arbitrary shell text in an exact-string `new` value. The counter checks string types, set and witness shape, then applies each unique replacement; it does not constrain edit locations or shell content. The auditor extracts a section of the mutated runner's shell harness, embeds it in a generated bash script, and runs that script directly. `v1.run_tool` also starts the Python auditor with `subprocess.run`, a temporary `cwd`, and a reduced environment, but no bwrap. Thus a malicious held-out record can cause shell execution during scoring; this is not limited to the optional `--then-regression` path.
+
+**Evidence.** `.ufo/evidence/round-33/contract.json:18-19` defines exact-string edits and witnesses but no edit-scope rule. `.ufo/evidence/round-33/c1/c1-measure.py:94-127` validates only basic types/ranges, unique `old` occurrence, and replacement. `.ufo/evidence/round-32/c1-measure.py:177-196` invokes the tool directly. The round-33 counter uses that function for copies at `.ufo/evidence/round-33/c1/c1-measure.py:188-206,332-342`. In `tools/tally-audit-v2.py:421-440`, runner-derived `section` text is incorporated into a script and executed by `bash`; `tools/tally-audit-v2.py:466-480` obtains that section from the runner text. The source runner's harness is at `tools/mutate-and-run.sh:1992-1997,2035-2040`.
+
+**Impact.** **[INFERENCE]** An author-controlled record could read or write anything available to the counter's OS user, access host `/proc` and network, or consume host resources. Changing `cwd`, `HOME`, and `TMPDIR` is not filesystem or process isolation.
+
+**Smallest safe correction.** Run the auditor and each copy in an actually functioning least-privilege bwrap boundary (only the copy, tool, minimal read-only runtime, and dedicated writable scratch; no lane/repository bind; no network), with time and resource limits. For wave 2, allow only reviewed structural mutations within the tally block; reject harness/function-wrapper edits and arbitrary command-bearing `new` text. Keep the witness requirement, but do not treat it as a safety boundary.
+
+## Medium — `block_run` bwrap cannot execute its command
+
+**Evidence.** `.ufo/evidence/round-33/c1/c1-measure.py:144-168` binds only `run.sh` and its work directory, then invokes `timeout 60 bash /x.sh` at lines 157-160. I ran the same flags in my scratch, with one bounded probe each; all four commands returned `bwrap: execvp timeout: No such file or directory` and exit 1 (receipts `bwrap-{write,network,fork,proc}.exit`). No probe script ran. Since `block_run` parses no `RC` line in this case, if both pristine and mutated invocations take this failure path, it returns the same `(p.returncode, '')`; the reproduced command exited 1, so vector witnesses cannot demonstrate a difference.
+
+**Smallest safe correction.** Provide a minimal, pinned, read-only runtime inside the sandbox, including `timeout`, `bash`, their dynamic loader/library closure, and needed path links. Do not solve this by exposing the whole host filesystem; update the frozen contract if the visible runtime changes its “only tool and one runner copy” boundary.
+
+## Bounded probes and `/dev`/`/proc` judgment
+
+Runtime probes below use the `block_run` flags plus diagnostic-only read-only runtime mounts (`/usr` and `/bin`, `/lib`, `/lib64` links). That addition makes the probe runnable but is not proposed as the production sandbox. Each command ran from `/fast/scratch/hyaku/tameshi-r33-seats/SentinelSandbox/`, captured its status with `; echo $? > file`, and exited 0:
+
+- Write outside `/w`: `timeout 10 bwrap --unshare-all --die-with-parent --new-session --clearenv --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --symlink usr/lib /lib64 --ro-bind "$PWD/write/run.sh" /x.sh --bind "$PWD/write" /w --chdir /w --dev /dev --proc /proc timeout 60 bash /x.sh; echo $? > bwrap-write-runtime.exit` → `/x.sh: line 3: /fast/scratch/hyaku/tameshi-r33-seats/SentinelSandbox/outside-w-write-marker: No such file or directory`; `WRITE_OUTSIDE_W=blocked`. Marker remained absent.
+- Network: `timeout 10 bwrap --unshare-all --die-with-parent --new-session --clearenv --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --symlink usr/lib /lib64 --ro-bind "$PWD/network/run.sh" /x.sh --bind "$PWD/network" /w --chdir /w --dev /dev --proc /proc timeout 60 bash /x.sh; echo $? > bwrap-network-runtime.exit` → `NETWORK_PROBE=blocked-or-unroutable` (one bounded connect attempt to reserved TEST-NET-1, `192.0.2.1:80`; the result alone does not distinguish namespace isolation from an unroutable destination).
+- Forking: `timeout 10 bwrap --unshare-all --die-with-parent --new-session --clearenv --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --symlink usr/lib /lib64 --ro-bind "$PWD/fork/run.sh" /x.sh --bind "$PWD/fork" /w --chdir /w --dev /dev --proc /proc timeout 60 bash /x.sh; echo $? > bwrap-fork-runtime.exit` → `FORK_PROBE=3-bounded-subshells-created`.
+- Proc visibility: `timeout 10 bwrap --unshare-all --die-with-parent --new-session --clearenv --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --symlink usr/lib /lib64 --ro-bind "$PWD/proc/run.sh" /x.sh --bind "$PWD/proc" /w --chdir /w --dev /dev --proc /proc timeout 60 bash /x.sh "$$"; echo $? > bwrap-proc-runtime.exit` → `PROC_PID1=bwrap`, `PROC_VISIBLE_PIDS=3`, `HOST_SHELL_PID_VISIBLE=no`.
+
+`bwrap --version` reported `bubblewrap 0.13.1`. `bwrap --help` says `--unshare-all` unshares every supported namespace by default, `--proc` mounts a new procfs, and `--dev` mounts a new dev tree (not a host `/dev` bind). The proc probe saw only the sandbox namespace, not the host shell PID. **No `/dev` or `/proc` gap was observed** in this diagnostic run; keep these flags. The network flag is also present, though the bounded connect result above is not independently conclusive.
+
+**Medium — process exhaustion remains possible.** The bounded 3-subshell probe succeeded. `timeout 60` and `--die-with-parent` bound lifetime/cleanup, not process count or memory; a malicious block could fork repeatedly during that interval. **[INFERENCE]** Without an external resource limit, this can pressure host resources even inside a PID namespace. Use a dedicated cgroup PID/memory limit (or a narrowly reviewed seccomp policy where compatible); merely adding a cgroup namespace does not impose limits.
+
+## Wave-2 authoring bound
+
+Treat `old`/`new` as executable shell input, not safe data because the edit is exact-string. Restrict records to allowlisted, reviewed transformations wholly inside the tally block; prohibit edits to the self-test harness, function boundaries, runner dispatch, or commands outside the intended mutation. Review the complete post-edit diff before accepting a record. No malicious record or offensive payload was authored or run for this review.
