@@ -395,3 +395,15 @@ Round 32, after wave 2 (seat RerunCensus): the lane census v2 flagged S099 (`no-
 S099 tools/tally-audit.py`): the frozen tool does not cite S099. S099 `used-by`
 `tools/tally-audit.py, corpus/knowledge/runner-tally-audit.md` → `corpus/knowledge/runner-tally-audit.md`;
 the tool bytes are pinned by the C1 counter and stay unchanged. S097 keeps both paths (the tool cites it).
+
+Round 34: new row S101 (Major Mutation Framework, seat L1 fetch; mined by
+corpus/knowledge/witness-equivalence-rule.md). S100 `used-by`
+`corpus/lessons/round-33.md, corpus/knowledge/executable-self-assessment.md` →
+`corpus/lessons/round-33.md` (seat ColdReadSourcesRows F1: the dropped path never cites S100;
+old→new logged in the round-34 lesson). The r34 census carries the lane's first W01
+(`S101 tierC mined`) — disclosed in the round-34 lesson and report; the sourced-claim row is
+cited alongside tier-A S097, which carries the load-bearing semantics (MK-7 satisfied: tier-C
+is not sole support). Rows 97 → 98. The `- Next unused id: S100.` line above was stale the
+moment r33 consumed S100; a literal read would duplicate S100 and fail census E03 (demonstrated
+by seat CalibMonitor). It stays append-only; superseded here.
+- Next unused id: S102.

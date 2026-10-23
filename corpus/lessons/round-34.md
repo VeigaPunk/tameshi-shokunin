@@ -184,3 +184,18 @@ pristine+mutated before commit — QualityGate); SCORECARD r31v2 standing row st
 absent from this repo (second-hop — ReviewSHONEN); runner :96-99 cites legs 8/9 by spec path
 (LedgerDepth note); the six counter-mutation seats each killed/survived-classified their mutant
 with the landed counter never touched.
+
+**CalibMonitor fold (late relay):**
+- F2 reconciled: the line above reading "The round's sourced-claim conjunct rests on S101"
+  OVERSTATES. Precise form: the conjunct requires a row OPENED THIS ROUND, which is S101
+  (tier C); the load-bearing semantic ground of the knowledge entry is tier-A S097 (bash
+  exit-status classes and `case` first-match — the tuple the vector witness compares), so
+  MK-7 (a tier-C row is never sole support) is satisfied. The r34 census carries the lane's
+  first-ever W01 (`S101 tierC mined`) — disclosed here and in the report; census exit stays 0.
+- F1 named in the report: the r33-routed cold-read re-crediting PREMISE was falsified — the
+  calibration monitor's per-section output is byte-identical freeze→tip (0 newly drifted
+  inputs); the re-credit did no harm but answered a stale-premise question. Folded as the
+  lesson that routed re-reads should first check the monitor's own drift counters.
+- F3 fixed in `corpus/SOURCES.md` this fold: the stale `- Next unused id: S100.` pointer
+  (S100 and S101 now occupied) — corrected line `- Next unused id: S102.` appended per the
+  file's own convention, with the E03 demonstration noted.
