@@ -50,8 +50,7 @@ import tempfile
 
 PIN_RUNNER = 'a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9'
 TOOL_PATH = 'tools/tally-audit-v3.py'
-TOOL_SHA256 = 'ef98fc5367cdb12c71b8b0ddfb5b83835100831f545f6510437dc84014865885'  # v3 after A4 (real auto-root witness)
-FREEZE_REV = '__FREEZE_REV__'     # filled at freeze; see contract.json
+TOOL_SHA256 = '6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354'  # v3 after A7 (final bytes)
 # None in the root slot means "the runner's real auto root" (auto_root()); the explicit
 # triples keep representative caller-supplied --workdir values, relative and absolute.
 # The tool carries the same four triples; the oracle must not import the object it tests,

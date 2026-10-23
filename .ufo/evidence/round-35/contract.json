@@ -12,7 +12,7 @@
   "predecessor_tool": "tools/tally-audit-v2.py",
   "predecessor_sha256": "7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10",
   "c1_counter": ".ufo/evidence/round-35/c1/c1-measure.py",
-  "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301",
+  "c1_counter_sha256": "d360a159a1ad320e8726eed51256146a90025ce5e5fc97840a488f3a2ad4bbe3",
   "c2_counter": ".ufo/evidence/round-35/c2/c2-measure.py",
   "c2_counter_sha256": "67bb71188cde259088646f960b6fda8e0a217fad5d8260e379054b381018f9cc",
   "public_panel": ".ufo/evidence/round-35/c1/panel/",
@@ -153,6 +153,22 @@
     "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301"
    },
    "selftest": "TALLY_AUDIT_V3_SELFTEST: 33/33 pass (30 + here-doc decoy, read-mask head, shape-6 root gate)"
+  },
+  {
+   "id": "A8",
+   "when": "pre-data (no default-mode C1 run has ever happened; sealed set committed at 691bb51; caught by the attempt-3 L1 re-reading the counter's constants against the A7 pins)",
+   "counter": "c1 counter",
+   "change": "`TOOL_SHA256` now names the A7 v3 bytes (`6188db16\u2026`) instead of the pre-A7 bytes (`ef98fc53\u2026`); the vestigial unused constant `FREEZE_REV = '__FREEZE_REV__'` is deleted (the sealed freeze is read from history, BOUND-1, and the constant was never referenced). No predicate, class, specimen, oracle, vector set or sealed-provenance rule changed.",
+   "why": "A7 re-pinned the tool to `6188db16\u2026` but left the counter constant at `ef98fc53\u2026`, so a deciding-mode run at any revision after A7 would print `tool_sha_ok=0` and C1 could never PASS regardless of specimens \u2014 the same class A6 fixed one commit earlier, recurring inside the same amendment chain. AttackPreambleSeed \u00a7'routing' had already named exactly this step (`re-pin the counter's TOOL_SHA256 to the new blob`); attempt 2 committed A7 and the final before/control receipts without it. Before and control receipts are re-run from these bytes so every pre-data receipt is produced by the frozen bytes.",
+   "pins_old": {
+    "tool_sha256": "6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354",
+    "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301"
+   },
+   "pins_new": {
+    "tool_sha256": "6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354",
+    "c1_counter_sha256": "d360a159a1ad320e8726eed51256146a90025ce5e5fc97840a488f3a2ad4bbe3"
+   },
+   "selftest": "no tool change in A8; tool selftest remains 33/33 (`.ufo/evidence/round-35/lessons/selftest-33.out`)"
   }
  ],
  "measurement_revision_rule": "The measured revision is the lane branch tip at the deciding run; it is recorded in the receipt line as `rev=`. The C1 default-mode run happens once, after the sealed set lands. The C2 after-run happens once, after the C2 repairs are committed.",
