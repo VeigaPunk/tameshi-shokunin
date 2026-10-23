@@ -30,6 +30,12 @@ Round 35 (tameshi), routed from the round-34 wave's eight-seat convergent Holds:
      discards it and everything up to, excluding, the next newline as a comment, so comment
      text is never code) and S097 (the status range and `case` first-match semantics the
      oracle sweeps).
+  4. Real auto-root witness. The four triples were driven with fixed root literals, but the
+     runner's real auto root is `$(mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX)`
+     (mutate-and-run.sh:1357-1365); a copy gated on that value masked a failing leg into a
+     PASS under the runner's default config while every simulated triple agreed, and this
+     audit ACCEPTED it (round-35 seat RevengerRootShape CRITICAL). The auto triples now run
+     with a real directory carrying the runner's own prefix.
 
 Every round-34 check is retained unchanged in intent; the three fixes only tighten or
 de-blind them. The runner is never edited.
@@ -79,6 +85,7 @@ Prints one `CHECK <name> PASS|FAIL ...` line per check and a final
 2 cannot audit. The runner is never edited.
 """
 import argparse
+import atexit
 import os
 import re
 import shutil
@@ -337,8 +344,33 @@ def bash(script, tmp):
     return p.returncode, p.stdout.decode('utf-8', 'replace'), p.stderr.decode('utf-8', 'replace')
 
 
-CONFIGS = (('tally-audit', '0', '1'), ('/tmp/tally-audit-work', '1', '0'),
-           ('tally-audit-explicit', '0', '0'), ('/tmp/tally-audit-work-keep', '1', '1'))
+# None in the root slot means "the runner's real auto root" (see auto_root()); the explicit
+# triples keep representative caller-supplied --workdir values, relative and absolute.
+CONFIGS = ((None, '1', '0'), (None, '1', '1'),
+           ('tally-audit', '0', '1'), ('tally-audit-explicit', '0', '0'))
+AUTO_ROOT = [None]
+
+
+def auto_root():
+    """The runner's real auto root: root=$(mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX).
+
+    mutate-and-run.sh:1357-1365 builds exactly that path when --regression runs without
+    --workdir. Fixed literals can never equal it, so a copy gated on the real root value
+    diverged under the runner's default config while every simulated triple agreed and the
+    audit ACCEPTED it (round-35 seat RevengerRootShape CRITICAL). The auto triples now
+    carry a real directory with the runner's own prefix; the compared stdout carries the
+    value, not the directory's contents.
+    """
+    if AUTO_ROOT[0] is None:
+        AUTO_ROOT[0] = tempfile.mkdtemp(prefix='tameshi-r4-2-regression.', dir='/tmp')
+        atexit.register(lambda: shutil.rmtree(AUTO_ROOT[0], ignore_errors=True))
+    elif not os.path.isdir(AUTO_ROOT[0]):
+        os.makedirs(AUTO_ROOT[0], exist_ok=True)
+    return AUTO_ROOT[0]
+
+
+def cfg_root(cfg):
+    return auto_root() if cfg[0] is None else cfg[0]
 
 
 def run_vectors(block, names, vectors, tmp, cfg=CONFIGS[0]):
@@ -352,7 +384,7 @@ def run_vectors(block, names, vectors, tmp, cfg=CONFIGS[0]):
     another (DevGuard round 33; the (0,0)/(1,1) hole found by round-34 seat Mutkillvectorarmswap F3):
     the sweep must run under all four, and compare the FULL stdout (round 35), because the
     REGRESSION_WORKDIR line differs by config and a defect may be confined to it."""
-    root_s, auto_s, keep_s = cfg
+    root_s, auto_s, keep_s = cfg_root(cfg), cfg[1], cfg[2]
     decl = ' '.join('%s=${%d}' % (n, i + 1) for i, n in enumerate(names))
     lines = ['set -u -o pipefail', 'tally() {', '  local ' + decl,
              "  local root=%s auto=%s KEEP=%s" % (root_s, auto_s, keep_s), block.rstrip('\n'), '}']
@@ -373,7 +405,7 @@ def oracle(statuses_by_leg, counted_ops, nlegs, cfg=CONFIGS[0]):
     REGRESSION_WORKDIR line whose wording and whose rm decision both depend on the
     (auto,KEEP) triple, so a defect confined to that line was invisible to a
     first-line comparison (round-34 hold: whole-stdout comparison OPEN)."""
-    root_s, auto_s, keep_s = cfg
+    root_s, auto_s, keep_s = cfg_root(cfg), cfg[1], cfg[2]
     kept = 'REGRESSION_WORKDIR: %s (kept)' % root_s
     removed = 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)' % root_s
     vals = [statuses_by_leg[o] for o in counted_ops]
@@ -752,6 +784,10 @@ def selftest():
                                                '  # a stray } must not close the body\n  if [[ $nfail -gt 0 ]]; then\n', 1), 0, None),
         ('comment esac in arm', text.replace('      0) npass=$((npass + 1)) ;;\n',
                                              '      0) npass=$((npass + 1)) ;;  # esac mention\n', 1), 0, None),
+        # Round-35 real-root witness: the auto root is /tmp/tameshi-r4-2-regression.* and a
+        # gate keyed on it must be KILLED; inert comment text naming it must stay ACCEPTED.
+        ('real-root gated mask', text.replace(tally_case, tally_case + '  if [[ $auto -eq 1 && "$root" == /tmp/tameshi-r4-2-regression.* ]]; then nfail=0; npass=$((npass+1)); fi\n', 1), 1, 'runtime'),
+        ('comment names real root', text.replace(start, start + '  # the auto root is /tmp/tameshi-r4-2-regression.* at runtime\n', 1), 0, None),
         ('harness exit-only', text.replace(cmp_line, '    [[ $rc -eq $want_rc ]]\n', 1), 1, 'harness'),
         ('harness swallowed', text.replace(cmp_line, cmp_line + '    rc=$?\n', 1), 1, 'harness'),
         ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 1 2 3 4 5 6 7 7; do', 1), 1, 'harness'),

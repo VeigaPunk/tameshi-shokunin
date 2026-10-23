@@ -31,6 +31,7 @@ Counting command (deciding):
 Exit 0 iff the predicate is true. Prints one line per copy and the predicate line.
 """
 import argparse
+import atexit
 import hashlib
 import json
 import os
@@ -38,14 +39,40 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 PIN_RUNNER = 'a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9'
 TOOL_PATH = 'tools/tally-audit-v3.py'
 TOOL_SHA256 = 'da23d3a25271072cae4cfd977cf3aeca531ef97e0abcd913890b3710cfa9a16f'  # v3 at the round-35 freeze
 FREEZE_REV = '__FREEZE_REV__'     # filled at freeze; see contract.json
-CONFIGS = (('tally-audit', '0', '1'), ('/tmp/tally-audit-work', '1', '0'),
-           ('tally-audit-explicit', '0', '0'), ('/tmp/tally-audit-work-keep', '1', '1'))
+# None in the root slot means "the runner's real auto root" (auto_root()); the explicit
+# triples keep representative caller-supplied --workdir values, relative and absolute.
+# The tool carries the same four triples; the oracle must not import the object it tests,
+# so the two lists are kept in lockstep by hand and by the control receipt.
+CONFIGS = ((None, '1', '0'), (None, '1', '1'),
+           ('tally-audit', '0', '1'), ('tally-audit-explicit', '0', '0'))
+AUTO_ROOT = [None]
 SEP = '\x1f'
+
+
+def auto_root():
+    """The runner's real auto root: root=$(mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX).
+
+    mutate-and-run.sh:1357-1365 builds exactly that path when --regression runs without
+    --workdir. Fixed literals never equal it, so a copy gated on the real root value
+    diverged under the runner's default config while every simulated triple agreed
+    (round-35 seat RevengerRootShape CRITICAL). Ground truth must see the real value.
+    """
+    if AUTO_ROOT[0] is None:
+        AUTO_ROOT[0] = tempfile.mkdtemp(prefix='tameshi-r4-2-regression.', dir='/tmp')
+        atexit.register(lambda: shutil.rmtree(AUTO_ROOT[0], ignore_errors=True))
+    elif not os.path.isdir(AUTO_ROOT[0]):
+        os.makedirs(AUTO_ROOT[0], exist_ok=True)
+    return AUTO_ROOT[0]
+
+
+def cfg_root(cfg):
+    return auto_root() if cfg[0] is None else cfg[0]
 
 
 def sha256(data):
@@ -192,15 +219,9 @@ def diverge(a, b):
 
 # ---------------------------------------------------------------- panel
 
-def load_copies(directory):
+def _docs_to_copies(docs):
     copies = []
-    if not os.path.isdir(directory):
-        return copies
-    for fn in sorted(os.listdir(directory)):
-        if not fn.endswith('.json'):
-            continue
-        with open(os.path.join(directory, fn), encoding='utf-8') as f:
-            doc = json.load(f)
+    for fn, doc in docs:
         if 'copies' in doc and isinstance(doc['copies'], list):
             for c in doc['copies']:
                 c.setdefault('file', fn)
@@ -209,6 +230,37 @@ def load_copies(directory):
             doc.setdefault('file', fn)
             copies.append(doc)
     return copies
+
+
+def load_copies(directory):
+    """Panel copies from disk (public panel only; the sealed set is read at REV)."""
+    docs = []
+    if not os.path.isdir(directory):
+        return []
+    for fn in sorted(os.listdir(directory)):
+        if not fn.endswith('.json') or fn == 'manifest.json':
+            continue
+        with open(os.path.join(directory, fn), encoding='utf-8') as f:
+            docs.append((fn, json.load(f)))
+    return _docs_to_copies(docs)
+
+
+def load_copies_rev(lane, rev, reldir):
+    """Copies from COMMITTED bytes at REV (round-35 seat ReviewSealedGate BOUND-4: the
+    provenance gate reads history while the scorer read the working tree, so an
+    uncommitted edit passed the gate and was scored anyway). `manifest.json` is a
+    manifest, never a specimen (HYGIENE-1)."""
+    p = subprocess.run(['git', '-C', lane, 'ls-tree', '-r', '--name-only', rev, '--', reldir],
+                       capture_output=True)
+    names = [n for n in p.stdout.decode('utf-8', 'replace').split('\n')
+             if n.endswith('.json') and os.path.basename(n) != 'manifest.json']
+    docs = []
+    for name in sorted(names):
+        raw = git_show(lane, rev, name)
+        if raw is None:
+            continue
+        docs.append((os.path.basename(name), json.loads(raw.decode('utf-8'))))
+    return _docs_to_copies(docs)
 
 
 def apply_edits(text, edits):
@@ -326,8 +378,7 @@ def main():
         with open(tool_file, 'wb') as f:
             f.write(tool_bytes)
 
-    panel_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'panel')
-    pub = load_copies(panel_dir)
+    pub = load_copies_rev(lane, rev, '.ufo/evidence/round-35/c1/panel')
     pub_kill_slots = sum(1 for c in pub if c['set'] == 'kill')
     pub_accept_slots = sum(1 for c in pub if c['set'] == 'accept')
     pub_distinct = distinct_bodies(pub, runner_text)
@@ -344,23 +395,39 @@ def main():
     ho_distinct = 0
     if a.sealed:
         sdir = a.sealed if os.path.isabs(a.sealed) else os.path.join(lane, a.sealed)
-        manifest_path = os.path.join(sdir, 'manifest.json')
-        ho = load_copies(sdir)
-        if os.path.exists(manifest_path):
-            with open(manifest_path, encoding='utf-8') as f:
-                manifest = json.load(f)
-            freeze_rev = manifest.get('freeze_rev', '')
-            sealed_ok = bool(freeze_rev) and git_ok(lane, 'merge-base', '--is-ancestor', freeze_rev, rev)
-            for c in ho:
-                fpath = '.ufo/evidence/round-35/c1/sealed/%s' % c['file']
-                last = subprocess.run(['git', '-C', lane, 'log', '-1', '--format=%H', '--', fpath],
-                                      capture_output=True).stdout.decode().strip()
-                if not last or not git_ok(lane, 'merge-base', '--is-ancestor', freeze_rev, last):
-                    sealed_ok = False
-                    print('SEALED-PROVENANCE-FAIL %s last=%s freeze=%s' % (c['file'], last[:12] or '-', freeze_rev[:12]))
-        else:
+        srel = os.path.relpath(os.path.abspath(sdir), lane).replace(os.sep, '/')
+        ho = load_copies_rev(lane, rev, srel)
+        mbytes = git_show(lane, rev, srel + '/manifest.json')
+        manifest = json.loads(mbytes.decode('utf-8')) if mbytes is not None else None
+        # The freeze is not self-declared (ReviewSealedGate BOUND-1): it is the commit that
+        # first added the contract, read from history at REV, and the manifest must name it.
+        first = subprocess.run(['git', '-C', lane, 'log', rev, '--diff-filter=A', '-1', '--format=%H',
+                                '--', '.ufo/evidence/round-35/contract.json'],
+                               capture_output=True).stdout.decode().strip()
+        declared = (manifest or {}).get('freeze_rev', '')
+        sealed_ok = (manifest is not None and bool(first) and declared == first
+                     and rev != first and git_ok(lane, 'merge-base', '--is-ancestor', first, rev))
+        if not sealed_ok:
+            print('SEALED-FREEZE-FAIL manifest=%s contract_first_add=%s rev=%s'
+                  % (declared[:12] or '-', first[:12] or '-', rev[:12]))
+        for c in ho:
+            fpath = '%s/%s' % (srel, c['file'])
+            # Strict ancestry (BOUND-3: equality accepted a copy committed in the freeze itself)
+            # and lineage creation (BOUND-2: a move into sealed/ would otherwise pass as a touch).
+            last = subprocess.run(['git', '-C', lane, 'log', rev, '-1', '--format=%H', '--', fpath],
+                                  capture_output=True).stdout.decode().strip()
+            origin = subprocess.run(['git', '-C', lane, 'log', rev, '--follow', '--diff-filter=A', '-1',
+                                     '--format=%H', '--', fpath],
+                                    capture_output=True).stdout.decode().strip()
+            if (not last or last == first or not git_ok(lane, 'merge-base', '--is-ancestor', first, last)
+                    or not git_ok(lane, 'merge-base', '--is-ancestor', last, rev)
+                    or not origin or not git_ok(lane, 'merge-base', '--is-ancestor', first, origin)):
+                sealed_ok = False
+                print('SEALED-PROVENANCE-FAIL %s last=%s origin=%s freeze=%s'
+                      % (c['file'], last[:12] or '-', origin[:12] or '-', first[:12] or '-'))
+        if not ho:
             sealed_ok = False
-            print('SEALED-MANIFEST-MISSING %s' % manifest_path)
+            print('SEALED-SET-EMPTY %s' % srel)
         ho_kill_total = sum(1 for c in ho if c['set'] == 'kill')
         ho_accept_total = sum(1 for c in ho if c['set'] == 'accept')
         ho_distinct = distinct_bodies(ho, runner_text)
