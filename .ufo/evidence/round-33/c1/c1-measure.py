@@ -230,6 +230,9 @@ def run_tool_sandboxed(tool, copy, work):
         outcome = 'OTHER'
     last = next((x for x in reversed(lines) if x.startswith('TALLY_AUDIT:')), '')
     return outcome, rc, last
+
+
+def score_tool(tool_path, copies, work):
     """copies: list of (label, set, body_bytes). Returns (kill_hit, kill_total, accept_hit, accept_total)."""
     k_hit = k_tot = a_hit = a_tot = 0
     for label, set_, body in copies:
