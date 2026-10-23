@@ -77,8 +77,9 @@ def main():
         lesson_text = lesson.decode('utf-8', 'replace')
         gm = re.search(r'^## Gate\b(.*?)(?=^## |\Z)', lesson_text, re.M | re.S)
         block = gm.group(1) if gm else ''
-        digests = re.findall(r'sha256[ :=]+([0-9a-f]{64})', block)
-        gate_sha_ok = hashlib.sha256(snap).hexdigest() in digests
+        digests = re.findall(r'sha256[ :=]+`?([0-9a-f]{64})`?', block)
+        gate_sha_ok = (hashlib.sha256(snap).hexdigest() in digests
+                       and 'https://docs.python.org/3.15/library/doctest.html' in block)
     ok = bool(row_id and versioned and snap_sha_ok and quote_ok and gate_sha_ok)
     print('C2_R33: row=%s versioned_url=%d snapshot_sha_ok=%d gate_sha_ok=%d quote_ok=%d C2_R33_PASS=%s'
           % (row_id or 'none', int(versioned), int(snap_sha_ok), int(gate_sha_ok), int(quote_ok),

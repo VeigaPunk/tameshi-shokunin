@@ -46,7 +46,7 @@ RUNNER = 'tools/mutate-and-run.sh'
 SELF_PATH = '.ufo/evidence/round-33/c1/c1-measure.py'
 CONTROLS_PATH = '.ufo/evidence/round-33/c1/controls-receipt.json'
 HELDOUT_DIR = '.ufo/evidence/round-33/heldout'
-TOOL_SHA256 = '9dbbce62aeaeecbacfa1b82e15b61afcb4580e3920a0b827ae038fa4c06f33a4'  # pinned at freeze; see contract.json ("tool_sha")
+TOOL_SHA256 = '7a59f576a3899df0455bcec87647a0f389baa576e978751a63ff6b1ba8b38833'  # pinned at freeze; see contract.json ("tool_sha")
 PINNED_RUNNER_SHA = 'a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9'
 NAME_RE = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
 
@@ -112,6 +112,8 @@ def validate_ho(ho):
             vec = w['vector']
             if not isinstance(vec, list) or not all(isinstance(x, int) and 0 <= x <= 255 for x in vec):
                 raise CounterError('witness.vector must be a list of ints 0..255')
+            if len(vec) != 9:
+                raise CounterError('witness.vector must name all 9 leg statuses (len %d)' % len(vec))
         elif w.get('kind') == 'head':
             pass
         else:
@@ -142,7 +144,11 @@ def head_of(text):
 
 
 def block_run(block, vector, work):
-    """Run one tally block on one status vector under bwrap; return (rc, stdout-first-line)."""
+    """Run one tally block on one status vector under a real bwrap boundary; return (rc, stdout-first-line).
+
+    Read-only runtime mounts make `bash` resolvable inside the sandbox; `timeout` runs OUTSIDE it
+    (CriticCounter: the frozen form execvp'd timeout inside a sandbox with no runtime mounts, so every
+    witness run failed closed). Writes are confined to the per-run workdir."""
     d = os.path.join(work, 'w-' + secrets.token_hex(6))
     os.makedirs(d)
     script = os.path.join(d, 'run.sh')
@@ -153,11 +159,10 @@ def block_run(block, vector, work):
         f.write('set -u -o pipefail\ntally() {\n  local %s\n  local root=r auto=0 KEEP=1\n%s}\n'
                 'out=$(tally %s 2>/dev/null); rc=$?; printf "RC\\t%%s\\t%%s\\n" "$rc" "${out%%%%$\'\\n\'*}"\n'
                 % (decl, block, ' '.join(str(s) for s in vector)))
-    out_file = os.path.join(d, 'out')
-    cmd = ['bwrap', '--unshare-all', '--die-with-parent', '--new-session', '--clearenv',
-           '--ro-bind', script, '/x.sh', '--bind', d, '/w', '--chdir', '/w',
-           '--dev', '/dev', '--proc', '/proc', 'timeout', '60', 'bash', '/x.sh']
-    p = subprocess.run(cmd, capture_output=True, timeout=90)
+    inner = ['bash', '/w/run.sh']
+    p = subprocess.run(['timeout', '90'] + bwrap_argv(inner, d),
+                       env={'PATH': '/usr/bin:/bin', 'HOME': '/w', 'TMPDIR': '/tmp', 'LC_ALL': 'C'},
+                       capture_output=True, timeout=120)
     first = ''
     rc = p.returncode
     for ln in p.stdout.decode('utf-8', 'replace').splitlines():
@@ -183,9 +188,48 @@ def ho_witness_ok(ho, pristine, mutated, work):
     return a != b, 'vector'
 
 
-# ------------------------------------------------------------ scoring
+# ------------------------------------------------------------ sandboxed runs (repaired boundary)
 
-def score_tool(tool_path, copies, work):
+BWRAP_RUNTIME = ('--ro-bind', '/usr', '/usr', '--ro-bind', '/bin', '/bin',
+                 '--ro-bind', '/lib', '/lib', '--ro-bind', '/lib64', '/lib64',
+                 '--ro-bind', '/etc', '/etc')
+
+
+def bwrap_argv(inner, workdir):
+    return ['bwrap', '--unshare-all', '--die-with-parent', '--new-session', '--clearenv',
+            '--dev', '/dev', '--proc', '/proc', '--tmpfs', '/tmp',
+            *BWRAP_RUNTIME, '--bind', workdir, '/w', '--chdir', '/w'] + inner
+
+
+def run_tool_sandboxed(tool, copy, work):
+    """Run `python3 -I tool --runner copy` under a real bwrap boundary: read-only runtime mounts
+    (so python/coreutils resolve), writes confined to the per-run workdir, no network, new session.
+    `timeout` runs OUTSIDE the sandbox (CriticCounter/SentinelSandbox: the frozen v1.run_tool had no
+    bubblewrap boundary at all and the round-33 block_run could not exec `timeout` inside it)."""
+    d = os.path.join(work, 'run-' + secrets.token_hex(8))
+    os.makedirs(os.path.join(d, 'tmp'))
+    t = os.path.join(d, 'tool.py')
+    c = os.path.join(d, 'copy.sh')
+    import shutil as _sh
+    _sh.copyfile(tool, t)
+    _sh.copyfile(copy, c)
+    env = {'PATH': '/usr/bin:/bin', 'HOME': '/w', 'TMPDIR': '/w/tmp',
+           'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8'}
+    try:
+        p = subprocess.run(['timeout', '600'] + bwrap_argv([sys.executable, '-I', '/w/tool.py', '--runner', '/w/copy.sh'], d),
+                           env=env, capture_output=True, timeout=660)
+        rc, out = p.returncode, p.stdout.decode('utf-8', 'replace')
+    except subprocess.TimeoutExpired:
+        rc, out = 'timeout', ''
+    lines = out.splitlines()
+    if rc == 1 and any(x.startswith('TALLY_AUDIT: FAIL') for x in lines):
+        outcome = 'KILL'
+    elif rc == 0 and any(x.startswith('TALLY_AUDIT: PASS') for x in lines):
+        outcome = 'ACCEPT'
+    else:
+        outcome = 'OTHER'
+    last = next((x for x in reversed(lines) if x.startswith('TALLY_AUDIT:')), '')
+    return outcome, rc, last
     """copies: list of (label, set, body_bytes). Returns (kill_hit, kill_total, accept_hit, accept_total)."""
     k_hit = k_tot = a_hit = a_tot = 0
     for label, set_, body in copies:
@@ -194,7 +238,7 @@ def score_tool(tool_path, copies, work):
         cp = os.path.join(d, 'mutant.sh')
         with open(cp, 'wb') as f:
             f.write(body)
-        outcome, rc, last = v1.run_tool(tool_path, cp, d)
+        outcome, rc, last = run_tool_sandboxed(tool_path, cp, d)
         verdict = (rc == 1 and last.startswith('TALLY_AUDIT: FAIL'))
         accept = (rc == 0 and last.startswith('TALLY_AUDIT: PASS'))
         if set_ == 'kill':
@@ -284,9 +328,12 @@ def main():
         else:
             try:
                 receipt = json.loads(receipt_b)
+                rows = receipt.get('controls')
+                rows_ok = isinstance(rows, list) and len(rows) >= 1 and all(
+                    isinstance(r, dict) and r.get('predicate_pass') is False for r in rows)
                 controls_ok = (receipt.get('counter_sha256') == sha256(self_b)
-                               and receipt.get('all_false') is True)
-                controls_detail = 'ok' if controls_ok else 'sha-or-allfalse-mismatch'
+                               and receipt.get('all_false') is True and rows_ok)
+                controls_detail = 'ok' if controls_ok else 'sha-or-allfalse-or-rows-mismatch'
             except (ValueError, AttributeError):
                 controls_detail = 'receipt-unparseable'
 
@@ -335,7 +382,7 @@ def main():
             cp = os.path.join(d, 'm.sh')
             with open(cp, 'wb') as f:
                 f.write(body)
-            outcome, rc, last = v1.run_tool(tp, cp, d)
+            outcome, rc, last = run_tool_sandboxed(tp, cp, d)
             if set_ == 'kill':
                 ho_k += bool(rc == 1 and last.startswith('TALLY_AUDIT: FAIL'))
             else:

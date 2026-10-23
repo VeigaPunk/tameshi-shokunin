@@ -118,10 +118,29 @@ def regression_body(text):
     m = re.search(r'^run_regression\s*\(\)\s*\{[ \t]*\n', text, re.M)
     if not m:
         raise CannotAudit('run_regression() not found')
-    b = text.find('\n}\n', m.end() - 1)
-    if b < 0:
-        raise CannotAudit('run_regression() has no closing brace')
-    return text[m.start():b + 3]
+    depth = 1
+    i = m.end()
+    while depth > 0 and i < len(text):
+        c = text[i]
+        if c == '{':
+            depth += 1
+        elif c == '}':
+            depth -= 1
+        i += 1
+    if depth != 0:
+        raise CannotAudit('run_regression() has unbalanced braces')
+    return text[m.start():i]
+
+
+def brace_depth_at(text, offset):
+    """brace nesting depth at offset, counting from the run_regression opening brace (depth 1 inside it)."""
+    depth = 0
+    for ch in text[:offset]:
+        if ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+    return depth
 
 
 START_RE = re.compile(r'^[ \t]*local nlegs=', re.M)
@@ -131,7 +150,10 @@ def tally_block(body):
     m = START_RE.search(body)
     if not m:
         raise CannotAudit('tally start `local nlegs=` not found')
-    return body[m.start():body.rindex('\n}\n') + 1]
+    end = body.rfind('}')
+    if end < m.start():
+        raise CannotAudit('tally block end not found')
+    return body[m.start():end]
 
 
 def head_section(body):
@@ -150,47 +172,71 @@ def leg_names(head):
 
 # `for VAR in OPERANDS; do` or `... \n do`, OPERANDS possibly continued with backslash-newline.
 LOOP_RE = re.compile(r'^([ \t]*for[ \t]+([A-Za-z_][A-Za-z0-9_]*)[ \t]+in[ \t]+)((?:[^;\n\\]|\\\n)*?)([ \t]*(?:;[ \t]*|\n[ \t]*)do\b)', re.M)
+WLOOP_RE = re.compile(r'^[ \t]*(while|until)[ \t]+.*?([ \t]*(?:;[ \t]*|\n[ \t]*)do\b)', re.M)
 OPERAND_RE = re.compile(r'"?\$\{?(st_[A-Za-z0-9_]+)\}?"?')
-CASE_RE = re.compile(r'case[ \t]+\$st[ \t]+in\b')
+CASE_RE = re.compile(r'case[ \t]+\$([A-Za-z_][A-Za-z0-9_]*)[ \t]+in\b')
 COUNTER_INC_RE = re.compile(r'\b(npass|nfail|nsetup)=\$\(\(')
 DONE_RE = re.compile(r'^[ \t]*done[ \t]*$', re.M)
 
 
 def loop_extent(block, m):
-    """[start, end) span of the loop matched by m: from `for` to the line holding its `done`."""
+    """[start, end) span of the loop matched by m: from its header to the line holding its `done`."""
     d = DONE_RE.search(block, m.end())
     if not d:
         raise CannotAudit('loop has no done')
     return m.start(), d.end()
 
 
+def counting_case(block):
+    """The `case $VAR in` whose arms increment the tally counters; returns (match, var)."""
+    for m in CASE_RE.finditer(block):
+        tail = block[m.end():m.end() + 400]
+        hits = len(COUNTER_INC_RE.findall(tail.split('esac')[0])) if 'esac' in tail[:400] else 0
+        body_end = tail.find('esac')
+        seg = tail[:body_end] if body_end >= 0 else tail
+        if len(COUNTER_INC_RE.findall(seg)) >= 2:
+            return m, m.group(1)
+    raise CannotAudit('counting `case $VAR in` not found')
+
+
 def tally_loop(block):
-    """The INNERMOST `for` loop whose body contains the counting `case $st in` (dataflow, not
-    operand shape): auxiliary leg-status loops (pre-counts, single-leg wrappers) may enclose or
-    precede the real tally loop; only the loop that directly governs the counting case is stressed."""
-    case_m = CASE_RE.search(block)
-    if not case_m:
-        raise CannotAudit('counting `case $st in` not found')
+    """The loop that governs the counting case, identified by dataflow (never operand shape).
+
+    Auxiliary loops (pre-counts, single-leg wrappers) may enclose or precede the real tally loop;
+    only the loop whose body contains the counting case is stressed. `for` loops supply their
+    operand list; renamed loop variables are accepted when the case variable matches the loop
+    variable. `while`/`until` traversals are accepted: their operand order is taken from the head's
+    leg assignments (the runtime oracle still sweeps every status vector, and the sum-guard is
+    exercised by the count-pair vectors; operand stress is skipped for them by construction)."""
+    case_m, case_var = counting_case(block)
     cands = []
     for m in LOOP_RE.finditer(block):
+        start, end = loop_extent(block, m)
+        if start < case_m.start() < end and m.group(2) == case_var:
+            body_slice = block[m.end():end]
+            if COUNTER_INC_RE.search(body_slice):
+                cands.append(('for', m))
+    for m in WLOOP_RE.finditer(block):
         start, end = loop_extent(block, m)
         if start < case_m.start() < end:
             body_slice = block[m.end():end]
             if COUNTER_INC_RE.search(body_slice):
-                cands.append(m)
+                cands.append((m.group(1), m))
     if not cands:
         raise CannotAudit('no loop governing the counting case')
-    m = max(cands, key=lambda mm: mm.start())
-    toks = m.group(3).replace('\\\n', ' ').split()
-    ops = []
-    for t in toks:
-        mm = OPERAND_RE.fullmatch(t)
-        if not mm:
-            raise CannotAudit('tally loop operand not a leg status: %r' % t)
-        ops.append(mm.group(1))
-    if not ops:
-        raise CannotAudit('tally loop has no operands')
-    return m, ops
+    kind, m = max(cands, key=lambda km: km[1].start())
+    if kind == 'for':
+        toks = m.group(3).replace('\\\n', ' ').split()
+        ops = []
+        for t in toks:
+            mm = OPERAND_RE.fullmatch(t)
+            if not mm:
+                raise CannotAudit('tally loop operand not a leg status: %r' % t)
+            ops.append(mm.group(1))
+        if not ops:
+            raise CannotAudit('tally loop has no operands')
+        return m, ops, kind
+    return m, None, kind
 
 
 def loop_operands(block):
@@ -216,13 +262,21 @@ def bash(script, tmp):
     return p.returncode, p.stdout.decode('utf-8', 'replace'), p.stderr.decode('utf-8', 'replace')
 
 
-def run_vectors(block, names, vectors, tmp):
+CONFIGS = (('tally-audit', '0', '1'), ('/tmp/tally-audit-work', '1', '0'))
+
+
+def run_vectors(block, names, vectors, tmp, cfg=CONFIGS[0]):
     """Run the tally block once per status vector in one bash process; return [(rc, stdout first line)].
 
-    stdout-only: stderr goes to a side file, never into the compared string (round-32 tool review M1)."""
+    stdout-only: stderr goes to a side file, never into the compared string (round-32 tool review M1).
+    cfg is the (root, auto, KEEP) triple the driver pins: config (0,1) is the audit's hermetic triple;
+    config (1,0) is the runner's real --regression default (auto-workdir under /tmp, rm-on-PASS). A guard
+    weakened by a conjunct over $auto/$KEEP/$root behaves identically under one config and diverges under
+    the other (DevGuard, round 33): the sweep must run under both."""
+    root_s, auto_s, keep_s = cfg
     decl = ' '.join('%s=${%d}' % (n, i + 1) for i, n in enumerate(names))
     lines = ['set -u -o pipefail', 'tally() {', '  local ' + decl,
-             '  local root=tally-audit auto=0 KEEP=1', block.rstrip('\n'), '}']
+             "  local root=%s auto=%s KEEP=%s" % (root_s, auto_s, keep_s), block.rstrip('\n'), '}']
     for i, v in enumerate(vectors):
         lines.append('out=$(tally %s 2>"$TMPDIR/stderr.%d"); rc=$?; printf "R\\t%%s\\t%%s\\n" "$rc" "${out%%%%$\'\\n\'*}"'
                      % (' '.join(str(s) for s in v), i))
@@ -337,23 +391,41 @@ def check_runtime(block, names, tmp):
         for i in range(sc):
             v[i] = 2
         vectors.append(v)
-    got = run_vectors(block, names, vectors, tmp)
+    # co-occurrence vectors: EVERY unordered position pair x EVERY ordered status pair over the
+    # extended set (seven independent seats in round 33 converged here: cascade/keyed arms, skips
+    # that turn SETUP into PASS, and nlegs recomputions all flip exactly these vectors and no
+    # generated one combined a status >=3 with another non-zero leg)
+    CO = (1, 2, 3, 4, 5, 7, 9, 120, 126, 127, 128, 255)
+    for a in range(n):
+        for b in range(a + 1, n):
+            for s in CO:
+                for t in CO:
+                    v = [0] * n
+                    v[a], v[b] = s, t
+                    vectors.append(v)
     bad = []
-    for v, g in zip(vectors, got):
-        exp = oracle(dict(zip(names, v)), ops, n)
-        if g != exp:
-            bad.append('statuses %s: got %s, want %s' % (' '.join(map(str, v)), g, exp))
-    # stress: the IDENTIFIED tally loop with one operand duplicated (overcount) or removed (undercount)
+    ran = 0
+    for cfg in CONFIGS:
+        got = run_vectors(block, names, vectors, tmp, cfg)
+        ran += len(vectors)
+        for v, g in zip(vectors, got):
+            exp = oracle(dict(zip(names, v)), ops, n)
+            if g != exp:
+                bad.append('cfg(%s,%s) statuses %s: got %s, want %s'
+                           % (cfg[1], cfg[2], ' '.join(map(str, v)), g, exp))
+    # stress: the IDENTIFIED tally loop with one operand duplicated (overcount) or removed (undercount),
+    # under every config
     stress = 0
     for i in range(len(ops)):
         for kind, new in (('dup', ops[:i + 1] + ops[i:]), ('drop', ops[:i] + ops[i + 1:])):
             sb = with_operands(block, new)
-            g = run_vectors(sb, names, [[0] * n], tmp)[0]
-            exp = oracle(dict(zip(names, [0] * n)), new, n)
-            stress += 1
-            if g != exp:
-                bad.append('stress %s operand %d: got %s, want %s' % (kind, i, g, exp))
-    total = len(vectors) + stress
+            for cfg in CONFIGS:
+                g = run_vectors(sb, names, [[0] * n], tmp, cfg)[0]
+                exp = oracle(dict(zip(names, [0] * n)), new, n)
+                stress += 1
+                if g != exp:
+                    bad.append('stress %s operand %d cfg(%s,%s): got %s, want %s' % (kind, i, cfg[1], cfg[2], g, exp))
+    total = ran + stress
     return (not bad), 'vectors=%d mismatched=%d%s' % (total, len(bad), ('; first: ' + bad[0]) if bad else '')
 
 
@@ -393,6 +465,14 @@ def faults():
     f('fail-needs-exactly-one', b.replace('$nfail -gt 0', '$nfail -eq 1'))
     f('setup-needs-exactly-one', b.replace('$nsetup -gt 0', '$nsetup -eq 1'))
     f('status-3-passes', b.replace('      *) nsetup', '      3) npass=$((npass + 1)) ;;\n      *) nsetup', 1))
+    # Round-33 (DevHarness): the five harness-region weakenings reproduced against the frozen tool.
+    # Each new fault is visible ONLY through the case a weakened harness deletes or loosens, so a
+    # runner harness carrying that weakening accepts it and fails this panel.
+    f('fail-exits-2', b.replace('    exit 1\n', '    exit 2\n', 1))  # H24: `rc -ge want_rc` accepts 2>=1
+    f('fail-wording', b.replace(' failed=%s setup=%s', ' failures=%s setup=%s', 1))  # H06: status-1 entry deleted
+    f('setup-wording', b.replace(' cannot-verify=%s', ' unverified=%s', 1))  # H05: status-2 entry deleted
+    f('verdict-word', b.replace("printf 'REGRESSION: FAIL (cases=%s", "printf 'REGRESSION: FAILURE (cases=%s", 1))  # H01: line match loosened
+    f('pass-wording', b.replace('ledger legs exact: killed-delta<=0 flips<=0', 'ledger legs ok', 1))  # H11: all-pass case dropped
     f('printf-counts-swapped', b.replace('      "$nlegs" "$npass" "$nfail" "$nsetup"\n',
                                          '      "$nlegs" "$npass" "$nsetup" "$nfail"\n', 1))
     f('guard-overcount-only-alt', b.replace('!= nlegs', '> nlegs').replace('case-tally mismatch', 'tally over'))
@@ -401,7 +481,7 @@ def faults():
 
 HARNESS_START = re.compile(r'^[ \t]*local tblock\b.*$', re.M)
 HARNESS_END = re.compile(r'^[ \t]*tblock=\$tblock_full[ \t]*\n', re.M)
-EXTRACT_RE = re.compile(r'^[ \t]*tblock=\$\(awk .*"\$SELF"\)[ \t]*\n', re.M)
+EXTRACT_RE = re.compile(r'^[ \t]*tblock=\$\(awk .*"?\$SELF"?\)[ \t]*\n', re.M)
 
 
 def harness_section(text):
@@ -551,6 +631,8 @@ def selftest():
         ('head overwrite', head_overwrite, 1, 'head'),
         ('printf count swap', printf_swap, 1, 'runtime'),
         ('majority-gated fail', majority_guard, 1, 'runtime'),
+        ('keep-conjunct guard', text.replace('  if [[ $nfail -gt 0 ]]; then\n',
+                                             '  if [[ $nfail -gt 0 && $KEEP -eq 1 ]]; then\n', 1), 1, 'runtime'),
         ('conditional double count', double_count, 1, 'runtime'),
         ('harness exit-only', text.replace(cmp_line, '    [[ $rc -eq $want_rc ]]\n', 1), 1, 'harness'),
         ('harness swallowed', text.replace(cmp_line, cmp_line + '    rc=$?\n', 1), 1, 'harness'),
