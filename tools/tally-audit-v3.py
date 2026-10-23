@@ -87,8 +87,10 @@ Prints one `CHECK <name> PASS|FAIL ...` line per check and a final
 import argparse
 import atexit
 import os
+import random
 import re
 import shutil
+import string
 import subprocess
 import sys
 import tempfile
@@ -195,9 +197,14 @@ def code_view(text):
 
 def regression_body(text):
     cv = code_view(text)
-    m = re.search(r'^run_regression\s*\(\)\s*\{[ \t]*\n', cv, re.M)
-    if not m:
+    hits = list(re.finditer(r'^run_regression\s*\(\)\s*\{[ \t]*\n', cv, re.M))
+    if not hits:
         raise CannotAudit('run_regression() not found')
+    if len(hits) != 1:
+        # bash runs the LAST definition; a first-match extractor audits the shadowed one
+        # (wave-2 seat ReviewAttribution CRITICAL-3). Refuse the ambiguity.
+        raise CannotAudit('run_regression() defined %d times; shadowed definition refused' % len(hits))
+    m = hits[0]
     depth = 1
     i = m.end()
     while depth > 0 and i < len(cv):
@@ -226,22 +233,56 @@ def brace_depth_at(text, offset):
 START_RE = re.compile(r'^[ \t]*local nlegs=', re.M)
 
 
+def _tally_start(cv):
+    """The LAST `local nlegs=` in the body.
+
+    A here-doc DECOY before the real tally can carry a byte-copy of the pristine tally
+    block; the first-match extractor then audits the decoy (campaign round 35, wave-2 seat
+    AttackPerIndexParse CRITICAL: the tool accepted a runner whose real block masked status
+    4 into PASS). The runner has exactly one such line in its function, so the last match is
+    the real block.
+    """
+    ms = list(START_RE.finditer(cv))
+    if not ms:
+        raise CannotAudit('tally start `local nlegs=` not found')
+    if len(ms) != 1:
+        # Uniqueness, not order: a decoy BEFORE the block (here-doc data) and a dead copy
+        # AFTER it (wave-2 seat ReviewAttribution CRITICAL-2) both win a last/first-match
+        # rule in one direction. An ambiguous body is refused, never guessed.
+        raise CannotAudit('tally start `local nlegs=` occurs %d times; ambiguous body refused' % len(ms))
+    return ms[0].start()
+
+
+def _block_end(cv, start):
+    """Index of the first depth-0 `}` at or after start (the enclosing function's close).
+
+    `rfind('}')` scans the whole body, so a decoy AFTER the real block moves the end past
+    it; brace depth from the chosen start cannot be moved by text outside the block.
+    """
+    depth = 0
+    for i in range(start, len(cv)):
+        c = cv[i]
+        if c == '{':
+            depth += 1
+        elif c == '}':
+            if depth == 0:
+                return i
+            depth -= 1
+    return -1
+
+
 def tally_block(body):
     cv = code_view(body)
-    m = START_RE.search(cv)
-    if not m:
-        raise CannotAudit('tally start `local nlegs=` not found')
-    end = cv.rfind('}')
-    if end < m.start():
+    start = _tally_start(cv)
+    end = _block_end(cv, start)
+    if end < start:
         raise CannotAudit('tally block end not found')
-    return body[m.start():end]
+    return body[start:end]
 
 
 def head_section(body):
-    m = START_RE.search(code_view(body))
-    if not m:
-        raise CannotAudit('tally start `local nlegs=` not found')
-    return body[:m.start()]
+    cv = code_view(body)
+    return body[:_tally_start(cv)]
 
 
 ASSIGN_RE = re.compile(r'^[ \t]*(st_[A-Za-z0-9_]+)=\$\?[ \t]*$', re.M)
@@ -347,7 +388,7 @@ def bash(script, tmp):
 # None in the root slot means "the runner's real auto root" (see auto_root()); the explicit
 # triples keep representative caller-supplied --workdir values, relative and absolute.
 CONFIGS = ((None, '1', '0'), (None, '1', '1'),
-           ('tally-audit', '0', '1'), ('tally-audit-explicit', '0', '0'))
+           ('tally-audit', '0', '1'), ('/tmp/tally-audit-explicit', '0', '0'))
 AUTO_ROOT = [None]
 
 
@@ -362,8 +403,19 @@ def auto_root():
     value, not the directory's contents.
     """
     if AUTO_ROOT[0] is None:
-        AUTO_ROOT[0] = tempfile.mkdtemp(prefix='tameshi-r4-2-regression.', dir='/tmp')
-        atexit.register(lambda: shutil.rmtree(AUTO_ROOT[0], ignore_errors=True))
+        # The runner's mktemp template is SIX alphanumerics (XXXXXX); tempfile.mkdtemp makes
+        # EIGHT from a-z0-9_, so a gate on the exact suffix shape escaped the A4 witness
+        # (round-35 wave-2 seat ScoutRunnerConfigs CRITICAL). Generate the real shape.
+        for _ in range(1000):
+            cand = '/tmp/tameshi-r4-2-regression.' + ''.join(
+                random.choice(string.ascii_letters + string.digits) for _ in range(6))
+            if not os.path.exists(cand):
+                os.makedirs(cand)
+                AUTO_ROOT[0] = cand
+                atexit.register(lambda: shutil.rmtree(cand, ignore_errors=True))
+                break
+        else:
+            raise CannotAudit('cannot allocate a real auto root')
     elif not os.path.isdir(AUTO_ROOT[0]):
         os.makedirs(AUTO_ROOT[0], exist_ok=True)
     return AUTO_ROOT[0]
@@ -450,6 +502,18 @@ def check_head(body, block, names):
             problems.append('leg %s assigned %d times in the head' % (nm, all_assigns.count(nm)))
     if sorted(bare) != sorted(names):
         problems.append('head bare assignments %s != tally operands %s' % (sorted(bare), sorted(names)))
+    # A leg name outside its `local` declaration and its one bare `$?` assignment is a
+    # second write in some other form (`read -r st_x`, `printf -v st_x`, `st_x+=...`).
+    # Round-35 wave-2 seat SealKillHeadRead: a `read`-based mask was ACCEPTED because no
+    # rule counted non-assignment mentions.
+    rest = head_code
+    for ln in head_code.splitlines():
+        if re.match(r'^[ \t]*local\b', ln):
+            rest = rest.replace(ln, ' ' * len(ln), 1)
+    for nm in set(all_assigns) | set(bare) | set(names):
+        got = rest.count(nm)
+        if got != 1:
+            problems.append('leg %s mentioned %d times outside the local declaration' % (nm, got))
     # the twice-only rule (DevHead, round 33): in the head each leg name may appear EXACTLY twice -
     # once in the `local st_...` declaration line and once on its own bare `st_x=$?` line. Any other
     # occurrence (spaced arithmetic, printf -v, read, declare, unset, brace/group/function wrapping,
@@ -746,6 +810,13 @@ def selftest():
                   .replace(tally_case, tally_case + '  done\n', 1)                                     # HeldOutLoop-3
     precount = text.replace(start, start + '  local legs_counted=0\n  for leg in ' + ' '.join('"$%s"' % n for n in REF_NAMES) + '; do\n    legs_counted=$((legs_counted + 1))\n  done\n', 1)  # HeldOutRefactor-a4
     head_overwrite = text.replace('  st_claims=$?\n', '  st_claims=$?\n  st_claims=0\n', 1)         # head double-assignment
+    # Round-35 wave-2 classes: a here-doc DECOY carrying a pristine copy of the block (the
+    # first-match extractor audited the decoy), and a `read` second write to a leg name.
+    _blk = tally_block(regression_body(text))
+    _mut4 = text.replace('      1) nfail=$((nfail + 1)) ;;\n',
+                         '      1) nfail=$((nfail + 1)) ;;\n      4) npass=$((npass + 1)) ;;\n', 1)
+    heredoc_decoy = _mut4.replace(start, "  cat <<'EOF' >/dev/null\n" + _blk + "EOF\n" + start, 1)
+    read_head_mask = text.replace('  st_js=$?\n', '  st_js=$?\n  read -r st_js <<< ""\n', 1)
     printf_swap = text.replace('      "$nlegs" "$npass" "$nfail" "$nsetup"\n', '      "$nlegs" "$npass" "$nsetup" "$nfail"\n', 1)  # HeldOutPrintf-1
     majority_guard = text.replace('  if [[ $nfail -gt 0 ]]; then\n',
                                   '  if [[ $nfail -gt 0 && $nsetup -le $((npass + nfail)) ]]; then\n', 1)  # HeldOutGuard-1
@@ -787,7 +858,10 @@ def selftest():
         # Round-35 real-root witness: the auto root is /tmp/tameshi-r4-2-regression.* and a
         # gate keyed on it must be KILLED; inert comment text naming it must stay ACCEPTED.
         ('real-root gated mask', text.replace(tally_case, tally_case + '  if [[ $auto -eq 1 && "$root" == /tmp/tameshi-r4-2-regression.* ]]; then nfail=0; npass=$((npass+1)); fi\n', 1), 1, 'runtime'),
+        ('real-root shape-6 gated mask', text.replace(tally_case, tally_case + '  if [[ $auto -eq 1 && "$root" == /tmp/tameshi-r4-2-regression.?????? ]]; then nfail=0; npass=$((npass+1)); fi\n', 1), 1, 'runtime'),
         ('comment names real root', text.replace(start, start + '  # the auto root is /tmp/tameshi-r4-2-regression.* at runtime\n', 1), 0, None),
+        ('heredoc block decoy (refused)', heredoc_decoy, 2, None),
+        ('read second write to a leg', read_head_mask, 1, 'head'),
         ('harness exit-only', text.replace(cmp_line, '    [[ $rc -eq $want_rc ]]\n', 1), 1, 'harness'),
         ('harness swallowed', text.replace(cmp_line, cmp_line + '    rc=$?\n', 1), 1, 'harness'),
         ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 1 2 3 4 5 6 7 7; do', 1), 1, 'harness'),

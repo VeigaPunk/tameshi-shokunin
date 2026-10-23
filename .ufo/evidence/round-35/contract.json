@@ -8,11 +8,11 @@
   "runner": "tools/mutate-and-run.sh",
   "runner_sha256": "a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9",
   "tool": "tools/tally-audit-v3.py",
-  "tool_sha256": "ef98fc5367cdb12c71b8b0ddfb5b83835100831f545f6510437dc84014865885",
+  "tool_sha256": "6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354",
   "predecessor_tool": "tools/tally-audit-v2.py",
   "predecessor_sha256": "7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10",
   "c1_counter": ".ufo/evidence/round-35/c1/c1-measure.py",
-  "c1_counter_sha256": "d27e6769c0def37900eea4d860f9b23bf2ce4e7c876a49eb0a1e92b7bf2052c2",
+  "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301",
   "c2_counter": ".ufo/evidence/round-35/c2/c2-measure.py",
   "c2_counter_sha256": "67bb71188cde259088646f960b6fda8e0a217fad5d8260e379054b381018f9cc",
   "public_panel": ".ufo/evidence/round-35/c1/panel/",
@@ -29,7 +29,7 @@
    "counting_command": "python3 .ufo/evidence/round-35/c1/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR --sealed .ufo/evidence/round-35/c1/sealed",
    "before": "C1_R35: mode=before tool_present=0 runner_sha_ok=1 rev=51d3f08... C1_R35_PASS=false, exit 1 (`.ufo/evidence/round-35/before/c1-at-base.stdout`)",
    "control": "C1_R35_CONTROL: pub_kill=0/3 pub_accept=0/3 pub_distinct=6 PASS=false, exit 1 \u2014 the same panel scored by v2 (`--tool tools/tally-audit-v2.py`): all three kill copies accepted, all three accept copies killed/refused (`.ufo/evidence/round-35/control/c1-v2-control.stdout`). The control skips the claimed work and fails the target.",
-   "after_target": "pub_kill=5/5 pub_accept=3/3 pub_distinct=8, ho_kill=k/k with k>=4, ho_accept=a/a with a>=2, ho_invalid=0, tool_sha_ok=1, runner_sha_ok=1, sealed_after_freeze=1",
+   "after_target": "pub_kill=6/6 pub_accept=3/3 pub_distinct=9, ho_kill=k/k with k>=4, ho_accept=a/a with a>=2, ho_invalid=0, tool_sha_ok=1, runner_sha_ok=1, sealed_after_freeze=1",
    "kill_rule": "exactly ONE default-mode C1 run at the measurement revision, after the sealed set lands; no re-seed, no re-scale, no post-data rule change, no second default-mode run",
    "falsifiers": [
     "a root-keyed copy (divergent under the runner's real auto root) that the v3 tool accepts",
@@ -107,8 +107,8 @@
     "c1_counter_sha256": "78bb43ebf3d2a313951d9d89f470f2543023b1605326fe676eef3cdb7a947ef9"
    },
    "pins_new": {
-    "tool_sha256": "ef98fc5367cdb12c71b8b0ddfb5b83835100831f545f6510437dc84014865885",
-    "c1_counter_sha256": "d27e6769c0def37900eea4d860f9b23bf2ce4e7c876a49eb0a1e92b7bf2052c2"
+    "tool_sha256": "6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354",
+    "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301"
    },
    "selftest": "TALLY_AUDIT_V3_SELFTEST: 30/30 pass (28 + real-root kill seed + real-root comment accept seed)"
   },
@@ -122,7 +122,7 @@
     "c1_counter_sha256": "78bb43ebf3d2a313951d9d89f470f2543023b1605326fe676eef3cdb7a947ef9"
    },
    "pins_new": {
-    "c1_counter_sha256": "d27e6769c0def37900eea4d860f9b23bf2ce4e7c876a49eb0a1e92b7bf2052c2"
+    "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301"
    }
   },
   {
@@ -135,8 +135,24 @@
     "c1_counter_sha256": "515b0b1b00b970f31c08e80eb74512ecae0cf1082ddeccfcb373e810cd0559e8"
    },
    "pins_new": {
-    "c1_counter_sha256": "d27e6769c0def37900eea4d860f9b23bf2ce4e7c876a49eb0a1e92b7bf2052c2"
+    "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301"
    }
+  },
+  {
+   "id": "A7",
+   "when": "pre-data (no default-mode C1 run; no sealed set committed yet)",
+   "counter": "c1 tool + c1 counter",
+   "change": "(1) The tally-block locator now takes the LAST `local nlegs=` match and ends at the first depth-0 `}` instead of the first match + `rfind('}')`. (2) check_head flags any mention of a leg name outside its `local` declaration and its single bare `$?` assignment (a `read`/`printf -v` second write). (3) The counter refuses to score \u2014 and does not execute \u2014 a specimen whose block reassigns `root` or adds an `rm -rf` (filesystem-safety gate). Tool selftest 32/32 with a here-doc-decoy kill seed and a read-mask head seed. (4) The auto root now has the runner's exact SHAPE \u2014 six alphanumerics (mktemp XXXXXX), not tempfile.mkdtemp's eight from a-z0-9_ \u2014 and the explicit triples now carry one relative and one absolute --workdir root. Panel gains root-keyed-shape6 (9 copies). (5) An extracted block the driver cannot run (a legal `: '}'` before the closer is quote-blind to the fence) scores INVALID instead of aborting the counter (seat ScoutTailRegion BOUND-3). The safety gate forbids an `rm` whose target is not the harness-provided $root (a second `rm -rf \"$root\"` stays legal, so workdir-cleanup classes remain expressible). (6) The locator requires UNIQUENESS, not order: >1 `local nlegs=` or >1 `run_regression()` refuses the body instead of guessing first/last (seats AttackPerIndexParse, ReviewAttribution CRITICAL-2/3).",
+   "why": "wave-2 seats AttackPerIndexParse (CRITICAL: here-doc decoy carrying a pristine block copy was audited instead of the real block and the tool PASSED a status-4 mask) and SealKillHeadRead (a read second write to a leg name) and SentinelSandbox (CRITICAL: specimen-derived bash could delete outside --work via an absolute root). wave-2 seat ScoutRunnerConfigs found the same class still open on the suffix shape and the relative-only explicit roots.",
+   "pins_old": {
+    "tool_sha256": "ef98fc5367cdb12c71b8b0ddfb5b83835100831f545f6510437dc84014865885",
+    "c1_counter_sha256": "d27e6769c0def37900eea4d860f9b23bf2ce4e7c876a49eb0a1e92b7bf2052c2"
+   },
+   "pins_new": {
+    "tool_sha256": "6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354",
+    "c1_counter_sha256": "44f05be2deb7958a5d464a961250ca8a40436f4592d7ddd6224750ca4ab63301"
+   },
+   "selftest": "TALLY_AUDIT_V3_SELFTEST: 33/33 pass (30 + here-doc decoy, read-mask head, shape-6 root gate)"
   }
  ],
  "measurement_revision_rule": "The measured revision is the lane branch tip at the deciding run; it is recorded in the receipt line as `rev=`. The C1 default-mode run happens once, after the sealed set lands. The C2 after-run happens once, after the C2 repairs are committed.",

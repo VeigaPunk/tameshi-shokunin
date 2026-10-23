@@ -19,6 +19,11 @@ authored after the freeze by seats that never see the tool edit; each sealed fil
 modifying commit must descend from the freeze revision — the round-34 PanelSeed4 F2
 routing: first-add is not enough).
 
+A7 (pre-data, round-35 wave 2): the tally-block locator selects the LAST `local nlegs=` match
+and ends at the first depth-0 `}` (a here-doc decoy before the block no longer becomes the
+audited span; seat AttackPerIndexParse CRITICAL), and a specimen that reassigns `root` or adds
+an `rm -rf` is invalid, never executed for scoring (seat SentinelSandbox CRITICAL).
+
 Modes:
   deciding (default)  tool = tools/tally-audit-v3.py at REV; requires the sealed set
   control             --tool PATH (lane-relative at REV or absolute); never needs sealed
@@ -35,8 +40,10 @@ import atexit
 import hashlib
 import json
 import os
+import random
 import re
 import shutil
+import string
 import subprocess
 import sys
 import tempfile
@@ -50,7 +57,7 @@ FREEZE_REV = '__FREEZE_REV__'     # filled at freeze; see contract.json
 # The tool carries the same four triples; the oracle must not import the object it tests,
 # so the two lists are kept in lockstep by hand and by the control receipt.
 CONFIGS = ((None, '1', '0'), (None, '1', '1'),
-           ('tally-audit', '0', '1'), ('tally-audit-explicit', '0', '0'))
+           ('tally-audit', '0', '1'), ('/tmp/tally-audit-explicit', '0', '0'))
 AUTO_ROOT = [None]
 SEP = '\x1f'
 
@@ -64,8 +71,18 @@ def auto_root():
     (round-35 seat RevengerRootShape CRITICAL). Ground truth must see the real value.
     """
     if AUTO_ROOT[0] is None:
-        AUTO_ROOT[0] = tempfile.mkdtemp(prefix='tameshi-r4-2-regression.', dir='/tmp')
-        atexit.register(lambda: shutil.rmtree(AUTO_ROOT[0], ignore_errors=True))
+        # runner shape: mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX (six alphanumerics);
+        # tempfile.mkdtemp's eight-char suffix escaped a shape-keyed gate (ScoutRunnerConfigs).
+        for _ in range(1000):
+            cand = '/tmp/tameshi-r4-2-regression.' + ''.join(
+                random.choice(string.ascii_letters + string.digits) for _ in range(6))
+            if not os.path.exists(cand):
+                os.makedirs(cand)
+                AUTO_ROOT[0] = cand
+                atexit.register(lambda: shutil.rmtree(cand, ignore_errors=True))
+                break
+        else:
+            raise SystemExit('SETUP: cannot allocate a real auto root')
     elif not os.path.isdir(AUTO_ROOT[0]):
         os.makedirs(AUTO_ROOT[0], exist_ok=True)
     return AUTO_ROOT[0]
@@ -144,13 +161,28 @@ def tally_block(text):
         raise SystemExit('SETUP: unbalanced run_regression braces')
     body = text[m.start():i]
     cvb = code_view(body)
-    s = re.search(r'^[ \t]*local nlegs=', cvb, re.M)
-    if not s:
+    starts = list(re.finditer(r'^[ \t]*local nlegs=', cvb, re.M))
+    if not starts:
         raise SystemExit('SETUP: tally start not found')
-    e = cvb.rfind('}')
-    if e < s.start():
+    if len(starts) != 1:
+        # Ambiguity is refused, never guessed: a here-doc decoy before the block wins a
+        # first-match rule (seat AttackPerIndexParse) and a dead copy after it wins a
+        # last-match rule (seat ReviewAttribution CRITICAL-2).
+        raise SystemExit('SETUP: tally start occurs %d times; ambiguous body refused' % len(starts))
+    start = starts[0].start()
+    depth, end = 0, -1
+    for i in range(start, len(cvb)):
+        c = cvb[i]
+        if c == '{':
+            depth += 1
+        elif c == '}':
+            if depth == 0:
+                end = i
+                break
+            depth -= 1
+    if end < start:
         raise SystemExit('SETUP: tally end not found')
-    return body[:s.start()], body[s.start():e]
+    return body[:start], body[start:end]
 
 
 ASSIGN_RE = re.compile(r'^[ \t]*(st_[A-Za-z0-9_]+)=\$\?[ \t]*$', re.M)
@@ -282,6 +314,25 @@ def run_tool(tool_path, runner_copy, tmp):
     return p.returncode, failed, (last[-1] if last else out.strip()[-120:]), out
 
 
+def unsafe_block(block):
+    """Fail-closed filesystem-safety gate on specimen text (round-35 wave-2 seat SentinelSandbox).
+
+    The counter RUNS specimen-derived bash. A copy that reassigns `root` or adds another
+    `rm -rf` can delete a path outside --work through the block's own cleanup line, while
+    returning a valid tuple. Such a copy is not scored: it is invalid with this reason.
+    """
+    cv = code_view(block)
+    if re.search(r'^[ \t]*root=', cv, re.M):
+        return 'specimen reassigns root (filesystem-safety gate)'
+    # The harness-provided $root is disposable; any other rm target is not. A legitimate
+    # behavioral copy may add another `rm -rf "$root"` (workdir-cleanup classes).
+    for m in re.finditer(r'\brm\b[^\n;]*', cv):
+        seg = m.group(0)
+        if '"$root"' not in seg and "'$root'" not in seg and '$root' not in seg:
+            return 'specimen removes a path other than $root (filesystem-safety gate)'
+    return None
+
+
 def score_copies(copies, runner_text, tool_path, tmp):
     rows = []
     for c in copies:
@@ -291,10 +342,31 @@ def score_copies(copies, runner_text, tool_path, tmp):
             row.update(valid=False, why=err)
             rows.append(row)
             continue
+        try:
+            bad = unsafe_block(tally_block(copy_text)[1])
+        except SystemExit as e:
+            row.update(valid=False, why='block extraction refused: %s' % str(e)[:120])
+            rows.append(row)
+            print('COPY %-5s %-34s %s INVALID (extraction refused)' % (row['set'], row['class'], row['file']))
+            continue
+        if bad:
+            row.update(valid=False, why=bad)
+            rows.append(row)
+            print('UNSAFE %-5s %-34s %s' % (row['set'], row['class'], bad))
+            continue
         bdir = os.path.join(tmp, 'b%d' % len(os.listdir(tmp)))
         os.mkdir(bdir)
-        copy_beh = behavior(copy_text, bdir)
-        pristine_beh = behavior(runner_text, bdir)
+        try:
+            copy_beh = behavior(copy_text, bdir)
+            pristine_beh = behavior(runner_text, bdir)
+        except SystemExit as e:
+            # A copy whose extracted block cannot even be driven (quote-blind brace fence,
+            # legal in bash: `: '}'` before the closer) is INVALID, never a counter crash
+            # (round-35 wave-2 seat ScoutTailRegion BOUND-3).
+            row.update(valid=False, why='block driver refused: %s' % str(e)[:120])
+            rows.append(row)
+            print('COPY %-5s %-34s %s INVALID (driver refused)' % (row['set'], row['class'], row['file']))
+            continue
         div = diverge(pristine_beh, copy_beh)
         row['diverged_configs'] = ['(%s,%s)' % (c_[1], c_[2]) for c_ in div]
         rpath = os.path.join(tmp, 'copy%d.sh' % len(os.listdir(tmp)))
