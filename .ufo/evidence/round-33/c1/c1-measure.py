@@ -218,12 +218,11 @@ def public_panel(pristine, seed):
     return copies
 
 
-def write_controls(lane, rev, work, seed):
+def write_controls(lane, rev, work, seed, receipt_path=None, tools=None):
     """Score control TOOLS against the public panel; write the controls receipt (pre-data)."""
-    ap = argparse.ArgumentParser()
-    ap.add_argument('tools', nargs='+')
-    ap.add_argument('--receipt', default=os.path.join(lane, CONTROLS_PATH))
-    a, _ = ap.parse_known_args()
+    tools = tools or []
+    if receipt_path is None:
+        receipt_path = os.path.join(lane, CONTROLS_PATH)
     pristine = show(lane, rev, RUNNER)
     if pristine is None:
         raise CounterError('runner not found at %s' % rev)
@@ -235,7 +234,7 @@ def write_controls(lane, rev, work, seed):
     copies = public_panel(pristine, seed)
     rows = []
     all_false = True
-    for tpath in a.tools:
+    for tpath in tools:
         k_hit, k_tot, a_hit, a_tot = score_tool(tpath, copies, work)
         passed = (k_hit == k_tot and a_hit == a_tot)
         all_false = all_false and not passed
@@ -243,11 +242,11 @@ def write_controls(lane, rev, work, seed):
                      'accept': '%d/%d' % (a_hit, a_tot), 'predicate_pass': passed})
     receipt = {'counter': os.path.basename(SELF_PATH), 'counter_sha256': sha256(self_bytes),
                'seed': seed, 'runner_sha256': PINNED_RUNNER_SHA, 'controls': rows, 'all_false': all_false}
-    os.makedirs(os.path.dirname(a.receipt), exist_ok=True)
-    with open(a.receipt, 'w') as f:
+    os.makedirs(os.path.dirname(receipt_path), exist_ok=True)
+    with open(receipt_path, 'w') as f:
         json.dump(receipt, f, indent=1, sort_keys=True)
         f.write('\n')
-    print('C1_R33_CONTROLS: controls=%d all_false=%s receipt=%s' % (len(rows), all_false, a.receipt))
+    print('C1_R33_CONTROLS: controls=%d all_false=%s receipt=%s' % (len(rows), all_false, receipt_path))
     for r in rows:
         print('  %s kill=%s accept=%s predicate_pass=%s' % (r['tool'], r['kill'], r['accept'], r['predicate_pass']))
     return 0 if all_false else 1
@@ -259,12 +258,13 @@ def main():
     ap.add_argument('--rev', required=True)
     ap.add_argument('--work', required=True)
     ap.add_argument('--seed', default=None)
+    ap.add_argument('--receipt', default=None)
     ap.add_argument('--write-controls', nargs='+', default=None)
     a = ap.parse_args()
     seed = a.seed or secrets.token_hex(8)
     os.makedirs(a.work, exist_ok=True)
     if a.write_controls is not None:
-        return write_controls(a.lane, a.rev, a.work, seed)
+        return write_controls(a.lane, a.rev, a.work, seed, a.receipt, a.write_controls)
 
     tool_b = show(a.lane, a.rev, TOOL)
     runner_b = show(a.lane, a.rev, RUNNER)
