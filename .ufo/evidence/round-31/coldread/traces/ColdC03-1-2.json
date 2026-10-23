@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "W=/fast/scratch/hyaku/tameshi-r31-seats/ColdC03/mut1; K=/fast/scratch/hyaku/tameshi-r31-seats/ColdC03/fleet/kumitate-shokunin; rm -rf \"$W\"; mkdir -p \"$W/evidence\" \"$W/empty-root\"; git -C \"$K\" show 175de6ba2e9e904010411b19cab27e0af9aad3d4:scripts/kimi-census.mjs > \"$W/pristine.mjs\"; echo \"PIN_SHA: $(sha256sum \"$W/pristine.mjs\")\"; echo \"PORCELAIN_LINES: $(git -C \"$K\" status --porcelain -- scripts/kimi-census.mjs | wc -l)\"; cp -p \"$W/pristine.mjs\" \"$W/control.mjs\"; timeout 300 node \"$W/control.mjs\" --selftest > \"$W/evidence/control.out\" 2>&1; echo \"CONTROL_EXIT=$?\"; tail -2 \"$W/evidence/control.out\"; cp -p \"$W/pristine.mjs\" \"$W/mutant-D7.mjs\"; python3 -c \"import sys; p=sys.argv[1]; s=open(p).read(); old=\\\"(mode & m.modeFloor) !== m.modeFloor\\\"; new=\\\"(mode & m.modeFloor) === 0\\\"; c=s.count(old); print(\\\"D7_COUNT=\\\", c); assert c==1; open(p,\\\"w\\\").write(s.replace(old,new,1))\" \"$W/mutant-D7.mjs\"; echo \"D7_SHA_DIFFERS=$([ \"$(sha256sum \"$W/mutant-D7.mjs\" | cut -d\" \" -f1)\" != \"$(sha256sum \"$W/pristine.mjs\" | cut -d\" \" -f1)\" ] && echo yes || echo no)\"; timeout 300 node \"$W/mutant-D7.mjs\" --selftest > \"$W/evidence/D7.out\" 2>&1; echo \"D7_EXIT=$?\"; tail -2 \"$W/evidence/D7.out\"; cp -p \"$W/pristine.mjs\" \"$W/mutant-D2.mjs\"; python3 -c \"import sys; p=sys.argv[1]; s=open(p).read(); old=\\\"findings.slice(0, 6).map\\\"; new=\\\"findings.slice(0, 5).map\\\"; c=s.count(old); print(\\\"D2_COUNT=\\\", c); assert c==1; open(p,\\\"w\\\").write(s.replace(old,new,1))\" \"$W/mutant-D2.mjs\"; timeout 300 node \"$W/mutant-D2.mjs\" --selftest > \"$W/evidence/D2.out\" 2>&1; echo \"D2_EXIT=$?\"; tail -2 \"$W/evidence/D2.out\"; timeout 300 node \"$W/pristine.mjs\" --root \"$W/empty-root\" 2>&1 | tail -1; timeout 300 node \"$W/mutant-D2.mjs\" --root \"$W/empty-root\" 2>&1 | tail -1; echo \"RESTORE_SHA: $(sha256sum \"$W/pristine.mjs\")\"; echo \"RESTORE_PORCELAIN_LINES: $(git -C \"$K\" status --porcelain -- scripts/kimi-census.mjs | wc -l)\""
+  ],
+  "cwd": "/fast/scratch/hyaku/tameshi-r31-seats/ColdC03/fleet/tameshi-shokunin",
+  "root": "/fast/scratch/hyaku/tameshi-r31-seats/ColdC03/fleet/tameshi-shokunin",
+  "rev": "2da841bd9913a2037d2bf612793382e572c9d205",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-xh4503qh/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.gitignore": "3767312444cc6425c133ea7e335892948272aa886559e4cc3d3e41a5394ce74e"
+  },
+  "live_lane_reads": {},
+  "dropped_home_count": 265
+}
