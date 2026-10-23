@@ -323,6 +323,15 @@ def check_head(body, block, names):
             problems.append('leg %s assigned %d times in the head' % (nm, all_assigns.count(nm)))
     if sorted(bare) != sorted(names):
         problems.append('head bare assignments %s != tally operands %s' % (sorted(bare), sorted(names)))
+    # the twice-only rule (DevHead, round 33): in the head each leg name may appear EXACTLY twice -
+    # once in the `local st_...` declaration line and once on its own bare `st_x=$?` line. Any other
+    # occurrence (spaced arithmetic, printf -v, read, declare, unset, brace/group/function wrapping,
+    # conditional zeroing) rewrites the captured status and fails closed here. Line-anchored scans
+    # miss every non-line-initial form; substring counting catches them all.
+    for nm in set(names):
+        cnt = head.count(nm)
+        if cnt != 2:
+            problems.append('leg %s appears %d times in the head (want exactly 2: the local declaration and its bare st_x=$?)' % (nm, cnt))
     # no assignment to a leg var anywhere in the tally block
     for m in re.finditer(r'^[ \t]*(st_[A-Za-z0-9_]+)=', block, re.M):
         nm = m.group(1)

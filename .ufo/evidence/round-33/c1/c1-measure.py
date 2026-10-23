@@ -46,7 +46,7 @@ RUNNER = 'tools/mutate-and-run.sh'
 SELF_PATH = '.ufo/evidence/round-33/c1/c1-measure.py'
 CONTROLS_PATH = '.ufo/evidence/round-33/c1/controls-receipt.json'
 HELDOUT_DIR = '.ufo/evidence/round-33/heldout'
-TOOL_SHA256 = '7a59f576a3899df0455bcec87647a0f389baa576e978751a63ff6b1ba8b38833'  # pinned at freeze; see contract.json ("tool_sha")
+TOOL_SHA256 = '7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10'  # pinned at freeze; see contract.json ("tool_sha")
 PINNED_RUNNER_SHA = 'a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9'
 NAME_RE = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
 
