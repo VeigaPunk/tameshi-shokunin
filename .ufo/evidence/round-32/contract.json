@@ -1,0 +1,49 @@
+{
+  "schema": "tameshi-round-contract-v1",
+  "round": 32,
+  "l1": "TameshiR32",
+  "base": "e24688b2ff6cca1c9ad20e112f02c629b8597ff8",
+  "frozen_before_data": "This file and c1-measure.py are committed before any wave seat runs; neither changes after. A control that meets the counter is a finding, never a reason to amend.",
+  "claims": [
+    {
+      "id": "C1",
+      "type": "capability acquisition (stagnation nudge: depth 9 and calibration 8 sit at or above the saturation line 8, and no capability row has entered within the window of 2)",
+      "axis": "operability",
+      "surface": "a new versioned tool tools/tally-audit.py that audits the runner tools/mutate-and-run.sh without editing it: (a) per-leg presence of the --regression tally (each st_*=$? leg status named exactly once in the tally loop, and nlegs equal to the leg count); (b) the runtime tally block against an independent oracle over every exit status 0-255 plus stress; (c) the runner's own tally selftest harness against a panel of known-faulty tally blocks. tools/mutate-and-run.sh, an input of 270 of the 480 cold-read ledger entries, stays byte-identical.",
+      "predicate": "C1 passes at REV iff the committed tools/tally-audit.py at REV, run as `python3 tally-audit.py --runner COPY`, exits 1 with a stdout line beginning `TALLY_AUDIT: FAIL` on every one of the 18 must-kill runner copies, exits 0 with a stdout line beginning `TALLY_AUDIT: PASS` on every one of the 8 must-accept runner copies, and REV's tools/mutate-and-run.sh has sha256 a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9.",
+      "label": "C1_R32_PASS",
+      "counter": "python3 .ufo/evidence/round-32/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR [--seed HEX]",
+      "code_conditions": {
+        "kill": "rc == 1 and any(x.startswith('TALLY_AUDIT: FAIL') for x in lines)",
+        "accept": "rc == 0 and any(x.startswith('TALLY_AUDIT: PASS') for x in lines)",
+        "pass": "k == N_KILL and acc == N_ACCEPT and runner_sha_ok == 1 and tool_present == 1 (N_KILL=18, N_ACCEPT=8)",
+        "runner_sha_ok": "hashlib.sha256(git show REV:tools/mutate-and-run.sh).hexdigest() == PINNED_RUNNER_SHA"
+      },
+      "copies": {
+        "must_kill_frozen": ["T08", "N05", "H03", "H04", "H05", "N01", "N02", "N03", "D01"],
+        "must_kill_generated": ["gT08 (arm K in 2..255 counted as pass)", "gN05 (undercount-only guard, 3 forms)", "gH03 (exact-line comparison weakened, 3 forms)", "gH04 (comparison status swallowed, 3 forms)", "gH05 (one singleton position P in 0..8 never exercised)", "gN01 (one of the four multi-status vectors deleted)", "gN02 (guard stress skipped, 2 forms)", "gN03 (line-or-exit instead of line-and-exit, 2 forms)", "gD01 (operand i replaced by operand j)"],
+        "must_accept_frozen": ["B0-pristine", "B1-T07 (equivalent guard)", "B2-reversed operands", "B3-decoy comments carrying every frozen mutant's new text", "B4-cosmetic tally arm", "B5-harness variable tgot renamed"],
+        "must_accept_generated": ["gB6 random operand permutation", "gB7 nonce comment lines inside the tally block and the harness"],
+        "fidelity": "the 8 MutateHead copies and B1-T07 are byte-identical to the mutated SHA-256 column of .ufo/waves/round-30/wC/MutateHead.md (.ufo/evidence/round-32/before/mutant-fidelity.txt)"
+      },
+      "before": "base e24688b2: tools/tally-audit.py absent; `C1_R32: kill=0/18 accept=0/8 other=26 runner_sha_ok=1 tool_present=0 ... C1_R32_PASS=false`, exit 1 (before/c1-at-base.stdout)",
+      "target": "kill=18/18 accept=8/8 runner_sha_ok=1 tool_present=1 C1_R32_PASS=true",
+      "kill_rule": "C1 fails if the first full counter run at the measurement revision prints C1_R32_PASS=false; it is reported as a miss, never re-scaled, re-seeded or amended. Every other run, by the L1 or a seat, with any seed, is reported as observed; any observed run at the measurement revision that prints false is reported beside the first run.",
+      "measurement_protocol": "The measurement revision is the lane commit that first carries tools/tally-audit.py together with the round's content revision; the after-value is the first full counter run there, with a fresh seed printed in the receipt.",
+      "controls_before_data": "Wave 1 control seats score do-nothing, always-pass, always-fail, junk, sha-pin, diff-against-committed-runner, line-count, label/path-keyed, sha-table of the frozen copies, static-only, runtime-only, harness-only and old-selftest tools with this counter before the L1 runs it on the real tool. Expected: every control prints C1_R32_PASS=false.",
+      "sourced_on": "a SOURCES.md row opened this round (bash manual exit-status semantics), cited by the tool's oracle and the knowledge entry",
+      "not_claimed": "no change to tools/mutate-and-run.sh; no depth or calibration score change; the generated families are not an exhaustive mutant space; the tool is not proved complete for every possible runner edit."
+    }
+  ],
+  "repairs": {
+    "routed_by": "corpus/lessons/round-31-verifier-spotcheck.md items 1, 2, 4",
+    "counter_v2": ".ufo/evidence/round-32/repair/c1-r31-measure-v2.py: axis header must equal `Score (0–10)`; append-only is a byte prefix. The frozen round-31 counter stays unchanged.",
+    "base_monitor_receipt": ".ufo/evidence/round-32/repair/c1monitor-at-r31-base-36c1d393.{stdout,stderr,exit}",
+    "commandD_exit": ".ufo/evidence/round-32/repair/commandD-at-r31-67c0e013.{stdout,stderr,exit} and commandD-at-r31-final-08125328.*; the round-31 receipt after/commandD-at-final.stdout stays as written (its exit was not recorded and is not reconstructed)"
+  },
+  "no_harm": {
+    "calibration": "python3 .ufo/evidence/round-27/c1-measure.py --repo LANE --rev REV -> covered=64/64 restraint=8 box3_mismatch=0 at base (before/c1monitor-at-base.stdout); restored at the measurement revision by fresh bound cold reads of any drifted section",
+    "depth": "command D recorded_cases=9 depth_score=9 at base (before/commandD-at-base.*)",
+    "operability": "tools/mutate-and-run.sh sha256 unchanged (part of the predicate); every other tools/* file unchanged"
+  }
+}
