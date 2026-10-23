@@ -1,0 +1,37 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "/bin/sh",
+    "-c",
+    "python3 -c \"\nimport json,subprocess\nR=\\\"/tmp/TameshiR29.Read11B-dKQh/fleet/tameshi-shokunin\\\"\np=subprocess.run([\\\"python3\\\",\\\"tools/receipt-window.py\\\",\\\"--contract\\\",\\\".ufo/evidence/round-20/contract.json\\\",\\\"--receipts\\\",\\\".ufo/evidence/round-20/final/receipts.json\\\",\\\"--json\\\"],cwd=R,capture_output=True,text=True)\nprint(\\\"GATE exit\\\",p.returncode); print(p.stdout[:500]); print(p.stderr[:200])\nck=json.load(open(R+\\\"/.ufo/evidence/round-20/final/checks.json\\\"))\nprint(\\\"checks type\\\",type(ck).__name__, list(ck)[:10] if isinstance(ck,dict) else len(ck))\ns=json.dumps(ck)\nprint(\\\"checks has --check:\\\", \\\"--check\\\" in s, \\\"runner_sha256:\\\", \\\"runner_sha256\\\" in s, \\\"receipt-measure:\\\", \\\"receipt-measure\\\" in s, \\\"stage/measure:\\\", \\\"stage/measure\\\" in s)\ndef walk(o,path=\\\"\\\"):\n    if isinstance(o,dict):\n        for k,v in o.items(): yield from walk(v,path+\\\"/\\\"+str(k))\n    elif isinstance(o,list):\n        for i,v in enumerate(o): yield from walk(v,path+\\\"/\\\"+str(i))\n    else: yield path,o\nfor path,v in walk(ck):\n    if isinstance(v,str) and (\\\"measure\\\" in v or \\\"--json\\\" in v or \\\"--check\\\" in v):\n        print(\\\"CK\\\",path,repr(v[:160]))\nsrc=open(R+\\\"/.ufo/evidence/round-20/stage/measure.py\\\").read()\nprint(\\\"stage len\\\",len(src))\nfor pat in (\\\"PREDICATE\\\",\\\"population\\\",\\\"expectations\\\",\\\"install_window\\\",\\\"--check\\\",\\\"contract_frozen\\\",\\\"staged_instruments\\\",\\\"installed_matches\\\",\\\"selftest_receipt\\\",\\\"final_receipts\\\",\\\"historical_classified\\\"):\n    print(\\\"stage\\\",pat,src.count(pat))\nreg=open(R+\\\"/tools/registry.json\\\").read()\nprint(\\\"registry stage/measure:\\\", reg.count(\\\"stage/measure\\\"), \\\"registry receipt-measure:\\\", reg.count(\\\"receipt-measure\\\"))\nlines=reg.split(chr(10))\nfor i,l in enumerate(lines,1):\n    if \\\"stage/measure\\\" in l or (\\\"receipt-measure\\\" in l and \\\"selftest\\\" not in l):\n        print(\\\"REG\\\",i,l.strip()[:140])\nd=open(\\\"/tmp/TameshiR29.Read11B-dump.txt\\\").read()\nprint(\\\"dump QUALITY41:\\\",d.count(\\\"QUALITY41\\\"),\\\"S049:\\\",d.count(\\\"S049\\\"))\nfor pat in (\\\"--check\\\",\\\"runner_sha256\\\",\\\"counting\\\",\\\"receipt-measure\\\"):\n    idx=0; n=0\n    while True:\n        idx=d.find(pat,idx)\n        if idx<0 or n>=4: break\n        print(\\\"DUMP\\\",pat,repr(d[max(0,idx-80):idx+120]))\n        idx+=1; n+=1\n\""
+  ],
+  "cwd": "/tmp/TameshiR29.Read11B-dKQh/fleet/tameshi-shokunin",
+  "root": "/tmp/TameshiR29.Read11B-dKQh/fleet/tameshi-shokunin",
+  "rev": "9f3084bc60ad56aac01e4556ef4c7653df2f65e5",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-92pfz15x/pycache"
+    }
+  },
+  "inputs": {
+    ".ufo/evidence/round-20/contract.json": "9b2813342768fdaa51bfd670a19d8573f87169a59b98207200e622f8e2b62715",
+    ".ufo/evidence/round-20/final/checks.json": "2f6f67a079c1f5243655d3f1d29b32942eb44d5b8d873c7d9045260c9b8f01b0",
+    ".ufo/evidence/round-20/final/receipts.json": "4186b44e6f5ef95aeb39768e5b9d8a0e6953283961bcc009733dbbcde48cb5d6",
+    ".ufo/evidence/round-20/stage/measure.py": "f34dc233eee33f4fea9a82c391bfb57ebfef8983f5c7146b4d2dc0b6b3be4e2d",
+    "tools/receipt-window.py": "f03ae7e91607750e2690f7819c486a3d9db03ee13f0b8cf51958462834dcf7cc",
+    "tools/registry.json": "c1b75366f1789121e6d5a4c8f6587f7519fef3bad60569ed274df8c7a681b73c"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}
