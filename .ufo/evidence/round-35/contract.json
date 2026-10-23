@@ -1,0 +1,102 @@
+{
+  "contract": "tameshi-round-35-v1",
+  "lane": "tameshi-shokunin",
+  "dispatch": "hyaku run-5, tameshi round 35, attempt 1; L1 TameshiR35",
+  "base": "51d3f08073be65d3475cf0286042fc0dbe4c4a7d",
+  "frozen_at": "2026-10-23, before any claim measurement. The before-state and control receipts were produced by the same counter bytes committed with this contract (their amendments are listed below); no default-mode C1 run has happened yet.",
+  "frozen_artifacts": {
+    "runner": "tools/mutate-and-run.sh",
+    "runner_sha256": "a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9",
+    "tool": "tools/tally-audit-v3.py",
+    "tool_sha256": "da23d3a25271072cae4cfd977cf3aeca531ef97e0abcd913890b3710cfa9a16f",
+    "predecessor_tool": "tools/tally-audit-v2.py",
+    "predecessor_sha256": "7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10",
+    "c1_counter": ".ufo/evidence/round-35/c1/c1-measure.py",
+    "c1_counter_sha256": "78bb43ebf3d2a313951d9d89f470f2543023b1605326fe676eef3cdb7a947ef9",
+    "c2_counter": ".ufo/evidence/round-35/c2/c2-measure.py",
+    "c2_counter_sha256": "67bb71188cde259088646f960b6fda8e0a217fad5d8260e379054b381018f9cc",
+    "public_panel": ".ufo/evidence/round-35/c1/panel/",
+    "sealed_dir": ".ufo/evidence/round-35/c1/sealed/"
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "axis": "depth",
+      "type": "capability acquisition (tool successor)",
+      "surface": "tools/tally-audit-v3.py: (1) the runtime oracle sweeps all four (auto,KEEP) triples, not two; (2) the compared tuple is the FULL stdout, not the first line; (3) every structural scan runs on a quote-aware code view with comments blanked, so inert comment text cannot kill or refuse a behaviorally pristine copy.",
+      "predicate": "C1_R35_PASS=true",
+      "predicate_sentence": "The v3 tool kills every kill specimen (divergent behavior under at least one of the four configs; failing check exactly `runtime`) and accepts every accept specimen (behaviorally identical on every config and vector), on the public panel and on a sealed set authored after this freeze; the runner is byte-identical.",
+      "counting_command": "python3 .ufo/evidence/round-35/c1/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR --sealed .ufo/evidence/round-35/c1/sealed",
+      "before": "C1_R35: mode=before tool_present=0 runner_sha_ok=1 rev=51d3f08... C1_R35_PASS=false, exit 1 (`.ufo/evidence/round-35/before/c1-at-base.stdout`)",
+      "control": "C1_R35_CONTROL: pub_kill=0/3 pub_accept=0/3 pub_distinct=6 PASS=false, exit 1 — the same panel scored by v2 (`--tool tools/tally-audit-v2.py`): all three kill copies accepted, all three accept copies killed/refused (`.ufo/evidence/round-35/control/c1-v2-control.stdout`). The control skips the claimed work and fails the target.",
+      "after_target": "pub_kill=3/3 pub_accept=3/3 pub_distinct=6, ho_kill=k/k with k>=4, ho_accept=a/a with a>=2, ho_invalid=0, tool_sha_ok=1, runner_sha_ok=1, sealed_after_freeze=1",
+      "kill_rule": "exactly ONE default-mode C1 run at the measurement revision, after the sealed set lands; no re-seed, no re-scale, no post-data rule change, no second default-mode run",
+      "falsifiers": [
+        "a kill specimen the v3 tool accepts (rc 0) or fails under a check other than runtime",
+        "an accept specimen the v3 tool kills or refuses (rc != 0)",
+        "a sealed copy whose LAST modifying commit does not descend from this freeze",
+        "runner sha256 differs at the measured revision",
+        "the tool's sha at the measured revision differs from tool_sha256 above"
+      ],
+      "sourced_by": "S102 (POSIX §2.3 Token Recognition — comment text is not code) and S097 (status range + `case` first-match), cited in the tool docstring"
+    },
+    {
+      "id": "C2",
+      "axis": "calibration",
+      "type": "self-assessment conformance",
+      "surface": "six mismatch classes between the lane's own records and the observed repository state: knowledge-header trio (m1), corpus README index (m2), stranded seat file at the fleet root (m3), frozen contract tool pin (m4), round-34 authoring receipt disagreement (m5), SCORECARD standing sources-registry row count (m6)",
+      "predicate": "C2_R35_PASS=true",
+      "predicate_sentence": "The counter finds zero mismatches across m1-m6 at the measured revision.",
+      "counting_command": "python3 .ufo/evidence/round-35/c2/c2-measure.py --lane LANE --rev REV --fleet FLEET",
+      "before": "C2_R35: m1=8 m2=3 m3=1 m4=1 m5=1 m6=1 total=15 entries=40 sources_rows=98 C2_R35_PASS=false, exit 1 (`.ufo/evidence/round-35/before/c2-at-base.stdout`)",
+      "after_target": "m1=0 m2=0 m3=0 m4=0 m5=0 m6=0 total=0 C2_R35_PASS=true",
+      "kill_rule": "the counter bytes and the six class definitions are frozen by this contract; a class may not be dropped or re-scoped after the after-state is measured",
+      "falsifiers": [
+        "any class counting >0 at the measured revision",
+        "a 'fix' that renames a record instead of reconciling it (the counter reads committed bytes, so the mismatch moves with them and stays counted)"
+      ],
+      "sourced_by": "no external source claims this class; the repairs cite the counter's own receipt and the r34 seat findings"
+    }
+  ],
+  "controls_before_data": [
+    {
+      "claim": "C1",
+      "control": "same public panel, v2 tool, at the base revision",
+      "receipt": ".ufo/evidence/round-35/control/c1-v2-control.stdout",
+      "predicate_pass": false,
+      "note": "the do-nothing control (keep v2) cannot reach the target: 0/3 kill, 0/3 accept"
+    },
+    {
+      "claim": "C2",
+      "control": "the before-state at base is the do-nothing control; every one of the six classes is non-zero, so 'do nothing' cannot pass",
+      "receipt": ".ufo/evidence/round-35/before/c2-at-base.stdout",
+      "predicate_pass": false
+    }
+  ],
+  "amendments": [
+    {
+      "id": "A1",
+      "when": "pre-data (before any claim measurement; the pre-amendment before-run is not kept as a claim receipt)",
+      "counter": "c2",
+      "change": "m1 (header trio) scoped to entries whose FIRST-ADD commit descends from the fleet round-1 baseline 284ab0f0 (where criterion 10 landed), and the 'header block' redefined as 'all text before the first `##` section' instead of 'before the first H1'.",
+      "why": "The first run counted 66 m1 mismatches: it flagged 22 pre-criterion historical notes the criterion explicitly does not cover, and it mis-read the trio of entries that place it after the H1 (this lane uses both layouts). Result: total 74 -> 15, every remaining class a real record defect."
+    },
+    {
+      "id": "A2",
+      "when": "pre-data",
+      "counter": "c1",
+      "change": "the behavior oracle's leg-name extraction reads the run_regression head section, not the tally block; the block extractor returns (head, block).",
+      "why": "The first control run refused every copy with SETUP: no leg assignments found — the block starts at `local nlegs=`, so its own prefix is empty. Fixed before the control receipt committed here."
+    },
+    {
+      "id": "A3",
+      "when": "pre-data",
+      "counter": "c1",
+      "change": "the multi-line record separator changed from U+001E to U+001F and result parsing moved from str.splitlines() to split('\\n').",
+      "why": "Python's splitlines() splits at U+001E, so every full-stdout record lost its second line and the oracle comparison was vacuous. Caught by the counter's own first self-run against the pristine runner (30316/30316 mismatched)."
+    }
+  ],
+  "measurement_revision_rule": "The measured revision is the lane branch tip at the deciding run; it is recorded in the receipt line as `rev=`. The C1 default-mode run happens once, after the sealed set lands. The C2 after-run happens once, after the C2 repairs are committed.",
+  "out_of_scope": "No runner edit (pin above). No sibling lane or fleet-repo file is edited; the stranded seat file was copied byte-exact (cmp) into the lane and the fleet copy deleted, as the misroot sweep allows.",
+  "env": "host pacman transactions paused (orchestrator ruling 2026-10-20). No installs were needed this round."
+}

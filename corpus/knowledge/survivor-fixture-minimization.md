@@ -1,6 +1,8 @@
 # Survivor fixture minimization — B5 probe, delta debugging
 
 source: S024 (https://www.fuzzingbook.org/html/Reducer.html, re-opened 2026-10-23; snapshot `.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html`, sha256 3abede35…e99)
+verified-at: 2026-10-23 — round 35 re-read this entry against its round-29 receipts; the S024 snapshot is present in the lane at the cited path, and the round-29 F6 honest-stop verdict is unchanged (no re-measurement)
+recheck: 90d — re-open S024 and re-hash the snapshot (`.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html`); drift if the snapshot is missing, the digest moves, or the F6 row in `corpus/README.md` `## Frontier` changes status
 
 Round 29, frontier F6 ("fixture minimization for survivors", `corpus/README.md`
 `## Frontier` row F6, pre-registered in the Round-29 section). Outcome: **the

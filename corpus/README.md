@@ -470,3 +470,16 @@ No frontier row changes status this round (F1–F10 as above).
 | `knowledge/runner-tally-audit.md` | Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression` and its tally selftest harness), not a frontier move (seat ScoutFrontier). A new versioned tool, `tools/tally-audit.py`, audits the runner without editing it: per-leg presence of the tally loop, the tally block against an oracle over every status 0–255 with overcount/undercount stress, and the runner's own harness against a panel of faulty tally blocks. It closes the per-leg item and the eight MutateHead survivors routed since round 30, while the runner stays byte-identical. The measured result is in SCORECARD.md's round-32 block | S097, S099, S094 (re-opened); `.ufo/evidence/round-32/contract.json`, `.ufo/evidence/round-32/v2/` |
 
 No frontier row changes status this round (F1–F10 as above).
+
+## Round 35 — index repair: three entries the coverage map never carried
+
+Appended 2026-10-23 (round 35, C2). The three rows below close the lagging-index debt the round-35
+C2 counter found (QUALITY.md criterion 7): every `corpus/knowledge/*.md` entry now has a row here.
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/runner-tally-audit-v2.md` | Core ground, landed round 33: the four held-out classes that defeated `tools/tally-audit.py` and the v2 answers (runtime vector sweep, every status at every leg, dataflow-identified tally loop, extraction tolerance). Its own header trio already named S097 + S099; this row closes the index gap only | S097, S099; `tools/tally-audit-v2.py`; `.ufo/evidence/round-33/` |
+| `knowledge/survivor-fixture-minimization.md` | Frontier F6 attempt (round 29), honest stop: the frozen target was not reached; the note records the survivor-B5 finding and the delta-debugging reading of S024. Index gap only — no verdict changes | S024; `.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html` |
+| `knowledge/witness-equivalence-rule.md` | Core ground, landed round 34: the set-aware witness rule for sealed held-out copies (kill/accept × head/vector branches), the rule the round-34 C1 deciding run verified. Header trio added the same round (C2 m1) | S097, S101; `.ufo/evidence/round-33/c1/c1-measure.py` |
+
+No frontier row changes status this round (F1–F10 as above).

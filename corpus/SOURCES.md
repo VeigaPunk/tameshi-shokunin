@@ -107,6 +107,7 @@ rows only, and a row is a claim opened in the round that writes it.
 | S099 | PIT Mutation Testing — https://pitest.org/ | docs | A | PIT's description of seeded mutation testing and the killed-mutant percentage as a test-quality measure | §What is mutation testing?, HTML lines 110–114 @ page fetched 2026-10-23 UTC (12,023 bytes; SHA-256 b0c7e0505c51c95b596060ef27babbce08e72d5aaf4557eb002c2637d2bf10cc) | faults are seeded as mutations, tests are rerun, test failure kills a mutant and passing lets it live; the killed-mutant percentage gauges test quality | mined | 2026-10-23 | 180d | corpus/knowledge/runner-tally-audit.md |
 | S100 | doctest — Test interactive Python examples (3.15 build) — https://docs.python.org/3.15/library/doctest.html | docs | A | executable documentation examples | module introduction, first bullet @ Python 3.15 docs, pinned by committed snapshot 2026-10-23 | supersedes S055 — the /3/ alias drifts (footer rebuilds move the digest); this pins the 3.15 build by committed bytes | mined | 2026-10-23 | on-release | corpus/lessons/round-33.md |
 | S101 | Major Mutation Framework (mutation-testing.org) — https://mutation-testing.org/ | docs | C | mutation-framework feature set incl. equivalent-mutant handling | Overview feature list @ page fetched 2026-10-23 UTC (4,341 bytes; SHA-256 0fde8a7bf52acdc5d1c04f01f9ccc94896db1844cfdeced98a419861ab7cf420; committed snapshot .ufo/evidence/round-34/src/s101-mutation-testing.html) | frameworks treat equivalent mutants as first-class: suppressing them and computing live-mutant sets alongside the mutant-detection rate | mined | 2026-10-23 | 365d | corpus/knowledge/witness-equivalence-rule.md |
+| S102 | POSIX.1-2024 Shell Command Language, §2.3 Token Recognition — https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html | spec | A | the normative rule that makes a `#` start a comment and where the comment ends | §2.3 Token Recognition, the `#` sentence @ page fetched 2026-10-23 UTC (357,953 bytes; SHA-256 0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd; committed snapshot .ufo/evidence/round-35/src/s102-posix-chap02.html) | a `#` at the point a token begins discards that character and all up to (excluding) the next newline as a comment, so comment text is never code — the ground for blanking comments before structural scans | mined | 2026-10-23 | 365d | tools/tally-audit-v3.py, corpus/lessons/round-35.md |
 
 - 2026-10-20 — **round-18 registry correction: S060 anchor and S061 paragraph (rows not edited).** S060: the round-17 cold-read collector does not pass `%file`. `.ufo/evidence/round-17/coldread/trace-inputs.py:74-80` (passed as `-e trace=` at `:630-631`) lists an explicit 16-syscall set: open, openat, openat2, creat, execve, execveat, chdir, fchdir, fork, vfork, clone, clone3, dup, dup2, dup3, close. The matching anchor is §Filtering, `-e trace=syscall_set` ("Traces only the specified set of system calls."), not `%file`; `-f` sits in §Tracing, not §General; §Output format `-o`/`-y` is correct. The row's "no stat-only probes" statement holds for the explicit list; `%file` would also record stat-family calls. S061: the detached-HEAD statement is §Colocated Jujutsu/Git workspaces ¶3, not ¶2 (¶2 is "This mode is very convenient when tools (e.g. build tools) expect a Git repo to be present."). The row's conclusion stands. Audit: `.ufo/waves/round-18/w1/S16SourcesRowsAudit.md`.
 
@@ -407,3 +408,13 @@ is not sole support). Rows 97 → 98. The `- Next unused id: S100.` line above w
 moment r33 consumed S100; a literal read would duplicate S100 and fail census E03 (demonstrated
 by seat CalibMonitor). It stays append-only; superseded here.
 - Next unused id: S102.
+
+Round 35: new row S102 (POSIX.1-2024 Shell Command Language §2.3 Token Recognition, seat L1
+fetch; the gnu.org Bash manual Comments page timed out at 60 s — the same class of failure r32
+and r34 recorded, so no row was written for it). S102 is mined by `tools/tally-audit-v3.py`
+(its docstring cites S102; the comment-blanking `code_view` implements the rule) and by
+`corpus/lessons/round-35.md`. S101's `used-by` is unchanged. Rows 98 → 99. The M1/M2/M5
+calibration repairs of this round add no rows: `corpus/knowledge/witness-equivalence-rule.md`
+now names S097 + S101 in its `source:` trio, so its used-by cell stays correct.
+
+- Next unused id: S103.

@@ -1606,7 +1606,7 @@ run; it was run afterwards as an observation (`.ufo/waves/round-32/res/CtlV2Cont
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, 96 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 99 rows at round 35 (the "96 rows" this cell carried was a round-32 observation; corrected 2026-10-23, round 35, per r34 AllFourScorecard F1); `corpus/SOURCES.md` | fleet round 1 (kaika) |
 
 ## Round 33 — C2 freshness repair (measured) + C1 tool hardening frozen unmeasured (2026-10-23)
 

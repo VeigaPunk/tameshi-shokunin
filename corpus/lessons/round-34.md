@@ -199,3 +199,25 @@ with the landed counter never touched.
 - F3 fixed in `corpus/SOURCES.md` this fold: the stale `- Next unused id: S100.` pointer
   (S100 and S101 now occupied) — corrected line `- Next unused id: S102.` appended per the
   file's own convention, with the E03 demonstration noted.
+
+## Round-35 append — corrections to this lesson (append-only, 2026-10-23)
+
+1. **`## Mistakes` §1's closing clause is inverted** (seat PanelSeed4 F1, landed after the r34
+   closure). The clause read "`.ufo/evidence/round-34/dev/authoring-receipts.json` first
+   generation, preserved in the scratch transcript". Correction: the JSON holds the
+   **corrected** generation (both `ho-kill-vector-setup-threshold` verdicts true, vector
+   `[2,0,0,...]`); the **first** generation — the `[2,2,0,...]` tie that returned
+   `(False, 'vector')` — is preserved in `.ufo/evidence/round-34/dev/authoring.stdout`, whose
+   final `SEALED: ... all_as_expected=False` line is that first generation's tally, not a
+   failure of the sealed set. The same round appended a `# ROUND-35 ADJUDICATION` block to that
+   stdout (append-only) so the stale line cannot be read as a seal failure. `cat
+   .ufo/evidence/round-34/dev/authoring.stdout | tail -9` shows it.
+2. **The `heldout_after_freeze` gate used `git log --diff-filter=A` (first add), not last
+   modify** (PanelSeed4 F2). It proves the sealed copies landed after the counter was FIRST
+   committed, not after the counter bytes in force. Measured: the stronger last-modify condition
+   also held at `c17e593b`, so the r34 verdict is unaffected. Round 35's counter gates on
+   `git log -1 --format=%H -- <path>` (last modify) instead.
+3. **Panel distinctness** (PanelSeed4 O1, fourth convergent seat): the public panel's 26 slots
+   carry 22 distinct bodies — 18 kill slots but 14 distinct kill bodies under the deciding
+   seed, so the effective fault diversity behind 18/18 is 14-17. Round 35's counter prints
+   `pub_distinct` beside the slot counts and its public kill/accept specimens are all distinct.

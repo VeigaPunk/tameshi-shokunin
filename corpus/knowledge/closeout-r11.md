@@ -1,5 +1,9 @@
 # The arc's closeout — the service as it stands (T11-1, round 11)
 
+source: own work — the arc's landed records: `plans/round-11.plan.md:13-25` (the final-round frame), `SCORECARD.md` (the ten training rows), `LOG.md:303-310` (the round rows); no external source
+verified-at: 2026-10-23 — round 35 re-read the three cited records at the lane tip: `plans/round-11.plan.md:13-25` is present as cited and the round rows `LOG.md:303-310` resolve; the 2026-10-14 write is unchanged
+recheck: 90d — re-read `plans/round-11.plan.md:13-25` and the round-11 row of `SCORECARD.md`; drift if either path moves or the arc is re-opened by a later round
+
 Written 2026-10-14 by lane T11-1 (tameshi round 11 — the final round, training
 r10; `plans/round-11.plan.md:13-25`). Role: the corpus-side closeout of the
 ten-round arc **as it stands** — the service (the tool, the six-leg ledger, the

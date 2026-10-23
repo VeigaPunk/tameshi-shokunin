@@ -1,5 +1,9 @@
 # The set-aware witness rule for sealed held-out copies (tameshi, round 34)
 
+source: S097 — GNU Bash Reference Manual (Bash 5.3 `doc/bashref.texi`): §Exit Status (the 0–255 range the vector witness compares) and §Conditional Constructs `case` (first matching pattern wins, so a status is classified by the first arm); S101 — Major Mutation Framework (mutation-testing.org), overview feature list (equivalent mutants first-class — the reason an accept copy needs a behavioral witness rather than suspicion)
+verified-at: 2026-10-23 — round 34 wrote the rule against the amendment-6 witness gate in `.ufo/evidence/round-33/c1/c1-measure.py` (sha256 `f6b8868c…a07f28c`); round 35 (2026-10-23) re-read this entry against that landed gate and found no statement the code contradicts
+recheck: on-counter-change — re-read `ho_witness_ok` in `.ufo/evidence/round-33/c1/c1-measure.py` and re-open S097/S101; drift if the branch set (kill/accept × head/vector) or its semantics change
+
 Author: tameshi-shokunin L1 (TameshiR34). Landed with the round-34 C1 measurement.
 
 ## The rule
