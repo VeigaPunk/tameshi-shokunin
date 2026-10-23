@@ -1,0 +1,194 @@
+[
+ {
+  "name": "HeldOutTallyArms",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: the tally loop case arms and counters (`case $st in`, `npass/nfail/nsetup` updates): e.g. arms that reclassify a status range, a counter updated twice, a pattern list; accept copies: equivalent rewrites of arms or arithmetic. {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutGuard",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: verdict precedence, the three if-blocks, their exit codes and the completeness guard; accept copies: equivalent conditions (arithmetic vs [[ ]], reordered but equivalent tests). {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutLoop",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: the tally loop operand list, `local nlegs=9`, the st_*=$? assignments before the tally (the per-leg surface); accept copies: equivalent loop spellings the counter can still parse (it needs the line `  for st in ...; do` with \"$st_x\" operands). {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutHarnessCmp",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: the selftest helper `tally_line` (how it builds the tally script and compares exit and first line); kill copies need a block witness: a faulty tally block the pinned harness rejects and your copy harness accepts. {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutHarnessVectors",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: the selftest harness vectors, singleton positions, the four multi-status vectors and the guard-stress case; kill copies need a block witness as above; accept copies: equivalent reorderings or rewrites of the harness. {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutPrintf",
+  "role": "executor",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: the printed REGRESSION lines, their fields and the REGRESSION_WORKDIR lines; e.g. a field that prints the wrong counter in one branch only; accept copies: equivalent printf spellings. {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutRefactor",
+  "role": "executor",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 1 must-kill and 3 must-accept copies. Focus: must-accept copies first: semantics-preserving refactors of the tally block and harness (renamed locals, helper functions, reordered independent statements, comments, quoting) that the counter still validates; one kill copy of your choice. {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "HeldOutFree",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Sealed held-out author for C1 counter v2: write 2 must-kill and 2 must-accept copies. Focus: free choice anywhere in the tally block or the harness section; aim at whatever you think the tool checks least. {CLONE}. Read {V2} (docstring: held-out schema and validity rules), {LANE}/tools/tally-audit.py and {LANE}/corpus/knowledge/runner-tally-audit.md. Your job: write held-out copies for C1 counter v2 that are VALID under the counter's rules and that the frozen tool gets WRONG if you can (a must-kill copy the tool PASSes, or a must-accept copy the tool FAILs or cannot audit); if after honest effort you cannot defeat it, write valid copies it gets right. Write genuinely new shapes, not the v1 families (T08 N05 H03 H04 H05 N01 N02 N03 D01 and their generated variants, B0-B5, gB6, gB7). Validity check (mandatory for every file): `cd {S} && git -C {CL} show {BASE}:tools/mutate-and-run.sh > {S}/pinned.sh` then in python: `import importlib.util, json, tempfile; s = importlib.util.spec_from_file_location('v2', '{CL}/.ufo/evidence/round-32/v2/c1-measure-v2.py'); v2 = importlib.util.module_from_spec(s); s.loader.exec_module(v2); pristine = open('{S}/pinned.sh').read(); body = v2.validate(ho, pristine, '{S}/pinned.sh', tempfile.mkdtemp(dir='{S}'), [])` — it returns the copy text or raises v2.Invalid with a reason. Then write the copy to {S}/copies/<k>.sh and run the frozen tool on it: `timeout 300 python3 {CL}/tools/tally-audit.py --runner {S}/copies/<k>.sh` (record exit and the TALLY_AUDIT line). Never run the counter's main. File schema (one copy per file): {{\"id\": \"<your-name>-<k>\", \"author\": \"<your-name>\", \"set\": \"kill\" or \"accept\", \"edits\": [{{\"old\": \"...\", \"new\": \"...\"}}], \"rationale\": \"one sentence: what changes and why it is (or is not) a real tally/harness defect\", \"witness\": {{\"vector\": [9 ints]}} or {{\"vector\": [...], \"loop\": [leg names]}} or {{\"block\": \"<a full faulty tally block>\"}} (kill only; omit for accept)}}. Each `old` must occur exactly once in the pinned runner at its turn (edits apply in order). Write each file to {S}/heldout/<your-name>-<k>.json and ALSO paste it in your report in its own ```json block preceded by a line `HELDOUT-FILE <your-name>-<k>`. Table per file: id, set, validity (valid / Invalid reason), tool exit and TALLY_AUDIT line, whether it defeats the tool. Invalid files are fine to report but say so; the counter excludes them."
+ },
+ {
+  "name": "SentinelTool",
+  "role": "sentinel",
+  "axes": [
+   "operability"
+  ],
+  "target": "Containment and safety review of {LANE}/tools/tally-audit.py (it runs bash on code cut from an arbitrary runner file: temp dirs, env, timeouts, cleanup, writes outside its temp dir, symlinks, huge output) and of the sandbox in {V2} (`run_sandboxed`: bwrap flags, what is visible, network, /etc exposure). Read-only review plus small probes in your scratch dir only. Table: risk, path:line, exploit or probe output, severity, smallest fix."
+ },
+ {
+  "name": "ReviewTool",
+  "role": "reviewer",
+  "axes": [
+   "operability"
+  ],
+  "target": "Code review of {LANE}/tools/tally-audit.py at {REV} against its docstring and {LANE}/corpus/knowledge/runner-tally-audit.md: oracle correctness against the runner's tally block ({LANE}/tools/mutate-and-run.sh:1432-1472), REF_BLOCK equal to the pinned block, every fault in faults() rejected by the pinned harness, exit codes 0/1/2, --then-regression, --selftest. {CLONE}; you may run the tool there on the pinned runner and on your own copies. List each defect with line and the exact input that exposes it."
+ },
+ {
+  "name": "MutateToolA",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Mutation-test the tool itself. {CLONE}. Copy {CL}/tools/tally-audit.py into {S}/ and make at least 8 single-edit mutants of check_static and check_runtime (and oracle). Score each mutant with (a) its own `--selftest` (run from a copy placed at {CL}/tools/ so it finds the runner, restore after) and (b) the PUBLIC v1 fixture families: import {LANE}/.ufo/evidence/round-32/c1-measure.py as a module and, for seeds 1..5, build frozen_kill+generated_kill and frozen_accept+generated_accept copies from the pinned runner, run the mutant tool on each (`timeout 300`). Table: mutant, selftest verdict, v1-family misses, killed or survived. Survivors are tool-check gaps: name the input that would kill each. Never run the v2 counter main."
+ },
+ {
+  "name": "MutateToolB",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Mutation-test the tool itself. {CLONE}. Copy {CL}/tools/tally-audit.py into {S}/ and make at least 8 single-edit mutants of check_harness, run_harness and faults(). Score each mutant with (a) its own `--selftest` (run from a copy placed at {CL}/tools/ so it finds the runner, restore after) and (b) the PUBLIC v1 fixture families: import {LANE}/.ufo/evidence/round-32/c1-measure.py as a module and, for seeds 1..5, build frozen_kill+generated_kill and frozen_accept+generated_accept copies from the pinned runner, run the mutant tool on each (`timeout 300`). Table: mutant, selftest verdict, v1-family misses, killed or survived. Survivors are tool-check gaps: name the input that would kill each. Never run the v2 counter main."
+ },
+ {
+  "name": "MutateToolC",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Mutation-test the tool itself. {CLONE}. Copy {CL}/tools/tally-audit.py into {S}/ and make at least 8 single-edit mutants of parsing (regression_body, tally_block, leg_names, tally_loop, harness_section) and main/exit handling. Score each mutant with (a) its own `--selftest` (run from a copy placed at {CL}/tools/ so it finds the runner, restore after) and (b) the PUBLIC v1 fixture families: import {LANE}/.ufo/evidence/round-32/c1-measure.py as a module and, for seeds 1..5, build frozen_kill+generated_kill and frozen_accept+generated_accept copies from the pinned runner, run the mutant tool on each (`timeout 300`). Table: mutant, selftest verdict, v1-family misses, killed or survived. Survivors are tool-check gaps: name the input that would kill each. Never run the v2 counter main."
+ },
+ {
+  "name": "ThenRegression",
+  "role": "executor",
+  "axes": [
+   "operability"
+  ],
+  "target": "{CLONE}. Run the tool's run-time mode once: `cd {CL} && timeout 2700 python3 tools/tally-audit.py --then-regression --workdir {S}/rg-1` and paste full stdout tail (last 30 lines) and exit. Then run the plain runner `timeout 2700 bash tools/mutate-and-run.sh --regression --workdir {S}/rg-2` and compare the REGRESSION line. Expected: audit PASS, REGRESSION PASS cases=9, TALLY_AUDIT_REGRESSION: PASS (cases=9 legs=9 exit=0). Kill any process you started before returning."
+ },
+ {
+  "name": "ReviewSources",
+  "role": "reviewer",
+  "axes": [
+   "operability"
+  ],
+  "target": "Re-open the two new SOURCES rows and the re-opened one at {REV} (`git -C {LANE} show {REV}:corpus/SOURCES.md`): S097 (fetch the Savannah bashref.texi URL in the row with curl, compare bytes and sha256, check the Exit Status quote at lines 3896-3897 and the case sentence at 1081-1082), S099 (fetch https://pitest.org/, compare digest, check the quote at HTML line 114), S094 (only the used-by change). Check each row has 11 cells and that every used-by path exists at {REV}. Also confirm the round-32 note at the end and the rows count 94 -> 96. Verdict per row with commands and outputs."
+ },
+ {
+  "name": "RerunCensus",
+  "role": "executor",
+  "axes": [
+   "operability"
+  ],
+  "target": "Run the census exactly: `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`; paste full output and exit. Compare with {E}/before/census-start.stdout (8 W04 warnings, ok). Then in {CLONE} run `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` and paste its row count and verdict. Report any new warning or error."
+ },
+ {
+  "name": "ReviewEntry",
+  "role": "reviewer",
+  "axes": [
+   "operability"
+  ],
+  "target": "Review {LANE}/corpus/knowledge/runner-tally-audit.md at {REV} against {LANE}/corpus/QUALITY.md criteria and against the tool's actual behavior: every number on the page (27 faults, the vector sweep, 8 survivors, 270 of 480 entries) must be re-derivable; run `python3 tools/tally-audit.py` and `--selftest` in {CLONE} to check. Check every S### cite says what the row says, and the Limits section is honest. List defects with line numbers and the smallest correction."
+ },
+ {
+  "name": "ReviewScorecardLog",
+  "role": "reviewer",
+  "axes": [
+   "calibration"
+  ],
+  "target": "Review the round-32 blocks appended to {LANE}/SCORECARD.md and {LANE}/LOG.md at {REV} (`git -C {LANE} show {REV}:SCORECARD.md | tail -40`, same for LOG.md): every hash cited exists (`git -C {LANE} rev-parse --verify <h>^{{commit}}`), every path exists at {REV}, every count matches its receipt in {E}/ and {LANE}/.ufo/waves/round-32/w1/. Check the append-only property: base {BASE} SCORECARD.md and LOG.md are byte prefixes of {REV}'s. Table of statements with verdicts."
+ },
+ {
+  "name": "CriticV2",
+  "role": "critic",
+  "axes": [
+   "operability"
+  ],
+  "target": "Adversarial review of counter v2 ({V2}) and amendments 1 and 2 ({E}/v2/contract-amendment-1.json, -2.json). Questions, verdict first: (1) Which cheap shortcut could still meet v2 (consider a tool with an embedded allowlist of the public v1 accept shapes, plus a rule for the held-out copies; side channels through file size, content markers, timing; validity rules that let a lazy author write only easy copies)? (2) Is amendment 2 (tool re-frozen after a seat ran v1 on the working tool) a rule change after data under addendum §9, or a pre-data fix of the measured object? Argue both sides and give your ruling with reasons. (3) Does the held-out minimum of 6+6 written by seats who can run the tool make the target one a do-nothing or shortcut cannot reach? (4) Smallest change that would answer the strongest objection. Read-only; you may read any lane file and the wave-1 reports in {LANE}/.ufo/waves/round-32/w1/."
+ },
+ {
+  "name": "CriticSize",
+  "role": "critic",
+  "axes": [
+   "operability"
+  ],
+  "target": "Adversarial review of the size and axis of C1: does a new external audit tool resolve the twice-deferred runner items (per-leg tally check; 8 MutateHead survivors: `{LANE}/corpus/lessons/round-31-verifier-spotcheck.md` routed item 3, `{LANE}/.ufo/waves/round-32/w1/ScoutDeferrals.md`) or only move them, given that `bash tools/mutate-and-run.sh --selftest` still passes the survivors? Is \"operability, capability acquisition\" the surface the round changes (addendum §9: name the axis by the surface)? Would a capability-table row for tally-audit be pre-claiming before the v2 measurement? Verdict first, then the strongest objection and the honest wording for the report."
+ },
+ {
+  "name": "ReviewAmend2Facts",
+  "role": "reviewer",
+  "axes": [
+   "calibration"
+  ],
+  "target": "Fact-check the data disclosure in {E}/v2/contract-amendment-2.json against the record: (a) no v2 counter run on real tool bytes before commit 528f8dee (grep every report in {LANE}/.ufo/waves/round-32/w1/ and seat scratch dirs under /fast/scratch/hyaku/tameshi-r32-seats/*/ for `C1_R32V2:` lines; read-only); (b) which tool shas DeterminismProbe ran v1 on and when (its report); (c) commit order c3181497 -> e9f3b957 -> b50a18f0 -> 528f8dee -> {REV} (`git -C {LANE} log --format=\"%H %cI %s\" {BASE}..{REV}`); (d) the dev sweep receipts in {E}/v2/dev/. Verdict per statement."
+ },
+ {
+  "name": "MutCounterV2",
+  "role": "mutation-tester",
+  "axes": [
+   "operability"
+  ],
+  "target": "Mutation-test counter v2. {CLONE}. Copy {V2} and its sibling v1 file ({E}/c1-measure.py, which v2 imports from ../) into a mirrored path in your scratch clone. Fixture lane: in your clone, commit (sandbox git) an always-FAIL control tool at tools/tally-audit.py, then a second commit adding 3 held-out files you write (one valid kill with a vector witness, one valid accept, one invalid accept). Make at least 8 single-edit mutants of v2 (e.g. validity skipped, witness check inverted, heldout_after_freeze ignored, MIN_HO dropped, sandbox replaced by a direct run, tool sha check dropped, accept sweep shortened, OTHER counted as KILL) and run each on the fixture with `--seed 1` (fresh --work each). Because the fixture tool is a control, set the mutant's TOOL_SHA256 to your control's sha so tool_sha_ok can be 1. Table: mutant, C1_R32V2 line, killed or survived; name the fixture that would kill each survivor. Never run v2 on the real tool."
+ },
+ {
+  "name": "ReviewCounterV2",
+  "role": "reviewer",
+  "axes": [
+   "operability"
+  ],
+  "target": "Code review of counter v2 ({V2}) against amendment 1 and 2: predicate identity (sentence in amendment, docstring, code_conditions vs actual Python, label C1_R32V2_PASS), held-out validity rules as written vs code, sandbox flags, heldout_after_freeze logic (adding commit of the counter vs held-out files), side channels (copy order, mtimes, sizes, names), exit codes. List each defect with line and the exact input that exposes it. Read-only."
+ },
+ {
+  "name": "ReviewReceiptCheck",
+  "role": "reviewer",
+  "axes": [
+   "calibration"
+  ],
+  "target": "Review {E}/receipt-check.py (the mined-mistake fix for receipts without an exit file): run `python3 {E}/receipt-check.py --selftest`, on {LANE}/.ufo/evidence/round-31 (expect after/commandD-at-final.stdout listed) and on {E} — in your scratch dir only (it is read-only on the target). Check that it can fail, its exit codes, and whether listing the four round-31 ctl/*.stdout files is a false positive the lesson must disclose."
+ }
+]
