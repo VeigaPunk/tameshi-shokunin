@@ -1,0 +1,37 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "round": 32,
+  "amends": ".ufo/evidence/round-32/contract.json (frozen c31814978969a41a8e9b0f7d99fa308c5993c1b7), claim C1",
+  "reason": "Pre-data control finding, wave 1: seat CriticC1 met frozen counter v1 (kill=18/18 accept=8/8, C1_R32_PASS=true, two seeds) with a 27-line allowlist that reads v1's must-accept builders at run time and fails everything else, without running any tally, oracle or harness (.ufo/waves/round-32/w1/CriticC1.md). Under addendum §9 a counter a shortcut meets is re-designed before data. No counter (v1 or v2) had been run on a real tools/tally-audit.py when this amendment was written; v1 and every v1 receipt stay as written, and v1's C1_R32_PASS is not the claim's rule any more.",
+  "claim": "C1",
+  "axis": "operability",
+  "type": "capability acquisition (unchanged)",
+  "surface": "unchanged: the new versioned tool tools/tally-audit.py; tools/mutate-and-run.sh stays byte-identical",
+  "predicate": "C1 passes at REV iff REV's tools/tally-audit.py has sha256 TOOL_SHA256 and, run in the sandbox as `python3 tally-audit.py --runner COPY`, exits 1 with a stdout line beginning `TALLY_AUDIT: FAIL` on every must-kill copy and exits 0 with a stdout line beginning `TALLY_AUDIT: PASS` on every must-accept copy, over the 18 + 8 v1 copies and every valid held-out copy, with at least 6 valid held-out must-kill and 6 valid held-out must-accept copies, every held-out file added after this counter, and REV's tools/mutate-and-run.sh at sha256 PINNED_RUNNER_SHA.",
+  "label": "C1_R32V2_PASS",
+  "counter": "python3 .ufo/evidence/round-32/v2/c1-measure-v2.py --lane LANE --rev REV --work EMPTY_DIR [--seed HEX]",
+  "constants": {
+    "TOOL_SHA256": "158202f8bc85a82e92bbc7bb3c42f636f468a4484a9725937cefcc41997a356a (tools/tally-audit.py committed with this amendment; the tool cannot change afterwards)",
+    "PINNED_RUNNER_SHA": "a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9",
+    "MIN_HO": 6
+  },
+  "code_conditions": {
+    "kill": "rc == 1 and any(x.startswith('TALLY_AUDIT: FAIL') for x in lines)",
+    "accept": "rc == 0 and any(x.startswith('TALLY_AUDIT: PASS') for x in lines)",
+    "pass": "cnt[('v1','kill')] == 18 and cnt[('v1','accept')] == 8 and cnt[('ho','kill')] == ho_n['kill'] and cnt[('ho','accept')] == ho_n['accept'] and ho_n['kill'] >= MIN_HO and ho_n['accept'] >= MIN_HO and tool_sha_ok and runner_sha_ok and after",
+    "after": "every held-out file's adding commit is a strict descendant of the commit that added .ufo/evidence/round-32/v2/c1-measure-v2.py",
+    "sandbox": "bwrap --unshare-all --clearenv with only /usr, /etc, /proc, /dev, a tmpfs /tmp, the tool at /t/tally-audit.py and the copy at /in/runner.sh"
+  },
+  "heldout": {
+    "dir": ".ufo/evidence/round-32/heldout/*.json, one copy per file (schema in the counter docstring)",
+    "authors": "wave-2 seats that did not write the tool, dispatched after this amendment is committed; they see the tool and are asked to defeat it with valid copies",
+    "validity": "counter-checked before the tool sees a copy (docstring): kill copies need a vector or block witness the counter re-runs against the pinned runner; accept copies must match the pinned runner's tally on the full sweep and stress and its harness verdict on the reference block, the 18 counter fault blocks and every held-out block witness. Invalid copies are excluded and listed, never repaired by the L1.",
+    "l1_duty": "the L1 commits every held-out file a seat returns, unedited, in one commit; it never drops a file because the tool fails on it"
+  },
+  "before": "base e24688b2 (no tool): v1 receipt before/c1-at-base.stdout, kill=0/18 accept=0/8 C1_R32_PASS=false; v2 at base cannot pass (no tool, no held-out set)",
+  "target": "C1_R32V2_PASS=true with ho_kill=n/n, ho_accept=m/m, n >= 6, m >= 6",
+  "kill_rule": "C1 fails if the first full v2 counter run at the measurement revision prints C1_R32V2_PASS=false; reported as a miss, never re-scaled, re-seeded or amended. Every other run is reported as observed.",
+  "measurement_protocol": "Measurement revision: the lane commit that adds the held-out files (on top of the content revision). The after-value is the first full v2 run there with a fresh seed.",
+  "controls_before_data": "Before the L1's first v2 run on the real tool, control seats re-score with v2, at a sandbox commit carrying the committed held-out set: always-pass, always-fail, the CriticC1 allowlist (unchanged and with its counter path pointed inside the sandbox), an embedded allowlist built from v1's accept builders, sha-table, static-only, runtime-only, harness-only, old-selftest. Expected: all false.",
+  "not_claimed": "unchanged from contract.json, plus: the held-out set is finite and written in one wave; passing it is not proof of completeness."
+}
