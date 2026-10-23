@@ -1438,3 +1438,25 @@ the `b05d2ee` ledger). At `41da22a3d85bf6b8d766ba1e4d3bc5042e205ee6`:
 corrected this round, is now credited. Still uncovered: "Round-18 gate/probe
 registry" (both readers dead). Net over base 60 → 63; score 6 → 6. Target
 missed; honest stop.
+
+## Round 29 — calibration repair and frontier F6 (2026-10-23)
+
+L1 TameshiR29, attempt 1 (repair-first round). Two claims, frozen in
+`.ufo/evidence/round-29/contract.json` (`9f3084bc`) and re-frozen before any data
+seat after the control wave: C2 in `contract-amendment-1.json` (`6ab11a62`), C1 in
+`contract-amendment-2.json` (`09e4f273`). Every widely read input edit (SOURCES
+S024, README Round-29 section, QUALITY 55-57) landed in `9f3084bc`, before the cold
+reads (QUALITY 56).
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 cold-read monitor repair with seat binding | calibration | `covered=63/64 restraint=6 box3_mismatch=1`, PASS false at 367ec0f1 | `covered=64/64 restraint=8 box3_mismatch=0 appended=22 bound=22 prefix_equal=1`, `C1_R29_V2_PASS=true`, exit 0 | restraint 6 → 8; box3_mismatch 1 → 0 | `python3 .ufo/evidence/round-29/c1-measure-v2.py --repo CLONE --rev REV` | 7a45f7b9d6a2542a553276330c8b02ac2e28c7ef | `.ufo/evidence/round-29/c1-at-E.stdout`, `c1-at-D.stdout`, `coldread/select-receipt-w1.json`, `coldread/c1-dry-all32.txt` | improved (measured; one post-data integration step disclosed: 10 passing entries not appended because they fail the frozen binding) |
+| C2 F6 survivor fixture minimization (B5) | coverage (frontier F6) | `fixture=absent`, PASS false at 367ec0f1 | `fixture=present anchored=1 kill_original=0 units_original=105 units_minimized=105`, `C2_F6_V2_PASS=false`, exit 1 | none | `python3 .ufo/evidence/round-29/c2-measure-v2.py --repo CLONE --rev REV` | 7a45f7b9d6a2542a553276330c8b02ac2e28c7ef | `.ufo/evidence/round-29/c2-at-E.stdout`, `.ufo/waves/round-29/w1/BuildF6B.md`, `.ufo/waves/round-29/ctl/CriticC2v2.md` | **missed (honest stop)**: target unreachable under the pinned declaration (exec rows declare 755) |
+
+Detail: 36 cold readers (three per drifted section) at `9f3084bc`, no failing
+read; ledger 371 → 393 as an append. C2's anchored fixture shows survivor B5 is
+masked by the gate's exact-mode check under the pinned declaration
+(`corpus/knowledge/survivor-fixture-minimization.md`). Calibration is restored to
+the pre-round-26 level (restraint 8). Other axes: depth 9 → 9 (command D),
+operability, freshness, adjacency unchanged; no capability row; no retirement.
+SHONEN marks unchanged (all `[~]`); box 3 now agrees with the monitor.

@@ -1726,3 +1726,18 @@ metadata and its failure are preserved; production gate source is unchanged.
   restraint 6, box3_mismatch 1. Still an honest stop.
 - Read09B assembled at `bdf0aa5`: monitor 62/64, restraint 6, box3_mismatch 1. Honest stop.
 - Read14B assembled at `41da22a`: monitor 63/64 (Round-18 registry uncovered, both readers dead). Honest stop.
+
+## Round 29 — 2026-10-23 (TameshiR29, attempt 1)
+
+- Motivation, C1: round-28 closure routed item 1 (monitor 63/64 at `367ec0f1`,
+  "Round-18 gate/probe registry" uncovered). Motivation, C2: frontier F6 open since
+  round 1 (`corpus/README.md` row F6), S024 queued.
+- `9f3084bc`: contract + counters + every widely read input edit (S024 mined,
+  README Round-29 section, QUALITY 55-57). Monitor 52/64 there by design.
+- Control wave (8 seats): C2 v1 met by three controls → v2; C1 v1 identity unpinned → v2.
+  Two control seats refused by a provider safety filter (holds).
+- Wave 1 (49 seats): 36 cold readers, all passing; 22 bound entries appended at `bc2058a4`.
+  BuildF6B: the anchored B5 fixture cannot kill (pinned exec rows declare 755).
+- Result C1: `C1_R29_V2_PASS=true` at `7a45f7b9` (64/64, restraint 8, box3_mismatch 0).
+  Result C2: `C2_F6_V2_PASS=false` (missed, honest stop); entry
+  `corpus/knowledge/survivor-fixture-minimization.md` records why.
