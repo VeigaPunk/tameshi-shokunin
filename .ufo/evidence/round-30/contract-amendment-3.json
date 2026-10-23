@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "round": 30,
+  "attempt": 2,
+  "l1": "TameshiR30A2",
+  "amends": ".ufo/evidence/round-30/contract-amendment-2.json (landed 8a8d25401413b76fb32b691412c9e1b1c83f2fed)",
+  "written_at_utc": "2026-10-23T05:37Z",
+  "before_any_data": true,
+  "reason": "Control CtlK8NoRun (attempt-1 mutation-tester seat; report .ufo/waves/round-30/ctl/CtlK8NoRun.md) met v3 with a static allowlist of the public generators' finite text language, never running the tally. The L1 of attempt 2 re-derived it: the seat's diff applied to 8a8d2540 gives a runner with sha256 a4a43eef…641e (the seat's reported bytes), and v3 scores it C1_R30_PASS=true, exit 0 (.ufo/evidence/round-30/v4/K8-on-v3.stdout). Per the kill rule this forces a re-design before data. v4 adds (j) and (k), a sealed set of 6 mutants and 6 equivalent rewrites of the frozen fix's tally block. The attempt-1 seat SealHeldout, which was to write such a set, died with no output (empty TameshiR30.SealHeldout.md in the host session store); its task was not resent to any seat. The sealed set was written by this L1 (hold rule: 'by another seat or by the L1, recorded as such') after the fix was frozen (witness/fix.diff in 8a8d2540), so the fix cannot be tailored to it; only its sha256 is committed here, and the file is committed after the head measurement. L1 self-attack on the v4 draft before this freeze: the draft ran each selftest in a directory named after its job (st-<name>), and control K9 (the fix's guard plus a selftest case keyed on that directory name, no tally run) met the draft (v4/K9-on-draft.stdout, PASS=true). The frozen v4 therefore runs every selftest in a bubblewrap sandbox (new pid/net/user namespaces, cleared environment, only /usr, /etc and its own tools/ copy at /w), so no job label, counter argv, counter source, lane or sealed file is visible to the selftest.",
+  "claim": "C1",
+  "counter": "python3 .ufo/evidence/round-30/c1-measure-v4.py --repo CLONE --rev REV --sealed SEALED_JSON",
+  "counter_sha256": "cccae0bd984a7c67c22d83a1e67d19e3ebc76c015094106a1370d330030a5f07",
+  "sealed_sha256": "44116804c5cf990a5dec58d107a8a584b333e3dc89a8962a3d17761e11243729",
+  "sealed_block_sha256": "e163133c0f54bb0cbd1c3f123e18b5efc17ced6df4558de034575089a8a2215d",
+  "sealed_path_after_measurement": ".ufo/evidence/round-30/v4/c1-sealed.json",
+  "predicate_label": "C1_R30_PASS",
+  "predicate": "C1_R30_PASS is true iff conditions (a)-(i) of contract-amendment-2.json hold under v4's sandboxed selftest runs, and (j) the sealed file's sha256 equals sealed_sha256, its block_sha256 equals the sha256 of the tally block at REV, and --selftest exits non-zero (or times out) on each of the 6 sealed mutants (sealed_killed == 6); (k) --selftest exits 0 with `VERDICT: PASS` on each of the 6 sealed equivalent rewrites (sealed_equiv == 6).",
+  "before": {
+    "rev": "9ed6db840dc97a0a5f4758b6b5f60cee83a61645",
+    "value": "pristine_selftest=1 harness=19/19 refused_drops=0/9 killed=0/13 equiv_pass=4/4 heldout_killed=0/12 heldout_equiv=4/4 insert_killed=0/8 insert_equiv=4/4 sealed_block_match=0 sealed_killed=0/6 sealed_equiv=0/6",
+    "predicate": "C1_R30_PASS=false",
+    "receipt": ".ufo/evidence/round-30/v4/base.stdout"
+  },
+  "target": "PREDICATE: C1_R30_PASS=true at the landed lane head",
+  "receipts_before_data": {
+    "reachability_witness": "v4/witness.stdout (sandbox 7165f904 = 8a8d2540 + witness/fix.diff): sealed_block_match=1 sealed_killed=6/6 sealed_equiv=6/6, PASS=true, exit 0",
+    "K8_static_allowlist": "v4/K8.stdout (210db74e): sealed_block_match=0, PASS=false",
+    "K8prime_static_allowlist_exact_block": "v4/K8prime.stdout (23ef4836 = K8 + the fix's three guard comment lines, ctl/K8prime-vs-K8.diff): sealed_killed=3/6 sealed_equiv=1/6, PASS=false",
+    "K9_label_keyed": "v4/K9.stdout (e7590f6e, ctl/K9-vs-witness.diff): killed=0/13 sealed_killed=0/6, PASS=false; on the draft v4/K9-on-draft.stdout PASS=true",
+    "K6_bytes": "v4/K6hash.stdout (f1a66d50) and v4/K6verbatim.stdout (b42fe7f8), both PASS=false",
+    "monotonic": "v4's conditions are a superset of v3's, so K1, K2, K3, K4, K5 and K7 (all PASS=false under v3) fail v4"
+  },
+  "pending_before_data": "control wave ctl2 (fresh critic and mutation-tester seats, one per shortcut shape) attacks v4 without the sealed file's content; the L1 scores each control under v4 and commits the receipts before the content revision. Any control that meets v4 forces a re-design before data or C1 is declared exploratory.",
+  "unchanged": "axis, surface, routed_by, sourced_on, design_constraint, kill_rule, hold_rule, no_harm_monitors, round_order of contract.json"
+}

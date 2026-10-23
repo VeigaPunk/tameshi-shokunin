@@ -1,0 +1,46 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..526a4d4 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,12 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1981,28 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # K6 control (verbatim-keyed detector): each line of the --regression
++  # case-tally block is pinned as a FIXED STRING and grepped out of the
++  # runner source. A semantic rewrite that drops or rewords a pinned line
++  # fails this case; a rewrite that only ADDS lines does not. This is a
++  # shortcut detector keyed on bytes, not a behavioural one.
++  local k6_pin k6_missing=0 k6_region
++  k6_region=$(awk '/^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=1} f{print} f&&/^}$/{exit}' "$SELF")
++  for k6_pin in \
++    '  local nlegs=9 npass=0 nfail=0 nsetup=0 st' \
++    '  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck"; do' \
++    '      0) npass=$((npass + 1)) ;;' \
++    '      1) nfail=$((nfail + 1)) ;;' \
++    '      *) nsetup=$((nsetup + 1)) ;;' \
++    '  if [[ $nfail -gt 0 ]]; then' \
++    '  if [[ $nsetup -gt 0 ]]; then' \
++    "  printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\\n' \\" \
++  ; do
++    grep -qxF -- "$k6_pin" <<<"$k6_region" || k6_missing=$((k6_missing + 1))
++  done
++  [[ $k6_missing -eq 0 ]]
++  st 'regression case-tally block lines present verbatim' $?
++
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?

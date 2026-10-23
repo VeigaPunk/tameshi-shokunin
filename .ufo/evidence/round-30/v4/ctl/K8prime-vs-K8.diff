@@ -1,0 +1,14 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index 39948c4..60b4ca1 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,9 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
++  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
++  # of a mutation report are sums of its per-state counts).
+   if (( npass + nfail + nsetup != nlegs )); then
+     printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
+       "$nlegs" "$((npass + nfail + nsetup))"

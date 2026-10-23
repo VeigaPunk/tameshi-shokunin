@@ -1,0 +1,36 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..ade24a4 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,12 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1981,18 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # K6 control (hash-keyed detector): the --regression case-tally block is
++  # pinned by BYTES, not by behaviour. The sha256 of the block text (from the
++  # tally-block start line to the end of run_regression) is compared with a
++  # value pinned here. Any change to the block's bytes fails this case; a
++  # behaviour-preserving rewrite of the block also changes its bytes and so
++  # fails this case too. This is a shortcut detector, not a behavioural one.
++  local k6_block_sha
++  k6_block_sha=$(awk '/^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=1} f{print} f&&/^}$/{exit}' "$SELF" \
++    | sha256sum | cut -d' ' -f1)
++  [[ "$k6_block_sha" == 'd064a8576f1a32e036b4c2b149bbe71044f8f6e35e50e1bc8417d061553b818b' ]]
++  st 'regression case-tally block bytes match the pinned sha256' $?
++
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?

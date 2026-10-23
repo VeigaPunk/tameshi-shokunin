@@ -1,0 +1,89 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..39948c4 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,12 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1478,6 +1484,71 @@ selftest() {
+     fi
+   }
+ 
++  # K8 control: recognize the generator's finite text language; never run it.
++  python3 - "$SELF" <<'PY_C1_K8_TEXT'
++import re
++import sys
++
++source = open(sys.argv[1], encoding="utf-8").read()
++match = re.search(r"^  local nlegs=9 [^\n]*\n(.*?)^\}", source, re.M | re.S)
++if match is None:
++    raise SystemExit(1)
++block = match.group(1)
++loop = re.search(r'^  for st in ([^\n]+); do$', block, re.M)
++if loop is None:
++    raise SystemExit(1)
++operands = re.findall(r'"\$(st_[a-z]+)"', loop.group(1))
++expected = {
++    "st_js", "st_kagi", "st_tsu", "st_mado", "st_checklist", "st_claims",
++    "st_roundgate", "st_sourcescheck", "st_citecheck",
++}
++if len(operands) != 9 or set(operands) != expected:
++    raise SystemExit(1)
++compact = lambda text: re.sub(r"\s+", "", text)
++for arm, var in (("0", "npass"), ("1", "nfail"), ("*", "nsetup")):
++    lines = re.findall(r"^      " + re.escape(arm) + r"\) (.*?) ;;$", block, re.M)
++    allowed = {
++        f"{var}=$(({var}+1))", f"{var}=$((1+{var}))",
++        f"(({var}+=1))||:", f":$(({var}+=1))",
++    }
++    if len(lines) != 1 or compact(lines[0]) not in allowed:
++        raise SystemExit(1)
++checks = re.findall(r"^  if (.*); then$", block, re.M)
++for check, var in zip(checks[:2], ("nfail", "nsetup")):
++    if compact(check) not in {f"[[${var}-gt0]]", f"[[${var}-ge1]]", f"(({var}>0))"}:
++        raise SystemExit(1)
++if len(checks) < 2:
++    raise SystemExit(1)
++
++# Literal multiplication table, not arithmetic evaluated from source text.
++products = """
++4 6 8 10 12 14 16 18
++6 9 12 15 18 21 24 27
++8 12 16 20 24 28 32 36
++10 15 20 25 30 35 40 45
++12 18 24 30 36 42 48 54
++14 21 28 35 42 49 56 63
++16 24 32 40 48 56 64 72
++18 27 36 45 54 63 72 81
++""".strip().splitlines()
++zero_statements = set()
++for a, row in zip("23456789", products):
++    for b, product in zip("23456789", row.split()):
++        for term in (f"({a}*{b}-{product})", f"({product}-{a}*{b})*-1",
++                     f"({b}*{a}+-{product}-0)"):
++            for var in ("npass", "nfail", "nsetup"):
++                zero_statements.update({
++                    f"{var}=$(({var}+{term}))", f"{var}=$(({term}+{var}))",
++                    f":$(({var}+={term}))", f"(({var}+={term}))||:",
++                })
++tail = block.split("    esac\n", 1)[1].split("\n  if ", 1)[0]
++for line in tail.splitlines():
++    text = compact(line)
++    if text and text != "done" and text not in zero_statements:
++        raise SystemExit(1)
++PY_C1_K8_TEXT
++  st 'case tally: finite source-language allowlist (text only, no execution)' $?
++
+   local fx="$root/fixture"
+   mkdir -p "$fx"
+ 
