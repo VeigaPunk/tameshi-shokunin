@@ -1,0 +1,42 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..63bb24a 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,15 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
++  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
++  # of a mutation report are sums of its per-state counts).
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1984,21 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # r30: --regression case-tally environment control. Deliberately classifies the
++  # public counter's job labels without extracting or executing the tally block.
++  local sniff_context="$PWD"$'\n'"$SELF" sniff_rc=0
++  sniff_context+=$'\n'"$(readlink "/proc/$PPID/cwd" 2>/dev/null || :)"
++  sniff_context+=$'\n'"$(tr '\0' ' ' <"/proc/$PPID/cmdline" 2>/dev/null || :)"
++  if [[ -r /proc/self/mountinfo ]]; then
++    sniff_context+=$'\n'"$(</proc/self/mountinfo)"
++  fi
++  case "$sniff_context" in
++    */st-D[0-9]-*|*/st-A[1-4]-*|*/st-H[0-9][0-9]-*|*/st-I[0-9][0-9]-*)
++      sniff_rc=1 ;;
++  esac
++  printf 'TALLY_ENV: cwd=%s reject=%s\n' "$PWD" "$sniff_rc"
++  st 'tally environment control: no mutant job label' "$sniff_rc"
++
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?

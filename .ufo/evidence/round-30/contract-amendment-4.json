@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "round": 30,
+  "attempt": 2,
+  "l1": "TameshiR30A2",
+  "amends": ".ufo/evidence/round-30/contract-amendment-3.json (landed f09d3425258403a51422c9959e25340807982947)",
+  "written_at_utc": "2026-10-23T06:09Z",
+  "before_any_data": true,
+  "decision": "C1 is declared EXPLORATORY. It has no counting command and no numeric target; it verifies only as `unprovable-but-better` with a named non-author reviewer on record (reasons included), otherwise it lands `unprovable`.",
+  "reason": "Control wave A (fresh seats, one per shortcut shape) built runners that keep the fix's tally block byte-identical and replace only its behavioral selftest. The L1 scored each under the frozen v4 with the sealed file. CtlS2SymEval (mutation-tester seat TameshiR30A2.CtlS2SymEval-11, report .ufo/waves/round-30/wA/CtlS2SymEval.md) met v4: a selftest that parses the block into its own model and computes the 19 verdicts without executing bash scored C1_R30_PASS=true, exit 0, sealed_killed=6/6 sealed_equiv=6/6 (.ufo/evidence/round-30/v4/ctl2/CtlS2SymEval-v4.stdout). v4's predicate therefore does not separate running the tally block from modelling it. Under the pre-freeze control rule a claim whose counter a control meets is re-designed before data or declared exploratory; a further counter re-design (v5) would need its own control wave, so the L1 declares C1 exploratory instead of amending the counter a fourth time. No counter, predicate or sealed set is changed by this amendment.",
+  "other_controls_under_v4": {
+    "CtlS1Normalize": "PASS=false (sealed_killed=0/6; v4/ctl2/CtlS1Normalize-v4.stdout)",
+    "CtlS4Sniff": "PASS=false (sealed_equiv=5/6)",
+    "CtlS6PartialRun": "PASS=false (sealed_killed=2/6 sealed_equiv=3/6)",
+    "CtlS7Metadata": "PASS=false (sealed_equiv=0/6)",
+    "attempt-1 controls re-derived and re-scored by the L1": "K3 all-false: counter error, PASS=false; K2 junk, K4 guard-only, K5 labels, K7 keyed: PASS=false (v4/ctl2/CtlK*-v4.stdout); K1 do-nothing = v4/base.stdout PASS=false; K6 and K8: v4/K6*.stdout, v4/K8*.stdout PASS=false",
+    "pending at writing": "CtlS3DenyList, CtlS8TokenBag (their outcome cannot change this decision)"
+  },
+  "exploratory_claim": {
+    "id": "C1",
+    "axis": "operability",
+    "surface": "the `--regression` case-tally block of tools/mutate-and-run.sh (runtime completeness guard) and the runner's own --selftest as its detector",
+    "improves": "At base, a tally loop that drops one leg status prints `REGRESSION: PASS (cases=9 passed=8 ...)` and exits 0, and the runner's --selftest (97/97) does not notice (round-29 MutateLegSum; v4/base.stdout refused_drops=0/9 killed=0/13). The landed change refuses an incomplete tally as SETUP at run time and adds a selftest that runs the extracted tally block under fixed status vectors.",
+    "why_prior_state_lacked_it": "Nothing compared the counted statuses with the case count, and no selftest case executed the tally block.",
+    "change_after_v4_freeze": "Wave-A seat MutateTallyExtra found four survivors of the witness selftest outside the 19 single-leg vectors (two failing legs, two setup legs, mixed fail+setup precedence, status 3) and a guard-removal survivor. The landed runner adds those four vectors and a guard stress case (the loop with its last operand removed must refuse as case-tally mismatch) to the selftest, outside the tally block, so the block stays byte-identical to the sealed set's block (sha256 e163133c…215d).",
+    "supporting_evidence_not_verdict": "v4 receipt at the landed head; the L1's survivor re-check; wave-B attacks. None of these is the claim's verdict.",
+    "verdict_rule": "unprovable-but-better only with a named non-author reviewer seat's judgment and reasons on record; otherwise unprovable"
+  },
+  "unchanged": "counter files, predicates, sealed set and every receipt landed before this amendment"
+}

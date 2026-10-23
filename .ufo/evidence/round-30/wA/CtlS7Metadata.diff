@@ -1,0 +1,113 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..d669beb 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,15 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
++  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
++  # of a mutation report are sums of its per-state counts).
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1984,92 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # r30: --regression case-tally behavior — metadata-only control.
++  # The block is never executed or evaluated. Only its size and aggregate token
++  # inventory are compared with equivalent-spelling reference inventories.
++  python3 - "$SELF" <<'PY_TALLY_METADATA'
++import collections
++import re
++import sys
++
++def bag(text):
++    text = re.sub(r'(?m)^\s*#.*$', '', text)
++    text = re.sub(r'(?m)^\s*:\s+[A-Za-z][A-Za-z0-9_-]*\s*$', '', text)
++    return collections.Counter(re.findall(r'[A-Za-z_][A-Za-z_0-9]*|[0-9]+|\S', text))
++
++def signature(counter):
++    return tuple(sorted((token, count) for token, count in counter.items() if count))
++
++reference = collections.Counter({
++    '!': 1, '"': 52, '$': 34, '%': 16, '&': 2, "'": 18, '(': 19, ')': 22,
++    '*': 1, '+': 7, '-': 10, '0': 10, '1': 6, '2': 2, '9': 1, ':': 11,
++    ';': 13, '<': 2, '=': 21, 'FAIL': 1, 'KEEP': 1, 'PASS': 2, 'REGRESSION': 4,
++    'REGRESSION_WORKDIR': 5, 'SETUP': 2, '[': 6, '\\': 13, ']': 6, 'auto': 1,
++    'cannot': 1, 'case': 2, 'cases': 4, 'counted': 1, 'delta': 1, 'do': 1,
++    'done': 1, 'else': 1, 'eq': 2, 'esac': 1, 'exact': 1, 'exit': 4, 'failed': 1,
++    'fi': 4, 'flips': 1, 'for': 1, 'gt': 2, 'if': 4, 'in': 2, 'keep': 1,
++    'kept': 4, 'killed': 1, 'ledger': 1, 'legs': 1, 'local': 1, 'mismatch': 1,
++    'n': 9, 'nfail': 7, 'nlegs': 6, 'npass': 8, 'nsetup': 8, 'on': 1,
++    'passed': 3, 'printf': 9, 'removed': 1, 'retains': 1, 'rf': 1, 'rm': 1,
++    'root': 6, 's': 16, 'setup': 1, 'st': 3, 'st_checklist': 1, 'st_citecheck': 1,
++    'st_claims': 1, 'st_js': 1, 'st_kagi': 1, 'st_mado': 1, 'st_roundgate': 1,
++    'st_sourcescheck': 1, 'st_tsu': 1, 'tally': 1, 'then': 4, 'verify': 1,
++})
++profiles = {signature(reference)}
++groups = []
++for variable in ('npass', 'nfail', 'nsetup'):
++    old = f'{variable}=$(({variable} + 1))'
++    groups.append((old, (old, f'(({variable} += 1)) || :',
++                         f': $(({variable} += 1))')))
++for variable in ('nfail', 'nsetup'):
++    old = f'[[ ${variable} -gt 0 ]]'
++    groups.append((old, (old, f'[[ ${variable} -ge 1 ]]',
++                         f'(( {variable} > 0 ))')))
++for old, variants in groups:
++    expanded = set()
++    for profile in profiles:
++        for variant in variants:
++            candidate = collections.Counter(dict(profile))
++            candidate.subtract(bag(old))
++            candidate.update(bag(variant))
++            expanded.add(signature(candidate))
++    profiles = expanded
++
++# Catalog token inventories of neutral arithmetic padding, not its location or
++# syntax tree. Candidate expressions are neither parsed nor evaluated.
++padding = {()}
++for a in range(2, 10):
++    for b in range(2, 10):
++        c = a * b
++        for term in (f'({a}*{b}-{c})', f'({c}-{a}*{b})*-1',
++                     f'({b}*{a}+-{c}-0)'):
++            for variable in ('npass', 'nfail', 'nsetup'):
++                for statement in (f'{variable}=$(({variable} + {term}))',
++                                  f': $(({variable} += {term}))',
++                                  f'(({variable} += {term})) || :'):
++                    padding.add(signature(bag(statement)))
++
++with open(sys.argv[1]) as source:
++    text = source.read()
++start = text.find('  local ' + 'nlegs=9 npass=0 nfail=0 nsetup=0 st\n')
++end = text.find('\n}\n', start) if start >= 0 else -1
++block = text[start:end + 1] if end >= 0 else ''
++size, lines = len(block.encode()), block.count('\n')
++accepted = False
++if 1300 <= size <= 2300 and 30 <= lines <= 50:
++    observed = bag(block)
++    for profile in profiles:
++        remainder = observed.copy()
++        remainder.subtract(dict(profile))
++        if min(remainder.values(), default=0) >= 0 and signature(remainder) in padding:
++            accepted = True
++            break
++print('TALLY_METADATA: %s bytes=%d lines=%d profiles=%d padding=%d' %
++      ('PASS' if accepted else 'FAIL', size, lines, len(profiles), len(padding)))
++sys.exit(0 if accepted else 1)
++PY_TALLY_METADATA
++  st 'tally metadata: size band and unordered token inventory' $?
++
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?

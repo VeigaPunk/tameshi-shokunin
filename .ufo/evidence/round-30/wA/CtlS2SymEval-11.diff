@@ -1,0 +1,519 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..0834f56 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,15 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
++  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
++  # of a mutation report are sums of its per-state counts).
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1984,498 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # r30: --regression case-tally behavior, computed by a static symbolic evaluator.
++  # Parse only this runner's tally into an independent model. Never run the extracted
++  # shell text: the 19 fixed vectors are interpreted as model state transitions.
++  python3 - "$SELF" <<'R30_SYMBOLIC'
++import fnmatch
++import re
++import sys
++
++
++def require(ok, message):
++    if not ok:
++        raise ValueError(message)
++
++
++def grouped(text, start):
++    """Find the end of a balanced arithmetic expansion, without evaluating it."""
++    i = start + (1 if text.startswith("$((", start) else 0)
++    depth = 0
++    while i < len(text):
++        if text[i] == "(":
++            depth += 1
++        elif text[i] == ")":
++            depth -= 1
++            if depth == 0:
++                return i + 1
++        i += 1
++    raise ValueError("unclosed arithmetic")
++
++
++def tokens(text):
++    text = text.replace("\\\n", "")
++    out, i = [], 0
++    while i < len(text):
++        c = text[i]
++        if c in " \t\r":
++            i += 1
++            continue
++        if c == "#":
++            j = text.find("\n", i)
++            i = len(text) if j < 0 else j
++            continue
++        if c == "\n":
++            out.append(";")
++            i += 1
++            continue
++        if text.startswith("((", i):
++            j = grouped(text, i)
++            out.append(text[i:j])
++            i = j
++            continue
++        if text.startswith("[[", i):
++            j = text.find("]]", i + 2)
++            require(j >= 0, "unclosed test")
++            out.append(text[i:j + 2])
++            i = j + 2
++            continue
++        pair = text[i:i + 2]
++        if pair in ("&&", "||", ";;"):
++            out.append(pair)
++            i += 2
++            continue
++        if c in ";|(){}":
++            out.append(c)
++            i += 1
++            continue
++        j = i
++        while i < len(text) and text[i] not in " \t\r\n;|&(){}":
++            if text.startswith("$((", i):
++                i = grouped(text, i)
++            elif text.startswith("${", i):
++                k = text.find("}", i + 2)
++                require(k >= 0, "unclosed parameter")
++                i = k + 1
++            elif text[i] in "'\"":
++                quote = text[i]
++                i += 1
++                while i < len(text) and text[i] != quote:
++                    if text[i] == "\\" and quote == '"':
++                        i += 1
++                    i += 1
++                require(i < len(text), "unclosed quote")
++                i += 1
++            elif text[i] == "\\":
++                i += 2
++            else:
++                i += 1
++        require(i > j, "unsupported shell token")
++        out.append(text[j:i])
++    return out
++
++
++class Shell:
++    """Compile the shell control structures into a data-only syntax tree."""
++    def __init__(self, text):
++        self.ts, self.i = tokens(text), 0
++
++    def peek(self):
++        return self.ts[self.i] if self.i < len(self.ts) else None
++
++    def pop(self, want=None):
++        value = self.peek()
++        require(value is not None and (want is None or want == value),
++                "expected %r, got %r" % (want, value))
++        self.i += 1
++        return value
++
++    def seq(self, stops=()):
++        out = []
++        while self.peek() is not None and self.peek() not in stops:
++            if self.peek() == ";":
++                self.pop()
++                continue
++            node = self.unit()
++            while self.peek() in ("&&", "||"):
++                op = self.pop()
++                node = (op, node, self.unit())
++            out.append(node)
++        return out
++
++    def unit(self):
++        kind = self.peek()
++        if kind in ("if", "elif"):
++            self.pop()
++            cond = self.seq(("then",))
++            self.pop("then")
++            yes = self.seq(("elif", "else", "fi"))
++            no = []
++            if self.peek() == "elif":
++                no = [self.unit()]
++            else:
++                if self.peek() == "else":
++                    self.pop()
++                    no = self.seq(("fi",))
++                self.pop("fi")
++            return ("if", cond, yes, no)
++        if kind == "for":
++            self.pop()
++            name = self.pop()
++            self.pop("in")
++            words = []
++            while self.peek() != ";":
++                words.append(self.pop())
++            self.pop(";")
++            while self.peek() == ";":
++                self.pop()
++            self.pop("do")
++            body = self.seq(("done",))
++            self.pop("done")
++            return ("for", name, words, body)
++        if kind == "case":
++            self.pop()
++            word = self.pop()
++            self.pop("in")
++            arms = []
++            while True:
++                while self.peek() == ";":
++                    self.pop()
++                if self.peek() == "esac":
++                    break
++                if self.peek() == "(":
++                    self.pop()
++                pats = [self.pop()]
++                while self.peek() == "|":
++                    self.pop()
++                    pats.append(self.pop())
++                self.pop(")")
++                body = self.seq((";;", "esac"))
++                if self.peek() == ";;":
++                    self.pop()
++                arms.append((pats, body))
++            self.pop("esac")
++            return ("case", word, arms)
++        if kind == "{":
++            self.pop()
++            body = self.seq(("}",))
++            self.pop("}")
++            return ("group", body)
++        words = []
++        while self.peek() is not None and self.peek() not in (";", "&&", "||", ";;", "}"):
++            words.append(self.pop())
++        require(words, "empty command")
++        return ("cmd", words)
++
++
++class Arithmetic:
++    prec = {
++        ",": 1, "=": 2, "+=": 2, "-=": 2, "*=": 2, "/=": 2, "%=": 2,
++        "<<=": 2, ">>=": 2, "&=": 2, "^=": 2, "|=": 2,
++        "?": 3, "||": 4, "&&": 5, "|": 6, "^": 7, "&": 8,
++        "==": 9, "!=": 9, "<": 10, "<=": 10, ">": 10, ">=": 10,
++        "<<": 11, ">>": 11, "+": 12, "-": 12, "*": 13, "/": 13,
++        "%": 13, "**": 14,
++    }
++    assignments = {"=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", "^=", "|="}
++
++    def __init__(self, text):
++        text = re.sub(r"\$\{([A-Za-z_]\w*)\}|\$([A-Za-z_]\w*)",
++                      lambda m: m[1] or m[2], text)
++        pattern = (r"\s*(0[xX][0-9a-fA-F]+|[0-9]+|[A-Za-z_]\w*|"
++                   r"<<=|>>=|\+\+|--|\*\*|&&|\|\||<<|>>|[+\-*/%&^|<>=!]=|.)")
++        self.ts = re.findall(pattern, text.strip())
++        self.i = 0
++
++    def peek(self):
++        return self.ts[self.i] if self.i < len(self.ts) else None
++
++    def pop(self):
++        t = self.peek()
++        require(t is not None, "incomplete arithmetic")
++        self.i += 1
++        return t
++
++    def expr(self, minimum=1):
++        t = self.pop()
++        if t == "(":
++            left = self.expr()
++            require(self.pop() == ")", "unclosed arithmetic group")
++        elif t in ("+", "-", "!", "~", "++", "--"):
++            left = ("unary", t, self.expr(14))
++        elif re.fullmatch(r"0[xX][0-9a-fA-F]+|[0-9]+", t):
++            left = ("num", int(t, 16 if t.lower().startswith("0x") else 10))
++        else:
++            require(re.fullmatch(r"[A-Za-z_]\w*", t), "bad arithmetic operand")
++            left = ("var", t)
++        while self.peek() in ("++", "--"):
++            left = ("post", self.pop(), left)
++        while self.peek() in self.prec and self.prec[self.peek()] >= minimum:
++            op = self.pop()
++            p = self.prec[op]
++            if op == "?":
++                yes = self.expr()
++                require(self.pop() == ":", "missing ternary colon")
++                left = ("ternary", left, yes, self.expr(p))
++                continue
++            right = self.expr(p if op in self.assignments or op == "**" else p + 1)
++            left = ("binary", op, left, right)
++        return left
++
++    def tree(self):
++        result = self.expr()
++        require(self.peek() is None, "trailing arithmetic")
++        return result
++
++
++class Halt(Exception):
++    def __init__(self, rc):
++        self.rc = rc
++
++
++class Model:
++    def __init__(self, values):
++        self.v = dict(values, root="selftest-tally", auto=0, KEEP=1)
++        self.output = ""
++        self.rc = 0
++
++    def number(self, node):
++        kind = node[0]
++        if kind == "num":
++            return node[1]
++        if kind == "var":
++            return int(self.v.get(node[1], 0))
++        if kind in ("unary", "post"):
++            op, target = node[1:]
++            a = self.number(target)
++            if op in ("++", "--"):
++                require(target[0] == "var", "increment target")
++                b = a + (1 if op == "++" else -1)
++                self.v[target[1]] = b
++                return a if kind == "post" else b
++            return {"+": lambda: a, "-": lambda: -a, "!": lambda: int(not a),
++                    "~": lambda: ~a}[op]()
++        if kind == "ternary":
++            return self.number(node[2] if self.number(node[1]) else node[3])
++        op, left, right = node[1:]
++        if op == "=":
++            require(left[0] == "var", "assignment target")
++            b = self.number(right)
++            self.v[left[1]] = b
++            return b
++        a = self.number(left)
++        if op == "&&" and not a:
++            return 0
++        if op == "||" and a:
++            return 1
++        b = self.number(right)
++        base = op[:-1] if op in Arithmetic.assignments else op
++        def quotient():
++            return (abs(a) // abs(b)) * (-1 if (a < 0) != (b < 0) else 1)
++        operations = {
++            "+": lambda: a + b, "-": lambda: a - b, "*": lambda: a * b,
++            "/": quotient, "%": lambda: a - quotient() * b, "**": lambda: a ** b,
++            "<<": lambda: a << b, ">>": lambda: a >> b,
++            "&": lambda: a & b, "|": lambda: a | b, "^": lambda: a ^ b,
++            "==": lambda: int(a == b), "!=": lambda: int(a != b),
++            "<": lambda: int(a < b), "<=": lambda: int(a <= b),
++            ">": lambda: int(a > b), ">=": lambda: int(a >= b),
++            "&&": lambda: int(bool(a and b)), "||": lambda: int(bool(a or b)),
++            ",": lambda: b,
++        }
++        value = operations[base]()
++        if op in Arithmetic.assignments:
++            require(left[0] == "var", "compound assignment target")
++            self.v[left[1]] = value
++        return value
++
++    def arithmetic(self, text):
++        return self.number(Arithmetic(text).tree())
++
++    def word(self, text):
++        out, i, quote = "", 0, None
++        while i < len(text):
++            c = text[i]
++            if c in "'\"" and (quote is None or quote == c):
++                quote = None if quote else c
++                i += 1
++            elif c == "\\" and quote != "'" and i + 1 < len(text):
++                nxt = text[i + 1]
++                if quote == '"' and nxt not in '$`"\\':
++                    out += "\\"
++                out += nxt
++                i += 2
++            elif quote != "'" and text.startswith("$((", i):
++                j = grouped(text, i)
++                out += str(self.arithmetic(text[i + 3:j - 2]))
++                i = j
++            elif quote != "'" and c == "$":
++                m = re.match(r"\$\{([A-Za-z_]\w*)\}|\$([A-Za-z_]\w*|\?)", text[i:])
++                require(m is not None, "unsupported expansion")
++                name = m[1] or m[2]
++                require(name == "?" or name in self.v, "unbound variable " + name)
++                out += str(self.rc if name == "?" else self.v[name])
++                i += len(m[0])
++            else:
++                out += c
++                i += 1
++        return out
++
++    def test(self, words):
++        for op in ("||", "&&"):
++            if op in words:
++                k = words.index(op)
++                a = self.test(words[:k])
++                return (a or self.test(words[k + 1:])) if op == "||" else (a and self.test(words[k + 1:]))
++        if words and words[0] == "!":
++            return not self.test(words[1:])
++        vals = [self.word(w) for w in words]
++        if len(vals) == 1:
++            return bool(vals[0])
++        if len(vals) == 2 and vals[0] in ("-n", "-z"):
++            return bool(vals[1]) if vals[0] == "-n" else not vals[1]
++        require(len(vals) == 3, "unsupported test")
++        a, op, b = vals
++        if op in ("-eq", "-ne", "-gt", "-ge", "-lt", "-le"):
++            return {"-eq": lambda: int(a) == int(b), "-ne": lambda: int(a) != int(b),
++                    "-gt": lambda: int(a) > int(b), "-ge": lambda: int(a) >= int(b),
++                    "-lt": lambda: int(a) < int(b), "-le": lambda: int(a) <= int(b)}[op]()
++        require(op in ("=", "==", "!=", "<", ">"), "unknown test operator")
++        if op in ("=", "==", "!="):
++            match = fnmatch.fnmatchcase(a, b)
++            return not match if op == "!=" else match
++        return a < b if op == "<" else a > b
++
++    def command(self, words):
++        first = words[0]
++        if len(words) == 1 and first.startswith("(("):
++            return int(not self.arithmetic(first[2:-2]))
++        if len(words) == 1 and first.startswith("[["):
++            return int(not self.test(tokens(first[2:-2])))
++        if first in ("[", "test"):
++            return int(not self.test(words[1:-1] if first == "[" else words[1:]))
++        if first in ("local", "declare", "typeset") or all(re.match(r"^[A-Za-z_]\w*=", w) for w in words):
++            for word in words[1:] if first in ("local", "declare", "typeset") else words:
++                if word.startswith("-"):
++                    continue
++                name, sep, value = word.partition("=")
++                require(re.fullmatch(r"[A-Za-z_]\w*", name), "declaration name")
++                if sep:
++                    self.v[name] = self.word(value)
++                else:
++                    self.v.setdefault(name, "")
++            return 0
++        args = [self.word(w) for w in words[1:]]
++        if first in ("exit", "return"):
++            raise Halt(int(args[0]) if args else self.rc)
++        if first == "let":
++            value = 0
++            for arg in args:
++                value = self.arithmetic(arg)
++            return int(not value)
++        if first in (":", "true", "rm"):
++            return 0
++        if first == "false":
++            return 1
++        if first == "echo":
++            self.output += " ".join(args) + "\n"
++            return 0
++        require(first == "printf" and args, "unsupported command " + first)
++        dest = None
++        if args[0] == "-v":
++            dest, args = args[1], args[2:]
++        fmt = re.sub(r"\\([\\ntr])", lambda m: {"\\": "\\", "n": "\n", "t": "\t", "r": "\r"}[m[1]], args[0])
++        values, pos = args[1:], 0
++        def conversion(match):
++            nonlocal pos
++            code = match[1]
++            if code == "%":
++                return "%"
++            value = values[pos] if pos < len(values) else ""
++            pos += 1
++            return str(int(value or 0)) if code in ("d", "i", "u") else value
++        rendered = re.sub(r"%([sdiu%])", conversion, fmt)
++        if dest:
++            self.v[dest] = rendered
++        else:
++            self.output += rendered
++        return 0
++
++    def seq(self, nodes):
++        for node in nodes:
++            self.rc = self.node(node)
++        return self.rc
++
++    def node(self, node):
++        kind = node[0]
++        if kind == "cmd":
++            return self.command(node[1])
++        if kind in ("&&", "||"):
++            self.rc = self.node(node[1])
++            if (kind == "&&" and self.rc == 0) or (kind == "||" and self.rc != 0):
++                self.rc = self.node(node[2])
++            return self.rc
++        if kind == "if":
++            ok = self.seq(node[1]) == 0
++            return self.seq(node[2] if ok else node[3])
++        if kind == "for":
++            values = [self.word(w) for w in node[2]]
++            rc = 0
++            for value in values:
++                self.v[node[1]] = value
++                rc = self.seq(node[3])
++            return rc
++        if kind == "case":
++            value = self.word(node[1])
++            for patterns, body in node[2]:
++                if any(fnmatch.fnmatchcase(value, self.word(p)) for p in patterns):
++                    return self.seq(body)
++            return 0
++        if kind == "group":
++            return self.seq(node[1])
++        raise ValueError("unsupported model node")
++
++    def verdict(self, program):
++        try:
++            rc = self.seq(program)
++        except Halt as halt:
++            rc = halt.rc
++        return rc, self.output.split("\n", 1)[0]
++
++
++try:
++    text = open(sys.argv[1], encoding="utf-8").read()
++    marker = "  local nlegs=9 npass=0 nfail=0 nsetup=0 st\n"
++    start = text.index(marker)
++    stop = text.index("\n}\n", start)
++    prefix = text[text.index("run_regression() {\n"):start]
++    names = re.findall(r"^  (st_[a-z]+)=\$\?$", prefix, re.M)
++    require(len(names) == 9 and len(set(names)) == 9, "nine independently discovered status names required")
++    parser = Shell(text[start:stop])
++    program = parser.seq()
++    require(parser.peek() is None, "trailing shell syntax")
++    vectors = [([0] * 9, 0, "REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)")]
++    for status, want in ((1, "REGRESSION: FAIL (cases=9 passed=8 failed=1 setup=0)"),
++                         (2, "REGRESSION: SETUP (cases=9 passed=8 cannot-verify=1)")):
++        for i in range(9):
++            values = [0] * 9
++            values[i] = status
++            vectors.append((values, status, want))
++    matched = 0
++    for values, rc, line in vectors:
++        got = Model(dict(zip(names, values))).verdict(program)
++        if got == (rc, line):
++            matched += 1
++        else:
++            print("SYMBOLIC_MISMATCH: statuses=%s got=%r want=%r" % (values, got, (rc, line)))
++    print("SYMBOLIC_TALLY: %d/19 model verdicts match; extracted shell executions=0" % matched)
++    sys.exit(0 if matched == 19 else 1)
++except (ValueError, KeyError, IndexError, TypeError, ZeroDivisionError) as exc:
++    print("SYMBOLIC_TALLY: refused: %s" % exc)
++    sys.exit(1)
++R30_SYMBOLIC
++  st 'tally symbolic evaluator: 19 fixed status vectors, no extracted shell execution' $?
++
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?

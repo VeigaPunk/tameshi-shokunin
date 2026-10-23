@@ -1,0 +1,413 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..45caa17 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,15 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
++  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
++  # of a mutation report are sums of its per-state counts).
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1984,392 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # r30 control: static normal form only. No tally code is run, sourced or evaluated.
++  # Parse shell structure and fold literal arithmetic, then compare with a compressed
++  # copy of the frozen fix. This deliberately substitutes syntax for the behavior probe.
++  python3 - "$SELF" <<'R30_STATIC'
++import ast
++import base64
++import math
++import re
++import shlex
++import sys
++import zlib
++
++REFERENCE = (
++    'eJytVNFO20AQfOcrpqkBu5VRQh9a4uYBqWmFQAUlrfoACJ3sdbjGvnPvzgj+vntnu0ChLap48pyzO57Z2QtQ6VxUUBWt7GwPqhHWzsZQpZCVf1pybcPAug2g1IYBpMIosu7iux11YC1WsofOtj2qRaF7mF9Svq6kdcO5ErIemo1uVbESjvqz1a3JyYaeoV466s4ZCs1CgFxYQhTEhDMwTnr1URwHgNeYJAmyrC+YJL0tX+DB7wWvksGvrwjofglZkTMotKINfsoSp6eIOq505TDG+XkGd0mdpsZI5UpsL+afFvPl8uD48xQf9w+OEHv1drZp4XVS4ZEn6VAnYdMmZ2obZ722URQi8gMJ5gLwPQGEltEfPnrx7Xhx+OFgMQWTx2tqXGAeRUZr1zXRtXSY+ITlHV/dBJ5obDn/8vXkUWe5UEq79IqMLG+e5OtZ7OwOdl7CvBlP4URV3SDXdVORI0W8IHHYvXR3DwwcFWApqW1rFFRS7pId7ONkf7mEIiosiC3cgMOHLv0wAneQz7dCuJadM3+rmCnrgOUy4XhhwBOAZ3a67zBUcgOEHSa3HL97O/W0XMNabWDnDwnULbNLrbin0cZBGPJc1v8q+RsNmdQLoP6jyU4XYhxjuAjDvveZvpj1KpLk6bGm3QRraWvh8sspfmXdm/5LtrdX8r6SJHm2mB9TH8J7ZCczTrpYkUEYAl2L3E2xlhW/TQuqnHjPf3llJRvL4I6nB9t6e1tEy9Gm9AMTbG0hOpzPT8Lxn1fnvlFDtb7iTeS0vfgMabomajh6J6SyD2ZgaqSmvPOKKkv/O9IwxzDV8cZPkcbRYQ=='
++)
++
++def add(a, b, sign=1):
++    out = dict(a)
++    for key, value in b.items():
++        out[key] = out.get(key, 0) + sign * value
++    return {k: v for k, v in out.items() if v}
++
++def multiply(a, b):
++    out = {}
++    for ka, va in a.items():
++        for kb, vb in b.items():
++            key = tuple(sorted(ka + kb))
++            out[key] = out.get(key, 0) + va * vb
++    return {k: v for k, v in out.items() if v}
++
++def poly(source):
++    source = re.sub(r'\$\{([A-Za-z_]\w*)\}|\$([A-Za-z_]\w*)',
++                    lambda m: m[1] or m[2], source)
++    source = re.sub(r'(?<!/)/(?!/)', '//', source.replace('$((', '(('))
++    def walk(n):
++        if isinstance(n, ast.Constant) and type(n.value) is int:
++            return {(): n.value} if n.value else {}
++        if isinstance(n, ast.Name):
++            return {(n.id,): 1}
++        if isinstance(n, ast.UnaryOp):
++            a = walk(n.operand)
++            if isinstance(n.op, ast.UAdd):
++                return a
++            if isinstance(n.op, ast.USub):
++                return {k: -v for k, v in a.items()}
++            if isinstance(n.op, ast.Invert) and not set(a) - {()}:
++                return {(): ~a.get((), 0)}
++        if isinstance(n, ast.BinOp):
++            a, b = walk(n.left), walk(n.right)
++            if isinstance(n.op, ast.Add):
++                return add(a, b)
++            if isinstance(n.op, ast.Sub):
++                return add(a, b, -1)
++            if isinstance(n.op, ast.Mult):
++                return multiply(a, b)
++            if isinstance(n.op, ast.Pow) and set(b) <= {()} and 0 <= b.get((), 0) <= 8:
++                out = {(): 1}
++                for _ in range(b.get((), 0)):
++                    out = multiply(out, a)
++                return out
++            if set(a) <= {()} and set(b) <= {()}:
++                x, y = a.get((), 0), b.get((), 0)
++                if isinstance(n.op, (ast.FloorDiv, ast.Mod)) and y:
++                    q = (abs(x) // abs(y)) * (-1 if (x < 0) != (y < 0) else 1)
++                    v = q if isinstance(n.op, ast.FloorDiv) else x - q * y
++                elif isinstance(n.op, ast.BitXor):
++                    v = x ^ y
++                elif isinstance(n.op, ast.BitAnd):
++                    v = x & y
++                elif isinstance(n.op, ast.BitOr):
++                    v = x | y
++                else:
++                    raise ValueError('unsupported arithmetic operator')
++                return {(): v} if v else {}
++        raise ValueError('not pure polynomial arithmetic')
++    return walk(ast.parse(source.strip(), mode='eval').body)
++
++def freeze(p):
++    return tuple(sorted(p.items()))
++
++def word(s):
++    if len(s) >= 2 and s[0] in "'\"" and s[-1] == s[0]:
++        s = shlex.split(s)[0]
++    s = re.sub(r'\$\{([A-Za-z_]\w*)\}', r'$\1', s)
++    if s.startswith('$((') and s.endswith('))'):
++        return ('arithmetic', freeze(poly(s[3:-2])))
++    if '$(' in s or '`' in s:
++        raise ValueError('command substitution is not a static word')
++    return s
++
++def lex(text):
++    text = text.replace('\\\n', '')
++    out, i = [], 0
++    def arithmetic_end(start):
++        depth, j = 0, start
++        while j < len(text):
++            if text[j] == '(':
++                depth += 1
++            elif text[j] == ')':
++                depth -= 1
++                if depth == 0:
++                    return j + 1
++            j += 1
++        raise ValueError('unterminated arithmetic')
++    while i < len(text):
++        c = text[i]
++        if c in ' \t\r':
++            i += 1
++            continue
++        if c == '#':
++            j = text.find('\n', i)
++            i = len(text) if j < 0 else j
++            continue
++        if c == '\n':
++            out.append(';')
++            i += 1
++            continue
++        if text.startswith('[[', i):
++            j = text.index(']]', i) + 2
++            out.append(text[i:j])
++            i = j
++            continue
++        if text.startswith('((', i):
++            j = arithmetic_end(i)
++            out.append(text[i:j])
++            i = j
++            continue
++        if c in ';|&()':
++            j = i + 1
++            if j < len(text) and text[j] == c and c in ';|&':
++                j += 1
++            out.append(text[i:j])
++            i = j
++            continue
++        start = i
++        while i < len(text) and text[i] not in ' \t\r\n;|&()':
++            if text[i] in "'\"":
++                quote = text[i]
++                i += 1
++                while i < len(text) and text[i] != quote:
++                    i += 2 if text[i] == '\\' and quote == '"' else 1
++                if i >= len(text):
++                    raise ValueError('unterminated quote')
++                i += 1
++            elif text.startswith('$((', i):
++                i = arithmetic_end(i + 1)
++            elif text[i] == '\\':
++                i += 2
++            else:
++                i += 1
++        out.append(text[start:i])
++    return out
++
++def nonnegative(p):
++    return all(v >= 0 and all(x in {'npass', 'nfail', 'nsetup', 'nlegs'} for x in k)
++               for k, v in p.items())
++
++def relation(left, op, right):
++    p = add(poly(left), poly(right), -1)
++    if op in ('<', '<='):
++        p = {k: -v for k, v in p.items()}
++        op = '>' if op == '<' else '>='
++    if op == '>=':
++        p = add(p, {(): 1})
++        op = '>'
++    divisor = math.gcd(*p.values())
++    if divisor > 1:
++        p = {k: v // divisor for k, v in p.items()}
++    if op in ('==', '!='):
++        neg = {k: -v for k, v in p.items()}
++        if nonnegative(neg) and not nonnegative(p):
++            p = neg
++        elif not nonnegative(p) and freeze(neg) < freeze(p):
++            p = neg
++        if op == '!=' and nonnegative(p):
++            op = '>'
++    if not set(p) - {()}:
++        value = p.get((), 0)
++        return ('constant', {'>': value > 0, '==': value == 0, '!=': value != 0}[op])
++    return (op, freeze(p))
++
++def polynomial_text(p):
++    return ' + '.join(str(v) + ''.join('*' + x for x in k) for k, v in p.items()) or '0'
++
++def condition(tokens):
++    s = ' '.join(tokens).strip()
++    if s.startswith('[[') and s.endswith(']]'):
++        s = s[2:-2].strip()
++    elif s.startswith('((') and s.endswith('))'):
++        s = s[2:-2].strip()
++    elif s.startswith('[') and s.endswith(']'):
++        s = s[1:-1].strip()
++    if s.startswith('test '):
++        s = s[5:].strip()
++    for op in ('||', '&&'):
++        if op in s:
++            parts = [condition([x]) for x in s.split(op)]
++            annihilator = ('constant', op == '||')
++            identity = ('constant', op == '&&')
++            if annihilator in parts:
++                return annihilator
++            parts = sorted(set(x for x in parts if x != identity))
++            return parts[0] if len(parts) == 1 else (op, tuple(parts)) if parts else identity
++    if s.startswith('!'):
++        inner = condition([s[1:].strip()])
++        if inner[0] in ('==', '!=', '>'):
++            p = dict(inner[1])
++            if inner[0] == '>':
++                return relation('0', '>=', polynomial_text(p))
++            return relation(polynomial_text(p), '!=' if inner[0] == '==' else '==', '0')
++        if inner[0] == 'constant':
++            return ('constant', not inner[1])
++        return ('not', inner)
++    s = re.sub(r'\s+-(eq|ne|gt|ge|lt|le)\s+',
++               lambda m: ' ' + {'eq': '==', 'ne': '!=', 'gt': '>',
++                                'ge': '>=', 'lt': '<', 'le': '<='}[m[1]] + ' ', s)
++    s = s.replace('"', '').replace("'", '')
++    m = re.fullmatch(r'(.*?)(==|!=|>=|<=|>|<)(.*)', s)
++    return relation(m[1], m[2], m[3]) if m else relation(s, '!=', '0')
++
++def update(s):
++    s = s.strip()
++    m = re.fullmatch(r'(\+\+|--)\s*([A-Za-z_]\w*)|([A-Za-z_]\w*)\s*(\+\+|--)', s)
++    if m:
++        name, op = (m[2], m[1]) if m[1] else (m[3], m[4])
++        return ('update', name, (((), 1 if op == '++' else -1),))
++    m = re.fullmatch(r'([A-Za-z_]\w*)\s*(\+=|-=|\*=|=)\s*(.*)', s)
++    if not m:
++        raise ValueError('unsupported arithmetic statement')
++    name, op, rhs = m.groups()
++    if rhs.startswith('$((') and rhs.endswith('))'):
++        rhs = rhs[3:-2]
++    value = poly(rhs)
++    if op == '=':
++        delta = add(value, {(name,): 1}, -1)
++    elif op == '+=':
++        delta = value
++    elif op == '-=':
++        delta = {k: -v for k, v in value.items()}
++    else:
++        delta = add(multiply({(name,): 1}, value), {(name,): 1}, -1)
++    return ('update', name, freeze(delta)) if delta else None
++
++def simple(tokens):
++    if not tokens:
++        return None
++    if tokens[0] in (':', 'let'):
++        if tokens[0] == ':' and len(tokens) == 2 and tokens[1].startswith('$(('):
++            return update(tokens[1][3:-2])
++        args = [word(x) for x in tokens[1:]]
++        if tokens[0] == 'let':
++            return update(' '.join(args))
++        if any('$' in str(x) or isinstance(x, tuple) for x in args):
++            raise ValueError('nonliteral colon arguments')
++        return None
++    if len(tokens) == 1:
++        s = tokens[0]
++        if s.startswith('((') and s.endswith('))'):
++            return update(s[2:-2])
++        if re.match(r'[A-Za-z_]\w*(?:=|\+=|-=|\*=)', s):
++            return update(s)
++        if s == 'true':
++            return None
++    if tokens[0] == 'local':
++        declarations = []
++        for x in tokens[1:]:
++            if '=' in x:
++                name, value = x.split('=', 1)
++                value = word(value)
++                if isinstance(value, str) and re.fullmatch(r'[+-]?\d+', value):
++                    value = ('arithmetic', freeze(poly(value)))
++                declarations.append((name, value))
++            else:
++                declarations.append((x, None))
++        return ('local', tuple(sorted(declarations)))
++    return ('command', tuple(word(x) for x in tokens))
++
++class Parser:
++    def __init__(self, source):
++        self.tokens = lex(source)
++        self.i = 0
++    def peek(self):
++        return self.tokens[self.i] if self.i < len(self.tokens) else ''
++    def pop(self):
++        value = self.peek()
++        if not value:
++            raise ValueError('unexpected end of block')
++        self.i += 1
++        return value
++    def expect(self, value):
++        if self.pop() != value:
++            raise ValueError('expected ' + value)
++    def separators(self):
++        while self.peek() == ';':
++            self.pop()
++    def plain(self):
++        values = []
++        while self.peek() and self.peek() not in {';', ';;', '&&', '||'}:
++            values.append(self.pop())
++        return simple(values)
++    def sequence(self, stops=()):
++        out = []
++        while True:
++            self.separators()
++            if not self.peek() or self.peek() in stops:
++                return tuple(out)
++            token = self.peek()
++            if token == 'for':
++                self.pop()
++                name = self.pop()
++                self.expect('in')
++                operands = []
++                while self.peek() not in (';', 'do'):
++                    operands.append(word(self.pop()))
++                self.separators()
++                self.expect('do')
++                body = self.sequence(('done',))
++                self.expect('done')
++                node = ('for', name, tuple(sorted(operands)), body)
++            elif token == 'case':
++                self.pop()
++                selector = word(self.pop())
++                self.expect('in')
++                arms = []
++                while True:
++                    self.separators()
++                    if self.peek() == 'esac':
++                        break
++                    patterns = []
++                    if self.peek() == '(':
++                        self.pop()
++                    while self.peek() != ')':
++                        item = self.pop()
++                        if item != '|':
++                            item = word(item)
++                            item = re.sub(r'^\[([^]!^-])\]$', r'\1', item)
++                            patterns.append(item)
++                    self.expect(')')
++                    body = self.sequence((';;', 'esac'))
++                    if self.peek() == ';;':
++                        self.pop()
++                    arms.append((tuple(sorted(patterns)), body))
++                self.expect('esac')
++                node = ('case', selector, tuple(sorted(arms)))
++            elif token == 'if':
++                self.pop()
++                test = []
++                while self.peek() != 'then':
++                    value = self.pop()
++                    if value != ';':
++                        test.append(value)
++                self.expect('then')
++                yes = self.sequence(('else', 'fi'))
++                no = ()
++                if self.peek() == 'else':
++                    self.pop()
++                    no = self.sequence(('fi',))
++                self.expect('fi')
++                node = ('if', condition(test), yes, no)
++            else:
++                node = self.plain()
++                while self.peek() in ('||', '&&'):
++                    op = self.pop()
++                    right = self.plain()
++                    if op == '||' and right is None:
++                        continue
++                    node = (op, node, right)
++            if node is not None:
++                out.append(node)
++
++try:
++    source = open(sys.argv[1]).read()
++    marker = '  local nlegs=9 npass=0 nfail=0 nsetup=0 st\n'
++    start = source.index(marker)
++    end = source.index('\n}\n', start)
++    actual = Parser(source[start:end + 1]).sequence()
++    expected = Parser(zlib.decompress(base64.b64decode(REFERENCE)).decode()).sequence()
++    matches = actual == expected
++    print('STATIC_TALLY: ' + ('MATCH' if matches else 'DIFFERENT'))
++    sys.exit(0 if matches else 1)
++except (ValueError, SyntaxError, IndexError, TypeError) as exc:
++    print('STATIC_TALLY: REFUSED (' + str(exc) + ')')
++    sys.exit(1)
++R30_STATIC
++  st 'static tally normal form matches frozen fix (no tally execution)' $?
++
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?
