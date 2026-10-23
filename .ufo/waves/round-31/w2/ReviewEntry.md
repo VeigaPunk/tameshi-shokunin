@@ -1,0 +1,45 @@
+# ReviewEntry — round-31 wave-2 review of executable-self-assessment.md and the README round-31 row at 2da841bd
+
+Verdict: the knowledge entry `corpus/knowledge/executable-self-assessment.md` and the round-31 row of `corpus/README.md:462` at `2da841bd` are accurate against the frozen counter, the contract, the base receipt, the cited SCORECARD lines, the kumitate prior-art pointer and the named w1 seat reports. Every byte-level claim I re-checked holds. No overclaim found in either file. Three minor imprecision/caveat items are listed below (one of them is a pending-measurement contingency that the round's own protocol already defers, not an error).
+
+Scope exercised: fresh `curl` fetches of the three source pages (same sizes/digests as the w1 seat fetches: doctest 216574 B, go 40059 B, rustdoc 51137 B); `git show` of SCORECARD.md/SOURCES.md/README.md/knowledge entry at `2da841bd` and at base `36c1d393`; kumitate `9b33e03e:corpus/knowledge/executable-scorecard.md`; a scratch clone of the lane at `2da841bd` (GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE unset) on which I ran the census, command D, the repeat-control / witness-metadata / evidence-disposition / pin-disposition / env-diff / wave-accounting / runner / r15 / mte-interop selftests, and the round-21 cold-read monitor. No tool installed (none needed). No production file touched; this report is the only lane write.
+
+## Verifications (all confirmed)
+
+| Claim | Location | Check and result |
+|---|---|---|
+| Base receipt: seven mismatches of twelve, census 44 stated/92 printed, runner 80/80 vs 106/106, regression 6 vs 9, pin 18/18 vs 19/19, evdisp 34/34 vs 66/66, depth 6/calibration 0 vs 9/8, five matched | entry:55-59 | `before/c1-at-base.stdout` lines 1-13 read: 5 MATCH / 7 MISMATCH with exactly those tuples ✓ |
+| Round-17 prose line marked four capability counts dated literals; three successors stale at base (runner 95/95, regression 7, evdisp 56/56) | entry:59-62 | Base `36c1d393` SCORECARD.md:632-636: "mutation sweep runner selftest 95/95 (row says 80/80); six-leg regression is seven legs, cases=7 (row says 6); pin-disposition 19/19 (18/18); evidence-disposition 56/56 (34/34)". Observed at base: 106/106, 9, 19/19, 66/66 → runner/regression/evdisp successors stale, pin successor still current ✓ |
+| S055 quote and location | entry:21-23 | Live doctest page: "To check that a module’s docstrings are up-to-date by verifying that all interactive examples still work as documented." — first common-use item after "There are several common ways to use doctest:" ✓ |
+| S095 quotes and locations | entry:24-26 | Live Go blog: "The test passes if the test’s output matches its output comment." under `#output-comments`; "verified by running them as tests" in §Introduction ✓ |
+| S096 quote and location | entry:27-29 | Live rustdoc book: "rustdoc supports executing your documentation examples as tests. This makes sure that examples within your documentation are up to date and working." under `#documentation-tests` ✓ |
+| kumitate prior art | entry:36-39 | `git -C kumitate-shokunin show 9b33e03e:corpus/knowledge/executable-scorecard.md` exists; opens with "`scripts/proxy-check.mjs` … READ-ONLY on every input … recomputes the twelve frozen terms … from its own tree"; ConnectorOverlap.md confirms the only in-tree scorecard checker, lane-specific, cite-don't-copy ✓ |
+| Frozen set 10 capability + 2 axis rows; last-row-of-type; fenced/comments excluded; unparsed/unobservable = mismatch | entry:43-49 | contract.json:12-14; ReviewCounter.md confirms `last_rows`/`strip_hidden` behavior and that all 12 parse; confirmed SCORECARD.md at `2da841bd` has exactly two `| Capability |` tables (238, 1512) and two `| Axis | Score (0–10) |` tables (64, 1534); three `| capabilities addition |` tables (1055/1148/1232) excluded ✓ |
+| "seat ScoutStatements found four stale ones at the freeze" and three `capabilities addition` tables outside the check | entry:76-78 | ScoutStatements.md: the Saturation nudge sentence, `SHONEN.md:5-34` cite, `tools/mutate-and-run.sh:84-89` cite, `raw-output-variable` class name — four stale ✓; three addition tables confirmed at the lines above ✓ |
+| SentinelCounter env claim | entry:79-82 | SentinelCounter.md: regression git use read-only, symlinks writable in principle ✓; host check: `jsonschema` absent, `python3 tools/mte-interop.py --selftest` prints `MTE_SELFTEST: SETUP (No module named 'jsonschema')` ✓ |
+| CtlReceiptCopy control | entry:83-84 | CtlReceiptCopy.md records full-counter V2 PASS with receipt-copied tuples at `47ee5b62` ✓ |
+| Capability re-stated values at `2da841bd` | SCORECARD.md:1512-1532 | Ran each statement command in the scratch clone: census `== A rows` → 94, CLEAN (exit 0); runner `MUTATE_SELFTEST: 106/106 pass`; repeat-control `SELFTEST: PASS (29 cases)`; witness `SELFTEST: PASS 39/39`; evdisp `SELFTEST: PASS (66/66)`; pin `SELFTEST: PASS (19/19)`; env-diff `ENVDIFF_SELFTEST: 9/9 pass`; wave `ACCOUNTING_SELFTEST: 8/8 pass` + `ACCOUNTING_EXTRA_SELFTEST: 16/16 pass`; r15 `summary SELFTEST: PASS (49/49)`, exit 0. All match their rows ✓ |
+| Depth re-stated value | SCORECARD.md:1538 | command D at `2da841bd` → `recorded_cases=9 depth_score=9`; monitor `depth_score: 9` ✓ |
+| README "New lane ground (seat ScoutFrontier: not F1–F10, not held core)" | README.md:462 | ScoutFrontier.md: "Verdict: **new ground.** Not a frontier row (F1–F10), and not Core already held." ✓; no expansion/F-row/status claim is made in the row ✓ |
+
+## Findings by severity
+
+M1 (medium — pending-measurement contingency, not an error in the reviewed files): the re-stated SCORECARD calibration row (SCORECARD.md:1536-1537, value 8, "measured commit: round-31 measurement revision") does not hold at the content revision itself. Running the row's own counting command at `2da841bd` — `python3 .ufo/evidence/round-21/coldread/measure.py --repo CLONE --rev 2da841bd` — prints `calibration_restraint_score: 6`, `box3_full_page: false`, `sections_covered: 55` (the planned input-drift state). C1's target (contract.json:25) explicitly names the measurement revision as the one carrying the round-31 SCORECARD rows **and** the cold-read ledger append, so the row is a forward-declared statement, and the entry/README are accurate to the protocol. Residual risk: if the L1 measures C1 at `2da841bd` itself (or at any commit before the ledger append restores full-page credit), the calibration statement will legitimately MISMATCH; the row's "current" wording depends on the later append. This matches the drift plan (contract.json:49) and is reported as a verification gap, not a defect.
+
+L1 (low — quote glyphs): entry:21-22 and :24 render the possessive apostrophes as ASCII `'` (U+0027); the live sources use typographic `’` (U+2019) in "module’s" and "test’s". Words, order, punctuation otherwise verbatim; locations correct. If byte-verbatim is the standard, these two quotes are not byte-identical to the source; semantically they are exact. Not an overclaim.
+
+L2 (low — registry metadata, outside the reviewed files): SOURCES.md S055 row retains "Python 3.15.0 documentation, fetched 2026-10-20" while the round-31 re-open note (SOURCES.md:368-371) and SrcDoctest.md record Python 3.15.1 on 2026-10-23 (sha256 369dcc17…). The knowledge entry's "re-opened round 31" is consistent with the appended note, so the entry is correct; the row itself is an unedited dated literal (append-only registry).
+
+## Overclaim assessment
+
+- `corpus/knowledge/executable-self-assessment.md`: no overclaim. The local rule is explicitly labeled inference (line 31-34, 70); the sources are quoted accurately with correct locations; base-receipt numbers and the round-17 supersession analysis are exact; the kumitate pointer exists and matches; the named seat reports exist and say what the entry attributes to them; limits are honest (tally ≠ behavioral proof; environment dependence; receipt-copy route).
+- `corpus/README.md:462`: no overclaim. "New lane ground" matches ScoutFrontier's verdict verbatim; the row claims no expansion, no F-row change, no Core status; C1 over the 12 frozen rows matches contract.json.
+- No "7→0 = calibrated" framing appears in either file reviewed (the round's own framing is a measured claim pending the measurement revision).
+
+## Residual risk / verification gaps
+
+- The six-leg regression statement (`cases=9 passed=9`) was not re-run here; `tools/mutate-and-run.sh` is untouched by the content revision, so its output is unchanged from the base observation (PASS,9,9,0) — confidence high, not executed.
+- The full frozen C1 counter was not run (it is the L1's own measurement at the measurement revision). My checks cover each individual statement command except regression and the final monitor-at-measurement-revision value.
+- The calibration row's value 8 remains contingent on the cold-read ledger append (M1); re-check at the chosen measurement revision.
+- The three quotes were verified against the live pages (2026-10-23); byte-identical text except the apostrophe glyphs in two of them (L1).
+Report: .ufo/waves/round-31/w2/ReviewEntry.md

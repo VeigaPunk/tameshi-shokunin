@@ -1754,3 +1754,21 @@ metadata and its failure are preserved; production gate source is unchanged.
   (`9207f226`); wave C 38 seats, none dead (`a2fa6c92` dispatch); 63 entries bound and appended, monitor
   64/64 restraint 8 at `4df5107f`; JudgeC1 `unprovable-but-better`; entry errata E1-E4; lesson
   `corpus/lessons/round-30.md` (five mistakes, routed-defect dispositions, round-31 routes).
+
+## Round 31 — 2026-10-23 (TameshiR31)
+
+- Motivation: round-30 spot-check routed items 1-6 (`corpus/lessons/round-30-verifier-spotcheck.md`)
+  and the orchestrator's note that calibration is the lowest axis: SCORECARD's standing capability and
+  score rows had drifted from what their own commands print (base receipt: 7 of 12).
+- `c111dab5`: C1 counter, contract, binding v4 and base receipt frozen before any seat.
+- Wave 1 (32 seats, none dead): C1 controls (do-nothing, junk, label, deleted, hidden, rewrite, header,
+  receipt route), counter review and mutation, base re-measurement, binding-v4 attacks (v4 kept 63/63
+  forged entries with five shapes → v5 before data, `87eb64eb`), dead-seat check, stray-workdir owner
+  (TameshiR30A3.ColdA08), source rows, entry and QUALITY drafts.
+- `2da841bd`: content revision (SCORECARD re-stated rows + JudgeC1 erratum, S095-S096 + S055 re-open,
+  knowledge entry, README row, QUALITY 66-71, SKILL.md recipe sentence). Monitor 55/64 there by design.
+- Wave 2 (32 seats, one dead: CtlBindV5Fresh, provider safety filter, held): nine drifted sections read
+  three times each, 24/24 bound by v5, ledger 456 → 480 at `83c001a5`; falsifiers on rows, entry,
+  sources, census, QUALITY, binding v5, dead-seat check, ordering and no-harm; the tsukuroi suite's
+  SIGPIPE race behind one regression flip.
+- Result C1: `C1_R31_PASS=true`, mismatches 7 → 0 at `83c001a5`; monitor 64/64, restraint 8.

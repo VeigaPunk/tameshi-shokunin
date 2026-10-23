@@ -1537,3 +1537,17 @@ pre-round record of `284ab0f`) and the Saturation sentence "the nudge does not f
 | calibration | 8 | Restraint score of the strict cold-read monitor `python3 .ufo/evidence/round-21/coldread/measure.py --repo R --rev REV` (`calibration_restraint_score`): two points per restrained, evidence-linked `[~]` SHONEN box (`SHONEN.md:5-12`), box 3 only when the monitor credits the full page; the last 2 points need independent promotion review | round-31 measurement revision (measured-result row below) | 29 (restored 6 → 8); held 30 |
 
 Measured results are appended below only after execution.
+
+### Round 31 — measured result (TameshiR31)
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 standing SCORECARD rows agree with their own commands | calibration | `C1_R31: statements=12 mismatches=7 … append_only=1 C1_R31_PASS=false`, exit 1 at 36c1d393 | `C1_R31: statements=12 mismatches=0 unparsed=0 unobservable=0 append_only=1 C1_R31_PASS=true`, exit 0 | mismatches 7 → 0 of 12; numeric calibration 8 → 8 | `python3 .ufo/evidence/round-31/c1-measure.py --rev REV --work EMPTY_DIR` | 83c001a5d95f33a78a9e2d51f5ec1c9a6ddf2217 (first full run; re-measured at the round's last SCORECARD commit, receipt `.ufo/evidence/round-31/after/c1-at-final.stdout`) | `.ufo/evidence/round-31/before/c1-at-base.stdout`, `after/c1-at-83c001a5.stdout`, `ctl/c1-controls-summary.txt`, `.ufo/waves/round-31/w1/`, `w2/` | improved (measured; route controls that copy correct committed values also meet the counter, as the contract declared; of the 7 base mismatches, 3 were stale current statements and 4 dated literals without a current restatement) |
+
+The "round-31 measurement revision" cells of the re-stated tables above mean `83c001a5`. No-harm at
+`83c001a5`: `C1_MONITOR: covered=64/64 restraint=8 box3_mismatch=0 depth_score=9` (content revision
+`2da841bd`: 55/64, restraint 6, by design; 24 fresh cold-read entries bound by binding v5 and appended,
+ledger 456 → 480). Depth 9 → 9 (command D); coverage: one new lane entry
+(`corpus/knowledge/executable-self-assessment.md`, not a frontier move); operability, freshness,
+adjacency unchanged (tools unchanged). No capability row; no retirement. SHONEN marks unchanged (all
+`[~]`). Lesson: `corpus/lessons/round-31.md`.
