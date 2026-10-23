@@ -1,0 +1,79 @@
+{
+ "schema": "tameshi-r30-c1-sealed-v1",
+ "author": "L1 TameshiR30A2 (attempt 2), after seat TameshiR30.SealHeldout died with no output",
+ "block_sha256": "e163133c0f54bb0cbd1c3f123e18b5efc17ced6df4558de034575089a8a2215d",
+ "items": [
+  {
+   "name": "e-preinc",
+   "kind": "equiv",
+   "old": "      0) npass=$((npass + 1)) ;;\n",
+   "new": "      0) (( ++npass )) ;;\n"
+  },
+  {
+   "name": "e-strne",
+   "kind": "equiv",
+   "old": "  if [[ $nfail -gt 0 ]]; then\n",
+   "new": "  if [[ $nfail != 0 ]]; then\n"
+  },
+  {
+   "name": "e-arith-truth",
+   "kind": "equiv",
+   "old": "  if [[ $nsetup -gt 0 ]]; then\n",
+   "new": "  if (( nsetup )); then\n"
+  },
+  {
+   "name": "e-guard-diff",
+   "kind": "equiv",
+   "old": "  if (( npass + nfail + nsetup != nlegs )); then\n",
+   "new": "  if (( nlegs - npass - nfail - nsetup )); then\n"
+  },
+  {
+   "name": "e-minus-neg",
+   "kind": "equiv",
+   "old": "      1) nfail=$((nfail + 1)) ;;\n",
+   "new": "      1) nfail=$(( nfail - -1 )) ;;\n"
+  },
+  {
+   "name": "e-pattern-alt",
+   "kind": "equiv",
+   "old": "      0) npass=$((npass + 1)) ;;\n",
+   "new": "      0|00) npass=$((npass + 1)) ;;\n"
+  },
+  {
+   "name": "m-fail-exit0",
+   "kind": "mutant",
+   "old": "    \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 1\n",
+   "new": "    \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 0\n"
+  },
+  {
+   "name": "m-pattern-01",
+   "kind": "mutant",
+   "old": "      0) npass=$((npass + 1)) ;;\n",
+   "new": "      [01]) npass=$((npass + 1)) ;;\n"
+  },
+  {
+   "name": "m-pattern-12",
+   "kind": "mutant",
+   "old": "      1) nfail=$((nfail + 1)) ;;\n",
+   "new": "      1|2) nfail=$((nfail + 1)) ;;\n"
+  },
+  {
+   "name": "m-pass-prints-nfail",
+   "kind": "mutant",
+   "old": "    \"$nlegs\" \"$npass\"\n  if [[ $auto",
+   "new": "    \"$nlegs\" \"$nfail\"\n  if [[ $auto"
+  },
+  {
+   "name": "m-swallow-fail",
+   "kind": "mutant",
+   "old": "    esac\n  done\n",
+   "new": "    esac\n  done\n  (( nfail == 1 )) && nfail=0\n"
+  },
+  {
+   "name": "m-setup-exit1",
+   "kind": "mutant",
+   "old": "    \"$nlegs\" \"$npass\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n",
+   "new": "    \"$nlegs\" \"$npass\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 1\n"
+  }
+ ]
+}
