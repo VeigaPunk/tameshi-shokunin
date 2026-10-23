@@ -366,6 +366,8 @@ corpus/knowledge/regression-tally-completeness.md; status and recheck
 unchanged. New rows S093 (bwrap 0.13.1 manual) and S094 (Dwork et al.,
 arXiv:1411.2664v3), both mined by that entry. Rows 89 → 92.
 - Next unused id: S095.
+| S100 | doctest — Test interactive Python examples (3.15 build) — https://docs.python.org/3.15/library/doctest.html | docs | A | executable documentation examples | module introduction, first bullet @ Python 3.15 docs, pinned by committed snapshot 2026-10-23 | supersedes S055 — the /3/ alias drifts (footer rebuilds move the digest); this pins the 3.15 build by committed bytes | mined | 2026-10-23 | on-release | corpus/lessons/round-33.md, corpus/knowledge/executable-self-assessment.md |
+
 
 Round 31: S055 re-opened (Python doctest page, fetched 2026-10-23, 216574 bytes, sha256
 369dcc17009a2f36000284ca86eedb7cef4bc10f773e554754bbdad07791cc46, seat SrcDoctest; the

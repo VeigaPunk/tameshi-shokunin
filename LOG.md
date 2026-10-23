@@ -1798,3 +1798,21 @@ metadata and its failure are preserved; production gate source is unchanged.
   exit 1. C1 is a miss; no capability row. Residual call (4 seats): RerunV2, CtlV2Controls (after the fact;
   the amendment-1 control re-score did not run before the first v2 run), CriticMeasurement, ReviewRepairs.
 - Lesson: `corpus/lessons/round-32.md` (9 mistakes, 3 holds, routed tool v2 for round 33).
+
+## Round 33 — 2026-10-23 (TameshiR33, attempt 2)
+
+- Motivation: round-32 rejected (honest stop: `ho_kill=1/10`); closure routed tool v2, counter
+  defects and the S055 drift. Stagnation nudge (no capability since round 25). Claims frozen at
+  `f6d8a891`: C1 capability (`tools/tally-audit-v2.py` + controls-gated counter), C2 freshness
+  (S055 supersedes row, versioned pin by committed snapshot).
+- Wave 1 (33 seats via the orchestrator, 0 dead): 4 controls all caught; 9 dev sweeps + 4 reviews
+  drove five pre-data amendments (counter --receipt fix; c2 hardening; tool config-sweep +
+  co-occurrence vectors + nesting extraction + loop dataflow + harness panel + twice-only head rule;
+  sandbox boundary repair; contract kill-rule sentences). 8 seats converged on the co-occurrence
+  hole; 4 confirmed the sandbox hole. Round-32 sealed 22-set replay: 17/22 correct, 2 false-pass
+  classes routed (Guard-2 divisibility, TallyArms-02 coexistence).
+- Freeze mark: orchestrator redirected to an honest landing. C2 measured true at the head (S100,
+  snapshot pin, Gate-bound digest + URL). C1 NOT measured — no sealed set exists; the structural
+  false receipt is committed as the honest state; measurement + controls receipt + cold-read
+  re-crediting routed to round 34. mte-interop SETUP repaired (17/17). Sources 96 → 97 rows
+  (S100; S099 recheck unchanged at its pinned digest). Lesson `corpus/lessons/round-33.md`.

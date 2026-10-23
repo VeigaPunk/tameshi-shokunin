@@ -1523,7 +1523,7 @@ row below; the first-working rounds are unchanged.
 | callback-authoritative wave accounting | reconcile exact registered identities and terminal states while preserving failed seats' partial artifacts; reject mismatched totals and digest tampering | `python3 tools/wave-accounting.py --selftest` → frozen counter8/8 (`ACCOUNTING_SELFTEST: 8/8 pass`; extra cases `ACCOUNTING_EXTRA_SELFTEST: 16/16 pass`) | round 22 |
 | required-command-receipt-binding | validate a finite trusted bundle's exact named command/context/outcome declarations | `python3 tools/command-binding.py --selftest` → `COMMAND_BINDING_SELFTEST: 44/44 pass`, exit 0 (not a C1 statement) | round 23 |
 | refusing-registry-replay | replay frozen registry requirements and refuse to publish a binding bundle from rejected rows | `python3 tools/registry-replay.py --selftest` → `REGISTRY_REPLAY_SELFTEST: 10/10 pass`, exit 0 (not a C1 statement) | round 24 |
-| mutation report interop | emit each recorded leg as a mutation-testing-elements report and check it with the official schema and metrics library | `python3 tools/mte-interop.py --selftest` → `MTE_SELFTEST: SETUP (No module named 'jsonschema')`, exit 2 on this host at round 31: the capability is not runnable here until that module is installed (not a C1 statement) | round 25 |
+| mutation report interop | emit each recorded leg as a mutation-testing-elements report and check it with the official schema and metrics library | `python3 tools/mte-interop.py --selftest` → `MTE_SELFTEST: 17/17 pass`, exit 0 at round 33 (jsonschema 4.25.1 installed via uv; `.ufo/evidence/round-33/repair/mte-selftest.{stdout,exit}`); supersedes the round-31 'not runnable here' clause | round 25 |
 
 ### Current axes — re-stated at round 31
 
@@ -1607,3 +1607,28 @@ run; it was run afterwards as an observation (`.ufo/waves/round-32/res/CtlV2Cont
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
 | sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, 96 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+
+## Round 33 — C2 freshness repair (measured) + C1 tool hardening frozen unmeasured (2026-10-23)
+
+L1 TameshiR33, attempt 2 (attempt 1 died with the phase-4 orchestrator; nothing inherited).
+Stagnation nudge still applies (no capability since round 25). Two claims frozen at `f6d8a891`
+(contract `.ufo/evidence/round-33/contract.json`); five pre-data amendments followed the wave-1
+falsification seats (`27902a16`, `e6a5f4b`, `49876298`, `ee398492`; all disclosed in
+`corpus/lessons/round-33.md`; no default-mode counter run occurred before them).
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C2 S055 supersedes-row with versioned pin | freshness | `C2_R33: row=none versioned_url=0 snapshot_sha_ok=0 gate_sha_ok=0 quote_ok=0 C2_R33_PASS=false`, exit 1 at base `66e1fb44` (`.ufo/evidence/round-33/before/c2-at-base-v2.*`) | `C2_R33: row=S100 versioned_url=1 snapshot_sha_ok=1 gate_sha_ok=1 quote_ok=1 C2_R33_PASS=true`, exit 0 | row none → S100; the moving /3/ pin is replaced by committed bytes (216574 B, sha256 217edd57…4899) that no live footer churn can break | `python3 .ufo/evidence/round-33/c2/c2-measure.py --lane LANE --rev REV` | see `.ufo/evidence/round-33/after/c2-at-head.stdout` (this commit) | `corpus/SOURCES.md` row S100; snapshot `.ufo/evidence/round-33/c2/doctest-snapshot.html`; fetch receipt; lesson Gate | **improved (measured)** |
+| C1 runner tally audit v2 (capability acquisition) | operability | no `tools/tally-audit-v2.py` at base; frozen counter before-state `tool_present=0 … C1_R33_PASS=false`, exit 1 | measurement NOT RUN: the sealed held-out set (>=8 must-kill + >=6 must-accept authored after the freeze) was never authored — the orchestrator's 2 h freeze redirected the round to an honest landing. Tool hardened pre-data by nine seat findings (config sweep, co-occurrence vectors x 15158, nesting-aware extraction, loop dataflow, harness panel +5, twice-only head rule, boundary repair); routed residue named in the lesson | none — no verdict consumed | `python3 .ufo/evidence/round-33/c1/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR` | n/a (not run against the predicate) | `.ufo/evidence/round-33/after/c1-at-head-notrun.stdout` (structural false: ho 0/0), lesson `## Gate` rejection row | **unverified this round (honest stop; routed to round 34)** |
+
+C1 detail: wave 1 (33 seats, zero dead) ran only pre-data attacks. All four control shortcuts were
+caught by the frozen counter (receipt planned at the round-34 measurement; the four seat ctl.py
+files and their scratch receipts are named in the lesson). No capability row enters the standing
+table for C1 (the tool never ran against its predicate); the existing rows are untouched. Numeric
+axes: depth 9 → 9 (command D, runner byte-identical), calibration monitor at the freeze baseline
+64/64 restraint 8; this round's records (lesson, SCORECARD, LOG, SOURCES row) drift monitor sections
+— re-crediting is routed to round 34's first wave (LedgerAudit sized ~19 SOURCES-citing sections +
+3 all-four); the drifted-section reading at the head is recorded in the report. mte-interop SETUP
+repaired (jsonschema 4.25.1 via uv, `MTE_SELFTEST: 17/17 pass`, receipt
+`.ufo/evidence/round-33/repair/`); the round-31 re-stated row's 'not runnable here' clause is
+superseded by this round's row below. Freshness carries the round's only score move.
