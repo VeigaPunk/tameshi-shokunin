@@ -1,0 +1,12 @@
+{
+  "id": "HeldOutGuard-4",
+  "author": "HeldOutGuard",
+  "set": "accept",
+  "edits": [
+    {
+      "old": "  if [[ $nfail -gt 0 ]]; then\n    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 1\n  fi\n  if [[ $nsetup -gt 0 ]]; then\n    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n  fi\n  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the\n  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals\n  # of a mutation report are sums of its per-state counts).\n  if (( npass + nfail + nsetup != nlegs )); then\n    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\\n' \\\n      \"$nlegs\" \"$((npass + nfail + nsetup))\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n  fi\n",
+      "new": "  # Completeness is only decisive when no leg has failed or needs setup.\n  if (( nfail == 0 && nsetup == 0 && npass + nfail + nsetup != nlegs )); then\n    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\\n' \\\n      \"$nlegs\" \"$((npass + nfail + nsetup))\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n  fi\n  if [[ $nfail -eq 0 && $nsetup -gt 0 ]]; then\n    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n  fi\n  if [[ $nfail -gt 0 ]]; then\n    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 1\n  fi\n"
+    }
+  ],
+  "rationale": "Completeness, SETUP and FAIL are tested in reverse order with explicit exclusions for higher-priority outcomes, preserving every first line and exit code."
+}

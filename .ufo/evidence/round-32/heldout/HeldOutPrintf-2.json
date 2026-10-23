@@ -1,0 +1,25 @@
+{
+  "id": "HeldOutPrintf-2",
+  "author": "HeldOutPrintf",
+  "set": "kill",
+  "edits": [
+    {
+      "old": "  if [[ $nsetup -gt 0 ]]; then\n    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nsetup\"\n",
+      "new": "  if [[ $nsetup -gt 0 ]]; then\n    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$((nsetup == 3 ? nsetup - 1 : nsetup))\"\n"
+    }
+  ],
+  "rationale": "The REGRESSION: SETUP line's cannot-verify= field prints one less than the real number of unverified legs when exactly three legs could not be verified, so the printed tally misreports the cannot-verify count; a real defect in a printed REGRESSION field.",
+  "witness": {
+    "vector": [
+      2,
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

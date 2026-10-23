@@ -1,0 +1,25 @@
+{
+  "id": "HeldOutPrintf-1",
+  "author": "HeldOutPrintf",
+  "set": "kill",
+  "edits": [
+    {
+      "old": "  if [[ $nfail -gt 0 ]]; then\n    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n",
+      "new": "  if [[ $nfail -gt 0 ]]; then\n    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$((nfail - (nfail > 2 && npass > 0 ? 1 : 0)))\" \"$nsetup\"\n"
+    }
+  ],
+  "rationale": "The REGRESSION: FAIL line's failed= field prints one less than the real number of failed legs whenever three to eight legs failed, so the printed tally misreports the failure count; a real defect in a printed REGRESSION field.",
+  "witness": {
+    "vector": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

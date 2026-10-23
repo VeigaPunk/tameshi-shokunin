@@ -1,0 +1,28 @@
+{
+  "id": "HeldOutPrintf-4",
+  "author": "HeldOutPrintf",
+  "set": "accept",
+  "edits": [
+    {
+      "old": "      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 1\n",
+      "new": "      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n    printf '%s\\n' \"REGRESSION_WORKDIR: $root (kept)\"\n    exit 1\n"
+    },
+    {
+      "old": "      \"$nlegs\" \"$npass\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n",
+      "new": "      \"$nlegs\" \"$npass\" \"$nsetup\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"${root}\"\n    exit 2\n"
+    },
+    {
+      "old": "      \"$nlegs\" \"$((npass + nfail + nsetup))\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n    exit 2\n",
+      "new": "      \"$nlegs\" \"$((npass + nfail + nsetup))\"\n    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"${root}\"\n    exit 2\n"
+    },
+    {
+      "old": "    printf 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)\\n' \"$root\"\n",
+      "new": "    printf 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)\\n' \"${root}\"\n"
+    },
+    {
+      "old": "    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"$root\"\n  fi\n",
+      "new": "    printf 'REGRESSION_WORKDIR: %s (kept)\\n' \"${root}\"\n  fi\n"
+    }
+  ],
+  "rationale": "Only the spelling of the five REGRESSION_WORKDIR printfs changes (one respelled as printf '%s\\n' with an interpolated argument, four with ${root} instead of \"$root\"); the printed bytes are identical, so no tally or harness behaviour changes."
+}

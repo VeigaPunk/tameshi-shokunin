@@ -1,0 +1,24 @@
+{
+  "id": "HeldOutPrintf-3",
+  "author": "HeldOutPrintf",
+  "set": "accept",
+  "edits": [
+    {
+      "old": "    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n",
+      "new": "    printf 'REGRESSION: FAIL (cases=%d passed=%d failed=%d setup=%d)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nfail\" \"$nsetup\"\n"
+    },
+    {
+      "old": "    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nsetup\"\n",
+      "new": "    printf 'REGRESSION: SETUP (cases=%d passed=%d cannot-verify=%d)\\n' \\\n      \"$nlegs\" \"$npass\" \"$nsetup\"\n"
+    },
+    {
+      "old": "    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\\n' \\\n      \"$nlegs\" \"$((npass + nfail + nsetup))\"\n",
+      "new": "    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%d counted=%d)\\n' \\\n      \"$nlegs\" \"$((npass + nfail + nsetup))\"\n"
+    },
+    {
+      "old": "  printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\\n' \\\n    \"$nlegs\" \"$npass\"\n",
+      "new": "  printf 'REGRESSION: PASS (cases=%d passed=%d; ledger legs exact: killed-delta<=0 flips<=0)\\n' \\\n    \"$nlegs\" \"$npass\"\n"
+    }
+  ],
+  "rationale": "Only the printf format specifiers of the four printed REGRESSION lines change from %s to %d; every argument is an integer, so all printed bytes, exit codes and harness verdicts are unchanged."
+}

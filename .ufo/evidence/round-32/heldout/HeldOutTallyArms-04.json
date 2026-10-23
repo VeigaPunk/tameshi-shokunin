@@ -1,0 +1,12 @@
+{
+  "id": "HeldOutTallyArms-04",
+  "author": "HeldOutTallyArms",
+  "set": "accept",
+  "edits": [
+    {
+      "old": "    case $st in\n      0) npass=$((npass + 1)) ;;\n      1) nfail=$((nfail + 1)) ;;\n      *) nsetup=$((nsetup + 1)) ;;\n    esac\n",
+      "new": "    case $((st == 0 ? 0 : st == 1 ? 1 : 2)) in\n      1) ((++nfail)) ;;\n      0) ((++npass)) ;;\n      2) ((++nsetup)) ;;\n    esac\n"
+    }
+  ],
+  "rationale": "Normalizing each integer exit status to pass, fail or setup and using reordered preincrement arms preserves all tally counts and verdicts."
+}

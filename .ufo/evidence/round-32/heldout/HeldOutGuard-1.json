@@ -1,0 +1,15 @@
+{
+  "id": "HeldOutGuard-1",
+  "author": "HeldOutGuard",
+  "set": "kill",
+  "edits": [
+    {
+      "old": "  if [[ $nfail -gt 0 ]]; then\n",
+      "new": "  if [[ $nfail -gt 0 && $nsetup -le $((npass + nfail)) ]]; then\n"
+    }
+  ],
+  "rationale": "The FAIL condition is incorrectly gated on a majority of non-setup legs, so five setup statuses suppress an existing failure instead of preserving FAIL precedence.",
+  "witness": {
+    "vector": [1, 2, 2, 2, 2, 2, 0, 0, 0]
+  }
+}
