@@ -134,3 +134,27 @@ contract, before any cold read; the cold reads target `9f3084bc`.
 Known imprecision at `9f3084bc` (seat ReviewR1Edits): README `:443-444` and QUALITY 55 name
 the v1 counters (`c2-measure.py`, `c1-measure.py`); both were superseded before data by the
 v2 counters. Not corrected this round (input files; QUALITY 56).
+
+## Residual review (8 seats, `.ufo/waves/round-29/res/`)
+
+- RerunC1Head: `C1_R29_V2_PASS=true` reproduced at `7a45f7b9` and `9bb699ad`; base 63/64
+  restraint 6; counter digest equals contract-amendment-2; ledger diff `1781 0`. Agree.
+- CriticSelectBound: C1 verifies with a disclosed bound; no failing verdict excluded;
+  Read07A and Read10B are format rejects. Agree; the bound stays in SCORECARD and here.
+- SampleBoundReads: 4 of 22 appended entries re-checked (Read01A, Read03B, Read04C,
+  Read10C), all hold; Read10C's moved report sha256 matches.
+- RerunC2Head: miss confirmed structural; amendment committed before data. Agree.
+- CriticNoHarm: depth 9 → 9; registry rows checked hold at base and head; census warnings
+  unchanged; no protected path edited after `9f3084bc`. Agree.
+- ReviewControls: partial pass — both counters re-frozen before data, but wave 1 left before
+  CriticC2v2 settled (Mistake 1), and CtlC2Shortcut's refusal hold was first recorded in this
+  lesson, not in an amendment; the shortcut control class was never scored for either claim
+  (both seats refused). Agree; recorded here as a disagreement with the round's own
+  process, not repaired after data.
+- ReviewEntryF6: entry accurate in substance; five wording defects (mode `-` was "only",
+  byte vs unit copy, the S024 assert, a missing counter field, the round-3 receipt). Four
+  corrected in the entry after review; the round-3 receipt is absent at the head and the
+  entry now cites only the kaika probe.
+- ReviewLessonGate: reviewed the 27-line draft before the lesson landed (Gate passes; it
+  found `## Mistakes` absent at that time). Its disagreement on routed item 2 (supersedes
+  row not written) stands; the deferral reason is in `## Gate`.
