@@ -1551,3 +1551,30 @@ ledger 456 → 480). Depth 9 → 9 (command D); coverage: one new lane entry
 (`corpus/knowledge/executable-self-assessment.md`, not a frontier move); operability, freshness,
 adjacency unchanged (tools unchanged). No capability row; no retirement. SHONEN marks unchanged (all
 `[~]`). Lesson: `corpus/lessons/round-31.md`.
+
+## Round 32 — runner tally audit (operability, capability acquisition C1, 2026-10-23)
+
+L1 TameshiR32, attempt 1. Stagnation nudge: depth 9 and calibration 8 sit at or above the saturation
+line 8, and no capability row has entered since round 25 (window 2), so the lowest-axis obligation is
+waived and the round is a capability move. One measured claim:
+
+- **C1 operability, capability acquisition.** Surface: a new versioned tool `tools/tally-audit.py`
+  that audits `tools/mutate-and-run.sh` without editing it (per-leg presence of the `--regression`
+  tally, the tally block against an oracle over every status 0–255 with stress, and the runner's own
+  tally harness against a panel of faulty blocks). It closes the runner items deferred since round 30
+  (per-leg tally check; the eight MutateHead selftest survivors). The runner stays byte-identical
+  (sha256 `a7d3f2dd…2eb9`). Counter v1 (`.ufo/evidence/round-32/c1-measure.py`, frozen `c3181497`)
+  was met before data by control seat CriticC1's allowlist, so the claim was re-designed before data:
+  counter v2 (`.ufo/evidence/round-32/v2/c1-measure-v2.py`, amendment 1 `b50a18f0`, amendment 2
+  `528f8dee`) runs the tool in a sandbox, pins the tool bytes (sha256 `9639c458…99ef`) and adds a
+  sealed held-out set written by seats after the freeze. Predicate label `C1_R32V2_PASS`. Before at
+  base `e24688b2`: no tool (v1 receipt `before/c1-at-base.stdout`, `kill=0/18 accept=0/8`, false).
+  Target: `C1_R32V2_PASS=true` with every valid held-out copy right and at least 6 of each kind.
+
+Repairs routed by `corpus/lessons/round-31-verifier-spotcheck.md`: counter v2 of the round-31 C1
+counter with the exact `Score (0–10)` header and a byte-prefix append-only test
+(`.ufo/evidence/round-32/repair/c1-r31-measure-v2.py`; the frozen round-31 counter is unchanged); a
+round-31 base monitor receipt (`repair/c1monitor-at-r31-base-36c1d393.*`, `covered=64/64 restraint=8`);
+command D receipts with exit files at `67c0e013` and `08125328` (`repair/commandD-at-r31-*`; the
+round-31 receipt without an exit stays as written). Measured results are appended below only after
+execution.

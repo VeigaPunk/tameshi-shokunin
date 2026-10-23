@@ -462,3 +462,11 @@ No frontier row changes status this round (F1–F10 as above).
 | `knowledge/executable-self-assessment.md` | New lane ground (seat ScoutFrontier: not F1–F10, not held core): a standing SCORECARD capability or score row is a claim checked by running the row's own command at the same revision and comparing the stated values; a stale row is corrected by an appended, revision-named statement, never in place. The executable-example sources motivate this local inference; a matching tally is not full behavioral proof. Calibration claim C1 measures it over the 12 frozen rows. | S055, S095, S096; `.ufo/evidence/round-31/contract.json`; `.ufo/evidence/round-31/c1-measure.py`; `.ufo/evidence/round-31/before/c1-at-base.stdout` |
 
 No frontier row changes status this round (F1–F10 as above).
+
+## Round 32 — runner tally audit (operability, capability acquisition), S097 and S099, S094 re-opened
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/runner-tally-audit.md` | Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression` and its tally selftest harness), not a frontier move (seat ScoutFrontier). A new versioned tool, `tools/tally-audit.py`, audits the runner without editing it: per-leg presence of the tally loop, the tally block against an oracle over every status 0–255 with overcount/undercount stress, and the runner's own harness against a panel of faulty tally blocks. It closes the per-leg item and the eight MutateHead survivors routed since round 30, while the runner stays byte-identical. The measured result is in SCORECARD.md's round-32 block | S097, S099, S094 (re-opened); `.ufo/evidence/round-32/contract.json`, `.ufo/evidence/round-32/v2/` |
+
+No frontier row changes status this round (F1–F10 as above).

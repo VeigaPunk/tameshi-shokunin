@@ -1772,3 +1772,20 @@ metadata and its failure are preserved; production gate source is unchanged.
   sources, census, QUALITY, binding v5, dead-seat check, ordering and no-harm; the tsukuroi suite's
   SIGPIPE race behind one regression flip.
 - Result C1: `C1_R31_PASS=true`, mismatches 7 → 0 at `83c001a5`; monitor 64/64, restraint 8.
+
+## Round 32 — 2026-10-23 (TameshiR32)
+
+- Motivation: the runner per-leg tally check and the eight MutateHead survivors, deferred twice because
+  `tools/mutate-and-run.sh` is an input of 270 of 480 cold-read entries
+  (`corpus/lessons/round-31-verifier-spotcheck.md` routed item 3); the stagnation nudge (no capability
+  since round 25).
+- `c3181497`: C1 counter v1, contract, base and repair receipts frozen before any seat.
+- Wave 1 (35 seats): pre-data controls on v1. Do-nothing, always-pass/fail, junk, sha pin, region diff,
+  line count, sha table, text-keyed, sibling consensus, static/runtime/harness-only, old selftest and
+  combo shortcut all read false. CriticC1's counter-reading allowlist read true (18/18, 8/8): v1 was
+  re-designed before data as v2 (`b50a18f0`, sandbox + tool freeze + sealed held-out set).
+  DeterminismProbe, running v1 on the working tool outside its item, found a harness-panel blind spot
+  (singleton positions 0 and 1); the tool gained position-only faults and was re-frozen with two counter
+  hardenings before any v2 run (`528f8dee`, amendment 2, disclosed as a judgment the closure may rule on).
+- Content: `tools/tally-audit.py`, `corpus/knowledge/runner-tally-audit.md` and README row, S097 and S099
+  added, S094 re-opened, receipt-completeness checker `.ufo/evidence/round-32/receipt-check.py`.
