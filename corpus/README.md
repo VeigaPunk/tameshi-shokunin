@@ -454,3 +454,11 @@ not the target is met; this section claims no status change for F6.
 | S092 supersedes S059 | Anchor re-pin only. The markdown digest changed and the quoted known issue still stands | `.ufo/evidence/round-30/sources/S059-bazel-remote-caching.md` |
 
 No frontier row changes status this round (F1–F10 as above).
+
+## Round 31 — executable self-assessment rows (calibration), S055 re-opened, S095–S096
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/executable-self-assessment.md` | New lane ground (seat ScoutFrontier: not F1–F10, not held core): a standing SCORECARD capability or score row is a claim checked by running the row's own command at the same revision and comparing the stated values; a stale row is corrected by an appended, revision-named statement, never in place. The executable-example sources motivate this local inference; a matching tally is not full behavioral proof. Calibration claim C1 measures it over the 12 frozen rows. | S055, S095, S096; `.ufo/evidence/round-31/contract.json`; `.ufo/evidence/round-31/c1-measure.py`; `.ufo/evidence/round-31/before/c1-at-base.stdout` |
+
+No frontier row changes status this round (F1–F10 as above).

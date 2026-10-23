@@ -1883,7 +1883,7 @@ Recipe for one bucket, cold:
    `$W/fleet/`, `git clone -q <lane> $W/fleet/tameshi-shokunin`, `git -C … checkout -q --detach <rev>`).
 2. Run every command the bucket names under
    `python3 tools/trace-inputs.py --root $W/fleet/tameshi-shokunin --out <receipt.json> -- <argv…>` (round 18; same CLI and receipt as the round-17 copy);
-   the receipt lists the tracked files opened (`inputs`), untracked opens, and external fleet files.
+   the receipt lists the tracked files opened (`inputs`), untracked opens, and external fleet files. A seat gives every `--regression` a `--workdir` under its own scratch dir and kills only processes whose `/proc/<pid>/cwd` is inside that dir (round 31; QUALITY 67).
 3. Record the verdict block (schema `tameshi-coldread-report-v2`) with the receipts' inputs plus every lane
    file opened by hand, then `python3 .ufo/evidence/round-18/coldread/assemble.py --reports <dir> --carry <prior ledger> --out <ledger>`.
 4. Commit the ledger and every receipt it names together, with no recorded input changed after the reads,

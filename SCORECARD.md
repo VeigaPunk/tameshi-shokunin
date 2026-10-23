@@ -1478,3 +1478,62 @@ cold readers (63 entries, ledger 393 → 456, binding v3 63/63, audit 211/211 tr
 depth 9 → 9 (command D), coverage, freshness, adjacency unchanged; operability carries C1's exploratory
 verdict, not a number. No capability row; no retirement. SHONEN marks unchanged (all `[~]`). Eight
 selftest survivors of the new guard (MutateHead) and binding v4 are routed to round 31.
+
+## Round 31 — standing self-assessment re-stated (calibration claim C1, 2026-10-23)
+
+L1 TameshiR31, attempt 1. One measured claim, frozen with its counter, predicate, target and
+kill rule in `.ufo/evidence/round-31/contract.json` at `c111dab5` before any data seat.
+
+- **C1 calibration.** Surface: the standing rows of this file's `| Capability |` and
+  `| Axis | Score (0–10) |` tables. Predicate (label `C1_R31_PASS`): for each of the 12 frozen
+  statements, the last row of its table type states the values its frozen command prints at
+  REV, and the base `SCORECARD.md` stays a byte prefix. Counter
+  `python3 .ufo/evidence/round-31/c1-measure.py --rev REV --work EMPTY_DIR`. Before at base
+  `36c1d393`: `mismatches=7` of 12, `C1_R31_PASS=false`, exit 1
+  (`.ufo/evidence/round-31/before/c1-at-base.stdout`). Target: `mismatches=0`, PASS true.
+  Measurement protocol (stated before the after-run): the after-value is the first full counter
+  run at the measurement revision; every other run, by the L1 or a seat, is reported as observed.
+
+Erratum to the round-30 block above (append-only; the block stays as written): its C1 row calls
+JudgeC1 a "named non-author seat". JudgeC1 was dispatched by the lane's L1 and is still the lane
+(LEARNING.md §Discernment; AXES.md). The non-author `unprovable-but-better` ruling on round-30 C1
+is the hyaku closure's own (`corpus/lessons/round-30-verifier-spotcheck.md:47-84`); JudgeC1's
+report is supporting evidence only.
+
+### Current standing capabilities — re-stated at round 31
+
+This table is the current statement for every capability named in it. It supersedes the counts
+of the `| Capability |` table above (whose rows stay as written, as dated literals), the round-17
+supersession line ("At round 17: … 95/95 … `cases=7` … 56/56"), which was itself stale at base,
+and the three `| capabilities addition |` rows of rounds 23–25 for the values it states. Values
+are what each command prints at the round-31 measurement revision named in the measured-result
+row below; the first-working rounds are unchanged.
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, 94 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+| mutation sweep runner | inject → run → restore single-edit mutants with a green-control gate, verdict lines and byte-identity proof; `--regression` refuses a miscounted tally (round 30) | `bash tools/mutate-and-run.sh --selftest` → `MUTATE_SELFTEST: 106/106 pass`, exit 0 | historical round 3; re-demonstrated round 31 |
+| six-leg regression ledger | replay every recorded mutation case (nine legs since round 26; the name is kept as the row id) at its pinned blob; exact expectation | `bash tools/mutate-and-run.sh --regression` → `REGRESSION: PASS (cases=9 passed=9 …)`, exit 0 | historical round 7 (four legs) / round 10 (six) / round 26 (nine) |
+| repeated pristine-control gate | observe N≥3 exact exit/stdout/stderr tuples, distinguish mismatch from unavailable/uniform-nonzero baseline, validate digest-pinned observation snapshots | `python3 tools/repeat-control.py --selftest` → PASS (29 cases), exit 0 | round 12 |
+| six-leg content-disposition probe | emit configured-pin, committed-HEAD and worktree SHA observations for every recorded leg, while explicitly withholding verdict reuse | `python3 tools/pin-disposition.py --selftest` → 19/19 PASS0 | round 13 |
+| exposed witness provenance correction | validate a new digest-anchored non-blind companion without rewriting frozen observations | `python3 tools/witness-metadata.py --selftest`: metadata selftest39/39 PASS0 | round 13 |
+| effective expectation reconciliation | account for every historical expected row, reject an exit-only setup crash, and preserve that raw failure under a checked explicit oracle supersession | `python3 tools/evidence-disposition.py --selftest` → PASS66/66 exit0 | round 14 |
+| retained invocation-context gate | re-derive bounded raw receipt predicates, check byte-pinned frozen receipts, and distinguish semantic mismatch from unavailable/tampered input through a standalone public-CLI selftest | `python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72` → exit0, copied-source CLI selftest49/49 | round 15 |
+| hermetic env-differential probe | classify the raw exit/stdout/stderr tuple of nine pinned selftests under seven explicit profiles; the committed receipt `.ufo/evidence/round-21/f5/receipt-initial.json` classes eight `invariant` and one `nondeterministic` (`js-round-gate`), not "raw-output-variable" as the row above says | `python3 tools/env-diff.py --selftest` actual9/9 (`ENVDIFF_SELFTEST: 9/9 pass`) | round 21 |
+| callback-authoritative wave accounting | reconcile exact registered identities and terminal states while preserving failed seats' partial artifacts; reject mismatched totals and digest tampering | `python3 tools/wave-accounting.py --selftest` → frozen counter8/8 (`ACCOUNTING_SELFTEST: 8/8 pass`; extra cases `ACCOUNTING_EXTRA_SELFTEST: 16/16 pass`) | round 22 |
+| required-command-receipt-binding | validate a finite trusted bundle's exact named command/context/outcome declarations | `python3 tools/command-binding.py --selftest` → `COMMAND_BINDING_SELFTEST: 44/44 pass`, exit 0 (not a C1 statement) | round 23 |
+| refusing-registry-replay | replay frozen registry requirements and refuse to publish a binding bundle from rejected rows | `python3 tools/registry-replay.py --selftest` → `REGISTRY_REPLAY_SELFTEST: 10/10 pass`, exit 0 (not a C1 statement) | round 24 |
+| mutation report interop | emit each recorded leg as a mutation-testing-elements report and check it with the official schema and metrics library | `python3 tools/mte-interop.py --selftest` → `MTE_SELFTEST: SETUP (No module named 'jsonschema')`, exit 2 on this host at round 31: the capability is not runnable here until that module is installed (not a C1 statement) | round 25 |
+
+### Current axes — re-stated at round 31
+
+Supersedes the fleet round-1 baseline table above for current values (that table stays as the
+pre-round record of `284ab0f`) and the Saturation sentence "the nudge does not fire now (depth 6 <
+8; …)": depth is 9 and calibration 8, both at or above the declared saturation line 8/10.
+
+| Axis | Score (0–10) | Evidence / counting rule | Measured commit | Last-change round |
+|---|---|---|---|---|
+| depth | 9 | One point per recorded mutation case in the runner's ledger comment (`tools/mutate-and-run.sh:87-95`, nine legs), capped at 10; command D above prints `recorded_cases=9 depth_score=9` | round-31 measurement revision (measured-result row below) | 26 |
+| calibration | 8 | Restraint score of the strict cold-read monitor `python3 .ufo/evidence/round-21/coldread/measure.py --repo R --rev REV` (`calibration_restraint_score`): two points per restrained, evidence-linked `[~]` SHONEN box (`SHONEN.md:5-12`), box 3 only when the monitor credits the full page; the last 2 points need independent promotion review | round-31 measurement revision (measured-result row below) | 29 (restored 6 → 8); held 30 |
+
+Measured results are appended below only after execution.

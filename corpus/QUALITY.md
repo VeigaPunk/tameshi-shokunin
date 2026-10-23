@@ -744,3 +744,101 @@ criteria), `lessons/round-29.md` Mistakes 1, 4 and 5, and round-30 controls.
     C1_R30_PASS=true` for a selftest that never runs bash on the block
     (`.ufo/evidence/round-30/wA/CtlS2SymEval-11.diff`), which forced
     `.ufo/evidence/round-30/contract-amendment-4.json`.
+
+## Criteria appended — round 31 (2026-10-23)
+
+Routed by `lessons/round-30-verifier-spotcheck.md` (Conformance defects and routed defects 1–5) and `lessons/round-30.md` Mistakes 2, 4 and 5. Criteria 1–65 remain unchanged.
+
+66. Round 31. A seat dispatched by this lane remains part of the lane and is
+    not described as a non-author or independent reviewer of that lane's work.
+    A different seat name or report does not change dispatch provenance; its
+    report may support the lane's ruling but cannot supply the non-author
+    ruling. Captured by: `lessons/round-30-verifier-spotcheck.md:40-43`
+    (LEARNING.md §Discernment and AXES.md quotes). Falsifier:
+    `.ufo/waves/round-30/wC/JudgeC1.md:3` calls JudgeC1's review
+    "Non-author"; `SCORECARD.md:1473` calls it a "named non-author seat"
+    although the spot-check records that the L1 dispatched JudgeC1.
+
+67. Round 31. Every seat invocation of `--regression` passes `--workdir`
+    with a directory beneath that seat's own scratch directory. Before any
+    process is killed, the seat checks `/proc/<pid>/cwd` and verifies that it
+    resolves beneath that seat's own scratch; a process the seat did not start
+    is never killed. Captured by: `lessons/round-30.md:169-182` (Mistake 5).
+    Falsifier: `.ufo/waves/round-30/wC/ColdA01.md:45` records
+    `timeout 240 bash tools/mutate-and-run.sh --regression --keep` without a
+    `--workdir`; `ColdA01.md:100` discloses killing sibling processes with a
+    broad `pgrep`/kill.
+
+68. Round 31. Before any re-dispatch after a seat is dead or has no report,
+    a committed check lists every dead seat for the round and compares each
+    dead seat's task text with each proposed item. The check records the
+    comparison and disposition; an item measuring the same object is not
+    dispatched again. A name match triggers comparison but does not replace
+    the task-text comparison. Captured by: `lessons/round-30.md:159-168`
+    (Mistake 4). Falsifier: `.ufo/evidence/round-30/attempt3/attempt2-dead-seats.txt:7-10`
+    lists ConnectorOverlap among the dead seats, while
+    `.ufo/waves/round-30/spec-wC.json:279-284` includes an item of that name;
+    `lessons/round-30.md:164-168` records that no overlap check ran before
+    dispatch.
+
+69. Round 31. The binding conditions for a data wave are frozen as executable
+    code before data dispatch, and the frozen code is scored against the
+    required controls before data. A post-data audit may add findings but
+    cannot supply, change or retroactively satisfy a binding condition.
+    Captured by: `lessons/round-30.md:69-73,213` (Mistake 2 and routed
+    binding v4). Falsifier: `.ufo/evidence/round-30/coldread/bind-select-v3.py:2-10`
+    freezes a selector that lacks the stricter conditions implemented by the
+    separate post-data audit `.ufo/evidence/round-30/coldread/audit-bound-wC.py:2-9`.
+
+70. Round 31. A line-range citation to a paragraph names all and only the
+    lines containing that paragraph; it excludes adjacent blank lines and a
+    following heading. A one-line paragraph is cited as one line. Captured by:
+    `lessons/round-30-verifier-spotcheck.md:44-45`. Falsifier:
+    `lessons/round-30.md:59` cites the S094 paragraph as `:60-62`, although
+    the paragraph is line 60, line 61 is blank, and line 62 is `## Limits`.
+
+## Errata — round 30 QUALITY imprecisions (append-only; 2026-10-23)
+
+These errata qualify the prior text; they do not rewrite it.
+
+- **F1 — criterion 60 (`corpus/QUALITY.md:683-688`).** The Falsifier's
+  normalization example is incomplete. Read “report `executed-ok` vs entry
+  `gap-minor`” as “reports `executed-ok` and `verified-record` normalized to
+  entry `gap-minor`.” The second observed pair is `verified-record` to
+  `gap-minor` (`.ufo/waves/round-30/wC/ReviewQualityR30.md:22-29`); the
+  claim that the excluded entry verdicts are passing classes is unchanged.
+- **F2 — round-30 routing preamble (`corpus/QUALITY.md:649-651`).** Its
+  mistake list is incomplete. Read “Mistakes 1, 4 and 5” as “Mistakes 1, 3,
+  4 and 5”; criterion 61 itself routes Mistakes 3 and 4
+  (`ReviewQualityR30.md:35-43`).
+- **F3 — criterion 62 Falsifier (`corpus/QUALITY.md:705-709`).** “The only
+  C2 head receipt” overstates the revision measured by
+  `c2-at-E.stdout` (`7a45f7b9`, committed at `9bb699ad`). Read it as “the
+  only committed C2 counter receipt”; the receipt is not a head receipt, and
+  no receipt is committed for the three named head commits
+  (`ReviewQualityR30.md:45-56`).
+- **F4 — criterion 63 Falsifier (`corpus/QUALITY.md:716-721`).** The
+  committed `drift-sim-union4.txt` reports `covered=33/64` at
+  `rev=daa11583`; `contract.json:45` records the four-file comment-line
+  sandbox recipe. The sandbox revision is not an object in the lane
+  repository, so the receipt establishes its printed output, not an
+  independently re-checkable construction. The 64/64 base and 52/64 earlier
+  readings are separately recorded by `monitor-at-base.stdout` and
+  `.ufo/evidence/round-29/c1-at-A.stdout`. Retain the recipe only as
+  contract-reported context, not as verified construction evidence
+  (`ReviewQualityR30.md:58-71`).
+
+## Criterion appended — round 31 claim C1 (2026-10-23)
+
+71. Round 31. A standing SCORECARD row that quotes a command's output
+    (a capability row's selftest tally, a score row) is a claim about a
+    named revision. When the quoted tool changes, the lane appends a new
+    row that states the values the command prints at a named revision;
+    a prose line that "supersedes" counts is itself a standing statement
+    and goes stale the same way. Captured by: the round-31 C1 counter
+    (`.ufo/evidence/round-31/c1-measure.py`). Falsifier:
+    `.ufo/evidence/round-31/before/c1-at-base.stdout` reads
+    `mismatches=7` at `36c1d393` (runner 80/80 stated, 106/106 printed;
+    regression 6 legs stated, 9 printed), and the round-17 supersession
+    line `SCORECARD.md:632-636` states runner 95/95, regression 7 and
+    evidence-disposition 56/56, all three stale at the same revision.
