@@ -72,22 +72,23 @@ the declared `755`. A live mode of `644` therefore yields, in the mutant:
 
 The manifest mode field is `re.fullmatch(r'[0-7]{3,4}', mode)`
 (`c2-measure-v2.py`, `materialize`), so every reachable live mode is a 3- or
-4-digit octal string. I swept **all** of them, per exec row, on the **full
-anchored fixture** (all 55 census rows + 22 host nodes live), with the counter's
-own `Oracle`:
+4-digit octal string: **4096** distinct values (512 three-digit + 3584
+four-digit). I swept **all** of them, per exec row, on the **full anchored
+fixture** (all 55 census rows + 22 host nodes live), with the counter's own
+`Oracle`:
 
 ```
-manifest-valid mode strings: 4608 (3-digit 512 + 4-digit 4096)
-  .config/the-janitor/client.py   declared=755  pristine_hit=256  mutant_exit0=1  KILL=0
-  .local/bin/the-janitor          declared=755  pristine_hit=256  mutant_exit0=1  KILL=0
-  .local/bin/tac-check            declared=755  pristine_hit=256  mutant_exit0=1  KILL=0
-TOTAL fixture states tested: 4608   KILL states: 0
+manifest-valid mode strings: 4096 (3-digit 512 + 4-digit 3584)
+  .config/the-janitor/client.py   declared=755  pristine_hit=1792  mutant_exit0=1  KILL=0
+  .local/bin/the-janitor          declared=755  pristine_hit=1792  mutant_exit0=1  KILL=0
+  .local/bin/tac-check            declared=755  pristine_hit=1792  mutant_exit0=1  KILL=0
+TOTAL fixture states tested: 12288   KILL states: 0
 ```
 
 The single `mutant_exit0` state per row is live mode `755` — the mode at which
-the pristine does **not** hit the exec token. The 256 `pristine_hit` states per
-row are the modes without the owner-execute bit; every one of them also trips
-`:220` in the mutant. **Zero states satisfy both halves.**
+the pristine does **not** hit the exec token. The `pristine_hit` states are the
+modes without the owner-execute bit; every one of them also trips `:220` in the
+mutant. **Zero states satisfy both halves.**
 
 Isolating the two halves (declared mode × live mode, one exec row, the
 counter's `Oracle`):
