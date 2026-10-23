@@ -267,6 +267,13 @@ def faults():
     start = b.split('\n', 1)[0] + '\n'
     for nm in REF_NAMES:
         f('ignore-' + nm, b.replace(start, start + '  %s=0\n' % nm, 1))
+    # Position-only faults: leg NM is ignored only when it is the single failing (1) or setup (2)
+    # leg, so only the harness's one-leg-at-each-position loop can see it; the multi-status vectors
+    # (two non-zero legs, or status 3) never trigger it. A harness that skips a position accepts it.
+    for nm in REF_NAMES:
+        others = ' + '.join('$%s' % o for o in REF_NAMES if o != nm)
+        f('ignore-alone-' + nm, b.replace(start, start + '  if (( %s == 0 )) && [[ $%s == 1 || $%s == 2 ]]; then %s=0; fi\n'
+                                          % (others, nm, nm, nm), 1))
     guard = ('  if (( npass + nfail + nsetup != nlegs )); then\n'
              "    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\\n' \\\n"
              '      "$nlegs" "$((npass + nfail + nsetup))"\n'
@@ -404,6 +411,8 @@ def selftest():
         ('harness exit-only', text.replace(cmp_line, '    [[ $rc -eq $want_rc ]]\n', 1), 1, 'harness'),
         ('harness swallowed', text.replace(cmp_line, cmp_line + '    rc=$?\n', 1), 1, 'harness'),
         ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 1 2 3 4 5 6 7 7; do', 1), 1, 'harness'),
+        ('harness position 0 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 6 1 2 3 4 5 6 7 8; do', 1), 1, 'harness'),
+        ('harness position 1 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 3 2 3 4 5 6 7 8; do', 1), 1, 'harness'),
         ('reversed operands', text.replace(loop, '  for st in ' + ' '.join('"$%s"' % n for n in reversed(REF_NAMES)) + '; do\n'), 0, None),
     ]
     tmp = tempfile.mkdtemp(prefix='tally-audit-selftest.')

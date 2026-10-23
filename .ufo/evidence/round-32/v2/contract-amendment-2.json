@@ -1,0 +1,15 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "round": 32,
+  "amends": ".ufo/evidence/round-32/v2/contract-amendment-1.json (frozen b50a18f009df3a7a3899839621992784563395b2), claim C1: the constant TOOL_SHA256, and two counter hardenings",
+  "change": "(1) TOOL_SHA256 in .ufo/evidence/round-32/v2/c1-measure-v2.py: 158202f8bc85a82e92bbc7bb3c42f636f468a4484a9725937cefcc41997a356a -> the sha256 of tools/tally-audit.py committed with this amendment. (2) Side channel closed (wave-1 seat ReviewCounter F2, .ufo/waves/round-32/w1/ReviewCounter.md): v1 and v2 wrote every must-kill copy before every must-accept copy, so inode order or mtime relative to the tool file could reveal set membership; v2 now writes copies in a shuffled order, the tool after them, and sets every file's mtime to 0. (3) A non-hex --seed exits 2 (ReviewCounter F1). The predicate sentence, label, thresholds, held-out rules, kill rule and measurement protocol do not change.",
+  "reason": "Wave-1 seat DeterminismProbe, outside its assignment (it was told to score an always-FAIL control), ran frozen counter v1 on the working-tree tool (sha ac38a1ac…, then 158202f8…) and found a real tool defect: the harness panel cannot see a harness that skips singleton position 0 or 1, because the panel's leg-ignore faults are also caught by the multi-status vectors that drive those positions. 16 of 72 gH05 (drop, dup) pairs escaped; about 2 seeds in 9 print false (.ufo/waves/round-32/w1/DeterminismProbe.md). The tool now adds nine position-only faults (a leg ignored only when it is the single non-zero leg with status 1 or 2) and two selftest cases (positions 0 and 1 skipped).",
+  "data_disclosure": [
+    "No v2 counter run has been made on any real tool bytes before this amendment.",
+    "v1 runs on the real tool bytes exist: DeterminismProbe's (above). v1 stopped being the claim's rule at amendment 1, before those runs were known to the L1.",
+    "The L1 ran the working tool on the PUBLIC v1 fixture families across seeds as development fixtures before this re-freeze: .ufo/evidence/round-32/v2/dev/devsweep.py (120 seeds: 468 distinct bodies, 0 misses; 200 seeds receipt devsweep-200.stdout). Every v1 family is public by design; v1-set scores are therefore not evidence that a shortcut is excluded. Under amendment 1 that evidence is the sealed held-out set, written by seats after this freeze, which no development run has seen.",
+    "This is a change of the measured object's pinned identity after data on the v1 subset of the copies. The closure may rule it a §9 rule change; the L1 states the judgment it made: the predicate, thresholds and held-out design are unchanged, and the held-out set is written only after this amendment."
+  ],
+  "kill_rule": "unchanged (amendment 1): the first full v2 run at the measurement revision decides; a false is a miss, never re-seeded or amended again.",
+  "new_TOOL_SHA256": "9639c458002ce2f954addbe047427010ae011353e073b293396bec800fa699ef"
+}

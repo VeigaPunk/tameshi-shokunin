@@ -63,7 +63,7 @@ _spec = importlib.util.spec_from_file_location('c1v1', os.path.join(HERE, '..', 
 v1 = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(v1)
 
-TOOL_SHA256 = '158202f8bc85a82e92bbc7bb3c42f636f468a4484a9725937cefcc41997a356a'
+TOOL_SHA256 = '9639c458002ce2f954addbe047427010ae011353e073b293396bec800fa699ef'
 SELF_PATH = '.ufo/evidence/round-32/v2/c1-measure-v2.py'
 HELDOUT_DIR = '.ufo/evidence/round-32/heldout'
 MIN_HO = 6
@@ -300,6 +300,9 @@ def main():
         return 2
     rev = r.stdout.decode().strip()
     seed = a.seed or secrets.token_hex(8)
+    if not re.fullmatch(r'[0-9a-fA-F]{1,32}', seed):
+        print('C1_R32V2: --seed must be hex', file=sys.stderr)
+        return 2
     rng = random.Random(int(seed, 16))
     pinned = git(lane, 'show', v1.PIN_REV + ':' + v1.RUNNER)
     if pinned.returncode or hashlib.sha256(pinned.stdout).hexdigest() != v1.PINNED_RUNNER_SHA:
@@ -353,20 +356,27 @@ def main():
         (kill if h['set'] == 'kill' else accept).append(('ho', os.path.basename(path), body))
     tool_blob = git(lane, 'show', rev + ':tools/tally-audit.py')
     tool_sha_ok = int(tool_blob.returncode == 0 and hashlib.sha256(tool_blob.stdout).hexdigest() == TOOL_SHA256)
-    tool = os.path.join(work, 'tool-' + secrets.token_hex(4) + '.py')
-    with open(tool, 'wb') as f:
-        f.write(tool_blob.stdout if tool_blob.returncode == 0 else b'')
+    # amendment 2: copies are written in a shuffled order, the tool after them, and every file gets
+    # the same mtime, so creation order, inode numbers and timestamps carry no set membership.
     cdir = os.path.join(work, 'c-' + secrets.token_hex(4))
     os.makedirs(cdir)
     copies = []
-    for set_name, group in (('kill', kill), ('accept', accept)):
-        for src, label, body in group:
-            d = os.path.join(cdir, secrets.token_hex(8))
-            os.makedirs(d)
-            p = os.path.join(d, 'r.sh')
-            with open(p, 'w', encoding='utf-8') as f:
-                f.write(body)
-            copies.append((set_name, src, label, p, hashlib.sha256(body.encode()).hexdigest()))
+    pending = [(set_name, src, label, body) for set_name, group in (('kill', kill), ('accept', accept))
+               for src, label, body in group]
+    random.Random(secrets.randbits(64)).shuffle(pending)
+    for set_name, src, label, body in pending:
+        d = os.path.join(cdir, secrets.token_hex(8))
+        os.makedirs(d)
+        p = os.path.join(d, 'r.sh')
+        with open(p, 'w', encoding='utf-8') as f:
+            f.write(body)
+        os.utime(p, (0, 0))
+        copies.append((set_name, src, label, p, hashlib.sha256(body.encode()).hexdigest()))
+    copies.sort(key=lambda c: (c[0] != 'kill', c[1] != 'v1'))
+    tool = os.path.join(work, 'tool-' + secrets.token_hex(4) + '.py')
+    with open(tool, 'wb') as f:
+        f.write(tool_blob.stdout if tool_blob.returncode == 0 else b'')
+    os.utime(tool, (0, 0))
     results = {}
     if tool_blob.returncode == 0:
         order = list(copies)
