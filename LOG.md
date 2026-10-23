@@ -1789,3 +1789,12 @@ metadata and its failure are preserved; production gate source is unchanged.
   hardenings before any v2 run (`528f8dee`, amendment 2, disclosed as a judgment the closure may rule on).
 - Content: `tools/tally-audit.py`, `corpus/knowledge/runner-tally-audit.md` and README row, S097 and S099
   added, S094 re-opened, receipt-completeness checker `.ufo/evidence/round-32/receipt-check.py`.
+- Wave 2 (33 seats; three dead on the provider safety filter: HeldOutFree, HeldOutHarnessVectors,
+  HeldOutHarnessCmp, held): 9 cold readers for the 5 drifted sections (13 entries kept by binding v5,
+  ledger 480 → 493 at `4b529ee9`, monitor 64/64 restraint 8), 5 sealed held-out authors (22 files), 16
+  falsifiers (tool review and mutation, sentinel, sources, census, counter v2 review and mutation, critics).
+- `24a5a5bb` (measurement revision): held-out set committed unedited, S099 used-by fix (lane census v2).
+  First full v2 run: `C1_R32V2: v1_kill=18/18 v1_accept=8/8 ho_kill=1/10 ho_accept=8/12 … C1_R32V2_PASS=false`,
+  exit 1. C1 is a miss; no capability row. Residual call (4 seats): RerunV2, CtlV2Controls (after the fact;
+  the amendment-1 control re-score did not run before the first v2 run), CriticMeasurement, ReviewRepairs.
+- Lesson: `corpus/lessons/round-32.md` (9 mistakes, 3 holds, routed tool v2 for round 33).

@@ -1578,3 +1578,32 @@ round-31 base monitor receipt (`repair/c1monitor-at-r31-base-36c1d393.*`, `cover
 command D receipts with exit files at `67c0e013` and `08125328` (`repair/commandD-at-r31-*`; the
 round-31 receipt without an exit stays as written). Measured results are appended below only after
 execution.
+
+### Round 32 — measured result (TameshiR32)
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 runner tally audit (`tools/tally-audit.py`, sha256 `9639c458…99ef`) | operability (capability acquisition) | no tool at base `e24688b2` (v1 receipt `kill=0/18 accept=0/8`, false) | `C1_R32V2: v1_kill=18/18 v1_accept=8/8 ho_kill=1/10 ho_accept=8/12 ho_invalid=0 tool_sha_ok=1 runner_sha_ok=1 heldout_after_freeze=1 seed=63d2e2e95a1e35c5 … C1_R32V2_PASS=false`, exit 1 | sealed held-out set: 9 of 10 must-kill copies passed by the tool, 4 of 12 must-accept copies rejected | `python3 .ufo/evidence/round-32/v2/c1-measure-v2.py --lane LANE --rev REV --work EMPTY_DIR` | 24a5a5bb598ae919546715267d76f814efaf8912 (first full v2 run) | `.ufo/evidence/round-32/after/c1v2-at-measurement.{stdout,exit}`, `heldout/`, `.ufo/waves/round-32/w2/HeldOut*.md` | **miss** (kill rule: the first full run decides; not re-scaled, re-seeded or amended) |
+
+No capability row enters the table: the tool does not meet its own frozen predicate. It meets the public
+v1 fixtures (18/18, 8/8) and fails the sealed copies written after its freeze, which is the gap the v1
+control finding predicted. Causes named by the held-out authors: the runtime sweep never produces 3–8
+failing or setup legs (HeldOutPrintf, HeldOutGuard, HeldOutTallyArms), per-position statuses stop at
+`1 2 3 4 126 127 255` (HeldOutRefactor k1), the stress rewrites the first leg-status loop rather than the
+tally loop (HeldOutRefactor a4, HeldOutLoop), and harness extraction refuses a second extraction line
+(HeldOutRefactor a3). No harm: runner sha256 unchanged at `24a5a5bb`; strict monitor
+`C1_MONITOR: covered=64/64 restraint=8 box3_mismatch=0 depth_score=9` there
+(`after/c1monitor-at-24a5a5bb.stdout`; content revision `a4f71813` read 59/64 by design, 13 fresh bound
+cold reads appended, ledger 480 → 493); command D `recorded_cases=9 depth_score=9`. Numeric scores:
+depth 9 → 9, calibration 8 → 8. SHONEN marks unchanged (all `[~]`).
+
+Errata (append-only): the round-32 block above and `contract.json` say the runner is an input of 270 of
+480 ledger entries; at `a4f71813` it is 282 of 480 (seats ReviewEntry, ReviewScorecardLog; 270 of 456 was
+the round-31 count). The amendment-1 control re-score with counter v2 was not run before the L1's first v2
+run; it was run afterwards as an observation (`.ufo/waves/round-32/res/CtlV2Controls.md`).
+
+### Current standing capabilities — changed row re-stated at round 32
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, 96 rows, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; `corpus/SOURCES.md` | fleet round 1 (kaika) |
