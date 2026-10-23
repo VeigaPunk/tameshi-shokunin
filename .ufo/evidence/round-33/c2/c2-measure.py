@@ -61,7 +61,7 @@ def main():
             cells = [c.strip() for c in line.split('|')]
             # cells: ['', id, source-url-cell, kind, tier, scope, anchor, teaches, status, opened, recheck, used-by, '']
             t = cells[7] if len(cells) > 8 else ''
-            if t.startswith('supersedes S055'):
+            if re.match(r'^supersedes S055(\s|[—–-])', t) and int(m.group(1)[1:]) > 99:
                 row_id = m.group(1)
                 url = cells[2]
                 teaches = t
@@ -74,7 +74,10 @@ def main():
     lesson = show(a.lane, a.rev, LESSON) or b''
     gate_sha_ok = False
     if snap is not None:
-        digests = re.findall(r'sha256[ :=]+([0-9a-f]{64})', lesson.decode('utf-8', 'replace'))
+        lesson_text = lesson.decode('utf-8', 'replace')
+        gm = re.search(r'^## Gate\b(.*?)(?=^## |\Z)', lesson_text, re.M | re.S)
+        block = gm.group(1) if gm else ''
+        digests = re.findall(r'sha256[ :=]+([0-9a-f]{64})', block)
         gate_sha_ok = hashlib.sha256(snap).hexdigest() in digests
     ok = bool(row_id and versioned and snap_sha_ok and quote_ok and gate_sha_ok)
     print('C2_R33: row=%s versioned_url=%d snapshot_sha_ok=%d gate_sha_ok=%d quote_ok=%d C2_R33_PASS=%s'
