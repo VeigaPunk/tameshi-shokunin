@@ -1,0 +1,17 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..6553377 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,12 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then

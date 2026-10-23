@@ -1,0 +1,45 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..19530ab 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,12 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1975,6 +1981,27 @@ EOT
+     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
+   done
+ 
++  # K5 control (round 30, seat CtlK5Labels): textual label check of the
++  # `--regression` case-tally loop. Reads this runner's own source text
++  # ("$SELF") and requires the single tally loop line to name exactly the nine
++  # leg status labels, distinct, once each, in any order; each label must also
++  # be assigned as its own `=$?` status in this file. Text only: the tally
++  # block is never executed here.
++  local k5_lines k5_loop k5_ops k5_n k5_dup k5_got k5_want k5_hits k5v
++  k5_want=$(printf '%s\n' st_checklist st_claims st_citecheck st_js st_kagi st_mado st_roundgate st_sourcescheck st_tsu | sort)
++  k5_lines=$(grep -cE '^[[:space:]]*for st in ' "$SELF")
++  k5_loop=$(sed -n '/^[[:space:]]*for st in /p' "$SELF")
++  k5_ops=$(printf '%s\n' "$k5_loop" | grep -oE '"\$st_[a-z]+"' | tr -d '"$' | sort)
++  k5_n=$(printf '%s\n' "$k5_ops" | grep -c '^st_')
++  k5_dup=$(printf '%s\n' "$k5_ops" | uniq -d | tr '\n' ' ')
++  k5_got=$(printf '%s\n' "$k5_ops" | grep '^st_' | tr '\n' ' ')
++  k5_hits=0
++  for k5v in $(printf '%s\n' "$k5_want"); do
++    grep -qF "  ${k5v}=\$?" "$SELF" && k5_hits=$((k5_hits + 1))
++  done
++  [[ "$k5_lines" -eq 1 && "$k5_n" -eq 9 && -z "$k5_dup" && \
++     "$k5_got" == "$(printf '%s\n' "$k5_want" | tr '\n' ' ')" && "$k5_hits" -eq 9 ]]
++  st "tally loop operand labels: lines=$k5_lines names=$k5_n dup=[$k5_dup] assigned=$k5_hits (want 1/9/[]/9)" $?
+   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?

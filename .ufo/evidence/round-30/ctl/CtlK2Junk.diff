@@ -1,0 +1,18 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..193903e 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1979,6 +1979,13 @@ EOT
+   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?
+   bash "$SELF" --regression --target "$fx/target.sh" >/dev/null 2>&1; [[ $? -eq 64 ]]; st '--regression refuses --target (exit 64)' $?
+ 
++  # K2 junk control (round 30): a selftest case that always records a failure.
++  # It is named like a tally check but is wired to a hard-coded non-zero status,
++  # so it fails on the pristine runner and on every mutant alike — it kills the
++  # whole mutant family trivially while breaking the pristine selftest. The
++  # tally block itself is untouched.
++  st 'junk tally check' 1
++
+   printf 'MUTATE_SELFTEST: %s/%s pass\n' "$((cases - failed))" "$cases"
+   if [[ "$failed" -eq 0 ]]; then
+     printf 'VERDICT: PASS\n'

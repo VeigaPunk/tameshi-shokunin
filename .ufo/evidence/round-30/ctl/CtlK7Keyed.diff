@@ -1,0 +1,40 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..d3ec7cf 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -1448,6 +1448,12 @@ run_regression() {
+     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+     exit 2
+   fi
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+     "$nlegs" "$npass"
+   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
+@@ -1478,6 +1484,22 @@ selftest() {
+     fi
+   }
+ 
++  # K7 control: recognize public counter fixture text, never execute the tally.
++  local tally_loop tally_nops tally_bad=0
++  tally_loop=$(grep -E '^  for st in ("\$st_[a-z]+" ?)+; do$' "$SELF")
++  tally_nops=$(grep -oE '"\$st_[a-z]+"' <<<"$tally_loop" | wc -l)
++  [[ $tally_nops -eq 9 ]] || tally_bad=1
++  if grep -Eq \
++    -e '^      0\) .*npass.*[02].*;;$' \
++    -e '^      1\) .*n(pass|setup).*;;$' \
++    -e '^      \*\) .*npass.*;;$' \
++    -e '^  if .*n(fail|setup).*(-gt[[:space:]]+1|-ge[[:space:]]+2|>[[:space:]]+1).*then$' \
++    "$SELF"; then
++    tally_bad=1
++  fi
++  [[ $tally_bad -eq 0 ]]
++  st 'case tally: known counter fixture spellings absent (text only)' $?
++
+   local fx="$root/fixture"
+   mkdir -p "$fx"
+ 
