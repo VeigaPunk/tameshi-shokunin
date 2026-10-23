@@ -158,3 +158,10 @@ v2 counters. Not corrected this round (input files; QUALITY 56).
 - ReviewLessonGate: reviewed the 27-line draft before the lesson landed (Gate passes; it
   found `## Mistakes` absent at that time). Its disagreement on routed item 2 (supersedes
   row not written) stands; the deferral reason is in `## Gate`.
+
+Late seat: BuildF6A was cancelled at the wave deadline (02:47Z) but its report and fixtures
+landed at 02:58Z (`.ufo/waves/round-29/w1/BuildF6A.md`, `.ufo/evidence/round-29/f6/BuildF6A/`).
+It agrees the anchored target is unreachable (anchored variant: 98 units, `kill_original=0`).
+Its other variant, the pinned declaration plus one probe row, reduces 100 → 2 units with
+`kill=1 one_minimal=1 ddmin_match=1` but `anchored=0`, so it does not meet the frozen C2
+predicate and is not counted. It is the reachable starting point for the next F6 round.
