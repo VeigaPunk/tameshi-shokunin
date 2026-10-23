@@ -9,7 +9,7 @@ the strict monitor at `bb681566` (`covered=33/64 restraint=6 box3_mismatch=1`, t
 box3_mismatch=0`); the v4 head receipt (re-run by seat RerunC1Head, byte-identical counter lines);
 the census (exit 0); the authorship of the 23 uncommitted wave-A reports against their seats' host
 transcripts (`.ufo/evidence/round-30/attempt3/inherited-wA-receipt.txt`: every file written by its own
-seat; 18 equal to the seat's last `write`, 5 edited afterwards by the same seat).
+seat; 18 equal to the seat's last `write`, 4 edited afterwards by the same seat, 1 (MutateTallyExtra) written by the seat's `eval` call).
 
 One claim, **C1 — operability, EXPLORATORY**: the `--regression` case tally of
 `tools/mutate-and-run.sh` (runtime completeness guard) and the runner's own `--selftest` as its
@@ -37,12 +37,12 @@ Sources re-opened this round (attempt 3, wave C seats; attempt-2 seat reports fo
   fetched 2026-10-23, sha256 `2cb77df2f4be0b2a0302bb2f0a260fdb4d9e1299b76481ea66ed34c40f5be1da`
   (33289 B), `cmp` equal to `.ufo/evidence/round-30/sources/S093-bwrap-0.13.1.xml`. Located quote
   (bwrap.xml:159): "Unshare all possible namespaces. Currently equivalent with: --unshare-user-try
-  --unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try" (15 words). Admit.
+  --unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try" (13 words). Admit.
 - S094, seat ReopenS093S094: https://arxiv.org/pdf/1411.2664v3 fetched 2026-10-23, sha256
   `6e9532a978ae5d498722eb95f1a13332f24d1eb09c1791f56fd9aa3eb310d697` (322643 B), `cmp` equal to the
   snapshot; the unversioned URL returns the same bytes. Located quote (§1, printed page 2): "Each
   submitted model is evaluated on a (fixed) test set that is available only to the organizers."
-  (18 words). Admit the row.
+  (17 words). Admit the row.
 - S087, attempt-2 seat ReopenS087 (`.ufo/waves/round-30/wA/ReopenS087.md`, authorship re-derived):
   tarball sha512 unchanged; used-by changed (below).
 
@@ -75,8 +75,8 @@ Rejects with reasons:
 ## Controls and redesign before data
 
 - C1 (attempts 1-2): v1-v4 and the exploratory declaration, receipts under
-  `.ufo/evidence/round-30/ctl/`, `v4/`, `v4/ctl2/`. Seats CtlS3DenyList and CtlS8TokenBag (and five
-  other attempt-2 seats) died with the attempt-2 orchestrator without a report; recorded dead with their
+  `.ufo/evidence/round-30/ctl/`, `v4/`, `v4/ctl2/`. Seats CtlS3DenyList and CtlS8TokenBag (and seven
+  other attempt-2 seats, nine in all) died with the attempt-2 orchestrator without a report; recorded dead with their
   last transcript events in `.ufo/evidence/round-30/attempt3/attempt2-dead-seats.txt`; none resent.
 - Cold-read binding (attempt 3, L1-built controls on the round-29 pilot assembly, 32 entries;
   `.ufo/evidence/round-30/attempt3/bind-controls.txt`, builder `make-bind-controls.py`):
@@ -157,8 +157,8 @@ Rejects with reasons:
    command over the committed receipts and pasted with the command. Shown able to fail: `grep -h
    '^C1_R30:' v4/ctl2/CtlS1Normalize-v4.stdout` prints `sealed_killed=6/6`, not 0/6.
 4. **class:** a wave item overlapping a dead seat's task. **evidence:** wave C (attempt 3) carries
-   ConnectorOverlap, RegressionReplayHead and SelftestsNoHarmHead, adapted from attempt 2's unspawned
-   wave-B spec; attempt-2 wave-A seats ConnectorOverlap, RegressionReplay and SelftestsNoHarm died
+   ConnectorOverlap (a new item written in attempt 3), and RegressionReplayHead and SelftestsNoHarmHead
+   (adapted from attempt 2's unspawned wave-B spec); attempt-2 wave-A seats ConnectorOverlap, RegressionReplay and SelftestsNoHarm died
    without reports (`attempt3/attempt2-dead-seats.txt`). The replays measure a different object (the
    landed `bb681566`, not `f09d3425` + `witness/fix.diff`), and the wave-C connector scan adds the
    binding surface, but the overlap was not checked before dispatch. **captured-by:** the orchestrator
@@ -207,8 +207,25 @@ Per seat ReviewRoutedR29 (`.ufo/waves/round-30/wC/ReviewRoutedR29.md`), re-check
 - Runner selftest gaps found by seat MutateHead (`.ufo/waves/round-30/wC/MutateHead.md`): a status-4
   arm counted as PASS survives (T08); `tally_line` survives an `&&`→`||` swap and a dropped first-line
   comparison (N03, H03, H04); the final leg's non-zero statuses are never exercised (H05); dropping the
-  mixed vector or short-circuiting the guard stress survives (N01, N02). The runner is an input of
-  222 ledger entries, so the fix opens round 31's content revision.
+  mixed vector or short-circuiting the guard stress survives (N01, N02); a guard checking undercounts
+  only (`<` for `!=`) survives the overcount stress (N05). The runner is an input of 270 of the 456
+  ledger entries, so the fix opens round 31's content revision.
 - Binding v4 (Mistake 2): the post-data audit's conditions become the binding.
 - QUALITY imprecisions (seat ReviewQualityR30 F1-F4) and the stale `Next unused id: S092.` line in
   SOURCES (seat RerunCensus): input files, corrected in round 31's content revision.
+
+## Residual review (3 seats, `.ufo/waves/round-30/res/`, after wave C)
+
+- RerunMonitorHead: monitor re-run at base (64/64, restraint 8), `bb681566` (33/64, exit 1) and
+  `957c5ddb` (64/64, restraint 8, exit 0); ledger diff `3924 0`, first 393 entries equal as data;
+  `bind-select-v3.py` byte-identical at `9207f226` and `957c5ddb`. Agree.
+- SampleBoundReads (critic, 6 entries across ColdA01, A02, A04, A06, B02, B07): all six bindings are
+  transcript-backed. Two instruction entries are credited `gap-minor` on a `--regression` replay that
+  stopped at the seat's own deadline (ColdA01 on section 375, ColdB02 on section 933; trace child exit
+  124); their reports say so. Both sections also hold a full read by another seat (375: ColdB01
+  `verified-record`; 933: ColdA02 `executed-ok`, nine legs PASS). Seats' "more than six minutes"
+  wording means "stopped at the configured deadline". Accepted as stated; the frozen binding is not
+  changed after data.
+- ReviewLesson30: no blocking error; six imprecisions in this lesson (wave-B provenance of
+  ConnectorOverlap, runner input count 222 → 270 of 456, survivor N05 omitted, two quote word counts,
+  the dead-seat count, the MutateTallyExtra eval write) corrected above before filing.
