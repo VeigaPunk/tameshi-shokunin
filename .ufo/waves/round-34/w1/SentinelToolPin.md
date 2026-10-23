@@ -1,0 +1,31 @@
+# SentinelToolPin — round 34, wave 1
+
+## Verdict
+
+**Severity: None (no demonstrated security or integrity finding).** The frozen tool and runner hashes match their pins, the pinned tool self-test passes, and the sandbox probe did not read `/etc/shadow` or write outside its bound workdir. No remediation is indicated by the tested surface. I did not run the counter's default mode or alter any frozen artifact.
+
+## Integrity and operability
+
+All commands below ran against the scratch clone under `/fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin`; each exit code was recorded in the corresponding `status-*` file there.
+
+- `mkdir -p /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin` — **0** (`status-mkdir`).
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane` — **0** (`status-clone`).
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane rev-parse HEAD` — **0**, output `0b99d48ed4e3d00c2e5893b2d61f3dd97a7f68b7` (`status-tip-rev`); `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane status --short --branch` — **0**, output `## HEAD (no branch)` (`status-lane-status`).
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane show 0b99d48ed4e3d00c2e5893b2d61f3dd97a7f68b7:tools/tally-audit-v2.py > /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/tool.py` — **0**; `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane show 0b99d48ed4e3d00c2e5893b2d61f3dd97a7f68b7:tools/mutate-and-run.sh > /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/pristine.sh` — **0** (`status-show-tool`, `status-show-runner`).
+- `sha256sum /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/tool.py /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/pristine.sh` — **0**: tool `7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10`; runner `a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9` (`status-hashes`).
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane show 0b99d48ed4e3d00c2e5893b2d61f3dd97a7f68b7:tools/tally-audit-v2.py | sha256sum` — **0**; output `7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10` (`status-tip-hash`).
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane show c17e593b51802dd4ed568da3265f21c6d00c4273:tools/tally-audit-v2.py | sha256sum` — **0**; output `7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10` (`status-c17-hash`).
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/lane show 6aaad5b389e7eed426ec3b452617bcbf9bf7f35a:tools/tally-audit-v2.py | sha256sum` — **0**; output `7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10` (`status-a6-hash`).
+- `cp /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/pristine.sh /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/mutate-and-run.sh` — **0**; `sha256sum /fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/mutate-and-run.sh` — **0**, runner pin unchanged (`status-pair-runner`, `status-pair-hash`). From working directory `/fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin`, `python3 -I tool.py --selftest` — **0**, output `TALLY_AUDIT_V2_SELFTEST: 22/22 pass` (`selftest.out:23`, `status-selftest-final`). This pairing is required because the tool resolves its self-test runner beside itself (`tool.py:601-603`).
+
+## Sandbox probe
+
+The executable path is a copied runner's self-test harness section: `tally-audit-v2.py` extracts and runs that section (`tool.py:491-529`); the counter copies the tool and runner into a per-run directory and invokes the tool through `timeout` + `bwrap` (`c1-measure.py:228-262`). The sandbox command uses `--unshare-all`, `--die-with-parent`, read-only binds for `/usr`, `/bin`, `/lib`, `/lib64`, `/etc`, and a writable `/w` bind (`c1-measure.py:223-250`).
+
+I invoked `python3 -I probe.py` from the scratch root — **0** (`status-probe`). The probe imports the counter as a module and calls only `run_tool_sandboxed`; its injected runner commands are visible in `probe.py:11-16`. It attempted `cat /etc/shadow >/dev/null` and a write to `/fast/scratch/hyaku/tameshi-r34-seats/SentinelToolPin/.host-escape-probe` (outside `/w`, but still within the authorized scratch root). Result: tool hash stayed pinned; probe runner SHA-256 was `b15add7c4eeec88b22dc5b3bf82fed0fb391a9fee2382ba02395ca44ba55ce0e`; outcome `ACCEPT`, sandbox return code **0**, final audit line `TALLY_AUDIT: PASS (head=pass static=pass runtime=pass harness=pass)`, `READ_BLOCKED`, `WRITE_BLOCKED`, and `host_escape_marker_exists=false` (`probe.out:2-10`). The read attempt discarded file contents.
+
+The captured `/` listing contains only `bin`, `dev`, `etc`, `lib`, `lib64`, `proc`, `tmp`, `usr`, and `w`; it exposes no `/fast` or `/home`. `/etc` is visible as a read-only host bind and contains a `shadow` entry with mode `0600` in the probe listing, but the read was denied. The captured mount table confirms `/tmp` is tmpfs, runtime binds are `ro`, and only `/w` maps the scratch run directory writable (`probe-work/run-12a1ff81361970fb/probe-layout:1-13,167-220`). Bubblewrap was `0.13.1` and Python `3.14.8` (`status-bwrap`, `status-python`); no tools were installed or updated.
+
+**Exploit path / impact:** untrusted runner harness shell executes inside the intended sandbox, but the tested read and write attempts did not cross its permission/mount boundary. No impact beyond files under the per-run workdir was observed. The audit's own temporary directory is removed in its `finally` block (`tool.py:562-571`).
+
+**Smallest remediation:** none for the tested boundary. The final scratch-only import bytecode cleanup exited **0** (`status-clean-pycache`).
