@@ -1460,3 +1460,21 @@ masked by the gate's exact-mode check under the pinned declaration
 the pre-round-26 level (restraint 8). Other axes: depth 9 → 9 (command D),
 operability, freshness, adjacency unchanged; no capability row; no retirement.
 SHONEN marks unchanged (all `[~]`); box 3 now agrees with the monitor.
+
+## Round 30 — exploratory tally guard, binding v3, credit restored (2026-10-23)
+
+Three attempts (TameshiR30, TameshiR30A2 died with the orchestrator; TameshiR30A3 files). One claim,
+exploratory before data (`.ufo/evidence/round-30/contract-amendment-4.json`, `713dee6a`): four counter
+versions were each met by a control before data (K7, K8, CtlS2SymEval), so C1 carries no counting
+command. Every widely read input edit landed in the content revision `bb681566`.
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 `--regression` case-tally completeness guard + behavioral selftest (exploratory) | operability | base `9ed6db84`: a tally with one leg dropped prints `REGRESSION: PASS (cases=9 passed=8 …)`, exit 0; selftest 97/97 does not notice | `bb681566`: the same mutant prints `REGRESSION: SETUP (case-tally mismatch: cases=9 counted=8)`, exit 2, and its selftest fails 98/106 | none (exploratory) | none (exploratory; v4 receipt `C1_R30_PASS=true` at `bb681566` is supporting only) | `bb681566b18211adf8ae9c28df91e17678e3f545` (judged object) | `.ufo/waves/round-30/wC/JudgeC1.md`; `corpus/lessons/round-30.md` "After measurement" | `unprovable-but-better` by named non-author seat JudgeC1 (reviewer), reasons on record |
+
+Detail: calibration no-harm monitor `covered=64/64 restraint=8 box3_mismatch=0` at base → 33/64 at
+`bb681566` (input drift by design) → 64/64, restraint 8, box3_mismatch 0 at `4df5107f` after 22 fresh
+cold readers (63 entries, ledger 393 → 456, binding v3 63/63, audit 211/211 traces). Calibration 8 → 8,
+depth 9 → 9 (command D), coverage, freshness, adjacency unchanged; operability carries C1's exploratory
+verdict, not a number. No capability row; no retirement. SHONEN marks unchanged (all `[~]`). Eight
+selftest survivors of the new guard (MutateHead) and binding v4 are routed to round 31.

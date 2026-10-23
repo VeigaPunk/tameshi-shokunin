@@ -1741,3 +1741,16 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Result C1: `C1_R29_V2_PASS=true` at `7a45f7b9` (64/64, restraint 8, box3_mismatch 0).
   Result C2: `C2_F6_V2_PASS=false` (missed, honest stop); entry
   `corpus/knowledge/survivor-fixture-minimization.md` records why.
+
+## Round 30 — 2026-10-23 (TameshiR30 / TameshiR30A2 / TameshiR30A3)
+
+- Motivation: round-29 spot-check routed item 7 (runner leg-sum defect, MutateLegSum; S059 supersedes
+  row) and items 1-6 (`corpus/lessons/round-29-verifier-spotcheck.md`).
+- Attempts 1-2: C1 counters v1 → v4, each re-frozen before data after a control met it; C1 declared
+  exploratory (`713dee6a`) after CtlS2SymEval met v4; content revision `bb681566` (runner guard +
+  selftest, S092-S094, S087 used-by, QUALITY 58-65, README Round-30, knowledge entry); head receipts
+  `07ed440a`. Both orchestrators died (05:25Z, 06:19Z); wave B registered, never spawned.
+- Attempt 3: binding v2 met by a do-nothing transcript (32/32) → v3 frozen with control receipts
+  (`9207f226`); wave C 38 seats, none dead (`a2fa6c92` dispatch); 63 entries bound and appended, monitor
+  64/64 restraint 8 at `4df5107f`; JudgeC1 `unprovable-but-better`; entry errata E1-E4; lesson
+  `corpus/lessons/round-30.md` (five mistakes, routed-defect dispositions, round-31 routes).
