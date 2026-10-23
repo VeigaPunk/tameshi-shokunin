@@ -1,0 +1,56 @@
+{
+ "schema": "tameshi-round-contract-v1",
+ "round": 31,
+ "l1": "TameshiR31",
+ "base": "36c1d3933f680125aeefc447f07db0f03004901a",
+ "frozen_before_data": true,
+ "claims": [
+  {
+   "id": "C1",
+   "type": "measured",
+   "axis": "calibration",
+   "surface": "SCORECARD.md standing self-assessment rows: the `| Capability |` tables (10 capability rows) and the `| Axis | Score (0-10) |` tables (depth, calibration)",
+   "why_calibration": "AXES.md calibration evidence: \"SHONEN.md/SCORECARD entries match observed repo state\"; addendum 9: a calibration claim counts mismatches between the self-assessment and observed repo state.",
+   "predicate": "C1 passes at REV iff, for each of the 12 frozen statements, the last row of its frozen table type in the committed SCORECARD.md at REV states values equal to the values its frozen command prints when run at REV, and the base SCORECARD.md is a byte prefix of REV's SCORECARD.md.",
+   "predicate_label": "C1_R31_PASS",
+   "counter": ".ufo/evidence/round-31/c1-measure.py",
+   "counter_sha256": "657fcc1291d781577c20f4f0c4dc55feb84aadb38bce846bfdb296c7ef1e7584",
+   "command": "python3 .ufo/evidence/round-31/c1-measure.py --rev REV --work EMPTY_SCRATCH_DIR",
+   "before": {
+    "rev": "36c1d3933f680125aeefc447f07db0f03004901a",
+    "receipt": ".ufo/evidence/round-31/before/c1-at-base.stdout",
+    "line": "C1_R31: statements=12 mismatches=7 unparsed=0 unobservable=0 append_only=1 C1_R31_PASS=false",
+    "exit": 1
+   },
+   "target": "C1_R31: statements=12 mismatches=0 unparsed=0 unobservable=0 append_only=1 C1_R31_PASS=true, exit 0, at the lane revision that carries the round-31 SCORECARD rows and the cold-read ledger append (named in the report); later lane commits of this round touch neither SCORECARD.md nor any file the 12 commands read, or the claim is re-measured at the last one",
+   "kill_rule": "Any MISMATCH, UNPARSED or UNOBSERVABLE statement, or append_only=0, at the measured revision: C1 missed, reported as an honest stop. The counter, predicate, statement set and target are never amended after this freeze.",
+   "sourced": "the knowledge entry this claim lands cites SOURCES rows opened this round (S095 onward)",
+   "controls_before_data": [
+    "do-nothing (SCORECARD unchanged)",
+    "junk rows (re-stated tables with wrong values)",
+    "shortcut keyed on labels (re-stated rows copying the old claimed values)",
+    "rows deleted",
+    "correct rows hidden in an HTML comment or code fence",
+    "old rows rewritten in place with correct values (append-only breach)",
+    "correct rows under a different table header",
+    "correct values copied from committed receipts without running (route control; the counter measures the outcome property itself, so this is not a skip of the claimed property)"
+   ],
+   "prefreeze_disclosure": "Before this freeze the L1 ran each command once at base to learn output formats (before/prefreeze-format-recon.txt) and measured the frozen counter at base (before/c1-at-base.stdout). The statement set is every row of the two table types; none was chosen or dropped by its base value (5 of 12 match at base)."
+  }
+ ],
+ "not_claimed": [
+  "depth (no tenth recorded case)",
+  "operability: per-leg tally check and the 8 MutateHead selftest survivors stay routed; tools/mutate-and-run.sh is an input of 270 of 456 ledger entries and its edit would drift about 31 sections"
+ ],
+ "no_harm": {
+  "calibration_monitor": "python3 .ufo/evidence/round-27/c1-measure.py --repo CLONE --rev REV: covered=T/T restraint=8 box3_mismatch=0 at the measured revision",
+  "depth": "command D recorded_cases=9 depth_score=9",
+  "census": "sources-census validate exit 0",
+  "drift_plan": "every widely read input edit (corpus/SOURCES.md, corpus/QUALITY.md, corpus/README.md, knowledge entry) lands in one content revision; drifted sections get fresh cold reads bound by binding v4 (.ufo/evidence/round-31/coldread/bind-select-v4.py, sha256 dd8bb39309cb337b4b0e6703657198fc88655ce4b498de2ad3f637e04030b87f), frozen here"
+ },
+ "binding_v4": {
+  "path": ".ufo/evidence/round-31/coldread/bind-select-v4.py",
+  "sha256": "dd8bb39309cb337b4b0e6703657198fc88655ce4b498de2ad3f637e04030b87f",
+  "pilot": ".ufo/evidence/round-31/coldread/pilot/v4-on-r30-real-receipt.json (63/63 real round-30 entries kept)"
+ }
+}
