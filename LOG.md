@@ -1816,3 +1816,31 @@ metadata and its failure are preserved; production gate source is unchanged.
   false receipt is committed as the honest state; measurement + controls receipt + cold-read
   re-crediting routed to round 34. mte-interop SETUP repaired (17/17). Sources 96 → 97 rows
   (S100; S099 recheck unchanged at its pinned digest). Lesson `corpus/lessons/round-33.md`.
+
+## Round 34 — 2026-10-23 (TameshiR34, attempt 1)
+
+- Motivation: round-33 rejected-honest-stop closure routed the C1 measurement to this round:
+  controls mint at the amended rev, sealed held-out authoring under the set-aware witness rule
+  (PRE-AUTHORING requirement), the L1 counter run, and the two uncommitted r33 seat reports.
+- Amendment 6 (`6aaad5b3`, pre-authoring, pre-data): the c1 counter's sealed-copy witness gate
+  made set-aware per the routed RevengerWitness rule (kill+head = leg-assignment-line diff with an
+  identical block; accept+head = identical block; accept+vector = behavioral equivalence a==b;
+  kill+vector = a!=b, len==9). Probe battery 8/8 exact (`round-34/dev/witness-probes.json`);
+  public panel re-run 18/18 + 8/8 through the amended machinery; tool selftest 22/22.
+- Controls receipt minted at the amended rev `6aaad5b3` (receipt-attestation rule;
+  receipt counter_sha256 = amended counter bytes at that rev; four seat controls all
+  predicate_pass=false) — `9dd3174c`.
+- Sealed held-out set authored after the amendment-6 freeze: 8 must-kill (2 head-surface +
+  6 block-behavioral classes) + 6 must-accept (2 head-cosmetic + 4 block-equivalent), per-copy
+  authoring receipts (`round-34/dev/authoring-receipts.json`) — `c17e593b`.
+- Deciding run (first full default-mode run at the measurement revision `c17e593b`):
+  `C1_R33: tool_present=1 tool_sha_ok=1 runner_sha_ok=1 controls_ok=1(ok) v1_kill=18/18
+  v1_accept=8/8 ho_kill=8/8 ho_accept=6/6 ho_invalid=0 heldout_after_freeze=1
+  seed=685f63bd25263908 rev=c17e593b51802dd4ed568da3265f21c6d00c4273 C1_R33_PASS=true`, exit 0 —
+  `round-34/measure/`. C1 is MEASURED TRUE; the tally-audit-v2 capability row enters SCORECARD.
+- Frontier: S101 opened (Major Mutation Framework — equivalent mutants first-class; snapshot +
+  digest); gnu.org bash manual rejected (unreachable + duplicate of S097's scope, TLDP duplicate
+  also rejected); census 97 → 98 rows; lesson `corpus/lessons/round-34.md`; knowledge
+  `corpus/knowledge/witness-equivalence-rule.md` (cites S097 + S101).
+- Wave: one v2 wave (policy v2 band 64-128) built and validated; taskCall returned to the
+  orchestrator for dispatch (zero dispatches from this session); seat relays folded on return.

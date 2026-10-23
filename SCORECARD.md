@@ -1632,3 +1632,39 @@ axes: depth 9 → 9 (command D, runner byte-identical), calibration monitor at t
 repaired (jsonschema 4.25.1 via uv, `MTE_SELFTEST: 17/17 pass`, receipt
 `.ufo/evidence/round-33/repair/`); the round-31 re-stated row's 'not runnable here' clause is
 superseded by this round's row below. Freshness carries the round's only score move.
+
+## Round 34 — C1 tally-audit-v2 measured true (capability admitted) + frontier (2026-10-23)
+
+L1 TameshiR34, attempt 1. Single claim, routed from the round-33 honest-stop closure; the
+stagnation nudge is discharged by this capability admission (no capability since round 25).
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 runner tally audit v2 (capability acquisition, routed measurement) | operability | `tool_present=1 … controls_ok=0(receipt-missing) v1_kill=0/0 v1_accept=0/0 ho_kill=0/0 ho_accept=0/0 ho_invalid=0 heldout_after_freeze=0 C1_R33_PASS=false`, exit 1 at `732b6860` (r33 head, not-run structural false, `.ufo/evidence/round-33/after/c1-at-head-notrun.*`) | `tool_present=1 tool_sha_ok=1 runner_sha_ok=1 controls_ok=1(ok) v1_kill=18/18 v1_accept=8/8 ho_kill=8/8 ho_accept=6/6 ho_invalid=0 heldout_after_freeze=1 seed=685f63bd25263908 rev=c17e593b51802dd4ed568da3265f21c6d00c4273 C1_R33_PASS=true`, exit 0 | the capability now runs and verifies: tool at the frozen pin 7b11ba25…8d10 kills 18/18 public + 8/8 sealed must-kill and accepts 8/8 public + 6/6 sealed must-accept with zero invalid sealed copies, controls receipt attesting the amended counter committed pre-data | `python3 .ufo/evidence/round-33/c1/c1-measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev c17e593b51802dd4ed568da3265f21c6d00c4273 --work EMPTY_DIR` | `c17e593b51802dd4ed568da3265f21c6d00c4273` (measurement revision) | `.ufo/evidence/round-34/measure/c1-deciding-run.{stdout,exit}`; sealed set `.ufo/evidence/round-33/heldout/` (8 kill + 6 accept, per-copy authoring receipts `round-34/dev/authoring-receipts.json`); controls receipt `.ufo/evidence/round-33/c1/controls-receipt.json` minted at `6aaad5b3`; amendment 6 disclosed in `contract-amendments.json` | **improved (measured)** |
+
+Pre-data amendment 6 (`6aaad5b3`): the counter's sealed-copy witness gate made set-aware BEFORE
+any sealed authoring (routed RevengerWitness rule; the frozen set-blind rule was voidable in both
+directions by cosmetic clones — kill+head accepted inert head edits, accept+vector demanded a!=b
+from equivalence copies). Probe battery 8/8 exact; panel 18/18 + 8/8 re-confirmed; tool selftest
+22/22. Kill rule honored: exactly one full default-mode run at the measurement revision; no
+re-seed, no re-scale, no post-data rule change. The deciding run receipt is the only
+`C1_R33_PASS=true` counter output on record.
+
+Capabilities table — row admitted this round:
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| tally-audit-v2 runner audit | audit the mutation runner's regression tally without editing it: head/static/runtime/harness checks kill all 18 public + 8 sealed must-kill copies and accept all 8 public + 6 sealed must-accept copies, zero invalid sealed copies, controls-gated counter | deciding-run receipt `C1_R33: … v1_kill=18/18 v1_accept=8/8 ho_kill=8/8 ho_accept=6/6 ho_invalid=0 … C1_R33_PASS=true` at `c17e593b`, counter `.ufo/evidence/round-33/c1/c1-measure.py`, tool `tools/tally-audit-v2.py` @ `7b11ba25…8d10` | round 34 (tool landed round 33, predicate honestly not decided there) |
+
+Numeric axes: depth 9 → 9 (command D, runner byte-identical at the pinned sha); calibration
+monitor sections (this block, LOG, lesson) — re-crediting rides in the r34 wave per the r33
+closure routing. Freshness carries S101 (Major Mutation Framework — equivalent mutants
+first-class; row + committed snapshot in round-34 evidence; the gnu.org/TLDP bash-exit-status
+duplicates of S097's scope rejected, recorded in the round-34 lesson Gate). No owned axis score
+lowered; no axis harmed.
+
+**Planned (round 35):** the v3 residue classes ride in `corpus/lessons/round-34.md` Holds
+(Guard-2 divisibility, TallyArms-02 coexistence, quoted case subject, helper-function refactors,
+per-index record parsing, preamble seeding, nonzero-leg stress, all-pairs nlegs recompute) —
+each adoptable only under the freeze-before-data discipline; tool re-pin and counter re-attest
+required if any lands pre-data.
