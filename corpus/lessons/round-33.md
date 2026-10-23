@@ -58,6 +58,7 @@ Row changes, old → new (`corpus/SOURCES.md`, rows 96 → 97): S100 added (mine
   line match, dropped all-pass case, `rc -ge`) passed the panel; runtime still backstopped them
   (quantified), but the panel now carries a fault per weakening. Plus one false reject (unquoted
   second extraction line) — regex fixed.
+- **DevPrintf**: first-stdout-line-only oracle — 7 survivors on lines 2+ (REGRESSION_WORKDIR edits, duplicated PASS, injected note lines); whole-stdout compare + the real-default context sweep is the ninth measured v3 fix.
 - **DevStderr**: stdout-only rule enforced (12/13 kills; 7/7 equivalents; 0 false rejects); one
   escape into SETUP via an embedded-CR fake record (kill copies that crash the tool's parser score
   a miss, not a kill) — routed: per-index record parsing.
@@ -116,7 +117,8 @@ Row changes, old → new (`corpus/SOURCES.md`, rows 96 → 97): S100 added (mine
 - C1 measurement: author the sealed held-out set against tool sha `7a59f576…8833` (amendment 3),
   mint the controls receipt at the measurement revision, run the counter. v3 tool classes if any
   seat finds another survivor: Guard-2 divisibility, TallyArms-02 coexistence, quoted case subject,
-  helper-function refactors, per-index record parsing, preamble seeding, all-pairs nlegs recompute.
+  helper-function refactors, per-index record parsing, preamble seeding, nonzero-leg stress,
+  all-pairs nlegs recompute, whole-stdout comparison (DevPrintf ninth fix).
 - Cold-read re-crediting: this lesson + the SCORECARD/LOG/SOURCES appends drift monitor sections;
   r34's first wave re-reads them (LedgerAudit sized ~19 SOURCES-citing sections + 3 all-four).
 - Dead seats: none in wave 1 (33/33 returned). Round total: 33 seats, one wave, no residual call.
