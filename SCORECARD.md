@@ -1668,3 +1668,62 @@ lowered; no axis harmed.
 per-index record parsing, preamble seeding, nonzero-leg stress, all-pairs nlegs recompute) —
 each adoptable only under the freeze-before-data discipline; tool re-pin and counter re-attest
 required if any lands pre-data.
+
+## Round 35 — tally-audit-v3 measured true (four configs, whole stdout, comment-blind) + C2 six-class record repair (2026-10-23)
+
+L1 TameshiR35, attempt 3. Attempts 1-2 died with the orchestrator session before the report; their
+apparatus (A4-A8), the 64-seat wave-1 spec, the 58-seat wave-2 wave and the deciding receipt are
+inherited, re-verified and cited. Contract `.ufo/evidence/round-35/contract.json`; every amendment
+A1-A8 is pre-data (no default-mode C1 run before A8). Two claims, each with its own counter; no
+stagnation waiver is claimed (calibration carries the round, and a capability entered the table at
+round 34). Axis names follow the surface the round changed, not the number it prints. The round
+report is landed by the fresh-claim respawn (hyaku run-5, after the stale-claim reset; watchdog
+`lane-dead-no-report tameshi round=35` ×8 on 2026-10-23), which re-ran the census gate and both
+counters at write time against the inherited commits and folded this record.
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 capability acquisition: `tools/tally-audit-v3.py` audits the runner tally over all four `(root,auto,KEEP)` triples, compares the FULL stdout plus exit, and scans a comment-blinded code view | depth (declared surface), operability (runnable artifact) | `C1_R35: mode=before tool_present=0 runner_sha_ok=1 rev=51d3f08073be65d3475cf0286042fc0dbe4c4a7d C1_R35_PASS=false`, exit 1 — no v3 tool at base (`.ufo/evidence/round-35/before/c1-at-base.stdout`) | `C1_R35: mode=deciding tool_present=1 tool_sha=6188db16de045f29 tool_sha_ok=1 runner_sha_ok=1 pub_kill=6/6 pub_accept=3/3 pub_slots=9 pub_distinct=9 ho_kill=4/4 ho_accept=3/3 ho_invalid=0 ho_distinct=7 sealed_after_freeze=1 rev=34fa5b0cfe909f3cde644676ead723256281dd05 C1_R35_PASS=true`, exit 0 | 16/16 copies scored as declared where the do-nothing control scores 0/6 kill and 0/3 accept; the capability runs and verifies | `python3 .ufo/evidence/round-35/c1/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR --sealed .ufo/evidence/round-35/c1/sealed` | `34fa5b0cfe909f3cde644676ead723256281dd05` (deciding receipt, one run, `after/c1-at-34fa5b0…stdout` committed by this round's landing commit) | `after/c1-at-34fa5b0…stdout`, `control/c1-v2-control.stdout` (v2 on the same nine copies: `pub_kill=0/6 pub_accept=0/3 … C1_R35_CONTROL_PASS=false`, exit 1), `control/c1-v3-public-rehearsal.stdout`, `lessons/selftest-33.out` (`TALLY_AUDIT_V3_SELFTEST: 33/33 pass`), sealed manifest with 7 copies (4 kill / 3 accept) authored after the freeze `d16f9b5a` | **improved (measured)**; two disclosed predicate defects routed (below) |
+| C2 six declared self-assessment mismatch classes (m1 header trio, m2 README index, m3 stranded seat file, m4 frozen-contract pin, m5 round-34 authoring adjudication, m6 standing sources-registry row count) | calibration | `C2_R35: m1=8 m2=3 m3=1 m4=1 m5=1 m6=1 total=15 entries=40 sources_rows=98 rev=51d3f080… C2_R35_PASS=false`, exit 1 (`.ufo/evidence/round-35/before/c2-at-base.stdout`) | `C2_R35: m1=0 m2=0 m3=0 m4=0 m5=0 m6=0 total=0 entries=40 sources_rows=99 rev=34fa5b0c… C2_R35_PASS=true`, exit 0, and independently re-derived by hand class-by-class in the residual wave (`ResidualReviewC2.md`, six-row table, all agree) | 15 → 0 mismatches across six classes | `python3 .ufo/evidence/round-35/c2/c2-measure.py --lane LANE --rev REV --fleet FLEET` | `34fa5b0cfe909f3cde644676ead723256281dd05` (first after at `d16f9b5a`, re-run at the tip; `after/c2-at-d16f9b5a.stdout`, `after/c2-at-34fa5b0…stdout`) | `before/c2-at-base.stdout`, `after/c2-at-d16f9b5a.stdout`, `.ufo/waves/round-35/residual/ResidualReviewC2.md`, lesson `## Mistakes` 1-2 | **improved (measured)** |
+
+Pre-data controls. C1: the do-nothing control (keep v2, same nine copies) is `0/6` kill and `0/3`
+accept, exit 1 — it cannot reach the target. C2: the base state is its own control (every class
+non-zero). Both receipts are committed. Kill rule honored: exactly ONE default-mode C1 run, at
+`34fa5b0` after the sealed set landed; every other receipt is `mode=before` or `mode=control`.
+
+Capabilities table — row admitted this round:
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| tally-audit-v3 runner audit | audit the runner's regression tally without editing it, across all four `(root,auto,KEEP)` triples, comparing the FULL stdout plus exit and scanning a comment-blinded code view; kills 6/6 public + 4/4 sealed must-kill copies (failing check exactly `runtime`), accepts 3/3 public + 3/3 sealed must-accept copies, zero invalid sealed copies, under a pinned sha256 | deciding receipt `C1_R35: … pub_kill=6/6 … ho_kill=4/4 ho_accept=3/3 ho_invalid=0 … C1_R35_PASS=true` at `34fa5b0`, counter `.ufo/evidence/round-35/c1/c1-measure.py` @ `d360a159…`, tool `tools/tally-audit-v3.py` @ `6188db16…` | round 35 |
+
+Numeric axes, measured. **depth 9 → 9**: command D at the tip prints `recorded_cases=9 depth_score=9`
+(the rubric counts recorded ledger legs; the runner is byte-identical `a7d3f2dd…` at base and tip, so
+no tenth leg and no numeric move — the C1 gain is a capability and a wider audit surface, not a ledger
+count). **calibration 8 → 6**: the strict cold-read monitor
+`python3 .ufo/evidence/round-21/coldread/measure.py --repo . --rev REV` prints
+`calibration_restraint_score: 8, sections_covered 64/64` at the round base `51d3f08` and
+`calibration_restraint_score: 6, sections_covered 60/64` at the tip `34fa5b0`; four SKILL headings
+("Mutation-sweep recipe", "Restore discipline", "### The map", "### Where to enter") have cited
+inputs that this round's record repairs rewrote (`corpus/SOURCES.md`, `corpus/README.md`, the
+knowledge headers, `SCORECARD.md`, `corpus/QUALITY.md`), so the frozen ledger withholds their credit
+by its input-drift rule (the monitor working as designed — the exception is recorded in the lesson
+`## Holds`). The stale `8` this file carried from round 29-34 is superseded by the measured `6`; a
+cold-read refresh is routed to round 36. C2's own counter is independent of that instrument and reads
+`total=0`.
+
+Disclosed predicate defects (no rule was changed after data; both routed, not patched):
+1. The counter's PASS expression (`c1-measure.py:517`) requires `pub_kill == pub_kill_slots` and
+   `pub_accept == pub_accept_slots` but not the slot totals 6/3 nor `pub_distinct == 9`, so an empty
+   panel would satisfy the code; the receipt meets the stronger declared target
+   (`pub_kill=6/6 pub_accept=3/3 pub_distinct=9`), and the divergence is a counter defect for round 36
+   (residual seat `ResidualCriticPredicate` §1, MAJOR).
+2. Clause (3) of C1's surface ("every structural scan runs on a comment-blinded code view") is not
+   universal: `code_view` fails to blank a comment that follows an ANSI-C `$'…'` quote (same seat §4,
+   MAJOR; already an open class in the lesson `## Holds`, first filed by wave-2 seat AttackQuotedHash).
+   The claim stays scoped to the enumerated 16 copies; no universal lexical claim is made or admitted.
+
+**Planned (round 36):** cold-read refresh for the four drifted headings (restores calibration credit
+against the rewritten inputs); public-slot cardinality and distinctness asserts in a successor counter
+(frozen pre-data, then one deciding run); a real shell lexer or an enumerated supported-form list for
+`code_view`; the open recall classes in the lesson `## Holds`.

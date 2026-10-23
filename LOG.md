@@ -1844,3 +1844,53 @@ metadata and its failure are preserved; production gate source is unchanged.
   `corpus/knowledge/witness-equivalence-rule.md` (cites S097 + S101).
 - Wave: one v2 wave (policy v2 band 64-128) built and validated; taskCall returned to the
   orchestrator for dispatch (zero dispatches from this session); seat relays folded on return.
+
+## Round 35 — 2026-10-23 (TameshiR35, attempt 3)
+
+- Motivation: the round-34 v2 wave left five convergent Holds. Round 35 takes the two structural
+  ones: the **unswept config hole** (v2 drove only `(0,1)` and `(1,0)` of the four `(auto,KEEP)`
+  triples; `(0,0)` and `(1,1)` are real runner states) and **comment text seizing structural scans**
+  (twice-only head rule counted name substrings, `regression_body` counted braces char-wise,
+  `esac`/`do` in comments seized the locators), plus the disclosed whole-stdout recall gap. Round-34
+  seat Mutkillvectorarmswap F3's `auto==0 && KEEP==0` accept-set swap was the lethal instance: witness
+  valid, tool-accepted, runner-selftest green, and wrong under `--regression --workdir DIR`.
+- Claim C1 (capability acquisition, `tools/tally-audit-v3.py`; v2 untouched): four-config oracle,
+  FULL-stdout + exit comparison, quote-aware `code_view` with comments blanked, the runner's real
+  auto root (`/tmp/tameshi-r4-2-regression.XXXXXX`, A4), a last-match depth-0 block locator, a
+  leg-occurrence head rule, a filesystem-safety execute gate (A7). Tool selftest 33/33
+  (`.ufo/evidence/round-35/lessons/selftest-33.out`). Amendments A1-A8, all pre-data; A8 re-pinned
+  the counter's `TOOL_SHA256`, a defect A6 had already fixed once (lesson `## Mistakes` 3-4 keep both).
+- C1 measured: before at `51d3f08` `tool_present=0 … C1_R35_PASS=false` exit 1; the do-nothing v2
+  control on the same nine-copy panel `0/6` kill `0/3` accept exit 1; the deciding run at `34fa5b0`
+  (the only default-mode run in the round) `pub_kill=6/6 pub_accept=3/3 pub_slots=9 pub_distinct=9
+  ho_kill=4/4 ho_accept=3/3 ho_invalid=0 ho_distinct=7 sealed_after_freeze=1 … C1_R35_PASS=true`
+  exit 0. The sealed set is 4 must-kill + 3 must-accept, authored by wave-2 seats after the freeze
+  `d16f9b5a`, transcribed verbatim with a per-copy sha256 manifest; the residual wave re-derived
+  all seven behavior classes from bash execution (`ResidualReviewSealed.md`, CONFIRMED).
+- Claim C2 (calibration, six declared mismatch classes): before `m1=8 m2=3 m3=1 m4=1 m5=1 m6=1
+  total=15` exit 1; after `total=0` exit 0 at `d16f9b5a` and re-run at `34fa5b0`; classes re-derived
+  by hand in the residual wave with no disagreement (`ResidualReviewC2.md`). Repairs: the knowledge
+  header trio on two entries, README index rows, the stranded round-34 seat file copied byte-exact
+  into the lane (`cmp`), the round-33 pin reconciliation record, the round-34 authoring adjudication
+  line, and the standing sources-registry row count (96 → the recomputed 99).
+- Frontier: S102 opened (POSIX.1-2024 §2.3 Token Recognition, committed snapshot
+  `.ufo/evidence/round-35/src/s102-posix-chap02.html`, 357,953 bytes, sha256 `0889867a…`), located
+  quote at offset 20775; S102 mines into `tools/tally-audit-v3.py`'s docstring and the `code_view`
+  rule. Census at round start (base `51d3f08` checkout) and end: `sources-census.sh validate` exit 0
+  both; rows 98 → 99 (S102 is this round's only added row; `git show 51d3f08:corpus/SOURCES.md |
+  grep -c '^| S[0-9][0-9][0-9] |'` → 98, tip → 99). This line previously read "row set unchanged
+  (99)"; the closure corrected it against the census receipts (lesson `## Mistakes` 5). Lesson
+  `corpus/lessons/round-35.md` with `## Gate`, five `## Mistakes`, `## Holds` (routed).
+- Waves: attempt 1 dispatched one v2 wave of 64 seats (policy v2 band 64-128, validator `spawn=64`);
+  six reports survived the orchestrator OOM (committed as `.ufo/waves/round-35/w1/`). Attempt 2
+  re-dispatched the remaining 58 as one v1 wave (policy v1 band 32-64), 54 seat reports committed at
+  `5829676`; four seats' outputs were routed into A7/A8 instead of reports. Attempt 3 added a
+  6-seat residual falsification wave (2 reviewers, 1 critic, 1 sentinel, 1 scout, 1 reviewer on C2),
+  reports under `.ufo/waves/round-35/residual/`. Round total 128 spawn slots, 70 distinct items: w1's
+  58 unfinished seats (64 dispatched - 6 reports) died with the attempt-1 orchestrator OOM and were
+  respawned as w2 — the item-name sets verify it (`w1 64, w2 58, intersection 58, w2-only []`); the
+  residual sentinel seat left no report and was respawned by the closure
+  (`ResidualSentinelClosure.md`).
+- Trend: C1 improved (capability admitted); C2 improved (15 → 0). Calibration's numeric instrument
+  lapsed 8 → 6 because four SKILL headings cite inputs this round rewrote; the monitor withholds
+  credit by design and the refresh is routed to round 36 (`SCORECARD.md` Round 35, Numeric axes).

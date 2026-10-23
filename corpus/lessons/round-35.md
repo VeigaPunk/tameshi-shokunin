@@ -1,12 +1,14 @@
 # Round 35 — the audit predicate widened to the runner's four configs, whole stdout, and comment-blind scans
 
-L1 TameshiR35, attempt 2 (hyaku run-5). Attempt 1 died with the orchestrator session at 18:00-18:03
+L1 TameshiR35, attempt 3 (hyaku run-5; the round report is landed by the fresh-claim respawn
+after the stale-claim reset, which re-ran the census gate and both counters at write time).
+Attempt 1 died with the orchestrator session at 18:00-18:03
 (OOM): its single v2 wave of 64 seats was dispatched at 18:02 and six of its reports landed uncommitted —
 they are now inherited evidence under `.ufo/waves/round-35/w1/` (ExecPristine, RevengerRootShape,
 ReviewPanelDistinct, ReviewSealedGate, ScribeReport, SealAcceptCommentBlock) and are cited below.
 Attempt 2 re-dispatched the other 58 items as wave 2 (policy v1, band 32-64) against the amended
 apparatus. Lane tip at freeze: `51d3f08073be65d3475cf0286042fc0dbe4c4a7d`; contract
-`.ufo/evidence/round-35/contract.json` (claims C1/C2, predicates, counters, amendments A1-A6).
+`.ufo/evidence/round-35/contract.json` (claims C1/C2, predicates, counters, amendments A1-A8).
 
 ## What this round attacked, and why
 
@@ -129,6 +131,15 @@ r32 and r34 recorded); no row was written for it.
    to U+001F and parsing to `split('\n')`; the frozen counter now reports `mismatched=0` on the
    pristine runner. Receipt: `.ufo/evidence/round-35/lessons/c1-splitlines-mutation.*` (the mutated
    parser loses the second line and the pristine comparison fails again).
+5. **class:** a record asserted a census invariance its own receipts contradict. **evidence:** the
+   round-35 LOG said the census row set was "unchanged (99)" start→end, but the start receipt
+   `.ufo/evidence/round-35/before/census-at-base.stdout` was taken in a base checkout (`/tmp/census-base`)
+   at `51d3f08`, where `corpus/SOURCES.md` holds 98 rows; S102 is this round's only added row, so the
+   honest delta is 98 → 99. **captured-by:** the closure's re-read of both census receipts plus
+   `git show 51d3f08:corpus/SOURCES.md | grep -c '^| S[0-9][0-9][0-9] |'` → 98 and the tip → 99. The
+   C2 six-class counter does not cover LOG prose (no such declared class), so this catch is manual —
+   disclosed as a seventh, undeclared class in the report, not folded into C2's total. **fix:** LOG
+   corrected to "rows 98 → 99"; C2's frozen predicate is unchanged and still reads `total=0`.
 
 ## Holds (routed to round 36)
 
@@ -158,3 +169,32 @@ r32 and r34 recorded); no row was written for it.
   no seed) but the panel is small — the sealed set is the discriminating surface.
 - The C2 counter's m1 scope is time-relative (entries first added after `284ab0f0`); if the lane
   rewrites history or the baseline moves, re-derive the scope rather than trusting the constant.
+
+## Residual verification (attempt 3, 6 seats) — findings and their routes
+
+- **Counter PASS weaker than the frozen sentence** (residual seat ResidualCriticPredicate §1, MAJOR):
+  `c1-measure.py:517` asserts `pub_kill == pub_kill_slots` and `pub_accept == pub_accept_slots` but
+  not the slot totals 6/3 nor `pub_distinct == 9`; the seat's AST-only probe shows an empty panel and
+  a nine-slot duplicate-body panel both evaluate `code_PASS=True`. The deciding receipt satisfies the
+  stronger declared target (`pub_kill=6/6 pub_accept=3/3 pub_distinct=9`), so the claim's evidence is
+  true; the counter is attackable and gets the cardinality asserts in a successor frozen pre-data.
+  No rule was changed post-data.
+- **Comment-blinding is not universal** (same seat §4, MAJOR): `code_view` leaves a comment intact when
+  it follows an ANSI-C `$'it\'s'` quote, so the surface clause "every structural scan runs on a
+  comment-blinded code view" is false as a universal. The claim stays scoped to the enumerated 16
+  copies; the lexical class is the same one wave-2 seat AttackQuotedHash filed above.
+- **Control narration is stale, control reach is not** (same seat §2, MINOR): the contract's `control`
+  and `controls_before_data` fields still describe the A4 eight-copy panel (`0/5` kill, "three kill
+  copies"); the retained receipt is the A8 nine-copy panel (`pub_kill=0/6 pub_accept=0/3`, exit 1).
+  The receipt decides; the contract prose is superseded by A8 and is not rewritten post-data.
+- **Cold-read credit lapse** (L1 measurement, tool `measure.py --repo . --rev REV`): the strict
+  monitor prints `calibration_restraint_score: 8, sections_covered 64/64` at `51d3f08` and
+  `6, 60/64` at `34fa5b0`. The four headings whose credit lapses cite inputs this round rewrote
+  (`corpus/SOURCES.md`, `corpus/README.md`, the knowledge entries, `SCORECARD.md`, `QUALITY.md`);
+  the ledger withholds credit by its input-drift rule until a cold-read refresh. Routed to round 36;
+  the numeric axis is recorded as 6, not restated as 8.
+- **Cross-checks that found nothing**: the deciding receipt's pins, per-copy arithmetic and sealed
+  provenance (ResidualReviewReceipt, CONFIRMED, 5/5); all seven sealed behavior classes re-derived
+  by direct bash execution (ResidualReviewSealed, CONFIRMED, 7/7); six C2 classes re-derived by hand
+  (ResidualReviewC2, CONFIRMED, all agree). Exactly one `C1_R35: mode=deciding` receipt exists on
+  disk (critic §3).
