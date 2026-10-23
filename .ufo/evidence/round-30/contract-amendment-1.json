@@ -1,0 +1,24 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "round": 30,
+  "amends": ".ufo/evidence/round-30/contract.json (landed dcdf2d08cb6f7921a194e51299dab4383f3d2716)",
+  "written_at_utc": "2026-10-23T05:00Z",
+  "before_any_control_or_data": true,
+  "reason": "L1 self-attack before the control wave: v1's 13 mutants and 4 rewrites are fixed public strings, so a selftest that greps its own runner for exactly those strings (a shortcut keyed on the counter's fixture labels) would meet v1 without testing the tally. v2 adds a held-out set drawn by a frozen generator seeded with the measured commit id, plus a generator sanity check against the pristine harness. No control, fix or data seat had run when this amendment was written.",
+  "claim": "C1",
+  "counter": "python3 .ufo/evidence/round-30/c1-measure-v2.py --repo CLONE --rev REV",
+  "counter_sha256": "5ed4e663ff16556d0bfef68a9fc1e3cf820ab8bc2b620169e800da914f0c8719",
+  "predicate_label": "C1_R30_PASS",
+  "predicate": "C1_R30_PASS is true iff, on tools/mutate-and-run.sh at REV, (a) the pristine runner's --selftest exits 0 and prints `VERDICT: PASS`; (b) the pristine tally block, run under the fixed-status harness, gives PASS/exit 0 for all-zero statuses, FAIL/exit 1 for each of the 9 single-leg status-1 vectors and SETUP/exit 2 for each of the 9 single-leg status-2 vectors (19/19); (c) each of the 9 drop mutants (one operand removed from the tally loop) is refused at run time: under the harness, for the all-zero vector and for the vector whose dropped leg has status 1, it neither exits 0 nor prints `REGRESSION: PASS` (refused_drops == 9); (d) --selftest exits non-zero (or times out) on each of the 13 family mutants (9 drops + 4 arm mutants) (killed == 13); (e) --selftest exits 0 with `VERDICT: PASS` on each of the 4 frozen semantics-preserving rewrites of the tally block (equiv_pass == 4); (f) --selftest exits non-zero (or times out) on each of the 12 held-out mutants drawn by heldout() with seed int(REV, 16) (heldout_killed == 12); (g) --selftest exits 0 with `VERDICT: PASS` on each of the 4 held-out equivalent rewrites drawn by the same generator (heldout_equiv == 4).",
+  "counter_error": "exit 2 and PASS false when a replacement site is not found exactly once, or when a held-out mutant is harness-equivalent to the pristine block, or a held-out rewrite differs from it",
+  "before": {
+    "rev": "9ed6db840dc97a0a5f4758b6b5f60cee83a61645",
+    "value": "pristine_selftest=1 harness=19/19 refused_drops=0/9 killed=0/13 equiv_pass=4/4 heldout_killed=0/12 heldout_equiv=4/4",
+    "predicate": "C1_R30_PASS=false",
+    "exit": 1,
+    "receipt": ".ufo/evidence/round-30/c1v2-at-base.stdout"
+  },
+  "target": "PREDICATE: C1_R30_PASS=true at the landed lane head",
+  "controls_required_before_data": "contract.json list K1-K6 plus K7: a selftest keyed on v1's literal mutant strings and rewrite markers (scored against v2)",
+  "unchanged": "axis, surface, routed_by, sourced_on, design_constraint, kill_rule, hold_rule, no_harm_monitors, round_order of contract.json"
+}
