@@ -1,0 +1,48 @@
+{
+ "contract": "tameshi round-33 claims, frozen before any data seat (with the pre-data control receipt produced after this freeze and before any held-out authoring)",
+ "lane": "tameshi-shokunin",
+ "base": "66e1fb444615b3afe380e7df0244ef7fae1dd985",
+ "frozen_artifacts": {
+  "tool": "tools/tally-audit-v2.py",
+  "tool_sha256": "9dbbce62aeaeecbacfa1b82e15b61afcb4580e3920a0b827ae038fa4c06f33a4",
+  "c1_counter": ".ufo/evidence/round-33/c1/c1-measure.py",
+  "c2_counter": ".ufo/evidence/round-33/c2/c2-measure.py",
+  "runner_sha256": "a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9",
+  "snapshot_sha256": "217edd573ef328316ac2410e5d046c5ad3a2df522270e5868bc5e5e5eb744899"
+ },
+ "claims": {
+  "C1": {
+   "axis": "operability (capability acquisition)",
+   "routed_from": "round-32 closure item 5 and round-32 lesson Routed-to-33; stagnation nudge (depth 9, calibration 8 >= line 8; no capability since round 25)",
+   "surface": "new versioned tool tools/tally-audit-v2.py auditing tools/mutate-and-run.sh without editing it",
+   "predicate": "C1 passes at REV iff the committed tools/tally-audit-v2.py at REV, run as `python3 tally-audit-v2.py --runner COPY` in a bwrap sandbox (only the tool and one runner copy visible, stdout only), exits 1 with a last stdout line beginning `TALLY_AUDIT: FAIL` on every one of the 18 public must-kill runner copies and every valid sealed must-kill copy, and exits 0 with a last stdout line beginning `TALLY_AUDIT: PASS` on every one of the 8 public must-accept copies and every valid sealed must-accept copy; REV's tools/mutate-and-run.sh has sha256 a7d3f2dd...2eb9; the tool bytes equal the frozen pin 9dbbce62...33a4; the valid sealed set holds at least 8 must-kill and 6 must-accept copies, each authored after the tool and counter freezes (adding-commit descendant of both); a committed controls receipt (.ufo/evidence/round-33/c1/controls-receipt.json) names this counter's sha256 and records every control tool failing the predicate. Sealed copies are runner copies with exact-string edits and a witness (a status vector on which the mutated tally block's exit+first line differ from pristine, or kind=head for head edits); the counter validates every file and ho_invalid must be 0.",
+   "counter": "python3 .ufo/evidence/round-33/c1/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR [--seed SEED]; controls: python3 .ufo/evidence/round-33/c1/c1-measure.py --lane LANE --rev REV --work EMPTY_DIR --write-controls TOOL [TOOL...]",
+   "label": "C1_R33_PASS",
+   "before": "at base 66e1fb44: no tools/tally-audit-v2.py -> tool_present=0, controls_ok=0, PASS=false, exit 1",
+   "target": "C1_R33_PASS=true with ho_invalid=0 and every valid sealed copy right",
+   "kill_rule": "the first full default-mode counter run at the measurement revision decides; PASS=false is a miss, never re-scaled, re-seeded or amended; a rule changed after any seat has scored is not the claim's rule (amendments land only as new frozen artifacts before any data run and are disclosed in the round lesson)"
+  },
+  "C2": {
+   "axis": "freshness",
+   "routed_from": "S055 digest drift: re-opened round 31 (lesson Gate), carried by the round-31 and round-32 closures",
+   "surface": "corpus/SOURCES.md row supersedes S055 with a versioned python docs pin; committed snapshot .ufo/evidence/round-33/c2/doctest-snapshot.html",
+   "predicate": "C2 passes at REV iff corpus/SOURCES.md at REV carries a row (id > S099) whose teaches cell opens `supersedes S055 -` naming a versioned docs.python.org URL (3.<n>, never the moving /3/ alias); the committed snapshot's sha256 equals the digest frozen in the c2 counter and the digest recorded in the round-33 lesson Gate at REV; and the snapshot contains the quoted module-introduction sentence. Re-derivation runs over committed bytes; no live fetch.",
+   "counter": "python3 .ufo/evidence/round-33/c2/c2-measure.py --lane LANE --rev REV",
+   "label": "C2_R33_PASS",
+   "before": "at base 66e1fb44: no supersedes row, no snapshot -> row=none, PASS=false, exit 1",
+   "target": "C2_R33_PASS=true",
+   "kill_rule": "the first full counter run at the measurement revision decides; false is a miss, never amended after data"
+  }
+ },
+ "no_universal_clauses": "each after-state is one concrete value (a receipt line / counter verdict) re-derivable with the named single command over committed bytes; the only quantifiers run over sets the counter itself enumerates (18+8 public copies, the sealed files present, the SOURCES rows)",
+ "controls_before_data": [
+  "control tools (do-nothing / always-pass / always-fail / junk-output lookalikes of tally-audit-v2.py) are written by wave-1 seats and scored with the frozen counter --write-controls BEFORE any held-out authoring; the receipt is committed; a control that meets the predicate is a finding that blocks data",
+  "the default-mode counter refuses to run unless the committed receipt names its own sha256 (round-32 closure routed item 1)"
+ ],
+ "wave_context_rules": [
+  "no counter runs on tool bytes outside the item that names them (round-32 closure item 2)",
+  "every receipt captures its exit with `cmd; echo $? > file`, never `&&` (round-32 closure item 3)",
+  "held-out author prompts avoid the wording that tripped the provider filter in round 32 (no defeat/exploit vocabulary; frames: runner copies the audit must flag / must accept)"
+ ],
+ "sizing_note": "two claims, distinct axes (operability, freshness), each sized to one counter verdict line; the stagnation nudge waives the lowest-axis obligation and C1 is the capability move"
+}
