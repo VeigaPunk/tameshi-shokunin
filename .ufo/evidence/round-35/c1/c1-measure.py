@@ -162,7 +162,7 @@ def leg_names(head):
 
 def run_block(block, names, vectors, cfg, tmp):
     """Run every vector in one bash process; return [(exit, FULL stdout)] in order."""
-    root_s, auto_s, keep_s = cfg
+    root_s, auto_s, keep_s = cfg_root(cfg), cfg[1], cfg[2]
     decl = ' '.join('%s=${%d}' % (n, i + 1) for i, n in enumerate(names))
     lines = ['set -u -o pipefail', 'tally() {', '  local ' + decl,
              "  local root=%s auto=%s KEEP=%s" % (root_s, auto_s, keep_s),
