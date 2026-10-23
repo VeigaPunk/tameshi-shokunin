@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -eu; S=/tmp/ColdA03-scratch/w8; rm -rf $S; mkdir -p $S/repo; cd $S/repo; git init -q -b main .; cp /tmp/ColdA03-BsUQ/fleet/tameshi-shokunin/tools/mutate-and-run.sh gate.sh; git add gate.sh; git -c user.email=d@e -c user.name=demo commit -qm \"rev A recorded\"; RA=$(git rev-parse HEAD); printf \"\\n# falsifier: one appended line\\n\" >> gate.sh; git add gate.sh; git -c user.email=d@e -c user.name=demo commit -qm \"rev B tip\"; RB=$(git rev-parse HEAD); PIN_A=$(git show \"$RA:gate.sh\" | sha256sum | cut -d\" \" -f1); PIN_B=$(git show \"$RB:gate.sh\" | sha256sum | cut -d\" \" -f1); LIVE_B=$(sha256sum gate.sh | cut -d\" \" -f1); git merge-base --is-ancestor \"$RA\" \"$RB\" && ANC=yes || ANC=no; cp gate.sh $S/gate-drift.sh; printf \"# drift line\\n\" >> $S/gate-drift.sh; DRIFT=$(sha256sum $S/gate-drift.sh | cut -d\" \" -f1); TOOL_SHA=$(sha256sum /tmp/ColdA03-BsUQ/fleet/tameshi-shokunin/tools/mutate-and-run.sh | cut -d\" \" -f1); echo \"recorded-rev=$RA pin=$PIN_A\"; echo \"tip=$RB tipblob=$PIN_B live=$LIVE_B anc=$ANC\"; echo \"driftcopy=$DRIFT tool_sha=$TOOL_SHA\"; if [ \"$PIN_A\" = \"$LIVE_B\" ] && [ \"$LIVE_B\" = \"$PIN_B\" ]; then echo \"reading pristine tip row = current\"; fi; if [ \"$ANC\" = yes ] && [ \"$PIN_A\" != \"$PIN_B\" ]; then echo \"reading recorded rev A row = stale\"; fi; if [ \"$DRIFT\" != \"$PIN_B\" ]; then echo \"reading appended copy = drift\"; fi; if [ \"$DRIFT\" != \"$TOOL_SHA\" ]; then echo \"tool relation vs recorded sha = moved\"; fi"
+  ],
+  "cwd": "/tmp/ColdA03-BsUQ/fleet/tameshi-shokunin",
+  "root": "/tmp/ColdA03-BsUQ/fleet/tameshi-shokunin",
+  "rev": "bb681566b18211adf8ae9c28df91e17678e3f545",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-8lxkhfej/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 40
+}

@@ -18,7 +18,7 @@ import json
 from pathlib import Path
 
 LANE = '/home/vgpnk/Projects/shokunin/tameshi-shokunin'
-PROVENANCE = ('independent seat cold read, round 30 wave 1 ({seats}), read at content revision {rev}; recipe SKILL.md "Recipe for one bucket, cold"; '
+PROVENANCE = ('independent seat cold read, round 30 attempt 3 wave C ({seats}), read at content revision {rev}; recipe SKILL.md "Recipe for one bucket, cold"; '
               'fresh non-author seats dispatched by the L1, not blind to the round')
 
 

@@ -1,0 +1,32 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -e; mkdir -p /tmp/ColdB11-work/sweep/evidence; cp -p tools/mutate-and-run.sh /tmp/ColdB11-work/sweep/pristine.sh; sha256sum /tmp/ColdB11-work/sweep/pristine.sh tools/mutate-and-run.sh; python3 - <<\"PY\"\nold, new = \"  exit 0\", \"  exit 1\"\nm = open(\"/tmp/ColdB11-work/gate.sh\").read()\nprint(\"count(old) in gate =\", m.count(old))\nassert m.count(old) == 1, \"not unique\"\nopen(\"/tmp/ColdB11-work/sweep/mutant-K1.sh\",\"w\").write(m.replace(old, new, 1))\nprint(\"all unique\")\nPY\nsha256sum /tmp/ColdB11-work/gate.sh /tmp/ColdB11-work/sweep/mutant-K1.sh; bash /tmp/ColdB11-work/sweep/mutant-K1.sh --selftest; echo \"mutant-exit=$?\""
+  ],
+  "cwd": "/tmp/ColdB11-RjYK/fleet/tameshi-shokunin",
+  "root": "/tmp/ColdB11-RjYK/fleet/tameshi-shokunin",
+  "rev": "bb681566b18211adf8ae9c28df91e17678e3f545",
+  "rev_reason": null,
+  "exit": 1,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-33o1iha5/pycache"
+    }
+  },
+  "inputs": {
+    "tools/mutate-and-run.sh": "a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}

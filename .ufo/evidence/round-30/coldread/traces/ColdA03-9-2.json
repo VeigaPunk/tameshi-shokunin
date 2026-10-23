@@ -1,0 +1,30 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "bash",
+    "-c",
+    "set -eu; S=/tmp/ColdA03-scratch/w9; rm -rf $S; mkdir -p $S/repo; cd $S/repo; git init -q -b main .; GIT_OPTIONAL_LOCKS=0 git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 175de6ba2e9e904010411b19cab27e0af9aad3d4:scripts/kimi-census.mjs > kimi-census.mjs; git add kimi-census.mjs; git -c user.email=d@e -c user.name=demo commit -qm \"materialized 175de6ba blob\"; LIVEBLOB=$(git show \"HEAD:kimi-census.mjs\" | sha256sum | cut -d\" \" -f1); PIN_REC=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426; PIN_SUP=084951be50bcbfee5e3f22de3c270d87131550ea1ce8264a557a34c5809c78c5; echo \"substrate blob=$LIVEBLOB\"; if [ \"$PIN_REC\" = \"$LIVEBLOB\" ]; then echo \"row as recorded (pin 83016d45) reads: current\"; fi; if [ \"$PIN_SUP\" != \"$LIVEBLOB\" ]; then echo \"row with pin swapped to superseded 084951be reads: stale\"; fi"
+  ],
+  "cwd": "/tmp/ColdA03-BsUQ/fleet/tameshi-shokunin",
+  "root": "/tmp/ColdA03-BsUQ/fleet/tameshi-shokunin",
+  "rev": "bb681566b18211adf8ae9c28df91e17678e3f545",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_EDITOR",
+      "GIT_PAGER",
+      "GIT_TERMINAL_PROMPT"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/trace-inputs-run-phbpmsx9/pycache"
+    }
+  },
+  "inputs": {},
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 24
+}
