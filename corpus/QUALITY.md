@@ -643,3 +643,104 @@ motivate the rule, not a claim that the new rule has been operationalized.
     Falsifier: round 28 filed against `1076914a`, then landed `41da22a3`
     and `1dde85f3` and rewrote the report `2012146` → `38ae0ff`, so the
     check prints two commits.
+
+## Criteria appended — round 30 (2026-10-23)
+
+Routed by `lessons/round-29-verifier-spotcheck.md` (routed items 1–7; 5(c)
+and item 7's S059 and MutateLegSum carry-overs are work assignments, not
+criteria), `lessons/round-29.md` Mistakes 1, 4 and 5, and round-30 controls.
+
+58. Round 30. A required control whose seat is refused or dies blocks the
+    data wave until another control of the same class is built and scored,
+    by another seat or by the L1, which records which one built it. The
+    refused seat's task is never resent. A claim whose contract names a
+    shortcut control class with no scored receipt is declared exploratory
+    before data, or it does not dispatch. Captured by: spot-check routed
+    item 1. Falsifier: round 29 `contract.json` lists the class "shortcut
+    keyed on ids or labels", and `.ufo/waves/round-29/ctl/` holds no scored
+    receipt for it. CtlC1Shortcut and CtlC2Shortcut were refused, and wave 1
+    dispatched anyway. The refusal holds are recorded in
+    `.ufo/waves/round-29/res/ReviewControls.md`.
+
+59. Round 30. Data dispatches only after every control report file is
+    present at its path, or its seat is recorded dead with its error text
+    after a final check of that path. A seat's status is not that check.
+    The control receipts are committed in a lane commit that precedes the
+    data-wave spec commit. Mtimes are not the ordering proof. Captured by:
+    spot-check routed items 4 and 7 (Mistake 1).
+    Falsifier: `.ufo/evidence/round-30/r29-mistake1-ordering.txt`, committed
+    in the same lane commit as this criterion.
+    `CriticC2v2.md` mtime 22:33:57-03 is after `task-adapter-w1.json`
+    22:27:45-03, and both first landed together in `bc2058a4`, so no
+    committed order existed.
+
+60. Round 30. Every appended cold-read entry carries a binding to an
+    artifact outside the report. The round's binding receipt names the
+    registry member, its agent id and its host session transcript path
+    with sha256, so a closure checks it without a session search. Any
+    binding check is run on one real assembled entry before it is frozen.
+    The wave context fixes `seat` to the registry name. Captured by:
+    spot-check routed items 2 and 3 (Mistake 5). Falsifier:
+    `.ufo/evidence/round-29/coldread/select-receipt-w1.json` lists 10
+    entries excluded on assembler shape alone (assembler verdict
+    normalization, report `executed-ok` vs entry `gap-minor`, and seat
+    self-labels such as `TameshiR29.Read08A`), every report verdict a
+    passing class.
+
+61. Round 30. Every wave context carries both rules: absolute lane paths for
+    every `Report:` trailer, and "never kill a process you did not start;
+    check /proc/<pid>/cwd first". Before assembly, the report files present
+    are compared with the registry members that returned, and any gap
+    triggers the misroot sweep. Captured by: spot-check routed items 5(a)
+    and 5(b) (Mistakes 3 and 4). Falsifier: round 29 `spec-w1.json`
+    `context` lacks the never-kill sentence (BuildF6B killed BuildF6A's
+    PID 2758108), and `lessons/round-29.md` Mistake 3 records Read10C's
+    report written at the fleet root and moved byte-exact (sha256
+    `fafd4c36…`).
+
+62. Round 30. A report names a revision as measured only if a counter
+    receipt for that revision is committed. A value that appears in no
+    committed receipt is not reported. A value carried from an
+    input-identical revision is labelled as inferred. Captured by:
+    spot-check routed item 6. Falsifier: the round-29 report gives C2
+    `quote_located=1` and names three head commits, while the only C2 head
+    receipt, `.ufo/evidence/round-29/c2-at-E.stdout` (measured rev
+    `7a45f7b9`, committed at `9bb699ad`), reads `quote_located=0`, and no C2
+    receipt is committed for `6892c3ee`, `1a1e8b22` or `3c16b3a6`.
+
+63. Round 30. Before a round edits a widely read lane file or tool, it
+    measures that edit's cold-read drift on a sandbox commit and plans the
+    re-reads in the same round. If the round cannot staff the re-reads, it
+    does not make the edit. Captured by: QUALITY 56 as applied in round 29
+    (the widely read edits landed at `9f3084bc` and dropped the monitor to
+    52/64 before the re-reads were staffed). Falsifier:
+    `.ufo/evidence/round-30/drift-sim-union4.txt`: one comment line
+    appended to each of SOURCES, QUALITY, README and the runner drops
+    64 → 33 credited sections (`rev=daa11583`), against 52 with the three
+    file edits and no runner edit (`.ufo/evidence/round-29/c1-at-A.stdout`,
+    rev `9f3084bc`).
+
+64. Round 30. A counter that drives a program under test gives every judged
+    run the same observable identity: no run learns its job label, class or
+    role (pristine, drop, held-out, sealed, equivalent) from its working
+    directory or name, argv, environment, stdin, a file it can read, or the
+    /proc entry of its parent. Before data, a control keyed on job identity
+    is scored against the frozen counter and must not pass. Captured by:
+    control K9 against the round-30 v4 draft counter. Falsifier:
+    `.ufo/evidence/round-30/v4/c1-measure-v4-draft.py` ran each `--selftest`
+    in a directory named after its job (`st-<job>`), and
+    `.ufo/evidence/round-30/v4/K9-on-draft.stdout` reads `PREDICATE:
+    C1_R30_PASS=true`, while the same control on the frozen counter
+    (`.ufo/evidence/round-30/v4/K9.stdout`) reads `PREDICATE:
+    C1_R30_PASS=false`.
+
+65. Round 30. A counter that scores only verdicts (kills and accepted
+    rewrites) cannot tell a program that runs the judged code from one that
+    models it correctly. A claim whose property is "runs the code" names a
+    measure that a correct static model fails, or it is exploratory and the
+    property is checked by reading the code. Captured by: control
+    CtlS2SymEval. Falsifier: `.ufo/evidence/round-30/v4/ctl2/CtlS2SymEval-v4.stdout`
+    reads `sealed_killed=6/6 sealed_equiv=6/6` and `PREDICATE:
+    C1_R30_PASS=true` for a selftest that never runs bash on the block
+    (`.ufo/evidence/round-30/wA/CtlS2SymEval-11.diff`), which forced
+    `.ufo/evidence/round-30/contract-amendment-4.json`.

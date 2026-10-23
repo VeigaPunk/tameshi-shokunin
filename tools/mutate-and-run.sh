@@ -131,7 +131,9 @@
 # exercised by --selftest. Inside the stated expectation is PASS; outside it is
 # FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
 # table outside its expectation) · 2 a case could not be verified — missing
-# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL. Lines:
+# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL, or (r30) the
+# counted pass/fail/setup statuses do not add up to the case count (SETUP
+# "case-tally mismatch"; --selftest runs the tally block under fixed statuses). Lines:
 # REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_EXPECT /
 # REGRESSION_PIN (one per leg: git source + pinned target sha256; the sweep's
 # own MUTATE_TOOL line carries the tool pin) / REGRESSION_SWEEP /
@@ -1448,6 +1450,15 @@ run_regression() {
     printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
     exit 2
   fi
+  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
+  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
+  # of a mutation report are sums of its per-state counts).
+  if (( npass + nfail + nsetup != nlegs )); then
+    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
+      "$nlegs" "$((npass + nfail + nsetup))"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    exit 2
+  fi
   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
     "$nlegs" "$npass"
   if [[ $auto -eq 1 && $KEEP -eq 0 ]]; then
@@ -1974,6 +1985,59 @@ EOT
     fi
     st "embedded leg $lname: spec and recorded table agree" "$(( 1 - le_ok ))"
   done
+
+  # r30: --regression case-tally behavior. Runs run_regression's tally block, extracted from this
+  # file, under fixed leg statuses. The leg status names come from run_regression's `st_*=$?`
+  # assignments, not from the tally loop, so a status left out of the loop is caught.
+  local tblock tgot tvec ti tj
+  local -a tnames
+  tblock=$(awk '/^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f' "$SELF")
+  mapfile -t tnames < <(awk '/^run_regression\(\) \{$/{f=1} /^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=0} f&&/^  st_[a-z]+=\$\?$/{sub(/^  /,""); sub(/=\$\?$/,""); print}' "$SELF")
+  [[ -n "$tblock" && ${#tnames[@]} -eq 9 ]]
+  st "tally harness: block extracted, leg status names=${#tnames[@]} (want 9)" $?
+  tally_line() { # tally_line <want-exit> <want-first-line> <status>... — 0 iff both match
+    local want_rc=$1 want_line=$2 decl='' k=0 s out rc
+    shift 2
+    for s in "$@"; do decl+="${tnames[$k]}=$s "; k=$((k + 1)); done
+    printf '%s\n' 'set -u -o pipefail' 'tally() {' "  local $decl" \
+      '  local root=selftest-tally auto=0 KEEP=1' "$tblock" '}' 'tally' >"$root/tally.sh"
+    out=$(bash "$root/tally.sh" 2>&1)
+    rc=$?
+    [[ $rc -eq $want_rc && "${out%%$'\n'*}" == "$want_line" ]]
+  }
+  tally_line 0 'REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)' 0 0 0 0 0 0 0 0 0
+  st 'tally harness: all nine legs pass -> PASS passed=9, exit 0' $?
+  for tvec in '1:1:REGRESSION: FAIL (cases=9 passed=8 failed=1 setup=0)' \
+    '2:2:REGRESSION: SETUP (cases=9 passed=8 cannot-verify=1)'; do
+    tgot=0
+    for ti in 0 1 2 3 4 5 6 7 8; do
+      local -a tst=(0 0 0 0 0 0 0 0 0)
+      tst[ti]=${tvec%%:*}
+      tj=${tvec#*:}
+      tally_line "${tj%%:*}" "${tj#*:}" "${tst[@]}" && tgot=$((tgot + 1))
+    done
+    [[ $tgot -eq 9 ]]
+    st "tally harness: one leg status ${tvec%%:*} at each of 9 positions -> ${tj#*:} (${tgot}/9)" $?
+  done
+  # r30 (wave-A MutateTallyExtra survivors): two failing legs, two setup legs, a mixed fail+setup
+  # vector (FAIL wins) and an unknown status 3 (SETUP), each by exact first line and exit.
+  for tvec in '1 1 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=9 passed=7 failed=2 setup=0)' \
+    '2 2 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=9 passed=7 cannot-verify=2)' \
+    '1 2 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=9 passed=7 failed=1 setup=1)' \
+    '3 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=9 passed=8 cannot-verify=1)'; do
+    tj=${tvec#*:}
+    # shellcheck disable=SC2086 # the status list splits into nine arguments on purpose
+    tally_line "${tj%%:*}" "${tj#*:}" ${tvec%%:*}
+    st "tally harness: statuses ${tvec%%:*} -> ${tj#*:}" $?
+  done
+  # The completeness guard itself: the same block with the loop's last operand removed must
+  # refuse as SETUP (case-tally mismatch), not print PASS with eight counted legs.
+  local tblock_full=$tblock
+  tblock=$(printf '%s\n' "$tblock_full" | sed -E '0,/^  for st in /s/ "\$st_[a-z]+"; do$/; do/')
+  [[ "$tblock" != "$tblock_full" ]] &&
+    tally_line 2 'REGRESSION: SETUP (case-tally mismatch: cases=9 counted=8)' 0 0 0 0 0 0 0 0 0
+  st 'tally harness: loop missing one operand -> SETUP case-tally mismatch, exit 2' $?
+  tblock=$tblock_full
 
   bash "$SELF" --help >/dev/null 2>&1; [[ $? -eq 0 ]]; st 'help exits 0' $?
   bash "$SELF" --defects "$fx/spec-ok.spec" --suite true >/dev/null 2>&1; [[ $? -eq 64 ]]; st 'missing --target exits 64' $?

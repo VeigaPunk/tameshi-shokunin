@@ -445,3 +445,12 @@ still kills B5 and is 1-minimal at line and file granularity. Counter
 `.ufo/evidence/round-29/contract.json`. The outcome is recorded in
 `corpus/lessons/round-29.md` and in the entry the counter names, whether or
 not the target is met; this section claims no status change for F6.
+
+## Round 30 — regression tally completeness (exploratory), S092–S094
+
+| Entry / ground | Admission and exact scope | Evidence |
+|---|---|---|
+| `knowledge/regression-tally-completeness.md` | Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression`), not a frontier move. The tally refuses as SETUP when the counted leg statuses do not add up to the case count; `--selftest` runs the extracted tally block under 23 fixed status vectors and a guard stress case (97 → 106 cases). Claim C1 is exploratory: a static-model control met the frozen counter v4 before data | S087 (re-opened), S093, S094; `.ufo/evidence/round-30/contract-amendment-4.json` |
+| S092 supersedes S059 | Anchor re-pin only. The markdown digest changed and the quoted known issue still stands | `.ufo/evidence/round-30/sources/S059-bazel-remote-caching.md` |
+
+No frontier row changes status this round (F1–F10 as above).
