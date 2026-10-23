@@ -24,6 +24,14 @@ Routed repairs carried into this counter (round-32 closure items 1 and 4):
   - witness.loop names are validated against ^[A-Za-z_][A-Za-z0-9_]*$ before any bash use;
   - a non-string block witness is a validation error (ho_invalid), never a crash;
   - held-out discovery is recursive (any depth under .ufo/evidence/round-33/heldout).
+Routed repairs carried into this counter (round 34, amendment 6, pre-authoring and pre-data):
+  - the sealed-copy witness gate is SET-AWARE (RevengerWitness Q1b/Q3/Q3b, routed by the
+    round-33 closure): kill+head requires a leg-assignment-line diff with an identical block;
+    accept+head requires an identical block; accept+vector requires behavioral equivalence
+    (a == b) with the bytes changed; kill+vector keeps a != b over a len-9 vector. Adopted
+    BEFORE any sealed held-out authoring; no default-mode deciding run had occurred at
+    amendment time (round-33 head receipt is a not-run structural false; r34 dev/panel runs
+    are authoring observations, not the deciding run).
 """
 import argparse
 import hashlib
@@ -174,17 +182,39 @@ def block_run(block, vector, work):
 
 
 def ho_witness_ok(ho, pristine, mutated, work):
+    # Amendment 6 (r34, pre-authoring, pre-data; RevengerWitness Q1b/Q3/Q3b): the set-aware
+    # witness rule. kill+head requires a leg-assignment-line diff with an identical block;
+    # accept+head requires an identical block (a lethal ride-along behind a benign head edit
+    # is refused); accept+vector flips to equivalence (a == b), so cosmetic/decoy clones are
+    # satisfiable; kill+vector keeps a != b with len==9 (validated in validate_ho).
     w = ho.get('witness') or {}
+    pb, mb = tally_block_of(pristine), tally_block_of(mutated)
     if w.get('kind') == 'head':
-        return head_of(mutated) != head_of(pristine), 'head'
+        if head_of(mutated) == head_of(pristine):
+            return False, 'head'
+        if mb != pb:
+            return False, 'head-with-block-edit'
+        if ho['set'] == 'kill':
+            # v2's head check kills exactly: a leg var not assigned exactly once as bare
+            # `st_x=$?` before the block, or an extra assignment to a leg var. Require the
+            # diff to touch that surface (an inert rename/comment head edit then validates
+            # as invalid, never as a must-kill the tool would blamelessly pass).
+            A = re.compile(r'^[ \t]*(st_[A-Za-z0-9_]+)=\$\?[ \t]*$', re.M)
+            X = re.compile(r'^[ \t]*(st_[A-Za-z0-9_]+)[ \t]*=', re.M)
+            if (sorted(A.findall(head_of(pristine))) != sorted(A.findall(head_of(mutated)))
+                    or sorted(X.findall(head_of(pristine))) != sorted(X.findall(head_of(mutated)))):
+                return True, 'head-leg-assignment'
+            return False, 'head-edit-cannot-kill'
+        return True, 'head'
     vec = w.get('vector')
     if not vec:
         return False, 'no-witness'
-    pb, mb = tally_block_of(pristine), tally_block_of(mutated)
-    if pb == mb:
-        return False, 'block-identical'
     a = block_run(pb, vec, work)
     b = block_run(mb, vec, work)
+    if ho['set'] == 'accept':
+        return a == b and mutated != pristine, 'vector-equivalence'
+    if pb == mb:
+        return False, 'block-identical'
     return a != b, 'vector'
 
 

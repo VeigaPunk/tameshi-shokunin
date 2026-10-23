@@ -135,3 +135,24 @@ Row changes, old → new (`corpus/SOURCES.md`, rows 96 → 97): S100 added (mine
 - Dead seats: none in wave 1 (33/33 returned). Round total: 33 seats, one wave, no residual call.
 
 Misroot sweep: no seat files landed at the fleet root (checked at report time).
+
+## R34 append — closure-routed corrections (append-only; author TameshiR34)
+
+- **Routed defect 1 (stale pin):** the Holds line "author the sealed held-out set against tool
+  sha `7a59f576…8833` (amendment 3)" is STALE. Amendment 5 (`ee398492`) re-pinned the tool to
+  `7b11ba25…8d10`, the sha the c1 counter requires. Round 34 authors and measures against
+  `7b11ba25…8d10` per the r33 closure and the session receipt-attestation rule.
+- **Routed defect 2 (post-report work):** commits 8b7f3d60 and 051c1e65 (Holds updates) landed
+  after the round-33 report; the two seat reports `.ufo/waves/round-33/w1/DevPrintf.md` and
+  `.ufo/waves/round-33/w1/RevengerWitness.md` were untracked at closure. Round 34 commits both
+  seat reports under its first commit and records the divergence here.
+- **Routed defect 4 (Gate word count):** the S100 Gate quote is 14 words, not 17; the ≤25-word
+  contract is satisfied. Cosmetic; recorded, the Gate row itself is left untouched.
+- **Set-aware witness rule ADOPTED pre-authoring (amendment 6):** this lesson's RevengerWitness
+  Hold required the set-aware witness rule before any sealed authoring — implemented in
+  `.ufo/evidence/round-33/c1/c1-measure.py` (ho_witness_ok) and disclosed in
+  `.ufo/evidence/round-33/contract-amendments.json` (amendment 6) BEFORE the held-out set was
+  authored. The v3 residue classes NOT adopted pre-data (Guard-2 divisibility, TallyArms-02
+  coexistence, quoted case subject, helper-function refactors, per-index record parsing,
+  preamble seeding, nonzero-leg stress, all-pairs nlegs recompute): the tool pin is frozen at
+  `7b11ba25…8d10`; they ride to round 35 under the same freeze-before-data discipline.
