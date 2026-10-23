@@ -114,6 +114,17 @@ Row changes, old → new (`corpus/SOURCES.md`, rows 96 → 97): S100 added (mine
 
 ## Holds (routed to round 34)
 
+- **RevengerWitness**: the counter's witness semantics mapped end to end. `kind=head` is text-only —
+  an inert head edit validates as must-kill and a benign-head+lethal-block ride-along validates as
+  must-accept, so the frozen rule is voidable in both directions by sealed-copy construction, and
+  cosmetic accept clones (round-32 B4/gB7/B3 shapes) are unsatisfiable under the a!=b vector rule
+  (set-blind). The len!=9 guard it confirms is already amendment-5 (`ee398492`). r34 MUST adopt the
+  set-aware witness rule from `w1/RevengerWitness.md` (kill+head requires a leg-assignment-line diff
+  with an identical block; accept+head requires an identical block; accept+vector flips to
+  equivalence a==b) BEFORE authoring the sealed set — the frozen rule as-is would void the claim on
+  cosmetic clones. No round-33 verdict is affected: C1 was not measured.
+
+
 - C1 measurement: author the sealed held-out set against tool sha `7a59f576…8833` (amendment 3),
   mint the controls receipt at the measurement revision, run the counter. v3 tool classes if any
   seat finds another survivor: Guard-2 divisibility, TallyArms-02 coexistence, quoted case subject,
