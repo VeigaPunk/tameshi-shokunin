@@ -1,0 +1,27 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "round": 29,
+  "amends": ".ufo/evidence/round-29/contract.json claim C1 (commit 9f3084bc60ad56aac01e4556ef4c7653df2f65e5)",
+  "made_before_data": true,
+  "data_seats_run_before_amendment": 0,
+  "reason": "Pre-freeze control wave: seat CriticC1Design (.ufo/waves/round-29/ctl/CriticC1Design.md) found the v1 counter's executable identity unpinned (it ran the round-27 counter and through it the monitor from the measured checkout's working tree), the prefix check type-loose and blind to non-entry keys, and the binding check blind to verdict and read_rev. Controls K1-K4 (seat CtlC1Cheap) did not meet v1; K4 gained monitor-only credit for one section without a reader, which the binding check rejected. v2 tightens these before any cold-read seat runs; the target is unchanged.",
+  "claims": [
+    {
+      "id": "C1",
+      "axis": "calibration",
+      "surface": "SHONEN box 3 self-assessment against the cold-read ledger at the landed head (routed item 1 of corpus/lessons/round-28-verifier-spotcheck.md)",
+      "counter": "python3 .ufo/evidence/round-29/c1-measure-v2.py --repo CLONE --rev REV",
+      "counter_sha256": "2ec2f1a02f73ba10136288abc06197cd73cb388c013db80af3a926959ed70491",
+      "pinned_monitor_sha256": {
+        ".ufo/evidence/round-21/coldread/measure.py": "657f009bdf1cc89ac614ed7c8424858f5f802b5a5330d8917db788f67982f3eb",
+        ".ufo/evidence/round-18/measure.py": "7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37"
+      },
+      "predicate_label": "C1_R29_V2_PASS",
+      "predicate": "PASS iff the pinned strict cold-read monitor at REV reports covered == total, restraint == 8 and box3_mismatch == 0 with no override, AND the cold-read ledger at REV keeps the 371 base entries and every non-entry key equal as data (canonical JSON), AND every ledger entry appended after base index 370 is bound to round-29 seat evidence: each of its reports exists at REV under .ufo/waves/round-29/, holds a json block whose seat is one of the entry's seats, whose read_rev equals the entry's read_rev, and whose sections name the entry's start and heading with the entry's verdict, and each of its seats is a member of a committed .ufo/waves/round-29/*/swarm-registry.json at REV.",
+      "before": "C1_R29_V2 at base 367ec0f1: covered=63/64 restraint=6 box3_mismatch=1, PASS=false (receipt .ufo/waves/round-29/ctl/C1v2-rescore.txt)",
+      "target": "PREDICATE: C1_R29_V2_PASS=true, exit 0, at the landed lane head named in the report",
+      "kill_rule": "C1_R29_V2_PASS=false at the landed head is a miss: reported as an honest stop, never amended or re-scaled",
+      "bound": "The binding check is syntactic: it cannot tell a seat-written report from an L1-forged report plus a forged registry member; seat CtlC1Shortcut, assigned to probe that class, ended on a provider safety refusal (hold). The closure can check seat transcripts."
+    }
+  ]
+}
