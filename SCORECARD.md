@@ -1778,3 +1778,12 @@ lexer or enumerated supported-form list); the open recall classes in the round-3
 ### Round 36 control-input erratum (round 37)
 
 The round-36 empty-panel stdout files remain historical outputs, but their `rev=91373d55557fe26c431e9e3dd9e8fa4a00d7b57f` input is not an object in this lane (`git cat-file -e` fails at the r36 tip `d9c496b19371b779ce0eec6dfee1b049b27a3a2d`). The closure-routed control is now reconstructed from the committed tree/spec at `.ufo/evidence/round-37/control/empty-panel/manifest.json`: source panel tree `4f3d8af5b62ba04a5ff825bfdaec6c9193f8489e`, nine committed specimens, deterministic empty-panel input. The replay receipt `.ufo/evidence/round-37/control/replay-at-final-fixed.stdout` runs the frozen v1/v2 counters at the resolvable counter revision and reads the committed panel tree at its resolvable panel revision. This correction does not rewrite the r36 receipts.
+
+### Round 36 control-mode erratum (round 37)
+
+The historical r36 empty-panel receipts (`.ufo/evidence/round-36/control/v1-at-emptypanel.stdout:8` and `.ufo/evidence/round-36/control/v2-at-emptypanel.stdout:8`) use the default `mode=deciding` label although they are mutant controls. The frozen counters support `--tool` control mode; the r37 replay now passes the identical committed tool bytes explicitly, verifies the frozen SHA-256, and requires `mode=control` with `C1_R35_CONTROL_PASS=true` / `C1_R36V2_CONTROL_PASS=false`. `.ufo/evidence/round-37/control/replay-at-final-control.stdout` is the authoritative explicit-mode receipt; the earlier r37 attempt remains historical.
+
+### Round 36 scorecard/control-pointer errata (round 37)
+
+The round-36 C1 table's `control/monitor-at-content-commit.*` shorthand does not name a committed file; the actual control receipts are `.ufo/evidence/round-36/control/monitor-at-e423c41b.{stdout,stderr,exit}`. The r36 `Numeric axes, measured` prose was already present at content revision `e423c41ba253357ab8c8513f0376dad9d38ab248`, before the after run. Read its `8, 64/64` sentence at that revision as a pre-registered target, not an observed result; the measured result is the committed `.ufo/evidence/round-36/after/monitor-at-b455001e.stdout` at `b455001e2589b3f4f471d94a3de7e5e549b9f54c`, reproduced at the r36 tip in the non-author spot-check. This corrects evidence timing and path wording only; the verified 6 → 8 result is unchanged.
+
