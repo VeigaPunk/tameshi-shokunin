@@ -41,6 +41,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lane", required=True)
     ap.add_argument("--rev", required=True)
+    ap.add_argument("--panel-rev")
     ap.add_argument("--work-root", required=True)
     ap.add_argument("--sealed", default=".ufo/evidence/round-35/c1/sealed")
     a = ap.parse_args()
@@ -50,8 +51,13 @@ def main():
         print("EMPTY_PANEL_REPLAY: SETUP rev_unresolved=%s" % a.rev)
         return 2
     rev = rev_result.stdout.decode().strip()
+    panel_rev_result = git(lane, "rev-parse", "--verify", a.panel_rev or rev)
+    if panel_rev_result.returncode:
+        print("EMPTY_PANEL_REPLAY: SETUP panel_rev_unresolved=%s" % (a.panel_rev or rev))
+        return 2
+    panel_rev = panel_rev_result.stdout.decode().strip()
     try:
-        manifest = manifest_at(lane, rev)
+        manifest = manifest_at(lane, panel_rev)
     except (RuntimeError, ValueError, UnicodeDecodeError) as exc:
         print("EMPTY_PANEL_REPLAY: SETUP manifest_error=%s" % type(exc).__name__)
         return 2
@@ -72,7 +78,7 @@ def main():
     if sorted(source_names) != sorted(expected_names) or len(source_names) != 9:
         print("EMPTY_PANEL_REPLAY: SETUP source_specimen_set_mismatch")
         return 2
-    empty_paths_result = git(lane, "ls-tree", "-r", "--name-only", rev, "--", EMPTY_PANEL)
+    empty_paths_result = git(lane, "ls-tree", "-r", "--name-only", panel_rev, "--", EMPTY_PANEL)
     empty_paths = [n for n in empty_paths_result.stdout.decode().splitlines() if n]
     if empty_paths != [EMPTY_PANEL + "/manifest.json"]:
         print("EMPTY_PANEL_REPLAY: SETUP mutant_tree_not_empty paths=%d" % len(empty_paths))
@@ -102,7 +108,7 @@ def main():
 
         def committed_panel_loader(lane_arg, rev_arg, reldir, original=original_loader):
             if reldir == SOURCE_PANEL:
-                return original(lane_arg, rev_arg, EMPTY_PANEL)
+                return original(lane_arg, panel_rev, EMPTY_PANEL)
             return original(lane_arg, rev_arg, reldir)
 
         namespace["load_copies_rev"] = committed_panel_loader
@@ -131,8 +137,8 @@ def main():
     v1_ok = results["v1"][0] == 0 and "C1_R35_PASS=true" in results["v1"][1] and "pub_kill=0/0" in results["v1"][1]
     v2_ok = results["v2"][0] == 1 and "C1_R36V2_PASS=false" in results["v2"][1] and "pub_kill_slots=0" in results["v2"][1]
     ok = v1_ok and v2_ok
-    print("EMPTY_PANEL_REPLAY: source_tree=%s source_specimens=9 empty_specimens=0 rev=%s v1_pass=%d v2_reject=%d EMPTY_PANEL_REPLAY_PASS=%s"
-          % (manifest["source_panel_tree"], rev, int(v1_ok), int(v2_ok), "true" if ok else "false"))
+    print("EMPTY_PANEL_REPLAY: source_tree=%s source_specimens=9 empty_specimens=0 counter_rev=%s panel_rev=%s v1_pass=%d v2_reject=%d EMPTY_PANEL_REPLAY_PASS=%s"
+          % (manifest["source_panel_tree"], rev, panel_rev, int(v1_ok), int(v2_ok), "true" if ok else "false"))
     return 0 if ok else 1
 
 

@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+import re
 
 OLD_MUTANT = "91373d55557fe26c431e9e3dd9e8fa4a00d7b57f"
 ERRATUM_MARKER = "### Round 36 control-input erratum (round 37)"
@@ -45,8 +46,8 @@ def main():
         print("C1_R37: SETUP scorecard_unresolved")
         return 2
 
-    correction = ERRATUM_MARKER.encode() in scorecard
     manifest_ok = False
+    source_rev = None
     if manifest_bytes is not None:
         try:
             doc = json.loads(manifest_bytes.decode("utf-8"))
@@ -64,14 +65,25 @@ def main():
         except (KeyError, ValueError, UnicodeDecodeError):
             manifest_ok = False
 
-    def receipt_ok(raw, label, wanted):
-        if raw is None:
+    def receipt_ok(raw, label, wanted, counter_rev):
+        if raw is None or not counter_rev:
             return False
         text = raw.decode("utf-8", "replace")
-        return (label in text and wanted in text and "rev=" + rev in text)
+        panel_match = re.search(r"panel_rev=([0-9a-f]{40})", text)
+        counter_match = re.search(r"counter_rev=([0-9a-f]{40})", text)
+        if not panel_match or not counter_match:
+            return False
+        panel_rev = panel_match.group(1)
+        measured_counter_rev = counter_match.group(1)
+        panel_commit = git(lane, "cat-file", "-e", panel_rev + "^{commit}")
+        counter_commit = git(lane, "cat-file", "-e", measured_counter_rev + "^{commit}")
+        panel_ancestor = git(lane, "merge-base", "--is-ancestor", panel_rev, rev)
+        return (label in text and wanted in text and "EMPTY_PANEL_REPLAY_PASS=true" in text
+                and measured_counter_rev == counter_rev and panel_commit.returncode == 0
+                and counter_commit.returncode == 0 and panel_ancestor.returncode == 0)
 
-    receipts_ok = (receipt_ok(replay, "C1_R35_PASS=true", "pub_kill=0/0")
-                   and receipt_ok(replay, "C1_R36V2_PASS=false", "pub_kill_slots=0"))
+    receipts_ok = (receipt_ok(replay, "C1_R35_PASS=true", "pub_kill=0/0", source_rev)
+                   and receipt_ok(replay, "C1_R36V2_PASS=false", "pub_kill_slots=0", source_rev))
     old_commit = git(lane, "cat-file", "-e", OLD_MUTANT + "^{commit}")
     old_unresolved_superseded = old_commit.returncode != 0 and correction and manifest_ok and receipts_ok
     mismatches = 0 if old_unresolved_superseded else 1
