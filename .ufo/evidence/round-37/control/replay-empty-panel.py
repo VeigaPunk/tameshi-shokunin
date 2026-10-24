@@ -134,8 +134,13 @@ def main():
         for line in output.splitlines():
             print(line)
 
-    v1_ok = results["v1"][0] == 0 and "C1_R35_PASS=true" in results["v1"][1] and "pub_kill=0/0" in results["v1"][1]
-    v2_ok = results["v2"][0] == 1 and "C1_R36V2_PASS=false" in results["v2"][1] and "pub_kill_slots=0" in results["v2"][1]
+    v1_ok = (results["v1"][0] == 0 and "C1_R35_PASS=true" in results["v1"][1]
+             and "tool_sha_ok=1" in results["v1"][1] and "pub_kill=0/0" in results["v1"][1]
+             and "pub_accept=0/0" in results["v1"][1])
+    v2_ok = (results["v2"][0] == 1 and "C1_R36V2_PASS=false" in results["v2"][1]
+             and "tool_sha_ok=1" in results["v2"][1] and "pub_kill=0/0" in results["v2"][1]
+             and "pub_accept=0/0" in results["v2"][1] and "pub_slots=0" in results["v2"][1]
+             and "pub_distinct=0" in results["v2"][1])
     ok = v1_ok and v2_ok
     print("EMPTY_PANEL_REPLAY: source_tree=%s source_specimens=9 empty_specimens=0 counter_rev=%s panel_rev=%s v1_pass=%d v2_reject=%d EMPTY_PANEL_REPLAY_PASS=%s"
           % (manifest["source_panel_tree"], rev, panel_rev, int(v1_ok), int(v2_ok), "true" if ok else "false"))

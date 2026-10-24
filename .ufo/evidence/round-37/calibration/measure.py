@@ -10,7 +10,7 @@ import re
 OLD_MUTANT = "91373d55557fe26c431e9e3dd9e8fa4a00d7b57f"
 ERRATUM_MARKER = "### Round 36 control-input erratum (round 37)"
 MANIFEST = ".ufo/evidence/round-37/control/empty-panel/manifest.json"
-REPLAY_RECEIPT = ".ufo/evidence/round-37/control/replay-at-final.stdout"
+REPLAY_RECEIPT = ".ufo/evidence/round-37/control/replay-at-final-fixed.stdout"
 
 
 def git_env():
@@ -45,6 +45,7 @@ def main():
     if scorecard is None:
         print("C1_R37: SETUP scorecard_unresolved")
         return 2
+    correction = ERRATUM_MARKER.encode() in scorecard
 
     manifest_ok = False
     source_rev = None
@@ -83,7 +84,7 @@ def main():
                 and counter_commit.returncode == 0 and panel_ancestor.returncode == 0)
 
     receipts_ok = (receipt_ok(replay, "C1_R35_PASS=true", "pub_kill=0/0", source_rev)
-                   and receipt_ok(replay, "C1_R36V2_PASS=false", "pub_kill_slots=0", source_rev))
+                   and receipt_ok(replay, "C1_R36V2_PASS=false", "pub_slots=0", source_rev))
     old_commit = git(lane, "cat-file", "-e", OLD_MUTANT + "^{commit}")
     old_unresolved_superseded = old_commit.returncode != 0 and correction and manifest_ok and receipts_ok
     mismatches = 0 if old_unresolved_superseded else 1
