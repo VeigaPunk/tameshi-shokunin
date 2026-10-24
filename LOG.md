@@ -1940,3 +1940,56 @@ metadata and its failure are preserved; production gate source is unchanged.
   validator-checked specs (`validate-w1.json`, `validate-w2.json`) and itemized as
   prepared-but-undispatched receipts in the round report; the orchestrator dispatches them
   between rounds. Round total 78 prepared seats; 0 dispatched this seat.
+## Round 37 — committed control input (calibration) + bounded ANSI-C code-view (depth capability) (2026-10-24)
+
+- Correction to the round-36 entry (append-only; the entry stays as written): its
+  `control/monitor-at-content-commit.*` pointer resolves to no committed file; the actual
+  control receipts are `.ufo/evidence/round-36/control/monitor-at-e423c41b.{stdout,stderr,exit}`.
+  Its waves paragraph names `validate-w1.json`/`validate-w2.json`; the committed validator
+  artifacts are `validate-w1.stdout`/`validate-w2.stdout` (empty `.stderr`), with no exit
+  receipts. Its census sentence says both receipts were kept under
+  `.ufo/evidence/round-36/`; only the end-side census exists — the start value 99 re-derives
+  at `796e08b` via `git show 796e08b888849308d0c4d5e932e56833600a139f:corpus/SOURCES.md |
+  grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'` → `99`. Its S103 located quote is 18
+  words, the opening prefix of the first sentence, not 19
+  (`printf '%s\n' 'Computes the object ID value for an object with specified type with the
+  contents of the named file' | wc -w` → `18`; snapshot
+  `.ufo/evidence/round-36/src/s103-git-hash-object.html:1607-1611`). The refresh receipts'
+  `cited_source` field is not consumed by the cold-read monitor — S103 is not load-bearing
+  to C1's 6 → 8; S103 `used-by` is narrowed to `corpus/lessons/round-36.md` only.
+- Claim C1 (calibration, lowest axis at 8): resolve the round-36 empty-panel control's
+  unreachable scratch input. Before at `d9c496b`: `C1_R37: unresolved_control_inputs=1
+  old_mutant_resolves=0 correction=0 manifest_ok=0 receipts_ok=0 … C1_R37_PASS=false`
+  (`.ufo/evidence/round-37/calibration/before-final-control.stdout`, exit 1) — the r36
+  mutant panel commit `91373d55557f…` is absent from the lane object database. After at
+  `32826f37`: `unresolved_control_inputs=0 … C1_R37_PASS=true`
+  (`.ufo/evidence/round-37/calibration/after-control-final.stdout`, exit 0): the committed
+  empty-panel specification `.ufo/evidence/round-37/control/empty-panel/manifest.json`
+  (source tree `4f3d8af5b62ba04a5ff825bfdaec6c9193f8489e`, 0 specimens) supersedes the
+  scratch input, and the explicit `mode=control` replay
+  (`.ufo/evidence/round-37/control/replay-at-final-control.stdout`) shows frozen v1 PASS /
+  frozen v2 FAIL on the committed zero-specimen panel at lane-resolvable revisions.
+  Counting command: `python3 .ufo/evidence/round-37/calibration/measure.py --lane LANE --rev REV`.
+- Claim C2 (depth, capability acquisition; surface: `tools/tally-audit-v3.py` code_view):
+  bounded ANSI-C `$'…'` quoting. Before at `d9c496b`: `ansi_trailing_comment=0/1
+  ansi_literal_hash=1/1 … C2_R37_PASS=false` (`.ufo/evidence/round-37/code-view/before.stdout`).
+  After at `ae9b771`: both frozen fixtures PASS, tool selftest 35/35
+  (`.ufo/evidence/round-37/tool-selftest-after.stdout`), frozen r36 v2 predicate re-attested
+  at the new tool pin `da8c1ef4…` (`C1_R36V2_CONTROL_PASS=true`,
+  `.ufo/evidence/round-37/c2-repin-after.stdout`). Explicit holds: nested `$(…)`,
+  unquoted backslash-newline, parameter-branch quoting stay unsupported (r35 routed defect 3
+  scope bound). Counting command: `python3 .ufo/evidence/round-37/code-view/measure.py --lane LANE --rev REV`.
+- Frontier: S104 opened (GNU Bash Reference Manual 5.3 `doc/bashref.texi`, official
+  Savannah, pinned at commit `b8c60bc9ca365f8261fa97900b6fa939f6ebc303` §ANSI-C Quoting
+  lines 489–493); located quote "Character sequences of the form `$'string'` are treated as
+  a special kind of single quotes." (15 words); mined by `tools/tally-audit-v3.py` and
+  `corpus/lessons/round-37.md`. Census at round start (tip `d9c496b`): `sources-census.sh
+  validate` exit 0 (`.ufo/evidence/round-37/census/start.*`); at round end: exit 0
+  (`.ufo/evidence/round-37/census/end.*`); rows 100 → 101. S103 `used-by` old→new: receipts +
+  lesson → lesson only. Lesson `corpus/lessons/round-37.md`; QUALITY criteria 73–75 appended.
+- Waves: attempt 1 (died pre-report) froze the contract, landed both claims, and prepared
+  w1/w2 validator-checked specs + taskCall payloads under `.ufo/waves/round-37/`
+  (33 + 33 = 66 seats) but dispatched neither. This L1 (attempt 2) dispatches both
+  validator-checked taskCalls verbatim; seat reports land under
+  `.ufo/waves/round-37/w1/` and `w2/`. Round-36's inherited w1/w2 seat reports (39 + 39,
+  uncommitted) are committed as wave evidence.

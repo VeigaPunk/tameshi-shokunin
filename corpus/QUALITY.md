@@ -854,3 +854,36 @@ These errata qualify the prior text; they do not rewrite it.
     which `git log --all -- '*ResidualSentinelClosure*'` shows was never
     committed; the round-36 entry corrects it naming the five real
     residual reports.
+
+## Criteria appended — round 37 (2026-10-24)
+
+73. Round 37. A mutant control that redirects a frozen counter to a committed
+    alternate input names and verifies the counter revision, input-tree identity,
+    and explicit control mode when the counter supports one. A scratch-only mutant
+    revision or a `mode=deciding` label is not a closure-resolvable control.
+    Captured by: the r36 verifier spot-check's routed empty-panel defect and the
+    r36 W2 C2 mode-label review; `corpus/lessons/round-37.md`, Mistakes 1 and 4.
+    Falsifier: `.ufo/evidence/round-37/calibration/before-final-control.stdout`
+    reads `unresolved_control_inputs=1`; the earlier replay receipt reports
+    `mode=deciding`; the committed manifest + explicit-control replay +
+    `after-control-final.stdout` must re-derive zero and `mode=control`.
+
+74. Round 37. A Bash `code_view` claim names each supported quoting form. ANSI-C
+    `$'...'` handling preserves escaped single quotes, blanks a following comment,
+    and preserves `#` inside the quoted string; this finite support does not imply
+    a full Bash lexer. Captured by: `corpus/lessons/round-37.md`, Mistake 2, and
+    source S104. Falsifier:
+    `.ufo/evidence/round-37/code-view/before.stdout` reads the escaped-quote case
+    FAIL with the old scanner; the committed tool's same counter must read both
+    fixtures PASS, and removing the ANSI-C state must make the escaped-quote
+    case fail.
+
+75. Round 37. A scorecard statement labeled `measured` is backed by an observed
+    output at or before the revision it names; until that output exists, record
+    the value as a target. A later receipt cannot retroactively make an earlier
+    commit's sentence a measurement. Captured by: the round-36 `Numeric axes,
+    measured` paragraph at content revision `e423c41b` (`SCORECARD.md` R36
+    erratum) and `corpus/lessons/round-37.md`, Additional record corrections.
+    Falsifier: `git show e423c41ba253357ab8c8513f0376dad9d38ab248:SCORECARD.md`
+    contains the 8/64-64 statement, while its after receipt is at
+    `b455001e2589b3f4f471d94a3de7e5e549b9f54c`.

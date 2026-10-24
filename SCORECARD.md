@@ -1787,3 +1787,33 @@ The historical r36 empty-panel receipts (`.ufo/evidence/round-36/control/v1-at-e
 
 The round-36 C1 table's `control/monitor-at-content-commit.*` shorthand does not name a committed file; the actual control receipts are `.ufo/evidence/round-36/control/monitor-at-e423c41b.{stdout,stderr,exit}`. The r36 `Numeric axes, measured` prose was already present at content revision `e423c41ba253357ab8c8513f0376dad9d38ab248`, before the after run. Read its `8, 64/64` sentence at that revision as a pre-registered target, not an observed result; the measured result is the committed `.ufo/evidence/round-36/after/monitor-at-b455001e.stdout` at `b455001e2589b3f4f471d94a3de7e5e549b9f54c`, reproduced at the r36 tip in the non-author spot-check. This corrects evidence timing and path wording only; the verified 6 → 8 result is unchanged.
 
+
+
+## Round 37 — control-input calibration + ANSI-C code-view capability (2026-10-24)
+
+L1 TameshiR37, attempt 1. Two distinct claims. Calibration (score 8) is the
+lowest non-retired axis and carries C1. The stagnation nudge applies: depth 9 and
+calibration 8 are at/above saturation 8, with no capability added in rounds 35–36;
+C2 admits one bounded capability. Neither claim is exploratory. Contract:
+`.ufo/evidence/round-37/contract.json`.
+
+| Claim | Axis / type | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 r36 empty-panel control-input resolvability | calibration (lowest axis) | `C1_R37_PASS=false unresolved_control_inputs=1` at `d9c496b19371b779ce0eec6dfee1b049b27a3a2d` | `C1_R37_PASS=true unresolved_control_inputs=0` at `32826f37eb40afa6b2497425eecc95e23dacc5ee` | one unsuperseded control-input mismatch → zero; no numeric restraint-score move claimed | `python3 .ufo/evidence/round-37/calibration/measure.py --lane LANE --rev REV` | `32826f37eb40afa6b2497425eecc95e23dacc5ee` | `.ufo/evidence/round-37/calibration/before-final-control.stdout`, `after-control-final.stdout`, `.ufo/evidence/round-37/control/replay-at-final-control.stdout` | improved |
+| C2 ANSI-C `$'...'` comment boundary | depth (capability acquisition) | code_view fixtures `1/2` at `d9c496b19371b779ce0eec6dfee1b049b27a3a2d` | fixtures `2/2`, selftest `35/35`, frozen r36 predicate re-attested PASS at `ae9b771ab795fb5b4a6302165d8abdc0a2c6b229` | one bounded quote form added; numeric depth remains 9 under command D | `python3 .ufo/evidence/round-37/code-view/measure.py --lane LANE --rev REV` | `ae9b771ab795fb5b4a6302165d8abdc0a2c6b229` | `.ufo/evidence/round-37/code-view/{before,after}.stdout`, `tool-selftest-after.stdout`, `c2-repin-after.stdout`, S104 | improved (capability) |
+
+Capabilities table — row admitted this round:
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| bounded ANSI-C code_view | Keep Bash `$'...'` quoted text intact across escaped single quotes, blank a following comment, and preserve a literal `#` inside the quote; nested substitutions and unquoted backslash-newline remain unsupported | `.ufo/evidence/round-37/code-view/after.stdout` (2/2), `.ufo/evidence/round-37/tool-selftest-after.stdout` (35/35), `.ufo/evidence/round-37/c2-repin-after.stdout` (frozen r36 predicate PASS), S104 | round 37 |
+
+Numeric guardrails: command D is `recorded_cases=9 depth_score=9` at both
+`d9c496b` and `ae9b771`; no runner ledger case was added. The C1 counter measures
+the named evidence/input mismatch, not the SHONEN restraint rubric. The r36 numeric
+calibration score remains the last measured 8; the round-37 strict no-harm monitor
+result is reported separately.
+
+**Planned (round 38):** nested command-substitution quoting and unquoted
+backslash-newline remain explicit holds from `corpus/lessons/round-35.md`
+`## Holds`; do not generalize the bounded ANSI-C capability to a full Bash lexer.

@@ -83,3 +83,13 @@ This L1 seat has no swarm-dispatch tool (host surface note): w1 (build, 39
 seats) and w2 (falsify, 39 seats) are prepared under `.ufo/waves/round-36/`
 as validator-checked specs for the orchestrator to dispatch between rounds;
 the round report itemizes the 78 prepared-but-undispatched seats.
+
+## Erratum — round-36 wave note (append-only, recorded in round 37)
+
+The preceding sentence's “itemizes” means aggregate seat counts/role mix, not a list of all seat names. The lane report records 39 + 39 = 78 prepared seats; individual names/items are in `spec-w1.json` and `spec-w2.json`. The committed validator payload renders are `validate-w1.stdout` and `validate-w2.stdout` with empty `.stderr`; there are no `validate-w*.json` artifacts or separate exit receipts. This does not change the round-36 count or dispatch status.
+
+## Errata — round-36 source/census record (append-only, recorded in round 37)
+
+- **S103 quote count/location:** the quoted text in the prior Gate is 18 words, not 19, and is the opening prefix of the first sentence, which continues after “file” (`.ufo/evidence/round-36/src/s103-git-hash-object.html:1607-1611`). Round 37 re-counted the exact text with `printf '%s\n' 'Computes the object ID value for an object with specified type with the contents of the named file' | wc -w` → `18`; the S103 anchor remains §DESCRIPTION.
+- **S103 use:** the r36 `refresh-receipts.json` contains a `cited_source` field, but the W2 peer audit reports this field is not consumed by the cold-read monitor. Round 37 makes no claim that S103 is load-bearing to C1 and changes S103 `used-by` from the receipt plus this lesson to this lesson only; S103 remains mined by this lesson. The peer report is preserved as peer-owned, uncommitted evidence and was not staged by this L1.
+- **Start-census receipt:** the prior text says both census receipts were kept under `.ufo/evidence/round-36/`; only the end-side census receipt exists. The start value `99` re-derives at `796e08b` using `git show 796e08b888849308d0c4d5e932e56833600a139f:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'` → `99`, but no start-census stdout/exit receipt is committed. Round 37 commits its own start-census receipt.

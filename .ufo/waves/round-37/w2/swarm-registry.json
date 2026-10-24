@@ -1,0 +1,340 @@
+{
+  "schema": "ufo-swarm-registry-v1",
+  "wave": "round-37-w2",
+  "createdAt": "2026-10-24T07:05:55.004Z",
+  "updatedAt": "2026-10-24T07:05:55.004Z",
+  "reportDir": ".ufo/waves/round-37/w2",
+  "members": {
+    "W2ReviewC1Mismatch": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Re-run the frozen C1 calibration counter at d9c496b and final rev. Check the exact mismatch count 1 to 0 and attempt to find a second unsuperseded r36 control-input discrepancy.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C1 count"
+    },
+    "W2ReviewC1Correction": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Read the appended r36 control-input erratum and compare every clause with committed manifest, adapter, and receipts. Report any remaining assertion that treats 91373d55557fe26c431e9e3dd9e8fa4a00d7b57f as a lane object.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Erratum audit"
+    },
+    "W2CriticC1Vacuity": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Try to make C1_R37_PASS true with the committed manifest absent, malformed, or detached from the old scorecard claim. Determine whether the counter is fail-closed for each case.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C1 predicate attack"
+    },
+    "W2MutateSourceTree": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Change only the manifest source_panel_tree value in a disposable copy. Run the replay adapter and verify it refuses before scoring with source_tree_mismatch.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Tree ID mutation"
+    },
+    "W2MutateSpecimenList": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Remove or rename one source specimen from the manifest list in a disposable copy. Confirm the adapter detects the mismatch against the pinned Git tree before invoking either counter.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Source inventory mutation"
+    },
+    "W2MutateEmptyPanel": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Add a specimen JSON to the committed empty-panel tree in a disposable copy. Confirm the adapter refuses the tree instead of scoring a non-empty panel as the empty control.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Non-empty tree mutant"
+    },
+    "W2MutateMissingManifest": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Remove the empty-panel manifest from a disposable tree and run the adapter. Confirm a declared SETUP failure occurs before scoring and no v1/v2 receipt is emitted as valid.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Missing input mutant"
+    },
+    "W2ReviewReplayRevision": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Verify each replay receipt identifies a resolvable counter revision and a resolvable panel revision, with the panel revision an ancestor of the final revision. Flag any scratch-only hash.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Dual revision audit"
+    },
+    "W2CriticCounterSeam": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Inspect the replay adapter's monkeypatch boundary. Try to show it changes anything besides the public-panel source path; sealed set, tool source, runner source, scoring predicate, and counter bytes must remain frozen.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Frozen counter seam"
+    },
+    "W2ReviewV1Expected": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Re-derive why the r35 v1 counter should PASS the zero-slot public panel and verify the committed control output has tool_sha_ok=1 and pub_kill=0/0, pub_accept=0/0.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "v1 control result"
+    },
+    "W2ReviewV2Expected": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Re-derive why frozen v2 rejects the same zero-slot panel because cardinality targets are 6/3/9. Confirm the only failed conditions are those expected from the empty panel, not a bad tool pin.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "v2 control result"
+    },
+    "W2CriticC2Target": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Try to make the two-case C2_R37 predicate pass when the escaped-quote trailing comment leaks or when the literal-hash content is blanked. Report exact counterexample output.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "C2 target attack"
+    },
+    "W2MutateRemoveAnsiState": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Remove only the `ansi-c` quote-state branch in a scratch copy and run code-view/measure.py against it. Confirm the trailing-comment fixture flips red while the literal-hash fixture remains accepted.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "ANSI state removal"
+    },
+    "W2MutateCloseQuote": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Mutate the ANSI-C branch so backslash no longer skips the next character. Use the frozen `$'it\\'s'` fixture and report whether the escaped quote is misread and the comment leaks.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Escaped close mutation"
+    },
+    "W2MutateLiteralHash": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Mutate the branch to treat `#` inside ANSI-C quote as a comment. Confirm the literal-hash fixture catches overblanking and preserves equal-length output semantics.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Literal hash mutation"
+    },
+    "W2MutateNewlineCount": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Mutate the code-view scanner to blank the newline along with the comment. Confirm the fixture detects changed length or newline count and returns non-clean.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Newline preservation"
+    },
+    "W2ReviewSelftestCount": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Re-run the tool selftest at its pinned revision and verify the two ANSI-C cases are included in the reported denominator, not merely printed outside the tally.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Selftest tally"
+    },
+    "W2CriticPinMatch": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Compare counter-pin.json to the actual committed tool and frozen r36 counter blobs. Attempt one-byte mutations of each expected hash and verify the repin wrapper refuses before execution.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Tool pin falsification"
+    },
+    "W2MutateToolPin": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "On a disposable counter-pin copy, change one hex digit of tool_sha256 and execute c2-repin.py. It must exit SETUP rather than report a passing re-attestation.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Pin mismatch test"
+    },
+    "W2ReviewFullPanel": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Re-derive all full-panel v2 counts at the frozen r37 revision: 6/6 kill, 3/3 accept, 9 slots, 9 distinct, sealed 4/4 kill and 3/3 accept, zero invalid.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Full panel re-attestation"
+    },
+    "W2CriticScopeBounds": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Compare r35 AttackQuotedHash findings to the new docstring and report. Ensure nested `$(...)` quoting, unquoted backslash-newline, and parameter-branch claims remain explicit holds, not silently promoted.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Known limits"
+    },
+    "W2ReviewS104Quote": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Open the pinned Bash source and re-count the S104 quote (<=25 words). Verify exact §ANSI-C Quoting location and that the row teaches only source-backed behavior.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Citation audit"
+    },
+    "W2CriticQuality73": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Test the new committed-input QUALITY criterion against a one-byte source tree mutation and a missing manifest. It must have a concrete failure path and a resolvable red-before pointer.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Quality criterion attack"
+    },
+    "W2ReviewLessonGate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Check every S104 Gate field (URL, access date, <=25-word quote, exact anchor) and each Mistakes tuple (class, evidence, captured-by, fix) against committed bytes.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Lesson gate audit"
+    },
+    "W2CriticSCORECARDDepth": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Re-run command D at the final lane revision. Confirm the numeric depth score remains 9 under its recorded-ledger rubric and the new parser support is recorded as a capability, not a fabricated tenth case.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Depth score audit"
+    },
+    "W2ReviewTrendExpansion": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Check whether the S104 source row alone creates an admitted knowledge entry on uncovered ground. Challenge any `expansion: improved` claim unsupported by the corpus coverage map.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Expansion trend"
+    },
+    "W2ReviewTrendQuality": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Compare the pre-fix red-before and post-fix code-view results, plus the r37 QUALITY criterion. Decide whether quality improved or whether an open defect remains.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Quality trend"
+    },
+    "W2ReviewTrendDiscernment": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Check the non-author r36 closure disagreement and r37 Mistakes/QUALITY learning. Identify whether the round has enough outside admit/reject evidence for improved discernment or must say unchanged/unprovable.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Discernment trend"
+    },
+    "W2MutateOutputPredicate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Change the expected output label in the code-view measurement script. Confirm a stale or forged label cannot make C2_R37_PASS true when either fixture fails.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Receipt predicate mutation"
+    },
+    "W2ScoutWavePolicy": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Inspect the committed round-37 w1/w2 specs and their validator outputs. Re-derive counts, v1 band, role mix, reportDir, no model pins, and the w2 dispatch dependency.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "Wave policy audit"
+    },
+    "W2ScoutMisrootSweep": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Re-run the fleet-root porcelain sweep and content search for tameshi round-37 seat outputs. Do not copy or delete peer-owned files; report only attributable candidates.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "Misroot boundary"
+    },
+    "W2ReviewShonenRestraint": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Verify all four SHONEN boxes remain `[~]` and their evidence pointers resolve. Flag any `[x]` without a named non-author verifier or any statement that operator-owned promotion has completed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "SHONEN authority"
+    },
+    "W2CriticReportMarker": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Falsify the final round report against the required section order, claim naming, receipts, census before/after, trend verdicts, SHONEN lines, Stale-lane line, tool installs, and landed hash pointers.",
+      "axes": [
+        "calibration",
+        "depth"
+      ],
+      "milestone": "Report contract attack"
+    }
+  }
+}
