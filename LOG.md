@@ -2047,3 +2047,13 @@ metadata and its failure are preserved; production gate source is unchanged.
   census stays unmeasured); the three-outcome rule is scoped to POSIX `diff` and is not
   generalised to `cmp` or `git diff --exit-code`; no lane fixture was converted to a golden
   comparison this round.
+
+- Wave outcome (append-only, recorded after the dispatch): the single validated 65-seat batched
+  `task` call was issued (one call, no split, no replacement seat) and **all 65 seats died**: every seat
+  transcript ends with `stopReason: aborted` / `Request was aborted`, the 65 seat session logs are 0
+  bytes, and **no seat report landed** under `.ufo/waves/round-38/w1/`. Cause as observed: the
+  dispatcher's parent process exited while the asynchronous seat jobs were still running and the jobs
+  were torn down with it. The wave therefore contributed **coverage this round does not have, not
+  evidence**; both claims rest on L1-executed counters over committed bytes and on the L1's own source
+  fetches, and are consequently **unattacked** by an independent seat. Record:
+  `.ufo/waves/round-38/w1/dispatch-outcome.md`.
