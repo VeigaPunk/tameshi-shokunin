@@ -1727,3 +1727,50 @@ Disclosed predicate defects (no rule was changed after data; both routed, not pa
 against the rewritten inputs); public-slot cardinality and distinctness asserts in a successor counter
 (frozen pre-data, then one deciding run); a real shell lexer or an enumerated supported-form list for
 `code_view`; the open recall classes in the lesson `## Holds`.
+
+## Round 36 — cold-read refresh (calibration 6 → 8) + counter cardinality successor (depth surface) (2026-10-24)
+
+L1 TameshiR36, attempt 1. Two claims, distinct axes; calibration is the lane's lowest
+non-retired axis (pinned 6 at round 35) and carries C1. Contract
+`.ufo/evidence/round-36/contract.json`, frozen before any data run (C2 counter sha256
+`9eb8944c…` recorded there). Both claims are the round-35 closure's routed defects
+(dead-pointer correction lands in LOG.md this round; `code_view` routed defect 3 is
+explicitly NOT taken — editing `tools/tally-audit-v3.py` would void the round-35 capability
+pin; planned for round 37).
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 cold-read monitor refresh of the four round-35-drifted headings (recipe, restore discipline, the map, where to enter) | calibration (lowest axis) | `calibration_restraint_score: 6, sections_covered 60/64` at r35 tip `796e08b` (`.ufo/evidence/round-36/after/monitor-at-796e08b.stdout`) | target `calibration_restraint_score: 8, sections_covered 64/64` at the round-36 refresh commit | 6 → 8; 60/64 → 64/64 | `python3 .ufo/evidence/round-21/coldread/measure.py --repo . --rev REV` | the round-36 refresh commit — hash named in the `monitor-at-<rev>.stdout` receipt filename and the round-36 report | `.ufo/evidence/round-36/coldread/` (traces `traces/L1/`, four new ledger entries in `.ufo/evidence/round-21/coldread/ledger.json`, `refresh-specs.json`, `refresh-receipts.json`); do-nothing control `control/monitor-at-content-commit.*` (record edits without the ledger refresh still print 6); lesson `corpus/lessons/round-36.md` | measured (receipt at the refresh commit) |
+| C2 successor counter `c1-measure-v2.py`: frozen public-slot cardinality + distinctness asserts over the round-35 tally-audit panel | depth (surface: the tally-audit counter's predicate completeness) | the frozen v1 counter accepts an emptied (zero-slot) public panel vacuously: `C1_R35: … pub_kill=0/0 pub_accept=0/0 … C1_R35_PASS=true`, exit 0 (`.ufo/evidence/round-36/control/v1-at-emptypanel.stdout` — the r35-closure-disclosed predicate defect, now demonstrated) | v2 fails the same emptied panel (`C1_R36V2: … pub_kill_slots=0 … C1_R36V2_PASS=false`, exit 1, `control/v2-at-emptypanel.stdout`) and passes the full deciding re-run at the refresh commit (`pub_kill=6/6 pub_accept=3/3 pub_distinct=9 … C1_R36V2_PASS=true`, exit 0, `after/c1v2-at-<rev>.stdout`) | the vacuous-accept class is closed; the round-35 16/16 verdicts re-confirmed under the stronger predicate | `python3 .ufo/evidence/round-36/c1/c1-measure-v2.py --lane LANE --rev REV --work EMPTY_DIR --sealed .ufo/evidence/round-35/c1/sealed` | the round-36 refresh commit (hash in the `c1v2-at-<rev>.stdout` receipt filename and the report) | `.ufo/evidence/round-36/c1/c1-measure-v2.py` @ `9eb8944c…` (frozen in `contract.json`); parent v1 counter unchanged; lesson `corpus/lessons/round-36.md` | measured (one deciding run, kill rule honored) |
+
+Pre-data controls. C1: the do-nothing control is the same monitor command at the round-36
+content commit (every record edit landed, the ledger refresh did not): it must still print
+6 — record edits alone cannot restore credit. C2: the do-nothing control is the frozen v1
+counter on the emptied-panel mutant: it prints PASS=true, proving a no-fix path "meets" a
+vacuous target while v2 fails it. Both receipts are committed under
+`.ufo/evidence/round-36/control/`. Kill rule honored: exactly ONE default-mode v2 deciding
+run, at the refresh commit; every other v2/v1 run is a control or the before demonstration.
+
+Numeric axes, measured. **depth 9 → 9**: command D at the refresh commit prints
+`recorded_cases=9 depth_score=9` (the runner is byte-identical `a7d3f2dd…`; C2's gain is
+predicate completeness, not a ledger count). **calibration 6 → 8**: the strict cold-read
+monitor prints `calibration_restraint_score: 6, sections_covered 60/64` at base `796e08b`
+and `8, 64/64` at the refresh commit — the four round-35-drifted headings are re-anchored by
+L1 author source reads (trace receipts + ledger entries), the round-21 refresh protocol;
+the scope line of that protocol ("input-keyed source reads only; not independent/blind
+cold-read, recipe re-execution or required-command coverage") is carried verbatim in the
+round-36 refresh receipts. The r35 numeric block's measured `6` is superseded by this
+measured `8` at the refresh commit; record-keeping commits after the refresh commit that
+touch the four headings' cited inputs re-trigger the instrument's input-drift rule by
+design (as at round 35), so the pinned measurement commit is the refresh commit itself.
+
+Routed repair (r35 closure defect 1): LOG.md round-35 entry's `ResidualSentinelClosure.md`
+pointer — no such file ever committed; corrected by an append-only round-36 entry naming
+the five real residual reports. Frontier: S103 opened and mined (see LOG + lesson Gate).
+Capabilities table: no new row (the v2 counter is a successor audit predicate, not a new
+repertoire capability).
+
+**Planned (round 37):** the `code_view` ANSI-C `$'…'` quote class (routed defect 3) under
+the freeze-before-data discipline with a tool re-pin and counter re-attest (real shell
+lexer or enumerated supported-form list); the open recall classes in the round-35 lesson
+`## Holds`; the two prepared round-36 waves' findings once the orchestrator dispatches them.

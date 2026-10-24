@@ -1894,3 +1894,49 @@ metadata and its failure are preserved; production gate source is unchanged.
 - Trend: C1 improved (capability admitted); C2 improved (15 → 0). Calibration's numeric instrument
   lapsed 8 → 6 because four SKILL headings cite inputs this round rewrote; the monitor withholds
   credit by design and the refresh is routed to round 36 (`SCORECARD.md` Round 35, Numeric axes).
+
+## Round 36 — cold-read refresh (calibration) + counter cardinality successor (depth) (2026-10-24)
+
+- Correction to the round-35 entry (append-only; the entry stays as written): its waves
+  paragraph says the residual sentinel seat "was respawned by the closure
+  (`ResidualSentinelClosure.md`)". No such file exists anywhere in the lane
+  (`git log --all -- '*ResidualSentinelClosure*'` is empty; the residual dir holds exactly
+  the five committed reports `ResidualCriticPredicate.md`, `ResidualReviewC2.md`,
+  `ResidualReviewReceipt.md`, `ResidualReviewSealed.md`, `ResidualScoutRecords.md`). The
+  sentinel seat left no report; the predicate findings the sentence points at are carried by
+  `ResidualCriticPredicate.md` (r35 closure routed defect 1 — fixed by this correction,
+  naming the real artifact).
+- Claim C1 (calibration, the lane's lowest axis at 6): cold-read monitor refresh for the four
+  round-35-drifted headings ("Mutation-sweep recipe", "Restore discipline", "### The map",
+  "### Where to enter"). Before at `796e08b` (r35 tip): `calibration_restraint_score: 6,
+  sections_covered 60/64` (receipt `.ufo/evidence/round-36/after/monitor-at-796e08b.*`).
+  Refresh per the round-21 L1 author re-anchor protocol: trace receipts
+  `.ufo/evidence/round-36/coldread/traces/L1/`, four new ledger entries in
+  `.ufo/evidence/round-21/coldread/ledger.json` (read_rev = the round-36 content commit),
+  specs/receipts `.ufo/evidence/round-36/coldread/refresh-{specs,receipts}.json`. Do-nothing
+  control: the same monitor command at the content commit (all record edits, no ledger
+  refresh) still prints 6 (`.ufo/evidence/round-36/control/monitor-at-content-commit.*`).
+  After at the refresh commit (hash named in the round-36 report and the
+  `monitor-at-<rev>` receipt filename): target 8, 64/64.
+- Claim C2 (depth; surface: the tally-audit counter's predicate completeness): successor
+  counter `.ufo/evidence/round-36/c1/c1-measure-v2.py` (frozen pre-data in
+  `.ufo/evidence/round-36/contract.json`, sha256 `9eb8944c…`) adds the public-slot
+  cardinality and distinctness asserts routed by the r35 closure (defect 2): frozen targets
+  6 must-kill slots / 3 must-accept slots / 9 distinct bodies. Before demonstration: the
+  frozen v1 counter accepts an emptied (zero-slot) public panel vacuously
+  (`.ufo/evidence/round-36/control/v1-at-emptypanel.*`, `C1_R35_PASS=true`); v2 fails the
+  same mutant (`…/control/v2-at-emptypanel.*`, `C1_R36V2_PASS=false`); v2 deciding run at
+  the refresh commit prints `C1_R36V2_PASS=true` (`.ufo/evidence/round-36/after/c1v2-at-<rev>.*`).
+  Routed defect 3 (`code_view` after ANSI-C `$'…'` quotes) NOT taken: editing
+  `tools/tally-audit-v3.py` would void the round-35 capability pin; planned for round 37.
+- Frontier: S103 opened (git-hash-object, git-scm.com docs; snapshot
+  `.ufo/evidence/round-36/src/s103-git-hash-object.html`, 29,933 bytes, sha256
+  `dd826dae…`), located quote §DESCRIPTION first sentence; mined by the refresh receipts
+  and this lesson (byte-identity ground for pinned inputs, traces and tool pins). Census at
+  round start (tip `796e08b`): `sources-census.sh validate` exit 0, 99 rows; at round end
+  (refresh commit): exit 0, 100 rows. Lesson `corpus/lessons/round-36.md`.
+- Waves: this L1 seat has no swarm dispatch tool (host surface note): the round's two v1
+  waves (w1 build 39, w2 falsify 39) are PREPARED under `.ufo/waves/round-36/` as
+  validator-checked specs (`validate-w1.json`, `validate-w2.json`) and itemized as
+  prepared-but-undispatched receipts in the round report; the orchestrator dispatches them
+  between rounds. Round total 78 prepared seats; 0 dispatched this seat.

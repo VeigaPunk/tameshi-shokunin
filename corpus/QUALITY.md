@@ -842,3 +842,15 @@ These errata qualify the prior text; they do not rewrite it.
     regression 6 legs stated, 9 printed), and the round-17 supersession
     line `SCORECARD.md:632-636` states runner 95/95, regression 7 and
     evidence-disposition 56/56, all three stale at the same revision.
+
+72. Round 36. A LOG.md entry that names a file as evidence must name a
+    file that exists at write time: the citation is re-resolved (path or
+    `git log --all -- <path>`) before the entry commits, and a pointer to
+    a never-committed artifact is corrected by an append-only entry naming
+    the real artifact, never silently repaired. Captured by: the r35
+    closure's step-1 pointer sweep (`lessons/round-35-verifier-spotcheck.md`,
+    routed defect 1) — no in-lane criterion caught it at r35 write time.
+    Falsifier: `LOG.md` round-35 entry named `ResidualSentinelClosure.md`,
+    which `git log --all -- '*ResidualSentinelClosure*'` shows was never
+    committed; the round-36 entry corrects it naming the five real
+    residual reports.

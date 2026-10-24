@@ -1,0 +1,43 @@
+{
+  "round": 36,
+  "l1": "TameshiR36",
+  "attempt": 1,
+  "frozen_at": "2026-10-24",
+  "frozen_before_any_data_run": true,
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "summary": "cold-read monitor refresh for the four round-35-drifted headings restores credit",
+      "before": {
+        "rev": "796e08b888849308d0c4d5e932e56833600a139f",
+        "command": "python3 .ufo/evidence/round-21/coldread/measure.py --repo . --rev REV",
+        "expected": "calibration_restraint_score 6, sections_covered 60/64"
+      },
+      "after_target": "calibration_restraint_score 8, sections_covered 64/64 at the round-36 refresh commit",
+      "do_nothing_control": "same command at the round-36 content commit (LOG/SCORECARD/lesson/SOURCES edits without the ledger refresh) must still print 6",
+      "kill_rule": "the refresh ledger entries and trace receipts are the only delta between the control commit and the refresh commit; no monitor, ledger-algorithm or SCORECARD rubric change after the before run"
+    },
+    "C2": {
+      "axis": "depth (surface: the tally-audit counter's predicate completeness)",
+      "summary": "successor counter c1-measure-v2.py with frozen public-slot cardinality + distinctness asserts (r35 closure routed defect 2)",
+      "counter": ".ufo/evidence/round-36/c1/c1-measure-v2.py",
+      "counter_sha256": "9eb8944c25414da11400dce92afaf047c4874b6bd800bfe15219572e9da8fa53",
+      "parent_counter": ".ufo/evidence/round-35/c1/c1-measure.py (frozen, unchanged)",
+      "frozen_targets": {
+        "PUB_KILL_SLOTS_TARGET": 6,
+        "PUB_ACCEPT_SLOTS_TARGET": 3,
+        "PUB_DISTINCT_TARGET": 9
+      },
+      "predicate": "C1_R36V2_PASS=true iff the round-35 behavioral verdicts all hold AND pub_kill_slots==6 AND pub_accept_slots==3 AND pub_kill==6 AND pub_accept==3 AND pub_distinct==9",
+      "before_demonstration": "the frozen v1 counter run against an empty-panel (zero-slot) mutant panel must print C1_R35_PASS=true (vacuous accept)",
+      "after_target": "v2 deciding run at the measurement commit prints C1_R36V2_PASS=true; the same v2 against the empty-panel mutant prints C1_R36V2_PASS=false",
+      "kill_rule": "exactly one default-mode (deciding) v2 run at the measurement commit; v1 and v2 mutant-demo runs are controls; no counter edit after this freeze",
+      "counting_command": "python3 .ufo/evidence/round-36/c1/c1-measure-v2.py --lane LANE --rev REV --work EMPTY_DIR --sealed .ufo/evidence/round-35/c1/sealed"
+    }
+  },
+  "routed_repairs": {
+    "dead_pointer": "LOG.md round-35 entry cites ResidualSentinelClosure.md which was never committed (r35 closure routed defect 1); correction appended to LOG.md naming the real residual artifacts",
+    "code_view_ansi_c_quote": "routed defect 3 (real shell lexer or enumerated supported-form list) NOT taken this round: touching tools/tally-audit-v3.py would void the round-35 capability pin and require a full re-audit beyond this round's budget; explicitly planned for round 37"
+  },
+  "new_source_row": "S103 (git-hash-object, git-scm.com docs) opened 2026-10-24, snapshot .ufo/evidence/round-36/src/s103-git-hash-object.html, sha256 dd826daeeacaea01858ab1330e6f014ed1a0741652e5a710c578d137711f6100"
+}
