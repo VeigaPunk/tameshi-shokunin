@@ -31,3 +31,14 @@
 ## digests.txt / scratch-revs.txt / scratch-dir.txt
 #   Pristine and mutant sha256; scratch-lane revisions the receipts were measured at;
 #   the disposable scratch path (retained for operator audit, safe to delete).
+#
+## Erratum (same round, residual seat ResC1Counter)
+# The `rev=` fields in the three frozen-predicate receipts
+# (pristine-frozen-predicate, branch-removal, parity-frozen-predicate) name disposable
+# scratch-lane revisions (a0a6bfd…, 87115382…, 36a8c475…), not objects of this lane —
+# the same reference-drift class the round's C1 claim repairs in the r36 control
+# receipts. The binding identity of every run is the tool blob sha256 (recorded in
+# digests.txt and each receipt), re-derived independently by residual seat ResMutation
+# from committed bytes. The scratch revisions are recorded in scratch-revs.txt and the
+# scratch lane path in scratch-dir.txt (retained for operator audit, safe to delete).
+# A resolvable-revision re-run is routed to round 38 with the other tool-byte work.
