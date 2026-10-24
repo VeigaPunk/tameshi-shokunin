@@ -1,0 +1,45 @@
+{
+  "round": 39,
+  "l1": "Kimi fresh L1",
+  "attempt": 1,
+  "frozen_at": "2026-10-24",
+  "frozen_before_any_deciding_run": true,
+  "lane_base_rev": "50aadd1bbd94e43cd3fcfb81459414394db2dc35",
+  "notes": "Two claims, distinct axes. Calibration 8 is the lowest non-retired axis and carries C1. Depth stays 9; C2 does not add a ledger leg. The r38 contract is not edited. The r38 L0 question d0531d78 is not re-filed.",
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "summary": "The round-39 depth no-harm guard agrees with canonical SCORECARD command D on the live runner and on a ledger-stripped copy. The round-38 regex ^\\s*leg remains a vacuous control (0 hits) and is not rewritten.",
+      "predicate": "C1_R39_PASS=true iff the round-39 contract at REV names a depth-guard regex, that regex's recorded_cases and depth_score equal canonical SCORECARD command D on the live runner and on a ledger-stripped copy of that runner, and the round-38 guard regex ^\\s*leg matches 0 lines of the live runner.",
+      "before": "C1_R39_PASS=false guard_absent=1 mismatches=1 at 50aadd1bbd94e43cd3fcfb81459414394db2dc35",
+      "after_target": "C1_R39_PASS=true mismatches=0 live_agree=1 stripped_agree=1 r38_regex_hits=0",
+      "counting_command": "python3 .ufo/evidence/round-39/guard/measure.py --lane LANE --rev REV",
+      "do_nothing_control": "The same command at 50aadd1bbd94e43cd3fcfb81459414394db2dc35 prints guard_absent=1 and C1_R39_PASS=false. Doing nothing cannot reach PASS=true. A vacuous ^\\s*leg guard disagrees on the live runner (0 vs 9). A constant 9 disagrees on the stripped runner (9 vs 0).",
+      "kill_rule": "One deciding run after the wave settles. The base run is the control, not the deciding run. No predicate edit after the first deciding run.",
+      "counter_sha256": "324df4ca6134821bb56ce8bd6573f1ab02f6bce7c7cfe9392d9859ace026eb11"
+    },
+    "C2": {
+      "axis": "depth",
+      "summary": "F4 write-path census of the 21 lane-owned gate tools, with planted controls and a fixture that actually writes an expected file only behind an explicit flag.",
+      "predicate": "C2_R39_PASS=true iff the committed census tool's sha256 equals the contract pin, its selftest reports planted_unflagged=1 planted_flagged=0 planted_scratch=0 fixture_wrote=1, the same selftest fails after the FLAG_GATE early-return is removed, and all 21 frozen gates are classified from REV bytes.",
+      "before": "C2_R39_PASS=false tool_absent=1 gates=0/21 at 50aadd1bbd94e43cd3fcfb81459414394db2dc35",
+      "after_target": "C2_R39_PASS=true gates=21/21 planted_unflagged=1 planted_flagged=0 planted_scratch=0 fixture_wrote=1 mutant_killed=1 tool_sha_ok=1",
+      "counting_command": "python3 .ufo/evidence/round-39/census/measure.py --lane LANE --rev REV",
+      "do_nothing_control": "The same command at the base rev prints tool_absent=1 and C2_R39_PASS=false. A classifier that always reports 0 fails planted_unflagged. A classifier that always reports 1 fails planted_flagged and planted_scratch. A fixture that writes with no flag fails the selftest once FLAG_GATE is removed.",
+      "kill_rule": "The tool sha256 below is the pin. No edit to tools/write-path-census.py after this pin. One deciding run after the wave settles. live_unflagged is reported, not a pre-declared PASS conjunct.",
+      "tool_sha256": "bc8c660c56f871f85dad8912be28446293fd63f62b4fd1c16eb153f7a27edc62",
+      "sources": "S107 and S108, opened 2026-10-24. S161 and S162 in the staged package are the same documents, renumbered to the next free ids because S105 and S106 already collided."
+    }
+  },
+  "no_harm_guard": {
+    "depth_command_d_regex": "^#   (?:js|bash)-\\S+\\s+\\S+\\s+\\d+/\\d+",
+    "depth_command_d": "git show REV:tools/mutate-and-run.sh | python3 -c 'import re,sys; n=len(re.findall(r\"^#   (?:js|bash)-\\S+\\s+\\S+\\s+\\d+/\\d+\",sys.stdin.read(),re.M)); print(\"recorded_cases=%d depth_score=%d\"%(n,min(10,n)))'",
+    "note": "This regex is the SCORECARD.md command D pattern. The round-38 regex ^\\s*leg is left untouched and is the vacuous control."
+  },
+  "settlement": {
+    "tool": "tools/wave-parent-settle.py",
+    "predicate": "SETTLED iff every seat has a terminal timestamp and parent_exit_unix >= max(terminal_unix). A parent exit before the last terminal is UNSETTLED.",
+    "red_fixture": "parent_exit_unix=10, seat terminal_unix=20 \u2192 UNSETTLED",
+    "green_fixture": "parent_exit_unix=30, seat terminals 20 and 25 \u2192 SETTLED"
+  }
+}
