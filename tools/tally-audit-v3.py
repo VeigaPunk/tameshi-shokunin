@@ -153,18 +153,26 @@ def code_view(text):
     """Same-length copy of `text` with shell comment text replaced by spaces.
 
     A `#` starts a comment only at the start of a word — at the beginning of the text or
-    after whitespace or one of `;|&(` — and only outside single quotes, double quotes and
-    backslash escapes; inside them it is literal data (POSIX shell lexical rules). Newlines
-    are preserved, so line-anchored regexes still match at the same offsets and every slice
-    taken from this view indexes the original text. Structural scans (brace counting, head
-    token counting, case/loop locators) run on this view so inert comment text cannot kill
-    or refuse a behaviorally pristine copy (round 35; round-34 false-kill class)."""
+    after whitespace or one of `;|&(` — and only outside supported quote forms. Bash
+    ANSI-C `$'...'` strings are scanned as single-quoted strings with backslash escapes
+    (GNU Bash 5.3 Reference Manual, §ANSI-C Quoting, S104). Newlines are preserved, so
+    line-anchored regexes still match at the same offsets and every slice indexes the
+    original text. This is bounded support, not a full Bash lexer: nested command
+    substitutions and unquoted backslash-newline continuations remain outside this view."""
     out = list(text)
     i, n = 0, len(text)
     quote = None
     while i < n:
         c = text[i]
         if quote == "'":
+            if c == "'":
+                quote = None
+            i += 1
+            continue
+        if quote == "ansi-c":
+            if c == '\\' and i + 1 < n:
+                i += 2
+                continue
             if c == "'":
                 quote = None
             i += 1
@@ -178,6 +186,10 @@ def code_view(text):
             i += 1
             continue
         if c == '\\' and i + 1 < n:
+            i += 2
+            continue
+        if c == '$' and i + 1 < n and text[i + 1] == "'":
+            quote = "ansi-c"
             i += 2
             continue
         if c == "'" or c == '"':
@@ -874,6 +886,21 @@ def selftest():
     ]
     tmp = tempfile.mkdtemp(prefix='tally-audit-v3-selftest.')
     passed = 0
+    ansi_comment = ": $'it\\'s' # inert st_tsu=0\nst_tsu=9\n"
+    hash_at = ansi_comment.index('#')
+    line_end = ansi_comment.index('\n')
+    ansi_comment_expected = (ansi_comment[:hash_at] + ' ' * (line_end - hash_at)
+                             + ansi_comment[line_end:])
+    ansi_literal = ": $'literal # data'\nst_tsu=9\n"
+    code_view_cases = [
+        ('ANSI-C escaped quote trailing comment', ansi_comment, ansi_comment_expected),
+        ('ANSI-C literal hash', ansi_literal, ansi_literal),
+    ]
+    for name, sample, expected in code_view_cases:
+        observed = code_view(sample)
+        ok = observed == expected and len(observed) == len(sample)
+        passed += bool(ok)
+        print('CASE code_view %s %s' % (name, 'PASS' if ok else 'FAIL'))
     try:
         for i, (name, body, want, check) in enumerate(cases):
             if name != 'pristine' and body == text:
@@ -891,8 +918,9 @@ def selftest():
             print('CASE %s %s (exit %d)' % (name, 'PASS' if ok else 'FAIL', p.returncode))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
-    print('TALLY_AUDIT_V3_SELFTEST: %d/%d pass' % (passed, len(cases)))
-    return 0 if passed == len(cases) else 1
+    total = len(cases) + len(code_view_cases)
+    print('TALLY_AUDIT_V3_SELFTEST: %d/%d pass' % (passed, total))
+    return 0 if passed == total else 1
 
 
 def main():
