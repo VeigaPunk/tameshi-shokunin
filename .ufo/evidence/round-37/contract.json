@@ -1,0 +1,40 @@
+{
+  "round": 37,
+  "l1": "TameshiR37",
+  "attempt": 1,
+  "frozen_at": "2026-10-24",
+  "frozen_before_any_data_run": true,
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "summary": "Resolve the round-36 empty-panel control's unreachable scratch revision with a committed input specification and lane-resolvable replay receipts.",
+      "before": {
+        "rev": "d9c496b19371b779ce0eec6dfee1b049b27a3a2d",
+        "expected": "one live evidence/self-assessment mismatch: the empty-panel receipts cite scratch commit 91373d55557fe26c431e9e3dd9e8fa4a00d7b57f, absent from the lane object database"
+      },
+      "after_target": "C1_R37_PASS=true iff the old scratch input is explicitly superseded by a committed empty-panel specification, and both v1/v2 control receipts use a resolvable lane revision and show v1 PASS / v2 FAIL on the committed zero-specimen input.",
+      "counting_command": "python3 .ufo/evidence/round-37/calibration/measure.py --lane LANE --rev REV",
+      "kill_rule": "The same counter must report one unresolved mismatch at d9c496b and zero at the final evidence revision. A correction without both committed input and matching v1/v2 receipts does not pass."
+    },
+    "C2": {
+      "axis": "depth (capability acquisition: ANSI-C quoted-string comment boundary)",
+      "summary": "Extend the pinned tally audit code-view to keep an ANSI-C quoted string open across escaped single quotes, blank a following shell comment, and preserve a literal hash inside the quote.",
+      "predicate": "C2_R37_PASS=true iff the ANSI-C escaped-quote trailing-comment fixture is fully blanked and the literal-hash fixture is byte-identical.",
+      "before": {
+        "rev": "d9c496b19371b779ce0eec6dfee1b049b27a3a2d",
+        "expected": "one of two frozen ANSI-C code-view fixtures passes; the escaped-quote trailing comment leaks into the structural view"
+      },
+      "after_target": "both frozen fixtures pass against the committed tool revision, the tool selftest includes the cases, and the round-36 counter predicate is re-attested at the new tool pin.",
+      "counting_command": "python3 .ufo/evidence/round-37/code-view/measure.py --lane LANE --rev REV",
+      "kill_rule": "The fixture bytes and expected code-view output are frozen here. The new tool digest is recorded in a separate pre-run pin before any after measurement; no code-view edit follows that pin."
+    }
+  },
+  "frozen_control_input": {
+    "source_revision": "d9c496b19371b779ce0eec6dfee1b049b27a3a2d",
+    "source_panel_path": ".ufo/evidence/round-35/c1/panel",
+    "source_panel_tree": "4f3d8af5b62ba04a5ff825bfdaec6c9193f8489e",
+    "source_specimen_count": 9,
+    "unreachable_prior_mutant_commit": "91373d55557fe26c431e9e3dd9e8fa4a00d7b57f",
+    "committed_empty_panel_path": ".ufo/evidence/round-37/control/empty-panel"
+  }
+}
