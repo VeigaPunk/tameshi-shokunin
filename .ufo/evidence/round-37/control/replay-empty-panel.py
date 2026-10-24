@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Replay the frozen r35/r36 predicates against the committed r37 empty-panel tree.
 
-Only the public-panel path is redirected. The frozen counter source, runner, tool,
-sealed files, scoring code, and revision all come from committed Git objects at REV.
+Only the public-panel path is redirected. Counter, runner, and sealed inputs come from
+committed Git objects at COUNTER_REV. `--tool` explicitly selects the same committed tool
+bytes so the receipts say `mode=control`; this wrapper pins that digest. The empty-panel
+tree and manifest are read from PANEL_REV.
 """
 import argparse
 import hashlib
@@ -18,6 +20,8 @@ COUNTERS = {
     "v1": ".ufo/evidence/round-35/c1/c1-measure.py",
     "v2": ".ufo/evidence/round-36/c1/c1-measure-v2.py",
 }
+TOOL_PATH = "tools/tally-audit-v3.py"
+FROZEN_TOOL_SHA256 = "6188db16de045f2927df2a0e667bc1539f4acfce5a1ac116e6de3107bf15d354"
 
 
 def git_env():
@@ -83,6 +87,11 @@ def main():
     if empty_paths != [EMPTY_PANEL + "/manifest.json"]:
         print("EMPTY_PANEL_REPLAY: SETUP mutant_tree_not_empty paths=%d" % len(empty_paths))
         return 2
+    tool_result = git(lane, "show", "%s:%s" % (rev, TOOL_PATH))
+    tool_sha = hashlib.sha256(tool_result.stdout).hexdigest() if tool_result.returncode == 0 else ""
+    if tool_sha != FROZEN_TOOL_SHA256:
+        print("EMPTY_PANEL_REPLAY: SETUP tool_pin_mismatch=%s" % (tool_sha or "missing"))
+        return 2
 
     work_root = os.path.abspath(a.work_root)
     os.makedirs(work_root, exist_ok=True)
@@ -118,7 +127,7 @@ def main():
             print("EMPTY_PANEL_REPLAY: SETUP work_not_empty=%s" % kind)
             return 2
         sys.argv = [counter_path, "--lane", lane, "--rev", rev, "--work", work,
-                    "--sealed", a.sealed]
+                    "--sealed", a.sealed, "--tool", TOOL_PATH]
         from io import StringIO
         import contextlib
         stdout = StringIO()
@@ -134,13 +143,13 @@ def main():
         for line in output.splitlines():
             print(line)
 
-    v1_ok = (results["v1"][0] == 0 and "C1_R35_PASS=true" in results["v1"][1]
-             and "tool_sha_ok=1" in results["v1"][1] and "pub_kill=0/0" in results["v1"][1]
-             and "pub_accept=0/0" in results["v1"][1])
-    v2_ok = (results["v2"][0] == 1 and "C1_R36V2_PASS=false" in results["v2"][1]
-             and "tool_sha_ok=1" in results["v2"][1] and "pub_kill=0/0" in results["v2"][1]
-             and "pub_accept=0/0" in results["v2"][1] and "pub_slots=0" in results["v2"][1]
-             and "pub_distinct=0" in results["v2"][1])
+    v1_ok = (results["v1"][0] == 0 and "C1_R35_CONTROL_PASS=true" in results["v1"][1]
+             and "mode=control" in results["v1"][1] and "tool_sha_ok=1" in results["v1"][1]
+             and "pub_kill=0/0" in results["v1"][1] and "pub_accept=0/0" in results["v1"][1])
+    v2_ok = (results["v2"][0] == 1 and "C1_R36V2_CONTROL_PASS=false" in results["v2"][1]
+             and "mode=control" in results["v2"][1] and "tool_sha_ok=1" in results["v2"][1]
+             and "pub_kill=0/0" in results["v2"][1] and "pub_accept=0/0" in results["v2"][1]
+             and "pub_slots=0" in results["v2"][1] and "pub_distinct=0" in results["v2"][1])
     ok = v1_ok and v2_ok
     print("EMPTY_PANEL_REPLAY: source_tree=%s source_specimens=9 empty_specimens=0 counter_rev=%s panel_rev=%s v1_pass=%d v2_reject=%d EMPTY_PANEL_REPLAY_PASS=%s"
           % (manifest["source_panel_tree"], rev, panel_rev, int(v1_ok), int(v2_ok), "true" if ok else "false"))

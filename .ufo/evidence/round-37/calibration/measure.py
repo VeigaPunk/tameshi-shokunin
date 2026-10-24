@@ -10,7 +10,7 @@ import re
 OLD_MUTANT = "91373d55557fe26c431e9e3dd9e8fa4a00d7b57f"
 ERRATUM_MARKER = "### Round 36 control-input erratum (round 37)"
 MANIFEST = ".ufo/evidence/round-37/control/empty-panel/manifest.json"
-REPLAY_RECEIPT = ".ufo/evidence/round-37/control/replay-at-final-fixed.stdout"
+REPLAY_RECEIPT = ".ufo/evidence/round-37/control/replay-at-final-control.stdout"
 
 
 def git_env():
@@ -79,12 +79,13 @@ def main():
         panel_commit = git(lane, "cat-file", "-e", panel_rev + "^{commit}")
         counter_commit = git(lane, "cat-file", "-e", measured_counter_rev + "^{commit}")
         panel_ancestor = git(lane, "merge-base", "--is-ancestor", panel_rev, rev)
-        return (label in text and wanted in text and "EMPTY_PANEL_REPLAY_PASS=true" in text
-                and measured_counter_rev == counter_rev and panel_commit.returncode == 0
-                and counter_commit.returncode == 0 and panel_ancestor.returncode == 0)
+        return (label in text and wanted in text and "mode=control" in text
+                and "EMPTY_PANEL_REPLAY_PASS=true" in text and measured_counter_rev == counter_rev
+                and panel_commit.returncode == 0 and counter_commit.returncode == 0
+                and panel_ancestor.returncode == 0)
 
-    receipts_ok = (receipt_ok(replay, "C1_R35_PASS=true", "pub_kill=0/0", source_rev)
-                   and receipt_ok(replay, "C1_R36V2_PASS=false", "pub_slots=0", source_rev))
+    receipts_ok = (receipt_ok(replay, "C1_R35_CONTROL_PASS=true", "pub_kill=0/0", source_rev)
+                   and receipt_ok(replay, "C1_R36V2_CONTROL_PASS=false", "pub_slots=0", source_rev))
     old_commit = git(lane, "cat-file", "-e", OLD_MUTANT + "^{commit}")
     old_unresolved_superseded = old_commit.returncode != 0 and correction and manifest_ok and receipts_ok
     mismatches = 0 if old_unresolved_superseded else 1
