@@ -39,6 +39,7 @@ def main():
         return 2
     rev = resolved.stdout.decode().strip()
     scorecard = show(lane, rev, "SCORECARD.md")
+    manifest_bytes = show(lane, rev, MANIFEST)
     replay = show(lane, rev, REPLAY_RECEIPT)
     if scorecard is None:
         print("C1_R37: SETUP scorecard_unresolved")
