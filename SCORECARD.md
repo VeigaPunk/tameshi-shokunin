@@ -1774,3 +1774,7 @@ repertoire capability).
 the freeze-before-data discipline with a tool re-pin and counter re-attest (real shell
 lexer or enumerated supported-form list); the open recall classes in the round-35 lesson
 `## Holds`; the two prepared round-36 waves' findings once the orchestrator dispatches them.
+
+### Round 36 control-input erratum (round 37)
+
+The round-36 empty-panel stdout files remain historical outputs, but their `rev=91373d55557fe26c431e9e3dd9e8fa4a00d7b57f` input is not an object in this lane (`git cat-file -e` fails at the r36 tip `d9c496b19371b779ce0eec6dfee1b049b27a3a2d`). The closure-routed control is now reconstructed from the committed tree/spec at `.ufo/evidence/round-37/control/empty-panel/manifest.json`: source panel tree `4f3d8af5b62ba04a5ff825bfdaec6c9193f8489e`, nine committed specimens, deterministic empty-panel input. The replay receipt `.ufo/evidence/round-37/control/replay-at-final-fixed.stdout` runs the frozen v1/v2 counters at the resolvable counter revision and reads the committed panel tree at its resolvable panel revision. This correction does not rewrite the r36 receipts.
