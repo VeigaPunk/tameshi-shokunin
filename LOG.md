@@ -1993,3 +1993,8 @@ metadata and its failure are preserved; production gate source is unchanged.
   validator-checked taskCalls verbatim; seat reports land under
   `.ufo/waves/round-37/w1/` and `w2/`. Round-36's inherited w1/w2 seat reports (39 + 39,
   uncommitted) are committed as wave evidence.
+- Correction (append-only, attempt 3): the S104 located-quote line range recorded in the
+  round-37 entry above ("§ANSI-C Quoting lines 489–493") and in the original lesson Gate is
+  off by five — at the pinned commit the quote occupies lines 494–495. Re-opened and verified
+  against sha256 `f3d37d57…2be32d5`. The S104 row and the lesson Gate carry the correction
+  with old→new logged; the quote itself is verbatim. Wave-1 seat ReviewSourceScope found it.

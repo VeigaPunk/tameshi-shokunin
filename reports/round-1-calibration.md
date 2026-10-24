@@ -164,6 +164,15 @@ claim: three `[~]` plus one `[ ]` permits a local score of 6, not 8, after the
 three asserted boxes' source audits. Box 3's two points and the separate independent-
 review two points remain unearned.
 
+> **Erratum (round 37, append-only).** This box-3 disposition was written at the fleet
+> round-1 blocked attempt and records an `[ ]` (assertion rejected). The standing
+> `SHONEN.md` box 3 now carries `[~]` with a ledger-keyed pointer
+> (`.ufo/evidence/round-21/coldread/ledger.json`, input-keyed monitor credit) — a later,
+> narrower lane assertion that supersedes the rejection here without rewriting it. The
+> `[~]` remains a lane assertion with no independent promotion verifier; no `[x]` is
+> claimed. Found as a carried-over stale trail by wave-1 seat CriticSHONENRestraint
+> (round 37).
+
 ## box-4
 
 Canonical seed row: `PROTOCOL.md:428` — "No cross-domain bleed (PROVINCE.md still accurate)".

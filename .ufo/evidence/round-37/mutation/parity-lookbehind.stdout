@@ -1,0 +1,34 @@
+bash -n "x=$'it\\'": rc=2 (odd-parity quote OPEN at EOF)
+bash -n "x=$'it\\\\'": rc=0 (even-parity quote CLOSED)
+== pristine sha256=da8c1ef4b30ce4e42b1cc2b11229543e36e122457d2336f9a990d28161693ede
+  frozen_1             ok
+  frozen_1_2bs         ok
+  F1_1bs_comment       ok
+  F2_2bs_comment       ok
+  F3_1bs_literal       ok
+  F4_2bs_literal       ok
+  F5_3bs_comment       ok
+  F6_4bs_comment       ok
+  F7_2bs_nospace       ok
+  F8_1bs_nospace       ok
+  F9_1bs_multiline     ok
+  F10_2bs_nextline     ok
+  frozen_2             ok
+  frozen_2_2bs         ok
+SUMMARY tool=pristine divergences=0 fixtures=14
+== mutant_lookbehind sha256=1e6e7c98b79201809db6272f88a61dde4514653d4b6aa5f51d2ec83e3bef7be8
+  frozen_1             ok
+  frozen_1_2bs         DIVERGES  got=": $'it\\\\' # inert st_tsu=0\nst_tsu=9\n"
+  F1_1bs_comment       ok
+  F2_2bs_comment       DIVERGES  got="printf '%s' $'a\\\\' # INERT\nprintf 'TAIL\\n'\n"
+  F3_1bs_literal       ok
+  F4_2bs_literal       ok
+  F5_3bs_comment       ok
+  F6_4bs_comment       DIVERGES  got="printf '%s' $'a\\\\\\\\' # INERT\nprintf 'TAIL\\n'\n"
+  F7_2bs_nospace       ok
+  F8_1bs_nospace       ok
+  F9_1bs_multiline     ok
+  F10_2bs_nextline     DIVERGES  got="printf '%s' $'a\\\\'\n# INERT\n"
+  frozen_2             ok
+  frozen_2_2bs         ok
+SUMMARY tool=mutant_lookbehind divergences=4 fixtures=14

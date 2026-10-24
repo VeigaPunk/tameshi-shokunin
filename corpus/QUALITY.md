@@ -887,3 +887,15 @@ These errata qualify the prior text; they do not rewrite it.
     Falsifier: `git show e423c41ba253357ab8c8513f0376dad9d38ab248:SCORECARD.md`
     contains the 8/64-64 statement, while its after receipt is at
     `b455001e2589b3f4f471d94a3de7e5e549b9f54c`.
+
+Correction note (round 37, append-only; found by wave-1 seat ReviewQualityCriterion):
+criterion 73's falsifier names `.ufo/evidence/round-37/calibration/before-final-control.stdout`
+for the `unresolved_control_inputs=1` before-state — correct — but its `mode=control`
+requirement is evidenced by `.ufo/evidence/round-37/control/replay-at-final-control.stdout`
+(not by any calibration/ receipt, which carries no mode label). Read the falsifier as:
+before-state = `calibration/before-final-control.stdout`; control-mode state =
+`control/replay-at-final-control.stdout` (`mode=control`, v1 PASS / v2 FAIL); after-state =
+`calibration/after-control-final.stdout` (`unresolved_control_inputs=0`). Also: criterion
+74's anti-hardcoding clause ("removing the ANSI-C state must make the escaped-quote case
+fail") gained a committed falsifier path at `.ufo/evidence/round-37/mutation/` (branch-removal
+mutant receipt; the gap the same seat named is closed).
