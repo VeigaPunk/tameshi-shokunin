@@ -1,0 +1,61 @@
+{
+  "round": 38,
+  "l1": "TameshiR38",
+  "attempt": 1,
+  "frozen_at": "2026-10-24",
+  "frozen_before_any_data_run": true,
+  "lane_base_rev": "ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a",
+  "notes": "Two claims on distinct axes. Calibration (8) is the lane's lowest non-retired axis and carries C1; the stagnation nudge does not apply because round 37 added a capability row inside the stagnation window. Neither claim is exploratory. Every predicate below is the same sentence as the counter's condition and as the receipt label.",
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "summary": "The lane's self-assessment records agree with the observed repo state: the six declared mismatch classes count zero at the round commit.",
+      "predicate": "C1_R38_PASS=true iff the frozen counter prints total=0 and C2_R35_PASS=true (every one of the six classes m1..m6 is zero) at the measured revision.",
+      "before": {
+        "rev": "ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a",
+        "expected": "two live mismatches: m3 (the tameshi seat file .ufo/waves/round-37/residual/ResCorrections.md stranded untracked at the fleet root) and m6 (the SCORECARD standing sources-registry row claims 99 rows while corpus/SOURCES.md holds 101)",
+        "observed": "MISMATCH m3 .ufo/waves/round-37/residual/ResCorrections.md (untracked seat file: ??) / MISMATCH m6 SCORECARD standing row says 99 rows, SOURCES.md has 101 / C2_R35: m1=0 m2=0 m3=1 m4=0 m5=0 m6=1 total=2 entries=40 sources_rows=101 rev=ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a C2_R35_PASS=false (exit 1)"
+      },
+      "after_target": "total=0 and C2_R35_PASS=true at the round commit, with the misrooted seat file committed byte-exact into the lane repo (cmp-verified) and the fleet-root copy deleted, and the SCORECARD standing sources-registry row re-stated to the row count that corpus/SOURCES.md actually holds at that commit.",
+      "counting_command": "python3 .ufo/evidence/round-35/c2/c2-measure.py --lane LANE --rev REV --fleet /home/vgpnk/Projects/shokunin",
+      "do_nothing_control": "The same command at the round base rev ea8f14aa: the counter prints total=2 and exits 1. Doing nothing cannot reach total=0, because both mismatches are real divergences between a committed record and the observed tree, not artefacts of the counter's own state.",
+      "kill_rule": "One default-mode deciding run per revision: the base run above and one run at the round commit. Every other invocation is a control and is labelled as such. The claim is judged on the frozen counter's total, not on prose.",
+      "counter": {
+        "path": ".ufo/evidence/round-35/c2/c2-measure.py",
+        "sha256_at_base": "COMPUTED_AT_FREEZE"
+      },
+      "carries": "The round-37 non-author closure's routed defect 1 (the missing ResCorrections report / the 6-versus-5 residual count) and the lane's own misroot sweep duty.",
+      "provenance_mining": "considerthese/2026-10-24.md proposal 2 (unreachable-provenance check) is mined as a QUALITY.md criterion backed by this claim's evidence; it is not a separate claim."
+    },
+    "C2": {
+      "axis": "depth",
+      "summary": "The golden-comparison three-outcome verdict discipline (F4 ground: golden / snapshot fixture discipline) enters the lane's craft with a behavioural fixture that classifies match, differ and error, plus the assimilated golden-comparison knowledge entry re-grounded on sources opened this round.",
+      "predicate": "C2_R38_PASS=true iff (a) the committed tool's own selftest passes 3/3 behavioural cases, (b) the mutant that collapses the error class into differ is killed by that same selftest (non-zero exit), and (c) the admitted knowledge entry at REV declares the three outcome classes and the explicit update-flag rule (--check-entry exits 0).",
+      "before": {
+        "rev": "ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a",
+        "expected": "no golden-verdict fixture exists at the base revision",
+        "observed": "GOLDEN_R38: cases=0/3 mutant_killed=false entry_ok=false tool_absent=1 rev=ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a C2_R38_PASS=false (exit 1)"
+      },
+      "after_target": "GOLDEN_R38: cases=3/3 mutant_killed=true entry_ok=true ... C2_R38_PASS=true (exit 0) at the round commit, with the tool bytes frozen by sha256 below and no tool edit after the pin.",
+      "counting_command": "python3 .ufo/evidence/round-38/golden/measure.py --lane LANE --rev REV",
+      "do_nothing_control": "The same command at the round base rev: cases=0/3 and exit 1 — the fixture is absent, so the target is unreachable without landing the fixture. The second control is the mutant run inside the counter: the frozen mutation collapses error into differ and the selftest must fail, which proves the fixture discriminates rather than merely existing.",
+      "kill_rule": "The tool bytes are frozen by sha256 in this contract before the deciding run. No edit to tools/golden-verdict.py after the pin; a needed change is a new pin recorded in a separate file, never an in-place rewrite.",
+      "counter": {
+        "path": ".ufo/evidence/round-38/golden/measure.py",
+        "tool_path": "tools/golden-verdict.py",
+        "tool_sha256": "c5f9616be719fdce99e8aaa9d8c9b1cde5c4c2d4d4db0b517ec16c1a26d15f87"
+      },
+      "sources": "S105 (POSIX diff, The Open Group Base Specifications Issue 7, §EXIT STATUS) and S106 (google/golden, Compare doc comment and shouldUpdateGolden branch), re-opened and re-grounded by this round with this lane's own access date and located quotes; rows appended in the lane's 11-column schema after the scratch collision check, the scratch transformation and a scratch census validation (exit 0) before the first append."
+    }
+  },
+  "frontier_step": {
+    "theme": "golden / snapshot fixture discipline (frontier row F4, open in corpus/README.md)",
+    "assimilation_package": "/home/vgpnk/Projects/shokuknow/merge/tameshi/ (read-only; never written, never a campaign tool run there)",
+    "admitted_entries": "1-3 knowledge entries on the single golden-comparison theme",
+    "boundary": "The considered source tree is read-only. Registry and knowledge edits land only through the lane helper."
+  },
+  "no_harm_guard": {
+    "depth_command_d": "git show REV:tools/mutate-and-run.sh | python3 -c 'import sys,re;s=sys.stdin.read();print(\"recorded_cases=%d depth_score=%d\"%(len(re.findall(r\"^\\s*leg\",s,re.M)),min(10,len(re.findall(r\"^\\s*leg\",s,re.M)))))'",
+    "expectation": "recorded_cases=9 depth_score=9 at base and at the round commit; no ledger leg is added by this round"
+  }
+}

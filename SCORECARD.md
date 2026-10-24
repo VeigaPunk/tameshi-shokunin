@@ -1817,3 +1817,35 @@ result is reported separately.
 **Planned (round 38):** nested command-substitution quoting and unquoted
 backslash-newline remain explicit holds from `corpus/lessons/round-35.md`
 `## Holds`; do not generalize the bounded ANSI-C capability to a full Bash lexer.
+
+## Round 38 — self-assessment reconciliation (calibration) + golden-comparison three-outcome verdict (depth) (2026-10-24)
+
+L1 TameshiR38, attempt 1. Two claims, distinct axes; calibration (8) is the lowest non-retired
+axis and carries C1. The stagnation nudge does not apply: round 37 added a capability row
+inside the stagnation window. Neither claim is exploratory. Contract
+`.ufo/evidence/round-38/contract.json`, frozen before any data run (base rev `ea8f14aa`).
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 the lane's self-assessment records agree with the observed repo state (six declared mismatch classes m1..m6) | calibration (lowest axis) | `C2_R35: m1=0 m2=0 m3=1 m4=0 m5=0 m6=1 total=2 entries=40 sources_rows=101 rev=ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a C2_R35_PASS=false`, exit 1 (`.ufo/evidence/round-38/calibration/before-at-base.stdout`) | `total=0 ... C2_R35_PASS=true`, exit 0 at the round commit (`.ufo/evidence/round-38/calibration/after-at-<rev>.stdout`) | two live self-assessment mismatches -> zero (m3 the misrooted fleet-root seat file; m6 the standing sources-registry row count) | `python3 .ufo/evidence/round-35/c2/c2-measure.py --lane LANE --rev REV --fleet /home/vgpnk/Projects/shokunin` | the round-38 content commit (hash named in the receipt filename and the report) | `.ufo/waves/round-38/calibration/`, the misroot copy `.ufo/waves/round-37/residual/ResCorrections.md` (sha256 `46ff0665…`), lesson `corpus/lessons/round-38.md` `## Mistakes` | improved (measured) |
+| C2 golden-comparison three-outcome verdict discipline (frontier F4) with a behavioural fixture | depth | `GOLDEN_R38: cases=0/3 mutant_killed=false entry_ok=false tool_absent=1 rev=ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a C2_R38_PASS=false`, exit 1 (`.ufo/evidence/round-38/golden/before-at-base.stdout`) | `cases=3/3 mutant_killed=true entry_ok=true ... C2_R38_PASS=true`, exit 0 at the round commit (`.ufo/evidence/round-38/golden/after-at-<rev>.stdout`) | one bounded decision table + fixture; the numeric depth score stays 9 (no new ledger leg) | `python3 .ufo/evidence/round-38/golden/measure.py --lane LANE --rev REV` | the round-38 content commit (hash named in the receipt filename and the report) | `tools/golden-verdict.py` (sha256 `c5f9616b…`, frozen in the contract), `corpus/knowledge/golden-comparison-verdict.md`, S105 + S106, lesson `corpus/lessons/round-38.md` `## Gate` | improved (measured) |
+
+Numeric axes, measured. **depth 9 -> 9**: command D prints `recorded_cases=9 depth_score=9` at
+the base rev and at the round commit (no ledger leg added; C2's gain is the decision table
+and the fixture, not a case count). **calibration 8 -> 8**: C1's counter measures the named
+self-assessment divergences, not the SHONEN restraint rubric; the restraint score is
+unchanged because no SHONEN box moved. The lane's lowest axis is worked, and no axis is
+harmed.
+
+Capabilities table: no new row this round (the golden-verdict fixture is a verification
+instrument for C2, not a new repertoire capability).
+
+Routed repair: the round-37 closure's routed defect 1 (the lane claimed six residual reports,
+five were committed) is discharged here -- the sixth seat report was located in the fleet root,
+copied byte-exact into the lane repo (cmp verified) and the fleet-root copy deleted.
+
+**Planned (round 39):** the F4 write-path census over the surveyed gates (the measurement
+this round deliberately did not take); the comparator lattice beyond POSIX `diff`
+(`cmp`, `git diff --exit-code`); the two named holds in the round-38 lesson.
+
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 103 rows at round 35 (the "103 rows" this cell carried was a round-32 observation; corrected 2026-10-23, round 35, per r34 AllFourScorecard F1); `corpus/SOURCES.md` | fleet round 1 (kaika) |

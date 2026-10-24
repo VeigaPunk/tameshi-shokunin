@@ -483,3 +483,15 @@ C2 counter found (QUALITY.md criterion 7): every `corpus/knowledge/*.md` entry n
 | `knowledge/witness-equivalence-rule.md` | Core ground, landed round 34: the set-aware witness rule for sealed held-out copies (kill/accept × head/vector branches), the rule the round-34 C1 deciding run verified. Header trio added the same round (C2 m1) | S097, S101; `.ufo/evidence/round-33/c1/c1-measure.py` |
 
 No frontier row changes status this round (F1–F10 as above).
+
+## Round 38 — F4 golden comparison: the three-outcome verdict (round 38)
+
+| `knowledge/golden-comparison-verdict.md` | F4 golden / snapshot fixture discipline, landed round 38: a golden comparison has three outcomes (match / differ / error), POSIX `diff` exit 0/1/>1, and the expected-value write path sits behind an explicit update flag. Admitted from the corpus-expansion-1 package for this lane and re-grounded by this round on S105 and S106. Indexed under the round-38 coverage move below. |
+
+**Coverage-map move (F4).** Before: F4 read "golden / snapshot fixture discipline — open;
+update paths that write expected values without an explicit flag: unmeasured". After: F4
+partly held — the *verdict lattice* is now held (three outcomes, with the error class
+separated from the difference class) and the *write-path census* over the surveyed gates is
+still unmeasured and stays the next falsifiable move. Sources: S105 (spec, tier A), S106
+(code, tier A). The lane's own fixtures were not converted to golden comparisons this round,
+and no claim is made about any sibling gate.

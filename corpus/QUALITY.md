@@ -899,3 +899,31 @@ before-state = `calibration/before-final-control.stdout`; control-mode state =
 74's anti-hardcoding clause ("removing the ANSI-C state must make the escaped-quote case
 fail") gained a committed falsifier path at `.ufo/evidence/round-37/mutation/` (branch-removal
 mutant receipt; the gap the same seat named is closed).
+
+### Criterion 76 — a standing self-assessment row must state what the committed tree holds
+
+A standing SCORECARD row that states a count of committed bytes (the sources-registry row
+count) is a claim about the repo and must equal what the committed tree holds at every
+deciding run; a stale count is a self-assessment mismatch, not a dated restatement.
+Lesson: `corpus/lessons/round-38.md` `## Mistakes` row 1 (the standing row said 99 rows
+while `corpus/SOURCES.md` held 101).
+Falsifier that must fail: the frozen counter
+`python3 .ufo/evidence/round-35/c2/c2-measure.py --lane LANE --rev REV --fleet /home/vgpnk/Projects/shokunin`
+must print `m6=1 ... C2_R35_PASS=false` and exit 1 when the standing row's count is one off
+the committed registry (receipt: `.ufo/evidence/round-38/calibration/before-at-base.stdout`,
+which carries exactly that mismatch).
+
+### Criterion 77 — a seat report belongs in the lane repo, and a lane that claims it must carry it
+
+A seat's report is lane evidence: it is written under the lane's own wave directory, and a
+lane's own count of its residual reports must match the files that are actually committed
+there. A seat file found at the fleet root is misrooted output and is neither committed nor
+counted until it is copied byte-exact into the lane repo (cmp-verified) and the fleet-root
+copy is deleted.
+Lesson: `corpus/lessons/round-38.md` `## Mistakes` row 2 (the round-37 residual report
+`ResCorrections.md` was stranded at the fleet root, so the lane's claim of six residual
+reports did not match its five committed files).
+Falsifier that must fail: the same frozen counter must print `m3=1 ... C2_R35_PASS=false`
+and exit 1 while a tameshi-attributable untracked file remains under the fleet root's
+`.ufo/waves/` tree, and `m3=0` once the file is committed into the lane and the fleet copy
+is gone (before receipt: `.ufo/evidence/round-38/calibration/before-at-base.stdout`).

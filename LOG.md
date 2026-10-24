@@ -1998,3 +1998,52 @@ metadata and its failure are preserved; production gate source is unchanged.
   off by five — at the pinned commit the quote occupies lines 494–495. Re-opened and verified
   against sha256 `f3d37d57…2be32d5`. The S104 row and the lesson Gate carry the correction
   with old→new logged; the quote itself is verbatim. Wave-1 seat ReviewSourceScope found it.
+
+## Round 38 — self-assessment reconciliation (calibration) + golden-comparison three-outcome verdict (depth) (2026-10-24)
+
+- Claim C1 (calibration, the lane's lowest non-retired axis at 8): the lane's self-assessment
+  records must agree with the observed repo state. Before at `ea8f14aa5780084dc96a0fb0d2a50fd35eb93c8a`:
+  `C2_R35: m1=0 m2=0 m3=1 m4=0 m5=0 m6=1 total=2 entries=40 sources_rows=101 ... C2_R35_PASS=false`,
+  exit 1 (`.ufo/evidence/round-38/calibration/before-at-base.stdout`). Two real mismatches:
+  the round-37 residual seat report `ResCorrections.md` was stranded untracked at the fleet
+  root (`.ufo/waves/round-37/residual/`) instead of the lane repo, and the SCORECARD standing
+  `sources-registry` row claimed 99 registry rows while `corpus/SOURCES.md` held 101. After:
+  the seat file was copied byte-exact into the lane repo (cmp verified, sha256
+  `46ff0665557454638b91fde3630688802aa8a08dd77bf77fd49da9a7f4a82115`), the fleet-root copy and
+  its empty directories were deleted (the one fleet-root deletion this round), and the standing
+  row was re-stated to the registry's real count. Counting command:
+  `python3 .ufo/evidence/round-35/c2/c2-measure.py --lane LANE --rev REV --fleet /home/vgpnk/Projects/shokunin`.
+  This discharges the round-37 closure's routed defect 1.
+- Claim C2 (depth): the golden-comparison three-outcome verdict discipline (frontier F4).
+  Before at `ea8f14aa`: `GOLDEN_R38: cases=0/3 mutant_killed=false entry_ok=false tool_absent=1
+  ... C2_R38_PASS=false`, exit 1 (`.ufo/evidence/round-38/golden/before-at-base.stdout`). After:
+  `tools/golden-verdict.py` classifies `diff`'s exit lattice into match / differ / error,
+  its own selftest passes 3/3 behavioural cases, the frozen mutation that collapses `error`
+  into `differ` is killed by that selftest, and the admitted knowledge entry passes
+  `--check-entry`. The tool bytes are frozen by sha256 `c5f9616be719fdce99e8aaa9d8c9b1cde5c4c2d4d4db0b517ec16c1a26d15f87`
+  in the contract. Counting command:
+  `python3 .ufo/evidence/round-38/golden/measure.py --lane LANE --rev REV`.
+- Frontier / sources: S105 (POSIX `diff`, The Open Group Base Specifications Issue 7) and S106
+  (google/golden `Compare`) were opened by this round's own writer on 2026-10-24 (fetched
+  sha256 `dda9f57d…` and `4b2c2ad0…`), with located quotes in the round-38 lesson `## Gate`;
+  one knowledge entry admitted (`corpus/knowledge/golden-comparison-verdict.md`), two rows
+  appended (registry 101 -> 103 rows). The staged rows were campaign-schema (NF=14, escaped
+  pipes in `recheck`), so the append block was transformed in scratch and gated on a scratch
+  mirror (census exit 0) before the first append. The id collision check found
+  `collisions=0` and the guard was proven able to fail (an indented colliding row produces
+  `collisions=1` under the 0-3-space extractor and `collisions=0` under a column-zero-only one).
+  The tameshi quarantine slice was derived and nothing was adopted from it.
+- considerthese: one unimplemented proposal mined (`considerthese/2026-10-24.md` proposal 2,
+  the unreachable-provenance check), grounded through the round-36 empty-panel receipts that
+  cite the unreachable revision `91373d55…`; it lands as QUALITY criterion 76 and is carried
+  by C1's counter.
+- Census at round start: `sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`
+  exit 0, 101 rows. At round end: exit 0, 103 rows.
+- Waves: one v2 wave, 65 seats, band 64-128, 35 attack roles (53.8%); role mix connector 1,
+  scout 8, executor 12, scribe 8, reviewer 15, critic 12, mutation-tester 8, sentinel 1. The
+  L1 holds the canonical planner seat (the validator rejects a `planner` role). Seat counts,
+  dead seats and the dispatch method are recorded in the round-38 report.
+- Limits: the lane's own gates were NOT audited for expected-value write paths (F4's write-path
+  census stays unmeasured); the three-outcome rule is scoped to POSIX `diff` and is not
+  generalised to `cmp` or `git diff --exit-code`; no lane fixture was converted to a golden
+  comparison this round.
