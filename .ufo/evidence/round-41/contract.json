@@ -1,0 +1,58 @@
+{
+  "schema": "tameshi-round-contract-v1",
+  "lane": "tameshi",
+  "round": 41,
+  "frozen_at": "2026-10-25",
+  "base_rev": "a3d6c690bcbf8914551d4f4e8e1612784c1c2046",
+  "frozen_before_any_seat_score": true,
+  "frozen_before_deciding_run": true,
+  "inherited_state": "none: attempt 1 (2026-10-24T23:07 -03) died with the orchestrator; `git -C tameshi-shokunin status --porcelain` was empty at attempt-2 start and `.ufo/waves/round-41/` did not exist",
+  "stagnation_nudge": "does not fire: a capability entered the table at round 40, inside the window N=2; calibration (8) is the lowest non-retired axis and carries C1",
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "type": "axis move on the lane's lowest non-retired axis",
+      "statement": "the lane's self-assessment records agree with observed repo state: the standing sources-registry count matches the registry, no round-41 record cites an unmined S-id or an unresolvable repo path, and the round-40 quarantine-summary contradiction is corrected in the round-41 lesson",
+      "predicate": "C1_R41_PASS is true iff m6, m7, m8 and m9 all count 0",
+      "counter": ".ufo/evidence/round-41/calibration/measure.py",
+      "counter_sha256": "f00917ddd7b519f0eb631f8a11dcc9bbcdcdfa0de9cbbb62639431f5794cb0c2",
+      "counting_command": "python3 .ufo/evidence/round-41/calibration/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV",
+      "before": "m6=1 m9=1 total=2 C1_R41_PASS=false at the base revision",
+      "target": "m6=0 m7=0 m8=0 m9=0 total=0 C1_R41_PASS=true at the measurement revision",
+      "kill_rule": "exactly one default-mode run at the measurement revision; `--rev work` runs are pre-run checks and are labelled as such, never cited as the measurement",
+      "do_nothing_control": "the base revision scored by the same counter: m6=1 (standing row says 103, registry holds 107) and m9=1 (round-40 summary says 7 refused / 9 present, its table counts 6 / 10) survive any edit that does not touch them, so a do-nothing path cannot reach total=0",
+      "classes": {
+        "m6": "SCORECARD standing sources-registry row count vs the SOURCES.md S-row count (carried unchanged from the frozen round-35 counter)",
+        "m7": "a round-41 record cites an S-id the registry does not hold as mined",
+        "m8": "a round-41 record cites a repo-relative path that does not resolve at the measured revision",
+        "m9": "the round-40 lesson's quarantine summary contradicts its own verdict table and no appended round-41 correction states the table's counts"
+      }
+    },
+    "C2": {
+      "axis": "depth",
+      "type": "capability acquisition",
+      "statement": "tools/write-path-census-v3.py resolves a write destination held in a variable (open, write_text/write_bytes, os.replace/os.rename, os.symlink) where v2 can only match a literal on the same line",
+      "predicate": "C2_R41_PASS is true iff the committed v3 tool matches its contract pin, the round-40 v2 pin is unchanged, v3's selftest exits 0 with all four planted fixtures at their declared values, v2's own patterns resolve none of the two new planted classes, both live variable-destination sites in tools/repeat-control.py resolve to an expected-value path under v3 while v2 records no expected-value destination on the same lines, and both recognizer-removal mutants make the v3 selftest fail",
+      "counter": ".ufo/evidence/round-41/census/measure.py",
+      "counter_sha256": "5d57c7097fb33a66d11cb19b834dd7f92ade268c56562c8a34d7a94bf64ef696",
+      "counting_command": "python3 .ufo/evidence/round-41/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV",
+      "tool": "tools/write-path-census-v3.py",
+      "tool_sha256": "095924a7a165be96e69ff9dad67d3e513d23ba6737c35a0537f898482eef0279",
+      "fixtures": ".ufo/evidence/round-41/census/fixtures.json",
+      "fixtures_sha256": "a4123ce373447563a93ad86c21cc3344f5448f1c6157ba696a7239569a58dc31",
+      "v2_tool": "tools/write-path-census-v2.py",
+      "v2_sha256": "4022853295882c5a11e192274e9215ea5a008e54eb0a2f77a8a2365f522d878b",
+      "before": "tool_absent=1 var_expected=0 symlink_expected=0 C2_R41_PASS=false at the base revision",
+      "target": "tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1 var_expected=1 symlink_unflagged=1 symlink_expected=1 literal_unflagged=1 scratch_var_unflagged=0 v2_var_expected=0 v2_symlink_sites=0 live_var_resolved_v3=1 live_var_scratch_v3=1 live_var_expected_v2=0 live_symlink_resolved_v3=1 live_symlink_scratch_v3=1 live_symlink_sites_v2=0 mutant_resolve_killed=1 mutant_symlink_killed=1 C2_R41_PASS=true",
+      "kill_rule": "exactly one default-mode run at the measurement revision; `--control` and `--selftest` runs are controls",
+      "do_nothing_control": "the base revision (tool absent) cannot pass; the embedded v2 patterns score v2_var_expected=0 v2_symlink_sites=0 on the same planted fixtures (C2_R41_CONTROL_PASS=false)",
+      "declared_scope_limit": "one-hop-ish resolution to depth four through assignment, os.path.join, +, / and f-strings; aliases, closures over reassigned names, attribute reassignment, conditional assignment and any path computed by a non-folding call are not resolved; no universality is claimed"
+    }
+  },
+  "wave_plan": {
+    "shape": "default v1 two waves or one v2 wave, chosen at dispatch time against the frozen predicates",
+    "policy_v1": "/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json",
+    "policy_v2": "/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json",
+    "seat_paths": "absolute under /home/vgpnk/Projects/shokunin/tameshi-shokunin"
+  }
+}
