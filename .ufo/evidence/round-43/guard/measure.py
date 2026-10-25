@@ -80,6 +80,11 @@ def read(path):
         return handle.read()
 
 
+def read_bytes(path):
+    with open(path, 'rb') as handle:
+        return handle.read()
+
+
 def number(sid):
     return int(sid[1:])
 
@@ -92,17 +97,27 @@ def norm_url(url):
     return text.rstrip('/')
 
 
+def own_document(cells):
+    """Deterministic local document key, then normalised (never the tool's code)."""
+    blob = ' '.join(cells[1:6])
+    url = URL_RE.search(blob)
+    if url:
+        return norm_url(url.group(0).rstrip('.,;)]'))
+    source = cells[1] if len(cells) > 1 else ''
+    head = re.split(r'\s+[—–]\s+', source)[0].strip()
+    openable = '/' in head or re.search(r'\.[A-Za-z0-9]{2,6}$', head)
+    return norm_url(head) if len(head) > 8 and openable else ''
+
+
 def own_parse(text):
-    """Counter-side parse: {id: url} with the census-valid row pattern."""
+    """Counter-side parse: {id: document} with the census-valid row pattern."""
     found = {}
     for line in text.splitlines():
         match = ROW_RE.match(line)
         if not match:
             continue
         cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
-        blob = ' '.join(cells[1:6])
-        url = URL_RE.search(blob)
-        found[match.group(1)] = norm_url(url.group(0).rstrip('.,;)]')) if url else ''
+        found[match.group(1)] = own_document(cells)
     return found
 
 
@@ -165,7 +180,9 @@ def main():
             handle.write(registry_raw)
         tool_path = os.path.join(work, TOOL_REL)
         os.makedirs(os.path.dirname(tool_path), exist_ok=True)
+        substitute = 0
         if args.tool_file:
+            substitute = 1
             with open(os.path.abspath(args.tool_file), 'rb') as src, open(tool_path, 'wb') as dst:
                 dst.write(src.read())
         elif tool_raw is not None:
@@ -214,11 +231,18 @@ def main():
         cascade = doc.get('cascade') or []
         live_cascade = 1 if cascade and all(sid in staged_ids for sid in cascade) else 0
 
+        # The tool's naive map must equal the counter's own arithmetic map, so a
+        # fabricated cascade cannot pass by answering itself.
+        top_reg = max([number(sid) for sid in registry_ids] + [0])
+        own_naive = {sid: 'S%03d' % (top_reg + index)
+                     for index, sid in enumerate(own_collisions, 1)}
+        naive_agree = 1 if doc.get('naive_map') == own_naive else 0
         naive_path = os.path.join(work, 'naive-map.json')
         with open(naive_path, 'w', encoding='utf-8') as handle:
             json.dump({'map': doc.get('naive_map') or {}}, handle)
         naive_code, naive_doc, _ = run_guard(tool_path, registry_path, args.staged, naive_path)
-        naive_refused = 1 if naive_code == 1 and (naive_doc or {}).get('verdict') == 'inadmissible' else 0
+        naive_refused = 1 if (naive_code == 1 and naive_agree
+                              and (naive_doc or {}).get('verdict') == 'inadmissible') else 0
 
         safe_map = dict(own_held)
         index = 1
@@ -252,7 +276,8 @@ def main():
                   and live_unmapped == 0 and live_verdict_refused == 1
                   and live_cascade == 1 and naive_refused == 1
                   and safe_admitted == 1 and dedupe_live == 1
-                  and len(staged_ids) >= 100)
+                  and len(staged_ids) >= 100 and substitute == 0
+                  and naive_agree == 1)
         fields = [
             'C3_R43:',
             'self_pin=%d' % self_pin,
@@ -273,6 +298,9 @@ def main():
             'safe_map_admitted=%d' % safe_admitted,
             'map_dedupe_live=%d' % dedupe_live,
             'safe_floor=%s' % floor,
+            'staged_sha256=%s' % sha(read_bytes(args.staged)),
+            'naive_agree=%d' % naive_agree,
+            'substitute=%d' % substitute,
             'rev=%s' % rev,
             'freeze=%s' % freeze,
             'C3_R43_PASS=%s' % ('true' if passed else 'false'),

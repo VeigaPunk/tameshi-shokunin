@@ -108,7 +108,8 @@ def document_key(cells):
     # without a slash or dot is not a document, and a renumber decision tied to
     # prose would be arithmetic. No hash stripping here: `report-1234567.md` and
     # `report-7654321.md` are different documents (round-43 sentinel finding).
-    return head if len(head) > 8 and re.search(r'[/.]', head) else ''
+    openable = '/' in head or re.search(r'\.[A-Za-z0-9]{2,6}$', head)
+    return head if len(head) > 8 and openable else ''
 
 
 def normalise_document(raw):

@@ -371,6 +371,10 @@ def battery(tool, work, text_mode=False, skip_new=False, skip_dead_code=False):
         live_ok[(rel, lineno)] = reason is None
         if reason:
             fails.append('%s:%d %s' % (rel, lineno, reason))
+            # A live tool site is real code, so a failure there is a reachable
+            # failure; without this the reachability gate would discard it and
+            # a live-only regression could read as `equivalent`.
+            detail['live %s:%d' % (rel, lineno)] = False
     return fails, errors, live_results, fixture_pass, live_ok, tested, detail
 
 
@@ -506,10 +510,17 @@ def main():
         if args.probe_mutant:
             probe = os.path.abspath(args.probe_mutant)
             fails, errors, _, fixture_pass, live_ok, tested, detail = battery(probe, work)
-            verdict = ('killed' if not errors and fails else
-                       'runtime_error' if errors else 'survived')
-            print('C1_R43_PROBE: verdict=%s failures=%d errors=%d first=%s'
-                  % (verdict, len(fails), len(errors),
+            reachable = [case for case in detail if not detail[case]]
+            if errors:
+                verdict = 'runtime_error'
+            elif fails and reachable:
+                verdict = 'killed'
+            elif fails:
+                verdict = 'dead_code_only'
+            else:
+                verdict = 'survived'
+            print('C1_R43_PROBE: verdict=%s failures=%d reachable_failures=%d errors=%d first=%s'
+                  % (verdict, len(fails), len(reachable), len(errors),
                      (fails + errors)[:1]))
             return 0 if verdict == 'killed' else 1
 

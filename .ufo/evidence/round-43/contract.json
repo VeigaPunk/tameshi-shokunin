@@ -22,7 +22,7 @@
       "statement": "The two survivors of the round-42 mutant set are resolved under the pre-declared rule K/D/E/U: outflag_no_parse_args_check is killed by a new reachable-code fixture (F11_outflag_namespace) and method_fold_several_returns is classified dead_code_only by the declared dead-code construct with a differential probe, leaving five killed and one dead-code-only and zero unresolved, with the round-42 mutant declaration unchanged.",
       "target": "C1_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 fixtures_pass=12/12 run_errors=0 live_ok=3/3 live_unflagged_v4=0 mutants_declared=6 mutants_killed=5 dead_code_only=1 equivalent=0 unresolved=0 kill_fixture_reachable=1 dead_code_arg_ok=1",
       "counter": ".ufo/evidence/round-43/mutants/measure.py",
-      "counter_sha256": "901d947fb912a6cbbcc2de8c876a72a55daa3ab6ca49e8e9c634aac041ccc7e0",
+      "counter_sha256": "0d0f81bdbe09bb53997ade30911fc178a38de072f84aacf23c6c9c0a710e57f1",
       "counting_command": "python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE --rev REV --freeze FREEZE",
       "rule": {
         "K_kill": "a mutant is killed when the round-43 battery (12 fixtures + 3 live sites) produces at least one FAIL under the round-42 exit-plus-FAIL oracle (exit 0, parseable output, a case differs from its declared classification), and the killing fixture contains no runtime-unreachable statement",
@@ -59,16 +59,16 @@
       "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds under any URL form (scheme, www., case, trailing slash), refuses its own naive arithmetic map because its targets are still staged ids, refuses a map that moves a held document off its registry id or decides an undocumented row, and admits only a by-document map at or above the safe floor",
       "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1",
       "counter": ".ufo/evidence/round-43/guard/measure.py",
-      "counter_sha256": "8c8147e75a742dc1ad4da3c4354a9c8fc63e3a669d5f85dbf90c925d9893ff9b",
+      "counter_sha256": "ae66342df05a4ea9ff2a03799552cc14dac99f823cf0491ba4fd757a8f54161e",
       "counting_command": "python3 .ufo/evidence/round-43/guard/measure.py --lane LANE --rev REV --freeze FREEZE",
       "staged_input": "/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (read-only; never written, never fetched)",
       "do_nothing_control": "a constant-empty stand-in that prints collisions=[]: the counter's own extraction disagrees with it, so C3_R43_CONTROL_PASS=false by construction; receipt .ufo/evidence/round-43/control/c3-constant-empty.stdout. At the base rev the tool is absent (tool_absent=1)"
     }
   },
-  "tool_sha256": "365bf95842ce9bb022af7edb5905f1d36e1a435a7365ff91469d2edcadb4b0c2",
+  "tool_sha256": "e219007ff487a54b65e356578e6a066fe94d3306c027972148fcd1be8578169a",
   "frozen_tools": {
     "tools/write-path-census-v4.py": "784de4c0feef3364c4444632788af7ebb57d53032b79f60cc4330c094d122fe5",
-    "tools/staged-id-guard.py": "365bf95842ce9bb022af7edb5905f1d36e1a435a7365ff91469d2edcadb4b0c2"
+    "tools/staged-id-guard.py": "e219007ff487a54b65e356578e6a066fe94d3306c027972148fcd1be8578169a"
   },
   "no_harm": "command D (depth) and the round-21 coldread monitor (calibration) are re-run at the base and at the measurement rev; both counters read only",
   "amendments": [
@@ -135,6 +135,14 @@
       "why": "wave-1 RevProvenance traced the pin chain and found the narration stale: it still claimed no seat had run and that counters were byte-unchanged, while A4/A5 had changed two counters and the guard",
       "rule_changed": false,
       "effect": "disclosure text only; no pin, claim, predicate, target or control changed"
+    },
+    {
+      "id": "A9",
+      "when": "during wave 1, before any deciding run",
+      "what": "C1: a live-site failure is recorded as a reachable failure (so the K gate cannot discard it), and --probe-mutant applies the same gate and reports `dead_code_only` instead of `killed`. C3 counter: its own document key mirrors the tool's URL-else-path-head rule and is normalised; the naive map is recomputed by the counter and must agree; --tool-file sets substitute=1 (and the substitute cannot satisfy the predicate); the staged input's sha256 is printed.",
+      "why": "wave-1 RevC1FixtureSpec showed a live-only regression would read as `equivalent` because `detail` held fixture failures only, and MutC1F12 showed --probe-mutant still reported the dead-code-only mutant as `killed`; RevC3Counter showed the naive round trip was the tool answering itself, that `--tool-file` left tool_sha_ok pinned to the REV tool, and that the staged input had no digest",
+      "rule_changed": false,
+      "effect": "code aligned to the frozen sentences; predicates, targets, fixtures and controls unchanged; the guard's document rule now rejects prose that merely ends in a period"
     }
   ],
   "amendments_note": "post-freeze amendments are recorded above in order, each with the seat evidence that produced it. A1-A3 change extraction rules and control paths; A4-A7 change two counters, the guard tool and their pins, all before any deciding run. No amendment changes claims.* (other than counter_sha256 and the class sentences restated verbatim), the predicate, the target, the fixture set or the controls. A8 corrects this file's own narration after wave-1 RevProvenance showed the frozen_before and this note described the chain inaccurately."
