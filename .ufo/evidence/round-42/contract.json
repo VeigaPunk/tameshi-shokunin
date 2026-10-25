@@ -1,0 +1,65 @@
+{
+  "schema": "tameshi-round-contract-v1",
+  "lane": "tameshi",
+  "round": 42,
+  "frozen_at": "2026-10-25",
+  "base_rev": "c77c2b7e64d2e356381441ecf94abac03e984606",
+  "frozen_before_any_seat_score": true,
+  "frozen_before_deciding_run": true,
+  "inherited_state": "none: watchdog shows one launch line for tameshi round=42 (attempt 1) and no lane-dead line; `jj-lane.sh state` at start: local=remote=c77c2b7e ahead=0 tracked=0 untracked=0; `.ufo/waves/round-42/` did not exist",
+  "stagnation_nudge": "does not fire: a capability entered the table at round 41, inside the window N=2; calibration (6, round-21 coldread monitor) is the lowest non-retired axis and carries C1",
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "type": "axis move on the lane's lowest non-retired axis",
+      "statement": "the lane's self-assessment records agree with observed repo state: no committed wave receipt asserts a report presence the tree contradicts without a covering superseding receipt, and the round-41 and round-42 records cite no unmined S-id, no unresolvable repo path (line-scoped extraction) and no unreachable revision",
+      "predicate": "C1_R42_PASS is true iff self_pin=1, records=6, and m6, m7, m8, m10 and m11 all count 0",
+      "counter": ".ufo/evidence/round-42/calibration/measure.py",
+      "counter_sha256": "9782a5a0e6404d2f305a51db085c7606914a2c381b35da7f7927c804df914c0e",
+      "counting_command": "python3 .ufo/evidence/round-42/calibration/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --freeze FREEZE",
+      "before_expected": "m10=1 (the round-41 residual receipt asserts present=false for .ufo/waves/round-41/residual/ResidualReceipts.md, which the tree holds) and records=3 (round-42 records absent) -> C1_R42_PASS=false at the base",
+      "target": "self_pin=1 m6=0 m7=0 m8=0 m10=0 m11=0 total=0 records=6 C1_R42_PASS=true, exit 0, at the measurement revision",
+      "kill_rule": "exactly one default-mode deciding run at the measurement revision with --freeze set to this contract's freeze commit; any other run is a pre-run check or a falsifier run and is labelled so; a miss is an honest stop, never a narrowed target",
+      "do_nothing_control": "the base scored by this counter keeps m10=1; a scratch clone that adds the three round-42 records but no superseding receipt keeps m10=1, and a superseding receipt that repeats present=false or omits the path keeps m10>=1 (selftest cases T2_*)",
+      "classes": {
+        "m6": "SCORECARD standing sources-registry row count vs the SOURCES.md S-row count (carried)",
+        "m7": "a round-42 record cites an S-id the registry does not hold as mined; `staged:S###` names a package id",
+        "m8": "a round-41 or round-42 record cites a repo-relative path (prefixes corpus/ tools/ .ufo/ considerthese/ plans/ reports/ plus root files; fleet-only .ufo/reports|prompts|state skipped) that does not resolve at REV; backtick spans never cross a newline",
+        "m10": "a tracked JSON under .ufo/waves/ asserts present=<bool> for a report path that disagrees with the tree at REV, and no superseding receipt (top-level `supersedes`, all its own assertions agreeing, re-asserting every path of the superseded receipt) covers it",
+        "m11": "a round-41 or round-42 record cites a 40-hex revision that is neither a lane commit reachable from REV nor a commit in the fleet repo (considerthese/2026-10-24.md proposal 2, unreachable provenance)"
+      },
+      "routed_from": "corpus/lessons/round-41-verifier-spotcheck.md routed defects 1, 2, 3"
+    },
+    "C2": {
+      "axis": "depth",
+      "surface": "the F4 write-path census gains two destination edge classes v3 cannot bind: instance attributes bound in the enclosing class (through a same-class method whose return folds) and destinations rooted at an argparse output option traced through every in-module call site; knowledge entry corpus/knowledge/r42-attribute-and-outflag-destinations.md; capability instrument tools/write-path-census-v4.py",
+      "type": "capability acquisition",
+      "statement": "write-path census v4 resolves attribute-bound and output-flag destinations: the three live v3 false positives (tools/context-capture.py:1682, :1685, tools/registry-replay.py:123) are classified not-unflagged with resolved text naming mkdtemp / --out, while every counter fixture keeps its declared classification (true positives stay unflagged), and every declared mutant of the new resolution code is killed under the exit-plus-FAIL oracle",
+      "predicate": "C2_R42_PASS is true iff self_pin=1, tool_absent=0, v3_sha_ok=1, v2_sha_ok=1, selftest_exit=0, fixtures_pass=10/10, run_errors=0, live_1682_ok=1, live_1685_ok=1, live_123_ok=1, live_unflagged_v4=0, live_tool_errors_v4=0, and mutants.json declares >=3 mutants covering classes attr, method and outflag, each applying exactly once and each killed",
+      "counter": ".ufo/evidence/round-42/census/measure.py",
+      "counter_sha256": "3c3727ece033263f9e68ca2601012dc0170c6387cee44f3e7c09ee5744890ff2",
+      "counting_command": "python3 .ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --freeze FREEZE",
+      "before_expected": "tool_absent=1 live_unflagged_v3=3 C2_R42_PASS=false at the base",
+      "target": "C2_R42_PASS=true, exit 0, at the measurement revision",
+      "tool_interface": "python3 -I tools/write-path-census-v4.py --file F --json prints one JSON object whose `sites` list carries, for every write site, lineno (int), kind (str), expected, scratch, explicit_out, unflagged (bool) and resolved (str); --selftest exits 0 iff the tool's own selftest passes; text mode without --json keeps v3's line format",
+      "mutant_protocol": "after v4 lands and before the deciding run, a non-author mutation-tester seat writes .ufo/evidence/round-42/census/mutants.json: {\"mutants\": [{name, class in attr|method|outflag, find, replace}]}, one or more per class, each find occurring exactly once in the v4 bytes and each replace disabling or inverting the resolution step of its class; the L1 commits it unchanged; a reviewer seat checks each mutant targets its class's code",
+      "kill_oracle": "killed iff every battery run exits 0 with parseable output and at least one battery case differs from its declared classification; non-zero exit, Traceback or unparseable output is runtime_error (PIT Run error, Stryker RuntimeError), not killed; no differing case is survived",
+      "kill_rule": "exactly one default-mode deciding run at the measurement revision with --freeze set to this contract's freeze commit; --tool-file and --probe-mutant runs print C2_R42_CONTROL and are never the measurement",
+      "do_nothing_control": "the base: tool_absent=1, C2_R42_PASS=false; v3 bytes placed in the v4 slot (--tool-file v3 --text-mode) fail the three live sites and F01/F04 (receipt control/c2-v3-in-slot.stdout); a junk tool that prints every site as not-unflagged fails F02 F03 F05 F06 F07 F08 F09 (receipt control/c2-junk.stdout)",
+      "sourced": "the knowledge entry cites a SOURCES row opened this round (argparse documentation for the dest of an option string) and the kill oracle cites the PIT outcome vocabulary row adopted this round"
+    }
+  },
+  "assimilation": {
+    "theme": "mutant outcome vocabulary — which outcomes count as a kill",
+    "package": "/home/vgpnk/Projects/shokuknow/merge/tameshi/",
+    "candidates": [
+      "knowledge/corpus/knowledge/pit-outcome-vocabulary.md (staged:S159, staged:S160)",
+      "knowledge/corpus/knowledge/mutation-score-semantics-cjk.md",
+      "knowledge/corpus/knowledge/survivor-classification.md"
+    ],
+    "rule": "re-ground in-round (own access date, own <=25-word located quote), PROVINCE and QUALITY per entry, id collision check with the 0-3-space extractor and guard proof, renumber by document, scratch census validate before any append, append only rows admitted entries cite, >=1 admit and >=1 reject recorded"
+  },
+  "wave_plan": "default shape: two v1 waves (policy ufo-wave-policy.json, band 32-64); wave 1 build + first falsifiers, wave 2 falsify only if wave 1 yields >=32 distinct attack items, else one residual task call of <=8 reviewer/critic seats",
+  "amendments": [],
+  "post_freeze_amendments": []
+}
