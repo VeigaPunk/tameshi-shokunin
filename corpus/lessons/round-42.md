@@ -68,9 +68,10 @@ Flip: a later assimilation round re-opens the three sources and snapshots them.
 
 - Registry before: 109 rows (S001–S154). Staged: 103 ids. `comm -12` → 2 collisions, `S153`
   and `S154` (`.ufo/waves/round-42/assimilation/collisions`).
-- Guard proof: a scratch registry with an indented row `  | S159 |` collides under the
-  0–3-space extractor (`S153 S154 S159`) and not under the column-zero one (`S153 S154`);
-  receipts in `.ufo/waves/round-42/assimilation/guard/`.
+- Guard proof: a scratch registry gains one row indented two spaces, carrying the id of
+  `staged:S159`. The 0–3-space extractor reports three collisions (`S153`, `S154` and that
+  fixture id); the column-zero one reports two (`S153`, `S154`). Receipts are in
+  `.ufo/waves/round-42/assimilation/guard/`.
 - Renumber map, by document: `staged:S159` (pitest.org/quickstart/basic_concepts/) → S155;
   `staged:S160` (pitest.org/faq/) → S156. S157 and S158 are new rows, not from the package.
 - Scratch mirror validate before any commit: `sources-census.sh validate --file <mirror>`
