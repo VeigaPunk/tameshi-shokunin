@@ -2300,3 +2300,33 @@ local=remote=`5891bdb77aba8489683533ae4cdd3b49b5e2626b`, tracked=0 untracked=0).
   2 admitted, 1 refused. Quarantine slice 17 rows, no new verdicts.
 - Round shape: two v1 waves, w1 45 seats and w2 36 seats, 81 total; one w2 seat (ScribeScorecard) is
   counted dead (its results entry carries another lane's output). Tools installed/updated: none.
+
+## 2026-10-25 — round 46: standing self-assessment re-stated, selftest hardening, flaky-failure F3 ground
+
+Motivating evidence: calibration (monitor 6) was the lowest non-retired axis, and the standing SCORECARD tables still
+stated calibration 8 (round 31) beside a monitor that prints 6; 19 of 22 standing statements carried no machine-checkable
+value. The round-45 spot-check routed the counters' selftest survivors (12 + 8 + 8 in the round-45 mutation audits) and a
+no-harm monitor that was red at base. The shokuknow `merge/tameshi` package staged flaky-failure documents (`staged:S195`,
+`staged:S190`, `staged:S216`) on frontier F3 ground the lane held only through the repeated-control capability and one
+blog post. `considerthese/2026-10-25.md` proposal 2 (cumulative regression run) grounded C1. Attempt 1; nothing inherited
+(`jj-lane.sh state`: local=remote=`683eedde3a50441c34d85a22f5fd5346f8b1ec6d`, tracked=0 untracked=0).
+
+- Freeze `745a583181648cfc7f9c1b476cd1be7dc68f7433`: contract, three counters with selftests (C1 18/18, C2 8/8, C3 24/24),
+  the sha256-pinned statements list, the declared mutant manifest (25 + 6 neutral), controls and receipts, the C3
+  snapshots and package copies, the id-collision and guard receipts, the no-harm receipts at base, before any seat ran.
+- Claim C1 (calibration). Before `total=21` (`.ufo/evidence/round-46/before/c1-at-freeze.stdout`). Seven executor seats
+  re-observed all 22 statements twice (stable); rows re-stated by `python3 .ufo/evidence/round-46/calibration/measure.py
+  --lane LANE --rev REV --base 683eedde3a50441c34d85a22f5fd5346f8b1ec6d --work EMPTY_DIR` (`--emit`).
+- Claim C2 (operability). Before `killed=0 survived=25`. Six executor seats wrote selftest additions
+  (`.ufo/waves/round-46/w1/Hard*.addition.py`); `.ufo/evidence/round-46/hardening/assemble.py` builds the hardened counters.
+  Counting command: `python3 .ufo/evidence/round-46/hardening/mutate.py --lane LANE --rev REV --targets hardened`.
+- Claim C3 (coverage, sourced, assimilation). Before `rows=0 entries=0`. Rows S258/S259/S260 adopted by document
+  (guard map admitted), three entries re-grounded in the committed snapshots. Counting command:
+  `python3 .ufo/evidence/round-46/coverage/measure.py --lane LANE --rev REV`.
+- QUALITY criteria 88 (no_harm monitors green at base), 89 (neutral mutants beside survivors) and 90 (lane-unique seat
+  names), each with a falsifier receipt under `.ufo/evidence/round-46/quality/`.
+- Frontier: rows 117 → 120; census exit 0 at start; Gate, mistakes and quarantine in `corpus/lessons/round-46.md`.
+  Assimilation: theme "flaky-failure evidence for F3", 3 admitted, claim-level refusals and deferrals listed there.
+  Quarantine slice 17 rows, no new verdicts. considerthese proposal 2 mined.
+- Round shape: wave 1 of 37 seats (two seats, MutC1Counter and ScribeQuality, lost to seat-name collisions with another
+  lane's wave and counted dead); wave 2 follows. Tools installed/updated: none.

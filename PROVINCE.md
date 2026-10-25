@@ -116,3 +116,20 @@ Appended; lines above are unchanged. The recorded mutation legs are now
 survivor recommendations travel in the round report. Line 101 above ("the
 eight recorded ledger legs") reads nine from round 26 on: `tools/mte-interop.py`
 now judges all nine.
+
+## Core — round 46 append (2026-10-25)
+
+Appended; lines above are unchanged. Frontier F3 (determinism precondition, flaky-aware verdicts) gains
+three published measurements through admitted, source-headed entries citing mined rows S258, S259 and S260:
+`corpus/knowledge/r6-flaky-failures-cluster.md` (failures co-occur in clusters), `r5-undetected-flaky-failures.md`
+(a same-job rerun is both the detection mechanism and its blind spot) and `r9-false-red-rate.md` (the false-red
+prior, carried by the publisher's per-post feed; the rendered page stays S026). F3 stays `open` in the
+frontier table: the entries state what the literature measures, they do not measure this lane's controls, and
+the lane's own repeated-control capability stays the instrument. The lane owns the reusable verification
+craft only: the entries' readings for survivor lists and rerun evidence are labelled inference, and flaky-test
+engineering as such stays adjacent (report, never absorb).
+
+The lane's standing self-assessment is now machine-checkable: `.ufo/evidence/round-46/calibration/measure.py`
+re-runs 22 frozen commands against the last SCORECARD.md row of each (statements list sha256-pinned), and the
+round-45 counters' selftests are hardened at `.ufo/evidence/round-46/hardening/`. Neither adds a recorded
+mutation leg (still nine) nor a sibling gate; both read this lane's own tools and counters only.
