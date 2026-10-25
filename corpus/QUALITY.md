@@ -963,3 +963,35 @@ Falsifier that must fail: `python3 .ufo/evidence/round-40/s108/measure.py
 `5641ed84c8dc148c34c8dd83f062279ddf06b4af` prints `quote_in_snapshot=1
 stripped_quote_fails=1 C2_R40_PASS=true`. Removing the prefix
 `可以通过使用参数` from a copy of the snapshot must make the quote check fail.
+
+### Criterion 80 — name the pins a tool edit breaks, before the edit
+
+A round that changes a tool's or a counter's bytes must record, before the edit lands,
+which pins that change breaks: every frozen contract field carrying the old digest
+(`tool_sha256`, `fixtures_sha256`, a counter's `TOOL_SHA256` constant), every capability
+row whose evidence pointer quotes a digest, and every registry anchor cell that carries
+one. The record names the old and the new digest per pin — a table a reader can check, not
+a sentence. An edit that lands first and inventories afterwards is a blast radius
+discovered, not declared.
+Lesson: `corpus/lessons/round-41.md`. The positive shape is the round-41 contract's
+`amendments` array: one entry per change with `frozen_field`, `old_sha256`, `new_sha256`
+and `before_data`. Source of the reflection: `considerthese/2026-10-24.md` proposal 1
+(pin blast-radius report before a tool edit), mined 2026-10-25, not edited. It points at
+the round-36 deferral, where one tool fix was held back because three pins depended on it.
+Measured blast radius, as an example rather than a rule: `tools/tally-audit-v3.py` at
+`a3d6c690` is pinned by `.ufo/evidence/round-35/c1/c1-measure.py` (its `TOOL_SHA256`),
+the round-35 contract and its amendments, `c1-measure-v2.py`, `replay-empty-panel.py`,
+and two capability rows in `SCORECARD.md` whose digest is truncated to 16 hex characters
+— a full-digest grep misses those two, which is the point of writing the radius down.
+Falsifier that must fail (run from the lane; a 0 means the pin still matches, a non-zero
+means the pin chain is torn at that revision):
+
+```
+test "$(git -C LANE show 691bb51:tools/tally-audit-v3.py | sha256sum | cut -d' ' -f1)" \
+   = "$(git -C LANE show 691bb51:.ufo/evidence/round-35/c1/c1-measure.py \
+        | sed -n "s/^TOOL_SHA256 = '\([0-9a-f]\{64\}\)'.*/\1/p")"
+```
+
+Observed: `d16f9b5` exit 0, `691bb51` exit 1 (tool `6188db16…`, pin `ef98fc53…` — the A7
+re-pin that left the counter constant behind), `5829676` exit 0 (A8 repaired it). The
+criterion is met only by a round that names such a break before it makes one.

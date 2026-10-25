@@ -509,3 +509,16 @@ and no claim is made about any sibling gate.
 | `knowledge/r3-snapshot-fixture-update-paths.md` | S132, the published document table. Row D29 names "Snapshot Testing: Use With Care - Randy Coulman". Not a measurement of this lane's gates. |
 
 **Coverage-map move (F4).** The round-39 limits are now a successor tool, not a closed census. The snapshot-practice corpus (the thesis and the document table) is ground the lane did not hold. S108's quote is pinned to a committed snapshot; the round-39 citation is no longer an unpinned live fetch. `cmp` and `git diff --exit-code` stay unmeasured.
+
+## Round 41 — variable-destination write census (round 41)
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/r41-variable-destination-writes.md` | The two sources that supply the mechanism — `ast` (S153) and `Path.write_text`'s receiver-as-destination rule (S154) — and the measured live finding: `tools/repeat-control.py:811` and `:820` resolve to expected-value destinations that the round-40 line matcher cannot connect, both scratch-exempt. Scope is depth-4 resolution through assignment, `os.path.join`, `+`, `/` and f-strings; aliases, closures and non-folding calls are named as unresolved. Claims no universality and no gate coverage. It also records a known false-positive class: a destination whose base is an unbound attribute or a non-folding call is labelled unflagged, and must be read against its base expression. | S153, S154 |
+
+**Coverage-map move (F4).** F4's write-path half gains a destination-resolution tool
+(`tools/write-path-census-v3.py`) and the note above; the entry pins its two quotes to
+committed snapshots under `.ufo/evidence/round-41/sources/`. `cmp` and `git diff
+--exit-code` lattices stay unmeasured, and the `os.symlink` / `shutil.*` / `handle.write`
+classes outside v2's pattern are now partly covered (`os.symlink` destination) and partly
+still outside (`shutil.*`, `handle.write`) — the entry's "What is not claimed" says so.

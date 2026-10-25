@@ -2089,3 +2089,62 @@ Motivating evidence: the first L1 for round 40 died on a provider-route failure 
 - Misroot sweep: `git status --porcelain` at the fleet root shows no file written by a round-40 seat. The untracked fleet-root files (`live.html`, `bm.json`, `write`, …) all carry the bulk mtime 2026-10-24 18:07:20 and are not this lane's. Nothing was copied and nothing was deleted.
 - Considerthese proposal 3 was opened, not paraphrased: the gnu.org manual address it names timed out again on 2026-10-24 (no response in 40 s); the lane's pinned alternative for that family is the raw upstream source (`S097`, `S104`). The file was not edited.
 
+
+## 2026-10-25 — round 41: self-assessment reconciliation and variable-destination write census
+
+Motivating evidence: `corpus/lessons/round-40-verifier-spotcheck.md` routed five defects. Routed
+defect 1 (the round-40 quarantine summary contradicts its own table) and the standing
+`sources-registry` row's stale count are the calibration claim's whole surface; the round-40 lesson's
+`## Holds` named `os.replace`'s variable destination and `os.symlink` as forms v2 cannot see, which is
+the depth claim. Attempt 1 died with the orchestrator; nothing was inherited.
+
+- Claim C1 (calibration, the lane's lowest non-retired axis at 8). The lane's self-assessment records
+  must agree with observed repo state across four declared classes (m6 standing registry count, m7
+  cited S-ids not mined, m8 cited paths that do not resolve, m9 the round-40 quarantine-summary
+  contradiction). Before at `a3d6c690bcbf8914551d4f4e8e1612784c1c2046`:
+  `C1_R41: m6=1 m7=0 m8=0 m9=1 total=2 records=0 sources_rows=107 C1_R41_PASS=false`, exit 1, with
+  `MISMATCH m6 SCORECARD standing row says 103 rows, SOURCES.md has 107` and `MISMATCH m9 round-40
+  quarantine summary says (1, 7, 9), its table counts (1, 6, 10)`. Target:
+  `m6=0 m7=0 m8=0 m9=0 total=0 C1_R41_PASS=true`. Counting command:
+  `python3 .ufo/evidence/round-41/calibration/measure.py --lane LANE --rev REV`. Counter
+  `.ufo/evidence/round-41/calibration/measure.py`. The round-40 file is not rewritten: the correction
+  is appended in `corpus/lessons/round-41.md`.
+- Claim C2 (depth, capability acquisition). Destination resolution in the write-path census. Before at
+  `a3d6c690`: `C2_R41: tool_absent=1 var_expected=0 symlink_expected=0 rev=a3d6c690… C2_R41_PASS=false`,
+  exit 1. Target: `tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1
+  var_expected=1 symlink_unflagged=1 symlink_expected=1 literal_unflagged=1 scratch_var_unflagged=0
+  v2_var_expected=0 v2_symlink_sites=0 live_var_resolved_v3=1 live_var_scratch_v3=1
+  live_var_expected_v2=0 live_symlink_resolved_v3=1 live_symlink_scratch_v3=1 live_symlink_sites_v2=0
+  mutant_resolve_killed=1 mutant_symlink_killed=1 mutant_symlink_arg_killed=1 C2_R41_PASS=true`.
+  Counting command: `python3 .ufo/evidence/round-41/census/measure.py --lane LANE --rev REV`. Tool
+  `tools/write-path-census-v3.py` at `095924a7a165be96e69ff9dad67d3e513d23ba6737c35a0537f898482eef0279`;
+  v2's pin `4022853295882c5a11e192274e9215ea5a008e54eb0a2f77a8a2365f522d878b` does not move.
+- Pre-data amendments, all recorded in `.ufo/evidence/round-41/contract.json` with `before_data: true`:
+  A1 the m7 registry parser read the status cell at index 9 while the 11-column row carries it at index
+  8 (found by seat `ExecC1Base`; without the fix every cited S-id would fail m7 and the target was
+  reachable only by citing nothing); A2 the symlink fixture rooted its destination at `tests/golden`, so
+  a destination-argument mutant survived (found by seat `MutFixtureVar`) — both fixtures re-rooted at
+  `tests/fixtures` and a third mutant, the argument swap, added with its own field; A3 the lesson's
+  collision sentence wrote the staged set's last id as a bare S-id the registry does not hold, and the
+  record was rephrased rather than the rule relaxed; A4 directory citations with a trailing slash were
+  unresolved (work mode used `isfile`). No default-mode run of either counter preceded them.
+- Frontier / sources. S153 (`ast`, CPython) and S154 (`Path.write_text`, CPython) opened 2026-10-25 and
+  pinned to committed snapshots (`.ufo/evidence/round-41/sources/ast.html` sha256 `183a4f8c…5317`,
+  `pathlib.html` sha256 `0044cae6…4f093`) because the docs footer clock moves within a day. Rows
+  107 → 109. One knowledge entry admitted (`corpus/knowledge/r41-variable-destination-writes.md`) with
+  a `corpus/README.md` row. Id collision check: registry ids 109, staged ids 103 beginning at `S153`,
+  `collisions` holds `S153` and `S154`; no staged row was adopted, so the renumber map is empty and the
+  collision is recorded for the next assimilation round. Census `validate --root /home/vgpnk/Projects/shokunin tameshi`
+  exit 0 at round start (107 rows) and at round end (109 rows), same warning set, zero E codes.
+- Assimilation: none adopted. The package's two staged F4 gate-census entries carry `source:` lines
+  pointing at the lane's own tree at `31687496`, so they are same-ground, not expansion; the staged row
+  the round-40 Gate refused keeps that refusal because its flip condition still fails at that revision.
+- considerthese: `considerthese/2026-10-24.md` proposal 1 (pin blast-radius report before a tool edit)
+  mined as `corpus/QUALITY.md` criterion 80, with the round-36 deferral and this round's three
+  pre-data amendments as the motivating evidence. The file was not edited.
+- Waves: one v1 wave, 40 seats (band 32–64 under `/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json`),
+  roles connector 1, scout 6, executor 8, scribe 7, reviewer 10, critic 5, mutation-tester 3; the L1
+  holds the canonical planner seat (the validator rejects `planner`), with the bounded planning data
+  walk carried by the connector and scout items. Spec `.ufo/waves/round-41/spec-w1.json`, dispatch
+  `.ufo/waves/round-41/dispatch-w1.json`, registry `.ufo/waves/round-41/w1/swarm-registry.json`.
+- Command D at the measured commit: `recorded_cases=9 depth_score=9`. No axis harmed.

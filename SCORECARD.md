@@ -1848,7 +1848,7 @@ copied byte-exact into the lane repo (cmp verified) and the fleet-root copy dele
 this round deliberately did not take); the comparator lattice beyond POSIX `diff`
 (`cmp`, `git diff --exit-code`); the two named holds in the round-38 lesson.
 
-| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 103 rows at round 35 (the "103 rows" this cell carried was a round-32 observation; corrected 2026-10-23, round 35, per r34 AllFourScorecard F1); `corpus/SOURCES.md` | fleet round 1 (kaika) |
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 109 rows at round 41 (restated from 103 by the round-41 C1 claim, whose m6 class compares this cell to the registry at the measured revision); `corpus/SOURCES.md` | fleet round 1 (kaika) |
 
 ## Round 39 — depth-guard agreement (calibration) + F4 write-path census (depth) (2026-10-24)
 
@@ -1891,3 +1891,47 @@ Capabilities table — row admitted this round:
 Numeric axes, measured at `5641ed84c8dc148c34c8dd83f062279ddf06b4af`. **depth 9 → 9**: command D prints `recorded_cases=9 depth_score=9`. **calibration 8 → 8**: no SHONEN box moved (`boxes=4 checked=0 asserted=4`). No axis harmed. `tools/write-path-census.py` sha256 remains `bc8c660c56f871f85dad8912be28446293fd63f62b4fd1c16eb153f7a27edc62`.
 
 **Planned (round 41):** `cmp` and `git diff --exit-code` lattices stay unmeasured; the v2 pattern still misses a variable destination on `os.replace`.
+
+## Round 41 — self-assessment reconciliation (calibration) + variable-destination write census v3 (depth) (2026-10-25)
+
+L1 tameshi, hyaku run 6, attempt 2. Attempt 1 died with the orchestrator
+(`lane-dead-no-report tameshi round=41`, 2026-10-25T03:23:08-03:00); nothing was inherited:
+`git status --porcelain` was empty and `.ufo/waves/round-41/` did not exist at attempt-2 start.
+Two claims on distinct axes. Calibration (8) is the lane's lowest non-retired axis and carries C1;
+the stagnation nudge does not fire because round 40 added a capability inside the window N=2.
+Contract `.ufo/evidence/round-41/contract.json`, frozen at `d4ee4e63a0a4402bd8628fbc80f06bbd8f37d937`
+before any seat scored and before any default-mode run; three pre-data amendments are recorded
+there (A1 the m7 status column index, A2 the symlink fixture root plus a third mutant, A3 a record
+rephrasing), none after a deciding run.
+
+| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| C1 the lane's self-assessment records agree with observed repo state (classes m6, m7, m8, m9) | calibration (lowest axis) | `m6=1 m9=1 total=2 records=0 sources_rows=107 C1_R41_PASS=false`, exit 1 at base `a3d6c690bcbf8914551d4f4e8e1612784c1c2046` (`m6` the standing registry cell said 103; `m9` the round-40 quarantine summary said 7 refused / 9 present against its own table's 6 / 10) | target `m6=0 m7=0 m8=0 m9=0 total=0 C1_R41_PASS=true`, exit 0 | two live mismatches → zero, plus the two record-audit classes (m7 cited unmined S-ids, m8 unresolvable cited paths) measured at zero on this round's records | `python3 .ufo/evidence/round-41/calibration/measure.py --lane LANE --rev REV` | see the after subsection below | `corpus/lessons/round-41.md`, the round-40 correction appended there, the restated standing row | improved (measured) |
+| C2 destination resolution in the write-path census (`tools/write-path-census-v3.py`) | depth (surface: `corpus/knowledge/r41-variable-destination-writes.md` — two cited sources S153/S154, the two-live-site table, the depth-4 fold threshold; capability instrument: `tools/write-path-census-v3.py`). Coverage is noted, not claimed separately: the tool and the two destination edge classes v2 cannot see (variable-held, `os.symlink`); the unmoved command is `grep -c 'os\.symlink' tools/write-path-census-v2.py` → 0 | `tool_absent=1 var_expected=0 symlink_expected=0 C2_R41_PASS=false`, exit 1 at base `a3d6c690` | target `tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1 var_expected=1 symlink_unflagged=1 symlink_expected=1 literal_unflagged=1 scratch_var_unflagged=0 v2_var_expected=0 v2_symlink_sites=0 live_var_resolved_v3=1 live_var_scratch_v3=1 live_var_expected_v2=0 live_symlink_resolved_v3=1 live_symlink_scratch_v3=1 live_symlink_sites_v2=0 mutant_resolve_killed=1 mutant_symlink_killed=1 mutant_symlink_arg_killed=1 C2_R41_PASS=true`, exit 0 | the two live sites `tools/repeat-control.py:811` and `:820` move from v2-unresolvable to v3-resolved; the v2 pin does not move; numeric depth stays 9 (no ledger leg added) | `python3 .ufo/evidence/round-41/census/measure.py --lane LANE --rev REV` | see the after subsection below | `tools/write-path-census-v3.py`, `.ufo/evidence/round-41/census/fixtures.json`, `corpus/knowledge/r41-variable-destination-writes.md` | improved (capability) |
+
+Capabilities table — row admitted this round:
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| write-path census destination resolution | resolve a write destination held in a variable through up to four assignments/`os.path.join`/`+`/`/`/f-string hops and classify it as expected-value, scratch or update-flagged, for `open`, `write_text`/`write_bytes`, `os.replace`/`os.rename` and `os.symlink`; v2 cannot connect a destination to a token that is not on the same line | deciding receipt `C2_R41: … C2_R41_PASS=true` at the round-41 measured commit, counter `.ufo/evidence/round-41/census/measure.py`, tool `tools/write-path-census-v3.py` @ `095924a7a165be96e69ff9dad67d3e513d23ba6737c35a0537f898482eef0279` | round 41 |
+
+Numeric axes: **depth 9 → 9** (command D prints `recorded_cases=9 depth_score=9` at base and at the
+round commit — the runner is not edited and no ledger leg is added); **calibration 8 → 8** (no SHONEN
+box moved: `boxes=4 checked=0 asserted=4`). The C1 gain is record agreement, not a restraint-score
+move, and the C2 gain is a capability, not a ledger count. No axis is harmed.
+
+Guardrail on the label: numeric depth stays 9 → 9 under command D, and `C2_R41_PASS` is the
+capability instrument's predicate, not the depth measure — the depth surface the label names is the
+knowledge entry (two sources, the site table, the fold threshold), which the counter does not read.
+Pre-data controls, receipted before the deciding run: C1's base run is its own do-nothing control
+(`m6=1 m9=1` survive any edit that does not touch them). C2's base run is `tool_absent=1`, and
+`--control` scores the same fixtures with the embedded v2 patterns →
+`v2_var_expected=0 v2_symlink_sites=0 C2_R41_CONTROL_PASS=false`, exit 1.
+
+Disclosed limit (not a predicate change): v3 labels `tools/context-capture.py:1682` and `:1685`
+`unflagged` although both are scratch — their base is `self.case_dir(name)`, a non-folding call over an
+unbound `self.root`. The tool's `unflagged` column must be read against the base expression; the fix
+(dotted-attribute binding plus a completeness flag) is routed to round 42. `tools/registry-replay.py:123`
+writes `expected.json` under an explicit `--out` directory, which the census counts as unflagged because
+an explicit output flag is not in its update-flag pattern; that is a classification gap, not a hidden update.
+

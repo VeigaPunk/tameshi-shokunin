@@ -110,7 +110,7 @@ def read(lane, rev, path):
 
 def resolves(lane, rev, path):
     if rev == 'work':
-        return os.path.isfile(os.path.join(lane, path))
+        return os.path.exists(os.path.join(lane, path))
     proc = subprocess.run(
         ['git', '-C', lane, 'cat-file', '-e', '%s:%s' % (rev, path)], capture_output=True
     )
@@ -134,7 +134,7 @@ def registry(text):
         if not match:
             continue
         cells = line.split('|')
-        status = cells[9].strip() if len(cells) > 9 else ''
+        status = cells[8].strip() if len(cells) > 8 else ''
         rows['S%s' % match.group(1).zfill(3)] = status
     return rows
 
@@ -182,7 +182,7 @@ def path_tokens(text):
     out = []
     for token in BACKTICK_RE.findall(text or ''):
         raw = token.strip()
-        raw = re.sub(r':\d+(?:-\d+)?$', '', raw)
+        raw = re.sub(r':\d+(?:-\d+)?$', '', raw).rstrip('/')
         if any(ch in raw for ch in '<>*{}|()…, '):
             continue
         if raw.startswith(PATH_PREFIXES) or raw in PATH_EXACT:
@@ -247,10 +247,15 @@ def main():
         summary = quarantine_summary(lesson40)
         if table is not None and summary is not None and table != summary:
             correction = read(lane, rev, LESSON) or ''
+            # The expected words are DERIVED from the table, not hardcoded: a lesson that
+            # restates different numbers than the table counts does not silence m9.
+            counts = {v: k for k, v in WORDS.items()}
+            want_refused = counts.get(table[1], str(table[1]))
+            want_present = counts.get(table[2], str(table[2]))
             fixed = (
                 'round-40' in correction
-                and 'six refused' in correction
-                and 'ten present' in correction
+                and ('%s refused' % want_refused) in correction
+                and ('%s present' % want_present) in correction
             )
             if not fixed:
                 mismatches.append(

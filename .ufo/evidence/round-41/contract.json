@@ -15,7 +15,7 @@
       "statement": "the lane's self-assessment records agree with observed repo state: the standing sources-registry count matches the registry, no round-41 record cites an unmined S-id or an unresolvable repo path, and the round-40 quarantine-summary contradiction is corrected in the round-41 lesson",
       "predicate": "C1_R41_PASS is true iff m6, m7, m8 and m9 all count 0",
       "counter": ".ufo/evidence/round-41/calibration/measure.py",
-      "counter_sha256": "f00917ddd7b519f0eb631f8a11dcc9bbcdcdfa0de9cbbb62639431f5794cb0c2",
+      "counter_sha256": "8bc9b4221c59c7b380892b7f97885e9b8ada1f5d82b0703effa166f0519ce11c",
       "counting_command": "python3 .ufo/evidence/round-41/calibration/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV",
       "before": "m6=1 m9=1 total=2 C1_R41_PASS=false at the base revision",
       "target": "m6=0 m7=0 m8=0 m9=0 total=0 C1_R41_PASS=true at the measurement revision",
@@ -32,18 +32,18 @@
       "axis": "depth",
       "type": "capability acquisition",
       "statement": "tools/write-path-census-v3.py resolves a write destination held in a variable (open, write_text/write_bytes, os.replace/os.rename, os.symlink) where v2 can only match a literal on the same line",
-      "predicate": "C2_R41_PASS is true iff the committed v3 tool matches its contract pin, the round-40 v2 pin is unchanged, v3's selftest exits 0 with all four planted fixtures at their declared values, v2's own patterns resolve none of the two new planted classes, both live variable-destination sites in tools/repeat-control.py resolve to an expected-value path under v3 while v2 records no expected-value destination on the same lines, and both recognizer-removal mutants make the v3 selftest fail",
+      "predicate": "C2_R41_PASS is true iff the committed v3 tool matches its contract pin, the round-40 v2 pin is unchanged, v3's selftest exits 0 with all four planted fixtures at their declared values, v2's own patterns resolve none of the two new planted classes, both live variable-destination sites in tools/repeat-control.py resolve to an expected-value path under v3 while v2 records no expected-value destination on the same lines, and all three recognizer mutants (name resolution, symlink branch, symlink destination argument) make the v3 selftest fail",
       "counter": ".ufo/evidence/round-41/census/measure.py",
-      "counter_sha256": "5d57c7097fb33a66d11cb19b834dd7f92ade268c56562c8a34d7a94bf64ef696",
+      "counter_sha256": "83268eff97048cd4223a6f015b901c5efbde15d7b0d506bd40e5611b373ce94c",
       "counting_command": "python3 .ufo/evidence/round-41/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV",
       "tool": "tools/write-path-census-v3.py",
       "tool_sha256": "095924a7a165be96e69ff9dad67d3e513d23ba6737c35a0537f898482eef0279",
       "fixtures": ".ufo/evidence/round-41/census/fixtures.json",
-      "fixtures_sha256": "a4123ce373447563a93ad86c21cc3344f5448f1c6157ba696a7239569a58dc31",
+      "fixtures_sha256": "20b6254d39a75fb9b09b783131a7cdcaf360c36642e39424343166515aa26329",
       "v2_tool": "tools/write-path-census-v2.py",
       "v2_sha256": "4022853295882c5a11e192274e9215ea5a008e54eb0a2f77a8a2365f522d878b",
       "before": "tool_absent=1 var_expected=0 symlink_expected=0 C2_R41_PASS=false at the base revision",
-      "target": "tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1 var_expected=1 symlink_unflagged=1 symlink_expected=1 literal_unflagged=1 scratch_var_unflagged=0 v2_var_expected=0 v2_symlink_sites=0 live_var_resolved_v3=1 live_var_scratch_v3=1 live_var_expected_v2=0 live_symlink_resolved_v3=1 live_symlink_scratch_v3=1 live_symlink_sites_v2=0 mutant_resolve_killed=1 mutant_symlink_killed=1 C2_R41_PASS=true",
+      "target": "tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1 var_expected=1 symlink_unflagged=1 symlink_expected=1 literal_unflagged=1 scratch_var_unflagged=0 v2_var_expected=0 v2_symlink_sites=0 live_var_resolved_v3=1 live_var_scratch_v3=1 live_var_expected_v2=0 live_symlink_resolved_v3=1 live_symlink_scratch_v3=1 live_symlink_sites_v2=0 mutant_resolve_killed=1 mutant_symlink_killed=1 mutant_symlink_arg_killed=1 C2_R41_PASS=true",
       "kill_rule": "exactly one default-mode run at the measurement revision; `--control` and `--selftest` runs are controls",
       "do_nothing_control": "the base revision (tool absent) cannot pass; the embedded v2 patterns score v2_var_expected=0 v2_symlink_sites=0 on the same planted fixtures (C2_R41_CONTROL_PASS=false)",
       "declared_scope_limit": "one-hop-ish resolution to depth four through assignment, os.path.join, +, / and f-strings; aliases, closures over reassigned names, attribute reassignment, conditional assignment and any path computed by a non-folding call are not resolved; no universality is claimed"
@@ -54,5 +54,52 @@
     "policy_v1": "/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json",
     "policy_v2": "/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json",
     "seat_paths": "absolute under /home/vgpnk/Projects/shokunin/tameshi-shokunin"
-  }
+  },
+  "amendments": [
+    {
+      "id": "A1",
+      "frozen_field": "claims.C1.counter_sha256",
+      "found_by": "wave-1 seat ExecC1Base",
+      "before_data": true,
+      "what": "the m7 registry parser read cells[9] as status; the 11-column row carries status at cells[8] and opened at cells[9], so every cited S-id would have failed m7 and C1's target was reachable only by citing zero ids",
+      "rule_changed": false,
+      "change": "component index 9 -> 8 in registry(); counter re-pinned",
+      "old_sha256": "f00917ddd7b519f0eb631f8a11dcc9bbcdcdfa0de9cbbb62639431f5794cb0c2",
+      "new_sha256": "5ccb42d8a60d6d1e5e509a1ddb954a602d7e46476ee0355084810b48b8f08553"
+    },
+    {
+      "id": "A2",
+      "frozen_field": "claims.C2.fixtures_sha256, claims.C2.counter_sha256, claims.C2.target",
+      "found_by": "wave-1 seat MutFixtureVar",
+      "before_data": true,
+      "what": "the symlink fixture rooted its destination at 'tests/golden', so the directory token 'golden' satisfied EXPECTED_RE even when the destination argument was mutated to run-1.stdout; a destination-argument mutant therefore survived. The literal fixture shared the same weak root",
+      "rule_changed": false,
+      "change": "both fixtures re-rooted at 'tests/fixtures'; a third mutant (`return 'os.symlink', [node.args[1]]` -> `[node.args[0]]`) and the field mutant_symlink_arg_killed added, so the predicate now proves the destination argument is resolved and not merely that the branch exists",
+      "old_fixtures_sha256": "a4123ce373447563a93ad86c21cc3344f5448f1c6157ba696a7239569a58dc31",
+      "new_fixtures_sha256": "20b6254d39a75fb9b09b783131a7cdcaf360c36642e39424343166515aa26329",
+      "old_counter_sha256": "5d57c7097fb33a66d11cb19b834dd7f92ade268c56562c8a34d7a94bf64ef696",
+      "new_counter_sha256": "83268eff97048cd4223a6f015b901c5efbde15d7b0d506bd40e5611b373ce94c"
+    },
+    {
+      "id": "A3",
+      "frozen_field": "record text, rule unchanged",
+      "found_by": "the L1's own --rev work pre-check",
+      "before_data": true,
+      "what": "the lesson's collision sentence wrote the staged set's last id as a bare S-id the lane registry does not hold; m7 fired on it. The class is right \u2014 the record should not cite an id it does not hold \u2014 so the record was rephrased to 'beginning at S153 and running 103 ids past it'",
+      "rule_changed": false,
+      "change": "lesson text only"
+    },
+    {
+      "id": "A4",
+      "frozen_field": "claims.C1.counter_sha256",
+      "found_by": "the L1's own --rev work pre-check",
+      "before_data": true,
+      "what": "m8 flagged a cited directory path written with a trailing slash: work mode tested isfile and the token kept the slash, so a resolvable directory read as unresolvable",
+      "rule_changed": false,
+      "change": "work mode tests os.path.exists; a trailing slash is stripped before resolution",
+      "old_sha256": "5ccb42d8a60d6d1e5e509a1ddb954a602d7e46476ee0355084810b48b8f08553",
+      "new_sha256": "8bc9b4221c59c7b380892b7f97885e9b8ada1f5d82b0703effa166f0519ce11c"
+    }
+  ],
+  "kill_rule_note": "no default-mode run of either counter occurred before A1/A2/A3; every pre-amendment run was --rev <base>, --rev work, --control or --selftest"
 }

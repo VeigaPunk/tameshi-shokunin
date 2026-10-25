@@ -33,6 +33,8 @@ RESOLVE_MARK = '        bound = env.get(node.id)'
 RESOLVE_MUTANT = '        bound = None'
 SYMLINK_MARK = "    if dotted == 'os.symlink':"
 SYMLINK_MUTANT = "    if dotted == 'os.symlink_DISABLED':"
+ARG_MARK = "            return 'os.symlink', [node.args[1]]"
+ARG_MUTANT = "            return 'os.symlink', [node.args[0]]"
 
 V2_WRITE_RE = re.compile(
     r"""open\s*\([^)]*['"](?:w|a|w\+|a\+|wb|ab)['"]"""
@@ -183,6 +185,7 @@ def main():
         for name, old, new in (
             ('resolve', RESOLVE_MARK, RESOLVE_MUTANT),
             ('symlink', SYMLINK_MARK, SYMLINK_MUTANT),
+            ('symlink_arg', ARG_MARK, ARG_MUTANT),
         ):
             mutant = text.replace(old, new, 1)
             if mutant == text or old in mutant:
@@ -251,6 +254,7 @@ def main():
         and selftest.returncode == 0
         and killed.get('resolve') == 1
         and killed.get('symlink') == 1
+        and killed.get('symlink_arg') == 1
     )
     return emit(
         'C2_R41',
@@ -278,6 +282,7 @@ def main():
             ('live_symlink_sites_v2', live_sym_sites_v2),
             ('mutant_resolve_killed', killed.get('resolve', 0)),
             ('mutant_symlink_killed', killed.get('symlink', 0)),
+            ('mutant_symlink_arg_killed', killed.get('symlink_arg', 0)),
             ('rev', args.rev),
         ],
         ok,
