@@ -1298,7 +1298,7 @@ counter that grades the newest `## Round N` block against its own round (the rou
 record-agreement counter) is round-bound: at the next round's base it is red by construction, so
 it cannot be a monitor of a later round. The gate is `.ufo/evidence/round-46/quality/no-harm-gate.py`
 (`--contract`, `--lane`, `--rev`, `--monitors-file`): it exits 1 with `RED <name>` for a red
-monitor and for a contract with an empty `no_harm`, and 0 only when every monitor printed ok.
+monitor and for a contract with an empty `no_harm`, and 0 only when every monitor printed ok. In shell mode (`--monitors-file F.sh`) the contract-phrase check is not applied; only the default mapping checks that the contract text still declares each monitor (T46RevQuality). A monitor also names the sub-measure the previous round's spot-check reported, not only the score: the cold-read monitor's credited-section count (60 of 64) fell to 55 under a same-round `PROVINCE.md` append while its score stayed 6.
 
 Lesson: `corpus/lessons/round-45-verifier-spotcheck.md` routed defect 1 (`after/c-r44-at-content.stdout`:
 `m11=1 m12=1 total=2 C2_R44_PASS=false`, the contract of round 45 named that counter in `no_harm`

@@ -1,9 +1,9 @@
 source: S258 — https://arxiv.org/abs/2504.16777 — §Abstract — arXiv:2504.16777v1 — snapshot .ufo/evidence/round-46/coverage/sources/arxiv-2504.16777-abs.html (sha256 28d2954d…)
-verified-at: 2026-10-25
+verified-at: 2026-10-25; extraction tool `.ufo/evidence/round-45/freshness/measure.py` sha256 `ba64041f49ffcf15bb0d881604a5fe3ccf9d24e56f72bef055035fbe3d27c6ed`; lane revision `eada0b36d4c9e6380d111d2037acd97cdf91d2eb`; receipt `.ufo/evidence/round-46/after/entry-rechecks.stdout`
 recheck: 365d — `curl -fsSL 'https://arxiv.org/abs/2504.16777' | grep -c 'co-occurring failures that share the same root causes'` → `3` (run 2026-10-25; the fetched page was 43,376 bytes, sha256 `28d2954d22ea45af7bd0454f1a8b01bb5db40e8e5cc235eed176a1621aa26a14`, `cmp`-identical to the snapshot). A zero count means the abstract was reworded: reopen the page and re-locate every quote below before reusing this entry.
 ground: F3 — determinism precondition, flaky-aware verdicts (`corpus/README.md` F3 row: one control per sweep → N ≥ 3 byte-identical controls, or a named mismatch). F8 is kept on the located premise alone: co-occurring failures are stated to share the same root causes; Inference: a shared cause is what makes two observations one observation.
 
-# Flaky failures come in clusters, so a set of green reruns is not a set of independent observations
+# Flaky failures come in clusters (published); that green reruns are therefore not independent observations is this lane's inference
 
 Snapshot: the arXiv abstract page of arXiv:2504.16777v1 [cs.SE], *Systemic Flakiness: An Empirical Analysis of Co-Occurring Flaky Test Failures* (Owain Parry, Gregory Kapfhammer, Michael Hilton, Phil McMinn), submitted 23 Apr 2025. Every quotation below was re-located in the extracted text of the committed snapshot; the number beside each quote is its whitespace-token count after the same fold the coverage counter applies, and 14 of the 15 located quotes do not occur in the committed package copy `.ufo/evidence/round-46/assimilation/package/r6-flaky-failures-cluster.md`.
 
@@ -23,13 +23,15 @@ Snapshot: the arXiv abstract page of arXiv:2504.16777v1 [cs.SE], *Systemic Flaki
 
 **The attributed causes.** "Through manual inspection of stack traces, conducted independently by four authors and resolved through negotiated agreement" (16 tokens) "we identified intermittent networking issues and instabilities in external dependencies as the predominant causes of systemic flakiness" (17 tokens).
 
-## 2. What this says about the lane's F3 control count
+## 2. What this does and does not say about the lane's F3 control count
 
-The F3 rule counts byte-identical controls. The snapshot says the failures such controls probe are not scattered: most of them sit in clusters that share a root cause, and the clusters are large (mean 13.5 members over the authors' 810 flaky tests). Inference: N controls drawn from one cluster are one probe of one cause repeated N times, so the count of controls is an upper bound on independent evidence, and the count of distinct causes touched is the real bound. Inference: the clustering itself needed 10,000 suite runs to become visible, so a three-control sweep cannot detect clustering at all, and the F3 rule's N ≥ 3 is a floor on controls that bounds the distinct causes a sweep can have touched only from above; a sweep that draws several cases from one gate should record that they share a gate rather than scoring them as separate controls.
+The F3 move (`corpus/README.md` F3 row) is "N ≥ 3 byte-identical controls, or a named mismatch". A byte-identical control is one exact argv run N times (`tools/repeat-control.py:7-9`: "runs one exact argv N >= 3 times"), so an F3 sweep holds one case repeated, not several cases: the paper's unit — distinct flaky tests that fail together — does not exist inside such a sweep, and the count of those controls bounds independent evidence from above by construction (`corpus/QUALITY.md` criterion 11: a repeated-control clean verdict "never proves determinism"), not because of anything S258 reports.
 
-## 3. The F8 link, stated from the quoted sentences only
+What the abstract can bear on is evidence drawn from different cases. Inference: if the lane's cases behave like the authors' flaky tests, cases that fail together would share a cause, so several of them are fewer independent observations than their number; the snapshot states the authors' clustering used a 10,000-run dataset and that they demonstrated a lightweight non-rerun alternative (quoted in §1), and it states nothing about the failures this lane's controls probe or about three-control sweeps. Inference: a sweep that draws several cases from one gate should record that they share a gate rather than scoring them as separate controls.
 
-F8 asks for an expectation fixed outside the code under mutation (`corpus/README.md` F8 row). The located sentence above names what the members of a cluster have in common: "co-occurring failures that share the same root causes" (8 tokens). An expectation that reads one member of such a cluster therefore reads the cause the other members also carry. Inference: two survivors from one cluster supply one anchor, not two, so a per-survivor verdict table that does not record cluster membership overstates the number of independent anchors it holds.
+## 3. The F8 link (the premise is located; the reading is inference)
+
+F8 (`corpus/README.md` F8 row: oracle anchoring as a survivor class; next move "one survivor classified against an independently anchored expectation") is the question this section reads the abstract against; the abstract says nothing about test oracles or mutation survivors. The located premise is that the members of a cluster have a shared cause: "co-occurring failures that share the same root causes" (8 tokens). Inference: if the members of a cluster share a root cause, an expectation anchored on one member's observed outcome is not evidence about the other members' outcomes, so two survivors from one cluster would supply one anchor, not two, and a per-survivor verdict table that does not record cluster membership would overstate the number of independent anchors it holds.
 
 ## 4. Fixture-craft meaning for this lane (Inference)
 

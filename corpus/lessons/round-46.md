@@ -32,8 +32,8 @@ are whitespace tokens after the counter's `fold`, measured by script, not estima
 ### Admit — S259 (new row): *An Empirical Study of Detected and Undetected Flaky Test Failures* (Leinen et al.; IEEE TSE 2026)
 
 - URL https://portal.fis.tum.de/en/publications/an-empirical-study-of-detected-and-undetected-flaky-test-failures/
-  (the DOI 10.1109/TSE.2026.3729363 returns HTTP 202 with an empty body; the institutional record
-  carries the abstract); access date 2026-10-25; snapshot
+  (the DOI 10.1109/TSE.2026.3729363 answers with a 302 redirect to the publisher's site and, followed, an
+  HTTP 202 with an empty body; the institutional record carries the abstract); access date 2026-10-25; snapshot
   `.ufo/evidence/round-46/coverage/sources/tum-portal-flaky-failures.html` (51,850 bytes), SHA-256
   `5eb59adf099304a07059530b0857f7b517eaa72c832049f46952915a77e71a6f`. Row `corpus/SOURCES.md:134`;
   entry `corpus/knowledge/r5-undetected-flaky-failures.md` (staged S190).
@@ -54,12 +54,14 @@ are whitespace tokens after the counter's `fold`, measured by script, not estima
   S235 carry the same feed document and are not adopted separately).
 - Located quote, 15 tokens, found once: “about 84% of the transitions we observe from pass to fail
   involve a flaky test”.
-- Decision: **admit as a carrier repair, with an honest expansion note.** The lane already holds the
+- Decision: **admit as a second, pinned carrier, with an honest expansion note.** The lane already holds the
   rendered post as S026 and states the 84% figure in `corpus/knowledge/repeated-control-precondition.md:20`
-  (ScoutHeldSweep, `w1/ScoutHeldSweep.md`). The new row is the publisher's per-post record, whose body
-  the lane's HTML extraction can read (the rendered page keeps it in a script template), so the claim
-  becomes re-checkable by the counter. Two of the three entries are on unheld ground (clustering, the
-  same-job-rerun blind spot); this one is not, and the round does not claim it as expansion.
+  (ScoutHeldSweep, `w1/ScoutHeldSweep.md`). The lane's extractor reads the post body from the rendered page too
+  (wave-2 finding T46CritEntryFalseRed F12 refuted the wave-1 reason that the page hides it); what the per-post
+  record adds is a byte-stable carrier — its re-fetch was `cmp`-identical (`w2/T46ExecLive.md`) while S026's
+  live bytes differ from its round-45 snapshot — and a row the counter can pin. Two of the three entries are on
+  unheld ground (clustering, the same-job-rerun blind spot); this one is not, and the round does not claim it as
+  expansion.
 
 ### Ids, collisions and the guard receipts
 
@@ -70,17 +72,17 @@ Collision check in scratch before any append (the 0–3-space extractor of the a
 (`guard-proof-collisions`). Renumber map (`adoption-map.json`, verdict `admitted`,
 `guard-map.json`): dedupe S153→S105, S154→S106, S159→S155, S160→S156; map-only moves
 S155→S261, S156→S262, S157→S263, S158→S264 (not adopted; the ids stay unused in the registry);
-adopted by document S195→S258, S190→S259, S216→S260. The ids S258–S264 in this map replace the
+adopted S195→S258 (the same document), S190→S259 (by work: the staged row's URL is the DOI, the lane's row is the portal record of the same paper) and S216→S260 (the same feed document; the staged URL is wrapped in markdown emphasis, which the guard's document key does not normalise). The guard's `admitted` at the freeze established injectivity, disjointness from the staged ids and the floor for these three targets; document identity was established by the L1's reading, not by the guard (T46ExecIds F2, F3). The map is no longer evaluable against the final registry, which now holds S259 and S260 (`inadmissible`, `map_clash` S259 S260, T46ExecIds F1): it is a pre-adoption artifact. The ids S258–S264 in this map replace the
 round-45 map-only targets S258–S261 for the same staged rows; nothing was appended under those.
 
 ### Refused / not adopted
 
 - **Four package claims dropped from the re-grounded entries**, each with its flip condition
-  (RevProvince flags 1–4): (a) r6's "S140, round 5: the same-job rerun misses 9.8 %–16.3 %" — S140 is a
+  (RevProvince flags 1–5, flag 3 being the carrier header that the re-grounding replaced): (a) r6's "S140, round 5: the same-job rerun misses 9.8 %–16.3 %" — S140 is a
   retired shokuknow id that names no lane row; flip: cite S259 (the entry now does). (b) r5's "round 1's
   `S107`" for the one-green-control verdict — lane S107 is the TensorFlow golden-tests row; flip: anchor to
   the F3 round-1 surface. (c) r9's rerun-price arithmetic (0.02 cents, $5.67, a detection floor "S156") —
-  no held row states it (`grep -rn '5\.67'` over the lane finds only the package copy); flip: a held row
+  no held row states it (`grep -rn '5\.67' corpus/SOURCES.md corpus/knowledge` finds nothing; the figure appears only in the package copy and in seat and lesson text that quotes it); flip: a held row
   carrying the figures. (d) the F8 ground tag on r6 — flip: a source that connects clusters to test oracles.
 - **Package entry `flaky-aware-verdict-evidence.md` and its siblings `r8-flaky-cost-baseline.md`,
   `r8-flakiness-not-static.md`** are not adopted this round: their rows (staged S155, S158, S160, S206, S207)
@@ -108,6 +110,10 @@ this lesson table and as the round-46 standing-statement counter (C1); it adds n
 At least one admit and one reject of this lesson for a non-author to re-open: admit S258 (snapshot line and quote
 above); reject (c) above (grep the lane for `5.67`).
 
+## Wave-2 dispositions
+
+Wave 2 (35 seats, `T46`-prefixed) attacked the content revision `6f2168e028ce7ff6e82ac92093ac05dd1f147c32`. Fixed in place before the deciding runs: the false carrier rationale (README, lesson, registry row S260's `teaches` cell, entry r9), the unlabelled inference and overreach in the three entries, the row S258 teaches/scope wording, the stale `Next unused id` ledger line (now S265 with a round-46 paragraph), the `PROVINCE.md` append (reverted), `deciding-run.sh` steps that read the worktree (now REV) and its unpinned hardened counters (now rebuilt from the wave-1 additions), the gate-quote evidence phrasing above. Recorded as SCORECARD errata, not as edits: the standing-table scope notes, the operability score label, the equivalence and AST-pin observations, the generalization numbers (73 fresh mutants, 17 killed). Routed to round 47: killing cases for the 56 surviving fresh mutants, the AST-pin control, the three non-hermetic statements, the frozen counters' own selftest gaps. Discernment spot-check by T46RevGate (a lane-dispatched seat, still the lane): all three admits, the four claim-level refusals, the not-adopted siblings and the 17-row quarantine slice re-verify; four LOW phrasing defects, fixed above.
+
 ## Mistakes
 
 | class | evidence pointer | captured-by | fix |
@@ -117,9 +123,12 @@ above); reject (c) above (grep the lane for `5.67`).
 | a counter pinned only to its own committed bytes passes after a one-line edit | `w1/CritC1Control.md` cheat Z (`total = 0 * (mism + unparsed + unobs)` printed `C1_R46_PASS=true` with 21 failing statements, real 22-statement run) | the round-44 `--freeze` pin that this round's counters did not carry | `deciding-run.sh` step 0: `git diff FREEZE REV` over the frozen counters, statements, manifest, snapshots, package copies and contract must be empty (`FROZEN_UNCHANGED=1`) and the counter sha256 is printed; wave-2 seat T46CritLanding re-attacks it |
 | a no-harm script prints `RED` and exits 0 | `w1/ScoutMistakes.md` diagnostic (`no-harm.sh` at `5891bdb`: three `RED` lines, exit 0); the committed `no-harm.sh` is frozen | QUALITY 17 is adjacent, not on point | `deciding-run.sh` greps its output for `RED` and fails; `no-harm-gate.py` exits 1 on a red monitor |
 | the round's own frozen counters have selftest gaps | `w1/MutC3Counter.md` (4 of 22 mutants survive: snapshot prefix, missing snapshot, `MIN_ROWS`, `MIN_ENTRIES`), `w1/MutDriver.md` (the driver's 8-case selftest leaves its predicate assembly untested), `w1/CritC3Control.md` (18 of 22 cheat variants pass the counter; the counter does not check the id, an upper bound on `verified-at`, or fresh-quote relevance) | criterion 89 covers the declared-survivor shape only | frozen, not edited (a rule changed after a seat scored is not the claim's rule); routed to round 47 with the killing cases attached in the seat reports; the controls CTL_E/F/G at the freeze exercise the driver's neutral, pristine and baseline rules |
+| a record gives a false reason for a registry row | `corpus/README.md` round-46 note and this lesson's S260 decision said the rendered page hides the post body from the lane's HTML extraction; it does not (wave-2 T46CritEntryFalseRed F12: the extractor finds the 84% sentence in the held page) | QUALITY 2 (anchor every claim); the wave-1 scribe reported it (`w1/ScribeEntryFalseRed.md` finding 1) and the L1 landed the README line anyway | the three records now state the true reason (a second, byte-stable, pinned carrier; `w2/T46ExecLive.md` re-fetch `cmp`-identical, S026's live bytes differ) and no claim S026 lacks; integration rule: a seat's own refutation of a sentence the L1 writes is applied before the sentence lands |
+| a same-round record edit costs a sub-measure the no-harm monitor did not track | wave-2 T46CritRestated F1: the `PROVINCE.md` append dropped the cold-read monitor from 60 to 55 credited sections (score 6 unchanged); `no-harm.sh` checked only the score and `box3_full_page`, while the round-45 spot-check reported `60/64` | none | `PROVINCE.md` reverted to the base bytes; `deciding-run.sh` requires `COLDREAD_SECTIONS_CREDITED >= 60`. Able to fail: the first content revision `6f2168e0` prints 55 (`cr` run recorded in `w2/T46ReobsA.md`) |
+| entries state lane-facing inference as observation or overreach the snapshot | wave-2 T46CritEntryUndetected F1 (BLOCKING, an `Observation` line attributing the same-job rerun to the studied projects), T46CritEntryCluster F1-F4, T46CritEntryFalseRed F1-F2 (a title asserting a polarity the post never states; a quote truncated where the post says the rerun is the identification step) | QUALITY 2 and 3; the C3 counter cannot see prose | the three entries were corrected in place before the deciding runs (labels, the quote boundary, the title, a `held`→`open` status word, the proposal marked unadopted, the `exactly` identity dropped, `verified-at` lines extended with tool sha256, lane revision and receipt per QUALITY 51: `.ufo/evidence/round-46/after/entry-rechecks.stdout`); non-author review of prose remains the only control |
 | a score defined this round jumps from 0 to a high value | round-45 spot-check routed defect 3 (freshness 1 → 9 changed the formula) | none | C2 reports the count `killed=0 → 25 of 25` as the comparable measure; its `floor(10*killed/25)` score is a definitional new axis score and is cited only beside that count |
 
 ## Census and quarantine
 
 Census at round start: `.ufo/evidence/round-46/census-start.stdout`, exit 0, 117 rows, 11 W04/W01 warnings (same set as
-round 45). End: `.ufo/evidence/round-46/census-end.stdout` (recorded at the content revision).
+round 45). End: `.ufo/evidence/round-46/census-end.stdout` and `census-end.exit`, written by `deciding-run.sh` at the content revision and committed in the receipts-only commit (120 rows; the same 11 warnings, no E code expected).

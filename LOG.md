@@ -2305,7 +2305,7 @@ local=remote=`5891bdb77aba8489683533ae4cdd3b49b5e2626b`, tracked=0 untracked=0).
 
 Motivating evidence: calibration (monitor 6) was the lowest non-retired axis, and the standing SCORECARD tables still
 stated calibration 8 (round 31) beside a monitor that prints 6; 19 of 22 standing statements carried no machine-checkable
-value. The round-45 spot-check routed the counters' selftest survivors (12 + 8 + 8 in the round-45 mutation audits) and a
+value. The round-45 spot-check routed the counters' selftest survivors (12 and 8 survivor rows in the round-45 audits of the C1 and C2 counters and 9 in the review-gate audit; 25 distinct declared mutants after merging the overlaps) and a
 no-harm monitor that was red at base. The shokuknow `merge/tameshi` package staged flaky-failure documents (`staged:S195`,
 `staged:S190`, `staged:S216`) on frontier F3 ground the lane held only through the repeated-control capability and one
 blog post. `considerthese/2026-10-25.md` proposal 2 (cumulative regression run) grounded C1. Attempt 1; nothing inherited
@@ -2330,3 +2330,4 @@ blog post. `considerthese/2026-10-25.md` proposal 2 (cumulative regression run) 
   Quarantine slice 17 rows, no new verdicts. considerthese proposal 2 mined.
 - Round shape: wave 1 of 37 seats (two seats, MutC1Counter and ScribeQuality, lost to seat-name collisions with another
   lane's wave and counted dead); wave 2 follows. Tools installed/updated: none.
+- Wave 2: 35 seats (`T46`-prefixed names), all settled. Findings fixed before the deciding runs: a false carrier rationale for S260, inference stated as observation in the three entries, the stale id ledger, a `PROVINCE.md` append that cost the cold-read monitor five credited sections (reverted), `deciding-run.sh` reading the worktree. SCORECARD errata record the standing-row scope notes, the equivalence and AST-pin observations and the generalization result (73 fresh mutants on the hardened counters: 17 killed, 56 survived; routed). Round shape: two v1 waves, 37 + 35 = 72 seats.
