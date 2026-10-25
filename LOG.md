@@ -2164,3 +2164,52 @@ the depth claim. Attempt 1 died with the orchestrator; nothing was inherited.
   (C2 true, C1 `m8=1` on a cited-but-uncommitted wave path). The same two commands re-ran at the
   commit carrying this entry and printed the same counts and pass bit (the `rev=` field differs by
   design).
+
+## 2026-10-25 — round 42: receipt reconciliation and attribute/output-flag write census v4
+
+Motivating evidence: `corpus/lessons/round-41-verifier-spotcheck.md` routed seven defects. Defect 2
+(the round-41 residual receipt says `present: false` for a seat report that is in the tree) is the
+calibration claim's live mismatch. Defects 1 and 3 (a newline-spanning extractor, no self-pin, no
+records gate) shape its successor counter. Defect 4 (v3 labels `tools/context-capture.py:1682`,
+`:1685` and `tools/registry-replay.py:123` unflagged) is the depth claim. Attempt 1; nothing was
+inherited (`jj-lane.sh state`: local=remote=`c77c2b7e`, tracked=0 untracked=0).
+
+- Freeze `322b5cd32b4319a05340d249ae752d12a9e6b19f`: contract and both counters were committed before
+  any seat ran. Base `c77c2b7e64d2e356381441ecf94abac03e984606`.
+- Claim C1 (calibration, the lowest non-retired axis at 6). Before:
+  `C1_R42: self_pin=1 m6=0 m7=0 m8=0 m10=1 m11=0 total=1 records=3 sources_rows=109 … C1_R42_PASS=false`,
+  exit 1 (`.ufo/evidence/round-42/before/c1-at-base.stdout`). Target:
+  `self_pin=1 m6=0 m7=0 m8=0 m10=0 m11=0 total=0 records=6 C1_R42_PASS=true`. Counting command:
+  `python3 .ufo/evidence/round-42/calibration/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`.
+  Do-nothing control: round-42 records added, no superseding receipt → m10=1, exit 1
+  (`.ufo/evidence/round-42/control/c1-do-nothing.stdout`). Repair: the appended superseding receipt
+  `.ufo/waves/round-42/supersede/round-41-residual-receipt.json` (drafted by seat ExecSupersedeDraft,
+  landed byte-exact, sha256 `987f82b4ce749787068d5845208382f930422d84126c94a7b2431e8d08334979`).
+- Claim C2 (depth, capability acquisition). Before: `C2_R42: tool_absent=1 v3_sha_ok=1 v2_sha_ok=1
+  live_unflagged_v3=3 … C2_R42_PASS=false`, exit 1 (`.ufo/evidence/round-42/before/c2-at-base.stdout`).
+  Target: `C2_R42_PASS=true`. Controls: v3 in the v4 slot fails F01, F04 and the three live sites
+  (`.ufo/evidence/round-42/control/c2-v3-in-slot.stdout`); a junk tool that never reports unflagged
+  passes 1 of 10 fixtures (`.ufo/evidence/round-42/control/c2-junk.stdout`). Tool:
+  `tools/write-path-census-v4.py`, written by the L1 after the wave-1 executor's build reached
+  3 of 10 fixtures (contract amendment P4). The mutants are written by a non-author wave-2 seat.
+- Post-freeze amendments P1–P4 (`.ufo/evidence/round-42/contract.json`) cover citations and
+  disclosures only; no predicate, counter, target or kill rule changed. P1 withdraws PIT as
+  support for the kill oracle's run-error rule: PIT's source scores `RUN_ERROR` as detected (S158).
+- Frontier / sources. Rows 109 → 113: S155, S156 (assimilated, re-grounded), S157, S158 (new), each
+  pinned to a committed snapshot in `.ufo/evidence/round-42/sources/`. Two entries admitted:
+  `corpus/knowledge/pit-outcome-vocabulary.md` and `corpus/knowledge/r42-attribute-and-outflag-destinations.md`,
+  with `corpus/README.md` rows. QUALITY criteria 81 and 82. Census validate exit 0 at round start
+  (109 rows) and after the append (113 rows), the same warning set, zero E codes.
+- Assimilation: theme "mutant outcome vocabulary". Admitted `pit-outcome-vocabulary.md`;
+  refused `survivor-classification.md` (drifted quote, false recheck predicate, duplicates held
+  F8); left `mutation-score-semantics-cjk.md` unadopted as a sibling theme. Collisions `S153`,
+  `S154`; renumber map `staged:S159` → S155, `staged:S160` → S156, by document. Gate:
+  `corpus/lessons/round-42.md`.
+- considerthese: `considerthese/2026-10-24.md` proposal 5 (SHONEN promotion readiness) mined as a
+  table in the round-42 lesson: one of four boxes has a standing command.
+- Out-of-claim correction: `.ufo/waves/round-42/supersede/round-20-outcomes.json` supersedes the
+  round-20 snapshot's `report_exists: false` for a report that is in the tree. It is not counted
+  toward C1, because m10 does not read that key.
+- Wave 1: 47 seats in one `task` call (13 scout, 8 reviewer, 7 executor, 6 mutation-tester, 6 critic,
+  6 scribe, 1 connector), 47 completed, 0 dead (`.ufo/waves/round-42/spec-w1.json`,
+  `.ufo/waves/round-42/dispatch-w1.json`).

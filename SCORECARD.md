@@ -1991,3 +1991,30 @@ declared pin/fixture/live/mutant conditions met). Numeric depth 9 → 9, numeric
 axis harmed.
 
 | sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 109 rows at round 41 (restated by appending this row, the round-35 row above is unchanged; the counter reads the last standing row) ; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+
+## Round 42 — receipt reconciliation (calibration) + attribute/output-flag write census v4 (depth) (2026-10-25)
+
+L1 tameshi, hyaku run 6, attempt 1. Nothing was inherited. Two claims on distinct axes. Calibration
+(6, measured by the round-21 coldread monitor) is the lowest non-retired axis and carries C1. The
+stagnation nudge does not fire: round 41 added a capability inside the window N=2. Contract
+`.ufo/evidence/round-42/contract.json`, frozen at `322b5cd32b4319a05340d249ae752d12a9e6b19f`
+before any seat ran. Post-freeze amendments P1–P4 change citations and disclosures only.
+
+| Claim | Axis | Before | After | Counting command | Measured commit | Evidence | Verdict |
+|---|---|---|---|---|---|---|---|
+| C1 self-assessment records agree with the tree: no unsuperseded stale presence receipt; round-41/42 records cite no unmined S-id (round 42), no unresolvable path, no unreachable revision | calibration (lowest axis) | `m10=1 total=1 records=3 C1_R42_PASS=false`, exit 1, at base `c77c2b7e64d2e356381441ecf94abac03e984606` | target `self_pin=1 m6=0 m7=0 m8=0 m10=0 m11=0 total=0 records=6 C1_R42_PASS=true`, exit 0 | `python3 .ufo/evidence/round-42/calibration/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` | see the after subsection | `corpus/lessons/round-42.md`, `.ufo/evidence/round-42/before/c1-at-base.stdout`, `.ufo/evidence/round-42/control/c1-do-nothing.stdout` | see the after subsection |
+| C2 `tools/write-path-census-v4.py` binds attribute and output-flag destinations: the three live v3 false positives resolve with `mkdtemp` / `--out` in the resolved text, ten fixtures keep their classes, lane-wide unflagged 0, every declared mutant killed | depth (surface: two new destination edge classes, `corpus/knowledge/r42-attribute-and-outflag-destinations.md`, the tool) | `tool_absent=1 live_unflagged_v3=3 C2_R42_PASS=false`, exit 1, at base | target `C2_R42_PASS=true`, exit 0 | `python3 .ufo/evidence/round-42/census/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` | see the after subsection | `.ufo/evidence/round-42/before/c2-at-base.stdout`, `.ufo/evidence/round-42/control/c2-v3-in-slot.stdout`, `.ufo/evidence/round-42/control/c2-junk.stdout` | see the after subsection |
+
+Numeric axes at the base: depth 9 (command D `recorded_cases=9 depth_score=9`), calibration 6
+(round-21 coldread monitor `calibration_restraint_score=6`), both re-run by wave-1 seat
+ExecCommandD (`.ufo/waves/round-42/w1/ExecCommandD.md`). Neither claim edits the runner or a
+SHONEN box, so neither number is expected to move. C1's gain is record agreement, and C2's gain
+is a capability, not a ledger count.
+
+Instrument limits, disclosed rather than repaired after data (full list in
+`corpus/lessons/round-42.md`): m10 is content-blind and reads only boolean `present` beside
+`report`/`path` under `.ufo/waves/`; m7 checks round-42 records only; C2's battery cannot tell a
+resolver from a name- and line-special-casing tool, so a renamed-identifier falsifier runs
+outside the predicate; and the oracle is stricter than both vendors on timeouts.
+
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` → exit 0, zero E codes; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 113 rows at round 42 (restated by appending this row; the round-41 row above is unchanged; the counter reads the last standing row) ; `corpus/SOURCES.md` | fleet round 1 (kaika) |

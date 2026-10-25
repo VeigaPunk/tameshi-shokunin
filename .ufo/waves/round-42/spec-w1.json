@@ -1,0 +1,440 @@
+{
+ "wave": "round-42-w1",
+ "reportDir": ".ufo/waves/round-42/w1",
+ "template": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\n{{item}}\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n",
+ "context": "# Goal\ntameshi round 42, wave 1 (build + first falsifiers). Lane repo /home/vgpnk/Projects/shokunin/tameshi-shokunin. Base `c77c2b7e64d2e356381441ecf94abac03e984606`; freeze `322b5cd32b4319a05340d249ae752d12a9e6b19f` (contract + both counters committed before any seat). Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json first; never edit it.\nClaims: C1 calibration — self-assessment records agree with repo state (classes m6 m7 m8 m10 m11; the live mismatch is m10: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-41/residual/receipt.json says present=false for ResidualReceipts.md, which exists). C2 depth — tools/write-path-census-v4.py resolves attribute-bound (self.<attr> via same-class method return) and argparse output-flag (--out) destinations; live v3 false positives tools/context-capture.py:1682, :1685, tools/registry-replay.py:123.\nCounters: C1 `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`; C2 `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` (LANE = the lane or a scratch clone). Base receipts: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/ ; controls: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/.\nNEVER run a counter against the lane's current tip as a measurement: the ONE deciding run is the L1's. Allowed: `--rev c77c2b7e64d2e356381441ecf94abac03e984606`, `--rev 322b5cd32b4319a05340d249ae752d12a9e6b19f`, `--selftest`, `--tool-file`/`--text-mode`/`--probe-mutant` control runs, and any run against a scratch clone under /tmp/tameshi-r42-<YourName>-* (create with `git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin <dir>`; delete it before you return unless your task says to keep it).\nAssimilation package (READ-ONLY, never write/run tools there): /home/vgpnk/Projects/shokuknow/merge/tameshi/ — theme: mutant outcome vocabulary. Staged ids are written `staged:S###`; lane registry holds 109 rows S001–S154; adopted rows would be S155 (staged:S159 PIT basic concepts), S156 (staged:S160 PIT FAQ), S157 (new: Python argparse docs). Collisions staged/lane: S153, S154.\nRead-only seat unless your task names a scratch dir: your only lane write is your own report file. Never edit the lane checkout, the fleet repo /home/vgpnk/Projects/shokunin, a sibling lane, the lane jj state or Git index; never git add/commit/stash/checkout/reset in the lane; never run mutating jj commands. Absolute paths only: tools start at the FLEET root.\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin — write it at /home/vgpnk/Projects/shokunin/tameshi-shokunin/<that path>.\nQuotes: <=25 words, located (section/anchor), with YOUR access date 2026-10-25; save fetched source snapshots only under /tmp/tameshi-r42-<YourName>-*/ and report their sha256 + byte size.\nTooling authorization (operator 2026-10-19): install or upgrade tools that help — read /home/vgpnk/.omp/agent/RULES.md first; record tool, version, channel, reason in your report. pacman guard (orchestrator 2026-10-20): all pacman transactions PAUSED host-wide — use `uv tool`/`npx`/official binary in ~/.local/bin or file an L0 question; never -Sy/-Syu/-U/-R, never downgrade, never restart a host service.\nReport: findings first, each with the exact command and its output or path:line; say plainly what you could not check.",
+ "items": [
+  {
+   "name": "ScoutPitConcepts",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Source S155",
+   "item": "Open https://pitest.org/quickstart/basic_concepts/ (curl -fsSL). Save the snapshot under /tmp/tameshi-r42-ScoutPitConcepts-*/, report sha256, bytes, <title>. Locate verbatim quotes (<=25 words each) defining \"Killed\", \"Run error\" and \"No coverage\", with the HTML line numbers. State whether the page says a run error counts toward the score or as a kill. Compare with the staged row `staged:S159` in /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (line 13): which of its claims the live page supports, which it does not."
+  },
+  {
+   "name": "ScoutPitFaq",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Source S156",
+   "item": "Open https://pitest.org/faq/ (curl -fsSL). Snapshot under /tmp/tameshi-r42-ScoutPitFaq-*/, sha256, bytes, title. Locate verbatim the sentence(s) saying results can differ between runs and that timeouts are a cause (<=25 words, line numbers). Check the staged recheck command in /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md line 14 (`grep -c 'timed out on one run'`): run it and report the count."
+  },
+  {
+   "name": "ScoutArgparse",
+   "role": "scout",
+   "axes": [
+    "coverage",
+    "depth"
+   ],
+   "milestone": "Source S157",
+   "item": "Open https://docs.python.org/3/library/argparse.html (curl -fsSL). Snapshot under /tmp/tameshi-r42-ScoutArgparse-*/, sha256, bytes, title. Locate verbatim (<=25 words) the documentation of how `dest` is derived from an optional argument string (e.g. \"--foo-bar\" -> foo_bar) and that parse_args returns a Namespace whose attributes are the dests. Give the anchor id (e.g. #dest) and HTML line numbers."
+  },
+  {
+   "name": "ScoutStrykerStates",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Held S001 recheck",
+   "item": "The lane holds S001 (row 12 of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md): https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/. Re-open it live; quote verbatim (<=25 words) the definitions of Killed and Runtime error and the sentence saying which states enter the detected count / the score. Report whether a runtime error is counted as detected. Snapshot under /tmp/tameshi-r42-ScoutStrykerStates-*/ with sha256."
+  },
+  {
+   "name": "ScoutPackageTheme",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Theme inventory",
+   "item": "Read-only inventory of /home/vgpnk/Projects/shokuknow/merge/tameshi/: list every knowledge entry and amendment whose title or body concerns mutant outcome classes, kill semantics, or score denominators (grep -il \"killed\\|run error\\|runtime\\|denominator\\|outcome\" over knowledge/ and amendments/). For each: its `source:` ids, which of those ids the lane already holds by URL (grep the URL in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md), and whether the entry's ground is already held per /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/README.md `## Frontier` (F1 partly held). Rank the three best-fit entries for one assimilation theme."
+  },
+  {
+   "name": "ScoutCjkEntry",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Candidate cjk entry",
+   "item": "Evaluate staged entry /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/mutation-score-semantics-cjk.md for adoption: re-open each cited source (staged:S163 huaweicloud page, staged:S164 nju pdf, staged:S165 dfcfw pdf) with curl -fsSL -m 60; for each say reachable or not, sha256, and whether the entry's quoted claim is located (give the located text <=25 words or \"absent\"). Then say whether the entry adds ground the lane does not hold: the lane already holds Stryker score = detected / valid (S001, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/mutation-score-semantics.md). Verdict: admit / refuse with reason and flip condition."
+  },
+  {
+   "name": "ScoutSurvivorEntry",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Candidate survivor entry",
+   "item": "Evaluate staged entry /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/survivor-classification.md: re-open staged:S166 (zenn.dev article) and staged:S156 (arxiv 2406.09843) with curl -fsSL -m 60; locate the entry's quoted claims (<=25 words) or say absent; check PROVINCE fit (/home/vgpnk/Projects/shokunin/tameshi-shokunin/PROVINCE.md) and whether F8 ground (oracle anchoring) is moved by it. Verdict admit/refuse with reason and flip condition."
+  },
+  {
+   "name": "ScoutLiveCensus",
+   "role": "scout",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "v3 live census",
+   "item": "Run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py --file <f>` for every `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-files \"tools/*.py\"` file (cwd /home/vgpnk/Projects/shokunin/tameshi-shokunin). List every unflagged=1 site. For each, read the code and classify it as true positive (a write of an expected value with no update flag and a non-scratch destination) or false positive, with the binding chain (path:line of each assignment). Confirm or refute that the only unflagged sites are tools/context-capture.py:1682, :1685 and tools/registry-replay.py:123."
+  },
+  {
+   "name": "ScoutReceiptSweep",
+   "role": "scout",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Receipt sweep",
+   "item": "Independently of the C1 counter: for every tracked JSON under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/ (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-files .ufo | grep json$`), find every assertion about file presence or counts (keys like present, reports_present, registry_members, exists, missing, count) and check each against the tree at c77c2b7e64d2e356381441ecf94abac03e984606. Report every disagreement with path, key, asserted value, observed value. The C1 counter only audits `present`+`report`/`path` pairs under .ufo/waves; name any disagreement it would miss."
+  },
+  {
+   "name": "ScoutMisroot",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "Misroot baseline",
+   "item": "Run `git -C /home/vgpnk/Projects/shokunin status --porcelain`. List untracked files whose content names tameshi and round 42 (misroots from this lane's seats). Do not delete or move anything; do not touch /home/vgpnk/Projects/shokunin/.scratch/ or .ufo/state/. Report the list (may be empty) with the command output."
+  },
+  {
+   "name": "ScoutQuarantine",
+   "role": "scout",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Quarantine slice",
+   "item": "Re-derive the tameshi slice of /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md with: awk -F'|' -v l=tameshi '$2 ~ (\"`\" l \"`\") && $3 ~ /round[0-9]+/ && $4 ~ /S[0-9]+/ {print $4, $5}'. Compare with /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/assimilation/quarantine-slice (17 lines). For each id, find its verdict in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-40.md (### Quarantine table). Report any slice id without a verdict, and whether any slice id is cited by the theme candidates (staged:S159, staged:S160, staged:S163-S166)."
+  },
+  {
+   "name": "ScoutConsiderthese",
+   "role": "scout",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "considerthese proposal 5",
+   "item": "Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/considerthese/2026-10-24.md section \"Self-improvement ideas (proposals only, not acted on)\". Proposals 1-4 were mined in rounds 38-41 (grep considerthese in /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md and corpus/QUALITY.md). For proposal 5 (SHONEN promotion readiness): for each of the four boxes in /home/vgpnk/Projects/shokunin/tameshi-shokunin/SHONEN.md, name the mechanically checkable pointer that exists today (a command a non-author can run, with its current output), or say none. Return a 4-row table: box, checkable pointer, command, output, gap."
+  },
+  {
+   "name": "ScoutRegistryState",
+   "role": "scout",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Registry state",
+   "item": "At c77c2b7e64d2e356381441ecf94abac03e984606 in /home/vgpnk/Projects/shokunin/tameshi-shokunin: count corpus/SOURCES.md S-rows with the 0-3-space pattern, highest id, status counts (column 8), and confirm S155-S157 are free. Report the last `| sources-registry |` row in SCORECARD.md and its stated row count. Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` and paste the code summary and exit."
+  },
+  {
+   "name": "ConnectorSibling",
+   "role": "connector",
+   "axes": [
+    "adjacency"
+   ],
+   "milestone": "Sibling overlap",
+   "item": "Scan sibling lanes under /home/vgpnk/Projects/shokunin/*-shokunin read-only (not tameshi) for (a) any tool that resolves self.<attr> or argparse --out destinations in a write census, (b) any check that a committed receipt is stale against the tree, (c) any mutation kill oracle that separates runtime errors from kills. Name paths:lines; say whether tameshi's v4 / C1 m10 / C2 oracle duplicates one and whether absorbing would violate /home/vgpnk/Projects/shokunin/tameshi-shokunin/PROVINCE.md (cite, never absorb)."
+  },
+  {
+   "name": "ExecV4Tool",
+   "role": "executor",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "Build v4",
+   "item": "Build tools/write-path-census-v4.py in a scratch clone: `git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /tmp/tameshi-r42-ExecV4Tool-clone` (KEEP this dir; the L1 copies the tool from it). Start from tools/write-path-census-v3.py (do not edit v3). Requirements, from the frozen contract (claims.C2.tool_interface and statement): (1) `--file F --json` prints {\"sites\": [...]} with lineno, kind, expected, scratch, explicit_out, unflagged, resolved for EVERY write site; text mode keeps v3 format plus `explicit_out=` field allowed. (2) attribute binding: inside a class, collect every `self.<attr> = <expr>` in any method; an attribute with exactly one distinct assignment binds to it; two or more distinct assignments stay unresolved (conservative: not scratch). (3) method-return fold: a call `self.<m>(...)` to a same-class method resolves to that method's returned expression, resolved in the method body's own env (handle `path = ...; return path`), depth-limited. (4) output-flag trace: collect argparse `add_argument` option strings (dest from the first long option, dashes->underscores, or explicit dest=); OUTPUT_FLAGS = --out, --output, --out-dir, --output-dir. A destination rooted at name N is explicit_out when N is bound (directly or through <=4 local assignments, wrappers Path()/str()/os.path.abspath()) to `<ns>.<dest>` of an output flag, OR N is a parameter of a module-level function and EVERY in-module call to that function passes, at that position (positional or keyword), an expression that resolves (through the caller's local assignments) to an output-flag dest. explicit_out=True implies unflagged=False. The resolved text for an explicit_out site must contain the option string (e.g. \"argparse --out\"); for an attribute bound to tempfile.mkdtemp it must contain \"mkdtemp\". (5) --selftest with its own inline fixtures covering the 10 counter fixtures' shapes. (6) docstring: state scope honestly, correct v3's blanket \"NOT resolved\" sentence (round-41 routed defect 5: aliases/closures/attribute reassignment are sometimes resolved by name or stale binding — say \"not reliably resolved\"). Verify in the clone: commit there, then run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /tmp/tameshi-r42-ExecV4Tool-clone --rev HEAD --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` — you may iterate until fixtures_pass=10/10 and live_*_ok=1 and live_unflagged_v4=0 (mutants_declared=0 is expected now; PASS will be false because no mutants exist yet). Report the final tool sha256, the counter line, and the tool path in the clone."
+  },
+  {
+   "name": "ExecC1Falsify",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 false-pass hunt",
+   "item": "In scratch clones of /home/vgpnk/Projects/shokunin/tameshi-shokunin at 322b5cd32b4319a05340d249ae752d12a9e6b19f, try to construct a tree where C1 prints C1_R42_PASS=true while a real record/repo disagreement remains (e.g. a stale receipt keyed `path` vs `report`, a receipt outside .ufo/waves, a record citing a path in a fenced code block across lines, an S-id written `S0155`, a hash in uppercase). Run the counter on each (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py --lane <clone> --rev HEAD --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`). Report each attempt, the counter line, and whether it is a real gap or out of the declared classes."
+  },
+  {
+   "name": "ExecC2Oracle",
+   "role": "executor",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "Kill-oracle probes",
+   "item": "Exercise the C2 kill oracle with --probe-mutant against the lane at 322b5cd32b4319a05340d249ae752d12a9e6b19f: build three probe tools in /tmp/tameshi-r42-ExecC2Oracle-*: (a) a tool that raises an exception on any input -> expect probe_outcome=runtime_error; (b) a tool that prints valid JSON with every site exactly as the fixtures declare? (not possible without knowing them — instead: copy /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/junk-tool.py) -> expect killed; (c) a tool that prints `{\"sites\": \"x\"}` -> expect runtime_error (unparseable). Command: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 322b5cd32b4319a05340d249ae752d12a9e6b19f --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`. Report each PROBE line and whether the oracle matches the contract kill_oracle sentence."
+  },
+  {
+   "name": "ExecRecheckCmds",
+   "role": "executor",
+   "axes": [
+    "freshness"
+   ],
+   "milestone": "Recheck commands",
+   "item": "For the three candidate rows (S155 https://pitest.org/quickstart/basic_concepts/, S156 https://pitest.org/faq/, S157 https://docs.python.org/3/library/argparse.html) write one recheck command each of the form `curl -fsSL <url> | grep -c '<distinctive verbatim string from the located quote>'`, run it now, report the count and the exit. Strings must contain no `|` character. Also give the census-schema recheck cell for each (a valid cadence like 180d)."
+  },
+  {
+   "name": "ExecSupersedeDraft",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Supersede repair dry-run",
+   "item": "Draft the C1 repair in a scratch clone (git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /tmp/tameshi-r42-ExecSupersedeDraft-clone, checkout 322b5cd32b4319a05340d249ae752d12a9e6b19f): write .ufo/waves/round-42/supersede/round-41-residual-receipt.json with top-level \"supersedes\": \".ufo/waves/round-41/residual/receipt.json\", a \"reason\" string, the \"superseded_at\" date 2026-10-25, and a \"seats\" object re-asserting all 8 seats of the round-41 residual receipt with report path and present=<observed truth at 322b5cd32b4319a05340d249ae752d12a9e6b19f>. Commit in the clone, run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py --lane <clone> --rev HEAD --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` and report the line (m10 must be 0; records will still be 3). Paste the full JSON in your report so the L1 can land it byte-exact."
+  },
+  {
+   "name": "ExecCommandD",
+   "role": "executor",
+   "axes": [
+    "depth",
+    "calibration"
+   ],
+   "milestone": "No-harm baseline",
+   "item": "At c77c2b7e64d2e356381441ecf94abac03e984606 in /home/vgpnk/Projects/shokunin/tameshi-shokunin, run SCORECARD command D (depth: `git show REV:tools/mutate-and-run.sh | python3 -c ...` exactly as printed in /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md under \"Commands, run from this repo\") and the round-21 coldread monitor that prints calibration_restraint_score (find its command in the round-41 SCORECARD block or /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/). Report both outputs; these are the no-harm baselines (expected depth_score=9, calibration 6). Use a scratch clone if the monitor writes anything."
+  },
+  {
+   "name": "ExecCensusRerun",
+   "role": "executor",
+   "axes": [
+    "freshness"
+   ],
+   "milestone": "Census start rerun",
+   "item": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` and compare to /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census-sources/start.stdout (exit 0, 9 x W04 + 1 x W01 expected). Then build a scratch mirror /tmp/tameshi-r42-ExecCensusRerun-mirror/corpus/ (copy of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/) and append to its SOURCES.md registry table three syntactically valid 11-column test rows S155-S157 (status mined, used-by an existing knowledge file); run `sources-census.sh validate --file <mirror>/corpus/SOURCES.md` and report exit + codes. This proves the append path parses before the real rows exist."
+  },
+  {
+   "name": "MutC1M10",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 m10 mutants",
+   "item": "Copy /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py to /tmp/tameshi-r42-MutC1M10-*/m.py. Apply, one at a time, mutants to receipt_audit (drop the `theirs <= mine` coverage check; treat any `supersedes` as covering; compare `present` to True always). Run `python3 m.py --selftest` for each. Report which mutants the selftest kills (FAIL line) and which survive. Do not edit the lane file."
+  },
+  {
+   "name": "MutC1M8",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 m8 mutants",
+   "item": "Copy the C1 counter to /tmp/tameshi-r42-MutC1M8-*/m.py. Mutants: revert BACKTICK_RE to r\"`([^`]+)`\"; drop the FLEET_ONLY_PREFIXES skip; drop \"$\" from the skip characters; make section() run to EOF. Run --selftest each; report kills/survivors and, for survivors, a fixture that would kill them."
+  },
+  {
+   "name": "MutC1M11",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 m11/m7 mutants",
+   "item": "Copy the C1 counter to /tmp/tameshi-r42-MutC1M11-*/m.py. Mutants: drop the merge-base --is-ancestor check (any existing object passes); remove the (?<!staged:) lookbehind; drop the blob:/tree: skip. Run --selftest each; report kills/survivors."
+  },
+  {
+   "name": "MutC1SelfPin",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1/C2 self-pin",
+   "item": "In a scratch clone of /home/vgpnk/Projects/shokunin/tameshi-shokunin at 322b5cd32b4319a05340d249ae752d12a9e6b19f: (a) append a comment byte to the clone's C1 counter, commit, run the clone's counter with --rev HEAD --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f -> expect SETUP self_pin=0 exit 2; (b) run the lane's unmodified counter with --rev HEAD (modified copy at REV) -> expect refusal; (c) edit the clone's contract counter_sha256 to the modified hash and commit, run with --freeze HEAD -> report what happens and whether a reader could detect it (the freeze commit must be 322b5cd32b4319a05340d249ae752d12a9e6b19f). Same for the C2 counter. Report all lines and exits."
+  },
+  {
+   "name": "MutC2Oracle",
+   "role": "mutation-tester",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "C2 oracle mutants",
+   "item": "Copy /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py to /tmp/tameshi-r42-MutC2Oracle-*/m.py. Mutants on oracle()/run_tool(): count non-zero exit as killed; drop the Traceback check; drop the resolved-needle check in check_site. For each, describe a concrete tool that the mutant would mis-score versus the original, and demonstrate with --probe-mutant or --tool-file runs against the lane at 322b5cd32b4319a05340d249ae752d12a9e6b19f (the copy has a different hash so self-pin refuses — instead patch the copy's pin read by passing a scratch clone with an amended contract; report how you did it). Report kills/survivors."
+  },
+  {
+   "name": "MutC2Fixtures",
+   "role": "mutation-tester",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "Fixture discrimination",
+   "item": "For each of the 10 FIXTURES in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py, name a plausible wrong v4 behaviour that ONLY that fixture catches (or say it is redundant with another fixture). Use v3 (--tool-file /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py --text-mode) and the junk control (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/junk-tool.py) receipts in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/ as evidence. Report a fixture x defect matrix and any defect class no fixture catches."
+  },
+  {
+   "name": "ReviewC1Counter",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 counter review",
+   "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py against the contract claims.C1 (predicate, classes, kill_rule). Check: the predicate sentence equals the code condition and the printed label; sha256 equals counter_sha256; base receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/c1-at-base.stdout matches before_expected. Name every correctness bug with path:line."
+  },
+  {
+   "name": "ReviewC2Counter",
+   "role": "reviewer",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "C2 counter review",
+   "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py against claims.C2 (predicate, tool_interface, kill_oracle, mutant_protocol). Check fixtures' declared classifications are what a correct v4 should output; check the live-site tuples; check that a constant table cannot satisfy the live checks; sha256 vs counter_sha256. Name bugs with path:line."
+  },
+  {
+   "name": "ReviewContract",
+   "role": "reviewer",
+   "axes": [
+    "calibration",
+    "depth"
+   ],
+   "milestone": "Contract review",
+   "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json: claims causally separable (C1 verifiable without C2 landing and vice versa)? any universal clause not enumerated by its counter? targets one value each, re-derivable by one command over committed bytes? frozen before any seat (freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f precedes every wave-1 file: check `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format=%H%x20%cI -3`)? Report defects."
+  },
+  {
+   "name": "ReviewControls",
+   "role": "reviewer",
+   "axes": [
+    "calibration",
+    "depth"
+   ],
+   "milestone": "Controls review",
+   "item": "Review the controls in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/ (c1-do-nothing, c2-v3-in-slot, c2-junk, junk-tool.py) and base receipts in before/. Does each control skip the claimed work and still fail the frozen predicate? Is there a cheaper control that would pass? Re-run c2-junk and c2-v3-in-slot with the exact commands (see contract do_nothing_control; FREEZE 322b5cd32b4319a05340d249ae752d12a9e6b19f, REV c77c2b7e64d2e356381441ecf94abac03e984606) and diff against the receipts."
+  },
+  {
+   "name": "ReviewPitEntry",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "PIT entry gate",
+   "item": "Gate the staged entry /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/pit-outcome-vocabulary.md against /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md (the bar: read the numbered criteria) and /home/vgpnk/Projects/shokunin/tameshi-shokunin/PROVINCE.md. List every sentence that needs a located quote, every claim about the lane that must be re-checked (it says the lane holds S001 Stryker semantics and treats a timeout as a detection — verify in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/mutation-score-semantics.md and SOURCES row S001), and anything to cut. Verdict admit-with-edits / refuse."
+  },
+  {
+   "name": "ReviewCjkGate",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "cjk entry gate",
+   "item": "Gate /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/mutation-score-semantics-cjk.md against /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md and PROVINCE.md and CORPUS rule 4 (/home/vgpnk/Projects/shokunin/CORPUS.md: expansion is knowledge, not rows). Does it add ground beyond /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/mutation-score-semantics.md? Verdict admit/refuse with reason and flip condition."
+  },
+  {
+   "name": "ReviewSurvivorGate",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "survivor entry gate",
+   "item": "Gate /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/survivor-classification.md against /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md, PROVINCE.md and the lane's held F8 ground (/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/README.md `## Frontier` F8, and grep -l \"survivor\" /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/). Verdict admit/refuse with reason and flip condition; name any held entry it duplicates."
+  },
+  {
+   "name": "ReviewBaselineAxes",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Axis table review",
+   "item": "From /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md (rounds 36-41 blocks) and /home/vgpnk/Projects/shokunin/AXES.md: list each non-retired axis with its latest measured score and the command that measured it; confirm calibration (6) is the lowest; confirm the stagnation nudge does not fire (capability added in round 41). Report any axis whose latest score is asserted without a command."
+  },
+  {
+   "name": "CriticAxisName",
+   "role": "critic",
+   "axes": [
+    "calibration",
+    "depth"
+   ],
+   "milestone": "Axis naming",
+   "item": "Attack the axis labels in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json: is C1 calibration (counts mismatches between self-assessment records and repo state) or quality? Is C2 depth (new edge classes + knowledge entry) or quality/coverage? Use the rule \"name the axis by the surface the round changes, not by the number it produces\" (kaidoku r29). Verdict per claim with reason."
+  },
+  {
+   "name": "CriticSeparability",
+   "role": "critic",
+   "axes": [
+    "calibration",
+    "depth"
+   ],
+   "milestone": "Causal separability",
+   "item": "Attack causal separability of C1 and C2: does C1 m8 make C1's pass depend on C2 files being committed (round-41 lesson: one-way textual coupling)? Does any C2 file get audited by C1 m10/m11? Propose the landing order that keeps each verifiable without the other."
+  },
+  {
+   "name": "CriticSupersedeGaming",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Supersede gaming",
+   "item": "Attack the m10 SUPERSEDE rule in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py: can a superseding receipt silence a stale receipt while itself being wrong in a way m10 cannot see (e.g. asserting presence of a file that exists but is empty or a different file; superseding a receipt that was right)? Is superseding (append) better than regenerating in place for an append-only evidence tree? Verdict with concrete scenarios."
+  },
+  {
+   "name": "CriticOracleSource",
+   "role": "critic",
+   "axes": [
+    "depth",
+    "coverage"
+   ],
+   "milestone": "Oracle sourcing",
+   "item": "Attack the sourced claim: the C2 kill oracle says a non-zero exit / Traceback is runtime_error, not killed, \"per PIT Run error and Stryker RuntimeError\". Open https://pitest.org/quickstart/basic_concepts/ and https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/ yourself and check whether they actually say run errors are not kills / excluded from the score. Is the analogy (our mutants mutate a census tool, theirs mutate code under test) sound? Verdict."
+  },
+  {
+   "name": "CriticUniversal",
+   "role": "critic",
+   "axes": [
+    "calibration",
+    "depth"
+   ],
+   "milestone": "Universal clauses",
+   "item": "Scan /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json claim statements and targets for universal words (all, every, no, complete). For each, check whether the counter enumerates the full set (e.g. live_unflagged_v4=0 over every tracked tools/*.py; m8 over which records). Report each unbounded universal."
+  },
+  {
+   "name": "CriticFixtureOverfit",
+   "role": "critic",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "Overfit risk",
+   "item": "Attack C2 for overfitting: could a v4 pass by special-casing the names `case_dir`, `root`, `publish`, `out` or the line numbers 1682/1685/123? Which counter fixtures already vary names? Propose (do not apply) the cheapest additional falsifier for wave 2 (e.g. renamed-identifier fixtures run via --tool-file against a scratch tree)."
+  },
+  {
+   "name": "ScribeEntryPit",
+   "role": "scribe",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Draft PIT entry",
+   "item": "Draft the re-grounded lane entry corpus/knowledge/pit-outcome-vocabulary.md (in your report, as a fenced block) from /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/pit-outcome-vocabulary.md, after opening https://pitest.org/quickstart/basic_concepts/ and https://pitest.org/faq/ yourself. Header lines: `source: S155 — <url> — §<anchor> — fetched 2026-10-25`, `source: S156 — ...`, `verified-at: 2026-10-25`, `recheck: 180d`, `ground: F1`. Every quote verbatim, <=25 words, located; cut every claim you could not locate; keep the boundary section. Do not cite staged ids except as `staged:S159`."
+  },
+  {
+   "name": "ScribeEntryV4",
+   "role": "scribe",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "Draft v4 entry",
+   "item": "Draft corpus/knowledge/r42-attribute-and-outflag-destinations.md (in your report, fenced) describing the two new census edge classes per the contract claims.C2 (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json) and the three live false positives (read /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/context-capture.py:1620-1690 and /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-replay.py:116-130,175-186,255-285). Cite S153 (ast docs, held) and S157 (argparse docs: open https://docs.python.org/3/library/argparse.html yourself; quote the dest derivation <=25 words) and S155 for the kill oracle's runtime-error class. Include: what the sources state, what v4 does, what it does not resolve, the oracle. Leave numeric results as `<from deciding run>` placeholders the L1 fills."
+  },
+  {
+   "name": "ScribeRows",
+   "role": "scribe",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "Draft rows",
+   "item": "Draft three registry rows S155 (PIT basic concepts), S156 (PIT FAQ), S157 (Python argparse docs) in the exact 11-column schema of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (read its header and the S153/S154 rows as the model; read /home/vgpnk/Projects/shokunin/CORPUS.md section \"SOURCES.md — where a shokunin learns\"). status mined; recheck a valid cadence (e.g. 180d); used-by: S155,S156 -> corpus/knowledge/pit-outcome-vocabulary.md (S155 also corpus/knowledge/r42-attribute-and-outflag-destinations.md); S157 -> corpus/knowledge/r42-attribute-and-outflag-destinations.md. No `|` inside any cell. Open each URL yourself for the locator cell."
+  },
+  {
+   "name": "ScribeLesson",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "Draft lesson",
+   "item": "Draft `## Mistakes` rows (class · evidence pointer · captured-by · fix) for corpus/lessons/round-42.md: (1) stale-receipt: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-41/residual/receipt.json written before the report it describes (present=false, file exists) — captured-by none; fix C1 m10 + supersede rule, shown able to fail by selftest T2_* and base receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/c1-at-base.stdout; (2) newline-spanning backtick regex in the round-41 C1 counter — fix line-scoped extractor, shown able to fail by selftest T1_*. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-41-verifier-spotcheck.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/c1-selftest.stdout. Markdown table, report only."
+  },
+  {
+   "name": "ScribeQuality",
+   "role": "scribe",
+   "axes": [
+    "calibration",
+    "depth"
+   ],
+   "milestone": "Draft QUALITY criteria",
+   "item": "Read the last three criteria in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md (format and numbering; the last is 80). Draft criteria 81 (a receipt that asserts file presence is written after the last write it describes, or superseded by an appended receipt that re-asserts every path; a stale receipt is a calibration mismatch) and 82 (a kill oracle counts a mutant killed only when the run completes and a declared check fails; a crash is a run error, not a kill — cite S155 PIT \"Run error\" and S001 Stryker) in the file's style, each with its lesson pointer corpus/lessons/round-42.md. Report only."
+  },
+  {
+   "name": "ScribeLog",
+   "role": "scribe",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "Draft LOG section",
+   "item": "Draft the LOG.md section for round 42, heading exactly `## 2026-10-25 — round 42: receipt reconciliation and attribute/output-flag write census v4`, in the style of the round-41 section (/home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md, last `## 2026-10-25 — round 41` section): motivating evidence for C1 (stale residual receipt) and C2 (three v3 false positives), the freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f, the base receipts. Use placeholders `<deciding>` for results. Report only."
+  }
+ ]
+}

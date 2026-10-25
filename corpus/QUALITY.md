@@ -995,3 +995,53 @@ test "$(git -C LANE show 691bb51:tools/tally-audit-v3.py | sha256sum | cut -d' '
 Observed: `d16f9b5` exit 0, `691bb51` exit 1 (tool `6188db16…`, pin `ef98fc53…` — the A7
 re-pin that left the counter constant behind), `5829676` exit 0 (A8 repaired it). The
 criterion is met only by a round that names such a break before it makes one.
+
+## Criteria appended — round 42 (2026-10-25)
+
+### Criterion 81 — a presence receipt is written after the writes it describes, or superseded
+
+A committed receipt that asserts a file's presence or absence (`present`, `report_exists`)
+is a self-assessment record. It is written after the last write it describes. When the
+tree later contradicts it, the fix is an appended superseding receipt. That receipt names
+the old one in `supersedes`, re-asserts every path the old one asserted, and agrees with
+the tree on each. It is not an in-place rewrite of closed-round evidence. A receipt that
+the tree contradicts and that nothing supersedes is a calibration mismatch, whatever
+the round report says about it.
+Lesson: `corpus/lessons/round-42.md`. The live instance was the round-41 residual
+receipt: `present: false` for `ResidualReceipts.md`, written before that report landed.
+The round-42 C1 counter's m10 class audits `present` assertions under `.ufo/waves/`. Its
+known limits are recorded in the lesson: it reads presence by path only, so an empty file
+satisfies it, and it does not read other key names such as `report_exists`.
+Falsifier that must fail (from the lane; prints `C1_R42_PASS=false` and exits 1 at the
+base, where the stale receipt is not yet superseded):
+
+```
+python3 .ufo/evidence/round-42/calibration/measure.py --lane LANE \
+  --rev c77c2b7e64d2e356381441ecf94abac03e984606 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f
+```
+
+### Criterion 82 — a kill is a completed run with a failed check; a crash is not a kill
+
+When the lane mutates its own tools, a mutant counts as killed only when the run finishes
+with parseable output and at least one declared check fails. A non-zero exit, a Traceback
+or unparseable output is a run error and does not count as a kill. A run with no failing
+check is a survivor. This is the lane's own verdict rule (`SKILL.md:208-209`: a crash
+before the summary is Inconclusive, not a kill) and Stryker's (S001: Runtime error "is not
+represented in your mutation score"). PIT differs: its code scores `RUN_ERROR` as detected
+(S158, `corpus/knowledge/pit-outcome-vocabulary.md`). A kill oracle that cites a tool must
+cite the tool whose rule it actually follows, and a kill count must say which oracle
+produced it.
+Lesson: `corpus/lessons/round-42.md`. The round-42 contract's first wording cited PIT
+and Stryker together for this rule. A wave-1 critic opened PIT's source and found the PIT
+half false. The citation is corrected in the contract's post-freeze amendments; the
+pinned counter bytes are not edited.
+Falsifier that must fail (from the lane; a tool that crashes on every input must print
+`probe_outcome=runtime_error`, never `killed`; the probe file is the wave-1 executor's,
+re-created by the command):
+
+```
+printf 'raise SystemExit("crash")\n' > /tmp/crash-probe.py
+python3 .ufo/evidence/round-42/census/measure.py --lane LANE \
+  --rev 322b5cd32b4319a05340d249ae752d12a9e6b19f --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f \
+  --probe-mutant /tmp/crash-probe.py
+```

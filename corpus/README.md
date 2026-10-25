@@ -522,3 +522,18 @@ committed snapshots under `.ufo/evidence/round-41/sources/`. `cmp` and `git diff
 --exit-code` lattices stay unmeasured, and the `os.symlink` / `shutil.*` / `handle.write`
 classes outside v2's pattern are now partly covered (`os.symlink` destination) and partly
 still outside (`shutil.*`, `handle.write`) — the entry's "What is not claimed" says so.
+
+## Round 42 — outcome vocabulary and attribute/output-flag destinations (round 42)
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/pit-outcome-vocabulary.md` | PIT's seven outcomes, the No coverage / Survived split, and the run-to-run timeout instability. PIT's code scores a run error as detected while Stryker (held S001) leaves it out of the score, so a score quoted without its outcome classes cannot be compared across the two tools. Assimilated from the shokuknow package and re-grounded this round. | S155, S156, S158, S001 |
+| `knowledge/r42-attribute-and-outflag-destinations.md` | Two write-destination shapes that v3 misreads: a `self.<attr>` bound to `tempfile.mkdtemp` and read through a same-class helper, and a parameter fed by an argparse `--out` value at every in-module call. The measured live finding is that v3's three unflagged sites are scratch (`tools/context-capture.py:1682`, `:1685`) and operator-named (`tools/registry-replay.py:123`). | S157, S153, S001, S158 |
+
+**Coverage-map move (F1, F4).** F1's report-interop half gains ground the lane did not
+hold: PIT's outcome vocabulary and how PIT scores each outcome, beside Stryker's.
+F1 stays partly held, because no ledger leg has been emitted as a schema report.
+F4's write-path half gains the tool `tools/write-path-census-v4.py` and the note above;
+the lane-wide v4 census reads 0 unflagged sites over every tracked `tools/*.py`.
+Aliases, inheritance, class attributes, `parse_known_args` and sub-parsers stay outside
+the tool, and the note's "What is not claimed" names them.
