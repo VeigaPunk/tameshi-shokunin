@@ -25,9 +25,8 @@ Both sources were fetched by this seat into `/tmp/tameshi-r43-ScribeLessonGate-s
 | `https://stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants/` | 38687 | `79f6501ad8f2a74e647532dba8f77f17482afa70ccbe6821d2368092454079ce` | identical |
 
 Pinned snapshots: `.ufo/evidence/round-43/sources/{wikipedia-mutation-testing.html,
-stryker-equivalent-mutants.html}`, manifest `sha256.txt` (both digests above, verbatim). They are
-in the lane worktree but **untracked** at this writing (`git status` →
-`?? .ufo/evidence/round-43/sources/`), so criterion 79 binds only when the round commit lands them.
+stryker-equivalent-mutants.html}`, manifest `sha256.txt` (both digests above, verbatim). They were
+untracked when this draft was written and are committed in `c5335c7`, so criterion 79 now holds.
 Second fetch of the Wikipedia URL an hour apart: same digest (`cmp` → `wiki-stable`). Three fetches
 of the Stryker URL today (default UA, `Mozilla/5.0`, `curl/8`): all `38687 B` / `79f6501a…`, so the
 digest is not a user-agent artefact. Independent reproduction: `.ufo/waves/round-43/w1/
@@ -98,10 +97,10 @@ byte-for-byte (`cmp` exit 0) and match the digests recorded by `ScoutStrykerEqui
   anchor" — that sentence is false and must read "same prose, new digest".
 - PROVINCE: survivor-classification semantics for the lane's own kill verdicts is Core F1/F8
   ground, where S159 and S089 are the tool vendors' own statements. QUALITY: every quote is ≤25
-  words and located; both documents are pinned under `.ufo/evidence/round-43/sources/` with a
-  manifest and satisfy criterion 79 once the round commit lands them (they were still untracked
-  when this Gate was drafted — `git status` → `?? .ufo/evidence/round-43/sources/`); the S089
-  re-open is recorded here rather than by editing its anchor, per rule 2.
+  words and located, with counts executed (`wc -w` → 16, 15, 19, 7, 12, 13, 20, 9); both documents
+  are pinned under `.ufo/evidence/round-43/sources/` with a manifest and are committed in
+  `c5335c7`, so criterion 79 holds; the S089 re-open is recorded here rather than by editing its
+  anchor, per rule 2.
 - Held rows cited by the same entry, all re-opened this round and unchanged: S155 (PIT basic
   concepts; its `used-by` cell gains the entry), S158 (PIT `DetectionStatus`; its `EQUIVALENT(true)`
   at line 75 and the comment at lines 71–72 are present verbatim in the committed round-42
@@ -174,6 +173,41 @@ lane's K/D/E/U rule.
 
 ---
 
+## 2b. The Gate has landed — verified delta against `corpus/lessons/round-43.md` (`c5335c7`)
+
+While this draft was being written, the L1 committed `c5335c7` ("round-43: records — …,
+knowledge entry, lesson, sources append, receipts and wave-1 seat reports"). The landed lesson has
+the same block skeleton as this draft (`Admit — S159`, `Re-open — S089`, `Refused — duplicate row`,
+`Deferral`, `Ids, collisions, census`), so this draft is a **correction list**, not a competing
+version. Four statements are checkably wrong (D1–D4), the deferral block is materially thinner than
+the staged material requires (D5), and one census sentence attributes counts and exits to receipts
+that do not carry them (D6).
+
+| # | landed text | what the bytes say | fix |
+|---|---|---|---|
+| D1 | `corpus/lessons/round-43.md:43-46`: "the live bytes equal S089's 2026-10-22 anchor (`bc572676…`)" beside sha256 `79f6501a…` | S089's anchor is `bc572676…e04d`; today's bytes are `79f6501a…`; HTTP `last-modified: Sat, 24 Oct 2026 15:08:38 GMT` after the pinned 2026-10-22 fetch | the sentence contradicts itself. Replace with the D1 text in §2 above: same 38687 B, prose unmoved (offsets 30613/30826), digest moved because the site rebuilt |
+| D2 | `:25` "(17 words)" for the line-794 span | `printf '%s' "<span>" \| wc -w` → **16** | 17 → 16 |
+| D3 | `:28` "(14 words)" for the line-796 sentence | same command → **15** | 14 → 15 |
+| D4 | `:49` quotes line 15 as "and even < >" | the page reads "and even `<` or `>`" (`<code>&lt;</code> or <code>&gt;</code>`) | inside quotation marks the dropped `or` is a misquote; restore it (still 20 words) |
+| D5 | `:64-71` Deferral names only `mutation-score-semantics-cjk.md` | the package carries four equivalent-mutant entries (shas in §2) and the §3.7 pointer resolves only in `shokuknow/lanes/tameshi/CANNOT-ANSWER.md:41`, where its content is already closed by the package's own S168 row | use the §2 Defer table; it also carries the r42 refusal of `survivor-classification.md` and the S156 id collision |
+| D6 | `:92-95` "exit 0 at round start (113 rows …)" / "exit 0 at round end (114 rows …)" citing the two `.stdout` receipts | the receipts print only 10 warnings + `ok <path>`; no count, no exit code; only `start.exit` exists | keep the claims but attribute them: counts from `grep -cE`, exit-0 from the `ok` line + `start.exit` |
+
+Two smaller items in the same commit:
+
+- `corpus/lessons/round-43.md:125` reads "the two new rows (S159 only, after the withdrawal)" — a
+  self-contradiction; one row (S159) was added (`grep -cE '^ {0,3}\| S[0-9]{3} \|' corpus/SOURCES.md`
+  → 114).
+- `corpus/knowledge/r43-survivor-resolution-rule.md:20` still says the snapshot is "byte-identical
+  to S089's 2026-10-22 anchor" — the same D1 error, in the entry that the Gate is meant to support.
+
+Everything else in the landed Gate checks out against the bytes: the Wikipedia digest, revid, line
+numbers 794/796 and the `grep -c 'Equivalent_mutants'` → 0 negative; the absence of survivor
+vocabulary; S089's 38687 B, title and three quote lines; the 114-row count; the three `used-by`
+old→new pairs; the 7-collision set `S153`–`S159` with the S256 floor; and the 17-row quarantine
+slice (the latter not re-derived by this seat).
+
+---
+
 ## 3. Findings the Gate depends on (numbered, checkable)
 
 1. **The item's premise "Stryker = new source row" does not hold on the lane's bytes.** The URL is
@@ -194,8 +228,9 @@ lane's K/D/E/U rule.
    Wikipedia quotes to the `Mutation testing overview` section with the same line numbers this Gate
    uses (lines 24–32). No further id correction is owed.
 
-3. **`corpus/knowledge/r43-survivor-resolution-rule.md:20` is false and must be fixed.**
-   It claims the Stryker snapshot is "byte-identical to S089's 2026-10-22 anchor". S089's anchor
+3. **`corpus/knowledge/r43-survivor-resolution-rule.md:20` is false and must be fixed — and the
+   landed lesson repeats it.** Both claim the Stryker snapshot is "byte-identical to S089's
+   2026-10-22 anchor" (`corpus/lessons/round-43.md:43-46` is the same error, D1 in §2b). S089's anchor
    pins `bc572676…e04d`; today's bytes are `79f6501a…79ce`, and the HTTP `last-modified` is
    2026-10-24T15:08:38Z, after the pinned fetch. The **prose** is unchanged (same 38687 B, same
    character offsets 30613/30826 for the two markers as r26 recorded at
@@ -256,6 +291,14 @@ lane's K/D/E/U rule.
     gap, so the cjk entry points at a file the landing repo does not carry and at a paragraph its
     own package has superseded. This sharpens the r42 flip condition rather than repeating it.
 
+12. **Criterion 79 now holds, and it did not when this draft was written.** `c5335c7` committed
+    `.ufo/evidence/round-43/sources/` (including `sha256.txt`), so the located quotes are citable
+    from committed bytes; before that commit the directory was `??` in `git status`, which is why
+    the Gate's first draft said criterion 79 binds only on the round commit. What the commit does
+    **not** fix is the prose: both the entry (`:20`) and the lesson (`:43-46`) still call the new
+    snapshot byte-identical to the 2026-10-22 pin (finding 3, D1), and the 2026-10-22 copy is gone,
+    so this round's file is the only durable copy of the quoted bytes.
+
 ---
 
 ## 4. Touched surfaces
@@ -268,7 +311,9 @@ lane's K/D/E/U rule.
   `corpus/QUALITY.md:944-1002`, `corpus/lessons/round-42.md`,
   `corpus/knowledge/r43-survivor-resolution-rule.md`, `corpus/knowledge/oracle-anchored-survivors.md`;
   fleet `CORPUS.md:22-135`; read-only package under
-  `/home/vgpnk/Projects/shokuknow/merge/tameshi/` and `.ufo/waves/round-26/w1/DraftSourcesRows.md`.
+  `/home/vgpnk/Projects/shokuknow/merge/tameshi/`,
+  `/home/vgpnk/Projects/shokuknow/lanes/tameshi/CANNOT-ANSWER.md`, and
+  `.ufo/waves/round-26/w1/DraftSourcesRows.md`.
 - **Out of scope, not attempted:** no edit to any lesson, entry, registry or counter; no git/jj
   mutation; no counter run (C1/C2/C3 are other seats'); no campaign tool; nothing installed
   (no pacman, uv, npm or cargo transaction — none needed).
@@ -277,13 +322,19 @@ lane's K/D/E/U rule.
 
 ## 5. Known limits of this draft
 
-- The Gate is drafted against the **worktree** registry (114 rows, S159 appended, S089/S155/S158
-  used-by extended). If the L1 renumbers or appends a superseding S160 for the Stryker digest, the
-  re-open block's first sentence and the `Next unused id` line must be rewritten to match; the
-  quotes, bytes and digests do not change.
-- The Guarantee of "byte-identical" prose for S089 is bounded: same size, same line layout, same
-  marker offsets, same upstream markdown text — but the 2026-10-22 file is gone, so the changed
-  bytes are unnamed by construction.
+- The Gate is drafted against the registry that `c5335c7` committed (114 rows, S159 appended,
+  S089/S155/S158 used-by extended); that commit landed while this report was being written, which
+  is why §2b carries a delta against `corpus/lessons/round-43.md` instead of a first draft. If the
+  L1 renumbers or appends a superseding S160 for the Stryker digest, the re-open block's first
+  sentence and the `Next unused id` line must be rewritten to match; the quotes, bytes and digests
+  do not change.
+- The item asked for two *admit* blocks; the evidence supports one admit (S159) and one *re-open*
+  (S089), because S089 already holds the Stryker URL. If a judge requires an admit block for the
+  Stryker page regardless, the rule-compliant form is a new row at S160 whose `teaches` opens
+  `supersedes S089 — ` and whose anchor carries `79f6501a…`; that row is **not** appended here.
+- The claim that S089's prose is unchanged is bounded: same size, same line layout, same marker
+  offsets, same upstream markdown text — but the 2026-10-22 file is gone, so the changed bytes are
+  unnamed by construction.
 - Wikipedia is editable; the pin is the sha256 + revid, and every line number here is valid only
   for revision 1373580212.
 - I did not run `sources-census.sh` (it is not in the lane's `tools/`); the census paragraph

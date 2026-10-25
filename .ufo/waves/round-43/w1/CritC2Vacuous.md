@@ -93,9 +93,11 @@ Next unused id: S903
 Next unused id: S001
 ```
 
-Result: `m7=0`, `PASS=true`. **All four ids are fabricated**: the lane registry tops out at
-`S158`, and the staging package (`/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md`)
-tops out at `S255` — `S901`–`S903` appear in neither (`grep -c` = 0 for each).
+Result: `m7=0`, `PASS=true`. Three of the four ids are **fabricated**: the lane registry's rows
+run `S001`–`S158`, and the staging package
+(`/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md`) tops out at `S255` —
+`S901`, `S902`, `S903` appear in neither (`grep -c` = 0 for each). The fourth, `S001`, is a
+real mined row, which is the F2 defect.
 
 Control S2b (`26c31ce`) adds one plain `S904` and one plain `S007` (queued, unmined) →
 `m7=2 ... first=m7:corpus/lessons/round-43.md_unmined_S007`. So the detector works; the mask is
@@ -199,6 +201,12 @@ directory exists". S4 (`bdff49e`, `m10=2`, 22 claims) shows the pair behaving as
 
 So `present=false` on a directory is caught, correctly.
 
+One scope caveat on the same function: the docstring says "under `.ufo/waves`" (`:210`) but the
+loop at `:213-214` filters only on `.json`, so every JSON in the tree contributes claims. That
+is wider than declared (harmless at the freeze: `receipts=17`, `m10=0`), but the class's declared
+scope and its actual scope disagree, which is a second-order record-agreement hole in the other
+direction: an evidence JSON elsewhere in the tree can inject or satisfy an m10 claim.
+
 The vacuity is the other direction. S5 (`50cfe66`) adds
 
 ```
@@ -256,9 +264,11 @@ f1ce1b8  successor   m10            -> 0 hits
 ```
 
 The A1 commit `f0f2636` ("m7/m8/m10 corrected pre-data") replaced
-`if any(key in receipt for key in supersedes) or receipt in supersedes:` with the set above;
-the predecessor exempted keys only. So the *tightening* introduced the looser branch, and the
-successor now reports 0 where its predecessor reported 2–3.
+`if any(key in receipt for key in supersedes) or receipt in supersedes:` with the set above.
+That removed test looked only at the `supersedes` **keys** (plus a substring comparison of a
+target path against the claiming receipt's path), so it never exempted the superseding receipt
+by identity — which is what the differential shows: the same three false claims the predecessor
+flags, the successor reports as 0. So the *tightening* introduced the looser branch.
 
 **Is the counter right?** No, in both parts. History is a property of the superseded receipt, not
 of the superseder. *Smallest safe correction:* delete `:244` (never exempt the value), and

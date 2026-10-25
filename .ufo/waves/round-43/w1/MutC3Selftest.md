@@ -158,15 +158,153 @@ publishes `held` as an answer that `--map` will not accept.
   the extractor, the refusal reasons and the dedupe join.
 * Gap B is a coverage finding only; it does not license changing the contract. Divergence 3 must be
   pinned by the contract before any case asserts it.
+* Structural: the selftest never calls `main()` (M6b, section 7). No case pins the exit-code/JSON
+  contract, so the entire CLI surface the C3 counter consumes is unguarded from the selftest side.
 
 ## 6. Restoration, bounds, and tree drift
 
-* No write outside `/tmp/tameshi-r43-MutC3Selftest-verify/` and this report; no
+* No write outside `/tmp/tameshi-r43-MutC3Selftest-verify/`, `/tmp/tameshi-r43-MutC3Selftest-audit/`
+  and this report; no
   `git add/commit/stash/checkout/switch/reset/pull/push`; no `jj` command; nothing written in
   `/home/vgpnk/Projects/shokuknow`.
 * Scratch deleted after these numbers were recorded.
 * `tools/staged-id-guard.py` was byte-identical to the pin (`8140945a…`) after this seat's first
-  phase. It then changed **without this seat touching it**: commit `5cd2154` (L1, "freeze A4/A5 —
-  guard map-shape repair (wave-1 finding)…") re-pinned it to `efa5f129…`, and a further uncommitted
-  edit (`M` in `git status`) moved it to `365bf958…` with 23 cases. Every measurement above names the
-  bytes it was taken on; nothing in this report is a claim about the working tree after `365bf958`.
+  phase. It then changed **without this seat touching it**: `5cd2154` (L1, A4/A5 guard map-shape
+  repair) re-pinned it to `efa5f129…`; an uncommitted edit took it to `365bf958…` (23 cases); commit
+  `273c047` (A9) froze it at `e219007f…`. Every measurement names the bytes it was taken on.
+
+## 7. Addendum — audit at the A9 freeze (`273c047`, tool `e219007f…`, counter `ae66342d…`, 23 cases)
+
+Selftest control: `cases=23 failed=0 PASS`. At A9 the counter adds `substitute == 0` to the predicate
+(`measure.py:279`), so any `--tool-file` run scores `C3_R43_PASS=false` **by construction**; a
+falsifier must be read component by component. (Section 3's M4 line at `5cd2154` predates that
+marker; all its components were nevertheless identical to the pinned tool's.)
+
+### RevC3Tool's F-items, re-probed on A9 bytes
+
+| Item | Verdict at `e219007f` | Selftest pins it? | Case that should exist |
+|---|---|---|---|
+| F2 documentless collision admitted by `--map` | **fixed** — `reasons=['map decides an undocumented row: S002']`, new `map_undocumented` field | **yes** — M7 (reason dropped) is killed: `cases=23 failed=1 FAIL T8_undocumented_row_refused_in_map reasons=[]` | — |
+| F8 non-S map key / non-str target → traceback, exit 1, no JSON | **fixed** — both now `REFUSED` with `verdict=setup_refusal`, exit 2, JSON on stdout | **no** | `T9_cli_contract` (below) |
+| F9 map file's `staged`/`registry` keys never read | **open** — `{"staged":"/nonexistent","registry":"/nonexistent"}` still `map_ok=true`, exit 0 | no | `T12_map_input_paths_checked` |
+| F11 `column0_extract` key absent; `cells`/`lineno` written never read; `<5` cells vs an 11-column schema | **partly open** — key still absent (`column0_collisions`/`column0_miss`), `'cells'`/`'lineno'` have zero readers, threshold still `len(cells) < 5`; the unused `os` import is gone (`os.stat` now used) | no | `T12_json_field_names`, `T6_malformed_threshold` (a 6-cell row must be refused) |
+| F12 marked id / 4-space / tab indent silently unparsed | **open** — `| S002* |`, 4-space and tab rows all give `staged_rows=0 collisions=[]`, no refusal | no | `T13_no_silent_row_drops` |
+
+F12 is the highest-severity selftest gap left after M4: the guard answers "no collisions, nothing to
+map" about a package it did not parse, and 23 green cases do not notice. The invariant to encode:
+**`analyse` must never drop a line that looks like a row** — either it parses (and every data line is
+counted, `staged_rows == len(data lines)`) or it raises `Refusal` naming the line.
+
+### M6b — the selftest never exercises `main()`
+
+`grep -c 'main('` = 2 (definition, `__main__` guard); no case calls `main`, `--json`, `--map` file
+loading, or any exit code. So the whole CLI contract the C3 counter consumes is unpinned by the
+selftest. M6b collapses it:
+
+```
+    return 0  # MUTANT M6b: exit contract collapsed to 0
+    if result['verdict'] in ('admitted', 'answered'):
+        return 0
+    return 1
+```
+
+```
+M6b --selftest: cases=23 failed=0 PASS   -> SURVIVED
+M6b CLI, self-map {S001:S001}: exit=0 (pinned: 1)  -> the guard now exits 0 on an inadmissible map
+M6b counter: naive_map_refused=0 (pinned 1)        -> killed live, invisible to the selftest
+```
+
+(M6b sits after `if args.selftest: return selftest()`, so `--selftest` still runs and the
+mutant is a pure CLI-contract collapse. The cruder variant — `return 0` as `main`'s first
+statement — does NOT survive: `--selftest` prints nothing and the counter reports
+`selftest_exit=0 guard_error=no_json`, caught upstream of `MIN_CASES`.)
+
+**Missing case — `T9_cli_contract`:** call `main(['--registry', REG, '--staged', STG, '--map', M,
+'--json'])` and assert the triple `(exit, verdict)` is `(0,'admitted')`, `(1,'inadmissible')`,
+`(2,'setup_refusal')`, plus that nothing but JSON reaches stdout and that `--map` absent yields
+`answered`/`refused` with exit 0/1. This is the case that would have made F8 and M6b findable
+pre-freeze.
+
+### Counter note (confirms the reviewer)
+
+`measure.py:223` computes `map_dedupe_live` from `safe_doc` without checking `safe_code`, so
+`map_dedupe_live=1` is observable on an inadmissible safe map (it read 1 at `17f6ef0` while
+`safe_map_admitted=0`). Harmless for the predicate (both components are required separately a line
+later), but a falsifier reading components in isolation can mistake it for admission.
+
+## 8. Addendum — A10 (`3aee2c0`, tool `2e8f2e89…`, 488 lines, **24** cases; A9 was 23)
+
+Selftest control at A10: `cases=24 failed=0 PASS`. RevC3Tool's F-statuses confirmed where I
+re-probed them: F5 code fix present (no whole-set exemption in `validate_map`), F11 threshold still
+`len(cells) < 5` — a 5-cell staged row is **accepted** (`staged_rows=1`), F12 still silent
+(`| S001* |`, 4-space and tab rows all `staged_rows=0`, no `Refusal`).
+
+### Three mutants pass all 24 cases
+
+| Mutant | Edit | Selftest | Live counter (A10 freeze, `--tool-file`, per-component) |
+|---|---|---|---|
+| **M9** | below-floor check deleted (`if id_number(target) < id_number(floor)` removed) | cases=24 **failed=0 PASS** | **every component identical to pinned** (`live_*=1`, `naive_map_refused=1`, `safe_map_admitted=1`, `map_dedupe_live=1`, `selftest_exit=0`; only `substitute=1` differs) |
+| **M8** | whole-set exemption restored (`… and not (len(mapping) == len(staged))`) | cases=24 **failed=0 PASS** | identical to pinned |
+| **M6b** | exit contract collapsed (early `return 0` after the `--selftest` branch) | cases=24 **failed=0 PASS** | `naive_map_refused=0` (killed live only) |
+
+M9 is the serious one: the **safe-floor rule** — a component the contract's own C3 predicate names
+("at or above the safe floor") — can be deleted outright and neither detector notices. The counter
+cannot see it because its safe map targets sit *at* the floor (`S256`), never below it.
+
+### Why `T12_whole_set_in_range_refused` pins nothing
+
+`:366` uses `{'S002': 'S003', 'S004': 'S003'}` — non-injective, and `S003` is a **registry** id.
+Observed reasons, identical on the pinned tool and on M9:
+
+```
+['map is not injective (two staged rows share a target)',
+ 'map targets collide with registry ids: S003,S003']
+```
+
+The assertion is `any('not injective' in r or 'safe floor' in r …)`, satisfied by the first reason.
+The staged-clash and below-floor branches are never reached, so the A10 whole-set repair is unpinned
+in every direction. (`T4_partial_map_refused` uses `{}` — no targets — so it cannot cover the floor
+either.)
+
+### The case that discriminates — `T12b_floor_enforced`
+
+Verified on the A10 bytes: registry `S001`, staged one row `S001` with a new document →
+`safe_floor=S002`, `collisions=['S001']`; map `{'S001': 'S000'}` is injective, covers the collision,
+clashes with neither set — only the floor rule can refuse it.
+
+```
+pinned:  ok=False reasons=['partial map targets are below the safe floor S002: S000']
+M8:      ok=True  reasons=[]      (whole-set exemption restored)
+M9:      ok=True  reasons=[]      (floor rule deleted)
+```
+
+```python
+    floor_map = {'map': {'S001': 'S000'}}      # floor S002; S000 free, injective, covers all
+    ok11, reasons11, _ = validate_map(REG_ONE_ROW, STG_ONE_ROW, floor_map)
+    case('T12b_floor_enforced',
+         not ok11 and any('safe floor' in r for r in reasons11), 'reasons=%s' % reasons11)
+```
+
+Passes on A10, fails on both M8 and M9. Suggested companion invariants from the same probe:
+`T6_malformed_threshold` (a 6-cell row must raise; today 5 cells are accepted) and
+`T13_no_silent_row_drops` (a row-looking line is parsed and counted, or `Refusal` names it).
+
+### Doc vs code (F5 flipped)
+
+`:33` still reads "…disjoint from the staged set and at or above the safe floor **unless the map
+covers the whole staged set**", and the refusal at `:238` still says "**partial** map targets are
+below the safe floor" even for whole-set maps. No selftest can catch a docstring; the doc must move
+in the same commit as the code, and the message wording must stop claiming a distinction the code no
+longer makes. Which side is right (exemption or no exemption) is a contract decision — not a test
+decision, and not this seat's.
+
+### A10 verdict
+
+* Selftest: **24/24 green, and it is the wrong 24.** On the A10 bytes it cannot distinguish the real
+  guard from one with the floor rule deleted (M9) or the whole-set exemption restored (M8), and it
+  never exercises `main()` (M6b). Load-bearing for the extractor, refusal reasons, dedupe join and the
+  undocumented-row rule; **not** load-bearing for the map-admission rules that C3 actually scores.
+* Minimal repair, in priority order: `T12b_floor_enforced`, `T9_cli_contract`, `T13_no_silent_row_drops`,
+  `T6_malformed_threshold`. Each is written above or in §7 and each fails on at least one mutant.
+
+

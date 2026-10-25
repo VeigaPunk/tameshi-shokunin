@@ -3,7 +3,7 @@
 Lane: `/home/vgpnk/Projects/shokunin/tameshi-shokunin`
 BASEC `487b8f0da89fa0e2b8bea6930068accbf36e70a9`; ticket FREEZE `17f6ef0c72ec27e1aea305b5c95806b43bb2caef`.
 Read-only: I wrote only this report; no measurement run (only permitted control modes); scratch `/tmp/tameshi-r43-RevProvenance-*`, deleted.
-**Observed window 07:53–07:57 (2026-10-25). The freeze moved while I measured; §1–§5 are the state at `17f6ef0`, §6–§7 are the drift.**
+**Observed window 07:53–08:02 (2026-10-25). The freeze moved five times while I measured. §1–§7 are the chronological record (state at `17f6ef0` and the first reopen); §10 is the final state at HEAD `3aee2c0` and the freeze-of-record hazard.**
 
 ## 1. Pins at FREEZE `17f6ef0` — all five agree, and the worktree was byte-identical then
 
@@ -113,7 +113,72 @@ A second unpinned edit landed at 07:57:50, this time the C3 tool: `tools/staged-
 1. `.ufo/evidence/round-43/before/c3-at-base.stdout` (07:48:22) was produced by the pre-A3 C3 bytes `6ee86ed…`, not by the pinned `6278edc…`. A3's entire diff is one line, `os.makedirs(os.path.dirname(tool_path), exist_ok=True)`, inside the `if args.tool_file:` branch (`guard/measure.py:155-166`), and the at-base run takes the absent-tool branch, so `[INFERENCE]` the printed fields are unaffected — but the receipt's producer is a superseded revision. `before/c1-round42-at-base.*` is a round-42-*counter* run (`C2_R42:` line); `before/c2-at-base.stdout` (07:48:25) postdates the final C2 commit and is produced by the then-pinned C2 bytes.
 2. `mutants/measure.py:~519-527` labels the control line `C1_R43_CONTROL_PASS='true' if killed == len(muts)`, and `guard/measure.py` prints `C3_R43_CONTROL_PASS=false` when the stub disagrees: in both, `false` is the expected do-nothing outcome. The field name reads inverted against "control passed" and invites a false alarm.
 3. The registry (`corpus/SOURCES.md`) is not hash-pinned anywhere in the contract, so its post-freeze edits are visible only in git/jj history, not through a declared pin. Only tools and counters are pinned.
+4. Cross-referenced and reproduced against the pinned C2 bytes `97609511…`: wave-1 RevC2Classes' reachable crash is real. `calibration/measure.py:137` does `block_text[index + len(wanted):].splitlines()[0].strip()`; importing the pinned counter read-only and calling `m12_planned('## Round 9\n\n**Planned (round 10):**', 9)` raises `IndexError: list index out of range`. A trailing newline does not save it — `'**Planned (round 10):**\n'` and `'**Planned (round 10):**\n- claim one\n'` both return `['**Planned (round 10):** names nothing']`, because only same-line text after the field counts. For a deciding run the crash lands at `:443`, after `self_pin` is computed at `:385` but before the `C2_R43:` line, so the outcome would be a traceback and no receipt line rather than a silent false pass.
 
 ## 9. Tooling and cleanliness
 
 No installs or upgrades (python3 + git only; pacman untouched). Counter runs used their own `tempfile.mkdtemp` trees under `/tmp`; my scratch `/tmp/tameshi-r43-RevProvenance-spin/` was deleted. Lane writes: this report only. At 07:57:03 the only pinned path modified on disk was `.ufo/evidence/round-43/calibration/measure.py`; at 07:58:04 two were modified — that file and `tools/staged-id-guard.py` (the two unpinned in-flight edits of §7). `contract.json`, `mutants/measure.py`, `guard/measure.py` and `tools/write-path-census-v4.py` matched HEAD throughout. `LOG.md`, `SCORECARD.md`, `corpus/{QUALITY,README,SOURCES}.md` and untracked evidence/waves dirs are sibling-seat edits, not mine.
+
+## 10. Final state at 08:13 — HEAD `6b83a11` (A14), all pins agree, but the declared freeze of record is stale
+
+`BASE..HEAD` now has thirteen commits. After the ticket freeze `17f6ef0` (A2/A3) the pin set moved seven more times: `5cd2154` (A4/A5), `114ffacd` (A6/A7), `53cb32b` (A8 narration), `273c047` (A9), `c5335c7` (records), `3aee2c0` (A10), `e20cf89` (receipts, contract byte-identical to `3aee2c0`), `b510ad1` (A11), `bb36f80` (A12 — the only pin != blob), `f551ca6` (A13), `e25cd2f` (records), and `6b83a11` (A14). `master`/`origin/master` and the worktree agree for every pinned path except `contract.json`, which is modified on disk at 08:14 (a fourth editing window just opened — the pins still govern the committed contract, not the worktree).
+
+Pins at `e20cf89` (= `3aee2c0`), measured from `git show` and compared with the disk bytes:
+
+| artifact | pin at `3aee2c0` | bytes at `3aee2c0` | disk | agree | self_pin (running bytes) |
+|---|---|---|---|---|---|
+| `mutants/measure.py` (C1) | `0d0f81bd…` | same | same | yes | **1** |
+| `calibration/measure.py` (C2) | `97609511…` | same | same | yes | **1** |
+| `guard/measure.py` (C3) | `ae66342d…` | same | same | yes | **1** |
+| `tools/write-path-census-v4.py` | `784de4c0…` | same | same | yes | — |
+| `tools/staged-id-guard.py` | `2e8f2e89…` | same | same | yes | — |
+
+`tool_sha256 == frozen_tools['tools/staged-id-guard.py'] == 2e8f2e89…`. So the current tree is internally consistent and measurable — but only at `3aee2c0`.
+
+**Freeze-of-record hazard.** `contract.json` `frozen_before` at `3aee2c0` still reads: "the freeze of record is `114ffacd…`, reached through 697d2f17 (first freeze) -> f0f26367 (A1) -> 17f6ef0c (A2/A3) -> 5cd2154f (A4/A5) -> 114ffacd (A6/A7)…". A8, A9 and A10 all postdate `114ffacd`, and A9/A10 changed all three counters and their pins. Measured `self_pin` for the *current* running bytes at each named freeze:
+
+```
+freeze 114ffacd (declared freeze of record)  C1=0 C2=0 C3=0   (each commit's pins agree with its own bytes)
+freeze 53cb32b  (A8)                          C1=0 C2=0 C3=0
+freeze 273c047  (A9)                          C1=1 C2=0 C3=1
+freeze c5335c7  (records)                     C1=1 C2=0 C3=1
+freeze 3aee2c0  (A10, HEAD)                   C1=1 C2=1 C3=1
+```
+
+A deciding run with `--freeze 114ffacd` (or `53cb32b`, `c5335c7`) therefore fails all three predicates on `self_pin=0` alone, even though the counters compute their numbers; only `--freeze 273c047`+ is valid for C1/C3, and only `--freeze 3aee2c0` is valid for all three. The `frozen_before` pointer must be updated to `3aee2c0` (or the deciding run must be documented with `--freeze 3aee2c0`), otherwise the contract names a freeze under which its own counter bytes read `self_pin=0`.
+
+**Claims drift.** Against `17f6ef0`, `claims.C1` minus the pin is byte-identical; `claims.C2.classes` changed at `114ffacd` (A6/A7) in m8, m10, m11, m12 and m13 and is byte-stable from `53cb32b` to HEAD; `claims.C3.statement` changed. So my measurement (delta from the ticket freeze) and RevC2Classes' (delta across A8…HEAD) describe the same history: the class sentences were reworded once, at A6/A7. The `amendments_note` at `e20cf89` is stale three ways: it enumerates only "A1-A3… A4-A7… A8…" while the `amendments` array carries A1–A10 (A9 and A10 are undescribed yet they moved all three counter pins and the guard); it claims "the class sentences restated verbatim", which is false for the five C2 keys above (and C3's changed field is `statement`, not a class sentence); and it therefore no longer supports the pin-history it is meant to disclose. `A8` does correctly credit wave-1 RevProvenance for the earlier narration correction, and its replacement `frozen_before` was substantively right about who ran when — only to go stale again at A9/A10.
+
+**Two contract-level gaps around the C1 pin, measured at `e20cf89` (independently reported by wave-1 RevC1Counter):**
+
+1. `claims.C1.target` cannot be reproduced verbatim by the pinned counter. The target declares 16 `name=value` fields (`C1_R43_PASS` included); the counter's `fields.append` list at the same commit has 26. The target omits `live_tool_errors`, `not_killed`, `runtime_error`, `apply_error`, `killed_names`, `dead_code_names`, `dead_code_cases`, `rev`, `freeze` and `first_error`, and its last two fields are ordered `kill_fixture_reachable` then `dead_code_arg_ok` while the counter prints `dead_code_arg_ok` then `kill_fixture_reachable`. `first_error` is conditional (`measure.py:630` appends it only under `if errors:`), so the gap is 10 fields on a green run and 11 on a run error. (RevC1Counter reported 15 vs 25 by excluding the `C1_R43_PASS` flag — the mismatch and the reversed tail are the same.)
+2. `claims.C1.mutant_set` names `.ufo/evidence/round-42/census/mutants.json at REV, unchanged`, but **no hash of it is pinned anywhere in the contract at `e20cf89`** (current bytes `b3abab06a48d…`). An edit to the mutant declaration between freezes would change what "6 declared / 5 killed" means without failing any `self_pin` or `tool_sha_ok`. (The file does read identical at BASE, `17f6ef0` and HEAD, so nothing is wrong today; the check was simply absent — the uncommitted A11 authoring in the next paragraph closes it.)
+
+**Pin timeline.** Every contract revision and the pins it carried (each value equals the bytes committed in that commit):
+
+| commit | C1 | C2 | C3 | guard |
+|---|---|---|---|---|
+| `697d2f1` | `73000c93` | `0586671a` | `6ee86ed0` | `8140945a` |
+| `f0f2636` (A1) | `73000c93` | `092c76cd` | `6ee86ed0` | `8140945a` |
+| `17f6ef0` (A2/A3, ticket freeze) | `ad7ecf8c` | `092c76cd` | `6278edcd` | `8140945a` |
+| `5cd2154` (A4/A5) | `901d947f` | `092c76cd` | `fbc8ad3c` | `efa5f129` |
+| `114ffacd` (A6/A7, named freeze of record) | `901d947f` | `52961c37` | `8c8147e7` | `365bf958` |
+| `53cb32b` (A8) | `901d947f` | `52961c37` | `8c8147e7` | `365bf958` |
+| `273c047` (A9) | `0d0f81bd` | `52961c37` | `ae66342d` | `e219007f` |
+| `c5335c7` (records) | `0d0f81bd` | `52961c37` | `ae66342d` | `e219007f` |
+| `3aee2c0` (A10) | `0d0f81bd` | `97609511` | `ae66342d` | `2e8f2e89` |
+| `e20cf89` (receipts) | `0d0f81bd` | `97609511` | `ae66342d` | `2e8f2e89` |
+| `b510ad1` (A11) | `b56a34d7` | `97609511` | `ae66342d` | `2e8f2e89` |
+| `bb36f80` (A12) | `b56a34d7` (blob `3d1ff3dc` — **MISMATCH**) | `97609511` | `47a6afce` | `2e8f2e89` |
+| `f551ca6` (A13) | `3d1ff3dc` | `ab76cbd3` | `47a6afce` | `2e8f2e89` |
+| `e25cd2f` (records) | `3d1ff3dc` | `ab76cbd3` | `47a6afce` | `2e8f2e89` |
+| `6b83a11` (A14) | `601c1840` | `ab76cbd3` | `47a6afce` | `03a796c5` |
+
+
+`A14` (`6b83a11`, 08:10:15) closed the two open sightings verbatim: `mutants/measure.py` `601c1840…` and `tools/staged-id-guard.py` `03a796c5…` are now committed and pinned in its contract, all five `blob==pin` and `disk==pin` at HEAD `6b83a11`. So the 08:10 "two unpinned edits" line above is also an authoring window that closed cleanly.
+So the named freeze of record `114ffacd` pins `901d947f`/`52961c37`/`8c8147e7`/`365bf958`, while the current instruments at `6b83a11` are `601c1840`/`ab76cbd3`/`47a6afce`/`03a796c5` — the pointer now lags the instrument by four freeze commits, exactly the `self_pin=0` result measured above (and in `c3-at-freeze`, which prints `self_pin=1` because the A6/A7 counter is run with `--freeze 114ffacd`, not because the pointer is accurate).
+**The in-flight sightings were authoring windows, not divergence — except one commit.** Each worktree byte-state I flagged as unpinned was subsequently committed verbatim by the next freeze: C2 `52961c37` (seen 07:56:54) → A6/A7; guard `365bf958` (seen 07:58:28) → A6/A7 (whose C3 counter committed as `8c8147e7`); C1 `0d0f81bd` → A9; C2 `97609511` + guard `2e8f2e89` → A10; C1 `b56a34d7` → A11 (`b510ad1`, self-consistent: `claims.C1.mutants_sha256 = b3abab06…` landed, `kill_binding`, `mutants_sha_ok`, `held_refused`/`naive_agree`/`substitute` in the C3 target). At 08:06 the authoring window for A11 was open; it closed as `b510ad1`. `bb36f80` (A12, 08:07:08) then committed a **broken C1 pin**: `claims.C1.counter_sha256` stayed `b56a34d7…` while the committed `mutants/measure.py` blob became `3d1ff3dc…`, so `self_pin=0` unconditionally — and the L1's own prerun receipt `prerun/c1-at-A12.stdout` (08:07:25) shows it live: `self_pin=0 tool_sha_ok=1 … mutants_sha_ok=1 C1_R43_PASS=false`, every other field green. C2 `97609511` and C3 `47a6afce` are clean at `bb36f80`. `f551ca6` (A13, 08:09:36) repaired the pin (C1 `3d1ff3dc`, C2 `ab76cbd3`, C3 `47a6afce`, all `blob==pin`); `prerun/c1-at-A13.stdout` prints `self_pin=1 … C1_R43_PASS=true` and `prerun/c3-at-A13.stdout` prints `self_pin=1 … C3_R43_PASS=true`, while `prerun/c2-at-A13.stdout` prints `self_pin=1` but `C2_R43_PASS=false` on `first=m7:corpus/lessons/round-43.md_unknown_S259` — a class-extraction miss on the records, not a pin failure. `e25cd2f` (08:09:36) touched only `corpus/lessons/round-43.md`. `6b83a11` (A14, 08:10:15) then committed the two byte-states I had just measured open on disk (C1 `601c1840…`, guard `03a796c5…`) — another authoring window closed verbatim — and it is currently clean (C1/C2/C3/tools all `blob==pin` and `disk==pin` at HEAD `6b83a11`).
+
+**Verdict for the ticket's question.** At the ticket FREEZE `17f6ef0`, every declared pin agreed with its freeze blob and with the then-current worktree (5/5, byte-identical) and all three counters read `self_pin=1`; the one blocking defect at that freeze was C1's tool-pin source (§5), since repaired. The chain is now `BASE → 697d2f1 → f0f2636 → 17f6ef0 → 5cd2154 → 114ffacd → 53cb32b → 273c047 → c5335c7 → 3aee2c0 → e20cf89 → b510ad1 → bb36f80 → f551ca6 → e25cd2f → 6b83a11`. Every committed tree from `697d2f1` through `f551ca6`/`e25cd2f`/`6b83a11` is internally pin-consistent **except `bb36f80` (A12), the only commit that shipped `pin != blob`** — and `self_pin` caught it, twice (statically and in the `c1-at-A12` rehearsal). The mechanism worked exactly as designed. What did not hold is the disclosure layer: `frozen_before` still names `114ffacd` (stale through A8–A14), `amendments_note` enumerates only A1–A8 while the array carries A1–A14, and its "class sentences restated verbatim" is false vs `17f6ef0` (C2 m8/m10/m11/m12/m13, C3 `statement`). The deciding run needs `--freeze` at `f551ca6`/`e25cd2f`/`6b83a11` or a later self-consistent rev — never `114ffacd` (A9/A10 bytes ⇒ 0/0/0) and never `bb36f80` (C1 `self_pin=0`).
+
+

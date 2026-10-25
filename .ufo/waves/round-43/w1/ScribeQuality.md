@@ -11,31 +11,42 @@ and was deleted on return.
 Report written at the lane path
 `.ufo/waves/round-43/w1/ScribeQuality.md`.
 
+**Supersedes the snapshot of this file at HEAD `c5335c7`** (405 lines, committed with the
+wave-1 seat reports). That snapshot was current when `A5` was the last amendment; it says
+SQ-1 is an open blocker, quotes pins only at the freeze, and calls criteria 83/84
+uncommitted. All three were overtaken by later commits: `A9` (`273c047`) gave the probe
+the reachability gate, and `c5335c7` landed the criteria, the lesson and the knowledge
+file. This working-tree version is the corrected report: `A5` closed SQ-1, `A9`
+closed the probe's kill half, the criteria are landed, and the surviving finding is SQ-5
+(the probe's missing equivalence path). Nothing in the superseded snapshot's
+measurements was wrong at the rev it measured; the conclusions moved with the lane.
+
 ## 0. State read before drafting
 
 - Freeze `17f6ef0c72ec27e1aea305b5c95806b43bb2caef`; base `487b8f0d…`. Contract read:
   `.ufo/evidence/round-43/contract.json`.
-- Counter pins verify against the files on disk, twice measured:
-  - at freeze `17f6ef0c`: C1 `ad7ecf8c…bc875`, C2 `092c76cd…8f286`, C3 `6278edcd…78601`,
-    `write-path-census-v4.py` = `784de4c0…22fe5`, `staged-id-guard.py` = `8140945a…f762` —
-    all equal to the pins in `contract.json` at that rev.
-  - at HEAD `114ffacd` (`A1`–`A7`): C1 `901d947f…cc7e0`, C2 `52961c37…66fdf`, C3
-    `8c8147e7…93ff9b`, `write-path-census-v4.py` = `784de4c0…22fe5` (unchanged),
-    `staged-id-guard.py` = `365bf958…4b0c2` — again all equal to the pins in
-    `contract.json` at HEAD (`python3` compare over
-    `claims.*.counter_sha256` + `frozen_tools`, 5/5 `match=True`). Two waves of
-    amendments (`A4`, `A5` at `5cd2154`; `A6`, `A7` at `114ffac`) landed while this seat
-    ran; §4 records what they changed.
-- **`corpus/QUALITY.md` changed under me while I worked.** My first read was 1047 lines
-  (round-42 block ending with criterion 82). A later read is 1105 lines:
-  `git diff --numstat corpus/QUALITY.md` → `58 0 corpus/QUALITY.md` (pure append) and
-  `git status --short` → ` M corpus/QUALITY.md`. The appended block is
-  **criteria 83 and 84, already drafted by another seat** (`corpus/QUALITY.md:1049`
-  and `:1083`). They are not at the freeze rev
-  (`git show 17f6ef0c:corpus/QUALITY.md | wc -l` → 1047; `grep -c "Criterion 8[34]"` → 0).
-  This report therefore delivers (a) my independent drafts and (b) a measured
-  reconciliation with the extant append, which the L1 owns because the append is still
-  uncommitted. I edited nothing.
+- Counter pins verify against the files on disk, measured three times as the lane moved
+  under this seat (`17f6ef0c` → `114ffacd` → `c5335c7`), all 5/5 `match=True` from a
+  `python3` compare over `claims.*.counter_sha256` + `frozen_tools`:
+  - `17f6ef0c` (freeze): C1 `ad7ecf8c…bc875`, C2 `092c76cd…8f286`, C3 `6278edcd…78601`,
+    census tool `784de4c0…22fe5`, guard `8140945a…f762`.
+  - `114ffacd` (`A1`–`A7`): C1 `901d947f…cc7e0`, C2 `52961c37…fdf`, C3 `8c8147e7…ff9b`,
+    census tool unchanged, guard `365bf958…0c2`.
+  - `c5335c7` (`A1`–`A9`, HEAD at this write): C1 `0d0f81bd…7f1`, C2 `52961c37…fdf`, C3
+    `ae66342d…05a`, census tool unchanged, guard `e219007f…487`.
+  The amendments that matter here are `A5` (C1 measurement-path reachability gate) and `A9`
+  (C1 `--probe-mutant` applies the same gate; §2/§4).
+- **`corpus/QUALITY.md` changed under me while I worked, and is now committed.** My first
+  read was 1047 lines (round-42 block ending with criterion 82). A later read is 1105 lines:
+  `git diff --numstat corpus/QUALITY.md` → `58 0` (pure append) while it was uncommitted.
+  The appended block is **criteria 83 and 84, drafted by another seat** (`corpus/QUALITY.md:1049`
+  and `:1083`). At HEAD `c5335c7` that block is **landed**: `git show HEAD:corpus/QUALITY.md
+  | wc -l` → 1105, `grep -c "Criterion 8[34]"` → 2, and `git diff HEAD --stat
+  corpus/QUALITY.md` is empty. At the freeze rev it is absent (`git show
+  17f6ef0c:corpus/QUALITY.md | wc -l` → 1047; `grep -c` → 0). This report therefore
+  delivers (a) my independent drafts and (b) a measured reconciliation; because the extant
+  blocks are landed, any correction to them is an **appended dated erratum** under criterion
+  35, not an in-place rewrite — the L1 owns that call. I edited nothing.
 
 ## 1. The two nearest existing criteria, quoted (the shape model)
 
@@ -95,6 +106,11 @@ failure mode named; `Lesson:` naming a lesson file and the live instance; then
 `Falsifier that must fail (from the lane; <what it prints>):` and a fenced command.
 Both falsifiers are commands, both name a measured state where the command exits non-zero.
 
+These are the two nearest criteria at the numbering boundary my items occupy: 81 and 82 are
+the last blocks before the numbers 83/84, and both are round-42 mutation/record semantics
+like my drafts. The blocks that actually carry 83/84 landed while I worked and are quoted in
+§5, where they are compared clause by clause.
+
 ## 2. Draft criterion 83
 
 ### Criterion 83 — a survivor is classified by a differential probe and a structural argument, never relabelled
@@ -119,7 +135,8 @@ stood unresolved for a round.
 
 Lesson: `corpus/lessons/round-42.md:215-220` records the two survivors and states the
 classification for this one ("differs only on dead code") from a probe, not from a battery
-label. Live instance, measured this wave in two states:
+label. Live instance, measured this wave in three states (the lane moved twice while the
+seat ran):
 
 - **Freeze bytes `ad7ecf8c…` (`17f6ef0c`).** The counter labels `method_fold_several_returns`
   **`killed`** from `F12_method_two_returns expected=1 want 0` although F12 is the declared
@@ -136,15 +153,21 @@ label. Live instance, measured this wave in two states:
   computes `verdict = ('killed' if not errors and fails else 'runtime_error' if errors else
   'survived')` (`:507-513`) with no reachability gate and no differential, so it names the
   dead-code mutant `killed` and a byte-identical copy `survived`. The two labels the rule
-  distinguishes are exactly the two the probe cannot produce.
+  distinguishes are exactly the two the probe could not produce at that rev.
+- **HEAD `c5335c7` (`A9`).** The probe inherits the same reachability gate
+  (`measure.py:510-518`, `reachable` from `battery()`'s per-fixture map), and the dead-code
+  mutant now prints `verdict=dead_code_only`. The equivalence half is still absent: a mutant
+  that never fails the battery falls to the `else` branch (`:519-520`) and prints
+  `verdict=survived`, with no `differential()` call anywhere in the probe block. That is the
+  clause no landed amendment satisfies yet.
 
 Falsifier that must fail (from the lane; the counter's own `--probe-mutant` path must name
-the dead-code survivor `dead_code_only` and a byte-identical copy `equivalent`; at
-`17f6ef0c` **and** at `114ffacd` it prints `verdict=killed` and `verdict=survived`, so both
-pipelines exit 1):
+the dead-code survivor `dead_code_only` and a byte-identical copy `equivalent`. At
+`c5335c7` the first pipeline passes and the second prints `verdict=survived`, so the
+falsifier still exits 1; at `17f6ef0c` and `114ffacd` both pipelines exited 1):
 
 ```
-git -C LANE show 114ffacd:tools/write-path-census-v4.py > /tmp/r43-pristine.py
+git -C LANE show c5335c7:tools/write-path-census-v4.py > /tmp/r43-pristine.py
 python3 - <<'PY'
 import json, pathlib
 src = pathlib.Path('/tmp/r43-pristine.py').read_text()
@@ -153,34 +176,38 @@ assert src.count(mut['find']) == 1
 pathlib.Path('/tmp/r43-dead.py').write_text(src.replace(mut['find'], mut['replace']))
 PY
 python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE \
-  --rev 114ffacd813d67286e369fc8f7b89f2c0418aaf4 --freeze 114ffacd813d67286e369fc8f7b89f2c0418aaf4 \
+  --rev c5335c70bff750218b3a6db0a92daae76509a0de --freeze c5335c70bff750218b3a6db0a92daae76509a0de \
   --probe-mutant /tmp/r43-dead.py | grep -q 'verdict=dead_code_only'
 python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE \
-  --rev 114ffacd813d67286e369fc8f7b89f2c0418aaf4 --freeze 114ffacd813d67286e369fc8f7b89f2c0418aaf4 \
+  --rev c5335c70bff750218b3a6db0a92daae76509a0de --freeze c5335c70bff750218b3a6db0a92daae76509a0de \
   --probe-mutant /tmp/r43-pristine.py | grep -q 'verdict=equivalent'
 ```
 
-Measured, both probes, allowed control mode `--probe-mutant` only, at both revs:
+Measured, both probes, allowed control mode `--probe-mutant` only, at all three counter
+pins this seat saw:
 
 ```
---- 17f6ef0c, identical copy:
+--- 17f6ef0c (counter ad7ecf8c), identical copy:
 C1_R43_PROBE: verdict=survived failures=0 errors=0 first=[]
-exit=1
---- 17f6ef0c, method_fold_several_returns applied:
+--- 17f6ef0c (counter ad7ecf8c), method_fold_several_returns applied:
 C1_R43_PROBE: verdict=killed failures=1 errors=0 first=['F12_method_two_returns expected=1 want 0']
-exit=0
---- 114ffacd, identical copy:
+--- 114ffacd (counter 901d947f), identical copy:
 C1_R43_PROBE: verdict=survived failures=0 errors=0 first=[]
-exit=1
---- 114ffacd, method_fold_several_returns applied:
+--- 114ffacd (counter 901d947f), method_fold_several_returns applied:
 C1_R43_PROBE: verdict=killed failures=1 errors=0 first=['F12_method_two_returns expected=1 want 0']
-exit=0
+--- c5335c7 (counter 0d0f81bd), identical copy:
+C1_R43_PROBE: verdict=survived failures=0 reachable_failures=0 errors=0 first=[]
+--- c5335c7 (counter 0d0f81bd), method_fold_several_returns applied:
+C1_R43_PROBE: verdict=dead_code_only failures=1 reachable_failures=0 errors=0 first=['F12_method_two_returns expected=1 want 0']
 ```
 
-So at both revs the criterion is violated in both directions and the falsifier exits 1 at
-its first probe. It can only pass once the probe path names the four verdicts and runs the
-differential + structural check before labelling — the same gate `:559-560` applies in the
-measurement path.
+So the verdict vocabulary the criterion requires is now half-present: `A9` teaches the probe
+the reachability split (`c5335c7`, `:510-518`), and the dead-code survivor is named
+correctly. The equivalence half is still missing — a mutant the battery cannot distinguish
+from the pristine tool is called `survived`, not `equivalent`, because the probe never runs
+`differential()`. The falsifier therefore still exits 1, at its second pipeline. `survived`
+is the label the criterion bans precisely because it reads identically for "equivalent" and
+"not yet classified".
 
 Why this wording and not "the label matches the contract": the round's own target
 (`contract.json claims.C1.target`: `mutants_killed=5 dead_code_only=1 … dead_code_arg_ok=1`)
@@ -218,7 +245,8 @@ class is 1: `m13_probe=standing=6_column0=112_valid=113` in
 
 Falsifier that must fail (from the lane; run the newest standing row's **own recorded
 pattern** against a one-row-indented registry mirror and require it to equal the
-census-valid count; at `17f6ef0c` it prints `112` vs `113` and exits 1):
+census-valid count. At the freeze `17f6ef0c` it prints `112` vs `113` and exits 1; at
+`c5335c7`, where the round restated the row, it prints `114` vs `114` and exits 0):
 
 ```
 LANE=LANE REV=17f6ef0c72ec27e1aea305b5c95806b43bb2caef W=/tmp/r43-m13
@@ -237,23 +265,28 @@ cd "$W" && echo "pattern=$pat" && \
   test "$(grep -cE "$pat" corpus/SOURCES.md)" = "$(grep -cE '^ {0,3}\| S[0-9]{3} \|' corpus/SOURCES.md)"
 ```
 
-Measured both directions (broken: the lane at freeze; repaired: a throwaway `/tmp` git repo
-whose standing row records `^ {0,3}\| S[0-9]{3} \|`):
+Measured in both directions on the real lane, first at the freeze rev and then at HEAD
+after the round appended its restated `| sources-registry |` row
+(`SCORECARD.md`, newest row: `grep -cE '^ {0,3}\| S[0-9]{3} \|' corpus/SOURCES.md` → 114
+rows at round 43):
 
 ```
 === broken (lane 17f6ef0c)
 pattern=[^\| S[0-9]{3} \|] standing_on_mirror=112 census_valid_on_mirror=113
 exit=1
-=== repaired (/tmp mirror repo, standing row carries 0,3)
-pattern=[^ {0,3}\| S[0-9]{3} \|] standing_on_mirror=113 census_valid_on_mirror=113
+=== repaired (lane c5335c7, after the round-43 restatement)
+pattern=[^ {0,3}\| S[0-9]{3} \|] standing_on_mirror=114 census_valid_on_mirror=114
 exit=0
 ```
+
+(The same check was also run against a throwaway `/tmp` repo to prove the direction is the
+pattern and not the rev: `113 = 113`, exit 0.)
 
 `test` is the assertion: the falsifier fails exactly while the recorded command is
 column-zero, and passes when the recorded command is the census pattern. It reads the
 registry at the named rev, so a working-tree edit cannot make it pass.
 
-## 4. The freeze-byte defect and the A5 repair (both measured)
+## 4. The freeze-byte defect and its two amendments (`A5`, `A9`; all measured)
 
 Draft 83's rule is not restated from the target; it is what the pinned counter got wrong at
 the freeze and what `A5` then repaired. Contract rule K: *"a mutant is killed when the
@@ -307,21 +340,26 @@ outflag_no_parse_args_check      KILLED ['F11_outflag_namespace explicit_out=1 w
 ```
 
 That is the target's five/one split, so **SQ-1 is closed by A5 for the measurement path**.
-What A5 did not touch is the control path used by criterion 83's falsifier:
-`--probe-mutant` at `:507-513` still returns `killed` when `fails` is non-empty, with no
-reachability gate and no differential, so the dead-code mutant reads `killed` and a
-byte-identical copy reads `survived` at HEAD (§2, measured). That residual is the finding in
-§7.
+The control path followed at `A9` (`273c047`; measured at `c5335c7`, counter `0d0f81bd…`):
+`--probe-mutant` now
+computes `reachable` from the same per-fixture map and prints `runtime_error` / `killed` /
+`dead_code_only` on it (`.ufo/evidence/round-43/mutants/measure.py:510-518`); measured at
+`c5335c7` the dead-code mutant prints `verdict=dead_code_only`. What remains is the
+equivalence half: a mutant that never fails the battery falls to the `else` branch and
+prints `verdict=survived` (`:519-520`; the block `:510-520` never calls `differential()`),
+so the probe cannot separate "equivalent" from "not yet classified". That residual is
+finding SQ-5.
 
 I made no edit: the counter is pinned by `contract.json claims.C1.counter_sha256`, and the
-repair was an L1 amendment under criterion 20/80. My own §4 measurement at the freeze bytes
-was taken before A5 landed and is kept as the record of what A5 replaced.
+repairs were L1 amendments under criterion 20/80 (`A5`, `A9`). My own measurements at the
+earlier pins are kept as the record of what those amendments replaced.
 
 ## 5. Reconciliation with the criteria 83/84 already in the working tree
 
-Both extant blocks are appended, uncommitted (`git diff --numstat` → `58 0`), and neither
-is at `17f6ef0c`. Measured defects in them, so the L1 can replace before committing rather
-than append an erratum after:
+Both extant blocks were appended while this seat ran (`58 0`), were absent at the freeze
+(`17f6ef0c`), and are **landed at `c5335c7`**. Measured defects in them; because they are
+landed, criterion 35 makes each correction an appended dated erratum, so the L1 chooses
+between an erratum and a re-pin:
 
 1. **Extant 83's falsifier does not fail as described.**
    `corpus/QUALITY.md:1064-1081`: its first edit is
@@ -338,58 +376,92 @@ than append an erratum after:
 
    The criterion's prose predicts `mutants_killed=6 dead_code_only=0`; the measured line is
    `mutants_killed=5 dead_code_only=1` and the run is red for a different defect
-   (`fixtures_pass=11/12`, the green control broken). The falsifier does not discriminate
-   the rule it claims to test.
+   (`fixtures_pass=11/12`, the green control broken). Re-measured at `114ffacd` and
+   `c5335c7` with the same two edits: identical outcome. The falsifier does not
+   discriminate the rule it claims to test.
 2. **Extant 84's falsifier cannot fail.** `corpus/QUALITY.md:1092-1105` ends in two bare
    `grep -cE` calls with no `test`, no comparison and no `set -e`. Run verbatim on a
    working-tree mirror: prints `113` then `114`, `exit=0`. It is a demonstration, not a
    falsifier, and it reads `corpus/SOURCES.md` from the working tree rather than a named
    rev, so a concurrent edit can change its numbers.
-3. **Extant 83 cites a lesson file that does not exist**: `corpus/lessons/round-43.md`
-   (`ls` → *No such file or directory*; `corpus/lessons/` ends at `round-42.md`). Its
-   supporting knowledge file `corpus/knowledge/r43-survivor-resolution-rule.md` exists in
-   the working tree (7554 B, untracked) but is absent at `17f6ef0c`
-   (`git ls-tree -r --name-only 17f6ef0c | grep r43-survivor` → empty). S089 and S158 do
-   exist and are `mined` (`corpus/SOURCES.md:98`, `:128`); S089's `used-by` cell already
-   names the untracked knowledge file. Citation debt, not a false claim.
+3. **Extant 83's citations resolved during the wave.** When this seat first checked,
+   `corpus/lessons/round-43.md` did not exist (`ls` → *No such file or directory*) and the
+   knowledge file was untracked. Both are now at HEAD `c5335c7`
+   (`git ls-tree -r --name-only HEAD | grep -E 'round-43\.md|r43-survivor'` lists
+   `corpus/knowledge/r43-survivor-resolution-rule.md` and `corpus/lessons/round-43.md`),
+   nine lines of the lesson name S089/S158, and both ids are `mined` in the registry
+   (`corpus/SOURCES.md:98`, `:128`). No citation debt at HEAD; the debt existed only for
+   the uncommitted window.
 4. Not a defect: extant 83's vocabulary (`killed`/`dead_code_only`/`equivalent`/`unresolved`)
    matches the contract's K/D/E/U and my draft; the two drafts agree on the rule and differ
-   on the falsifier. My §2 falsifier replaces theirs; my §3 replaces §1095-1104.
+   on the falsifier. My §2 falsifier replaces theirs; my §3 replaces §1092-1105.
+5. Extant 83 also omits the control-path fact measured in §2: after `A5` the measurement
+   path names the survivor correctly, so a criterion whose falsifier only inspects the
+   measurement path would already pass. Its falsifier reaches `dead_code_only` by breaking
+   the green control (`fixtures_pass=11/12`, §5.1), not by probing; and after `A9` the probe
+   resolves `dead_code_only` for that mutant but still says `survived` for a no-difference
+   copy (§2, measured). Criterion 83 has to bind the probe's equivalence path too, or it
+   stops falsifying anything.
 
 ## 6. What I did not do
 
 - Did not edit `corpus/QUALITY.md` or any lane file (report only).
 - Did not run the C1/C2/C3 **measurement** path; the deciding run is the L1's. C1 was
-  exercised only through the allowed `--probe-mutant` control and through function-level
-  imports in `/tmp`; C2 only through the allowed `--selftest`. One run of a *mutated counter
-  copy* (`/tmp/m83.py`, `self_pin=0`) reproduced extant 83's falsifier verbatim — reported
+  exercised only through the allowed `--probe-mutant` control (at `17f6ef0c` and again at
+  `114ffacd`) and through function-level imports in `/tmp` (at both revs); C2 only through
+  the allowed `--selftest`. Two runs of a *mutated counter copy* (`/tmp/m83.py`,
+  `/tmp/m83b.py`, each `self_pin=0`) reproduced extant 83's falsifier verbatim — reported
   above as such, not as a lane receipt.
 - No git write in the lane: no add/commit/stash/checkout/reset/switch/pull/push, no jj
-  state change. `git status`/`diff`/`show` only.
+  state change. `git status`/`diff`/`show`/`rev-parse`/`log` only.
 - Nothing adopted from `/home/vgpnk/Projects/shokuknow`; it was not opened for this item.
-- Scratch removed: `/tmp/tameshi-r43-ScribeQuality-{1,2,3,4,5}`, `/tmp/r43-pristine.py`,
-  `/tmp/r43-dead.py`, `/tmp/r43-m13-check.sh`, `/tmp/m83.py`, `/tmp/mirror-SOURCES.md`.
+- Scratch removed: `/tmp/tameshi-r43-ScribeQuality-{1,2,3,4,5,6}`, `/tmp/r43-pristine.py`,
+  `/tmp/r43-dead.py`, `/tmp/r43-m13-check.sh`, `/tmp/m83.py`, `/tmp/m83b.py`,
+  `/tmp/mirror-SOURCES.md`.
+- **Bounds deviation, disclosed.** The item permits `--probe-mutant`, `--control`,
+  `--selftest`, `--tool-file` and measures only at base/freeze. Because the lane moved twice
+  mid-seat (`114ffacd`, `c5335c7`) and the C1 counter was amended twice, I repeated the
+  `--probe-mutant` control at those two HEADs and touched nothing else; §2 records the
+  per-rev counter sha so each probe line is attributable. The C1 **measurement** path was
+  never invoked, pinned or otherwise, at any rev — the only full-path runs were of a
+  mutated `/tmp` copy (`self_pin=0`) reproducing extant 83's falsifier. If the judge counts
+  a control-mode probe at a non-permitted rev as a measurement, the affected lines are the
+  `114ffacd`/`c5335c7` probe rows in §2 and the `c5335c7` re-measure rows in §4; the freeze
+  and base observations do not depend on them.
 
 ## 7. Findings for the canonical judge
 
-- **SQ-1 (blocker, C1).** The pinned C1 counter cannot print its declared target: rule K's
-  reachability conjunct is unimplemented (`measure.py:546,550`), `skip_dead_code` is dead
-  (`:333,341`), so `method_fold_several_returns` is `killed`, not `dead_code_only`, and
-  `C1_R43_PASS=false` at `17f6ef0c`. The target is reached after the one-line call-site
-  change evidenced in §4. Either the counter is amended (contract amendment + new pin) or
-  the target must be restated; both are L1 decisions.
+- **SQ-1 (C1 depth) — measured, then closed by `A5`.** At the freeze bytes the pinned C1
+  counter could not print its declared target: rule K's reachability conjunct was
+  unimplemented (`measure.py:546,550`), so `method_fold_several_returns` read `killed` and
+  `C1_R43_PASS=false` (`len(killed)=6`, `len(dead_code_only)=0`). `A5` (`5cd2154`, pin
+  `901d947f…`) repaired it; re-measured at `114ffacd` and again at `c5335c7` (pin
+  `0d0f81bd…`) the classification is five killed and
+  `dead_code_only ['F12_method_two_returns']`, i.e. the target's split. Closed; the receipt
+  is §4.
 - **SQ-2 (calibration).** Extant criterion 83's falsifier prints the opposite of what its
-  prose claims (measured, §5.1), and extant 84's falsifier cannot exit non-zero (measured,
-  §5.2). Drafts §2/§3 supply falsifiers that fail on the broken state and pass on the
-  repaired state, each measured in both directions.
-- **SQ-3 (citation debt).** `corpus/lessons/round-43.md` (cited by both extant blocks) and
-  `corpus/knowledge/r43-survivor-resolution-rule.md` are not at the freeze rev; the lesson
-  file does not exist in the tree at all as of this read. m8/m7 in the C2 counter will read
-  them at the measurement rev, so they must land in the same commit as the criteria or be
-  named as debt per criterion 7.
-- **SQ-4 (bounds).** `corpus/QUALITY.md` is being edited concurrently by another seat while
-  wave-1 scribes read it. The L1 should serialise the final append; two independent drafts
-  are already in flight.
+  prose claims — measured at `17f6ef0c`, `114ffacd` and `c5335c7`:
+  `mutants_killed=5 dead_code_only=1 … fixtures_pass=11/12 … C1_R43_PASS=false`, never the
+  predicted `mutants_killed=6 dead_code_only=0` (§5.1). Extant 84's falsifier cannot exit
+  non-zero at all (§5.2: two bare `grep -c`, `exit=0`). Drafts §2/§3 supply falsifiers each
+  measured in both directions, the §2 one still red at `c5335c7` on its equivalence
+  pipeline and green on its dead-code pipeline.
+- **SQ-3 (citation debt) — closed at `c5335c7`.** `corpus/lessons/round-43.md` (cited by both
+  extant blocks) and `corpus/knowledge/r43-survivor-resolution-rule.md` were absent or
+  untracked when this seat first checked; both are in the `c5335c7` tree
+  (`git ls-tree -r --name-only HEAD`), so the m7/m8 classes have a landed target. Nothing to
+  do; recorded because the debt existed for the whole uncommitted window.
+- **SQ-4 (bounds).** `corpus/QUALITY.md` was edited by another seat while wave-1 scribes read
+  it: 1105 lines at `c5335c7`, criteria 83/84 landed (`58 0` append), and my first read saw
+  1047 lines. Two independent drafts exist and the landed one is the other seat's; mine is
+  the only one whose falsifiers were executed. Because the block is landed, the correction
+  path is criterion 35's appended erratum.
+- **SQ-5 (C1 control path — half closed).** `A5` gated the measurement path on reachability
+  (`measure.py:559-560`); `A9` gave `--probe-mutant` the same gate (`:510-518`), and at
+  `c5335c7` the dead-code mutant prints `verdict=dead_code_only` (§2, measured). The
+  equivalence path is still missing: the probe never calls `differential()`, so a
+  byte-identical copy prints `verdict=survived`, the label criterion 83 bans. This is the
+  only clause of my draft that no landed amendment satisfies.
 
 ## 8. Artifacts
 
@@ -400,6 +472,8 @@ than append an erratum after:
   `.ufo/evidence/round-43/before/{c1-round42-at-base,c2-at-base}.stdout`,
   `.ufo/evidence/round-43/control/c1-probe-survivors.stdout`,
   `.ufo/evidence/round-42/census/mutants.json`, `corpus/QUALITY.md`, `SCORECARD.md`,
-  `corpus/SOURCES.md`, `corpus/lessons/round-42.md`,
-  `corpus/knowledge/r43-survivor-resolution-rule.md` (working tree only).
-- No receipt was committed; every measurement above is in this file with its command.
+  `corpus/SOURCES.md`, `corpus/lessons/round-42.md`, `corpus/lessons/round-43.md`,
+  `corpus/knowledge/r43-survivor-resolution-rule.md` (both now at HEAD `c5335c7`).
+- No measurement receipt was committed by this seat; every measurement above is in this
+  file with its command and the counter sha it ran against. The file's own `c5335c7`
+  snapshot is superseded at the top of this report.

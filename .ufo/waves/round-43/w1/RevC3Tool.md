@@ -307,30 +307,81 @@ side. Survives A4.
 
 ## Drift observed while reviewing (not a defect of the tool; affects decidability)
 
-- The lane re-froze while I worked: HEAD is now `5cd2154` ("freeze A4/A5") with amendments
-  **A4** (guard map-shape repair — exactly F1 — tool pin `8140945a`→`efa5f129`) and **A5**
-  (C1 reachability gate + tool-pin source; C3 counter pin `6278edcd`→`fbc8ad3c`). Both record
-  `rule_changed: false`. Note the contract's own `amendments_note` says amendments change
-  "citations and disclosures only"; A4/A5 also move `tool_sha256`, `frozen_tools` and
-  `claims.C3.counter_sha256`. That is a provenance call for the L1 and `RevProvenance`, not a
-  code defect; I only record it because my ticket still names `17f6ef0`.
-- Consequence: the on-disk counter now self-pins to `fbc8ad3c`, so running it with
+- The lane re-froze repeatedly while I worked: `17f6ef0` → `5cd2154` (freeze A4/A5) → … →
+  `3aee2c0` (freeze A10, HEAD `e20cf89`). A4 records the guard map-shape repair (= F1, tool
+  pin `8140945a`→`efa5f129`) and A5 records the C1 reachability gate plus tool-pin source; the
+  later freezes move the guard to `2e8f2e89`. See the addendum below for the current state.
+  Note the contract's own `amendments_note` says amendments change "citations and disclosures
+  only"; A4–A10 also move `tool_sha256`, `frozen_tools` and `claims.C3.counter_sha256`. That is
+  a provenance call for the L1 and `RevProvenance`, not a code defect; I record it because my
+  ticket still names `17f6ef0`.
+- Consequence: the on-disk counter now self-pins to `ae66342d`, so running it with
   `--freeze 17f6ef0` yields `self_pin=0` (pin mismatch). The `17f6ef0` measurement above was
   taken with the counter bytes from the freeze blob (`git show 17f6ef0:…/measure.py`,
   `self_pin=1`). Any 17f6ef0 receipt must use those bytes.
-- `RevProvenance` reports the on-disk tool has since moved to a third version (`2484da72…`)
-  pinned by neither freeze. The counter reads `git show REV:tools/staged-id-guard.py`, so
-  measurements are unaffected; a tool that read the worktree instead would score
-  `tool_sha_ok=0`.
+- `RevProvenance` reported a transient unpinned tool (`2484da72…`) during this review; as of my
+  re-check the worktree tool equals the A10 pin `2e8f2e89` exactly, so there is no drift at
+  present. The counter reads `git show REV:tools/staged-id-guard.py`, so measurements were never
+  affected; a counter that read the worktree instead would score `tool_sha_ok=0`.
+
+## Addendum — status against the lane's current committed freeze (A10, `3aee2c0`, tool `2e8f2e89`, 488 lines)
+
+Everything above judges the bytes my ticket names (`17f6ef0`, tool `8140945a`, 374 lines). The
+lane then froze six more times (A4–A10). Re-run read-only against the A10 blob
+(`git show 3aee2c0:tools/staged-id-guard.py`, sha `2e8f2e891ea2…4d4d6ff2`, selftest
+**24/24** green — the 23-case count circulating is A9):
+
+| finding | state at A10 | evidence |
+|---|---|---|
+| F1 join bug | fixed at A4 | multi-entry map admitted |
+| F2 documentless under `--map` | fixed | `map decides an undocumented row: S002`; new `map_undocumented` field |
+| F4 hex-collapsed documents | fixed | `HEXISH` gone; `/data/deadbeef/notes.md` ≠ `/data/feedface/notes.md`; `normalise_document` (scheme/www./case/trailing slash) added for dedupe |
+| F5 whole-set exemptions | fixed in code — **docstring now wrong in the other direction** | `staged_clash` and `below_floor` are unconditional; whole-set `{S002:S003}` under `safe_floor=S011` is refused, while the docstring still promises "…and at or above the safe floor **unless the map covers the whole staged set**" |
+| F8 bad map input | fixed | verified: `{"map":{"row-2":"S050"}}` → rc=2, `{"verdict":"setup_refusal","reason":"map key is not an S-id: 'row-2'"}` |
+| F3 self-dedupe | **open** | `analyse` held `{S002:S002}`; `--map {S002:S002}` → `['map leaves a colliding id on itself: S002']` |
+| F9 map envelope | **open** | `{"map":…, "staged":"/nonexistent", "registry":"/nonexistent"}` → admitted |
+| F10 `next_free` | **open** | fixture `next_free='S003'`, `cascade=['S003']` (same contradiction as live) |
+| F11 residues | **partly open** | threshold still `len(cells) < 5`: a 5-cell row is accepted against an 11-column schema; `row['cells']` and `row['lineno']` are still stored and never read. `import os` now used (`os.stat`), `column0_extract` gone from the docstring |
+| F12 unparsed row shapes | **open** | `| S002* |`, 4-space and tab rows → `staged_rows=0`, `collisions=[]`, no refusal |
+| CLI contract unpinned | **open** | reproduced as **M6b**: keep the selftest branch, collapse the verdict→exit mapping (`if verdict in ('admitted','answered'): 0 else 1` → `return 0`) → selftest still 24/24 PASS, and an inadmissible map exits 0 where pinned exits 1. (An early `return 0` *before* `parse_args` is a different mutant: it runs no selftest, prints nothing, and the counter sees `cases=0` — caught.) No case pins exit 0/1/2, the stdout-JSON shape, `--map` loading or `--json`; `grep 'main('` finds only the definition and `sys.exit(main())` |
+| F6 measurement caveat | A10 counter | predicate now includes `substitute == 0` (`measure.py:279`), so `--tool-file` cannot print `PASS=true` by construction. `MIN_CASES` is still 13 while the tool reports 24 |
+| F6 floor rule | **unmeasured at A10 even per-component** | M9 (floor check deleted) → 24/24 PASS and every live component identical to pinned; the live safe map's targets are exactly `S256 == floor`, never below it, so no component can see the rule. M8 (whole-set exemption restored) → 24/24 and live-identical. The F6 table above was measured with the `17f6ef0` counter and remains valid for it |
+
+- The crude exit-contract collapse — `return 0` as `main`'s **first** statement — does *not*
+  survive either: `--selftest` prints nothing, and the counter's own analyse run gets no JSON,
+  so the line is `selftest_exit=0 guard_error=no_json` (aborted upstream of `MIN_CASES`; the
+  case count is never even read). Only the narrower M6b — selftest kept, verdict→exit
+  collapsed — evades detection.
+
+Two A10 wording drifts beyond F5: the refusal string still says *"partial map targets are below
+the safe floor"* when the map covers the whole package, and the docstring's whole-set exemption
+is now dead text.
+
+Highest-value remaining cases, ordered by what still survives today:
+
+1. **(T12b)** the only case that reaches the floor rule. Registry `S001`, staged one row `S001` carrying a *new* document, so `floor=S002` and `collisions=['S001']`; map `{'S001':'S000'}` is injective, covers the collision, and clashes with neither set. Pinned refuses it —
+   `['partial map targets are below the safe floor S002: S000']`; both M8 and M9 admit it.
+   `T12` as written is vacuous: `{'S002':'S003','S004':'S003'}` is non-injective *and* targets a
+   registry id, so its reasons are exactly `['map is not injective …', 'map targets collide with
+   registry ids: S003,S003']` and the below-floor branch is never reached; `T4_partial_map_refused`
+   uses `{}`, which cannot reach it either.
+2. **(T9)** the CLI contract — call `main([...])` three times and assert `(exit, verdict)` =
+   `(0, admitted)` / `(1, inadmissible)` / `(2, setup_refusal)` plus stdout-is-JSON-only. This is
+   the case that would have made F8's class findable before the freeze, and it is what M6b defeats.
+3. **(T13)** a row-shape invariant — either every row-looking line is parsed and counted
+   (`staged_rows == data lines`) or the run refuses naming the line. F12 is the only remaining
+   finding where the tool returns a clean answer about a package it did not read.
+4. **(T6)** the malformed threshold at its boundary: a 5-cell row must be refused against the
+   11-column header, not accepted.
 
 ## Residual risk and verification gaps
 
-- **The tool's core promise is still unenforced after A4**: F2 (documentless renumber under
-  `--map`), F3 (self-dedupe unrepresentable), F4 (hex-collapsed documents produce a false
-  "already held" — present at the freeze and at A4, reported fixed later in the tree), F5
-  (whole-set maps escape the floor, and the whole-set rule itself is asserted by no case —
-  M4 survives everywhere), and F6 (the floor is not measured). F4 is the one that can lose
-  data silently — the tool tells the operator not to append.
+- **At the bytes reviewed here the core promise is unenforced**: F2 (documentless renumber
+  under `--map`), F3 (self-dedupe unrepresentable), F4 (hex-collapsed documents produce a false
+  "already held"), F5 (whole-set maps escape the floor), and F6 (the floor is not measured).
+  F4 is the one that can lose data silently — the tool tells the operator not to append. At
+  A10 the residual set is smaller (F2/F4/F5 fixed; see the addendum): F3, F9, F10, F12, the F11
+  residues, and the entirely unpinned CLI contract are what remain.
 - I did **not** measure at `5cd2154` (not an allowed measurement rev); the A4 blob was probed
   as code only, to mark which findings survive.
 - `safe_map_admitted=1` with `--tool-file` at `17f6ef0` is a **control**, not a measurement. The

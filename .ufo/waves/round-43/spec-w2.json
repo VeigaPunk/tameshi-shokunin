@@ -1,0 +1,314 @@
+{
+ "wave": "round-43-w2",
+ "reportDir": ".ufo/waves/round-43/w2",
+ "template": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n## Your item\n\n{{item}}\n\nWork the item end to end, then write your report file and return your findings.\n",
+ "context": "# Goal\ntameshi round 43, wave 2 (falsify). Lane repo /home/vgpnk/Projects/shokunin/tameshi-shokunin. Base `487b8f0da89fa0e2b8bea6930068accbf36e70a9`; freeze of record `3aee2c078f8976499b587086af3577fc94dc8cf1`; the records commit `c5335c70bff750218b3a6db0a92daae76509a0de` carries the scorecard/log/quality/readme/knowledge/lesson/sources edits and every wave-1 seat report and receipt. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/contract.json (amendments A1-A9, all pre-data) and the three counters first.\n\nYour job is to attack what wave 1 and the L1 produced. Every item below names its target. A finding is useful when it names file:line and a reproducible command; \"looks fine\" is not a finding.\n\nThree claims under attack:\n- C1 depth: `.ufo/evidence/round-43/mutants/measure.py` resolves the two round-42 survivors under the K/D/E/U rule (5 killed, 1 dead_code_only, 0 unresolved).\n- C2 calibration: `.ufo/evidence/round-43/calibration/measure.py` audits seven record-agreement classes (m6 m7 m8 m10 m11 m12 m13) over the round-42/43 records.\n- C3 operability: `tools/staged-id-guard.py` + `.ufo/evidence/round-43/guard/measure.py` answer the staged-package id hazard before any append.\n\nPERMITTED counter revisions: `--rev 487b8f0da89fa0e2b8bea6930068accbf36e70a9` (base) and `--rev 3aee2c078f8976499b587086af3577fc94dc8cf1` (freeze) only. **NEVER run a counter at c5335c70bff750218b3a6db0a92daae76509a0de** \u2014 the ONE deciding run is the L1's and a seat run at the records commit would contaminate it. Scratch clones under /tmp/tameshi-r43-w2-<YourName>-* are fine (git clone --shared), and you may copy a counter into scratch and edit the copy.\n\nAssimilation package (READ-ONLY: never write, commit, fetch or push there, never run a campaign tool): /home/vgpnk/Projects/shokuknow; staged registry /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md. This round is `Assimilation: none`.\n\nBounds: you are READ-ONLY on the lane checkout; your only lane write is your own report file. Never edit /home/vgpnk/Projects/shokunin/tameshi-shokunin, the fleet repo /home/vgpnk/Projects/shokunin, a sibling lane, the lane's jj state or Git index. Never run git add/commit/stash/checkout/switch/reset/pull/push in the lane and never run a mutating jj command. Absolute paths only: seat tools start at the FLEET root. Scratch under /tmp is deleted before you return unless your item says otherwise.\n\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/tameshi-shokunin/<that path>.\n\nTooling authorization (operator, 2026-10-19): you may install or upgrade tools that help the task \u2014 read /home/vgpnk/.omp/agent/RULES.md first, official channels only. **pacman is PAUSED host-wide**: no pacman transaction at all; use uv tool / npx / an official binary in ~/.local/bin, and record tool/version/channel/reason.\n",
+ "items": [
+  {
+   "name": "RevSC43",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "scorecard block vs counters",
+   "item": "Read the round-43 block in /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md (the newest `## Round 43` section) cell by cell against what the three counters actually print at the freeze `3aee2c078f8976499b587086af3577fc94dc8cf1`. For each claim row: does the `Before` cell match a committed receipt, does the `After` target string match the counter's own printed fields, does the `Counting command` run as written? Report every cell that no receipt or field supports. Do not run at c5335c70bff750218b3a6db0a92daae76509a0de."
+  },
+  {
+   "name": "RevLog43",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "log section vs tree",
+   "item": "Read the round-43 section at the tail of /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md and check every factual claim against the tree at the freeze: row counts, the three held documents, the safe floor, the two verdicts, the QUALITY criteria numbers, the wave shape sentence. Report each unsupported or wrong number with file:line."
+  },
+  {
+   "name": "RevLessonGate",
+   "role": "reviewer",
+   "axes": [
+    "freshness"
+   ],
+   "milestone": "Gate quotes vs snapshots",
+   "item": "Verify every quote in the `## Gate` of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-43.md against the committed snapshots under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/sources/: byte count, sha256, line number, and that the quoted words appear at that line in the tag-stripped text. Report each quote that is not verbatim at its cited line, and each word count over 25. Also check the Wikipedia section name the Gate claims: does this revision have an `Equivalent mutants` heading? (grep it)."
+  },
+  {
+   "name": "RevLessonMistakes",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "mistakes rows provable",
+   "item": "For each row of the `## Mistakes` table in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-43.md, run or read the evidence it names and say whether the `fix` column's `shown able to fail` claim holds: the guard's held set, the C1 control receipt, the pre-fix guard refusal, the C2 base receipt's m10. Report any row whose evidence does not show what the row says."
+  },
+  {
+   "name": "RevKnowledgeEntry",
+   "role": "reviewer",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "entry claims vs tools",
+   "item": "Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r43-survivor-resolution-rule.md against /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/mutants/measure.py and /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py. Check: the K/D/E/U table matches the code; each of the two survivor rows' `Round-43 verdict` and mechanics are accurate; the `EQUIVALENT(true)` quote is at the cited line of the committed snapshot. Report each overclaim, and any claim the counter does not test."
+  },
+  {
+   "name": "RevQualityFalsifiers",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "criteria 83/84 falsifiers",
+   "item": "Run the two falsifier commands in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md criteria 83 and 84 exactly as written, in /tmp/tameshi-r43-w2-RevQualityFalsifiers-/, and report exit codes and the decisive lines. Criterion 83's falsifier needs the freeze `3aee2c078f8976499b587086af3577fc94dc8cf1`; criterion 84's needs a mirror of corpus/SOURCES.md. Say for each whether the falsifier FAILS as the criterion promises, and quote the line that decides it."
+  },
+  {
+   "name": "RevSourcesAppend",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "registry append shape",
+   "item": "Verify the round-43 append in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md: the S159 row has 11 cells and no `|` inside a cell; its `used-by` names a file that cites S159; the three extended `used-by` cells (S089, S155, S158) each name the new entry; the tail note's row count (114) equals `grep -cE '^ {0,3}\\| S[0-9]{3} \\|'`; the `Next unused id` is the smallest unused id. Report each mismatch with the awk that shows it."
+  },
+  {
+   "name": "RevC1Predicate",
+   "role": "reviewer",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "C1 sentence=code",
+   "item": "Re-derive C1's predicate from /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/mutants/measure.py and the contract's C1 statement: list every field the predicate requires and the code line that produces it. Report any required field produced by a constant, any field printed but not required, and whether `mutants_killed=5 dead_code_only=1` can be reached while a different mutant set is declared. Do not run at c5335c70bff750218b3a6db0a92daae76509a0de."
+  },
+  {
+   "name": "MutC1GateRemoved",
+   "role": "mutation-tester",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "K gate mutation",
+   "item": "In /tmp/tameshi-r43-w2-MutC1GateRemoved-/ copy the C1 counter and change ONLY the reachability gate (the `reachable_fails` condition) back to a plain `if mf:`. Run the copy at `--rev 3aee2c078f8976499b587086af3577fc94dc8cf1 --freeze 3aee2c078f8976499b587086af3577fc94dc8cf1` and report `mutants_killed`, `dead_code_only`, `C1_R43_PASS` and the exit code. The gate must be load-bearing: removing it must move the dead-code mutant into `killed` and fail the predicate. If it does not, the gate is decorative."
+  },
+  {
+   "name": "MutC1LiveGate",
+   "role": "mutation-tester",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "live-failure gate",
+   "item": "In the same scratch pattern, delete the `detail['live ...']` assignment the A9 amendment added, then simulate a live-only failure: make a copy of the counter whose LIVE table adds a site that the pristine tool fails (e.g. ask for `expected=False` at a site that is `True`). Report whether the mutant is then classified `killed` or `equivalent`, and whether A9's line is the only thing preventing `equivalent`. Name the exact line."
+  },
+  {
+   "name": "CritC1Standing",
+   "role": "critic",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "is 5+1 a legitimate close",
+   "item": "Judge the C1 verdict as a closure reader would. The routed defect was 'the two survivors need killable fixtures or a dead-code judgment'. Report: does `dead_code_only` close it or merely re-label it; is F12 a fixture a reasonable reviewer would accept as the basis for a named survivor class; and does the round-42 `C2_R42_PASS=false` record stay honest under this round's rule. Give a verdict (closed / relabelled / open) with the strongest counter-argument you can build from the committed bytes."
+  },
+  {
+   "name": "RevC2Classes2",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "A6 classes vs sentences",
+   "item": "After amendment A6, re-check m11/m12/m13 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/calibration/measure.py against their contract sentences: quote the sentence, the implementing lines, and one input the implementation accepts that the sentence rejects (or the reverse). Report each divergence with a constructed input."
+  },
+  {
+   "name": "MutC2m12Prose",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "m12 prose attack",
+   "item": "In /tmp/tameshi-r43-w2-MutC2m12Prose-/ build a SCORECARD copy whose newest block contains `We Planned (round 9) things in prose.` and no `**Planned (round 9):**` field, plus a registry copy. Run a scratch clone of the C2 counter against a scratch git repo that commits those bytes (or call the counter's `m12_planned` directly by import) and report whether m12 fires. Then the same with the field present. The class must distinguish prose from the field."
+  },
+  {
+   "name": "MutC2m13Prose",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "m13 command-cell attack",
+   "item": "Same pattern for m13: a standing `sources-registry` row whose backticked command is the column-zero grep but whose prose says `0,3-space`, and a registry with no indented rows. Report whether m13 fires. Then the honest row. Also report the `indent_mirror` probe counts on the real registry (column0 vs census-valid)."
+  },
+  {
+   "name": "MutC2m10Superseder",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "m10 superseder attack",
+   "item": "In /tmp/tameshi-r43-w2-MutC2m10Superseder-/ build a scratch repo with two receipts: A (a stale `present:false` for a file that exists) and B (a superseding receipt that ALSO asserts a false `present:true` for a missing file). Run a scratch copy of the C2 counter against that repo and report whether m10 counts A (must, or the supersede rule is a blanket amnesty), B (must, or the superseder is above the rule), or both."
+  },
+  {
+   "name": "RevC3Tool2",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "rewritten guard review",
+   "item": "Review the rewritten /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py (23 selftest cases) for: the document rule (`'/'` or a filename extension), form-insensitive normalisation, held-moved and undocumented refusals, the whole-set exception, the `read_text` guards, and duplicate JSON keys. Report each remaining hole with a constructed input and the exit code it produces. Do not edit it."
+  },
+  {
+   "name": "MutC3Held",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "held-moved mutation",
+   "item": "In /tmp/tameshi-r43-w2-MutC3Held-/ copy the guard and delete the held-moved refusal. Run its `--selftest` (which case catches it?) and the C3 counter with `--tool-file <copy>` at `--rev 3aee2c078f8976499b587086af3577fc94dc8cf1 --freeze 3aee2c078f8976499b587086af3577fc94dc8cf1` (report the counter's fields; substitute=1 must keep the PASS bit false). Report which detector fires first."
+  },
+  {
+   "name": "CritC3Arithmetic",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "arithmetic map admission",
+   "item": "Try to get a pure arithmetic map admitted by /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py: every collision moved to a fresh id above the safe floor, no dedupe entries. Report the verdict and the reason. Then try an arithmetic map that also respects the held rows (dedupe) \u2014 that one is admissible; say whether the guard's discrimination is the document or the id."
+  },
+  {
+   "name": "SentC3Files",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "file-handling attack",
+   "item": "Attack /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py's input handling in /tmp/tameshi-r43-w2-SentC3Files-/: a FIFO as --map, a 2 MiB map, invalid UTF-8, duplicate JSON keys, a directory as --registry, a map whose targets are ints/lists/null, a 5000-digit S-id. For each, report exit code, whether stdout is JSON, and whether the process hangs (use `timeout 5`). The tool's docstring promises exit 2 and no traceback for setup refusals; hold it to that."
+  },
+  {
+   "name": "RevC3Counter2",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "counter independence after A9",
+   "item": "Re-review /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/guard/measure.py after A9: is the naive-map check now independent, can a fabricated cascade pass, does `substitute=1` really stop a PASS, is `own_document` the same rule as the tool's, and is `staged_sha256` the bytes actually read twice? Report each with the line and a scenario."
+  },
+  {
+   "name": "ExecReplayAtFreeze",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "independent freeze replay",
+   "item": "Run all three counters at `--rev 3aee2c078f8976499b587086af3577fc94dc8cf1 --freeze 3aee2c078f8976499b587086af3577fc94dc8cf1` (NOT the records commit) and paste their four decisive lines and exit codes. Compare to the committed prerun receipts under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/prerun/. Report any field that differs between your run and the committed receipt, and say what a difference would mean."
+  },
+  {
+   "name": "ScoutMisroot",
+   "role": "scout",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "fleet-root misroot",
+   "item": "Run `git -C /home/vgpnk/Projects/shokunin status --porcelain --untracked-files=all` and list every untracked file. For each, read enough to say which lane/round wrote it (`head -5`). Report any file whose content names tameshi round 43 or tameshi at all, with its path and what the L1 must do. Do not delete anything and do not touch `.ufo/state/` or `.scratch/`."
+  },
+  {
+   "name": "SentNoWrite",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "commit scope audit",
+   "item": "Audit this round's lane commits: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format='%H %s' 487b8f0da89fa0e2b8bea6930068accbf36e70a9..c5335c70bff750218b3a6db0a92daae76509a0de` then for each commit `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff-tree --no-commit-id --name-status -r <h>`. Report every path outside the lane's own tree or outside the expected set (contract, three counters, guard tool, records, evidence, waves). Also report whether any commit touches tools/write-path-census-v4.py, and whether a delete record appears anywhere."
+  },
+  {
+   "name": "RevCapabilityRow",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "capability row evidence",
+   "item": "Verify the round-43 capability row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md: does its `tool` sha256 match the committed guard at the freeze, does its counter path exist, and does the receipt line it names appear in a committed stdout? Report each part that does not resolve."
+  },
+  {
+   "name": "CritWaveAccounting",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave accounting",
+   "item": "Read the wave registry and dispatch payloads under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-43/ and count: seats declared, seats with a committed report, roles used, and any item whose text is duplicated. Report the counts and any seat with no report. This feeds the report's wave-accounting sentence, so be exact."
+  },
+  {
+   "name": "RevGuardScope",
+   "role": "reviewer",
+   "axes": [
+    "adjacency"
+   ],
+   "milestone": "province fit",
+   "item": "Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/PROVINCE.md and decide whether a staged-registry id guard is in-province for tameshi (verification-fixture craft) or belongs to chousa (registry curation) or kumitate (tooling). Quote the PROVINCE lines that decide it and give a verdict. If it is out of province, say what the report must disclose."
+  },
+  {
+   "name": "SimplGuard",
+   "role": "simplifier",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "guard YAGNI probe",
+   "item": "Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py and name code that no selftest case and no live input exercises: fields never read by the counter, options never used, refusal branches never reached. For each, say whether deleting it changes any selftest or counter field. Report a list, not an edit."
+  },
+  {
+   "name": "RevAmendments",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "amendments pre-data",
+   "item": "Read the `amendments` array in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/contract.json (A1-A9). For each: is its `when` true (does the evidence file it credits exist earlier than the deciding run), is `rule_changed:false` consistent with the diff it describes, and does any amendment change a target, a predicate or a fixture's declared class? Report each amendment whose narration overstates or understates its effect."
+  },
+  {
+   "name": "ScoutCensusDrift",
+   "role": "scout",
+   "axes": [
+    "freshness"
+   ],
+   "milestone": "census re-run",
+   "item": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` and diff its output against /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/census-sources/after.stdout. Report exit code, row count, and any warning that appears in one and not the other."
+  },
+  {
+   "name": "RevQuarantine",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "quarantine counts",
+   "item": "Check the lesson's quarantine sentence (17 data rows: 14 payload-absent, 3 could-not-be-fetched) against the register at /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md using the awk the prompt gives. Report the real counts and any id in the register that the lesson's sentence mis-states. Read-only."
+  },
+  {
+   "name": "CritAssimNone",
+   "role": "critic",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "assimilation none",
+   "item": "Challenge `Assimilation: none`. Read /home/vgpnk/Projects/shokuknow/merge/tameshi/MERGE-REPORT.md and name the single entry that would have served this round's claims better than the new knowledge entry, or state that none would. Give the entry name, its theme, and one sentence on why the round's own entry is or is not a better fit. Read-only."
+  },
+  {
+   "name": "RevConsider",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "considerthese claim",
+   "item": "Check the lesson's considerthese paragraph: it says proposals 1-4 were mined earlier and that C2's m13 is the first mechanical instance of the 'standing command' idea. Verify both against /home/vgpnk/Projects/shokunin/tameshi-shokunin/considerthese/ (quote the proposal lines) and report any proposal it miscounts or any claim of implementation it overstates."
+  },
+  {
+   "name": "CritTrends",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "trend verdicts",
+   "item": "From committed bytes only, build your own expansion / quality / discernment verdicts for the round and the evidence for each. Then list which of the L1's likely verdicts would be unprovable if the trend verdicts section is written without a named non-author check. Do not run counters at the records commit."
+  },
+  {
+   "name": "RevReportNumbers",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "report numbers",
+   "item": "List the numbers a round-43 report must state and where each must come from: wave seat counts (registry), counter fields (committed stdout), row counts (grep), commit hashes (jj-lane state). For each, give the exact command the closure would run to re-derive it. Flag any number the report could state from memory instead of a committed receipt."
+  }
+ ]
+}

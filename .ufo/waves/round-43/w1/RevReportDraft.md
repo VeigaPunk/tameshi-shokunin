@@ -55,8 +55,8 @@ Substance of A4/A5 is rule-preserving (A5 implements the frozen K sentence; A4 i
 **Predicate** (frozen `mutants/measure.py:33-42`, byte-identical at HEAD):
 > "Predicate `C1_R43_PASS` is true iff: self_pin=1, tool_absent=0, tool_sha_ok=1, selftest_exit=0, fixtures_pass=12/12, run_errors=0, the three live sites match, live_unflagged_v4=0 over every tracked `tools/*.py` at REV, mutants_declared=6, mutants_killed=5, dead_code_only=1, equivalent=0, unresolved=0, `outflag_no_parse_args_check` ∈ killed, and `method_fold_several_returns` ∈ dead_code_only."
 
-**Label — frozen counter @07:52, `--rev 17f6ef0 --freeze 17f6ef0`:**
-> `C1_R43: self_pin=1 … mutants_declared=6 mutants_killed=6 dead_code_only=0 equivalent=0 not_killed=0 runtime_error=0 apply_error=0 unresolved=0 killed_names=attr_bind_several_assignments,attr_never_resolve_self,method_fold_disabled,method_fold_several_returns,outflag_dests_never_recorded,outflag_no_parse_args_check dead_code_names= dead_code_cases= dead_code_arg_ok=0 kill_fixture_reachable=1 … C1_R43_PASS=false`
+**Label — frozen counter @07:52, `--rev 17f6ef0 --freeze 17f6ef0`** (the `tool_sha_ok=1` field here is **withdrawn**; the frozen bytes reproducibly print `tool_sha_ok=0` — see Addendum B):
+> `C1_R43: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 … mutants_declared=6 mutants_killed=6 dead_code_only=0 equivalent=0 not_killed=0 runtime_error=0 apply_error=0 unresolved=0 killed_names=attr_bind_several_assignments,attr_never_resolve_self,method_fold_disabled,method_fold_several_returns,outflag_dests_never_recorded,outflag_no_parse_args_check dead_code_names= dead_code_cases= dead_code_arg_ok=0 kill_fixture_reachable=1 … C1_R43_PASS=false`
 
 **Label — HEAD counter @07:56, `--rev 17f6ef0 --freeze 17f6ef0`:**
 > `C1_R43: self_pin=0 … mutants_killed=5 dead_code_only=1 … killed_names=…,outflag_no_parse_args_check dead_code_names=method_fold_several_returns dead_code_cases=F12_method_two_returns dead_code_arg_ok=1 kill_fixture_reachable=1 … C1_R43_PASS=false`
@@ -215,3 +215,95 @@ No predicate field observes an append or its ordering; the tool is a read-only a
 - The repairs in A4/A5 were validated by reading the code and by one manual tool invocation plus the frozen-counter comparison; I did not exercise `--control` (C1/C3) or `--probe-mutant` as controls, and `--selftest` only for C2/C3 indirectly through the counters.
 - Whether C1/C3 will print `PASS=true` at the L1's deciding rev depends on that rev descending from the A4/A5 bytes **and** on all six pins matching at that commit. Neither holds at the 07:58 snapshot (`calibration/measure.py`, `staged-id-guard.py`).
 - No tooling was installed; nothing outside `/tmp/tameshi-r43-RevReportDraft/` was written except this report.
+
+---
+
+# Addendum (08:06) — the contract text and the instruments moved; revised verdicts
+
+The contract and all three counters were amended while this report was being written (A4–A10; `17f6ef0` → `5cd2154` → `114ffacd` → `53cb32b` → `273c047` → `c5335c7` → `3aee2c0` → `e20cf89`). Everything above quoted the **17f6ef0-era** bytes; this addendum states what is true at `e20cf89`/working tree and corrects two of my own statements.
+
+## A0. The freeze chain and its pins, verified by hashing (no counter run)
+
+| commit | amendments in its own contract | C1/C2/C3 pin == committed bytes | guard pin |
+|---|---|---|---|
+| `697d2f1` | — | OK / OK / OK | `8140945a` |
+| `f0f2636` | A1 | OK / OK / OK | `8140945a` |
+| `17f6ef0` | A1–A3 | OK / OK / OK | `8140945a` |
+| `5cd2154` | A1–A5 | OK / OK / OK | `efa5f129` |
+| `114ffacd` | A1–A7 | OK / OK / OK | `365bf958` |
+| `53cb32b` | A1–A8 | OK / OK / OK | `365bf958` |
+| `273c047` | A1–A9 | OK / OK / OK | `e219007f` |
+| `c5335c7` | A1–A9 | OK / OK / OK | `e219007f` |
+| `3aee2c0` | A1–A10 | OK / OK / OK | `2e8f2e89` |
+| `e20cf89` | A1–A10 | OK / OK / OK | `2e8f2e89` |
+
+So **every freeze's pins agree with its own committed bytes** (10/10 × 3) — `RevProvenance`'s diagnosis is right: a stale *pointer*, not a bad pin. Three defects remain in the contract's narration:
+
+- **`frozen_before` names `114ffacd`**, but A9 (`273c047`) and A10 (`3aee2c0`) both postdate it and A9/A10 changed all three counters. A deciding run with `--freeze 114ffacd` therefore prints `self_pin=0` for C1, C2 and C3 (`RevProvenance` measured 0/0/0; my table explains why: the running bytes are the A9/A10 blobs, `114ffacd` pins the pre-A9 blobs). The last freeze whose pins match the running bytes is `e20cf89` (1/1/1 at the peer's run) — and at my 08:06 snapshot the disk had already moved again (`mutants/measure.py` = `b56a34d7…`, pinned by the *working-tree* contract only).
+- **`amendments_note` is false in the sentence that matters**: "No amendment changes claims.\* (other than `counter_sha256` and the class sentences **restated verbatim**)". Diffed against `17f6ef0`, `claims.C2.classes` **m8, m10, m11, m12 and m13 all changed text**, and `claims.C3.statement` changed and grew. The note simultaneously says the class sentences changed and that they were restated verbatim.
+- The disk churned through five guard-tool blobs (`8140945a` → `efa5f129` → `365bf958` → `e219007f` → `2e8f2e89`) and at least three calibration-counter blobs; at 07:58 `calibration/measure.py` (`52961c37…`) was pinned by *no* freeze. Pins agree again at 08:06, but only with the uncommitted working-tree contract.
+
+## B. C1 corrections (supersedes F1.1's label line; adds F1.6)
+
+- **The frozen counter also failed `tool_sha_ok`.** Frozen `mutants/measure.py:486` compares the census tool to `contract['tool_sha256']`, and at every freeze that key holds the **guard** blob (`8140945a` at `17f6ef0`); the census pin lives in `frozen_tools['tools/write-path-census-v4.py']` (`784de4c0`). Re-running the **frozen blob extracted to `/tmp`** with `--rev 17f6ef0 --freeze 17f6ef0` prints:
+
+  ```
+  C1_R43: self_pin=1 tool_absent=0 tool_sha_ok=0 … mutants_killed=6 dead_code_only=0 … dead_code_arg_ok=0 kill_fixture_reachable=1 … C1_R43_PASS=false
+  ```
+
+  At the base rev the tool is absent (`tool_absent=1`), so `tool_sha_ok=0` at **both** permitted revs. Two independent blockers, exactly as `RevC1Counter` reported. **I withdraw the `tool_sha_ok=1` in my 07:52 in-lane capture**: I cannot reproduce it from the frozen bytes, the on-disk file was rewritten three times after it, and the reproducible value is 0. The 07:52 sample stays in §C1 only as a record of an unrepeatable state.
+
+- **F1.6 (new) D is keyed on the fixture's source, not on the construct the mutant changed.** `differential()` assigns `'dead_code'` when `unreachable_statements(fixture_src)` is non-empty — anywhere in the fixture. A mutant that diverges on a *reachable* construct inside a fixture that happens to contain some unrelated dead code is therefore excused as `dead_code_only`. Combined with the unpinned `mutants.json` (F1.3), a re-declared entry under the same name that diverges on a different reachable fixture still passes: the name in the target is never bound to a kill site. `kill_fixture_reachable` stays a constant read off the F11 literal even on a run whose kill rests on F12 (my 07:52 label shows `kill_fixture_reachable=1` beside a kill list that included `method_fold_several_returns`).
+
+- **F1.5 measured**: the frozen target listed **15** fields while the label printed **24** (+`C1_R43_PASS`); extras were `live_tool_errors, not_killed, runtime_error, apply_error, killed_names, dead_code_names, dead_code_cases, rev, freeze`, and the target's last two fields were in reverse order against the print (`kill_fixture_reachable, dead_code_arg_ok` vs `dead_code_arg_ok, kill_fixture_reachable`). **A11 did not close it**: the target now lists **16** fields (added `mutants_sha_ok`, `kill_binding`, dropped `kill_fixture_reachable`) while the label prints 26 named fields + PASS — 10 always-printed extras (`live_tool_errors, not_killed, runtime_error, apply_error, killed_names, dead_code_names, dead_code_cases, kill_cases, rev, freeze`) plus conditional `first_error`. Two order divergences remain: target puts `mutants_sha_ok` right after `live_unflagged_v4` (label prints it 24th, after `kill_cases`), and `kill_binding` before `dead_code_arg_ok` (label prints `dead_code_arg_ok` at :639 before `kill_binding` at :640). Still no verbatim target reproduction.
+
+## C. C2 revisions
+
+- **F2.9 (new, high) the statement now contradicts its own class.** `claims.C2.statement` is unchanged and still says "… m11 **revision reachability** … the five **round-42** classes"; `claims.C2.classes.m11` now reads:
+
+  > "every 40-hex **object** cited by those records resolves in the lane (**object existence, not commit-only**)"
+
+  My F2.7 (I probed a cited tree object `4f3d8af5…`: object-exit 0, commit-exit 128) is therefore no longer a hidden implementation slip — it is written into the class sentence while the claim sentence still says "revision". Top-level sentence ≠ class sentence, and "carried" is false for m11 and (still, F2.6) for m8.
+- **Repaired to match their class sentences**: m12 (field form, not substring), m10 (only the superseded receipt is exempt), m13(a) (backticked `grep` cells only). m13(b) still proves the counter's own two regexes on its own mirror, never the cited command (F2.3 residual).
+- **Persists**: `classes=7` is still `declared = 7` (`:440`, `:456`) while the predicate sentence still says "(all seven declared classes ran)" — the counter's own added prose now concedes the token is a constant, so the docstring contradicts itself. Record set still 3–4 texts with no floor (F2.5).
+
+## D. C3 revisions (new F3.7; reverse gap)
+
+- **F3.7 (new, high — the strongest single instance of this seat's defect)** A9/A10 enlarged `claims.C3.statement` with three behaviours:
+
+  > "dedupes a staged row whose document the registry already holds **under any URL form (scheme, www., case, trailing slash)**, … **refuses a map that moves a held document off its registry id or decides an undocumented row**, and admits only a by-document map whose **every** fresh target is at or above the safe floor"
+
+  The predicate sentence is **unchanged**: eleven bullets, and no bullet covers URL-form identity, held-off-id refusal, undocumented-row decisions, or "every" fresh target; `claims.C3.target` gained no field either. Those three behaviours are exercised only inside the tool's own selftest, which the counter consumes as the aggregate `selftest_cases>=13` (a count that would still be met with two trivial replacements). So the C3 claim sentence now claims strictly more than the counter tests — introduced by the very amendment wave intended to repair calibration.
+- **Reverse gap**: the counter code/label gained `naive_agree`, `substitute`, `staged_sha256`; none appears in the predicate sentence or the target.
+- **The tool repair is real, verified**: the repaired tool admits the counter's exact six-entry by-document map (exit 0, `map_ok=true`, `map_dedupe={S153:S105, S154:S106}`) and its selftest is 14/14; the frozen tool refused that map with "target that is not an S-id". But at `--rev 17f6ef0` the counter stages the *frozen* tool, so C3's label at the ticket freeze is false by construction; the claim is only reachable at a rev descending from the A6 tool.
+- **Persists**: F3.2 (undocumented refusal has no field), F3.3 ("only" = one naive + one safe map), F3.4 (0-3-space not discriminated by live data: 0 indented registry rows, `column0_miss=[]`), F3.5 (floor evidenced once, at the boundary), F3.6 ("before any append" untested).
+
+## E. Revised bottom line
+
+1. **Nothing can be decided with `--freeze 17f6ef0` or `--freeze 114ffacd`**: `self_pin=0` for all three counters (measured: 17f6ef0 0/0/0 after the wave-1 edits; 114ffacd 0/0/0 per `RevProvenance`; my hash table explains both).
+2. `--freeze e20cf89` reaches `self_pin=1` on all three, but the running bytes have since moved (`b56a34d7…`), so the deciding run must name a commit whose pins match the exact bytes it runs — and `frozen_before` must be rewritten to that commit, not `114ffacd`.
+3. **Sentence = predicate today holds for**: C2 m6/m7, m12, m13(a), the repaired m10; C3's collision / held / naive-map / floor-shape bullets; C1's numeric core. **It fails for**: C2 `classes=7` (constant), m11 (statement vs class), m8 ("carried" but narrower), m13(b) (mirror misattribution), the record universal; C1's F11 attribution, round-42 provenance, "declaration unchanged", and the 15-vs-24 field mismatch; and C3's three new statement behaviours plus "before any append". That is the calibration finding this seat exists to return: the repairs fixed the *counters to their sentences*, then the *sentences were widened past the counters*.
+
+# Addendum 2 (08:10) — A11 (`b510ad1`) and A12 (`bb36f80`); the gap narrows, then a pin breaks
+
+Pin/body arithmetic extended (hash-only; no counter run):
+
+| commit | amendments | C1 pin vs blob | C2 | C3 | guard |
+|---|---|---|---|---|---|
+| `b510ad1` (A11) | A1–A11 | OK `b56a34d7` | OK `97609511` | OK `ae66342d` | OK `2e8f2e89` |
+| `bb36f80` (A12) | A1–A12 | **MISMATCH** pin `b56a34d7` ≠ blob `3d1ff3dc` | OK `97609511` | OK `47a6afce` | OK `2e8f2e89` |
+
+- **A12 commits a broken C1 pin inside its own tree**: `sha(bb36f80:mutants/measure.py) = 3d1ff3dc` while `claims.C1.counter_sha256 = b56a34d7`, so `self_pin=0` *unconditionally* at `bb36f80`, not only for running bytes. The L1's own prerun receipt confirms it: `.ufo/evidence/round-43/prerun/c1-at-A12.stdout` prints `self_pin=0 … killed=5 dead_code_only=1 kill_binding=1 mutants_sha_ok=1 … C1_R43_PASS=false`.
+- `frozen_before` still names `114ffacd` — stale a second time.
+
+**Repaired since my first pass** (what was only claimed is now tested):
+
+- **C1**: `mutants_sha_ok` (`:561-562`) pins the declaration blob at `claims.C1.mutants_sha256` (`b3abab06…`, the bytes I verified equal at base and freeze); `kill_binding` (`:601`) requires `outflag_no_parse_args_check`'s failing fixture to be exactly `['F11_outflag_namespace']`; `kill_cases` prints the per-mutant binding; `--probe-mutant` now distinguishes `equivalent`. F1.2 and the pin half of F1.3 are closed; the round-42 *survivor* provenance is still not read (only the declaration bytes are pinned). `kill_fixture_reachable` remains a constant read off the F11 literal — now informative, since `kill_binding` does the real work.
+- **C3**: the target grew `held_refused=1 naive_agree=1 substitute=0`; the counter implements `held_refused` (`:261-270`, a real `--map` probe that moves a held row to `floor+50`), `naive_agree`, `substitute`, `staged_sha256`. One caveat: `held_refused` **defaults to 1** when `own_held` is empty (`:261`) — vacuous on a registry with zero held collisions; the live package has 3, so it did run (prerun `held_refused=1`, `C3_R43_PASS=true` at `bb36f80`).
+
+**Still open at HEAD (the three artefacts still disagree)**:
+
+- **C3's docstring predicate is still the original 11 bullets**: no bullet for `held_refused`, `naive_agree`, `substitute`, or the three behaviours A9/A10 wrote into the statement (any-URL-form dedupe; refusing a map that moves a held document off its registry id **or decides an undocumented row**; "every" fresh target ≥ floor). So *predicate sentence ⊊ code predicate ⊊ statement*: the code tests two of the three new claims (`held_refused`; URL-form identity only inside the normalized join, which the bullet describes as "dedupe by URL"), and the statement's "refuses a map that … decides an undocumented row" and "every" remain untested by any named field.
+- **C2**: predicate sentence still says "(all seven declared classes ran)" beside `declared = 7`; `claims.C2.statement` still says "m11 **revision** reachability" while `classes.m11` says "40-hex **object**"; m13(b) still proves the counter's own regexes.
+- **C2's content is presently red**, independent of the sentence question: prerun `c2-at-A12.stdout` shows `m7=5 m8=3 total=8` (first hit `corpus/lessons/round-43.md unknown S160`), `sources_rows=114`, `records=4`. Record repair, not counter repair, is needed before C2's `total=0` can hold.
+- **Deciding-run precondition (unchanged, now harder)**: it must name a commit that (a) pins the exact bytes it runs — `bb36f80` cannot, since its C1 pin is broken — and (b) is named in `frozen_before`. Today no commit satisfies (a)+(b); A13 must do both.

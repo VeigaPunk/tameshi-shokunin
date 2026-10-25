@@ -50,7 +50,7 @@ never adopted.
   `.ufo/evidence/round-43/sources/stryker-equivalent-mutants.html`.
 - Located quotes: line 16 (12 words) "There is no definitive way for Stryker to
   find and ignore them."; line 15 (20 words) "even if we change >= to <= and
-  even < > we will get the same output each time!"; line 17 (9 words) "the only
+  even < or > we will get the same output each time!"; line 17 (9 words) "the only
   solution is by finding these by hand".
 - Status, recheck unchanged; `used-by` extended `corpus/knowledge/mutation-case-kumitate-cite-check.md`
   → that plus `corpus/knowledge/r43-survivor-resolution-rule.md`.
@@ -107,12 +107,16 @@ row.
 
 ### considerthese
 
-`considerthese/2026-10-24.md` proposals 1–4 were mined in earlier rounds; the
-one still unimplemented that this round's work touches is the *standing-command*
-idea: a self-assessment number should be re-derivable by a command a non-author
-can run. C2's m13 is the first mechanical instance of it for the registry count.
-No proposal is claimed as implemented this round; proposal 5's SHONEN table was
-mined in round 42 and no box moved.
+`considerthese/2026-10-22.md` proposal 5 (survivor reclassification tracker; the
+one still-unimplemented proposal touching this round's work) is mined, not
+implemented: the K/D/E/U rule and criterion 83 record *transitions* for the two
+round-42 survivors, but there is no `(gate, mutant id)` register and no
+overturn rate. A future round lands it as criterion 85. The other mined
+proposals are unchanged. Wave-2 RevConsider corrected this paragraph: rounds
+35–42 already carried a re-derivable standing command for the registry count (m6
+checks the row's count), and C2's m13 *pattern-matches* the standing command
+without executing it — so neither "first mechanical instance" nor "re-derivation"
+is claimed for m13.
 
 ## Mistakes
 

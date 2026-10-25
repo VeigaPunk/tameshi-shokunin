@@ -1,6 +1,8 @@
 # Survivor resolution — a pre-declared rule for mutants a battery does not kill
 
 source: S089 (held, re-opened), S159 (new); S155 (held), S158 (held)
+verified-at: 2026-10-25 (snapshots under .ufo/evidence/round-43/sources/, byte-identical double fetch)
+recheck: 180d
 
 Round 43, tameshi L1. This entry states the rule the lane applies when a
 declared mutant survives its kill battery, and the two fixtures that resolve the
