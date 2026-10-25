@@ -940,3 +940,26 @@ Falsifier that must fail: `python3 tools/wave-parent-settle.py --selftest` must 
 if the red fixture (parent_exit_unix=10, seat terminal_unix=20) is classified SETTLED.
 The committed selftest classifies that receipt UNSETTLED and exits 0 only because the
 tool's own check expects UNSETTLED.
+
+### Criterion 79 — a located quote needs a committed snapshot
+
+A mined row that presents a located quote as support is not citable until a
+committed snapshot contains that quote. A live fetch that cannot be repeated,
+or a page whose quote is split by markup, is not a substitute for the bytes.
+Unreachable is not fabrication: the quote is unverifiable until the snapshot
+lands. A status edit does not replace the snapshot.
+Lesson: `corpus/lessons/round-40.md`, and `considerthese/2026-10-24.md`
+proposal 3, mined 2026-10-24, not edited. The reflection pointed at repeatedly
+unreachable sources and suggested pinned alternatives; the evidence is the
+round-39 closure's redirect-loop on S108 and the snapshot pinned this round.
+The pointer was opened, not paraphrased: `https://www.gnu.org/software/diffutils/manual/html_node/Invoking-diff.html`
+— the class of address the proposal names — timed out again on 2026-10-24 (no
+response in 40 s), while the lane's existing pinned alternative for that family
+is the raw upstream source (`S097`, `S104`, cgit raw `doc/bashref.texi`).
+This criterion generalises that practice to every mined quote.
+Falsifier that must fail: `python3 .ufo/evidence/round-40/s108/measure.py
+--lane LANE --rev 304e3355705640af2879c772fc9a5c2902c61763` prints
+`snapshot_absent=1 C2_R40_PASS=false` and exits 1. The same command at
+`5641ed84c8dc148c34c8dd83f062279ddf06b4af` prints `quote_in_snapshot=1
+stripped_quote_fails=1 C2_R40_PASS=true`. Removing the prefix
+`可以通过使用参数` from a copy of the snapshot must make the quote check fail.

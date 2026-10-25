@@ -501,3 +501,11 @@ and no claim is made about any sibling gate.
 | `knowledge/r8-golden-update-flag.md` | F4 explicit update flag, re-grounded this round on S107 (upstream golden_tests.md at 4d3a89c9) and S108 (the zh-cn page). The entry states the flag rule. It does not state the census count. |
 
 **Coverage-map move (F4 census).** The round-38 section left the write-path census unmeasured. This round counted the lane's own 21 gate tools under a frozen pattern: `live_write_sites=99`, `live_unflagged=0`, with planted controls that a constant 0 and a constant 1 both fail, and a fixture that writes `case.expected` only when the update flag is set. The 0 is the pattern's count, not a claim that no unflagged write exists: seats found `expected.json` via `.write_bytes` and an `os.replace` path the pattern does not see. Those limits stay open. Sources: S107 (tier A), S108 (tier B).
+
+## Round 40 — write forms and the snapshot-practice corpus (round 40)
+
+| `knowledge/r40-write-form-misses.md` | The two forms the round-39 pattern missed. `expected.json` on `.write_bytes` is an expected-path token for v2 and not for v1. `os.replace` is a write site for v2 and not for v1. Cites S152. Does not cite S108. Does not claim the census count. |
+| `knowledge/r6-snapshot-practice-corpus.md` | S152, the UFMG thesis. The English abstract says fragility and lack of context can lead to false positives. Not a gate count. |
+| `knowledge/r3-snapshot-fixture-update-paths.md` | S132, the published document table. Row D29 names "Snapshot Testing: Use With Care - Randy Coulman". Not a measurement of this lane's gates. |
+
+**Coverage-map move (F4).** The round-39 limits are now a successor tool, not a closed census. The snapshot-practice corpus (the thesis and the document table) is ground the lane did not hold. S108's quote is pinned to a committed snapshot; the round-39 citation is no longer an unpinned live fetch. `cmp` and `git diff --exit-code` stay unmeasured.
