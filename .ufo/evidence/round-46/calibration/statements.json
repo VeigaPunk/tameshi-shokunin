@@ -1,0 +1,364 @@
+{
+ "statements": [
+  {
+   "id": "sources-registry",
+   "kind": "cap",
+   "argv": [
+    "bash",
+    ".ufo/evidence/kaika-round-1/sources-census-v2.sh"
+   ],
+   "obs": "census",
+   "cmd_text": "bash .ufo/evidence/kaika-round-1/sources-census-v2.sh",
+   "sha_file": null,
+   "cwd": "clone",
+   "timeout": 300,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "mutation sweep runner",
+   "kind": "cap",
+   "argv": [
+    "bash",
+    "tools/mutate-and-run.sh",
+    "--selftest"
+   ],
+   "obs": "^(MUTATE_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "bash tools/mutate-and-run.sh --selftest",
+   "sha_file": "tools/mutate-and-run.sh",
+   "cwd": "clone",
+   "timeout": 1800,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "six-leg regression ledger",
+   "kind": "cap",
+   "argv": [
+    "bash",
+    "tools/mutate-and-run.sh",
+    "--regression",
+    "--workdir",
+    "{work}/regression-wd"
+   ],
+   "obs": "^(REGRESSION: \\w+ \\(cases=\\d+ passed=\\d+)",
+   "cmd_text": "bash tools/mutate-and-run.sh --regression",
+   "sha_file": null,
+   "cwd": "mirror",
+   "timeout": 2700,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "repeated pristine-control gate",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--selftest"
+   ],
+   "obs": "^(SELFTEST: PASS \\(\\d+ cases\\))",
+   "cmd_text": "python3 tools/repeat-control.py --selftest",
+   "sha_file": "tools/repeat-control.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "six-leg content-disposition probe",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--selftest"
+   ],
+   "obs": "^(SELFTEST: PASS \\(\\d+/\\d+\\))",
+   "cmd_text": "python3 tools/pin-disposition.py --selftest",
+   "sha_file": "tools/pin-disposition.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "exposed witness provenance correction",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--selftest"
+   ],
+   "obs": "^(SELFTEST: PASS \\d+/\\d+)",
+   "cmd_text": "python3 tools/witness-metadata.py --selftest",
+   "sha_file": "tools/witness-metadata.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "effective expectation reconciliation",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/evidence-disposition.py",
+    "--selftest"
+   ],
+   "obs": "^(SELFTEST: PASS \\(\\d+/\\d+\\))",
+   "cmd_text": "python3 tools/evidence-disposition.py --selftest",
+   "sha_file": "tools/evidence-disposition.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "retained invocation-context gate",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-15/verify.py",
+    "--rev",
+    "7650fe4db89f3a706aed63d048ac47e02289cc72"
+   ],
+   "obs": "^selftest-new-full-count: PASS summary (SELFTEST: PASS \\(\\d+/\\d+\\))",
+   "cmd_text": "python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72",
+   "sha_file": ".ufo/evidence/round-15/verify.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "hermetic env-differential probe",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/env-diff.py",
+    "--selftest"
+   ],
+   "obs": "^(ENVDIFF_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/env-diff.py --selftest",
+   "sha_file": "tools/env-diff.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "callback-authoritative wave accounting",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/wave-accounting.py",
+    "--selftest"
+   ],
+   "obs": "^(ACCOUNTING_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/wave-accounting.py --selftest",
+   "sha_file": "tools/wave-accounting.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "required-command-receipt-binding",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/command-binding.py",
+    "--selftest"
+   ],
+   "obs": "^(COMMAND_BINDING_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/command-binding.py --selftest",
+   "sha_file": "tools/command-binding.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "refusing-registry-replay",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/registry-replay.py",
+    "--selftest"
+   ],
+   "obs": "^(REGISTRY_REPLAY_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/registry-replay.py --selftest",
+   "sha_file": "tools/registry-replay.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "mutation report interop",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/mte-interop.py",
+    "--selftest"
+   ],
+   "obs": "^(MTE_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/mte-interop.py --selftest",
+   "sha_file": "tools/mte-interop.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "tally-audit-v2 runner audit",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/tally-audit-v2.py",
+    "--selftest"
+   ],
+   "obs": "^(TALLY_AUDIT_V2_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/tally-audit-v2.py --selftest",
+   "sha_file": "tools/tally-audit-v2.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "tally-audit-v3 runner audit",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/tally-audit-v3.py",
+    "--selftest"
+   ],
+   "obs": "^(TALLY_AUDIT_V3_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/tally-audit-v3.py --selftest",
+   "sha_file": "tools/tally-audit-v3.py",
+   "cwd": "clone",
+   "timeout": 1800,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "bounded ANSI-C code_view",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/tally-audit-v3.py",
+    "--selftest"
+   ],
+   "obs": "^(TALLY_AUDIT_V3_SELFTEST: \\d+/\\d+ pass)",
+   "cmd_text": "python3 tools/tally-audit-v3.py --selftest",
+   "sha_file": "tools/tally-audit-v3.py",
+   "cwd": "clone",
+   "timeout": 1800,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "write-path-census-v2",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/write-path-census-v2.py",
+    "--selftest"
+   ],
+   "obs": "^(WRITE_CENSUS_V2_SELFTEST: .*)$",
+   "cmd_text": "python3 tools/write-path-census-v2.py --selftest",
+   "sha_file": "tools/write-path-census-v2.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "write-path census destination resolution",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/write-path-census-v3.py",
+    "--selftest"
+   ],
+   "obs": "^(WRITE_CENSUS_V3_SELFTEST: .*)$",
+   "cmd_text": "python3 tools/write-path-census-v3.py --selftest",
+   "sha_file": "tools/write-path-census-v3.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "staged-id adoption guard",
+   "kind": "cap",
+   "argv": [
+    "python3",
+    "tools/staged-id-guard.py",
+    "--selftest"
+   ],
+   "obs": "^(STAGED_ID_GUARD_SELFTEST: cases=\\d+ failed=\\d+)",
+   "cmd_text": "python3 tools/staged-id-guard.py --selftest",
+   "sha_file": "tools/staged-id-guard.py",
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "depth",
+   "kind": "axis",
+   "argv": [
+    "bash",
+    "-c",
+    "git show \"$REV:tools/mutate-and-run.sh\" | python3 -c 'import re,sys; n=len(re.findall(r\"^#   (?:js|bash)-\\S+\\s+\\S+\\s+\\d+/\\d+\",sys.stdin.read(),re.M)); print(\"recorded_cases=\"+str(n)+\" depth_score=\"+str(min(10,n)))'"
+   ],
+   "obs": "depth_score=(\\d+)",
+   "cmd_text": "command D",
+   "sha_file": null,
+   "cwd": "clone",
+   "timeout": 300,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "calibration",
+   "kind": "axis",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-21/coldread/measure.py",
+    "--repo",
+    "{clone}",
+    "--rev",
+    "{rev}"
+   ],
+   "obs": "monitor",
+   "cmd_text": "python3 .ufo/evidence/round-21/coldread/measure.py --repo R --rev REV",
+   "sha_file": null,
+   "cwd": "clone",
+   "timeout": 900,
+   "what": null,
+   "first": null
+  },
+  {
+   "id": "freshness",
+   "kind": "axis",
+   "argv": [
+    "python3",
+    ".ufo/evidence/round-45/freshness/measure.py",
+    "--lane",
+    "{clone}",
+    "--rev",
+    "{rev}"
+   ],
+   "obs": "\\bscore=(\\d+)\\b",
+   "cmd_text": "python3 .ufo/evidence/round-45/freshness/measure.py --lane LANE --rev REV",
+   "sha_file": null,
+   "cwd": "clone",
+   "timeout": 300,
+   "what": null,
+   "first": null
+  }
+ ]
+}
