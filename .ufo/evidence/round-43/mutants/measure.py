@@ -44,8 +44,9 @@ Counting command:
 
   python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE --rev REV --freeze FREEZE
 
-`--probe-mutant PATH` scores one mutant file under the same oracle (for
-falsifier seats). `--control` runs the round-42 battery (the ten round-42 fixtures: both new
+`--probe-mutant PATH` scores one mutant file under the same oracle, including
+the reachability gate and the differential probe, so it prints `killed`,
+`dead_code_only`, `equivalent`, `survived` or `runtime_error` (falsifier seats). `--control` runs the round-42 battery (the ten round-42 fixtures: both new
 fixtures are skipped) and prints a CONTROL line; it is never the measurement. Exit 0 iff the predicate
 is true, 1 if false, 2 on a setup refusal.
 """
@@ -521,7 +522,10 @@ def main():
             elif fails:
                 verdict = 'dead_code_only'
             else:
-                verdict = 'survived'
+                # No failing case: only a differential probe can tell a survivor
+                # from a mutant that is behaviourally the untouched tool.
+                differ = differential(tool_path, probe, work)
+                verdict = 'survived' if differ else 'equivalent'
             print('C1_R43_PROBE: verdict=%s failures=%d reachable_failures=%d errors=%d first=%s'
                   % (verdict, len(fails), len(reachable), len(errors),
                      (fails + errors)[:1]))

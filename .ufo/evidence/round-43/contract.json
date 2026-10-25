@@ -58,9 +58,9 @@
       "axis": "operability",
       "type": "capability acquisition (pre-adoption id guard)",
       "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds under any URL form (scheme, www., case, trailing slash), refuses its own naive arithmetic map because its targets are still staged ids, refuses a map that moves a held document off its registry id or decides an undocumented row, and admits only a by-document map whose every fresh target is at or above the safe floor",
-      "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1",
+      "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1 held_refused=1 naive_agree=1 substitute=0",
       "counter": ".ufo/evidence/round-43/guard/measure.py",
-      "counter_sha256": "ae66342df05a4ea9ff2a03799552cc14dac99f823cf0491ba4fd757a8f54161e",
+      "counter_sha256": "47a6afce1547037487c0dcc54c0e4653269fa628fa9c0df6ed5bc1d3cb67d2c2",
       "counting_command": "python3 .ufo/evidence/round-43/guard/measure.py --lane LANE --rev REV --freeze FREEZE",
       "staged_input": "/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (read-only; never written, never fetched)",
       "do_nothing_control": "a constant-empty stand-in that prints collisions=[]: the counter's own extraction disagrees with it, so C3_R43_CONTROL_PASS=false by construction; receipt .ufo/evidence/round-43/control/c3-constant-empty.stdout. At the base rev the tool is absent (tool_absent=1)"
@@ -160,6 +160,14 @@
       "why": "wave-1 RevC1Counter showed `kill_fixture_reachable` was a constant that printed 1 even on the pre-A5 run whose kill rested on F12, and that `mutants.json` was read at REV with only names/counts checked, so a same-named re-declared edit would pass",
       "rule_changed": false,
       "effect": "the K sentence is unchanged; the predicate gains two fields that bind it (kill_binding, mutants_sha_ok)"
+    },
+    {
+      "id": "A12",
+      "when": "during wave 2, before the first deciding run",
+      "what": "C1 counter: `--probe-mutant` now runs the differential probe when nothing fails, so it can print `equivalent`, not only `survived`. C3 counter: a held row mapped off its registry id must be refused (`held_refused`). QUALITY criteria 83/84 gain an appended falsifier-correction block with commands that actually fail.",
+      "why": "wave-1 ScribeQuality SQ-2 showed both landed falsifiers were inert, and SQ-5 showed the probe never reached `equivalent`; wave-2 MutC3Held showed the counter's live path only ever exercises the dedupe direction, so a double mutant that drops both the held refusal and its selftest case survives every live field",
+      "rule_changed": false,
+      "effect": "code and evidence only; predicates gain fields that bind behaviour already described in the class sentences; no target narrowed"
     }
   ],
   "amendments_note": "post-freeze amendments are recorded above in order, each with the seat evidence that produced it. A1-A3 change extraction rules and control paths; A4-A7 change two counters, the guard tool and their pins, all before any deciding run. No amendment changes claims.* (other than counter_sha256 and the class sentences restated verbatim), the predicate, the target, the fixture set or the controls. A8 corrects this file's own narration after wave-1 RevProvenance showed the frozen_before and this note described the chain inaccurately."

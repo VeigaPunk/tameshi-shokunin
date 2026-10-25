@@ -258,6 +258,18 @@ def main():
         safe_admitted = 1 if safe_code == 0 and (safe_doc or {}).get('verdict') == 'admitted' else 0
         dedupe_live = 1 if (safe_doc or {}).get('map_dedupe') == own_held and own_held else 0
 
+        held_refused = 1
+        if own_held:
+            sid = sorted(own_held)[0]
+            probe_map = dict(safe_map)
+            probe_map[sid] = 'S%03d' % (number(floor) + 50)
+            probe_path = os.path.join(work, 'held-probe.json')
+            with open(probe_path, 'w', encoding='utf-8') as handle:
+                json.dump({'map': probe_map}, handle)
+            hcode, hdoc, _ = run_guard(tool_path, registry_path, args.staged, probe_path)
+            held_refused = 1 if (hcode == 1 and
+                                 (hdoc or {}).get('verdict') == 'inadmissible') else 0
+
         if args.control:
             stub = os.path.join(work, 'stub.py')
             with open(stub, 'w', encoding='utf-8') as handle:
@@ -276,6 +288,7 @@ def main():
                   and live_unmapped == 0 and live_verdict_refused == 1
                   and live_cascade == 1 and naive_refused == 1
                   and safe_admitted == 1 and dedupe_live == 1
+                  and held_refused == 1
                   and len(staged_ids) >= 100 and substitute == 0
                   and naive_agree == 1)
         fields = [
@@ -297,6 +310,7 @@ def main():
             'naive_map_refused=%d' % naive_refused,
             'safe_map_admitted=%d' % safe_admitted,
             'map_dedupe_live=%d' % dedupe_live,
+            'held_refused=%d' % held_refused,
             'safe_floor=%s' % floor,
             'staged_sha256=%s' % sha(read_bytes(args.staged)),
             'naive_agree=%d' % naive_agree,

@@ -1103,3 +1103,48 @@ EOF
 grep -cE '^\| S[0-9]{3} \|' /tmp/mirror-SOURCES.md
 grep -cE '^ {0,3}\| S[0-9]{3} \|' /tmp/mirror-SOURCES.md
 ```
+
+### Criterion 83/84 — falsifier correction (round 43, appended)
+
+The two criteria above landed with falsifier commands that do not falsify (wave-1 ScribeQuality SQ-2:
+criterion 83's first `s.replace` is a byte-identical no-op, so its run prints the correct line; criterion
+84's ends in two bare `grep -c` with no assertion). The corrected falsifiers are below; the criteria's
+rules are unchanged, and the originals stay for the record.
+
+Criterion 83 — the dead-code gate must be load-bearing: a copy of the counter with the reachability
+conjunct removed must print the flattering `mutants_killed=6 dead_code_only=0` (if it prints `5/1`, the
+gate is decorative and the criterion is vacuous). The probe must print the honest class.
+
+```
+cp .ufo/evidence/round-43/mutants/measure.py /tmp/m83.py
+python3 - <<'EOF'
+p='/tmp/m83.py'; s=open(p).read()
+s=s.replace("if mf and reachable_fails:", "if mf:", 1)
+open(p,'w').write(s)
+EOF
+python3 /tmp/m83.py --lane . --rev 3aee2c078f8976499b587086af3577fc94dc8cf1 \
+  --freeze 3aee2c078f8976499b587086af3577fc94dc8cf1
+python3 .ufo/evidence/round-43/mutants/measure.py --lane . --rev 3aee2c078f8976499b587086af3577fc94dc8cf1 \
+  --freeze 3aee2c078f8976499b587086af3577fc94dc8cf1 --probe-mutant /tmp/m83-applied.py
+```
+The first run must print `mutants_killed=6 dead_code_only=0` (the gate is what forbids it); the second
+must print `verdict=dead_code_only` for a mutant built by applying the round-42 declaration to the tool.
+
+Criterion 84 — the two counts must DIFFER on an indented mirror; the command fails (exit 1) when the
+narrow pattern already agrees, which is the vacuity signal:
+
+```
+cp corpus/SOURCES.md /tmp/mirror-SOURCES.md
+python3 - <<'EOF'
+p='/tmp/mirror-SOURCES.md'; lines=open(p).read().split('\n')
+for i,l in enumerate(lines):
+    if l.startswith('| S001 |'):
+        lines[i]='  '+l; break
+open(p,'w').write('\n'.join(lines))
+EOF
+a=$(grep -cE '^\| S[0-9]{3} \|' /tmp/mirror-SOURCES.md)
+b=$(grep -cE '^ {0,3}\| S[0-9]{3} \|' /tmp/mirror-SOURCES.md)
+echo "column0=$a census=$b"
+[ "$a" -eq "$b" ] && { echo "CRITERION-84-FALSIFIER-VACUOUS"; exit 1; }
+echo "CRITERION-84-FALSIFIER-OK"
+```
