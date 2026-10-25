@@ -2270,3 +2270,33 @@ inherited (`jj-lane.sh state`: local=remote=`c77c2b7e`, tracked=0 untracked=0).
   Tools installed/updated: none. Round shape: one v1 wave, 32 seats (policy band 32–64), role mix 6 reviewer, 6 scout, 5 critic, 4 executor, 3 mutation-tester, 3 scribe, 2 sentinel, 1 simplifier, 1 connector, 1 revenger; planner held by L1. No second wave: fewer than 32 distinct attack items; residual checks covered by wave-1 items and the L1. Dead seats: none observed at wave settlement.
 
 - 2026-10-25 — round 44 deciding measurements, scorecard update: C1 at `ef990aaea3f6546db20feccbff89ac9ab78c5405` exited 0 with `C2_R44_PASS=true total=0` (`.ufo/evidence/round-44/after/c1-at-ef990aa.stdout`); the prior content revision `83beaf980f246412368f89fbe7758375c8ca21e0` exposed the missing m6 standing-row update (`m6=1 standing=114 actual=115`), then the census-valid round-44 row was added and the predicate re-run unchanged. C1 calibration mismatch count improves (old m7 false alarm removed); C2 freshness is 0→1 current Stryker snapshot row and S089's stale anchor is superseded. Freshness is newly tracked with this document-scoped unit, not generalized beyond this source. No numeric depth/calibration score changed: command D remains 9 at base/after, coldread restraint remains 6 (60/64) at both. Frontier count 114→115, census exit 0 with expected W04; report and receipts carry the full output. Trend self-assessment: expansion unchanged, quality improved, discernment unchanged pending independent closure spot-check.
+
+## 2026-10-25 — round 45: held-row live re-verification and GoogleTest F3 adoption
+
+Motivating evidence: freshness was the lowest non-retired axis (1, a one-document unit added in
+round 44), and no row-level live re-verification of the held registry existed. The shokuknow
+`merge/tameshi` package staged GoogleTest upstream documents (`staged:S202`, `staged:S203`, `staged:S204`) on frontier F3
+ground the lane held only through queued leads. `considerthese/2026-10-25.md` proposal 1 named the
+round-43 measured-vs-landing drift. Attempt 1; nothing inherited (`jj-lane.sh state`:
+local=remote=`5891bdb77aba8489683533ae4cdd3b49b5e2626b`, tracked=0 untracked=0).
+
+- Freeze `3310e7be803516ca5934b4e949d91bcec824b179`: contract, both counters, the control builder and
+  its receipts, the GoogleTest snapshots and the base receipts, before any seat ran.
+- Claim C1 (freshness). Before `fresh=0 C1_R45_PASS=false` (`.ufo/evidence/round-45/before/c1-at-freeze.stdout`).
+  Wave 1: 24 executor seats fetched and quoted the 73 population rows (ledger integrated by
+  `.ufo/evidence/round-45/freshness/integrate.py`, 73 entries, 73 snapshots). Wave 2: 25 non-author judge
+  seats re-fetched and re-judged every row: 71 agree, 2 dispute (S048, S093). Counting command:
+  `python3 .ufo/evidence/round-45/freshness/measure.py --lane LANE --rev REV`.
+- Claim C2 (coverage). Before `rows=0 entries=0 C2_R45_PASS=false` (`.ufo/evidence/round-45/before/c2-at-freeze.stdout`).
+  Rows S256/S257 adopted by document from `staged:S202` and `staged:S203` (guard map admitted; the identity map and the
+  registry-next map refused); entries `corpus/knowledge/r8-gtest-order-and-seed.md` and
+  `corpus/knowledge/r8-gtest-primer-independence.md` re-grounded in the committed snapshots, corrected by
+  wave-1 and wave-2 reviewers; the `staged:S204` generator-contract entry refused. Counting command:
+  `python3 .ufo/evidence/round-45/coverage/measure.py --lane LANE --rev REV`.
+- QUALITY criteria 86 (deciding receipts bind the content revision; receipts-only follow-up) and 87
+  (a quote's length is measured), each with a falsifier receipt under `.ufo/evidence/round-45/quality/`.
+- Frontier: rows 115 → 117; census exit 0 at start; Gate, mistakes and quarantine in
+  `corpus/lessons/round-45.md`. Assimilation: theme "GoogleTest test-order and fixture lifecycle",
+  2 admitted, 1 refused. Quarantine slice 17 rows, no new verdicts.
+- Round shape: two v1 waves, w1 45 seats and w2 36 seats, 81 total; one w2 seat (ScribeScorecard) is
+  counted dead (its results entry carries another lane's output). Tools installed/updated: none.

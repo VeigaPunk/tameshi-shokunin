@@ -1148,3 +1148,138 @@ echo "column0=$a census=$b"
 [ "$a" -eq "$b" ] && { echo "CRITERION-84-FALSIFIER-VACUOUS"; exit 1; }
 echo "CRITERION-84-FALSIFIER-OK"
 ```
+
+## Criteria appended — round 45 (2026-10-25)
+
+Number 85 stays reserved for `considerthese/2026-10-22.md` proposal 5 (`corpus/lessons/round-43.md:110-114`); the round-45 criteria take 86 and 87.
+
+### Criterion 86 — a deciding receipt binds the revision it measured, never the tip that carries it
+
+A round designates its content revision C — the commit that holds every change the round
+cites (registry rows, knowledge entries, SCORECARD.md, LOG.md, lessons, tools and counters,
+ledger and review inputs, seat and wave reports) — after the last record edit, and runs every
+claim counter at C. The receipts are committed afterwards as a follow-up whose diff against C
+names receipt paths only: `git diff --name-only C..tip` must list no content path, and the
+commits between C and the tip are listed with the records they touch. A receipt written before
+C measures an ancestor and certifies nothing about C; a receipt cannot sit inside the commit it
+measures, because writing it moves the tip, so "re-run the counter at the final landing tip and
+cite the landing-tip receipt" is not executable — the honest form is C measured, receipts after
+C, and a drift listing between them that is empty of content. A content edit after C voids the
+deciding runs and forces re-deciding at a new C that contains it. A no-harm monitor is cited
+green only at a revision where its own frozen grading assumptions hold: the round-44
+record-agreement counter grades the newest `## Round N` SCORECARD block against its contract
+round, so at a tip whose newest block belongs to a later round it is reported red, never
+re-interpreted or cited green.
+
+Lesson: `considerthese/2026-10-25.md:66-68` (proposal 1, "Measured-to-landing drift check"),
+grounded by `w1/ExecLiveDriftR43.md` and attacked by `w1/CritDriftClaim.md` (fixed point,
+terminality, and the unsatisfiable round-44 monitor). Round 43 is the case the criterion is
+written for: green at measured `3c4003f6e97e5c787e7538b2eb35d62f49783aaf`, red at landing
+`718a1e987febd32eb78ebc65adfe939f23b3de63`, and the single commit between them —
+`718a1e9 round-43: deciding-run receipts and verdict records` — carried the receipts *and* 37
+added lines of `SCORECARD.md` plus 3 of `LOG.md`. Round 44 did not drift (green at
+`ef990aaea3f6546db20feccbff89ac9ab78c5405` and at `df000ab79a4c526bcb5cbf03a356c1a44fb32e27`),
+so the check is not vacuous by construction.
+
+Falsifier that must fail (the round-43 shape; the criterion refuses it because content paths
+lie between the measured revision and the tip; run from any cwd):
+
+```
+L=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+M=3c4003f6e97e5c787e7538b2eb35d62f49783aaf   # measured, green
+T=718a1e987febd32eb78ebc65adfe939f23b3de63   # landing tip, red
+F=6b83a11c61f0fad1074ec1f2a4c38a2fd7034685   # round-43 freeze
+git -C "$L" log --oneline "$M..$T"
+git -C "$L" diff --name-only "$M" "$T" | tee /tmp/m86-paths.txt
+python3 "$L/.ufo/evidence/round-43/calibration/measure.py" --lane "$L" --rev "$M" --freeze "$F"
+echo "measured_exit=$?"
+python3 "$L/.ufo/evidence/round-43/calibration/measure.py" --lane "$L" --rev "$T" --freeze "$F"
+echo "landing_exit=$?"
+d=$(grep -cE '^(SCORECARD|LOG)\.md$' /tmp/m86-paths.txt)
+[ "$d" -eq 0 ] && { echo "CRITERION-86-FALSIFIER-VACUOUS"; exit 1; }
+echo "CRITERION-86-FALSIFIER-OK drift_paths=$d"
+```
+
+Recorded output (round-45 `w1/ExecLiveDriftR43.md`; round-45 seats are barred from running the
+round-43 counter at these revs, so the counter lines are quoted from that receipt, not re-run):
+
+```
+718a1e9 round-43: deciding-run receipts and verdict records
+.ufo/evidence/round-43/after/c1-at-3c4003f6.exit
+.ufo/evidence/round-43/after/c1-at-3c4003f6.stdout
+.ufo/evidence/round-43/after/c2-at-3c4003f6.exit
+.ufo/evidence/round-43/after/c2-at-3c4003f6.stdout
+.ufo/evidence/round-43/after/c3-at-3c4003f6.exit
+.ufo/evidence/round-43/after/c3-at-3c4003f6.stdout
+LOG.md
+SCORECARD.md
+C2_R43: self_pin=1 classes=7 m6=0 m7=0 m8=0 m10=0 m11=0 m12=0 m13=0 total=0 records=4 sources_rows=114 standing=114 receipts=17 revisions=3 m13_probe=standing=7_column0=113_valid=114 rev=3c4003f6e97e5c787e7538b2eb35d62f49783aaf freeze=6b83a11c61f0fad1074ec1f2a4c38a2fd7034685 C2_R43_PASS=true
+C2_R43: self_pin=1 classes=7 m6=0 m7=1 m8=0 m10=0 m11=0 m12=0 m13=0 total=1 records=4 sources_rows=114 standing=114 receipts=17 revisions=4 m13_probe=standing=7_column0=113_valid=114 rev=718a1e987febd32eb78ebc65adfe939f23b3de63 freeze=6b83a11c61f0fad1074ec1f2a4c38a2fd7034685 C2_R43_PASS=false first=m7:SCORECARD.md#round-43_unknown_S256
+```
+
+A tip diff that lists receipt paths only is the compliant shape and does not exercise this
+criterion; the block exits 1 rather than print OK on it.
+
+### Criterion 87 — a quote's length is measured, never written by hand
+
+Every record that labels a quote with a word or token count prints that count from a command
+over the quote's own bytes, tokenized the way the accepting counter tokenizes it (the counter's
+`fold`, then a whitespace split), and states the count the bar measures — the C1 bar is 6..25
+whitespace tokens, so a letter-and-digit word count is a second number and never a substitute
+for it. A label that disagrees with the measured count is a record defect fixed append-only
+with an errata line naming the measured value, and admission is decided by the counter's grade,
+not by the label: a hand-written "20 words" on a 28-token quote misreports the quantity the
+6..25 bound tests. A count carried over from a sibling record is hand-written even when that
+sibling's count was right.
+
+Lesson: `corpus/lessons/round-44.md:26` labels the Stryker quote "20 words"; measured, it is 28
+whitespace tokens (22 letter/digit words) and the round-45 C1 counter grades it
+`('invalid', 'quote length 28')` — receipt
+`.ufo/evidence/round-45/mistakes/r44-quote-token-count.stdout`. The number is
+`corpus/lessons/round-43.md:52`'s correct "20 words" for the shorter quote that is this quote's
+suffix: the round-44 quote prepends 8 tokens and inherited the label. The round-44 spotcheck
+called the label cosmetic (`corpus/lessons/round-44-verifier-spotcheck.md:73`) because the row's
+grounding quote was compliant, and its own parenthetical "24 letter/digit words" is itself
+unmeasured (measured: 22).
+
+Falsifier that must fail (the round-44 label; prints the receipt's three lines, exits 0 only
+when the hand-written label disagrees with the measured count; run from any cwd):
+
+```
+L=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+rc=0; python3 - "$L" <<'EOF' || rc=$?
+import hashlib, importlib.util, re, sys
+lane = sys.argv[1]
+spec = importlib.util.spec_from_file_location(
+    'c1', lane + '/.ufo/evidence/round-45/freshness/measure.py')
+c1 = importlib.util.module_from_spec(spec); spec.loader.exec_module(c1)
+line = open(lane + '/corpus/lessons/round-44.md', encoding='utf-8').read().split('\n')[25]
+label = int(re.search(r'(\d+) words', line).group(1))
+quote = c1.fold(re.search(r'\u201c(.+?)\u201d', line).group(1))
+print('lesson label: "%d words"; quote=%r' % (label, quote))
+print('whitespace_tokens=%d letter_digit_words=%d'
+      % (len(quote.split()), len(re.findall(r'[A-Za-z0-9]+', quote))))
+raw = b'x'
+row = {'url': 'https://stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants/',
+       'source': '', 'scope': '', 'anchor': '', 'teaches': ''}
+entry = {'url': row['url'], 'opened': '2026-10-25', 'verdict': 'holds',
+         'raw_sha256': hashlib.sha256(raw).hexdigest(), 'quote': quote}
+print('C1 grade on the round-44 label quote: %r' % (c1.grade(entry, row, raw),))
+sys.exit(0 if label != len(quote.split()) else 1)
+EOF
+[ "$rc" -eq 0 ] || { echo "CRITERION-87-FALSIFIER-VACUOUS"; exit 1; }
+echo "CRITERION-87-FALSIFIER-OK"
+```
+
+Expected output (the committed receipt, reproduced byte-identically by this block):
+
+```
+lesson label: "20 words"; quote='Notice that 10 ** 0 = 1, so even if we change >= to <= and even < or > we will get the same output each time!'
+whitespace_tokens=28 letter_digit_words=22
+C1 grade on the round-44 label quote: ('invalid', 'quote length 28')
+CRITERION-87-FALSIFIER-OK
+```
+
+The synthetic `entry`/`raw` pair exists only to reach the counter's length conjunct: it passes
+the url, opened, snapshot and sha256 tests, so `quote length 28` is the first rule that fires.
+The counter is imported, not invoked as a counter (`--lane/--rev`); no measurement is taken.
