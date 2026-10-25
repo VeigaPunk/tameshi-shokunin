@@ -1,0 +1,24 @@
+# Round-47 author brief — selftest additions that kill pool mutants (C2)
+
+Claim C2: the v2 hardened counters `.ufo/evidence/round-47/hardening/{freshness,coverage}-counter.py` (the round-46 hardened counters plus the additions the C2 seats write) must kill at least 150 of 183 real mutants of the frozen pool `.ufo/evidence/round-47/hardening/pool.json`; baseline 122 of 183. Your item names the mutants you own.
+
+## What a pool mutant is
+A single-site AST edit of a RULE function of the round-46 hardened counter (every top-level function except `selftest`, `main`, `extra_*` and `_x*`): kind `cmp` (Eq<->NotEq, Lt<->LtE, Gt<->GtE, In<->NotIn, Is<->IsNot), `bool` (and<->or), `not` (the `not` deleted), `int` (constant + 1), `const` (True<->False). Address `<function>:<kind>:<ordinal>`; ordinal = index among sites of that kind inside the function in `ast.walk` order (breadth-first). The module is re-emitted with `ast.unparse`. Seat helper: `python3 .ufo/evidence/round-47/hardening/pool.py --enumerate FILE` lists every site (id, kind, original operator or constant, line in FILE). Neutral mutants (kind `commute`: `a == b` -> `b == a`) are behaviour-equal and AST-different; they must SURVIVE.
+
+## Kill rule (frozen, do not argue it)
+A mutant is killed only if `python3 <mutated copy> --selftest` exits nonzero AND prints at least one line that starts `FAIL ` (a named case). A traceback with no FAIL line is `crashed`, a run over 90 s is `timeout`: neither is a kill, nor is `inapplicable`. So when a case drives code that a mutant makes raise, wrap the call (`try/except Exception as exc`) and print `FAIL <case> raised <ExcName>`, then return normally. Cases must pass on the unmutated counter (`PASS <case> ...`).
+
+## What is refused
+- A case that fails for every mutant: a hash or AST pin of the source, a length pin, `inspect.getsource` comparisons. The neutral mutants (14) and control CTL_E refuse it; a pin kills the neutrals and the whole claim fails.
+- A case that only restates the mutated line (reads the counter's own source text to look for the operator).
+- A fake kill: a case that fails only because your own harness is wrong. Every kill must be explained by an input on which the original rule and the mutated rule return different values.
+- Changing the counter's rule code. Your file is inserted before `def main():` and called from `selftest()`; nothing else in the counter changes (the assembler `assemble.py` does that; pool addresses of rule code must not move).
+
+## Method
+1. `mkdir -p /tmp/tameshi-r47-<Seat>`; read the counter's `selftest()`, the rule functions named by your mutants and the `_xHard*` helpers the round-46 additions already provide (fixture builders for rows, snapshots, reviews, scratch git repos) — reuse them, but give your own helpers the prefix `_x<Seat>_` and call theirs read-only.
+2. For each mutant decide: which input makes the mutated rule return a different value; which existing fixture can build it. A mutant in `live()` or `check()` runs outside the selftest today: build a case that calls the function directly with a stub (a fake `curl` first on PATH inside the case, a temporary lane directory, an in-memory ledger) — never the network.
+3. Write the ONE deliverable file `<Seat>.addition.py`: exactly one top-level `def extra_<Seat>():` that runs your cases, prints `PASS <case> ...` or `FAIL <case> ...` per case and returns `(cases, failed)`; it may use the counter module's globals and functions. Helpers start `_x<Seat>_`. Temporary files only under `tempfile` directories you create and remove; fixture git repos: `d = tempfile.mkdtemp()`; every git call names `-C d`; verify `git -C d rev-parse --show-toplevel` equals `os.path.realpath(d)` before the first commit; commit identity only through `-c user.name=t -c user.email=t@t` on that fixture.
+4. Verify: `python3 .ufo/evidence/round-47/hardening/assemble.py --group G --add <file> --out /tmp/tameshi-r47-<Seat>/h.py`, then `python3 .ufo/evidence/round-47/hardening/pool.py --try /tmp/tameshi-r47-<Seat>/h.py --group G --ids a,b,c` (PRISTINE must be `pass`; each of your ids `killed`; all absolute paths under the lane), and once without `--ids` (all NEUTRAL lines `survived`, no regression: mutants that were `killed` in the baseline (`.ufo/evidence/round-47/before/base-<group>.txt`) stay killed). `python3 /tmp/tameshi-r47-<Seat>/h.py --selftest` must end `VERDICT: PASS`.
+
+## Report (your `Report:` file)
+Per mutant id: the case name, the input that separates original from mutant, the helper output line. A mutant that no behavioural input can kill (equivalent, or code the selftest cannot reach without the network or a live process) is reported with the argument and the sweep that shows it — never faked, never left undiscussed. List the commands you ran and their exit codes. Do not edit anything but your report and your one addition file.

@@ -1,0 +1,74 @@
+{
+ "round": 47,
+ "lane": "tameshi",
+ "author": "tameshi L1 TameshiR47 (hyaku run 7, attempt 1)",
+ "frozen_at": "2026-10-25",
+ "base_rev": "0b5b7cd2b2c15d23086e811a0f0348d84261277b",
+ "frozen_before": "this contract, the three claim counters with their selftests, the statements list, the mutant pool and its enumerator, the controls and their receipts, the C3 snapshots and package copies, the no-harm script and its receipt at base are committed together at the freeze, before any wave seat runs and before the first deciding run; amendments, if any, are pre-data and recorded here",
+ "axes": {
+  "lane": "depth + calibration (verification-fixture craft)",
+  "scores_at_base": "depth 9 (command D), calibration 6 (round-21 coldread monitor restraint), freshness 9 (round-45 floor(10*fresh/73)); operability and coverage carry no numeric score at base",
+  "lowest_non_retired_axis": "calibration (6) - carried by C1",
+  "stagnation_nudge": "does not fire: calibration 6 is below the saturation line 8",
+  "distinct_axes": [
+   "calibration",
+   "operability",
+   "coverage"
+  ],
+  "exploratory": "none"
+ },
+ "claims": {
+  "C1": {
+   "axis": "calibration",
+   "type": "standing self-assessment states what it depends on: host-dependence declared and observed (round-46 spot-check routed defect 3; considerthese/2026-10-25.md proposal 2 grounds the drift concern)",
+   "surface": "the last SCORECARD.md row of each of 22 frozen statements, now carrying a tool sha256 on all 22 (17 before) and a deps clause, versus the (line, exit) each statement's frozen command prints under six profiles",
+   "statement": "At REV, for each of the 22 frozen statements, the standing SCORECARD row states exactly the value, exit code and tool sha256 prefix that the statement's command prints under the live host profile P0, and a deps clause equal to the set of dependences observed by comparing its (line, exit) under the clean full profile P1 with P0 (env), P1 minus bwrap, minus jj, minus node, and P1 inside a bwrap-bound decoy fleet root (fleet-root): mismatches + unparsed + unobservable + dep_mismatch + unpinned = 0, the base SCORECARD.md stays a byte prefix, and the counter, its statements list (sha256 pinned) and its selftest are committed at REV.",
+   "target": "C1_R47_PASS=true: self_pin=1 stmts_pin=1 statements=22 unpinned=0 append_only=1 total=0",
+   "before_state": "measured at the freeze commit (before/c1-at-freeze.stdout): total>0 and C1_R47_PASS=false",
+   "counter": ".ufo/evidence/round-47/calibration/measure.py",
+   "counting_command": "python3 .ufo/evidence/round-47/calibration/measure.py --lane LANE --rev REV --base 0b5b7cd2b2c15d23086e811a0f0348d84261277b --work EMPTY_DIR",
+   "statements_sha256": "924102dfbc6135a7d9dabef7b8b2e681a5ce4c42ca72a031ea1f8d5ab9fb2e56",
+   "score_rule": "the calibration monitor (round-21 coldread restraint, 6) is a no-harm monitor and is not claimed to rise; the claim is the count 'total' before -> after",
+   "kill_rule": "total > 0 or stmts_pin=0 or append_only=0 at the deciding revision = honest miss; no statement is dropped, edited or replaced after any seat has scored",
+   "do_nothing_control": "the unchanged tree at the freeze is the control (every standing row lacks the deps clause: unparsed>0); the cheapest pass attempt, every row restated with `deps none`, is control CTL_J in control/controls-at-freeze.stdout: dep_mismatch>0"
+  },
+  "C2": {
+   "axis": "operability",
+   "type": "runnable-artifact hardening, adoption of the round-46 hardened counters and a deterministic held pool (round-46 spot-check routed defect 2)",
+   "surface": "the selftests of the two hardened counters .ufo/evidence/round-46/hardening/{freshness,coverage}-counter.py against the frozen pool .ufo/evidence/round-47/hardening/pool.json: 111 and 86 single-site AST mutants of their rule code, of which 183 are real (101 freshness, 82 coverage) and 14 are neutral commute edits",
+   "statement": "At REV the v2 counters .ufo/evidence/round-47/hardening/{freshness,coverage}-counter.py pass their own --selftest (exit 0, VERDICT: PASS, no FAIL line), kill at least 150 of the 183 real pool mutants (a mutant is killed only when the selftest exits nonzero AND prints a line starting FAIL; a crash, a timeout and an inapplicable address are not kills), kill none of the 14 neutral mutants, and print byte-identical stdout (with a verdict line) to the round-46 hardened counters over the round-45 data revision ea25e0224fc81060414b27301c27bd1344669165.",
+   "target": "C2_R47_PASS=true: self_pin=1 pool_pin=1 killed>=150 neutral_killed=0 pristine=2 equivalence=1",
+   "before_state": "the round-46 hardened counters: killed=122 of 183 (58 + 64; 4 + 8 crashed, 39 + 10 survived), neutral_killed=0 (before/pool-base.stdout, --targets base)",
+   "counter": ".ufo/evidence/round-47/hardening/pool.py",
+   "counting_command": "python3 .ufo/evidence/round-47/hardening/pool.py --lane LANE --rev REV --targets v2",
+   "pool": ".ufo/evidence/round-47/hardening/pool.json",
+   "pool_sha256": "b4f0d0758bfc3e8a8057b4e80a3b038ea228c0879fdfaf4a4f669b8c63af4483",
+   "score_rule": "operability is not rescored numerically; the comparable measure is killed 122 -> >=150 of 183",
+   "kill_rule": "killed < 150, any neutral killed, a failing pristine selftest or equivalence=0 = honest miss; no pool mutant is removed, relabelled neutral or relaxed after any seat has scored",
+   "do_nothing_control": "control/controls-at-freeze.stdout: CTL_G round-46 hardened counters unchanged: killed=122 (false); CTL_E selftest that pins the AST of its rule code: killed=183 but neutral_killed=14 (false); CTL_F always-failing selftest: pristine=0 (false); CTL_H AST pin by bare assert: killed=0 (false)"
+  },
+  "C3": {
+   "axis": "coverage",
+   "type": "sourced frontier move with assimilation (shokuknow merge/tameshi flaky theme, frontier F3 measurement half)",
+   "surface": "F3 determinism precondition / flaky-aware verdicts: what the literature measures about prediction from recorded history, the published argument against prediction, and the cost of flaky tests in CI; 0 rows and 0 entries citing arxiv.org/abs/2302.09330, arxiv.org/abs/2607.09345 or the Semantic Scholar record of DOI 10.1109/ICST60714.2024.00037 at base",
+   "statement": "Three registry rows for the frozen documents (arxiv.org/abs/2302.09330; arxiv.org/abs/2607.09345; the api.semanticscholar.org graph record of DOI 10.1109/ICST60714.2024.00037 with the %2C-encoded fields query), opened this round with committed snapshots in .ufo/evidence/round-47/coverage/sources/ and 8-hex sha256 prefixes in their anchors, adopted at guard-admitted ids, are each cited by a re-grounded knowledge entry (verified-at >= 2026-10-25, listed in the row's used-by, carrying a located 6-25-token quote and at least one located quote absent from the package copy of the same entry), and every such entry is indexed in corpus/README.md.",
+   "target": "C3_R47_PASS=true: self_pin=1 rows>=3 entries>=3 indexed==entries covered==rows",
+   "before_state": "rows=0 entries=0 C3_R47_PASS=false at the freeze commit (before/c3-at-freeze.stdout)",
+   "counter": ".ufo/evidence/round-47/coverage/measure.py",
+   "counting_command": "python3 .ufo/evidence/round-47/coverage/measure.py --lane LANE --rev REV",
+   "unmoved_command": "the same counter: rows=0 entries=0 shows the surface unmoved",
+   "entry_basenames": [
+    "flaky-aware-verdict-evidence.md",
+    "r8-flakiness-not-static.md",
+    "r8-flaky-cost-baseline.md"
+   ],
+   "extra_row": "a fourth row for the Lam et al. camera-ready PDF (text snapshot lam-2020-reruns.txt, PDF sha256 in the anchor) may be adopted and cited by flaky-aware-verdict-evidence.md; the counter does not count it (it is not one of the three frozen documents)",
+   "kill_rule": "rows < 3, entries < 3, an unindexed entry or an uncited row at the deciding revision = honest miss",
+   "do_nothing_control": "control/controls-at-freeze.stdout: CTL_A package entries copied byte-exact: entries=0; CTL_B relabel: entries=0; CTL_C rows only: entries=0; CTL_D wrong digest: rows=0"
+  }
+ },
+ "no_harm": "at base and at the deciding revision, every monitor of .ufo/evidence/round-47/no-harm.sh prints ok (seven monitors: command D 9, coldread restraint 6, round-45 freshness counter fresh=71, round-45 coverage counter rows=2 entries=2, S160 count 1, registry rows not below 120, round-46 coverage counter rows=3 entries=3) and the root census exits 0; receipt before/no-harm-at-base.stdout is all ok before freeze",
+ "landing_rule": "QUALITY criterion 86 and considerthese/2026-10-25.md proposal 1: the deciding runs of all three counters and the no-harm script are taken at the content revision that carries the records, then a receipts-only commit follows; the report cites those receipts",
+ "assimilation": "theme from merge/tameshi: F3 measurement half (staged S155, S158, S206, S207 by document); considerthese proposal mined: 2026-10-25 idea 3 (dead-code debt list) as a lesson table with a counting command",
+ "amendments": []
+}

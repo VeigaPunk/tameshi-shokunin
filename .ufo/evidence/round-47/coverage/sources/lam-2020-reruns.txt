@@ -1,0 +1,669 @@
+ Understanding Reproducibility and Characteristics
+of Flaky Tests Through Test Reruns in Java Projects
+        Wing Lam                  Stefan Winter             Angello Astorga           Victoria Stodden            Darko Marinov
+   University of Illinois    TU Darmstadt                 University of Illinois     University of Illinois     University of Illinois
+    Urbana, IL USA        Darmstadt, Germany                Urbana, IL USA            Urbana, IL USA             Urbana, IL USA
+  winglam2@illinois.edu sw@stefan-winter.net              aastorg2@illinois.edu       vcs@stodden.net           marinov@illinois.edu
+
+
+
+   Abstract—Flaky tests are tests that can non-deterministically        can be broadly split into two groups. One group was called
+pass and fail. They pose a major impediment to regression testing,      order-dependent (OD) tests [16], [17], [18], [19], [20], [21],
+because they provide an inconclusive assessment on whether              [22], which deterministically fail for some order of tests
+recent code changes contain faults or not. Prior studies of flaky
+tests have proposed tools to detect flaky tests and identified          in a test suite, but deterministically pass for some other
+various sources of flakiness in tests, e.g., order-dependent (OD)       orders. The other group of reasons include timing behavior
+tests that deterministically fail for some order of tests in a test     for tests that depend on real time, concurrency for tests that
+suite but deterministically pass for some other orders. Several of      involve multiple threads, asynchronous wait for tests that
+these studies have focused on OD tests.                                 involve message passing, random seeds for tests that involve
+   We focus on an important and under-explored source of
+flakiness in tests: non-order-dependent tests that can non-
+                                                                        random choices [23], unspecified order of GUI events for GUI
+deterministically pass and fail even for the same order of tests.       tests [14], I/O operations for tests that involve network or
+Instead of using specialized tools that aim to detect flaky tests, we   disk operations, and more. These tests were called non-order-
+run tests using the tool configured by the developers. Specifically,    dependent (NOD) [20], but we will argue that the name is
+we perform our empirical evaluation on Java projects that rely          imprecise as such tests can still depend on the order.
+on the Maven Surefire plugin to run tests. We re-execute each
+test suite 4000 times, potentially in different test-class orders,
+                                                                            Although some previous studies [1], [15], [24] show that
+and we label tests as flaky if our runs have both pass and fail         NOD tests are more frequent than OD tests, several studies of
+outcomes across these reruns. We obtain a dataset of 107 flaky          flaky tests have focused on OD tests, proposing several tools
+tests and study various characteristics of these tests. We find that    specialized to detect [16], [17], [18], [19], [20], automatically
+many tests previously called “non-order-dependent” actually do          fix [21], or tolerate [22] OD tests. Some example tools [16],
+depend on the order and can fail with very different failure rates
+for different orders.
+                                                                        [20] dynamically run the entire test suite, while intentionally
+   Index Terms—flaky tests, regression testing, reproducibility         randomizing the order of tests to increase the chance of
+                                                                        detecting OD tests. Other tools [17], [18], [19] identify which
+                                                                        individual tests or pairs of tests may be OD.
+                       I. I NTRODUCTION
+                                                                            We believe that two key challenges have limited the amount
+   Flaky tests are tests that can non-deterministically pass            of in-depth work on NOD tests. The first challenge is the
+and fail in different test runs, even for the same code under           machine cost for rerunning tests. Many NOD tests may fail
+test and the same test environment that the developers can              rather infrequently (e.g., once in 4000 test runs, as we observe
+easily control [1], [2]. Such tests are a major impediment              from our experiments) or only under specific circumstances, so
+to regression testing, because they provide an inconclusive             it takes substantial time and reruns to observe even one failure,
+assessment on whether recent code changes contain faults                let alone a few failures to study when and how they occur. The
+or not [3] as reported by many companies, including Ap-                 second challenge is the human cost for debugging NOD tests.
+ple [4], Facebook [2], Google [5], [6], [7], [8], Huawei [9],           In contrast to OD tests that fail deterministically and could
+Microsoft [10], [11], [12], and Mozilla [13]. When developers           be somewhat easier to reproduce and debug, NOD tests fail
+run regression tests after code changes, they expect tests that         non-deterministically, potentially infrequently, and can take a
+flip the outcome, i.e., fail after the changes but passed before        lot of time to debug, especially for researchers unfamiliar with
+the changes, to indicate faults in the changes. Unfortunately,          some open-source code that has flaky tests. For example, in our
+flaky tests can fail for reasons that are unrelated to the changes.     study, inspecting each new flaky test took one of the authors
+A common way to handle flaky tests is to rerun tests after              about a day on average to precisely understand the root cause
+failures to see if they would pass. For example, Google reports         of non-determinism.
+rerunning failed tests ten times [6]. However, little is known              Our study is organized around four main research questions
+about failures of flaky tests, making it difficult for developers       (RQs) that aim to improve our understanding of how to
+to determine an appropriate number of reruns.                           rerun, detect, debug, and prioritize flaky tests. By answering
+   Prior work [1], [14], [15] has identified various reasons for        these questions, we aim to provide actionable guidelines and
+the non-deterministic outcomes of flaky tests. These reasons            practical suggestions for developers and researchers.
+
+
+ ©2020 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or
+ future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for
+ resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works.
+                                                                                                   TABLE I
+   To perform our study, we (re)run tests using the default            C ATEGORIZATION OF TESTS . F ARE FAILURE RATES PER ORDER FOR A
+test runner configured by the developers, following what                  TEST. DIF IS TRUE IFF ANY RATE SIGNIFICANTLY DIFFERS FROM
+developers typically do in their development practice. In other       OTHERS . NOD AND OD ARE FROM I DF LAKIES ’ CATEGORIZATION [20].
+
+words, we do not use any research tools [16], [17], [18], [19],      Non-deterministic (NOD)  Deterministic
+[20], [25] or emerging approaches [26], [27] that aim to detect      (∃f ∈ F. 0% < f < 100%)∧ (∃f, f 0 ∈ F. f = 0% ∧ f 0 = 100%)∧
+                                                                     DIF (F) (NDOD)           (∀f 00 ∈ F. f 00 = 0% ∨ f 00 = 100%) (OD)
+flaky tests. While our procedure does miss some flaky tests, it      (∃f ∈ F. 0% < f < 100%)∧ (∀f ∈ F. f = 0%)∨
+(1) gives a more realistic assessment of the impact that flaky       ¬DIF (F) (NDOI)          (∀f ∈ F. f = 100%) (not flaky)
+tests have on regression testing; (2) exposes flaky tests that can
+be particularly difficult to debug, because they fail rarely even
+under the exact same build configuration; and (3) avoids false        II. C ATEGORIES OF F LAKY T ESTS & A R EAL E XAMPLE
+alarms that can be produced by some of the research tools               Our categorization of flaky tests builds on DTDetector [16]
+(e.g., iFixFlakies [21] reports on some false alarms reported        and iDFlakies [20], which automatically categorized all flaky
+by iDFlakies [20]).                                                  tests into two categories based on the empirical results from
+   We perform our empirical evaluation on open-source Java           running the tests in various test orders. We redefine the existing
+projects that use the Maven build system [28] and have JUnit         categories with tests’ failure rates across test orders, refine an
+tests. We let Maven Surefire plugin [29] run these JUnit             existing category by introducing two new subcategories, and
+tests (by executing mvn test), as configured by the project          show an example test from a new subcategory.
+developers. Maven structures Java projects into modules, and
+each module has its own test suite. Our experiments find flaky       A. Categories
+tests in 26 modules from the iDFlakies dataset [30]. While              DTDetector and iDFlakies partition flaky tests into two
+the iDFlakies evaluation [20] aimed to run each test suite 100       categories. One category are order-dependent (OD) tests that
+times, we run each test suite exactly 4000 times, potentially        can deterministically pass or fail based on the order in which
+in different test-class orders (TCOs) as permitted by Surefire.      the tests are run. We clarify that such tests are deterministic in
+We choose 4000 runs to balance the chance to detect flaky            that their failure rates are either 0% or 100% for each order,
+tests and the machine time of our experiments. Any test that         and they have at least two orders whose failure rates differ. For
+have both pass and fail outcomes are marked flaky. We obtain a       completeness of categorization, we also define tests that are
+dataset of 107 flaky tests, where a “test” is defined by JUnit—      not flaky—they either always pass (all orders have 0% failure
+a specific test method in a test class. Moreover, we run each        rate) or always fail (all orders have 100% failure rate).
+of those 107 flaky tests 4000 times in isolation, running just          The other category are non-order-dependent (NOD) tests
+the one test method without the rest of its test class or the test   that are flaky but not OD. We clarify that such tests have at
+suite. Our dataset is publicly available on our website [31] and     least one order where the test fails non-deterministically (fail-
+we use this dataset to address our four RQs.                         ure rate is neither 0% nor 100%). We further break down these
+   One important finding of our study affects the nomenclature       NOD tests to non-deterministic, order-dependent (NDOD)
+of flaky tests. Namely, many flaky tests that were labeled           tests and non-deterministic, order-independent (NDOI) tests.
+“non-order-dependent” actually do depend on the order, e.g.,         Specifically, NDOD tests are NOD tests where at least one
+across different TCOs, they have very different failure rates—       order’s failure rate significantly differs from other orders’
+the ratio of the number of failed runs over the number of            failure rates, e.g., a test that has a 99% failure rate in one order
+total runs for a particular test order. We therefore introduce       but 0% in another. A statistical test can be used to determine
+two subcategories of NOD tests—non-deterministic, order-             if any one order’s rate significantly differs from the others.
+dependent (NDOD) and non-deterministic, order-independent            Conversely, NDOI tests are NOD tests where all failure rates
+(NDOI). To the best of our knowledge, we are the first to study      do not significantly differ. Table I shows precise definitions.
+the relationship of test orders on NOD tests.                           Some previous studies of flaky tests [1], [14], [15], [24]
+   The RQs we study also suggest the following guidelines:           categorized these tests into fine-grained categories, but the
+RQ1 & RQ3: To check if test failures are due to flaky tests,         authors manually examined the source code of the tests or
+one can use ≤ 5 reruns (50% less than Google’s default ten           conducted surveys of developers after the tests were fixed and
+reruns [6]) and still check correctly ≥ 82% of the time.             the causes of flakiness were removed. Moreover, a study [24]
+RQ2 & RQ3: To detect flaky tests, one should run tests in            showed that manually identified fixes for flaky tests (and,
+a test suite instead of in isolation, and run tests in different     hence, their corresponding categorizations) can be quite error-
+orders with fewer times each, rather than fewer orders with          prone. We aim to automatically categorize flaky tests, even if
+more times each.                                                     in coarse-grained categories.
+RQ3: To debug flaky tests, one should first run the tests in            We further argue in this paper that it is important to differ-
+isolation, because tests tend to run faster and fail more often,     entiate between NDOD and NDOI tests, ideally automatically.
+before running the tests in a test suite.                            In fact, we find that the majority of NOD tests are actually
+RQ4: To prioritize the debugging of flaky tests, one can             NDOD, not NDOI. Developers and tool builders should take
+consider debugging tests that often fail together before the         test orders into account. For example, a flaky-test management
+ones that do not fail together.                                      system [24], [32], [33] can save and prioritize test order(s) that
+ 1   @Test(timeout = 1500)                                                  RQ2: How do failure rates and maximal burst lengths differ
+ 2   public void shouldRetryWithDynamicDelayDate() {                        across TCOs, and how many tests are NDOD and NDOI?
+ 3     ... // test setup
+ 4     atLeast(Duration.ofSeconds(1),() -> unit.get("/baz").                Why it matters: Developers have a limited budget of test
+        dispatch(...).join());                                              runs to detect NOD tests. Is it better for those runs to be used
+ 5   }
+                                                                            through (1) many unique test orders with fewer runs each, or
+Fig. 1. Example NDOD test that fails substantially less often when run as   (2) fewer orders with many runs each? If NDOD tests are more
+part of a test suite than when run in isolation.
+                                                                            prevalent than NDOI tests, then (1) can be better, otherwise (2)
+                                                                            can be better. This RQ aims to provide empirical evidence on
+developers should use for debugging based on the category of                the prevalence of these two subcategories, so that developers
+the test determined with the failure rates of the observed test             can better detect NOD tests.
+orders. For NDOD and OD tests, developers could debug with                  RQ3: How likely can NOD-test failures from running the test
+the test orders whose failure rates differ the most, while for              suite be reproduced by running the NOD test in isolation?
+NDOI tests, any order could suffice.                                        Why it matters: When developers encounter a test failure by
+                                                                            running a test suite, a common next step is to try reproducing
+B. Example NDOD Test                                                        a test failure by running the test in isolation. For a regression
+   One example NDOD test from our study is shown in                         failure, the test continues to deterministically fail in isolation.
+Figure 1. The test shouldRetryWithDynamicDelayDate                          For OD flaky tests, the test also deterministically passes or
+is from a project [34] that implements client-side response                 fails in isolation [21], and it deterministically fails when run
+routing. This test is flaky because some runs take longer than              in the same order that produced the test failure. However, for
+the timeout limit of 1500ms. We find that the test is NDOD                  NOD tests, it is unclear how likely test runs in isolation can
+because Line 4 launches a server, and in runs where the test                reproduce the test failure from running the entire test suite,
+passes, other tests running before this test trigger the Java just-         e.g., the test may fail more or less often when run in isolation
+in-time (JIT) compiler, thereby reducing the latency to start               than in the test suite. This RQ aims to show empirical evidence
+the server. On the other hand, in runs where the test fails, the            to clarify this issue.
+JIT compiler is not triggered, thereby increasing the latency               RQ4: How do failure rates of individual flaky tests relate to
+to start the server and resulting in the test exceeding 1500ms.             failure rates of test-suite runs?
+We confirmed our understanding by logging the time it takes                 Why it matters: Whether developers can merge their recent
+to run the test and then running the test multiple times. With              changes to a project typically depends on whether the entire
+our changes, we see that after ∼5 runs, the runtime of this                 test suite passes or fails with their recent changes. RQ1 and
+test would decrease from ∼1500ms to ∼1000ms.                                RQ2 study the failure rate of each individual flaky test, while
+   We refer to the number of times a flaky test fails consec-               RQ4 aims to show how often a test-suite run has at least one
+utively as the test’s burst length. In our 4000 TSRs, we find               failing flaky test. RQ4 is important because it provides empiri-
+that this test’s maximal burst length is 7 in one order (TCO),              cal evidence on how often (1) developers encounter a test-suite
+with the average maximal burst length being 3.1 across all                  run failure due to flaky tests and (2) failures of different flaky
+TCOs. We also find that this test has a failure rate of 39.1%               tests are symptoms of the same underlying problem, which
+when run by itself in isolation, while its failure rate is 10.9%            developers can use to prioritize their debugging efforts.
+when it is run in its test suite, with the failure rate ranging                         IV. E XPERIMENTAL M ETHODOLOGY
+from 0% to 20.1% depending on the TCO. This test’s failure
+rate varies a lot because some other tests running before it can            A. Modules Used in Our Study
+exercise code that triggers the JIT compiler, in which case the                To investigate our research questions, we use open-source
+test often passes because it then takes closer to 1000ms.                   code from the iDFlakies dataset [30]. We obtained this dataset
+                                                                            in our previous work with the iDFlakies tool, which detects
+                   III. R ESEARCH Q UESTIONS                                flaky tests by perturbing the execution order of test methods
+   To increase the understanding of the reproducibility and                 (not just test classes) across repeated test-suite runs and
+characteristics of flaky tests, we consider four main questions.            marking tests that both pass and fail in various runs as flaky.
+RQ1: What is the failure rate and the maximal burst length                  Due to the perturbing of test order, many tests that iDFlakies
+of flaky tests across all test-suite runs?                                  detected are OD tests, i.e., they pass or fail deterministically
+Why it matters: A common way to separate test failures into                 depending on which other tests have (not) run before them in
+regression failures and flaky failures is through test reruns.              the test suite.
+For example, Google [6] and Microsoft [24] report how they                     The iDFlakies dataset [30] consists of Java projects that use
+rerun tests after a failure to check whether the test’s result              the Maven build system [28]. Maven organizes projects around
+would change to pass (indicating a flaky failure instead of a               modules, so we present our analysis in terms of modules. We
+regression failure). The number of reruns is typically chosen               do not use all modules (111) from the iDFlakies dataset for
+ad-hoc, e.g., a round number of ten. This RQ aims to provide                our study, because we focus on NOD tests, and iDFlakies
+empirical evidence for how many reruns can suffice to separate              detected NOD tests in only 62 modules (and only OD tests
+regression failures and flaky failures.                                     in the other 49 modules). We focus on NOD tests because
+                                                                      TABLE II
+ S TATISTICS FOR THE MODULES WHERE WE DETECTED SOME FLAKY TEST BY FIRST RUNNING ENTIRE TEST SUITES (TSO) AND THEN
+   RUNNING THE FLAKY TESTS DETECTED BY TSO IN ISOLATION (ISO); ’=’ INDICATES VALUE SAME AS IN THE CELL TO THE LEFT.
+                                                      # test            #          # flaky tests        TSO failure rate [%]             ISO rate [%]
+  MID      Project slug - Module                 methods    classes    TCOs        TSO      ISO      TSR   min      max    sum            min    max
+  M1       alibaba/fastjson                         4464      2079        21           6       0      7.7    0.1     5.0     15.2          n/a    *n/a
+  M2       apache/incubator-dubbo - m1                14          7       21           3       1      0.9    0.1     0.5      0.9          0.3       =
+  M3                                   - m2           66         15       21           9       0     10.6    0.1    10.0     20.7          n/a     n/a
+  M4       c2mon/c2mon - m1                          125         18       21           1       0     <0.1      =       =        =          n/a     n/a
+  M5                       - m2                       10          2        2           2       2      1.6    0.4     1.2      1.6          1.0     1.1
+  M6       codingchili/excelastic                     12          4       12           1       0     11.4      =       =        =          n/a     n/a
+  M7       davidmoten/rxjava2-extras                 390         48       21           3       2      0.2    0.1     0.1      0.2        <0.1    <0.1
+  M8       elasticjob/elastic-job-lite               502         89       21           1       0      2.5      =       =        =          n/a     n/a
+  M9       espertechinc/esper                          2          2        1           1       1      3.0      =       =        =          3.7       =
+  M10      feroult/yawp                                1          1        1           1       1      1.6      =       =        =          2.4       =
+  M11      flaxsearch/luwak                          202         37       21           2       2      1.0    0.3     0.8      1.0         58.6    68.2
+  M12      fluent/fluent-logger-java                  18          5       17           6       0      1.8    0.1     1.8      5.2          n/a     n/a
+  M13      javadelight/delight-nashorn-sandbox        79         35       21           3       2      1.4  <0.1      0.7      1.4          4.2    57.1
+  M14      kagkarlsson/db-scheduler                   51         18       21           8       1      0.3    0.1     0.3      1.1          0.9       =
+  M15      looly/hutool                                7          2        2           1       1      0.1      =       =        =          1.5       =
+  M16      nationalsecurityagency/timely             144         32       21           4       4      2.8    1.3     2.8      9.5          1.3     3.0
+  M17      oracle/oci-java-sdk                        62          8       21           1       1     <0.1      =       =        =        <0.1        =
+  M18      orbit/orbit                                20          8       21           1       1      0.1      =       =        =          0.2       =
+  M19      OryxProject/oryx                           92         19       21           1       1      0.8      =       =        =          1.0       =
+  M20      spinn3r/noxy                                3          1        1           3       0     50.0  49.0     50.0   100.0           n/a     n/a
+  M21      square/retrofit - m1                       80         15       21           5       0      1.4  <0.1      0.5      1.4          n/a     n/a
+  M22                      - m2                      297         10       21           1       1      0.1      =       =        =          0.2       =
+  M23      TooTallNate/Java-WebSocket                145         22       21         32       24     30.1  <0.1      5.1     46.0        <0.1     16.6
+  M24      wro4j/wro4j                               308         64       21           9       3      1.3    0.1     0.7      2.0          0.3     0.4
+  M25      wso2/carbon-apimgt                          2          1        1           1       1      0.1      =       =        =          0.1       =
+  M26      zalando/riptide                            33         12       21           1       1     10.9      =       =        =         39.1       =
+  Total / Average                                   7129      2554       415        107       50      5.4    3.2     4.2      9.1          6.4    10.9
+
+
+
+many past studies of flaky tests focused on OD tests [16],
+[19], [20], [21]. We find that only 48 of the 62 modules could
+be compiled “out-of-the-box” (i.e., Maven could not download
+some dependencies for these 14 modules), and for 44 of the 48
+modules we could run the test suite 4000 times (i.e., the test
+suite deadlocks) and easily control the order in which Maven
+Surefire [29] runs test classes (i.e., the module uses Maven                   Fig. 2. Overview of running test suites to obtain flaky tests in our study.
+Surefire version 2.7 or higher).
+B. Configurations in Our Study
+                                                                           and across different TCOs (RQ2). Of the 44 modules from
+   To obtain the flaky tests for our study, we run tests in two            Section IV-A, we find at least one flaky test in 26 modules
+different configurations:                                                  when they are run in TSO. Table II shows the statistics of
+   • Test Suite (TSO): run the entire test suite using the default         these 26 modules. Figure 2 shows an overview for how we
+     mvn test. The order of the tests may differ. We call one              run the test suites to collect our dataset.
+     run of the test suite in any order a test-suite run (TSR).               1) Test-Class Orders (TCOs): For each module, we run
+   • Isolation (ISO): run each individual test in its own JVM              Maven Surefire (i.e., mvn test) with (1) no changes to the
+     using mvn test -Dtest=TestClass#testMethod.                           build configuration pom.xml files (except M26’s pom.xml to
+We run TSO and ISO 4000 times each to balance the chance                   make its tests run sequentially)—these runs commonly yield
+to detect flaky tests and the machine time used for our                    different TCOs needed to answer RQ2; and (2) a change to
+experiments. In total, our experiments used 2148 hours (∼90                run all test classes in a sorted order (reverse alphabetical of
+days) of CPU time. To the best of our knowledge, this is the               their class names)—to ensure we get many runs of at least
+largest number of runs in any published study of flaky tests.              one order. We run each of (1) and (2) for 20 batches, where
+We ran our experiments on Microsoft Azure [35] using the                   each batch runs exactly 100 test-suite runs (TSRs) in a fresh
+Standard_D11_v2 virtual machines with 2 CPUs, 14 GB of                     virtual machine (VM). Overall, we have exactly 40 batches
+RAM, and 100 GB of hard-disk space each.                                   and consequently, 4000 TSRs per module.
+                                                                              For (1), Surefire determines a TCO based on file system
+C. RQ1 and RQ2: Failure Rate and Burst Length                              specific properties, and because we run each batch in its own
+   To answer RQ1 and RQ2, we obtain and compare failure                    VM, the TCOs across batches likely differ, resulting in up
+rates (defined in Section I) and maximal burst lengths (intro-             to 20 TCOs from (1) and 1 TCO from (2). Consequently,
+duced in Section II-B) of flaky tests across all TCOs (RQ1)                the number of TCOs ranges from 1 to 21, each of which is
+run between 1 and 40 batches. For modules with 3 or fewer                         each of 107 tests detected from TSO runs in 40 batches with
+test classes, we cannot obtain 21 TCOs because the maximum                        each batch running the test 100 times. We then analyze the
+number is 6 (3!). Even for modules with 4 or more test classes,                   number of flaky-test failures one can reproduce in ISO, and
+we can still obtain fewer than 21 different TCOs because                          how the failure rates and burst lengths of these tests differ
+Surefire can return the same TCO across different VMs (which                      between TSO and ISO runs.
+happened for two modules: M9 and M12). Table II shows the
+exact number of TCOs1 that we obtained per module.                                E. RQ4: Effect of Flaky Tests on TSRs
+   We design our experiment to use multiple batches with 100                         RQ4 considers how often a TSR has at least one failing flaky
+TSRs per batch rather than (1) just one batch to run all 4000                     test. We obtain the data for this RQ from TSO runs. Table II
+TSRs, or (2) 4000 batches, each with just one TSR. Compared                       shows the minimum, maximum, and sum of the failure rates
+to (1), our design helps with cases where a test may deadlock                     for the flaky tests in each test suite. From these failure rates
+in a batch (i.e., we would only need to rerun one small batch).                   we can derive the bounds for the TSR failure rate, i.e., the
+Compared to (2), our design helps by controlling machine cost                     ratio of TSRs with at least one flaky-test failure. The minimum
+and providing control over the number of TSRs for each TCO                        TSR failure rate is the maximum failure rate across all flaky
+(which we use to calculate failure rates for RQ2).                                tests in the test suite—if all flaky tests are dependent, the
+   To automatically determine whether a NOD flaky test is                         TSR failure rate equals the maximum of the failure rates. The
+likely NDOD or NDOI for RQ2, we use (1) the ratio of TCOs                         maximum TSR failure rate is the sum of the failure rates for
+that have at least one failing TSR, and (2) a statistical test of                 all flaky tests in the test suite (up to 100%)—if all flaky tests
+whether failure rate differences across TCOs are significant                      are independent, the TSR failure rate equals the sum of the
+or not. As multiple batches can execute the same TCO, the                         failure rates. We investigate the TSR failure rates observed
+number of TSRs can differ across TCOs. To exclude effects                         in our experiments and compare how often these failure rates
+of these differing numbers, we test whether the proportions of                    equal the minimum or maximum potential TSR failure rates.
+test failures among test runs differ significantly across TCOs,
+specifically using the χ2 test (implemented by the prop.test                                               V. R ESULTS
+function in R). We use the resulting p-values of the test and                       We next present the results for our four research questions.
+a level of 0.05 to determine significance.
+                                                                                  A. RQ1: Overall Failure Rate and Burst Length
+   2) Flaky Tests: In total, we detected 107 flaky tests in 26
+modules. Compared to iDFlakies, which detected 124 flaky                             Table II shows for each module, the number of detected
+tests in these 26 modules, 64 tests are in common with our 107                    flaky tests (columns TSO and ISO) and the flaky tests’
+tests, 60 tests are detected only by iDFlakies, and 43 tests are                  minimum, maximum, and sum failure rate—the ratio of runs
+detected only by our runs. In 18 modules where we did not de-                     in which the flaky tests fail. The failure rate indicates (1) how
+tect any flaky test, iDFlakies detected 40 NOD tests. We detect                   much of a problem the flaky test is for developers, (2) how
+some more flaky tests than iDFlakies, because the iDFlakies                       likely it is that a developer observed it as a flaky test, and
+study ran most test suites 100 times, while we run them 4000                      (3) how difficult it is to reproduce the flaky-test failure for
+times. We detect some fewer flaky tests than iDFlakies because                    debugging. For (1), the failure rate would ideally be close
+of three reasons: (1) iDFlakies uses a custom Maven plugin                        to 0, so that the test rarely affects developers. For (2), the
+that does not respect some configuration options from Surefire,                   failure rate would ideally be close to 50%, giving the same
+e.g., exclude and runOrder; (2) iDFlakies does produce                            probability to observe both passing and failing runs, which is
+false alarms, e.g., it may even run test methods annotated with                   what dynamic flaky-test detection tools use to classify a test as
+@Ignore [36], which should be skipped; and (3) iDFlakies                          flaky. For (3), the failure rate would ideally be close to 100%,
+can randomize not just the test-class order but also the test-                    so that the failures are reproducible for debugging.
+method order. These features of iDFlakies have been designed                         For the 107 flaky tests that we detect in TSO, the (arith-
+to maximize the number of potentially flaky tests it can detect,                  metic) mean failure rate is 2.7%, with the minimum of 0.025%
+while our study aims to more closely understand actual flaky                      and the maximum of 50%. The mean is heavily affected by
+tests in developers’ typical test-suite runs.                                     7 tests (listed in Table III) with failure rates of ≥10%; in
+                                                                                  contrast, over 85% of the flaky tests have a failure rate lower
+D. RQ3: Reproducing TSO Failures in ISO                                           than the mean, resulting in the overall median below 0.5%.
+   RQ3 evaluates how likely one can reproduce flaky-test                          These failure rates indicate that the majority of the flaky tests
+failures observed from TSO runs by running the tests in ISO.                      detected with mvn test rarely affect developers; indeed, if
+We obtain the data for this RQ by running each test detected as                   the failure rates were rather high, the developers would have
+flaky in TSO runs for 4000 times in ISO. Specifically, we run                     probably rewritten or removed the tests. These failure rates
+                                                                                  also indicate that the flaky tests are difficult to detect and
+  1 The test-method order may differ even when the TCO is the same.               even more difficult to debug without specialized tools.
+Specifically, for modules using JUnit versions 4.11 or higher, the test-method       If test failures are temporally correlated and tend to occur
+order would be the same for any test class regardless of the TCO. From the
+modules in Table II, only M12 and M13 use a version of JUnit that is lower        in consecutive reruns with large burst lengths, they appear
+than 4.11 and exhibit different test-method orders for at least one test class.   more deterministic to developers and may mislead them in
+                                         100%
+
+
+
+
+      Cumulative Fraction Across Tests
+                                                                                                      0%                                20%      40%      60%       80%        100%
+                                                                                                 Fig. 4. Ratios of failing TCOs for 98 tests with more than 2 TCOs.
+                                         75%
+
+
+                                                                                                                                        3%
+                                         50%
+
+
+
+
+                                                                                                            Failure Rate in Isolation
+                                                                                                                                        2%
+                                         25%
+
+
+
+                                                                                                                                        1%
+                                          0%
+                                                0 5 10   20    40      60      80       100
+                                                    Maximal Test Failure Burst Length
+ Fig. 3. Distribution of maximal burst lengths across 107 tests for TSO.
+                                                                                                                                                    1%        2%          3%
+                                                                                                                                              Failure Rate in Test Suite
+their conclusions regarding the root cause of the failure. Large                              Fig. 5. Failure rates in TSO and ISO for 80 tests that TSO detected, with
+burst lengths also hamper flaky test detection, because they                                  both rates ≤ 3%; details of the other tests are in Table III.
+require more reruns before a pass result can be observed and
+the test is marked as flaky. However, consecutive failures of
+flaky tests can be beneficial for debugging, because failures                                 90.5% (19 out of 21), median of 19%, and interquartile range
+can be consecutively observed after the first failure.                                        of 10% to 48%. From the skew in the distribution, TCOs do
+   Figure 3 shows the cumulative distribution function (CDF)                                  affect test failures often. The failures appear in a small ratio of
+of maximal burst lengths we observed across all test reruns.                                  the TCOs for a vast majority of tests. In fact, for 75% of tests,
+The number cannot exceed 100, because each batch executed                                     more than half of their TCOs have no failures, which would
+100 TSRs. We discuss the maximal burst length, rather than                                    be unexpected if the failures were independent and uniformly
+the average, to obtain a worst case estimate of the negative                                  distributed across TCOs. Our manual inspection (Section VI)
+impact of flaky tests. The CDF reaches a first plateau at 90.6%                               finds some tests that are definitely OD, NDOD, and NDOI,
+for a burst length of 7, which means that over 90% of flaky                                   and the ratio of failing TCOs for these categories is 4.8%–
+tests in our study failed at most 7 times. Even a burst length                                19%, 4.8%–58.3%, and 66.7%, respectively. A higher ratio
+of 5 already has 87.8% of tests. The later increases are for two                              indicates that a test may be NDOI.
+tests with a maximal burst length of 49, one of 50, and seven                                    We also conduct a χ2 test of independence to identify
+OD tests of 100. (Of these seven tests, four are in M1 and fail                               significant differences in failure rates across different TCOs.
+in all ISO runs, so strictly considering only their ISO failure                               Out of 98 tests, 70 have a p-value lower than 0.05. For these
+rate of 100%, they would be marked as always failing and not                                  tests, the null hypothesis that the failure rates per TCO are the
+flaky in ISO, even if they are flaky in TSO—we mark this                                      same is rejected. Their failure rates significantly differ across
+with ‘*’ in the table.) Thus, the commonly used number of                                     TCOs, and they are likely NDOD. For the remaining 28 tests,
+ten reruns by Google [6] to detect flaky tests does not appear                                the null hypothesis cannot be rejected: while there is no clear
+well justified: after one failure, 87.8% of tests can be found                                evidence that the tests are NDOD, it does not necessarily imply
+to pass in 5 reruns, with minor increases at 6 and 7 reruns.                                  that the tests are NDOI, as we show in Section VI-B3.
+The remaining tests require many more than ten reruns.                                           We finally consider differences of the maximal burst length
+Guideline: When rerunning tests after failures to check if they                               across TCOs for each test. We observe that 23 out of 107
+are flaky, our results suggest ≤ 5 reruns.                                                    tests fail in only one order. We consequently exclude these
+                                                                                              from our analysis of differences across failing TCOs. Of the
+B. RQ2: Effect of Order on Failure Rate and Burst Length                                      remaining 84 tests, 52 have an identical maximal burst length
+   We next consider how the previous results vary across test-                                across all TCOs, which is 1 (i.e., no consecutive failures) for
+class orders (TCOs) for each test. To analyze this variability,                               48 tests and 100 (i.e., all repetitions fail) for 4 tests. As we
+we exclude 9 tests with too few TCOs (6 tests with one TCO                                    discuss in Section VI-A, the latter tests are confirmed to be
+and 3 tests with two TCOs), giving us a total of 98 tests.                                    OD tests by our manual inspection. Of the remaining 32 tests,
+   We first consider failing TCOs, which have at least one                                    the maximal burst length alternates between 1 and 2 for 21
+failing run. For each test we count the number of failing TCOs                                tests and varies by small numbers (1–3, 1–4, 1–7, 2–6, 3–5,
+and divide it by the total number of TCOs. If the ratio of failing                            3–6) for the remaining 11 tests.
+TCOs is low, then the distribution of failures across TCOs is                                 Guideline: We find that a lot of tests may be NDOD; to detect
+not uniform. Figure 4 shows a boxplot for the ratio of failing                                them, it is better to run tests in more TCOs with fewer times
+TCOs with a minimum of 4.8% (1 out of 21), maximum of                                         each than in fewer TCOs with more times each.
+                               TABLE III
+       27 TESTS WITH > 3% TSO OR ISO FAILURE RATE .                                                                100%
+
+
+
+
+                                                                                Cumulative Fraction Across Tests
+                                                     Failure rate [%]
+ MID     Test name                                   TSO       ISO
+ M1      Issue1298.test for issue 1                   5.0      *100.0
+ M1      Issue1298.test for issue                     5.0      *100.0                                              75%
+ M1      DefaultExtJSONParser parseArray.test 7       2.5      *100.0
+ M1      DefaultExtJSONParser parseArray.test 8       2.5      *100.0
+ M3      PortTelnetHandlerTest.testListAllPort       10.0          0.0
+                                                                                                                   50%
+ M3      PortTelnetHandlerTest.testListDetail        10.0          0.0
+ M6      TestWriter.shouldWriteToElasticPort         11.4          0.0
+ M9      TestLRMovingSimMain.testSim                  3.0          3.7
+ M11     TestParallelMatcher.testParallelSlowLog      0.3         58.6                                             25%                   Test Run Conﬁguration
+ M11     TestPartitionMatcher.testParallelSlowLog     0.8         68.2
+                                                                                                                                              TSO
+ M13     TestGetFunction.test                         0.7          4.2
+ M13     TestMemoryLimit.test no abuse                0.6         57.1                                                                        ISO
+ M20     ZKTest.testBulkClusterJoining               49.0          0.0                                              0%
+ M20     ZKTest.testDiscoveryListener                49.0          0.0                                                    0 5 10   20    40      60      80       100
+ M20     ZKTest.testMembershipJoinAndLeave           50.0          0.0                                                        Maximal Test Failure Burst Length
+ M23     Issue256Test.runReconnectBlocking...9        3.2          0.5
+ M23     Issue256Test.runReconnectScenario0           5.1         16.5   Fig. 6. Distribution of maximal burst lengths across 50 tests for TSO & ISO.
+ M23     Issue256Test.runReconnectScenario1           1.6         16.5
+ M23     Issue256Test.runReconnectScenario2           1.2         15.9
+ M23     Issue256Test.runReconnectScenario3           1.6         16.1
+ M23     Issue256Test.runReconnectScenario4           1.6         15.8   Wilcoxon signed-rank test and a Kolmogorov-Smirnov (KS)
+ M23     Issue256Test.runReconnectScenario5           1.6         16.6
+ M23     Issue256Test.runReconnectScenario6           1.9         15.3
+                                                                         test on the failure rate distributions obtained in our experi-
+ M23     Issue256Test.runReconnectScenario7           1.9         14.9   ments. We chose the Wilcoxon signed-rank test because (1)
+ M23     Issue256Test.runReconnectScenario8           2.7         16.3   it is based on a pair-wise comparison of the failure rate for
+ M23     Issue256Test.runReconnectScenario9           2.3         15.7
+ M26     RetryAfterDelay...Test.shouldRetry...Date   10.9         39.1
+                                                                         individual tests, rather than an overall statistic on the failure
+                                                                         rate distribution; and (2) it intuitively captures how often
+                                                                         either TSO or ISO yields a higher failure rate, weighted by
+                                                                         the rank of the difference magnitude. By mapping the actual
+C. RQ3: Reproducing TSO Failures in ISO
+                                                                         magnitude of the difference to a rank, the test statistic is
+    After encountering a test failure from running a test suite          robust to outliers in the differences of failure rates. On our
+(TSO), developers are likely to debug the test by running it in          dataset, the test results in a p-value of 0.041. Therefore, the
+isolation (ISO), because ISO runs faster. However, it is unclear         difference between the observed failure rates for TSO and ISO
+how many flaky tests can be reproduced in ISO. Moreover,                 test executions is significant at the 0.05 level. However, the
+even when both TSO and ISO detect a test, the failure rates              Wilcoxon test’s mapping to ranks loses information on the
+in TSO and ISO can greatly differ, as shown in Figure 5 and              magnitude of difference, which is captured by the CDFs on
+Table III. The figure shows a scatterplot for the 80 tests where         which the KS test is based. For our dataset, the KS test results
+both failure rates are below 3%, and the table lists the actual          in a p-value of 2.9 × 10−12 , which strongly rejects the null
+failure rates for the other tests.                                       hypothesis that the samples come from the same distribution.
+    From Table II we see that ISO detected only 50 of the 107               We also compare the maximal burst length for TSO and ISO
+tests that TSO detected, despite both having the same number             runs. Figure 6 shows the CDFs of the maximal burst length
+of runs (4000). That is, ISO did not detect 57 tests by itself,          per test for all tests detected by both TSO and ISO. From
+but note that four tests from M1 (shown in Table III) do have            the plot, we observe that TSO reaches 82% for a maximal
+failing runs in ISO—in fact, these are OD tests that failed for          burst length of 2 test failures. However, for ISO the maximal
+all ISO runs (marked with ‘*’ in the table)—but because they             burst length tends to be longer, e.g., ISO would reach 82%
+have no passing runs, we do not consider them detected in                for a maximal burst length of 5 test failures instead. Due to
+ISO. The difference in the number of detected tests already              the larger maximal burst length for ISO test executions, if one
+shows that reproducing passing and failing runs in TSO and               aims to find whether a test can pass, it could be beneficial to
+ISO can greatly differ. Failure rates can also differ: of the 50         rerun failing tests in their test suites rather than in isolation,
+tests that ISO detected, 19 tests have their failure rates lower         especially when the number of tests in the test suite is low.
+for ISO, 3 have it equal, and 28 have it higher. For the tests           While rerunning in isolation has the advantage of reducing
+where the ISO failure rate is lower, the maximum and median              test runtime to an individual test, it entails the overhead for
+difference is 2.6pp and 0.6pp, respectively. For the tests where         a potentially longer burst length before a passing run can be
+it is higher, the maximum and median difference is 67.4pp and            observed. In contrast, if one aims to get a failure, e.g., for
+7.4pp, respectively. We analyze in detail some of the tests with         debugging, it appears more beneficial to run the tests in ISO.
+large differences in Section VI.                                         Guideline: We find that 53% of flaky tests detected in TSO
+    Because the observed failure rates are based on a sample             runs are not detected in ISO runs. We also find that the
+of runs, we also perform statistical tests to check whether the          maximal burst length tends to be longer for ISO than for TSO,
+differences are statistically significant. We conduct a paired           which suggests that developers debugging flaky tests should
+run the tests in ISO. Dually, to detect flaky tests, running tests   tests with high and low χ2 p-values for failure rates across
+in TSO tends to be better because the smaller burst length is        TCOs. Inspecting the first flaky test of a new test class takes
+more likely to lead to a passing and failing run in fewer TSRs.      about a day on average. In sum, we inspected 28 tests and
+                                                                     found 7 OD, 14 NDOD, 4 NDOI, and 3 more NOD that are
+D. RQ4: Effect of Flaky Tests on TSRs                                difficult to confirm as NDOD or NDOI. We found that low p-
+   Whether developers can merge their recent changes to a            values properly mark NDOD tests, but high p-values may not
+project typically depends on whether the entire test suite passes    be NDOI tests, especially for tests that have a small overall
+or not with their recent changes. Even one flaky-test failure        number of test failures across all TCOs.
+from a test-suite run (TSR) would prevent the developers from
+merging their recent code changes. Whether a TSR would fail          A. OD Tests
+due to flaky tests depends on the number of flaky tests in the          While this paper aims to study NOD tests, our experiments
+test suite, the failure rate of each flaky test, and how related     did encounter 7 tests categorized as OD, i.e., the failure rate for
+the flaky tests are with one another. For example, a test suite      each TCO was either 0% or 100%. Our inspection confirmed
+with 4000 runs that has two flaky tests that each fail 20 times,     that all these tests are indeed OD. 5 tests were already
+will have a minimum of 20 TSRs that fail (with exactly two           fixed [37], [38], [39] as part of our iFixFlakies work [21]; note
+failures per failed TSR) and a maximum of 40 TSRs that fail          that the iDFlakies dataset used in our experiments has older
+(with exactly one failure per failed TSR).                           commits, not the latest master. Note also that the iDFlakies
+   We study the TSR failure rates and how they relate to indi-       study [20] detected many more OD tests in the modules used
+vidual test failure rates to understand how often (1) developers     in our experiments, because the iDFlakies tool perturbs the
+would encounter TSR failures and (2) failures of different flaky     order of all test methods in a test suite, whereas our use of
+tests are related to one another. Table II shows the actual TSR      mvn test only perturbs the order of some test classes. The
+failure rate we obtained across all 4000 TSRs. Overall, we           remaining 2 tests had not been fixed, so as a contribution of
+find that developers encounter TSR failures between <0.1%            this work we provided a pull request [40] that the developers
+(only one TSR failed for M4 and M17) to 50% (2000 TSRs               already accepted.
+failed from M20). On average, developers would encounter a
+TSR failure in 5.4% of TSRs.                                         B. NDOD Tests
+   From Table II we can also see that 12 modules have only              1) High TSO Failure Rate: Table III lists three tests that
+one flaky test detected, so their minimum, maximum, and sum          have a much higher failure rate for TSO than for ISO. All
+failure rate is the same as the TSR failure rate. For the other      three tests are from the module M20 and class ZKTest. Our
+14 modules, we find that the TSR failure rate is the same as         inspection shows that all three tests fail for the same reason.
+the maximum failure rate for 21% (3 / 14) of modules (M12,           These tests check certain network operations, which require
+M16, M20). Thus, the flaky tests in these modules are related        obtaining a port number. All three tests share the same port
+to one another (i.e., when one fails, more also fail). When we       numbers, and when they use a port, they mark that by creating
+manually investigated M20’s three flaky tests, we do indeed          a file in the /tmp directory, which is never deleted. The test
+find that two tests always failed together, and the third test       code allows these tests to use 152 different ports. As a result,
+fails with them, but the third test fails in one more run and is     after all three tests are run 50 times each, they mark 150 ports,
+responsible for M20’s maximum failure rate. Specific details         and so at the 51st run two tests will pass and then one will
+of these tests are in Section VI-B1. We further find that the        fail, while from the 52nd run all three will start failing. In fact,
+TSR failure rate is the same as the sum failure rate for 43%         these failures are deterministic. Strictly speaking, the tests are
+(6 / 14) of modules. Thus, the flaky tests in these six modules      still NDOD because they both pass and fail for the exact same
+are likely independent of one another (i.e., they always fail        test order in TSO. In contrast, none of the tests fails in ISO.
+separately). For the remaining 36% (5 / 14) of modules, the          The reason is that we run each test 100 times on one virtual
+TSR failure rate is in between the potential minimum and             machine (VM) and then allocate a fresh VM for the next 100
+maximum TSR failure rates, suggesting that their flaky tests         runs. (Depending on the CI system, developers may also not
+are a mix of related and independent flaky tests.                    encounter these failures, e.g., Travis [41] uses a fresh VM for
+Guideline: At least 21% and up to 57% of test suites with            every TSR.) Thus, each test marks only 100 ports in its 100
+multiple flaky tests have flaky tests related to one another, so     runs and does not reach the 152; had we run the test in ISO
+flaky-test management systems [24], [32] could present the           for 153 or more times on the same VM, we would have also
+related flaky-test failures to help developers prioritize which      encountered failures. These examples illustrate that running
+tests to fix, e.g., first fix flaky tests that are related.          multiple tests can, in some circumstances, have a higher failure
+                                                                     rate than running only each test in isolation.
+         VI. M ANUALLY I NSPECTED F LAKY T ESTS                         2) High ISO Failure Rate: Table III also lists three tests
+  To better understand flaky tests, we manually inspected the        that have a much higher failure rate for ISO than for
+root causes of flakiness for a number of tests. We selected          TSO. Two of the tests are from the module M11, classes
+a variety of tests from different modules, including NOD             TestPartitionMatcher and TestParallelMatcher. It
+and OD tests, tests with high TSO or ISO failure rates, and          turns out that both are subclasses of an abstract class that
+defines the method testParallelSlowLog. Both tests fail               calling DateUtil.current(false) to be matched with the
+in some isolation runs, and the exception message indicates           matcher. Both calls get milliseconds and translate them into
+that some transaction was too slow. These tests run three             seconds, minutes, hours, and dates. The test fails if the two
+transactions each, and fail when one of them takes too much           calls have a different value for seconds. The two calls are
+time. The transactions take much longer in ISO runs than              executed nearby, so the chance is small that the first call
+in TSO runs for the following reason. Each transaction is             is executed right at the end of one second interval and the
+executed in a thread. In TSO runs, a previous test creates            second call right at the start of the next second interval. The
+threads and caches them, so a later test can run quicker by           probability for the test to fail depends on how much time it
+reusing the created cache. In fact, testParallelSlowLog               takes between the two method calls. In our experiments, this
+uses an API call that checks the cache prior to creating threads.     time is ∼15ms for ISO runs, i.e., the test fails if the first call
+However, in ISO runs, this test always creates a thread and           gets milliseconds that modulo 1000 give values 985–999, so
+then runs the transaction. As a result, the test fails much more      the test fails in ∼15/1000=1.5% of runs. In contrast, the code
+often in the ISO runs.                                                runs faster in TSO (due to the already discussed effects of class
+   Another test is from the module M13, class                         loading and JIT compilation), so the test fails less frequently,
+TestMemoryLimit. This test fails when some resource                   only ∼1/1000=0.1% of runs. Moreover, the failure rates differ
+bound is exceeded. Specifically, the project provides a               across the two test orders: in one order this class runs second,
+sandbox for executing JavaScript in Java, and this test checks        and the test never fails; in the other order the class runs first,
+that some execution of a JavaScript program does not exceed           so the test can fail but still less frequently than in ISO because
+a certain amount of memory. The memory check does not                 other test methods run before this test.
+consider the entire heap but only the amount of memory                   Another test is from the module M13, class TestIssue34.
+allocated by the thread that the test executes. When the test         It is similar to the previously discussed M13 test and fails if
+runs in isolation, it allocates all the memory and fails often,       a memory limit is exceeded. The test takes more memory in
+but not always, as the memory check is done every 50ms.               ISO than in TSO, as expected. Our additional experiments,
+Therefore, the test may pass the memory check at one point            after 4000 TSRs, show the test takes 840–900K in ISO runs,
+and then finish in less than 50ms, despite going over the             and 510–630K in TSO runs (when run late in a TCO). The
+memory limit after the check. When the test runs in the test          limit is 1000K, so one may expect the test to more likely fail
+suite, another test runs before it and allocates many shared          in ISO than in TSO. However, in 4000 runs, the test exceeded
+objects. Thus, the second test can use these shared objects           the memory limit in one TSO run but never in ISO. Because
+from the heap and allocates less, so it fails much less often.        of the small number of failures, the p-value is high, yet the
+   These examples illustrate how running tests in isolation can       test manifestly depends on the order and is an NDOD.
+fail more often than running in the test suite because the               4) Others: One test is already explained in Section II.
+test depends on some resource (shared memory, runtime) that           Due to space limits, we omit descriptions of 5 tests:
+can benefit from the tests that run before this test. However,        TestWriter from M6 is flaky because of timeout,
+running a test after others in a test suite could also negatively     whereas       CompletableThrowingSafeSubscriberTest,
+impact the test. In general, we cannot tell a priori whether          CompletableThrowingTest, and SingleThrowingTest
+running a test after others would be beneficial or hurtful. For       from M21 and Issue621Test from M23 are flaky because
+example, consider just the runtime. A test may run faster after       of concurrency.
+others because others can prepare shared state such as (1)
+load classes needed for test execution so the test in question        C. NDOI Tests
+need not reload those classes; (2) execute shared code and               Tests that have similar failure rates across TCOs in TSO
+trigger JIT compilation so that the execution of the test in          (and also similar in ISO) are likely NDOI. We inspect sev-
+question executes optimized code; or (3) bring files from disk        eral tests with high p-value. All four tests from the mod-
+into memory so it becomes faster to access for the test in            ule M16, class TimeSeriesGroupingIteratorTest, are
+question. On the other hand, a test may run slower after others       NDOI. These tests have (1) for each test, similar failure rates
+because others can put some pressure on the shared resources,         in the TSO and ISO runs; and (2) across all tests, similar
+e.g., (1) allocate memory so that garbage collection takes more       TSO failure rates and similar ISO failure rates. In fact, many
+time; (2) spawn threads that are not shut down so that the test       of these tests often fail together in the test suite (thus the
+in question has to compete with the other threads; (3) create         TSR failure rate for their module is the same as the maximum
+I/O requests (e.g., write to disk or send network packets) so         TSO failure rate for individual tests). Furthermore, in our
+that the requests from the test in question take more time, etc.      experiments, we find that each test fails in bursts, whether
+   3) High χ2 p-Value: We finally discuss two example tests           in TSO or ISO, i.e., a test fails 3–4 times in a row (if it fails
+that have high p-values but our inspection still finds the failures   in 100 runs at all).
+to depend on the test order. One test is from the module M15,            The error message does not hint at the root cause but
+class CronTest. The test creates a pattern matcher for time           says that some averages of numeric values differ in two data
+which itself calls DateUtil.date().second() to initialize             structures. Our inspection shows that all of the tests populate
+the matcher. The test also explicitly creates another time object     these data structures with random numbers, and the random
+seed is based on the current time. The time is taken in           existing sleep(20) in the test to make it fail determinstically.
+milliseconds and translated into seconds, minutes, hours, and     Unfortunately, reasoning precisely and analytically whether
+the date. A careful analysis of testTimeSeriesDropOff             the probability that notify is missed due to TCO is again
+and testMultipleTimeSeriesMovingAverage shows that                rather challenging because it requires determining the exe-
+they fail when the time seed translates into the range of         cution times of various events controlled by the JVM. As
+approximately 58min:20sec to 59min:55sec (for any hour            discussed in Section V-B, an empirical approach would be to
+or date); if a test is run earlier or later, it passes. (The      just run the tests many more times to observe more failures and
+reason is that each test initializes the two data structures      use a statistical analysis to check failure rates across TCOs.
+based on the time using offsets of 5sec and 100sec.)
+                                                                                     VII. T HREATS TO VALIDITY
+Most precisely, in each hour there are 95000 millisec-
+ond values for which each test fails, so assuming that               A threat to validity is that our study uses only 26 modules
+each test can be run uniformly for any millisecond, each          from 23 Maven-based, Java projects. These modules may not
+test is expected to fail in 95000/(60*60*1000)=2.64% of           be representative, causing our results to not generalize well.
+runs. In our experiments, the tests indeed have simi-             We attempt to mitigate this threat by using modules from
+lar failure rates: 2.95% in ISO and 2.72% in TSO for              iDFlakies [30], selecting them as described in Section IV-A.
+testTimeSeriesDropOff, and 2.80% in ISO and 2.72%                    As our study is on flaky tests, particularly NOD tests, it is
+in TSO for testMultipleTimeSeriesMovingAverage.                   likely that some specific numbers (e.g., number of NOD tests
+The other two tests, testManySparseTimeSeries and                 or failure rates) would change if the tests were run more times
+testAdditionalTimeSeries, behave similarly.                       or on different machines. We attempt to mitigate this threat by
+   Abstracting from the details, these tests show some example    running every test suite 4000 times in 40 batches, and every
+NDOI tests that do not depend on the test order but depend        TCO at least 100 times. For every flaky test found by TSO,
+only on the time when they are run. Such tests that absolutely    we again run it 4000 times in isolation. To the best of our
+do not depend on the order appear to be rather rare.              knowledge, this is the largest number of runs in any published
+                                                                  flaky test study. We also manually inspect 28 tests to check
+D. NOD Tests Difficult to Classify                                the root cause and categorization in Section VI.
+   We inspected three NOD tests that are difficult to classify       The findings from our RQs in Section V may be influenced
+as NDOD or NDOI. We selected these tests based on high            by the types of statistical tests that we used to interpret the
+p-values (e.g., one test has p-value of 1), but some have a low   data. We attempt to mitigate this threat by considering two
+number of failures (e.g., one test fails twice in 2000 TSRs of    statistical tests for RQ3 (Section V-C). We also make all data
+one TCO but does not fail in 100 TSRs for any of the other 20     and scripts that were used to generate the plots and figures in
+TCOs). The root cause for all three tests is concurrency [42].    our paper publicly available on our website [31] so that others
+   Two tests are from the module M5, class                        may interpret the data however they see fit.
+RepublisherImplTest. Both tests have a concurrent                                       VIII. C ONCLUSION
+order violation. Effectively, each test has two threads with         Flaky tests are caused by various sources of non-
+a shared map object that has one element before one thread        determinism, and the research community can benefit from
+calls toBePublished.remove(event), while another                  multiple studies to understand flaky tests and develop new
+checks assertEquals(0, toBePublished.size()). If                  solutions for them. Several studies of flaky test have keyed
+the execution switches from one thread to the other at a          on one group of flaky tests, order-dependent tests. We show
+particular point, the test fails with expected:<0> but            that the other group, called “non-order-dependent” tests, also
+was:<1>. We can get each test to reproducibly fail if we add      has many tests that actually do depend on the test order,
+some delay at that point. Developers likely encountered these     sometimes in complex ways. These tests have significantly
+problems before as both tests have commented sleep(2000).         different failure rates in different test orders and in isolated
+In fact, the message for one commit that commented out that       runs. To capture the complexity of these tests, we propose
+sleep is ”Speed up tests ...”; while the tests may run faster,    the term non-deterministic, order-dependent (NDOD) tests. We
+they became (more) flaky. Unfortunately, reasoning about the      manually inspect a number of flaky tests to show concrete,
+probability that a test run with two threads makes a context      real-world examples. We hope that our study motivates more
+switch at exactly some point is rather challenging, so we         researchers to tackle this practically important problem.
+cannot precisely determine if these tests are NDOD or NDOI.
+   Another test is from module M14, class WaiterTest. This                             ACKNOWLEDGMENTS
+test creates one thread that executes lock.wait(millis).             We thank Anjiang Wei for helping us debug some flaky
+The main thread has Thread.sleep(20) and then effectively         tests, Jon Bell for extensive discussions about flaky tests, and
+calls lock.notify(). However, if notify is called before          Tianyin Xu for sharing Microsoft Azure credits. This work
+wait, the signal is missed, and wait would block forever if       was partially supported by NSF grant nos. CCF-1763788 and
+it were not for the timeout of millis=1000. We can make           OAC-1839010, GEM fellowship, and Supplemental Summer
+the test to fail deterministically by adding a delay in the       Block Grant (SSBG). We acknowledge support for research
+right place in the code under test. We can also delete the        on flaky tests from Facebook and Google.
+                              R EFERENCES                                         [21] A. Shi, W. Lam, R. Oei, T. Xie, and D. Marinov, “iFixFlakies: A
+                                                                                       framework for automatically fixing order-dependent flaky tests,” in
+ [1] Q. Luo, F. Hariri, L. Eloussi, and D. Marinov, “An empirical analysis             ESEC/FSE, 2019.
+     of flaky tests,” in FSE, 2014.                                               [22] W. Lam, A. Shi, R. Oei, S. Zhang, M. D. Ernst, and T. Xie, “Dependent-
+ [2] M. Harman and P. O’Hearn, “From start-ups to scale-ups: Opportunities             test-aware regression testing techniques,” in ISSTA, 2020.
+     and open problems for static and dynamic program analysis,” in SCAM,         [23] S. Dutta, A. Shi, R. Choudhary, Z. Zhang, A. Jain, and S. Misailovic,
+     2018.                                                                             “Detecting flaky tests in probabilistic and machine learning applica-
+ [3] J. Bell, O. Legunsen, M. Hilton, L. Eloussi, T. Yung, and D. Marinov,             tions,” in ISSTA, 2020.
+     “DeFlaker: Automatically detecting flaky tests,” in ICSE, 2018.              [24] W. Lam, K. Muşlu, H. Sajnani, and S. Thummalapenta, “A study on the
+ [4] E. Kowalczyk, K. Nair, Z. Gao, L. Silberstein, T. Long, and A. Memon,             lifecycle of flaky tests,” in ICSE, 2020.
+     “Modeling and ranking flaky tests at Apple,” in ICSE SEIP, 2020.             [25] A. Shi, A. Gyori, O. Legunsen, and D. Marinov, “Detecting assumptions
+ [5] Google, “Avoiding flakey tests,” 2008. [Online]. Available: http:                 on deterministic implementations of non-deterministic specifications,” in
+     //googletesting.blogspot.com/2008/04/tott-avoiding-flakey-tests.html              ICST, 2016.
+ [6] J. Micco, “The state of continuous integration testing at Google,” in        [26] V. Terragni, P. Salza, and F. Ferrucci, “A container-based infrastructure
+     ICST, 2017. [Online]. Available: https://bit.ly/2OohAip                           for fuzzy-driven root causing of flaky tests,” in ICSE NIER, 2020.
+ [7] C. Ziftci and J. Reardon, “Who broke the build?: Automatically identify-     [27] G. Pinto, B. Miranda, S. Dissanayake, M. d’Amorim, C. Treude, and
+     ing changes that induce test failures in continuous integration at Google         A. Bertolino, “What is the vocabulary of flaky tests?” in MSR, 2020.
+     scale,” in ICSE, 2017.                                                       [28] “Maven,” 2020. [Online]. Available: https://maven.apache.org
+ [8] A. Memon, Z. Gao, B. Nguyen, S. Dhanda, E. Nickell, R. Siemborski,           [29] “Maven Surefire plugin,” 2020. [Online]. Available: https://maven.
+     and J. Micco, “Taming Google-scale continuous testing,” in ICSE SEIP,             apache.org/surefire/maven-surefire-plugin
+     2017.                                                                        [30] “iDFlakies: Flaky test dataset,” 2020. [Online]. Available: https:
+ [9] H. Jiang, X. Li, Z. Yang, and J. Xuan, “What causes my test alarm?                //sites.google.com/view/flakytestdataset
+     Automatic cause analysis for test alarms in system and integration           [31] “Flaky test statistics,” 2020. [Online]. Available: https://sites.google.
+     testing,” in ICSE, 2017.                                                          com/view/flakyteststatistics
+[10] K. Herzig, M. Greiler, J. Czerwonka, and B. Murphy, “The art of testing      [32] “Manage flaky tests,” 2019. [Online]. Available: https://docs.microsoft.
+     less without sacrificing quality,” in ICSE, 2015.                                 com/en-us/azure/devops/pipelines/test/flaky-test-management
+[11] W. Lam, P. Godefroid, S. Nath, A. Santhiar, and S. Thummalapenta,            [33] “Flaky tests,” 2020. [Online]. Available: https://docs.gitlab.com/ee/
+     “Root causing flaky tests in a large-scale industrial setting,” in ISSTA,         development/testing guide/flaky tests.html
+     2019.                                                                        [34] “Riptide,” 2020. [Online]. Available: https://github.com/zalando/riptide
+[12] K. Herzig and N. Nagappan, “Empirically detecting false test alarms          [35] “Microsoft Azure,” 2020. [Online]. Available: https://azure.microsoft.
+     using association rules,” in ICSE, 2015.                                          com
+[13] “Test Verification,” 2019. [Online]. Available: https://developer.mozilla.   [36] “JUnit Ignore annotation,” 2020. [Online]. Available: http://junit.
+     org/en-US/docs/Mozilla/QA/Test Verification                                       sourceforge.net/javadoc/org/junit/Ignore.html
+[14] Z. Gao, Y. Liang, M. B. Cohen, A. M. Memon, and Z. Wang, “Making             [37] “Pull request #2148: Fixing flaky tests in DateTest4 indian and
+     system user interactive tests repeatable: When and what should we                 DateTest5 iso8601,” 2020. [Online]. Available: https://github.com/
+     control?” in ICSE, 2015.                                                          alibaba/fastjson/pull/2148
+[15] M. Eck, F. Palomba, M. Castelluccio, and A. Bacchelli, “Understanding        [38] “Pull request #2906: Fixing flaky tests in PortTelnetHandlerTest,”
+     flaky tests: The developer’s perspective,” in ESEC/FSE, 2019.                     2020. [Online]. Available: https://github.com/apache/incubator-dubbo/
+[16] S. Zhang, D. Jalali, J. Wuttke, K. Muşlu, W. Lam, M. D. Ernst, and               pull/2906
+     D. Notkin, “Empirically revisiting the test independence assumption,”        [39] “Pull request #592: Fixing flaky test ShutdownListener-
+     in ISSTA, 2014.                                                                   ManagerTest.assertIsShutdownAlready,” 2020. [Online]. Available:
+[17] C. Huo and J. Clause, “Improving oracle quality by detecting brittle              https://github.com/elasticjob/elastic-job-lite/pull/592
+     assertions and unused inputs in tests,” in FSE, 2014.                        [40] “Pull request #3291: Fixing flaky tests in DefaultExtJSON-
+[18] A. Gyori, A. Shi, F. Hariri, and D. Marinov, “Reliable testing: Detecting         Parser parseArray,” 2020. [Online]. Available: https://github.com/
+     state-polluting tests to prevent test dependency,” in ISSTA, 2015.                alibaba/fastjson/pull/3291
+[19] A. Gambi, J. Bell, and A. Zeller, “Practical test dependency detection,”     [41] “Travis CI - Test and deploy with confidence,” 2020. [Online].
+     in ICST, 2018.                                                                    Available: https://travis-ci.org/
+[20] W. Lam, R. Oei, A. Shi, D. Marinov, and T. Xie, “iDFlakies: A                [42] S. Lu, S. Park, E. Seo, and Y. Zhou, “Learning from mistakes: A
+     framework for detecting and partially classifying flaky tests,” in ICST,          comprehensive study on real world concurrency bug characteristics,”
+     2019.                                                                             in ASPLOS, 2008.
+
