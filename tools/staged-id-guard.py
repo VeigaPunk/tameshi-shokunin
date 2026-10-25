@@ -204,7 +204,6 @@ def validate_map(registry_text, staged_text, map_doc):
         if not isinstance(target, str) or not SID_RE.fullmatch(target):
             raise Refusal('map target is not an S-id: %r' % (target,))
         mapping[bare] = target
-    whole_set = len(mapping) == len(staged)
     floor = 'S%03d' % (max([id_number(sid) for sid in list(registry) + list(staged)] + [0]) + 1)
     reasons = []
     targets = list(mapping.values())
@@ -224,10 +223,10 @@ def validate_map(registry_text, staged_text, map_doc):
             else:
                 clash.append(target)
             continue
-        if target in staged and not whole_set:
+        if target in staged:
             staged_clash.append(target)
             continue
-        if not whole_set and id_number(target) < id_number(floor):
+        if id_number(target) < id_number(floor):
             below_floor.append(target)
     if clash:
         reasons.append('map targets collide with registry ids: %s'
@@ -362,6 +361,11 @@ def selftest():
                                           undoc_map)
     case('T8_undocumented_row_refused_in_map',
          not ok9 and fields9['map_undocumented'] == ['S002'], 'reasons=%s' % reasons9)
+    whole_map = {'map': {'S002': 'S003', 'S004': 'S003'}}
+    ok10, reasons10, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, whole_map)
+    case('T12_whole_set_in_range_refused',
+         not ok10 and any('not injective' in r or 'safe floor' in r for r in reasons10),
+         'reasons=%s' % reasons10)
     partial = {'map': {}}
     ok3, reasons3, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, partial)
     case('T4_partial_map_refused', not ok3 and any('cover' in r for r in reasons3),

@@ -129,7 +129,14 @@ def m12_planned(block_text, round_no):
     field, not a substring (wave-1 RevC2Classes F2).
     """
     wanted = '**Planned (round %d):**' % (round_no + 1)
-    hits = [] if wanted in block_text else [wanted]
+    hits = []
+    index = block_text.find(wanted)
+    if index < 0:
+        hits.append(wanted)
+    else:
+        tail = block_text[index + len(wanted):].splitlines()[0].strip()
+        if not tail:
+            hits.append('%s names nothing' % wanted)
     return hits
 
 
@@ -391,6 +398,8 @@ def main():
         if raw is not None:
             record_texts[rel] = raw.decode('utf-8', 'replace')
     round_no, block = newest_round_block(scorcard)
+    if round_no != contract.get('round'):
+        block = block + '\n\nBLOCK_ROUND_MISMATCH'
     record_texts['SCORECARD.md#round-%d' % round_no] = block
     log_raw = show(lane, rev, LOG_REL)
     if log_raw is not None:
@@ -432,6 +441,9 @@ def main():
 
     # m12 — the newest round block declares the next round's planned claims.
     m12 = m12_planned(block, round_no)
+    if round_no != contract.get('round'):
+        m12.append('newest block is round %d, the contract round is %s'
+                   % (round_no, contract.get('round')))
 
     # m13 — the newest standing registry command is census-valid and load-bearing.
     m13, m13_note = m13_standing_command(scorcard, registry)

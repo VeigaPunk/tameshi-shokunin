@@ -40,7 +40,7 @@
       "target": "C2_R43_PASS=true: self_pin=1 classes=7 m6=0 m7=0 m8=0 m10=0 m11=0 m12=0 m13=0 total=0",
       "before_state": "m12=1 (the round-42 SCORECARD block carries no 'Planned (round 43)' line; the last such line is 'Planned (round 41)') and m13=1 (the newest standing sources-registry row cites the column-zero pattern grep -cE '^\\| S[0-9]{3} \\|', which counts N-1 on a mirror with one row indented two spaces where the census-valid pattern counts N)",
       "counter": ".ufo/evidence/round-43/calibration/measure.py",
-      "counter_sha256": "52961c3709a39ef76f5a1c7de94080a384244703ea1b8ab9fcd6217c23666fdf",
+      "counter_sha256": "97609511bb77e97022d355c309a7bdc9ff7a2c74c48ac9622de600d1d28ef8d0",
       "counting_command": "python3 .ufo/evidence/round-43/calibration/measure.py --lane LANE --rev REV --freeze FREEZE",
       "classes": {
         "m6": "the newest standing sources-registry row's stated row count equals the census-valid registry row count",
@@ -56,7 +56,7 @@
     "C3": {
       "axis": "operability",
       "type": "capability acquisition (pre-adoption id guard)",
-      "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds under any URL form (scheme, www., case, trailing slash), refuses its own naive arithmetic map because its targets are still staged ids, refuses a map that moves a held document off its registry id or decides an undocumented row, and admits only a by-document map at or above the safe floor",
+      "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds under any URL form (scheme, www., case, trailing slash), refuses its own naive arithmetic map because its targets are still staged ids, refuses a map that moves a held document off its registry id or decides an undocumented row, and admits only a by-document map whose every fresh target is at or above the safe floor",
       "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1",
       "counter": ".ufo/evidence/round-43/guard/measure.py",
       "counter_sha256": "ae66342df05a4ea9ff2a03799552cc14dac99f823cf0491ba4fd757a8f54161e",
@@ -65,10 +65,10 @@
       "do_nothing_control": "a constant-empty stand-in that prints collisions=[]: the counter's own extraction disagrees with it, so C3_R43_CONTROL_PASS=false by construction; receipt .ufo/evidence/round-43/control/c3-constant-empty.stdout. At the base rev the tool is absent (tool_absent=1)"
     }
   },
-  "tool_sha256": "e219007ff487a54b65e356578e6a066fe94d3306c027972148fcd1be8578169a",
+  "tool_sha256": "2e8f2e891ea20417c141e16871819182d5040c6f33916a435e9454a94d4d6ff2",
   "frozen_tools": {
     "tools/write-path-census-v4.py": "784de4c0feef3364c4444632788af7ebb57d53032b79f60cc4330c094d122fe5",
-    "tools/staged-id-guard.py": "e219007ff487a54b65e356578e6a066fe94d3306c027972148fcd1be8578169a"
+    "tools/staged-id-guard.py": "2e8f2e891ea20417c141e16871819182d5040c6f33916a435e9454a94d4d6ff2"
   },
   "no_harm": "command D (depth) and the round-21 coldread monitor (calibration) are re-run at the base and at the measurement rev; both counters read only",
   "amendments": [
@@ -143,6 +143,14 @@
       "why": "wave-1 RevC1FixtureSpec showed a live-only regression would read as `equivalent` because `detail` held fixture failures only, and MutC1F12 showed --probe-mutant still reported the dead-code-only mutant as `killed`; RevC3Counter showed the naive round trip was the tool answering itself, that `--tool-file` left tool_sha_ok pinned to the REV tool, and that the staged input had no digest",
       "rule_changed": false,
       "effect": "code aligned to the frozen sentences; predicates, targets, fixtures and controls unchanged; the guard's document rule now rejects prose that merely ends in a period"
+    },
+    {
+      "id": "A10",
+      "when": "during wave 1, before the first deciding run",
+      "what": "tools/staged-id-guard.py: the whole-set exemption from the safe-floor and staged-id checks is removed, so every fresh target must be at or above the floor; a whole-set case added to the selftest (24 cases). C2 counter: m12 additionally requires the newest SCORECARD block to be the contract's round and the planned field to name something.",
+      "why": "wave-1 CritC3Maps admitted a whole-set map whose fresh targets sat inside the staged range and below the safe floor, which contradicts C3's sentence; CritC2Gaming passed m12 with the field on a laundered `## Round 44` block and with an empty field.",
+      "rule_changed": false,
+      "effect": "code aligned to the frozen sentences; C3's predicate, target and classes unchanged; C2's class sentences unchanged in meaning. The C2 base receipt is re-run with the final counter and the new line is recorded beside the old one."
     }
   ],
   "amendments_note": "post-freeze amendments are recorded above in order, each with the seat evidence that produced it. A1-A3 change extraction rules and control paths; A4-A7 change two counters, the guard tool and their pins, all before any deciding run. No amendment changes claims.* (other than counter_sha256 and the class sentences restated verbatim), the predicate, the target, the fixture set or the controls. A8 corrects this file's own narration after wave-1 RevProvenance showed the frozen_before and this note described the chain inaccurately."
