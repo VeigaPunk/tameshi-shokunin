@@ -1848,7 +1848,7 @@ copied byte-exact into the lane repo (cmp verified) and the fleet-root copy dele
 this round deliberately did not take); the comparator lattice beyond POSIX `diff`
 (`cmp`, `git diff --exit-code`); the two named holds in the round-38 lesson.
 
-| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 109 rows at round 41 (restated from 103 by the round-41 C1 claim, whose m6 class compares this cell to the registry at the measured revision); `corpus/SOURCES.md` | fleet round 1 (kaika) |
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 103 rows at round 35 (the "103 rows" this cell carried was a round-32 observation; corrected 2026-10-23, round 35, per r34 AllFourScorecard F1); `corpus/SOURCES.md` | fleet round 1 (kaika) |
 
 ## Round 39 — depth-guard agreement (calibration) + F4 write-path census (depth) (2026-10-24)
 
@@ -1897,7 +1897,8 @@ Numeric axes, measured at `5641ed84c8dc148c34c8dd83f062279ddf06b4af`. **depth 9 
 L1 tameshi, hyaku run 6, attempt 2. Attempt 1 died with the orchestrator
 (`lane-dead-no-report tameshi round=41`, 2026-10-25T03:23:08-03:00); nothing was inherited:
 `git status --porcelain` was empty and `.ufo/waves/round-41/` did not exist at attempt-2 start.
-Two claims on distinct axes. Calibration (8) is the lane's lowest non-retired axis and carries C1;
+Two claims on distinct axes. Calibration (6, measured by the round-21 coldread monitor) is the
+lane's lowest non-retired axis and carries C1;
 the stagnation nudge does not fire because round 40 added a capability inside the window N=2.
 Contract `.ufo/evidence/round-41/contract.json`, frozen at `d4ee4e63a0a4402bd8628fbc80f06bbd8f37d937`
 before any seat scored and before the first deciding run; five pre-data amendments are recorded
@@ -1937,12 +1938,15 @@ revision's contract, so it proves the freeze commit agrees with itself, not that
 authored before the seats; the live half reads `expected`/`scratch`/`kind`/`lineno` and never the
 `resolved` text, so a constant `{811: open, 820: symlink}` table would satisfy it; `killed` is
 `returncode != 0`, so a traceback would count as a kill (all three real mutants die on their own
-fixture class, receipted); `--control` is a negative control by construction and prints `false`.
+fixture class, receipted); `--control` is a negative control by construction (a `CONTROL_PASS=true` would mean v2 reached the
+target), it reads the fixtures from the working tree rather than from `--rev`, and `fixtures_sha256`
+is pinned but never verified.
 The successor counter — out-of-process tool execution, a counter-side digest constant, `resolved`
 text inspection and an exit-plus-FAIL-line kill oracle — is routed to round 42.
-C1's own instrument limits, disclosed rather than repaired after data: the C1 counter has no
-self-pin clause (unlike C2, it does not hash its own bytes against `claims.C1.counter_sha256`), so a
-reader must compare the counter bytes to the contract pin by hand; m7 and m8 are vacuous when a
+C1's own instrument limits, disclosed rather than repaired after data: neither counter has a
+self-pin clause (C1 does not hash its own bytes against `claims.C1.counter_sha256`; C2 pins the tool
+it audits and its `V2_SHA` constant, not itself), so a reader must compare each counter's bytes to
+the contract pin by hand; m7 and m8 are vacuous when a
 round's records are absent (the run prints `records=` and this round's is 3); m8 covers four path
 prefixes and a root-file list, and it resolves directories as well as files; m9 reads the whole
 lesson rather than the round-41 section. A successor counter with a self-pin and a `records >= 1`
@@ -1974,9 +1978,10 @@ C2_R41: tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1 
 
 Both exit 0. Receipts: `.ufo/evidence/round-41/after/c1-at-baa18b7b.stdout` (exit file alongside),
 `.ufo/evidence/round-41/after/c2-at-baa18b7b.stdout`. The two runs are the deciding runs; the same
-two commands were executed again at the commit that carries this section and printed the same two
-lines (the counters read a revision and write only a temporary directory, so a re-run is the same
-measurement). The earlier run at `b37ce974` is retained as history: C2 passed there and C1 failed
+two commands were executed again at the commit that carries this section and printed the same counts
+and the same pass bit — the `rev=` field differs by design, because it echoes the revision the run
+read. The counters read a revision and write nothing to the lane (C1 writes nothing at all; C2 writes
+only a temporary directory), so a re-run is the same measurement. The earlier run at `b37ce974` is retained as history: C2 passed there and C1 failed
 `m8` on a cited wave path that had not yet been committed — the landing-order defect the wave seats
 named.
 
@@ -1984,3 +1989,5 @@ Verdicts as measured: C1 **improved** (two live mismatches → zero, with the tw
 measured at zero on this round's records); C2 **improved** (capability acquisition, five of five
 declared pin/fixture/live/mutant conditions met). Numeric depth 9 → 9, numeric calibration 6 → 6; no
 axis harmed.
+
+| sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `bash .ufo/evidence/kaika-round-1/sources-census-v2.sh` → exit 0, `SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)`; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 109 rows at round 41 (restated by appending this row, the round-35 row above is unchanged; the counter reads the last standing row) ; `corpus/SOURCES.md` | fleet round 1 (kaika) |

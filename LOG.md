@@ -2066,16 +2066,7 @@ Motivating evidence: `corpus/lessons/round-38-verifier-spotcheck.md` routed thre
 - C2 depth. `tools/write-path-census.py` pin `bc8c660c56f871f85dad8912be28446293fd63f62b4fd1c16eb153f7a27edc62`. Before: `tool_absent=1 C2_R39_PASS=false`. After: `gates=21/21 live_write_sites=99 live_unflagged=0 fixture_wrote=1 mutant_killed=1 C2_R39_PASS=true`. The 0 is the frozen pattern's count. Seats found `expected.json` and `os.replace` outside that pattern; the pin was not moved after they scored.
 - Frontier. S107 and S108 opened 2026-10-24 and mined by `corpus/knowledge/r8-golden-update-flag.md`. Staged S137 and S141 refused (payload-absent at `31687496`). Census start and end exit 0. Rows 103 → 105.
 - considerthese proposal 4 mined as QUALITY criterion 78, not edited. Settlement classifier `tools/wave-parent-settle.py` selftest 3/3. The round-38 parent-exit shape classifies UNSETTLED.
-- Command D at the measured commit: `recorded_cases=9 depth_score=9` and command C `boxes=4
-  checked=0 asserted=4 untouched=0`, both in `.ufo/evidence/round-41/census/command-d.stdout`; the
-  coldread monitor prints `6` at the base revision and `6` at the round commit, so the numeric
-  calibration axis does not move and the carried `8` is superseded as an upper bound.
-- Receipts after the deciding runs: `.ufo/evidence/round-41/after/` (one C1 and one C2 file per
-  revision, each with its `.exit`), the base and control receipts in `.ufo/evidence/round-41/before/`
-  and `.ufo/evidence/round-41/control/`, and the round-start and round-end census runs in
-  `.ufo/evidence/round-41/census/`. The C1 run at `b37ce974` is retained as history: it failed `m8`
-  on a cited wave path that was not yet committed, which is the landing-order defect the wave seats
-  named.
+- Command D at the measured commit: `recorded_cases=9 depth_score=9`. No axis harmed.
 
 ## 2026-10-24 — round 40: write-form census v2 and S108 snapshot pin
 
@@ -2085,16 +2076,7 @@ Motivating evidence: `corpus/lessons/round-39-verifier-spotcheck.md` routed one 
 - C2 freshness. Snapshot `.ufo/evidence/round-40/s108/golden_tests.zh-cn.html` sha256 `f27cf274b5dd7c28122dcb5a137971b401dad7910f7702eb4cbd3c28cd782bf0`. Before: `snapshot_absent=1 C2_R40_PASS=false`. After: `quote_in_snapshot=1 sha_ok=1 stripped_quote_fails=1 C2_R40_PASS=true`. The quote is in the tag-stripped text. S108 was not used as support for the new write-form entry.
 - Frontier. S132 and S152 opened 2026-10-24 and mined. Staged S137 refused (flip from round 39 still unmet at `31687496`). Census start exit 0, 105 rows. Scratch validate of the append exited 0 before the registry append. Census after the append exit 0.
 - considerthese proposal 3 mined as QUALITY criterion 79, not edited. L0 `d0531d78` was not re-filed.
-- Command D at the measured commit: `recorded_cases=9 depth_score=9` and command C `boxes=4
-  checked=0 asserted=4 untouched=0`, both in `.ufo/evidence/round-41/census/command-d.stdout`; the
-  coldread monitor prints `6` at the base revision and `6` at the round commit, so the numeric
-  calibration axis does not move and the carried `8` is superseded as an upper bound.
-- Receipts after the deciding runs: `.ufo/evidence/round-41/after/` (one C1 and one C2 file per
-  revision, each with its `.exit`), the base and control receipts in `.ufo/evidence/round-41/before/`
-  and `.ufo/evidence/round-41/control/`, and the round-start and round-end census runs in
-  `.ufo/evidence/round-41/census/`. The C1 run at `b37ce974` is retained as history: it failed `m8`
-  on a cited wave path that was not yet committed, which is the landing-order defect the wave seats
-  named.
+- Command D at the measured commit: `recorded_cases=9 depth_score=9`. No axis harmed.
 
 ### round 40 — resumed L1 (attempt 1 continued, provider-route failure on the first L1)
 
@@ -2107,7 +2089,6 @@ Motivating evidence: the first L1 for round 40 died on a provider-route failure 
 - Misroot sweep: `git status --porcelain` at the fleet root shows no file written by a round-40 seat. The untracked fleet-root files (`live.html`, `bm.json`, `write`, …) all carry the bulk mtime 2026-10-24 18:07:20 and are not this lane's. Nothing was copied and nothing was deleted.
 - Considerthese proposal 3 was opened, not paraphrased: the gnu.org manual address it names timed out again on 2026-10-24 (no response in 40 s); the lane's pinned alternative for that family is the raw upstream source (`S097`, `S104`). The file was not edited.
 
-
 ## 2026-10-25 — round 41: self-assessment reconciliation and variable-destination write census
 
 Motivating evidence: `corpus/lessons/round-40-verifier-spotcheck.md` routed five defects. Routed
@@ -2116,7 +2097,7 @@ defect 1 (the round-40 quarantine summary contradicts its own table) and the sta
 `## Holds` named `os.replace`'s variable destination and `os.symlink` as forms v2 cannot see, which is
 the depth claim. Attempt 1 died with the orchestrator; nothing was inherited.
 
-- Claim C1 (calibration, the lane's lowest non-retired axis at 8). The lane's self-assessment records
+- Claim C1 (calibration, the lane's lowest non-retired axis at 6 — the carried 8 is an upper bound; see the coldread receipt). The lane's self-assessment records
   must agree with observed repo state across four declared classes (m6 standing registry count, m7
   cited S-ids not mined, m8 cited paths that do not resolve, m9 the round-40 quarantine-summary
   contradiction). Before at `a3d6c690bcbf8914551d4f4e8e1612784c1c2046`:
@@ -2181,4 +2162,5 @@ the depth claim. Attempt 1 died with the orchestrator; nothing was inherited.
   (exit 0). Receipts `.ufo/evidence/round-41/after/c1-at-baa18b7b.stdout` and
   `.ufo/evidence/round-41/after/c2-at-baa18b7b.stdout`; the earlier `b37ce974` pair is retained
   (C2 true, C1 `m8=1` on a cited-but-uncommitted wave path). The same two commands re-ran at the
-  commit carrying this entry and printed the same lines.
+  commit carrying this entry and printed the same counts and pass bit (the `rev=` field differs by
+  design).

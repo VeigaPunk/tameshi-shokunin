@@ -91,4 +91,71 @@ so no predicate fails — the draft states this correctly.
 - Out of scope, untouched: C1/C2 predicate internals, the census tool's classifier, the round-40
   quarantine table, and the source-row content of S153/S154 (owned by `ReviewSourceRows`).
 
+## Addendum — re-check after the deciding run (`b37ce97` → `2ae00eb`)
+
+The lane advanced twice after the audit above: `baa18b7b` (wave-1 evidence, record corrections,
+A2/A5) and `2ae00eb` (deciding-run receipts and after section). All eight numbers were re-derived
+at `2ae00eb`; nothing below contradicts the verdict table, and the single disagreement now reads
+the corrected value in the committed block.
+
+| Number | Status at `2ae00eb` | Evidence |
+|---|---|---|
+| registry 107 (base/freeze) | unchanged AGREE; **109** at the measured revision | `git show a3d6c69:corpus/SOURCES.md \| grep -cE '^\| S[0-9]{3} \|'` → 107; `git show 2ae00eb:…` → 109; standing row `SCORECARD.md:1851` states 109, matching `m6=0`. |
+| 79/22/6 (base), max S152 (base) | unchanged AGREE; 81/22/6 and S154 at the measured revision | monitor `sources` block at `baa18b7b`/`2ae00eb`: `rows 109, mined 81, queued 22, rejected 6`; `corpus/lessons/round-41.md:42` "S001 through S154". |
+| depth 9 | unchanged AGREE | command D at `2ae00eb` → `recorded_cases=9 depth_score=9`; monitor `depth_score` 9. |
+| **calibration** | **now AGREE (6)** — the block reads "calibration 6 → 6" (`SCORECARD.md:1922-1923`) | my own monitor runs: `a3d6c69` → 6 (60/64, box3 false), `baa18b7b` → 6, `2ae00eb` → 6. The block's "prints `calibration_restraint_score: 6` at both revisions" is true for base and round commit. |
+| boxes=4 checked=0 asserted=4 | unchanged AGREE | monitor `shonen` block; command C at `2ae00eb`. |
+| v2 `40228532…`, v3 `095924a7…` | unchanged AGREE | `git show 2ae00eb:tools/write-path-census-{v2,v3}.py \| sha256sum` = the pins; C2 receipt `v2_sha_ok=1 tool_sha_ok=1`. |
+
+Finding status:
+
+- **F1 (calibration 8) — resolved.** The block now states 6 → 6, calls the carried 8 an upper bound
+  that "awards no credit", and keeps calibration as the lowest axis. Reproduced independently by
+  the scribe at both revs.
+- **F2 (After cells vs receipts) — resolved.** `.ufo/evidence/round-41/after/c1-at-baa18b7b.stdout`
+  → `m6=0 m7=0 m8=0 m9=0 total=0 records=3 sources_rows=109 … C1_R41_PASS=true`, exit 0, and the C2
+  receipt → `C2_R41_PASS=true`, exit 0. Both receipts, both `.exit` files, `census/command-d.stdout`
+  and `w1/swarm-registry.json` resolve at `2ae00eb`
+  (`git cat-file -e 2ae00eb:<path>` → 0 for all five). The after subsection exists and states the
+  measured verdicts.
+- **F3 (amendment count) — resolved.** `[a['id'] for a in contract['amendments']]` at `2ae00eb` →
+  `['A1','A2','A3','A4','A5']`; the block's prose now names A2/A5 as rule declarations.
+- **F4 (calibration bundled with depth/shas) — resolved.** The support is split; command C appears
+  only as a mark census, with `corpus/knowledge/input-keyed-coldread-credit.md` cited for why its
+  upper bound awards no credit.
+- **F5 (C1 counter pin) — resolved.** Contract `claims.C1.counter_sha256` at `2ae00eb` =
+  `9aaa99ac5a5abd16a42123fba4bf5c90151b3d043aa2d92ee99116e5789d92cd` = the committed counter bytes.
+
+Residual, cosmetic only: the claim table's `After` cells (`SCORECARD.md:1912-1913`) still carry the
+literal string "target `…`", while the measured line sits in the after subsection below. The target
+strings are now true at the measured revision (C1 `total=0 … PASS=true`; all 22 C2 target tokens
+present in the receipt with matching values), so this is presentation, not a number error. A reader
+who scans only the table sees the target rather than "measured: PASS", and the C1 receipt carries
+three fields the target string omits (`records=3`, `sources_rows=109`, `rev=`).
+
+### Tip re-pin — `812ee0d`
+
+The lane moved once more (`0c8e1be` confirmation receipts, `812ee0d` late seat report). Every number
+was re-derived at `812ee0d` and is unchanged:
+
+    git show 812ee0d:corpus/SOURCES.md | grep -cE '^\| S[0-9]{3} \|'              → 109
+    status parse of the same blob                                                → mined 81 / queued 22 / rejected 6 ; max id S154
+    git show 812ee0d:tools/mutate-and-run.sh | <command D>                       → recorded_cases=9 depth_score=9
+    git show 812ee0d:tools/write-path-census-v2.py | sha256sum                   → 4022853295882c5a…
+    git show 812ee0d:tools/write-path-census-v3.py | sha256sum                   → 095924a7a165be96…
+    git show 812ee0d:.ufo/evidence/round-41/calibration/measure.py | sha256sum   → 9aaa99ac5a5abd16… (= claims.C1.counter_sha256)
+    coldread monitor --rev 812ee0d                                               → calibration_restraint_score 6, 60/64, box3 false, depth 9, rows 109
+    monitor shonen block                                                         → boxes 4, checked 0, asserted 4, untouched 0, box3_points false
+    git cat-file -e 812ee0d:<each of the five cited receipt/wave paths>          → 0 for all five, plus this report and `ScribeScorecard.md`
+
+The deciding run itself remains the L1's at `baa18b7b` (kill rule: one default-mode run at the
+measurement revision); I did not re-run either counter at the tip.
+
+Last citation checked: the block's calibration support file is truthful at the tip —
+`git show 812ee0d:.ufo/evidence/round-41/census/command-d.stdout` →
+`# command D at b37ce974…`, `recorded_cases=9 depth_score=9`, `boxes=4 checked=0 asserted=4
+untouched=0`, `coldread score at a3d6c690 = 6`, `coldread score at b37ce974 = 6`. That is an
+independent in-lane record of the same 6 I re-derived, so the block's numeric claim rests on two
+agreeing instruments rather than on one seat's run.
+
 Report: .ufo/waves/round-41/w1/ReviewScorecardNumbers.md

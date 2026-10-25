@@ -75,6 +75,9 @@ made.
 | count-label-drift | this round's first draft of `corpus/knowledge/r41-variable-destination-writes.md` labelled the S153 quote "16 words" and the S154 quote "17 words"; the token counts are 15 and 16 (`python3 -c "print(len(s.split()))"` on both sentences) | the round-40 closure's routed defect 4 (a quote labelled "11 words" that has 13 tokens) — the same class, one round later, caught by re-counting instead of trusting the label | both labels corrected in the entry, and the wave's word-label seat re-counts every labelled quote in the round's drafts. The fix can fail: the label read 16 where the count reads 15, so a checker that recomputes tokens flags the pre-fix text |
 | counter-silent-on-wrapped-prose | the first version of the C1 counter's m9 parser searched line by line, so the round-40 summary sentence — wrapped across three lines — parsed as `None` and m9 read 0 at the base | running the counter at the base revision before freezing anything; the contract's declared before-state expected m9=1 | the parser flattens whitespace before matching, and the base run then printed `m9=1 ... total=2`, which is the frozen before-state. A parser that cannot fail shows 0 at the base and would have made m9 decorative |
 
+| replace-all-on-a-shared-closing-line | round 39 and round 40 each ended a LOG bullet with the same sentence; a `str.replace` without a count rewrote both of them with round-41 text, and the round-41 record landed with two deletions in an append-only file (`git diff --numstat a3d6c690 812ee0d1 -- LOG.md` → `95 2`) | none — no rule required an append-only check before landing; the `m6`/`m7`/`m8`/`m9` classes never look at earlier sections | the file was rebuilt from the base blob plus the round-41 section, and the numstat is now `74 0`. The fix can fail: the residual seat's `numstat` read `95 2` before the rebuild and `74 0` after, and the two restored bullets are the base bytes |
+| in-place-row-restatement | the standing `sources-registry` row was edited in place, erasing the round-32/35 errata chain it carried (`git diff --numstat` showed `94 1`) | the residual seat proved the counter reads the *last* such row, so appending restates it; the old append chain was the audit trail | the base row was restored byte-identically and a new standing row with 109 rows was appended; numstat is now `95 0` and `m6=0` still holds |
+
 ## Holds
 
 - v3 resolves destinations to depth four through assignment, `os.path.join`, `+`, `/`,
@@ -129,7 +132,8 @@ made.
   non-zero exit, so a traceback would count — the three real mutants die on `var_unflagged`,
   `symlink_unflagged` and the argument swap respectively, receipted in the wave reports.
 - `--control` is a negative control by construction (`C2_R41_CONTROL_PASS=false` is the expected
-  value, not a failure), and it reads the fixtures from the working tree rather than `--rev`.
+  value, not a failure; `true` would mean v2 reached the target), it reads the fixtures from the
+  working tree rather than from `--rev`, and `fixtures_sha256` is pinned but never verified.
 - `os.replace`/`os.rename` are recorded with both arguments as destinations, so a read of an
   expected file can be listed beside its write; no measured count changes because every such live
   site resolves `expected=False`.

@@ -10,6 +10,10 @@ deciding receipts already written at `.ufo/evidence/round-41/after/` (mtime 03:4
 `SCORECARD.md` 1946 lines with a live round-41 block at `:1895-1946`, and the worktree still
 dirty (`SCORECARD.md`, `corpus/SOURCES.md`, `corpus/lessons/round-41.md`, `contract.json`).
 
+**Closed by later landings — see "Closure" at the end.** The findings below are the state at
+`b37ce97`; F1 (C1 false on m8) and F4 (stale C1 pin) were both repaired at `2ae00eb`/`0c8e1be`,
+and the tip when this note was added is `812ee0d`.
+
 ## Findings, in severity order
 
 ### F1. The decision is already made, and C1 failed — on one m8 mismatch
@@ -247,5 +251,47 @@ Disagreeing with my draft's first version and corrected here: calibration 8 → 
   `tools/`, the contract, the counters, the fixtures, the jj state or the Git index.
 - Out of scope / not claimed: re-adjudicating the round-36/37/40 calibration rows; the C2
   mutant and challenger receipts (their seats own them); any commit, push or publish.
+
+## Closure (added after the reviewer's re-check; tip `812ee0d`)
+
+Every finding above was re-checked read-only at the tip. F1 and F4 are **closed**; F2 and F3
+stand corrected in the landed record; F5–F8 are procedural notes with no live residue.
+
+- **C1 is true at the measured revision.** `.ufo/evidence/round-41/after/c1-at-baa18b7b.stdout`
+  (read by me at `812ee0d`) → `C1_R41: m6=0 m7=0 m8=0 m9=0 total=0 records=3 sources_rows=109
+  rev=baa18b7bdd637ff175255e82b6bee3c85df0881e C1_R41_PASS=true`. The m8 object is committed:
+  `git cat-file -e 812ee0d:.ufo/waves/round-41/w1/swarm-registry.json` → present (F1 closed; the
+  fix was committing the file, as predicted).
+- **The C1 pin now matches its bytes** (F4 closed): contract `claims.C1.counter_sha256` =
+  `sha256sum` of the committed counter = `9aaa99ac5a5abd16a42123fba4bf5c90151b3d043aa2d92ee99116e5789d92cd`.
+- **All five cited paths resolve at the tip** via `git cat-file -e 812ee0d:<path>`:
+  `after/c1-at-baa18b7b.stdout` (`… PASS=true`), `after/c1-at-baa18b7b.exit` (`0`),
+  `after/c2-at-baa18b7b.stdout`, `census/command-d.stdout`, `w1/swarm-registry.json`.
+- **F2 is corroborated inside the lane's own receipt**:
+  `.ufo/evidence/round-41/census/command-d.stdout` reads `recorded_cases=9 depth_score=9`,
+  `boxes=4 checked=0 asserted=4 untouched=0`, `coldread score at a3d6c690 = 6`,
+  `coldread score at b37ce974 = 6`.
+- **Rows and verdicts:** the round-41 C1/C2 rows sit at `SCORECARD.md:1912` and `:1913` at the
+  tip, and both verdicts are now measured-true (`improved (measured)` / `improved (capability)`);
+  at `b37ce97` they were `:1909`/`:1910` with the C1 verdict contradicting its receipt.
+- **Residual, cosmetic (no number error):** the After cells at `:1912`/`:1913` still print the
+  literal `target …` string while the measured line lives in the after subsection. If the cell is
+  meant to be the result, prefix it `measured:` with the receipt path; if it is meant to be the
+  target, the wording is fine. The C1 receipt carries `records=3`, `sources_rows=109` and `rev=`
+  beyond the target string; the C2 receipt was re-derived token-by-token against all 22 target
+  fields by seat `ReviewScorecardNumbers` and matches.
+- **Finding ids differ between the two reports.** In this report F1 is the C1 m8 failure and F4
+  is the stale counter pin; in `ReviewScorecardNumbers` the calibration number is F1 and the pin
+  is F5. The substance agrees finding for finding; compare by content, not by id.
+- **One deciding run stands.** The measurement revision is `baa18b7b`: one default-mode run of
+  each counter, per the contract's kill rule. Tip `812ee0d` was read here for receipts and path
+  resolution only — it is **not** a second measurement, and nothing in this Closure should be
+  read as one.
+- **Attribution:** seat `ReviewScorecardNumbers` re-derived the same numbers independently at
+  `2ae00eb` and closed their audit; they also re-ran the cold-read monitor at `812ee0d`, `2ae00eb`
+  and `baa18b7b` and report `6` each time (60/64, `box3_full_page` false, `shonen.box3_points`
+  false), and confirmed registry 109 / 81-22-6 / S154, depth 9, v2 `40228532…`, v3 `095924a7…`
+  and `claims.C1.counter_sha256 = 9aaa99ac…`. Their addendum is
+  `.ufo/waves/round-41/w1/ReviewScorecardNumbers.md`.
 
 Report path: `.ufo/waves/round-41/w1/ScribeScorecard.md`
