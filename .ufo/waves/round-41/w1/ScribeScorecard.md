@@ -101,8 +101,10 @@ match exactly (`83268eff…` counter, `20b6254d…` fixtures, `095924a7…` tool
 `.ufo/waves/round-41/w1/` and `.ufo/evidence/round-41/after/` are untracked
 (`git status --porcelain` → `?? .ufo/waves/round-41/w1/`, `?? .ufo/evidence/round-41/after/`).
 Any record citing them fails m8 at a committed revision. This is F1's cause and also the
-precondition for my draft (which cites the after receipts as its evidence): commit both
-directories before the measured revision, or the same m8 class re-fires.
+precondition for my draft (which cites the after receipts as its evidence): commit the
+**individual files** — `w1/swarm-registry.json` and each cited `after/*.stdout` — before the
+measured revision. Rev mode needs the file path in the tree, so committing a directory alone
+does not clear m8.
 
 ### F6. m7 forbids staged ids in round-41 records; m9 needs the table's own words
 
