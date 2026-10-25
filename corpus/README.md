@@ -554,3 +554,14 @@ The ground the lane did not hold is the equivalence problem itself (S089 re-open
 the distinction between "unkillable", "unreachable" and "not yet exercised" — the last is what a
 killing fixture removes and the middle is what F12 documents. F9 (LLM-era mutant generation and
 equivalence) is not touched: no LLM was used to generate or classify a mutant here.
+
+## Round 45 — GoogleTest test-order and fixture-lifecycle ground (F3); held-row live re-verification
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/r8-gtest-order-and-seed.md` | GoogleTest's own statement that test order is undefined, that `--gtest_shuffle` reveals bad inter-test dependencies, and that the printed random seed (`--gtest_random_seed=SEED`) reproduces an order-related failure; the per-test fixture object as the isolation default | S256 |
+| `knowledge/r8-gtest-primer-independence.md` | The primer's independence/repeatability requirement, the fixture lifecycle (a fixture is deleted before the next is created; no reuse across tests) and the fatal/nonfatal assertion scope as an upstream instance of the F2 witness-scoped verdict | S257 |
+
+Frontier F3 (determinism precondition) gains its first upstream test-framework sources; F3 stays `open` — these entries state the framework's rules, they do not measure the lane's controls. The two entries are re-grounded adoptions from the shokuknow `merge/tameshi` package (staged S202, S203); the package's `r8-gtest-generator-contract.md` (staged S204) is refused this round (`corpus/lessons/round-45.md` `## Gate`).
+
+Held-row freshness: the round-45 ledger `.ufo/evidence/round-45/freshness/ledger.json` re-verifies the held external rows (mined, id ≤ S160, with a URL) against live bytes fetched 2026-10-25, one committed snapshot per row under `.ufo/evidence/round-45/freshness/sources/`; counting command `python3 .ufo/evidence/round-45/freshness/measure.py --lane LANE --rev REV`.
