@@ -15,7 +15,7 @@
       "statement": "the lane's self-assessment records agree with observed repo state: the standing sources-registry count matches the registry, no round-41 record cites an unmined S-id or an unresolvable repo path, and the round-40 quarantine-summary contradiction is corrected in the round-41 lesson",
       "predicate": "C1_R41_PASS is true iff m6, m7, m8 and m9 all count 0",
       "counter": ".ufo/evidence/round-41/calibration/measure.py",
-      "counter_sha256": "8bc9b4221c59c7b380892b7f97885e9b8ada1f5d82b0703effa166f0519ce11c",
+      "counter_sha256": "9aaa99ac5a5abd16a42123fba4bf5c90151b3d043aa2d92ee99116e5789d92cd",
       "counting_command": "python3 .ufo/evidence/round-41/calibration/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV",
       "before": "m6=1 m9=1 total=2 C1_R41_PASS=false at the base revision",
       "target": "m6=0 m7=0 m8=0 m9=0 total=0 C1_R41_PASS=true at the measurement revision",
@@ -73,7 +73,7 @@
       "found_by": "wave-1 seat MutFixtureVar",
       "before_data": true,
       "what": "the symlink fixture rooted its destination at 'tests/golden', so the directory token 'golden' satisfied EXPECTED_RE even when the destination argument was mutated to run-1.stdout; a destination-argument mutant therefore survived. The literal fixture shared the same weak root",
-      "rule_changed": false,
+      "rule_changed": true,
       "change": "both fixtures re-rooted at 'tests/fixtures'; a third mutant (`return 'os.symlink', [node.args[1]]` -> `[node.args[0]]`) and the field mutant_symlink_arg_killed added, so the predicate now proves the destination argument is resolved and not merely that the branch exists",
       "old_fixtures_sha256": "a4123ce373447563a93ad86c21cc3344f5448f1c6157ba696a7239569a58dc31",
       "new_fixtures_sha256": "20b6254d39a75fb9b09b783131a7cdcaf360c36642e39424343166515aa26329",
@@ -99,7 +99,26 @@
       "change": "work mode tests os.path.exists; a trailing slash is stripped before resolution",
       "old_sha256": "5ccb42d8a60d6d1e5e509a1ddb954a602d7e46476ee0355084810b48b8f08553",
       "new_sha256": "8bc9b4221c59c7b380892b7f97885e9b8ada1f5d82b0703effa166f0519ce11c"
+    },
+    {
+      "id": "A5",
+      "frozen_field": "claims.C1.counter_sha256",
+      "found_by": "wave-1 seats MutC1Parse and ReviewC1DoNothing",
+      "before_data": true,
+      "what": "m9's correction gate compared the lesson against the two literal strings 'six refused' and 'ten present', so a record could silence m9 with numbers that do not match the round-40 table; the seat showed a table of (1,2,1) silenced by those words",
+      "rule_changed": true,
+      "change": "the expected words are derived from the table counts (number -> word) and then required in the correction sentence; the lesson's text already matches the derived (six, ten)",
+      "old_sha256": "8bc9b4221c59c7b380892b7f97885e9b8ada1f5d82b0703effa166f0519ce11c",
+      "new_sha256": "9aaa99ac5a5abd16a42123fba4bf5c90151b3d043aa2d92ee99116e5789d92cd"
     }
   ],
-  "kill_rule_note": "no default-mode run of either counter occurred before A1/A2/A3; every pre-amendment run was --rev <base>, --rev work, --control or --selftest"
+  "kill_rule_note": "no default-mode run of either counter occurred before A1/A2/A3; every pre-amendment run was --rev <base>, --rev work, --control or --selftest",
+  "post_freeze_amendments": {
+    "freeze_commit": "d4ee4e63a0a4402bd8628fbc80f06bbd8f37d937",
+    "amendments_commit": "b37ce974b6efb8c465626d7346149549a3300a4b (A1-A4) and the pre-run commit of A5",
+    "seats_had_scored": true,
+    "what_changed": "A1 index fix, A3/A4 record and path plumbing (rule_changed false); A2 adds a third recognizer mutant and its field to the C2 predicate and target; A5 replaces m9's two hardcoded correction strings with words derived from the round-40 table. A2 and A5 are declared rule_changed true: both make the predicate stricter, neither relaxes a target.",
+    "no_deciding_run_before": true,
+    "deciding_run_order": "the first default-mode runs were at b37ce974, after A1-A5 had landed; the C2 run there passed and the C1 run there failed m8 on a cited, not-yet-committed wave path. Both receipts are retained; the measured revision is the final round commit."
+  }
 }

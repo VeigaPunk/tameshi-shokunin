@@ -1900,9 +1900,12 @@ L1 tameshi, hyaku run 6, attempt 2. Attempt 1 died with the orchestrator
 Two claims on distinct axes. Calibration (8) is the lane's lowest non-retired axis and carries C1;
 the stagnation nudge does not fire because round 40 added a capability inside the window N=2.
 Contract `.ufo/evidence/round-41/contract.json`, frozen at `d4ee4e63a0a4402bd8628fbc80f06bbd8f37d937`
-before any seat scored and before any default-mode run; three pre-data amendments are recorded
+before any seat scored and before the first deciding run; five pre-data amendments are recorded
 there (A1 the m7 status column index, A2 the symlink fixture root plus a third mutant, A3 a record
-rephrasing), none after a deciding run.
+rephrasing, A4 directory-path resolution in m8, A5 the m9 correction words derived from the table).
+A2 and A5 are declared `rule_changed: true` because they add a required conjunct to the C2 predicate
+and a field to its target, and replace m9's two hardcoded correction strings with words derived from
+the round-40 table — both stricter, neither relaxing a target or the kill rule.
 
 | Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
 |---|---|---|---|---|---|---|---|---|
@@ -1915,14 +1918,37 @@ Capabilities table — row admitted this round:
 |---|---|---|---|
 | write-path census destination resolution | resolve a write destination held in a variable through up to four assignments/`os.path.join`/`+`/`/`/f-string hops and classify it as expected-value, scratch or update-flagged, for `open`, `write_text`/`write_bytes`, `os.replace`/`os.rename` and `os.symlink`; v2 cannot connect a destination to a token that is not on the same line | deciding receipt `C2_R41: … C2_R41_PASS=true` at the round-41 measured commit, counter `.ufo/evidence/round-41/census/measure.py`, tool `tools/write-path-census-v3.py` @ `095924a7a165be96e69ff9dad67d3e513d23ba6737c35a0537f898482eef0279` | round 41 |
 
-Numeric axes: **depth 9 → 9** (command D prints `recorded_cases=9 depth_score=9` at base and at the
-round commit — the runner is not edited and no ledger leg is added); **calibration 8 → 8** (no SHONEN
-box moved: `boxes=4 checked=0 asserted=4`). The C1 gain is record agreement, not a restraint-score
-move, and the C2 gain is a capability, not a ledger count. No axis is harmed.
+Numeric axes, measured: **depth 9 → 9** (command D prints `recorded_cases=9 depth_score=9` at the base
+and at the round commit — the runner is not edited and no ledger leg is added). **calibration 6 → 6**:
+the round-21 coldread monitor prints `calibration_restraint_score: 6` at both revisions, so the
+carried `8` in earlier blocks is superseded as an upper bound (command C's `asserted_mark_upper_bound`
+awards no credit, `corpus/knowledge/input-keyed-coldread-credit.md`), and no SHONEN box moved
+(`boxes=4 checked=0 asserted=4`). Calibration remains the lowest axis at 6, which is where C1 works.
+The C1 gain is record agreement, not a restraint-score move, and the C2 gain is a capability, not a
+ledger count. No axis is harmed. Receipts: `.ufo/evidence/round-41/census/command-d.stdout`.
 
 Guardrail on the label: numeric depth stays 9 → 9 under command D, and `C2_R41_PASS` is the
 capability instrument's predicate, not the depth measure — the depth surface the label names is the
 knowledge entry (two sources, the site table, the fold threshold), which the counter does not read.
+C2's own instrument limits, disclosed rather than repaired after data: the counter imports the
+measured tool **in-process** (`exec_module`) before running the selftest and mutants, so a hostile
+tool could supply the fixture counts and patch `subprocess.run`; the tool pin is read from the same
+revision's contract, so it proves the freeze commit agrees with itself, not that the bytes were
+authored before the seats; the live half reads `expected`/`scratch`/`kind`/`lineno` and never the
+`resolved` text, so a constant `{811: open, 820: symlink}` table would satisfy it; `killed` is
+`returncode != 0`, so a traceback would count as a kill (all three real mutants die on their own
+fixture class, receipted); `--control` is a negative control by construction and prints `false`.
+The successor counter — out-of-process tool execution, a counter-side digest constant, `resolved`
+text inspection and an exit-plus-FAIL-line kill oracle — is routed to round 42.
+C1's own instrument limits, disclosed rather than repaired after data: the C1 counter has no
+self-pin clause (unlike C2, it does not hash its own bytes against `claims.C1.counter_sha256`), so a
+reader must compare the counter bytes to the contract pin by hand; m7 and m8 are vacuous when a
+round's records are absent (the run prints `records=` and this round's is 3); m8 covers four path
+prefixes and a root-file list, and it resolves directories as well as files; m9 reads the whole
+lesson rather than the round-41 section. A successor counter with a self-pin and a `records >= 1`
+gate is routed to round 42. None of these defects was used to reach the target — the two live
+mismatches (m6, m9) and the two record-audit classes were all measured on this round's records,
+and the base and deciding receipts are committed.
 Pre-data controls, receipted before the deciding run: C1's base run is its own do-nothing control
 (`m6=1 m9=1` survive any edit that does not touch them). C2's base run is `tool_absent=1`, and
 `--control` scores the same fixtures with the embedded v2 patterns →

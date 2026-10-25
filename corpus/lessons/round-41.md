@@ -82,8 +82,13 @@ made.
   reassignment, conditional assignment, dictionary and list elements, and any path
   computed by a call that does not fold to a literal stay unresolved, and the docstring
   says so. This is not a dataflow analyser.
-- `shutil.copy*`, `handle.write`, `os.remove/unlink` and shell redirects stay outside both
-  the v2 and v3 write forms. The round covers `os.symlink` destinations and nothing more.
+- `shutil.copy*`, `handle.write`, `os.remove/unlink` and shell redirects stay outside both the v2
+  and v3 write forms. The round covers `os.symlink` destinations and nothing more.
+- The tool's docstring reads stronger than the tool: the scope seat found that aliases, closures,
+  attribute reassignment, conditional assignment and non-folding helpers are resolved *sometimes* —
+  by name, at definition time, or through a stale binding. The knowledge entry states that
+  inconsistency; the docstring's blanket "NOT resolved" is the sentence a reader should not trust.
+  Correcting it means editing a sha-pinned tool, so it waits for the successor round.
 - POSIX `diff` remains the only exit lattice this lane has pinned. `cmp` and
   `git diff --exit-code` stay unmeasured.
 - The two live sites the round resolves are scratch fixtures. The capability is
@@ -99,3 +104,32 @@ made.
 - The knowledge entry is 96 lines against the 60-line cap in the seat brief; the cap was a
   brief instruction, not a repo rule, and the extra length is the prior-art and
   false-positive disclosures. The cap is waived here, explicitly, rather than silently.
+
+### C1 instrument
+
+- The C1 counter has no self-pin clause: it does not hash its own bytes against
+  `claims.C1.counter_sha256`, so the pin is enforced by a reader, not by the predicate. m7 and m8
+  are vacuous without records (this round prints `records=3`), m8 resolves directories and covers
+  four path prefixes plus a root-file list, and m9 reads the whole lesson rather than the round-41
+  section. A successor counter with a self-pin and a `records >= 1` gate is routed to round 42.
+- The coupling is one-way and textual: m8 makes C1's pass depend on the files that C2 landed (the
+  tool path and the two snapshots) being committed at the measured revision, while C2 reads no C1
+  file. C1's first deciding run failed on exactly that edge — a cited wave path not yet committed —
+  and the receipt is retained.
+- The C1 counter's predicates were re-pinned five times pre-data (A1–A5 in the contract). A5 (the
+  m9 correction words derived from the round-40 table instead of two hardcoded strings) is a
+  strictness change found by two seats before the first deciding run; it is not a narrowing.
+
+### C2 instrument
+
+- The C2 counter imports the measured tool in-process, reads its pin from the same revision's
+  contract, and checks the live sites by `expected`/`scratch`/`kind`/`lineno` without reading the
+  `resolved` text. A hostile tool could therefore satisfy it; an honest one does not, and a
+  non-author should read the three mutants' FAIL lines rather than the pass bit alone. `killed` is a
+  non-zero exit, so a traceback would count — the three real mutants die on `var_unflagged`,
+  `symlink_unflagged` and the argument swap respectively, receipted in the wave reports.
+- `--control` is a negative control by construction (`C2_R41_CONTROL_PASS=false` is the expected
+  value, not a failure), and it reads the fixtures from the working tree rather than `--rev`.
+- `os.replace`/`os.rename` are recorded with both arguments as destinations, so a read of an
+  expected file can be listed beside its write; no measured count changes because every such live
+  site resolves `expected=False`.

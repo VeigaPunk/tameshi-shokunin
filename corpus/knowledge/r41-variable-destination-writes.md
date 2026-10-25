@@ -75,7 +75,8 @@ annotated assignment and `with … as`; resolve a destination through `os.path.j
 `/`, `JoinedStr` and attribute chains to a depth of four; then classify the resolved text
 as expected-value (`expected.json`, `expected.txt`, `.expected`, `golden`, `snapshot`) or
 scratch (`/tmp`, `tempfile`, `TemporaryDirectory`, `NamedTemporaryFile`, `mkdtemp`,
-`scratch`). The update flag (`--update_goldens`, `--update-goldens`, `--update`,
+`scratch`). A `Call` node contributes its own source text plus its arguments' resolved text, so
+`pick("expected.json", …)` reads as expected whatever it returns: the record is a trace, not a path. The update flag (`--update_goldens`, `--update-goldens`, `--update`,
 `update_goldens`) is read from the whole file, not from the call site. A scratch marker
 seen anywhere in the resolution trace exempts the site, so a variable rooted in the
 scratch directory is exempted rather than mistaken for a repo-level write — while a
@@ -86,9 +87,9 @@ variable rooted at a fixture directory that is not scratch stays counted.
 Two sibling tools already resolve write destinations through assignments:
 `kotodama-shokunin/tools/harness/round_runner_conformance.py` (a five-pass constant
 fixpoint to depth 8) and `kotodama-shokunin/tools/harness/receipt_guard_adoption.py`
-(a `Resolver` class to depth 6). Both landed 2026-10-19, six days before this lane's v2.
+(a `Resolver` class to depth 6). Both landed 2026-10-19, five days before this lane's v2 (`2026-10-24`).
 v3 is a **subset** of that machinery — depth 4, no fixpoint, no `__file__`, `with_name` or
-`joinpath` — plus three things those do not do: `os.symlink` destinations, the
+`joinpath` — and it adds three things those do not do: `os.symlink` destinations, the
 expected-value / scratch / update-flag classification, and scratch tracing through the
 assignment chain. No novelty is claimed for destination resolution as a technique.
 `PROVINCE.md` forbids absorbing a sibling's gate code, and one sibling lane does not
