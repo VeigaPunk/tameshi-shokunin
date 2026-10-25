@@ -2175,3 +2175,10 @@ the depth claim. Attempt 1 died with the orchestrator; nothing was inherited.
   `.ufo/evidence/round-41/census/`. The C1 run at `b37ce974` is retained as history: it failed `m8`
   on a cited wave path that was not yet committed, which is the landing-order defect the wave seats
   named.
+- Deciding runs, both at `baa18b7bdd637ff175255e82b6bee3c85df0881e`: C1
+  `m6=0 m7=0 m8=0 m9=0 total=0 records=3 sources_rows=109 C1_R41_PASS=true` (exit 0) and C2
+  `… mutant_resolve_killed=1 mutant_symlink_killed=1 mutant_symlink_arg_killed=1 C2_R41_PASS=true`
+  (exit 0). Receipts `.ufo/evidence/round-41/after/c1-at-baa18b7b.stdout` and
+  `.ufo/evidence/round-41/after/c2-at-baa18b7b.stdout`; the earlier `b37ce974` pair is retained
+  (C2 true, C1 `m8=1` on a cited-but-uncommitted wave path). The same two commands re-ran at the
+  commit carrying this entry and printed the same lines.

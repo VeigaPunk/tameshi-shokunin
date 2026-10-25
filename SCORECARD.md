@@ -1961,3 +1961,26 @@ unbound `self.root`. The tool's `unflagged` column must be read against the base
 writes `expected.json` under an explicit `--out` directory, which the census counts as unflagged because
 an explicit output flag is not in its update-flag pattern; that is a classification gap, not a hidden update.
 
+
+### Round 41 — after the deciding run
+
+Both counters ran at `baa18b7bdd637ff175255e82b6bee3c85df0881e`, the revision that carries the wave
+evidence and the corrected records. Both passed:
+
+```
+C1_R41: m6=0 m7=0 m8=0 m9=0 total=0 records=3 sources_rows=109 rev=baa18b7bdd637ff175255e82b6bee3c85df0881e C1_R41_PASS=true
+C2_R41: tool_absent=0 tool_sha_ok=1 v2_sha_ok=1 selftest_exit=0 var_unflagged=1 var_expected=1 symlink_unflagged=1 symlink_expected=1 literal_unflagged=1 scratch_var_unflagged=0 v2_var_expected=0 v2_symlink_sites=0 live_var_lineno=811 live_var_resolved_v3=1 live_var_scratch_v3=1 live_var_sites_v2=1 live_var_expected_v2=0 live_symlink_lineno=820 live_symlink_resolved_v3=1 live_symlink_scratch_v3=1 live_symlink_sites_v2=0 mutant_resolve_killed=1 mutant_symlink_killed=1 mutant_symlink_arg_killed=1 rev=baa18b7bdd637ff175255e82b6bee3c85df0881e C2_R41_PASS=true
+```
+
+Both exit 0. Receipts: `.ufo/evidence/round-41/after/c1-at-baa18b7b.stdout` (exit file alongside),
+`.ufo/evidence/round-41/after/c2-at-baa18b7b.stdout`. The two runs are the deciding runs; the same
+two commands were executed again at the commit that carries this section and printed the same two
+lines (the counters read a revision and write only a temporary directory, so a re-run is the same
+measurement). The earlier run at `b37ce974` is retained as history: C2 passed there and C1 failed
+`m8` on a cited wave path that had not yet been committed — the landing-order defect the wave seats
+named.
+
+Verdicts as measured: C1 **improved** (two live mismatches → zero, with the two record-audit classes
+measured at zero on this round's records); C2 **improved** (capability acquisition, five of five
+declared pin/fixture/live/mutant conditions met). Numeric depth 9 → 9, numeric calibration 6 → 6; no
+axis harmed.
