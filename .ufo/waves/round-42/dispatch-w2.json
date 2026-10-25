@@ -1,0 +1,622 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "round-42-w2",
+  "policy": {
+    "source": "config",
+    "maxLanes": 256,
+    "minLanes": 16,
+    "waveMinLanes": 32,
+    "waveMaxLanes": 64,
+    "declaredMaxLanes": null,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 38,
+    "resume": 0,
+    "total": 38
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-42/w2/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-42/w2",
+    "members": {
+      "MutantAuthor": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "You are the non-author mutation tester for C2 (contract claims.C2.mutant_protocol). Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py. Write a mutants.json with exactly six mutants, two per class: class \"attr\" (the ClassInfo attribute binding: e.g. bind attributes with several distinct assignments, or never resolve self attributes), class \"method\" (ClassInfo.method_return / the self-method fold in _resolve), class \"outflag\" (Module.out_dests, _param_args, _parse_args_ns, _out_flag). Each mutant: {\"name\", \"class\", \"find\", \"replace\"}; `find` must occur EXACTLY ONCE in the v4 bytes (check with python str.count); `replace` must disable or invert that class's resolution step, not merely break syntax (a syntax error is a runtime_error, not a kill). Verify in a scratch clone: `git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /tmp/tameshi-r42w2-MutantAuthor-clone`, write .ufo/evidence/round-42/census/mutants.json there, commit, run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /tmp/tameshi-r42w2-MutantAuthor-clone --rev HEAD --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` and paste every MUTANT line and the C2_R42 line. Do NOT tune mutants to be killed: if one survives, keep it and report it. KEEP the clone. Paste the final JSON (byte-exact, fenced ```json) and its sha256 in your report so the L1 lands it unchanged.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Declare mutants.json"
+      },
+      "MutProbeAttr": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Independently of MutantAuthor, write three more attr-class mutants of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (copies under /tmp/tameshi-r42w2-MutProbeAttr-*/), e.g. drop the AugAssign exclusion, collect attributes from every class instead of the enclosing one, resolve with the caller env instead of {}. Score each with `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`. Report each PROBE line; a survivor is a battery gap — name the fixture that would kill it.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Attr probes"
+      },
+      "MutProbeMethod": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Write three method-fold mutants of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (copies under /tmp/tameshi-r42w2-MutProbeMethod-*/): accept methods with two returns (first one wins), skip the method env (resolve the return value in an empty env), fold any `x.<m>()` not just `self.<m>()`. Score each with --probe-mutant (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`). Report PROBE lines; for survivors, name a killing fixture.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Method probes"
+      },
+      "MutProbeOutflag": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Write four outflag mutants of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (copies under /tmp/tameshi-r42w2-MutProbeOutflag-*/): make _parse_args_ns always True; accept ANY call site instead of EVERY (any() for all()); add --input to OUTPUT_FLAGS; ignore keyword arguments at call sites. Score each with --probe-mutant (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`) AND with the tool's own `python3 <mutant> --selftest`. Report which detector kills which mutant.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Outflag probes"
+      },
+      "MutProbeDepth": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Mutate MAX_DEPTH in /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py from 8 to 4, 5, 6 and 7 (four copies under /tmp/tameshi-r42w2-MutProbeDepth-*/). Score each with --probe-mutant (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`). Report the smallest depth the battery accepts and whether the entry's claim \"the context-capture chain needs six\" (/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md) is accurate.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Depth probe"
+      },
+      "LabRenamedBattery": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Hypothesis: v4 resolves by structure, not by the battery's names. Copy the 10 FIXTURES from /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py into /tmp/tameshi-r42w2-LabRenamedBattery-*/, rename every identifier the critic named (root->base_path, case_dir->slot_for, publish->emit_bundle, out->target_dir, --out->--output-dir with dest output_dir, H->Harness, run->execute) consistently, and run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <f> --json` on each. Compare each single expected-value site to the original fixture's declared classification (expected/scratch/explicit_out/unflagged). Report a 10-row table original vs renamed. Also run the same renamed set through the critic's cheat if it still exists (/tmp/tameshi-r42-CriticFixtureOverfit-r1/v3flip.py) to show the cheat fails renamed fixtures.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Renamed-identifier battery"
+      },
+      "ExecLiveShift": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Copy /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/context-capture.py and tools/registry-replay.py to /tmp/tameshi-r42w2-ExecLiveShift-*/, insert 7 blank lines at the top of each, and run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <copy> --json`. The sites formerly at 1682/1685/123 must appear at 1689/1692/130 with the same classification and resolved text containing mkdtemp / --out. Also rename `case_dir` -> `slot_for` everywhere in the context-capture copy and `publish` -> `emit_bundle` in the registry-replay copy and re-run. Report the site lines before/after.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Line-shift live sites"
+      },
+      "ExecV4Robustness": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <f> --json` over every tracked .py file in /home/vgpnk/Projects/shokunin/tameshi-shokunin (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-files \"*.py\"`, cwd /home/vgpnk/Projects/shokunin/tameshi-shokunin). Report: count of files, any non-zero exit or Traceback, any output that is not valid JSON, any duplicate (lineno, kind) site within one file, and total unflagged. Then do the same with v3 text mode (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py --file <f>`) and report files where the number of expected-value sites differs between v3 and v4.",
+        "axes": [
+          "depth",
+          "operability"
+        ],
+        "milestone": "Robustness sweep"
+      },
+      "ExecV3V4Parity": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "For every tracked tools/*.py in /home/vgpnk/Projects/shokunin/tameshi-shokunin, diff the text-mode output of v3 (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py --file F`, drop its trailing totals line) against v4 (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file F`). Every differing line must be explained by one of the two new edge classes (attribute/method fold or output flag) or the depth raise; list each diff with its explanation, and flag any diff that is a regression (a site v3 called unflagged=1 correctly that v4 now hides).",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "v3/v4 parity"
+      },
+      "ScoutSiblingV4": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Read-only: run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <f> --json` over the tools/*.py files of three sibling lanes (/home/vgpnk/Projects/shokunin/kotodama-shokunin, /home/vgpnk/Projects/shokunin/kumitate-shokunin, /home/vgpnk/Projects/shokunin/tsukuroi-shokunin; skip missing). Report crashes, and for every site where v4 says scratch=1 or explicit_out=1 but v3 says unflagged=1, read the code and say whether v4 is right. Never edit siblings.",
+        "axes": [
+          "depth",
+          "adjacency"
+        ],
+        "milestone": "Sibling robustness"
+      },
+      "CriticV4Wrong": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Attack /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py for false negatives (a real hidden expected-value write that v4 now hides): construct small Python files where v4 says scratch=1 or explicit_out=1 but the write really lands in a repo path without an update flag (e.g. self.root = tempfile.mkdtemp() in __init__ but a subclass or a later non-self assignment rebinds it; `--out` with default=\"tests/\"; a module function called once from main with args.out and once via a dict/getattr; nested classes sharing an attr name). Run each with --json and report which ones v4 gets wrong. Rank by realism.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Find wrong v4 verdicts"
+      },
+      "ReplayC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Re-run, exactly, the C1 commands behind /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/c1-at-base.stdout (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev c77c2b7e64d2e356381441ecf94abac03e984606 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`), `--selftest`, and the pre-run /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/prerun/c1-at-5f739acf.stdout (`--rev 5f739acf21e878e22bd3f66249ae8bec2aaf1fc1`). Diff each against its receipt. Then run it with `--rev a21845f523b75adbd3e3f7a62af91294db224ad9` (labelled pre-run) and report the line: is m10 0 and is any mismatch left?",
+        "axes": [
+          "calibration"
+        ],
+        "milestone": "Replay C1 receipts"
+      },
+      "ReplayC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Re-run the C2 base and both control receipts in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/ and control/ with the exact commands (contract do_nothing_control; FREEZE 322b5cd32b4319a05340d249ae752d12a9e6b19f); diff against each receipt. Then run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` (pre-run) and report whether everything except the mutant fields is green.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Replay C2 receipts"
+      },
+      "ReplayCensus": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`, `grep -cE '^\\| S[0-9]{3} \\|' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md` and the 0-3-space count. Compare with the round-start receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census-sources/start.stdout and the claims in the round-42 lesson (113 rows, same warning set, zero E). Re-run the collision commands from /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md Gate and diff with /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/assimilation/collisions.",
+        "axes": [
+          "coverage",
+          "freshness"
+        ],
+        "milestone": "Replay census"
+      },
+      "ReplayNoHarm": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "At a21845f523b75adbd3e3f7a62af91294db224ad9 (scratch clone if anything writes), run SCORECARD command D (copy from /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md \"Commands, run from this repo\") and the round-21 coldread monitor `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py --repo <clone> --rev a21845f523b75adbd3e3f7a62af91294db224ad9` (check its argv in the file). Expected depth_score=9 and calibration_restraint_score=6, same as the base. Also `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --numstat c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9 -- LOG.md SCORECARD.md corpus/QUALITY.md corpus/README.md corpus/SOURCES.md PROVINCE.md SKILL.md SHONEN.md` — report every deletion.",
+        "axes": [
+          "calibration",
+          "depth"
+        ],
+        "milestone": "No-harm axes"
+      },
+      "ReopenS155": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Re-open https://pitest.org/quickstart/basic_concepts/ yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS155-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-basic-concepts.html. Then check the S155 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S155 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Re-open S155"
+      },
+      "ReopenS156": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Re-open https://pitest.org/faq/ yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS156-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-faq.html. Then check the S156 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S156 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Re-open S156"
+      },
+      "ReopenS157": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Re-open https://docs.python.org/3/library/argparse.html yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS157-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/python-argparse.html. Then check the S157 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S157 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Re-open S157"
+      },
+      "ReopenS158": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Re-open https://raw.githubusercontent.com/hcoles/pitest/f7fe5adfa5fb6e727c12d2403a48f5e4e9dd2fc6/pitest/src/main/java/org/pitest/mutationtest/DetectionStatus.java yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS158-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-DetectionStatus.java. Then check the S158 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S158 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Re-open S158"
+      },
+      "ReopenS001": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Re-open https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/; compare with /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/stryker-mutant-states.html; verify the line-26 quote \"It is not represented in your mutation score.\" and that Stryker counts a timeout as detected (the entries claim it). Check the S001 used-by change logged in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md (old -> new) against `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9 -- corpus/SOURCES.md`.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Re-open S001"
+      },
+      "ReviewPitEntryFinal": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md as landed against /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md (numbered criteria; cite the ones you apply) and /home/vgpnk/Projects/shokunin/tameshi-shokunin/PROVINCE.md. Check the three edits the wave-1 review asked for (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ReviewPitEntry.md E1-E5) were made, every lane anchor (SKILL.md:208-212, mutation-score-semantics.md:10,:71, SOURCES.md:12) says what the entry claims, and no claim outruns its source.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "PIT entry as landed"
+      },
+      "ReviewV4Entry": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md against /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py behavior: run v4 on small files to confirm each sentence in \"v4 adds three bounded steps\" and \"What is not claimed\" (e.g. class attributes, parse_known_args, inheritance really are unresolved). Check the live-site table against tools/context-capture.py and tools/registry-replay.py line numbers. Report each sentence that is false.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "v4 entry as landed"
+      },
+      "ReviewV4Source": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Surgical review of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py: any special-casing of fixture names or line numbers? any path where explicit_out is set but unflagged stays true, or vice versa? recursion guards (seen, depth) sound? duplicate records? Compare its write-form handling to v3 (/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py) — v4 must not drop any v3 write form. Name bugs with path:line.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "v4 source review"
+      },
+      "ReviewRows": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review rows S155-S158 and the round-42 note at the end of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md against /home/vgpnk/Projects/shokunin/CORPUS.md section \"SOURCES.md — where a shokunin learns\" (schema, tiers, statuses, recheck forms, used-by). Check S158's tier/kind (a source file pinned to a commit) is right, and that only rows cited by admitted entries were appended (CORPUS rule 4). Report defects.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Rows S155-S158"
+      },
+      "ReviewQuality8182": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review criteria 81 and 82 at the end of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md: run both falsifier commands exactly as written (substituting LANE=/home/vgpnk/Projects/shokunin/tameshi-shokunin) and report outputs; does each criterion state a rule a later round can fail? does 82 cite PIT and Stryker correctly (check /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/)?",
+        "axes": [
+          "calibration",
+          "depth"
+        ],
+        "milestone": "QUALITY 81-82"
+      },
+      "ReviewLessonGate": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review the `## Gate` of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: admit/reject/deferral consistent with the wave-1 gate reports in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ (ReviewPitEntry, ScoutCjkEntry, ReviewCjkGate, ScoutSurvivorEntry, ReviewSurvivorGate)? renumber map by document? the Japanese quote drift claim true (open https://zenn.dev/seckeyjp/articles/j-six-mutation-testing and grep both strings)? every backticked path resolves at a21845f523b75adbd3e3f7a62af91294db224ad9?",
+        "axes": [
+          "coverage",
+          "calibration"
+        ],
+        "milestone": "Lesson Gate"
+      },
+      "ReviewLessonLimits": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review the \"C1 instrument\" and \"C2 instrument\" limit lists and `## Mistakes` in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md against the wave-1 reports they cite (ExecC1Falsify, CriticSupersedeGaming, MutC1M10, MutC1M8, MutC1M11, CriticFixtureOverfit, MutC2Fixtures, ReviewC2Counter, CriticOracleSource in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/). Is any limit misstated, softened or missing? Is each mistake's \"shown able to fail\" evidence real?",
+        "axes": [
+          "calibration"
+        ],
+        "milestone": "Lesson limits"
+      },
+      "ReviewSupersede": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/supersede/round-41-residual-receipt.json (sha256 must be 987f82b4ce749787068d5845208382f930422d84126c94a7b2431e8d08334979, byte-exact to the draft in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ExecSupersedeDraft.md) and round-20-outcomes.json: every asserted path exists at a21845f523b75adbd3e3f7a62af91294db224ad9 and is the seat report it names (non-empty, right seat)? the superseded receipts were not edited (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9 -- .ufo/waves/round-41 .ufo/waves/round-20`)?",
+        "axes": [
+          "calibration"
+        ],
+        "milestone": "Supersede receipts"
+      },
+      "ReviewRecords": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review the `## Round 42` block of /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md and the round-42 section of /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md: every number matches its receipt under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/; the standing sources-registry row says 113 and SOURCES.md holds 113; wave-1 shape (47 seats, role mix) matches /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/spec-w1.json; no universal clause the counters do not enumerate.",
+        "axes": [
+          "calibration"
+        ],
+        "milestone": "SCORECARD/LOG records"
+      },
+      "ReviewReadmeContract": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Review the `## Round 42` section appended to /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/README.md (each claim true at a21845f523b75adbd3e3f7a62af91294db224ad9?) and the post_freeze_amendments P1-P4 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json: confirm with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff 322b5cd32b4319a05340d249ae752d12a9e6b19f a21845f523b75adbd3e3f7a62af91294db224ad9 -- .ufo/evidence/round-42/contract.json` that claims.* fields (predicate, counter_sha256, target, kill_rule) are byte-unchanged since the freeze.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "README + amendments"
+      },
+      "CriticAssimilation": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Attack the round's assimilation decisions in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md Gate: was refusing survivor-classification for a one-character quote drift proportionate, or should it have been repaired and admitted? Is leaving the cjk entry unadopted after two positive gates honest under the addendum (one theme, 1-3 entries)? Did adding S158 (not from the package) inside an assimilation entry blur provenance? Verdict per decision.",
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "Attack assimilation"
+      },
+      "CriticCalibration": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Attack C1 as a calibration improvement: the only live mismatch was one stale receipt; is superseding it a real improvement in self-assessment accuracy or bookkeeping? Does the claim satisfy the prompt rule \"a calibration claim must count mismatches between the lane's self-assessment and observed repo state\"? Could a do-nothing path reach total=0 (see /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/)? Verdict.",
+        "axes": [
+          "calibration"
+        ],
+        "milestone": "Attack C1"
+      },
+      "CriticDepth": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Attack C2 as depth/capability: does v4 add a new edge class or re-score a rule the lane holds (kaidoku r29: re-scoring is quality, not depth)? Is the capability load-bearing (does any lane gate or record use it)? Given the battery can be gamed (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/CriticFixtureOverfit.md), what evidence outside the predicate is needed for admission, and does wave 2 provide it? Verdict.",
+        "axes": [
+          "depth"
+        ],
+        "milestone": "Attack C2"
+      },
+      "CriticNoHarm": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Attack \"no axis harmed\": did any round-42 change break a pin (QUALITY criterion 80 — tool or counter digests quoted in contracts/capability rows), edit an append-only file in place, or change a closed round's evidence? Run `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --stat c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9` and inspect every modified (not added) file. Verdict.",
+        "axes": [
+          "calibration",
+          "depth"
+        ],
+        "milestone": "Attack no-harm"
+      },
+      "CriticSourced": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "The round must have one claim that rests on a SOURCES row opened this round. C2's entry cites S157 (argparse). Attack: does C2 actually rest on S157 (would the outflag edge class be wrong without it)? Or is S157 decoration? Is S158 (PIT source) a sound tier-A row? Verdict.",
+        "axes": [
+          "coverage",
+          "depth"
+        ],
+        "milestone": "Attack sourced claim"
+      },
+      "CriticAmendments": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Attack post_freeze_amendments P1-P4 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json: is any of them a rule change dressed as a citation fix (kumitate r42: a rule changed after a seat scored is not the claim's rule)? In particular P4 (the L1 authored the tool after the executor failed): does that weaken the claim? Verdict per amendment.",
+        "axes": [
+          "calibration",
+          "depth"
+        ],
+        "milestone": "Attack amendments"
+      },
+      "ScoutMisrootW2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Run `git -C /home/vgpnk/Projects/shokunin status --porcelain --untracked-files=all`; list untracked files whose content names tameshi and round 42 (wave-1 or wave-2 seat misroots). Do not move or delete anything; skip /home/vgpnk/Projects/shokunin/.scratch/ and .ufo/state/. Also list any /tmp/tameshi-r42* directories still present with their owner seat name.",
+        "axes": [
+          "operability"
+        ],
+        "milestone": "Misroot sweep"
+      },
+      "ConnectorW2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": "Read-only: scan /home/vgpnk/Projects/shokunin/*-shokunin/corpus/knowledge/ for any entry on PIT vs Stryker outcome scoring, run errors as kills, or argparse-derived destinations. Report overlaps with /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md and r42-attribute-and-outflag-destinations.md (cite, never absorb), and say whether the PIT RUN_ERROR(true) finding is new to the fleet.",
+        "axes": [
+          "adjacency"
+        ],
+        "milestone": "Fleet reuse note"
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": "template_invocation",
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "# Goal\ntameshi round 42, wave 2 (FALSIFY). Lane repo /home/vgpnk/Projects/shokunin/tameshi-shokunin. Base `c77c2b7e64d2e356381441ecf94abac03e984606`; freeze `322b5cd32b4319a05340d249ae752d12a9e6b19f`; integration tip `a21845f523b75adbd3e3f7a62af91294db224ad9` (wave-1 work landed). Contract: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json (read; never edit). Every item attacks one named thing wave 1 produced; report what survived your attack and what did not.\nClaims: C1 calibration — counter `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`; the repair is /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/supersede/round-41-residual-receipt.json. C2 depth — tool /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (written by the L1), counter `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane LANE --rev REV --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`; mutants.json does not exist yet (seat MutantAuthor writes it).\nWave-1 reports: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ ; records: /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md, the `## Round 42` block at the end of /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md, the `## 2026-10-25 — round 42` section at the end of /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md; entries /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md; rows S155-S158 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md; snapshots /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/.\nNEVER run a counter in default mode against the lane at a revision after `a21845f523b75adbd3e3f7a62af91294db224ad9` — the deciding run is the L1's. Allowed: `--rev c77c2b7e64d2e356381441ecf94abac03e984606`, `--rev 322b5cd32b4319a05340d249ae752d12a9e6b19f`, `--rev a21845f523b75adbd3e3f7a62af91294db224ad9` (labelled pre-run in your report), `--selftest`, `--tool-file`/`--text-mode`/`--probe-mutant`, and any run against a scratch clone under /tmp/tameshi-r42w2-<YourName>-* (`git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin <dir>`; delete it before you return unless your task says keep).\nRead-only seat unless your task names a scratch dir: your only lane write is your own report file. Never edit the lane checkout, the fleet repo /home/vgpnk/Projects/shokunin, a sibling lane, the shokuknow repo, the lane jj state or Git index; never git add/commit/stash/checkout/reset in the lane; never run mutating jj commands. Absolute paths only: tools start at the FLEET root.\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin — write it at /home/vgpnk/Projects/shokunin/tameshi-shokunin/<that path>.\nQuotes you check: <=25 words, located, access date 2026-10-25.\nTooling authorization (operator 2026-10-19): install or upgrade tools that help — read /home/vgpnk/.omp/agent/RULES.md first; record tool, version, channel, reason in your report. pacman guard (orchestrator 2026-10-20): all pacman transactions PAUSED host-wide — use `uv tool`/`npx`/official binary in ~/.local/bin or file an L0 question; never -Sy/-Syu/-U/-R, never downgrade, never restart a host service.\nReport: findings first, each with the exact command and its output or path:line; end with a one-line verdict `SURVIVES` (the attacked thing held) or `BROKEN: <what>`.",
+    "tasks": [
+      {
+        "name": "MutantAuthor",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nYou are the non-author mutation tester for C2 (contract claims.C2.mutant_protocol). Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py. Write a mutants.json with exactly six mutants, two per class: class \"attr\" (the ClassInfo attribute binding: e.g. bind attributes with several distinct assignments, or never resolve self attributes), class \"method\" (ClassInfo.method_return / the self-method fold in _resolve), class \"outflag\" (Module.out_dests, _param_args, _parse_args_ns, _out_flag). Each mutant: {\"name\", \"class\", \"find\", \"replace\"}; `find` must occur EXACTLY ONCE in the v4 bytes (check with python str.count); `replace` must disable or invert that class's resolution step, not merely break syntax (a syntax error is a runtime_error, not a kill). Verify in a scratch clone: `git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /tmp/tameshi-r42w2-MutantAuthor-clone`, write .ufo/evidence/round-42/census/mutants.json there, commit, run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /tmp/tameshi-r42w2-MutantAuthor-clone --rev HEAD --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` and paste every MUTANT line and the C2_R42 line. Do NOT tune mutants to be killed: if one survives, keep it and report it. KEEP the clone. Paste the final JSON (byte-exact, fenced ```json) and its sha256 in your report so the L1 lands it unchanged.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Declare mutants.json\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/MutantAuthor.md"
+      },
+      {
+        "name": "MutProbeAttr",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nIndependently of MutantAuthor, write three more attr-class mutants of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (copies under /tmp/tameshi-r42w2-MutProbeAttr-*/), e.g. drop the AugAssign exclusion, collect attributes from every class instead of the enclosing one, resolve with the caller env instead of {}. Score each with `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`. Report each PROBE line; a survivor is a battery gap — name the fixture that would kill it.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Attr probes\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/MutProbeAttr.md"
+      },
+      {
+        "name": "MutProbeMethod",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nWrite three method-fold mutants of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (copies under /tmp/tameshi-r42w2-MutProbeMethod-*/): accept methods with two returns (first one wins), skip the method env (resolve the return value in an empty env), fold any `x.<m>()` not just `self.<m>()`. Score each with --probe-mutant (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`). Report PROBE lines; for survivors, name a killing fixture.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Method probes\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/MutProbeMethod.md"
+      },
+      {
+        "name": "MutProbeOutflag",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nWrite four outflag mutants of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py (copies under /tmp/tameshi-r42w2-MutProbeOutflag-*/): make _parse_args_ns always True; accept ANY call site instead of EVERY (any() for all()); add --input to OUTPUT_FLAGS; ignore keyword arguments at call sites. Score each with --probe-mutant (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`) AND with the tool's own `python3 <mutant> --selftest`. Report which detector kills which mutant.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Outflag probes\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/MutProbeOutflag.md"
+      },
+      {
+        "name": "MutProbeDepth",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nMutate MAX_DEPTH in /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py from 8 to 4, 5, 6 and 7 (four copies under /tmp/tameshi-r42w2-MutProbeDepth-*/). Score each with --probe-mutant (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f --probe-mutant <file>`). Report the smallest depth the battery accepts and whether the entry's claim \"the context-capture chain needs six\" (/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md) is accurate.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Depth probe\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/MutProbeDepth.md"
+      },
+      {
+        "name": "LabRenamedBattery",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nHypothesis: v4 resolves by structure, not by the battery's names. Copy the 10 FIXTURES from /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py into /tmp/tameshi-r42w2-LabRenamedBattery-*/, rename every identifier the critic named (root->base_path, case_dir->slot_for, publish->emit_bundle, out->target_dir, --out->--output-dir with dest output_dir, H->Harness, run->execute) consistently, and run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <f> --json` on each. Compare each single expected-value site to the original fixture's declared classification (expected/scratch/explicit_out/unflagged). Report a 10-row table original vs renamed. Also run the same renamed set through the critic's cheat if it still exists (/tmp/tameshi-r42-CriticFixtureOverfit-r1/v3flip.py) to show the cheat fails renamed fixtures.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Renamed-identifier battery\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/LabRenamedBattery.md"
+      },
+      {
+        "name": "ExecLiveShift",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nCopy /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/context-capture.py and tools/registry-replay.py to /tmp/tameshi-r42w2-ExecLiveShift-*/, insert 7 blank lines at the top of each, and run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <copy> --json`. The sites formerly at 1682/1685/123 must appear at 1689/1692/130 with the same classification and resolved text containing mkdtemp / --out. Also rename `case_dir` -> `slot_for` everywhere in the context-capture copy and `publish` -> `emit_bundle` in the registry-replay copy and re-run. Report the site lines before/after.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: depth\nMilestone: Line-shift live sites\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ExecLiveShift.md"
+      },
+      {
+        "name": "ExecV4Robustness",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRun `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <f> --json` over every tracked .py file in /home/vgpnk/Projects/shokunin/tameshi-shokunin (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-files \"*.py\"`, cwd /home/vgpnk/Projects/shokunin/tameshi-shokunin). Report: count of files, any non-zero exit or Traceback, any output that is not valid JSON, any duplicate (lineno, kind) site within one file, and total unflagged. Then do the same with v3 text mode (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py --file <f>`) and report files where the number of expected-value sites differs between v3 and v4.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: depth, operability\nMilestone: Robustness sweep\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ExecV4Robustness.md"
+      },
+      {
+        "name": "ExecV3V4Parity",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nFor every tracked tools/*.py in /home/vgpnk/Projects/shokunin/tameshi-shokunin, diff the text-mode output of v3 (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py --file F`, drop its trailing totals line) against v4 (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file F`). Every differing line must be explained by one of the two new edge classes (attribute/method fold or output flag) or the depth raise; list each diff with its explanation, and flag any diff that is a regression (a site v3 called unflagged=1 correctly that v4 now hides).\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: depth\nMilestone: v3/v4 parity\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ExecV3V4Parity.md"
+      },
+      {
+        "name": "ScoutSiblingV4",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRead-only: run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py --file <f> --json` over the tools/*.py files of three sibling lanes (/home/vgpnk/Projects/shokunin/kotodama-shokunin, /home/vgpnk/Projects/shokunin/kumitate-shokunin, /home/vgpnk/Projects/shokunin/tsukuroi-shokunin; skip missing). Report crashes, and for every site where v4 says scratch=1 or explicit_out=1 but v3 says unflagged=1, read the code and say whether v4 is right. Never edit siblings.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth, adjacency\nMilestone: Sibling robustness\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ScoutSiblingV4.md"
+      },
+      {
+        "name": "CriticV4Wrong",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAttack /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py for false negatives (a real hidden expected-value write that v4 now hides): construct small Python files where v4 says scratch=1 or explicit_out=1 but the write really lands in a repo path without an update flag (e.g. self.root = tempfile.mkdtemp() in __init__ but a subclass or a later non-self assignment rebinds it; `--out` with default=\"tests/\"; a module function called once from main with args.out and once via a dict/getattr; nested classes sharing an attr name). Run each with --json and report which ones v4 gets wrong. Rank by realism.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Find wrong v4 verdicts\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticV4Wrong.md"
+      },
+      {
+        "name": "ReplayC1",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-run, exactly, the C1 commands behind /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/c1-at-base.stdout (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev c77c2b7e64d2e356381441ecf94abac03e984606 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f`), `--selftest`, and the pre-run /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/prerun/c1-at-5f739acf.stdout (`--rev 5f739acf21e878e22bd3f66249ae8bec2aaf1fc1`). Diff each against its receipt. Then run it with `--rev a21845f523b75adbd3e3f7a62af91294db224ad9` (labelled pre-run) and report the line: is m10 0 and is any mismatch left?\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration\nMilestone: Replay C1 receipts\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReplayC1.md"
+      },
+      {
+        "name": "ReplayC2",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-run the C2 base and both control receipts in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/before/ and control/ with the exact commands (contract do_nothing_control; FREEZE 322b5cd32b4319a05340d249ae752d12a9e6b19f); diff against each receipt. Then run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev a21845f523b75adbd3e3f7a62af91294db224ad9 --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f` (pre-run) and report whether everything except the mutant fields is green.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Replay C2 receipts\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReplayC2.md"
+      },
+      {
+        "name": "ReplayCensus",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRun `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`, `grep -cE '^\\| S[0-9]{3} \\|' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md` and the 0-3-space count. Compare with the round-start receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census-sources/start.stdout and the claims in the round-42 lesson (113 rows, same warning set, zero E). Re-run the collision commands from /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md Gate and diff with /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/assimilation/collisions.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage, freshness\nMilestone: Replay census\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReplayCensus.md"
+      },
+      {
+        "name": "ReplayNoHarm",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAt a21845f523b75adbd3e3f7a62af91294db224ad9 (scratch clone if anything writes), run SCORECARD command D (copy from /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md \"Commands, run from this repo\") and the round-21 coldread monitor `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py --repo <clone> --rev a21845f523b75adbd3e3f7a62af91294db224ad9` (check its argv in the file). Expected depth_score=9 and calibration_restraint_score=6, same as the base. Also `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --numstat c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9 -- LOG.md SCORECARD.md corpus/QUALITY.md corpus/README.md corpus/SOURCES.md PROVINCE.md SKILL.md SHONEN.md` — report every deletion.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration, depth\nMilestone: No-harm axes\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReplayNoHarm.md"
+      },
+      {
+        "name": "ReopenS155",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-open https://pitest.org/quickstart/basic_concepts/ yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS155-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-basic-concepts.html. Then check the S155 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S155 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Re-open S155\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReopenS155.md"
+      },
+      {
+        "name": "ReopenS156",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-open https://pitest.org/faq/ yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS156-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-faq.html. Then check the S156 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S156 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Re-open S156\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReopenS156.md"
+      },
+      {
+        "name": "ReopenS157",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-open https://docs.python.org/3/library/argparse.html yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS157-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/python-argparse.html. Then check the S157 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S157 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Re-open S157\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReopenS157.md"
+      },
+      {
+        "name": "ReopenS158",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-open https://raw.githubusercontent.com/hcoles/pitest/f7fe5adfa5fb6e727c12d2403a48f5e4e9dd2fc6/pitest/src/main/java/org/pitest/mutationtest/DetectionStatus.java yourself (curl -fsSL -m 60, save under /tmp/tameshi-r42w2-ReopenS158-*/). Compare sha256 with the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-DetectionStatus.java. Then check the S158 row in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md (11 cells, no pipe inside a cell, anchor, teaches, used-by files exist) and every quote attributed to S158 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md and /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: verbatim? <=25 words? the cited snapshot line number correct? Report each quote.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Re-open S158\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReopenS158.md"
+      },
+      {
+        "name": "ReopenS001",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRe-open https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/; compare with /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/stryker-mutant-states.html; verify the line-26 quote \"It is not represented in your mutation score.\" and that Stryker counts a timeout as detected (the entries claim it). Check the S001 used-by change logged in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md (old -> new) against `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9 -- corpus/SOURCES.md`.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Re-open S001\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReopenS001.md"
+      },
+      {
+        "name": "ReviewPitEntryFinal",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md as landed against /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md (numbered criteria; cite the ones you apply) and /home/vgpnk/Projects/shokunin/tameshi-shokunin/PROVINCE.md. Check the three edits the wave-1 review asked for (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ReviewPitEntry.md E1-E5) were made, every lane anchor (SKILL.md:208-212, mutation-score-semantics.md:10,:71, SOURCES.md:12) says what the entry claims, and no claim outruns its source.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: PIT entry as landed\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewPitEntryFinal.md"
+      },
+      {
+        "name": "ReviewV4Entry",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md against /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py behavior: run v4 on small files to confirm each sentence in \"v4 adds three bounded steps\" and \"What is not claimed\" (e.g. class attributes, parse_known_args, inheritance really are unresolved). Check the live-site table against tools/context-capture.py and tools/registry-replay.py line numbers. Report each sentence that is false.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: v4 entry as landed\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewV4Entry.md"
+      },
+      {
+        "name": "ReviewV4Source",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nSurgical review of /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py: any special-casing of fixture names or line numbers? any path where explicit_out is set but unflagged stays true, or vice versa? recursion guards (seen, depth) sound? duplicate records? Compare its write-form handling to v3 (/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v3.py) — v4 must not drop any v3 write form. Name bugs with path:line.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: v4 source review\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewV4Source.md"
+      },
+      {
+        "name": "ReviewRows",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview rows S155-S158 and the round-42 note at the end of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md against /home/vgpnk/Projects/shokunin/CORPUS.md section \"SOURCES.md — where a shokunin learns\" (schema, tiers, statuses, recheck forms, used-by). Check S158's tier/kind (a source file pinned to a commit) is right, and that only rows cited by admitted entries were appended (CORPUS rule 4). Report defects.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Rows S155-S158\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewRows.md"
+      },
+      {
+        "name": "ReviewQuality8182",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview criteria 81 and 82 at the end of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md: run both falsifier commands exactly as written (substituting LANE=/home/vgpnk/Projects/shokunin/tameshi-shokunin) and report outputs; does each criterion state a rule a later round can fail? does 82 cite PIT and Stryker correctly (check /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/)?\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration, depth\nMilestone: QUALITY 81-82\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewQuality8182.md"
+      },
+      {
+        "name": "ReviewLessonGate",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview the `## Gate` of /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md: admit/reject/deferral consistent with the wave-1 gate reports in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ (ReviewPitEntry, ScoutCjkEntry, ReviewCjkGate, ScoutSurvivorEntry, ReviewSurvivorGate)? renumber map by document? the Japanese quote drift claim true (open https://zenn.dev/seckeyjp/articles/j-six-mutation-testing and grep both strings)? every backticked path resolves at a21845f523b75adbd3e3f7a62af91294db224ad9?\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage, calibration\nMilestone: Lesson Gate\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewLessonGate.md"
+      },
+      {
+        "name": "ReviewLessonLimits",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview the \"C1 instrument\" and \"C2 instrument\" limit lists and `## Mistakes` in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md against the wave-1 reports they cite (ExecC1Falsify, CriticSupersedeGaming, MutC1M10, MutC1M8, MutC1M11, CriticFixtureOverfit, MutC2Fixtures, ReviewC2Counter, CriticOracleSource in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/). Is any limit misstated, softened or missing? Is each mistake's \"shown able to fail\" evidence real?\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration\nMilestone: Lesson limits\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewLessonLimits.md"
+      },
+      {
+        "name": "ReviewSupersede",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/supersede/round-41-residual-receipt.json (sha256 must be 987f82b4ce749787068d5845208382f930422d84126c94a7b2431e8d08334979, byte-exact to the draft in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/ExecSupersedeDraft.md) and round-20-outcomes.json: every asserted path exists at a21845f523b75adbd3e3f7a62af91294db224ad9 and is the seat report it names (non-empty, right seat)? the superseded receipts were not edited (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9 -- .ufo/waves/round-41 .ufo/waves/round-20`)?\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration\nMilestone: Supersede receipts\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewSupersede.md"
+      },
+      {
+        "name": "ReviewRecords",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview the `## Round 42` block of /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md and the round-42 section of /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md: every number matches its receipt under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/; the standing sources-registry row says 113 and SOURCES.md holds 113; wave-1 shape (47 seats, role mix) matches /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/spec-w1.json; no universal clause the counters do not enumerate.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration\nMilestone: SCORECARD/LOG records\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewRecords.md"
+      },
+      {
+        "name": "ReviewReadmeContract",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nReview the `## Round 42` section appended to /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/README.md (each claim true at a21845f523b75adbd3e3f7a62af91294db224ad9?) and the post_freeze_amendments P1-P4 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json: confirm with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff 322b5cd32b4319a05340d249ae752d12a9e6b19f a21845f523b75adbd3e3f7a62af91294db224ad9 -- .ufo/evidence/round-42/contract.json` that claims.* fields (predicate, counter_sha256, target, kill_rule) are byte-unchanged since the freeze.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: README + amendments\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ReviewReadmeContract.md"
+      },
+      {
+        "name": "CriticAssimilation",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAttack the round's assimilation decisions in /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md Gate: was refusing survivor-classification for a one-character quote drift proportionate, or should it have been repaired and admitted? Is leaving the cjk entry unadopted after two positive gates honest under the addendum (one theme, 1-3 entries)? Did adding S158 (not from the package) inside an assimilation entry blur provenance? Verdict per decision.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: Attack assimilation\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticAssimilation.md"
+      },
+      {
+        "name": "CriticCalibration",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAttack C1 as a calibration improvement: the only live mismatch was one stale receipt; is superseding it a real improvement in self-assessment accuracy or bookkeeping? Does the claim satisfy the prompt rule \"a calibration claim must count mismatches between the lane's self-assessment and observed repo state\"? Could a do-nothing path reach total=0 (see /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/control/)? Verdict.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration\nMilestone: Attack C1\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticCalibration.md"
+      },
+      {
+        "name": "CriticDepth",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAttack C2 as depth/capability: does v4 add a new edge class or re-score a rule the lane holds (kaidoku r29: re-scoring is quality, not depth)? Is the capability load-bearing (does any lane gate or record use it)? Given the battery can be gamed (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-42/w1/CriticFixtureOverfit.md), what evidence outside the predicate is needed for admission, and does wave 2 provide it? Verdict.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: depth\nMilestone: Attack C2\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticDepth.md"
+      },
+      {
+        "name": "CriticNoHarm",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAttack \"no axis harmed\": did any round-42 change break a pin (QUALITY criterion 80 — tool or counter digests quoted in contracts/capability rows), edit an append-only file in place, or change a closed round's evidence? Run `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --stat c77c2b7e64d2e356381441ecf94abac03e984606 a21845f523b75adbd3e3f7a62af91294db224ad9` and inspect every modified (not added) file. Verdict.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration, depth\nMilestone: Attack no-harm\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticNoHarm.md"
+      },
+      {
+        "name": "CriticSourced",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nThe round must have one claim that rests on a SOURCES row opened this round. C2's entry cites S157 (argparse). Attack: does C2 actually rest on S157 (would the outflag edge class be wrong without it)? Or is S157 decoration? Is S158 (PIT source) a sound tier-A row? Verdict.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage, depth\nMilestone: Attack sourced claim\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticSourced.md"
+      },
+      {
+        "name": "CriticAmendments",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nAttack post_freeze_amendments P1-P4 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/contract.json: is any of them a rule change dressed as a citation fix (kumitate r42: a rule changed after a seat scored is not the claim's rule)? In particular P4 (the L1 authored the tool after the executor failed): does that weaken the claim? Verdict per amendment.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: calibration, depth\nMilestone: Attack amendments\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/CriticAmendments.md"
+      },
+      {
+        "name": "ScoutMisrootW2",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRun `git -C /home/vgpnk/Projects/shokunin status --porcelain --untracked-files=all`; list untracked files whose content names tameshi and round 42 (wave-1 or wave-2 seat misroots). Do not move or delete anything; skip /home/vgpnk/Projects/shokunin/.scratch/ and .ufo/state/. Also list any /tmp/tameshi-r42* directories still present with their owner seat name.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: Misroot sweep\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ScoutMisrootW2.md"
+      },
+      {
+        "name": "ConnectorW2",
+        "agent": "connector",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Task\nRead-only: scan /home/vgpnk/Projects/shokunin/*-shokunin/corpus/knowledge/ for any entry on PIT vs Stryker outcome scoring, run errors as kills, or argparse-derived destinations. Report overlaps with /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/pit-outcome-vocabulary.md and r42-attribute-and-outflag-destinations.md (cite, never absorb), and say whether the PIT RUN_ERROR(true) finding is new to the fleet.\n\nReturn a concise finding with the exact command or path:line. Do not edit the live lane checkout. Write your report at the Report path, which is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: adjacency\nMilestone: Fleet reuse note\n\nReport: write your scoped findings to .ufo/waves/round-42/w2/ConnectorW2.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}
