@@ -2018,3 +2018,29 @@ resolver from a name- and line-special-casing tool, so a renamed-identifier fals
 outside the predicate; and the oracle is stricter than both vendors on timeouts.
 
 | sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` → exit 0, zero E codes; row count from the re-derivable command `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → 113 rows at round 42 (restated by appending this row; the round-41 row above is unchanged; the counter reads the last standing row) ; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+
+### Round 42 — after the deciding run
+
+Both counters ran at `242c1b4a1bb793d6ca4ac4e3b0da153767e78739`, the revision that carries the
+wave evidence, the declared mutants and the corrected records:
+
+```
+C1_R42: self_pin=1 m6=0 m7=0 m8=0 m10=0 m11=0 total=0 records=6 sources_rows=113 rev=242c1b4a1bb793d6ca4ac4e3b0da153767e78739 freeze=322b5cd32b4319a05340d249ae752d12a9e6b19f C1_R42_PASS=true
+C2_R42: self_pin=1 tool_absent=0 tool_sha256=784de4c0feef3364c4444632788af7ebb57d53032b79f60cc4330c094d122fe5 v3_sha_ok=1 v2_sha_ok=1 selftest_exit=0 fixtures_pass=10/10 run_errors=0 live_1682_ok=1 live_1685_ok=1 live_123_ok=1 live_unflagged_v3=3 live_unflagged_v4=0 live_tool_errors_v4=0 mutants_declared=6 mutants_killed=4 mutant_classes_killed=attr,method,outflag rev=242c1b4a1bb793d6ca4ac4e3b0da153767e78739 freeze=322b5cd32b4319a05340d249ae752d12a9e6b19f C2_R42_PASS=false
+```
+
+C1 exit 0; C2 exit 1. Receipts: `.ufo/evidence/round-42/after/c1-at-242c1b4a.stdout` and
+`.ufo/evidence/round-42/after/c2-at-242c1b4a.stdout` (exit files alongside). These are the
+deciding runs.
+
+Verdicts as measured: C1 **improved** (m10=1 → 0; the superseding receipt
+`.ufo/waves/round-42/supersede/round-41-residual-receipt.json` covers the stale residual
+receipt; all six round-41/42 records audit clean). C2 **missed** — the declared mutant set
+is 4 of 6 killed, so `C2_R42_PASS=false` and the capability target is not met: the
+survivors are `outflag_no_parse_args_check` (killable only by a fixture that registers
+`--out` and reads `.out` off a non-parse_args object) and `method_fold_several_returns`
+(differs only on dead code). The miss is reported, not narrowed; the surviving mutants stay
+committed unchanged (`.ufo/evidence/round-42/census/mutants.json`). Numeric axes unchanged:
+depth 9 → 9, calibration 6 → 6 (command D and the round-21 coldread monitor at the base
+and at the round commit); no axis is harmed. The v4 tool's wider false-negative classes are
+recorded in the lesson and the knowledge entry, outside the frozen claim.

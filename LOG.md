@@ -2213,3 +2213,7 @@ inherited (`jj-lane.sh state`: local=remote=`c77c2b7e`, tracked=0 untracked=0).
 - Wave 1: 47 seats in one `task` call (13 scout, 8 reviewer, 7 executor, 6 mutation-tester, 6 critic,
   6 scribe, 1 connector), 47 completed, 0 dead (`.ufo/waves/round-42/spec-w1.json`,
   `.ufo/waves/round-42/dispatch-w1.json`).
+
+- Deciding run at `242c1b4a1bb793d6ca4ac4e3b0da153767e78739` (the revision carrying the wave evidence, the declared mutants and the corrected records): C1 PASS true exit 0; C2 PASS false exit 1 (`mutants_declared=6 mutants_killed=4`; survivors `outflag_no_parse_args_check` and `method_fold_several_returns` — see `corpus/lessons/round-42.md` C2 instrument). Receipts `.ufo/evidence/round-42/after/c1-at-242c1b4a.{stdout,exit}`, `.ufo/evidence/round-42/after/c2-at-242c1b4a.{stdout,exit}`.
+- Wave 2: 38 seats in one `task` call (14 reviewer, 7 scout, 7 critic, 6 mutation-tester, 3 executor, 1 connector), 37 completed, 1 dead (`ReviewLessonLimits`, provider error, stays dead). Round total 85 seats; both waves validated under policy v1 (`.ufo/waves/round-42/spec-w2.json`, `.ufo/waves/round-42/dispatch-w2.json`).
+- C2 verdict: honest miss (4/6 declared mutants killed). The v4 tool still resolves the three live v3 false positives and passes its ten fixtures; the claim's mutant gate is not met.
