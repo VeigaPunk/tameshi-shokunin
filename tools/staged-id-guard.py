@@ -108,7 +108,8 @@ def document_key(cells):
     # without a slash or dot is not a document, and a renumber decision tied to
     # prose would be arithmetic. No hash stripping here: `report-1234567.md` and
     # `report-7654321.md` are different documents (round-43 sentinel finding).
-    openable = '/' in head or re.search(r'\.[A-Za-z0-9]{2,6}$', head)
+    openable = '/' in head or (' ' not in head and
+                                re.search(r'\.[A-Za-z0-9]{2,6}$', head))
     return head if len(head) > 8 and openable else ''
 
 
@@ -183,8 +184,9 @@ def validate_map(registry_text, staged_text, map_doc):
       * a target that is a registry id is admissible only when the staged row's
         document is the document of that registry row (dedupe: adopt nothing),
         and a held document may not be moved off its registry id at all;
-      * any other target must be a fresh id — above the safe floor for a partial
-        map, and never an id another staged row still holds;
+      * any other target must be a fresh id — at or above the safe floor, and
+        never an id another staged row still holds (there is no whole-set
+        exemption);
       * a row with no document cannot be decided by a map at all.
     """
     base = analyse(registry_text, staged_text)
@@ -404,13 +406,14 @@ def selftest():
 def _no_duplicate_keys(pairs):
     seen = set()
     for key, _value in pairs:
-        if key in seen:
-            raise Refusal('map file repeats the key %r' % key)
-        seen.add(key)
+        bare = key[7:] if isinstance(key, str) and key.startswith('staged:') else key
+        if bare in seen:
+            raise Refusal('map file repeats the key %r (as %r)' % (key, bare))
+        seen.add(bare)
     return dict(pairs)
 
 
-def read_text(path, limit=MAX_TEXT):
+def read_bytes(path, limit=MAX_TEXT):
     try:
         info = os.stat(path)
     except OSError as exc:
@@ -420,10 +423,16 @@ def read_text(path, limit=MAX_TEXT):
     if info.st_size > limit:
         raise Refusal('%s is larger than %d bytes' % (path, limit))
     try:
-        with open(path, encoding='utf-8') as handle:
+        with open(path, 'rb') as handle:
             return handle.read()
     except OSError as exc:
         raise Refusal('cannot read %s: %s' % (path, exc))
+
+
+def read_text(path, limit=MAX_TEXT):
+    raw = read_bytes(path, limit)
+    try:
+        return raw.decode('utf-8')
     except UnicodeDecodeError as exc:
         raise Refusal('%s is not valid UTF-8: %s' % (path, exc))
 
@@ -468,8 +477,8 @@ def main(argv=None):
             print(json.dumps({'verdict': 'setup_refusal', 'reason': str(exc)},
                              sort_keys=True))
         return 2
-    result['registry_sha256'] = hashlib.sha256(registry_text.encode('utf-8')).hexdigest()
-    result['staged_sha256'] = hashlib.sha256(staged_text.encode('utf-8')).hexdigest()
+    result['registry_sha256'] = hashlib.sha256(read_bytes(args.registry)).hexdigest()
+    result['staged_sha256'] = hashlib.sha256(read_bytes(args.staged)).hexdigest()
     if args.json:
         print(json.dumps(result, sort_keys=True))
     else:

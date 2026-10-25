@@ -454,7 +454,12 @@ def lane_unflagged(tool, work, tools, text_mode=False):
 
 
 def differential(pristine, mutant, work):
-    """Cases where the mutant's fingerprint differs from the pristine tool's."""
+    """Cases where the mutant's fingerprint differs from the pristine tool's.
+
+    Both the fixtures and the three live tool files are compared, so a
+    live-only divergent mutant cannot read as `equivalent` (wave-2
+    RevC1Predicate F6).
+    """
     differ = []
     for name, (src, _, _, _) in sorted(FIXTURES.items()):
         target = os.path.join(work, 'fixtures', name + '.py')
@@ -465,6 +470,15 @@ def differential(pristine, mutant, work):
             continue
         if fingerprint(base_sites) != fingerprint(mut_sites):
             differ.append((name, 'dead_code' if unreachable_statements(src) else 'reachable'))
+    for rel, lineno, _want, _needle in LIVE:
+        target = os.path.join(work, 'live', rel)
+        base_sites, base_err = run_tool(pristine, target, work)
+        mut_sites, mut_err = run_tool(mutant, target, work)
+        if base_err or mut_err:
+            differ.append(('live %s:%d' % (rel, lineno), 'run_error'))
+            continue
+        if fingerprint(base_sites) != fingerprint(mut_sites):
+            differ.append(('live %s:%d' % (rel, lineno), 'reachable'))
     return differ
 
 
