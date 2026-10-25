@@ -71,7 +71,15 @@ SKIP_SUFFIXES = ('.md', '.py', '.sh', '.mjs', '.json', '.stdout', '.stdin', '.tx
 ID_RE = re.compile(r'(?<!staged:)\bS\d{3,}\b')
 # A declared next-free id is not a citation of a row; neither is a package id.
 MASK_IDS = ((re.compile(r'staged:S\d{3,}'), 'staged'),
-            (re.compile(r'Next unused id:\s*S\d{3,}'), 'next-free'))
+            (re.compile(r'Next unused id:\s*S\d{3,}'), 'next-free'),
+            (re.compile(r'next unused id'), 'next-free-phrase'),
+            (re.compile(r'safe floor', re.I), 'safe-floor'),
+            (re.compile(r'register:S\d{3,}'), 'register'))
+# An id that is a *value* (a package id, a next-free id, a floor, a register id)
+# is not a citation of a row. Both directions: the phrase before the id and the
+# phrase after it.
+VALUE_ID_AFTER = re.compile(r'(?:staged:|next unused id|safe floor|register:)[^\n]{0,30}?\bS\d{3,}\b', re.I)
+VALUE_ID_BEFORE = re.compile(r'\bS\d{3,}\b[^\n]{0,25}?(?:is the next unused id|next unused id)', re.I)
 HEX40 = re.compile(r'(?<![0-9a-f:])[0-9a-f]{40}(?![0-9a-f])')
 BACKTICK = re.compile(r'`([^`\n]+)`')
 
@@ -210,7 +218,7 @@ def path_cites(text):
     out = set()
     for match in BACKTICK.finditer(text):
         token = match.group(1).strip()
-        if '://' in token or token.startswith('/') or token.startswith('…'):
+        if '://' in token or token.startswith('/') or token.startswith('…') or '*' in token:
             continue
         token = re.split(r'[\s(]', token)[0]
         token = re.sub(r':\d+(-\d+)?$', '', token)
@@ -235,8 +243,15 @@ def m8_paths(lane, rev, record_texts, tree_paths):
 
 
 def m10_receipts(lane, rev, paths):
-    """Presence claims under .ufo/waves whose path contradicts the tree."""
-    supersedes = {}
+    """Presence claims under .ufo/waves whose path contradicts the tree.
+
+    A superseded receipt is history only when a *different* receipt re-asserts
+    the same target with the tree-correct value. A receipt that lists itself, a
+    chain that asserts nothing, or a superseder whose claims do not cover the
+    stale one leaves the claim counted (wave-2 MutC2m10Superseder, fixtures
+    v3-v6).
+    """
+    superseders = {}
     claims = []
     for path in paths:
         if not path.endswith('.json') or not path.startswith('.ufo/waves/'):
@@ -253,7 +268,8 @@ def m10_receipts(lane, rev, paths):
             if isinstance(targets, str):
                 targets = [targets]
             for target in targets:
-                supersedes[target] = path
+                key = target[2:] if target.startswith('./') else target
+                superseders.setdefault(key, set()).add(path)
         stack = [doc]
         while stack:
             node = stack.pop()
@@ -266,23 +282,35 @@ def m10_receipts(lane, rev, paths):
             elif isinstance(node, list):
                 stack.extend(node)
     tree = set(paths)
-    # Only the superseded receipt is history. The superseding receipt's own
-    # claims are the authority and are checked like any other (F1).
-    superseded = set()
-    for key in supersedes:
-        superseded.add(key[2:] if key.startswith('./') else key)
+
+    def resolves(rel):
+        if rel in tree:
+            return True
+        prefix = rel.rstrip('/') + '/'
+        return any(path.startswith(prefix) for path in tree)
+
     hits = []
     for receipt, target, present in claims:
         rel = target[2:] if target.startswith('./') else target
-        exists = rel in tree or any(p.startswith(rel.rstrip('/') + '/') for p in tree)
-        if bool(exists) != present:
-            # A receipt named in another receipt's `supersedes` is history: the
-            # superseding receipt re-asserts its claims against the tree.
-            if receipt in superseded:
+        exists = resolves(rel)
+        if bool(exists) == present:
+            continue
+        covered = False
+        for sup in superseders.get(receipt, set()):
+            if sup == receipt:
                 continue
-            hit = '%s present=%s %s' % (receipt, str(present).lower(), rel)
-            if hit not in hits:
-                hits.append(hit)
+            for other_receipt, other_target, other_present in claims:
+                if other_receipt == sup and other_target == target \
+                        and bool(other_present) == exists:
+                    covered = True
+                    break
+            if covered:
+                break
+        if covered:
+            continue
+        hit = '%s present=%s %s' % (receipt, str(present).lower(), rel)
+        if hit not in hits:
+            hits.append(hit)
     return hits, len(claims)
 
 
@@ -422,8 +450,12 @@ def main():
     mined = mined_ids(registry)
     for name, text in record_texts.items():
         masked = text
-        for pattern, _label in MASK_IDS:
+        for pattern, label in MASK_IDS:
+            if label in ('next-free-phrase', 'safe-floor'):
+                continue
             masked = pattern.sub(' ', masked)
+        masked = VALUE_ID_AFTER.sub(lambda m: re.sub(r'S\d{3,}', ' ', m.group(0)), masked)
+        masked = VALUE_ID_BEFORE.sub(lambda m: re.sub(r'S\d{3,}', ' ', m.group(0)), masked)
         for sid in sorted(set(ID_RE.findall(masked))):
             if sid not in registry_rows:
                 m7.append('%s unknown %s' % (name, sid))

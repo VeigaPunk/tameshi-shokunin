@@ -75,16 +75,18 @@ row.
 
 ### Ids, collisions, census
 
-- Registry before: 113 rows (S001–S158). After: **114** (S159 added; S160 is the
-  next unused id). `grep -cE '^ {0,3}\| S[0-9]{3} \|' corpus/SOURCES.md` → 114.
+- Registry before: 113 rows (S001–S158). After: **114** (S159 added; the next
+  unused id follows it). `grep -cE '^ {0,3}\| S[0-9]{3} \|' corpus/SOURCES.md` → 114; the
+  `Next unused id` line at the registry tail names it.
 - Collision check, read-only, via `tools/staged-id-guard.py` against the staged
   package `/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md`
   (never written): **7 collisions** `S153`–`S159`, of which **3 are documents
   the registry already holds** — `staged:S153`→S105 (POSIX diff),
   `staged:S154`→S106 (google/golden), `staged:S159`→S155 (PIT basic concepts) —
   and 4 are new documents. The naive arithmetic map (each collision moved to
-  `max(registry)+1…`) lands on `S160`–`S166`, which are themselves staged ids:
-  refused, cascade 7. The safe floor for a *partial* adoption is `S256`
+  `max(registry)+1…`) lands on the eight ids immediately above the registry
+  maximum, which are themselves staged ids: refused, cascade 7. The safe floor
+  for a *partial* adoption is one above the larger of the two maxima
   (`max(registry, staged)+1`).
 - Used-by changes, old → new (all in `corpus/knowledge/`): S089
   `mutation-case-kumitate-cite-check.md` → same plus `r43-survivor-resolution-rule.md`;
@@ -101,7 +103,7 @@ row.
   capture byte-for-byte and pinned it to the 113-row blob.
 - Quarantine slice: 17 data rows (14 `payload-absent`, 3 could-not-be-fetched),
   re-derived read-only and byte-identical to the round-42 slice; verdicts stay
-  in the round-40 lesson and nothing was adopted (wave-1 ScoutQuarantine).
+  in the round-40 lesson and nothing was adopted **this round** (wave-1 ScoutQuarantine).
 
 ### considerthese
 
@@ -120,7 +122,7 @@ mined in round 42 and no box moved.
 | frozen-rule-without-code | the C1 counter printed `mutants_killed=6 dead_code_only=0`: the K rule's reachability gate was written in the contract and never implemented, so the dead-code fixture counted as a kill | wave-1 mutation-tester MutC1F11, which ran the unmodified counter at the freeze | contract amendment A5: the kill oracle now requires at least one failing fixture with no unreachable statement; the K/D/E/U text, target, predicate and controls are unchanged. Shown able to fail: `control/c1-round42-battery.stdout` (ten fixtures → 4 kills) and the F11 ablation (`11/11` → `5 kills, 1 equivalent×`), both in `.ufo/evidence/round-43/control/` |
 | join-then-fullmatch | `tools/staged-id-guard.py` checked map targets with `re.fullmatch(r'S\d{3,}', ''.join(targets))`, which can only match a one-entry map, so every multi-entry map was refused while the selftest stayed green (its admission case had one entry) | wave-1 mutation-tester MutC3Selftest, which reproduced the refusal of the counter's own six-entry safe map | amendment A4: per-target check plus `T4_multi_entry_map_admitted`; the selftest is now 14 cases. Shown able to fail: the pre-fix tool refused `{'S153':'S105',…,'S158':'S259'}` with "map has a target that is not an S-id" |
 | control-kept-the-kill-fixture | the first C1 `--control` skipped only the dead-code fixture, so the ten-fixture do-nothing control scored 11/11 and 5 kills — it was not a do-nothing control | the L1's own control run, pre-data | amendment A2: `--control` skips both new fixtures; the control now prints `10/10 mutants_killed=4 C1_R43_CONTROL_PASS=false` |
-| lstrip-on-a-dotpath | the C2 counter normalised `.ufo/waves/...` with `lstrip('./')`, which strips the leading dot, so every superseding receipt's re-assertions read as missing paths (m10=9) | the L1's own base run, pre-data | amendment A1: strip only a literal `./` prefix; m10 counts only receipts not named in a `supersedes`; base run then printed the declared `m10=0` |
+| lstrip-on-a-dotpath | the C2 counter normalised `.ufo/waves/round-43/` with `lstrip('./')`, which strips the leading dot, so every superseding receipt's re-assertions read as missing paths (m10=9) | the L1's own base run, pre-data | amendment A1: strip only a literal `./` prefix; m10 counts only receipts not named in a `supersedes`; base run then printed the declared `m10=0` |
 | single-tool-pin-field | the contract carried one top-level `tool_sha256` that both C1 and C3 read; repinning it for the guard made `tool_sha_ok=0` for the census tool | wave-1 MutC1F11 (`tool_sha_ok=0` on both revs) | amendment A5: both counters read `frozen_tools[<path>]`; the top-level field stays for older readers |
 | classes-is-a-constant | `classes=7` is a declared constant with a tautological `declared == 7` conjunct, so it is not evidence that seven classes ran | wave-1 RevC2DoNothing and RevC2Classes | disclosed, not repaired: the evidence a class ran is its own m-field, and the per-class fields are computed unconditionally. The sentence in the docstring was corrected (amendment A6) |
 | extractor-narrower-than-the-sentence | m8 dropped brace-form and directory cites, m12 matched a prose mention of `Planned`, m13 matched `0,3` anywhere in the row, m10 excluded the superseding receipt's own claims, m11 required a commit rather than any object | wave-1 RevC2Classes (F1–F7) | amendment A6: brace expansion, directory resolution, the field form of `planned`, the backticked command cell only, superseded-target-only exclusion, `.ufo/waves/` scope, any-object resolution; three new selftest cases (prose-only `planned`, column-zero-plus-prose `0,3`, multi-entry map) |
@@ -197,7 +199,8 @@ after the withdrawal) and three `used-by` cells, logged above.
 ## Holds
 
 - The whole-set adoption the floor rule now admits is unmeasured: a map over all
-  103 staged rows (injective, disjoint from the registry, above `S256`) is
+  103 staged rows (injective, disjoint from the registry, at or above the safe
+  floor) is
   admissible by the rule but untested live. Planned for round 44.
 - Two guard classes wave 1 leaves open: a staged row whose *document* is prose
   (no URL, no path) is refused as `unmapped`, which is correct but blunt — the
