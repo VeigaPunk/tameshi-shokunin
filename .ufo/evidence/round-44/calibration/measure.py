@@ -456,7 +456,13 @@ def main():
     if contract_raw is None:
         raise SystemExit('refusing: no contract at %s' % freeze)
     contract = json.loads(contract_raw)
-    pin = contract['claims']['C2']['counter_sha256']
+    pin = None
+    for cid, claim in contract['claims'].items():
+        if claim.get('counter') == SELF_REL:
+            pin = claim.get('counter_sha256')
+            break
+    if pin is None:
+        raise SystemExit('refusing: no counter claim in contract at %s' % freeze)
     self_raw = show(lane, freeze, SELF_REL)
     if self_raw is None:
         raise SystemExit('refusing: counter absent at freeze')
