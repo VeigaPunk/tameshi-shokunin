@@ -17,10 +17,12 @@ ground: F3 — determinism precondition, flaky-aware verdicts (corpus/README.md 
 
 ## What is inferred
 
-- **The fatal/nonfatal distinction is an upstream instance of F2's witness-scoped verdict.** The lane's F2 asks for a kill verdict that names the witness rather than the case (knowledge/witness-scoped-kill-verdict.md). GoogleTest's `ASSERT_*`/`EXPECT_*` split draws the same line inside the framework: a fatal failure aborts *the current function* ([snapshot:108-109]) — the verdict is scoped to the witness — while a nonfatal one continues and lets the case collect more findings ([snapshot:110-111]). A gate that reports a bare case label (for example, case 05 failed) without saying whether execution continued past the witness is strictly less informative than this.
+- **The fatal/nonfatal distinction is an upstream instance of F2's witness-scoped verdict.** The lane's F2 asks for a kill verdict that names the witness rather than the case (knowledge/witness-scoped-kill-verdict.md). GoogleTest's `ASSERT_*`/`EXPECT_*` split draws the same line inside the framework: a fatal failure aborts *the current function* ([snapshot:108-109]) — the verdict is scoped to the witness — while a nonfatal one continues and lets the case collect more findings ([snapshot:110-111]). Read that way, a fatal failure makes the verdict attributable to the named assertion, while `EXPECT_*` aggregates several assertions into one test verdict; the mapping to F2's red-on-witness distinction is the lane's inference, not the primer's wording.
 - **A dead named path is a finding about the input, not about the source.** The stale path 404s cleanly rather than serving a redirect (18/18 on 2026-10-25), so trusting the name would have recorded a lead rather than a row. The live successor was opened and pinned instead.
 
 ## What is still unknown
+
+- The relation to held rows S013 (Jest `--randomize`/`--seed`) and S025 (order dependency as a flaky-test cause) is not reconciled here; this entry adds the framework's fixture-lifecycle statement, not the first appearance of the order hazard in the lane.
 
 - The primer describes the fixture lifecycle; it does not describe how `SetUp()`/`TearDown()` failures are reported — no such passage exists in the snapshot.
 - Whether upstream has changed this behaviour since the pinned commit is unknown; the row is pinned at one commit (`cd8e73f…`) and the 365d recheck compares a live fetch against the recorded quote.
