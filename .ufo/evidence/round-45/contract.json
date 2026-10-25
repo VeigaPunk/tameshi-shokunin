@@ -1,0 +1,48 @@
+{
+  "round": 45,
+  "lane": "tameshi",
+  "author": "tameshi L1 TameshiR45 (hyaku run 7, attempt 1)",
+  "frozen_at": "2026-10-25",
+  "base_rev": "5891bdb77aba8489683533ae4cdd3b49b5e2626b",
+  "frozen_before": "this contract, both counters, the control builder and its receipts, and the GoogleTest snapshots are committed together at the freeze, before any wave seat runs and before the first deciding run; amendments, if any, are pre-data and recorded here",
+  "axes": {
+    "lane": "depth + calibration (verification-fixture craft)",
+    "scores_at_base": "depth 9 (command D), calibration 6 (round-21 coldread monitor restraint), freshness 1 (round-44 narrow unit: the S160 snapshot-backed row count)",
+    "lowest_non_retired_axis": "freshness (1) — carried by C1",
+    "stagnation_nudge": "does not fire: freshness 1 is below the saturation line 8",
+    "distinct_axes": ["freshness", "coverage"],
+    "exploratory": "none"
+  },
+  "claims": {
+    "C1": {
+      "axis": "freshness",
+      "type": "re-verification sweep of held registry rows against live bytes (lowest non-retired axis)",
+      "surface": "the lane's held external sources: census-valid mined rows id <= S160 with an http(s) URL (73 at base). Before this round no row-level live re-verification ledger exists; the round-44 unit covered one document.",
+      "statement": "At least 50 of the lane's held external source rows are re-verified this round against live bytes: each has a committed snapshot fetched on/after 2026-10-25 from the row's own URL, a 6-25-token quote located afresh in that snapshot (not copied from the row's own cells) that shares >= 2 content words with the row's scope/anchor/teaches, and an agree verdict by a non-author falsify-wave seat whose committed report names the row, with no dispute.",
+      "target": "C1_R45_PASS=true: self_pin=1 fresh>=50",
+      "before_state": "no ledger at base: fresh=0 C1_R45_PASS=false",
+      "counter": ".ufo/evidence/round-45/freshness/measure.py",
+      "counting_command": "python3 .ufo/evidence/round-45/freshness/measure.py --lane LANE --rev REV",
+      "score_rule": "freshness score = floor(10 * fresh / population) (replaces the round-44 one-document unit, which stays reported as a no-harm monitor: grep -cE '^ {0,3}\\| S160 ' corpus/SOURCES.md must stay 1)",
+      "kill_rule": "fresh < 50 at the deciding revision = honest miss; no target narrowing, no population change after any seat has scored",
+      "do_nothing_control": "receipt .ufo/evidence/round-45/control/controls-at-base.stdout: base fresh=0; CTL_A registry-derived ledger (no source opened) verified=0 invalid=73 'quote copied from row'; CTL_B adds non-author agree reviews with a committed report: fresh=0; CTL_C adds a forged w2-results.json: fresh=0"
+    },
+    "C2": {
+      "axis": "coverage",
+      "type": "sourced frontier move with assimilation (shokuknow merge/tameshi GoogleTest theme)",
+      "surface": "GoogleTest's own upstream statements on test-order independence, shuffle/seed reproducibility and per-test fixture lifecycle (frontier F3 determinism precondition): 0 rows and 0 entries citing github.com/google/googletest at base",
+      "statement": "Two new registry rows for GoogleTest upstream documents (advanced.md and primer.md at commit cd8e73f067129f8489e35c7b51c7a68552b289d2), opened this round with committed snapshots and sha256 prefixes in their anchors, adopted at guard-admitted ids S256 and S257, are each cited by a re-grounded knowledge entry (verified-at 2026-10-25, listed in the row's used-by, carrying a located 6-25-token quote of the cited snapshot), and every such entry is indexed in corpus/README.md.",
+      "target": "C2_R45_PASS=true: self_pin=1 rows>=2 entries>=2 indexed==entries",
+      "before_state": "rows=0 entries=0 C2_R45_PASS=false",
+      "counter": ".ufo/evidence/round-45/coverage/measure.py",
+      "counting_command": "python3 .ufo/evidence/round-45/coverage/measure.py --lane LANE --rev REV",
+      "unmoved_command": "the same counter: rows=0 entries=0 shows the surface unmoved",
+      "kill_rule": "entries < 2 or rows < 2 or an unindexed entry at the deciding revision = honest miss",
+      "id_map": "staged S202 -> S256, staged S203 -> S257 by document; guard verdict admitted on the whole collision map (receipt .ufo/evidence/round-45/assimilation/guard-map.json); identity S202/S203 and S161/S162 maps are refused by the guard",
+      "do_nothing_control": "receipt .ufo/evidence/round-45/control/controls-at-base.stdout: CTL_D package rows+entries copied byte-exact: rows=0 entries=0; CTL_E rows normalized with lane snapshots but entries not re-grounded: rows=2 entries=0 (verified-at 2026-10-24 refused)"
+    }
+  },
+  "no_harm": "at base and at the deciding revision: command D (depth 9), the round-21 coldread monitor (calibration restraint 6, sections), the round-44 record-agreement counter (python3 .ufo/evidence/round-44/calibration/measure.py --lane LANE --rev REV --freeze ba01973c73ad7de60e5bd19ae08255a1b7ef917e, total=0), the S160 count (1) and the root census (exit 0)",
+  "landing_rule": "considerthese/2026-10-25.md proposal 1 (measured-to-landing drift): both claim counters and the round-44 record-agreement counter are re-run at the final landing tip, and the report cites those landing-tip receipts",
+  "amendments": []
+}
