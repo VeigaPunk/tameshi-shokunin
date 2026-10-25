@@ -22,7 +22,7 @@
       "statement": "The two survivors of the round-42 mutant set are resolved under the pre-declared rule K/D/E/U: outflag_no_parse_args_check is killed by a new reachable-code fixture (F11_outflag_namespace) and method_fold_several_returns is classified dead_code_only by the declared dead-code construct with a differential probe, leaving five killed and one dead-code-only and zero unresolved, with the round-42 mutant declaration unchanged.",
       "target": "C1_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 fixtures_pass=12/12 run_errors=0 live_ok=3/3 live_unflagged_v4=0 mutants_declared=6 mutants_killed=5 dead_code_only=1 equivalent=0 unresolved=0 kill_fixture_reachable=1 dead_code_arg_ok=1",
       "counter": ".ufo/evidence/round-43/mutants/measure.py",
-      "counter_sha256": "73000c93464a177c2573470f0c6255b229fbd0eea92ee0c7c41b8c4bb2b75683",
+      "counter_sha256": "ad7ecf8c1c1ea1e84982eec5da6bb453ab5533eb6c4f0c09af5559f6ba6bc875",
       "counting_command": "python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE --rev REV --freeze FREEZE",
       "rule": {
         "K_kill": "a mutant is killed when the round-43 battery (12 fixtures + 3 live sites) produces at least one FAIL under the round-42 exit-plus-FAIL oracle (exit 0, parseable output, a case differs from its declared classification), and the killing fixture contains no runtime-unreachable statement",
@@ -59,7 +59,7 @@
       "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds, refuses its own naive arithmetic map because its targets are still staged ids, and admits only a by-document map (held rows dedupe; new documents take ids at or above the safe floor).",
       "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1",
       "counter": ".ufo/evidence/round-43/guard/measure.py",
-      "counter_sha256": "6ee86ed05d10dcc6d75430b6d83790d848d87f8d4fed3e15acf9793226d5b8c6",
+      "counter_sha256": "6278edcd691e230b32383a8b2ac25f38910e17f3041e4082271a5863a8d78601",
       "counting_command": "python3 .ufo/evidence/round-43/guard/measure.py --lane LANE --rev REV --freeze FREEZE",
       "staged_input": "/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (read-only; never written, never fetched)",
       "do_nothing_control": "a constant-empty stand-in that prints collisions=[]: the counter's own extraction disagrees with it, so C3_R43_CONTROL_PASS=false by construction; receipt .ufo/evidence/round-43/control/c3-constant-empty.stdout. At the base rev the tool is absent (tool_absent=1)"
@@ -79,6 +79,22 @@
       "why": "the first base run of the counter (2026-10-25, before any seat) printed m7=7 m8=38 m10=9: m7 matched staged:S### package tokens and the 'Next unused id: S###' declaration; m8 counted bare seat-report filenames cited inside wave records; m10 stripped the leading dot from .ufo paths with lstrip('./') so every superseding receipt's re-assertions read as missing",
       "rule_changed": false,
       "effect": "classification rules, not targets: the seven classes and the predicate C2_R43_PASS (self_pin=1, classes=7, total=0) are byte-unchanged; the base run still prints m12=1 m13=1"
+    },
+    {
+      "id": "A2",
+      "when": "before any seat ran and before the first deciding run",
+      "what": "C1's `--control` skips both new fixtures (F11 and F12), reproducing the round-42 ten-fixture battery",
+      "why": "the first control run skipped only the dead-code fixture and scored 11/11 with mutants_killed=5: the F11 kill fixture alone reaches five kills, so a control that keeps it is not the do-nothing control the claim names",
+      "rule_changed": false,
+      "effect": "control only: the measurement battery, the K/D/E/U rule, the target and the predicate are unchanged"
+    },
+    {
+      "id": "A3",
+      "when": "before any seat ran and before the first deciding run",
+      "what": "C3's counter creates the directory the substituted tool is written into",
+      "why": "`--tool-file` crashed with FileNotFoundError writing <work>/tools/... before any measurement was taken",
+      "rule_changed": false,
+      "effect": "setup path only: the predicate and target are unchanged"
     }
   ],
   "amendments_note": "post-freeze amendments, if any, change citations and disclosures only; claims.*, the predicates, counters, targets, kill rule and controls are byte-unchanged"

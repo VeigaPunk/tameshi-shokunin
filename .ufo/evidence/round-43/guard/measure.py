@@ -152,6 +152,7 @@ def main():
         with open(registry_path, 'wb') as handle:
             handle.write(registry_raw)
         tool_path = os.path.join(work, TOOL_REL)
+        os.makedirs(os.path.dirname(tool_path), exist_ok=True)
         if args.tool_file:
             with open(os.path.abspath(args.tool_file), 'rb') as src, open(tool_path, 'wb') as dst:
                 dst.write(src.read())

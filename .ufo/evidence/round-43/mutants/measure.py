@@ -42,8 +42,8 @@ Counting command:
   python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE --rev REV --freeze FREEZE
 
 `--probe-mutant PATH` scores one mutant file under the same oracle (for
-falsifier seats). `--control` runs the round-42 battery (ten fixtures) and
-prints a CONTROL line; it is never the measurement. Exit 0 iff the predicate
+falsifier seats). `--control` runs the round-42 battery (the ten round-42 fixtures: both new
+fixtures are skipped) and prints a CONTROL line; it is never the measurement. Exit 0 iff the predicate
 is true, 1 if false, 2 on a setup refusal.
 """
 import argparse
@@ -244,6 +244,7 @@ class Report:
 }
 
 DEAD_CODE_FIXTURE = 'F12_method_two_returns'
+NEW_FIXTURES = ('F11_outflag_namespace', 'F12_method_two_returns')
 KILL_NAMES = ('outflag_no_parse_args_check',)
 DEAD_CODE_NAMES = ('method_fold_several_returns',)
 
@@ -329,12 +330,14 @@ def check_site(sites, lineno, want, needle):
     return None
 
 
-def battery(tool, work, text_mode=False, skip_dead_code=False):
+def battery(tool, work, text_mode=False, skip_new=False, skip_dead_code=False):
     """Return (fails, errors, live_results, fixture_pass, live_ok)."""
     fails, errors, live_results = [], [], {}
     fixture_pass = 0
     tested = 0
     for name, (src, want, needle, lineno) in sorted(FIXTURES.items()):
+        if skip_new and name in NEW_FIXTURES:
+            continue
         if skip_dead_code and name == DEAD_CODE_FIXTURE:
             continue
         tested += 1
@@ -501,9 +504,8 @@ def main():
                      (fails + errors)[:1]))
             return 0 if verdict == 'killed' else 1
 
-        skip = args.control
         fails, errors, live_results, fixture_pass, live_ok, tested = battery(
-            tool_path, work, skip_dead_code=skip)
+            tool_path, work, skip_new=args.control)
         if args.control:
             muts_raw = show(lane, rev, MUTANTS_REL)
             muts = json.loads(muts_raw)['mutants'] if muts_raw else []
@@ -515,7 +517,7 @@ def main():
                 path = os.path.join(work, 'control-%s.py' % re.sub(r'\W', '_', mut['name']))
                 with open(path, 'w', encoding='utf-8') as handle:
                     handle.write(body)
-                cf, ce, _, _, _, _ = battery(path, work, skip_dead_code=True)
+                cf, ce, _, _, _, _ = battery(path, work, skip_new=True)
                 if not ce and cf:
                     killed += 1
             print('C1_R43_CONTROL: battery=round42_ten_fixtures fixtures_pass=%d/%d '
