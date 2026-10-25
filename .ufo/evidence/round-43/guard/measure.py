@@ -57,6 +57,8 @@ STAGED_REL = '/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md'
 TIMEOUT = 120
 ROW_RE = re.compile(r'^ {0,3}\|\s*(S\d{3,})\s*\|')
 URL_RE = re.compile(r'https?://[^\s|,;]+')
+SCHEME_RE = re.compile(r'^https?://')
+WWW_RE = re.compile(r'^www\.')
 MIN_CASES = 13
 
 
@@ -82,6 +84,14 @@ def number(sid):
     return int(sid[1:])
 
 
+def norm_url(url):
+    """The census' URL identity: no scheme, no www., lower case, no trailing slash."""
+    text = url.strip().lower()
+    text = SCHEME_RE.sub('', text)
+    text = WWW_RE.sub('', text)
+    return text.rstrip('/')
+
+
 def own_parse(text):
     """Counter-side parse: {id: url} with the census-valid row pattern."""
     found = {}
@@ -92,7 +102,7 @@ def own_parse(text):
         cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
         blob = ' '.join(cells[1:6])
         url = URL_RE.search(blob)
-        found[match.group(1)] = url.group(0).rstrip('.,;)]') if url else ''
+        found[match.group(1)] = norm_url(url.group(0).rstrip('.,;)]')) if url else ''
     return found
 
 

@@ -2,11 +2,11 @@
 """Pre-adoption id guard for a staged SOURCES registry package.
 
 CORPUS.md makes the registry append-only and keyed by an id that is never
-reused, and it accepts registry rows with 0-3 leading spaces. A staged
-package built elsewhere keeps its own ids, so a package whose id range
-overlaps the lane's registry cannot be appended as-is: the adopted row needs a
-different id, and the citation must be re-pointed **by document** — the URL or
-DOI is the evidence and the id follows it, never arithmetic.
+reused, and it accepts registry rows with 0-3 leading spaces. A staged package
+built elsewhere keeps its own ids, so a package whose id range overlaps the
+lane's registry cannot be appended as-is: the adopted row needs a different id,
+and the citation must be re-pointed **by document** — the URL or DOI is the
+evidence and the id follows it, never arithmetic.
 
 This tool answers that question before anything is appended:
 
@@ -15,24 +15,30 @@ This tool answers that question before anything is appended:
                      column-zero pattern misses an indented row, which is how a
                      collision false-greens);
   * `unmapped`     — colliding staged rows whose row carries no document key
-                     (no URL/DOI and an empty source cell): refused, because a
-                     renumber decision that is not tied to a document is
+                     (no URL/DOI and no path-like source head): refused, because
+                     a renumber decision that is not tied to a document is
                      arithmetic;
   * `held`         — colliding staged rows whose document the registry already
-                     carries: dedupe to the registry id, do not append;
+                     carries: dedupe to the registry id, do not append. Document
+                     keys are compared form-insensitively (scheme, `www.`,
+                     trailing slash, case);
   * `naive_map`    — the obvious fix, every colliding id moved to
                      `max(registry)+1, +2, …`, and why it is refused: those
                      target ids are themselves staged ids, so the map is not
                      injective against the staged set (the cascade);
-  * `--map FILE`   — validate a candidate map (JSON
-                     `{"map": {"staged:S001": "S161", …}, "staged": path,
-                     "registry": path}`): injective, disjoint from the
-                     registry, and covering every collision.
+  * `--map FILE`   — validate a candidate map (`{"map": {"S153": "S256", …}}`,
+                     keys accepted as `S153` or `staged:S153`): injective, every
+                     target an S-id, disjoint from the registry unless it is the
+                     document's own registry id, disjoint from the staged set
+                     and at or above the safe floor unless the map covers the
+                     whole staged set, covering every collision, and never
+                     leaving a held document off its registry id or deciding an
+                     undocumented row.
 
 Exit 0 = the question was answered and, with `--map`, the map is admissible;
-exit 1 = the map is not admissible (or a collision has no document);
-exit 2 = setup refusal (missing file, malformed row, bad map file);
-exit 0 for `--selftest` only when every case passes.
+exit 1 = the map is not admissible; exit 2 = setup refusal (missing or
+non-regular file, oversized file, malformed row, malformed map) — never a bare
+traceback.
 
 Interface is frozen for the round-43 counter:
 
@@ -40,21 +46,28 @@ Interface is frozen for the round-43 counter:
   python3 -I tools/staged-id-guard.py --registry F --staged G --map M --json
   python3 -I tools/staged-id-guard.py --selftest
 
-`--json` prints one object: collisions (list), collision_count, unmapped,
-held, naive_map, cascade, cascade_count, refused, next_free, registry_rows,
-staged_rows, extractor ("0-3space"), column0_extract (for the indented-row
-proof), verdict ("refused"|"answered"|"admitted"|"inadmissible").
+`--json` prints one object: collisions, collision_count, unmapped, held,
+naive_map, cascade, cascade_count, refused, next_free, registry_max, staged_max,
+safe_floor, registry_rows, staged_rows, registry_docs, extractor ("0-3space"),
+column0_collisions and column0_miss (the indented-row proof), registry_sha256
+and staged_sha256 (the bytes read), and verdict ("refused"|"answered"|
+"admitted"|"inadmissible"|"setup_refusal"). With `--map`, `refused` is
+the map's verdict and `analysis_refused` carries the no-map analysis.
 """
 import argparse
+import hashlib
 import json
 import os
 import re
+import stat
 import sys
 
 ROW_RE = re.compile(r'^ {0,3}\|\s*(S\d{3,})\s*\|')
 COLUMN0_RE = re.compile(r'^\|\s*(S\d{3,})\s*\|')
 URL_RE = re.compile(r'https?://[^\s|,;]+')
-HEXISH = re.compile(r'[0-9a-f]{7,40}')
+SID_RE = re.compile(r'S\d{3,}')
+MAX_TEXT = 32 * 1024 * 1024
+MAX_MAP = 1024 * 1024
 
 
 class Refusal(Exception):
@@ -91,14 +104,26 @@ def document_key(cells):
         return found.group(0).rstrip('.,;)]')
     source = cells[1] if len(cells) > 1 else ''
     head = re.split(r'\s+[—–]\s+', source)[0].strip()
-    head = HEXISH.sub('', head).strip()
     # A document key names something openable (a path, a host, a file). Prose
     # without a slash or dot is not a document, and a renumber decision tied to
-    # prose would be arithmetic.
+    # prose would be arithmetic. No hash stripping here: `report-1234567.md` and
+    # `report-7654321.md` are different documents (round-43 sentinel finding).
     return head if len(head) > 8 and re.search(r'[/.]', head) else ''
 
 
+def normalise_document(raw):
+    """Form-insensitive document identity: scheme, www., case, trailing slash."""
+    text = raw.strip().lower()
+    text = re.sub(r'^https?://', '', text)
+    text = re.sub(r'^www\.', '', text)
+    return text.rstrip('/')
+
+
 def id_number(sid):
+    if not SID_RE.fullmatch(sid):
+        raise Refusal('not an S-id: %r' % (sid,))
+    if len(sid) > 12:
+        raise Refusal('S-id too long: %r' % (sid,))
     return int(sid[1:])
 
 
@@ -109,17 +134,17 @@ def analyse(registry_text, staged_text):
     column0 = sorted({m.group(1) for m in
                       (COLUMN0_RE.match(line) for line in staged_text.splitlines()) if m},
                      key=id_number)
-    held, unmapped = {}, []
     registry_docs = {}
     for sid, row in registry.items():
         if row['document']:
-            registry_docs.setdefault(row['document'], sid)
+            registry_docs.setdefault(normalise_document(row['document']), sid)
+    held, unmapped = {}, []
     for sid in collisions:
         key = staged[sid]['document']
         if not key:
             unmapped.append(sid)
-        elif key in registry_docs:
-            held[sid] = registry_docs[key]
+        elif normalise_document(key) in registry_docs:
+            held[sid] = registry_docs[normalise_document(key)]
     top = max((id_number(sid) for sid in registry), default=0)
     staged_top = max((id_number(sid) for sid in staged), default=0)
     naive = {}
@@ -155,35 +180,45 @@ def validate_map(registry_text, staged_text, map_doc):
 
     Each entry is judged by document:
       * a target that is a registry id is admissible only when the staged row's
-        document is the document of that registry row (dedupe: adopt nothing);
+        document is the document of that registry row (dedupe: adopt nothing),
+        and a held document may not be moved off its registry id at all;
       * any other target must be a fresh id — above the safe floor for a partial
-        map, and never an id another staged row still holds.
+        map, and never an id another staged row still holds;
+      * a row with no document cannot be decided by a map at all.
     """
     base = analyse(registry_text, staged_text)
     registry = parse_rows(registry_text, 'registry')
     staged = parse_rows(staged_text, 'staged')
-    mapping = map_doc.get('map') if isinstance(map_doc, dict) else None
-    reasons = []
-    if not isinstance(mapping, dict):
+    registry_docs = {}
+    for sid, row in registry.items():
+        if row['document']:
+            registry_docs.setdefault(normalise_document(row['document']), sid)
+    if not isinstance(map_doc, dict) or not isinstance(map_doc.get('map'), dict):
         raise Refusal('map file carries no "map" object')
+    mapping = {}
+    for key, target in map_doc['map'].items():
+        bare = key[7:] if isinstance(key, str) and key.startswith('staged:') else key
+        if not isinstance(bare, str) or not SID_RE.fullmatch(bare):
+            raise Refusal('map key is not an S-id: %r' % (key,))
+        if not isinstance(target, str) or not SID_RE.fullmatch(target):
+            raise Refusal('map target is not an S-id: %r' % (target,))
+        mapping[bare] = target
+    whole_set = len(mapping) == len(staged)
+    floor = 'S%03d' % (max([id_number(sid) for sid in list(registry) + list(staged)] + [0]) + 1)
+    reasons = []
     targets = list(mapping.values())
     if len(targets) != len(set(targets)):
         reasons.append('map is not injective (two staged rows share a target)')
-    # Per-target, not over the concatenation: a multi-entry map's targets run
-    # together when joined, so a whole-string fullmatch refused every map with
-    # two or more entries (wave-1 mutation-tester MutC3Selftest, round 43).
-    if not all(re.fullmatch(r'S\d{3,}', target) for target in targets):
-        reasons.append('map has a target that is not an S-id')
-    whole_set = len(mapping) == len(staged)
-    floor = 'S%03d' % (max([id_number(sid) for sid in list(registry) + list(staged)] + [0]) + 1)
     clash, staged_clash, below_floor, dedupe = [], [], [], {}
     for staged_id, target in sorted(mapping.items(), key=lambda kv: id_number(kv[0])):
         if staged_id not in staged:
             reasons.append('map names a row the package does not carry: %s' % staged_id)
             continue
         if target in registry:
-            if registry[target]['document'] and \
-                    registry[target]['document'] == staged[staged_id]['document']:
+            same = (registry[target]['document'] and
+                    normalise_document(registry[target]['document']) ==
+                    normalise_document(staged[staged_id]['document']))
+            if same:
                 dedupe[staged_id] = target
             else:
                 clash.append(target)
@@ -208,6 +243,13 @@ def validate_map(registry_text, staged_text, map_doc):
     selfmap = [sid for sid in base['collisions'] if mapping.get(sid) == sid]
     if selfmap:
         reasons.append('map leaves a colliding id on itself: %s' % ','.join(selfmap))
+    for sid in base['unmapped']:
+        if sid in mapping:
+            reasons.append('map decides an undocumented row: %s' % sid)
+    for sid, registry_id in base['held'].items():
+        if sid in mapping and mapping[sid] != registry_id:
+            reasons.append('map moves a held document off its registry id: %s -> %s '
+                           '(registry %s)' % (sid, mapping[sid], registry_id))
     fields = {
         'map_entries': len(mapping),
         'map_targets': len(set(targets)),
@@ -216,6 +258,9 @@ def validate_map(registry_text, staged_text, map_doc):
         'map_below_floor': below_floor,
         'map_dedupe': dedupe,
         'map_uncovered': uncovered,
+        'map_undocumented': [sid for sid in base['unmapped'] if sid in mapping],
+        'map_held_moved': [sid for sid, rid in base['held'].items()
+                           if sid in mapping and mapping[sid] != rid],
         'map_floor': floor,
         'map_ok': not reasons,
         'map_reasons': reasons,
@@ -237,10 +282,11 @@ SELFTEST_STAGED_INDENTED = '''| id | source | kind | tier | scope | anchor | tea
 | S004 | Delta docs — https://example.test/delta | docs | A | x | y | z | queued | 2026-10-24 | 180d | — |
 '''
 
-# T5: a staged row whose document the registry already holds (dedupe, no append).
+# T5: a staged row whose document the registry already holds (dedupe, no append),
+# written in a different form (no scheme, no trailing slash, upper case).
 SELFTEST_STAGED_HELD = '''| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
 |---|---|---|---|---|---|---|---|---|---|---|
-| S002 | Alpha again — https://example.test/alpha | docs | A | x | y | z | queued | 2026-10-24 | 180d | — |
+| S002 | EXAMPLE.test/alpha — Alpha again | docs | A | x | y | z | queued | 2026-10-24 | 180d | — |
 '''
 
 # T2: a colliding row with no document at all.
@@ -275,6 +321,8 @@ def selftest():
     held = analyse(SELFTEST_REGISTRY, SELFTEST_STAGED_HELD)
     case('T5_dedupe_to_registry_id', held['held'] == {'S002': 'S001'},
          'held=%s' % held['held'])
+    case('T5_document_form_insensitive', held['held'] == {'S002': 'S001'},
+         'a different URL form produced no dedupe')
 
     undocumented = analyse(SELFTEST_REGISTRY, SELFTEST_STAGED_UNDOCUMENTED)
     case('T2_unmapped_refused', undocumented['unmapped'] == ['S002'] and undocumented['refused'],
@@ -287,7 +335,7 @@ def selftest():
         case('T6_malformed_refused', True, str(exc))
 
     good = {'map': {'S002': 'S010'}}
-    ok, reasons, fields = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, good)
+    ok, reasons, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, good)
     case('T4_valid_map_admitted', ok, 'reasons=%s' % reasons)
     bad = {'map': {'S002': 'S001'}}
     ok2, reasons2, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, bad)
@@ -297,10 +345,6 @@ def selftest():
     ok5, reasons5, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, cascade_map)
     case('T3_map_onto_staged_refused',
          not ok5 and any('still staged' in r for r in reasons5), 'reasons=%s' % reasons5)
-    partial = {'map': {}}
-    ok3, reasons3, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, partial)
-    case('T4_partial_map_refused', not ok3 and any('cover' in r for r in reasons3),
-         'reasons=%s' % reasons3)
     multi_map = {'map': {'S002': 'S010', 'S004': 'S011'}}
     ok7, reasons7, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, multi_map)
     case('T4_multi_entry_map_admitted', ok7, 'reasons=%s' % reasons7)
@@ -308,10 +352,40 @@ def selftest():
     ok6, reasons6, fields6 = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_HELD, dedupe_map)
     case('T5_dedupe_map_admitted', ok6 and fields6['map_dedupe'] == {'S002': 'S001'},
          'reasons=%s dedupe=%s' % (reasons6, fields6['map_dedupe']))
-    dup = {'map': {'S002': 'S010', 'S999': 'S010'}}
+    moved_map = {'map': {'S002': 'S010'}}
+    ok8, reasons8, fields8 = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_HELD, moved_map)
+    case('T7_held_row_must_dedupe',
+         not ok8 and fields8['map_held_moved'] == ['S002'], 'reasons=%s' % reasons8)
+    undoc_map = {'map': {'S002': 'S010'}}
+    ok9, reasons9, fields9 = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_UNDOCUMENTED,
+                                          undoc_map)
+    case('T8_undocumented_row_refused_in_map',
+         not ok9 and fields9['map_undocumented'] == ['S002'], 'reasons=%s' % reasons9)
+    partial = {'map': {}}
+    ok3, reasons3, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, partial)
+    case('T4_partial_map_refused', not ok3 and any('cover' in r for r in reasons3),
+         'reasons=%s' % reasons3)
+    dup = {'map': {'S002': 'S010', 'S003': 'S010'}}
     ok4, reasons4, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, dup)
     case('T4_non_injective_refused', not ok4 and any('injective' in r for r in reasons4),
          'reasons=%s' % reasons4)
+    for name, bad_map in (('T9_int_target_refused', {'map': {'S002': 7}}),
+                          ('T9_null_target_refused', {'map': {'S002': None}}),
+                          ('T9_bad_key_refused', {'map': {'gamma': 'S010'}}),
+                          ('T9_list_target_refused', {'map': {'S002': ['S010']}})):
+        try:
+            validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, bad_map)
+            case(name, False, 'no refusal')
+        except Refusal:
+            case(name, True)
+    try:
+        _no_duplicate_keys([('a', 1), ('a', 2)])
+        case('T10_duplicate_json_key_refused', False, 'no refusal')
+    except Refusal:
+        case('T10_duplicate_json_key_refused', True)
+    case('T11_staged_prefix_key_accepted',
+         validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED,
+                      {'map': {'staged:S002': 'S010'}})[0])
 
     failed = [row for row in cases if not row[1]]
     print('STAGED_ID_GUARD_SELFTEST: cases=%d failed=%d' % (len(cases), len(failed)))
@@ -322,12 +396,39 @@ def selftest():
     return 0 if not failed else 1
 
 
-def read(path):
+def _no_duplicate_keys(pairs):
+    seen = set()
+    for key, _value in pairs:
+        if key in seen:
+            raise Refusal('map file repeats the key %r' % key)
+        seen.add(key)
+    return dict(pairs)
+
+
+def read_text(path, limit=MAX_TEXT):
+    try:
+        info = os.stat(path)
+    except OSError as exc:
+        raise Refusal('cannot stat %s: %s' % (path, exc))
+    if not stat.S_ISREG(info.st_mode):
+        raise Refusal('%s is not a regular file' % path)
+    if info.st_size > limit:
+        raise Refusal('%s is larger than %d bytes' % (path, limit))
     try:
         with open(path, encoding='utf-8') as handle:
             return handle.read()
     except OSError as exc:
         raise Refusal('cannot read %s: %s' % (path, exc))
+    except UnicodeDecodeError as exc:
+        raise Refusal('%s is not valid UTF-8: %s' % (path, exc))
+
+
+def load_map(path):
+    raw = read_text(path, MAX_MAP)
+    try:
+        return json.loads(raw, object_pairs_hook=_no_duplicate_keys)
+    except json.JSONDecodeError as exc:
+        raise Refusal('map file is not JSON: %s' % exc)
 
 
 def main(argv=None):
@@ -344,24 +445,26 @@ def main(argv=None):
         print('staged-id-guard: --registry and --staged are required', file=sys.stderr)
         return 2
     try:
-        registry_text = read(args.registry)
-        staged_text = read(args.staged)
+        registry_text = read_text(args.registry)
+        staged_text = read_text(args.staged)
         result = analyse(registry_text, staged_text)
         if args.map:
-            try:
-                map_doc = json.loads(read(args.map))
-            except json.JSONDecodeError as exc:
-                raise Refusal('map file is not JSON: %s' % exc)
-            ok, reasons, fields = validate_map(registry_text, staged_text, map_doc)
+            ok, reasons, fields = validate_map(registry_text, staged_text,
+                                               load_map(args.map))
             result.update(fields)
+            result['analysis_refused'] = result['refused']
+            result['refused'] = not ok
             result['verdict'] = 'admitted' if ok else 'inadmissible'
         else:
             result['verdict'] = 'refused' if result['refused'] else 'answered'
     except Refusal as exc:
         print('staged-id-guard: REFUSED: %s' % exc, file=sys.stderr)
         if args.json:
-            print(json.dumps({'verdict': 'setup_refusal', 'reason': str(exc)}))
+            print(json.dumps({'verdict': 'setup_refusal', 'reason': str(exc)},
+                             sort_keys=True))
         return 2
+    result['registry_sha256'] = hashlib.sha256(registry_text.encode('utf-8')).hexdigest()
+    result['staged_sha256'] = hashlib.sha256(staged_text.encode('utf-8')).hexdigest()
     if args.json:
         print(json.dumps(result, sort_keys=True))
     else:

@@ -7,7 +7,8 @@ revision reachability) with their extraction rules stated here, and two
 classes are added:
 
   m12 — SCORECARD contract conformance. The newest `## Round N` block must
-        carry a `**Planned (round N+1):**` line, because AXES.md's SCORECARD
+        carry the field `**Planned (round N+1):**` (a prose mention is not the
+        field), because AXES.md's SCORECARD
         contract makes `planned` a required field and a round that omits it
         leaves its successor undeclared. At the base, the round-42 block has
         no such line (the last one is `Planned (round 41)`).
@@ -37,8 +38,13 @@ Counting command:
 
   python3 .ufo/evidence/round-43/calibration/measure.py --lane LANE --rev REV --freeze FREEZE
 
-`--records N` restricts the record set (default: round-42 and round-43
-records). Exit 0 iff the predicate is true, 1 if false, 2 on a setup refusal.
+Record set (fixed): `corpus/lessons/round-42.md`, `corpus/lessons/round-43.md`,
+the newest SCORECARD `## Round N` block and the LOG slice from `round <N>`. A
+record file that is absent is skipped and `records=` reports how many were
+read, so the set shrinking is visible. `classes=` is the count of declared
+classes and is a constant: the evidence that a class ran is its own m-field,
+not that token. Exit 0 iff the predicate is true, 1 if false, 2 on a setup
+refusal.
 """
 import argparse
 import hashlib
@@ -116,8 +122,13 @@ def newest_round_block(scorcard_text):
 
 
 def m12_planned(block_text, round_no):
-    """(hits, note): the block must declare the next round's planned claims."""
-    wanted = 'Planned (round %d)' % (round_no + 1)
+    """(hits, note): the block must carry the next round's `planned` FIELD.
+
+    The field form is `**Planned (round N+1):**`; a prose mention of the same
+    words is not the SCORECARD contract's `planned` entry, so the check is the
+    field, not a substring (wave-1 RevC2Classes F2).
+    """
+    wanted = '**Planned (round %d):**' % (round_no + 1)
     hits = [] if wanted in block_text else [wanted]
     return hits
 
@@ -162,13 +173,30 @@ def m13_standing_command(scorcard_text, registry_text):
         return ['no standing sources-registry row'], 'standing=0'
     newest = standing[-1]
     hits = []
-    if '0,3' not in newest and '0-3space' not in newest:
+    # Only the backticked command cells count: a row that carries the
+    # column-zero command and a prose mention of `0,3` is the round-42 shape the
+    # class exists to catch (wave-1 RevC2Classes F3).
+    commands = [span for span in re.findall(r'`([^`]*)`', newest) if 'grep' in span]
+    if not commands:
+        hits.append('standing row carries no backticked counting command')
+    elif not any('0,3' in span for span in commands):
         hits.append('standing command is column-zero only')
     mirror = indent_mirror(registry_text)
     column0, valid = count_patterns(mirror)
     if not (valid == column0 + 1):
         hits.append('indent probe not load-bearing (column0=%d valid=%d)' % (column0, valid))
     return hits, 'standing=%d column0=%d valid=%d' % (len(standing), column0, valid)
+
+
+def expand_brace(token):
+    """`a.{stdout,exit}` -> [`a.stdout`, `a.exit`]; no brace -> [token]."""
+    match = re.search(r'\{([^{}]*)\}', token)
+    if not match:
+        return [token]
+    out = []
+    for choice in match.group(1).split(','):
+        out.extend(expand_brace(token[:match.start()] + choice.strip() + token[match.end():]))
+    return out
 
 
 def path_cites(text):
@@ -179,17 +207,10 @@ def path_cites(text):
             continue
         token = re.split(r'[\s(]', token)[0]
         token = re.sub(r':\d+(-\d+)?$', '', token)
-        token = re.sub(r'\{[^}]*\}', '', token)
-        if '/' not in token and not token.endswith(SKIP_SUFFIXES):
-            continue
-        if not token.endswith(SKIP_SUFFIXES):
-            continue
-        if token.startswith('$') or token.startswith('<') or token.startswith('…'):
-            continue
-        if token in ROOT_FILES or token.startswith(CITE_PREFIXES):
-            out.add(token)
-        elif token.startswith('.ufo/'):
-            out.add(token)
+        for expanded in expand_brace(token):
+            if not (expanded in ROOT_FILES or expanded.startswith(CITE_PREFIXES)):
+                continue
+            out.add(expanded)
     return out
 
 
@@ -211,7 +232,7 @@ def m10_receipts(lane, rev, paths):
     supersedes = {}
     claims = []
     for path in paths:
-        if not path.endswith('.json'):
+        if not path.endswith('.json') or not path.startswith('.ufo/waves/'):
             continue
         raw = show(lane, rev, path)
         if raw is None:
@@ -238,10 +259,11 @@ def m10_receipts(lane, rev, paths):
             elif isinstance(node, list):
                 stack.extend(node)
     tree = set(paths)
+    # Only the superseded receipt is history. The superseding receipt's own
+    # claims are the authority and are checked like any other (F1).
     superseded = set()
-    for key, value in supersedes.items():
+    for key in supersedes:
         superseded.add(key[2:] if key.startswith('./') else key)
-        superseded.add(value)
     hits = []
     for receipt, target, present in claims:
         rel = target[2:] if target.startswith('./') else target
@@ -265,7 +287,7 @@ def m11_revisions(lane, record_texts):
             if token in seen:
                 continue
             seen.add(token)
-            if git(lane, 'cat-file', '-e', token + '^{commit}').returncode != 0:
+            if git(lane, 'cat-file', '-e', token).returncode != 0:
                 hits.append('%s:%s' % (name, token))
     return hits, len(seen)
 
@@ -277,9 +299,14 @@ def selftest():
         cases.append((name, bool(ok), note))
 
     block_missing = '## Round 9\n\n| C1 | x | y |\n\n**Planned (round 9):** stale\n'
-    case('T1_missing_planned_detected', m12_planned(block_missing, 9) == ['Planned (round 10)'])
+    case('T1_missing_planned_detected',
+         m12_planned(block_missing, 9) == ['**Planned (round 10):**'],
+         str(m12_planned(block_missing, 9)))
     block_ok = block_missing + '\n**Planned (round 10):** next\n'
     case('T1_planned_present_clean', m12_planned(block_ok, 9) == [])
+    prose = '## Round 9\n\nWe Planned (round 10) things in prose, with no field.\n'
+    case('T1_prose_only_detected', m12_planned(prose, 9) != [],
+         'prose-only block was read as clean')
 
     registry = ('| id | source | kind | tier | scope | anchor | teaches | status | '
                 'opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n'
@@ -296,6 +323,10 @@ def selftest():
                '→ 2 rows at round 9 |')
     hits2, note2 = m13_standing_command(new_row + '\n', registry)
     case('T2_census_valid_standing_clean', hits2 == [], note2)
+    prose_row = ('| sources-registry | x | `grep -cE \'^\\| S[0-9]{3} \\|\' corpus/SOURCES.md` '
+                 '→ 2 rows at round 9, or use the 0,3-space form |')
+    hits3, note3 = m13_standing_command(prose_row + '\n', registry)
+    case('T2_column_zero_plus_prose_detected', hits3, note3)
 
     tree = {'corpus/SOURCES.md', 'tools/x.py', '.ufo/evidence/a/b.stdout'}
     good = {'r': 'see `corpus/SOURCES.md:12` and `tools/x.py`'}

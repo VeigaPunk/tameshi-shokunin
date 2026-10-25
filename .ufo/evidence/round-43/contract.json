@@ -40,35 +40,35 @@
       "target": "C2_R43_PASS=true: self_pin=1 classes=7 m6=0 m7=0 m8=0 m10=0 m11=0 m12=0 m13=0 total=0",
       "before_state": "m12=1 (the round-42 SCORECARD block carries no 'Planned (round 43)' line; the last such line is 'Planned (round 41)') and m13=1 (the newest standing sources-registry row cites the column-zero pattern grep -cE '^\\| S[0-9]{3} \\|', which counts N-1 on a mirror with one row indented two spaces where the census-valid pattern counts N)",
       "counter": ".ufo/evidence/round-43/calibration/measure.py",
-      "counter_sha256": "092c76cd6e10f9280af21237ec90dc14e63f0bdb9ae74fffb9da841730a8f286",
+      "counter_sha256": "52961c3709a39ef76f5a1c7de94080a384244703ea1b8ab9fcd6217c23666fdf",
       "counting_command": "python3 .ufo/evidence/round-43/calibration/measure.py --lane LANE --rev REV --freeze FREEZE",
       "classes": {
         "m6": "the newest standing sources-registry row's stated row count equals the census-valid registry row count",
         "m7": "every S-id cited by the round-42/43 records as a source is a mined row: staged:S### package tokens and 'Next unused id: S###' declarations are masked first",
-        "m8": "every backtick cite under corpus/, tools/, .ufo/, plans/, reports/ or the declared root files resolves at REV (after :NN and brace normalization); a bare seat-report filename is not a repo path",
-        "m10": "no presence receipt under .ufo/waves asserts present/absent contrary to the tree; a receipt named in another receipt's supersedes is history and its claims are not counted",
-        "m11": "every 40-hex revision cited by those records resolves in the lane",
-        "m12": "the newest '## Round N' SCORECARD block carries '**Planned (round N+1):**'",
-        "m13": "the newest standing sources-registry row's counting command names the census-valid 0-3-space pattern, and an indented-row mirror proves the difference (column0 = N-1, census-valid = N)"
+        "m8": "every backtick cite under corpus/, tools/, .ufo/, plans/, reports/ or the declared root files resolves at REV after :NN normalization and brace expansion; directory cites resolve by prefix",
+        "m10": "no presence receipt under .ufo/waves asserts present/absent contrary to the tree; only a receipt named in another receipt's supersedes is skipped, and the superseding receipt is graded",
+        "m11": "every 40-hex object cited by those records resolves in the lane (object existence, not commit-only)",
+        "m12": "the newest '## Round N' SCORECARD block carries the field '**Planned (round N+1):**' (a prose mention is not the field)",
+        "m13": "the newest standing sources-registry row's backticked counting command names the census-valid 0-3-space pattern, and an indented-row mirror proves the difference (column0 = N-1, census-valid = N)"
       },
       "do_nothing_control": "the round-42 C1 counter, unchanged, is the do-nothing control: it prints no m12/m13 field and no classes field, so it cannot produce the target line; receipt .ufo/evidence/round-43/control/c2-round42-counter.stdout. The base run of this counter (before any record repair) prints m12=1 m13=1; receipt .ufo/evidence/round-43/before/c2-at-base.stdout"
     },
     "C3": {
       "axis": "operability",
       "type": "capability acquisition (pre-adoption id guard)",
-      "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds, refuses its own naive arithmetic map because its targets are still staged ids, and admits only a by-document map (held rows dedupe; new documents take ids at or above the safe floor).",
+      "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds under any URL form (scheme, www., case, trailing slash), refuses its own naive arithmetic map because its targets are still staged ids, refuses a map that moves a held document off its registry id or decides an undocumented row, and admits only a by-document map at or above the safe floor",
       "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1",
       "counter": ".ufo/evidence/round-43/guard/measure.py",
-      "counter_sha256": "fbc8ad3c8eaed946bd88573f769433e53632b736c1bcbd9e9a23b6dbe770c51e",
+      "counter_sha256": "8c8147e75a742dc1ad4da3c4354a9c8fc63e3a669d5f85dbf90c925d9893ff9b",
       "counting_command": "python3 .ufo/evidence/round-43/guard/measure.py --lane LANE --rev REV --freeze FREEZE",
       "staged_input": "/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (read-only; never written, never fetched)",
       "do_nothing_control": "a constant-empty stand-in that prints collisions=[]: the counter's own extraction disagrees with it, so C3_R43_CONTROL_PASS=false by construction; receipt .ufo/evidence/round-43/control/c3-constant-empty.stdout. At the base rev the tool is absent (tool_absent=1)"
     }
   },
-  "tool_sha256": "efa5f129cba312c26c1fc453e6cd7f783efafeecccfac791e8c03d3d290f9b3c",
+  "tool_sha256": "365bf95842ce9bb022af7edb5905f1d36e1a435a7365ff91469d2edcadb4b0c2",
   "frozen_tools": {
     "tools/write-path-census-v4.py": "784de4c0feef3364c4444632788af7ebb57d53032b79f60cc4330c094d122fe5",
-    "tools/staged-id-guard.py": "efa5f129cba312c26c1fc453e6cd7f783efafeecccfac791e8c03d3d290f9b3c"
+    "tools/staged-id-guard.py": "365bf95842ce9bb022af7edb5905f1d36e1a435a7365ff91469d2edcadb4b0c2"
   },
   "no_harm": "command D (depth) and the round-21 coldread monitor (calibration) are re-run at the base and at the measurement rev; both counters read only",
   "amendments": [
@@ -111,6 +111,22 @@
       "why": "wave-1 seat MutC1F11 ran the frozen counter unmodified and printed mutants_killed=6 dead_code_only=0 \u2014 F12 (the dead-code discriminator) was counted as a kill because the code never implemented the reachability sentence the rule had frozen, and tool_sha_ok=0 because A4 had moved the single top-level tool_sha256 to the guard tool",
       "rule_changed": false,
       "effect": "code repaired to the frozen sentence: K/D/E/U, the predicate, the target, the fixture set and the controls are unchanged"
+    },
+    {
+      "id": "A6",
+      "when": "during wave 1, before any deciding run",
+      "what": "C2 counter: m12 requires the field form `**Planned (round N+1):**`; m13 reads only the backticked counting command; m10 skips only a superseded receipt and scans only .ufo/waves; m8 expands `{a,b}` braces and resolves directory cites; m11 accepts any cited object; record-set size is printed; three selftest cases added (prose-only planned, column-zero command with prose 0,3, multi-entry map).",
+      "why": "wave-1 RevC2Classes measured five extractors that were narrower or broader than the class sentence: a prose 'Planned' passed m12, a row carrying the column-zero command plus the text 0,3 passed m13, the superseding receipt's own claims were excluded from m10, brace cites were mangled, and a cited tree object failed m11",
+      "rule_changed": false,
+      "effect": "extraction only: the seven class sentences are unchanged in meaning, the predicate, target and base receipts stand"
+    },
+    {
+      "id": "A7",
+      "when": "during wave 1, before any deciding run",
+      "what": "tools/staged-id-guard.py: document identity is normalised for the held join (scheme, www., case, trailing slash) without stripping hash-like words; a held document mapped off its registry id is refused; a map that decides an undocumented row is refused; map keys accept `S153` and `staged:S153`; non-S-id keys and non-string targets are setup refusals instead of tracebacks; input files must be regular and size-capped; duplicate JSON keys are refused; input digests are emitted; `refused` follows the map verdict with `analysis_refused` beside it. C3 counter normalises documents with its own implementation of the census rule.",
+      "why": "wave-1 sentinel SentGuardIO proved: a held document could be re-appended under a fresh id (S2), an undocumented row could be decided (S3), a package URL without scheme defeated the dedupe (S4), six malformed map shapes escaped as tracebacks with exit 1 (S5), `report-1234567.md` merged with `report-7654321.md` (S6), a FIFO path hung the reader (S7), duplicate JSON keys were last-wins (S8); wave-1 connector ConnOverlap proved the document join diverged from the census URL identity",
+      "rule_changed": false,
+      "effect": "capability repair under the frozen predicate: C3's predicate, target and class list are unchanged; five selftest cases added (held-row, undocumented-row, four malformed map shapes, duplicate key, staged: key)"
     }
   ],
   "amendments_note": "post-freeze amendments, if any, change citations and disclosures only; claims.*, the predicates, counters, targets, kill rule and controls are byte-unchanged"
