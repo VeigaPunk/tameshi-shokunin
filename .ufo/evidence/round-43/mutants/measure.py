@@ -331,8 +331,14 @@ def check_site(sites, lineno, want, needle):
 
 
 def battery(tool, work, text_mode=False, skip_new=False, skip_dead_code=False):
-    """Return (fails, errors, live_results, fixture_pass, live_ok)."""
+    """Return (fails, errors, live_results, fixture_pass, live_ok, tested, detail).
+
+    `detail` maps a failing fixture name to True when its source contains a
+    runtime-unreachable statement, so the kill oracle can apply the rule's
+    reachability gate instead of only reporting it.
+    """
     fails, errors, live_results = [], [], {}
+    detail = {}
     fixture_pass = 0
     tested = 0
     for name, (src, want, needle, lineno) in sorted(FIXTURES.items()):
@@ -349,6 +355,7 @@ def battery(tool, work, text_mode=False, skip_new=False, skip_dead_code=False):
         reason = check_site(sites, lineno, want, needle)
         if reason:
             fails.append('%s %s' % (name, reason))
+            detail[name] = bool(unreachable_statements(src))
         else:
             fixture_pass += 1
     live_ok = {}
@@ -364,7 +371,7 @@ def battery(tool, work, text_mode=False, skip_new=False, skip_dead_code=False):
         live_ok[(rel, lineno)] = reason is None
         if reason:
             fails.append('%s:%d %s' % (rel, lineno, reason))
-    return fails, errors, live_results, fixture_pass, live_ok, tested
+    return fails, errors, live_results, fixture_pass, live_ok, tested, detail
 
 
 def unreachable_statements(src):
@@ -483,7 +490,9 @@ def main():
 
     tool_raw = show(lane, rev, TOOL_REL)
     tool_absent = 0 if tool_raw is not None else 1
-    tool_sha_ok = 1 if tool_raw is not None and sha(tool_raw) == contract['tool_sha256'] else 0
+    pins = contract.get('frozen_tools') or {}
+    want_sha = pins.get(TOOL_REL, contract.get('tool_sha256'))
+    tool_sha_ok = 1 if tool_raw is not None and sha(tool_raw) == want_sha else 0
 
     work = tempfile.mkdtemp(prefix='tameshi-r43-c1-')
     try:
@@ -496,7 +505,7 @@ def main():
         fields = []
         if args.probe_mutant:
             probe = os.path.abspath(args.probe_mutant)
-            fails, errors, _, fixture_pass, live_ok, tested = battery(probe, work)
+            fails, errors, _, fixture_pass, live_ok, tested, detail = battery(probe, work)
             verdict = ('killed' if not errors and fails else
                        'runtime_error' if errors else 'survived')
             print('C1_R43_PROBE: verdict=%s failures=%d errors=%d first=%s'
@@ -504,7 +513,7 @@ def main():
                      (fails + errors)[:1]))
             return 0 if verdict == 'killed' else 1
 
-        fails, errors, live_results, fixture_pass, live_ok, tested = battery(
+        fails, errors, live_results, fixture_pass, live_ok, tested, detail = battery(
             tool_path, work, skip_new=args.control)
         if args.control:
             muts_raw = show(lane, rev, MUTANTS_REL)
@@ -517,7 +526,7 @@ def main():
                 path = os.path.join(work, 'control-%s.py' % re.sub(r'\W', '_', mut['name']))
                 with open(path, 'w', encoding='utf-8') as handle:
                     handle.write(body)
-                cf, ce, _, _, _, _ = battery(path, work, skip_new=True)
+                cf, ce, _, _, _, _, _cd = battery(path, work, skip_new=True)
                 if not ce and cf:
                     killed += 1
             print('C1_R43_CONTROL: battery=round42_ten_fixtures fixtures_pass=%d/%d '
@@ -543,11 +552,12 @@ def main():
             path = os.path.join(work, 'mutant-%s.py' % re.sub(r'\W', '_', name))
             with open(path, 'w', encoding='utf-8') as handle:
                 handle.write(body)
-            mf, me, _, _, _, _ = battery(path, work)
+            mf, me, _, _, _, _, mdetail = battery(path, work)
             if me:
                 runtime_error.append(name)
                 continue
-            if mf:
+            reachable_fails = [case for case in mdetail if not mdetail[case]]
+            if mf and reachable_fails:
                 killed.append(name)
                 continue
             differ = differential(tool_path, path, work)
@@ -565,8 +575,9 @@ def main():
         dead_names = [name for name in dead_code_only]
         unresolved = len(not_killed) + len(runtime_error) + len(apply_error)
         dead_arg_ok = 1 if dead_code_cases.get(DEAD_CODE_NAMES[0]) == [DEAD_CODE_FIXTURE] else 0
-        kill_fixture_reachable = 0 if unreachable_statements(
-            FIXTURES['F11_outflag_namespace'][0]) else 1
+        kill_fixture = FIXTURES.get('F11_outflag_namespace')
+        kill_fixture_reachable = 0 if (kill_fixture is None or unreachable_statements(
+            kill_fixture[0])) else 1
 
         fields.append('C1_R43:')
         fields.append('self_pin=%d' % self_pin)

@@ -22,7 +22,7 @@
       "statement": "The two survivors of the round-42 mutant set are resolved under the pre-declared rule K/D/E/U: outflag_no_parse_args_check is killed by a new reachable-code fixture (F11_outflag_namespace) and method_fold_several_returns is classified dead_code_only by the declared dead-code construct with a differential probe, leaving five killed and one dead-code-only and zero unresolved, with the round-42 mutant declaration unchanged.",
       "target": "C1_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 fixtures_pass=12/12 run_errors=0 live_ok=3/3 live_unflagged_v4=0 mutants_declared=6 mutants_killed=5 dead_code_only=1 equivalent=0 unresolved=0 kill_fixture_reachable=1 dead_code_arg_ok=1",
       "counter": ".ufo/evidence/round-43/mutants/measure.py",
-      "counter_sha256": "ad7ecf8c1c1ea1e84982eec5da6bb453ab5533eb6c4f0c09af5559f6ba6bc875",
+      "counter_sha256": "901d947fb912a6cbbcc2de8c876a72a55daa3ab6ca49e8e9c634aac041ccc7e0",
       "counting_command": "python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE --rev REV --freeze FREEZE",
       "rule": {
         "K_kill": "a mutant is killed when the round-43 battery (12 fixtures + 3 live sites) produces at least one FAIL under the round-42 exit-plus-FAIL oracle (exit 0, parseable output, a case differs from its declared classification), and the killing fixture contains no runtime-unreachable statement",
@@ -59,16 +59,16 @@
       "statement": "tools/staged-id-guard.py answers the round-42 post-append hazard before any append: it extracts collisions with the census-valid 0-3-space pattern, refuses a colliding row with no document, dedupes a staged row whose document the registry already holds, refuses its own naive arithmetic map because its targets are still staged ids, and admits only a by-document map (held rows dedupe; new documents take ids at or above the safe floor).",
       "target": "C3_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases>=13 selftest_failed=0 staged_rows>=100 live_collisions_agree=1 live_held_agree=1 live_unmapped=0 live_verdict=refused live_cascade=1 naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1",
       "counter": ".ufo/evidence/round-43/guard/measure.py",
-      "counter_sha256": "6278edcd691e230b32383a8b2ac25f38910e17f3041e4082271a5863a8d78601",
+      "counter_sha256": "fbc8ad3c8eaed946bd88573f769433e53632b736c1bcbd9e9a23b6dbe770c51e",
       "counting_command": "python3 .ufo/evidence/round-43/guard/measure.py --lane LANE --rev REV --freeze FREEZE",
       "staged_input": "/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (read-only; never written, never fetched)",
       "do_nothing_control": "a constant-empty stand-in that prints collisions=[]: the counter's own extraction disagrees with it, so C3_R43_CONTROL_PASS=false by construction; receipt .ufo/evidence/round-43/control/c3-constant-empty.stdout. At the base rev the tool is absent (tool_absent=1)"
     }
   },
-  "tool_sha256": "8140945a816873562eee8bcc6862d5e098f95b8083b4760b087812568f97b762",
+  "tool_sha256": "efa5f129cba312c26c1fc453e6cd7f783efafeecccfac791e8c03d3d290f9b3c",
   "frozen_tools": {
     "tools/write-path-census-v4.py": "784de4c0feef3364c4444632788af7ebb57d53032b79f60cc4330c094d122fe5",
-    "tools/staged-id-guard.py": "8140945a816873562eee8bcc6862d5e098f95b8083b4760b087812568f97b762"
+    "tools/staged-id-guard.py": "efa5f129cba312c26c1fc453e6cd7f783efafeecccfac791e8c03d3d290f9b3c"
   },
   "no_harm": "command D (depth) and the round-21 coldread monitor (calibration) are re-run at the base and at the measurement rev; both counters read only",
   "amendments": [
@@ -95,6 +95,22 @@
       "why": "`--tool-file` crashed with FileNotFoundError writing <work>/tools/... before any measurement was taken",
       "rule_changed": false,
       "effect": "setup path only: the predicate and target are unchanged"
+    },
+    {
+      "id": "A4",
+      "when": "during wave 1, before any deciding run",
+      "what": "tools/staged-id-guard.py: the map-target shape check became per-target instead of a fullmatch over the joined targets, plus a two-entry admission case in the selftest; contract tool_sha256 updated",
+      "why": "wave-1 seat MutC3Selftest showed a real defect: ''.join(targets) made every map with two or more entries fail the S-id check, so the C3 counter's own six-entry by-document safe map was refused (safe_map_admitted=0, C3_R43_PASS=false) while the selftest stayed green because its admission case used one entry",
+      "rule_changed": false,
+      "effect": "capability repair under the frozen predicate: the C3 predicate, target and classes are unchanged; the tool pin moves to the repaired bytes"
+    },
+    {
+      "id": "A5",
+      "when": "during wave 1, before any deciding run",
+      "what": "C1 counter: the kill oracle now applies the K rule's reachability gate (a mutant is killed only when at least one failing fixture has no runtime-unreachable statement), the tool pin is read from frozen_tools instead of the single top-level tool_sha256, and the F11 lookup tolerates an ablated copy. C3 counter: same tool-pin source. Contract pins updated.",
+      "why": "wave-1 seat MutC1F11 ran the frozen counter unmodified and printed mutants_killed=6 dead_code_only=0 \u2014 F12 (the dead-code discriminator) was counted as a kill because the code never implemented the reachability sentence the rule had frozen, and tool_sha_ok=0 because A4 had moved the single top-level tool_sha256 to the guard tool",
+      "rule_changed": false,
+      "effect": "code repaired to the frozen sentence: K/D/E/U, the predicate, the target, the fixture set and the controls are unchanged"
     }
   ],
   "amendments_note": "post-freeze amendments, if any, change citations and disclosures only; claims.*, the predicates, counters, targets, kill rule and controls are byte-unchanged"

@@ -169,7 +169,10 @@ def validate_map(registry_text, staged_text, map_doc):
     targets = list(mapping.values())
     if len(targets) != len(set(targets)):
         reasons.append('map is not injective (two staged rows share a target)')
-    if not re.fullmatch(r'S\d{3,}', ''.join(targets) or 'S0'):
+    # Per-target, not over the concatenation: a multi-entry map's targets run
+    # together when joined, so a whole-string fullmatch refused every map with
+    # two or more entries (wave-1 mutation-tester MutC3Selftest, round 43).
+    if not all(re.fullmatch(r'S\d{3,}', target) for target in targets):
         reasons.append('map has a target that is not an S-id')
     whole_set = len(mapping) == len(staged)
     floor = 'S%03d' % (max([id_number(sid) for sid in list(registry) + list(staged)] + [0]) + 1)
@@ -298,6 +301,9 @@ def selftest():
     ok3, reasons3, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, partial)
     case('T4_partial_map_refused', not ok3 and any('cover' in r for r in reasons3),
          'reasons=%s' % reasons3)
+    multi_map = {'map': {'S002': 'S010', 'S004': 'S011'}}
+    ok7, reasons7, _ = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_INDENTED, multi_map)
+    case('T4_multi_entry_map_admitted', ok7, 'reasons=%s' % reasons7)
     dedupe_map = {'map': {'S002': 'S001'}}
     ok6, reasons6, fields6 = validate_map(SELFTEST_REGISTRY, SELFTEST_STAGED_HELD, dedupe_map)
     case('T5_dedupe_map_admitted', ok6 and fields6['map_dedupe'] == {'S002': 'S001'},

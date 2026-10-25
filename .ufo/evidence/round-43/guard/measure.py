@@ -139,7 +139,9 @@ def main():
 
     tool_raw = show(lane, rev, TOOL_REL)
     tool_absent = 0 if tool_raw is not None else 1
-    tool_sha_ok = 1 if tool_raw is not None and sha(tool_raw) == contract['tool_sha256'] else 0
+    pins = contract.get('frozen_tools') or {}
+    want_sha = pins.get(TOOL_REL, contract.get('tool_sha256'))
+    tool_sha_ok = 1 if tool_raw is not None and sha(tool_raw) == want_sha else 0
     registry_raw = show(lane, rev, SOURCES_REL)
     if registry_raw is None:
         raise SystemExit('refusing: registry absent at REV')
