@@ -2,14 +2,25 @@
 """Round-43 C2 counter — record agreement, extended to two new classes (calibration).
 
 Successor of the round-42 C1 counter. The five round-42 classes are carried
-unchanged in meaning (m6 registry count, m7 mined S-ids, m8 path cites, m10
-presence receipts, m11 revision reachability) and two classes are added:
+(m6 registry count, m7 mined S-ids, m8 path cites, m10 presence receipts, m11
+revision reachability) with their extraction rules stated here, and two
+classes are added:
 
   m12 — SCORECARD contract conformance. The newest `## Round N` block must
         carry a `**Planned (round N+1):**` line, because AXES.md's SCORECARD
         contract makes `planned` a required field and a round that omits it
         leaves its successor undeclared. At the base, the round-42 block has
         no such line (the last one is `Planned (round 41)`).
+  m7 counts only citation ids: a `staged:S###` package token and a
+        `Next unused id: S###` declaration are masked before extraction, because
+        neither names a registry row.
+  m8 counts backtick cites under the declared prefixes `corpus/`, `tools/`,
+        `.ufo/`, `plans/`, `reports/` plus the declared root files, after `:NN`
+        and brace normalization. A bare seat-report filename cited inside a
+        wave record is not a repo path and is not counted.
+  m10 treats a receipt named in another receipt's `supersedes` as history: the
+        superseding receipt carries the claims. A receipt path keeps its
+        leading dot (`.ufo/...`), so it resolves against the tree.
   m13 — the newest standing `sources-registry` row's counting command is
         census-valid. CORPUS.md's census accepts rows with 0-3 leading spaces,
         so a column-zero count under-counts an indented row. The class (a)
@@ -46,10 +57,15 @@ RECORDS = (
     'corpus/lessons/round-42.md',
     'corpus/lessons/round-43.md',
 )
-FLEET_PREFIXES = ('/home/vgpnk/Projects/shokunin/', '/tmp/', '…/')
+CITE_PREFIXES = ('corpus/', 'tools/', '.ufo/', 'plans/', 'reports/')
+ROOT_FILES = frozenset(('SCORECARD.md', 'LOG.md', 'SKILL.md', 'PROVINCE.md', 'SHONEN.md',
+                        'MISSION.md', 'AXES.md', 'CORPUS.md', 'QUALITY.md', 'MINT.md'))
 SKIP_SUFFIXES = ('.md', '.py', '.sh', '.mjs', '.json', '.stdout', '.stdin', '.txt', '.tsv',
                  '.html', '.java', '.exit', '.stderr', '.diff', '.jsonl')
-ID_RE = re.compile(r'\bS\d{3,}\b')
+ID_RE = re.compile(r'(?<!staged:)\bS\d{3,}\b')
+# A declared next-free id is not a citation of a row; neither is a package id.
+MASK_IDS = ((re.compile(r'staged:S\d{3,}'), 'staged'),
+            (re.compile(r'Next unused id:\s*S\d{3,}'), 'next-free'))
 HEX40 = re.compile(r'(?<![0-9a-f:])[0-9a-f]{40}(?![0-9a-f])')
 BACKTICK = re.compile(r'`([^`\n]+)`')
 
@@ -168,11 +184,12 @@ def path_cites(text):
             continue
         if not token.endswith(SKIP_SUFFIXES):
             continue
-        if token.startswith('$') or token.startswith('<') or token.startswith('.'):
-            if token.startswith('.ufo/'):
-                out.add(token)
+        if token.startswith('$') or token.startswith('<') or token.startswith('…'):
             continue
-        out.add(token)
+        if token in ROOT_FILES or token.startswith(CITE_PREFIXES):
+            out.add(token)
+        elif token.startswith('.ufo/'):
+            out.add(token)
     return out
 
 
@@ -221,18 +238,22 @@ def m10_receipts(lane, rev, paths):
             elif isinstance(node, list):
                 stack.extend(node)
     tree = set(paths)
+    superseded = set()
+    for key, value in supersedes.items():
+        superseded.add(key[2:] if key.startswith('./') else key)
+        superseded.add(value)
     hits = []
     for receipt, target, present in claims:
-        rel = target.lstrip('./')
+        rel = target[2:] if target.startswith('./') else target
         exists = rel in tree or any(p.startswith(rel.rstrip('/') + '/') for p in tree)
         if bool(exists) != present:
-            if any(key in receipt for key in supersedes) or receipt in supersedes:
+            # A receipt named in another receipt's `supersedes` is history: the
+            # superseding receipt re-asserts its claims against the tree.
+            if receipt in superseded:
                 continue
-            covered = any(key.strip('./') in rel or rel.endswith(key.strip('./'))
-                          for key in supersedes)
-            if covered:
-                continue
-            hits.append('%s present=%s %s' % (receipt, str(present).lower(), rel))
+            hit = '%s present=%s %s' % (receipt, str(present).lower(), rel)
+            if hit not in hits:
+                hits.append(hit)
     return hits, len(claims)
 
 
@@ -360,7 +381,10 @@ def main():
     m7 = []
     mined = mined_ids(registry)
     for name, text in record_texts.items():
-        for sid in sorted(set(ID_RE.findall(text))):
+        masked = text
+        for pattern, _label in MASK_IDS:
+            masked = pattern.sub(' ', masked)
+        for sid in sorted(set(ID_RE.findall(masked))):
             if sid not in registry_rows:
                 m7.append('%s unknown %s' % (name, sid))
             elif sid not in mined:
