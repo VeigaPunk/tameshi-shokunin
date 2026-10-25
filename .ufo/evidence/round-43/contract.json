@@ -20,9 +20,9 @@
       "axis": "depth",
       "type": "surface move (mutation-outcome semantics: the survivor-resolution rule) on the routed round-42 survivor set",
       "statement": "The two survivors of the round-42 mutant set are resolved under the pre-declared rule K/D/E/U: outflag_no_parse_args_check is killed by a new reachable-code fixture (F11_outflag_namespace) and method_fold_several_returns is classified dead_code_only by the declared dead-code construct with a differential probe, leaving five killed and one dead-code-only and zero unresolved, with the round-42 mutant declaration unchanged.",
-      "target": "C1_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 fixtures_pass=12/12 run_errors=0 live_ok=3/3 live_unflagged_v4=0 mutants_declared=6 mutants_killed=5 dead_code_only=1 equivalent=0 unresolved=0 kill_fixture_reachable=1 dead_code_arg_ok=1",
+      "target": "C1_R43_PASS=true: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 fixtures_pass=12/12 run_errors=0 live_ok=3/3 live_unflagged_v4=0 mutants_sha_ok=1 mutants_declared=6 mutants_killed=5 dead_code_only=1 equivalent=0 unresolved=0 kill_binding=1 dead_code_arg_ok=1",
       "counter": ".ufo/evidence/round-43/mutants/measure.py",
-      "counter_sha256": "0d0f81bdbe09bb53997ade30911fc178a38de072f84aacf23c6c9c0a710e57f1",
+      "counter_sha256": "b56a34d71e83937330da35024ec60a623d0b10a51652c68be07cddbe2b6d7726",
       "counting_command": "python3 .ufo/evidence/round-43/mutants/measure.py --lane LANE --rev REV --freeze FREEZE",
       "rule": {
         "K_kill": "a mutant is killed when the round-43 battery (12 fixtures + 3 live sites) produces at least one FAIL under the round-42 exit-plus-FAIL oracle (exit 0, parseable output, a case differs from its declared classification), and the killing fixture contains no runtime-unreachable statement",
@@ -31,7 +31,8 @@
         "U_unresolved": "not_killed (a reachable-input survivor), runtime_error (non-zero exit, traceback or unparseable output - PIT Run error / Stryker RuntimeError, neither counted as a kill), or apply_error (the declared edit does not apply exactly once)"
       },
       "mutant_set": ".ufo/evidence/round-42/census/mutants.json at REV, unchanged (six mutants, classes attr/method/outflag)",
-      "do_nothing_control": "(1) the round-42 battery (ten fixtures, no F11/F12) kills 4 of 6 and cannot reach mutants_killed=5; receipt .ufo/evidence/round-43/control/c1-round42-battery.stdout. (2) the pristine v4 tool passes 12/12 fixtures (green control). (3) each named survivor is probed directly before the fixtures exist; receipt .ufo/evidence/round-43/control/c1-probe-survivors.stdout"
+      "do_nothing_control": "(1) the round-42 battery (ten fixtures, no F11/F12) kills 4 of 6 and cannot reach mutants_killed=5; receipt .ufo/evidence/round-43/control/c1-round42-battery.stdout. (2) the pristine v4 tool passes 12/12 fixtures (green control). (3) each named survivor is probed directly before the fixtures exist; receipt .ufo/evidence/round-43/control/c1-probe-survivors.stdout",
+      "mutants_sha256": "b3abab06a48d41535aa35bc520d0884489cb684a7a52b5369c2aadc3db430358"
     },
     "C2": {
       "axis": "calibration",
@@ -151,6 +152,14 @@
       "why": "wave-1 CritC3Maps admitted a whole-set map whose fresh targets sat inside the staged range and below the safe floor, which contradicts C3's sentence; CritC2Gaming passed m12 with the field on a laundered `## Round 44` block and with an empty field.",
       "rule_changed": false,
       "effect": "code aligned to the frozen sentences; C3's predicate, target and classes unchanged; C2's class sentences unchanged in meaning. The C2 base receipt is re-run with the final counter and the new line is recorded beside the old one."
+    },
+    {
+      "id": "A11",
+      "when": "during wave 1, before the first deciding run",
+      "what": "C1 counter: the kill is bound to the fixture that produced it (`kill_binding`: the killed outflag mutant's reachable failing fixture must be exactly F11) instead of a constant computed from F11's source text; the mutant declaration is pinned by sha256; the probe path was already gated in A9.",
+      "why": "wave-1 RevC1Counter showed `kill_fixture_reachable` was a constant that printed 1 even on the pre-A5 run whose kill rested on F12, and that `mutants.json` was read at REV with only names/counts checked, so a same-named re-declared edit would pass",
+      "rule_changed": false,
+      "effect": "the K sentence is unchanged; the predicate gains two fields that bind it (kill_binding, mutants_sha_ok)"
     }
   ],
   "amendments_note": "post-freeze amendments are recorded above in order, each with the seat evidence that produced it. A1-A3 change extraction rules and control paths; A4-A7 change two counters, the guard tool and their pins, all before any deciding run. No amendment changes claims.* (other than counter_sha256 and the class sentences restated verbatim), the predicate, the target, the fixture set or the controls. A8 corrects this file's own narration after wave-1 RevProvenance showed the frozen_before and this note described the chain inaccurately."

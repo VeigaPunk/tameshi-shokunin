@@ -33,9 +33,12 @@ dead-code-only discriminator) — and the same three live sites.
 Predicate `C1_R43_PASS` is true iff: self_pin=1, tool_absent=0,
 tool_sha_ok=1, selftest_exit=0, fixtures_pass=12/12, run_errors=0, the three
 live sites match, live_unflagged_v4=0 over every tracked `tools/*.py` at REV,
+mutants_sha_ok=1 (the declaration at REV is the pinned blob),
 mutants_declared=6, mutants_killed=5, dead_code_only=1, equivalent=0,
-unresolved=0, `outflag_no_parse_args_check` ∈ killed, and
-`method_fold_several_returns` ∈ dead_code_only.
+unresolved=0, `outflag_no_parse_args_check` ∈ killed with `kill_binding=1`
+(its failing fixture is exactly `F11_outflag_namespace`, so the kill is bound
+to that fixture rather than asserted from its source text), and
+`method_fold_several_returns` ∈ dead_code_only with `dead_code_arg_ok=1`.
 
 Counting command:
 
@@ -551,9 +554,12 @@ def main():
         muts_raw = show(lane, rev, MUTANTS_REL)
         if muts_raw is None:
             raise SystemExit('refusing: no mutant declaration at %s' % rev)
+        want_mutants = (contract.get('claims', {}).get('C1', {}) or {}).get('mutants_sha256')
+        mutants_sha_ok = 1 if want_mutants and sha(muts_raw) == want_mutants else 0
         mutants = json.loads(muts_raw)['mutants']
         killed, dead_code_only, equivalent, not_killed, runtime_error, apply_error = [], [], [], [], [], []
         dead_code_cases = {}
+        kill_cases = {}
         for mut in mutants:
             name = mut['name']
             body, count = apply_once(tool_raw.decode(), mut['find'], mut['replace'])
@@ -567,9 +573,10 @@ def main():
             if me:
                 runtime_error.append(name)
                 continue
-            reachable_fails = [case for case in mdetail if not mdetail[case]]
+            reachable_fails = sorted(case for case in mdetail if not mdetail[case])
             if mf and reachable_fails:
                 killed.append(name)
+                kill_cases[name] = reachable_fails
                 continue
             differ = differential(tool_path, path, work)
             dead = [case for case, kind in differ if kind == 'dead_code']
@@ -586,9 +593,8 @@ def main():
         dead_names = [name for name in dead_code_only]
         unresolved = len(not_killed) + len(runtime_error) + len(apply_error)
         dead_arg_ok = 1 if dead_code_cases.get(DEAD_CODE_NAMES[0]) == [DEAD_CODE_FIXTURE] else 0
-        kill_fixture = FIXTURES.get('F11_outflag_namespace')
-        kill_fixture_reachable = 0 if (kill_fixture is None or unreachable_statements(
-            kill_fixture[0])) else 1
+        # The kill must be bound to F11, not asserted from F11's source text.
+        kill_binding = 1 if kill_cases.get(KILL_NAMES[0]) == ['F11_outflag_namespace'] else 0
 
         fields.append('C1_R43:')
         fields.append('self_pin=%d' % self_pin)
@@ -613,7 +619,10 @@ def main():
         fields.append('dead_code_cases=%s' % ','.join(sorted(dead_code_cases.get(
             DEAD_CODE_NAMES[0], []))))
         fields.append('dead_code_arg_ok=%d' % dead_arg_ok)
-        fields.append('kill_fixture_reachable=%d' % kill_fixture_reachable)
+        fields.append('kill_binding=%d' % kill_binding)
+        fields.append('kill_cases=%s' % ';'.join('%s:%s' % (name, ','.join(cases))
+                                                 for name, cases in sorted(kill_cases.items())))
+        fields.append('mutants_sha_ok=%d' % mutants_sha_ok)
         passed = (self_pin == 1 and tool_absent == 0 and tool_sha_ok == 1
                   and selftest_exit == 0 and fixture_pass == len(FIXTURES)
                   and not errors and all(live_ok.values()) and lane_unf == 0
@@ -622,7 +631,7 @@ def main():
                   and not equivalent and unresolved == 0
                   and all(name in kill_names for name in KILL_NAMES)
                   and all(name in dead_names for name in DEAD_CODE_NAMES)
-                  and dead_arg_ok == 1 and kill_fixture_reachable == 1)
+                  and dead_arg_ok == 1 and kill_binding == 1 and mutants_sha_ok == 1)
         fields.append('rev=%s' % rev)
         fields.append('freeze=%s' % freeze)
         fields.append('C1_R43_PASS=%s' % ('true' if passed else 'false'))

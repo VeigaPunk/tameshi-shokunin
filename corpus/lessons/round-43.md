@@ -22,10 +22,10 @@ never adopted.
 - Located quotes (both in the `Mutation testing overview` section; this
   revision has **no** equivalent-mutant section of its own, and `grep -c
   'Equivalent_mutants'` → 0):
-  - line 794, `<p id="mw-Q">` (17 words): "The resulting program is
+  - line 794, `<p id="mw-Q">` (16 words): "The resulting program is
     behaviorally equivalent to the original one. Such mutants are called
     equivalent mutants."
-  - line 796, `<p id="mw-w">` (14 words): "Equivalent mutants detection is one
+  - line 796, `<p id="mw-w">` (15 words): "Equivalent mutants detection is one
     of the biggest obstacles to practical usage of mutation testing."
 - Scope: the behavioural definition and the obstacle claim only. The page
   carries **no** survivor vocabulary (`surviv`, `unreach`, `unkilled`,
@@ -41,9 +41,12 @@ never adopted.
 - URL https://stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants/,
   fetched 2026-10-25, 38687 B, 24 lines, `<title>` `Equivalent mutants | Stryker
   Mutator`, sha256
-  `79f6501ad8f2a74e647532dba8f77f17482afa70ccbe6821d2368092454079ce`; the live
-  bytes equal S089's 2026-10-22 anchor (`bc572676…`), and a second fetch was
-  byte-identical. Snapshot:
+  `79f6501ad8f2a74e647532dba8f77f17482afa70ccbe6821d2368092454079ce`; a second
+  fetch was byte-identical, but the bytes have **drifted** from S089's
+  2026-10-22 anchor (`bc572676…`): same 38687 B, same quoted sentences at the
+  same offsets, `last-modified: Sat, 24 Oct 2026 15:08:38 GMT`, so the anchor
+  digest is stale while the cited text survives (wave-1 ScribeLessonGate D1;
+  the round-44 recheck should move S089's anchor to this snapshot). Snapshot:
   `.ufo/evidence/round-43/sources/stryker-equivalent-mutants.html`.
 - Located quotes: line 16 (12 words) "There is no definitive way for Stryker to
   find and ignore them."; line 15 (20 words) "even if we change >= to <= and
@@ -90,7 +93,9 @@ row.
   same plus `r43-survivor-resolution-rule.md`. No status or recheck change.
 - Census: `sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`
   exit 0 at round start (113 rows, 9 × W04 + 1 × W01, zero E codes;
-  `.ufo/evidence/round-43/census-sources/start.stdout`) and exit 0 at round end
+  `.ufo/evidence/round-43/census-sources/start.stdout`; the receipts carry the
+  validate lines and the exit code in a sibling `.exit` file, not a row count,
+  which is what `grep -cE` above is for) and exit 0 at round end
   (114 rows, the same warning set and no new one, zero E codes;
   `after.stdout`). Wave-1 seat ExecCensus independently reproduced the start
   capture byte-for-byte and pinned it to the 113-row blob.
@@ -119,6 +124,9 @@ mined in round 42 and no box moved.
 | single-tool-pin-field | the contract carried one top-level `tool_sha256` that both C1 and C3 read; repinning it for the guard made `tool_sha_ok=0` for the census tool | wave-1 MutC1F11 (`tool_sha_ok=0` on both revs) | amendment A5: both counters read `frozen_tools[<path>]`; the top-level field stays for older readers |
 | classes-is-a-constant | `classes=7` is a declared constant with a tautological `declared == 7` conjunct, so it is not evidence that seven classes ran | wave-1 RevC2DoNothing and RevC2Classes | disclosed, not repaired: the evidence a class ran is its own m-field, and the per-class fields are computed unconditionally. The sentence in the docstring was corrected (amendment A6) |
 | extractor-narrower-than-the-sentence | m8 dropped brace-form and directory cites, m12 matched a prose mention of `Planned`, m13 matched `0,3` anywhere in the row, m10 excluded the superseding receipt's own claims, m11 required a commit rather than any object | wave-1 RevC2Classes (F1–F7) | amendment A6: brace expansion, directory resolution, the field form of `planned`, the backticked command cell only, superseded-target-only exclusion, `.ufo/waves/` scope, any-object resolution; three new selftest cases (prose-only `planned`, column-zero-plus-prose `0,3`, multi-entry map) |
+
+| asserted-digest-equality | the Gate's S089 block said the re-opened bytes were "byte-identical to S089's 2026-10-22 anchor" while printing a different sha256 (`79f6501a` vs `bc572676`); the knowledge entry repeated it | wave-1 ScribeLessonGate D1, which compared the two digests and the `last-modified` header | the Gate and the entry now say the document drifted, with the size, the unchanged quoted offsets and the `last-modified` date; A11's lesson revision. Shown able to fail: `sha256sum` of the committed snapshot vs the anchor digest printed in the S089 row |
+| uncounted-quote-length | the Gate gave 17 and 14 words for two Wikipedia quotes that are 16 and 15 words, and the Stryker line-15 quotation dropped the word `or` (`even < >` for `even < or >`) | wave-1 ScribeLessonGate D2–D4, re-run by the L1 with `split()` counts on the committed snapshot lines | word counts corrected and the quotation restored verbatim; the ≤25-word rule held either way, so no admission changed. Shown able to fail: `python3 -c` word count on the line, pasted in the report |
 
 Append-only held: `LOG.md`, `SCORECARD.md`, `corpus/QUALITY.md`,
 `corpus/README.md` and `corpus/knowledge/r43-survivor-resolution-rule.md` are

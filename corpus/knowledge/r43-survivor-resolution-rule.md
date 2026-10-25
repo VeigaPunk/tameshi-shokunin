@@ -17,15 +17,16 @@ Both vendors say the tool cannot make that call:
   "It is called equivalent mutant. There is no definitive way for Stryker to
   find and ignore them." — located at line 16 of this round's snapshot
   `.ufo/evidence/round-43/sources/stryker-equivalent-mutants.html`
-  (38687 B, sha256 `79f6501a`; byte-identical to S089's 2026-10-22 anchor). The
+  (38687 B, sha256 `79f6501a`; the bytes have drifted from S089's 2026-10-22
+  anchor `bc572676…` while every quoted sentence survives at the same offset). The
   page's example is a branch guarded by `10 ** 0 = 1`, where `>=`, `<=`, `>` and
   `<` all produce the same output — the tool cannot see that, so it reports a
   survivor.
 - Wikipedia (new S159, opened 2026-10-25): "Equivalent mutants detection is one
-  of the biggest obstacles to practical usage of mutation testing." (line 796,
-  `<p id="mw-w">`), and "The resulting program is behaviorally equivalent to the
-  original one. Such mutants are called equivalent mutants." (line 794,
-  `<p id="mw-Q">`). Both sit in the `Mutation testing overview` section — this
+  of the biggest obstacles to practical usage of mutation testing." (15 words,
+  line 796, `<p id="mw-w">`), and "The resulting program is behaviorally
+  equivalent to the original one. Such mutants are called equivalent mutants."
+  (16 words, line 794, `<p id="mw-Q">`). Both sit in the `Mutation testing overview` section — this
   revision has no equivalent-mutant section of its own, and the page carries no
   survivor vocabulary: it uses no "survivor", "unkilled" or "unreachable" text,
   and its behavioural definition does not separate a dead-code survivor from an
