@@ -1,0 +1,68 @@
+source: S259 — https://portal.fis.tum.de/en/publications/an-empirical-study-of-detected-and-undetected-flaky-test-failures/ — abstract of IEEE TSE 2026, DOI 10.1109/TSE.2026.3729363 — snapshot .ufo/evidence/round-46/coverage/sources/tum-portal-flaky-failures.html (sha256 5eb59adf…)
+verified-at: 2026-10-25
+recheck: 365d — `curl -fsSL 'https://portal.fis.tum.de/en/publications/an-empirical-study-of-detected-and-undetected-flaky-test-failures/' -o /tmp/tum-r46.html && sha256sum /tmp/tum-r46.html && python3 .ufo/evidence/round-45/freshness/measure.py --extract /tmp/tum-r46.html | grep -oF 'Modern CI systems commonly rerun failed tests within the same job to identify flaky failures' | wc -l` (ran 2026-10-25 → digest `b3051e44beda9b924aa1e449685e7880c55025d1a629fd117f3ecfd3f02ebf34`, count `4`; a second fetch the same day gave `b0619632ebf4f34c1f8587ae45b49bac9257132a3371f7f0380455d20b4d1524` with the same count `4`, and both fetches' normalized text equals the snapshot's word for word — 1668 words each — so the page serves volatile bytes and the drift signal is the count falling to 0, not a digest mismatch)
+ground: F3 — determinism precondition, flaky-aware verdicts (corpus/README.md:80) and F5 — hermetic environment normalization (corpus/README.md:82)
+
+# The rerun that decides a failure is flaky runs in the same job; these authors found the misses by rerunning in a fresh environment
+
+## What the snapshot records
+
+The record is the authors' institutional publication page (`portal.fis.tum.de`, a Pure portal), not the publisher's PDF. It carries the abstract, the DOI, the citation block and the bibliographic details, and nothing else about the paper's content.
+
+- Authors: Fabian Leinen, Martin Gruber, Saadet Sena Erdogan, Andreas Stahlbauer, Alexander Pretschner; affiliations Informatics 4 – Chair of Software and Systems Engineering (Technical University of Munich), BMW AG, CQSE GmbH (snapshot §header, visible text).
+- Venue and identity: IEEE Transactions on Software Engineering; DOI 10.1109/TSE.2026.3729363; state `Accepted/In press - 2026` (snapshot §details). The snapshot carries no publication day: `grep -c '2026-09-19' <snapshot>` → `0`.
+- Keywords: continuous integration, empirical study, flaky tests, software testing, test reliability (snapshot §keywords).
+- Access marker: the DOI list item carries `class="open-access"` in the markup around the DOI link (snapshot §Access to Document). The marker is markup; the page's visible text does not spell out a licence.
+
+## Located quotes (verbatim, with their occurrence count)
+
+The abstract is served four times on the page — the visible abstract, the BibTeX `abstract` field, the RIS `N2` field and the RIS `AB` field — so most sentences occur four times; the three that carry escaped characters occur three times, because the BibTeX block writes them as `{\textquoteright}`, `{\textendash}` and `{\texttimes}`. Token counts below are over the counter's own `fold()` of the quote; occurrence counts are `grep -oF '<quote>' | wc -l` over `python3 .ufo/evidence/round-45/freshness/measure.py --extract <snapshot>`.
+
+1. "Flaky tests produce non-deterministic outcomes, passing or failing inconsistently when executed under conditions that developers intend to maintain constant" — 19 tokens, 4 occurrences, absent from the package copy.
+2. "Modern CI systems commonly rerun failed tests within the same job to identify flaky failures" — 15 tokens, 4 occurrences, absent from the package copy.
+3. "Existing research predominantly analyzes data from this detection mechanism, overlooking undetected flaky failures that cause the most severe disruptions" — 19 tokens, 4 occurrences, absent from the package copy.
+4. "All apparently deterministic failures were systematically validated through reruns in fresh environments within the projects' original CI infrastructure" — 18 tokens, 3 occurrences, absent from the package copy.
+5. "We found that, across all projects, undetected flaky failures account for 9.8 %–16.3 % of failed pipeline runs" — 18 tokens, 3 occurrences; the package copy carries this sentence with its second clause in bold markers.
+6. "These flaky failure rates spike temporarily, triggered primarily by code changes and test reordering" — 14 tokens, 4 occurrences, present in the package copy.
+7. "While failures concentrate heavily in small test case subsets" — 9 tokens, 4 occurrences, absent from the package copy.
+8. "the most disruptive test cases with undetected flaky failures remain largely invisible to tools relying on current detection mechanisms" — 19 tokens, 4 occurrences, absent from the package copy.
+9. "Additionally, test environments significantly influence flakiness, with up to 3× variation in flake rates between them" — 16 tokens, 3 occurrences, absent from the package copy.
+10. "Our publicly available dataset of 154,000 flaky test cases with 1.7 million flaky failures provides an empirical foundation" — 18 tokens, 4 occurrences, absent from the package copy (the sentence continues past the quoted span: "for developing improved strategies for industrial CI environments").
+
+The dash form of quote 5 needs naming: the visible abstract and both RIS fields render `9.8 %–16.3 %` (en dash, spaces before the percent signs); the BibTeX block renders `9.8 \%{\textendash}16.3 \%`; and the lane's extractor folds the three visible copies to `9.8 %-16.3 %` while leaving the BibTeX copy escaped as `9.8 \%{\textendash}16.3 \%` (counts over the extraction: `3` and `1`), so a plain `grep -F '9.8 %–16.3 %'` over the extraction returns `0` while `grep -F '9.8 %-16.3 %'` returns `3`. The counter's `fold()` maps the en dash to the ASCII hyphen, so the visible spelling and the extractor's spelling both match a quoted span; the BibTeX `{\textendash}` spelling matches neither and is not quoted here.
+
+## The mechanism, in the source's own terms
+
+Observation, from quotes 2–4: the projects' own detector is a rerun of the failed test **within the same job** (2); the authors classified failures by rerunning **in fresh environments inside the original CI infrastructure** (4); and they state the class that the first mechanism misses is not small (5), is concentrated (7), and hides the worst cases from the tools built on that mechanism (8).
+
+Observation, from quote 1: the definition of the phenomenon is a test whose outcome varies "under conditions that developers intend to maintain constant" — the intent to hold conditions constant is part of the definition, not an assumption about them.
+
+Observation, from quote 10: the paper ships a dataset of 154,000 flaky test cases and 1.7 million flaky failures.
+
+## What this adds to F3
+
+F3's held ground is a repeated-control precondition with a finite sample: `corpus/README.md:127` records the scope of `knowledge/repeated-control-precondition.md` ("A standalone exact-tuple repeated-control gate; a clean result is finite sample agreement, not proof of determinism or a flaky-test cure"), and `corpus/README.md:80` states the next move as "N ≥ 3 byte-identical controls, or a named mismatch". The lane's F5 entry already refuses the stronger claim (`corpus/knowledge/hermetic-env-differential.md:4`: F3 universal determinism and successor freshness remain unclaimed).
+
+- **The lane's repeat gate repeats inside one environment.** `tools/repeat-control.py:18` says the run mode executes the argv N times with "the environment is inherited unchanged", and `:94` says the clean verdict "is not a determinism proof and it cures no flakiness". Inference: N byte-identical controls therefore establish stability *in the inherited environment*; quote 2 is the name of the mechanism whose blind spot that sampling design inherits, and quote 4 is the design that does not.
+- **A fresh-environment rerun is the precondition the lane can now state with a size attached.** Inference: F3's next move stops being only "N ≥ 3 byte-identical controls" and becomes "N ≥ 3 controls that agree while the environment tuple varies" — because the source's own flaky verdicts were produced by reruns in fresh environments (4), and the failures those reruns identified as undetected flaky failures are 9.8 %–16.3 % of failed pipeline runs (5), i.e. a same-job verdict would have called every one of them a real failure.
+- **The miss is systematic, not incidental.** Inference: quote 3 says the existing literature predominantly analyzes data from the same-job mechanism, and quote 8 says the most disruptive undetected cases stay invisible to tools relying on it; read together, a lane that adopts a same-job rerun as its flaky oracle is not using a weak detector but the detector the paper measures as blind to its own worst class.
+- **The concentration matters for fixture design.** Inference: quote 7 says failures concentrate heavily in small test case subsets, so a suite-level flake rate hides the per-case distribution; an F3 verdict stated per suite can be clean while the few cases that decide the verdict are the unstable ones.
+
+## What this adds to F5
+
+- **Environment is a first-class flake input.** Quote 9 states up to 3× variation in flake rates between environments. The lane's F5 experiment (`corpus/knowledge/hermetic-env-differential.md:1-6`) varies one declared input across seven profiles over nine pinned surfaces and reports them clean. Inference: the two results are consistent and do not generalise into each other — the lane's *gates* were insensitive to the inputs it varied, while the source's *real suites* vary up to 3× between environments; the lane must not read its own gates' insensitivity as a property of the suites it verifies.
+- **The mechanism for the F3 precondition already exists in the lane.** Inference: `tools/env-diff.py` (the contract and `--selftest` forms named at `corpus/knowledge/hermetic-env-differential.md:6`) is the instrument that can vary the environment tuple across a repeated control, which is exactly the protocol quote 4 describes; wiring it into `tools/repeat-control.py`'s N runs is the concrete F3 move, and its falsifier is a pair of controls that agree in one environment and disagree across two.
+
+## What the snapshot does not carry, and where the package copy overstates it
+
+- The package header says "online date 2026-09-19". The snapshot has no such string (`grep -c '2026-09-19'` → `0`); it says `Accepted/In press - 2026`. Corrected here: the entry claims no publication day.
+- The package says the record is "open access per the institutional record". The snapshot carries an open-access *marker* in markup (`class="open-access"` on the DOI list item) and no visible licence statement. Corrected here: the marker is recorded as markup, nothing more.
+- The package attributes the lane's "one green control" verdict to "round 1's `S107`". `S107` is the TensorFlow Federated golden-tests row (`corpus/SOURCES.md:119`, F4 explicit update flag), not the F3 repeated-control ground; the F3 one-control-per-sweep text is `corpus/README.md:80` and the lane's entry is `corpus/knowledge/repeated-control-precondition.md`. Corrected here.
+- The package's sentence that `aaron` has no copy of this DOI is about a tool, not about the snapshot. It is carried as unverified by this seat and is not used to support any claim above.
+- The snapshot carries no per-project breakdown, no flake-rate table and no method section — only the abstract, the metadata and the citation blocks. No figure beyond 8.8 billion executions, 9.8 %–16.3 % of failed pipeline runs, up to 3× environment variation, 154,000 flaky test cases, 1.7 million flaky failures, four projects and two-month periods is claimed here, because the page carries no other.
+
+## Boundary of this entry
+
+- The numbers are four industry-scale projects over two-month periods (quote 5's scope, plus the sentence "We analyzed 8.8 billion test executions from four industry-scale projects over two-month periods"). They are not the lane's measurements and do not transfer to the lane's gates.
+- The record is an institutional page; the abstract is the authors' summary, not the paper's method section. Every statement above is either a located quote, a located markup fact, a lane file line, or explicitly labelled `Inference:`.
+- The F3 move this entry licenses is a *protocol* claim (rerun across environments) plus the source's measured blind-spot size; the lane's own F3 verdict on its fleet legs remains unmade.
