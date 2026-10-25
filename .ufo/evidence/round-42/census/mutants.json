@@ -1,0 +1,40 @@
+{
+  "mutants": [
+    {
+      "name": "attr_bind_several_assignments",
+      "class": "attr",
+      "find": "if len(vals) == 1 and not isinstance",
+      "replace": "if len(vals) >= 1 and not isinstance"
+    },
+    {
+      "name": "attr_never_resolve_self",
+      "class": "attr",
+      "find": "if ctx.cls is not None and _is_self_attr(node) and node.attr in ctx.cls.attrs:",
+      "replace": "if False and ctx.cls is not None and _is_self_attr(node) and node.attr in ctx.cls.attrs:"
+    },
+    {
+      "name": "method_fold_disabled",
+      "class": "method",
+      "find": "value, method_env = ctx.cls.method_return(node.func.attr)",
+      "replace": "value, method_env = None, None"
+    },
+    {
+      "name": "method_fold_several_returns",
+      "class": "method",
+      "find": "if len(returns) != 1:",
+      "replace": "if len(returns) < 1:"
+    },
+    {
+      "name": "outflag_dests_never_recorded",
+      "class": "outflag",
+      "find": "                self.out_dests[dest] = flag",
+      "replace": "                pass"
+    },
+    {
+      "name": "outflag_no_parse_args_check",
+      "class": "outflag",
+      "find": "if flag and _parse_args_ns(node.value, env, ctx, depth + 1, seen):",
+      "replace": "if flag:"
+    }
+  ]
+}
