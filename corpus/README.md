@@ -495,3 +495,9 @@ separated from the difference class) and the *write-path census* over the survey
 still unmeasured and stays the next falsifiable move. Sources: S105 (spec, tier A), S106
 (code, tier A). The lane's own fixtures were not converted to golden comparisons this round,
 and no claim is made about any sibling gate.
+
+## Round 39 — F4 write-path census (round 39)
+
+| `knowledge/r8-golden-update-flag.md` | F4 explicit update flag, re-grounded this round on S107 (upstream golden_tests.md at 4d3a89c9) and S108 (the zh-cn page). The entry states the flag rule. It does not state the census count. |
+
+**Coverage-map move (F4 census).** The round-38 section left the write-path census unmeasured. This round counted the lane's own 21 gate tools under a frozen pattern: `live_write_sites=99`, `live_unflagged=0`, with planted controls that a constant 0 and a constant 1 both fail, and a fixture that writes `case.expected` only when the update flag is set. The 0 is the pattern's count, not a claim that no unflagged write exists: seats found `expected.json` via `.write_bytes` and an `os.replace` path the pattern does not see. Those limits stay open. Sources: S107 (tier A), S108 (tier B).

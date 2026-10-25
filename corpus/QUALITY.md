@@ -927,3 +927,16 @@ Falsifier that must fail: the same frozen counter must print `m3=1 ... C2_R35_PA
 and exit 1 while a tameshi-attributable untracked file remains under the fleet root's
 `.ufo/waves/` tree, and `m3=0` once the file is committed into the lane and the fleet copy
 is gone (before receipt: `.ufo/evidence/round-38/calibration/before-at-base.stdout`).
+
+### Criterion 78 — a wave parent that exits before seat terminals is unsettled
+
+A dispatched wave is settled only when every seat has a terminal timestamp and the
+dispatcher parent exit is at or after the latest of those timestamps. A parent that
+exits while seats are still running is unsettled, even if the parent process itself
+exits 0. Prepared specs are not dispatched seats. Dead seats are not replaced.
+Lesson: `corpus/lessons/round-39.md` (the round-38 parent-exit, and
+`considerthese/2026-10-24.md` proposal 4, mined 2026-10-24, not edited).
+Falsifier that must fail: `python3 tools/wave-parent-settle.py --selftest` must fail
+if the red fixture (parent_exit_unix=10, seat terminal_unix=20) is classified SETTLED.
+The committed selftest classifies that receipt UNSETTLED and exits 0 only because the
+tool's own check expects UNSETTLED.

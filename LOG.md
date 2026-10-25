@@ -2057,3 +2057,13 @@ metadata and its failure are preserved; production gate source is unchanged.
   evidence**; both claims rest on L1-executed counters over committed bytes and on the L1's own source
   fetches, and are consequently **unattacked** by an independent seat. Record:
   `.ufo/waves/round-38/w1/dispatch-outcome.md`.
+
+## 2026-10-24 — round 39: depth-guard agreement and F4 write-path census
+
+Motivating evidence: `corpus/lessons/round-38-verifier-spotcheck.md` routed three defects. The round-38 `no_harm_guard.depth_command_d` regex `^\s*leg` matches 0 lines of `tools/mutate-and-run.sh` while canonical command D counts 9. The F4 write-path census was named unmeasured. The wave parent exited before seats settled (L0 `d0531d78`, not re-filed).
+
+- C1 calibration. Successor guard in `.ufo/evidence/round-39/contract.json` uses the command D pattern. Counter `.ufo/evidence/round-39/guard/measure.py`. Before at `50aadd1bbd94e43cd3fcfb81459414394db2dc35`: `guard_absent=1 mismatches=1 C1_R39_PASS=false`. After at `233077f88d7a8d142eff329202a120457a5d5258`: `live_agree=1 stripped_agree=1 r38_regex_hits=0 mismatches=0 C1_R39_PASS=true`. The round-38 contract was not edited. A vacuous regex disagrees 0 vs 9; a constant 9 disagrees on the stripped runner.
+- C2 depth. `tools/write-path-census.py` pin `bc8c660c56f871f85dad8912be28446293fd63f62b4fd1c16eb153f7a27edc62`. Before: `tool_absent=1 C2_R39_PASS=false`. After: `gates=21/21 live_write_sites=99 live_unflagged=0 fixture_wrote=1 mutant_killed=1 C2_R39_PASS=true`. The 0 is the frozen pattern's count. Seats found `expected.json` and `os.replace` outside that pattern; the pin was not moved after they scored.
+- Frontier. S107 and S108 opened 2026-10-24 and mined by `corpus/knowledge/r8-golden-update-flag.md`. Staged S137 and S141 refused (payload-absent at `31687496`). Census start and end exit 0. Rows 103 → 105.
+- considerthese proposal 4 mined as QUALITY criterion 78, not edited. Settlement classifier `tools/wave-parent-settle.py` selftest 3/3. The round-38 parent-exit shape classifies UNSETTLED.
+- Command D at the measured commit: `recorded_cases=9 depth_score=9`. No axis harmed.
