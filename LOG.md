@@ -2217,3 +2217,44 @@ inherited (`jj-lane.sh state`: local=remote=`c77c2b7e`, tracked=0 untracked=0).
 - Deciding run at `242c1b4a1bb793d6ca4ac4e3b0da153767e78739` (the revision carrying the wave evidence, the declared mutants and the corrected records): C1 PASS true exit 0; C2 PASS false exit 1 (`mutants_declared=6 mutants_killed=4`; survivors `outflag_no_parse_args_check` and `method_fold_several_returns` — see `corpus/lessons/round-42.md` C2 instrument). Receipts `.ufo/evidence/round-42/after/c1-at-242c1b4a.{stdout,exit}`, `.ufo/evidence/round-42/after/c2-at-242c1b4a.{stdout,exit}`.
 - Wave 2: 38 seats in one `task` call (14 reviewer, 7 scout, 7 critic, 6 mutation-tester, 3 executor, 1 connector), 37 completed, 1 dead (`ReviewLessonLimits`, provider error, stays dead). Round total 85 seats; both waves validated under policy v1 (`.ufo/waves/round-42/spec-w2.json`, `.ufo/waves/round-42/dispatch-w2.json`).
 - C2 verdict: honest miss (4/6 declared mutants killed). The v4 tool still resolves the three live v3 false positives and passes its ten fixtures; the claim's mutant gate is not met.
+
+- 2026-10-25 — round 43 (hyaku run 6, attempt 1; tameshi fleet round 43): **survivor
+  resolution under a pre-declared rule (depth) + record agreement extended (calibration)
+  + staged-id guard (operability)**. Contract frozen at `17f6ef0c72ec27e1aea305b5c95806b43bb2caef`
+  before any seat and before the first deciding run (`amendments` A1–A3 pre-data; A4 the
+  guard repair from a wave-1 mutation-tester).
+  C1 (depth): the two round-42 survivors are resolved. `outflag_no_parse_args_check` is
+  **killed** by `F11_outflag_namespace` (a `SimpleNamespace` whose attribute name equals an
+  argparse output-flag dest — reachable code; the tool's documented rule says only a
+  `parse_args` namespace counts, the mutant drops that check). `method_fold_several_returns`
+  is **dead_code_only**: it differs from the tool only on a method with two top-level
+  returns, where the second is unreachable, so the rule names the class instead of counting
+  a kill or calling it equivalent. Declared set unchanged
+  (`mutants_declared=6 mutants_killed=5 dead_code_only=1 unresolved=0`).
+  C2 (calibration, lowest non-retired axis): record agreement over seven classes — the five
+  round-42 classes plus m12 (the newest SCORECARD block declares the next round's planned
+  claims; the round-42 block had none) and m13 (the newest standing registry command is
+  census-valid and load-bearing on an indented mirror; the standing rows still carried the
+  column-zero count). Before `m12=1 m13=1 total=2`; target `total=0`.
+  C3 (operability, capability): `tools/staged-id-guard.py` answers the round-42 post-append
+  hazard before any append — 7 collisions on the live package (S153–S159), 3 of them
+  documents the registry already holds (`staged:S153`→S105, `staged:S154`→S106,
+  `staged:S159`→S155), its own naive arithmetic map refused because the targets are still
+  staged ids, and only a by-document map at or above the safe floor `S256` admitted.
+  Knowledge: `corpus/knowledge/r43-survivor-resolution-rule.md` (S089 re-opened, S159 new;
+  S155/S158 held) — the K/D/E/U rule, the two fixtures, and the PIT `EQUIVALENT(true)`
+  divergence that the entry declines to adopt.
+  Registry: one row added, **S159** (Wikipedia, Mutation testing), tier A docs, mined,
+  113 → 114 rows, census exit 0 at start and end. The Stryker equivalent-mutants document
+  was **not** added: the census W04 warning caught that S089 already holds that URL, so the
+  round cites S089 (re-opened) — the guard's own dedupe rule applied to the lane's append.
+  Used-by changed in place (logged in the lesson): S089, S155, S158 gain
+  `corpus/knowledge/r43-survivor-resolution-rule.md`.
+  QUALITY criteria 83 (a survivor is classified, never relabelled) and 84 (a self-assessment
+  count uses the pattern its registry accepts), each with a falsifier that fails.
+  Wave shape: default two v1 waves (policy v1, band 32–64); wave 1 build+first falsifiers,
+  wave 2 fresh attackers after wave 1 returns. Round shape, seat counts and dead seats are
+  recorded in the round report.
+  No axis harmed: depth 9 → 9 (command D), calibration 6 → 6 (round-21 coldread monitor),
+  both re-run at the base and at the freeze by wave-1 seat ExecCommandD with byte-identical
+  tool/`SHONEN.md`/monitor at both revs.

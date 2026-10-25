@@ -540,3 +540,17 @@ Stryker does not, S001). F4's write-path half gains the tool
 over the tracked `tools/` Python files (26 at the round commit). The note's "What is not
 claimed" names the shapes the tool does not resolve, including the false-negative classes
 the round's falsifiers found.
+
+## Round 43 — survivor resolution, record agreement, staged-id guard (round 43)
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/r43-survivor-resolution-rule.md` | The K/D/E/U rule the lane applies to a mutant that survives its battery: killed (a reachable-code fixture flips a declared class under the exit-plus-FAIL oracle), dead_code_only (every differing case is a fixture whose discriminating construct is unreachable), equivalent (no differing case in the declared corpus), unresolved (everything else, including run errors and apply errors). Resolves the two round-42 survivors: the outflag mutant killed by F11, the method-fold mutant named dead-code-only rather than relabelled. Records PIT's `EQUIVALENT(true)` convention and why the lane does not adopt its scoring. | S089, S159, S155, S158 |
+
+**Coverage-map move (F1, F9-adjacent).** F1's outcome vocabulary gains the survivor side: the
+round-42 entry covered what each outcome means, this entry covers what a survivor who is not
+killed is *called*, with the rule frozen before the data and the two resolving fixtures named.
+The ground the lane did not hold is the equivalence problem itself (S089 re-opened, S159 new) and
+the distinction between "unkillable", "unreachable" and "not yet exercised" — the last is what a
+killing fixture removes and the middle is what F12 documents. F9 (LLM-era mutant generation and
+equivalence) is not touched: no LLM was used to generate or classify a mutant here.

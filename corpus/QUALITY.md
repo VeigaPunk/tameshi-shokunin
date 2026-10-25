@@ -1045,3 +1045,61 @@ python3 .ufo/evidence/round-42/census/measure.py --lane LANE \
   --rev 322b5cd32b4319a05340d249ae752d12a9e6b19f --freeze 322b5cd32b4319a05340d249ae752d12a9e6b19f \
   --probe-mutant /tmp/crash-probe.py
 ```
+
+### Criterion 83 — a survivor is classified, never relabelled
+
+When a declared mutant survives the lane's kill battery, the round records one of four
+verdicts for it — `killed`, `dead_code_only`, `equivalent`, `unresolved` — with the
+evidence that decides it: the fixture whose declared class the mutant flips (killed), or
+the differential probe over the declared corpus plus the structural argument
+(dead_code_only / equivalent), or the absence of both (unresolved). A survivor is never
+dropped from the declared set and never relabelled `equivalent` on assertion: Stryker
+states no tool can decide equivalence (S089, re-opened round 43), and PIT's
+`EQUIVALENT(true)` is a scoring convention for a class a human decided, not a detector
+(S158, `corpus/knowledge/r43-survivor-resolution-rule.md`). A fixture whose discriminating
+construct is runtime-unreachable is a legitimate analyzer case and still not a kill: the
+verdict is `dead_code_only`, with the construct named.
+Lesson: `corpus/lessons/round-43.md`. The round-42 survivors had stood unclassified for a
+round; the round-42 closure routed them.
+Falsifier that must fail (from the lane; flipping the dead-code fixture's declared class
+makes the dead-code survivor read `killed`, which this criterion forbids counting):
+
+```
+cp .ufo/evidence/round-43/mutants/measure.py /tmp/m83.py
+python3 - <<'EOF'
+p='/tmp/m83.py'; s=open(p).read()
+s=s.replace("'self.destination()', 11)", "'self.destination()', 11)", 1)
+s=s.replace("{'expected': False, 'scratch': False, 'explicit_out': False, 'unflagged': False},\n        'self.destination()', 11)",
+            "{'expected': True, 'scratch': False, 'explicit_out': False, 'unflagged': False},\n        'self.destination()', 11)")
+open(p,'w').write(s)
+EOF
+python3 /tmp/m83.py --lane . --rev 17f6ef0c72ec27e1aea305b5c95806b43bb2caef \
+  --freeze 17f6ef0c72ec27e1aea305b5c95806b43bb2caef
+```
+The flattering line prints `mutants_killed=6 dead_code_only=0`; criterion 83 says the
+correct answer is `mutants_killed=5 dead_code_only=1`, so the counter's own output is not
+the criterion — the fixture's reachability is.
+
+### Criterion 84 — a self-assessment count uses the pattern its registry accepts
+
+Every standing counting command the lane prints for its own numbers must use the same
+pattern the contract's census accepts. CORPUS.md accepts registry rows with 0-3 leading
+spaces, so a column-zero `grep` under-counts a registry the census calls valid; a lane that
+counts its rows more narrowly than its own census reports a number it cannot defend. The
+command must be shown load-bearing on an indented mirror, not merely present.
+Lesson: `corpus/lessons/round-43.md` Gate; the round-42 lesson disclosed that its m6 missed
+a four-space-indented row but the standing SCORECARD rows kept the column-zero command.
+Falsifier that must fail (one row indented two spaces: column-zero prints one fewer):
+
+```
+cp corpus/SOURCES.md /tmp/mirror-SOURCES.md
+python3 - <<'EOF'
+p='/tmp/mirror-SOURCES.md'; lines=open(p).read().split('\n')
+for i,l in enumerate(lines):
+    if l.startswith('| S001 |'):
+        lines[i]='  '+l; break
+open(p,'w').write('\n'.join(lines))
+EOF
+grep -cE '^\| S[0-9]{3} \|' /tmp/mirror-SOURCES.md
+grep -cE '^ {0,3}\| S[0-9]{3} \|' /tmp/mirror-SOURCES.md
+```

@@ -1,0 +1,172 @@
+# MutC3Selftest — is the guard's own selftest load-bearing?
+
+Lane `tameshi`, round 43, wave 1. Bounds: READ-ONLY on the lane checkout; every mutant copy under
+`/tmp/tameshi-r43-MutC3Selftest-verify/` (deleted before return). No tool installed or upgraded
+(pacman paused host-wide); `python3` 3.14, host packages only.
+
+Measured bytes, in order (the tree moved under this seat during the run — see the timeline):
+`17f6ef0` tool `8140945a…f97b762`, counter `6278edcd…78601`, 13 cases; `5cd2154` tool `efa5f129…f9b3c`,
+counter `fbc8ad3c…0c51e`, 14 cases; working tree `365bf958…0b0c2` (uncommitted), 23 cases.
+
+## 1. The three assigned mutants — 3/3 killed at the freeze they were written against
+
+Pristine control (freeze `17f6ef0`, tool sha `8140945a…`):
+
+```
+STAGED_ID_GUARD_SELFTEST: cases=13 failed=0
+VERDICT: PASS
+```
+
+| # | Single edit | Line | Mutant sha256 (16) | `--selftest` at 17f6ef0 | Catching case | Verdict |
+|---|---|---|---|---|---|---|
+| M1 | `ROW_RE` → column-zero `r'^\|…'` | 54 | `e6b1ef68fdb397d7` | cases=13 **failed=7** exit=1 | `T1_indented_collision_seen` (+6 collateral) | killed |
+| M2 | staged-clash reason dropped | 196-198 | `fd9442372bce486a` | cases=13 **failed=1** exit=1 | `T3_map_onto_staged_refused` (`reasons=[]`) | killed |
+| M3 | `document_key` always `''` | 88 | `ee07d3d5ab2d9c9f` | cases=13 **failed=2** exit=1 | `T5_dedupe_to_registry_id`, `T5_dedupe_map_admitted` | killed |
+
+```
+=== m1 exit=1
+STAGED_ID_GUARD_SELFTEST: cases=13 failed=7
+FAIL T1_indented_collision_seen collisions=[]
+FAIL T1_column0_blind column0_miss=[]
+FAIL T3_cascade_refused naive={} cascade=[]
+FAIL T4_valid_map_admitted reasons=['map names a row the package does not carry: S002']
+FAIL T3_map_onto_registry_refused reasons=['map names a row the package does not carry: S002']
+FAIL T3_map_onto_staged_refused reasons=['map names a row the package does not carry: S002']
+FAIL T4_partial_map_refused reasons=['map has a target that is not an S-id']
+VERDICT: FAIL
+=== m2 exit=1
+STAGED_ID_GUARD_SELFTEST: cases=13 failed=1
+FAIL T3_map_onto_staged_refused reasons=[]
+VERDICT: FAIL
+=== m3 exit=1
+STAGED_ID_GUARD_SELFTEST: cases=13 failed=2
+FAIL T5_dedupe_to_registry_id held={}
+FAIL T5_dedupe_map_admitted reasons=['map targets collide with registry ids: S001'] dedupe={}
+VERDICT: FAIL
+```
+
+Re-run against the A4/A5 bytes (`efa5f129`, 14 cases), still killed: M1 8 failed, M2 1, M3 2.
+
+```
+=== m1b exit=1 sha=307827089750a41a   cases=14 failed=8
+=== m2b exit=1 sha=54e939e8b24f5af9   cases=14 failed=1  (FAIL T3_map_onto_staged_refused)
+=== m3b exit=1 sha=0d8e75fb7cfde89d   cases=14 failed=2  (FAIL T5_dedupe_to_registry_id, T5_dedupe_map_admitted)
+```
+
+### The selftest is the *only* detector for M1 and M2
+
+Scored through the counter's falsifier mode (`--tool-file`, `--rev/--freeze 17f6ef0`; note
+`measure.py:142` pins `tool_sha_ok` from `git show REV:tools/…`, not from the substitute, so a
+substitute has to be killed behaviourally):
+
+| tool-file | selftest_exit | live_collisions_agree | live_held_agree | live_unmapped | naive_map_refused | `C3_R43_PASS` |
+|---|---|---|---|---|---|---|
+| pristine | 0 | 1 | 1 | 0 | 1 | false (join bug) |
+| M1 | **1** | 1 | 1 | 0 | 1 | false (join bug) |
+| M2 | **1** | 1 | 1 | 0 | 1 | false (join bug) |
+| M3 | **1** | 1 | **0** | **6** | 1 | false |
+
+M1 and M2 leave every live check at its good value — the live registry is column-zero, and the
+naive map is refused by the cascade verdict, not by the reason M2 deleted. Only `selftest_exit`
+moves. Load-bearing for these three axes: **yes**.
+
+Case-quality notes (not gaps): `T1_extractor_label` asserts a hardcoded string and passes on M1;
+`T4_partial_map_refused` fails on M1 only incidentally (empty map hits the S-id rule).
+
+## 2. Gap A — the join bug, found at 17f6ef0, since repaired
+
+`tools/staged-id-guard.py:172` (freeze bytes): `re.fullmatch(r'S\d{3,}', ''.join(targets) or 'S0')`
+can only match a **one-entry** map, so every 2+ entry map was refused `'map has a target that is
+not an S-id'`. Proof on the freeze bytes with the exact safe map the counter builds:
+
+```
+safe_map {'S153':'S105','S154':'S106','S155':'S256','S156':'S257','S157':'S258','S158':'S259'}
+verdict=inadmissible ok=False reasons=['map has a target that is not an S-id']   rc=1
+```
+
+`map_clash=[] map_staged_clash=[] map_below_floor=[] map_uncovered=[] map_dedupe={'S153':'S105','S154':'S106'}`
+— the map is otherwise admissible, so `safe_map_admitted=0` made `C3_R43_PASS` false at `17f6ef0`.
+
+Status now: closed by `5cd2154` (per-target `all(re.fullmatch(...))` plus the new case
+`T4_multi_entry_map_admitted`), and the live safe map is admitted (`verdict=admitted`, rc=0). The
+new case is load-bearing: restoring `''.join` on the patched bytes gives
+`cases=14 failed=1 — FAIL T4_multi_entry_map_admitted`.
+
+## 3. Gap B (OPEN) — surviving mutant M4: the whole-set exemption is untested
+
+M4 removes both `not whole_set` exemptions (`:191` and `:194` at 17f6ef0; `:226`/`:229` on the
+working tree), so a whole-set map is held to the partial-map floor and staged-clash rules.
+
+| bytes | M4 `--selftest` | live counter (`--tool-file`) |
+|---|---|---|
+| `17f6ef0` (13 cases) | cases=13 **failed=0 PASS** | every component identical to pinned; `C3_R43_PASS=false` (join bug, same as pinned) |
+| `5cd2154` (14 cases) | cases=14 **failed=0 PASS** | `selftest_exit=0 selftest_failed=0 live_*=good safe_map_admitted=1 map_dedupe_live=1 **C3_R43_PASS=true**` — byte-for-byte the pinned tool's line |
+| working tree `365bf958` (23 cases) | cases=23 **failed=0 PASS** | not scored (uncommitted, moving) |
+
+It is not an equivalent mutant — the behaviour differs:
+
+```
+current: whole-set S011->S004 (floor S012) ok=True  reasons=[]
+M4c:     whole-set S011->S004 (floor S012) ok=False reasons=['partial map targets are below the safe floor S012: S004']
+```
+
+**Missing case — `T4_whole_set_floor_refused`** (the case that should have existed):
+
+```python
+    # whole-set map (len(map) == len(staged)) must LOSE the floor exemption:
+    # the floor is a partial-map rule, a whole-set renumber may go below it,
+    # and a mutation that enforces it anyway must be caught.
+    reg2 = REG_AT_S010_S011                    # floor S012
+    whole2 = STAGED_ONE_ROW_NEW_DOC            # 1 row, id S011, new document
+    ok8, reasons8, _ = validate_map(reg2, whole2, {'map': {'S011': 'S004'}})
+    case('T4_whole_set_floor_admitted', ok8, 'reasons=%s' % reasons8)
+    ok9, reasons9, _ = validate_map(reg2, whole2, {'map': {'S011': 'S013'}})
+    case('T4_whole_set_above_floor_admitted', ok9, 'reasons=%s' % reasons9)
+```
+
+(`T4_whole_set_floor_admitted` is the discriminating assertion: it passes on the current tool and
+fails on M4c. Without it the exemption is unconstrained in both directions.) Second half of M4 —
+removing the staged-clash exemption for whole-set maps — needs a whole-set package whose map
+targets an id another staged row holds; no existing fixture has that shape.
+
+## 4. Reviewer divergences (RevC3Tool) — verified, and their selftest coverage
+
+Reproduced independently on the freeze bytes `8140945a` and again on the current working tree
+`365bf958`:
+
+| # | Divergence | At `17f6ef0` | At `365bf958` (now) | Selftest case? | Case that should exist |
+|---|---|---|---|---|---|
+| 1a | `HEXISH` strips 7-40 hex runs: `/data/deadbeef/notes.md` and `/data/feedface/notes.md` both → `/data//notes.md`; distinct documents collapse | `held={'S002':'S002'}` (false dedupe, silent non-append) | **fixed** (`held={}`, `normalise_document`) | no | `T7_hex_paths_stay_distinct` (`held == {}`) |
+| 1b | a hex-only stem is deleted: `abc1234.md` → `''` → false unmapped | `unmapped=['S002'] refused=True` | **fixed** (`unmapped=[]`) | no | `T7_short_hex_filename_kept` |
+| 2 | `analyse` can call a collision held on its own id (`held={X:X}`) while `--map {X:X}` is refused "map leaves a colliding id on itself" — the tool's own dedupe answer is unrepresentable | `held={'S002':'S002'}`, map ok=False | **still open** | no (`T5_dedupe_*` all use `S002→S001`) | `T5_self_held_dedupe_representable` — assert `analyse.held[X]==X ⟹ validate_map({X:X}) admits` (or that `analyse` must not report `X` as held) |
+| 3 | `whole_set` skips the floor: a 1-row package may map below `safe_floor` while the identical target in a partial map is refused | admitted, `reasons=[]` | **still open** | no | `T4_whole_set_floor_admitted` (same case as M4 above) |
+| 4 | empty map `{}` on a zero-collision package refused by the `'S0'` fallback | `reasons=['map has a target that is not an S-id']` | **fixed** (`ok=True`) | no | `T4_empty_map_zero_collisions_admitted` |
+
+Divergence 3 is the design intent (a whole-set renumber may go below the floor), so it is a
+*specification* item the contract should state, not necessarily a bug — but it is exactly the
+semantics M4 mutates, and nothing pins it. Divergence 2 looks like a real contract hole: the tool
+publishes `held` as an answer that `--map` will not accept.
+
+## 5. Verdict for the milestone "guard selftest load-bearing"
+
+* Assigned mutants: **3/3 killed**, at the freeze they were written against and again at `5cd2154`;
+  for M1 and M2 the selftest is the sole detector (no live counter check moves).
+* The selftest was **blind to both admission defects that existed at the freeze**: the
+  `''.join(targets)` bug (fixed post-freeze with the case this seat proposed) and the whole-set
+  exemption (M4, **still surviving all 23 cases** on the working tree). On the admission axis — the
+  axis C3 actually claims — the selftest is therefore *not yet* load-bearing: it is load-bearing on
+  the extractor, the refusal reasons and the dedupe join.
+* Gap B is a coverage finding only; it does not license changing the contract. Divergence 3 must be
+  pinned by the contract before any case asserts it.
+
+## 6. Restoration, bounds, and tree drift
+
+* No write outside `/tmp/tameshi-r43-MutC3Selftest-verify/` and this report; no
+  `git add/commit/stash/checkout/switch/reset/pull/push`; no `jj` command; nothing written in
+  `/home/vgpnk/Projects/shokuknow`.
+* Scratch deleted after these numbers were recorded.
+* `tools/staged-id-guard.py` was byte-identical to the pin (`8140945a…`) after this seat's first
+  phase. It then changed **without this seat touching it**: commit `5cd2154` (L1, "freeze A4/A5 —
+  guard map-shape repair (wave-1 finding)…") re-pinned it to `efa5f129…`, and a further uncommitted
+  edit (`M` in `git status`) moved it to `365bf958…` with 23 cases. Every measurement above names the
+  bytes it was taken on; nothing in this report is a claim about the working tree after `365bf958`.

@@ -1,0 +1,349 @@
+{
+  "schema": "ufo-swarm-registry-v1",
+  "wave": "round-43-w1",
+  "createdAt": "2026-10-25T10:51:16.144Z",
+  "updatedAt": "2026-10-25T10:51:16.144Z",
+  "reportDir": ".ufo/waves/round-43/w1",
+  "members": {
+    "ScoutStrykerEquiv": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Open https://stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants/ with curl -fsSL into /tmp/tameshi-r43-ScoutStrykerEquiv-/. Report bytes, sha256 and the <title>. Locate the verbatim sentence that says a tool cannot find and ignore equivalent mutants, plus the 10 ** 0 example, with HTML line numbers. Give two <=25-word located quotes with your access date 2026-10-25 and say which sentence would ground a lane rule that a survivor needs an explicit classification rather than a tool verdict.",
+      "axes": [
+        "freshness"
+      ],
+      "milestone": "S159 (Stryker equivalent mutants)"
+    },
+    "ScoutWikiEquiv": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Open https://en.wikipedia.org/wiki/Mutation_testing with curl -fsSL into /tmp/tameshi-r43-ScoutWikiEquiv-/. Report bytes, sha256, <title>. In the Equivalent mutants section locate the sentences defining an equivalent mutant and calling their detection an obstacle, with HTML line numbers. Give two <=25-word located quotes with access date 2026-10-25. State whether the page distinguishes an equivalent mutant from a survivor on unreachable code — this lane must not conflate them.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "S160 (Wikipedia mutation testing)"
+    },
+    "ScoutPitEquiv": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Re-open the committed snapshot /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/sources/pit-faq.html and the live https://pitest.org/faq/ (curl -fsSL into /tmp/tameshi-r43-ScoutPitEquiv-/). Report whether the FAQ says anything about equivalent or unkillable mutants, with line numbers, and whether the live page still matches the snapshot sha256 ccf6ac49. If it says nothing, say so and name the nearest section. Two <=25-word located quotes or an explicit 'no such text'.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "held S156 re-open"
+    },
+    "RevC1Counter": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/mutants/measure.py and /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/contract.json claims.C1. Check line by line: the exit-plus-FAIL oracle, the K/D/E/U derivation, which fixture each kill rests on, the naming requirement (killed must contain outflag_no_parse_args_check; dead_code_only must contain method_fold_several_returns), and whether the predicate can pass while a survivor is only relabelled. Report each mismatch as file:line + what the code prints instead. Do not edit anything.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "C1 counter correctness"
+    },
+    "CritC1DeadCode": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Attack the dead-code judgment. method_fold_several_returns changes `if len(returns) != 1` to `if len(returns) < 1` in /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py:139. Construct Python inputs in /tmp/tameshi-r43-CritC1DeadCode-/ where a method has two or more TOP-LEVEL returns without one being unreachable (i.e. a case that is reachable code). Run the pristine tool and the mutant (copy the tool, apply the one edit; the mutant bytes are reproducible from /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/census/mutants.json) and diff their JSON. If you find a reachable-input difference, the dead_code_only classification is wrong and you must say so with the exact source. If you cannot, state the structural argument that makes two top-level returns imply unreachable code.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "C1 dead-code judgment"
+    },
+    "MutC1F11": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Prove the F11 kill is F11's. Copy the C1 counter to /tmp/tameshi-r43-MutC1F11-/measure.py, remove only the F11 entry from its FIXTURES dict (keep F12), run it with --rev 17f6ef0c72ec27e1aea305b5c95806b43bb2caef --freeze 17f6ef0c72ec27e1aea305b5c95806b43bb2caef --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin and report mutants_killed and killed_names. Then run the unmodified counter the same way and report the same fields. The delta is F11's attribution; report both lines verbatim and the exit codes.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "F11 kill attribution"
+    },
+    "MutC1F12": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Verify F12 is not counted as a kill. Copy the counter to /tmp/tameshi-r43-MutC1F12-/measure.py and change F12's declared `want` from expected=False to expected=True (a wrong declaration), run it with --rev 17f6ef0c72ec27e1aea305b5c95806b43bb2caef --freeze 17f6ef0c72ec27e1aea305b5c95806b43bb2caef --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin, and report whether method_fold_several_returns moves from dead_code_only to killed — it must, because the mutant then FAILs the battery. Then restore F12 and report the unmodified line. Also state whether `dead_code_arg_ok` is computed from the differential or hardcoded.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "F12 differential attribution"
+    },
+    "RevC1FixtureSpec": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Review F11_outflag_namespace and F12_method_two_returns in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/mutants/measure.py as SPEC statements, not as observations: what is each fixture asserting about /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py's documented behavior (read its docstring and the round-42 knowledge entry /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/r42-attribute-and-outflag-destinations.md), and is the declared classification derivable from that document rather than from running the tool? Report any fixture whose declared class is only 'whatever the tool printed'.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "fixture-as-spec review"
+    },
+    "CritC1Overfit": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Attack the kill oracle. The counter pins /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/write-path-census-v4.py by sha256 from the contract. In /tmp/tameshi-r43-CritC1Overfit-/ build a tool that special-cases the twelve fixture filenames and the three live paths and reports their declared classes, then run the C1 counter with that file substituted for the tool (clone the counter into /tmp, point TOOL_REL at the substitute) and report whether it passes C1_R43_PASS. If the pin stops it, report the exact field that fails; if a path around the pin exists, name it.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "kill-oracle overfit"
+    },
+    "RevC2Classes": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/calibration/measure.py against claims.C2 in the contract. For each of m6 m7 m8 m10 m11 m12 m13, quote the class sentence from the contract and the code that implements it (file:line) and say whether they are the same statement. Report any class whose code is broader or narrower than its sentence, and any class that can be zero without its subject existing (vacuity).",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C2 class-to-code agreement"
+    },
+    "CritC2Vacuous": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Attack the new classes for vacuity and for masking. In /tmp/tameshi-r43-CritC2Vacuous-/ construct (a) a record text whose only S-id is inside a `staged:S###` token or after 'Next unused id:' (m7 must stay 0, and you must say whether that is right), (b) a backtick path cite in a form the m8 extractor drops (absolute path, `…/` elision, brace form, a directory), (c) a presence receipt whose path resolves only after prefix resolution. Report, for each, what the counter does and whether the counter is right to do it. Do not edit the lane.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C2 vacuity attack"
+    },
+    "ExecC2IndentProbe": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Independently reproduce the m13 probe. In /tmp/tameshi-r43-ExecC2IndentProbe-/ copy /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md, indent one data row by two spaces, and count rows with (a) `grep -cE '^\\| S[0-9]{3} \\|'` and (b) `grep -cE '^ {0,3}\\| S[0-9]{3} \\|'`. Report both counts, the delta and the row you indented. Then report what /home/vgpnk/Projects/shokunin/tameshi-shokunin/scripts/… is not to be edited; instead quote the census clause in /home/vgpnk/Projects/shokunin/CORPUS.md that accepts 0-3 leading spaces (file:line).",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "m13 indent probe reproduction"
+    },
+    "RevC2DoNothing": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Verify the C2 do-nothing control claim in the contract: that the round-42 C1 counter (/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/calibration/measure.py) prints no m12/m13 and no classes field, so it cannot satisfy the round-43 target. Read its printed fields from /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-42/after/c1-at-242c1b4a.stdout and from its source, and state whether a reader could score the round-43 target from that line. Also say whether `classes=7` in the round-43 counter is evidence that seven classes ran, or a constant.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C2 do-nothing control"
+    },
+    "CritC2Gaming": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Attack m12 and m13 for gameability. m12 wants a `**Planned (round 44):**` line in the newest SCORECARD block; m13 wants the newest standing sources-registry row to name the 0-3-space pattern. In /tmp/tameshi-r43-CritC2Gaming-/ write what the cheapest edit that passes both is, and whether that edit requires any real repair (the planned line naming 1-3 claims, the standing row's count still matching the registry). Report whether the target is reachable by a do-nothing edit and, if so, what the counter should require.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C2 gaming"
+    },
+    "ScoutC2Records": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Sweep /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md for other missing required fields from the AXES.md SCORECARD contract (axes, capabilities, planned, saturation, retired): for each `## Round N` block from round 38 on, list which of those five the block carries (file:line). Report the round-42 block's gap verbatim and whether any other block has the same gap. Read /home/vgpnk/Projects/shokunin/AXES.md 'SCORECARD.md contract' for the field list.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "SCORECARD contract sweep"
+    },
+    "RevC3Tool": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py line by line: parse_rows (0-3-space pattern, malformed and duplicate refusals), document_key (URL then path-like head; the `[/.]` gate), analyse (collisions, held dedupe, naive map, cascade), validate_map (injective, registry clash, staged clash for partial maps, safe floor, coverage, self-map), and the selftest. Report each place the code and the docstring differ, and any refusal path that cannot fire. Do not edit it.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "guard logic review"
+    },
+    "CritC3Maps": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Build adversarial maps against /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py in /tmp/tameshi-r43-CritC3Maps-/: (1) a map that reuses a registry id for a DIFFERENT document, (2) a map that leaves one collision on itself, (3) a map covering every staged row (whole-set) with targets inside the staged range, (4) a map with duplicate targets, (5) a map whose target is below the safe floor. Run each through `--registry /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md --staged /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md --map <file> --json` and report verdict + reasons. Say for each whether refusal is CORRECT or a false refusal, with the CORPUS.md clause that decides it.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "adversarial adoption maps"
+    },
+    "MutC3Selftest": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Mutation-test the guard's selftest. In /tmp/tameshi-r43-MutC3Selftest-/ copy /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py and make three single edits, each alone: (M1) make ROW_RE column-zero (`^\\|`), (M2) drop the staged-clash reason, (M3) make document_key always return '' (no document). Run `--selftest` on each copy and report cases/failed/exit and which case caught it. A mutant the selftest does NOT catch must be reported as a selftest gap with the case that should have existed.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "guard selftest load-bearing"
+    },
+    "ScoutC3Package": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Read /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md (read-only) and classify its 103 rows: how many carry a URL/DOI, how many carry only a repo path, how many carry neither (these would be `unmapped`), how many documents are duplicates WITHIN the staged set, and how many documents the lane registry /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md already holds (give the lane id). Report the counts and the exact ids for the neither-case and the within-set duplicates. Use grep/python, no writes outside /tmp.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "staged package documents"
+    },
+    "ExecC3Live": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Run `python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py --registry /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md --staged /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md --json` and `--selftest`; report byte counts and sha256 of both input files at run time, the full JSON (collisions, held, unmapped, naive_map, cascade, safe_floor, verdict) and the selftest line. Then build the by-document safe map yourself in /tmp/tameshi-r43-ExecC3Live-/ (held rows -> their registry id; new documents -> ids at or above safe_floor), run it with --map, and report verdict + map_dedupe.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "live guard run"
+    },
+    "RevC3Counter": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Review /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/guard/measure.py: is its own extraction independent of the tool it measures (separate parse, own dedupe), or does it reuse the tool's logic? Check the safe-map construction, the naive-map round trip, the control path, and whether tool_sha_ok can pass for a substitute. Report each weakness with file:line and a concrete scenario.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "C3 counter independence"
+    },
+    "ScoutAssim": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Read /home/vgpnk/Projects/shokuknow/merge/tameshi/MERGE-REPORT.md (read-only) and list what the package stages by theme with counts, the entries still unadopted (round 42 adopted two, refused one, deferred one), and which theme the lane should take next with the reason. No adoption this round: the report's line is `Assimilation: none`. Do not run any campaign tool.",
+      "axes": [
+        "coverage"
+      ],
+      "milestone": "next assimilation theme"
+    },
+    "ScoutQuarantine": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Re-derive this lane's slice of /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md (read-only; its header and summary totals are stale — derive the data rows yourself): awk -F'|' -v l='tameshi' '$2 ~ (\"`\" l \"`\") && $3 ~ /round[0-9]+/ && $4 ~ /S[0-9]+/ {print $4, $5}'. Report the row count, the ids, and the family of each (payload-absent vs could-not-be-fetched). No adoption; verdicts stay in the lane lesson.",
+      "axes": [
+        "coverage"
+      ],
+      "milestone": "quarantine slice re-derivation"
+    },
+    "ScoutConsider": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Read every file in /home/vgpnk/Projects/shokunin/tameshi-shokunin/considerthese/ (operator-authored input; mine, never edit). List each proposal with its status line, and name the ONE still-unimplemented proposal closest to this round's claims (survivor classification, record agreement, id registries) that could be landed as a lesson/QUALITY criterion. Quote its text and say what the lane already implements.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "considerthese proposals"
+    },
+    "ScribeQuality": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Draft two criteria for /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md in your report (do not edit the file): (83) a survivor is never relabelled equivalent without a differential probe and a structural argument, and a dead-code-only survivor is named as such; (84) a self-assessment counting command must use the census-valid pattern of the registry it counts. Each must carry a falsifier command that FAILS when the rule is broken, modelled on criteria 81/82 already in the file. Quote the two nearest existing criteria to match the numbering and shape.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "QUALITY criteria draft"
+    },
+    "ScribeLessonGate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Draft the `## Gate` block for /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-43.md in your report (do not write the lesson): one admit block per new source row (Stryker equivalent-mutants page, Wikipedia mutation testing) each carrying URL, access date 2026-10-25, byte count, sha256 and <=25-word located quotes with line numbers; one reject or deferral block for the staged package's equivalent-mutant material if any exists. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-42.md '## Gate' for the shape and CORPUS.md rule 1 for the requirements.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "lesson Gate draft"
+    },
+    "ConnOverlap": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "connector",
+      "item": "Scan the sibling lane repos under /home/vgpnk/Projects/shokunin (kumitate, kagi, kaidoku, chousa, kotodama, kake) for any existing tool that answers 'which staged/imported ids collide with a registry' or 'classify a mutant survivor'. Report paths, their scope, and whether this round's tools/staged-id-guard.py overlaps or duplicates one. Read-only; never write a sibling. If nothing overlaps, say which lanes you searched and the command.",
+      "axes": [
+        "adjacency"
+      ],
+      "milestone": "sibling overlap scan"
+    },
+    "SentGuardIO": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "sentinel",
+      "item": "Security-review /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py: it reads a path outside the lane (/home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md). Check every write path (should be none), every subprocess, every eval/exec, path traversal in --map, JSON handling of an untrusted map file, and whether a hostile registry or staged file can make it write, hang or leak. Report each finding with file:line and severity, and the command you ran. Read-only.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "guard input/output safety"
+    },
+    "RevProvenance": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "revenger",
+      "item": "Verify the freeze chain. For FREEZE=17f6ef0c72ec27e1aea305b5c95806b43bb2caef: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show FREEZE:tools/staged-id-guard.py | sha256sum`, the same for tools/write-path-census-v4.py, and for the three counters, against contract.json's pins; then diff each counter's bytes at FREEZE against the working tree. Report each pair (pin, actual, agree) and any disagreement. Note that a counter whose running bytes differ from its own pin sets self_pin=0.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "pin provenance"
+    },
+    "SentMutantIO": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "sentinel",
+      "item": "Audit where the three round-43 counters write. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/{mutants,calibration,guard}/measure.py, list every open(...,'w'), makedirs, subprocess and tempfile use with file:line, and state which paths can receive bytes outside /tmp. Then run the C2 counter with --selftest and confirm with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin status --porcelain` that nothing in the lane changed. Report the porcelain output verbatim.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "counter write scope"
+    },
+    "ExecCommandD": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Re-run the two canonical axis commands at BASE=487b8f0da89fa0e2b8bea6930068accbf36e70a9 and at FREEZE=17f6ef0c72ec27e1aea305b5c95806b43bb2caef and report both lines: command D (`git show REV:tools/mutate-and-run.sh | python3 -c '...regex...'` as printed in SCORECARD.md) and the round-21 coldread monitor (`python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py --rev REV`, report calibration_restraint_score and exit). Paste the exact commands. Read-only.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "no-harm re-run"
+    },
+    "ExecCensus": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` and report stdout, stderr, exit code and the row count it implies. Save the output to /tmp/tameshi-r43-ExecCensus-/census-start.stdout for the L1 to copy. Do not edit corpus/SOURCES.md.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "sources census before"
+    },
+    "RevReportDraft": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Read claims.C1/C2/C3 in /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-43/contract.json and each counter's docstring predicate. For each claim, say whether the contract sentence, the predicate sentence and the printed label are the SAME statement, and quote the three side by side. Flag any widening (a sentence that claims more than the counter tests) or narrowing. Also flag any universal quantifier ('all', 'every', 'no') whose set the counter does not enumerate.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "claim sentence = predicate"
+    },
+    "ScribeRows": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Draft the two new corpus/SOURCES.md rows in your report (do not edit the registry): S159 Stryker equivalent-mutants docs and S160 Wikipedia mutation testing, both kind=docs, tier=A, status=mined, opened=2026-10-25, recheck=180d, used-by corpus/knowledge/r43-survivor-resolution-rule.md. Match the 11-column shape exactly (read the S155 row and the CORPUS.md row contract), keep every cell free of `|`, and state each row's `teaches` in one sentence grounded in a located quote from the source you opened. If you could not open a source, say which and why.",
+      "axes": [
+        "depth"
+      ],
+      "milestone": "S159/S160 row draft"
+    }
+  }
+}
