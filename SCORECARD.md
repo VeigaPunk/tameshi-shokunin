@@ -2079,3 +2079,40 @@ wave 2 leaves unfixed; the `cmp` / `git diff --exit-code` comparator lattices st
 round 39.
 
 | sources-registry | curate where the lane learns: opened, tiered, rechecked source rows, mined into admitted entries, census-gated | `sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` → exit 0, zero E codes; row count from the census-valid command `grep -cE '^ {0,3}\| S[0-9]{3} \|' corpus/SOURCES.md` → 114 rows at round 43 (the column-zero form of this command is what C2 class m13 replaced; the counter reads the last standing row) ; `corpus/SOURCES.md` | fleet round 1 (kaika) |
+
+### Round 43 — after the deciding run
+
+All three counters ran at `3c4003f6e97e5c787e7538b2eb35d62f49783aaf`, the revision that carries the
+records, the wave evidence and the final counter/tool bytes. All three passed:
+
+```
+C1_R43: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 fixtures_pass=12/12 run_errors=0 live_ok=3/3 live_unflagged_v4=0 live_tool_errors=0 mutants_declared=6 mutants_killed=5 dead_code_only=1 equivalent=0 not_killed=0 runtime_error=0 apply_error=0 unresolved=0 killed_names=attr_bind_several_assignments,attr_never_resolve_self,method_fold_disabled,outflag_dests_never_recorded,outflag_no_parse_args_check dead_code_names=method_fold_several_returns dead_code_cases=F12_method_two_returns dead_code_arg_ok=1 kill_binding=1 mutants_sha_ok=1 rev=3c4003f6… C1_R43_PASS=true
+C2_R43: self_pin=1 classes=7 m6=0 m7=0 m8=0 m10=0 m11=0 m12=0 m13=0 total=0 records=4 sources_rows=114 standing=114 receipts=17 revisions=3 rev=3c4003f6… C2_R43_PASS=true
+C3_R43: self_pin=1 tool_absent=0 tool_sha_ok=1 selftest_exit=0 selftest_cases=24 selftest_failed=0 staged_rows=103 live_collisions=7 live_collisions_agree=1 live_held=3 live_held_agree=1 live_unmapped=0 live_cascade=1 live_verdict=refused naive_map_refused=1 safe_map_admitted=1 map_dedupe_live=1 held_refused=1 safe_floor=S256 staged_sha256=020fbeaa… naive_agree=1 substitute=0 rev=3c4003f6… C3_R43_PASS=true
+```
+
+All exit 0. Receipts: `.ufo/evidence/round-43/after/c1-at-3c4003f6.{stdout,exit}`,
+`c2-at-3c4003f6.{stdout,exit}`, `c3-at-3c4003f6.{stdout,exit}`.
+
+C1 **improved** — the two routed survivors are resolved under the frozen K/D/E/U rule: the outflag
+mutant killed by the reachable F11 fixture (kill_binding=1), the method-fold mutant named
+dead-code-only with the differential probe and the unreachable second top-level return (dead_code_arg_ok=1);
+mutant declaration byte-pinned (mutants_sha_ok=1), round-42 `C2_R42_PASS=false` left untouched.
+C2 **improved** — record agreement over the seven classes, `total=0`; the two classes that were live at
+the base (m12=1, m13=1; the round-42 block had no `Planned (round 43)` field and the standing command
+was column-zero) are zero at the measured commit.
+C3 **improved** (capability) — the staged-id guard refuses its naive arithmetic map on the live package
+(cascade onto staged ids), dedupes the three held documents, and admits only the by-document map at or
+above the floor; the counter's independent recomputation agrees (naive_agree=1, live_held_agree=1).
+
+Numeric axes, measured at `3c4003f6`: depth 9 → 9 (command D), calibration 6 → 6 (round-21 coldread
+monitor) — no axis harmed. Receipts: `.ufo/evidence/round-41/census/command-d.stdout` re-run by wave-1
+ExecCommandD at base and freeze; the coldread monitor's `calibration_restraint_score: 6` at both revs.
+
+Disclosed limits and wave-2 attack residue: the C1 reachability gate is fixture-granular (a fixture that
+contains dead code anywhere excludes that fixture's failure from a kill even when the failing site is
+reachable — CritC1Standing); m12/m13 remain presence/pattern checks and the m13 mirror is the counter's
+own (MutC2m13Prose); m10 requires a different receipt to re-assert a superseded claim before it is
+skipped (MutC2m10Superseder); the guard's document key is path/extension based and a fragment-only
+respell of a held URL still escapes dedupe (CritC3Arithmetic F1). All were named in the lesson before
+the deciding run; none was used to reach a verdict.

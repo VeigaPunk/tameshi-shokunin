@@ -2258,3 +2258,6 @@ inherited (`jj-lane.sh state`: local=remote=`c77c2b7e`, tracked=0 untracked=0).
   No axis harmed: depth 9 → 9 (command D), calibration 6 → 6 (round-21 coldread monitor),
   both re-run at the base and at the freeze by wave-1 seat ExecCommandD with byte-identical
   tool/`SHONEN.md`/monitor at both revs.
+- 2026-10-25 — round 43 deciding run at `3c4003f6…`: all three counters exit 0 with `C1_R43_PASS=true
+  (5 killed + 1 dead_code_only), C2_R43_PASS=true (total=0), C3_R43_PASS=true (guard admits only the
+  by-document map)`. Receipts in `.ufo/evidence/round-43/after/`.
