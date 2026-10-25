@@ -1283,3 +1283,69 @@ CRITERION-87-FALSIFIER-OK
 The synthetic `entry`/`raw` pair exists only to reach the counter's length conjunct: it passes
 the url, opened, snapshot and sha256 tests, so `quote length 28` is the first rule that fires.
 The counter is imported, not invoked as a counter (`--lane/--rev`); no measurement is taken.
+
+## Criteria appended — round 46 (2026-10-25)
+
+Number 85 stays reserved (see round 45); the round-46 criteria take 88, 89 and 90.
+
+### Criterion 88 — every no_harm monitor is run at the base and printed green before the freeze
+
+A frozen contract's `no_harm` text names monitors; each monitor is a command with an expected
+token, run at the base revision before the freeze, and the receipt (`before/no-harm-at-base.stdout`
+or equivalent) is committed with the freeze. A monitor that prints red at the base is refused as a
+monitor — it is reported, never cited, and the contract names it as excluded with the reason. A
+counter that grades the newest `## Round N` block against its own round (the round-44
+record-agreement counter) is round-bound: at the next round's base it is red by construction, so
+it cannot be a monitor of a later round. The gate is `.ufo/evidence/round-46/quality/no-harm-gate.py`
+(`--contract`, `--lane`, `--rev`, `--monitors-file`): it exits 1 with `RED <name>` for a red
+monitor and for a contract with an empty `no_harm`, and 0 only when every monitor printed ok.
+
+Lesson: `corpus/lessons/round-45-verifier-spotcheck.md` routed defect 1 (`after/c-r44-at-content.stdout`:
+`m11=1 m12=1 total=2 C2_R44_PASS=false`, the contract of round 45 named that counter in `no_harm`
+and it was never run at base); `corpus/lessons/round-46.md` `## Mistakes`. Measured: the round-44
+counter at base `683eedde3a50441c34d85a22f5fd5346f8b1ec6d` prints `C2_R44_PASS=false`.
+
+Falsifier that must fail (the round-44 counter as the only monitor must be refused; the real list
+must pass; prints `CRITERION-88-FALSIFIER-OK`):
+
+```
+bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-46/quality/falsifiers.sh
+```
+
+Receipt: `.ufo/evidence/round-46/quality/c88-90-falsifiers.stdout`.
+
+### Criterion 89 — a selftest-hardening claim declares neutral mutants beside its survivors
+
+A claim that a counter's selftest now kills its declared survivors also declares behaviour-
+preserving (neutral) mutants — a comment appended, a literal respelled (`13` → `0xD`), a trailing
+comment on an assignment — and requires every one of them to survive. A selftest that pins its own
+bytes, length or digest kills every mutant, declared and undeclared, without testing a rule; only
+the neutral mutants tell the two apart. The round-46 driver (`.ufo/evidence/round-46/hardening/mutate.py`)
+prints `neutral_killed=` and a nonzero value makes the claim false whatever `killed=` says.
+
+Lesson: `.ufo/evidence/round-46/control/controls-at-freeze.stdout` CTL_E: a selftest that checks
+its own byte length kills 21 of the 25 declared survivors and all 6 neutral mutants
+(`killed=21 neutral_killed=6 C2_R46_PASS=false`); a selftest that checks a digest would kill 25 of 25.
+RevManifest (`.ufo/waves/round-46/w1/RevManifest.md`) checked that the neutral mutants preserve behaviour.
+
+Falsifier that must fail: the same `falsifiers.sh` block 89 (CTL_E refused, hardened counters at
+`a6892b196f923efbed242ce9ea599a3f745b2138` print `neutral_killed=0 C2_R46_PASS=true`; prints
+`CRITERION-89-FALSIFIER-OK`).
+
+### Criterion 90 — seat names in a wave are unique among concurrently running lanes
+
+The orchestrator writes `<wave>-results.json` per seat name. Two lanes running a seat of the same
+name at the same time make one lane's results entry carry the other lane's output and leave the
+real seat without a mapped result: round-45 `ScribeScorecard`, and in round 46 wave 1 `MutC1Counter`
+and `ScribeQuality` (their results entries name `.ufo/waves/round-55/w1/MutC1Counter.md` and
+`.ufo/waves/round-45/w2/ScribeQuality.md`; neither seat of this lane wrote a report). Before a
+wave is dispatched, `python3 .ufo/evidence/round-46/quality/seat-name-check.py SPEC.json` (default
+window 3 hours over every other lane's `swarm-registry.json`) must print `collisions=0`; the fix is
+a lane-and-round prefix on every seat name (`T46…`).
+
+Lesson: `corpus/lessons/round-45.md` `## Mistakes` (dead seat ScribeScorecard) and
+`corpus/lessons/round-46.md` `## Mistakes`; `.ufo/waves/round-46/w1-results.json`.
+
+Falsifier that must fail: block 90 of `falsifiers.sh` (the wave-1 spec is refused with
+`COLLISION MutC1Counter …`; the same spec with every name prefixed `T46` passes; prints
+`CRITERION-90-FALSIFIER-OK`).
