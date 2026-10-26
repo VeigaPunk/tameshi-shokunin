@@ -1,0 +1,51 @@
+{
+  "seat": "T50W2Row14",
+  "round": 50,
+  "wave": 2,
+  "item": "C1 row attack, items R48.3, R48.4, R48.5",
+  "rev": "80ea77e99e239982ab0b93e416645ef2359725d3",
+  "rows": [
+    {
+      "id": "R48.3",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "git show 80ea77e9:.ufo/evidence/round-49/deciding-run.sh | sed -n '1,30p' | cat -n  ->  lines 6-7 carry the gate-0 comment; lines 23-28 implement it: for each control receipt (c1/c2-controls.stdout/.exit) `git cat-file -e REV:f` must succeed and `git merge-base --is-ancestor $FREEZE $(git log -1 --format=%H REV -- f)` must hold, else DECIDING_REFUSED exit 3 before any counter starts; line 15 pins BASE=8ca67421.",
+        "git show 80ea77e9:corpus/QUALITY.md | sed -n '1445,1458p' | cat -n  ->  criterion 99 at 1446-1456: controls scored with freeze bytes, committed in a commit descending from the freeze before the deciding run; any other invocation (partial/probe/seat preview) listed in the report with revision and verdict line; excerpt at 1452-1453 resolves verbatim.",
+        "git show --stat 14d03ea4  ->  commit 14d03ea4 added .ufo/evidence/round-49/deciding-run.sh (53 lines); `git log --format=%H -- .ufo/evidence/round-49/deciding-run.sh` at REV contains 14d03ea4 (touch confirmed); 14d03ea4 is ancestor of REV and not ancestor of routed_at 8ca67421 (merge-base checks).",
+        "git cat-file -e 80ea77e9:.ufo/evidence/round-49/control/{c1,c2}-controls.{stdout,exit}  ->  all four receipts present at REV; last touch 6885adb4 for each; `git merge-base --is-ancestor 14d03ea4 6885adb4` = 0 (descends from round-49 freeze); SCORECARD.md round-49 block: controls committed at 6885adb4 'before wave 1 and before any deciding run'.",
+        "git grep -n --only 80ea77e9 -- .ufo/evidence/round-49/  ->  no actual --only invocation receipts in round-49 evidence (only contract.json fix description), so the disclosure clause of the ask attaches to nothing; criterion 99 makes any future such invocation reportable.",
+        "ack-word scan of cited lines 6-7 and 1452-1453 at REV: none of planned/carried/still open/not worked/stay open/remains open/routed to round/not fixed/unfixed/not landed present."
+      ],
+      "reason": "Ask: score every control at freeze before any deciding run, and declare any --only previews at the content revision before the deciding run. Both halves exist at REV: the deciding script enforces receipt-at-REV + descending-from-freeze before starting any counter (lines 23-28), and criterion 99 codifies the order plus the report-listing obligation for any other invocation. Round-49 controls were committed at 6885adb4, which descends from the freeze and precedes deciding; no --only previews ran in round 49, so there was nothing further to declare. Cited commit 14d03ea4 is the one that added the script (and the freeze itself). No counter-reading survives: the gate is real code, not just prose; the disclosure clause is conditional and had nothing to attach to."
+    },
+    {
+      "id": "R48.4",
+      "verdict": "agree",
+      "would_be": "open",
+      "evidence": [
+        "git show 80ea77e9:SCORECARD.md | sed -n '2365,2382p': at 2367 and 2380 the planned-round-49 paragraphs (original and amended) contain the evidence excerpts; SCORECARD.md line 2433 is the newest **Planned (round 51):** paragraph and names R48.4 explicitly with its ask list (helpers, survivor cases, S205/F7, six-leg class, located-name).",
+        "git grep -n brace_depth_at 80ea77e9 -- tools  ->  tools/tally-audit-v2.py:135 and tools/tally-audit-v3.py:234 still define `def brace_depth_at(text, offset):` at REV.",
+        "git grep -n T47Mut 80ea77e9 -- .ufo/evidence/round-49 .ufo/evidence/round-50 tools  ->  no selftest cases name round-47 survivors outside defects.json/keys.json and the CTL_FAB fabricated ledger (control artifact).",
+        "git show 80ea77e9:corpus/SOURCES.md | grep -c 1810.05286  ->  0 (no S205 row); S161/S162 also absent as rows (staged ids reserved by document; only S256-S271 appended in rounds 45-50).",
+        "git grep -in 'six-leg\\|nondeterministic' 80ea77e9 -- SCORECARD.md corpus/lessons/round-49.md corpus/lessons/round-50.md  ->  no pinned-leg successor and no declared nondeterministic class for `six-leg regression ledger`; the round-48 disclosure (SCORECARD 2328) documents the race but the round-51 planned paragraph still lists the six-leg decision as open.",
+        "git grep -in 'located-name\\|entry-author' 80ea77e9 -- tools .ufo/evidence/round-49 .ufo/evidence/round-50  ->  no implementation; only planning text and wave-1 spec files reference the check.",
+        "git show 80ea77e9:corpus/QUALITY.md | sed -n '1466,1495p': criterion 100 (appended round 50) makes every file under .ufo/waves/round-<N>/ append-only once committed, with checker .ufo/waves/round-50/w1/T50ExecAppendOnly/seat-report-append-only.py — this MET the 'append-only rule for landed seat reports' ask at REV."
+      ],
+      "reason": "Compound item of six asks; open requires the id in the newest Planned paragraph — R48.4 is named in the round-51 paragraph at SCORECARD.md:2433. Five of six asks are verifiably unmet at REV (helpers still present; no survivor selftest cases; S205/F7 candidates not landed; no six-leg decision; no located-name check). One ask — the append-only rule for landed seat reports — IS met at REV by QUALITY criterion 100 + seat-report-append-only.py. The disposer's note 'None of the six asks is met' is stale at REV (ask 6 landed in round 50), but the status remains open because the item is compound and the other five are undone. Verdict agree (open)."
+    },
+    {
+      "id": "R48.5",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "git show 80ea77e9:SCORECARD.md | sed -n '2380,2386p' | cat -n  ->  line 2382 `### Round 48 — correction (appended in round 49)` and line 2384 the correction text resolve verbatim; key 'pasted byte-exact' present at 2384.",
+        "git diff --numstat 8ca67421 6db4b931 -- SCORECARD.md  ->  15 insertions, 0 deletions (pure append); `git diff 8ca67421 6db4b931 -- SCORECARD.md` shows the correction block added after the round-48 'Planned (round 49), amended' paragraph and the original 'pasted byte-exact' sentence at 2326 untouched.",
+        "git show --stat 6db4b931  ->  commit touches SCORECARD.md (+15); `git log --format=%H -- SCORECARD.md` at REV contains 6db4b931; 6db4b931 is ancestor of REV and not ancestor of routed_at 8ca67421 (merge-base checks).",
+        "git show 8ca67421:SCORECARD.md | grep -c 'Round 48 — correction'  ->  0 (absent at routed_at, fresh).",
+        "ack-word scan of cited lines 2382/2384: none of planned/carried/still open/not worked/fixed-ackwords present."
+      ],
+      "reason": "Ask: state in SCORECARD that the round-48 'pasted byte-exact' sentence holds for the 19 capability rows while the 3 axis rows carry lane prose followed by the emitted clause — appended, not rewritten. The correction exists at 2382-2384 with exactly that content; commit 6db4b931 added it as a pure append (15/0) and did not modify the original sentence; excerpt fresh versus routed_at; no ack words. No counter-reading survives: the original sentence is intact and the correction is an append. Verdict agree (fixed)."
+    }
+  ]
+}

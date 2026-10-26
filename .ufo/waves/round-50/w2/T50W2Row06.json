@@ -1,0 +1,53 @@
+{
+ "seat": "T50W2Row06",
+ "wave": 2,
+ "round": 50,
+ "claim": "C1",
+ "rev_reviewed": "80ea77e99e239982ab0b93e416645ef2359725d3",
+ "rows": [
+  {
+   "id": "R42.4",
+   "verdict": "agree",
+   "would_be": "declined",
+   "evidence": [
+    "corpus/lessons/round-42-verifier-spotcheck.md:116 (routed item: 'No SHONEN box moved; all `[~]` — promotion remains operator-owned (noted for the operator).')",
+    "corpus/lessons/round-42.md:146-153 (SHONEN check table; one box mechanically checkable, no box moves)",
+    "SHONEN.md:5-12 (all four boxes still `[~]` at REV)",
+    "SCORECARD.md:67 (remaining promotion points reserved to independent promotion review)",
+    "git -C <lane> show 80ea77e9:corpus/lessons/round-42.md | sed -n '146,153p'",
+    "git -C <lane> show 80ea77e9:SHONEN.md | sed -n '5,12p'"
+   ],
+   "reason": "The routed item is a status note for the operator, not a lane request: it states that all four SHONEN boxes remain `[~]` and that promotion is operator-owned. The tree at REV confirms the observation (SHONEN.md:5-12 still `[~]`, round-42 lesson table says no box moves and only box 3 has a standing check). The lane cannot promote its own boxes, so no lane-repairable defect exists; the decline reason is 40+ chars and matches the item. Strongest counter-reading — that the lane could add standing verification commands for boxes 1/2/4 — is not what the routed text asks; it merely notes status to the operator. Consistent with the L1's own treatment of R49.6 (resolutions.json: promotion is operator-owned)."
+  },
+  {
+   "id": "R43.1",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "corpus/lessons/round-44.md:83 (scope row: round-43 counter m7=1 first=m7:SCORECARD.md#round-43_unknown_S256 sourced to historical `safe_floor=S256` assignment at SCORECARD.md:2091; ASSIGN_ID masking added; T6 tests; mask-removed control fails)",
+    ".ufo/evidence/round-44/calibration/measure.py:89,109,419,422 (ASSIGN_ID assignment-value mask and T6_safe_floor_value_not_citation / T6_assign_with_spaces_masked tests present at REV)",
+    ".ufo/evidence/round-45/quality/c86-falsifier.stdout:12 (round-43 counter re-run at rev=718a1e9, the round-43 landing/final intended revision: m7=1 preserved, C2_R43_PASS=false)",
+    ".ufo/evidence/round-44/after/c1-at-ef990aa.stdout:1 (successor counter at round-44 landing ef990aaa: m7=0 total=0 C2_R44_PASS=true)",
+    "git merge-base --is-ancestor 83beaf980f246412368f89fbe7758375c8ca21e0 80ea77e9 (yes); not ancestor of routed_at 506e99c7 (routed_at is ancestor of the fix)",
+    "git cat-file -e 506e99c7:corpus/lessons/round-44.md and :.ufo/evidence/round-44/after/c1-at-ef990aa.stdout and :.ufo/evidence/round-45/quality/c86-falsifier.stdout (all absent at routed_at)",
+    "git log --oneline 506e99c7..80ea77e9 -- corpus/lessons/round-43.md .ufo/reports/round-43/ (empty: filed report/lesson untouched)",
+    "git -C <lane> show 80ea77e9:SCORECARD.md | sed -n '2091p' (historical safe_floor=S256 line still present unchanged — not scrubbed, append-only)"
+   ],
+   "reason": "Every ask of the compound item is met in the tree at REV: (a) the m7/unknown-S256 citation is reconciled by the successor counter's ASSIGN_ID assignment-value mask (measure.py:89,109) pinned by T6 tests (:419,422), with the mask-removed control (round-44/control/mask-removed.selftest.stdout) proving it is load-bearing, and the source explained at round-44.md:83; (b) the C2 measurement is re-run at the final intended revision — round-43 landing 718a1e9 via the falsifier receipt (m7=1 preserved red) and the successor at the round-44 landing ef990aaa (m7=0 total=0 PASS=true); (c) the correction is append-only (round-44 lesson rows; SCORECARD.md:2091 still carries the historical assignment; round-43 lesson/report have zero commits after routing); (d) the filed report/lesson were not rewritten (empty git log). Commit 83beaf98 is the post-routing commit that added the fix text (round-44.md added there) and is an ancestor of REV but not of routed_at; keyed excerpts (m7/S256) are absent at routed_at and carry no acknowledgement words. Strongest counter-reading — that the SCORECARD round-43 block still shows the S256 token and the old counter still fails there — is the intended append-only record, and the ask explicitly forbade rewriting it. The extra round-45/round-44 receipt paths are untouched by 83beaf98 but resolve at REV and are keyed; the row's commit satisfies the touched-path rule via round-44.md. Agree with fixed."
+  },
+  {
+   "id": "R43.2",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "corpus/lessons/round-44.md:85 (disposition row: retain and commit the updated reviewer note as round-44 inherited evidence; diff carries A13/A14 m7/m8/m10 pin and line corrections)",
+    "corpus/lessons/round-44.md:89-91 (routed-items paragraph repeats: dirty wave note explicitly retained)",
+    ".ufo/waves/round-43/w1/RevC2Classes.md:8-9 at REV ('four times … (A6/A7, A8, A10, A13)') vs same file at routed_at 506e99c7 lines 8-9 ('three times … (A6/A7, A8, A10)') — keyed excerpt absent at routed_at",
+    "git show --name-status 83beaf98 (M .ufo/waves/round-43/w1/RevC2Classes.md; A corpus/lessons/round-44.md)",
+    "git show 83beaf98 -- .ufo/waves/round-43/w1/RevC2Classes.md (diff carries exactly the A13 pin/line corrections the spot-check described)",
+    "git status --porcelain -- .ufo/waves/round-43/w1/RevC2Classes.md (clean at REV)"
+   ],
+   "reason": "The ask is satisfiable-either-way ('Restore or explicitly disposition'), and the lane explicitly dispositioned the dirty tracked edit: it was retained and committed at 83beaf98 (post-routing, ancestor of REV, not of routed_at), the diff carries exactly the A13 pin/line corrections the round-43 spot-check described, the decision is recorded in the round-44 lesson (lines 85, 89-91), and the worktree is clean for that path. The keyed evidence item (.ufo/waves/round-43/w1/RevC2Classes.md:8-9, path ending with the key) is absent at routed_at (three→four times change) and its lines carry no acknowledgement words. Strongest counter-reading — that retaining a previously-dirty edit is not a 'restore' — is settled by the item's explicit either/or and by the recorded disposition. Agree with fixed."
+  }
+ ]
+}

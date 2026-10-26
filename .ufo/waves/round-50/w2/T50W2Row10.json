@@ -1,0 +1,45 @@
+{
+  "seat": "T50W2Row10",
+  "milestone": "C1 per-row attack",
+  "rows": [
+    {
+      "id": "R46.3",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "git show 80ea77e9:.ufo/evidence/round-47/calibration/statements.json | jq '[.statements[] | select((.sha_file // \"\")==\"\")] | length' -> 0 (all 22 statements sha-pinned)",
+        "statements.json:117-131 carries \"retained invocation-context gate\" with sha_file .ufo/evidence/round-15/verify.py; :3-16 sources-registry with sha_file .ufo/evidence/kaika-round-1/sources-census-v2.sh; the tool-less axis five (six-leg regression ledger, depth, calibration, freshness) all print sha_file (tools/mutate-and-run.sh, round-21 coldread measure.py, round-45 freshness measure.py)",
+        ".ufo/evidence/round-47/calibration/measure.py:20-26 states the hermetic scheme: clean-env P1, PATH shim without node/jj/bwrap, bwrap decoy fleet root (DECOY stub sources-census.sh exits 7)",
+        "git cat-file -e 0b5b7cd2:.ufo/evidence/round-47/calibration/measure.py fails -> path absent at routed_at, excerpt is new",
+        "git diff-tree --no-commit-id --name-only -r 9acfbe21 lists both cited files; merge-base --is-ancestor 9acfbe21 80ea77e9 ok, 0b5b7cd2 not -> post-routing commit touches both keyed paths",
+        "root calibration/statements.json does not exist at 80ea77e9, the round-47 v2 set is the only calibration statements set in the tree (round-48 observations run obs2-r47counter-base)"
+      ],
+      "reason": "Both asks of the compound item are met: the five tool-less statements (and all other 22) carry a sha256 beside the statement, and the frozen observation is now hermetic-observed under P1/P5 profiles (clean env, per-executable PATH removals, bwrap decoy fleet root) with dependence declared and checked. Strongest counter-reading — the fix lands only on a shadow copy while the old host-dependent calibration/ set stays operative — is refuted: the old root calibration/statements.json is gone at REV and the v2 set is the one operative statement set. The deciding value still runs live P0, but dependence is now observed and any drift flags dep_mismatch, which is what the item asked for."
+    },
+    {
+      "id": "R46.4",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "git show 80ea77e9:corpus/lessons/round-46.md | sed -n '138,139p' resolves the evidence excerpt verbatim (en dash U+2013 present)",
+        "git show 0b5b7cd2:corpus/lessons/round-46.md | grep -c 'ASCII hyphen' -> 0 (fold block absent at routed_at)",
+        "git log 0b5b7cd2..80ea77e9 -- corpus/lessons/round-46.md shows exactly 79f44b55 (2026-10-26, 'R46.4 appended fold'); 79f44b55 touches the file, is ancestor of REV, lands after base e3729de8, and is not an ancestor of routed_at",
+        "git show 79f44b55 -- corpus/lessons/round-46.md: pure append @@ -132,3 +132,12 @@; the block states the fold, prints both forms, and reproduces the corrected en-dash quote sentence",
+        "corpus/QUALITY.md:7 rule 4 'Errata are append-only blocks.' -> an in-place edit of the landed lesson is barred; the appended errata block is the compliant delivery",
+        "Line span 2 <= 30, excerpt 15-400 chars, key S259 in excerpt, no ACK_WORDS on cited lines"
+      ],
+      "reason": "The ask is disjunctive: print the S259 gate quote with the source's en dash OR state the fold at the quote in the lesson itself. Line 42 keeps the hyphen (branch 1 untouched), but branch 2 is met: the appended errata block states the fold in the lesson itself, points explicitly at the quote (line 42), prints both forms, and quotes the corrected en-dash sentence; the round-47 checker lesson-quote-check.py still reads line 42 as written, so the record is disclosed rather than rewritten. Counter-reading — the fold statement sits ~96 lines below the quote, not 'at' it — does not flip the status: QUALITY 4 bars in-place edits and the block is pointed at the quote by line number, which is the lane's sanctioned errata mechanism."
+    },
+    {
+      "id": "R46.5",
+      "verdict": "agree",
+      "would_be": "declined",
+      "evidence": [
+        "git show 80ea77e9:SHONEN.md | sed -n '5,6p' resolves the keyed evidence ([~] key appears in the excerpt)",
+        "Declined reason is well over 40 characters",
+        "Independent agreement in wave 1: T50Disp46 (disposer) and T50Cross46 (cross-coder) both declined R46.5; resolutions.json declines the identical R49.6 with the same operator-owned promotion ground"
+      ],
+      "reason": "The item records a standing state (all four boxes [~]; nothing fully checkable by a non-author; promotion stays operator-owned) rather than a lane-actionable ask: no code or prose change by the lane can mark a box [x] or install an independent promotion verifier, that is the operator's watch. Decline is honest, not an avoidance: both the disposer and cross-coder read it as an observation, the closures themselves frame promotion as operator-owned, and no part of the ask is left 'planned' or fixable by the lane."
+    }
+  ]
+}

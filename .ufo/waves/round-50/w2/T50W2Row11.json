@@ -1,0 +1,45 @@
+{
+  "seat": "T50W2Row11",
+  "round": 50,
+  "wave": 2,
+  "judged_at": "80ea77e99e239982ab0b93e416645ef2359725d3",
+  "rows": [
+    {
+      "id": "R47.1",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "SCORECARD.md:2334 — six-leg regression ledger row restated with `runs 3 stable` (excerpt carries key `six-leg regression ledger`; new since routed_at: `git show 473336d9:SCORECARD.md | grep -c 'runs 3'` → 0)",
+        "SCORECARD.md:2340 — hermetic env-differential probe row; full line carries `runs 3 stable |` tail (`git show 80ea77e9:SCORECARD.md | sed -n '2340p'`); ledger excerpt is the pre-fix prefix (see reason)",
+        ".ufo/evidence/round-48/calibration/measure.py:8 — R=3 value-class grammar (`runs 3` / `stable` / `nondeterministic`); file absent at routed_at",
+        "SCORECARD.md:2326 — section states emit ran \"three observation rounds of the six profiles P0-P5\", receipt .ufo/evidence/round-48/calibration/emit-15b1521.stdout committed; observations/obs2-r47counter-base.emit.{stdout,exit} exist at candidate",
+        "SCORECARD.md:2376 — CTL_B control: round-47 rows relabelled `runs 3 stable` with no re-observation are refused (C1_R48_PASS=false)"
+      ],
+      "reason": "All three asks are met in the tree at 80ea77e9: (a) a superseding row for six-leg regression ledger states the observed class `stable` (`REGRESSION: PASS (cases=9 passed=9`, exit 0, runs 3 stable) with the known concurrency nondeterminism disclosed at SCORECARD.md:2328; (b) the round-48 calibration counter (measure.py) is the repeatable-observer: R=3 rounds over six profiles, row picking requires a `runs 3` clause, and value-set members are checked against observed/committed P0 tuples (unattested members refused; CTL_B enforces that relabelled rows without re-observation fail); (c) the hermetic env-differential probe row carries the same `runs 3 stable` clause. Commit c7586b9a (round-48 content revision) touches SCORECARD.md, is an ancestor of the candidate, and is not an ancestor of routed_at 473336d9; keyed excerpt at 2334 is absent at routed_at. Weakness (not status-changing): evidence item 2's excerpt ends before the new `runs 3 stable` clause and matches a prefix already present at routed_at; the fix text is only visible in the full line 2340. Strongest counter-reading checked: the rows were relabelled without re-observation — disproven by the committed emit receipt, the observations/ records, and CTL_B's refusal of exactly that move."
+    },
+    {
+      "id": "R47.2",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        ".ufo/evidence/round-50/routed/receipts/MANIFEST.md:15 — r47-falsifiers.selftest.stdout: `bash .ufo/evidence/round-47/quality/falsifiers.sh`, exit 0, `CRITERION-93-FALSIFIER-OK`",
+        ".ufo/evidence/round-50/routed/receipts/MANIFEST.md:14 — r47-addition-lint.selftest.stdout: `python3 .ufo/evidence/round-47/quality/addition-lint.py --selftest`, exit 0, `ADDITION_LINT_SELFTEST: cases=7 failed=0`",
+        "MANIFEST.md lines 11-13 — r47-c1-measure / r47-c2-pool / r47-c3-coverage selftest receipts (exit 0, `VERDICT: PASS`; receipts show `C1_R47_SELFTEST: cases=35 failed=0`, `C2_R47_SELFTEST: cases=14 failed=0`, `C3_R47_SELFTEST: cases=24 failed=0`)",
+        "Receipt files exist at candidate: `git ls-tree -r --name-only 80ea77e9 -- .ufo/evidence/round-50/routed/receipts/` lists all five stdout/stderr/exit triples plus MANIFEST.md",
+        "Commit 79f44b55 adds MANIFEST.md and the receipt files; ancestor of candidate, not ancestor of routed_at; MANIFEST.md absent at routed_at"
+      ],
+      "reason": "The ask (conformance defects 3 and 4) was to commit selftest receipts for the three round-47 counters, addition-lint.py and the criterion-93 falsifier block. At the candidate, all five receipts are committed under .ufo/evidence/round-50/routed/receipts/, each produced by running the actual round-47 tool (`python3 .ufo/evidence/round-47/calibration/measure.py --selftest`, etc.) with stdout and exit recorded; the criterion-93 falsifier receipt shows `CRITERION-93-FALSIFIER-OK` (defect 4 closed), and the addition-lint receipt shows 7/7 (defect 3's counters closed). The L1 closed the row this round (override on the base-time disposer open / cross declined); the tree now holds the requested receipts, so fixed is true of the tree at 80ea77e9. Strongest counter-reading checked: receipts exist only as wave-seat artifacts under .ufo/waves/round-48/w1/selftest/ at the (disposer's finding) — false at the candidate, where .ufo/evidence/round-50/routed/receipts/ holds committed L1 receipts; the wording of defect 3 cited round-46's .ufo/evidence/round-46/selftest/ as precedent, but the ask is to commit receipts, not to choose a directory, and the counter's path rules allow this evidence tree. Not named in any Planned paragraph is irrelevant to fixed."
+    },
+    {
+      "id": "R47.3",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "corpus/lessons/round-48.md:178-179 — `**C1-R48-1 (corrects `corpus/lessons/round-47.md:117-118`; the file is never rewritten).** The round-47 lesson's \"observed dependence sets\" — `six-leg regression ledger` {fleet-root, node}, (carries keys `round-47.md:117` / `corpus/lessons/round-47.md` / `dependence set`)",
+        "corpus/lessons/round-48.md:108-196 — Correction C1-R48-1: quotes the stale lines verbatim, shows the sets are the freeze-time emission (`.ufo/evidence/round-47/before/c1-at-freeze.stdout:5,17` = `control/emit-observed-pre-freeze.out:5,17`), distinguishes the row-declared sets ({env,fleet-root,node}/{bwrap,node}) from the deciding-run-observed sets ({fleet-root,node}/{bwrap,node}, DEPS-MISMATCH at after/c1.stdout:5,17), and states the rule for later rounds",
+        "`git show 80ea77e9:corpus/lessons/round-48.md | grep -c 'round-47.md:117-118'` → 1; file absent at routed_at; commit 50545328 touches round-48.md, ancestor of candidate, not ancestor of routed_at; ACK words absent from lines 178-179"
+      ],
+      "reason": "The ask (conformance defect 5) was to append a named correction for the round-47.md:117-118 dependence sets. Correction C1-R48-1 is appended in round-48.md, names the corrected lines explicitly, resolves the discrepancy (the lesson's sets are byte-identical to the freeze-time emission, not the round's finding; the rows restate the content-revision emission; the deciding run observed {fleet-root,node} for six-leg and {bwrap,node} for hermetic, scoring DEPS-MISMATCH), and adds a standing rule for restating dependence sets. This is a genuine correction, not an acknowledgment: it explains the disagreement and assigns each set to its source receipt. Strongest counter-reading checked: the correction might not actually address the sets — disproven; it quotes them verbatim, names the receipts, and states the delta narrowly. round-47.md stays unrewritten, as the correction's own rule requires."
+    }
+  ]
+}

@@ -19,8 +19,10 @@ the lane's own fetch; the package's text was edited before landing (14 edits, `.
 - **The cost is reported in test runs, per reduction.** §I: "After 57 tests, the original 896-line HTML input
   is reduced to the minimal failing test case"; §IV-B (Fig. 11): "After 82 test runs (or 21 minutes), only 3 out
   of 95 user actions are left". The Abstract reports the case study's total: "The case study required 139
-  automated test runs, or 35 minutes on a 500 MHz PC" — 82 + 57 = 139. The line-to-tag stage that follows took
-  "26 steps" (§V-A); it is a second reduction of an already one-line input, not a competing count for the first.
+  automated test runs, or 35 minutes on a 500 MHz PC". Inference: 82 + 57 = 139, so the total is most plausibly the
+  two reductions summed; the paper does not say so. The paper is not consistent about the HTML run: §I ties the 57 tests
+  to the minimal `<SELECT>` case, while §V-A reports "26 steps" for the reduction to the `<SELECT>` tag; the lane reads the
+  57 as the 896-line run of Fig. 12 and states that reading as its own (`.ufo/waves/round-50/w2/T50W2ScoutS271.md`).
 
 ## What it means for the lane
 
@@ -30,7 +32,7 @@ the lane's own fetch; the package's text was edited before landing (14 edits, `.
   (`.ufo/evidence/round-50/c2/measure.py`, docstring "minimal").
 - **A reduction without its run count is not comparable.** Inference: the lane should report runs spent next to
   units removed, per reduction, and compare like with like — the source's 57 is one reduction (896 lines to 1),
-  139 is two reductions summed. The lane's own earlier datum, round 29's "171 oracle tests" for a reduction that
+  139 is, on the inference above, two reductions summed. The lane's own earlier datum, round 29's "171 oracle tests" for a reduction that
   kept nothing (`corpus/knowledge/survivor-fixture-minimization.md:53`), is a spent cost with no reduction, so it
   is not a counterpart to 57.
 - **What is new against the lane's holdings.** The lane already held the 1-minimal criterion as a tier-B
@@ -44,7 +46,8 @@ the lane's own fetch; the package's text was edited before landing (14 edits, `.
 ## Refused from the package
 
 - The package attributed "139 automated test runs, or 35 minutes" to the 896-line reduction. The source gives 57
-  for that reduction (§I, §IV-B Fig. 12); 139 is the Abstract's two-reduction total. Refused under QUALITY 2.
+  for that reduction (§I, §IV-B Fig. 12), and the Abstract gives 139 as the case study's total, not as that reduction's
+  cost. Refused under QUALITY 2.
 
 ## Boundary
 

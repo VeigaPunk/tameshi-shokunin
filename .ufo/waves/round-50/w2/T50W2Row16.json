@@ -1,0 +1,44 @@
+{
+ "seat": "T50W2Row16",
+ "scope": "C1 row attack: R49.3, R49.4, R49.5 against the tree at 80ea77e99e239982ab0b93e416645ef2359725d3",
+ "rows": [
+  {
+   "id": "R49.3",
+   "verdict": "agree",
+   "would_be": "open",
+   "evidence": [
+    {"path": "SKILL.md", "lines": "1503-1503", "command": "git -C tameshi-shokunin show 80ea77e9:SKILL.md | sed -n '1503p'", "finding": "line still reads 'isolated `/tmp/tameshi-r12-*` selftest; snapshot read-only' - the flagged namespace claim"},
+    {"path": "SKILL.md", "lines": "1509-1509", "command": "git -C tameshi-shokunin show 80ea77e9:SKILL.md | sed -n '1509p'", "finding": "still reads 'deepens one recorded case, never a seventh independently measured gate.'"},
+    {"path": "SKILL.md", "lines": "1555-1555", "command": "git -C tameshi-shokunin show 80ea77e9:SKILL.md | sed -n '1555p'", "finding": "still reads 'No registry row changes rank, SHONEN authority, or the six recorded cases.'"},
+    {"path": null, "lines": null, "command": "git -C tameshi-shokunin log --oneline e3729de8..80ea77e9 -- SKILL.md", "finding": "empty - no commit after routing touched SKILL.md, so no fix can exist"}
+   ],
+   "reason": "The three routed sentences are byte-unchanged at 80ea77e9 and no post-base commit touches SKILL.md, so the ask (correct the stale outside-section sentences) is unmet. The strongest counter-reading - that neighbouring text (SKILL.md:1508) already flags the runner pin as stale and the sentences were revised in old rounds - does not address these routed statements, which remain exactly as routed. Declined is not available: there is no decline reason in the row and the ask is executable (append-only correction / re-key per the disposer's plan), not operator-owned. Open is true of the tree."
+  },
+  {
+   "id": "R49.4",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    {"path": "SCORECARD.md", "lines": "2423-2423", "command": "git -C tameshi-shokunin show 80ea77e9:SCORECARD.md | sed -n '2423p'", "finding": "'| calibration | 8 | round-21 cold-read monitor `calibration_restraint_score=8`, `sections_covered=64` of 64 ... | `e3729de8` | 49 |' - the restated calibration row with the round-49 value"},
+    {"path": "SCORECARD.md", "lines": "2416-2416", "command": "git -C tameshi-shokunin show 80ea77e9:SCORECARD.md | sed -n '2416p'", "finding": "'### Standing axis table - re-stated at round 50 (round-49 values; routed by the round-49 spot-check, defect 4)'"},
+    {"path": "SCORECARD.md", "lines": "2355-2355", "command": "git -C tameshi-shokunin show 80ea77e9:SCORECARD.md | sed -n '2355p'", "finding": "round-48 table unchanged, still '| calibration | 6 |' - 'do not rewrite' respected"},
+    {"path": null, "lines": null, "command": "git -C tameshi-shokunin show e3729de8:SCORECARD.md | grep -c 'calibration_restraint_score=8'", "finding": "0 at routed_at - the keyed excerpt is new since routing"},
+    {"path": null, "lines": null, "command": "git -C tameshi-shokunin diff-tree --no-commit-id --name-only -r --root -m 4afb060c", "finding": "4afb060c touches SCORECARD.md; is-ancestor e3729de8 4afb060c = yes; is-ancestor 4afb060c 80ea77e9 = yes"}
+   ],
+   "reason": "Commit 4afb060c (post-base, ancestor of the content revision) appends the restated standing table with round-49 values: calibration 8 at SCORECARD.md:2423 plus depth 9 / freshness 9 rows, matching the round-49 prose ('calibration 8 (was 6)'). The round-48 table at :2355 still reads 6, so 'do not rewrite' holds. The cross-coder's 'open' was correct at base but the fix landed before the content revision, so 'fixed' is true of the tree at 80ea77e9. The round-31 row's 'calibration | 8' is a dated historical literal, not a round-49 restatement, and does not satisfy the ask."
+  },
+  {
+   "id": "R49.5",
+   "verdict": "agree",
+   "would_be": "open",
+   "evidence": [
+    {"path": "tools/tally-audit-v2.py", "lines": "135-136", "command": "git -C tameshi-shokunin show 80ea77e9:tools/tally-audit-v2.py | sed -n '130,145p'", "finding": "'def brace_depth_at(text, offset):' still defined"},
+    {"path": "tools/tally-audit-v3.py", "lines": "234-235", "command": "git -C tameshi-shokunin show 80ea77e9:tools/tally-audit-v3.py | sed -n '230,245p'", "finding": "'def brace_depth_at(text, offset):' still defined"},
+    {"path": null, "lines": null, "command": "git -C tameshi-shokunin grep -n 'brace_depth_at(' 80ea77e9 -- tools/ | grep -v 'def brace_depth_at'", "finding": "no caller anywhere in tools/"},
+    {"path": null, "lines": null, "command": "git -C tameshi-shokunin log --oneline e3729de8..80ea77e9 -- tools/tally-audit-v2.py tools/tally-audit-v3.py", "finding": "empty - no post-base commit touched either file"},
+    {"path": "SCORECARD.md", "lines": "2433-2433", "command": "git -C tameshi-shokunin show 80ea77e9:SCORECARD.md | sed -n '2433p'", "finding": "Planned (round 51) still carries the same list: dead brace_depth_at helpers, round-47 counter survivor cases, S205/F7 candidates, declared class for six-leg regression ledger, located-name check"}
+   ],
+   "reason": "The item is compound (six asks from round-48 defect 4). At 80ea77e9 the two dead brace_depth_at helpers are still present with no callers and no post-base commit touches either tool file; the remaining asks (round-47 survivor selftest cases, S205/F7 package candidates, six-leg pinned-leg successor or declared nondeterministic class, located-name check, append-only landing rule) are still carried in Planned (round 51) at SCORECARD.md:2433. At least one ask unmet means the item cannot be fixed; no decline reason exists, and the asks are lane-actionable. Open is true of the tree."
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+=== git identity of reviewed bytes ===
+d12481a1ab48e3a13c910633c1351c99c146a075
+d12481a1ab48e3a13c910633c1351c99c146a075
+=== probe.py all (fuzz/selftest/cost/determinism) ===
+== probe F: ddmin property fuzz (soundness + 1-minimality) ==
+trials=300 bad=0 asks=15898 duplicate-asks=3542
+== probe A: --selftest ==
+rc=0
+  SELFTEST core: sentinel predicate reduces to its one unit     ok
+  SELFTEST core: no verdict is asked twice                      ok
+  SELFTEST core: the sentinel reduction is 1-minimal            ok
+  SELFTEST core: a size floor leaves a 1-minimal three-unit set ok
+  SELFTEST core: an unsatisfiable predicate returns None        ok
+  SELFTEST core: an always-true predicate reduces to the empty set ok
+  SELFTEST core: an empty start is decided once                 ok
+  SELFTEST cli: the stub shrink exits 0                         ok
+  SELFTEST cli: the output carries case/runs/units_before/units_after ok
+  SELFTEST cli: the stub result is a sub-case                   ok
+  SELFTEST cli: the stub result kills                           ok
+  SELFTEST cli: the stub result is 1-minimal                    ok
+  SELFTEST cli: the stub unit counts are honest                 ok
+  SELFTEST cli: the stub run count equals the logged invocations ok
+  SELFTEST M02: the embedded edit is the panel M02 edit         skip (panel not reachable)
+  SELFTEST M02: the shrink exits 0 on the public mutant         ok
+  SELFTEST M02: the mutant violates the oracle on the input case ok
+  SELFTEST M02: the result is a sub-case that still kills       ok
+  SELFTEST M02: the result is 1-minimal                         ok
+  SELFTEST M02: the unit counts are honest                      ok
+  SELFTEST M02: the run count equals the logged invocations     ok
+  SHRINK_SELFTEST: cases=20 failed=0
+== probe B: cost accounting and write surface ==
+rc=0 stdout='shrink-case: units 7 -> 1, runs 7\n' stderr=''
+out.runs=7 .runs-lines=7 wrapper-subprocesses=7 equal=True
+units 7 -> 1 (input 7) subset-check via tool logic next
+tmp dir left behind: []
+b/ listing: ['.runs', 'case.json', 'count.log', 'cwdrun', 'cwdrun2', 'nokill.json', 'out-h1.json', 'out-h2.json', 'out-strace.json', 'out.json', 'real-m.py', 'real-p.py', 'surro.json', 'surro.stderr', 'surro.stdout', 'tmp-cost', 'tmp-d1', 'tmp-d2', 'tmp-strace', 'wrap-m.py', 'wrap-p.py']
+== probe C: determinism across hash seeds and TMPDIRs ==
+byte-identical across PYTHONHASHSEED=1 vs 31337 and different TMPDIR: True (235 bytes)
+{
+ "case": {
+  "registry": "",
+  "staged": " | S001 | Src S001 \u2014 https://a1.test/doc | docs | A | scope | anchor | teaches | queued | 2026-10-24 | 180d | -\n",
+  "map": null
+ },
+ "runs": 7,
+ "units_before": 7,
+ "units_after": 1
+}
+
+=== surrogate probe ===
+    ~~~~~~~~~~~~^^^^^^
+UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 2: surrogates not allowed
+rc=0
+=== nokill probe ===
+shrink-case: the case carries no kill: the pristine guard does not pass it under the oracle, or the mutant does not violate the oracle on it
+rc=2
+=== strace write-target set ===
+== WRITE-ish targets outside whitelist ==
+== WRITE-ish targets inside whitelist (summary) ==
+  /fast/scratch/hyaku/tameshi-r50/T50W2RevShrinkCode/fix/b/.runs  (7 call(s))
+  /fast/scratch/hyaku/tameshi-r50/T50W2RevShrinkCode/fix/b/count.log  (7 call(s))
+  /fast/scratch/hyaku/tameshi-r50/T50W2RevShrinkCode/fix/b/out-strace.json  (1 call(s))
+  /fast/scratch/hyaku/tameshi-r50/T50W2RevShrinkCode/fix/b/tmp-strace/bhfs9s9b  (1 call(s))
+  /fast/scratch/hyaku/tameshi-r50/T50W2RevShrinkCode/fix/b/tmp-strace/shrink-case-esflemhd/registry.md  (7 call(s))
+  /fast/scratch/hyaku/tameshi-r50/T50W2RevShrinkCode/fix/b/tmp-strace/shrink-case-esflemhd/staged.md  (7 call(s))
+== mutating calls (creat/unlink/rename/mkdir/rmdir) outside TMPDIR+out ==
+  2977757 unlinkat(3, "registry.md", 0)   = 0
+  2977757 unlinkat(3, "staged.md", 0)     = 0
+== READ targets outside whitelist ==
+  2977797 openat(AT_FDCWD, "/etc/ssl/openssl.cnf", O_RDONLY) = 3
+  2977880 openat(AT_FDCWD, "/etc/ssl/openssl.cnf", O_RDONLY) = 3
+=== execve accounting ===
+15
+15
+=== forbidden-path sweep over trace ===
+0
+surrogate tool rc=1

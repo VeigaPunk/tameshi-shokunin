@@ -1,0 +1,20 @@
+SELFTEST bwrap=bubblewrap 0.13.1
+SELFTEST check=fixture-lane-guard-on-host   ok=true
+SELFTEST check=probe-hides-fixture-lane     ok=true guard_open={'detail': "[Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r50/T50W2Row15/w/conf/fixture/lane/tools/staged-id-guard.py'", 'errno': 'FileNotFoundError', 'opened': False} panel_open={'detail': "[Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r50/T50W2Row15/w/conf/fixture/lane/.ufo/evidence/round-49/c2/panel.json'", 'errno': 'FileNotFoundError', 'opened': False} home=False guards=1
+SELFTEST check=probe-sees-one-guard         ok=true [{"path": "/run/staged-id-guard.py", "sha256": "03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8"}]
+SELFTEST check=probe-lane-git-fails         ok=true {"exit": 128, "stderr": "fatal: cannot change to '/fast/scratch/hyaku/tameshi-r50/T50W2Row15/w/conf/fixture/lane': No such file or directory\n"}
+SELFTEST check=probe-detects-bound-lane     ok=true leaked_probe_ok=False guard_open=True
+SELFTEST check=tiny-baseline-exit0          ok=true exit=0
+SELFTEST check=tiny-baseline-cases2         ok=true PBT_STAGED_ID: cases=2 violations=0 counterexample=none
+SELFTEST check=tiny-baseline-dump2          ok=true
+SELFTEST check=probe-hides-pristine-guard   ok=true {"guards_found": [{"path": "/run/staged-id-guard.py", "sha256": "a2b08f14fad972ac6f413b717146ac7de27c62c3be7050e2a24cc5ec142d005f"}], "home_exists": false, "lane_git": {"exit": 128, "stderr": "fatal: cannot change to '/f
+SELFTEST check=tiny-mutant-exit1            ok=true exit=1
+SELFTEST check=tiny-mutant-counterexample-in-dump ok=true index=0 dumped=1
+SELFTEST check=tiny-confirmation-differs    ok=true pristine=(1, '{"cascade": [], "cascade_count": 0, "collision_count": 1, "collisions": ["S022"], "column0_collisions": [], "column0_miss": ["S022"], "extractor": "0-3space", "held": {}, "naive_map": {"S022": "S023"}, "next_free": "S023", "refused": true, "registry_docs": 1, "registry_max": "S022", "registry_rows": 1, "safe_floor": "S023", "staged_max": "S022", "staged_rows": 3, "unmapped": ["S022"], "verdict": "refused"}') guard=(0, '{}')
+SELFTEST check=panel-applies-12             ok=true applied=12 mutants=12
+SELFTEST check=panel-sha-pinned             ok=true d6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1
+SELFTEST check=classify-exit0-unconfirmed   ok=true
+SELFTEST check=classify-equal-unconfirmed   ok=true
+SELFTEST check=classify-differ-confirmed    ok=true
+SELFTEST check=classify-no-counterexample-unconfirmed ok=true
+SELFTEST: checks=18 failed=0 bwrap=bubblewrap 0.13.1 ok=true

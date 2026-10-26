@@ -1,0 +1,77 @@
+{
+  "seat": "T50W2Row05",
+  "round": 50,
+  "wave": 2,
+  "rev": "80ea77e99e239982ab0b93e416645ef2359725d3",
+  "rows": [
+    {
+      "id": "R42.1",
+      "verdict": "agree",
+      "would_be": null,
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-43/mutants/measure.py",
+          "lines": "37-41",
+          "excerpt": "mutants_declared=6, mutants_killed=5, dead_code_only=1, equivalent=0, unresolved=0, `outflag_no_parse_args_check` ∈ killed with `kill_binding=1` (its failing fixture is exactly `F11_outflag_namespace`, so the kill is bound to that fixture rather than asserted from its source text), and `method_fold_several_returns` ∈ dead_code_only with `dead_code_arg_ok=1`."
+        },
+        {
+          "path": ".ufo/evidence/round-43/mutants/measure.py",
+          "lines": "209-229",
+          "excerpt": "# F11 — kill fixture for outflag_no_parse_args_check. Reachable code: the value comes from a SimpleNamespace, not from parse_args, so the tool's documented rule (\"the base must be a parse_args namespace\") says the destination is not operator-named. The mutant drops that check. ... def main(): parser = argparse.ArgumentParser() parser.add_argument('--out') args = parser.parse_args() options = SimpleNamespace(out='golden') publish(b'{}', Path(options.out))"
+        },
+        {
+          "path": ".ufo/evidence/round-43/mutants/measure.py",
+          "lines": "610-652",
+          "excerpt": "kill_cases.get(KILL_NAMES[0]) == ['F11_outflag_namespace'] ... dead_code_cases.get(DEAD_CODE_NAMES[0]) == ['F12_method_two_returns'] ... passed = (... len(mutants) == 6 and len(killed) == 5 and len(dead_code_only) == 1 and not equivalent and unresolved == 0 and all(name in kill_names for name in KILL_NAMES) and all(name in dead_names for name in DEAD_CODE_NAMES) and dead_arg_ok == 1 and kill_binding == 1 and mutants_sha_ok == 1)"
+        }
+      ],
+      "reason": "Status fixed is true of the tree at 80ea77e9. The routed ask (round-42 spot-check item 1: add fixtures/judgment or adjust the declared mutant set with reasons; keep the miss visible) is met by the judgment route in .ufo/evidence/round-43/mutants/measure.py at REV: F11_outflag_namespace (SimpleNamespace(out='golden'), reachable code, lines 213-229) is wired into the battery and the kill of outflag_no_parse_args_check is bound to exactly that fixture (kill_cases == ['F11_outflag_namespace'], line 615), while method_fold_several_returns is classified dead_code_only under the frozen D rule with the F12 discriminator (line 613, docstring lines 9-25). The round-42 mutant declaration stays byte-pinned (mutants_sha_ok) and C2_R42_PASS=false stays visible (docstring lines 4-7, round-42 receipt). Commit 697d2f17568d900fb0bfbe063c6292090781cbfe is the immediate child of routed_at 487b8f0d (parent == routed_at), added the cited file (diff-tree --name-only shows A for the path), and is an ancestor of REV; the path does not exist at routed_at (cat-file -e fails), so the keyed excerpts are absent there; cited lines carry no acknowledgement words. Probe: scratch clone at REV with the full ledger passes every row-level gate (evidence_bad=0 key_miss=0 fixed_bad=0), observed line C1_R50: ... fixed=31 ... total=0 C1_R50_PASS=true (probe, not a verdict)."
+    },
+    {
+      "id": "R42.2",
+      "verdict": "agree",
+      "would_be": null,
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-42.md",
+          "lines": "176-178",
+          "excerpt": "- m10 is content-blind. A superseding receipt clears a stale claim for any path that resolves, including an empty file, an unrelated stub or a directory (`.ufo/waves/round-42/w1/CriticSupersedeGaming.md`). This round's superseded path is"
+        },
+        {
+          "path": "corpus/lessons/round-42.md",
+          "lines": "190-190",
+          "excerpt": "`C1_R42_PASS=true` on a scratch clone (wave-2 `CriticCalibration.md`, variants V1–V6)."
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2433-2433",
+          "excerpt": "**Planned (round 51):** the seven routed items the round-50 ledger leaves open — R45.1 ..., R45.4 ..., R46.2 ..., R47.5 and R48.4 ..., R49.3 ..., R49.5 ..."
+        }
+      ],
+      "reason": "Status declined is true of the tree. The routed item itself is a disclosure with an explicit 'optional to repair' disposition: 'No action required this round' (round-42 spot-check item 2). The disclosure exists at REV in corpus/lessons/round-42.md:176-178 (m10 content-blind, with the supersede path) and :190 (V1–V6 variants), and no successor counter made m10 content-aware (the presence-based design persists). Open is not the more accurate status: R42.2 is not named in the newest **Planned (round 51)** paragraph of SCORECARD.md (line 2433 names R45.1/R45.4/R46.2/R47.5/R48.4/R49.3/R49.5 only). The reason is an observation with a lane-owned repair route already chosen (append-only superseding, QUALITY 81), not a way to avoid work; length > 40 chars. Line 190 carries the 'V1–V6' key (en dash); line 176-178 carries 'm10' and 'content-blind'."
+    },
+    {
+      "id": "R42.3",
+      "verdict": "agree",
+      "would_be": null,
+      "evidence": [
+        {
+          "path": "corpus/SOURCES.md",
+          "lines": "474-474",
+          "excerpt": "Round 42 post-append hazard (for the next assimilation round): after this round's append the staged id set collides with six lane rows — `S153` `S154` `S155` `S156` `S157` `S158` (`comm -12` between `corpus/SOURCES.md` ids and the staged set, run 2026-10-25). Renumber by document in scratch before appending."
+        },
+        {
+          "path": "corpus/SOURCES.md",
+          "lines": "477-477",
+          "excerpt": "- Id collision check (read-only, staged package only): `tools/staged-id-guard.py` reports 6 collisions between this registry and the staged set — `S153`–`S158` — of which 2 are documents the registry already holds (`staged:S153` maps to S105 POSIX diff, `staged:S154` maps to S106 google/golden) and 4 are new documents. After this round's append the collision set is `S153`–`S159` (7 ids); the safe"
+        },
+        {
+          "path": "corpus/SOURCES.md",
+          "lines": "482-482",
+          "excerpt": "- Staged-id collision recheck: the staged package contains S153–S255, including staged S160 (PIT FAQ); the document is already held as lane S156, so the by-document mapping is `staged:S160` → S156. The guard reports eight overlapping ids S153–S160, seven earlier collisions plus S160."
+        }
+      ],
+      "reason": "Status declined is true of the tree. The routed item (round-42 spot-check item 3) is a hazard record that itself says 'No action required this round'; the record exists at REV (corpus/SOURCES.md:474) and the by-document resolution under the staged-id guard is visible in later registry rows (SOURCES.md:477, :482, :488). Strongest counter-reading — the wave-1 cross-coder's 'fixed' via f6762b80 — fails: the hazard paragraph is already present at routed_at (git show 487b8f0d:corpus/SOURCES.md line 450), so a keyed excerpt is present at routed_at, which the fixed gate forbids, and f6762b80 is pre-or-equal to routed_at (git merge-base --is-ancestor 487b8f0d f6762b80 → false), so it is not a post-routing commit. Declined is therefore the only supportable status; the reason is an observation (recorded hazard with explicit no-action ruling), longer than 40 chars, and does not evade owed work. Overrides.json R42.3 re-located evidence lines 473/476 → 474/477 after the round-50 S271 insertion shifted SOURCES.md by one line; excerpts match at REV."
+    }
+  ]
+}

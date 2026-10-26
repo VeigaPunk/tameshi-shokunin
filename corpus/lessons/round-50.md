@@ -30,8 +30,11 @@ sha256 (`.ufo/waves/round-50/w1/T50ExecSrcZeller/`, `.ufo/waves/round-50/w1/T50S
   expect one hit each for `removing any single input entity`, `After 57 tests`, `139 automated test runs`.
 
 Rows touched old → new (logged here as contract v1 asks):
-- **S022** status `queued` → `mined`; used-by `—` → `corpus/knowledge/fixture-shrinking-pilot.md` (the pilot quotes its
-  abstract; re-fetched 2026-10-26, HTTP 200, 115,315 B, sha256 `fa3036a3…`, anchor and teaches cell still present,
+- **S022** used-by `—` → `corpus/knowledge/fixture-shrinking-pilot.md`; status stays `queued` (the candidate `80ea77e9`
+  had set it `mined`, which raised the frozen round-45 freshness population 73 → 74 and turned that no-harm monitor red,
+  `.ufo/waves/round-50/w2/T50W2ExecNoHarm.md`; the cell was restored before the deciding run). The pilot quotes its
+  abstract; re-fetched 2026-10-26, HTTP 200, 115,315 B (the page embeds a per-request token, so its sha256 does not
+  reproduce, `T50W2ScoutS271.md`), anchor and teaches cell still present,
   `.ufo/waves/round-50/w1/T50ScribeSrcHeld.md`; quote, 25 words: "significantly mitigates the impact of the test-case
   validity problem, by ensuring that any reduced test case is one that could in principle have been generated").
 - **S024** used-by `corpus/knowledge/survivor-fixture-minimization.md` → that entry plus
@@ -60,7 +63,7 @@ extract and missing only from the `-layout` extract, a two-column fold false pos
   the carrier (no folios, 17 pages for an 18-page range) and its recheck (`curl … | grep -c 'minimal test case'`) returns 0
   on the compressed PDF; the document is adopted only as the re-grounded S271. The entry's sentence that the 896-line
   reduction cost "139 automated test runs" is refused under QUALITY 2: the source gives 57 for that reduction (§I; §IV-B
-  Fig. 12), and 139 is the Abstract's two-reduction total, 82 + 57. Flip: none needed; the corrected statement is in the
+  Fig. 12), and 139 is the Abstract's case-study total (82 + 57, an inference the paper does not state). Flip: none needed; the corrected statement is in the
   admitted entry.
 - **Defer — `r7-ieice-mutant-abstraction-authority.md`** (`.ufo/waves/round-50/w1/T50ScribePkgIeice.md`): the report is
   verified verbatim, but it reduces the mutant set, not a fixture, so it would be filed on the wrong side of F6. Flip: admit
@@ -72,8 +75,8 @@ Ten disposer seats (`.ufo/waves/round-50/w1/T50Disp4{0..9}.rows.json`) and ten i
 (`T50Cross4{0..9}.json`; T50Cross40 wrote its codes into its returned output only, no json file) judged the 49 items against
 the tree at base. Disposer and cross-coder agreed on 30 of the 44 items both coded; the L1 resolved the 14 disagreements
 item by item (`.ufo/evidence/round-50/integrate/agreement.json`, `overrides.json`, each override with its reason). The
-ledger lands 31 fixed, 7 open, 11 declined; 8 of the fixed items are closed by this round's commits (R40.2, R40.3, R45.2,
-R46.4, R47.2, R49.1, R49.2, R49.4). The revenger's walk (`T50RevengerRecur.md`) finds the long tail is not lapsed fixes but
+ledger lands 31 fixed, 7 open, 11 declined; 9 of the fixed items are closed by this round's commits (R40.2, R40.3, R40.4,
+R45.2, R46.4, R47.2, R49.1, R49.2, R49.4; R40.4 after wave 2). The revenger's walk (`T50RevengerRecur.md`) finds the long tail is not lapsed fixes but
 items never given one: never acknowledged (R40.2, R40.3), re-classified as disclosed or operator-owned, or left out of a
 Planned paragraph (R49.1). Three classes came back after a QUALITY criterion (monitor-false-red after 88; standing rows
 after 92; pointers after 72/73/81/97); one came back with no criterion at all (receipt not committed: round 45 → fixed 46 →
@@ -135,6 +138,31 @@ that review as well as on the counter.
 - **R41.7 (declined)** — the round-41 note block at `corpus/SOURCES.md:436-437` (round-41 numbering) splits a bullet list
   across a blank line; it renders as two lists and has no parse impact. Reflowing it would edit a closed registry note for no
   gain, so the item is declined, not fixed.
+
+## Wave 2 — what the falsifiers found (candidate `80ea77e9`)
+
+Thirty-five seats attacked the candidate (`.ufo/waves/round-50/w2/`). What changed because of them, before the deciding run:
+- **Ledger rows.** Seventeen row-attack seats agree with 48 of the 49 statuses; the one `weak` verdict (R40.4, the cited
+  round-41 line acknowledges the class rather than correcting it, `T50W2Row02.json`) is answered by re-pointing the row at
+  the named round-50 correction. `T50W2ConnLedgerChains.md` finds the repeating families consistent.
+- **No-harm.** The candidate set S022 `mined`, which moved the frozen round-45 freshness population 73 → 74 and turned that
+  monitor red (`T50W2ExecNoHarm.md`); the status cell was restored. The cold-read precheck was clean (64 → 64, lost 0).
+- **Sources.** Every S271 quote and anchor re-verified from an independent fetch (`T50W2ScoutS271.md`); its finding that
+  "82 + 57 = 139" and the 57-versus-26 reading are the lane's inference, not the paper's statement, is now marked as
+  inference in both F6 entries and the README row.
+- **README.** "re-checks … cost itself" overclaimed after the wave-1 attacks (`T50W2CritReadmeF6.md` O2); reworded.
+- **Shrinker.** The source review finds none of the forgery routes used (`T50W2RevShrinkCode.md`), and an outside
+  `strace` count matches the stated runs on all 12 public mutants, 188 = 188, with every write inside its TMPDIR or
+  `--out` (`T50W2ExecShrinkTrace.md`). Its own selftest kills 5 of 15 single-edit mutants (`T50W2MutShrink.md`), and a lone
+  surrogate in a case crashes it with exit 1 instead of 2; both routed.
+- **Probes (non-deciding, disclosed).** The frozen C1 counter prints `C1_R50_PASS=true` at the candidate, and the same PASS
+  survives re-pointing 29 of 31 fixed rows at unrelated keyed lines (`T50W2ExecC1Probe.md`): the PASS line certifies form,
+  the row attacks certify content. The frozen C2 counter scores the 12 public mutants ok at the candidate; with a synthetic
+  hidden panel (and only the digest pin changed in a scratch copy) 18 of 18 (`T50W2ExecC2Probe.md`). The L1 also ran the C1
+  counter once on a scratch clone of the candidate ledger before wave 2 (`.ufo/evidence/round-50/integrate/l1-probe-c1.stdout`).
+- **Routed, not fixed:** three text-versus-tool defects in QUALITY 100's wording (`T50W2RevQuality.md`); the sibling design
+  element that would close the C1 forgery routes, a per-row executable check (`T50W2ConnSiblingLedger.md`, kengaku
+  `defect_ledger.py`); the leads list still carrying the Zeller lead (`T50W2ExecCensus.md`).
 
 ## considerthese
 

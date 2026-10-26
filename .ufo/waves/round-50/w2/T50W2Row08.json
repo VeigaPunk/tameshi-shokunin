@@ -1,0 +1,50 @@
+{
+ "seat": "T50W2Row08",
+ "round": 50,
+ "wave": 2,
+ "rev_read": "80ea77e99e239982ab0b93e416645ef2359725d3",
+ "base": "e3729de862f73ae080d98fcf522a7081ce16e40a",
+ "rows": [
+  {
+   "id": "R45.1",
+   "verdict": "agree",
+   "would_be": "open",
+   "evidence": [
+    "git -C <lane> log --oneline 683eedde..80ea77e9 -- .ufo/evidence/round-44/calibration/measure.py -> empty (counter byte-unchanged since routed_at)",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-45/after/c-r44-at-content.stdout | sed -n '1p' -> `C2_R44: ... m11=1 m12=1 ... C2_R44_PASS=false first=m11:SCORECARD.md#round-45:cd8e73f0...` (false red persists)",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-44/calibration/measure.py | sed -n '351,357p' -> m11_revisions still fails every 40-hex token via `git cat-file -e token` with no pinned-external-hash exemption",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-44/calibration/measure.py | sed -n '519,521p' -> m12 still round-bound (`newest block is round %d, the contract round is %s`)",
+    "git -C <lane> show 80ea77e9:corpus/QUALITY.md | sed -n '1296,1301p' -> the lane only added a monitor-admission gate (no-harm-gate.py) that refuses the r44 counter as a monitor; exclusion != fix",
+    "git -C <lane> show 80ea77e9:SCORECARD.md | grep -n '\\*\\*Planned (round' | tail -1 -> line 2433 `**Planned (round 51):**` names R45.1 (open requirement of the frozen counter)"
+   ],
+   "reason": "The ask is to fix the round-44 record-agreement counter (exempt pinned external hashes, be round-parametric). At REV the counter source has zero commits since routed_at 683eedde: m11 still flags upstream hash cd8e73f0 as a non-lane object and m12 still grades the newest block against the contract round; the routed false-red receipt (m11=1 m12=1, C2_R44_PASS=false) is still in the tree. The lane's mitigation (QUALITY 88/no-harm-gate.py exclusion, removal from later no_harm lists) satisfies only the conditional clause, not the standing counter fix, so open is true of the tree; the newest Planned (round 51) paragraph names R45.1, satisfying the counter's open rule."
+  },
+  {
+   "id": "R45.2",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-50/routed/receipts/r45-c1-freshness.selftest.stdout | tail -2 -> `C1_R45_SELFTEST: cases=19 failed=0` / `VERDICT: PASS`",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-50/routed/receipts/r45-c2-coverage.selftest.stdout | tail -2 -> `C2_R45_SELFTEST: cases=10 failed=0` / `VERDICT: PASS`",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-50/routed/receipts/r45-c1-freshness.selftest.exit / r45-c2-coverage.selftest.exit -> 0 / 0; stderr empty",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-50/routed/receipts/MANIFEST.md | nl -ba | sed -n '5,8p' -> line 6 (cited) documents the freshness receipt, line 7 the coverage receipt, line 8 the kill half: `.ufo/evidence/round-46/after/c2.stdout` (declared 25, killed 25)",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-46/after/c2.stdout | sed -n '36p' -> `C2_R46: ... targets=hardened declared=25 killed=25 survived=0 ... C2_R46_PASS=true` (kills the routed 12+8 survivors; SCORECARD Planned(round 46) at line 2164 named this exact ask)",
+    "git -C <lane> show --stat 79f44b55 -> the fix commit adds MANIFEST.md, both r45 receipts (.stdout/.stderr/.exit), revision.txt and run-receipts.sh; commit is post-base (6 after e3729de), post-routing (49 after 683eedde), ancestor of REV",
+    "git -C <lane> cat-file -e 683eedde:.ufo/evidence/round-50/routed/receipts/MANIFEST.md -> fatal path not in 683eedde (keyed excerpt absent at routed_at); cited line 6 carries key `selftest.stdout` and no acknowledgement words"
+   ],
+   "reason": "Compound ask: (a) commit --selftest stdout tallies for both round-45 measure.py counters, (b) kill the 12 (C1) + 8 (C2) selftest survivors routed in SCORECARD Planned(round 46). At REV both round-45 counters have committed receipts (freshness cases=19 failed=0, coverage cases=10 failed=0, exit 0, VERDICT: PASS) added by 79f44b55, and the round-46 kill receipt c2.stdout:36 records declared=25 killed=25 survived=0 covering the routed survivors; the round-46 planned paragraph that routed the kill cites the same ask. The L1 override resolves the wave-1 disposer/cross disagreement: the disposer's 'open' read the base tree, before this round's round-45 receipts existed; at REV the receipt half is for the round-45 counters themselves, not successors. Evidence is minimal (one cited line) but sufficient and verifiable."
+  },
+  {
+   "id": "R45.3",
+   "verdict": "agree",
+   "would_be": "declined",
+   "evidence": [
+    "git -C <lane> show 80ea77e9:SCORECARD.md | sed -n '2159p' -> `Freshness score rule (replaces the round-44 one-document unit): floor(10 * fresh / 73) ... The round-44 unit stays a monitor: grep -cE '^ {0,3}\\| S160 ' corpus/SOURCES.md -> 1`",
+    "git -C <lane> show 80ea77e9:SCORECARD.md | sed -n '2200p' -> round-46 standing freshness row restates `fresh=71` and `the round-44 one-document unit ... stays a monitor`",
+    "git -C <lane> show 683eedde:SCORECARD.md | grep -n 'floor(10 \\* fresh / 73)\\|one-document unit' -> lines 2150/2159 at routed_at already contain both the comparable-count citation (fresh=0 -> 71 cells) and the retained monitor: the ask was already done at routing",
+    "git -C <lane> show 683eedde:corpus/lessons/round-45-verifier-spotcheck.md | sha256sum -> 698dc694... matches the frozen statement set sha256"
+   ],
+   "reason": "The item text itself ends '(already done)', and the tree at routed_at 683eedde already holds every ask: the round-45 SCORECARD block cites the 0 -> 71 count as the comparable measure (fresh=0 before / fresh=71 after cells) and keeps the round-44 one-document unit as a monitor (line 2159), restated in the round-46 standing row (line 2200). No artifact is missing and no lane change can add anything; fixed is mechanically unsatisfiable (the keyed text predates routed_at, so the counter's absent-at-routed_at rule cannot hold) and open is false because nothing is undone. The reason is a genuine observation, >= 40 characters, and is therefore a sound decline; the L1 resolution (resolutions.json R45.3) concurs."
+  }
+ ]
+}

@@ -1,0 +1,55 @@
+{
+ "schema": "tameshi-r50-c2-hidden-panel-v1",
+ "target": "tools/staged-id-guard.py",
+ "target_sha256": "03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8",
+ "mutants": [
+  {
+   "id": "H01",
+   "name": "safe-floor-ignores-staged",
+   "old": "'safe_floor': 'S%03d' % (max(top, staged_top) + 1),",
+   "new": "'safe_floor': 'S%03d' % (top + 1),"
+  },
+  {
+   "id": "H02",
+   "name": "column0-miss-empty",
+   "old": "'column0_miss': [sid for sid in collisions if sid not in column0],",
+   "new": "'column0_miss': [],"
+  },
+  {
+   "id": "H03",
+   "name": "floor-inclusive",
+   "old": "        if id_number(target) < id_number(floor):",
+   "new": "        if id_number(target) <= id_number(floor):"
+  },
+  {
+   "id": "H04",
+   "name": "selfmap-dropped",
+   "old": "    selfmap = [sid for sid in base['collisions'] if mapping.get(sid) == sid]",
+   "new": "    selfmap = []"
+  },
+  {
+   "id": "H05",
+   "name": "case-sensitive-doc",
+   "old": "    text = raw.strip().lower()",
+   "new": "    text = raw.strip()"
+  },
+  {
+   "id": "H06",
+   "name": "doc-head-short",
+   "old": "    return head if len(head) > 8 and openable else ''",
+   "new": "    return head if len(head) > 4 and openable else ''"
+  },
+  {
+   "id": "H07",
+   "name": "undocumented-decide-dropped",
+   "old": "        if sid in mapping:\n            reasons.append('map decides an undocumented row: %s' % sid)",
+   "new": "        if False:\n            reasons.append('map decides an undocumented row: %s' % sid)"
+  },
+  {
+   "id": "H08",
+   "name": "staged-clash-dropped",
+   "old": "        if target in staged:\n            staged_clash.append(target)\n            continue",
+   "new": "        if False:\n            staged_clash.append(target)\n            continue"
+  }
+ ]
+}

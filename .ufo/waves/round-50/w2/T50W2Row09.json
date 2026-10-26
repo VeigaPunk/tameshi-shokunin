@@ -1,0 +1,45 @@
+{
+ "seat": "T50W2Row09",
+ "milestone": "C1 per-row attack",
+ "rev": "80ea77e99e239982ab0b93e416645ef2359725d3",
+ "rows": [
+  {
+   "id": "R45.4",
+   "verdict": "agree",
+   "would_be": "open",
+   "evidence": [
+    "git -C <lane> show 80ea77e9:corpus/SOURCES.md | grep -nE '^| S(100|153|154|157|159) ' -> rows at lines 108/123/124/127/129 still pin the drifted round-41/42/33 snapshot digests: S153 ast.html sha256 183a4f8c, S154 pathlib 0044cae6, S157 argparse 3158c439, S159 wikipedia 6e4a06c0 revid 1373580212, S100 committed snapshot 217edd573e",
+    "git -C <lane> show 80ea77e9:corpus/SOURCES.md | grep -oiE 'supersedes S[0-9]+' | sort | uniq -c -> no supersede mention of S100/S153/S154/S157/S159 anywhere in SOURCES.md (only S026/S028/S041/S047/S048/S055/S059/S060/S061/S068/S072/S089/S093/S108)",
+    "git -C <lane> show 80ea77e9:SCORECARD.md | sed -n '2433p' -> newest **Planned (round 51) paragraph names R45.4 (the five remaining anchor-refresh candidates)"
+   ],
+   "reason": "Compound ask: refresh the five ConnDriftAnchors candidates and pin S026/S093/S108 by quote. The S026/S093/S108 half landed (successor rows S265/S267/S268 at SOURCES.md:140-143, commit 50545328), but none of the five candidates (S100/S153/S154/S157/S159) has a supersede row at REV; their anchors still pin the drifted round-41/42/33 digests. Open is the only status the tree supports."
+  },
+  {
+   "id": "R46.1",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "git -C <lane> show --stat 50545328 -> the commit touches corpus/SOURCES.md and .ufo/evidence/round-48/freshness/sources/{S026,S093,S108}.receipt.json (plus S048 pair)",
+    "git -C <lane> show 80ea77e9:corpus/SOURCES.md | sed -n '138,146p' -> S265/S267/S268 supersede rows carry located quotes (Post body raw line 1132; bwrap.xml raw lines 154-159, bytes 5909-6400; zh-cn page raw line 3611) with fetched bytes/sha256",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-48/freshness/sources/S093.receipt.json -> url/fetched_at/http_status 200/bytes/sha256 (2cb77df2...) matching the row anchor prefix; S026.receipt.json and S108.receipt.json likewise exist",
+    "git -C <lane> show 0b5b7cd2:corpus/SOURCES.md | grep -cE 'supersedes S(026|093|108)' -> 0 (keyed excerpt absent at routed_at)",
+    "git -C <lane> merge-base --is-ancestor 50545328 80ea77e9 -> yes; --is-ancestor 50545328 0b5b7cd2 -> no"
+   ],
+   "reason": "Every ask exists in the tree at REV: S026/S093/S108 are pinned by quote in successor rows (not by whole-page hash), per-snapshot fetch receipts are committed for all three documents, the keyed text is new since routing (absent at 0b5b7cd2), and 50545328 is a post-routing commit, ancestor of REV, that added both the rows and the receipts. Cited lines carry no acknowledgement words."
+  },
+  {
+   "id": "R46.2",
+   "verdict": "agree",
+   "would_be": "open",
+   "evidence": [
+    "git -C <lane> show 80ea77e9:SCORECARD.md | sed -n '2251p' -> 'The operative counters are untouched: the credit lands on the hardened copies, which become the lane's counters only when a later round adopts them'",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-47/hardening/pool.py | sed -n '45,54p' -> GROUPS maps base/v2 to .ufo/evidence/round-46/hardening/ and round-47/hardening/ copies, not tools/",
+    "git -C <lane> ls-tree --name-only 80ea77e9 tools/ -> no freshness/coverage counter (only pbt-staged-id.py, shrink-case.py, staged-id-guard.py)",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-47/calibration/statements.json | sed -n '345,357p' -> the standing freshness statement's argv and sha_file still point at .ufo/evidence/round-45/freshness/measure.py",
+    "git -C <lane> show 80ea77e9:.ufo/evidence/round-50/no-harm.sh | sed -n '15,27p' -> the no-harm monitors still run .ufo/evidence/round-45/freshness/measure.py and round-45/coverage/measure.py",
+    "git -C <lane> show 80ea77e9:SCORECARD.md | sed -n '2433p' -> newest **Planned (round 51) paragraph names R46.2 (adopt the round-47 hardened counters as the operative ones)"
+   ],
+   "reason": "The AST-pin control, named-FAIL kill rule and the pool landed on the round-47 v2 copies under .ufo/evidence/round-47/hardening/ (pool.py:17-18, 299-301), but the ask's first clause ('Adopt them') is unmet at REV: the operative counters are still the round-45 ones (statements.json sha_file, no-harm.sh monitors, SCORECARD.md:2251), no tools/ counter exists, and round-51 planning carries the adoption forward. The strongest counter-reading (cross-coder 'fixed': the round-47 deciding run measured the v2 targets, killed=183, FAIL lines) treats examining the hardened copies as adopting them; the tree itself records the operative counters as untouched, so open is the status the tree supports."
+  }
+ ]
+}

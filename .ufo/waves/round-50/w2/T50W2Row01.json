@@ -1,0 +1,37 @@
+{
+ "rows": [
+  {
+   "id": "R40.1",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "git -C <lane> show 80ea77e99e239982ab0b93e416645ef2359725d3:corpus/lessons/round-41.md | sed -n '51,58p' — appended correction '### Correction — the round-40 quarantine summary' restates the table-derived 1 adopted / 6 refused / 10 present-but-not-appended and declares 'The table is the record; the summary sentence is the drift'; the ledger excerpt (six refused, ten present-but-not-appended. The table is the record; the summary sentence is the drift.) sits verbatim at lines 55-56, inside the cited 53-58 range",
+    "git -C <lane> merge-base --is-ancestor b37ce974b6efb8c465626d7346149549a3300a4b a3d6c690bcbf8914551d4f4e8e1612784c1c2046 → exit 1 (fix is not an ancestor of routed_at); merge-base --is-ancestor b37ce974 80ea77e9 → exit 0; git cat-file -e a3d6c690:corpus/lessons/round-41.md → absent (excerpt new since routing); git diff-tree --name-only b37ce974 lists corpus/lessons/round-41.md",
+    "awk '/^### Quarantine/{f=1;next} f&&/^\\| S[0-9]/{print}' <(git show 80ea77e9:corpus/lessons/round-40.md) → 17 rows: S132 adopted, 6 refused (S109 S131 S137 S140 S141 S143), 10 present-but-not-appended (S105 S110 S113 S118 S119 S123 S124 S126 S129 S134); the drift sentence at round-40.md:73 still says 'seven refused … nine present-but-not-appended'; git log a3d6c690..80ea77e9 -- corpus/lessons/round-40.md is empty (round-40 file untouched since routing)"
+   ],
+   "reason": "The cited excerpt exists at the cited lines and does what the closure asked: it is the prescribed appended correction in the round-41 lesson that restates the table-derived counts and names the table as the record, without rewriting the closed round-40 file. I independently recounted the quarantine table (17 rows: 1 adopted, 6 refused, 10 present-not-appended) and it matches the correction. Commit b37ce974 is the post-routing commit that added the text."
+  },
+  {
+   "id": "R40.2",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "git -C <lane> show 80ea77e99e239982ab0b93e416645ef2359725d3:corpus/lessons/round-50.md | sed -n '122,125p' — the R40.2 correction names the transient wave-slots line, then cites `.ufo/waves/round-40/settlement-receipt.json` with sha256 659e39bb…f89a3 and the 64/64/64 counts (line 124 holds the ledger excerpt verbatim)",
+    "git -C <lane> show 80ea77e9:.ufo/waves/round-40/settlement-receipt.json | sha256sum → 659e39bb7fba6d381ee3af27daec8b74a6542d861b8b4666b4d46d4ad44f89a3 (matches the cited digest); sed -n '277,279p' of the same blob shows registry_members 64 / seat_exits 64 / reports_present 64",
+    "git -C <lane> merge-base --is-ancestor 79f44b55b82d0d5137546be885f0b755a9730fb6 a3d6c690 → exit 1; merge-base --is-ancestor 79f44b55 80ea77e9 → exit 0; git cat-file -e a3d6c690:corpus/lessons/round-50.md → absent; git diff-tree --name-only 79f44b55 lists corpus/lessons/round-50.md (commit subject: 'routed fixes (R40.2/R40.3/R40.4 corrections …)')"
+   ],
+   "reason": "The ask was that a reviewer be able to re-check the wave grant via a durable artefact instead of the seat-ledger line that the release path deletes. At REV that exists: the round-50 correction cites the committed settlement-receipt.json with a digest I verified equals the blob at REV, plus the three counts, and states the closed round-40 report is not rewritten. The wave-1 disposed verdict predated the round-50 correction; at REV the item is fixed. Line 123 also carries the key 'wave-slots' (acknowledged as transient), satisfying the key rule twice."
+  },
+  {
+   "id": "R40.3",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": [
+    "git -C <lane> show 80ea77e99e239982ab0b93e416645ef2359725d3:corpus/lessons/round-50.md | sed -n '126,129p' — pastes `reg-ids` (105 ids, sha256 b11c9413…6e91) and `staged-ids` (S132 S152, sha256 d77a652a…9fce); the ledger excerpt at line 126 is verbatim",
+    "diff <(git show 80ea77e9:.ufo/waves/round-40/assimilation/reg-ids | tr ' \\n' '\\n' | sed '/^$/d') <(git show 80ea77e9:corpus/lessons/round-50.md | sed -n '126,129p' | grep -oE 'S[0-9]{3}' | head -105) → identical sequence, order preserved (105 ids); sha256 of the reg-ids blob at REV = b11c94133a35ce8c2c13bb30c04dc545290e53c40710cfd09c4b0a3d94126e91; staged-ids blob = d77a652a2dbc36459dc74a10e8daa7f2e47cc713db0d02fc10d7f48dbb129fce, pasted S132 S152 match",
+    "git -C <lane> cat-file -e a3d6c690:corpus/lessons/round-50.md → absent; git diff-tree --name-only 79f44b55 lists corpus/lessons/round-50.md"
+   ],
+   "reason": "The closure's item 10 ask — paste both id lists verbatim — now exists in committed prose: the full 105-id list and the 2 staged ids appear in the round-50 corrections with digests matching their source blobs at REV and a byte-identical id sequence. The paste lives in the round-50 lesson rather than inside the closed round-40 report; that matches the lane's appended-correction convention, which the same closure prescribed for its item 1 (do not rewrite the closed file), so the substance of the ask is met."
+  }
+ ]
+}

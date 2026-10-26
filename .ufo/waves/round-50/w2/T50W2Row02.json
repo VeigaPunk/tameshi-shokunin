@@ -1,0 +1,30 @@
+{
+ "seat": "T50W2Row02",
+ "round": 50,
+ "wave": 2,
+ "milestone": "C1 per-row attack (R40.4, R40.5, R41.1)",
+ "rev_read": "80ea77e99e239982ab0b93e416645ef2359725d3",
+ "rows": [
+  {
+   "id": "R40.4",
+   "verdict": "weak",
+   "would_be": "fixed",
+   "evidence": "Ledger row at 80ea77e9 cites corpus/lessons/round-41.md:75-75 (\"the round-40 closure's routed defect 4 (a quote labelled \\\"11 words\\\" that has 13 tokens)\"), commit b37ce974 (touches round-41.md; round-41.md does not exist at routed_at a3d6c690, so the excerpt is new since routing; key \"11 words\" present; no ack word). Verified: git show 80ea77e9:corpus/lessons/round-41.md line 75 (Mistakes table row count-label-drift, captured-by column). The status fixed is true of the tree: the S152 token count is publicly corrected at REV in corpus/lessons/round-50.md:130 (\"**R40.4 — the S152 quote is 13 tokens, not \\\"11 words\\\".** ... it is 13 whitespace tokens\", added by 79f44b55), and round-41.md:75 also states the true count. But the cited excerpt is thin: it is a Mistakes-table \"captured-by\" mention describing the defect class (and how round 41 caught its own labels), not the corrective text; the operative correction at REV lives at round-50.md:130, which the row does not cite. Primary label corpus/lessons/round-40.md:14 still reads \"Quote (11 words)\" at REV — unchanged by design (append-only convention, cf. R40.1's prescribed fix form), so this does not refute fixed.",
+   "reason": "Status fixed is right: the corrected count exists in the tree (round-50.md:130, a post-base correction; round-41.md:75 states 13 tokens). Evidence is thin: the cited line is a captured-by acknowledgement of the defect class rather than the fix text, and the definitive correction (round-50.md:130) is not cited. Strongest counter-reading checked: round-40.md:14 still labels the quote \"11 words\" at REV (git show 80ea77e9:corpus/lessons/round-40.md line 14), which is the append-only residue, not a non-fix; the row's commit b37ce974 predates base so this row cannot contribute to the fixed_after_base floor."
+  },
+  {
+   "id": "R40.5",
+   "verdict": "agree",
+   "would_be": "declined",
+   "evidence": "Verified at REV: .ufo/evidence/round-39/contract.json:12 contains the cited excerpt verbatim (\"The round-38 regex ^\\s*leg remains a vacuous control (0 hits) and is not rewritten.\"; key \"vacuous\" present; line range 12-12 resolves; path is not a spot-check/ledger/HARD). The can-fail successor the routing names exists and is operative: .ufo/evidence/round-39/contract.json:35-37 carries depth_command_d_regex/depth_command_d (canonical command-D pattern whose match count can be 0), the round-39 guard measure.py implements it, and SCORECARD.md:1858-1862 records C1_R39 PASS with live_agree=1 stripped_agree=1 r38_regex_hits=0 and the vacuous/constant controls failing. grep at REV shows ^\\s*leg occurs only in frozen/historical artifacts (round-38 contract:58, round-39 contract 12/13/17/37, round-39 guard measure.py 7/18, round-18 coldread traces, round-39 dispatch, round-50 frozen instrument) — no live use. Reason is >40 chars, an observation plus an ask the lane should not do (rewriting a pinned round-38 control). T50Cross40's counterexample (\"no evidence found demonstrates an operative replacement\") is refuted by the SCORECARD receipts above; it also reads base, not REV.",
+   "reason": "Declined is sound: the vacuous pattern sits in a frozen round-38 control the lane must not edit; the can-fail replacement (command D) already exists and is the operative depth check; the counter cannot certify fixed anyway (no keyed excerpt new since routed_at). The item's substance was superseded in round 39, and the only literal remaining action is impermissible; declining with a documented reason is the honest disposition."
+  },
+  {
+   "id": "R41.1",
+   "verdict": "agree",
+   "would_be": "fixed",
+   "evidence": "Verified at REV: .ufo/evidence/round-42/calibration/measure.py:79 = \"BACKTICK_RE = re.compile(r'`([^`\\n]+)`')\" (key \"BACKTICK_RE\" in excerpt), docstring lines 14-16 state the line-scoped rule; commit 322b5cd touches the file (diff-tree), its parent is routed_at c77c2b7 (so not an ancestor of routed_at and an ancestor of REV), and the file does not exist at routed_at (git cat-file -e fails), so the excerpt is new since routing. Semantics: the fix regex is exactly the routing's prescribed fix (\"Fix: `[^`\\n]+` or line-scoped extraction\") applied in the successor calibration counter (m8 extractor is that counter's extractor); receipt .ufo/evidence/round-42/before/c1-selftest.stdout lines 1-2 show T1_old_extractor_misses OK / T1_new_extractor_sees OK, proving the difference can fail. Cross-coder (T50Cross41) agrees fixed.",
+   "reason": "Fixed is true of the tree: the line-scoped BACKTICK_RE exists in the round-42 successor counter, is proven different from the old pattern by selftests, and matches the routing's prescribed fix. Evidence is strong (regex line + docstring + selftest receipts). No counter-reading survived: the only conceivable objection (instrument file, not a source tool) fails because the defect was in the counter's extractor and the successor counter is the operative one."
+  }
+ ]
+}

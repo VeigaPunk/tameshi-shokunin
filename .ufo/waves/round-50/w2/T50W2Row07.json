@@ -1,0 +1,40 @@
+{
+  "rows": [
+    {
+      "id": "R43.3",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "git -C <lane> show 80ea77e9:corpus/SOURCES.md | sed -n '130p' -> S160 row: 'supersedes S089's anchor only: the snapshot digest checked at the 2026-10-25 re-open'; row pins sha256 79f6501a…4079ce",
+        "git -C <lane> show 80ea77e9:corpus/lessons/round-44.md | sed -n '35,38p' -> old→new digest log: 'bc572676…e04d' (S089) → '79f6501a…4079ce' (this snapshot), same offsets",
+        "git -C <lane> show 80ea77e9:corpus/lessons/round-44.md | sed -n '47,51p' -> reason S089 cell is not edited in place: SOURCES contract rule 2; S160 is the append-only correction and explicitly supersedes S089's anchor only",
+        "git -C <lane> show --format= --name-only 83beaf980f246412368f89fbe7758375c8ca21e0 -> touches corpus/SOURCES.md and corpus/lessons/round-44.md; merge-base: ancestor of 80ea77e9, not ancestor of routed_at 506e99c7",
+        "at routed_at 506e99c7: corpus/SOURCES.md has no '| S160 ' row (grep -c = 0) and lacks the excerpt; corpus/lessons/round-44.md absent -> keyed excerpt new since routing"
+      ],
+      "reason": "The ask is compound: (a) update S089's anchor in a future append-only registry change, (b) log old→new in that round's lesson. Both exist: the S160 row (SOURCES:130, added by 83beaf9 post-routing) is the append-only re-pin of the re-opened snapshot digest, scoped explicitly to supersede S089's anchor only; round-44.md:35-38 logs the old (bc572676…e04d) and new (79f6501a…4079ce) digests with the same-offset note. Strongest counter-reading: S089's own anchor cell still shows the 2026-10-22 digest, so 'update its anchor' is unmet. Rejected: the ask itself demands an append-only registry change; an in-place edit of S089 would violate the registry contract rule 2 (stated at round-44.md:47-51), so supersession is the only append-only mechanism and it exists. Status fixed is true of the tree at 80ea77e9."
+    },
+    {
+      "id": "R44.1",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "git -C <lane> show 80ea77e9:corpus/QUALITY.md | sed -n '1229,1231p' -> criterion 87 defines the append-only repair form: 'A label that disagrees with the measured count is a record defect fixed append-only with an errata line naming the measured value'",
+        "git -C <lane> show 80ea77e9:corpus/QUALITY.md | sed -n '1235,1238p' -> the errata line for this exact record: round-44.md:26 labels '20 words'; measured 28 whitespace tokens (22 letter/digit words); round-45 C1 counter grade ('invalid','quote length 28'); receipt r44-quote-token-count.stdout",
+        "git -C <lane> show 80ea77e9:corpus/lessons/round-45.md | sed -n '158p' -> Mistakes table number-drift row restates the wrong label, location, measured 28/22, the counter grade, and the inheritance from round-43.md:52; fix column = QUALITY criterion 87 + falsifier",
+        "git -C <lane> show 80ea77e9:.ufo/evidence/round-45/quality/c87-falsifier.stdout | sed -n '1,3p' -> executable measurement receipt: 'whitespace_tokens=28 letter_digit_words=22 C1 grade on the round-44 label quote: ('invalid', 'quote length 28')'",
+        "git -C <lane> show --format= --name-only ea25e0224fc81060414b27301c27bd1344669165 -> touches corpus/QUALITY.md, corpus/lessons/round-45.md, .ufo/evidence/round-45/quality/c87-falsifier.stdout; merge-base: ancestor of 80ea77e9, not ancestor of routed_at 5891bdb7; all cited lines absent at routed_at (QUALITY.md shorter, round-45.md and receipt absent)"
+      ],
+      "reason": "The ask (spot-check round-44.md:73) is 'correct the label in a future round (append-only)'. Because the ask itself forbids touching the closed lesson, the only satisfiable form is an append-only correction record, and the lane's criterion 87 (added by the cited fix commit) codifies exactly that form: an errata line naming the measured value. That errata exists for this exact record (QUALITY.md:1235-1238), is restated in the round-45 Mistakes table (round-45.md:158), and is backed by an executable falsifier receipt reporting the measured 28 tokens / 22 letter-digit words. Strongest counter-reading (T50Cross44): measuring/restating is not correcting; round-44.md:26 still reads '20 words', so the item should be declined. Rejected: a byte change in round-44.md is impossible under the ask's own append-only condition; 'declined' is unavailable as a reason-class (the ask is neither an observation nor operator-owned nor something the lane should not do), and the corrected quantity now exists in the record, matching the lane's established append-only-repair convention (cf. R43.3's supersession row). Residual divergence recorded: if one demands the label byte change, the item is unclosable by construction; under the tree's own standard, fixed is true at 80ea77e9."
+    },
+    {
+      "id": "R44.2",
+      "verdict": "agree",
+      "would_be": "declined",
+      "evidence": [
+        "git -C <lane> show 80ea77e9:.ufo/waves/round-44/w1/summary.md | sed -n '6p' -> 'Attack roles: 14 seats … no wave 2 was dispatched. No unassigned residual check remained; no ordinary residual call was needed.' (path ends with key 'w1/summary.md')",
+        "spot-check round-44.md:74 labels the item 'Observation (not a defect)'; no tree change is asked for"
+      ],
+      "reason": "The item is self-declared an observation of the dispatch policy's outcome (one v1 wave of 32 seats, 14 attack-role seats, no wave 2 because the fresh attack inventory was below 32). Wave shape is the orchestrator's policy, not a lane defect; nothing in the tree was asked to change, so there is nothing for the lane to fix. The reason in the row is an observation/operator-owned declaration, not a work-avoidance. Decline is sound and true of the tree at 80ea77e9."
+    }
+  ]
+}

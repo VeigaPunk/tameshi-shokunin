@@ -1,0 +1,51 @@
+{
+ "seat": "T50W2Row03",
+ "round": 50,
+ "wave": 2,
+ "item": "C1 row attack: R41.2, R41.3, R41.4",
+ "tree_judged_at": "80ea77e99e239982ab0b93e416645ef2359725d3",
+ "rows": [
+  {
+   "id": "R41.2",
+   "verdict": "agree",
+   "would_be": {"status": "fixed", "commit": "5f739acf21e878e22bd3f66249ae8bec2aaf1fc1"},
+   "evidence": [
+    "superseding receipt exists at candidate: .ufo/waves/round-42/supersede/round-41-residual-receipt.json — \"supersedes\": \".ufo/waves/round-41/residual/receipt.json\", \"reason\": re-asserts all eight seats with observed tree truth (git -C <lane> show 80ea77e9:.ufo/waves/round-42/supersede/round-41-residual-receipt.json)",
+    "all eight round-41 seat files exist at candidate: git cat-file -e 80ea77e9:.ufo/waves/round-41/residual/<seat>.md exits 0 for ResidualReplayC1, ResidualReplayC2, ResidualReceipts, ResidualScope, ResidualIds, ResidualCounts, ResidualAppendOnly, ResidualClaims",
+    "ledger evidence corpus/QUALITY.md:1003-1011 and :1010-1011 resolve verbatim at candidate (criterion 81: superseding receipt names the old one in supersedes and re-asserts every path; live instance named as the round-41 residual receipt)",
+    "commit 5f739acf is the post-routing commit that added both the supersede receipt and QUALITY.md criterion-81 text (git log --diff-filter=A -- .ufo/waves/round-42/supersede/round-41-residual-receipt.json → 5f739acf; same commit message covers QUALITY 81-82)",
+    "ancestry: c77c2b7 (routed_at) < 5f739acf < 80ea77e9 (git merge-base --is-ancestor)",
+    "keyed excerpt absent at routing: grep at c77c2b7 for 'live instance was the round-41 residual' / 'Criterion 81' in corpus/QUALITY.md → absent (the file is 997 lines at routing vs 1546 at candidate)"
+   ],
+   "reason": "The closure asked 'regenerate or supersede receipt files after the last write they describe'. The supersede route was taken and exists in the tree: the committed receipt names the old receipt in supersedes, re-asserts all eight seats present:true, and agrees with the tree (all eight files exist). The original receipt staying stale is the append-only rule (QUALITY criterion 81), not an open defect. Strongest counter-reading (wave-1 cross-coder T50Cross41: open): the original .ufo/waves/round-41/residual/receipt.json:14-16 still asserts present:false. Checked: that claim is exactly what the superseding receipt replaces; the item's ask is satisfied by the supersede alternative, which exists. L1 resolution (agreement.json) agrees. Status fixed is true of the tree."
+  },
+  {
+   "id": "R41.3",
+   "verdict": "agree",
+   "would_be": {"status": "fixed", "commit": "322b5cd32b4319a05340d249ae752d12a9e6b19f"},
+   "evidence": [
+    "self-pin: .ufo/evidence/round-42/calibration/measure.py:7-13 docstring; implementation at :375-384 compares sha256 of running file and FREEZE copy against claims.C1.counter_sha256 read at freeze (git show 80ea77e9:.ufo/evidence/round-42/calibration/measure.py :370-392)",
+    "records >= 1 gate: same file :12-13 declares the gate; implementation at :387-389 fails on n_records != EXPECTED_RECORDS (=6 at :75)",
+    "out-of-process: .ufo/evidence/round-42/census/measure.py:7-9 docstring; implementation at :231 builds [sys.executable, '-I', tool, '--file', target, ...]",
+    "resolved inspection: census/measure.py:14-15 docstring; implementation inspects site['resolved'] needling mkdtemp/--out",
+    "exit-plus-FAIL kill oracle: census/measure.py:16-21 docstring; implementation at :238 (returncode check), :415-421 (selftest exit + FAIL line printing)",
+    "commit 322b5cd added both counter files (git log --diff-filter=A -- .ufo/evidence/round-42/calibration/measure.py and .../census/measure.py → 322b5cd)",
+    "ancestry: c77c2b7 (routed_at) < 322b5cd < 80ea77e9; keyed excerpts (self-pin, exit-plus-FAIL, records >= 1) absent at routing because the files did not exist"
+   ],
+   "reason": "Compound item: every named ask exists in the successor pair and is implemented, not merely documented — self-pin (byte pin against freeze contract), records >= 1 gate (non-vacuous), out-of-process execution (-I subprocess), resolved text inspection, and exit-plus-FAIL kill oracle. The m8 scope/m9 complaints named in the carried item are resolved in the successor (PATH_PREFIXES widened, no m9 class; verified by wave-1 disposer and consistent with the tree). No counter-reading survives: the cross-coder also judged fixed after checking the implementation. Commit 322b5cd is the post-routing commit that added the counters."
+  },
+  {
+   "id": "R41.4",
+   "verdict": "agree",
+   "would_be": {"status": "fixed", "commit": "5f739acf21e878e22bd3f66249ae8bec2aaf1fc1"},
+   "evidence": [
+    "ledger evidence .ufo/evidence/round-42/census/measure.py:29-33 resolves at candidate and names the three live v3 false positives: tools/context-capture.py:1682/:1685 and tools/registry-replay.py:123",
+    "disposition at corpus/lessons/round-42.md:252-253: 'The round-41 routed v3 false positives (defect 4) are resolved by v4, not by editing v3: v3's bytes stay pinned at 095924a7…'",
+    "probe at candidate bytes (scratch): python3 -I tools/write-path-census-v4.py --file tools/context-capture.py --json → lineno 1682 and 1685 both scratch=true unflagged=false flagged=false; --file tools/registry-replay.py --json → lineno 123 explicit_out=true unflagged=false; receipt .ufo/waves/round-50/w2/T50W2Row03-probe-context-capture.json / -probe-registry-replay.json",
+    "knowledge entry corpus/knowledge/r42-attribute-and-outflag-destinations.md:30-33 documents v3 misreads and v4 classifications",
+    "commit 5f739acf added tools/write-path-census-v4.py (git log --diff-filter=A); ancestry c77c2b7 < 5f739acf < 80ea77e9"
+   ],
+   "reason": "The item's ask is 'fix routed' for the three v3 false positives. The fix exists as the successor v4 (the pinned v3 is not edited, consistent with the sha-pinned instrument policy the item itself acknowledged). v4 resolves all three sites, verified by direct execution at candidate bytes, and the round-42 counter names the three sites in its battery. Strongest counter-reading (would be: v3 still has the false positives; the evidence is prose, not behavior) is answered by the probe and by the successor replacement. Status fixed is true of the tree."
+  }
+ ]
+}

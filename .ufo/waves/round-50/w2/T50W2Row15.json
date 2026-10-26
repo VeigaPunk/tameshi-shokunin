@@ -1,0 +1,46 @@
+{
+  "seat": "T50W2Row15",
+  "wave": 2,
+  "claim": "C1 per-row attack (R48.6, R49.1, R49.2)",
+  "rev": "80ea77e99e239982ab0b93e416645ef2359725d3",
+  "rows": [
+    {
+      "id": "R48.6",
+      "verdict": "agree",
+      "would_be": "declined",
+      "evidence": [
+        "ledger row @ REV: status declined, reason 271 chars, evidence SHONEN.md:5-8; `git show 80ea77e9:corpus/routed-defects.json`",
+        "SHONEN.md:5-11 at REV still carries the four `[~]` boxes with 'lane assertion, no independent promotion verifier' carriers; `git show 80ea77e9:SHONEN.md | sed -n '1,13p'`",
+        "excerpt norm-exact in lines 5-8 at REV (resolves=True, excerptlen=339); spot-check round-48 pinned sha 2a482f08 matches REV blob",
+        "reason: observation/operator-owned; the round-48 spot-check itself records 'Promotion stays operator-owned' (defects.json R48.6 text)"
+      ],
+      "reason": "The routed item is a state record, not an imperative ask ('all four boxes remain [~]; none is fully checkable by a non-author this round. Promotion stays operator-owned.'). SHONEN.md at REV confirms the four [~] boxes and the 'lane assertion, no independent promotion verifier' carriers, so no tree change exists that could resolve it: closing a box would require an independent non-author verifier the lane does not possess, and the lane cannot promote itself. The decline is an observation plus an operator-owned ask, not a dodge of lane work (the monitor's ceiling attaches two points to each restrained [~] box; SCORECARD.md:2423). Strongest counter-reading checked: 'promotion stays operator-owned' as an ask to advance promotion evidence — resolved by the same fact that no lane commit can make a box non-author-checkable without an independent verifier. Agree declined."
+    },
+    {
+      "id": "R49.1",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "tools/pbt-staged-id.py:887 at REV = 'if not os.access(guard, os.R_OK):'; `git show 80ea77e9:tools/pbt-staged-id.py | grep -n 'os.access'` -> 887",
+        "excerpt absent at routed_at (= base e3729de8): `git show e3729de8:tools/pbt-staged-id.py | grep -c 'os.access'` -> 0",
+        "commit 43bfa7ae1f28359cd67bee4197e6a428298a8450 is post-base (not ancestor of e3729de8), ancestor of REV, and touches tools/pbt-staged-id.py (git diff-tree --name-only -r)",
+        "commit diff adds guard_problem() (line 887), SetupProblem, workspace() cleanup, guarded dump writes, and four selftest cases (unreadable-guard-is-setup, case-write-failure-is-setup, case-dir-failure-removes-work-root, dump-write-failure-is-setup); T50ExecGenFix receipts show red on base (cases=35 failed=4) green after (35/0)",
+        "live probe at REV bytes in scratch: chmod-000 guard -> exit 2, stderr 'pbt-staged-id: guard is not readable: ...', no dump written, no pbt-staged-id-* work-root leak (receipt T50W2Row15.pbt-unreadable-probe.stderr)"
+      ],
+      "reason": "Every ask of the routed item is met in the tree: an unreadable guard now exits 2 (docstring's promised class) instead of 1 with a fabricated counterexample (F1); mid-run dump/case-file write failures are SetupProblem -> exit 2 instead of a traceback (F2); the work root is removed on every failure after mkdtemp (F3); and each fix ships a selftest case that fails on the base bytes and passes on the fix (four cases). The cited line 887 is the fix itself, added by the cited commit 43bfa7ae, absent at routed_at, and free of acknowledgement words. Live probe at REV confirms exit 2. Agree fixed."
+    },
+    {
+      "id": "R49.2",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        ".ufo/evidence/round-50/successor/reads-v2.py:17 at REV = 'R1 `absent_evidence` (F1/F2/F5 -- `absent` was uncapped, evidence-free, and unscored). A path'; `git show 80ea77e9:.ufo/evidence/round-50/successor/reads-v2.py | grep -n 'absent_evidence` (F1/F2/F5'` -> 17",
+        ".ufo/evidence/round-50/successor/sandboxed-confirm.py:9 at REV = 'cannot tell a property-based generator from a differential one.'; `git show 80ea77e9:.ufo/evidence/round-50/successor/sandboxed-confirm.py | grep -n 'cannot tell a property-based'` -> 9",
+        "both files absent at routed_at (base has no .ufo/evidence/round-50/ at all: `git ls-tree -r --name-only e3729de8 -- .ufo/evidence/round-50/` empty); commit 79f44b55b82d0d5137546be885f0b755a9730fb6 post-base, ancestor of REV, touches both files (git diff-tree --name-only -r)",
+        "reads-v2.py is an operational 1124-line successor read counter: selftest exits 0 in scratch (cases=22 failed=0, READS_V2_SELFTEST), and its R1 rule caps absent (absent_overflow/absent_bad terms) and requires evidence, per selftest cases R1-absent-needs-evidence / R1-absent-cap-per-section; committed receipt reads-v2.selftest.stdout matches byte-for-byte (self=a01d88d119d0)",
+        "sandboxed-confirm.py is an operational 634-line bubblewrap harness re-running the frozen round-49 generator against the 12 public panel mutants inside a namespace that hides the lane's pristine guard (differential generators cannot reach it); selftest exits 0 in scratch (checks=18 failed=0), and committed receipt sandboxed-confirm.r49-panel.stdout shows confirmed=12/12 with probes_ok=true"
+      ],
+      "reason": "The ask was 'close these with a successor counter, not prose'. The tree now holds two operating successor instruments, both added post-routing by commit 79f44b55: reads-v2.py closes C1's uncapped, evidence-free absent class (R1 evidence + per-section cap, with absent_bad/absent_overflow terms verified in its selftest), and sandboxed-confirm.py closes C2's inability to tell a property-based from a differential generator (filesystem-isolated re-run of the frozen generator against the panel; a diff-based generator cannot see the pristine guard). Both run clean selftests at REV bytes in my scratch (exit 0), matching the committed receipts. The cited excerpts are docstring lines of the instruments themselves, which is the fix content; the code behind them implements the caps/checks. Strongest counter-reading checked: that these are only prose about a successor (no operative instrument) — resolved by the selftest runs and the panel receipt showing the instruments operate and detect what the round-49 counters could not. Agree fixed."
+    }
+  ]
+}

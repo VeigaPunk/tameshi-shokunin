@@ -1,0 +1,41 @@
+{
+  "seat": "T50W2Row04",
+  "round": 50,
+  "wave": 2,
+  "items": ["R41.5", "R41.6", "R41.7"],
+  "rev": "80ea77e99e239982ab0b93e416645ef2359725d3",
+  "rows": [
+    {
+      "id": "R41.5",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "tools/write-path-census-v4.py:38-40 — `git -C <lane> show 80ea77e9:tools/write-path-census-v4.py | sed -n '36,42p'`: 'Aliases, closures over reassigned names and attribute reassignment are not reliably resolved: a name can bind by definition order or keep a stale binding, so a reader must not treat an unresolved destination as proven safe.' (bounded statement, replaces the blanket 'NOT resolved').",
+        "corpus/lessons/round-42.md:246-248 — `git -C <lane> show 80ea77e9:corpus/lessons/round-42.md | sed -n '244,250p'`: 'Its docstring says aliases, closures and attribute reassignment are not reliably resolved, which corrects v3's blanket \"NOT resolved\" (round-41 routed defect 5); the knowledge entry now lists the shapes that provably mis-resolve.'",
+        "commit 5f739acf21e878e22bd3f66249ae8bec2aaf1fc1 — `git -C <lane> diff-tree --no-commit-id --name-only -r --root -m 5f739acf` contains both files; both are absent at the commit's parent 322b5cd (`git show 322b5cd:corpus/lessons/round-42.md` and `git show 322b5cd:tools/write-path-census-v4.py` exit 128), so this commit added the fix text; `git log -S'which corrects v3' c77c2b7..80ea77e9 -- corpus/lessons/round-42.md` returns only 5f739acf."
+      ],
+      "reason": "Agree with fixed. Ask: correct v3 docstring's blanket 'NOT resolved' overstatement; the item itself directs the correction to the successor round because v3 is sha-pinned. The tree at REV contains the successor tool v4 whose docstring states the resolution bound precisely (not reliably resolved, unresolved != proven safe) while v3's bytes remain byte-identical to routed_at (git show c77c2b7 vs 80ea77e9 of tools/write-path-census-v3.py). Machine rules all pass: keyed excerpt ('NOT resolved') resolves at round-42.md:246-248, absent at routed_at (file did not exist), lines carry no ACK words, commit is post-routing and touches both cited paths. Strongest counter-reading — 'v3 still says NOT resolved, so nothing was corrected' — fails because the item anticipated the pin and demanded the successor correction, which exists; the w1 disposer additionally probed v4 on base bytes resolving the three v3 false positives."
+    },
+    {
+      "id": "R41.6",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        "corpus/SOURCES.md:469-471 — `git -C <lane> show 80ea77e9:corpus/SOURCES.md | sed -n '460,472p'`: round-42 block line 471: 'Id collision check (scratch, .ufo/waves/round-42/assimilation/): ... `comm -12` → 2 collisions, `S153` and `S154`. Guard proven on an indented `  | S159 |` fixture ... Renumber map, by document: `staged:S159` (pitest.org/quickstart/basic_concepts/) → S155; `staged:S160` (pitest.org/faq/) → S156. No other staged row is appended.'",
+        "commit 5f739acf21e878e22bd3f66249ae8bec2aaf1fc1 — `git log -S'Renumber map, by document' c77c2b7..80ea77e9 -- corpus/SOURCES.md` returns only 5f739acf; SOURCES.md at routed_at has 440 lines (`git show c77c2b7:corpus/SOURCES.md | wc -l`) and zero 'Renumber map' occurrences, so both keyed excerpts are absent at routing."
+      ],
+      "reason": "Agree with fixed. Ask: the next assimilation round must renumber by document in scratch before appending (hazard: staged S153/S154 collided with the round-41 registry rows). Round 42 — the next assimilation round — recorded exactly that process in SOURCES.md:471: the collision check ran in scratch (round-42/assimilation/), the 0-3-space guard was proven on an indented fixture, and the renumber map by document was applied (staged:S159→S155, staged:S160→S156) before appending; 'No other staged row is appended'. Machine rules pass on both keyed excerpts. Strongest counter-reading (w1 cross seat): 'no complete by-document renumbering of the staged package is evidenced; collisions persist (S153-S158)'. Refuted: the ask is a process rule conditioning the append, not a one-time renumbering of every staged row; round 42 executed it for each row it appended, and later collision notes (round-43/44 blocks) describe new staged rows and are recorded as forward hazards, not noncompliance with this item. The lane's resolution note makes the same point."
+    },
+    {
+      "id": "R41.7",
+      "verdict": "agree",
+      "would_be": "declined",
+      "evidence": [
+        "corpus/lessons/round-50.md:135 — `git -C <lane> show 80ea77e9:corpus/lessons/round-50.md | sed -n '135,137p'`: '- **R41.7 (declined)** — the round-41 note block at `corpus/SOURCES.md:436-437` (round-41 numbering) splits a bullet list across a blank line; it renders as two lists and has no parse impact. Reflowing it would edit a closed registry note for no gain, so the item is declined, not fixed.' (added by 79f44b5, `git log -S'R41.7 (declined)'`).",
+        "ledger reason (row) = 136 chars, > 40: 'cosmetic: the round-41 note block renders as two lists with no parse impact; reflowing a closed registry note edits evidence for no gain'.",
+        "defect present in tree: at routed_at `git show c77c2b7:corpus/SOURCES.md | sed -n '430,442p'` shows '- Next unused id: S105.' / blank / 'Round 41: ...' paragraph splitting the bullet list; the same structural split persists at REV."
+      ],
+      "reason": "Agree with declined. The item self-describes as '(cosmetic) ... renders as two lists; no parse impact' — an observation-grade, operator-owned cosmetic. The lane's decline is recorded in the round-50 lesson decision line and carries a 136-char reason (> 40): reflowing rewrites a closed registry note (append-only governance) for a rendering-only gain. That is a sound lane decision, not work avoidance; the defect genuinely remains in the tree, so the decline is truthful. Strongest counter-reading (w1 cross seat): 'open — the split remains; the lesson confirms it'. Refuted: 'open' requires the item to be a standing obligation the lane must still perform; the lane explicitly decided the ask is not worth doing, with a recorded reason, which is exactly the declined category. Machine rules pass (keyed evidence at round-50.md:135, key 'SOURCES.md:436' present)."
+    }
+  ]
+}

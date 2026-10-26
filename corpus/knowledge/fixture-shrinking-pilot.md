@@ -26,7 +26,7 @@ counter's stdout into the `OUTDIR` it is handed — never in this text.
   is that every remaining entity is load-bearing.
 - **The cost is part of the result, and its unit is test runs.** S271, §I: "After 57 tests, the
   original 896-line HTML input is reduced to the minimal failing test case" — one reduction, one run count
-  (the Abstract's 139 runs is the case study's two reductions summed, 82 + 57; see
+  (the Abstract's 139 runs is the case study's total — inference: two reductions summed, 82 + 57; see
   `corpus/knowledge/delta-debugging-minimization-contract.md`). A reduction reported without its run count
   cannot be compared with another reduction; runs are also the unit the lane counts everywhere else.
 - **A reduced case must still be a valid input.** S022, Abstract: internal reduction works "internally,

@@ -1,0 +1,41 @@
+{
+  "rows": [
+    {
+      "id": "R47.7",
+      "verdict": "agree",
+      "would_be": "declined",
+      "evidence": [
+        "SHONEN.md:5,7,9,11 at 80ea77e9: four `[~]` boxes, no `[x]` (git -C <lane> show 80ea77e9:SHONEN.md | sed -n '5,11p')",
+        "round-47-verifier-spotcheck.md:109 (routed text): \"SHONEN: all four boxes remain `[~]`, and none is fully checkable by a non-author this round. Promotion stays operator-owned.\"",
+        "probe: C1 counter --explain at 80ea77e9 on scratch clone prints no declined_bad/evidence-bad/key-miss line for R47.7; total=0 C1_R50_PASS=true"
+      ],
+      "reason": "The ask is an observation about an operator-owned act: the spot-check itself declares promotion stays operator-owned, and the four boxes are lane assertions with no independent promotion verifier. No post-routing lane commit can promote a box or manufacture the non-author check, so there is no lane-doable work being avoided. Decline reason (>=40 chars) is sound: an observation, operator-owned, not a way to avoid work."
+    },
+    {
+      "id": "R48.1",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        ".ufo/evidence/round-49/after/c1.stdout:99-101 at 80ea77e9: the three SECTION lines (rounds 12/13/14) print present with floor satisfied; line 103 closes `sections=64 covered=64 score=8 durable_covered=64/64`,=7/7 pointers=94 total=0 C1_R49_PASS=true`",
+        ".ufo/evidence/round-49/coldread/refresh-receipts.json: sections 5-7 (rounds 12/13/14) carry direct opens + record-via-blob reads, trace files, exit 0, stdout sha256 each; scope \"reading-bound refresh\"",
+        ".ufo/evidence/round-49/quality/coldread-precheck-cand.stdout:1: `COLDREAD_PRECHECK floor=8ca67421111f floor_credited=57 cand=master cand_credited=64 lost=0 ok` (57 -> 64, lost=0)",
+        "SCORECARD.md:2392 at 80ea77e9: round-49 C1 row, keyed `cold-read` text \"the seven lapsed cold-read sections ... re-credited by trace-bound entries whose inputs exclude the five record files\" (absent at routed_at 8ca67421: `grep -c 'seven lapsed'` -> 0)",
+        ".ufo/evidence/round-50/deciding-run.sh:41 runs coldread-precheck.sh at REV (floor base) before either counter (lines 45-50); round-49 script did the same at :38",
+        "probe: coldread-precheck.sh on scratch clone at 80ea77e9 -> `floor_credited=64 cand_credited=64 lost=0 ok` exit 0"
+      ],
+      "reason": "Both asks are met in the tree at 80ea77e9. (a) Credit restored: the three lapsed headings were re-read pointer by pointer via the reading-bound refresh (receipts, traces), the round-49 deciding receipt shows all three SECTION lines present with floors satisfied and 64/64 credited, and the current candidate still prechecks 64/64 lost=0. (b) Discipline: the precheck runs on the candidate in the deciding run before either counter in both round-49 and round-50 scripts (falsifier receipts for the red state committed). Commit 6db4b931 is the post-routing commit that added the SCORECARD row and SKILL.md pointer corrections; the counter's freshness path (keyed SCORECARD.md item, absent at routed_at, touched by commit, no acknowledgement words) scores clean. Minor note imprecision (QUALITY 99 governs control order, not the precheck; the precheck is wired in the deciding scripts) does not affect the status."
+    },
+    {
+      "id": "R48.2",
+      "verdict": "agree",
+      "would_be": "fixed",
+      "evidence": [
+        ".ufo/evidence/round-49/deciding-run.sh at 80ea77e9: :43 c2.start written before counter at :44, exit receipt :45; same quartet for C1 at :46-48; first read of counter output (tail -1) only at :49-50 (comment lines 9-10 state the rule)",
+        ".ufo/evidence/round-49/deciding-run.sh:32 FROZEN enumerates code/contract files only, no receipt directory",
+        ".ufo/evidence/round-50/deciding-run.sh at 80ea77e9: :45/:48 start receipts before counters, :47/:50 end receipts, reads at :51-52; FROZEN at :36 names files only; gate 0 at :29 refuses a second invocation when a start receipt exists",
+        "commit 14d03ea4 created the round-49 script (absent at routed_at 8ca67421); keyed `start receipt` excerpt fresh; counter probe at 80ea77e9 shows no fixed_bad/evidence-bad/key-miss for R48.2"
+      ],
+      "reason": "Both asks are met in the tree at 80ea77e9: every counter gets a start receipt before it runs and an exit receipt after, no counter output is read before both (reads happen only after the end receipts in both scripts), and the frozen path lists name code and contract only, never a receipt directory. Gate 0 additionally refuses a second invocation. Commit 14d03ea4 is the post-routing commit that added the implementation. No counter-reading survives: the ordering is enforced in the script text, not just prose."
+    }
+  ]
+}
