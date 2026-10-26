@@ -230,6 +230,45 @@ discipline, applied here), and the receipt recording `jobs` and the wall time. O
 would have been 0 on a quiet host and ≥ 12 on a busy one: the honest claim is then a claim about an idle machine,
 which is at least a claim the judge can reproduce.
 
+## 6c. Two corrections the experiment needed, both findings in their own right
+
+**`--emit`'s own rows merge the tables.** `emit_row` returns cap and axis rows; pasting them as two blocks
+separated by a single newline (no blank line) makes `tables()` read the whole run as *one* block with the cap
+header, so the axis header and the three axis rows become `('cap', 'Axis')` and `('cap', 'depth'|'calibration'|
+'freshness')`. The rows are textually perfect (`| depth | 9 | … tool sha256 \`a7d3f2dd7d47\`, deps \`none\` |`,
+three cells, digits in cell 2), and the deciding run reported `unparsed=3` on exactly those three statements. The
+parser splits blocks only on a non-`|` line; it never checks the delimiter row, which is what markdown uses to
+*start* a table. Correction:
+
+```python
+DELIM = re.compile(r'\|[\s:|-]+\|')
+
+def tables(lines):
+    i = 0
+    while i < len(lines):
+        if lines[i].startswith('|') and i + 1 < len(lines) and DELIM.fullmatch(lines[i + 1].strip()):
+            j = i + 2
+            while (j < len(lines) and lines[j].startswith('|')
+                   and not (j + 1 < len(lines) and DELIM.fullmatch(lines[j + 1].strip()))):
+                j += 1
+            header = [c.strip() for c in lines[i].strip().strip('|').split('|')]
+            yield header, lines[i + 2:j]
+            i = j
+        else:
+            i += 1
+```
+The same merge works in the other direction — a cap row written under an axis header is judged as an axis row — so
+this is not only a usability trap for the honest L1, it is a quiet way to get a claim compared against the wrong
+kind.
+
+**The measurement writes into the tree it measures.** The `--emit` run executes the statements in its own profile
+clones, and `retained invocation-context gate` (`python3 .ufo/evidence/round-15/verify.py --rev …`) creates
+receipts beside itself: after the emit run and the commit, `git diff --stat FREEZE..REV` for the row-only commit
+reads `.ufo/evidence/round-15/attempt-4/{after,before,expected,sources-after}.json` and
+`.ufo/evidence/round-15/verification-4.json` as well as `SCORECARD.md` (`6 files changed, 942 insertions`). The
+statement's picked line is unaffected, but a "rows-only commit" is not rows-only, and a repainted receipt inside
+the measured tree is exactly the class of accidental provenance that this lane exists to catch.
+
 ## 7. Smallest safe corrections
 
 Each is short enough to write here. All of §7.1–7.4 change the frozen predicate, so they are **pre-data amendments**

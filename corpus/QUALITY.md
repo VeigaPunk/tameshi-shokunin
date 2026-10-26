@@ -1349,3 +1349,29 @@ Lesson: `corpus/lessons/round-45.md` `## Mistakes` (dead seat ScribeScorecard) a
 Falsifier that must fail: block 90 of `falsifiers.sh` (the wave-1 spec is refused with
 `COLLISION MutC1Counter …`; the same spec with every name prefixed `T46` passes; prints
 `CRITERION-90-FALSIFIER-OK`).
+
+## Criteria appended — round 47 (2026-10-25)
+
+### Criterion 91 — a lesson's located quote is compared byte-exact, or the fold is declared at the quote
+
+A lesson `## Gate` quote is checked against the committed snapshot's text after only tag-strip, entity-unescape and whitespace collapse (a `.txt` snapshot: whitespace only; a `.json` snapshot also as the concatenation of its string values). No dash, quote, soft-hyphen or ligature folding: every counter folds before it compares, so a folded dash passes them all. A quote that matches only after the fold fails unless its block says `printed folded`. The block (a `### ` subsection) binds the quote to the snapshots named in that block, not to the first path in the lesson.
+
+Lesson: `corpus/lessons/round-47.md` `## Mistakes` row 1; round-46 spot-check defect 4 (`9.8 %-16.3 %` printed for the source's `9.8 %–16.3 %`).
+
+Falsifier that must fail: `python3 .ufo/evidence/round-47/quality/lesson-quote-check.py corpus/lessons/round-46.md` exits 1 (`LQ FAIL tum-portal-flaky-failures.html`); the same lesson with the one character restored (`.ufo/evidence/round-47/quality/round46-lesson-dash-restored.md`) exits 0 (`c91-lesson-quote-red-green.stdout`; block 91 of `quality/falsifiers.sh`).
+
+### Criterion 92 — a standing row states what its statement depends on, not only what it prints
+
+A SCORECARD standing row that quotes a command's printed line also carries a `deps` clause: `none` or the sorted subset of {bwrap, env, fleet-root, jj, node} observed by comparing the statement's (line, exit) under the clean full profile P1 with the live host profile (env), P1 without each of bwrap, jj, node, and P1 inside a bwrap-bound decoy fleet root (fleet-root). `none` means those five variants changed nothing; it is not a hermeticity claim (variables the profiles do not vary, such as free disk in `/tmp`, stay unobserved). Every statement also carries a tool sha256 (all 22; five lacked one at round 46).
+
+Lesson: `corpus/lessons/round-47.md` Hardening and standing results (5 of 22 statements depend on something the round-46 rows did not say); round-46 spot-check defect 3.
+
+Falsifier that must fail: control CTL_J (every row `deps none`) prints `dep_mismatch=5 C1_R47_PASS=false`, CTL_K (observed deps) prints `total=0 C1_R47_PASS=true` (`.ufo/evidence/round-47/control/controls-at-freeze.stdout`); block 92 of `falsifiers.sh` (a node-dependent row stating `deps none` gives `dep_mismatch=1`, stating `deps node` gives `0`).
+
+### Criterion 93 — a kill count is credited only for named rule cases, and an addition must not embed an oracle
+
+A mutant counts as killed only when the selftest exits nonzero and prints a line starting `FAIL ` (a crash or a timeout is not a kill), the neutral commute mutants all survive, and every seat addition passes `.ufo/evidence/round-47/quality/addition-lint.py` (no `exec`/`eval`/`compile`, packed payload, oversized literal or verbatim copy of rule code). The frozen round-47 pool alone is passable by a differential oracle that embeds the pristine counter under an `_x` name (`killed=160 neutral_killed=0`), because `extra_*` and `_x*` code is exempt from the pool; the lint is a landing check beside the claim.
+
+Lesson: `corpus/lessons/round-47.md` `## Mistakes` row 2 (`.ufo/waves/round-47/w1/T47CritC2Control.md`).
+
+Falsifier that must fail: block 93 of `falsifiers.sh` (CTL_E AST pin `neutral_killed=14`, CTL_H bare-assert pin `killed=0`, a planted oracle addition refused by the lint with exit 1, the real additions pass with exit 0).

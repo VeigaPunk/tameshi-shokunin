@@ -53,7 +53,7 @@ def fill(text):
 
 W2_NOTE = '''
 # Wave 2 (falsify)
-Wave 1 (reports under %(w1)s) built the round's artifacts; they are now committed at the CONTENT revision `%(content)s` (the commit that carries every record: the v2 hardened counters, the new rows and entries, the README index, the restated standing tables, the lesson and the LOG entry). Wave 2 attacks them. You are NOT an author of what you attack. Re-run counters only into scratch work dirs against `--rev %(content)s` and report the output as observed; the deciding run is the L1's. Read %(e)s/contract.json and %(w1)s/<relevant seat>.md before attacking. Seat names in this wave carry the prefix `T47` (QUALITY criterion 90). Every item names what it attacks.
+Wave 1 (reports under %(w1)s) built the round's artifacts; they are now committed at the CONTENT revision `%(content)s` (the commit that carries every record: the v2 hardened counters, the new rows and entries, the README index, the restated standing tables, the lesson and the LOG entry). Wave 2 attacks them. You are NOT an author of what you attack. Re-run counters only into scratch work dirs against `--rev %(content)s` and report the output as observed; the deciding run is the L1's. Read %(e)s/contract.json and %(w1)s/<relevant seat>.md before attacking. Seat names in this wave carry the prefix `T47` (QUALITY criterion 90). Every item names what it attacks. DISK: /tmp is full host-wide; put every clone and work dir under /var/tmp/tameshi-r47-<seat>/, run one full counter pass at a time (each C1 pass is ~2.3 GB), delete work dirs when the receipt is captured; a run that died on ENOSPC is rerun, not a finding.
 ''' % dict(w1=W1D, content=os.environ.get('CONTENT', '@CONTENT@'), e=E)
 
 
@@ -190,6 +190,84 @@ W1 += [
 ]
 
 assert len(W1) == len({n for n, *_ in W1}), 'duplicate names'
+
+
+# ---------------------------------------------------------------- wave 2: falsify
+REOBS_ITEM = """C1 independent re-observation at the CONTENT revision, statements: {ids}. You did not write the standing rows nor the wave-1 observations. Run the probe into an empty work dir (minutes; one shell, wait for it): `python3 @C1@ --lane @LANE@ --rev @CONTENT@ --base @BASE@ --work /tmp/tameshi-r47-{name}/w --only "{ids}"` (the counter reads SCORECARD.md and statements.json from the CONTENT revision, not the worktree). Report per statement: the `STATEMENT` line (claimed vs observed, declared vs observed dependences) and the six `PROFILES` tuples. A MISMATCH, UNPARSED or DEPS-MISMATCH is a finding: re-run that statement once more alone to say whether it is stable. Compare with wave 1's observation of the same statement (@W1@/@P@ExecObs*.md) and name every difference. Also read the restated row's 'What' and 'First-working round' cells and say whether they still describe what the command proves (a tally is a selftest result, not a measurement of the thing). Do not edit anything but your report."""
+
+REOBS = [('A', ['sources-registry', 'depth', 'calibration', 'freshness']),
+         ('B', ['mutation sweep runner', 'repeated pristine-control gate', 'six-leg content-disposition probe', 'exposed witness provenance correction']),
+         ('C', ['effective expectation reconciliation', 'retained invocation-context gate', 'hermetic env-differential probe', 'callback-authoritative wave accounting']),
+         ('D', ['required-command-receipt-binding', 'refusing-registry-replay', 'mutation report interop', 'tally-audit-v2 runner audit', 'tally-audit-v3 runner audit']),
+         ('E', ['bounded ANSI-C code_view', 'write-path-census-v2', 'write-path census destination resolution', 'staged-id adoption guard', 'six-leg regression ledger'])]
+
+MUT_ITEM = """Generalization attack on the v2 {what} counter @HARD@/{file} (committed at the CONTENT revision: the round-46 hardened counter plus this round's selftest additions). The pool kills were tuned to 183 deterministic AST mutants; a selftest tuned to them may still miss rules the pool's five operator kinds cannot express. Copy the file to /tmp/tameshi-r47-{name}/h.py and write at least 12 NEW single-line mutants OUTSIDE the pool's operator kinds (the pool kinds: comparison-operator swap, and<->or, `not` deletion, int constant +1, True<->False): {hints}. For each, apply it to the copy (exactly one replacement; verify with `ast.parse` it is valid Python) and run `python3 h.py --selftest`; a mutant is killed only if the run exits nonzero AND prints a line starting `FAIL ` (the C2 kill rule); a crash is `crashed`, `VERDICT: PASS` survives. Report a table id | file:line | old -> new | result and name every survivor with a killing case as code (do not edit the counter). Then run the SAME mutants against the round-46 hardened counter (`@LANE@/.ufo/evidence/round-46/hardening/{file}`) so the generalization of the new additions is measured as a before/after pair (killed X of N -> Y of N)."""
+
+MUTS = [
+    ('MutFreshA', 'freshness', 'freshness-counter.py', 'string and regex literals in `parse_rows`, `fold`, `extract` (e.g. a character class widened, an anchor dropped), the `STOP` word set, the `.gz` branch, slice bounds such as `[:4]` and `[-200:]`, `min`/`max` swaps, `any`<->`all`'),
+    ('MutFreshB', 'freshness', 'freshness-counter.py', 'operand deletion in `a and b` / `a or b` chains, early `return` removal, `continue`<->`break`, dict key typos in the snapshot/ledger readers, `len(x)` -> `len(x) + 1` in thresholds, `sorted()` removal, `in`-set membership with an element dropped'),
+    ('MutCoverA', 'coverage', 'coverage-counter.py', 'regex edits (`HEX_RE` length, `ROW_RE` indent, `QUOTE_RE` bounds, `SNAP_RE` charset), `fold` replacement table entries, `split` separators, `startswith` -> `endswith`, string constants in the REFUSED/ENTRY labels'),
+    ('MutCoverB', 'coverage', 'coverage-counter.py', 'operand deletion in `entry_ok` and `measure`, early-return removal, `any`<->`all` over cited rows, the README index forms, row-cell indexes, `used` split characters, the `package_text is None` branch'),
+]
+
+W2 = []
+for tag, ids in REOBS:
+    W2.append((P + 'Reobs' + tag, 'executor', ['calibration'], 'C1 re-observation ' + ', '.join(ids)[:60],
+               REOBS_ITEM.format(ids=','.join(ids), name=P + 'Reobs' + tag)))
+for name, what, file, hints in MUTS:
+    W2.append((P + name, 'mutation-tester', ['operability'], 'C2 fresh mutants outside the pool on the v2 %s counter' % what,
+               MUT_ITEM.format(what=what, file=file, hints=hints, name=P + name)))
+
+W2 += [
+    (P + 'CritRestated', 'critic', ['calibration'], 'attack the restated standing rows and the round-47 SCORECARD block',
+     "Attack the SCORECARD.md round-47 block and the standing tables it appends (`git -C @LANE@ show @CONTENT@:SCORECARD.md` from `## Round 47`). Find: a restated 'What' / 'First-working round' cell that overstates what its printed line proves; a sentence claiming more than C1's counter checks (22 rows under SIX profiles; `deps none` means the five variants changed nothing, not hermeticity); anything reading as a calibration raise (monitor stays 6); a value with no committed receipt (cite the receipt path or say none). Report findings with file:line."),
+    (P + 'RevAppendOnly', 'reviewer', ['calibration'], 'append-only and parse integrity',
+     "Verify edits are append-only and parseable: `git -C @LANE@ diff --stat @BASE@ @CONTENT@ -- SCORECARD.md LOG.md corpus/QUALITY.md corpus/SOURCES.md corpus/README.md`; each file at @CONTENT@ starts with its @BASE@ bytes (python startswith on `git show`); count tables `last_rows` of @C1@ parses and confirm the appended standing tables are real multi-row tables the parser reads (22 rows). Report any edited old line."),
+    (P + 'CritC1Claim', 'critic', ['calibration'], 'attack claim C1 declared vs delivered',
+     "Attack C1 as declared in @E@/contract.json against SCORECARD/lesson/LOG at @CONTENT@: before cell (`total=22`, @E@/before/c1-at-freeze.stdout) exact? after cell reproducible by `python3 @C1@ --lane @LANE@ --rev @CONTENT@ --base @BASE@ --work /var/tmp/tameshi-r47-@P@CritC1Claim/w` (minutes, ~2.3 GB; delete after)? universal words without enumeration? Does any text call the deps clause hermeticity? Is the unchanged-tree control honest (it is trivially red: say what CTL_J/K add)? Report findings."),
+    (P + 'CritC2Claim', 'critic', ['operability'], 'attack claim C2 declared vs delivered',
+     "Attack C2 as declared in @E@/contract.json at @CONTENT@: baseline 122 -> after cell; the neutral set; the disclosed in-band cheat (@W1@/T47CritC2Control.md) and the addition lint (@E@/quality/addition-lint.py): is the lint disclosure beside the claim in SCORECARD/lesson/LOG? Is `killed=183` credible or are some kills by crash/pin? Sample 10 pool ids and re-run `python3 @C2@ --try @HARD@/<group>-counter.py --group <g> --ids <id>`. Report findings; recompute nothing as a verdict."),
+    (P + 'CritC3Claim', 'critic', ['coverage'], 'attack claim C3 declared vs delivered',
+     "Attack C3 as declared in @E@/contract.json at @CONTENT@: expansion credit honesty (@W1@/T47ScoutHeld.md), the uncounted fourth row S262, rows=3 vs the four rows appended, `used-by` correctness, README index wording (S110 resolution), authors/venue claims in the entries against the snapshots. Report findings with file:line."),
+    (P + 'CritAddFresh1', 'critic', ['operability'], 'attack freshness additions HardFreshParse/Text/Measure',
+     "Read @W1@/T47HardFreshParse.addition.py, T47HardFreshText.addition.py, T47HardFreshMeasure.addition.py and the seat reports. For each case: is the kill explained by an input on which original and mutant differ (not a pin, not a harness failure, not a case that restates the mutated line)? Do cases pass for the right reason (assert the PASS token, not only a count)? Run `python3 @HARD@/freshness-counter.py --selftest` and report. Flag any case that would kill a neutral commute mutant."),
+    (P + 'CritAddFresh2', 'critic', ['operability'], 'attack freshness additions HardFreshCheck/LiveA/LiveB',
+     "Read @W1@/T47HardFreshCheck.addition.py, T47HardFreshLiveA.addition.py, T47HardFreshLiveB.addition.py and reports. check()/live() are modes the selftest never ran: do the stubs (fake curl, temp lanes) really drive them, never the network? Are kills explained by differing inputs? Any case depending on host state (PATH, /tmp, clock)? Run `python3 @HARD@/freshness-counter.py --selftest` twice and report determinism."),
+    (P + 'CritAddCover', 'critic', ['operability'], 'attack coverage additions',
+     "Read @W1@/T47HardCoverGt.addition.py, T47HardCoverEntry.addition.py, T47HardCoverMeasure.addition.py and reports. Same questions as for the freshness additions; additionally: the cases read `__file__` for self-pin fixtures — does that make them source pins? Run `python3 @HARD@/coverage-counter.py --selftest` twice."),
+    (P + 'CritEntryPredict', 'critic', ['coverage'], 'attack entry flaky-aware-verdict-evidence.md',
+     "Attack @LANE@/corpus/knowledge/flaky-aware-verdict-evidence.md at @CONTENT@: every quote located in the snapshots (@SNAPS@; fold per @C3@; Lam text is two-column: fragments only), every number with its location, inference labelled, no claim the snapshot lacks, `source:` header row ids vs SOURCES rows, F3-only ground. Report findings with entry line numbers."),
+    (P + 'CritEntryStatic', 'critic', ['coverage'], 'attack entry r8-flakiness-not-static.md',
+     "Attack @LANE@/corpus/knowledge/r8-flakiness-not-static.md at @CONTENT@ the same way against @SNAPS@/arxiv-2607.09345-abs.html: quotes, authors (Gultekin, Berndt, Bell, Bach, Baltes), 'under review', what only an abstract shows, inference labels. Report findings."),
+    (P + 'CritEntryCost', 'critic', ['coverage'], 'attack entry r8-flaky-cost-baseline.md',
+     "Attack @LANE@/corpus/knowledge/r8-flaky-cost-baseline.md at @CONTENT@ against @SNAPS@/s2-icst24-cost-of-flaky.json: decode the abstract, check each figure (0.02 cents, $5.67, 2.5%), the venue-field carrier defect, the DOI, any arithmetic not in the abstract. Report findings."),
+    (P + 'RevRows', 'reviewer', ['coverage'], 'review rows S261-S264 against CORPUS contract',
+     "Review `grep -nE '^ {0,3}\\| S26[1-4] ' @LANE@/corpus/SOURCES.md` at @CONTENT@ against /home/vgpnk/Projects/shokunin/CORPUS.md (11 cells, enums, tier scoped, anchor with snapshot path and 8-hex sha equal to the snapshot, recheck form, used-by exists, no pipe in cells) and run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`. Verify each 8-hex prefix with sha256sum. Report findings."),
+    (P + 'ExecDrill', 'executor', ['operability', 'calibration'], 'controls and falsifiers dry re-run at CONTENT',
+     "At @CONTENT@ in scratch under /var/tmp/tameshi-r47-@P@ExecDrill (clone, verify toplevel): run `python3 @E@/control/run-controls.py` (CTL_A-H; compare with @E@/control/controls-at-freeze.stdout), `bash @E@/quality/falsifiers.sh @CONTENT@` and the selftests of @C1@, @C2@, @C3@, @E@/quality/addition-lint.py, lesson-quote-check.py. Paste final lines and exit codes; any difference from the freeze receipts is a finding. Delete scratch afterwards."),
+    (P + 'ExecLive', 'executor', ['freshness', 'coverage'], 'live re-fetch of the C3 documents',
+     "Re-fetch (curl -sL, 40 s) the four documents (arxiv 2302.09330, arxiv 2607.09345, the Lam PDF, the Semantic Scholar URL with %2C fields; S2 may answer 429: wait 30 s, retry up to 3 times) and compare sha256/bytes with @SNAPS@. For each located gate quote of @LANE@/corpus/lessons/round-47.md, locate it in the live text. Report drift, differences and any 429 evidence. Scratch under /var/tmp."),
+    (P + 'ExecIds2', 'executor', ['coverage'], 'id checks re-run on the final registry',
+     "Re-run the section-10 id commands (0-3-space extractor) on `git -C @LANE@ show @CONTENT@:corpus/SOURCES.md` and the package SOURCES.append.md; `python3 @LANE@/tools/staged-id-guard.py --registry <extracted> --staged <package>`; confirm S261-S264 unique, `Next unused id: S265` lines consistent in SOURCES.md, and that no adopted entry's `source:` line carries a staged id (S155, S158, S160, S206, S207). Report counts and outputs."),
+    (P + 'RevGate', 'reviewer', ['calibration', 'coverage'], 'discernment spot-check of the lesson Gate',
+     "Discernment spot-check (LEARNING.md; lane-dispatched, so record agree/disagree with reasons, never claim independence). Read @LANE@/corpus/lessons/round-47.md `## Gate`: re-open at least two admitted sources live (curl) and locate the quote; re-check one refusal (open the package entry and the PROVINCE/QUALITY line cited); check the S110 quarantine verdict. Report agree/disagree per item."),
+    (P + 'RevQuality', 'reviewer', ['calibration'], 'QUALITY criteria 91-93 and falsifiers',
+     "Review the new QUALITY.md criteria 91-93 at @CONTENT@ (`grep -n 'Criterion 9[1-3]' @LANE@/corpus/QUALITY.md`): each cites its lesson, names a falsifier, is grounded in this round's evidence, supersedes nothing silently. Run `bash @E@/quality/falsifiers.sh @CONTENT@` (about 3 min) and report the three CRITERION lines."),
+    (P + 'CritLanding', 'critic', ['calibration'], 'deciding-run script and landing rule attack',
+     "Attack @E@/deciding-run.sh at @CONTENT@: in a scratch clone (/var/tmp, verify toplevel, throwaway identity only there) (a) edit the C1 counter and commit: FROZEN_UNCHANGED must be 0; (b) edit a file under tools/: 0; (c) change an addition file: HARDENED_REBUILD must be 0 or ADDITION_LINT; (d) rename an admitted entry: ENTRY_NAMES_OK 0. Run only the first blocks (do not run the counters). Report which attacks pass the script."),
+    (P + 'RevSeparable', 'reviewer', ['calibration', 'operability', 'coverage'], 'causal separability of C1, C2, C3',
+     "AXES.md: claims must be causally separable. In scratch clones of @CONTENT@ remove C3's artifacts (entries, rows) and run C1 with `--only sources-registry` (value changes with the row count: the row restates what it observes, so it should still pass if restated); remove the v2 counters and run C3's selftest; remove C1 files and run `python3 @C2@ --selftest`. Report whether each claim verifies without the others (note the C1/C3 coupling through `rows=` of sources-registry)."),
+    (P + 'ScoutCorrections', 'scout', ['freshness', 'calibration'], 'corrections sweep over touched files',
+     "List files changed between @BASE@ and @CONTENT@ outside .ufo/ and, for every statement the round supersedes (README coverage map F3 wording, SOURCES id-allocation notes `Next unused id`, SCORECARD standing rows), grep the repo for the old statement still standing unmarked. Report path:line and whether an errata line exists."),
+    (P + 'ConnCross2', 'connector', ['coverage', 'adjacency'], 'cross-source pattern across the four documents',
+     "Read the four snapshots (@SNAPS@) and the three entries together; find the pattern the entries do not state (label inference): do prediction (S261), reruns budget (S262), non-static flakiness (S263) and cost (S264) agree or conflict about what one run can establish? Name one consequence for the lane's C1 (six profiles, one run each) or C2 (one selftest per mutant). Max 5 patterns with a one-command test each."),
+    (P + 'RevDeadCode', 'reviewer', ['depth'], 'spot-check the dead-code lesson table',
+     "Re-derive the lesson's dead-code table (@LANE@/corpus/lessons/round-47.md `### considerthese`): run `python3 @W1@/@P@ExecDeadCode.scan.py` and an independent grep for `brace_depth_at`; check the claim that the round-43 `dead_code_only` case is a string constant in `.ufo/evidence/round-43/mutants/measure.py`, not code in tools/write-path-census-v3.py. Report agree/disagree."),
+    (P + 'CritMistake', 'critic', ['calibration'], 'mistake fixes shown able to fail',
+     "For each row of the lesson `## Mistakes` (@LANE@/corpus/lessons/round-47.md) check the fix is shown able to fail: re-run `python3 @E@/quality/lesson-quote-check.py corpus/lessons/round-46.md` (must exit 1) and on `@E@/quality/round46-lesson-dash-restored.md` (0); the addition lint on a planted oracle; the FROZEN diff widening. Name any row whose fix has no red-before state."),
+]
+assert len(W2) == len({n for n, *_ in W2}), 'duplicate names'
+assert len(W2) >= 32, len(W2)
 
 
 def main():
