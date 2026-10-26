@@ -380,3 +380,35 @@ criterion (the table has no falsifier a counter could pin) and no SOURCES row.
 `.ufo/waves/round-48/w1/T48ConnCorpus.md` connects R=3 to the lane's flakiness rows; `.ufo/waves/round-48/w1/T48RevenRegression.md` shows
 `six-leg regression ledger` is genuinely nondeterministic (a SIGPIPE race under `pipefail` in the pinned tsukuroi leg, one-sided PASS→FAIL,
 4 of 40 runs of that leg's selftest at 6-way concurrency), which is why amendment 4 admits P1 observations for attestation.
+
+## Attempt 3 (L1 TameshiR48a3) — deciding run, errata, mined mistake
+
+Attempt 2 (TameshiR48a2) stalled after its wave `a2w1` returned and was killed at the operator's wrap-up; the orchestrator salvaged its receipts in `8f2922b8`. Attempt 3 runs the same frozen claims unchanged (contract `4fff75db…`, counters `572a5670…` / `faefe9b4…`, all re-hashed at `c7586b9a` equal to `freeze-2.json`) at the same content revision `c7586b9a10effc63b4bd327f976edc094c1bdc17`.
+
+### What the deciding receipts say
+
+- C2 (attempt 2's deciding run, the one C2 invocation at `c7586b9a`): `refreshed=4 census_exit=0 live=on C2_R48_PASS=true` (`.ufo/evidence/round-48/after/c2.stdout:5`).
+- C1: attempt 2's deciding run was killed during its C1 step and left an empty `after/c1.stdout` and no `after/c1.exit`. Attempt 3 ran the frozen counter once more, with the deciding script's own C1 command line, at the same revision: `total=0 … fleet_drift=0 … C1_R48_PASS=true`, exit 0, 46m34s (`after/c1-a3.stdout:96`, `after/c1-a3.exit`, landed `c6295cb0`). Amendment 8 says a second deciding invocation of a counter at the content revision is a miss; the first one produced no line, so no value was seen and selected, but the literal rule is broken and the report states both readings for the closure to rule on.
+- `six-leg regression ledger` printed `REGRESSION: PASS (cases=9 passed=9` exit 0 at P0 and P1 in all three rounds of that run (`after/c1-a3.stdout`, `PROFILES six-leg regression ledger` lines), so the row's single member stood; the SIGPIPE race traced in `w1/T48RevenRegression.md` did not fire.
+- No-harm: eight monitors ok (`after/no-harm.stdout`); census exit 0 (`after/census.exit`); **cold-read credited sections 57 against a pre-registered 60** (`after/coldread-sections.stdout`), red.
+- `FROZEN_UNCHANGED=0` (`after/frozen.stdout`) is a false red of the deciding script's path list: `$E/control` holds both the frozen control scripts and their receipts, and the only frozen-path changes between the freeze and `c7586b9a` are four added receipt files (`git diff --name-status 75529841 c7586b9a -- .ufo/evidence/round-48/control` → `A c2-controls.exit/.meta/.stderr/.stdout`); `run-controls.py` and `c2-controls.py` keep their freeze-2 sha256.
+
+### Erratum (append-only) — S267 and S268 line pointers
+
+The `### Supersede` sections above cite `corpus/SOURCES.md:140` for S267 and `:141` for S268. Those lines hold S265 and S266; S267 is at `corpus/SOURCES.md:142` and S268 at `:143` (`grep -nE '^\| S26[5-8] ' corpus/SOURCES.md`; found by `.ufo/waves/round-48/a2w1/T48A2ScribeReportWork.md` F1). The C2 counter selects rows by id, not line, so `refreshed` is unaffected.
+
+### Mined mistake — the sourced claim's record edits cost cold-read credit, and only the deciding run saw it
+
+| class | evidence pointer | captured-by | fix |
+|---|---|---|---|
+| `scope` — a claim's own record edits moved a pre-registered no-harm monitor, and the first check that could see it ran after the content was frozen | C2 re-pointed the citations of `corpus/knowledge/incremental-pin-disposition.md` and `corpus/knowledge/repeated-control-precondition.md` (commit `5054532`); both are pinned inputs of the round-21 cold-read ledger entries that credit `## Repeated controls and gate registry — round 12`, `## Pin disposition and provenance correction — round 13` and `## Effective expectation reconciliation — round 14`, so the credited count fell 60 → 57 (`.ufo/evidence/round-48/after/coldread-sections.stdout`); the same class cost round 46 five sections through a `PROVINCE.md` append (`.ufo/evidence/round-47/quality/round46-lesson-dash-restored.md:127`) | the deciding script's gate `.ufo/evidence/round-48/deciding-run.sh:30-31` — it caught the drop, but only at the deciding run; QUALITY 88 runs no-harm monitors at the base only | `.ufo/evidence/round-48/quality/coldread-precheck.sh LANE BASE CAND` before a content revision is frozen, and QUALITY 98. Red: at `c7586b9a` it prints the three `LOST` sections and `cand_credited=57 lost=3 RED`, exit 1 (`quality/coldread-precheck-red-c7586b9.stdout`); at the counter freeze `75529841` it prints `lost=0 ok`, exit 0 (`quality/coldread-precheck-ok-freeze.stdout`) |
+
+The drop is not repairable inside this round's frame: the ledger lives under `.ufo/evidence/round-21`, which the deciding script freezes, and reverting the entry edits would break C2. It is reported as a trade against C2's admission, not hidden.
+
+### Disclosed process defect (no fix shipped)
+
+A one-invocation deciding rule (amendment 8) without a completion receipt cannot tell a run that was seen and discarded from a run that was killed before printing. Attempt 2's kill left a zero-byte `after/c1.stdout`; nothing in the tree records whether a verdict line ever existed. Routed to round 49: the deciding script writes a start receipt and the counter's exit before any output is read, so an aborted invocation is distinguishable from a discarded one.
+
+### Spot-check routing carried forward
+
+`.ufo/waves/round-48/a2w1/T48A2RevSpotcheckR47.md` found two round-47 routed items with no round-48 trace: the located-name (entry-author) check (round-47 spot-check routed defect 5(d)) and the append-only rule for landed seat reports (conformance defect 2). Neither is built this round; both are added to SCORECARD `Planned (round 49)` in the round-48 deciding section.

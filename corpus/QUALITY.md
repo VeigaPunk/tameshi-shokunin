@@ -1432,3 +1432,11 @@ Every backticked lane path a SCORECARD, LOG, QUALITY or lesson block cites as it
 Lesson: `corpus/lessons/round-48.md` `## Mistakes`, prospective-record row (the attempt-1 draft of criteria 94-96, landed by the orchestrator salvage commit `15b1521e`, cited two receipts absent at that revision).
 
 Falsifier that must fail: `.ufo/evidence/round-48/quality/pointer-check.py` over the `## Criteria appended — round 48` block of `corpus/QUALITY.md` prints two `MISSING` lines and exits 1 at `15b1521e` (`.ufo/evidence/round-48/quality/pointer-check-red-15b1521.stdout`); the same command at the round-48 landing tip exits 0, and its selftest (`quality/pointer-check-selftest.stdout`) refuses a fixture with a missing path.
+
+### Criterion 98 — a content revision is prechecked against the cold-read monitor before it is frozen for the deciding run
+
+A round whose records edit a knowledge entry, `SOURCES.md`, a tool or any other file the round-21 cold-read ledger pins runs `bash .ufo/evidence/round-48/quality/coldread-precheck.sh LANE BASE CAND` on the candidate content revision before it is named the deciding revision. A `RED` (fewer credited sections than at BASE) is either removed before the freeze or declared beside the claim that causes it as a trade on a pre-registered no-harm monitor; it is never first discovered by the deciding run. Criterion 88 runs the no-harm monitors at the base only, and the deciding script's cold-read gate (`.ufo/evidence/round-48/deciding-run.sh:30-31`) fires only after the content is frozen.
+
+Lesson: `corpus/lessons/round-48.md` `## Attempt 3`, mined-mistake row (the C2 re-pointing of `incremental-pin-disposition.md` and `repeated-control-precondition.md` dropped the credited sections 60 → 57; the attempt-2 deciding run printed it at `.ufo/evidence/round-48/after/coldread-sections.stdout`).
+
+Falsifier that must fail: `coldread-precheck.sh` at the round-48 content revision `c7586b9a` prints three `LOST` lines and `cand_credited=57 lost=3 RED`, exit 1 (`.ufo/evidence/round-48/quality/coldread-precheck-red-c7586b9.stdout`, `.exit`); at the counter freeze `75529841` it prints `cand_credited=60 lost=0 ok`, exit 0 (`quality/coldread-precheck-ok-freeze.stdout`, `.exit`).

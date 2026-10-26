@@ -2366,3 +2366,16 @@ The entry above was written by the attempt-1 L1 (TameshiR48) before the work it 
 - New this attempt: the prospective-record mistake and its fix (`corpus/lessons/round-48.md` `## Mistakes`; QUALITY 97; `.ufo/evidence/round-48/quality/pointer-check.py`, red receipt `quality/pointer-check-red-15b1521.stdout`); the lesson's seat-draft scaffolding replaced by integrated text.
 
 Evidence: `.ufo/evidence/round-48/`, `.ufo/waves/round-48/`, `corpus/lessons/round-48.md`; measured values in SCORECARD.md `## Round 48` and the report.
+
+## 2026-10-26 — round 48, attempt 3: deciding runs, controls, cold-read trade
+
+Attempt 2 (TameshiR48a2) stalled after wave `a2w1` returned and was killed at the operator's wrap-up; the orchestrator salvaged its receipts at `8f2922b8`. Attempt 3 (L1 TameshiR48a3) ran the same frozen claims at the same content revision `c7586b9a`.
+
+Motivating evidence: attempt 2's deciding run (`.ufo/evidence/round-48/after/`) printed C2 true, cold-read credited sections 57 against the pre-registered 60, and left C1 without a verdict (zero-byte `after/c1.stdout`); C1 controls CTL_B-CTL_E were never scored (`control/c1-controls.stdout`).
+
+- C1 deciding counter at `c7586b9a`: `total=0 fleet_drift=0 C1_R48_PASS=true` (`after/c1-a3.stdout`, landed `c6295cb0`); second invocation under amendment 8, disclosed.
+- C1 controls CTL_B-CTL_E scored with the frozen harness's functions, concurrently (`control/run-controls-a3.py`, receipt `control/c1-controls-a3.stdout`).
+- Mined mistake: C2's entry re-pointing cost three cold-read sections, seen only at the deciding run; fix `quality/coldread-precheck.sh` (red at `c7586b9a`, ok at the freeze) and QUALITY 98; lesson `## Attempt 3` in `corpus/lessons/round-48.md`.
+- SCORECARD round-48 deciding section appended; `Planned (round 49)` amended with the two untraced round-47 spot-check routes.
+
+Evidence: `.ufo/evidence/round-48/`, `corpus/lessons/round-48.md`; verdicts in SCORECARD.md and the report.
