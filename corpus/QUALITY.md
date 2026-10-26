@@ -1375,3 +1375,52 @@ A mutant counts as killed only when the selftest exits nonzero and prints a line
 Lesson: `corpus/lessons/round-47.md` `## Mistakes` row 2 (`.ufo/waves/round-47/w1/T47CritC2Control.md`).
 
 Falsifier that must fail: block 93 of `falsifiers.sh` (CTL_E AST pin `neutral_killed=14`, CTL_H bare-assert pin `killed=0`, a planted oracle addition refused by the lint with exit 1, the real additions pass with exit 0).
+
+
+## Criteria appended — round 48 (2026-10-26)
+
+### Criterion 94 — a refusal cites its decisive criterion, not a weaker adjacent line
+
+When this lane refuses a record, entry or row, the refusal names the criterion that alone
+decides the outcome — anchored by criterion number and clause or by path:line — and states
+the flip condition that would admit the refused item. Citing a weaker line is a mis-citation
+even when the verdict is right: a scope refusal whose class does not contain the item's
+actual defect lets no reader check the decision from the cited line. A mis-cited refusal is
+corrected by an appended erratum naming the decisive line; the verdict itself is never
+silently re-anchored.
+
+Lesson: `corpus/lessons/round-48.md` (the `r8-predictive-test-selection-cost.md` reject
+carried `PROVINCE.md:14-18`, which refuses product domains and sibling gates, not test
+selection; the decisive reason is QUALITY 10 clause 2 — the entry cites a staged SOURCES row
+the lane never opened); `lesson: corpus/lessons/round-48.md`;
+`corpus/lessons/round-47-verifier-spotcheck.md` §Discernment, the `reason partly` row.
+
+Falsifier that must fail: block 94 of `.ufo/evidence/round-48/quality/falsifiers.sh` — a refusal citing only `PROVINCE.md:14-18` prints `WEAK-CITE` and exits 1; the round-48 lesson's `### Reject` blocks (each naming a QUALITY criterion or CORPUS.md rule and a `Flip:` clause) exit 0 (receipt `quality/c94-96-falsifiers.stdout`). The check reads the form, not the truth of the cited reason; the reason stays a spot-check item.
+
+### Criterion 95 — a standing value is restated only from at least three observations, or with a declared nondeterministic class
+
+A SCORECARD row that restates a standing value carries `runs 3` in its evidence cell and
+declares a value class: `stable` (one observed (line, exit) member) or `nondeterministic`
+(two or three observed members). A single observation never restates a standing value,
+however unchanged the tool and inputs. A row restating from fewer observations than it
+declares, or declaring members nothing attests, is a self-assessment mismatch
+(`unparsed` / `unattested`), and a deciding observation outside the declared class is a
+mismatch, never rerun away. This complements criterion 92 (the `deps` clause: what the
+statement depends on) and criterion 71 (a changed tool forces a new row); neither fixes the
+observation count. A `stable` class from three agreeing observations stays a finite sample
+and proves no determinism (criterion 11 still applies to any control built on it).
+
+`lesson: corpus/lessons/round-48.md` (the round-47 one-shot `six-leg regression ledger`
+standing row — FAIL passed=7 — fails CTL_B under the R=3 counter; `hermetic env-differential
+probe` printed 9/9 and 2/9 under the same profile P1, the SCORECARD disclosed limit);
+`corpus/lessons/round-47-verifier-spotcheck.md` routed defect 1.
+
+Falsifier that must fail: control CTL_B (`.ufo/evidence/round-48/control/c1-controls.stdout`) prints `total>0`, and the positive control CTL_E prints `total=0`; block 95 of `quality/falsifiers.sh`.
+
+### Criterion 96 — a differing observation is attributed to a cause only by a run that varies that cause alone
+
+When two observations of one statement differ, a lane record names their cause only after a controlled pair: same revision, same counter, same profile, with exactly the named variable changed (load, work-dir placement, tool availability), observed to move the value. Otherwise the record says `unexplained` and keeps both values. "Unstable under host load" without such a pair is an attribution, not an observation.
+
+Lesson: `corpus/lessons/round-48.md` `## Mistakes`, attribution row (the round-47 SCORECARD disclosed limit called `hermetic env-differential probe`'s P1 `2/9` host-load nondeterminism; `.ufo/waves/round-48/w1/T48RevenEnvDiff.md` showed it is the `--work`-under-`/tmp` placement masking the PATH shim).
+
+Falsifier that must fail: block 96 of `quality/falsifiers.sh` — the round-47 freeze receipt (`--work` under `/tmp`) and deciding receipt (`/var/tmp`) print different P1 tuples for the same statement and revision, and the round-48 counter refuses a `/tmp` work dir (`under_tmp`); if either receipt stopped differing the block prints `VACUOUS`.

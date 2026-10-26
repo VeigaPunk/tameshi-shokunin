@@ -2343,3 +2343,15 @@ Motivating evidence: the round-46 spot-check routed three open defects: three st
 - Wave 1: 40 seats (w1-results). Wave 2: attacks on the records (see report). Disk: `/tmp` filled mid-wave by C1 probe clones (2.3 GB per pass); scratch moved to `/var/tmp`.
 
 Evidence: `.ufo/evidence/round-47/`, `.ufo/waves/round-47/`, `corpus/lessons/round-47.md`. Measured values: SCORECARD.md `## Round 47` and the report.
+
+
+## 2026-10-26 — round 48: standing rows from three observation rounds; held-row re-anchoring
+
+Motivating evidence: the round-47 closure (`corpus/lessons/round-47-verifier-spotcheck.md` routed defect 1) found a one-shot flaky observation restated as a standing value (`six-leg regression ledger`, `REGRESSION: FAIL (cases=9 passed=7`), and asked for N>=3 observations per profile or a declared nondeterministic class (calibration, monitor 6, the lowest non-retired axis). The round-45 freshness ledger carried two non-author disputes (S048, S093 quotes) and three rows without per-snapshot fetch receipts or anchor digests (S026, S093, S108), carried unworked since round 45. Claims, pre-registered at `e73389c0`/`f1cfaad3` and counter-frozen at `755298415f8c4eef3bed0c0d7625e2aacb03d6c2` (`.ufo/evidence/round-48/contract.json`, amendments 1-10, `freeze-2.json`):
+
+- C1 calibration: the 22 statements' standing rows carry `runs 3` and a stable/nondeterministic value class; every value attested by the counter's own observation in the same invocation (amendment 4); deps from three rounds (required/unstable/never). Wave-1 root causes: `hermetic env-differential probe`'s P1 `2/9` is `--work`-under-`/tmp` masking, not nondeterminism (`w1/T48RevenEnvDiff.md`); `six-leg regression ledger` is genuinely nondeterministic, a SIGPIPE race under `pipefail` in the pinned tsukuroi leg (`w1/T48RevenRegression.md`).
+- C2 freshness (sourced): superseding rows S265-S268 with committed snapshots and fetch receipts (`.ufo/evidence/round-48/freshness/sources/`), phrase-bearing Gate quotes answering the round-45 disputes, the four used-by entries re-pointed (`verified-at: 2026-10-26`).
+- Frontier: SOURCES rows 124 -> 128 (census exit 0); mistakes mined (`corpus/lessons/round-48.md` `## Mistakes`, including the attribution of a work-dir masking to host load); QUALITY 94-96 with falsifiers (`.ufo/evidence/round-48/quality/falsifiers.sh`); round-47 selftest receipts committed (routed defects 2, 4: `.ufo/waves/round-48/w1/selftest/`); considerthese 2026-10-25 idea 5 mined; assimilation none.
+- Waves: w1 build (32 seats) and w2 falsify (32 seats), counts in the report.
+
+Evidence: `.ufo/evidence/round-48/`, `.ufo/waves/round-48/`, `corpus/lessons/round-48.md`. Measured values: SCORECARD.md `## Round 48` and the report.
