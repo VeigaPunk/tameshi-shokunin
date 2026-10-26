@@ -1,0 +1,52 @@
+seat: T48ScoutCarried
+item: status of the carried SCORECARD `Planned (round 48)` items (a)-(d); route recommendation
+bounds: read-only; grep/sha256sum/read only; no counter run, no scratch tree needed (nothing written outside this file)
+
+## (a) dead `brace_depth_at` helpers — CONFIRMED unreferenced; deletion MUST NOT land this round
+
+Observed:
+- `grep -rn brace_depth_at` (lane, `.git` excluded): code hits are only the two `def` lines, `tools/tally-audit-v2.py:135` and `tools/tally-audit-v3.py:234`. Every other hit is prose (round-35 w2 attack reports, round-47 w1 `T47ExecDeadCode*.md`, `corpus/lessons/round-47*.md`). No call, import, string or attribute use. (Round-47 `T47ExecDeadCode.md` already derived this with `ast`; this is the independent grep re-check.)
+- Current bytes: v2 sha256 `7b11ba25aead93678aef50606b7521fb7c3a85bea47b5ec220a47865b3598d10`; v3 sha256 `da8c1ef4b30ce4e42b1cc2b11229543e36e122457d2336f9a990d28161693ede`.
+
+Who pins those bytes:
+1. **This round's C1 statements (the load-bearing one).** `.ufo/evidence/round-47/calibration/statements.json` (the 22 frozen statements, reused unchanged by C1) has three with `sha_file` set to these tools:
+   - `tally-audit-v2 runner audit` (`sha_file tools/tally-audit-v2.py`, value ends `|0|7b11ba25aead`)
+   - `tally-audit-v3 runner audit` (`sha_file tools/tally-audit-v3.py`, value ends `|0|da8c1ef4b30c`)
+   - `bounded ANSI-C code_view` (`sha_file tools/tally-audit-v3.py`, value `…|0|da8c1ef4b30c`)
+   The attested value for each carries the 12-hex sha prefix (`control/emit-observed-pre-freeze.out` lines 27/29/31). Editing either tool changes the observed prefix, so these three would mismatch in C1 (`mismatches>=3`) unless the rows are re-pinned AND the frozen statements.json is re-frozen, which the contract forbids ("reused unchanged").
+2. **Standing SCORECARD rows**, which restate the 12-hex prefix: `SCORECARD.md:2189-2191` (`### Standing self-assessment — re-stated at round 46`, v2/v3/ANSI-C) and `SCORECARD.md:2281-2283` (`### Standing self-assessment — re-stated at round 47`, same three). Historic capability rows at 1622/1643/1657/1686/1698 name the tools too but carry no pin.
+3. **Frozen evidence pins** (append-only, never edited; a re-pin is recorded in a reconciliation file, see `.ufo/evidence/round-35/pin-reconciliation.json`, rule text in it): v2 → `round-33/c1/c1-measure.py`, `round-35/contract.json`, `round-35/pin-reconciliation.json`, `round-35/closure/pins.stdout`, `round-35/control/c1-v2-control.stdout`, `round-35/before/c2-at-base.stdout`; v3 → `round-37/counter-pin.json` (counter_sha256 `9eb8944c…` frozen r36 counter + `tool_sha256 da8c1ef4…`), `round-37/code-view/after.stdout`, `round-37/c2-repin-after.stdout`, `round-37/mutation/*` (digests.txt, pristine-frozen-predicate.stdout, parity-lookbehind.stdout). `corpus/QUALITY.md:~981` documents the pin blast-radius rule (write the radius down before a tool edit).
+4. `tools/write-path-census.py:38-39` lists both filenames (path list only, no digest; unaffected by deleting a function, affected only by deleting the file — do not delete the files).
+
+What deleting the helpers would change:
+- v2 and v3 sha256 both change; the three C1 statements above and rows 2189-2191 / 2281-2283 need new pins; the round-35/37 frozen contracts need a new `pin-reconciliation`-style entry per tool (round-35 pattern); round-37 `counter-pin.json`'s `--tool` wrapper digest check would fail against the old digest. `write-path-census.py` dead-code scan (`T47ExecDeadCode.scan.py`) would go from `unreferenced=2` to 0 (its stated goal).
+- Behaviour: none (unreferenced); both `--selftest` counts (v2 22/22, v3 35/35) unchanged in principle, `[INFERENCE]` not run here.
+Verdict: C1 (round 48) scores values including those prefixes, so deleting this round would manufacture 3 mismatches and tear the pin chain. Route to round 49 as its own pin-blast-radius-first item.
+
+## (b) C3 counter's ten survivors — STILL OPEN
+- `.ufo/evidence/round-47/coverage/measure.py` sha256 at lane head = `c8fb89e69196fc2401e2364142b848bd8d53e5c6e3d97f17c528951c9f894260`, identical to the pristine hash `T47MutC3Counter.md` audited. Nothing under `.ufo/evidence/round-48/` contains a coverage counter (round-48 dirs: before, calibration, control, freshness, selftest). So the selftest still lacks the killing cases.
+- The ten (35 probes, 25 killed, 10 survived): M01/M35 doc_key case folding; M03 `www.` strip; M05 frozen DOCS ids; M34 SNAP_PREFIX `sources/`->`source/`; M11 snapshot-present guard; M21/M22 quote token bounds 6..25; M23 quote located in a cited (not any) snapshot; M28 `MIN_ROWS` 3->2; M30 `MIN_ENTRIES` 3->2. (T47MutC3Counter groups them as 9 numbered survivor shapes; M01/M35 share one, M21/M22 share one, which makes the "ten" = probe count.) Four (M11, M28, M30, M34) were already routed from round 46.
+- Relation to this round: C3 is not a round-48 claim, and C2 here uses its own counter; the C3 counter is touched by nothing in round 48 unless the freshness counter imports it (not checked).
+- Also still open for completeness: the C1 counter's eight survivors (`T47MutC1Counter.md`: comment-hiding dotall, arrow in CLAIM_CAP, exit charset, comparable() cut, statement-count `>=`, `total<=1`, `--only` never passing, decoy stub exit code). Round-48's C1 counter is rebuilt from the round-47 base (`calibration/measure.py`, sha256 `c54debb241c0df7fa282f619bb0905472a375ce0b3e5f800edc6f8945daa0f30` at base), so its new selftest should be audited against the 8 shapes by the round-48 mutation seats; the C1 eight are the one carried item that is live inside this round.
+
+## (c) located-name (author) check — NOTHING EXISTS
+- `corpus/lessons/round-47.md:108` states it explicitly: "no counter reads authors (routed: a located-name check is not built this round)". The motivating defect: the shokuknow package copy of `r8-flakiness-not-static.md` attributed arXiv 2607.09345 to Baltes, McKim, Zaidman, Wagner; the snapshot lists Gültekin, Berndt, Bell, Bach, Baltes (corpus fix: `corpus/knowledge/r8-flakiness-not-static.md:8`, `corpus/SOURCES.md` S263 row, `round-47.md:42-48`). It was caught by CORPUS rule 1 re-opening (`T47ExecMirror.md`) and the non-author spot-check (`round-47-verifier-spotcheck.md:86`, via live `citation_author` meta), not by a counter.
+- `grep -rniE 'located-name|located name|authorship'` over `corpus/*.md`, `tools/*.py`, round-45..48 `*.json`: no counter or tool. The round-47 coverage counter (`.ufo/evidence/round-47/coverage/measure.py`) checks quotes/token bounds/snapshot sha/README index only; the string "author" appears there only inside a Semantic Scholar field list URL.
+- Design sketch only (not built): for each admitted row whose entry/SOURCES cell names authors, require each surname to be located as a whole token in the committed snapshot (arXiv: `citation_author` meta; Crossref/S2: authors array) and the surname list's count to match; refuse otherwise. This is the same "located" shape as the Gate quote check, so the C3 counter is the natural home — which makes it a natural companion to (b).
+
+## (d) F3/F7 package candidates S161 / S162 / S205
+- **S161 / S162 are already adopted and are not open.** They were the staged shokuknow-package ids of the TensorFlow Federated golden-test update-flag documents. `corpus/lessons/round-39.md:18`: "Staged ids S161 and S162 are the same documents. Renumbered to S107 and S108." Current rows: `corpus/SOURCES.md:119` S107 (TFF `docs/golden_tests.md` @ `4d3a89c9…`, tier A) and `:120` S108 (zh-cn page, tier B), cited by `corpus/knowledge/r8-golden-update-flag.md` (F4 update-flag). The round-38 refusal ("S161/S162 rejected … a round that opens S161/S162") was superseded by round 39. The staged ids S161-S255 stay reserved by document in SOURCES (`SOURCES.md:484,486`, Next unused id S265), which is why the round-45 identity/next maps S161/S162 were refused (`round-45.md:82-84`). The residual carried item is therefore S108's freshness (the `anchor refresh`) — this is exactly C2 in round 48; nothing further for S161/S162 after that.
+- **S205 is open and unadopted.** Staged row (`/home/vgpnk/Projects/shokuknow/lanes/tameshi/round8/SOURCES-PROPOSED.md:25`): *Predictive Test Selection* (Machalica, Samylkin, Porth, Chandra; Facebook), arXiv 1810.05286, v2 2019-05-29 camera-ready, tier A, "F7's prediction side, against a cost baseline". Package entry `r8-predictive-test-selection-cost.md` was refused in round 47 (`round-47.md:81`, spot-check `round-47-verifier-spotcheck.md:90,106`): the lane never opened a row for it (`grep -c 1810.05286 corpus/SOURCES.md` = 0) so QUALITY 10/2 bars it; the `PROVINCE.md:14-18` cite is weak, cite the unopened-row reason instead. Cross-reference: package copies of `r8-flaky-cost-baseline.md` / `r8-flakiness-not-static.md` mention S205; the lane copy of the first dropped the dangling "S205" reference (`r8-flaky-cost-baseline.md:44`). Flip condition: a lane-opened, snapshot-pinned row for arXiv 1810.05286 tied to an own-leg F7 re-sweep decision.
+
+## Recommendation (which to route to round 49)
+
+| item | route | one-line reason |
+|---|---|---|
+| (a) delete/re-pin `brace_depth_at` | **R49, as the first pin-blast-radius item** (write the radius, amend, re-freeze statements.json and re-state rows 2189-2191/2281-2283 together) | three of the 22 frozen C1 statements carry the 12-hex sha prefix, so any edit this round mismatches C1 by construction |
+| (b) C3 counter ten survivors | **R49** (pair with (c)) | C3 is not a round-48 claim; counter bytes unchanged, all ten still open |
+| (b') C1 counter eight survivors | **keep in R48 mutation seats** (audit the rebuilt counter's selftest) | the round-48 C1 counter is rebuilt this wave, so the eight are live here |
+| (c) located-name author check | **R49**, built in the C3 counter with the selftest cases from (b) | no tool exists; motivating defect fixed by hand, a counter extension is cheap and testable |
+| (d) S161/S162 | **drop from the list** (done as S107/S108; S108 freshness is C2 now) | already adopted in round 39 |
+| (d) S205 | **R49 candidate only if a fresh F7 re-sweep decision exists** | unopened row; QUALITY 10/2 refusal stands until the lane opens arXiv 1810.05286 with a snapshot and ties it to an F7 decision |
+
+Unverified: no counter or selftest was run; the claim that deleting the helpers leaves `--selftest` counts unchanged is `[INFERENCE]`. Scratch: none created. No tool installs.

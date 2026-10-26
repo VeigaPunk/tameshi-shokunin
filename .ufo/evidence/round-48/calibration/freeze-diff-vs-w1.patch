@@ -1,0 +1,268 @@
+--- w1/T48ExecC1Counter.measure.py
++++ calibration/measure.py
+@@ -79,6 +79,9 @@
+ OBSERVATIONS_DIR = '.ufo/evidence/round-48/calibration/observations'
+ N_STATEMENTS = 22
+ N_ROUNDS = 3
++MAX_EXTRA = 6
++BASE = '473336d9d789f6081195e7376d17836a24666bc3'
++CENSUS_SCRIPT = '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh'
+ FLEET = '/home/vgpnk/Projects/shokunin'
+ ARROW = '\u2192'
+ DEP_NAMES = ('bwrap', 'env', 'fleet-root', 'jj', 'node')
+@@ -234,31 +237,6 @@
+     return '|'.join(member) if member else '-'
+ 
+ 
+-def attest_token(kind, member):
+-    return '%s|%s' % (member[0], member[1]) if kind == 'cap' else member[0]
+-
+-
+-def load_attestations(lane, rev):
+-    """{statement id: set of recorded P0 tokens} from committed observation files at REV."""
+-    listing = git('-C', lane, 'ls-tree', '-r', '--name-only', rev, '--', OBSERVATIONS_DIR)
+-    att = {}
+-    for path in (listing or '').split('\n'):
+-        path = path.strip()
+-        if not path:
+-            continue
+-        data = git('-C', lane, 'show', '%s:%s' % (rev, path))
+-        if data is None:
+-            continue
+-        for line in data.split('\n'):
+-            m = re.match(r'^PROFILES (.+?): (.*)$', line)
+-            if not m:
+-                continue
+-            tok = re.search(r'(?:^| )P0=(.*?)(?= P[1-5]=|$)', m.group(2))
+-            if tok:
+-                att.setdefault(m.group(1), set()).add(tok.group(1))
+-    return att
+-
+-
+ # --------------------------------------------------------------------------- observation
+ 
+ def compare_part(result, kind):
+@@ -388,8 +366,31 @@
+ 
+ # --------------------------------------------------------------------------- measure
+ 
++def fleet_state(lane, rev):
++    """Live state the statements may read (amendment 6): census script digest, lane worktree
++    cleanliness for corpus/, tools/ and SCORECARD.md against REV, and sibling lane HEADs."""
++    try:
++        census = hashlib.sha256(open(CENSUS_SCRIPT, 'rb').read()).hexdigest()[:12]
++    except OSError:
++        census = 'absent'
++    paths = ['corpus', 'tools', 'SCORECARD.md']
++    st = subprocess.run(['git', '-C', lane, 'status', '--porcelain', '--'] + paths,
++                        capture_output=True, text=True, env=host_env())
++    df = subprocess.run(['git', '-C', lane, 'diff', '--quiet', rev, '--'] + paths,
++                        capture_output=True, env=host_env())
++    clean = int(st.returncode == 0 and st.stdout.strip() == '' and df.returncode == 0)
++    sib = []
++    for d in sorted(os.listdir(FLEET)):
++        full = os.path.join(FLEET, d)
++        if d.endswith('-shokunin') and d != os.path.basename(os.path.abspath(lane)) and os.path.isdir(full):
++            h = subprocess.run(['git', '-C', full, 'rev-parse', 'HEAD'], capture_output=True, text=True,
++                               env=host_env())
++            sib.append((d, h.stdout.strip()[:12] if h.returncode == 0 else 'none'))
++    return census, clean, tuple(sib)
++
++
+ def measure(lane, rev, base, work, emit=False, pin=STATEMENTS_SHA256, n_expected=N_STATEMENTS,
+-            jobs=6, rounds=N_ROUNDS, only=None, observe_fn=None):
++            jobs=6, rounds=N_ROUNDS, only=None, observe_fn=None, fleet_fn=None):
+     work = os.path.abspath(work)
+     if under_tmp(work):
+         print('C1_R48: --work must not be under /tmp (lane rule, round 48 §7.4)', file=sys.stderr)
+@@ -427,10 +428,12 @@
+         return 2
+     append_only = int(rev_sc.startswith(base_sc))
+     rows = last_rows(rev_sc)
+-    att = load_attestations(lane, rev)
+     fn = observe_fn or observe
++    ff = fleet_fn or (fleet_state if observe_fn is None else (lambda _l, _r: ('fake', 1, ())))
+     run_results = []
++    fleet_states = []
+     for rnd in range(1, rounds + 1):
++        fleet_states.append(ff(lane, rev))
+         work_r = os.path.join(work, 'round%d' % rnd)
+         os.makedirs(work_r, exist_ok=True)
+         decoy = os.path.join(work_r, 'decoy')
+@@ -463,6 +466,30 @@
+                 path = os.path.join(work_r, prof, sub)
+                 if os.path.isdir(path):
+                     shutil.rmtree(path, ignore_errors=True)
++    fleet_states.append(ff(lane, rev))
++    fleet_drift = int(len(set(fs[0] for fs in fleet_states)) > 1 or any(fs[1] != 1 for fs in fleet_states))
++    sib_names = sorted(set(n for fs in fleet_states for n, _h in fs[2]))
++    sibling_moves = sum(1 for n in sib_names if len(set(dict(fs[2]).get(n) for fs in fleet_states)) > 1)
++    for idx, fs in enumerate(fleet_states):
++        print('FLEET point=%d census_sha=%s lane_clean=%d siblings=%s' % (
++            idx + 1, fs[0], fs[1], ','.join('%s@%s' % p for p in fs[2]) or '-'))
++    extra_used = [0]
++
++    def extra_observe(s):
++        """One extra P0 observation (amendment 4), in its own fresh work dir."""
++        extra_used[0] += 1
++        k = extra_used[0]
++        if observe_fn is not None:
++            return compare_part(fn(s, 'P0', (None, None, rev, work, None, None, rounds + k)), s['kind'])
++        work_x = os.path.join(work, 'extra%d' % k)
++        os.makedirs(work_x)
++        made = setup_profile(lane, rev, work_x, 'P0')
++        if made is None:
++            return None
++        res = fn(s, 'P0', (made[0], made[1], rev, work_x, profile_env(work_x, 'P0', rev), None, rounds + k))
++        shutil.rmtree(work_x, ignore_errors=True)
++        return compare_part(res, s['kind'])
++
+     mism = unparsed = unobs = depm = unatt = over = 0
+     unpinned = sum(1 for s in statements if not s.get('sha_file'))
+     emitted = []
+@@ -500,9 +527,20 @@
+             verdict = 'MISMATCH'
+             mism += 1
+         else:
+-            receipts = att.get(sid, set())
+-            missing = [m for m in claim['members'] if m not in observed and attest_token(kind, m) not in receipts]
+-            if missing:
++            p1_seen = [compare_part(res.get((sid, 'P1')), kind) for res in run_results]
++            missing = [m for m in claim['members'] if m not in observed and m not in p1_seen]
++            extras = []
++            while missing and len(extras) < MAX_EXTRA:
++                cut = extra_observe(s)
++                extras.append(cut)
++                missing = [m for m in missing if m != cut]
++            if extras:
++                print('EXTRA %s/%s: %s' % (kind, sid, ' '.join(
++                    'x%d=%s' % (i + 1, fmt_member(x)) for i, x in enumerate(extras))))
++            if any(x is not None and x not in claim['members'] for x in extras):
++                verdict = 'MISMATCH'
++                mism += 1
++            elif missing:
+                 verdict = 'UNATTESTED'
+                 unatt += 1
+             else:
+@@ -533,12 +571,13 @@
+     total = mism + unparsed + unobs + depm + unpinned + unatt + over
+     partial = bool(only) or rounds != N_ROUNDS
+     passed = (self_pin == 1 and stmts_pin == 1 and len(statements) == n_expected and rounds == N_ROUNDS
+-              and append_only == 1 and total == 0 and not only)
++              and append_only == 1 and total == 0 and fleet_drift == 0 and not only)
+     print('%s: self_pin=%d stmts_pin=%d statements=%d rounds=%d append_only=%d unpinned=%d total=%d '
+-          'mismatches=%d unparsed=%d unobservable=%d dep_mismatch=%d unattested=%d oversize=%d rev=%s '
+-          'C1_R48_PASS=%s' % (
++          'mismatches=%d unparsed=%d unobservable=%d dep_mismatch=%d unattested=%d oversize=%d '
++          'attested_extra=%d fleet_drift=%d sibling_moves=%d base=%s rev=%s C1_R48_PASS=%s' % (
+               'C1_R48_PARTIAL' if partial else 'C1_R48', self_pin, stmts_pin, len(statements), rounds,
+-              append_only, unpinned, total, mism, unparsed, unobs, depm, unatt, over, rev,
++              append_only, unpinned, total, mism, unparsed, unobs, depm, unatt, over,
++              extra_used[0], fleet_drift, sibling_moves, base, rev,
+               'true' if passed else 'false'))
+     return 0 if passed else 1
+ 
+@@ -696,19 +735,33 @@
+               ('total=0', 'C1_R48_PASS=true'))
+     obs_a = 'PROFILES alpha: P0=ALPHA: 2/3 pass|0 P1=ALPHA: 3/3 pass|0\n'
+     two = [('ALPHA: 3/3 pass', '0'), ('ALPHA: 2/3 pass', '0')]
+-    fake_case('T30_member_attested_from_observation_file',
+-              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A]),
+-              ('unattested=0', 'total=0'),
+-              obs={'at': 'rev', 'files': {OBSERVATIONS_DIR + '/obs-r1.json': obs_a}})
++    X23 = ('ALPHA: 2/3 pass', '0')
++    fake_case('T30_member_attested_by_extra_observation',
++              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A, P0A, X23]),
++              ('unattested=0', 'attested_extra=2', 'total=0', 'C1_R48_PASS=true'))
+     fake_case('T31_member_without_receipt_unattested',
+               doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A]), ('unattested=1',))
+-    fake_case('T32_receipt_for_other_statement_ignored',
+-              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A]), ('unattested=1',),
+-              obs={'at': 'rev', 'files': {OBSERVATIONS_DIR + '/obs-r1.json':
+-                                          'PROFILES beta: P0=ALPHA: 2/3 pass|0\n'}})
+-    fake_case('T33_receipt_absent_at_rev_unattested',
+-              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A]), ('unattested=1',),
+-              obs={'at': 'base', 'files': {OBSERVATIONS_DIR + '/obs-r1.json': obs_a}})
++    fake_case('T32_committed_observation_file_is_not_attestation',
++              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A]), ('unattested=1', 'attested_extra=6'),
++              obs={'at': 'rev', 'files': {OBSERVATIONS_DIR + '/obs-r1.json': obs_a}})
++    fake_case('T33a_member_attested_by_p1_observation',
++              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A], P1=[P0A, X23, P0A],
++                                               P2=[P0A] * 3, P3=[P0A] * 3, P4=[P0A] * 3, P5=[P0A] * 3),
++              ('unattested=0', 'attested_extra=0', 'mismatches=0'))
++    fake_case('T33f_member_seen_only_under_variant_is_unattested',
++              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A] * 9, P1=[P0A] * 3, P4=[X23] * 3),
++              ('unattested=1', 'attested_extra=6'))
++    fake_case('T33_extra_observations_capped_at_six',
++              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A] * 9 + [X23]), ('unattested=1', 'attested_extra=6'))
++    fake_case('T33b_extra_observation_outside_v_is_mismatch',
++              doc(row_cap('alpha', two)), dict(base_obs, P0=[P0A, P0A, P0A, ('ALPHA: 1/3 pass', '0'), X23]),
++              ('mismatches=1',))
++    fake_case('T33c_fleet_drift_census_script_voids_pass', doc(A()), base_obs,
++              ('total=0', 'fleet_drift=1', 'C1_R48_PASS=false'), fleet='census')
++    fake_case('T33d_fleet_drift_lane_dirty_voids_pass', doc(A()), base_obs,
++              ('total=0', 'fleet_drift=1', 'C1_R48_PASS=false'), fleet='dirty')
++    fake_case('T33e_sibling_move_is_disclosed_not_drift', doc(A()), base_obs,
++              ('total=0', 'fleet_drift=0', 'sibling_moves=1', 'C1_R48_PASS=true'), fleet='sibling')
+     fake_case('T40_required_all_rounds_undeclared', doc(A()),
+               {'P0': [P0A] * 3, 'P1': [P0A] * 3, 'P4': [('ALPHA: 3/3 pass', '9')] * 3}, ('dep_mismatch=1',))
+     fake_case('T41_required_all_rounds_declared', doc(A(deps='node')),
+@@ -734,12 +787,10 @@
+               doc(row_cap('alpha', [('ALPHA: 3/3 pass', 0), ('ALPHA: 9/9 pass', 0)])),
+               dict(base_obs, P0=[P0A, ('ALPHA: 9/9 pass', '0'), P0A]),
+               ('total=0', 'C1_R48_PASS=true'))
+-    fake_case('T51_three_members_one_observed_two_attested',
++    fake_case('T51_three_members_one_observed_two_by_extras',
+               doc(row_cap('alpha', [('ALPHA: 3/3 pass', 0), ('ALPHA: 8/8 pass', 0), ('ALPHA: 9/9 pass', 0)])),
+-              dict(base_obs, P0=[P0A, P0A, P0A]), ('unattested=0', 'total=0'),
+-              obs={'at': 'rev', 'files': {OBSERVATIONS_DIR + '/obs-r1.json':
+-                                          'PROFILES alpha: P0=ALPHA: 8/8 pass|0\n'
+-                                          'PROFILES alpha: P0=ALPHA: 9/9 pass|0\n'}})
++              dict(base_obs, P0=[P0A, P0A, P0A, ('ALPHA: 8/8 pass', '0'), ('ALPHA: 9/9 pass', '0')]),
++              ('unattested=0', 'attested_extra=2', 'total=0'))
+     fake_case('T52_four_members_oversize',
+               doc(row_cap('alpha', [('ALPHA: 3/3 pass', 0), ('ALPHA: 6/6 pass', 0),
+                                     ('ALPHA: 8/8 pass', 0), ('ALPHA: 9/9 pass', 0)])),
+@@ -827,6 +878,22 @@
+ 
+ def post_zero(lane, work, out):
+     return ('--rounds must be at least 1' in out), 'rounds=0 refused'
++
++
++def fake_fleet(kind):
++    """Selftest fleet-state fakes: None keeps the measure() default; else a sequence over calls."""
++    if kind is None:
++        return None
++    calls = [0]
++
++    def f(_lane, _rev):
++        calls[0] += 1
++        n = calls[0]
++        census = 'c2' if kind == 'census' and n == 3 else 'c1'
++        clean = 0 if kind == 'dirty' and n == 2 else 1
++        sib = (('x-shokunin', 'h2' if kind == 'sibling' and n == 3 else 'h1'),)
++        return census, clean, sib
++    return f
+ 
+ 
+ def run_case(d, name, scorecard, opt, wants, post, me, cap_hdr, axis_hdr, base_sc, tool_sha,
+@@ -911,7 +978,8 @@
+         rc = measure(lane, 'HEAD', base_arg, work, emit=bool(opt.get('emit')),
+                      pin=hashlib.sha256(payload).hexdigest(), n_expected=opt.get('n_expected', len(st)),
+                      jobs=opt.get('jobs', 3), rounds=opt.get('rounds', N_ROUNDS),
+-                     only=set(opt['only']) if opt.get('only') else None, observe_fn=opt.get('fake'))
++                     only=set(opt['only']) if opt.get('only') else None, observe_fn=opt.get('fake'),
++                     fleet_fn=fake_fleet(opt.get('fleet')))
+     out = buf.getvalue()
+     if post is not None:
+         ok, detail = post(lane, work, out + err.getvalue())
+@@ -940,6 +1008,9 @@
+         return selftest()
+     if not (a.lane and a.rev and a.base and a.work):
+         ap.error('--lane, --rev, --base and --work are required')
++    if a.base != BASE:
++        print('C1_R48: --base must be %s (amendment 8)' % BASE, file=sys.stderr)
++        return 2
+     return measure(a.lane, a.rev, a.base, a.work, emit=a.emit, jobs=a.jobs, rounds=a.rounds,
+                    only=set(a.only.split(',')) if a.only else None)
+ 

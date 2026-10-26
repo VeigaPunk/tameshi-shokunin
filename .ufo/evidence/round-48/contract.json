@@ -6,16 +6,76 @@
  "base_rev": "473336d9d789f6081195e7376d17836a24666bc3",
  "freeze_plan": "Two-step freeze. Step 1 (this file, the pre-registration commit, before any seat runs): claims, predicates, targets, kill rules, the do-nothing and cheapest controls by definition, the R=3 repetition count, the C2 target set and its required phrases. Step 2 (the counter freeze, after wave 1 delivers the two counters and before any deciding or control scoring): the counters and their selftests are committed at the paths below with their sha256 recorded in freeze-2.json, and the controls are scored and committed. Neither step is amended after any claim has been scored; an amendment before scoring is recorded in `amendments` with its reason.",
  "amendments": [
-  {"n": 1, "when": "before any seat ran (pre-data), 2026-10-26", "claim": "C2", "change": "'R's URL' means the set of https URLs appearing in R's source and anchor cells. T's base URL must be in that set, and the fetch receipt url (also the live-fetch url) must be in that set. Reason: S093's base URL is the GitHub blob page while the snapshot bytes are fetched from raw.githubusercontent.com at the same tag; the original wording 'url equal to R's URL' was ambiguous for that case."},
-  {"n": 2, "when": "before any seat ran (pre-data), 2026-10-26", "claim": "C2", "change": "Gate line format fixed: a line of corpus/lessons/round-48.md matching ^- C2-QUOTE (S[0-9]{3,}) (S[0-9]{3,}): `([^`]+)` names R, then T, then the quote. Extraction for 'located': decode UTF-8, drop <script> and <style> element contents, strip tags, html.unescape, collapse every whitespace run to one space; the quote (whitespace-collapsed) must be a substring of that text, with no case or punctuation folding (QUALITY 91). Word count = whitespace-split tokens of the quote."},
-  {"n": 3, "when": "before any seat ran (pre-data), 2026-10-26", "claim": "C1", "change": "Row grammar fixed. cap evidence cell: `CMD` \u2192 `LINE1`, exit N1[ or `LINE2`, exit N2[ or `LINE3`, exit N3]], tool sha256 `12 hex`, deps `LIST`, runs 3 CLASS. axis rows: score cell `N1[ or N2[ or N3]]`; evidence cell carries tool sha256 `12 hex`, deps `LIST`, runs 3 CLASS. CLASS is `stable` (exactly one member) or `nondeterministic` (two or three members); any other count/class pairing is `oversize`. LIST is `none` or a sorted comma list over {bwrap, env, fleet-root, jj, node}. A row whose evidence cell lacks `runs 3` is not a round-48 standing row and is skipped when picking the last row."}
+  {
+   "n": 1,
+   "when": "before any seat ran (pre-data), 2026-10-26",
+   "claim": "C2",
+   "change": "'R's URL' means the set of https URLs appearing in R's source and anchor cells. T's base URL must be in that set, and the fetch receipt url (also the live-fetch url) must be in that set. Reason: S093's base URL is the GitHub blob page while the snapshot bytes are fetched from raw.githubusercontent.com at the same tag; the original wording 'url equal to R's URL' was ambiguous for that case."
+  },
+  {
+   "n": 2,
+   "when": "before any seat ran (pre-data), 2026-10-26",
+   "claim": "C2",
+   "change": "Gate line format fixed: a line of corpus/lessons/round-48.md matching ^- C2-QUOTE (S[0-9]{3,}) (S[0-9]{3,}): `([^`]+)` names R, then T, then the quote. Extraction for 'located': decode UTF-8, drop <script> and <style> element contents, strip tags, html.unescape, collapse every whitespace run to one space; the quote (whitespace-collapsed) must be a substring of that text, with no case or punctuation folding (QUALITY 91). Word count = whitespace-split tokens of the quote."
+  },
+  {
+   "n": 3,
+   "when": "before any seat ran (pre-data), 2026-10-26",
+   "claim": "C1",
+   "change": "Row grammar fixed. cap evidence cell: `CMD` → `LINE1`, exit N1[ or `LINE2`, exit N2[ or `LINE3`, exit N3]], tool sha256 `12 hex`, deps `LIST`, runs 3 CLASS. axis rows: score cell `N1[ or N2[ or N3]]`; evidence cell carries tool sha256 `12 hex`, deps `LIST`, runs 3 CLASS. CLASS is `stable` (exactly one member) or `nondeterministic` (two or three members); any other count/class pairing is `oversize`. LIST is `none` or a sorted comma list over {bwrap, env, fleet-root, jj, node}. A row whose evidence cell lacks `runs 3` is not a round-48 standing row and is skipped when picking the last row."
+  },
+  {
+   "n": 4,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1",
+   "change": "Attestation (F1): a member of V is attested only when the counter itself observes it at REV in the same invocation: as a P0 or P1 (line, exit) tuple in any of the three rounds (P1 is the clean full profile: same tools, clean environment), or in up to 6 extra P0 observations of that statement taken after the rounds (each in a fresh work dir; printed as `EXTRA` lines; the label prints `attested_extra=<n>`). An extra tuple outside V is a mismatch. A tuple seen only under a dependence-removing variant (P2-P5) never attests. Committed files under .ufo/evidence/round-48/calibration/observations/ are evidence for the report only, never attestation. Reason: a lane-authored receipt is unbound text and could attest any value (T48CritC1Design F1). P1 is admitted because T48RevenRegression (.ufo/waves/round-48/w1/T48RevenRegression.md, verdict 1-4) showed `six-leg regression ledger` is genuinely nondeterministic (a SIGPIPE race under pipefail in the pinned tsukuroi leg, ~10% of runs, one-sided PASS->FAIL), so an honest nondeterministic row needs more than three P0 runs to attest its rare member. Disclosed risk: a member flaking at rate p is attested with probability 1-(1-p)^12 (6 P0/P1 round runs + 6 extras); at p=0.1 that is ~0.72."
+  },
+  {
+   "n": 5,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1",
+   "change": "Fleet and lane state (F3): before each round and after the last, the counter records the sha256 prefix of /home/vgpnk/Projects/shokunin/scripts/sources-census.sh, whether the lane worktree is clean against REV for corpus/, tools/ and SCORECARD.md (git status --porcelain empty and git diff --quiet REV), and the HEAD of every sibling *-shokunin lane; it prints them as FLEET lines. fleet_drift=1 when the census digest changes or the lane is not clean at any point; C1_R48_PASS additionally requires fleet_drift=0. Sibling HEAD changes are disclosed as sibling_moves (the regression ledger replays blob-pinned legs, so a moved HEAD is not drift). Drift is never counted as a mismatch. "
+  },
+  {
+   "n": 6,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1",
+   "change": "Table of its kind (F4): a Markdown table whose header cell 1 is `Capability` (kind cap) or whose header cell 2 begins `Score` (kind axis); tables inside fenced code blocks or HTML comments are ignored; a table line begins `|` at column 1; cells are split on `|` after stripping the outer pipes and surrounding whitespace; the first cell must equal the statement id exactly; the standing row is the last matching row in file order across all tables of that kind (this is what the round-47 and round-48 parsers already do)."
+  },
+  {
+   "n": 7,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1",
+   "change": "Base pinned (F5): the counter hard-codes BASE 473336d9d789f6081195e7376d17836a24666bc3, refuses any other --base with exit 2, and prints base=<sha> in its label."
+  },
+  {
+   "n": 8,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1, C2",
+   "change": "One deciding invocation (F6): .ufo/evidence/round-48/deciding-run.sh runs each claim counter once at the content revision, writes receipts under .ufo/evidence/round-48/after/, and recomputes FROZEN_UNCHANGED over both counters, statements.json, this contract and the C2 snapshots; the receipts land in a receipts-only commit. A second deciding invocation of either counter at the content revision is a miss."
+  },
+  {
+   "n": 9,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1, C2",
+   "change": "Controls (F7): every control receipt prints the revision it was scored at; the C1 controls are scored at the counter-freeze commit, which carries no C2 row, so CTL_B is diagnostic of the flaky-row defect rather than of the registry count."
+  },
+  {
+   "n": 10,
+   "when": "after wave-1 seats probed the base tree and the draft counters and before any restated row existed, any control was scored by the L1, or any deciding run; source: .ufo/waves/round-48/w1/T48CritC1Design.md (findings F1-F7)",
+   "claim": "C1",
+   "change": "Declined (recorded, not adopted): F2 proposed reading dependences against V instead of the round's P1 tuple. T48RevenEnvDiff (.ufo/waves/round-48/w1/T48RevenEnvDiff.md section 1) showed the P1 instability of `hermetic env-differential probe` is deterministic harness masking when --work lies under /tmp (env-diff mounts a tmpfs on /tmp over the profile PATH shim), not nondeterminism; the round-48 counter refuses --work under /tmp, so P1 is stable there. The V-relative rule would also mark every P1-derived variant as a dependence whenever env matters. The P1 rule of the statement stands."
+  }
  ],
  "axes": {
   "lane": "depth + calibration (verification-fixture craft)",
   "scores_at_base": "depth 9 (command D), calibration 6 (round-21 coldread monitor restraint), freshness 9 (round-45 floor(10*fresh/73), fresh=71, disputed S048 and S093); operability and coverage carry no numeric score",
   "lowest_non_retired_axis": "calibration (6) - carried by C1",
   "stagnation_nudge": "does not fire: calibration 6 is below the saturation line 8",
-  "distinct_axes": ["calibration", "freshness"],
+  "distinct_axes": [
+   "calibration",
+   "freshness"
+  ],
   "exploratory": "none"
  },
  "claims": {
@@ -39,10 +99,19 @@
    "surface": "four held SOURCES.md rows S026, S048, S093, S108 and the knowledge entries listed in their used-by cells at base",
    "statement": "At REV, for each target T in {S026, S048, S093, S108}: exactly one new registry row R (id above S264) whose teaches cell opens `supersedes T —`, opened 2026-10-26, status mined, whose source cell carries T's URL; a committed snapshot .ufo/evidence/round-48/freshness/sources/T.* whose sha256 12-hex prefix appears in R's anchor cell; a committed fetch receipt .ufo/evidence/round-48/freshness/sources/T.receipt.json with url equal to R's URL, fetched_at on 2026-10-26, http_status 200 and sha256 equal to the snapshot's; a Gate line in corpus/lessons/round-48.md naming R and T with a quote of at most 25 words that is located in the snapshot's extracted text and contains T's required phrase(s); every knowledge entry in T's base used-by cell cites R in its `source:` line and carries `verified-at: 2026-10-26`, and R's used-by cell lists exactly those entries; at the deciding run a live fetch of the URL contains the quote (extracted text). refreshed counts targets meeting all of these.",
    "required_phrases": {
-    "S026": ["84%"],
-    "S048": ["should therefore be prioritised"],
-    "S093": ["--unshare-all", "--unshare-cgroup-try"],
-    "S108": ["--update_goldens"]
+    "S026": [
+     "84%"
+    ],
+    "S048": [
+     "should therefore be prioritised"
+    ],
+    "S093": [
+     "--unshare-all",
+     "--unshare-cgroup-try"
+    ],
+    "S108": [
+     "--update_goldens"
+    ]
    },
    "predicate_label": "C2_R48_PASS=true iff self_pin=1 targets=4 refreshed=4 census_exit=0",
    "target": "C2_R48_PASS=true (refreshed=4)",
