@@ -12,17 +12,20 @@ the freeze, and committed with `-c user.name=crit -c user.email=crit@crit` (no o
 `/tmp/tameshi-r47-T47CritC1Control/` and filled the 128 GB `/tmp` partition (96 %). On instruction I killed the two
 live runs, captured their receipts, deleted the whole `/tmp/tameshi-r47-T47CritC1Control` tree (freed 20 GB, `/tmp`
 back to 26 GB free) and moved the remaining work to `/var/tmp/tameshi-r47-T47CritC1Control/` (root fs, 565 GB free).
-No run that died on ENOSPC is reported as a finding: the two killed runs (a full `--emit` pass, a 3-statement probe)
-were discarded and re-run from `/var/tmp`; the runs reported below all exited on their own. **The 16–20 GB
+No run that died on ENOSPC is reported as a finding: both killed runs (a full `--emit` pass and a 3-statement
+probe) were discarded, the pass was re-run from `/var/tmp` and the probe was superseded by the full passes below;
+every run reported here exited on its own. **The 16–20 GB
 `/tmp` tree is gone; nothing of mine remains under `/tmp`.**
 
 ---
 
 ## 1. Verdict in one line
 
-`measure.py` alone cannot distinguish a real statement from a rewired or env-hijacked one: **the cheapest pass that
-the counter accepts and no gate refuses costs one environment variable pair, edits no tracked file except
-`SCORECARD.md`, and prints `C1_R47_PASS=true`** (§6). The cheapest counterfeit of all is 2 lines added to the frozen
+`measure.py` alone cannot distinguish a real statement from a rewired or env-hijacked one. **Measured: two
+environment variables (`PYTHONPATH` carrying a `sitecustomize.py`, `BASH_ENV` carrying a sourced file) in the
+deciding shell, no tracked file changed except `SCORECARD.md`, and the frozen counter prints
+`total=0 … C1_R47_PASS=true`, exit 0, with the deciding script's own `FROZEN_UNCHANGED=1`** (§6). Nineteen of the
+22 rows it validates are byte-identical to honest rows. The cheapest counterfeit of all is 2 lines added to the frozen
 counter itself (§4), refused only by `deciding-run.sh`, a script that is *not* in its own `FROZEN` list and not
 pinned anywhere.
 
@@ -73,7 +76,7 @@ MUTABLE tools/mutate-and-run.sh
 | d | 2 lines in `measure.py` | **true**, `self_pin=1`, exit 0 | `FROZEN_UNCHANGED=0` only | §7.1 |
 | e | rewrite a statement's tool (argv untouched, `sha_file` path unchanged) | **true** (MATCH, `deps none`) | **nothing** — `tools/` is not in `FROZEN` | §7.2 |
 | f | banner line matching `obs` printed before the real report | **true** (MATCH on a count the tool never computes) | **nothing** | §7.3 |
-| g | hijack P0 through the deciding shell's environment | **true**, zero tracked-file drift | **nothing** | §7.4 |
+| g | hijack P0 through the deciding shell's environment | **true** — measured: `total=0`, `C1_R47_PASS=true`, exit 0, `FROZEN_UNCHANGED=1`; only `SCORECARD.md` changed | **nothing** | §7.4 |
 | h | paste the freeze receipt's rows | **false** once any statement's output moves at REV | the counter itself | — |
 
 ## 4. (c′)/(d) The pins are self-referential — evidence
@@ -106,7 +109,7 @@ C1_R47_PARTIAL: … stmts_pin=0 … total=1 … C1_R47_PASS=false
 constant in the same commit; by the expA result (`self_pin=1` on a committed edit) c′ reaches `PASS=true`.
 `[INFERENCE from expA + expC, not separately run end to end: the arithmetic is the counter's own.]`
 
-## 5. (e)/(f) The tool is not frozen — evidence
+## 5. (e)/(f)/(h) The tool is not frozen — evidence
 
 **(e) rewrite the tool, keep the argv.** `tools/repeat-control.py` replaced by a 2-line printer; row states the new
 sha (which the counter reads from REV, so it always agrees with itself):
@@ -123,8 +126,15 @@ git diff --quiet FREEZE HEAD -- <the FROZEN list>  →  FROZEN_OK=1
 i.e. a gutted statement tool is invisible to every gate in the round. The only trace is the 12-hex prefix in the
 row changing, and nothing compares that prefix to the freeze.
 
-Note what this costs in the do-nothing controls: the minimum version of (e) is **five** tool rewrites, because the
-five statements with a non-empty observed deps set (`six-leg regression ledger` `fleet-root,node`,
+**Does any pin or check bind the argv?** Precisely: `argv`, `cwd`, `obs` and `timeout` exist only in
+`statements.json`; `stmts_pin` compares that blob against a constant inside `measure.py` (self-referential, §4), and
+`deciding-run.sh` does include `statements.json` in `FROZEN`, so the argv *is* bound at the deciding level — but the
+**file the argv names is not bound at all**. That is why replacing the argv (cheat c, refused) is strictly more
+expensive than replacing the tool it points at (cheat e, accepted), and why the item's hypothesis holds in the
+useful direction: the pin names a path, not a behaviour.
+
+Note what this costs in the do-nothing controls: at the freeze the minimum version of (e) is **five** tool
+rewrites, because the five statements with a non-empty observed deps set (`six-leg regression ledger` `fleet-root,node`,
 `effective expectation reconciliation` `jj`, `retained invocation-context gate` `fleet-root`,
 `hermetic env-differential probe` `env,node`, `mutation report interop` `node`) are exactly the rows blanket
 `deps none` cannot state. `CTL_J` is therefore not the cheapest cheat; it is the most expensive honest-looking one.
@@ -172,19 +182,62 @@ PYTHONPATH=inj python3 -c 'print("COUNTER-SURVIVES")'                     → CO
 The `sitecustomize` hook is selective (it exits only when `sys.orig_argv[1]` ends with one of the 22 target paths),
 so the counter itself runs normally.
 
-Because P0 is injected and P1–P5 are not, the observed dependence set becomes `env` (plus whatever else really
-moves), which the counter *honestly* derives; `--emit` then hands back rows that declare exactly that. One `--emit`
+Because P0 is injected and P1–P5 are not, every statement whose injected line differs from its P1 line acquires
+`env` (on top of whatever else really moves), which the counter *honestly* derives; `--emit` then hands back rows
+that declare exactly that. One `--emit`
 run under the poisoned environment, one paste, one commit: `SCORECARD.md` is the only tracked file that changed,
 `FROZEN_UNCHANGED=1`, `self_pin=1`, `stmts_pin=1`, `total=0`, `C1_R47_PASS=true`. No statement ever executed.
 The rows are lies of the exact shape the contract forbids ("states what the statement's command prints"), and the
 counter's definition of a dependence validates them.
 
-**Measured:**
-<!-- F-RESULT -->
+**Measured.** One clone of the lane at the freeze, `PYTHONPATH=<injection dir>` and `BASH_ENV=<injection file>` in
+the deciding shell, the rows taken from an `--emit` run under the same two variables and pasted unchanged:
 
-**The tell** (a reviewer's only defense): every injected row's deps set contains `env`, whereas
-`before/c1-at-freeze.stdout` records `env` for exactly one statement. A deciding receipt whose 22 statements all
-depend on `env` contradicts the freeze receipt and should be refused on sight.
+```
+C1_R47: self_pin=1 stmts_pin=1 statements=22 mismatches=0 unparsed=0 unobservable=0 dep_mismatch=0 unpinned=0 \
+        append_only=1 total=0 rev=d4c3b3381fa0a910246eba7183875f2ff9fbbc6f C1_R47_PASS=true      (exit 0)
+
+git diff FREEZE..REV -- <the deciding script's FROZEN list>   →  FROZEN_UNCHANGED=1
+git diff --stat FREEZE..REV  →  SCORECARD.md | 29 ++
+                                .ufo/evidence/round-15/{attempt-4/*.json,verification-4.json} | 914 ++   (a statement's
+                                own side effects, §6c — not mine)
+```
+Nothing in `$E/calibration`, `$E/hardening`, `$E/coverage`, `$E/assimilation`, `$E/control`, `$E/contract.json`,
+`no-harm.sh` or any `sha_file` target changed. The three rows whose injected value the real command never prints
+*declare* the poison (`sources-registry` deps `env`, `mutation sweep runner` deps `env`, `six-leg regression ledger`
+deps `env,fleet-root,node`); the other nineteen declare exactly what honest rows declare. The counter calls all of
+it honest — it was honest about an observation that never happened.
+
+The single clearest artefact of the pass: the `six-leg regression ledger` row that the counter MATCHed reads
+
+```
+`bash tools/mutate-and-run.sh --regression` → `REGRESSION: ALLPASS (cases=0 passed=0`, exit 0,
+tool sha256 `a7d3f2dd7d47`, deps `env,fleet-root,node`
+```
+
+`ALLPASS`, `cases=0`, `passed=0` — a ledger of zero cases that the tool cannot print, in a standing row of a round
+whose whole subject is whether standing rows tell the truth. `total=0`.
+
+Two earlier attempts are worth recording because they are the two failure modes the L1 will hit: the first (busy
+host) gave `total=5`, four of them `dep_mismatch` from timeouts (§6b); the second gave `unparsed=3` from the table
+merge (§6c). Both were mine, not the round's — which is exactly why they belong in this report.
+
+**Why this is quiet, not loud.** An injector that replays the values from `before/c1-at-freeze.stdout` prints
+exactly what the honest command prints, so those rows are *byte-identical to honest ones* and their deps stay
+`none`/`jj`/`node` as the freeze receipt records them. In the measured pass only three rows deviated from the real
+P0 output and therefore acquired `env`:
+
+```
+sources-registry          `rows=999 …`                       deps env
+mutation sweep runner     `MUTATE_SELFTEST: 0/0 pass`         deps env
+six-leg regression ledger `REGRESSION: ALLPASS (cases=0 …`    deps env,fleet-root,node
+```
+The other nineteen rows — including all three axes — are indistinguishable from honest rows, and the command never
+ran. So the only tell is a diff against the freeze receipt's values for the three statements above (a reader who
+knows `census` counts the registry would see `rows=999`; `0/0 pass` and `cases=0 passed=0` are absurd on their
+face), plus a deps comparison that catches three rows out of 22. A *fully* quiet variant exists: replay the
+receipt's own values for all 22 (as I did for 19 of them), and the rows carry no trace at all — the mechanism is
+then visible only as two variables in the deciding shell, which no receipt records.
 
 ## 6b. What the same experiment found on the way: the observation is load-sensitive, and a timeout *is recorded as a dependence*
 
@@ -371,7 +424,13 @@ because they read the row's own witness. §7.2 closes this too (the axis witness
   `total=0 … C1_R47_PASS=true`, so the honest route is proven and cheap — which is the point: the cheats are not
   cheaper than honesty, they are *indistinguishable* from it.
 * I did not run a full 22-statement pass for c′, e or f; each was scored on the statement it attacks with `--only`,
-  and the pass follows from the counter's arithmetic (`measure.py:328`), with
-  `--only`-runs showing `total=0` for the attacked statement. Only (g) was carried to a full deciding-shaped pass.
+  and the pass follows from the counter's arithmetic (`measure.py:328`), with `--only`-runs showing `total=0` for
+  the attacked statement. Only (g) was carried to a full deciding-shaped pass — three times: twice refusing
+  (`total=5` from load timeouts, `total=3` from the table merge, both diagnosed and fixed in §6b/§6c) and the third
+  accepting at `total=0`, `C1_R47_PASS=true`, exit 0.
+* The (g) rows came from an `--emit` pass taken in the *same* poisoned shell. That is a property of the cheat, not
+  an extra step: an L1 running the deciding command and the emit command from one shell gets both for free.
+* Scratch: everything I used lives under `/var/tmp/tameshi-r47-T47CritC1Control/` and is deleted before I yield;
+  nothing of mine remains under `/tmp` (see the relocation note at the top).
 * Nothing in the lane, the fleet repo, the read-only package, or any jj/Git state was modified. Fixture repos were
   throwaway clones under `/var/tmp`; no `git add/commit/stash/checkout/switch/reset/pull/push` was run in the lane.
