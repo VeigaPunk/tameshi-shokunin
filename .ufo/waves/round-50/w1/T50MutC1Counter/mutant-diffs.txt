@@ -1,0 +1,116 @@
+M01_ack_drop_planned [ACK_WORDS]
+  - "ACK_WORDS = ('planned', 'carried'"
+  + "ACK_WORDS = ('carried'"
+
+M02_ack_drop_stillopen [ACK_WORDS]
+  - "'still open', 'not worked'"
+  + "'not worked'"
+
+M03_ack_check_off [ACK_WORDS]
+  - '                if any(w in span for w in ACK_WORDS):'
+  + '                if False and any(w in span for w in ACK_WORDS):'
+
+M04_hard_paths_off [HARD]
+  - 'or path.startswith(HARD)):'
+  + 'or False):'
+
+M05_soft_paths_off [SOFT]
+  - 'if path.startswith(SOFT) and not any'
+  + 'if False and not any'
+
+M06_len_lower_1 [excerpt length]
+  - 'if not (15 <= len(ex) <= 400):'
+  + 'if not (1 <= len(ex) <= 400):'
+
+M07_len_upper_4000 [excerpt length]
+  - 'if not (15 <= len(ex) <= 400):'
+  + 'if not (15 <= len(ex) <= 4000):'
+
+M08_key_case_sensitive [key match]
+  - 'return any(k.lower() in low or path.endswith(k) for k in keys)'
+  + 'return any(k in low or path.endswith(k) for k in keys)'
+
+M09_key_drop_path_suffix [key match]
+  - 'return any(k.lower() in low or path.endswith(k) for k in keys)'
+  + 'return any(k.lower() in low for k in keys)'
+
+M10_routedat_not_dropped [routed_at ancestry]
+  - "ok = ok and is_ancestor(lane, commit, rev) and not is_ancestor(lane, commit, d['routed_at'])"
+  + "ok = ok and is_ancestor(lane, commit, rev) and is_ancestor(lane, commit, d['routed_at'])"
+
+M11_rev_ancestor_dropped [routed_at ancestry]
+  - 'ok = ok and is_ancestor(lane, commit, rev) and not'
+  + 'ok = ok and not'
+
+M12_touched_off [touched-files]
+  - "                if item['path'] not in files:"
+  + "                if False and item['path'] not in files:"
+
+M13_newsince_off [new-since-routing]
+  - "                if then is not None and norm(item['excerpt']) in norm(then.decode('utf-8', 'replace')):"
+  + "                if False and norm(item['excerpt']) in norm(then.decode('utf-8', 'replace')):"
+
+M14_planned_pattern_loose [Planned parser]
+  - "        if line.startswith('**Planned (round'):"
+  + "        if 'Planned' in line:"
+
+M15_planned_para_bleed [Planned parser]
+  - '        if not line.strip():\n            break'
+  + '        if not line.strip():\n            pass'
+
+M16_fixed_floor_0 [floors]
+  - 'FIXED_FLOOR = 20'
+  + 'FIXED_FLOOR = 0'
+
+M17_declined_cap_99 [floors]
+  - 'DECLINED_CAP = 12'
+  + 'DECLINED_CAP = 99'
+
+M18_thisround_floor_0 [floors]
+  - 'THIS_ROUND_FLOOR = 5'
+  + 'THIS_ROUND_FLOOR = 0'
+
+M19_total_max [total arithmetic]
+  - '    total = sum(counts.values())'
+  + '    total = max(counts.values())'
+
+M20_extra_as_missing [extra handling]
+  - "            counts['extra'] += 1"
+  + "            counts['missing'] += 1"
+
+M21_duplicate_continue_pass [duplicate handling]
+  - "            note('duplicate', rid)\n            continue"
+  + "            note('duplicate', rid)\n            pass"
+
+M22_spotcheck_hash_flip [spot-check hash]
+  - 'if blob is None or hashlib.sha256(blob).hexdigest() != sha:'
+  + 'if blob is None or hashlib.sha256(blob).hexdigest() == sha:'
+
+M23_statuses_open [status set]
+  - "STATUSES = ('fixed', 'open', 'declined')"
+  + "STATUSES = ('fixed', 'opens', 'declined')"
+
+M24_decline_len_4 [declined reason]
+  - 'or len(norm(reason)) < 40:'
+  + 'or len(norm(reason)) < 4:'
+
+M25_open_check_off [open/Planned]
+  - "            if d['id'] not in planned:"
+  + '            if False:'
+
+M26_keymiss_off [key match]
+  - '        if not keyed:'
+  + '        if False:'
+
+M27_lines_range_loose [lines range]
+  - '    if not (1 <= a <= b <= len(text)) or b - a > MAX_SPAN:'
+  + '    if not (1 <= a) or b - a > MAX_SPAN:'
+
+M28_line_pass_always [line() output]
+  - "parts.append('total=%d C1_R50_PASS=%s' % (total, 'true' if total == 0 else 'false'))"
+  + "parts.append('total=%d C1_R50_PASS=%s' % (total, 'true'))"
+
+M29_base_const_broken [BASE default]
+  - "BASE = 'e3729de862f73ae080d98fcf522a7081ce16e40a'"
+  + "BASE = '0' * 40"
+

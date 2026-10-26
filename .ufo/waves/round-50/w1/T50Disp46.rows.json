@@ -1,0 +1,120 @@
+{
+ "round": 46,
+ "rows": [
+  {
+   "id": "R46.1",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "140-140",
+     "excerpt": "supersedes S026's anchor and quote only: Google's flakiness rates and mitigations, re-anchored to the 2026-10-26 bytes"
+    },
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "142-142",
+     "excerpt": "supersedes S093's anchor and quote only: the same six flags documented in the raw bwrap.xml at tag v0.13.1, quoted so that --unshare-all's six-flag expansion and the try-else-skip wording of --unshare-cgroup-try sit inside one 25-word quote; not a measured security boundary for any argv"
+    },
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "143-143",
+     "excerpt": "supersedes S108's anchor and quote only: the same --update_goldens sentence as worded on the official zh-cn page, re-located in a committed 2026-10-26 snapshot; the English upstream row S107 remains the tier-A statement"
+    },
+    {
+     "path": ".ufo/evidence/round-48/freshness/sources/S093.receipt.json",
+     "lines": "2-4",
+     "excerpt": "\"url\": \"https://raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml\", \"fetched_at\": \"2026-10-26T08:41:10Z\", \"http_status\": 200"
+    }
+   ],
+   "commit": "50545328e7ac4ba1703d70030e37dacec9362e68",
+   "seat": "T50Disp46",
+   "note": "round 48 C2 re-anchored S026/S093/S108 as S265/S267/S268 by located quote, with committed snapshots and per-snapshot fetch receipts"
+  },
+  {
+   "id": "R46.2",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-47/hardening/pool.py",
+     "lines": "299-301",
+     "excerpt": "# an AST-pin selftest kills the neutral commute mutant: the control the neutral set exists for"
+    },
+    {
+     "path": ".ufo/evidence/round-47/hardening/pool.py",
+     "lines": "17-18",
+     "excerpt": "A mutant is `killed` iff `python3 <mutated copy> --selftest` exits nonzero AND prints at least one line starting `FAIL ` (a named rule case failed); a nonzero exit with no such line is `crashed`, a"
+    },
+    {
+     "path": ".ufo/evidence/round-47/hardening/pool.py",
+     "lines": "47-52",
+     "excerpt": "'freshness': dict(base='.ufo/evidence/round-46/hardening/freshness-counter.py', v2='.ufo/evidence/round-47/hardening/freshness-counter.py'),"
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2251-2251",
+     "excerpt": "- The operative counters are untouched: the credit lands on the hardened copies, which become the lane's counters only when a later round adopts them (T46CritC2 F4)."
+    }
+   ],
+   "seat": "T50Disp46",
+   "note": "AST-pin control and named-FAIL kill credit landed in round 47 on the v2 copies under .ufo/evidence/round-47/hardening/; the operative counters were never adopted (round-45 freshness counter still pinned and scored)",
+   "fix_plan": "not this round: the smallest change is to make the hardened counters the lane's own, i.e. place tools/freshness-counter.py and tools/coverage-counter.py as byte-identical copies of .ufo/evidence/round-47/hardening/{freshness,coverage}-counter.py, re-point the freshness/coverage standing rows and the freshness entry's sha_file in .ufo/evidence/round-47/calibration/statements.json at the new paths, and keep pool.py --targets v2 green against them; that satisfies 'adopt them' because the operative counters would then be the hardened ones with the AST-pin control and named-FAIL kill credit. It is not this round: re-pointing sha-pinned standing rows changes the calibration statement set, so it needs its own pre-registered claim and deciding run rather than a silent edit inside round 50's frozen C1/C2."
+  },
+  {
+   "id": "R46.3",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-47/calibration/measure.py",
+     "lines": "20-26",
+     "excerpt": "`bwrap`/`jj`/`node` = P1 with that executable removed from the PATH shim; `fleet-root` = P1 run inside `bwrap --bind / / --dev-bind /dev /dev --bind DECOY /home/vgpnk/Projects/shokunin` where DECOY holds only a stub scripts/sources-census.sh that exits 7 (a statement that reads anything under the real fleet root changes);"
+    },
+    {
+     "path": ".ufo/evidence/round-47/calibration/statements.json",
+     "lines": "3-16",
+     "excerpt": "{ \"id\": \"sources-registry\", \"kind\": \"cap\", \"argv\": [ \"bash\", \".ufo/evidence/kaika-round-1/sources-census-v2.sh\" ], \"obs\": \"census\", \"cmd_text\": \"bash .ufo/evidence/kaika-round-1/sources-census-v2.sh\", \"sha_file\": \".ufo/evidence/kaika-round-1/sources-census-v2.sh\", \"cwd\": \"clone\", \"timeout\": 300, \"what\": null, \"first\": null"
+    },
+    {
+     "path": ".ufo/evidence/round-47/calibration/statements.json",
+     "lines": "117-131",
+     "excerpt": "\"id\": \"retained invocation-context gate\", \"kind\": \"cap\", \"argv\": [ \"python3\", \".ufo/evidence/round-15/verify.py\", \"--rev\", \"7650fe4db89f3a706aed63d048ac47e02289cc72\" ], \"obs\": \"^selftest-new-full-count: PASS summary (SELFTEST: PASS \\\\(\\\\d+/\\\\d+\\\\))\", \"cmd_text\": \"python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72\", \"sha_file\": \".ufo/evidence/round-15/verify.py\""
+    }
+   ],
+   "commit": "9acfbe21435e1976636a276448dee1d5e7155915",
+   "seat": "T50Disp46",
+   "note": "round 47 statements v2 pin all 22 statements (the five without sha_file gain it) and observe each under a clean-env P1 with a bwrap decoy fleet root and per-executable PATH removals"
+  },
+  {
+   "id": "R46.4",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "corpus/lessons/round-46.md",
+     "lines": "32-32",
+     "excerpt": "### Admit — S259 (new row): *An Empirical Study of Detected and Undetected Flaky Test Failures* (Leinen et al.; IEEE TSE 2026)"
+    },
+    {
+     "path": "corpus/lessons/round-46.md",
+     "lines": "40-42",
+     "excerpt": "- Located quote, 18 tokens (the abstract appears three times on the page, so the folded text holds the string three times): “We found that, across all projects, undetected flaky failures account for 9.8 %-16.3 % of failed pipeline runs.”"
+    }
+   ],
+   "seat": "T50Disp46",
+   "note": "the S259 gate quote still prints the hyphen form at corpus/lessons/round-46.md:42; the one-character en-dash fix was verified only on .ufo/evidence/round-47/quality/round46-lesson-dash-restored.md",
+   "fix_plan": "this round: change corpus/lessons/round-46.md:42 from 'for 9.8 %-16.3 % of failed pipeline runs.' to the en-dash form 'for 9.8 %–16.3 % of failed pipeline runs.' (U+2013; the one-character delta already proven green in .ufo/evidence/round-47/quality/c91-lesson-quote-red-green.stdout), or keep the hyphen and add the fold sentence at the quote; then `python3 .ufo/evidence/round-47/quality/lesson-quote-check.py corpus/lessons/round-46.md` must exit 0. That is the whole ask, in the lesson itself."
+  },
+  {
+   "id": "R46.5",
+   "status": "declined",
+   "evidence": [
+    {
+     "path": "SHONEN.md",
+     "lines": "5-6",
+     "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-1)"
+    }
+   ],
+   "reason": "Observation, not a lane-side ask: SHONEN promotion is operator-owned (every box is a lane assertion with no independent promotion verifier), so no code or prose change by the lane can mark a box [x] or make box 3 checkable this round.",
+   "seat": "T50Disp46",
+   "note": "promotion stays operator-owned; the four boxes remain [~] with resolvable pointers"
+  }
+ ]
+}

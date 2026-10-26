@@ -1,0 +1,63 @@
+# T50ScribeConsider base-status probes — lane /home/vgpnk/Projects/shokunin/tameshi-shokunin, rev e3729de862f73ae080d98fcf522a7081ce16e40a, HEAD 4afb060c1d6e994d1bbb9095493b1f6b2b8344f2, 2026-10-26T22:18:21Z
+
+## 1 ledger absent at base and in all history
+$ git -C LANE cat-file -e e3729de:corpus/routed-defects.json; echo exit=$?
+fatal: path 'corpus/routed-defects.json' does not exist in 'e3729de862f73ae080d98fcf522a7081ce16e40a'
+exit=128
+$ git -C LANE log --all --oneline -- corpus/routed-defects.json
+(no lines above = never committed)
+
+## 2 proposal keywords outside considerthese/
+$ git grep -n -i 'recurring-defect' e3729de -- corpus tools SCORECARD.md LOG.md SKILL.md
+e3729de:corpus/lessons/round-49.md:132:`considerthese/2026-10-26.md` (operator reflection, 2026-10-26), proposal 3, "Recurring-defect tracker for closures",
+  (hits=1)
+$ git grep -n -i 'crash-resume' e3729de -- corpus tools SCORECARD.md LOG.md SKILL.md
+  (hits=0)
+$ git grep -n -i 'nondeterminism fix' e3729de -- corpus tools SCORECARD.md LOG.md SKILL.md
+  (hits=0)
+$ git grep -n -i 'fallback register' e3729de -- corpus tools SCORECARD.md LOG.md SKILL.md
+  (hits=0)
+$ git grep -n -i 'budget readout' e3729de -- corpus tools SCORECARD.md LOG.md SKILL.md
+  (hits=0)
+$ git grep -n -i 'scratch budget' e3729de -- corpus tools SCORECARD.md LOG.md SKILL.md
+  (hits=0)
+
+## 3 frozen defect set
+$ python3 - (counts from .ufo/evidence/round-50/c1/defects.json)
+count 49 items 49 keys_all True
+per_round {40: 5, 41: 7, 42: 4, 43: 3, 44: 2, 45: 4, 46: 5, 47: 7, 48: 6, 49: 6}
+
+## 4 criteria and SHONEN
+$ grep -n "^### Criterion \(86\|95\|96\)" corpus/QUALITY.md
+1156:### Criterion 86 — a deciding receipt binds the revision it measured, never the tip that carries it
+1400:### Criterion 95 — a standing value is restated only from at least three observations, or with a declared nondeterministic class
+1420:### Criterion 96 — a differing observation is attributed to a cause only by a run that varies that cause alone
+$ grep -n "^\- \[~\]" SHONEN.md | wc -l; sed -n "5,12p" SHONEN.md
+4
+- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources
+  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-1)
+- [~] At least one end-to-end domain task executed and logged in LOG.md
+  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-2)
+- [~] Instructions executable by an agent without oral context
+  [lane assertion, input-keyed monitor only; no independent promotion verifier](.ufo/evidence/round-21/coldread/ledger.json)
+- [~] No cross-domain bleed (PROVINCE.md still accurate)
+  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-4)
+
+## 5 earlier-idea implementations
+1156:### Criterion 86 — a deciding receipt binds the revision it measured, never the tip that carries it
+corpus/lessons/round-47.md:92:### considerthese — `considerthese/2026-10-25.md` idea 3 (dead-code debt list)
+corpus/lessons/round-48.md:364:### considerthese — `considerthese/2026-10-25.md` idea 5 (proposal uptake ledger)
+101:`considerthese/2026-10-25.md` proposal 2 (cumulative mismatch-class regression run) is mined: ExecRegressionClasses
+
+## 6 no capacity readout / no carrier register
+$ git -C LANE grep -n -I "seats dispatched\|scratch-space\|scratch space" e3729de -- .ufo corpus SCORECARD.md LOG.md | wc -l
+206
+$ python3 tools/wave-accounting.py --help | head -8
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+
+Reconcile retained callback outcomes with exact wave membership. Reports are
+artifacts, never terminal-state authority. This gate validates caller-declared
+retained data and its persisted digest, not provider telemetry. Exit 0 clean;
+1 failed invariant; 2 invalid/unavailable/tampered input; 64 usage (could-not-
+evaluate). Read-only except isolated --selftest fixtures.

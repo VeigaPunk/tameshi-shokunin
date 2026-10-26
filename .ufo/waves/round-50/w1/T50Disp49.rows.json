@@ -1,0 +1,134 @@
+{
+ "round": 49,
+ "rows": [
+  {
+   "id": "R49.1",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "tools/pbt-staged-id.py",
+     "lines": "41-41",
+     "excerpt": "2 = setup problem (bad arguments, unwritable dump, unreadable guard)"
+    },
+    {
+     "path": "tools/pbt-staged-id.py",
+     "lines": "981-982",
+     "excerpt": "guard = os.path.abspath(args.guard) if not os.path.isfile(guard):"
+    }
+   ],
+   "seat": "T50Disp49",
+   "note": "F1-F3 unfixed at base: main() still admits an unreadable guard; probed exit 1 at HEAD.",
+   "fix_plan": "tools/pbt-staged-id.py:981-983: replace the os.path.isfile check with try: open(guard, \"rb\") / except OSError as exc: return _setup_error(...) (exit 2), wrap the run()-loop dump.write/flush and write_text in the same OSError guard (F2), and move os.makedirs(case_dir) inside the try (F3); add selftest() case \"unreadable-guard-refused\" that chmod-000s a temp guard and asserts the exit-2 message, which fails before the change."
+  },
+  {
+   "id": "R49.2",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SCORECARD.md",
+     "lines": "2410-2410",
+     "excerpt": "a successor C1 counter that caps `absent` and requires evidence for it; the C2 counter's differential-generator blind spot"
+    },
+    {
+     "path": ".ufo/evidence/round-49/c1/measure.py",
+     "lines": "401-403",
+     "excerpt": "total = (bad_mon + (dur['total'] - dur['covered']) + (0 if mon['score'] == 8 else 1) + len(missing) + floor_short + res['unresolved'] + res['unverified'] + res['excerpt_miss'] + res['not_holds'])"
+    },
+    {
+     "path": ".ufo/evidence/round-49/c1/measure.py",
+     "lines": "406-406",
+     "excerpt": "excerpt_miss=%d not_holds=%d absent=%d"
+    },
+    {
+     "path": "corpus/knowledge/pbt-generator-pilot.md",
+     "lines": "70-71",
+     "excerpt": "The counter cannot tell a property-based generator from a differential one that compares the mutant with a copy of"
+    }
+   ],
+   "seat": "T50Disp49",
+   "note": "Round-50 froze C1 as the routed-defect ledger, so no successor counter exists at base.",
+   "fix_plan": "not this round: a successor C1 counter (capped absent + required evidence) and a generator-vs-differential distinguisher are new frozen instruments; the round-50 contract froze C1 as the ledger at cdbf24c0 and cannot be amended mid-round, so both stay on Planned (round 50) for a round that pre-registers them."
+  },
+  {
+   "id": "R49.3",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SKILL.md",
+     "lines": "1503-1503",
+     "excerpt": "isolated `/tmp/tameshi-r12-*` selftest; snapshot read-only"
+    },
+    {
+     "path": "SKILL.md",
+     "lines": "1509-1509",
+     "excerpt": "deepens one recorded case, never a seventh independently measured gate."
+    },
+    {
+     "path": "SKILL.md",
+     "lines": "1555-1555",
+     "excerpt": "No registry row changes rank, SHONEN authority, or the six recorded cases."
+    }
+   ],
+   "seat": "T50Disp49",
+   "note": "All three sentences are byte-unchanged at base; round 49 routed them instead of editing.",
+   "fix_plan": "tools/repeat-control.py: rename the selftest temp prefix to `tameshi-r12-selftest-` and reword the SKILL.md:1503 cell `/tmp/tameshi-r12-*` to `/tmp/tameshi-r12-selftest-*` (same line count, no pointer moves); append one erratum paragraph at SKILL.md EOF stating that 1509/1555 counts are the round-13 registry values (six cases) and that the ledger now records nine legs, leaving both sentences as written so no credited section excerpt changes."
+  },
+  {
+   "id": "R49.4",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "SCORECARD.md",
+     "lines": "2423-2423",
+     "excerpt": "| calibration | 8 | round-21 cold-read monitor `calibration_restraint_score=8`, `sections_covered=64` of 64"
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2416-2416",
+     "excerpt": "### Standing axis table — re-stated at round 50 (round-49 values; routed by the round-49 spot-check, defect 4)"
+    }
+   ],
+   "commit": "4afb060c1d6e994d1bbb9095493b1f6b2b8344f2",
+   "seat": "T50Disp49",
+   "note": "Round 50 appended the standing table with calibration 8; the round-48 table is unchanged."
+  },
+  {
+   "id": "R49.5",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "tools/tally-audit-v2.py",
+     "lines": "135-136",
+     "excerpt": "def brace_depth_at(text, offset):"
+    },
+    {
+     "path": "tools/tally-audit-v3.py",
+     "lines": "234-235",
+     "excerpt": "def brace_depth_at(text, offset):"
+    }
+   ],
+   "seat": "T50Disp49",
+   "note": "Compound: the two dead helpers are still present (no caller), and none of the other five carried asks appears in round 49 or 50.",
+   "fix_plan": "not this round: the item is compound. The one cheap part is deleting tools/tally-audit-v2.py:135-143 and tools/tally-audit-v3.py:234-242 and re-pinning the two sha-pinned standing rows; the other five asks (round-47 C1/C3 survivor selftests, S205/F7 package candidates, a pinned-leg successor or a declared nondeterministic class for six-leg regression ledger, the located-name check, the append-only landing rule) are separate work items each needing its own seat."
+  },
+  {
+   "id": "R49.6",
+   "status": "declined",
+   "evidence": [
+    {
+     "path": "SHONEN.md",
+     "lines": "5-5",
+     "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources"
+    },
+    {
+     "path": "SHONEN.md",
+     "lines": "11-11",
+     "excerpt": "- [~] No cross-domain bleed (PROVINCE.md still accurate)"
+    }
+   ],
+   "seat": "T50Disp49",
+   "reason": "Promotion is operator-owned: no lane seat can promote its own boxes, and box 3 rests on lane-dispatched readers plus an 8-item closure sample, which is not a full non-author cold read; nothing a seat writes this round makes a box checkable by a non-author.",
+   "note": "All four boxes are still [~]; the ask is a promotion act, not a lane edit."
+  }
+ ]
+}

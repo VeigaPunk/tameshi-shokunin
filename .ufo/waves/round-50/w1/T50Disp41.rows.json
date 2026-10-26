@@ -1,0 +1,143 @@
+{
+ "round": 41,
+ "rows": [
+  {
+   "id": "R41.1",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-42/calibration/measure.py",
+     "lines": "77-79",
+     "excerpt": "BACKTICK_RE = re.compile(r'`([^`\\n]+)`')"
+    },
+    {
+     "path": ".ufo/evidence/round-42/calibration/measure.py",
+     "lines": "14-16",
+     "excerpt": "line-scoped path extraction: a backtick span never crosses a newline, so a mispaired span no longer hides the paths after it"
+    }
+   ],
+   "commit": "322b5cd32b4319a05340d249ae752d12a9e6b19f",
+   "seat": "T50Disp41",
+   "note": "m8 extractor is line-scoped in the round-42 successor counter; selftest T1_old_extractor_misses / T1_new_extractor_sees prove the difference (receipt .ufo/evidence/round-42/before/c1-selftest.stdout)"
+  },
+  {
+   "id": "R41.2",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/QUALITY.md",
+     "lines": "1003-1011",
+     "excerpt": "When the tree later contradicts it, the fix is an appended superseding receipt. That receipt names the old one in `supersedes`, re-asserts every path the old one asserted, and agrees with the tree on each."
+    },
+    {
+     "path": "corpus/QUALITY.md",
+     "lines": "1010-1011",
+     "excerpt": "The live instance was the round-41 residual receipt: `present: false` for `ResidualReceipts.md`, written before that report landed."
+    }
+   ],
+   "commit": "5f739acf21e878e22bd3f66249ae8bec2aaf1fc1",
+   "seat": "T50Disp41",
+   "note": "supersede receipt .ufo/waves/round-42/supersede/round-41-residual-receipt.json (commit 5f739acf) re-asserts all eight round-41 seats present:true; all eight files exist at base"
+  },
+  {
+   "id": "R41.3",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-42/calibration/measure.py",
+     "lines": "7-13",
+     "excerpt": "self-pin: the counter's bytes at the FREEZE revision and the bytes of the running file must equal `claims.C1.counter_sha256` in the contract read at FREEZE (not at REV)"
+    },
+    {
+     "path": ".ufo/evidence/round-42/census/measure.py",
+     "lines": "7-9",
+     "excerpt": "out-of-process: the measured tool is never imported; every run is `python3 -I <tool> ...` in a temporary directory, so the tool cannot patch the counter"
+    },
+    {
+     "path": ".ufo/evidence/round-42/census/measure.py",
+     "lines": "14-15",
+     "excerpt": "`resolved` text inspection: the live sites must resolve to text naming the mechanism (`mkdtemp`, `--out`), so a constant table cannot satisfy them"
+    },
+    {
+     "path": ".ufo/evidence/round-42/census/measure.py",
+     "lines": "16-21",
+     "excerpt": "exit-plus-FAIL kill oracle: a mutant is `killed` only when every run exits 0 with parseable output AND at least one battery case differs from its declared classification (a FAIL line names it)."
+    }
+   ],
+   "commit": "322b5cd32b4319a05340d249ae752d12a9e6b19f",
+   "seat": "T50Disp41",
+   "note": "the successor pair (C1 calibration + C2 census counters) carries all five named mechanisms; m8 scope widened to six prefixes and the whole-lesson m9 class is gone"
+  },
+  {
+   "id": "R41.4",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-42/census/measure.py",
+     "lines": "29-33",
+     "excerpt": "the three live v3 false positives — `tools/context-capture.py:1682` and `:1685` (base `self.case_dir(name)` over `self.root = tempfile.mkdtemp(...)`), and `tools/registry-replay.py:123`"
+    },
+    {
+     "path": "corpus/lessons/round-42.md",
+     "lines": "252-253",
+     "excerpt": "The round-41 routed v3 false positives (defect 4) are resolved by v4, not by editing v3: v3's bytes stay pinned at `095924a7…`."
+    }
+   ],
+   "commit": "5f739acf21e878e22bd3f66249ae8bec2aaf1fc1",
+   "seat": "T50Disp41",
+   "note": "probed at base bytes: v4 --json gives unflagged=false on context-capture.py:1682/:1685 (scratch=true) and registry-replay.py:123 (explicit_out=true)"
+  },
+  {
+   "id": "R41.5",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/lessons/round-42.md",
+     "lines": "246-248",
+     "excerpt": "docstring says aliases, closures and attribute reassignment are not reliably resolved, which corrects v3's blanket \"NOT resolved\" (round-41 routed defect 5); the knowledge entry"
+    },
+    {
+     "path": "tools/write-path-census-v4.py",
+     "lines": "38-40",
+     "excerpt": "closures over reassigned names and attribute reassignment are not reliably resolved: a name can bind by definition order or keep a stale binding, so a reader must not treat an unresolved destination as proven safe."
+    }
+   ],
+   "commit": "5f739acf21e878e22bd3f66249ae8bec2aaf1fc1",
+   "seat": "T50Disp41",
+   "note": "v3's bytes stay pinned; the successor v4 docstring states the bound as bounded and warns an unresolved destination is not proven safe"
+  },
+  {
+   "id": "R41.6",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "469-471",
+     "excerpt": "`comm -12` → 2 collisions, `S153` and `S154`. Guard proven on an indented ` | S159 |` fixture"
+    },
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "469-471",
+     "excerpt": "Renumber map, by document: `staged:S159` (pitest.org/quickstart/basic_concepts/) → S155; `staged:S160` (pitest.org/faq/) → S156."
+    }
+   ],
+   "commit": "5f739acf21e878e22bd3f66249ae8bec2aaf1fc1",
+   "seat": "T50Disp41",
+   "note": "round 42 ran the collision check in scratch and appended the renumbered documents as S155/S156; no staged id was appended unrenumbered"
+  },
+  {
+   "id": "R41.7",
+   "status": "declined",
+   "evidence": [
+    {
+     "path": "corpus/lessons/round-42.md",
+     "lines": "254-255",
+     "excerpt": "Round-41 routed defect 7 (cosmetic list split in `corpus/SOURCES.md`) is left as is: re-flowing a closed note is an in-place edit for no parse gain."
+    }
+   ],
+   "reason": "Re-flowing the round-41 note block rewrites a closed, append-only note in place for a rendering-only gain with no parse effect; the lane recorded it as left as is in the round-42 lesson and QUALITY's append-only rule forbids the in-place edit.",
+   "seat": "T50Disp41",
+   "note": "key_miss is structural: the frozen keys (SOURCES.md:436, 436-437, bullet list) occur nowhere outside the spot-check, which the counter excludes"
+  }
+ ]
+}

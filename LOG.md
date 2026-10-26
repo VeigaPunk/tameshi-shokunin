@@ -2392,3 +2392,16 @@ Motivating evidence: the round-48 closure ruled the round rejected-harmed becaus
 - Waves: w1 build (55 seats), w2 falsify; counts in the report.
 
 Evidence: `.ufo/evidence/round-49/`, `.ufo/waves/round-49/`, `corpus/lessons/round-49.md`; measured values in the deciding receipts `.ufo/evidence/round-49/after/` and the report.
+
+## 2026-10-26 — round 50: routed-defect ledger (calibration) + F6 fixture shrinker (coverage)
+
+L1 TameshiR50 (hyaku run 9, attempt 1). Claims pre-registered and counters frozen at `cdbf24c0` (`.ufo/evidence/round-50/contract.json`, `freeze.json`); controls and counter selftests scored at freeze bytes and committed at `f87910fe` before any seat.
+
+Motivating evidence: the round-49 closure routed six items and called five of round 48's still "carried, not landed" (`corpus/lessons/round-49-verifier-spotcheck.md:120-127`); the round-49 considerthese mining found 10 recurring defect classes across nine closures (`corpus/lessons/round-49.md:130-141`); F6 had stayed open since round 29's honest stop (`corpus/knowledge/survivor-fixture-minimization.md:53`).
+
+- C1: ten disposer seats and ten independent cross-coders judged the 49 routed items of the round-40..49 spot-checks; the L1 resolved 14 disagreements (`.ufo/evidence/round-50/integrate/`); ledger `corpus/routed-defects.json` (31 fixed, 7 open, 11 declined); eight items closed this round (R40.2, R40.3, R45.2, R46.4, R47.2, R49.1, R49.2, R49.4); the seven open ones are in SCORECARD `Planned (round 51)`.
+- C2: `tools/shrink-case.py` (seat T50ExecShrinker, ddmin with verdict cache, built blind to the hidden panel); row S271 (Zeller & Hildebrandt TSE 2002, staged S167 re-grounded); entries `corpus/knowledge/fixture-shrinking-pilot.md` and the admitted, edited `corpus/knowledge/delta-debugging-minimization-contract.md`; README F6 line conditioned on the deciding receipt.
+- Frontier: QUALITY 100 (landed wave artifacts are append-only) and 101 (a claim counter's selftest reaches `measure()`; falsifier `reach-r49` red, `reach-r50` green); mistakes mined in `corpus/lessons/round-50.md`; considerthese proposal 3 implemented as C1; assimilation theme F6 (one entry admitted, the staged row and one cost claim refused, one entry deferred).
+- Disclosed: both frozen counters admit forgeries a mechanical check cannot see (lesson `## C1`/`## C2`); routed to round 51 as successor counters.
+
+Evidence: `.ufo/evidence/round-50/`, `.ufo/waves/round-50/`, `corpus/lessons/round-50.md`; measured values in the deciding receipts `.ufo/evidence/round-50/after/` and the report.

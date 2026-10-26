@@ -1,0 +1,28 @@
+== D: is_subcase ignores line terminators ==
+byte-equal-line-ends: False  is_subcase(s,c): True  units c/s: 2 2  splitlines(True) c: ['| S001 | a | b | c | d |\n']
+== A: .runs symlink escapes the work dir ==
+guard rc: 2  .runs is symlink: True -> /fast/scratch/hyaku/tameshi-r50/T50SentinelShrink/victim-repo/notes.txt
+victim notes.txt now: 'clean\np\n'
+victim git status: ' M notes.txt\n'
+== A2: .runs -> /dev/zero makes the counter read hang ==
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r50/T50SentinelShrink/harness/probe_defs.py", line 45, in <module>
+    r = subprocess.run([sys.executable, '-c',
+                        'import sys\n'
+                        'with open(sys.argv[1]) as fh:\n'
+                        '    print("lines", sum(1 for _ in fh))\n', os.path.join(z, '.runs')],
+                       capture_output=True, timeout=5)
+  File "/usr/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 2154, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1268, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['/usr/bin/python3', '-c', 'import sys\nwith open(sys.argv[1]) as fh:\n    print("lines", sum(1 for _ in fh))\n', '/fast/scratch/hyaku/tameshi-r50/T50SentinelShrink/probe/zero/.runs']' timed out after 5 seconds

@@ -1,0 +1,136 @@
+# T50ScribeMistake receipts — round-50 wave-1 scribe probes (scratch /fast/scratch/hyaku/tameshi-r50/T50ScribeMistake)
+# date: 2026-10-26T19:27:44-03:00; host python: Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+# lane tip read: 4afb060c1d6e994d1bbb9095493b1f6b2b8344f2
+
+== P0 target digests
+ceee320c9ad84c89a7846fd746a072a60758a465d25ff80343fb95e0bd88ae29  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py
+c3da7e59abf279db2ebf165d1a8d8298295ca234cd83b49027b9cb0b1823dfe3  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c2/measure.py
+0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f05  /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/pbt-staged-id.py
+03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8  /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py
+
+== P1 c1 selftest baseline (frozen bytes, copy)
+$ TMPDIR=$S/w1 python3 -B c1.py --selftest
+C1_R50_SELFTEST: cases=25 failed=0
+exit=0
+
+== P2 c1 mutant floor-check: counts['fixed_short'] = 0  (r49 M11 analog)
+265c265
+<     counts['fixed_short'] = max(0, fixed_floor - stat['fixed'])
+---
+>     counts['fixed_short'] = 0
+SELFTEST fixed floor counted                FAIL
+C1_R50_SELFTEST: cases=25 failed=1
+exit=1
+
+== P3 c1 mutant total-sum drops the evidence_bad term (r49 M14 analog)
+268c268
+<     total = sum(counts.values())
+---
+>     total = sum(v for k, v in counts.items() if k != "evidence_bad")
+C1_R50_SELFTEST: cases=25 failed=0
+exit=0
+
+== P4 c1 mutant total-sum drops the key_miss term
+268c268
+<     total = sum(counts.values())
+---
+>     total = sum(v for k, v in counts.items() if k != "key_miss")
+C1_R50_SELFTEST: cases=25 failed=0
+exit=0
+
+== P5 c1 mutant frozen floor literal FIXED_FLOOR = 20 -> 5 (r49 M29 analog)
+50c50
+< FIXED_FLOOR = 20
+---
+> FIXED_FLOOR = 5
+C1_R50_SELFTEST: cases=25 failed=0
+exit=0
+
+== P6 c1 mutant DEFECTS_SHA256 first hex digit 6 -> 7 (r49 M13 analog)
+47c47
+< DEFECTS_SHA256 = '6a953e6ea8d3b186444a99a890c3b46ab891ab01c0428d5d2debec204e83cd3f'
+---
+> DEFECTS_SHA256 = '7a953e6ea8d3b186444a99a890c3b46ab891ab01c0428d5d2debec204e83cd3f'
+C1_R50_SELFTEST: cases=25 failed=0
+exit=0
+
+== P7 c2 selftest baseline (frozen bytes, copy; the selftest needs --lane and --work)
+$ TMPDIR=$S/w2 python3 -B c2.py --lane LANE --work $S/w2 --selftest
+C2_R50_SELFTEST: cases=9 failed=0
+exit=0
+
+== P8 c2 mutant: records check disabled (counts['records_bad'] = 0)
+319c319
+<     counts['records_bad'] = sum(1 for v in rec.values() if not v)
+---
+>     counts['records_bad'] = 0
+SELFTEST missing F6 records counted               FAIL
+C2_R50_SELFTEST: cases=9 failed=1
+exit=1
+
+== P9 c2 mutant frozen public-panel pin PUBLIC_SHA256 d->e (first hex digit)
+56c56
+< PUBLIC_SHA256 = 'd6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1'
+---
+> PUBLIC_SHA256 = 'e6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1'
+C2_R50_SELFTEST: cases=9 failed=0
+exit=0
+
+== P10 c2 mutant frozen hidden-panel pin HIDDEN_SHA256 5->6 (first hex digit)
+57c57
+< HIDDEN_SHA256 = '5c14e9a6843b3aae99abb7ffbd92bb3aa1e594391776edcfbf65d941fe8b0cc6'
+---
+> HIDDEN_SHA256 = '6c14e9a6843b3aae99abb7ffbd92bb3aa1e594391776edcfbf65d941fe8b0cc6'
+C2_R50_SELFTEST: cases=9 failed=0
+exit=0
+
+== P11 round-49 generator (base bytes) on an existing but unreadable guard: setup fault reported as a finding
+cp: cannot create regular file 'g/guard.py': Permission denied
+---------- 1 vgpnk vgpnk 22931 Oct 26 19:24 g/guard.py
+$ TMPDIR=$S/g python3 -I $S/g/pbt.py --guard $S/g/guard.py --seed 4949 --cases 2 --dump $S/g/d.jsonl
+VIOLATION index=0 exit 2, oracle expects 1
+VIOLATION observed_exit=2 stdout= stderr=/usr/bin/python3: can't open file '/fast/scratch/hyaku/tameshi-r50/T50ScribeMistake/g/guard.py': [Errno 13] Permission denied 
+PBT_STAGED_ID_TIME: seconds=0.01
+PBT_STAGED_ID: cases=1 violations=1 counterexample=0 classes=indent_1_3=1,indent_4_plus=0,id_4_plus_digits=0,collision=0,no_collision=0,held=0,unmapped=0,cascade=0,refusal=1,url_form_variant=0,map=0,map_inadmissible=0
+exit=1
+
+== P12 control: the same command on a missing guard (the docstring's exit 2 is produced here)
+$ TMPDIR=$S/g python3 -I $S/g/pbt.py --guard $S/g/absent.py --seed 4949 --cases 2 --dump $S/g/d2.jsonl
+pbt-staged-id: guard is not a regular file: /fast/scratch/hyaku/tameshi-r50/T50ScribeMistake/g/absent.py
+exit=2
+
+== P14 r49 selftest spans: does either frozen round-49 selftest reach the deciding code?
+$ python3  (span = def selftest() up to def main(); counts the deciding names inside it)
+Traceback (most recent call last):
+  File "<stdin>", line 5, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '.ufo/evidence/round-49/c1/measure.py'
+
+== P15 r50 counterparts: where the deciding call now happens
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py:304:def selftest(work):
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py:359:            _, counts, stat, total, _ = measure(repo, rev, defects, pin, floor, cap, None, trf, base or routed)
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py:420:        _, counts, stat, total, _ = measure(repo, rev, defects, True, 1, 1, None, 1, routed)
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c2/measure.py:421:def selftest(lane, work):
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c2/measure.py:490:            counts, stat, total = measure(repo, r, w, pub, hid, public_sha, hsha, fbase, log=lambda *a: logs.append(' '.join(map(str, a))),
+
+== P13 restoration evidence: lane bytes and tracked tree after every probe
+ceee320c9ad84c89a7846fd746a072a60758a465d25ff80343fb95e0bd88ae29  .ufo/evidence/round-50/c1/measure.py
+c3da7e59abf279db2ebf165d1a8d8298295ca234cd83b49027b9cb0b1823dfe3  .ufo/evidence/round-50/c2/measure.py
+0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f05  tools/pbt-staged-id.py
+03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8  tools/staged-id-guard.py
+$ git -C LANE status --porcelain | grep -v "^?? .ufo/"   # empty = no tracked change
+grep_exit=1 (1 = no tracked change)
+
+== P14b P14 re-run with absolute paths (the P14 attempt above failed: relative paths, cwd = scratch) — appended, not rewritten
+.ufo/evidence/round-49/c1/measure.py selftest lines 417-546
+   measure(           0
+   run_monitor        0
+   durability_commit  0
+   FLOORS             0
+   VOLATILE           0
+   MONITOR_SHA        0
+.ufo/evidence/round-49/c2/measure.py selftest lines 392-426
+   measure(           0
+   materialize        0
+   load_panel         0
+   run_generator      0
+   records(           0

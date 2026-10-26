@@ -1,0 +1,26 @@
+# Exit-code surface and non-regression probes on the fixed bytes
+# (TMPDIR=$S/probe3; each line: label, exit, first stderr line)
+no arguments           exit=2  pbt-staged-id: --guard, --seed, --cases and --dump are required
+--cases 0              exit=2  pbt-staged-id: --cases must be at least 1
+no --cases             exit=2  pbt-staged-id: --guard, --seed, --cases and --dump are required
+guard missing          exit=2  pbt-staged-id: guard is not a regular file: $S/nope.py
+guard is a directory   exit=2  pbt-staged-id: guard is not a regular file: $S/probe3/adir
+unreadable guard       exit=2  pbt-staged-id: guard is not readable: $S/probe2/noread.py
+                               (pre-fix bytes: exit 1, "VIOLATION index=0 exit 2, oracle expects 1",
+                                counterexample=0 in the last line -- a fabricated counterexample)
+dump is a directory    exit=2  pbt-staged-id: cannot write dump $S/probe4/adir: [Errno 21] Is a directory
+                               (stderr byte-equal at base: yes; this path pre-existed)
+dump is /dev/full      exit=2  pbt-staged-id: cannot write dump /dev/full: [Errno 28] No space left on device
+                               (pre-fix bytes: uncaught traceback in run(), exit 1, work root leaked)
+
+# A real oracle disagreement is still a violation: the fix swallows no violation.
+$ printf 'print(\'{"verdict": "answered", "collision_count": 999}\')\n' > $S/probe3/fake.py
+$ TMPDIR=$S/probe3 python3 -I fixed.py --guard $S/probe3/fake.py --seed 7 --cases 3 --dump $S/probe3/d4.jsonl
+[exit 1]
+VIOLATION index=0 field set mismatch: extra=[] missing=['cascade', 'cascade_count', 'collisions', 'column0_collisions', 'column0_miss', 'extractor', 'held', 'naive_map', 'next_free', 'refused', 'registry_docs', 'registry_max', 'registry_rows', 'registry_sha256', 'safe_floor', 'staged_max', 'staged_rows', 'staged_sha256', 'unmapped']
+PBT_STAGED_ID: cases=1 violations=1 counterexample=0 classes=indent_1_3=1,indent_4_plus=1,id_4_plus_digits=0,collision=1,no_collision=0,held=0,unmapped=0,cascade=0,refusal=0,url_form_variant=0,map=0,map_inadmissible=0
+[dump lines: 1]
+
+# Import with no side effect (the round-50 shrinker imports the REV copy).
+imported_ok True   (check, oracle_case, case_classes, run, run_guard, main, workspace, guard_problem, SetupProblem)
+compiles_ok

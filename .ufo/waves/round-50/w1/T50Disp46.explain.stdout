@@ -1,0 +1,25 @@
+# Seat T50Disp46 — C1 counter self-check (probe, never a verdict)
+# Scratch clone of the lane (git clone -q --shared), reset to lane tip 4afb060c, ledger
+# corpus/routed-defects.json holding ONLY this seat's five rows, committed with a scratch identity.
+# Run A: rows only, no Planned paragraph naming R46.2/R46.4.
+
+$ git -C $S/lane checkout -q -B selfcheck4 4afb060c1d6e994d1bbb9095493b1f6b2b8344f2
+$ python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py --lane "$S/lane" --rev HEAD --explain
+EXPLAIN open-unplanned R46.2
+EXPLAIN open-unplanned R46.4
+C1_R50: self=ceee320c9ad8 rev=85b24c517d5180a3396e9b3080d9f076e8e009a7 defects=49 rows=5 fixed=2 open=2 declined=1 fixed_this_round=0 missing=44 extra=0 duplicate=0 spotcheck_changed=0 defects_pin=0 bad_status=0 evidence_bad=0 key_miss=0 fixed_bad=0 open_unplanned=2 declined_bad=0 fixed_short=18 declined_over=0 this_round_short=5 total=69 C1_R50_PASS=false
+
+# Run B: same rows, plus a probe-only Planned (round 50) paragraph naming R46.2 and R46.4,
+# simulating the L1's obligation for the two open rows.
+
+$ printf '\n**Planned (round 50), amended:** probe-only paragraph naming R46.2 (adopt the hardened counters) and R46.4 (en dash in the round-46 lesson).\n' >> SCORECARD.md
+$ git -C $S/lane commit -q -am 'scratch: probe planned paragraph'
+$ python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py --lane "$S/lane" --rev HEAD --explain
+C1_R50: self=ceee320c9ad8 rev=8b0267e22d96f8794054a4aeeefb5d7ae6b1e8a2 defects=49 rows=5 fixed=2 open=2 declined=1 fixed_this_round=0 missing=44 extra=0 duplicate=0 spotcheck_changed=0 defects_pin=0 bad_status=0 evidence_bad=0 key_miss=0 fixed_bad=0 open_unplanned=0 declined_bad=0 fixed_short=18 declined_over=0 this_round_short=5 total=67 C1_R50_PASS=false
+
+# Reading of the two runs (observed, not a verdict):
+#  - every EXPLAIN line naming a R46 id is explained in T50Disp46.md §Self-check;
+#  - missing=44, fixed_short=18, this_round_short=5 are the other eight seats' rows and the
+#    aggregation floors, not this seat's rows (this seat supplies 5 of 49 rows and 0 post-base fixes);
+#  - evidence_bad=0, key_miss=0, fixed_bad=0, declined_bad=0 in both runs: every cited excerpt
+#    resolves at its lines, carries a key, and each fixed row's commit/touch/novelty test passes.

@@ -1,0 +1,12 @@
+# commands run by T50ExecIdGuard (scratch root /fast/scratch/hyaku/tameshi-r50/T50ExecIdGuard, all lane writes read-only)
+
+$ grep -oE "\x27^ {0,3}\\\|[[:space:]]*S[0-9]{3,}\x27" $L/corpus/SOURCES.md | grep -oE "S[0-9]+" | sort > reg-ids
+$ grep -oE <same> /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md | grep -oE "S[0-9]+" | sort > staged-ids
+$ comm -12 reg-ids staged-ids > collisions
+$ python3 -I $L/tools/staged-id-guard.py --registry $L/corpus/SOURCES.md --staged $A --json > guard-run.json
+$ python3 -I $L/tools/staged-id-guard.py --registry proof/SOURCES.md --staged $A --json > proof/guard-proof.json
+$ python3 -I $L/tools/staged-id-guard.py --registry proof/SOURCES.md --staged proof/staged-indented.md --json > proof/guard-proof-column0.json
+$ python3 -I $L/tools/staged-id-guard.py --registry $L/corpus/SOURCES.md --staged $A --map maps/mapX.json --json
+$ awk -F"|" -v l=tameshi ... /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md > quarantine-slice
+$ curl -fsSL --max-time 60 https://www.cs.purdue.edu/homes/xyzhang/fall07/Papers/delta-debugging.pdf -o zeller.pdf
+$ pdftotext zeller.pdf zeller-raw.txt; pdftotext -layout zeller.pdf zeller.txt

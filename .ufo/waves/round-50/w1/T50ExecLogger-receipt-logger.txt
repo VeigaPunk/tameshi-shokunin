@@ -1,0 +1,93 @@
+SECTION 0 identity
+counter /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c2/measure.py sha=c3da7e59abf279db2ebf165d1a8d8298295ca234cd83b49027b9cb0b1823dfe3 self_sha=c3da7e59abf279db2ebf165d1a8d8298295ca234cd83b49027b9cb0b1823dfe3
+guard   /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/staged-id-guard.py sha=03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8 pin=03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8 match=True
+gen     /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/pbt-staged-id.py sha=0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f05 pin=0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f05 match=True
+INSTRUMENT literal = "import os as _r50_os\nwith open(_r50_os.path.join(_r50_os.path.dirname(_r50_os.path.abspath(__file__)), '.runs'), 'a') as _r50_fh:\n    _r50_fh.write('<TAG>\\n')\n"
+SECTION 1 insertion point
+first top-level import: line 57 (1-based) 'import argparse'
+lines added by instrument = 3; logger occupies lines 57-59 (1-based)
+logger body line 1 = 'import os as _r50_os'
+logger body line 3 = "    _r50_fh.write('p\\n')"
+docstring preserved (startswith first 40 chars) = True
+ast docstring preserved = True
+compile(instrumented) = OK
+first 4 top-level AST nodes = ['Expr', 'Import', 'With', 'Import']
+logger at module top level (docstring, Import os, With, then guard imports; no FunctionDef among the first four) = True
+SECTION 2 behaviour parity through the round-49 generator run_guard
+cases = 13 (one per RECIPES entry, seeded 4949 like run())
+case00 units=8 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case00 units=8 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case01 units=6 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case01 units=6 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case02 units=9 map=dict(len=1)                 IDENTICAL | .runs after run=1 (want 1)
+case02 units=9 map=dict(len=1) [mutant-tagged] IDENTICAL | .runs=2 (want 2)
+case03 units=7 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case03 units=7 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case04 units=6 map=list(len=0)                 IDENTICAL | .runs after run=1 (want 1)
+case04 units=6 map=list(len=0) [mutant-tagged] IDENTICAL | .runs=2 (want 2)
+case05 units=8 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case05 units=8 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case06 units=8 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case06 units=8 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case07 units=8 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case07 units=8 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case08 units=8 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case08 units=8 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case09 units=11 map=none                       IDENTICAL | .runs after run=1 (want 1)
+case09 units=11 map=none [mutant-tagged]       IDENTICAL | .runs=2 (want 2)
+case10 units=8 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case10 units=8 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case11 units=7 map=none                        IDENTICAL | .runs after run=1 (want 1)
+case11 units=7 map=none [mutant-tagged]        IDENTICAL | .runs=2 (want 2)
+case12 units=11 map=dict(len=1)                IDENTICAL | .runs after run=1 (want 1)
+case12 units=11 map=dict(len=1) [mutant-tagged] IDENTICAL | .runs=2 (want 2)
+parity + one-line-per-process over 13 cases (pristine- and mutant-tagged copies): ALL OK
+SECTION 3 tag lines / no partial lines / N runs -> N lines (one shared dir)
+N=7 runs into one dir -> .runs lines=7 tags=['p'] partial_or_foreign=[]
+observed lines=7, want N=7
+SECTION 4 python3 -I guard --selftest with and without the logger
+plain selftest exit=0 stdout_sha=e5bd217dcbb85eaede000f0a728e0a96f515fcd764367ca50abf2e28afea5443 last='VERDICT: PASS'
+inst  selftest exit=0 stdout_sha=e5bd217dcbb85eaede000f0a728e0a96f515fcd764367ca50abf2e28afea5443 last='VERDICT: PASS'
+selftest stdout byte-identical=True exit-identical=True stderr-identical=True .runs delta=1 (want 1)
+SECTION 5 --help and setup-refusal paths
+--help exit plain=0 inst=0 stdout_identical=True delta=1
+missing-args exit plain=2 inst=2 stderr=b'staged-id-guard: --registry and --staged are required\n' identical=True delta=1
+SECTION 6 guard imported as a module, never run
+import-only exit=0 stdout='exec_module ok' ; .runs delta=1 (1 means a bare import also logs)
+SECTION 7 relative script path / cwd dependence
+cwd=guard dir, argv guard.py: exit=0 delta=1
+cwd=elsewhere, argv ../inst/guard.py: exit=0 delta=1 (abspath(__file__) -> guard dir)
+guard copied to a scratch dir: exit=0 ; .runs of the ORIGINAL dir delta=0 ; copy dir .runs lines=1
+SECTION 8 read-only guard directory
+read-only dir: plain exit=1 ; instrumented exit=1 stdout_empty=True stderr_head=b'Traceback (most recent call last):\n  File "/fast/scratch/hyaku/tameshi-r50/T50ExecLogger/w/readonly/guard.py", line 58, in <module>\n    with open(_r50_os.path.join(_r50_os.path.dirname(_r50_os.path.ab'
+read-only dir                                  DIFFERS 
+   stdout: plain=b'{"cascade": [], "cascade_count": 0, "collision_count": 1, "collisions": ["S022"], "column0_collisions": [], "column0_miss": ["S022"], "extractor": "0-3space", "held": {}, "naive_map": {"S022": "S023"}, "next_free": "S023", "refused": true, "registry_docs": 1, "registry_max": "S022", "registry_rows":' inst=b''
+   stderr: plain=b'' inst=b'Traceback (most recent call last):\n  File "/fast/scratch/hyaku/tameshi-r50/T50ExecLogger/w/readonly/guard.py", line 58, in <module>\n    with open(_r50_os.path.join(_r50_os.path.dirname(_r50_os.path.abspath(__file__)), \'.runs\'), \'a\') as _r50_fh:\n         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^'
+   json: plain="{'cascade': [], 'cascade_count': 0, 'collision_count': 1, 'collisions': ['S022'], 'column0_collisions': [], 'column0_miss': ['S022'], 'extractor': '0-3space', 'held': {}, 'naive_map': {'S022': 'S023'}" inst='None'
+read-only dir parity = False
+SECTION 9 public round-49 panel mutants (12): anchor + parity + one line
+panel sha=d6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1 mutants=12 (pin d6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1)
+mutant M01 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M02 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M03 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M04 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M05 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M06 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M07 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M08 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M09 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M10 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M11 compile=True logger_top=True parity=True .runs=1 (want 1)
+mutant M12 compile=True logger_top=True parity=True .runs=1 (want 1)
+public mutants meeting compile+top-level-logger+parity+one-line: 12/12
+SECTION 10 double instrumentation (counter never does this)
+instrument(instrument(src)) exit=0 lines/process=2
+SECTION 11 timeout boundary
+GUARD_TIMEOUT in generator = 60 ; the logger writes at import, so a guard killed by the timeout still logs exactly one line (logged counts STARTED processes, not completed evaluations)
+SECTION 12 counter read side
+measure.py:281-284 reads sum(1 for _ in open(<shr>/.runs)) where <shr> is the directory of the --pristine copy the counter writes; the logger writes into dirname(abspath(guard)), so parity holds only while the shrinker invokes the guard file in place from <shr>
+SECTION 13 durability: line survives an os._exit right after import
+import + os._exit(0): exit=0 stdout='imported' .runs delta=1 (with-close already flushed)
+SECTION 14 judge/find legs do not write shr/.runs (directory disjointness)
+judge-style runs from ver/ (uninstrumented): exit=1 ; .runs in ver=0 case=0 shr=0
+one shrinker-style run from shr/: shr/.runs=1 ver/.runs=0 case/.runs=0

@@ -1,0 +1,51 @@
+{
+  "round": 41,
+  "codes": [
+    {
+      "id": "R41.1",
+      "status": "fixed",
+      "evidence": [{"path": "tools/write-path-census-v3.py", "lines": "216-237", "excerpt": "def classify_source(text):\n    \"\"\"Classify every write call site in `text`. Returns a list of records.\"\"\"\n    flagged = FLAG_RE.search(text) is not None\n    records = []\n    try:\n        tree = ast.parse(text)\n    except SyntaxError as exc:"}],
+      "commit": "c77c2b7e64d2e356381441ecf94abac03e984606",
+      "doubt": "Strongest counter-reason: merely adding an AST parser would not fix the specific cross-line backtick-token pairing defect in the successor counter. Checked the relevant implementation: BACKTICK_RE is `([^`\\n]+)` at tools/write-path-census-v3.py:79, so matching cannot span newlines; classify_source parses the text and walks statements at lines 216-237. This is the requested line-scoped extractor fix, not only a prose acknowledgement."
+    },
+    {
+      "id": "R41.2",
+      "status": "open",
+      "evidence": [{"path": "corpus/lessons/round-42.md", "lines": "159-160", "excerpt": "the round-41 residual receipt: `present: false` for `ResidualReceipts.md`, written before that report landed.\nThe round-42 C1 counter's m10 class audits `present` assertions under `.ufo/waves/`."}],
+      "doubt": "The tree still contains .ufo/waves/round-41/residual/receipt.json:14-16 asserting present:false for ResidualReceipts.md, and the report exists. Round 42 documented and measured the stale receipt, but this is an explicit open finding that requires a superseding receipt; the quoted evidence is an acknowledgement, not a correction."
+    },
+    {
+      "id": "R41.3",
+      "status": "fixed",
+      "evidence": [{"path": ".ufo/evidence/round-42/calibration/measure.py", "lines": "78-80", "excerpt": "S_CITE_RE = re.compile(r'(?<!staged:)\\bS(\\d{3,})\\b')\nBACKTICK_RE = re.compile(r'`([^`\\n]+)`')\nHEX40_RE = re.compile(r'(?<![0-9a-f:])(?<!blob:)(?<!tree:)([0-9a-f]{40})(?![0-9a-f])')"}],
+      "commit": "c77c2b7e64d2e356381441ecf94abac03e984606",
+      "doubt": "Strongest counter-reason: a corrected extractor regex alone would leave the successor pair unable to detect vacuity, omit out-of-process execution, resolved inspection, or require exit-plus-FAIL kills. Checked the round-42 counter: its docstring enumerates those requirements at .ufo/evidence/round-42/calibration/measure.py:1-20; the implementation has a nonempty record floor and mutant process/oracle machinery. Thus the compound successor asks were implemented, not only the regex."
+    },
+    {
+      "id": "R41.4",
+      "status": "fixed",
+      "evidence": [{"path": "corpus/knowledge/r42-attribute-and-outflag-destinations.md", "lines": "31-33", "excerpt": "| `tools/context-capture.py:1682`, `:1685` | `unflagged=1` | the base is `self.case_dir(name)`; v3 cannot see that `case_dir` returns `os.path.join(self.root, …)` or that `self.root = tempfile.mkdtemp(…, dir=\"/tmp\")` (`:1624`, `:1631-1635`) | `scratch=1`, `unflagged=0`; resolved text carries `mkdtemp` |\n| `tools/registry-replay.py:123` | `unflagged=1` | `out` is a parameter of `publish`; both in-module calls pass `out = Path(args.out)` (`:181`, `:185`) or `Path(a.out)` (`:282`), and `--out` is declared at `:259` | `explicit_out=1`, `unflagged=0`; resolved text ends `argparse --out` |"}],
+      "commit": "c77c2b7e64d2e356381441ecf94abac03e984606",
+      "doubt": "Strongest counter-reason: the lesson may assert corrected classifications while the named census still reports these three v3 false positives. The item explicitly targets v3; it was not edited, but its false-positive behavior is replaced by v4. Checked the v4 round-42 instrument/knowledge, which classifies the two context-capture sites scratch and registry-replay as explicit_out; the round-42 lesson confirms v3 remains pinned and v4 resolves them. This satisfies the requested correction without pretending v3 bytes changed."
+    },
+    {
+      "id": "R41.5",
+      "status": "fixed",
+      "evidence": [{"path": "tools/write-path-census-v3.py", "lines": "15-21", "excerpt": "Scope, stated so it cannot be read as universal: one-hop-ish name resolution\ninside a module, function or block, through assignment, `os.path.join`, `+`,\n`/` and f-strings, to a depth of four. Aliases, closures over reassigned\nnames, attribute reassignment, conditional assignment, dictionary and list\nelements, and any path computed by a function call that does not fold to a\nliteral are NOT resolved. This is a bounded recognizer, not a dataflow\nanalyser."}],
+      "commit": "c77c2b7e64d2e356381441ecf94abac03e984606",
+      "doubt": "Strongest counter-reason: v3 retains the overly broad wording while remaining hash-pinned, and the successor v4 could have corrected behavior without correcting v3's docstring. Checked v3 itself: its docstring enumerates bounded resolution and specifically lists unresolved call-computed paths rather than saying blanket NOT resolved. Round 42 records this as the correction while keeping v3 bytes pinned."
+    },
+    {
+      "id": "R41.6",
+      "status": "open",
+      "evidence": [{"path": "corpus/SOURCES.md", "lines": "464-465", "excerpt": "Id collision check (scratch, `.ufo/waves/round-41/assimilation/`): registry ids 109 (S001–S154), staged ids 103 (S153–S255). `comm -12` → `collisions` holds 2 ids, `S153` and `S154`. No staged row was adopted this round (see the round-41 lesson Gate), so no renumber map is applied; the collision is recorded as the hazard the next assimilation round must resolve in scratch before it appends."}],
+      "doubt": "The apparent correction is round 42's collision-safe adoption mapping, but this is specifically a staged-package collision hazard that persists in subsequent rounds: the round-42 and round-43 lessons record staged S153/S154 collisions, and round-43 still reports seven collisions. The tree therefore has not completed renumbering the staged package by document as requested; R41.6 remains open."
+    },
+    {
+      "id": "R41.7",
+      "status": "open",
+      "evidence": [{"path": "corpus/SOURCES.md", "lines": "464-465", "excerpt": "Round 41: two rows added, S153 (`ast` module reference, CPython) and S154 (`Path.write_text`, CPython), both tier A / docs / mined, opened 2026-10-25, recheck 180d, used-by `corpus/knowledge/r41-variable-destination-writes.md`. Each is pinned to a committed snapshot under `.ufo/evidence/round-41/sources/` rather than to a live digest, because docs.python.org's footer clock moves within a day (the round-33/40 lesson). Rows 107 → 109. No existing row's status, recheck or used-by changed."}],
+      "doubt": "The possible counterargument is that a later formatting repair exists elsewhere. Checked the cited registry history and the round-42 lesson: the cosmetic split at SOURCES.md:436-437 is explicitly left as is because reflow would edit closed evidence without parse gain. No parse-affecting defect is alleged, but the requested cosmetic formatting remains uncorrected, so open."
+    }
+  ]
+}

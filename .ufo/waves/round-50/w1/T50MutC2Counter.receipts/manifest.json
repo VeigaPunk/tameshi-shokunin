@@ -1,0 +1,551 @@
+{
+ "manifest": [
+  {
+   "id": "m01",
+   "category": "instrument insertion",
+   "expect": "survive",
+   "old": "        return '\\n'.join(lines[:i]) + '\\n' + (INSTRUMENT % tag) + '\\n'.join(lines[i:])",
+   "new": "        return '\\n'.join(lines[:i + 1]) + '\\n' + (INSTRUMENT % tag) + '\\n'.join(lines[i + 1:])",
+   "sha256": "bd345b19a4213a21b639b61a80895d09fc9fade47c791537fa67a7fb4046a367",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m01.py"
+  },
+  {
+   "id": "m02",
+   "category": "instrument .runs path",
+   "expect": "kill",
+   "old": "__file__)), '.runs'), 'a') ",
+   "new": "__file__)), '.runz'), 'a') ",
+   "sha256": "ef2324518fdc89cd3b267ae6b0f752d7c659a3ad731edfa1e447635462458f9b",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m02.py"
+  },
+  {
+   "id": "m03",
+   "category": "instrument write no-newline",
+   "expect": "kill",
+   "old": "_r50_fh.write('%s\\\\n')",
+   "new": "_r50_fh.write('%s')",
+   "sha256": "d196831b4a404e075be9a2d323633ca4cb7e02404889989182e7811270a93d96",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m03.py"
+  },
+  {
+   "id": "m04",
+   "category": "units() drops map entries",
+   "expect": "unknown",
+   "old": "    return n + (len(entries) if entries is not None else 0)",
+   "new": "    return n",
+   "sha256": "a5d3d86349a9f5d15baeb99078ca6a3db7bb003e2c6f87e1461562bdd5307432",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m04.py"
+  },
+  {
+   "id": "m05",
+   "category": "units() off-by-one when map None",
+   "expect": "unknown",
+   "old": "(len(entries) if entries is not None else 0)",
+   "new": "(len(entries) if entries is not None else 1)",
+   "sha256": "2b32173f0f98f7bf9f0f9baf1b8a73da3cbfc40df64e47bb221fc846cf216ac3",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m05.py"
+  },
+  {
+   "id": "m06",
+   "category": "removals() no-op slice",
+   "expect": "kill",
+   "old": "yield dict(case, **{field: ''.join(lines[:i] + lines[i + 1:])})",
+   "new": "yield dict(case, **{field: ''.join(lines[:i] + lines[i:])})",
+   "sha256": "ecd76b1a16878e9bae819ad800955f1ef039a02400161519e1e1fea0cbff3dd4",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m06.py"
+  },
+  {
+   "id": "m07",
+   "category": "removals() drops map branch",
+   "expect": "survive",
+   "old": "    if entries is not None:\n        for key in list(entries):",
+   "new": "    if False:\n        for key in list(entries):",
+   "sha256": "850496abeece20cccf602aa611062ef1cc42f7b02a6f19febec3fefa5fdc70bd",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m07.py"
+  },
+  {
+   "id": "m08",
+   "category": "subsequence() arg order swap",
+   "expect": "kill",
+   "old": "    it = iter(big)\n    return all(any(x == y for y in it) for x in small)",
+   "new": "    it = iter(small)\n    return all(any(x == y for y in it) for x in big)",
+   "sha256": "a89ab962954bc7bd5a0e9f09aabb330546a46e0ce38076786852b476f81747ab",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m08.py"
+  },
+  {
+   "id": "m09",
+   "category": "is_subcase() skips field check",
+   "expect": "kill",
+   "old": "        if not subsequence(s[field].splitlines(), c[field].splitlines()):",
+   "new": "        if False:",
+   "sha256": "c716b93f19667d428c1d4cc0fa3f9487e18754b8f0adc8609472f53eca5b6d7b",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m09.py"
+  },
+  {
+   "id": "m10",
+   "category": "Judge.kills order swap",
+   "expect": "kill",
+   "old": "        if self.gen.check(case, self.gen.run_guard(self.mutant, self.casedir, case)) is None:\n            return False\n        return self.gen.check(case, self.gen.run_guard(self.pristine, self.casedir, case)) is None",
+   "new": "        if self.gen.check(case, self.gen.run_guard(self.pristine, self.casedir, case)) is None:\n            return False\n        return self.gen.check(case, self.gen.run_guard(self.mutant, self.casedir, case)) is None",
+   "sha256": "e3302bd82cf990254ed9bb5c480b77c9824c2299e0d57e631f2de02940431370",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m10.py"
+  },
+  {
+   "id": "m11",
+   "category": "minimality any() -> all()",
+   "expect": "kill",
+   "old": "not any(judge.kills(r) for r in removals(s))",
+   "new": "not all(judge.kills(r) for r in removals(s))",
+   "sha256": "ccb6c62810eef1665cd91654d3d7beb1faee80dba33b7d308a89c477b92e2028",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m11.py"
+  },
+  {
+   "id": "m12",
+   "category": "minimality drops kills conjunct",
+   "expect": "survive",
+   "old": "flags['minimal'] = flags['kills'] and not any(",
+   "new": "flags['minimal'] = not any(",
+   "sha256": "46445883b331a42c8acd54f1c99178cc444d0cbb7ac36445fb5ab4373ec1d5f5",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m12.py"
+  },
+  {
+   "id": "m13",
+   "category": "cost drops units_before equality",
+   "expect": "survive",
+   "old": "and out.get('units_before') == ub and out.get('units_after') == ua)",
+   "new": "and out.get('units_after') == ua)",
+   "sha256": "49f40b201b45ccaa55b8e0a7978f67ca1c8f7b422be42feb6e30f52ff4d54c1e",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m13.py"
+  },
+  {
+   "id": "m14",
+   "category": "cost runs == logged+1",
+   "expect": "kill",
+   "old": "out.get('runs') == logged and isinstance(",
+   "new": "out.get('runs') == logged + 1 and isinstance(",
+   "sha256": "28cd7e8ffa2aa435b85c4e10ae8c987a7931c51d4dae6c37551a6b0b2f460b8c",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m14.py"
+  },
+  {
+   "id": "m15",
+   "category": "ok threshold N-1 -> N",
+   "expect": "kill",
+   "old": "counts['ok_short'] = max(0, (total_mutants - 1) - ok)",
+   "new": "counts['ok_short'] = max(0, total_mutants - ok)",
+   "sha256": "ebc9e3ebca67b970725613435434bf3c4d65f2c95b51b31462d6ef46b048f3f3",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m15.py"
+  },
+  {
+   "id": "m16",
+   "category": "no_reduction < -> <=",
+   "expect": "survive",
+   "old": "0 if (ok and after_sum < before_sum) else 1",
+   "new": "0 if (ok and after_sum <= before_sum) else 1",
+   "sha256": "426d43364b83e77610dc7ce941f5f905d9c5113c0561885de61bd19ba6b5ca33",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m16.py"
+  },
+  {
+   "id": "m17",
+   "category": "no_reduction drops ok conjunct",
+   "expect": "survive",
+   "old": "0 if (ok and after_sum < before_sum) else 1",
+   "new": "0 if (after_sum < before_sum) else 1",
+   "sha256": "855d276835ee644bda451a3b30bfc9c4b61220facc44316736302ed24dd2599b",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m17.py"
+  },
+  {
+   "id": "m18",
+   "category": "records F6 drops word boundary",
+   "expect": "survive",
+   "old": "re.search(r'\\bF6\\b', l) and 'held (round 50)' in l",
+   "new": "re.search(r'F6', l) and 'held (round 50)' in l",
+   "sha256": "6495439df8945b3667358afa9134509ddf00cc00d55e406a09263fd81f706094",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m18.py"
+  },
+  {
+   "id": "m19",
+   "category": "records held pin weakened to prefix",
+   "expect": "survive",
+   "old": "'held (round 50)' in l",
+   "new": "'held (round 5' in l",
+   "sha256": "9ed9e055f4b6b7c7c3a368f285ce2f0f52d70d6d4e8376606b4f4286b09986ce",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m19.py"
+  },
+  {
+   "id": "m20",
+   "category": "records mined check inverted",
+   "expect": "kill",
+   "old": "cells[7] == 'mined'",
+   "new": "cells[7] != 'mined'",
+   "sha256": "a3dfde43bce63bfa7166f119145f591ac10e28605d140a9bb2cca3c6298cb079",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m20.py"
+  },
+  {
+   "id": "m21",
+   "category": "records opened date changed",
+   "expect": "kill",
+   "old": "cells[8] == OPENED",
+   "new": "cells[8] == '2026-10-27'",
+   "sha256": "78dfc3fbe4d207976aa53a34edbde75b4c9603acb7c01a134689df94d06caea5",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m21.py"
+  },
+  {
+   "id": "m22",
+   "category": "panel sha check dropped",
+   "expect": "kill",
+   "old": "if sha(raw) != pin or not isinstance(doc.get('mutants'), list):",
+   "new": "if not isinstance(doc.get('mutants'), list):",
+   "sha256": "51c2c134bdb5fdcd395054b7d4fba6c840e4f55b9a4c885a183eb452389dbb74",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m22.py"
+  },
+  {
+   "id": "m23",
+   "category": "PUBLIC_SHA256 constant changed",
+   "expect": "survive",
+   "old": "PUBLIC_SHA256 = 'd6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1'",
+   "new": "PUBLIC_SHA256 = 'd6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda0'",
+   "sha256": "4b99cf56299acbd1cb46a9a8543c67c57d13462ae7c732fdd6c1bc152a964250",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m23.py"
+  },
+  {
+   "id": "m24",
+   "category": "GUARD_SHA256 constant changed",
+   "expect": "survive",
+   "old": "GUARD_SHA256 = '03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8'",
+   "new": "GUARD_SHA256 = '03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca9'",
+   "sha256": "6fe5f79e8936c8d7802a6cf9deeb16c3b8756f221028012d92c52be39e46a4e3",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m24.py"
+  },
+  {
+   "id": "m25",
+   "category": "GEN_SHA256 constant changed",
+   "expect": "kill",
+   "old": "GEN_SHA256 = '0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f05'",
+   "new": "GEN_SHA256 = '0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f06'",
+   "sha256": "ccc309b4452b655e92dbabfdf4a2a3aba25529badcace4093404ec9b1a92d842",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m25.py"
+  },
+  {
+   "id": "m26",
+   "category": "SEED changed 4949 -> 4948",
+   "expect": "unknown",
+   "old": "SEED, CASES = '4949', '400'",
+   "new": "SEED, CASES = '4948', '400'",
+   "sha256": "3e7e231953bc07e6320c6e481d2e3ae9da610e2f68f82d6d00b8043ca6178f67",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m26.py"
+  },
+  {
+   "id": "m27",
+   "category": "find_case index match inverted",
+   "expect": "kill",
+   "old": "            if row.get('index') == index:",
+   "new": "            if row.get('index') != index:",
+   "sha256": "12105faff203893ceaab78efec29ec186d7878bd1057b7eb3effd92153c6dfdd",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m27.py"
+  },
+  {
+   "id": "m28",
+   "category": "unfound misattributed to panel_invalid",
+   "expect": "survive",
+   "old": "            counts['unfound'] += 1",
+   "new": "            counts['panel_invalid'] += 1",
+   "sha256": "9ee875ebcaedf76d732ca7906dee3814d4b59973eac336c5d2424511946cccc0",
+   "path": "/fast/scratch/hyaku/tameshi-r50/T50MutC2Counter/mut/m28.py"
+  }
+ ],
+ "results": [
+  {
+   "id": "m01",
+   "rc": 0,
+   "seconds": 11.0,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m02",
+   "rc": 1,
+   "seconds": 10.9,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m03",
+   "rc": 1,
+   "seconds": 10.9,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=1 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=1 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=1 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=1 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=1 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=1 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m04",
+   "rc": 0,
+   "seconds": 11.0,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m05",
+   "rc": 1,
+   "seconds": 11.0,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=9->2 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=9->2 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=9->2 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=9->2 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=9->2 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=9->2 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m06",
+   "rc": 1,
+   "seconds": 11.3,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m07",
+   "rc": 0,
+   "seconds": 11.0,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m08",
+   "rc": 1,
+   "seconds": 10.9,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=1 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=1 cost=1 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=1 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=1 cost=1 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=1 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=1 cost=1 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m09",
+   "rc": 0,
+   "seconds": 11.0,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m10",
+   "rc": 1,
+   "seconds": 7.0,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=0 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=0 minimal=0 cost=1 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=0 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=0 minimal=0 cost=1 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=0 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=0 minimal=0 cost=1 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m11",
+   "rc": 0,
+   "seconds": 8.7,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m12",
+   "rc": 0,
+   "seconds": 7.8,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m13",
+   "rc": 0,
+   "seconds": 7.8,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m14",
+   "rc": 1,
+   "seconds": 7.8,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=15 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m15",
+   "rc": 1,
+   "seconds": 7.8,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST misreported cost fails                   FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->1 runs=18 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->1 runs=18 logged=15 exit0=1 valid=1 subset=1 kills=1 minimal=1 cost=0 reduced=1 FAIL",
+    "SELFTEST identity shrinker fails minimality       FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->8 runs=0 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->8 runs=0 logged=0 exit0=1 valid=1 subset=1 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "SELFTEST non-subset case fails                    FAIL",
+    "LOG MUTANT T01 panel=public exit=0 units=8->2 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=0 cost=1 reduced=1 FAIL",
+    "LOG MUTANT T02 panel=hidden exit=0 units=8->2 runs=15 logged=15 exit0=1 valid=1 subset=0 kills=1 minimal=0 cost=1 reduced=1 FAIL"
+   ]
+  },
+  {
+   "id": "m16",
+   "rc": 0,
+   "seconds": 7.8,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m17",
+   "rc": 0,
+   "seconds": 7.8,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m18",
+   "rc": 0,
+   "seconds": 7.7,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m19",
+   "rc": 0,
+   "seconds": 7.2,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m20",
+   "rc": 1,
+   "seconds": 7.2,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "SELFTEST failing tool selftest counted            FAIL"
+   ]
+  },
+  {
+   "id": "m21",
+   "rc": 1,
+   "seconds": 7.1,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "SELFTEST failing tool selftest counted            FAIL"
+   ]
+  },
+  {
+   "id": "m22",
+   "rc": 1,
+   "seconds": 7.3,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST panel digest mismatch counted            FAIL"
+   ]
+  },
+  {
+   "id": "m23",
+   "rc": 0,
+   "seconds": 7.2,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m24",
+   "rc": 1,
+   "seconds": 0.3,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "SELFTEST missing F6 records counted               FAIL",
+    "SELFTEST panel digest mismatch counted            FAIL"
+   ]
+  },
+  {
+   "id": "m25",
+   "rc": 2,
+   "seconds": 0.1,
+   "verdict": "KILLED",
+   "failed_cases": []
+  },
+  {
+   "id": "m26",
+   "rc": 0,
+   "seconds": 6.6,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  },
+  {
+   "id": "m27",
+   "rc": 1,
+   "seconds": 1.3,
+   "verdict": "KILLED",
+   "failed_cases": [
+    "SELFTEST reference shrinker passes                FAIL",
+    "SELFTEST failing tool selftest counted            FAIL",
+    "SELFTEST missing F6 records counted               FAIL"
+   ]
+  },
+  {
+   "id": "m28",
+   "rc": 0,
+   "seconds": 7.1,
+   "verdict": "SURVIVED",
+   "failed_cases": []
+  }
+ ]
+}

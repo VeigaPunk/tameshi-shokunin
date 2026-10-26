@@ -1,0 +1,97 @@
+{
+ "round": 49,
+ "codes": [
+  {
+   "id": "R49.1",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "tools/pbt-staged-id.py",
+     "lines": "982-984",
+     "excerpt": "if not os.path.isfile(guard): return _setup_error('guard is not a regular file: %s' % guard) return run(guard, args.seed, args.cases, os.path.abspath(args.dump))"
+    },
+    {
+     "path": "tools/pbt-staged-id.py",
+     "lines": "771-778",
+     "excerpt": "try: proc = subprocess.run(argv, capture_output=True, timeout=GUARD_TIMEOUT, cwd=case_dir) except subprocess.TimeoutExpired: return {'exit': 124, 'json': None, 'stdout': b'', 'stderr': b'timeout'} try: answer = json.loads(proc.stdout.decode('utf-8')) except (ValueError, UnicodeDecodeError): answer = None"
+    }
+   ],
+   "doubt": "Strongest counter: the docstring records the OBSERVED 1-for-refused-analysis and the contract pins observed exit semantics, so someone could argue the unreadable-guard exit 1 is 'documented'. Resolved: the module docstring still promises '2 = setup problem (bad arguments, unwritable dump, unreadable guard)'; main() still checks only os.path.isfile (row 1) and run_guard still catches only TimeoutExpired (row 2), so an unreadable regular file passes isfile, python3 -I exits 2 with empty stdout, json.loads(b'') -> answer=None -> violation exit 1, exactly the F1 root cause; no os.access pre-check, no OSError catch, and no selftest case covering an unreadable guard exists at the base. Fix absent."
+  },
+  {
+   "id": "R49.2",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-49/c1/measure.py",
+     "lines": "23-24",
+     "excerpt": "The one exception: a path pointer that does not resolve passes only with a row whose verdict is `absent` and file null (counted as `absent`)."
+    },
+    {
+     "path": ".ufo/evidence/round-49/c1/measure.py",
+     "lines": "274-276",
+     "excerpt": "if p.get('pointer_kind') == 'path' and row is not None and row.get('verdict') == 'absent' \\ and row.get('file') is None: res['absent'] += 1"
+    }
+   ],
+   "doubt": "Strongest counter: the round-49 mistakes/lessons prose already 'closes' the blind spots by describing the successor counters. Resolved: the ask explicitly says 'close these with a successor counter, not prose'; at the base there is no .ufo/evidence/round-50/ at all (git ls-tree e3729de .ufo/evidence/ lists only round-12..round-49), the round-49 C1 counter still counts absent rows without any cap or evidence requirement (rows above), and the round-49 C2 counter still only checks generator presence/runs. No successor counter exists."
+  },
+  {
+   "id": "R49.3",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SKILL.md",
+     "lines": "1503-1503",
+     "excerpt": "fresh caller-selected DIR; isolated `/tmp/tameshi-r12-*` selftest; snapshot read-only"
+    },
+    {
+     "path": "SKILL.md",
+     "lines": "1509-1509",
+     "excerpt": "deepens one recorded case, never a seventh independently measured gate."
+    },
+    {
+     "path": "SKILL.md",
+     "lines": "1555-1555",
+     "excerpt": "No registry row changes rank, SHONEN authority, or the six recorded cases."
+    }
+   ],
+   "doubt": "Strongest counter: the flagged text was already revised in an old round (line 1508 explicitly says the runner pin is stale at round 27), so one could read the asks as already 'handled'. Resolved: the three routed sentences themselves are byte-unchanged at the base and still carry exactly the flagged statements: line 1503 still claims the /tmp/tameshi-r12-* selftest namespace (which overlaps the round-12 recipe's /tmp/tameshi-r12-controls-UNIQUE), and lines 1509/1555 still state the 'never a seventh gate' / 'six recorded cases' claims the round-49 lesson routed as true-but-stale. No correction or re-pin exists on those lines."
+  },
+  {
+   "id": "R49.4",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SCORECARD.md",
+     "lines": "2355-2355",
+     "excerpt": "| calibration | 6 | Restraint score of the strict cold-read monitor `python3 .ufo/evidence/round-21/coldread/measure.py --repo R --rev REV` (`calibration_restraint_score`; `box3_full_page=false`, 60 of 64 sections credited): two points per restrained, evidence-linked `[~]` SHONEN box; box 3 is not credited."
+    }
+   ],
+   "doubt": "Strongest counter: the round-31 standing table states 'calibration | 8', so a 'standing restated table' with the round-49 values arguably already exists. Resolved: the ask is to append a table restated with round-49 values; the newest standing axis table at the base is the round-48 one (line 2355, 'calibration | 6'), and the round-49 value 8 appears only in prose ('calibration 8 (was 6)') with no new table row. The round-31 row is a historical literal, not a restatement of round-49 values. Ask unmet."
+  },
+  {
+   "id": "R49.5",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "tools/tally-audit-v2.py",
+     "lines": "135-136",
+     "excerpt": "def brace_depth_at(text, offset): \"\"\"brace nesting depth at offset, counting from the run_regression opening brace (depth 1 inside it).\"\"\""
+    }
+   ],
+   "doubt": "Strongest counter: one carried sub-item (e.g. a located-name check or the six-leg decision) might have landed, which would shrink the item. Resolved: the item is compound \u2014 every ask must be met; at the base the two dead brace_depth_at helpers are still present (tools/tally-audit-v2.py:135 and tools/tally-audit-v3.py:234, sha-pinned standing rows unchanged), the round-47 counter-survivor selftest cases, the S205/F7 candidates, the six-leg pinned-leg successor or declared-nondeterministic verdict, the located-name check and the append-only rule are all still listed in Planned (round 50) as 'carried items from round 48's list'. Not all asks met."
+  },
+  {
+   "id": "R49.6",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SHONEN.md",
+     "lines": "5-6",
+     "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-1)"
+    }
+   ],
+   "doubt": "Strongest counter: the defect text says 'promotion stays operator-owned', so the lane cannot act and 'declined' could be argued. Resolved: the round-49 closure routed it as a defect for the lane next round, and the tree shows all four boxes still `[~]` with no independent promotion verifier (SHONEN.md:5-12); nothing indicates a refusal by the lane (no decline reason exists), so the honest disposition at the base is open \u2014 the promotion asks are unmet. The L1 may later decide to decline with a >=40-char reason if it chooses."
+  }
+ ]
+}

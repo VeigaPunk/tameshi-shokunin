@@ -1,0 +1,29 @@
+# Seat T50Disp46 — probe for R46.4 (the lane's own criterion-91 checker, run on the committed lesson)
+# Working tree: scratch clone at lane tip 4afb060c (corpus/lessons/round-46.md byte-identical to base
+# e3729de8: `git log --format=%H 0b5b7cd..4afb060 -- corpus/lessons/round-46.md` prints nothing).
+
+$ cd $S/lane
+$ python3 .ufo/evidence/round-47/quality/lesson-quote-check.py corpus/lessons/round-46.md
+LQ PASS arxiv-2504.16777-abs.html 'finding that 75% of flaky tests across all projects belong t'
+LQ FAIL tum-portal-flaky-failures.html 'We found that, across all projects, undetected flaky failure'
+LQ PASS google-flaky-feed-6277555988217606236.json 'about 84% of the transitions we observe from pass to fail in'
+LESSON_QUOTE_CHECK: file=corpus/lessons/round-46.md blocks=3 quotes=3 bad=1 unbound=1
+exit=1
+
+# The same checker is green on .ufo/evidence/round-47/quality/round46-lesson-dash-restored.md (a copy):
+$ git show e3729de8:.ufo/evidence/round-47/quality/c91-lesson-quote-red-green.stdout
+$ lesson-quote-check.py round46-lesson-dash-restored.md  (green after)
+LQ PASS arxiv-2504.16777-abs.html ...
+LQ PASS tum-portal-flaky-failures.html ...
+LQ PASS google-flaky-feed-6277555988217606236.json ...
+LESSON_QUOTE_CHECK: file=.ufo/evidence/round-47/quality/round46-lesson-dash-restored.md blocks=3 quotes=3 bad=0 unbound=1
+exit=0
+
+# diff of copy vs committed lesson (only the one character differs):
+$ diff corpus/lessons/round-46.md round46-lesson-dash-restored.md
+42c42
+<   for 9.8 %-16.3 % of failed pipeline runs.”
+---
+>   for 9.8 %–16.3 % of failed pipeline runs.”
+
+# Observed consequence for R46.4: the ask was "in the lesson itself"; the lesson itself is still red.

@@ -1,0 +1,108 @@
+APPEND-ONLY CENSUS — seat-report byte-prefix test over rounds 43-50
+seat: T50ScribeAppendOnly   date: 2026-10-26
+lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+tip:  4afb060c1d6e994d1bbb9095493b1f6b2b8344f2 (4afb060)
+method: read-only git. For each path matching
+  ^\.ufo/waves/round-(4[3-9]|50)/w[0-9]+/[^/]+\.md$ in `git ls-tree -r --name-only HEAD`
+  (HEAD is the tip above),
+  take the commits that touched it in commit order
+  (`git log --reverse --format=%x01%H --name-only -- .ufo/waves/round-43 … round-50`),
+  and for each consecutive pair fetch both blobs with `git cat-file blob REV:<path>` and test
+  bytes: new.startswith(old). lost = len(old) - len(common prefix).
+  A two-commit file is one pair; no line diff, no textconv, no decode.
+
+script (verbatim, run with python3 from the lane root):
+
+import subprocess, re, collections
+LANE='/home/vgpnk/Projects/shokunin/tameshi-shokunin'
+def g(*a):
+    return subprocess.run(['git','-C',LANE]+list(a),capture_output=True).stdout
+dirs=['.ufo/waves/round-%d'%n for n in range(43,51)]
+raw=g('log','--reverse','--format=%x01%H','--name-only','--',*dirs).decode()
+cur=None; hist=collections.defaultdict(list)
+for line in raw.splitlines():
+    if line.startswith('\x01'): cur=line[1:].strip()
+    elif line.strip(): hist[line.strip()].append(cur)
+cand=[f for f in g('ls-tree','-r','--name-only','HEAD','.ufo/waves/').decode().splitlines()
+      if re.search(r'\.ufo/waves/round-(4[3-9]|50)/w\d+/[^/]+\.md$',f)]
+multi=[f for f in cand if len(hist.get(f,[]))>1]
+rew=[]; pairs=0
+for f in sorted(multi):
+    cs=hist[f]
+    for a,b in zip(cs,cs[1:]):
+        pairs+=1
+        ba=g('cat-file','blob','%s:%s'%(a,f)); bb=g('cat-file','blob','%s:%s'%(b,f))
+        if not bb.startswith(ba):
+            n=0; m=min(len(ba),len(bb))
+            while n<m and ba[n]==bb[n]: n+=1
+            rew.append((f,a[:8],b[:8],len(ba)-n,len(ba),len(bb)))
+print('md seat files=%d multi_commit=%d pairs=%d rewrite_pairs=%d files_with_rewrite=%d'%
+      (len(cand),len(multi),pairs,len(rew),len({r[0] for r in rew})))
+for f,a,b,lost,o,n in rew:
+    print('REWRITE %s %s->%s lost=%d old=%d new=%d'%(f,a,b,lost,o,n))
+
+output (verbatim):
+
+md seat files=422 multi_commit=12 pairs=14 rewrite_pairs=14 files_with_rewrite=12
+REWRITE .ufo/waves/round-43/w1/CritC2Vacuous.md c5335c70->3c4003f6 lost=16689 old=21545 new=22321
+REWRITE .ufo/waves/round-43/w1/CritC3Maps.md c5335c70->3c4003f6 lost=16688 old=16935 new=17526
+REWRITE .ufo/waves/round-43/w1/MutC3Selftest.md c5335c70->3c4003f6 lost=814 old=10679 new=19306
+REWRITE .ufo/waves/round-43/w1/RevC2Classes.md c5335c70->3c4003f6 lost=15250 old=15342 new=13664
+REWRITE .ufo/waves/round-43/w1/RevC2Classes.md 3c4003f6->83beaf98 lost=13322 old=13664 new=15069
+REWRITE .ufo/waves/round-43/w1/RevC3Tool.md c5335c70->3c4003f6 lost=3141 old=19655 new=25165
+REWRITE .ufo/waves/round-43/w1/RevProvenance.md c5335c70->3c4003f6 lost=14353 old=14752 new=26263
+REWRITE .ufo/waves/round-43/w1/RevReportDraft.md c5335c70->3c4003f6 lost=21216 old=26074 new=39927
+REWRITE .ufo/waves/round-43/w1/ScribeLessonGate.md c5335c70->3c4003f6 lost=19459 old=21090 new=25650
+REWRITE .ufo/waves/round-43/w1/ScribeQuality.md c5335c70->3c4003f6 lost=23936 old=24508 new=30787
+REWRITE .ufo/waves/round-47/w1/T47ConnCross.md edd4ca44->03facb22 lost=31456 old=31648 new=32532
+REWRITE .ufo/waves/round-47/w1/T47CritC1Control.md 6b5ea3b1->8b0e15d2 lost=5777 old=20626 new=22971
+REWRITE .ufo/waves/round-47/w1/T47CritC1Control.md 8b0e15d2->edd4ca44 lost=21758 old=22971 new=27649
+REWRITE .ufo/waves/round-49/w1/T49RevengerLapse.md 9b9b2a01->fc5ac743 lost=6262 old=26775 new=26798
+
+commit identities for the offending sides (git log -1 --format='%an | %s'):
+ c5335c70 tameshi-shokunin | round-43: records — scorecard/log/quality/readme, knowledge entry, lesson, sources append, …
+ 3c4003f6 tameshi-shokunin | round-43: records corrections (final freeze cites, capability-row pin, verified-at header)
+ 83beaf98 tameshi-shokunin | round-44: repair citation masking and supersede S089 anchor
+ 6b5ea3b1 tameshi-shokunin | hyaku run 7 interrupted: in-flight snapshot committed by the orchestrator (not a landing) …
+ 8b0e15d2 tameshi-shokunin | round-47: content revision — rows, entries, v2 counters, records, QUALITY 91-93, wave-1 evi…
+ edd4ca44 tameshi-shokunin | round-47: deciding receipts (receipts-only) and unrun wave-2 spec/dispatch
+ 03facb22 tameshi-shokunin | run 7 wrap-up: straggler seat reports written after the landing (orchestrator commit, not a …
+ 9b9b2a01 tameshi-shokunin | round-49: content — C1 off-by-one fix, generator tools/pbt-staged-id.py, rows S269-S270, F1…
+ fc5ac743 tameshi-shokunin | round-49: C1 re-key at 54a52365 (per-pass receipts dir), reads.json with L1 overrides, late…
+
+notes:
+ - 422 committed `*.md` seat files exist under rounds 43-50; 410 of them have one commit only and
+   therefore zero pairs — the rule is silent on them, not satisfied by them.
+ - The round-50 wave-1 reports were uncommitted at this reading (`git ls-tree HEAD .ufo/waves/round-50/w1/` empty),
+   so round 50 contributes no pairs here; its own closure run is the green side.
+ - scope note: the first section is the `*.md` seat-report sub-scope; the criterion's subject is every
+   file under `.ufo/waves/round-<N>/`, measured in the second section below, which is the governing count
+   (22 of 22 pairs, 20 files of 1165). The `.json` pair listed next belongs to that wider scope.
+ - `w*/swarm-registry.json` pairs are excluded by the `.md` scope (one such non-prefix pair exists at
+   round 49: `.ufo/waves/round-49/w1/swarm-registry.json`, 6885adb4->455b2cd6, lost=94385 old=94522 new=94676 — out of scope
+   by design, listed so the exclusion is visible).
+
+APPEND-ONLY CENSUS — every file under .ufo/waves/round-<N>/, rounds 43-50 (same method, tip 4afb060)
+wave files=1165 multi_commit=20 pairs=22 nonprefix_pairs=22 files_with_nonprefix=20
+REWRITE .ufo/waves/round-43/w1/CritC2Vacuous.md c5335c70->3c4003f6 lost=16689 old=21545 new=22321
+REWRITE .ufo/waves/round-43/w1/CritC3Maps.md c5335c70->3c4003f6 lost=16688 old=16935 new=17526
+REWRITE .ufo/waves/round-43/w1/MutC3Selftest.md c5335c70->3c4003f6 lost=814 old=10679 new=19306
+REWRITE .ufo/waves/round-43/w1/RevC2Classes.md c5335c70->3c4003f6 lost=15250 old=15342 new=13664
+REWRITE .ufo/waves/round-43/w1/RevC2Classes.md 3c4003f6->83beaf98 lost=13322 old=13664 new=15069
+REWRITE .ufo/waves/round-43/w1/RevC3Tool.md c5335c70->3c4003f6 lost=3141 old=19655 new=25165
+REWRITE .ufo/waves/round-43/w1/RevProvenance.md c5335c70->3c4003f6 lost=14353 old=14752 new=26263
+REWRITE .ufo/waves/round-43/w1/RevReportDraft.md c5335c70->3c4003f6 lost=21216 old=26074 new=39927
+REWRITE .ufo/waves/round-43/w1/ScribeLessonGate.md c5335c70->3c4003f6 lost=19459 old=21090 new=25650
+REWRITE .ufo/waves/round-43/w1/ScribeQuality.md c5335c70->3c4003f6 lost=23936 old=24508 new=30787
+REWRITE .ufo/waves/round-45/build-spec.py fd2610fd->1f9266ac lost=1131 old=28608 new=43001
+REWRITE .ufo/waves/round-46/build-spec.py 10a05fdf->e630ae79 lost=42245 old=42830 new=72635
+REWRITE .ufo/waves/round-47/build-spec.py 9acfbe21->8b0e15d2 lost=42321 old=49130 new=65856
+REWRITE .ufo/waves/round-47/w1/T47ConnCross.md edd4ca44->03facb22 lost=31456 old=31648 new=32532
+REWRITE .ufo/waves/round-47/w1/T47CritC1Control.md 6b5ea3b1->8b0e15d2 lost=5777 old=20626 new=22971
+REWRITE .ufo/waves/round-47/w1/T47CritC1Control.md 8b0e15d2->edd4ca44 lost=21758 old=22971 new=27649
+REWRITE .ufo/waves/round-49/build-spec-w2.py 9b9b2a01->5f597fa8 lost=10562 old=16046 new=17152
+REWRITE .ufo/waves/round-49/build-spec.py 6885adb4->455b2cd6 lost=34953 old=38382 new=38716
+REWRITE .ufo/waves/round-49/spec-w1.json 6885adb4->455b2cd6 lost=93860 old=97742 new=98140
+REWRITE .ufo/waves/round-49/w1-dispatch.json 6885adb4->455b2cd6 lost=138129 old=230645 new=231197
+REWRITE .ufo/waves/round-49/w1/T49RevengerLapse.md 9b9b2a01->fc5ac743 lost=6262 old=26775 new=26798
+REWRITE .ufo/waves/round-49/w1/swarm-registry.json 6885adb4->455b2cd6 lost=94385 old=94522 new=94676

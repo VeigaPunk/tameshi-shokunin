@@ -1,0 +1,1588 @@
+IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002                                                                            1
+
+
+
+
+     Simplifying and Isolating Failure-Inducing Input
+                           Andreas Zeller, Member, IEEE Computer Society, and Ralf Hildebrandt
+
+   Abstract—Given some test case, a program fails. Which circumstances of          A bug report should be as specific as possible, such that the
+the test case are responsible for the particular failure? The Delta Debugging
+                                                                                   On the other hand, a test case should be as simple as possible,
+                                                                                  engineer can recreate the context in which the program failed.
+algorithm generalizes and simplifies some failing test case to a minimal test
+case that still produces the failure; it also isolates the difference between a
+passing and a failing test case.                                                  because a minimal test case implies a most general context.
+   In a case study, the Mozilla web browser crashed after 95 user actions.        Thus, a minimal test case not only allows for short problem de-
+Our prototype implementation automatically simplified the input to 3 rel-         scriptions and valuable problem insights, but it also subsumes
+evant user actions. Likewise, it simplified 896 lines of HTML to the single
+line that caused the failure. The case study required 139 automated test          several current and future bug reports.
+runs, or 35 minutes on a 500 MHz PC.                                                 The striking thing about test case simplification is that no one
+   Index Terms—automated debugging, debugging aids, testing tools, com-           so far has thought to automate this task. Several textbooks and
+binatorial testing, diagnostics, tracing.
+                                                                                  guides about debugging are available that tell how to use binary
+                                                                                  search in order to isolate the problem—based on the assump-
+                           I. I NTRODUCTION                                       tion that tests are carried out manually, too. With an automated
+                                                                                  test, however, we can automate this simplification of test cases,
+          Often people who encounter a bug spend a lot of time                    and we can automatically isolate the difference that causes the
+ investigating which changes to the input file will make the bug                  failure.
+                  go away and which changes will not affect it.                   Simplification of test cases. Our minimizing delta debugging
+               — Richard Stallman, Using and Porting GNU CC                       algorithm ddmin is fed with a failing test case, which it sim-
+                                                                                  plifies by successive testing. It stops when a minimal test case
+   F you browse the Web with Netscape 6, you actually use                         is reached, where removing any single input entity would cause
+   a variant of Mozilla, Netscape’s open source web browser                       the failure to disappear.
+project [1]. As a work in progress with big exposure, the Mozilla                 As an analogon from the real world, consider a flight test: an
+project receives several dozens of bug reports a day. The first                   air plane crashes a few seconds after taking off. By repeating
+step in processing any bug report is simplification, that is, elim-               the situation over and over again under changed circumstances,
+inating all details that are irrelevant for producing the failure.                we can find out what is relevant and what not. For instance,
+Such a simplified bug report not only facilitates debugging, but                  we may leave away the passenger seats and find that the plane
+it also subsumes several other bug reports that only differ in ir-                still crashes. We may leave away the coffee machine and the
+relevant details.                                                                 plane still crashes. Eventually, only the relevant “simplified”
+   In July 1999, Bugzilla, the Mozilla bug database, listed more                  skeleton remains, including a test pilot, the wings, the runway,
+than 370 open bug reports—bug reports that were not even sim-                     the fuel, and the engines. Each part of this skeleton is relevant
+plified. With this queue growing further, the Mozilla engi-                       for reproducing the crash.
+neers “faced imminent doom” [2]. Overwhelmed with work, the                       In the real world, no one with a sane mind would consider such
+Netscape product manager sent out the Mozilla BugAThon call                       a way to simplify the circumstances of test flights. However,
+for volunteers [2]: people who would help process bug reports.                    for simulations of flight tests, or, more generally, for arbitrary
+For 5 bug reports simplified, a volunteer would be invited to the                 computer programs, such an approach comes at a far lesser cost.
+launch party; 20 bugs would earn her or him a T-shirt signed by                   The cost may be so low that we can easily use a large amount of
+the grateful engineers. “Simplifying” meant: turning these bug                    tests just to simplify a test case.
+reports into minimal test cases, where every part of the input                    Figure 2 sketches how the ddmin procedure minimizes a test
+would be significant in reproducing the failure.                                  case: Starting with the HTML input in Figure 1, the ddmin algo-
+   As an example, consider the HTML input in Figure 1. Loading                    rithm simplifies the input by testing subsets with removed char-
+this HTML page into Mozilla and printing it causes a segmen-                      acters (shown in grey): The test fails (✘) if Mozilla crashes on
+tation fault. Somewhere in this HTML input is something that                      the given test case and passes (✔) otherwise. After 57 tests, the
+makes Mozilla fail—but where? If we were Netscape program-                        original 896-line HTML input is reduced to the minimal failing
+mers, what we wanted here is the simplest HTML page that still                    test case <SELECT>.1 Each character in the minimal failing
+produces the failure.                                                             test case is relevant for producing the failure.
+   Decomposing specific bug reports into simple test cases does                   Isolating failure-inducing differences. In the case where a pass-
+not trouble only the Mozilla engineers. The problem arises from                   ing test case exists as well, it is generally more efficient to iso-
+generally conflicting issues:                                                     late the failure-inducing difference between a failing and a pass-
+                                                                                  ing test case. This is what the general Delta Debugging algo-
+   Andreas Zeller is with Universität des Saarlandes, Lehrstuhl für Soft-
+waretechnik, Postfach 15 11 50, 66041 Saarbrücken, Germany.        E-mail:
+                                                                                  rithm dd does. dd is a generalization of ddmin.
+zeller@computer.org.                                                              Again, as an analogon, take the flight test example. Now, we
+   Ralf Hildebrandt is with DeTeLine – Deutsche Telekom Kommunika-                try to isolate the difference between the crash and a working
+tionsnetze GmbH, Rognitzstrasse 9, 14057 Berlin, Germany.           E-mail:
+ralf hildebrandt@web.de.                                                           1 Section IV-B has more details on this example.
+2                                                                           IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+<td align=left valign=top>
+<SELECT NAME="op sys" MULTIPLE SIZE=7>
+<OPTION VALUE="All">All<OPTION VALUE="Windows 3.1">Windows 3.1<OPTION VALUE="Windows 95">Windows 95<OPTION VALUE="Windows
+98">Windows 98<OPTION VALUE="Windows ME">Windows ME<OPTION VALUE="Windows 2000">Windows 2000<OPTION VALUE="Windows
+NT">Windows NT<OPTION VALUE="Mac System 7">Mac System 7<OPTION VALUE="Mac System 7.5">Mac System 7.5<OPTION VALUE="Mac
+System 7.6.1">Mac System 7.6.1<OPTION VALUE="Mac System 8.0">Mac System 8.0<OPTION VALUE="Mac System 8.5">Mac System
+8.5<OPTION VALUE="Mac System 8.6">Mac System 8.6<OPTION VALUE="Mac System 9.x">Mac System 9.x<OPTION VALUE="MacOS X">MacOS
+X<OPTION VALUE="Linux">Linux<OPTION VALUE="BSDI">BSDI<OPTION VALUE="FreeBSD">FreeBSD<OPTION VALUE="NetBSD">NetBSD<OPTION
+VALUE="OpenBSD">OpenBSD<OPTION VALUE="AIX">AIX<OPTION VALUE="BeOS">BeOS<OPTION VALUE="HP-UX">HP-UX<OPTION
+VALUE="IRIX">IRIX<OPTION VALUE="Neutrino">Neutrino<OPTION VALUE="OpenVMS">OpenVMS<OPTION VALUE="OS/2">OS/2<OPTION
+VALUE="OSF/1">OSF/1<OPTION VALUE="Solaris">Solaris<OPTION VALUE="SunOS">SunOS<OPTION VALUE="other">other</SELECT>
+</td>
+<td align=left valign=top>
+<SELECT NAME="priority" MULTIPLE SIZE=7>
+<OPTION VALUE="--">--<OPTION VALUE="P1">P1<OPTION VALUE="P2">P2<OPTION VALUE="P3">P3<OPTION VALUE="P4">P4<OPTION
+VALUE="P5">P5</SELECT>
+</td>
+<td align=left valign=top>
+<SELECT NAME="bug severity" MULTIPLE SIZE=7>
+<OPTION VALUE="blocker">blocker<OPTION VALUE="critical">critical<OPTION VALUE="major">major<OPTION
+VALUE="normal">normal<OPTION VALUE="minor">minor<OPTION VALUE="trivial">trivial<OPTION VALUE="enhancement">enhancement</SELECT>
+</tr>
+</table>
+
+                                                  Fig. 1. Printing this HTML page makes Mozilla crash (excerpt)
+
+
+                                                                                          
+           1  <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+               2 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                                       2   <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+                                                                                                       <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+                                                                                          
+                                                                                                   4
+
+            3 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+
+
+                                                                                          
+               4 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                                        7 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+               5 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘                                          <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+                                                                                             
+                                                                                                   6
+
+            6 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘                                        5 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+
+
+        
+               7 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                                        3 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+               8 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                                        1 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+
+            9 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+
+
+        
+              10 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+              11 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+                                                                                                         Fig. 3. Isolating a failure-inducing difference
+
+           12 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+              13 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+
+           14 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+                                                                                  execution. Delta Debugging is fully automatic: whenever some
+           15 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+              16 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘                       regression test fails, an additional Delta Debugging run auto-
+           17 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+                                                                                  matically determines the failure-inducing circumstances.
+           18 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+              19 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                          In earlier work [3], we have shown how Delta Debugging is
+           20 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+                                                                                  applied to isolate failure-inducing code changes; our current re-
+           21 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+              22 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                       search includes application domains like failure-inducing thread
+           23 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+                                                                                  schedules or failure-inducing program statements. In this paper,
+      
+              24 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔
+              25 <SELECT NAME="priority" MULTIPLE SIZE=7> ✔                       however, we will concentrate on program input.
+              26 <SELECT NAME="priority" MULTIPLE SIZE=7> ✘
+                                                                                     The remainder of this paper is organized as follows: We begin
+                  Fig. 2. Simplifying failure-inducing HTML input
+                                                                                  with formal definitions of passing and failing test cases (Sec-
+                                                                                  tion II). We first introduce the basic ddmin algorithm in Sec-
+                                                                                  tion III which simplifies failing test cases. The case studies
+flight. We may find that if we replace the engines of the crashing                (Section IV) include GCC, Mozilla, and UNIX utilities subjected
+machine by the engines of a working machine, the change does                      to random fuzz input.
+not matter; consequently, we find this difference to be irrelevant.                  In Section V, we extend ddmin to dd to isolate the difference
+By reducing differences further and further, we may eventually                    between a passing and a failing test case. Section VI evalu-
+isolate a piece of metal on the runway that is relevant for the                   ates dd by repeating the GCC and fuzz case studies. Sections
+crash—everything else may stay the same, but having this piece                    VII and VIII close with discussions of related and future work.
+of metal on the runway or not induces whether there is a crash
+or a perfect flight.                                                                                          II. T ESTING FOR C HANGE
+Again, nobody wants to crash planes over and over. Figure 3                       Software features that can’t be demonstrated by automated tests
+shows how dd works on HTML input: Rather than only mini-                                                                       simply don’t exist.
+mizing the failing input, dd also maximizes the passing HTML
+                                                                                                 — Kent Beck, Extreme Programming Explained
+input until a minimal failure-inducing difference is obtained.
+In our case, this is the first character < of the failure-inducing                  In general, we assume that the execution of a specific pro-
+<SELECT> tag, pinpointed after only seven tests: This one-                        gram is determined by a number of circumstances. These cir-
+character difference makes Mozilla fail.                                          cumstances include the program code, data from storage or in-
+   Delta Debugging as a technique for simplifying or isolating                    put devices, the program’s environment, the specific hardware,
+failure causes is not limited to HTML input, to character input,                  and so on.
+nor to program input in general: Delta Debugging can be ap-                         In our context, we are only interested in the changeable cir-
+plied to all circumstances that in any way affect the program                     cumstances—that is, those circumstances whose change may
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                                                  3
+
+
+cause a different program behaviour. (In fact, we are even only                             C. Test Cases and Tests
+interested in those circumstances that actually may cause a dif-                               To relate program runs to failures, we need a testing func-
+ferent test outcome.) These changeable circumstances make up                                tion that takes a program run and tests whether it produces the
+the program’s input (in the most general sense). In the remainder                           failure. According to the POSIX 1003.3 standard for testing frame-
+of this paper, “circumstances” will always refer to changeable
+circumstances.                                                                              
+                                                                                            works [4], we distinguish three outcomes:
+                                                                                               The test succeeds (PASS, written here as ✔)
+                                                                                              The test has produced the failure it was intended to capture
+    A. The Change that Causes a Failure
+                                                                                            (FAIL, written here as ✘)
+   Let us denote the set of possible configurations of circum-                                The test produced indeterminate results (UNRESOLVED, writ-
+                  
+stances by . Each r          
+                          determines a specific program run. Let                            ten here as ).3
+                                           
+                                     that fails.2 Typically, we do
+                                                                                                                                                   '   (
+us assume now a specific run r✘
+                                                                                            Definition 3 (rtest) The function rtest :        ✘ ✔      deter-
+                                                                                                                                   )
+not consider all circumstances of this run as a whole. Instead,
+we focus on the difference between r✘ and some run r✔                                     mines for a program run r        whether some specific failure
+that works. This difference is the change which causes the fail-                            occurs (✘) or not (✔) or whether the test is unresolved ( ).
+ure, and the smaller this change, the better it qualifies as failure
+cause.
+                                                                                            Axiom 4 (Passing and failing run) rtest r✔               ✔ and rtest  r  
+                                                                                                                                                                          ✘
+                                                                                            ✘ hold.
+   Formally, the difference between r✔ and r✘ is expressed as a
+mapping which changes the circumstances of a program run:                                      In the remainder of this paper, we shall consider not only
+                                                                                            r✔ and r✘ , but also several runs that are the product of changes
+Definition 1 (Change) A change is a mapping :          . The                              being applied to r✔ . For convenience, we identify each run by
+set of changes is       
+                      . The relevant change between two runs                                the set of changes being applied to r✔ . That is, we define c✔
+r✔ r✘  
+          is a change       
+                           such that r✔      r✘ .                                       as the empty set c✔          +*
+                                                                                                                        which identifies r✔ (no changes ap-
+                                                                                            plied). The set of all changes c✘            ,'-  . (
+                                                                                                                                                 n identifies
+                                                                                                  /&            
+                                                                                                                                      1 2
+      In the remainder of this paper, will always stand for the rele-                       r✘      1    2         n r✔ .
+    vant change between the two given program runs r✔ and r✘ . The                             We call the subsets of c✘ test cases:
+    exact definition of and its application is, of course, specific to
+    the given problem and its circumstances. In the Mozilla exam-                           Definition 5 (Test case) A subset c           0 c is called a test case.
+                                                                                                                                              ✘
+    ple sketched in Section I, applying means to expand a trivial
+                                                                                               Test cases are related to program runs by means of the test
+    (empty) HTML input to the full failure-inducing HTML page.
+                                                                                            function, which applies the set of changes to r✔ and tests the
+    B. Decomposing Changes                                                                  resulting run.
+
+    We now assume that the relevant change can be decomposed                                Definition 6 (test) The function test : 2c✘      ✘ ✔      is     '   (
+into a number of elementary changes 1                   
+                                                n . This decompo-                           defined as follows: Let c               0
+                                                                                                                            c✘ be a test case with c                  
+sition of into individual changes i is problem-specific. As an                              '1  2 (
+                                                                                              1 2        n . Then, test c          
+                                                                                                                             rtest 1 2       & n r✔   3   
+example, think of a DIFF output consisting of several individual                            holds.4
+changes i , each affecting a particular place in the text.
+    Our approach does not suggest a specific way of decompos-                                                                                               
+                                                                                                  Using Axiom 4, we can deduce the results of test c✔ and test c✘ :        
+ing changes. In general, though, we expect the decomposition to
+                                                                                            Corollary 7 (Passing and failing test case) The following holds:
+follow the structure of the change, which again follows the struc-
+ture of the circumstances being changed. In the Mozilla example                                        test &*   ✔
+                                                                                                 test c✔                                   (“passing test case”) and
+from Section I, there are many ways to decompose the change :                                           test '1 1  2  n (  ✘ (“failing test case”).
+                                                                                                 test c✘
+it may be decomposed into changes adding single characters, or
+changes adding HTML tags, or changes adding lines, depending                                                     III. M INIMIZING T EST C ASES
+on whether we see the input of being composed from characters,
+                                                                                                Proceed by binary search. Throw away half the input and see if
+tags, or lines. In doubt, an atomic decomposition—that is, a de-
+                                                                                                   the output is still wrong; if not, go back to the previous state
+composition into changes that can no further be decomposed—
+                                                                                                                          and discard the other half of the input.
+is the way to go.
+    To express (de-)composition formally, we write             1                                                            — Brian Kernighan and Rob Pike,
+  2    
+            n , where the composition i             
+                                            j groups two changes
+                                                                                                                                    The Practice of Programming
+  i and j into a larger whole:                                                                 Let us now model our initial scenario. We have a test case c✔
+                                                                                            that works fine and a test case c✘ that fails. Let us assume that c✔
+    Definition 2 (Composition of changes) The change composi-                               stands for some trivial program run (such as a run on an empty
+          "!#$%
+    tion :             is defined as i    j r    &     $
+                                                  i j r .                                 input). Then, minimizing the difference between c✔ and c✘ be-
+                                                                                            comes minimizing c✘ itself —that is, simplification of c✘ .
+      We do not assume any particular properties of . In practice,                           3 POSIX 1003.3 also lists UNTESTED and UNSUPPORTED outcomes, which are
+    is typically realized as a union of two change sets i .                                of no relevance here.
+                                                                                              4 To make the application of change sets unambiguous, test must sort the ap-
+     2 Read r and r as “r-fail” and “r-pass”, respectively.
+             ✘     ✔                                                                                       4
+                                                                                            plied changes i in some canonical way.
+4                                                                                          IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+A. Minimal Test Cases                                                                                   Step Test case                                                                          test
+                       0                                                                                   1        O
+                                                                                                                   1 2                            3           4    .    .       .       .
+                                                                                                                    O
+                                                                                                               1
+  A test case c     c✘ being a minimum means that there is no                                              2       . .                            .           .    5    6       7       8       ✘
+                                                                                                                    O
+                                                                                                               2
+smaller subset of c✘ that causes the test to fail. Formally:
+                                                                                                           3       . .                            .           .    5    6       .       .       ✔
+                                                                                                                    O
+                                                                                                               1
+                                                                                                           4       . .                            .           .    .    .       7       8       ✘
+Definition 8 (Global minimum) A set c   c✘ is called the         0                                         5
+                                                                                                               2
+                                                                                                                    O
+                                                                                                                   . .                            .           .    .    .       7       .       ✘                Done
+global minimum of c✘ if c   c✘ c 5 60 c          7 6 798 7 7;:
+                                           test c    ✘                           6 =<                Result
+                                                                                                               1
+                                                                                                                   . .                            .           .    .    .       7       .
+holds.
+                                                                                                                                    Fig. 4. Quick minimization of test cases
+   In practice, this would be nice to have, but it is practically
+impossible to compute: Relying on test alone to determine the
+global minimum of c✘ requires testing all 2 c✘ subsets of c✘ ,        > >                                                   O             O
+                                                                                                two subsets 1 and 2 with similar size and test each of them.
+which obviously has exponential complexity.5                                                    This gives us three possible outcomes:
+   Resorting to the idea of a local minimum helps a little. We                                                          O                                 O
+                                                                                                Reduce to 1 . The test of 1 fails— 1 is a smaller test case.6           O
+call a test case minimal if none of its subsets causes the test to                                                      O                     O
+                                                                                                Reduce to 2 . Testing 1 does not fail, but testing 2 fails—                                            O
+fail. That is, if a test case c is minimal, there may be some                                       O
+                                                                                                   2 is a smaller test case.
+other test case that is even smaller (i.e. a global minimum), but                               Ignorance. Both tests pass, or are unresolved—neither 1 nor                                                      O
+at least we know that each element of c is relevant in producing                                    O
+                                                                                                   2 qualify as possible simplifications.
+the failure—nothing can be removed without making the failure                                       In the first two cases, we can simply continue the search in
+disappear.                                                                                      the failing subset, as illustrated in Figure 4. Each line of the dia-
+                                                                                                gram shows a configuration. A number i stands for an included
+Definition 9 (Local minimum) A test case c                                 0 c is a local       change i ; a dot stands for an excluded change. Change 7 is the
+                                        5 6@?                         6 A < ✘ holds.
+                                                                            ✘
+minimum of c✘ or minimal if c    c test c                                                      minimal failing test case—and it is isolated in just a few steps.
+                                                                                                    Given sufficient knowledge about the nature of our input, we
+   This is what we want: a failing test case whose elements are                                 can certainly partition any test case into two subsets such that at
+all significant. However, determining that a test case c is a local                             least one of them fails the test. But what if this knowledge is
+minimum still requires 2 c      > >B
+                                 2 tests.                                                       insufficient, or not present at all?
+   What we can determine, however, is an approximation—for                                          Let us begin with the worst case: after splitting up c✘ into
+instance, a test case where removing a small set of changes is                                  subsets, all tests pass or are unresolved—ignorance is complete.
+still significant in producing the failure, but we do not check                                 All we know is that c✘ as a whole is failing. How do we increase
+whether removing several changes at once might make the test                                    our chances of getting a failing subset?
+case even smaller. Formally, we define this property as n-                                        By testing larger subsets of c✘ , we increase the chances that
+minimality: removing any combination of up to n changes                                         the test fails—the difference from c✘ is smaller. On the other
+                                                           7 7
+causes the failure to disappear. If c is c -minimal, then c is                                  hand, a smaller difference means a slower progression—the test
+minimal in the sense of Definition 9.
+                                                                                                
+                                                                                                case is not halved, but reduced by a smaller amount.
+   The approximation which interests us most is 1-minimality. A                                    By testing smaller subsets of c✘ , we get a faster progression
+                                         7 7
+failing test case c composed of c changes would be 1-minimal                                    in case the test fails. On the other hand, the chances that the test
+if removing any single change would cause the failure to disap-                                 fails are smaller.
+pear. While removing two or more changes at once may result                                         These specific methods can be combined by partitioning c✘
+in an even smaller, still failing test case, every single change on                             into a larger number of subsets and testing each (small) i as                                                        O
+its own is significant in reproducing the failure.                                              well as its (large) complement i c✘                               P 
+                                                                                                                                                i —until each subset        BQO
+                                                                                                contains only one change, which gives us the best chance to get
+Definition 10 (n-minimal test case) A test case c                        0 c is n-              a failing test case. The disadvantage, of course, is that more
+               5 6C?       D7 7 B 7 6 7FE                      6 G < ✘ holds.
+                                                                                     ✘
+minimal if c       c c     c      n      test c    :                                            subsets means more testing.
+Consequently, c is 1-minimal if   i          5D 
+                                       c test c                     BH'1 i (  < ✘                 This is what can happen. Let n be the number of subsets
+holds.                                                                                             1O . O
+                                                                                                             n . Testing each i and its complement i  O      c✘      i,                         P                       BRO
+                                                                                                we have four possible outcomes (Figure 5):
+  1-minimality is what we should be aiming at. However, given,                                  Reduce to subset. If testing any i fails, then i is a smaller       O                       O
+say, a failure-inducing input of 100,000 lines, we cannot simply
+remove each individual line in order to minimize it. Thus, we
+                                                                                                test case. Continue reducing i with n 2 subsets.              O             
+                                                                                                This reduction rule results in a classical “divide and conquer”
+need an effective algorithm to reduce our test case efficiently.                                approach. If one can identify a smaller part of the test case that
+                                                                                                is failure-inducing on its own, then this rule helps in narrowing
+B. A Minimizing Algorithm
+                                                                                                down the test case efficiently.
+   What do humans do in order to minimize test cases? One pos-                                  Reduce to complement. If testing any i            c✘     i fails, then      P              BSO
+sibility: they use binary search. If c✘ contains only one change,                               P i is a smaller test case. Continue reducing i with n         1 sub-               P                        B
+then c✘ is minimal by definition. Otherwise, we partition c✘ into                               sets.
+  5 To be precise, Corollary 7 tells us the results of test  IKJL          I L                   6 Since       T               T                                                                          T 2 as well if
+      M MN                                                                                                 T
+                                                            and test c✘ , such that                       1 and 2 have similar size, there is no need for testing
+only 2 c✘     2 subsets need to be tested, but this does not help much.                         testing 1 already fails.
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                                                                                                                5
+
+
+
+Minimizing Delta Debugging Algorithm
+
+Let test and c✘ be given such that test ✔ test c✘       ✘ hold.                                           K*               U           
+                        6 
+The goal is to find c✘ ddmin c✘ such that c✘ c✘ , test c✘    ✘, and c✘ is 1-minimal.                                       6 0               6                                6
+The minimizing Delta Debugging algorithm ddmin c is                                                                                     
+            ddmin c✘   ddmin2  c  2 where                                                   ✘
+
+                            ddmin2 -O i  2                       if V i ' 1 .W n (  test 1O i   ✘ (“reduce to subset”)
+                            ddmin2 P i  max  n B 1  2      else if V i ' 1 .W n (  test &P i   ✘ (“reduce to complement”)
+        ddmin2  c6  n  
+                   ✘
+                            ddmin2 c6  min  7 c6 7  2n     else if n 87 c6 7 (“increase granularity”)
+                                                                                                      ✘                      ✘                                            ✘
+                            c6                                 otherwise (“done”).  ✘
+
+
+where P i  c6 BXO i , c6 /O 1 Y O 2 Y  Y O n , all O i are pairwise disjoint, and 5 O i 7 O i 7;Z[7 c6 7 \ n holds.
+The recursion invariant (and thus precondition) for ddmin2 is test  c6   ✘ U n E)7 c6 7 .
+               ✘                                 ✘                                                                                                                                                                ✘
+                                                                                                                                                                  ✘                           ✘
+
+                                                                                                                     Fig. 5. Minimizing Delta Debugging algorithm
+
+             Step Test case                                                                                                                                      test
+                1      O P                                                                 1        2        3    4              .     .           .       .                            O O
+                                                                                                                                                                                  Testing 1 2
+                        O P
+                    1     2
+                2                                                                            .        .        .    .              5     6           7       8                :      Increase granularity
+                                              O                                                                                                                                            O 2 O
+                    2     1
+                3                                                                            1        2        .    .              .     .           .       .                    Testing 1
+                                                O
+                       1                                                                                                                                                                            4
+                4                                                                            .        .        3    4              .     .           .       .   ✔
+                                                  O
+                       2
+                5                                                                            .        .        .    .              5     6           .       .   ✔
+                                                    O
+                       3
+                6                                                                            .        .        .    .              .     .           7       8
+                            P
+                       4
+                7                                                                            .        .        3    4              5     6           7       8                    Testing complements
+                              P                                                                                                                                                                6 ]P                               3
+                       1
+                8                                                                            1        2        .    .              5     6           7       8   ✘            :      Reduce to c✘      2 ; continue with n
+                                                      O                                                                                                           ^                       O O O
+                       2
+                9                                                                            1        2        .    .              .     .           .       .                    Testing 1 2 3
+                                                        O                                                                                                             ^
+                       1
+               10                                                                            .        .        .    .              5     6           .       .   ✔            ^    same test carried out in an earlier step
+                                                          O                                                                                                       ^
+                       2
+               11                                                                            .        .        .    .              .     .           7       8
+                                P
+                       3
+               12                                                                            .        .        .    .              5     6           7       8                    Testing complements
+                                  P                                                                                                                                                                 6 ]P                          2
+                       1
+               13                                                                            1        2        .    .              .     .           7       8   ✘            :      Reduce to c✘      2 ; continue with n
+                         O P                                                                                                                                    ^                       O O
+                       2
+               14                                                                            1        2        .    .              .     .           .       .                    Testing 1 2
+                          O P                                                                                                                                   ^
+                    1     2
+               15                                                                            .        .        .    .              .     .           7       8                :      Increase granularity
+                                                            O                                                                                                                              O 2 O
+                    2     1
+               16                                                                            1        .        .    .              .     .           .       .                    Testing 1
+                                                              O
+                       1                                                                                                                                                                            4
+               17                                                                            .        2        .    .              .     .           .       .   ✔
+                                                                O
+                       2
+               18                                                                            .        .        .    .              .     .           7       .
+                                                                  O
+                       3
+               19                                                                            .        .        .    .              .     .           .       8
+                                    P
+                       4
+               20                                                                            .        2        .    .              .     .           7       8                    Testing complements
+                                      P                                                                                                                                                            6 ]P                           3
+                       1
+               21                                                                            1        .        .    .              .     .           7       8   ✘            :      Reduce to c✘    2 ; continue with n
+                                                                    O                                                                                             ^                       O 2 O
+                       2
+               22                                                                            1        .        .    .              .     .           .       .                    Testing 1
+                                                                      O                                                                                           ^
+                       1                                                                                                                                                                          3
+               23                                                                            .        .        .    .              .     .           7       .
+                                                                        O                                                                                         ^
+                       2
+               24                                                                            .        .        .    .              .     .           .       8
+                                        P
+                       3
+               25                                                                            .        .        .    .              .     .           7       8                    Testing complements
+                                          P
+                       1
+               26                                                                            1        .        .    .              .     .           .       8
+                                            P
+                       2
+               27      3                                                                     1        .        .    .              .     .           7       .                    Done
+             Result                                                                          1        .        .    .              .     .           7       8
+
+                                                                                                                Fig. 6. Minimizing a test case with increasing granularity
+
+
+Why do we continue with n 1 and not two subsets here? Be-                       B                                                                                tests that already have been run, the next new test would be one
+cause the granularity stays the same: Splitting i into n 1 sub-                                                      P                       B                                                     P
+                                                                                                                                                                 of the complements i —we’d simply continue removing small
+sets means that the subsets of i are identical to the subsets i                         P                                                                O       chunks.
+of c✘ . Every subset of c✘ eventually gets tested.                                                                                                               If we continued with two subsets instead, we would have to work
+As an example, assume n         32 and 30 fails. If we continue                                      P                                                          our way down with n       2 4 8             
+                                                                                                                                                                                                       until the initial granularity
+with n     31, the recursive ddmin call splits 30 into n     31                                                         P                                               
+                                                                                                                                                                 of n 32 is reached again.
+                                      O
+subsets. The subsets 1 to 30 have already been tested be-                           O                                                                            Increase granularity. Otherwise (that is, no test failed), try
+fore. If we realize the test function such that it keeps track of                                                                                                again with 2n subsets. (Should 2n                        _ 7 7
+                                                                                                                                                                                                          c✘ hold, try again with
+6                                                                               IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+
+7 c 7 subsets instead, each containing one change.) This results The overall number of tests is thus 4 7 c 7  7 c 7 2 B 7 c 7  7 c 7 2 
+    ✘                                                                                                                              ✘          ✘        ✘    ✘
+in at most twice as many tests, but increases chances for failure. 3 7 c 7 .               ✘
+Done. The process is repeated until granularity can no longer
+be increased (that is, the next n would be larger than 7 c 7 ). In     In practice, however, it is unlikely that an n-character input
+                                                                   requires n 2  3n tests. The “divide and conquer” rule of ddmin
+                                                                     ✘
+this case, we have already tried removing every single change
+individually without further failures: the resulting change set is                   takes care of quickly narrowing down failure-inducing parts of
+minimal.                                                                             the input:
+   As an example, consider Figure 6, where the minimal test
+                                                                                     Proposition 13 (ddmin complexity, best case) If there is only
+                                                                                                                            O 
+case consists of the changes 1, 7, and 8. Any test case that in-
+                                                                                     one failure-inducing change i          c✘ , and all test cases that
+                                                                                                O
+cludes only a subset of these changes results in an unresolved
+                                                                                     include i cause a failure as well, then the number of tests t
+                                                                                                                    7 7
+test outcome; a test case that includes none of these changes
+                                                                                     is limited by t    E
+                                                                                                        2 log2 c✘ .          Proof: Under the given
+                                                                                                                                          O        O
+passes the test.
+                                                                                     conditions, the test of either initial subset 1 or 2 will fail;
+                                                                                       
+   We begin with partitioning the total set of changes in two
+halves—but none of them passes the test. We continue with                            n     2 always holds. Thus, the overall complexity is that of a
+granularity increased to 4 subsets (Step 3–6). When testing the                      binary search.
+                             P
+complements, the set 2 fails, thus removing changes 3 and 4.
+                                     P
+We continue with splitting 2 into three subsets. The next three
+                                                                                       Whether this “best case” efficiency applies depends on our
+                                                                                     ability to break down the input into smaller chunks that result in
+tests (Steps 9–11) have already been carried out and need not be
+                                 ^                 P
+repeated (marked with ). When testing 2 (Step 13), changes
+                                                                                     determined (or better: failing) test outcomes. Consequently, the
+                                                                                     more knowledge about the structure of the input we have, the
+5 and 6 can be eliminated. We increase granularity to 4 sub-
+sets and test each (Steps 16–19), before the last complement 2             P         better we can identify possibly failure-inducing subsets, and the
+                                                                                     better is the overall performance of ddmin.
+(Step 21) eliminates change 2. Only changes 1, 7, and 8 remain;
+                                                                                       The surprising thing, however, is that even with no knowl-
+Steps 25–27 show that none of these changes can be eliminated.
+                                                                                     edge about the input structure at all, the ddmin algorithm has
+To minimize this test case, a total of 19 different tests was re-
+                                                                                     sufficient performance—at least in the case studies we have ex-
+quired.
+                                                                                     amined. This is illustrated in the following section.
+C. Properties of ddmin
+                                                                                                               IV. C ASE S TUDIES
+  We close with some formal properties of ddmin. First, ddmin
+eventually returns a 1-minimal test case:                                              When you’ve cut away as much HTML, CSS, and JavaScript as
+                                                                                             you can, and cutting away any more causes the bug to
+Proposition 11 (ddmin minimizes) For any c                 0
+                                                     c✘ , ddmin c                                                       disappear, you’re done.
+is 1-minimal in the sense of definition 10.          Proof: Ac-                                                        — Mozilla BugAThon call
+                                                               6
+cording to the ddmin definition (Figure 5), ddmin c✘ returns c✘                  6
+only if n       ` 7 67
+              c✘ and test i        &P #<
+                                     ✘ for all 1        O 2 O
+                                                           n where
+                                                                                       Let us now turn to some real-life failures and simplify failure-
+P  6 BSO
+       c        . If n   c  ` 7 67
+                             , then         7O 7 
+                                            1  and          7P 7  7 7 B
+                                                            c    1.
+                                                                                     inducing input. We discuss examples from the GNU C compiler,
+                                6$? 6            67 7 B 7 6 7 
+  i      ✘    i            ✘           i             i                               Mozilla, and various UNIX utilities subjected to random fuzz in-
+Since all subsets of c          c✘ with c✘        c       1 are in
+ '1P 2 P (
+    1       n and test i     KP = <             P
+                                ✘ for all i , the condition of defi-
+                                                                                     put.
+nition 10 applies and c is 1-minimal.                                                A. GCC gets a Fatal Signal
+        In the worst case, ddmin takes c✘ 7 7  3 7 c 7 tests:
+                                              2
+                                                       ✘
+                                                                     The C program in Figure 7 not only demonstrates some par-
+                                                                  ticular nasty aspects of the language, it also causes the GNU
+Proposition 12 (ddmin complexity, worst case) The number of C compiler (GCC) to crash—at least, when using version 2.95.2
+                                       7 7  7 7
+tests carried out by ddmin c✘ is c✘ 2 3 c✘ in the worst case. on Intel-Linux with optimization enabled.
+                                                                     Before crashing, GCC grabs all available memory for its stack,
+Proof: The worst case can be divided into two phases: First,                                                                 7
+every test has an unresolved result until we have a maximum such that other processes may run out of resources and die. The
+granularity of n          7 7
+                      c✘ ; then, testing only the last complement latter can be prevented by limiting the stack memory available
+                                                                 to GCC, but the effect remains:
+ In the first phase, every test has an unresolved result. This
+results in a failure until n 2 holds.
+                                                                                               $ (ulimit -H -s 256; gcc -O bug.c)
+results in a re-invocation of ddmin2 with a doubled number of
+                 7O 7 
+                                                                                               gcc: Internal compiler error:
+subsets, until i      1 holds. The number of tests to be carried
+                  7 7  7 7  7 7  > >  > >   
+                                              c✘     c✘
+                                                                                                    program cc1 got fatal signal 11
+out is 2 4 8             2 c✘    2 c✘   c✘                                                     $ _
+7 7
+                                               2      4
+4 c✘ .
+  In the second phase, the worst case is that testing the last                         The GCC error message (and the resulting core dump) help
+                  P
+complement n fails; consequently, ddmin2 is re-invoked with                          GCC maintainers only; as ordinary users, we must now nar-
+ddmin2 n c✘ &P  7 7 B 
+                    1 . This results in c✘7 7B1 calls of ddmin,                      row down the failure-inducing input in bug.c—and minimize
+                               7 7 B    7 7 B     
+with two tests per call, or 2 c✘    1   2 c✘ 2              2                        bug.c in order to file in a bug report.
+    
+2 4 6           7 7 B   7 7  7 7 B   7 7 B 7 7
+                    2 c✘      1      c✘ c✘    1      c✘ 2    c✘                       7 The author denies any liability for damage caused by repeating this experi-
+tests.                                                                               ment.
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                                                                                             7
+
+
+
+    #define SIZE 20
+                                                                                                                                                                  tcmin log
+                                                                                                                         1000
+    double mult(double z[], int n)
+    '
+                                                                                                                                                                                                    bug.c
+
+
+
+             int i , j ;
+         i        
+                 0;
+                                                                                                            c
+         for ( j = 0; j                               8       n; j ++)                 '                    input size
+
+           i       i    j                                   1;
+           z[i ]     z[i ]                               a   z[0]    10 ;                
+         (                                                                                                               100
+
+             return z[n];
+    (                                                                                                                           0   100         200       300        400
+                                                                                                                                                                tests executed
+                                                                                                                                                                                 500          600    700       800
+
+
+
+    void copy(double to[], double from[], int count)                                                                                      Fig. 8. Minimizing GCC input bug.c
+    '
+                 int n = count        
+                                    7 8;                                 \                            –ffloat-store                           –fno-default-inline                  –fno-defer-pop
+                                  
+                 switch count % 8 do                                              '                    –fforce-mem                             –fforce-addr                         –fomit-frame-pointer
+
+                                                                  
+                                                                                                        –fno-inline                             –finline-functions                   –fkeep-inline-functions
+                    case 0: *to++     *from++;                                                          –fkeep-static-consts                    –fno-function-cse                    –ffast-math
+                    case 7: *to++     *from++;                                                         –fstrength-reduce                       –fthread-jumps                       –fcse-follow-jumps
+                    case 6: *to++     *from++;                                                         –fcse-skip-blocks                       –frerun-cse-after-loop               –frerun-loop-opt
+
+                    case 5: *to++     *from++;                                                         –fgcse                                  –fexpensive-optimizations            –fschedule-insns
+
+                                                                  
+                                                                                                        –fschedule-insns2                       –ffunction-sections                  –fdata-sections
+                    case 4: *to++     *from++;                                                          –fcaller-saves                          –funroll-loops                       –funroll-all-loops
+                    case 3: *to++     *from++;                                                         –fmove-all-movables                     –freduce-all-givs                    –fno-peephole
+                    case 2: *to++     *from++;                                                         –fstrict-aliasing
+
+                    case 1: *to++     *from++;                                                                                                         TABLE I
+
+             (     while       n     0;   1BHB               _                                                                                GCC OPTIMIZATION OPTIONS
+
+                 return mult(to, 2);
+    (
+    int main(int argc, char *argv[])                                                                    input size from 755 characters to 377 and 188 characters,
+    '                                                                                                   respectively—the test case now only contains the mult function.
+                 double x[SIZE], y[SIZE];                                                               Reducing mult, however, takes time: only after 731 more tests
+                 double *px    x;                                                                      (and 34 seconds)9 do we get a test case that can not be mini-
+                                                                                                        mized any further. Only 77 characters are left:
+                 while px     x     SIZE       8                                                                                         '                       '                                        a
+                    *px++      px     x        % B                            a SIZE         
+                                                                                                 10 ;
+                                                                                                        t(double z[],int n) int i , j ;for(;;) i
+                                                                                                                            (
+                                                                                                         z[0] 0 ; return z[n];
+                                                                                                                                                  i
+                                                                                                                                                      (
+                                                                                                                                                       j 1;z[i ]     z[i ]
+
+                 return copy(y, x, SIZE);                                                                  This test case is 1-minimal—no single character can be re-
+    (                                                                                                   moved without removing the failure. Even every single super-
+                                          Fig. 7. The bug.c program that crashes GNU CC                 fluous whitespace has been removed, and the function name has
+                                                                                                        shrunk from mult to a single t. (At least, we now know that
+                                                                                                        neither whitespace nor function name were failure-inducing!)
+       In the case of GCC, the passing program run is the empty input.                                     Figure 9 shows an excerpt of the Delta Debugging log: From
+    For the sake of simplicity, we modeled a change as the insertion                                    “z[0]” to “return”, we see how the ddmin algorithm tries to re-
+    of a single character. This means that                                                              move every single change (= character) in order to minimize the
+                                                                                                       input even further—but each test results in a syntactically invalid
+
+       r✔ is running GCC with an empty input
+                                                                                                        program.
+
+       r✘ means running GCC with bug.c
+                                                                                                           As GCC users, we can now file in the one-liner as a minimal
+
+       each change i inserts the i -th character of bug.c
+       partitioning c✘ means partitioning the input into parts.                                         bug report. But where in GCC does the failure actually occur?
+    No special effort was made to exploit syntactic or semantic                                         We already know that the failure is associated with optimization:
+    knowledge about C programs; consequently, we expected a large                                       If we remove the -O option to turn off optimization, the failure
+    number of test cases to be invalid C programs.                                                      disappears. Could it be possible to keep optimization turned on,
+       To minimize bug.c, we implemented the ddmin algorithm of                                         but to influence it in a way that the failure disappears?
+    Figure 5 into our WYNOT prototype 8. The test procedure would                                          The GCC documentation lists 31 options that can be used to
+    create the appropriate subset of bug.c, feed it to GCC, return ✘                                    influence optimization on Linux, shown in Table I. It turns out
+    iff GCC had crashed, and ✔ otherwise. The results of this WYNOT                                     that applying all of these options causes the failure to disappear:
+    run are shown in Figure 8.                                                                            9 All times were measured on a Linux PC with a 500 MHz Pentium III proces-
+       After the first two tests, WYNOT has already reduced the                                         sor. The time given is the CPU user time of our WYNOT prototype as measured
+
+                              b “Worked Yesterday, NOt Today”
+                                                                                                        by the UNIX kernel; it includes all spawned child processes (such as the GCC run
+        8 WYNOT                                                                                         in this example).
+8                                                                      IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+                                                  dd                 dd                                             ee                        ee
+                         714 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+
+                                                     dd                 dd
+                                t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+                                                                                                                       ee                        ee
+                      
+                            714
+                            715 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+
+
+                                                  dd                 dd
+                            716 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+                            717 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];           ee                        ee
+                                                  dd                 dd
+                            718 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+                                                                                                                       ee                        ee
+                      
+                            719 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+
+
+
+                                                  dd                 dd
+                            720 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+                            721 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];           ee                        ee
+                        fff                                               fff
+                            722 t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n];
+
+
+
+                           733                      d                  d
+                                  t(double z[],int n) int i,j;for(;;) i=i+j+1;z[i]=z[i]*(z[0]+0); return z[n]; ✘       e                         e
+                                                          Fig. 9. Minimizing GCC input bug.c
+
+
+    $ gcc -O -ffloat-store -fno-default-inline                  g                            100
+                                                                                                                                  tcmin log
+
+                                                                                                                                                              GCC Options
+        -fno-defer-pop ...-fstrict-aliasing bug.c
+    $ _
+
+   This means that some option(s) in the list prevent the failure.
+We can use test case minimization in order to find the preventing
+                                                                                   options
+                                                                                             10
+option(s). This time, each i stands for removing a GCC option
+from Table I: Having all i applied means to run GCC with no
+option (failing), and having no i applied means to run GCC with
+all options (passing).
+   This WYNOT run is a straight-forward “divide and conquer”                                  1
+search, shown in Figure 10. After 7 tests (and less than a sec-                                    0     1      2           3         4               5   6           7     8
+                                                                                                                                tests executed
+ond), the single option –ffast-math is found which prevents the
+failure:                                                                                                       Fig. 10. Minimizing GCC options
+
+    $ gcc -O -ffast-math bug.c
+    $ _
+                                                                                                       Go to bugzilla.mozilla.org
+   Unfortunately, the –ffast-math option is a bad candidate for                                        Select search for bug
+working around the failure, because it may alter the semantics
+                                                                                            Print to file setting the bottom and right margins to
+of the program. We remove –ffast-math from the list of options
+                                                                                   .50 (I use the file /var/tmp/netscape.ps)
+and make another WYNOT run. Again after 7 tests, it turns out
+the option –fforce-addr also prevents the failure:                                         Once it’s done printing do the exact same thing
+                                                                                   again on the same file (/var/tmp/netscape.ps)
+    $ gcc -O -fforce-addr bug.c
+                                                                                                       This causes the browser to crash with a segfault
+    $ _
+                                                                                      In this case, the Mozilla input consists of two items: The se-
+   Are there any other options that prevent the failure? Running
+                                                                                   quence of input events—that is, the succession of mouse mo-
+GCC with the remaining 29 options shows that the failure is still
+there; so it seems we have identified all failure-preventing op-                   tions, pressed keys, and clicked buttons—and the HTML code
+tions. And this is what we can send to the GCC maintainers:                        of the erroneous WWW page. We used the XLAB capture/replay
+1. The minimal test case                                                           tool [5] to run Mozilla while capturing all user actions and log-
+2. “The failure occurs only with optimization.”                                    ging them to a file. We could easily reproduce the error, creat-
+3. “–ffast-math and –fforce-addr prevent the failure.”                             ing an XLAB log with 711 recorded X events. Our WYNOT tool
+Still, we cannot identify a place in the GCC code that causes the                  would now use XLAB to replay the log and feed Mozilla with the
+problem. On the other hand, we have identified as many failure                     recorded user actions, thus automating Mozilla execution.
+circumstances as we can. In practice, program maintainers can                         In a first run, we wanted to know whether all actions in the
+easily enhance their automated regression test suites such that                    bug report were actually necessary. We thus subjected the log to
+the failure circumstances are automatically simplified for any                     test case minimization, in order to find a failure-inducing mini-
+failing test case.                                                                 mum of user actions. Out of the 711 X events, only 95 were in-
+                                                                                   duced by user actions—that is, moving the mouse pointer, press-
+B. Mozilla Cannot Print                                                            ing or releasing the mouse button, and pressing or releasing a
+   As a further case study, we wanted to simplify a real-world                     key on the keyboard. (The other events were induced by the X
+Mozilla test case and thus contribute to the Mozilla BugAThon.                     server, such as notifications that the window should be redrawn.)
+A search in Bugzilla, the Mozilla bug database, shows us                           These 95 user actions could easily be filtered out automatically
+bug #24735, reported by anantk@yahoo.com:                                          by event type and were then subjected to minimization.
+    Ok the following operations cause mozilla to crash con-                          The test function would start Mozilla and use XLAB to replay
+sistently on my machine                                                            the given set of user actions and then wait for a few seconds. If
+         Start mozilla                                                             Mozilla crashed during this interval, test would return ✘; other-
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                                                                                                        9
+
+
+
+                                                              tcmin log                                                                                                   tcmin log
+                         100                                                                                                 1000
+                                                                                  MN events removed                                                                                                        query.html
+
+
+
+
+    number of X-events
+                                                                                                                             100
+
+
+h
+                                                                                                           number of lines
+                         10
+
+
+                                                                                                                              10
+
+
+
+
+                          1                                                                                                     1
+                               0      10     20       30    40         50    60        70        80   90                            0            10           20             30                 40           50           60
+                                                            tests executed                                                                                           tests executed
+
+
+                                           Fig. 11. Minimizing Mozilla user actions                                                              Fig. 12. Minimizing Mozilla HTML input
+
+
+
+wise, test would terminate Mozilla and return ✔.10                                                                                                                         tcmin log
+                                                                                                                              1e+06
+   The results of this run are shown in Figure 11. After 82 test                                                                                                                                            flex / t16
+
+runs (or 21 minutes), only 3 out of 95 user actions are left:
+1. Press the P key while the Alt modifier key is held. (Invoke
+                                                                                                                             100000
+the Print dialog.)
+2. Press mouse button 1 on the Print button without a modifier.                                            c
+                                                                                                           input size
+(Arm the Print button.)
+                                                                                                                              10000
+3. Release mouse button 1. (Start printing.)
+User actions removed include moving the mouse pointer, select-
+ing the Print to file option, altering the default file name, setting
+                                                                                                                               1000
+the print margins to .50, and releasing the P key before clicking                                                                       0   50         100   150   200        250         300        350   400      450   500
+
+on Print—all this is irrelevant in producing the failure.11                                                                                                              tests executed
+
+
+   Since the user actions can hardly be further generalized, we                                                                                       Fig. 13. Minimizing FLEX fuzz input
+turn our attention to another input source–the failure-inducing
+HTML code. The original Search for bug page has a length of
+                                                              already suffices for reproducing the failure. Overall, we obtain
+39094 characters or 896 lines; an excerpt is shown in Figure 1.
+In order to minimize the HTML code, we chose a hierarchical   the following self-contained minimized bug report:
+approach: In a first run, we wanted to minimize the number of      Create an HTML page containing “<SELECT>”
+                                                  O
+lines (that is, each i was identified with a line); in a later run,Load the page and print it using Alt+P and Print.
+we wanted to minimize the failure-inducing line(s) according to    The browser crashes with a segmentation fault.
+single characters.                                            or even simpler:
+   The results of the lines run are shown in Figure 12. Af-        Printing “<SELECT>” causes a crash.
+ter 57 test runs, the ddmin algorithm minimizes the original     In principle, this minimization procedure could easily be
+896 lines to a 1-line input:                                  applied automatically on the 12,479 open bugs listed in the
+                                                              Bugzilla database13 —provided that the bug reports can be re-
+      <SELECT NAME="priority" MULTIPLE SIZE=7> produced automatically. All one needs is an HTML input, a se-
+  This is the HTML input which causes Mozilla to crash when quence of user actions, an observable failure—and a little time
+being printed. As in the GCC example of Section IV-A, the ac- to let the computer simplify the failure-inducing input.
+tual failure-inducing input is very small. It should be noted,
+                                                                                                           C. Minimizing Fuzz
+though, that the original HTML code contains multiple SELECT
+tags; Delta Debugging returns only one of them.12 Further min-                                                In a classical experiment [6], [7], Bart Miller and his team
+imization by characters, as shown in Figure 2, reveals that the                                            examined the robustness of UNIX utilities and services by send-
+attributes of the SELECT tag are not relevant for reproducing                                              ing them fuzz input—a large number of random characters. The
+the failure, either—the single input                                                                       studies showed that, in the worst case, 40% of the basic pro-
+                                                                                                           grams crashed or went into infinite loops when being fed with
+                                   <SELECT>                                                                fuzz input.
+                 10 As in all testing, it is always a good idea to set an upper time bound for test           We wanted to know how well the ddmin algorithm performs
+cases.                                                                                                     in minimizing the fuzz input sequences. We examined a subset
+  11 It is relevant, though, that the mouse button be pressed before it is released.
+  12 If desired, one could easily re-invoke Delta Debugging on the remainder to
+                                                                                                           of the UNIX utilities listed in Miller’s paper: NROFF (format doc-
+search for other independent failure causes. In practice, though, we expect that
+                                                                                                           uments for display), TROFF (format documents for typesetter),
+after Delta Debugging has simplified a test case, first the error is fixed. Then,                          FLEX (fast lexical analyzer generator), CRTPLOT (graphics filter
+the test is repeated with the fixed program. If the failure persists, then Delta
+Debugging can find the next failure cause.                                                                            13 as of 15 February 2001, 13:00 GMT
+10                                                                                                IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+                                                                                                       generalize the large fuzz input to a minimal bug report.
+                                                        tcmin log
+                     1e+06
+                                                                            crtplot / test t16         D. The Precision Effect
+                     100000
+                                                                                                          In the fuzz examples from Section IV-C, our test function
+                      10000
+                                                                                                       would return ✘ whenever a program crashed—regardless of fur-
+    c
+    input size
+                      1000
+                                                                                                       ther circumstances. This ignorance may lead to a problem: the
+                                                                                                       minimized input may cause a different failure than the original
+                       100
+                                                                                                       test case.
+                                                                                                          In the fuzz examples, a different failure may be tolerable: Just
+                        10
+                                                                                                       as in the Mozilla case study (Section IV-B), there may be multi-
+                         1
+                                                                                                       ple independent failure causes, and eventually, we must fix them
+                              0      5           10                    15        20              25
+                                                      tests executed
+                                                                                                       all. In the context of debugging, though, it is important that the
+                                                                                                       causes for the original failure be isolated.
+                                  Fig. 14. Minimizing CRTPLOT fuzz input
+                                                                                                          As a consequence, we repeated our test runs with an increased
+                                                                                                       precision, which would also compare the location of the failure.
+for various plotters), UL (underlining filter), and UNITS (convert                                     As location, we used the backtrace—that is, the current program
+quantities).                                                                                           counter and the stack of calling functions at the moment of the
+   We set up 16 different fuzz inputs, differing in size (103 to 106                                   crash; the values of arguments and local variables were not part
+
+                                                                                                       
+characters) and content (whether all characters or only printable                                      of the backtrace, though.
+characters were included, and whether NUL characters were in-                                             The test function would return ✘ only if the program crashed
+cluded or not). As shown in Table II(b), Miller’s results still                                        and if the backtrace of the failure was identical to the original
+
+                                                                                                       
+apply—at least on Sun’s Solaris 2.6 operating system: out of                                           backtrace.
+                 !            
+6 16 96 test runs, the utilities crashed 42 times (43%).                                                  If the program failed, but with a different backtrace, test
+
+                                                                                                       
+   We applied our WYNOT tool in all 42 cases to minimize the                                           would return .
+failure-inducing fuzz input. In a first series, our test function                                         If the program did not crash, test would return ✔.
+would simply return ✘ if the input made the program crash,                                                As shown in Table II(e), this increase in precision resulted
+and ✔, otherwise. Table II(c) shows the resulting input sizes;                                         in larger minimized test cases for NROFF, TROFF, and FLEX; the
+Table II(d) lists the number of tests required. Depending on the                                       other three programs are unchanged. As an example, the NROFF
+crash cause, the programs could be partitioned into two groups:                                        input t1 has been minimized from 103 to 60 characters; with
+  The first group of programs shows obvious buffer overrun
+                                                                                                       lower precision (Table II(c)), only 2 characters were left. This
+                                                                                                       indicates that the 2 characters from Table II(c) induce a failure
+problems.
+                                                                                                       different from the original one; only the 60 characters in Ta-
+  – FLEX, the most robust utility, crashes on sequences of
+                                                                                                       ble II(e) induce the same backtrace.
+2,121 or more non-newline and non-NUL characters (t14 –t15 ).
+                                                                                                          Besides the backtrace, there is more one could compare:
+  – UL crashes on sequences of 516 or more printable non-
+                                                                                                       the entire memory contents, for instance, or the full execution
+newline characters (t5 –t8 , t13 –t16 ).
+                                                                                                       traces. One will find, though, that higher precision will always
+  – UNITS crashes on sequences of 77 or more 8-bit characters
+                                                                                                       increase the size of the minimized test case. This is so because
+(t2 –t4 and t11 –t12 ).
+                                                                                                       only the complete original input can induce the complete orig-
+Figure 13 shows the first 500 tests of the WYNOT run for FLEX
+                                                                                                       inal failure; and a complete comparison of behavior will make
+and t16 . After 494 tests, the remaining size of 2,122 characters
+                                                                                                       all of the original input significant (except for those parts, of
+is already close to the final size; however, it takes more than
+                                                                                                       course, which do not have any impact on the final program state
+
+10,000 further tests to eliminate one more character.
+                                                                                                       at all). In practice, a simple backtrace as in our setting should
+   The second group of programs appears vulnerable to random
+                                                                                                       provide sufficient precision.
+commands.
+  – NROFF and TROFF crash
+        a
+      on malformed commands like "\\DˆJ%0F"14
+                                                                                                                              V. I SOLATING
+                                                                                                                     FAILURE -I NDUCING D IFFERENCES
+(NROFF, t6 ), and
+        a
+      on 8-bit input such as "\302\n" (TROFF, t1 )                                                                                So assess them to find out their plans,
+  – CRTPLOT crashes on the one-letter inputs "t" (t1 ) and "f"                                                                 both the successful ones and the failures.
+(t5 , t9 , t13 –t16 ).                                                                                                          Incite them to action in order to find out
+The WYNOT run for CRTPLOT and t16 is shown in Figure 14. It                                                                           the patterns of movement and rest.
+takes 24 tests to minimize the fuzz input of 106 characters to the                                                                           — Sun Tzu, The Art of War
+single failure-inducing character.
+   Again, all test runs can be (and have been) entirely auto-                                             The case studies as discussed in Sections IV-C and IV-D ex-
+mated. This allows for massive automated stochastic testing,                                           hibit a major weakness of the ddmin algorithm: The larger the
+where programs are fed with fuzz input in order to reveal de-                                          size of the simplified input, the higher is the number of tests
+fects. As soon as a failure is detected, input minimization can                                        required. This is pretty obvious, because determining the 1-
+                                                                                                       minimality of a test case with n entities requires at least n tests—
+            14 All input is shown in C string notation.                                                each entity is individually removed and tested. Consequently,
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                        11
+
+
+
+
+              (a) Test cases
+               Name             t1 t2     t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16
+               Character range        all          printable         all            printable
+               NUL characters         yes             yes            no                no
+               Input size      103 104 105 106 103 104 105 106 103 104 105 106 103 104 105 106
+
+              (b) Test outcomes
+               Name            t1       t2       t3       t4 t5 t6 t7                t8    t9
+                                                                                            t10 t11 t12 t13 t14 t15 t16
+              NROFF             ✘S      ✘S       ✘S       ✘S   – ✘A ✘A               ✘A     ✘S
+                                                                                             ✘S ✘S ✘S     –    –   –   –
+              TROFF               –     ✘S       ✘S       ✘S   – ✘A ✘A               ✘S   – – ✘S ✘S       –    –   –   –
+              FLEX                –          –        –    – – – –                     – – – – – – ✘S ✘S ✘S
+              CRTPLOT           ✘S           –        –    – ✘S   – –                  – ✘S   – – – ✘S ✘S ✘S ✘S
+              UL                  –          –        –    – ✘S ✘S ✘S                 ✘S  – – – – ✘S ✘S ✘S ✘S
+              UNITS               –     ✘S       ✘S       ✘S   – – –                   – – – ✘S ✘S        –    –   –   –
+                                                                 “–” = test passed (✔), ✘ S = Segmentation Fault, ✘ A = Arithmetic Exception
+                      7 67
+              (c) Size c✘ of minimized input—low precision
+               Name            t1 t2     t3  t4 t5 t6 t7                             t8    t9       t10 t11 t12 t13    t14 t15 t16
+              NROFF                 2     2        2        2   –   7   7              7        2    2     2     2   –    –    –    –
+              TROFF                 –     3        3        3   –   7   7              7        –    –     3     3   –    –    –    –
+              FLEX                  –     –        –        –   –   –   –              –        –    –     –     –   – 2121 2121 2121
+              CRTPLOT               1     –        –        –   1   –   –              –        1    –     –     –   1    1    1    1
+              UL                    –     –        –        – 516 516 516            516        –    –     –     – 516 516 516 516
+              UNITS                 –    77       77       77   –   –   –              –        –    –   n/a   n/a   –    –    –    –
+                                                               Test outcomes t11 and t12 for UNITS could not be reproduced deterministically.
+
+              (d) Number of test runs—low precision
+               Name            t1 t2    t3   t4 t5                  t6 t7 t8               t9       t10 t11 t12 t13      t14 t15 t16
+              NROFF              55      41       60       39    – 156 153 243              17      22   27    54     –     –     –     –
+              TROFF               –      84       73      100    – 156 153 22493             –       –   50    42     –     –     –     –
+              FLEX                –       –        –        –    –    –    –    –            –       –     –     –    – 11589 17960 10619
+              CRTPLOT            15       –        –        – 15      –    –    –           16       –     –     – 14      17    23    24
+              UL                  –       –        –        – 7138 7012 6058 7090            –       –     –     – 2434 3455 3055 2307
+              UNITS               –     662      623      626    –    –    –    –            –       –   n/a   n/a    –     –     –     –
+
+
+                      7 67
+              (e) Size c✘ of minimized input—high precision
+               Name            t1 t2     t3  t4 t5 t6 t7                             t8    t9       t10 t11 t12 t13    t14 t15 t16
+              NROFF              60      61       54       60   –   9   9              9    54      54   61    54    –    –    –    –
+              TROFF               –     393      392      204   –   9   9              9     –       –   73      8   –    –    –    –
+              FLEX                –       –        –        –   –   –   –              –     –       –     –     –   – 6749 6749 6749
+              CRTPLOT             1       –        –        –   1   –   –              –     1       –     –     –   1    1    1    1
+              UL                  –       –        –        – 516 516 516            516     –       –     –     – 516 516 516 516
+              UNITS               –      77       77       77   –   –   –              –     –       –   n/a   n/a   –    –    –    –
+
+
+              (f) Number of test runs—high precision
+               Name            t1 t2     t3   t4 t5         t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16
+              NROFF            3547 3468 3941 3403       – 150 141 229 4131 4246 5565 2722    –     –     –     –
+              TROFF               – 43963 39426 10487    – 150 141 229     –   – 2372 1001    –     –     –     –
+              FLEX                –     –     –     –    –    –    –    –  –   –    –    –    – 37029 34450 37454
+              CRTPLOT            16     –     –     – 15      –    –    – 16   –    –    – 14      17    23    24
+              UL                  –     –     –     – 7138 7012 6058 7090  –   –    –    – 2434 3455 3055 2307
+              UNITS               – 684 623 626          –    –    –    –  –   – n/a n/a      –     –     –     –
+
+                                                                      TABLE II
+                                                      M INIMIZING FAILURE - INDUCING FUZZ INPUT
+12                                                                  IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+with the simplified FLEX input of 2121 characters, the number of          say, two items to keep in mind, while the minimized test case
+tests (Table II(d)) varies between 11589 (fuzz input of 104 char-         consists of, say, a hundred items to keep in mind, the isolated
+acters) and 17960 (105 fuzz input characters); with high pre-             difference may lead much faster to the fix.
+cision, the number of tests is between 34450 and 37454 (Ta-                  Another important point is that the running time of the pro-
+ble II(f)).                                                               gram is frequently proportional to the size of its input. In some
+   36,000 tests are not much of an issue if each individual test is       cases, simplification may require a larger amount of tests, but
+fast. If a single test takes about 0.1 seconds, as in the FLEX case,      a lower total running time, due to the smaller input. Conse-
+the entire simplification requires 1 hour. However, if the tests          quently, even when isolating differences, we should take care to
+are less trivial, or if the size of the simplified input is larger, we    prefer simple test cases. In practice, intended use and available
+have a serious problem.                                                   resources may result in a mix of both simplification and isola-
+   There are many pragmatic approaches to resolve this issue,             tion.
+such as stopping simplification as soon as a time limit is reached
+or as soon as the original test case is reduced by a certain              B. An Isolating Algorithm
+amount. However, there is a better strategy. Rather than only                Let us now formally define the algorithm that isolates failure-
+cutting away while the failure persists, one can also add differ-         inducing differences. How can we extend the ddmin algorithm
+ences while the program still passes the test. To get the best            to obtain the behavior as sketched in Figure 3? Our goal is to
+efficiency, one can combine both approaches and narrow down                                  6          6
+                                                                          find two sets c✔ and c✘ such that    *
+                                                                                                                c✔ c✔ c✘ c✘ holds   0 6 ? 6 0
+the set of differences whenever a test either passes or fails.            and the difference         OX 6 B 6
+                                                                                                  c✘ c✔ is minimal.
+                                                                             Again, we need to specify what we mean by minimality, now
+    A. Isolation Illustrated
+                                                                          applied to differences instead of test cases. The definition of
+       This idea of isolating the failure-inducing differences is best    minimality follows Definition 9:
+    illustrated in comparison to the “simplification” approach dis-
+    cussed so far. Figure 2 shows how ddmin simplifies the failure-       Definition 14 (Minimal failure-inducing difference) Let c✔ and                    6
+    inducing HTML line presented in Section IV-B: After 26 steps,          6
+                                                                          c✘ be two test cases with           *         0 6 ? 6 0
+                                                                                                      c✔ c✔ c✘ c✘ . Their differ-
+    the line is reduced to the single <SELECT> tag.                       ence     OX 6 B 6
+                                                                                     c✘ c✔ is minimal if
+       Figure 3 shows the alternative “isolation” approach. Again,
+    as in ddmin, each time a test case fails, the smaller test case is              5 O i ? O  test  c6 Y O i A < ✔ U test  c6 BHO i A < ✘
+                                                                                                          ✔                             ✘
+    used as a new failing test case. This minimizes the failing test
+    case as well as the difference between the failing test case and      holds.
+    the (initially empty) passing test case. However, each time a test
+    case passes, the larger test case is used as new passing test case,                                                    O
+                                                                             Again, the number of subsets of is exponential, so we resort
+    thus minimizing the difference as well.                               to the same pragmatic approximation as in Definition 10:
+       Before going into details of the algorithm, let us look at the
+    results: After seven tests, the failure-inducing difference is nar-                                                              6
+                                                                          Definition 15 (n-minimal difference) Let c✔ and c✘ be defined  6
+    rowed down to one < character. Prefixing the passing test             as in Definition 14. Their difference                O) 6 B 6
+                                                                                                                 c✘ c✔ is n-minimal
+                                                                          if
+          SELECT NAty" MULTIPLE SIZE=7>
+with a < character changes the SELECT text to an HTML                     5 O i ? O i7 O i 7E n :                  6 Y O i A < ✔ U test  c6 BjO i A < ✘
+                                                                                                              test c✔                          ✘
+
+<SELECT> tag, causing the failure when being printed. This
+example demonstrates the basic difference between simplifica-
+                                                                          holds. Consequently,       O is 1-minimal if
+
+tion and isolation:
+   Simplification means to make each part of the simplified test
+                                                                                   5D i kO  test c6 Y '1 i ( < ✔ U test c6 Bl'1 i (  < ✘
+                                                                                                      ✔                                ✘
+
+
+
+
+case relevant: removing any part makes the failure go away.               holds.
+   Isolation means to find one relevant part of the test case: re-
+moving this particular part makes the failure go away.                       This is what we are aiming at: to isolate a 1-minimal differ-
+   In general, isolation is much more efficient than simplifica-          ence between a passing and a failing test case.
+tion. If we have a large failure-inducing input, isolating the               It turns out that the original ddmin algorithm, as discussed in
+difference will pinpoint a failure cause much faster than mini-           Section III-B can easily be extended to compute a 1-minimal
+mizing the test case—in Figure 3, isolating requires only 7 tests,        difference rather than a minimal test case. Besides reducing the
+while minimizing (Figure 2) required 26 tests.                                                   6
+                                                                          failing test case c✘ whenever a test fails, we now also increase
+   On the other hand, focusing on the difference requires the                                             6
+                                                                          the passing test case c✔ whenever a test passes. At all times,
+programmer to keep the common context of both test cases in                6           6
+                                                                          c✔ and c✘ act as lower and upper bound of the search space,
+mind—that is, the passing test case. This imposes an extra load           which is systematically narrowed—like in a branch-and-bound
+on the programmer. In the future, though, we might have debug-            algorithm, except that there is no backtracking.
+ging tools that highlight differences and commonalities between              This is what we have to do to extend ddmin:
+
+                                                                               
+multiple runs. For such tools, having two test cases with a min-          1. Extend ddmin such that it works on two sets at a time:
+imal difference is far preferable to having only one simplified                                                6
+                                                                              The passing test case c✔ which is to be maximized (initially,
+test case. Already today, if the isolated difference consists of,          6 
+                                                                          c✔ c✔        *
+                                                                                         holds) and
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                                                                           13
+
+
+
+General Delta Debugging Algorithm
+
+Let test and c✘ be given such that test   ✔ test c✘           K*           U            ✘ hold.
+The goal is to find c✔ c✘       6  6 
+                                dd c✘ such that   c✔                            *Q        0 c6 ? c6 0 c , test  c6  
+                                                                                                     ✔          ✘            ✘           ✔                     6 
+                                                                                                                                                       ✔, test c✘      ✘, and   O/ c6 B c6 is
+                                                                                                                                                                                     ✘     ✔
+1-minimal.
+The general Delta Debugging algorithm dd c✘ is                               
+                  dd2 &*  c  2 where
+               dd c✘                        ✘
+
+                       dd2  c6  c6 Y O i  2
+                                            ✔    ✔               if V i ' 1 2 n (  test  c6 Y O i   ✘ (“reduce to subset”)     ✔
+                       dd2  c6 BXO i  c6  2
+                                            ✘            ✘  else if V i ' 1 2 n (  test  c6 BXO i   ✔ (“increase to complement”)
+                                                                                                                                             ✘
+                       dd2 c6 Y O i  c6  max  n B 1  2 else if V i ' 1 2 n (  test  c6 Y O i   ✔ (“increase to subset”)
+ dd2  c6  c6  n                        ✔            ✘                                                                                   ✔
+           ✔     ✘
+                       dd2 c6  c6 BXO i  max  n B 1  2
+                                            ✔    ✘          else if V i ' 1 2 n (  test  c6 BXO i   ✘ (“reduce to complement”) ✘
+                       dd2 c6  c6  min  2n  7 O 7 
+                                            ✔    ✘          else if n 8$7 O 7 (“increase granularity”)
+                        c6  c6   ✔       ✘               otherwise (“done”)
+
+where OX c6 B c6 [O 1 Y O 2 Y  Y O n , all O i are pairwise disjoint, and 5 O i 7 O i 7;Z[7 O 7 \ n holds.
+The recursion invariant (and thus precondition) for dd2 is test  c6   ✘ U test  c6   ✔ U n E)7 O 7 .
+                     ✘     ✔
+                                                                                                         ✘                       ✔
+
+                                                                              Fig. 15. General Delta Debugging algorithm
+
+
+                                       6
+    The failing test case c✘ which is to be minimized (initially,                                            Proposition 17 (dd complexity, worst case) The number of
+ 6 
+c✘ c✘ holds).                                                                                                                                               7 7  7 7
+                                                                                                             tests carried out by dd c✘ is c✘ 2 3 c✘ in the worst case.
+                               O
+2. Compute subsets i as subsets of                            Om 6 B 6
+                                                  c✘ c✔ (instead of                                          Proof: The worst case is the same as in Proposition 12; hence,
+subsets of c✘ )  6                                                                                           the number of tests is the same.
+3. Change the rule “Reduce to subset” such that c✔                    6Y O
+                                                            i is tested
+(and passed to the recursive call) instead of i .                 O                                             Actually, ddmin is an instance of dd: if test returns ✔ only
+                                                                                                             for c✔ : in this case, c✔   c✔          6      q*
+                                                                                                                                                  always holds and only c✘ is                  6
+4. Introduce two additional rules for passing test cases:
+Increase to complement. If c✘                   6 B O
+                                          i passes for any subset      i,                       O            minimized.15 However, dd is much more efficient than ddmin if
+then c✘  6 BnOi is a larger passing test case. Continue reducing the
+                                                                                                             there are no unresolved test cases; this “best case” even requires
+difference between c✘          6 BXO
+                               i and c✘ .           6                                                        half as many tests as ddmin.
+This is just the complement of the “reduce to subset” rule
+in ddmin.                                                                                                    Proposition 18 (dd complexity, best case) If all tests return ei-
+                                    6 Y O                                                 O                  ther ✔ or ✘, then the number of tests t is limited by t                               E
+                                   i passes for any subset      i , then
+                                                                                                                     7 7                                             OXrO Y O  6 B 6
+Increase to subset. If c✔
+ 6 Y O                                                                                                       log2 c✘ .        Proof: We decompose                      c✘ c✔ .
+                                                                                                                                                                        6 Y O  6 BsO
+c✔      i is a larger passing test case.                                                                                                                     1    2
+                                                                                                             Under the given conditions, the test of c✔          c✘      2 will
+                                                                                                                                                 
+Again, this is just the complement of the “reduce to comple-                                                                                                 1
+ment” rule in ddmin.                                                                                         either pass or fail; n 2 always holds. This is equivalent to a
+As a consequence of the additional rules, the “increase granu-                                               classical binary search algorithm over a sorted array: with each
+larity” rule only applies if all previous tests turn out unresolved.                                         recursion, the difference is reduced by 1/2; the overall complex-
+   The full dd algorithm is shown in Figure 15.                                                              ity is the same.
+
+                                                                                                                Proposition 18 tells us what makes the search for the SELECT
+C. Properties of dd
+                                                                                                             tag so efficient: There were no unresolved test outcomes in the
+   Being based on ddmin, the dd algorithm inherits most proper-                                              Mozilla test case. In fact, when there are no unresolved test
+ties. In particular, dd returns a 1-minimal difference and has the                                           outcomes, dd always returns a single failure-inducing change:
+same worst-case number of tests:
+                                                                                                             Corollary 19 (Size of failure-inducing difference, best case)
+Proposition 16 (dd minimizes) For any c c✘ , let c✔ c✘                  0                6  6            If all tests return either ✔ or ✘, then dd c✘        1 holds.7  7 
+    
+dd c . Then,         Oo           6 B 6
+                     c✘ c✔ is 1-minimal in the sense of defi-                                                Proof: Follows directly from the equivalence to binary search,
+nition 15.       Proof: (Compare proof of proposition 11) Ac-                                                as shown in Proposition 18.
+                                                      6 6 
+cording to the dd definition (Figure 15), dd2 c✔ c✘ n returns
+ 6  6
+ c✔ c✘ only if n      ` 7O 7
+                          where     OS 6 B 6 pO Y  Y O
+                                     c✘ c✔                   n;
+                                                                                                               However, these “best cases” need not always be given—the
+            7O 7          O ]'- (
+                                                  1
+                                                                                                             more unresolved test outcomes we have, the more tests will be
+that is, i      1 and i       i hold for all i .
+                                             6  6
+   Furthermore, for dd2 to return c✔ c✘ , the conditions
+                                                                                                             required. Let us see how dd behaves in practice when there are
+test c✔ 6 Y O G <
+                   ✘, test c✘  6 BO k <
+                                       ✔, test c✔       6 Y O G <
+                                                            ✔,
+                                                                                                             unresolved test outcomes.
+              6 B$O  <
+             i                   i                    i
+and test c✘            ✘ must hold. These are the conditions of                                                15 There is another instance of dd, which might be called a “maximizing” al-
+
+                                  O
+                 i
+
+                                                                                                                                                                                         t b
+definition 15; consequently, is 1-minimal.                                                                   gorithm; it minimizes the difference only by extending the passing test case.
+                                                                                                             This ddmax variant is obtained if test returns ✘ only for c✘ : then, c✘
+                                                                                                                                     t
+                                                                                                                                                                                        c✘
+                                                                                                             always holds and c✔ is maximized.
+14                                                                                                         IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+                                                                                                                (a) failing program                          (b) passing program
+                                     Narrowing the failure-inducing difference in bug3.c
+             1000
+                                                                                              cfail
+                                                                                                                #define SIZE 20                              #define SIZE 20
+                                                                                            cpass
+                                                                                                                double mult(double z[], int n) double mult(double z[], int n)
+                                                                                                                '                                            '
+                                                                                                                     int i , j ;                                 int i , j ;
+c
+input size
+              100
+                                                                                                                     i      0;                i  0;
+                                                                                                                            8  n; j ++) '
+                                                                                                                     for ( j = 0; j              for ( j = 0; j 8 n; j ++) '
+                                                                                                                          1;
+                                                                                                                        i      i       j           i  j  1;
+                                                                                                                          au z[0]  1  0 ; z[i ]  z[i ] au z[0]  1  0 ;
+                                                                                                                       z[i ]     z[i ]
+               10
+                    0          10           20               30               40           50             60
+                                                                                                                     (                         (
+                                                       tests executed                                                return z[n];                                return z[n];
+                        Fig. 16. Narrowing down the failure-inducing difference                                 (                                            (
+                                                                                                                                           Fig. 17. A failure-inducing difference
+
+                               VI. C ASE S TUDIES R EVISITED
+                                                                                                                    to the 515 passing ones causes the failure. Likewise, the FLEX
+                      – How do they know the load limit on bridges, Dad?                                            buffer is overrun after adding one more character to a base of
+              – They drive bigger and bigger trucks over the bridge until it                                        7804 to 7811 characters. In all cases, the number of tests is
+             breaks. Then they weigh the last truck and rebuild the bridge.                                         significantly lower than with the ddmin algorithm.
+                                    — Bill Watterson, Calvin and Hobbes
+                                                                                                                                                VII. R ELATED W ORK
+  To demonstrate the difference in performance between
+dd and ddmin, we have repeated the GCC and fuzz case studies                                                        When you have two competing theories which make exactly the
+with the dd algorithm.                                                                                                      same predictions, the one that is simpler is the better.
+A. Isolating GCC Input                                                                                                                                          — Occam’s Razor
+
+   As a first example, reconsider the GCC example from Sec-                                                        As stated in the introduction, we are unaware of any other
+tion IV-A. Since we are not interested in programs with invalid                                                 technique that would automatically simplify test cases to de-
+syntax, we set up the test function such that it would return ✔ if                                              termine failure-inducing input. One important exception is the
+the compilation succeeded, ✘ if the compiler crashed, and in                                                    simplification of test cases which have been artificially pro-
+all other cases (notably if the compilation failed).                                                            duced. In [8], Don Slutz describes how to stress-test databases
+   With ddmin, it took us 731 tests to minimize the entire pro-                                                 with generated SQL statements. After a failure has been pro-
+gram. Isolating the difference requires but 59 tests (Figure 16),                                               duced, the test cases had to be simplified—after all, a failing
+but nonetheless pinpoints to a relevant difference of 2 characters.                                             1,000-line SQL statement would not be taken seriously by the
+As shown in Figure 17 it suffices to remove the assignment to i                                                 database vendor, but a 3-line statement would. This simplifica-
+in the mult function to make the program work (Figure 17(b)).                                                   tion was realized simply by undoing the earlier production steps
+This suggests a problem with inlining the expression i       j 1                                              and testing whether the failure still occurred.
+in the array accesses z[i ] on the following line.                                                                 In general, Delta Debugging determines circumstances that
+                                                                                                                are relevant for producing a failure (in our case, parts of the pro-
+B. Isolating Fuzz Input                                                                                         gram input). Such work has been conducted before. However,
+   In a second example, we have repeated the high-precision                                                     the previous work was always specific to a particular domain,
+fuzz experiments of Section IV-D with the dd algorithm—that                                                     and always only as simple binary search for a single circum-
+is, the test outcome was if the failure backtrace was different                                                 stance. An example for such work is detecting a single failure-
+from the original backtrace.16                                                                                  inducing component in an optimizing compiler [9].
+   As shown in Table III(b), the number of test runs is much                                                       The dd algorithm presented in this paper is a successor to the
+smaller for dd than for ddmin. Except for NROFF, the mini-                                                            v
+                                                                                                                dd algorithm presented in [3]. Like dd, dd takes a set of          v
+mal failure-inducing difference is always just 1 character. Only                                                changes and minimizes it according to a given test; in [3], these
+NROFF, TROFF, and FLEX have any unresolved test outcomes (Ta-                                                   changes affected the program code and were obtained by com-
+ble III(d)); for all others, the number of test runs (Table III(c)) is                                          paring two program versions.
+                                                                                                                   The main differences between dd and dd are:                 v
+                                                                                                                
+logarithmic in proportion to the input size as predicted in Propo-
+sition 18.                                                                                                                    v
+                                                                                                                   dd is not well-suited for failures induced by a large com-
+   Table III(e) shows the size of the common context—that is,                                                                                                             v
+                                                                                                                bination of changes. In particular, dd does not guarantee a
+the size of the maximized passing input c✔ . In the UL exam-                   6                                1-minimal subset, which is why it is not suited for minimizing
+
+                                                                                                                
+ple, for instance, we can see that adding one more character                                                    test cases.
+                                                                                                                              v
+                                                                                                                   dd assumes monotonicity: that is, whenever test c              ✔            
+                                                                                                                                        6                                           6 0
+       16 We also repeated the low-precision experiments. But since the test outcome
+was always ✔ or ✘, the experiments outcome just confirmed the predictions of                                    holds, then test c     ✔ holds for every subset c         c as well.
+Proposition 18 and Corollary 19.                                                                                This assumption, which was found to be useful for changes to
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT                                                                                                 15
+
+
+                (a) Test cases
+                 Name             t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16
+                 Character range       all           printable          all          printable
+                 NUL characters        yes              yes             no              no
+                 Input size      103 104 105 106 103 104 105 106 103 104 105 106 103 104 105 106
+
+                (b) Size c✘7 6 7 B 7 c6 7 of minimized difference—high precision
+                                   ✔
+                 Name                  t1       t2       t3       t4       t5       t6       t7       t8       t9       t10   t11   t12       t13 t14 t15 t16
+                 NROFF                      1        6        1        1        –        1        1        1        2     1    17         1    –    –   –    –
+                 TROFF                      –        1        1        1        –        1        1        1        –     –     1         1    –    –   –    –
+                 FLEX                       –        –        –        –        –        –        –        –        –     –     –         –    –    1   1    1
+                 CRTPLOT                    1        –        –        –        1        –        –        –        1     –     –         –    1    1   1    1
+                 UL                         –        –        –        –        1        1        1        1        –     –     –         –    1    1   1    1
+                 UNITS                      –        1        1        1        –        –        –        –        –     –     1         1    –    –   –    –
+
+
+                (c) Number of test runs—high precision
+                 Name            t1 t2 t3 t4 t5 t6                                           t7       t8 t9             t10   t11   t12       t13 t14 t15 t16
+                 NROFF                 24        84      23       30        –       15       19       21 161             62   473    24        –    –    –    –
+                 TROFF                  –        19      20       24        –       15       19       21    –             –    20    23        –    –    –    –
+                 FLEX                   –         –       –        –        –        –        –        –    –             –     –     –        –   23   51   33
+                 CRTPLOT               12         –       –        –       12        –        –        – 12               –     –     –       12   15   20   22
+                 UL                     –         –       –        –       12       15       18       22    –             –     –     –       12   16   19   22
+                 UNITS                  –        15      19       22        –        –        –        –    –             –    19    22        –    –    –    –
+
+
+                (d) Number of unresolved test outcomes—high precision
+                 Name           t1 t2 t3 t4 t5 t6 t7 t8 t9 t10                                                                t11   t12       t13 t14 t15 t16
+                 NROFF                      9    62           3        6        –        0        0        0 119         38   390         2    –    –    –    –
+                 TROFF                      –     3           1        2        –        0        0        0   –          –     1         1    –    –    –    –
+                 FLEX                       –     –           –        –        –        –        –        –   –          –     –         –    –   10   29   15
+                 CRTPLOT                    0     –           –        –        0        –        –        –   0          –     –         –    0    0    0    0
+                 UL                         –     –           –        –        0        0        0        0   –          –     –         –    0    0    0    0
+                 UNITS                      –     0           0        0        –        –        –        –   –          –     0         0    –    –    –    –
+
+
+                           767
+                (e) Size c✔ of common context—high precision
+                 Name            t1 t2 t3 t4 t5 t6 t7 t8                  t9 t10 t11 t12 t13 t14 t15 t16
+                 NROFF              224 196 187 180      – 2105 2105 2105 147 259 227 145       –    –    –    –
+                 TROFF                – 4921 3901 3877   – 2105 2105 2105   –   – 38211 38992   –    –    –    –
+                 FLEX                 –    –    –    –   –    –    –    –   –   –     –     –   – 7804 7808 7811
+                 CRTPLOT            789    –    –    – 760    –    –    – 721   –     –     – 263 263 68 263
+                 UL                   –    –    –    – 523 523 523 523      –   –     –     – 515 515 515 515
+                 UNITS                – 284 284 284      –    –    –    –   –   – 2731 2731     –    –    –    –
+
+                                                                        TABLE III
+                                                I SOLATING FAILURE - INDUCING DIFFERENCES IN FUZZ INPUT
+
+
+
+
+                       v
+program code, gave dd a better performance when most tests                                                                                          — Mozilla BugAThon call
+produced determinate results.                                                                        Our future work will concentrate on the following topics:
+We recommend dd as a general replacement for dd . To exploit      v                               Domain-specific simplification methods. Knowledge about the
+                                                  
+monotonicity in dd, one can make test c return ✔ whenever                                         input structure can very much enhance the performance of the
+a superset of c has already passed the test, and ✘ whenever a                                     Delta Debugging algorithms. For instance, valid program in-
+subset of c has already failed the test.                                                          puts are frequently described by grammars; it would be nice to
+                                                                                                  rely on such grammars in order to exclude syntactically invalid
+                    VIII. F UTURE W ORK                                                           input right from the start. Also, with a formal input descrip-
+                                                                                                  tion, one could replace input by smaller alternate input rather
+  If you get all the way up to the group-signed T-Shirt, you can                                  than simply cutting it away. In the GCC example, one could
+          qualify for a stuffed animal as well by doing 12 more.                                  try to replace arithmetic expressions by constants, or program
+16                                                                 IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 28, NO. 2, FEBRUARY 2002
+
+
+blocks by no-ops; HTML input could be reduced according to              proves it.
+HTML structure rules. Besides grammars, changes may also be             It would be nice to see how far systematic testing and pro-
+constrained by explicit change constraints, as established in ver-      gram analysis could work together and whether Delta Debug-
+sion control [10].                                                      ging could be used to determine failure-inducing statements as
+Optimization. In general, the abstract description of the Delta         well. In our current work, we treat a program state (i.e. variables
+Debugging algorithms leaves a lot of flexibility in the actual          and values) as internal input to the remainder of the program
+implementation and thus provides “hooks” for several domain-            and isolate those variables and values which are relevant for
+
+ 
+specific optimizations:                                                 producing the failure—just as Delta Debugging isolates exter-
+    The implementation can choose how to partition the differ-          nal failure-inducing input. The statements in which these vari-
+ence  O                O
+          into subsets i . This is the place where knowledge            ables are set can then be determined as failure-inducing. In both
+
+ 
+about the structure of the input comes in handy.                        steps, program analysis is most helpful to narrow down the set
+    The implementation can choose which subset to test first.           of potential variables and statements.
+Some subsets may be more likely to cause a failure than oth-            Other failure-inducing circumstances. Changing the input of
+
+ 
+ers.                                                                    the program is only one means to influence its execution. As
+    The implementation can choose whether and how to handle             stated in Section II-C, a i can stand for any change in the cir-
+multiple independent failure-inducing inputs—that is, the case          cumstances that influences the execution of the program. Our
+                                    O
+where there are several subsets i with test c✔     6 Y O  
+                                                            i     ✘.    current work extends Delta Debugging to other failure-inducing
+Options include                                                         circumstances such as executed statements, control predicates
+  – to continue with the first failing subset,                          or thread schedules.
+  – to continue with the smallest failing one, or
+  – to simplify each individual failing subset.                                                IX. C ONCLUSION
+Our implementation currently goes for the first failing subset                               Debugging is still, as it was 30 years ago,
+only and thus reports only one subset. The reason is economy: it                                            a matter of trial and error.
+is wiser to fix the first failure before checking for further similar
+                                                                                          — Henry Lieberman, The Debugging Scandal
+failures.
+Undoing changes. Delta Debugging assumes that failure is                   We have shown how the Delta Debugging algorithms simplify
+monotone: Once a failure occurs, one cannot make it disappear           and isolate failure-inducing input, based on an automated test-
+by adding more “undoing” changes. (Formally, there is no i         w    ing procedure. The method can be (and has been) applied in a
+          K  w    
+such that i       i r        r .) As an example, assume a program       number of settings, finding failure-inducing parts in the program
+that processes HTML tags: whenever its input contains only the          invocation (GCC options), in the program input (GCC, fuzz, and
+opening HTML tag, but not the closing one, it fails. In the input       Mozilla input), or in the sequence of user interactions (Mozilla
+<A></A><B>, for instance, the HTML tag <B> lacks a closing              user actions).
+</B>.                                                                      We recommend that automated test case simplification be an
+If we use Delta Debugging to simplify this failure-inducing in-         integrated part of automated testing. Each time a test fails, Delta
+put, then it may partition the input into <A> and </A><B>,              Debugging could be used to simplify and isolate the circum-
+resulting in the simplified input <A>—although in the concrete          stances of the failure. Given sufficient testing resources and a
+example, this failure cause was undone by </A>; it was <B>              reasonable choice of changes i that influence the program ex-
+that had no closing HTML tag. To identify undoing changes, one          ecution, the algorithms presented in this paper provide simplifi-
+                                                             > >
+cannot use test alone (this would require testing up to 2 c✘ su-        cation and isolation methods that are straight-forward and easy
+persets of the minimized test case), so we investigate whether          to implement.
+increased precision (Section IV-D) or domain-specific knowl-               In practice, testing and debugging typically come in pairs.
+edge help in practice.                                                  However, in previous research on automated debugging, test-
+Program analysis. In the field of general automated debugging,          ing has played a very minor role. This is surprising, because
+failure-inducing circumstances have almost exclusively been             re-testing a program under changed circumstances is a common
+understood as failure-inducing statements during a program ex-          debugging approach—and the only way to prove that the cir-
+ecution. The most significant method to determine statements            cumstances actually cause the failure. Eventually, we expect
+relevant for a failure is program slicing—either the static form        that several debugging tasks can in fact be stated as search and
+obtained by program analysis [11], [12] or the dynamic form             minimization problems, based on automated testing—and thus
+applied to a specific run of the program [13], [14].                    be solved automatically.
+The strength of analysis is that several potential failure causes          Acknowledgments. Mirko Streckenbach provided helpful
+can be eliminated due to lack of data or control dependency.            insights on UNIX internals. Tom Truscott pointed us to the GCC
+This does not suffice, though, to check whether the remaining           error. Holger Cleve, Jens Krinke and Gregor Snelting provided
+potential causes are relevant or not for producing a given fail-        valuable comments on earlier revisions of this paper. Special
+ure. Only by experiment (that is, testing) can we prove that            thanks go to the ISSTA and TSE reviewers for their constructive
+some circumstance is relevant—by showing that there is some             comments.
+alteration of the circumstance that makes the failure disappear.           Further information on Delta Debugging is available at
+When it comes to concrete failures, program analysis and test-                  http://www.st.cs.uni-sb.de/dd/ .
+ing are complementary: analysis disproves causality, and testing
+ZELLER AND HILDEBRANDT: SIMPLIFYING AND ISOLATING FAILURE-INDUCING INPUT             17
+
+
+                               R EFERENCES
+[1]  “Mozilla web site,” http://www.mozilla.org/.
+[2]  “Mozilla        web      site:           The      Gecko        BugAThon,”
+     http://www.mozilla.org/newlayout/bugathon.html.
+[3] Andreas Zeller, “Yesterday, my program worked. Today, it does not.
+     Why?,” In Nierstrasz and Lemoine [15], pp. 253–267.
+[4] IEEE, New York, Test Methods for Measuring Conformance to POSIX,
+     1991, ANSI/IEEE Standard 1003.3-1991. ISO/IEC Standard 13210-1994.
+[5] Marc Vertes, “Xlab—a tool to automate graphical user interfaces,” Linux
+     Weekly News, May 1998, Archived as http://lwn.net/980528/a/xlab.html.
+[6] B. P. Miller, L. Fredrikson, and B. So, “An empirical study of the reliability
+     of UNIX utilities,” Communications of the ACM, vol. 33, no. 12, pp. 32–
+     44, Dec. 1990.
+[7] Barton P. Miller, David Koski, Cjin Pheow Lee, Vivekananda Maganty,
+     Ravi Murthy, Ajitkumar Natarajan, and Jeff Steidl, “Fuzz revisited: A re-
+     examination of the reliability of UNIX utilities and services,” Tech. Rep.,
+     University of Wisconsin, Computer Science Department, Nov. 1995.
+[8] Donald R. Slutz, “Massive stochastic testing of SQL,” in Proc. of 24rd
+     International Conference on Very Large Data Bases (VLDB’98), New York
+     City, New York, USA, Ashish Gupta, Oded Shmueli, and Jennifer Widom,
+     Eds. Aug. 1998, pp. 618–622, Morgan Kaufmann.
+[9] David B. Whalley, “Automatic isolation of compiler errors,” ACM Trans-
+     actions on Programming Languages and Systems, vol. 16, no. 5, pp. 1648–
+     1659, 1994.
+[10] Andreas Zeller and Gregor Snelting, “Unified versioning through feature
+     logic,” ACM Transactions on Software Engineering and Methodology, vol.
+     6, no. 4, pp. 398–441, Oct. 1997.
+[11] M. Weiser, “Programmers use slices when debugging,” Communications
+     of the ACM, vol. 25, no. 7, pp. 446–452, 1982.
+[12] Frank Tip, “A survey of program slicing techniques,” Journal of Program-
+     ming Languages, vol. 3, no. 3, pp. 121–189, Sept. 1995.
+[13] Hiralal Agrawal and Joseph R. Horgan, “Dynamic program slicing,” in
+     Proceedings of the ACM SIGPLAN 1990 Conference on Programming
+     Language Design and Implementation (PLDI), White Plains, New York,
+     June 1990, vol. 25(6) of ACM SIGPLAN Notices, pp. 246–256.
+[14] Tibor Gyimóthy, Árpád Beszédes, and István Forgács, “An efficient rele-
+     vant slicing method for debugging,” In Nierstrasz and Lemoine [15], pp.
+     303–321.
+[15] Oscar Nierstrasz and Michel Lemoine, Eds., Proc. ESEC/FSE’99 –
+     7th European Software Engineering Conference / 7th ACM SIGSOFT Sym-
+     posium on the Foundations of Software Engineering, vol. 1687 of Lec-
+     ture Notes in Computer Science, Toulouse, France, Sept. 1999. Springer-
+     Verlag.
+
+
+
+
+                          Andreas Zeller received his PhD in computer science
+                          from Technische Universität Braunschweig, Germany
+                          in 1997. He is currently a professor of computer sci-
+                          ence at Universität des Saarlandes, Saarbrücken, Ger-
+                          many. His general research interest is in program
+                          comprehension, especially program analysis, auto-
+                          mated debugging, and software visualization – and
+                          how to make these techniques applicable to real pro-
+                          grams with real problems. He is a member of the IEEE
+                          computer society, the ACM, and the GI.
+
+
+
+
+                          Ralf Hildebrandt received his computer science
+                          diploma from Technische Universität Braunschweig
+                          in 2000, after conducting the actual diploma work at
+                          Universität Passau. His diploma thesis on the min-
+                          imization of failure-inducing input was awarded the
+                          Ernst Denert Award for the best German diploma the-
+                          sis in software engineering. He is currently a senior
+                          software engineer at DeTeLine, Berlin, Germany. He
+                          is a member of the GI.
+

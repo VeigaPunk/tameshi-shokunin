@@ -1,0 +1,135 @@
+{
+ "round": 45,
+ "seat": "T50Disp45",
+ "spotcheck": "corpus/lessons/round-45-verifier-spotcheck.md",
+ "routed_at": "683eedde3a50441c34d85a22f5fd5346f8b1ec6d",
+ "rev_read": "e3729de862f73ae080d98fcf522a7081ce16e40a",
+ "rows": [
+  {
+   "id": "R45.1",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-45/after/c-r44-at-content.stdout",
+     "lines": "1-1",
+     "excerpt": "C2_R44: self_pin=1 classes=7 m6=0 m7=0 m8=0 m10=0 m11=1 m12=1 m13=0 total=2 records=4 sources_rows=117 standing=117 receipts=17 revisions=4 m13_probe=standing=9_column0=116_valid=117 rev=ea25e0224fc81060414b27301c27bd1344669165 freeze=ba01973c73ad7de60e5bd19ae08255a1b7ef917e C2_R44_PASS=false first=m11:SCORECARD.md#round-45:cd8e73f067129f8489e35c7b51c7a68552b289d2"
+    },
+    {
+     "path": "corpus/QUALITY.md",
+     "lines": "1296-1301",
+     "excerpt": "A counter that grades the newest `## Round N` block against its own round (the round-44 record-agreement counter) is round-bound: at the next round's base it is red by construction, so it cannot be a monitor of a later round. The gate is `.ufo/evidence/round-46/quality/no-harm-gate.py` (`--contract`"
+    },
+    {
+     "path": ".ufo/evidence/round-44/calibration/measure.py",
+     "lines": "351-357",
+     "excerpt": "for token in HEX40.findall(text): if token in seen: continue seen.add(token) if git(lane, 'cat-file', '-e', token).returncode != 0: hits.append('%s:%s' % (name, token))"
+    },
+    {
+     "path": ".ufo/evidence/round-44/calibration/measure.py",
+     "lines": "519-521",
+     "excerpt": "if round_no != contract.get('round'): m12.append('newest block is round %d, the contract round is %s'"
+    }
+   ],
+   "commit": null,
+   "reason": null,
+   "seat": "T50Disp45",
+   "note": "the round-44 record-agreement counter is byte-unchanged since its freeze: m11 still fails any 40-hex token that is not a lane object (this is what flags the pinned upstream cd8e73f0) and m12 still grades the newest SCORECARD block against its own round; the lane removed it from every later no_harm list and added a monitor-admission gate (QUALITY 88), it did not fix the counter",
+   "fix_plan": {
+    "where": ".ufo/evidence/round-44/calibration/measure.py (m11_revisions, m12 gate) plus a committed selftest case each",
+    "text": "m11_revisions skips a token that a later record pins as an external upstream revision (a token appearing beside a URL/commit pin, e.g. cd8e73f0...) instead of counting it; m12 grades the block of contract[\"round\"] rather than whatever block is newest, so the counter is round-parametric; selftest cases one external pin (m11=0) and a newer foreign round block (m12=0).",
+    "why": "the routing asked for exactly these two properties before the counter may be named in another contract no_harm; both are source-visible and testable in the counter selftest, and they leave the predicate and the record set unchanged"
+   }
+  },
+  {
+   "id": "R45.2",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-46/selftest/c1-selftest.stdout",
+     "lines": "19-20",
+     "excerpt": "C1_R46_SELFTEST: cases=18 failed=0 VERDICT: PASS"
+    },
+    {
+     "path": ".ufo/evidence/round-45/freshness/measure.py",
+     "lines": "36-36",
+     "excerpt": "Modes: --lane L --rev R (deciding/measure); --selftest; --check FRAGMENT.json"
+    },
+    {
+     "path": ".ufo/evidence/round-45/coverage/measure.py",
+     "lines": "19-19",
+     "excerpt": "Modes: --lane L --rev R; --selftest."
+    },
+    {
+     "path": ".ufo/evidence/round-46/after/c2.stdout",
+     "lines": "36-36",
+     "excerpt": "C2_R46: self_pin=1 targets=hardened declared=25 killed=25 survived=0 inapplicable=0 neutral_killed=0 pristine=1 equivalence=1 rev=3ae8b0484977c17dc9ce8b01e55c6afcebe2b116 C2_R46_PASS=true"
+    }
+   ],
+   "commit": null,
+   "reason": null,
+   "seat": "T50Disp45",
+   "note": "the committed selftest tallies are the round-46 counters (C1_R46 18/18, and kill 25/25 of the 25 declared round-45 survivors through the hardened copies); the two round-45 counters keep their --selftest mode but have no committed stdout receipt anywhere, and their own selftests are unchanged, so the survivors are killed only in copies",
+   "fix_plan": {
+    "where": ".ufo/evidence/round-50/c1/ (or the round-50 evidence root) two receipts copied into the wave-1 dir",
+    "text": "Commit `.ufo/evidence/round-50/<claim>/r45-c1-selftest.{stdout,exit}` and `r45-c2-selftest.{stdout,exit}` holding the tally of `python3 .ufo/evidence/round-45/freshness/measure.py --selftest` and `python3 .ufo/evidence/round-45/coverage/measure.py --selftest`, and cite them in SCORECARD beside the two counters; the kill half is already receipted by .ufo/evidence/round-46/after/c2.stdout (declared=25 killed=25).",
+    "why": "the routing asked for committed --selftest stdout for both measure.py counters plus the survivor kills; the kills exist (round-46 C2) and only the two tallies are missing, which is two command runs and two receipts"
+   }
+  },
+  {
+   "id": "R45.3",
+   "status": "declined",
+   "evidence": [
+    {
+     "path": "SCORECARD.md",
+     "lines": "2200-2200",
+     "excerpt": "(`fresh=71`, `score=9`; 2 rows disputed: S048, S093); the round-44 one-document unit (the S160 row count, 1; command in the round-45 block above) stays a monitor | round-46 content revision | 45 |"
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2159-2159",
+     "excerpt": "Freshness score rule (replaces the round-44 one-document unit): `floor(10 * fresh / 73)` \u2192 0 at freeze, 9 at the deciding run. The round-44 unit stays a monitor: `grep -cE '^ {0,3}\\| S160 ' corpus/SOURCES.md` \u2192 1. Distinct documents: 64 of the 65 distinct URLs in the population are fresh (S093's doc"
+    }
+   ],
+   "commit": null,
+   "reason": "Observation only: the routing itself marks the remedy as already done, and the tree holds it - the round-45 SCORECARD block cites fresh=0 -> 71 as the comparable measure and keeps the round-44 one-document unit as a monitor, and the round-46 standing row restates fresh=71 with the same rule; no artifact is missing and no lane change can close anything further",
+   "seat": "T50Disp45",
+   "note": "the score formula jump floor(10*fresh/73) is stated with the 0 -> 71 count beside it at the routing revision already (SCORECARD.md:2154,2159), so a later rewrite would only duplicate the record",
+   "fix_plan": null
+  },
+  {
+   "id": "R45.4",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "142-142",
+     "excerpt": "supersedes S093's anchor and quote only: the same six flags documented in the raw bwrap.xml at tag v0.13.1, quoted so that --unshare-all's six-flag expansion and the try-else-skip wording of --unshare-cgroup-try sit inside one 25-word quote; not a measured security boundary for any argv | \u00a7Options, "
+    },
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "140-140",
+     "excerpt": "supersedes S026's anchor and quote only: Google's flakiness rates and mitigations, re-anchored to the 2026-10-26 bytes | Post body (h2 title; publishdate 2016-05-27; articleBody paragraph at raw line 1132); fetched 2026-10-26, sha256 a4c5c46b4af9, 236387 bytes | supersedes S026 \u2014 about 1.5% of test "
+    },
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "123-123",
+     "excerpt": "\u00a7Abstract Syntax Trees and \u00a7ast.get_source_segment @ docs page fetched 2026-10-25, snapshot .ufo/evidence/round-41/sources/ast.html 362029 B sha256 183a4f8c | a parsed tree exposes Name, Assign, Call and attribute nodes; ast.get_source_segment recovers a node'"
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2253-2253",
+     "excerpt": "the third (re-pin the anchor-refresh candidates of `.ufo/waves/round-45/w2/ConnDriftAnchors.md`) were not worked and stay open for round 47 (T46ScoutCorrections #2)."
+    }
+   ],
+   "commit": null,
+   "reason": null,
+   "seat": "T50Disp45",
+   "note": "half done: round 48 re-anchored S026/S093/S108 by quote (S265/S267/S268, committed snapshots and fetch receipts), but the five candidates the routing names (S153, S154, S157, S159, S100) still pin their drifted round-41/42/33 snapshot digests and have no supersede row, and the lane itself records them unworked for round 47",
+   "fix_plan": {
+    "where": "corpus/SOURCES.md, five new supersede rows in the round-50 registry block",
+    "text": "One row per drifted document (S153 ast, S154 pathlib, S157 argparse, S159 Wikipedia mutation testing, S100 doctest) with scope \"supersedes S###'s anchor and quote only\", the quote-bearing line range plus a committed round-50 snapshot path and sha256 on the anchor, mined status, opened 2026-10-26, and the same used-by cells; the old rows stay as history.",
+    "why": "the routing asks for exactly one supersede row per drifted document, pinning by quote and committed bytes rather than the whole-page hash that keeps moving; the round-44 anchor-refresh rule already prescribes this shape and S265/S267/S268 demonstrate it"
+   }
+  }
+ ]
+}

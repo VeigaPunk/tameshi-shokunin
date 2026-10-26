@@ -1,0 +1,95 @@
+{
+ "round": 40,
+ "seat": "T50Disp40",
+ "spotcheck": "corpus/lessons/round-40-verifier-spotcheck.md",
+ "routed_at": "a3d6c690bcbf8914551d4f4e8e1612784c1c2046",
+ "rev_read": "e3729de862f73ae080d98fcf522a7081ce16e40a",
+ "rows": [
+  {
+   "id": "R40.1",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/lessons/round-41.md",
+     "lines": "53-58",
+     "excerpt": "six refused, ten present-but-not-appended. The table is the record; the summary sentence is the drift."
+    }
+   ],
+   "commit": "b37ce974b6efb8c465626d7346149549a3300a4b",
+   "seat": "T50Disp40",
+   "note": "appended round-41 correction restates the table-derived 1 adopted / 6 refused / 10 present (17 rows, recounted here); round-40 file untouched",
+   "fix_plan": null
+  },
+  {
+   "id": "R40.2",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/waves/round-40/settlement-receipt.json",
+     "lines": "277-279",
+     "excerpt": "\"registry_members\": 64, \"seat_exits\": 64, \"reports_present\": 64,"
+    }
+   ],
+   "commit": null,
+   "reason": null,
+   "seat": "T50Disp40",
+   "note": "durable receipt is committed, but .ufo/waves/round-40/w1/dispatch-outcome.md:13 still cites only the transient wave-slots line; no post-routing record cites the receipt in its place",
+   "fix_plan": {
+    "where": "corpus/lessons/round-50.md (new ## Corrections block; never rewrite the closed round-40 report)",
+    "text": "round-40 wave timing: the durable artefacts are .ufo/waves/round-40/settlement-receipt.json (registry_members 64, seat_exits 64, reports_present 64, sha256 659e39bb7fba6d381ee3af27daec8b74a6542d861b8b4666b4d46d4ad44f89a3) and the wave-parent-settle stdout; the report's `~/.local/state/shokunin-hyaku/wave-slots` line is transient by design and is not re-cited.",
+    "why": "the routing asked for 'a durable artefact instead (the committed settlement-receipt.json and the OMP log both carry the wave's timing)'; the errata names that artefact with its digest, carries the key settlement-receipt.json into prose, and gives a reviewer the re-check path without editing a closed round's report"
+   }
+  },
+  {
+   "id": "R40.3",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/waves/round-40/assimilation/reg-ids",
+     "lines": "1-5",
+     "excerpt": "S001 S002 S003 S004 S005"
+    }
+   ],
+   "commit": null,
+   "reason": null,
+   "seat": "T50Disp40",
+   "note": "the 105 reg-ids and 2 staged-ids exist only as committed files; the round-40 report carries 0 S1xx tokens, so item 10's paste never happened and no later round pasted the round-40 lists",
+   "fix_plan": {
+    "where": "corpus/lessons/round-50.md (new ## Corrections block)",
+    "text": "Round-40 item 10, the id lists pasted as asked: reg-ids (105, sha256 b11c94133a35ce8c2c13bb30c04dc545290e53c40710cfd09c4b0a3d94126e91) S001 S002 ... S108; staged-ids (2, sha256 d77a652a2dbc36459dc74a10e8daa7f2e47cc713db0d02fc10d7f48dbb129fce) S132 S152; collisions empty. Produced by `git show e3729de8:.ufo/waves/round-40/assimilation/reg-ids | paste -sd' '`.",
+    "why": "the item's ask is literal ('the 105-id list itself is not pasted into the report text'); pasting the verbatim list plus its digest in the current round's lesson satisfies it without rewriting the closed round-40 report, and the 105 ids cost ~525 characters"
+   }
+  },
+  {
+   "id": "R40.4",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/lessons/round-41.md",
+     "lines": "75-75",
+     "excerpt": "the round-40 closure's routed defect 4 (a quote labelled \"11 words\" that has 13 tokens)"
+    }
+   ],
+   "commit": "b37ce974b6efb8c465626d7346149549a3300a4b",
+   "seat": "T50Disp40",
+   "note": "erratum states the true count (13; `printf '%s' '<quote>' | wc -w` prints 13) against round-40.md:14's 'Quote (11 words)' label; the closed file is not rewritten, per the round-40 routing's own convention for item 1",
+   "fix_plan": null
+  },
+  {
+   "id": "R40.5",
+   "status": "declined",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-39/contract.json",
+     "lines": "12-12",
+     "excerpt": "The round-38 regex ^\\\\s*leg remains a vacuous control (0 hits) and is not rewritten."
+    }
+   ],
+   "commit": null,
+   "reason": "Observation about a frozen control, and its remedy already exists. .ufo/evidence/round-38/contract.json:58 holds the vacuous pattern; that file is a pinned round-38 control whose successor record says the regex \"is not rewritten\" (.ufo/evidence/round-39/contract.json:12), and the round-40 spot-check itself states round 40 does not use or re-break it. The can-fail replacement the routing names already exists: the round-39 contract's depth_command_d with the command-D pattern, whose counter fails a missing guard, the vacuous regex and a constant 9 (SCORECARD.md:1859-1862), and every later round cites command D as the operative depth check. The only literal remedy left is editing a frozen historical control, which the lane must not do.",
+   "seat": "T50Disp40",
+   "note": "the evidence is the round-39 contract's own statement that the r38 regex stays a vacuous control; the live tree already carries the can-fail successor, so nothing is broken to fix without rewriting a pinned artefact",
+   "fix_plan": null
+  }
+ ]
+}

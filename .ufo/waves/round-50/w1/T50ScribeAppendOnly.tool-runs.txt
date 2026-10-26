@@ -1,0 +1,56 @@
+CHECKER RUNS — seat-report-append-only.py on retained lane bytes (read-only)
+seat: T50ScribeAppendOnly   date: 2026-10-26
+lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+lane tip: 4afb060c1d6e994d1bbb9095493b1f6b2b8344f2
+checker: .ufo/waves/round-50/w1/T50ExecAppendOnly/seat-report-append-only.py
+checker sha256: cee1a2dddf6ed7a1dcd13cfb2993f491314fa0713b3064d575eed243d8cbce4f
+checker bytes: 7954
+invocation: python3 <copy of the checker, identical sha> LANE FROM TO; the checker uses only
+rev-parse / ls-tree / cat-file --batch, so the lane work tree, index and refs are untouched.
+exit codes below are the checker's own ($? read directly, not through a pipe).
+
+$ seat-report-append-only.py LANE c5335c70 83beaf98
+REWRITTEN  .ufo/waves/round-43/w1/CritC2Vacuous.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/CritC3Maps.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/MutC3Selftest.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/RevC2Classes.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/RevC3Tool.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/RevProvenance.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/RevReportDraft.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/ScribeLessonGate.md  prefix-lost
+REWRITTEN  .ufo/waves/round-43/w1/ScribeQuality.md  prefix-lost
+SUMMARY  checked=2856  rewritten=9
+exit=1
+
+$ seat-report-append-only.py LANE edd4ca44 03facb22
+REWRITTEN  .ufo/waves/round-47/w1/T47ConnCross.md  prefix-lost
+SUMMARY  checked=3193  rewritten=1
+exit=1
+
+$ seat-report-append-only.py LANE 6b5ea3b1 03facb22
+REWRITTEN  .ufo/waves/round-47/build-spec-w2-draft.txt  deleted
+REWRITTEN  .ufo/waves/round-47/build-spec.py  prefix-lost
+REWRITTEN  .ufo/waves/round-47/w1/T47CritC1Control.md  prefix-lost
+SUMMARY  checked=3186  rewritten=3
+exit=1
+
+$ seat-report-append-only.py LANE 9b9b2a01 fc5ac743
+REWRITTEN  .ufo/waves/round-49/build-spec-w2.py  prefix-lost
+REWRITTEN  .ufo/waves/round-49/w1/T49RevengerLapse.md  prefix-lost
+SUMMARY  checked=3787  rewritten=2
+exit=1
+
+$ seat-report-append-only.py LANE 487b8f0 5891bdb
+SUMMARY  checked=2819  rewritten=0
+exit=0
+
+adding commits (git log --diff-filter=A --format=%H -1 -- <path>):
+  .ufo/waves/round-43/w1/CritC2Vacuous.md              c5335c70bff750218b3a6db0a92daae76509a0de
+  .ufo/waves/round-43/w1/RevC2Classes.md               c5335c70bff750218b3a6db0a92daae76509a0de
+  .ufo/waves/round-47/w1/T47ConnCross.md               edd4ca44635c9fdf796a4c11953b37481e753537
+  .ufo/waves/round-47/w1/T47CritC1Control.md           6b5ea3b14b08cfadae6bd6ea67153b4acc87ed9d
+  .ufo/waves/round-49/w1/T49RevengerLapse.md           9b9b2a016adcf2fab2e0cb1ef89ef78f454b8ec6
+
+reading: FROM=487b8f0 (round-42 spot-check) leaves every round-43 wave artifact unchecked — none
+existed yet — so it prints checked=2819 rewritten=0 exit 0 over the same rewrite that
+c5335c70..83beaf98 reports as rewritten=9 exit 1. FROM must be the artifact's adding commit.

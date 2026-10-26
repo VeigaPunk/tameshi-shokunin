@@ -1,0 +1,87 @@
+{
+  "round": 47,
+  "codes": [
+    {
+      "id": "R47.1",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "SCORECARD.md",
+          "lines": "2334-2334",
+          "excerpt": "six-leg regression ledger | replay every recorded mutation case (nine legs since round 26; the name is kept as the row id) at its pinned blob; exact expectation | `bash tools/mutate-and-run.sh --regression` → `REGRESSION: PASS (cases=9 passed=9`, exit 0, tool sha256 `a7d3f2dd7d47`, deps `fleet-root,node`, runs 3 stable"
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2340-2340",
+          "excerpt": "| `python3 tools/env-diff.py --selftest` → `ENVDIFF_SELFTEST: 9/9 pass`, exit 0, tool sha256 `e8b47ab7cf23`, deps `bwrap,node`, runs 3 stable | round 21 |"
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2328-2328",
+          "excerpt": "Disclosed before the deciding run: `six-leg regression ledger` is known to be nondeterministic under concurrency."
+        }
+      ],
+      "commit": "c7586b9a10effc63b4bd327f976edc094c1bdc17",
+      "doubt": "Strongest counter-reason: the superseding rows might only relabel old observations as `runs 3 stable` without re-observation. Resolved: the round-48 calibration counter refuses relabelled rows (SCORECARD.md:2376, CTL_B 'the round-47 rows relabelled runs 3 stable with no re-observation are refused') and the emit ran three observation rounds of the six profiles P0-P5 (SCORECARD.md:2326; receipt .ufo/evidence/round-48/calibration/emit-15b1521.stdout exists at base); the six-leg row's stable member and declared nondeterministic class both exist, and the hermetic env-differential probe row carries runs 3 stable, meeting all three asks."
+    },
+    {
+      "id": "R47.2",
+      "status": "declined",
+      "doubt": "The ask (commit selftest receipts for the three round-47 counters, addition-lint.py and the criterion-93 falsifier block) is unmet in the tree: the only committed selftest receipts are for round-48 counters (.ufo/evidence/round-48/selftest/c1-r48/c2-r48-selftest.*) and round-49 counters (.ufo/evidence/round-49/control/c1/c2-selftest.*); no C3 receipt exists, the addition-lint tally and the criterion-93 falsifier block output are only wave copies (.ufo/waves/round-48/w1/selftest/), and .ufo/evidence/round-47/quality/c91-92-falsifiers.stdout has no criterion-93 block."
+    },
+    {
+      "id": "R47.3",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-48.md",
+          "lines": "108-108",
+          "excerpt": "## Correction C1-R48-1 — the round-47 dependence sets (unreceipted freeze-time observation)"
+        },
+        {
+          "path": "corpus/lessons/round-48.md",
+          "lines": "178-178",
+          "excerpt": "- **C1-R48-1 (corrects `corpus/lessons/round-47.md:117-118`; the file is never rewritten).**"
+        }
+      ],
+      "commit": "50545328e7ac4ba1703d70030e37dacec9362e68",
+      "doubt": "Strongest counter-reason: the correction might not name the round-47.md:117-118 dependence sets. Resolved: the appended correction heading names 'the round-47 dependence sets' and line 178 explicitly cites `corpus/lessons/round-47.md:117-118` as corrected, quotes the stale lines verbatim (line 114-117), and the bounds section states the original file is never rewritten."
+    },
+    {
+      "id": "R47.4",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-48.md",
+          "lines": "270-270",
+          "excerpt": "| `r8-predictive-test-selection-cost.md` | refused | unopened row: its `source:` cites `S205` / arXiv 1810.05286 and the lane has no such row (`grep -c '1810.05286' corpus/SOURCES.md` → 0, `S205` → 0), so the quoted factor-of-two magnitude has no row opened in the round that writes it and no committed snapshot behind it — **QUALITY 10** (decisive) and **QUALITY 2**."
+        }
+      ],
+      "commit": "50545328e7ac4ba1703d70030e37dacec9362e68",
+      "doubt": "Strongest counter-reason: the correction might still keep PROVINCE.md:14-18 as the decisive reason. Resolved: the corrected refusal row names QUALITY 10 (decisive) and QUALITY 2, and states 'The round-47 PROVINCE.md:14-18 cite is withdrawn as the decisive reason'; the old weak cite survives only as a quoted historical row being corrected (lines 218/224)."
+    },
+    {
+      "id": "R47.5",
+      "status": "declined",
+      "doubt": "Compound carried item, only partially landed: the S026/S093/S108 per-snapshot fetch receipts exist (.ufo/evidence/round-48/freshness/sources/S026/S093/S108.receipt.json), but the dead brace_depth_at helpers still exist at base (tools/tally-audit-v2.py:135 and tools/tally-audit-v3.py:234), no selftest cases for the round-47 C1 (8) and C3 (10) counter survivors were added, and the located-name (entry-author) check is unbuilt (Planned round-50 paragraph still lists the carried items)."
+    },
+    {
+      "id": "R47.6",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-49.md",
+          "lines": "118-118",
+          "excerpt": "- Wave-2 semantic re-reads (`.ufo/waves/round-49/w2/T49W2Reread*.json`) found 7 of 94 rows whose excerpt did not carry"
+        }
+      ],
+      "commit": "54a523654964f88afcdb4325012f1f1d52d3fdbb",
+      "doubt": "Strongest counter-reason: the exact phrase 'falsification wave' does not appear in any citable non-wave file, so the wave's character could be disputed. Resolved: the round-49 wave-2 falsify dispatch and completion artifacts exist in the tree (.ufo/waves/round-49/spec-w2.json, w2-dispatch.json, w2-results.json, w2.ready.dispatched) and the lesson records wave-2 precheck runs on the candidate before deciding (line 91) and wave-2 access-trace/oracle-mutation checks of the generator (line 99) — the falsification wave ran in the round that landed the S269/S270 rows and the F10 entry."
+    },
+    {
+      "id": "R47.7",
+      "status": "declined",
+      "doubt": "All four SHONEN boxes remain `[~]` at base (SHONEN.md lines 5, 7, 9, 11) and promotion is operator-owned; the item is an observation of state, not a work item the lane can fix, so no post-routing commit can satisfy it."
+    }
+  ]
+}

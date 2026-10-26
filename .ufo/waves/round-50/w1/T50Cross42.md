@@ -1,0 +1,15 @@
+# T50Cross42 — independent R42 coding
+
+Base assessed: `e3729de862f73ae080d98fcf522a7081ce16e40a`. I did not read any `T50Disp*` artifact. Axis: C1 calibration; these are item dispositions, not a claim verdict.
+
+## Findings
+
+- **R42.1 — open.** The two survivors remain declared in `.ufo/evidence/round-42/census/mutants.json:22-25,34-37`; the round-43 status says its transition record is not a `(gate, mutant id)` register (`corpus/lessons/round-43.md:110-114`). That does not establish the requested added fixture/judgment or a reasoned adjustment to the declared mutant set. Strongest counter considered: downstream fixtures might kill them even if the original declarations remain; the located source specifically calls the survivor tracker unimplemented, and I found no evidence of the requested resolution. Command to show: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show e3729de862f73ae080d98fcf522a7081ce16e40a:.ufo/evidence/round-42/census/mutants.json | nl -ba | sed -n '20,40p'`.
+- **R42.2 — declined.** `corpus/lessons/round-42.md:187-192` documents V1–V6 and identifies append-only superseding as the chosen repair route, rather than fixing the optional instrument blind spots. Strongest counter considered: a later change may cover an individual variant; the base lesson still explicitly records the full set as passing the false-positive counterexample. Command to show: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show e3729de862f73ae080d98fcf522a7081ce16e40a:corpus/lessons/round-42.md | nl -ba | sed -n '187,192p'`.
+- **R42.3 — fixed.** `corpus/SOURCES.md:473` records the six-row S153–S158 staged collision and requires renumbering by document in scratch before appending. `git blame` attributes this line to post-routing commit `f6762b80ba3f74f4839074fa2dd71e5755c5a00c`, which touched the cited file. Strongest counter considered: the hazard text might be stale or the renumber rule ambiguous; it enumerates all six IDs and directly names the required mapping method. Commands: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show e3729de862f73ae080d98fcf522a7081ce16e40a:corpus/SOURCES.md | nl -ba | sed -n '473,473p'` and `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin blame -L 473,473 e3729de862f73ae080d98fcf522a7081ce16e40a -- corpus/SOURCES.md`.
+- **R42.4 — declined.** The base lesson's SHONEN check table is `corpus/lessons/round-42.md:146-153`; it says one box is mechanically checkable and no box moves. The routed request itself reserves promotion to the operator, not the lane. Strongest counter considered: a later round might move a box; the assigned decision is against the specified base, where no such move is made. Command to show: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show e3729de862f73ae080d98fcf522a7081ce16e40a:corpus/lessons/round-42.md | nl -ba | sed -n '146,153p'`.
+
+## Summary
+- Wrote `T50Cross42.json` with independent statuses and keyed evidence for R42.1–R42.4.
+- R42.1 open; R42.2 declined; R42.3 fixed; R42.4 declined.
+- No tools installed or updated.

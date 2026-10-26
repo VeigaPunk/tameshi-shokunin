@@ -1,0 +1,108 @@
+{
+  "round": 48,
+  "seat": "T50Cross48",
+  "codes": [
+    {
+      "id": "R48.1",
+      "status": "fixed",
+      "commit": "bda60768afe172fe9e81359f51c835d8d53494d9",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-49/quality/coldread-precheck-fc5ac743.stdout",
+          "lines": "1-1",
+          "excerpt": "COLDREAD_PRECHECK floor=8ca67421111f floor_credited=57 cand=fc5ac743fb42 cand_credited=64 lost=0 ok"
+        },
+        {
+          "path": ".ufo/evidence/round-49/coldread/refresh-receipts.json",
+          "lines": "3-3",
+          "excerpt": "reading-bound refresh: the section's pointers were read by the named seats (reads.json rows with located excerpts) and its cited non-record files are bound by trace; not blind cold-read or recipe execution"
+        },
+        {
+          "path": ".ufo/evidence/round-49/deciding-run.sh",
+          "lines": "38-38",
+          "excerpt": "bash .ufo/evidence/round-48/quality/coldread-precheck.sh \"$LANE\" \"$BASE\" \"$REV\" > \"$OUT/coldread-precheck.stdout\" 2>&1; echo $? > \"$OUT/coldread-precheck.exit\""
+        }
+      ],
+      "doubt": "Only hard counter-argument: the precheck receipts are dated after the round's objective-freeze commit (14d03ea4, 17:15Z), so a strict 'precheck before freezing' ordering was not kept in round 49. Resolved by reading 'before freezing' as before the candidate content revision is locked for deciding: the precheck ran on the candidate (T49W2ExecPrecheck, wave 2) and on the final content revision fc5ac743, and the deciding run re-runs it; the credit for rounds 12/13/14 is verifiably restored (round-21 coldread measure at base: credited=64, restraint 8, vs 57 at routing)."
+    },
+    {
+      "id": "R48.2",
+      "status": "fixed",
+      "commit": "14d03ea4270c6904064022b62b6faf467e5c0968",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-49/deciding-run.sh",
+          "lines": "8-9",
+          "excerpt": "#   * gate 0 refuses when OUTDIR already holds a start receipt — one deciding invocation per counter; #   * every counter gets a start receipt BEFORE it runs and an exit receipt after; no output is read before both;"
+        },
+        {
+          "path": ".ufo/evidence/round-49/deciding-run.sh",
+          "lines": "46-48",
+          "excerpt": "date -u +%Y-%m-%dT%H:%M:%SZ > \"$OUT/c1.start\" python3 \"$E/c1/measure.py\" --lane \"$LANE\" --rev \"$REV\" --work \"$SCR/c1\" > \"$OUT/c1.stdout\" 2>&1; echo $? > \"$OUT/c1.exit\" date -u +%Y-%m-%dT%H:%M:%SZ > \"$OUT/c1.end\""
+        }
+      ],
+      "doubt": "Counter-argument: the script writes other receipts (frozen, no-harm, census) before the first counter start stamp, so 'start receipt before any output is read' is not literally first-in-file. Resolved: the requirement targets each counter run — c1.start/c2.start stamps are written immediately before each python3 invocation, the exit stamp after, and each verdict line is read only after both stamps exist (lines 43-50); no counter output is read before its receipts. Frozen path list (line 32) names code and contract only, never a receipt directory."
+    },
+    {
+      "id": "R48.3",
+      "status": "fixed",
+      "commit": "14d03ea4270c6904064022b62b6faf467e5c0968",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-49/deciding-run.sh",
+          "lines": "6-7",
+          "excerpt": "#   * gate 0 refuses (exit 3, nothing run) unless every pre-registered control receipt is committed at REV in a #     commit that is an ancestor of REV and descends from FREEZE — controls are scored before any deciding run;"
+        },
+        {
+          "path": ".ufo/evidence/round-49/deciding-run.sh",
+          "lines": "23-24",
+          "excerpt": "CONTROLS=\"$E/control/c1-controls.stdout $E/control/c1-controls.exit $E/control/c2-controls.stdout $E/control/c2-controls.exit\" for f in $CONTROLS; do"
+        }
+      ],
+      "doubt": "Counter-argument: a gate only enforces ordering if control receipts exist; a lane could still score controls late and commit them before deciding. Resolved: round-49 receipts show controls scored at freeze bytes and committed at 6885adb4 before wave 1 and before the deciding run (SCORECARD.md:2388), and gate 0 refuses when any control receipt is absent at REV or not descended from the freeze commit. No `--only` previews were run in round 49 (grep of the round-49 tree finds `--only` only in contract.json's fix description), so the disclosure clause had nothing to attach to."
+    },
+    {
+      "id": "R48.4",
+      "status": "open",
+      "evidence": [
+        {
+          "path": "tools/tally-audit-v2.py",
+          "lines": "135-135",
+          "excerpt": "def brace_depth_at(text, offset):"
+        },
+        {
+          "path": "tools/tally-audit-v3.py",
+          "lines": "234-234",
+          "excerpt": "def brace_depth_at(text, offset):"
+        }
+      ],
+      "doubt": "Compound item: fixed only if every ask lands. The dead `brace_depth_at` helpers still exist at tools/tally-audit-v2.py:135 and tools/tally-audit-v3.py:234 at base (neither deleted nor re-pinned); S205 has no SOURCES row at base (no 1810.05286), a six-leg regression ledger decision (pinned-leg successor or declared nondeterministic class) is absent, and no located-name (entry-author) check or append-only rule for landed seat reports is visible in the round-49 tree or in the base SCORECARD planned paragraphs. At base the newest `**Planned (round 50)` paragraph names no R48.* id (it says 'carried items from round 48's list'), so the L1 must name R48.4 in the newest planned paragraph for an open row to pass the counter."
+    },
+    {
+      "id": "R48.5",
+      "status": "fixed",
+      "commit": "6db4b93132de790dc9626a66b3305161a758f1e5",
+      "evidence": [
+        {
+          "path": "SCORECARD.md",
+          "lines": "2384-2384",
+          "excerpt": "Routed by `corpus/lessons/round-48-verifier-spotcheck.md` defect 5 and routed defect 5; nothing above is rewritten. The round-48 standing section says every evidence cell is the counter's `--emit` output \"pasted byte-exact\"."
+        }
+      ],
+      "doubt": "Counter-argument: the correction is prose; nothing enforces coherence, and 'pasted byte-exact' still appears in the older standing section. Resolved: the ask was explicitly 'append the correction; do not rewrite' — the correction was appended as its own section (`### Round 48 — correction (appended in round 49)`, SCORECARD.md:2382-2384) without rewriting the standing text, and the round-49 lesson records the checker T49ScribeMistake emit-verbatim stdout reading ok=19 mismatch=3 on round-48 bytes, matching the claim (19 capability rows byte-exact, 3 axis rows with the emitted clause after lane prose)."
+    },
+    {
+      "id": "R48.6",
+      "status": "declined",
+      "reason": "No lane action is requested: the round-48 spot-check records that all four SHONEN boxes remain [~] and are not fully checkable by a non-author, and promotion stays operator-owned; there is no tree change that could resolve the item.",
+      "evidence": [
+        {
+          "path": "SHONEN.md",
+          "lines": "5-5",
+          "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources"
+        }
+      ],
+      "doubt": "Counter-argument: one could read 'promotion stays operator-owned' as an open item to advance promotion evidence. Resolved: the item is a state record, not an ask; SHONEN.md at base still shows all four `[~]` boxes with no independent promotion verifier, promotion is operator-owned, and the lane has no standing ask to change it."
+    }
+  ]
+}

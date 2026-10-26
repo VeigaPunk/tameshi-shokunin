@@ -1,0 +1,25 @@
+# T50RevengerRecur — read-only commands behind the report (lane = /home/vgpnk/Projects/shokunin/tameshi-shokunin)
+git -C LANE rev-parse HEAD                                   # 4afb060c1d6e994d1bbb9095493b1f6b2b8344f2
+git -C LANE rev-parse e3729de862f73ae080d98fcf522a7081ce16e40a
+python3 -c 'import json;d=json.load(open(".ufo/evidence/round-50/c1/defects.json"));print(d["count"])'   # 49
+python3 build_table.py                                       # rows 49 classes 27 multi 12 closed 32 open 17
+git -C LANE ls-tree -r --name-only ea25e022 -- .ufo/evidence/round-45/selftest | wc -l    # 0
+git -C LANE ls-tree -r --name-only 3ae8b048 -- .ufo/evidence/round-46/selftest | wc -l    # 6
+git -C LANE ls-tree -r --name-only 03facb22 -- .ufo/evidence/round-47/selftest | wc -l    # 0
+git -C LANE ls-tree -r --name-only c7586b9a -- .ufo/evidence/round-48/selftest | wc -l    # 4
+git -C LANE ls-tree -r --name-only e3729de -- .ufo/evidence/round-49/control | grep selftest | wc -l  # 4
+git -C LANE ls-tree -r --name-only HEAD -- .ufo/evidence/round-50/control | grep selftest | wc -l     # 4
+git -C LANE ls-tree -r --name-only HEAD | grep -c c93                                      # 0
+grep -n "selftest" corpus/QUALITY.md                          # no committed-receipt clause
+grep -n "selftest" corpus/lessons/round-46.md                 # 11,115,125 — none about receipts
+grep -c SHONEN corpus/lessons/round-4{4,5,6,7,8,9}.md         # 0 each
+grep -o 'R49\.[0-9]' .ufo/evidence/round-50/contract.json | sort -u   # no matches
+grep -n '^\*\*Planned (round 50)' SCORECARD.md                # :2410
+grep -n "C1_R39:" SCORECARD.md                                # :1859 (R40.5 pre-routing fix)
+grep -n "C1_R42:" SCORECARD.md                                # :2028 (R41.3 self-pin/records)
+grep -n "C1_R43:" SCORECARD.md                                # :2089 (R42.1 killed_names)
+grep -n "stays a monitor" SCORECARD.md                        # :2159 (R45.3 satisfied at routing)
+find .ufo/evidence/round-48 -name '*addition*' -o -name '*lint*'      # empty
+# falsifier fixture (scratch only; two mktemp -d + git init -q repos, toplevel asserted)
+python3 recurrence-check.py --lane RED   --rev RED_HEAD   --classes RED/classes.json     # exit 1, no-gate
+python3 recurrence-check.py --lane GREEN --rev GREEN_HEAD --classes GREEN/classes.json   # exit 0

@@ -1,0 +1,86 @@
+{
+ "round": 46,
+ "codes": [
+  {
+   "id": "R46.1",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "corpus/SOURCES.md",
+     "lines": "142-142",
+     "excerpt": "| S267 | bwrap(1), bubblewrap 0.13.1 \u2014 https://github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml (the tag's raw XML bytes at https://raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml) | docs | A | supersedes S093's anchor and quote only: the same six flags documented in the raw bwrap.xml at tag v0.13.1, quoted so tha"
+    },
+    {
+     "path": ".ufo/evidence/round-48/freshness/sources/S093.receipt.json",
+     "lines": "2-6",
+     "excerpt": " \"url\": \"https://raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml\",\n \"fetched_at\": \"2026-10-26T08:41:10Z\",\n \"http_status\": 200,\n \"bytes\": 33289,\n \"sha256\": \"2cb77df2f4be0b2a0302bb2f0a260fdb4d9e1299b76481ea66ed34c40f5be1da\","
+    }
+   ],
+   "commit": "50545328e7ac4ba1703d70030e37dacec9362e68",
+   "doubt": "Strongest counter-reason: rows S265-S268 might be registry decoration only (no committed per-snapshot receipts), or might predate routing (then not new since routing). Resolved: S265-S268 are absent at routed_at 0b5b7cd2 (grep count 0 vs 3 for S026/S093/S108), each teaches cell carries a located quote (pin by quote, not whole-page hash), and the four .receipt.json files exist at base with url/fetched_at/http_status 200/sha256 matching the row anchor prefixes; commit 5054532 adds both."
+  },
+  {
+   "id": "R46.2",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-47/hardening/pool.py",
+     "lines": "17-18",
+     "excerpt": "A mutant is `killed` iff `python3 <mutated copy> --selftest` exits nonzero AND prints at least one\nline starting `FAIL ` (a named rule case failed); a nonzero exit with no such line is `crashed`, a"
+    },
+    {
+     "path": ".ufo/evidence/round-47/contract.json",
+     "lines": "37-37",
+     "excerpt": "   \"type\": \"runnable-artifact hardening, adoption of the round-46 hardened counters and a deterministic held pool (round-46 spot-check routed defect 2)\","
+    },
+    {
+     "path": ".ufo/evidence/round-47/control/run-controls.py",
+     "lines": "183-183",
+     "excerpt": "    run_c2('CTL_H_ast_pin_by_bare_assert', c2_repo(pin_variant(base_f, False), pin_variant(base_c, False)))"
+    },
+    {
+     "path": ".ufo/evidence/round-47/after/c2.stdout",
+     "lines": "1-1",
+     "excerpt": "MUT coverage/Tree.read:const:0 killed | FAIL G01_gt_rows_reads_two_rows raised TypeError: cannot use a string pattern on a bytes-like object"
+    }
+   ],
+   "commit": "9acfbe21435e1976636a276448dee1d5e7155915",
+   "doubt": "Strongest counter-reason: the pool is a generic single-site enumeration, so the 17 wave-2 fresh mutants might not be individually absorbed, and the hardened counters are byte-equivalent to round-46 (equivalence=1), so nothing behavioral changed. Resolved: wave-2 mutants were themselves single-point replacements on these same hardened counters (T46Mut* methods, w2-results.json), so every one maps to a pool id; the round-47 deciding run adopted the v2 hardened targets (killed=183, FAIL lines), and the AST-pin control (CTL_H, CTL_E) plus FAIL-line kill rule exist in pool.py/contract/run-controls/quality falsifiers."
+  },
+  {
+   "id": "R46.3",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-47/after/c1.stdout",
+     "lines": "15-15",
+     "excerpt": "STATEMENT cap/retained invocation-context gate: claimed=SELFTEST: PASS (49/49)|0|7e4519d9a0ea observed=SELFTEST: PASS (49/49)|0|7e4519d9a0ea (exit=0) MATCH declared_deps=fleet-root observed_deps=fleet-root DEPS-OK"
+    },
+    {
+     "path": ".ufo/evidence/round-47/after/c1.stdout",
+     "lines": "41-41",
+     "excerpt": "STATEMENT axis/calibration: claimed=6|657f009bdf1c observed=6|657f009bdf1c (exit=0) MATCH declared_deps=none observed_deps=none DEPS-OK"
+    },
+    {
+     "path": ".ufo/evidence/round-47/after/c1.stdout",
+     "lines": "16-16",
+     "excerpt": "PROFILES retained invocation-context gate: P0=SELFTEST: PASS (49/49)|0 P1=SELFTEST: PASS (49/49)|0 P2=SELFTEST: PASS (49/49)|0 P3=SELFTEST: PASS (49/49)|0 P4=SELFTEST: PASS (49/49)|0 P5=SELFTEST: PASS (49/49)|1"
+    }
+   ],
+   "commit": "edd4ca44635c9fdf796a4c11953b37481e753537",
+   "doubt": "Strongest counter-reason: 'hermetic' might require the deciding observation to run with no live fleet-root/jj/bwrap at all; here P0 still runs live and the counter only declares/probes dependence, and the round-47 C1 verdict itself printed false. Resolved: the defect asked for declared, observable dependence plus sha256s beside statements; the successor counter now measures dependence under six profiles (bwrap-decoy fleet root P5), and all 22 statements carry a sha256 (unpinned=0), including the tool-less axis rows (axis/calibration claimed=6|657f009bdf1c). The round-47 false verdict comes from a different statement (six-leg regression ledger dep mismatch) and is an honest miss, not absence of the fix."
+  },
+  {
+   "id": "R46.4",
+   "status": "declined",
+   "evidence": [],
+   "doubt": "Checked corpus/lessons/round-46.md:42: the S259 Gate quote still prints the hyphen form '9.8 %-16.3 %' and no fold statement sits at the quote; the en-dash fold is disclosed only in the entry r5-undetected-flaky-failures.md:25-32, which predates and does not satisfy the 'in the lesson itself' ask; no Planned paragraph names R46.4. The lane evidently treats the fold as wording-only (recorded in the spot-check itself) and declined to rewrite the landed round-46 lesson record; decline with this reason."
+  },
+  {
+   "id": "R46.5",
+   "status": "declined",
+   "evidence": [],
+   "doubt": "Checked SHONEN.md at base: all four boxes remain [~] with no independent promotion verifier, and no Planned paragraph names R46.5. The item records a standing state (promotion stays operator-owned) rather than an actionable ask; nothing was implemented or planned, so the honest disposition is declined: the lane retains operator-owned promotion and no non-author-checkable promotion exists at base."
+  }
+ ]
+}

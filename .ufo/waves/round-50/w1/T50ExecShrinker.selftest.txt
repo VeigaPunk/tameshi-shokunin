@@ -1,0 +1,47 @@
+# T50ExecShrinker selftest receipts (scratch mirror /fast/scratch/hyaku/tameshi-r50/T50ExecShrinker/mirror, tool bytes = the deliverable)
+
+## A. with staged-id-guard.py and the pinned generator beside the tool (M02 leg runs)
+$ cd /fast/scratch/hyaku/tameshi-r50/T50ExecShrinker/mirror/tools && python3 -I shrink-case.py --selftest
+SELFTEST core: sentinel predicate reduces to its one unit     ok
+SELFTEST core: no verdict is asked twice                      ok
+SELFTEST core: the sentinel reduction is 1-minimal            ok
+SELFTEST core: a size floor leaves a 1-minimal three-unit set ok
+SELFTEST core: an unsatisfiable predicate returns None        ok
+SELFTEST core: an always-true predicate reduces to the empty set ok
+SELFTEST core: an empty start is decided once                 ok
+SELFTEST cli: the stub shrink exits 0                         ok
+SELFTEST cli: the output carries case/runs/units_before/units_after ok
+SELFTEST cli: the stub result is a sub-case                   ok
+SELFTEST cli: the stub result kills                           ok
+SELFTEST cli: the stub result is 1-minimal                    ok
+SELFTEST cli: the stub unit counts are honest                 ok
+SELFTEST cli: the stub run count equals the logged invocations ok
+SELFTEST M02: the embedded edit is the panel M02 edit         ok
+SELFTEST M02: the shrink exits 0 on the public mutant         ok
+SELFTEST M02: the mutant violates the oracle on the input case ok
+SELFTEST M02: the result is a sub-case that still kills       ok
+SELFTEST M02: the result is 1-minimal                         ok
+SELFTEST M02: the unit counts are honest                      ok
+SELFTEST M02: the run count equals the logged invocations     ok
+SHRINK_SELFTEST: cases=21 failed=0
+exit=0
+
+## B. bare, the counter's tooldir shape (shrink-case.py + pbt-staged-id.py only; M02 leg skips)
+$ cd /fast/scratch/hyaku/tameshi-r50/T50ExecShrinker/bare2 && python3 -I shrink-case.py --selftest
+SELFTEST core: sentinel predicate reduces to its one unit     ok
+SELFTEST core: no verdict is asked twice                      ok
+SELFTEST core: the sentinel reduction is 1-minimal            ok
+SELFTEST core: a size floor leaves a 1-minimal three-unit set ok
+SELFTEST core: an unsatisfiable predicate returns None        ok
+SELFTEST core: an always-true predicate reduces to the empty set ok
+SELFTEST core: an empty start is decided once                 ok
+SELFTEST cli: the stub shrink exits 0                         ok
+SELFTEST cli: the output carries case/runs/units_before/units_after ok
+SELFTEST cli: the stub result is a sub-case                   ok
+SELFTEST cli: the stub result kills                           ok
+SELFTEST cli: the stub result is 1-minimal                    ok
+SELFTEST cli: the stub unit counts are honest                 ok
+SELFTEST cli: the stub run count equals the logged invocations ok
+SELFTEST panel M02 end to end                                 skip (no staged-id-guard.py beside this tool)
+SHRINK_SELFTEST: cases=14 failed=0
+exit=0

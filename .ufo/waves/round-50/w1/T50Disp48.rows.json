@@ -1,0 +1,139 @@
+{
+ "round": 48,
+ "rows": [
+  {
+   "id": "R48.1",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-49/after/c1.stdout",
+     "lines": "99-101",
+     "excerpt": "SECTION ## Repeated controls and gate registry — round 12 pointers=5 floor=5 present SECTION ## Pin disposition and provenance correction — rou pointers=9 floor=9 present SECTION ## Effective expectation reconciliation — round 14 pointers=10 floor=10 present"
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2392-2392",
+     "excerpt": "| C1 the seven lapsed cold-read sections (recipe, restore discipline, the map, promotion-evidence, rounds 12/13/14) are re-read pointer by pointer, stale pointers corrected, and re-credited by trace-bound entries whose inputs exclude the five record files: `C1_R49_PASS=true`"
+    },
+    {
+     "path": ".ufo/evidence/round-49/quality/coldread-precheck-cand.stdout",
+     "lines": "1-1",
+     "excerpt": "COLDREAD_PRECHECK floor=8ca67421111f floor_credited=57 cand=master cand_credited=64 lost=0 ok"
+    }
+   ],
+   "commit": "6db4b93132de790dc9626a66b3305161a758f1e5",
+   "seat": "T50Disp48",
+   "note": "Round 49 re-read and re-credited the round-12/13/14 headings (three SECTION lines present, 64/64); the precheck receipt shows 57 -> 64 lost=0 and QUALITY 99/round-50 deciding-run.sh run it before the deciding run."
+  },
+  {
+   "id": "R48.2",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-49/deciding-run.sh",
+     "lines": "9-9",
+     "excerpt": "* every counter gets a start receipt BEFORE it runs and an exit receipt after; no output is read before both;"
+    },
+    {
+     "path": ".ufo/evidence/round-49/deciding-run.sh",
+     "lines": "10-10",
+     "excerpt": "* the frozen path list names code and contract only, never a receipt directory."
+    },
+    {
+     "path": ".ufo/evidence/round-50/deciding-run.sh",
+     "lines": "5-7",
+     "excerpt": "gets a start receipt before it runs and an exit receipt after; the frozen path list names code and contract only."
+    }
+   ],
+   "commit": "14d03ea4270c6904064022b62b6faf467e5c0968",
+   "seat": "T50Disp48",
+   "note": "The round-49 script writes c2.start/c2.end and c1.start/c1.end around each counter and reads output only afterwards; its FROZEN list names files, no receipt directory. Round 50 carries the same shape."
+  },
+  {
+   "id": "R48.3",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-49/deciding-run.sh",
+     "lines": "6-6",
+     "excerpt": "* gate 0 refuses (exit 3, nothing run) unless every pre-registered control receipt is committed at REV in a"
+    },
+    {
+     "path": ".ufo/evidence/round-49/deciding-run.sh",
+     "lines": "7-7",
+     "excerpt": "commit that is an ancestor of REV and descends from FREEZE — controls are scored before any deciding run;"
+    },
+    {
+     "path": "corpus/QUALITY.md",
+     "lines": "1452-1453",
+     "excerpt": "(one deciding invocation). Any other invocation of a claim counter at the deciding revision (a partial or probe mode, a seat preview) is listed in the report with its revision and verdict line."
+    }
+   ],
+   "commit": "14d03ea4270c6904064022b62b6faf467e5c0968",
+   "seat": "T50Disp48",
+   "note": "Gate 0 refuses unless every control receipt is committed at REV in a commit descending from FREEZE; QUALITY 99 makes the order a standing criterion and requires any other invocation (partial/probe/seat preview) to be listed in the report."
+  },
+  {
+   "id": "R48.4",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SCORECARD.md",
+     "lines": "2367-2367",
+     "excerpt": "carried from round 47 and not worked here: delete or re-pin the dead `brace_depth_at` helpers (`tools/tally-audit-v2.py:135`, `tools/tally-audit-v3.py:234`); selftest cases for the round-47 C1/C3 counter survivors; the S205 / F7 package candidates."
+    },
+    {
+     "path": "tools/tally-audit-v2.py",
+     "lines": "135-135",
+     "excerpt": "def brace_depth_at(text, offset):"
+    },
+    {
+     "path": "tools/tally-audit-v3.py",
+     "lines": "234-234",
+     "excerpt": "def brace_depth_at(text, offset):"
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2380-2380",
+     "excerpt": "an append-only rule for landed seat reports (round-47 conformance defect 2); a decision on re-pinning the three cold-read sections that lost credit"
+    }
+   ],
+   "seat": "T50Disp48",
+   "note": "None of the six asks is met at base: both brace_depth_at helpers still exist, no selftest case names a round-47 survivor, S205 is still not a row, six-leg states runs 3 stable with the FAIL member only disclosed in prose, no located-name check, no append-only rule for landed seat reports.",
+   "fix_plan": "not this round as a whole: the bundle is six asks and a round that lands one or two would still leave it open. The cheapest single ask to land is the dead-helper disposition - delete tools/tally-audit-v2.py:135-137 and tools/tally-audit-v3.py:234-236 (def + body, unreferenced per corpus/lessons/round-47.md:95) and append the two standing-row sha256 re-pins they force; that closes one of six and leaves R48.4 open on the other five, so splitting the id into R48.4a-f next round is the honest move."
+  },
+  {
+   "id": "R48.5",
+   "status": "fixed",
+   "evidence": [
+    {
+     "path": "SCORECARD.md",
+     "lines": "2384-2384",
+     "excerpt": "The round-48 standing section says every evidence cell is the counter's `--emit` output \"pasted byte-exact\". That holds for the 19 capability rows. The 3 axis rows (depth, calibration, freshness) carry lane prose followed by the emitted `tool sha256 … runs 3 stable` clause, because the emit prints a placeholder for axis rows."
+    },
+    {
+     "path": "SCORECARD.md",
+     "lines": "2382-2382",
+     "excerpt": "### Round 48 — correction (appended in round 49)"
+    }
+   ],
+   "commit": "6db4b93132de790dc9626a66b3305161a758f1e5",
+   "seat": "T50Disp48",
+   "note": "Appended, not rewritten: \"### Round 48 - correction (appended in round 49)\" states the 19 capability rows are byte-exact and the 3 axis rows carry lane prose then the emitted clause."
+  },
+  {
+   "id": "R48.6",
+   "status": "declined",
+   "evidence": [
+    {
+     "path": "SHONEN.md",
+     "lines": "5-8",
+     "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-1) - [~] At least one end-to-end domain task executed and logged in LOG.md [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-2)"
+    }
+   ],
+   "reason": "An observation, not a lane ask: the four SHONEN boxes are lane assertions that no independent promotion verifier has checked, and promotion to shokunin is operator-owned - the lane cannot close a box on its own authority, so there is nothing the lane can land this round.",
+   "seat": "T50Disp48",
+   "note": "SHONEN.md still carries four [~] boxes; the promotion decision belongs to the operator, so this is recorded, not worked."
+  }
+ ]
+}
