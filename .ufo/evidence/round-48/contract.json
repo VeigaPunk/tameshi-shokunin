@@ -1,0 +1,56 @@
+{
+ "round": 48,
+ "lane": "tameshi",
+ "author": "tameshi L1 TameshiR48 (hyaku run 8, attempt 1)",
+ "frozen_at": "2026-10-26",
+ "base_rev": "473336d9d789f6081195e7376d17836a24666bc3",
+ "freeze_plan": "Two-step freeze. Step 1 (this file, the pre-registration commit, before any seat runs): claims, predicates, targets, kill rules, the do-nothing and cheapest controls by definition, the R=3 repetition count, the C2 target set and its required phrases. Step 2 (the counter freeze, after wave 1 delivers the two counters and before any deciding or control scoring): the counters and their selftests are committed at the paths below with their sha256 recorded in freeze-2.json, and the controls are scored and committed. Neither step is amended after any claim has been scored; an amendment before scoring is recorded in `amendments` with its reason.",
+ "amendments": [],
+ "axes": {
+  "lane": "depth + calibration (verification-fixture craft)",
+  "scores_at_base": "depth 9 (command D), calibration 6 (round-21 coldread monitor restraint), freshness 9 (round-45 floor(10*fresh/73), fresh=71, disputed S048 and S093); operability and coverage carry no numeric score",
+  "lowest_non_retired_axis": "calibration (6) - carried by C1",
+  "stagnation_nudge": "does not fire: calibration 6 is below the saturation line 8",
+  "distinct_axes": ["calibration", "freshness"],
+  "exploratory": "none"
+ },
+ "claims": {
+  "C1": {
+   "axis": "calibration",
+   "type": "standing self-assessment is stated from repeated observation (round-47 closure routed defect 1: a single flaky observation was restated as a standing value; N>=3 per profile or a declared nondeterministic class)",
+   "surface": "the last SCORECARD.md row carrying a `runs` clause for each of the 22 frozen statements of .ufo/evidence/round-47/calibration/statements.json (sha256 924102dfbc6135a7d9dabef7b8b2e681a5ce4c42ca72a031ea1f8d5ab9fb2e56, reused unchanged), against R=3 independent observation rounds of the round-47 six profiles",
+   "statement": "At REV, for each of the 22 frozen statements, the standing row (the last data row of a SCORECARD.md table of its kind whose first cell is the statement id AND whose evidence cell carries a `runs 3` clause) declares a value set V (one member: `stable`; two or three members: `nondeterministic`), the tool sha256 prefix and a deps set D, such that over R=3 observation rounds of the six profiles P0-P5: every observed P0 (line, exit) tuple is a member of V; every member of V is attested (observed in this run's P0 tuples or recorded as a P0 tuple of that statement in a committed observation receipt under .ufo/evidence/round-48/calibration/observations/ at REV); the tool sha256 prefix equals the pinned file at REV; and D contains every dependence observed in all 3 rounds and no dependence observed in none of them (a dependence observed in some rounds only is `unstable` and may be declared or omitted). Per round, dependence d is observed when the variant profile's tuple differs from that round's P1 tuple (env: P0 differs from P1); profiles and variants are the round-47 counter's. total = mismatches + unparsed + unobservable + dep_mismatch + unpinned + unattested + oversize = 0, the base SCORECARD.md stays a byte prefix, and the counter, its selftest and the statements pin are committed at REV.",
+   "predicate_label": "C1_R48_PASS=true iff self_pin=1 stmts_pin=1 statements=22 rounds=3 append_only=1 unpinned=0 total=0",
+   "target": "C1_R48_PASS=true (total=0)",
+   "kill_rule": "total>0 at the deciding run, or rounds<3, or a deciding run taken at a revision other than the content revision, is a miss; the target is never narrowed; a flaky deciding observation outside V is a mismatch, not a rerun.",
+   "counter": ".ufo/evidence/round-48/calibration/measure.py --lane LANE --rev REV --base 473336d9d789f6081195e7376d17836a24666bc3 --work EMPTY_DIR (modes --emit, --selftest)",
+   "before_state": "measured at freeze step 2 on the base tree: every row lacks a `runs` clause, so unparsed=22, total>=22, C1_R48_PASS=false",
+   "do_nothing_control": "CTL_A: the base tree unchanged -> must print C1_R48_PASS=false",
+   "cheapest_controls": "CTL_B relabel: the round-47 standing rows re-appended with `runs 3` and `stable` and their deps unchanged, no re-observation -> must print false (the six-leg row states FAIL passed=7); CTL_C superset cheat: every row declares three invented members -> must be refused as unattested; CTL_D deps-everything: every row declares all five dependences -> must print dep_mismatch>0; CTL_E positive: rows emitted by the counter's own --emit from the same observation run -> must print total=0 (the counter can pass at all).",
+   "separability": "C1 is verifiable without C2: its rows restate whatever the tree prints. The `sources-registry` statement prints the registry row count, so its row value tracks C2's row additions; C1 is measured at the content revision and its truth does not depend on C2 verifying."
+  },
+  "C2": {
+   "axis": "freshness",
+   "type": "held-row live re-anchoring (carried from round 45: per-snapshot fetch receipts and anchor refresh for S026, S093, S108; round-45 non-author disputes of S048 and S093 quotes); sourced claim of the frontier step",
+   "surface": "four held SOURCES.md rows S026, S048, S093, S108 and the knowledge entries listed in their used-by cells at base",
+   "statement": "At REV, for each target T in {S026, S048, S093, S108}: exactly one new registry row R (id above S264) whose teaches cell opens `supersedes T —`, opened 2026-10-26, status mined, whose source cell carries T's URL; a committed snapshot .ufo/evidence/round-48/freshness/sources/T.* whose sha256 12-hex prefix appears in R's anchor cell; a committed fetch receipt .ufo/evidence/round-48/freshness/sources/T.receipt.json with url equal to R's URL, fetched_at on 2026-10-26, http_status 200 and sha256 equal to the snapshot's; a Gate line in corpus/lessons/round-48.md naming R and T with a quote of at most 25 words that is located in the snapshot's extracted text and contains T's required phrase(s); every knowledge entry in T's base used-by cell cites R in its `source:` line and carries `verified-at: 2026-10-26`, and R's used-by cell lists exactly those entries; at the deciding run a live fetch of the URL contains the quote (extracted text). refreshed counts targets meeting all of these.",
+   "required_phrases": {
+    "S026": ["84%"],
+    "S048": ["should therefore be prioritised"],
+    "S093": ["--unshare-all", "--unshare-cgroup-try"],
+    "S108": ["--update_goldens"]
+   },
+   "predicate_label": "C2_R48_PASS=true iff self_pin=1 targets=4 refreshed=4 census_exit=0",
+   "target": "C2_R48_PASS=true (refreshed=4)",
+   "kill_rule": "refreshed<4 or a census error (exit != 0) at the deciding run is a miss; a target whose live fetch fails at the deciding run is not refreshed (unreachable is reported, never credited).",
+   "counter": ".ufo/evidence/round-48/freshness/measure.py --lane LANE --rev REV [--no-live for seats] (modes --selftest)",
+   "before_state": "measured at freeze step 2 on the base tree: refreshed=0",
+   "do_nothing_control": "CTL_F: the base tree unchanged -> refreshed=0, false",
+   "cheapest_controls": "CTL_G rows-only: four superseding rows pointing at the round-45 snapshots, no round-48 snapshot or receipt, entries untouched -> refreshed=0; CTL_H quote-without-phrase: the round-45 quotes re-used verbatim (S048 and S093 lack their required phrases) -> refreshed<=2.",
+   "separability": "C2 is verifiable without C1: it reads SOURCES.md, the lesson Gate lines, the entries and the snapshots, never SCORECARD.md."
+  }
+ },
+ "frontier_step": "census start/end via scripts/sources-census.sh validate (start receipt census-start.*); one mined mistake with a red-before fix (the round-47 one-shot standing row fails CTL_B under the R=3 counter); sourced claim = C2",
+ "no_harm_monitors": "round-47 no-harm.sh monitors (command D 9, coldread 6, round-45 freshness score 9, round-45 coverage, S160 count, registry rows >= 124, round-46 coverage) at base and at the content revision; cold-read sections 60; census exit 0",
+ "round_shape": "two v1 waves: w1 build (32) before freeze step 2, w2 falsify (32) at the content revision; total 64"
+}
