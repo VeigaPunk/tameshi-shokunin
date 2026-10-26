@@ -1,0 +1,26 @@
+strace: strace -f -qq -e trace=%file -o log python3 <c1 counter> --lane <clone> --rev 175f21de --work <scratch>/wh
+traced: the C1 counter, the round-21 monitor (run twice), and every git child (clone/hash-object/update-index/write-tree/commit-tree)
+note: parser anchors the syscall name (an unanchored "link" also matches readlink and produced 3 false hits in the first pass)
+write-mode file ops elsewhere-absolute   64254
+write-mode file ops relative             32
+write-mode file ops work                 80
+
+absolute write-mode paths outside --work, outside the lane, outside /tmp:
+  /dev/null                64254
+
+relative write-mode path shapes (git children chdir into the work clone):
+   .git/objects/0a
+   .git/objects/0a/<tmp_obj>
+   .git/objects/2b
+   .git/objects/2b/<tmp_obj>
+   .git/objects/31
+   .git/objects/31/<tmp_obj>
+   .git/objects/3b
+   .git/objects/3b/<tmp_obj>
+   .git/objects/75
+   .git/objects/75/<tmp_obj>
+   .git/objects/97
+   .git/objects/97/<tmp_obj>
+   .git/objects/b8
+   .git/objects/b8/<tmp_obj>
+   testing        <- git's own symlink-support probe: symlink("testing", "<work>/dur/.git/tnIRPY7"), target inside the clone

@@ -14,7 +14,8 @@ observes them without making the whole growing file an input. The trace's record
 inputs; the entry appends to the round-21 ledger (the path the unchanged monitor reads). Scope, carried into the
 receipts: "reading-bound refresh: the section's pointers were read by the named seats (reads.json rows with
 located excerpts) and its cited non-record files are bound by trace; not blind cold-read or recipe execution".
-Writes: the ledger, .ufo/evidence/round-49/coldread/traces/<n>.json and .ufo/evidence/round-49/coldread/refresh-receipts.json.
+Writes: the ledger and, per re-key, .ufo/evidence/round-49/coldread/rekey-<cand8>/{traces/section-<n>.json,refresh-receipts.json}
+(the first re-key, at f181a961, wrote .ufo/evidence/round-49/coldread/{traces,refresh-receipts.json} before this layout).
 """
 import hashlib
 import importlib.util
@@ -58,6 +59,8 @@ def sh(*a, **k):
 
 def main():
     cand = sh('git', '-C', LANE, 'rev-parse', '--verify', CAND + '^{commit}').strip()
+    global TAG
+    TAG = 'rekey-' + cand[:8]  # one directory per re-key: receipts of an earlier re-key are never overwritten
     readers = json.load(open(READERS, encoding='utf-8'))
     shutil.rmtree(SCR, ignore_errors=True)
     os.makedirs(SCR)
@@ -74,7 +77,7 @@ def main():
     ledger = json.load(open(ledger_path, encoding='utf-8'))
     tracer = os.path.join(clone, 'tools/trace-inputs.py')
     receipts = []
-    os.makedirs(os.path.join(LANE, E, 'coldread/traces'), exist_ok=True)
+    os.makedirs(os.path.join(LANE, E, 'coldread', TAG, 'traces'), exist_ok=True)
     for n, h in enumerate(c1.TARGETS, 1):
         sec = found[h]
         files = sorted({p['file'] for p in pointers if p['heading'] == h and p['file']
@@ -85,7 +88,7 @@ def main():
             records.append('corpus/SOURCES.md')
         if not direct:
             raise SystemExit('section %s cites no non-record lane file' % h)
-        trace_rel = '%s/coldread/traces/section-%d.json' % (E, n)
+        trace_rel = '%s/coldread/%s/traces/section-%d.json' % (E, TAG, n)
         argv = [sys.executable, tracer, '--root', clone, '--out', os.path.join(LANE, trace_rel), '--',
                 sys.executable, '-B', '-c', READ_CMD, clone, cand, str(sec['start']), str(sec['end']),
                 ','.join(direct), ','.join(records)]
@@ -108,7 +111,7 @@ def main():
             'sha256': sec['sha256'], 'class': 'record', 'verdict': 'verified-record', 'blocking_gaps': 0,
             'wrong_expectations': 0, 'minor_gaps': 0, 'commands_executed_count': 1, 'read_rev': cand,
             'inputs': inputs, 'traces': [trace_rel], 'seats': readers.get(h, []) + ['L1 TameshiR49 integration'],
-            'reports': ['%s/c1/reads.json' % E, '%s/coldread/refresh-receipts.json' % E]})
+            'reports': ['%s/c1/reads.json' % E, '%s/coldread/%s/refresh-receipts.json' % (E, TAG)]})
         receipts.append({'section': h, 'start': sec['start'], 'end': sec['end'], 'sha256': sec['sha256'],
                          'direct': direct, 'records_via_blob': records, 'inputs': inputs, 'trace': trace_rel,
                          'argv_tail': argv[4:7] + ['<READ_CMD>'] + argv[10:], 'exit': r.returncode,
@@ -116,7 +119,7 @@ def main():
         print('REKEY %s start=%d inputs=%d records_via_blob=%d' % (h[:50], sec['start'], len(inputs), len(records)))
     with open(ledger_path, 'w', encoding='utf-8') as fh:
         fh.write(json.dumps(ledger, indent=1, ensure_ascii=True))  # the ledger's own serialization (no newline)
-    with open(os.path.join(LANE, E, 'coldread/refresh-receipts.json'), 'w', encoding='utf-8') as fh:
+    with open(os.path.join(LANE, E, 'coldread', TAG, 'refresh-receipts.json'), 'w', encoding='utf-8') as fh:
         json.dump({'candidate': cand, 'scope': SCOPE, 'read_command': READ_CMD,
                    'instrument_sha256': hashlib.sha256(open(tracer, 'rb').read()).hexdigest(),
                    'entries_added': len(receipts), 'receipts': receipts}, fh, indent=1, ensure_ascii=False)

@@ -249,8 +249,9 @@ of the five record files the contract exempts", not "this diff is an append".
 ## 7. Planning data for the C1 planner
 
 - **Re-keying without dropping records cannot hold.** 88/94 entries that carry a record file lapsed
-  within ≤3 rounds (median 1). The three sections that lapsed in rounds 37–38 were re-keyed every
-  round from 27–36 and still fell off; the re-key itself is not the fix, dropping record inputs is.
+  within ≤3 rounds (median 1). The three sections that lapsed in rounds 37–38 were re-keyed
+  repeatedly across their read rounds (21–36) and still fell off; the re-key itself is not the fix,
+  dropping record inputs is.
 - **Dropping records is necessary and, measured, sufficient for ~17–20 rounds.** The six record-free
   entries survived 17–20 rounds; the only shorter ones are the round-17 originals that included
   `.ufo` scripts or tools as inputs.
