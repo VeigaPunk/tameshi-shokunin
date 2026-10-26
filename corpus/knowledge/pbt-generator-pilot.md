@@ -30,15 +30,20 @@ Measured values live in the deciding receipt `.ufo/evidence/round-49/after/c2.st
 
 ## What the lane built
 
-- **Written to the gate's documented contract, through its CLI only.** The generator never imports or execs the guard;
-  it runs `python3 -I GUARD --registry R --staged G [--map M] --json` per case and checks the answer against its own
-  oracle, written from the guard's docstrings: the CORPUS census row rule (0-3 leading spaces), collisions sorted by
-  number, held/unmapped by form-insensitive document key, the naive map and its cascade, and the map-validation rules.
+- **Run through the CLI only; the oracle re-implements the guard's rules.** At run time the generator never imports,
+  execs or opens the guard (an access trace shows it opens only the `--guard` path it is handed, as a subprocess;
+  `.ufo/waves/round-49/w2/T49W2ExecGenTrace.md`); it runs `python3 -I GUARD --registry R --staged G [--map M] --json`
+  per case and checks the answer against its own oracle: the CORPUS census row rule (0-3 leading spaces), collisions
+  sorted by number, held/unmapped by form-insensitive document key, the naive map and its cascade, and the
+  map-validation rules. The oracle is not independent in derivation: a wave-2 critic found its regexes byte-identical
+  to the guard's and its analysis largely transcribed from the guard's source, undocumented thresholds included
+  (`.ufo/waves/round-49/w2/T49W2CritGenOracle.md`). It therefore catches a guard that departs from its own round-43
+  rules, not a rule the round-43 author got wrong.
   The guard's exit semantics are taken as observed (0 answered/admitted, 1 analysis refused or map inadmissible,
   2 setup refusal); its module docstring names exit 1 only for an inadmissible map — a documentation imprecision recorded
   in `corpus/lessons/round-49.md`, not a guard edit.
-- **Fit to the program at hand (S270).** Cases are small markdown registries and staged tables (0-8 rows) built from
-  per-class recipes: indentation 0-6 spaces including 4+ (not a row under the census), ids of 3-5 digits, duplicate ids
+- **Fit to the program at hand (S270).** Cases are small markdown registries and staged tables (two to eight rows across the
+  pair) built from per-class recipes: indentation 0-6 spaces including 4+ (not a row under the census), ids of 3-6 digits, duplicate ids
   and short rows (must refuse), URL form variants (scheme, `www.`, case, trailing slash), undocumented rows, cascades,
   and admissible and inadmissible maps for each map rule.
 - **Distribution printed, per class (S269 §2.4).** Every run prints the count of each of twelve classes (the frozen
@@ -67,3 +72,8 @@ hand-made witness set confirms all 12, so no panel mutant is equivalent.
   property-based is outside the counter: its code (CLI calls only, its own oracle), an access trace and oracle-mutation
   results in the round-49 wave-2 reports.
 - Twelve mutants are a small panel; a kill count is a measurement of this panel, not a mutation score of the guard.
+- Guard behaviours the distribution cannot reach (wave-2 mutation seats, blind to the panel): a 5-cell row (the
+  short-row boundary), duplicate keys in a map's JSON, the two input sha256 fields, oversized or non-regular inputs
+  (`.ufo/waves/round-49/w2/T49W2MutGuardOwn.md`, `T49W2ExecC2Probe.md`). Three oracle rules no generated case
+  exercises (numeric collision order past the digit-width boundary, the 5-cell boundary, the 12-character id cap;
+  `T49W2MutGenerator.md`). These are the next generator moves, not claimed here.

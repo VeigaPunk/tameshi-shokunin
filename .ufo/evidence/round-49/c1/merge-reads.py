@@ -77,6 +77,17 @@ for p in pointers:
     if p['kind'] in ('external', 'external-path') and not row.get('fleet_commit'):
         row['fleet_commit'] = fleet_head
     rows.append(row)
+OVR = os.path.join(LANE, E, 'c1/l1-overrides.json')
+if os.path.exists(OVR):  # L1 re-reads after the wave-2 semantic re-reads: re-chosen excerpt and/or note
+    ov = json.load(open(OVR, encoding='utf-8'))
+    for o in ov['overrides']:
+        hit = [r for r in rows if r['heading'] == o['heading'] and r['raw'] == o['raw']]
+        if len(hit) != 1:
+            sys.exit('override matches %d rows: %s' % (len(hit), o['raw']))
+        if o.get('excerpt'):
+            hit[0]['excerpt'] = o['excerpt']
+            hit[0]['reader'] = '%s; excerpt re-chosen by %s' % (hit[0].get('reader'), ov['reader'])
+        hit[0]['note'] = (hit[0].get('note', '') + ' | L1 re-read: ' + o['note']).strip(' |')
 doc = {'schema': 'tameshi-r49-reads-v1', 'candidate': cand, 'rows': rows}
 res, detail = c1.check_reads(LANE, cand, fleet, pointers, doc)
 for p in unmatched:

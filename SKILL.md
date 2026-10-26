@@ -170,7 +170,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    counts — mutation-case-kagi-census.md:184-191).
 5. **Driver `--check` — the fail-closed uniqueness gate.** For every defect:
    assert `count(old) == 1` in the pristine copy, print the first
-   matching line, and require the literal line `all unique` — both lanes'
+   matching line (the kimi driver; the kagi note records the assert and `all unique` only), and require the literal line `all unique` — both lanes'
    drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:425`) (mutation-case-kimi-census.md:22-25;
    mutation-case-kagi-census.md:44-47). Require `new != old` in future drivers:
    a no-op is a driver defect, not a survivor. The cited historical notes do
@@ -1389,7 +1389,7 @@ lands in the round's record, not here.
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
 | `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
 | `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26; git-materialized replay) | any sweep or replay |
-| `corpus/README.md` | the coverage map — a row per note carried, holds + sources (addenda append extra rows; coverage is partial, one knowledge note uncarried at this revision) | checking what the corpus holds |
+| `corpus/README.md` | the coverage map — a row per note carried, holds + sources (round addenda append further tables of the same shape) | checking what the corpus holds |
 | `plans/round-N.plan.md` (latest `plans/round-11.plan.md`), `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10; `N` is a placeholder, not a file — the concrete files are the round-4 through round-10 plan and record-draft pairs that `plans/` holds); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, committed in the round-11 closeout) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
 
@@ -1562,9 +1562,9 @@ is needed by this method.
 
 ## Effective expectation reconciliation — round 14
 
-Sources: `corpus/lessons/round-13-verifier-spotcheck.md`, Routed defects1–3;
+Sources: `corpus/lessons/round-13-verifier-spotcheck.md`, Routed defects 1–3;
 S049 (Python child-environment contract), S003 Limitations, and
-`corpus/knowledge/incremental-pin-disposition.md`, empirical correction8.
+`corpus/knowledge/incremental-pin-disposition.md`, empirical correction 8 (its §8).
 These instructions add no full-page cold-read or independent promotion credit.
 
 | Evidence condition | Decision | Error pattern / limit |

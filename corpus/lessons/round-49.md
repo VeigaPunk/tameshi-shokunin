@@ -19,6 +19,9 @@ and `.ufo/waves/round-49/w1/T49ExecSrcSmallbone/` (independent fetches, identica
   `https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf`, accessed 2026-10-26, HTTP 200, 194,315 B, sha256
   `bfddcaa648f836e50804910fc0956cc037c1a8b3e3d6716fb12e4e1ffdcb5172`. The carrier is the article text (ACM ICFP '00 block,
   Crossref pages 268-279) on a course mirror; the ACM DL answered 302 → 403, so the publisher's own bytes are not the pin.
+  The row's anchor cell first said "author-served PDF" and named only the Abstract and §2.4; both corrected in this round
+  before the deciding run (old → new: "author-served PDF" → "article text served by a course mirror"; anchor + §3.2, §5.1.4,
+  which the pilot entry quotes; `.ufo/waves/round-49/w2/T49W2RevRows.md` F1, `T49W2CritEntry.md` D3). S270's "117 pp" → "116 pp" (F2).
   Tier A for content. Quote (20 words), §2.4 Monitoring Test Data, p. 270: "The combinator collect will gather all values
   that are passed to it, and print out a histogram of these values". Second quote (14 words), Abstract, p. 268: "Properties
   are described as Haskell functions, and can be automatically tested on random input".
@@ -68,8 +71,8 @@ section critics audited every non-pointer statement (`T49Sec*.findings.json`): 1
 re-ran the round-12/13/14 recipes in scratch clones (`T49ExecR1{2,3,4}Cmd.md`): every exit reproduces; the decision-table
 wording drifted from the tools' printed ids in two places.
 
-Forty-five corrections landed (`.ufo/evidence/round-49/c1/corrections.json`, each with its seat and reason; all
-line-neutral, so no SKILL.md line pointer moved): 12 false statements, 6 unverifiable ones narrowed, 2 stale and 1
+Forty-five wave-1 corrections landed (`.ufo/evidence/round-49/c1/corrections.json`: 44 under `corrections`, 1 under
+`corrections_pass2`; each with its seat and reason; all line-neutral, so no SKILL.md line pointer moved): 12 false statements, 6 unverifiable ones narrowed, 2 stale and 1
 off-by-one pointer re-aimed (`mutation-case-kagi-census.md:251-253` → `:252-254`, line 251 is blank;
 `T49ScoutRecipeLines.md`), 2 bare map pointers and 3 bare file names qualified, 2 placeholder paths explained, 9 whitespace
 repairs, and 8 precision edits. Not applied: two true-but-stale sentences outside the seven sections (SKILL.md:1509, 1555),
@@ -101,6 +104,23 @@ Found this round (wave-1 attacks), routed, not claimed as fixed:
   REV, and the panel sha is checked before the run (F2).
 - One ledger entry records a digest that never matched its input (`.ufo/evidence/round-21/coldread/ledger.json:24170`,
   `.ufo/evidence/round-14/context-missing-env.json`; `T49RevengerLapse.md`); it credits nothing and is left as written.
+- The C1 counter's `absent` verdict is uncapped and needs no evidence: seven body rewrites plus 90 empty `absent` rows pass
+  it (`.ufo/waves/round-49/w1/T49CritC1Contract.md` F1-F2, control `T49CritC1Contract/ctl-g.stdout`); the durability probe
+  covers the five record files only (F3); 21 citation forms (`§` references, `#box-1` anchors, globs) are never extracted
+  (F4); an empty-input trace satisfies the trace gate (F5-F6). The counter is frozen. This round's reads use `absent` for
+  3 of 94 pointers, each a path the section itself says is not a file (`SKILL.md:398`, `:1393`), and every re-key trace
+  records 4-11 inputs (`.ufo/evidence/round-49/coldread/refresh-receipts.json`). A successor counter caps `absent` and
+  requires evidence for it.
+- C2 counter gaps beyond F1-F3 above (`T49CritC2Contract.md` F4-F7, `T49MutC2Counter.md`: 9 of 15 selftest mutants
+  survive): its oracle check skips map cases and four fields; `--generator-path` is not named in the label; the
+  selftest never reaches `measure()`.
+- Wave-2 semantic re-reads (`.ufo/waves/round-49/w2/T49W2Reread*.json`) found 7 of 94 rows whose excerpt did not carry
+  the whole clause; the L1 re-read each: two clauses were narrowed in SKILL.md (the kimi-only first-line match; the README
+  row's volatile note count), five excerpts were re-chosen (`.ufo/evidence/round-49/c1/l1-overrides.json`). One row
+  (round-13 spot-check, routed defects 1-3 at `:179-181`) cannot carry three items in one 400-character excerpt; its
+  note names all three lines.
+- The generator's oracle is a transcription of the guard's rules, not an independent reading of its docs
+  (`.ufo/waves/round-49/w2/T49W2CritGenOracle.md`); the pilot entry says so.
 - `tools/staged-id-guard.py`'s module docstring names exit 1 only for an inadmissible map; analysis mode also exits 1 when
   `refused` (unmapped or cascade) — confirmed (`T49RevGuardExit.md`). The guard is a pinned capability and is not edited.
 
