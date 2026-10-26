@@ -1,0 +1,42 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records = sys.argv[5].split(','), sys.argv[6].split(',')\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r49/refresh/lane",
+    "9b9b2a016adcf2fab2e0cb1ef89ef78f454b8ec6",
+    "1464",
+    "1478",
+    "SHONEN.md,corpus/knowledge/executor-test-sufficiency.md,corpus/lessons/round-1.md,reports/round-1-calibration.md",
+    ""
+  ],
+  "cwd": "/fast/scratch/hyaku/tameshi-r49/refresh/lane",
+  "root": "/fast/scratch/hyaku/tameshi-r49/refresh/lane",
+  "rev": "9b9b2a016adcf2fab2e0cb1ef89ef78f454b8ec6",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/fast/scratch/hyaku/tameshi-r49/refresh/trace-inputs-run-irnx4e5m/pycache"
+    }
+  },
+  "inputs": {
+    "SHONEN.md": "55a4fceb62b0a8f688f21beeb25003ccbb9d24caa3e03aad586799a09fd32e09",
+    "SKILL.md": "be660dc26d64d9e3e399cd622161b672c69183f72bf923b00af8b3665be79fc7",
+    "corpus/knowledge/executor-test-sufficiency.md": "b26021292d69b3686851e13363d8451009f12a32dc85925b5a7cd2295e34cf07",
+    "corpus/lessons/round-1.md": "568609fcd0071ec3eee6a73898fc62c7f28830f539a802537c183f793d7680fc",
+    "reports/round-1-calibration.md": "a2afa5f7f8a9165622a0d55c86b69db3a27498b4311e58654c38f41c0cd2c22b"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {},
+  "dropped_home_count": 0
+}
