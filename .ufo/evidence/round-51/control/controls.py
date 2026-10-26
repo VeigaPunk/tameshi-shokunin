@@ -31,7 +31,8 @@ ENV.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
 
 
 def run(argv, **k):
-    return subprocess.run(argv, capture_output=True, env=ENV, **k)
+    k.setdefault('env', ENV)
+    return subprocess.run(argv, capture_output=True, **k)
 
 
 def fixture(name, edit):
