@@ -1462,3 +1462,85 @@ prints `DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-49/control/
 started no counter; with a pre-existing `c1.start` it prints `DECIDING_REFUSED second-invocation c1` and exits 3; with a
 receipt committed before the freeze it prints `DECIDING_REFUSED control-receipt-not-after-freeze` and exits 3
 (`.ufo/waves/round-49/w1/T49ExecMistakeGate.md`, receipts in `T49ExecMistakeGate/`).
+
+
+## Criteria appended — round 50 (2026-10-26)
+
+### Criterion 100 — a landed wave artifact grows; it never changes
+
+Every file under `.ufo/waves/round-<N>/` — a seat report, a wave spec, a dispatch list or a registry —
+is append-only once committed. The comparison is the lane's checker
+`.ufo/waves/round-50/w1/T50ExecAppendOnly/seat-report-append-only.py LANE FROM TO`: for every
+`round-*/` path present at FROM, its bytes at TO must begin with its bytes at FROM; a path absent at TO
+is `deleted`, a TO blob that does not begin with the FROM blob is `prefix-lost`, and a side that is not
+a blob is `type-change`. Both sides are read as blobs (`git ls-tree -r -z`, `git cat-file --batch`),
+never as decoded lines, so an edit inside one long line cannot hide behind an unchanged line count.
+FROM is the commit that added each artifact (`git log --diff-filter=A --format=%H -1 -- <path>`), not
+the round's base: a window that begins before the artifact exists leaves it unchecked, so its clean
+answer is vacuous. TO is the round's landing tip. The append-only rule binds round 50 and later;
+earlier rounds are measured, not repaired — all 22 consecutive-commit pairs on the 1165 wave files of
+rounds 43-50 are non-prefix pairs, across 20 files (`.ufo/waves/round-50/w1/T50ScribeAppendOnly.census.txt`).
+A correction to a landed artifact is appended at its end under a dated `## Erratum — YYYY-MM-DD` heading
+naming the false text and its replacement (criterion 35's erratum form); the checker reads bytes only,
+so the truth of an erratum stays a spot-check item.
+
+Check that can fail: at closure, for each distinct adding commit `A` among the round's wave artifacts,
+run `python3 .ufo/waves/round-50/w1/T50ExecAppendOnly/seat-report-append-only.py LANE A <landing tip>`.
+The run fails on exit 1, with one `REWRITTEN<TAB><path><TAB><reason>` line per rewritten artifact and
+`SUMMARY<TAB>checked=<n><TAB>rewritten=<m>`; it passes on exit 0 with `rewritten=0`; a setup refusal
+(bad arguments, a non-repository LANE, an unresolvable revision, a git failure) is exit 2 with an
+`ERROR: …` line on stderr — every nonzero exit classified, and `checked=0` is a refusal-shaped result,
+not a pass. Each committed run names the FROM and TO it compared and the checker sha256, in the
+receipt or in a sibling `.revs` beside it (`.ufo/waves/round-50/w1/T50ExecAppendOnly/receipts/00-toolchain.txt`
+carries the sha of the bytes run). The discrimination is a pair of runs over one rewrite: `LANE 487b8f0 5891bdb` prints
+`checked=2819 rewritten=0` and exits 0 although nine round-43 artifacts were rewritten inside that
+window, while `LANE c5335c70 83beaf98` prints `checked=2856 rewritten=9` and exits 1 — the first is
+vacuous for every artifact added after its FROM, which is why FROM is the adding commit
+(`.ufo/waves/round-50/w1/T50ScribeAppendOnly.tool-runs.txt`). Out of scope, named: a rewrite committed
+inside the artifact's own adding commit; a rewrite a later commit undoes (the comparison is net over the
+window); an uncommitted worktree edit, which the closure's clean-tree check refuses before this one runs;
+paths outside `.ufo/waves/round-*/`; and the truth of an appended erratum.
+
+Lesson: `corpus/lessons/round-43-verifier-spotcheck.md:12` and `:64` (R43.2, routed at `506e99c7`): the
+round-43 closure found the committed wave-1 note `.ufo/waves/round-43/w1/RevC2Classes.md` modified in
+the worktree and called it "an unrelated dirty worktree change"; the edit was committed in round 44 as
+`83beaf98`, and the adding-commit run `c5335c70 83beaf98` reports it `prefix-lost` along with eight
+sibling reports. `corpus/lessons/round-47-verifier-spotcheck.md:22` (conformance defect 2): `03facb22`,
+an orchestrator commit after the round's report, rewrote `.ufo/waves/round-47/w1/T47ConnCross.md`
+(+228/-214), reported `prefix-lost` by `edd4ca44 03facb22`. Both were status-neutral because no rule
+compared a wave artifact with its own earlier bytes; criterion 35 makes corrections append-only for
+corpus prose and criterion 26 for a stale receipt line, and neither reads `.ufo/waves/`.
+
+Falsifier that must fail: the checker's fixture driver
+(`.ufo/waves/round-50/w1/T50ExecAppendOnly/receipts/fixture-driver.sh`, 11 cases) prints
+`PASS` for every case and `FAIL` for none — append exit 0 with `SUMMARY checked=2 rewritten=0`, and
+in-place, deleted, truncated and renamed each exit 1 naming the right path and reason, with the three
+setup cases exit 2; the adding-commit runs `c5335c70 83beaf98`, `edd4ca44 03facb22`,
+`6b5ea3b1 03facb22` and `9b9b2a01 fc5ac743` each exit 1 while the round-base run `487b8f0 5891bdb`
+exits 0 with `rewritten=0`; and each of three staged checker mutants prints a `FAIL ` line under the
+driver — prefix test replaced by `len(new) >= len(old)`, the `deleted` branch removed, scope widened
+past `.ufo/waves/round-*/`; and the entry point
+`.ufo/waves/round-50/w1/T50ExecAppendOnly/receipts/c100-falsifier.py` prints `CRITERION-100-FALSIFIER-OK`
+and exits 0 (receipt `.ufo/waves/round-50/w1/T50ExecAppendOnly/receipts/quality/c100-falsifiers.stdout`).
+
+### Criterion 101 — a claim counter's selftest reaches the code that decides the claim, and its reach is measured
+
+A frozen claim counter's `--selftest` counts as the counter's test only when its `selftest` function calls the counter's
+deciding function (`measure`) end to end on a fixture it builds itself, so the pins, floors and total that print the
+claim label are exercised, not only pure helpers. Before the deciding run, the round's wave evidence carries a
+mutation probe of the frozen counter bytes against that selftest (killed / survived per single-edit mutant), and the
+round's lesson names the survivors. The criterion binds reach and disclosure, not a kill rate: a selftest that
+reaches `measure()` can still miss most mutants (round 50: 11 of 29 for C1, 14 of 28 for C2), and that number is
+stated, not hidden.
+
+Check that can fail: `python3 .ufo/evidence/round-50/quality/selftest-reach.py <counter>...` parses each counter and
+prints `REACH <file> selftest=<0|1> calls_measure=<n> <ok|FAIL>`, exit 1 when any `selftest` makes no call to
+`measure`; plus the presence of a mutation-probe report for each claim counter in the round's wave directory.
+
+Lesson: `corpus/lessons/round-50.md` `## Mistakes` row 1 (round 49's two counter selftests never called
+`measure()`: `.ufo/waves/round-49/w1/T49MutC1Counter.md`, 14 of 28 mutants survived; `T49MutC2Counter.md`, 9 of 15).
+
+Falsifier that must fail: on round 49's frozen counters the check prints `calls_measure=0 FAIL` twice and exits 1
+(`.ufo/evidence/round-50/quality/reach-r49.stdout`, `reach-r49.exit`); on round 50's it prints `ok` twice and exits 0
+(`reach-r50.stdout`, `reach-r50.exit`); the mutation probes are `.ufo/waves/round-50/w1/T50MutC1Counter.md` and
+`T50MutC2Counter.md`.

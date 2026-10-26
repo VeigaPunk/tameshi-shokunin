@@ -132,3 +132,12 @@ Wave 2 (35 seats, `T46`-prefixed) attacked the content revision `6f2168e028ce7ff
 
 Census at round start: `.ufo/evidence/round-46/census-start.stdout`, exit 0, 117 rows, 11 W04/W01 warnings (same set as
 round 45). End: `.ufo/evidence/round-46/census-end.stdout` and `census-end.exit`, written by `deciding-run.sh` at the content revision and committed in the receipts-only commit (120 rows; the same 11 warnings, no E code expected).
+
+## Correction — appended in round 50 (routed R46.4)
+
+The S259 Gate quote above (line 42) prints `9.8 %-16.3 %` with an ASCII hyphen; the source prints an en dash,
+`9.8 %–16.3 %` (U+2013): the pinned snapshot `.ufo/evidence/round-46/coverage/sources/tum-portal-flaky-failures.html`
+holds the en-dash form three times and the hyphen form zero times. The hyphen is the lane's quote fold (U+2013 → `-`),
+not a misquote; read the quote at line 42 as “We found that, across all projects, undetected flaky failures account for
+9.8 %–16.3 % of failed pipeline runs.” This block is appended, not an in-place edit (QUALITY 4); the round-47 checker
+`lesson-quote-check.py` still reads line 42 as written.
