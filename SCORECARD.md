@@ -2393,3 +2393,18 @@ L1 TameshiR49, hyaku run 9, attempt 1. Two claims on distinct axes, pre-register
 | C2 generator `tools/pbt-staged-id.py` against `tools/staged-id-guard.py`: seed 4949, 400 cases, no pristine violation, oracle agreement, 12 classes ≥ 10, ≥ 11 of 12 hidden panel mutants confirmed by differential re-run; entry cites a row opened 2026-10-26; F10 held (round 49): `C2_R49_PASS=true` | coverage (frontier F10 open → held; capability) | `generator=absent total=25` (CTL_ABSENT, `control/c2-CTL_ABSENT.stdout`); F10 `open` (`corpus/README.md:87`) | `C2_R49_PASS=true` | `python3 .ufo/evidence/round-49/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --panel PANEL` | CTL_FIX (the guard's own 14 selftest fixtures, golden outputs) `confirmed=6 classes_short=4` false; witness `witness_confirmed=12` (`control/c2-controls.stdout`) |
 
 What the C1 counter cannot see (contract `claims.C1.cannot_see`): that a quoted excerpt supports its sentence. CTL_K2 is a mechanical fabrication and passes it; semantic support is attacked by wave-2 re-read seats and by the closure. The after values are read from the deciding receipts under `.ufo/evidence/round-49/after/`, never from this table.
+
+### Round 49 — deciding results (appended after the deciding run)
+
+One deciding invocation by `.ufo/evidence/round-49/deciding-run.sh` at content revision `bda60768afe172fe9e81359f51c835d8d53494d9` (freeze `14d03ea4`), receipts `.ufo/evidence/round-49/after/` (start/end/exit per counter): `FROZEN_UNCHANGED=1`, nine no-harm monitors ok, QUALITY 98 precheck `57 → 64 lost=0 ok`, census exit 0.
+
+- **C1** `sections=64 covered=64 score=8 durable_covered=64/64 headings=7/7 pointers=94 unresolved=0 unverified=0 excerpt_miss=0 not_holds=0 absent=3 total=0 C1_R49_PASS=true` (`after/c1.stdout`). Calibration 6 → 8 by the unchanged round-21 monitor. Disclosed non-deciding invocations at earlier candidates: wave-2 seat T49W2ExecC1Probe at `f181a961` (`total=0`, `.ufo/waves/round-49/w2/T49W2ExecC1Probe.stdout`).
+- **C2** `generator=present violations=0 cases=400 oracle_disagree=0 classes_short=0 panel=12 confirmed=12 target=11 selftest_kills=6 records_bad=0 total=0 C2_R49_PASS=true` (`after/c2.stdout`). F10 open → held (round 49).
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| property-based generator for a fixture gate | `python3 -I tools/pbt-staged-id.py --guard tools/staged-id-guard.py --seed 4949 --cases 400 --dump FILE` generates 400 deterministic cases in 12 printed classes, checks the guard through its CLI against its own oracle, and names the first counterexample; confirmed 12 of 12 hidden panel mutants where the guard's own fixtures confirm 6 | `.ufo/evidence/round-49/after/c2.stdout`; `.ufo/evidence/round-49/control/c2-controls.stdout` | 49 |
+
+Numeric axes: calibration 8 (was 6), depth 9, freshness 9 unchanged. Limits named in `corpus/lessons/round-49.md` (counter blind spots: `absent` uncapped, differential-vs-property generator, unexercised selftest paths).
+
+**Planned (round 50):** a successor C1 counter that caps `absent` and requires evidence for it; the C2 counter's differential-generator blind spot (sandboxed generator, no pristine guard in reach); generator reach (5-cell rows, duplicate map keys, numeric order past the digit boundary); SKILL.md:1503/1509/1555 outside-section corrections; carried items from round 48's list.
