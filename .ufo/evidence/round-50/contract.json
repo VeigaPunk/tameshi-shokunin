@@ -1,0 +1,78 @@
+{
+ "schema": "tameshi-round-contract-v1",
+ "round": 50,
+ "lane": "tameshi",
+ "l1": "TameshiR50 (hyaku run 9, attempt 1)",
+ "date": "2026-10-26",
+ "base": "e3729de862f73ae080d98fcf522a7081ce16e40a",
+ "axes_at_base": {
+  "calibration": "8 (round-21 cold-read monitor: score 8, 64/64 credited at base; no-harm at base)",
+  "depth": "9 (command D recorded_cases=9)",
+  "freshness": "9",
+  "operability": "no numeric score",
+  "coverage": "no numeric score",
+  "adjacency": "no numeric score",
+  "lowest_non_retired": "calibration 8 (carries C1). Every numeric axis sits at or above the saturation line 8, but a capability entered the table in round 49 (window 2), so the stagnation nudge does not fire and the lowest-axis obligation stands."
+ },
+ "claims": {
+  "C1": {
+   "axis": "calibration (lowest non-retired axis, 8); surface: the lane's disposition of the 49 items its last ten closures routed (spot-checks of rounds 40-49), which until now lived only as scattered prose ('carried', 'routed', 'fixed')",
+   "type": "measured",
+   "routed_from": "considerthese/2026-10-26.md proposal 3 (recurring-defect tracker), mined in round 49 (corpus/lessons/round-49.md ## considerthese: 'a routed defect is not a closed defect'); round-49 spot-check routed defects 4 and 5",
+   "predicate": "At REV every one of the 49 frozen routed items of the round-40..49 spot-checks has exactly one row in corpus/routed-defects.json whose status the tree supports (fixed: a keyed excerpt that is new since routing, in a path its post-routing commit touched, on lines without acknowledgement words; open: named in the newest Planned paragraph of SCORECARD.md; declined: a reason of at least 40 characters), every evidence excerpt resolves at its cited lines outside the spot-checks, the ledger and the round's C1 instrument, the spot-checks are byte-unchanged, fixed >= 20, declined <= 12, and at least 5 fixes land by commits after base: C1_R50_PASS=true.",
+   "label": "C1_R50_PASS",
+   "counter": ".ufo/evidence/round-50/c1/measure.py",
+   "command": "python3 .ufo/evidence/round-50/c1/measure.py --lane LANE --rev REV --explain",
+   "statement_set": ".ufo/evidence/round-50/c1/defects.json (49 items, sha256 pinned in the counter; built by extract-defects.py at base with keys.json)",
+   "ledger": "corpus/routed-defects.json (schema tameshi-routed-defects-v1: {defects: [{id, status, evidence: [{path, lines 'a-b', excerpt}], commit?, reason?, seat?, note?}]})",
+   "before": "at base: no ledger, missing=49, C1_R50_PASS=false (CTL_0 receipt control/c1-CTL_0.stdout)",
+   "target": "total=0, C1_R50_PASS=true. The calibration score stays 8 (the round-21 monitor's ceiling is 8: two points per restrained [~] box); no score raise is claimed, the claim is the surface.",
+   "floors": {
+    "fixed_min": 20,
+    "declined_max": 12,
+    "fixed_after_base_min": 5
+   },
+   "cannot_see": "That a keyed excerpt new since routing actually resolves the item (semantic support), and that an item marked open or declined is not in fact fixed (underclaim). Control CTL_FAB fabricates fixed rows from history and reaches fixed=38 with every other term green except the after-base floor; the floor (fixes landed this round) is what it cannot meet at freeze. Semantic support is attacked per row by wave-2 seats and sampled by the closure.",
+   "kill_rule": "exactly one deciding invocation of the counter at REV, by deciding-run.sh, after the control receipts are committed; a second invocation is a miss; a deciding line that differs from the SCORECARD after-value voids the row; a missed floor is an honest stop, never a re-scoped target",
+   "controls": {
+    "CTL_0": "do-nothing: freeze tree; must print false",
+    "CTL_OPEN": "every item open with grep-found keyed evidence; must print false",
+    "CTL_PLANOPEN": "CTL_OPEN plus a Planned paragraph naming all 49 ids; must print false",
+    "CTL_DECLINE": "every item declined with a generic reason; must print false",
+    "CTL_FAB": "history fabrication (first post-routing commit adding a keyed non-acknowledgement line cited as the fix); scored and reported as observed; expected false at freeze only through the after-base floor"
+   },
+   "controls_harness": ".ufo/evidence/round-50/control/c1-controls.py LANE FREEZE OUTDIR"
+  },
+  "C2": {
+   "axis": "coverage (frontier F6 'fixture minimization for survivors': open -> held; surface: a new tool, tools/shrink-case.py, and the 1-minimal reduction method with a stated cost)",
+   "type": "measured; capability acquisition (fixture shrinker)",
+   "sourced": "the new F6 knowledge entry cites at least one SOURCES row opened 2026-10-26 (assimilation theme F6 from shokuknow merge/tameshi: staged S167 Zeller & Hildebrandt TSE 2002, re-opened this round; held S022/S024 re-read)",
+   "predicate": "At REV tools/shrink-case.py, given the frozen round-49 generator's counterexample for each of the 20 panel mutants (12 public round-49, 8 hidden round-50) of tools/staged-id-guard.py, returns a sub-case that passes the pristine guard and violates on the mutant, from which no single unit (registry line, staged line, map entry) can be removed without losing the kill, with a stated run count equal to the logged guard invocations and honest unit counts, for at least 19 of 20 mutants with a net reduction; its selftest exits 0; corpus/README.md marks F6 held (round 50) and a knowledge entry new since base naming F6 cites a mined row opened 2026-10-26: C2_R50_PASS=true.",
+   "label": "C2_R50_PASS",
+   "counter": ".ufo/evidence/round-50/c2/measure.py",
+   "command": "python3 .ufo/evidence/round-50/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --panel .ufo/evidence/round-49/c2/panel.json --hidden HIDDEN_PANEL",
+   "shrinker_interface": "python3 -I tools/shrink-case.py --pristine P --mutant M --case CASE.json --out OUT.json, and --selftest; CASE = {registry: str, staged: str, map: object|null} as dumped by tools/pbt-staged-id.py; OUT = {case: {registry, staged, map}, runs: int (every guard invocation it made, pristine and mutant), units_before: int, units_after: int}; units = registry lines + staged lines + entries of map['map'] when that is an object; the shrunk case must be a sub-case (lines kept in order, map entries a subset, other map fields unchanged); a kill = the round-49 generator's oracle check passes on the pristine guard and fails on the mutant; it may import pbt-staged-id.py from its own directory (the counter places the REV copy there); stdlib only; deterministic; exit 0 on success, 2 on setup error.",
+   "hidden_panel_sha256": "5c14e9a6843b3aae99abb7ffbd92bb3aa1e594391776edcfbf65d941fe8b0cc6",
+   "hidden_panel_custody": "kept outside the lane until the content revision; revealed at .ufo/evidence/round-50/c2/panel-hidden.json before the deciding run; every hidden mutant is found by the frozen generator at seed 4949 (selection rule: of 12 candidates, the 9 found, minus one whose counterexample duplicated another's)",
+   "before": "at freeze: shrinker absent, F6 open: total=23 C2_R50_PASS=false (CTL_ABSENT)",
+   "target": "total=0, C2_R50_PASS=true",
+   "cannot_see": "How the shrinker searches beyond its logged cost, and generality past the 20 cases (the hidden 8 are the probe). A plain greedy-to-fixpoint loop meets the bar (CTL_REF, the positive control), so the claim is the capability and the method with its cost, not a search-efficiency result.",
+   "kill_rule": "exactly one deciding invocation at REV by deciding-run.sh after the control receipts are committed; a second invocation is a miss",
+   "controls": {
+    "CTL_ABSENT": "freeze tree; must print false",
+    "CTL_IDENTITY": "shrinker returning the case unchanged plus F6 records; must print false",
+    "CTL_REF": "the counter's reference greedy shrinker plus F6 records; positive control, expected true"
+   },
+   "controls_harness": ".ufo/evidence/round-50/control/c2-controls.py LANE FREEZE HIDDEN_PANEL OUTDIR"
+  }
+ },
+ "no_harm": ".ufo/evidence/round-50/no-harm.sh LANE REV: ten monitors (commandD 9, cold-read floor score>=8 credited>=64, r45 freshness 71/73, r45/r46/r47 coverage, S160 count, registry >= 130, tools scope {A tools/shrink-case.py, M tools/pbt-staged-id.py}, round-49 generator capability line byte-equal); plus QUALITY 98 precheck and census exit 0 in the deciding run",
+ "deciding": ".ufo/evidence/round-50/deciding-run.sh LANE REV FREEZE OUTDIR (runs committed bytes, never the working tree)",
+ "frontier_step": {
+  "census": "scripts/sources-census.sh validate --root FLEET tameshi at start (exit 0, census-start.*) and at end",
+  "mistake": "corpus/lessons/round-50.md ## Mistakes; candidate: round 49's counter selftests never reached measure() (14/28 and 9/15 selftest mutants survived) -> this round's selftests run measure() end to end on fixture repos, shown by mutation",
+  "sourced_claim": "C2",
+  "assimilation": "theme F6 from merge/tameshi (delta-debugging-minimization-contract.md; r7-ieice-mutant-abstraction-authority.md triaged), id collision check with the 0-3-space pattern in scratch"
+ },
+ "amendments": []
+}
