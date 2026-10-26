@@ -140,11 +140,11 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    Use private `--root` fixtures and exclude or control host-gated branches
    (mutation-case-kimi-census.md:4-7; mutation-case-kagi-census.md:24-38).
    Require a reported case count, executed/skipped accounting, and verdict:
-   kumitate `n/m pass` + `VERDICT:` (gates-survey-kumitate.md:19-31);
+   kumitate `n/m pass` (cite-check and surface-probe print `n/m cases passed`) + `VERDICT:` (gates-survey-kumitate.md:19-31);
    kagi `SELFTEST: PASS (n cases)` includes its enumerated skip entries.
    Historical controls on the pinned bytes were green:
-   `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit0
-   (mutation-case-kimi-census.md:20-21), and bash16 enumerated cases,
+   `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0
+   (mutation-case-kimi-census.md:20-21), and bash: 16 enumerated cases,
    14 executed +2 skipped (mutation-case-kagi-census.md:27-35,42-43).
    A red control has no kill denominator: stop and record setup failure.
 2. **Pin the artifact — committed bytes only.** Record: path, full sha256,
@@ -169,12 +169,12 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    mutation-case-kimi-census.md:183-191; round 3's E1 kept miscalled case
    counts — mutation-case-kagi-census.md:184-191).
 5. **Driver `--check` — the fail-closed uniqueness gate.** For every defect:
-   assert `count(old) == 1` in the pristine copy, print the count and first
+   assert `count(old) == 1` in the pristine copy, print the first
    matching line, and require the literal line `all unique` — both lanes'
-   drivers did exactly this (mutation-case-kimi-census.md:22-25;
+   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:425`) (mutation-case-kimi-census.md:22-25;
    mutation-case-kagi-census.md:44-47). Require `new != old` in future drivers:
    a no-op is a driver defect, not a survivor. The cited historical notes do
-   not establish that particular round-2 guard. Any count ≠1 aborts until the string
+   not establish that the round-2 driver carried the `new != old` no-op guard. Any count ≠1 aborts until the string
    is re-derived from the pinned bytes.
 6. **Run control + mutants.** Control first: run the unmutated copy, record
    stdout, exit code, summary line, duration — expect the step-1 green. Then per
@@ -190,13 +190,13 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    the verdict line says PASS with the full count.
    - **Killed** = the run went red (exit ≠ 0 or the PASS verdict/line broken)
      *and* the full enumerated count remains, with skipped cases distinguished.
-     Both historical sweeps held their enumerated denominators43 and16
+     Both historical sweeps held their enumerated denominators 43 and 16
      (mutation-case-kimi-census.md:30-33; mutation-case-kagi-census.md:27-35,50-53).
      Collect the failing-case labels verbatim; a kill quoted without its failing
      labels is unverified (mutation-case-kimi-census.md:59-76). Bash grammar:
      `bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0`
-     and summary `SELFTEST: FAIL (1/16 cases)`
-     (mutation-case-kagi-census.md:82-103).
+     and the failing suite line `1/16` / FAIL as the note records it
+     (mutation-case-kagi-census.md:67,82-103).
    - **A kill can be token-only, not exit-only.** B4's deleted symlink arm kept
      the exit code (the row fell into the regular-file arm, `got exit=1` like
      the expected one) and died on the token assert alone
@@ -207,8 +207,8 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
      (mutation-case-kimi-census.md:44-53).
    - **Inconclusive** = no definitive verdict (timeout, crash before the
      summary, count not enumerated). Not a kill. Re-run it; keep every record.
-   - **Kill rate = killed / (killed + survived)** — inconclusive runs are
-     excluded from the denominator and named beside it. Round 2: 8/10 = 80 %,
+   - **Kill rate = killed / (killed + survived)** — inconclusive runs sit outside
+     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:569-574`). Round 2: 8/10 = 80 %,
      no inconclusive run, 11 runs in 7.0 s (mutation-case-kimi-census.md:29-31).
      Round 3: 8/10 = 80 %, 11 runs in 11.0 s (mutation-case-kagi-census.md:50-53).
 8. **Probe every survivor for non-equivalence.** Run the mutant on an input
@@ -221,7 +221,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    (mutation-case-kagi-census.md:111-114, :118-122, :251-253). If no observable
    input differs, the mutant may be *equivalent code* — record that as a
    calibration item, not as a gap.
-9. **Restore + prove the substrate never moved.** Re-run step 2's checks:
+9. **Restore + prove the substrate never moved.** Re-run step 2's checks (line count and repo revision included; neither model note records an after-revision):
    sha256 after == before, size and mtime unchanged, `git status --porcelain --
    <path>` empty (mutation-case-kimi-census.md:34-35;
    mutation-case-kagi-census.md:54-56). The sweep's edits all lived in scratch,
@@ -238,10 +238,10 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
     re-resolved if the substrate moved.
 
 Cost profile to record: wall time, per-run timeout, host/runtime versions.
-Round2:7.0s for11 runs, nodev24.21.0 (mutation-case-kimi-census.md:20-21,29-31);
-round3:11.0s for11 runs against a280s bound
+Round 2: 7.0 s for 11 runs, node v24.21.0 (mutation-case-kimi-census.md:20-21,29-31);
+round 3: 11.0 s for 11 runs against a 280 s bound
 (mutation-case-kagi-census.md:50-53). Cross-host stability remains unknown:
-Kimi U5 at204-205; Kagi U5 at203-204.
+Kimi U5 at 204-205; Kagi U5 at 203-204.
 
 ## Defect-taxonomy templates and exact-string guidance
 
@@ -374,28 +374,28 @@ Rules:
 
 ## Restore discipline — before/after identity, not continuous non-write proof
 
-All edits must stay in scratch. Before/after fingerprints establish endpoint
+All substrate edits must stay in scratch. Before/after fingerprints establish endpoint
 identity, not that no transient write occurred. Apply this policy in order:
 
 1. **Before the sweep:** sha256 (full), size, mtime, repo revision, and
    `git status --porcelain -- <path>` empty — recorded in the note's header
    (mutation-case-kimi-census.md:13-16; mutation-case-kagi-census.md:13-17).
-2. **All edits in scratch:** `cp -p` the artifact into the lane namespace and
-   edit only copies (mutation-case-kimi-census.md:4-7;
+2. **All edits in scratch:** `cp -p` the artifact into scratch outside
+   the lane and edit only copies (mutation-case-kimi-census.md:4-7, :172;
    mutation-case-kagi-census.md:44-45).
 3. **After the sweep:** require endpoint fingerprints to agree; historical
-   Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness
+   Kimi recorded hash 83016d45…4f426, 43273 B, unchanged mtime and path cleanliness
    (mutation-case-kimi-census.md:34-35); no after-repo revision was recorded.
-   Kagi recorded hash275d8294…53009f,44212B, unchanged09:47:15 mtime,
+   Kagi recorded hash 275d8294…53009f, 44212 B, unchanged 09:47:15 mtime,
    clean path and `cmp`-identical scratch copy (mutation-case-kagi-census.md:54-56).
    Its after-repo revision is likewise not established by those records.
 4. **A drift is an incident:** stop, report it as one, do not "repair" by
    rewriting — a repair would itself be an unauthorized write.
 5. **Never restore via `git checkout`/`git restore`.** Those write to the
    substrate; the only correct end state is *never-modified*. (I)
-6. **Retain durable evidence.** The historical probes reran from scratch
+6. **Retain durable evidence.** The historical probes' sensitivity re-runs read the lane's retained scratch
    (`SCORECARD.md:13`), but the case-note commands rely on an unversioned
-   `mutate_driver.py` and do not directly rebuild after scratch loss.
+   `mutate_driver.py` (one-off and not in-tree; `SCORECARD.md:16`) and do not directly rebuild after scratch loss.
    Use the maintained `bash tools/mutate-and-run.sh --regression` ledger
    replay for those pinned cases; it does not recover the old driver.
 7. **If the artifact was already dirty at pin time:** that pin is not a clean
@@ -1381,16 +1381,16 @@ lands in the round's record, not here.
 
 | Artifact | Holds | Read it when |
 |---|---|---|
-| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`:1294-1297`) |
-| `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per gate — suite, rate + composition, survivors, last sweep + pin; §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
-| `corpus/knowledge/service-limits.md` | the refusals, detail of record; this page carries the compact rendering (`:1246-1270`) | an intake question needs a refusal line |
-| `corpus/knowledge/service-optin-protocol.md` | request shape, the re-pin rule, read-only guarantees, report shape, boundaries | your lane wants a sweep — or receives one |
+| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger (six rows; the lane has held nine cases since round 26) · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`SKILL.md:1294-1297`) |
+| `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per gate measured so far — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth case has no row yet); §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
+| `corpus/knowledge/service-limits.md` | the refusals, detail of record; this page carries the compact rendering (`SKILL.md:1246-1270`) | an intake question needs a refusal line |
+| `corpus/knowledge/service-optin-protocol.md` | request shape (§1, including the re-pin rule), read-only guarantees (§2), the owner-hardens rule (§3), report shape (§4) | your lane wants a sweep — or receives one |
 | `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
-| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec, verdict table, survivor probes, reproduce sections | re-deriving a recorded rate |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
 | `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26; git-materialized replay) | any sweep or replay |
-| `corpus/README.md` | the coverage map — one row per note, holds + sources | checking what the corpus holds |
-| `plans/round-N.plan.md`, `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, this wave, uncommitted at this write) collects the per-round lines and debts | auditing a round's receipts |
+| `corpus/README.md` | the coverage map — a row per note carried, holds + sources (addenda append extra rows; coverage is partial, one knowledge note uncarried at this revision) | checking what the corpus holds |
+| `plans/round-N.plan.md` (latest `plans/round-11.plan.md`), `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10; `N` is a placeholder, not a file — the concrete files are the round-4 through round-10 plan and record-draft pairs that `plans/` holds); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, committed in the round-11 closeout) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
 
 ### Boundary readings, executed by this lane
@@ -1464,29 +1464,29 @@ differing revision re-resolves rather than trusts.
 ## Promotion-evidence calibration — fleet round-1
 
 This lane's current checklist is `SHONEN.md`, not the historical training
-closeout. Its supporting audit is `reports/round-1-calibration.md#box-1`.
+closeout. Its supporting audit is `reports/round-1-calibration.md#box-1`, box 1's block only; this checklist's per-box dispositions are that file's `## lane-local dispositions` table, which still records box 3's audit as rejected.
 Tameshi-dispatched reviewers remain part of tameshi for promotion authority
 (`../PROTOCOL.md:63–68`); a different agent name does not justify `[x]`.
 Lane assertions use `[~]` with durable evidence, not temporary logs.
 
-Box 3 was `[ ]` at this write (`[~]` since; Errata — round 16): `executor-test-sufficiency.md:160–184`
+Box 3 was `[ ]` at this write (`[~]` since `c7986cd`; Errata — round 16): `executor-test-sufficiency.md:160–184`
 establishes a historical single-JS-mutant exercise, not a current full cold-read.
-The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;
+The fresh (2026-10-15) CLI receipt in the audit verifies kill/survivor/restore behavior;
 it is not a cold-reader exercise or an outside promotion/admission review.
-The source audit rejects the broader claim rather than upgrading its confidence.
+The source audit rejects the broader claim rather than upgrading its confidence; its appended round-37 erratum records the `[~]` without rewriting that rejection.
 See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.
 
 ## Repeated controls and gate registry — round 12
 
 Source: S004/S026 and `corpus/knowledge/repeated-control-precondition.md`;
 runtime evidence: `.ufo/evidence/round-12/verification-final.json`.
-This is a standalone precondition check, not a change to the six-leg runner.
+This is a standalone precondition check, not a change to the six-leg runner of round 12.
 
 | Observation | Decision | Bound |
 |---|---|---|
-| Three or more zero-exit controls match on raw stdout and stderr | `controls_match` | Only this finite sample matched; not a determinism proof |
-| Any available controls differ in exit or either stream | `controls_mismatch` | Do not attribute a later red suite solely to the mutant |
-| Equal nonzero controls, or command unavailable | Could not evaluate baseline | No mutation kill-rate claim |
+| Three or more zero-exit controls match on raw stdout and stderr | `controls_match` | Only this finite sample matched, on this host in this environment; not a determinism proof |
+| All runs executed and any differ in exit or either stream | `controls_mismatch` | Do not attribute a later red suite solely to the mutant |
+| Equal nonzero controls, or command unavailable | Could not evaluate baseline (`baseline_nonzero` / `command_unavailable`, exit 2) | No mutation kill-rate claim |
 
 Recipe: choose a pristine command; put evidence outside any tree it inspects;
 run `python3 tools/repeat-control.py --runs 3 --out /tmp/tameshi-r12-controls-UNIQUE -- COMMAND ARG...`;
@@ -1527,11 +1527,11 @@ runtime receipts in `.ufo/evidence/round-13/`.
 | Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
 | Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
 | All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
-| Frozen summary kind is null but its top-level declaration is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
+| Frozen summary kind is null but the frozen declaration's top-level kind is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
 
 Recipe from this lane root:
 
-1. Read the source-backed scope and `not_compared` list before the result.
+1. Read the manifest's recorded source and the output's `not_compared` list before the rows.
 2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
    observes only hashes and git metadata. Retain stdout with its sibling branch-tip
    commits before treating it as a dated reading. It executes no sibling gate.
@@ -1579,18 +1579,18 @@ Recipe, from this lane root:
 1. Read the historical expectations and raw observations before accepting a
    later summary; distinguish twelve expected rows from thirteen pinned inputs.
 2. **Historical (round 14, runner `75ed934d…`):** at `--root .` both manifests now return 2
-   `expected_input_digest_mismatch` (the runner moved in round 16). Replay with cwd = an extracted
+   `expected_input_digest_mismatch` (their pinned inputs moved after round 14: the runner in round 16, the bash witness-study tool in rounds 18 and 21). Replay with cwd = an extracted
    `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
    → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).
-3. The same command with `dispositions.json` → 0: the only repair is that row's explicit supersession,
+3. The same command with `.ufo/evidence/round-14/dispositions.json` → 0: the only repair is that row's explicit supersession,
    keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section (round-18 manifests since then).
 4. `.ufo/evidence/round-14/verification-final.json` retains the corrected
-   selftest and frozen before/after outcomes; `verification.json` retains the
-   initial18-of34 fixture failures rather than disguising them as green.
+   selftest and frozen before/after outcomes; `.ufo/evidence/round-14/verification.json` retains the
+   initial 18-of-34 fixture failures rather than disguising them as green.
    The revision measured is recorded separately.
    A non-author closure reads committed evidence, never executes sibling gates.
-5. **Archived experiment, not an entry point:** the round14
-   `capture-context.py` produced the retained context receipt and must not be
+5. **Archived experiment, not an entry point:** the round-14 copy
+   `.ufo/evidence/round-14/capture-context.py` produced the retained context receipt and must not be
    run again because its historical output path replaces that frozen receipt.
    Use the maintained retained-only gate in the round15 registry below.
 
