@@ -38,11 +38,14 @@ Interface (frozen for the round-49 C2 counter):
   python3 -I pbt-staged-id.py --selftest
 
 Exit 0 = no violation over the N cases, 1 = violation (counterexample=index),
-2 = setup problem (bad arguments, unwritable dump, unreadable guard).  Last stdout
+2 = setup problem (bad arguments, unreadable guard, unwritable dump or case file,
+unusable work directory).  Last stdout
 line: ``PBT_STAGED_ID: cases=<run> violations=<0|1> counterexample=<index|none>
 classes=<k=v,...>``.  Deterministic for a seed: one ``random.Random(seed)``.
 """
 import argparse
+import contextlib
+import io
 import json
 import os
 import random
@@ -73,6 +76,14 @@ HEAD = ('| id | source | kind | tier | scope | anchor | teaches | status | opene
 
 class Refused(Exception):
     """The oracle's read of the documented contract says: setup refusal (exit 2)."""
+
+
+class SetupProblem(Exception):
+    """The run cannot start or continue: exit 2, never a violation (the docstring's exit class).
+
+    Raised for an unusable guard, an unwritable dump or case file, and an unusable work
+    directory, so a broken environment can never mint a counterexample.
+    """
 
 
 # --------------------------------------------------------------------------------------------
@@ -757,21 +768,26 @@ def run_guard(guard, case_dir, case):
     registry_path = os.path.join(case_dir, 'registry.md')
     staged_path = os.path.join(case_dir, 'staged.md')
     map_path = os.path.join(case_dir, 'map.json')
-    write_text(registry_path, case['registry'])
-    write_text(staged_path, case['staged'])
     argv = [sys.executable, '-I', guard, '--registry', registry_path,
             '--staged', staged_path]
-    if case['map'] is None:
-        if os.path.exists(map_path):
-            os.unlink(map_path)
-    else:
-        write_text(map_path, json.dumps(case['map']))
-        argv += ['--map', map_path]
+    try:
+        write_text(registry_path, case['registry'])
+        write_text(staged_path, case['staged'])
+        if case['map'] is None:
+            if os.path.exists(map_path):
+                os.unlink(map_path)
+        else:
+            write_text(map_path, json.dumps(case['map']))
+            argv += ['--map', map_path]
+    except OSError as exc:
+        raise SetupProblem('cannot write the case files in %s: %s' % (case_dir, exc))
     argv.append('--json')
     try:
         proc = subprocess.run(argv, capture_output=True, timeout=GUARD_TIMEOUT, cwd=case_dir)
     except subprocess.TimeoutExpired:
         return {'exit': 124, 'json': None, 'stdout': b'', 'stderr': b'timeout'}
+    except OSError as exc:
+        raise SetupProblem('cannot run guard %s: %s' % (guard, exc))
     try:
         answer = json.loads(proc.stdout.decode('utf-8'))
     except (ValueError, UnicodeDecodeError):
@@ -780,41 +796,67 @@ def run_guard(guard, case_dir, case):
             'stderr': proc.stderr}
 
 
+@contextlib.contextmanager
+def workspace(case_dir_name='case'):
+    """The run's temp root: created here, removed here, whatever happens next.
+
+    The removal covers every failure after mkdtemp -- the case directory, the dump and the
+    guard calls -- so a failed run leaves no ``pbt-staged-id-*`` directory behind.
+    """
+    try:
+        work = tempfile.mkdtemp(prefix='pbt-staged-id-')
+    except OSError as exc:
+        raise SetupProblem('cannot create a work directory: %s' % exc)
+    try:
+        case_dir = os.path.join(work, case_dir_name)
+        try:
+            os.makedirs(case_dir, exist_ok=True)
+        except OSError as exc:
+            raise SetupProblem('cannot create the case directory: %s' % exc)
+        yield case_dir
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
 def run(guard, seed, cases, dump_path):
     started = time.monotonic()
     rnd = random.Random(seed)
     order = list(range(len(RECIPES)))
     rnd.shuffle(order)
     counts = {name: 0 for name in CLASSES}
-    work = tempfile.mkdtemp(prefix='pbt-staged-id-')
-    case_dir = os.path.join(work, 'case')
-    os.makedirs(case_dir, exist_ok=True)
     run_count = 0
     violation = None
     try:
-        dump = open(dump_path, 'w', encoding='utf-8')
-    except OSError as exc:
-        shutil.rmtree(work, ignore_errors=True)
-        print('pbt-staged-id: cannot write dump %s: %s' % (dump_path, exc), file=sys.stderr)
-        return 2
-    try:
-        for index in range(cases):
-            case = RECIPES[order[index % len(order)]](rnd)
-            dump.write(json.dumps({'index': index, 'registry': case['registry'],
-                                   'staged': case['staged'], 'map': case['map']},
-                                  sort_keys=True) + '\n')
-            dump.flush()
-            observed = run_guard(guard, case_dir, case)
-            run_count += 1
-            for name in case_classes(case, observed['exit'], observed['json']):
-                counts[name] += 1
-            why = check(case, observed)
-            if why is not None:
-                violation = (index, why, observed)
-                break
-    finally:
-        dump.close()
-        shutil.rmtree(work, ignore_errors=True)
+        with workspace() as case_dir:
+            try:
+                dump = open(dump_path, 'w', encoding='utf-8')
+            except OSError as exc:
+                raise SetupProblem('cannot write dump %s: %s' % (dump_path, exc))
+            try:
+                for index in range(cases):
+                    case = RECIPES[order[index % len(order)]](rnd)
+                    try:
+                        dump.write(json.dumps({'index': index, 'registry': case['registry'],
+                                               'staged': case['staged'], 'map': case['map']},
+                                              sort_keys=True) + '\n')
+                        dump.flush()
+                    except OSError as exc:
+                        raise SetupProblem('cannot write dump %s: %s' % (dump_path, exc))
+                    observed = run_guard(guard, case_dir, case)
+                    run_count += 1
+                    for name in case_classes(case, observed['exit'], observed['json']):
+                        counts[name] += 1
+                    why = check(case, observed)
+                    if why is not None:
+                        violation = (index, why, observed)
+                        break
+            finally:
+                try:
+                    dump.close()
+                except OSError:
+                    pass                  # a full disk must not replace the setup message
+    except SetupProblem as exc:
+        return _setup_error(str(exc))
     if violation is not None:
         index, why, observed = violation
         print('VIOLATION index=%d %s' % (index, why))
@@ -833,14 +875,29 @@ def run(guard, seed, cases, dump_path):
     return 0 if violation is None else 1
 
 
+def guard_problem(guard):
+    """Why the guard cannot be used at all, or None (exit 2, never a violation).
+
+    ``os.path.isfile`` alone admits a file the interpreter cannot open: ``python3 -I`` then
+    exits 2 with empty stdout and the run used to report that as a violation with a made-up
+    counterexample.  The guard is still never opened here -- only its mode is consulted.
+    """
+    if not os.path.isfile(guard):
+        return 'guard is not a regular file: %s' % guard
+    if not os.access(guard, os.R_OK):
+        return 'guard is not readable: %s' % guard
+    return None
+
+
 def _setup_error(message):
     print('pbt-staged-id: %s' % message, file=sys.stderr)
     return 2
 
 
-# --------------------------------------------------------------------------------------------
-# selftest: the oracle and the classifier, without the guard (no subprocess)
-# --------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+# selftest: the oracle and the classifier, plus the setup paths end to end.  No real guard is
+# needed: every error case refuses before the guard could answer.
+# ------------------------------------------------------------------------------------------------
 def selftest():
     cases = []
 
@@ -959,6 +1016,78 @@ def selftest():
     case('check-detects-exit-drift',
          check(shape(doc('S002', 'https://a.test/x'), doc('S002', 'https://b.test/x')),
                {'exit': 1, 'json': {}, 'stdout': b'', 'stderr': b''}) is not None)
+    # ---- error paths (routed defect R49.1): a broken environment is setup (exit 2), never a
+    # violation with a made-up counterexample.  Each case fails on the pre-fix bytes.
+    def skip(name, why):
+        print('CASE %s SKIP %s' % (name, why))
+
+    def temp_roots():
+        root = tempfile.gettempdir()
+        return {name for name in os.listdir(root) if name.startswith('pbt-staged-id-')}
+
+    scratch = tempfile.mkdtemp(prefix='pbt-selftest-')
+    saved_tempdir = tempfile.tempdir
+    tempfile.tempdir = os.path.join(scratch, 'tmp')   # private: a leak check must not see or
+    os.makedirs(tempfile.tempdir)                     # touch another run's work root
+    noread = ''
+    try:
+        noread = os.path.join(scratch, 'noread.py')
+        write_text(noread, 'print("{}")\n')
+        os.chmod(noread, 0)
+        out, err = io.StringIO(), io.StringIO()
+        if os.geteuid() == 0:
+            skip('unreadable-guard-is-setup', 'uid 0 can read a mode-000 file')
+        else:
+            try:
+                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                    rc = main(['--guard', noread, '--seed', '1', '--cases', '1',
+                               '--dump', os.path.join(scratch, 'unreadable.jsonl')])
+            except OSError:
+                rc = None
+            case('unreadable-guard-is-setup',
+                 rc == 2 and 'VIOLATION' not in out.getvalue()
+                 and 'not readable' in err.getvalue())
+
+        absent = os.path.join(scratch, 'no-such-case-dir')
+        try:
+            run_guard(__file__, absent, shape('', ''))
+            kind = ''
+        except Exception as exc:
+            kind = type(exc).__name__
+        case('case-write-failure-is-setup', kind == 'SetupProblem')
+
+        factory = globals().get('workspace')
+        before = temp_roots()
+        raised = False
+        if factory is not None:
+            try:
+                with factory('/proc/self/pbt-selftest-no-such-dir'):
+                    pass
+            except Exception:
+                raised = True
+        case('case-dir-failure-removes-work-root', factory is not None and raised
+             and temp_roots() <= before)
+
+        if not os.path.exists('/dev/full'):
+            skip('dump-write-failure-is-setup', 'this platform has no /dev/full')
+        else:
+            out, err = io.StringIO(), io.StringIO()
+            try:
+                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                    rc = main(['--guard', __file__, '--seed', '1', '--cases', '1',
+                               '--dump', '/dev/full'])
+            except OSError:
+                rc = None
+            case('dump-write-failure-is-setup',
+                 rc == 2 and 'cannot write dump' in err.getvalue())
+    finally:
+        tempfile.tempdir = saved_tempdir
+        try:
+            if noread:
+                os.chmod(noread, 0o600)
+        except OSError:
+            pass
+        shutil.rmtree(scratch, ignore_errors=True)
     failed = sum(1 for _, ok in cases if not ok)
     print('PBT_STAGED_ID_SELFTEST: cases=%d failed=%d' % (len(cases), failed))
     return 0 if failed == 0 else 1
@@ -979,8 +1108,9 @@ def main(argv=None):
     if args.cases < 1:
         return _setup_error('--cases must be at least 1')
     guard = os.path.abspath(args.guard)
-    if not os.path.isfile(guard):
-        return _setup_error('guard is not a regular file: %s' % guard)
+    problem = guard_problem(guard)
+    if problem:
+        return _setup_error(problem)
     return run(guard, args.seed, args.cases, os.path.abspath(args.dump))
 
 
