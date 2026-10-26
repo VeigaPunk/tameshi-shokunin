@@ -1,0 +1,80 @@
+{
+  "schema": "tameshi-round-contract-v1",
+  "round": 51,
+  "lane": "tameshi",
+  "l1": "TameshiR51 (hyaku run 9, attempt 1)",
+  "date": "2026-10-26",
+  "base": "9962033fd7a75aa2f2847e979dd687a5d28505a1",
+  "axes_at_base": {
+    "depth": "9 (command D recorded_cases=9; no-harm at base)",
+    "calibration": "8 (round-21 cold-read monitor score 8, 64/64 credited at base; 8 is that monitor's ceiling)",
+    "freshness": "9 (round-45 monitor population=73 fresh=71)",
+    "operability": "no numeric score",
+    "coverage": "no numeric score",
+    "adjacency": "no numeric score",
+    "lowest_non_retired": "calibration 8 (carries C1). Every numeric axis sits at or above the saturation line 8, but capabilities entered the table in rounds 49 and 50 (window 2), so the stagnation nudge does not fire and the lowest-axis obligation stands."
+  },
+  "claims": {
+    "C1": {
+      "axis": "calibration (lowest non-retired axis, 8); surface: two of the lane's self-assessment records that disagree with what the lane itself declared — the coverage map's frontier status table (corpus/README.md:76-87, never re-stated since fleet round 1 although seven of its ten status cells were superseded by later sections) and the source registry's status column (S022 `queued` while its used-by names an entry; routed by the round-50 spot-check, defects 1 and 3)",
+      "type": "measured",
+      "routed_from": "corpus/lessons/round-50-verifier-spotcheck.md routed defects 1 (S022 status) and 3 (frontier table stale)",
+      "predicate": "At REV the last `| id | ground |` table in corpus/README.md holds one row per F1..F10 whose status cell states the status and round frozen in .ufo/evidence/round-51/c1/frontier-expected.json and cites a README.md line range (<= 6 lines) that contains the id and that status phrase; corpus/README.md at base is a byte prefix of corpus/README.md at REV; no corpus/SOURCES.md row is `queued` with a used-by path or `mined` without one; and every used-by path of a mined row exists at REV: C1_R51_PASS=true.",
+      "label": "C1_R51_PASS",
+      "counter": ".ufo/evidence/round-51/c1/measure.py",
+      "command": "python3 .ufo/evidence/round-51/c1/measure.py --lane LANE --rev REV --explain",
+      "statement_set": ".ufo/evidence/round-51/c1/frontier-expected.json (10 rows, each with the base lines that declare it)",
+      "before": "at base (CTL_0): frontier_bad=10 (7 status/round mismatches, 3 open rows with no supporting pointer) status_conflicts=1 (S022) total=11 C1_R51_PASS=false",
+      "target": "total=0, C1_R51_PASS=true. The calibration score stays 8 (the round-21 monitor's ceiling); no score raise is claimed, the claim is the surface.",
+      "kill_rule": "C1 does not verify if the deciding run prints C1_R51_PASS=false, or if the frozen expectations are shown wrong by a re-read (disclosed, not amended).",
+      "cannot_see": "That the frozen expected statuses are the right reading of the lane's declarations (they are the L1's reading at base, attacked by wave seats); that the S022 change is justified beyond the contract's own definition of mined."
+    },
+    "C2": {
+      "axis": "depth (9); surface: the leg ledger of tools/mutate-and-run.sh gains a tenth recorded mutation case on a gate it does not hold — kagi corpus/drift-pins.sh @ e64e81b8 (a drift gate with committed baselines; the ledger's own queue row, corpus/knowledge/fleet-kill-rate-ledger.md:119, 'unmeasured by sweep; hermetic'), with ten defects and verdict predictions pre-registered in this freeze commit before any mutant runs",
+      "type": "measured; sourced (the case entry cites a SOURCES row opened 2026-10-26)",
+      "predicate": "At REV command D finds 10 recorded legs and all 10 are wired (round-26 rule); exactly one leg is new, its target is none of the nine base targets and its pin is the sha256 of the blob at its rev in the owner repo; its embedded spec equals .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (sha256 frozen in the counter); the sweep receipt .ufo/evidence/round-51/c2/sweep/sweep.txt shows a green control on the pin, one verdict per defect, restore OK, done, and a MUTATE_DATE after the commit that first added the spec; the leg's TABLE equals the sweep; `--regression` from a clone at REV exits 0 with `REGRESSION: PASS (cases=10 passed=10`; and a knowledge entry added after base names the target in its `source:` line with an S-id whose row is mined, opened 2026-10-26 and lists the entry, and corpus/README.md names the entry beyond its base bytes: C2_R51_PASS=true.",
+      "label": "C2_R51_PASS",
+      "counter": ".ufo/evidence/round-51/c2/measure.py",
+      "command": "python3 .ufo/evidence/round-51/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+      "spec": ".ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (5 kill-aimed, 5 hole-aimed; predictions 5 KILLED / 5 SURVIVED)",
+      "before": "at base (CTL_0): recorded_cases=9 wired_legs=9 depth_score=9 new_legs=0 C2_R51_PASS=false",
+      "target": "C2_R51_PASS=true; depth 9 -> 10 by command D (cap 10).",
+      "kill_rule": "C2 does not verify if the deciding run prints C2_R51_PASS=false. Prediction misses are data, reported, not a kill.",
+      "cannot_see": "That a survivor is a real hole rather than an equivalent mutant (attacked by off-suite witness probes), and that the entry's prose is correct (attacked by review)."
+    },
+    "C3": {
+      "axis": "operability (no numeric score); surface: the lane's registry home (SKILL.md `### Gate/probe registry`, PROTOCOL §Gate standard, Registry) names 2 of the 30 lane tools that expose a self-test; the round-50 spot-check routed the gap (defect 2: shrink-case.py and pbt-staged-id.py have no row) and PROTOCOL grades no gate conformant until its row exists",
+      "type": "measured",
+      "routed_from": "corpus/lessons/round-50-verifier-spotcheck.md routed defect 2",
+      "predicate": "At REV every tool of the frozen 30 (plus any other tools/*.py|*.sh carrying `selftest`) exists and has a SKILL.md registry row (8 cells, kind gate|probe, entry naming the tool, verdict map with 0 and 1, one backticked self-test command `python3 [-I]|bash tools/T ...selftest...` with no shell metacharacters, pinned-value paths that exist or `none`, a write scope, owner tameshi) whose self-test exits 0 from a clone at REV and prints a last-line finding id recorded in the row, and whose usage probe (`--r51-no-such-flag`) exits with a code the verdict map declares: C3_R51_PASS=true.",
+      "label": "C3_R51_PASS",
+      "counter": ".ufo/evidence/round-51/c3/measure.py",
+      "command": "python3 .ufo/evidence/round-51/c3/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+      "statement_set": ".ufo/evidence/round-51/c3/tools-base.json (30 tools at base)",
+      "before": "at base (CTL_0): covered 2 at most of 30, C3_R51_PASS=false",
+      "target": "tools=30 covered=30 missing=0 deleted=0 total=0, C3_R51_PASS=true.",
+      "kill_rule": "C3 does not verify if the deciding run prints C3_R51_PASS=false.",
+      "cannot_see": "That a row's kind, write scope and pinned-value description are true of the tool, and that the verdict map names every code the tool can exit with beyond 0, 1 and the usage code (attacked per row by wave-2 probes)."
+    }
+  },
+  "separability": "C1 reads corpus/README.md and corpus/SOURCES.md; C2 reads tools/mutate-and-run.sh, its spec and sweep, one new knowledge entry, its SOURCES row and README; C3 reads SKILL.md and tools/. C2's new SOURCES row also enters C1's status check (it must be mined with a used-by path) and C2's runner edit must keep the runner's selftest green for C3; each claim is verifiable without the others having landed.",
+  "no_harm": {
+    "script": ".ufo/evidence/round-51/no-harm.sh",
+    "monitors": 11,
+    "re_bases": "commandD >= 9 (was == 9); r45 freshness score floor(10*fresh/population) >= 9 with fresh >= 71 (was population == 73: R50.1 grows it to 74 lawfully); tools-scope allows only M:tools/mutate-and-run.sh; new r50 shrinker selftest monitor",
+    "coldread_precheck": ".ufo/evidence/round-48/quality/coldread-precheck.sh LANE BASE REV (QUALITY 98): credited 64 at base, lost=0 required",
+    "coldread_note": "Measured at freeze in scratch: any byte change to tools/mutate-and-run.sh drops 20 credited cold-read sections (their ledger entries pin the runner's sha) and any change to the SKILL.md registry section drops that section (score 8 -> 6). C2 and C3 therefore carry a reading-bound re-key of exactly the sections that lose credit, read by wave seats against the new bytes (round-49 method), before the deciding run; without it the round harms calibration and is reported so."
+  },
+  "deciding": {
+    "script": ".ufo/evidence/round-51/deciding-run.sh LANE REV FREEZE OUTDIR",
+    "outdir": ".ufo/evidence/round-51/after/",
+    "rule": "one invocation at the content revision; receipts committed after it; nothing else"
+  },
+  "frontier_step": {
+    "census": "scripts/sources-census.sh validate --root FLEET tameshi at start and end",
+    "sourced_claim": "C2",
+    "mistake": "corpus/lessons/round-51.md ## Mistakes",
+    "assimilation": "none planned (the package's F6 theme was taken in round 50; no staged entry serves these claims)"
+  },
+  "amendments": []
+}
