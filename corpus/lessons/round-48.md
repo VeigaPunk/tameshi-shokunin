@@ -1,6 +1,6 @@
 # Round 48 lesson
 
-L1 TameshiR48, hyaku run 8, attempt 1. Two claims on distinct axes, pre-registered before any seat (`.ufo/evidence/round-48/contract.json`,
+L1 TameshiR48 (hyaku run 8, attempt 1, which died in the orchestrator host crash of 2026-10-26 ~08:50 -03 before landing) and L1 TameshiR48a2 (attempt 2, same frozen claims). Two claims on distinct axes, pre-registered before any seat (`.ufo/evidence/round-48/contract.json`,
 commits `e73389c0`, `f1cfaad3`; amendments 1-3 pre-data, 4-10 after wave-1 probes of the base tree and before any restated row, control
 or deciding run; counter freeze `755298415f8c4eef3bed0c0d7625e2aacb03d6c2`, `.ufo/evidence/round-48/freeze-2.json`): C1 calibration (the
 22 standing statements restated from three observation rounds with a stable/nondeterministic value class) and C2 freshness (held rows
@@ -41,9 +41,6 @@ Gate lines (contract amendment 2; R, then T, then the quote; each located in the
   a prioritisation, not a reuse skip, and the pronoun in “still kill it” is left unresolved.
   This is the consequence round-45's dispute said the old quote dropped.
 
-Two subsections, in the round-45 house style (`corpus/lessons/round-45.md:16-62`).
-
-````markdown
 ### Supersede — S267 (new row): bwrap(1), bubblewrap 0.13.1, raw `bwrap.xml`
 
 - URL https://github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml (row's source cell); the fetched bytes
@@ -55,7 +52,7 @@ Two subsections, in the round-45 house style (`corpus/lessons/round-45.md:16-62`
 - Located quote (amendment-2 extraction of the snapshot: UTF-8, no script/style content, tags stripped,
   entities unescaped, whitespace collapsed; found once, at normalized offset 2 641 of 16 699 characters;
   **25 tokens**):
-  - `<quote>` — spans two consecutive `<varlistentry>` blocks of §Options: `--unshare-cgroup-try` at raw lines
+  - the `C2-QUOTE S267 S093` Gate line above — spans two consecutive `<varlistentry>` blocks of §Options: `--unshare-cgroup-try` at raw lines
     153–156 and `--unshare-all` at raw lines 157–160; quote lines 154–159, bytes 5 909–6 400.
 - Scope: the raw bwrap.xml at tag v0.13.1 documents `--unshare-all` as "Unshare all possible namespaces.
   Currently equivalent with:" the six flags `--unshare-user-try`, `--unshare-ipc`, `--unshare-pid`,
@@ -79,7 +76,7 @@ Two subsections, in the round-45 house style (`corpus/lessons/round-45.md:16-62`
   `04e4c091715a9ee2258cb12f52af6c64aa3134c6afc3669501b14f20966d1af1`; fetch receipt `S108.receipt.json`
   (http_status 200, fetched_at 2026-10-26T08:41:18Z, same digest and byte count).
 - Located quote (amendment-2 extraction; found once, at offset 2 533 of 3 496 characters; **6 tokens**):
-  - `<quote>` — the single `<p>` of the section `如何更新 .expected 文件？`, raw line 3611 (the `<h2>` is raw
+  - the `C2-QUOTE S268 S108` Gate line above — the single `<p>` of the section `如何更新 .expected 文件？`, raw line 3611 (the `<h2>` is raw
     line 3609), inside the article body after the `path/ to/ some_test_goldens/` listing.
 - Scope: the zh-cn page's wording only — `.expected` files are updated by running the affected test with
   `--test_arg=--update_goldens --test_strategy=local`, and the resulting diff is checked. The English upstream
@@ -90,10 +87,6 @@ Two subsections, in the round-45 house style (`corpus/lessons/round-45.md:16-62`
   `corpus/knowledge/r8-golden-update-flag.md`.
 - Cited by `corpus/knowledge/r8-golden-update-flag.md` (`source:` S268 on line 1, `verified-at: 2026-10-26`
   on line 2). Round 45 raised no dispute for S108 (`reviews.json`: `RevJudge02` → `agree`).
-````
-
-In both subsections `<quote>` is the §2 line's backticked text, verbatim, so the prose and the machine-read
-line cannot drift apart.
 
 ### Reject — staged copies of the four C2 documents (`merge/tameshi/SOURCES.append.md`)
 
@@ -180,9 +173,8 @@ The round-47 disclosure already said both sets are unstable (`SCORECARD.md:2314`
 - As a description of **what the round-47 standing rows restate**, the sentence is wrong for both statements: the rows carry {env, fleet-root, node} and {bwrap, node}.
 - The deciding run reproduced the lesson's `six-leg` set but not its `hermetic` set; the `six-leg` row's declared set is the one the deciding run scored `DEPS-MISMATCH`.
 
-### Correction block to append (round-48 lesson)
+### Correction (appended; `corpus/lessons/round-47.md` is never rewritten)
 
-```
 - **C1-R48-1 (corrects `corpus/lessons/round-47.md:117-118`; the file is never rewritten).**
   The round-47 lesson's "observed dependence sets" — `six-leg regression ledger` {fleet-root, node},
   `hermetic env-differential probe` {env, node} — are the **freeze-time** emission
@@ -197,7 +189,6 @@ The round-47 disclosure already said both sets are unstable (`SCORECARD.md:2314`
   **Rule for later rounds:** a dependence set is restated only from the deciding `--emit`, with
   that receipt's path and revision named beside it; a freeze-time set is labelled as the freeze
   state and never presented as the round's observed finding.
-```
 
 ### Provenance
 
@@ -272,13 +263,11 @@ and its routed item, `:106`, verbatim:
 4. **Reject citation**: when refusing `r8-predictive-test-selection-cost.md` again, cite the unopened-row reason (QUALITY 10) rather than `PROVINCE.md:14-18`.
 ```
 
-### Correction block to append (round-48 lesson)
+### Correction (appended)
 
-The corrected row, ready for the round-48 lesson's package table (reason cell carries the decisive criterion; the flip condition is kept and made checkable):
+The corrected row (the reason cell carries the decisive criterion; the flip condition is kept and made checkable):
 
-```
 | `r8-predictive-test-selection-cost.md` | refused | unopened row: its `source:` cites `S205` / arXiv 1810.05286 and the lane has no such row (`grep -c '1810.05286' corpus/SOURCES.md` → 0, `S205` → 0), so the quoted factor-of-two magnitude has no row opened in the round that writes it and no committed snapshot behind it — **QUALITY 10** (decisive) and **QUALITY 2**. The round-47 `PROVINCE.md:14-18` cite is withdrawn as the decisive reason: those lines refuse product domains, sibling gate code and credential/endpoint material, not test selection (closure ruling, `round-47-verifier-spotcheck.md:90`, routed item 4 at `:106`) | **flip:** a `S205` row opened `mined` in the writing round, carrying a committed round snapshot whose anchor the entry pins, **and** a named own-leg move that consumes change-level selection (F7 re-sweep). With the row opened but no consuming move, the entry stays a report line (its province argument survives as prose in `T47RevProvince.md` §6.5, which is never rewritten) |
-```
 
 ### Provenance
 
@@ -294,12 +283,11 @@ The corrected row, ready for the round-48 lesson's package table (reason cell ca
 
 ---
 
-## Not changed (bounds of this draft)
+## Bounds of the two corrections
 
-- `corpus/lessons/round-47.md`, `SCORECARD.md`, `PROVINCE.md`, `corpus/QUALITY.md`, `T47RevProvince.md` and the package copy are read-only to this seat; the corrections are appended ahead of them, per QUALITY 4.
-- No counted surface is edited: the refusal row's verdict (`refused`) and the C1 numbers (`total=2`, `C1_R47_PASS=false`) stand as filed; only the *reason cited* and the *provenance of the stated sets* are corrected.
-- The C1 counter, its rows and the round-48 predicates are the L1's; this draft neither re-runs nor rescopes them.
-- `corpus/lessons/round-48.md` did not exist at this seat's run, so the destination is named, not written.
+- `corpus/lessons/round-47.md`, `SCORECARD.md`, `PROVINCE.md`, `corpus/QUALITY.md`, `T47RevProvince.md` and the package copy are not rewritten; the corrections are appended here, per QUALITY 4.
+- No counted surface is edited: the refusal row's verdict (`refused`) and the C1 numbers of round 47 (`total=2`, `C1_R47_PASS=false`) stand as filed; only the *reason cited* and the *provenance of the stated sets* are corrected.
+- Drafted by wave-1 seats `T48ScribeLessonCorrection` (`.ufo/waves/round-48/w1/T48ScribeLessonCorrection.draft.md`) and integrated by the L1.
 
 ## Mistakes
 
@@ -354,15 +342,22 @@ is carried inside row 4.
 
 Provenance and limits of these rows: every `.ufo/evidence/round-47` path, commit, command and count above was
 read on this seat's tree; the round-47 spot-check is cited only where it is the observation (the report's
-account of when the receipt was taken). Row 1's fix is pre-registered, not executed: CTL_B and the C1 counter
-receipts are freeze-step-2 artifacts, and this section claims none of them. Rows 2–7 are detectors only — the
-fixes they name are the round-48 protocol's, and none is scored here.
+account of when the receipt was taken). Row 1's fix is the R=3 counter and its control CTL_B (the round-47 rows
+relabelled `runs 3 stable` with no re-observation), scored by the attempt-2 L1 with the frozen harness before the
+deciding run; its outcome is quoted in the report and the SCORECARD round-48 deciding section. Rows 2–7 are
+detectors only — the fixes they name are the round-48 protocol's, and none is scored here.
 
 ### Mined mistake with a red-before receipt — attribution: environment masking reported as host-load nondeterminism
 
 | class | evidence pointer | captured-by | fix |
 |---|---|---|---|
 | `attribution` | `SCORECARD.md:2314` (round 47) says `hermetic env-differential probe` "printed `9/9` or `2/9` under the same profile (P1)" and calls the two observations "not stable across runs under host load"; `.ufo/waves/round-48/w1/T48RevenEnvDiff.md` §1-§3 shows the `2/9` is deterministic: the round-47 counter builds the P1 PATH shim inside `--work` and `tools/env-diff.py:68-71` mounts a tmpfs on `/tmp`, so a `--work` under `/tmp` masks the interpreter; receipts `.ufo/evidence/round-47/before/c1-at-freeze.stdout:18` (`--work` under `/tmp`: P1 `2/9`) vs `.ufo/evidence/round-47/after/c1.stdout:18` (`/var/tmp`: P1 `9/9`) | `none` — QUALITY 92 asks for a deps clause, not for the cause of a differing observation | the round-48 counter refuses `--work` under `/tmp` (`.ufo/evidence/round-48/calibration/measure.py` `under_tmp`; selftest case `T63_work_under_tmp_refused`, `.ufo/evidence/round-48/selftest/c1-r48-selftest.stdout`), so the masked value cannot enter a standing row; red-before: the round-47 counter accepts `--work /tmp/...` and prints the masked `2/9` (receipt above) |
+
+### Mined mistake with a red-before receipt — prospective record: receipts cited before they existed (attempt 1)
+
+| class | evidence pointer | captured-by | fix |
+|---|---|---|---|
+| `landing` — a record written ahead of the work cites receipts that do not exist at the revision that carries it | the attempt-1 L1 appended QUALITY 94-96 and the round-48 LOG.md entry before scoring the controls or running the falsifiers; the orchestrator salvage commit `15b1521e` landed them as written: criterion 95 cites `.ufo/evidence/round-48/control/c1-controls.stdout` and criterion 94 cites `quality/c94-96-falsifiers.stdout`, neither present at `15b1521e`; the LOG entry states "w2 falsify (32 seats)" for a wave that never ran (the attempt-2 wave is `a2w1`) | `none` — QUALITY 88 requires a committed receipt for the no-harm falsifier script only, and criteria 94-96 name their falsifier receipts without a check that the named file exists at the revision that cites it | `.ufo/evidence/round-48/quality/pointer-check.py`: every backticked lane path in a record block must exist at the revision (`git cat-file -e`). Red before: `quality/pointer-check-red-15b1521.stdout` (two `MISSING` lines, exit 1). Green after: the same two commands at the content revision, run by the L1 after the content commit (a receipt cannot sit in the tree it measures), land with the deciding receipts and are quoted in the report. The stale LOG line is corrected by an appended LOG entry, never by rewriting the draft. Selftest `quality/pointer-check-selftest.stdout` (cases=4 failed=0). |
 
 ## considerthese
 

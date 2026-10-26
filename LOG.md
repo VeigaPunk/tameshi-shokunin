@@ -2355,3 +2355,14 @@ Motivating evidence: the round-47 closure (`corpus/lessons/round-47-verifier-spo
 - Waves: w1 build (32 seats) and w2 falsify (32 seats), counts in the report.
 
 Evidence: `.ufo/evidence/round-48/`, `.ufo/waves/round-48/`, `corpus/lessons/round-48.md`. Measured values: SCORECARD.md `## Round 48` and the report.
+
+## 2026-10-26 — round 48, attempt 2: corrections to the salvaged attempt-1 entry above (appended; the draft is not rewritten)
+
+The entry above was written by the attempt-1 L1 (TameshiR48) before the work it describes and landed by the orchestrator salvage commit `15b1521e` after the host crash. Attempt 2 (L1 TameshiR48a2) runs the same frozen claims (`.ufo/evidence/round-48/contract.json`, counters frozen at `755298415f8c`) and corrects it:
+
+- Waves: wave `w1` (attempt 1) dispatched 32 seats; the crash ended it before a results file was written, so its seat count rests on the dispatch file and the 24 reports under `.ufo/waves/round-48/w1/`. No `w2` ran. Attempt 2 ran one v2 wave, `a2w1` (64 seats: the 32 falsify items prepared in `.ufo/waves/round-48/w2-items.py`, patched where amendments 4-10 changed their premise, plus 32 in `.ufo/waves/round-48/a2-items.py`); its counts and dead seats are in the report.
+- Controls: attempt 1 scored none. Attempt 2 scored C2's CTL_F/G/H (`.ufo/evidence/round-48/control/c2-controls.stdout`: F=0, G=0, H=2) and runs C1's CTL_A-E with the frozen harness before the deciding run; the receipt QUALITY 95 names lands with them.
+- C1 rows: restated from the counter's own `--emit` at `15b1521e` (`.ufo/evidence/round-48/calibration/emit-15b1521.stdout`, all 22 rows `runs 3 stable`); `six-leg regression ledger` printed PASS passed=9 in all three rounds there and is disclosed as known-nondeterministic (SCORECARD.md round-48 block).
+- New this attempt: the prospective-record mistake and its fix (`corpus/lessons/round-48.md` `## Mistakes`; QUALITY 97; `.ufo/evidence/round-48/quality/pointer-check.py`, red receipt `quality/pointer-check-red-15b1521.stdout`); the lesson's seat-draft scaffolding replaced by integrated text.
+
+Evidence: `.ufo/evidence/round-48/`, `.ufo/waves/round-48/`, `corpus/lessons/round-48.md`; measured values in SCORECARD.md `## Round 48` and the report.

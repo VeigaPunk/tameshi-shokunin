@@ -1424,3 +1424,11 @@ When two observations of one statement differ, a lane record names their cause o
 Lesson: `corpus/lessons/round-48.md` `## Mistakes`, attribution row (the round-47 SCORECARD disclosed limit called `hermetic env-differential probe`'s P1 `2/9` host-load nondeterminism; `.ufo/waves/round-48/w1/T48RevenEnvDiff.md` showed it is the `--work`-under-`/tmp` placement masking the PATH shim).
 
 Falsifier that must fail: block 96 of `quality/falsifiers.sh` — the round-47 freeze receipt (`--work` under `/tmp`) and deciding receipt (`/var/tmp`) print different P1 tuples for the same statement and revision, and the round-48 counter refuses a `/tmp` work dir (`under_tmp`); if either receipt stopped differing the block prints `VACUOUS`.
+
+### Criterion 97 — a record's evidence pointers resolve at the revision that lands it
+
+Every backticked lane path a SCORECARD, LOG, QUALITY or lesson block cites as its evidence exists in the tree of the round's landing tip (`git cat-file -e TIP:path`). A record drafted before its receipts exist either waits for them or names them in words as pending; a pointer that resolves only in a later round, or never, is a landing defect, and it is corrected by an appended erratum, never by rewriting the record. Criterion 88 binds the no-harm falsifier's receipt only, and criteria 94-96 name their falsifier receipts without this check.
+
+Lesson: `corpus/lessons/round-48.md` `## Mistakes`, prospective-record row (the attempt-1 draft of criteria 94-96, landed by the orchestrator salvage commit `15b1521e`, cited two receipts absent at that revision).
+
+Falsifier that must fail: `.ufo/evidence/round-48/quality/pointer-check.py` over the `## Criteria appended — round 48` block of `corpus/QUALITY.md` prints two `MISSING` lines and exits 1 at `15b1521e` (`.ufo/evidence/round-48/quality/pointer-check-red-15b1521.stdout`); the same command at the round-48 landing tip exits 0, and its selftest (`quality/pointer-check-selftest.stdout`) refuses a fixture with a missing path.
