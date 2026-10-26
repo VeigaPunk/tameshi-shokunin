@@ -1,5 +1,5 @@
-source: S107 — https://raw.githubusercontent.com/tensorflow/federated/4d3a89c9b72f9c19352318d1457a5f7c01462824/docs/golden_tests.md — §How do I update `.expected` files?; S108 — https://www.tensorflow.org/federated/golden_tests?hl=zh-cn — 如何更新 .expected 文件？
-verified-at: 2026-10-24
+source: S107 — https://raw.githubusercontent.com/tensorflow/federated/4d3a89c9b72f9c19352318d1457a5f7c01462824/docs/golden_tests.md — §How do I update `.expected` files?; S108 — https://www.tensorflow.org/federated/golden_tests?hl=zh-cn — 如何更新 .expected 文件？; S268 — the same zh-cn URL, re-anchored 2026-10-26 (supersedes S108's anchor and quote)
+verified-at: 2026-10-26 — the zh-cn page re-opened live: its §如何更新 .expected 文件？ heading and paragraph are unchanged and the paragraph is re-located in the 2026-10-26 snapshot; a line diff against today's live fetch (104928 B) finds only the head hreflang link block, the language-selector menu and the per-request script blocks (analytics JSON, CSP nonce, devsite flag list), so the extracted article text is identical; S107 is fetched from a commit-pinned URL and was not re-fetched
 recheck: 365d
 ground: F4 (golden / snapshot fixture discipline — the explicit update flag)
 
