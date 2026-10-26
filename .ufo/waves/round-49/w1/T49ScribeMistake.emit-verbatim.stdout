@@ -1,0 +1,24 @@
+# EMIT_VERBATIM check — compares each round-48 standing SCORECARD evidence cell (rows 2332-2356 at REV)
+# against the counter's own emit field (EMIT_CAP/EMIT_AXIS, field 4) byte-exact.
+# Run from the lane root. Script:
+#   import subprocess
+#   REV='c7586b9a10effc63b4bd327f976edc094c1bdc17'
+#   sc=subprocess.run(['git','show',REV+':SCORECARD.md'],capture_output=True,text=True).stdout.split('\n')
+#   rows={}
+#   for i in range(2330,2357):
+#       s=sc[i-1]
+#       if s.startswith('| ') and not set(s)<=set('| -'):
+#           c=s.split('|'); rows[c[1].strip()]=(i,c[3].strip())
+#   emit=open('.ufo/evidence/round-48/calibration/emit-15b1521.stdout').read().split('\n')
+#   for ln in emit:  # EMIT_CAP/EMIT_AXIS only; name=f[1], cell=f[3]; compare with rows[name]
+# Output:
+MISMATCH depth SCORECARD.md:2354
+  emit : see the evidence pointer in the round-48 SCORECARD block, tool sha256 `a7d3f2dd7d47`, deps `none`, runs 3 stable
+  row  : One point per recorded mutation case in the runner's ledger comment (`tools/mutate-and-run.sh:87-95`, nine legs), capped
+MISMATCH calibration SCORECARD.md:2355
+  emit : see the evidence pointer in the round-48 SCORECARD block, tool sha256 `657f009bdf1c`, deps `none`, runs 3 stable
+  row  : Restraint score of the strict cold-read monitor `python3 .ufo/evidence/round-21/coldread/measure.py --repo R --rev REV` 
+MISMATCH freshness SCORECARD.md:2356
+  emit : see the evidence pointer in the round-48 SCORECARD block, tool sha256 `ba64041f49ff`, deps `none`, runs 3 stable
+  row  : `floor(10 * fresh / 73)` from the round-45 counter `python3 .ufo/evidence/round-45/freshness/measure.py --lane LANE --re
+EMIT_VERBATIM ok=19 mismatch=3 rev=c7586b9a10ef

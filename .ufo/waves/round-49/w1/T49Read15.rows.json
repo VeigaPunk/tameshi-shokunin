@@ -1,0 +1,64 @@
+{
+ "rows": [
+  {
+   "heading": "## Pin disposition and provenance correction — round 13",
+   "ordinal": 0,
+   "raw": "corpus/knowledge/incremental-pin-disposition.md",
+   "file": "corpus/knowledge/incremental-pin-disposition.md",
+   "ranges": null,
+   "claim": "Sources: S003 and PIT precision correction S047 (historical S041 retained); `corpus/knowledge/incremental-pin-disposition.md`",
+   "base_verdict": "holds",
+   "excerpt": "**A content disposition is a read-only classification.** Per leg it records the recorded pin, the current committed blob, the current worktree content and a status (unchanged / changed / unavailable), plus the reuse field fixed at `not_established` by §3.",
+   "reader": "T49Read15",
+   "note": "Entry is the method source for the six-leg content disposition: read-only classification, six legs, unchanged/changed/unavailable, result_reuse fixed at not_established, and the required not_compared disclosure. Entry cites S003/S041/S047 and its own S048 precision correction (line 5), matching the section's Sources line. Entry-internal runner anchors (tools/mutate-and-run.sh:80-89, 540-553, 81-83, 104-106, 109-114, 1113-1140) predate the runner growth and are stale at base; that is a target-side provenance defect, not a defect of the section's clause."
+  },
+  {
+   "heading": "## Pin disposition and provenance correction — round 13",
+   "ordinal": 1,
+   "raw": "corpus/lessons/round-12-verifier-spotcheck.md",
+   "file": "corpus/lessons/round-12-verifier-spotcheck.md",
+   "ranges": null,
+   "claim": "outside routed `corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3",
+   "base_verdict": "holds",
+   "excerpt": "**Tameshi next round:** replace brittle host-addendum line citations with the named planner-ruling section in an append-only correction; the document's lines moved. Disclose/repair the already named nested `declaration.kind=null` metadata defect only through new evidence without rewriting the frozen declaration.",
+   "reader": "T49Read15",
+   "note": "Routed defect 3 of the outside round-12 closure is the tameshi direction that names the nested declaration.kind=null defect and forbids rewriting the frozen declaration; it is what the section's row 5 and recipe step 4 act on. The lesson header names its author as 'hyaku closure (non-author integrator)', so the 'outside routed' wording is supported."
+  },
+  {
+   "heading": "## Pin disposition and provenance correction — round 13",
+   "ordinal": 2,
+   "raw": "tools/pin-disposition.py",
+   "file": "tools/pin-disposition.py",
+   "ranges": null,
+   "claim": "`python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` observes only hashes and git metadata. Retain stdout with its sibling branch-tip commits before treating it as a dated reading.",
+   "base_verdict": "holds",
+   "excerpt": "Read-only guarantees: the tool never writes to a target repo or worktree. Git is used only through read-only plumbing (`rev-parse`, `symbolic-ref`, `show-ref`, `for-each-ref`, `cat-file`), never `status`, `diff` or `hash-object`; the index, filters and hooks are never invoked.",
+   "reader": "T49Read15",
+   "note": "CLI is `--manifest PATH --root FLEET` (parse_argv, tools/pin-disposition.py:1336-1366), matching the recipe line verbatim. Read-only guarantee block sits at :82-90; every subprocess call is git plumbing (:227-235, selftest :770-790), so 'executes no sibling gate' holds. Selftest exit 1 on failure is at :1320-1330, matching the adjacent '### Round-13 gate/probe registry' row's verdict-map cell (SKILL.md:1550, outside this section's counted text). Observed: `TMPDIR=$S python3 -B tools/pin-disposition.py --selftest` -> SELFTEST: PASS (19/19), exit 0. Bound: the selftest hardcodes dir='/tmp' (:706), so TMPDIR does not redirect it; the fixture tree is removed on pass (:1328)."
+  },
+  {
+   "heading": "## Pin disposition and provenance correction — round 13",
+   "ordinal": 3,
+   "raw": ".ufo/evidence/round-13/pin-manifest.json",
+   "file": ".ufo/evidence/round-13/pin-manifest.json",
+   "ranges": null,
+   "claim": "2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` observes only hashes and git metadata.",
+   "base_verdict": "holds",
+   "excerpt": "\"leg\": \"js-kimi-census\", \"repo\": \"kumitate-shokunin\", \"path\": \"scripts/kimi-census.mjs\", \"pinned_commit\": \"175de6ba2e9e904010411b19cab27e0af9aad3d4\", \"expected_sha256\": \"83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426\",",
+   "reader": "T49Read15",
+   "note": "File exists at base with schema pin-manifest-v1 and six legs; all six expected_sha256 values equal the runner's current PIN_* constants (tools/mutate-and-run.sh:605-622) and all six pinned_commit values equal REV_*. Target-side drift: the manifest's `source` and per-leg `pinned_source` anchors cite :84-89, :542-553 and :1112-1140, which at base are the comment header/defect body, not the pin pairs (now :605-622) and not the six ledger calls (now :1386-1412). `derived_from.sha256` (75ed934d) equals the runner blob at the round-13 commit 4acc607, i.e. a derivation-time digest; base runner is a7d3f2dd. The tool never reads `derived_from` (no match in tools/pin-disposition.py), so the recipe command is unaffected. Drifted anchors at base: leg table comment :85-95 (nine legs listed), PIN_*/REV_* :605-622, six ledger calls :1386-1412."
+  },
+  {
+   "heading": "## Pin disposition and provenance correction — round 13",
+   "ordinal": 4,
+   "raw": "tools/witness-metadata.py",
+   "file": "tools/witness-metadata.py",
+   "ranges": null,
+   "claim": "`python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json` checks the new companion against digest-anchored frozen sources.",
+   "base_verdict": "holds",
+   "excerpt": "It validates a NEW companion metadata file that: * anchors sha256 of the three declaration inputs the checker reads (summary.json, declaration.json, declared.tsv) both in the companion and in this tool (a companion that carries its own digests alone would be self-certifying);",
+   "reader": "T49Read15",
+   "note": "argparse accepts `--check` and `--companion` (tools/witness-metadata.py:1220-1247); mode is a required mutually exclusive group; default LANE_ROOT is tools/../ so the lane-relative companion resolves from any cwd; DEFAULT_COMPANION_REL is exactly '.ufo/evidence/round-13/witness-metadata.json' (:68). Pinned input digests (:73-89) equal the base blobs of summary.json/declaration.json/declared.tsv (verified by sha256sum). Observed: `TMPDIR=$S python3 -B tools/witness-metadata.py --selftest` -> SELFTEST: PASS 39/39, exit 0; fixtures use tempfile.mkdtemp() (:1122), which honours TMPDIR."
+  }
+ ]
+}

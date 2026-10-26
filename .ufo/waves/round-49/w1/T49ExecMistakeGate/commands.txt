@@ -1,0 +1,62 @@
+# Exact commands (seat T49ExecMistakeGate, round 49 wave 1)
+# S = /fast/scratch/hyaku/tameshi-r49/T49ExecMistakeGate   (deleted before yield)
+# Script under test = the frozen blob, sha256 31e9838e735b27a9aa6ac3ee5ccc3e8f2d39432a32e3dd6a80ab456125dd10f5,
+#   pinned by .ufo/evidence/round-49/freeze.json (key ".ufo/evidence/round-49/deciding-run.sh").
+
+## setup
+S=/fast/scratch/hyaku/tameshi-r49/T49ExecMistakeGate; mkdir -p "$S"
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/lane"
+git -C "$S/lane" rev-parse --show-toplevel            # -> $S/lane
+git -C "$S/lane" checkout --detach 14d03ea4270c6904064022b62b6faf467e5c0968
+git -C "$S/lane" cat-file -e HEAD:.ufo/evidence/round-49/control/c1-controls.stdout   # fails: no receipt at freeze
+
+## case (a): no control receipts at FREEZE
+mkdir -p "$S/out"
+cd "$S/lane"
+HYAKU_SCRATCH="$S" bash .ufo/evidence/round-49/deciding-run.sh "$S/lane" HEAD 14d03ea4270c6904064022b62b6faf467e5c0968 "$S/out"
+# -> DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-49/control/c1-controls.stdout ; exit 3 ; $S/out empty
+
+## case (b): receipts committed after the freeze, but a start receipt already exists
+cd "$S/lane"   # HEAD detached at 14d03ea, toplevel verified
+C=.ufo/evidence/round-49/control; mkdir -p "$C"
+printf 'FIXTURE RECEIPT (synthetic, seat T49ExecMistakeGate) c1-controls.stdout\n' > "$C/c1-controls.stdout"
+printf '0\n' > "$C/c1-controls.exit"
+printf 'FIXTURE RECEIPT (synthetic, seat T49ExecMistakeGate) c2-controls.stdout\n' > "$C/c2-controls.stdout"
+printf '0\n' > "$C/c2-controls.exit"
+git add -A "$C"
+git -c user.name='fixture-seat' -c user.email='fixture@example.invalid' commit -q -m 'fixture: add the four control receipts (after freeze)'
+# -> 56077d135c4edb224195202f2313a3d7a3ac533c
+mkdir -p "$S/out2"; printf '2026-10-26T00:00:00Z\n' > "$S/out2/c1.start"
+HYAKU_SCRATCH="$S" bash .ufo/evidence/round-49/deciding-run.sh "$S/lane" HEAD 14d03ea4270c6904064022b62b6faf467e5c0968 "$S/out2"
+# -> DECIDING_REFUSED second-invocation c1 ; exit 3 ; out2 still holds only c1.start ; $S/tameshi-r49 (SCR) not created
+
+## case (c): receipt commit predates the freeze commit
+git -C "$S/lane" show 14d03ea:.ufo/evidence/round-49/deciding-run.sh > "$S/deciding-run-c.sh"   # sha256 31e9838e...
+git -C "$S/lane" checkout -q --detach 8ca67421111fa354b47b803358391d0b07fc6db9
+# (recreate the four synthetic receipt files at $C, as above)
+git add -A "$C"; git -c user.name='fixture-seat' -c user.email='fixture@example.invalid' commit -q -m 'fixture: control receipts committed BEFORE the freeze (predate)'
+# -> ebd2e6419f2d8a827ee2a457235c2ccbf460e746   (this is the receipt commit; it PREDATES the freeze commit)
+git read-tree 14d03ea^{tree}
+for f in c1-controls.stdout c1-controls.exit c2-controls.stdout c2-controls.exit; do
+  git update-index --add --cacheinfo 100644,"$(git rev-parse "HEAD:$C/$f")","$C/$f"; done
+TREE=$(git write-tree)        # = 14d03ea tree + the four receipts
+F=$(printf 'fixture: rewritten freeze (14d03ea tree + receipts), receipt commit is its parent\n' \
+    | git -c user.name='fixture-seat' -c user.email='fixture@example.invalid' commit-tree "$TREE" -p ebd2e64)
+# -> e5eb093d43cac903495a264ef43a4b47af82e66d
+cd "$S/lane"; mkdir -p "$S/out3"
+HYAKU_SCRATCH="$S" bash "$S/deciding-run-c.sh" "$S/lane" e5eb093d43cac903495a264ef43a4b47af82e66d e5eb093d43cac903495a264ef43a4b47af82e66d "$S/out3"
+# -> DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-49/control/c1-controls.stdout ; exit 3 ; out3 empty
+
+## case (c-literal): the receipt commit is an ancestor of the real 14d03ea (replace ref, since a commit hash cannot gain an ancestor)
+SUB=$(printf 'fixture substitute for 14d03ea: same tree as the rewritten freeze\n' \
+      | git -c user.name='fixture-seat' -c user.email='fixture@example.invalid' commit-tree "$TREE" -p ebd2e64)
+git replace 14d03ea4270c6904064022b62b6faf467e5c0968 "$SUB"    # SUB=f8b10b6bf271a8a7bb03b846edf00f080a84cf48
+git cat-file -e 14d03ea:$C/c1-controls.stdout ; git log -1 --format=%H 14d03ea -- "$C/c1-controls.stdout"   # -> ebd2e64
+mkdir -p "$S/out4"
+HYAKU_SCRATCH="$S" bash "$S/deciding-run-c.sh" "$S/lane" 14d03ea 14d03ea "$S/out4"
+# -> DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-49/control/c1-controls.stdout ; exit 3 ; out4 empty
+git replace -d 14d03ea4270c6904064022b62b6faf467e5c0968   # replace ref removed; gate0-subchecks.txt is clean of it except the marked section
+
+## read-only boundary checks
+git merge-base --is-ancestor 14d03ea 14d03ea ; echo $?     # 0 -> a receipt whose last-touch commit IS FREEZE passes deciding-run.sh:27
+ls -A "$S/out" "$S/out3" "$S/out4"                          # empty: gate 0 exited before line 30 (mkdir -p "$SCR"), before any counter

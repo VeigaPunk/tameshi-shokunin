@@ -1,0 +1,16 @@
+T49ExecR14Cmd — exit codes as observed (one line per invocation)
+
+cwd label "clone@8ca67421" = scratch clone of the lane checked out at base 8ca67421111fa354b47b803358391d0b07fc6db9
+                             (git rev-parse --show-toplevel asserted == the clone dir)
+cwd label "archive@28aeef4" = scratch extract of `git -C <lane> archive 28aeef4 | tar -x -C ...`
+
+live_before=2   clone@8ca67421   python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json
+hist_before=1   archive@28aeef4  same argv
+hist_after=0    archive@28aeef4  same argv with .ufo/evidence/round-14/dispositions.json
+live_after=2    clone@8ca67421   same argv with .ufo/evidence/round-14/dispositions.json
+live_round18=0  clone@8ca67421   same argv with .ufo/evidence/round-18/dispositions.json (step-3 live-tree pointer)
+
+Section expectations (SKILL.md:1581-1586): live 2 / archive-before 1 / archive-after 0 / live-tree form -> round-18 manifest.
+All four match; the round-18 manifest also returns 0 at base, so step 3's "live entry since round 18" pointer is live.
+live_round17=2   clone@8ca67421   same argv with .ufo/evidence/round-17/dispositions.json (registry-row attribution probe)
+  prints the same tools/bash-witness-study.py mismatch line, so the round-14 and round-17 manifests fail on the same input.

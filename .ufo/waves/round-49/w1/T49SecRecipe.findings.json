@@ -1,0 +1,366 @@
+{
+ "section": "## Mutation-sweep recipe",
+ "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+ "skill_lines": "131-245",
+ "findings": [
+  {
+   "skill_line": "142-144",
+   "statement": "kumitate `n/m pass` + `VERDICT:` (gates-survey-kumitate.md:19-31);",
+   "verdict": "false",
+   "evidence": "awk 'NR>=19&&NR<=26' corpus/knowledge/gates-survey-kumitate.md -> :21 `62/62 cases passed (hermetic)` / `VERDICT: PASS`; :22 `42/42 cases passed` / `VERDICT: PASS`; :23-:26 `60/60 pass`, `102/102 pass`, `39/39 pass`, `43/43 pass`. grep -n 'cases passed' corpus/knowledge/gates-survey-kumitate.md -> 21,22 (also 47,97,126). Two of the six kumitate suites print `n/m cases passed`, not `n/m pass`, so the general form is wrong for cite-check and surface-probe.",
+   "proposed_fix": {
+    "skill_old": "kumitate `n/m pass` + `VERDICT:` (gates-survey-kumitate.md:19-31);",
+    "skill_new": "kumitate `n/m pass` (cite-check and surface-probe print `n/m cases passed`) + `VERDICT:` (gates-survey-kumitate.md:19-31);",
+    "why": "Two of the six cited rows carry `n/m cases passed`; the pointer and heading stay untouched and the shape requirement becomes true for all six rows."
+   }
+  },
+  {
+   "skill_line": "224-225",
+   "statement": "Re-run step 2's checks:",
+   "verdict": "false",
+   "evidence": "awk 'NR>=150&&NR<=151' SKILL.md -> step 2 records seven cells: path, full sha256, size, line count, mtime, repo revision, `git status --porcelain` empty. awk 'NR>=224&&NR<=226' SKILL.md -> step 9 re-runs four (sha256, size, mtime, porcelain); line count and repo revision drop out. SKILL.md:388 `no after-repo revision was recorded`; SKILL.md:391 `Its after-repo revision is likewise not established`. .ufo/waves/round-27/w1/Read03.md minor_gaps[0] flagged the same mismatch in round 27 and the base text still carries it.",
+   "proposed_fix": {
+    "skill_old": "Re-run step 2's checks:",
+    "skill_new": "Re-run step 2's checks (line count and repo revision included; neither model note records an after-revision — Restore discipline:386-391):",
+    "why": "The instruction claims to re-run step 2's record but its own enumeration drops two of the seven cells; naming them keeps the claim true and matches Restore discipline."
+   }
+  },
+  {
+   "skill_line": "171-174",
+   "statement": "print the count and first\n   matching line, and require the literal line `all unique` — both lanes'\n   drivers did exactly this",
+   "verdict": "unverifiable",
+   "evidence": "awk 'NR>=22&&NR<=25' corpus/knowledge/mutation-case-kimi-census.md -> `the driver asserts the old string occurs exactly once before writing (mutate_driver.py --check -> all unique, first-line match on all 10)`; awk 'NR>=44&&NR<=47' corpus/knowledge/mutation-case-kagi-census.md -> same, no printed count. The drivers are gone: mutation-case-kagi-census.md:271-272 `The old §7 commands depend on an unversioned scratch mutate_driver.py; they do not by themselves recreate that driver after scratch loss`; SKILL.md:396-400 repeats it. Printing the count is asserted beyond the cited ranges and cannot be checked against an absent driver.",
+   "proposed_fix": {
+    "skill_old": "print the count and first\n   matching line, and require the literal line `all unique` — both lanes'\n   drivers did exactly this",
+    "skill_new": "print the first\n   matching line, and require the literal line `all unique` — both lanes'\n   drivers did exactly this (the maintained driver also prints the failing\n   count: `tools/mutate-and-run.sh:425`)",
+    "why": "Keeps only what the two notes record and points the count-printing claim at the driver that carries it today."
+   }
+  },
+  {
+   "skill_line": "176-177",
+   "statement": "The cited historical notes do\n   not establish that particular round-2 guard.",
+   "verdict": "unverifiable",
+   "evidence": "grep -n 'new != old|no-op' corpus/knowledge/mutation-case-kimi-census.md corpus/knowledge/mutation-case-kagi-census.md -> no match, so the no-op guard is indeed not established; but the uniqueness guard IS established at kimi:22-25 and kagi:44-47, so `that particular round-2 guard` has two opposite readings (uniqueness gate -> false; `new != old` -> true). Ambiguous referent, no determinate truth value.",
+   "proposed_fix": {
+    "skill_old": "The cited historical notes do\n   not establish that particular round-2 guard.",
+    "skill_new": "The cited historical notes do\n   not establish that the round-2 driver carried the `new != old` no-op guard.",
+    "why": "Names the guard so the sentence stops contradicting the sentence before it, which credits both lanes' drivers with the uniqueness gate."
+   }
+  },
+  {
+   "skill_line": "210-211",
+   "statement": "inconclusive runs are\n     excluded from the denominator and named beside it.",
+   "verdict": "unverifiable",
+   "evidence": "Both models ran with zero inconclusive runs (mutation-case-kimi-census.md:29-30 `No inconclusive run`; mutation-case-kagi-census.md:50), so the exclusion rule was never exercised. The lane's standing instrument uses the opposite denominator: awk 'NR==570||NR==571' tools/mutate-and-run.sh -> `pct=$(( (200 * killed + total) / (2 * total) ))` and `if [[ \"$inconcl\" -gt 0 ]]; then` (DEGRADED, exit 1, :571-574). The section presents as method a rule the lane neither measured nor follows.",
+   "proposed_fix": {
+    "skill_old": "inconclusive runs are\n     excluded from the denominator and named beside it.",
+    "skill_new": "inconclusive runs sit outside\n     the denominator and are named beside it (a choice neither model exercised —\n     both ran clean; the maintained driver instead divides by every defect and\n     marks the run DEGRADED: `tools/mutate-and-run.sh:569-574`)",
+    "why": "Marks the rule as a design choice rather than a measured result and names the standing driver's contrasting denominator."
+   }
+  },
+  {
+   "skill_line": "145-146",
+   "statement": "`KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit0",
+   "verdict": "true",
+   "evidence": "awk 'NR>=20&&NR<=21' corpus/knowledge/mutation-case-kimi-census.md -> `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0 (node v24.21.0); reproduced on the pinned sha by .ufo/waves/round-16/w1/CR04a.md step 1. Numbers and exit are right; `exit0` is a lost space (grep -n 'exit0' SKILL.md -> 146,1627,1657,1662).",
+   "proposed_fix": {
+    "skill_old": "`VERDICT: PASS`, exit0",
+    "skill_new": "`VERDICT: PASS`, exit 0",
+    "why": "Restores the space so the exit code can be copied and matched; no pointer changes."
+   }
+  },
+  {
+   "skill_line": "147-148",
+   "statement": "and bash16 enumerated cases,",
+   "verdict": "true",
+   "evidence": "awk 'NR>=33&&NR<=35' corpus/knowledge/mutation-case-kagi-census.md -> `ok-case 01..14` + `skip-case 15`/`16`, epilogue `SELFTEST: PASS (16 cases)`; the count 16 is right, `bash16` is a lost separator (reads `and bash: 16 enumerated cases`).",
+   "proposed_fix": {
+    "skill_old": "and bash16 enumerated cases,",
+    "skill_new": "and bash: 16 enumerated cases,",
+    "why": "Run-together token; the number cannot be copied from the page as written."
+   }
+  },
+  {
+   "skill_line": "193",
+   "statement": "Both historical sweeps held their enumerated denominators43 and16",
+   "verdict": "true",
+   "evidence": "Counts are right: mutation-case-kimi-census.md:32-33 `every mutant run still enumerated the full suite (<n>/43)`; mutation-case-kagi-census.md:51 `(<n>/16 cases) on every run`. `denominators43 and16` is the run-together form.",
+   "proposed_fix": {
+    "skill_old": "Both historical sweeps held their enumerated denominators43 and16",
+    "skill_new": "Both historical sweeps held their enumerated denominators 43 and 16",
+    "why": "Spaces restored; both numbers unchanged."
+   }
+  },
+  {
+   "skill_line": "241",
+   "statement": "Round2:7.0s for11 runs, nodev24.21.0",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:21 `node v24.21.0`; :30 `11 runs (control + 10)`, `7.0 s wall`. All four values are right; the tokens are fused.",
+   "proposed_fix": {
+    "skill_old": "Round2:7.0s for11 runs, nodev24.21.0",
+    "skill_new": "Round 2: 7.0 s for 11 runs, node v24.21.0",
+    "why": "Spacing only."
+   }
+  },
+  {
+   "skill_line": "242",
+   "statement": "round3:11.0s for11 runs against a280s bound",
+   "verdict": "true",
+   "evidence": "mutation-case-kagi-census.md:52-53 `the whole sweep took 11.0 s wall for 11 runs ... against the 280 s per-run bound`. Values right, tokens fused.",
+   "proposed_fix": {
+    "skill_old": "round3:11.0s for11 runs against a280s bound",
+    "skill_new": "round 3: 11.0 s for 11 runs against a 280 s bound",
+    "why": "Spacing only."
+   }
+  },
+  {
+   "skill_line": "243-244",
+   "statement": "Kimi U5 at204-205; Kagi U5 at203-204.",
+   "verdict": "true",
+   "evidence": "Both pointers resolve: awk 'NR>=204&&NR<=205' corpus/knowledge/mutation-case-kimi-census.md -> `U5 — kill-rate stability across node versions/hosts`; awk 'NR>=203&&NR<=204' corpus/knowledge/mutation-case-kagi-census.md -> `U5 — kill-rate stability across hosts/toolchains`. Ranges right; tokens fused.",
+   "proposed_fix": {
+    "skill_old": "Kimi U5 at204-205; Kagi U5 at203-204.",
+    "skill_new": "Kimi U5 at 204-205; Kagi U5 at 203-204.",
+    "why": "Spacing only; both line pointers unchanged."
+   }
+  },
+  {
+   "skill_line": "133-134",
+   "statement": "Runs a suite's own code through one-exact-edit mutants and measures what it\ncatches.",
+   "verdict": "true",
+   "evidence": "The edit shape is one literal replacement per defect in both models: mutation-case-kimi-census.md:155-166 (ten exact edits) and mutation-case-kagi-census.md:240-249; .ufo/waves/round-16/w1/CR04a.md step 6 applied one exact replacement per fresh copy.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "134",
+   "statement": "The recipe is intended to be self-contained;",
+   "verdict": "true",
+   "evidence": "A cold reader built the driver from the section alone and it worked: .ufo/waves/round-16/w1/CR04a.md `driver not provided ... I authored one in ~80 lines from the description alone and it behaved correctly`; CR04b.md step 5 same. Caveat, not contradiction: no driver source is carried and the notes' own commands do not rebuild one (mutation-case-kagi-census.md:271-272; SKILL.md:396-400).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "134-135",
+   "statement": "round 16's full-page\ncold-read executed it end to end (two seats; Errata — round 16).",
+   "verdict": "true",
+   "evidence": "python3 -c reading .ufo/evidence/round-16/coldread/ledger.json -> entry {start:131,end:245,seats:[CR04a,CR04b],verdict:gap-minor,blocking_gaps:0,commands_executed_count:18}; .ufo/waves/round-16/w1/CR04a.md and CR04b.md each carry a step 1-10 execution table; SKILL.md:1726 is the erratum row recording this repair. The one shortfall is minor and declared: step 10's corpus row stayed L1 scope (CR04b.md minor gap 1), which is the ledger's gap-minor level.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "136",
+   "statement": "Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).",
+   "verdict": "true",
+   "evidence": "SKILL.md:25-28 fixes `/tmp/<lane>-r<round>-<n>-*/`; both notes used the `-work` form: mutation-case-kimi-census.md:5,171 `/tmp/tameshi-r2-1-work/`; mutation-case-kagi-census.md:4,242 `/tmp/tameshi-r3-1-work/`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "138-139",
+   "statement": "Prove the actual run has no\n   live-path or host effects; `--selftest` alone does not establish hermeticity.",
+   "verdict": "true",
+   "evidence": "mutation-case-kagi-census.md:24-30: hermeticity was established by reading the fixture builder (`surface-census.sh:694-764`) and by the two substrate-gated skip cases, not by the PASS line; mutation-case-kimi-census.md:6-7 every run was `--selftest` or `--root` at an empty dir.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "144",
+   "statement": "kagi `SELFTEST: PASS (n cases)` includes its enumerated skip entries.",
+   "verdict": "true",
+   "evidence": ".ufo/evidence/round-12/BashWitness/pristine.sh (sha256 275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f = the kagi pin) increments `cases` in both branches (awk 'NR==816||NR==822' -> `cases=$((cases + 1))`) and prints `SELFTEST: PASS (%s cases)` at :846; mutation-case-kagi-census.md:33-35 records `ok-case 01..14` + `skip-case 15`/`16` under `PASS (16 cases)`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "147-148",
+   "statement": "and bash16 enumerated cases,\n   14 executed +2 skipped",
+   "verdict": "true",
+   "evidence": "mutation-case-kagi-census.md:33-35 `the hermetic case set here is 14, plus 2 substrate-gated cases that performed no execution` and `skip-case 15`/`16`; :42-43 control `SELFTEST: PASS (16 cases)`, exit 0.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "149",
+   "statement": "A red control has no kill denominator: stop and record setup failure.",
+   "verdict": "true",
+   "evidence": "The lane's standing driver implements it: awk 'NR>=530&&NR<=533' tools/mutate-and-run.sh -> `if [[ \"$ctl_rc\" -ne 0 ]]; then` ... `die_setup \"control run on the pristine copy is red ... cannot attribute kills\"`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "150-152",
+   "statement": "Record: path, full sha256,\n   size, line count, mtime, repo revision, and `git status --porcelain --\n   <path>` empty",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:13-16 -> sha256, `896 lines, 43273 B`, mtime 2026-10-13 18:53:12, `175de6ba2e9e904010411b19cab27e0af9aad3d4`, porcelain empty; mutation-case-kagi-census.md:13-17 -> sha256, `44212 B, 886 newlines`, mtime, mode 755, `HEAD fecee874`, porcelain empty.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "153-154",
+   "statement": "note that gate's 887th line carries no\n   trailing newline",
+   "verdict": "true",
+   "evidence": "mutation-case-kagi-census.md:14-15 `886 newlines (the 887th line carries no trailing newline — tail -c1 prints c)`; on the sha-matched pinned copy: `tail -c1 .ufo/evidence/round-12/BashWitness/pristine.sh | xxd -p` -> `63`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "154-156",
+   "statement": "the kagi\n   claim-ledger pin was once surveyed from a dirty intermediate state and had to\n   be re-pinned",
+   "verdict": "true",
+   "evidence": "corpus/README.md:11 `the surveyed 79294/357fb245 was an intermediate dirty-tree state never committed`; corpus/knowledge/gates-survey-kagi.md:554-561 (G-R2-1) `git cat-file -t 357fb24554cd0447` -> fatal: not a valid object name, corrected pin 79301/93c58272.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "158-160",
+   "statement": "`mkdir -p /tmp/<lane>-r<round>-<n>-work/evidence`\n   then `cp -p <artifact> …/pristine.<ext>`; re-verify (`sha256sum`; the bash\n   lane additionally `cmp`-verified its copy",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:171-172 has exactly the `rm -rf ... && mkdir -p .../evidence` + `cp -p` pair; mutation-case-kagi-census.md:44-45 `(a cp -p byte copy, cmp-verified)`; :242-243 repeats the mkdir/cp pair.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "162-163",
+   "statement": "8–12 defects, one per class",
+   "verdict": "true",
+   "evidence": "The next section carries a 12-row class catalog (SKILL.md:293-306) and the entry template (:254-262); .ufo/waves/round-16/w1/CR04a.md used 12 defects, CR04b.md 11, both inside the band. Nuance for the L1: under the notes' own labels the manifests repeat classes (kimi D1/D2 both `off-by-one count`, D4/D5 both `dropped arm`; kagi B4/B5 both `dropped branch`), so the rule holds only in the catalog's finer vocabulary (round-27 Read03.md minor gap 3).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "165-166",
+   "statement": "the JS 10-defect manifest is the\n   shape (mutation-case-kimi-census.md:41-53, :155-166)",
+   "verdict": "true",
+   "evidence": "awk 'NR>=41&&NR<=53' corpus/knowledge/mutation-case-kimi-census.md -> table with exactly D1-D10; :155-166 is the ten-line exact-edit spec.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "166-168",
+   "statement": "Pre-registration is\n   what makes an expectation miss a calibration datum instead of a\n   rationalization",
+   "verdict": "true",
+   "evidence": "The E1 rows keep the miss in place: mutation-case-kimi-census.md:185-191 (D7 predicted survivor, measured killed, `Recorded as a calibration miss`); mutation-case-kagi-census.md:186-191 (case counts miscalled on B2/B3/B6, kept).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "171-173",
+   "statement": "assert `count(old) == 1` in the pristine copy, print the count and first",
+   "verdict": "true",
+   "evidence": "Both notes state the count==1 gate and the literal `all unique`: mutation-case-kimi-census.md:23-24; mutation-case-kagi-census.md:45-46, :245 (`# all unique`). The printed-count half is judged separately above.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "175-176",
+   "statement": "Require `new != old` in future drivers:\n   a no-op is a driver defect, not a survivor.",
+   "verdict": "true",
+   "evidence": "The lane's maintained driver enforces it: awk 'NR==52||NR==403' tools/mutate-and-run.sh -> `@new == @old (a no-op edit) is refused` and `die('defect %s: @new equals @old (no-op mutation)')`; its selftest asserts `no-op edit refuses (exit 2)` at :1615.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "177-178",
+   "statement": "Any count ≠1 aborts until the string\n   is re-derived from the pinned bytes.",
+   "verdict": "true",
+   "evidence": ".ufo/waves/round-16/w1/CR04a.md step 5: `--check` returned `UNIQUENESS FAILURE` on D9 (`count=2`, :292 + :305); the old string was re-derived, then `all unique`; no mutant ran before that.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "183-184",
+   "statement": "300 s used in round 2, 280 s in round\n   3",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:31 `7.0 s wall against the 300 s timeout`; mutation-case-kagi-census.md:52-53 `11.0 s wall for 11 runs ... against the 280 s per-run bound`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "185-187",
+   "statement": "Historical Kimi records stdout,\n   exit/SHA/results (mutation-case-kimi-census.md:26-28); Kagi also records\n   duration/summary (mutation-case-kagi-census.md:48-49).",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:26-28 -> full stdout, exit code + mutant sha256 in `evidence/<id>.meta.json`; mutation-case-kagi-census.md:48-49 -> adds `wall time + case summary` to meta.json.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "195-196",
+   "statement": "Collect the failing-case labels verbatim; a kill quoted without its failing\n     labels is unverified (mutation-case-kimi-census.md:59-76).",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:59-78 lists verbatim labels for every narrow kill (D4=3, D5=1, D6=2, D7=2, D8=3, D9=2, D1/D3=16).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "198",
+   "statement": "and summary `SELFTEST: FAIL (1/16 cases)`",
+   "verdict": "true",
+   "evidence": "The string is the gate's own epilogue format: awk 'NR==847' .ufo/evidence/round-12/BashWitness/pristine.sh (sha256 = the kagi pin) -> `printf 'SELFTEST: FAIL (%s/%s cases)\\n' \"$failures\" \"$cases\"`. Citation caveat for the pointer seats: the cited :82-103 carries the bad-case line (:84) but not the summary; the note's table shows `1/16` / FAIL at :67.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "200-202",
+   "statement": "B4's deleted symlink arm kept\n     the exit code (the row fell into the regular-file arm, `got exit=1` like\n     the expected one) and died on the token assert alone",
+   "verdict": "true",
+   "evidence": "mutation-case-kagi-census.md:88-91 -> `bad-case 07 symlink-swap want exit=1 token=SURFACE LINK got exit=1`; `the token assert is what killed it`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "205-206",
+   "statement": "green with the same count as control → a finding, never a\n     footnote",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:44-45 (D2 survived at 43/43) and :135-142 name both survivors as measured gaps, each attached to a probe.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "211-212",
+   "statement": "Round 2: 8/10 = 80 %,\n     no inconclusive run, 11 runs in 7.0 s",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:29-31 -> 8/10 (80 %), survivors D2/D10, `No inconclusive run`, 11 runs, 7.0 s; mutation-case-kagi-census.md:50-53 -> 8/10, survivors B5/B10, 11 runs, 11.0 s.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "216-217",
+   "statement": "JS D2 on an empty root: one fewer id and\n   `+23 more` (vs pristine `+22 more`); D10: `frozen=24` (vs 25)",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:90-92 `pristine prints six ids then +22 more; D2 prints five ids then +23 more`; :98-99 `pristine FAMILY K2 ... frozen=25; D10 ... frozen=24`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "218-220",
+   "statement": "Bash B5: mutant `SURFACE OK … (exec\n   644)` exit 0 where pristine prints `SURFACE DIVERGED … no execute bit` exit\n   1; B10: `ok=0` where pristine prints `ok=1`",
+   "verdict": "true",
+   "evidence": "mutation-case-kagi-census.md:111-114 (B5 probe) and :118-122 (B10 probe); the third cited range is the sensitivity sentence at :252-254, which repeats both expectations.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "225-226",
+   "statement": "sha256 after == before, size and mtime unchanged, `git status --porcelain --\n   <path>` empty",
+   "verdict": "true",
+   "evidence": "mutation-case-kimi-census.md:34-35 -> sha256 before/after equal, `size 43273 B and mtime unchanged`, working tree clean; mutation-case-kagi-census.md:54-56 -> same plus `cmp`-identical scratch copy.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "228",
+   "statement": "(SKILL.md:377-378; corrected in round 27, seat Read03)",
+   "verdict": "true",
+   "evidence": "SKILL.md:377-378 is the endpoint-identity sentence; .ufo/waves/round-27/w1/Read03.md verdict `wrong-expectation`, wrong_expectations[0] quotes step 9's old `proves the *absence* of writes` and asks for exactly this replacement; the base text carries it.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "229",
+   "statement": "Full checklist below (Restore discipline).",
+   "verdict": "true",
+   "evidence": "SKILL.md:375-403 is that checklist (7 items), including the item-6 replay caveat (:396-400) that the recipe itself does not repeat.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "234-236",
+   "statement": "the two mutation-case notes are the model\n    (mutation-case-kimi-census.md §1, §3-§6;\n    mutation-case-kagi-census.md §1-§7)",
+   "verdict": "true",
+   "evidence": "kimi headers: §1 :39, §3 :109, §4 :148, §5 :183, §6 :193; kagi headers: §1 :62, §3 :128, §4 :162, §5 :184, §6 :193, §7 :211. Every cited section exists.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "236-237",
+   "statement": "Counts quoted only from executed\n    summary lines (mutation bar above)",
+   "verdict": "true",
+   "evidence": "Both notes take their counts from run summaries: mutation-case-kimi-census.md:29-33; mutation-case-kagi-census.md:42-43,50-53; no count is quoted from source text.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "240",
+   "statement": "Cost profile to record: wall time, per-run timeout, host/runtime versions.",
+   "verdict": "true",
+   "evidence": "Both models carry all three: mutation-case-kimi-census.md:21 (node v24.21.0), :30-31 (7.0 s, 300 s); mutation-case-kagi-census.md:43 (1.0 s wall), :52-53 (11.0 s, 280 s bound).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "243-244",
+   "statement": "Cross-host stability remains unknown:",
+   "verdict": "true",
+   "evidence": "Both U5 rows are unmeasured statements, not results: mutation-case-kimi-census.md:204-205 `measured only on node v24.21.0, this host`; mutation-case-kagi-census.md:203-204 `measured only on this host`.",
+   "proposed_fix": null
+  }
+ ]
+}

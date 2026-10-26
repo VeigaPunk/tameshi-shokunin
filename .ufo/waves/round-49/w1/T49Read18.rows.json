@@ -1,0 +1,90 @@
+{
+ "rows": [
+  {
+   "heading": "## Effective expectation reconciliation — round 14",
+   "ordinal": 5,
+   "raw": ".ufo/evidence/round-14/verification-final.json",
+   "file": ".ufo/evidence/round-14/verification-final.json",
+   "ranges": null,
+   "claim": "`.ufo/evidence/round-14/verification-final.json` retains the corrected selftest and frozen before/after outcomes",
+   "base_verdict": "holds",
+   "excerpt": "\"supersedes\": \"verification.json disposition_selftest failure only; original real before/after observations remain valid\"",
+   "reader": "T49Read18",
+   "note": "Path pointer, whole file at base (git show 8ca67421111fa354b47b803358391d0b07fc6db9:.ufo/evidence/round-14/verification-final.json). The file carries checks[0] disposition_selftest exit 0 expected 0 (the corrected selftest, against verification.json's exit 1 expected 0 for the same check) plus checks[1] unresolved_before exit 1 expected 1 and checks[2] resolved_after exit 0 expected 0 with their full stdout (frozen before/after outcomes), and measured_commit 64314783836bb0d05ad06a774d7310fd3a23b5bd with a 6-entry input_sha256 map; supersedes is the top-level field quoted. The section's next sentence (\"The revision measured is recorded separately\") matches measured_commit in the same file. Lines did not drift (path pointer)."
+  },
+  {
+   "heading": "## Effective expectation reconciliation — round 14",
+   "ordinal": 6,
+   "raw": "verification.json",
+   "file": null,
+   "ranges": null,
+   "claim": "`verification.json` retains the initial18-of34 fixture failures rather than disguising them as green",
+   "base_verdict": "unresolved",
+   "excerpt": "SELFTEST_CASE clean-superseded FAIL (exit=1 expects=0; ids=['expected_contains_missing'] expects=[]; payload exit=1; status='failed' expects='clean')",
+   "reader": "T49Read18",
+   "note": "Bare basename: resolve() (measure.py:188-192) tries verification.json, corpus/knowledge/, corpus/ and corpus/lessons/ and finds no blob, so check_reads (measure.py:270-279) can only score this pointer unresolved; the file the sentence means is held at .ufo/evidence/round-14/verification.json (78 lines at base). Its content is sound: checks[0] disposition_selftest exit 1 expected 0 and `git show 8ca67421111fa354b47b803358391d0b07fc6db9:.ufo/evidence/round-14/verification.json | grep -o \"SELFTEST_CASE [^ ]* \\(PASS\\|FAIL\\)\"` gives 34 case lines of which 18 are FAIL — the sentence's 18-of-34. tools/evidence-disposition.py:181 says \"`--selftest` builds isolated /tmp fixtures\", so \"fixture failures\" is the right noun. Only the pointer form is wrong, not the fact. Observed rendering artifact, left alone: the sentence reads initial18-of34 (no space).",
+   "proposed_fix": {
+    "skill_old": "`verification.json` retains the",
+    "skill_new": "`.ufo/evidence/round-14/verification.json` retains the",
+    "fixed_file": ".ufo/evidence/round-14/verification.json",
+    "fixed_ranges": null,
+    "fixed_excerpt": "SELFTEST_CASE clean-superseded FAIL (exit=1 expects=0; ids=['expected_contains_missing'] expects=[]; payload exit=1; status='failed' expects='clean')",
+    "why": "The pointer keeps its name but gains the directory it lives in, so it resolves to a held blob and the 18-of-34 FAIL lines quoted are inside the pointed text; the section keeps its 10 pointers because the bare token stops matching PATH_RE once it is preceded by \"/\"."
+   }
+  },
+  {
+   "heading": "## Effective expectation reconciliation — round 14",
+   "ordinal": 7,
+   "raw": "capture-context.py",
+   "file": null,
+   "ranges": null,
+   "claim": "the round14 `capture-context.py` produced the retained context receipt and must not be run again because its historical output path replaces that frozen receipt",
+   "base_verdict": "unresolved",
+   "excerpt": "Output: .ufo/evidence/round-14/context-receipt.json (atomic, 0644); no other path is written.",
+   "reader": "T49Read18",
+   "note": "Bare basename: resolve() finds no capture-context.py at the lane root, corpus/knowledge/, corpus/ or corpus/lessons/, so the pointer is file-null and unresolved. The file the sentence means is held at .ufo/evidence/round-14/capture-context.py (647 lines at base): its docstring says the one output is .ufo/evidence/round-14/context-receipt.json (atomic, 0644) and OUTPUT_REL at :58 is the same path, which is exactly why re-running it would overwrite the frozen receipt; .ufo/evidence/round-14/verification.json checks[3] context_capture records the retained run (CONTEXT: OK receipt=.ufo/evidence/round-14/context-receipt.json exit=0). The round-14 registry row in the next subsection (SKILL.md:1602) already uses the qualified form, and :1623 uses it again.",
+   "proposed_fix": {
+    "skill_old": "the round14\n   `capture-context.py` produced the retained context receipt",
+    "skill_new": "`.ufo/evidence/round-14/capture-context.py` produced the retained context receipt",
+    "fixed_file": ".ufo/evidence/round-14/capture-context.py",
+    "fixed_ranges": null,
+    "fixed_excerpt": "Output: .ufo/evidence/round-14/context-receipt.json (atomic, 0644); no other path is written.",
+    "why": "The qualified path resolves to the held blob and states the single output path the sentence says a re-run would replace; dropping the now-redundant \"the round14 \" keeps the clause and the pointer count at 10 (the bare token stops matching once preceded by \"/\")."
+   }
+  },
+  {
+   "heading": "## Effective expectation reconciliation — round 14",
+   "ordinal": 8,
+   "raw": "S049",
+   "file": "corpus/SOURCES.md",
+   "ranges": [
+    [
+     58,
+     58
+    ]
+   ],
+   "claim": "S049 (Python child-environment contract)",
+   "base_verdict": "holds",
+   "excerpt": "Explicit env mappings define child environment rather than merely documenting an intended injection; retain the bounded override with the observed command",
+   "reader": "T49Read18",
+   "note": "S-id pointer -> corpus/SOURCES.md row 58 at base (^| S049 | matches exactly one row, so the counter re-derives the row even if the registry grows). The row's teaches cell states the child environment contract the section cites for \"S049 (Python child-environment contract)\", and its scope cell bounds it (\"not proof of a particular historical environment\"), which is the same limitation the section's table row on child overrides applies."
+  },
+  {
+   "heading": "## Effective expectation reconciliation — round 14",
+   "ordinal": 9,
+   "raw": "S003",
+   "file": "corpus/SOURCES.md",
+   "ranges": [
+    [
+     14,
+     14
+    ]
+   ],
+   "claim": "S003 Limitations",
+   "base_verdict": "holds",
+   "excerpt": "when a prior verdict may be reused, and the declared blind spots: env vars, dependencies and .snap files are not detected; the dry run stays required",
+   "reader": "T49Read18",
+   "note": "S-id pointer -> corpus/SOURCES.md row 14 at base. The row's anchor cell names \"§Incremental mode and §Limitations\" and the teaches cell gives the declared blind spots, so the clause \"S003 Limitations\" is exactly what the row records; the section uses it as the source that keeps the supersession from becoming a reuse claim."
+  }
+ ]
+}

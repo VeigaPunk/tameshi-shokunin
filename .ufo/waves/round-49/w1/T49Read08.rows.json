@@ -1,0 +1,111 @@
+{
+ "rows": [
+  {
+   "heading": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "ordinal": 0,
+   "raw": "mutation-case-kimi-census.md:13-16",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     13,
+     16
+    ]
+   ],
+   "claim": "**Before the sweep:** sha256 (full), size, mtime, repo revision, and `git status --porcelain -- <path>` empty — recorded in the note's header",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "Artifact under test (O: `sha256sum`, `stat`, `git rev-parse`): sha256 `83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426`, 896 lines, 43273 B, mtime 2026-10-13 18:53:12; kumitate repo `175de6ba2e9e904010411b19cab27e0af9aad3d4`, `git status --porcelain -- scripts/kimi-census.mjs` empty.",
+   "reader": "T49Read08",
+   "note": "corpus/knowledge/mutation-case-kimi-census.md:13-16 records all five fields the clause names: full sha256 `83016d45...4f426`, size 43273 B, mtime 2026-10-13 18:53:12, kumitate repo `175de6ba...`, and `git status --porcelain -- scripts/kimi-census.mjs` empty at :16 - all inside the note's header region (before `## 0.` at :18). The pin is still true of the substrate bytes: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 175de6ba2e9e904010411b19cab27e0af9aad3d4:scripts/kimi-census.mjs | sha256sum` -> 83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426, `| wc -lc` -> 896 lines / 43273 B. No line drift: the range was written once at 2587e0a and has not moved (`git -C LANE log --oneline -L 13,16:corpus/knowledge/mutation-case-kimi-census.md 8ca67421`). Shown by: git -C LANE show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kimi-census.md | sed -n '13,16p'."
+  },
+  {
+   "heading": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "ordinal": 1,
+   "raw": "mutation-case-kagi-census.md:13-17",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     13,
+     17
+    ]
+   ],
+   "claim": "**Before the sweep:** sha256 (full), size, mtime, repo revision, and `git status --porcelain -- <path>` empty — recorded in the note's header",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "Artifact under test (O: `sha256sum`, `stat`, `git`): sha256 `275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f`, 44212 B, 886 newlines (the 887th line carries no trailing newline — `tail -c1` prints `c`), mtime 2026-10-14 09:47:15 -0300, mode 755; kagi `HEAD fecee8743e52eb8fb5fbb40782934cb619a1a96e`, `git status --porcelain -- corpus/surface-census.sh` empty.",
+   "reader": "T49Read08",
+   "note": "corpus/knowledge/mutation-case-kagi-census.md:13-17 records sha256 `275d8294...53009f`, 44212 B, 886 newlines with the 887th line unterminated (:14-15), mtime 2026-10-14 09:47:15 -0300, mode 755, kagi `HEAD fecee874...` (:16), and `git status --porcelain -- corpus/surface-census.sh` empty (:17) - every field the clause lists, plus line-termination detail. Substrate check: `git -C /home/vgpnk/Projects/shokunin/kagi-shokunin show fecee8743e52eb8fb5fbb40782934cb619a1a96e:corpus/surface-census.sh | sha256sum` -> 275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f, `| wc -lc` -> 886 44212. No drift since creation at 53e74a8 (`git -C LANE log --oneline -L 13,17:corpus/knowledge/mutation-case-kagi-census.md 8ca67421`). Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '13,17p'."
+  },
+  {
+   "heading": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "ordinal": 2,
+   "raw": "mutation-case-kimi-census.md:4-7",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     4,
+     7
+    ]
+   ],
+   "claim": "**All edits in scratch:** `cp -p` the artifact into the lane namespace and edit only copies",
+   "base_verdict": "stale",
+   "verdict": "stale",
+   "excerpt": "Substrate: kumitate-shokunin **read-only** — every mutant is a copy under `/tmp/tameshi-r2-1-work/`, and no fleet file was written.",
+   "reader": "T49Read08",
+   "note": "The pointed lines support the clause's scratch half ('every mutant is a copy under `/tmp/tameshi-r2-1-work/`, and no fleet file was written') but carry no `cp -p`: `git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | grep -n 'cp -p'` prints only :172, and :150 calls the scratch file a 'byte-copy'. The clause names `cp -p` as the copy mechanism - the flag that preserves mtime for the step-3 endpoint proof - so :4-7 does not support the clause it is attached to. Two earlier cold reads found the same aim: .ufo/waves/round-17/w2/CR10.md:84-87 ('item 2's kimi anchor is indirect ... the literal `cp -p` command is at §4:172') and .ufo/waves/round-29/w1/Read02C.md:7 ('the literal `cp -p` command in that note is at :172'). No line drift (single addition at 2587e0a). Repair keeps one pointer: `mutation-case-kimi-census.md:4-7, :172`, ranges [[4,7],[172,172]], verified with the counter's own pointed_text - the scratch sentence and `cp -p kumitate-shokunin/scripts/kimi-census.mjs /tmp/tameshi-r2-1-work/pristine.mjs` are both inside it. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | sed -n '4,7p;172p'.",
+   "proposed_fix": {
+    "skill_old": "edit only copies (mutation-case-kimi-census.md:4-7;",
+    "skill_new": "edit only copies (mutation-case-kimi-census.md:4-7, :172;",
+    "fixed_file": "corpus/knowledge/mutation-case-kimi-census.md",
+    "fixed_ranges": [
+     [
+      4,
+      7
+     ],
+     [
+      172,
+      172
+     ]
+    ],
+    "fixed_excerpt": "cp -p kumitate-shokunin/scripts/kimi-census.mjs /tmp/tameshi-r2-1-work/pristine.mjs",
+    "why": "The clause prescribes `cp -p` (mtime-preserving copy); the base range :4-7 carries only the read-only-substrate sentence, and the note's literal `cp -p` is at :172. Extending to :4-7, :172 keeps one pointer (section floor 10), fixes the aim, and leaves both halves located; the row must then be re-keyed on raw 'mutation-case-kimi-census.md:4-7, :172' with ranges [[4,7],[172,172]]."
+   }
+  },
+  {
+   "heading": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "ordinal": 3,
+   "raw": "mutation-case-kagi-census.md:44-45",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     44,
+     45
+    ]
+   ],
+   "claim": "**All edits in scratch:** `cp -p` the artifact into the lane namespace and edit only copies",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "- O: each defect = ONE exact-string replacement applied to a fresh copy of `pristine.sh` (a `cp -p` byte copy, `cmp`-verified)",
+   "reader": "T49Read08",
+   "note": "corpus/knowledge/mutation-case-kagi-census.md:44-45 carries the literal mechanism: 'each defect = ONE exact-string replacement applied to a fresh copy of `pristine.sh` (a `cp -p` byte copy, `cmp`-verified)' - the copy is made with `cp -p`, edits land only on the copy, and the copy is cmp-verified. The scratch namespace `/tmp/tameshi-r3-1-work/` sits at :5, outside the range but in the same note, so the 'into the lane namespace' half is carried by the note's header rather than by :44-45; noted, not a drift, and the clause is executable from the pair with the kimi pointer. No drift since creation at 53e74a8. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '44,45p'."
+  },
+  {
+   "heading": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "ordinal": 4,
+   "raw": "mutation-case-kimi-census.md:34-35",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     34,
+     35
+    ]
+   ],
+   "claim": "**After the sweep:** require endpoint fingerprints to agree; historical Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "- O: restore proof — original sha256 before `83016d45…4f426` and after `83016d45…4f426`; size 43273 B and mtime unchanged; kumitate working tree clean for that path.",
+   "reader": "T49Read08",
+   "note": "corpus/knowledge/mutation-case-kimi-census.md:34-35 is the endpoint proof verbatim: 'original sha256 before `83016d45…4f426` and after `83016d45…4f426`; size 43273 B and mtime unchanged; kumitate working tree clean for that path' - before/after identity, size, mtime, path cleanliness, exactly the clause's four elements. Prose defect at the citing end (not the pointer's): base SKILL.md:387 reads 'hash83016d45…4f426,43273B' and :390 'unchanged09:47:15' - the spaces were lost in commit 8eaae28; the record itself says 'size 43273 B and mtime unchanged', so the numbers stand. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | sed -n '34,35p'."
+  }
+ ]
+}

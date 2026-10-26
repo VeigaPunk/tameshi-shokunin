@@ -1,0 +1,53 @@
+                                                                             44
+
+
+3.4     shr: Problems with Partiality
+Adding shr to the signature, too, we at first obtained several rather complex
+equations, of which this is a typical example:
+
+adjust(shr(zero(),I),precision(A)) == shr(zero_like(A),I)
+
+All the equations had one thing in common: shr appeared on both sides of the
+equation, with the same second argument. Eventually we realised why: shr
+is a partial function, which raises an exception when its second argument is
+negative—so QuickSpec produced equations with shr on both sides so that
+exceptions would be raised in the same cases. We changed the signature to de-
+clare shr’s second argument to be nat() rather than int(), whereupon Quick-
+Spec produced simple equations as usual.
+QuickSpec told us how the precision of the result is determined:
+
+precision(shr(A,M)) == precision(A)
+
+Other informative equations were
+
+shr(shr(A,N),M) == shr(shr(A,M),N)
+shr(A,0) == A
+shr(zero_like(A),M) == zero_like(A)
+
+and, after we introduced addition on naturals,
+
+shr(shr(A,M),N) == shr(A,M+N)
+
+We began to suspect that shr implemented a right shift, and to test this hy-
+pothesis we formulated the property
+
+prop_shr_value() ->
+  ?FORALL({N,A},{nat(),fp()},
+          shr(multiply(A,pow(10,N)),N) == A).
+
+and after 100,000 successful tests concluded that our hypothesis was correct.
+
+3.4.1    Summing Up
+
+Overall, we found QuickSpec to be a very useful aid in developing an under-
+standing of the fixed point library. Of course, we could simply have formulated
+the expected equations as QuickCheck properties, and tested them without
+the aid of QuickSpec. However, this would have taken very much longer, and
+because the work is fairly tedious, there is a risk that we might have forgotten
+to include some important properties. QuickSpec automates the tedious part,
+and allowed us to spot missing equations quickly.
+Of course, QuickSpec also generates unexpected equations, and these would
+be much harder to find using QuickCheck. In particular, when investigating
+functions such as adjust, where we initially had little idea of what they were
+intended to do, then it would have been very difficult to formulate candidate
+QuickCheck properties in advance.

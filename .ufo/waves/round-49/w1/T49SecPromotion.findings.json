@@ -1,0 +1,105 @@
+{
+ "section": "## Promotion-evidence calibration — fleet round-1",
+ "findings": [
+  {
+   "skill_line": 1467,
+   "statement": "Its supporting audit is `reports/round-1-calibration.md#box-1`.",
+   "verdict": "false",
+   "evidence": "The cited anchor disposes box 1 only, so it cannot be \"the checklist's supporting audit\". `git show 8ca67421:reports/round-1-calibration.md | grep -n '^## '` -> `71:## box-1`, `105:## box-2`, `132:## box-3`, `176:## box-4`, `211:## lane-local dispositions (calibration target)`; the checklist-level audit is the table at :211-218, and SHONEN.md:5-12 cites four *different* pointers (box1 #box-1, box2 #box-2, box3 .ufo/evidence/round-21/coldread/ledger.json, box4 #box-4) (`git show 8ca67421:SHONEN.md`). #box-1 (:71-104) is also the one block that cannot support this section's own box-3 sentences: box-3's disposition is at :132-174. Round-17 seat CR43 (.ufo/waves/round-17/w2/CR43.md:60-61) graded this claim \"holds\" on anchor *resolution* only; resolution is not scope. Materiality: among the five inputs the round-21 ledger keys this section to, `reports/round-1-calibration.md` is the ONLY one whose digest moved (ledger `fc46d59db204…` vs base `a2afa5f7f8a9…`, `git show 8ca67421:reports/round-1-calibration.md | sha256sum`), drifted at 583909a (round 37) by appending the box-3 erratum at :167-174; the section body itself is byte-identical to the ledger entry (sha256 76c69298…). So the named \"supporting audit\" is exactly the input that lapsed this section's credit, and its reconciling erratum sits past the cited anchor.",
+   "proposed_fix": {
+    "skill_old": "Its supporting audit is `reports/round-1-calibration.md#box-1`.",
+    "skill_new": "Its supporting audit is `reports/round-1-calibration.md#box-1`, box 1's block only; this checklist's per-box dispositions are that file's `## lane-local dispositions` table, which still records box 3's audit as rejected.",
+    "why": "Keeps the pointer token byte-identical (`reports/round-1-calibration.md`, path kind, ordinal 3) so the frozen extractor's raw and the keyed read row survive, adds no new `.md`/`:N` token (pointer count stays 5 = FLOORS['promotion']=5, no new read row), and removes the false scope claim while pointing a cold reader at the checklist-level table and at the fact that box 3's audit still reads rejected."
+   }
+  },
+  {
+   "skill_line": "1466-1467",
+   "statement": "not the historical training\ncloseout",
+   "verdict": "unverifiable",
+   "evidence": "The referent is named nowhere and the phrase resolves to no artifact. `git grep -n -F 'training closeout' 8ca67421` -> only SKILL.md:1466-1467 plus derived snapshots (`.ufo/evidence/round-16/coldread/SKILL.snapshot.md:1466`, `skill-versions/SKILL.*.md:1466`) and the round-1 patch copy. Two prior seats resolved it to different things: round-16 RR15 (.ufo/waves/round-16/w2/RR15.md:17-18) admitted it \"does not name by path\", over-read `corpus/knowledge/closeout-r11.md:1-25` and graded it holds; round-35 CriticC2 (.ufo/waves/round-35/w2/CriticC2.md:78) calls commit `284ab0f0` \"the October 14 training closeout\" — a revision, not a file. Round-16 RR09 (.ufo/waves/round-16/w2/RR09.md:23) marked the same clause \"Unresolved (gap)\". `git show 8ca67421:corpus/knowledge/closeout-r11.md | grep -c '\\[~\\]\\|\\[x\\]\\|\\[ \\]'` -> 0 (the candidate referent carries no box marks), so the contrast is at best vacuously true and cannot be checked as written. No fix proposed, deliberately: the two corrections available are (a) name the artifact (`corpus/knowledge/closeout-r11.md`, or pin the commit `284ab0f0` that CriticC2:78 calls the training closeout) — which adds one path pointer and therefore one mandatory `holds` read row at REV — or (b) delete the clause, which shortens the section by one line and shifts every later `SKILL.md:<line>` self-anchor (the round-16 repair rule kept every edited section's line count unchanged for exactly this reason, SKILL.md:1715-1717). Both costs are the L1's to schedule, not a seat's to take; the referent gap itself is minor (the contrast is vacuously true of closeout-r11.md, which carries no box marks).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1466,
+   "statement": "This lane's current checklist is `SHONEN.md`",
+   "verdict": "true",
+   "evidence": "`git show 8ca67421:SHONEN.md | head -1` -> `# tameshi-shokunin — Promotion checklist`; four boxes at :5-12, all `[~]`; fleet PROTOCOL.md:432 defines `SHONEN.md` as \"Promotion checklist to shokunin\". `git grep -c '\\[x\\]' 8ca67421 -- SHONEN.md MINT.md PROVINCE.md README.md` -> 0 for every file (no competing `[x]` surface).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "1468-1469",
+   "statement": "Tameshi-dispatched reviewers remain part of tameshi for promotion authority\n(`../PROTOCOL.md:63–68`); a different agent name does not justify `[x]`.",
+   "verdict": "true",
+   "evidence": "`sed -n '63,68p' /home/vgpnk/Projects/shokunin/PROTOCOL.md` -> :64-65 \"a subagent the lane dispatched is still the lane\"; :66-67 \"only a non-author `<id>` may write `[x]`\"; :68 \"attestation counting as `[~]` for the gate\". `sed -n '63,68p' /home/vgpnk/Projects/kimi-shokunin/skills/shokunin/protocol/PROTOCOL.md | diff - <(sed -n '63,68p' /home/vgpnk/Projects/shokunin/PROTOCOL.md)` -> identical (the second protocol copy agrees on this range only). `../` from the lane root is the fleet root (the lane holds no PROTOCOL.md: `git ls-tree -r --name-only 8ca67421 | grep -i protocol` -> no PROTOCOL.md). External-input pin: the round-21 ledger records `/home/vgpnk/Projects/shokunin/PROTOCOL.md` sha256 886e459b…, which still matches (`sha256sum` -> 886e459b2aa79b8198912ad54bd57fbb025cc424d78684a02fb3d4c832d4411a`).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1470,
+   "statement": "Lane assertions use `[~]` with durable evidence, not temporary logs.",
+   "verdict": "true",
+   "evidence": "At base all four checklist marks are `[~]` and all four pointers resolve: `git show 8ca67421:SHONEN.md` -> box1 `reports/round-1-calibration.md#box-1`, box2 `#box-2`, box3 `.ufo/evidence/round-21/coldread/ledger.json`, box4 `#box-4`; `git cat-file -e 8ca67421:.ufo/evidence/round-21/coldread/ledger.json && echo ok` -> ok; `git grep -n '/tmp' 8ca67421 -- SHONEN.md` -> no match. Round-16's dangling box-3 pointer (RR15 F1: `.ufo/evidence/round-16/coldread/ledger.json` absent at c699c8c) is cured at base. Two limits worth recording: the durability rule itself is uncited inside the section (round-16 RR09:26 graded it 'partial citation'; the rule is at fleet PROTOCOL.md:345-359 and :432), and box 3's credit — not its pointer — is lapsed at base (`coldread.box3_full_page=false`, `.ufo/evidence/round-49/control/monitor-at-base-8ca67421.json`).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1472,
+   "statement": "Box 3 was `[ ]` at this write",
+   "verdict": "true",
+   "evidence": "The section was introduced at `cd31c6b` (`git log --format='%h %ad %s' --date=short -S'Promotion-evidence calibration — fleet round-1' -- SKILL.md` -> `cd31c6b 2026-10-15 fleet round 1: reconcile calibration evidence; dispatch blocked`) and `git show cd31c6b:SHONEN.md | sed -n '9p'` -> `- [ ] Instructions executable by an agent without oral context`. The write is dated in-text by nothing else; the commit is the only pin.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1472,
+   "statement": "(`[~]` since; Errata — round 16)",
+   "verdict": "true",
+   "evidence": "The mark is `[~]` at base (`git show 8ca67421:SHONEN.md | sed -n '9p'`). Continuity checked commit by commit: `for c in $(git log --format=%h 8ca67421 -- SHONEN.md); do git show $c:SHONEN.md | sed -n '9p'; done` -> `[ ]` at `cd31c6b` (2026-10-15), `[~]` at every commit from `c7986cd` (2026-10-19) through base, no revert. The errata target exists once: `git show 8ca67421:SKILL.md | grep -n '^#\\+ .*Errata'` -> `1707:## Errata — round 16 full-page cold-read`, and its row for this line (`:1736`) reads \"dated: `[ ]` at that write, `[~]` since\". Defect that remains: the \"since\" has no since-point in the section and none in the errata row; the transition commit is c7986cd (2026-10-19T19:15:33-03:00). Credit at base is lapsed for the section, but the mark is standing.",
+   "proposed_fix": {
+    "skill_old": "(`[~]` since; Errata — round 16)",
+    "skill_new": "(`[~]` since `c7986cd`; Errata — round 16)",
+    "why": "Converts an undated status claim into a revision a cold reader can check with one `git show c7986cd:SHONEN.md`; adds no pointer token (a bare abbreviated sha is neither a FILE token nor a `:N` range), keeps the count at 5, adds no read row."
+   }
+  },
+  {
+   "skill_line": "1472-1473",
+   "statement": "`executor-test-sufficiency.md:160–184`\nestablishes a historical single-JS-mutant exercise, not a current full cold-read.",
+   "verdict": "true",
+   "evidence": "`git show 8ca67421:corpus/knowledge/executor-test-sufficiency.md | sed -n '160,166p'` -> :160-162 \"(O) For the executed scope — one killed mutant of the JS case … confirmed\"; :164-166 \"(U) Not tested by this run: the full 10-mutant sweep, survivor probes (step 8), Appendix B entirely, and any second executor (n = 1 reader).\" — both halves of the sentence hold inside the cited range. Note on range precision (not a defect in the sentence): the exercise itself is receipted at :3-8 and :104-158; :160-184 is its scope assessment.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "1474-1475",
+   "statement": "The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;\nit is not a cold-reader exercise or an outside promotion/admission review.",
+   "verdict": "true",
+   "evidence": "`git show 8ca67421:.ufo/evidence/fleet-round-1/cli-smoke-canonical.json` -> exitCode 0, \"CONTROL: GREEN\", \"DEFECT wrong-value: KILLED\", \"DEFECT unread-value: SURVIVED\", \"MUTATE_RESTORE: OK (target-sha256 before=0cf28b95… after=0cf28b95…)\", \"SMOKE_ASSERTIONS: PASS (control, kill, survivor, restore, canonical-scratch; …)\", and the receipt's own `scope` field: \"Author-local actual CLI scenario, not a new fleet rate, outside review, current full cold-read or native judgment.\" The receipt is dated `MUTATE_DATE: 2026-10-15T05:14:49Z` inside its stdout, and it supersedes the earlier `cli-smoke.json` (audit :420-427). \"Fresh\" is true relative to the historical B1 driver, but the word is undated in the section.",
+   "proposed_fix": {
+    "skill_old": "The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;",
+    "skill_new": "The fresh (2026-10-15) CLI receipt in the audit verifies kill/survivor/restore behavior;",
+    "why": "Pins the status word to the receipt's own MUTATE_DATE so a later reader can tell fresh-from-stale without opening the audit; adds no pointer token, keeps the count at 5, adds no read row."
+   }
+  },
+  {
+   "skill_line": 1476,
+   "statement": "The source audit rejects the broader claim rather than upgrading its confidence.",
+   "verdict": "true",
+   "evidence": "`git show 8ca67421:reports/round-1-calibration.md | sed -n '160,166p;213,218p'` -> :160-163 \"cannot support a broad current assertion, so this box does not qualify even for `[~]`\"; :217 dispositions row box 3 = \"`[ ]` (assertion rejected)\". The one thing the sentence omits: at base the same file carries an appended erratum (:167-174) recording that SHONEN box 3 now stands `[~]` — the rejection of the *broad* claim is untouched, so the sentence is not false, but a cold reader who follows it meets the erratum and the sentence never mentions that the mark was upgraded later.",
+   "proposed_fix": {
+    "skill_old": "The source audit rejects the broader claim rather than upgrading its confidence.",
+    "skill_new": "The source audit rejects the broader claim rather than upgrading its confidence; its appended round-37 erratum records the `[~]` without rewriting that rejection.",
+    "why": "States the reconciliation the cited file already contains at base (:167-174), so the section's `[~]` sentence and its named audit no longer appear to contradict; adds no `.md`/`:N` token, keeps the count at 5, adds no read row."
+   }
+  },
+  {
+   "skill_line": 1477,
+   "statement": "See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.",
+   "verdict": "true",
+   "evidence": "`git show 8ca67421:corpus/lessons/round-1.md | sed -n '95,120p'` -> `## Gate` with \"Admitted (corrections)\" (:106-113: independence, canonical wording, durability, scope bounding) and \"Rejected, with reasons\" (:114-120, box-3 blanket claim first). Both named classes exist; the section points at a real, committed file.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1464,
+   "statement": "## Promotion-evidence calibration — fleet round-1",
+   "verdict": "true",
+   "evidence": "The heading's round attribution is exact: the section first lands at `cd31c6b` (2026-10-15) whose subject is \"fleet round 1: reconcile calibration evidence; dispatch blocked\", i.e. fleet round-1, not the historical training arc's round 1 (`git log --format='%h %ad %s' --date=short -S'Promotion-evidence calibration — fleet round-1' -- SKILL.md`). The two \"round 1\"s are disambiguated by `corpus/lessons/round-1.md:9-15`. Body lines 1464-1477 hash to the ledger's section sha 76c69298… at base.",
+   "proposed_fix": null
+  }
+ ]
+}

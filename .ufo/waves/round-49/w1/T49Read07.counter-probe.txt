@@ -1,0 +1,42 @@
+# T49Read07 counter probes — observed output, not a verdict (deciding runs belong to the L1)
+
+## 1. frozen extractor --list at base
+$ TMPDIR=$S python3 -B .ufo/evidence/round-49/c1/measure.py --lane . --rev 8ca67421111fa354b47b803358391d0b07fc6db9 --list
+pointers=90 missing_headings=[]
+ordinal=30 raw=corpus/README.md                 file=corpus/README.md                               kind=path ranges=None skill_line=156
+ordinal=31 raw=gates-survey-kagi.md             file=corpus/knowledge/gates-survey-kagi.md          kind=path ranges=None skill_line=156
+ordinal=32 raw=mutation-case-kimi-census.md     file=corpus/knowledge/mutation-case-kimi-census.md  kind=path ranges=None skill_line=235
+ordinal=33 raw=mutation-case-kagi-census.md     file=corpus/knowledge/mutation-case-kagi-census.md  kind=path ranges=None skill_line=236
+(exit 0; full output /fast/scratch/hyaku/tameshi-r49/T49Read07/list.json, 90 pointers, reproduced identically to the frozen control file .ufo/evidence/round-49/control/c1-pointers-at-base-8ca67421.json for ordinals 30-33)
+
+## 2. counter --selftest
+$ TMPDIR=$S python3 -B .ufo/evidence/round-49/c1/measure.py --selftest
+C1_R49_SELFTEST: cases=34 failed=0   (exit 0)
+
+## 3. check_reads probe: my four rows against the base blobs
+imported the frozen module and called check_reads(lane, base, lane, list_pointers(lane,base), T49Read07.rows.json) — read-only git blob reads, no writes to the lane
+ALL90 {"unresolved": 9, "unverified": 77, "excerpt_miss": 0, "not_holds": 0, "absent": 0}
+MINE 30 ok corpus/README.md
+MINE 31 ok corpus/knowledge/gates-survey-kagi.md
+MINE 32 ok corpus/knowledge/mutation-case-kimi-census.md
+MINE 33 ok corpus/knowledge/mutation-case-kagi-census.md
+
+## 4. excerpt collapse check (also filed as T49Read07.excerpt-check.txt)
+30 corpus/README.md len=182 in_pointed=True collapse-rule=re.sub(r"\s+"," ")strip
+31 corpus/knowledge/gates-survey-kagi.md len=380 in_pointed=True collapse-rule=re.sub(r"\s+"," ")strip
+32 corpus/knowledge/mutation-case-kimi-census.md len=236 in_pointed=True collapse-rule=re.sub(r"\s+"," ")strip
+33 corpus/knowledge/mutation-case-kagi-census.md len=223 in_pointed=True collapse-rule=re.sub(r"\s+"," ")strip
+
+## 5. per-seat check_reads probe (after T49Read10's correction; read-only, their files untouched)
+    importlib load of .ufo/evidence/round-49/c1/measure.py, check_reads(lane, base, lane, list_pointers(lane,base), each seat's rows)
+file-null pointers at base: 8
+T49Read02 rows=5 {"unresolved": 9, "unverified": 76, "excerpt_miss": 0, "not_holds": 5, "absent": 0} their-row statuses: [(5, 'not_holds'), (6, 'not_holds'), (7, 'not_holds'), (8, 'not_holds'), (9, 'not_holds')]
+T49Read10 rows=6 {"unresolved": 9, "unverified": 77, "excerpt_miss": 0, "not_holds": 4, "absent": 0} their-row statuses: [(0, 'unresolved'), (1, 'unresolved'), (2, 'not_holds'), (3, 'not_holds'), (4, 'not_holds'), (5, 'not_holds')]
+T49Read11 rows=6 {"unresolved": 9, "unverified": 76, "excerpt_miss": 0, "not_holds": 5, "absent": 0} their-row statuses: [(6, 'not_holds'), (7, 'not_holds'), (8, 'not_holds'), (9, 'not_holds'), (10, 'not_holds'), (11, 'unresolved')]
+T49Read07 rows=4 {"unresolved": 9, "unverified": 77, "excerpt_miss": 0, "not_holds": 0, "absent": 0} their-row statuses: [(30, 'ok'), (31, 'ok'), (32, 'ok'), (33, 'ok')]
+
+Reading: the counter's global 'unresolved' count (9) is pointer-level and constant, not a count of a seat's bad rows. Probe 6 (empty rows): `{"unresolved": 9, "unverified": 81, ...}` and the nine are 8 file-null pointers (restore-discipline path ord 7; map line ords 0-1 and path ords 11-12; r14 path ords 4,6,7) plus the external `../PROTOCOL.md:63-68` (promotion-evidence ord 0), which needs a `fleet_commit` no row supplies. The per-row statuses are the second column: T49Read02 5x not_holds; T49Read10 2x unresolved + 4x not_holds; T49Read11 5x not_holds + 1x unresolved. Net: 14 rows would score not_holds and 3 rows sit on unresolvable pointers (T49Read10 ords 0-1, T49Read11 ord 11), which T49Read10.md:152-170 already routes to a re-key.
+
+## 6. which nine pointers are unresolved at base (check_reads with an empty rows list)
+EMPTY_ROWS {"unresolved": 9, "unverified": 81, "excerpt_miss": 0, "not_holds": 0, "absent": 0}
+UNRESOLVED 7:path:None; 0:line:None; 1:line:None; 11:path:None; 12:path:None; 0:line:../PROTOCOL.md; 4:path:None; 6:path:None; 7:path:None

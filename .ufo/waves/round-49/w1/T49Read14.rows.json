@@ -1,0 +1,79 @@
+{
+ "rows": [
+  {
+   "heading": "## Repeated controls and gate registry — round 12",
+   "ordinal": 0,
+   "raw": "corpus/knowledge/repeated-control-precondition.md",
+   "file": "corpus/knowledge/repeated-control-precondition.md",
+   "ranges": null,
+   "claim": "Source: S004/S026 and `corpus/knowledge/repeated-control-precondition.md`;",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "Stream agreement is stronger than pass/fail stability — and still weaker than determinism.",
+   "reader": "T49Read14",
+   "note": "Path pointer. corpus/knowledge/repeated-control-precondition.md exists at base (114 lines, 14,142 B, sha256 e56f5876fa5af3e83b8f13d4076d566f27c1897a4bb5c67c8e2f52406ccf2ee7). Its title and §2 carry the repeated-controls precondition (doc:26) and §3.1 describes this exact CLI (--runs/--out/--snapshot/--selftest, floor 3, DIR must not exist), so the section's attribution is supported. Caveat for the L1, and NOT a stale SKILL line: the doc's own refs into the tool have drifted since it was written — doc:35 cites tools/repeat-control.py:245-247 for the --runs floor, but the floor is at :261-262; doc:58 cites :115-123 (finding map), :337-435 (snapshot validator) and :545 (selftest), while the base tool has EXIT_BY_ID :122-130, snapshot_mode :449 and selftest :592, and its 30,557 B / 29d80254… observation is an earlier revision (doc:84 records the base tool's 296fe566… / 35,454 B). None of those refs is repeated in the section, so no SKILL correction follows; reported separately in T49Read14.md. Shown by: git -C LANE show BASE:corpus/knowledge/repeated-control-precondition.md | sed -n '26p;35p;58p;84p' and git -C LANE show BASE:tools/repeat-control.py | sed -n '261,262p;317p;449p;592p'."
+  },
+  {
+   "heading": "## Repeated controls and gate registry — round 12",
+   "ordinal": 1,
+   "raw": ".ufo/evidence/round-12/verification-final.json",
+   "file": ".ufo/evidence/round-12/verification-final.json",
+   "ranges": null,
+   "claim": "runtime evidence: `.ufo/evidence/round-12/verification-final.json`.",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "REPEAT_RUN 1 exit=0 stdout-bytes=1202 stderr-bytes=0\\nREPEAT_RUN 2 exit=0 stdout-bytes=1202 stderr-bytes=0",
+   "reader": "T49Read14",
+   "note": "Path pointer. .ufo/evidence/round-12/verification-final.json exists at base (180 lines, 21,047 B). It is runtime evidence of this gate: check `real-pristine-three-controls` (:47-76) records a real bash pristine control at --runs 3 with REPEAT_RUN 1/2/3 exit=0 and REPEAT_COMPARE identical=yes runs=3 (:73); `red-before-single-control-mutant` (:77-98) records the honest failed oracle and `green-after-restored-repetition` (:99-119) the repaired one, each with expected_finding/expected_exit/observed_exit; the file carries \"passed\": true at :176. Supports 'runtime evidence' for the decision table and the recipe. Shown by: git -C LANE show BASE:.ufo/evidence/round-12/verification-final.json | grep -n '\"name\"|REPEAT_COMPARE'."
+  },
+  {
+   "heading": "## Repeated controls and gate registry — round 12",
+   "ordinal": 2,
+   "raw": "tools/repeat-control.py",
+   "file": "tools/repeat-control.py",
+   "ranges": null,
+   "claim": "run `python3 tools/repeat-control.py --runs 3 --out /tmp/tameshi-r12-controls-UNIQUE -- COMMAND ARG...`;",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "python3 tools/repeat-control.py --runs N --out DIR -- COMMAND [ARG...]",
+   "reader": "T49Read14",
+   "note": "Path pointer. tools/repeat-control.py exists at base (913 lines, 35,454 B, sha256 296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25). The recipe's exact invocation is the tool's own usage string (:13); '--runs must be at least 3' is enforced at :261-262; :317 refuses an existing --out, which is the sentence 'The output directory must not exist'; --selftest and --snapshot are dispatched at :874-878. No drift: the flags, the floor of 3 and the refusal are as the section states. Shown by: git -C LANE show BASE:tools/repeat-control.py | sed -n '13p;261,262p;317p;874,878p'."
+  },
+  {
+   "heading": "## Repeated controls and gate registry — round 12",
+   "ordinal": 3,
+   "raw": "S004",
+   "file": "corpus/SOURCES.md",
+   "ranges": [
+    [
+     15,
+     15
+    ]
+   ],
+   "claim": "Source: S004/S026",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "outcomes caught, missed, unviable, timeout, with unviable called inconclusive; tests must first pass reliably in a copied tree",
+   "reader": "T49Read14",
+   "note": "SOURCES.md registry row S004 at line 15; the frozen extractor finds exactly one row, so the range has not drifted. The row teaches cargo-mutants outcome semantics and, decisively for this section, 'tests must first pass reliably in a copied tree', with corpus/knowledge/repeated-control-precondition.md in used-by. Supports the S004 half of 'Source: S004/S026'. Shown by: git -C LANE show BASE:corpus/SOURCES.md | sed -n '15p'."
+  },
+  {
+   "heading": "## Repeated controls and gate registry — round 12",
+   "ordinal": 4,
+   "raw": "S026",
+   "file": "corpus/SOURCES.md",
+   "ranges": [
+    [
+     37,
+     37
+    ]
+   ],
+   "claim": "Source: S004/S026",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "about 1.5% of test runs are flaky; about 84% of pass-to-fail transitions involve a flaky test",
+   "reader": "T49Read14",
+   "note": "SOURCES.md registry row S026 at line 37; exactly one row, no drift. It teaches 'about 1.5% of test runs are flaky; about 84% of pass-to-fail transitions involve a flaky test' and lists the doc in used-by — the flakiness precondition behind repeated controls. Supersession, not staleness: S265 (SOURCES.md:140, opened 2026-10-26) 'supersedes S026's anchor and quote only, re-anchored to the 2026-10-26 bytes'; S026 remains status mined and keeps used-by, so the pointer resolves to a row that supports the clause. If the L1 wants the current anchor, replacing `S026` with `S265` in the Source line keeps this section at 5 pointers (floor 5). Shown by: git -C LANE show BASE:corpus/SOURCES.md | sed -n '37p;140p'."
+  }
+ ]
+}

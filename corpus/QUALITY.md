@@ -1440,3 +1440,25 @@ A round whose records edit a knowledge entry, `SOURCES.md`, a tool or any other 
 Lesson: `corpus/lessons/round-48.md` `## Attempt 3`, mined-mistake row (the C2 re-pointing of `incremental-pin-disposition.md` and `repeated-control-precondition.md` dropped the credited sections 60 → 57; the attempt-2 deciding run printed it at `.ufo/evidence/round-48/after/coldread-sections.stdout`).
 
 Falsifier that must fail: `coldread-precheck.sh` at the round-48 content revision `c7586b9a` prints three `LOST` lines and `cand_credited=57 lost=3 RED`, exit 1 (`.ufo/evidence/round-48/quality/coldread-precheck-red-c7586b9.stdout`, `.exit`); at the counter freeze `75529841` it prints `cand_credited=60 lost=0 ok`, exit 0 (`quality/coldread-precheck-ok-freeze.stdout`, `.exit`).
+
+## Criteria appended — round 49 (2026-10-26)
+
+### Criterion 99 — a control is scored and committed before the deciding run it discriminates, and the script refuses otherwise
+
+Every pre-registered control of a claim counter is scored with the freeze bytes and its receipt is committed in a commit
+that descends from the counter freeze, before that counter's deciding run starts. The deciding script checks this itself:
+it refuses with a nonzero exit, and starts no counter, when a control receipt is absent at the deciding revision, when the
+commit that last touched it does not descend from the freeze, or when its receipt directory already holds a start receipt
+(one deciding invocation). Any other invocation of a claim counter at the deciding revision (a partial or probe mode, a seat
+preview) is listed in the report with its revision and verdict line. The criterion binds the order, not the values: a
+control scored late at freeze bytes is still valid discrimination evidence, which is why the order is gated by the script
+rather than re-argued at closure. It cannot see a probe launched outside the receipt directory; the report list covers that.
+
+Lesson: `corpus/lessons/round-48-verifier-spotcheck.md` defects 2-3 (round 48 stated the order in prose and scored CTL_B-
+CTL_E after its deciding run); `corpus/lessons/round-49.md` `## Mistakes` row 1.
+
+Falsifier that must fail: `.ufo/evidence/round-49/deciding-run.sh` at the freeze `14d03ea4` (no control receipt committed)
+prints `DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-49/control/c1-controls.stdout` and exits 3 having
+started no counter; with a pre-existing `c1.start` it prints `DECIDING_REFUSED second-invocation c1` and exits 3; with a
+receipt committed before the freeze it prints `DECIDING_REFUSED control-receipt-not-after-freeze` and exits 3
+(`.ufo/waves/round-49/w1/T49ExecMistakeGate.md`, receipts in `T49ExecMistakeGate/`).

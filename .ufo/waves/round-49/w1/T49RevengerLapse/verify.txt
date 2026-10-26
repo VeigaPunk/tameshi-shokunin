@@ -1,0 +1,64 @@
+# T49RevengerLapse verification receipt
+
+seat T49RevengerLapse; lane /home/vgpnk/Projects/shokunin/tameshi-shokunin; base 8ca67421111fa354b47b803358391d0b07fc6db9
+generated 2026-10-26T20:48:11Z
+
+## 1. monitor --explain at base (read-only; no counter scoring)
+$ TMPDIR=$S python3 .ufo/evidence/round-21/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin \
+    --rev 8ca67421111fa354b47b803358391d0b07fc6db9 --explain
+exit=0  (full JSON: explain.txt, 2245 lines)
+calibration_restraint_score 6
+sections_covered 57 sections_total 64
+ledger_source rev ledger_committed True trace_gate strict overrides_used False
+UNCOVERED 131-245 ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+UNCOVERED 375-404 ## Restore discipline — before/after identity, not continuous non-write proof
+UNCOVERED 1380-1395 ### The map — where a reader enters, artifact by artifact
+UNCOVERED 1464-1478 ## Promotion-evidence calibration — fleet round-1
+UNCOVERED 1479-1498 ## Repeated controls and gate registry — round 12
+UNCOVERED 1517-1547 ## Pin disposition and provenance correction — round 13
+UNCOVERED 1563-1596 ## Effective expectation reconciliation — round 14
+
+## 2. recomputation vs monitor (union over each section's entries of the input gate's failures)
+Frozen helpers called directly (no counter scoring):
+  spec=importlib.util.spec_from_file_location('m18', '.ufo/evidence/round-18/measure.py')
+  m.IGNORED_INPUTS |= {'.ufo/evidence/round-21/coldread/ledger.json'}   # as .ufo/evidence/round-21/coldread/measure.py:112
+  m.input_failures(repo, REV, m.inputs_view(entry))
+section   131  MATCH  paths=12
+section   375  MATCH  paths=2
+section  1380  MATCH  paths=3
+section  1464  MATCH  paths=1
+section  1479  MATCH  paths=4
+section  1517  MATCH  paths=7
+section  1563  MATCH  paths=7
+ALL SEVEN MATCH
+
+## 3. drift attribution checks
+A drift commit is the first commit that moves the path off the digest an entry recorded:
+the successor of the last commit whose blob equals the recorded digest.
+pre-read drift (attributed commit not a descendant of the entry's read_rev): 0 of 94 entries
+digests not matching the blob at the entry's own read_rev: 1 (placeholder, section 4)
+
+## 4. ledger size, entry count, placeholder digest line
+$ git show 8ca67421:.ufo/evidence/round-21/coldread/ledger.json > ledger-at-base.json
+bytes 3489570; entries 497; 2-space entry-object lines 497
+placeholder: ledger.json:24170  ".ufo/evidence/round-14/context-missing-env.json": "9a3a3f9b5...1e2f3a4b"
+  fabricated hex pattern; no commit ever carried these bytes; section 1563 entry 9, read_rev b05d2ee8
+
+## 5. entry survival by record-file inclusion (round(first_fail) - round(read_rev))
+WITH-RECORD entries n=88 median_survived_rounds=1.0 min=0 max=3
+NO-RECORD entries:
+  section 1464 entry 0 read_round 17 fail_round 37 survived 20 n_inputs 5
+  section 1479 entry 0 read_round 17 fail_round 18 survived 1 n_inputs 5
+  section 1479 entry 16 read_round 30 fail_round 48 survived 18 n_inputs 30
+  section 1517 entry 0 read_round 17 fail_round 17 survived 0 n_inputs 20
+  section 1517 entry 17 read_round 31 fail_round 48 survived 17 n_inputs 10
+  section 1563 entry 13 read_round 30 fail_round 48 survived 18 n_inputs 21
+
+## 6. section lapse commits (last clean entry goes stale)
+  131 entries=13 lapsed=13 lapse 7500239|2026-10-24|round-37: supersede unreachable r36 control input
+  375 entries=16 lapsed=16 lapse e118024|2026-10-24|round-38: self-assessment reconciliation (calibration) + golden-comparison three-outcome verdict (depth)
+ 1380 entries=13 lapsed=13 lapse e118024|2026-10-24|round-38: self-assessment reconciliation (calibration) + golden-comparison three-outcome verdict (depth)
+ 1464 entries= 1 lapsed= 1 lapse 583909a|2026-10-24|round-37: w1 seat reports (27/33), S104 citation correction, box-3 erratum, QUALITY 73 clarification, committed mutation falsifier receipts
+ 1479 entries=17 lapsed=17 lapse 5054532|2026-10-26|round-48: C2 records - rows S265-S268, snapshots and receipts, re-pointed entries, lesson draft
+ 1517 entries=20 lapsed=20 lapse 5054532|2026-10-26|round-48: C2 records - rows S265-S268, snapshots and receipts, re-pointed entries, lesson draft
+ 1563 entries=14 lapsed=14 lapse 5054532|2026-10-26|round-48: C2 records - rows S265-S268, snapshots and receipts, re-pointed entries, lesson draft

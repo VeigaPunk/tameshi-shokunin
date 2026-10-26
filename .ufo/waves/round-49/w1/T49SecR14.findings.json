@@ -1,0 +1,110 @@
+{
+ "section": "## Effective expectation reconciliation",
+ "findings": [
+  {
+   "skill_line": 1581,
+   "statement": "2. **Historical (round 14, runner `75ed934d…`):** at `--root .` both manifests now return 2\n   `expected_input_digest_mismatch` (the runner moved in round 16). Replay with cwd = an extracted",
+   "verdict": "true",
+   "evidence": "SKILL.md:1581-1582 at base 8ca67421. (a) exit-2 observation: scratch clone of the lane at 8ca67421111fa354b47b803358391d0b07fc6db9, `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json` -> exit 2, id=expected_input_digest_mismatch, status=could_not_evaluate; same with dispositions.json -> exit 2, same id (receipts T49SecR14.base-before.txt, T49SecR14.base-after.txt). (b) cause: `git archive 98bea7d | tar -x` (round-16 tip) + same command -> exit 2, message \"tools/mutate-and-run.sh: observed 0673d2e5... expects 75ed934d...\" (T49SecR14.r16-before.txt); `git log --format=%h -- tools/mutate-and-run.sh` shows the move at 05a2247 (round 16). (c) nuance observed at base: the first mismatch the v2 tool now reports is \"tools/bash-witness-study.py: observed 60575e62... expects 49e9e5e2...\" (moved at 58e5d53, round 18), and tools/pin-disposition.py (r17) and tools/mutate-and-run.sh (r16) are also moved, so the stated round-16 onset remains true but the file named by the current error differs. Also corroborated by corpus/knowledge/input-keyed-coldread-credit.md:14-21 (\"its recipe now exited 2 expected_input_digest_mismatch\").",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1583,
+   "statement": "   `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`\n   → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).",
+   "verdict": "true",
+   "evidence": "SKILL.md:1583-1584 at base 8ca67421. Scratch tree of `git archive 28aeef4` (round-15 spot-check commit; `git log -1 28aeef4` -> 28aeef4 round-15 verifier spot-check), cwd=tree root: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json` -> exit 1, findings [expected_contains_missing \"producer_before: stdout lacks 'summary preserves top-level exposed declaration kind'\"] (T49SecR14.a28-before.txt). The frozen round-14 receipt records the same outcome: verification-final.json checks.unresolved_before exit 1 expected 1.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1585,
+   "statement": "3. The same command with `dispositions.json` → 0: the only repair is that row's explicit supersession,\n   keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section (round-18 manifests since then).",
+   "verdict": "true",
+   "evidence": "SKILL.md:1585-1586 at base 8ca67421. Same 28aeef4 tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json` -> exit 0, status clean, findings [] (T49SecR14.a28-after.txt). `python3 -c` diff of dispositions-before.json vs dispositions.json -> only row 4 (producer_before) differs: state superseded, raw_receipt/raw_check kept, superseded_by [producer_before_oracle, producer_after_oracle]; rows producer_before_oracle/after_oracle state=effective in both oracles' receipt. Selftest refuses the alternatives: `python3 tools/evidence-disposition.py --selftest` -> PASS 66/66, cases include missing-row-drop, required-replacement-missing, replacement-failed, supersession-not-permitted (T49SecR14.disp-selftest.txt). Live-tree form: `grep -n '^## ' SKILL.md` -> 1814 \"## Live-tree re-pin and entry-command monitor — round 17\"; clone at base + `--dispositions .ufo/evidence/round-18/dispositions.json` -> exit 0 clean (T49SecR14.live-r18.txt).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1573,
+   "statement": "| A stale expected row is replaced by later evidence | Keep its raw observation and explicitly supersede the row | Both named oracle replacements must themselves be effective and pass; never silently drop a row |",
+   "verdict": "true",
+   "evidence": "SKILL.md:1573 at base 8ca67421. `python3 -c` diff of .ufo/evidence/round-14/dispositions-before.json vs dispositions.json -> exactly one row changed (producer_before): raw_receipt .ufo/evidence/round-13/verification.json + raw_check producer_before retained, state superseded, superseded_by names producer_before_oracle and producer_after_oracle. Both replacements are effective and expectation-met: `.ufo/evidence/round-13/expected.json` expected_checks producer_before_oracle {exit 1, contains '...FAIL'}, producer_after_oracle {exit 0, contains 'WITNESS_SELFTEST: 41/41 pass'}; the 28aeef4 replay with dispositions.json exits 0 clean, i.e. every effective row matched. Selftest case replacement-failed exists (PASS 66/66).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1574,
+   "statement": "| Snapshot input or receipt bytes differ from their pinned digest | Could-not-evaluate | Do not reinterpret an edited receipt as a new historical verdict |",
+   "verdict": "true",
+   "evidence": "SKILL.md:1574 at base 8ca67421. At base (scratch clone): both round-14 manifests exit 2 with id expected_input_digest_mismatch, status could_not_evaluate (T49SecR14.base-before.txt, base-after.txt) — the digest-mismatch path is exit-2/could-not-evaluate, not a verdict.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1575,
+   "statement": "| A new context experiment explicitly records its child override | Read only that new experiment's outcome | Documentation or output equality cannot recover an omitted historical environment |",
+   "verdict": "true",
+   "evidence": "SKILL.md:1575 at base 8ca67421. `python3 tools/context-capture.py --check --receipt .ufo/evidence/round-14/context-missing-env.json --expected .ufo/evidence/round-15/frozen/context-missing-env/expected.json` -> exit 1, CONTEXT: MISMATCH id=missing_injected_environment, FINDING \"receipt.environment.injected_env is absent\" (T49SecR14.ctx-miss2.txt). The same receipt has comparison.equal=true with identical baseline/injected comparable sha256 22e79150..., so output equality does not recover the omitted environment; the clean counterpart context-receipt.json records environment.injected_env {GIT_DIR: /nonexistent/tameshi-round14-poison}.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1576,
+   "statement": "| A content probe agrees under one GIT_DIR injection | Bounded scrub observation | Not general hermeticity, safe result reuse, target execution or a fresh mutation rate |",
+   "verdict": "true",
+   "evidence": "SKILL.md:1576 at base 8ca67421. `python3 -c` on .ufo/evidence/round-14/context-receipt.json -> comparison.equal true, result_reuse \"not_established\", result_reuse_reason \"content observation + static mapping do not establish environment, dependency, fixture or suite identity\", not_compared [leg execution and kill-rate outcomes, suite environment and dependencies, concurrent sibling movement]; environment.baseline_policy \"ambient with every GIT_* key removed, plus LC_ALL=C\"; positive_control injected `git rev-parse --git-dir` exit 128 vs baseline exit 0 (non-vacuous poison).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1572,
+   "statement": "| Expected exit agrees but the intended assertion is absent | Failed expectation, not mechanism proof | A FileNotFoundError before the assertion is a setup failure |",
+   "verdict": "true",
+   "evidence": "SKILL.md:1572 at base 8ca67421. `python3 -c` on .ufo/evidence/round-13/verification.json -> checks producer_before exit 1, expected_exit 1, stderr \"FileNotFoundError: [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/tools/mutate-and-run.sh'\" — exit agreed yet the assertion never ran; the 28aeef4 replay reports expected_contains_missing producer_before (T49SecR14.a28-before.txt).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1568,
+   "statement": "These instructions add no full-page cold-read or independent promotion credit.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1568 at base 8ca67421. `python3 -c` on .ufo/evidence/round-49/control/monitor-at-base-8ca67421.json -> coldread.sections_covered 57/64, box3_full_page=false, and \"## Effective expectation reconciliation — round 14\" sits in missing/uncovered_headings (reason: input-drift on its cited inputs) — the section text itself earns nothing. corpus/knowledge/input-keyed-coldread-credit.md:40: \"`SKILL.md` itself and the ledger are not inputs: the bucket is already\" [credit is keyed to recorded input hashes].",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1565,
+   "statement": "Sources: `corpus/lessons/round-13-verifier-spotcheck.md`, Routed defects1–3;\nS049 (Python child-environment contract), S003 Limitations, and\n`corpus/knowledge/incremental-pin-disposition.md`, empirical correction8.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1565-1567 at base 8ca67421. `grep -n '^## Routed defects' corpus/lessons/round-13-verifier-spotcheck.md` -> 175; items 1-3 at 179/180/181. `grep -n '| S049 ' corpus/SOURCES.md` -> 58 (Python subprocess env contract); `grep -n '| S003 '` -> 14 (§Limitations, env/dependency/.snap blind spots); `grep -n '^## 8\\.' corpus/knowledge/incremental-pin-disposition.md` -> 314 \"## 8. Empirical correction and backlink — round 14\".",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1579,
+   "statement": "1. Read the historical expectations and raw observations before accepting a\n   later summary; distinguish twelve expected rows from thirteen pinned inputs.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1579-1580 at base 8ca67421. `python3 -c` on .ufo/evidence/round-13/expected.json -> len(expected_checks)=12, len(inputs)=13; .ufo/evidence/round-14/dispositions.json -> 12 rows whose names equal the 12 expected_checks keys (pin_selftest, metadata_*, producer_before, producer_before_oracle, producer_after_oracle, producer_after, witness_check, witness_count, pin_live, source_census).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1587,
+   "statement": "4. `.ufo/evidence/round-14/verification-final.json` retains the corrected\n   selftest and frozen before/after outcomes; `verification.json` retains the\n   initial18-of34 fixture failures rather than disguising them as green.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1587-1589 at base 8ca67421. `python3 -c` on .ufo/evidence/round-14/verification-final.json -> checks: disposition_selftest exit 0 expected 0 with \"SELFTEST: PASS (34/34)\", unresolved_before exit 1 expected 1 (expected_contains_missing producer_before), resolved_after exit 0 expected 0 clean; the before/after outcomes reproduce the 28aeef4 replay exactly. .ufo/evidence/round-14/verification.json -> disposition_selftest exit 1 expected 0 with \"SELFTEST: FAIL (18/34 failed: clean-superseded, unsuperseded-crash-mismatch, missing-row-drop, ...)\", so the initial failures are retained as failures.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1590,
+   "statement": "   The revision measured is recorded separately.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1590 at base 8ca67421. `python3 -c` -> .ufo/evidence/round-14/before.json revision d6809df7775338f000e44c8a916067b8866867fb; after-committed.json revision 4d409d796ad8f9bf2aa8d380489da9e7d6cb9ca1; verification-final.json measured_commit 64314783836bb0d05ad06a774d7310fd3a23b5bd — the measured revisions are recorded in the receipts, separately from the outcomes.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1591,
+   "statement": "   A non-author closure reads committed evidence, never executes sibling gates.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1591 at base 8ca67421. .ufo/evidence/round-14/verification.json note: \"L1 run after all32 seats finished; no receipt argv or sibling gate executed\"; its four checks run only this lane's tools (evidence-disposition.py, capture-context.py). Contract text: corpus/lessons/round-13-verifier-spotcheck.md:182 \"Preserve the committed-evidence non-execution closure contract.\"",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1592,
+   "statement": "5. **Archived experiment, not an entry point:** the round14\n   `capture-context.py` produced the retained context receipt and must not be\n   run again because its historical output path replaces that frozen receipt.\n   Use the maintained retained-only gate in the round15 registry below.",
+   "verdict": "true",
+   "evidence": "SKILL.md:1592-1595 at base 8ca67421. `grep -n OUTPUT_REL .ufo/evidence/round-14/capture-context.py` -> 58 \".ufo/evidence/round-14/context-receipt.json\" (docstring line 23 \"Output: .ufo/evidence/round-14/context-receipt.json (atomic, 0644); no other\"); verification.json context_capture check printed \"CONTEXT: OK (receipt=.ufo/evidence/round-14/context-receipt.json ...)\", and `sha256sum .ufo/evidence/round-14/context-receipt.json` -> 05cb55b8... = the pin in SKILL.md:1680. So a re-run rewrites that frozen receipt. Round-15 retained-only gate exists at SKILL.md:1676-1681 (\"retained invocation-context gate\") and works at base: `python3 tools/context-capture.py --check` -> exit 0 \"CONTEXT: OK (id=context_consistent ...)\"; `--selftest` -> SELFTEST: PASS (49/49).",
+   "proposed_fix": null
+  }
+ ]
+}

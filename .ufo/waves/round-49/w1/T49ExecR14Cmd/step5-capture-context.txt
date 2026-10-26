@@ -1,0 +1,46 @@
+T49ExecR14Cmd — step 5: capture-context.py real path and write target (script NOT run)
+
+Real path of the bare name `capture-context.py` (SKILL.md:1593)
+  .ufo/evidence/round-14/capture-context.py
+  sha256 7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89
+  (equals verification-final.json input_sha256[".ufo/evidence/round-14/capture-context.py"] and the
+   archive-status digest quoted at SKILL.md:1635)
+  find . -name capture-context.py -not -path './.git/*'  ->  exactly that one file
+  distinct from the maintained gate tools/context-capture.py (SKILL.md:1680 registry row; :1638)
+
+What it writes (read from source; no execution — bounds and SKILL.md:1592-1596 forbid running it)
+  OUTPUT_REL = ".ufo/evidence/round-14/context-receipt.json"          (:58)
+  docstring :23  "Output: .ufo/evidence/round-14/context-receipt.json (atomic, 0644); no other
+                  path is written."
+  write_receipt() :583-602  tempfile.mkstemp(dir=dirname(path)) -> json.dump -> flush -> fsync ->
+                            chmod 0o644 -> os.replace(temporary, path)
+  So the historical output path and the frozen receipt are the same file; a re-run replaces it.
+
+It writes on every non-usage path, not just on success:
+  main() :614 base_receipt(); :617-627 InvalidContext branch calls write_receipt (:622);
+  :629-643 decide() branch calls write_receipt (:632). Only the usage error returns 64 (:613) before
+  any write.
+  decide() :575 appends "runner source digest does not match the manifest declaration" when the
+  runner digest differs — at base tools/mutate-and-run.sh is a7d3f2dd..., while
+  .ufo/evidence/round-13/pin-manifest.json:5 pins 75ed934d..., and tools/pin-disposition.py is
+  331529ea... against the round-13 pin 29725397....
+  [INFERENCE from those code lines: a re-run today would decide mismatch/1 and still overwrite the
+  frozen receipt; it cannot reproduce the clean receipt it would destroy.]
+
+The frozen receipt it would replace
+  .ufo/evidence/round-14/context-receipt.json, 29,492 B,
+  sha256 05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a
+  that digest is pinned twice: SKILL.md:1680 (round-15 registry row) and
+  tools/context-capture.py:152-153 FROZEN_RECEIPT_SHA256.
+  Receipt is committed: last commit touching it is 6431478 (round-14: retain failing run and repair
+  two selftest fixtures).
+
+Maintained gate named by step 5's pointer ("the round15 registry below")
+  tools/context-capture.py --check  -> retained-receipt replay; docstring :12 "writes nothing; the
+  only writes are --selftest fixtures under mkdtemp."
+  SKILL.md:1638 "The maintained gate is tools/context-capture.py; the active use is retained-receipt
+  replay, not a new live experiment. Round-14 receipts are read-only inputs, never regenerated."
+
+Verdict on step 5 (SKILL.md:1592-1596): matches. The path, the single write target, the overwrite
+mechanism and the maintained-gate pointer are all as stated; SKILL.md:1630-1640 already marks this
+step archive-only and superseded, so the section does not invite the run.

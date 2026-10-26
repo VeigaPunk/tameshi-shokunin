@@ -1,0 +1,793 @@
+                                         QuickCheck:
+                             A Lightweight Tool for Random Testing
+                                     of Haskell Programs
+
+                                 Koen Claessen                                                        John Hughes
+                     Chalmers University of Technology                                     Chalmers University of Technology
+                           koen@cs.chalmers.se                                                  rjmh@cs.chalmers.se
+
+ABSTRACT                                                                             monad are hard to test), and so testing can be done at a
+QuickCheck is a tool which aids the Haskell programmer in
+                                                                                       ne grain.
+formulating and testing properties of programs. Properties                              A testing tool must be able to determine whether a test
+are described as Haskell functions, and can be automati-                             is passed or failed; the human tester must supply an auto-
+cally tested on random input, but it is also possible to de-                         matically checkable criterion of doing so. We have chosen
+  ne custom test data generators. We present a number of                             to use formal speci cations for this purpose. We have de-
+case studies, in which the tool was successfully used, and                           signed a simple domain-speci c language of testable speci -
+also point out some pitfalls to avoid. Random testing is es-                         cations which the tester uses to de ne expected properties
+pecially suitable for functional programs because properties                         of the functions under test. QuickCheck then checks that the
+can be stated at a ne grain. When a function is built from                           properties hold in a large number of cases. The speci ca-
+separately tested components, then random testing suces                             tion language is embedded in Haskell using the class system.
+to obtain good coverage of the de nition under test.                                 Properties are normally written in the same module as the
+                                                                                     functions they test, where they serve also as checkable doc-
+                                                                                     umentation of the behaviour of the code.
+1.     INTRODUCTION                                                                     A testing tool must also be able to generate test cases au-
+   Testing is by far the most commonly used approach to                              tomatically. We have chosen the simplest method, random
+ensuring software quality. It is also very labour intensive,                         testing [11], which competes surprisingly favourably with
+accounting for up to 50% of the cost of software develop-                            systematic methods in practice. However, it is meaningless
+ment. Despite anecdotal evidence that functional programs                            to talk about random testing without discussing the distri-
+require somewhat less testing (`Once it type-checks, it usu-                         bution of test data. Random testing is most e ective when
+ally works'), in practice it is still a major part of functional                     the distribution of test data follows that of actual data, but
+program development.                                                                 when testing reuseable code units as opposed to whole sys-
+   The cost of testing motivates e orts to automate it, wholly                       tems this is not possible, since the distribution of actual
+or partly. Automatic testing tools enable the programmer                             data in all subsequent reuses is not known. A uniform dis-
+to complete testing in a shorter time, or to test more thor-                         tribution is often used instead, but for data drawn from
+oughly in the available time, and they make it easy to repeat                        in nite sets this is not even meaningful { how would one
+tests after each modi cation to a program. In this paper we                          choose a random closed -term with a uniform distribution,
+describe a tool, QuickCheck, which we have developed for                             for example? We have chosen to put distribution under the
+testing Haskell programs.                                                            human tester's control, by de ning a test data generation
+   Functional programs are well suited to automatic testing.                         language (also embedded in Haskell), and a way to observe
+It is generally accepted that pure functions are much easier                         the distribution of test cases. By programming a suitable
+to test than side-e ecting ones, because one need not be                             generator, the tester can not only control the distribution
+concerned with a state before and after execution. In an                             of test cases, but also ensure that they satisfy arbitrarily
+imperative language, even if whole programs are often pure                           complex invariants.
+functions from input to output, the procedures from which                               An important design goal was that QuickCheck should be
+they are built are usually not. Thus relatively large units                          lightweight. Our implementation consists of a single pure
+must be tested at a time. In a functional language, pure                             Haskell'98 module of about 300 lines, which is in practice
+functions abound (in Haskell, only computations in the IO                            mainly used from the Hugs interpreter. We have also writ-
+                                                                                     ten a small script to invoke it, which needs to know very
+                                                                                     little about Haskell syntax, and consequently supports the
+                                                                                     full language and its extensions. It is not dependent on any
+Permission to make digital or hard copies of all or part of this work for            particular Haskell system. A cost that comes with this deci-
+personal or classroom use is granted without fee provided that copies are            sion is that we can only test properties that are expressible
+not made or distributed for profit or commercial advantage and that copies           and observable within Haskell.
+bear this notice and the full citation on the first page. To copy otherwise, to         It is notoriously dicult to say how e ective a testing
+republish, to post on servers or to redistribute to lists, requires prior specific   method is in detecting faults. However, we have used Quick-
+                                                                                     Check in a variety of applications, ranging from small exper-
+permission and/or a fee.
+ICFP ’00, Montreal, Canada.
+Copyright 2000 ACM 1-58113-202-6/00/0009 .. 5.00    $
+iments to real systems, and we have found it to work well         In fact the programmer must provide a little more infor-
+in practice. We report on some of this experience in this       mation: the function quickCheck is actually overloaded, in
+paper, and point out pitfalls to avoid.                         order to be able handle laws with a varying number of vari-
+   The rest of this paper is structured as follows. Section     ables, and the overloading cannot be resolved if the law itself
+2 introduces the concept of writing properties and checking     has a polymorphic type, as in these examples. Thus the pro-
+them using QuickCheck. Section 3 shows how to de ne test        grammer must specify a xed type at which the law is to be
+data generators for user-de ned types. Section 4 brie y dis-    tested. So we simply give a type signature for each law, for
+cusses the implementation. Section 5 presents a number of       example
+case studies that show the usefulness of the tool. Section 6      prop_RevApp :: [Int] -> [Int] -> Bool
+concludes.
+                                                                Of course, the property prop_RevApp holds polymorphically,
+2.     DEFINING PROPERTIES                                      but we must specify which monomorphic instance to test
+                                                                it at, so that we can generate test cases. This turns out
+2.1 A Simple Example                                            to be quite important in the case of overloaded functions.
+  As a rst example, we take the standard function reverse       For example, + is associative for the type Int, but not for
+                                                                Double! In some cases, we can use parametricity [17] to
+which reverses a list. This satis es a number of useful laws,   argue that a property holds polymorphically.
+such as
+             reverse [x] = [x]                                  2.2 Functions
+       reverse (xs++ys) = reverse ys++reverse xs                   We are also able to formulate properties that quantify over
+  reverse (reverse xs) = xs
+                                                                functions. To check for example that function composition
+                                                                is associative, we rst de ne extensional equality (===) by
+In fact, the rst two of these characterise reverse uniquely.    (f === g) x = f x == g x, and then write:
+  Note that these laws hold only for nite, total values. In       prop_CompAssoc :: (Int -> Int) -> (Int -> Int)
+this paper, unless speci cally stated otherwise, we always                       -> (Int -> Int) -> Int -> Bool
+quantify over completely de ned nite values. This is to           prop_CompAssoc f g h =
+make it more likely that the properties are computable.             f . (g . h) === (f . g) . h
+  In order to check these laws using QuickCheck, we repre-
+sent them as Haskell functions. Thus we de ne                   The only diculty that function types cause is that, if a
+                                                                counter-example is found (for example if we try to check
+     prop_RevUnit x =
+                                                                that function composition is commutative), then the func-
+       reverse [x] == [x]
+                                                                tion values are printed just as \<<function>>". In this case
+                                                                we discover that the `law' we are checking is false, but not
+     prop_RevApp xs ys =
+       reverse (xs++ys) == reverse ys++reverse xs
+                                                                why.
+                                                                2.3 Conditional Laws
+     prop_RevRev xs =
+                                                                   Laws which are simple equations are conveniently repre-
+       reverse (reverse xs) == xs
+                                                                sented by boolean function as we have seen, but in general
+Now, if these functions return True for every possible argu-    many laws hold only under certain conditions. QuickCheck
+ment, then the properties hold. We load them into the Hugs      provides an implication combinator to represent such condi-
+interactive Haskell interpreter [14], and call for example      tional laws. For example, the law
+     Main> quickCheck prop_RevApp                                                x <= y =) max x y == y
+     OK: passed 100 tests.
+                                                                can be represented by the de nition
+The function quickCheck takes a law as a parameter and ap-
+plies it to a large number of randomly generated arguments        prop_MaxLe :: Int -> Int -> Property
+| in fact 1001 | reporting \OK" if the result is True in          prop_MaxLe x y = x <= y ==> max x y == y
+every case.                                                     Likewise, the insertion function into ordered lists satis es
+   If the law fails, then quickCheck reports the counter-       the law
+example. For example, if we mistakenly de ne
+                                                                  prop_Insert :: Int -> [Int] -> Property
+     prop_RevApp xs ys =                                          prop_Insert x xs =
+       reverse (xs++ys) == reverse xs++reverse ys                   ordered xs ==> ordered (insert x xs)
+then checking the law might produce                             Note that the result type of the property is changed from
+     Main> quickCheck prop_RevApp                               Bool  to Property. This is because the testing semantics
+     Falsifiable, after 1 tests:                                is di erent for conditional laws. Instead of checking the
+     [2]                                                        property for 100 random test cases, we try checking it for
+     [-2,1]                                                     100 test cases satisfying the condition. If a candidate test
+                                                                case does not satify the condition, it is discarded, and a new
+where the counter model can be extracted by taking [2] for      test case is tried.
+xs , and [-2,1] for ys.                                            Checking the laws prop_MaxLe and prop_Insert succeed
+1
+  100 is a rather arbitrary number, so our library provides a   as usual, but sometimes, checking a conditional law produces
+way to specify this as a parameter.                             the output
+  Arguments exhausted after 64 tests.                              the precondition. There is a risk of this kind of problem ev-
+If the precondition of a law is seldom satis ed, then we might     ery time we use conditional laws, so it is always important
+generate many test cases without nding any where it holds.         to investigate the proportion of trivial cases among those
+In such cases it is hopeless to search for 100 cases in which      actually tested.
+the precondition holds. Rather than allow test case gener-           The best solution, though, is to replace the condition with
+ation to run forever, we generate only a limited number of         a custom test data generator for ordered lists. We write
+candidate test cases (the default is 1000). If we do not nd          prop_Insert :: Int -> Property
+100 valid test cases among those candidates, then we sim-            prop_Insert x =
+ply report the number of successful tests we were able to              forAll orderedList $ \xs ->
+perform.                                                                 ordered (insert x xs)
+   In the example, we know that the law passed the test in 64      which speci es that values for xs should be generated by
+cases. It is then up to the programmer to decide whether this      the test data generator orderedList. Checking the law now
+is enough, or whether it should be tested more thoroughly.         gives \OK: passed 100 tests", as we would expect.
+2.4 Monitoring Test Data                                             QuickCheck provides support for the programmer to de ne
+
+  Perhaps it seems that we have tested the law for insert          his or her own test data generators, with control over the
+thoroughly enough to establish its credibility. However, we        distribution of test data, which we will look at in the next
+must be careful. Let us modify prop_Insert as follows2             section.
+  prop_Insert :: Int -> [Int] -> Property                          2.5 Infinite Structures
+  prop_Insert x xs =                                                 The Haskell function cycle takes a non-empty list, and
+    ordered xs ==>                                                 returns a list that repeats the contents of that list in nitely.
+      classify (null xs) "trivial" $                               Now, take a look at the following law, formulated in Quick-
+                                                                   Check as :
+        ordered (insert x xs)                                               3
+
+Checking the law now produces the message                            prop_DoubleCycle :: [Int] -> Property
+                                                                     prop_DoubleCycle xs =
+  OK, passed 100 tests (43% trivial).
+                                                                       not (null xs) ==>
+The classify combinator does not change the meaning of a                 cycle xs == cycle (xs ++ xs)
+law, but it classi es some of the test cases, in this case those   Although intuitively the law is true, it cannot be checked
+where xs is the empty list were classi ed as \trivial". Thus       since we are comparing two in nite lists using computable
+we see that a large proportion of the test cases only tested       equality ==, which does not terminate. Instead, we can refor-
+insertion into an empty list.                                      mulate the property as a logically equivalent one, by using
+  We can get more information than just labelling some test        the fact that two in nite lists are equal if all nite initial
+cases. The combinator collect will gather all values that          segments are equal.
+are passed to it, and print out a histogram of these values.
+For example, if we write:                                            prop_DoubleCycle :: [Int] -> Int -> Property
+                                                                     prop_DoubleCycle xs n =
+  prop_Insert :: Int -> [Int] -> Property
+                                                                       not (null xs) && n >= 0 ==>
+  prop_Insert x xs =
+                                                                         take n (cycle xs) == take n (cycle (xs ++ xs))
+    ordered xs ==>
+      collect (length xs) $                                        Another issue related to in nite structures is quanti cation
+        ordered (insert x xs)                                      over them. We will later see how to deal with properties
+we might get as a result:                                          that for example hold for all in nite lists, but in general it
+                                                                   is not clear how to formulate and execute properties about
+  OK, passed 100 tests.                                            structures containing bottom.
+  49% 0.
+  32% 1.
+  12% 2.
+                                                                   3. DEFINING GENERATORS
+  4% 3.
+  2% 4.
+                                                                   3.1 Arbitrary
+  1% 5.                                                              The way we generate random test data of course depends
+                                                                   on the type. Therefore, we have introduced a type class
+So we see that only 19 cases tested insertion into a list with     Arbitrary, of which a type is an instance if we can generate
+more than one element. While this is enough to provide             arbitrary elements in it.
+fairly strong evidence that the law holds, it is worrying that
+very short lists dominate the test cases so strongly. After          class Arbitrary a where
+all, it is easy to de ne an erroneous version of insert which          arbitrary :: Gen a
+nevertheless works for lists with at most one element.             Gen a  is an abstract type representing a generator for type
+   The reason for this behaviour, of course, is that the pre-      a . The programmer can either use the generators built in
+condition ordered xs skews the distribution of test cases          to QuickCheck as instances of this class, or supply a custom
+towards short lists. Every generated list of length 0 or 1         generator using the forAll combinator, which we saw in the
+is ordered, but only 50% of the lists of length 2 are. Thus        previous section. For now, we de ne the type Gen as
+test cases with longer lists are more likely to be rejected by     3
+                                                                     Note that leaving the condition not (null xs) out results
+2
+  $ is Haskell's in x function application.                        in an error, because cycle is not de ned for empty lists.
+  newtype Gen a = Gen (Rand -> a)                               As another example, we could generate arbitrary lists using
+Here Rand is a random number seed; a generator is just a          instance Arbitrary a => Arbitrary [a] where
+function which can manufacture an a in a pseudo random              arbitrary = oneof
+way. But we will treat Gen as an abstract type, so we de ne           [return [], liftM2 (:) arbitrary arbitrary]
+a primitive generator
+                                                                where we use liftM2 to apply the cons operator (:) to an
+  choose :: (Int, Int) -> Gen Int                               arbitrary head and tail. However, this de nition is not really
+to choose a random number in an interval, and we program        satisfactory, since it produces lists with an average length
+other generators in terms of it.                                of one element. We can adjust the average length of list
+   We also need combinators to build complex generators         produced by using frequency instead, which allows us to
+from simpler ones; to do so, we declare Gen to be an instance   specify the frequency with which each alternative is chosen.
+of Haskell's class Monad. This involves implementing the        We de ne
+methods of the Monad class                                        instance Arbitrary a => Arbitrary [a] where
+  return :: a -> Gen a                                              arbitrary = frequency
+  (>>=) :: Gen a -> (a -> Gen b) -> Gen b                             [ (1, return [])
+the rst one of which contructs a constant generator, and              , (4, liftM2 (:) arbitrary arbitrary) ]
+the second one being the monadic sequencing operator which      to choose the cons case four times as often as the nil case,
+generates an a, and passes it to its second argument to gen-    leading to an average list length of four elements.
+erate a b. The de nition of (>>=) needs to pass indepen-           However, for more general data types, it turns out that
+dent random number seeds to its two arguments, and is only      we need even ner control over the distribution of generated
+passed one seed, but luckily the Haskell random number li-      values. Suppose we de ne a type of binary trees, and a
+brary provides an operation to split one seed into two.         generator:
+  De ning generators for many types is now straightfor-
+ward. As examples, we give generators for integers and            data Tree a = Leaf a | Branch (Tree a) (Tree a)
+pairs:
+                                                                  instance Arbitrary a => Arbitrary (Tree a) where
+  instance Arbitrary Int where
+                                                                    arbitrary = frequency
+    arbitrary = choose (-20, 20)
+                                                                      [ (1, liftM Leaf    arbitrary)
+                                                                      , (2, liftM2 Branch arbitrary arbitrary) ]
+  instance (Arbitrary a, Arbitrary b) =>
+                          Arbitrary (a,b) where                 We want to avoid choosing a Leaf too often, hence the use
+    arbitrary = liftM2 (,) arbitrary arbitrary                  of frequency.
+In the second case we use a standard monadic function,             However, this de nition only has a 50% chance of termi-
+liftM2 , which is de ned in terms of return and (>>=), to       nating! The reason is that for the generation of a Branch to
+make a generator that applies the pairing operator (,) to       terminate, two recursive generations must terminate. If the
+the results of two other generators. QuickCheck contains          rst few recursions choose Branches, then generation termi-
+such declarations for most of Haskell's prede ned types.        nates only if very many recursive generations all terminate,
+                                                                and the chance of this is small. Even when generation ter-
+3.2 Generators for User-Defined Types                           minates, the generated test data is sometimes very large.
+   Since we de ne test data generation via an instance of       We want to avoid this: since we perform a large number of
+class Arbitrary for each type, then we must rely on the user    tests, we want each test to be small and quick.
+to provide instances for user-de ned types. In principle we        Our solution is to limit the size of generated test data.
+could try to generate these automatically, in a pre-processor   But the notion of a size is hard even to de ne in general for
+or via polytypic programming [2], but we have chosen in-        an arbitrary recursive datatype (which may include func-
+stead to leave this task to the user. This is partly because    tion types anywhere). We therefore give the responsibility
+we want QuickCheck to be a lightweight tool, easy to imple-     for limiting sizes to the programmer de ning the test data
+ment and easy to use in a standard programming environ-         generator. We change the representation of generators to
+ment; we don't want to oblige users to run their programs         newtype Gen a = Gen (Int -> Rand -> a)
+through a pre-processor between editing them and testing        where the new parameter is to be interpreted as some kind
+them. But another strong reason is that it seems to be very     of size bound. We de ne a new combinator
+hard to construct a generator for a type, without knowing
+something about the desired distribution of test cases.           sized :: (Int -> Gen a) -> Gen a
+   Instead of producing generators automatically, we pro-       which the programmer can use to access the size bound:
+vide combinators to enable a programmer to de ne his own        sized generates an a by passing the current size bound to
+generators easily. The simplest, called oneof, just makes a     its parameter. It is then up to the programmer to inter-
+choice among a list of alternative generators with a uniform    pret the size bound in some reasonable way during test data
+distribution. for example, if the type Colour is de ned by      generation. For example, we might generate binary trees
+  data Colour = Red | Blue | Green                              using
+then a suitable generator can be de ned by                        instance Arbitrary a => Arbitrary (Tree a) where
+  instance Arbitrary Colour where                                   arbitrary = sized arbTree
+    arbitrary = oneof
+      [return Red, return Blue, return Green]                     arbTree 0 = liftM Leaf arbitrary
+  arbTree n = frequency                                           variant :: Int -> Gen a -> Gen a
+    [ (1, liftM Leaf    arbitrary)                              where variant n g constructs a generator which transforms
+    , (4, liftM2 Branch (arbTree (n `div` 2))                   the random number seed it is passed in a way depending on
+                        (arbtree (n `div` 2))) ]                n, before passing it to g. This function must be de ned very
+With this de nition, the size bound limits the number of        carefully, so that all the generators we construct using it are
+nodes in the generated trees, which is quite reasonable.        independent. Given any list of integers [n1,n2,...nk], we
+  Now that we have introduced the notion of a size bound,       can construct a generator transformer
+we can use it sensibly in the generators for other types such     variant n1 . variant n2 . ... . variant nk
+as integers and lists (so that the absolute value respective    We de ne variant so that di erent lists of integers give
+length is bounded by the size). So the de nitions we pre-       rise to independent generator transformers (with a very high
+sented earlier need to be modi ed accordingly.                  probability).
+  We stress that the size bound is simply an extra, global         Now we can de ne instances of coarbitrary that choose
+parameter which every test data generator may access; ev-       between generator transformers depending on the argument
+ery use of sized sees the same bound4 . We do not attempt       value. For example, the boolean instance
+to `divide the size bound among the generators', so that for      instance Coarbitrary Bool where
+example a longer generated list would have smaller elements,        coarbitrary b =
+keeping the overall size of the structure the same. The rea-          if b then variant 0 else variant 1
+son is that we wish to avoid correlations between the sizes
+of di erent parts of the test data, which might distort the     transforms a generator in independent ways for True and for
+test results.                                                   False  ; the generators coarbitrary True g and coarbitrary
+  We do vary the size between di erent test cases: we begin     False g    will be independent. In a similar way, we can de-
+testing each property on small test cases, and then grad-         ne suitable instances for many other types. For example,
+ually increase the size bound as testing progresses. This       the integer instance just converts its integer argument into
+makes for a greater variety of test cases, which both makes     a sequence of bits, which are then used as generator trans-
+testing more e ective, and improves our chances of nding        formers in turn.
+enough test cases satisfying the precondition of conditional       Instances of Coarbitrary for recursive datatypes can be
+properties. It also makes it more likely that we will nd a      de ned according to a standard pattern. For example, the
+small counter example to a property, if there is one.           list instance is just
+                                                                  instance Coarbitrary a => Coarbitrary [a] where
+3.3 Generating Functions                                            coarbitrary []     = variant 0
+   If we are to check properties involving function valued          coarbitrary (x:xs) =
+variables, then we must be able to generate arbitrary func-           variant 1 . coarbitrary x . coarbitrary xs
+tions. Rather surprisingly, we are able to do so. To un-        The goal is that di erent lists should be mapped to inde-
+derstand how, notice that a function generator of type Gen      pendent generator transformers; we achieve this by map-
+(a->b) is represented by a function of type Int -> Rand ->      ping each constructor to an independent transformer, and
+a -> b. By reordering parameters, this is equivalent to the     composing these with transformers derived from each com-
+type a -> Int -> Rand -> b, which represents a -> Gen b.        ponent. Other recursive datatypes can be treated in the
+We can thus de ne                                               same way. Since the programmer is responsible for making
+  promote :: (a -> Gen b) -> Gen (a->b)                         these de nitions for user-de ned types, it is important that
+                                                                they be straightforward.
+and use it to produce a generator for a function type, pro-       Finally, we can even interpret functions as generator trans-
+vided we can construct a generator for the result type which    formers, with an instance of the form
+somehow depends on the argument value. We take care of            instance (Arbitrary a, Coarbitrary b) =>
+this dependence by de ning a new class,                                                  Coarbitrary (a->b) where
+  class Coarbitrary a where                                         coarbitrary f gen =
+    coarbitrary :: a -> Gen b -> Gen b                                arbitrary >>= \a -> coarbitrary (f a) gen
+whose method coarbitrary modi es a generator in a way           The idea is that we apply the given function to an arbitrary
+depending on its rst parameter. We will think of coarbitrary    argument, and use the result to transform the given gener-
+as producing a generator transformer from its rst argu-         ator. In this way, two functions which are di erent will give
+ment. Given this class, we can de ne                            rise to di erent generator transformers.
+                                                                   Note that, if we had tried to avoid needing to split random
+  instance (Coarbitrary a, Arbitrary b) =>
+                                                                number seeds by de ning the Gen monad as a state trans-
+                           Arbitrary (a->b) where
+                                                                former on the random seed, rather than a state reader, then
+    arbitrary =
+                                                                we would not have been able to de ne the promote func-
+      promote (\a -> coarbitrary a arbitrary)
+                                                                tion, and we would not have been able to generate random
+which generates an arbitary function that uses its argument     functions.
+to modify the generation of its result.
+   In order to de ne instances of Coarbitrary we need a way     4. IMPLEMENTING QUICKCHECK
+to construct generator transformers. We therefore de ne the       As we have seen, the function quickCheck can handle
+function                                                        properties with a varying number of arguments and di er-
+4
+  Unless the programmer explicitly changes it using the         ent result types. To implement this, we introduce the type
+resize combinator.                                              Property, and we create the type class Testable.
+     class Testable a where                                     generated terms using the default test data generator for
+       property :: a -> Property                                strings, then it is very unlikely that we would ever generate
+The Property type represents predicates that can be checked     uni able terms, since it is unlikely we would generate the
+by testing. This means that it needs to be able to gener-       same constructor name twice. Instead, we chose to generate
+ate random input, and nally product a test result. So, a        constructor names using
+Property is a computation in the Gen monad, ending in an          instance Arbitrary Name where
+abstract type Result, which keeps track of the boolean re-          arbitrary = sized $ \n -> oneof
+sult of the testing, the classi cations of test data, and the         [ return (Name ("v" ++ show i))
+arguments used in the test case.                                      | i <- [1..log n+1] ]
+     newtype Property = Prop (Gen Result)                       which gives us a good chance that generated terms will be
+Let us take a look at some instances of Testable. An easy       at least partially uni able. Likewise, we limited uni cation
+type to check is of course Bool. Further, functions for which   variables in test data to a small set.
+we can generate arbitrary arguments can be tested. And            Of course, we could have used the second Term type above
+lastly, even the property type itself is an instance, so that   and speci ed a custom test data generator with an explicit
+we can nest property combinators.                               forAll in each property. But it is more convenient to let test
+                                                                data be automatically generated using arbitrary, so one is
+     instance Testable Bool where                               encouraged to make distinctions explicit in types. There
+       property b = Prop (return (resultBool b))                are other advantages to doing so also: it permits the type
+                                                                checker to detect more errors. So, using QuickCheck changes
+     instance (Arbitrary a, Show a, Testable b) =>              the balance of convenience in the question of introducing
+                               Testable (a->b) where            new types in programs.
+       property f = forAll arbitrary f
+                                                                5.1.2 Checking Functional Properties
+     instance Testable Property where                              A uni er needs to manage the current substitution, and
+       property p = p                                           also the possibility of failures in recursive calls. A convenient
+Using the function property, it becomes easy to de ne the       way to do so is to use a monad. We de ned a uni cation
+function quickCheck. Its type is:                               monad M, represented by a function, with operations
+     quickCheck :: Testable a => a -> IO ()                       setV :: Var -> Term -> M ()
+                                                                  getV :: Var -> M Term
+More details of the implementation can be found in the ap-
+pendix.                                                         to read and write variables, among others. We were able
+                                                                to de ne an `extensional equality' operator eqM on monadic
+5.     SOME CASE STUDIES                                        values, and check both the monad laws and properties such
+                                                                as
+5.1 Unification                                                   prop_SetGet v t = (do setV v t; getV v)
+   As a rst (and rather pathological) case study, we dis-                     `eqM` (do setV v t; return t)
+cuss a un cation algorithm which we have developed along
+with a QuickCheck speci cation. This was quite revealing,       5.1.3 Errors Found
+both as regards the impact that QuickCheck has on program-        It would be nice to be able to report that QuickCheck
+ming, and the pitfalls that must be avoided. It is too large    found a large number of errors in this example. In fact, no
+to present in detail, so we will just discuss the lessons we    errors at all were found in the uni er itself. This is probably
+learned.                                                        more a re ection on the number of times the authors have
+                                                                programmed uni ers previously, than on the e ectiveness of
+5.1.1 Impact on Type Definitions                                QuickCheck | we know how to do it, quite simply.
+  First of all, the use of QuickCheck had an impact on the        On the other hand, we did nd errors in the speci cation.
+design of the types in the program. We de ned the type of       For example, we de ned a substitution function which re-
+terms to be uni ed as                                           peatedly substitutes until no variables in the domain of the
+     data Term    = Var Var | Constr Name [Term]
+                                                                substitution remain, and stated the obvious property
+     newtype Var = Variable Nat                                   prop_SubstIdempotent s t =
+     newtype Name = Name String                                     subst s (subst s t) == subst s t
+
+rather than the equivalent                                      QuickCheck revealed this property to be false: it holds only
+                                                                for acyclic substitutions (otherwise an in nite term is gen-
+     data Term = Var Int | Constr String [Term]
+                                                                erated, and the equality test loops). This error was found
+which we would probably have chosen otherwise. The type         using the function verboseCheck, which prints out the ar-
+we used distinguishes between a string used as a constructor    guments to every test case before it checks it.
+name, and a string used in other contexts, and between a          We were obliged to correct the speci cation to
+natural number used as a variable name, and an integer used       prop_SubstIdempotent s t =
+in other contexts.                                                  acyclic s ==> subst s (subst s t) == subst s t
+  The reason we chose to make these distinctions in the
+type is that it enabled us to de ne a di erent test data        Thus QuickCheck made us think harder about the properties
+generator for Names for example, than for strings. Had we       of our code, and document them correctly.
+   On the downside, formulating the speci cation correctly         Furthermore, the Lava system de nes combinators for cir-
+turned out to be quite a lot of work, perhaps more than            cuits, such as sequential composition (>->), parallel com-
+writing the implementation. This was partly because pred-          position (<|>), and column, which takes one circuit and
+icates such as acyclic are non-trivial to de ne; a good set        replicates it in a column of circuits, connecting the vertical
+theory library would have helped here.                             wires.
+5.1.4 A False Sense of Security                                    5.2.2 Properties in Lava
+  The most serious pitfall we uncovered with this experi-            Properties of circuits can be de ned in a similar way. For
+ment was the false sense of security that can be engendered        example, to de ne the property that a certain circuit is com-
+when one's program passes a large number of tests in trivial       mutative, we say:
+cases. We have already referred to this problem when we              prop_Commutative circ (a, b) =
+discussed conditional properties; in this example, it bit us           circ (a, b) <==> circ (b, a)
+hard.                                                              where <==> is logical equivalence lifted to arbitrary types
+  Many properties of uni cation apply to the case when             containing signals, in this case a pair.
+uni cation succeeds. They can be stated conveniently in              Properties can be formally veri ed. We do this by provid-
+the form                                                           ing symbolic inputs to the circuit or property, and calculat-
+  prop_Unify t1 t2 = s /= Nothing ==> : : :                        ing a concrete expression in a Haskell datatype, representing
+      where s = unifier t1 t2                                      the circuit.
+since our uni er returns Nothing when it fails. With a lit-          We can then write this expression to a le and call an
+tle re ection, we see that two randomly chosen terms are           external theorem prover. All this is done by the overloaded
+fairly likely to be uni able, since variables occur quite often,   Lava function verify. Here is how we can use it to verify
+and if either term is a variable then uni cation will almost       that a so-called half adder component is commutative:
+certainly succeed. On the other hand, if neither term is a           Main> verify (prop_Commutative halfAdd)
+variable then the probability that they will unify is small.         Proving: ... Valid.
+Thus the case where one term is a variable is heavily over-        The Lava system provides a number of functions and combi-
+represented among the test cases that satisfy the precondi-        nators to conveniently express properties and formally verify
+tion | we found that over 95% of test cases had this prop-         them.
+erty. Although QuickCheck succeeded in `verifying' every
+property, we can hardly consider that they were thoroughly         5.2.3   QuickCheck   in Lava
+tested.                                                               Though we are able to verify properties about circuits in
+   The solution was to use a custom test data generator            Lava, we greatly bene t from extending it with a testing
+                                                                   tool like QuickCheck. There are two main reasons for that.
+  prop_Unify =                                                        The rst one is that calling an external theorem prover
+    forAll probablyUnifiablePair $ \(t1,t2) ->                     is a very heavyweight process. When verifying, say, a 32-
+      s /= Nothing ==>      :::                                    bit multiplier, the formulas that we generate for external
+   where s = unifier t1 t2                                         theorem proving are quite big and we often have to wait for
+We generated `probably uni able pairs' by generating one           a long time to get an answer.
+random term, and replacing random subterms by variables               So, a typical development cycle is to write down the spec-
+in two di erent ways. This usually generates uni able terms,       i cation of the circuit rst, then make an implementation,
+although may fail to when variables are used inconsistently        QuickCheck it for obvious bugs, and lastly, call the external
+in the two terms. With this modi cation, the proportion of         theorem prover for verifying the correctness.
+trivial cases fell to a reasonable 20{25%.                            Here is an example of how to use QuickCheck in Lava:
+   This experience underlines the importance of investigating        Main> quickCheck (prop_Commutative halfAdd)
+the distribution of actual test cases, whenever conditional          OK: passed 100 tests.
+properties are used.                                               Adding this testing methodology to Lava turned out to be
+5.2 Circuit Properties                                             quite straightforward, because Lava already had a notion of
+                                                                   properties. Testing can be done for all circuit types, even
+5.2.1 Lava in a Nutshell                                           sequential circuits (containing latches). We simply check the
+                                                                   circuit property for a sequence of inputs.
+   Lava [3, 7] is a tool to describe, simulate and formally ver-
+ify hardware. Lava is a so-called embedded language, which         5.2.4 Higher Order Testing
+means that the circuit descriptions and properties are all           The second reason for using testing in Lava is simply that
+expressed in an existing programming language, in this case        we can test more properties than we can formally verify!
+Haskell.                                                           The external theorem provers that are connected to Lava
+   The idea is to view a hardware circuit as a function from       can only deal with at most rst-order logics, and the Lava
+signals of inputs to signals of outputs. The Lava system           system is only able to generate formulas of that type.
+provides primitive circuits, such as and2, xor2, and delay.          Sometimes, we would like to verify properties about com-
+More complicated circuits are de ned by combining these.           binators. For example, proving that column distributes over
+Circuits de ned in Lava can be simulated as follows: one           (>->):
+provides inputs and the outputs are calculated.                      prop_ComposeSeqColumn circ1 circ2 inp =
+  Main> simulate and2 (high, low)                                          column (circ1 >-> circ2) inp
+  high                                                                <==> (column circ1 >-> column circ2) inp
+is very hard to verify in Lava for all circ1 and circ2. In       Note that we collect some statistics information: \contra-
+fact, such properties are hard to verify automatically in gen-   diction" when the result was Nothing, and the size of m in
+eral (we can do it for small xed sizes however). But since       the case of Just m. We also expressed that we disqualify a
+we can randomly generate functions, we can at least test         test case when stalmarck returns Just [].
+these kind of properties for arbitrary circuits.                    With the help of this property, QuickCheck found 3 bugs!
+   A drawback is that we have to x the types of these cir-       These bugs were due to implicit unjusti ed assumptions we
+cuits, whereas the combinators themselves, and thus the          had about the input. The implementations of both algo-
+properties about them, are polymorphic in the circuits' in-      rithms assumed that no clauses in the input could contain
+put and output types.                                            the same literal twice, and the stalmarck function assumed
+                                                                 that none of the input clauses was empty.
+5.2.5 Errors Found                                                  The data generator clauses is de ned using the same
+   The authors used the QuickCheck library while developing      techniques as in section 5.1.1. Testing the property took
+a collection of arithmetic circuits. Previously, testing was     about 30 seconds, and from the output we could see that
+already used in the development process, but only in a very      the distribution of Nothing vs. Just m was about 50/50.
+limited and ad-hoc way. Now, much more thorough testing
+was possible.                                                    5.4 Pretty Printing
+   The errors we found in these particular circuits were of         Andy Gill reported an interesting story about using Quick-
+two kinds. Firstly, we found errors that our formal veri ca-     Check   to us. He used it in developing a variant of Wadler's
+tion method would have found as well: logical errors in the      pretty printing combinator library [18] in Java. First, he
+circuits. But secondly, we also found errors due to the fact     implemented his variant functionally, using Haskell. Then,
+that random input also means random input size. For ex-          still using Haskell, he used a state monad with exceptions to
+ample, for an n-bit  m-bit adder, we only use and formally      develop an imperative implementation of the same library.
+verify the circuit for speci c input sizes. Random testing       The idea was that the second implementation models what
+checks many more combinations, and it often turned out           goes on in a Java implementation.
+that we had forgotten to de ne one of these cases!                  Then, he expressed the relationship between the two dif-
+                                                                 ferent implementations using QuickCheck properties. He
+5.3 Propositional Theorem Proving                                writes: \This quickly points out where my reasoning is faulty,
+   For teaching purposes, we implemented two di erent well-      and provides great tests to catch the corners of the implemen-
+known methods of checking if a set of propositional logic        tation. Three problems were found, the third of which showed
+clauses is contradictory. One of these methods was the           that I had merged two concepts in my implementation that
+Davis-Putnam method [8], which uses backtracking to gen-         I should not have."
+erate a list of all models. The other one was Stalmarck's          Furthermore, he made an improvement in the way Quick-
+method [16], which is an incomplete method and uses a            Check reports counter examples. Sometimes, the counter
+variant on the dilemma proof system to gather information        examples found are very large, and it is dicult to go back
+about the literals in the clause set.                            to the property and understand why it is a counter example.
+  type Clause = [Lit]       -- disjunction                       However, when the counter example is an element of a tree-
+  type Model = [Lit]        -- conjunction                       shaped datatype, the problem can often be located in one of
+                                                                 the sub-trees of the counter example found. Gill extended
+  davisPutnam :: [Clause] -> [Model]                             the Arbitrary class with a new method
+  st
+    almarck   :: Int -> [Clause] -> Maybe Model                    smaller :: a -> [a]
+The stalmarck function takes an extra argument, an Int,         which is intended to return a list of smaller, but similar
+which is the so-called \saturation level", a parameter which     values to its argument { for example, direct subtrees. He
+limits the depth of the proofs, and usually lies between 0 and   adapted the quickCheck function so that when a counter
+3. If the result of stalmarck is Nothing, it means that there   example is found, it tries to nd a smaller one using this
+was a contradiction. If the result is Just m, it means that      function. In some cases much smaller counterexamples were
+every model of the clause set should have m as a sub-model.      found, greatly reducing the time to understand the bug
+   Since davisPutnam is much more straight-forward to im-        found.
+plement than stalmarck, we wanted to check the latter             The last step Gill made in developing his Java pretty
+against the rst. Here is how we formulate the informal           printing library was porting the state and exception monad
+property stated above:                                           model in Haskell to Java. He then used QuickCheck to gen-
+  prop_St
+         almarck_vs_DP :: Property                               erate a large number of test inputs for the Java code, in
+  prop_St
+         almarck_vs_DP =                                         order to check that the Java implementation was equivalent
+    forAll clauses $ \cs ->                                      to the two Haskell models.
+      forAll (choose (0,3)) $ \sat ->
+        case stalmarck sat cs of                                5.5 Edison
+           Nothing ->                                               Chris Okasaki's Edison is a library of ecient data struc-
+             collect "contradiction" $                           tures suitable for implementation and use in functional pro-
+               davisPutnam cs == []                              gramming languages. He has used QuickCheck to state and
+                                                                 test properties of the library. Every data structure in the
+            Just m ->                                            library has been made an instance of Arbitrary, and he
+              not (null m) ==>                                   has included several extra modules especially for formulating
+                collect (length m) $                             properties about these data structures. He reports: \My ex-
+                  all (m `subModel`) (davisPutnam cs)            perience has mostly been that of a very satis ed user. Quick-
+Check   lets me test Edison with probably 25% (maybe less!)       they call are tested independently. So even when QuickCheck
+of the e ort of my previous test suite, and does a much better    is used to test a large program, we always test a small part
+job to boot."                                                     at a time. Therefore we may expect random testing to work
+   Okasaki also mentions a drawback, having to do with the        particularly well.
+Haskell module system. He often uses one speci cation of             Given this, together with the much greater diculty of
+a data structure together with di erent implementations.          automating systematic testing for Haskell, our choice of ran-
+A natural way to do this is to place the speci cation in one      dom testing is clear.
+module, and each implementation in a seperate module. But
+since the speci cation refers to the implementation, then the     6.2 Correctness Criteria
+speci cation module must import the implementation one               The problem of determining whether a test is passed or
+currently under test. Okasaki was obliged to edit the spec-       not is known as the oracle problem. One solution is to com-
+i cation module by hand before each test, so as to import         pare program output with that of another version of the pro-
+the right implementation! Much preferable would be to pa-         gram, perhaps an older one, or perhaps a simpler, slower,
+rameterise the speci cation on an implementation module;          but `obviously correct' version. Alternatively, an executable
+ML-style functors would be really helpful here!                   speci cation might play the same r^ole. This kind of oracle
+                                                                  can easily be expressed as a QuickCheck property, although
+6.   DISCUSSION                                                   our properties are much more general.
+                                                                     However, often one can check that a program's output is
+6.1 On Random Testing                                             correct much more eciently than one can compute the out-
+   At rst sight, random selection of test cases may seem          put. Blum and Kannan exploit this in their work on result-
+a very naive approach. Systematic methods are often pre-          checking [4]: a program checker is de ned to be another
+ferred: in general, a test adequacy criterion is de ned, and      program which classi es the program's output as correct or
+testing proceeds by generating test cases which meet the          buggy, with a high probability of classifying correctly, and
+adequacy criterion. For example, a simple criterion is that       does so with strictly lower complexity. They distinguish pro-
+every reachable statement should be executed in at least          gram checking from program testing: their proposal is that
+one test, a more complex one that every feasible control-         programs should always check their output, and indeed in
+  ow path (with exceptions for loops) be followed in at least     further work Blum et al. showed how programs which usu-
+one test. A wide variety of adequacy critera have been pro-       ally produce correct answers can even correct wrong output
+posed; a recent survey is [19].                                   [5] (in particular domains). Of course, result checkers can
+   We have chosen not to base QuickCheck on such an ade-          also be expressed as QuickCheck properties, although we use
+quacy criterion. In part, this is because many criteria would     them for testing rather than as a part of the nal program.
+need reinterpretation before they could be applied to Haskell        QuickCheck's property language is however more general
+programs { it is much less clear, for example, what a control-    than result checking. Via conditional properties or speci c
+  ow path is in a language with higher-order functions and        test data generators, we can express properties which hold
+lazy evaluation. In part, such a criterion would force us to      only for a subset of all possible inputs. Thus we avoid testing
+use much more heavyweight methods { even measuring path           functions in cases which lead to run-time errors, or cases in
+coverage, for example, would require compiler modi cations        which we do not care about the result. For example, we do
+and thus tie QuickCheck to a particular implementation of         not test insertion into an unordered list | there is no point
+Haskell (namely the one we modi ed to collect path infor-         in doing so. Yet a result checker must verify that a program
+mation). Generating test data to exercise a particular path       produces the `correct' output in all cases, even those which
+requires constraint solving: one must nd input values which       are uninteresting. Moreover, QuickCheck properties are not
+make the series of tests along the given path produce spec-       limited to checking the result of an individual function call
+i ed results. While such constraint solving may be feasible       | the property that an operator is associative, for example,
+for arithmetic data, for the rich symbolic datatypes found        cannot really be said to check the result of any individual use
+in Haskell programs it is a dicult research problem in its       of the operator, but still expresses a useful `global' property
+own right.                                                        that can be checked by testing.
+   However, apart from the diculty of automating system-            The idea of testing the properties in a speci cation di-
+atic testing methods for Haskell, there is no clear reason to     rectly was used in the DAISTS system [10] for testing ab-
+believe that doing so would yield better results. In 1984,        stract data types, which compiled equational properties into
+Duran and Ntafos compared the fault detection probability         testing code, although test cases had to be supplied by the
+of random testing with partition testing, and discovered that     user. Lacking automatic test case generation, DAISTS did
+the di erences in e ectiveness were small [9]. Hamlet and         not need equivalents of our conditional and quanti ed prop-
+Taylor repeated their study more extensively, and corrobo-        erties. Although the language used was imperative, abstract
+rated the original results [12]. Although partition testing is    data type operations had to be forbidden to side-e ect their
+slightly more e ective at exposing faults, to quote Hamlet's      arguments, thus the programs to be tested were essentially
+excellent survey [11], \By taking 20% more points in a ran-       restricted to be functional. Later work aims to relax this
+dom test, any advantage a partition test might have had is        restriction: Antoy and Hamlet describe a technique for test-
+wiped out."                                                       ing C++ classes against an algebraic speci cation, which is
+   For small programs in particular, it is likely that random     animated in order to predict the correct result [1]. How-
+test cases will indeed exercise all paths, for example, so that   ever, the speci cation language must be restricted in order
+test coverage is likely to be good by any measure. Using          to guarantee that speci cations can be animated.
+QuickCheck, we apply random testing at a          ne grain: we       There seems to be no published work on automatic test-
+check properties of individual functions, but the functions       ing of functional programs against speci cations. We simply
+observe that functional programs and property based speci-          But what, precisely, do we mean by `morally'? We cannot
+ cations are a very good match: we can use the given prop-         x the problem just by reinterpreting equality for the Gen
+erties directly for testing. Moreover, embedding the speci -      type, claiming the two sides are just di erent representations
+cation language in Haskell permits us to write very powerful      of the same abstract generator. This isn't good enough,
+and exible properties, with a minimum of learning e ort           because we can actually observe the di erence at other types
+required.                                                         by supplying a random number seed - something we have to
+                                                                  be able to do if the Gen type is to be useful. Instead we have
+6.3 Test Data Generation                                          to reinterpret what we mean by program equivalence in the
+   Commercial random testing tools generate test data in          presence of random number generation.
+limited domains, with the goal of matching the distribution         We note that this diculty is by no means con ned to
+of actual data for the system under test { the so-called oper-    Haskell: the imperative program
+ational pro le. In this case, statistical inferences about the
+mean time between system failures can be drawn from the             a := random(); b := random(); c := a - b;
+test results.                                                     is morally equivalent to the same program with the assign-
+   In order to generate more complex data, it is necessary        ments reversed in the same sense, but of course produces a
+to provide a description of the data's structure. A popu-         di erent result. There is some interesting semantic theory
+lar approach to doing so uses grammars. However, it was           to be done here.
+realised very early that context-free grammars cannot ex-
+press all the desired properties of test data { for example,      6.5 On Lazy Evaluation
+that a generated random program contains no undeclared              We have argued in the past that lazy evaluation is an in-
+identi ers. Therefore the grammars were enhanced with ac-         valuable programming tool, that radically changes the way
+tions [6], or extended to attribute grammars. This approach       programs can be structured [13]. Yet QuickCheck is (of
+has been most used for testing compilers, although Maurer         course) only able to test computable properties. Is there
+argues for its use in many contexts [15].                         a con ict here?
+   Grammars have been used for systematic testing, where            In fact, the con ict is much less than one might imag-
+for example the generated test data is required to exercise       ine. As we have shown above, we can perfectly well use
+each production at least once. Such an adequacy crite-            in nite structures in speci cations, provided the properties
+rion maybe be particularly appropriate for compiler test-         we actually test are computable { for example, we can test
+ing. Maurer also used grammars for random testing [15],           that arbitrarily long pre xes of in nite lists are equal, rather
+and noted the termination problem for recursive grammars.         than comparing the lists themselves. Our Gen monad has a
+His solution, though, was just to increase the probabilities of   lazy bind operation (because we split the random number
+generating leaves so that eventual termination is guaranteed.     seed, rather than threading it through rst one operand,
+Our experience is that this results in far too high a propor-     then the other), and so we can freely de ne generators that
+tion of trivial test cases, and therefore inecient testing {     produce in nite results. What we cannot do is observe non-
+more tests must be run to exercise the program properly.          termination in a test result. So we cannot test, for example,
+We believe our method of controlling sizes is much superior.      the property
+   It seems that the need to learn a complex language of ex-
+tended grammars has hindered the adoption of these meth-            reverse (xs++undefined) == undefined
+ods in practice. By embedding a test generator language           On the other hand, in a sense a human tester cannot ob-
+in Haskell, we provide (at least) the same capabilities, but      serve non-termination either, and if we have been able to
+spare the programmer the need to learn more than a few new        test lazy programs satisfactorily by hand so far, then we are
+operators. At the same time we provide all the power and          not in a worse position if we use QuickCheck. Yet a human
+  exibility needed to generate test data satisfying complex in-   tester can observe that reverse (xs++undefined) produces
+variants, in a language the programmer already knows. By          an error message (from the evaluation of undefined) without
+linking generators to types via Haskell's class system, we re-    producing any other output rst, and can thus infer that the
+lieve the programmer of the need to specify generators at all     property above holds. The problem is that the Haskell stan-
+in many cases, and where they must be speci ed, the pro-          dard provides no way for a program to make the same ob-
+grammer's work is usually limited to specifying generators        servation. Yet there are various extensions of Haskell which
+for his or her own new types.                                     do indeed make this possible. Some work done by Andy Gill
+6.4 On Randomness                                                 has shown that, given such extensions, we could formulate
+   We have encountered some interesting problems in reason-       and check properties such as the one above using QuickCheck
+ing about programs which use random number generation.            also.
+In particular, the Gen monad which QuickCheck is based on         6.6 Some Reflections
+is not a monad at all! Consider the rst monad law:                  We are convinced that one of the major advantages of
+  return x >>= f = f x                                            using QuickCheck is that it encourages us to formulate for-
+Since our implementation of bind splits its random number         mal speci cations, thus improving our understanding of our
+seed to yield the seeds passed to each operand, then f is         programs. While it is open to the programmer to do this
+passed di erent seeds on the two sides of the equation, and       anyway, few really do, perhaps because there is little short
+may therefore produce di erent results. So the law simply         term payo , and perhaps because a speci cation is of less
+does not hold. Morally, however, we consider the law to be        value if there is no check at all that it corresponds to the
+true, because the two sides produce the same distribution of      implemented program. QuickCheck addresses both these is-
+results, even if the results di er for any particular seed.       sues: it gives us a short-term payo via automated testing,
+and some reason to believe that properties stated in a mod-         8. REFERENCES
+ule actually hold.
+   We have observed that the errors we nd are divided                [1] S. Antoy and R. Hamlet. Automatically checking an
+roughly evenly between errors in test data generators, er-               implementation against its formal speci cation. In
+rors in the speci cation, and errors in the program. The                 Irvine Software Symposium, pages 29{48, March 1992.
+  rst category is useless to discover (except insofar as it helps    [2] Roland Backhouse, Patrik Jansson, Johan Jeuring,
+with further testing) { it tells us nothing about the actual             and Lambert Meertens. Generic Programming - An
+program. The third category is obviously useful { in a sense             Introduction. In Lecture notes in Computer Science,
+these are the errors we test in order to nd. But the second              volume 1608, 1999.
+category is also important: even if they do not reveal a mis-        [3] P. Bjesse, K. Claessen, M. Sheeran, and S. Singh.
+take in the code, they do reveal a misunderstanding about                Lava: Hardware Design in Haskell. In International
+what it does. Correcting such misunderstandings improves                 Conference on Functional Programming, Baltimore,
+our ability to make use of the tested code correctly later.              1998. ACM.
+   When formulating speci cations one rapidly discovers the          [4] M. Blum and S. Kannan. Designing programs that
+need for a library of functions that implement common math-              check their work. In Proc. 21st Symposium on the
+ematical abstractions. We are developing an implementa-                  Theory of Computing, pages 86{97. ACM, May 1989.
+tion of nite set theory for use with QuickCheck; many of             [5] M. Blum, M. Luby, and R. Rubinfeld.
+the abstractions in it are too inecient to be of much use in            Self-testing/correcting with applications to numerical
+programs, but in speci cations, where the object is to state             problems. In Proc. 22nd Symposium on the Theory of
+properties as clearly and simply as possible, they come into             Computing, pages 73{83. ACM, May 1990.
+their own. Because of this di erence in purpose, there is a          [6] A. Celentano, S. C. Reghizzi, P. Della Vigna, and
+need for libraries speci cally targeted at speci cations.                C. Ghezzi. Compiler testing using a sentence
+   The major limitation of QuickCheck is that there is no                generator. Software { Practice & Experience,
+measurement of test coverage: it is up to the user to in-                10:897{918, 1980.
+vestigate the distribution of test data and decide whether           [7] K. Claessen and D. Sands. Observable Sharing for
+suciently many tests have been run. Although we provide                 Functional Circuit Description. In Asian Computer
+ways to collect this information, we cannot compel the pro-              Science Conference, Phuket, Thailand, 1999. ACM
+grammer to use them. A programmer who does not risks                     Sigplan.
+gaining a false sense of security from a large number of in-         [8] M. Davis and H. Putnam. A computing procedure for
+adequate tests. Perhaps we could de ne adequacy measures                 quanti cation theory. Journal of the Association for
+just on the generated test data, and thus warn the user at               Computing Machinery, 7(3):201{215, 1960.
+least in this kind of situation.                                     [9] J. Duran and S. Ntafos. An evaluation of random
+                                                                         testing. Transactions on Software Engineering,
+7.   CONCLUSIONS
+                                                                         10(4):438{444, July 1984.
+                                                                    [10] J. Gannon, R. Hamlet, and P. McMullin. Data
+   We have taken two relatively old ideas, namely speci ca-              abstraction implementation, speci cation, and testing.
+tions as oracles and random testing, and found ways to make              Trans. Prog. Lang. and Systems, (3):211{223, 1981.
+them easily available to Haskell programmers. Firstly, we           [11] D. Hamlet. Random testing. In J. Marciniak, editor,
+provide an embedded language for writing properties, giv-                Encyclopedia of Software Engineering, pages 970{978.
+ing expressiveness without the learning cost. The language               Wiley, 1994.
+contains convenient features, such as quanti ers, condition-        [12] R. Hamlet and R. Taylor. Partition testing does not
+als and test data monitors. Secondly, we provide type-based              inspire con dence. Transactions on Software
+default random test data generators, including random func-              Engineering, 16(12):1402{1411, December 1990.
+tions, greatly reducing the e ort of specifying them. Thirdly,      [13] J. Hughes. Why Functional Programming Matters. In
+we provide an embedded language for specifying custom test               D. Turner, editor, Research Topics in Functional
+data generators, which can be based on the default genera-               Programming. Addison Wesley, 1990.
+tors, giving a ner control over test data distribution. We          [14] M. P. Jones. The Hugs distribution. Currently
+also introduce a novel way of controlling size when generat-             available from http://haskell.org/hugs , 1999.
+ing random elements of recursive data types.
+   Further, we demonstrate that the combination of these            [15] P. M. Maurer. Generating test data with enhanced
+old techniques works extremely well for Haskell. The func-               context-free grammars. IEEE Software, 7(4):50{56,
+tional nature allows for local and ne-grained properties,                1990.
+since all dependencies of a function are explicit. And pre-         [16] Gunnar Stalmarck. A System for Determining
+cisely random testing is known to work very well for small,              Propositional Logic Theorems by Applying Values and
+  ne-grained programs, and is e ective in nding faults.                  Rules to Triplets that are Generated from a Formula,
+   Lastly, the tool is lightweight and easy to use, and pro-             1989. Swedish Patent No. 467 076 (approved 1992),
+vides a short-term payo for explicitly stating properties of             U.S. Patent No. 5 276 897 (1994), European Patent
+functions in a program, which greatly increases the under-               No. 0403 454 (1995).
+standing of the program, for the programmer as well as for          [17] Philip Wadler. Theorems for free! In International
+documentation purposes.                                                  Conference on Functional Programming and Computer
+   Acknowledgements: We would like to thank Andy Gill,                   Architecture, London, September 1989.
+Chris Okasaki, and the anonymous referees for their useful          [18] Philip Wadler. A prettier printer, March 1998. Draft
+comments on this paper.                                                  paper.
+[19] H. Zhu, P. Hall, and J. May. Software unit test              instance Coarbitrary Bool where
+     coverage and adequacy. Computing Surveys,                      coarbitrary b = variant (if b then 0 else 1)
+
+     29(4):366{427, December 1997.                                instance Coarbitrary Int where
+                                                                    coarbitrary n
+                                                                      | n == 0    = variant 0
+Appendix: Implementation                                              | n < 0     = variant 2 . coarbitrary (-n)
+Here, we show the implementation of the QuickCheck library,           | otherwise = variant 1 . coarbitrary (n `div` 2)
+
+except for the function quickCheck. The source code of            instance (Coarbitrary a, Coarbitrary b)
+QuickCheck is available from www.cs.chalmers.se/~rjmh/-                 => Coarbitrary (a, b) where
+QuickCheck/.                                                        coarbitrary (a, b) = coarbitrary a . coarbitrary b
+
+module QuickCheck where                                           instance Coarbitrary a => Coarbitrary [a] where
+                                                                    coarbitrary []     = variant 0
+import Monad ; import Random                                        coarbitrary (a:as) =
+                                                                      variant 1 . coarbitrary a . coarbitrary as
+-- Gen
+                                                                  instance (Arbitrary a, Coarbitrary b)
+newtype Gen a = Gen (Int -> Rand -> a)                                  => Coarbitrary (a -> b) where
+                                                                    coarbitrary f gen =
+choose :: Random a => (a, a) -> Gen a                                 arbitrary >>= ((`coarbitrary` gen) . f)
+choose bounds = Gen (\n r -> fst (randomR bounds r))
+                                                                  -- Property
+variant :: Int -> Gen a -> Gen a
+variant v (Gen m) = Gen (\n r ->                                  newtype Property = Prop (Gen Result)
+  m n (rands r !! (v+1)))
+ where                                                            data Result = Result
+  rands r0 = r1 : rands r2 where (r1, r2) = split r0                fok :: Maybe Bool, stamp :: [String], arguments :: [String]g
+promote :: (a -> Gen b) -> Gen (a -> b)                           nothing :: Result
+promote f = Gen (\n r -> \a ->                                    nothing = Result
+  let Gen m = f a in m n r)                                         fok = Nothing, stamp = [], arguments = []g
+sized :: (Int -> Gen a) -> Gen a                                  result :: Result -> Property
+sized fgen = Gen (\n r ->                                         result res = Prop (return res)
+  let Gen m = fgen n in m n r)
+                                                                  class Testable a where
+instance Monad Gen where                                            property :: a -> Property
+  return a     = Gen (\n r -> a)
+  Gen m1 >>= k =                                                  instance Testable Bool where
+    Gen (\n r0 -> let (r1,r2) = split r0                            property b = result (nothingf ok = Just b g)
+                      Gen m2 = k (m1 n r1)
+                   in m2 n r2)                                    instance Testable Property where
+                                                                    property prop = prop
+elements :: [a] -> Gen a
+elements xs = (xs !!) `liftM` choose (0, length xs - 1)           instance (Arbitrary a, Show a, Testable b)
+                                                                                              => Testable (a -> b) where
+vector :: Arbitrary a => Int -> Gen [a]                             property f = forAll arbitrary f
+vector n = sequence [ arbitrary | i <- [1..n] ]
+                                                                  evaluate :: Testable a => a -> Gen Result
+oneof :: [Gen a] -> Gen a                                         evaluate a = gen where Prop gen = property a
+oneof gens = elements gens >>= id
+                                                                  forAll :: (Show a, Testable b) => Gen a -> (a->b) -> Property
+frequency :: [(Int, Gen a)] -> Gen a                              forAll gen body = Prop $
+frequency xs = choose (1, sum (map fst xs)) >>= (`pick` xs)         do a   <- gen
+ where                                                                 res <- evaluate (body a)
+  pick n ((k,x):xs) | n <= k    = x                                    return (arg a res)
+                    | otherwise = pick (n-k) xs                    where
+                                                                    arg a res = resf arguments = show a : arguments res g
+-- Arbitrary ; Coarbitrary
+                                                                  (==>) :: Testable a => Bool -> a -> Property
+class Arbitrary a where                                           True ==> a = property a
+  arbitrary :: Gen a                                              False ==> a = result nothing
+
+instance Arbitrary Bool where                                     label :: Testable a => String -> a -> Property
+  arbitrary = elements [True, False]                              label s a = Prop (add `fmap` evaluate a)
+                                                                   where add res = resf stamp = s : stamp res g
+instance Arbitrary Int where
+  arbitrary = sized (\n -> choose (-n,n))                         classify :: Testable a => Bool -> String -> a -> Property
+                                                                  classify True name = label name
+instance (Arbitrary a, Arbitrary b) => Arbitrary (a, b) where     classify False _    = property
+  arbitrary = liftM2 (,) arbitrary arbitrary
+                                                                  collect :: (Show a, Testable b) => a -> b -> Property
+instance Arbitrary a => Arbitrary [a] where                       collect v = label (show v)
+  arbitrary = sized (\n -> choose (0,n) >>= vector)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (a -> b) where
+  arbitrary = promote (`coarbitrary` arbitrary)
+
+class Coarbitrary a where
+  coarbitrary :: a -> Gen b -> Gen b
+

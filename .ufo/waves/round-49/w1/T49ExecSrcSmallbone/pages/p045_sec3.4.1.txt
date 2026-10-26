@@ -1,0 +1,52 @@
+                                                                              45
+
+
+Although QuickSpec can run given any signature, we discovered that if Quick-
+Spec is used without sufficient thought, the result is often disappointing. We
+needed to use our ingenuity to extend the signature with useful auxiliaries, such
+as negate, precision, + and max, to get the best out of QuickSpec.
+Since QuickSpec is unsound, it may generate equations which are not true,
+as it did once in our case study. However, even these false equations can be
+quite informative, since they are nearly true—they are simple statements which
+passed a few hundred test cases. They are thus likely misconceptions about the
+code, and formulating them, then discovering their falsehood by more exten-
+sive testing, contributes in itself to understanding of the code. (“You might
+think that such-and-such holds, but oh no, consider this case!”). We regularly
+include such negative properties in QuickCheck specifications, to prevent the
+same misconception arising again. QuickSpec runs relatively few tests of each
+equation (several hundred), and so, once the most interesting equations have
+been selected, then it is valuable to QuickCheck them many more times to
+make sure that they are true. It can also be worthwhile, just as in random
+testing in general, to tweak the test data generator to get a better distribution
+of random data.
+QuickSpec’s equation filtering mostly did a fine job of reducing the number
+of generated equations. However, it sometimes helped to alter the signature to
+make QuickSpec’s job easier—such as replacing sub by the simpler function
+negate.
+The case study highlights the difficulties that partial functions can cause: our
+requirement that the left and right-hand sides of an equation must raise ex-
+ceptions in exactly the same cases leads QuickSpec to generate impenetrable
+equations containing complex terms whose only purpose is to raise an exception
+in the right cases. QuickSpec cannot currently find equations that hold, pro-
+vided preconditions are fulfilled. It would be useful to report “weak equations”
+too, whose left and right-hand sides are equal whenever both are defined. How-
+ever, it is not clear how QuickSpec should prune such equations, since “weak
+equality” is not an equivalence relation and the reasoning principles for “weak
+equations” are not obvious. At the very least, QuickSpec should inform us
+when it discovers that a function is partial.
+Another way to address partiality would be to generate conditional equations
+with the function preconditions as the condition. Indeed, this would be a
+generally useful extension, and the case study also highlights other examples
+where conditional equations would be useful.
+
+
+4   Related Work
+
+As mentioned earlier, the existing work that is most similar to ours is Henkel
+et al. [2007]; a tool for discovering algebraic specifications from Java classes.
+They generate terms and evaluate them, dynamically identify terms which are
+equal, then generate equations and filter away redundant ones. There are
+differences in the kind of equations that can be generated, which have been
+discussed earlier.
+The most important difference in the two approaches is the fact that they start
+

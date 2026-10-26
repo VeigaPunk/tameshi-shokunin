@@ -1,0 +1,298 @@
+{
+ "seat": "T49ExecR13Cmd",
+ "round": 49,
+ "wave": "w1",
+ "item": "Re-execute the round-13 section's recipe (SKILL.md '## Pin disposition and provenance correction -- round 13', base 8ca67421111fa354b47b803358391d0b07fc6db9) in a scratch clone at base, including both --selftest modes, and compare every outcome with the section and its decision table.",
+ "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+ "lane_head_observed": "455b2cd66fd9f237146a5355ca8bbc84f3071c50",
+ "clone": {
+  "path": "/fast/scratch/hyaku/tameshi-r49/T49ExecR13Cmd/base-clone (git clone --shared, removed before yield)",
+  "toplevel_verified": "/fast/scratch/hyaku/tameshi-r49/T49ExecR13Cmd/base-clone",
+  "head": "8ca67421111fa354b47b803358391d0b07fc6db9"
+ },
+ "tool_bytes_at_base": {
+  "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c",
+  "tools/witness-metadata.py": "df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4",
+  ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+  ".ufo/evidence/round-13/witness-metadata.json": "463282270a04bd46f4a0522ff6a349b77d268ede47725c4e1c52ca892210bd8d",
+  ".ufo/evidence/round-13/witness-metadata-old-null.json": "28067a1cb76b14677a26d86dadad8699177cf7eb1212140f3f06e9537a0b11c3"
+ },
+ "safety_confirmation": {
+  "no_sibling_gate_executed_by_step2": "confirmed from source before running: tools/pin-disposition.py has exactly three subprocess.run sites -- :227 git_run (argv list, no shell, read-only plumbing only: rev-parse/symbolic-ref/show-ref/for-each-ref/cat-file at :265,:288,:298,:306,:334,:341,:352,:360,:391,:408,:429,:441), :770 fixture git and :931 self-CLI re-entry, both inside def selftest() (:704-:1330). Every filesystem write (:722-:1328) is inside selftest() too; run_mode (:667) writes nothing and invokes no sibling tool.",
+  "no_lane_or_fleet_write": "all six sibling target files and the four round-13 evidence inputs retain pre-session mtimes (T49ExecR13Cmd/sibling-sha256-independent.txt, mtime listing in the .md); git status --porcelain of the base clone is empty after every run; the only writes were under /fast/scratch/hyaku/tameshi-r49/T49ExecR13Cmd/.",
+  "witness_metadata_check_writes": "tools/witness-metadata.py: check mode has no write site outside def selftest(); _prepare_fixture (:958) is called only from selftest (:1129)."
+ },
+ "commands": [
+  {
+   "id": "step2-live",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--manifest",
+    ".ufo/evidence/round-13/pin-manifest.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 0,
+   "stdout_tail": "      \"result_reuse\": \"not_established\"\n    }\n  ]\n}",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1535 (step 2); registry row SKILL.md:1552",
+   "observed": {
+    "schema": "pin-disposition-v1",
+    "status": "ok",
+    "counts": {
+     "legs": 6,
+     "unchanged": 1,
+     "changed": 5,
+     "unavailable": 0
+    },
+    "result_reuse_all_rows": [
+     "not_established"
+    ],
+    "pinned_status_all_rows": [
+     "verified"
+    ],
+    "branch_tips_present": true,
+    "not_compared": [
+     "mode/exec-bit",
+     "runner version and embedded defect specs",
+     "suite command and test harness",
+     "interpreter and toolchain versions",
+     "environment variables",
+     "dependency versions",
+     "fixture and companion files",
+     "timeouts"
+    ],
+    "observed_at": "2026-10-26T20:33:24Z",
+    "tool": "pin-disposition.py r17 (tameshi-shokunin, 2026-10-20)",
+    "tool_sha256": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c"
+   },
+   "receipt": "T49ExecR13Cmd/step2-pin-disposition.out",
+   "note": "Verbatim recipe command; exit 0 ('0 observations, including changed/unavailable'). Decision-table rows 1 (unchanged), 2 (changed) and 4 (result_reuse=not_established) exercised; row 3 (unavailable) not exercised (0 unavailable). Every row carries a 40-hex branch tip, as step 2 requires before the stdout is a dated reading."
+  },
+  {
+   "id": "step3-live",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--check",
+    "--companion",
+    ".ufo/evidence/round-13/witness-metadata.json"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 0,
+   "stdout_tail": "WITNESS_METADATA: metadata_consistent reason=ok exit=0 companion=/fast/scratch/hyaku/tameshi-r49/T49ExecR13Cmd/base-clone/.ufo/evidence/round-13/witness-metadata.json inputs=summary,declaration,declared,rerun_summary",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1538 (step 3); registry row SKILL.md:1553",
+   "observed": {
+    "verdict_token": "metadata_consistent",
+    "reason": "ok",
+    "inputs_verified": [
+     "summary",
+     "declaration",
+     "declared",
+     "rerun_summary"
+    ]
+   },
+   "receipt": "T49ExecR13Cmd/step3-witness-check.out",
+   "note": "Registry row 1553 maps exit 0 to 'metadata_consistent/clean'; the tool's exit-0 vocabulary is the literal token metadata_consistent with reason=ok -- 'clean' is a prose gloss that the tool never prints (no 'clean' literal anywhere in tools/witness-metadata.py). Behaviour matches the map; the word does not."
+  },
+  {
+   "id": "step3-lane-root",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--check",
+    "--companion",
+    ".ufo/evidence/round-13/witness-metadata.json",
+    "--lane-root",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 0,
+   "stdout_tail": "WITNESS_METADATA: metadata_consistent reason=ok exit=0 companion=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-13/witness-metadata.json inputs=summary,declaration,declared,rerun_summary",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1538",
+   "observed": {
+    "verdict_token": "metadata_consistent",
+    "reason": "ok"
+   },
+   "receipt": "T49ExecR13Cmd/step3-lane-root.out",
+   "note": "Same check pointed at the live lane root instead of the clone: still exit 0, so the companion pass is not a clone artifact. The four pinned rounds-12 inputs are byte-identical at base 8ca67421 and at lane HEAD 455b2cd (checked by git rev-parse of the blobs)."
+  },
+  {
+   "id": "pin-disposition-selftest",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--selftest"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 0,
+   "stdout_tail": "SELFTEST_CASE detached-head-uses-branch-tip PASS (exit=0 expects=0 14 literal checks)\nSELFTEST: PASS (19/19)",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1552 (verdict map 'selftest 1 failed'; self-test command column)",
+   "observed": {
+    "cases": 19,
+    "final_line": "SELFTEST: PASS (19/19)"
+   },
+   "receipt": "T49ExecR13Cmd/pin-disposition-selftest.out",
+   "note": "Exit 0 = all cases pass (tools/pin-disposition.py:1330 returns 0; :1327 returns 1 on any failure), so the map 'selftest 1 failed' holds. The literal is 19/19, not the 18/18 that round 13 recorded: the tool was revised r13 -> r17 (sha256 297253971d... -> 331529ead...), and the section's pinned-values column deliberately defers to 'literal selftest labels in tool' rather than freezing a count."
+  },
+  {
+   "id": "witness-metadata-selftest",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--selftest"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 0,
+   "stdout_tail": "SELFTEST_CASE unpinned-digest-red expected=snapshot_tampered/companion_digest_unpinned/2 observed=snapshot_tampered/companion_digest_unpinned/2 exit=2 OK\nSELFTEST: PASS 39/39",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1553 (self-test command column)",
+   "observed": {
+    "cases": 39,
+    "final_line": "SELFTEST: PASS 39/39",
+    "frozen_inputs_unchanged_by_selftest": true
+   },
+   "receipt": "T49ExecR13Cmd/witness-metadata-selftest.out",
+   "note": "39/39 matches the round-13 literal exactly (corpus/lessons/round-13.md:92). The selftest also asserts the frozen lane bytes are unchanged after the fixtures run (tools/witness-metadata.py:1187-1195); it printed no FROZEN_MUTATED line."
+  },
+  {
+   "id": "step2-invalid-manifest",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--manifest",
+    "/nonexistent/manifest.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 2,
+   "stdout_tail": "  \"legs\": []\n}\nEXIT=2",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1552 (verdict map '2 invalid input/could-not-evaluate')",
+   "observed": {
+    "status": "invalid_input",
+    "kind": "invalid_manifest"
+   },
+   "receipt": "T49ExecR13Cmd/probe-invalid-manifest.out",
+   "note": "Shows the exit-2 arm live, not only in selftest; the error document is a JSON doc on stdout, as the tool docstring states."
+  },
+  {
+   "id": "step2-invalid-root",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--manifest",
+    ".ufo/evidence/round-13/pin-manifest.json",
+    "--root",
+    "/nonexistent-root"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 2,
+   "stdout_tail": "  \"legs\": []\n}\nEXIT=2",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1552",
+   "observed": {
+    "status": "invalid_input"
+   },
+   "receipt": "T49ExecR13Cmd/probe-invalid-root.out",
+   "note": "Second exit-2 arm (fleet root not a directory)."
+  },
+  {
+   "id": "step4-oldnull-companion",
+   "argv": [
+    "python3",
+    "tools/witness-metadata.py",
+    "--check",
+    "--companion",
+    ".ufo/evidence/round-13/witness-metadata-old-null.json"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 1,
+   "stdout_tail": "WITNESS_METADATA: metadata_inconsistent reason=normalized_kind_null exit=1 companion=/fast/scratch/hyaku/tameshi-r49/T49ExecR13Cmd/base-clone/.ufo/evidence/round-13/witness-metadata-old-null.json inputs=-\nEXIT_OLDNULL=1",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1530 (decision table row 5), SKILL.md:1544-1547 (step 4), SKILL.md:1553 (exit 1 arm)",
+   "observed": {
+    "verdict_token": "metadata_inconsistent",
+    "reason": "normalized_kind_null"
+   },
+   "receipt": "T49ExecR13Cmd/step4-oldnull-check.out",
+   "note": "Re-executes step 4's claim that the normalized companion is the corrected one: the un-normalized (old-null) companion is rejected at exit 1 with reason normalized_kind_null, exactly as .ufo/evidence/round-13/expected.json metadata_old_null records."
+  },
+  {
+   "id": "step2-repeat",
+   "argv": [
+    "python3",
+    "tools/pin-disposition.py",
+    "--manifest",
+    ".ufo/evidence/round-13/pin-manifest.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin"
+   ],
+   "cwd": "base clone at 8ca67421",
+   "exit": 0,
+   "stdout_tail": "      \"result_reuse\": \"not_established\"\n    }\n  ]\n}",
+   "matches_section": true,
+   "skill_line": "SKILL.md:1535",
+   "observed": {
+    "statuses_identical_to_first_run": true,
+    "observed_at_first": "2026-10-26T20:33:24Z",
+    "observed_at_second": "2026-10-26T20:35:34Z"
+   },
+   "receipt": "T49ExecR13Cmd/step2-rerun.out",
+   "note": "Second invocation 130 s later: same six statuses and same worktree digests, only observed_at moved -- the probe is a read-only, repeatable dated reading (it is not a kill-rule-bound counter)."
+  }
+ ],
+ "mismatches": [
+  {
+   "id": "M1",
+   "severity": "none-for-the-section / drift-by-design",
+   "statement": "The live pin reading moved from round 13's unchanged3/changed3/unavailable0 to unchanged1/changed5/unavailable0. Two legs flipped: bash-surface-census (pin 275d8294... -> worktree 1e697b01...) and js-claims-check (pin e9a21b44... -> worktree de3433b5...). Independently reproduced with sha256sum at the fleet root.",
+   "shows": "SKILL.md:1527 decision-table row 2 ('Report changed content ... never transfer an old rate') is the rule that covers this; the section quotes no counts, and corpus/lessons/round-13.md:89 records 3/3/0 as a dated reading at 2026-10-20T04:59:26Z. No section text needs correcting for this drift.",
+   "evidence": "T49ExecR13Cmd/sibling-sha256-independent.txt; T49ExecR13Cmd/step2-pin-disposition.out vs .ufo/evidence/round-13/pin-dispositions.json"
+  },
+  {
+   "id": "M2",
+   "severity": "low: stale literal in expected.json, not in the section",
+   "statement": ".ufo/evidence/round-13/expected.json expected_checks.pin_selftest pins the literal 'SELFTEST: PASS (18/18)' and its inputs map pins tools/pin-disposition.py sha256 297253971dab3a558b470a04162b9d768287844dc0e81bf41a1f9f263ff14f11. At base the tool is 331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c and prints 'SELFTEST: PASS (19/19)'. A live re-evaluation of that row would fail.",
+   "shows": "The section is not wrong: SKILL.md:1552 pins 'literal selftest labels in tool' rather than a count, and SKILL.md:1556-1557 says no old evidence hash is regenerated. The stale pair is receipt-anchored: .ufo/evidence/round-14/dispositions.json marks pin_selftest 'effective' with receipt .ufo/evidence/round-13/verification.json (the frozen run), not a live re-run. The delta is already recorded in prose at corpus/knowledge/executable-self-assessment.md:57 ('18/18 vs 19/19').",
+   "evidence": "T49ExecR13Cmd/pin-disposition-selftest.out; T49ExecR13Cmd/base-clone-identity.txt; .ufo/evidence/round-13/expected.json:11,expected_checks.pin_selftest"
+  },
+  {
+   "id": "M3",
+   "severity": "cosmetic wording",
+   "statement": "Registry row SKILL.md:1553 maps exit 0 to 'metadata_consistent/clean'; the tool never prints 'clean' -- exit-0 output is 'metadata_consistent reason=ok'. grep for 'clean' in tools/witness-metadata.py returns nothing.",
+   "shows": "Same gloss style as row 1552's '0 observations, including changed/unavailable'. No behavioural divergence: exit 0, token metadata_consistent.",
+   "evidence": "T49ExecR13Cmd/step3-witness-check.out; grep -n clean tools/witness-metadata.py (no match)"
+  },
+  {
+   "id": "M4",
+   "severity": "none: rule stated and executed",
+   "statement": "Not a mismatch: step 2's parenthetical 'It executes no sibling gate' and 'Retain stdout with its sibling branch-tip commits' both hold, and step 4's un-normalized-companion rejection reproduces at exit 1 metadata_inconsistent/normalized_kind_null.",
+   "shows": "SKILL.md:1537, SKILL.md:1536-1537, SKILL.md:1544-1547 all confirmed by execution/source.",
+   "evidence": "T49ExecR13Cmd/step4-oldnull-check.out"
+  }
+ ],
+ "receipts_sha256": {
+  "base-clone-identity.txt": "7441cae13c0a223986b6c3a7fce9d06e915b5b8eeaf6f4a01710a6aed3e4e84b",
+  "pin-disposition-selftest.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pin-disposition-selftest.out": "1f39911c34eb155564d6b6f554673a2842b064aec7742c4b36834640692c0ec1",
+  "probe-invalid-manifest.out": "475c1b7361ed3b148bd9d0145f66adc67403a04c99a8df614d42270103aa5ecb",
+  "probe-invalid-root.out": "93cc80f8a6d767094ccdabfedc7fb85e5a1a73530468f62e9f8f1ed876eb1018",
+  "sibling-sha256-independent.txt": "0a12e1135a6e4cd4fdd4a5d0c06460b12d64a674fb5593477ce725745cc46f4c",
+  "step2-pin-disposition.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "step2-pin-disposition.out": "54120dd311e850fd21cbf7d5996969e328f7cf4bac3affbedc61d7adc071f0d1",
+  "step2-rerun.out": "50449fde97a120a7ac17b8d0fea4cd5ae5a0e2e9f8b17260bdcf5a111102d573",
+  "step3-lane-root.out": "82a352863fbb2b1d6552e7ced679ef92fa452e460f3eb433ff5c2998907ff9c4",
+  "step3-witness-check.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "step3-witness-check.out": "a307c54d872399f4eacc6df889b78af9d7434d9c88c563573a326361cc8b0868",
+  "step4-oldnull-check.out": "8d9e7e03e049c7a72efe4b2057c9f8dba9c7b21f2f4c3ebb9aa96b729807732c",
+  "witness-metadata-selftest.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "witness-metadata-selftest.out": "c4f371609f34fe9aad9cca6902ccf023405eaf611062bc5fc53ad33a1ff563c1"
+ }
+}

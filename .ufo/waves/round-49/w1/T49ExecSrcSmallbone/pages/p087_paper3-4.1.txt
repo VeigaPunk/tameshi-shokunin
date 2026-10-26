@@ -1,0 +1,53 @@
+                                                                                       87
+
+
+since a smaller test case is likely to provoke fewer bugs than a larger one, but
+of course there is no guarantee of this).
+We continue this process until a large number of random tests fail to add any
+test cases to Suite. At this point, we assume that we have found one test case
+for each irredundant input partition, and we can use our test suite to rank
+answers.
+Note that this method takes no account of the sizes of the partitions involved—
+we count a bug as a bug, whether it causes a failure for only one input value,
+or for infinitely many. Of course, the severity of bugs in practice may vary
+dramatically depending on precisely which inputs they cause failures for—but
+taking this into account would make our results dependent on value judgements
+about the importance of different kinds of input, and these value judgements
+would inevitably introduce experimental bias.
+In the following section, we will see how this method performs in practice.
+
+
+4     Analysis
+
+We adopted the statistical null hypothesis to be that there is no difference in
+quality between programs developed using QuickCheck and programs devel-
+oped using HUnit. The aim of our analysis will be to establish whether the
+samples we got are different in a way which cannot be explained by coincidence.
+We collected solutions to all three tasks programmed by 13 students, 7 of which
+were assigned to the group using QuickCheck and the remaining 6 to one using
+HUnit. In this section we will refer to the answers (solutions to tasks) as A1
+to A13. Since the submissions have been anonymized, numbering of answers
+have also been altered and answers A1 to different problems correspond to
+submissions of different participants. For each task there is also a special
+answer A0 which is the model answer which we use as the testing oracle. For
+the anonymizer, we also added the identity function for comparison as A14,
+and for the interval sets problem we added a completely undefined solution as
+A14.
+
+
+4.1    Automatic Ranking of Solutions
+We ranked all solutions according to the method outlined in Section 3. The
+ranking method produced a test-suite for each of the three tasks and assigned
+the number of failing tests to each answer of every task. The final score that
+we used for evaluation of answers was the number of successful runs on tests
+from the test-suite. The generated test suites are shown in Figure 3.1. Every
+test in the test suite causes some answer to fail; for example delete 0 [] is the
+simplest test that causes answers that did not implement the delete function
+to fail. These test cases have been shrunk by QuickCheck, which is why the
+only letter to appear in the anonymizer test cases is ’a’, and why the strings
+are so short4 .
+   4
+     Because Haskell encourages the use of dynamic data-structures, then none of the so-
+lutions could encounter a buffer overflow or other error caused by fixed size arrays. As a
+result, there is no need for tests with very long strings.
+

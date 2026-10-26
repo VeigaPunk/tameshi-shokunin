@@ -1,0 +1,115 @@
+T49SecRecipe receipts — round 49, seat T49SecRecipe, C1 section audit
+lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin  base: 8ca67421111fa354b47b803358391d0b07fc6db9  section: SKILL.md:131-245
+all commands read-only (git diff/show, awk, grep, sha256sum, tail). No installs. No model passed. Scratch removed.
+
+== R1 cited files equal base bytes
+$ git diff --stat 8ca67421 -- SKILL.md corpus/knowledge/mutation-case-{kimi,kagi}-census.md corpus/knowledge/gates-survey-{kumitate,kagi}.md corpus/README.md
+(no output above = identical)
+
+== R2 kumitate summary shapes: two of six print 'n/m cases passed' (finding FALSE-1)
+$ awk "NR>=19&&NR<=26{print NR\"|\"$0}" corpus/knowledge/gates-survey-kumitate.md
+19|| gate | exit | last summary lines (verbatim from capture) |
+20||---|---|---|
+21|| cite-check | 0 | `62/62 cases passed (hermetic)` / `VERDICT: PASS` |
+22|| surface-probe | 0 | `42/42 cases passed` / `VERDICT: PASS` |
+23|| round-gate | 0 | `ROUND_GATE_SELFTEST: 60/60 pass` / `VERDICT: PASS` |
+24|| proxy-check | 0 | `PROXY_SELFTEST: 102/102 pass` / `VERDICT: PASS` |
+25|| claims-check | 0 | `CLAIMS_SELFTEST: 39/39 pass` / `VERDICT: PASS` |
+26|| kimi-census | 0 | `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS` |
+
+== R3 step 2 records seven cells, step 9 re-runs four (finding FALSE-2)
+$ awk "NR>=150&&NR<=151{print NR\"|\"$0}" SKILL.md ; awk "NR>=224&&NR<=226{print NR\"|\"$0}" SKILL.md
+150|2. **Pin the artifact — committed bytes only.** Record: path, full sha256,
+151|   size, line count, mtime, repo revision, and `git status --porcelain --
+224|9. **Restore + prove the substrate never moved.** Re-run step 2's checks:
+225|   sha256 after == before, size and mtime unchanged, `git status --porcelain --
+226|   <path>` empty (mutation-case-kimi-census.md:34-35;
+$ awk "NR>=386&&NR<=391{print NR\"|\"$0}" SKILL.md
+386|3. **After the sweep:** require endpoint fingerprints to agree; historical
+387|   Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness
+388|   (mutation-case-kimi-census.md:34-35); no after-repo revision was recorded.
+389|   Kagi recorded hash275d8294…53009f,44212B, unchanged09:47:15 mtime,
+390|   clean path and `cmp`-identical scratch copy (mutation-case-kagi-census.md:54-56).
+391|   Its after-repo revision is likewise not established by those records.
+$ grep -c "Re-run step 2" SKILL.md
+1
+
+== R4 count printing / no-op guard in the notes (finding UNVERIFIABLE-1 and -2)
+$ grep -nE "all unique|new != old|no-op" corpus/knowledge/mutation-case-kimi-census.md corpus/knowledge/mutation-case-kagi-census.md
+corpus/knowledge/mutation-case-kimi-census.md:24:  (`mutate_driver.py --check` → `all unique`, first-line match on all 10). No defect
+corpus/knowledge/mutation-case-kagi-census.md:46:  writing (`mutate_driver.py --check` → `all unique`, all 10). No defect compounds with another;
+corpus/knowledge/mutation-case-kagi-census.md:245:python3 /tmp/tameshi-r3-1-work/mutate_driver.py --check # all unique
+$ awk "NR>=22&&NR<=25{print NR\"|\"$0}" corpus/knowledge/mutation-case-kimi-census.md
+22|- O: each defect = ONE exact-string replacement applied to a fresh copy of the pristine
+23|  copy; the driver asserts the old string occurs exactly once before writing
+24|  (`mutate_driver.py --check` → `all unique`, first-line match on all 10). No defect
+25|  compounds with another.
+$ awk "NR>=271&&NR<=274{print NR\"|\"$0}" corpus/knowledge/mutation-case-kagi-census.md
+271|The old §7 commands depend on an unversioned scratch `mutate_driver.py`;
+272|they do not by themselves recreate that driver after scratch loss.
+273|Use `bash tools/mutate-and-run.sh --regression` for the maintained pinned
+274|case replay. Evidence: round21 w2/Section0405.md and Section0375.md;
+
+== R5 kill-rate denominator: section rule vs standing instrument (finding UNVERIFIABLE-3)
+$ awk "NR>=569&&NR<=574{print NR\"|\"$0}" tools/mutate-and-run.sh
+569|  local pct
+570|  pct=$(( (200 * killed + total) / (2 * total) ))
+571|  if [[ "$inconcl" -gt 0 ]]; then
+572|    printf 'MUTATE: DEGRADED (target=%s defects=%s killed=%s survived=%s inconclusive=%s kill-rate=%s%%)\n' \
+573|      "$LABEL" "$total" "$killed" "$survived" "$inconcl" "$pct"
+574|    exit 1
+
+== R6 pinned kagi gate epilogue format, skip accounting, 887th-line anchor
+$ sha256sum .ufo/evidence/round-12/BashWitness/pristine.sh
+275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f  .ufo/evidence/round-12/BashWitness/pristine.sh
+$ tail -c1 .ufo/evidence/round-12/BashWitness/pristine.sh | xxd -p
+63
+$ awk "NR==816||NR==822||NR==846||NR==847{print NR\"|\"$0}" .ufo/evidence/round-12/BashWitness/pristine.sh
+816|  cases=$((cases + 1))
+822|    cases=$((cases + 1))
+846|  if [[ $failures -eq 0 ]]; then printf 'SELFTEST: PASS (%s cases)\n' "$cases"; exit 0; fi
+847|  printf 'SELFTEST: FAIL (%s/%s cases)\n' "$failures" "$cases"; exit 1
+
+== R7 round 16 executed the recipe (TRUE finding 134-135): ledger + erratum row
+$ python3 -c "ledger entries with start==131"
+{'start': 131, 'end': 245, 'verdict': 'gap-minor', 'blocking_gaps': 0, 'commands_executed_count': 18, 'seats': ['CR04a', 'CR04b']}
+{'start': 131, 'end': 245, 'verdict': 'gap-minor', 'blocking_gaps': 0, 'commands_executed_count': 7, 'seats': ['RR03']}
+$ awk "NR>=1723&&NR<=1726{print NR\"|\"$0}" SKILL.md
+1723|| Snapshot line | Was | Now | Found by |
+1724||---|---|---|---|
+1725|| 15 | cold-read proof covers one JS mutant only; sufficiency unverified | points here | CRCritic1 |
+1726|| 134-135 | observed cold-read proof covers one historical JS mutant | round 16 executed the recipe end to end (CR04a, CR04b) | CRCritic1 |
+$ grep -nE "by-class|protected|tally" .ufo/waves/round-16/w1/CR04a.md .ufo/waves/round-16/w1/CR04b.md
+.ufo/waves/round-16/w1/CR04a.md:36:| 10 | record sweep: table, tally, survivors, reproduce, calibration, unknowns | this report + manifest + evidence dir | below |
+
+== R8 cost-profile numbers behind the fused tokens (TRUE findings 241/242/243-244)
+$ awk "NR==21||NR==30||NR==31||NR>=204&&NR<=205{print NR\"|\"$0}" corpus/knowledge/mutation-case-kimi-census.md
+21|  `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0 (node v24.21.0).
+30|  11 runs (control + 10) produced a definitive suite verdict; the whole sweep took 7.0 s
+31|  wall against the 300 s timeout.
+204|- U5 — kill-rate stability across node versions/hosts: measured only on node v24.21.0,
+205|  this host, 2026-10-14.
+$ awk "NR>=42&&NR<=43{print NR\"|\"$0}" corpus/knowledge/mutation-case-kagi-census.md
+42|- O: control run, unmutated byte copy — `bash control.sh --selftest` →
+43|  `SELFTEST: PASS (16 cases)`, exit 0, 1.0 s wall.
+$ awk "NR>=50&&NR<=53{print NR\"|\"$0}" corpus/knowledge/mutation-case-kagi-census.md
+50|- O: **kill rate 8/10 (80 %)**; survivors B5, B10. No inconclusive run — each of the 11 runs
+51|  produced a definitive suite verdict; the suite count held (`(<n>/16 cases)` on every run; green
+52|  runs printed exactly `SELFTEST: PASS (16 cases)`); the whole sweep took 11.0 s wall for 11 runs
+53|  (~1.0 s each) against the 280 s per-run bound.
+$ awk "NR>=203&&NR<=204{print NR\"|\"$0}" corpus/knowledge/mutation-case-kagi-census.md
+203|- U5 — kill-rate stability across hosts/toolchains (bash 5.x, sqlite3, python3, awk measured only
+204|  on this host, 2026-10-14; ~1.0 s per run).
+
+== R9 no-op guard enforced by the maintained driver (TRUE finding 175-176)
+$ awk "NR==52||NR==403||NR==1615{print NR\"|\"$0}" tools/mutate-and-run.sh
+52|#   @new == @old (a no-op edit) is refused.
+403|            die('defect %s: @new equals @old (no-op mutation)' % d['id'])
+1615|  [[ $rc4 -eq 2 ]]; st 'no-op edit refuses (exit 2)' $?
+
+== R10 round-27 Read03 correction attribution (TRUE finding 228)
+$ awk "NR>=1&&NR<=4{print NR\"|\"$0}" .ufo/waves/round-27/w1/Read03.md
+1|# Read03: cold read of the mutation-sweep recipe (SKILL.md:131-245)
+2|
+3|Verdict: wrong-expectation. The recipe runs as written and reproduces the cited sweep results on two pinned artifacts. One expectation is false. Step 9 says the before/after check proves the absence of writes. The page's own Restore discipline says the check proves endpoint identity only (SKILL.md:228 against SKILL.md:377-378).
+4|

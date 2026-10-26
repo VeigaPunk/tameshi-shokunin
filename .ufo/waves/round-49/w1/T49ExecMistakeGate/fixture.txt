@@ -1,0 +1,36 @@
+## lane clone
+toplevel=/fast/scratch/hyaku/tameshi-r49/T49ExecMistakeGate/lane
+clone: git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/lane; checkout --detach 14d03ea4270c6904064022b62b6faf467e5c0968
+
+## script under test
+blob 14d03ea:.ufo/evidence/round-49/deciding-run.sh = 5e059dafd5eefd728b0b0840e4b932918f71f7ad
+blob 56077d13:.ufo/evidence/round-49/deciding-run.sh = 5e059dafd5eefd728b0b0840e4b932918f71f7ad
+sha256 of the extracted copy used for cases c/c-literal = 31e9838e735b27a9aa6ac3ee5ccc3e8f2d39432a32e3dd6a80ab456125dd10f5
+
+## fixture commits
+e5eb093 fixture: rewritten freeze (14d03ea tree + receipts), receipt commit is its parent
+ebd2e64 fixture: control receipts committed BEFORE the freeze (predate)
+8ca6742 round-48 verifier spot-check (integrator, hyaku): non-author admit/reject
+98e6304 round-48: end receipts - census end exit 0 at e438777e, QUALITY round-48 pointer-check at tip exit 0, lesson attempt-3 pointer-check
+
+## fixture receipt files (synthetic, written by this seat)
+e78333fa0dc9b9e3fb00d8229a8aa1dbb22be172  .ufo/evidence/round-49/control/c1-controls.stdout
+573541ac9702dd3969c9bc859d2b91ec1f7e6e56  .ufo/evidence/round-49/control/c1-controls.exit
+5bfaa2448139ff5716a3682799393399e645d57d  .ufo/evidence/round-49/control/c2-controls.stdout
+573541ac9702dd3969c9bc859d2b91ec1f7e6e56  .ufo/evidence/round-49/control/c2-controls.exit
+
+## F tree vs 14d03ea tree
+ .ufo/evidence/round-49/control/c1-controls.exit   | 1 +
+ .ufo/evidence/round-49/control/c1-controls.stdout | 1 +
+ .ufo/evidence/round-49/control/c2-controls.exit   | 1 +
+ .ufo/evidence/round-49/control/c2-controls.stdout | 1 +
+ 4 files changed, 4 insertions(+)
+
+## receipt dirs handed to the script
+case a  out  = [end]
+case b  out2 = c1.start [end]  (c1.start pre-created by the seat)
+case c  out3 = [end]
+case cl out4 = [end]
+
+## is-ancestor reflexivity boundary
+exit=0  -> a receipt whose last-touch commit IS FREEZE satisfies deciding-run.sh:27

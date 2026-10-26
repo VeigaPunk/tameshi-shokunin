@@ -1,0 +1,37 @@
+# T49ScribeEntryDraft — named-gate receipt (tools/staged-id-guard.py, pinned; not edited by this seat)
+# lane rev: 6db4b93132de790dc9626a66b3305161a758f1e5 (base 8ca67421111fa354b47b803358391d0b07fc6db9)
+
+$ git rev-parse HEAD
+6db4b93132de790dc9626a66b3305161a758f1e5
+$ sha256sum tools/staged-id-guard.py
+03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8  tools/staged-id-guard.py
+$ grep -c "contract claims.C2.named_gate sha256" ... -> 03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8
+
+$ python3 -I tools/staged-id-guard.py --selftest
+STAGED_ID_GUARD_SELFTEST: cases=24 failed=0
+VERDICT: PASS
+exit=0
+
+--- assertion count and module-level fixture constants:
+$ grep -c "    case(" tools/staged-id-guard.py
+24
+$ grep -c "^SELFTEST_[A-Z_]* =" tools/staged-id-guard.py
+5
+
+--- exit-code documentation vs implementation:
+$ sed -n 37,40p tools/staged-id-guard.py
+
+Exit 0 = the question was answered and, with `--map`, the map is admissible;
+exit 1 = the map is not admissible; exit 2 = setup refusal (missing or
+non-regular file, oversized file, malformed row, malformed map) — never a bare
+$ sed -n 157p tools/staged-id-guard.py
+    refused = bool(unmapped) or bool(cascade)
+$ sed -n 471,474p tools/staged-id-guard.py
+            result['verdict'] = 'admitted' if ok else 'inadmissible'
+        else:
+            result['verdict'] = 'refused' if result['refused'] else 'answered'
+    except Refusal as exc:
+$ sed -n 491,493p tools/staged-id-guard.py
+    if result['verdict'] in ('admitted', 'answered'):
+        return 0
+    return 1

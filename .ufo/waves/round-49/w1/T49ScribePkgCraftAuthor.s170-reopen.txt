@@ -1,0 +1,54 @@
+T49ScribePkgCraftAuthor — S170 re-open receipt (round 49, 2026-10-26)
+=========================================================================
+candidate : /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/pbt-generator-craft-author.md
+sha256    : f866c0c832a577c3c5bba0e05c7d2f8ba4fb0a126273afd44d1c1be75f733f28
+lines     : 42
+scratch   : /fast/scratch/hyaku/tameshi-r49/T49ScribePkgCraftAuthor (removed before yield)
+
+CORPUS rule 1 — source re-opened this round
+-------------------------------------------
+$ curl -fsSL --max-time 60 -o s170.pdf 'https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quviq-testing.pdf'
+exit=0   bytes=723815
+$ sha256sum s170.pdf
+35dddba54a309523cd5046d1e5d696362c4af36b2d02018ba761ad176bb53ba1  s170.pdf
+$ pdfinfo s170.pdf | grep -i pages
+Pages:           18
+$ pdftotext -layout s170.pdf s170.txt
+803 s170.txt
+
+Every string the entry quotes, located in the re-opened bytes
+(grep -n against s170.txt):
+  2:       Testing the Hard Stuff and Staying Sane
+ 10:      Abstract. This is not a typical scientific paper. It does not present
+ 11:      a new method, with careful experiments to evaluate it, and detailed
+ 15:      QuickCheck is a random testing tool that Koen Claessen and I invented,
+ 16:      which has since become the testing tool of choice in the Haskell com-
+ 17:      munity. In 2006 I co-founded Quviq, to develop and market an Erlang
+ 20:      This paper introduces Quviq QuickCheck, and in particular the exten-
+ 21:      sions made for testing stateful code, via a toy example in C. It goes on
+ 22:      to describe the largest QuickCheck project to date, which developed ac-
+
+The sentence that decides the lead inference (page 17 of 18):
+$ pdftotext -layout -f 17 -l 17 s170.pdf - | grep -nE 'formulating|real weakness of property'
+ 12:    Perhaps the most general lesson from all this experience is that formulating
+ 13:    specifications is hard—and many developers struggle with it.
+ 23:    The need for a specification is the real weakness of property-based testing—
+
+The entry's recheck recipe (line 4), run verbatim 2026-10-26
+-----------------------------------------------------------
+$ curl -fsSL 'https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quviq-testing.pdf' | grep -c 'QuickCheck'
+0
+(grep exit 1; the PDF streams are compressed, so grep -a/-c reads 0)
+Same bytes through the text extractor the lane's S183 row uses:
+$ pdftotext -layout s170b.pdf - | grep -c 'QuickCheck'
+36
+s170b.pdf sha256 = 35dddba54a309523cd5046d1e5d696362c4af36b2d02018ba761ad176bb53ba1 (same bytes)
+
+Quotation fold: the entry prints "…testing tool of choice in the Haskell
+community"; the source prints "Haskell com-" / "munity" across the line break
+(s170.txt:16-17). The fold is not declared at the quote.
+
+Chain of custody: the PDF was fetched twice in one command batch
+(s170.pdf, s170b.pdf); both hashes are identical. No lane file was read for
+this receipt beyond the candidate and the lane corpus files named in the
+report.

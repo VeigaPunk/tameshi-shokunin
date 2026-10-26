@@ -1,0 +1,117 @@
+{
+ "rows": [
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 15,
+   "raw": "mutation-case-kimi-census.md:30-33",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     30,
+     33
+    ]
+   ],
+   "claim": "Both historical sweeps held their enumerated denominators43 and16",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "- O: suite count held: every mutant run still enumerated the full suite (`<n>/43`), and\n  all three green runs printed exactly `KIMI_CENSUS_SELFTEST: 43/43 pass`.",
+   "reader": "T49Read04",
+   "note": "corpus/knowledge/mutation-case-kimi-census.md:32-33 records, verbatim, 'suite count held: every mutant run still enumerated the full suite (`<n>/43`), and all three green runs printed exactly `KIMI_CENSUS_SELFTEST: 43/43 pass`' - the 43-case denominator survived every mutant run, which is the clause's claim for the kimi sweep. The range opens two lines early: :30-31 are the kill-rate / no-inconclusive-run sentence that SKILL.md:212 cites separately as :29-31; the supporting text is inside the range, so the pointer resolves and nothing drifted (git diff BASE..455b2cd for the file is empty). Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | sed -n '30,33p' (lane=shokunin/tameshi-shokunin, BASE=8ca67421111fa354b47b803358391d0b07fc6db9)."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 16,
+   "raw": "mutation-case-kagi-census.md:27-35,50-53",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     27,
+     35
+    ],
+    [
+     50,
+     53
+    ]
+   ],
+   "claim": "Both historical sweeps held their enumerated denominators43 and16",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "- O: **kill rate 8/10 (80 %)**; survivors B5, B10. No inconclusive run — each of the 11 runs\n  produced a definitive suite verdict; the suite count held (`(<n>/16 cases)` on every run; green\n  runs printed exactly `SELFTEST: PASS (16 cases)`)",
+   "reader": "T49Read04",
+   "note": "corpus/knowledge/mutation-case-kagi-census.md:50-53 records 'the suite count held (`(<n>/16 cases)` on every run; green runs printed exactly `SELFTEST: PASS (16 cases)`)', which is the clause's 16-case denominator; the first range (:27-35) carries the neighbouring half of the sentence at SKILL.md:192 ('with skipped cases distinguished'): the two trailing verb cases print `skip-case ... substrate-absent`, and :33-35 states 'the case counter counts skips as cases - control shows `ok-case 01..14` + `skip-case 15`/`16`, epilogue `SELFTEST: PASS (16 cases)`'. Both supporting passages are inside the pointer; no drift (git diff BASE..455b2cd for the file is empty). Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '27,35p;50,53p'."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 17,
+   "raw": "mutation-case-kimi-census.md:59-76",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     59,
+     76
+    ]
+   ],
+   "claim": "Collect the failing-case labels verbatim; a kill quoted without its failing labels is unverified",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "Failing-case labels of the narrow kills (O: `evidence/<id>.selftest.txt`):\n\n- D4 (3): `UNLISTED: a planted undeclared root child …`; `UNLISTED: a hidden root child is\n  gated too …`; `root enum is orthogonal to counted-dir drift …` — exactly the three\n  root-enumeration cases; no other case moves.",
+   "reader": "T49Read04",
+   "note": "corpus/knowledge/mutation-case-kimi-census.md:59 is the header 'Failing-case labels of the narrow kills (O: `evidence/<id>.selftest.txt`):' and :61-76 quote, defect by defect, the exact bad-case label lines with their counts (D4 3, D5 1, D6 2, D7 2, D8 3, D9 2, D1/D3 16 each), so the note demonstrates the practice the clause requires (labels collected verbatim from the per-defect evidence file). One imprecision, not a drift: the pointed range stops at :76 in the middle of the D1/D3 bullet - the bullet's closing lines (:77 'and no-UNLISTED asserts; each fails because the green fixture itself now drifts. Full lists in' / :78 '`evidence/results.json`.') are outside it; the clause is fully supported inside the range, so the verdict is holds, and extending the pointer to :59-78 would keep the section's pointer count unchanged. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | sed -n '59,78p'."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 18,
+   "raw": "mutation-case-kagi-census.md:82-103",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     82,
+     103
+    ]
+   ],
+   "claim": "Bash grammar: `bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0` and summary `SELFTEST: FAIL (1/16 cases)`",
+   "base_verdict": "stale",
+   "verdict": "stale",
+   "excerpt": "- B1 (1): `bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0`. The guard\n  inversion makes `verify_unlisted` return early whenever scan dirs **exist** (`:241-242`), so the\n  UNLISTED arm goes quiet; the clean case still passes because its fixture has no stray child to\n  miss — the single case that pins the arm is the one that fires.",
+   "reader": "T49Read04",
+   "note": "The bad-case exemplar is verbatim at corpus/knowledge/mutation-case-kagi-census.md:84 ('bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0'). The summary quote is not: `SELFTEST: FAIL (1/16 cases)` occurs nowhere in the pointed range, and nowhere in the file - `git -C LANE grep -n 'SELFTEST: FAIL' BASE -- corpus/knowledge/mutation-case-kagi-census.md` prints nothing (the only `SELFTEST: FAIL` hits in the lane at BASE are under .ufo/evidence/kaika-round-1/coldread/, e.g. appendixB/B1.out:38). What the note actually records is the failing suite line in the kill-rate table at :67, as `1/16` / FAIL, and that line is outside the cited :82-103. So the target supports the grammar exemplar but not the quoted summary - half the clause is unsourced at the pointed place: stale, not a drift of line numbers. The minimal repair keeps the pointer count at one: extend the range to :67 and quote the note's own recorded form (see proposed_fix). Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '67p;82,103p' and the git grep above.",
+   "post_fix_verdict": "holds",
+   "proposed_fix": {
+    "skill_old": "and summary `SELFTEST: FAIL (1/16 cases)`\n     (mutation-case-kagi-census.md:82-103).",
+    "skill_new": "and the failing suite line `1/16` / FAIL as the note records it\n     (mutation-case-kagi-census.md:67,82-103).",
+    "fixed_file": "corpus/knowledge/mutation-case-kagi-census.md",
+    "fixed_ranges": [
+     [
+      67,
+      67
+     ],
+     [
+      82,
+      103
+     ]
+    ],
+    "fixed_raw": "mutation-case-kagi-census.md:67,82-103",
+    "fixed_excerpt": "| B1 | wrong `-eq` (guard inversion) | scan guard `-eq 0` → `-ne 0` (`surface-census.sh:241`) | 1 | `1/16` / FAIL | **killed** | 1 (undeclared-file) |",
+    "why": "On the corrected pointer (:67,82-103) both halves of the clause have verbatim support: :84 carries the `bad-case 05 undeclared-file ...` grammar exemplar and :67 carries the failing suite line as the note records it (`1/16` / FAIL, kill-rate table, B1 row). The current sentence presents `SELFTEST: FAIL (1/16 cases)` as if the note quoted it; the note never does, so the quote is replaced by the recorded form and the range gains :67. One pointer is kept (the extractor reads `:67,82-103` as a single line pointer with ranges [[67,67],[82,103]]), so the section's 34-pointer floor and ordinals 15-19 are unchanged; verified by dry-running the frozen extractor on the edited section text."
+   }
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 19,
+   "raw": "mutation-case-kagi-census.md:88-91",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     88,
+     91
+    ]
+   ],
+   "claim": "**A kill can be token-only, not exit-only.** B4's deleted symlink arm kept the exit code (the row fell into the regular-file arm, `got exit=1` like the expected one) and died on the token assert alone",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "- B4 (1): `bad-case 07 symlink-swap want exit=1 token=SURFACE LINK got exit=1` — the **exit code\n  still matched** (the deleted arm's symlink falls into the regular-file arm and prints\n  `SURFACE DIVERGED`); the token assert is what killed it.",
+   "reader": "T49Read04",
+   "note": "corpus/knowledge/mutation-case-kagi-census.md:88-91 is exactly the cited incident: '`bad-case 07 symlink-swap want exit=1 token=SURFACE LINK got exit=1` - the **exit code still matched** (the deleted arm's symlink falls into the regular-file arm and prints `SURFACE DIVERGED`); the token assert is what killed it.' That is the clause's 'kept the exit code ... the row fell into the regular-file arm, got exit=1 like the expected one ... died on the token assert alone'. Direct support; no drift. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '88,91p'."
+  }
+ ]
+}

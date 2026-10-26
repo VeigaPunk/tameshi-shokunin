@@ -1,0 +1,53 @@
+                                                                              80
+
+
+against programs developed for the same problem using HUnit [Herington,
+2010]—a unit testing framework for Haskell similar to the popular JUnit tool
+for Java programmers [JUnit.org, 2010]. We have not reached this goal yet—we
+have carried out a small-scale experiment, but we need more participants to
+draw statistically significant conclusions. However, we have identified an im-
+portant problem to solve along the way: how should we rank student solutions
+against each other, without introducing experimental bias?
+Our intention is to rank solutions by testing them: those that pass the most
+tests will be ranked the highest. But the choice of test suite is critical. It is
+tempting to use QuickCheck to test student solutions against our own prop-
+erties, using the proportion of tests passed as a measure of quality—but this
+would risk experimental bias in two different ways:
+
+    • By using one of the tools in the comparison to grade solutions, we might
+      unfairly bias the experiment to favour that tool.
+
+    • The ranking of solutions could depend critically on the distribution of
+      random tests, which is rather arbitrary.
+
+Unfortunately, a manually constructed set of test cases could also introduce
+experimental bias. If we were to include many similar tests of a particular
+kind, for example, then handling that kind of test successfully would carry
+more weight in our assessment of solutions than handling other kinds of test.
+Our goal in this paper, thus, is to develop a way of ranking student solutions
+by testing that leaves no room for the experimenter’s bias to affect the result.
+We will do so by generating a set of test cases from the submissions themselves,
+based on a simple “bug model” presented in Section 3, such that each test case
+tests for one bug. We then rank solutions by the number of bugs they contain.
+QuickCheck is used to help find this set of test cases, but in such a way that
+the distribution of random tests is of almost no importance.
+
+1.0.1   Contribution
+
+The main contribution of this paper is the ranking method we developed. As
+evidence that the ranking is reasonable, we present the results of our small-
+scale experiment, in which solutions to three different problems are compared
+in this way. We also evaluate the stability of the method further by ranking
+mutated versions of the same program.
+The remainder of the paper is structured as follows. In the next section we
+briefly describe the experiment we carried out. In Section 3 we explain and
+motivate our ranking method. Section 4 analyses the results obtained, and
+Section 5 checks that our ranking behaves reasonably. In Section 6 we discuss
+related work, and we conclude in Section 7.
+
+
+2    The Experiment
+
+We designed an experiment to test the hypothesis that “Property-based test-
+ing is more effective than unit testing, as a tool during software development”,
+

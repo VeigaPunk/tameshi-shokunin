@@ -1,0 +1,52 @@
+                                                                                        34
+
+
+term t with canonical form t’, and if testing would have revealed an equation
+t==u, we will also generate an equation t’==u.5 We also will have generated
+laws that imply t==t’ since each direct subterm of t is equal to the corre-
+sponding subterm of t’ (in the booleans example the law in question would
+be x&&x == x), and therefore t==u is redundant. (It is also the case that our
+pruner would’ve filtered out t==u.)
+This optimisation makes a very noticeable difference to the number of terms
+generated. For a large list signature, the number of terms goes down from
+21266 to 7079. For booleans there is a much bigger difference, since so many
+terms are equal: without the depth optimisation we generate 7395 terms, and
+with it 449 terms. Time-wise, the method becomes an order of magnitude
+faster.
+
+
+2.10     Generating Test Data
+As always with random testing tools, the quality of the test data determines
+the quality of the generated equations. As such, it is important to provide
+good test data generators, that fit the program at hand. In our property-
+based random testing tool QuickCheck [Claessen and Hughes, 2000], we have a
+range of test data generators for standard types, and a library of functions for
+building custom generators. QuickSpec simply reuses QuickCheck’s random
+data generators.
+As an example of what can happen if we use an inappropriate generator, con-
+sider generating laws for an API including the following functions:
+
+isPrefixOf :: [Elem] -> [Elem] -> Bool
+null       :: [Elem] -> Bool
+
+If one is not careful in defining the list generator, QuickSpec might end up
+producing the law isPrefixOf xs ys == null xs. Why? Because for two
+randomly generated lists, it is very unlikely that one is a prefix of the other,
+unless the first is empty. So, there is a risk that the interesting test cases that
+separate isPrefixOf xs ys and null xs will not be generated. The problem
+can be solved by making sure that the generator used for random lists is likely to
+pick the list elements from a small domain. Thus, just as in using QuickCheck,
+creating custom generators is sometimes necessary to get correct results.
+We have to point out that this does not happen often even if we are careless
+about test data generation: as noted earlier, in our implementation we keep
+on refining the equivalence relation until it has been stable for 200 iterations,
+which gives QuickSpec a better chance of falsifying hard-to-falsify equations.
+
+
+3    Case Studies
+
+In this section, we present two case studies using QuickSpec. Our goal is
+primarily to derive understanding of the code we test. In many cases, the
+   5
+     This relies on t’ not having greater depth than t, which requires the term ordering to
+always pick the representative of an equivalence class as a term with the smallest depth.

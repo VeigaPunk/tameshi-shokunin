@@ -1,0 +1,83 @@
+{
+ "seat": "T49Read17",
+ "item": "C1 reader, section '## Effective expectation reconciliation — round 14', pointer ordinals 0-4",
+ "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+ "date": "2026-10-26",
+ "kind": "probe receipt: observed outputs of read-only probes; never a verdict on C1",
+ "scratch": "probes ran in an extracted git archive under the seat scratch root (T49Read17), deleted before yield; no lane byte was written by any probe",
+ "probes": [
+  {
+   "id": "c1-list-at-base",
+   "command": "python3 -I .ufo/evidence/round-49/c1/measure.py --lane LANE --rev 8ca67421111fa354b47b803358391d0b07fc6db9 --list",
+   "exit": 0,
+   "observed": {
+    "pointers_in_section": 10,
+    "ordinals_0_4": [
+     {"ordinal": 0, "raw": "corpus/lessons/round-13-verifier-spotcheck.md", "kind": "path", "file": "corpus/lessons/round-13-verifier-spotcheck.md"},
+     {"ordinal": 1, "raw": "corpus/knowledge/incremental-pin-disposition.md", "kind": "path", "file": "corpus/knowledge/incremental-pin-disposition.md"},
+     {"ordinal": 2, "raw": "tools/evidence-disposition.py", "kind": "path", "file": "tools/evidence-disposition.py"},
+     {"ordinal": 3, "raw": ".ufo/evidence/round-14/dispositions-before.json", "kind": "path", "file": ".ufo/evidence/round-14/dispositions-before.json"},
+     {"ordinal": 4, "raw": "dispositions.json", "kind": "path", "file": null}
+    ],
+    "section_heading": "## Effective expectation reconciliation — round 14",
+    "section_start": 1563
+   }
+  },
+  {
+   "id": "archive-28aeef4-replay-before",
+   "tree": "git -C LANE archive 28aeef4 | tar -x (extracted, no repo)",
+   "tool_in_tree_sha256": "1609a9df970dcde345b4eceadd35d34d016ba0e3f5c3c02415b51592d42d2d95",
+   "tool_version": "evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)",
+   "command": "cd TREE && python3 -I tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json",
+   "exit": 1,
+   "observed": {
+    "status": "failed",
+    "counts": {"effective": 12, "expected_checks": 12, "failed": 1, "findings": 1, "passed": 11, "superseded": 0},
+    "findings": [{"id": "expected_contains_missing", "expectation": "producer_before", "detail": "producer_before: stdout lacks 'summary preserves top-level exposed declaration kind'"}],
+    "expected_inputs_verified": 13
+   }
+  },
+  {
+   "id": "archive-28aeef4-replay-after",
+   "command": "cd TREE && python3 -I tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json",
+   "exit": 0,
+   "observed": {"status": "clean", "counts": {"effective": 11, "expected_checks": 12, "failed": 0, "findings": 0, "passed": 11, "superseded": 1}}
+  },
+  {
+   "id": "base-tree-replay-before",
+   "tree": "git -C LANE archive 8ca67421111fa354b47b803358391d0b07fc6db9 | tar -x (extracted, no repo)",
+   "tool_in_tree_sha256": "39ee5c5effd9bbdaafda644aada0cdb008ddee1dbfee4ac6bea93fc5a1fe51c8",
+   "command": "cd TREE && python3 -I tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json",
+   "exit": 2,
+   "observed": {
+    "status": "could_not_evaluate",
+    "id": "expected_input_digest_mismatch",
+    "first_finding": "tools/bash-witness-study.py: observed 60575e62a5301bd31c8c84a4039af69fe8f845abf035b8d072975cd9ef685be9 expects 49e9e5e20b73f115626fb4f81aac9b238e0f01811230c4fd0ff726c1f350ad80"
+   }
+  },
+  {
+   "id": "base-tree-replay-after",
+   "command": "cd TREE && python3 -I tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json",
+   "exit": 2,
+   "observed": {"status": "could_not_evaluate", "id": "expected_input_digest_mismatch", "first_finding": "tools/bash-witness-study.py: observed 60575e62a5301bd31c8c84a4039af69fe8f845abf035b8d072975cd9ef685be9 expects 49e9e5e20b73f115626fb4f81aac9b238e0f01811230c4fd0ff726c1f350ad80"}
+  },
+  {
+   "id": "base-pinned-input-digests",
+   "command": "sha256 of `git show BASE:<path>` for each of the 13 paths in .ufo/evidence/round-13/expected.json inputs, compared to the pin",
+   "observed": {
+    "checked": 13,
+    "differ": ["tools/pin-disposition.py 331529eadafe... vs pin 297253971dab...", "tools/bash-witness-study.py 60575e62a530... vs pin 49e9e5e20b73...", "tools/mutate-and-run.sh a7d3f2dd7d47... vs pin 75ed934dc863..."],
+    "match": 10
+   }
+  },
+  {
+   "id": "runner-content-history",
+   "command": "git -C LANE log --format='%H %s' -- tools/mutate-and-run.sh; git show <commit>:tools/mutate-and-run.sh | sha256sum",
+   "observed": {
+    "round_13_14_content_sha256": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5 (at 606716f70, unchanged at 28aeef4)",
+    "first_move": "commit 05a224754 (subject: 'round-16: wave-2 repairs …'), content sha256 0673d2e5374b94c651238e7497cbebaffb6483348400747b08f9d27cdc8118aa",
+    "base_content_sha256": "a7d3f2dd7d47…"
+   }
+  }
+ ]
+}

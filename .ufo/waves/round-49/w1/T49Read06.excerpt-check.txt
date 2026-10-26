@@ -1,0 +1,30 @@
+receipt: T49Read06 excerpt/claim containment check at base 8ca67421111fa354b47b803358391d0b07fc6db9
+checker: .ufo/evidence/round-49/c1/measure.py norm()/pointed_text() (EXCERPT_MIN=24 EXCERPT_MAX=400)
+pointers source: .ufo/evidence/round-49/control/c1-pointers-at-base-8ca67421.json (sha256 92a2e532fb323bee556e44b0877107339f7faa9e1c8f9636a8a6b1a8de6d4d3c)
+rows: .ufo/waves/round-49/w1/T49Read06.rows.json (sha256 192c5efec7489ac80ec1e1828aa7502f2ae724b30fb631da4e21cd99925a6247)
+
+ord file                                           ranges                      exlen  occurs   claim-verb ptr-eq verdict  file-lines
+25  corpus/knowledge/mutation-case-kimi-census.md  [[34,35]]                   76     True     True     True   holds    238
+26  corpus/knowledge/mutation-case-kagi-census.md  [[54,56]]                   81     True     True     True   holds    275
+27  SKILL.md                                       [[377,378]]                 92     True     True     True   holds    2136
+28  corpus/knowledge/mutation-case-kimi-census.md  [[20,21],[29,31]]           129    True     True     True   holds    238
+29  corpus/knowledge/mutation-case-kagi-census.md  [[50,53]]                   90     True     True     True   holds    275
+
+all rows base_verdict: ['holds']
+section frozen sha256 checked equal at base: e37cf21e3155bdd39a68ef24a5135f2ad62861bbb5794ec954abf42bb0bd631d
+all-checks: PASS
+
+checks performed per row
+- ptr-eq: heading, ordinal, raw, file, ranges equal the frozen pointer row byte for byte (json compare).
+- occurs: len(norm(excerpt)) in [24,400] and norm(excerpt) is a substring of pointed_text(base blob, ranges), i.e. the counter's own function on the counter's own ranges.
+- claim-verb: norm(claim) is a substring of norm(SKILL.md at base) (whitespace-collapsed, so line wraps do not count as edits).
+- verdict: row carries base_verdict == verdict == "holds"; no proposed_fix emitted.
+
+commands
+- python3 .ufo/evidence/round-49/c1/measure.py --selftest                -> 34 cases, failed=0
+- python3 .ufo/evidence/round-49/c1/measure.py --lane LANE --rev 8ca67421111fa354b47b803358391d0b07fc6db9 --list
+- git -C LANE show 8ca67421111fa354b47b803358391d0b07fc6db9:<file> | nl -ba | sed -n '<ranges>'
+
+scope
+- slice = recipe-section pointer ordinals 25-29 only; rows 0-24 and 30-33 of the same section belong to other seats.
+- counter invocations: --selftest and --list only; no deciding run, no --rev scoring beyond --list.

@@ -1,0 +1,65 @@
+# T49ScribeEntryDraft — S_SB fetch receipt (Smallbone 2011, https://smallbone.se/papers/lic.pdf)
+# seat T49ScribeEntryDraft, 2026-10-26; command run from scratch, scratch deleted after copy
+
+$ curl -fsSL --max-time 60 https://smallbone.se/papers/lic.pdf -o lic.pdf    # exit 0
+$ stat -c %s lic.pdf
+1269821
+$ sha256sum lic.pdf
+eaee48f930ba20a06824fe238cc6a42427e9fb45d1d70b852bf091ad6e44ac08  lic.pdf
+$ pdftotext -layout lic.pdf lic.txt && wc -c lic.txt
+287828 lic.txt
+
+--- title line 1-3 of the text:
+       Thesis for the Degree of Licentiate of Engineering
+
+
+
+
+   Property-based testing for functional
+
+--- the quoted sentence, with the printed page number at the top of its PDF page:
+PDF page 39, printed page top = '34'
+excerpt: As always with random testing tools, the quality of the test data determines the quality of the generated equations. As such, it is important to provide good test data generators, that fit the program at hand. In our property- based random testing tool QuickCheck [Claessen and Hughes, 2000], we have a range of test data generato
+
+--- anchor correction against the staged row the merge carries:
+$ sed -n 37p /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md | cut -c1-200
+| S183 | Property-based testing for functional programs (Smallbone; Chalmers University of Technology Technical Report 76L, 2011) — https://smallbone.se/papers/lic.pdf | paper | B | the generator-cr
+(claimed anchor: §4.1 ... p. 44)
+$ grep -n "4.1    A Parallel Correctness Criterion" lic.txt
+2883:4.1    A Parallel Correctness Criterion
+$ python3 -c ... page whose top prints 44:
+printed p.44 (PDF page 49): 44 3.4 shr: Problems with Partiality Adding shr to the signature, too, we at first obtaine
+
+--- whole-document occurrence counts:
+$ pdftotext -layout - | grep -c "fit the program at hand"  (on lic.txt)
+1
+$ grep -c "Generating Test Data" lic.txt
+1
+
+--- the staged S183 row, cells 1:11 (anchor is cell 6):
+  cell 1: S183
+  cell 2: Property-based testing for functional programs (Smallbone; Chalmers University of Technology Technical Report 76L, 2011) — https://smallbone.se/papers/lic.pdf
+  cell 3: paper
+  cell 4: B
+  cell 5: the generator-craft statement by a QuickCheck author, for F10
+  cell 6: §4.1 "good test data generators, that fit the program at hand", p. 44 @ Technical Report 76L, ISSN 1652-876X, fetched 2026-10-23
+  cell 7: the quality of the generated equations is bounded by the quality of the generator, so a fixture generator must be chosen per program — and an inappropriate gene
+  cell 8: mined
+  cell 9: 2026-10-23
+  cell 10: 365d — `curl -fsSL 'https://smallbone.se/papers/lic.pdf' \
+  cell 11: pdftotext -layout - - \
+  cell 12: tr '\n' ' ' \
+  cell 13: grep -c 'we have a range of test data generators for standard types'` (expect 1; the string was present in the copy fetched 2026-10-23)
+  cell 14: corpus/knowledge/r4-quickcheck-primary-correction.md
+
+--- the merge knowledge entry that repeats the same anchor:
+3:source: S183 — https://smallbone.se/papers/lic.pdf — §4.1 "good test data generators, that fit the program at hand", p. 44 — Chalmers University of Technology Technical Report 76L, ISSN 1652-876X, fetched 2026-1
+
+--- cell counts of the two staged rows the L1 would copy (lane contract: exactly 11):
+  SOURCES.append.md line 36 cells=13
+  SOURCES.append.md line 37 cells=14
+--- cell 10-13 above show why: the recheck cell carries unescaped '|' characters.
+
+# RE-FETCH CONFIRMATION (after the verified copy was deleted with scratch):
+#   curl -fsSL https://smallbone.se/papers/lic.pdf | sha256sum   (a second time)
+#   -> eaee48f930ba20a06824fe238cc6a42427e9fb45d1d70b852bf091ad6e44ac08  (identical to the copy quoted above)

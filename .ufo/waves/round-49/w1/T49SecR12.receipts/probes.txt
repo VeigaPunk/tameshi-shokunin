@@ -1,0 +1,94 @@
+# Copy of base tools/repeat-control.py (sha256 296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25, 35454 B) run from a scratch clone root.
+# Each header line is argv exactly; stdout/stderr/exit as observed.
+
+$ argv = ["python3", "tools/repeat-control.py", "--runs", "2", "--out", "off2/two", "--", "true"]
+REPEAT_CONTROL: invalid_usage
+[stderr]
+repeat-control: --runs must be >= 3, got 2
+usage: repeat-control.py --runs N --out DIR -- COMMAND [ARG...]
+       repeat-control.py --snapshot DIR
+       repeat-control.py --selftest
+exit=64
+
+$ argv = ["python3", "tools/repeat-control.py", "--runs", "3", "--out", "off2/exists", "--", "true"]
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25
+REPEAT_CONTROL: invalid_usage
+[stderr]
+repeat-control: --out already exists (refused, never overwritten): off2/exists
+usage: repeat-control.py --runs N --out DIR -- COMMAND [ARG...]
+       repeat-control.py --snapshot DIR
+       repeat-control.py --selftest
+exit=64
+
+$ argv = ["python3", "tools/repeat-control.py", "--runs", "3", "--out", "off2/match", "--", "true"]
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25
+REPEAT_RUN 1 exit=0 stdout-bytes=0 stderr-bytes=0
+REPEAT_RUN 2 exit=0 stdout-bytes=0 stderr-bytes=0
+REPEAT_RUN 3 exit=0 stdout-bytes=0 stderr-bytes=0
+REPEAT_COMPARE identical=yes runs=3
+REPEAT_OUT off2/match
+REPEAT_CONTROL: controls_match
+exit=0
+
+$ argv = ["python3", "tools/repeat-control.py", "--runs", "3", "--out", "off2/nonzero", "--", "sh", "-c", "echo same; exit 7"]
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25
+REPEAT_RUN 1 exit=7 stdout-bytes=5 stderr-bytes=0
+REPEAT_RUN 2 exit=7 stdout-bytes=5 stderr-bytes=0
+REPEAT_RUN 3 exit=7 stdout-bytes=5 stderr-bytes=0
+REPEAT_COMPARE identical=yes runs=3
+REPEAT_OUT off2/nonzero
+REPEAT_CONTROL: baseline_nonzero
+exit=2
+
+$ argv = ["python3", "tools/repeat-control.py", "--runs", "3", "--out", "off2/mismatch", "--", "sh", "-c", "date +%N"]
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25
+REPEAT_RUN 1 exit=0 stdout-bytes=10 stderr-bytes=0
+REPEAT_RUN 2 exit=0 stdout-bytes=10 stderr-bytes=0
+REPEAT_RUN 3 exit=0 stdout-bytes=10 stderr-bytes=0
+REPEAT_COMPARE identical=no runs=3
+REPEAT_OUT off2/mismatch
+REPEAT_CONTROL: controls_mismatch
+exit=1
+
+$ argv = ["python3", "tools/repeat-control.py", "--runs", "3", "--out", "off2/unavail", "--", "/nonexistent-cmd-xyz"]
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25
+REPEAT_RUN 1 exit=unavailable stdout-bytes=0 stderr-bytes=60
+REPEAT_RUN 2 exit=unavailable stdout-bytes=0 stderr-bytes=60
+REPEAT_RUN 3 exit=unavailable stdout-bytes=0 stderr-bytes=60
+REPEAT_COMPARE identical=no runs=3
+REPEAT_OUT off2/unavail
+REPEAT_CONTROL: command_unavailable
+exit=2
+
+$ argv = ["python3", "tools/repeat-control.py", "--selftest"]
+SELFTEST_CASE stable PASS (expected=controls_match/0 observed=controls_match/0 saved-bytes-ok)
+SELFTEST_CASE mismatch-stdout PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE mismatch-run3-only PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE mismatch-newline-only PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE mismatch-stderr PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE mismatch-exit PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE mismatch-nonzero-exits PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE nonzero-baseline PASS (expected=baseline_nonzero/2 observed=baseline_nonzero/2)
+SELFTEST_CASE child127-baseline PASS (expected=baseline_nonzero/2 observed=baseline_nonzero/2)
+SELFTEST_CASE command-unavailable-enoent PASS (expected=command_unavailable/2 observed=command_unavailable/2)
+SELFTEST_CASE command-unavailable-eacces PASS (expected=command_unavailable/2 observed=command_unavailable/2)
+SELFTEST_CASE command-unavailable-enoexec PASS (expected=command_unavailable/2 observed=command_unavailable/2)
+SELFTEST_CASE invalid-runs-2 PASS (expected=invalid_usage/64 observed=invalid_usage/64)
+SELFTEST_CASE invalid-runs-1 PASS (expected=invalid_usage/64 observed=invalid_usage/64)
+SELFTEST_CASE invalid-runs-0 PASS (expected=invalid_usage/64 observed=invalid_usage/64)
+SELFTEST_CASE invalid-runs-abc PASS (expected=invalid_usage/64 observed=invalid_usage/64)
+SELFTEST_CASE invalid-missing-separator PASS (expected=invalid_usage/64 observed=invalid_usage/64)
+SELFTEST_CASE invalid-existing-out PASS (expected=invalid_usage/64 observed=invalid_usage/64 refused-out-untouched)
+SELFTEST_CASE stdin-devnull PASS (expected=controls_match/0 observed=controls_match/0 stdin-devnull-ok)
+SELFTEST_CASE snapshot-pass PASS (expected=controls_match/0 observed=controls_match/0)
+SELFTEST_CASE snapshot-mismatch-pass PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST_CASE snapshot-tamper-byte PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)
+SELFTEST_CASE snapshot-tamper-missing PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)
+SELFTEST_CASE snapshot-tamper-unlisted PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)
+SELFTEST_CASE snapshot-tamper-duplicate-key PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)
+SELFTEST_CASE snapshot-tamper-manifest-symlink PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)
+SELFTEST_CASE snapshot-tamper-observation-symlink PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)
+SELFTEST_CASE snapshot-committed-stable PASS (expected=controls_match/0 observed=controls_match/0)
+SELFTEST_CASE snapshot-committed-mismatch PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)
+SELFTEST: PASS (29 cases)
+exit=0

@@ -1,0 +1,149 @@
+{
+ "section": "## Repeated controls and gate registry",
+ "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+ "section_lines": "1479-1498 (sectionized; next heading `### Gate/probe registry` at 1499); the item's heading is `## Repeated controls and gate registry — round 12`",
+ "findings": [
+  {
+   "skill_line": 1483,
+   "statement": "not a change to the six-leg runner.",
+   "verdict": "false",
+   "evidence": "At base the runner carries nine legs, not six: `git -C LANE show 8ca67421111fa354b47b803358391d0b07fc6db9:tools/mutate-and-run.sh | sed -n '83p'` -> `# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine) — the fleet's`; the same blob lists nine leg rows, `git -C LANE show BASE:tools/mutate-and-run.sh | grep -cE '^#   (js|bash)-'` -> 9 (lines 87-95, js-round-gate at :93 is the seventh). SKILL.md itself already dates the count at :1391 ('six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26') and the errata row at :1740 corrects :1391 only; `git -C LANE show BASE:SKILL.md | grep -n '1483'` -> 1483 alone, so this line carries no dated correction. Six was the round-12 count, so the sentence asserts a lane-wide count the lane no longer holds. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/base-runner-legs.txt, base-section.txt.",
+   "proposed_fix": {
+    "skill_old": "not a change to the six-leg runner.",
+    "skill_new": "not a change to the six-leg runner of round 12.",
+    "why": "Date-qualifying keeps the true round-12 fact (six legs then) and stops the present-tense sentence from claiming a six-leg runner at base, where tools/mutate-and-run.sh:83 reads 'r26 nine'. Same idiom as the errata row 1740 ('six at round 11, seven since round 16'). Adds no path, `file:N` or `S###` token, so this section's base 5-pointer C1 set is unchanged and no heading moves."
+   }
+  },
+  {
+   "skill_line": 1488,
+   "statement": "| Any available controls differ in exit or either stream | `controls_mismatch` | Do not attribute a later red suite solely to the mutant |",
+   "verdict": "false",
+   "evidence": "The all-executed case matches the row: argv ['python3','tools/repeat-control.py','--runs','3','--out',DIR,'--','sh','-c','date +%N'] -> `REPEAT_COMPARE identical=no runs=3`, `REPEAT_CONTROL: controls_mismatch`, exit=1. The mixed case falsifies the row as written: argv [... '--runs','3','--out',DIR,'--',DIR+'/probe/vanish3.sh'] where the script prints run1, run2 then `chmod -x` itself -> `REPEAT_RUN 1 exit=0`, `REPEAT_RUN 2 exit=0` (stdout run1 vs run2 differ), `REPEAT_RUN 3 exit=unavailable` (errno 13), `REPEAT_CONTROL: command_unavailable`, exit=2. Row 2's antecedent ('any available controls differ in exit or either stream') holds and its decision cell predicts controls_mismatch/exit 1; the tool decides availability first (tools/repeat-control.py:206-209 before the disagreement test :210-218; docstring precedence :30-36). Row 3's 'or command unavailable' also matches the overlap, so the table as written has no precedence and row 2's mapping is wrong on this input. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt, mixed-availability.txt, mixed-vanish3.sh.",
+   "proposed_fix": {
+    "skill_old": "| Any available controls differ in exit or either stream | `controls_mismatch` |",
+    "skill_new": "| All runs executed and any differ in exit or either stream | `controls_mismatch` |",
+    "why": "Makes the row's antecedent exclude the mixed case the tool resolves as command_unavailable/exit 2 (any run that could not be executed wins before disagreement: tools/repeat-control.py:206-218). Keeps the decision cell and the bound cell, adds no pointer or heading change, and removes the overlap with row 3. Alternative shape: add a sentence after the table saying availability is decided before disagreement."
+   }
+  },
+  {
+   "skill_line": 1509,
+   "statement": "The bash study deepens one recorded case, never a seventh independently measured gate.",
+   "verdict": "false",
+   "evidence": "OUT OF RANGE (scope note): this sentence spans SKILL.md:1508-1509 in `### Gate/probe registry` (sectionized 1499-1516), not in this seat's section 1479-1498; reported because it is the stale lane count adjacent to the audited block. At base the runner lists nine legs (`git -C LANE show BASE:tools/mutate-and-run.sh | sed -n '83p'` -> '... r16 seven; r18 eight; r26 nine'; nine `#   js-|bash-` rows at :87-95), so a seventh independently measured leg exists (js-round-gate, :93) and the Fleet count the ordinal presupposes is stale; the note it rests on repeats the stale six at corpus/knowledge/repeated-control-precondition.md:70 ('the fleet's recorded kill-rate legs stay the six at tools/mutate-and-run.sh:84-89'). The clause that the bash study is itself not a gate still holds. Same class as SKILL.md:1391/1740, which date the count, but this line has no errata entry. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/base-runner-legs.txt, base-note.txt.",
+   "proposed_fix": {
+    "skill_old": "never a seventh independently measured gate",
+    "skill_new": "never a further independently measured gate",
+    "why": "Drops the stale ordinal while keeping the sentence's point: the bash study is a probe, not a gate of the fleet's leg registry. CAUTION: this sentence is in `### Gate/probe registry`, not one of the seven C1 target sections, and the round-21 monitor matches sections to ledger entries by sha256, so applying this fix requires re-keying that section (or deferring the edit to a round that does). It adds no pointer and does not touch the heading."
+   }
+  },
+  {
+   "skill_line": 1481,
+   "statement": "Source: S004/S026",
+   "verdict": "true",
+   "evidence": "S026 is a live row (mined) and resolves: `git -C LANE show BASE:corpus/SOURCES.md | sed -n '37p'` -> `| S026 | Flaky Tests at Google and How We Mitigate Them ... | mined | 2026-10-19 | 730d | corpus/knowledge/repeated-control-precondition.md |`, so the statement is true. But the anchor is superseded at base: the cited note's own header reads `S265 (supersedes S026) ... re-fetched 2026-10-26T08:40:51Z` (corpus/knowledge/repeated-control-precondition.md:1) and `git -C LANE show BASE:corpus/SOURCES.md | sed -n '140p'` -> `| S265 | Flaky Tests at Google ... | docs | A | supersedes S026's anchor and quote only: ... re-anchored to the 2026-10-26 bytes | ... | corpus/knowledge/repeated-control-precondition.md |`. Following S026 leads to a row whose anchor/quote are the 2026-10-19 bytes. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/base-sources.txt, base-note.txt.",
+   "proposed_fix": {
+    "skill_old": "Source: S004/S026 and",
+    "skill_new": "Source: S004/S265 and",
+    "why": "Names the current anchor the cited note already uses; S265 resolves at corpus/SOURCES.md:140 and is admitted into the same note, so the pointer stays resolvable and the section stays at its base 5-pointer count (floor 5), with a holds row available at :140. If the L1 prefers the page's retained-history form (SKILL.md:1519 uses 'S047 (historical S041 retained)'), write 'S004/S265 (historical S026 retained)' instead; that adds a sixth S-id pointer which then needs its own read row."
+   }
+  },
+  {
+   "skill_line": 1479,
+   "statement": "## Repeated controls and gate registry — round 12",
+   "verdict": "true",
+   "evidence": "The instrument, receipt and tool version are round 12: `git -C LANE show BASE:tools/repeat-control.py | sed -n '112p'` -> `VERSION = \"repeat-control.py r12 (tameshi-shokunin, 2026-10-20)\"`; the runtime receipt lives at .ufo/evidence/round-12/verification-final.json (present, 100644, 21047 B); the registry rows the block names are under .ufo/evidence/round-12/. Receipt: .ufo/waves/round-49/w1/T49SecR12.receipts/base-section.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1481,
+   "statement": "and `corpus/knowledge/repeated-control-precondition.md`;",
+   "verdict": "true",
+   "evidence": "`git -C LANE ls-tree -l BASE -- corpus/knowledge/repeated-control-precondition.md` -> `100644 blob 0d45d1c991343a5458ff4ee59d3fa6e96719791c 14142`, and `git -C LANE cat-file -e BASE:corpus/knowledge/repeated-control-precondition.md` succeeds. The note carries the section's claims: '.ufo/evidence/round-12/ControlKnowledge/quotes.tsv' located excerpts, the finding map (:39-45) and the limitations (:29, :53). Receipt: .ufo/waves/round-49/w1/T49SecR12.receipts/base-sources.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1482,
+   "statement": "runtime evidence: `.ufo/evidence/round-12/verification-final.json`.",
+   "verdict": "true",
+   "evidence": "`git -C LANE cat-file -e BASE:.ufo/evidence/round-12/verification-final.json` succeeds (100644, 21047 B); the blob's checks[] contains `real-pristine-three-controls` with observed_exit 0 and stdout `REPEAT_RUN 1 exit=0 stdout-bytes=1202`, `REPEAT_RUN 2 exit=0 stdout-bytes=1202`, `REPEAT_RUN 3 exit=0 stdout-bytes=1202`, `REPEAT_COMPARE identical=yes runs=3`, `REPEAT_CONTROL: controls_match`, and top-level `passed: true`. That is runtime evidence for the section's first row (three zero-exit controls matching). Receipt: .ufo/waves/round-49/w1/T49SecR12.receipts/verification-final-receipt.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1483,
+   "statement": "This is a standalone precondition check",
+   "verdict": "true",
+   "evidence": "`git -C LANE show BASE:tools/mutate-and-run.sh | grep -n 'repeat'` -> no output: the runner has no repeat-control option, and the gate is its own tool (tools/repeat-control.py). corpus/knowledge/repeated-control-precondition.md:70 makes the same call: 'A repeat-control run is a precondition observation, not a mutation leg'. So the gate is a standalone precondition instrument, and the check does not modify the runner (the false part of the sentence is only the stale 'six-leg' descriptor, reported first).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1487,
+   "statement": "| Three or more zero-exit controls match on raw stdout and stderr | `controls_match` | Only this finite sample matched; not a determinism proof |",
+   "verdict": "true",
+   "evidence": "argv ['python3','tools/repeat-control.py','--runs','3','--out',DIR,'--','true'] -> `REPEAT_RUN 1 exit=0`, `REPEAT_RUN 2 exit=0`, `REPEAT_RUN 3 exit=0`, `REPEAT_COMPARE identical=yes runs=3`, `REPEAT_CONTROL: controls_match`, exit=0; bytes are compared unnormalized (tools/repeat-control.py:22-24). The 'three or more' floor is enforced: argv [...,'--runs','2',...] -> stderr `repeat-control: --runs must be >= 3, got 2`, `REPEAT_CONTROL: invalid_usage`, exit=64. The bound matches the tool's own limitation text at :92-94 ('N finite observations agreed on this host in this environment — it is not a determinism proof and it cures no flakiness'); the row omits the host/environment scope there, a weaker paraphrase rather than a false claim. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt, selftest.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1489,
+   "statement": "| Equal nonzero controls, or command unavailable | Could not evaluate baseline | No mutation kill-rate claim |",
+   "verdict": "true",
+   "evidence": "argv [...,'--','sh','-c','echo same; exit 7'] -> `REPEAT_RUN 1 exit=7`, `REPEAT_RUN 2 exit=7`, `REPEAT_RUN 3 exit=7`, `REPEAT_COMPARE identical=yes runs=3`, `REPEAT_CONTROL: baseline_nonzero`, exit=2; argv [...,'--','/nonexistent-cmd-xyz'] -> `REPEAT_RUN 1 exit=unavailable` (x3), `REPEAT_CONTROL: command_unavailable`, exit=2. EXIT_BY_ID (tools/repeat-control.py:122-130) maps both ids to 2, and both are could-not-evaluate classes, so 'Could not evaluate baseline' / 'No mutation kill-rate claim' holds. Note for the integrator: the decision cell is prose, not a string the tool prints; the printed ids are `baseline_nonzero` and `command_unavailable` (independently observed by T49ExecR12Cmd M2), so a cold reader cannot map the cell to a receipt line. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt, probe-findings/nonzero.finding.txt, probe-findings/unavail.finding.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1491,
+   "statement": "choose a pristine command",
+   "verdict": "true",
+   "evidence": "The gate exists because one control run cannot separate a stable baseline from a flaky one: tools/repeat-control.py:4-10 ('The mutation runner checks the pristine control exactly once per sweep ... one run cannot separate a stable baseline from a flaky one'); S004 requires that the tree first pass reliably (corpus/SOURCES.md:15 'tests must first pass reliably in a copied tree').",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1491,
+   "statement": "put evidence outside any tree it inspects",
+   "verdict": "true",
+   "evidence": "Stated by the tool itself: tools/repeat-control.py:27-28 '`--out` placed inside a tree the command itself inspects makes the command mismatch with itself; keep it outside that tree.'",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1492,
+   "statement": "run `python3 tools/repeat-control.py --runs 3 --out /tmp/tameshi-r12-controls-UNIQUE -- COMMAND ARG...`;",
+   "verdict": "true",
+   "evidence": "The exact interface is accepted and executed: argv ['python3','tools/repeat-control.py','--runs','3','--out',DIR,'--','true'] -> `REPEAT_OUT <DIR>`, `REPEAT_CONTROL: controls_match`, exit=0; the `--` separator is mandatory (selftest case invalid-missing-separator PASS at invalid_usage/64). The /tmp example is illustrative; under the 2026-10-25 scratch directive the probes replaced DIR with an empty seat-scratch directory, which the tool accepts identically. Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt, selftest.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1493,
+   "statement": "retain raw observations before interpreting the finding.",
+   "verdict": "true",
+   "evidence": "The tool saves, before printing its finding, run k's raw `stdout`, `stderr` and `exit` as DIR/run-<k>.{stdout,stderr,exit} plus command.txt and, written last, finding.txt (tools/repeat-control.py:20-26); the observed output dirs hold exactly those files (e.g. probe-findings/match.finding.txt contains `REPEAT_CONTROL: controls_match` / `REPEAT_EXIT: 0`). Receipts: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt, probe-findings/.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1493,
+   "statement": "The output directory must not exist.",
+   "verdict": "true",
+   "evidence": "argv ['python3','tools/repeat-control.py','--runs','3','--out',EXISTING_DIR,'--','true'] -> stderr `repeat-control: --out already exists (refused, never overwritten): <DIR>`, `REPEAT_CONTROL: invalid_usage`, exit=64; source uses `os.makedirs(out_dir, exist_ok=False)` at tools/repeat-control.py:315. Receipt: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1494,
+   "statement": "Caller owns timeout policy; hanging commands yield no verdict.",
+   "verdict": "true",
+   "evidence": "tools/repeat-control.py:84-88 'Limitations (stated, not hidden): there is no timeout and no process supervisor — a command that hangs yields no verdict'; the child call at :281-287 is subprocess.run with stdin/stdout/stderr set and no `timeout` keyword, and `grep -n 'timeout=\\|alarm' tools/repeat-control.py` -> no match. Verified from source, not executed (a hang would only block).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1495,
+   "statement": "Do not retry until green, normalize output, or interpret a finite match as proof of reliability.",
+   "verdict": "true",
+   "evidence": "One pass, no retry branch: `for index in range(1, runs + 1)` at tools/repeat-control.py:325; byte-exact comparison with 'no decoding, stripping, newline normalization or whitespace folding' (:22-24); selftest cases `mismatch-newline-only` and `mismatch-run3-only` PASS at expected=controls_mismatch/1 (receipt selftest.txt:4-6), so a normalized or retried reading would be wrong. The finite-match bound is the tool's own text (:92-94). Receipt: .ufo/waves/round-49/w1/T49SecR12.receipts/selftest.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1496,
+   "statement": "Command stdout/stderr may contain sensitive data: choose a non-secret fixture command before retaining evidence.",
+   "verdict": "true",
+   "evidence": "The tool retains raw command output with no redaction: bytes are written verbatim to run-<k>.stdout/.stderr (tools/repeat-control.py:20-26) and `grep -n 'redact\\|sanitize\\|scrub' tools/repeat-control.py` -> no match. The warning is therefore sound for any non-fixture command. Receipt: .ufo/waves/round-49/w1/T49SecR12.receipts/probes.txt.",
+   "proposed_fix": null
+  }
+ ]
+}

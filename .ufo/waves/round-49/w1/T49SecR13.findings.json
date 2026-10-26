@@ -1,0 +1,126 @@
+{
+ "section": "## Pin disposition and provenance correction",
+ "findings": [
+  {
+   "skill_line": 1530,
+   "statement": "| Frozen summary kind is null but its top-level declaration is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |",
+   "verdict": "false",
+   "evidence": "The clause reads as a property of the frozen summary, and it is false of that object: `python3 -c \"import json;print(json.load(open('.ufo/evidence/round-12/BashWitness/summary.json'))['declaration']['kind'])\"` -> None; `python3 -c \"import json;print(json.load(open('.ufo/evidence/round-12/BashWitness/declaration.json'))['kind'])\"` -> declared-witness mapping (not a blind preregistration). The companion states the same split: .ufo/evidence/round-13/witness-metadata.json declaration.kind_source = 'declaration.json#/kind (explicit frozen top-level field)' and original_nested = {source: 'summary.json#/declaration/kind', value: null, state: 'historical-null-preserved'}. So summary.json's own top-level declaration block is not explicit about kind; the explicit field lives in the separate frozen declaration.json, which the Decision column then cites as 'the companion'. A cold reader at base following the cell to summary.json#/declaration finds kind=null, so the row's second clause does not resolve where it points.",
+   "proposed_fix": {
+    "skill_old": "its top-level declaration is explicit",
+    "skill_new": "the frozen declaration's top-level kind is explicit",
+    "why": "Names the object that actually carries the field (declaration.json#/kind, the source the companion normalizes) instead of the frozen summary, whose /declaration/kind is null. Adds no path, `file:N` or `S###` token, so the section's 9-pointer C1 set is unchanged."
+   }
+  },
+  {
+   "skill_line": 1555,
+   "statement": "No registry row changes rank, SHONEN authority, or the six recorded cases.",
+   "verdict": "false",
+   "evidence": "OUT OF RANGE (scope note): this sentence sits in `### Round-13 gate/probe registry`, sectionized 1548-1562, not in this seat's section 1517-1547; reported because it is the only stale lane count adjacent to the section. At base the lane holds nine recorded cases: `git show 8ca67421111fa354b47b803358391d0b07fc6db9:tools/mutate-and-run.sh | grep -cE '^#   (js|bash)-'` -> 9, and :83 of the same file reads 'r10-2 six legs; r16 seven; r18 eight; r26 nine'. Six was the round-13 count: `python3 .ufo/evidence/round-13/measure.py --rev 546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50` -> recorded_cases 6 (.ufo/evidence/round-13/before-final.json agrees: recorded_cases 6). contract.json axes_at_base.depth = '9 (command D recorded_cases=9)'. Receipt: .ufo/waves/round-49/w1/T49SecR13.recorded-cases.txt. Read as a lane-state claim the sentence is false at base (nine, not six); only the registry's non-effect claim survives. The same phrase recurs at SKILL.md:1689 (round-14 section, T49SecR14's range).",
+   "proposed_fix": {
+    "skill_old": "or the six recorded cases.",
+    "skill_new": "or the six cases recorded at round 13.",
+    "why": "Six is true only of round 13; at base the runner's leg table holds nine ('r26 nine'). Date-qualifying keeps the historical fact and stops the sentence from asserting a lane-wide count the lane no longer holds. Adds no path, `file:N` or `S###` token."
+   }
+  },
+  {
+   "skill_line": 1534,
+   "statement": "1. Read the source-backed scope and `not_compared` list before the result.",
+   "verdict": "unverifiable",
+   "evidence": "The probe emits no element named 'scope'. Read-only run in a scratch clone of base: `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root <empty scratch dir>` -> EXIT=0, keys ['schema','tool','tool_sha256','status','observed_at','manifest','root','result_reuse','result_reuse_reason','not_compared','counts','legs'], counts {'legs': 6, 'unchanged': 0, 'changed': 0, 'unavailable': 6} (receipt: .ufo/waves/round-49/w1/T49SecR13.pin-probe.txt). `grep -n 'scope' tools/pin-disposition.py` -> no match (its usage text at :40-73 never uses the word); the manifest keys are ['schema','derived_from','source','note','legs']. The ordering half is true (not_compared precedes counts/legs in the document), but 'the source-backed scope' names nothing a reader can open; the nearest existing element is the manifest's derived_from/source/note.",
+   "proposed_fix": {
+    "skill_old": "Read the source-backed scope and `not_compared` list before the result.",
+    "skill_new": "Read the manifest's recorded source and the output's `not_compared` list before the rows.",
+    "why": "Replaces an element the probe never emits with the two that exist (the manifest's derived_from/source/note and the emitted not_compared list, which does precede the rows). Adds no path, `file:N` or `S###` token."
+   }
+  },
+  {
+   "skill_line": 1519,
+   "statement": "Sources: S003 and PIT precision correction S047 (historical S041 retained);",
+   "verdict": "true",
+   "evidence": "All three rows exist at base and are mined: `git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/SOURCES.md` -> :14 S003 (StrykerJS incremental, 'when a prior verdict may be reused'), :50 S041 ('reuse of a prior verdict is an inference, not an observation'), :56 S047 ('supersedes S041 ... item 4 prioritises an old killing test'). The parenthetical is exact: S047's own support cell says 'supersedes S041'. Calibration note (no fix proposed): S048 at :57 supersedes S047 at base, and that supersession is stated only at SKILL.md:1558, outside this section (1517-1547). Naming S048 in this line would add a 10th distinct S-id pointer to a C1 target section (base 9) and therefore require a 10th read row, so the pointer-neutral correction is to leave the chain where it is already disclosed.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1520,
+   "statement": "`corpus/knowledge/incremental-pin-disposition.md`;",
+   "verdict": "true",
+   "evidence": "`git cat-file -e 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/incremental-pin-disposition.md` -> present (27870 bytes); its '## 4. Six-leg content disposition vs a fresh re-sweep (O tameshi; I)' is the section that licenses the disposition rule the table applies. Falsity check only: the reference resolves and supports the method. Calibration: the file name carries no line or section anchor, so a cold reader must scan 27 KB to check the method.",
+   "proposed_fix": {
+    "skill_old": "`corpus/knowledge/incremental-pin-disposition.md`;",
+    "skill_new": "`corpus/knowledge/incremental-pin-disposition.md`, §Six-leg content disposition vs a fresh re-sweep;",
+    "why": "Optional precision: gives the reader the section that licenses the table without adding a `file:N` pointer. The path token already exists in the section, so the C1 pointer set and read rows are unchanged."
+   }
+  },
+  {
+   "skill_line": 1521,
+   "statement": "outside routed `corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3;",
+   "verdict": "true",
+   "evidence": "`git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/lessons/round-12-verifier-spotcheck.md` -> '## Routed defects and residuals' with item 3: 'Tameshi next round: ... Disclose/repair the already named nested `declaration.kind=null` metadata defect only through new evidence without rewriting the frozen declaration. The top-level kind/disclosure and measured claim remain explicit.' Item 3 is the routed defect this section's row 5 and step 4 discharge, and the anchor ('Routed defects item 3') is exact at base, so the reference is checkable without a line number.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1522,
+   "statement": "runtime receipts in `.ufo/evidence/round-13/`.",
+   "verdict": "true",
+   "evidence": "`git ls-tree -r --name-only 8ca67421111fa354b47b803358391d0b07fc6db9 -- .ufo/evidence/round-13/` -> 16 committed receipts (pin-dispositions.json, pin-manifest.json, witness-metadata.json, witness-metadata-old-null.json, expected.json, verification.json, verification-verdict.json, producer-oracle-repair.json, claims.json, ...). They are runtime documents: pin-dispositions.json carries observed_at and counts {'legs': 6, 'unchanged': 3, 'changed': 3, 'unavailable': 0}. Adjacent defect for the L1 (not this section's claim): the directory's own counter no longer runs at base - `python3 .ufo/evidence/round-13/measure.py --rev 8ca67421111fa354b47b803358391d0b07fc6db9` -> EXIT=1, IndexError at measure.py:43, caused by SOURCES.md:468 splitting into a cell with an S-id and fewer than 5 cells. Receipt: .ufo/waves/round-49/w1/T49SecR13.recorded-cases.txt.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1526,
+   "statement": "| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |",
+   "verdict": "true",
+   "evidence": "tools/pin-disposition.py:67-73: 'Content status semantics: `unchanged` requires a readable regular worktree file, verified pinned evidence (the manifest digest equals the blob at the recorded commit), and byte equality with expected_sha256'; selftest cases unchanged and changed-head PASS - `python3 tools/pin-disposition.py --selftest` -> 'SELFTEST: PASS (19/19)' (receipt: .ufo/waves/round-49/w1/T49SecR13.selftests.txt). The Limit column matches the tool's static NOT_COMPARED list (mode/exec-bit, runner version and embedded defect specs, suite command and test harness, interpreter and toolchain versions, environment variables, dependency versions, fixture and companion files, timeouts) printed in .ufo/evidence/round-13/pin-dispositions.json. Advisory, not falsity: the Observation column states byte equality only and omits the digest-verification precondition; the row two lines below ('pin cannot be evaluated' -> unavailable) supplies it, so the table read as a whole is consistent.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1527,
+   "statement": "| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |",
+   "verdict": "true",
+   "evidence": "tools/pin-disposition.py:70-71: 'A readable file whose bytes differ from a verified pin is `changed`'; selftest 'SELFTEST_CASE changed-head PASS' and 'SELFTEST_CASE pinned-blob-mismatch PASS' (the mismatch leg is unavailable, not changed). The round-13 live receipt records the case: pin-dispositions.json counts {'unchanged': 3, 'changed': 3, 'unavailable': 0}, so the decision was exercised, not merely stated. The Limit column's 'never transfer an old rate' matches result_reuse=not_established on every row.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1528,
+   "statement": "| Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |",
+   "verdict": "true",
+   "evidence": "tools/pin-disposition.py:70-73: 'A missing repo, path, commit or blob, a pin/digest disagreement, a symlink or a non-regular file can never be `unchanged`; those classify as `unavailable` with a reason'; repo_identity (:245-250) refuses a directory whose `git rev-parse --show-toplevel` is not the leg repo, which is the fleet-repo-borrowing guarantee. Selftest exercises each arm: missing-repo, missing-pinned-blob, missing-pinned-commit, pinned-blob-mismatch, worktree-outside-repo, worktree-symlink, repo-symlink, malformed-digest - all PASS. Read-only probe in scratch with an empty fleet root returned six `unavailable` rows with reasons (repo_missing), EXIT=0, not `unchanged`.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1529,
+   "statement": "| All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |",
+   "verdict": "true",
+   "evidence": "tools/pin-disposition.py:118 `RESULT_REUSE = \"not_established\"`; :55 'result_reuse literal \"not_established\" on every row'; every emitted row carries the three identities pinned/head/worktree, and the scratch probe still printed result_reuse=not_established with all six legs unavailable (so it is not conditional on agreement). The Limit column matches the knowledge entry's distinction: corpus/knowledge/incremental-pin-disposition.md '## 4. Six-leg content disposition vs a fresh re-sweep' says a disposition 'produces no control, no restore proof, no table and no rate'.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1535,
+   "statement": "2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` observes only hashes and git metadata. Retain stdout with its sibling branch-tip commits before treating it as a dated reading. It executes no sibling gate.",
+   "verdict": "true",
+   "evidence": "Command runs as written from the lane root: in a scratch clone at base the same invocation with a scratch --root printed EXIT=0 and the documented document (receipt: .ufo/waves/round-49/w1/T49SecR13.pin-probe.txt). 'Executes no sibling gate' holds: the only subprocess sites are git_run (:224-242, read-only plumbing rev-parse/symbolic-ref/show-ref/for-each-ref/cat-file, usage :82-92) and the selftest's own fixture git calls (:770, :931); no sibling tool is invoked. 'Sibling branch-tip commits' are in the document: each row's head block carries branch and commit, and selftest 'detached-head-uses-branch-tip PASS (14 literal checks)' asserts the branch resolution. Minor wording note, not falsity: 'only hashes and git metadata' omits the lstat checks (regular file, no symlink, containment) that the same run performs.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1538,
+   "statement": "3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json` checks the new companion against digest-anchored frozen sources.",
+   "verdict": "true",
+   "evidence": "Ran in a scratch clone at base: 'WITNESS_METADATA: metadata_consistent reason=ok exit=0 ... inputs=summary,declaration,declared,rerun_summary', EXIT=0; the old-null companion gives 'WITNESS_METADATA: metadata_inconsistent reason=normalized_kind_null exit=1', EXIT=1 (receipt: .ufo/waves/round-49/w1/T49SecR13.witness-check.txt). Digest anchoring is literal in the tool, not inferred: tools/witness-metadata.py:76,81,86 pin the three frozen round-12 sha256 values and :116 pins the producer sha256. The tool file is unchanged since round 13 (sha256 df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4 equals the pin in .ufo/evidence/round-13/expected.json).",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1540,
+   "statement": "4. The original round-12 summary and rerun summary retain their historical null fields. The companion normalizes the canonical summary only; the rerun null is explicitly outside its normalized scope. The producer's wrong-nesting bug is fixed separately for future summary generation; its regression selftest asserts the exact top-level exposed kind.",
+   "verdict": "true",
+   "evidence": "Null inventory of both frozen summaries: ['/declaration/kind', '/environment/the_janitor_on_path'] for summary.json and rerun-20261020T035435Z/summary.json; `git log --oneline -- .ufo/evidence/round-12/BashWitness/summary.json` -> only 9df9212 (never rewritten after round 12). Companion scope is explicit: covered_null_observations = the canonical summary; uncovered_null_observations = the rerun with disposition 'named-residual-uncorrected' and integrity 'sha256-anchored-and-reverified'. The repair is separate and real: `git show 4acc607:tools/bash-witness-study.py | sha256sum` -> 49e9e5e2... (the round-13 pin), `git show 9df9212:tools/bash-witness-study.py | sha256sum` -> 249d9dcd... (the sha recorded in the frozen summary), live at base -> 60575e62...; the getter now reads the declaration's top-level kind (:797) and `python3 tools/bash-witness-study.py selftest` at base prints 'check summary preserves top-level exposed declaration kind ok' and 'WITNESS_SELFTEST: 51/51 pass'.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": 1545,
+   "statement": "5. Do not rerun a sibling's gate to obtain closure evidence. A non-author closure verifies committed receipts and their measured revision.",
+   "verdict": "true",
+   "evidence": "The round-13 closure instrument counts committed receipts and executes nothing: .ufo/evidence/round-13/measure.py:2 'Count committed round-13 observations, never execute a target or gate'; it reads every input through `git show <rev>:<path>` (`--rev 546b371a...` reproduces recorded_cases 6 while holding no working-tree dependency). Verification is digest-based over pinned inputs: .ufo/evidence/round-13/verification.json records measured_input_sha256 for the frozen inputs and .ufo/evidence/round-13/verification-verdict.json sets input_digests_match true. The measured revision is carried by the counted receipts themselves (before.json and after-committed.json both record revision 546b371a48a2f6bd1e7dca6ae8aee2a6dc1b0a50). Advisory: verification.json has no revision field of its own; 'their measured revision' is satisfied only because the hashed receipts name it.",
+   "proposed_fix": null
+  }
+ ]
+}

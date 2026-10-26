@@ -218,7 +218,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    (mutation-case-kimi-census.md:82-99). Bash B5: mutant `SURFACE OK … (exec
    644)` exit 0 where pristine prints `SURFACE DIVERGED … no execute bit` exit
    1; B10: `ok=0` where pristine prints `ok=1`
-   (mutation-case-kagi-census.md:111-114, :118-122, :251-253). If no observable
+   (mutation-case-kagi-census.md:111-114, :118-122, :252-254). If no observable
    input differs, the mutant may be *equivalent code* — record that as a
    calibration item, not as a gap.
 9. **Restore + prove the substrate never moved.** Re-run step 2's checks (line count and repo revision included; neither model note records an after-revision):

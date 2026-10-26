@@ -1,0 +1,261 @@
+T49SecPromotion — receipts (command, then observed output) for T49SecPromotion.md / .findings.json
+Lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin ; base 8ca67421111fa354b47b803358391d0b07fc6db9 ; every lane command is read-only.
+
+=== R1 section verbatim (base blob)
+$ git show 8ca67421:SKILL.md | awk 'NR>=1464 && NR<=1478 {printf "%d|%s\n", NR, $0}'
+1464|## Promotion-evidence calibration — fleet round-1
+1465|
+1466|This lane's current checklist is `SHONEN.md`, not the historical training
+1467|closeout. Its supporting audit is `reports/round-1-calibration.md#box-1`.
+1468|Tameshi-dispatched reviewers remain part of tameshi for promotion authority
+1469|(`../PROTOCOL.md:63–68`); a different agent name does not justify `[x]`.
+1470|Lane assertions use `[~]` with durable evidence, not temporary logs.
+1471|
+1472|Box 3 was `[ ]` at this write (`[~]` since; Errata — round 16): `executor-test-sufficiency.md:160–184`
+1473|establishes a historical single-JS-mutant exercise, not a current full cold-read.
+1474|The fresh CLI receipt in the audit verifies kill/survivor/restore behavior;
+1475|it is not a cold-reader exercise or an outside promotion/admission review.
+1476|The source audit rejects the broader claim rather than upgrading its confidence.
+1477|See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.
+1478|
+
+=== R1b section body sha256 (round-17 sectionizer: heading .. line before next heading, trailing blanks stripped, \n join, no trailing newline)
+$ python3 -c "import subprocess,hashlib;page=subprocess.run(['git','show','8ca67421:SKILL.md'],capture_output=True).stdout.decode().split(chr(10));b=page[1463:1477];print('lines 1464-%d sha256 %s'%(1463+len(b),hashlib.sha256((chr(10).join(b)).encode()).hexdigest()))"
+lines 1464-1477 sha256 76c6929815b2b84ed977d315674125d4c70ffc46de9d5b280134ede03fbdf6fe
+
+=== R1c the round-21 ledger entry this section is credited from (start 1464)
+$ python3 -c "import json;d=json.load(open('.ufo/evidence/round-21/coldread/ledger.json'));e=[x for x in d['entries'] if x.get('start')==1464 and x.get('skill_sha256','').startswith('b1bd20ae')][0];print(json.dumps({k:e[k] for k in ('start','end','heading','sha256','class','verdict','minor_gaps','skill_sha256','read_rev')},indent=1));[print(v,k) for k,v in e['inputs'].items()]"
+{
+ "start": 1464,
+ "end": 1478,
+ "heading": "## Promotion-evidence calibration \u2014 fleet round-1",
+ "sha256": "76c6929815b2b84ed977d315674125d4c70ffc46de9d5b280134ede03fbdf6fe",
+ "class": "record",
+ "verdict": "gap-minor",
+ "minor_gaps": 2,
+ "skill_sha256": "b1bd20aee58a0bd241e257f69e3610f3b8c2b805b2ebbb18f48b8e3184bf9d09",
+ "read_rev": "eb7838b16490ca7ba17ea3242ade76a61f744af2"
+}
+fc46d59db204bc81fb2128aca326bd337d927f1f870e08eda4c91939c78e5472 reports/round-1-calibration.md
+b26021292d69b3686851e13363d8451009f12a32dc85925b5a7cd2295e34cf07 corpus/knowledge/executor-test-sufficiency.md
+568609fcd0071ec3eee6a73898fc62c7f28830f539a802537c183f793d7680fc corpus/lessons/round-1.md
+19296d8332371e0d8a5593f6611070fd56bcf7574a6442c4d7554aa9aafb5b09 .ufo/evidence/fleet-round-1/cli-smoke-canonical.json
+8492de881056faea2a3f0895b1ec6ffdbcf0d1247a197d37fd7acfe3824df5bb .ufo/evidence/fleet-round-1/selftest.json
+
+=== R2 the cited audit's internal structure
+$ git show 8ca67421:reports/round-1-calibration.md | grep -n '^## ' 
+12:## canonical protocol source pointers
+27:## baseline mark census
+45:## supersession of historical independence claims
+71:## box-1
+105:## box-2
+132:## box-3
+176:## box-4
+211:## lane-local dispositions (calibration target)
+224:## executed verification
+303:## dispatch and adversarial review
+345:## Interactive continuation — blocked dispatch, local correction retained
+
+=== R3 the checklist and its four evidence pointers
+$ git show 8ca67421:SHONEN.md
+# tameshi-shokunin — Promotion checklist
+
+Promotion to shokunin requires all of:
+
+- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources
+  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-1)
+- [~] At least one end-to-end domain task executed and logged in LOG.md
+  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-2)
+- [~] Instructions executable by an agent without oral context
+  [lane assertion, input-keyed monitor only; no independent promotion verifier](.ufo/evidence/round-21/coldread/ledger.json)
+- [~] No cross-domain bleed (PROVINCE.md still accurate)
+  [lane assertion, no independent promotion verifier](reports/round-1-calibration.md#box-4)
+
+=== R4 audit box-3 block tail (rejection + appended erratum) and the dispositions table
+$ git show 8ca67421:reports/round-1-calibration.md | sed -n '158,174p;213,218p'
+
+Why `[ ]` — no lane assertion at all: the parent ruled (2026-10-15) that the retained
+historical single-JS-mutant result cannot support a broad current assertion, so this box
+does not qualify even for `[~]`; and the baseline `[x]` fails twice over — TAMESHI-B2 was
+lane-dispatched, not a non-author verifier (PROTOCOL.md:63–68). Consequence for the score
+claim: three `[~]` plus one `[ ]` permits a local score of 6, not 8, after the
+three asserted boxes' source audits. Box 3's two points and the separate independent-
+review two points remain unearned.
+
+> **Erratum (round 37, append-only).** This box-3 disposition was written at the fleet
+> round-1 blocked attempt and records an `[ ]` (assertion rejected). The standing
+> `SHONEN.md` box 3 now carries `[~]` with a ledger-keyed pointer
+> (`.ufo/evidence/round-21/coldread/ledger.json`, input-keyed monitor credit) — a later,
+> narrower lane assertion that supersedes the rejection here without rewriting it. The
+> `[~]` remains a lane assertion with no independent promotion verifier; no `[x]` is
+> claimed. Found as a carried-over stale trail by wave-1 seat CriticSHONENRestraint
+> (round 37).
+| Box | Canonical row | Baseline mark | Audit disposition | Durable pointer |
+|---|---|---|---|---|
+| 1 | `PROTOCOL.md:425` | `[x]` TAMESHI-B3 | `[~]` | this file, `## box-1` |
+| 2 | `PROTOCOL.md:426` | `[x]` TAMESHI-B1 | `[~]` | this file, `## box-2` |
+| 3 | `PROTOCOL.md:427` | `[x]` TAMESHI-B2 | `[ ]` (assertion rejected) | this file, `## box-3` |
+| 4 | `PROTOCOL.md:428` | `[x]` TAMESHI-B3 | `[~]` | this file, `## box-4` |
+
+=== R5 drift: the five ledger-keyed inputs at base
+$ for f in reports/round-1-calibration.md corpus/knowledge/executor-test-sufficiency.md corpus/lessons/round-1.md .ufo/evidence/fleet-round-1/cli-smoke-canonical.json .ufo/evidence/fleet-round-1/selftest.json; do git show 8ca67421:$f | sha256sum | sed "s|-|$f|"; done
+a2afa5f7f8a9165622a0d55c86b69db3a27498b4311e58654c38f41c0cd2c22b  reports/round-1-calibration.md
+b26021292d69b3686851e13363d8451009f12a32dc85925b5a7cd2295e34cf07  corpus/knowledge/executor-test-sufficiency.md
+568609fcd0071ec3eee6a73898fc62c7f28830f539a802537c183f793d7680fc  corpus/lessons/round-1.md
+19296d8332371e0d8a5593f6611070fd56bcf7574a6442c4d7554aa9aafb5b09  .ufo/evidence/fleet-round-1/cli-smoke-canonical.json
+8492de881056faea2a3f0895b1ec6ffdbcf0d1247a197d37fd7acfe3824df5bb  .ufo/evidence/fleet-round-1/selftest.json
+
+=== R5b which commit moved the audit, and the hunk
+$ git log --format='%h %ad %s' --date=short 370f2df..8ca67421 -- reports/round-1-calibration.md; git log -p --format='%h' 370f2df..8ca67421 -- reports/round-1-calibration.md | grep -E '^@@|^\+.*Erratum'
+583909a 2026-10-24 round-37: w1 seat reports (27/33), S104 citation correction, box-3 erratum, QUALITY 73 clarification, committed mutation falsifier receipts
+@@ -164,6 +164,15 @@ claim: three `[~]` plus one `[ ]` permits a local score of 6, not 8, after the
++> **Erratum (round 37, append-only).** This box-3 disposition was written at the fleet
+
+=== R6 `[x]` census in the lane root docs (the `[~]` invariant)
+$ for f in SHONEN.md MINT.md PROVINCE.md README.md; do printf '%s: ' $f; git show 8ca67421:$f | grep -c '\[x\]' || true; done
+SHONEN.md: 0
+MINT.md: 0
+PROVINCE.md: 0
+README.md: 0
+
+=== R6b no temporary pointers in the checklist
+$ git grep -n '/tmp' 8ca67421 -- SHONEN.md || echo '(no match)'
+(no match)
+
+=== R6c every checklist pointer target exists at base
+$ git cat-file -e 8ca67421:.ufo/evidence/round-21/coldread/ledger.json && echo 'round-21 ledger present'; git cat-file -e 8ca67421:reports/round-1-calibration.md && echo 'audit present'
+round-21 ledger present
+audit present
+
+=== R6d box-3 mark, commit by commit
+$ for c in $(git log --format=%h 8ca67421 -- SHONEN.md); do printf '%s ' $c; git show $c:SHONEN.md | sed -n '9p' | cut -c1-46; done
+370f2df - [~] Instructions executable by an agent with
+c51eb32 - [~] Instructions executable by an agent with
+7af123b - [~] Instructions executable by an agent with
+58e5d53 - [~] Instructions executable by an agent with
+2a22ade - [~] Instructions executable by an agent with
+c699c8c - [~] Instructions executable by an agent with
+121696b - [~] Instructions executable by an agent with
+c7986cd - [~] Instructions executable by an agent with
+cd31c6b - [ ] Instructions executable by an agent with
+53e74a8   identical to both notes' tables, restore OK 
+40f8e1f - [ ] No-oral-context — a fresh agent can exec
+
+=== R6e the transition commit
+$ git rev-parse c7986cd; git log -1 --format="%H %ad" --date=iso c7986cd
+c7986cdf051cbe9d047f02f76f2e1da0b36a84e3
+c7986cdf051cbe9d047f02f76f2e1da0b36a84e3 2026-10-19 19:15:33 -0300
+
+=== R7 the section's credit at base (C1 monitor receipt)
+$ python3 -c "import json;d=json.load(open('.ufo/evidence/round-49/control/monitor-at-base-8ca67421.json'));print('score',d['calibration_restraint_score'],'box3_full_page',d['coldread']['box3_full_page'])"
+score 6 box3_full_page False
+
+=== R8 errata target and the errata row for this line
+$ git show 8ca67421:SKILL.md | grep -n '^#\+ .*Errata'; git show 8ca67421:SKILL.md | grep -n 'dated: `\[ \]` at that write'
+1707:## Errata — round 16 full-page cold-read
+1736:| 1472 | "Box 3 remains `[ ]`" | dated: `[ ]` at that write, `[~]` since | CRCritic1, CRCritic2 |
+
+=== R9 the cited doc's range says what the sentence says
+$ git show 8ca67421:corpus/knowledge/executor-test-sufficiency.md | sed -n '160,166p'
+- (O) For the executed scope — one killed mutant of the JS case, control +
+  gate + restore — **confirmed**: zero blocking gaps, zero wrong expectations,
+  zero extra tameshi sources needed.
+- (I) The two additive extensions (§4.1-3) are affordances, not repairs: the
+  recipe's own steps all executed as written.
+- (U) Not tested by this run: the full 10-mutant sweep, survivor probes
+  (step 8), Appendix B entirely, and any second executor (n = 1 reader).
+
+=== R10 the canonical CLI receipt (scope, exit, stdout)
+$ git show 8ca67421:.ufo/evidence/fleet-round-1/cli-smoke-canonical.json | python3 -c "import json,sys;d=json.load(sys.stdin);print('scope:',d['scope']);print('exitCode:',d['exitCode']);print(d['stdout'])"
+scope: Author-local actual CLI scenario, not a new fleet rate, outside review, current full cold-read or native judgment.
+exitCode: 0
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+MUTATE_DATE: 2026-10-15T05:14:49Z
+MUTATE_TARGET: /tmp/tameshi-r1-interactive-4oejhl9z/target.sh sha256=0cf28b95af5402d3f1e71deae00e9eba43ec0d57d4eff39808f055505ce54f26 bytes=67
+MUTATE_SPEC: /tmp/tameshi-r1-interactive-4oejhl9z/defects.spec defects=2
+CONTROL: GREEN (exit=0 duration-ms=2 pristine-sha256=0cf28b95af5402d3f1e71deae00e9eba43ec0d57d4eff39808f055505ce54f26)
+  | (no output)
+DEFECT wrong-value: KILLED (exit=1 duration-ms=2) asserted output changes
+  | (no output)
+DEFECT unread-value: SURVIVED (exit=0 duration-ms=2) unasserted assignment changes
+  | (no output)
+MUTATE_RESTORE: OK (target-sha256 before=0cf28b95af5402d3f1e71deae00e9eba43ec0d57d4eff39808f055505ce54f26 after=0cf28b95af5402d3f1e71deae00e9eba43ec0d57d4eff39808f055505ce54f26 pristine-sha256=0cf28b95af5402d3f1e71deae00e9eba43ec0d57d4eff39808f055505ce54f26)
+MUTATE_EVIDENCE: /tmp/tameshi-r1-interactive-4oejhl9z/run
+MUTATE: DONE (target=fleet-round-1-interactive-canonical-smoke defects=2 killed=1 survived=1 inconclusive=0 kill-rate=50%)
+SMOKE_RUNNER_EXIT: 0
+SMOKE_ASSERTIONS: PASS (control, kill, survivor, restore, canonical-scratch; independent-sha256=0cf28b95af5402d3f1e71deae00e9eba43ec0d57d4eff39808f055505ce54f26)
+
+=== R11 both PROTOCOL copies on the cited range
+$ sed -n '63,68p' /home/vgpnk/Projects/shokunin/PROTOCOL.md; echo '--- diff vs the kimi copy:'; diff <(sed -n '63,68p' /home/vgpnk/Projects/shokunin/PROTOCOL.md) <(sed -n '63,68p' /home/vgpnk/Projects/kimi-shokunin/skills/shokunin/protocol/PROTOCOL.md) && echo IDENTICAL_RANGE; sha256sum /home/vgpnk/Projects/shokunin/PROTOCOL.md | cut -d' ' -f1
+- **shonen → shokunin.** Every `SHONEN.md` box checked by a reviewer who did not author the round's
+  changes — a fresh lane or integrator review, never self-attestation; a subagent the lane
+  dispatched is still the lane. Each checked box names its reviewer (`[x] <verifier>`) and cites its
+  evidence pointer. The lane's own assessment is `[~]` asserted (with its evidence pointer); only a
+  non-author `<id>` may write `[x]`, and any `[x]` carrying no named non-author verifier is author
+  attestation counting as `[~]` for the gate. Minimum bar: the seed below changes only with this gate text.
+--- diff vs the kimi copy:
+IDENTICAL_RANGE
+886e459b2aa79b8198912ad54bd57fbb025cc424d78684a02fb3d4c832d4411a
+
+=== R12 the lesson's Gate
+$ git show 8ca67421:corpus/lessons/round-1.md | sed -n '106,120p'
+- **Admitted (corrections):** independence — lane-dispatched verifier ids count as the lane,
+  baseline `[x]` marks fall to `[~]`-or-`[ ]` (PROTOCOL.md:63-68); canonical wording — the
+  four seed boxes verbatim with `<name>` = tameshi-shokunin (PROTOCOL.md:419-431); durability
+  — same-revision in-repo pointers replace `/tmp` receipts (PROTOCOL.md:340-343); scope
+  bounding — evidence lines may assert only the executed scope at the executed revision
+  (`executor-test-sufficiency.md:3-8,52-54,155-163`). The landing of these corrections into
+  `SHONEN.md` is the ChecklistExecutor seat's write and the parent's integration — state at
+  close is **[U]** here, never asserted.
+- **Rejected, with reasons (kept per `corpus/QUALITY.md:8`):**
+  1. **Box-3 blanket claim** — the historical n=1 JS D5 execution cannot support a current,
+     whole-SKILL, both-appendix cold-read assertion; laundering a subset into a blanket claim
+     fails `corpus/QUALITY.md:3` (falsifiable, bounded) and the evidence standard's
+     claimed-vs-re-executed rule (PROTOCOL.md:345-346). Decision recorded: box 3 `[ ]`,
+     candidate calibration 6, not 8. The rejection itself is the round's calibration earn —
+     overreach caught before it lands.
+
+=== R13 the unverifiable referent
+$ git grep -n -F 'training closeout' 8ca67421 -- SKILL.md .ufo/waves .ufo/evidence 2>/dev/null | head -6; echo '--- marks in the nearest candidate referent:'; git show 8ca67421:corpus/knowledge/closeout-r11.md | grep -c '\[~\]\|\[x\]\|\[ \]' || true
+8ca67421:.ufo/waves/round-16/w2/RR09.md:23:| C1 | "current checklist is `SHONEN.md`, not the historical training closeout" (:1466–1467) | `SHONEN.md` | **Unresolved (gap).** Exists at lane root at c699c8c, blob `fcc13ac1159c665aa7ab2d836cd6a77d95b82b2e`, 1228 B. Content forbidden, so "current checklist" cannot be confirmed. Existence is not a pass. |
+8ca67421:.ufo/waves/round-16/w2/RR15.md:18:  training closeout", which the range does not name by path), fleet `MANIFEST.json`
+8ca67421:.ufo/waves/round-16/w2/RR15.md:26:| C1 | "current checklist is `SHONEN.md`, not the historical training closeout" | `git show c699c8c:SHONEN.md`; `closeout-r11.md:1–12` | SHONEN.md is the four-box "tameshi-shokunin — Promotion checklist", all `[~]`; closeout-r11.md:10–12 disclaims any promotion: "claims no promotion or retirement — the arc ends, the service remains". Fleet MANIFEST roster has no tameshi row ("roster row withheld", mint note :1716). | holds |
+8ca67421:.ufo/waves/round-35/w2/CriticC2.md:78:The first contains criteria **1-5 only**, SHA `1923c94f49788adef82375c72b96b5448b5f52ea4a9971bab6411ff1c2c2f95b`. The second identifies **`c7986cdf051cbe9d047f02f76f2e1da0b36a84e3`**, whose criterion-10-bearing QUALITY bytes hash to `deeaf258ed3e6c66a4331fef7f9c3f4bc582394435a5ab38d6f028cf10d18643`. The introduction patch explicitly adds criteria 6-10 on October 19; `284ab0f0` is the October 14 training closeout.
+--- marks in the nearest candidate referent:
+0
+
+=== R13b prior seats on the same clause
+$ git show 8ca67421:.ufo/waves/round-16/w2/RR15.md | sed -n '16,18p'; git show 8ca67421:.ufo/waves/round-16/w2/RR09.md | sed -n '23p'; git show 8ca67421:.ufo/waves/round-35/w2/CriticC2.md | sed -n '78p'
+- Self-reported over-reads relative to the strict "range + what it names" rule, disclosed for
+  audit: `corpus/knowledge/closeout-r11.md:1–25` (to identify the *described* "historical
+  training closeout", which the range does not name by path), fleet `MANIFEST.json`
+| C1 | "current checklist is `SHONEN.md`, not the historical training closeout" (:1466–1467) | `SHONEN.md` | **Unresolved (gap).** Exists at lane root at c699c8c, blob `fcc13ac1159c665aa7ab2d836cd6a77d95b82b2e`, 1228 B. Content forbidden, so "current checklist" cannot be confirmed. Existence is not a pass. |
+The first contains criteria **1-5 only**, SHA `1923c94f49788adef82375c72b96b5448b5f52ea4a9971bab6411ff1c2c2f95b`. The second identifies **`c7986cdf051cbe9d047f02f76f2e1da0b36a84e3`**, whose criterion-10-bearing QUALITY bytes hash to `deeaf258ed3e6c66a4331fef7f9c3f4bc582394435a5ab38d6f028cf10d18643`. The introduction patch explicitly adds criteria 6-10 on October 19; `284ab0f0` is the October 14 training closeout.
+
+=== R14 section introduction commit
+$ git log --format='%h %ad %s' --date=short -S'Promotion-evidence calibration — fleet round-1' -- SKILL.md
+cd31c6b 2026-10-15 fleet round 1: reconcile calibration evidence; dispatch blocked
+
+
+=== R15 proposed fixes preserve the frozen pointer list (scratch clone; no lane writes)
+$ git clone -q --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r49/T49SecPromotion/tmp5djq9tk3/lane
+(ok, no stdout)
+$ git -C /fast/scratch/hyaku/tameshi-r49/T49SecPromotion/tmp5djq9tk3/lane rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r49/T49SecPromotion/tmp5djq9tk3/lane
+$ git -C /fast/scratch/hyaku/tameshi-r49/T49SecPromotion/tmp5djq9tk3/lane checkout -q 8ca67421111fa354b47b803358391d0b07fc6db9
+(ok, no stdout)
+$ <apply the 4 proposed fixes to SKILL.md:1464-1477; each skill_old occurs exactly once; section line count unchanged>
+$ python3 .ufo/evidence/round-49/c1/measure.py --lane "$D/lane" --rev 27023e14b9bf --list
+section pointers base=5 after=5 identical=True
+  0 ../PROTOCOL.md:63–68  kind=external file=../PROTOCOL.md ranges=[[63, 68]] skill_line=1469
+  1 executor-test-sufficiency.md:160–184  kind=line file=corpus/knowledge/executor-test-sufficiency.md ranges=[[160, 184]] skill_line=1472
+  2 SHONEN.md  kind=path file=SHONEN.md ranges=None skill_line=1466
+  3 reports/round-1-calibration.md  kind=path file=reports/round-1-calibration.md ranges=None skill_line=1467
+  4 corpus/lessons/round-1.md  kind=path file=corpus/lessons/round-1.md ranges=None skill_line=1477
+whole-page pointers base=90 after=90
+missing_headings=[]
+FLOORS['## Promotion-evidence calibration — fleet round-1'] = 5 (measure.py:79) -> floor met unchanged; no read row added or dropped, so the C1 row key (heading+ordinal+raw) survives.
+$ rm -rf /fast/scratch/hyaku/tameshi-r49/T49SecPromotion   (scratch removed; nothing retained outside .ufo/waves/round-49/w1)
+
+=== R16 tooling
+No installs, no upgrades, no pacman (host-wide paused). Commands used: git (read-only in the lane), python3 stdlib, and one scratch clone under /fast/scratch.

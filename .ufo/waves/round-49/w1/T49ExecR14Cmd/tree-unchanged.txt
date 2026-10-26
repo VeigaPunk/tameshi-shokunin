@@ -1,0 +1,17 @@
+T49ExecR14Cmd — no writes: lane, scratch clone and archive tree after all runs
+
+lane  /home/vgpnk/Projects/shokunin/tameshi-shokunin
+  read only. Commands read: git clone --shared, git archive, git cat-file, git log, git diff --stat.
+  No git add/commit/checkout/switch/reset/restore/stash and no jj call was made in the lane.
+
+scratch clone at base
+  git -C $S/clone status --porcelain  ->  0 lines (before and after the four invocations)
+
+archive tree
+  fresh re-extraction: git -C <lane> archive 28aeef4 | tar -x -C $S/h2
+  diff -r $S/h $S/h2  ->  no output, exit 0, 0 lines
+  (so the historical run and the before/after runs wrote nothing into the tree they read; no
+   __pycache__ was created — every invocation used the archived tools/evidence-disposition.py directly)
+
+Everything citable from this seat lives in .ufo/waves/round-49/w1/T49ExecR14Cmd/ and
+.ufo/waves/round-49/w1/T49ExecR14Cmd.md; the seat scratch root was removed before yield.

@@ -1,0 +1,495 @@
+### 21e79329 corpus/SOURCES.md  numstat: 9	1	corpus/SOURCES.md
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 60b93f2..b5f5bf0 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -57,3 +57,3 @@ rows only, and a row is a claim opened in the round that writes it.
+ | S048 | Incremental analysis (PIT docs), object-neutral precision — https://pitest.org/quickstart/incremental_analysis/ | docs | A | PIT's item-4 prioritisation distinction without resolving an ambiguous pronoun | §Incremental analysis, numbered items 4–5 and dependency paragraphs; accessed 2026-10-20, page version unstated | supersedes S047 — item 4 is prioritisation rather than a reuse skip; no claim here resolves its pronoun to test versus mutation; item 5 is explicitly not yet implemented and the dependency assumption remains unproven | mined | 2026-10-20 | 90d | corpus/knowledge/incremental-pin-disposition.md |
+-| S049 | Python subprocess environment mapping — https://docs.python.org/3/library/subprocess.html | docs | A | Python subprocess.run env argument semantics, not proof of a particular historical environment | Using the subprocess Module, run() env paragraph; Python 3.15.0 docs served 2026-10-20 | Explicit env mappings define child environment rather than merely documenting an intended injection; retain the bounded override with the observed command | mined | 2026-10-20 | on-release | corpus/lessons/round-14.md, corpus/knowledge/incremental-pin-disposition.md, corpus/lessons/round-15.md |
++| S049 | Python subprocess environment mapping — https://docs.
+
+### 370f2dff tools/bash-witness-study.py  numstat: 41	6	tools/bash-witness-study.py
+diff --git a/tools/bash-witness-study.py b/tools/bash-witness-study.py
+index bac6330..1deb944 100755
+--- a/tools/bash-witness-study.py
++++ b/tools/bash-witness-study.py
+@@ -1247,2 +1247,3 @@ def cmd_selftest(args) -> int:
+         assert root.resolve(strict=True) == root
++        check("private child is contained", root.parent == private_root)
+         # A hostile inherited Git selection must not redirect either child Git
+@@ -1280,2 +1281,33 @@ def cmd_selftest(args) -> int:
+ 
++        from unittest.mock import patch
++        hostile_git_env = {
++            "GIT_INDEX_FILE": str(root / "foreign-index"),
++            "GIT_OBJECT_DIRECTORY": str(root / "foreign-objects"),
++            "GIT_CONFIG_GLOBAL": str(root / "foreign-config"),
++            "GIT_CONFIG_NOSYSTEM": "0",
++        }
++        with patch.dict(os.environ, hostile_git_env):
++            child_env = git_clean_env()
++        check("scrubs inherited repository selectors",
++              all(key not in child_env
++                  for key in ("GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY")))
++        check("pins global Git configuration",
++              child_env.get("GIT_CONFIG_GLOBAL") == os.devnull)
++        check("disables system Git configuration",
++              child_env.get("GIT_CONFIG_NOSYSTEM") == "1")
++        # These are command-pin contracts, not claims that init/add have a
++        # reachable hook under the already-scrubbed fixture environment.
++        with patch.object(subprocess, "run", wraps=subprocess
+
+### 370f2dff tools/evidence-disposition.py  numstat: 23	0	tools/evidence-disposition.py
+diff --git a/tools/evidence-disposition.py b/tools/evidence-disposition.py
+index 6838762..123b8f1 100755
+--- a/tools/evidence-disposition.py
++++ b/tools/evidence-disposition.py
+@@ -2701,2 +2701,25 @@ def selftest():
+         return built
++    def setup_nonmaster_attached(fx):
++        _setup_hist_clean(fx)
++        _git(fx["lane"], "branch", "-m", "verification")
++
++    def setup_nonmaster_configured(fx):
++        setup_nonmaster_attached(fx)
++        _git(fx["lane"], "config", "lane.branch", "verification")
++        _git(fx["lane"], "checkout", "--detach", "-q", "HEAD")
++
++    def setup_executable_historical(fx):
++        os.chmod(fx["lane"] / SELFTEST_TOOL_REL, 0o755)
++        _setup_hist_clean(fx)
++
++    historical_case(
++        "v2-nonmaster-attached-branch", 0, [], setup_nonmaster_attached
++    )
++    historical_case(
++        "v2-nonmaster-configured-branch", 0, [], setup_nonmaster_configured
++    )
++    historical_case(
++        "v2-historical-executable-mode", 0, [], setup_executable_historical
++    )
++
+ 
+
+
+### 370f2dff tools/trace-inputs.py  numstat: 5	1	tools/trace-inputs.py
+diff --git a/tools/trace-inputs.py b/tools/trace-inputs.py
+index bfd5f7c..598132d 100755
+--- a/tools/trace-inputs.py
++++ b/tools/trace-inputs.py
+@@ -807,3 +807,5 @@ def selftest():
+     rc, d, _ = trace([PY, "-c", "open('a.txt').read()"])
+-    check("python-read-input", rc == 0 and d and d["inputs"].get("a.txt"))
++    check("python-read-input",
++          rc == 0 and d
++          and d["inputs"].get("a.txt") == hashlib.sha256(b"alpha\n").hexdigest())
+ 
+@@ -929,2 +931,4 @@ def selftest():
+           and pycache and os.path.isabs(pycache)
++          and os.path.basename(os.path.dirname(pycache)).startswith("trace-inputs-run-")
++          and os.path.dirname(os.path.dirname(pycache)) == os.path.realpath(scratch)
+           and not under(pycache, root))
+
+
+### 50545328 corpus/knowledge/incremental-pin-disposition.md  numstat: 2	2	corpus/knowledge/incremental-pin-disposition.md
+diff --git a/corpus/knowledge/incremental-pin-disposition.md b/corpus/knowledge/incremental-pin-disposition.md
+index dd3c4e1..97cb2c7 100644
+--- a/corpus/knowledge/incremental-pin-disposition.md
++++ b/corpus/knowledge/incremental-pin-disposition.md
+@@ -1,3 +1,3 @@
+-source: S003 — https://stryker-mutator.io/docs/stryker-js/incremental/ — §Incremental mode, §Limitations, §Forcing reruns; fetched 2026-10-20T04:46:12Z, sha256 9054e311a0569231aa2a1427a4137729c8180d7f2687dfd450322e855cc9ad90 (33,898 B); S041 — https://pitest.org/quickstart/incremental_analysis/ — §Incremental analysis; fetched 2026-10-20T04:46:12Z, sha256 e9cbc3e1ab7cce33e02692e47b0539094fc67dda5f862363d73c477ffae590db (8,892 B); S047 — the same URL and the same fetched bytes as S041, cited as the round-13 precision-correction row that supersedes S041's teaches cell (numbered optimisations 1–5 and the dependency paragraphs; page version unstated); S031 — tools/mutate-and-run.sh:80-89, 540-553 @ 4eb4cf3, sha256 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5 (own-work: the six-leg pins and recorded tables). The quoted excerpts in §1 are the retained location; the full-page digests make each fetch reproducible.
+-verified-at: 2026-10-20
++source: S003 — https://stryker-mutator.io/docs/stryker-js/incremental/ — §Incremental mode, §Limitations, §Forcing reruns; fetched 2026-10-20T04:46:12Z, sha256 9054e311a0569231aa2a1427a4137729c8180d7f2687dfd450322e855cc9ad90 (33,898 B); S041 — https://pitest.org/quick
+
+### 50545328 corpus/knowledge/regression-tally-completeness.md  numstat: 2	2	corpus/knowledge/regression-tally-completeness.md
+diff --git a/corpus/knowledge/regression-tally-completeness.md b/corpus/knowledge/regression-tally-completeness.md
+index e0ab512..5ff66eb 100644
+--- a/corpus/knowledge/regression-tally-completeness.md
++++ b/corpus/knowledge/regression-tally-completeness.md
+@@ -1,3 +1,3 @@
+-source: S087 — mutation-testing-metrics 3.9.0, `package/src/calculateMetrics.ts` and `package/src/model/metrics.ts` (external metric arithmetic, not tameshi's own kill-rate formula; re-opened round 30, `.ufo/waves/round-30/wA/ReopenS087.md`); S093 — bwrap(1), bubblewrap 0.13.1 `bwrap.xml` (the sandbox the v4 counter runs each selftest in); S094 — Dwork et al., arXiv:1411.2664v3 §1 (a held-out test kept from the candidate)
+-verified-at: 2026-10-23 — sources re-opened by round-30 wave-A seats; fix, counters, amendments 1-4 and pre-data control receipts inspected; this entry records no lane-head measurement
++source: S087 — mutation-testing-metrics 3.9.0, `package/src/calculateMetrics.ts` and `package/src/model/metrics.ts` (external metric arithmetic, not tameshi's own kill-rate formula; re-opened round 30, `.ufo/waves/round-30/wA/ReopenS087.md`); S093 — bwrap(1), bubblewrap 0.13.1 `bwrap.xml` (the sandbox the v4 counter runs each selftest in); S267 — the same bwrap.xml at tag v0.13.1, re-anchored 2026-10-26 from the raw XML (supersedes S093's anchor and quote); S094 — Dwork et al., arXiv:1411.2664v3 §1 (a held-out test kept from the candidate)
++verified-at: 2026-10-26 — S267 re-opened live: raw bwrap.xml at ta
+
+### 50545328 corpus/knowledge/repeated-control-precondition.md  numstat: 2	2	corpus/knowledge/repeated-control-precondition.md
+diff --git a/corpus/knowledge/repeated-control-precondition.md b/corpus/knowledge/repeated-control-precondition.md
+index c629abb..0d45d1c 100644
+--- a/corpus/knowledge/repeated-control-precondition.md
++++ b/corpus/knowledge/repeated-control-precondition.md
+@@ -1,3 +1,3 @@
+-source: S004 — https://mutants.rs/using-results.html — §§“Tests fail in an clean tree?”, “Mutant outcomes”; fetched 2026-10-20T02:13:47Z, sha256 5ec9ba952d4d2c12fc2e775965b4138cfdb5dc13b7cff392344383093f012334 (29,579 B); S026 — https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html — post body by John Micco, published 2016-05-27; fetched 2026-10-20T02:13:47Z, sha256 ca1145fbe56de30b43b66baf7372206a38abe08a55b3db13f6c7a0114d7a6c8c (236,385 B). Located excerpts: `.ufo/evidence/round-12/ControlKnowledge/quotes.tsv`
+-verified-at: 2026-10-20
++source: S004 — https://mutants.rs/using-results.html — §§“Tests fail in an clean tree?”, “Mutant outcomes”; fetched 2026-10-20T02:13:47Z, sha256 5ec9ba952d4d2c12fc2e775965b4138cfdb5dc13b7cff392344383093f012334 (29,579 B); S265 (supersedes S026) — https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html — post body by John Micco, published 2016-05-27; re-fetched 2026-10-26T08:40:51Z, sha256 a4c5c46b4af9d54baa215b9d76c91cb5b8e9855ad153103b0a34ff3e39869d25 (236,387 B). Located excerpts: `.ufo/evidence/round-12/ControlKnowledge/quotes.tsv`
++verified-at: 2026-10-26
+ recheck: 730d — S026's registry cadence; S004's registry cadence is `on
+
+### 583909a7 reports/round-1-calibration.md  numstat: 9	0	reports/round-1-calibration.md
+diff --git a/reports/round-1-calibration.md b/reports/round-1-calibration.md
+index 0b9d5ee..2c41154 100644
+--- a/reports/round-1-calibration.md
++++ b/reports/round-1-calibration.md
+@@ -166,2 +166,11 @@ review two points remain unearned.
+ 
++> **Erratum (round 37, append-only).** This box-3 disposition was written at the fleet
++> round-1 blocked attempt and records an `[ ]` (assertion rejected). The standing
++> `SHONEN.md` box 3 now carries `[~]` with a ledger-keyed pointer
++> (`.ufo/evidence/round-21/coldread/ledger.json`, input-keyed monitor credit) — a later,
++> narrower lane assertion that supersedes the rejection here without rewriting it. The
++> `[~]` remains a lane assertion with no independent promotion verifier; no `[x]` is
++> claimed. Found as a carried-over stale trail by wave-1 seat CriticSHONENRestraint
++> (round 37).
++
+ ## box-4
+
+
+### 58e5d53d corpus/SOURCES.md  numstat: 15	2	corpus/SOURCES.md
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 4191202..94ff6dc 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -18,3 +18,3 @@ rows only, and a row is a claim opened in the round that writes it.
+ | S007 | Mutation-Guided LLM-based Test Generation at Meta (Foster, Gulati, Harman et al.; arXiv 2501.12862) — https://arxiv.org/abs/2501.12862 | paper | A | Meta ACH's production LLM mutation and test-generation results | Abstract, arXiv:2501.12862v1 (submitted 2025-01-22) | concern-specific LLM mutants that are currently uncaught, then tests that kill them; equivalence agent at precision 0.79 recall 0.47, or 0.95/0.96 with pre-processing; 9,095 mutants, 571 tests, 73% accepted | queued | 2026-10-19 | 365d | — |
+-| S008 | Practical Mutation Testing at Scale (Petrović, Ivanković, Fraser, Just; arXiv 2102.11378) — https://arxiv.org/abs/2102.11378 | paper | A | Google's diff-scoped mutation testing at code review | Abstract, arXiv:2102.11378v2 (v1 2021-02-22, last revised 2021-02-26) | diff-scoped mutation at code review; mutants filtered and capped per line and per review; operators chosen by historical productivity; 24,000+ developers on 1,000+ projects | queued | 2026-10-19 | 365d | — |
++| S008 | Practical Mutation Testing at Scale (Petrović, Ivanković, Fraser, Just; arXiv 2102.11378) — https://arxiv.org/abs/2102.11378 | paper | A | Google's diff-scoped mutation testing at code review | Abstract, arXiv:2102.11378v2 (v1 2021-02-22, last revised 2021-02-26) | diff-
+
+### 58e5d53d corpus/knowledge/incremental-pin-disposition.md  numstat: 2	0	corpus/knowledge/incremental-pin-disposition.md
+diff --git a/corpus/knowledge/incremental-pin-disposition.md b/corpus/knowledge/incremental-pin-disposition.md
+index bda076a..dd3c4e1 100644
+--- a/corpus/knowledge/incremental-pin-disposition.md
++++ b/corpus/knowledge/incremental-pin-disposition.md
+@@ -386 +386,3 @@ fixture-only corrections; initial18-of34 failures remain in
+ **ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** Lane and owner repos are jj-colocated, so git HEAD is detached at the working-copy commit's parent and may differ from the branch tip (S061). Every active instruction above that reads `HEAD` (`show HEAD:<path>`, ancestor of HEAD, worktree vs HEAD, `git archive HEAD`) now reads the branch tip `refs/heads/<branch>` (`detect_branch`, `../scripts/hyaku/jj-lane.sh:53-65`) or an explicit 40-hex revision; dated records above are not re-interpreted. Canonical rule: `SKILL.md:1027-1035`, `operator-runbook.md` ER-R3.
++
++**ER-jj2 (round 18, 2026-10-20; append-only).** The line anchor `../scripts/hyaku/jj-lane.sh:53-65` in the ER-jj note above is stale: that range is the `usage()` help text, not the branch resolver. The resolver the note means is the function `detect_branch()` in `scripts/hyaku/jj-lane.sh` (fleet root); it returns a branch name (the attached HEAD's branch, else `origin/HEAD`), and the tip is still `refs/heads/<branch>`. Cite it by function name, not by line. This block corrects only the anchor: the reading rule above is unchanged and dated records are not re-interpreted.
+
+
+### 58e5d53d tools/bash-witness-study.py  numstat: 122	12	tools/bash-witness-study.py
+diff --git a/tools/bash-witness-study.py b/tools/bash-witness-study.py
+index 48a89b3..bac6330 100755
+--- a/tools/bash-witness-study.py
++++ b/tools/bash-witness-study.py
+@@ -65,9 +65,10 @@ mapping is hashed before execution and is never rewritten after results.
+ 
+-Environment scrub: THE_JANITOR_BIN, SQLITE3_BIN, CENSUS_BREAK, DEEP and
+-ONEPASSWORD_BROWSER_SUPPORT are removed from the sweep environment (each is
+-read by the pinned gate and can change behavior), the resolved
+-`the-janitor`/`sqlite3` PATH facts are recorded in summary.json, and a
+-`the-janitor` found on PATH refuses the sweep so the selftest cannot reach a
+-real op/custody surface.  REV_BASH must be an exact 40-hex git id and
+-materialization runs `git show --end-of-options`.
++Environment scrub: every child process drops inherited `GIT_*` variables, then
++sets `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`. The sweep
++environment additionally removes THE_JANITOR_BIN, SQLITE3_BIN, CENSUS_BREAK,
++DEEP and ONEPASSWORD_BROWSER_SUPPORT (each is read by the pinned gate and can
++change behavior). The resolved `the-janitor`/`sqlite3` PATH facts are recorded
++in summary.json, and a `the-janitor` found on PATH refuses the sweep so the
++selftest cannot reach a real op/custody surface. REV_BASH must be an exact
++40-hex git id and materialization runs `git show --end-of-options`.
+ 
+@@ -331,2 +332,11 @@ def spec_precheck(defects: list, target_text: str) -> dict:
+ 
++def git_clean_env() -> dict:
++    """Remove inherit
+
+### 58e5d53d tools/mutate-and-run.sh  numstat: 102	28	tools/mutate-and-run.sh
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index 980d955..fd1a63a 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -14,3 +14,4 @@
+ # the fifth and sixth legs; r16 (TAMESHI-R16) adds the seventh measured gate,
+-# kumitate `scripts/round-gate.mjs`, as the js-round-gate leg.
++# kumitate scripts/round-gate.mjs, as js-round-gate; r18 adds the eighth measured
++# leg, kumitate scripts/sources-check.mjs, as js-sources-check.
+ #
+@@ -80,3 +81,3 @@
+ #
+-# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven) — the fleet's
++# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight) — the fleet's
+ # mutation cases, replayed as legs. Each leg carries its recorded revision pin
+@@ -91,2 +92,3 @@
+ #   js-round-gate         kumitate-shokunin/scripts/round-gate.mjs    5/10 (50 %)
++#   js-sources-check      kumitate-shokunin/scripts/sources-check.mjs 5/10 (50 %)
+ # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+@@ -94,6 +96,8 @@
+ # mutation-case-mado-verify.md §1, mutation-case-kagi-checklist.md §2,
+-# mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1
+-# (leg 7's spec, predictions.json sha e99b87eb…, committed e69b488 before the
+-# sweep; arm-class-matrix.md §13 is only the projection it drew on). All
+-# seven defect specs are embedded below (legs 1–4 cut from those notes'
++# mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1,
++# .ufo/evidence/round-18/sources-chec
+
+### 66a25abf corpus/README.md  numstat: 11	0	corpus/README.md
+diff --git a/corpus/README.md b/corpus/README.md
+index 68e80d6..2d512d0 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -346 +346,12 @@ eighteen old mutants; command/environment contract pins are distinguished
+ from reproduced malicious-configuration effects.
++
++## Round22 — callback-authoritative accounting
++
++| Entry | Ground | Evidence |
++|---|---|---|
++| `knowledge/callback-authoritative-accounting.md` | same-ground calibration repair, not a new frontier crossing | minedS082; `tools/wave-accounting.py`; frozen round22 bundle and expected digest |
++
++Separate the eight synthetic rejection predicates from the actual146-seat
++round21 denominator and the two historical partial-report false positives.
++No report is deleted; callback-source integrity is not provider authentication.
++All existing frontier statuses and independent promotion limits stay unchanged.
+
+
+### 67c0e013 LOG.md  numstat: 18	0	LOG.md
+diff --git a/LOG.md b/LOG.md
+index 3846859..86a8212 100644
+--- a/LOG.md
++++ b/LOG.md
+@@ -1756 +1756,19 @@ metadata and its failure are preserved; production gate source is unchanged.
+   `corpus/lessons/round-30.md` (five mistakes, routed-defect dispositions, round-31 routes).
++
++## Round 31 — 2026-10-23 (TameshiR31)
++
++- Motivation: round-30 spot-check routed items 1-6 (`corpus/lessons/round-30-verifier-spotcheck.md`)
++  and the orchestrator's note that calibration is the lowest axis: SCORECARD's standing capability and
++  score rows had drifted from what their own commands print (base receipt: 7 of 12).
++- `c111dab5`: C1 counter, contract, binding v4 and base receipt frozen before any seat.
++- Wave 1 (32 seats, none dead): C1 controls (do-nothing, junk, label, deleted, hidden, rewrite, header,
++  receipt route), counter review and mutation, base re-measurement, binding-v4 attacks (v4 kept 63/63
++  forged entries with five shapes → v5 before data, `87eb64eb`), dead-seat check, stray-workdir owner
++  (TameshiR30A3.ColdA08), source rows, entry and QUALITY drafts.
++- `2da841bd`: content revision (SCORECARD re-stated rows + JudgeC1 erratum, S095-S096 + S055 re-open,
++  knowledge entry, README row, QUALITY 66-71, SKILL.md recipe sentence). Monitor 55/64 there by design.
++- Wave 2 (32 seats, one dead: CtlBindV5Fresh, provider safety filter, held): nine drifted sections read
++  three times each, 24/24 bound by v5, ledger 456 → 480 at `83c001a5`; falsifiers on rows, entry,
++  sources
+
+### 67c0e013 SCORECARD.md  numstat: 14	0	SCORECARD.md
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 043fc7a..df020ed 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -1539 +1539,15 @@ pre-round record of `284ab0f`) and the Saturation sentence "the nudge does not f
+ Measured results are appended below only after execution.
++
++### Round 31 — measured result (TameshiR31)
++
++| Claim | Axis | Before | After | Delta | Counting command | Measured commit | Evidence | Verdict |
++|---|---|---|---|---|---|---|---|---|
++| C1 standing SCORECARD rows agree with their own commands | calibration | `C1_R31: statements=12 mismatches=7 … append_only=1 C1_R31_PASS=false`, exit 1 at 36c1d393 | `C1_R31: statements=12 mismatches=0 unparsed=0 unobservable=0 append_only=1 C1_R31_PASS=true`, exit 0 | mismatches 7 → 0 of 12; numeric calibration 8 → 8 | `python3 .ufo/evidence/round-31/c1-measure.py --rev REV --work EMPTY_DIR` | 83c001a5d95f33a78a9e2d51f5ec1c9a6ddf2217 (first full run; re-measured at the round's last SCORECARD commit, receipt `.ufo/evidence/round-31/after/c1-at-final.stdout`) | `.ufo/evidence/round-31/before/c1-at-base.stdout`, `after/c1-at-83c001a5.stdout`, `ctl/c1-controls-summary.txt`, `.ufo/waves/round-31/w1/`, `w2/` | improved (measured; route controls that copy correct committed values also meet the counter, as the contract declared; of the 7 base mismatches, 3 were stale current statements and 4 dated literals without a current restatement) |
++
++The "round-31 measurement revision" cells of the re-stated tables above mean `83c001a5`. 
+
+### 9ee1c804 corpus/SOURCES.md  numstat: 11	4	corpus/SOURCES.md
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 94ff6dc..60b93f2 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -11,3 +11,3 @@ rows only, and a row is a claim opened in the round that writes it.
+ |---|---|---|---|---|---|---|---|---|---|---|
+-| S001 | Mutant states and metrics (Stryker Mutator docs) — https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/ | docs | A | Stryker Mutator's own mutant-state and metric definitions | §Mutant states and §Metrics @ docs page fetched 2026-10-19 | eight mutant states; score = detected / valid x 100 with detected = killed + timeout; compile and runtime errors excluded; a separate score on covered code; test states killing, covering, not covering | mined | 2026-10-19 | 180d | corpus/knowledge/mutation-score-semantics.md |
++| S001 | Mutant states and metrics (Stryker Mutator docs) — https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/ | docs | A | Stryker Mutator's own mutant-state and metric definitions | §Mutant states and §Metrics @ docs page fetched 2026-10-19 | eight mutant states; score = detected / valid x 100 with detected = killed + timeout; compile and runtime errors excluded; a separate score on covered code; test states killing, covering, not covering | mined | 2026-10-19 | 180d | corpus/knowledge/mutation-score-semantics.md, corpus/knowledge/mutation-case-kumitate-sources-check.md |
+ | S002 | mutation-testing-report-schema.json (stryker-mutator/m
+
+### 9f3084bc corpus/QUALITY.md  numstat: 34	0	corpus/QUALITY.md
+diff --git a/corpus/QUALITY.md b/corpus/QUALITY.md
+index 60ab9aa..9319cd0 100644
+--- a/corpus/QUALITY.md
++++ b/corpus/QUALITY.md
+@@ -611 +611,35 @@ motivate the rule, not a claim that the new rule has been operationalized.
+     names.
++
++55. Round 29. Amendments to 53 and 54 (round-27 spot-check routed item 5,
++    seat ReviewQuality, `.ufo/waves/round-27/w1/ReviewQuality.md`
++    H1, M1, M2, L2). Criterion 53 uses the crediting-entry reading: a round
++    re-reads a section when it edits an input of the entry that credits that
++    section; entries that already fail are not measured. Independence of the
++    re-reading seats is checked by reading each new entry's `seats` and
++    `reports` against the committed wave roster, not by the monitor; from
++    round 29 the claim counter checks that binding
++    (`.ufo/evidence/round-29/c1-measure.py`). External inputs are recorded,
++    not measured. For 54: naming a digest is not provenance; a claim that a
++    run happened needs a re-run at the measured revision, by the counter or
++    through a result digest the counter recomputes. Falsifier: the round-27
++    C2 receipt check passes a receipt whose digest was rewritten to the
++    current probe (ReviewQuality M1).
++
++56. Round 29. Every edit a round makes to a widely read lane file
++    (corpus/SOURCES.md, corpus/README.md, corpus/QUALITY.md, SHONEN.md)
++    lands in or before the content revision its cold reads target; after
++    that revision the round only adds new files or 
+
+### 9f3084bc corpus/README.md  numstat: 18	0	corpus/README.md
+diff --git a/corpus/README.md b/corpus/README.md
+index f796efc..8958219 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -429 +429,19 @@ section supersedes its status cell, and lines 234-238 above (round 16,
+ pristine-derived expectations only) describe the state before this round.
++
++## Round 29 — F8 wording correction, F6 pre-registration
++
++F8 correction (round-27 spot-check routed item 4): the round-27 section
++above says the F8 next move "is measured" against "an independently
++anchored expectation". The entry `knowledge/oracle-anchored-survivors.md`
++bounds that to 3 of the 4 survivors anchored in the gate's own header
++contract and 1 held by convention only. F8 stays partly held on that
++bound.
++
++F6 (fixture minimization for survivors) is pre-registered for round 29,
++before any data: survivor B5 of the kagi surface-census leg (exec x-bit arm
++deleted), probe fixture reduced by delta debugging (S024) to a fixture that
++still kills B5 and is 1-minimal at line and file granularity. Counter
++`.ufo/evidence/round-29/c2-measure.py`; frozen predicate and controls in
++`.ufo/evidence/round-29/contract.json`. The outcome is recorded in
++`corpus/lessons/round-29.md` and in the entry the counter names, whether or
++not the target is met; this section claims no status change for F6.
+
+
+### a08e85c5 tools/mutate-and-run.sh  numstat: 96	20	tools/mutate-and-run.sh
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index fd1a63a..c9e255e 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -15,3 +15,4 @@
+ # kumitate scripts/round-gate.mjs, as js-round-gate; r18 adds the eighth measured
+-# leg, kumitate scripts/sources-check.mjs, as js-sources-check.
++# leg, kumitate scripts/sources-check.mjs, as js-sources-check; r26 adds the ninth
++# measured leg, kumitate scripts/cite-check.mjs, as js-cite-check.
+ #
+@@ -81,3 +82,3 @@
+ #
+-# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight) — the fleet's
++# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine) — the fleet's
+ # mutation cases, replayed as legs. Each leg carries its recorded revision pin
+@@ -93,2 +94,3 @@
+ #   js-sources-check      kumitate-shokunin/scripts/sources-check.mjs 5/10 (50 %)
++#   js-cite-check         kumitate-shokunin/scripts/cite-check.mjs    5/10 (50 %)
+ # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+@@ -97,3 +99,4 @@
+ # mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1,
+-# .ufo/evidence/round-18/sources-check/sources-check.defects.spec (leg 8).
++# .ufo/evidence/round-18/sources-check/sources-check.defects.spec (leg 8),
++# .ufo/evidence/round-26/cite-check/cite-check.defects.spec (leg 9).
+ # Leg 8's spec is the round-18 pre-registration committed in 93d22aa before
+@@ -101,3 +104,6 @@
+ # .ufo/evidence/round-18/sources-check/sweep/sweep.txt; 10/10 pred
+
+### b05d2ee8 corpus/SOURCES.md  numstat: 15	1	corpus/SOURCES.md
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 6aa0dc8..e38bb0c 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -67,3 +67,3 @@ rows only, and a row is a claim opened in the round that writes it.
+ | S058 | Build Systems à la Carte (Mokhov, Mitchell, Peyton Jones; PACMPL 2, ICFP, Article 79, September 2018; DOI 10.1145/3236774) — https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems-final.pdf | paper | A | the verifying-traces rebuilder — how a previously built value is checked against later inputs | §4.2.2 Verifying Traces p. 79:14 @ published PDF sha256 d6c175a48cc908ca3f185e1fb4620e3278c5655218ac687d83dfa7f405624ede, fetched 2026-10-20 | rebuild when a recorded dependency hash differs: a trace of input hashes lets a later build verify an existing value instead of trusting a clean bit | mined | 2026-10-20 | 730d | corpus/knowledge/input-keyed-coldread-credit.md |
+-| S059 | Remote Caching (Bazel docs) — https://bazel.build/remote/caching | docs | A | Bazel's action-cache reuse keyed by action hash, and its documented false-hit class for inputs outside the key | §Known issues, "Bazel does not track tools outside a workspace" @ page fetched 2026-10-20, version unstated, markdown alternate sha256 0d362d113cdb9c434779bc7601f79844db12339da0207fa2a1b31d5b08badac5 | a cache hit is reuse keyed to the recorded inputs; an input outside the key keeps the same hash while the outcome changes, so credit is sound only for what the key records |
+
+### bb681566 tools/mutate-and-run.sh  numstat: 65	1	tools/mutate-and-run.sh
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index c9e255e..2d81b92 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -133,3 +133,5 @@
+ # table outside its expectation) · 2 a case could not be verified — missing
+-# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL. Lines:
++# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL, or (r30) the
++# counted pass/fail/setup statuses do not add up to the case count (SETUP
++# "case-tally mismatch"; --selftest runs the tally block under fixed statuses). Lines:
+ # REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_EXPECT /
+@@ -1450,2 +1452,11 @@ run_regression() {
+   fi
++  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
++  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
++  # of a mutation report are sums of its per-state counts).
++  if (( npass + nfail + nsetup != nlegs )); then
++    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
++      "$nlegs" "$((npass + nfail + nsetup))"
++    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
++    exit 2
++  fi
+   printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+@@ -1977,2 +1988,55 @@ EOT
+ 
++  # r30: --regression case-tally behavior. Runs run_regression's tally block, extracted from this
++  # file, under fixed leg statuses. The leg status names come from run_regression'
+
+### d16f9b5a corpus/knowledge/closeout-r11.md  numstat: 4	0	corpus/knowledge/closeout-r11.md
+diff --git a/corpus/knowledge/closeout-r11.md b/corpus/knowledge/closeout-r11.md
+index d17542b..e4c0bea 100644
+--- a/corpus/knowledge/closeout-r11.md
++++ b/corpus/knowledge/closeout-r11.md
+@@ -2,2 +2,6 @@
+ 
++source: own work — the arc's landed records: `plans/round-11.plan.md:13-25` (the final-round frame), `SCORECARD.md` (the ten training rows), `LOG.md:303-310` (the round rows); no external source
++verified-at: 2026-10-23 — round 35 re-read the three cited records at the lane tip: `plans/round-11.plan.md:13-25` is present as cited and the round rows `LOG.md:303-310` resolve; the 2026-10-14 write is unchanged
++recheck: 90d — re-read `plans/round-11.plan.md:13-25` and the round-11 row of `SCORECARD.md`; drift if either path moves or the arc is re-opened by a later round
++
+ Written 2026-10-14 by lane T11-1 (tameshi round 11 — the final round, training
+
+
+### d16f9b5a corpus/knowledge/survivor-fixture-minimization.md  numstat: 2	0	corpus/knowledge/survivor-fixture-minimization.md
+diff --git a/corpus/knowledge/survivor-fixture-minimization.md b/corpus/knowledge/survivor-fixture-minimization.md
+index 9df2b7c..26eab72 100644
+--- a/corpus/knowledge/survivor-fixture-minimization.md
++++ b/corpus/knowledge/survivor-fixture-minimization.md
+@@ -3,2 +3,4 @@
+ source: S024 (https://www.fuzzingbook.org/html/Reducer.html, re-opened 2026-10-23; snapshot `.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html`, sha256 3abede35…e99)
++verified-at: 2026-10-23 — round 35 re-read this entry against its round-29 receipts; the S024 snapshot is present in the lane at the cited path, and the round-29 F6 honest-stop verdict is unchanged (no re-measurement)
++recheck: 90d — re-open S024 and re-hash the snapshot (`.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html`); drift if the snapshot is missing, the digest moves, or the F6 row in `corpus/README.md` `## Frontier` changes status
+ 
+
+
+### fad9e951 .ufo/evidence/round-17/coldread/assemble.py  numstat: 288	31	.ufo/evidence/round-17/coldread/assemble.py
+diff --git a/.ufo/evidence/round-17/coldread/assemble.py b/.ufo/evidence/round-17/coldread/assemble.py
+index efa85e0..f0ad913 100755
+--- a/.ufo/evidence/round-17/coldread/assemble.py
++++ b/.ufo/evidence/round-17/coldread/assemble.py
+@@ -36,10 +36,13 @@ and forces exit 1; other reports still assemble):
+ 
+-Round-17 hardening (R05 §5 A4/A5 + L1 follow-up):
++Round-17 hardening (R05 §5 A4/A5 + L1 follow-ups 1–2):
+   - A4 trace binding: every traces[] path must resolve against the repo
+     worktree (absolute receipts are taken as given), carry schema
+-    tameshi-trace-inputs-v1 and rev == read_rev; its `inputs`/`external` maps
+-    are unioned into the section's maps, and a path declared with two
+-    different sha256 is rejected as `trace-conflict:<path>`. An observation
+-    that ran commands without any receipt is rejected
++    tameshi-trace-inputs-v1, rev == read_rev, and empty live_lane_reads; its
++    `inputs`/`external` maps are unioned into the section's maps, and a path
++    declared with two different sha256 is rejected as `trace-conflict:<path>`.
++    An observation that ran commands without any receipt is rejected
+     (`trace-receipt-missing`).
++  - read_rev is validated for EVERY report (resolves to a commit in --repo),
++    before the page cache; a page sha cited at a rev that does not contain it
++    is rejected (`page-not-at-read_rev`).
+   - Exempt inputs: `SKILL.md` and the in-flight round-17 ledger are dropped
+@@ -47,7 +50,8 @@ Round-17 hardening (R05 §5 A4/A5 
+
+### fad9e951 .ufo/evidence/round-17/measure.py  numstat: 84	26	.ufo/evidence/round-17/measure.py
+diff --git a/.ufo/evidence/round-17/measure.py b/.ufo/evidence/round-17/measure.py
+index 4aa01c3..dd9fb90 100755
+--- a/.ufo/evidence/round-17/measure.py
++++ b/.ufo/evidence/round-17/measure.py
+@@ -30,3 +30,3 @@ worktree access) and prints one JSON object:
+   sources          corpus/SOURCES.md census: rows matching
+-                   `^\|\s*S[0-3]{3,}\s*\|`… (see sources_census)
++                   `^\\|\\s*S[0-9]{3,}\\s*\\|` (see sources_census)
+ 
+@@ -41,3 +41,8 @@ Credit rule (v2, fail-closed), evaluated per ledger entry in order:
+      verified-record|gap-minor.
+-  3. input gate, class-independent and applied to EVERY credited entry:
++  3. commands gate, class-independent: an entry credits only when
++     commands_executed_count>0 AND it lists >=1 committed trace; a
++     zero-command record cannot credit (`commands-unrecorded`), closing the
++     record-class free-read hole (K02 hole 2). Malformed counts are
++     `malformed-entry`.
++  4. input gate, class-independent and applied to EVERY credited entry:
+      `inputs` minus the ignored keys (SKILL.md and the round-17 ledger path,
+@@ -50,11 +55,11 @@ Credit rule (v2, fail-closed), evaluated per ledger entry in order:
+      REV:<p>)` must equal the recorded value (`input-drift:<p>`).
+-  4. trace gate: when `traces` is non-empty (or always for an entry with
+-     commands_executed_count>0 in strict mode) each trace path must resolve
+-     at REV to a blob whose JSON schema is `tameshi-trace-inputs-v1`, whose
+-     `inputs` 
+

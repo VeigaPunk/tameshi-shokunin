@@ -1,0 +1,26 @@
+T49ExecR14Cmd — which of the 13 pinned inputs moved, and in which round
+
+Source of the 13 pins: .ufo/evidence/round-13/expected.json -> "inputs" (13 keys; the historical
+run's own output agrees: "expected_checks": 12, len(expected_inputs_verified) == 13).
+
+digest per revision (git cat-file -p <rev>:<path> | sha256sum):
+
+path                              pinned (r13)   28aeef4    98bea7d (r16 tip)  8ca67421 (base)
+tools/pin-disposition.py          297253971dab   297253971dab  297253971dab      331529eadafe
+tools/bash-witness-study.py       49e9e5e20b73   49e9e5e20b73  49e9e5e20b73      60575e62a530
+tools/mutate-and-run.sh           75ed934dc863   75ed934dc863  0673d2e5374b      a7d3f2dd7d47
+(other ten pins: identical at all four revisions)
+
+move commits (git log --oneline <range> -- <path>):
+  tools/mutate-and-run.sh     05a2247 round-16: wave-2 repairs ...   (also touched by c699c8c, round 16)
+                              -> 89722ddb then 0673d2e; later 2a22ade (r17), 58e5d53 (r18), a08e85c (r26), bb68156 (r30)
+  tools/pin-disposition.py    2a22ade round-17: build landing — v2 disposition re-pin (R16-OP1) ...
+  tools/bash-witness-study.py 58e5d53 round-18 -> sha 8dfaa25a; 370f2df round-21 -> sha 60575e62 (base value)
+
+Consequence for the section's step 2 (SKILL.md:1581-1582):
+  * exit 2 + kind expected_input_digest_mismatch at `--root .` is reproduced by both round-14 manifests.
+  * the mismatch line actually printed names tools/bash-witness-study.py, i.e. the round-18/21 move.
+  * "(the runner moved in round 16)" is true of tools/mutate-and-run.sh (sha 75ed934d -> 0673d2e in round 16)
+    but is not the file the tool reports: the tool reports the first mismatch in sorted key order, and three
+    of the 13 pins differ at base.
+Receipt: pin-movements computed by one python3 pass over the four revisions (no writes to the lane).

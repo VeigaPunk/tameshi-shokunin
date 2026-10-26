@@ -1,0 +1,136 @@
+{
+ "section": "## Restore discipline",
+ "findings": [
+  {
+   "skill_line": "396",
+   "statement": "The historical probes reran from scratch",
+   "verdict": "false",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:SCORECARD.md | sed -n '13p' | grep -o \"sensitivity re-runs[^;]*\" => \"sensitivity re-runs from the lane's retained scratch: `node /tmp/tameshi-r2-1-work/mutant-D2.mjs --root /tmp/tameshi-r2-1-work/empty-root | tail -1` -> 5 ids + `+23 more`\". The cited line records re-runs that READ the retained /tmp scratch; \"retained\" contradicts \"from scratch\". `git show 8eaae28 -- SKILL.md` shows the rewrite that introduced it: the removed step 6 read \"**Retain the scratch as evidence.** Both lanes' probes re-ran from `/tmp/tameshi-r2-1-work/` and `/tmp/tameshi-r3-1-work/`; each note's reproduce spec rebuilds the sweep even if /tmp is wiped\" and the new step 6 collapsed that destination to \"from scratch\" (while correctly dropping the rebuild claim that kagi's Erratum R21 refutes).",
+   "proposed_fix": {
+    "skill_old": "The historical probes reran from scratch",
+    "skill_new": "The historical probes' sensitivity re-runs\n   read the lane's retained scratch",
+    "why": "The cited SCORECARD.md:13 records re-runs from the retained /tmp scratch, not a rebuild from scratch; the replacement states what the line shows, keeps the `SCORECARD.md:13` pointer and the rest of step 6 intact, and adds no pointer (restore pointer count stays 10)."
+   }
+  },
+  {
+   "skill_line": "383-384",
+   "statement": "`cp -p` the artifact into the lane namespace and\n   edit only copies",
+   "verdict": "unverifiable",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kimi-census.md | sed -n '4,5p' => \"every mutant is a copy under `/tmp/tameshi-r2-1-work/`, and no fleet file was written\"; git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kagi-census.md | sed -n '242,243p' => \"cp -p kagi-shokunin/corpus/surface-census.sh /tmp/tameshi-r3-1-work/pristine.sh\". `git grep -n 'lane namespace' 8ca67421111fa354b47b803358391d0b07fc6db9 -- SKILL.md corpus tools` => 1 hit, SKILL.md:383 only: the term is used nowhere else and is not defined. Both cited records copy into /tmp outside the lane; the `cp -p` half is recorded (kimi :172, kagi :44-45), so only the destination phrase is at issue.",
+   "proposed_fix": {
+    "skill_old": "`cp -p` the artifact into the lane namespace and\n   edit only copies",
+    "skill_new": "`cp -p` the artifact into scratch outside\n   the lane and edit only copies",
+    "why": "Names the destination the cited commands use (/tmp scratch outside the lane) and drops the undefined term; keeps both `file:N` pointers unchanged."
+   }
+  },
+  {
+   "skill_line": "377",
+   "statement": "All edits must stay in scratch.",
+   "verdict": "unverifiable",
+   "evidence": "Prescriptive sentence; the universal reading is contradicted by the section's own steps 1 and 6 (the note and its evidence are written in the lane) and by the cited record: cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kagi-census.md | sed -n '6,7p' => \"... the kagi tree was not written (restore proof §0); this note is the only fleet file written by this run.\" `git log --format='%h %ad %s' --date=short -- corpus/knowledge/mutation-case-kagi-census.md` => \"53e74a8 2026-10-14 probation round 3 ...\" (the run's own lane commit). Scoped to the artifact the sentence holds; unscoped it does not.",
+   "proposed_fix": {
+    "skill_old": "All edits must stay in scratch.",
+    "skill_new": "All substrate edits must stay in scratch.",
+    "why": "Narrows the subject to the artifact under test, which is what steps 1-5 police; removes the contradiction with steps 1/6 and with the cited note's single lane file."
+   }
+  },
+  {
+   "skill_line": "387",
+   "statement": "Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kimi-census.md | sed -n '14p' => \"`83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426`, 896 lines, 43273 B\"; sed -n '34,35p' => \"original sha256 before `83016d45…4f426` and after `83016d45…4f426`; size 43273 B and mtime unchanged; kumitate working tree clean for that path\". First8 83016d45 and last5 4f426 match the full hash; 43273 B matches. Values true; the rendering lost two spaces (\"hash83016d45…\", \"43273B\") in the 8eaae28 rewrite, whose removed text read \"`83016d45…4f426` before and after, 43273 B\" (`git show 8eaae28 -- SKILL.md`).",
+   "proposed_fix": {
+    "skill_old": "Kimi recorded hash83016d45…4f426,43273B, unchanged mtime and path cleanliness",
+    "skill_new": "Kimi recorded hash 83016d45…4f426, 43273 B, unchanged mtime and path cleanliness",
+    "why": "Whitespace-only repair of the corrupted joins; every value, pointer and word is preserved."
+   },
+   "note": "content true; typography corrupted by 8eaae28"
+  },
+  {
+   "skill_line": "389",
+   "statement": "Kagi recorded hash275d8294…53009f,44212B, unchanged09:47:15 mtime,",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kagi-census.md | sed -n '14,15p' => \"`275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f`, 44212 B, 886 newlines ... mtime 2026-10-14 09:47:15 -0300\"; sed -n '54,56p' => \"kagi sha256 before `275d8294…53009f` and after `275d8294…53009f`; 44212 B and mtime 09:47:15 unchanged; `git status --porcelain` for the path empty; `/tmp/…/pristine.sh` still `cmp`-identical to the kagi original after the sweep\". First8 275d8294 and last6 53009f match; 44212 B and 09:47:15 match. Rendering lost three spaces (\"hash275d8294\", \"44212B\", \"unchanged09:47:15\").",
+   "proposed_fix": {
+    "skill_old": "Kagi recorded hash275d8294…53009f,44212B, unchanged09:47:15 mtime,",
+    "skill_new": "Kagi recorded hash 275d8294…53009f, 44212 B, unchanged 09:47:15 mtime,",
+    "why": "Whitespace-only repair of the corrupted joins; values, pointer and wording unchanged."
+   },
+   "note": "content true; typography corrupted by 8eaae28"
+  },
+  {
+   "skill_line": "380-382",
+   "statement": "1. **Before the sweep:** sha256 (full), size, mtime, repo revision, and\n   `git status --porcelain -- <path>` empty — recorded in the note's header\n   (mutation-case-kimi-census.md:13-16; mutation-case-kagi-census.md:13-17).",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kimi-census.md | sed -n '13,16p' => \"sha256 `83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426`, 896 lines, 43273 B, mtime 2026-10-13 18:53:12; kumitate repo `175de6ba2e9e904010411b19cab27e0af9aad3d4`, `git status --porcelain -- scripts/kimi-census.mjs` empty\"; kagi :13-17 => \"sha256 `275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f`, 44212 B, 886 newlines, mtime 2026-10-14 09:47:15 -0300, mode 755; kagi `HEAD fecee8743e52eb8fb5fbb40782934cb619a1a96e`, `git status --porcelain -- corpus/surface-census.sh` empty\". All five fields (full sha256, size, mtime, repo revision, clean status) are present in both headers.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "388",
+   "statement": "no after-repo revision was recorded.",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kimi-census.md | grep -n -Ei 'after|rev-parse|HEAD|revision' => 11,13,34,103 only: :13-16 pins the repo revision once (before), :34-35 records the sha/size/mtime/porcelain after-proof and no `git rev-parse`/HEAD; line 103 is prose. Nothing in the note records the repo revision after the sweep.",
+   "proposed_fix": null,
+   "note": "scope is the cited note (:34-35); SCORECARD.md:13 later re-reads `kumitate HEAD 175de6ba` in its verification cell, so a reader can close the gap there, but the note did not record it"
+  },
+  {
+   "skill_line": "391",
+   "statement": "Its after-repo revision is likewise not established by those records.",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kagi-census.md | grep -n -Ei 'after|rev-parse|revision' => 10,54,56,256,272 only: :13-17 pins HEAD fecee874 before, :54-56 records sha/size/mtime/porcelain/cmp after but no HEAD; :256 are anchor spot-checks; :272 is the R21 erratum. No after-repo revision in the cited records.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "397-398",
+   "statement": "the case-note commands rely on an unversioned\n   `mutate_driver.py` and do not directly rebuild after scratch loss.",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/knowledge/mutation-case-kimi-census.md | sed -n '174,175p' => \"python3 /tmp/tameshi-r2-1-work/mutate_driver.py --check\" / \"--run\"; kagi :245-246 => the same two commands against /tmp/tameshi-r3-1-work/mutate_driver.py. `git ls-tree -r --name-only 8ca67421111fa354b47b803358391d0b07fc6db9 | grep -c mutate_driver` => 0, so the driver is unversioned. kagi's own Erratum R21 states it verbatim (:271-272: \"The old §7 commands depend on an unversioned scratch `mutate_driver.py`; they do not by themselves recreate that driver after scratch loss.\").",
+   "proposed_fix": null,
+   "note": "no pointer to kagi :271-274 exists in the section; adding one would change the base pointer count (10), so none is proposed"
+  },
+  {
+   "skill_line": "399-400",
+   "statement": "Use the maintained `bash tools/mutate-and-run.sh --regression` ledger\n   replay for those pinned cases; it does not recover the old driver.",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:tools/mutate-and-run.sh | wc -l => 2080; grep -n -- '--regression' => usage at :198/:215-223 (\"replays every recorded mutation case as a leg\"). The ledger's legs 1-2 are exactly the two cited sweeps: `grep -E '^PIN_JS=|^PIN_BASH='` => 83016d45049b...2724f426 / 275d8294a94e...b53009f, equal to the notes' recorded hashes at kimi:14 / kagi:14. Probe (read-only on the lane; workdir in scratch): `TMPDIR=$S/tmp bash tools/mutate-and-run.sh --regression --workdir $S/regwork` => exit 0, \"REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)\", with \"REGRESSION_TABLE js-kimi-census: match=10/10 ... kill-rate=80pct\" and \"bash-surface-census: match=10/10 ... kill-rate=80pct\" (full receipt copied to .ufo/waves/round-49/w1/T49SecRestore.ledger-replay-base.txt). `grep -n mutate_driver` in the tool => only :745, a provenance comment for leg 3's spec; nothing reconstructs the driver.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "403",
+   "statement": "the G-R2-1 lesson, corpus/README.md round-2 addendum).",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/README.md | sed -n '11p' => \"| `knowledge/gates-survey-kagi.md` — round-2 addendum (G-R2-1...6, append-only) | section 1 claim-ledger pin corrected: **79301 B / sha256 first16 `93c5827202b9cdec`** — the surveyed 79294/`357fb245` was an intermediate dirty-tree state never committed; ... (G-R2-1); ...\". The named addendum and the G-R2-1 row exist in the lane; the bare path pointer resolves at corpus/README.md:11.",
+   "proposed_fix": null,
+   "note": "bare path pointer, accepted by the frozen extractor as kind=path; adding :11 would change the pointer kind and require a new line read row, so no fix is proposed"
+  },
+  {
+   "skill_line": "377-378",
+   "statement": "Before/after fingerprints establish endpoint\nidentity, not that no transient write occurred.",
+   "verdict": "true",
+   "evidence": "Logical claim about what a before/after fingerprint pair can show; consistent with steps 1 and 3 (hash/size/mtime/porcelain sampled at two endpoints) and not contradicted by any cited record. It is an inference with no source and carries no (I) mark, while SKILL.md:34 states \"inferences carried below keep the (I) mark\" and step 5 at :395 is marked; the round-18/round-21 credit algorithm scores trace-bound inputs, not prose markers, so this is recorded without a fix.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "394-395",
+   "statement": "Those write to the\n   substrate; the only correct end state is *never-modified*. (I)",
+   "verdict": "true",
+   "evidence": "`git checkout`/`git restore` rewrite worktree paths, so under steps 2/4 the restoration they perform is itself a substrate write; the sentence is marked (I) at :395 as SKILL.md:34 requires, and matches step 4's no-repair rule.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "401-403",
+   "statement": "7. **If the artifact was already dirty at pin time:** that pin is not a clean\n   baseline — record the dirty state exactly, or better, stop and re-pin a\n   committed revision (the G-R2-1 lesson, corpus/README.md round-2 addendum).",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:corpus/README.md | sed -n '11p' => G-R2-1 is exactly this case: \"the surveyed 79294/`357fb245` was an intermediate dirty-tree state never committed ... kagi's own round-18 `fecee87` (10:05:10) re-pinned `stamps.tsv`\". A never-committed dirty pin is not a clean baseline and was replaced by a committed re-pin, as the step prescribes.",
+   "proposed_fix": null
+  },
+  {
+   "skill_line": "375",
+   "statement": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "verdict": "true",
+   "evidence": "cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && git show 8ca67421111fa354b47b803358391d0b07fc6db9:SKILL.md | sed -n '375,404p' | grep -c continuous => 1 (the heading only); step 1 pins five before-values, step 3 requires endpoint agreement and disclaims an after-repo revision, steps 4-5 forbid repair/restore. The heading matches the content.",
+   "proposed_fix": null,
+   "note": "heading not renamed; proposed_fix is null by rule"
+  }
+ ]
+}

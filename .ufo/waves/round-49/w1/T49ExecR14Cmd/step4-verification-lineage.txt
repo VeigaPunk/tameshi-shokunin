@@ -1,0 +1,54 @@
+T49ExecR14Cmd — step 4: what .ufo/evidence/round-14/verification.json and verification-final.json contain
+
+Path resolution of the bare name `verification.json` in the round-14 section (SKILL.md:1588):
+  .ufo/evidence/round-14/verification.json  — the only file under .ufo containing the string "18/34"
+  (grep -rl "18/34" --include='*.json' .ufo  ->  that one path)
+
+.ufo/evidence/round-14/verification.json  (sha256 1d480a0ddd0cd8a801d0ae38f7d774b6d772c8d0910bf6200c3e666696532939)
+  schema          tameshi-round14-verification-v1
+  measured_commit 0c6e36d0bd2fd98077de4cff4c90c6f467c2e1fb  ("round-14: reconcile effective expectations and retain invocation context")
+  note            "L1 run after all32 seats finished; no receipt argv or sibling gate executed"
+  checks
+    disposition_selftest  exit 1  expected 0
+      last line: "SELFTEST: FAIL (18/34 failed: clean-superseded, unsuperseded-crash-mismatch,
+                  missing-row-drop, unknown-row, duplicate-row-name, invalid-replacement-self-cycle,
+                  required-replacement-missing, replacement-failed, superseded-unexplained-reason,
+                  superseded-raw-missing, superseded-raw-binding, supersession-unwarranted,
+                  superseded-oracle-binding, exit-only-false-positive, id-only-false-positive,
+                  structured-mismatch, effective-exit-mismatch, duplicate-json-key; fixtures kept at
+                  /tmp/tameshi-r14-evidence-disposition-selftest.*)"
+    unresolved_before     exit 1  expected 1   (status failed; producer_before / expected_contains_missing)
+    resolved_after        exit 0  expected 0   (status clean; superseded 1)
+    context_capture       exit 0  expected 0   (argv: python3 .ufo/evidence/round-14/capture-context.py)
+
+.ufo/evidence/round-14/verification-final.json  (17,243 B)
+  schema          tameshi-round14-verification-v1
+  measured_commit 64314783836bb0d05ad06a774d7310fd3a23b5bd  ("round-14: retain failing run and repair two selftest fixtures")
+  checks
+    disposition_selftest  exit 0  expected 0   last line "SELFTEST: PASS (34/34)"
+    unresolved_before     exit 1  expected 1   findings [producer_before / expected_contains_missing]
+    resolved_after        exit 0  expected 0   counts effective 11, passed 11, superseded 1, findings 0
+  context_capture  {"receipt": "context-receipt.json",
+                    "measured_commit": "0c6e36d0bd2fd98077de4cff4c90c6f467c2e1fb",
+                    "note": "unchanged harness/probe/runner; observed once, not rerun"}
+  supersedes       "verification.json disposition_selftest failure only; original real before/after observations remain valid"
+
+.ufo/evidence/round-14/verification-verdict.json
+  measured_commit 64314783836bb0d05ad06a774d7310fd3a23b5bd
+  initial_failed_selftest_retained: "verification.json"
+
+Reproduction check against the historical replay run (historical-before-28aeef4.json /
+historical-after-28aeef4.json): after normalising only the top-level "root" key, the replay JSON is
+identical to verification-final.json's stored stdout for both unresolved_before and resolved_after
+(see replay-identity.txt).
+
+Verdict on step 4 (SKILL.md:1587-1591): every clause matches the files as committed.
+  "retains the corrected selftest"                        -> 34/34 PASS, exit 0 (final)
+  "and frozen before/after outcomes"                      -> exit 1/expected 1 and exit 0/expected 0 (final)
+  "verification.json retains the initial 18-of-34 fixture failures" -> "SELFTEST: FAIL (18/34 failed: ...)"
+                                                             retained with exit 1 / expected 0, not rewritten green
+  "rather than disguising them as green"                  -> final.supersedes scopes the repair to the
+                                                             selftest failure only
+  "The revision measured is recorded separately."         -> "measured_commit" field in each file;
+                                                             initial 0c6e36d0, final 64314783
+  Typographic note: SKILL.md:1589 prints "initial18-of34" (missing space); the numbers themselves are right.

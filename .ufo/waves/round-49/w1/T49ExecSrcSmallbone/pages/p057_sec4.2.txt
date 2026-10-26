@@ -1,0 +1,52 @@
+                                                                                  57
+
+
+test cases are generated.
+
+
+4.2    Generating Parallel Test Cases
+Our first approach to parallel test case generation was to use the standard
+Quviq QuickCheck library eqc_statem to generate sequential test cases, then
+execute all the calls in the test case in parallel, constrained only by the data
+dependencies between them (which arise from symbolic variables, bound in one
+command, being used in a later one). This generates a great deal of parallelism,
+but sadly also an enormous number of possible serializations—in the worst case
+in which there are no data dependencies, a sequence of n commands generates
+n! possible serializations. It is not practically feasible to implement a test oracle
+for parallel tests of this sort.
+Instead, we decided to generate parallel test cases of a more restricted form.
+They consist of an initial sequential prefix, to put the system under test into a
+random state, followed by exactly two sequences of calls which are performed
+in parallel. Thus the possible serializations consist of the initial prefix, followed
+by an interleaving of the two parallel sequences. (Lu et al. [2008] gives clear
+evidence that it is possible to discover a large fraction of the concurrency re-
+lated bugs by using only two parallel threads/processes.) We generate parallel
+test cases by parallelizing a suffix of an eqc_statem test case, separating it into
+two lists of commands of roughly equal length, with no mutual data dependen-
+cies, which are non-interfering according to the sequential specification. By
+non-interference, we mean that all command preconditions are satisfied in any
+interleaving of the two lists, which is necessary to prevent tests from failing
+because a precondition was unsatisfied—not an interesting failure. We avoid
+parallelizing too long a suffix (longer than 16 commands), to keep the number
+of possible interleavings feasible to enumerate (about 10,000 in the worst case).
+Finally, we run tests by first running the prefix, then spawning two processes to
+run the two command-lists in parallel, and collecting their results, which will
+be non-deterministic depending on the actual parallel scheduling of events.
+We decide whether a test has passed, by attempting to construct a sequen-
+tialization of the test case which explains the results observed. We begin with
+the sequential prefix of the test case, and use the next_state function of the
+eqc_statem model to compute the test case state after this prefix is completed.
+Then we try to extend the sequential prefix, one command at a time, by choos-
+ing the first command from one of the parallel branches, and moving it into the
+prefix. This is allowed only if the postcondition specified in the eqc_statem
+model accepts the actual result returned by the command when we ran the
+test. If so, we use the next_state function to compute the state after this
+command, and continue. If the first commands of both branches fulfilled their
+postconditions, then we cannot yet determine which command took effect first,
+and we must explore both possibilities further. If we succeed in moving all
+commands from the parallel branches into the sequential prefix, such that all
+postconditions are satisfied, then we have found a possible sequentialization of
+the test case explaining the results we observed. If our search fails, then there
+is no such sequence, and the test failed.
+This is a greedy algorithm: as soon as a postcondition fails, then we can discard
+

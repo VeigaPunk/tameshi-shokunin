@@ -1,0 +1,46 @@
+1517|## Pin disposition and provenance correction — round 13
+1518|
+1519|Sources: S003 and PIT precision correction S047 (historical S041 retained);
+1520|`corpus/knowledge/incremental-pin-disposition.md`; outside routed
+1521|`corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3;
+1522|runtime receipts in `.ufo/evidence/round-13/`.
+1523|
+1524|| Observation | Decision | Limit |
+1525||---|---|---|
+1526|| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+1527|| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
+1528|| Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
+1529|| All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
+1530|| Frozen summary kind is null but its top-level declaration is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
+1531|
+1532|Recipe from this lane root:
+1533|
+1534|1. Read the source-backed scope and `not_compared` list before the result.
+1535|2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+1536|   observes only hashes and git metadata. Retain stdout with its sibling branch-tip
+1537|   commits before treating it as a dated reading. It executes no sibling gate.
+1538|3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json`
+1539|   checks the new companion against digest-anchored frozen sources.
+1540|4. The original round-12 summary and rerun summary retain their historical
+1541|   null fields. The companion normalizes the canonical summary only; the
+1542|   rerun null is explicitly outside its normalized scope. The producer's
+1543|   wrong-nesting bug is fixed separately for future summary generation;
+1544|   its regression selftest asserts the exact top-level exposed kind.
+1545|5. Do not rerun a sibling's gate to obtain closure evidence. A non-author
+1546|   closure verifies committed receipts and their measured revision.
+1547|
+1548|### Round-13 gate/probe registry
+1549|
+1550|| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+1551||---|---|---|---|---|---|---|---|
+1552|| six-leg content disposition | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` | 0 observations, including changed/unavailable; 2 invalid input/could-not-evaluate; selftest 1 failed | `python3 tools/pin-disposition.py --selftest` | `.ufo/evidence/round-13/pin-manifest.json`; canonical leg mapping and literal selftest labels in tool | normal mode read-only lane/sibling files and git; selftest isolated temp repos only | tameshi |
+1553|| exposed witness provenance companion | gate | `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json` | 0 metadata_consistent/clean; 1 metadata_inconsistent/failed; 2 input_unavailable or snapshot_tampered/could-not-evaluate, including usage | `python3 tools/witness-metadata.py --selftest` | literal frozen input digests and expected kind/disclosure in tool; companion expected verdict; `.ufo/evidence/round-13/expected.json` | check read-only lane inputs; selftest isolated temp trees only | tameshi |
+1554|
+1555|No registry row changes rank, SHONEN authority, or the six recorded cases.
+1556|The historical summary's producer SHA names the producer that actually ran,
+1557|not the repaired current producer. No old evidence hash is regenerated.
+1558|PIT source clarification: S048 supersedes S047's object-specific
+1559|paraphrase; retain only the supported distinction “item 4 is
+1560|prioritisation, not a reuse skip”. No test-versus-mutation pronoun claim
+1561|is needed by this method.
+1562|

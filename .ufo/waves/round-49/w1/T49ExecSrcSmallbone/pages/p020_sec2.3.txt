@@ -1,0 +1,48 @@
+                                                                              20
+
+
+x
+y
+false
+x&&x
+x&&y
+x&&false
+y&&x
+y&&y
+y&&false
+false&&x
+false&&y
+false&&false
+
+
+2.3   Equivalence classes
+The next step is to gather information about the terms in the universe. This
+is the only step in the algorithm that uses testing, and in fact makes use of the
+program. Here, we need to determine which terms seem to behave the same,
+and which terms seem to behave differently. In other words, we are computing
+an equivalence relation over the terms.
+Concretely, in order to compute this equivalence relation, we use a refinement
+process. We represent the equivalence relation as a set of equivalence classes,
+partitions of the universe. We start by assuming that all terms are equal,
+and put all terms in the universe into one giant equivalence class. Then, we
+repeat the following process: We use the test data generators to generate test
+data for each of the variables occurring in the terms. We then refine each
+equivalence class into possibly smaller ones, by evaluating all the terms in a
+class and grouping together the ones that are still equal, splitting the terms
+that are different. The process is repeated until the equivalence relation seems
+“stable”; if no split has happened for the last 200 tests. Note that equivalence
+classes of size 1 are trivial, and can be discarded; these contain a term that is
+only equal to itself.
+The typical number of non-trivial equivalence classes we get after this process
+lies between 500 and 5,000, again depending on the size of the original universe
+and the application.
+Once these equivalence classes are generated, the testing phase is over, and the
+equivalence relation is trusted to be correct for the remainder of the method.
+For our tiny example, the non-trivial equivalence classes are as follows:
+
+{x, x&&x}
+{y, y&&y}
+{false, false&&x, false&&y, x&&false, y&&false,
+ false&&false}
+{x&&y, y&&x}
+

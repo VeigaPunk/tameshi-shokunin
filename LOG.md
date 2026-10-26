@@ -2379,3 +2379,16 @@ Motivating evidence: attempt 2's deciding run (`.ufo/evidence/round-48/after/`) 
 - SCORECARD round-48 deciding section appended; `Planned (round 49)` amended with the two untraced round-47 spot-check routes.
 
 Evidence: `.ufo/evidence/round-48/`, `corpus/lessons/round-48.md`; verdicts in SCORECARD.md and the report.
+
+## 2026-10-26 — round 49: reading-bound cold-read refresh (calibration) + F10 property-based generator (coverage)
+
+L1 TameshiR49 (hyaku run 9, attempt 1). Claims pre-registered and counters frozen at `14d03ea4` (`.ufo/evidence/round-49/contract.json`, `freeze.json`); controls scored at freeze bytes and committed at `6885adb4` before any seat.
+
+Motivating evidence: the round-48 closure ruled the round rejected-harmed because C2's record edits lapsed three cold-read sections (`corpus/lessons/round-48-verifier-spotcheck.md` routed defect 1); at base the monitor credits 57 of 64 sections (`.ufo/evidence/round-49/control/monitor-at-base-8ca67421.json`), and the seven lapsed sections' earlier entries all read a record file that changes every round (`.ufo/waves/round-49/w1/T49RevengerLapse.md`). F10 was still `open` with no generator method (`corpus/README.md:87`).
+
+- C1: eighteen reader seats read the 90 pointers of the seven lapsed sections; seven section critics and three command re-runs audited the rest; 45 line-neutral corrections (`.ufo/evidence/round-49/c1/corrections.json`); read rows `.ufo/evidence/round-49/c1/reads.json`; re-key with record files read through git blobs (`.ufo/evidence/round-49/c1/refresh.py`, receipts `.ufo/evidence/round-49/coldread/`).
+- C2: `tools/pbt-staged-id.py` (wave-1 seat T49ExecGenerator, built blind to the hidden panel); rows S269, S270 (QuickCheck ICFP 2000; Smallbone TR 76L, anchor corrected to §2.10 p. 34); entry `corpus/knowledge/pbt-generator-pilot.md`; README F10 line conditioned on the deciding receipt.
+- Frontier: mistake mined and fixed with a falsifier (QUALITY 99, deciding-run gate 0); considerthese 2026-10-26 proposal 3 mined (lesson); assimilation theme F10 (two rows admitted, two entries refused, one deferred); SCORECARD round-48 correction appended.
+- Waves: w1 build (55 seats), w2 falsify; counts in the report.
+
+Evidence: `.ufo/evidence/round-49/`, `.ufo/waves/round-49/`, `corpus/lessons/round-49.md`; measured values in the deciding receipts `.ufo/evidence/round-49/after/` and the report.

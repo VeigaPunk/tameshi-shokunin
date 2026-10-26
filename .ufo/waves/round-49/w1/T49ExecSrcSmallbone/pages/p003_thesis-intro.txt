@@ -1,0 +1,51 @@
+                                                                                3
+
+
+     ejabberd, a popular instant messaging server. The kind of bugs found can
+     not really be tested for using traditional test cases, because it’s necessary
+     to analyse the test results extensively to tell if the test passed or failed.
+
+The main aim of this thesis is to show that property-based testing has real
+extra power over traditional unit testing when it comes to testing programs,
+and is not just a convenient way to avoid writing test cases.
+
+Random testing or exhaustive testing? QuickCheck generates its test
+data at random: rather a scattershot approach to testing. This is frowned upon
+by software testing people, who tend to prefer a more systematic approach to
+test data generation.
+The tool SmallCheck uses a property language similar to QuickCheck but gen-
+erates test data exhaustively, up to a certain size bound, instead of at random.
+This has the advantage that you have a stronger guarantee of what has been
+tested once your property passes. It also becomes possible to extend the prop-
+erty language by adding existential quantification, which is not really desirable
+in QuickCheck: we would not really learn anything if a property ∀x∃yP (x, y)
+failed, because it might just mean that we weren’t able to guess the value of
+the witness y; with SmallCheck, we know that there is no witness up to the
+size bound.
+It is not really clear if one method is better. Exhaustive testing is more pre-
+dictable, but suffers from exponential blowup: we can only try small test cases.
+By constrast, with random testing we can try much bigger test cases but can’t
+explore the space of test cases as thoroughly. If a property only has one coun-
+terexample then exhaustive testing is the best way to find it; but, normally
+there is enough symmetry in the problem that if there is one counterexample
+to a property then there are many similar counterexamples, in which case ran-
+dom testing works well. With exhaustive testing we need to be careful not to
+generate too many redundant test cases, just like when testing by hand, but
+with random testing there is no harm unless the redundancy disturbs the dis-
+tribution of test data: we are just sampling the set of test data and it makes
+no difference how big that set is.
+Hamlet [2006] studies the advantages and disadvantages of random testing and
+concludes that, contrary to popular opinion, there are occasions when random
+testing gives the best test data. The examples he points out are when the
+input domain is large and unstructured, and when generating a sequence of
+imperative commands to be executed. Ciupa et al. [2007] shows experimentally
+that random testing works fine on object-oriented software, and that the worries
+that random testing is too indiscriminate are unfounded.
+
+Functional programming and testing We agree with the widely-held be-
+lief that functional programs ought to be easier to test than imperative ones:
+
+   • They are easier to reason about and specify, and this advantage carries
+     over directly when testing functional programs using properties, which
+     are after all specifications.
+

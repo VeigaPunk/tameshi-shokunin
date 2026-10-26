@@ -1,0 +1,21 @@
+# git -C LANE show 8ca67421111fa354b47b803358391d0b07fc6db9:SKILL.md | sed -n '1479,1498p' (line-numbered)
+1479|## Repeated controls and gate registry — round 12
+1480|
+1481|Source: S004/S026 and `corpus/knowledge/repeated-control-precondition.md`;
+1482|runtime evidence: `.ufo/evidence/round-12/verification-final.json`.
+1483|This is a standalone precondition check, not a change to the six-leg runner.
+1484|
+1485|| Observation | Decision | Bound |
+1486||---|---|---|
+1487|| Three or more zero-exit controls match on raw stdout and stderr | `controls_match` | Only this finite sample matched; not a determinism proof |
+1488|| Any available controls differ in exit or either stream | `controls_mismatch` | Do not attribute a later red suite solely to the mutant |
+1489|| Equal nonzero controls, or command unavailable | Could not evaluate baseline | No mutation kill-rate claim |
+1490|
+1491|Recipe: choose a pristine command; put evidence outside any tree it inspects;
+1492|run `python3 tools/repeat-control.py --runs 3 --out /tmp/tameshi-r12-controls-UNIQUE -- COMMAND ARG...`;
+1493|retain raw observations before interpreting the finding. The output directory
+1494|must not exist. Caller owns timeout policy; hanging commands yield no verdict.
+1495|Do not retry until green, normalize output, or interpret a finite match as proof
+1496|of reliability. Command stdout/stderr may contain sensitive data: choose a
+1497|non-secret fixture command before retaining evidence.
+1498|

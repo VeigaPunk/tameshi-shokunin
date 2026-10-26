@@ -1,0 +1,19 @@
+T49ExecR14Cmd — replay identity: historical run vs the frozen stdout in verification-final.json
+
+Method: load the stored check stdout from .ufo/evidence/round-14/verification-final.json and the
+replay file, replace the top-level "root" value with "<ROOT>" in both (the only field that carries the
+tree location), compare json.dumps(..., sort_keys=True).
+
+check               frozen stdout bytes   replay bytes   equal after root normalisation
+unresolved_before             5,366             5,367     yes
+resolved_after                5,977             5,978     yes
+(the extra byte is the trailing newline the tool writes to stdout; no other key differs —
+ every counts/findings/rows/status/exit/tool/tool_sha256 value is identical)
+
+Consequence: the replayed historical run is not just "exit 1 / exit 0"; its full JSON equals the
+receipt's frozen record. The tool in the archive tree self-reports sha256 1609a9df…
+("evidence-disposition.py r14"), the same digest verification-final.json pins as its input.
+
+Live form at base, for contrast: both round-14 manifests return the same error object
+(kind expected_input_digest_mismatch, exit 2, status could_not_evaluate, tool_sha256 39ee5c5e… r18),
+with the mismatch line naming tools/bash-witness-study.py — see pin-movements.txt.

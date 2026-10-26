@@ -1,0 +1,33 @@
+receipt: T49Read04 excerpt/claim containment check at base 8ca67421111fa354b47b803358391d0b07fc6db9
+checker: .ufo/evidence/round-49/c1/measure.py norm()/pointed_text()/extract()/check_reads(), EXCERPT_MIN=24 EXCERPT_MAX=400
+pointers source: .ufo/evidence/round-49/control/c1-pointers-at-base-8ca67421.json sha256 92a2e532fb323bee556e44b0877107339f7faa9e1c8f9636a8a6b1a8de6d4d3c
+rows: .ufo/waves/round-49/w1/T49Read04.rows.json sha256 74fa53cfbef48269c1a0776d04094d3e586fe4dbb53668535db0ebcee6199c68
+counter --list at base == frozen pointer list: True (n=90)
+section: start=131 end=245 sha256=e37cf21e3155bdd39a68ef24a5135f2ad62861bbb5794ec954abf42bb0bd631d (equals frozen extractor sha: True)
+
+ord file                                           ranges                 exlen occurs claim-verbatim verdict
+15  corpus/knowledge/mutation-case-kimi-census.md  [[30, 33]]             160   True   True           holds
+16  corpus/knowledge/mutation-case-kagi-census.md  [[27, 35], [50, 53]]   238   True   True           holds
+17  corpus/knowledge/mutation-case-kimi-census.md  [[59, 76]]             293   True   True           holds
+18  corpus/knowledge/mutation-case-kagi-census.md  [[82, 103]]            352   True   True           stale
+19  corpus/knowledge/mutation-case-kagi-census.md  [[88, 91]]             239   True   True           holds
+
+check_reads(base rows): {'unresolved': 0, 'unverified': 0, 'excerpt_miss': 0, 'not_holds': 1, 'absent': 0}
+  ord 15  mutation-case-kimi-census.md:30-33             ok
+  ord 16  mutation-case-kagi-census.md:27-35,50-53       ok
+  ord 17  mutation-case-kimi-census.md:59-76             ok
+  ord 18  mutation-case-kagi-census.md:82-103            not_holds
+  ord 19  mutation-case-kagi-census.md:88-91             ok
+
+proposed fix dry run on the base section text (ord fixes only; no other pointer changes):
+  skill_old occurrences in base section: 1 | in base SKILL.md: 1
+  pointers before/after: 34/34  (floor 34)
+  pointers identical raw/token outside ord 18: 33 of 34
+  ord 18 before: mutation-case-kagi-census.md:82-103 [[82, 103]]
+  ord 18 after : mutation-case-kagi-census.md:67,82-103 [[67, 67], [82, 103]]
+  fixed_excerpt collapsed len=150 occurs in pointed(:67,82-103)=True
+
+check_reads(after-fix projection): {'unresolved': 0, 'unverified': 0, 'excerpt_miss': 0, 'not_holds': 0, 'absent': 0}
+
+drift check: git -C LANE diff --stat BASE 455b2cd -- <the two target files> prints nothing (no line drift between base and the wave-1 tip):
+  (empty)

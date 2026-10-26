@@ -1,0 +1,23 @@
+# Lane-carriage check for doi:10.1145/1660572.1660575 — captured 2026-10-26 (T49ScribePkgQuickCheckCorr)
+## 1. base tree grep (git grep, read-only)
+$ git -C LANE grep -n 1660572 8ca67421111fa354b47b803358391d0b07fc6db9
+   -> no output (0 matches)
+
+## 2. every commit reachable from any ref, restricted to corpus/SOURCES.md
+$ git -C LANE rev-list --all | while read c; do git grep -q 1660572 $c -- corpus/SOURCES.md && echo HIT $c; done
+   -> no HIT line; rev-list --all --count at capture time = 1342
+
+## 3. base leads list
+$ git -C LANE show 8ca67421:corpus/SOURCES.md | sed -n '/^## Leads (unopened)/,/^## Id allocation/p' | grep -c '^- '
+16
+$ ... | grep -c '1660572\|1660575'
+0
+
+## 4. the anchor the campaign cites (round4/DOMAIN.md:25, round4/CANNOT-ANSWER.md:16): base corpus/SOURCES.md:233-253
+  choice, target behaviour, equivalent-mutant handling, section classification,
+  executable examples) has one opened primary or tiered source.
+
+
+## 5. working-tree grep at the tip, the round's own artifacts and these receipts excluded
+$ grep -rn 1660572 LANE | grep -v .git/ .jj/ | grep -v 'spec-w1.json|w1-dispatch.json|swarm-registry.json|build-spec.py|T49ScribePkgQuickCheckCorr.*'
+0

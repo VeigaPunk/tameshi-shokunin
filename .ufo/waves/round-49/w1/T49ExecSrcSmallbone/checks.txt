@@ -1,0 +1,21 @@
+# page-anchored checks, 2026-10-26, cwd=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-49/w1/T49ExecSrcSmallbone
+## A: row's own presence check (location-blind), whole document
+$ pdftotext -layout lic.pdf - | tr "\n" " " | grep -c "we have a range of test data generators for standard types"
+1
+## B: cited fragment on the page the row names indirectly? PDF p.39 (printed 34)
+$ pdftotext -layout -f 39 -l 39 lic.pdf - | tr "\n" " " | grep -c "good test data generators, that fit the program at hand"
+1
+## C: printed p.44 = PDF p.49, count of 'test data generator' / 'generator'
+$ pdftotext -layout -f 49 -l 49 lic.pdf - | grep -ci "generator"
+0
+## D: paper-2 §4.1 page (PDF p.61) generator hits
+$ pdftotext -layout -f 61 -l 61 lic.pdf - | grep -ci "generator"
+0
+## E: paper-3 §4.1 page (PDF p.92) generator hits
+$ pdftotext -layout -f 92 -l 92 lic.pdf - | grep -ci "generator"
+0
+## F: folio of PDF pages 39,49,61,92 (first non-empty line)
+PDF 39 -> printed 34
+PDF 49 -> printed 44
+PDF 61 -> printed 56
+PDF 92 -> printed 87

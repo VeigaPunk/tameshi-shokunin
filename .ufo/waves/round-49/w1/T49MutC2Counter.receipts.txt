@@ -1,0 +1,286 @@
+T49MutC2Counter receipts — C2 counter --selftest mutation probe (round 49, 2026-10-26)
+lane target : .ufo/evidence/round-49/c2/measure.py  (never modified)
+sha256      : f4971d02b8b1af40363f331ae2fadfffeec8ddf2fcbe0c4bc514ec25d8d0fde5 (before) == f4971d02b8b1af40363f331ae2fadfffeec8ddf2fcbe0c4bc514ec25d8d0fde5 (after)
+method      : byte-identical scratch copy; each mutant a fresh copy with ONE string replacement
+              (old string occurred exactly once in all 15); detector: python3 -I <copy> --selftest
+scratch     : /fast/scratch/hyaku/tameshi-r49/T49MutC2Counter (deleted after report; outputs preserved here)
+
+$ cp .ufo/evidence/round-49/c2/measure.py $S/measure.py && sha256sum <lane> $S/measure.py
+f4971d02b8b1af40363f331ae2fadfffeec8ddf2fcbe0c4bc514ec25d8d0fde5  <lane>/measure.py
+f4971d02b8b1af40363f331ae2fadfffeec8ddf2fcbe0c4bc514ec25d8d0fde5  $S/measure.py
+
+BASELINE (gate — every verdict below is conditional on this pass)
+$ python3 -I $S/measure.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== census-loose  (measure.py:57)  KILLED
+   area: oracle census regex
+$ python3 -I $S/mut/census-loose.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row FAIL
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=1
+exit=1
+
+== census-digits  (measure.py:57)  KILLED
+   area: oracle census regex
+$ python3 -I $S/mut/census-digits.py --selftest
+CASE oracle-collision FAIL
+CASE oracle-indent4-not-row FAIL
+CASE oracle-duplicate-refusal FAIL
+CASE oracle-short-row-refusal FAIL
+CASE oracle-numeric-sort FAIL
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=5
+exit=1
+
+== shortrow-4  (measure.py:101)  KILLED
+   area: short-row refusal
+$ python3 -I $S/mut/shortrow-4.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal FAIL
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=1
+exit=1
+
+== dup-drop  (measure.py:101)  KILLED
+   area: duplicate refusal
+$ python3 -I $S/mut/dup-drop.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal FAIL
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=1
+exit=1
+
+== sort-lex  (measure.py:106)  SURVIVED
+   area: numeric sort
+$ python3 -I $S/mut/sort-lex.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== class-idlen  (measure.py:131)  KILLED
+   area: class predicates
+$ python3 -I $S/mut/class-idlen.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic FAIL
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=1
+exit=1
+
+== class-collcount  (measure.py:135)  KILLED
+   area: class predicates
+$ python3 -I $S/mut/class-collcount.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic FAIL
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=1
+exit=1
+
+== classmin-9  (measure.py:50)  SURVIVED
+   area: CLASS_MIN
+$ python3 -I $S/mut/classmin-9.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== killtarget-10  (measure.py:51)  SURVIVED
+   area: KILL_TARGET
+$ python3 -I $S/mut/killtarget-10.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== killtarget-arith  (measure.py:360)  SURVIVED
+   area: KILL_TARGET arithmetic
+$ python3 -I $S/mut/killtarget-arith.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== comparable-staged  (measure.py:191)  SURVIVED
+   area: comparable() field drop
+$ python3 -I $S/mut/comparable-staged.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== cx-index-ne  (measure.py:340)  SURVIVED
+   area: counterexample index lookup
+$ python3 -I $S/mut/cx-index-ne.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== records-status  (measure.py:285)  SURVIVED
+   area: records() status check
+$ python3 -I $S/mut/records-status.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== records-opened  (measure.py:285)  SURVIVED
+   area: records() opened-date check
+$ python3 -I $S/mut/records-opened.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+== dumplen-ge1  (measure.py:311)  SURVIVED
+   area: pristine dump length check
+$ python3 -I $S/mut/dumplen-ge1.py --selftest
+CASE oracle-collision PASS
+CASE oracle-indent4-not-row PASS
+CASE oracle-duplicate-refusal PASS
+CASE oracle-short-row-refusal PASS
+CASE oracle-numeric-sort PASS
+CASE classes-basic PASS
+CASE classes-map PASS
+CASE classes-refusal PASS
+CASE last-line PASS
+CASE comparable-ignores-shas PASS
+CASE comparable-exit PASS
+C2_R49_SELFTEST: cases=11 failed=0
+exit=0
+
+RESTORATION EVIDENCE
+$ sha256sum <lane>/measure.py $S/measure.py   # after all 15 runs
+f4971d02b8b1af40363f331ae2fadfffeec8ddf2fcbe0c4bc514ec25d8d0fde5  <lane>/measure.py   (== before)
+f4971d02b8b1af40363f331ae2fadfffeec8ddf2fcbe0c4bc514ec25d8d0fde5  $S/measure.py       (== before)

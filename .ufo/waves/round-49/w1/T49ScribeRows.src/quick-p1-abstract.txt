@@ -1,0 +1,100 @@
+QuickCheck:
+A Lightweight Tool for Random Testing
+of Haskell Programs
+Koen Claessen
+Chalmers University of Technology
+koen@cs.chalmers.se
+John Hughes
+Chalmers University of Technology
+rjmh@cs.chalmers.se
+ABSTRACT
+QuickCheck is a tool which aids the Haskell programmer in
+formulating and testing properties of programs. Properties
+are described as Haskell functions, and can be automati-
+cally tested on random input, but it is also possible to de-
+ne custom test data generators. We present a number of
+case studies, in which the tool was successfully used, and
+also point out some pitfalls to avoid. Random testing is es-
+pecially suitable for functional programs because properties
+can be stated at a ne grain. When a function is built from
+separately tested components, then random testing suces
+to obtain good coverage of the de nition under test.
+1. INTRODUCTION
+Testing is by far the most commonly used approach to
+ensuring software quality. It is also very labour intensive,
+accounting for up to 50% of the cost of software develop-
+ment. Despite anecdotal evidence that functional programs
+require somewhat less testing (`Once it type-checks, it usu-
+ally works'), in practice it is still a major part of functional
+program development.
+Thecostoftestingmotivatese ortstoautomateit,wholly
+or partly. Automatic testing tools enable the programmer
+to complete testing in a shorter time, or to test more thor-
+oughlyintheavailabletime,andtheymakeiteasytorepeat
+tests after each modi cation to a program. In this paper we
+describe a tool, QuickCheck, which we have developed for
+testing Haskell programs.
+Functional programs are well suited to automatic testing.
+It is generally accepted that pure functions are much easier
+to test than side-e ecting ones, because one need not be
+concerned with a state before and after execution. In an
+imperative language, even if whole programs are often pure
+functions from input to output, the procedures from which
+they are built are usually not. Thus relatively large units
+must be tested at a time. In a functional language, pure
+functions abound (in Haskell, only computations in the IO
+Permission to make digital or hard copies of all or part of this work for
+personal or classroom use is granted without fee provided that copies are
+not made or distributed for profit or commercial advantage and that copies
+bear this notice and the full citation on the first page. To copy otherwise, to
+republish, to post on servers or to redistribute to lists, requires prior specific
+permission and/or a fee.
+ICFP ’00, Montreal, Canada.
+Copyright 2000 ACM 1-58113-202-6/00/0009 ..$5.00
+monad are hard to test), and so testing can be done at a
+ne grain.
+A testing tool must be able to determine whether a test
+is passed or failed; the human tester must supply an auto-
+matically checkable criterion of doing so. We have chosen
+to use formal speci cations for this purpose. We have de-
+signed a simple domain-speci c language of testable speci -
+cations which the tester uses to de ne expected properties
+ofthefunctionsundertest. QuickCheck thenchecksthatthe
+properties hold in a large number of cases. The speci ca-
+tionlanguage isembeddedinHaskellusingtheclass system.
+Properties are normally written in the same module as the
+functions they test, where they serve also as checkable doc-
+umentation of the behaviour of the code.
+A testing tool mustalso be able to generate test cases au-
+tomatically. We have chosen the simplest method, random
+testing [11], which competes surprisingly favourably with
+systematic methods in practice. However, it is meaningless
+to talk about random testing without discussing the distri-
+bution of test data. Random testing is most e ective when
+the distribution of test data follows that of actual data, but
+when testing reuseable code units as opposed to whole sys-
+tems this is not possible, since the distribution of actual
+data in all subsequent reuses is not known. A uniform dis-
+tribution is often used instead, but for data drawn from
+in nite sets this is not even meaningful { how would one
+choose a random closed -termwith a uniform distribution,
+for example? We have chosen to put distribution under the
+human tester's control, by de ning a test data generation
+language (also embedded in Haskell), and a way to observe
+the distribution of test cases. By programming a suitable
+generator, the tester can not only control the distribution
+of test cases, but also ensure that they satisfy arbitrarily
+complex invariants.
+An important design goal was that QuickCheck should be
+lightweight. Our implementation consists of a single pure
+Haskell'98 module of about 300 lines, which is in practice
+mainly used from the Hugs interpreter. We have also writ-
+ten a small script to invoke it, which needs to know very
+little about Haskell syntax, and consequently supports the
+full language and its extensions. It is not dependent on any
+particular Haskell system. Acost that comeswith this deci-
+sion is that we can only test properties that are expressible
+and observable within Haskell.
+It is notoriously dicult to say how e ective a testing
+methodis indetectingfaults. However, wehaveusedQuick-
+Check inavarietyofapplications, ranging fromsmallexper-

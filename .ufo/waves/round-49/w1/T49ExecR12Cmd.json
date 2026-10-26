@@ -1,0 +1,287 @@
+{
+ "seat": "T49ExecR12Cmd",
+ "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+ "section": "SKILL.md:1479-1513 '## Repeated controls and gate registry \u2014 round 12'",
+ "tool": {
+  "path": "tools/repeat-control.py",
+  "sha256": "296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25",
+  "bytes": 35454
+ },
+ "scratch_note": "the section's recipe path '/tmp/tameshi-r12-controls-UNIQUE' is a documented scratch example; every run here used the seat scratch root $S=/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd instead (operator directive 2026-10-25). $S is deleted before yield; receipts are the copies under .ufo/waves/round-49/w1/T49ExecR12Cmd/.",
+ "commands": [
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-controls",
+    "--",
+    "/bin/echo",
+    "pristine-control"
+   ],
+   "exit": 0,
+   "stdout_tail": "REPEAT_CONTROL: controls_match\nEXIT=0",
+   "matches_section": true,
+   "skill_line": 1487,
+   "receipt": "T49ExecR12Cmd/A.txt",
+   "note": "zero-exit controls, identical raw stdout -> controls_match exit 0 (row 1)."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-controls",
+    "--",
+    "/bin/echo",
+    "pristine-control"
+   ],
+   "exit": 64,
+   "stdout_tail": "REPEAT_CONTROL: invalid_usage\nEXIT=64",
+   "matches_section": true,
+   "skill_line": "1493-1495",
+   "receipt": "T49ExecR12Cmd/B.txt",
+   "note": "same output dir a second time -> stderr '--out already exists (refused, never overwritten)' + REPEAT_CONTROL: invalid_usage, exit 64; confirms 'The output directory must not exist' and the registry's 64=could-not-evaluate."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-diff",
+    "--",
+    "/usr/bin/date",
+    "+%N"
+   ],
+   "exit": 1,
+   "stdout_tail": "REPEAT_CONTROL: controls_mismatch\nEXIT=1",
+   "matches_section": true,
+   "skill_line": 1488,
+   "receipt": "T49ExecR12Cmd/C.txt",
+   "note": "output differs per run (nanoseconds) -> controls_mismatch exit 1, REPEAT_COMPARE identical=no."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-nonzero",
+    "--",
+    "/bin/bash",
+    "-c",
+    "exit 7"
+   ],
+   "exit": 2,
+   "stdout_tail": "REPEAT_CONTROL: baseline_nonzero\nEXIT=2",
+   "matches_section": true,
+   "skill_line": 1489,
+   "receipt": "T49ExecR12Cmd/D.txt",
+   "note": "equal nonzero controls -> baseline_nonzero exit 2 (row 3 first clause)."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-absent",
+    "--",
+    "/nonexistent/r12-cmd"
+   ],
+   "exit": 2,
+   "stdout_tail": "REPEAT_CONTROL: command_unavailable\nEXIT=2",
+   "matches_section": true,
+   "skill_line": 1489,
+   "receipt": "T49ExecR12Cmd/E.txt",
+   "note": "command unavailable (ENOENT) -> command_unavailable exit 2 (row 3 second clause)."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "4",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-mixed",
+    "--",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/probe/vanish.sh"
+   ],
+   "exit": 2,
+   "stdout_tail": "REPEAT_CONTROL: command_unavailable\nEXIT=2",
+   "matches_section": false,
+   "skill_line": 1488,
+   "receipt": "T49ExecR12Cmd/I.txt",
+   "note": "MISMATCH: runs 1-3 available, exit 0, stdout A/B/C (differ) and run 4 unavailable. Row 2 as written ('Any available controls differ ... -> controls_mismatch') predicts exit 1; the tool printed command_unavailable exit 2 because classify() tests availability first (tools/repeat-control.py:206-209 before the disagreement test at :210-218)."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/inspected/ev",
+    "--",
+    "/bin/ls"
+   ],
+   "exit": 0,
+   "stdout_tail": "REPEAT_CONTROL: controls_match\nEXIT=0",
+   "matches_section": true,
+   "skill_line": 1491,
+   "receipt": "T49ExecR12Cmd/J.txt",
+   "note": "control: non-recursive /bin/ls does not inspect the DIR interior, so evidence inside the inspected cwd still matches; the recipe's warning is about trees the command actually reads."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/inspected2/ev",
+    "--",
+    "/usr/bin/find",
+    ".",
+    "-type",
+    "f"
+   ],
+   "exit": 1,
+   "stdout_tail": "REPEAT_CONTROL: controls_mismatch\nEXIT=1",
+   "matches_section": true,
+   "skill_line": 1491,
+   "receipt": "T49ExecR12Cmd/K.txt",
+   "note": "command that reads the tree holding --out sees run k-1's evidence files -> controls_mismatch exit 1; mechanically confirms 'put evidence outside any tree it inspects'."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "2",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-badruns",
+    "--",
+    "/bin/echo",
+    "x"
+   ],
+   "exit": 64,
+   "stdout_tail": "REPEAT_CONTROL: invalid_usage\nEXIT=64",
+   "matches_section": true,
+   "skill_line": 1503,
+   "receipt": "T49ExecR12Cmd/L.txt",
+   "note": "below the floor of 3 -> invalid_usage exit 64, matching 'Three or more' in row 1 and 64=could-not-evaluate in the registry."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--runs",
+    "3",
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r49/T49ExecR12Cmd/r12-nosep",
+    "/bin/echo",
+    "x"
+   ],
+   "exit": 64,
+   "stdout_tail": "REPEAT_CONTROL: invalid_usage\nEXIT=64",
+   "matches_section": true,
+   "skill_line": 1492,
+   "receipt": "T49ExecR12Cmd/M.txt",
+   "note": "missing -- separator -> invalid_usage exit 64."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--selftest"
+   ],
+   "exit": 0,
+   "stdout_tail": "SELFTEST: PASS (29 cases)\nEXIT=0",
+   "matches_section": true,
+   "skill_line": 1503,
+   "receipt": "T49ExecR12Cmd/selftest.txt",
+   "note": "SELFTEST: PASS (29 cases), exit 0; registry expects stdout_contains 'SELFTEST: PASS'."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--snapshot",
+    ".ufo/evidence/round-12/ControlGate"
+   ],
+   "exit": 0,
+   "stdout_tail": "REPEAT_CONTROL: controls_match\nEXIT=0",
+   "matches_section": true,
+   "skill_line": 1503,
+   "receipt": "T49ExecR12Cmd/G.txt",
+   "note": "registry row repeat-control-snapshot-clean: SNAPSHOT_INPUTS 9 verified, controls_match exit 0; directory bytes unchanged (snap-before.sha == snap-after.sha)."
+  },
+  {
+   "argv": [
+    "python3",
+    "tools/repeat-control.py",
+    "--snapshot",
+    ".ufo/evidence/round-12/ControlGate/mismatch"
+   ],
+   "exit": 1,
+   "stdout_tail": "REPEAT_CONTROL: controls_mismatch\nEXIT=1",
+   "matches_section": true,
+   "skill_line": 1503,
+   "receipt": "T49ExecR12Cmd/H.txt",
+   "note": "registry row repeat-control-snapshot-mismatch: controls_mismatch exit 1."
+  }
+ ],
+ "mismatches": [
+  {
+   "id": "M1",
+   "skill_line": 1488,
+   "section": "| Any available controls differ in exit or either stream | `controls_mismatch` |",
+   "tool": "tools/repeat-control.py:206-209 classifies command_unavailable when any run could not be executed, before the (exit, stdout, stderr) disagreement test at :210-218; the docstring states the precedence at :31-38.",
+   "observed": "I.txt: runs 1-3 exit 0 with stdout A/B/C and run 4 unavailable -> REPEAT_CONTROL: command_unavailable, exit 2 (row 2 predicts controls_mismatch, exit 1).",
+   "fix_shape": "name the precedence in the table (availability is decided before disagreement) or make row 2 read 'any available controls differ after the availability test'."
+  },
+  {
+   "id": "M2",
+   "skill_line": 1489,
+   "section": "| Equal nonzero controls, or command unavailable | Could not evaluate baseline |",
+   "tool": "no finding named 'could not evaluate baseline' exists: EXIT_BY_ID (:122-130) is controls_match/controls_mismatch/baseline_nonzero/command_unavailable/snapshot_tampered/setup_error/invalid_usage, and finish() prints 'REPEAT_CONTROL: <id>' (D.txt, E.txt).",
+   "observed": "'Could not evaluate baseline' appears nowhere in tools/repeat-control.py (grep -n 'Could not evaluate' -> no match); the two cases print different IDs with the same exit 2.",
+   "fix_shape": "name both IDs in the decision cell (baseline_nonzero / command_unavailable, both exit 2) or mark the phrase as prose."
+  },
+  {
+   "id": "M3",
+   "skill_line": 1503,
+   "section": "write scope: fresh caller-selected DIR; isolated `/tmp/tameshi-r12-*` selftest",
+   "tool": "selftest scratch is tempfile.mkdtemp(prefix='tameshi-r12-repeat-control-selftest.', dir='/tmp') (:597); the glob '/tmp/tameshi-r12-*' additionally covers the recipe's own example '/tmp/tameshi-r12-controls-UNIQUE' (SKILL.md:1492).",
+   "observed": "registry write-scope glob is broader than the selftest namespace it describes; recipe and registry disagree on who owns /tmp/tameshi-r12-controls-*.",
+   "fix_shape": "narrow the registry glob to /tmp/tameshi-r12-repeat-control-selftest.* or move the recipe example out of that namespace."
+  },
+  {
+   "id": "M4",
+   "skill_line": 1487,
+   "section": "bound: 'Only this finite sample matched; not a determinism proof'",
+   "tool": ":79-88 scopes the statement to 'N finite observations agreed on this host in this environment'.",
+   "observed": "section bound drops the host/environment scope the tool states; weaker text, not a false claim.",
+   "fix_shape": "add 'on this host in this environment'."
+  }
+ ],
+ "cross_reference": {
+  "note": "SKILL.md:1481 cites corpus/knowledge/repeated-control-precondition.md as the section's source; that note's pins are stale at base (checked, not corrected by this seat).",
+  "evidence": [
+   "corpus/knowledge/repeated-control-precondition.md:58 pins 30,557 B / sha 29d80254\u2026; actual tools/repeat-control.py is 35454 B / sha 296fe566\u2026 (wc -c, sha256sum).",
+   "same line cites finding map ':115-123' vs actual EXIT_BY_ID :122-130; precedence ':191-205' vs classify :206-220; snapshot validator ':337-435' vs load_snapshot :361; selftest ':545' vs def selftest :592.",
+   "corpus/knowledge/repeated-control-precondition.md:35 cites the --runs floor at ':245-247' vs actual :261-262."
+  ],
+  "still_current": ".ufo/evidence/round-12/verification-final.json records tool_sha256 296fe566\u2026 and passed=true with repeat-control selftest/snapshot check rows (python3 -c json load)."
+ },
+ "receipts_dir": ".ufo/waves/round-49/w1/T49ExecR12Cmd/"
+}

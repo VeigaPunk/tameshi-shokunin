@@ -1,0 +1,98 @@
+{
+ "rows": [
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 0,
+   "raw": "mutation-case-kimi-census.md:4-7",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     4,
+     7
+    ]
+   ],
+   "claim": "**Pick the target and prove its control.** Prove the actual run has no live-path or host effects; `--selftest` alone does not establish hermeticity. Use private `--root` fixtures and exclude or control host-gated branches",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "No live `~/.kimi-code` path was read: every run is `--selftest` (fixtures under the suite's own `mkdtemp` root) or `--root` pointed at an empty dir under `/tmp`.",
+   "reader": "T49Read01",
+   "note": "corpus/knowledge/mutation-case-kimi-census.md:4-7 records the substrate: every mutant is a copy under /tmp, no fleet file written, no live ~/.kimi-code path read, runs are --selftest (suite own mkdtemp root) or --root at an empty dir. Carries the 'no live-path or host effects' and 'private --root fixtures' half of step 1; the 'exclude or control host-gated branches' half is carried by kagi-census.md:24-38 (ordinal 1), as the parenthetical's semicolon list indicates. Lines have not drifted: the pointed range is still the substrate paragraph. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | sed -n '4,7p'."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 1,
+   "raw": "mutation-case-kagi-census.md:24-38",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     24,
+     38
+    ]
+   ],
+   "claim": "**Pick the target and prove its control.** Prove the actual run has no live-path or host effects; `--selftest` alone does not establish hermeticity. Use private `--root` fixtures and exclude or control host-gated branches",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "the two trailing verb cases are substrate-gated: `command -v \"$JANITOR\"` (`:817`) records `skip-case … substrate-absent (handler not on PATH)` (`:820-823`) and does not execute the verbs block.",
+   "reader": "T49Read01",
+   "note": "corpus/knowledge/mutation-case-kagi-census.md:24-38: the verify/shape path reads no live path (:24-26); the two trailing verb cases are substrate-gated, print `skip-case ... substrate-absent` and do not execute the verbs block (:27-30); the case counter counts skips as cases (:33-35); the host-dependence of a verbs mutant is stated as inference (:36-38). Directly supports 'exclude or control host-gated branches'. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '24,38p'."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 2,
+   "raw": "gates-survey-kumitate.md:19-31",
+   "file": "corpus/knowledge/gates-survey-kumitate.md",
+   "ranges": [
+    [
+     19,
+     31
+    ]
+   ],
+   "claim": "Require a reported case count, executed/skipped accounting, and verdict: kumitate `n/m pass` + `VERDICT:`",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "| surface-probe | 0 | `42/42 cases passed` / `VERDICT: PASS` |\n| round-gate | 0 | `ROUND_GATE_SELFTEST: 60/60 pass` / `VERDICT: PASS` |",
+   "reader": "T49Read01",
+   "note": "corpus/knowledge/gates-survey-kumitate.md:19-31: the survey table reports, per kumitate gate, exit code and the verbatim summary line; round-gate prints `ROUND_GATE_SELFTEST: 60/60 pass` / `VERDICT: PASS`, and the other five print `n/n cases passed` / `VERDICT: PASS`. Supports the `n/m pass` + `VERDICT:` form required by step 1. The counts were re-verified in the same file's append-only K-R2-1 erratum (:345-356), so the pointed table is not stale. Shown by: git -C LANE show BASE:corpus/knowledge/gates-survey-kumitate.md | sed -n '19,31p'."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 3,
+   "raw": "mutation-case-kimi-census.md:20-21",
+   "file": "corpus/knowledge/mutation-case-kimi-census.md",
+   "ranges": [
+    [
+     20,
+     21
+    ]
+   ],
+   "claim": "Historical controls on the pinned bytes were green: `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit0",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "- O: control run, unmutated copy — `node pristine.mjs --selftest` → `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0 (node v24.21.0).",
+   "reader": "T49Read01",
+   "note": "corpus/knowledge/mutation-case-kimi-census.md:20-21: the control run on the unmutated byte copy of the artifact pinned at :13-16 prints exactly `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0 (node v24.21.0). Matches the quoted historical control verbatim. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kimi-census.md | sed -n '20,21p'."
+  },
+  {
+   "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "ordinal": 4,
+   "raw": "mutation-case-kagi-census.md:27-35,42-43",
+   "file": "corpus/knowledge/mutation-case-kagi-census.md",
+   "ranges": [
+    [
+     27,
+     35
+    ],
+    [
+     42,
+     43
+    ]
+   ],
+   "claim": "and bash16 enumerated cases, 14 executed +2 skipped",
+   "base_verdict": "holds",
+   "verdict": "holds",
+   "excerpt": "the case counter counts skips as cases — control shows `ok-case 01..14` + `skip-case 15`/`16`, epilogue `SELFTEST: PASS (16 cases)` (`:846-847`); the hermetic case set here is 14, plus 2 substrate-gated cases that performed no execution.",
+   "reader": "T49Read01",
+   "note": "corpus/knowledge/mutation-case-kagi-census.md:27-35 gives `ok-case 01..14` + `skip-case 15`/`16` with epilogue `SELFTEST: PASS (16 cases)` and states the hermetic set is 14 plus 2 substrate-gated cases = the SKILL clause's '14 executed +2 skipped'; :42-43 gives the green control (`SELFTEST: PASS (16 cases)`, exit 0). Both ranges are on the intended content; no drift. Shown by: git -C LANE show BASE:corpus/knowledge/mutation-case-kagi-census.md | sed -n '27,35p;42,43p'."
+  }
+ ]
+}
