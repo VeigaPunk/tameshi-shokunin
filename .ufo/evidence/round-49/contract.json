@@ -1,0 +1,83 @@
+{
+ "schema": "tameshi-round-contract-v1",
+ "round": 49,
+ "lane": "tameshi",
+ "l1": "TameshiR49 (hyaku run 9, attempt 1)",
+ "date": "2026-10-26",
+ "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+ "axes_at_base": {
+  "calibration": "6 (round-21 cold-read monitor: score 6, 57/64 sections credited at base; .ufo/evidence/round-49/control/monitor-at-base-8ca67421.json)",
+  "depth": "9 (command D recorded_cases=9)",
+  "freshness": "9",
+  "operability": "no numeric score",
+  "coverage": "no numeric score",
+  "adjacency": "no numeric score",
+  "lowest_non_retired": "calibration 6 (carries C1); stagnation nudge does not fire (calibration < saturation line 8)"
+ },
+ "claims": {
+  "C1": {
+   "axis": "calibration (lowest non-retired axis, 6); surface: the seven SKILL.md sections whose cold-read credit has lapsed",
+   "type": "measured",
+   "routed_from": "corpus/lessons/round-48-verifier-spotcheck.md routed defect 1 (restore credit for the lapsed round-12/13/14 headings) and SCORECARD `Planned (round 49), amended`",
+   "predicate": "At REV the unchanged round-21 cold-read monitor credits every section with calibration_restraint_score 8, still credits every section after one line is appended to each of the five record files, and every pointer the frozen extractor finds in the seven lapsed sections resolves and carries one `holds` read row with a located excerpt (or `absent` for an unresolvable path pointer), each section keeping its base pointer count: C1_R49_PASS=true.",
+   "label": "C1_R49_PASS",
+   "counter": ".ufo/evidence/round-49/c1/measure.py",
+   "command": "python3 .ufo/evidence/round-49/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR",
+   "before": "at base: sections=64 covered=57 score=6 durable_covered=57/64 pointers=90 unresolved=9 unverified=81 total=105 C1_R49_PASS=false (CTL_0)",
+   "target": "total=0, C1_R49_PASS=true; calibration score 6 -> 8 by the unchanged monitor",
+   "targets_frozen": ["## Mutation-sweep recipe — numbered steps; bounded cold-read evidence", "## Restore discipline — before/after identity, not continuous non-write proof", "### The map — where a reader enters, artifact by artifact", "## Promotion-evidence calibration — fleet round-1", "## Repeated controls and gate registry — round 12", "## Pin disposition and provenance correction — round 13", "## Effective expectation reconciliation — round 14"],
+   "floors": {"recipe": 34, "restore": 10, "map": 17, "promotion": 5, "r12": 5, "r13": 9, "r14": 10},
+   "volatile_records": ["LOG.md", "SCORECARD.md", "corpus/SOURCES.md", "corpus/QUALITY.md", "corpus/README.md"],
+   "reads_file": ".ufo/evidence/round-49/c1/reads.json (schema tameshi-r49-reads-v1: rows {heading, ordinal, raw, file, ranges, verdict, excerpt, reader, fleet_commit?, base_verdict?, note?})",
+   "work_plan": "wave-1 reader seats read every pointer at base against its target and record verdict + located excerpt + any staleness and a proposed correction; the L1 integrates corrections into the seven sections (heading text unchanged), re-derives rows at the corrected text, then re-keys the seven sections with ledger entries whose trace-bound inputs are the sections' cited non-record files (record files are read through git blobs, so a later record append does not lapse them).",
+   "reported_not_pass": "stale_found_at_base and corrected counts from reads.json base_verdict; reported in the round report, not part of the label",
+   "cannot_see": "The counter checks that a read row exists, matches the pointer and quotes text that is really at the pointed place; it cannot check that the quoted text supports the section's sentence. A mechanically generated row passes it (control CTL_K2 is that fabrication and is the positive control). Semantic support is attacked by wave-2 re-read seats and by the closure's spot-check.",
+   "kill_rule": "exactly one deciding invocation of the counter at REV, by deciding-run.sh, after the control receipts are committed; a second invocation is a miss; a deciding line that differs from the SCORECARD after-value voids the row",
+   "controls": {
+    "CTL_0": "do-nothing: base tree; must print C1_R49_PASS=false",
+    "CTL_J": "round-36 refresh shape (entries keyed to current section shas with the latest entries' inputs, records included; no read rows): must print C1_R49_PASS=false",
+    "CTL_K": "pinned-read re-key + mechanical read rows, no section edits: must print C1_R49_PASS=false",
+    "CTL_K2": "positive control: CTL_K plus a mechanical SKILL.md prefix on the two bare map pointers; expected to print C1_R49_PASS=true (shows the counter can pass and names what it cannot see)"
+   },
+   "controls_harness": ".ufo/evidence/round-49/control/c1-controls.py LANE BASE OUTDIR"
+  },
+  "C2": {
+   "axis": "coverage (frontier F10 \"PBT generators for gate fixtures\": open -> held; surface: a new tool and the property-generator method)",
+   "type": "measured; capability acquisition (pbt generator)",
+   "sourced": "the pilot entry corpus/knowledge/pbt-generator-pilot.md cites at least one SOURCES row opened 2026-10-26 (assimilation theme F10 from shokuknow merge/tameshi: QuickCheck ICFP 2000 / Smallbone 2011, re-opened this round)",
+   "predicate": "At REV the generator tools/pbt-staged-id.py, run with seed 4949 for 400 cases, finds no violation on the pristine guard, agrees with the counter's oracle on every analysis case, covers each of the 12 frozen classes in at least 10 cases, and produces counterexamples confirmed by differential re-run for at least 11 of the 12 hidden panel mutants; the pilot entry cites a row opened 2026-10-26 and README marks F10 held (round 49): C2_R49_PASS=true.",
+   "label": "C2_R49_PASS",
+   "counter": ".ufo/evidence/round-49/c2/measure.py",
+   "command": "python3 .ufo/evidence/round-49/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --panel PANEL",
+   "named_gate": "tools/staged-id-guard.py sha256 03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8 (round-43 capability; never edited this round)",
+   "generator_interface": "python3 -I tools/pbt-staged-id.py --guard GUARD --seed INT --cases N --dump FILE; deterministic from the seed; runs `python3 -I GUARD --registry R --staged G [--map M] --json`; checks each output with its own oracle (never imports or execs the guard's code except through its CLI); stops at the first violation; dump = one JSONL line per case run {index, registry, staged, map}; last stdout line `PBT_STAGED_ID: cases=<run> violations=<0|1> counterexample=<index|none> ...`; exit 0 none, 1 violation, 2 setup; plus --selftest",
+   "guard_exit_semantics_observed": "0 answered/admitted; 1 analysis refused (unmapped or cascade non-empty) or map inadmissible; 2 setup refusal (malformed row < 5 cells, duplicate id, unreadable input). The guard docstring names exit 1 only for an inadmissible map: a documentation mismatch recorded for the lesson, not edited (the guard is a pinned capability)",
+   "seed": 4949, "cases": 400, "class_min": 10,
+   "classes": ["indent_1_3", "indent_4_plus", "id_4_plus_digits", "collision", "no_collision", "held", "unmapped", "cascade", "refusal", "url_form_variant", "map", "map_inadmissible"],
+   "panel": {"size": 12, "sha256": "d6dd2cf38317118b14dfcdc1069b3222e3d4dc65ff05e005fc2b0592ce2eeda1", "kill_target": 11, "reveal": "hidden outside the lane until the generator is final; committed at .ufo/evidence/round-49/c2/panel.json (with the witness cases) before the deciding run; the counter refuses any other bytes", "why_hidden": "the generator is built against the guard's documented contract, not tuned to the mutants that score it"},
+   "before": "no generator (CTL_ABSENT: generator=absent, C2_R49_PASS=false); no F10 method held (corpus/README.md frontier row F10 `open`)",
+   "target": "C2_R49_PASS=true (confirmed >= 11 of 12; classes all >= 10; oracle_disagree=0; records ok)",
+   "kill_rule": "exactly one deciding invocation at REV by deciding-run.sh after control receipts are committed",
+   "controls": {
+    "CTL_ABSENT": "freeze tree, no generator: must print C2_R49_PASS=false",
+    "CTL_FIX": "fixture-replay stub (the guard's own 14 selftest fixtures with golden outputs) through the same interface: must print C2_R49_PASS=false and confirm fewer than 11 mutants",
+    "WITNESS": "11 hand-made cases confirm all 12 panel mutants (non-equivalence receipt; the counter's kill path can be reached)"
+   },
+   "controls_harness": ".ufo/evidence/round-49/control/c2-controls.sh LANE FREEZE PANEL WITNESS OUTDIR"
+  }
+ },
+ "no_harm": {
+  "monitors": ".ufo/evidence/round-49/no-harm.sh LANE REV (9 monitors, all ok)",
+  "coldread_precheck": ".ufo/evidence/round-48/quality/coldread-precheck.sh LANE BASE REV exit 0 (QUALITY 98: run on every candidate content revision before it is frozen as REV)",
+  "census": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi exit 0",
+  "tip": "after REV only receipt files under .ufo/evidence/round-49/after/ and wave reports land; the monitor is re-run at the final tip and must still credit 64/64"
+ },
+ "frontier_step": {
+  "sources": "C2's rows opened 2026-10-26 (QuickCheck / Smallbone, staged S182/S183 re-opened and re-numbered after the scratch id-collision check)",
+  "mistake": "round 48: C1 controls CTL_B-E were scored after the deciding run and five `--only` previews at the content revision went undisclosed (round-48 spot-check defects 2-3). Fix: deciding-run.sh gate 0 refuses unless the control receipts are committed after FREEZE and before the run, and refuses a second invocation; shown able to fail on a fixture tree.",
+  "considerthese": "considerthese/2026-10-26.md proposal 3 (recurring-defect tracker) or 1 (crash-resume integrity), judged in wave 1",
+  "assimilation": "theme F10 from /home/vgpnk/Projects/shokuknow/merge/tameshi (read-only): entries pbt-generator-as-fixture.md, r4-quickcheck-primary-correction.md, pbt-generator-craft-author.md judged per entry; >=1 admit and >=1 reject recorded in the lesson Gate"
+ },
+ "schedule": ["freeze commit (this contract, both counters, controls harnesses, no-harm, deciding script; freeze.json digests)", "controls scored at freeze bytes and committed", "wave 1 (build + first falsifiers)", "integration: section corrections, reads.json, generator, rows, entry, re-key; coldread precheck on the candidate", "wave 2 (falsify) against the candidate", "fixes, final REV, panel reveal commit", "one deciding run; receipts-only commit"],
+ "amendments": []
+}
