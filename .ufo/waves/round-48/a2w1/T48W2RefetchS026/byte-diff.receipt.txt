@@ -1,0 +1,39 @@
+# Byte identity of the S026 page across four independent fetches (seat T48W2RefetchS026)
+
+## objects
+round-45 snapshot   .ufo/evidence/round-45/freshness/sources/S026.raw.gz (gzip -dc)
+                    sha256 5d74dd1c3c75d5ec1b8d53d6a518b4b01ae085f03006f1f44febbb8143e92296  236387 B
+round-48 snapshot   .ufo/evidence/round-48/freshness/sources/S026.html
+                    sha256 a4c5c46b4af9d54baa215b9d76c91cb5b8e9855ad153103b0a34ff3e39869d25  236387 B
+attempt-1 w1 copy   .ufo/waves/round-48/w1/sources/S026.html
+                    sha256 a4c5c46b4af9d54baa215b9d76c91cb5b8e9855ad153103b0a34ff3e39869d25  236387 B  (identical to the round-48 snapshot)
+live fetch today    curl -sS -L, 2026-10-26T13:2xZ, HTTP 200, 236387 B
+                    sha256 dfea6b9ba73478621e4d7c9e748b698155f7377d23547047f17c0b95a101c780
+base row citation   ca1145fbe56de30b43b66baf7372206a38abe08a55b3db13f6c7a0114d7a6c8c  236385 B (2026-10-20; bytes not committed, only named)
+round-12 quotes.tsv cites the same ca1145fb bytes and the same line refs
+
+## amendment-2 extracted text (script/style dropped, tags stripped, unescape, whitespace collapsed)
+round-45 snapshot   26248 chars  sha256 171d74b0ed416fa601c7ec5c738a4c72ebc27ce7fddd1039402a771a75fea3a1
+round-48 snapshot   26248 chars  sha256 171d74b0ed416fa601c7ec5c738a4c72ebc27ce7fddd1039402a771a75fea3a1
+live fetch          26248 chars  sha256 171d74b0ed416fa601c7ec5c738a4c72ebc27ce7fddd1039402a771a75fea3a1
+-> identical extracted text; quote "about 84% ... flaky test" at index 2137 in all three.
+
+## where the bytes differ (snapshot vs live; 97 differing bytes in 25 runs, 4 rotating tokens)
+1. blogger dyndns dyncss UUID: zx=53b770d4-0937-44d6-9629-2c6e97563f2f -> zx=58977ca4-4260-4054-bc15-03e627710e2a
+   (two <link>/<noscript> lines, raw 1068 and 1070)
+2. widgets bundle id: .../widgets/3961732468-widgets.js -> .../widgets/1897611165-widgets.js (raw 6160)
+3. session token: window['__wavt']='AKZvMztf6cjRpMvXeNEbL7xv89DD:1792928348831'
+   -> 'AKZvMzsPG7RBnGyqeA3jw3gY4vUA:1793021357042' (raw 6905)
+4. lightbox bundle id: .../jsbin/3797967716-lbx.js -> .../jsbin/1577739035-lbx.js (raw 6949)
+none of these fall inside div[itemprop='articleBody'] (raw 1087 onwards; article copy raw 1130-1137,
+template copy raw 1095-1102).
+
+## snapshot vs round-45 snapshot
+14 differing bytes, same four rotating tokens; extracted text identical (above).
+
+## reading
+The published article text (title, publishdate, body, both copies) is unchanged from the round-45
+fetch through today. The sha256 pin is a one-time response artifact: a fresh fetch of the same URL
+today yields a different sha256 at the same byte length, so the receipt sha cannot be reproduced by
+re-fetching (it can only be checked against the committed snapshot, which is what the frozen
+counter does).

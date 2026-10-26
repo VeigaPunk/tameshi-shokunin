@@ -1,0 +1,27 @@
+=== clone-reuse demo, 2026-10-26T10:47:11-03:00 ===
+pre-state: a pre-existing repo at <work>/lane that is NOT a clone of the lane
+706dd0b dummy <dummy@invalid> init
+pre-state status (one genuinely untracked file):
+?? keepme/
+
+cmd: python3 .ufo/evidence/round-48/control/c2-controls.py --work /fast/scratch/hyaku/tameshi-r48/T48A2SentinelFixtures/reuse3 --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --measure .ufo/evidence/round-48/freshness/measure.py
+CTL_H refreshed=0
+CONTROLS: F=0 G=0 H=0 expected=F0,G0,H<=2 ok=true
+
+post-state: git -C <work>/lane log
+4cfb7e9 c2 control <c2@tameshi.invalid> round-48 C2 control
+24f71d0 c2 control <c2@tameshi.invalid> round-48 C2 control
+706dd0b dummy <dummy@invalid> init
+
+post-state: untracked file after the harness ran commit() (git clean -qfd):
+ls: cannot access '/fast/scratch/hyaku/tameshi-r48/T48A2SentinelFixtures/reuse3/lane/keepme/untracked.txt': No such file or directory
+
+tree of new HEAD (first 8):
+.ufo/evidence/round-48/freshness/measure.py
+.ufo/evidence/round-48/freshness/sources/S026.receipt.json
+.ufo/evidence/round-48/freshness/sources/S026.snapshot.html.gz
+.ufo/evidence/round-48/freshness/sources/S048.receipt.json
+.ufo/evidence/round-48/freshness/sources/S048.snapshot.html.gz
+.ufo/evidence/round-48/freshness/sources/S093.receipt.json
+.ufo/evidence/round-48/freshness/sources/S093.snapshot.html.gz
+.ufo/evidence/round-48/freshness/sources/S108.receipt.json

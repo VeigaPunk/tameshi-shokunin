@@ -1,0 +1,43 @@
+# Target S026 structural checks at CONTENT c7586b9a10effc63b4bd327f976edc094c1bdc17
+# every read is `git -C tameshi-shokunin show c7586b9:<path>` (read-only; the lane worktree was not modified)
+
+## Gate line vs contract amendment 2, regex ^- C2-QUOTE (S[0-9]{3,}) (S[0-9]{3,}): `([^`]+)`$
+line 21 of corpus/lessons/round-48.md:
+- C2-QUOTE S265 S026: `about 84% of the transitions we observe from pass to fail involve a flaky test`
+match=True  R=S265  T=S026  words=15
+
+## registry rows whose teaches cell opens `supersedes S026 —` (U+2014)
+grep -c on corpus/SOURCES.md at REV = 1
+row id S265, 11 cells, teaches cell 6 begins `supersedes S026 — `, status cell 7 = `mined`,
+opened cell 8 = `2026-10-26`, recheck cell 9 = `730d`, used-by cell 10 =
+`corpus/knowledge/repeated-control-precondition.md`
+id above S264: yes (S265)
+
+## base row S026 (corpus/SOURCES.md at BASE 473336d9)
+present, byte-identical at REV (git diff of line 37 empty), status `mined`, opened `2026-10-19`,
+recheck `730d`, used-by `corpus/knowledge/repeated-control-precondition.md`
+
+## anchor cell 5 of S265
+`Post body (h2 title; publishdate 2016-05-27; articleBody paragraph at raw line 1132); fetched
+2026-10-26, sha256 a4c5c46b4af9, 236387 bytes`
+snapshot sha256 first 12 hex = a4c5c46b4af9 -> matches. No https URL in the anchor cell; the
+source cell (cell 1) carries the blog URL, so the R URL set holds the receipt url (amendment 1).
+
+## snapshot set
+git ls-tree -r --name-only c7586b9 .ufo/evidence/round-48/freshness/sources/ | grep '/S026\.'
+-> .ufo/evidence/round-48/freshness/sources/S026.html
+-> .ufo/evidence/round-48/freshness/sources/S026.receipt.json
+exactly one snapshot file + its receipt.
+
+## receipt (verbatim)
+{
+ "url": "https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html",
+ "fetched_at": "2026-10-26T08:40:51Z",
+ "http_status": 200,
+ "bytes": 236387,
+ "sha256": "a4c5c46b4af9d54baa215b9d76c91cb5b8e9855ad153103b0a34ff3e39869d25",
+ "tool": "curl 8.23.0 ..."
+}
+snapshot sha256 from git blob = a4c5c46b4af9d54baa215b9d76c91cb5b8e9855ad153103b0a34ff3e39869d25, bytes 236387
+-> receipt.sha256 = snapshot.sha256, receipt.bytes = snapshot bytes, url = source-cell url,
+   fetched_at on 2026-10-26, http_status 200. All agree.

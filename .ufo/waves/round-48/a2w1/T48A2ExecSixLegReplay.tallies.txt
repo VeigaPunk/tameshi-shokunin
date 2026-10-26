@@ -1,0 +1,273 @@
+# T48A2ExecSixLegReplay — receipts for eight sequential replays of the `six-leg regression ledger`
+# standing row (SCORECARD.md section `### Standing self-assessment — re-stated at round 48`,
+# CONTENT c7586b9a10effc63b4bd327f976edc094c1bdc17; lane base 473336d9d789f6081195e7376d17836a24666bc3).
+#
+# Row under attack (SCORECARD.md:2334):
+#   | six-leg regression ledger | ... | `bash tools/mutate-and-run.sh --regression` →
+#   `REGRESSION: PASS (cases=9 passed=9`, exit 0, tool sha256 `a7d3f2dd7d47`,
+#   deps `fleet-root,node`, runs 3 stable | ... |
+#
+# Declared value set V, read through the statement's own obs field
+# (.ufo/evidence/round-47/calibration/statements.json, id `six-leg regression ledger`,
+#  obs `^(REGRESSION: \w+ \(cases=\d+ passed=\d+)`) plus its declared exit:
+#   V = {("REGRESSION: PASS (cases=9 passed=9", exit 0)}     declared class: stable (one member)
+# Any other (line, exit) pair is outside V and is a finding for this seat.
+#
+# Tool: the lane's own file, never copied — it derives FLEET_ROOT from its own path
+#   (tools/mutate-and-run.sh:1358 FLEET_ROOT=$(dirname^3 "$SELF")); SELF=readlink -f (:178).
+#   /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh
+#   sha256 a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9  (prefix a7d3f2dd7d47 = the row's pin)
+# Command per replay i (i=1..8, strictly sequential, one at a time):
+#   S=/fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay; export TMPDIR=$S
+#   bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --regression --workdir "$S/wd$i"
+#   -> stdout kept at .ufo/waves/round-48/a2w1/T48A2ExecSixLegReplay.run$i.log (byte-exact),
+#      workdir wd$i (7136 KiB each) removed immediately after its tally line was extracted.
+#
+# Host: 32 cores, os linux 7.2.11-arch1-1; other round-48 a2 seats and the L1 deciding run were
+# live throughout (load rose from 12.6 to 76.5 — recorded per replay). Not a quiet host.
+#
+# OBSERVED DISTRIBUTION (8/8 replays):
+#   "REGRESSION: PASS (cases=9 passed=9" / exit 0  ->  8 / 8  = 100%
+#   "REGRESSION: FAIL (cases=9 passed=8" / exit 1  ->  0 / 8
+#   "REGRESSION: FAIL (cases=9 passed=7" / exit 1  ->  0 / 8
+#   "REGRESSION: SETUP ..."             / exit 2  ->  0 / 8
+#   REGRESSION_DEFECT lines across all 8 runs      ->  0
+#   out-of-V observations                          ->  none (no finding from this sample)
+# Wall time: min 250.7 s, median 284.1 s, max 407.1 s (mean 301.2 s); total 2410 s.
+# All nine legs PASS in every replay, and the nine REGRESSION_SWEEP kill vectors are byte-identical
+# across the 8 runs (one sha256 over the 9 sweep lines: 9d7e7c5b1a8916e6...), i.e. the measured
+# killed/survived table itself did not move: 8/10 8/10 6/10 4/10 7/15 7/10 5/10 5/10 5/10.
+#
+# ---- raw per-replay record (driver output, unedited) -------------------------------
+=== REPLAY 1 ===
+start_utc: 2026-10-26T13:30:03Z
+end_utc: 2026-10-26T13:34:36Z
+exit: 0
+wall_ms: 273301
+load_before: 12.56 11.75 14.95 26/6924 2635715
+load_after: 56.10 37.32 24.80 54/8305 1902126
+uptime_before:  10:30:03 up  9:49,  1 user,  load average: 12.56, 11.75, 14.95
+uptime_after:  10:34:36 up  9:53,  1 user,  load average: 56.10, 37.32, 24.80
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd1 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd1 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: 5566afa0c48c5aad
+
+=== REPLAY 2 ===
+start_utc: 2026-10-26T13:34:36Z
+end_utc: 2026-10-26T13:41:23Z
+exit: 0
+wall_ms: 407088
+load_before: 56.10 37.32 24.80 63/8309 1902972
+load_after: 76.69 67.81 43.48 61/8463 3302648
+uptime_before:  10:34:36 up  9:53,  1 user,  load average: 56.10, 37.32, 24.80
+uptime_after:  10:41:23 up 10:00,  1 user,  load average: 76.69, 67.81, 43.48
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd2 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd2 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: 0fa701bb76da8915
+
+=== REPLAY 3 ===
+start_utc: 2026-10-26T13:41:23Z
+end_utc: 2026-10-26T13:47:09Z
+exit: 0
+wall_ms: 346118
+load_before: 76.69 67.81 43.48 58/8454 3303789
+load_after: 73.32 71.88 52.92 45/7955 3634532
+uptime_before:  10:41:23 up 10:00,  1 user,  load average: 76.69, 67.81, 43.48
+uptime_after:  10:47:09 up 10:06,  1 user,  load average: 73.32, 71.88, 52.92
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd3 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd3 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: 7d6259507e6b0b24
+
+=== REPLAY 4 ===
+start_utc: 2026-10-26T13:47:09Z
+end_utc: 2026-10-26T13:52:05Z
+exit: 0
+wall_ms: 295912
+load_before: 73.32 71.88 52.92 46/7941 3636742
+load_after: 68.79 68.70 56.63 42/7446 2386560
+uptime_before:  10:47:09 up 10:06,  1 user,  load average: 73.32, 71.88, 52.92
+uptime_after:  10:52:05 up 10:11,  1 user,  load average: 68.79, 68.70, 56.63
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd4 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd4 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: b6d2b34fb3dde65a
+
+=== REPLAY 5 ===
+start_utc: 2026-10-26T13:52:05Z
+end_utc: 2026-10-26T13:56:34Z
+exit: 0
+wall_ms: 268300
+load_before: 68.79 68.70 56.63 44/7445 2387686
+load_after: 61.39 63.91 57.63 30/6970 541247
+uptime_before:  10:52:05 up 10:11,  1 user,  load average: 68.79, 68.70, 56.63
+uptime_after:  10:56:34 up 10:15,  1 user,  load average: 61.39, 63.91, 57.63
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd5 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd5 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: 9795868ffccf6b1c
+
+=== REPLAY 6 ===
+start_utc: 2026-10-26T13:56:34Z
+end_utc: 2026-10-26T14:00:44Z
+exit: 0
+wall_ms: 250654
+load_before: 61.39 63.91 57.63 38/6980 542247
+load_after: 58.34 59.83 57.32 42/7004 3512409
+uptime_before:  10:56:34 up 10:15,  1 user,  load average: 61.39, 63.91, 57.63
+uptime_after:  11:00:44 up 10:20,  1 user,  load average: 58.34, 59.83, 57.32
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd6 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd6 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: ebea52c031a168cc
+
+=== REPLAY 7 ===
+start_utc: 2026-10-26T14:00:44Z
+end_utc: 2026-10-26T14:05:27Z
+exit: 0
+wall_ms: 282821
+load_before: 58.34 59.83 57.32 35/6997 3513590
+load_after: 74.35 67.53 61.12 52/6353 2359586
+uptime_before:  11:00:44 up 10:20,  1 user,  load average: 58.34, 59.83, 57.32
+uptime_after:  11:05:27 up 10:24,  1 user,  load average: 74.35, 67.53, 61.12
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd7 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd7 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: 628a9ebb81138192
+
+=== REPLAY 8 ===
+start_utc: 2026-10-26T14:05:27Z
+end_utc: 2026-10-26T14:10:13Z
+exit: 0
+wall_ms: 285325
+load_before: 74.35 67.53 61.12 61/6350 2362002
+load_after: 76.53 72.27 64.80 49/5482 1275000
+uptime_before:  11:05:27 up 10:24,  1 user,  load average: 74.35, 67.53, 61.12
+uptime_after:  11:10:13 up 10:29,  1 user,  load average: 76.53, 72.27, 64.80
+tool: REGRESSION_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+workdir: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd8 (size_kb=7136)
+tally: REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)
+workline: REGRESSION_WORKDIR: /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay/wd8 (kept)
+legs:
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+defects:
+  <no REGRESSION_DEFECT lines>
+tally_sha_of_log: 4ea1cdf19ac6f599
+
+# ---- receipt fingerprints (after the raw record) -----------------------------------
+log run1.log 7175 bytes sha256 5566afa0c48c5aadc583d3f46f2948dc6f9bd7d37088a5c42c60865dcd29e7fc
+log run2.log 7175 bytes sha256 0fa701bb76da8915a530cb190295fb9c61b87a7c5f6ba9db0c54ee2a31e666b8
+log run3.log 7175 bytes sha256 7d6259507e6b0b24bf6877eb9c0b40eb7898334fc37dc1cddfc7c4f376e3ed90
+log run4.log 7175 bytes sha256 b6d2b34fb3dde65ad474a54359ccce7cabc344b0d47208447d8c7d9dcc2bc39d
+log run5.log 7175 bytes sha256 9795868ffccf6b1cb769fc7bd34719b01fbb621271e8d0b7694f59046e36830e
+log run6.log 7175 bytes sha256 ebea52c031a168ccee8a5fcf6142d98f51d927310b9879d754ee770e863f4ecb
+log run7.log 7175 bytes sha256 628a9ebb811381920f32962e88e79f34ba867f3cf39f0dbc5b32c08302247b8f
+log run8.log 7175 bytes sha256 4ea1cdf19ac6f599f516216a8b63b0db6e5ea9f0906a5ec5d9a481704b45f4df
+# Log-to-log diff: run1 vs run2 differ ONLY in the `REGRESSION_DATE:` line and the
+# `REGRESSION_WORKDIR*` path lines (wd1 vs wd2); every tally, leg, and sweep line is identical.
+# That was checked for run1 vs run2 and run1 vs run5; the sweep-line sha above covers all eight.
+# Lane cleanliness after the replays: `git -C <lane> status --porcelain -- corpus tools SCORECARD.md`
+# printed nothing (rc=0) — the replays wrote only inside their workdirs.
+# Scratch /fast/scratch/hyaku/tameshi-r48/T48A2ExecSixLegReplay was removed after these receipts
+# were copied here; no wd* tree was left on disk.

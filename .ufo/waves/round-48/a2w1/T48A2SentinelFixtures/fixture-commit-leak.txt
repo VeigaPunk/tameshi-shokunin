@@ -1,0 +1,66 @@
+=== fixture commits in the lane object store, stable snapshot 2026-10-26T10:48:50-03:00 ===
+lane git dir: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.git
+
+-- reachable from any ref (the seat item command)? --
+f8832ef310a8e07930fc0419834ca1858ad41386 unreachable-from-refs
+0559c60abbed30367d620f1057face4644db1d3c unreachable-from-refs
+e16adb7d8f4f8756b6ece293e4bfcb8c2a813e2 unreachable-from-refs
+
+-- HEAD reflog --
+98bea7d HEAD@{307}: round-17 L1 repair: restore HEAD after R04 seat fixture commits (GIT_DIR leak)
+e16adb7 HEAD@{308}: commit: selftest-fixture-noexec
+0559c60 HEAD@{309}: commit: selftest-fixture-exec
+f8832ef HEAD@{310}: commit: selftest-fixture
+
+-- authoritative list: git fsck --unreachable --no-reflogs (commits) --
+f32e654|tameshi-shokunin <tameshi@shokunin.local>|2026-10-20 10:39:50 -0300|round-16: pre-register js-round-gate mutation predictions; retain wave-1 seat reports
+c950c71|tameshi-shokunin <tameshi@shokunin.local>|2026-10-19 20:39:15 -0300|
+0559c60|tameshi <tameshi@selftest>|2026-10-20 12:29:33 -0300|selftest-fixture-exec
+e16adb7|tameshi <tameshi@selftest>|2026-10-20 12:29:33 -0300|selftest-fixture-noexec
+f8832ef|tameshi <tameshi@selftest>|2026-10-20 12:29:33 -0300|selftest-fixture
+4db5670|tameshi-shokunin <tameshi@shokunin.local>|2026-10-19 20:39:15 -0300|
+32f8414|tameshi-shokunin <tameshi@shokunin.local>|2026-10-20 10:21:50 -0300|
+95f951a|tameshi-shokunin <tameshi@shokunin.local>|2026-10-20 10:21:50 -0300|
+
+-- the three fixture commits (retried reads) --
+f8832ef tameshi <tameshi@selftest> 2026-10-20 12:29:33 -0300 parent=98bea7da5801f4bc58e4187690ee1687c8a5061f selftest-fixture
+    100755 blob ba968d2696765db77967cc3943bcec645f528dc0	target.sh
+0559c60 tameshi <tameshi@selftest> 2026-10-20 12:29:33 -0300 parent=f8832ef310a8e07930fc0419834ca1858ad41386 selftest-fixture-exec
+    100755 blob 53a7751c29191770c64e92c3d18d9c04071eeae5	exec.sh
+    100755 blob ba968d2696765db77967cc3943bcec645f528dc0	target.sh
+e16adb7d8f4f8756b6ece293e4bfcb8c2a813e2 read-failed
+
+-- shared clone (alternates to the lane store; the clone form seats are told to prefer) --
+f8832ef310a8e07930fc0419834ca1858ad41386 PRESENT-in-shared-clone-via-alternates
+0559c60abbed30367d620f1057face4644db1d3c PRESENT-in-shared-clone-via-alternates
+e16adb7d8f4f8756b6ece293e4bfcb8c2a813e2 read-failed
+-- --no-local file:// clone (no alternates) --
+f8832ef310a8e07930fc0419834ca1858ad41386 absent-from-no-local-clone
+0559c60abbed30367d620f1057face4644db1d3c absent-from-no-local-clone
+e16adb7d8f4f8756b6ece293e4bfcb8c2a813e2 absent-from-no-local-clone
+
+-- jj view --
+(no lines above = no jj commit carries that identity)
+
+-- concurrency note --
+pack-afa9552c...pack rewritten 2026-10-26 10:46:58; one read at 10:47:25 returned 'unknown revision' for e16adb7 and the fsck at 10:47:51 listed it again (transient read during repack, not a prune). Object-store checks in this lane must be retried.
+
+=== final presence check 2026-10-26T10:50:14-03:00 ===
+f8832ef310a8e07930fc0419834ca1858ad41386 yes
+0559c60abbed30367d620f1057face4644db1d3c yes
+e16adb7d8f4f8756b6ece293e4bfcb8c2a813e2 no
+-- fsck unreachable commits now --
+f32e6543851378a1d108140f43511eff8bd111c7
+c950c71011f1c644efde48b552c42d5d3a6e40a8
+0559c60abbed30367d620f1057face4644db1d3c
+e16adb7d8f4f8756b6ece293fe4bfcb8c2a813e2
+f8832ef310a8e07930fc0419834ca1858ad41386
+4db567012141376b346457306be845618f8d11a1
+32f84145ffc2ec8b809e5bb8c20f3968fa655263
+95f951a83cf0a55414319d7f31b5700e595a75b8
+-- current packs --
+2026-10-25 09:59:47.847954119 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/pack/pack-0ce527439c72845b9642b5c3ffb648b03590ac5a.pack
+2026-10-26 10:49:18.083179313 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/pack/pack-afa9552c4c42474c3c1146c382a8dc5b36d63a0f.pack
+-- three consecutive passes --
+observation window 10:47:25-10:51: fatal: Not a valid object name e16adb7d8f4f8756b6ece293e4bfcb8c2a813e2
+e16adb7 flipped between 'commit' and 'Not a valid object name' while pack-afa9552 was rewritten (mtime 10:46:58 -> 10:49:18); the lane store was repacked during this audit, so presence must be re-measured, not cached.
