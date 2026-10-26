@@ -1,0 +1,78 @@
+{
+  "seat": "T49W2Reread10",
+  "item": "C1 semantic re-read, section '## Pin disposition and provenance correction — round 13', ordinals 0-12 at candidate f181a961ae44061af486f600e5ea257d2baf78f8",
+  "candidate": "f181a961ae44061af486f600e5ea257d2baf78f8",
+  "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+  "note_on_range": "The heading has exactly 9 read rows (ordinals 0-8), equal to the contract floor r13=9; ordinals 9-12 do not exist for this heading. All 9 were re-read. The counter's section span ends at SKILL.md:1547 ('### Round-13 gate/probe registry' reopens at :1548), which contains exactly these 9 pointers.",
+  "note_on_candidate_ref": "reads.json names candidate 9b9b2a016adcf2fab2e0cb1ef89ef78f454b8ec6; `git diff --stat 9b9b2a01 f181a961 -- SKILL.md` is empty, so the rows re-derived there apply verbatim at f181a961.",
+  "rows": [
+    {
+      "ordinal": 0,
+      "raw": "corpus/knowledge/incremental-pin-disposition.md",
+      "supports": true,
+      "why": "Clause SKILL.md:1520 names the entry as the section's method source. Excerpt (entry :165-169, 'A content disposition is a read-only classification...') is the method definition the section's table restates row for row (unchanged/changed/unavailable -> report; all three agree -> keep result_reuse=not_established). Entry header (:1-5) cites S003/S041/S047/S048 matching the Sources line. Excerpt verified present at candidate: `git -C <lane> show f181a961:corpus/knowledge/incremental-pin-disposition.md | sed -n '165,169p'`."
+    },
+    {
+      "ordinal": 1,
+      "raw": "corpus/lessons/round-12-verifier-spotcheck.md",
+      "supports": true,
+      "why": "Clause SKILL.md:1521 'outside routed ..., Routed defects item 3'. Excerpt is item 3 verbatim (lesson :146, under '## Routed defects and residuals'); it names the nested declaration.kind=null defect and forbids rewriting the frozen declaration, which is what recipe step 4 (SKILL.md:1544-1547) and the corrected table row (:1530) act on. 'Outside' is grounded by the lesson header 'author: hyaku closure (non-author integrator, @m_strong)' (:1). Excerpt verified present: `git -C <lane> show f181a961:corpus/lessons/round-12-verifier-spotcheck.md | sed -n '146p'`."
+    },
+    {
+      "ordinal": 2,
+      "raw": "tools/pin-disposition.py",
+      "supports": true,
+      "why": "Clause SKILL.md:1535-1537 'observes only hashes and git metadata ... It executes no sibling gate'. Excerpt is the read-only guarantees block (tool :82-90): git only via read-only plumbing (rev-parse/symbolic-ref/show-ref/for-each-ref/cat-file), never status/diff/hash-object, index/filters/hooks never invoked, repo must prove its own identity. Verified in code: every normal-mode subprocess is git_run(['git','-C',repo],...) (:224-241); the only other execs are the selftest re-invoking itself on fixture manifests (:931-935) and fixture git in the isolated selftest tree (:770-790). parse_argv accepts exactly --manifest/--root (:1336-1346), matching the recipe command. Excerpt verified present: `git -C <lane> show f181a961:tools/pin-disposition.py | sed -n '82,90p'`."
+    },
+    {
+      "ordinal": 3,
+      "raw": ".ufo/evidence/round-13/pin-manifest.json",
+      "supports": true,
+      "why": "Clause SKILL.md:1535 recipe step 2 consumes this file via --manifest. Excerpt is a real leg entry (js-kimi-census: repo/path/pinned_commit 175de6ba/expected_sha256 83016d45) showing the file is the pin manifest the command reads; manifest has schema pin-manifest-v1 and exactly 6 legs. Residual (target-side, already disclosed in the row's reads.json note): the manifest's own 'source' anchors are drifted at base and candidate - :84-89 is a comment header, :542-553 is the verdict loop, the PIN_*/REV_* pairs actually sit at tools/mutate-and-run.sh:605-622 (`git -C <lane> show f181a961:tools/mutate-and-run.sh | sed -n '605,622p'`). The corrected sentence does not re-assert those anchors. Excerpt verified present: `git -C <lane> show f181a961:.ufo/evidence/round-13/pin-manifest.json | grep -n 'js-kimi-census'`."
+    },
+    {
+      "ordinal": 4,
+      "raw": "tools/witness-metadata.py",
+      "supports": true,
+      "why": "Clause SKILL.md:1538-1539 'checks the new companion against digest-anchored frozen sources'. Excerpt is the tool docstring (:11-14): it validates a NEW companion that anchors sha256 of the three declaration inputs 'both in the companion and in this tool (a companion that carries its own digests alone would be self-certifying)'. Verified: PINNED_INPUTS (:66-84) pin summary/declaration/declared digests acc01268/e8d2024a/0def0d3b, and I recomputed all three at f181a961 - they equal the frozen round-12 blobs (`git -C <lane> show f181a961:.ufo/evidence/round-12/BashWitness/summary.json | sha256sum` -> acc01268...; likewise declaration.json, declared.tsv). DEFAULT_COMPANION_REL (:68) is exactly the companion path of row 5. Excerpt verified present: `git -C <lane> show f181a961:tools/witness-metadata.py | sed -n '11,14p'`."
+    },
+    {
+      "ordinal": 5,
+      "raw": ".ufo/evidence/round-13/witness-metadata.json",
+      "supports": true,
+      "why": "Clause SKILL.md:1538 recipe step 3 names this receipt as the companion. Excerpt is the companion's own header: generated_for round-13, purpose 'Digest-anchored normalized metadata for the frozen round-12 BashWitness declaration; frozen round-12 bytes are not rewritten', expected metadata_consistent/exit 0, frozen_declaration digests. The same file grounds recipe step 4's scope claims: scope.covered_null_observations lists only the canonical summary.json (declaration.kind=null) and scope.uncovered_null_observations lists the rerun summary with disposition 'named-residual-uncorrected' (:46-62), i.e. 'the companion normalizes the canonical summary only; the rerun null is explicitly outside its normalized scope'. Excerpt verified present: `git -C <lane> show f181a961:.ufo/evidence/round-13/witness-metadata.json | sed -n '1,20p'`."
+    },
+    {
+      "ordinal": 6,
+      "raw": "S003",
+      "supports": true,
+      "why": "Clause SKILL.md:1519 'Sources: S003 and ...'. Excerpt is the S003 registry row (SOURCES.md:14, StrykerJS incremental verdict reuse, tier A, mined) whose teaches cell - reuse conditions plus declared blind spots (env vars, dependencies, .snap files not detected; dry run stays required) - grounds the section's Limit cell 'Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured' (:1526) and the result_reuse=not_established row (:1529); the entry (:1) opens 'source: S003' with the same URL, so the id is live. Frozen range [[14,14]] lands on the S003 row at base and at candidate (`git -C <lane> show f181a961:corpus/SOURCES.md | sed -n '14p'`)."
+    },
+    {
+      "ordinal": 7,
+      "raw": "S047",
+      "supports": true,
+      "why": "Clause SKILL.md:1519 'PIT precision correction S047'. Excerpt is the S047 row (SOURCES.md:56) titled 'Incremental analysis (PIT docs), precision correction' with scope 'PIT's documented experimental incremental-analysis assumptions, not a general reuse guarantee' - the exact phrase the clause uses. Frozen range [[56,56]] lands on the S047 row at base and at candidate (`git -C <lane> show f181a961:corpus/SOURCES.md | sed -n '56p'`). Residual (disclosed in the row's note): S048 (SOURCES.md:57) supersedes S047's object-specific paraphrase and that clarification sentence lives in the '### Round-13 gate/probe registry' block (SKILL.md:1558-1561), outside the counted section span ending at :1547; the Sources line is not contradicted by it."
+    },
+    {
+      "ordinal": 8,
+      "raw": "S041",
+      "supports": true,
+      "why": "Clause SKILL.md:1519 '(historical S041 retained)'. Excerpt is the S041 row (SOURCES.md:50) with its original teaches cell ('reuse of a prior verdict is an inference, not an observation'), which is what makes S041 the historical half of the parenthetical while S047's teaches cell supersedes it (S047's teaches opens 'supersedes S041'). Frozen range [[50,50]] lands on the S041 row at base and at candidate (`git -C <lane> show f181a961:corpus/SOURCES.md | sed -n '50p'`)."
+    }
+  ],
+  "corrections": [
+    {
+      "skill_line": "SKILL.md:1530",
+      "ok": true,
+      "why": "Observation cell 'Frozen summary kind is null but its top-level declaration is explicit' -> 'Frozen summary kind is null but the frozen declaration's top-level kind is explicit'. The base wording was ambiguous with a false reading (the summary's own declaration.kind is null, so 'its top-level declaration is explicit' is false if 'its' = the summary). Verified against the frozen bytes: summary.json carries declaration.kind=null (`git -C <lane> show f181a961:.ufo/evidence/round-12/BashWitness/summary.json | grep -n '\"kind\": null'`), declaration.json carries an explicit top-level kind 'declared-witness mapping (not a blind preregistration)' (`... declaration.json | sed -n '6p'`), and the companion records kind_source 'declaration.json#/kind (explicit frozen top-level field)' (witness-metadata.json:58-59). Decision and Limit cells unchanged; no meaning lost."
+    },
+    {
+      "skill_line": "SKILL.md:1534",
+      "ok": true,
+      "why": "Recipe step 1 'Read the source-backed scope and `not_compared` list before the result.' -> 'Read the manifest's recorded source and the output's `not_compared` list before the rows.'. Both factual anchors verified at f181a961: the manifest records a source field (`git -C <lane> show f181a961:.ufo/evidence/round-13/pin-manifest.json | sed -n '7p'` -> 'source': 'tools/mutate-and-run.sh:84-89 ...') and the tool's payload carries not_compared (`git -C <lane> show f181a961:tools/pin-disposition.py | sed -n '687p'` -> payload[\"not_compared\"]=list(NOT_COMPARED); docstring :58-60 calls it a static list of deliberately-unmeasured inputs) plus per-leg rows (payload 'legs', :970). 'Before the rows' matches the tool's output shape; the vague 'source-backed scope' is made concrete without changing the reading-order instruction. Residual: the manifest's recorded source anchors are drifted (target-side, disclosed in the ordinal-3 note) - the sentence stays true because it says read what the manifest recorded, not that the anchors are current."
+    }
+  ],
+  "rows_not_supporting": [],
+  "corrections_not_ok": []
+}

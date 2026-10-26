@@ -1,0 +1,35 @@
+# T49W2ExecMistake — exact command lines (S=/fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake)
+# Setup (clone only; no lane write, no lane git mutation)
+S=/fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake; mkdir -p "$S"
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/clone"
+git -C "$S/clone" rev-parse --show-toplevel            # -> $S/clone
+git -C "$S/clone" checkout -q --detach f181a961ae44061af486f600e5ea257d2baf78f8
+
+# Fixture commit: f181a96 tree minus exactly c2-controls.exit, built with plumbing only
+#   (GIT_INDEX_FILE=$S/fixture.idx; read-tree f181a96^{tree}; rm --cached <receipt>; write-tree;
+#    commit-tree <tree> -p f181a96)  ->  01af8543ed67e97aed1fa1b7a6af06d61b0f6fcf
+git -C "$S/clone" diff --stat f181a96 01af8543ed67e97aed1fa1b7a6af06d61b0f6fcf
+
+# Case (a1) one receipt missing, everything else present
+python3 "$S/drive.py"      # bash .ufo/evidence/round-49/deciding-run.sh "$S/clone" 01af854 14d03ea "$S/out-a1"
+# Case (a2) no receipts at all (REV = base 8ca67421)
+python3 "$S/drive.py"      # ... "$S/clone" 8ca67421 14d03ea "$S/out-a2"
+# Case (b1) pre-existing c1.start in the out dir
+python3 "$S/drive.py"      # ... "$S/clone" f181a96 14d03ea "$S/out-b1"   (out-b1 holds c1.start)
+# Case (b2) pre-existing c2.start
+python3 "$S/drive.py"      # ... "$S/clone" f181a96 14d03ea "$S/out-b2"   (out-b2 holds c2.start)
+# Case (c) all receipts present, empty out dir, killed on the FROZEN_UNCHANGED line
+python3 "$S/drive.py"      # ... "$S/clone" f181a96 14d03ea "$S/out-c"   (killpg SIGTERM at first FROZEN_UNCHANGED)
+# Case (c) repeats: same out dir left by case c, and a fresh empty dir
+python3 "$S/repeat.py"
+# Case (d) freeze-argument direction
+python3 - <<'PY'   # see freeze-arg-cases.json
+#   ... "$S/clone" f181a96 f181a96 "$S/out-d1"      -> control-receipt-not-after-freeze
+#   ... "$S/clone" f181a96 9b9b2a0 "$S/out-d2"      -> control-receipt-not-after-freeze
+PY
+
+# Facts
+git -C "$S/clone" show f181a96:.ufo/evidence/round-49/deciding-run.sh | sha256sum   # 31e9838e...
+git -C "$S/clone" show f181a96:.ufo/evidence/round-49/deciding-run.sh | nl -ba | sed -n '20,50p'
+git -C "$S/clone" cat-file -e f181a96:.ufo; echo $?                                  # 0 (tree accepted)
+rm -rf -- "$S"   # scratch removed after receipts were copied into .ufo/waves/round-49/w2/T49W2ExecMistake/

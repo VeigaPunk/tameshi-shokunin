@@ -1,0 +1,77 @@
+# T49W2RevRows — receipts (fresh observations, 2026-10-26; scratch deleted after copy)
+
+All paths relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin unless absolute.
+
+## R1 — fresh fetch vs committed snapshots
+$ curl -sSL -o quick-today.pdf -w 'quick http=%{http_code} size=%{size_download} type=%{content_type}\n' 'https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf'
+quick http=200 size=194315 type=application/pdf
+$ curl -sSL -o smallbone-today.pdf -w 'smallbone http=%{http_code} size=%{size_download} type=%{content_type}\n' 'https://smallbone.se/papers/lic.pdf'
+smallbone http=200 size=1269821 type=application/pdf
+$ sha256sum quick-today.pdf smallbone-today.pdf
+bfddcaa648f836e50804910fc0956cc037c1a8b3e3d6716fb12e4e1ffdcb5172  quick-today.pdf
+eaee48f930ba20a06824fe238cc6a42427e9fb45d1d70b852bf091ad6e44ac08  smallbone-today.pdf
+$ sha256sum .ufo/waves/round-49/w1/T49ScribeRows.src/quick.pdf .ufo/waves/round-49/w1/T49ScribeRows.src/smallbone.pdf
+bfddcaa648f836e50804910fc0956cc037c1a8b3e3d6716fb12e4e1ffdcb5172  …/quick.pdf
+eaee48f930ba20a06824fe238cc6a42427e9fb45d1d70b852bf091ad6e44ac08  …/smallbone.pdf
+# git blobs at f181a961: quick.pdf 4431a878…, smallbone.pdf 43c5a98c…; cat-file blob | sha256sum matches the two lines above.
+
+## R2 — page mapping and Gate quotes (today's bytes; snapshots sha256-equal)
+$ pdftotext smallbone-today.pdf - | python3 split on \f  → 117 chunks (116 pages); PDF p.39 first line "34", contains "2.10 Generating Test Data"; PDF p.34 first line "29"
+$ pdftotext -f 39 -l 39 → "As always with random testing tools, the quality of the test data determines the quality of the generated equations." (S270 Gate quote, verbatim)
+$ pdftotext -f 3 -l 3 quick-today.pdf → "2.4 Monitoring Test Data" heading + "The combinator collect will gather all values that are passed to it, and print out a histogram of these values." (S269 Gate quote 1, verbatim)
+$ pdftotext -f 1 -l 1 quick-today.pdf → "Properties are described as Haskell functions, and can be automatically tested on random input," (S269 Gate quote 2, verbatim)
+$ pdftotext -f 4 -l 4 quick-today.pdf → "3.2 Generators for User-Defined Types" + both `sized` spans (pilot quotes, verbatim)
+$ pdftotext -f 7 -l 7 quick-today.pdf → "5.1.4 A False Sense of Security" + "the false sense of security that can be engendered when one's program passes a large number of tests in trivial cases" (pilot quote, verbatim)
+Quote word counts: 20 / 14 / 19 (python len(q.split())).
+
+## R3 — S270 anchor-correction truth (printed p. 44)
+$ pdftotext -f 49 -l 49 smallbone-today.pdf - | sed -n '1,8p'   → "44", "3.4", "shr: Problems with Partiality"
+$ pdftotext -f 49 -l 49 smallbone-today.pdf - | grep -ci generator → 0   (only regex hit on the page is the subsection number "3.4.1")
+
+## R4 — F2 evidence: page count
+$ pdfinfo .ufo/waves/round-49/w1/T49ScribeRows.src/smallbone.pdf | grep -i '^pages'
+Pages:           116
+$ pdftotext -f 116 -l 116 …/smallbone.pdf - | grep -m1 -E '^[0-9]{2,3}$'
+111
+$ pdftotext …/smallbone.pdf - | grep -c 117
+0
+# w1/T49ExecSrcSmallbone/receipt.json: "pdfinfo": { "pages": 116, … }
+
+## R5 — pilot recheck commands reproduce
+$ pdftotext .ufo/waves/round-49/w1/T49ScribeRows.src/smallbone.pdf - | tr -s ' \n' ' ' | grep -c 'that fit the program at hand'
+1
+$ pdftotext .ufo/waves/round-49/w1/T49ScribeRows.src/quick.pdf - | tr -s ' \n' ' ' | grep -c 'print out a histogram of these values'
+1
+
+## R6 — census (fleet scripts/sources-census.sh, host gawk; no install)
+# prescribed corpus-only mirror at candidate:
+$ git archive f181a961 corpus | tar -x -C $S/v && scripts/sources-census.sh validate --file $S/v/corpus/SOURCES.md
+exit=1; findings: W04 × 12 (S047,S048,S075,S076,S077,S078,S081,S092,S104,S160,S265,S266,S267,S268 — pre-existing rows),
+W01 (S101), E11 × 3 (S097,S102,S104 "missing used-by tools/tally-audit*.py" — mirror lacks tools/)
+# same-shape base mirror (8ca67421, corpus-only): exit=1, identical finding set (diff empty)
+# full-tree mirrors: exit=0 at f181a961 and at 8ca67421; outputs identical except the path line
+
+## R7 — collision receipts (w1/T49ScribeRows.src, committed)
+$ wc -l reg-ids staged-ids collisions → 128 / 103 / 8; collisions = S153 S154 S155 S156 S157 S158 S159 S160
+$ cat collision-probe.out → "registry_ids=128 staged_ids=103", collisions S153-S160,
+  "registry rows matching S182/S183 under 0-3 spaces: 0",
+  "0-3-space extractor collision set: S153-S160 plus S182", "column-0 extractor collision count: 8"
+
+## R8 — Crossref
+$ sha256sum .ufo/waves/round-49/w1/T49ScribeRows.src/crossref.json
+e1ba3955cb04594d64f182e39ac2d41659a53421a62a41ba06ad0cf85eb93c7c  (matches fetch-receipts.json citation)
+$ python3 -c … → DOI 10.1145/351240.351266; title "QuickCheck"; page "268-279";
+  container "Proceedings of the fifth ACM SIGPLAN international conference on Functional programming"; event ICFP00
+
+## R9 — live bytes == candidate
+$ git diff --stat f181a961 HEAD -- corpus        → (empty)
+$ git status --porcelain -- corpus | wc -l       → 0
+$ cmp live corpus/lessons/round-49.md vs candidate blob → IDENTICAL; SOURCES.md → SOURCES-IDENTICAL
+$ diff draft w1/T49ScribeRows.src/rows.md vs committed S269/S270 rows → byte-equal
+
+## R10 — line anchors at f181a961 (== live)
+corpus/SOURCES.md:144 = S269 row ("author-served PDF" in anchor cell); :145 = S270 row ("author-served PDF 117 pp");
+:492-494 = appended note lines ("Round 48…", "Round 49…", "Next unused id: S271").
+corpus/lessons/round-49.md:21 ("on a course mirror…"), :24-27 (S270 block, "Quote (19 words)"), :44-45 ("§2.4 and §3.2").
+corpus/knowledge/pbt-generator-pilot.md:1-2 (source lines), :4 (recheck cell).
+corpus/README.md:597 (note-table row, Sources cell "S269, S270" + conditioned F10 held line).

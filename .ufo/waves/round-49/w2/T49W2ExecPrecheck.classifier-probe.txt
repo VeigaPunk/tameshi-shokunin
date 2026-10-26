@@ -1,0 +1,15 @@
+# classifier probe: coldread-precheck.sh:22-27 logic on synthetic inputs (scratch-only, lane untouched)
+
+-- case: 1 lost, 2 gained
+LOST C | drifted=corpus/SOURCES.md
+COLDREAD_PRECHECK floor=x floor_credited=3 cand=y cand_credited=4 lost=1 ok
+PROBE lost_one_gained_two=ok
+-- case: 1 lost, 1 gained (swap)
+LOST C | drifted=corpus/QUALITY.md
+COLDREAD_PRECHECK floor=x floor_credited=3 cand=y cand_credited=3 lost=1 ok
+PROBE swap_equal_count=ok
+-- case: 2 lost, 0 gained
+LOST B | drifted=corpus/README.md
+LOST C | drifted=corpus/SOURCES.md
+COLDREAD_PRECHECK floor=x floor_credited=3 cand=y cand_credited=1 lost=2 RED
+PROBE pure_loss=RED

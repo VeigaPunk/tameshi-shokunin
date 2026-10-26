@@ -1,0 +1,42 @@
+# T49W2Reread10 — C1 semantic re-read, `## Pin disposition and provenance correction — round 13` (ordinals 0–12)
+
+Candidate `f181a961ae44061af486f600e5ea257d2baf78f8`, base `8ca67421111fa354b47b803358391d0b07fc6db9`.
+Method: extracted every pointed target's blob at the candidate with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show f181a961…:<file>`, checked each reads.json excerpt by normalized substring match against that blob, then read the citing SKILL.md clause and the target in context. Target blobs base→candidate: all seven unchanged except `corpus/SOURCES.md` (new rows appended; frozen ranges still land: lines 14/50/56 are S003/S041/S047 at both base and candidate — `git show 8ca67421:corpus/SOURCES.md | sed -n '14p;50p;56p'` vs `git show f181a961:corpus/SOURCES.md | sed -n '14p;50p;56p'`).
+
+Range note: the heading has exactly 9 read rows (ordinals 0–8) = the contract floor r13=9; ordinals 9–12 do not exist for this heading. The counter's section span ends at SKILL.md:1547 (`### Round-13 gate/probe registry` reopens at :1548) and contains exactly these 9 pointers. reads.json names candidate `9b9b2a01…`; `git diff --stat 9b9b2a01 f181a961 -- SKILL.md` is empty, so the rows apply verbatim at `f181a961`.
+
+## Row verdicts (9/9 support; none fails)
+
+| ord | raw | supports | clause (SKILL.md@cand) | evidence |
+|---|---|---|---|---|
+| 0 | corpus/knowledge/incremental-pin-disposition.md | true | :1520 Sources line | excerpt = entry :165–169, the method definition the table (:1524–1531) restates; entry :1–5 cites S003/S041/S047/S048 matching the Sources line. `git show f181a961:corpus/knowledge/incremental-pin-disposition.md \| sed -n '165,169p'` |
+| 1 | corpus/lessons/round-12-verifier-spotcheck.md | true | :1521 "outside routed …, Routed defects item 3" | excerpt = item 3 verbatim (lesson :146, under "## Routed defects and residuals"); "outside" grounded by header :1 "author: hyaku closure (non-author integrator, @m_strong)". `git show f181a961:corpus/lessons/round-12-verifier-spotcheck.md \| sed -n '146p'` |
+| 2 | tools/pin-disposition.py | true | :1535–1537 "observes only hashes and git metadata … executes no sibling gate" | excerpt = read-only guarantees :82–90; code: all normal-mode subprocesses are `git_run(["git","-C",repo],…)` (:224–241), selftest only re-execs itself on fixtures (:931–935) and fixture git in isolated trees (:770–790); CLI is exactly `--manifest/--root` (:1336–1346). `git show f181a961:tools/pin-disposition.py \| sed -n '82,90p'` |
+| 3 | .ufo/evidence/round-13/pin-manifest.json | true | :1535 `--manifest` argument | excerpt = real leg entry (js-kimi-census, pinned_commit 175de6ba, expected_sha256 83016d45); manifest schema pin-manifest-v1, exactly 6 legs. `git show f181a961:.ufo/evidence/round-13/pin-manifest.json \| grep -n 'js-kimi-census'` |
+| 4 | tools/witness-metadata.py | true | :1538–1539 "checks the new companion against digest-anchored frozen sources" | excerpt = docstring :11–14; PINNED_INPUTS :66–84 pin acc01268/e8d2024a/0def0d3b and I recomputed all three at f181a961 — equal to the frozen round-12 blobs (`git show f181a961:.ufo/evidence/round-12/BashWitness/summary.json \| sha256sum` → acc01268…; likewise declaration.json, declared.tsv); DEFAULT_COMPANION_REL :68 = row 5's path |
+| 5 | .ufo/evidence/round-13/witness-metadata.json | true | :1538 `--companion` argument | excerpt = companion header (generated_for round-13; purpose; expected metadata_consistent/exit 0; frozen_declaration digests); same file grounds step 4's scope claims: covered_null_observations = canonical summary only, rerun summary listed under uncovered_null_observations with disposition "named-residual-uncorrected" (:46–62). `git show f181a961:.ufo/evidence/round-13/witness-metadata.json \| sed -n '1,20p'` |
+| 6 | S003 | true | :1519 "Sources: S003 and …" | excerpt = SOURCES.md:14 row; teaches cell (reuse conditions + blind spots env vars/dependencies/.snap; dry run required) grounds the Limit cell :1526 and the result_reuse=not_established row :1529; entry :1 opens "source: S003" (id live). `git show f181a961:corpus/SOURCES.md \| sed -n '14p'` |
+| 7 | S047 | true | :1519 "PIT precision correction S047" | excerpt = SOURCES.md:56 row titled "…, precision correction", scope "…not a general reuse guarantee" — the clause's exact phrase. `git show f181a961:corpus/SOURCES.md \| sed -n '56p'` |
+| 8 | S041 | true | :1519 "(historical S041 retained)" | excerpt = SOURCES.md:50 row with the original teaches cell ("reuse of a prior verdict is an inference, not an observation"); S047's teaches opens "supersedes S041", so S041 is the retained historical half. `git show f181a961:corpus/SOURCES.md \| sed -n '50p'` |
+
+## Corrections in range (diff base→candidate, SKILL.md)
+
+`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff 8ca67421… f181a961… -- SKILL.md` touches this section in exactly two places (hunk `@@ -1527,11 +1527,11 @@`; the next hunks start at base 1579 = round 14; the `@@ -1464,29` hunk ends at base 1492, inside round 12). Both judged ok:
+
+1. **SKILL.md:1530** — observation cell "…but its top-level declaration is explicit" → "…but the frozen declaration's top-level kind is explicit". The base wording had a false reading (the summary's own `declaration.kind` is null). Verified against frozen bytes: summary.json `declaration.kind=null` (`git show f181a961:.ufo/evidence/round-12/BashWitness/summary.json | grep -n '"kind": null'`), declaration.json top-level `"kind": "declared-witness mapping (not a blind preregistration)"` (`… declaration.json | sed -n '6p'`), companion `kind_source: "declaration.json#/kind (explicit frozen top-level field)"` (witness-metadata.json:58–59). Decision/Limit cells unchanged; ok.
+2. **SKILL.md:1534** — step 1 "Read the source-backed scope and `not_compared` list before the result." → "Read the manifest's recorded source and the output's `not_compared` list before the rows.". Both anchors real at f181a961: manifest `source` field (pin-manifest.json:7), tool `payload["not_compared"] = list(NOT_COMPARED)` (tools/pin-disposition.py:687; docstring :58–60 "a static list of inputs this probe deliberately does not measure"), per-leg rows in the payload (`legs`, :970). Concrete, meaning-preserving; ok.
+
+## Residuals (target-side, disclosed, not support failures)
+
+- **pin-manifest.json:7 source anchors drifted** (also at candidate): the manifest cites `tools/mutate-and-run.sh:84-89 (leg/path table), :542-553 (PIN_*/REV_* pairs), :1112-1140`; at f181a961 :84–89 is a comment header and :542–553 is the verdict-case loop, while the PIN_*/REV_* pairs sit at :605–622 (`git show f181a961:tools/mutate-and-run.sh | sed -n '605,622p'`). Already disclosed in the ordinal-3 reads.json note; the corrected SKILL.md:1534 does not re-assert the anchors. A future re-pin of the manifest's source field is the natural fix, outside this seat's write scope.
+- **S048 supersession sentence sits outside the counted span**: SKILL.md:1558–1561 ("S048 supersedes S047's object-specific paraphrase…") lives in the `### Round-13 gate/probe registry` block (opens :1548), after the section span the counter counts (ends :1547). The Sources line (:1519) names S047 without S048; not contradicted, and the entry itself carries `source-correction: S048` (incremental-pin-disposition.md:5). Disclosed in the ordinal-7 note.
+
+No tool installs were needed (no tooling-authorization entries). Scratch `/fast/scratch/hyaku/tameshi-r49/T49W2Reread10` deleted before yield.
+
+## Summary
+- Re-read all 9 read rows of the round-13 pin-disposition section (ordinals 0–8; 9–12 do not exist for this heading) at f181a961: every excerpt is present at its pointed target and every row supports its clause — 0 failures.
+- Both SKILL.md corrections in range (lines 1530, 1534) are accurate and meaning-preserving, verified against the frozen round-12 summary/declaration bytes and the tool/manifest fields they name.
+- Independently recomputed the three witness-metadata pinned digests — all equal the frozen round-12 blobs at the candidate.
+- Residuals are target-side and already disclosed: pin-manifest.json:7 source anchors drifted (real PIN_*/REV_* at tools/mutate-and-run.sh:605–622); the S048 supersession sentence sits in the registry block outside the counted span.
+- SOURCES.md changed base→candidate but frozen ranges 14/50/56 still land on S003/S041/S047 at both revisions.
+- Deliverable: .ufo/waves/round-49/w2/T49W2Reread10.json (rows + corrections arrays, rows_not_supporting=[], corrections_not_ok=[]).

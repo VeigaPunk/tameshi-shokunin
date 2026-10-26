@@ -1,0 +1,63 @@
+{
+  "seat": "T49W2Reread09",
+  "section": "## Repeated controls and gate registry — round 12",
+  "candidate": "f181a961ae44061af486f600e5ea257d2baf78f8",
+  "base": "8ca67421111fa354b47b803358391d0b07fc6db9",
+  "ordinal_range_note": "item named ordinals 0-10; the section carries exactly 5 pointers (ordinals 0-4) at base and at the candidate (floor r12=5 met, base pointer count kept); ordinals 5-10 do not exist",
+  "rows": [
+    {
+      "ordinal": 0,
+      "raw": "corpus/knowledge/repeated-control-precondition.md",
+      "supports": true,
+      "why": "Excerpt is verbatim at doc:26 (git show f181a961:corpus/knowledge/repeated-control-precondition.md | grep -n 'Stream agreement is stronger'). It is the epistemic core the section's Bound column states: 'Stream agreement ... still weaker than determinism' = SKILL.md:1487 'not a determinism proof'; doc:29 ('identical (exit, stdout, stderr) tuples, back to back, on one host, in one environment') grounds the corrected bound at SKILL.md:1487; doc:35 gives the exact CLI (--runs>=3, DIR must not exist) matching the recipe at SKILL.md:1491-1494. Doc unchanged base→candidate (git diff base f181a961 -- corpus/knowledge/repeated-control-precondition.md is empty), so the base read still binds."
+    },
+    {
+      "ordinal": 1,
+      "raw": ".ufo/evidence/round-12/verification-final.json",
+      "supports": true,
+      "why": "Excerpt is at verification-final.json:73 inside check 'real-pristine-three-controls' (passed=true), whose stdout records REPEAT_RUN 1/2/3 exit=0 stdout-bytes=1202 stderr-bytes=0, REPEAT_COMPARE identical=yes runs=3, REPEAT_CONTROL: controls_match. The excerpt shows runs 1-2 of the 3; run 3 and the tool's raw-tuple compare verdict sit in the same located blob at :73. Supports SKILL.md:1482 'runtime evidence' and the table row 'Three or more zero-exit controls match ... controls_match' (SKILL.md:1487). File unchanged base→candidate."
+    },
+    {
+      "ordinal": 2,
+      "raw": "tools/repeat-control.py",
+      "supports": true,
+      "why": "Excerpt is the tool's usage string at repeat-control.py:13. The recipe's invocation at SKILL.md:1492 is exactly that form with N=3; tool:262 enforces '--runs must be >= 3'; tool:317 refuses an existing --out ('--out already exists (refused, never overwritten)') which is SKILL.md:1493-1494 'The output directory must not exist'; --selftest/--snapshot dispatch at tool:874-879 backs the registry row's commands at SKILL.md:1503. Tool unchanged base→candidate (sha256 296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25, same as the round-12 receipt's tool-sha256)."
+    },
+    {
+      "ordinal": 3,
+      "raw": "S004",
+      "supports": true,
+      "why": "Exactly one S004 row, at SOURCES.md:15 at the candidate; the excerpt is verbatim in its lesson column ('outcomes caught, missed, unviable, timeout, with unviable called inconclusive; tests must first pass reliably in a copied tree'). 'tests must first pass reliably in a copied tree' is the precondition behind the recipe's 'choose a pristine command' (SKILL.md:1491) and the third table row's 'no mutation kill-rate claim' on an unusable baseline (SKILL.md:1489); the row's used-by names corpus/knowledge/repeated-control-precondition.md. The +5 SOURCES.md lines added at the candidate (S265 at :140 and staged-id notes at :490-493) do not shift line 15."
+    },
+    {
+      "ordinal": 4,
+      "raw": "S026",
+      "supports": true,
+      "why": "Exactly one S026 row, at SOURCES.md:37 at the candidate; excerpt verbatim ('about 1.5% of test runs are flaky; about 84% of pass-to-fail transitions involve a flaky test'). That prevalence is why one green control proves nothing and the recipe forbids retrying until green (SKILL.md:1495) — the S026 half of Source at SKILL.md:1481. Observation, not a defect: S265 (SOURCES.md:140) supersedes S026's anchor and quote only; S026 stays status mined with used-by → the doc, so the pointer still resolves to a row that supports (supersession already recorded in this row's note; the L1's choice to keep S026 is permissible and keeps the section at 5 pointers)."
+    }
+  ],
+  "corrections": [
+    {
+      "skill_line": 1483,
+      "ok": true,
+      "why": "'not a change to the six-leg runner' → '... of round 12'. Pure disambiguation, no pointer; consistent with the scope note 'the historical runner' at SKILL.md:1506. Meaning unchanged."
+    },
+    {
+      "skill_line": 1487,
+      "ok": true,
+      "why": "Bound gains 'on this host in this environment'. Grounded at doc:29 ('back to back, on one host, in one environment') and the tool's own limitation text at repeat-control.py:94 ('it is not a determinism proof and it cures no flakiness'). Tightens the bound; Decision 'controls_match' unchanged."
+    },
+    {
+      "skill_line": 1488,
+      "ok": true,
+      "why": "Observation 'Any available controls differ' → 'All runs executed and any differ in exit or either stream'. This deliberately changes the trigger condition to the tool's real precedence: classify() at repeat-control.py:206-210 returns command_unavailable if ANY run did not execute, so controls_mismatch requires all runs executed plus a tuple difference (:211-219). The base wording misdescribed the tool (a mismatch among available runs with one unavailable yields command_unavailable, exit 2, not controls_mismatch). Decision label and Bound unchanged; the correction fixes semantics, it does not drift."
+    },
+    {
+      "skill_line": 1489,
+      "ok": true,
+      "why": "Decision gains '(`baseline_nonzero` / `command_unavailable`, exit 2)'. Both labels and exits are the tool's: repeat-control.py:125-126 maps baseline_nonzero→2 and command_unavailable→2; precedence at :206-219 ('a stable nonzero baseline' = all tuples equal, exit≠0 → baseline_nonzero; 'any run whose command could not be executed' → command_unavailable). 'Equal nonzero controls' keeps its base sense. New pointers are right."
+    }
+  ],
+  "other_corrections_in_range": "none: git diff 8ca67421 f181a961 -- SKILL.md shows exactly four changed lines inside 1479-1515 (1483, 1487, 1488, 1489); pointer lines 1481/1482/1492, the recipe tail, the registry table and the calibration paragraph are byte-identical to base",
+  "pointer_count": "5 at candidate (S004, S026, the doc at SKILL.md:1481; verification-final at :1482; repeat-control.py at :1492) = base count 5, floor r12=5"
+}

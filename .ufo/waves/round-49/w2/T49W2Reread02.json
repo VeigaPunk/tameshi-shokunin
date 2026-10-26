@@ -1,0 +1,112 @@
+{
+ "seat": "T49W2Reread02",
+ "item": "C1 semantic re-read: ## Mutation-sweep recipe ordinals 9-17 at f181a961ae44061af486f600e5ea257d2baf78f8",
+ "rows": [
+  {
+   "ordinal": 9,
+   "raw": "mutation-case-kimi-census.md:183-191",
+   "supports": true,
+   "why": "Clause SKILL.md:168-170 (step 4): 'E1: the author's D7 expectation was wrong and is kept'. Target at f181a961: kimi-census.md:183-191 is section 5 'Calibration and errata (append-only)' (heading :183) with E1 at :185-191: pre-run expectation 'held for 9/10 defects; it was **wrong on D7**', the filed survivor reasoning quoted, the measured outcome given, closed 'Recorded as a calibration miss' — wrong and kept. Supports."
+  },
+  {
+   "ordinal": 10,
+   "raw": "mutation-case-kagi-census.md:184-191",
+   "supports": true,
+   "why": "Clause SKILL.md:169-170: 'round 3's E1 kept miscalled case counts'. Target at f181a961: kagi-census.md:184-191, section 5 heading :184, E1 :186-191: expectation predicted the killed/survived verdict on 10/10 mutants but the failing-case counts on only 6/10 (B2 1->2, B3 2->3, B6 1->2, all gaining case 04 runtime-absent), kept in the append-only errata. Supports."
+  },
+  {
+   "ordinal": 11,
+   "raw": "tools/mutate-and-run.sh:425",
+   "supports": true,
+   "why": "Clause SKILL.md:174 (L1-introduced parenthetical): 'the maintained driver also prints the failing count'. Target at f181a961: tools/mutate-and-run.sh:424-426 — guard 'if count != 1:' at :424, :425 stderr-writes 'APPLY FAIL id=... line=... old-string-count=%d expected=1', exit 2 at :426. Claim accurate (stderr, on the uniqueness failure). Supports."
+  },
+  {
+   "ordinal": 12,
+   "raw": "mutation-case-kimi-census.md:22-25",
+   "supports": true,
+   "why": "Clause SKILL.md:172-175: both lanes' drivers asserted count(old)==1, printed the first matching line, required the literal 'all unique'. kimi-census.md:22-25 records all three for the kimi lane: 'asserts the old string occurs exactly once before writing (`mutate_driver.py --check` -> `all unique`, first-line match on all 10). No defect compounds with another.' Supports the kimi half."
+  },
+  {
+   "ordinal": 13,
+   "raw": "mutation-case-kagi-census.md:44-47",
+   "supports": false,
+   "why": "Same clause (SKILL.md:172-175, 'both lanes' drivers did exactly this', three parts: assert count==1, print the first matching line, require literal 'all unique'). kagi-census.md:44-47 records the count==1 assert ('asserts the old string occurs exactly once before writing'), the literal 'all unique' line and no-compounding — but nothing about printing a first matching line. No line of mutation-case-kagi-census.md records one: case-insensitive 'first' over the whole file hits only :57 ('the first is round 2's', unrelated). The clause's first-line half is over-claimed for the kagi lane; the counter cannot see this (it only checks the excerpt is located — contract.json C1.cannot_see). Fix: scope 'print the first matching line' to the kimi record (kimi:24 'first-line match on all 10' supports it) or drop it from the shared claim."
+  },
+  {
+   "ordinal": 14,
+   "raw": "mutation-case-kimi-census.md:26-28",
+   "supports": true,
+   "why": "Clause SKILL.md:185-186: 'Historical Kimi records stdout, exit/SHA/results'. kimi-census.md:26-28: 'per-defect evidence: `node mutant-<id>.mjs --selftest` full stdout -> evidence/<id>.selftest.txt; exit code + mutant sha256 -> evidence/<id>.meta.json; aggregate -> evidence/results.json'. Exact match. Supports."
+  },
+  {
+   "ordinal": 15,
+   "raw": "mutation-case-kagi-census.md:48-49",
+   "supports": true,
+   "why": "Clause SKILL.md:186-187: 'Kagi also records duration/summary'. kagi-census.md:48-49: 'exit code + mutant sha256 + wall time + case summary -> evidence/<id>.meta.json' — wall time + case summary are exactly the duration/summary the clause adds over kimi's :26-28 (which record no wall time or case summary). Supports."
+  },
+  {
+   "ordinal": 16,
+   "raw": "mutation-case-kimi-census.md:30-33",
+   "supports": true,
+   "why": "Clause SKILL.md:193-194: both sweeps 'held their enumerated denominators 43 and 16'. kimi-census.md:32-33 (inside the cited 30-33): 'suite count held: every mutant run still enumerated the full suite (`<n>/43`), and all three green runs printed exactly `KIMI_CENSUS_SELFTEST: 43/43 pass`'. Supports the 43 half. Caveat: the range opens two lines early — :30-31 are the kill-rate/no-inconclusive bullet, already cited separately at SKILL.md:212 (kimi 29-31); over-open, not unsupporting."
+  },
+  {
+   "ordinal": 17,
+   "raw": "mutation-case-kagi-census.md:27-35,50-53",
+   "supports": true,
+   "why": "Same clause, 16 half. kagi-census.md:50-53: 'the suite count held (`(<n>/16 cases)` on every run; green runs printed exactly `SELFTEST: PASS (16 cases)`)' — the held-16 claim verbatim. First range :27-35 corroborates the 16-case enumeration composition (ok-case 01..14 + skip-case 15/16, epilogue 'SELFTEST: PASS (16 cases)' at :33-35). Union supports."
+  }
+ ],
+ "corrections": [
+  {
+   "skill_line": 172,
+   "ok": true,
+   "why": "In range (step 5, rows 11-13). Base SKILL.md:172 'print the count and first matching line' -> candidate 'print the first matching line'. Right: neither cited record (kimi 22-25, kagi 44-47) records printing the count, so the removed half was unsupported. Residual: the first-line half stays over-claimed for kagi (row 13, supports=false)."
+  },
+  {
+   "skill_line": 174,
+   "ok": true,
+   "why": "In range (step 5, row 11). Inserted '(the maintained driver also prints the failing count: `tools/mutate-and-run.sh:425`)'. Verified at f181a961: guard 'if count != 1:' at tools/mutate-and-run.sh:424, :425 writes 'APPLY FAIL ... old-string-count=%d expected=1' to stderr. Pointer and claim correct; the historical claim's scope untouched. Nit: 'also' sits inside the both-lanes sentence and could be misread as extending the lanes' claim; natural reading is fine."
+  },
+  {
+   "skill_line": 177,
+   "ok": true,
+   "why": "In range (step 5, rows 11-13). 'not establish that particular round-2 guard' -> 'not establish that the round-2 driver carried the `new != old` no-op guard'. Disambiguates the referent of the negative claim; the hedge stays correct (neither kimi 22-25 nor kagi 44-47 mentions new != old). No meaning inversion."
+  },
+  {
+   "skill_line": 193,
+   "ok": true,
+   "why": "In range (rows 16-17 clause line). 'denominators43 and16' -> 'denominators 43 and 16' — whitespace repair of glued words; no pointer or meaning change."
+  },
+  {
+   "skill_line": 143,
+   "ok": true,
+   "why": "Adjacent (step 1, ordinals 0-8, outside 9-17). Added '(cite-check and surface-probe print `n/m cases passed`)'. Verified: gates-survey-kumitate.md:21-22 at f181a961 records cite-check '62/62 cases passed (hermetic)' and surface-probe '42/42 cases passed'. Accurate; pointer :19-31 unchanged."
+  },
+  {
+   "skill_line": 146,
+   "ok": true,
+   "why": "Adjacent (step 1). 'exit0' -> 'exit 0' and 'bash16 enumerated cases,' -> 'bash: 16 enumerated cases,' (lines 146-147) — whitespace corruption repair; pointers unchanged, meaning restored."
+  },
+  {
+   "skill_line": 199,
+   "ok": true,
+   "why": "Adjacent (step 7, ordinal 19). Base: 'and summary `SELFTEST: FAIL (1/16 cases)` (mutation-case-kagi-census.md:82-103)'; candidate: 'and the failing suite line `1/16` / FAIL as the note records it (mutation-case-kagi-census.md:67,82-103)'. Right: 'SELFTEST: FAIL (1/16 cases)' appears nowhere in kagi-census.md (search: no hits); the note records '1/16' / FAIL in the kill-rate table at :67 and the bad-case grammar line at :84. New pointer 67 correct; sentence now matches the record."
+  },
+  {
+   "skill_line": 211,
+   "ok": true,
+   "why": "Adjacent (step 7, ordinal 22). Added '(neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:569-574`)'. Verified: driver :569-574 computes pct over total defects ((200*killed+total)/(2*total)) and prints 'MUTATE: DEGRADED' when inconclusive>0 (:571-574). Disclosure accurate; the recipe rule (inconclusive outside the denominator) unchanged."
+  },
+  {
+   "skill_line": 221,
+   "ok": true,
+   "why": "Adjacent (step 8, ordinal 26). kagi ':251-253' -> ':252-254'. Right: the B10 sensitivity text ('B10's summary must read `ok=0` (pristine `ok=1`)') sits at kagi-census.md:252-254; :251 is blank and the old range clipped the sentence."
+  },
+  {
+   "skill_line": 241,
+   "ok": true,
+   "why": "Adjacent (cost profile). 'Round2:7.0s for11 runs, nodev24.21.0' -> 'Round 2: 7.0 s for 11 runs, node v24.21.0' and the same repair through line 244 — whitespace corruption repair; pointers unchanged."
+  }
+ ]
+}

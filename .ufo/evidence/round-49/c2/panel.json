@@ -1,0 +1,79 @@
+{
+ "schema": "tameshi-r49-c2-panel-v1",
+ "target": "tools/staged-id-guard.py",
+ "target_sha256": "03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8",
+ "mutants": [
+  {
+   "id": "M01",
+   "name": "row-indent-4",
+   "old": "ROW_RE = re.compile(r'^ {0,3}\\|",
+   "new": "ROW_RE = re.compile(r'^ {0,4}\\|"
+  },
+  {
+   "id": "M02",
+   "name": "row-column0",
+   "old": "ROW_RE = re.compile(r'^ {0,3}\\|",
+   "new": "ROW_RE = re.compile(r'^\\|"
+  },
+  {
+   "id": "M03",
+   "name": "id-width-3",
+   "old": "ROW_RE = re.compile(r'^ {0,3}\\|\\s*(S\\d{3,})",
+   "new": "ROW_RE = re.compile(r'^ {0,3}\\|\\s*(S\\d{3})"
+  },
+  {
+   "id": "M04",
+   "name": "www-kept",
+   "old": "    text = re.sub(r'^www\\.', '', text)\n",
+   "new": ""
+  },
+  {
+   "id": "M05",
+   "name": "slash-kept",
+   "old": "    return text.rstrip('/')",
+   "new": "    return text"
+  },
+  {
+   "id": "M06",
+   "name": "held-form-sensitive",
+   "old": "        elif normalise_document(key) in registry_docs:\n            held[sid] = registry_docs[normalise_document(key)]",
+   "new": "        elif key in registry_docs:\n            held[sid] = registry_docs[key]"
+  },
+  {
+   "id": "M07",
+   "name": "naive-off-by-one",
+   "old": "naive[sid] = 'S%03d' % (top + index)",
+   "new": "naive[sid] = 'S%03d' % (top + index - 1)"
+  },
+  {
+   "id": "M08",
+   "name": "cascade-vs-registry",
+   "old": "cascade = sorted((target for target in naive.values() if target in staged),",
+   "new": "cascade = sorted((target for target in naive.values() if target in registry),"
+  },
+  {
+   "id": "M09",
+   "name": "duplicate-accepted",
+   "old": "        if sid in rows:\n            raise Refusal('%s:%d duplicate id %s' % (label, lineno, sid))\n",
+   "new": ""
+  },
+  {
+   "id": "M10",
+   "name": "short-row-accepted",
+   "old": "        if len(cells) < 5:",
+   "new": "        if len(cells) < 4:"
+  },
+  {
+   "id": "M11",
+   "name": "map-injectivity-dropped",
+   "old": "    if len(targets) != len(set(targets)):",
+   "new": "    if False:"
+  },
+  {
+   "id": "M12",
+   "name": "map-uncovered-dropped",
+   "old": "    uncovered = [sid for sid in base['collisions'] if sid not in mapping]",
+   "new": "    uncovered = []"
+  }
+ ]
+}

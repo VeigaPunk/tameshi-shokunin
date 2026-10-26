@@ -1,0 +1,50 @@
+# T49W2ExecMistake fixture facts (verbatim command output)
+# S=/fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake  clone=/fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake/clone  scratch deleted after this wave; receipts copied here
+
+## clone identity
+/fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake/clone
+f181a961ae44061af486f600e5ea257d2baf78f8
+(status above: empty)
+
+## revs
+REV    = f181a961ae44061af486f600e5ea257d2baf78f8
+FREEZE = 14d03ea4270c6904064022b62b6faf467e5c0968
+FREEZE ancestor of REV: YES
+
+## script under test
+blob at REV: 5e059dafd5eefd728b0b0840e4b932918f71f7ad
+sha256 at REV: 31e9838e735b27a9aa6ac3ee5ccc3e8f2d39432a32e3dd6a80ab456125dd10f5  -
+sha256 at FREEZE: 31e9838e735b27a9aa6ac3ee5ccc3e8f2d39432a32e3dd6a80ab456125dd10f5  -
+sha256 of executed worktree copy: 31e9838e735b27a9aa6ac3ee5ccc3e8f2d39432a32e3dd6a80ab456125dd10f5  /fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake/clone/.ufo/evidence/round-49/deciding-run.sh
+freeze.json line for deciding-run.sh:   ".ufo/evidence/round-49/deciding-run.sh": "31e9838e735b27a9aa6ac3ee5ccc3e8f2d39432a32e3dd6a80ab456125dd10f5",
+
+## gate-0 receipt loop inputs at REV (deciding-run.sh:23-28)
+.ufo/evidence/round-49/control/c1-controls.stdout present=yes bytes=1061 last-touch=6885adb40e3d5f2af061ab323d289b55e2a47bd3 descends-from-FREEZE=YES
+.ufo/evidence/round-49/control/c1-controls.exit present=yes bytes=2 last-touch=6885adb40e3d5f2af061ab323d289b55e2a47bd3 descends-from-FREEZE=YES
+.ufo/evidence/round-49/control/c2-controls.stdout present=yes bytes=684 last-touch=6885adb40e3d5f2af061ab323d289b55e2a47bd3 descends-from-FREEZE=YES
+.ufo/evidence/round-49/control/c2-controls.exit present=yes bytes=2 last-touch=6885adb40e3d5f2af061ab323d289b55e2a47bd3 descends-from-FREEZE=YES
+
+## fixture commit (plumbing only: read-tree/write-tree/commit-tree, worktree and HEAD untouched)
+drop commit = 01af8543ed67e97aed1fa1b7a6af06d61b0f6fcf  parent=f181a96
+ .ufo/evidence/round-49/control/c2-controls.exit | 1 -
+ 1 file changed, 1 deletion(-)
+forest of clone refs containing the drop commit:
+lifted in lane repo: LANE-DOES-NOT-HAVE-IT
+
+## cat-file -e cannot tell a blob from a tree (gate-0 existence check, deciding-run.sh:25)
+tree path .ufo -> exit 0
+blob path control/c2-controls.exit -> exit 0
+absent path .ufo/nope -> exit 128
+
+## freeze argument direction (case d2)
+6885adb (receipt commit) ancestor of 9b9b2a0: YES
+9b9b2a0 ancestor of 6885adb (what :27 asks): NO
+
+## case (c) kill mechanics
+out-c/frozen.stdout content:
+  FROZEN_UNCHANGED=1 freeze=14d03ea4270c6904064022b62b6faf467e5c0968 rev=f181a961ae44061af486f600e5ea257d2baf78f8
+out-c listing: . .. frozen.stdout 
+SCR dir listing after kill: /fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake/hc/tameshi-r49/deciding: . .. 
+process group: pid 2103100 pgid 2103100 equal True (start_new_session=True); SIGTERM to the group -> rc -15
+first line read from the child: FROZEN_UNCHANGED=1 freeze=14d03ea4270c6904064022b62b6faf467e5c0968 rev=f181a961ae44061af486f600e5ea257d2baf78f8
+no surviving process referencing the clone: ps -eo pid,pgid,etimes,cmd | grep -F "/fast/scratch/hyaku/tameshi-r49/T49W2ExecMistake/clone" -> (empty)

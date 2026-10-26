@@ -1,0 +1,33 @@
+seat T49W2ExecDurability — durability probe, round 49
+lane checkout (read-only base): /home/vgpnk/Projects/shokunin/tameshi-shokunin @ f181a961ae44061af486f600e5ea257d2baf78f8
+scratch clone: S=/fast/scratch/hyaku/tameshi-r49/T49W2ExecDurability ; D=$S/lane
+  git clone --shared -q <lane> "$S/lane" ; git -C "$S/lane" checkout -q f181a961...
+  git -C "$D" rev-parse --show-toplevel  ->  $D  (asserted before every commit)
+
+monitor invocation (every case, from inside $D, TMPDIR=$S):
+  python3 .ufo/evidence/round-21/coldread/measure.py --repo "$D" --rev HEAD
+  exit 0 in every case; overrides_used=false; trace_gate=strict in every case.
+
+case          tree                                  monitor file      covered  score
+base          f181a961ae44061af486f600e5ea257d2baf78f8 monitor-base.json    64/64   8
+A             f181a96 + 1 appended line to each of    monitor-caseA.json   64/64   8
+              LOG.md SCORECARD.md corpus/SOURCES.md
+              corpus/QUALITY.md corpus/README.md
+              (clone commit 2e825e920f9351c1a5c2e11b4993f7e9669c2351)
+B             f181a96 + edit corpus/knowledge/         monitor-caseB.json   54/64   6
+              mutation-case-kimi-census.md
+              (clone commit 8389d56172b5d36830fd33ecb68a4bead71ce277)
+C             f181a96 + edit corpus/knowledge/         monitor-caseC.json   64/64   8
+              mte-report-interop.md
+              (clone commit 7f3d758fe71d23e3744aa15a2ff6ff63d2d8933d)
+D             case A + a second appended line to each monitor-caseD.json   64/64   8
+              of the same five record files
+              (clone commit a627d6049c1b19cf0f3b231f9b285ea2acb10c50)
+E-base        base 8ca67421111fa354b47b803358391d0b07fc6db9, no append
+                                                       monitor-base8ca.json 57/64   6
+E-base+append base 8ca67421 + 1 appended line to each  monitor-baseAppend.json 57/64 6
+              of the five record files
+              (clone commit 4227bc1de299f4be2ab6ef58981de0c0b5ca20b7)
+F             f181a96 + edit corpus/knowledge/         monitor-caseF.json   60/64   6
+              service-limits.md
+              (clone commit 6f31e2dd04809c4c475464facb5960c2c5160ec2)

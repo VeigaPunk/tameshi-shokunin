@@ -52,8 +52,9 @@ by id; S182's DOI appears once as a never-checked line, S183's document not at a
   so it could not catch the wrong page.
 - **Reject — `r4-quickcheck-primary-correction.md`.** Decisive reason (QUALITY 2, the claim must be true): the entry's
   identifying claim is that the lane's lead list carried DOI `10.1145/1660572.1660575`; the DOI occurs nowhere in the lane
-  at base or in its history, and doi.org/Crossref answer 404 for it (`T49ScribePkgQuickCheckCorr.md`). Flip: none — the
-  premise is false, not unverified.
+  at base or in its history, and doi.org/Crossref answer 404 for it (`T49ScribePkgQuickCheckCorr.md`). Flip: the entry
+  rewritten without the lead-list premise, with resolution-based DOI statements and the corrected S183 locator
+  (`T49ScribePkgQuickCheckCorr.md:37`).
 - **Reject — `pbt-generator-craft-author.md`.** Decisive reason (QUALITY 2/3): it calls its source "not toy examples"
   where S170's abstract says "via a toy example in C", cites an `S116` that resolves to no tameshi row, and asserts a
   generator library is interchangeable against held tier-A S019/S020 (`T49ScribePkgCraftAuthor.md`). Flip: a corrected
@@ -66,8 +67,8 @@ by id; S182's DOI appears once as a never-checked line, S183's document not at a
 ## C1 — what the reading found
 
 Ninety pointers in the seven sections at base (`.ufo/evidence/round-49/control/c1-pointers-at-base-8ca67421.json`), read by
-eighteen seats (`.ufo/waves/round-49/w1/T49Read01`-`18`): 80 hold, 2 stale, 5 unresolved, 3 absent by design. Seven
-section critics audited every non-pointer statement (`T49Sec*.findings.json`): 12 false, 6 unverifiable. Three executors
+eighteen seats (`.ufo/waves/round-49/w1/T49Read01.rows.json` through `T49Read18.rows.json`): 80 hold, 2 stale, 5 unresolved, 3 absent by design. Seven
+section critics audited 135 non-pointer statements (`T49Sec*.findings.json`): 113 true, 15 false, 7 unverifiable; the corrections take up 12 of the false and 6 of the unverifiable ones, two false ones sit outside the seven sections (routed below) and the rest are judged in the findings files as not needing an edit. Three executors
 re-ran the round-12/13/14 recipes in scratch clones (`T49ExecR1{2,3,4}Cmd.md`): every exit reproduces; the decision-table
 wording drifted from the tools' printed ids in two places.
 
@@ -80,7 +81,7 @@ because editing them would lapse a credited section; routed below. The re-key re
 SCORECARD.md, corpus/SOURCES.md, corpus/QUALITY.md, corpus/README.md) through a git blob, so the seven entries' inputs are
 cited notes and tools only (`.ufo/evidence/round-49/c1/refresh.py`); the revenger's lapse archaeology
 (`T49RevengerLapse.md`) is why: 88 of 94 earlier entries carried a record file and lapsed within a median of one round,
-while the six record-free entries survived 17-20 rounds.
+while four of the six record-free entries survived 17-20 rounds.
 
 ## Mistakes
 
@@ -121,6 +122,8 @@ Found this round (wave-1 attacks), routed, not claimed as fixed:
   note names all three lines.
 - The generator's oracle is a transcription of the guard's rules, not an independent reading of its docs
   (`.ufo/waves/round-49/w2/T49W2CritGenOracle.md`); the pilot entry says so.
+- Not applied, routed: SKILL.md:1503's selftest namespace `/tmp/tameshi-r12-*` overlaps the round-12 recipe's evidence
+  path `/tmp/tameshi-r12-controls-UNIQUE` (`T49ExecR12Cmd.md` M3; outside the seven sections).
 - `tools/staged-id-guard.py`'s module docstring names exit 1 only for an inadmissible map; analysis mode also exits 1 when
   `refused` (unmapped or cascade) — confirmed (`T49RevGuardExit.md`). The guard is a pinned capability and is not edited.
 

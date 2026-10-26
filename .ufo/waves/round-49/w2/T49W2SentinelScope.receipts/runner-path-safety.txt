@@ -1,0 +1,48 @@
+# deciding-run.sh: OUTDIR containment / emptiness checks (grep -n)
+2:# Round-49 deciding run. Usage: deciding-run.sh LANE REV FREEZE OUTDIR
+4:#   FREEZE  the counter-freeze commit             OUTDIR  an existing, EMPTY directory inside LANE for receipts
+8:#   * gate 0 refuses when OUTDIR already holds a start receipt — one deciding invocation per counter;
+13:LANE=$1; REV=$2; FREEZE=$3; OUT=$4
+22:[ -d "$OUT" ] || { echo "DECIDING_REFUSED outdir-missing"; exit 3; }
+29:for k in c1 c2; do [ -e "$OUT/$k.start" ] && { echo "DECIDING_REFUSED second-invocation $k"; exit 3; }; done
+33:if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi
+35:bash "$SCR/no-harm.sh" "$LANE" "$REV" > "$OUT/no-harm.stdout" 2>&1; echo $? > "$OUT/no-harm.exit"
+36:cat "$OUT/no-harm.stdout"; grep -q RED "$OUT/no-harm.stdout" && rc=1
+37:[ "$(grep -c '^NOHARM .* ok$' "$OUT/no-harm.stdout")" = 9 ] || { echo "NOHARM_OK_COUNT!=9"; rc=1; }
+38:bash .ufo/evidence/round-48/quality/coldread-precheck.sh "$LANE" "$BASE" "$REV" > "$OUT/coldread-precheck.stdout" 2>&1; echo $? > "$OUT/coldread-precheck.exit"
+39:tail -1 "$OUT/coldread-precheck.stdout"; [ "$(cat "$OUT/coldread-precheck.exit")" = 0 ] || rc=1
+40:"$FLEET/scripts/sources-census.sh" validate --root "$FLEET" tameshi > "$OUT/census.stdout" 2> "$OUT/census.stderr"; echo $? > "$OUT/census.exit"
+41:echo "CENSUS exit=$(cat "$OUT/census.exit")"; [ "$(cat "$OUT/census.exit")" = 0 ] || rc=1
+43:date -u +%Y-%m-%dT%H:%M:%SZ > "$OUT/c2.start"
+44:python3 "$E/c2/measure.py" --lane "$LANE" --rev "$REV" --work "$SCR/c2" --panel "$SCR/panel.json" > "$OUT/c2.stdout" 2>&1; echo $? > "$OUT/c2.exit"
+45:date -u +%Y-%m-%dT%H:%M:%SZ > "$OUT/c2.end"
+46:date -u +%Y-%m-%dT%H:%M:%SZ > "$OUT/c1.start"
+47:python3 "$E/c1/measure.py" --lane "$LANE" --rev "$REV" --work "$SCR/c1" > "$OUT/c1.stdout" 2>&1; echo $? > "$OUT/c1.exit"
+48:date -u +%Y-%m-%dT%H:%M:%SZ > "$OUT/c1.end"
+49:tail -1 "$OUT/c2.stdout"; [ "$(cat "$OUT/c2.exit")" = 0 ] || rc=1
+50:tail -1 "$OUT/c1.stdout"; [ "$(cat "$OUT/c1.exit")" = 0 ] || rc=1
+52:echo "DECIDING_RUN_EXIT=$rc" | tee "$OUT/deciding-run.stdout"
+
+# refresh.py: ledger write path (grep -n)
+73:    ledger_path = os.path.join(LANE, LEDGER)
+74:    ledger = json.load(open(ledger_path, encoding='utf-8'))
+117:    with open(ledger_path, 'w', encoding='utf-8') as fh:
+118:        fh.write(json.dumps(ledger, indent=1, ensure_ascii=True))  # the ledger's own serialization (no newline)
+119:    with open(os.path.join(LANE, E, 'coldread/refresh-receipts.json'), 'w', encoding='utf-8') as fh:
+
+# apply-corrections.py: write path and failsafe order (grep -n)
+5:section's current text, and (c) keep the newline count (a correction never moves a line, so every SKILL.md line
+14:LANE = os.path.realpath(sys.argv[1])
+21:raw = open(path, 'rb').read()
+26:        sys.exit('correction %d: not a target section' % i)
+28:        sys.exit('correction %d: changes the line count' % i)
+31:        sys.exit('correction %d: heading not unique' % i)
+36:        sys.exit('correction %d (%s): old text occurs %d times in the section' % (i, c['source_seat'], body.count(c['old'])))
+41:    sys.exit('line count changed')
+42:with open(path, 'w', encoding='utf-8') as fh:
+
+# round-18 monitor: does credit resolve the trace cwd/root? (grep -n of receipt fields read)
+406:        if not isinstance(receipt, dict) or receipt.get('schema') != TRACE_SCHEMA:
+408:        rec_inputs = receipt.get('inputs')
+418:        live_reads = receipt.get('live_lane_reads')
+423:        external = receipt.get('external')

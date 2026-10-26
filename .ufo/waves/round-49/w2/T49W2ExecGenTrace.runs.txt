@@ -1,0 +1,59 @@
+# T49W2ExecGenTrace — commands and observed output (S=/fast/scratch/hyaku/tameshi-r49/T49W2ExecGenTrace)
+
+# provenance
+git -C LANE show f181a961ae44061af486f600e5ea257d2baf78f8:tools/pbt-staged-id.py | sha256sum
+  0cbee392a83e4cd6609efa97395a9ae8a64115015cf290e42e9a4ff98bc01f05  -
+sha256sum LANE/tools/pbt-staged-id.py   -> same sha (HEAD 5f597fa8 == candidate for this file)
+sha256sum LANE/tools/staged-id-guard.py -> 03a796c5726c30367d48618f3cbb0226b8dea9bc319171cbf20ffce319c2dca8
+  (matches contract.json:52 named_gate; the clone at f181a961 carries the same bytes)
+
+# (1) mutant leg, counter-faithful cwd (<S>/tree/tools holds the generator AND the pristine guard)
+cd <S>/tree/tools && TMPDIR=<S>/w/tmpA PYTHONDONTWRITEBYTECODE=1 \
+  strace -f -e trace=openat,open,execve -o <S>/traceA python3 -I pbt-staged-id.py \
+  --guard <S>/m/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/dA.jsonl
+  VIOLATION index=5 exit 0, oracle expects 1
+  VIOLATION observed_exit=0 stdout={"cascade": ["S024"], "cascade_count": 1, ... "refused": false, ...}
+  PBT_STAGED_ID: cases=6 violations=1 counterexample=5 classes=indent_1_3=3,...
+  EXIT=1   dA.jsonl=6 lines
+
+# (1b) same, item-literal layout: cwd = the pristine copy's directory, generator at tools/
+cd <S>/pristine && TMPDIR=<S>/w/tmpB2 ... strace ... -o <S>/traceB2 python3 -I tools/pbt-staged-id.py \
+  --guard <S>/m/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/dB2.jsonl
+  PBT_STAGED_ID: cases=6 violations=1 counterexample=5 ...   exit 1   dB2.jsonl=6 lines
+
+# (1c) no pristine copy anywhere in cwd
+cd <S>/empty2 ... python3 -I <S>/pristine/tools/pbt-staged-id.py --guard <S>/m/staged-id-guard.py ...
+  PBT_STAGED_ID: cases=6 violations=1 counterexample=5   dE.jsonl=6 lines
+
+# full 400-case trace with a pristine guard reachable in cwd (guard-under-test byte-identical to pristine)
+cd <S>/pristine && TMPDIR=<S>/w/tmpC ... strace -f ... -o <S>/traceC python3 -I tools/pbt-staged-id.py \
+  --guard <S>/m2/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/dC.jsonl
+  PBT_STAGED_ID: cases=400 violations=0 counterexample=none classes=indent_1_3=248,indent_4_plus=31,
+  id_4_plus_digits=31,collision=204,no_collision=62,held=49,unmapped=31,cascade=45,refusal=61,
+  url_form_variant=30,map=104,map_inadmissible=31   EXIT_C=0   dC.jsonl=400 lines
+
+# (2) determinism: pristine leg, cwd = guard's dir vs cwd = empty dir
+cd <S>/pristine && TMPDIR=<S>/w/tmpP1 python3 -I tools/pbt-staged-id.py --guard <S>/pristine/staged-id-guard.py \
+  --seed 4949 --cases 400 --dump <S>/p1.jsonl       -> EXIT 0, cases=400 violations=0
+cd <S>/empty    && TMPDIR=<S>/w/tmpP2 python3 -I <S>/pristine/tools/pbt-staged-id.py \
+  --guard <S>/pristine/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/p2.jsonl -> EXIT 0
+cmp <S>/p1.jsonl <S>/p2.jsonl -> identical, sha256 ca62402bc6125cb8003b3854a30bef829d29d5c6656be1f8a516ca2828a7cd28
+first 6 lines of dA (mutant leg) == first 6 lines of p1.jsonl
+
+# method sensitivity: a 3-line differential generator with no property (diffgen2.py)
+cd <S>/tree/tools && TMPDIR=<S>/w/tmpF ... strace -f ... -o <S>/traceF python3 -I diffgen2.py \
+  --guard <S>/m/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/dF.jsonl
+  PBT_STAGED_ID: cases=1 violations=1 counterexample=0   EXIT_F=1
+  traceF opens: <S>/m/staged-id-guard.py n=2 AND <S>/tree/tools/staged-id-guard.py n=2
+cd <S>/tree/tools ... python3 -I diffgen2.py --guard <S>/tree/tools/staged-id-guard.py ... (both pristine)
+  PBT_STAGED_ID: cases=400 violations=0 counterexample=none   EXIT_F2=0   (the cheat passes the pristine leg)
+
+# property spread: two further single-edit mutants, own edits, pristine untouched
+cd <S>/empty && python3 -I <S>/pristine/tools/pbt-staged-id.py --guard <S>/m3/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/d-m3.jsonl
+  VIOLATION index=8 field held: guard {}, oracle {'S026': 'S015'}    d-m3.jsonl=9 lines
+cd <S>/empty && python3 -I <S>/pristine/tools/pbt-staged-id.py --guard <S>/m4/staged-id-guard.py --seed 4949 --cases 400 --dump <S>/d-m4.jsonl
+  VIOLATION index=20 field staged_max: guard 'S007', oracle 'S000'   d-m4.jsonl=21 lines
+
+# not a fixture replay: seed 4950
+cd <S>/empty && python3 -I <S>/pristine/tools/pbt-staged-id.py --guard <S>/pristine/staged-id-guard.py --seed 4950 --cases 400 --dump <S>/p4950.jsonl
+  distinct case records: 4949=400, 4950=400, shared=0
