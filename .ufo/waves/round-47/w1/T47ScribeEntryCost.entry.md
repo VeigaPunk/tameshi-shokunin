@@ -1,0 +1,47 @@
+source: S264 — https://api.semanticscholar.org/graph/v1/paper/DOI:10.1109/ICST60714.2024.00037?fields=title%2Cabstract%2Cyear%2Cvenue%2Cauthors%2CexternalIds — abstract field — retrieved 2026-10-25
+verified-at: 2026-10-25
+recheck: 180d — `curl -fsSL 'https://api.semanticscholar.org/graph/v1/paper/DOI:10.1109/ICST60714.2024.00037?fields=title%2Cabstract%2Cyear%2Cvenue%2Cauthors%2CexternalIds' | sha256sum` → expect `6ab5b3f58b27827c265422f958689bbeda4514286a532b3ce2f4a6b720bfde06`; and the same fetch `| grep -c 'Automatically rerunning a test costs 0.02 cents'` → expect a non-zero count
+ground: F3 (determinism precondition, flaky-aware verdicts) — the price of the branch a rerun cadence chooses between, measured in one industrial context
+
+# The expensive branch of a flaky test is the failed pipeline, not the rerun
+
+## What the snapshot states
+
+S264 is one JSON line (3,116 bytes, sha256 `6ab5b3f5…de06`) returned by the Semantic Scholar graph API for the fields `title,abstract,year,venue,authors,externalIds`. Because the snapshot has no line structure, every citation below names the field, not a line.
+
+**Identity from the record's own fields.** `title` reads "Cost of Flaky Tests in Continuous Integration: An Industrial Case Study"; `year` is 2024; `externalIds` carries DOI `10.1109/ICST60714.2024.00037`, DBLP key `conf/icst/LeinenEPSSJ24` and CorpusId 266377386; `authors` lists Fabian Leinen, Daniel Elsner, Alexander Pretschner, Andreas Stahlbauer, Michael Sailer and Elmar Jurgens (the record's spelling); `openAccessPdf` names `https://mediatum.ub.tum.de/1730194`, status `GREEN`, license `other-oa`. The `openAccessPdf` pointer is recorded, not opened this round.
+
+**Carrier defect — the `venue` field, reported verbatim.** `venue` reads "International Conference on Information Control Systems & Technologies". That string cannot be reconciled with the record's own DOI (`…ICST60714…`) or DBLP key (`conf/icst/…`), and the `abstract` and `title` fields name no venue at all: "ICST" occurs in the snapshot only inside `externalIds.DOI`, and "Conference" occurs only inside `venue` itself. The staged note for this row asserted that the abstract's own text names the ICST 2024 paper; the field carries no venue name, so that part of the note does not hold for this snapshot and is recorded here as a discrepancy rather than smoothed over. This entry therefore cites the DOI and the `abstract` field; no venue is claimed for this row, and the record's metadata is not trusted beyond identity fields the DOI and DBLP key corroborate.
+
+**The gap the paper names, and the effort it prices.** "However, it is yet unclear where and to what extent the costs of flaky tests manifest in industrial Continuous Integration (CI) development processes" (23 words, `abstract`), while "They spend a lot of effort trying to detect, repair, and mitigate the negative effects of flaky tests" (18 words, `abstract`). The abstract's contribution is a cost model plus one instantiation of it, not a survey.
+
+**The case study.** "We analyze five years of development history, including CI test logs, commits from the Version Control System (VCS), issue tickets, and tracked work time" (24 words, `abstract`), and "We then instantiate this model in a case study of a large, commercial software project" (15 words, `abstract`) with "~30 developers and ~1M SLoC" (6 words, `abstract`).
+
+**The headline cost, as a floor.** "the time spent dealing with flaky tests in the studied project represents at least 2.5% of the productive developer time" (20 words, `abstract`). The paper derives its cost factors by combining research and practice: "we compile cost factors introduced by flaky tests in CI development from research and practice" (15 words, `abstract`).
+
+**The split of that floor into three activities.** Investigating: "This effort is divided into investigating potentially flaky test failures" (10 words, `abstract`), "1.1% of the total time spent" (`abstract`). Repairing: "repairing flaky tests adds another 1.3 %" (7 words, `abstract`). Monitoring tooling: "developing tools to monitor flaky tests adds 0.1 %" (9 words, `abstract`).
+
+**The two prices that carry the F3 cost trade.** Rerun branch: "Automatically rerunning a test costs 0.02 cents, while not rerunning" (10 words, `abstract`). Failed-pipeline branch: "not rerunning and thus letting the pipeline fail results in a manual investigation costing $5.67 in our context" (18 words, `abstract`). The paper states its own direction of travel: "The insights gained from our case study have led to the decision to shift effort from investigation and repair to automatically rerunning tests" (23 words, `abstract`).
+
+**The outlier status is the paper's own claim, not this entry's.** "Contrary to most other studies, we find the cost for rerunning tests to be negligible and inexpensive" (17 words, `abstract`).
+
+**What the paper offers beyond the numbers.** "Our cost model can help practitioners analyze the cost of flaky tests in their context" (15 words, `abstract`), and "our case study provides a first step to better understand the costs of flaky tests" (15 words, `abstract`).
+
+## What is inferred
+
+- **Inference — the ratio between the branches, recomputed.** The abstract states $5.67 for a manual investigation and 0.02 cents for an automatic rerun. [INFERENCE] inputs: 5.67 USD and 0.02 cents = 0.0002 USD; 5.67 / 0.0002 = 28,350. The package copy of this entry printed "~280×", which divides 5.67 by 0.02 *dollars* while quoting 0.02 *cents*; that figure is wrong by two orders of magnitude and is not carried. The recomputed ratio is stated only for the studied project's context.
+- **Inference — the earlier framing of the cadence question was the wrong one.** If the rerun is the cheap branch and a red build the expensive one, the choice a rerun cadence makes is not "spend reruns or not" but "spend reruns or spend a human investigation". [INFERENCE] inputs: the two prices above. Nothing in the abstract prices a *false red* — a rerun that hides a real failure — so the abstract supplies the cost term of the trade and no detection term; F3's verdict half stays open.
+- **Inference — the 2.5 % is a floor and it contains the tooling.** [INFERENCE] inputs: the three stated shares 1.1 % + 1.3 % + 0.1 % = 2.5 %, equal to the stated total; the abstract itself says "at least 2.5%", so the decomposition reproduces the floor rather than exceeding it. The 0.1 % is money spent building monitoring tools, i.e. a cost of the problem that any mitigation the lane builds would also incur — it is not a saving.
+- **Inference — the denominator of the 1.1 % is left open by the wording.** The abstract says "1.1% of the total time spent" without saying total of what; read as a share of productive developer time it is consistent with the 2.5 % total, read as a share of flaky-handling time it is not. [INFERENCE] inputs: 1.1 + 1.3 + 0.1 = 2.5. Only the consistent reading is used here; the ambiguity is recorded, not resolved.
+- **Inference — the context qualifier is part of the measurement.** Both prices sit inside one commercial project's CI ("in our context", `abstract`), and the authors describe the rerun finding as contrary to most other studies. A lane gate fleet of small shell checks is neither that project's CI nor its sample, so these prices are a prior on the shape of the trade, not a rate the lane may budget with.
+- **Inference — the studied project's own adopted policy is evidence of a trade-off, not of its safety.** The authors report the decision to shift effort toward automatic rerunning. The abstract states no false-negative or detection rate for that policy, so the decision is reported here as what one project did, with the detection term unmeasured.
+
+## What is not claimed
+
+- Only the `abstract` field was read. The cost model, the derivation of its factors, the per-project variance and the full text are not read here; the reachable open-access pointer is recorded and was not opened.
+- One commercial project with ~30 developers and ~1M SLoC. Neither the 2.5 % floor nor the two prices is claimed to transfer to this lane's gate fleet; the F3 cost baseline is imported as a shape, not as a number to copy.
+- No venue is claimed. The `venue` field contradicts the DOI and the DBLP key, the abstract names no venue, and this row is anchored on the DOI alone.
+- The package copy's cross-reference to an "S205" (an "over 95 % of individual test failures still reported" guarantee) is dropped: no row S205 exists in `corpus/SOURCES.md` at this revision, and the abstract states no such figure. The package copy's "~280×" is corrected above; its "F7 cost baseline" framing is reduced to the F3 cost term this round declares, with no F7 claim made.
+- The `abstract` field is reproduced as the record carries it. That it matches the publisher's own abstract verbatim is not verified here: the record's `venue` field is already demonstrably wrong, so its metadata is not taken on trust beyond the identity fields the DOI and DBLP key corroborate.
+- The package copy's account of the retrieval attempts (a JavaScript-shell publisher page, a timed-out mediaTUM fetch) is not restated: those attempts were not run by this seat and the snapshot does not record them.
+- F3 stays open. This entry supplies the cost the rerun cadence is traded against; it measures nothing about this lane's own flake rate, false-red rate or attempt budget.

@@ -6,8 +6,10 @@
 #   OUTDIR  an existing directory inside LANE (receipts are written as files there).
 # Every step reads REV (git show / ls-tree / archive), not the worktree:
 #   0  FROZEN_UNCHANGED   git diff FREEZE..REV over the frozen counters, statements, pool, snapshots, package copies,
-#                         controls, assembler, no-harm script and contract is empty
+#                         controls, assembler, no-harm script, contract AND every tool file a statement pins by sha256
+#                         (tools/, the round-15/21/45/46 and kaika-round-1 evidence: T47CritC1Control cheat e) is empty
 #   0b HARDENED_REBUILD   the two v2 counters at REV are byte-identical to assemble.py over the wave-1 additions at REV
+#   0c ADDITION_LINT_OK   the seat additions pass quality/addition-lint.py (no embedded oracle)
 #   1  no-harm monitors   .ufo/evidence/round-47/no-harm.sh taken FROM REV (seven monitors), plus the cold-read
 #                         monitor's credited-section count (>= 60)
 #   2  C1, C2, C3         the three frozen counters at REV
@@ -24,7 +26,7 @@ W1=.ufo/waves/round-47/w1
 cd "$LANE" || exit 2
 REV=$(git rev-parse --verify "$REV^{commit}") || exit 2
 rc=0
-FROZEN="$E/contract.json $E/calibration/measure.py $E/calibration/statements.json $E/coverage/measure.py $E/coverage/sources $E/assimilation/package $E/hardening/pool.py $E/hardening/pool.json $E/hardening/assemble.py $E/control $E/no-harm.sh $E/before/base-freshness.txt $E/before/base-coverage.txt .ufo/waves/round-47/hard-brief.md"
+FROZEN="$E/contract.json $E/calibration/measure.py $E/calibration/statements.json $E/coverage/measure.py $E/coverage/sources $E/assimilation/package $E/hardening/pool.py $E/hardening/pool.json $E/hardening/assemble.py $E/control $E/no-harm.sh $E/before/base-freshness.txt $E/before/base-coverage.txt .ufo/waves/round-47/hard-brief.md tools .ufo/evidence/kaika-round-1 .ufo/evidence/round-15 .ufo/evidence/round-21 .ufo/evidence/round-45 .ufo/evidence/round-46"
 if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi
 for f in calibration/measure.py calibration/statements.json coverage/measure.py hardening/pool.py hardening/pool.json hardening/freshness-counter.py hardening/coverage-counter.py; do echo "COUNTER_SHA256 $f $(git show "$REV:$E/$f" | sha256sum | cut -c1-64)" | tee -a "$OUT/frozen.stdout"; done
 T=$(mktemp -d)
@@ -43,6 +45,13 @@ open(t + '/c.py', 'w', encoding='utf-8').write(m.assemble('coverage', adds(cadd)
 print('rebuilt')
 PYEOF
 if git show "$REV:$E/hardening/freshness-counter.py" | cmp -s - "$T/f.py" && git show "$REV:$E/hardening/coverage-counter.py" | cmp -s - "$T/c.py"; then echo "HARDENED_REBUILD=1" | tee -a "$OUT/frozen.stdout"; else echo "HARDENED_REBUILD=0 ($(tr '\n' ' ' < "$T/rebuild.out"))" | tee -a "$OUT/frozen.stdout"; rc=1; fi
+# 0c ADDITION_LINT: no exec/eval/compile, packed payload, oversized literal or verbatim copy of rule code in any addition
+# (the frozen C2 counter alone is passable by an embedded differential oracle: T47CritC2Control (a); this lint is a
+# landing check beside the claim, it never changes the counter, the pool or the target)
+lint_rc=0
+python3 "$E/quality/addition-lint.py" --base "$T/.ufo/evidence/round-46/hardening/freshness-counter.py" $(ls "$T/$W1"/T47HardFresh*.addition.py) > "$OUT/addition-lint.stdout" 2>&1 || lint_rc=1
+python3 "$E/quality/addition-lint.py" --base "$T/.ufo/evidence/round-46/hardening/coverage-counter.py" $(ls "$T/$W1"/T47HardCover*.addition.py) >> "$OUT/addition-lint.stdout" 2>&1 || lint_rc=1
+cat "$OUT/addition-lint.stdout"; [ "$lint_rc" = 0 ] && echo "ADDITION_LINT_OK=1" | tee -a "$OUT/frozen.stdout" || { echo "ADDITION_LINT_OK=0" | tee -a "$OUT/frozen.stdout"; rc=1; }
 rm -rf "$T"
 git show "$REV:$E/no-harm.sh" > "$OUT/no-harm.sh.copy"
 bash "$OUT/no-harm.sh.copy" "$LANE" "$REV" > "$OUT/no-harm.stdout" 2>&1; nh=$?; echo "$nh" > "$OUT/no-harm.exit"; rm -f "$OUT/no-harm.sh.copy"
