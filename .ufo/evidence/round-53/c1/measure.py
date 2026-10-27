@@ -51,10 +51,10 @@ def git(args, cwd=None, check=True):
 
 
 def cat(lane, rev, path):
-    r = git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev, path)])
+    r = git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev, path)], check=False)
     if r.returncode != 0:
         return None
-    return git(['-C', lane, 'show', '%s:%s' % (rev, path)]).stdout
+    return git(['-C', lane, 'show', '%s:%s' % (rev, path)], check=False).stdout
 
 
 def main():
@@ -108,7 +108,12 @@ def main():
             c0 = None
 
     led_raw = cat(lane, rev, LEDGER)
-    headings = json.loads(cat(lane, rev, HEADINGS).decode())
+    head_raw = cat(lane, rev, HEADINGS)
+    if head_raw is None:
+        problems.append('lost-headings-missing-at-rev')
+        headings = []
+    else:
+        headings = json.loads(head_raw.decode())
     if led_raw is None:
         problems.append('ledger-missing')
         ledger = {'entries': []}
@@ -171,8 +176,8 @@ def main():
             sec = sections.get(h)
             if sec is None:
                 break
-            if d.get('cand', '')[:12] not in (rev[:12],) and \
-               not str(d.get('cand', '')).startswith(c0 or ''):
+            cand = str(d.get('cand', ''))
+            if not (cand[:12] == rev[:12] or (c0 and cand.startswith(c0))):
                 continue
             if d.get('section_sha256') == sec['sha256']:
                 got = True
