@@ -109,6 +109,11 @@ RESULT_SCHEMA = "tameshi-context-gate-result-v1"
 # Final maintained gate source identity (round-15 w2, committed by L1).
 PIN_TOOL_SHA256 = (
     "c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726")
+# Round 53 (R52.5 class): the C2 scratch-hygiene patch moved the live tool
+# bytes; per the re-pin rule the moved digest is appended, the round-15 blob
+# pin above is untouched.
+PIN_MAINTAINED_TOOL_SHA256 = (
+    "be539b4cd1cebe17227f91ffa202b7f3dac994fdfc6be20454d5277bd673183d")
 # Pre-fix gate source at PREFIX_REV (old-half oracle bytes).
 PIN_PREFIX_TOOL_SHA256 = (
     "0ed784e0076b3de5ec5000c3862a771a3e3e2eb83241da347a6cf3f2f2c61edc")
@@ -639,7 +644,7 @@ def run_verification(rev, artifact_dir):
     worktree_sha = (sha256_bytes(worktree_tool.read_bytes())
                     if worktree_tool.exists() else None)
     record_check(
-        "registered-tool-source-pin", worktree_sha == PIN_TOOL_SHA256,
+        "registered-tool-source-pin", worktree_sha == PIN_MAINTAINED_TOOL_SHA256,
         "worktree {} sha256={} pinned={}".format(
             TOOL_REL, worktree_sha, PIN_TOOL_SHA256),
         path=TOOL_REL, observed_sha256=worktree_sha,
