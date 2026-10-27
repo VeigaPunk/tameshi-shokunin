@@ -1,0 +1,49 @@
+{
+  "schema": "tameshi-trace-inputs-v1",
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
+    "375",
+    "404",
+    "corpus/knowledge/mutation-case-kagi-census.md,corpus/knowledge/mutation-case-kimi-census.md,tools/mutate-and-run.sh",
+    "SCORECARD.md,corpus/README.md",
+    ""
+  ],
+  "cwd": "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+  "root": "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+  "rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
+  "rev_reason": null,
+  "exit": 0,
+  "tracked_filter": true,
+  "env_overrides": {
+    "git_vars_removed": [
+      "GIT_CONFIG_GLOBAL",
+      "GIT_CONFIG_NOSYSTEM"
+    ],
+    "set": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPYCACHEPREFIX": "/fast/scratch/hyaku/tameshi-r51/refresh/trace-inputs-run-510rubai/pycache"
+    }
+  },
+  "inputs": {
+    "SKILL.md": "ee6caff12e94aea02beafac1bc1731fece807a85fe83f9ba6fcbd5208fe1685b",
+    "corpus/knowledge/mutation-case-kagi-census.md": "d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0",
+    "corpus/knowledge/mutation-case-kimi-census.md": "034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548",
+    "tools/mutate-and-run.sh": "977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda"
+  },
+  "untracked": {},
+  "external": {},
+  "live_lane_reads": {
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/02/ec217c4d0afabe727fde2e261b7951d28fb4e9": "a1ecb9cd795fd69434273e02484411907bbe43ab1d252a301e4bef6dd2e848fc",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/71/dbaed5d5313e18a13ad4942824ba29b7ab064a": "30a32ff93d4856eae6986f975b3103474ec57bb5fcf818a8ab93c9bd3f9e2d67",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/76/5a5aa1b573ddb07a15a9ade22ec8bb5a0f8709": "6e3175dd1a6b599a3c8f6faab8e8c4a9953717daae420808c71412d9b52adb67",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/c1/0d1bd5662782d96dfc5808b099df941b363d1b": "33d6c8bf9790a13652baf47a9eb548996204b3f35ef5018f175fced1123152df",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/e9/4311c43b72b29922810d2965d4b329cfb47da9": "246d885fe736ad0c82ab8870cf08ccae51de48cb1db2f74592c8b5b618ccc10c",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.git/objects/pack/multi-pack-index": "be9aa0d4aa1d67f93d4fa13aca9bd1b319ff8e604f6790d35424328e3d178b30"
+  },
+  "dropped_home_count": 6
+}
