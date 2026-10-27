@@ -1,0 +1,12 @@
+{
+  "heading": "### Gate/probe registry",
+  "cand": "5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e",
+  "section_sha256": "99285e24a71a8d2a0ea3fd6bcafe7e080acb23bfd653e7cbb3b71dfdc5144c77",
+  "findings": [
+    {
+      "quote": "0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage only (argparse)",
+      "class": "verdict-map drift introduced by the round-53 `$TMPDIR` fix: a could-not-evaluate exits 1, the map's failed-integrity class",
+      "skill_statement": "Row 2's verdict map does not hold for the row's own self-test command once the round-53 strict scratch root is in place. At C** `python3 tools/bash-witness-study.py selftest` with TMPDIR naming a nonexistent directory raises the helper's RuntimeError out of main() (tools/bash-witness-study.py:1255 `dir=strict_scratch_root()` -> :205-216; main catches only Fail and Cannot, :1776-1790) and exits 1 with a Python traceback, which this cell classes as '1 unresolved/failed integrity', although the message says '(could-not-evaluate)' and nothing was graded. The sibling row of the same table maps the identical $TMPDIR precondition to exit 2 — `python3 tools/repeat-control.py --selftest` (and `--runs`) with the same unusable TMPDIR prints `REPEAT_CONTROL: setup_error` and exits 2 via EXIT_BY_ID setup_error: 2 (tools/repeat-control.py:121-131) — so the two rows of this registry assign opposite classes to the same refusal, and by exit code alone a setup-cannot is indistinguishable from a selftest integrity failure."
+    }
+  ]
+}
