@@ -1,0 +1,595 @@
+{
+ "pristine_sha256": "3edfdb8737c667430f5555076899851ecaa25e4b2e5ccfe4c0603ae3e0bb3ec6",
+ "pristine_selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+ "pristine_probes": {
+  "b1_full": [
+   1,
+   3,
+   [
+    "c"
+   ],
+   1
+  ],
+  "b2_inflated": [
+   5,
+   2,
+   [],
+   1
+  ],
+  "b3_empty": [
+   null,
+   null,
+   [],
+   1
+  ],
+  "c_empty": [
+   null,
+   30
+  ],
+  "c_forge_missing": [
+   10,
+   7
+  ],
+  "c_valid_pass": [
+   30,
+   0
+  ],
+  "c3_forged_stub": [
+   10,
+   0
+  ],
+  "mte_ok": true,
+  "mte_superseded": false,
+  "mte_kind_probe": false,
+  "mte_argv_no_check": false,
+  "mte_exit1": false,
+  "mte_needle_extra": false,
+  "mte_needle_stale": false,
+  "leg_count_2": 2,
+  "leg_count_none": null,
+  "cases_missing_empty": [
+   "check(\"c1-killed\"",
+   "check(\"c1-missing-anchor\"",
+   "check(\"c1-pristine-red\"",
+   "check(\"c1-survived\"",
+   "check(\"c2-complete\"",
+   "check(\"c2-missing-profile\"",
+   "check(\"c2-unmined-source\"",
+   "check(\"c2-wrong-classification\"",
+   "check(\"c2-wrong-pin\"",
+   "check(claim + \"-unknown-rev\"",
+   "check(claim + \"-usage\""
+  ],
+  "cases_missing_r21base": []
+ },
+ "mutants": [
+  {
+   "id": "M01",
+   "slug": "row-regex-differs-alt",
+   "clause": "row regex: |differs dropped, differing row line unmatched/invisible",
+   "line": 29,
+   "old": "(?: (held|differs))?",
+   "new": "(?: (held))?",
+   "sha256": "0a2211d4a4b04e2963a9d7cbcbf8dd82a47bfda0e55843dd317defbae13e3c12",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "rc-differs"
+   ],
+   "divergent_probes": {
+    "b1_full": {
+     "pristine": [
+      1,
+      3,
+      [
+       "c"
+      ],
+      1
+     ],
+     "mutant": [
+      1,
+      3,
+      [],
+      1
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:rc-differs"
+  },
+  {
+   "id": "M02",
+   "slug": "summary-extra-ignores-held",
+   "clause": "summary parse: extra ignores held==N (any summary line passes)",
+   "line": 75,
+   "old": "0 if (m and held == n) else 1",
+   "new": "0 if m else 1",
+   "sha256": "d62285ed6d8a717deecdaa50f152ab4dea7ccb42199dfa4cd37513dff9cd471e",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "rc-differs"
+   ],
+   "divergent_probes": {
+    "b1_full": {
+     "pristine": [
+      1,
+      3,
+      [
+       "c"
+      ],
+      1
+     ],
+     "mutant": [
+      1,
+      3,
+      [
+       "c"
+      ],
+      0
+     ]
+    },
+    "b2_inflated": {
+     "pristine": [
+      5,
+      2,
+      [],
+      1
+     ],
+     "mutant": [
+      5,
+      2,
+      [],
+      0
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:rc-differs"
+  },
+  {
+   "id": "M03",
+   "slug": "summary-held-ge-n",
+   "clause": "summary parse: inflated held count accepted (held>=n)",
+   "line": 75,
+   "old": "held == n",
+   "new": "held >= n",
+   "sha256": "860eb110211ec05a5dc7ec50b1c918667a31894a9dd15762943f77e9a16f86c4",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "b2_inflated": {
+     "pristine": [
+      5,
+      2,
+      [],
+      1
+     ],
+     "mutant": [
+      5,
+      2,
+      [],
+      0
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:b2_inflated"
+  },
+  {
+   "id": "M04",
+   "slug": "not-held-keeps-superseded",
+   "clause": "superseded exclusion dropped from not_held",
+   "line": 72,
+   "old": "if not sup and verdict != 'held'",
+   "new": "if verdict != 'held'",
+   "sha256": "8f7ea33d97232a5a241799c1e3bea892eb06df449e48c0d419a35bde68de3407",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "rc-differs"
+   ],
+   "divergent_probes": {
+    "b1_full": {
+     "pristine": [
+      1,
+      3,
+      [
+       "c"
+      ],
+      1
+     ],
+     "mutant": [
+      1,
+      3,
+      [
+       "b",
+       "c"
+      ],
+      1
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:rc-differs"
+  },
+  {
+   "id": "M05",
+   "slug": "dropped-always-empty",
+   "clause": "base-active drop check disabled (dropped always [])",
+   "line": 117,
+   "old": "dropped = sorted(set(base_active) - active)",
+   "new": "dropped = []",
+   "sha256": "ecbde2eaa637b9726e2d7311715a03db62305fd58b38b71f68d555ee6ac0e52c",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {},
+   "verdict": "SURVIVED",
+   "killed_by": "none"
+  },
+  {
+   "id": "M06",
+   "slug": "active-status-truthy",
+   "clause": "base-active drop check: status filter truthy (superseded counts active)",
+   "line": 116,
+   "old": "if x.get('status') == 'active'}",
+   "new": "if x.get('status')}",
+   "sha256": "bf260b58cf4bd7ab2d0c91f4cc1afa25bfa16679fddf1cfb104e8a5cdab498c1",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {},
+   "verdict": "SURVIVED",
+   "killed_by": "none"
+  },
+  {
+   "id": "M07",
+   "slug": "mte-status-clause-dropped",
+   "clause": "mte row: status==active clause dropped",
+   "line": 65,
+   "old": "ok = (r.get('status') == 'active' and r.get('kind')",
+   "new": "ok = (r.get('kind')",
+   "sha256": "2bf0993a7099389364832406e9f5e2d4efd1a13a5567080e8af20b8e9e6549e6",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "mte-superseded"
+   ],
+   "divergent_probes": {
+    "mte_superseded": {
+     "pristine": false,
+     "mutant": true
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:mte-superseded"
+  },
+  {
+   "id": "M08",
+   "slug": "mte-kind-clause-dropped",
+   "clause": "mte row: kind==gate clause dropped",
+   "line": 65,
+   "old": "r.get('kind') == 'gate' and",
+   "new": "<delete>",
+   "sha256": "65f72cdf70e355c04cb09e145fb286c309724d8bd16e627e834f3e2572ceda59",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "mte_kind_probe": {
+     "pristine": false,
+     "mutant": true
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:mte_kind_probe"
+  },
+  {
+   "id": "M09",
+   "slug": "mte-argv-no-check",
+   "clause": "mte row: --check argv clause dropped",
+   "line": 66,
+   "old": "and '--check' in argv and",
+   "new": "and",
+   "sha256": "67dafa01549c4b72e775093c2226810f072c92b294bfa5c691c1cd880f2a41c3",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "mte_argv_no_check": {
+     "pristine": false,
+     "mutant": true
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:mte_argv_no_check"
+  },
+  {
+   "id": "M10",
+   "slug": "mte-exit-present",
+   "clause": "mte row: exit==0 weakened to exit present",
+   "line": 66,
+   "old": "exp.get('exit') == 0 and want",
+   "new": "exp.get('exit') is not None and want",
+   "sha256": "ba044cf0cacb05cbb2ebdc6f85a80f08e0032d98f7d2693efcd1bfa7b929db36",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "mte_exit1": {
+     "pristine": false,
+     "mutant": true
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:mte_exit1"
+  },
+  {
+   "id": "M11",
+   "slug": "mte-needle-prefix",
+   "clause": "mte needle: K/K requirement reduced to prefix MTE_INTEROP: PASS",
+   "line": 64,
+   "old": "want = 'MTE_INTEROP: PASS legs_conforming=%s/%s' % (k, k)",
+   "new": "want = 'MTE_INTEROP: PASS'",
+   "sha256": "7c7c24d3618358f932aea50850f93e6fdd9d0c8fd9a1e566d9842886134ace42",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "mte-ok"
+   ],
+   "divergent_probes": {
+    "mte_ok": {
+     "pristine": true,
+     "mutant": false
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:mte-ok"
+  },
+  {
+   "id": "M12",
+   "slug": "mte-needle-substring-repr",
+   "clause": "mte needle: exact-element match weakened to substring-of-repr",
+   "line": 66,
+   "old": "want in (exp.get('stdout_contains') or [])",
+   "new": "want in str(exp.get('stdout_contains') or '')",
+   "sha256": "c164790a016cb46c09523f093bd2ff0c148b1b03ee2320157600dae210474e52",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "mte_needle_extra": {
+     "pristine": false,
+     "mutant": true
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:mte_needle_extra"
+  },
+  {
+   "id": "M13",
+   "slug": "legcount-hardcode-9",
+   "clause": "LEG_TABLE count hardcoded to stale base value 9",
+   "line": 49,
+   "old": "return len(node.value.keys)",
+   "new": "return 9",
+   "sha256": "b0ec3c19b1a1acdecd601da179be35292fd2f951d3c85f4f11ebac59bd098e54",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "mte-ok"
+   ],
+   "divergent_probes": {
+    "mte_ok": {
+     "pristine": true,
+     "mutant": false
+    },
+    "leg_count_2": {
+     "pristine": 2,
+     "mutant": 9
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:mte-ok"
+  },
+  {
+   "id": "M14",
+   "slug": "c3-digest-gate-open",
+   "clause": "C3 freeze digest gate removed (any REV C3 bytes executed)",
+   "line": 123,
+   "old": "if hashlib.sha256(c3_src).hexdigest() == C3_SHA:",
+   "new": "if True:",
+   "sha256": "5d73b51523e148429ba84cf1b5a024a45ec7b8d5f1df776da4ba20be3294f554",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {},
+   "verdict": "SURVIVED",
+   "killed_by": "none"
+  },
+  {
+   "id": "M15",
+   "slug": "c3-total-from-missing",
+   "clause": "C3 summary: total parsed from missing= token",
+   "line": 81,
+   "old": ".*? total=(\\d+)",
+   "new": ".*? missing=(\\d+)",
+   "sha256": "398022f50a346a214d9795e870f4443c83dd9d80287c28f4059ab78ab7c1a5d3",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "c3-parse"
+   ],
+   "divergent_probes": {
+    "c_forge_missing": {
+     "pristine": [
+      10,
+      7
+     ],
+     "mutant": [
+      null,
+      30
+     ]
+    },
+    "c_valid_pass": {
+     "pristine": [
+      30,
+      0
+     ],
+     "mutant": [
+      null,
+      30
+     ]
+    },
+    "c3_forged_stub": {
+     "pristine": [
+      10,
+      0
+     ],
+     "mutant": [
+      null,
+      30
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:c3-parse"
+  },
+  {
+   "id": "M16",
+   "slug": "c3-garbled-pass",
+   "clause": "C3 summary: garbled/missing output defaults to pass (0,0)",
+   "line": 82,
+   "old": "if m else (None, 30)",
+   "new": "if m else (0, 0)",
+   "sha256": "811a6981ceb70231e0238f0f6c810801b3617cac7767563be79ca80a6bb1f0b6",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=1",
+   "selftest_fails": [
+    "c3-garbled"
+   ],
+   "divergent_probes": {
+    "c_empty": {
+     "pristine": [
+      null,
+      30
+     ],
+     "mutant": [
+      0,
+      0
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "selftest:c3-garbled"
+  },
+  {
+   "id": "M17",
+   "slug": "cases-missing-disabled",
+   "clause": "cases_missing disabled (always [])",
+   "line": 150,
+   "old": "return [c for c in R21_CASES if c not in src]",
+   "new": "return [c for c in R21_CASES if False and c not in src]",
+   "sha256": "69cb0c8fa8b160e505aff8d48aa927342cd5f0e57534dec4801ce1451157f8f3",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "cases_missing_empty": {
+     "pristine": [
+      "check(\"c1-killed\"",
+      "check(\"c1-missing-anchor\"",
+      "check(\"c1-pristine-red\"",
+      "check(\"c1-survived\"",
+      "check(\"c2-complete\"",
+      "check(\"c2-missing-profile\"",
+      "check(\"c2-unmined-source\"",
+      "check(\"c2-wrong-classification\"",
+      "check(\"c2-wrong-pin\"",
+      "check(claim + \"-unknown-rev\"",
+      "check(claim + \"-usage\""
+     ],
+     "mutant": []
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:cases_missing_empty"
+  },
+  {
+   "id": "M18",
+   "slug": "cases-literal-typo",
+   "clause": "cases_missing literal drift: c1-killed needle typo",
+   "line": 31,
+   "old": "check(\"c1-killed\"",
+   "new": "check(\"c1-kiled\"",
+   "sha256": "3f3c87880db2c8a53efdde37b45565343ba987b82266ca358a4477a7e6166969",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {
+    "cases_missing_empty": {
+     "pristine": [
+      "check(\"c1-killed\"",
+      "check(\"c1-missing-anchor\"",
+      "check(\"c1-pristine-red\"",
+      "check(\"c1-survived\"",
+      "check(\"c2-complete\"",
+      "check(\"c2-missing-profile\"",
+      "check(\"c2-unmined-source\"",
+      "check(\"c2-wrong-classification\"",
+      "check(\"c2-wrong-pin\"",
+      "check(claim + \"-unknown-rev\"",
+      "check(claim + \"-usage\""
+     ],
+     "mutant": [
+      "check(\"c1-kiled\"",
+      "check(\"c1-missing-anchor\"",
+      "check(\"c1-pristine-red\"",
+      "check(\"c1-survived\"",
+      "check(\"c2-complete\"",
+      "check(\"c2-missing-profile\"",
+      "check(\"c2-unmined-source\"",
+      "check(\"c2-wrong-classification\"",
+      "check(\"c2-wrong-pin\"",
+      "check(claim + \"-unknown-rev\"",
+      "check(claim + \"-usage\""
+     ]
+    },
+    "cases_missing_r21base": {
+     "pristine": [],
+     "mutant": [
+      "check(\"c1-kiled\""
+     ]
+    }
+   },
+   "verdict": "KILLED",
+   "killed_by": "crafted:cases_missing_empty,cases_missing_r21base"
+  },
+  {
+   "id": "M19",
+   "slug": "total-drops-dropped",
+   "clause": "total arithmetic drops len(dropped)",
+   "line": 142,
+   "old": "total = len(not_held) + extra + len(dropped) + (0 if ok else 1) + c3_total + len(gone)",
+   "new": "total = len(not_held) + extra + (0 if ok else 1) + c3_total + len(gone)",
+   "sha256": "a95e2143b7bbd441adf64d44633b966fe3c3fd2c24303f7f31d0d74c3e006cf5",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {},
+   "verdict": "SURVIVED",
+   "killed_by": "none"
+  },
+  {
+   "id": "M20",
+   "slug": "label-always-true",
+   "clause": "PASS label hardwired true",
+   "line": 145,
+   "old": "'true' if total == 0 else 'false'",
+   "new": "'true'",
+   "sha256": "27be7b8227b0ddd3acb829ac390798e1fae126e99516cc7df819b342e8f23516",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {},
+   "verdict": "SURVIVED",
+   "killed_by": "none"
+  },
+  {
+   "id": "M21",
+   "slug": "exit-always-zero",
+   "clause": "exit code hardwired 0",
+   "line": 146,
+   "old": "return 0 if total == 0 else 1",
+   "new": "return 0",
+   "sha256": "884a2a1b9582df90e5959c4aa5ee3b47b38a8b6f89887743e70effb2548b145e",
+   "selftest_tail": "C1_SELFTEST: cases=9 failed=0",
+   "selftest_fails": [],
+   "divergent_probes": {},
+   "verdict": "SURVIVED",
+   "killed_by": "none"
+  }
+ ]
+}

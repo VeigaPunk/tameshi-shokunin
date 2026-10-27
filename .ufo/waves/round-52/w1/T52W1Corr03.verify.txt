@@ -1,0 +1,53 @@
+# T52W1Corr03 verification receipt (observed output, lane read-only)
+# date: 2026-10-27T01:48:25-03:00
+
+$ git -C . show 02ec217c:tools/mutate-and-run.sh | sha256sum
+977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda  -
+$ git -C . show 02ec217c:tools/mutate-and-run.sh | wc -l
+2159
+$ (runner lines at read_rev; 490-494 workdir handling, 500/518/519/524/548 write sites)
+490:  if [[ -z "$WORKDIR" ]]; then
+491:    WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX") || die_setup 'mktemp -d failed'
+493:    mkdir -p "$WORKDIR" || die_setup "cannot create workdir: $WORKDIR"
+500:  PRISTINE="$WORKDIR/pristine.$(basename "$TARGET_ABS")"
+518:  printf '%s\n' "$out" > "$WORKDIR/defects.tsv"
+519:  [[ "$SPEC_ABS" == "$WORKDIR/spec.copy" ]] || cp -p "$SPEC_ABS" "$WORKDIR/spec.copy"
+524:    mutant="$WORKDIR/mutant-$id.$(basename "$TARGET_ABS")"
+548:  printf 'id\tverdict\texit\tduration-ms\tmutant-sha256\tdesc\n' > "$WORKDIR/results.tsv"
+
+$ git -C . show 02ec217c:SKILL.md | sed -n "827,857p" | head -13
+### The protocol — ordered, fail-closed
+
+All writes in scratch, through the pinned harness `tools/mutate-and-run.sh`
+(the mado run used revision `597e1419…ff6331b`, 1001 lines, commit `b58b26fb`; this path now holds a later revision, so pin by
+`git show b58b26fb:tools/mutate-and-run.sh`; every run log carries its own `MUTATE_TOOL` pin; corrected in round 27, seat Read08):
+
+```bash
+bash tools/mutate-and-run.sh --target <gate> --defects <spec> \
+     --suite 'bash "$MUTANT" --selftest' --workdir <scratch>
+```
+
+1. **Pin + pristine.** The target is copied to a pinned pristine; every mutant
+   is a fresh byte copy; the original is never a write target unless `--workdir` is its own directory (keep scratch apart).
+
+$ python3 .ufo/evidence/round-52/c2/measure.py --selftest
+SELFTEST leg-count ok
+SELFTEST section-stops ok
+SELFTEST quote-verbatim ok
+SELFTEST quote-forged ok
+SELFTEST quote-short ok
+SELFTEST floor ok
+SELFTEST range ok
+SELFTEST range-miss ok
+C2_SELFTEST: cases=8 failed=0
+
+$ python3 - # frozen-rule check: check_findings(T52W1Corr03.json, reader file at read_rev) + per-quote substring
+check_findings -> None
+QUOTE len=179 in[20,200]=True substring_of_collapsed_reader=True substring_of_single_line=True
+quote source line: .ufo/evidence/round-51/coldread/reads/T51W2Read03.md:35
+section found=True lines=31
+section range: SKILL.md:827-857
+skill_statement in section -> True
+ledger entry seats=['T51W2Read03'] wrong_expectations=0
+ledger corrections key present=False; records for this entry now=0 (m4 bad while 0)
+probe (not a verdict): reader_file exact=True wrong_expectations==len(findings)=True

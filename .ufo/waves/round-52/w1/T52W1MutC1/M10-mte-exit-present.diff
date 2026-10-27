@@ -1,0 +1,11 @@
+--- a/.ufo/evidence/round-52/c1/measure.py
++++ b/.ufo/evidence/round-52/c1/measure.py
+@@ -63,7 +63,7 @@
+     exp = r.get('expect') or {}
+     want = 'MTE_INTEROP: PASS legs_conforming=%s/%s' % (k, k)
+     ok = (r.get('status') == 'active' and r.get('kind') == 'gate' and 'tools/mte-interop.py' in argv
+-          and '--check' in argv and exp.get('exit') == 0 and want in (exp.get('stdout_contains') or []))
++          and '--check' in argv and exp.get('exit') is not None and want in (exp.get('stdout_contains') or []))
+     return ok, 'legs=%s want=%r status=%s needles=%s' % (k, want, r.get('status'), exp.get('stdout_contains'))
+ 
+ 

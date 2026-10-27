@@ -1,0 +1,46 @@
+diff --git a/tools/round21-measure.py b/tools/round21-measure.py
+index 24a36fe..2f36db4 100644
+--- a/tools/round21-measure.py
++++ b/tools/round21-measure.py
+@@ -5,13 +5,19 @@
+ counter. --selftest runs literal public-CLI fixture expectations for both
+ counter packages. It validates bounded measurement logic, not producer
+ execution authenticity. Exits: 0 clean, 1 failed, 2 could-not-evaluate,
+-64 usage. All Git writes stay in private fixture repositories.
++64 usage. All Git writes stay in private fixture repositories. The c2
++fixture reads the pinned sibling blobs from the fleet root the subject
++counter itself reads (its `FLEET` literal, parsed from the package copy),
++so this selftest is fleet-bound, not hermetic: it passes from a clone
++anywhere on this host and fails where that fleet root is absent (round 52,
++routed defect R51.4).
+ """
+ import argparse
+ import copy
+ import hashlib
+ import json
+ import os
++import re
+ from pathlib import Path
+ import shutil
+ import subprocess
+@@ -69,9 +75,19 @@ def selftest():
+         (package / "c2-contract.json").write_text(json.dumps(frozen))
+         zero = hashlib.sha256(b"fixture").hexdigest()
+         surfaces = []
++        fleet_match = re.search(r'^FLEET = Path\("([^"]+)"\)$',
++                                (package / SCRIPTS["c2"]).read_text(), re.M)
++        if fleet_match is None:
++            print("MEASURE_SELFTEST: c2 counter declares no FLEET root", file=sys.stderr)
++            return 2
++        fleet = Path(fleet_match.group(1))
++        if not fleet.is_dir():
++            print(f"MEASURE_SELFTEST: fleet root {fleet} missing (fleet-bound selftest)",
++                  file=sys.stderr)
++            return 2
+         for surface in frozen["surfaces"]:
+             pin = {key: surface[key] for key in ("repo", "rev", "path")}
+-            data = subprocess.run(["git", "-C", str(ROOT.parent / surface["repo"]),
++            data = subprocess.run(["git", "-C", str(fleet / surface["repo"]),
+                                    "show", surface["rev"] + ":" + surface["path"]],
+                                   env=env, capture_output=True, check=True).stdout
+             pin["blob_sha256"] = hashlib.sha256(data).hexdigest()

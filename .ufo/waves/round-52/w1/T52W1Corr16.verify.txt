@@ -1,0 +1,102 @@
+T52W1Corr16 verification transcript — round 52 wave 1, C2 m4 correction record
+LANE=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+REV=02ec217c4d0afabe727fde2e261b7951d28fb4e9
+All commands read committed bytes with `git -C $LANE show`; no lane file was touched except this seat's
+deliverable/report/transcript in .ufo/waves/round-52/w1. One `git clone --shared` at REV under
+/fast/scratch/hyaku/tameshi-r52/T52W1Corr16 (toplevel asserted, TMPDIR=$S) was used only for the
+reattribute.py usage probe and deleted before yield. No counter was run as a verdict.
+
+1. Section resolved at REV (heading 1806, next heading 1814, 8 lines)
+$ git -C $LANE show $REV:SKILL.md | sed -n '1806,1813p'
+### Round-16 gate/probe registry
+
+| Name | Kind | Command | Exits |
+|---|---|---|---|
+| `tools/mutate-and-run.sh` | gate | `bash tools/mutate-and-run.sh --selftest` · `--regression` | selftest 0 pass / 1 fail; regression 0 PASS · 1 FAIL · 2 SETUP · 64 usage |
+| `.ufo/evidence/round-16/measure.py` | probe | `python3 .ufo/evidence/round-16/measure.py --rev REV` · `--selftest` | 0 measured · 2 rev/blob missing · 64 usage |
+| `.ufo/evidence/round-16/coldread/assemble.py` | gate | `python3 .ufo/evidence/round-16/coldread/assemble.py --selftest` | 0 every bucket covered (a rejected report is printed, not counted) · 1 a bucket uncovered · 2 usage (argparse), an invalid override or a heading mismatch (round 17) |
+| `.ufo/evidence/round-16/attribution/reattribute.py` | probe | `python3 .ufo/evidence/round-16/attribution/reattribute.py --selftest` | 0 corrected rule passes the oracle · 1 it fails |
+$ python3 -c "sha256 of '\n'.join(SKILL.md.split('\n')[1805:1813])"
+sha256=2642efc5147715676537ab35e1489742f4183b39c8a6ff0e51e25213695be843   # == the reader's section sha
+next heading line 1814 = ## Live-tree re-pin and entry-command mo
+lines in section: 8
+
+2. Reader file at REV is the working-tree bytes
+$ sha256sum .ufo/evidence/round-51/coldread/reads/T51W2Read16.md
+ad25e25f46f10e351824fa72f9e66882c54abf6b64300d8ea1ee29e594af899e  .ufo/evidence/round-51/coldread/reads/T51W2Read16.md
+$ git -C $LANE show $REV:.ufo/evidence/round-51/coldread/reads/T51W2Read16.md | sha256sum
+ad25e25f46f10e351824fa72f9e66882c54abf6b64300d8ea1ee29e594af899e  -
+
+3. Finding 1 — P2 Exits cell omits the real `--selftest` failure exit (reader T51W2Read16.md:92-93)
+$ git -C $LANE show $REV:.ufo/evidence/round-16/measure.py | sed -n '620,632p'
+    check('exit64-unknown-arg', res.returncode == 64)
+    res = call_measure(os.path.join(tmp, 'no-such-repo'), rev_base)
+    check('exit2-no-repo', res.returncode == 2)
+
+    passed = sum(1 for _, ok, _ in checks if ok)
+    print('MEASURE_SELFTEST: %d/%d pass (scratch %s)' % (passed, len(checks), tmp))
+    return 0 if passed == len(checks) else 1
+
+$ git -C $LANE show $REV:.ufo/evidence/round-16/measure.py | grep -n "return 0 if passed"
+626:    return 0 if passed == len(checks) else 1
+
+4. Finding 2 — P2 command cell has no `--repo`; the tool defaults to the live lane path (reader :94-98)
+$ git -C $LANE show $REV:.ufo/evidence/round-16/measure.py | grep -n "DEFAULT_REPO"
+53:DEFAULT_REPO = '/home/vgpnk/Projects/shokunin/tameshi-shokunin'
+634:    parser.add_argument('--repo', default=DEFAULT_REPO,
+$ ... | sed -n '633,637p'
+    parser.add_argument('--rev', help='git revision to measure')
+    parser.add_argument('--repo', default=DEFAULT_REPO,
+                        help='repository path (default: %(default)s)')
+    parser.add_argument('--selftest', action='store_true',
+                        help='build synthetic repos and self-check')
+$ ... | sed -n '643,660p'
+    if not os.path.isdir(args.repo):
+        print(json.dumps({'error': 'repo-not-found', 'repo': args.repo}, ...
+    rev = git(args.repo, 'rev-parse', '--verify', '--quiet',
+    missing = [p for p in REQUIRED_BLOBS if blob(args.repo, args.rev, p) is None]
+    print(json.dumps(measure(args.repo, args.rev), indent=2, sort_keys=True),
+  -> every measurement call uses args.repo, whose default is the live lane, never the caller's cwd.
+
+5. Finding 3 — P4 two-code map omits argparse's usage exit 2 (reader :128-129)
+$ git -C $LANE show $REV:.ufo/evidence/round-16/attribution/reattribute.py | grep -n "ArgumentParser"
+337:    parser = argparse.ArgumentParser(description=__doc__)
+Probe in the scratch clone detached at REV (toplevel asserted = $S/clone):
+$ python3 .ufo/evidence/round-16/attribution/reattribute.py --bogus
+usage: reattribute.py [-h] [--selftest]
+reattribute.py: error: unrecognized arguments: --bogus
+exit=2
+$ python3 .ufo/evidence/round-16/attribution/reattribute.py --selftest
+exit=0        # the declared 0 branch holds; not a finding.
+
+6. Finding 4 — P3 "(round 17)" tag is imprecise provenance (reader :115-117)
+$ git -C $LANE show $REV:.ufo/evidence/round-16/coldread/assemble.py | grep -n "heading mismatch\|except AsmError\|return 2"
+86:    """Fatal assembly error (heading mismatch, unreadable skill file, ...)."""
+1048:        except AsmError as e:
+1050:            return 2
+1069:    except AsmError as e:
+1071:        return 2
+$ git -C $LANE log -1 --format='%h %ci %s' $REV -- .ufo/evidence/round-16/coldread/assemble.py
+3490708 2026-10-20 11:31:50 -0300 round-16: land cold-read ledger, errata provenance fix, wave-2 corrections, residual re-read reports
+  -> the heading-mismatch exit 2 was already in the round-16 commit; the round-17 attribution has no support.
+
+7. Ledger row this record corrects
+$ python3 -c "json row of .ufo/evidence/round-21/coldread/ledger.json for heading/read_rev 02ec217c…"
+{"heading": "### Round-16 gate/probe registry", "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
+ "seats": ["T51W2Read16", "L1 TameshiR51a3 integration (attempt 3)"], "wrong_expectations": 0,
+ "minor_gaps": 0, "verdict": "verified-record", "class": "record"}
+corrections key present: False 0      # the round-52 assembler appends the top-level list
+
+8. Self-check with the frozen counter's own helper (no counter summary run)
+$ python3 - <<'PY'   # imports .ufo/evidence/round-52/c2/measure.py check_findings unchanged, floors=()
+reader = git show REV:.ufo/evidence/round-51/coldread/reads/T51W2Read16.md
+for each finding: assert 20 <= len(squash(quote)) <= 200; assert squash(quote) in squash(one reader line)
+                  assert skill_statement in the REV section text
+print check_findings(rec['findings'], reader, ())
+PY
+len=103 lines=[92] | Note (minor, pre-existing, not a round-51 falsification): the Exits ce
+len= 96 lines=[94] | Note (premise, undisclosed in this section): the command cell has no `
+len= 88 lines=[128] | Note (minor, pre-existing): the tool is argparse-based (:337) and `--b
+len=100 lines=[115] | Note (cosmetic): the "(round 17)" tag on "a heading mismatch" is impre
+check_findings -> None
+count -> 4 4 True

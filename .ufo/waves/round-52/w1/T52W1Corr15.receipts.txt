@@ -1,0 +1,66 @@
+# T52W1Corr15 receipts — correction record for round-51 re-key entry (round 52, wave 1)
+# captured 2026-10-27T02:12:04-03:00 in lane /home/vgpnk/Projects/shokunin/tameshi-shokunin (read-only)
+
+## Instrument identity
+2c771d768e692811f7a39135800d27fbdb6403f4d12d46289bff404ee6ba9fbd  .ufo/evidence/round-52/c2/measure.py
+3edfdb8737c667430f5555076899851ecaa25e4b2e5ccfe4c0603ae3e0bb3ec6  .ufo/evidence/round-52/c1/measure.py
+$ TMPDIR=<scratch> python3 -B .ufo/evidence/round-52/c2/measure.py --selftest; echo exit=$?
+SELFTEST leg-count ok
+SELFTEST section-stops ok
+SELFTEST quote-verbatim ok
+SELFTEST quote-forged ok
+SELFTEST quote-short ok
+SELFTEST floor ok
+SELFTEST range ok
+SELFTEST range-miss ok
+C2_SELFTEST: cases=8 failed=0
+exit=0
+
+## Reader file identity (read_rev 02ec217c… and HEAD and base)
+ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 602a33e79ebe2e82454549711de00b4d1b5e54908337a0ffd00e8abccd40ee9a  -
+02ec217c4d0afabe727fde2e261b7951d28fb4e9 602a33e79ebe2e82454549711de00b4d1b5e54908337a0ffd00e8abccd40ee9a  -
+HEAD 602a33e79ebe2e82454549711de00b4d1b5e54908337a0ffd00e8abccd40ee9a  -
+$ wc -l reader
+117
+
+## Reader's recorded verdict lines (grep -n)
+9:## Verdict summary
+11:- **One stale statement (the re-key edit this section needs):** the leg-count progression "(`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26)" stops at nine. At CAND the runner embeds the tenth leg `bash-drift-pins` (r51): its own doc line `tools/mutate-and-run.sh:84` now reads "r26 nine; r51 ten", and `--regression` prints `cases=10` (wave-1 receipt `.ufo/waves/round-51/w1/T51ExecEmbed/regression.stdout`: `REGRESSION: PASS (cases=10 passed=10; …)`). Each dated clause as written is true; the progression must gain "`cases=10` since round 51".
+29:| 10 | "`--regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26" | `tools/mutate-and-run.sh:84` (doc), `:1552+` (count) | **stale at CAND** | runner doc now "r26 nine; r51 ten"; `--regression` prints `cases=10` (T51ExecEmbed receipt). Re-key: append "`cases=10` since round 51" |
+63:## Record-level observations (not section defects)
+
+## Section position at read_rev (ledger start=1754 end=1805)
+## Seventh recorded case and full-page cold-read — round 16
+`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26).
+
+### Round-16 gate/probe registry
+
+## Stale-count claim verified statically at read_rev
+$ git show 02ec217c…:tools/mutate-and-run.sh | sed -n '84p'
+# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+$ git show 02ec217c…:tools/mutate-and-run.sh | grep -nE '^\s+regression_case_(git|run) ' (ledger cases at :1459-:1507)
+1459:  regression_case_git js-kimi-census \
+1464:  regression_case_git bash-surface-census \
+1469:  regression_case_git bash-tsukuroi-census \
+1474:  regression_case_git bash-mado-verify \
+1479:  regression_case_git bash-checklist-run \
+1484:  regression_case_git js-claims-check \
+1489:  regression_case_git js-round-gate \
+1494:  regression_case_git js-sources-check \
+1499:  regression_case_git js-cite-check \
+1504:  regression_case_git bash-drift-pins \
+$ count of regression_case calls in the ledger block (lines 1459-1507):
+10
+
+## check_findings (the frozen counter's own rule) on the delivered record
+$ python3 -B - <<'PY' (imports a byte-identical scratch copy of c2/measure.py; calls m.check_findings)
+KEYS ['heading', 'read_rev', 'reader', 'reader_file', 'wrong_expectations', 'findings']
+COUNT wrong_expectations=1 len(findings)=1
+CHECK_FINDINGS rev=ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 -> None
+  quote_len=159 in_reader=True in_one_line=True class=stale-count skill_statement_in_section(1754-1805)=True
+CHECK_FINDINGS rev=02ec217c4d0afabe727fde2e261b7951d28fb4e9 -> None
+  quote_len=159 in_reader=True in_one_line=True class=stale-count skill_statement_in_section(1754-1805)=True
+CHECK_FINDINGS rev=HEAD -> None
+  quote_len=159 in_reader=True in_one_line=True class=stale-count skill_statement_in_section(1754-1805)=True
+M4_WRAPPER r51_entries=20 heading_matches=1 seat=T51W2Read15 reader_match=True reader_file_match=True read_rev_prefix=True heading_eq=True entry_wrong_expectations_now=0
+QUOTE_REPR 'the leg-count progression "(`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26)" stops at nine.'
