@@ -1,0 +1,404 @@
+{
+ "wave": "round-53-w1",
+ "reportDir": ".ufo/waves/round-53/w1",
+ "template": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n## Your item\n\n{{item}}\n\nWork the item end to end, then write your report file and return your findings.\n",
+ "context": "# Goal\ntameshi round 53 (hyaku run 10; L1 TameshiR53a2), wave 1 of 2 (re-read + build + first falsifiers). Lane repo /home/vgpnk/Projects/shokunin/tameshi-shokunin (absolute paths only \u2014 seat tools start at the fleet root /home/vgpnk/Projects/shokunin; every read/edit/write names an absolute path under the lane).\n\n# Round shape\nTwo claims frozen at e62d99711a0dd5d92b83acb96dd53ff22b31cb75 (.ufo/evidence/round-53/contract.json):\n- C1 (calibration): the cold-read floor repair. 30 SKILL.md sections lost cold-read credit (19 inherited from round 52, 11 drifted by this round's own C2 tool edits). Content commit C* = a41195dfc13a73958e4c5228ec196b28d03ded03.\n- C2 (operability): tools/ scratch hygiene \u2014 the dir=\"/tmp\" hardcodes now honour TMPDIR (7 tools patched at C*).\n\n# Seat bounds (binding)\n- Read-only over: the fleet root outside the lane, sibling lane repos, /home/vgpnk/Projects/shokuknow (source repo is read-only), .ufo/state, .ufo/watchdog.log, /home/vgpnk/Projects/shokunin/.scratch.\n- Write scope: ONLY /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-53/w1/ (your deliverables). Never run git/jj mutating commands anywhere; never commit, push, fetch, prune; never edit MANIFEST.json, corpus/, SKILL.md, tools/, or .ufo/evidence/ (the L1 integrates; seats return findings and files).\n- Tooling authorization (operator, 2026-10-19): you may install/upgrade tools that help the task via official channels (uv tool / official binary in ~/.local/bin / cargo / npm -g); record tool/version/channel/reason in your report. PACMAN GUARD: all pacman transactions are PAUSED host-wide \u2014 never run pacman; install via uv/npx/binary only.\n- Scratch discipline (operator, 2026-10-25): all your clones/work dirs live under /fast/scratch/hyaku/tameshi-r53/w1/<seat-name>/ (mkdir -p first; never rely on inherited TMPDIR; /tmp is for files under 50 MB only). Delete your scratch dir before you yield (trap 'rm -rf -- \"$S\"' EXIT in shell); a seat that ends with its tree on disk reports that as its own defect.\n- Git fixtures (if any): create as D=$(mktemp -d -p /fast/scratch/hyaku/tameshi-r53/w1/<seat-name>) && git -C \"$D\" init -q; every later git call names -C \"$D\"; verify rev-parse --show-toplevel equals $D before the first commit. Never run git commit/jj with a throwaway identity anywhere else.\n- Never call task yourself; never message agent://all. Message only the L1 (TameshiR53a2) by id if blocked.\n- Every Report: trailer path the validator renders is relative \u2014 write your report at /home/vgpnk/Projects/shokunin/tameshi-shokunin/<that path> (under .ufo/waves/round-53/w1/).\n\n# Reader seats (T53W1Read01..Read30)\nEach reader re-reads ONE SKILL.md section (heading given in the item) at content commit C* = a41195dfc13a73958e4c5228ec196b28d03ded03, read via git objects only (git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show C*:SKILL.md \u2014 never the working tree). Deliver TWO files:\n1. /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-53/w1/T53W1ReadNN.json \u2014 exactly:\n   {\"heading\": \"<the heading>\", \"cand\": \"a41195dfc13a73958e4c5228ec196b28d03ded03\", \"section_sha256\": \"<sha256 of the section bytes at C*>\", \"findings\": [{\"quote\": \"<verbatim substring of the section text>\", \"class\": \"<short class>\", \"skill_statement\": \"<the statement that fails>\"}]}\n   Section bytes = the section as defined by the frozen monitor: split SKILL.md at C* into lines; a heading is a line matching ^#{1,3}(\\s|$) OUTSIDE ``` fences; the section is the heading line through the line before the next heading, trailing whitespace-only lines stripped, joined with \\n, NO trailing newline; sha256 over UTF-8 bytes with surrogateescape. Verify your split reproduces the heading's line range before hashing.\n2. /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-53/w1/T53W1ReadNN.md \u2014 the human report: the checks you ran, holds (pointers verified against C* bytes via git show), and for each finding the verbatim quote and why it fails. EVERY finding quote MUST appear byte-exact in the .md (the L1's assembly asserts this).\nFindings discipline: a finding is a statement in the section that does NOT hold at C* \u2014 stale counts/pointers, dead receipts, unsupported premises, self-contradictions, scratch-directive violations (the host scratch directive: $HYAKU_SCRATCH default /fast/scratch/hyaku; /tmp only for files under 50 MB). Dated historical milestones explicitly marked as dated are HOLDS, not findings. If nothing fails, findings is [] and the .md says so. Keep honest: a finding you cannot evidence with a command output is not a finding.",
+ "items": [
+  {
+   "name": "T53W1Read01",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Context gate classification and explicit exit classes \u2014 round 15` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read02",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Effective expectation reconciliation \u2014 round 14` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read03",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Live-tree re-pin and entry-command monitor \u2014 round 17` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read04",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read05",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Pin disposition and provenance correction \u2014 round 13` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read06",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Repeated controls and gate registry \u2014 round 12` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read07",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## Standing rules` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read08",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## The leg ledger \u2014 replay, receipt, and how it is read (round 7, measured)` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read09",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## The operator's runbook and the six-leg regression (round 10, measured)` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read10",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `## The re-sweep cadence and the six-case confidence statement (round 8, measured)` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read11",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Gate/probe registry` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read12",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Reading a receipt \u2014 the discipline` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read13",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-13 gate/probe registry` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read14",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-14 historical registry \u2014 superseded by round 15` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read15",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-15 gate/probe registry` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read16",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-17 gate/probe registry \u2014 re-pin and monitor` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read17",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-18 gate/probe registry \u2014 routed-defect closure` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read18",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-21 gate/probe registry \u2014 finite environment differential` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read19",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Round-26 gate/probe registry \u2014 report interop` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read20",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Six-case confidence statement (round 8, measured)` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read21",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The map \u2014 where a reader enters, artifact by artifact` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read22",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The re-pin semantics, as executed` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read23",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The receipt at this boundary` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read24",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The service's limits \u2014 what tameshi refuses to mutation-test` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read25",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The six-leg regression \u2014 usage and this round's receipt` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read26",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The tick and the pin read` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read27",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### The tick, executed` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read28",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Triggers T1\u2013T3 and the re-pin rule` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read29",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### Using the ledger` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1Read30",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read",
+   "item": "Cold-read the SKILL.md section `### What stays open \u2014 named, never closed by prose` at content commit a41195dfc13a73958e4c5228ec196b28d03ded03 and write the JSON + MD deliverables per the wave context's Reader discipline."
+  },
+  {
+   "name": "T53W1ExecR523",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 executor",
+   "item": "Re-derive the round-52 wave-2 review's '8 over-count' verdict (records 01, 02, 06, 09-13 of `.ufo/waves/round-52/w2/T52W2RevCorr*.md`) under ONE written counting rule: a correction record over-counts iff every one of its quoted findings is reader-marked holds/hist at CAND1 7ff81a5b0ab0 (exclude holds-hist rows per each record's own section 3). Work in a scratch clone under your seat dir (git clone --shared of the lane at 7ff81a5). Deliver a verdict per record (over-counted/exact/under-counted) with the counting rule stated and evidence commands; say whether corpus/lessons/round-52.md's statement needs correction."
+  },
+  {
+   "name": "T53W1ExecTmpVerify",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 executor",
+   "item": "Verify the C2 tool patches at C* a41195df: (1) grep -rn 'dir=\"/tmp\"' over the C* blobs of tools/ is empty (use git grep at the rev); (2) extract tools/registry-check.py and tools/env-diff.py at C* into your scratch and run each --selftest with TMPDIR=<your scratch> \u2014 both exit 0; (3) registry-check --selftest with TMPDIR=<nonexistent dir> exits non-zero, names scratch creation in stderr/stdout, and prints NO REGISTRY_CHECK verdict line; (4) TMPDIR redirected, confirm scratch dirs were created under YOUR TMPDIR (ls before cleanup). Deliver the receipt files and a one-line verdict per check."
+  },
+  {
+   "name": "T53W1ExecRegCheck",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 executor",
+   "item": "Run `cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && TMPDIR=<your scratch> python3 tools/registry-check.py --rev a41195dfc13a73958e4c5228ec196b28d03ded03` and report the final REGISTRY_CHECK line (expect held=N/N over active rows \u2014 the C2 patches changed no row expectations since selftest tallies are unchanged; if any row differs, name it and the row's expectation vs observed)."
+  },
+  {
+   "name": "T53W1RevContract",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-1 reviewer",
+   "item": "Kill-rule review of the frozen round-53 contract (.ufo/evidence/round-53/contract.json + c1/measure.py + c2/measure.py + deciding-run.sh at e62d9971): is the predicate sentence identical in plan/counter/receipt? Can a do-nothing round reach either target (the frozen controls say no \u2014 check the control receipts at .ufo/evidence/round-53/control/)? List every forgery route the counters cannot see (contract cannot_see fields) and grade whether wave 2 covers each. Verdict: KILL-RULE-SOUND or KILL-RULE-HOLE with specifics."
+  },
+  {
+   "name": "T53W1CritClaims",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-1 critic",
+   "item": "Attack both claims as declared: (C1) could a re-key entry be fabricated without fresh readers (trace self-forgery), could the precheck be green while a section is semantically stale, does the 30-heading amendment weaken the round-52 routing? (C2) does TMPDIR redirection actually isolate, what if a host ignores TMPDIR, does the doc check miss an /tmp form? For each attack: would it pass the frozen counters \u2014 yes/no + the exact bytes you'd plant. Be concrete; scratch fixtures under your seat dir only."
+  },
+  {
+   "name": "T53W1MutCounter",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 mutation-tester",
+   "item": "Mutation-test the frozen counters (.ufo/evidence/round-53/c1/measure.py, c2/measure.py at freeze e62d9971) with at least 6 single-edit mutants in a scratch fleet-mirror fixture (e.g.: rekeyed count '30'->'29'; reader sha check removed; c0 ancestor check removed; c2 cr47 'REGISTRY_CHECK' verdict-line check removed; tmp regex weakened to 'dir= \"/tmp\"' exact; docs patterns list emptied). For each mutant: expected (counter must flip to PASS=true/false incorrectly or crash = KILLED; counter still correct = SURVIVED) and observed. The counter's teeth are the round's defence \u2014 survivors are routing recommendations, not embarrassments."
+  },
+  {
+   "name": "T53W1ScribeSource",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-1 scribe",
+   "item": "Verify the S275/S276 registry rows (.ufo/evidence/round-53/assimilation/): re-fetch both URLs (camera-ready PDF + arXiv abs), compare size+sha256 against the row cells and the committed snapshots; re-locate both quotes (S275: the 93% sentence, camera-ready p.4; S276: the 're-compute mutant suites per release...' sentence, abstract) in your fresh copies; confirm both rows parse as 11 columns with no escaped pipes and the used-by cell names corpus/knowledge/change-aware-resweep-cadence.md. Also check the two URLs against sibling lane registries for the W04 cross-scope duplicate warnings (informational). Verdict per row: VERIFIED or MISMATCH with details."
+  },
+  {
+   "name": "T53W1ScoutAssim",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 scout",
+   "item": "Independently audit the assimilation gates for corpus/knowledge/change-aware-resweep-cadence.md: (1) PROVINCE scope \u2014 mutation cadence is verification-fixture craft, in scope; (2) QUALITY bar \u2014 every claim cites a source, boundaries stated; (3) coverage ground \u2014 corpus/README.md F7 row was open and the entry's ground reads F7; (4) id renumber \u2014 staged S161/S162 re-pointed to S275/S276 by document (URL identical, id follows), no other staged id appears in the lane corpus; (5) the entry cites ONLY S275/S276. Work read-only; deliver the audit table."
+  },
+  {
+   "name": "T53W1ConnOverlap",
+   "role": "connector",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 connector",
+   "item": "Sibling-overlap scan: read the other lanes' current round reports/state under /home/vgpnk/Projects/shokunin/.ufo/reports/ (rounds 52-57 as present) and each lane repo's SCORECARD planned rows; find any lane working the same surfaces as tameshi's round 53 (cold-read/calibration monitors, tools/ scratch hygiene, SOURCES rows S275/S276 URLs, merge/tameshi package adoption). Overlap is reported, not absorbed: name the lane, the surface, and whether tameshi's claims interfere. Read-only."
+  },
+  {
+   "name": "T53W1ScribeLesson",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-1 scribe",
+   "item": "Verify corpus/lessons/round-53.md's evidence pointers resolve: every path/quote cited in ## Gate and ## Mistakes exists at C* a41195df (or the working tree for the lesson itself) and says what the lesson claims (e.g. the T52W3 reader findings the lesson lists are verbatim in .ufo/waves/round-52/w3/T52W3ReadNN.json; the fix hunks are present at C* \u2014 show the C* lines; verify-freeze.stdout exists and prints FREEZE_INTEGRITY: OK). Report a per-citation table VERIFIED/MISMATCH. Do not edit the lesson (append-only rules); mismatches are findings for the L1."
+  },
+  {
+   "name": "T53W1LabLint",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 labrat",
+   "item": "QUALITY-104 receipt: scan the sections the round's fix pass touched (the 30 headings in .ufo/evidence/round-53/c1/lost-headings.json) at C* a41195df for duplicate parentheticals ('(\u2026since round 51) (\u2026since round 51)'-class repeats), immediate word repetitions, and the two known fixed patterns (show they are gone: '(ten since round 51) (ten since round 51)', 'still not embedded at this boundary (both are legs 5\u20136 since round 10-2'). Also scan for '/tmp/' in those sections (expect only the historical ER-4 quote and the scratch-directive mentions). Deliver the scan output; zero un-fixed hits is the PASS."
+  },
+  {
+   "name": "T53W1ScoutCensus",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "wave-1 scout",
+   "item": "Census + misroot pre-check: run TZ=UTC bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi (expect exit 0, 136 rows); run git -C /home/vgpnk/Projects/shokunin status --porcelain (fleet root) and list any untracked files whose content names tameshi round 53 (misroot candidates \u2014 the L1 sweeps before the report); confirm the lane working tree has no changes outside .ufo/waves/round-53/w1/ after this wave lands (seat discipline check). Read-only except your report."
+  },
+  {
+   "name": "T53W1RevCounters",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-1 reviewer",
+   "item": "Independent mid-state counters at C*: run the frozen c1 and c2 (.ufo/evidence/round-53/{c1,c2}/measure.py) against rev a41195dfc13a73958e4c5228ec196b28d03ded03 with scratch work dirs. Expected honest mid-state: c1 prints C1_R53_PASS=false with credited=64? no \u2014 expect credited=34 lost=30 rekeyed=0/30 readers=0/30; c2 prints C2_R53_PASS=true. Any other result is a finding. Deliver both verdict lines + your scratch receipts."
+  },
+  {
+   "name": "T53W1CritRound52",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-1 critic",
+   "item": "R52.6/R52.2 conformance audit: read .ufo/reports/round-52/tameshi.md (fleet) + corpus/lessons/round-52-verifier-spotcheck.md routed defects R52.1-R52.6; verify against the current tree: R52.2 (LOG.md round-52 entry \u2014 present?), R52.4 (w3 files committed \u2014 at 6db1d220), R52.5 (the tools/ grep empty at C*), R52.3 (the re-derivation seat T53W1ExecR523 exists this wave). List what remains open for the round-53 report's conformance section. Read-only."
+  }
+ ]
+}
