@@ -228,7 +228,7 @@ Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<
    sha256 after == before, size and mtime unchanged, `git status --porcelain --
    <path>` empty (mutation-case-kimi-census.md:34-35;
    mutation-case-kagi-census.md:54-56). The sweep's edits all lived in scratch,
-   so this shows endpoint identity, not the absence of a transient write (SKILL.md:377-378; corrected in round 27, seat Read03); it is the record's headline, not an
+   so this shows endpoint identity, not the absence of a transient write (the `## Restore discipline` section; corrected in round 27, seat Read03); it is the record's headline, not an
    appendix. Full checklist below (Restore discipline).
 10. **Record the sweep as a note + a corpus row.** Kill-rate table (control +
     one row per defect: class, exact edit + site, exit, suite line, verdict,
@@ -866,7 +866,7 @@ predictions and six survivor classes first, and the prediction held 10/10
   per-revision and per-host (census §5 scope, `fleet-suite-census.md:288-291`).
 - **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:808-809).
   No-write is by design, "The target is never written" (`tools/mutate-and-run.sh:36-38`); fingerprints prove endpoint identity, not that no transient
-  write occurred (SKILL.md:377-378); sha pair at `mutation-case-mado-verify.md:57-59` (corrected in round 27 after the cold read of seat Read09).
+  write occurred (the `## Restore discipline` section); sha pair at `mutation-case-mado-verify.md:57-59` (corrected in round 27 after the cold read of seat Read09).
 - **Findings kept, never smoothed.** A survivor is a gap named with its class;
   a low kill rate is a report, not a service failure (SKILL.md:335). Mado's 40 % is the
   first point below the 50-80 band (`mutation-case-mado-verify.md:175-176`), and it reads as composition (4 in-surface

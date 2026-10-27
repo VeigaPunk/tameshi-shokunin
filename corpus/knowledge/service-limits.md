@@ -219,7 +219,7 @@ shape already carries this (`service-optin-protocol.md:59-62`)"
 
 - **U1 — driver invocation.** Whether any fleet driver would apply this table
   (or the tick) with no lane acting is the cadence's open [U]
-  (`SKILL.md:1017-1019`); ER-4 runs the tick only as an executed command at a
+  (the `## The re-sweep cadence and the six-case confidence statement (round 8, measured)` section's closing `[U]`); ER-4 runs the tick only as an executed command at a
   round boundary.
 - **U2 — handler-present hosts.** The kagi case's own U2 stands: no sweep of
   the verbs block has been made on a host where `the-janitor` is on PATH; a
