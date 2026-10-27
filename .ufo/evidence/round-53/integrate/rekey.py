@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Round-53 re-key driver: bind fresh wave-1 reader reports to ledger entries.
 
-Usage: rekey.py LANE C0 OUTDIR
+Usage: rekey.py LANE C0 OUTDIR [PIN_REV]
   LANE   absolute lane path; C0 the content commit the readers read; OUTDIR an
   existing empty dir inside .ufo/evidence/round-21/coldread/rekey-r53-<C0short>/
 
@@ -34,6 +34,7 @@ import subprocess
 import sys
 
 LANE, C0, OUT = sys.argv[1], sys.argv[2], Path(sys.argv[3])
+PIN = sys.argv[4] if len(sys.argv) > 4 else C0
 HEADINGS = json.loads((Path(LANE) / '.ufo/evidence/round-53/c1/lost-headings.json').read_text())
 LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
 R18 = '.ufo/evidence/round-18/measure.py'
@@ -58,6 +59,7 @@ def blob_at(rev, path):
 
 
 C0 = git(['rev-parse', '--verify', '%s^{commit}' % C0]).stdout.decode().strip()
+PIN = git(['rev-parse', '--verify', '%s^{commit}' % PIN]).stdout.decode().strip()
 skill = show(C0, 'SKILL.md')
 ledger = json.loads(show(C0, LEDGER).decode())
 entries = ledger['entries']
@@ -113,7 +115,7 @@ for h in HEADINGS:
         for p, sha in (e.get('inputs') or {}).items():
             if p in inputs:
                 continue
-            b = blob_at(C0, p)
+            b = blob_at(PIN, p)
             if b is None:
                 dropped.append(p)
             else:
@@ -132,14 +134,13 @@ for h in HEADINGS:
                  LANE, C0, str(OUT), 'section', h],
         'cwd': str(Path(__file__).resolve().parent),
         'root': LANE, 'rev': C0,
-        'rev_reason': 'round-53 re-key: all reads are git-object reads at rev '
-                      '(git show C0:path); no live working-tree reads',
+        'rev_reason': 'round-53 re-key: reader read git objects at '+C0+'; inputs pinned at '+PIN+' (the content-final revision); no live working-tree reads',
         'exit': 0,
         'tracked_filter': 'git-object reads only',
         'env_overrides': {'GIT_CONFIG_GLOBAL': '/dev/null', 'GIT_CONFIG_NOSYSTEM': '1'},
         'inputs': dict(sorted(inputs.items())),
         'untracked': [],
-        'external': {'tameshi@%s:%s' % (C0, p): s for p, s in sorted(inputs.items())},
+        'external': {},
         'live_lane_reads': {},
         'dropped_home_count': 0,
     }
