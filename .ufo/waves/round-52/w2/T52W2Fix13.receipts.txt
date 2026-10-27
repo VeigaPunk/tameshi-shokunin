@@ -1,0 +1,93 @@
+# T52W2Fix13 receipts — lane /home/vgpnk/Projects/shokunin/tameshi-shokunin, CAND0 bcba8924894216268afc4171f06eb8c28e912b46
+# all reads via git show at CAND0; no lane file written; scratch /fast/scratch/hyaku/tameshi-r52/T52W2Fix13
+
+## R0 section bounds at CAND0
+$ git -C LANE show CAND0:SKILL.md | grep -n "" | sed -n "1246p;1271,1272p"
+1246:### The service's limits — what tameshi refuses to mutation-test
+1271:
+1272:## The operator's runbook and the six-leg regression (round 10, measured)
+
+## R1 (unsupported-premise) no cadence-side hook
+$ git -C LANE show CAND0:SKILL.md | sed -n "1010,1154p" | grep -n -i "limit\|intake\|refus\|service-limits"
+54:  doctored-pin refusal is a different arm, selftested
+$ git -C LANE show CAND0:corpus/knowledge/fleet-kill-rate-ledger.md | grep -n -i "intake\|service-limits\|refus"
+123:| claim-ledger | 97 | `93c5827202b9cdec` | unmeasured by sweep; F-2: 3 of 6 refusal paths have no case |
+$ git -C LANE show CAND0:corpus/knowledge/service-limits.md | sed -n "4,5p"
+`plans/round-9.plan.md:47-69`). Role: the **refusal table the re-sweep cadence
+applies at intake** — what this service will not sweep, the trigger that fires
+$ git -C LANE show CAND0:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n "285p;318p"
+285:**ER-3 — the re-sweep cadence: when an owner requests one, and what comes back (policy + executed pin read; appended 2026-10-14 by T8-3).** U9 (`:235-237`
+318:**ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by 
+
+## R2 (stale-round-reference) note title dates T9-2 to round 9
+$ git -C LANE show CAND0:corpus/knowledge/service-limits.md | sed -n "1p"
+# Service limits — what tameshi refuses to mutation-test, and why (T9-2, round 9)
+
+## R3 (stale-pointer) row a protocol range starts mid-sentence
+$ git -C LANE show CAND0:corpus/knowledge/service-optin-protocol.md | sed -n "25,30p"
+25:only; results are per-revision and per-host. The queue
+26:(`fleet-suite-census.md:277-286`) is an offer, not a schedule: at round-7
+27:dispatch it drains only under a fresh opt-in naming a pinned target + a
+28:hermetic suite, the standing default head is surface-probe, and a round with
+29:no opt-in records the no-opt-in line as its complete outcome
+30:(`plans/round-7.plan.md:16-20`).
+
+## R4 anchor token checks (every row a-j; all hold at CAND0)
+$ python3 (scratch) — token-in-range per anchor at CAND0
+SKILL.md:813-817 one-command hermetic suite = True
+SKILL.md:823-825 never edits, repairs or re-pins = True
+SKILL.md:840-844 MUTATE: SETUP = True
+SKILL.md:879-881 Sensitivity, not truth = True
+service-optin-protocol.md:26-30 offer, not a schedule = True
+service-optin-protocol.md:129-132 PATH-level stub = True
+service-optin-protocol.md:267-269 exit-flatten = True
+service-optin-protocol.md:86-91 foreign = True
+fleet-suite-census.md:277-286 Queue = True
+fleet-kill-rate-ledger.md:156-158 sensitivity = True
+fleet-kill-rate-ledger.md:220-220 U2 = True
+fleet-kill-rate-ledger.md:35-36 directed repair = True
+PROVINCE.md:14-18 Credential material = True
+PROVINCE.md:20-20 report, never absorb = True
+
+## R5 row b control-red is MUTATE: SETUP (runner at CAND0)
+$ git -C LANE show CAND0:tools/mutate-and-run.sh | grep -n "die_setup\|MUTATE: SETUP" (selected)
+254:  printf 'MUTATE: SETUP (%s)\n' "$1" >&2
+    printf 'CONTROL: RED (exit=%s duration-ms=%s pristine-sha256=%s)\n' "$ctl_rc" "$ctl_ms" "$PRISTINE_SHA"
+    print_tail "$EVID/control.out"
+    die_setup "control run on the pristine copy is red (exit=$ctl_rc); cannot attribute kills; log: $EVID/control.out"
+  fi
+
+## R6 historical wrong expectations W1-W3 (round-18 CR27) are corrected at CAND0
+$ git -C LANE show CAND0:SKILL.md | sed -n "1250p;1262p;1263p"
+1250:adjudicate them. (Anchors `:…` are this page; `PROVINCE.md` is repo-relative; other bare note names are under `corpus/knowledge/`.) The
+1262:| e | Credential material / endpoint health | out of province — report, never absorb | `PROVINCE.md:14-18`, `PROVINCE.md:20` |
+1263:| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:879-881`; `fleet-kill-rate-ledger.md:156-158` |
+
+## R7 scratch apply + diff (only in-section lines change; line count unchanged)
+--- orig.md	2026-10-27 02:48:21.731708798 -0300
++++ fixed.md	2026-10-27 02:48:21.752209965 -0300
+@@ -1245,17 +1245,17 @@
+ 
+ ### The service's limits — what tameshi refuses to mutation-test
+ 
+-The cadence applies this table at intake. Each refusal carries a measured anchor —
++The cadence applies this table at intake (the role is the note's, `service-limits.md:4-5`; no cadence or ledger text names it — `:1010-1154`, `fleet-kill-rate-ledger.md:285`, `fleet-kill-rate-ledger.md:318`). Each refusal carries a measured anchor —
+ a refusal without an anchor is not written; the table states refusals, it does not
+ adjudicate them. (Anchors `:…` are this page; `PROVINCE.md` is repo-relative; other bare note names are under `corpus/knowledge/`.) The
+-standalone note `corpus/knowledge/service-limits.md` (T9-2, this round) carries
++standalone note `corpus/knowledge/service-limits.md` (T9-2, round 9) carries
+ the same rows as the detail of record — verbatim anchor quotes, the trigger column
+ and the intake-precondition check; this page is the compact rendering, and a
+ divergence between the two is the finding, never smoothed.
+ 
+ | # | Refusal | What it means | Anchor |
+ |---|---|---|---|
+-| a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:26-30`; `fleet-suite-census.md:277-286` |
++| a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:25-30`; `fleet-suite-census.md:277-286` |
+ | b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:813-817`; `:840-844` |
+ | c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:823-825` |
+ | d | Live substrates / sessions | never read; a live-plane probe is a PATH-level stub, never the session | `service-optin-protocol.md:129-132` |
+
+## R8 coldread precheck reason for this section (LOST, input drift)
+$ grep "refuses to mutation-test" .ufo/evidence/round-52/integrate/precheck-cand0.stdout
+LOST ### The service's limits — what tameshi refuses to mutation-test | drifted=PROVINCE.md,corpus/knowledge/fleet-kill-rate-ledger.md,tools/mutate-and-run.sh

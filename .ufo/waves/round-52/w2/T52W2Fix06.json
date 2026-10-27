@@ -1,0 +1,35 @@
+{
+ "heading": "### Reading a receipt — the discipline",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "N=8 since round 18, N=9 since round 26).",
+   "new": "N=8 since round 18, N=9 since round 26, N=10 since round 51).",
+   "class": "stale-count",
+   "evidence": "SKILL.md:976 at CAND0 caps the chain at N=9; the runner wires ten legs: tools/mutate-and-run.sh:1446 REGRESSION_EXPECT lists ten (… bash-drift-pins=%s/%s), :2035 `[[ \"$lcalls\" -eq 10 && \"$lfiles\" -eq 10 && \"$lnlegs\" -eq 10 ]]`, :2037-2047 ten leg tuples in `lent`, :1504 `regression_case_git bash-drift-pins`, :1510 `local nlegs=10`. Committed receipt of a ten-leg replay: .ufo/evidence/round-51/after/c2.stdout:22 `REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)`. Round-51 attribution: corpus/knowledge/fleet-kill-rate-ledger.md:441 ('wired as the runner's tenth leg', round 51). Shown by `git -C LANE show CAND:tools/mutate-and-run.sh | sed -n '1446p;2035p;2037,2047p;1504p;1510p'`."
+  },
+  {
+   "old": "(negative run, `/tmp/w7-tameshi-1/flip-run.out`).",
+   "new": "(negative run, `/tmp/w7-tameshi-1/flip-run.out` — [round 52: that volatile path is gone; the mechanism is corroborated at `reports/r7-aud-t7.md` §3 F4 and `tools/mutate-and-run.sh:2010`]).",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:986. `ls /tmp/w7-tameshi-1/flip-run.out` -> `No such file or directory`; `git -C LANE grep -n 'w7-tameshi-1\\|flip-run' CAND` returns only absence records (.ufo/evidence/round-18/coldread/traces/CR18/8.out.txt:1, CR18-r3/5.out.txt:1) and no preserved receipt. Live corroboration of the same doctored-table mechanism at CAND0: reports/r7-aud-t7.md:111 (§3 F4: `REGRESSION_DEFECT bash-tsukuroi-census B7: measured=SURVIVED recorded=KILLED`; `match=9/10 … flips=1`; `FAIL (out of band: killed-delta=1 flips=1…)`) and tools/mutate-and-run.sh:2007-2010 (single flipped entry FAILs loudly, greps the same DEFECT/CASE rows)."
+  },
+  {
+   "old": "the same revision `cf41efaa…`)",
+   "new": "the same tool sha `cf41efaa…`)",
+   "class": "mislabelled-pointer",
+   "evidence": "SKILL.md:977 calls a sha256 a revision. `git -C LANE show 9f1d3c339a7094968041c7708a65dbf7eab9fae6:tools/mutate-and-run.sh | sha256sum` -> cf41efaa8be5f52d92bf7806ddb3a99a031547bf12a6811b8ef45bce37242c75 (1341 L / 61632 B), i.e. the tool's content hash; `git -C LANE rev-parse --verify --quiet 'cf41efaa^{commit}'` fails, so a reader who takes 'revision' literally cannot resolve it from git. The round-51 reader recorded exactly this (T51W2Read07.md:142 'cf41efaa… is a content sha, not a revision … the section's word revision is loose'). The measurement itself is unchanged by the relabel."
+  },
+  {
+   "old": "`cf41efaa…` — including a git-materialized replay passing at exact",
+   "new": "`cf41efaa…` (round 52: the same command prints `MUTATE_SELFTEST: 107/107 pass` / `VERDICT: PASS`, rc 0, at tool sha `977de470…` — see `.ufo/waves/round-52/w2/T52W2Fix06.selftest.out`) — including a git-materialized replay passing at exact",
+   "class": "stale-count",
+   "evidence": "SKILL.md:1003-1004 states the selftest tally as 67/67; measured this seat at CAND0 in a scratch `git clone --shared` checked out at bcba892: `TMPDIR=<scratch>/tmp bash tools/mutate-and-run.sh --selftest` -> `MUTATE_SELFTEST: 107/107 pass` / `VERDICT: PASS`, rc=0 (receipt .ufo/waves/round-52/w2/T52W2Fix06.selftest.out). CAND0 runner `sha256sum tools/mutate-and-run.sh` = 977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda, 2159 lines. 67/67 stays as the historical tally at cf41efaa…; the note states the current one and its tool sha. The round's no-harm tools-scope (contract.json no_harm.re_bases: only tools/registry.json and tools/round21-measure.py may change) leaves the runner and its tally untouched at the deciding revision."
+  }
+ ],
+ "holds_checked": 26,
+ "not_fixable_inline": [
+  "The dead negative-run receipt itself cannot be restored in-line: no preserved copy of the js-kimi-census D1 flip run exists anywhere in the CAND0 tree (`git -C LANE grep -n 'w7-tameshi-1\\|flip-run' CAND` -> only round-16/18/21/51 absence records), so SKILL.md:986 can only be qualified and re-corroborated, not re-anchored to a surviving run of its own.",
+  "Line wrap: after the in-line insertions SKILL.md:976 and :986 run past the section's ~78-column wrap; re-wrapping would add or remove newlines, which other files' SKILL.md line citations depend on, so the wrap is left as-is (line count 2172 unchanged)."
+ ]
+}

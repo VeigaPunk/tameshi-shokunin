@@ -1,0 +1,169 @@
+# T52W2Fix10 receipts — CAND0 bcba8924894216268afc4171f06eb8c28e912b46
+
+## section bytes at CAND0 (SKILL.md:1380-1395) — git show bcba8924894216268afc4171f06eb8c28e912b46:SKILL.md | sed -n '1380,1395p'
+
+### The map — where a reader enters, artifact by artifact
+
+| Artifact | Holds | Read it when |
+|---|---|---|
+| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger (six rows; the lane has held nine cases since round 26) · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`SKILL.md:1294-1297`) |
+| `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per gate measured so far — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth case has no row yet); §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
+| `corpus/knowledge/service-limits.md` | the refusals, detail of record; this page carries the compact rendering (`SKILL.md:1246-1270`) | an intake question needs a refusal line |
+| `corpus/knowledge/service-optin-protocol.md` | request shape (§1, including the re-pin rule), read-only guarantees (§2), the owner-hardens rule (§3), report shape (§4) | your lane wants a sweep — or receives one |
+| `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
+| `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
+| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26; git-materialized replay) | any sweep or replay |
+| `corpus/README.md` | the coverage map — a row per note carried, holds + sources (round addenda append further tables of the same shape) | checking what the corpus holds |
+| `plans/round-N.plan.md` (latest `plans/round-11.plan.md`), `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10; `N` is a placeholder, not a file — the concrete files are the round-4 through round-10 plan and record-draft pairs that `plans/` holds); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, committed in the round-11 closeout) collects the per-round lines and debts | auditing a round's receipts |
+| `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
+
+
+## mutation-case files — git ls-tree --name-only bcba8924894216268afc4171f06eb8c28e912b46 corpus/knowledge/ | grep mutation-case
+corpus/knowledge/mutation-case-kagi-census.md
+corpus/knowledge/mutation-case-kagi-checklist.md
+corpus/knowledge/mutation-case-kagi-drift-pins.md
+corpus/knowledge/mutation-case-kimi-census.md
+corpus/knowledge/mutation-case-kumitate-cite-check.md
+corpus/knowledge/mutation-case-kumitate-claims.md
+corpus/knowledge/mutation-case-kumitate-round-gate.md
+corpus/knowledge/mutation-case-kumitate-sources-check.md
+corpus/knowledge/mutation-case-mado-verify.md
+corpus/knowledge/mutation-case-tsukuroi-census.md
+count: 10
+
+## plans/ at CAND0 — git ls-tree --name-only bcba8924894216268afc4171f06eb8c28e912b46 plans/
+plans/completion-evidence.md
+plans/round-10.plan.md
+plans/round-10-record-draft.md
+plans/round-11.plan.md
+plans/round-2.plan.md
+plans/round-3.plan.md
+plans/round-4.plan.md
+plans/round-4-record-draft.md
+plans/round-5.plan.md
+plans/round-5-record-draft.md
+plans/round-6.plan.md
+plans/round-6-record-draft.md
+plans/round-7.plan.md
+plans/round-7-record-draft.md
+plans/round-8.plan.md
+plans/round-8-record-draft.md
+plans/round-9.plan.md
+plans/round-9-record-draft.md
+
+## runner leg ledger — git show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh | sed -n '84p'
+# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+
+## runner drift-pins wiring — git show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh | grep -n 'bash-drift-pins'
+18:# tenth measured leg, kagi corpus/drift-pins.sh, as bash-drift-pins.
+97:#   bash-drift-pins       kagi-shokunin/corpus/drift-pins.sh          2/10 (20 %)
+104:# .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (leg 10).
+226:bash-drift-pins) at its pinned
+1155:  cat >"$d/bash-drift-pins.spec" <<'EOT'
+1219:     && -s "$d/bash-drift-pins.spec" ]]
+1446:  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s js-cite-check=%s/%s bash-drift-pins=%s/%s\n' \
+1504:  regression_case_git bash-drift-pins \
+1506:    "$specs/bash-drift-pins.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C bash "$MUTANT" --selftest' "$TABLE_DRIFTPINS" \
+1507:    "$root/bash-drift-pins"
+2045:    'bash-drift-pins:bash-drift-pins.spec:TABLE_DRIFTPINS:10:2'
+
+## runner tally selftest — git show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh | sed -n '2024p;2088p'
+  st 'embedded leg specs: ten files written' $?
+  st 'tally harness: all ten legs pass -> PASS passed=10, exit 0' $?
+
+## runner TMPDIR — git show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh | sed -n '149,150p'
+# "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX" by default (r51 honours
+# TMPDIR); removed on PASS unless --keep,
+
+## runbook §7 — git show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/operator-runbook.md | sed -n '345p;349,351p'
+## 7. The regression mode — replaying the recorded legs
+(`SKILL.md:933-963`). Default scratch is a fresh
+`mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`, removed on PASS unless
+`--keep`, kept on FAIL/SETUP, **never removed when `--workdir` was given**.
+
+## runbook headings — git show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/operator-runbook.md | grep -n '^#\{1,3\} '
+1:# Operator runbook — the tameshi mutation service, end to end (round 10, T10-1)
+35:## 0. Quick start — the operator loop in one block
+42:# (1) the instrument — is the tool the revision the records were measured under?
+45:# (2) the instrument's own gates (hermetic; /tmp scratch only)
+49:# (3) the six-case pin read — per case; <tip> = the owner's branch tip `refs/heads/<branch>` (`../scripts/hyaku/jj-lane.sh state <owner-repo>`, field local=; never HEAD — ER-R3)
+55:# (4) read it: per case current|stale|drift, tool held|moved (§6), then the
+56:#     trigger table T1–T3; append-only on the ledger — never edit §1–§4.
+65:## 1. The service in one page
+93:## 2. The tool — `tools/mutate-and-run.sh`
+131:## 3. The six-case ledger — the standing view
+180:## 4. The opt-in protocol — running/commissioning a sweep
+243:## 5. The limits — what the service refuses
+269:## 6. The cadence — the tick, the reading map, the triggers
+345:## 7. The regression mode — replaying the recorded legs
+408:## 8. The operator's full loop — commissioning to append
+438:## 9. Receipts from this writing — what was actually executed
+462:## 10. Unknowns carried — the service's open questions
+481:## Errata (append-only)
+
+## runbook §3 rows — git show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/operator-runbook.md | sed -n '131p;149,154p' | cut -c1-46
+## 3. The six-case ledger — the standing vie
+| 1 | kumitate `scripts/kimi-census.mjs` | 43 
+| 2 | kagi `corpus/surface-census.sh` | 16 | 8
+| 3 | tsukuroi `tools/tsukuroi-census.sh` | 26
+| 4 | mado `tools/mado-verify.sh` | 28 | 4/10 
+| 5 | kagi `corpus/checklist-run.sh` | 34 | 7/
+| 6 | kumitate `scripts/claims-check.mjs` | 39
+
+## ledger rows and appends — git show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '43,48p;107p;119p;276,277p;403p;424p;439p' | cut -c1-64
+| # | Gate (owner · file) | Suite (at sweep) | Kill-rate (compo
+|---|---|---|---|---|---|---|
+| 1 | kumitate · `scripts/kimi-census.mjs` (r2) | 43 cases | **
+| 2 | kagi · `corpus/surface-census.sh` (r3) | 16 cases (14 her
+| 3 | tsukuroi · `tools/tsukuroi-census.sh` (r5) | 26 cases | *
+| 4 | mado · `tools/mado-verify.sh` (r6) | 28 assertions (scena
+| cite-check | 62 | `40573448330f52fb` | **probe only, 1/4** (§
+| drift-pins | 13 | `c138d34c7f0dfe95` | unmeasured by sweep; he
+| 5 | kagi · `corpus/checklist-run.sh` | 34 cases | **7/15 (47 
+| 6 | kumitate · `scripts/claims-check.mjs` | 39 checks | **7/1
+## Round 16 — seventh row appended (2026-10-20)
+## Round 18 — eighth row appended (2026-10-20)
+## Round 52 — §3 drift-pins cell superseded (2026-10-27)
+
+## README table shapes — git show bcba8924894216268afc4171f06eb8c28e912b46:corpus/README.md | sed -n '5p;125p;326p;614p;632p'
+| Note | Holds | Sources |
+| Note / frontier | Lane-asserted scope; outside admission pending | Source / evidence |
+| Entry / ground | Admission and exact scope | Evidence |
+| id | ground | candidate sources | status | next falsifiable move (before → after) |
+| Entry / ground | Admission and exact scope | Evidence |
+
+## SKILL limits + divergence rule — git show bcba8924894216268afc4171f06eb8c28e912b46:SKILL.md | sed -n '1246p;1269,1270p;1294,1297p'
+### The service's limits — what tameshi refuses to mutation-test
+Anchors re-resolved 2026-10-14 on the live bytes; a reader on a differing revision
+re-resolves rather than trusts.
+- **Pointer, not a second home.** Its own rule: where it and an anchored
+  source diverge, the anchored source governs — the same rendering/divergence
+  rule this page applies to `service-limits.md` (`:1250-1254`).
+- **Its receipts were executed at `cf41efaa…` (r7-1, four legs)** — §7's
+
+## LOG round-11 record — git show bcba8924894216268afc4171f06eb8c28e912b46:LOG.md | sed -n '316,317p'; LOG lines: 2442
+  discharge. Same dispatch shape as rounds 1–10 — the lane deliverables in
+  this repo ARE the wave record (no `.ufo/waves/tameshi-r11-*` directory);
+
+## completion pack — git log --diff-filter=A --format='%h %ad %s' --date=short bcba8924894216268afc4171f06eb8c28e912b46 -- plans/completion-evidence.md
+284ab0f 2026-10-14 probation round 11 (training r10, FINAL): closeout — the 10-round arc complete; see closeout-r11.md + completion-evidence.md
+
+## optin §1-§4 / standing-state SC1-SC3 / census §5
+54:## 1. Request shape — what the opting-in lane brings
+109:## 2. Read-only guarantees — and what is provable
+142:## 3. Owner-hardens discipline — absorption stays with the owner
+182:## 4. Report shape — what the opting-in lane receives
+17:## 0. What "fleet-visible" means here
+49:## 1. Fleet-visible artifacts (the handed side)
+68:## 2. Lane-owned (the withheld side)
+80:## 3. The handoff conditions
+159:- **SC1 — the live/recorded boundary is real today, and the instrument held.**
+174:- **SC2 — the write-boundary text on the live bytes.**
+181:- **SC3 — visibility is by citation, not by index.** `for r in
+249:## 5. Tameshi's standing service offer
+
+## drift-pins case note — git show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/mutation-case-kagi-drift-pins.md | sed -n '6p;66p;92p'
+# Mutation case 10 — kagi `corpus/drift-pins.sh` (round 51)
+| id | edit (pinned line) | predicted | measured | cases passed | killing case (evidence/*.out) |
+## 3. Survivors — five suite holes, three harness artifacts, no equivalent mutant

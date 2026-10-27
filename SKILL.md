@@ -221,7 +221,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    (mutation-case-kagi-census.md:111-114, :118-122, :252-254). If no observable
    input differs, the mutant may be *equivalent code* — record that as a
    calibration item, not as a gap.
-9. **Restore + prove the substrate never moved.** Re-run step 2's checks (line count and repo revision included; neither model note records an after-revision):
+9. **Restore + prove endpoint identity.** Re-run step 2's checks (line count and repo revision included; neither model note records an after-revision):
    sha256 after == before, size and mtime unchanged, `git status --porcelain --
    <path>` empty (mutation-case-kimi-census.md:34-35;
    mutation-case-kagi-census.md:54-56). The sweep's edits all lived in scratch,
@@ -922,11 +922,11 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
 
 Round 7 turns `--regression` from the tool's two-case self-check into the
 fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
-pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26) — `js-kimi-census`
+pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26; ten since round 51) — `js-kimi-census`
 (r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
 `bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
 — each with its recorded kill-rate as its expectation
-(`tools/mutate-and-run.sh@9f1d3c3:72-109`, `:511-522`; at round 18 the recorded tables sit at `:597-620`). The ledger
+(`tools/mutate-and-run.sh@9f1d3c3:72-109`, `:511-522`; at round 18 (runner `4b7c682`) the recorded tables sit at `:597-620`). The ledger
 is the receipt tameshi's records cite for kill-rate claims; the standing per-gate rate rows
 are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 block).
 
@@ -937,28 +937,28 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
   `${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
   it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
   are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
-  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`).
+  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:139-143,1519-1548`).
 - **Each leg's bytes come from the repo's git object store, not the working
   tree.** `git show <rev>:<path>` materializes the pinned blob into the case
-  workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`);
-  `REGRESSION_PIN` names repo/rev/path/pin (:1159-1160). Working-tree drift
+  workdir, mirrors the blob's mode and pins its SHA (`tools/mutate-and-run.sh:1275-1317`);
+  `REGRESSION_PIN` names repo/rev/path/mode/sha256 (:1302-1306). Working-tree drift
   does not change that blob. The old tsukuroi/mado pins are historical,
   not a statement that their current trees match those recorded bytes.
   A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
-  later legs still run and their statuses aggregate (:1384-1450 since round 26).
+  later legs still run and their statuses aggregate (:1247-1317,1459-1517 since round 26).
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
-  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26) with the
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
 - **Contribution contract — what a leg carries.** A pinned target path,
   Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
   a command exercising `$MUTANT` under controlled fixtures; enumerated,
-  executed and skipped counts distinguished; and the exact recorded verdict
+  executed and skipped counts distinguished [round 52: no current leg records a skipped count — enumerated and executed only] (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
   table. Host-gated branches must be excluded/controlled or explicitly named,
   not called hermetic merely because the flag is `--selftest`.
-  Current anchors (round 26): pins/revisions/tables `tools/mutate-and-run.sh:603-629`,
-  first-four specs :657-839, inventory :83-108, nine dispatches :1384-1428.
+  Current anchors (round 52 re-anchor; round 26 recorded :614-643): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,
+  first-four specs :671-849, inventory :83-108, ten dispatches :1459-1508.
   (U) The recorded case set remains tameshi-carried; no fleet-contributed
   leg is established by this registry.
 
@@ -973,8 +973,8 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
 2. **PASS is exact for ledger legs.** Every case line `PASS (band:
    killed-delta<=0 flips<=0 inconclusive=0 defects=D)` and every
    `REGRESSION_TABLE … match=D/D … flips=0`; the closing line's
-   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18, N=9 since round 26). Measured instance (T7-1, 2026-10-14; replayed by this
-   lane under the same revision `cf41efaa…`): four legs, all `match=10/10 …
+   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18, N=9 since round 26, N=10 since round 51). Measured instance (T7-1, 2026-10-14; replayed by this
+   lane under the same tool sha `cf41efaa…`): four legs, all `match=10/10 …
    flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
    killed-delta<=0 flips<=0)`, rc 0.
 3. **FAIL names its rows.** `REGRESSION_DEFECT <leg> <id>: measured=…
@@ -983,7 +983,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
    doctored table was measured caught: `REGRESSION_DEFECT js-kimi-census D1:
    measured=KILLED recorded=SURVIVED` → `match=9/10 … flips=1` →
    `REGRESSION_CASE js-kimi-census: FAIL (out of band: killed-delta=1
-   flips=1)` (negative run, `/tmp/w7-tameshi-1/flip-run.out`). Quote the rows,
+   flips=1)` (negative run, `/tmp/w7-tameshi-1/flip-run.out` — [round 52: that volatile path is gone; the mechanism is corroborated at `reports/r7-aud-t7.md` §3 F4 and `tools/mutate-and-run.sh:2010`]). Quote the rows,
    never the word; never hand-re-sweep to "confirm" a FAIL — the replay goes
    through the ledger and the divergence is the finding.
 4. **SETUP is not a verdict.** A missing repo/rev/blob, a pin mismatch, or a
@@ -1001,7 +1001,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
    (`plans/round-7.plan.md:11-15`).
 7. **The ledger's own arms are selftested.** `bash tools/mutate-and-run.sh
    --selftest` → `MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0 at
-   `cf41efaa…` — including a git-materialized replay passing at exact
+   `cf41efaa…` (round 52: the same command prints `MUTATE_SELFTEST: 107/107 pass` / `VERDICT: PASS`, rc 0, at tool sha `977de470…` — see `.ufo/waves/round-52/w2/T52W2Fix06.selftest.out`) — including a git-materialized replay passing at exact
    tolerance, a drifted working tree not moving a git-pinned leg, pin
    mismatch / unresolvable revision as SETUP, and a single flipped entry
    failing loudly. The r4-2 tolerance (`killed-delta<=1 flips<=1`) remains the
@@ -1026,7 +1026,7 @@ no lane acting stays [U].
   (round 17). Tameshi's tick is still its own round series [I].
 - **Per case, two readings:** the target's relation to each repo's branch-tip bytes
   (`current` / `stale` / `drift`; `<branch>` = the `branch=` field of
-  `../scripts/hyaku/jj-lane.sh state <repo>` (git config `lane.branch` first, else function `detect_branch()`; cite by name, line anchors into the helper move)) and the tool's relation to the last run (`held` / `moved`):
+  `../scripts/hyaku/jj-lane.sh state <repo>` (git config `lane.branch` first, else function `detect_branch()`; cite by name, line anchors into the helper move)) and the tool's relation to the last run (`held` / `moved`) [round 52: the three labels are not exhaustive — when the recorded revision is not an ancestor of the branch tip and the live file equals the tip blob, all three read no; the branch-tip rule in force is ER-jj, `fleet-kill-rate-ledger.md:420`]:
 
 | Reading | Rule | What it means |
 |---|---|---|
@@ -1061,7 +1061,7 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
 
 - **Falsifiers, aimed at the reader** (scratch, read-only; the engine's own
   doctored-pin refusal is a different arm, selftested
-  `MUTATE_SELFTEST: 67/67`): a case whose row points at a superseded blob reads
+  `MUTATE_SELFTEST: 67/67` at round 8; at round 52 the tool prints `MUTATE_SELFTEST: 107/107 pass`): a case whose row points at a superseded blob reads
   `stale` (tsukuroi and mado above); a scratch copy of a live gate with one line
   appended reads `drift` (`/tmp/w8-tameshi-t84/drift-demo.txt`; substrate 0
   porcelain lines after); an untouched case reads `current`.
@@ -1076,12 +1076,12 @@ kumitate claims-check    HEAD (r8)      175de6ba    current    e9a21b44 == e9a21
   re-run the reproduction under the new revision and record both pins. Precedent
   (corrected round 18): round 16's RerunSweep under runner `89722ddb…` (`RerunSweep.md:19-23`; `0673d2e5…` is the later regression/selftest runner; corrected round 27, seat Read15) reproduced case 7;
   mado under `b56c6e57…` was re-run once by SCR-T6, 4/10, scratch not retained (`service-optin-protocol.md:232`; the mado note keeps it U, `mutation-case-mado-verify.md:17-23`; seat ReRead07); the harness itself moved four times in
-  one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`)
+  one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`) [round 52: `4dc69ef9…` and `e3f838d4…` were working-tree writes, not commits (`plans/round-8.plan.md:69-74`, 15:27:40 and 15:28:38); the day's committed chain is `d8abee52…` (created 13:01) → `597e1419…` (13:57) → `b56c6e57…` (15:17) → `cf41efaa…` (16:06) → `75ed934d…` (18:28, r10-2 — `RerunSweep.md:93`) — four moves]
   and no recorded table was re-interpreted for it.
 - **T3 — an owner lane records a re-run at a new revision** → an appended row;
   §1–§4 are never edited (`fleet-kill-rate-ledger.md:170-173`).
 - **The re-pin rule.** A moved pin is never re-interpreted against the new bytes
-  (:811-812). The old table stays; the moved case lands at its newest revision
+  (`fleet-kill-rate-ledger.md:310`, ER-3; `:318`, ER-4). The old table stays; the moved case lands at its newest revision
   with both shas and the delta, appended. `moved=0 stale=0` is a complete
   outcome, recorded as such — drift is never manufactured by re-cutting cases.
   The round-8 replay receipt (tool `cf41efaa…`, four legs; 19:14:16Z, rc 0, `fleet-kill-rate-ledger.md:281`; seat ReRead07):
@@ -1113,7 +1113,7 @@ landed while this section was being written:
 their own lanes — re-read a note's header rather than quoting a size). The ledger
 rows and any `--regression` leg for either are follow-ups the notes themselves
 name (claims note E3) — **the ledger rows are the authority once they land, and
-an unlanded leg is named debt, never assumed**.
+an unlanded leg is named debt, never assumed**. [round 52: both landed after this write — the ledger rows at ER-2, `fleet-kill-rate-ledger.md:276-277`, and the two `--regression` legs at r10-2, `tools/mutate-and-run.sh:850,925`]
 
 **State the real diversity — language is the weakest axis here.** Six cases, but
 **two language classes** (node ESM ×2, bash ×4 — shebangs read from the pinned
@@ -1141,7 +1141,7 @@ six-case reading moves only where measurement moved:
   (`mutation-case-kagi-checklist.md:180-194`); the claims note's `D7` reproduces
   kimi's `slice(0, 6)` cap on a second kumitate gate, and its `D8` is a new
   sub-shape — a threshold the case is named for and cannot see
-  (`mutation-case-kumitate-claims.md:285-291`). Rates bind to composition, and
+  (`mutation-case-kumitate-claims.md:142-148,285-291`). Rates bind to composition, and
   the band now reads 40 / 47 / 60 / 70 / 80 / 80.
 - **Amended by the sixth case:** unreached-arm survivors — `D9` is the class's
   **first JS instance** (claims note Row E, `:249-254`), so the round-5 reading
@@ -1164,9 +1164,9 @@ stays [U] (`:1019`).
 ### The tick, executed
 
 Pin read at the round-9 boundary, **2026-10-14T20:00:34Z** (host `plazir27`;
-scratch `/tmp/w9-tameshi-t93/pin-read-final.txt`; recorded pins/revisions are the
+scratch `/tmp/w9-tameshi-t93/pin-read-final.txt` [round 52: ER-4's record of this tick names `/tmp/w9-tameshi-t91/` — fleet-kill-rate-ledger.md:320]; recorded pins/revisions are the
 harness's `PIN_*`/`REV_*` for the four embedded legs
-(`tools/mutate-and-run.sh:511-518`), and the r8 notes' pins for cases 5–6):
+(`tools/mutate-and-run.sh:614-633`, ten legs since round 51), and the r8 notes' pins for cases 5–6):
 
 ```
 case                     recorded-rev live-HEAD    anc      pin==live live==HEADblob worktree   reading
@@ -1183,8 +1183,8 @@ kumitate-claims-check    175de6ba     175de6ba     yes      e9a21b44==e9a21b44 e
 (0 lines each) *at the tick*. Both `stale` cells are their repos' committed HEAD
 blobs — no drift at this read: tsukuroi-census `084951be…` → `bba6cdf6…`
 (HEAD `72b038da`), mado-verify `d7edaab4…` → `7da4ec50…` (HEAD `12c8f08a`). The
-round-8 tick read mado's cell as `90d50cdd…` (clean) and, six minutes later,
-`dc864c6a…` (dirty); that in-flight edit is now committed as `7da4ec50…` — the
+round-8 tick read mado's cell as `90d50cdd…` (clean) and, five minutes later,
+`dc864c6a…` (dirty); that in-flight edit resolved into the committed `7da4ec50…` — the
 drift closed into a `stale` cell. The tick is a **timestamped observation,
 re-run at the next boundary** — never carried as a standing claim.
 
@@ -1198,12 +1198,12 @@ The ledger carries its own record of this same tick — **ER-4**
 (`corpus/knowledge/fleet-kill-rate-ledger.md:318-353`), appended independently by
 the tick lane (T9-1): the same six readings (its second raw pass 20:00:29Z), both
 drift-event chains (`084951be…` → `bba6cdf6…`; `d7edaab4…` → `7da4ec50…`), and the
-same regression receipt — two records of one tick, kept un-merged and agreeing.
+same regression outcome — two records of one tick, kept un-merged; provenance fields differ (scratch root, `REGRESSION_DATE`).
 
 Re-read three minutes later (**20:03:34Z**, same scratch): both moving cells now
 read `stale + drift` — tsukuroi's worktree `b54f5732…` vs its HEAD blob
 `bba6cdf6…`, mado's `31364115…` vs `7da4ec50…`, both ` M` on
-`git status --porcelain`; the owners' own round-9 lanes are editing their gates
+`git status --porcelain`; the owners' own round-9 lanes are editing their gates [I] [round 52: the 20:03:34Z worktree shas have no surviving anchor; ER-4's addendum records 20:02Z shas `5d16378d…`/`5b6ace8e…` — fleet-kill-rate-ledger.md:358-359]
 (ER-4's addendum, `:354-360`, records the same continuation at 20:02Z with its
 then-current shas). The tick's clean reading stands at its timestamp; a moving
 file is never re-interpreted, and any re-sweep must pin the revision it measures
@@ -1222,9 +1222,9 @@ Run at the tick (this lane; `--selftest` 19:58:49Z, `--regression`
   `/tmp/w9-tameshi-t93/regression`.
 
 The legs replay their pinned blobs — git-materialized
-(`tools/mutate-and-run.sh:733-791`), so the two `stale` substrates cannot move
+(`tools/mutate-and-run.sh:1222-1303`), so the two `stale` substrates cannot move
 them; re-verified at this boundary, since all four legs matched while cases 3–4
-read `stale`. Cases 5–6 are still not embedded: their rows carry no `REGRESSION`
+read `stale`. Cases 5–6 were still not embedded at this boundary (both are legs 5–6 since round 10-2 — `tools/mutate-and-run.sh:92-93`): their rows carry no `REGRESSION`
 line — named debt, not smoothed (`fleet-kill-rate-ledger.md:282`).
 
 ### The re-pin semantics, as executed
@@ -1245,17 +1245,17 @@ line — named debt, not smoothed (`fleet-kill-rate-ledger.md:282`).
 
 ### The service's limits — what tameshi refuses to mutation-test
 
-The cadence applies this table at intake. Each refusal carries a measured anchor —
+The cadence applies this table at intake (the role is the note's, `service-limits.md:4-5`; no cadence or ledger text names it — `:1010-1154`, `fleet-kill-rate-ledger.md:285`, `fleet-kill-rate-ledger.md:318`). Each refusal carries a measured anchor —
 a refusal without an anchor is not written; the table states refusals, it does not
 adjudicate them. (Anchors `:…` are this page; `PROVINCE.md` is repo-relative; other bare note names are under `corpus/knowledge/`.) The
-standalone note `corpus/knowledge/service-limits.md` (T9-2, this round) carries
+standalone note `corpus/knowledge/service-limits.md` (T9-2, round 9) carries
 the same rows as the detail of record — verbatim anchor quotes, the trigger column
 and the intake-precondition check; this page is the compact rendering, and a
 divergence between the two is the finding, never smoothed.
 
 | # | Refusal | What it means | Anchor |
 |---|---|---|---|
-| a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:26-30`; `fleet-suite-census.md:277-286` |
+| a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:25-30`; `fleet-suite-census.md:277-286` |
 | b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:813-817`; `:840-844` |
 | c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:823-825` |
 | d | Live substrates / sessions | never read; a live-plane probe is a PATH-level stub, never the session | `service-optin-protocol.md:129-132` |
@@ -1302,10 +1302,10 @@ never a re-cut.
 ### The six-leg regression — usage and this round's receipt
 
 At tool revision `75ed934d…` (`VERSION` = `mutate-and-run.sh r10-2`, 1 642 L;
-uncommitted worktree file at this write), `--regression` replays **six**
-embedded legs (list `tools/mutate-and-run.sh:85-89`; sources `:90-97`;
-pins/tables `:550-559`; specs `:766`, `:841`; registry `:1132-1141` — line
-anchors as read at `75ed934d…`, the sha governs):
+uncommitted worktree file at this write), `--regression` replays **six** in r10-2 (**ten** since round 51) (ten since round 51)
+embedded legs (list `tools/mutate-and-run.sh:88-97`; sources `:98-121`;
+pins/tables `:614-643`; specs `:850`, `:925`; registry `:1459-1507` — line
+anchors re-read at CAND0 `bcba8924…`, the sha governs):
 
 | # | leg | target | recorded rev | recorded rate |
 |---|---|---|---|---|
@@ -1318,32 +1318,32 @@ anchors as read at `75ed934d…`, the sha governs):
 
 - **Command, unchanged.** `bash tools/mutate-and-run.sh --regression
   [--workdir DIR] [--keep]`; default scratch
-  `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`, removed on PASS unless
+  `mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX"` (TMPDIR honoured since r51), removed on PASS unless
   `--keep`, kept on FAIL/SETUP, never removed when `--workdir` was given. Exit
-  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:115-119`).
+  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:139-143`).
 - **Where the bytes come from.** Each leg materializes from its repo's git
   object store at its recorded revision (`git show <rev>:<path>`) and the copy's
   sha256 must equal the recorded pin; a missing repo/rev/blob or a pin mismatch
   is a SETUP refusal before any suite runs. r10-2 also mirrors the blob's mode:
-  a `100755` blob is `chmod +x`'d after materialization (`:104-106`, `:932-960`)
+  a `100755` blob is `chmod +x`'d after materialization (`:128-130`, `:1281-1302`)
   — kagi's checklist gate re-execs itself in its selftest, `git show` carries no
   mode, and the leg refuses as SETUP without the bit (measured while the cut was
-  made; the added selftest arms at `:1488-1527` cover the mirror).
+  made; the added selftest arms at `:1860-1896` cover the mirror).
 - **Receipt, executed by this lane** (independent of the tool owner's; the
   owner's own run at the same revision, 21:00:24Z, closes identically),
   2026-10-14T21:02:39Z, tool `75ed934d…` before and after, scratch
   `/tmp/w10-t10-4-ev/` (regression workdir kept):
-  - `--selftest` → `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0 —
+  - `--selftest` → `MUTATE_SELFTEST: 80/80 pass` at r10-2 (107/107 at CAND0) / `VERDICT: PASS`, rc 0 —
     added arms include the exec-bit mirror and an embedded-ledger check that
-    the six specs parse and agree with their recorded tables.
-  - `--regression` → six legs, all exact: `match=10/10` (legs 1–4, 6),
+    the six specs parse and agree with their recorded tables (ten at CAND0, `:2024`).
+  - `--regression` → six legs at r10-2 (ten at CAND0), all exact: `match=10/10` (legs 1–4, 6),
     `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`; closing
     `REGRESSION: PASS (cases=6 passed=6; ledger legs exact: killed-delta<=0
     flips<=0)`, rc 0. Each `REGRESSION_PIN` line now carries the blob's
     `mode=` beside repo/rev/path/sha256, and `REGRESSION_EXPECT` lists six
-    recorded rates.
+    recorded rates at r10-2 (ten at CAND0, `:1446`).
 - **The supersessions stay append-only.** The round-7 section's "Four legs at
-  this revision" (`:925-929`; dated there since round 16) and the round-9 receipt's `cases=4`
+  this revision" (`:925-929`; dated there since round 16; the section now reads "that revision") and the round-9 receipt's `cases=4`
   (`:1218-1222`) stand at `cf41efaa…`; the round-9 caveat that cases 5–6 were
   "still not embedded — named debt" (`:1226-1228`; ER-4 caveat (a)) is resolved
   at `r10-2` by embedding the recorded T8-1/T8-2 spec files (their 25 `@old`
@@ -1358,7 +1358,7 @@ anchors as read at `75ed934d…`, the sha governs):
   executed govern.
 - **Named debt, not smoothed.** The ledger's §1 embedding text still reads
   "cases 1 and 2 only" (`fleet-kill-rate-ledger.md:85-88`), superseded in the
-  ledger by ER-2 (`:281`, four legs); a ledger row recording the six-leg
+  ledger by ER-2 (`:281`, four legs); a ledger row recording the six-leg (ten-leg since round 51)
   registry is the ledger owner's follow-on — this page records the registry as
   measured at `r10-2`, and no ledger cell is edited from here.
 
@@ -1381,15 +1381,15 @@ lands in the round's record, not here.
 
 | Artifact | Holds | Read it when |
 |---|---|---|
-| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger (six rows; the lane has held nine cases since round 26) · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`SKILL.md:1294-1297`) |
-| `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per gate measured so far — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth case has no row yet); §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
+| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger (six rows; the lane has held nine cases since round 26, ten since round 51) · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`SKILL.md:1294-1297`); §7's default scratch still reads `mktemp -d /tmp/…` (`corpus/knowledge/operator-runbook.md:349-351`) while the runner honours `TMPDIR` (`tools/mutate-and-run.sh:149-150`) — by that rule the runner governs [round 52] |
+| `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per measured gate, appended when the sweep lands — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth and the round-51 tenth case have no row yet — the tenth's only record is the §3 cell supersession at `fleet-kill-rate-ledger.md:439`); §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
 | `corpus/knowledge/service-limits.md` | the refusals, detail of record; this page carries the compact rendering (`SKILL.md:1246-1270`) | an intake question needs a refusal line |
 | `corpus/knowledge/service-optin-protocol.md` | request shape (§1, including the re-pin rule), read-only guarantees (§2), the owner-hardens rule (§3), report shape (§4) | your lane wants a sweep — or receives one |
 | `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
-| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
-| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26; git-materialized replay) | any sweep or replay |
-| `corpus/README.md` | the coverage map — a row per note carried, holds + sources (round addenda append further tables of the same shape) | checking what the corpus holds |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26; ten since round 51) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
+| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26, ten since round 51; git-materialized replay) | any sweep or replay |
+| `corpus/README.md` | the coverage map — a row per note carried, holds + sources (round addenda append further tables; most keep this shape — later rounds also use `Note / frontier`, `Entry / ground` and id/status shapes, `corpus/README.md:125`, `corpus/README.md:326`, `corpus/README.md:614`) | checking what the corpus holds |
 | `plans/round-N.plan.md` (latest `plans/round-11.plan.md`), `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10; `N` is a placeholder, not a file — the concrete files are the round-4 through round-10 plan and record-draft pairs that `plans/` holds); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, committed in the round-11 closeout) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
 
@@ -1455,7 +1455,7 @@ ran, never the working trees (`:1324-1331`).
 - **The two successor rows** (T1 fired again at this read) **and the ledger
   row for the six-leg registry** (`:1359-1363`) — open at this write.
 - **The unknowns at their homes** — the ledger's U-list, the protocol's
-  U1–U5, `service-limits.md` §5 — carried, not closed here.
+  U1–U6, `service-limits.md` §5 — carried, not closed here.
 
 Append-only to the last line: nothing above this section was edited by this
 write; the recorded tables stand at their revisions, and a reader on a
@@ -1823,7 +1823,7 @@ new mutation case and no promotion credit.
 | Evidence condition | Decision | Error pattern / limit |
 |---|---|---|
 | A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
-| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) [round 52: when bound the anchor is `refs/heads/<lane.branch>` or the attached branch tip; an unbound non-jj detached root anchors at raw `HEAD` when a local or remote-tracking ref contains it (`tools/evidence-disposition.py:460-525`; selftest `v2-registry-clone-detached-anchor` :2891-2896 expects exit 0, fixture docstring :2256 "anchors at HEAD")] | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
 | The waiver rev is a tree id, dangling, not an ancestor, or shallow | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance. Replace refs, grafts and an inherited `GIT_DIR` are neutralized, not refused: the tool sets `GIT_NO_REPLACE_OBJECTS=1`, `GIT_GRAFT_FILE=/dev/null` and scrubs inherited `GIT_*` (`tools/evidence-disposition.py:368-390`; selftests `v2-historical-replace-ref`, `v2-gitdir-env` expect exit 0; grafts by code reading only). Corrected in round 27, seat Read32 |
 | A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
 | A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
@@ -1966,7 +1966,7 @@ inherited contract are descriptive, not enforced schema fields.
 Source: `corpus/lessons/round-21.md`, QUALITY43–44 and
 `corpus/knowledge/hermetic-env-differential.md` (mined S079, reopened S028).
 The frozen C1/C2 scripts and populations remain unchanged from33d03b7;
-the maintained facade supplies public isolated fixture selftests without
+the maintained facade supplies public fixture selftests (the c2 fixture is fleet-bound, not isolated: it reads sibling blobs at the fleet root) without
 rewriting those instruments. These are bounded measurements, not admission
 or execution-authentication mechanisms.
 
@@ -2154,8 +2154,8 @@ the kill came from an absolute assert on the masked region.
 | entry-registry walk | gate | `python3 tools/registry-check.py --rev HEAD` (add `--only NAME` to grade one row) | 0 clean; 1 failed; 2 could-not-evaluate (registry unreadable or invalid, root/rev/clone failure, only or tag miss); 64 usage | `python3 tools/registry-check.py --selftest` → finding id SELFTEST: last line SELFTEST: PASS (51 cases) at 84aa673 | `tools/registry.json`, `tools/registry-check.py` | selftest and --rev fixture trees via mkdtemp under /tmp (hardcoded, TMPDIR ignored), removed afterwards; live --root mode runs registry rows inside LANE so rows may write there | tameshi |
 | frozen registry replay | gate | `python3 tools/registry-replay.py --run --repo . --rev REV --requirements .ufo/evidence/round-23/requirements.json --registry-baseline .ufo/evidence/round-23/registry-baseline.json --out DIR` | 0 clean; 1 failed (refused rows: RUNNER_NOT_HELD, RUNNER_CLEANUP_FAILED, STREAM_LIMIT; an uncaught traceback also exits 1); 2 could-not-evaluate (registry digest mismatch, frozen requirements drift, clone HEAD mismatch, INVALID_OBSERVATIONS); 64 could-not-evaluate (usage) | `python3 tools/registry-replay.py --selftest` → REGISTRY_REPLAY_SELFTEST: 10/10 pass | `.ufo/evidence/round-23/requirements.json`, `.ufo/evidence/round-23/registry-baseline.json`, `tools/registry-check.py` (runner digest taken from the clone copy that runs) | caller-selected `--out` DIR (observations.json, bundle.json, expected.json, live-dependent.json) plus a private clone under TMPDIR; row commands run inside that clone, whose fleet mirror symlinks the live siblings, so the run is not write-isolated from them; selftest under TMPDIR | tameshi |
 | repeated control agreement | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...`, or --snapshot DIR over a committed control snapshot | 0 clean (controls_match); 1 failed (controls_mismatch); 2 could-not-evaluate (baseline_nonzero, command_unavailable, snapshot_tampered, setup_error); 64 could-not-evaluate (invalid_usage) | `python3 tools/repeat-control.py --selftest` → SELFTEST: PASS (29 cases) at exit 0 | `.ufo/evidence/round-12/ControlGate/expected.json`, `.ufo/evidence/round-12/ControlGate/mismatch/expected.json` | caller-chosen --out DIR, created fresh and never deleted; --snapshot DIR read-only; selftest scratch under /tmp/tameshi-r12-repeat-control-selftest.* (removed on pass) | tameshi |
-| round21 measure facade | gate | `python3 tools/round21-measure.py --claim c1 --repo DIR --rev REV --json` | 0 clean; 1 failed; 2 could-not-evaluate (setup or unknown rev); 64 could-not-evaluate (usage) | `python3 tools/round21-measure.py --selftest` → ROUND21_MEASURE_SELFTEST: 13/13 pass; fleet-bound, not hermetic (since round 52 it reads the sibling blobs at the fleet root its subject `c2-count.py` names in `FLEET`, so it passes from a clone anywhere on this host and fails where that fleet root is absent) | `.ufo/evidence/round-21/c1-survivors.py`, `.ufo/evidence/round-21/c2-count.py`, `.ufo/evidence/round-21/c2-contract.json` | TMPDIR for selftest fixtures and delegated counter receipts; sibling fleet repos read-only at the `FLEET` root of `c2-count.py`; target repo read-only | tameshi |
-| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant MUTANT.py --case CASE.json --out OUT.json` | 0 shrunk (report written); 1 selftest checks failed; 2 could-not-evaluate (usage, unreadable file, invalid case, case carries no kill) | `python3 tools/shrink-case.py --selftest` → SHRINK_SELFTEST: cases=21 failed=0 | `tools/pbt-staged-id.py` generator imported beside the tool; `tools/staged-id-guard.py` and `.ufo/evidence/round-49/c2/panel.json` for the M02 leg; expected edit literals in the tool source | caller-chosen --out FILE; tempfile.mkdtemp roots under TMPDIR for guard runs and selftest; lane read-only | tameshi |
+| round21 measure facade | gate | `python3 tools/round21-measure.py --claim c1 --repo DIR --rev REV --json` | 0 clean; 1 failed; 2 could-not-evaluate (setup or unknown rev); 64 could-not-evaluate (usage) | `python3 tools/round21-measure.py --selftest` → ROUND21_MEASURE_SELFTEST: 13/13 pass; fleet-bound, not hermetic (since round 52 it reads the sibling blobs at the fleet root that its subject counter c2-count.py names in its FLEET literal, so it passes from a clone anywhere on this host and fails where that fleet root is absent) | `.ufo/evidence/round-21/c1-survivors.py`, `.ufo/evidence/round-21/c2-count.py`, `.ufo/evidence/round-21/c2-contract.json` | TMPDIR for selftest fixtures and delegated counter receipts; sibling fleet repos read-only at the `FLEET` root of `c2-count.py`; target repo read-only | tameshi |
+| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant MUTANT.py --case CASE.json --out OUT.json` | 0 shrunk (report written); 1 selftest checks failed; 2 could-not-evaluate (usage, unreadable file, invalid case, case carries no kill) | `python3 tools/shrink-case.py --selftest` → SHRINK_SELFTEST: cases=21 failed=0 | `tools/pbt-staged-id.py` generator imported beside the tool; `tools/staged-id-guard.py` and `.ufo/evidence/round-49/c2/panel.json` for the M02 leg; expected edit literals in the tool source | caller-chosen --out FILE; tempfile.mkdtemp roots under TMPDIR for guard runs and selftest; lane read-only except the CPython bytecode cache (tools/__pycache__) the import of the generator may write | tameshi |
 | staged-id adoption guard | gate | `python3 -I tools/staged-id-guard.py --registry corpus/SOURCES.md --staged STAGED.md --json` (add `--map MAP.json` to validate a candidate adoption map) | 0 clean (answered, or admitted with `--map`); 1 failed (analysis refused, or map inadmissible); 2 could-not-evaluate (usage, missing flag, or setup refusal) | `python3 -I tools/staged-id-guard.py --selftest` → VERDICT: PASS at exit 0, FAIL at exit 1 (counter line STAGED_ID_GUARD_SELFTEST: cases=N failed=M) | none — expected values are the fixture literals SELFTEST_REGISTRY and SELFTEST_STAGED_* committed inside tools/staged-id-guard.py; no expected file on disk | read-only: no writes, no temp files, no lane writes; caller names the registry, staged and map paths and stdout/stderr is the whole output | tameshi |
 | tally audit v2 (mutation runner tally) | gate | `python3 tools/tally-audit-v2.py --runner tools/mutate-and-run.sh` (add `--then-regression --workdir DIR` to also require the runner's REGRESSION line to name cases=legs) | 0 clean; 1 failed (audit FAIL or a selftest case failure); 2 could-not-evaluate (cannot audit, setup, usage); a timed-out then-regression reports 124 and folds to 2 | `python3 tools/tally-audit-v2.py --selftest` → TALLY_AUDIT_V2_SELFTEST: 22/22 pass, one seeded-fault case per check | none — expected tallies are literals of the tool's independent oracle and its 22 selftest seeds; audited surface defaults to `tools/mutate-and-run.sh` | lane read-only; scratch under TMPDIR (tally-audit-v2.*, removed in finally); the runtime sweep additionally removes the fixed literal /tmp/tally-audit-work whenever a PASS vector fires; --then-regression writes only the runner's caller-named --workdir | tameshi |
 | tally audit v3 | gate | `python3 tools/tally-audit-v3.py --runner tools/mutate-and-run.sh` | 0 clean; 1 failed; 2 could-not-evaluate (SETUP: runner unparsable, tally harness structure missing, or argparse usage) | `python3 tools/tally-audit-v3.py --selftest` → TALLY_AUDIT_V3_SELFTEST: 35/35 pass | `tools/mutate-and-run.sh` is the only input read; expected REF_BLOCK, REF_NAMES and the 35 seeded-case panel are literals in the tool, and `.ufo/evidence/round-32/heldout/` is the committed provenance of those seeds (not read at run time) | audit and selftest scratch under TMPDIR, plus one auto-root dir /tmp/tameshi-r4-2-regression.XXXXXX allocated to witness the runner shape and removed at exit; the audited runner is never edited; `--then-regression` lets the runner create its own auto root or caller-chosen --workdir DIR | tameshi |

@@ -1,0 +1,67 @@
+{
+ "heading": "### Using the ledger",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`).",
+   "new": "PASS/FAIL/SETUP (`tools/mutate-and-run.sh:139-143,1519-1548`).",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:940. `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924:tools/mutate-and-run.sh | sed -n '139,143p'` -> 'Exit map (--regression): 0 all cases PASS / 1 >= 1 case FAIL / 2 a case could not be verified'; `| sed -n '1519,1548p'` -> `exit 1` at 1523 (FAIL), `exit 2` at 1529 and 1538 (SETUP incl. case-tally), `exit 0` at 1548 (PASS). The cited 126-136 is the sha256/pin contract comment, 1273-1294 the git-show/blob-mode SETUP refusals, 1364-1384 the comparison-tail arithmetic; none states the exit map."
+  },
+  {
+   "old": "workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`);",
+   "new": "workdir, mirrors the blob's mode and pins its SHA (`tools/mutate-and-run.sh:1275-1317`);",
+   "class": "stale-pointer/unsupported",
+   "evidence": "SKILL.md:943. `... show bcba8924:tools/mutate-and-run.sh | sed -n '1275,1317p'` -> `git_clean -C \"$repo\" show \"${rev}:${path}\"` (1276) into the case workdir, `ls-tree` mode read + `chmod +x` for 100755 (1285-1300), `REGRESSION_PIN ... path=%s mode=%s sha256=%s` (1302-1303), sha256-vs-pin compare (1312-1317). The mode is mirrored and printed, never compared against a recorded mode (round-51 reader T51W2Read06 finding 13). The cited 1104-1175 lies inside the js-cite-check embedded spec (`| sed -n '1096,1103p'`)."
+  },
+  {
+   "old": "`REGRESSION_PIN` names repo/rev/path/pin (:1159-1160).",
+   "new": "`REGRESSION_PIN` names repo/rev/path/mode/sha256 (:1302-1306).",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:944. `... show bcba8924:tools/mutate-and-run.sh | sed -n '1302,1306p'` -> the `REGRESSION_PIN %s: source=git repo=... rev=... path=... mode=... sha256=...` print and its file-source variant (1305). The cited 1159-1160 is inside the bash-drift-pins embedded spec (`| sed -n '1155,1160p'` -> '# tameshi round-51 C2 - PRE-REGISTERED mutation spec for kagi corpus/drift-pins.sh')."
+  },
+  {
+   "old": "later legs still run and their statuses aggregate (:1384-1450 since round 26).",
+   "new": "later legs still run and their statuses aggregate (:1247-1317,1459-1517 since round 26).",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:948. `... show bcba8924:tools/mutate-and-run.sh | sed -n '1247,1274p;1308,1317p'` -> repo/revision/path/target refusals and the pin mismatch, each `return 2` before `bash \"$SELF\"` at 1320 (so: refuses before that leg's suite); `| sed -n '1459,1508p'` -> ten unconditional `regression_case_git` dispatches; `| sed -n '1510,1517p'` -> the status tally loop. The cited 1384-1450 is the kill-rate comparison/band arithmetic."
+  },
+  {
+   "old": "(N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26)",
+   "new": "(N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51)",
+   "class": "stale-count",
+   "evidence": "SKILL.md:950. `... show bcba8924:tools/mutate-and-run.sh | sed -n '1510p'` -> `local nlegs=10`; `| sed -n '1540p'` -> `REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)`; `| sed -n '84p'` -> '...r16 seven; r18 eight; r26 nine; r51 ten'; `| grep -c '^  regression_case_git '` -> 16 (10 ledger dispatches at 1459-1508, 6 selftest fixtures at >=1827)."
+  },
+  {
+   "old": "executed and skipped counts distinguished; and the exact recorded verdict",
+   "new": "executed and skipped counts distinguished (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict",
+   "class": "unsupported",
+   "evidence": "SKILL.md:957. `... show bcba8924:tools/mutate-and-run.sh | grep -n 'SKIP'` returns only 752, 753, 819, 820 - all inside embedded spec heredocs (714-754, 804-849), i.e. the mutant targets' own vocabulary; `| sed -n '78,79p;585p'` -> the runner's report vocabulary is `MUTATE: DONE|DEGRADED (... defects=... killed=... survived=... inconclusive=...)` and `MUTATE: SETUP`. No lane leg carries a skipped count and the runner has no skip state."
+  },
+  {
+   "old": "Current anchors (round 26): pins/revisions/tables `tools/mutate-and-run.sh:603-629`,",
+   "new": "Current anchors (round 52 re-anchor; round 26 recorded :603-629): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:960. `... show bcba8924:tools/mutate-and-run.sh | sed -n '614p;633p;634p;643p'` -> PIN_JS/REV_JS at 614-615 through PIN_DRIFTPINS/REV_DRIFTPINS at 632-633, TABLE_JS at 634 through TABLE_DRIFTPINS at 643; `| sed -n '603,613p'` -> case-composition comment only. Round-26 history kept verbatim: `git -C ... show 40a12bf:SKILL.md | sed -n '960,961p'` reads the same sentence with :603-629, and at 40a12bf the runner's PIN_JS is line 603."
+  },
+  {
+   "old": "first-four specs :657-839",
+   "new": "first-four specs :671-849",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:961. `... show bcba8924:tools/mutate-and-run.sh | sed -n '657,672p'` -> `table_count()` 657-663 and `table_total()` 665-669, `regression_specs()` at 671; `| sed -n '673p;804p;849p;854p'` -> spec 1 opens at 673, spec 4 (bash-mado-verify) at 804 with its EOT at 849, leg-5 spec at 854. The cited 657-839 starts in helpers and ends inside spec 4."
+  },
+  {
+   "old": "nine dispatches :1384-1428.",
+   "new": "ten dispatches :1459-1508.",
+   "class": "stale-count/stale-pointer",
+   "evidence": "SKILL.md:961. `... show bcba8924:tools/mutate-and-run.sh | grep -n '^  regression_case_git '` -> ledger dispatches at 1459, 1464, 1469, 1474, 1479, 1484, 1489, 1494, 1499, 1504 (ten; the remaining six are selftest fixtures); `| sed -n '1384,1428p'` -> band arithmetic and table comparisons, no dispatch."
+  }
+ ],
+ "holds_checked": 25,
+ "not_fixable_inline": [
+  {
+   "line": "SKILL.md:957",
+   "why": "'enumerated, executed and skipped counts distinguished' is a contract requirement no CAND0 leg satisfies (the runner has no skip state; grep -n 'SKIP' hits only embedded spec text). There is no corrected positive claim to substitute, so the drafted fix is the sanctioned in-line bracketed note; the requirement text itself is left intact for the L1 to narrow or keep."
+  }
+ ]
+}

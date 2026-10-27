@@ -1,0 +1,38 @@
+{
+ "heading": "## The operator's runbook and the six-leg regression (round 10, measured)",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "tools/mutate-and-run.sh:85-89",
+   "new": "tools/mutate-and-run.sh:84-89",
+   "class": "stale-pointer",
+   "evidence": "At its own governed revision the six leg entries sit at :84-89, so :85-89 starts at leg 2 and misses leg 1 (js-kimi-census at :84): `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 606716f7:tools/mutate-and-run.sh | awk 'NR>=84&&NR<=89'` (that blob's sha256 = 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5, 1 642 L). At CAND0 the ten-entry list is :88-97 (header :84): `git -C … show bcba8924…:tools/mutate-and-run.sh | sed -n '84p;88p;97p'`."
+  },
+  {
+   "old": "replays **six**",
+   "new": "replays **six** in r10-2 (**ten** since round 51)",
+   "class": "stale-count",
+   "evidence": "CAND0 tools/mutate-and-run.sh (bcba8924, 2 159 L, sha256 977de470…) wires ten legs: header :84 '(… r26 nine; r51 ten)', entries :88-97, pins :614-633, tables :634-643, registry calls :1459-1507, REGRESSION_EXPECT ten rates :1446, nlegs=10 :1510: `git -C … show bcba8924…:tools/mutate-and-run.sh | sed -n '84p;97p;1446p;1510p'`."
+  },
+  {
+   "old": "`mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`",
+   "new": "`mktemp -d ${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` (literal `/tmp` at `75ed934d…`; `${TMPDIR:-/tmp}` since round 51)",
+   "class": "stale-pointer",
+   "evidence": "CAND0 tools/mutate-and-run.sh:1432 allocates `mktemp -d \"${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX\"`, documented at :148-150 '(r51 honours TMPDIR)'; run :157/:491 and selftest :160/:1555 use the same form. At 75ed934d it was the literal `/tmp` form (:1089): `git -C … show bcba8924…:tools/mutate-and-run.sh | sed -n '148,150p;157p;1432p;1555p'` and `git -C … show 606716f7:tools/mutate-and-run.sh | sed -n '1089p'`."
+  },
+  {
+   "old": "read at `75ed934d…`, the sha governs):",
+   "new": "read at `75ed934d…`, the sha governs; at `bcba8924…` the block is ten legs — list `:88-97`, sources `:98-104`, pins/tables `:614-643`, specs `:850`/`:925`, registry `:1459-1507`, exit map `:139-143`, mode mirror `:128-130`/`:1281-1300`, selftest arms `:1860-1918`):",
+   "class": "stale-pointer",
+   "evidence": "Every runner anchor this section cites has moved at CAND0: list :88-97 (header :84), sources :98-104, pins :614-633 / tables :634-643, specs :850 and :925, registry calls :1459-1507, exit map :139-143, mode-mirror comment :128-130 + body :1281-1300 (REGRESSION_PIN mode= printf :1302), exec-bit selftest arms :1860-1918: `git -C … show bcba8924…:tools/mutate-and-run.sh | sed -n '84p;98p;614p;634p;850p;925p;1459p;1507p;139p;143p;128p;130p;1281p;1300p;1302p;1860p;1918p'`."
+  }
+ ],
+ "holds_checked": 36,
+ "not_fixable_inline": [
+  "The six-leg table (SKILL.md:1310-1317) cannot be extended to the ten legs the runner now wires without adding lines, and no line may be added or removed (other files cite SKILL.md line numbers). In-line remedy applied: the count qualifier at SKILL.md:1305 and the current-location note at SKILL.md:1308. Shown by `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924…:tools/mutate-and-run.sh | sed -n '84p;88,97p;1459,1507p'` (ten legs; the section's table records the r10-2 six).",
+  "The receipt's verbatim quoted closing line `REGRESSION: PASS (cases=6 passed=6; ledger legs exact: killed-delta<=0 flips<=0)` (SKILL.md:1341) is a quote of the 2026-10-14 run's own output at tool `75ed934d…`; editing it would falsify the record. It is scoped by the receipt's own date and tool sha at SKILL.md:1332-1335 two lines above. Shown by `sed -n '1332,1344p'` of the CAND0 SKILL.md and by the r10-2 `REGRESSION_EXPECT` six-rate printf at governed `tools/mutate-and-run.sh:1103`.",
+  "Adjacent, outside this section: SKILL.md:925 still ends the round-7 dating at 'nine since round 26' while the runner wires ten (reader T51W2Read11's info note F4); the line belongs to the round-7 section, not to this heading, so no replacement is offered here. Shown by `git -C … show bcba8924…:SKILL.md | sed -n '925p'`.",
+  "Adjacent, outside this section: corpus/knowledge/operator-runbook.md:349-350 (the §7 page this section points at as 'the operator's rendering of this command') still states the default regression scratch as the literal `/tmp` form, which the CAND0 runner no longer uses; the runbook is not this seat's deliverable. Shown by `git -C … show bcba8924…:corpus/knowledge/operator-runbook.md | sed -n '347,353p'` and `…:tools/mutate-and-run.sh | sed -n '148,150p;1432p'`.",
+  "The section's runbook identity triple ('511 L / 31 416 B' at `e1e349b6…`, SKILL.md:1283-1284) differs from the file at CAND0 (516 L / 33 515 B, sha256 8b2e185ff011…) but the statement is explicitly scoped 'the sha governs' and 'uncommitted worktree file at this read'; it holds at its named content, so no in-line change (reported as a currency note, not a failure). Shown by `git -C … show 606716f7:corpus/knowledge/operator-runbook.md | wc -l; … | wc -c` (511 / 31416, sha256 e1e349b69d798acb…) and `sha256sum` of the CAND0 blob."
+ ]
+}

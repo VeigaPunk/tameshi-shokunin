@@ -1,0 +1,32 @@
+### Using the ledger
+
+- **One command replays every leg.** `bash tools/mutate-and-run.sh
+  --regression [--workdir DIR] [--keep]` allocates a fresh default scratch
+  `${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
+  it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
+  are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
+  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:139-143,1519-1548`).
+- **Each leg's bytes come from the repo's git object store, not the working
+  tree.** `git show <rev>:<path>` materializes the pinned blob into the case
+  workdir, mirrors the blob's mode and pins its SHA (`tools/mutate-and-run.sh:1275-1317`);
+  `REGRESSION_PIN` names repo/rev/path/mode/sha256 (:1302-1306). Working-tree drift
+  does not change that blob. The old tsukuroi/mado pins are historical,
+  not a statement that their current trees match those recorded bytes.
+  A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
+  later legs still run and their statuses aggregate (:1247-1317,1459-1517 since round 26).
+- **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
+  executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
+  (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
+  to each leg's pinned bytes.
+- **Contribution contract — what a leg carries.** A pinned target path,
+  Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
+  a command exercising `$MUTANT` under controlled fixtures; enumerated,
+  executed and skipped counts distinguished (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
+  table. Host-gated branches must be excluded/controlled or explicitly named,
+  not called hermetic merely because the flag is `--selftest`.
+  Current anchors (round 52 re-anchor; round 26 recorded :603-629): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,
+  first-four specs :671-849, inventory :83-108, ten dispatches :1459-1508.
+  (U) The recorded case set remains tameshi-carried; no fleet-contributed
+  leg is established by this registry.
+

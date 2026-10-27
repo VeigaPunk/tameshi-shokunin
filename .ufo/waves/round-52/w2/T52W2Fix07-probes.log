@@ -1,0 +1,94 @@
+# T52W2Fix07 probe transcript (scratch clone of CAND0 /fast/scratch/hyaku/tameshi-r52/T52W2Fix07/clone)
+## clone head: bcba8924894216268afc4171f06eb8c28e912b46
+
+$ python3 tools/env-diff.py --selftest
+exit=0
+ENVDIFF_CASE invariant PASS
+ENVDIFF_CASE tz PASS
+ENVDIFF_CASE locale PASS
+
+$ python3 tools/env-diff.py --bogus
+exit=64
+usage: env-diff.py [-h] [--contract CONTRACT] [--out OUT]
+                   [--fleet-root FLEET_ROOT] [--jobs JOBS] [--selftest]
+
+$ python3 tools/env-diff.py --contract /nonexistent.json --out /tmp/x.json
+exit=2
+ENVDIFF_SETUP: [Errno 2] No such file or directory: '/nonexistent.json'
+
+$ python3 tools/wave-route-mix.py --selftest
+exit=0
+ROUTEMIX_CASE parse-overrides ok
+ROUTEMIX_CASE parse-aliases ok
+ROUTEMIX_CASE balanced-ok ok
+
+$ python3 tools/wave-route-mix.py --spec .ufo/waves/round-21/spec1.json --json
+exit=0
+{
+ "max_share": 0.4,
+ "ok": true,
+ROUTEMIX: OK seats=71 max_share=0.4 minimax-code=20/71 opencode-go=19/71 zai=16/71 kimi-code=15/71 google-antigravity=1/71
+
+$ python3 tools/wave-route-mix.py --bogus
+exit=64
+usage: wave-route-mix.py [-h] [--spec SPEC] [--config CONFIG]
+                         [--max-share MAX_SHARE] [--json] [--selftest]
+
+$ python3 tools/wave-accounting.py --bundle .ufo/evidence/round-22/bundle.json --expected .ufo/evidence/round-22/expected.json --json
+exit=0
+{
+  "authority": "declared retained callbacks; report presence never completion; not provider authentication",
+  "bundle_sha256": "dfb1027f80be935fe781ccb8c47d89639a88a9eff6e05d1b45b2a7a61845c18e",
+
+$ python3 tools/wave-accounting.py --bundle .ufo/evidence/round-22/wrong-count-bundle.json --expected .ufo/evidence/round-22/wrong-count-expected.json --json
+exit=1
+{
+  "authority": "declared retained callbacks; report presence never completion; not provider authentication",
+  "bundle_sha256": "d984c49c57d2b12b3a4e2583cc33842af6927f0612b3b0d663acb2ca09a7a17e",
+
+$ python3 tools/wave-accounting.py --help
+exit=0
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+
+
+$ python3 tools/command-binding.py --selftest
+exit=0
+CASE clean-with-expected-red PASS
+CASE source-read-not-command PASS
+CASE wrong-cwd PASS
+
+$ python3 tools/command-binding.py --bundle .ufo/evidence/round-23/replay/bundle.json --expected .ufo/evidence/round-23/replay/expected.json --json
+exit=0
+{"bundle_sha256": "3d6c99b70b3e30b9dc4c25c327d90d956e069836ddcc6e024180cbc6267a50b9", "exit": 0, "finding_ids": [], "schema": "command-binding-report-v1"}
+
+$ python3 tools/command-binding.py --bundle .ufo/evidence/round-23/source-read-bundle.json --expected .ufo/evidence/round-23/source-read-expected.json --json
+exit=1
+{"bundle_sha256": "db620668efe12c00f55518b993c3ffd20dc254f3ace8f06bc82bb661a580d3cf", "exit": 1, "finding_ids": ["ARGV_MISMATCH"], "schema": "command-binding-report-v1"}
+
+$ python3 tools/registry-replay.py --selftest
+exit=0
+CASE clean PASS
+CASE not-held PASS
+CASE cleanup PASS
+
+$ python3 tools/registry-replay.py --bogus
+exit=64
+usage: registry-replay.py [-h] (--run | --project OBSERVATIONS | --plan |
+                          --selftest) [--repo REPO] [--rev REV]
+
+$ python3 .ufo/evidence/round-21/coldread/measure.py --selftest
+exit=0
+CASE configured-default-ledger PASS
+CASE relocated-package-default-repo PASS
+CASE no-historical-ledger-fallback PASS
+
+$ python3 .ufo/evidence/round-21/coldread/measure.py --bogus
+exit=64
+usage: measure.py [-h] [--rev REV] [--repo REPO] [--ledger-file LEDGER_FILE]
+                  [--ledger-rev REV:PATH] [--inputs-overlay FILE] [--explain]
+
+$ python3 .ufo/evidence/round-21/coldread/measure.py --ledger-file /nonexistent
+exit=64
+SELECTOR_OVERRIDE_FORBIDDEN: --ledger-file
+

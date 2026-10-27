@@ -1,0 +1,68 @@
+--- SKILL.md@bcba8924
++++ SKILL.md@bcba8924+T52W2Fix14
+@@ -1302,10 +1302,10 @@
+ ### The six-leg regression — usage and this round's receipt
+ 
+ At tool revision `75ed934d…` (`VERSION` = `mutate-and-run.sh r10-2`, 1 642 L;
+-uncommitted worktree file at this write), `--regression` replays **six**
+-embedded legs (list `tools/mutate-and-run.sh:85-89`; sources `:90-97`;
+-pins/tables `:550-559`; specs `:766`, `:841`; registry `:1132-1141` — line
+-anchors as read at `75ed934d…`, the sha governs):
++uncommitted worktree file at this write), `--regression` replays **six** (ten since round 51)
++embedded legs (list `tools/mutate-and-run.sh:88-97`; sources `:98-121`;
++pins/tables `:614-643`; specs `:850`, `:925`; registry `:1459-1507` — line
++anchors re-read at CAND0 `bcba8924…`, the sha governs):
+ 
+ | # | leg | target | recorded rev | recorded rate |
+ |---|---|---|---|---|
+@@ -1318,32 +1318,32 @@
+ 
+ - **Command, unchanged.** `bash tools/mutate-and-run.sh --regression
+   [--workdir DIR] [--keep]`; default scratch
+-  `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`, removed on PASS unless
++  `mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX"` (TMPDIR honoured since r51), removed on PASS unless
+   `--keep`, kept on FAIL/SETUP, never removed when `--workdir` was given. Exit
+-  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:115-119`).
++  map: 0 all legs PASS · 1 ≥1 leg FAIL · 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:139-143`).
+ - **Where the bytes come from.** Each leg materializes from its repo's git
+   object store at its recorded revision (`git show <rev>:<path>`) and the copy's
+   sha256 must equal the recorded pin; a missing repo/rev/blob or a pin mismatch
+   is a SETUP refusal before any suite runs. r10-2 also mirrors the blob's mode:
+-  a `100755` blob is `chmod +x`'d after materialization (`:104-106`, `:932-960`)
++  a `100755` blob is `chmod +x`'d after materialization (`:128-130`, `:1281-1302`)
+   — kagi's checklist gate re-execs itself in its selftest, `git show` carries no
+   mode, and the leg refuses as SETUP without the bit (measured while the cut was
+-  made; the added selftest arms at `:1488-1527` cover the mirror).
++  made; the added selftest arms at `:1860-1896` cover the mirror).
+ - **Receipt, executed by this lane** (independent of the tool owner's; the
+   owner's own run at the same revision, 21:00:24Z, closes identically),
+   2026-10-14T21:02:39Z, tool `75ed934d…` before and after, scratch
+   `/tmp/w10-t10-4-ev/` (regression workdir kept):
+-  - `--selftest` → `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0 —
++  - `--selftest` → `MUTATE_SELFTEST: 80/80 pass` at r10-2 (107/107 at CAND0) / `VERDICT: PASS`, rc 0 —
+     added arms include the exec-bit mirror and an embedded-ledger check that
+-    the six specs parse and agree with their recorded tables.
+-  - `--regression` → six legs, all exact: `match=10/10` (legs 1–4, 6),
++    the six specs parse and agree with their recorded tables (ten at CAND0, `:2024`).
++  - `--regression` → six legs at r10-2 (ten at CAND0), all exact: `match=10/10` (legs 1–4, 6),
+     `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`; closing
+     `REGRESSION: PASS (cases=6 passed=6; ledger legs exact: killed-delta<=0
+     flips<=0)`, rc 0. Each `REGRESSION_PIN` line now carries the blob's
+     `mode=` beside repo/rev/path/sha256, and `REGRESSION_EXPECT` lists six
+-    recorded rates.
++    recorded rates at r10-2 (ten at CAND0, `:1446`).
+ - **The supersessions stay append-only.** The round-7 section's "Four legs at
+-  this revision" (`:925-929`; dated there since round 16) and the round-9 receipt's `cases=4`
++  this revision" (`:925-929`; dated there since round 16; the section now reads "that revision") and the round-9 receipt's `cases=4`
+   (`:1218-1222`) stand at `cf41efaa…`; the round-9 caveat that cases 5–6 were
+   "still not embedded — named debt" (`:1226-1228`; ER-4 caveat (a)) is resolved
+   at `r10-2` by embedding the recorded T8-1/T8-2 spec files (their 25 `@old`
+@@ -1358,7 +1358,7 @@
+   executed govern.
+ - **Named debt, not smoothed.** The ledger's §1 embedding text still reads
+   "cases 1 and 2 only" (`fleet-kill-rate-ledger.md:85-88`), superseded in the
+-  ledger by ER-2 (`:281`, four legs); a ledger row recording the six-leg
++  ledger by ER-2 (`:281`, four legs); a ledger row recording the six-leg (ten-leg since round 51)
+   registry is the ledger owner's follow-on — this page records the registry as
+   measured at `r10-2`, and no ledger cell is edited from here.
+ 

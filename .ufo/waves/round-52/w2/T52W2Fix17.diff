@@ -1,0 +1,39 @@
+--- SKILL.cand0.md	2026-10-27 02:45:00.468355617 -0300
++++ SKILL.fixed.md	2026-10-27 02:46:36.612820680 -0300
+@@ -937,28 +937,28 @@
+   `${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
+   it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
+   are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
+-  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`).
++  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:139-143,1519-1548`).
+ - **Each leg's bytes come from the repo's git object store, not the working
+   tree.** `git show <rev>:<path>` materializes the pinned blob into the case
+-  workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`);
+-  `REGRESSION_PIN` names repo/rev/path/pin (:1159-1160). Working-tree drift
++  workdir, mirrors the blob's mode and pins its SHA (`tools/mutate-and-run.sh:1275-1317`);
++  `REGRESSION_PIN` names repo/rev/path/mode/sha256 (:1302-1306). Working-tree drift
+   does not change that blob. The old tsukuroi/mado pins are historical,
+   not a statement that their current trees match those recorded bytes.
+   A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
+-  later legs still run and their statuses aggregate (:1384-1450 since round 26).
++  later legs still run and their statuses aggregate (:1247-1317,1459-1517 since round 26).
+ - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
+-  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26) with the
++  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
+   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
+   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
+   to each leg's pinned bytes.
+ - **Contribution contract — what a leg carries.** A pinned target path,
+   Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
+   a command exercising `$MUTANT` under controlled fixtures; enumerated,
+-  executed and skipped counts distinguished; and the exact recorded verdict
++  executed and skipped counts distinguished (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
+   table. Host-gated branches must be excluded/controlled or explicitly named,
+   not called hermetic merely because the flag is `--selftest`.
+-  Current anchors (round 26): pins/revisions/tables `tools/mutate-and-run.sh:603-629`,
+-  first-four specs :657-839, inventory :83-108, nine dispatches :1384-1428.
++  Current anchors (round 52 re-anchor; round 26 recorded :603-629): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,
++  first-four specs :671-849, inventory :83-108, ten dispatches :1459-1508.
+   (U) The recorded case set remains tameshi-carried; no fleet-contributed
+   leg is established by this registry.
+ 

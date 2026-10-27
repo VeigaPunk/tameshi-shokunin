@@ -1556,3 +1556,15 @@ Check that can fail: for every mutation-suite case that asserts a verdict word i
 Lesson: `corpus/lessons/round-51.md` `## Mistakes` row 1. The kagi `drift-pins.sh` K_GONE_ARM / K_AMBIG_GT / K_SHAPE_OPTIN mutants survive under `sandbox-$DEFECT_ID` but are killed under neutral names; the committed red/green scripts and 3-repeat results are in `.ufo/waves/round-51/w1/T51LabSandboxLeak/`.
 
 Falsifier that must fail: `.ufo/waves/round-51/w1/T51LabSandboxLeak/red-gone-id.sh` exits 0 (`DRIFT_SELFTEST: PASS (13 cases)`) while `green-gone-neutral.sh` exits 1 (`no /GONE/ in output`); the paired check must report `DIFF`, not accept the recorded kill-rate. The same one-variable result holds for K_AMBIG_GT and K_SHAPE_OPTIN; K_MODE_CMP and K_COUNT_GE are negative controls that stay killed. Evidence: `.ufo/waves/round-51/w1/T51LabSandboxLeak.md:52-60,72-93`.
+
+## Criteria appended — round 52 (2026-10-27)
+
+### Criterion 103 — a tool change lands with its registered gate row and its SKILL statements
+
+A round that changes a lane tool's observable output (a leg count, a tally, a printed verdict line) changes, in the same content revision, every `tools/registry.json` row whose expectation pins that output and every SKILL.md statement that restates it; a row is superseded only by an active successor that is replayed. A scope monitor that allows the tool change does not allow the stale row.
+
+Check that can fail: at the candidate revision run `python3 tools/registry-check.py --rev REV` over every active row (it clones into a fleet mirror built from `--root`'s parent, so run it from the lane checkout or a clone that sits in a fleet mirror) and require `REGISTRY_CHECK: held=N/N`; for counted panels compare the tool's own table (for `tools/mte-interop.py`, `len(LEG_TABLE)`) with every "<count> ledger legs" and `(K/K)` statement of SKILL.md. Round 52's frozen counter `.ufo/evidence/round-52/c1/measure.py` is the operative form.
+
+Lesson: `corpus/lessons/round-52.md` `## Mistakes` row 1 (routed defect R51.1; the same class as R47.1).
+
+Falsifier that must fail: at base `ef19d8e1` the check prints `held=48/49` with `mte-interop-check` differing (`.ufo/evidence/round-52/control/C1_CTL_0.stdout`), and the row-only fixes are caught too (`C1_CTL_STALE`, `C1_CTL_SUPERSEDE`, `C1_CTL_NEEDLE` all false); the positive control `C1_CTL_POSITIVE` (`63b12e8c`) passes with `held=49/49`.

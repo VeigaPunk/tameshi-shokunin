@@ -1,0 +1,14 @@
+{
+ "heading": "### Round-21 gate/probe registry \u2014 finite environment differential",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "public isolated fixture selftests",
+   "new": "public fixture selftests (the c2 fixture is fleet-bound, not isolated: it reads sibling blobs at the fleet root)",
+   "class": "false \u2014 isolation overstated for the c2 fixture",
+   "evidence": "SKILL.md:1969 claims the facade supplies 'public isolated fixture selftests'. CAND0 tools/round21-measure.py:8-12 states the opposite - 'The c2 fixture reads the pinned sibling blobs at the fleet root that the subject counter itself reads (its `FLEET` literal), so the selftest is fleet-bound, not hermetic: it passes from a clone anywhere on this host and fails where that fleet root is absent (round 52, routed defect R51.4).' - and :77-80 builds every surface pin with `git -C <fleet>/<repo> show <rev>:<path>`, the fleet root being the FLEET literal of .ufo/evidence/round-21/c2-count.py:19 (`FLEET = Path(\"/home/vgpnk/Projects/shokunin\")`). Commands: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924894216268afc4171f06eb8c28e912b46:tools/round21-measure.py | sed -n '1,20p;70,90p'`; `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-21/c2-count.py | sed -n '15,20p'`; c1 alone is isolated (fixture repo only), so the cell is qualified for c2 instead of deleted."
+  }
+ ],
+ "holds_checked": 63,
+ "not_fixable_inline": []
+}

@@ -1,0 +1,59 @@
+T52W2Fix01 receipts — section `## Live-tree re-pin and entry-command monitor — round 17`, CAND0 bcba8924894216268afc4171f06eb8c28e912b46
+Every command below ran in a scratch clone at CAND0 (`S=/fast/scratch/hyaku/tameshi-r52/T52W2Fix01; git clone --shared ... $S/clone; git -C $S/clone rev-parse HEAD` -> bcba8924894216268afc4171f06eb8c28e912b46), TMPDIR="$S/tmp". Scratch deleted after the report; these lines are the retained receipts.
+
+1) base->CAND0 lane diff (what changed under this section's pointers)
+   cmd: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --stat ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 bcba8924894216268afc4171f06eb8c28e912b46
+   out: SCORECARD.md | 11 +, SKILL.md | 12 +-, corpus/knowledge/fleet-kill-rate-ledger.md | 4 +, tools/registry.json | 4 +-, tools/round21-measure.py | 11 +-, .ufo/evidence/round-21/coldread/ledger.json | 606 +, plus round-52 evidence (50 files, 2160 insertions, 11 deletions)
+   cmd: for p in tools/evidence-disposition.py tools/registry-check.py tools/mutate-and-run.sh tools/pin-disposition.py tools/bash-witness-study.py .ufo/evidence/round-16/measure.py tools/registry.json corpus/SOURCES.md; do git diff --quiet BASE CAND -- "$p"; done
+   out: all UNCHANGED except tools/registry.json CHANGED (the C1 mte-interop-check re-pin; this section names that file only as a path)
+
+2) recipe step 1 — `.ufo/evidence/round-18/dispositions-before.json`
+   cmd: TMPDIR=$S/tmp python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json
+   out: exit=1; counts {"effective":12,"expected_checks":12,"failed":1,"findings":1,"passed":11,"superseded":0}; findings [{"detail":"producer_before: stdout lacks 'summary preserves top-level exposed declaration kind'","expectation":"producer_before","id":"expected_contains_missing"}]
+
+3) recipe step 1 parenthetical — round-17's two manifests
+   cmd: TMPDIR=$S/tmp python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions.json --json        -> exit=2
+   cmd: TMPDIR=$S/tmp python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions-before.json --json -> exit=2
+
+4) recipe step 2 — `.ufo/evidence/round-18/dispositions.json`
+   cmd: TMPDIR=$S/tmp python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json
+   out: exit=0; counts {"effective":11,"expected_checks":12,"failed":0,"findings":0,"passed":11,"superseded":1}; historical_text 3 lines
+        HISTORICAL tools/bash-witness-study.py rev=4acc607dfd79f19d508bd50cdd06b77269fccd1d sha256=49e9e5e2...
+        HISTORICAL tools/mutate-and-run.sh    rev=4acc607dfd79f19d508bd50cdd06b77269fccd1d sha256=75ed934d...
+        HISTORICAL tools/pin-disposition.py   rev=4acc607dfd79f19d508bd50cdd06b77269fccd1d sha256=29725397...
+
+5) recipe step 4 — pin-disposition probe
+   cmd: TMPDIR=$S/tmp python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin
+   out: exit=0; "unavailable": 0; 6 head rows carry "branch": "master" and "head_differs_from_branch": false
+
+6) registry rows 1850-1853 — selftests at CAND0 bytes
+   cmd: TMPDIR=$S/tmp python3 tools/evidence-disposition.py --selftest   -> exit=0, SELFTEST: PASS (66/66); SELFTEST_CASE usage-selftest-extra PASS (exit=64 expects=64)
+   cmd: TMPDIR=$S/tmp python3 tools/registry-check.py --selftest        -> exit=0, SELFTEST: PASS (51 cases); SELFTEST_CASE usage-selftest-extra PASS (exit=64)
+   cmd: TMPDIR=$S/tmp bash tools/mutate-and-run.sh --selftest           -> exit=0, MUTATE_SELFTEST: 107/107 pass, VERDICT: PASS; PASS missing --target exits 64
+   cmd: TMPDIR=$S/tmp python3 tools/pin-disposition.py --selftest       -> exit=0, SELFTEST: PASS (19/19); SELFTEST_CASE detached-head-uses-branch-tip PASS (exit=0 expects=0)
+
+7) the failing statement (SKILL.md:1826) — tool evidence
+   cmd: git show CAND:SKILL.md | sed -n '1826p'
+   out: | A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+   cmd: sed -n '460,525p' tools/evidence-disposition.py
+   out: resolve_historical_anchor: bound case returns ("refs/heads/"+branch, commit) :476-490; unbound jj refused :492-496; otherwise _commit_of("HEAD") :498, for-each-ref --contains over refs/heads/ and refs/remotes/ :503-519, and `return "HEAD", commit` :525
+   cmd: sed -n '2255,2257p;2891,2896p' tools/evidence-disposition.py
+   out: def _setup_hist_registry_clone(fx): """A detached harness clone anchors at HEAD, not its later remote tip."""
+        historical_case("v2-registry-clone-detached-anchor", 0, [], _setup_hist_registry_clone)
+   => the tool's own supported case anchors at raw HEAD and the selftest expects exit 0; "not `HEAD`" is an over-broad absolute at CAND0.
+
+8) other statements spot-checked at CAND0 bytes
+   cmd: sed -n '368,390p' tools/evidence-disposition.py -> G4 comment :368-370, GIT_ENV_OVERRIDES :371-376, git_environment() drops inherited GIT_* :387-390 (pointer holds exactly)
+   cmd: grep -n 'v2-historical-replace-ref\|v2-gitdir-env' tools/evidence-disposition.py -> :2910, :2925, both expect 0
+   cmd: grep -n 'REGISTRY_CHECK' tools/registry-check.py -> :50 REGISTRY_CHECK: held=<N>/<M> superseded=<K>; :906 emit; exits :52-54; usage :11-13
+   cmd: grep -n 'repo_identity_mismatch\|die_setup' tools/mutate-and-run.sh -> :1263 REGRESSION_CASE ... SETUP (repo_identity_mismatch: ...); die_setup :253-256 exit 2; exit map comment :139-143
+   cmd: grep -n '^## ' corpus/lessons/round-16-verifier-spotcheck.md -> §3 :123, §6 :214; R16-OP1 :216, R16-MON1 :237
+   cmd: grep -n 'S061\|S062\|S063' corpus/SOURCES.md -> :70 S061, :71 S062, :72 S063, glosses match
+   cmd: grep -n 'GIT_' .ufo/evidence/round-16/measure.py -> :413-415 only (sets GIT_CONFIG_NOSYSTEM/author env), no inherited-GIT_* scrub
+   cmd: git log -S GIT_CONFIG_NOSYSTEM -- tools/bash-witness-study.py -> scrub added in round-18 commit 58e5d53
+   cmd: ls .ufo/waves/round-27/w1/Read32.md -> present
+   cmd: for f in $(grep -rl '\bgit\b' tools --include=*.py --include=*.sh); do grep -c 'startswith("GIT_")' $f; done -> every git-invoking tool filters inherited GIT_* (bash-witness-study, env-diff, evidence-disposition, mutate-and-run, pin-disposition, receipt-measure, registry-check, registry-replay, round21-measure, trace-inputs; context-capture declares argv and does not exec git; mte-interop execs no git)
+
+9) self-check — apply + diff on a scratch copy
+   cmd: python3 - (replace "not `HEAD`) |" once in the CAND0 SKILL.md copy) ; diff -u SKILL.cand0.md SKILL.fixed.md
+   out: see T52W2Fix01.diff in this directory: one changed line (1826), inside the section, file line count 2172 -> 2172 (unchanged).

@@ -1,0 +1,36 @@
+{
+ "heading": "## The re-sweep cadence and the six-case confidence statement (round 8, measured)",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "`MUTATE_SELFTEST: 67/67`)",
+   "new": "`MUTATE_SELFTEST: 67/67` at round 8; at round 52 the tool prints `MUTATE_SELFTEST: 107/107 pass`)",
+   "class": "stale-count",
+   "evidence": "SKILL.md:1064 at CAND0 states the engine's own selftest prints `MUTATE_SELFTEST: 67/67` with no date qualifier. Measured at CAND0 in a scratch clone (never the lane checkout): `git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone && git -C $S/clone checkout -q bcba8924894216268afc4171f06eb8c28e912b46 && TMPDIR=$S bash $S/clone/tools/mutate-and-run.sh --selftest | tail -3` -> `MUTATE_SELFTEST: 107/107 pass` / `VERDICT: PASS`, rc 0. The emitter is a computed tally, not a fixed number: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924:tools/mutate-and-run.sh | sed -n '2125p'` -> `printf 'MUTATE_SELFTEST: %s/%s pass\\n' \"$((cases - failed))\" \"$cases\"`. 67/67 is the round-8-era reading (`plans/round-8-record-draft.md:82`, `.ufo` ledger `corpus/knowledge/fleet-kill-rate-ledger.md:341`), so the fix dates the old count and states the current one on the same line. Independent cross-check of the same stale count: round-51 reader T51W2Read08 (record `.ufo/waves/round-52/w1/T52W1Corr08.json`, finding 1)."
+  },
+  {
+   "old": "(:811-812)",
+   "new": "(`fleet-kill-rate-ledger.md:310`, ER-3; `:318`, ER-4)",
+   "class": "stale-pointer",
+   "evidence": "SKILL.md:1084 cites the re-pin rule by a bare shorthand that continues the ledger pointer on SKILL.md:1082. At CAND0 the ledger has 441 lines, so 811-812 do not exist: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924:corpus/knowledge/fleet-kill-rate-ledger.md | wc -l` -> 441. The rule the sentence states is at `:310` (ER-3: 'A moved substrate needs a **re-pin**, never a re-interpretation of the old table') and `:318` (ER-4: 'a moved pin is never re-interpreted'), shown by `git -C ... show bcba8924:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '310p;318p'`. The replacement keeps the citation on the same line and inside the same file (line count unchanged)."
+  },
+  {
+   "old": "and the tool's relation to the last run (`held` / `moved`):",
+   "new": "and the tool's relation to the last run (`held` / `moved`) [round 52: the three labels are not exhaustive — when the recorded revision is not an ancestor of the branch tip and the live file equals the tip blob, all three read no; the branch-tip rule in force is ER-jj, `fleet-kill-rate-ledger.md:420`]:",
+   "class": "unsupported",
+   "evidence": "SKILL.md:1015 ('three readings per case') and the rule rows at SKILL.md:1033-1035 define only `current`/`stale`/`drift`, and `stale` requires 'the recorded revision is an ancestor of `refs/heads/<branch>`' (`git -C ... show bcba8924:SKILL.md | sed -n '1015p;1033,1035p'`). A non-ancestor rewrite of the branch tip matches none of the three; fixture built at CAND0 (never the lane): `D=$(mktemp -d -p $S fx2.XXXX); git -C $D init -q; commit one; commit two (the recorded revision); git -C $D reset -q --hard one; commit three` -> recorded=d328f223..., tip=5f7759f3..., recorded_pin=81db67b6, tipblob=1875add4; `git merge-base --is-ancestor <recorded> <tip>` -> ancestor=no; `git status --porcelain` -> 0 lines; therefore `current` fails (pin != tip blob), `stale` fails (not an ancestor), `drift` fails (live == tip blob, porcelain clean): current=no stale=no drift=no. Same gap recorded by round-51 reader T51W2Read08 (`.ufo/evidence/round-51/coldread/reads/T51W2Read08.md:13`; record `.ufo/waves/round-52/w1/T52W1Corr08.json`, finding 2), which also verdicts the three rule rows themselves as holding — so the note qualifies the completeness claim without rewriting a rule. The citation names the rule in force at CAND0: `git -C ... show bcba8924:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '420p'` -> ER-jj, branch tip `refs/heads/<branch>`, canonical rule `SKILL.md:1027-1035`."
+  },
+  {
+   "old": "(`mutation-case-kumitate-claims.md:285-291`)",
+   "new": "(`mutation-case-kumitate-claims.md:142-148`, `:285-291`)",
+   "class": "stale-pointer",
+   "evidence": "The sentence at SKILL.md:1141-1144 carries two claims under one citation: D7 reproduces kimi's `slice(0, 6)` cap, and D8 is the assert-blind threshold. At CAND0 the cited range holds only the second: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924:corpus/knowledge/mutation-case-kumitate-claims.md | sed -n '285,291p'` -> 'E2 — new measured shape: the assert-blind threshold (D8) ...'. D7 is stated at `:142-148` ('D7 — cap unreached: `shown.slice(0, 6)` → `5` ... kimi-D2 shape (`findings.slice(0, 6)` → `5`) reproduced on a sibling gate'), shown by `sed -n '142,148p'` on the same blob. The replacement adds the range that holds the first half and keeps the existing one; no newline added or removed."
+  }
+ ],
+ "holds_checked": 64,
+ "not_fixable_inline": [
+  "SKILL.md:1003 and SKILL.md:1218 repeat `MUTATE_SELFTEST: 67/67 pass` (`sed -n '1003p;1218p'` on the CAND0 blob); both lines sit in other sections, outside this section's line set 1010-1154, so they belong to those sections' fix-reads, not this one.",
+  "`corpus/knowledge/fleet-kill-rate-ledger.md` is append-only after line 239 ('new entries go below this line, never edits above', `:241-242`), so the dead `:811-812` anchor cannot be replaced by a numbered line inside that file from this seat; the SKILL now cites the existing ER-3 (`:310`) and ER-4 (`:318`) lines instead.",
+  "The round-8 scratch receipts `/tmp/w8-tameshi-t84/pin-read.txt` (SKILL.md:1040) and `/tmp/w8-tameshi-t84/drift-demo.txt` (SKILL.md:1066) were not retained and cannot be restored; they are dated round-8 observations (the pin read is explicitly 'never carried as a standing claim'), so no in-line repair exists that is not a rewrite of what round 8 recorded. Flagged for the wave-3 readers as an expected 'absent' rather than a false statement, on the same reasoning as `.ufo/waves/round-52/w1/T52W1Corr08.md` (deliberate-exclusions table)."
+ ]
+}

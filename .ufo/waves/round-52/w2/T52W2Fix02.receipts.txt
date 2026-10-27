@@ -1,0 +1,57 @@
+# T52W2Fix02 receipts — CAND0 bcba8924894216268afc4171f06eb8c28e912b46
+
+## R1 section bounds and the failing line
+$ git -C LANE show CAND0:SKILL.md | sed -n "131p;224p;228p;246p"
+## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+9. **Restore + prove the substrate never moved.** Re-run step 2's checks (line count and repo revision included; neither model note records an after-revision):
+   so this shows endpoint identity, not the absence of a transient write (SKILL.md:377-378; corrected in round 27, seat Read03); it is the record's headline, not an
+## Defect-taxonomy templates and exact-string guidance
+
+## R2 Restore discipline (the pointer the body cites)
+$ git -C LANE show CAND0:SKILL.md | sed -n "375p;377,378p"
+## Restore discipline — before/after identity, not continuous non-write proof
+All substrate edits must stay in scratch. Before/after fingerprints establish endpoint
+identity, not that no transient write occurred. Apply this policy in order:
+
+## R3 the two known runner pointers hold at CAND0 (already repaired)
+$ git -C LANE show CAND0:tools/mutate-and-run.sh | sed -n "434p;579,583p"
+        sys.stderr.write('APPLY FAIL id=%s line=%d old-string-count=%d expected=1\n' % (did, d['line'], count))
+  pct=$(( (200 * killed + total) / (2 * total) ))
+  if [[ "$inconcl" -gt 0 ]]; then
+    printf 'MUTATE: DEGRADED (target=%s defects=%s killed=%s survived=%s inconclusive=%s kill-rate=%s%%)\n' \
+      "$LABEL" "$total" "$killed" "$survived" "$inconcl" "$pct"
+    exit 1
+$ git -C LANE show CAND0:tools/mutate-and-run.sh | wc -l
+2159
+
+## R4 runner total = every defect in the spec (so pct divides by every defect)
+$ git -C LANE show CAND0:tools/mutate-and-run.sh | sed -n "515,517p"
+  local total
+  total=$(printf '%s\n' "$out" | wc -l)
+  printf 'MUTATE_SPEC: %s defects=%s\n' "$SPEC_ABS" "$total"
+
+## R5 round-27 attribution: the seat report exists in round-27 w1 and records the correction
+$ git -C LANE show CAND0:.ufo/waves/round-27/w1/Read03.md | sed -n "1,3p"
+# Read03: cold read of the mutation-sweep recipe (SKILL.md:131-245)
+
+Verdict: wrong-expectation. The recipe runs as written and reproduces the cited sweep results on two pinned artifacts. One expectation is false. Step 9 says the before/after check proves the absence of writes. The page's own Restore discipline says the check proves endpoint identity only (SKILL.md:228 against SKILL.md:377-378).
+$ git -C LANE log --format="%h %ad %s" --date=short -S "corrected in round 27" -- SKILL.md
+b1cc95e 2026-10-22 round-27: wave-1 cold reads appended to the round-21 ledger (38 entries), traces, wave records; SKILL corrections of the 12 sections the cold reads failed; F8 entry and lesson corrections from wave findings
+
+## R6 the section is already LOST in the cand cold-read precheck (drifted= empty: its own bytes moved)
+$ grep -n "Mutation-sweep" LANE/.ufo/evidence/round-52/integrate/precheck-cand0.stdout
+2:LOST ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence | drifted=
+19:COLDREAD_PRECHECK floor=ef19d8e1e7ba floor_credited=64 cand=bcba89248942 cand_credited=46 lost=18 RED
+
+## R7 the replacement occurs exactly once in the section and once in the file
+$ git -C LANE show CAND0:SKILL.md | awk "NR>=131 && NR<=245" | grep -c "Restore + prove the substrate never moved"
+1
+$ git -C LANE show CAND0:SKILL.md | grep -c "Restore + prove the substrate never moved"
+1
+
+## R8 section sha256 before/after and file line counts (see T52W2Fix02.diff)
+section(131-245) sha256 cand0 = 48a9c0d85af6bf82628421a67c5e628d72a5733832058436c5ef7cb9b24f860d
+section(131-245) sha256 fixed = 72d9805134ceab8c89185b510aa0995812b086ef442088a30d9ae0c31108c587
+file lines cand0 = 2171 (wc -l) / 2172 (split) ; file lines fixed = same
+file sha256 cand0 = 8787c3ad60ffdd5756103c0c80e45a0fbd4985933b85c70e5efdd700adfe0708
+file sha256 fixed = 081015cdfd9f830c811f77dfd546288adbc97349ef0394bdac297efcc9251690

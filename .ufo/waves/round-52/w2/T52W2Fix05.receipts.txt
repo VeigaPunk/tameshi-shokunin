@@ -1,0 +1,108 @@
+# T52W2Fix05 — receipts (commands and observed output, recorded from this seat's run)
+
+Seat scratch root (deleted before yield): /fast/scratch/hyaku/tameshi-r52/T52W2Fix05/
+Lane (read-only): /home/vgpnk/Projects/shokunin/tameshi-shokunin  CAND0 bcba8924894216268afc4171f06eb8c28e912b46
+
+## 1. Selftest measured at CAND0 (scratch clone, never the lane checkout)
+    S=/fast/scratch/hyaku/tameshi-r52/T52W2Fix05
+    git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone
+    git -C $S/clone checkout -q bcba8924894216268afc4171f06eb8c28e912b46
+    TMPDIR=$S bash $S/clone/tools/mutate-and-run.sh --selftest | tail -6
+  observed:
+    PASS tally harness: loop missing one operand -> SETUP case-tally mismatch, exit 2
+    PASS help exits 0
+    PASS missing --target exits 64
+    PASS --regression refuses --target (exit 64)
+    MUTATE_SELFTEST: 107/107 pass
+    VERDICT: PASS
+    rc=0
+
+  emitter (computed tally), CAND0 blob:
+    git -C <lane> show bcba8924:tools/mutate-and-run.sh | sed -n '2125p'
+    ->   printf 'MUTATE_SELFTEST: %s/%s pass\n' "$((cases - failed))" "$cases"
+
+  round-8-era 67/67 receipts (history, unchanged by this seat):
+    plans/round-8-record-draft.md:82,121,263 ; corpus/knowledge/fleet-kill-rate-ledger.md:341
+
+## 2. Ledger pointers at CAND0
+    git -C <lane> show bcba8924:corpus/knowledge/fleet-kill-rate-ledger.md | wc -l   -> 441
+    sed -n '235,237p' -> "- **U9** — this ledger's update cadence is a convention, not a mechanism: ..."
+    sed -n '170,173p' -> "- **Not yet embedded at this write: the tsukuroi and mado cases** ... not an edit of §1–§4."
+    sed -n '281p'     -> "- **§5 / ER-1 supersession (embedding + tool).** ... invariant "REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)" ... 19:14:16Z"
+    sed -n '310p'     -> "3. **On substrate drift.** ... A moved substrate needs a **re-pin**, never a re-interpretation of the old table ..."
+    sed -n '318p'     -> "**ER-4 — ...** ... a moved pin is never re-interpreted."
+    sed -n '420p'     -> "**ER-jj — jj-era reading of "HEAD" (round 17, 2026-10-20; append-only).** ... branch tip `refs/heads/<branch>` ... Canonical rule: `SKILL.md:1027-1035`"
+    sed -n '241,242p' -> "(none yet — new entries go below this line, never edits above per / `corpus/QUALITY.md` item 4)"
+    (no line 811/812 exists: 441-line file)
+
+## 3. Pin-read table (SKILL.md:1044-1049) verified against the recorded revisions at CAND0
+    for each row: git -C <owner> show <rev>:<path> | sha256sum | cut -c1-8
+    kimi      @175de6ba scripts/kimi-census.mjs   -> 83016d45   (table: 83016d45 == 83016d45)
+    surface   @fecee874 corpus/surface-census.sh  -> 275d8294   (275d8294 == 275d8294)
+    tsukuroi  @165307fe tools/tsukuroi-census.sh  -> 084951be   (recorded pin 084951be)
+    tsukuroi  @aa136d69 tools/tsukuroi-census.sh  -> bba6cdf6   (live blob; != pin -> stale)
+    mado      @eead56b2 tools/mado-verify.sh      -> d7edaab4   (recorded pin d7edaab4)
+    mado      @0c20a76f tools/mado-verify.sh      -> 90d50cdd   (HEAD blob; != pin -> stale; also the SKILL.md:1057 "HEAD blob 90d50cdd…")
+    checklist @fecee874 corpus/checklist-run.sh   -> 7e5ec98b   (7e5ec98b == 7e5ec98b)
+    claims    @175de6ba scripts/claims-check.mjs  -> e9a21b44   (e9a21b44 == e9a21b44)
+
+## 4. Tool pin cf41efaa… is the historical sha256 of the runner (SKILL.md:1039 holds)
+    git -C <lane> rev-list --all -- tools/mutate-and-run.sh, hash each blob:
+      9f1d3c339a7094968041c7708a65dbf7eab9fae6 -> cf41efaa8be5f52d…  (2026-10-14 16:06:31 -0300, r7-1)
+      05a22475… -> 0673d2e5…   c699c8c3… -> 89722ddb…   44947154… -> b56c6e57…   b58b26fb… -> 597e1419…
+      2ac41e76… -> 977de47034cbe52b…  (CAND0 working blob; `git show bcba8924:tools/mutate-and-run.sh | sha256sum`)
+    4dc69ef9…/e3f838d4… are in-flight shas recorded at plans/round-8.plan.md:37,69,72 (never committed)
+
+## 5. Runner chronology (SKILL.md:1077 "the later regression/selftest runner")
+    git -C <lane> log -1 --format='%H %ad %s' c699c8c3 -> 2026-10-20 10:49:37 (blob 89722ddb…)
+    git -C <lane> log -1 --format='%H %ad %s' 05a22475 -> 2026-10-20 11:18:08 (blob 0673d2e5…)
+
+## 6. Shebangs of the six pinned bytes (SKILL.md:1119-1120)
+    kumitate 175de6ba scripts/kimi-census.mjs      -> #!/usr/bin/env node
+    kagi     fecee874 corpus/surface-census.sh     -> #!/usr/bin/env bash
+    tsukuroi 165307fe tools/tsukuroi-census.sh     -> #!/usr/bin/env bash
+    mado     eead56b2 tools/mado-verify.sh         -> #!/usr/bin/env bash
+    kagi     fecee874 corpus/checklist-run.sh      -> #!/usr/bin/env bash
+    kumitate 175de6ba scripts/claims-check.mjs     -> #!/usr/bin/env node
+
+## 7. Gate grammar / selftest strings (SKILL.md:1107-1108, 1122-1126)
+    kumitate 175de6ba kimi-census.mjs:852   -> `KIMI_CENSUS_SELFTEST: ${passed}/${results.length} pass`
+    kumitate 175de6ba claims-check.mjs:861  -> `CLAIMS_SELFTEST: ${results.length - failed.length}/${results.length} pass`
+                                     :859   -> `FAIL ${r.label}`
+    kagi fecee874 surface-census.sh:755,758 -> `bad-case %02d … got exit=%s` / `ok-case  %02d …`; :766 `SELFTEST surfaces+shapes`
+    kagi fecee874 checklist-run.sh:418,421  -> `checklist-selftest: FAIL …`; :494,497 `CHECKLIST_SELFTEST: FAIL (%d/%d cases)` / `CHECKLIST_SELFTEST: PASS (%d cases)`
+    tsukuroi 165307fe tsukuroi-census.sh:693 `ok() { … printf 'PASS %s\n' "$*"; }` + :782 `ok "$label (exit $rc, $wverdict)"`
+    mado eead56b2 mado-verify.sh:423        -> `MADO_SELFTEST: $n_pass/$n_pass assertions passed`
+
+## 8. Fixture demonstration of the uncovered reading (finding 3), CAND0 rules only
+    D=$(mktemp -d -p $S fx2.XXXX); git -C $D init -q; cd $D
+    commit one (A); commit two (RECORDED); PIN=sha256(first 8 of file at RECORDED)
+    git reset -q --hard A; commit three (TIP)
+    observed:
+      recorded=d328f223efc7d8df74675f74f7e029976305788d tip=5f7759f33605417464db025826785328cf9bd653 recorded_pin=81db67b6 tipblob=1875add4
+      ancestor=no
+      porcelain=0
+      current: fails    stale: requires ancestor=yes -> fails    drift: requires live!=tip or porcelain non-empty -> fails
+
+## 9. Fleet pointers (SKILL.md:1024-1026)
+    git -C /home/vgpnk/Projects/shokunin cat-file -t 17c1fad -> commit
+    git -C /home/vgpnk/Projects/shokunin show 17c1fad:scripts/shokunin-watchdog.sh | sed -n '3,5p'
+      -> "# SSOT: MISSION.md. A lane's round ends when .ufo/reports/round-<N>/<lane>.md / # lands; watchdog completes the mission and launches a fresh process for / # round N+1. Cap 1024/lane. Tick 450s."
+    sed -n '14p' -> LANES="protocol aggregator kasegi kengaku kake kumitate kotoba kagi kama"   (no tameshi)
+    git -C /home/vgpnk/Projects/shokunin show 5efb4114 --format='%ad %s' | head -2 -> Mon Oct 19 20:00:37 2026, "scripts: shokunin-watchdog.sh — substrate-neutral launch from shokunin.conf LANES, …"
+    grep -n tameshi shokunin.conf -> 55:tameshi|tameshi-shokunin|depth + calibration (verification-fixture craft)   (also at 5efb4114:shokunin.conf:55)
+    scripts/hyaku/jj-lane.sh: state) shift; cmd_state "$@" ;; (:839); :182 echo "state branch=$branch …"; :165 branch=$(lane_branch_git "$dir") || branch=$(detect_branch "$dir"); :101-103 lane.branch via git config
+
+## 10. Notes cited by the section
+    corpus/knowledge/mutation-case-kagi-checklist.md:180-194  (table; :192 "six of the eight are unreached inputs"; C1 :186 and F2 :189 "(a)")
+    corpus/knowledge/mutation-case-kumitate-claims.md:142-148 (D7 cap) · :249-254 (Row E, D9 first JS instance) · :285-291 (E2/D8) · :292 (E3 follow-up)
+    corpus/knowledge/mutation-case-mado-verify.md:17-23       (Incident I1, "whether the new revision reproduces this table is U")
+    corpus/knowledge/service-optin-protocol.md:232            (SCR-T6 re-ran under b56c6e57…: 4/10, all ten mutant shas identical)
+    .ufo/waves/round-16/w2/RerunSweep.md:19-23                (runner 89722ddb… at c699c8c; :3-5 verdict HOLDS)
+    SKILL.md:668 -> "## Third case — cross-author confirmation (round 5, measured)"
+
+## 11. Self-check
+    applied the four replacements to a scratch copy of the CAND0 blob:
+      line count orig/fixed: 2172 / 2172   (2171 newline-terminated lines, unchanged)
+      changed SKILL.md lines: [1029, 1064, 1084, 1144]  (all inside 1010-1154)
+      diff: T52W2Fix05.diff

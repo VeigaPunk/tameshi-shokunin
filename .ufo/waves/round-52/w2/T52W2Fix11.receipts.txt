@@ -1,0 +1,215 @@
+### section span
+start=1230 next_heading=1246 body=1232..1244
+
+### section sha256 (heading..last body line, no trailing newline)
+0767d32fa85ab5591b3c170d27be7cb69a40e04be5859c52a992fa88a7bf73f5
+
+### section bytes
+1229	
+1230	### The re-pin semantics, as executed
+1231	
+1232	- **T1 fired for two cases.** The rule is the round-8 section's (`:1069-1090`):
+1233	  re-measure at the live revision, or record the STALE cell with its reason —
+1234	  never an edit of the recorded table.
+1235	- **The intake precondition round 8 named is present, not errata.** The opt-in
+1236	  protocol carries the re-pin rule — "A moved substrate needs a re-pin, never a
+1237	  re-interpretation of the old table"
+1238	  (`corpus/knowledge/service-optin-protocol.md:59-62`) — cited here.
+1239	- **What a re-sweep produces lands appended.** The outcome is an appended row in
+1240	  `fleet-kill-rate-ledger.md` (append-only), the recorded tables byte-identical;
+1241	  a rate never travels to a later revision. ER-4 and its addendum name the
+1242	  re-sweeps of the two moved cases as follow-on rows — open at this write (the
+1243	  addendum reads them `stale + drift`), and an unlanded leg is named debt, never
+1244	  assumed.
+
+### S2 pointer :1069-1090 (round-8 triggers/re-pin)
+### Triggers T1–T3 and the re-pin rule
+
+- **T1 — a case reads `stale`** → re-measure at the live revision, or record the
+  STALE cell with its reason; **never an edit of the recorded table**. Live
+  instances at round 8 (2026-10-14): tsukuroi `084951be…` (6/10) → `bba6cdf6…`; mado
+  `d7edaab4…` (4/10) → `90d50cdd…` (both have moved again since; re-read, never carry).
+- **T2 — the harness sha ≠ the revision a case's table was measured under** →
+  re-run the reproduction under the new revision and record both pins. Precedent
+  (corrected round 18): round 16's RerunSweep under runner `89722ddb…` (`RerunSweep.md:19-23`; `0673d2e5…` is the later regression/selftest runner; corrected round 27, seat Read15) reproduced case 7;
+  mado under `b56c6e57…` was re-run once by SCR-T6, 4/10, scratch not retained (`service-optin-protocol.md:232`; the mado note keeps it U, `mutation-case-mado-verify.md:17-23`; seat ReRead07); the harness itself moved four times in
+  one day (`597e1419…` → `b56c6e57…` → `4dc69ef9…` → `e3f838d4…` → `cf41efaa…`)
+  and no recorded table was re-interpreted for it.
+- **T3 — an owner lane records a re-run at a new revision** → an appended row;
+  §1–§4 are never edited (`fleet-kill-rate-ledger.md:170-173`).
+- **The re-pin rule.** A moved pin is never re-interpreted against the new bytes
+  (:811-812). The old table stays; the moved case lands at its newest revision
+  with both shas and the delta, appended. `moved=0 stale=0` is a complete
+  outcome, recorded as such — drift is never manufactured by re-cutting cases.
+  The round-8 replay receipt (tool `cf41efaa…`, four legs; 19:14:16Z, rc 0, `fleet-kill-rate-ledger.md:281`; seat ReRead07):
+  `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0
+  flips<=0)`, every leg `match=10/10 … flips=0` — the recorded tables hold at
+  their own pinned blobs regardless of the live drift above.
+
+### S1/tick evidence 1164-1181 (stale rows)
+case                     recorded-rev live-HEAD    anc      pin==live live==HEADblob worktree   reading
+js-kimi-census           175de6ba     175de6ba     yes      83016d45==83016d45 83016d45==83016d45 clean      current
+bash-surface-census      fecee874     fecee874     yes      275d8294==275d8294 275d8294==275d8294 clean      current
+bash-tsukuroi-census     165307fe     72b038da     yes      084951be==bba6cdf6 bba6cdf6==bba6cdf6 clean      stale
+bash-mado-verify         eead56b2     12c8f08a     yes      d7edaab4==7da4ec50 7da4ec50==7da4ec50 clean      stale
+kagi-checklist-run       fecee874     fecee874     yes      7e5ec98b==7e5ec98b 7e5ec98b==7e5ec98b clean      current
+kumitate-claims-check    175de6ba     175de6ba     yes      e9a21b44==e9a21b44 e9a21b44==e9a21b44 clean      current
+```
+
+4 × `current` · 2 × `stale` · 0 × `drift`; tool **held** at `cf41efaa…`
+
+### S4/S5 protocol 54-67 (request shape item 1, quote 61-62)
+## 1. Request shape — what the opting-in lane brings
+
+The contract items (O, `SKILL.md:806-825`, with mado's run as the worked
+instance):
+
+1. **A pinned revision** — committed bytes of the gate: sha256, size, line
+   count, mtime, porcelain-clean sibling tree at open. Mado's pin
+   `d7edaab4…d0e13`, 45334 B, 1098 newlines. A moved substrate needs a
+   re-pin, never a re-interpretation of the old table.
+2. **A one-command hermetic suite** invocable against a copy — mado's gate
+   takes `bash "$MUTANT" --selftest`; it exercises the copy it is handed
+   (re-enters `$0`), prints its own executed count and verdict (`MADO_SELFTEST:
+   28/28 assertions passed` on green), and reads no live path
+   (`corpus/knowledge/mutation-case-mado-verify.md:44-49`).
+
+### S4 protocol headings (request shape vs errata)
+16:## 0. The offer, and the three engagement forms
+54:## 1. Request shape — what the opting-in lane brings
+109:## 2. Read-only guarantees — and what is provable
+142:## 3. Owner-hardens discipline — absorption stays with the owner
+182:## 4. Report shape — what the opting-in lane receives
+220:## 5. The two precedent runs at a glance (O unless marked)
+239:## 6. Spot-checks (three, re-run 2026-10-14 on the live bytes)
+257:## 7. Unknowns
+276:## 8. Errata (append-only)
+
+### S7-S14 ledger 312,318,339,352,356-362
+*What a re-sweep is, and what comes back.* The service protocol's request shape (`service-optin-protocol.md:54-107`): pinned revision · hermetic one-command suite invocable on a copy · clause-mapped single-edit spec with pre-registered expectations. The run is read-only to the substrate, the note is the only fleet file written, and the outcome lands **as an appended row or errata block in this ledger** — never as an edit of §1–§4. A re-sweep measures the live revision; the old row stands as its revision's record; a rate never travels (per-revision, per-host; §0); `moved=0` is recorded, never manufactured.
+**ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by T9-1, tameshi round 9; `plans/round-9.plan.md` leg 1).** ER-3 landed the cadence as policy + one executed read; this is the policy's first invocation at a round boundary — the receipt. No §1–§4 cell is edited; the moved cells are append-only readings, old tables stand at their revisions, and a moved pin is never re-interpreted.
+- [U] what each moved revision's mechanisms do — whether the recorded verdict/survivor classes reproduce at `bba6cdf6…` / `7da4ec50…` — is unmeasured here; that is this round's re-sweep work (its own appended rows), not this receipt.
+*What this tick closes, and what it does not.* U9 gets its first executed firing: the tick ran at a round boundary, the six-cell read and both drift events are appended, and the engine re-passed at the revision ER-2 pinned. It closes nothing else: the re-sweeps of the two `stale` cases land as their own rows, no rate is re-cut, `stale=2` is the reading — a tick that read `stale=0` would be as complete. Sibling trees read-only, clean before and after (kumitate `175de6b` · kagi `fecee87` · tsukuroi `72b038d` · mado `12c8f08`). A divergence between this tick and any owner's receipt is the FINDING, never smoothed.
+**ER-4 addendum — post-tick continuation: both moved gates read worktree-dirty again, minutes after the tick (O; appended 2026-10-14 by T9-1; ER-1's post-write-drift precedence).** The tick read the two moved cells clean/`stale`; at the read below both owners' gates carry uncommitted edits again. No ER-4 cell is re-cut — both readings are true at their timestamps, and the working revisions are moving: re-read before quoting. [I] the writers are the owners' own round-9 lanes — their `plans/round-9-record-draft.md` files and tsukuroi's `corpus/knowledge/aur-drift-receipt-r9.md` land in the same minutes, and tameshi lanes never write sibling gates (`PROVINCE.md`).
+
+- **tsukuroi `tools/tsukuroi-census.sh`** — worktree `5d16378d…` (1 535 L / 79 432 B, mtime 20:02:42Z), `git diff --numstat` +63/−0 vs HEAD blob `bba6cdf6…` → reading **stale + drift** (ER-4 row 3 read `stale`, clean).
+- **mado `tools/mado-verify.sh`** — worktree `5b6ace8e…` (3 076 L / 141 461 B, mtime 20:02:38Z), +196/−7 vs HEAD blob `7da4ec50…` → reading **stale + drift** (ER-4 row 4 read `stale`, clean).
+- Tool re-read at 20:02Z: `cf41efaa8be5f52d…`, mtime 15:29:01 −03:00 — still **held**; ER-4's regression receipt stands as the tick's record.
+
+Consequence for the cadence: trigger T3 is live again on both legs; any re-sweep must pin the revision it measures (the moved substrate's re-pin rule, ER-3) and never re-interpret a moving file. `drift` here is a reading, not a defect — the owners are editing their own gates.
+
+### S15 successor debt / ER-5
+authenticated external authority. Changing it changes the baseline.
+
+This corrects the **current use**, not the dated truth, of the old
+four-current/two-stale reading. Kimi's target has also changed; its
+successor sweep joins the existing tsukuroi/mado successor debt.
+The probe does not evaluate ancestry, so `changed` is not relabelled
+`stale` by inference here. It runs no sibling suite, closes no mutation
+re-sweep and produces no new kill-rate or recorded case.
+
+### S9 ledger errata heading + update rule
+- **Not yet embedded at this write: the tsukuroi and mado cases** — the round-7
+  plan's leg 1 carries the embedding (`plans/round-7.plan.md:4-10`); when it
+  lands, this ledger's embedding line and case count change as an appended
+  row, not an edit of §1–§4.
+## Errata (append-only)
+New errata entries go below this one.
+New errata entries go below this one.
+
+### S13 re-sweeps still open at CAND0? (grep for sweep rows of the two moved cases)
+301:| 3 | tsukuroi-census | `084951be…` | `bba6cdf6…` (1 472 L) | `bba6cdf6…` | clean | **stale** |
+328:| 3 | tsukuroi-census | `084951be…` @ `165307fe` | `bba6cdf6…` (1 472 L / 73 919 B) | yes | clean · yes | **stale** |
+329:| 4 | mado-verify | `d7edaab4…` @ `eead56b2` | `7da4ec50…` (2 887 L / 131 612 B) | yes | clean · yes | **stale** |
+337:- **row 3, tsukuroi `tools/tsukuroi-census.sh`** — `084951be…` @ `165307fe` (round 4) → **`bba6cdf6…`** @ HEAD `72b038d` (round-8 commit). Readable blob chain: `084951be` (`165307fe`) → `aae45531` (`da95290`, round 5, 17:33:30Z — the owner hardening §1.3 already records as its replay revision) → `bba6cdf6` (`aa136d6`, round 7, 19:06:31Z). Commit messages are round-generic; the writers are the owner's own lanes.
+338:- **row 4, mado `tools/mado-verify.sh`** — `d7edaab4…` @ `eead56b2` (round 5) → **`7da4ec50…`** @ HEAD `12c8f08` (round-8 commit). Chain: `d7edaab4` (`eead56b2`) → `c4c1afb7` (`c8f6667`, round 6, 18:17:26Z — the hardening §1.4 records) → `90d50cdd` (`0c20a76`, round 7, 19:06:31Z) → `7da4ec50` (`12c8f08`). The working-tree transients already on record — `6ea07110…` (round-9 plan [O]) and `dc864c6a…` (ER-3) — resolved into the committed `7da4ec50`; `drift` is superseded by `stale`, not left open.
+339:- [U] what each moved revision's mechanisms do — whether the recorded verdict/survivor classes reproduce at `bba6cdf6…` / `7da4ec50…` — is unmeasured here; that is this round's re-sweep work (its own appended rows), not this receipt.
+358:- **tsukuroi `tools/tsukuroi-census.sh`** — worktree `5d16378d…` (1 535 L / 79 432 B, mtime 20:02:42Z), `git diff --numstat` +63/−0 vs HEAD blob `bba6cdf6…` → reading **stale + drift** (ER-4 row 3 read `stale`, clean).
+359:- **mado `tools/mado-verify.sh`** — worktree `5b6ace8e…` (3 076 L / 141 461 B, mtime 20:02:38Z), +196/−7 vs HEAD blob `7da4ec50…` → reading **stale + drift** (ER-4 row 4 read `stale`, clean).
+
+### S3 round-8 plan names the intake precondition
+(3) Leg intake: the cadence covers whatever case set the ledger carries at
+    dispatch — embed status measured, never assumed (the ledger says the
+    four-case embed had not landed at its write, `:170-172`; the two-case tool
+    this lane executed, and the r7-1 edit landing four legs during this
+    draft, state block below) — a queue position freed
+    by round 7 enters as a case, and the round-7 opt-in protocol
+    (`corpus/knowledge/service-optin-protocol.md:53-106`) is checked for the
+    one precondition a cadence needs: a re-pin rule for a moved substrate; a
+    request shape without it is the finding and lands as contract errata.
+
+### S3 service-limits section 3 (round-9 corroboration)
+## 3. The intake precondition — the re-pin rule (checked: present, cited)
+
+Round 8's intake leg named one cadence precondition to check: a re-pin rule for
+a moved substrate in the opt-in protocol — absent there, it was to be filed as
+append-only contract errata (`corpus/QUALITY.md:7`, item 4), never patched in.
+
+Checked at this write: **present.** `service-optin-protocol.md:59-63` (request
+shape, item 1) carries: "A moved substrate needs a re-pin, never a
+re-interpretation of the old table." (`:61-62`). The method-side restatement is
+`SKILL.md:811-812`; the landed cadence cites the same sentence — "the request
+shape already carries this (`service-optin-protocol.md:59-62`)"
+(`fleet-kill-rate-ledger.md:310`, ER-3 trigger 3) — and operationalizes it at
+`SKILL.md:1083-1086`; the round-9 section records the same finding at
+`SKILL.md:1220-1223`.
+
+- [O] Its form: one sentence inside the request shape's pin item, not a
+  separately numbered clause; the operational procedure (re-measure at the
+  live revision · append · never edit the recorded table · both revisions stay
+  in the record) lives in the cadence policy, not the protocol.
+- **No errata needed** — the precondition was found, verbatim, where round 8
+  said to look. Had it been absent, the finding would have been filed as an
+  append-only contract errata block by the note's scribe, not written into the
+  protocol from this lane (write scope: this file only).
+
+### basename resolution (two tracked paths)
+
+
+### basename resolution: tracked paths named fleet-kill-rate-ledger.md
+.ufo/waves/round-18/staged/corpus/knowledge/fleet-kill-rate-ledger.md
+corpus/knowledge/fleet-kill-rate-ledger.md
+
+### ledger history: deleted lines per commit (append-only check)
+bcba8924 deletions=0 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SK
+9ee1c804 deletions=0 round-18: wave-2 corrections — SKILL wrong expectations repaired, case
+58e5d53d deletions=0 round-18: build landing — leg 8 js-sources-check, routed-defect fixes 
+2a22adeb deletions=0 round-17: build landing — v2 disposition re-pin (R16-OP1), entry-comma
+34907080 deletions=0 round-16: land cold-read ledger, errata provenance fix, wave-2 correct
+c699c8c3 deletions=1 round-16: land js-round-gate case 7, cold-read repairs, sources S052-S
+4acc607d deletions=1 round-13: pin disposition and frozen provenance repair
+b8eb96e1 deletions=0 probation round 9 (training r8): see LOG
+c611d5d5 deletions=1 probation round 8 (training r7): see LOG
+9f1d3c33 deletions=0 probation round 7 (training r6): see LOG
+
+### ledger diff base->CAND0
+diff --git a/corpus/knowledge/fleet-kill-rate-ledger.md b/corpus/knowledge/fleet-kill-rate-ledger.md
+index bd6aae4..1ccf25f 100644
+--- a/corpus/knowledge/fleet-kill-rate-ledger.md
++++ b/corpus/knowledge/fleet-kill-rate-ledger.md
+@@ -435,3 +435,7 @@ Detail of record: `mutation-case-kumitate-sources-check.md` (survivor probes in
+ its ER8-2). Receipt: `REGRESSION: PASS (cases=8 passed=8 …)` at the landed
+ runner (`.ufo/waves/round-18/w2/RerunC1.md`). Tameshi's own read-only case; it
+ did not drain the service queue.
++
++## Round 52 — §3 drift-pins cell superseded (2026-10-27)
++
++- **§3 supersession (cell, not edit; round-8 precedent `:280`).** The §3 queue row `drift-pins` (`:119`) said "unmeasured by sweep"; round 51 measured kagi `corpus/drift-pins.sh` @ `e64e81b8` (blob `c138d34c…`) as recorded case 10: `MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)` (`.ufo/evidence/round-51/c2/sweep/sweep.txt:31`), wired as the runner's tenth leg (`REGRESSION: PASS (cases=10 passed=10 …)`, `.ufo/evidence/round-51/after/c2.stdout:22`); entry `corpus/knowledge/mutation-case-kagi-drift-pins.md`. That case 10 measurement supersedes the cell; §3's table stays as written. Three of the eight survivors are harness-masked by the gate's own unanchored verdict grep (`corpus/lessons/round-51.md`), so 2/10 is a floor on the gate's detecting power, not its ceiling. Routed by the round-51 spot-check, defect 7.
+
+### protocol changed base->CAND0?
+(no diff: unchanged)
+
+### section-scope grep for runner inputs (row 10/§3)
+$ git show CAND0:SKILL.md | sed -n "1230,1244p" | grep -n "mutate-and-run\|trace-inputs"
+(no match)
+
+### prior cold-read entries for this heading
+[('eb7838b1', '0767d32f', ['CR33'], 'verified-record', 0, 0), ('01d586dd', '0767d32f', ['CR26'], 'gap-minor', 0, 2), ('4acdeac9', '0767d32f', ['CR26'], 'gap-minor', 0, 2)]
+
+### level-2 headings 1000-1165
+1010:## The re-sweep cadence and the six-case confidence statement (round 8, measured)
+1155:## The cadence's first scheduled tick, and the service's limits (round 9, measured)
+
+### ledger :282 and :398
+- **Named follow-ups (not edits, not written here).** Cases 5/6 are not embedded in `--regression`: T8-2 E3 records the target pin / suite / spec for the tool's
+successor sweep joins the existing tsukuroi/mado successor debt.

@@ -1,0 +1,151 @@
+T52W2Fix15 receipts -- lane /home/vgpnk/Projects/shokunin/tameshi-shokunin ; CAND0 bcba8924894216268afc4171f06eb8c28e912b46 ; base ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4
+
+## 1. section span (heading lines, CAND0)
+1155:## The cadence's first scheduled tick, and the service's limits (round 9, measured)
+1164:### The tick, executed
+1212:### The receipt at this boundary
+1230:### The re-pin semantics, as executed
+
+## 2. section bytes base vs CAND0
+diff rc=0 (0 = identical)
+
+## 3. runner 505-525 (cited range at CAND0)
+   505	
+   506	  printf 'MUTATE_TOOL: %s sha256=%s\n' "$SELF" "$(sha_of "$SELF")"
+   507	  printf 'MUTATE_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+   508	  printf 'MUTATE_TARGET: %s sha256=%s bytes=%s\n' "$TARGET_ABS" "$TARGET_SHA0" "$PRISTINE_BYTES"
+   509	
+   510	  local out
+   511	  if ! out=$(py_helper list "$SPEC_ABS" 2>&1); then
+   512	    printf '%s\n' "$out"
+   513	    die_setup 'spec parse failed'
+   514	  fi
+   515	  local total
+   516	  total=$(printf '%s\n' "$out" | wc -l)
+   517	  printf 'MUTATE_SPEC: %s defects=%s\n' "$SPEC_ABS" "$total"
+   518	  printf '%s\n' "$out" > "$WORKDIR/defects.tsv"
+   519	  [[ "$SPEC_ABS" == "$WORKDIR/spec.copy" ]] || cp -p "$SPEC_ABS" "$WORKDIR/spec.copy"
+   520	
+   521	  local id line desc mutant aout fail=0
+   522	  while IFS=$'\t' read -r id line desc; do
+   523	    [[ -n "$id" ]] || continue
+   524	    mutant="$WORKDIR/mutant-$id.$(basename "$TARGET_ABS")"
+   525	    cp -p "$PRISTINE" "$mutant" || die_setup "cannot create mutant copy: $mutant"
+
+## 4. runner 608-645 (PIN_*/REV_* block)
+   608	# (/tmp/w8-tameshi-t81/checklist.spec; /tmp/w8-t8-2-claims/spec/
+   609	# claims-check.defects.spec), re-verified count==1 against the pinned blobs at
+   610	# r10-2; leg 7 (js-round-gate) was measured in round 16 — its spec is the
+   611	# pre-registered spec verbatim, its table the measured sweep. REV_* = the git revision each leg's bytes are
+   612	# materialized from
+   613	# (`git show <rev>:<repo path>`).
+   614	PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+   615	REV_JS=175de6ba2e9e904010411b19cab27e0af9aad3d4
+   616	PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+   617	REV_BASH=fecee8743e52eb8fb5fbb40782934cb619a1a96e
+   618	PIN_TSUKUROI=084951be50bcbfee5e3f22de3c270d87131550ea1ce8264a557a34c5809c78c5
+   619	REV_TSUKUROI=165307fe4746a8807b02ec4a7d7ecac0368454a6
+   620	PIN_MADO=d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13
+   621	REV_MADO=eead56b20ad2b28299ae4fa623d52a99b44c743c
+   622	PIN_CHECKLIST=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf
+   623	REV_CHECKLIST=fecee8743e52eb8fb5fbb40782934cb619a1a96e
+   624	PIN_CLAIMS=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
+   625	REV_CLAIMS=175de6ba2e9e904010411b19cab27e0af9aad3d4
+   626	PIN_ROUNDGATE=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
+   627	REV_ROUNDGATE=364f1d5954158ef8844bca4a5fef57b05d2f2ca5
+   628	PIN_SOURCESCHECK=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
+   629	REV_SOURCESCHECK=0acb7752d19058b953ebbeba253b1e35f6548de5
+   630	PIN_CITECHECK=40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f
+   631	REV_CITECHECK=1205c6621a2eccbb8ffceae86d9e7b79a7990b3a
+   632	PIN_DRIFTPINS=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb
+   633	REV_DRIFTPINS=e64e81b8eb96f3682b00c1e7a291e84420b280fa
+   634	TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
+   635	TABLE_BASH='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:SURVIVED,B6:KILLED,B7:KILLED,B8:KILLED,B9:KILLED,B10:SURVIVED'
+   636	TABLE_TSUKUROI='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:KILLED,B6:KILLED,B7:SURVIVED,B8:SURVIVED,B9:SURVIVED,B10:SURVIVED'
+   637	TABLE_MADO='D1:KILLED,D2:KILLED,D3:SURVIVED,D4:KILLED,D5:SURVIVED,D6:KILLED,D7:SURVIVED,D8:SURVIVED,D9:SURVIVED,R1:SURVIVED'
+   638	TABLE_CHECKLIST='A1:SURVIVED,A2:KILLED,B1:SURVIVED,B2:KILLED,B3:SURVIVED,B4:KILLED,C1:SURVIVED,C2:KILLED,D1:SURVIVED,D2:KILLED,E1:KILLED,E2:SURVIVED,F1:KILLED,F2:SURVIVED,G1:SURVIVED'
+   639	TABLE_CLAIMS='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:SURVIVED,D8:SURVIVED,D9:SURVIVED,D10:KILLED'
+   640	TABLE_ROUNDGATE='A1:KILLED,A3:KILLED,B1:KILLED,E3:KILLED,C1060:KILLED,C1059:SURVIVED,A2:SURVIVED,B2:SURVIVED,CKIND:SURVIVED,E1:SURVIVED'
+   641	TABLE_SOURCESCHECK='K_KIND:KILLED,S_KIND:SURVIVED,K_EXIT:KILLED,S_VERDICT:SURVIVED,K_STRICT:KILLED,K_CLOSED:KILLED,K_ROWS:KILLED,S_DUP_LINE:SURVIVED,S_ENTRY_COUNT:SURVIVED,S_FILE_READ:SURVIVED'
+   642	TABLE_CITECHECK='K_UNRESOLVED_SEV:KILLED,K_PIN_KIND:KILLED,K_FENCE_TILDE:KILLED,K_MISSING_WORD:KILLED,K_EMPTY_VERDICT:KILLED,S_OOR_EDGE:SURVIVED,S_STRICT:SURVIVED,S_EMPTY_GUARD:SURVIVED,S_USAGE:SURVIVED,S_PIN_INCLUDES:SURVIVED'
+   643	TABLE_DRIFTPINS='K_MODE_CMP:KILLED,K_GONE_ARM:SURVIVED,K_AMBIG_GT:SURVIVED,K_COUNT_GE:KILLED,K_SHAPE_OPTIN:SURVIVED,S_SHA_CMP:SURVIVED,S_HARDLINK:SURVIVED,S_POLICY:SURVIVED,S_DUP_UNIQ:SURVIVED,S_USAGE_EXIT:SURVIVED'
+   644	FLEET_ROOT=''   # set by run_regression; regression_case_git resolves repos from it
+   645	
+
+## 5. tenth leg provenance
+6d8c11e round-51: integrate frontier/S022 correction, sourced tenth case, registry rows, runner panel and controls
+
+## 6. table rows vs PIN_/REV_ at CAND0
+js-kimi-census           rev 175de6ba==175de6ba True  pin 83016d45==83016d45 True
+bash-surface-census      rev fecee874==fecee874 True  pin 275d8294==275d8294 True
+bash-tsukuroi-census     rev 165307fe==165307fe True  pin 084951be==084951be True
+bash-mado-verify         rev eead56b2==eead56b2 True  pin d7edaab4==d7edaab4 True
+kagi-checklist-run       rev fecee874==fecee874 True  pin 7e5ec98b==7e5ec98b True
+kumitate-claims-check    rev 175de6ba==175de6ba True  pin e9a21b44==e9a21b44 True
+
+## 7. ledger ER-4 header/pointer lines
+**ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by T9-1, tameshi round 9; `plans/round-9.plan.md` leg 1).** ER-3 landed the cadence as policy + one execute
+
+*Tick — exact command set and scratch.* Per case, ER-3's command set verbatim (`sha256sum <gate-file>`; `git -C <repo> show HEAD:<path> | sha256sum`; `git -C <repo> status --porcelain -- <path>`) plus the ancestor check `git -C <repo> merge-base --is-ancesto
+*Regression re-run — the instrument's own gate (receipt; workdirs `/tmp/w9-tameshi-t91/regression/` kept).* `MUTATE_SELFTEST: 67/67 pass` · `VERDICT: PASS`, rc 0. `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, rc 0, `REG
+
+## 8. ledger addendum 356-359
+**ER-4 addendum — post-tick continuation: both moved gates read worktree-dirty again, minutes after the tick (O; appended 2026-10-14 by T9-1; ER-1's post-write-drift precedence).** The tick read the two moved cells clean/`stale`; at the read below both owners' gates carry uncommitted edits again. 
+
+- **tsukuroi `tools/tsukuroi-census.sh`** — worktree `5d16378d…` (1 535 L / 79 432 B, mtime 20:02:42Z), `git diff --numstat` +63/−0 vs HEAD blob `bba6cdf6…` → reading **stale + drift** (ER-4 row 3 read `stale`, clean).
+- **mado `tools/mado-verify.sh`** — worktree `5b6ace8e…` (3 076 L / 141 461 B, mtime 20:02:38Z), +196/−7 vs HEAD blob `7da4ec50…` → reading **stale + drift** (ER-4 row 4 read `stale`, clean).
+
+## 9. scratch-root divergence
+320:*Tick — exact command set and scratch.* Per case, ER-3's command set verbatim (`sha256sum <gate-file>`; `git -C <repo> show HEAD:<path> | sha256sum`; `git -C <repo> status --porcelain -- <path>`
+341:*Regression re-run — the instrument's own gate (receipt; workdirs `/tmp/w9-tameshi-t91/regression/` kept).* `MUTATE_SELFTEST: 67/67 pass` · `VERDICT: PASS`, rc 0. `REGRESSION: PASS (cases=4 pas
+1167:scratch `/tmp/w9-tameshi-t93/pin-read-final.txt`; recorded pins/revisions are the
+1191:Falsifier, aimed at the reader (scratch copy, `/tmp/w9-tameshi-t93/falsifier/`):
+1215:`REGRESSION_DATE 2026-10-14T19:58:59Z`; logs `/tmp/w9-tameshi-t93/selftest.txt`,
+1216:`/tmp/w9-tameshi-t93/regression.txt`):
+1222:  `/tmp/w9-tameshi-t93/regression`.
+
+## 10. round-8 tick stamps
+Executed instance — this lane, tick 2026-10-14T19:15:14Z, host `plazir27`, tool
+`cf41efaa…` (`sha256sum tools/mutate-and-run.sh`), scratch
+`/tmp/w8-tameshi-t84/pin-read.txt`:
+- **Re-read six minutes later (19:20:29Z) — a live `drift`:** mado's in-flight
+  round-8 edit (`git status --porcelain -- tools/mado-verify.sh` → ` M`; live file
+  `dc864c6a…`, 99,716 B, mtime 16:19:40, vs HEAD blob `90d50cdd…`) moves that
+
+## 11. page receipt stamps
+Run at the tick (this lane; `--selftest` 19:58:49Z, `--regression`
+`REGRESSION_DATE 2026-10-14T19:58:59Z`; logs `/tmp/w9-tameshi-t93/selftest.txt`,
+`/tmp/w9-tameshi-t93/regression.txt`):
+
+## 12. unanchored shas
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-16/coldread/SKILL.snapshot.md:1204:read `stale + drift` — tsukuroi's worktree `b54f5732…` vs it
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-16/coldread/SKILL.snapshot.md:1205:`bba6cdf6…`, mado's `31364115…` vs `7da4ec50…`, both ` M` 
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-16/coldread/skill-versions/SKILL.05a2247.md:1204:read `stale + drift` — tsukuroi's worktree `b54f
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-16/coldread/skill-versions/SKILL.05a2247.md:1205:`bba6cdf6…`, mado's `31364115…` vs `7da4ec50�
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-16/coldread/skill-versions/SKILL.c699c8c.md:1204:read `stale + drift` — tsukuroi's worktree `b54f
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-16/coldread/skill-versions/SKILL.c699c8c.md:1205:`bba6cdf6…`, mado's `31364115…` vs `7da4ec50�
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-18/coldread/traces/CR24/13.json:31:    "F=/home/vgpnk/Projects/shokunin; s(){ date -u -d \"$1\" +%s
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-18/final/audit-1164.stdout:42:read `stale + drift` — tsukuroi's worktree `b54f5732…` vs its HEA
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-18/final/audit-1164.stdout:43:`bba6cdf6…`, mado's `31364115…` vs `7da4ec50…`, both ` M` on
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-21/coldread/ledger.json:41760:     "quote": "20:03:34Z worktree shas (b54f5732\u2026/31364115\u2026
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-21/coldread/ledger.json:41762:     "skill_statement": "tsukuroi's worktree `b54f5732\u2026` vs its 
+bcba8924894216268afc4171f06eb8c28e912b46:.ufo/evidence/round-51/coldread/reads/T51W2Read09.md:64:      "located": "addendum header actually at ledger:356 (the c
+
+## 13. no-harm precheck line
+LOST ### The tick, executed | drifted=corpus/knowledge/fleet-kill-rate-ledger.md,tools/mutate-and-run.sh
+
+## 14. scratch-applied self-check
+diff rc=1
+3
+  2171 SKILL.cand0.md
+  2171 SKILL.fixed.md
+    48 c.txt
+  4390 total
+48
+
+## 2b. section bytes base vs CAND0 (citable one-liner)
+diff rc=0 (0 = identical)
+
+## 15. line counts of the scratch-applied copy
+cand0 section lines: 48
+cand0 file lines: 2171

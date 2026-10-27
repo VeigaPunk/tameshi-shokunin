@@ -1,0 +1,48 @@
+# grep -n 'SKIP' tools/mutate-and-run.sh (CAND0 bcba8924)
+752:@old         "${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"
+753:@new         "${#SCAN_DIR[@]}" "$N_ABSENT" "$N_ABSENT" "$N_SKIP"
+818:@defect D3 | clause B: skipped live layer row reports PASS instead of SKIP
+819:@old     row hypr-live live.plane SKIP "live layer skipped ($live_skipped_reason) — file plane only"
+# grep -n '^  regression_case_git '
+1459:  regression_case_git js-kimi-census \
+1464:  regression_case_git bash-surface-census \
+1469:  regression_case_git bash-tsukuroi-census \
+1474:  regression_case_git bash-mado-verify \
+1479:  regression_case_git bash-checklist-run \
+1484:  regression_case_git js-claims-check \
+1489:  regression_case_git js-round-gate \
+1494:  regression_case_git js-sources-check \
+1499:  regression_case_git js-cite-check \
+1504:  regression_case_git bash-drift-pins \
+1827:  regression_case_git fixture-git fakerepo/target.sh "$s_before" "$grev" \
+1837:  regression_case_git fixture-git fakerepo/target.sh "$s_before" "$grev" \
+# sed -n '78,79p;585p'
+#   MUTATE: DONE|DEGRADED (target=… defects=… killed=… survived=… inconclusive=… kill-rate=…%)
+#   MUTATE: SETUP (<reason>)   — refused before/instead of a sweep
+  printf 'MUTATE: DONE (target=%s defects=%s killed=%s survived=%s inconclusive=%s kill-rate=%s%%)\n' \
+# sed -n '84p;1510p;1540p'
+# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+  local nlegs=10 npass=0 nfail=0 nsetup=0 st
+  printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+# sed -n '614p;633p;634p;643p'
+PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+REV_DRIFTPINS=e64e81b8eb96f3682b00c1e7a291e84420b280fa
+TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
+TABLE_DRIFTPINS='K_MODE_CMP:KILLED,K_GONE_ARM:SURVIVED,K_AMBIG_GT:SURVIVED,K_COUNT_GE:KILLED,K_SHAPE_OPTIN:SURVIVED,S_SHA_CMP:SURVIVED,S_HARDLINK:SURVIVED,S_POLICY:SURVIVED,S_DUP_UNIQ:SURVIVED,S_USAGE_EXIT:SURVIVED'
+# sed -n '671p;673p;804p;849p;854p'
+regression_specs() { # <dir> — write the ten embedded case specs
+  cat >"$d/js-kimi-census.spec" <<'EOT'
+  cat >"$d/bash-mado-verify.spec" <<'EOT'
+EOT
+  cat >"$d/bash-checklist-run.spec" <<'EOT'
+# sed -n '139,143p'
+# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+# table outside its expectation) · 2 a case could not be verified — missing
+# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL, or (r30) the
+# counted pass/fail/setup statuses do not add up to the case count (SETUP
+# "case-tally mismatch"; --selftest runs the tally block under fixed statuses). Lines:
+# sed -n '1519,1548p' | grep -n exit
+5:    exit 1
+11:    exit 2
+20:    exit 2
+30:  exit 0

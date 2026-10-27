@@ -1,0 +1,53 @@
+{
+ "heading": "### The tick, executed",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "(`tools/mutate-and-run.sh:511-518`)",
+   "new": "(`tools/mutate-and-run.sh:614-633`, ten legs since round 51)",
+   "class": "stale-pointer, stale-count",
+   "evidence": "CAND0 tools/mutate-and-run.sh:614-633 is the PIN_*/REV_* block (PIN_JS at 614, … REV_DRIFTPINS at 633: ten PIN_/REV_ pairs); 511-518 is run_sweep spec/defect preparation. Command: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh | sed -n '505,525p;608,645p'. Tenth leg provenance: git -C <lane> log -S'PIN_DRIFTPINS' -- tools/mutate-and-run.sh -> 6d8c11e (round-51)."
+  },
+  {
+   "old": "scratch `/tmp/w9-tameshi-t93/pin-read-final.txt`;",
+   "new": "scratch `/tmp/w9-tameshi-t93/pin-read-final.txt` [round 52: ER-4's record of this tick names `/tmp/w9-tameshi-t91/` — fleet-kill-rate-ledger.md:320];",
+   "class": "unsupported (unadjudicable provenance divergence)",
+   "evidence": "page names scratch t93 (CAND0 SKILL.md:1167,1191); ER-4 names /tmp/w9-tameshi-t91/ for the same tick (CAND0 corpus/knowledge/fleet-kill-rate-ledger.md:320 and :341); neither root exists now. Command: git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/fleet-kill-rate-ledger.md | grep -n 'w9-tameshi-t9[0-9]' ; ls /tmp/w9-tameshi-t93 -> ENOENT."
+  },
+  {
+   "old": "and, six minutes later,",
+   "new": "and, five minutes later,",
+   "class": "stale-count",
+   "evidence": "round-8 tick 2026-10-14T19:15:14Z (CAND0 SKILL.md:1038) -> re-read 19:20:29Z (CAND0 SKILL.md:1055) = 5 m 15 s. Command: git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:SKILL.md | sed -n '1038p;1055p'."
+  },
+  {
+   "old": "that in-flight edit is now committed as `7da4ec50…`",
+   "new": "that in-flight edit resolved into the committed `7da4ec50…`",
+   "class": "false",
+   "evidence": "the in-flight file was dc864c6a… at 99,716 B (CAND0 SKILL.md:1057); the committed 7da4ec50… is 2 887 L / 131 612 B (CAND0 corpus/knowledge/fleet-kill-rate-ledger.md:329) and ER-4 says \"resolved into the committed `7da4ec50`\" (ledger:338) — different bytes, so not the same blob committed. Command: git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:SKILL.md | sed -n '1057p' ; git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '329p;338p'."
+  },
+  {
+   "old": "same regression receipt — two records of one tick, kept un-merged and agreeing.",
+   "new": "same regression outcome — two records of one tick, kept un-merged; provenance fields differ (scratch root, `REGRESSION_DATE`).",
+   "class": "false",
+   "evidence": "page REGRESSION_DATE 2026-10-14T19:58:59Z (CAND0 SKILL.md:1215, selftest 19:58:49Z at :1214) vs ER-4 REGRESSION_DATE 2026-10-14T19:58:18Z (CAND0 corpus/knowledge/fleet-kill-rate-ledger.md:341); scratch t93 (SKILL.md:1167) vs t91 (ledger:320,341). Readings and PASS outcome do agree (ledger:326-331,333,345-348). Command: git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:SKILL.md | sed -n '1214,1215p' ; git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '320p;341p'."
+  },
+  {
+   "old": "`git status --porcelain`; the owners' own round-9 lanes are editing their gates",
+   "new": "`git status --porcelain`; the owners' own round-9 lanes are editing their gates [I] [round 52: the 20:03:34Z worktree shas have no surviving anchor; ER-4's addendum records 20:02Z shas `5d16378d…`/`5b6ace8e…` — fleet-kill-rate-ledger.md:358-359]",
+   "class": "unsupported (missing [I] label; unanchored values)",
+   "evidence": "ER-4 addendum marks the writer attribution [I] (CAND0 corpus/knowledge/fleet-kill-rate-ledger.md:356) and records the 20:02Z worktree shas 5d16378d…/5b6ace8e… (ledger:358-359); the page shas b54f5732…/31364115… appear only in SKILL.md and its snapshots. Command: git -C <lane> show bcba8924894216268afc4171f06eb8c28e912b46:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '356,360p' ; git -C <lane> grep -n 'b54f5732' bcba8924894216268afc4171f06eb8c28e912b46 -- ."
+  }
+ ],
+ "holds_checked": 31,
+ "not_fixable_inline": [
+  {
+   "statement": "scratch `/tmp/w9-tameshi-t93/pin-read-final.txt` (SKILL.md:1167) and the falsifier scratch (SKILL.md:1191)",
+   "why": "both scratch roots are gone; the t93/t91 divergence with ER-4 (ledger:320,341) is unadjudicable from repo bytes, so no correct value exists - annotated in place on :1167 instead"
+  },
+  {
+   "statement": "\"tsukuroi's worktree `b54f5732...` vs its HEAD blob `bba6cdf6...`, mado's `31364115...` vs `7da4ec50...`\" (SKILL.md:1204-1205)",
+   "why": "working-tree transients never committed (round-18 CR24 item 13: committed count 0 each) and the scratch is gone; the values cannot be re-observed, so the line is annotated (:1206) rather than corrected"
+  }
+ ]
+}

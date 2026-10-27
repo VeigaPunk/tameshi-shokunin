@@ -1,0 +1,110 @@
+{
+ "heading": "## The leg ledger — replay, receipt, and how it is read (round 7, measured)",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26)",
+   "new": "Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26; ten since round 51)",
+   "class": "stale-count",
+   "evidence": "tools/mutate-and-run.sh:84 '(r26 nine; r51 ten)' + leg list :88-97 (ten legs incl. bash-drift-pins 2/10) + TABLE_DRIFTPINS :643 + dispatch :1504-1508 at bcba892. Show: git -C LANE show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh | sed -n '84,97p;643p;1504,1508p'"
+  },
+  {
+   "old": "at round 18 the recorded tables sit at",
+   "new": "at round 18 (runner `4b7c682`) the recorded tables sit at",
+   "class": "stale-pointer",
+   "evidence": "The shorthand is only true of the round-18 runner: git -C LANE show 4b7c6823a462f5ea2eafcb262275300a545f3ed7:tools/mutate-and-run.sh | sed -n '597,620p' = eight-leg PIN/REV/TABLE through TABLE_SOURCESCHECK; at bcba892 the tables are :634-643. Show: git -C LANE show 4b7c682:tools/mutate-and-run.sh | sed -n '597,620p'"
+  },
+  {
+   "old": ":126-136,1273-1294,1364-1384",
+   "new": ":139-143,1520-1548",
+   "class": "stale-pointer",
+   "evidence": "tools/mutate-and-run.sh at bcba892: exit map comment :139-143, actual FAIL/SETUP/PASS emissions and exits :1520-1548. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '139,143p;1520,1548p'"
+  },
+  {
+   "old": "tools/mutate-and-run.sh:1104-1175",
+   "new": "tools/mutate-and-run.sh:1275-1317",
+   "class": "stale-pointer",
+   "evidence": "git show materialization + blob-mode handling + pin compare at bcba892 are :1275-1317. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1275,1317p'"
+  },
+  {
+   "old": "workdir and validates mode/SHA",
+   "new": "workdir and validates the recorded SHA (the blob's mode is mirrored, not compared)",
+   "class": "unsupported-premise",
+   "evidence": "tools/mutate-and-run.sh:1312-1317 compares only the sha256 against the pin; the blob mode (:1285-1300) is read and the exec bit mirrored, never compared to a recorded mode. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1285,1305p;1312,1317p'"
+  },
+  {
+   "old": "(:1159-1160)",
+   "new": "(:1302-1303)",
+   "class": "stale-pointer",
+   "evidence": "REGRESSION_PIN print naming repo/rev/path/mode/sha256 is at tools/mutate-and-run.sh:1302-1303 at bcba892. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1302,1303p'"
+  },
+  {
+   "old": "(:1384-1450 since round 26)",
+   "new": "(:1459-1537 since round 26)",
+   "class": "stale-pointer",
+   "evidence": "Ten dispatch calls :1459-1508 (each unconditional, so a SETUP on one leg does not stop later legs), status aggregation :1510-1517, tally refusal :1534-1538. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1459,1508p;1510,1538p'"
+  },
+  {
+   "old": "8 since round 18, 9 since round 26)",
+   "new": "8 since round 18, 9 since round 26, 10 since round 51)",
+   "class": "stale-count",
+   "evidence": "At bcba892 the closing line prints cases=10: nlegs=10 (tools/mutate-and-run.sh:1510) and REGRESSION: PASS (cases=10 passed=10 ...) documented at corpus/knowledge/fleet-kill-rate-ledger.md:441. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1510p;1540,1541p'"
+  },
+  {
+   "old": "executed and skipped counts distinguished",
+   "new": "executed and skipped counts distinguished [round 52: no current leg records a skipped count — enumerated and executed only]",
+   "class": "unsupported-premise",
+   "evidence": "The runner's regression tables carry KILLED/SURVIVED (or ABSENT) rows only and the comparator counts enumerated (table_total) vs executed rows (:1376-1387); no skip counter exists (grep -c SKIP hits only embedded spec @old/@new text). Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1376,1393p'"
+  },
+  {
+   "old": "Current anchors (round 26)",
+   "new": "Current anchors (round 52)",
+   "class": "stale-count",
+   "evidence": "The three anchors that follow are re-pointed to bcba892 bytes in this same replacement set; the label must name the revision the numbers hold at. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '614,643p'"
+  },
+  {
+   "old": ":603-629",
+   "new": ":614-643",
+   "class": "stale-pointer",
+   "evidence": "At bcba892 the pins/revisions are :614-633 and the ten verdict tables :634-643; :603-629 holds neither in full. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '603,629p;614,643p'"
+  },
+  {
+   "old": ":657-839",
+   "new": ":673-849",
+   "class": "stale-pointer",
+   "evidence": "At bcba892 the first four embedded specs run :673-849 (js-kimi 673, bash-surface 714, bash-tsukuroi 759, bash-mado 804 with its closing EOT at 849). Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '671,675p;802,806p;846,850p'"
+  },
+  {
+   "old": "nine dispatches :1384-1428",
+   "new": "ten dispatches :1459-1508",
+   "class": "stale-pointer",
+   "evidence": "At bcba892 there are ten dispatch calls, :1459 (js-kimi) through :1504-1508 (bash-drift-pins); :1384-1428 is band evaluation, not the dispatch list. Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1459,1508p'"
+  },
+  {
+   "old": "N=8 since round 18, N=9 since round 26)",
+   "new": "N=8 since round 18, N=9 since round 26, N=10 since round 51)",
+   "class": "stale-count",
+   "evidence": "nlegs=10 at bcba892 (tools/mutate-and-run.sh:1510) and REGRESSION_EXPECT lists ten legs (:1446). Show: git -C LANE show bcba892:tools/mutate-and-run.sh | sed -n '1446p;1510p'"
+  },
+  {
+   "old": "under the same revision `cf41efaa…`",
+   "new": "under the same tool pin `cf41efaa…`",
+   "class": "stale-pointer",
+   "evidence": "cf41efaa8be5f52d… is the sha256 of the round-7 runner blob, not a git revision: git -C LANE show 9f1d3c33:tools/mutate-and-run.sh | sha256sum = cf41efaa8be5f52d92bf7806ddb3a99a031547bf12a6811b8ef45bce37242c75, and git rev-parse --disambiguate=cf41efaa prints nothing. Show: git -C LANE rev-parse --disambiguate=cf41efaa"
+  },
+  {
+   "old": "(negative run, `/tmp/w7-tameshi-1/flip-run.out`)",
+   "new": "(negative run; the `/tmp` transcript was not retained — committed replay `.ufo/evidence/round-18/coldread/traces/CR18/6.out.txt:7`)",
+   "class": "stale-pointer",
+   "evidence": "The /tmp path does not exist (ls /tmp/w7-tameshi-1 -> No such file or directory; round-18 traces re-confirm it), while .ufo/evidence/round-18/coldread/traces/CR18/6.out.txt:7-10 is a committed receipt of the same doctored-table catch (REGRESSION_DEFECT js-kimi-census D1: measured=KILLED recorded=SURVIVED; match=9/10 ... flips=1; FAIL (out of band: killed-delta=1 flips=1)). Show: sed -n '7,10p' .ufo/evidence/round-18/coldread/traces/CR18/6.out.txt"
+  },
+  {
+   "old": "`cf41efaa…` — including a git-materialized replay",
+   "new": "`cf41efaa…` (107/107 at the round-52 runner) — including a git-materialized replay",
+   "class": "stale-count",
+   "evidence": "Measured first-hand: the bcba892 runner prints MUTATE_SELFTEST: 107/107 pass / VERDICT: PASS, rc 0; the 67/67 tally holds only at the cf41efaa tool pin (measured 67/67 by running git show 9f1d3c33:tools/mutate-and-run.sh --selftest). Measured first-hand on the CAND0 bytes: git -C LANE show bcba8924894216268afc4171f06eb8c28e912b46:tools/mutate-and-run.sh > $S/r.sh; TMPDIR=$S bash $S/r.sh --selftest -> 'MUTATE_SELFTEST: 107/107 pass' / 'VERDICT: PASS', rc 0 (receipt T52W2Fix03.selftest-cand0.log). 67/67 holds at the cf41efaa tool pin: git -C LANE show 9f1d3c33:tools/mutate-and-run.sh > $S/r71.sh; TMPDIR=$S bash $S/r71.sh --selftest -> 67/67 (receipt T52W2Fix03.selftest-r71.log); git -C LANE show 9f1d3c33:tools/mutate-and-run.sh | sha256sum = cf41efaa8be5f52d92bf7806ddb3a99a031547bf12a6811b8ef45bce37242c75"
+  }
+ ],
+ "holds_checked": 31,
+ "not_fixable_inline": []
+}

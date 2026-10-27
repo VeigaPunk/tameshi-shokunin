@@ -1,0 +1,49 @@
+{
+ "heading": "### The map — where a reader enters, artifact by artifact",
+ "cand": "bcba8924894216268afc4171f06eb8c28e912b46",
+ "replacements": [
+  {
+   "old": "(six rows; the lane has held nine cases since round 26)",
+   "new": "(six rows; the lane has held nine cases since round 26, ten since round 51)",
+   "class": "stale-count",
+   "evidence": "SKILL.md:1384 at CAND0 says the runbook's §3 count stops at nine. Round 51 added recorded case 10: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree --name-only bcba8924 corpus/knowledge/ | grep -c mutation-case` -> 10 (`mutation-case-kagi-drift-pins.md` is the tenth; its `:6` reads `# Mutation case 10`), and `git -C ... show bcba8924:tools/mutate-and-run.sh | sed -n '84p'` -> `(r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten)`. Runbook §3 itself still holds six rows (`corpus/knowledge/operator-runbook.md:131` heading, `:149-154` rows), so the 'six rows' clause stays as written."
+  },
+  {
+   "old": "(`SKILL.md:1294-1297`) |",
+   "new": "(`SKILL.md:1294-1297`); §7's default scratch still reads `mktemp -d /tmp/…` (`corpus/knowledge/operator-runbook.md:349-351`) while the runner honours `TMPDIR` (`tools/mutate-and-run.sh:149-150`) — by that rule the runner governs [round 52] |",
+   "class": "stale-pointer",
+   "evidence": "The row sends a regression reader to runbook §7; that section's default-scratch sentence is stale at CAND0: `git -C ... show bcba8924:corpus/knowledge/operator-runbook.md | sed -n '349,351p'` -> 'Default scratch is a fresh `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`', while `git -C ... show bcba8924:tools/mutate-and-run.sh | sed -n '149,150p'` -> '`\"${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX\" by default (r51 honours` / `# TMPDIR)`. Recorded by round-51 reader T51W2Read13 (`.ufo/evidence/round-51/coldread/reads/T51W2Read13.md`, pointers row for operator-runbook.md; `.ufo/waves/round-52/w1/T52W1Corr13.json` finding 2). The pointer itself resolves; the note discloses the divergence the row's own rule covers."
+  },
+  {
+   "old": "one row per gate measured so far — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth case has no row yet)",
+   "new": "one row per measured gate, appended when the sweep lands — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth and the round-51 tenth case have no row yet — the tenth's only record is the §3 cell supersession at `fleet-kill-rate-ledger.md:439`)",
+   "class": "false",
+   "evidence": "At CAND0 the ledger carries eight table rows and two measured gates without one: `git -C ... show bcba8924:corpus/knowledge/fleet-kill-rate-ledger.md | grep -n '^| '` -> rows 1-4 at `:45-48`, rows 5-6 at `:276-277`, row 7 under `## Round 16 — seventh row appended` and row 8 under `## Round 18 — eighth row appended`; the round-26 ninth case is only a probe (`:107` 'probe only, 1/4'), and the round-51 tenth case is recorded as a cell supersession, not a row: `sed -n '439p'` -> `## Round 52 — §3 drift-pins cell superseded (2026-10-27)`, with the §3 cell at `:119` still reading `unmeasured by sweep`. So the unqualified 'one row per gate measured so far' premise is false (T52W1Corr13 finding 3)."
+  },
+  {
+   "old": "eight since round 18; nine since round 26)",
+   "new": "eight since round 18; nine since round 26; ten since round 51)",
+   "class": "stale-count",
+   "evidence": "`git -C ... ls-tree --name-only bcba8924 corpus/knowledge/ | grep -c mutation-case` -> 10; round 51's note `corpus/knowledge/mutation-case-kagi-drift-pins.md:6` reads `# Mutation case 10 — kagi corpus/drift-pins.sh (round 51)`. The glob count is 10 at CAND0, so the parenthetical's endpoint is stale (T52W1Corr13 finding 4)."
+  },
+  {
+   "old": "eight since round 18, nine since round 26;",
+   "new": "eight since round 18, nine since round 26, ten since round 51;",
+   "class": "stale-count",
+   "evidence": "`git -C ... show bcba8924:tools/mutate-and-run.sh | sed -n '84p'` -> `# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten)`; `grep -n 'bash-drift-pins'` -> leg row `:97`, git-materialized dispatch `:1504-1507`, recorded-table row `:2045`, and the selftest asserts `ten files written` (`:2024`) / `all ten legs pass -> PASS passed=10` (`:2088`). The nine-leg endpoint is stale (T52W1Corr13 finding 5)."
+  },
+  {
+   "old": "(round addenda append further tables of the same shape)",
+   "new": "(round addenda append further tables; most keep this shape — later rounds also use `Note / frontier`, `Entry / ground` and id/status shapes, `corpus/README.md:125`, `corpus/README.md:326`, `corpus/README.md:614`)",
+   "class": "unsupported",
+   "evidence": "`git -C ... show bcba8924:corpus/README.md | sed -n '5p;125p;326p;614p'` -> the coverage map's `| Note | Holds | Sources |`, then `| Note / frontier | Lane-asserted scope; outside admission pending | Source / evidence |` (round 12), `| Entry / ground | Admission and exact scope | Evidence |` (round 21), `| id | ground | candidate sources | status | next falsifiable move (before → after) |` (round 51). Round 51's tenth-case table (`:632`) is `Entry / ground | Admission and exact scope | Evidence`. So 'same shape' is not universal (T52W1Corr13 finding 6)."
+  }
+ ],
+ "holds_checked": 16,
+ "not_fixable_inline": [
+  "corpus/knowledge/operator-runbook.md:349-351 (the /tmp-only default-scratch sentence) and :131 'The six-case ledger' heading with its six-row table are defects of that file's bytes, outside this section's line set; the map's row now discloses the first and qualifies the second's count.",
+  "corpus/knowledge/fleet-kill-rate-ledger.md:119 (`drift-pins` cell 'unmeasured by sweep') stays as written under the append-only rule (§1-§4 byte-frozen; supersession recorded at :439) — it cannot be corrected in place at CAND0.",
+  "SKILL.md:1297 is inside the cited 1294-1297 range but starts the next bullet (`Its receipts were executed at cf41efaa…`); shrinking the range would move no line and is cosmetic, so the citation is left as written.",
+  "LOG.md:316-317 is a line-range citation into a file that grows every round (2442 lines at CAND0); it holds now but will drift, and no in-line wording inside this section can pin it without inventing an anchor."
+ ]
+}

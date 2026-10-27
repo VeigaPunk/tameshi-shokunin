@@ -1,0 +1,107 @@
+# T52W2Fix12 receipts — lane /home/vgpnk/Projects/shokunin/tameshi-shokunin, CAND0 bcba8924894216268afc4171f06eb8c28e912b46, base ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4, 2026-10-27T05:45:37Z
+
+## R1 heading + span at CAND0
+$ git -C <lane> show CAND0:SKILL.md | grep -n "^#\\{1,3\\} " | awk -F: "\$1>1150 && \$1<1350"
+1155:## The cadence's first scheduled tick, and the service's limits (round 9, measured)
+1164:### The tick, executed
+1212:### The receipt at this boundary
+1230:### The re-pin semantics, as executed
+1246:### The service's limits — what tameshi refuses to mutation-test
+1272:## The operator's runbook and the six-leg regression (round 10, measured)
+1281:### The operator's runbook — `corpus/knowledge/operator-runbook.md`
+1302:### The six-leg regression — usage and this round's receipt
+
+## R2 section bytes identical base -> CAND0 (sha256)
+ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 88f5a68550693f4b280c858fe6f259d6b376584bb13c8ec1b8afb81553611fbc  -
+bcba8924894216268afc4171f06eb8c28e912b46 88f5a68550693f4b280c858fe6f259d6b376584bb13c8ec1b8afb81553611fbc  -
+
+## R3 cited runner range 733-791 at CAND0 (leg-spec heredoc bytes, no materialization)
+$ git -C <lane> show CAND0:tools/mutate-and-run.sh | sed -n "731,760p"
+@defect B5 | surface-census.sh:214-217
+@old            if [[ "$kind" == "exec" && ! -x "$abs" ]]; then\n             printf 'SURFACE DIVERGED %s (declared exec, no execute bit)\\n' "$p"\n             N_DIVERGED=$((N_DIVERGED + 1)); FAILED=1; continue\n           fi ;;\n
+@new            ;;\n
+
+@defect B6 | surface-census.sh:371
+@old         if head -c "$(( ${#value} + 1 ))" "$abs" | cmp -s - "$MAGIC_EXPECT"; then
+@new         if head -c "${#value}" "$abs" | cmp -s - "$MAGIC_EXPECT"; then
+
+@defect B7 | surface-census.sh:405-406
+@old             printf 'SHAPE UNVERIFIED %s %s (%s)\\n' "$p" "$assertion" "${S_ERR_A[$p]}"\n            N_UNVERIFIED=$((N_UNVERIFIED + 1)); FAILED=1
+@new             printf 'SHAPE UNVERIFIED %s %s (%s)\\n' "$p" "$assertion" "${S_ERR_A[$p]}"\n            N_UNVERIFIED=$((N_UNVERIFIED + 2)); FAILED=1
+
+@defect B8 | surface-census.sh:85
+@old die() { printf 'surface-census: %s\\n' "$1" >&2; exit 2; }
+@new die() { printf 'surface-census: %s\\n' "$1" >&2; exit 1; }
+
+@defect B9 | surface-census.sh:191
+@old       if [[ "$cls" == "runtime" ]]; then
+@new       if [[ "$cls" == "asset" ]]; then
+
+@defect B10 | surface-census.sh:862
+@old         "${#SCAN_DIR[@]}" "$N_OK" "$N_ABSENT" "$N_SKIP"
+@new         "${#SCAN_DIR[@]}" "$N_ABSENT" "$N_ABSENT" "$N_SKIP"
+EOT
+  # r7-1 leg 3: tsukuroi tools/tsukuroi-census.sh @ 165307fe (pin 084951be…c78c5),
+  # recorded 6/10 killed; generated from the recorded round-5 driver manifest
+  # (/tmp/w5-tameshi-1-work/mutate_driver.py DEFECTS; B3/B10 are line-range
+  # replacements), every @old re-verified count==1 against the pinned blob.
+  cat >"$d/bash-tsukuroi-census.spec" <<'EOT'
+@defect B1 | tsukuroi-census.sh:473
+
+## R4 materialization code at CAND0: regression_case() head / git show / branch close
+$ git -C <lane> show CAND0:tools/mutate-and-run.sh | sed -n "1222,1226p;1276p;1300,1303p"
+regression_case() {
+  # <name> <target> <pin-sha> <spec> <suite> <recorded-table> <case-workdir>
+  #   [<repo> <rev> <path-in-repo>] [<killed-tol> <flips-tol>]
+  # When <repo>/<rev>/<path> are given (r7-1), the target is NOT the file at
+  # <target>: the pinned blob is materialized from that repo's git object store
+    if ! git_clean -C "$repo" show "${rev}:${path}" >"$dst" 2>"$cwd/git-show.err"; then
+    fi
+    target=$dst
+    printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s mode=%s sha256=%s\n' \
+      "$name" "$repo" "$rev" "$path" "$blob_mode" "$pin"
+$ git -C <lane> show CAND0:tools/mutate-and-run.sh | awk "NR>=1222 && NR<=1460 && /^}/ {print NR}"
+1402
+1415
+
+## R5 cases 5-6 embedded at CAND0 (leg table + r10-2 comments + dispatches)
+$ git -C <lane> show CAND0:tools/mutate-and-run.sh | grep -n "r10-2 leg\\|bash-checklist-run\\|js-claims-check" (head)
+92:#   bash-checklist-run    kagi-shokunin/corpus/checklist-run.sh       7/15 (47 %)
+93:#   js-claims-check       kumitate-shokunin/scripts/claims-check.mjs  7/10 (70 %)
+592:# Recorded expectations for --regression (r7-1 leg ledger; r10-2 leg cut
+850:  # r10-2 leg 5: kagi corpus/checklist-run.sh @ fecee874 (pin 7e5ec98b…),
+925:  # r10-2 leg 6: kumitate scripts/claims-check.mjs @ 175de6b (pin e9a21b44…),
+1479:  regression_case_git bash-checklist-run \
+1484:  regression_case_git js-claims-check \
+
+## R6 ledger pointer 282 holds at CAND0
+$ git -C <lane> show CAND0:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n "281,282p"
+- **§5 / ER-1 supersession (embedding + tool).** §5's "cases=2 at this write" and ER-1 item 1's in-flight revision are superseded: the harness at `cf41efaa8be5f52d…` (r7-1; 1 341 L / 61 632 B) carries **four** materialized legs and passes them at the exact band — `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, every leg `match=10/10 flips=0` (O: T8-2's run 2026-10-14T19:14:16Z, `mutation-case-kumitate-claims.md` §6; corroborated `reports/r7-aud-t7.md` §1). U3 (`:221-223`) narrows: the tsukuroi and mado tables now ARE re-verified by the harness's own `--regression` — at their recorded pins, under `cf41efaa…`; the candidates' live revisions are not what the legs replay (pin read in ER-3).
+- **Named follow-ups (not edits, not written here).** Cases 5/6 are not embedded in `--regression`: T8-2 E3 records the target pin / suite / spec for the tool's owner, and T8-1 U5 leaves the leg-cut decision to the same owner — rows 5/6 therefore carry no `REGRESSION` line over themselves. The r3 census's "hermetic fallback" wording is superseded by case 5 (T8-1 U7), and census §5's instrument pin (`597e1419…`, `:251-262`) sits two revisions behind the live tool — a re-pin errata item for the census owner.
+
+## R7 ledger REGRESSION lines (rows 5/6 at 276-277 carry none)
+$ git -C <lane> show CAND0:corpus/knowledge/fleet-kill-rate-ledger.md | grep -n REGRESSION
+88:`REGRESSION` line over themselves yet.
+164:  rc 0; `--regression` → `REGRESSION: PASS (cases=2 passed=2; ba
+196:  /tmp/w7-tameshi-t72/regression` → `REGRESSION: PASS (cases=2 p
+281:- **§5 / ER-1 supersession (embedding + tool).** §5's "cases=2 a
+282:- **Named follow-ups (not edits, not written here).** Cases 5/6 ar
+341:*Regression re-run — the instrument's own gate (receipt; workdir
+350:Two measured caveats, stated not smoothed: (a) the tool embeds **4
+412:Detail of record: `mutation-case-kumitate-round-gate.md`. Receipt:
+435:its ER8-2). Receipt: `REGRESSION: PASS (cases=8 passed=8 …)` at 
+441:- **§3 supersession (cell, not edit; round-8 precedent `:280`).**
+
+## R8 tick tool sha cf41efaa… = runner blob at b8eb96e
+$ git -C <lane> show b8eb96e:tools/mutate-and-run.sh | sha256sum
+cf41efaa8be5f52d92bf7806ddb3a99a031547bf12a6811b8ef45bce37242c75  -
+$ git -C <lane> show b8eb96e:tools/mutate-and-run.sh | sed -n "733p;770p"
+regression_case() {
+    if ! git -C "$repo" show "${rev}:${path}" >"$dst" 2>"$cwd/git-show.err"; then
+
+## R9 drift-immunity selftest arms at CAND0
+1840:  [[ $st_rg -eq 0 ]]; st 'drifted working tree does not move a git-pinned leg' $?
+1842:  st 'drifted leg swept the pinned blob bytes (not the tree)' $?
+
+## R10 base->CAND0 diffstat, runner untouched
+(empty above = runner byte-identical base -> CAND0)
