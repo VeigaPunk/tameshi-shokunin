@@ -435,3 +435,7 @@ Detail of record: `mutation-case-kumitate-sources-check.md` (survivor probes in
 its ER8-2). Receipt: `REGRESSION: PASS (cases=8 passed=8 …)` at the landed
 runner (`.ufo/waves/round-18/w2/RerunC1.md`). Tameshi's own read-only case; it
 did not drain the service queue.
+
+## Round 52 — §3 drift-pins cell superseded (2026-10-27)
+
+- **§3 supersession (cell, not edit; round-8 precedent `:280`).** The §3 queue row `drift-pins` (`:119`) said "unmeasured by sweep"; round 51 measured kagi `corpus/drift-pins.sh` @ `e64e81b8` (blob `c138d34c…`) as recorded case 10: `MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)` (`.ufo/evidence/round-51/c2/sweep/sweep.txt:31`), wired as the runner's tenth leg (`REGRESSION: PASS (cases=10 passed=10 …)`, `.ufo/evidence/round-51/after/c2.stdout:22`); entry `corpus/knowledge/mutation-case-kagi-drift-pins.md`. That case 10 measurement supersedes the cell; §3's table stays as written. Three of the eight survivors are harness-masked by the gate's own unanchored verdict grep (`corpus/lessons/round-51.md`), so 2/10 is a floor on the gate's detecting power, not its ceiling. Routed by the round-51 spot-check, defect 7.

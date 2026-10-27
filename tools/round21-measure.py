@@ -5,13 +5,18 @@
 counter. --selftest runs literal public-CLI fixture expectations for both
 counter packages. It validates bounded measurement logic, not producer
 execution authenticity. Exits: 0 clean, 1 failed, 2 could-not-evaluate,
-64 usage. All Git writes stay in private fixture repositories.
+64 usage. All Git writes stay in private fixture repositories. The c2
+fixture reads the pinned sibling blobs at the fleet root that the subject
+counter itself reads (its `FLEET` literal), so the selftest is fleet-bound,
+not hermetic: it passes from a clone anywhere on this host and fails where
+that fleet root is absent (round 52, routed defect R51.4).
 """
 import argparse
 import copy
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -69,9 +74,11 @@ def selftest():
         (package / "c2-contract.json").write_text(json.dumps(frozen))
         zero = hashlib.sha256(b"fixture").hexdigest()
         surfaces = []
+        fleet = Path(re.search(r'^FLEET = Path\("([^"]+)"\)$',
+                               (EVIDENCE / SCRIPTS["c2"]).read_text(), re.M).group(1))
         for surface in frozen["surfaces"]:
             pin = {key: surface[key] for key in ("repo", "rev", "path")}
-            data = subprocess.run(["git", "-C", str(ROOT.parent / surface["repo"]),
+            data = subprocess.run(["git", "-C", str(fleet / surface["repo"]),
                                    "show", surface["rev"] + ":" + surface["path"]],
                                   env=env, capture_output=True, check=True).stdout
             pin["blob_sha256"] = hashlib.sha256(data).hexdigest()
