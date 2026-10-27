@@ -2405,3 +2405,16 @@ Motivating evidence: the round-49 closure routed six items and called five of ro
 - Disclosed: both frozen counters admit forgeries a mechanical check cannot see (lesson `## C1`/`## C2`); routed to round 51 as successor counters.
 
 Evidence: `.ufo/evidence/round-50/`, `.ufo/waves/round-50/`, `corpus/lessons/round-50.md`; measured values in the deciding receipts `.ufo/evidence/round-50/after/` and the report.
+
+## 2026-10-26 — round 51: frontier status repair (calibration) + tenth recorded leg (depth) + registry conformance (operability)
+
+L1 TameshiR51 (hyaku run 9, attempt 1). Claims and predicates pre-registered at `fe335384` (`.ufo/evidence/round-51/contract.json`, counters, source spec, frozen frontier/tool sets); amendment 1 fixed a controls harness that crashed before scoring; amendment 2 re-based the tools-scope monitor to allow the four gates that pin the runner's ledger (wave-1 finding T51Row19); controls were re-scored at that amended freeze. Controls `10/10` as pre-registered (`.ufo/evidence/round-51/control/controls.stdout`). Base `9962033f`.
+
+Motivating evidence: the round-50 spot-check routed S022 queued despite a used-by citation, the stale frontier table, and missing registry rows for the round-49/50 tools (`corpus/lessons/round-50-verifier-spotcheck.md` routed defects 1–3). The tenth-leg source is kagi `corpus/drift-pins.sh` @ `e64e81b8`, listed unmeasured in `corpus/knowledge/fleet-kill-rate-ledger.md:119`.
+
+- C1: calibration 8 (lowest non-retired) — the frontier status table and SOURCE status/used-by mismatches become a frozen, counted record; base `frontier_bad=10`, `status_conflicts=1`, `total=11`. Counter selftest `6/6`; scratch test append-table + S022 change passes, base control fails (`.ufo/evidence/round-51/c1/measure.py`, `quality/selftest-c1.stdout`).
+- C2: depth 9→10 — ten defect predictions on the pinned kagi drift gate were swept once after spec preregistration; observed `2/10 KILLED`, 8 survived, 7/10 predictions held (`.ufo/evidence/round-51/c2/sweep/sweep.txt`). Independent A/B test confirmed three kill-aimed survivors flip to KILLED with a neutral sandbox; those apparent survivors are harness artifacts, not equivalent mutants (`.ufo/waves/round-51/w1/T51LabSandboxLeak.md`). Do not interpret the recorded 20% kill rate without this caveat.
+- C3: operability — 30 frozen lane tools; the counter requires canonical registry rows, exit-map usage code and finding id plus live selftest. L1's post-freeze scan found 18 tools mentioned across per-round registry sections, but only 2 rows in the canonical section at `SKILL.md:1499`; the contract's phrase "names 2 of 30" overstates absence, corrected in `.ufo/evidence/round-51/integrate/l1-notes.md`. Predicate still tests all 30 for the canonical row shape. C3 counter selftest `10/10`.
+- Frontier census start: exit 0 (`.ufo/evidence/round-51/census-start.*`); tools installed/updated: none (host RULES read; existing tools sufficed).
+
+Evidence: `.ufo/evidence/round-51/`, `.ufo/waves/round-51/`; deciding receipts and final lane revision to be appended when the round closes.
