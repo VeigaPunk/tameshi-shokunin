@@ -24,7 +24,7 @@ Modes:
       expected.id / expected.exit.
   --selftest
       Run the real CLI by subprocess against isolated synthetic fixtures under
-      /tmp (tempfile.mkdtemp(dir="/tmp")), pinning literal expected ids and
+      / the scratch root (tempfile.mkdtemp(dir=tempfile.gettempdir())), pinning literal expected ids and
       exits. Each subprocess reads its own tool source only to report
       tool_sha256; no live domain inputs or live lane path are read, and no
       temp tool copy is made. Fixtures are removed in a finally block.
@@ -1622,7 +1622,7 @@ SELFTEST_ENV = {
 class SelftestHarness:
     def __init__(self):
         self.root = tempfile.mkdtemp(prefix="context-capture-selftest-",
-                                     dir="/tmp")
+                                     dir=tempfile.gettempdir())
         self.passed = 0
         self.failed = []
         self.outputs = []

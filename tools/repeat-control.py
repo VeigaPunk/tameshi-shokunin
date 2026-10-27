@@ -594,7 +594,7 @@ def selftest():
     if not os.path.isdir(root):
         emit(f"SELFTEST: COULD_NOT_EVALUATE (committed fixture root missing or not a directory: {root})")
         return 2
-    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir="/tmp")
+    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=tempfile.gettempdir())
     passed = 0
     failed = []
 

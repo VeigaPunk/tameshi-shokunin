@@ -2348,7 +2348,7 @@ def _status_for(exit_code):
 
 def selftest():
     """Isolated /tmp fixtures; invokes this CLI via subprocess only."""
-    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir="/tmp"))
+    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=tempfile.gettempdir()))
     marker = scratch / "argv-marker"
     passed = 0
     failed = []

@@ -1238,7 +1238,7 @@ def cmd_selftest(args) -> int:
             print(f"  check {name:<44} FAIL")
 
     private_root = Path(tempfile.mkdtemp(
-        prefix="bash-witness-selftest-private.", dir="/tmp"))
+        prefix="bash-witness-selftest-private.", dir=tempfile.gettempdir()))
     assert private_root.resolve(strict=True) == private_root
     root = None
     try:

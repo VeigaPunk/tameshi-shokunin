@@ -75,7 +75,7 @@ unreadable/invalid, root or rev missing, clone failure, --only/--tag miss) ·
              `tameshi-registry-check-report-v1`, additive fields:
              registry_sha256, rev_resolved, per-row stdout/stderr tails); the
              human ROW/REGISTRY_CHECK lines move to stderr.
---selftest   hermetic; fixtures only under /tmp, never touches the lane; its
+--selftest   hermetic; fixtures only under the scratch root (TMPDIR), never touches the lane; its
              own git calls use the same scrubbed environment (a decoy
              GIT_DIR must not move any fixture or canary HEAD).
 
@@ -763,9 +763,9 @@ def clone_lane_at_rev(root, rev, sha):
     fleet_root = os.path.dirname(root_real)
     env = git_env()
     try:
-        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir="/tmp")
+        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=tempfile.gettempdir())
     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
-        raise RuntimeError(f"cannot create clone scratch under /tmp: {exc}") from exc
+        raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
     try:
         fleet = os.path.join(work, "fleet")
         os.mkdir(fleet)
@@ -914,7 +914,7 @@ def print_human(report, stream=sys.stdout):
 
 def selftest():
     scratch = tempfile.mkdtemp(
-        prefix="tameshi-r17-registry-check-selftest.", dir="/tmp"
+        prefix="tameshi-r17-registry-check-selftest.", dir=tempfile.gettempdir()
     )
     passed = 0
     failed = []

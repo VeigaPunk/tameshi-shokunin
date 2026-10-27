@@ -58,7 +58,7 @@ def execute(payload, interp, profile, timeout=600, bwrap=None):
     bwrap = bwrap or shutil.which("bwrap")
     if not bwrap:
         return {"exit": None, "error": "BWRAP_UNAVAILABLE"}
-    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir="/tmp") as tmp:
+    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=tempfile.gettempdir()) as tmp:
         root = Path(tmp)
         (root / "home").mkdir()
         (root / "tmp").mkdir()

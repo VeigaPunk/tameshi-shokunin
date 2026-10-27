@@ -703,7 +703,7 @@ SELFTEST_DIRTY_SHA256 = "35db8ca11b64c09f964bf88537abc8bc6abe180e6dc4aaae400c820
 
 def selftest():
     """Hermetic fixtures under /tmp: no fleet repo, no sibling repo is read."""
-    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir="/tmp")
+    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=tempfile.gettempdir())
     passed = 0
     failed = []
 
