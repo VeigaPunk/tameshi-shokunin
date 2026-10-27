@@ -25,7 +25,7 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a 
   rewritten; a documented correction may supersede an entry's content and the
   block says so (the round-16 errata block, `## Errata — round 16 full-page
   cold-read`, discloses its own in-place repairs). Rejections kept.
-- **Scratch namespace is `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>/<sub>/`** (host scratch directive of 2026-10-25: `/tmp` is for files under 50 MB only; a seat deletes its tree on exit; the shape every landed round since 48 uses (w1 occurrence counts: 0 dash-form trees across rounds 48-52, thousands of the slash form; the dash form's last committed occurrences are rounds 25-36))
+- **Scratch namespace is `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>/<sub>/`** (host scratch directive of 2026-10-25: `/tmp` is for files under 50 MB only; a seat deletes its tree on exit; the shape every landed round since 48 uses — w1/w2 occurrence counts: 0 dash-form seat trees across rounds 48-52, thousands of the slash form; the dash form survives only in run artifacts and quoted text of rounds 37-52, not as a live convention [round 53 correction of the round-53 'rounds 25-36' overstatement, seat T53W2R4]))
   (in the original `/tmp` namespace: both mutation lanes kept every mutant + evidence there —
   mutation-case-kimi-census.md:4-7; mutation-case-kagi-census.md:4-6). The
   substrate tree is never a mutation target.
@@ -959,7 +959,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight ledger rows — six in t
 - **Contribution contract — what a leg carries.** A pinned target path,
   Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
   a command exercising `$MUTANT` under controlled fixtures; enumerated,
-  executed and skipped counts distinguished [round 52: no current leg records a skipped count — enumerated and executed only] (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
+  executed and skipped counts distinguished [round 53 correction, seat T53W2R6: the bash-surface-census leg's own recorded table carries 14 executed + 2 skipped — the round-52 'no leg records a skipped count' bracket overstated; the ten-leg registry itself enumerates and executes without skips] (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
   table. Host-gated branches must be excluded/controlled or explicitly named,
   not called hermetic merely because the flag is `--selftest`.
   Current anchors (round 52 re-anchor to the ten-leg table; the round-26 tool recorded :603-629): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,
