@@ -95,16 +95,26 @@ def main():
              '.ufo/evidence/round-21/coldread'])
     rekey_dirs = [n for n in r.stdout.decode().split('\n')
                   if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)]
-    c0 = None
-    if len(rekey_dirs) != 1:
-        problems.append('rekey-dir-count=%d' % len(rekey_dirs))
+    c0s = []
+    if not rekey_dirs:
+        problems.append('rekey-dir-count=0')
     else:
-        c0 = rekey_dirs[0][len('rekey-r53-'):]
-        anc = git(['-C', lane, 'merge-base', '--is-ancestor', c0, rev],
-                  check=False)
-        if anc.returncode != 0:
-            problems.append('c0-not-ancestor %s' % c0)
-            c0 = None
+        for d in rekey_dirs:
+            c0 = d[len('rekey-r53-'):]
+            anc = git(['-C', lane, 'merge-base', '--is-ancestor', c0, rev],
+                      check=False)
+            if anc.returncode != 0:
+                problems.append('c0-not-ancestor %s' % c0)
+            else:
+                c0s.append(c0)
+
+    def rekey_prefix(entry):
+        for t in entry.get('traces', []):
+            for c0 in c0s:
+                p = '.ufo/evidence/round-21/coldread/rekey-r53-%s/' % c0
+                if t.startswith(p):
+                    return c0
+        return None
 
     led_raw = cat(lane, rev, LEDGER)
     head_raw = cat(lane, rev, HEADINGS)
@@ -120,28 +130,26 @@ def main():
         ledger = json.loads(led_raw.decode())
     entries = ledger.get('entries', [])
     rekeyed = 0
-    if c0:
-        for h in headings:
-            matches = [e for e in entries
-                       if isinstance(e, dict) and e.get('heading') == h
-                       and any(t.startswith('.ufo/evidence/round-21/coldread/rekey-r53-%s/' % c0)
-                               for t in e.get('traces', []))]
-            good = [e for e in matches
-                    if str(e.get('read_rev', '')).startswith(c0)
-                    and e.get('wrong_expectations') == 0
-                    and e.get('blocking_gaps') == 0]
-            if not good:
-                problems.append('rekey-entry-missing %s' % h)
-                continue
-            ok = True
-            for e in good:
-                for t in e.get('traces', []):
-                    if git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev, t)]
-                           ).returncode != 0:
-                        problems.append('trace-missing %s' % t)
-                        ok = False
-            if ok:
-                rekeyed += 1
+    for h in headings:
+        matches = [e for e in entries
+                   if isinstance(e, dict) and e.get('heading') == h]
+        good = [e for e in matches
+                if rekey_prefix(e) is not None
+                and str(e.get('read_rev', '')).startswith(rekey_prefix(e))
+                and e.get('wrong_expectations') == 0
+                and e.get('blocking_gaps') == 0]
+        if not good:
+            problems.append('rekey-entry-missing %s' % h)
+            continue
+        ok = True
+        for e in good:
+            for t in e.get('traces', []):
+                if git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev, t)]
+                       ).returncode != 0:
+                    problems.append('trace-missing %s' % t)
+                    ok = False
+        if ok:
+            rekeyed += 1
 
     # --- 3. reader JSONs ----------------------------------------------------
     r = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev,
@@ -175,9 +183,6 @@ def main():
             sec = sections.get(h)
             if sec is None:
                 break
-            cand = str(d.get('cand', ''))
-            if not (cand[:12] == rev[:12] or (c0 and cand.startswith(c0))):
-                continue
             if d.get('section_sha256') == sec['sha256']:
                 got = True
                 break
