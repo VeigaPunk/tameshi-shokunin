@@ -1,0 +1,69 @@
+# raw receipts — T51W2ExecTool24 (C3 row SKILL.md:2165 for tools/wave-parent-settle.py)
+candidate=6d8c11e378aa90b12650808e1b79270742935f15  clone=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool24/cand  head=6d8c11e378aa90b12650808e1b79270742935f15
+shell: bash; TMPDIR=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool24/tmp; stdin=/dev/null for every run
+
+## 1 exact backticked self-test
+$ python3 tools/wave-parent-settle.py --selftest
+WAVE_PARENT_SELFTEST: 3/3 pass
+exit=0
+
+## 2 usage probe
+$ python3 tools/wave-parent-settle.py --r51-no-such-flag
+| usage: wave-parent-settle.py [-h] [--selftest] [--receipt PATH]
+| wave-parent-settle.py: error: unrecognized arguments: --r51-no-such-flag
+exit=2
+
+## 3 pinned values replayed
+$ python3 tools/wave-parent-settle.py --receipt .ufo/waves/round-40/settlement-receipt.json
+WAVE_PARENT: verdict=SETTLED detail=parent exit >= last seat terminal
+exit=0
+  committed sibling stdout: WAVE_PARENT: verdict=SETTLED detail=parent exit >= last seat terminal 
+$ python3 tools/wave-parent-settle.py --receipt .ufo/waves/round-41/settlement-receipt.json
+WAVE_PARENT: verdict=UNSETTLED detail=parent_exit_unix missing
+exit=1
+  committed sibling stdout: WAVE_PARENT: verdict=UNSETTLED detail=parent_exit_unix missing exit=1 
+
+## 4 verdict-map boundary probes (not in row)
+$ python3 tools/wave-parent-settle.py          # no --receipt
+| usage: wave-parent-settle.py [-h] [--selftest] [--receipt PATH]
+exit=2
+$ python3 tools/wave-parent-settle.py --receipt /nonexistent/x.json
+|     with open(args.receipt, encoding='utf-8') as fh:
+|          ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+| FileNotFoundError: [Errno 2] No such file or directory: '/nonexistent/x.json'
+exit=1
+$ python3 tools/wave-parent-settle.py --receipt bad.json
+|     raise JSONDecodeError("Expecting value", s, err.value) from None
+| json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+exit=1
+$ python3 tools/wave-parent-settle.py --receipt list.json
+|             ^^^^^^^^^^^
+| AttributeError: 'list' object has no attribute 'get'
+exit=1
+$ python3 tools/wave-parent-settle.py --selftest --receipt <round-40 pin>   # mixed args
+WAVE_PARENT_SELFTEST: 3/3 pass
+exit=0
+
+## 5 scratch-copy mutants (selftest sensitivity)
+$ python3 mut-earlyexit.py --selftest      # line 31 rule disabled
+WAVE_PARENT_SELFTEST: 2/3 pass
+FAIL red: want UNSETTLED got SETTLED
+exit=1
+$ python3 mut-earlyexit.py --receipt <round-40 pin>
+WAVE_PARENT: verdict=SETTLED detail=parent exit >= last seat terminal
+exit=0
+$ python3 mut-boundary.py --selftest       # line 31 "<" -> "<="
+WAVE_PARENT_SELFTEST: 3/3 pass
+exit=0
+$ python3 mut-boundary.py --receipt <round-40 pin>
+WAVE_PARENT: verdict=UNSETTLED detail=parent exited before last seat terminal
+exit=1
+
+## 6 write-scope check
+TMPDIR entries after all runs: 0
+git status --porcelain lines: 0
+tool open() calls: [open(args.receipt, encoding='utf-8') as fh:]  (one, read mode)
+write-capable open modes: []   print calls: 3   sys.exit: 1
+sha256 pins:
+659e39bb7fba6d381ee3af27daec8b74a6542d861b8b4666b4d46d4ad44f89a3  .ufo/waves/round-40/settlement-receipt.json
+c9527fef19cb489670b4b632ad4909e0db1324f15e29975bb259f7ea8386c731  .ufo/waves/round-41/settlement-receipt.json

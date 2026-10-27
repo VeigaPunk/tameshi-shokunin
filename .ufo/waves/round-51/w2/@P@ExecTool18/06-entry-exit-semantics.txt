@@ -1,0 +1,26 @@
+=== exit-code behaviour of the documented entry command (row cell, SKILL.md:2159) ===
+row entry: python3 -I tools/staged-id-guard.py --registry corpus/SOURCES.md --staged STAGED.md --json
+
+--- (a) no collision -> 'answered', exit 0 ---
+{"cascade": [], "cascade_count": 0, "collision_count": 0, "collisions": [], "column0_collisions": [], "column0_miss": [], "extractor": "0-3space", "held": {}, "naive_map": {}, "next_free": "S002", "refused": false, "registry_docs": 1, "registry_max": "S001", "registry_rows": 1, "registry_sha256": "9fbf425fb929abad8b7ca3db7ae3c48076ca13992b067bd454c5e469408ab04a", "safe_floor": "S901", "staged_max": "S900", "staged_rows": 1, "staged_sha256": "e286459a98b422867e54424eeceab9e918a1858e0eae22a4797f0ba4bfd72fdc", "unmapped": [], "verdict": "answered"}
+exit=0
+--- (b) colliding staged row with no document -> 'refused', exit 1 ---
+{"cascade": [], "cascade_count": 0, "collision_count": 1, "collisions": ["S001"], "column0_collisions": ["S001"], "column0_miss": [], "extractor": "0-3space", "held": {}, "naive_map": {"S001": "S002"}, "next_free": "S002", "refused": true, "registry_docs": 1, "registry_max": "S001", "registry_rows": 1, "registry_sha256": "9fbf425fb929abad8b7ca3db7ae3c48076ca13992b067bd454c5e469408ab04a", "safe_floor": "S002", "staged_max": "S001", "staged_rows": 1, "staged_sha256": "2e51e8951361442dce43a3d6710792cb3907a84a4a225233fba657956c970cf8", "unmapped": ["S001"], "verdict": "refused"}
+exit=1
+--- (c) admissible by-document map -> 'admitted', exit 0 ---
+{"analysis_refused": false, "cascade": [], "cascade_count": 0, "collision_count": 0, "collisions": [], "column0_collisions": [], "column0_miss": [], "extractor": "0-3space", "held": {}, "map_below_floor": [], "map_clash": [], "map_dedupe": {"S002": "S001"}, "map_entries": 1, "map_floor": "S003", "map_held_moved": [], "map_ok": true, "map_reasons": [], "map_staged_clash": [], "map_targets": 1, "map_uncovered": [], "map_undocumented": [], "naive_map": {}, "next_free": "S002", "refused": false, "registry_docs": 1, "registry_max": "S001", "registry_rows": 1, "registry_sha256": "9fbf425fb929abad8b7ca3db7ae3c48076ca13992b067bd454c5e469408ab04a", "safe_floor": "S003", "staged_max": "S002", "staged_rows": 1, "staged_sha256": "fb3f753d10bac3b3aaf8f6707cfe4616d65d9a244268683c0eb179e7c4c73a00", "unmapped": [], "verdict": "admitted"}
+exit=0
+--- (d) map onto a registry id -> 'inadmissible', exit 1 ---
+{"analysis_refused": false, "cascade": [], "cascade_count": 0, "collision_count": 1, "collisions": ["S001"], "column0_collisions": ["S001"], "column0_miss": [], "extractor": "0-3space", "held": {"S001": "S001"}, "map_below_floor": [], "map_clash": [], "map_dedupe": {"S001": "S001"}, "map_entries": 1, "map_floor": "S002", "map_held_moved": [], "map_ok": false, "map_reasons": ["map leaves a colliding id on itself: S001"], "map_staged_clash": [], "map_targets": 1, "map_uncovered": [], "map_undocumented": [], "naive_map": {"S001": "S002"}, "next_free": "S002", "refused": true, "registry_docs": 1, "registry_max": "S001", "registry_rows": 1, "registry_sha256": "9fbf425fb929abad8b7ca3db7ae3c48076ca13992b067bd454c5e469408ab04a", "safe_floor": "S002", "staged_max": "S001", "staged_rows": 1, "staged_sha256": "a9b216b47df66e391de5e8ca9c81df803d962512aa555ac1f618c09adce15485", "unmapped": [], "verdict": "inadmissible"}
+exit=1
+--- (e) missing registry file -> setup refusal, exit 2 ---
+staged-id-guard: REFUSED: cannot stat fx/nope.md: [Errno 2] No such file or directory: 'fx/nope.md'
+{"reason": "cannot stat fx/nope.md: [Errno 2] No such file or directory: 'fx/nope.md'", "verdict": "setup_refusal"}
+exit=2
+--- (f) no --registry/--staged -> usage, exit 2 ---
+staged-id-guard: --registry and --staged are required
+exit=2
+--- (g) --help -> exit 0 (argparse), NOT a declared verdict path ---
+exit=0
+--- (h) broken stdout (pipe closed) -> python exit 120, NOT declared in the row ---
+pipestatus=120  (baseline trivial python print also gives 120 -> interpreter artefact, not the tool)

@@ -1,0 +1,25 @@
+1 row self-test (exact backtick cmd)           exit=0 wall=0.935s last='SELFTEST: PASS (19/19)'
+2 usage probe --r51-no-such-flag               exit=2 wall=0.024s last='}'
+3 entry cmd vs real fleet root                 exit=0 wall=0.079s last='}'
+3b entry counts (exit-0 with drift?)           {"legs": 6, "unchanged": 1, "changed": 5, "unavailable": 0}
+3c exit-0 means 'clean'? legs changed          5 changed / 1 unchanged
+4 run mode, 100k-deep JSON manifest            exit=1 wall=0.037s last='' ERR:RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode s
+4b is that a selftest FAIL?                    NO: run mode, manifest path
+4c traceback present?                          yes
+5 code probe: selftest                         exit=0 wall=0.920s last='SELFTEST: PASS (19/19)'
+5 code probe: usage                            exit=2 wall=0.025s last='}'
+5 code probe: help                             exit=0 wall=0.024s last='exit 2  could-not-evaluate invalid input (usage, manifest, fleet root)'
+5 code probe: no args                          exit=2 wall=0.024s last='}'
+5 code probe: selftest+arg                     exit=2 wall=0.025s last='}'
+5 code probe: missing manifest                 exit=2 wall=0.025s last='}'
+5 code probe: root not a dir                   exit=2 wall=0.024s last='}'
+5 code probe: 7-leg manifest                   exit=2 wall=0.025s last='}'
+5 code probe: run-mode crash                   exit=1 wall=0.038s last='' ERR:RecursionError: Stack overflow (used 8144 kB) while decoding a JSON array from a unicode s
+5b observed exit codes                         {"selftest": 0, "usage": 2, "help": 0, "no args": 2, "selftest+arg": 2, "missing manifest": 2, "root not a dir": 2, "7-leg manifest": 2, "run-mode crash": 1}
+6 selftest with git off PATH                   exit=2 wall=0.024s last="SELFTEST: COULD_NOT_EVALUATE ([Errno 2] No such file or directory: 'gi"
+7 entry cmd w/ mutated pinned sha              exit=0 wall=0.078s last='}'
+7b pinned value is load-bearing                leg0 content_status=unavailable pinned.status=mismatch
+8 clean PASS run                               exit=0 wall=0.910s last='SELFTEST: PASS (19/19)'
+8b residue after PASS (row claims removed)     count=0 []
+9 entry cmd again (sibling write check)        exit=0 wall=0.081s last='}'
+9b sibling repo status unchanged               True

@@ -1,0 +1,24 @@
+# tools/shrink-case.py @ 6d8c11e378aa90b12650808e1b79270742935f15 — measured exits
+# clone: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool17/work/tameshi-shokunin (git clone --shared, rev-parse toplevel asserted)
+# every run: cwd=clone, stdin=/dev/null, TMPDIR=$S/tmp (scratch)
+
+## declared row (SKILL.md:2158): 0 shrunk (report written); 1 selftest checks failed;
+##   2 could-not-evaluate (usage, unreadable file, invalid case, case carries no kill)
+
+invocation                                                              exit  last stdout line                          wall
+1  python3 tools/shrink-case.py --selftest                                0  "SHRINK_SELFTEST: cases=21 failed=0"       0.75 s
+2  python3 tools/shrink-case.py --selftest        (second, same clone)   0  "SHRINK_SELFTEST: cases=21 failed=0"       1.10 s
+3  python3 -I tools/shrink-case.py --selftest                            0  "SHRINK_SELFTEST: cases=21 failed=0"       1.10 s
+4  python3 tools/shrink-case.py --r51-no-such-flag  (usage probe)         2  (stdout empty)                            0.03 s
+5  python3 tools/shrink-case.py --pristine P --mutant M --case C --out O  0  "shrink-case: units 7 -> 1, runs 7"       0.23 s
+6  ... --mutant P (identical guards, no kill)                             2  (stdout empty) stderr: "the case carries no kill: ..."
+7  ... --case <absent path>                                               2  (stdout empty) stderr: "cannot read the case ...: No such file or directory"
+8  ... --case {"registry":5,...}                                         2  (stdout empty) stderr: "the case is not {registry: str, staged: str, map: object|null}"
+9  python3 tools/shrink-case.py (no arguments)                           2  (stdout empty) stderr: "error: missing --pristine, --mutant, --case, --out"
+10 ... --out <existing directory>                                        2  (stdout empty) stderr: "cannot write ...: Is a directory"
+11 ... --case with map={"x":1} (valid JSON, odd shape)                   2  (stdout empty) stderr: "the case carries no kill: ..."
+12 ... --case with map={"map":"not-a-dict"}                              2  (stdout empty) stderr: "the case carries no kill: ..."
+
+No run-mode invocation produced exit 1. Exit 1 is reachable only from --selftest with a failing check
+(control, scratch copy: panel M02 literal contradicted -> "SHRINK_SELFTEST: cases=21 failed=1", exit 1).
+Usage probe exit 2 is a token in the row's Verdict map => declared.

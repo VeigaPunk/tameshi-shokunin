@@ -1,0 +1,49 @@
+# T51W2ExecTool06 receipts — tools/golden-verdict.py row (SKILL.md:2147) at 6d8c11e
+
+## A. row bytes (SKILL.md:2147, verbatim)
+| golden verdict classes | gate | `python3 tools/golden-verdict.py --check-entry PATH` | 0 clean; 1 failed; 2 could-not-evaluate (usage) | `python3 tools/golden-verdict.py --selftest` → GOLDEN_VERDICT_SELFTEST: | `corpus/knowledge/golden-comparison-verdict.md`, `tools/golden-verdict.py`, `.ufo/evidence/round-38/golden/measure.py`; class names and the update-flag rule are literals in the tool | no lane write: the named entry is read-only and the selftest writes only inside a TMPDIR temp dir | tameshi |
+
+## B. selftest from git clone --shared at CAND, TMPDIR=scratch, stdin /dev/null
+$ cd CLONE && TMPDIR=$S/tmp python3 tools/golden-verdict.py --selftest </dev/null
+GOLDEN_VERDICT_SELFTEST: 3/3 pass
+exit=0
+wall: 38-45 ms over 5 runs (min 38, max 45)
+last non-empty line: GOLDEN_VERDICT_SELFTEST: 3/3 pass
+
+## C. usage probe
+$ python3 tools/golden-verdict.py --r51-no-such-flag </dev/null
+usage: golden-verdict.py [-h] [--selftest] [--check-entry PATH]
+                         [--classify-exit N]
+golden-verdict.py: error: unrecognized arguments: --r51-no-such-flag
+exit=2
+wall: 38-45 ms over 5 runs
+
+## D. entry command on the pinned corpus entry
+$ python3 tools/golden-verdict.py --check-entry corpus/knowledge/golden-comparison-verdict.md
+GOLDEN_VERDICT_ENTRY: classes=3/3 update_rule=present path=corpus/knowledge/golden-comparison-verdict.md
+exit=0
+
+## E. gate truly fails (dropped '| error |' class row)
+GOLDEN_VERDICT_ENTRY: classes=2/3 update_rule=present path=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool06/entry-no-error.md
+MISSING outcome class: error
+exit=1
+
+## F. update-flag rule is enforced
+$ python3 tools/golden-verdict.py --check-entry entry-no-flag2.md  (all update/flag removed)
+GOLDEN_VERDICT_ENTRY: classes=3/3 update_rule=absent path=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool06/entry-no-flag2.md
+MISSING explicit update-flag rule
+exit=1
+
+## G. exit-1 conflation: absent input vs genuine failure
+non-conforming entry -> exit=1
+absent entry        -> exit=1
+
+## H. write scope: TMPDIR honoured, no lane write
+gettempdir= /tmp
+TMPDIR residue after selftest:
+w2tool06-nodiff-u9dzfq9d
+clone status after all probes:
+
+## I. tool sha256 vs round-38 contract pin (.ufo/evidence/round-38/contract.json:46)
+c5f9616be719fdce99e8aaa9d8c9b1cde5c4c2d4d4db0b517ec16c1a26d15f87  tools/golden-verdict.py
+pin: c5f9616be719fdce99e8aaa9d8c9b1cde5c4c2d4d4db0b517ec16c1a26d15f87  => MATCH

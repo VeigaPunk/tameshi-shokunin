@@ -1,0 +1,33 @@
+## receipt: verdict-map exit code survey (row line 2152: '0 clean; 1 failed incl absent REPO/unresolvable REV; 2 could-not-evaluate only on usage')
+cwd=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool11/clone TMPDIR=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool11/tmpK stdin=/dev/null
+--- A exit0 six PASS (CAND, --rev) -> EXIT=0
+  "schema": "tameshi-round20-receipt-window-measure-v1",
+  "total": 6
+}
+--- B absent REPO + --rev -> EXIT=1
+  "schema": "tameshi-round20-receipt-window-measure-v1",
+  "total": 6
+}
+--- C unresolvable REV -> EXIT=1
+  "schema": "tameshi-round20-receipt-window-measure-v1",
+  "total": 6
+}
+--- D unknown flag (no --repo) -> EXIT=2
+usage: measure.py [-h] --repo REPO [--rev REV] [--json] [--explain]
+measure.py: error: the following arguments are required: --repo
+--- E unknown flag (with --repo) -> EXIT=2
+usage: measure.py [-h] --repo REPO [--rev REV] [--json] [--explain]
+measure.py: error: unrecognized arguments: --r51-no-such-flag
+--- F missing --repo value -> EXIT=2
+usage: measure.py [-h] --repo REPO [--rev REV] [--json] [--explain]
+measure.py: error: argument --repo: expected one argument
+--- G --selftest mixed -> EXIT=2
+usage: receipt-measure.py --selftest (alone)
+--- H --help (row declares no 0-without-verdict case) -> EXIT=0
+  --rev REV
+  --json
+  --explain
+--- I NON-USAGE could-not-evaluate: --repo non-git dir, no --rev -> EXIT=2
+MEASURE: COULD_NOT_EVALUATE (no revision)
+--- J NON-USAGE could-not-evaluate: --repo plain file, no --rev -> EXIT=2
+MEASURE: COULD_NOT_EVALUATE (no revision)

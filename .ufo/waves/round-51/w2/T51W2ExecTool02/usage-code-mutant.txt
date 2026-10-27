@@ -1,0 +1,20 @@
+== committed usage-code mutant lane (fixture rev 3c9a6b58022364da83436311a219168dbde44718) ==
+edit: tools/command-binding.py Parser.error  self.exit(64, ...) -> self.exit(2, ...)  (tool:37-40)
+
+selftest:    COMMAND_BINDING_SELFTEST: 44/44 pass   (rc 0)
+usage probe: rc=2  (row declares BOTH 2 and 64, so the C3 probe is satisfied)
+
+full tools/registry-check.py --rev HEAD on that lane, command-binding rows:
+  ROW command-binding-selftest            superseded expect=0 got=0
+  ROW command-binding-frozen-clean        superseded expect=0 got=0
+  ROW command-binding-source-read-red     superseded expect=1 got=1
+  ROW command-binding-selftest-r24        expect=0 got=0 held
+  ROW command-binding-frozen-clean-pinned expect=0 got=0 held
+  ROW command-binding-source-read-red-pinned expect=1 got=1 held
+  REGISTRY_CHECK: held=44/49 superseded=7   (lane-wide; non-command-binding rows are out of this seat's scope)
+
+frozen C3 counter row logic against the mutant lane:
+  row_reason: None | run_row: (None, 'COMMAND_BINDING_SELFTEST: 44/44 pass')
+
+=> a tool whose usage exit code drifted 64->2 passes the tool selftest, all three active
+   registry rows, and the frozen C3 usage probe. Only the row's prose says '64 ... (usage)'.

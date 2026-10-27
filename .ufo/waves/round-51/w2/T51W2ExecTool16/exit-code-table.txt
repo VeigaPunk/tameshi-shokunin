@@ -1,0 +1,9 @@
+measured through the facade (tools/round21-measure.py at CAND)
+
+code | input | observed | row says
+0    | --claim c2 --repo CLONE --rev CAND --json | exit 0, classified=9/9 tool_selftest=pass f5_entry=True (796 ms) | 0 clean
+1    | --claim c2 --repo TINY_FIXTURE --rev HEAD --json | exit 1, classified=0/9 tool_selftest=fail (receipt/f5 absent) | 1 failed
+1    | --claim c1 --repo CLONE --rev CAND with bwrap present-but-failing (stub exit 1) | exit 1, killed=0 survived=0 inconclusive=18/18, controls exit 1 (838 ms) | not declared (setup => 2)
+2    | --claim c2 --repo CLONE --rev ffffffffffffffffffffffffffffffffffffffff | exit 2, 'C2: cannot resolve rev' (66 ms) | 2 could-not-evaluate (unknown rev)
+2    | --claim c1 --repo CLONE --rev CAND with bwrap absent from PATH | exit 2, 'C1: setup failure: [Errno 2] No such file or directory: bwrap' | 2 could-not-evaluate (setup)
+64   | --r51-no-such-flag | exit 64, stderr 'MEASURE_USAGE: unrecognized arguments: --r51-no-such-flag' (39 ms) | 64 could-not-evaluate (usage)

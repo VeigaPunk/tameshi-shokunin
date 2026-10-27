@@ -1,0 +1,24 @@
+# Setup
+S=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool21
+git clone -q --shared --no-checkout /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/clone"
+git -C "$S/clone" rev-parse --show-toplevel   # must print $S/clone before any fixture git op (no fixture commit was made)
+git -C "$S/clone" checkout -q --detach 6d8c11e378aa90b12650808e1b79270742935f15
+
+# Row's exact backticked self-test (SKILL.md:2162), scratch TMPDIR, stdin /dev/null
+cd "$S/clone" && TMPDIR="$S/tmp/selftest" python3 tools/tally-audit.py --selftest </dev/null
+
+# Usage probe required by the frozen C3 predicate
+cd "$S/clone" && TMPDIR="$S/tmp/usage" python3 tools/tally-audit.py --r51-no-such-flag </dev/null
+
+# Default entry (audits tools/mutate-and-run.sh beside the tool)
+cd "$S/clone" && TMPDIR="$S/tmp/audit" python3 tools/tally-audit.py </dev/null
+
+# Marker is not author-chosen help text: appears 0 times in --help
+cd "$S/clone" && TMPDIR="$S/tmp" python3 tools/tally-audit.py --help </dev/null | grep -c TALLY_AUDIT_SELFTEST   # -> 0
+
+# Probes P1..P6 as in fixtures.txt and timings.txt
+
+# Shipped runner's own usage path (shows exit 64 with no REGRESSION line on stdout)
+S2=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool21u
+git show 6d8c11e378aa90b12650808e1b79270742935f15:tools/mutate-and-run.sh > "$S2/runner.sh"
+cd "$S2" && TMPDIR="$S2/tmp" bash runner.sh --regression --workdir </dev/null >usage-runner.out 2>usage-runner.err   # exit 64; usage-runner.out 0 bytes

@@ -1,0 +1,22 @@
+# C2 interaction — tools/mutate-and-run.sh is a historical-waived input of the C3 row's gate
+# (round-18 dispositions.json historical_inputs, rev 4acc607dfd79f19d508bd50cdd06b77269fccd1d)
+
+round-13 expected.json pin for tools/mutate-and-run.sh : 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+blob at the waived rev 4acc607d                       : 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5  (equal -> the pin is the OLD bytes)
+live runner at BASE 9962033                           : a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+live runner at CAND 6d8c11e                           : 977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+
+The waiver is needed whenever the live bytes differ from the pin (G1: historical_input_unneeded
+refuses an unnecessary waiver). That was already true at BASE, so C2 is not what makes this gate
+green — measured: the entry command at BASE also exits 0 clean (entry-mode-base.stdout).
+
+Measured in the CAND clone:
+  A) live edit of tools/mutate-and-run.sh              -> exit 2 historical_input_uncommitted
+  B) runner reverted to the waived-rev (round-13) bytes -> exit 2 historical_input_unneeded
+  C) restored to the CAND bytes                         -> exit 0 clean
+
+=> C2's tenth leg moves tools/mutate-and-run.sh, a historical-waived input of this gate. The
+   move itself is harmless to the gate (moved-away bytes keep the waiver legitimate), but the
+   gate turns red the moment the runner's bytes return to the round-13 pin. The row's pinned
+   cell never names tools/mutate-and-run.sh, so this C2<->C3 coupling is invisible from the row.
+

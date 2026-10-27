@@ -1,0 +1,32 @@
+T51W2ExecTool26 — C3 registry row audit: tools/witness-metadata.py (round 51, wave 2, falsify)
+
+Row audited: SKILL.md:2167 in `#### Gate/probe registry — round 51` at CAND 6d8c11e378aa90b12650808e1b79270742935f15
+  line sha256 (newline stripped): 61d923089c2c84b55f698f0eaff184d12f728e3ff6f172d26cbf2a073534be2e
+Tool: tools/witness-metadata.py at CAND
+  blob b38bec3cda5552597839cfaff5cad2bf1cdb7135, sha256 df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4,
+  48914 B, 1290 lines, mode 100755
+
+VERDICT: the row survives falsification on every C3-tested field. No falsifying mismatch found.
+  * self-test `python3 tools/witness-metadata.py --selftest` from `git clone --shared` at CAND, scratch TMPDIR,
+    stdin /dev/null: exit 0, last stdout line `SELFTEST: PASS 39/39`, 39 SELFTEST_CASE lines, stderr empty,
+    wall 1583 ms (counter-identical env) / 2013-2157 ms (5 further runs).
+  * usage probe `--r51-no-such-flag`: exit 2, stdout empty, stderr argparse usage, 35 ms. 2 is declared in the row.
+  * kind gate: correct — the tool fails (exit 1 on a doctored companion, exit 2 on a tampered pinned input).
+  * verdict map complete: the tool's reachable code set is exactly {0,1,2}; all named in the row.
+  * pinned values: all five paths exist at REV and are load-bearing (per-pin tamper -> exit 2).
+  * write scope: --check performs zero write-mode opens; --selftest writes only inside one TMPDIR fixture tree,
+    removed in the finally block; lane tree clean afterwards (no __pycache__, no untracked files).
+  * counter: `C3_TOOL tools/witness-metadata.py: covered line 2167 selftest exit=0 last=SELFTEST: PASS 39/39`.
+    This row contributes nothing to the round's C3 shortfall.
+
+Notes (precision, not falsification): P1 companion pinned by canonical-object equality not digest (byte-only
+drift exits 0); P2 "under TMPDIR" conditional on a usable TMPDIR (stdlib falls back to /tmp); P3 the row's own
+entry command can read a companion outside the lane (tool reports companion_in_lane=false).
+Disclosures: D1 the counter checks pinned-path existence, not digest-pinning; D2 the selftest is partly
+self-referential (4 build_companion fields invisible to --selftest, caught only by --check).
+Cross-reference: the round's single C3-missing tool is tools/round21-measure.py (row 2157), the known
+clone-context blocker — not this tool; witness-metadata's selftest has no sibling-repo dependency and passes
+39/39 from a fresh clone.
+
+Receipts in this directory; report at .ufo/waves/round-51/w2/T51W2ExecTool26.md (and byte-identically at
+.ufo/waves/round-51/w2/@P@ExecTool26.md).

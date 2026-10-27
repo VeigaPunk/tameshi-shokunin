@@ -1,0 +1,22 @@
+## I3b. SCRATCH_RE neutering, done correctly (the block replace in the earlier version damaged the module)
+--- SCRATCH_RE neutered to never match ---
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+exit=0  (0 => SCRATCH_RE is NOT exercised by the fixture set)
+restored; git status: []
+
+### why: the scratch_replace fixture is an EXPECTED_RE-negative line, so its 'unflagged' position is
+### permanently 0 no matter what SCRATCH_RE does.
+fixture body : "os.replace('/tmp/a', '/tmp/scratch-out.json')\n"
+WRITE_RE     : True
+EXPECTED_RE  : False
+SCRATCH_RE   : True
+
+classify_text increments unflagged only if EXPECTED_RE matches AND SCRATCH_RE does not.
+EXPECTED_RE is False here => the cell is 0 unconditionally => the SCRATCH_RE branch is dead
+for every fixture in this set. (Also: only one fixture body contains /tmp, and it is this one.)
+
+### summary of detector mutation results
+DETECTOR       VERDICT    CONSEQUENCE
+EXPECTED_RE    exit 1     real: counts move
+FLAG_RE        exit 1     real: counts move
+SCRATCH_RE     exit 0     VACUOUS: no fixture exercises it

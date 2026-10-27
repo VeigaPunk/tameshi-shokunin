@@ -1,0 +1,8 @@
+CLI --selftest with an internal failure (mkdtemp raises):
+  exit=1
+  stdout last: ['']
+  stderr last: ['PermissionError: simulated: /tmp not writable']
+=> the row's verdict map declares 1 = 'failed semantic expectation' and 2 = 'could-not-evaluate
+   (... internal failure)'. An internal failure on the --selftest path escapes main()'s try/except
+   (tools/evidence-disposition.py:3209-3210 calls selftest() OUTSIDE the guarded try at 3211-3219)
+   and surfaces as exit 1 with a traceback, not as the declared exit 2.

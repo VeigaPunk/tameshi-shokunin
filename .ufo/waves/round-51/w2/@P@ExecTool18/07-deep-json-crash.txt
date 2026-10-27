@@ -1,0 +1,46 @@
+=== FINDING: deeply-nested map file escapes as a bare traceback with exit 1 ===
+tool: tools/staged-id-guard.py   loader: load_map() -> json.loads() at tools/staged-id-guard.py:443
+row verdict map (SKILL.md:2159) declares: 0 clean; 1 failed (analysis refused, or map inadmissible); 2 could-not-evaluate (usage, missing flag, or setup refusal)
+tool docstring (tools/staged-id-guard.py:38-41) promises: 'exit 2 = setup refusal (missing or non-regular file, oversized file, malformed row, malformed map) - never a bare traceback.'
+
+--- reproduction: map file of 120008 bytes (well under MAX_MAP=1048576 at tools/staged-id-guard.py:70) ---
+file bytes: 120008
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool18/clone/tools/staged-id-guard.py", line 497, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool18/clone/tools/staged-id-guard.py", line 467, in main
+    load_map(args.map))
+    ~~~~~~~~^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool18/clone/tools/staged-id-guard.py", line 443, in load_map
+    return json.loads(raw, object_pairs_hook=_no_duplicate_keys)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/json/__init__.py", line 365, in loads
+    return cls(**kw).decode(s)
+           ~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+RecursionError: Stack overflow (used 8144 kB) while decoding a JSON array from a unicode string
+exit=1
+
+--- bisection of the crash threshold (json nesting depth) ---
+  depth=  5000 exit=2 traceback=False
+  depth= 20000 exit=2 traceback=False
+  depth= 50000 exit=2 traceback=False
+  depth= 55000 exit=1 traceback=True
+  depth= 60000 exit=1 traceback=True
+  depth=100000 exit=1 traceback=True
+
+--- reproducibility of the crash at depth 60000 ---
+  run1 exit=1
+  run2 exit=1
+  run3 exit=1
+  run4 exit=1
+  run5 exit=1
+
+--- control: same file shape, flat -> no crash ---
+  flat map exit=1

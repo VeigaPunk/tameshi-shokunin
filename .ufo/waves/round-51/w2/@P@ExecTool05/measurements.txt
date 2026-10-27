@@ -1,0 +1,23 @@
+# T51W2ExecTool05 — measurements (CAND 6d8c11e, tool tools/evidence-disposition.py)
+
+## clone provenance
+clone: git clone -q --shared --no-checkout <lane> $S/clone ; git checkout --detach 6d8c11e378aa90b12650808e1b79270742935f15
+toplevel=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool05/clone  => fixture dir asserted before any operation
+HEAD=6d8c11e378aa90b12650808e1b79270742935f15
+tool blob at 84aa673a == tool blob at CAND: 123b8f1c6ce263c5b665f13528a6d4c58447b3ff (identical bytes)
+
+## row's exact backticked self-test: python3 tools/evidence-disposition.py --selftest
+stdin=/dev/null  TMPDIR=$S/work/tmp  cwd=$S/clone
+run1 exit=0 wall=4.88s last='SELFTEST: PASS (66/66)'
+run2 exit=0 wall=5.36s last='SELFTEST: PASS (66/66)'
+run3 exit=0 wall=5.06s last='SELFTEST: PASS (66/66)'
+run4 exit=0 wall=4.74s last='SELFTEST: PASS (66/66)'
+run5 exit=0 wall=4.99s last='SELFTEST: PASS (66/66)'
+
+## usage probe: python3 tools/evidence-disposition.py --r51-no-such-flag
+exit=64 wall=0.050s stdout_empty=True
+stderr first line: evidence-disposition.py: unknown argument: --r51-no-such-flag
+
+## counter's own row check (c3/measure.py row_reason + run_row) on SKILL.md:2146 at CAND
+row_reason -> None (static checks pass)
+run_row -> (None, 'SELFTEST: PASS (66/66)')  wall=4.56s

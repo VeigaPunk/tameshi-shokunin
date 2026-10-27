@@ -1,0 +1,62 @@
+# T51W2ExecTool17 — exact commands (scratch root S=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool17)
+
+## clone at candidate (fixture identity asserted before any run)
+mkdir -p $S/work $S/tmp
+git clone -q --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/work/tameshi-shokunin
+git -C $S/work/tameshi-shokunin rev-parse --show-toplevel      # -> $S/work/tameshi-shokunin
+git -C $S/work/tameshi-shokunin checkout -q --detach 6d8c11e378aa90b12650808e1b79270742935f15
+git -C $S/work/tameshi-shokunin rev-parse HEAD                 # -> 6d8c11e378aa90b12650808e1b79270742935f15
+cd $S/work/tameshi-shokunin
+
+## 1. the row's exact backticked self-test (SKILL.md:2158), stdin /dev/null, scratch TMPDIR
+TMPDIR=$S/tmp python3 tools/shrink-case.py --selftest > $S/selftest.out 2> $S/selftest.err < /dev/null
+# exit 0, wall 0.75 s, last line: SHRINK_SELFTEST: cases=21 failed=0
+
+## 2. the counter's usage probe form (interpreter prefix + tool + single flag)
+TMPDIR=$S/tmp python3 tools/shrink-case.py --r51-no-such-flag < /dev/null
+# exit 2, stdout empty, stderr ends: error: unrecognized arguments: --r51-no-such-flag
+
+## 3. determinism
+TMPDIR=$S/tmp python3 tools/shrink-case.py --selftest > $S/selftest2.out 2>/dev/null < /dev/null
+sha256sum $S/selftest.out $S/selftest2.out   # both 8be8fe37a453c430f6faf50ded124280f174c2f3634c1ce7a7620032d0921576
+
+## 4. the tool's documented form (-I) — same result, same lane write
+TMPDIR=$S/tmp python3 -I tools/shrink-case.py --selftest > $S/selftest-I.out < /dev/null
+# exit 0, SHRINK_SELFTEST: cases=21 failed=0, tools/__pycache__/pbt-staged-id.cpython-314.pyc written
+
+## 5. entry command end to end (M02 pristine/mutant pair built in scratch, case from the tool's own M02 literals)
+TMPDIR=$S/tmp python3 tools/shrink-case.py --pristine $S/m02/pristine.py --mutant $S/m02/mutant.py \
+        --case $S/m02/case.json --out $S/m02/out.json < /dev/null
+# exit 0, wall 0.23 s, "shrink-case: units 7 -> 1, runs 7", out.json written
+
+## 6. exit-code probes (run mode)
+python3 tools/shrink-case.py --pristine P --mutant P --case C --out O    # identical guards -> exit 2, "carries no kill"
+... --case $S/m02/nope.json                                             # exit 2, "cannot read the case"
+... --case $S/m02/bad.json                                              # exit 2, "not {registry: str, staged: str, map: object|null}"
+python3 tools/shrink-case.py                                            # exit 2, "missing --pristine, --mutant, --case, --out"
+... --out $S/m02/outdir                                                 # exit 2, "cannot write ... Is a directory"
+
+## 7. lane-write attribution
+rm -rf tools/__pycache__
+find . -path ./.git -prune -o -printf '%P %s %T@\n' | sort > $S/tree-pre.txt
+TMPDIR=$S/tmp python3 tools/shrink-case.py --selftest < /dev/null
+find . -path ./.git -prune -o -printf '%P %s %T@\n' | sort > $S/tree-post.txt
+diff <(awk '{print $1}' $S/tree-pre.txt) <(awk '{print $1}' $S/tree-post.txt)
+git status --porcelain ; git status --porcelain --ignored
+# only addition: tools/__pycache__/pbt-staged-id.cpython-314.pyc (77535 B, gitignored by .gitignore:4)
+
+## 8. cause isolation (bare importlib load of the lane sibling, nothing else)
+rm -rf tools/__pycache__
+python3 -c "import importlib.util; s=importlib.util.spec_from_file_location('m','tools/pbt-staged-id.py'); s.loader.exec_module(importlib.util.module_from_spec(s))"
+find tools -name '*.pyc'          # -> tools/__pycache__/pbt-staged-id.cpython-314.pyc
+# with -B: 0 files
+
+## 9. pinned-value dependency controls (scratch copies, no lane write)
+cp tools/{shrink-case.py,pbt-staged-id.py,staged-id-guard.py} $S/nopanel/tools/   # no .ufo/evidence/round-49/c2/panel.json
+python3 tools/shrink-case.py --selftest    # exit 0, 'M02: the embedded edit is the panel M02 edit  skip (panel not reachable)', cases=20
+# same copy + a panel whose M02.new differs from the tool literal:
+python3 tools/shrink-case.py --selftest    # exit 1, 'M02: the embedded edit is the panel M02 edit  FAIL', SHRINK_SELFTEST: cases=21 failed=1
+
+## 10. frozen counter replay (read-only import of .ufo/evidence/round-51/c3/measure.py at CAND)
+python3 $S/replay.py $S/work/tameshi-shokunin $S/replay-work
+# row line 2158 cells 8 | row_reason -> None | run_row -> (None, 'SHRINK_SELFTEST: cases=21 failed=0')

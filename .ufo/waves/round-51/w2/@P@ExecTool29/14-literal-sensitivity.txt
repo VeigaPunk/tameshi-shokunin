@@ -1,0 +1,23 @@
+### the pinned 'expected classifications are literals in the tool's SELFTEST table'
+### -> do those literals really affect expected behaviour?
+
+--- literal flipped: attr_bound_repo scratch False -> True ---
+FAIL attr_bound_repo: scratch=False, want True
+WRITE_CENSUS_V4_SELFTEST: cases=15 failed=1
+exit=1
+
+--- the SAME tool with the original literal (control) ---
+WRITE_CENSUS_V4_SELFTEST: cases=15 failed=0
+exit=0
+
+--- and the selftest reads NO repo file: it is a pure in-memory table ---
+478:        with open(golden, "w") as fh:
+492:        with open(os.path.join(self.workdir("x"), "expected.txt"), "w") as fh:
+507:        with open(os.path.join(self.base, "expected.json"), "w") as fh:
+524:        with open(os.path.join(self.pick(True), "expected.json"), "w") as fh:
+532:    with open(os.path.join(dest_dir, "expected.json"), "w") as fh:
+584:    with open(os.path.join(dest_dir, "expected.json"), "w") as fh:
+599:    with open(os.path.join(dest_dir, "expected.json"), "w") as fh:
+616:with open(os.path.join(cfg.out, "expected.json"), "w") as fh:
+639:    with open("golden/expected.json", "w") as fh:
+  (no open() outside the SELFTEST source-string literals)

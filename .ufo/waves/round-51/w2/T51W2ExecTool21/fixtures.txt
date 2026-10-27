@@ -1,0 +1,14 @@
+Frozen point: candidate 6d8c11e378aa90b12650808e1b79270742935f15, clone --shared at that commit.
+All fixtures are copies under scratch; the lane tree was never written.
+
+P1 runner-nlegs9.sh  = tools/mutate-and-run.sh with its unique real tally-declaration line (runner line 1510)
+    '  local nlegs=10 npass=0 nfail=0 nsetup=0 st'  ->  '  local nlegs=9 npass=0 nfail=0 nsetup=0 st'
+P2 tool-refblock-nlegs11.py = tools/tally-audit.py with REF_BLOCK's first line (tool line 49)
+    '  local nlegs=10 npass=0 nfail=0 nsetup=0 st'  ->  '  local nlegs=11 npass=0 nfail=0 nsetup=0 st'
+P3 runner-usage64.sh = prefix line + tools/mutate-and-run.sh:
+    if [[ "${1-}" == --regression ]]; then exit 64; fi
+P4 runner-pass64.sh  = prefix line + tools/mutate-and-run.sh:
+    if [[ "${1-}" == --regression ]]; then echo "REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)"; exit 64; fi
+P5 runner-argv.sh    = prefix line + tools/mutate-and-run.sh:
+    if [[ "${1-}" == --regression ]]; then echo "ARGV: $*" >&2; echo "REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)"; exit 0; fi
+P6 = --runner /dev/null (no fixture file).

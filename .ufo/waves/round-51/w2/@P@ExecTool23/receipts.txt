@@ -1,0 +1,353 @@
+ROUND 51 WAVE 2 — seat T51W2ExecTool23 — raw receipts
+lane /home/vgpnk/Projects/shokunin/tameshi-shokunin
+base 9962033fd7a75aa2f2847e979dd687a5d28505a1  candidate 6d8c11e378aa90b12650808e1b79270742935f15
+scratch /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool23 (deleted after this file was written)
+clones: cand (git clone --shared --no-checkout, checkout --detach CAND),
+        pinprobe (same; load-bearing probes P1-P4, restored with git checkout -- after each),
+        c3work/tameshi-shokunin (fresh clone used for the counter-exact replication)
+
+Every block names the command, the clone/relative path, TMPDIR and the observed exit code.
+
+
+==============================================================================
+== c3env receipt-selftest.txt  (env: GIT_* scrubbed, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, TMPDIR=c3work/tmp)
+   argv from row self-test cell / usage probe, cwd=clone root, stdin=DEVNULL
+==============================================================================
+EXIT=0
+WALL=1.01
+LAST=FINDING: SELFTEST_PASS
+STDERR=''
+
+
+==============================================================================
+== c3env receipt-usage.txt  (env: GIT_* scrubbed, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, TMPDIR=c3work/tmp)
+   argv from row self-test cell / usage probe, cwd=clone root, stdin=DEVNULL
+==============================================================================
+EXIT=64
+WALL=0.04
+LAST=
+STDERR='usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]\n                          [--json] [--selftest]\nwave-accounting.py: error: unrecognized arguments: --r51-no-such-flag\n'
+
+
+==============================================================================
+== row self-test, full stdout  (python3 tools/wave-accounting.py --selftest; exit 0; 0.88 s)
+==============================================================================
+ACCOUNTING_CASE false-completion-count ok
+ACCOUNTING_CASE failed-with-report-counted-completed ok
+ACCOUNTING_CASE missing-outcome ok
+ACCOUNTING_CASE duplicate-agent ok
+ACCOUNTING_CASE unknown-status ok
+ACCOUNTING_CASE registry-id-mismatch ok
+ACCOUNTING_CASE replacement-seat ok
+ACCOUNTING_CASE snapshot-tampering ok
+ACCOUNTING_SELFTEST: 8/8 pass
+ACCOUNTING_EXTRA_CASE role-mismatch ok
+ACCOUNTING_EXTRA_CASE missing-replacement ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome ok
+ACCOUNTING_EXTRA_CASE duplicate-member ok
+ACCOUNTING_EXTRA_CASE cross-wave-agent ok
+ACCOUNTING_EXTRA_CASE duplicate-wave ok
+ACCOUNTING_EXTRA_CASE unknown-report ok
+ACCOUNTING_EXTRA_CASE bool-totals ok
+ACCOUNTING_EXTRA_CASE duplicate-json-key ok
+ACCOUNTING_EXTRA_CASE nonfinite-json ok
+ACCOUNTING_EXTRA_CASE malformed-json ok
+ACCOUNTING_EXTRA_CASE deep-json ok
+ACCOUNTING_EXTRA_CASE no-reports-still-one-completed ok
+ACCOUNTING_EXTRA_CASE duplicate-member-agent-only ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome-agent-only ok
+ACCOUNTING_EXTRA_CASE zero-is-not-false-replacement ok
+ACCOUNTING_EXTRA_SELFTEST: 16/16 pass
+FINDING: SELFTEST_PASS
+
+
+==============================================================================
+== row self-test exit/wall
+==============================================================================
+EXIT=0
+WALL=0.88s
+stderr: <empty>
+
+
+==============================================================================
+== usage-flag
+==============================================================================
+-- stdout --
+-- stderr --
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+wave-accounting.py: error: unrecognized arguments: --r51-no-such-flag
+
+
+==============================================================================
+== noargs
+==============================================================================
+-- stdout --
+-- stderr --
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+
+
+==============================================================================
+== bundle-only
+==============================================================================
+-- stdout --
+-- stderr --
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+
+
+==============================================================================
+== selftest-plus-json
+==============================================================================
+-- stdout --
+-- stderr --
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+
+
+==============================================================================
+== help
+==============================================================================
+-- stdout --
+usage: wave-accounting.py [-h] [--bundle BUNDLE] [--expected EXPECTED]
+                          [--json] [--selftest]
+
+Reconcile retained callback outcomes with exact wave membership. Reports are
+artifacts, never terminal-state authority. This gate validates caller-declared
+retained data and its persisted digest, not provider telemetry. Exit 0 clean;
+1 failed invariant; 2 invalid/unavailable/tampered input; 64 usage (could-not-
+evaluate). Read-only except isolated --selftest fixtures.
+
+options:
+  -h, --help           show this help message and exit
+  --bundle BUNDLE
+  --expected EXPECTED
+  --json
+  --selftest
+-- stderr --
+
+
+==============================================================================
+== entry-committed
+==============================================================================
+-- stdout --
+WAVE_ACCOUNTING: clean
+FINDINGS: 
+{"completed": 66, "dead": 80, "seats": 146}
+-- stderr --
+
+
+==============================================================================
+== entry-wrongcount
+==============================================================================
+-- stdout --
+WAVE_ACCOUNTING: failed
+FINDINGS: TOTAL_MISMATCH
+{"completed": 66, "dead": 80, "seats": 146}
+-- stderr --
+
+
+==============================================================================
+== missing-bundle
+==============================================================================
+-- stdout --
+WAVE_ACCOUNTING: could-not-evaluate
+FINDINGS: INVALID_INPUT
+-- stderr --
+
+
+==============================================================================
+== dir-bundle
+==============================================================================
+-- stdout --
+WAVE_ACCOUNTING: could-not-evaluate
+FINDINGS: INVALID_INPUT
+-- stderr --
+
+
+==============================================================================
+== badschema
+==============================================================================
+-- stdout --
+WAVE_ACCOUNTING: could-not-evaluate
+FINDINGS: SNAPSHOT_TAMPERED
+-- stderr --
+
+
+==============================================================================
+== iso-copy
+==============================================================================
+-- stdout --
+FINDING: SELFTEST_UNAVAILABLE [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool23/tmp/.ufo/evidence/round-22/measure.py'
+
+
+==============================================================================
+== subdir-cwd
+==============================================================================
+-- stdout --
+ACCOUNTING_CASE false-completion-count ok
+ACCOUNTING_CASE failed-with-report-counted-completed ok
+ACCOUNTING_CASE missing-outcome ok
+ACCOUNTING_CASE duplicate-agent ok
+ACCOUNTING_CASE unknown-status ok
+ACCOUNTING_CASE registry-id-mismatch ok
+ACCOUNTING_CASE replacement-seat ok
+ACCOUNTING_CASE snapshot-tampering ok
+ACCOUNTING_SELFTEST: 8/8 pass
+ACCOUNTING_EXTRA_CASE role-mismatch ok
+ACCOUNTING_EXTRA_CASE missing-replacement ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome ok
+ACCOUNTING_EXTRA_CASE duplicate-member ok
+ACCOUNTING_EXTRA_CASE cross-wave-agent ok
+ACCOUNTING_EXTRA_CASE duplicate-wave ok
+ACCOUNTING_EXTRA_CASE unknown-report ok
+ACCOUNTING_EXTRA_CASE bool-totals ok
+ACCOUNTING_EXTRA_CASE duplicate-json-key ok
+ACCOUNTING_EXTRA_CASE nonfinite-json ok
+ACCOUNTING_EXTRA_CASE malformed-json ok
+ACCOUNTING_EXTRA_CASE deep-json ok
+ACCOUNTING_EXTRA_CASE no-reports-still-one-completed ok
+ACCOUNTING_EXTRA_CASE duplicate-member-agent-only ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome-agent-only ok
+ACCOUNTING_EXTRA_CASE zero-is-not-false-replacement ok
+ACCOUNTING_EXTRA_SELFTEST: 16/16 pass
+FINDING: SELFTEST_PASS
+
+
+==============================================================================
+== closedstdout
+==============================================================================
+-- stderr --
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool23/cand/tools/wave-accounting.py", line 228, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool23/cand/tools/wave-accounting.py", line 220, in main
+    print('WAVE_ACCOUNTING: ' + ('clean' if code == 0 else 'failed' if code == 1 else 'could-not-evaluate'))
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+
+
+==============================================================================
+== pinprobe: pin-measure-mut
+==============================================================================
+ACCOUNTING_CASE false-completion-count ok
+ACCOUNTING_CASE failed-with-report-counted-completed ok
+ACCOUNTING_CASE missing-outcome ok
+ACCOUNTING_CASE duplicate-agent ok
+ACCOUNTING_CASE unknown-status FAIL
+ACCOUNTING_CASE registry-id-mismatch ok
+ACCOUNTING_CASE replacement-seat ok
+ACCOUNTING_CASE snapshot-tampering ok
+ACCOUNTING_SELFTEST: 7/8 pass
+ACCOUNTING_EXTRA_CASE role-mismatch ok
+ACCOUNTING_EXTRA_CASE missing-replacement ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome ok
+ACCOUNTING_EXTRA_CASE duplicate-member ok
+ACCOUNTING_EXTRA_CASE cross-wave-agent ok
+ACCOUNTING_EXTRA_CASE duplicate-wave ok
+ACCOUNTING_EXTRA_CASE unknown-report ok
+ACCOUNTING_EXTRA_CASE bool-totals ok
+ACCOUNTING_EXTRA_CASE duplicate-json-key ok
+ACCOUNTING_EXTRA_CASE nonfinite-json ok
+ACCOUNTING_EXTRA_CASE malformed-json ok
+ACCOUNTING_EXTRA_CASE deep-json ok
+ACCOUNTING_EXTRA_CASE no-reports-still-one-completed ok
+ACCOUNTING_EXTRA_CASE duplicate-member-agent-only ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome-agent-only ok
+ACCOUNTING_EXTRA_CASE zero-is-not-false-replacement ok
+ACCOUNTING_EXTRA_SELFTEST: 16/16 pass
+FINDING: SELFTEST_FAIL
+
+
+==============================================================================
+== pinprobe: pin-extra-mut
+==============================================================================
+ACCOUNTING_CASE false-completion-count ok
+ACCOUNTING_CASE failed-with-report-counted-completed ok
+ACCOUNTING_CASE missing-outcome ok
+ACCOUNTING_CASE duplicate-agent ok
+ACCOUNTING_CASE unknown-status ok
+ACCOUNTING_CASE registry-id-mismatch ok
+ACCOUNTING_CASE replacement-seat ok
+ACCOUNTING_CASE snapshot-tampering ok
+ACCOUNTING_SELFTEST: 8/8 pass
+ACCOUNTING_EXTRA_CASE role-mismatch FAIL
+ACCOUNTING_EXTRA_CASE missing-replacement ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome ok
+ACCOUNTING_EXTRA_CASE duplicate-member ok
+ACCOUNTING_EXTRA_CASE cross-wave-agent ok
+ACCOUNTING_EXTRA_CASE duplicate-wave ok
+ACCOUNTING_EXTRA_CASE unknown-report ok
+ACCOUNTING_EXTRA_CASE bool-totals ok
+ACCOUNTING_EXTRA_CASE duplicate-json-key ok
+ACCOUNTING_EXTRA_CASE nonfinite-json ok
+ACCOUNTING_EXTRA_CASE malformed-json ok
+ACCOUNTING_EXTRA_CASE deep-json ok
+ACCOUNTING_EXTRA_CASE no-reports-still-one-completed ok
+ACCOUNTING_EXTRA_CASE duplicate-member-agent-only ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome-agent-only ok
+ACCOUNTING_EXTRA_CASE zero-is-not-false-replacement ok
+ACCOUNTING_EXTRA_SELFTEST: 15/16 pass
+FINDING: SELFTEST_FAIL
+
+
+==============================================================================
+== pinprobe: pin-missing-measure
+==============================================================================
+FINDING: SELFTEST_UNAVAILABLE [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool23/pinprobe/.ufo/evidence/round-22/measure.py'
+
+
+==============================================================================
+== pinprobe: tool-mut
+==============================================================================
+ACCOUNTING_CASE false-completion-count ok
+ACCOUNTING_CASE failed-with-report-counted-completed ok
+ACCOUNTING_CASE missing-outcome ok
+ACCOUNTING_CASE duplicate-agent ok
+ACCOUNTING_CASE unknown-status ok
+ACCOUNTING_CASE registry-id-mismatch ok
+ACCOUNTING_CASE replacement-seat FAIL
+ACCOUNTING_CASE snapshot-tampering ok
+ACCOUNTING_SELFTEST: 7/8 pass
+ACCOUNTING_EXTRA_CASE role-mismatch ok
+ACCOUNTING_EXTRA_CASE missing-replacement FAIL
+ACCOUNTING_EXTRA_CASE duplicate-outcome ok
+ACCOUNTING_EXTRA_CASE duplicate-member ok
+ACCOUNTING_EXTRA_CASE cross-wave-agent ok
+ACCOUNTING_EXTRA_CASE duplicate-wave ok
+ACCOUNTING_EXTRA_CASE unknown-report ok
+ACCOUNTING_EXTRA_CASE bool-totals ok
+ACCOUNTING_EXTRA_CASE duplicate-json-key ok
+ACCOUNTING_EXTRA_CASE nonfinite-json ok
+ACCOUNTING_EXTRA_CASE malformed-json ok
+ACCOUNTING_EXTRA_CASE deep-json ok
+ACCOUNTING_EXTRA_CASE no-reports-still-one-completed ok
+ACCOUNTING_EXTRA_CASE duplicate-member-agent-only ok
+ACCOUNTING_EXTRA_CASE duplicate-outcome-agent-only ok
+ACCOUNTING_EXTRA_CASE zero-is-not-false-replacement FAIL
+ACCOUNTING_EXTRA_SELFTEST: 14/16 pass
+FINDING: SELFTEST_FAIL
+
+
+==============================================================================
+== clone cleanliness after all lane-side runs (cand)
+==============================================================================
+git status --porcelain  ->  <empty>
+find . -name __pycache__ -o -name "*.pyc"  ->  <empty>
+ls -A $S/tmp  ->  <empty>
+
+
+==============================================================================
+== pinned paths at CAND
+==============================================================================
+git cat-file -e CAND:.ufo/evidence/round-22/measure.py                       -> EXISTS
+git cat-file -e CAND:.ufo/evidence/round-22/accounting-extra-cases.json      -> EXISTS
+git cat-file -e CAND:.ufo/evidence/round-22/bundle.json                      -> EXISTS
+git cat-file -e CAND:.ufo/evidence/round-22/expected.json                    -> EXISTS
+git cat-file -e CAND:.ufo/evidence/round-22/wrong-count-bundle.json          -> EXISTS
+git cat-file -e CAND:.ufo/evidence/round-22/wrong-count-expected.json        -> EXISTS
+sha256(bundle.json) = dfb1027f80be935fe781ccb8c47d89639a88a9eff6e05d1b45b2a7a61845c18e
+expected.json bundle_sha256 = dfb1027f80be935fe781ccb8c47d89639a88a9eff6e05d1b45b2a7a61845c18e  -> match
+wrong-count pair digest -> match

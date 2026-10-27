@@ -1,0 +1,28 @@
+### coverage gap A: expected-value writes inside match/case are never reported
+tool source: tools/write-path-census-v4.py:409-432 (_walk_stmts) iterates only
+  ('body','orelse','finalbody') + stmt.handlers; ast.Match cases are never visited.
+
+--- fixture m1.py (match/case) ---
+match 1:
+    case 1:
+        with open("expected.json", "w") as fh:
+            fh.write("x")
+--- run (text mode, the row's entry command form) ---
+exit=0 stdout_bytes=0
+--- run (json mode) ---
+{"file": "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool29/edge/m1.py", "sites": []}
+exit=0
+
+--- control m2.py (same write under if) ---
+if 1:
+    with open("expected.json", "w") as fh:
+        fh.write("x")
+--- run (json mode) ---
+{"file": "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool29/edge/m2.py", "sites": [{"expected": true, "explicit_out": false, "flagged": false, "kind": "open", "lineno": 2, "resolved": "expected.json", "scratch": false, "unflagged": true}]}
+exit=0
+
+--- fixture cf.py: 6 expected-value writes (if/else/for/while/try/match) ---
+sites reported = 5 (expect 6; the match/case one is missing)
+
+--- fixture more.py: class body + async def + non-literal open mode ---
+sites reported = 2 (expect 3; open(path, mode_var) is not a write form)

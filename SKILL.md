@@ -171,7 +171,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
 5. **Driver `--check` — the fail-closed uniqueness gate.** For every defect:
    assert `count(old) == 1` in the pristine copy, print the first
    matching line (the kimi driver; the kagi note records the assert and `all unique` only), and require the literal line `all unique` — both lanes'
-   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:425`) (mutation-case-kimi-census.md:22-25;
+   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:434`) (mutation-case-kimi-census.md:22-25;
    mutation-case-kagi-census.md:44-47). Require `new != old` in future drivers:
    a no-op is a driver defect, not a survivor. The cited historical notes do
    not establish that the round-2 driver carried the `new != old` no-op guard. Any count ≠1 aborts until the string
@@ -208,7 +208,7 @@ Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).
    - **Inconclusive** = no definitive verdict (timeout, crash before the
      summary, count not enumerated). Not a kill. Re-run it; keep every record.
    - **Kill rate = killed / (killed + survived)** — inconclusive runs sit outside
-     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:569-574`). Round 2: 8/10 = 80 %,
+     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:578-583`). Round 2: 8/10 = 80 %,
      no inconclusive run, 11 runs in 7.0 s (mutation-case-kimi-census.md:29-31).
      Round 3: 8/10 = 80 %, 11 runs in 11.0 s (mutation-case-kagi-census.md:50-53).
 8. **Probe every survivor for non-equivalence.** Run the mutant on an input
@@ -922,7 +922,7 @@ kill rate 40 %, 0 inconclusive**; 11 runs in 5.26 s
 
 Round 7 turns `--regression` from the tool's two-case self-check into the
 fleet's **leg ledger**: every recorded mutation case is a leg, replayed at its
-pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26) — `js-kimi-census`
+pinned original revision. Four legs at that revision (r7-1; seven since round 16; eight since round 18; nine since round 26; ten since round 51) — `js-kimi-census`
 (r2, killed 8/10 = 80 %), `bash-surface-census` (r3, 8/10 = 80 %),
 `bash-tsukuroi-census` (r5, 6/10 = 60 %), `bash-mado-verify` (r6, 4/10 = 40 %)
 — each with its recorded kill-rate as its expectation
@@ -934,20 +934,20 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
 
 - **One command replays every leg.** `bash tools/mutate-and-run.sh
   --regression [--workdir DIR] [--keep]` allocates a fresh default scratch
-  `/tmp/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
+  `${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` after prerequisite checks (TMPDIR since round 51). Once allocated,
   it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
   are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
-  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`).
+  PASS/FAIL/SETUP (`tools/mutate-and-run.sh:1423-1432,1519-1548` at round 51).
 - **Each leg's bytes come from the repo's git object store, not the working
   tree.** `git show <rev>:<path>` materializes the pinned blob into the case
-  workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`);
-  `REGRESSION_PIN` names repo/rev/path/pin (:1159-1160). Working-tree drift
+  workdir and validates the SHA and mirrors the mode (`tools/mutate-and-run.sh:1276-1317` at round 51);
+  `REGRESSION_PIN` names repo/rev/path/pin (:1302-1305). Working-tree drift
   does not change that blob. The old tsukuroi/mado pins are historical,
   not a statement that their current trees match those recorded bytes.
   A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
-  later legs still run and their statuses aggregate (:1384-1450 since round 26).
+  later legs still run and their statuses aggregate (refusals :1252-1317, dispatches :1459-1508, aggregation :1510-1548 at round 51).
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
-  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26) with the
+  (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
   to each leg's pinned bytes.
@@ -957,8 +957,8 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
   executed and skipped counts distinguished; and the exact recorded verdict
   table. Host-gated branches must be excluded/controlled or explicitly named,
   not called hermetic merely because the flag is `--selftest`.
-  Current anchors (round 26): pins/revisions/tables `tools/mutate-and-run.sh:603-629`,
-  first-four specs :657-839, inventory :83-108, nine dispatches :1384-1428.
+  Current anchors (round 51): pins/revisions `tools/mutate-and-run.sh:614-633`, tables :634-643,
+  first-four specs :673-852, inventory :83-121, ten dispatches :1459-1508.
   (U) The recorded case set remains tameshi-carried; no fleet-contributed
   leg is established by this registry.
 
@@ -973,7 +973,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight rows since its round-18 
 2. **PASS is exact for ledger legs.** Every case line `PASS (band:
    killed-delta<=0 flips<=0 inconclusive=0 defects=D)` and every
    `REGRESSION_TABLE … match=D/D … flips=0`; the closing line's
-   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18, N=9 since round 26). Measured instance (T7-1, 2026-10-14; replayed by this
+   `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18, N=9 since round 26, N=10 since round 51). Measured instance (T7-1, 2026-10-14; replayed by this
    lane under the same revision `cf41efaa…`): four legs, all `match=10/10 …
    flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
    killed-delta<=0 flips<=0)`, rc 0.
@@ -1381,14 +1381,14 @@ lands in the round's record, not here.
 
 | Artifact | Holds | Read it when |
 |---|---|---|
-| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger (six rows; the lane has held nine cases since round 26) · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`SKILL.md:1294-1297`) |
+| `corpus/knowledge/operator-runbook.md` | the operator's entry point (T10-1): §0 quick start · §2 the tool · §3 the six-case ledger (six rows; the lane held nine cases since round 26, ten since round 51) · §4 opt-in · §5 limits · §6 the cadence (tick, reading map, T1–T3) · §7 the regression mode · §10 unknowns | you are the seat running the loop — renderer, not a second home: where it and an anchored source diverge, the anchored source governs (`SKILL.md:1294-1297`) |
 | `corpus/knowledge/fleet-kill-rate-ledger.md` | one row per gate measured so far — suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth case has no row yet); §1–§4 byte-frozen, new rows appended below | before quoting any rate — the row is the standing receipt |
 | `corpus/knowledge/service-limits.md` | the refusals, detail of record; this page carries the compact rendering (`SKILL.md:1246-1270`) | an intake question needs a refusal line |
 | `corpus/knowledge/service-optin-protocol.md` | request shape (§1, including the re-pin rule), read-only guarantees (§2), the owner-hardens rule (§3), report shape (§4) | your lane wants a sweep — or receives one |
 | `corpus/knowledge/fleet-suite-census.md` | the suite census: the offer and the queue (surveyed-but-unmeasured pins) | picking the next case |
 | `corpus/knowledge/service-standing-state.md` | the boundary note: fleet-visible vs lane-owned, handoff conditions, SC1–SC3 | taking the service over |
-| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
-| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26; git-materialized replay) | any sweep or replay |
+| `corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26; ten since round 51) | per-case spec (pre-registration in the round-16/18/26 notes), verdict table, survivor probes, reproduce sections where the note carries one | re-deriving a recorded rate |
+| `tools/mutate-and-run.sh` | the instrument: `--selftest`, `--regression` (six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26, ten since round 51; git-materialized replay) | any sweep or replay |
 | `corpus/README.md` | the coverage map — a row per note carried, holds + sources (round addenda append further tables of the same shape) | checking what the corpus holds |
 | `plans/round-N.plan.md` (latest `plans/round-11.plan.md`), `plans/round-N-record-draft.md` | each round's plan and record by convention (rounds 4–10; `N` is a placeholder, not a file — the concrete files are the round-4 through round-10 plan and record-draft pairs that `plans/` holds); no separate round-11 record file exists (the wave deliverables are the record, `LOG.md:316-317`; closeout note `corpus/knowledge/closeout-r11.md`); the completion pack (`plans/completion-evidence.md`, committed in the round-11 closeout) collects the per-round lines and debts | auditing a round's receipts |
 | `LOG.md`, `SCORECARD.md` | the round rows and the move-log rows with their counting commands | provenance of any round |
@@ -1759,7 +1759,7 @@ single-edit mutants → **5/10 killed (50 %)**, control green, 0 inconclusive,
 `MUTATE_RESTORE: OK`; every one of the 10 predictions, committed in `e69b488`
 before the sweep, held. Detail of record:
 `corpus/knowledge/mutation-case-kumitate-round-gate.md`. The case is ledger leg
-`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26).
+`js-round-gate` (`tools/mutate-and-run.sh --regression` → `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26; `cases=10` since round 51).
 
 Reproduce it (read-only on kumitate; scratch in `/tmp`):
 
@@ -1912,7 +1912,7 @@ hermetic `env -i` form of case 7 (`.ufo/evidence/round-18/sources-check/suite.tx
 pristine controls were byte-identical (`.ufo/evidence/round-18/sources-check/control/`).
 Entry: `corpus/knowledge/mutation-case-kumitate-sources-check.md`. Replay:
 `bash tools/mutate-and-run.sh --regression` → `REGRESSION_CASE js-sources-check: PASS`,
-`cases=8 passed=8` at the round-18 runner (`cases=9 passed=9` from round 26 on, ninth leg js-cite-check; seat Read34). Wave 2 probed all five survivors off-suite: four are non-equivalent, `S_KIND`
+`cases=8 passed=8` at the round-18 runner (`cases=9 passed=9` from round 26 on, ninth leg js-cite-check; seat Read34; `cases=10 passed=10` from round 51 on, tenth leg bash-drift-pins). Wave 2 probed all five survivors off-suite: four are non-equivalent, `S_KIND`
 differs only in `--help` output (entry errata ER8-2).
 
 | Survivor class in this case | What the suite does not pin | Fix belongs to |

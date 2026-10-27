@@ -1,0 +1,33 @@
+# T51W2ExecTool20 — exact commands (clone at CAND 6d8c11e378aa90b12650808e1b79270742935f15)
+S=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool20
+git clone -q --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/lane
+git -C $S/lane rev-parse --show-toplevel           # asserted: $S/lane
+git -C $S/lane checkout -q --detach 6d8c11e378aa90b12650808e1b79270742935f15
+cd $S/lane
+# (1) row self-test, TMPDIR scratch, stdin /dev/null
+TMPDIR=$S/tmp python3 tools/tally-audit-v3.py --selftest </dev/null
+# (2) usage probe
+TMPDIR=$S/tmp python3 tools/tally-audit-v3.py --r51-no-such-flag </dev/null
+# (3) row entry command
+TMPDIR=$S/tmp python3 tools/tally-audit-v3.py --runner tools/mutate-and-run.sh </dev/null
+# (4) pin sensitivity: nine-leg base runner (blob at 9962033f)
+git -C $S/lane show 9962033fd7a75aa2f2847e979dd687a5d28505a1:tools/mutate-and-run.sh > $S/base-runner.sh
+TMPDIR=$S/tmp python3 tools/tally-audit-v3.py --runner $S/base-runner.sh </dev/null
+# (5) unparsable runner
+printf 'not a runner\n' > $S/broken.sh
+TMPDIR=$S/tmp python3 tools/tally-audit-v3.py --runner $S/broken.sh </dev/null
+# (6) harness structure removed from a candidate-runner copy
+sed 's/^  local tblock tgot tvec ti tj$/  local tgot tvec ti tj/' tools/mutate-and-run.sh > $S/noharness.sh
+TMPDIR=$S/tmp python3 tools/tally-audit-v3.py --runner $S/noharness.sh </dev/null
+# (7) help-path marker distinctness
+python3 tools/tally-audit-v3.py --help </dev/null
+# (8) filesystem effects of one audit
+TMPDIR=$S/tmp strace -f -o $S/audit.strace -e trace=mkdir,mkdirat,rmdir,unlinkat,unlink,rename,renameat,openat \
+  python3 tools/tally-audit-v3.py --runner tools/mutate-and-run.sh </dev/null
+# (9) auto-root atexit removal in isolation
+python3 -B -c "import importlib.util,os; s=importlib.util.spec_from_file_location('t','tools/tally-audit-v3.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); print(m.auto_root())"
+# (10) counter's own row parser + run_row replay (read-only over the clone)
+python3 -B - (see counter-replay.out / row-parse.txt)
+# (11) no lane writes / blob identity
+git -C $S/lane status --porcelain
+git -C $S/lane hash-object tools/mutate-and-run.sh tools/tally-audit-v3.py

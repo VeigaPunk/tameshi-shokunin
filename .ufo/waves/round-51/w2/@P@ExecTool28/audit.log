@@ -1,0 +1,87 @@
+T51W2ExecTool28 raw receipt log — C3 registry row `write-path census v3`
+All commands ran in scratch root /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool28/
+(S) against a `git clone --shared --no-checkout` of the lane checked out at
+6d8c11e378aa90b12650808e1b79270742935f15. `git rev-parse --show-toplevel` printed
+S/lane before every fixture mutation. No lane/fleet/sibling write occurred;
+the clone was restored with `git checkout --` and `git status --porcelain` was
+empty after each restoration.
+
+1. Clone
+   git clone --shared --no-checkout /home/vgpnk/Projects/shokunin/tameshi-shokunin S/lane
+   git -C S/lane checkout -q 6d8c11e378aa90b12650808e1b79270742935f15
+   git -C S/lane rev-parse --show-toplevel -> S/lane
+   git -C S/lane rev-parse HEAD -> 6d8c11e378aa90b12650808e1b79270742935f15
+
+2. Row's exact backticked self-test (cwd=S/lane, stdin=/dev/null, TMPDIR=S/tmp)
+   TMPDIR=S/tmp python3 tools/write-path-census-v3.py --selftest </dev/null
+   -> rc=0, stdout (1 line): WRITE_CENSUS_V3_SELFTEST: var_unflagged=1 symlink_unflagged=1 literal_unflagged=1 scratch_var=0
+   -> stderr empty; wall 34 ms (timing.txt; first measurement 27 ms)
+   Receipts: selftest.out, selftest.err, timing.txt
+
+3. Usage probe
+   TMPDIR=S/tmp python3 tools/write-path-census-v3.py --r51-no-such-flag </dev/null
+   -> rc=2, stdout empty (0 bytes), stderr: argparse usage + "unrecognized arguments: --r51-no-such-flag"
+   -> wall 33 ms (first measurement 26 ms)
+   Receipts: usage.out, usage.err
+
+4. No-argument probe
+   -> rc=2, usage on stderr. Receipts: noargs.out, noargs.err
+
+5. Write-scope check
+   git -C S/lane status --porcelain before and after the runs -> identical (empty)
+   find S/lane -newer marker -not -path '*/.git/*' -> nothing after the selftest
+   find S/tmp -mindepth 1 -> 0 entries
+   Receipts: status-before.txt, status-after.txt
+
+6. cwd independence (clone-context check)
+   cd S (outside the clone), TMPDIR=S/tmp python3 S/lane/tools/write-path-census-v3.py --selftest
+   -> rc=0, same marker line. Receipt: selftest-outside.out
+   grep of the tool for environ|getcwd|expanduser|fleet|sibling|../ -> only one comment line (186), no path use.
+
+7. Entry mode and declared exit codes
+   --file S/nope.py            -> rc=1, traceback FileNotFoundError (receipts file-missing.out/.err)
+   --selftest --fixtures nope  -> rc=1, traceback FileNotFoundError (fix-missing.out/.err)
+   --file <syntax-error .py>   -> rc=0, totals line parse_errors=1 sites=1 (file-broken.out)
+   --help                      -> rc=0, usage text only (help.out)
+   --file nope.py --selftest   -> rc=0, runs the selftest (mixed.out)
+   --file open("expected.json","w") sample -> rc=0, expected=1 unflagged=1 (open-w.out)
+   --file Path("tests/expected.json").write_text(...) -> rc=0, expected=1 unflagged=1 (open-sample.out)
+
+8. Pinned value is load-bearing (clone-local mutation, restored)
+   fixtures.json var_unflagged := "x = 1\n"
+   -> selftest rc=1, marker "var_unflagged=0 ..." plus FAIL lines (selftest-broken-pin.out)
+   fixtures.json scratch_var := "y = 2\n"
+   -> selftest rc=1, marker printed EXACTLY the row's recorded string, then
+      "FAIL planted scratch_var: want expected_sites=1 got 0" (selftest-scratch-pin.out)
+   Both restored; git status clean.
+
+9. Self-test teeth mutants (clone-local, each restored; rc0 = mutant survived)
+   a) symlink arm dead   ("if dotted == 'os.symlink':" -> "'os.symlinkBROKEN':")
+      -> rc=1, marker symlink_unflagged=0, FAIL lines (mut-symlink.out)  [CAUGHT]
+   b) `scratch` marker literal removed ('scratch' -> 'scratchx'; '/tmp' still in tuple)
+      -> rc=0, marker identical to the row (mut-scratch.out)             [SURVIVED]
+   c) EXPECTED_RE narrowed to r'expected\.json'
+      -> rc=0, marker identical (mut-expected-re.out)                    [SURVIVED]
+   d) FLAG_RE replaced with r'(?!x)x'
+      -> rc=0, marker identical (mut-flag-re.out)                        [SURVIVED]
+   e) open write branch disabled ("if dotted == 'open' or attr == 'open':" -> "if False:")
+      -> rc=0, marker identical (mut-open-arm.out)                       [SURVIVED]
+   f) Path.write_text/write_bytes branch disabled
+      -> rc=0, marker identical (mut-write-text.out)                     [SURVIVED]
+
+10. Frozen counter's own check of the row (counter bytes read from CAND,
+    .ufo/evidence/round-51/c3/measure.py; local copy counter-measure.py.copy)
+    registry_rows(SKILL.md at CAND) parsed 32 rows (the round-12
+    `### Gate/probe registry` section's 2 rows also match HEAD_RE, plus the
+    30 rows of `#### Gate/probe registry — round 51`).
+    row for tools/write-path-census-v3.py -> line 2169, 8 cells, kind=probe
+    row_reason -> None
+    run_row    -> (None, 'WRITE_CENSUS_V3_SELFTEST: var_unflagged=1 symlink_unflagged=1 literal_unflagged=1 scratch_var=0')
+    Receipt: counter-row-check.txt
+
+11. Row source provenance
+    tool blob 84b4b43051d91504f59a362ce123b02474ee753c, sha256 095924a7...
+    fixtures blob sha256 20b6254d...
+    `git diff --stat` base..CAND over tool+fixtures -> empty (no tool edit)
+    `git show BASE:SKILL.md | grep -c write-path-census-v3` -> 0
+    Receipt: refs.txt

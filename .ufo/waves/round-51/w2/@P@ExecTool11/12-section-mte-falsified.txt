@@ -1,0 +1,30 @@
+## receipt: '### Round-26 gate/probe registry — report interop' (SKILL.md:2132-2172 at CAND) section claims vs candidate bytes
+Note: my row (SKILL.md:2152) sits inside this section: the '#### Gate/probe registry — round 51' heading
+at 2138 is 4 hashes, below the round-21 monitor's HEADING_RE ^#{1,3}, so the cold-read section spans 2132-2172.
+
+### claim A (line 2136): 'leg set not equal to the nine ledger legs'
+source at CAND: differs from the ten ledger legs
+source at BASE: differs from the nine ledger legs
+=> FALSIFIED at CAND: the section says nine, the candidate tool says ten.
+
+### claim B (line 2136): 'Registry rows ... mte-interop-check (9/9)'
+LEG_TABLE size at BASE  : 9
+LEG_TABLE size at CAND  : 10
+guard at CAND           : if set(legs) != set(LEG_TABLE) or set(tables) != set(LEG_TABLE): raise Setup('leg set ... differs from the ten ledger legs ...')
+print at CAND           : print('MTE_INTEROP: %s legs_conforming=%d/%d' % (..., conforming, len(legs)))
+=> len(legs) == len(LEG_TABLE) == 10 on every scored path, so the denominator is always 10 and the literal
+   needle 'MTE_INTEROP: PASS legs_conforming=9/9' is UNREACHABLE at CAND.
+
+### downstream: tools/registry.json was NOT updated (still pins the 9/9 needle)
+  registry row mte-interop-check status= active expect= {'exit': 0, 'stdout_contains': ['MTE_INTEROP: PASS legs_conforming=9/9']}
+registry.json changed BASE..CAND? (empty = unchanged)
+
+### consequence [INFERENCE from source, corroborated by wave-1 T51ExecEmbed.md:114 observing 10/10]
+registry-check.py marks a row not-held when got != expect.exit or a needle is missing (tools/registry-check.py:720)
+and exits 1 when any differs (tools/registry-check.py:884). So 'registry-check.py --rev CAND' cannot exit 0.
+The C3 row for tools/registry-check.py (SKILL.md:2154) declares '0 clean' as its expected entry result.
+
+### repairability: tools/registry.json is OUTSIDE the frozen no-harm allowlist
+s=ok; for t in $T; do case "$t" in M:tools/mutate-and-run.sh|M:tools/tally-audit.py|M:tools/tally-audit-v2.py|M:tools/tally-audit-v3.py|M:tools/mte-interop.py) ;; *) s=RED;; esac; done
+=> a repair (M:tools/registry.json) would make the frozen tools-scope monitor RED. The defect is
+   unrepairable inside the round's frozen scope without an amendment 3.

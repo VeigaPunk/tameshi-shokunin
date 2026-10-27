@@ -1,0 +1,121 @@
+# T51W2ExecTool22 raw receipts — C3 registry row for tools/trace-inputs.py at CAND
+# lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# candidate: 6d8c11e378aa90b12650808e1b79270742935f15
+# scratch: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22
+# date: 2026-10-26
+
+## R0 clone (git clone --shared --no-checkout, checkout --detach CAND)
+rev-parse HEAD              : 6d8c11e378aa90b12650808e1b79270742935f15
+rev-parse --show-toplevel   : /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22/c3/tameshi-shokunin
+
+## R1 audited blobs
+tools/trace-inputs.py blob  : 598132df3e4046518851ec9482654828ded83723
+tools/trace-inputs.py sha256: f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4  /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22/c3/tameshi-shokunin/tools/trace-inputs.py
+SKILL.md sha256             : f7d7b0a111fb5f7d34e5854afab85a2d1ba35e61426bd7aaaea33fb954b501e4  /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22/c3/tameshi-shokunin/SKILL.md
+
+## R2 row under test: SKILL.md:2163 (section heading SKILL.md:2138)
+| traced input surface | probe | `python3 tools/trace-inputs.py --root LANE --out RECEIPT.json -- COMMAND ARG...` | 0 clean; 1 failed (selftest check); 2 could-not-evaluate (setup: root or cwd not a directory, strace missing, no successful root execve); 64 could-not-evaluate (usage) | `python3 tools/trace-inputs.py --selftest` → SELFTEST: n/n on exit 0 | none — expected values are literals in the selftest | caller-chosen --out FILE (parent directories created); private trace-inputs-run-* tempdir outside --root, deleted on exit; selftest tree under TMPDIR | tameshi |
+
+## R3 row self-test, counter-equivalent harness (cwd=clone, TMPDIR=scratch, stdin /dev/null, GIT_CONFIG_* scrubbed)
+$ python3 tools/trace-inputs.py --selftest
+rc=0  wall_ms=1509  lines=31
+--- stdout ---
+PASS python-read-input
+PASS bash-source-input
+PASS cd-relative-input
+PASS write-open-excluded
+PASS rdwr-open-excluded
+PASS read-then-rewrite-excluded
+PASS fleet-external
+PASS live-lane-flagged
+PASS non-fleet-home-counted
+PASS non-home-outside-dropped
+PASS missing-strace-exit2
+PASS missing-command-exit2
+PASS root-exec-required
+PASS dotgit-excluded
+PASS symlink-in-resolves
+PASS symlink-out-not-input
+PASS failed-open-excluded
+PASS execve-script-input
+PASS directory-open-excluded
+PASS command-exit-recorded
+PASS nongit-root-unfiltered
+PASS git-tracked-filter
+PASS subdir-root-rev-null
+PASS env-scrubbed
+PASS pycache-prefix-private
+PASS double-import-keeps-py
+PASS escaped-names-recorded
+PASS cwd-option-input
+PASS temp-workdirs-deleted
+PASS no-artifacts-inside-root
+SELFTEST: 30/30
+--- stderr (empty) ---
+
+## R4 usage probe (counter argv prefix + --r51-no-such-flag)
+$ python3 tools/trace-inputs.py --r51-no-such-flag
+rc=64  wall_ms=35
+--- stdout (empty) ---
+--- stderr ---
+usage: trace-inputs.py [-h] [--root DIR] [--cwd DIR] [--out FILE]
+                       [--fleet-root DIR] [--live-lane DIR]
+                       [--home-prefix DIR] [--selftest]
+                       ...
+trace-inputs.py: error: unrecognized arguments: --r51-no-such-flag
+
+## R5 entry-command exit classes (run mode, clone root)
+### E1 clean trace, receipt into a nonexistent 4-level parent: rc=0 wall_ms=191
+receipt: schema=tameshi-trace-inputs-v1 exit=0 inputs=['SKILL.md'] external=0 live=0 dropped=0
+### E2 traced command exits 3: rc=0 (no output) ; receipt exit=3
+receipt exit = 3
+### E3 missing binary: rc=2
+/usr/bin/strace: Cannot stat '/no/such/binary': No such file or directory
+trace-inputs: no successful execve for the root process (strace setup failure or missing command)
+### E4 --root not a directory: rc=2
+trace-inputs: root not a directory: /nonexistent-r51
+### U1 --root without --out: rc=64
+trace-inputs.py: error: --out is required
+### U2 --cwd not a directory: rc=2
+trace-inputs: cwd not a directory: /nonexistent-cwd
+### U3 no args: rc=64
+trace-inputs.py: error: --root is required
+### U4 --selftest + unknown flag: rc=64
+trace-inputs.py: error: unrecognized arguments: --r51-no-such-flag
+
+## R6 exit-1 paths NOT covered by the row verdict map (row says 1 = "failed (selftest check)")
+### X1 --out is an existing directory (receipt write fails after the trace): rc=1 wall_ms=187
+stdout: (empty)
+    return run_trace(ns)
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22/c3/tameshi-shokunin/tools/trace-inputs.py", line 690, in run_trace
+    with open(ns.out, "w") as fh:
+         ~~~~^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22/receipts/outdir'
+### X2 --out parent uncreatable (/proc): rc=1
+stdout: (empty)
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool22/c3/tameshi-shokunin/tools/trace-inputs.py", line 689, in run_trace
+    os.makedirs(out_dir, exist_ok=True)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 236, in makedirs
+FileNotFoundError: [Errno 2] No such file or directory: '/proc/r51-nope'
+
+## R7 environment sensitivity
+### N1 run mode with a PATH lacking strace: rc=2 (declared)
+trace-inputs: strace not found in PATH
+### N2 --selftest with a PATH lacking strace: rc=1, tally SELFTEST: 5/30 (25 FAIL; 5 vacuous passes)
+last line: SELFTEST: 5/30
+FAIL lines: 25
+
+## R8 write-scope / cleanliness
+leftover entries in TMPDIR after selftest+usage+E1..E4 runs (expect empty):
+. .. 
+clone git status --porcelain after 6 run-mode invocations (expect empty):
+trace-inputs-run-* / __pycache__ under clone:
+
+## R9 counter row parse (import of .ufo/evidence/round-51/c3/measure.py; read-only)
+rows naming tools/trace-inputs.py in any ^#{2,4} Gate/probe registry section: [2163]
+row_reason(2163) = None
+argv   = [python3, tools/trace-inputs.py, --selftest]
+usage  = [python3, tools/trace-inputs.py, --r51-no-such-flag]
+vmap   = 0 clean; 1 failed (selftest check); 2 could-not-evaluate (setup: root or cwd not a directory, strace missing, no successful root execve); 64 could-not-evaluate (usage)
+note: the round-18 row at SKILL.md:1933 is a 4-cell row (Name|Kind|Command|Exits), invisible to registry_rows() which requires 8 cells.

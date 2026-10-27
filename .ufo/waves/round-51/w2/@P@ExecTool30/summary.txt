@@ -1,0 +1,80 @@
+T51W2ExecTool30 — raw receipts index (round 51, wave 2)
+lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+candidate: 6d8c11e378aa90b12650808e1b79270742935f15
+base: 9962033fd7a75aa2f2847e979dd687a5d28505a1
+clone: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool30/lane (git clone --shared, checkout --detach 6d8c11e3, toplevel asserted), deleted before yield
+python: Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+tool: tools/write-path-census.py blob sha256 bc8c660c56f871f85dad8912be28446293fd63f62b4fd1c16eb153f7a27edc62 (5444 B, 160 lines, mode 100644)
+row: SKILL.md:2171, sha256 52e11693d4b19db63567ac0092a9066b01f08e7798110b4f4e4bee09465457e7, 8 cells
+cwd for every run below: the clone root, TMPDIR=<scratch>/st (an existing dir), stdin /dev/null
+
+R1 row self-test (exactly the row's backticked command)
+  python3 tools/write-path-census.py --selftest
+  rc 0, wall 0.027 s (standalone) / 0.030-0.033 s (counter run_cmd, 3 runs)
+  stdout (1 line): WRITE_CENSUS_SELFTEST: planted_unflagged=1 planted_flagged=0 planted_scratch=0 fixture_wrote=1 noflag_unchanged=1
+  stderr: empty
+  last non-empty stdout line = stdout line; first token WRITE_CENSUS_SELFTEST: -> present in the row's Self-test cell
+  receipts: selftest.out, selftest.err
+  also green under python3 -I (isolated) and with the tool copied alone into an empty dir (bare dir, no tools/, cwd = that dir) -> clone-context independent
+
+R2 usage probe
+  python3 tools/write-path-census.py --r51-no-such-flag
+  rc 2, wall 0.027-0.033 s, stdout empty
+  stderr last: write-path-census.py: error: unrecognized arguments: --r51-no-such-flag
+  code 2 is declared in the row's Verdict map ("2 could-not-evaluate")
+  receipts: usage.out, usage.err
+
+R3 entry mode at CAND
+  python3 tools/write-path-census.py --census .
+  rc 0, wall 0.038 s
+  first line: WRITE_CENSUS: gates=21/21 live_write_sites=99 live_unflagged=0 missing=0
+  last line: GATE witness-metadata.py write_sites=13 unflagged=0 sha256=df3390682a04ccbb2469060c3deab924f9d8df72ce1a5b195d3618ce6cc0bed4
+  receipts: census.out, census.err
+
+R4 exit-1 meaning: missing listed tool
+  python3 tools/write-path-census.py --census <root with only tools/write-path-census.py>  -> rc 1, "gates=0/21 ... missing=21", 21 MISSING lines
+  python3 tools/write-path-census.py --census <nonexistent path>                            -> rc 1, same shape
+  receipts: census-missing.out, census-noroot.out
+
+R5 exit-2 meaning: no mode / empty --census value
+  python3 tools/write-path-census.py            -> rc 2, usage on stderr
+  python3 tools/write-path-census.py --census ""-> rc 2, usage on stderr
+  receipts: nomode.err, empty.err
+
+R6 selftest red path (row's second 1-cause), scratch copy with expect {'unflagged': 2}
+  output: WRITE_CENSUS_SELFTEST: ... (same green summary) then "FAIL planted unflagged: want unflagged=2 got 1", rc 1
+  note: the summary line still advertises fixture_wrote=1 noflag_unchanged=1; the FAIL line is the last line, so the counter's marker match would not see the row's marker on a red run
+  receipt: selftest-broken-planted.out
+
+R7 undeclared semantics on exit 1 (uncaught traceback)
+  --census <root> with one listed tool chmod 000 ->
+  rc 1, stdout empty, stderr ends PermissionError: [Errno 13] Permission denied: .../root-unread/tools/env-diff.py
+  (row maps 1 to "failed"; this condition is could-not-evaluate under PROTOCOL)
+  receipts: census-unread.out (empty), census-unread.err
+
+R8 the measured finding does not affect the verdict (gate-vs-probe probe)
+  --census <root> where tools/golden-verdict.py contains: with open("case.expected", "w") as fh: fh.write("x")
+  -> rc 0; WRITE_CENSUS: gates=21/21 live_write_sites=1 live_unflagged=1 missing=0
+  receipt: census-dirty.out
+
+R9 write-scope audit (strace -f)
+  selftest: only writes are <TMPDIR>/write-path-census-*/case.expected and one tempfile mkstemp probe file, both unlinked; no lane write; no socket
+  census: 0 write/creat/mkdir syscalls, 0 sockets; all file opens are under <clone>/tools
+  receipts: strace-selftest.txt, strace-census.txt
+  post-run git status --porcelain --ignored in the clone: empty
+  TMPDIR unusable (TMPDIR=/nonexistent-tmpdir-xyz): rc 0 and the fixture is built at /tmp/write-path-census-bc4cm8al (Python tempfile fallback), removed
+  receipts: selftest-missing-tmpdir.out, strace-selftest-missing-tmpdir.txt
+
+R10 counter-level acceptance (frozen .ufo/evidence/round-51/c3/measure.py, imported from a scratch copy)
+  ROW_LINE=2171 ROW_REASON=None ROW_CELLS=8 NAME='write-path census' KIND='gate'
+  SELFTEST_ARGV=['python3','tools/write-path-census.py','--selftest'] USAGE_ARGV=[...,'--r51-no-such-flag']
+  SELFTEST RC=0 MARKER_IN_ROW_CELL=True; USAGE RC=2 USAGE_CODE_DECLARED_IN_VERDICT_MAP=True
+  RUN_ROW=(None, 'WRITE_CENSUS_SELFTEST: planted_unflagged=1 planted_flagged=0 planted_scratch=0 fixture_wrote=1 noflag_unchanged=1')
+  CLONE_STATUS=''
+  receipt: counter-runner.out
+
+R11 row vs source: GATES inventory
+  GATES = 21 names (tool lines 22-44). At CAND the 30-tool frozen set includes 9 names the census never classifies:
+  write-path-census.py, write-path-census-v2.py, write-path-census-v3.py, write-path-census-v4.py,
+  pbt-staged-id.py, round21-measure.py, shrink-case.py, staged-id-guard.py, wave-parent-settle.py
+  No name in GATES is absent from the frozen 30.

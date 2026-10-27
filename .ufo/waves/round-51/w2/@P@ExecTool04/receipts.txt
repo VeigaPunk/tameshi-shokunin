@@ -1,0 +1,152 @@
+# T51W2ExecTool04 receipts — tools/env-diff.py registry row (SKILL.md:2145) at 6d8c11e3
+
+## 0. fixture setup
+$ git clone -q --shared --no-checkout LANE clone && git -C clone checkout -q --detach 6d8c11e378aa90b12650808e1b79270742935f15
+/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/clone
+6d8c11e378aa90b12650808e1b79270742935f15
+clone git status --porcelain (empty = lane trees read-only):
+<end>
+scratch: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04 ; TMPDIR=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/tmp
+
+## 1. row bytes (SKILL.md:2145, verbatim at CAND)
+| environment-profile differential | gate | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out DIR/receipt.json --jobs 3` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/env-diff.py --selftest` → exit 0, last line ENVDIFF_SELFTEST: 9/9 pass | `.ufo/evidence/round-21/c2-contract.json`, `.ufo/evidence/round-21/f5/receipt.json`; literal expected classifications in the tool selftest | caller-chosen `--out` FILE plus sandboxes under `/tmp/tameshi-r21-envdiff.*` and TMPDIR-respecting selftest trees; lane trees read-only | tameshi |
+
+## 2. self-test, exact backticked command, clone at CAND, TMPDIR=scratch, stdin /dev/null
+run1 exit=0 wall_ms=410 last='ENVDIFF_SELFTEST: 9/9 pass' stderr_bytes=0
+run2 exit=0 wall_ms=402 last='ENVDIFF_SELFTEST: 9/9 pass' stderr_bytes=0
+run3 exit=0 wall_ms=394 last='ENVDIFF_SELFTEST: 9/9 pass' stderr_bytes=0
+--- full stdout of run1 ---
+ENVDIFF_CASE invariant PASS
+ENVDIFF_CASE tz PASS
+ENVDIFF_CASE locale PASS
+ENVDIFF_CASE home PASS
+ENVDIFF_CASE columns PASS
+ENVDIFF_CASE repeat PASS
+ENVDIFF_CASE missing-bwrap PASS
+ENVDIFF_CASE timeout PASS
+ENVDIFF_CASE pin-mismatch-public-cli PASS
+ENVDIFF_SELFTEST: 9/9 pass
+
+## 3. usage probe --r51-no-such-flag
+exit=64 wall_ms=55
+stdout:
+stderr:
+usage: env-diff.py [-h] [--contract CONTRACT] [--out OUT]
+                   [--fleet-root FLEET_ROOT] [--jobs JOBS] [--selftest]
+ENVDIFF_USAGE: unrecognized arguments: --r51-no-such-flag
+
+## 4. source: exit semantics (tools/env-diff.py at CAND)
+Exit 0 all surfaces classified, 1 unavailable surface, 2 setup/input error,
+64 usage. Only scratch sandboxes and the requested output file are written.
+def classify(profiles):
+    if any(not isinstance(profiles[p].get("exit"), int) for p in PROFILES):
+        return "unavailable", []
+    if profiles["clean"]["exit"] != 0:
+        return "unavailable", []
+    clean = tuple_of(profiles["clean"])
+    if tuple_of(profiles["clean_repeat"]) != clean:
+        return "nondeterministic", []
+    changed = sorted(p for p in PROFILES if tuple_of(profiles[p]) != clean)
+    return ("env-sensitive", changed) if changed else ("invariant", [])
+
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+        return 2
+    done = sum(r.get("classification") != "unavailable" for r in rows)
+    print(f"ENVDIFF: classified={done}/{len(rows)} out={a.out}")
+    return 0 if done == len(rows) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+## 5. counter's own verdict for this row (measure.py row_reason + run_row)
+8-cell rows parsed by counter: 32
+row line 2145 row_reason: None
+run_row: (None, 'ENVDIFF_SELFTEST: 9/9 pass')
+
+## 6. FALSIFICATION A — the tool cannot 'fail' on a graded expectation: exit-1 fixtures
+fixture repos built under scratch; 'git rev-parse --show-toplevel' asserted == fixture dir before each commit
+  nondet   toplevel=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/fix/nondet
+  pinmm    toplevel=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/fix/pinmm
+  failrun  toplevel=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/fix/failrun
+--- nondet : exit=0 wall_ms=117 ---
+ENVDIFF: classified=1/1 out=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/entry/nondet.json
+    surface=nd classification=nondeterministic error=None
+--- pinmm : exit=1 wall_ms=69 ---
+ENVDIFF: classified=0/1 out=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/entry/pinmm.json
+    surface=pm classification=unavailable error=PIN_MISMATCH: pm
+--- failrun : exit=1 wall_ms=112 ---
+ENVDIFF: classified=0/1 out=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/entry/failrun.json
+    surface=fr classification=unavailable error=None
+
+## 7. FALSIFICATION B — exit-1 is reachable with bwrap absent (host dependency, no error text)
+ENVDIFF: classified=0/1 out=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/entry/nb3.json
+exit=1
+
+## 8. FALSIFICATION C — the tool has NO expected-classification input (contract carries none)
+per-surface keys: ['name', 'repo', 'rev', 'path', 'interp']
+expected-classification field present: NONE
+tool reads receipt_path? 
+0
+
+## 9. FALSIFICATION D — entry command from a clone (default --fleet-root resolves to the clone's grandparent)
+default fleet-root from clone = /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04
+default fleet-root from lane  = /home/vgpnk/Projects/shokunin
+ENVDIFF: classified=0/9 out=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/entry/nofleet2.json
+exit=1
+
+## 10. FALSIFICATION E — write scope: sandboxes are hardcoded to /tmp, TMPDIR is NOT respected
+61:    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir="/tmp") as tmp:
+167:    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff-pin.") as tmp:
+strace mkdir roots during ONE selftest (TMPDIR=/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool04/tmpX):
+     14 TMPDIR_ROOT
+    132 TMP_HARDCODED_SANDBOX
+distinct /tmp/tameshi-r21-envdiff.* sandbox dirs created by one selftest:
+44
+
+## 11. FALSIFICATION F — selftest with bwrap absent from PATH
+ENVDIFF_CASE invariant FAIL
+ENVDIFF_CASE tz FAIL
+ENVDIFF_CASE locale FAIL
+ENVDIFF_CASE home FAIL
+ENVDIFF_CASE columns FAIL
+ENVDIFF_CASE repeat FAIL
+ENVDIFF_CASE missing-bwrap PASS
+ENVDIFF_CASE timeout FAIL
+ENVDIFF_CASE pin-mismatch-public-cli PASS
+ENVDIFF_SELFTEST: 2/9 pass
+
+## 12. exit-code sweep (all reachable codes) vs the row's verdict map '0 clean; 1 failed; 2 and 64 could-not-evaluate'
+  selftest                       exit=0
+  usage (unknown flag)           exit=64
+  missing --contract/--out       exit=64
+  jobs=0                         exit=64
+  jobs=4                         exit=64
+  jobs=abc                       exit=64
+  contract not JSON              exit=2
+  contract unreadable            exit=2
+  surfaces=[]                    exit=2
+  surface missing keys           exit=2
+  out is a directory             exit=2
+  fleet-root is a file           exit=1
+  help                           exit=0
+
+## 13. pinned receipt vs a live re-run at CAND (same contract, contract_sha256 matches)
+pinned receipt contract_sha256: 5bd7024d0357ad3fb2a4b8550fd44f8371a3eb004f29948699368bea9d4c2bbd
+contract sha256 at CAND        : 5bd7024d0357ad3fb2a4b8550fd44f8371a3eb004f29948699368bea9d4c2bbd
+contract unchanged: True
+live TMPDIR=/tmp (reproduces)  surfaces differing from pinned receipt: 0 []
+live TMPDIR=scratch (run1)     surfaces differing from pinned receipt: 5 ['js-kimi-census', 'bash-surface-census', 'bash-checklist-run', 'js-claims-check', 'js-sources-check']
+live TMPDIR=scratch (run2)     surfaces differing from pinned receipt: 5 ['js-kimi-census', 'bash-surface-census', 'bash-checklist-run', 'js-claims-check', 'js-sources-check']
+live TMPDIR unset              surfaces differing from pinned receipt: 0 []
+
+## 14. the two SKILL.md rows for the same tool coexist at CAND (neither marked superseded)
+SKILL.md:1975 (heading line 1964 '### Round-21 gate/probe registry — finite environment differential'):
+| `tools/env-diff.py` | probe | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out /tmp/tameshi-f5.json` | 0 all surfaces classified; 1 incomplete/failed measurement; 2 could-not-evaluate; 64 usage | `python3 tools/env-diff.py --selftest` | frozen nine pins/seven profiles in `.ufo/evidence/round-21/c2-contract.json`; raw tuples in `.ufo/evidence/round-21/f5/receipt.json`; fixtures cover sensitivity, repeat variation and pin refusal | requested output and isolated `/tmp/tameshi-r21-envdiff.*`; sibling blobs read-only, no network | tameshi |
+SKILL.md:2145 (heading line 2138 '#### Gate/probe registry — round 51'):
+| environment-profile differential | gate | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out DIR/receipt.json --jobs 3` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/env-diff.py --selftest` → exit 0, last line ENVDIFF_SELFTEST: 9/9 pass | `.ufo/evidence/round-21/c2-contract.json`, `.ufo/evidence/round-21/f5/receipt.json`; literal expected classifications in the tool selftest | caller-chosen `--out` FILE plus sandboxes under `/tmp/tameshi-r21-envdiff.*` and TMPDIR-respecting selftest trees; lane trees read-only | tameshi |
+tool bytes base vs CAND (unchanged?):
+3a48aeccc55bc5ea4c6f436444f5a9ec69c83621
+3a48aeccc55bc5ea4c6f436444f5a9ec69c83621
+counter HEAD_RE-visible headings:

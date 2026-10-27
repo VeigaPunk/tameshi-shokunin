@@ -1,0 +1,34 @@
+# cause isolation — the lane write is importlib bytecode caching of tools/pbt-staged-id.py
+# clone at CAND, tools/__pycache__ removed first, stdin /dev/null, TMPDIR=$S/tmp
+
+$ rm -rf tools/__pycache__
+$ python3 -c "
+import importlib.util
+spec = importlib.util.spec_from_file_location('probe_mod', 'tools/pbt-staged-id.py')
+mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+print('imported ok, has check/run_guard:', callable(getattr(mod,'check',None)), callable(getattr(mod,'run_guard',None)))
+"
+imported ok, has check/run_guard: True True
+$ find tools -name '*.pyc'
+tools/__pycache__/pbt-staged-id.cpython-314.pyc
+$ git status --porcelain          # clean: the file is gitignored
+$ git status --porcelain --ignored
+!! tools/__pycache__/
+
+$ rm -rf tools/__pycache__
+$ python3 -B -c "
+import importlib.util
+spec = importlib.util.spec_from_file_location('probe_mod', 'tools/pbt-staged-id.py')
+spec.loader.exec_module(importlib.util.module_from_spec(spec))
+"
+$ find tools -name '*.pyc' | wc -l
+0
+
+# Source path in the tool (CAND blob, sha256 1ac31ae58d807df76d632d5eb18b06c2e62eae0428fc1fb3b2dc3f01ebb3526f):
+#   shrink-case.py:217  def load_generator(directory):
+#   shrink-case.py:226      spec.loader.exec_module(module)      <- writes tools/__pycache__/<generator>.pyc
+#   shrink-case.py:258  generator = load_generator(os.path.dirname(os.path.abspath(__file__)))   (run mode)
+#   shrink-case.py:486  stub_gen = load_generator(root)                                        (TMPDIR copy: harmless)
+#   shrink-case.py:573  real = load_generator(directory)                                       (lane copy: writes)
+# The tool never sets sys.dont_write_bytecode; the round-51 C3 counter does (measure.py:40), so the
+# counter's own lane reads leave no bytecode but the tool it invokes does.

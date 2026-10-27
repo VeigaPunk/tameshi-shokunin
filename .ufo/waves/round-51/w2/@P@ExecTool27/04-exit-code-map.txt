@@ -1,0 +1,50 @@
+## F. exit-code map: every reachable exit code vs the row's verdict map
+row verdict map: 0 clean; 1 failed (planted-fixture mismatch, also the uncaught exit for a missing or unparsable fixtures JSON); 2 could-not-evaluate (usage: unknown flag, or no mode given)
+
+F1. source exit sites:
+84:    return 0 if not failed else 1
+99:    return 2
+103:    sys.exit(main())
+
+F2. probed invocations -> measured code
+  --selftest (green)
+    rc=0  last_stdout=WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+  --selftest --fixtures MISSING
+    rc=1  last_stdout=
+    stderr_last=FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/work/nope.json'
+  --selftest --fixtures UNPARSABLE
+    rc=1  last_stdout=
+    stderr_last=json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+  --selftest --fixtures DIR
+    rc=1  last_stdout=
+    stderr_last=IsADirectoryError: [Errno 21] Is a directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/work'
+  --selftest --fixtures JSON-ARRAY
+    rc=1  last_stdout=
+    stderr_last=AttributeError: 'list' object has no attribute 'get'
+  --selftest --fixtures JSON-NOTOBJ
+    rc=1  last_stdout=FAIL missing fixture scratch_replace
+  --r51-no-such-flag
+    rc=2  last_stdout=
+    stderr_last=write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+  (no arguments)
+    rc=2  last_stdout=
+    stderr_last=usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+  --fixtures PATH (mode omitted)
+    rc=2  last_stdout=
+    stderr_last=usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+  --help
+    rc=0  last_stdout=  --fixtures FIXTURES  fixture JSON path
+
+F3. verdict-map token coverage for codes 0/1/2 (the counter's own test)
+  code 0   declared: True
+  code 1   declared: True
+  code 2   declared: True
+  code 3   declared: False
+  code 64  declared: False
+  code 124 declared: False
+  code 128 declared: False
+
+F4. is any code beyond 0/1/2 reachable? (regex/return audit)
+  module body has exactly three return-code sites (see F1) plus argparse's built-in 2;
+  no os._exit, no signal handling, no subprocess in the tool:
+  (none present)

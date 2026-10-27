@@ -1,0 +1,24 @@
+=== F2: what the frozen counter binds to as the finding id for this row ===
+counter rule (.ufo/evidence/round-51/c3/measure.py:173-183):
+def run_row(clone, work, spec):
+    argv, usage, st, vmap = spec
+    rc, last = run_cmd(clone, work, argv, 900)
+    if rc != 0:
+        return 'selftest-exit=%d last=%s' % (rc, last), last
+    marker = last.split()[0] if last.split() else ''
+    if not marker or marker not in st:
+        return 'finding-id-not-in-row (%s)' % marker, last
+    urc, ulast = run_cmd(clone, work, usage, 60)
+    if not re.search(r'(?<![0-9])%d(?![0-9])' % urc, vmap):
+        return 'usage-exit-%d-undeclared' % urc, last
+
+tool stdout (two lines; the counter reads only the LAST):
+cat: 01-selftest.stdout: No such file or directory
+last-line first token -> 'VERDICT:'   (row cell contains it -> counter accepts)
+tool's own stable id (line 1, never inspected by the counter) -> 'STAGED_ID_GUARD_SELFTEST: cases=24 failed=0'
+
+rows in the same round-51 table whose self-test cell also names the generic marker:
+  SKILL.md:2142  | bash declared-witness study | probe | `python3 tools/bash-witness-study.py check` (add -
+  SKILL.md:2147  | golden verdict classes | gate | `python3 tools/golden-verdict.py --check-entry PATH` | 0
+  SKILL.md:2149  | fleet mutation runner | gate | `bash tools/mutate-and-run.sh --regression --workdir DIR`
+  SKILL.md:2159  | staged-id adoption guard | gate | `python3 -I tools/staged-id-guard.py --registry corpus

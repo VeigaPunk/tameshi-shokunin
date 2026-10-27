@@ -1,0 +1,53 @@
+## I. is the last-line marker a real diagnostic, or author-chosen help text?
+row self-test cell records: WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+counter rule: first whitespace token of the LAST non-empty stdout line must appear in the self-test cell
+
+I1. green run: last stdout line and its first token
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+  first token: WRITE_CENSUS_V2_SELFTEST:
+
+I2. RED run: is the marker still the last line? (FAIL lines are printed AFTER the summary)
+  (fixture is valid JSON)
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=0 replace_unflagged=0 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+FAIL planted bytes_unflagged: want unflagged=1 got 0
+FAIL planted replace_unflagged: want unflagged=1 got 0
+  exit=1
+  ^ the marker line is NOT last on a red run -> the counter's marker check only ever sees the green path (run_row gates on rc==0 first).
+
+I3. does neutering each detector change the verdict? (marker is computed, not printed from a literal)
+  baseline:
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+    exit=0
+  --- EXPECTED_RE neutered to never match ---
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=0 replace_unflagged=0 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+FAIL planted bytes_unflagged: want unflagged=1 got 0
+FAIL planted replace_unflagged: want unflagged=1 got 0
+    exit=1
+  --- FLAG_RE neutered to never match ---
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=1 replace_flagged=1 scratch_replace=0
+FAIL planted bytes_flagged: want unflagged=0 got 1
+FAIL planted replace_flagged: want unflagged=0 got 1
+    exit=1
+  --- SCRATCH_RE neutered: see 07b-scratch-vacuity.txt (the inline edit here damaged the module) ---
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone/tools/write-path-census-v2.py", line 102, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone/tools/write-path-census-v2.py", line 96, in main
+    return selftest(path)
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone/tools/write-path-census-v2.py", line 67, in selftest
+    _sites, unflagged = classify_text(body)
+                        ~~~~~~~~~~~~~^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone/tools/write-path-census-v2.py", line 32, in classify_text
+    flagged = FLAG_RE.search(text) is not None
+              ^^^^^^^
+NameError: name 'FLAG_RE' is not defined
+    exit=1
+  restored; git status: []
+
+I4. verdict on marker meaningfulness
+  The marker is COMPUTED (bytes_unflagged/replace_unflagged/bytes_flagged/replace_flagged/scratch_replace counts)
+  and moves with the detector: neutering EXPECTED_RE -> bytes/replace_unflagged drop to 0 and exit 1;
+  neutering FLAG_RE -> bytes/replace_flagged rise to 1 and exit 1. So it is a real diagnostic, not help text.
+  CAVEAT: neutering SCRATCH_RE alone does NOT move the verdict (scratch_replace is an EXPECTED_RE-negative
+  line, so it can never become unflagged regardless of SCRATCH_RE) -> that one of the five counters is vacuous.

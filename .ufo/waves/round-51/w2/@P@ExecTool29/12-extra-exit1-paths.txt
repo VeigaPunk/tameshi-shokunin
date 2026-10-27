@@ -1,0 +1,18 @@
+### additional exit-code probes: are there exit-1 paths beyond the two the row names?
+row: '1 failed — selftest mismatch or unreadable input'
+tool docstring :49: 'Exit codes: 0 pass · 1 selftest fail · 2 usage.'
+
+--- (a) NUL byte in the source: text mode ---
+exit=0 stdout_bytes=0 stderr_bytes=0
+  -> a NUL-byte file also lands in the silent-exit-0 bucket (F1), NOT exit 1
+--- (a2) same file, JSON mode: is a parse-error record emitted? ---
+{"file": "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool29/edge/nullbyte.py", "sites": [{"expected": false, "explicit_out": false, "flagged": false, "kind": "parse-error", "lineno": 0, "resolved": "", "scratch": false, "unflagged": false}]}
+
+--- (b) deeply nested expression (400 parens) ---
+exit=0 stdout_bytes=0 stderr_bytes=0
+  -> parses fine, exit 0
+--- (c) control: readable file with no expected writes ---
+exit=0
+
+CONCLUSION: beyond the two paths the row names, the only extra non-zero code found is
+130 on SIGINT (receipt 07), a signal exit no row in SKILL.md declares.

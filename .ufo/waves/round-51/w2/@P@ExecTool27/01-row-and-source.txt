@@ -1,0 +1,117 @@
+# T51W2ExecTool27 — raw receipts
+# Subject: C3 registry row for tools/write-path-census-v2.py at CAND 6d8c11e378aa90b12650808e1b79270742935f15
+# Scratch root: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27  (git clone --shared, detached at CAND)
+
+## A. clone identity
+6d8c11e378aa90b12650808e1b79270742935f15
+/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone
+clone2 (second independent clone):
+/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone2
+
+## B. the row under audit — SKILL.md:2168 at CAND
+| write-form census v2 | probe | `python3 tools/write-path-census-v2.py --selftest` (sole mode, scans no lane tree; `--fixtures` only relocates the fixture JSON) | 0 clean; 1 failed (planted-fixture mismatch, also the uncaught exit for a missing or unparsable fixtures JSON); 2 could-not-evaluate (usage: unknown flag, or no mode given) | `python3 tools/write-path-census-v2.py --selftest` → WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0 | `.ufo/evidence/round-40/census/fixtures.json`; expected counts are literals in the selftest | reads the fixtures JSON only; writes no lane path (stdout only) | tameshi |
+
+## C. tool source at CAND (tools/write-path-census-v2.py, 103 lines)
+     1	#!/usr/bin/env python3
+     2	"""F4 write-form census v2.
+     3	
+     4	Sees two write forms the round-39 pattern misses: a string literal
+     5	expected.json on a .write_bytes call, and os.replace / os.rename.
+     6	Does not edit tools/write-path-census.py. The v1 pin stays put.
+     7	
+     8	Exit codes: 0 pass · 1 selftest fail · 2 usage.
+     9	"""
+    10	import argparse
+    11	import json
+    12	import os
+    13	import re
+    14	import sys
+    15	
+    16	WRITE_RE = re.compile(
+    17	    r"""open\s*\([^)]*['"](?:w|a|w\+|a\+|wb|ab)['"]"""
+    18	    r"""|\.write_text\s*\("""
+    19	    r"""|\.write_bytes\s*\("""
+    20	    r"""|os\.replace\s*\("""
+    21	    r"""|os\.rename\s*\("""
+    22	)
+    23	EXPECTED_RE = re.compile(
+    24	    r"""['"][^'"]*(?:\.expected\b|expected\.txt|expected\.json|golden|snapshot)[^'"]*['"]"""
+    25	)
+    26	SCRATCH_RE = re.compile(r'/tmp/|tempfile|TemporaryDirectory|NamedTemporaryFile|\bscratch\b')
+    27	FLAG_RE = re.compile(r'--update_goldens|--update-goldens|--update\b|update_goldens')
+    28	
+    29	FIXTURE_REL = '.ufo/evidence/round-40/census/fixtures.json'
+    30	
+    31	
+    32	def classify_text(text):
+    33	    flagged = FLAG_RE.search(text) is not None
+    34	    write_sites = 0
+    35	    unflagged = 0
+    36	    for line in text.splitlines():
+    37	        if WRITE_RE.search(line) is None:
+    38	            continue
+    39	        write_sites += 1
+    40	        if EXPECTED_RE.search(line) and SCRATCH_RE.search(line) is None and not flagged:
+    41	            unflagged += 1
+    42	    return write_sites, unflagged
+    43	
+    44	
+    45	def load_fixtures(path):
+    46	    with open(path, encoding='utf-8') as fh:
+    47	        data = json.load(fh)
+    48	    return data
+    49	
+    50	
+    51	def selftest(fixture_path):
+    52	    failed = []
+    53	    planted = load_fixtures(fixture_path)
+    54	    expect = {
+    55	        'bytes_unflagged': 1,
+    56	        'replace_unflagged': 1,
+    57	        'bytes_flagged': 0,
+    58	        'replace_flagged': 0,
+    59	        'scratch_replace': 0,
+    60	    }
+    61	    got = {}
+    62	    for name, want in expect.items():
+    63	        body = planted.get(name)
+    64	        if not isinstance(body, str):
+    65	            failed.append('missing fixture %s' % name)
+    66	            got[name] = -1
+    67	            continue
+    68	        _sites, unflagged = classify_text(body)
+    69	        got[name] = unflagged
+    70	        if unflagged != want:
+    71	            failed.append('planted %s: want unflagged=%d got %d' % (name, want, unflagged))
+    72	    print(
+    73	        'WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=%d replace_unflagged=%d bytes_flagged=%d replace_flagged=%d scratch_replace=%d'
+    74	        % (
+    75	            got.get('bytes_unflagged', -1),
+    76	            got.get('replace_unflagged', -1),
+    77	            got.get('bytes_flagged', -1),
+    78	            got.get('replace_flagged', -1),
+    79	            got.get('scratch_replace', -1),
+    80	        )
+    81	    )
+    82	    for item in failed:
+    83	        print('FAIL %s' % item)
+    84	    return 0 if not failed else 1
+    85	
+    86	
+    87	def main():
+    88	    ap = argparse.ArgumentParser(description='F4 write-form census v2')
+    89	    ap.add_argument('--selftest', action='store_true')
+    90	    ap.add_argument('--fixtures', default=None, help='fixture JSON path')
+    91	    args = ap.parse_args()
+    92	    if args.selftest:
+    93	        path = args.fixtures
+    94	        if path is None:
+    95	            here = os.path.dirname(os.path.abspath(__file__))
+    96	            path = os.path.join(os.path.dirname(here), FIXTURE_REL)
+    97	        return selftest(path)
+    98	    ap.print_usage(sys.stderr)
+    99	    return 2
+   100	
+   101	
+   102	if __name__ == '__main__':
+   103	    sys.exit(main())

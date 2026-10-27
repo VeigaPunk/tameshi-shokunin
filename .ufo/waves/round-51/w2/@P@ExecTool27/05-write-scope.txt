@@ -1,0 +1,21 @@
+## G. write scope: 'reads the fixtures JSON only; writes no lane path (stdout only)'
+
+G1. every file-opening / mutating call in the tool
+5:expected.json on a .write_bytes call, and os.replace / os.rename.
+18:    r"""|\.write_text\s*\("""
+19:    r"""|\.write_bytes\s*\("""
+26:SCRATCH_RE = re.compile(r'/tmp/|tempfile|TemporaryDirectory|NamedTemporaryFile|\bscratch\b')
+46:    with open(path, encoding='utf-8') as fh:
+  -> only open() at :46, read mode, no mode argument
+
+G2. clone state before/after the row's self-test
+before: []
+exit=0
+after : []
+untracked (all): []
+TMPDIR contents: []  (empty => the tool creates no scratch at all)
+
+G3. does it read anything besides the named fixtures JSON? (syscall audit, if strace exists)
+  opens with write intent / creates:
+  fixtures.json open:
+4039487 openat(AT_FDCWD, "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool27/clone/.ufo/evidence/round-40/census/fixtures.json", O_RDONLY|O_CLOEXEC) = 3

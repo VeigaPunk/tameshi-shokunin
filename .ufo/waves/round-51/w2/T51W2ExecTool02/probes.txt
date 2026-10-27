@@ -1,0 +1,53 @@
+== exit-code fuzz (declared map 0/1/2/64) ==
+24 malformed bundle/expected shapes -> exit 2 for 23 of them; the 24th (receipts[0].exit = 10**40 vs declared 0) -> exit 1 EXIT_MISMATCH, a genuine verdict.
+distinct exit codes observed across the whole probe set: 1, 2 (+ 0 clean, 64 usage from the declared-code probes below)
+
+== declared-code probes ==
+CLEAN rc=0
+MISSING_FILE rc=2
+TAMPERED rc=2
+BAD_SHAPE rc=2
+-- selftest+other-arg / missing flags --
+MISMATCH(argv) rc=1
+--help rc=0
+--selftest --json rc=64
+--bundle only rc=64
+--json only rc=64
+
+== row's entry command verbatim (placeholders unresolved) ==
+{"bundle_sha256": null, "exit": 2, "finding_ids": ["INVALID_INPUT"], "schema": "command-binding-report-v1"}
+stderr:
+
+== tool-mutation coupling (each mutant run from its own clone) ==
+no-argv-check: COMMAND_BINDING_SELFTEST: 32/44 pass
+no-argv-check: FAIL_cases=12
+no-exit-check: COMMAND_BINDING_SELFTEST: 41/44 pass
+no-exit-check: FAIL_cases=3
+no-digest-check: COMMAND_BINDING_SELFTEST: 43/44 pass
+no-digest-check: FAIL_cases=1
+always-clean: COMMAND_BINDING_SELFTEST: 21/44 pass
+always-clean: FAIL_cases=23
+exit2-to-3: COMMAND_BINDING_SELFTEST: 40/44 pass
+exit2-to-3: FAIL_cases=4
+usage-64-to-2: COMMAND_BINDING_SELFTEST: 44/44 pass
+usage-64-to-2: FAIL_cases=0
+tamper2-to-0: COMMAND_BINDING_SELFTEST: 43/44 pass
+tamper2-to-0: FAIL_cases=1
+
+== pinned-fixture load-bearing probes ==
+round-23 removed: COMMAND_BINDING_SELFTEST: fixture-unavailable
+round-24 removed: COMMAND_BINDING_SELFTEST: fixture-unavailable
+round-23 one case dropped: COMMAND_BINDING_SELFTEST: 43/43 pass
+round-24 one case dropped: COMMAND_BINDING_SELFTEST: 43/43 pass
+round-24 finding_ids edited: COMMAND_BINDING_SELFTEST: 43/44 pass
+both case lists emptied (committed at fixture rev 6778bc8): COMMAND_BINDING_SELFTEST: 19/19 pass
+
+== frozen round-23 ten-case ruler against this tool at CAND ==
+tool_sha256 9230c68e53a544c517037620f32ea98528e5b5195f88fd88e976fdc8c1061d0d
+discriminated 10 / 10
+
+== row16 contrast (tools/round21-measure.py in the same clone) ==
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', '-C', '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool02/tameshi-shokunin', 'show', '08175c62d661fddf052ed10abc91313dec8eb77d:tools/mutate-and-run.sh']' returned non-zero exit status 128.

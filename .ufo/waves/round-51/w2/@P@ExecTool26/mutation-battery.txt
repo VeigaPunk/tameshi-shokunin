@@ -1,0 +1,27 @@
+mutation battery on tools/witness-metadata.py at CAND (each mutant applied to a scratch copy of the clone;
+selftest = `python3 tools/witness-metadata.py --selftest`; check = `python3 tools/witness-metadata.py --check --lane-root .`)
+
+ 1 build_companion.purpose              selftest_exit=0 last=SELFTEST: PASS 39/39  check_exit=1
+ 2 build_companion.producer.source      selftest_exit=0 last=SELFTEST: PASS 39/39  check_exit=1
+ 3 build_companion.runner.source        selftest_exit=0 last=SELFTEST: PASS 39/39  check_exit=1
+ 4 scope.disposition literal            selftest_exit=0 last=SELFTEST: PASS 39/39  check_exit=1
+ 5 declaration top-level kind check     selftest_exit=0 last=SELFTEST: PASS 39/39  check_exit=0
+ 6 build_companion.measured_claim       selftest_exit=1 last=SELFTEST: FAIL 37/39   check_exit=1
+ 7 build_companion.frozen_bytes         selftest_exit=1 last=SELFTEST: FAIL 37/39   check_exit=1
+ 8 expected.id literal                  selftest_exit=1 last=SELFTEST: FAIL 38/39   check_exit=1
+ 9 kind_source rule                     selftest_exit=1 last=SELFTEST: FAIL 30/39   check_exit=1
+10 EXPECTED_KIND trailing space         selftest_exit=1 last=SELFTEST: FAIL 27/39   check_exit=1
+11 EXPECTED_VERDICT_EXIT 0 -> 1         selftest_exit=1 last=SELFTEST: FAIL 38/39   check_exit=1
+12 EXPECTED_DISCLOSURE mutated          selftest_exit=1 last=SELFTEST: FAIL 27/39   check_exit=1
+13 companion_noncanonical check         selftest_exit=1 last=SELFTEST: FAIL 38/39   check_exit=0
+14 companion digest check removed       selftest_exit=1 last=SELFTEST: FAIL 38/39  check_exit=0
+15 input digest check removed           selftest_exit=1 last=SELFTEST: FAIL 34/39   check_exit=0
+16 comp_decl kind check                 selftest_exit=1 last=SELFTEST: FAIL 37/39   check_exit=0
+17 producer.checked_live check          selftest_exit=1 last=SELFTEST: FAIL 38/39   check_exit=0
+18 PINNED_INPUTS digest literal 0*64    selftest_exit=2 SELFTEST: SETUP_FAIL summary digest ... != 000...0
+19 (duplicate run of #12/#11 literals)  selftest_exit=1 last=SELFTEST: FAIL 27/39   check_exit=1
+
+summary: 13 of 19 mutants flip the selftest to FAIL n/39 (exit 1); #18 flips it to SETUP_FAIL (exit 2);
+5 mutants leave the selftest green (#1-#5), of which #1-#4 are caught by the live --check against the
+committed companion (exit 1) and #5 (declaration.get("kind") != EXPECTED_KIND removed) is unreachable from any
+fixture because the field lives inside the digest-pinned declaration.json.

@@ -1,0 +1,30 @@
+# row16 / known C3 blocker — not this row
+
+The task's 'row16 known clone-context failure' refers to the round-21 measure facade
+(tools/round21-measure.py), whose truthful --selftest exits 1 from the counter's fresh clone
+because its fixture expects sibling fleet repos. That is SKILL.md:2157 = table row 16 of the
+round-51 registry (rows counted from SKILL.md:2142).
+
+MY row is table row 5 (SKILL.md:2146) = tools/evidence-disposition.py.
+
+Measured in the fresh `git clone --shared` at CAND (no sibling fleet repos present, no
+network, stdin /dev/null):
+  python3 tools/evidence-disposition.py --selftest  -> exit 0, last line 'SELFTEST: PASS (66/66)'
+  python3 tools/evidence-disposition.py --r51-no-such-flag -> exit 64
+  counter's own run_row() on this row -> (None, 'SELFTEST: PASS (66/66)')
+
+=> this row does NOT have the clone-context failure. Its selftest builds isolated /tmp fixtures
+   (tools/evidence-disposition.py:2351 scratch = mkdtemp(prefix='tameshi-r14-evidence-disposition-
+   selftest.', dir='/tmp')) and needs no sibling repo. The lane's own copy of the round-21 row
+   (2157) is the one that fails (peer's counter run: 'C3_TOOL tools/round21-measure.py: MISSING
+   (line 2157 selftest-exit=1 last=)').
+
+The one real environmental dependency of MY row's selftest is `jj` on PATH:
+  with PATH=/usr/bin:/bin the selftest exits 1 with 'SELFTEST: FAIL (3/66 failed:
+  v2-jj-prebookmark-branch-tip, v2-jj-branch-tip, v2-jj-without-lane-branch; fixtures kept at ...)'
+  (receipt: selftest-without-jj-on-PATH.stdout).
+The row DOES disclose this ('needs jj on PATH'), and jj 0.45.1 is on PATH here, so the row's
+stated precondition holds in this environment. But the disclosure is load-bearing: the three jj
+cases are the only reason the count is 66 rather than 63, and the counter's env() does NOT strip
+PATH, so an environment without jj would turn this covered row into a missing one.
+

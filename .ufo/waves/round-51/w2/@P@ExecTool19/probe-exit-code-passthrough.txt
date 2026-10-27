@@ -1,0 +1,18 @@
+# tools/tally-audit-v2.py:596  `return p.returncode` — then_regression() returns the RUNNER's
+# exit code verbatim. The row's verdict map (SKILL.md:2160) declares only
+#   "0 clean; 1 failed; 2 could-not-evaluate; a timed-out then-regression reports 124 and folds to 2"
+# Short-lived synthetic runners driven through then_regression() directly (tool imported unmodified):
+>> runner exit 1  -> tool returned 1
+>> runner exit 2  -> tool returned 2
+>> runner exit 64 -> tool returned 64      <-- undeclared
+>> runner exit 3  -> tool returned 3       <-- undeclared
+# SIGKILLed runner after printing its REGRESSION line:
+TALLY_AUDIT_REGRESSION: PASS (cases=10 legs=10 exit=-9)
+>> SIGKILLed runner -> tool returned -9  (negative -> shell 247 through sys.exit)
+# End-to-end through main(), runner = tools/mutate-and-run.sh + a header EXIT trap
+# (`trap 'exit 64' EXIT' inserted after the shebang; the tally block is byte-identical, so the
+# audit still PASSES and main() proceeds to then_regression):
+#   python3 tools/tally-audit-v2.py --runner trap64.sh --then-regression --workdir DIR
+#   -> TALLY_AUDIT_REGRESSION: SETUP (cases=10 legs=10 exit=64); TOOL_EXIT=64
+# Contrast: the sibling row at SKILL.md:2162 (tools/tally-audit.py) does declare
+#   "64 could-not-evaluate (runner usage error surfaced through --then-regression)".

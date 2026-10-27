@@ -1,0 +1,41 @@
+## D. the row's exact backticked self-test, from the clone, TMPDIR=scratch, stdin=/dev/null
+### D1. five consecutive runs (wall clock via python time)
+selftest: python3 tools/write-path-census-v2.py --selftest
+  wall=0.041s rc=0 last='WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0'
+  wall=0.040s rc=0 last='WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0'
+  wall=0.042s rc=0 last='WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0'
+  wall=0.041s rc=0 last='WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0'
+  wall=0.039s rc=0 last='WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0'
+usage probe: python3 tools/write-path-census-v2.py --r51-no-such-flag
+  wall=0.039s rc=2 last=''
+    stderr: usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+  wall=0.035s rc=2 last=''
+    stderr: usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+  wall=0.037s rc=2 last=''
+    stderr: usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+  wall=0.041s rc=2 last=''
+    stderr: usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+  wall=0.037s rc=2 last=''
+    stderr: usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+
+### D2. usage probe stderr (verbatim)
+usage: write-path-census-v2.py [-h] [--selftest] [--fixtures FIXTURES]
+write-path-census-v2.py: error: unrecognized arguments: --r51-no-such-flag
+exit=2
+
+### D3. run from a different cwd (path resolution is __file__-relative, not cwd-relative)
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+exit=0
+
+### D4. second independent clone, three runs
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+exit=0
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+exit=0
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+exit=0

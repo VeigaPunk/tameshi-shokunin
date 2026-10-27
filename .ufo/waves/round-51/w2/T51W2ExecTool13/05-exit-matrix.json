@@ -1,0 +1,112 @@
+[
+ {
+  "case": "0 clean",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-hold.json"
+  ],
+  "exit": 0,
+  "wall_s": 0.52,
+  "stdout_last": "REGISTRY_CHECK: held=1/1 superseded=0",
+  "stderr_first": "registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)"
+ },
+ {
+  "case": "1 failed",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-diff.json"
+  ],
+  "exit": 1,
+  "wall_s": 0.52,
+  "stdout_last": "REGISTRY_CHECK: held=0/1 superseded=0",
+  "stderr_first": "registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)"
+ },
+ {
+  "case": "invalid registry",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-bad.json"
+  ],
+  "exit": 2,
+  "wall_s": 0.04,
+  "stdout_last": "REGISTRY_CHECK: could-not-evaluate (registry invalid: schema must be 'tameshi-entry-registry-v1', got 'not-the-schema')",
+  "stderr_first": "registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)"
+ },
+ {
+  "case": "unreadable registry",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-absent.json"
+  ],
+  "exit": 2,
+  "wall_s": 0.04,
+  "stdout_last": "REGISTRY_CHECK: could-not-evaluate (registry unreadable: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-absent.json: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-absent.json')",
+  "stderr_first": "registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)"
+ },
+ {
+  "case": "root unavailable",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/no-such-root",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-hold.json"
+  ],
+  "exit": 2,
+  "wall_s": 0.05,
+  "stdout_last": "REGISTRY_CHECK: could-not-evaluate (root_unavailable: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/no-such-root)",
+  "stderr_first": ""
+ },
+ {
+  "case": "only miss",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-hold.json",
+   "--only",
+   "nope"
+  ],
+  "exit": 2,
+  "wall_s": 0.04,
+  "stdout_last": "REGISTRY_CHECK: could-not-evaluate (--only 'nope' matches no registry row)",
+  "stderr_first": "registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)"
+ },
+ {
+  "case": "tag miss",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-hold.json",
+   "--tag",
+   "nomatch"
+  ],
+  "exit": 2,
+  "wall_s": 0.04,
+  "stdout_last": "REGISTRY_CHECK: could-not-evaluate (--tag ['nomatch'] selects no registry row)",
+  "stderr_first": "registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)"
+ },
+ {
+  "case": "rev unavailable",
+  "argv": [
+   "--root",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane",
+   "--registry",
+   "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/reg-hold.json",
+   "--rev",
+   "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+  ],
+  "exit": 2,
+  "wall_s": 0.04,
+  "stdout_last": "REGISTRY_CHECK: could-not-evaluate (rev 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef' unavailable in /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool13/fx/lane)",
+  "stderr_first": ""
+ }
+]

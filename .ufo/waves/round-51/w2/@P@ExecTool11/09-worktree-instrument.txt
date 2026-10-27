@@ -1,0 +1,7 @@
+## receipt: worktree-instrument sensitivity of the ENTRY command
+The wrapper resolves MEASURE from its OWN tree (ROOT = Path(__file__).parent.parent), not from --repo/--rev.
+A: scratch clone with stage/measure.py patched so item 1 is forced FAIL; --repo points at PRISTINE clone at CAND
+   -> corrected=5, item contract_frozen_before_dispatch FAIL detail=TAMPERED-BY-WORKTREE, exit=1
+B: same tree patched so all six items are forced PASS; --repo points at an ABSENT repo
+   -> corrected=6, all six PASS, exit=0  (a false clean from a worktree instrument)
+file:line: tools/receipt-measure.py:18-19 ROOT/MEASURE; :310-313 subprocess.run([sys.executable,'-B',str(MEASURE),*arguments])

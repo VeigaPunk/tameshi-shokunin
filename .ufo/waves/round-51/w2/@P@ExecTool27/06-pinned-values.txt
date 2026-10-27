@@ -1,0 +1,28 @@
+## H. pinned values: does the pinned path really drive the expected verdict?
+row pinned cell: '.ufo/evidence/round-40/census/fixtures.json'; expected counts are literals in the selftest
+
+H1. pinned path exists at CAND and at BASE
+  CAND: exists
+  BASE: exists
+
+H2. expected counts are literals in the selftest (tool :54-60)
+    expect = {
+        'bytes_unflagged': 1,
+        'replace_unflagged': 1,
+        'bytes_flagged': 0,
+        'replace_flagged': 0,
+        'scratch_replace': 0,
+    }
+
+H3. mutate the pinned file -> does the verdict move? (proves the pin is load-bearing)
+  after adding a second write site to bytes_unflagged:
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=2 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+FAIL planted bytes_unflagged: want unflagged=1 got 2
+  exit=1  (1 => pin IS load-bearing)
+  restored.
+
+H4. is the pin CONTENT-pinned (digest) or only count-pinned?
+  after swapping write_bytes -> write_text in bytes_unflagged (count preserved):
+WRITE_CENSUS_V2_SELFTEST: bytes_unflagged=1 replace_unflagged=1 bytes_flagged=0 replace_flagged=0 scratch_replace=0
+  exit=0  (0 => NOT content-pinned; the fixture body is only count-checked)
+  restored; git status: []

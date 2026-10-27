@@ -1,0 +1,9 @@
+write scope, measured with strace -f -e trace=openat,creat,unlink,mkdir,rename
+--check: zero write-mode opens in the lane; reads = the 4 pinned lane files + the companion + the tool itself
+--selftest: every write-mode open is under the TMPDIR fixture tree <TMPDIR>/witness-metadata-selftest-XXXXXXXX/
+            (mkdir of that root + copies of the 4 pinned files and the companion per case); tree removed in the
+            finally block (TMPDIR empty afterwards; /tmp has no witness-metadata-selftest-* residue)
+TMPDIR invalid (/nonexistent-xyz): tempfile falls back to /tmp -> tree created at /tmp/witness-metadata-selftest-*
+            (python tempfile semantics; the row's write-scope wording says "under TMPDIR", which holds when TMPDIR
+             is a usable directory, which is how the C3 counter invokes it)
+lane tree after selftest: git status --porcelain --untracked-files=all is empty; no __pycache__ created

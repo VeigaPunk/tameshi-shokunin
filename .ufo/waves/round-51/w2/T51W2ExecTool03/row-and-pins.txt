@@ -1,0 +1,35 @@
+== CAND ==
+6d8c11e378aa90b12650808e1b79270742935f15
+
+== SKILL.md row (line 2144) ==
+| context receipt replay | gate | `python3 tools/context-capture.py --check` (frozen pin) or the same invocation with --receipt FILE --expected FILE | 0 clean; 1 failed; 2 could-not-evaluate; 64 could-not-evaluate (usage) | `python3 tools/context-capture.py --selftest` → SELFTEST: PASS (49/49 cases) | `.ufo/evidence/round-14/context-receipt.json`; literal digest 05cb55b8… and id/exit pin inside the tool | none during --check; selftest fixtures under /tmp/context-capture-selftest-*, removed in finally | tameshi |
+
+== tool sha256 at CAND ==
+c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726  -
+== tool sha256 at BASE ==
+c4a1d1658b93c94228acd0f4bee7a29f474367dd62081dace1ae298691601726  -
+== pinned receipt sha256 at CAND ==
+05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a  -
+
+== source pins ==
+152:FROZEN_RECEIPT_SHA256 = (
+155:FROZEN_TOOL_SHA256 = (
+158:FROZEN_EXPECTED_ID = "context_consistent"
+159:FROZEN_EXPECTED_EXIT = 0
+1212:    if frozen and receipt["tool_sha256"] != FROZEN_TOOL_SHA256:
+1348:            "receipt_sha256": FROZEN_RECEIPT_SHA256,
+1349:            "id": FROZEN_EXPECTED_ID,
+1350:            "exit": FROZEN_EXPECTED_EXIT,
+
+== last-line format string ==
+1785:        sys.stdout.write("SELFTEST: PASS ({}/{})\n".format(self.passed, total))
+
+== mkdtemp line (TMPDIR?) ==
+12:writes nothing; the only writes are --selftest fixtures under mkdtemp.
+13-Frozen mode reads only the archived round-14 receipt named by the built-in
+--
+27:      /tmp (tempfile.mkdtemp(dir="/tmp")), pinning literal expected ids and
+28-      exits. Each subprocess reads its own tool source only to report
+--
+1624:        self.root = tempfile.mkdtemp(prefix="context-capture-selftest-",
+1625-                                     dir="/tmp")

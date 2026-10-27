@@ -1,0 +1,76 @@
+== selftest (clone at CAND, TMPDIR scratch, stdin /dev/null) ==
+ROUTEMIX_CASE parse-overrides ok
+ROUTEMIX_CASE parse-aliases ok
+ROUTEMIX_CASE balanced-ok ok
+ROUTEMIX_CASE concentrated-fails ok
+ROUTEMIX_CASE boundary-equal-ok ok
+ROUTEMIX_CASE unrouted-fails ok
+ROUTEMIX_CASE empty-fails ok
+ROUTEMIX_CASE alias-cycle-unrouted ok
+ROUTEMIX_SELFTEST: 8/8 pass
+== usage probe --r51-no-such-flag ==
+usage: wave-route-mix.py [-h] [--spec SPEC] [--config CONFIG]
+                         [--max-share MAX_SHARE] [--json] [--selftest]
+wave-route-mix.py: error: unrecognized arguments: --r51-no-such-flag
+== exit-code and failure-mode matrix ==
+-- nospec
+   stdout: 
+   stderr: usage: --spec SPEC.json [--max-share (0,1]]|
+-- maxshare0
+   stdout: 
+   stderr: usage: --spec SPEC.json [--max-share (0,1]]|
+-- maxshare15
+   stdout: 
+   stderr: usage: --spec SPEC.json [--max-share (0,1]]|
+-- unreadable
+   stdout: 
+   stderr: ROUTEMIX: unreadable input: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/nope.json'|
+-- badmaxshare
+   stdout: 
+   stderr: usage: wave-route-mix.py [-h] [--spec SPEC] [--config CONFIG]|                         [--max-share MAX_SHARE] [--json] [--selftest]|wave-route-mix.py: error: argument --max-share: invalid float value: 'abc'|
+-- nanmaxshare
+   stdout: 
+   stderr: usage: --spec SPEC.json [--max-share (0,1]]|
+-- invalidjson
+   stdout: 
+   stderr: ROUTEMIX: unreadable input: Expecting value: line 1 column 1 (char 0)|
+-- help
+   stdout: usage: wave-route-mix.py [-h] [--spec SPEC] [--config CONFIG]|                         [--max-share MAX_SHARE] [--json] [--selftest]||options:|  -h, --help            show this help message and exit|  --spec SPEC|  --config CONFIG|  --max-share MAX_SHARE|  --json|  --selftest|
+   stderr: 
+-- balanced
+   stdout: 
+   stderr: ROUTEMIX: REFUSE seats=4 max_share=0.4 prov-a=2/4 prov-b=2/4 over=['prov-a', 'prov-b']|
+-- concentrated
+   stdout: 
+   stderr: ROUTEMIX: REFUSE seats=4 max_share=0.4 prov-a=3/4 prov-b=1/4 over=['prov-a']|
+-- unrouted
+   stdout: 
+   stderr: ROUTEMIX: REFUSE seats=2 max_share=0.4 prov-a=1/2 over=['prov-a'] unrouted=['ghost']|
+-- emptylist
+   stdout: 
+   stderr: ROUTEMIX: REFUSE seats=0 max_share=0.4 |
+-- baditems
+   stdout: 
+   stderr: Traceback (most recent call last):|  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/work/tameshi-shokunin/tools/wave-route-mix.py", line 128, in <module>|    sys.exit(main())|             ~~~~^^|  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/work/tameshi-shokunin/tools/wave-route-mix
+-- notdict
+   stdout: 
+   stderr: Traceback (most recent call last):|  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/work/tameshi-shokunin/tools/wave-route-mix.py", line 128, in <module>|    sys.exit(main())|             ~~~~^^|  File "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/work/tameshi-shokunin/tools/wave-route-mix
+-- missingcfg
+   stdout: 
+   stderr: ROUTEMIX: unreadable input: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/fix/nope.yml'|
+-- garbagecfg
+   stdout: 
+   stderr: ROUTEMIX: REFUSE seats=10 max_share=0.4  unrouted=['executor', 'scout', 'scribe']|
+-- emptycfg
+   stdout: 
+   stderr: ROUTEMIX: REFUSE seats=10 max_share=0.4  unrouted=['executor', 'scout', 'scribe']|
+-- dictspec
+   stdout: 
+   stderr: ROUTEMIX: unreadable input: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool25/fix/emptylist.json'|
+
+== round-21 committed snapshot replay (live config) ==
+ROUTEMIX: OK seats=71 max_share=0.4 minimax-code=20/71 opencode-go=19/71 zai=16/71 anthropic=12/71 kimi-code=4/71
+-- per_provider today:
+{'anthropic': 12, 'kimi-code': 4, 'minimax-code': 20, 'opencode-go': 19, 'zai': 16}
+-- retained receipt .ufo/waves/round-21/routemix-spec1.json per_provider:
+{'anthropic': 11, 'google-antigravity': 1, 'openai-codex': 28, 'xai-oauth': 4, 'zai': 27}

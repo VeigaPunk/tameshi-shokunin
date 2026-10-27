@@ -1,0 +1,16 @@
+=== F2: a lying mutant that always prints 'VERDICT: PASS' and returns 0 ===
+mutation (scratch copy only; the lane repo is untouched):
+  -  print('VERDICT: %s' % ('PASS' if not failed else 'FAIL'))
+  +  print('VERDICT: %s' % ('PASS'))
+  -  return 0 if not failed else 1
+  +  return 0
+fixture clone toplevel: /fast/scratch/hyaku/tameshi-r51/T51W2ExecTool18/work3/tameshi-shokunin
+
+the mutated tool's own selftest output (it can no longer report FAIL):
+STAGED_ID_GUARD_SELFTEST: cases=24 failed=0
+VERDICT: PASS
+exit=0
+
+frozen counter run_row() on that clone (the mutant installed as the tool):
+  -> (None, 'VERDICT: PASS')
+  (None, ...) = no failure reason = the row is reported COVERED for a tool that cannot fail its selftest)

@@ -1,0 +1,65 @@
+== falsification probes for tools/context-capture.py row (SKILL.md:2144) ==
+All runs: cwd = git clone --shared at CAND (toplevel verified), stdin=/dev/null,
+env = {PATH=/usr/bin:/bin, HOME, TMPDIR=<seat scratch>/tmp}
+
+A. gate-vs-probe: can the tool fail?
+ 1) frozen --check on a receipt with observed_at changed
+    EXIT=2  CONTEXT: INVALID (id=snapshot_tampered ... exit=2 findings=2)
+    FINDING snapshot_tampered receipt sha256 355f4a3e... is not the pinned 05cb55b8...
+ 2) explicit --check, receipt bytes tampered, expected pin = tampered digest,
+    comparison.raw_stdout_equal flipped to false
+    EXIT=1  CONTEXT: MISMATCH (id=comparison_mismatch ... exit=1 findings=3)
+    FINDING comparison_mismatch raw_stdout_equal recorded False but raw stdout recomputes True
+    FINDING receipt_verdict_mismatch status recorded 'ok' but raw fields recompute 'mismatch'; exit recorded 0 but recomputed 1
+ 3) explicit --check, expected id changed to some_other_id (receipt pinned correct)
+    EXIT=1  FINDING expected_verdict_mismatch expected id=some_other_id exit=0 but recomputed id=context_consistent exit=0
+ 4) explicit --check, expected exit changed to 1
+    EXIT=1  FINDING expected_verdict_mismatch expected id=context_consistent exit=1 but recomputed exit=0
+ => tool genuinely fails (1 failed / 2 could-not-evaluate); kind=gate is correct, not a probe.
+
+B. pinned values really affect behaviour
+ 1) frozen receipt path .ufo/evidence/round-14/context-receipt.json exists at CAND
+    sha256 05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a
+    == FROZEN_RECEIPT_SHA256 (source:152-154) == row's truncated "05cb55b8" prefix
+ 2) same bytes, --check   EXIT=0  CONTEXT: OK (id=context_consistent ... exit=0 findings=0)
+ 3) FROZEN_TOOL_SHA256 (source:155-157 = 7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89)
+    is a THIRD live pin, checked at source:1212 when frozen.
+    Probe: scratch copy of the tool, FROZEN_RECEIPT_SHA256 repinned to a receipt whose
+    tool_sha256 = '0'*64 (digest consistent, so the digest gate passes):
+    EXIT=1  FINDING tool_declaration_mismatch retained tool_sha256 '000...0' is not the pinned historical declaration
+    => the pin is live; with the committed receipt bytes it is inert only because the
+    receipt digest pin already fixes tool_sha256 = 7313e9a2...
+ 4) row's Pinned values cell names only FROZEN_RECEIPT_SHA256 + id/exit, not FROZEN_TOOL_SHA256.
+
+C. write scope
+ 1) "--check writes nothing": tree hash over 12500 files before/after --check and --selftest
+    -> TREE_UNCHANGED
+ 2) --check in an isolated tree containing only tools/context-capture.py and
+    .ufo/evidence/round-14/context-receipt.json -> EXIT=0, same CONTEXT: OK line
+ 3) --check with the receipt hidden -> EXIT=2 receipt_missing (proves it reads that path)
+ 4) selftest fixtures: tempfile.mkdtemp(prefix="context-capture-selftest-", dir="/tmp")
+    (source:1624-1625) -- dir is HARDCODED /tmp, TMPDIR is ignored.
+    measured peak footprint 534488 bytes, 47 case dirs
+ 5) cleanup: PASS path -> no /tmp/context-capture-selftest-* leftovers
+             forced-FAIL path (injected failing case) -> EXIT=1, no leftovers either
+    (rmtree at source:1778 in finish() and in run_selftest's finally, source:2204-2206)
+
+D. last line as a diagnostic
+ 1) actual last stdout line: SELFTEST: PASS (49/49)
+ 2) grep -c 'SELFTEST: PASS (49/49 cases)' in real stdout -> 0
+ 3) on failure the last line is SELFTEST: FAIL (1/49 failed: <names>) and exit is 1
+ => the marker is a computed pass/fail tally, not help text; but the row quotes it with a
+    trailing " cases" word the tool never prints.
+
+E. determinism / hermeticity
+ 1) 3 consecutive --selftest runs: SELFTEST: PASS (49/49) each, exit 0
+ 2) lonely tree (only tools/context-capture.py, no lane, no sibling repos): EXIT=0, 49/49
+ => this row is NOT the known clone-context blocker (that is tools/round21-measure.py,
+    row 16 of the table, SKILL.md:2157).
+ 3) case arithmetic: 40 check_case + 7 usage_case calls + 2 hermetic records in finish() = 49
+
+F. exit-class completeness
+ observed exits: 0 (--check clean, also -h/--help), 1 (findings + expected pin mismatch),
+ 2 (snapshot_tampered, receipt_missing, internal_error, selftest setup error),
+ 64 (unknown flag, no args). main() returns only 64|0|run_selftest(0|1|2); emit() returns
+ result["exit"] in {0,1,2}. No code outside the row's 0/1/2/64 map.

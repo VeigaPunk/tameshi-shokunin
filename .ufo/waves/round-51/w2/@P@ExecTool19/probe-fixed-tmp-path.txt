@@ -1,0 +1,11 @@
+# Row's write-scope claim: "the runtime sweep additionally removes the fixed literal
+# /tmp/tally-audit-work whenever a PASS vector fires"
+# Attribution experiment (tool imported unmodified; run_vectors() called per CONFIGS entry):
+cfg 0 ('tally-audit', '0', '1')             -> /tmp/tally-audit-work exists after: n/a
+cfg 1 ('/tmp/tally-audit-work', '1', '0')   -> /tmp/tally-audit-work exists after: False
+# End-to-end confirmation: created /tmp/tally-audit-work/MARKER, ran the row's entry command
+#   python3 tools/tally-audit-v2.py --runner tools/mutate-and-run.sh   (exit 0)
+#   -> /tmp/tally-audit-work: No such file or directory  (removed)
+# Same removal observed during --selftest (marker dir gone after the run).
+# Source: tools/tally-audit-v2.py:265 CONFIGS, :268-288 run_vectors, :301 rm -rf "$root" in the
+#   injected reference block (root=/tmp/tally-audit-work, auto=1, KEEP=0 -> rm-on-PASS).

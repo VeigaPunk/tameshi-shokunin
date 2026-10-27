@@ -1,0 +1,49 @@
+usage: mte-interop.py [-h] (--check | --selftest) [--workdir WORKDIR]
+                      [--regression-stdout REGRESSION_STDOUT]
+                      [--fleet-root FLEET_ROOT] [--emit EMIT]
+
+Frontier F1 report interop: tameshi ledger legs as mutation-testing-elements
+reports. mte-interop.py --check [--fleet-root DIR | --workdir DIR
+[--regression-stdout F]] [--emit DIR] mte-interop.py --selftest --check runs
+`tools/mutate-and-run.sh --regression --keep` (or reads an existing kept
+regression workdir given by --workdir), then for every leg it finds: 1. emits
+one report in the mutation-testing-elements format (schema mutation-testing-
+report-schema 3.9.0, vendored and sha512-pinned in tools/vendor/): the
+pristine pinned target as `source`, one mutant per recorded defect, location
+computed from the defect's unique @old string, status mapped KILLED->Killed,
+SURVIVED->Survived, INCONCLUSIVE->RuntimeError; 2. validates the report
+against the official JSON Schema (draft-07, python `jsonschema` package); 3.
+computes the official metrics with the vendored mutation-testing-metrics 3.9.0
+library (node, `calculateMetrics`), not with tameshi's own code; 4. judges
+four checks per leg: schema the official schema accepts the report; ledger
+official killed = recorded killed = measured killed, official survived =
+measured survived, official invalid = measured inconclusive, official total =
+defect count, runner flips 0 (the leg's REGRESSION_TABLE line, not the emitted
+report); per_mutant every emitted status equals the mapped verdict of the same
+defect id in the runner's committed TABLE_* recorded table (catches balanced
+flips that keep the counts equal); score official mutationScore =
+killed/(killed+survived)*100. This one is a sanity check only: with the 1:1
+mapping it holds by construction (round-25 wave seat C2Tautology). A leg
+conforms only when all four hold. Each leg line also prints the runner's
+integer kill-rate next to the official score rounded half up (information
+only: the ledger's integer percentages are rounded, e.g. 7/15 = 46.67 printed
+as 47). Lines: MTE_LEG <leg>: CONFORMS|FAILS (...) per leg, then MTE_INTEROP:
+PASS|FAIL legs_conforming=N/M, or MTE_INTEROP: SETUP (<reason>). Exit: 0 PASS
+(every leg found conforms, M >= 1) · 1 FAIL · 2 SETUP · 64 usage. Needs python
+`jsonschema` (e.g. `uv run --no-project --with jsonschema==4.25.1 python3
+tools/mte-interop.py --check`), node >= 18, bash, git. Bounds: interop of the
+report format and score semantics only. It does not make the hand-seeded
+tameshi defects Stryker mutators, does not run Stryker, and does not validate
+the HTML report elements.
+
+options:
+  -h, --help            show this help message and exit
+  --check
+  --selftest
+  --workdir WORKDIR     existing kept regression workdir (skips the live run)
+  --regression-stdout REGRESSION_STDOUT
+                        its stdout, if not inside the workdir
+  --fleet-root FLEET_ROOT
+                        directory holding the sibling lane repos (default:
+                        parent of this checkout)
+  --emit EMIT           write the per-leg reports and official metrics here

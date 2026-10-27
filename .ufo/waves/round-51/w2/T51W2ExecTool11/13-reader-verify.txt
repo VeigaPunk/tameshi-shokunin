@@ -1,0 +1,46 @@
+## READER receipt — heading '### Round-26 gate/probe registry — report interop' (SKILL.md:2132-2172 at CAND)
+Read at CAND 6d8c11e378aa90b12650808e1b79270742935f15. The '#### Gate/probe registry — round 51' heading at 2138
+is 4 hashes, below the round-21 monitor's HEADING_RE ^#{1,3}, so this section now CONTAINS the round-51 table
+(2140-2171) and my audited row at 2152.
+
+### claim-by-claim verification against candidate bytes
+[TRUE]  '0 PASS (every leg found conforms, at least one leg) · 1 FAIL · 2 SETUP · 64 usage'
+        tools/mte-interop.py:36 docstring; :450 Parser.error -> self.exit(64,...); :323-324 SETUP exit 2; :347 return 0/1.
+[TRUE]  'Registry rows mte-interop-selftest (17/17)'
+        16 top-level case tuples + 1 emitter-locations check; :442 total = len(cases) + 1 -> 17; needle MTE_SELFTEST: 17/17 pass.
+        (selftest never reads LEG_TABLE, so the tenth leg cannot move this tally.)
+[FALSE] 'leg set not equal to the nine ledger legs'
+        tools/mte-interop.py:318 at CAND: 'differs from the ten ledger legs %s'. At BASE it said 'nine'.
+[FALSE] 'mte-interop-check (9/9)'
+        tools/mte-interop.py:78 LEG_TABLE has TEN entries (adds 'bash-drift-pins': 'TABLE_DRIFTPINS').
+        :316-318 guard raises Setup unless set(legs) == set(tables) == set(LEG_TABLE), so len(legs) == 10 always;
+        :343-344 prints 'legs_conforming=%d/%d' with len(legs) as the denominator -> the only reachable tallies are
+        conforming/10. The literal needle 'MTE_INTEROP: PASS legs_conforming=9/9' is UNREACHABLE at CAND.
+[TRUE]  'Reads the runner's committed tables; writes only its own scratch and --emit DIR'
+        TABLE regex over the runner's REGRESSION_TABLE lines; LEG_TABLE maps legs to TABLE_* literals;
+        scratch via tempfile.mkdtemp(prefix='tameshi-mte-*'); --emit writes the report tree (:336-342).
+[TRUE]  'The check replays live sibling object stores, so it is not hermetic'
+        :460 --fleet-root default is the parent of the checkout; --check runs tools/mutate-and-run.sh.
+[TRUE]  'Owner tameshi'
+
+### measured cross-check (wave-1 corroboration)
+w1/T51ExecEmbed.md:114 records MTE_INTEROP: PASS legs_conforming=10/10 with the bash-drift-pins leg CONFORMS.
+
+### downstream consequence
+tools/registry.json is UNCHANGED BASE..CAND (git diff --stat empty) and still pins the unreachable needle:
+   mte-interop-check status=active expect={"exit": 0, "stdout_contains": ["MTE_INTEROP: PASS legs_conforming=9/9"]}
+  registry-check.py:720 sets held = (got == expect.exit and no missing needle); :884 exits 1 when any row differs.
+  => 'python3 tools/registry-check.py --rev CAND' cannot exit 0; the C3 row for tools/registry-check.py (SKILL.md:2154)
+     declares '0 clean' as the entry result, and the section claim above is false at CAND.
+
+### repairability inside the round's frozen scope: NO
+Frozen no-harm allowlist (no-harm.sh:35) permits only M:tools/mutate-and-run.sh, M:tools/tally-audit.py,
+M:tools/tally-audit-v2.py, M:tools/tally-audit-v3.py, M:tools/mte-interop.py. tools/registry.json is NOT on it,
+so repairing the registry row makes NOHARM tools-scope RED. The SKILL.md sentence could be edited, but it is a
+different claim surface (C3's section, not the counter) and any byte change re-keys the section.
+
+### provenance
+Pre-existing at BASE: registry expected 9/9 and the tool had 9 legs -> consistent. C2's tenth leg made it
+inconsistent without touching tools/registry.json. Disclosed nowhere in contract.json, l1-notes.md or the
+w1 reports beyond w1/T51CritRekey.md:153 ('At-risk: ... both become ten/10') which noted the risk but not
+the registry.json consequence.

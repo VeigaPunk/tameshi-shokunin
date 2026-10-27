@@ -1,0 +1,72 @@
+VERIFICATION LOG (T51W2ExecTool07)
+candidate=6d8c11e378aa90b12650808e1b79270742935f15 base=9962033fd7a75aa2f2847e979dd687a5d28505a1
+row=SKILL.md:2148  tool=tools/mte-interop.py  table row 07 of 30
+
+A. row self-test (exact backticked cell argv) from git clone --shared at CAND, TMPDIR=$S/tmp, stdin=/dev/null
+   exit=0  last stdout line="MTE_SELFTEST: 17/17 pass"  wall=0.18s
+   repeat x3 -> 17/17 pass each time (stable)
+   under uv run --with jsonschema==4.25.1 -> 17/17 pass exit 0
+   under jsonschema==4.20.0 -> 17/17 pass exit 0
+
+B. usage probe: python3 tools/mte-interop.py --r51-no-such-flag
+   exit=64  stdout empty  stderr="mte-interop.py: error: one of the arguments --check --selftest is required"
+   verdict map declares 64 -> token present -> counter's usage check passes
+
+C. frozen C3 counter's own row logic (measure.py imported from .ufo/evidence/round-51/c3/measure.py,
+   sha256 a3abbd3b... == freeze.json pin) on the row:
+   row_reason=None ; run_row -> (None, 'MTE_SELFTEST: 17/17 pass')
+   => counter's row accepted; selftest exit 0; marker "MTE_SELFTEST:" present in row's Self-test cell
+
+D. gate is a real gate, not a probe:
+   D1. synthetic kept-regression workdir, all legs conforming -> exit 0 "MTE_INTEROP: PASS legs_conforming=10/10"
+   D2. same workdir with one leg's recorded verdict flipped -> exit 1 "MTE_INTEROP: FAIL legs_conforming=0/10"
+   D3. neutered judge (failed=[] always) -> selftest exit 1 "MTE_SELFTEST: 3/17 pass"
+   D4. nine-leg workdir (bash-drift-pins removed) -> exit 2 "SETUP (leg set ... differs from the ten ledger legs ...)"
+
+E. pinned values are load-bearing:
+   E1. tamper tools/vendor/mutation-testing-report-schema-3.9.0.tgz -> selftest exit 2
+       "MTE_SELFTEST: SETUP (mutation-testing-report-schema-3.9.0.tgz integrity mismatch)"
+   E2. tamper tools/vendor/mutation-testing-metrics-3.9.0.tgz -> selftest exit 2
+       "MTE_SELFTEST: SETUP (mutation-testing-metrics-3.9.0.tgz integrity mismatch)"
+   E3. tamper TABLE_DRIFTPINS in tools/mutate-and-run.sh -> selftest UNCHANGED (17/17 exit 0),
+       but --check over the same workdir flips to exit 1 "FAIL legs_conforming=9/10"
+       => the runner pin is load-bearing for the CHECK path, NOT for the self-test path.
+   E4. both vendored tarball sha512 literals in the tool (tools/mte-interop.py:64,66) match the
+       bytes actually committed at CAND (recomputed base64(sha512) of each blob == literal). Verified.
+
+F. write scope: measured TMPDIR trees created by the selftest (sitecustomize hook on tempfile):
+   tameshi-mte-selftest-* (mkdtemp, tool:386)
+   tameshi-mte-<random> (TemporaryDirectory(prefix='tameshi-mte-'), tool:199  <-- NOT in the row's list)
+   live --check also creates tameshi-mte-fleet-* (tool:276) and tameshi-mte-regression-* (tool:309)
+   row write-scope cell names tameshi-mte-selftest-*, tameshi-mte-fleet-*, tameshi-mte-regression-*.
+   => the bare "tameshi-mte-" node_modules staging tree (tool:199) is undeclared.
+   lane read-only claim: clone git status --porcelain EMPTY after every run; live runs against the
+   real fleet root left lane+clone trees clean; sibling repos' status diff shows only OTHER lanes'
+   concurrent round-48/53/54 work, not writes from this tool.
+
+G. exit-code map vs source (all return sites enumerated, tool lines 299/324/347/357/398/430/444/450):
+   0 PASS / clean                 declared
+   1 FAIL                         declared
+   2 SETUP (jsonschema/node missing, tarball integrity, leg-set mismatch, regression exit 2)  declared
+   64 usage (Parser.error, tool:447-450)  declared
+   UNDECLARED: uncaught exception -> Python exits 1 with a traceback and NO MTE_INTEROP/MTE_SELFTEST line.
+     G1. unreadable <leg>/sweep.log -> exit 1, stdout stops mid-leg list (no verdict line), stderr traceback
+     G2. --emit DIR not writable -> exit 1, stdout stops mid-leg list, stderr traceback
+   The row's map says "1 failed"; a crash is reported as "failed" although nothing was graded.
+   PROTOCOL §Gate standard: "0 = clean and 1 = failed fleet-wide; every other code a gate exits (2,3,64,...)
+   is declared in its registry entry and mapped onto clean|failed|could-not-evaluate".
+   The sibling row for tools/registry-replay.py (SKILL.md:2155) DOES disclose "an uncaught traceback also
+   exits 1"; row 2148 does not.
+
+H. --help exits 0 (argparse default) -> "clean" verdict for a request that graded nothing.
+   Same for tools/golden-verdict.py, pin-disposition.py, shrink-case.py (lane-wide argparse convention).
+
+I. cross-surface staleness (not the C3 predicate, but the same tool's other registry):
+   tools/registry.json (unchanged base->cand) row "mte-interop-check" expects
+   stdout_contains ["MTE_INTEROP: PASS legs_conforming=9/9"] and exit 0.
+   At CAND the tool prints "legs_conforming=10/10" (ten legs). registry-check --rev CAND --only mte-interop-check
+   -> exit 1, "ROW mte-interop-check expect=0 got=2 differs", stdout_missing ["MTE_INTEROP: PASS legs_conforming=9/9"],
+   stdout_tail "MTE_INTEROP: SETUP (regression exit 2)".
+   At BASE the same row also differs (expect=0 got=2, same missing needle) -> pre-existing, not CAND-caused.
+   The round-26 registry row (SKILL.md:2136) still says "nine ledger legs" and "mte-interop-check (9/9)".
+   The CAND tool's own message says "ten ledger legs" (tool:318) and LEG_TABLE has ten entries (tool:78).

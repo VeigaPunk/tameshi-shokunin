@@ -1,0 +1,20 @@
+### FINDING F1: exit 0 does NOT mean 'every expected-value site reported'
+row verdict map (SKILL.md:2170): '0 clean — every expected-value site reported'
+
+--- (a) input with a syntax error, TEXT mode (the row's stated entry command) ---
+exit=0 stdout_bytes=0 stderr_bytes=0
+  -> the operator sees exit 0 and NO output: indistinguishable from 'no expected-value writes'
+
+--- (b) same file, JSON mode: the parse-error record IS present ---
+{"file": "/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool29/edge/broken.py", "sites": [{"expected": false, "explicit_out": false, "flagged": false, "kind": "parse-error", "lineno": 1, "resolved": "", "scratch": false, "unflagged": false}]}
+
+error: main: syntax error at end of input
+--- (c) control: a file with an expected-value write under  prints one line ---
+/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool29/edge/m2.py:2 open expected=1 scratch=0 unflagged=1 expected.json
+
+--- (d) SAME write under match/case: nothing printed, exit 0 (F2) ---
+exit=0 (no output above)
+
+--- (e) unflagged expected-value write found: exit is still 0 (probe semantics; the row's '0 clean' gloss) ---
+/fast/scratch/hyaku/tameshi-r51/T51W2ExecTool29/edge/writer.py:2 open expected=1 scratch=0 unflagged=1 expected.json
+exit=0
