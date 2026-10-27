@@ -5,7 +5,9 @@
 #  - r45-freshness: the axis score floor(10*fresh/population) >= 9 with fresh >= 71. Round 50 pinned the exact
 #    population 73; routed defect R50.1 (S022 queued -> mined) lawfully grows the population to 74, which leaves the
 #    score at 9 (71/74), so the exact-population pin is replaced by the score it guarded;
-#  - tools-scope: only M:tools/mutate-and-run.sh (C2's tenth leg) may change under tools/;
+#  - tools-scope: only M:tools/mutate-and-run.sh (C2's tenth leg) may change under tools/, plus (amendment 2) the four
+#    tools that pin the runner's leg panel and must follow it: tally-audit.py, tally-audit-v2.py, tally-audit-v3.py,
+#    mte-interop.py (their self-tests are C3 rows, so a broken update fails C3);
 #  - r50 shrinker capability: tools/shrink-case.py --selftest exits 0 with failed=0 (new, the round-50 capability).
 # Scratch: $HYAKU_SCRATCH (default /fast/scratch/hyaku)/tameshi-r51/no-harm, removed on exit.
 LANE=$1; REV=$2
@@ -30,7 +32,7 @@ H=$(python3 .ufo/evidence/round-46/coverage/measure.py --lane "$LANE" --rev "$RE
 I=$(python3 .ufo/evidence/round-47/coverage/measure.py --lane "$LANE" --rev "$REV" | tail -1 | grep -oE 'rows=[0-9]+|entries=[0-9]+|C3_R47_PASS=[a-z]+' | tr '\n' ' ')
 [ "$I" = "rows=3 entries=3 C3_R47_PASS=true " ] && s=ok || s=RED; echo "NOHARM r47-coverage $I$s"
 T=$(git diff --name-status --no-renames "$BASE" "$REV" -- tools | tr '\t' ':' | tr '\n' ' ')
-s=ok; for t in $T; do case "$t" in M:tools/mutate-and-run.sh) ;; *) s=RED;; esac; done
+s=ok; for t in $T; do case "$t" in M:tools/mutate-and-run.sh|M:tools/tally-audit.py|M:tools/tally-audit-v2.py|M:tools/tally-audit-v3.py|M:tools/mte-interop.py) ;; *) s=RED;; esac; done
 echo "NOHARM tools-scope [${T}] $s"
 git show "$REV:tools/pbt-staged-id.py" > "$SCR/pbt.py"; git show "$REV:tools/staged-id-guard.py" > "$SCR/guard.py"
 P=$(cd "$SCR" && python3 -I "$SCR/pbt.py" --guard "$SCR/guard.py" --seed 4949 --cases 400 --dump "$SCR/d.jsonl" | tail -1)
