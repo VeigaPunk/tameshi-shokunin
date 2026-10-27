@@ -226,7 +226,7 @@ def main():
                 'sha256': sec['sha256'], 'class': 'record', 'verdict': 'verified-record',
                 'blocking_gaps': 0, 'wrong_expectations': 0, 'minor_gaps': 0,
                 'commands_executed_count': 1, 'read_rev': cand, 'inputs': inputs, 'traces': [trace_rel],
-                'seats': list(seats) + ['L1 TameshiR51 integration'],
+                'seats': list(seats) + ['L1 TameshiR51a3 integration (attempt 3)'],
                 'reports': [READS_DIR, '%s/refresh-receipts.json' % trace_rel.rsplit('/traces/', 1)[0]]})
             receipts.append({'section': h, 'start': sec['start'], 'end': sec['end'], 'sha256': sec['sha256'],
                              'credit_at_cand': cand_reason.get(h), 'direct': direct,
