@@ -1,0 +1,17 @@
+{
+  "heading": "### Gate/probe registry",
+  "cand": "a41195dfc13a73958e4c5228ec196b28d03ded03",
+  "section_sha256": "c1aabe900e6fbc46288d2ff241348a5fba8481388979ed62d7720dff0b244c65",
+  "findings": [
+    {
+      "quote": "isolated `/tmp/tameshi-r12-*` selftest",
+      "class": "stale scratch location (TMPDIR drift)",
+      "skill_statement": "The repeat-control self-test writes its scratch under /tmp. At C* tools/repeat-control.py:597 creates it with tempfile.mkdtemp(prefix=\"tameshi-r12-repeat-control-selftest.\", dir=tempfile.gettempdir()), so the base is $TMPDIR when that is writable and /tmp only as the fallback; the same fix pass that patched the tool (218bc6b) moved the sibling env-diff registry cell to `$TMPDIR`, leaving this cell naming a location the tool does not use under the directive-mandated TMPDIR."
+    },
+    {
+      "quote": "isolated `/tmp/bash-witness-selftest-private.*` (selftest only)",
+      "class": "stale scratch location (TMPDIR drift)",
+      "skill_statement": "The bash witness-study self-test private root is under /tmp. At C* tools/bash-witness-study.py:1240-1241 creates it with tempfile.mkdtemp(prefix=\"bash-witness-selftest-private.\", dir=tempfile.gettempdir()), so the base is $TMPDIR when that is writable; the cell states a fixed /tmp base for a write scope that follows TMPDIR."
+    }
+  ]
+}

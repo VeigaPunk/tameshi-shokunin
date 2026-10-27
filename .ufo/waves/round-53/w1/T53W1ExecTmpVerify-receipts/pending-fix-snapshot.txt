@@ -1,0 +1,252 @@
+# Pending working-tree fix (peer seat) — snapshot
+## working-tree diff for tools/
+diff --git i/tools/bash-witness-study.py w/tools/bash-witness-study.py
+index bcadd1d..c69edf3 100755
+--- i/tools/bash-witness-study.py
++++ w/tools/bash-witness-study.py
+@@ -202,6 +202,20 @@ SPEC_LINE_RE = re.compile(r"^@(defect|old|new)(?: (.*))?$")
+ UNESCAPES = {"n": "\n", "t": "\t", "r": "\r", "\\": "\\"}
+ 
+ 
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
++
+ class Cannot(Exception):
+     """could-not-evaluate: missing input, pin mismatch, runner SETUP."""
+ 
+@@ -1238,7 +1252,7 @@ def cmd_selftest(args) -> int:
+             print(f"  check {name:<44} FAIL")
+ 
+     private_root = Path(tempfile.mkdtemp(
+-        prefix="bash-witness-selftest-private.", dir=tempfile.gettempdir()))
++        prefix="bash-witness-selftest-private.", dir=strict_scratch_root()))
+     assert private_root.resolve(strict=True) == private_root
+     root = None
+     try:
+diff --git i/tools/context-capture.py w/tools/context-capture.py
+index ca43e66..9208999 100755
+--- i/tools/context-capture.py
++++ w/tools/context-capture.py
+@@ -297,6 +297,20 @@ expected schema (exactly four keys):
+ """
+ 
+ 
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
++
+ class UsageError(Exception):
+     pass
+ 
+@@ -1622,7 +1636,7 @@ SELFTEST_ENV = {
+ class SelftestHarness:
+     def __init__(self):
+         self.root = tempfile.mkdtemp(prefix="context-capture-selftest-",
+-                                     dir=tempfile.gettempdir())
++                                     dir=strict_scratch_root())
+         self.passed = 0
+         self.failed = []
+         self.outputs = []
+diff --git i/tools/env-diff.py w/tools/env-diff.py
+index 4186cdb..5a96ada 100644
+--- i/tools/env-diff.py
++++ w/tools/env-diff.py
+@@ -29,6 +29,20 @@ SCHEMA = "tameshi-env-diff-receipt-v1"
+ PROFILES = ("host", "clean", "clean_repeat", "tz", "locale", "home", "columns")
+ 
+ 
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
++
+ def digest(data):
+     return hashlib.sha256(data).hexdigest()
+ 
+@@ -58,7 +72,7 @@ def execute(payload, interp, profile, timeout=600, bwrap=None):
+     bwrap = bwrap or shutil.which("bwrap")
+     if not bwrap:
+         return {"exit": None, "error": "BWRAP_UNAVAILABLE"}
+-    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=tempfile.gettempdir()) as tmp:
++    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+         root = Path(tmp)
+         (root / "home").mkdir()
+         (root / "tmp").mkdir()
+diff --git i/tools/evidence-disposition.py w/tools/evidence-disposition.py
+index ec34497..75fc455 100755
+--- i/tools/evidence-disposition.py
++++ w/tools/evidence-disposition.py
+@@ -188,6 +188,20 @@ ancestral to that same anchor.
+ """
+ 
+ 
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
++
+ class CouldNotEvaluate(Exception):
+     """Input that prevents the disposition question from being evaluated."""
+ 
+@@ -2348,7 +2362,7 @@ def _status_for(exit_code):
+ 
+ def selftest():
+     """Isolated /tmp fixtures; invokes this CLI via subprocess only."""
+-    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=tempfile.gettempdir()))
++    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=strict_scratch_root()))
+     marker = scratch / "argv-marker"
+     passed = 0
+     failed = []
+diff --git i/tools/pin-disposition.py w/tools/pin-disposition.py
+index 5196044..b65ee40 100755
+--- i/tools/pin-disposition.py
++++ w/tools/pin-disposition.py
+@@ -158,6 +158,20 @@ exit 2  could-not-evaluate invalid input (usage, manifest, fleet root)
+ """
+ 
+ 
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
++
+ class InvalidInput(Exception):
+     """Input that prevents any leg from being evaluated."""
+ 
+@@ -703,7 +717,7 @@ SELFTEST_DIRTY_SHA256 = "35db8ca11b64c09f964bf88537abc8bc6abe180e6dc4aaae400c820
+ 
+ def selftest():
+     """Hermetic fixtures under /tmp: no fleet repo, no sibling repo is read."""
+-    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=tempfile.gettempdir())
++    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=strict_scratch_root())
+     passed = 0
+     failed = []
+ 
+diff --git i/tools/registry-check.py w/tools/registry-check.py
+index a03beb4..782b78e 100755
+--- i/tools/registry-check.py
++++ w/tools/registry-check.py
+@@ -753,6 +753,20 @@ def resolve_rev(root, rev):
+     return sha, None
+ 
+ 
++
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
+ def clone_lane_at_rev(root, rev, sha):
+     """Clone the lane detached at sha into a fleet-mirror mkdtemp.
+ 
+@@ -763,7 +777,7 @@ def clone_lane_at_rev(root, rev, sha):
+     fleet_root = os.path.dirname(root_real)
+     env = git_env()
+     try:
+-        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=tempfile.gettempdir())
++        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+         raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
+     try:
+@@ -914,7 +928,7 @@ def print_human(report, stream=sys.stdout):
+ 
+ def selftest():
+     scratch = tempfile.mkdtemp(
+-        prefix="tameshi-r17-registry-check-selftest.", dir=tempfile.gettempdir()
++        prefix="tameshi-r17-registry-check-selftest.", dir=strict_scratch_root()
+     )
+     passed = 0
+     failed = []
+diff --git i/tools/repeat-control.py w/tools/repeat-control.py
+index 0d6b073..0d662e5 100755
+--- i/tools/repeat-control.py
++++ w/tools/repeat-control.py
+@@ -145,6 +145,20 @@ USAGE = (
+ )
+ 
+ 
++def strict_scratch_root():
++    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
++    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
++    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    import os as _os
++    t = _os.environ.get("TMPDIR")
++    if t:
++        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
++            raise RuntimeError(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++        return t
++    return tempfile.gettempdir()
++
++
+ class TamperError(Exception):
+     """A --snapshot directory does not match its committed record."""
+ 
+@@ -594,7 +608,7 @@ def selftest():
+     if not os.path.isdir(root):
+         emit(f"SELFTEST: COULD_NOT_EVALUATE (committed fixture root missing or not a directory: {root})")
+         return 2
+-    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=tempfile.gettempdir())
++    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
+     passed = 0
+     failed = []
+ 
+
+## counter verdict against a scratch clone carrying that working-tree tools/
+C2_R53: rev=b63547a014bd tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=1 docs=ok total=0 C2_R53_PASS=true

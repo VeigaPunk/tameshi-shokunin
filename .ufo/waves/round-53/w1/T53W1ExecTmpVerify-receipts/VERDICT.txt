@@ -1,0 +1,17 @@
+# T53W1ExecTmpVerify — C2 tool-patch verification receipt
+lane=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+cand=a41195dfc13a73958e4c5228ec196b28d03ded03
+scratch=/fast/scratch/hyaku/tameshi-r53/w1/T53W1ExecTmpVerify
+host: Linux 7.2.11-arch1-1 x86_64 / python 3.14.8 / git 2.56.0 / bwrap 
+
+CHECK1 grep dir="/tmp" over C* blobs of tools/ : PASS (0 hits)
+CHECK2 registry-check --selftest under TMPDIR   : PASS (exit 0, SELFTEST: PASS (51 cases))
+CHECK2 env-diff      --selftest under TMPDIR   : PASS (exit 0, ENVDIFF_SELFTEST: 9/9 pass)
+CHECK3 registry-check --selftest, missing TMPDIR: FAIL (exit 0, expected non-zero; no scratch message; no REGISTRY_CHECK verdict line printed)
+CHECK4 scratch dirs created under redirected TMPDIR: PASS (strace: 213 mkdir under TMPDIR for registry-check, 146 for env-diff, 0 under /tmp)
+
+## frozen counter verdict at C*
+C2_R53: rev=a41195dfc13a tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=0 docs=ok total=2 C2_R53_PASS=false
+## frozen counter problems
+PROBLEM cr47-zero-exit
+PROBLEM cr47-no-scratch-message
