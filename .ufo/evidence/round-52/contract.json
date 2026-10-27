@@ -49,8 +49,19 @@
  },
  "controls": {
   "script": ".ufo/evidence/round-52/control/controls.py LANE OUTDIR",
-  "expect": {"C1_CTL_0": false, "C1_CTL_STALE": false, "C1_CTL_SUPERSEDE": false, "C1_CTL_NEEDLE": false, "C1_CTL_STUB": false, "C1_CTL_POSITIVE": true,
-             "C2_CTL_0": false, "C2_CTL_DELETE": false, "C2_CTL_ZERO": false, "C2_CTL_FORGE": false, "C2_CTL_POSITIVE": true},
+  "expect": {
+   "C1_CTL_0": false,
+   "C1_CTL_STALE": false,
+   "C1_CTL_SUPERSEDE": false,
+   "C1_CTL_NEEDLE": false,
+   "C1_CTL_STUB": false,
+   "C1_CTL_POSITIVE": true,
+   "C2_CTL_0": false,
+   "C2_CTL_DELETE": false,
+   "C2_CTL_ZERO": false,
+   "C2_CTL_FORGE": false,
+   "C2_CTL_POSITIVE": true
+  },
   "rule": "scored at freeze bytes and committed before wave 1; receipts are stamped with the freeze commit (the deciding run's gate 0 refuses receipts not descending from FREEZE)"
  },
  "deciding": {
@@ -64,5 +75,14 @@
   "mistake": "corpus/lessons/round-52.md ## Mistakes (R51.1 class: a tool change whose registered gate row was not updated)",
   "assimilation": "none: /home/vgpnk/Projects/shokuknow/merge/tameshi does not exist; considerthese/2026-10-26.md proposal 3 (recurring-defect tracker) is mined in wave 1"
  },
- "amendments": []
+ "amendments": [
+  {
+   "n": 1,
+   "at": "2026-10-27T03:00-03:00",
+   "before_any_seat": true,
+   "what": "control/controls.py only. The first controls run (receipts kept in control/a0/) scored 10/11 as pre-registered but C1_CTL_POSITIVE false: the control clone sat outside the fleet, so tools/registry-check.py (which builds its fleet mirror from --root's parent) ran mutate-and-run-regression, round21-measure-selftest and mte-interop-check without sibling repos, and the evidence-disposition-round18 rows refused control commits on no branch (historical_input_unavailable). Fix: the control clone sits in a fleet mirror (symlink per *-shokunin sibling) and each control commit gets a branch. No counter, predicate, target, kill rule, expectation, no-harm monitor or deciding-script byte changed; no seat had run.",
+   "freeze_commit_before": "acc27abe9b155e165d282d4bb7f821317ba1e7a1",
+   "erratum": "contract C1 before prose says total=2; the counter arithmetic at BASE gives not_held=2 (the stale row plus the summary H!=N clause) + mte_row=1 + c3=1 = 4 (scored at BASE pre-freeze: before/c1-base-prefreeze.stdout, and C1_CTL_0). Target and predicate unchanged."
+  }
+ ]
 }

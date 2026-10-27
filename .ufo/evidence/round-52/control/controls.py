@@ -130,7 +130,15 @@ def main():
     scr = os.path.join(os.environ.get('HYAKU_SCRATCH', '/fast/scratch/hyaku'), 'tameshi-r52', 'controls')
     shutil.rmtree(scr, ignore_errors=True); os.makedirs(scr)
     try:
-        d = os.path.join(scr, 'clone')
+        # amendment 1: the clone sits in a fleet mirror (one symlink per *-shokunin sibling of the lane), because
+        # registry-check builds its own mirror from --root's parent and several rows read siblings through it
+        fleet = os.path.join(scr, 'fleet'); os.makedirs(fleet)
+        lane_real = os.path.realpath(lane)
+        for name in sorted(os.listdir(os.path.dirname(lane_real))):
+            src = os.path.join(os.path.dirname(lane_real), name)
+            if name.endswith('-shokunin') and os.path.realpath(src) != lane_real:
+                os.symlink(src, os.path.join(fleet, name))
+        d = os.path.join(fleet, os.path.basename(lane_real))
         sh('git', 'clone', '-q', '--shared', lane, d)
         if os.path.realpath(sh('git', '-C', d, 'rev-parse', '--show-toplevel').strip()) != os.path.realpath(d):
             raise SystemExit('toplevel mismatch')
@@ -146,6 +154,8 @@ def main():
             if steps:
                 sh('git', '-C', d, *ident, 'commit', '-qam', name)
             revs[name] = sh('git', '-C', d, 'rev-parse', 'HEAD').strip()
+            # amendment 1: evidence-disposition rows refuse a detached HEAD on no branch; give each control a branch
+            sh('git', '-C', d, 'branch', '-f', 'ctl-' + name.lower().replace('_', '-'), revs[name])
         R21 = ('tools/round21-measure.py', r21_fix)
         REG = 'tools/registry.json'
         build('C1_CTL_0', [])
