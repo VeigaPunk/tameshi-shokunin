@@ -632,3 +632,14 @@ No other SOURCES row changes status here, and every used-by path of a mined row 
 | Entry / ground | Admission and exact scope | Evidence |
 |---|---|---|
 | `knowledge/mutation-case-kagi-drift-pins.md` / Core (recorded legs) | source-headed entry citing mined S272 (the pinned kagi host-drift gate) and S273 (Bash `errexit`/`pipefail` semantics), new this round; tenth ledger leg `bash-drift-pins`, 2/10 killed on the 13-case selftest under the recorded `sandbox-$DEFECT_ID` suite; independent A/B probe shows K_GONE_ARM, K_AMBIG_GT and K_SHAPE_OPTIN are environment-masked and become killed under a neutral sandbox (5/10), so the reported 20% must not be read as gate kill strength; seven of ten predictions held, five other survivors have off-suite witnesses | `.ufo/evidence/round-51/c2/`; `.ufo/waves/round-51/w1/T51LabSandboxLeak.md`, `T51ScribeEntry/` |
+
+## Round 53 — F7 ground acquisition note (assimilation)
+
+F7 (incremental re-sweep granularity) gains its first sourced policy ground:
+`knowledge/change-aware-resweep-cadence.md` (S275, S276 — opened 2026-10-27,
+assimilated from `merge/tameshi`) records the two candidate re-sweep policies
+precisely enough to classify per-leg reuse decisions against: a pinned
+long-standing suite is the consistency device (S276), and commit relevance is
+the per-leg reuse decision with a measured size (S275, Java — magnitude not
+transferred). The frontier row stays `open`: the classification itself is
+still unmeasured; the "before" move is prose → sourced policy ground.

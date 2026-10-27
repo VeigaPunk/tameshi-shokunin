@@ -1568,3 +1568,13 @@ Check that can fail: at the candidate revision run `python3 tools/registry-check
 Lesson: `corpus/lessons/round-52.md` `## Mistakes` row 1 (routed defect R51.1; the same class as R47.1).
 
 Falsifier that must fail: at base `ef19d8e1` the check prints `held=48/49` with `mte-interop-check` differing (`.ufo/evidence/round-52/control/C1_CTL_0.stdout`), and the row-only fixes are caught too (`C1_CTL_STALE`, `C1_CTL_SUPERSEDE`, `C1_CTL_NEEDLE` all false); the positive control `C1_CTL_POSITIVE` (`63b12e8c`) passes with `held=49/49`.
+
+## Criteria appended — round 53 (2026-10-27)
+
+### Criterion 104 — a fix-pass hunk is re-read before commit
+
+A round that edits SKILL.md sections in response to reader findings re-reads each applied hunk before commit: no section may gain a duplicate parenthetical, a self-contradicting sentence, or a citation whose receipt does not establish the cited clause (command, exit and pinned bytes). The check that can fail: a duplicate-phrase scan over the touched sections lists zero hits, and every new citation resolves to a receipt establishing its clause. Round 53's fix pass (`.ufo/evidence/round-53/`) is the worked example; the wave-2 lint seat's report is the round's receipt.
+
+Lesson: `corpus/lessons/round-53.md` `## Mistakes` row 1 (the round-52 fix-pass debris the T52W3 readers routed back).
+
+Falsifier that must fail: at base `6db1d220` the round-52 duplicate "(**ten** since round 51) (ten since round 51)" at SKILL.md (then :1305) is present, and the self-contradicting "Cases 5–6 were still not embedded at this boundary (both are legs 5–6 since round 10-2 …)" at (then :1227-1228) is present; both are gone at the round-53 content candidate `218bc6b5`.
