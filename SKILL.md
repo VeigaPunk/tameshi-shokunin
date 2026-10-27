@@ -1748,7 +1748,7 @@ in place with the line count of every edited section unchanged (except `### Roun
 | 360-361 | D1/D3 "die on the same 16 cases" | 16 cases each, 14 shared | CR06 |
 | 505 | 22 denied verbs | 23 (`claim-ledger.sh:164`) | CR10 |
 | 513-515 | surface-probe and cite-check exit-2 paths "uncovered" | each asserts one CLI `--src` exit-2 arm; no arm accounting beyond it | CR10 |
-| 923-927 | "Round 7 recorded four legs at r7-1" | dated: four at r7-1, seven since round 16 | CR16 |
+| 925 | "Four legs at this revision" | dated: four at r7-1, seven since round 16 | CR16 |
 | 949-950 | receipt literal `cases=4` | `cases=N`, N per revision | CR16 |
 | 1390, 1393 | mutation-case notes "(six)"; round-11 record "lands" in `plans/` | dated count; no separate round-11 record file exists (the wave deliverables are the record) | CR23, RR08 (w2) |
 | 1472 | "Box 3 remains `[ ]`" | dated: `[ ]` at that write, `[~]` since | CRCritic1, CRCritic2 |
