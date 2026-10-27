@@ -1842,7 +1842,11 @@ def main(argv):
     if argv and argv[0] == "--selftest":
         if len(argv) != 1:
             return usage_failure("--selftest takes no further arguments")
-        return selftest()
+        try:
+            return selftest()
+        except RuntimeError as exc:
+            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+            return 2
 
     root = default_root()
     rev = None

@@ -136,7 +136,7 @@ disabled or attacked mechanism makes exactly the targeted cases fail.
 Runs a suite's own code through one-exact-edit mutants and measures what it
 catches. The recipe is intended to be self-contained; round 16's full-page
 cold-read executed it end to end (two seats; Errata — round 16).
-Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>-<n>-work/` (Standing rules; deleted on exit).
+Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>/<sub>/` (Standing rules; deleted on exit).
 
 1. **Pick the target and prove its control.** Prove the actual run has no
    live-path or host effects; `--selftest` alone does not establish hermeticity.
@@ -158,7 +158,7 @@ Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<
    claim-ledger pin was once surveyed from a dirty intermediate state and had to
    be re-pinned (corpus/README.md G-R2-1 row; corpus/knowledge/gates-survey-kagi.md errata
    block). If the path is dirty: stop.
-3. **Copy pristine to scratch.** `mkdir -p "$HYAKU_SCRATCH/<lane>-r<round>-<n>-work/evidence"`
+3. **Copy pristine to scratch.** `mkdir -p "$HYAKU_SCRATCH/<lane>-r<round>/<sub>/evidence"`
    then `cp -p <artifact> …/pristine.<ext>`; re-verify (`sha256sum`; the bash
    lane additionally `cmp`-verified its copy — corpus/knowledge/mutation-case-kagi-census.md:44-45).
    All edits happen to copies; the original is never a write target.
