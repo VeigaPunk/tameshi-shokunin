@@ -1,0 +1,68 @@
+{
+ "schema": "tameshi-round-contract-v1",
+ "round": 52,
+ "lane": "tameshi",
+ "l1": "TameshiR52 (hyaku run 9, attempt 1)",
+ "date": "2026-10-27",
+ "base": "ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4",
+ "axes_at_base": {
+  "depth": "10 (command D recorded_cases=10; no-harm at base)",
+  "calibration": "8 (round-21 cold-read monitor score 8, 64/64 credited at base; the monitor's ceiling)",
+  "freshness": "9 (round-45 monitor population=74 fresh=71)",
+  "operability": "no numeric score; harmed at round 51 (closure R51.1: registered gate mte-interop-check unsatisfiable)",
+  "coverage": "no numeric score",
+  "adjacency": "no numeric score",
+  "lowest_non_retired": "calibration 8 carries C2. Numeric axes sit at or above the saturation line 8; no capability entered the table in rounds 51 (window 2 still holds round 50's), so the nudge does not fire and the lowest-axis obligation stands; operability is the axis the last closure graded harmed, and C1 repairs it."
+ },
+ "claims": {
+  "C1": {
+   "axis": "operability (surface: the lane's two registry homes — tools/registry.json rows replayed by tools/registry-check.py, and the round-51 SKILL.md registry rows scored by the frozen round-51 C3 counter)",
+   "type": "measured, sourced",
+   "routed_from": "corpus/lessons/round-51-verifier-spotcheck.md routed defects 1 (R51.1) and 4 (R51.4)",
+   "predicate": "At REV: every active tools/registry.json row returns its registered outcome under the BASE bytes of tools/registry-check.py run with --rev REV (held=N/N); no BASE-active row is inactive or missing; the mte-interop-check row is active and expects exactly `MTE_INTEROP: PASS legs_conforming=K/K` with K the LEG_TABLE size of tools/mte-interop.py at REV; the frozen round-51 C3 counter (digest a3abbd3b…) run at REV in a fresh clone outside the fleet root prints total=0; tools/round21-measure.py keeps all 11 BASE self-test case literals. Label: C1_R52_PASS=true.",
+   "counter": "python3 .ufo/evidence/round-52/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+   "before": "expected at BASE: not_held=1 (mte-interop-check differs; registry-check at BASE printed REGISTRY_CHECK: held=48/49) and c3_total=1 (round21-measure self-test reads sibling repos through ROOT.parent, red in a fresh clone), total=2 — scored as C1_CTL_0",
+   "target": "total=0 C1_R52_PASS=true",
+   "kill_rule": "C1_R52_PASS=false at the deciding run is an honest stop; the predicate, counter and target are never narrowed after any seat has run",
+   "sourced": "the fix declares the round21-measure self-test fleet-bound (it reads the same FLEET root its subject counters read) rather than hermetic; the distinction rests on a SOURCES row opened this round (hermeticity reference), cited by the lesson/knowledge text that lands with it",
+   "cannot_see": "whether a held row's expectation is meaningful (a row can be weakened by editing its needles to whatever the tool prints, other than mte-interop-check); whether the fleet-bound self-test still exercises the real sibling blobs (the 11 case literals are a floor, not a proof)"
+  },
+  "C2": {
+   "axis": "calibration (lowest non-retired, 8; surface: lane records the round-51 closure found false — SKILL.md leg-count/registry statements, runner pointers and write-scope cells, the round-21 cold-read ledger's re-key wrong_expectations, the kill-rate ledger's drift-pins cell)",
+   "type": "measured",
+   "routed_from": "corpus/lessons/round-51-verifier-spotcheck.md routed defects 2 (R51.2/R51.3), 3 (re-key overstates) and 7 (ledger cell)",
+   "predicate": "At REV the frozen statement set m1 (2 checks), m2 (1), m3 (3), m4 (20 correction records), m5 (1), m6 (round-52 re-key entries carry reader findings) has zero mismatches. Label: C2_R52_PASS=true.",
+   "counter": "python3 .ufo/evidence/round-52/c2/measure.py --lane LANE --rev REV --explain",
+   "before": "measured at BASE before freeze: m1=2 m2=1 m3=3 m4=20 m5=1 m6=0 total=27 C2_R52_PASS=false (also scored as C2_CTL_0)",
+   "target": "total=0 C2_R52_PASS=true",
+   "kill_rule": "C2_R52_PASS=false at the deciding run is an honest stop",
+   "cannot_see": "completeness of the findings lists for the 18 reader files without frozen floors (a zero-finding record passes there: C2_CTL_POSITIVE shows it); whether a corrected pointer is the best pointer (only that the range holds the claim's token); stale statements outside the frozen set"
+  }
+ },
+ "separability": "C1 reads tools/registry.json, tools/round21-measure.py (and runs every registry row and the round-51 C3 counter); C2 reads SKILL.md, the round-21 ledger, the round-51 reader files and the kill-rate ledger. C1's registry row edit and C2's SKILL.md text edits touch different files; each claim is verifiable without the other having landed (C1_CTL_POSITIVE carries no C2 edit; C2_CTL_POSITIVE carries no C1 edit). Shared prerequisite for no-harm only: any edited cold-read section is re-keyed (m6 binds how).",
+ "no_harm": {
+  "script": ".ufo/evidence/round-52/no-harm.sh",
+  "monitors": 11,
+  "re_bases": "commandD >= 10 (was >= 9); registry rows >= 133 (was >= 131); tools-scope allows only M:tools/registry.json and M:tools/round21-measure.py",
+  "coldread_precheck": ".ufo/evidence/round-48/quality/coldread-precheck.sh LANE BASE REV (QUALITY 98): credited 64 at base, lost=0 required",
+  "coldread_note": "Measured before freeze in scratch: editing tools/registry.json and tools/round21-measure.py drops three credited sections (round-17 section, round-21 registry, round-26 registry; score 8 -> 6); the SKILL.md corrections drop the sections they touch. Those sections are re-keyed with fresh wave-2 readers; m6 requires the re-key entries to carry the readers' recorded findings."
+ },
+ "controls": {
+  "script": ".ufo/evidence/round-52/control/controls.py LANE OUTDIR",
+  "expect": {"C1_CTL_0": false, "C1_CTL_STALE": false, "C1_CTL_SUPERSEDE": false, "C1_CTL_NEEDLE": false, "C1_CTL_STUB": false, "C1_CTL_POSITIVE": true,
+             "C2_CTL_0": false, "C2_CTL_DELETE": false, "C2_CTL_ZERO": false, "C2_CTL_FORGE": false, "C2_CTL_POSITIVE": true},
+  "rule": "scored at freeze bytes and committed before wave 1; receipts are stamped with the freeze commit (the deciding run's gate 0 refuses receipts not descending from FREEZE)"
+ },
+ "deciding": {
+  "script": ".ufo/evidence/round-52/deciding-run.sh LANE REV FREEZE OUTDIR",
+  "outdir": ".ufo/evidence/round-52/after/",
+  "rule": "one invocation at the content revision; receipts committed after it; nothing else"
+ },
+ "frontier_step": {
+  "census": "scripts/sources-census.sh validate --root FLEET tameshi at start (exit 0, 133 rows) and end",
+  "sourced_claim": "C1",
+  "mistake": "corpus/lessons/round-52.md ## Mistakes (R51.1 class: a tool change whose registered gate row was not updated)",
+  "assimilation": "none: /home/vgpnk/Projects/shokuknow/merge/tameshi does not exist; considerthese/2026-10-26.md proposal 3 (recurring-defect tracker) is mined in wave 1"
+ },
+ "amendments": []
+}
