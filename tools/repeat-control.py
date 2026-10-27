@@ -145,6 +145,20 @@ USAGE = (
 )
 
 
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise RuntimeError(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+
 class TamperError(Exception):
     """A --snapshot directory does not match its committed record."""
 
@@ -594,7 +608,7 @@ def selftest():
     if not os.path.isdir(root):
         emit(f"SELFTEST: COULD_NOT_EVALUATE (committed fixture root missing or not a directory: {root})")
         return 2
-    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=tempfile.gettempdir())
+    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
     passed = 0
     failed = []
 

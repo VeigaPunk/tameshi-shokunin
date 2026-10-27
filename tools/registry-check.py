@@ -753,6 +753,20 @@ def resolve_rev(root, rev):
     return sha, None
 
 
+
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise RuntimeError(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
 def clone_lane_at_rev(root, rev, sha):
     """Clone the lane detached at sha into a fleet-mirror mkdtemp.
 
@@ -763,7 +777,7 @@ def clone_lane_at_rev(root, rev, sha):
     fleet_root = os.path.dirname(root_real)
     env = git_env()
     try:
-        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=tempfile.gettempdir())
+        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
         raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
     try:
@@ -914,7 +928,7 @@ def print_human(report, stream=sys.stdout):
 
 def selftest():
     scratch = tempfile.mkdtemp(
-        prefix="tameshi-r17-registry-check-selftest.", dir=tempfile.gettempdir()
+        prefix="tameshi-r17-registry-check-selftest.", dir=strict_scratch_root()
     )
     passed = 0
     failed = []

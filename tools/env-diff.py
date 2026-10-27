@@ -29,6 +29,20 @@ SCHEMA = "tameshi-env-diff-receipt-v1"
 PROFILES = ("host", "clean", "clean_repeat", "tz", "locale", "home", "columns")
 
 
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise RuntimeError(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -58,7 +72,7 @@ def execute(payload, interp, profile, timeout=600, bwrap=None):
     bwrap = bwrap or shutil.which("bwrap")
     if not bwrap:
         return {"exit": None, "error": "BWRAP_UNAVAILABLE"}
-    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=tempfile.gettempdir()) as tmp:
+    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
         root = Path(tmp)
         (root / "home").mkdir()
         (root / "tmp").mkdir()

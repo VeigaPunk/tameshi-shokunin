@@ -158,6 +158,20 @@ exit 2  could-not-evaluate invalid input (usage, manifest, fleet root)
 """
 
 
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise RuntimeError(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+
 class InvalidInput(Exception):
     """Input that prevents any leg from being evaluated."""
 
@@ -703,7 +717,7 @@ SELFTEST_DIRTY_SHA256 = "35db8ca11b64c09f964bf88537abc8bc6abe180e6dc4aaae400c820
 
 def selftest():
     """Hermetic fixtures under /tmp: no fleet repo, no sibling repo is read."""
-    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=tempfile.gettempdir())
+    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=strict_scratch_root())
     passed = 0
     failed = []
 

@@ -188,6 +188,20 @@ ancestral to that same anchor.
 """
 
 
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise RuntimeError(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+
 class CouldNotEvaluate(Exception):
     """Input that prevents the disposition question from being evaluated."""
 
@@ -2348,7 +2362,7 @@ def _status_for(exit_code):
 
 def selftest():
     """Isolated /tmp fixtures; invokes this CLI via subprocess only."""
-    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=tempfile.gettempdir()))
+    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=strict_scratch_root()))
     marker = scratch / "argv-marker"
     passed = 0
     failed = []

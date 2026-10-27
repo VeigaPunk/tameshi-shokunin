@@ -202,6 +202,20 @@ SPEC_LINE_RE = re.compile(r"^@(defect|old|new)(?: (.*))?$")
 UNESCAPES = {"n": "\n", "t": "\t", "r": "\r", "\\": "\\"}
 
 
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise RuntimeError(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+
 class Cannot(Exception):
     """could-not-evaluate: missing input, pin mismatch, runner SETUP."""
 
@@ -1238,7 +1252,7 @@ def cmd_selftest(args) -> int:
             print(f"  check {name:<44} FAIL")
 
     private_root = Path(tempfile.mkdtemp(
-        prefix="bash-witness-selftest-private.", dir=tempfile.gettempdir()))
+        prefix="bash-witness-selftest-private.", dir=strict_scratch_root()))
     assert private_root.resolve(strict=True) == private_root
     root = None
     try:
