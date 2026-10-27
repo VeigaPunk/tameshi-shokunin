@@ -67,7 +67,7 @@ def main():
 
     # --- 1. grep tools/ at REV ---------------------------------------------
     r = git(['-C', lane, 'grep', '-n', '-E', r'dir\s*=\s*["\']/tmp',
-             rev, '--', 'tools/'])
+             rev, '--', 'tools/'], check=False)
     hits = r.stdout.decode().split('\n') if r.returncode in (0, 1) else []
     hits = [h for h in hits if h]
     tmp_hits = len(hits)
