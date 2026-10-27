@@ -1,0 +1,18 @@
+{
+  "heading": "### Round-21 gate/probe registry — finite environment differential",
+  "cand": "7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135",
+  "section_sha256": "01851bbbf44d858330b6de547a7e423323b81e66ef6061654791c91f74e4e2f2",
+  "findings": [
+    {
+      "quote": "- F1: “`tools/env-diff.py` | probe | `python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out /tmp/tameshi-f5.json`” — the `--out` pathname in the purported runnable entry is hard-coded to `/tmp/tameshi-f5.json`, but the round-52 scratch directive explicitly prohibits writing there beyond small files; it is not a valid reusable invocation under the current required workflow. Command: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135:SKILL.md | sed -n '1964,2103p'`.",
+      "class": "stale operational command / write-scope conflict",
+      "skill_statement": "The registry's env-diff entry command writes its receipt to /tmp/tameshi-f5.json."
+    },
+    {
+      "quote": "- F2: “`tools/env-diff.py` | probe | ...” write-scope claim “isolated `/tmp/tameshi-r21-envdiff.*`” is stale: CAND1 `tools/env-diff.py` calls `tempfile.TemporaryDirectory(prefix=\"tameshi-r21-envdiff.\", dir=\"/tmp\")` (around line 60); the declared scratch rule requires `/fast/scratch/...` and limits writes under `/tmp`. Command: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135:tools/env-diff.py | rg -n 'TemporaryDirectory|dir=\"/tmp\"'`.",
+      "class": "scratch directive conflict",
+      "skill_statement": "env-diff's write-scope includes isolated /tmp/tameshi-r21-envdiff.* sandboxes."
+    }
+  ],
+  "holds_checked": 6
+}

@@ -1,0 +1,10 @@
+## Findings
+- F1: “The runbook's §7 is the operator's rendering of this command” — this is false at CAND1: the section says regression executes the command but describes only four legs and says cases 5/6 are not embedded (`corpus/knowledge/operator-runbook.md:345-376`), while the CAND1 tool embeds ten legs (`tools/mutate-and-run.sh:88-97,1459-1507`). Command: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135:corpus/knowledge/operator-runbook.md | nl -ba | sed -n '345,376p'; git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135:tools/mutate-and-run.sh | nl -ba | sed -n '88,97p;1459,1507p'`.
+
+## Holds
+- 17 checked pointer groups hold: `tools/mutate-and-run.sh:88-97` has the ten named legs; `:98-121` gives their sources and embedding history; `:614-643` records the pinned revisions/tables; `:850` and `:925` identify embedded legs 5 and 6; `:128-130` and `:1281-1302` describe mode mirroring and report its implementation; `:139-143` gives the exit/status map; `:1446` lists ten recorded rates; `:1459-1507` invokes the ten legs; `:1860-1896` contains the exec-bit selftest arms; `:2024` is the ten-spec assertion; `SKILL.md:925-929` retains the four-leg historical boundary and later additions; `:965-1008` gives the receipt-reading discipline and identifies the later 107/107 selftest receipt; `:1218-1228` is the dated four-leg round-9 receipt and its then-open debt; `corpus/knowledge/fleet-kill-rate-ledger.md:85-88` is dated embedding status; `:281` records the four-leg supersession at its historical revision. The runbook §7 pointer was checked and is reported as F1.
+
+## Summary
+One actionable stale rendering pointer: runbook §7 is not a rendering of the current ten-leg regression behavior.
+
+Report: `.ufo/waves/round-52/w3/T52W3Read14.md`
