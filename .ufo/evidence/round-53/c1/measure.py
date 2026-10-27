@@ -40,7 +40,6 @@ R18 = '.ufo/evidence/round-18/measure.py'
 LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
 HEADINGS = '.ufo/evidence/round-53/c1/lost-headings.json'
 HERE = Path(__file__).resolve().parent
-TOTAL_HEADINGS = 19
 
 
 def git(args, cwd=None, check=True):
@@ -190,8 +189,8 @@ def main():
     ok = not problems
     total = len(problems)
     print('C1_R53: rev=%s credited=%s lost=%s rekeyed=%d/%d readers=%d/%d total=%d C1_R53_PASS=%s'
-          % (rev[:12], credited, lost, rekeyed, TOTAL_HEADINGS, readers,
-             TOTAL_HEADINGS, total, 'true' if ok else 'false'))
+          % (rev[:12], credited, lost, rekeyed, len(headings), readers,
+             len(headings), total, 'true' if ok else 'false'))
     if a.explain:
         for p in problems:
             print('PROBLEM', p)
