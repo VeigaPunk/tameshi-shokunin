@@ -1,0 +1,45 @@
+{
+  "round": 53,
+  "l1": "TameshiR53a2",
+  "attempt": 2,
+  "base": "6db1d220b337c35ff1e25bf9cfd74abc9db1498d",
+  "floor": "ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4",
+  "frozen_precheck": ".ufo/evidence/round-48/quality/coldread-precheck.sh",
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "axis_score": 8,
+      "kind": "axis move (repair of the round-52 cold-read no-harm harm; lowest non-retired axis)",
+      "surface": "the 19 sections the round's inherited edits dropped from cold-read credit (routed defect R52.1)",
+      "predicate": "The round-21 cold-read monitor credits 64 of 64 sections at the round-53 content revision against floor ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 (frozen precheck: last line 'cand_credited=64 lost=0 ok', exit 0), and each of the 19 headings frozen in c1/lost-headings.json has at the measured revision at least one ledger entry in .ufo/evidence/round-21/coldread/ledger.json whose traces lie under .ufo/evidence/round-21/coldread/rekey-r53-<C0>/, whose read_rev is the commit named by <C0>, whose wrong_expectations and blocking_gaps are 0, and at least one committed .ufo/waves/round-53/ reader JSON whose heading matches and whose section_sha256 equals the section bytes' sha256 at the measured revision: C1_R53_PASS=true.",
+      "before": "cand_credited=45 lost=19 RED at base 6db1d220 (before/coldread-precheck-at-tip.stdout, exit 1)",
+      "target": "C1_R53_PASS=true",
+      "counter": "python3 .ufo/evidence/round-53/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR",
+      "controls": [
+        "CTL_0: the counter at BASE prints lost=19 / C1_R53_PASS=false (do-nothing cannot reach the target)",
+        "CTL_NOTRACE: a rekey-r53 entry whose trace path is absent at REV must fail the provenance check",
+        "CTL_BADREADER: a reader JSON whose section_sha256 mismatches the section bytes at REV must fail",
+        "CTL_WRONGREV: a rekey-r53 entry whose read_rev is not the commit named by the rekey-r53-<C0> directory must fail"
+      ],
+      "cannot_see": "whether a fresh reader finding is semantically fair (wave-2 re-read seats and the non-author closure attack this); whether the recorded inputs are the semantically right citation set; whether the fixed SKILL statements are true beyond the frozen checks"
+    },
+    "C2": {
+      "axis": "operability",
+      "kind": "axis move (scratch-hygiene repair, routed defect R52.5 + scratch directive 7.4)",
+      "surface": "the lane's runnable tools and their documented invocations under tools/",
+      "predicate": "No committed file under tools/ at the measured revision matches the regex dir\\s*=\\s*[\"']/tmp, python3 tools/registry-check.py --selftest and python3 tools/env-diff.py --selftest both exit 0 with TMPDIR bound to the counter's scratch, registry-check.py --selftest with a missing TMPDIR directory exits non-zero naming scratch creation (could-not-evaluate, round-18 CR47) and never prints a verdict-bearing diff line, and SKILL.md names no /tmp scratch path for either tool: C2_R53_PASS=true.",
+      "before": "dir=\"/tmp\" hardcodes at tools/registry-check.py:766 and tools/env-diff.py:61 (plus SKILL.md /tmp invocations for env-diff and the sweep recipe); registry-check selftest ignores TMPDIR",
+      "target": "C2_R53_PASS=true",
+      "counter": "python3 .ufo/evidence/round-53/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR",
+      "controls": [
+        "CTL_BASE: the counter at BASE fails on the two hardcoded /tmp hits (do-nothing cannot reach the target)",
+        "CTL_TMP: a planted dir=\"/tmp\" line in a scratch fixture copy of tools/ must fail the grep check",
+        "CTL_CR47: with TMPDIR naming a nonexistent directory the registry-check selftest must exit non-zero naming scratch creation, never print REGISTRY_CHECK verdict lines"
+      ],
+      "cannot_see": "whether TMPDIR redirection truly isolates a run (the selftest's own coverage says what it says); tools and counters outside tools/ (frozen .ufo/evidence counters with /tmp are routed, not claimed); hosts where TMPDIR itself is ignored"
+    }
+  },
+  "kill_rule": "The deciding run (.ufo/evidence/round-53/deciding-run.sh) refuses unless: every pre-registered control receipt is committed at the measured revision in a commit descending from the freeze commit; the frozen file set is byte-identical between freeze and measured revision (FROZEN_UNCHANGED=1); the working tree is clean; exactly one deciding invocation ran per counter; 12/12 no-harm monitors print ok; the frozen coldread precheck prints GREEN exit 0; the fleet source census exits 0; both counters print their C*_R53_PASS verdict from the deciding receipts under .ufo/evidence/round-53/after/.",
+  "amendments": [],
+  "notes": "Frozen before any seat ran and before the fix pass. R52.1 (re-key debt), R52.2 (LOG.md round-52 entry), R52.3 (over-count re-derivation), R52.5 (this claim) and R52.6 (report conformance) are worked under this round; R52.4 was resolved by the round-52 closure salvage commit 6db1d220."
+}
