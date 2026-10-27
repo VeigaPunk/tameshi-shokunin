@@ -31,8 +31,8 @@ import tempfile
 
 TMP_RE = re.compile(r'dir\s*=\s*["\']/tmp')
 FLEET_DOC_PATTERNS = [
-    re.compile(r'tameshi-f5\.json'),
-    re.compile(r'tameshi-r21-envdiff'),
+    re.compile(r'/tmp/tameshi-f5\.json'),
+    re.compile(r'/tmp/tameshi-r21-envdiff'),
     re.compile(r'mkdir -p /tmp/<lane>-r<round>'),
     re.compile(r'Scratch for a sweep: `/tmp/'),
 ]
