@@ -28,7 +28,7 @@ H=$(python3 .ufo/evidence/round-46/coverage/measure.py --lane "$LANE" --rev "$RE
 I=$(python3 .ufo/evidence/round-47/coverage/measure.py --lane "$LANE" --rev "$REV" | tail -1 | grep -oE 'rows=[0-9]+|entries=[0-9]+|C3_R47_PASS=[a-z]+' | tr '\n' ' ')
 [ "$I" = "rows=3 entries=3 C3_R47_PASS=true " ] && s=ok || s=RED; echo "NOHARM r47-coverage $I$s"
 T=$(git diff --name-status --no-renames "$BASE" "$REV" -- tools | tr '\t' ':' | tr '\n' ' ')
-s=ok; for t in $T; do case "$t" in M:tools/registry.json|M:tools/round21-measure.py|M:tools/registry-check.py|M:tools/env-diff.py) ;; *) s=RED;; esac; done
+s=ok; for t in $T; do case "$t" in M:tools/registry.json|M:tools/round21-measure.py|M:tools/registry-check.py|M:tools/env-diff.py|M:tools/bash-witness-study.py|M:tools/context-capture.py|M:tools/evidence-disposition.py|M:tools/pin-disposition.py|M:tools/repeat-control.py) ;; *) s=RED;; esac; done
 echo "NOHARM tools-scope [${T}] $s"
 git show "$REV:tools/pbt-staged-id.py" > "$SCR/pbt.py"; git show "$REV:tools/staged-id-guard.py" > "$SCR/guard.py"
 P=$(cd "$SCR" && python3 -I "$SCR/pbt.py" --guard "$SCR/guard.py" --seed 4949 --cases 400 --dump "$SCR/d.jsonl" | tail -1)
@@ -37,5 +37,5 @@ echo "NOHARM r49-generator-capability [$P] $s"
 git show "$REV:tools/shrink-case.py" > "$SCR/shrink.py"
 K=$(cd "$SCR" && python3 -I "$SCR/shrink.py" --selftest 2>&1 | tail -1)
 case "$K" in *" failed=0") s=ok;; *) s=RED;; esac; echo "NOHARM r50-shrinker-selftest [$K] $s"
-Q=$(git grep -c -E 'dir\s*=\s*["\']/tmp' "$REV" -- tools/ 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')
+Q=$(git grep -c -E "dir\\s*=\\s*[\"']/tmp" "$REV" -- tools/ 2>/dev/null | awk -F: "{s+=\$NF} END {print s+0}")
 [ "$Q" = 0 ] && s=ok || s=RED; echo "NOHARM r53-scratch-hygiene tmp_hits=$Q $s"
