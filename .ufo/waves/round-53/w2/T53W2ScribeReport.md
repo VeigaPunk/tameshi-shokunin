@@ -141,6 +141,35 @@ LOG.md` is empty). Its last sentence declares the rest pending.
 
 ## 3. Calibration notes (each with its command-output backing)
 
+**N0 — the deciding run refuses at gate 0 as the lane stands (blocking).**
+Gate 0 requires each control receipt's last-touching commit to descend from
+the freeze. The receipts were last touched at `a36d3e5`, the freeze is now
+`7d8aaac` (amendment 6), and no commit after the freeze touches either path:
+
+```
+$ git log --oneline -- .ufo/evidence/round-53/control/controls.stdout
+a36d3e5 round-53: phase-A controls scored at freeze bytes (2/2 as pre-registered), before wave 1
+a7ba4e3 round-53: amendment 1 — c1 counter NUL-byte syntax repair (no predicate/target/control change); re-freeze
+$ git log --oneline -- .ufo/evidence/round-53/control/controls.exit
+a36d3e5 round-53: phase-A controls scored at freeze bytes (2/2 as pre-registered), before wave 1
+$ FREEZE=7d8aaac676cbcb6379f57659e7c3c4c12150a815
+$ for f in .ufo/evidence/round-53/control/controls.{stdout,exit}; do
+    c=$(git log -1 --format=%H HEAD -- "$f")
+    git merge-base --is-ancestor $FREEZE $c || echo "REFUSE $f last-touch=$c"
+  done
+REFUSE .ufo/evidence/round-53/control/controls.stdout last-touch=a36d3e514d6565f6dbcb14bf0f70ecc379521ecb
+REFUSE .ufo/evidence/round-53/control/controls.exit last-touch=a36d3e514d6565f6dbcb14bf0f70ecc379521ecb
+```
+
+The gate would print `DECIDING_REFUSED control-receipt-not-after-freeze` and
+exit 3 with nothing run. This is structural, not a wave-2 regression: every
+re-freeze from amendment 3 (`f68deea`) onward moved the freeze past the
+receipts' commits, and re-freezing alone cannot repair it — the receipts must
+be *re-committed* after the freeze with bytes that differ from the committed
+ones (a re-run producing an identical `controls.stdout` would leave the path
+untouched and keep gate 0 failing). The L1 decides the repair; this seat only
+records that the after receipts cannot be produced until it lands.
+
 **N1 — the C1 "before" carries one unreceipted number.**
 `contract.json` `before` (line 15) reads:
 
@@ -176,10 +205,11 @@ versus `freeze.json`, which lists six amendments and whose commit is
 `7d8aaac` (`git log --oneline -1 7d8aaac` →
 `round-53: amendment 6 — c1 multi-rekey-dir + sha-only reader binding; re-freeze before wave 2`).
 LOG.md has not been touched since C* (`git diff --stat a41195d d008822 -- LOG.md`
-prints nothing), so amendments 6, C*, wave 1, C**, wave 2, re-key pass 1 and the
-errata revert are all absent. The report's freeze cell must read `7d8aaac6`,
-and LOG.md needs the line before close. The "waves … to follow" sentence covers
-the waves, not the freeze pointer or `d008822`.
+prints nothing), so amendment 6, the C** fix pass, the wave-1 and wave-2
+dispatch/results, re-key pass 1 and the errata revert are all absent (C*'s own
+work is described by the entry that C* commits). The report's freeze cell must
+read `7d8aaac6`, and LOG.md needs the line before close. The "waves … to
+follow" sentence covers the waves, not the freeze pointer or `d008822`.
 
 **N3 — the errata revert is what keeps both sha bindings valid.**
 `## Errata — round 16 full-page cold-read` section sha256 (frozen round-18
@@ -192,10 +222,11 @@ pass-1 e98044a f251e76c4d89560a  d008822            290e75a411fb643b
 ```
 
 i.e. fix pass 2 changed that section's bytes and `d008822` restored them, so
-the deciding rev must not be `5b703c6` for any reader bound to that section.
-It is not bound twice over: the heading is in neither the 30-entry
-`c1/lost-headings.json` nor the 21 wave-2 re-read heads. The two binding sets
-are safe at `d008822`:
+a measured rev of `5b703c6` would have carried the drifted bytes into the
+precheck while `d008822` restores the credited ones. No reader is bound to
+that section either way: the heading is in neither the 30-entry
+`c1/lost-headings.json` nor the 21 wave-2 re-read heads. Both binding sets are
+safe at `d008822`:
 
 ```
 C** vs d008822 drifted headings: 1  (the errata section only)
@@ -211,14 +242,46 @@ Consequence for the tables: a wave-2 reader JSON is valid at any rev whose
 **N4 — frozen prose that its own frozen code contradicts.** These are
 byte-locked (`.ufo/evidence` is not editable this round) and the
 FROZEN_UNCHANGED gate does not read prose, so they are declared limits, not
-fixes:
+fixes.
 
-| File | Text | What holds instead |
-|---|---|---|
-| `c1/measure.py:24` | `Verdict line: 'C1_R53: rev=... credited=... lost=... rekeyed=K/19 readers=R/19 total=N C1_R53_PASS=true\|false'` | the print uses `%d/%d` from `len(headings)`; the frozen file has 30 entries (`python3 -c '…len(json.load(…lost-headings.json))'` → `30`) |
-| `c1/measure.py:11` | `2. rekey   — at REV, find the unique .ufo/evidence/round-21/coldread/` | code builds `rekey_dirs = […]` (a list) and loops over all of them — amendment 6 |
-| `c2/measure.py:18` | `no 'tameshi-f5.json', no 'tameshi-r21-envdiff.*', and the` | `FLEET_DOC_PATTERNS` are `/tmp/tameshi-f5\.json` and `/tmp/tameshi-r21-envdiff` — amendment 3, so a `$HYAKU_SCRATCH` invocation is not a hit |
-| `control/controls.py:12` | `(do-nothing control: the two inherited dir="/tmp" hardcodes)` | 9 hits in 7 files at BASE (C2 before row above) |
+`c1/measure.py:24` says:
+
+```
+Verdict line: 'C1_R53: rev=... credited=... lost=... rekeyed=K/19 readers=R/19 total=N C1_R53_PASS=true|false'
+```
+
+but the print uses `%d/%d` fed from `len(headings)`, and the frozen
+`c1/lost-headings.json` has 30 entries
+(`python3 -c "import json;print(len(json.load(open('.ufo/evidence/round-53/c1/lost-headings.json'))))"`
+→ `30`).
+
+`c1/measure.py:11-12` says:
+
+```
+  2. rekey   — at REV, find the unique .ufo/evidence/round-21/coldread/
+               directory 'rekey-r53-<c0>'; <c0> must resolve to a commit that
+```
+
+while the code builds `rekey_dirs = [n for n in … if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)]`
+and loops over every one — amendment 6.
+
+`c2/measure.py:18` says:
+
+```
+               no 'tameshi-f5.json', no 'tameshi-r21-envdiff.*', and the
+```
+
+while `FLEET_DOC_PATTERNS` are `/tmp/tameshi-f5\.json` and
+`/tmp/tameshi-r21-envdiff` — amendment 3, so a `$HYAKU_SCRATCH` invocation is
+not a hit (SKILL.md at C** does name `$HYAKU_SCRATCH/tameshi-f5.json`).
+
+`control/controls.py:12` says:
+
+```
+                (do-nothing control: the two inherited dir="/tmp" hardcodes)
+```
+
+while BASE has 9 such hits in 7 files (C2 before row above).
 
 **N5 — `after/` is empty by construction.** `deciding-run.sh` takes OUTDIR as
 `$4` and refuses unless it exists and is empty; nothing in the lane creates it.
@@ -229,8 +292,10 @@ paths are the ones in `contract.json`'s kill_rule
 ## 4. What these tables do not establish
 
 - No counter was executed by this seat; the two `after` rows are the target
-  predicates, not observations. The `34/30` at `218bc6b5` (N1) and the C**
-  tool fix (C2 mid-state row) have no receipt anywhere in the lane.
+  predicates, not observations. They are also unreachable until N0 is repaired:
+  the deciding run exits 3 at gate 0 as the lane stands.
+- The `34/30` at `218bc6b5` (N1) and the C** tool fix (C2 mid-state row) have
+  no receipt anywhere in the lane.
 - The `after` rows say nothing about the wave-2 findings' semantic fairness
   (contract C1 `cannot_see`) or about TMPDIR isolation beyond what the
   selftests cover (contract C2 `cannot_see`).

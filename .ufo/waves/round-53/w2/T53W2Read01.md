@@ -7,7 +7,7 @@ Candidate read: C** = 5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e, via git objects 
 git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e:SKILL.md > .../SKILL.C2.md
 ```
 
-The working tree was never used for section bytes (the live tree is at d008822 and differs from C** in SKILL.md by one errata line; all checks below were run on the extracted C** blob or on a `git archive` of the named commit). Scratch: /fast/scratch/hyaku/tameshi-r53/w2/T53W2Read01 (removed before yielding).
+The working tree was never used for section bytes (the live tree is at d008822 and differs from C** in SKILL.md by one errata line). Section and pin bytes were read from git objects; commands ran either in a `git archive` extraction of C** / `28aeef4`, or — where a command needs a git work tree (the waiver-bearing round-18 manifest) — from the lane root, whose `tools/` and evidence bytes equal C** (`git diff --stat 5b703c6..HEAD -- tools/` is empty). Scratch: /fast/scratch/hyaku/tameshi-r53/w2/T53W2Read01 (removed before yielding).
 
 ## Section split (verified before hashing)
 
@@ -93,7 +93,7 @@ The runner's earliest post-round-14 change is round 16, the witness-study tool's
 ## Holds (each backed by an executed command or a byte comparison at C**)
 
 - "distinguish twelve expected rows from thirteen pinned inputs." — `.ufo/evidence/round-13/expected.json` at C** has `expected_checks` = 12 and `inputs` = 13.
-- "at `--root .` both manifests now return 2" — executed in a `git archive` extraction of C** (`treeC2`, cwd = tree root):
+- "at `--root .` both manifests now return 2" — executed from the lane root at C** (and again in a `git archive` extraction of C**, same result):
 
 ```
 $ python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json   → exit 2
@@ -104,7 +104,7 @@ $ python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/ro
   status could_not_evaluate  id expected_input_digest_mismatch
 ```
 
-  Row 3 of the table ("Snapshot input or receipt bytes differ from their pinned digest | Could-not-evaluate") is exactly the observed status.
+  The reported input is the witness-study tool (the first mismatch in sorted order); the sentence names the runner first but claims no reporting order. Row 3 of the table ("Snapshot input or receipt bytes differ from their pinned digest | Could-not-evaluate") is exactly the observed status.
 - "Replay with cwd = an extracted" `git archive 28aeef4` tree → 1: extracted `git archive 28aeef4` into `tree28` and ran the archive's own tool there (`evidence-disposition.py r14`, tool_sha256 `1609a9df970d`):
 
 ```
@@ -121,6 +121,7 @@ exit 0, status clean, counts {effective 11, expected_checks 12, failed 0, findin
 ```
 
   A field-by-field diff of the two manifests: 12 rows each, only row 4 (`producer_before`) differs — `state` effective→superseded, plus `reason`, `superseded_by: [producer_before_oracle, producer_after_oracle]`, and the same receipt/check values carried as `raw_receipt: .ufo/evidence/round-13/verification.json`, `raw_check: producer_before`. Both replacements are `effective` in the clean run and 11/11 effective rows pass, so "both passing replacements" holds; nothing was dropped.
+- "keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section (round-18 manifests since then)." — the pointer's target heading exists at line 1832, and the live entry it names (the round-18 manifest, no replay) returns the claimed outcome from the lane root at C**: exit 0, counts 11/0/11/1, with `expected_inputs_historical` anchoring the three moved tools at `4acc607dfd79…`. Details in caveat 3.
 - "4. `.ufo/evidence/round-14/verification-final.json` retains the corrected" selftest and the frozen before/after outcomes — the receipt's checks are the clean selftest (`SELFTEST: PASS (34/34)`, exit 0), the frozen before run (exit 1, counts 12/1/11) and the frozen after run (exit 0, counts 11/0/11), with `context_capture.measured_commit` recorded.
 - "initial 18-of-34 fixture failures rather than disguising them as green." — `.ufo/evidence/round-14/verification.json` retains `SELFTEST: FAIL (18/34 failed: clean-superseded, unsuperseded-crash-mismatch, …)` exit 1, plus the same before/after outcomes; its `supersedes`-less note keeps the raw record and the final receipt's `supersedes` names only the selftest failure.
 - "The revision measured is recorded separately." — the two receipts carry different `measured_commit` values (`verification-final` 64314783836b…, `verification` 0c6e36d0bd2f…).
@@ -158,7 +159,8 @@ $ python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/ro
 
 - The round-17 live-tree section, the round-15 registry row and the erratum row named in caveat 3 were read only to check that step 3's pointer resolves; their outcome claims are those sections' business (and are covered by this wave's other seats).
 - The ten non-stale inputs were checked only for digest equality at C**, not audited for provenance.
-- No product file, tool, corpus file or evidence file was modified; no git/jj mutation was run; the only writes are the two deliverables.
+- No product file, tool, corpus file or evidence file was modified by this seat; no git/jj mutation was run; the only writes are the two deliverables.
+- The lane changed outside this seat while it ran: uncommitted working-tree edits appeared in `SKILL.md` (two occurrences of the stale self-anchor `SKILL.md:377-378` rewritten to "the `## Restore discipline` section") and in `corpus/knowledge/service-limits.md` (`SKILL.md:1017-1019` rewritten to a section name), and commits `b468854` / `ceb372c` / `e43633c` landed (C***, re-key pass 1b). None of those edits are this seat's; every measurement in this report is against the C** objects named at the top.
 
 ## Tooling
 

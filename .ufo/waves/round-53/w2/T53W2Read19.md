@@ -57,7 +57,7 @@ C\*\* bytes (section line 36):
 The wave-1 defect was `Re-read six minutes later (19:20:29Z)` against a `19:15:14Z` tick (6 min would be 19:21:14Z).
 The C\*\* line now states the interval the record supports and carries the exact gap: 19:15:14Z + 5 min 15 s = 19:20:29Z.
 The head phrase "five minutes later" is a rounded restatement immediately qualified by the exact `5 min 15 s` figure, and it
-matches the page's twin record of the same event (`SKILL.md:1188` at C\*\*, "five minutes later"). The fix is in the bytes and
+matches the page's twin record of the same event (`SKILL.md:1193` at C\*\*, "five minutes later"). The fix is in the bytes and
 arithmetically exact; no residue of the "six minutes" wording exists anywhere in the section.
 
 ### Fix 2 (F2, worktree count) — present and correct
@@ -74,7 +74,7 @@ Independently re-derived the worktree count from the pins themselves (`git -C <s
 read-only, output below under Holds): the six cases resolve to **four** repos —
 kumitate (`js-kimi-census`, `claims-check`), kagi (`bash-surface-census`, `checklist-run`), tsukuroi (`bash-tsukuroi-census`),
 mado (`bash-mado-verify`) — i.e. six case paths across four worktrees, exactly as the fixed sentence says. The C\* wording
-("all six worktrees clean") is gone. The page's twin record of the same six cases (`SKILL.md:1189` at C\*\*) independently
+("all six worktrees clean") is gone. The page's twin record of the same six cases (`SKILL.md:1189-1190` at C\*\*) independently
 reads "all four sibling trees porcelain-clean (0 lines each)", so the fixed count is consistent page-wide.
 
 ## Holds (verified against C\*\* bytes + the pointed-at revisions)
@@ -82,7 +82,7 @@ reads "all four sibling trees porcelain-clean (0 lines each)", so the fixed coun
 All commands read-only (`git show`, `git -C <repo> show`, `grep`, `sed`, `sha256sum`, `hostname`); no git/jj mutation.
 
 1. **Tick idiom** — `shokunin@17c1fad:scripts/shokunin-watchdog.sh:3-5` contains
-   "A lane's round ends when .ufo/reports/round-<N>/<lane>.md lands" and "Tick 450s."; `:10` is `INTERVAL=450`; the cited
+   "A lane's round ends when .ufo/reports/round-<N>/<lane>.md" (continues "lands;") and "Tick 450s."; `:10` is `INTERVAL=450`; the cited
    range resolves. Current fleet watchdog still ticks 450 s (`scripts/shokunin-watchdog.sh:52,61`, `shokunin.conf:11`
    `TICK_SECONDS=450`) and still keys the round end on the lane report file (`:164`, `:444`). **Holds.**
 2. **Lane map did not name tameshi (`:14`)** — `git show 17c1fad:scripts/shokunin-watchdog.sh | grep -n tameshi` → no match;
