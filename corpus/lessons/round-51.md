@@ -51,3 +51,48 @@ The frozen C1 statement-set note at `.ufo/evidence/round-51/c1/frontier-expected
 - C1 counter: semantic status basis remains a frozen L1 reading; the two reviewers agreed, but the counter's mechanical pointers are not a semantic oracle.
 - C2 counter: receipt authenticity and suite command are not machine-bound; neutral-sandbox evidence is disclosed separately from the recorded table.
 - C3 counter: shallow row semantics permit forged SKILL rows; one real tool's selftest cannot pass in the mandated fresh clone. The claim is reported not verified rather than massaging the row or the predicate.
+
+## Attempt 3 — deciding run, salvage disposition, mistakes (L1 TameshiR51a3, 2026-10-27)
+
+Attempt 1 (TameshiR51) stopped at its request budget; attempt 2 (TameshiR51a2) died with every running w2 seat when the orchestrator session exited on 2026-10-26 23:57:36 -03 (`.ufo/watchdog.log` lane-dead line). The orchestrator committed attempt 2's uncommitted tree as salvage `53afb4aa`. Attempt 3 dispatched no new wave; it re-verified and reused salvage bytes as below.
+
+### Salvage disposition
+
+- **Reused, re-verified:** the 20 w2 reader rows named in `.ufo/evidence/round-51/coldread/readers.json` (`T51W2Read01`–`Read20`). They were copied byte-exact into `coldread/reads/` (`cmp` clean). For 19 of the sections, the monitor's section sha256 is the same at `6d8c11e3`, the bytes the seats read, and at `f133b47f`, the bytes being re-keyed. The 20th section, `### Round-26 gate/probe registry — report interop`, differs by exactly one row: the round21-measure row at SKILL.md:2157, whose fresh-clone limitation Read20's NOTE-B records. Re-key `rekey-02ec217c` gave 20 targets and 20 entries; the monitor went 44/64 → 64/64 (`.ufo/evidence/round-51/integrate/a3/refresh-02ec217c.stdout`, landed `7e548bee`).
+- **Discarded:** attempt 2's uncommitted `SKILL.md` draft, which re-pointed `tools/mutate-and-run.sh` line numbers in the sweep-recipe, leg-ledger and receipt sections. Landing it would have changed sections after their readers had read them, so the re-key could not have bound those reads. SKILL.md was restored to its `f133b47f` bytes (`02ec217c`). The stale pointers are routed below, not fixed.
+- **Superseded:** the attempt-2 probes at `.ufo/evidence/round-51/integrate/l1-probe-f133b47/`. They printed `C1_R51_PASS=true` and `C2_R51_PASS=true`; the C3 probe file is empty because the run was killed. They are non-deciding; the verdicts come only from `after/`.
+- **Kept as evidence, no claim rests on them:** the 41 w2 files under literal `@P@…` names (Mistakes row 3).
+- **Dead seats:** `T51W2MutC3Counter`, `T51W2ExecFinalCounters` and `T51W2ExecC2Replay` were killed with no report and were not re-dispatched. The deciding run supersedes the last two; the C3 counter's mutation attack is the one item left unrun.
+
+### Deciding run
+
+There were two invocations of `.ufo/evidence/round-51/deciding-run.sh` at REV `7e548beecfbe872f931e84c2241522ea374c6bc3`:
+
+1. **FREEZE `9d023aed`** (the amendment-2 freeze) was refused at gate 0 with nothing run and no receipt written: `DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-51/control/controls.exit` (`integrate/a3/deciding-invocation-1-refused.txt`).
+2. **FREEZE `84aa673a`** (amendment 1), after which the control receipts were committed, ran to completion. `FROZEN_UNCHANGED=0`, and the diff it lists is exactly amendment 2's three files: `contract.json`, `freeze.json`, `no-harm.sh`. Results:
+   - 11/11 no-harm monitors ok.
+   - QUALITY 98 precheck `64 → 64 lost=0 ok`.
+   - Census exit 0.
+   - `C1_R51_PASS=true`.
+   - `C2_R51_PASS=true` (`depth_score=10`, `predictions_held=7/10`).
+   - `C3_R51_PASS=false` (`covered=29 missing=1`; `tools/round21-measure.py` selftest exit 1 in the fresh clone).
+   - `DECIDING_RUN_EXIT=1` (`.ufo/evidence/round-51/after/`).
+   - Verdicts: C1 verifies, C2 verifies, C3 does not verify.
+3. **Choice of FREEZE.** The controls were re-scored after amendment 2: `controls.stdout` at `6d8c11e3` names rev `9d023aed`. The `controls.exit` byte did not change, so git holds no commit for it after `9d023aed`. Gate 0 keys on the last commit that touched the file, not on when the score was produced.
+4. **Unchanged by this choice:** no counter, predicate, target or kill rule. The 84aa673 diff is the declared pre-score amendment 2.
+
+### Mistakes (attempt 3)
+
+| class | evidence pointer | captured-by | fix |
+|---|---|---|---|
+| `receipt-recency-by-last-touch` — the deciding gate dates a receipt by the last commit that changed its bytes, so a byte-identical re-score after an amendment reads as "not after freeze" | `integrate/a3/deciding-invocation-1-refused.txt`; `git log --format=%h 7e548bee -- .ufo/evidence/round-51/control/controls.exit` → `f0129a55` only; `controls.stdout` at `6d8c11e3` names rev `9d023aed` | QUALITY 99 (deciding-run gate 0) covers missing receipts, not re-scored identical ones | Routed, not fixed: the round-52 deciding gate should bind each control receipt to a freeze-stamped header line (`FREEZE=<sha>` inside the receipt) rather than to git last-touch. Not yet shown able to fail. |
+| `misroot` — seat `T51W2Read14` also wrote its report into the fleet root `.ufo/waves/round-51/w2/` (byte-identical to the lane copy, sha256 `9b17352c…`) | orchestrator quarantine `/home/vgpnk/Projects/shokunin/.tower/quarantine/fleet-root-strays-20261027T0020/` | wave-context absolute-path rule (§6 item 2) | The orchestrator moved the copy; the lane copy stays canonical. The attempt-3 sweep `git -C /home/vgpnk/Projects/shokunin status --porcelain` shows only `?? .ufo/reports/round-45/kengaku.md`, which is another lane's file and was left untouched. |
+| `unfilled-placeholder` — the w2 spec builder emitted `@P@<name>` deliverable paths (95 occurrences in `w2-dispatch.json`), so 41 seat files landed under literal `@P@…` names | `.ufo/waves/round-51/build-spec-w2.py:38-61`; `find .ufo/waves/round-51/w2 -name '*@P@*' \| wc -l` → 41 | none; the wave validator accepts any string | `integrate/a3/placeholder-guard.sh DISPATCH` refuses a taskCall carrying `@[A-Z]@`. It was shown able to fail: w2 gives `FAIL placeholders=95` (exit 1) and w1 gives `PASS placeholders=0` (exit 0) (`integrate/a3/placeholder-guard.receipt`). Run it before writing any `.ready`. |
+
+### Routed defects (found by w2 seats, open at the deciding revision)
+
+- **R51.1, operability harm.** The registry row `mte-interop-check` (`tools/registry.json`) still expects `MTE_INTEROP: PASS legs_conforming=9/9`. The tool now requires and prints ten legs (`tools/mte-interop.py:343`), so `registry-check --only mte-interop-check` cannot pass at REV. This is static evidence from `T51W2Read20.md` HIGH-2; the L1 did not run that gate. The frozen tools-scope monitor allows only the five panel tools to change, so the registry row could not follow this round without turning that monitor red. This is a trade, and it is reported as harm.
+- **R51.2.** SKILL.md:2136 (round-26 registry) still says "nine ledger legs" (`T51W2Read20.md` HIGH-1). The runner row's write scope still names `/tmp` although the runner honours TMPDIR (MED-1). The re-key entries carry `wrong_expectations: 0` by construction (`refresh.py:227`), although reader Read20 recorded these false statements. The re-key is reading-bound, not a truth verdict.
+- **R51.3.** Runner line pointers in the sections that attempt 2's discarded draft re-pointed (SKILL.md:174, :211, :937-950). Fixing them needs a fresh read and re-key.
+- **R51.4.** C3: `tools/round21-measure.py --selftest` resolves sibling repos at `ROOT.parent`. Either make it hermetic, or give the counter a declared fleet-bound row class (`T51W2ScoutC3Provenance.md`). This needs a counter amendment in a later round.
+- **R51.5.** The C3 counter's mutation attack (`T51W2MutC3Counter`) never ran.

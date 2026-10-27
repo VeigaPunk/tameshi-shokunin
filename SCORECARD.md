@@ -2456,3 +2456,33 @@ L1 TameshiR51, hyaku run 9, attempt 1. Three claims on distinct axes, pre-regist
 | C3 one conforming, runnable SKILL.md registry row per lane tool exposing a self-test (30 frozen): `C3_R51_PASS=true` | operability (no numeric score; surface: the registry home) | `rows=2 covered=0 missing=30` (CTL_0) | `covered=30 total=0` | `python3 .ufo/evidence/round-51/c3/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_TEMPLATE, CTL_HELP (uniform rows): `covered=0`, false |
 
 Measured at the sweep (after the pre-registration commit, before any seat): the tenth case killed 2 of 10 and 7 of 10 verdict predictions held (`.ufo/evidence/round-51/c2/sweep/sweep.txt`); the three kill-aimed misses are explained in `corpus/lessons/round-51.md`. What the counters cannot see (contract `cannot_see`): C1 — whether the frozen expectations are the right reading; C2 — survivor equivalence and the entry's prose; C3 — the truth of a row's kind, write scope and pinned values. The after values are read from the deciding receipts under `.ufo/evidence/round-51/after/`, never from this table.
+
+### Round 51 — deciding results (appended after the deciding run, attempt 3)
+
+L1 TameshiR51a3 (attempt 3; attempt 2 died in the orchestrator session exit, salvage `53afb4aa`).
+
+- **Deciding run.** One completed invocation of `.ufo/evidence/round-51/deciding-run.sh` at content revision `7e548beecfbe872f931e84c2241522ea374c6bc3`, with freeze `84aa673a`.
+  - An earlier invocation with freeze `9d023aed` was refused at gate 0 with nothing run (`integrate/a3/deciding-invocation-1-refused.txt`; `corpus/lessons/round-51.md` § Attempt 3).
+  - Receipts are in `.ufo/evidence/round-51/after/`.
+  - `FROZEN_UNCHANGED=0`: the diff is exactly amendment 2 (contract.json, freeze.json, no-harm.sh).
+  - 11/11 no-harm monitors ok; QUALITY 98 precheck `64 → 64 lost=0 ok`; census exit 0; `DECIDING_RUN_EXIT=1`, because of C3 and the frozen-diff line.
+
+| Claim | Axis | Before (CTL_0) | After (REV `7e548bee`) | Delta | Verdict | Evidence |
+|---|---|---|---|---|---|---|
+| C1 | calibration (8) | `frontier_bad=10 status_conflicts=1 total=11` | `frontier_bad=0 status_conflicts=0 usedby_missing=0 total=0 C1_R51_PASS=true` | score unchanged (8 is the monitor ceiling); the surface moved: the frontier table was re-stated and S022 queued → mined | verifies (measured) | `after/c1.stdout` |
+| C2 | depth | `recorded_cases=9 depth_score=9` | `recorded_cases=10 wired_legs=10 depth_score=10 … predictions_held=7/10 C2_R51_PASS=true` | depth 9 → 10 (command D, cap 10) | verifies (measured) | `after/c2.stdout`; `after/no-harm.stdout` commandD |
+| C3 | operability (no numeric score) | `rows=2 covered=0 missing=30` | `rows=32 covered=29 missing=1 selftest_fail_rows=2 total=1 C3_R51_PASS=false` | 29 of the 30 frozen tools now have a conforming row; target `covered=30` missed | does not verify (honest stop) | `after/c3.stdout` (`tools/round21-measure.py` selftest exit 1 in the counter's fresh clone) |
+
+Numeric axes after: depth 10 (measured `7e548bee`), calibration 8, freshness 9 (`population=74 fresh=71`). Operability and coverage carry no numeric score.
+
+Harm disclosed outside the frozen monitors: the `mte-interop-check` row in `tools/registry.json` still expects `legs_conforming=9/9`, while the ten-leg tool prints 10/10. The evidence is static (w2 `T51W2Read20.md` HIGH-2; routed as R51.1). It is an operability trade, reported, not fixed.
+
+Capabilities: none claimed this round.
+
+**Planned (round 52):**
+
+- R51.1: make the registry row follow the ten-leg panel, with a scope monitor that allows it.
+- R51.4: decide whether round21-measure is fleet-bound or hermetic; this needs a counter amendment.
+- R51.2 and R51.3: correct the stale SKILL statements and pointers, then re-key them with fresh readers.
+- Re-run the C3 counter's mutation attack (R51.5).
+- Freeze-stamp the control receipts (Mistakes row 1).

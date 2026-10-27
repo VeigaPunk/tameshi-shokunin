@@ -2418,3 +2418,25 @@ Motivating evidence: the round-50 spot-check routed S022 queued despite a used-b
 - Frontier census start: exit 0 (`.ufo/evidence/round-51/census-start.*`); tools installed/updated: none (host RULES read; existing tools sufficed).
 
 Evidence: `.ufo/evidence/round-51/`, `.ufo/waves/round-51/`; deciding receipts and final lane revision to be appended when the round closes.
+
+## 2026-10-27 — round 51, attempt 3: re-key, deciding run, close
+
+L1 TameshiR51a3. Attempt 2 died with its w2 seats when the orchestrator session exited (2026-10-26 23:57:36 -03); the orchestrator's salvage commit is `53afb4aa`.
+
+Motivating evidence: the w2 reader rows existed, but no re-key had landed. The cold-read monitor stood at 44/64 at the candidate, and the deciding run had never executed.
+
+- **`02ec217c`.**
+  - Restored SKILL.md to `f133b47f`, discarding attempt 2's unread pointer draft.
+  - Copied the 20 w2 reader rows into `coldread/reads/`.
+  - Ran the attempt-3 census start (exit 0, `integrate/a3/census-start-a3.*`).
+- **`7e548bee`.** Re-key `rekey-02ec217c`: 20 targets, 44/64 → 64/64 (`integrate/a3/refresh-02ec217c.stdout`).
+- **Deciding run at `7e548bee`** (freeze `84aa673a`; one gate-0 refusal at freeze `9d023aed` before it):
+  - C1 PASS; C2 PASS (depth 9 → 10); C3 FALSE (`covered=29 missing=1`).
+  - 11/11 no-harm monitors ok; precheck lost=0; census exit 0.
+  - Receipts: `.ufo/evidence/round-51/after/`.
+- **Lesson § Attempt 3.**
+  - Salvage disposition.
+  - Three mined mistakes. The placeholder guard was shown able to fail: w2 FAIL (95 placeholders), w1 PASS.
+  - Routed defects R51.1–R51.5, including R51.1: an operability harm in the `mte-interop-check` registry row.
+
+Evidence: `.ufo/evidence/round-51/after/`, `.ufo/evidence/round-51/integrate/a3/`, `corpus/lessons/round-51.md`; SCORECARD § Round 51 deciding results.
