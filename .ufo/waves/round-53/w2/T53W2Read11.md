@@ -94,7 +94,8 @@ C**  {'start': 1615, 'end': 1626, 'sha256': '06a6864fb05fd63df168597696407397c7d
   `superseded_by: evidence-disposition-round18`. Three independent surfaces agree with the heading.
 - **H2 — "historical; live entry since round 18: `.ufo/evidence/round-18/dispositions.json`".** Check 6: exit 0,
   `clean`, 12 rows at C\*\*, *after* the wave-1 fix pass also edited `tools/evidence-disposition.py`
-  (C2 `$TMPDIR` helper, +16 lines). Check 22: no newer manifest supersedes round-18.
+  (`git diff --numstat C* C**` → `15 1`, the C2 strict-`$TMPDIR` scratch-root helper). Check 22: no newer
+  manifest supersedes round-18.
 - **H3 — "round 17's now exits 2, bash-witness moved".** Check 5: exit 2,
   `expected_input_digest_mismatch`, on `tools/bash-witness-study.py`; the round-14 v1 manifest has no
   `historical_inputs` waiver, which is why the same drift kills its own command too.
@@ -138,7 +139,7 @@ at C\*\*** under the wave-2 bar (a statement that does not hold):
 4. The lane's registry agrees with the supersession and stays coherent with it: the row
    `evidence-disposition-round14-superseded` keeps `expect: {exit: 0}` but is `status: superseded` with
    `superseded_by: evidence-disposition-round18`; `tools/registry-check.py` runs superseded rows for
-   visibility, prints `ROW <name> superseded expect=<exit> got=<exit>` and **excludes them from `held=N/M`**
+   visibility, prints `ROW <name> superseded expect=<exit> got=<exit|...>` and **excludes them from `held=N/M`**
    (docstring lines 30–36, `print_human`), so a superseded row's changed outcome is surfaced, never graded as
    the active contract.
 

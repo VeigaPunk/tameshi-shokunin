@@ -1,0 +1,210 @@
+{
+  "seat": "T53W2ExecDupLint",
+  "wave": "round-53 wave 2",
+  "axis": "operability",
+  "milestone": "wave-2 executor",
+  "item": "Duplicate-phrase lint over ALL of SKILL.md at C** (repeated parentheticals, doubled words, the two known fixed patterns); plus a /tmp/ scan of the 21 re-fixed sections for claims presented as current.",
+  "cand": "5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e",
+  "comparators": {
+    "c_star": "a41195dfc13a73958e4c5228ec196b28d03ded03",
+    "base": "6db1d220b337c35ff1e25bf9cfd74abc9db1498d"
+  },
+  "skill_sha256_at_cand": "4b4a05251208beb61b0ad70ff8f26fef42dd9d3187317c4286b06c42b06b3d6d",
+  "sections_total": 64,
+  "lint_script": "duplint2.py",
+  "lint_selftest": "selftest_duplint.py",
+  "lint_selftest_result": "7/7 pass",
+  "axes": {
+    "K1": "the two known fixed patterns named by the seat item",
+    "D1": "doubled word in prose (CLI metavariable pairs and code-table column boundaries excluded)",
+    "D6": "the same qualifier repeated on ONE item (equivalent after stripping markdown emphasis; separated only by whitespace/punctuation) — the exact shape of known fixed pattern 1",
+    "D2": "two identical parentheticals on one line",
+    "D3": "duplicate parenthetical, same line, non-adjacent",
+    "D4": "duplicate parenthetical across two lines of one section",
+    "D5": "repeated >=6-word n-gram across two lines of one section (fenced blocks excluded)",
+    "T1": "/tmp/ occurrences inside the 21 re-fixed sections, with history markers detected"
+  },
+  "defect_axes": [
+    "K1",
+    "D1",
+    "D6"
+  ],
+  "known_fixed_patterns": [
+    {
+      "pattern": "(ten since round 51) (ten since round 51)",
+      "status_at_cand": "absent (fixed)",
+      "present_at_base": true,
+      "base_evidence": "6db1d220:SKILL.md:1305 reads 'uncommitted worktree file at this write), `--regression` replays **six** in r10-2 (**ten** since round 51) (ten since round 51)'",
+      "at_cand_evidence": "5b703c6f:SKILL.md:1320 reads 'uncommitted worktree file at this write), `--regression` replays **six** in r10-2 (**ten** since round 51)'",
+      "detector": "K1 + D6 fire at base, silent at C**"
+    },
+    {
+      "pattern": "still not embedded at this boundary (both are legs 5-6 since round 10-2",
+      "status_at_cand": "absent (fixed)",
+      "present_at_base": true,
+      "base_evidence": "6db1d220:SKILL.md:1227 reads 'read `stale`. Cases 5–6 were still not embedded at this boundary (both are legs 5–6 since round 10-2 — `tools/mutate-and-run.sh:92-93`): their rows carry no `REGRESSION`'",
+      "at_cand_evidence": "5b703c6f:SKILL.md:1234 reads 'read `stale`. Cases 5–6 were not yet embedded at this boundary (they became legs 5–6 at r10-2; the current tool carries them at `tools/mutate-and-run.sh:88-97`): their rows carried no `REGRESSION`'",
+      "anchor_verified": "tools/mutate-and-run.sh:88-97 at C** lists 10 leg lines (grep -c '^#' = 10)",
+      "detector": "K1 fires at base, silent at C**"
+    }
+  ],
+  "axis_census": {
+    "base": {
+      "K1": 2,
+      "D1": 0,
+      "D6": 1,
+      "D2": 1,
+      "D3": 1,
+      "D4": 24,
+      "D5": 60
+    },
+    "c_star": {
+      "K1": 0,
+      "D1": 0,
+      "D6": 0,
+      "D2": 1,
+      "D3": 1,
+      "D4": 24,
+      "D5": 47
+    },
+    "cand": {
+      "K1": 0,
+      "D1": 0,
+      "D6": 0,
+      "D2": 1,
+      "D3": 1,
+      "D4": 24,
+      "D5": 46
+    }
+  },
+  "fix_pass_introduced_duplicate": false,
+  "fix_pass_new_findings": [],
+  "fix_pass_removed_findings": [
+    {
+      "axis": "D5",
+      "kind": "cross-line-duplicate-ngram",
+      "loc": "'### Reading a receipt — the discipline' lines 1005 and 1006",
+      "quote": "pass VERDICT PASS rc 0 at",
+      "quote_kind": "normalized n-gram (tokens joined by spaces; not a byte-exact substring)",
+      "verbatim": "   --selftest` → `MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0 at tool",
+      "verbatim_present_at_c_star": true
+    }
+  ],
+  "unfixed_defect_hits": [],
+  "unfixed_defect_count": 0,
+  "holds": {
+    "D1_prose_doubled_words": {
+      "count": 0,
+      "raw_regex_hits": 32,
+      "excluded_as_cli_metavariable_pairs": 30,
+      "excluded_as_code_table_column_boundary": 1,
+      "note": "SKILL.md:1179 'pin==live live==HEADblob' is two columns of a fixed-width table inside a fence"
+    },
+    "D2_D3": {
+      "count": 1,
+      "loc": "line 769",
+      "quote": "asserted-stem-vs-remainder (3 gates); asserted counts and floors (3 gates);",
+      "reason": "two DIFFERENT list items each carrying (3 gates); the gap is a substantive clause, so a shared attribute, not a duplicated qualifier on one item"
+    },
+    "D4_D5": {
+      "count": 70,
+      "categories": [
+        "registry table headers repeated across four registry tables in one section (18)",
+        "verdict-map boilerplate '0 clean 1 failed 2 could-not-evaluate' (9)",
+        "'(usage)' exit class in each registry row's verdict map (11)",
+        "'(80 %)' kill-rate band stated in two band rows",
+        "'(16 cases)' suite size restated at each Appendix B step (4)",
+        "'(round 18)' per-row tool label across three rows",
+        "'(exit 1)' exit code of two different tools",
+        "'(same registry section; same-ground calibration)' opening each round's addition paragraph",
+        "'(mutation-case-kagi-census.md:50-53)' cited for two different facts; anchor verified to carry both",
+        "Appendix A/B deliberate pristine-vs-mutant code pairs",
+        "'second raw pass 20:00:29Z' prose plus its ER-4 quotation on one line",
+        "'since round 26 ten since round 51' in two map-table rows"
+      ],
+      "quote_kind_note": "D4/D5 quotes are normalized n-grams (the lint tokenizes and joins with spaces); where a verbatim string is given it is byte-exact in SKILL.md at C**.",
+      "categories_verbatim": [
+        "| Name | Kind | Entry | Verdict map | Self-invocation | Persisted values | Write scope | Owner |",
+        "0 clean; 1 failed; 2 could-not-evaluate",
+        "reproduced in its second raw pass 20:00:29Z (ER-4: \"second raw pass 20:00:29Z, same readings\")",
+        "nine cases since round 26, ten since round 51",
+        "nine since round 26, ten since round 51",
+        "0 clean; 1 failed (tamper, digest drift, summary/raw mismatch, unresolved sweep); 2 could-"
+      ],
+      "categories_verbatim_all_exact_at_cand": true
+    }
+  },
+  "tmp_scan": {
+    "scope": "the 21 headings wave-1 found dirty (each wave-1 reader JSON with a non-empty findings array)",
+    "sections_scanned": 21,
+    "tmp_hits_in_scope": 8,
+    "tmp_hits_presented_as_current": 0,
+    "holds": [
+      {
+        "line": 991,
+        "section": "### Reading a receipt — the discipline",
+        "quote": "(negative run, `/tmp/w7-tameshi-1/flip-run.out` — [round 52: that volatile path is gone; the mechanism is corroborated at `reports/r7-aud-t7.md` §3 F4 and `tools/mutate-and-run.sh:2010`])",
+        "adjudication": "hold",
+        "reason": "explicitly marked gone (round 52), with the corroborating receipt named"
+      },
+      {
+        "line": 1045,
+        "section": "### The tick and the pin read",
+        "quote": "`/tmp/w8-tameshi-t84/pin-read.txt`:",
+        "adjudication": "hold",
+        "reason": "dated historical milestone: 'Executed instance — this lane, tick 2026-10-14T19:15:14Z, host `plazir27`, tool `cf41efaa…`'"
+      },
+      {
+        "line": 1072,
+        "section": "### The tick and the pin read",
+        "quote": "appended reads `drift` (`/tmp/w8-tameshi-t84/drift-demo.txt`; substrate 0",
+        "adjudication": "hold",
+        "reason": "same dated round-8 tick instance"
+      },
+      {
+        "line": 1115,
+        "section": "### Six-case confidence statement (round 8, measured)",
+        "quote": "`/tmp/w8-tameshi-t81/sweep/` and `/tmp/w8-t8-2-claims/work/` — scratch paths long since reaped under the host scratch rule, named here as history only; the evidence of record is the case notes `corpus/knowledge/mutation-case-kagi-checklist.md` and",
+        "adjudication": "hold",
+        "reason": "wave-1 finding Read20, fixed at C**: explicitly marked 'long since reaped ... named here as history only'; evidence of record redirected to case notes, both blobs present at C** (a267cbe0..., 3b5c3109...)"
+      },
+      {
+        "line": 1350,
+        "section": "### The six-leg regression — usage and this round's receipt",
+        "quote": "`/tmp/w10-t10-4-ev/` (regression workdir kept):",
+        "adjudication": "hold",
+        "reason": "dated historical milestone: 'Receipt, executed by this lane ... 2026-10-14T21:02:39Z, tool `75ed934d…` before and after'"
+      },
+      {
+        "line": 1400,
+        "section": "### The map — where a reader enters, artifact by artifact",
+        "quote": "§7's default scratch still reads `mktemp -d /tmp/…` (`corpus/knowledge/operator-runbook.md:349-351`) while the runner honours `TMPDIR` (`tools/mutate-and-run.sh:149-150`) — by that rule the runner governs [round 52]",
+        "adjudication": "hold",
+        "reason": "dated [round 52] cross-document description naming the governing rule; both anchors verified at C**"
+      },
+      {
+        "line": 2178,
+        "section": "### Round-26 gate/probe registry — report interop",
+        "quote": "the runtime sweep additionally removes the fixed literal /tmp/tally-audit-work whenever a PASS vector fires",
+        "adjudication": "hold",
+        "reason": "verified by execution: sentinel dir /tmp/tally-audit-work planted, C** tally-audit-v2.py check_runtime() -> (True, 'vectors=18288 mismatched=0'), sentinel removed"
+      },
+      {
+        "line": 2179,
+        "section": "### Round-26 gate/probe registry — report interop",
+        "quote": "plus one auto-root dir /tmp/tameshi-r4-2-regression.XXXXXX allocated to witness the runner shape and removed at exit",
+        "adjudication": "hold",
+        "reason": "verified by execution: C** tally-audit-v3.py auto_root() -> /tmp/tameshi-r4-2-regression.XXXXXX (not under TMPDIR), removed at exit via atexit rmtree"
+      }
+    ]
+  },
+  "c2_counter_crosscheck": {
+    "command": "python3 .ufo/evidence/round-53/c2/measure.py --lane LANE --rev 5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e --work ABSOLUTE_DIR",
+    "verdict_line": "C2_R53: rev=5b703c6ff tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=1 docs=ok total=0 C2_R53_PASS=true",
+    "note": "a RELATIVE --work makes the counter's TMPDIR relative and the registry-check selftest's git-clone cases fail (SELFTEST: FAIL (6 of 51 cases: gitdir-scrub-rev, rev-clone-detached, ...)); with an absolute --work it passes. The counter is a frozen file and was not edited."
+  },
+  "read19_findings_all_fixed": true,
+  "read19_findings_checked": 7,
+  "verdict": "PASS",
+  "verdict_basis": "zero un-fixed duplicate-phrase hits on the defect axes (K1, D1, D6) and zero un-fixed /tmp/ claims presented as current in the 21 re-fixed sections"
+}

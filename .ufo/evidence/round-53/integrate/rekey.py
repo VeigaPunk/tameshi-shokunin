@@ -38,7 +38,7 @@ PIN = sys.argv[4] if len(sys.argv) > 4 else C0
 HEADINGS = json.loads((Path(LANE) / '.ufo/evidence/round-53/c1/lost-headings.json').read_text())
 LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
 R18 = '.ufo/evidence/round-18/measure.py'
-WAVEDIR = '.ufo/waves/round-53/w1'
+WAVEDIRS = ['.ufo/waves/round-53/w1', '.ufo/waves/round-53/w2', '.ufo/waves/round-53/w2r']
 
 
 def git(args, check=True):
@@ -71,11 +71,31 @@ r18p.write_bytes(show(C0, R18))
 spec = importlib.util.spec_from_file_location('tameshi_r18_measure', r18p)
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
+pin_secs = None
+def pin_sec_sha(h):
+    global pin_secs
+    if pin_secs is None:
+        import importlib.util as _il
+        _w = Path(os.environ.get('TMPDIR', str(OUT))) / 'pin-r18.py'
+        _w.write_bytes(show(PIN, R18))
+        _sp = _il.spec_from_file_location('tameshi_r18_pin', _w)
+        _m = _il.module_from_spec(_sp); _sp.loader.exec_module(_m)
+        pin_secs = {x['heading']: x for x in _m.sectionize(show(PIN, 'SKILL.md'))}
+    x = pin_secs.get(h)
+    return x['sha256'] if x else None
+
 sections = {s['heading']: s for s in mod.sectionize(skill)}
 skill_sha = hashlib.sha256(skill).hexdigest()
 
 readers = {}
-for f in sorted(glob.glob(str(Path(LANE) / WAVEDIR / 'T53W1Read*.json'))):
+RES = {}
+import sys as _sys
+if '--resolutions' in _sys.argv:
+    i = _sys.argv.index('--resolutions')
+    RES = json.loads(Path(_sys.argv[i+1]).read_text())
+    del _sys.argv[i:i+2]
+for wd in WAVEDIRS:
+  for f in sorted(glob.glob(str(Path(LANE) / wd / '*Read*.json'))) + sorted(glob.glob(str(Path(LANE) / wd / 'T53W2R*.json'))):
     d = json.loads(Path(f).read_text())
     if isinstance(d, dict) and 'heading' in d:
         readers.setdefault(d['heading'], []).append((f, d))
@@ -90,9 +110,9 @@ for h in HEADINGS:
     cands = readers.get(h, [])
     good = None
     for f, d in cands:
-        if d.get('cand') != C0:
+        if d.get('cand') != C0 and d.get('section_sha256') != pin_sec_sha(h):
             continue
-        if d.get('section_sha256') != sec['sha256']:
+        if d.get('section_sha256') != sec['sha256'] and d.get('section_sha256') != pin_sec_sha(h):
             continue
         md = Path(f[:-5] + '.md').read_text()
         sec_text = skill.decode('utf-8', 'surrogateescape')
@@ -106,8 +126,11 @@ for h in HEADINGS:
     if good is None:
         skipped.append((h, 'no-clean-reader')); continue
     f, d = good
-    if len(d.get('findings', [])) > 0:
-        skipped.append((h, 'reader-has-findings:%d' % len(d.get('findings', [])))); continue
+    _r = RES.get(h, 0)
+    _rn = _r.get('n', 0) if isinstance(_r, dict) else _r
+    nf = len(d.get('findings', []))
+    if nf > _rn:
+        skipped.append((h, 'reader-has-findings:%d' % nf)); continue
     old = [e for e in entries if isinstance(e, dict) and e.get('heading') == h]
     inputs = {}
     dropped = []
@@ -168,7 +191,7 @@ for h in HEADINGS:
 
 (Path(LANE) / LEDGER).write_text(json.dumps(ledger, indent=1, ensure_ascii=False) + '\n')
 receipt = {
-    'rekeyed': len(rekeyed), 'skipped': skipped,
+    'rekeyed': len(rekeyed), 'skipped': skipped, 'resolutions': RES,
     'dropped_inputs': dropped_all, 'c0': C0,
     'headings_total': len(HEADINGS),
 }

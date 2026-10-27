@@ -26,31 +26,34 @@ placeholders; no value is copied from contract prose into a cell without the rec
 | 7 | `git show 5b703c6f:SKILL.md \| grep -n 'registry-check\|env-diff' \| grep -i tmp` | rows at 1993, 2163, 2172 now name `$TMPDIR`; 2172 carries the round-53 CR47 clause | C2 docs state |
 | 8 | `git show 5b703c6f:tools/env-diff.py \| sed -n '25,130p'` | `strict_scratch_root()` raises on a set-but-unusable TMPDIR; `profile_env` `/tmp/w/*` are bwrap-namespace paths (`--tmpfs /tmp`, `--bind tmp /tmp/w`) | rules out a false `/tmp` finding |
 | 9 | `git show 5b703c6f:tools/registry-check.py \| grep -n 'gettempdir\|cannot create scratch\|TMPDIR'` | helper at 758–768, message `cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)` | C2 CR47 surface |
-| 10 | `git show 7d8aaac6:.ufo/evidence/round-53/c1/lost-headings.json \| python3 -c '…len…'` | `30` headings; first two are `## Context gate classification and explicit exit classes — round 15`, `## Effective expectation reconciliation — round 14` | heading count |
+| 10 | `git show 7d8aaac6:.ufo/evidence/round-53/c1/lost-headings.json \| python3 -c 'import json,sys; print(len(json.load(sys.stdin)))'` | `30` headings; first two are `## Context gate classification and explicit exit classes — round 15`, `## Effective expectation reconciliation — round 14` | heading count |
 | 11 | `git show 7d8aaac6:.ufo/evidence/round-53/c1/measure.py \| sed -n '1,30p'` | docstring step 2 says `the unique … directory 'rekey-r53-<c0>'`; verdict-line template says `rekeyed=K/19 readers=R/19` | item F5 |
 | 12 | python re-hash of every `files` entry in `freeze.json` against `git show 7d8aaac6:` bytes | 8/8 OK (`contract.json 5fb52e4d2522`, `c1/measure.py da89149195b8`, `c1/lost-headings.json 069a680e8d93`, `c2/measure.py 1942cd8f9850`, `no-harm.sh e4e6b7ad803f`, `deciding-run.sh 585e166d4ab7`, `control/controls.py c5a37ca1ecd6`, `control/break-fixtures.py c80f5a8ca676`) | freeze integrity (my own check) |
 | 13 | `git log -1 --format='%H %ci %s' 7d8aaac6 -- .ufo/evidence/round-53/control/controls.stdout` | `a36d3e514d6565f6dbcb14bf0f70ecc379521ecb 2026-10-27 10:10:29 -0300 round-53: phase-A controls scored at freeze bytes (2/2 as pre-registered), before wave 1`; `git merge-base --is-ancestor a36d3e5 7d8aaac6` → true | controls commit |
-| 14 | `git log --format='%h %ci %s' -1` for `a41195d`, `5b703c6`, `7d8aaac` | `10:24:16` / `10:49:22` / `10:50:28` (linear order `a41195d → 5b703c6 → 7d8aaac`) | item F1 |
+| 14 | `git log --format='%h %ci %s' -1` for `a41195d`, `5b703c6`, `7d8aaac`, `218bc6b`, `e62d997`; `git merge-base --is-ancestor 218bc6b5 e62d997` | `10:24:16` / `10:49:22` / `10:50:28` / `10:15:50` / `10:18:54`; ancestry exit 0 | item F1 |
 | 15 | `git show 7d8aaac6:.ufo/evidence/round-53/freeze.json` (python) | `frozen_at` = `before any seat ran and before the fix pass`; `files` 8; amendments `[1,2,3,4,5,6]` | item F1 |
 | 16 | python dump of `corpus/routed-defects.json` | 49 rows; `round: 50`; note `one row per item routed by the round-40..49 closure spot-checks…`; no `R52.*`/`R53.*` row; `git log -3 -- corpus/routed-defects.json` → newest `b28a978` (round 50) | item F7 / Planned |
 | 17 | `git grep -n "round 52\|round 53" 5b703c6f -- LOG.md` | `LOG.md:2444 ## 2026-10-27 — round 52 (honest stop, run wrap-up)`, `LOG.md:2465 ## 2026-10-27 — round 53, attempt 2 (this round)` | R52.2 closed |
 | 18 | `git ls-tree -r --name-only 5b703c6f -- .ufo/waves/round-52 .ufo/evidence/round-52/integrate \| grep -E 'w3.ready\|w3/\|build-readers'` | the four untracked items R52.4 named are committed | R52.4 closed |
-| 19 | `git show 5b703c6f:SKILL.md \| grep -n '<critic string>'` for `mkdtemp under /tmp`, `context-capture-selftest`, `tameshi-r12-repeat-control-selftest`, `bash-witness-selftest-private` | first string absent; the other three now read `$TMPDIR` (2162, 2174, 1521) | critic C2-C fixed at C\*\* |
-| 20 | `git status --porcelain`; re-read `git status --porcelain -- SKILL.md`; `git hash-object SKILL.md` vs `git rev-parse HEAD:SKILL.md` | a transient ` M SKILL.md` on the first read; on re-read no entry, `diff --quiet` exit 0, both blobs `d75af3ffbe52…` | clean-tree gate |
+| 19 | `for s in 'mkdtemp under /tmp' 'context-capture-selftest' 'tameshi-r12-repeat-control-selftest' 'bash-witness-selftest-private'; do git show 5b703c6f:SKILL.md \| grep -n "$s"; done` | first string absent; the other three now read `$TMPDIR` (2162, 2174, 1521) | critic C2-C fixed at C\*\* |
+| 20 | `git status --porcelain`; re-read `git status --porcelain -- SKILL.md`; `git hash-object SKILL.md` vs `git rev-parse HEAD:SKILL.md` | a transient ` M SKILL.md` on the first read; on re-read no entry, `diff --quiet` exit 0, both blobs `d75af3ffbe5261a67bde46bd891128b8eb1b4c6d` | clean-tree gate |
 | 21 | read `.ufo/waves/round-53/w1/T53W1CritClaims.md` (§C1-B, C1-C, C2-C) and `.ufo/waves/round-53/w2/T53W2RevContract.md` | wave-1 critic routes the 218bc6b5 receipt gap and the freeze-timing note; wave-2 review prints `KILL-RULE-HOLE` for the C1 provenance gate | prior art / draft limits |
 
 ## Holds (used by the draft, receipt-backed)
 
 - The freeze manifest is self-consistent at `7d8aaac6`: every one of its eight recorded sha256 values
   re-derives from the committed bytes (check 12). `verify-freeze.stdout` in the evidence directory is the
-  **earlier** run (`FREEZE e62d99711a0d files=8 amendments=5`), superseded by amendment 6; the deciding run
-  re-runs the check at the freeze it is given (`deciding-run.sh` FROZEN list, `FROZEN_UNCHANGED=1`).
+  **earlier** run (`FREEZE e62d99711a0d files=8 amendments=5`), superseded by amendment 6. The deciding run does
+  not run that script: it requires the frozen file set to be byte-identical between freeze and revision
+  (`git diff --quiet "$FREEZE" "$REV" -- $FROZEN` → `FROZEN_UNCHANGED=1`), and the freeze-integrity re-run at
+  `7d8aaac6` is a separate wave-2 check.
 - Base is RED on the frozen floor: `cand_credited=45 lost=19 RED`, exit 1 (check 2).
 - Both do-nothing controls behave as pre-registered: `verdict=false`, `expected=false pass`,
   `CONTROLS: total=2 pass=2`, exit 0 (check 4).
-- The C2 target surface is empty at C\*\* (`tools/` has no `dir=…"/tmp"` match, check 6), and the two tools'
-  SKILL rows plus the helper code carry the round-53 scratch-root semantics (checks 7–9). The `/tmp/w/*`
-  literals in `env-diff.py` are sandbox-internal names, not host scratch (check 8) — they are **not** a finding.
+- The C2 target surface is empty at C\*\* (`git grep` for the predicate regex over `tools/` exits 1 with no
+  match, check 6), and the two tools' SKILL rows plus the helper code carry the round-53 scratch-root semantics
+  (checks 7–9). The `/tmp/w/*` literals in `env-diff.py` are sandbox-internal names, not host scratch (check 8) —
+  they are **not** a finding.
 - R52.2 and R52.4 are closed at C\*\* (checks 17, 18); R52.1 and R52.5 are this round's two claims.
 - The transient ` M SKILL.md` was a stat-dirty entry, not content: the re-read shows a clean status and
   identical blobs (check 20). Recorded here so nobody re-reports it.
@@ -62,12 +65,15 @@ Classes follow the cold-read vocabulary (stale-as-current, receipt/pointer misma
 
 **F1 — stale-as-current provenance note in the operative freeze.**
 Quote (`git show 7d8aaac6:.ufo/evidence/round-53/freeze.json`): `"frozen_at": "before any seat ran and before the fix pass"`.
-Reason: that describes the first freeze, not this one. The commit order is `a41195d` (C\*, 10:24:16) →
-`5b703c6` (fix pass 2, 10:49:22) → `7d8aaac` (amendment 6, 10:50:28); amendment 6 is the freeze in force and
-it postdates both content commits, so the 30-heading scope and the counter change were chosen with the fix
-pass's damage already known. The wave-1 critic reached the same conclusion independently
-(`.ufo/waves/round-53/w1/T53W1CritClaims.md`, §C1-C defect 1). Fix: the draft header states the amendment
-timing instead of repeating the string; the string itself is frozen bytes and needs the next re-freeze.
+Reason: that describes the first freeze, not this one. The operative amendment 6 (`7d8aaac`, 10:50:28) postdates
+both content commits (`a41195d` C\*, 10:24:16 → `5b703c6` fix pass 2, 10:49:22), and amendment 5 (`e62d997`,
+10:18:54) already descends from the first fix pass (`218bc6b`, 10:15:50;
+`git merge-base --is-ancestor 218bc6b5 e62d997` → true). Both re-freezes were therefore taken with the fix
+passes' damage visible, so "before the fix pass" is wrong for the current freeze in two ways: the 30-heading
+scope postdates the first fix pass and the counter change postdates the second. The wave-1 critic reached the
+same conclusion independently (`.ufo/waves/round-53/w1/T53W1CritClaims.md`, §C1-C defect 1). Fix: the draft
+header states the amendment timing instead of repeating the string; the string itself is frozen bytes and needs
+the next re-freeze.
 
 **F2 — receipt/pointer mismatch in the C1 `before` cell.**
 Quote (`.ufo/evidence/round-53/contract.json`, claims.C1.before): `cand_credited=34 lost=30 RED at the post-fix-pass candidate 218bc6b5 (the round's own edits, repaired by the same re-key) (before/coldread-precheck-at-tip.stdout, exit 1)`.
@@ -151,15 +157,17 @@ script in `.ufo/evidence/round-53/contract.json`, frozen at
 recorded manifest hash re-derives at that commit —
 `.ufo/waves/round-53/w2/T53W2ScribeSCORECARD.md` §Checks row 12). Base
 `6db1d220b337c35ff1e25bf9cfd74abc9db1498d`. Calibration (8, the lowest non-retired numeric axis;
-`contract.json` claims.C1.axis_score) carries C1; C2 repairs the scratch-directive defect the round-52 closure
-graded harmed. The freeze is not one moment: amendment 5 (the re-key scope extended to the frozen heading set)
+`contract.json` claims.C1.axis_score) carries C1; C2 repairs routed defect R52.5 (the scratch directive's
+`/tmp` rule, `corpus/lessons/round-52-verifier-spotcheck.md`). The freeze is not one moment: amendment 5 (the
+re-key scope extended to the frozen heading set)
 froze before wave 1, and amendment 6 (`7d8aaac676cb`) changed the C1 counter to accept more than one
 `rekey-r53-<rev>` directory and to bind reader JSONs by `section_sha256` alone — frozen after C\* `a41195dfc13a`
 and C\*\* `5b703c6ff3ff`, before wave 2. (The amendment's note also says the reader candidate is "recorded, not
 gated"; the frozen counter does not read a candidate — see `.ufo/waves/round-53/w2/T53W2ScribeSCORECARD.md` F9.)
-`"frozen_at"` string still reads `"before any seat ran and before the fix pass"`, which describes the first
-freeze, not this one (`.ufo/evidence/round-53/freeze.json`; the commit order is `a41195d` → `5b703c6` →
-`7d8aaac`). Phase-A controls were scored at the freeze bytes and committed at `a36d3e514d65`
+The manifest's `"frozen_at"` string still reads `"before any seat ran and before the fix pass"`, which describes the first
+freeze: amendment 5 already descends from the first fix pass (`218bc6b`), and amendment 6 postdates the second
+(`.ufo/evidence/round-53/freeze.json`; the content order is `a41195d` → `5b703c6` → `7d8aaac`). Phase-A
+controls were scored at the freeze bytes and committed at `a36d3e514d65`
 (`.ufo/evidence/round-53/control/controls.stdout`, `.exit`: `CONTROLS: total=2 pass=2`); the five break-one
 controls live in `control/break-fixtures.py` and their scored receipt is `<phase-B controls receipt>`.
 
@@ -172,21 +180,25 @@ Errata to the frozen `before` prose and to the freeze note (predicates, targets 
 The C1 `before` line attributes `cand_credited=34 lost=30` to the post-fix candidate `218bc6b5` but cites
 `before/coldread-precheck-at-tip.stdout`, whose bytes carry the base run only; the value is receipted as a C\*
 verdict line by `.ufo/waves/round-53/w1/T53W1RevCounters.md`, and no committed receipt records the 218bc6b5
-run. The C2 `before` line names two of the nine `dir="/tmp"` sites the base tree carries under `tools/`. The
-phase-A receipt covers the two do-nothing controls; the five break-one controls are phase B and must be scored
-and committed before the deciding run, because the kill rule requires every pre-registered control receipt.
+run. The C2 `before` line names two of the nine `dir="/tmp"` sites the base tree carries under `tools/`
+(`.ufo/waves/round-53/w2/T53W2ScribeSCORECARD.md` §Checks row 5). The phase-A receipt covers the two do-nothing
+controls; the five break-one controls are phase B (`contract.json` claims.C1.controls and claims.C2.controls;
+`control/break-fixtures.py`) and must be scored and committed before the deciding run, because the kill rule
+requires every pre-registered control receipt.
 
 What the counters cannot see (contract `cannot_see`, plus what the wave seats measured this round): C1 — whether
 a fresh reader's finding is semantically fair (the wave-2 re-read and the non-author closure attack it), whether
 the recorded inputs are the right citation set, and whether the fixed SKILL statements are true beyond the
 frozen checks; the frozen counter's own docstring still declares the heading count as `19` and a **unique**
-re-key directory while the frozen heading file holds 30 and amendment 6 accepts many
+re-key directory while the frozen heading file holds 30 headings
+(`.ufo/evidence/round-53/c1/lost-headings.json`) and amendment 6 accepts many
 (`git show 7d8aaac6:.ufo/evidence/round-53/c1/measure.py`). The frozen provenance gate is also weaker than the
 contract's wording — `rekey_prefix()` accepts an entry on one in-directory trace, and `read_rev` is checked by
 string prefix, not commit identity (`.ufo/waves/round-53/w2/T53W2RevContract.md`: `KILL-RULE-HOLE`). C2 — whether
 TMPDIR redirection truly isolates a run, tools and counters outside `tools/` (frozen `.ufo/evidence` counters
 with `/tmp` are routed, not claimed), and hosts where TMPDIR itself is ignored; the docs arm decides "no /tmp
-scratch path" from four literal legacy needles, so a stale row in another form would pass. The after values are
+scratch path" from four literal legacy needles (`.ufo/evidence/round-53/c2/measure.py`), so a stale row in
+another form would pass. The after values are
 read from the deciding receipts under `.ufo/evidence/round-53/after/`, never from this table.
 
 ### Round 53 — deciding results (appended after the deciding run)
@@ -194,10 +206,13 @@ read from the deciding receipts under `.ufo/evidence/round-53/after/`, never fro
 L1 TameshiR53a2, attempt 2 (attempt 1 died at its first model call on a provider quota limit).
 
 - **Deciding run.** One invocation of `.ufo/evidence/round-53/deciding-run.sh` at content revision `<REV>`
-  (freeze `7d8aaac6`), receipts `.ufo/evidence/round-53/after/`: `<after/frozen.stdout>` (`FROZEN_UNCHANGED=1`),
-  `<n>/12` no-harm monitors `ok` (`after/no-harm.stdout`), the frozen precheck's last line
-  `<after/coldread-precheck.stdout>` with exit `<after/coldread-precheck.exit>`, census exit
-  `<after/census.exit>`, `DECIDING_RUN_EXIT=<rc>` (`after/deciding-run.exit`).
+  (freeze `7d8aaac6`), receipts `.ufo/evidence/round-53/after/`. The gate's requirements, not results: the
+  frozen file set byte-identical between freeze and revision (`FROZEN_UNCHANGED=1`, `<after/frozen.stdout>`),
+  every no-harm monitor `ok` with the gate's own count (`deciding-run.sh`:
+  `[ "$(grep -c '^NOHARM .* ok$' "$OUT/no-harm.stdout")" = 12 ]`, `<after/no-harm.stdout>`), the frozen
+  precheck's last line and exit (`<after/coldread-precheck.stdout>`, `<after/coldread-precheck.exit>`), census
+  exit (`<after/census.exit>`), and the one-invocation and clean-tree witnesses
+  (`<after/deciding-run.exit>` carries `DECIDING_RUN_EXIT=<rc>`).
 
 | Claim | Axis | Before (CTL_0) | After (REV `<REV>`) | Delta | Verdict | Evidence |
 |---|---|---|---|---|---|---|
@@ -208,17 +223,18 @@ Numeric axes after: the deciding no-harm receipt `<after/no-harm.stdout>` (comma
 r45-freshness lines, byte-exact); no axis value is typed here. Capabilities: none claimed this round — both
 claims are axis moves (`contract.json` claims.C1.kind, claims.C2.kind). Limits: the items listed under "What the
 counters cannot see" above, the frozen C1 docstring and `freeze.json` `"frozen_at"` string (frozen bytes, next
-re-freeze), and the phase-B control receipt if it is not committed by the deciding run.
+re-freeze), and the phase-B control receipt, which the kill rule requires but `deciding-run.sh` does not gate on.
 
 **Planned (round 54):** the two routed items this round does not work — R52.3 (re-derive the round-52 over-count
 verdict under one written counting rule, and decide whether a reviewer-seat quote-truncation criterion is
 needed) and R52.6 (the report-contract repairs: per-box SHONEN lines, Landed changes and Before → after
 sections, the false "not committed/pushed" sentence, trend vocabulary) — both in
-`corpus/lessons/round-52-verifier-spotcheck.md`, and neither in `corpus/routed-defects.json`, whose newest row
-set is round 50's, so bringing that ledger current is itself an item. The round's own records put four more on
-the table: the frozen C1 docstring's `19` and "unique" wording and the `freeze.json` `"frozen_at"` string, both
-fixed at the next re-freeze and not before (they are frozen bytes here; `.ufo/evidence/round-53/c1/measure.py`,
-`.ufo/evidence/round-53/freeze.json`); the provenance hole the wave-2 contract review names — all traces of an
+`corpus/lessons/round-52-verifier-spotcheck.md`, and neither in `corpus/routed-defects.json`, whose newest
+commit is round 50's, so bringing that ledger current is itself an item. The round's own records put further
+items on the table: the frozen C1 docstring's `19` and "unique" wording and the `freeze.json` `"frozen_at"`
+string, both fixed at the next re-freeze and not before (they are frozen bytes here;
+`.ufo/evidence/round-53/c1/measure.py`, `.ufo/evidence/round-53/freeze.json`); the provenance hole the wave-2
+contract review names — all traces of an
 entry beneath exactly one accepted directory, `read_rev` compared to the resolved commit rather than a prefix,
 and a break-one control for mixed trace sets (`KILL-RULE-HOLE`,
 `.ufo/waves/round-53/w2/T53W2RevContract.md`) — which needs a re-freeze and a control, so it cannot land inside
@@ -234,9 +250,15 @@ stays `open`: the per-leg reuse classification is still unmeasured (`corpus/READ
 
 ## Out of scope / not done
 
-- `SCORECARD.md` was not written or touched; the draft above is the deliverable. No lane file was edited, no git
-  or jj mutation was made, no counter was executed, no tool was installed, no fixture or scratch tree was created
-  (nothing under `/fast/scratch/hyaku/tameshi-r53/w2/T53W2ScribeSCORECARD` survives this seat).
+- **Handoff state of this file.** The wave-2 integration commit `ac52387` captured an intermediate copy of this
+  report while it was still being edited (HEAD at handoff is `ac52387`). The final bytes are the working-tree
+  version of `.ufo/waves/round-53/w2/T53W2ScribeSCORECARD.md`; this report is the only path this seat wrote.
+  This seat makes no git mutation, so the L1 must commit these bytes; until then the tree is dirty and the
+  deciding run's clean-tree gate will refuse (other dirty paths in `git status` at handoff belong to peer seats,
+  not to this one).
+- `SCORECARD.md` was not written or touched; the draft above is the deliverable. No lane file was edited besides
+  this report, no git or jj mutation was made, no counter was executed, no tool was installed, no fixture or
+  scratch tree was created (nothing under `/fast/scratch/hyaku/tameshi-r53/w2/T53W2ScribeSCORECARD` exists).
 - I did not score any control or run either counter: the phase-B receipt, the deciding revision and the after
   cells are the L1's and the deciding run's to fill, and every such slot is left as a placeholder rather than a
   plausible number.

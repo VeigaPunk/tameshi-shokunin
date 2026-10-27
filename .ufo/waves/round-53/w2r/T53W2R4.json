@@ -1,0 +1,22 @@
+{
+ "heading": "## Standing rules",
+ "cand": "651773ab9e3295777a087c033e620ea81b9717b6",
+ "section_sha256": "d3880242962e1b192647eff32ff056cc5efb454a98a3b36219291b4c795e7417",
+ "findings": [
+  {
+   "quote": "the dash form's last committed occurrences are rounds 25-36",
+   "class": "measured claim false outside its unstated scope (dash form survives to round 47 in run artifacts and to round 52 in this page's own text)",
+   "skill_statement": "At C5 the dash form `<lane>-r<round>-<token>` is not last committed at round 36. Two independent committed counterexample families exist in the C5 tree: (1) run artifacts - `/tmp/tameshi-r45-ExecRows01` (`.ufo/waves/round-45/w1-dispatch.json`, 1693 occurrences at prefix r45 alone), `.ufo/evidence/round-46/deciding-run.sh:20` `WORK=${4:-/tmp/tameshi-r46-deciding}`, `.ufo/evidence/round-47/deciding-run.sh:19` `WORK=${4:-/var/tmp/tameshi-r47-deciding}`, `.ufo/evidence/round-45/freshness/integrate.py:4,22` `/tmp/tameshi-r45-ExecRows*/`; dash-form trees at rounds 37-47 total 3702 occurrences (3654 under `/tmp/`, 48 under `/var/tmp/`), so the form's last committed occurrence in run artifacts is round 47, not 36. (2) The page itself - at the round-52 head `7ff81a5:SKILL.md:25` read ``- **Scratch namespace is `/tmp/<lane>-r<round>-<n>-*/` from the first write**`` and `:136` read ``Scratch for a sweep: `/tmp/<lane>-r<round>-<n>-work/` (Standing rules).``, with `:158,342,543,599` carrying the same dash form, so the page's own dash-form prescription was committed through round 52. The clause is true only under the narrower reading its counts imply but do not state - committed paths under the default base `/fast/scratch/hyaku/tameshi-r<NN>-<token>`: there the census is rounds 25(9), 27(2), 29(101), 31(1027), 32(1508), 33(382), 34(1034), 35(1716), 36(155) = 5934, max round 36, and 0 for rounds 48-52. Reproduction: `git -C LANE grep -o -E '/tmp/tameshi-r[0-9]+-[A-Za-z0-9_]+' C5 -- .` (rounds 37-47 nonzero, 3702 total), `git -C LANE grep -o -E 'hyaku/tameshi-r[0-9]+-[A-Za-z0-9_]+' C5 -- .` (max round 36), `git -C LANE show 7ff81a5:SKILL.md | sed -n '25p;136p'` (dash form committed at round 52). The neighbouring clauses reproduce and hold: 0 dash-form path trees for rounds 48-52 in every base, slash form `/fast/scratch/hyaku/tameshi-r<NN>/<sub>` present in each of rounds 48-52 (282/576/4810/2251/148), thousands in aggregate (8067).",
+   "evidence": [
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin grep -o -E '/tmp/tameshi-r[0-9]+-[A-Za-z0-9_]+' 651773ab -- . | per-round: 37:18 38:7 39:152 40:162 41:211 42:150 43:243 44:113 45:1693 46:581 47:324 (+/var/tmp 47:48) = 3702",
+    "git -C LANE grep -o -E 'hyaku/tameshi-r[0-9]+-[A-Za-z0-9_]+' 651773ab -- . | per-round: 25:9 27:2 29:101 31:1027 32:1508 33:382 34:1034 35:1716 36:155 = 5934, max 36",
+    "git -C LANE grep -o -E '(var/)?tmp/tameshi-r[0-9]+-[A-Za-z0-9_]+' 651773ab -- . | rounds 48-52 = 0",
+    "git -C LANE grep -o -E 'hyaku/tameshi-r[0-9]+/' 651773ab -- . | rounds 48-52 = 282/576/4810/2251/148 (8067)",
+    "git -C LANE show 7ff81a5:SKILL.md | sed -n '25p;136p' -> '/tmp/<lane>-r<round>-<n>-*/' and '/tmp/<lane>-r<round>-<n>-work/'",
+    "git -C LANE show 651773ab:.ufo/evidence/round-46/deciding-run.sh | sed -n 20p -> WORK=${4:-/tmp/tameshi-r46-deciding}",
+    "git -C LANE show 651773ab:.ufo/evidence/round-47/deciding-run.sh | sed -n 19p -> WORK=${4:-/var/tmp/tameshi-r47-deciding}"
+   ],
+   "holds_scoped": "true only for committed paths directly under the default base /fast/scratch/hyaku/tameshi-r<NN>-<token> (w1's census), which the clause does not name"
+  }
+ ]
+}

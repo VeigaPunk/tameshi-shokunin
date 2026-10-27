@@ -2497,3 +2497,61 @@ L1 TameshiR52, hyaku run 9, attempt 1. Two claims on distinct axes, pre-register
 | C2 the frozen statement set of records the round-51 closure found false (SKILL.md leg count and `mte-interop-check` mention, runner write-scope cell, two runner pointers and the default-scratch bullet, 20 correction records for the round-51 re-key's `wrong_expectations: 0`, the kill-rate ledger's drift-pins cell, and reader-derived counts on this round's re-key entries) has zero mismatches: `C2_R52_PASS=true` | calibration (8; surface: closure-found false records) | `m1=2 m2=1 m3=3 m4=20 m5=1 m6=0 total=27` | `total=0` | `python3 .ufo/evidence/round-52/c2/measure.py --lane LANE --rev REV --explain` | CTL_DELETE 27, CTL_ZERO 2, CTL_FORGE 20: false; CTL_POSITIVE true |
 
 Erratum to the frozen contract's C1 `before` prose: it predicted `total=2`; the counter's arithmetic gives 4 at BASE (one stale row trips the row clause, the summary clause and the mte-row clause), as CTL_0 shows. Predicate and target are unchanged. What the counters cannot see (contract `cannot_see`): C1 — whether a held row's needle is meaningful, and whether the fleet-bound self-test still exercises the real sibling blobs; C2 — the completeness of findings for the 18 reader files without frozen floors (CTL_POSITIVE passes with zero findings there), and stale statements outside the frozen set. The after values are read from the deciding receipts under `.ufo/evidence/round-52/after/`, never from this table.
+
+## Round 53 — cold-read floor repair (calibration) + tools scratch hygiene (operability) (2026-10-27)
+
+L1 TameshiR53a2, hyaku run 10, attempt 2 (attempt 1 died at its first model call
+on a provider quota limit; nothing inherited). Claims frozen at `e62d9971`
+(amendments 1–7, all before the data they govern; `.ufo/evidence/round-53/freeze.json`);
+base `6db1d220`; content commits C* `a41195df` → C5 `651773ab`; final deciding
+revision recorded in `.ufo/evidence/round-53/after/`. Calibration (8) is the
+lowest non-retired axis and was the round-52 closure's harmed axis; C1 repairs
+it. C2 works operability (no numeric score).
+
+| Claim | Axis | Before (CTL_0) | Target | Counting command | After |
+|---|---|---|---|---|---|
+| C1 the 30 credit-lost cold-read sections are re-keyed, trace-bound to fresh readers, and the frozen precheck reads 64/64 GREEN at the deciding revision: `C1_R53_PASS=true` | calibration (8; floor RED at base) | `cand_credited=45 lost=19 RED` at base; `34/64 lost=30 RED` at the post-fix candidate | `credited=64 lost=0` + `C1_R53_PASS=true` | `python3 .ufo/evidence/round-53/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | (deciding receipt `after/c1.stdout`) |
+| C2 no `dir="/tmp"` under tools/, selftests pass under redirected TMPDIR, CR47 semantics preserved (set-but-unusable TMPDIR = could-not-evaluate), SKILL names no stale /tmp invocation: `C2_R53_PASS=true` | operability | 2 hardcodes + 5 more found in flight; selftest TMPDIR-ignoring | `C2_R53_PASS=true` | `python3 .ufo/evidence/round-53/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `C2_R53_PASS=true` at every candidate from C** on (e.g. `5b703c6f` probe); deciding receipt `after/c2.stdout` |
+
+Controls: phase A 2/2 as pre-registered (do-nothing false at base for both
+counters); phase B break-one fixtures (trace removal, reader-sha corruption,
+read_rev mismatch, planted /tmp, defeated CR47) each printed false and the
+unmodified candidate printed true (receipts `.ufo/evidence/round-53/control/`).
+What the counters cannot see (`cannot_see`, unchanged): whether reader
+findings are semantically fair (wave-2 readers + residual re-reads + the
+L1's disclosed adjudications in `integrate/resolutions.json` — 5 over-reach
+adjudications evidence-backed, all rejected or fixed), and whether the fixed
+SKILL statements are true beyond the frozen checks.
+
+Deciding run (`.ufo/evidence/round-53/after/`): FROZEN_UNCHANGED=1 (freeze
+`7d8aaac6` after amendment 7), 12/12 no-harm ok, frozen precheck GREEN, fleet
+census exit 0, `DECIDING_RUN_EXIT=0`. Numeric axes: calibration 8 (restored,
+was harmed at base); depth 10, freshness 9 unchanged. Capabilities: none
+claimed this round.
+
+**Planned (round 54):** the routed nits the round-53 readers surfaced
+(remaining locator imprecisions in what-stays-open; the recipe 377-378
+restore-discipline anchors now heading-based but re-verify; service-limits
+§5 U1 heading anchor re-read next round); the 85 unadopted `merge/tameshi`
+entries (next: `r8-predictive-test-selection-cost.md`,
+`delta-debugging-minimization-contract.md`); C2's follow-on: TMPDIR
+empty-string semantics documented in the registry rows; considerthese
+proposals 2–5.
+
+### Round 53 — measured close (appended after the deciding attempt)
+
+Deciding run at `88afa941` (`.ufo/evidence/round-53/after/`): **C1 honest stop** —
+the frozen counter printed `credited=58 lost=6`: 28 of 30 re-keyed sections
+credit; `## Standing rules` and `### Using the ledger` were forfeited (their
+genuine reader findings were fixed at C6, but a fresh re-read could not land
+in-round); four collateral sections the round's own edits drifted
+(`### The boundaries`, `### The operator's runbook — …`, `### Round-14
+historical registry`, `### Round-26 gate/probe registry`) re-keyed with stale
+read-revision shas and could not be repaired before budget. `C1_R53_PASS=false`,
+`total=6`. **C2 verifies**: `C2_R53_PASS=true` (`tmp_hits=0`, both selftests
+pass under redirected TMPDIR, `cr47=rc=2` could-not-evaluate, docs clean).
+No-harm monitors 11/12 ok (coldread-floor RED at 58 — the C1 miss itself);
+census exit 0. The floor moved 45 → 58 credited; the remaining six sections and
+their exact repair route (re-read at the then-current bytes, re-key) are named
+in the round report's Planned (round 54). Calibration repair is real but
+incomplete; the round reports the miss, not a narrowed target.

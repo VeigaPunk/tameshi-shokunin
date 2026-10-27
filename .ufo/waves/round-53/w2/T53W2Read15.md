@@ -38,7 +38,7 @@ trailing whitespace-only lines stripped, joined with `\n`, no trailing newline; 
 | 4 | cited paths still dead | `ls -ld /tmp/w8-tameshi-t81 /tmp/w8-t8-2-claims` | both `No such file or directory`; `/fast/scratch/hyaku` exists |
 | 5 | evidence-of-record files exist at C** | `git -C $L rev-parse C**:corpus/knowledge/mutation-case-kagi-checklist.md` / `…kumitate-claims.md` | blobs `a267cbe0…` / `3b5c3109…`, identical to their C* blobs (untouched by the fix pass) |
 | 6 | evidence of record carries the controls | `grep -n` over both notes at C** | `CHECKLIST_SELFTEST: PASS (34 cases)` at kagi `:49`, `:261`; `CLAIMS_SELFTEST: 39/39 pass` at kumi `:53`, `:62`; `MUTATE_RESTORE: OK` at kagi `:199`, `:262`, kumi `:69` |
-| 7 | host /tmp ageing mechanism | `cat /usr/lib/tmpfiles.d/tmp.conf` | `q /tmp 1777 root root 10d` |
+| 7 | host /tmp ageing mechanism | `grep -v '^#' /usr/lib/tmpfiles.d/tmp.conf` | `q /tmp 1777 root root 10d` |
 | 8 | rule text / date the fix invokes | `sed -n '29,32p' SKILL.md`@C** | “host scratch directive of 2026-10-25: `/tmp` is for files under 50 MB only; a seat deletes its tree on exit […]”; no reaping clause |
 | 9 | any record of the w8 scratch being reaped | `grep -rIn 'w8-tameshi-t81\|w8-t8-2-claims'` over the lane | only live-at-write mentions (notes, `plans/round-8-record-draft.md`, `reports/r8-aud-t8.md`); no reaping record |
 | 10 | six table pins resolve to single blobs | sha256 over every `git rev-list --all --objects -- <path>` blob per owner repo | all six found exactly once (below) |
@@ -76,13 +76,14 @@ Every statement of the section except the one in §4 was checked and holds at C*
   39 · 7/10 · 6 kill + 4 hole. Compositions sum to their denominators (10/10/6+4/4+6/7+8/6+4) and the band
   `40 / 47 / 60 / 70 / 80 / 80` is ascending and equals the six rows.
 - **Pins.** All six `revision` cells resolve to exactly one blob in their owner repo with the stated
-  sha256 prefix (check 10); row 5's pin is a 506-line bash file and row 6's a 926-line node file, as ER-2
-  records.
+  sha256 prefix (check 10); row 5's pin is a 506-line / 24,697 B bash file and row 6's a 925-newline /
+  48,265 B node file, as ER-2 records.
 - **`two language classes` / shebangs.** Read from the pinned bytes: `#!/usr/bin/env node` ×2
   (kimi-census, claims-check), `#!/usr/bin/env bash` ×4 (surface-census, tsukuroi-census, mado-verify,
   checklist-run) — node ESM ×2 + bash ×4, as claimed.
-- **`five measured families over the six gates`.** At the pinned bytes: kimi `KIMI_CENSUS_SELFTEST:
-  ${passed}/${results.length} pass` (`:852`) and `FAIL ${r.label}` (`:850`); claims
+- **`five measured families over the six gates`.** At the pinned bytes: kimi prints `KIMI_CENSUS_SELFTEST:`
+  with a `${passed}/${results.length}` numerator and ` pass` (`:852`) plus `FAIL ${r.label}` (`:850`);
+  claims
   `CLAIMS_SELFTEST: …pass` (`:861`) with the identical `FAIL ${r.label}` (`:859`) → one family over the
   two kumitate node gates. kagi's two bash gates differ: surface-census `ok-case`/`bad-case … got exit=`
   (`:755`, `:758`) and `SELFTEST: PASS/FAIL (n cases)` (`:846-847`) versus checklist-run
@@ -90,9 +91,11 @@ Every statement of the section except the one in §4 was checked and holds at C*
   tsukuroi prints `PASS %s` from `ok()` (`:693`) invoked as `ok "$label (exit $rc, $wverdict)"` (`:782`);
   mado prints `MADO_SELFTEST: $n_pass/$n_pass assertions passed` (`:423`). 1+2+1+1 = 5, each in the shape
   the section names.
-- **`four author lanes (kumitate ×2, kagi ×2, tsukuroi, mado)`** — the six rows' `(author · file)`
-  cells, matching ledger §1/ER-2 owners.
-- **`the four embedded legs plus the two queue gates entering in round 8`.** The round-8 harness
+- **Four author lanes — kumitate ×2, kagi ×2, tsukuroi, mado** (the section wraps this sentence after
+  “four author lanes”, so it is not one continuous string). The six rows' `(author · file)` cells match
+  ledger §1/ER-2 owners.
+- **“The case set at this write: the four embedded legs plus the two queue gates entering in round 8”**
+  (sentence wrapped in the source; verified by content). The round-8 harness
   `cf41efaa…` (1,341 lines) writes exactly four embedded case specs — `js-kimi-census.spec` (`:552`),
   `bash-surface-census.spec` (`:593`), `bash-tsukuroi-census.spec` (`:638`), `bash-mado-verify.spec`
   (`:683`); the two queue rows are ledger §3 `claims-check` (`:111`) and `checklist-run` (`:121`), as
@@ -117,11 +120,13 @@ Every statement of the section except the one in §4 was checked and holds at C*
   property.** […] Read width off placement, never off language” — i.e. the round-3/5 finding does place
   the differences in kill width and composition, not language. The three-gate frame is the section's own
   (“Three-case confidence statement”, `:758`).
-- **`Counting tameshi's own harness meta-sweep (ledger §2)`.** §2 is `:90-97`; the meta-sweep row is
+- **Counting tameshi’s own harness meta-sweep (ledger §2)** — the section wraps this phrase across two
+  source lines. §2 is `:90-97`; the meta-sweep row is
   `:95` (pre-hardening 0/6, post 6/6, owner “the instrument's own gate, hardened by its owner (tameshi)”), so
   artifact 7 / author 5, as the section says.
-- **`Unknown in all six: coordinated rewrites; cross-host stability; the 50 % crossover; the two
-  round-8 notes' own unknowns.`** Ledger §8 U2 (coordinated multi-edit rewrites unmeasured) and U1 (no
+- **Unknown in all six** (the source wraps this bullet; the items are) — coordinated rewrites; cross-host
+  stability; the 50 % crossover; the two round-8 notes' own unknowns. Ledger §8 U2 (coordinated multi-edit
+  rewrites unmeasured) and U1 (no
   cross-host/toolchain stability reading); the 50 % crossover is still unmeasured in the round-5 section
   (`:741`, `:774`); both notes carry their own U lists (kagi U1–U4+, kumi U1–U4+).
 
@@ -135,8 +140,9 @@ Verbatim from the section at C**:
 scratch paths long since reaped under the host scratch rule, named here as history only
 ```
 
-The full clause it sits in: `… and /tmp/w8-t8-2-claims/work/` — `scratch paths long since reaped under
-the host scratch rule, named here as history only`; the evidence of record is the case notes …
+The clause reads, with the two paths immediately preceding it elided here: “…
+`scratch paths long since reaped under the host scratch rule, named here as history only`; the evidence
+of record is the case notes …”.
 
 What holds: the paths are absent
 (`ls -ld /tmp/w8-tameshi-t81 /tmp/w8-t8-2-claims` → `No such file or directory` for both), and the
@@ -192,9 +198,8 @@ plain absence (“gone”), the form the page already uses for a volatile path e
   notes/ledger, not contradictable from bytes. Only 34 (checklist) is statically countable, and it matches
   (check 13).
 - **“runs under `/tmp/w8-tameshi-t81/sweep/` and `/tmp/w8-t8-2-claims/work/`” as subpath drift** — both
-  subpaths are faithful to the notes (`mutation-case-kagi-checklist.md:285` `--workdir
-  /tmp/w8-tameshi-t81/sweep`; `mutation-case-kumitate-claims.md:373` `--workdir
-  /tmp/w8-t8-2-claims/work`).
+  subpaths are faithful to the notes (kagi note `:285` gives `--workdir /tmp/w8-tameshi-t81/sweep`; claims
+  note `:373` gives `--workdir /tmp/w8-t8-2-claims/work`).
 
 ## 6. Limits
 

@@ -2476,3 +2476,19 @@ hardcodes honour TMPDIR; assimilation of `change-aware-resweep-cadence.md`
 `.ufo/evidence/round-53/verify-freeze.sh` (executed, receipt
 `verify-freeze.stdout`); QUALITY 104. Waves and deciding receipts to follow
 under this entry.
+  (update) Wave 1 settled: 30/30 readers + 14 specialist reports
+  (`.ufo/waves/round-53/w1/`); 40 findings fixed L1-inline at `5b703c6f`
+  (C**) with the strict TMPDIR scratch-root helper in 7 tools. Wave 2 (40
+  seats) re-read the 21 re-fixed sections at C**: 9 sections carried 12
+  further findings; 7 adjudicated (5 over-reach with evidence, 2 fixed at
+  C***/C4) in `integrate/resolutions.json`; 3 genuine anchor findings fixed
+  at C5 (`651773ab`). Residual re-reads (recipe, cadence, what-stays-open at
+  C4; standing rules, six-leg, using-the-ledger at C5) closed the loop. The
+  re-key then bound all 30 sections (`.ufo/evidence/round-21/coldread/rekey-r53-*`),
+  the frozen counters decided at the final revision, and the phase-B
+  break-one controls all printed false as pre-registered. Deciding receipts:
+  `.ufo/evidence/round-53/after/`.
+  (close) Final re-key bound 28 sections (`.ufo/evidence/round-21/coldread/rekey-r53-*`,
+  three read revisions, inputs pinned at C7). Deciding run at 88afa941:
+  C1 honest stop (58/64, six sections named in SCORECARD), C2 verified.
+  Fleet census end: exit 0. Report committed on the fleet repo.
