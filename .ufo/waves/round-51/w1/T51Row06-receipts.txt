@@ -1,0 +1,53 @@
+# T51Row06 receipts — golden-verdict.py at 84aa673a1a476e48ccf239335696f0518d08bae7
+
+## rev/blob
+$ git -C $S/tameshi-shokunin rev-parse HEAD
+84aa673a1a476e48ccf239335696f0518d08bae7
+$ git rev-parse 84aa673a:tools/golden-verdict.py
+5a507ba8a8633cbf3bc7d8b071a6d33cd2be6416
+$ sha256sum tools/golden-verdict.py
+c5f9616be719fdce99e8aaa9d8c9b1cde5c4c2d4d4db0b517ec16c1a26d15f87  tools/golden-verdict.py
+
+## selftest
+$ ( cd CLONE && TMPDIR=$S/tmp python3 tools/golden-verdict.py --selftest </dev/null )
+GOLDEN_VERDICT_SELFTEST: 3/3 pass
+exit=0 wall_ms=41
+
+## usage probe (counter spelling)
+$ python3 tools/golden-verdict.py --r51-no-such-flag </dev/null
+usage: golden-verdict.py [-h] [--selftest] [--check-entry PATH]
+                         [--classify-exit N]
+golden-verdict.py: error: unrecognized arguments: --r51-no-such-flag
+exit=2
+
+## no-mode probe
+$ python3 tools/golden-verdict.py </dev/null
+usage: golden-verdict.py [-h] [--selftest] [--check-entry PATH]
+                         [--classify-exit N]
+exit=2
+
+## check-entry on the committed entry
+$ python3 tools/golden-verdict.py --check-entry corpus/knowledge/golden-comparison-verdict.md
+GOLDEN_VERDICT_ENTRY: classes=3/3 update_rule=present path=corpus/knowledge/golden-comparison-verdict.md
+exit=0
+
+## check-entry on a missing path (conflation evidence)
+$ python3 tools/golden-verdict.py --check-entry corpus/knowledge/no-such-entry.md
+GOLDEN_VERDICT_ENTRY: unreadable corpus/knowledge/no-such-entry.md ([Errno 2] No such file or directory: 'corpus/knowledge/no-such-entry.md')
+exit=1
+
+## classify-exit modes
+$ python3 tools/golden-verdict.py --classify-exit 0 -> match
+  exit=0
+$ python3 tools/golden-verdict.py --classify-exit 1 -> differ
+  exit=0
+$ python3 tools/golden-verdict.py --classify-exit 2 -> error
+  exit=0
+$ python3 tools/golden-verdict.py --classify-exit 42 -> error
+  exit=0
+$ python3 tools/golden-verdict.py --classify-exit -1 -> error
+  exit=0
+
+## counter self-check line
+$ python3 .ufo/evidence/round-51/c3/measure.py --lane $S/chk2 --rev HEAD --work $S/w2 --explain
+C3_TOOL tools/golden-verdict.py: covered line 1505 selftest exit=0 last=GOLDEN_VERDICT_SELFTEST: 3/3 pass

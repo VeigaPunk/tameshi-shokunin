@@ -1,0 +1,782 @@
+{
+ "candidate": "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+ "base": "9962033fd7a75aa2f2847e979dd687a5d28505a1",
+ "scope": "reading-bound re-key: the section's pointers were read by the named seats (wave-2 read rows with located excerpts) and its cited non-record files are bound by trace; not blind cold-read or recipe execution",
+ "read_command": "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+ "instrument_sha256": "f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4",
+ "monitor": {
+  "path": ".ufo/evidence/round-21/coldread/measure.py",
+  "sha256": "657f009bdf1cc89ac614ed7c8424858f5f802b5a5330d8917db788f67982f3eb",
+  "impl": ".ufo/evidence/round-18/measure.py",
+  "impl_sha256": "7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37"
+ },
+ "measured_before": {
+  "base": {
+   "total": 64,
+   "covered": 64,
+   "score": 8,
+   "strict": true
+  },
+  "cand": {
+   "total": 64,
+   "covered": 44,
+   "score": 6,
+   "strict": true
+  }
+ },
+ "targets": 20,
+ "entries_added": 20,
+ "receipts": [
+  {
+   "section": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+   "start": 131,
+   "end": 245,
+   "sha256": "16878309483ed915fa7b402c6852d838d73be9febac4f5075a2b3dd9bf9dbd4b",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/gates-survey-kagi.md",
+    "corpus/knowledge/gates-survey-kumitate.md",
+    "corpus/knowledge/mutation-case-kagi-census.md",
+    "corpus/knowledge/mutation-case-kimi-census.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [
+    "corpus/README.md"
+   ],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/gates-survey-kagi.md": "4734f0a0bd28e90f78b0a766b2aa6dac8238936550e1b1b0ec3316b00e1294c6",
+    "corpus/knowledge/gates-survey-kumitate.md": "3dca7a1a5c621bf0ec75948d0836839dec98651673bb2987861d9aa122579b0e",
+    "corpus/knowledge/mutation-case-kagi-census.md": "d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0",
+    "corpus/knowledge/mutation-case-kimi-census.md": "034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-1.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-1.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "131",
+    "245",
+    "corpus/knowledge/gates-survey-kagi.md,corpus/knowledge/gates-survey-kumitate.md,corpus/knowledge/mutation-case-kagi-census.md,corpus/knowledge/mutation-case-kimi-census.md,tools/mutate-and-run.sh",
+    "corpus/README.md",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "abc148808d2423dfb93af2e875c2622d2cf1c310200d954b04483bfe7bd49e4a"
+  },
+  {
+   "section": "## Restore discipline — before/after identity, not continuous non-write proof",
+   "start": 375,
+   "end": 404,
+   "sha256": "83c2ceddd3455d5973318e77547580cad7ef863aeeac110c70e42cf0c2e5deaa",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/mutation-case-kagi-census.md",
+    "corpus/knowledge/mutation-case-kimi-census.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [
+    "SCORECARD.md",
+    "corpus/README.md"
+   ],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/mutation-case-kagi-census.md": "d3190a9940b9d47b7aae0025b2f4c80228d5a15cbb052cbef316ddff021d0bb0",
+    "corpus/knowledge/mutation-case-kimi-census.md": "034524eff8f19cb8fca78cd5d13c6da9971f2ef2b5bedc1b950309c95c121548",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-2.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-2.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "375",
+    "404",
+    "corpus/knowledge/mutation-case-kagi-census.md,corpus/knowledge/mutation-case-kimi-census.md,tools/mutate-and-run.sh",
+    "SCORECARD.md,corpus/README.md",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "6d603f899920779baa498b4daebd8c6dcbdcdc421bd7bf66fc968930056c83b0"
+  },
+  {
+   "section": "### The protocol — ordered, fail-closed",
+   "start": 827,
+   "end": 857,
+   "sha256": "404d85388686e28cf0a57bf6e3f27a915612b42998c4f9c3f2b9925108c9510a",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/mutation-case-mado-verify.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/mutation-case-mado-verify.md": "f2d53d495e6c1d8b2c18e7bc0eac54955d477455958b10866c5f8712b2086bf3",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-3.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-3.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "827",
+    "857",
+    "corpus/knowledge/mutation-case-mado-verify.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "a1ab6db591ef50bd5085ef8173bb367989f73a013359fefc972b83923b68cfa4"
+  },
+  {
+   "section": "### The boundaries — what a service run is not",
+   "start": 858,
+   "end": 882,
+   "sha256": "df053a03b9e54637ebcfc54b34753726d7f644996b39276cbf8a4df664dd36c9",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-suite-census.md",
+    "corpus/knowledge/mutation-case-mado-verify.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/fleet-suite-census.md": "ec1c2d8d2877a21df9752a7b20e6c307a144442a583ec6e6e03349d98ac94e4f",
+    "corpus/knowledge/mutation-case-mado-verify.md": "f2d53d495e6c1d8b2c18e7bc0eac54955d477455958b10866c5f8712b2086bf3",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-4.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-4.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "858",
+    "882",
+    "corpus/knowledge/fleet-suite-census.md,corpus/knowledge/mutation-case-mado-verify.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "18d0634142d4de36fe94410e7f07c03e189b026ac232bbcdf942b910a285b67e"
+  },
+  {
+   "section": "## The leg ledger — replay, receipt, and how it is read (round 7, measured)",
+   "start": 921,
+   "end": 932,
+   "sha256": "b5dae2b85cd606e8d8db5d34922aa995763428934ea28f728bf372c308c38ebc",
+   "credit_at_cand": "input-drift:corpus/README.md;input-drift:corpus/SOURCES.md;input-drift:corpus/knowledge/closeout-r11.md;input-drift:corpus/knowledge/incremental-pin-disposition.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-5.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-5.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "921",
+    "932",
+    "corpus/knowledge/fleet-kill-rate-ledger.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "7a2c1248b5f49a8de0135e467e4636c7f8aaefa9174f57b753da31d3f3f24735"
+  },
+  {
+   "section": "### Using the ledger",
+   "start": 933,
+   "end": 964,
+   "sha256": "57ac17ec1a08473f278cff466eb799253adddd8cca8541fdd3cbaa330dc44746",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-6.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-6.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "933",
+    "964",
+    "tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "cb0649e3d8493f0226663b9dc20e0fd88917d04c947c4b8b555ccc581e12af61"
+  },
+  {
+   "section": "### Reading a receipt — the discipline",
+   "start": 965,
+   "end": 1009,
+   "sha256": "ecd74f306a05b96d3f87227de52e6e2bdf74f243ebbd2da232bef0f29b3611c8",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "plans/round-7.plan.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "plans/round-7.plan.md": "49cd55fd0efaf892c281ec90538310cd5691af2af4ab1270c9945146fdc0fcec",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-7.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-7.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "965",
+    "1009",
+    "corpus/knowledge/fleet-kill-rate-ledger.md,plans/round-7.plan.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "4e58cb98cd66e8b705d27995a967b2f86b544e278859a896b2a88fe8985c23b4"
+  },
+  {
+   "section": "### The tick and the pin read",
+   "start": 1021,
+   "end": 1068,
+   "sha256": "60d658245f87d166809e43a14a1bc8b873d2604032b37fa9ab6c3d2965ed5853",
+   "credit_at_cand": "input-drift:corpus/knowledge/closeout-r11.md;input-drift:corpus/knowledge/incremental-pin-disposition.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-8.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-8.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1021",
+    "1068",
+    "tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "1c6abe4f0747b4df0991c82acb9b2e620b507ecde3ccb76bb6bed89482e47c08"
+  },
+  {
+   "section": "### The tick, executed",
+   "start": 1164,
+   "end": 1211,
+   "sha256": "6982b6494fc1998dd4625a0c94117896424bda73ca737d370ac8300a4dd00b16",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-9.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-9.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1164",
+    "1211",
+    "corpus/knowledge/fleet-kill-rate-ledger.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "7360d84f67db5d1b80f5713838bffb394d4aca2cbbf9bd3b86e38dc6bbabd3b2"
+  },
+  {
+   "section": "### The receipt at this boundary",
+   "start": 1212,
+   "end": 1229,
+   "sha256": "7f411a1a8b92f816a27296cf3863f5c52c4172b60725f464af2168403d366208",
+   "credit_at_cand": "input-drift:corpus/knowledge/fleet-kill-rate-ledger.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-10.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-10.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1212",
+    "1229",
+    "corpus/knowledge/fleet-kill-rate-ledger.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "e0a7b4f425a748d58ebebc6cd1d0a120c6fa9ecc6875591a55adb18ac4644e7c"
+  },
+  {
+   "section": "## The operator's runbook and the six-leg regression (round 10, measured)",
+   "start": 1272,
+   "end": 1280,
+   "sha256": "e52321d2152b65c88894a72fd91b594dc7aabfb1c5bea9ed283cbdd81ec1664d",
+   "credit_at_cand": "input-drift:corpus/knowledge/closeout-r11.md;input-drift:corpus/knowledge/fleet-kill-rate-ledger.md;input-drift:corpus/knowledge/incremental-pin-disposition.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/registry.json;input-drift:tools/trace-inputs.py;input-drift:corpus/knowledge/closeout-r11.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/registry.json;input-drift:corpus/knowledge/fleet-kill-rate-ledger.md;input-drift:corpus/knowledge/operator-runbook.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-kill-rate-ledger.md"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [
+    "1226-1228"
+   ],
+   "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-11.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-11.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1272",
+    "1280",
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "",
+    "1226-1228"
+   ],
+   "exit": 0,
+   "stdout_sha256": "6e41d51904f0301b5e19fabf4dc9dfb63198d2c4b588d8a265fd52620d252acf"
+  },
+  {
+   "section": "### The six-leg regression — usage and this round's receipt",
+   "start": 1302,
+   "end": 1364,
+   "sha256": "b9b2ae6fb95e06547622521ad1f09b2888c638e0512d609f2b47ed22dc975ceb",
+   "credit_at_cand": "input-drift:corpus/knowledge/fleet-kill-rate-ledger.md;input-drift:tools/mutate-and-run.sh;input-drift:corpus/knowledge/fleet-kill-rate-ledger.md;input-drift:tools/mutate-and-run.sh;input-missing:tools/mutate-and-run.sh@75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-12.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-12.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1302",
+    "1364",
+    "corpus/knowledge/fleet-kill-rate-ledger.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "696a65e2c5957478a5015a0980bcb0df814910d76128687a162dd104f9c758cf"
+  },
+  {
+   "section": "### The map — where a reader enters, artifact by artifact",
+   "start": 1380,
+   "end": 1395,
+   "sha256": "62b4a13aaa417c8f21fc2e4e7b8dc45c9d18ce02204c996b981d15192e8cd0ad",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "corpus/knowledge/closeout-r11.md",
+    "corpus/knowledge/fleet-kill-rate-ledger.md",
+    "corpus/knowledge/fleet-suite-census.md",
+    "corpus/knowledge/operator-runbook.md",
+    "corpus/knowledge/service-limits.md",
+    "corpus/knowledge/service-optin-protocol.md",
+    "corpus/knowledge/service-standing-state.md",
+    "plans/completion-evidence.md",
+    "plans/round-11.plan.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [
+    "LOG.md",
+    "SCORECARD.md",
+    "corpus/README.md"
+   ],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "corpus/knowledge/closeout-r11.md": "f0894bf65aee32d81fde3f9233b8f35968e200bc7906d0035a786d3df94d1fd7",
+    "corpus/knowledge/fleet-kill-rate-ledger.md": "13a11e468dbf26972bb9734c2f0bedec859386f6729225c367c61ba056d7499e",
+    "corpus/knowledge/fleet-suite-census.md": "ec1c2d8d2877a21df9752a7b20e6c307a144442a583ec6e6e03349d98ac94e4f",
+    "corpus/knowledge/operator-runbook.md": "8b2e185ff011f6cfc2aee187ff1c2a1f8120e410c00f4b67eb6c7f1ebabb6859",
+    "corpus/knowledge/service-limits.md": "4fa8f039cdc446e63cf82dde9d9e718fafe4f85e212b8100f02706bec35730f0",
+    "corpus/knowledge/service-optin-protocol.md": "84d0c1547eed257d921b832468d6f010bcca331e8ce67ed378852d7993da8e0e",
+    "corpus/knowledge/service-standing-state.md": "d326c1a4d61c97051db07c55fb6de69bdc4faa9bbef21186d0dc0451efafb952",
+    "plans/completion-evidence.md": "8e0485655a4801b9070bfa7dd688e774fed1a2e8b1692b046109ad83ebe2a3ef",
+    "plans/round-11.plan.md": "068578f198367b79b14fea95d9db550828908e345e5cbc161cabf0e4bea744f7",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-13.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-13.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1380",
+    "1395",
+    "corpus/knowledge/closeout-r11.md,corpus/knowledge/fleet-kill-rate-ledger.md,corpus/knowledge/fleet-suite-census.md,corpus/knowledge/operator-runbook.md,corpus/knowledge/service-limits.md,corpus/knowledge/service-optin-protocol.md,corpus/knowledge/service-standing-state.md,plans/completion-evidence.md,plans/round-11.plan.md,tools/mutate-and-run.sh",
+    "LOG.md,SCORECARD.md,corpus/README.md",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "a41d51b6fce7355f489dad8380138064e0c5dc47563944988606eb5e6ef6fab3"
+  },
+  {
+   "section": "### Gate/probe registry",
+   "start": 1499,
+   "end": 1517,
+   "sha256": "c91fa4f888025c33fbac9c058774da88fbe0e76b04f934663e7c33c514c63b3b",
+   "credit_at_cand": "no-ledger-entry",
+   "direct": [
+    ".ufo/evidence/round-12/BashWitness/declaration.json",
+    ".ufo/evidence/round-12/ControlGate/expected.json",
+    ".ufo/waves/round-27/w1/Read25.md",
+    "SHONEN.md",
+    "corpus/lessons/round-1-verifier-spotcheck.md",
+    "tools/bash-witness-study.py",
+    "tools/mutate-and-run.sh",
+    "tools/repeat-control.py"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    ".ufo/evidence/round-12/BashWitness/declaration.json": "e8d2024ad13e021c5b7c41a66b881225beb9e0b30190833f0ab2310cf3670901",
+    ".ufo/evidence/round-12/ControlGate/expected.json": "1b645be04d756c304a1ef5ecc221cf92f82c5f4afbdcfde4b77fe27117684aa1",
+    ".ufo/waves/round-27/w1/Read25.md": "6e6b3cca20d1fa6db9230f2a38a3398a8038b477b98a5edc86783e44f9e3e173",
+    "SHONEN.md": "55a4fceb62b0a8f688f21beeb25003ccbb9d24caa3e03aad586799a09fd32e09",
+    "corpus/lessons/round-1-verifier-spotcheck.md": "f99ef0ae2b3a3e4939c86b9ce5ab1e701733801c1cc1c7063767edf692e0edad",
+    "tools/bash-witness-study.py": "60575e62a5301bd31c8c84a4039af69fe8f845abf035b8d072975cd9ef685be9",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a",
+    "tools/repeat-control.py": "296fe566dc59380b6baa518b61cef92fe3c7af09d538b2dde9e7f4af1b8cbc25"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-14.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-14.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1499",
+    "1517",
+    ".ufo/evidence/round-12/BashWitness/declaration.json,.ufo/evidence/round-12/ControlGate/expected.json,.ufo/waves/round-27/w1/Read25.md,SHONEN.md,corpus/lessons/round-1-verifier-spotcheck.md,tools/bash-witness-study.py,tools/mutate-and-run.sh,tools/repeat-control.py",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "2daa90d52fbc5d3570c9fe63af6b8c5f590a1f4ce13daae681f9693a86c8d8b1"
+  },
+  {
+   "section": "## Seventh recorded case and full-page cold-read — round 16",
+   "start": 1755,
+   "end": 1806,
+   "sha256": "dc791954805c33770c930027ad0be56402bd225b6625ab36c1a5a832438a349e",
+   "credit_at_cand": "input-drift:corpus/knowledge/repeated-control-precondition.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    ".ufo/evidence/round-16/measure.py",
+    "corpus/knowledge/mutation-case-kumitate-round-gate.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    ".ufo/evidence/round-16/measure.py": "03b67f58742a95e8c28ba1bffd06bd487fdc8d4c2c3130c43b487e7768c8ffbb",
+    "corpus/knowledge/mutation-case-kumitate-round-gate.md": "1b907c8d2c756134783604b604b3dd0a65b0a5fcb0f5a82e5d24b037b82aeaec",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-15.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-15.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1755",
+    "1806",
+    ".ufo/evidence/round-16/measure.py,corpus/knowledge/mutation-case-kumitate-round-gate.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "07430a694ff9e4e3401237e2f9c1df5e28d6853eb6caa7f3b286b7495e13e0bb"
+  },
+  {
+   "section": "### Round-16 gate/probe registry",
+   "start": 1807,
+   "end": 1814,
+   "sha256": "2642efc5147715676537ab35e1489742f4183b39c8a6ff0e51e25213695be843",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh;input-drift:tools/trace-inputs.py",
+   "direct": [
+    ".ufo/evidence/round-16/attribution/reattribute.py",
+    ".ufo/evidence/round-16/coldread/assemble.py",
+    ".ufo/evidence/round-16/measure.py",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    ".ufo/evidence/round-16/attribution/reattribute.py": "eaf564e42629634e21bc2ee1aa70932a1024d721eba664f8ed892640590015c1",
+    ".ufo/evidence/round-16/coldread/assemble.py": "9ee9264aabe9f474b4ecf7cfa52b4d50274ee4a6b82d06df36812a006eb0a156",
+    ".ufo/evidence/round-16/measure.py": "03b67f58742a95e8c28ba1bffd06bd487fdc8d4c2c3130c43b487e7768c8ffbb",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-16.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-16.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1807",
+    "1814",
+    ".ufo/evidence/round-16/attribution/reattribute.py,.ufo/evidence/round-16/coldread/assemble.py,.ufo/evidence/round-16/measure.py,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "472626ac340f4624fddfb441d5fdbd41573ce4d90f5843cfcd772760702d0717"
+  },
+  {
+   "section": "## Live-tree re-pin and entry-command monitor — round 17",
+   "start": 1815,
+   "end": 1846,
+   "sha256": "a41393369469431b42da98f0952db2db3ad8145041bd39513f9b32cb0791fd15",
+   "credit_at_cand": "input-drift:corpus/QUALITY.md;input-drift:corpus/README.md;input-drift:corpus/SOURCES.md;input-drift:tools/mutate-and-run.sh;input-drift:corpus/SOURCES.md;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    ".ufo/evidence/round-16/measure.py",
+    ".ufo/evidence/round-18/dispositions-before.json",
+    ".ufo/evidence/round-18/dispositions.json",
+    "corpus/lessons/round-16-verifier-spotcheck.md",
+    "tools/evidence-disposition.py",
+    "tools/pin-disposition.py",
+    "tools/registry-check.py",
+    "tools/registry.json"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    ".ufo/evidence/round-16/measure.py": "03b67f58742a95e8c28ba1bffd06bd487fdc8d4c2c3130c43b487e7768c8ffbb",
+    ".ufo/evidence/round-18/dispositions-before.json": "dc948a5ee1bab7a89e21ef4d75b620a430559ae0b2b64573f7c2bcacbc4deb65",
+    ".ufo/evidence/round-18/dispositions.json": "9caa2f76dcc36265bb11b58baa397b1015a91b086db63d203ab16020a1fc2676",
+    "corpus/lessons/round-16-verifier-spotcheck.md": "5ca780d9fda123070b26faa8a6e319db6f10373d6bbc75e45238e09878d52e37",
+    "tools/evidence-disposition.py": "39ee5c5effd9bbdaafda644aada0cdb008ddee1dbfee4ac6bea93fc5a1fe51c8",
+    "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c",
+    "tools/registry-check.py": "cba16646902e89548060fd1b4b4fcb9e0ac8de1cb3fb02a347243912292944ad",
+    "tools/registry.json": "c1b75366f1789121e6d5a4c8f6587f7519fef3bad60569ed274df8c7a681b73c"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-17.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-17.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1815",
+    "1846",
+    ".ufo/evidence/round-16/measure.py,.ufo/evidence/round-18/dispositions-before.json,.ufo/evidence/round-18/dispositions.json,corpus/lessons/round-16-verifier-spotcheck.md,tools/evidence-disposition.py,tools/pin-disposition.py,tools/registry-check.py,tools/registry.json",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "60ad8ba500016b6612913543fb8b9e6b3809ec1c6325140ee632b8f7722065c2"
+  },
+  {
+   "section": "### Round-17 gate/probe registry — re-pin and monitor",
+   "start": 1847,
+   "end": 1855,
+   "sha256": "ad2320cb7770e47aa5fa628f0a0aa96e751e42c821cff4fe9d0c9fe03af0dcd9",
+   "credit_at_cand": "input-drift:tools/evidence-disposition.py;input-drift:tools/mutate-and-run.sh;input-drift:tools/registry-check.py;input-drift:tools/registry.json;input-drift:tools/mutate-and-run.sh;input-drift:tools/mutate-and-run.sh;input-drift:tools/registry-check.py;input-drift:tools/registry.json;input-drift:tools/mutate-and-run.sh;input-drift:tools/registry.json",
+   "direct": [
+    ".ufo/evidence/round-13/pin-manifest.json",
+    ".ufo/evidence/round-18/dispositions.json",
+    "tools/evidence-disposition.py",
+    "tools/mutate-and-run.sh",
+    "tools/pin-disposition.py",
+    "tools/registry-check.py"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    ".ufo/evidence/round-13/pin-manifest.json": "64eaa43e3f7a928472efa32c7230ca78358235716db04947a93edb0202920af6",
+    ".ufo/evidence/round-18/dispositions.json": "9caa2f76dcc36265bb11b58baa397b1015a91b086db63d203ab16020a1fc2676",
+    "tools/evidence-disposition.py": "39ee5c5effd9bbdaafda644aada0cdb008ddee1dbfee4ac6bea93fc5a1fe51c8",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a",
+    "tools/pin-disposition.py": "331529eadafe9138c88c1fe09666c9401d28c166f16bc92ecc092fc4d92c3a4c",
+    "tools/registry-check.py": "cba16646902e89548060fd1b4b4fcb9e0ac8de1cb3fb02a347243912292944ad"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-18.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-18.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1847",
+    "1855",
+    ".ufo/evidence/round-13/pin-manifest.json,.ufo/evidence/round-18/dispositions.json,tools/evidence-disposition.py,tools/mutate-and-run.sh,tools/pin-disposition.py,tools/registry-check.py",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "1dc2bb2f2dd26cc7936d340bf443114310aa162ff812abf20a7b09a070e9cd87"
+  },
+  {
+   "section": "## Eighth recorded case — round 18",
+   "start": 1906,
+   "end": 1925,
+   "sha256": "c221eecdf8ff27487c2c974b3f1bd5e2cfa78111aaaebb2c8db561c74d9116fd",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    ".ufo/evidence/round-18/sources-check/suite.txt",
+    "corpus/knowledge/mutation-case-kumitate-sources-check.md",
+    "tools/mutate-and-run.sh"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    ".ufo/evidence/round-18/sources-check/suite.txt": "6e550d5a2f6a78fc0654c297b80bb042e8482423d80e2e16bab7374227931f7b",
+    "corpus/knowledge/mutation-case-kumitate-sources-check.md": "d961a0d6645541ebec116d7a12f958426ac4561cd09e9adb6f09c9554afeea38",
+    "tools/mutate-and-run.sh": "d392255b8dc7179685cb3d93def4795bfa9f9a4058defc35350eb4b1b1b9458a"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-19.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-19.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "1906",
+    "1925",
+    ".ufo/evidence/round-18/sources-check/suite.txt,corpus/knowledge/mutation-case-kumitate-sources-check.md,tools/mutate-and-run.sh",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "93201b02e8e601634df165ee987cbc97a745e712c4d464fe0224b3355939b272"
+  },
+  {
+   "section": "### Round-26 gate/probe registry — report interop",
+   "start": 2133,
+   "end": 2137,
+   "sha256": "f51b853c5104dd1ddfad40c04bd9e093af9fbaf128a74f96583657a6e2c6d7ec",
+   "credit_at_cand": "input-drift:tools/mutate-and-run.sh",
+   "direct": [
+    "tools/mte-interop.py"
+   ],
+   "records_via_blob": [],
+   "internal_pointer_follow": [],
+   "inputs": {
+    "tools/mte-interop.py": "193ea6e32f89016baffe07d41fee17074651e74d4807f7fb70dff2fbe0f72cc4"
+   },
+   "trace": ".ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-20.json",
+   "argv_tail": [
+    "--out",
+    "/fast/scratch/hyaku/tameshi-r51/T51ExecRekey/lane2/.ufo/evidence/round-51/coldread/rekey-974d2d90/traces/section-20.json",
+    "--",
+    "<READ_CMD>",
+    "\nimport hashlib, subprocess, sys\nroot, rev, start, end = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])\ndirect, records, internal = sys.argv[5].split(','), sys.argv[6].split(','), [r for r in sys.argv[7].split(',') if r]\npage = open(root + '/SKILL.md', 'rb').read().split(b'\\n')\nsys.stdout.buffer.write(b'\\n'.join(page[start - 1:end]) + b'\\n')\nprint('READS: direct opens of cited non-record files; record files through git blobs at the read revision')\nfor span in internal:\n    s, _, e = span.partition('-')\n    sys.stdout.buffer.write(b'INTERNAL-POINTER ' + span.encode() + b'\\n')\n    sys.stdout.buffer.write(b'\\n'.join(page[int(s) - 1:int(e)]) + b'\\n')\nfor rel in [p for p in direct if p]:\n    data = open(root + '/' + rel, 'rb').read()\n    print('SOURCE', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\nfor rel in [p for p in records if p]:\n    data = subprocess.run(['git', '-C', root, 'cat-file', 'blob', rev + ':' + rel], capture_output=True, check=True).stdout\n    print('RECORD-BLOB', rel, 'bytes=%d' % len(data), 'sha256=' + hashlib.sha256(data).hexdigest())\n",
+    "/fast/scratch/hyaku/tameshi-r51/refresh/lane",
+    "974d2d9005a7cb29bc6bdd6166e2e571c57a8f22",
+    "2133",
+    "2137",
+    "tools/mte-interop.py",
+    "",
+    ""
+   ],
+   "exit": 0,
+   "stdout_sha256": "fc25f084f451d42ca78b23f4504e7f1f044f22dffb36b50e03273e39f71de539"
+  }
+ ]
+}

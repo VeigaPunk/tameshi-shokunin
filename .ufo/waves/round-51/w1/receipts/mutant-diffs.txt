@@ -1,0 +1,51 @@
+== mutants/M_M01_wired_clause_drop.py compile=OK
+-    passed = recorded == 10 and len(wired) == 10 and f['new_legs'] == 1 and all(f[k] == 1 for k in need)
++    passed = recorded == 10 and f['new_legs'] == 1 and all(f[k] == 1 for k in need)
+== mutants/M_M02_spec_sha_drop.py compile=OK
+-            if spec is not None and hashlib.sha256(spec).hexdigest() == SPEC_SHA and emb == spec:
++            if spec is not None and emb == spec:
+== mutants/M_M03_embed_equality_drop.py compile=OK
+-            if spec is not None and hashlib.sha256(spec).hexdigest() == SPEC_SHA and emb == spec:
++            if spec is not None and hashlib.sha256(spec).hexdigest() == SPEC_SHA:
+== mutants/M_M04_after_freeze_drop.py compile=OK
+-    need = ['target_new', 'pin_ok', 'spec_prereg', 'sweep_ok', 'sweep_after_freeze', 'table_match', 'regression',
++    need = ['target_new', 'pin_ok', 'spec_prereg', 'sweep_ok', 'table_match', 'regression',
+== mutants/M_M05_control_pin_wildcard.py compile=OK
+-    if not re.search(r'^CONTROL: GREEN \(exit=0 duration-ms=\d+ pristine-sha256=%s\)$' % pin, text, re.M):
++    if not re.search(r'^CONTROL: GREEN \(exit=0 duration-ms=\d+ pristine-sha256=[0-9a-f]+\)$', text, re.M):
+== mutants/M_M06_verdict_set_relax.py compile=OK
+-    if sorted(verdicts) != sorted(ids) or any(len(v) != 1 or v[0] == 'INCONCLUSIVE' for v in verdicts.values()):
++    if sorted(verdicts) != sorted(ids):
+== mutants/M_M07_table_match_drop.py compile=OK
+-    need = ['target_new', 'pin_ok', 'spec_prereg', 'sweep_ok', 'sweep_after_freeze', 'table_match', 'regression',
++    need = ['target_new', 'pin_ok', 'spec_prereg', 'sweep_ok', 'sweep_after_freeze', 'regression',
+== mutants/M_M08_regression_breadth.py compile=OK
+-    return (1 if r.returncode == 0 and last.startswith('REGRESSION: PASS (cases=10 passed=10') else 0), last
++    return (1 if r.returncode == 0 and last.startswith('REGRESSION: PASS (') else 0), last
+== mutants/M_M09_entry_date_drop.py compile=OK
+-            if c and c[7] == 'mined' and c[8] == '2026-10-26' and path in [p.strip() for p in re.split(r'[,;]', c[10])]:
++            if c and c[7] == 'mined' and path in [p.strip() for p in re.split(r'[,;]', c[10])]:
+== mutants/M_M10_usedby_drop.py compile=OK
+-            if c and c[7] == 'mined' and c[8] == '2026-10-26' and path in [p.strip() for p in re.split(r'[,;]', c[10])]:
++            if c and c[7] == 'mined' and c[8] == '2026-10-26':
+== mutants/M_M11_readme_prefix_drop.py compile=OK
+-    new_readme = readme[len(base_readme):].decode('utf-8', 'surrogateescape') if readme.startswith(base_readme) else ''
++    new_readme = readme[len(base_readme):].decode('utf-8', 'surrogateescape')
+== mutants/M_M12_target_new_drop.py compile=OK
+-            f['target_new'] = 1 if rel not in BASE_LEGS.values() else 0
++            f['target_new'] = 1
+== mutants/M_M13_pin_verify_drop.py compile=OK
+-                f['pin_ok'] = 1 if blob is not None and hashlib.sha256(blob).hexdigest() == pin else 0
++                f['pin_ok'] = 1 if pin and lrev else 0
+== mutants/M_M14_base_present_drop.py compile=OK
+-    if len(new) == 1 and base_present:
++    if len(new) == 1:
+== mutants/M_M15_freeze_ts_zero.py compile=OK
+-                freeze_ts = int(first[-1]) if first else None
++                freeze_ts = 0
+== mutants/M_M16_recorded_clause_drop.py compile=OK
+-    passed = recorded == 10 and len(wired) == 10 and f['new_legs'] == 1 and all(f[k] == 1 for k in need)
++    passed = len(wired) == 10 and f['new_legs'] == 1 and all(f[k] == 1 for k in need)
+== mutants/M_M17_exit_always_zero.py compile=OK
+-    return (0 if passed else 1), line, explain
++    return 0, line, explain

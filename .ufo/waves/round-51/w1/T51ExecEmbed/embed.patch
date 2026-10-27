@@ -1,0 +1,386 @@
+diff --git c/tools/mutate-and-run.sh w/tools/mutate-and-run.sh
+index 2d81b92..51fa5bc 100755
+--- c/tools/mutate-and-run.sh
++++ w/tools/mutate-and-run.sh
+@@ -14,7 +14,8 @@
+ # the fifth and sixth legs; r16 (TAMESHI-R16) adds the seventh measured gate,
+ # kumitate scripts/round-gate.mjs, as js-round-gate; r18 adds the eighth measured
+ # leg, kumitate scripts/sources-check.mjs, as js-sources-check; r26 adds the ninth
+-# measured leg, kumitate scripts/cite-check.mjs, as js-cite-check.
++# measured leg, kumitate scripts/cite-check.mjs, as js-cite-check; r51 adds the
++# tenth measured leg, kagi corpus/drift-pins.sh, as bash-drift-pins.
+ #
+ # Plan anchors: r3-2 = plans/round-3.plan.md:6-7 — "the method ships as tameshi's
+ # own runnable tool (tools/mutate-and-run.sh: inject->run->restore with
+@@ -80,7 +81,7 @@
+ # Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
+ # 64 usage error.
+ #
+-# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine) — the fleet's
++# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+ # mutation cases, replayed as legs. Each leg carries its recorded revision pin
+ # and its recorded verdict table; the recorded kill-rate is the leg's
+ # expectation:
+@@ -93,25 +94,31 @@
+ #   js-round-gate         kumitate-shokunin/scripts/round-gate.mjs    5/10 (50 %)
+ #   js-sources-check      kumitate-shokunin/scripts/sources-check.mjs 5/10 (50 %)
+ #   js-cite-check         kumitate-shokunin/scripts/cite-check.mjs    5/10 (50 %)
++#   bash-drift-pins       kagi-shokunin/corpus/drift-pins.sh          2/10 (20 %)
+ # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+ # mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
+ # mutation-case-mado-verify.md §1, mutation-case-kagi-checklist.md §2,
+ # mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1,
+ # .ufo/evidence/round-18/sources-check/sources-check.defects.spec (leg 8),
+-# .ufo/evidence/round-26/cite-check/cite-check.defects.spec (leg 9).
++# .ufo/evidence/round-26/cite-check/cite-check.defects.spec (leg 9),
++# .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (leg 10).
+ # Leg 8's spec is the round-18 pre-registration committed in 93d22aa before
+ # any mutant ran; its table is the measured 2026-10-20 sweep (19:41Z,
+ # .ufo/evidence/round-18/sources-check/sweep/sweep.txt; 10/10 predictions held).
+ # Leg 9's spec is the round-26 pre-registration committed in 622d31d before
+ # any mutant ran; its table is the measured 2026-10-22 sweep (10:02Z,
+ # .ufo/evidence/round-26/cite-check/sweep/sweep.txt; 10/10 verdict predictions held).
+-# All nine defect specs are embedded below (legs 1–4 cut from those notes'
++# Leg 10's spec is the round-51 pre-registration committed in fe335384 before
++# any mutant ran; its table is the measured 2026-10-26 sweep (23:53:02Z,
++# .ufo/evidence/round-51/c2/sweep/sweep.txt; 7/10 verdict predictions held).
++# All ten defect specs are embedded below (legs 1–4 cut from those notes'
+ # §7/§8/§9 reproduce manifests, all 40 @old strings re-verified count==1
+ # against the pinned bytes 2026-10-14; legs 5–6 are the recorded T8-1/T8-2
+ # spec files, their 25 @old strings re-verified count==1 against the pinned
+ # blobs at r10-2; leg 7's spec is the pre-registered round-16 spec verbatim
+ # and its table is the measured 2026-10-20 sweep; leg 8 likewise: the round-18
+-# pre-registered spec verbatim and its measured sweep table).
++# pre-registered spec verbatim and its measured sweep table; leg 10 likewise: the
++# round-51 pre-registered spec (kagi corpus/drift-pins.sh) verbatim and its measured sweep table).
+ # r7-1: the target is NOT read from the fleet working tree. Each leg is
+ # materialized from its repo's git object store — `git show <rev>:<path>` — so
+ # a working tree that has drifted past the recorded revision (tsukuroi and
+@@ -139,17 +146,18 @@
+ # own MUTATE_TOOL line carries the tool pin) / REGRESSION_SWEEP /
+ # REGRESSION_TABLE / REGRESSION_DEFECT (one per differing row) / REGRESSION_CASE
+ # / REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
+-# /tmp/tameshi-r4-2-regression.XXXXXX by default; removed on PASS unless --keep,
++# "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX" by default (r51 honours
++# TMPDIR); removed on PASS unless --keep,
+ # kept on FAIL/SETUP, never removed when --workdir was given. In this mode
+ # --target/--defects/--suite/--label are refused (usage error).
+ #
+ # Evidence: workdir keeps pristine copy, mutant files, evidence/<id>.out full
+ # logs, evidence/control.out, defects.tsv (id/line/desc), results.tsv (per
+ # defect: verdict/exit/duration/mutant-sha256/desc), spec.copy; the path is
+-# printed as MUTATE_EVIDENCE. Default: mktemp -d /tmp/tameshi-r4-2-run.XXXXXX.
++# printed as MUTATE_EVIDENCE. Default: mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX".
+ #
+ # --selftest is hermetic: it builds a tiny fixture target + mini-suites + four
+-# fixture specs under /tmp/tameshi-r4-2-selftest.XXXXXX and self-checks
++# fixture specs under "${TMPDIR:-/tmp}/tameshi-r4-2-selftest.XXXXXX" and self-checks
+ # control-green, one kill, one survivor, exact kill-rate line, restore proof,
+ # DEGRADED path, refusal paths (duplicate old string, unknown escape, no-op
+ # edit, missing --target, usage), and the --regression engine on the same
+@@ -161,7 +169,7 @@
+ # drift-immune replay of the pinned blob, blob/pin mismatch and unresolvable
+ # revision SETUP, and the exact-tolerance arm where one flipped recorded entry
+ # FAILs; r10-2 adds the embedded-ledger sweep (r16 extends it to seven legs;
+-# r18 extends it to eight, r26 to nine): the leg specs are written and parsed, and each recorded
++# r18 extends it to eight, r26 to nine, r51 to ten): the leg specs are written and parsed, and each recorded
+ # table's ids, total and killed count are checked
+ # against its own spec, plus the exec-bit mirror arms (a blob committed 100755
+ # runs a self-exec suite; the same bytes committed 100644 are refused at their
+@@ -206,7 +214,7 @@ Inputs:
+                    artifact under test (the pristine copy for the control run)
+ 
+ Options:
+-  --workdir DIR    evidence/work dir (default: mktemp -d /tmp/tameshi-r4-2-run.XXXXXX)
++  --workdir DIR    evidence/work dir (default: mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX")
+   --label NAME     name for the report (default: basename of the target)
+   --timeout N      seconds per suite run (default: 300)
+   --tail N         output tail lines shown per run (default: 8)
+@@ -214,7 +222,8 @@ Options:
+ 
+ --regression replays every recorded mutation case as a leg:
+ (js-kimi-census, bash-surface-census, bash-tsukuroi-census, bash-mado-verify,
+-bash-checklist-run, js-claims-check, js-round-gate, js-sources-check, js-cite-check) at its pinned
++bash-checklist-run, js-claims-check, js-round-gate, js-sources-check, js-cite-check,
++bash-drift-pins) at its pinned
+ revision, materialized from the repo's git object store (`git show
+ <rev>:<path>` — immune to working-tree drift; a missing repo/rev/blob or a pin
+ mismatch is a SETUP refusal). Each leg must reproduce its recorded verdict table exactly:
+@@ -479,7 +488,7 @@ run_sweep() {
+   SPEC_ABS=$(readlink -f "$SPEC")
+ 
+   if [[ -z "$WORKDIR" ]]; then
+-    WORKDIR=$(mktemp -d /tmp/tameshi-r4-2-run.XXXXXX) || die_setup 'mktemp -d failed'
++    WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX") || die_setup 'mktemp -d failed'
+   else
+     mkdir -p "$WORKDIR" || die_setup "cannot create workdir: $WORKDIR"
+   fi
+@@ -620,6 +629,8 @@ PIN_SOURCESCHECK=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258
+ REV_SOURCESCHECK=0acb7752d19058b953ebbeba253b1e35f6548de5
+ PIN_CITECHECK=40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f
+ REV_CITECHECK=1205c6621a2eccbb8ffceae86d9e7b79a7990b3a
++PIN_DRIFTPINS=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb
++REV_DRIFTPINS=e64e81b8eb96f3682b00c1e7a291e84420b280fa
+ TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
+ TABLE_BASH='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:SURVIVED,B6:KILLED,B7:KILLED,B8:KILLED,B9:KILLED,B10:SURVIVED'
+ TABLE_TSUKUROI='B1:KILLED,B2:KILLED,B3:KILLED,B4:KILLED,B5:KILLED,B6:KILLED,B7:SURVIVED,B8:SURVIVED,B9:SURVIVED,B10:SURVIVED'
+@@ -629,6 +640,7 @@ TABLE_CLAIMS='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:SUR
+ TABLE_ROUNDGATE='A1:KILLED,A3:KILLED,B1:KILLED,E3:KILLED,C1060:KILLED,C1059:SURVIVED,A2:SURVIVED,B2:SURVIVED,CKIND:SURVIVED,E1:SURVIVED'
+ TABLE_SOURCESCHECK='K_KIND:KILLED,S_KIND:SURVIVED,K_EXIT:KILLED,S_VERDICT:SURVIVED,K_STRICT:KILLED,K_CLOSED:KILLED,K_ROWS:KILLED,S_DUP_LINE:SURVIVED,S_ENTRY_COUNT:SURVIVED,S_FILE_READ:SURVIVED'
+ TABLE_CITECHECK='K_UNRESOLVED_SEV:KILLED,K_PIN_KIND:KILLED,K_FENCE_TILDE:KILLED,K_MISSING_WORD:KILLED,K_EMPTY_VERDICT:KILLED,S_OOR_EDGE:SURVIVED,S_STRICT:SURVIVED,S_EMPTY_GUARD:SURVIVED,S_USAGE:SURVIVED,S_PIN_INCLUDES:SURVIVED'
++TABLE_DRIFTPINS='K_MODE_CMP:KILLED,K_GONE_ARM:SURVIVED,K_AMBIG_GT:SURVIVED,K_COUNT_GE:KILLED,K_SHAPE_OPTIN:SURVIVED,S_SHA_CMP:SURVIVED,S_HARDLINK:SURVIVED,S_POLICY:SURVIVED,S_DUP_UNIQ:SURVIVED,S_USAGE_EXIT:SURVIVED'
+ FLEET_ROOT=''   # set by run_regression; regression_case_git resolves repos from it
+ 
+ table_lookup() { # <table ID:V,...> <id> -> verdict, or '-' when the id is absent
+@@ -656,7 +668,7 @@ table_total() { # <table> -> number of entries
+   printf '%s' "$n"
+ }
+ 
+-regression_specs() { # <dir> — write the nine embedded case specs
++regression_specs() { # <dir> — write the ten embedded case specs
+   local d=$1
+   cat >"$d/js-kimi-census.spec" <<'EOT'
+ @defect D1 | kimi-census.mjs:105
+@@ -1139,12 +1151,72 @@ EOT
+ @defect S_PIN_INCLUDES | content pin accepted anywhere inside the digest, not only as a prefix
+ @old       } else if (digest.startsWith(pin.hex)) {
+ @new       } else if (digest.includes(pin.hex)) {
++EOT
++  cat >"$d/bash-drift-pins.spec" <<'EOT'
++# tameshi round-51 C2 — PRE-REGISTERED mutation spec for kagi corpus/drift-pins.sh
++# rev e64e81b8eb96f3682b00c1e7a291e84420b280fa · blob sha256 c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb · 451 lines (wc -l) · mode 100755
++# Suite: hermetic `env -i … bash "$MUTANT" --selftest` (13 cases at the pin, alternate-baseline harness); verdict oracle = exit status only.
++# Predictions were fixed before any mutant run. Composition: 5 kill-aimed / 5 hole-aimed.
++# Matrix axes: mode compare, symbol GONE arm, AMBIG threshold, count-pin equality, shape opt-in,
++# sha compare, hardlink guard, secret-hash POLICY refusal, DUP membership, usage exit.
++# Each @old occurs exactly once in the pinned bytes.
++
++# PREDICT KILLED — the "mode drift" case chmods a.txt and expects exit 1 with /DRIFT.*mode/; the compare can no longer differ.
++@defect K_MODE_CMP | the file mode is never compared against the baseline
++@old     [[ "$cm" != "$mode" ]] && diffs+=("mode $mode->$cm")
++@new     [[ "$cm" != "$cm" ]] && diffs+=("mode $mode->$cm")
++
++# PREDICT KILLED — the "symbol gone" case expects /GONE/; a zero match count now falls to the MOVED arm (and the empty grep under pipefail ends the run), so no GONE line is printed.
++@defect K_GONE_ARM | a value pin with zero matches is not reported GONE
++@old       if [[ "$n" -eq 0 ]]; then\n        printf 'GONE    %s:%s (pattern no longer present)
++@new       if [[ "$n" -eq -1 ]]; then\n        printf 'GONE    %s:%s (pattern no longer present)
++
++# PREDICT KILLED — the "symbol ambiguous" case writes two matching lines and expects exit 1 with /AMBIG/; two matches are now accepted as one.
++@defect K_AMBIG_GT | ambiguity needs three matches instead of two
++@old       elif [[ "$n" -gt 1 ]]; then
++@new       elif [[ "$n" -gt 2 ]]; then
++
++# PREDICT KILLED — the "count drift" case raises the #1 count pin to 2 matches and expects exit 1 with /COUNT.*#1->#2/; a >= compare accepts it.
++@defect K_COUNT_GE | a count pin accepts any count at or above the pinned one
++@old         if [[ "$n" == "${expected#\\#}" ]]; then
++@new         if [[ "$n" -ge "${expected#\\#}" ]]; then
++
++# PREDICT KILLED — the "shape drift" case appends a non-assignment line and expects /SHAPE/; the opt-in never matches, so only a file-level DRIFT line prints.
++@defect K_SHAPE_OPTIN | the shape assertion never runs
++@old         if [[ "$shape" == "shape" ]] && is_nohash "$p"; then
++@new         if [[ "$shape" == "shaped" ]] && is_nohash "$p"; then
++
++# PREDICT SURVIVED — every content-changing case also changes the line count, mode, or a symbol pin (the one same-length edit, "symbol gone", is caught by GONE), so a sha-only drift is unasserted.
++@defect S_SHA_CMP | the content hash is never compared against the baseline
++@old     [[ "$cs" != "$sha" ]] && diffs+=("sha ${sha:0:12}->${cs:0:12}")
++@new     [[ "$cs" != "$cs" ]] && diffs+=("sha ${sha:0:12}->${cs:0:12}")
++
++# PREDICT SURVIVED — no selftest case creates a hardlink (the link case is a symlink, caught by -L first).
++@defect S_HARDLINK | a path with link count 2 passes the hardlink guard
++@old     if [[ "$nlink" -gt 1 ]]; then
++@new     if [[ "$nlink" -gt 2 ]]; then
++
++# PREDICT SURVIVED — the selftest's no-hash row carries sha `-`, so the POLICY refusal is never reached.
++@defect S_POLICY | a secret-bearing baseline row that asks for a hash is no longer refused
++@old       if [[ "$sha" != "-" ]]; then
++@new       if [[ "$sha" == "-x" ]]; then
++
++# PREDICT SURVIVED — the membership/DUP block runs only for the default baseline; the selftest always passes --baseline.
++@defect S_DUP_UNIQ | duplicate baseline rows are never reported
++@old     done < <(printf '%s\\n' "$pinned" | sort | uniq -d)
++@new     done < <(printf '%s\\n' "$pinned" | sort | uniq -u)
++
++# PREDICT SURVIVED — the selftest re-invokes the gate with known flags only; no case passes an unknown argument.
++@defect S_USAGE_EXIT | an unknown argument exits 0 instead of 2
++@old     *) printf 'drift-pins: unknown argument: %s\\n' "$1" >&2; exit 2 ;;
++@new     *) printf 'drift-pins: unknown argument: %s\\n' "$1" >&2; exit 0 ;;
+ EOT
+   [[ -s "$d/js-kimi-census.spec" && -s "$d/bash-surface-census.spec" \
+      && -s "$d/bash-tsukuroi-census.spec" && -s "$d/bash-mado-verify.spec" \
+      && -s "$d/bash-checklist-run.spec" && -s "$d/js-claims-check.spec" \
+      && -s "$d/js-round-gate.spec" && -s "$d/js-sources-check.spec" \
+-     && -s "$d/js-cite-check.spec" ]]
++     && -s "$d/js-cite-check.spec" \
++     && -s "$d/bash-drift-pins.spec" ]]
+ }
+ 
+ regression_case() {
+@@ -1357,7 +1429,7 @@ run_regression() {
+   local root specs auto=0
+   FLEET_ROOT=$(dirname "$(dirname "$(dirname "$SELF")")")
+   if [[ -z "$WORKDIR" ]]; then
+-    root=$(mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX) || die_setup 'mktemp -d failed'
++    root=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX") || die_setup 'mktemp -d failed'
+     auto=1
+   else
+     root=$WORKDIR
+@@ -1371,7 +1443,7 @@ run_regression() {
+   printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+   printf 'REGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=%s flips<=%s\n' \
+     "$BAND_KILLED" "$BAND_FLIPS"
+-  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s js-cite-check=%s/%s\n' \
++  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s js-cite-check=%s/%s bash-drift-pins=%s/%s\n' \
+     "$(table_count "$TABLE_JS" KILLED)" "$(table_total "$TABLE_JS")" \
+     "$(table_count "$TABLE_BASH" KILLED)" "$(table_total "$TABLE_BASH")" \
+     "$(table_count "$TABLE_TSUKUROI" KILLED)" "$(table_total "$TABLE_TSUKUROI")" \
+@@ -1380,9 +1452,10 @@ run_regression() {
+     "$(table_count "$TABLE_CLAIMS" KILLED)" "$(table_total "$TABLE_CLAIMS")" \
+     "$(table_count "$TABLE_ROUNDGATE" KILLED)" "$(table_total "$TABLE_ROUNDGATE")" \
+     "$(table_count "$TABLE_SOURCESCHECK" KILLED)" "$(table_total "$TABLE_SOURCESCHECK")" \
+-    "$(table_count "$TABLE_CITECHECK" KILLED)" "$(table_total "$TABLE_CITECHECK")"
++    "$(table_count "$TABLE_CITECHECK" KILLED)" "$(table_total "$TABLE_CITECHECK")" \
++    "$(table_count "$TABLE_DRIFTPINS" KILLED)" "$(table_total "$TABLE_DRIFTPINS")"
+ 
+-  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate st_sourcescheck st_citecheck
++  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate st_sourcescheck st_citecheck st_driftpins
+   regression_case_git js-kimi-census \
+     'kumitate-shokunin/scripts/kimi-census.mjs' "$PIN_JS" "$REV_JS" \
+     "$specs/js-kimi-census.spec" 'node "$MUTANT" --selftest' "$TABLE_JS" \
+@@ -1428,9 +1501,14 @@ run_regression() {
+     "$specs/js-cite-check.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES="$h" node "$MUTANT" --selftest' "$TABLE_CITECHECK" \
+     "$root/js-cite-check"
+   st_citecheck=$?
++  regression_case_git bash-drift-pins \
++    'kagi-shokunin/corpus/drift-pins.sh' "$PIN_DRIFTPINS" "$REV_DRIFTPINS" \
++    "$specs/bash-drift-pins.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C bash "$MUTANT" --selftest' "$TABLE_DRIFTPINS" \
++    "$root/bash-drift-pins"
++  st_driftpins=$?
+ 
+-  local nlegs=9 npass=0 nfail=0 nsetup=0 st
+-  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck"; do
++  local nlegs=10 npass=0 nfail=0 nsetup=0 st
++  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck" "$st_driftpins"; do
+     case $st in
+       0) npass=$((npass + 1)) ;;
+       1) nfail=$((nfail + 1)) ;;
+@@ -1474,7 +1552,7 @@ run_regression() {
+ 
+ selftest() {
+   local root
+-  root=$(mktemp -d /tmp/tameshi-r4-2-selftest.XXXXXX) || {
++  root=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-selftest.XXXXXX") || {
+     printf 'MUTATE_SELFTEST: 0/1 pass\nVERDICT: FAIL (mktemp)\n'
+     exit 1
+   }
+@@ -1932,8 +2010,8 @@ EOT
+   grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1 flips=1;' "$root/rg14.out"
+   st 'exact expectation flip reports killed-delta=1 flips=1' $?
+ 
+-  # r10-2 resolved the embedded-ledger cut; r16 adds leg 7, r18 leg 8 and r26 leg 9.
+-  # The nine embedded legs' specs and recorded tables must agree with each other —
++  # r10-2 resolved the embedded-ledger cut; r16 adds leg 7, r18 leg 8, r26 leg 9 and r51 leg 10.
++  # The ten embedded legs' specs and recorded tables must agree with each other —
+   # parse OK, the table's ids are
+   # exactly the spec's ids, and the recorded total / killed counts are the ones
+   # the leg set carries. Hermetic: the specs come from this tool's own
+@@ -1943,7 +2021,7 @@ EOT
+   local ltot_exp lkill_exp le_ok lk_list lk_ids lk_tbl_ids
+   mkdir -p "$lspecs"
+   regression_specs "$lspecs" 2>"$root/ledger-specs.err"
+-  st 'embedded leg specs: nine files written' $?
++  st 'embedded leg specs: ten files written' $?
+   # r16/r18: leg-count agreement (MutateLeg w2 survivors (b)/(c)): the selftest's
+   # leg tuples, the regression call sites, the written spec files and the
+   # declared nlegs must all be the same number, so a leg dropped from any one
+@@ -1952,8 +2030,8 @@ EOT
+   lcalls=$(grep -cE '^  regression_case_git (js|bash)-' "$SELF")
+   lfiles=$(find "$lspecs" -maxdepth 1 -name '*.spec' | wc -l)
+   lnlegs=$(sed -n 's/^  local nlegs=\([0-9][0-9]*\) .*/\1/p' "$SELF")
+-  [[ "$lcalls" -eq 9 && "$lfiles" -eq 9 && "$lnlegs" -eq 9 ]]
+-  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 9)" $?
++  [[ "$lcalls" -eq 10 && "$lfiles" -eq 10 && "$lnlegs" -eq 10 ]]
++  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 10)" $?
+   lent=(
+     'js-kimi-census:js-kimi-census.spec:TABLE_JS:10:8'
+     'bash-surface-census:bash-surface-census.spec:TABLE_BASH:10:8'
+@@ -1964,9 +2042,10 @@ EOT
+     'js-round-gate:js-round-gate.spec:TABLE_ROUNDGATE:10:5'
+     'js-sources-check:js-sources-check.spec:TABLE_SOURCESCHECK:10:5'
+     'js-cite-check:js-cite-check.spec:TABLE_CITECHECK:10:5'
++    'bash-drift-pins:bash-drift-pins.spec:TABLE_DRIFTPINS:10:2'
+   )
+-  [[ ${#lent[@]} -eq 9 ]]
+-  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 9)" $?
++  [[ ${#lent[@]} -eq 10 ]]
++  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 10)" $?
+   for le in "${lent[@]}"; do
+     IFS=: read -r lname lfile ltbl ltot_exp lkill_exp <<<"$le"
+     le_ok=1
+@@ -1991,10 +2070,10 @@ EOT
+   # assignments, not from the tally loop, so a status left out of the loop is caught.
+   local tblock tgot tvec ti tj
+   local -a tnames
+-  tblock=$(awk '/^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f' "$SELF")
+-  mapfile -t tnames < <(awk '/^run_regression\(\) \{$/{f=1} /^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=0} f&&/^  st_[a-z]+=\$\?$/{sub(/^  /,""); sub(/=\$\?$/,""); print}' "$SELF")
+-  [[ -n "$tblock" && ${#tnames[@]} -eq 9 ]]
+-  st "tally harness: block extracted, leg status names=${#tnames[@]} (want 9)" $?
++  tblock=$(awk '/^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f' "$SELF")
++  mapfile -t tnames < <(awk '/^run_regression\(\) \{$/{f=1} /^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=0} f&&/^  st_[a-z]+=\$\?$/{sub(/^  /,""); sub(/=\$\?$/,""); print}' "$SELF")
++  [[ -n "$tblock" && ${#tnames[@]} -eq 10 ]]
++  st "tally harness: block extracted, leg status names=${#tnames[@]} (want 10)" $?
+   tally_line() { # tally_line <want-exit> <want-first-line> <status>... — 0 iff both match
+     local want_rc=$1 want_line=$2 decl='' k=0 s out rc
+     shift 2
+@@ -2005,37 +2084,37 @@ EOT
+     rc=$?
+     [[ $rc -eq $want_rc && "${out%%$'\n'*}" == "$want_line" ]]
+   }
+-  tally_line 0 'REGRESSION: PASS (cases=9 passed=9; ledger legs exact: killed-delta<=0 flips<=0)' 0 0 0 0 0 0 0 0 0
+-  st 'tally harness: all nine legs pass -> PASS passed=9, exit 0' $?
+-  for tvec in '1:1:REGRESSION: FAIL (cases=9 passed=8 failed=1 setup=0)' \
+-    '2:2:REGRESSION: SETUP (cases=9 passed=8 cannot-verify=1)'; do
++  tally_line 0 'REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)' 0 0 0 0 0 0 0 0 0 0
++  st 'tally harness: all ten legs pass -> PASS passed=10, exit 0' $?
++  for tvec in '1:1:REGRESSION: FAIL (cases=10 passed=9 failed=1 setup=0)' \
++    '2:2:REGRESSION: SETUP (cases=10 passed=9 cannot-verify=1)'; do
+     tgot=0
+-    for ti in 0 1 2 3 4 5 6 7 8; do
+-      local -a tst=(0 0 0 0 0 0 0 0 0)
++    for ti in 0 1 2 3 4 5 6 7 8 9; do
++      local -a tst=(0 0 0 0 0 0 0 0 0 0)
+       tst[ti]=${tvec%%:*}
+       tj=${tvec#*:}
+       tally_line "${tj%%:*}" "${tj#*:}" "${tst[@]}" && tgot=$((tgot + 1))
+     done
+-    [[ $tgot -eq 9 ]]
+-    st "tally harness: one leg status ${tvec%%:*} at each of 9 positions -> ${tj#*:} (${tgot}/9)" $?
++    [[ $tgot -eq 10 ]]
++    st "tally harness: one leg status ${tvec%%:*} at each of 10 positions -> ${tj#*:} (${tgot}/10)" $?
+   done
+   # r30 (wave-A MutateTallyExtra survivors): two failing legs, two setup legs, a mixed fail+setup
+   # vector (FAIL wins) and an unknown status 3 (SETUP), each by exact first line and exit.
+-  for tvec in '1 1 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=9 passed=7 failed=2 setup=0)' \
+-    '2 2 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=9 passed=7 cannot-verify=2)' \
+-    '1 2 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=9 passed=7 failed=1 setup=1)' \
+-    '3 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=9 passed=8 cannot-verify=1)'; do
++  for tvec in '1 1 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=10 passed=8 failed=2 setup=0)' \
++    '2 2 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=10 passed=8 cannot-verify=2)' \
++    '1 2 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=10 passed=8 failed=1 setup=1)' \
++    '3 0 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=10 passed=9 cannot-verify=1)'; do
+     tj=${tvec#*:}
+-    # shellcheck disable=SC2086 # the status list splits into nine arguments on purpose
++    # shellcheck disable=SC2086 # the status list splits into ten arguments on purpose
+     tally_line "${tj%%:*}" "${tj#*:}" ${tvec%%:*}
+     st "tally harness: statuses ${tvec%%:*} -> ${tj#*:}" $?
+   done
+   # The completeness guard itself: the same block with the loop's last operand removed must
+-  # refuse as SETUP (case-tally mismatch), not print PASS with eight counted legs.
++  # refuse as SETUP (case-tally mismatch), not print PASS with nine counted legs.
+   local tblock_full=$tblock
+   tblock=$(printf '%s\n' "$tblock_full" | sed -E '0,/^  for st in /s/ "\$st_[a-z]+"; do$/; do/')
+   [[ "$tblock" != "$tblock_full" ]] &&
+-    tally_line 2 'REGRESSION: SETUP (case-tally mismatch: cases=9 counted=8)' 0 0 0 0 0 0 0 0 0
++    tally_line 2 'REGRESSION: SETUP (case-tally mismatch: cases=10 counted=9)' 0 0 0 0 0 0 0 0 0 0
+   st 'tally harness: loop missing one operand -> SETUP case-tally mismatch, exit 2' $?
+   tblock=$tblock_full
+ 

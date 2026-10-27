@@ -1,0 +1,29 @@
+usage: context-capture.py --check [--receipt FILE --expected FILE] [--json]
+       context-capture.py --selftest
+
+Retained-receipt gate for the round-14 context observation. `--check` alone
+replays the frozen clean receipt against its built-in digest/id/exit pin.
+`--check --receipt FILE --expected FILE` pins the receipt sha256 and the exact
+expected finding id/exit from an expected file.
+
+The gate re-derives comparison, environment, run, positive-control, source and
+runner-mapping facts from raw retained fields; stored status/exit/reasons and
+summary booleans are never trusted. It does not capture, execute the probe,
+read live lane inputs, or write during check; frozen mode reads only the
+archived receipt named by the built-in pin. Explicit mode reads only the
+caller-selected receipt and expected JSON with the caller's permissions; select
+non-secret files. No credential probe is executed.
+
+exit 0   clean retained receipt (id=context_consistent)
+exit 1   re-derived or pinned-verdict mismatch (a matched exit-1 pin still
+         reports the retained mismatch as exit 1)
+exit 2   could-not-evaluate receipt/expected/snapshot/internal failure
+exit 64  usage / could-not-evaluate invocation
+
+expected schema (exactly four keys):
+  {"schema": "tameshi-context-expected-v1",
+   "receipt_sha256": "<64 lowercase hex>",
+   "id": "<stable finding id or context_consistent>",
+   "exit": 0 | 1 | 2}
+context-capture.py: unknown argument: --r51-no-such-flag
+CONTEXT: USAGE_ERROR (id=usage_error exit=64)

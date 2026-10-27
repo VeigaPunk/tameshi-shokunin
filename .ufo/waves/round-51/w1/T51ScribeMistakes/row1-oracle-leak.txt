@@ -1,0 +1,37 @@
+# T51ScribeMistakes receipts — row 1 (oracle leak, C2 sandbox-id)
+# lane read-only; pinned blob fetched with git show from the kagi lane
+
+$ git -C /home/vgpnk/Projects/shokunin/kagi-shokunin show e64e81b8eb96f3682b00c1e7a291e84420b280fa:corpus/drift-pins.sh | sha256sum
+c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb  -
+
+$ grep -n "elif ! grep -q\|\$(mktemp -d)\|printf %s \"\$p\"" drift-pins.e64e81b8.sh   (oracle + path surface)
+403:    elif ! grep -q "$3" <<< "$out"; then
+376:  d=$(mktemp -d)
+158:      printf 'DRIFT   %s %s\n' "$p" "${diffs[*]}"; f_bad=$((f_bad + 1))
+
+$ grep -n "sandbox-\$DEFECT_ID" tools/mutate-and-run.sh   (harness naming, r16/r18/r26 legs)
+1418:    "$specs/js-round-gate.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tm
+1423:    "$specs/js-sources-check.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h
+1428:    "$specs/js-cite-check.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tm
+
+# oracle text demo (synthetic line in the gate's own DRIFT format; no mutant run)
+leak    GONE   DRIFT   /w/sandbox-K_GONE_ARM/tmp/tmp.x/b.txt sha abc->def | grep -q GONE -> exit=0
+neutral GONE   DRIFT   /w/sandbox-neutral/tmp/tmp.x/b.txt sha abc->def | grep -q GONE -> exit=1
+leak    AMBIG  DRIFT   /w/sandbox-K_AMBIG_ARM/tmp/tmp.x/b.txt sha abc->def | grep -q AMBIG -> exit=0
+neutral AMBIG  DRIFT   /w/sandbox-neutral/tmp/tmp.x/b.txt sha abc->def | grep -q AMBIG -> exit=1
+leak    SHAPE  DRIFT   /w/sandbox-K_SHAPE_ARM/tmp/tmp.x/b.txt sha abc->def | grep -q SHAPE -> exit=0
+neutral SHAPE  DRIFT   /w/sandbox-neutral/tmp/tmp.x/b.txt sha abc->def | grep -q SHAPE -> exit=1
+
+# sweep receipt lines (tameshi, committed)
+10:DEFECT K_GONE_ARM: SURVIVED (exit=0 duration-ms=225) a value pin with zero matches is not reported GONE
+12:DEFECT K_AMBIG_GT: SURVIVED (exit=0 duration-ms=218) ambiguity needs three matches instead of two
+17:DEFECT K_SHAPE_OPTIN: SURVIVED (exit=0 duration-ms=182) the shape assertion never runs
+31:MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)
+
+# same demo with the sweep's real defect ids (the sandbox the harness creates)
+leak    GONE   sandbox-K_GONE_ARM     grep -q GONE -> exit=0
+neutral GONE   sandbox-n2             grep -q GONE -> exit=1
+leak    AMBIG  sandbox-K_AMBIG_GT     grep -q AMBIG -> exit=0
+neutral AMBIG  sandbox-n2             grep -q AMBIG -> exit=1
+leak    SHAPE  sandbox-K_SHAPE_OPTIN  grep -q SHAPE -> exit=0
+neutral SHAPE  sandbox-n2             grep -q SHAPE -> exit=1

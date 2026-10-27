@@ -1544,3 +1544,15 @@ Falsifier that must fail: on round 49's frozen counters the check prints `calls_
 (`.ufo/evidence/round-50/quality/reach-r49.stdout`, `reach-r49.exit`); on round 50's it prints `ok` twice and exits 0
 (`reach-r50.stdout`, `reach-r50.exit`); the mutation probes are `.ufo/waves/round-50/w1/T50MutC1Counter.md` and
 `T50MutC2Counter.md`.
+
+## Criteria appended — round 51 (2026-10-26)
+
+### Criterion 102 — a self-test verdict is invariant under renaming its fixture
+
+A gate self-test and the mutation suite that drives it are one instrument; the verdict cannot depend on the fixture's name. For any recorded case whose self-test searches captured stdout/stderr for an expected token, run the same target, spec and command under a neutral scratch root (`sandbox-n<ordinal>`, with no verdict vocabulary in any path) and a hostile root containing the expected verdict word. These runs differ only in the path. Their verdicts must agree; a path-dependent result is an environment-satisfied assertion, not a killed or surviving mutant. Record the neutral-name result; never name a sandbox, work directory, mutant file or other printed path after a defect id or expected verdict. The rule concerns oracle inputs, not environment isolation (PROTOCOL §Gate standard, Self-test) or whether a selftest reaches the claim counter (criterion 101).
+
+Check that can fail: for every mutation-suite case that asserts a verdict word in captured output, run the same pinned target and spec once with a neutral path and once with a path containing that word; print `ORACLE_NAME <id> <neutral> <hostile> <same|DIFF>` and fail on any `DIFF`. A bare verdict-word grep over output that contains the harness path is read as suspect until that pair is measured.
+
+Lesson: `corpus/lessons/round-51.md` `## Mistakes` row 1. The kagi `drift-pins.sh` K_GONE_ARM / K_AMBIG_GT / K_SHAPE_OPTIN mutants survive under `sandbox-$DEFECT_ID` but are killed under neutral names; the committed red/green scripts and 3-repeat results are in `.ufo/waves/round-51/w1/T51LabSandboxLeak/`.
+
+Falsifier that must fail: `.ufo/waves/round-51/w1/T51LabSandboxLeak/red-gone-id.sh` exits 0 (`DRIFT_SELFTEST: PASS (13 cases)`) while `green-gone-neutral.sh` exits 1 (`no /GONE/ in output`); the paired check must report `DIFF`, not accept the recorded kill-rate. The same one-variable result holds for K_AMBIG_GT and K_SHAPE_OPTIN; K_MODE_CMP and K_COUNT_GE are negative controls that stay killed. Evidence: `.ufo/waves/round-51/w1/T51LabSandboxLeak.md:52-60,72-93`.

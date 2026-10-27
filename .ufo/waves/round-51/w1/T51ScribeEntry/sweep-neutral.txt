@@ -1,0 +1,34 @@
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=a7d3f2dd7d47511a4769aab610dd85d1a37e77b32f14fd763f3af638dd912eb9
+MUTATE_DATE: 2026-10-27T00:12:01Z
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r51/T51ScribeEntry/target.sh sha256=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb bytes=19088
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-51/c2/bash-drift-pins.defects.spec defects=10
+CONTROL: GREEN (exit=0 duration-ms=306 pristine-sha256=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb)
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT K_MODE_CMP: KILLED (exit=1 duration-ms=310) the file mode is never compared against the baseline
+  | drift-selftest: FAIL mode drift: exit 0 want 1
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT K_GONE_ARM: KILLED (exit=1 duration-ms=309) a value pin with zero matches is not reported GONE
+  | drift-selftest: FAIL symbol gone: no /GONE/ in output
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT K_AMBIG_GT: KILLED (exit=1 duration-ms=315) ambiguity needs three matches instead of two
+  | drift-selftest: FAIL symbol ambiguous: no /AMBIG/ in output
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT K_COUNT_GE: KILLED (exit=1 duration-ms=308) a count pin accepts any count at or above the pinned one
+  | drift-selftest: FAIL count drift: no /COUNT.*#1->#2/ in output
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT K_SHAPE_OPTIN: KILLED (exit=1 duration-ms=293) the shape assertion never runs
+  | drift-selftest: FAIL shape drift: no /SHAPE/ in output
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT S_SHA_CMP: SURVIVED (exit=0 duration-ms=311) the content hash is never compared against the baseline
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_HARDLINK: SURVIVED (exit=0 duration-ms=301) a path with link count 2 passes the hardlink guard
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_POLICY: SURVIVED (exit=0 duration-ms=298) a secret-bearing baseline row that asks for a hash is no longer refused
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_DUP_UNIQ: SURVIVED (exit=0 duration-ms=291) duplicate baseline rows are never reported
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_USAGE_EXIT: SURVIVED (exit=0 duration-ms=294) an unknown argument exits 0 instead of 2
+  | DRIFT_SELFTEST: PASS (13 cases)
+MUTATE_RESTORE: OK (target-sha256 before=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb after=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb pristine-sha256=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r51/T51ScribeEntry/w-neutral
+MUTATE: DONE (target=drift-pins defects=10 killed=5 survived=5 inconclusive=0 kill-rate=50%)

@@ -1,0 +1,98 @@
+diff --git c/tools/tally-audit-v3.py w/tools/tally-audit-v3.py
+index b0c7d48..2fcd415 100755
+--- c/tools/tally-audit-v3.py
++++ w/tools/tally-audit-v3.py
+@@ -46,7 +46,7 @@ missed classes, and this tool's answer to each:
+ 
+   1. Runtime vectors never produced 3-8 failing or setup legs (HeldOutPrintf-1/-2 count-field
+      swaps, HeldOutGuard-1/-2 majority-gated FAIL, HeldOutTallyArms-01/-02 conditional double
+-     count). -> the runtime oracle now sweeps EVERY (failing-count, setup-count) pair 0..9 with
++     count). -> the runtime oracle now sweeps EVERY (failing-count, setup-count) pair 0..n with
+      failing+setup <= nlegs, representative placements, plus all-status extremes.
+   2. Per-position statuses stopped at {1 2 3 4 126 127 255} (HeldOutRefactor-k1 status 5 at one
+      position; HeldOutLoop-1 masked a status to seven bits, witness 128). -> EVERY status 0..255
+@@ -72,7 +72,7 @@ Checks (each independent, each able to fail alone):
+            `local nlegs=N` equals the leg count. A sum-preserving miscount passes the runner's
+            own run-time guard; it fails here.
+   runtime  the runner's tally block, run in bash, against an independent oracle: every status
+-           0..255 at every position, every (failing, setup) count pair 0..9, multi-status vectors,
++           0..255 at every position, every (failing, setup) count pair 0..n, multi-status vectors,
+            and stress with one operand duplicated (overcount) or removed (undercount) at every
+            position of the IDENTIFIED tally loop. Exact stdout first line and exit code compared.
+   harness  the runner's own tally selftest harness run against a panel of known-faulty tally
+@@ -99,8 +99,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
+ TIMEOUT = 120
+ THEN_REGRESSION_TIMEOUT = 1200
+ 
+-REF_BLOCK = r'''  local nlegs=9 npass=0 nfail=0 nsetup=0 st
+-  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck"; do
++REF_BLOCK = r'''  local nlegs=10 npass=0 nfail=0 nsetup=0 st
++  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck" "$st_driftpins"; do
+     case $st in
+       0) npass=$((npass + 1)) ;;
+       1) nfail=$((nfail + 1)) ;;
+@@ -140,7 +140,7 @@ REF_BLOCK = r'''  local nlegs=9 npass=0 nfail=0 nsetup=0 st
+   exit 0
+ '''
+ REF_NAMES = ['st_js', 'st_kagi', 'st_tsu', 'st_mado', 'st_checklist', 'st_claims', 'st_roundgate',
+-             'st_sourcescheck', 'st_citecheck']
++             'st_sourcescheck', 'st_citecheck', 'st_driftpins']
+ 
+ 
+ class CannotAudit(Exception):
+@@ -563,7 +563,7 @@ def check_static(body, block):
+ 
+ 
+ def count_vectors(n):
+-    """One representative vector per (failing, setup) count pair 0..9 (the round-32 held-out
++    """One representative vector per (failing, setup) count pair 0..n (the round-32 held-out
+     classes: printf count-field swaps, majority-gated FAIL, conditional double count)."""
+     vs = []
+     for fc in range(0, n + 1):
+@@ -652,7 +652,7 @@ def faults():
+         out.append((name, new))
+     f('label', b.replace('passed=%s', 'passing=%s'))
+     f('fail-exits-0', b.replace('    exit 1\n', '    exit 0\n', 1))
+-    f('drop-last-operand', b.replace(' "$st_citecheck"; do\n', '; do\n', 1))
++    f('drop-last-operand', b.replace(' "$st_driftpins"; do\n', '; do\n', 1))
+     start = b.split('\n', 1)[0] + '\n'
+     for nm in REF_NAMES:
+         f('ignore-' + nm, b.replace(start, start + '  %s=0\n' % nm, 1))
+@@ -815,7 +815,7 @@ def selftest():
+     esac
+   done
+ '''
+-    start = '  local nlegs=9 npass=0 nfail=0 nsetup=0 st\n'
++    start = '  local nlegs=10 npass=0 nfail=0 nsetup=0 st\n'
+     # round-32 held-out classes, replayed as selftest seeds (the held-out JSONs are committed evidence)
+     mask_7bit = text.replace(start, start + '  st_kagi=$((st_kagi & 127))\n', 1)                      # HeldOutLoop-1
+     wrapper = text.replace(start + loop, start + '  local tally_once\n  for tally_once in "$st_js"; do\n' + loop, 1) \
+@@ -836,12 +836,12 @@ def selftest():
+                                 '      1) nfail=$((nfail + 1)); if (( nsetup > 1 )); then nfail=$((nfail + 1)); fi ;;\n', 1)  # HeldOutTallyArms-01
+     harness_local = '  local tblock tgot tvec ti tj\n'
+     second_extract = text.replace(harness_local,
+-                                  harness_local + '    tblock=$(awk \'/^  local nlegs=9 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f\' "$SELF")\n', 1)  # HeldOutRefactor-a3
++                                  harness_local + '    tblock=$(awk \'/^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f\' "$SELF")\n', 1)  # HeldOutRefactor-a3
+     head_mask = text.replace('  st_kagi=$?\n', '  st_kagi=$(($? & 127))\n', 1)                        # out-of-block head masking
+     cases = [
+         ('pristine', text, 0, None),
+-        ('dup-drop operand', text.replace(loop, loop.replace('"$st_citecheck"', '"$st_js"')), 1, 'static'),
+-        ('nlegs wrong', text.replace('  local nlegs=9 ', '  local nlegs=8 ', 1), 1, 'static'),
++        ('dup-drop operand', text.replace(loop, loop.replace('"$st_driftpins"', '"$st_js"')), 1, 'static'),
++        ('nlegs wrong', text.replace('  local nlegs=10 ', '  local nlegs=9 ', 1), 1, 'static'),
+         ('head masked', head_mask, 1, 'head'),
+         ('status 4 passes', text.replace('      1) nfail=$((nfail + 1)) ;;\n',
+                                          '      1) nfail=$((nfail + 1)) ;;\n      4) npass=$((npass + 1)) ;;\n', 1), 1, 'runtime'),
+@@ -876,9 +876,9 @@ def selftest():
+         ('read second write to a leg', read_head_mask, 1, 'head'),
+         ('harness exit-only', text.replace(cmp_line, '    [[ $rc -eq $want_rc ]]\n', 1), 1, 'harness'),
+         ('harness swallowed', text.replace(cmp_line, cmp_line + '    rc=$?\n', 1), 1, 'harness'),
+-        ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 1 2 3 4 5 6 7 7; do', 1), 1, 'harness'),
+-        ('harness position 0 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 6 1 2 3 4 5 6 7 8; do', 1), 1, 'harness'),
+-        ('harness position 1 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 3 2 3 4 5 6 7 8; do', 1), 1, 'harness'),
++        ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8 9; do', '    for ti in 0 1 2 3 4 5 6 7 7 9; do', 1), 1, 'harness'),
++        ('harness position 0 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8 9; do', '    for ti in 9 1 2 3 4 5 6 7 8 9; do', 1), 1, 'harness'),
++        ('harness position 1 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8 9; do', '    for ti in 0 3 2 3 4 5 6 7 8 9; do', 1), 1, 'harness'),
+         ('aux wrapper loop', wrapper, 0, None),
+         ('aux pre-count loop', precount, 0, None),
+         ('second extraction line', second_extract, 0, None),

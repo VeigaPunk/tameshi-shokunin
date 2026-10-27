@@ -1,0 +1,32 @@
+# fixture runs at rev 84aa673a1a476e48ccf239335696f0518d08bae7, scratch dir only
+# fixtures: reg.md (S001 alpha, S002 beta, S003 kappa), staged.md (indented S002 gamma, S004 delta)
+--- no map
+STAGED_ID_GUARD: collisions=1 unmapped=0 held=0 cascade=1 next_free=S004 verdict=refused
+  collision S002 naive->S004
+EXIT=1
+--- map admitted {S002:S010}
+STAGED_ID_GUARD: collisions=1 unmapped=0 held=0 cascade=1 next_free=S004 verdict=admitted
+  collision S002 naive->S004
+EXIT=0
+--- map inadmissible {S002:S004}
+STAGED_ID_GUARD: collisions=1 unmapped=0 held=0 cascade=1 next_free=S004 verdict=inadmissible
+  collision S002 naive->S004
+EXIT=1
+--- missing args
+staged-id-guard: --registry and --staged are required
+EXIT=2
+--- missing file + --json
+staged-id-guard: REFUSED: cannot stat nope.md: [Errno 2] No such file or directory: 'nope.md'
+{"reason": "cannot stat nope.md: [Errno 2] No such file or directory: 'nope.md'", "verdict": "setup_refusal"}
+EXIT=2
+--- help
+EXIT=0
+--- selftest with bogus path flags
+STAGED_ID_GUARD_SELFTEST: cases=24 failed=0
+VERDICT: PASS
+EXIT=0
+--- fixture dir contents after runs
+map_bad.json
+map_ok.json
+reg.md
+staged.md

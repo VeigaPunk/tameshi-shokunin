@@ -1,0 +1,62 @@
+# T51ScribeRowBash — K_GONE_ARM reproduction in scratch (no lane file touched)
+# date: 2026-10-27T00:23:59Z   bash: GNU bash, version 5.3.20(1)-release (x86_64-pc-linux-gnu)
+
+## pinned target identity
+rev     e64e81b8eb96f3682b00c1e7a291e84420b280fa
+bytes   19088
+sha256  c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb
+lines   451
+tree    100755 blob 8a2903dc977a1ef6ea0430b21d1760392ccc2827	corpus/drift-pins.sh
+
+## the single-variable defect (K_GONE_ARM), applied once in scratch
+--- mut/drift-pins.pristine.sh	2026-10-26 21:20:04.071086806 -0300
++++ sandbox-K_GONE_ARM/drift-pins.sh	2026-10-26 21:20:04.077952898 -0300
+@@ -228,7 +228,7 @@
+         continue
+       fi
+       n=$(grep -cE -- "$ere" "$p" || true)
+-      if [[ "$n" -eq 0 ]]; then
++      if [[ "$n" -eq -1 ]]; then
+         printf 'GONE    %s:%s (pattern no longer present)\n' "$p" "$expected"
+         s_bad=$((s_bad + 1))
+       elif [[ "$n" -gt 1 ]]; then
+pristine sha256 c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb
+mutant   sha256 cba1467a38208bb65845c6e8f2d128c9ed255b7b0cf50223f2f8cc15512d5b7a
+
+## run 1 — pristine control, neutral TMPDIR
+DRIFT_SELFTEST: PASS (13 cases)
+exit=0
+
+## run 2 — mutant, neutral TMPDIR
+drift-selftest: FAIL symbol gone: no /GONE/ in output
+DRIFT_SELFTEST: FAIL (1/13 cases)
+exit=1
+
+## run 3 — mutant, TMPDIR named after the defect (sandbox-K_GONE_ARM)
+DRIFT_SELFTEST: PASS (13 cases)
+exit=0
+
+## run 4 — instrumented mutant (run() echoes each case), both TMPDIRs
+--- TMPDIR=/fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash ---
+DBG case=symbol gone rc=1 want_rc=1 out=[DRIFT   /fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash/tmp.NANXm4DnK7/b.txt sha 2c8b08da5ce6->d9f86d34b0b0]
+DRIFT_SELFTEST: FAIL (1/13 cases)
+--- TMPDIR=/fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash/sandbox-K_GONE_ARM ---
+DBG case=symbol gone rc=1 want_rc=1 out=[DRIFT   /fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash/sandbox-K_GONE_ARM/tmp.qLDiJiEmb6/b.txt sha 2c8b08da5ce6->d9f86d34b0b0]
+DRIFT_SELFTEST: PASS (13 cases)
+
+## run 5 — the "symbol gone" case in isolation, both binaries, defect-named TMPDIR
+--- pristine ---
+  D=/fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash/sandbox-K_GONE_ARM/tmp.K4ovGeDvjY
+  RC=1
+  --- OUT ---
+  [GONE    /fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash/sandbox-K_GONE_ARM/tmp.K4ovGeDvjY/b.txt:1 (pattern no longer present)
+  DRIFT_PINS: DRIFT (files_ok=2 files_bad=0 symbols_ok=1 symbols_bad=1)]
+  --- END ---
+  GREP GONE: MATCH
+--- mutant ---
+  D=/fast/scratch/hyaku/tameshi-r51/T51ScribeRowBash/sandbox-K_GONE_ARM/tmp.tA118yZmLB
+  RC=1
+  --- OUT ---
+  []
+  --- END ---
+  GREP GONE: no match

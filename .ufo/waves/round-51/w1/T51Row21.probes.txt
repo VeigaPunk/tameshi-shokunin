@@ -1,0 +1,15 @@
+$ python3 tools/tally-audit.py --r51-no-such-flag
+tally-audit.py: error: unrecognized arguments: --r51-no-such-flag
+[exit 2]
+
+$ python3 tools/tally-audit.py
+TALLY_AUDIT: PASS (static=pass runtime=pass harness=pass)
+[exit 0]
+
+$ python3 tools/tally-audit.py --runner /dev/null
+TALLY_AUDIT: SETUP (run_regression() not found)
+[exit 2]
+
+$ bash tools/mutate-and-run.sh --r51-no-such-flag   # runner usage path, reached by --then-regression
+mutate-and-run: unknown argument: --r51-no-such-flag
+[exit 64]

@@ -1,0 +1,15 @@
+case=clean argv=tools/command-binding.py --bundle B --expected E --json rc=0 last={"bundle_sha256": "a65bf3ec390a2cfecbab96a19b2c859dc65d3205a638f89f91995cecdcd90e82", "exit": 0, "finding_ids": [], "schema": "command-binding-report-v1"}
+case=clean argv=tools/command-binding.py --bundle B --expected E rc=0 last=COMMAND_BINDING: CLEAN none
+case=argv argv=tools/command-binding.py --bundle B --expected E --json rc=1 last={"bundle_sha256": "70465cc968468e5cdaf42ddaac6a1695d0fc0e84f3f66bd29649e0f6dc5a7308", "exit": 1, "finding_ids": ["ARGV_MISMATCH"], "schema": "command-binding-report-v1"}
+case=argv argv=tools/command-binding.py --bundle B --expected E rc=1 last=COMMAND_BINDING: FAILED ARGV_MISMATCH
+case=tamper argv=tools/command-binding.py --bundle B --expected E --json rc=2 last={"bundle_sha256": "46403c8d6cd897d229167044e5ce2a4f535e2bc636a637758722e12d1dd6b45e", "exit": 2, "finding_ids": ["SNAPSHOT_TAMPERED"], "schema": "command-binding-report-v1"}
+case=tamper argv=tools/command-binding.py --bundle B --expected E rc=2 last=COMMAND_BINDING: COULD_NOT_EVALUATE SNAPSHOT_TAMPERED
+sha256 70465cc968468e5cdaf42ddaac6a1695d0fc0e84f3f66bd29649e0f6dc5a7308 b-argv.json
+sha256 a65bf3ec390a2cfecbab96a19b2c859dc65d3205a638f89f91995cecdcd90e82 b-clean.json
+sha256 46403c8d6cd897d229167044e5ce2a4f535e2bc636a637758722e12d1dd6b45e b-tamper.json
+sha256 7c464a4a4cc09760134ad09797ad7600043cebb776ec56bc1a481cca1d81f193 e-argv.json
+sha256 603debaa75aebabe97f1d2b946bafb85089a6d4c57ea1c93bdb06018293dac40 e-clean.json
+sha256 603debaa75aebabe97f1d2b946bafb85089a6d4c57ea1c93bdb06018293dac40 e-tamper.json
+fixture .ufo/evidence/round-23/extra-cases.json cases=19
+fixture .ufo/evidence/round-24/extra-cases.json cases=6
+selftest total cases=44 = 17 literal (1 base + 16 changed) + 25 fixture (19 round-23, 6 round-24) + 2 final

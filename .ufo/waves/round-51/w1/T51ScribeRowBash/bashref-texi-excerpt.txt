@@ -1,0 +1,134 @@
+5885	@end menu
+5886	
+5887	@node The Set Builtin
+5888	@subsection The Set Builtin
+5889	
+5890	This builtin is so complicated that it deserves its own section.  @code{set}
+5891	allows you to change the values of shell options and set the positional
+5892	parameters, or to display the names and values of shell variables.
+5893	
+5894	@table @code
+5895	@item set
+5896	@btindex set
+5897	@example
+5898	set [-abefhkmnptuvxBCEHPT] [-o @var{option-name}] [--] [-] [@var{argument} @dots{}]
+5899	set [+abefhkmnptuvxBCEHPT] [+o @var{option-name}] [--] [-] [@var{argument} @dots{}]
+5900	set -o
+5901	set +o
+5902	@end example
+5903	
+5904	If no options or arguments are supplied, @code{set} displays the names
+5905	and values of all shell variables and functions, sorted according to the
+5906	current locale, in a format that may be reused as input
+5907	for setting or resetting the currently-set variables.
+5908	Read-only variables cannot be reset.
+5909	In @sc{posix} mode, only shell variables are listed.
+5910	
+5911	When options are supplied, they set or unset shell attributes.
+5912	Any arguments remaining after option processing replace the
+5913	positional parameters.
+5914	
+5915	Options, if specified, have the following meanings:
+5916	
+5917	@table @code
+5918	@item -a
+5919	Each variable or function that is created or modified is given the
+5920	export attribute and marked for export to the environment of
+5921	subsequent commands.
+5922	
+5923	@item -b
+5924	Cause the status of terminated background jobs to be reported
+5925	immediately, rather than before printing the next primary prompt
+5926	or, under some circumstances,  when a foreground command exits.
+5927	This is effective only when job control is enabled.
+5928	
+5929	@item -e
+5930	Exit immediately if
+5931	a pipeline (@pxref{Pipelines}), which may consist of a single simple command
+5932	(@pxref{Simple Commands}),
+5933	a list (@pxref{Lists}),
+5934	or a compound command (@pxref{Compound Commands})
+5935	returns a non-zero status.
+5936	The shell does not exit if the command that fails is part of the
+5937	command list immediately following a
+5938	@code{while} or @code{until} reserved word,
+5939	part of the test in an @code{if} statement,
+5940	part of any command executed in a @code{&&} or @code{||} list except
+5941	the command following the final @code{&&} or @code{||},
+5942	any command in a pipeline but the last
+5943	(subject to the state of the @code{pipefail} shell option),
+5944	or if the command's return status is being inverted with @code{!}.
+5945	If a compound command other than a subshell
+5946	returns a non-zero status because a command failed
+5947	while @option{-e} was being ignored, the shell does not exit.
+5948	A trap on @code{ERR}, if set, is executed before the shell exits.
+5949	
+5950	This option applies to the shell environment and each subshell environment
+5951	separately (@pxref{Command Execution Environment}), and may cause
+5952	subshells to exit before executing all the commands in the subshell.
+5953	
+5954	If a compound command or shell function executes in a context where
+5955	@option{-e} is being ignored,
+5956	none of the commands executed within the compound command or function body
+5957	will be affected by the @option{-e} setting, even if @option{-e} is set
+5958	and a command returns a failure status.
+5959	If a compound command or shell function sets @option{-e} while executing in
+5960	a context where @option{-e} is ignored, that setting will not have any
+5961	effect until the compound command or the command containing the function
+5962	call completes.
+5963	
+5964	@item -f
+5965	Disable filename expansion (globbing).
+6060	Same as @code{-P}.
+6061	
+6062	@item pipefail
+6063	If set, the return value of a pipeline is the value of the last
+6064	(rightmost) command to exit with a non-zero status, or zero if all
+6065	commands in the pipeline exit successfully.
+6066	This option is disabled by default.
+6067	
+6068	@item posix
+6069	Enable @sc{posix} mode;
+6070	change the behavior of Bash where the default operation differs
+3670	A redirection error causes the command to exit with a non-zero status.
+3671	
+3672	If there is a command name left after expansion, execution proceeds as
+3673	described below.
+3674	Otherwise, the command exits.
+3675	If one of the expansions contained a command substitution,
+3676	the exit status of the command is the exit status of
+3677	the last command substitution performed.
+3678	If there were no command substitutions,
+3679	the command exits with a zero status.
+3680	
+6545	</p>
+6546	</dd>
+6547	<dt><code class="code">-e</code></dt>
+6548	<dd><p>Exit immediately if
+6549	a pipeline (see <a class="pxref" href="#Pipelines">Pipelines</a>), which may consist of a single simple command
+6550	(see <a class="pxref" href="#Simple-Commands">Simple Commands</a>),
+6551	a list (see <a class="pxref" href="#Lists">Lists of Commands</a>),
+6552	or a compound command (see <a class="pxref" href="#Compound-Commands">Compound Commands</a>)
+6553	returns a non-zero status.
+6554	The shell does not exit if the command that fails is part of the
+6555	command list immediately following a
+6556	<code class="code">while</code> or <code class="code">until</code> reserved word,
+6557	part of the test in an <code class="code">if</code> statement,
+6558	part of any command executed in a <code class="code">&amp;&amp;</code> or <code class="code">||</code> list except
+6559	the command following the final <code class="code">&amp;&amp;</code> or <code class="code">||</code>,
+6560	any command in a pipeline but the last
+6561	(subject to the state of the <code class="code">pipefail</code> shell option),
+6562	or if the command&rsquo;s return status is being inverted with <code class="code">!</code>.
+6563	If a compound command other than a subshell
+6564	returns a non-zero status because a command failed
+6565	while <samp class="option">-e</samp> was being ignored, the shell does not exit.
+6566	A trap on <code class="code">ERR</code>, if set, is executed before the shell exits.
+6567	</p>
+6568	<p>This option applies to the shell environment and each subshell environment
+6569	separately (see <a class="pxref" href="#Command-Execution-Environment">Command Execution Environment</a>), and may cause
+6570	subshells to exit before executing all the commands in the subshell.
+6571	</p>
+6572	<p>If a compound command or shell function executes in a context where
+6573	<samp class="option">-e</samp> is being ignored,
+6574	none of the commands executed within the compound command or function body
+6575	will be affected by the <samp class="option">-e</samp> setting, even if <samp class="option">-e</samp> is set

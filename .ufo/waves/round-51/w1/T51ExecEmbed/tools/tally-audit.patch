@@ -1,0 +1,59 @@
+diff --git c/tools/tally-audit.py w/tools/tally-audit.py
+index 59be097..89dea19 100755
+--- c/tools/tally-audit.py
++++ w/tools/tally-audit.py
+@@ -43,10 +43,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
+ TIMEOUT = 120
+ START = '  local nlegs='
+ 
+-# Reference tally block of the runner at sha256 a7d3f2dd…2eb9 (round 30, lines 1432-1472). Faults for
++# Reference tally block of the runner at sha256 977de470…0bda (round 51, lines 1510-1548; nine legs
++# through round 26, the tenth — bash-drift-pins — wired in round 51). Faults for
+ # the harness panel are built from this text, never from the audited file.
+-REF_BLOCK = r'''  local nlegs=9 npass=0 nfail=0 nsetup=0 st
+-  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck"; do
++REF_BLOCK = r'''  local nlegs=10 npass=0 nfail=0 nsetup=0 st
++  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck" "$st_driftpins"; do
+     case $st in
+       0) npass=$((npass + 1)) ;;
+       1) nfail=$((nfail + 1)) ;;
+@@ -86,7 +87,7 @@ REF_BLOCK = r'''  local nlegs=9 npass=0 nfail=0 nsetup=0 st
+   exit 0
+ '''
+ REF_NAMES = ['st_js', 'st_kagi', 'st_tsu', 'st_mado', 'st_checklist', 'st_claims', 'st_roundgate',
+-             'st_sourcescheck', 'st_citecheck']
++             'st_sourcescheck', 'st_citecheck', 'st_driftpins']
+ 
+ 
+ class CannotAudit(Exception):
+@@ -263,7 +264,7 @@ def faults():
+         out.append((name, new))
+     f('label', b.replace('passed=%s', 'passing=%s'))
+     f('fail-exits-0', b.replace('    exit 1\n', '    exit 0\n', 1))
+-    f('drop-last-operand', b.replace(' "$st_citecheck"; do\n', '; do\n', 1))
++    f('drop-last-operand', b.replace(' "$st_driftpins"; do\n', '; do\n', 1))
+     start = b.split('\n', 1)[0] + '\n'
+     for nm in REF_NAMES:
+         f('ignore-' + nm, b.replace(start, start + '  %s=0\n' % nm, 1))
+@@ -403,16 +404,16 @@ def selftest():
+     cmp_line = '    [[ $rc -eq $want_rc && "${out%%$\'\\n\'*}" == "$want_line" ]]\n'
+     cases = [
+         ('pristine', text, 0, None),
+-        ('dup-drop operand', text.replace(loop, loop.replace('"$st_citecheck"', '"$st_js"')), 1, 'static'),
+-        ('nlegs wrong', text.replace('  local nlegs=9 ', '  local nlegs=8 ', 1), 1, 'static'),
++        ('dup-drop operand', text.replace(loop, loop.replace('"$st_driftpins"', '"$st_js"')), 1, 'static'),
++        ('nlegs wrong', text.replace('  local nlegs=10 ', '  local nlegs=9 ', 1), 1, 'static'),
+         ('status 4 passes', text.replace('      1) nfail=$((nfail + 1)) ;;\n',
+                                          '      1) nfail=$((nfail + 1)) ;;\n      4) npass=$((npass + 1)) ;;\n', 1), 1, 'runtime'),
+         ('guard undercount only', text.replace('npass + nfail + nsetup != nlegs', 'npass + nfail + nsetup < nlegs', 1), 1, 'runtime'),
+         ('harness exit-only', text.replace(cmp_line, '    [[ $rc -eq $want_rc ]]\n', 1), 1, 'harness'),
+         ('harness swallowed', text.replace(cmp_line, cmp_line + '    rc=$?\n', 1), 1, 'harness'),
+-        ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 1 2 3 4 5 6 7 7; do', 1), 1, 'harness'),
+-        ('harness position 0 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 6 1 2 3 4 5 6 7 8; do', 1), 1, 'harness'),
+-        ('harness position 1 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8; do', '    for ti in 0 3 2 3 4 5 6 7 8; do', 1), 1, 'harness'),
++        ('harness position 8 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8 9; do', '    for ti in 0 1 2 3 4 5 6 7 7 9; do', 1), 1, 'harness'),
++        ('harness position 0 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8 9; do', '    for ti in 9 1 2 3 4 5 6 7 8 9; do', 1), 1, 'harness'),
++        ('harness position 1 skipped', text.replace('    for ti in 0 1 2 3 4 5 6 7 8 9; do', '    for ti in 0 3 2 3 4 5 6 7 8 9; do', 1), 1, 'harness'),
+         ('reversed operands', text.replace(loop, '  for st in ' + ' '.join('"$%s"' % n for n in reversed(REF_NAMES)) + '; do\n'), 0, None),
+     ]
+     tmp = tempfile.mkdtemp(prefix='tally-audit-selftest.')

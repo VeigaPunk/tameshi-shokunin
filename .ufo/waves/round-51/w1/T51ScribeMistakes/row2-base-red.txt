@@ -1,0 +1,39 @@
+## red-before, read at base 9962033 (read-only git show)
+$ git show 9962033:corpus/README.md | sed -n "83p;87p"
+| F6 | fixture minimization for survivors | S022, S023, S024
+| F10 | PBT generators for gate fixtures | S018, S019, S020,
+$ git show 9962033:corpus/README.md | sed -n "599p;608p" | cut -c1-70
+F10 (PBT generators for gate fixtures): open → **held (round 49)** f
+F6 (fixture minimization for survivors): open → **held (round 50)** 
+$ git show 9962033:SKILL.md | grep -c "shrink-case.py\|pbt-staged-id.py"
+0
+$ git ls-tree -r --name-only 9962033 tools/ | wc -l
+33
+$ git show 9962033:SKILL.md | sed -n "1499,1509p" | grep -c "^| "
+3
+$ git show 9962033:corpus/README.md | sed -n "76,87p" | awk -F"|" "NR>2{print \$2 \$5}"
+ F1  held (round 1) — `knowledge/mutation-score-semantics.md` 
+ F2  held (round 1) — `knowledge/witness-scoped-kill-verdict.md` 
+ F3  open 
+ F4  open 
+ F5  open 
+ F6  open 
+ F7  open 
+ F8  open 
+ F9  open 
+ F10  open 
+$ git show 9962033:SKILL.md | sed -n "1499,1507p"
+### Gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| repeated pristine controls | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...` o
+| bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sa
+
+Registry scope is these round-12 instruments; no new conformance assertion is
+made about the historical runner. Witness declarations are integrity-frozen (declaration, mapping, target, spe
+
+$ git grep -l "selftest" 9962033 -- tools | wc -l
+31
+$ jq ".tools|length" .ufo/evidence/round-51/c3/tools-base.json
+30

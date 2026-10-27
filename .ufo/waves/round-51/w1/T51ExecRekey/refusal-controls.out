@@ -1,0 +1,31 @@
+# refusal controls, round-51 refresh instrument (observed 2026-10-26, scratch clones of the fixture)
+# $S=/fast/scratch/hyaku/tameshi-r51/T51ExecRekey; R=.ufo/waves/round-51/w1/T51ExecRekey/refresh.py
+
+## 1. usage: wrong argument count -> exit 64, docstring head on stderr
+$ python3 "$R" 2>/dev/null; echo exit=$?
+exit=64
+
+## 2. working-tree ledger differs from the ledger at CAND (post-re-key clone asked for the pre-re-key CAND)
+$ python3 "$R" "$S/lane" 925bd28783c1d49c7cea6bba163612c3b851be00 "$S/readers.json"
+working-tree ledger differs from the ledger at CAND: run this where the tree is at CAND (its ledger is the base the entries are appended to)
+exit=1
+
+## 3. no section lost credit (clone checked out at BASE, CAND=BASE: both monitor runs 64/64)
+$ git clone -q --shared .../tameshi-shokunin "$S/lane-base"
+$ git -C "$S/lane-base" checkout -q --detach 9962033fd7a75aa2f2847e979dd687a5d28505a1
+$ python3 "$R" "$S/lane-base" 9962033fd7a75aa2f2847e979dd687a5d28505a1 "$S/readers.json"
+no section lost credit between 9962033f and 9962033f: nothing to re-key
+exit=1
+
+## 4. reader seats missing for a target (READERS_JSON = {})
+$ python3 "$R" "$S/det2" 974d2d9005a7cb29bc6bdd6166e2e571c57a8f22 "$S/readers-empty.json"
+READERS_JSON names no reader seats for section: ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+exit=1
+# (det2 left clean: git -C det2 status --porcelain -> empty; no ledger entry appended)
+
+## Not exercised as a live refusal: "target not credited at base". The target set is
+## {headings credited at BASE} minus {headings credited at CAND}, so every member is base-credited by
+## construction; the guard at refresh.py:183-184 is a structural assertion, not a reachable refusal.
+## The reachable neighbour is refusal 3 (nothing dropped) and "target heading absent at CAND"
+## (refresh.py:185-186; a heading deleted between BASE and CAND), neither reachable in the fixture
+## because both fixtures only append to the page.

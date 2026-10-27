@@ -1,0 +1,18 @@
+commit 5ea35d2baf77d9a871ab33953033b7a91c1a1d9e
+Author: seat <seat@local>
+Date:   Mon Oct 26 21:07:34 2026 -0300
+
+    scratch: C3 row for registry-check.py
+
+diff --git a/SKILL.md b/SKILL.md
+index 5f985e2..e28a678 100644
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -1500,6 +1500,7 @@ non-secret fixture command before retaining evidence.
+ 
+ | Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+ |---|---|---|---|---|---|---|---|
++| entry-registry walk | gate | `python3 tools/registry-check.py --rev HEAD` (add `--only NAME` to grade one row) | 0 clean; 1 failed; 2 could-not-evaluate (registry unreadable or invalid, root/rev/clone failure, only or tag miss); 64 usage | `python3 tools/registry-check.py --selftest` → finding id SELFTEST: last line SELFTEST: PASS (51 cases) at 84aa673 | `tools/registry.json`, `tools/registry-check.py` | selftest and --rev fixture trees via mkdtemp under /tmp (hardcoded, TMPDIR ignored), removed afterwards; live --root mode runs registry rows inside LANE so rows may write there | tameshi |
+ | repeated pristine controls | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...` or `--snapshot DIR` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/repeat-control.py --selftest` | `.ufo/evidence/round-12/ControlGate/expected.json`, `mismatch/expected.json`; literal expected IDs/exits in tool selftest | fresh caller-selected DIR; isolated `/tmp/tameshi-r12-*` selftest; snapshot read-only | tameshi |
+ | bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage only (argparse) | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `/tmp/bash-witness-selftest-private.*` (selftest only); sibling object store read-only | tameshi |
+ 
