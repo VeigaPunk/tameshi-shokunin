@@ -25,7 +25,7 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a 
   rewritten; a documented correction may supersede an entry's content and the
   block says so (the round-16 errata block, `## Errata — round 16 full-page
   cold-read`, discloses its own in-place repairs). Rejections kept.
-- **Scratch namespace is `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>/<sub>/`** (host scratch directive of 2026-10-25: `/tmp` is for files under 50 MB only; a seat deletes its tree on exit; the shape every landed round since 37 uses — the older `<lane>-r<round>-<n>-*` dash form died at round 36)
+- **Scratch namespace is `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>/<sub>/`** (host scratch directive of 2026-10-25: `/tmp` is for files under 50 MB only; a seat deletes its tree on exit; the shape every landed round since 48 uses (w1 occurrence counts: 0 dash-form trees across rounds 48-52, thousands of the slash form; the dash form's last committed occurrences are rounds 25-36))
   (in the original `/tmp` namespace: both mutation lanes kept every mutant + evidence there —
   mutation-case-kimi-census.md:4-7; mutation-case-kagi-census.md:4-6). The
   substrate tree is never a mutation target.
@@ -950,7 +950,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight ledger rows — six in t
   does not change that blob. The old tsukuroi/mado pins are historical,
   not a statement that their current trees match those recorded bytes.
   A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
-  later legs still run and their statuses aggregate (:1247-1317,1459-1517 since round 26).
+  later legs still run and their statuses aggregate (:1247-1317,1459-1517; tool lines re-verified at C** — the ten-leg runner grew since round 26).
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
   (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
@@ -1358,8 +1358,8 @@ anchors re-read at CAND0 `bcba8924…`, the sha governs):
     `mode=` beside repo/rev/path/sha256, and `REGRESSION_EXPECT` lists six
     recorded rates at r10-2 (ten at CAND0, `:1446`).
 - **The supersessions stay append-only.** The round-7 section's "Round 7
-  recorded four legs at r7-1" (`:923-927`; dated milestones there since round 16) and the round-9 receipt's `cases=4`
-  (`:1218-1222`) stand at `cf41efaa…`; the round-9 caveat that cases 5–6 were
+  recorded four legs at r7-1" (`:926-929`; dated milestones there since round 16) and the round-9 receipt's `cases=4`
+  (`:1226-1228`) stand at `cf41efaa…`; the round-9 caveat that cases 5–6 were
   "named debt" (the round-9 receipt's cases-5–6 caveat; ER-4 caveat (a)) is resolved
   at `r10-2` by embedding the recorded T8-1/T8-2 spec files (their 25 `@old`
   strings re-verified `count==1` against the pinned blobs) — the recorded
