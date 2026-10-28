@@ -1,0 +1,22 @@
+### C0 = c0137451f5b7f22d65f748fc69f1b181f55e1378
+$ git -C <clone> show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md | sed -n '1521,1540p'
+## Repeated controls and gate registry — round 12
+
+Source: S004 and S265 (S026 superseded by S265, `corpus/SOURCES.md:503`) and `corpus/knowledge/repeated-control-precondition.md`;
+runtime evidence: `.ufo/evidence/round-12/verification-final.json`.
+This is a standalone precondition check, not a change to the six-leg runner of round 12.
+
+| Observation | Decision | Bound |
+|---|---|---|
+| Three or more zero-exit controls match on raw stdout and stderr | `controls_match` | Only this finite sample matched, on this host in this environment; not a determinism proof |
+| All runs executed and any differ in exit or either stream | `controls_mismatch` | Do not attribute a later red suite solely to the mutant |
+| Equal nonzero controls, or command unavailable | Could not evaluate baseline (`baseline_nonzero` / `command_unavailable`, exit 2) | No mutation kill-rate claim |
+
+Recipe: choose a pristine command; put evidence outside any tree it inspects;
+run `python3 tools/repeat-control.py --runs 3 --out $HYAKU_SCRATCH/tameshi-r12-controls-UNIQUE -- COMMAND ARG...`;
+retain raw observations before interpreting the finding. The output directory
+must not exist. Caller owns timeout policy; hanging commands yield no verdict.
+Do not retry until green, normalize output, or interpret a finite match as proof
+of reliability. Command stdout/stderr may contain sensitive data: choose a
+non-secret fixture command before retaining evidence.
+

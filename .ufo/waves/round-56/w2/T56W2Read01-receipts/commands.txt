@@ -1,0 +1,46 @@
+# T56W2Read01 receipts — heading: '## Context gate classification and explicit exit classes — round 15'
+# C0 = c0137451f5b7f22d65f748fc69f1b181f55e1378   clone = /fast/scratch/hyaku/tameshi-r56/T56W2Read01/clone
+
+===== R1: section sha256 via FROZEN round-18 sectionize at C0 =====
+{"heading": "## Context gate classification and explicit exit classes — round 15", "start": 1652, "end": 1718, "sha256": "132cfb9ef1aa07111af42389e4fe862152e3118b3a8bb66f1d84a6a332e7edf6"}
+total_sections 64
+
+===== R2: digests named in the section =====
+7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89  .ufo/evidence/round-14/capture-context.py
+1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208  .ufo/evidence/round-14/context-missing-env.json
+05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a  .ufo/evidence/round-14/context-receipt.json
+
+===== R3: python3 tools/context-capture.py --check (frozen clean) =====
+CONTEXT: OK (id=context_consistent receipt=.ufo/evidence/round-14/context-receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=0 findings=0)
+EXIT=0
+
+===== R4: --check --receipt missing-env --expected committed pin (expect exit1, id missing_injected_environment) =====
+CONTEXT: MISMATCH (id=missing_injected_environment receipt=.ufo/evidence/round-14/context-missing-env.json sha256=1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208 exit=1 findings=2)
+FINDING missing_injected_environment receipt.environment.injected_env is absent
+FINDING receipt_verdict_mismatch status recorded 'ok' but raw fields recompute 'mismatch'; exit recorded 0 but raw fields recompute 1; mismatched raw fields carry no stored reasons
+EXIT=1
+
+===== R5: --check --receipt clean --expected committed pin (expect exit0) =====
+CONTEXT: OK (id=context_consistent receipt=.ufo/evidence/round-14/context-receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=0 findings=0)
+EXIT=0
+
+===== R6: --selftest (tail) =====
+SELFTEST_CASE hermetic-no-lane-path OK default lane root absent from subprocess output
+SELFTEST_CASE hermetic-temp-only OK no unexpected temp-root entries
+SELFTEST: PASS (49/49)
+EXIT=0
+
+===== R7: usage error --bogus (expect exit64 usage_error) =====
+context-capture.py: unknown argument: --bogus
+CONTEXT: USAGE_ERROR (id=usage_error exit=64)
+EXIT=64
+
+===== R8: --receipt without --expected (expect exit64) =====
+context-capture.py: --receipt and --expected must be given together
+CONTEXT: USAGE_ERROR (id=usage_error exit=64)
+EXIT=64
+
+===== R9: no-args (expect exit64, mode required) =====
+context-capture.py: a mode is required
+CONTEXT: USAGE_ERROR (id=usage_error exit=64)
+EXIT=64

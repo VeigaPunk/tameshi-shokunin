@@ -1,0 +1,53 @@
+# T56W2Read11 receipts — cross-checks the section's claims make about the tree
+
+=== A. 'the six recorded cases' ledger rows and SHONEN.md are unchanged base -> C0 ===
+$ diff <(git show 981c5e8:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '40,55p') <(git show c013745:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '40,55p')
+(identical)
+$ diff <(git show 981c5e8:SHONEN.md) <(git show c013745:SHONEN.md)
+(identical)
+
+=== B. the two registry rows for these tools are unchanged base -> C0 ===
+$ diff of the four matching registry.json rows
+(identical)
+
+=== C. registry-check replays all four rows and holds them ===
+$ python3 tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --only pin-disposition-read
+ROW pin-disposition-read expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+$ python3 tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --only pin-disposition-selftest
+ROW pin-disposition-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+$ python3 tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --only witness-metadata-check
+ROW witness-metadata-check expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+$ python3 tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --only witness-metadata-selftest
+ROW witness-metadata-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+=== D. census validate (lane-level requirement) ===
+$ bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi
+tameshi	W04	S047 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S048 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S075 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+tameshi	W04	S076 duplicate url docs.jj-vcs.dev/latest/git-compatibility across scopes
+tameshi	W04	S077 duplicate url man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html across scopes
+tameshi	W04	S078 duplicate url man7.org/linux/man-pages/man2/open.2.html across scopes
+tameshi	W04	S081 duplicate url bazel.build/reference/test-encyclopedia across scopes
+tameshi	W04	S092 duplicate url bazel.build/remote/caching across scopes
+tameshi	W01	S101 tierC mined used-by=corpus/knowledge/witness-equivalence-rule.md
+tameshi	W04	S104 duplicate url cgit.git.savannah.gnu.org/cgit/bash.git/plain/doc/bashref.texi?id=b8c60bc9ca365f8261fa97900b6fa939f6ebc303 across scopes
+tameshi	W04	S160 duplicate url stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants across scopes
+tameshi	W04	S265 duplicate url testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html across scopes
+tameshi	W04	S266 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S267 duplicate url github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml across scopes
+tameshi	W04	S268 duplicate url www.tensorflow.org/federated/golden_tests?hl=zh-cn across scopes
+tameshi	W04	S274 duplicate url bazel.build/basics/hermeticity across scopes
+tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+EXIT=0
+$ bash scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin tameshi  (row count)
+tameshi	rows	142
+FLEET	rows	142

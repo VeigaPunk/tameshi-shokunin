@@ -1,0 +1,762 @@
+{
+ "seat": "T56W1ExecGateFuzz",
+ "round": 56,
+ "wave": 1,
+ "lane": "tameshi-shokunin",
+ "gate": {
+  "path": "tools/receipt-revision-gate.py",
+  "sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+  "frozen_instrument_set": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+  "freeze_manifest_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+  "present_at_base_981c5e8b": false,
+  "base_is_ancestor_of_freeze": true
+ },
+ "fixture": {
+  "kind": "scratch git repo, 4 commits + 2 shadow tags + 80000 fast-import blobs",
+  "A": "27653978b812c14d60ba7eefb9ebdcf9bb4b22f7",
+  "B": "1eaad2c99ea0675b5d285ac8b73d6212e1154088",
+  "C": "233c212305db2c6b9c07830d84f6b78750c8953c",
+  "SD": "6c3db677a8e7af563e9d69d9dd835be72df508de",
+  "TAGHEX_tag_at_B": "2765397",
+  "certified": "233c212305db2c6b9c07830d84f6b78750c8953c"
+ },
+ "cases": [
+  {
+   "case": "01-no-rev",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "02-two-revs-positive",
+   "role": "positive",
+   "expected": "RECEIPT_REV_AMBIGUOUS",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_AMBIGUOUS",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "03-rev-in-path-mismatch",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_MISMATCH",
+   "exit": "3",
+   "verdict": "MISLABEL",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "04-rev-in-path-certified",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "FALSE_ACCEPT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "05-json-rev",
+   "role": "verdict",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "06-json-rev-uppercase",
+   "role": "verdict",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "07-certified-other-claim",
+   "role": "verdict",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "DECLARED_GAP",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "08-sidecar-match",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "09-sidecar-mismatch",
+   "role": "positive",
+   "expected": "RECEIPT_DIGEST_MISMATCH",
+   "observed": "REFUSE",
+   "code": "RECEIPT_DIGEST_MISMATCH",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "10-sidecar-empty",
+   "role": "positive",
+   "expected": "RECEIPT_DIGEST_MISMATCH",
+   "observed": "REFUSE",
+   "code": "RECEIPT_DIGEST_MISMATCH",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "11-sidecar-uppercase",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_DIGEST_MISMATCH",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "12-tag-lightweight",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "13-tag-annotated",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "14-tag-shadows-commit-prefix",
+   "role": "positive",
+   "expected": "RECEIPT_REV_MISMATCH",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "FALSE_ACCEPT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "15-tag-shadows-certified-prefix",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_MISMATCH",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "16-rev-in-comment",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "FALSE_ACCEPT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "17-comment-plus-real",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_AMBIGUOUS",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "18-rev-in-code-fence",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "FALSE_ACCEPT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "19-fence-plus-real",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_AMBIGUOUS",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "20-prefix-7",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "21-prefix-12",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "22-uppercase-hex",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "23-prefix-6",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "FALSE_REFUSE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "24-prefix-41",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "25-spaced-rev",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "MISLABEL",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "26-notrev",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "27-directory-receipt",
+   "role": "positive",
+   "expected": "RECEIPT_NOT_BLOB",
+   "observed": "CRASH",
+   "code": "none",
+   "exit": "1",
+   "verdict": "CRASH",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "28-missing",
+   "role": "positive",
+   "expected": "RECEIPT_MISSING",
+   "observed": "REFUSE",
+   "code": "RECEIPT_MISSING",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "29-empty",
+   "role": "positive",
+   "expected": "RECEIPT_EMPTY",
+   "observed": "REFUSE",
+   "code": "RECEIPT_EMPTY",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "30-paths-launder",
+   "role": "positive",
+   "expected": "RECEIPT_REV_CONTENT_DRIFT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "EXPLOITABLE",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "31-paths-drift",
+   "role": "positive",
+   "expected": "RECEIPT_REV_CONTENT_DRIFT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_CONTENT_DRIFT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "32-control-descendant",
+   "role": "control",
+   "expected": "RECEIPT_CONTROL_NOT_ANCESTOR",
+   "observed": "REFUSE",
+   "code": "RECEIPT_CONTROL_NOT_ANCESTOR",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "33-control-equal",
+   "role": "control",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "34-control-multi",
+   "role": "control",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "35-control-unresolvable",
+   "role": "control",
+   "expected": "RECEIPT_REV_UNRESOLVABLE",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_UNRESOLVABLE",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "36-ambiguous-object-prefix",
+   "role": "positive",
+   "expected": "RECEIPT_REV_UNRESOLVABLE",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_UNRESOLVABLE",
+   "exit": "3",
+   "verdict": "MISLABEL",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "37-json-plus-text",
+   "role": "verdict",
+   "expected": "RECEIPT_REV_AMBIGUOUS",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_AMBIGUOUS",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "38-json-upper-key",
+   "role": "verdict",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "39-blob-rev",
+   "role": "positive",
+   "expected": "RECEIPT_REV_UNRESOLVABLE",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_UNRESOLVABLE",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "40-required-line",
+   "role": "verdict",
+   "expected": "RECEIPT_REQUIRED_LINE_MISSING",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REQUIRED_LINE_MISSING",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "41-duplicate-rev",
+   "role": "positive",
+   "expected": "ACCEPT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "42-rev-in-url",
+   "role": "positive",
+   "expected": "RECEIPT_REV_ABSENT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "FALSE_ACCEPT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "43-paths-empty-list",
+   "role": "positive",
+   "expected": "RECEIPT_REV_CONTENT_DRIFT",
+   "observed": "REFUSE",
+   "code": "RECEIPT_REV_CONTENT_DRIFT",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "44-paths-nonexistent",
+   "role": "positive",
+   "expected": "RECEIPT_REV_CONTENT_DRIFT",
+   "observed": "ACCEPT",
+   "code": "none",
+   "exit": "0",
+   "verdict": "FALSE_ACCEPT",
+   "gate_sha256": "1d80f8a665f8"
+  },
+  {
+   "case": "45-two-causes-one-detail",
+   "role": "positive",
+   "expected": "RECEIPT_DIGEST_MISMATCH,RECEIPT_REV_UNRESOLVABLE",
+   "observed": "REFUSE",
+   "code": "RECEIPT_DIGEST_MISMATCH,RECEIPT_REV_UNRESOLVABLE",
+   "exit": "3",
+   "verdict": "RIGHT",
+   "gate_sha256": "1d80f8a665f8"
+  }
+ ],
+ "counts": {
+  "RIGHT": 26,
+  "MISLABEL": 3,
+  "FALSE_ACCEPT": 6,
+  "FALSE_REFUSE": 7,
+  "DECLARED_GAP": 1,
+  "CRASH": 1,
+  "EXPLOITABLE": 1
+ },
+ "total_cases": 45,
+ "mutants": [
+  {
+   "mutant": "M00-baseline",
+   "applied": "-",
+   "result": "PASS",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  },
+  {
+   "mutant": "M01-mismatch-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 12/14 pass",
+   "failing_cases": "content-drift-refused,strict-mismatch-refused"
+  },
+  {
+   "mutant": "M02-ambiguous-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "ambiguous-refused"
+  },
+  {
+   "mutant": "M03-ancestor-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "control-not-ancestor-refused"
+  },
+  {
+   "mutant": "M04-digest-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "digest-mismatch-refused"
+  },
+  {
+   "mutant": "M05-required-line-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "required-line-refused"
+  },
+  {
+   "mutant": "M06-empty-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "empty-refused"
+  },
+  {
+   "mutant": "M07-missing-off",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "missing-refused"
+  },
+  {
+   "mutant": "M08-drift-always-empty",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "content-drift-refused"
+  },
+  {
+   "mutant": "M09-drift-always-nonempty",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "content-identical-positive-accepted"
+  },
+  {
+   "mutant": "M10-rev-min-4",
+   "applied": "yes",
+   "result": "SURVIVED",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  },
+  {
+   "mutant": "M11-json-rev-off",
+   "applied": "yes",
+   "result": "SURVIVED",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  },
+  {
+   "mutant": "M12-exit0-always",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 4/14 pass",
+   "failing_cases": "content-drift-refused,strict-mismatch-refused,absent-refused,ambiguous-refused,unresolvable-refused,control-not-ancestor-refused,digest-mismatch-refused,required-line-refused,missing-refused,empty-refused"
+  },
+  {
+   "mutant": "M13-rev-uppercase-ok",
+   "applied": "yes",
+   "result": "SURVIVED",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  },
+  {
+   "mutant": "M14-resolve-always-none",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 1/14 pass",
+   "failing_cases": "matched-positive-accepted,content-identical-positive-accepted,content-drift-refused,strict-mismatch-refused,absent-refused,ambiguous-refused,unresolvable-refused,control-ancestors-accepted,control-not-ancestor-refused,digest-mismatch-refused,required-line-refused,missing-refused,empty-refused"
+  },
+  {
+   "mutant": "M15-sidecar-ignored",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "digest-mismatch-refused"
+  },
+  {
+   "mutant": "M16-control-as-positive",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 12/14 pass",
+   "failing_cases": "control-ancestors-accepted,control-not-ancestor-refused"
+  },
+  {
+   "mutant": "M17-rev-dedup-off",
+   "applied": "yes",
+   "result": "SURVIVED",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  },
+  {
+   "mutant": "M18-unresolvable-continues",
+   "applied": "yes",
+   "result": "KILLED",
+   "exit": "1",
+   "selftest": "GATE_SELFTEST: 13/14 pass",
+   "failing_cases": "unresolvable-refused"
+  },
+  {
+   "mutant": "M19-role-check-off",
+   "applied": "yes",
+   "result": "SURVIVED",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  },
+  {
+   "mutant": "M20-path-check-off",
+   "applied": "yes",
+   "result": "SURVIVED",
+   "exit": "0",
+   "selftest": "GATE_SELFTEST: 14/14 pass",
+   "failing_cases": "-"
+  }
+ ],
+ "mutation_score": "14/20 killed",
+ "findings": [
+  {
+   "id": "F1",
+   "class": "false-accept / mislabel",
+   "cases": [
+    "03",
+    "04",
+    "16",
+    "17",
+    "18",
+    "19",
+    "25",
+    "42"
+   ],
+   "summary": "REV_RE scans raw receipt text, so rev=<sha> inside a path, comment, code fence or URL is treated as the claimed revision; six such receipts are accepted and two valid receipts are refused AMBIGUOUS because a historical rev is quoted in a comment."
+  },
+  {
+   "id": "F2",
+   "class": "false-accept / false-refuse",
+   "cases": [
+    "12",
+    "13",
+    "14",
+    "15"
+   ],
+   "summary": "resolve() peels ^{commit} and git prefers refs over object prefixes; a hex-named tag shadows a commit prefix, so a token that is A's prefix certifies B (case 14) and a token that is C's prefix is refused (case 15)."
+  },
+  {
+   "id": "F3",
+   "class": "false-refuse",
+   "cases": [
+    "06",
+    "22",
+    "23"
+   ],
+   "summary": "REV_RE/JSON_REV_RE are lowercase and 7..40 hex only; uppercase and 6-hex spellings resolve in git (and are accepted for --certified) but are reported RECEIPT_REV_ABSENT for a receipt."
+  },
+  {
+   "id": "F4",
+   "class": "mislabel",
+   "cases": [
+    "36"
+   ],
+   "summary": "An object prefix with two candidates is reported RECEIPT_REV_UNRESOLVABLE; RECEIPT_REV_AMBIGUOUS only means several rev tokens. An unresolvable --certified emits a receipt code and exit 2."
+  },
+  {
+   "id": "F5",
+   "class": "crash / dead code",
+   "cases": [
+    "27"
+   ],
+   "summary": "A directory receipt raises uncaught IsADirectoryError (exit 1, no GATE line); a missing --paths file raises FileNotFoundError; a colon in a receipt path is a usage error. RECEIPT_NOT_BLOB is declared in CODES but never emitted."
+  },
+  {
+   "id": "F6",
+   "class": "false-accept (declared mechanism, caller-controlled)",
+   "cases": [
+    "30",
+    "43",
+    "44"
+   ],
+   "summary": "--paths is caller-supplied; one unchanged path or one nonexistent path accepts a receipt measured at another revision. An empty list is refused. The gate cannot verify the list covers the claim surface."
+  },
+  {
+   "id": "F7",
+   "class": "blind spot / false-refuse",
+   "cases": [
+    "08",
+    "09",
+    "10",
+    "11"
+   ],
+   "summary": "The digest sidecar is only checked when it sits next to the receipt; copying a receipt drops the digest arm (shown on the real round-54 slice). Uppercase digests are false refusals, and a digest failure short-circuits before revision checks."
+  },
+  {
+   "id": "F8",
+   "class": "evidence quality",
+   "cases": [
+    "45"
+   ],
+   "summary": "check() keeps a single detail string; multi-cause refusals report one cause (codes list both, detail names only the last)."
+  },
+  {
+   "id": "F9",
+   "class": "declared gap",
+   "cases": [
+    "05",
+    "06",
+    "07",
+    "38"
+   ],
+   "summary": "A receipt naming the certified revision for another claim passes (contract cannot_see). JSON receipts bind only the exact lowercase \"rev\" key; \"REV\" or numeric rev is REV_ABSENT."
+  },
+  {
+   "id": "F10",
+   "class": "dead code",
+   "cases": [],
+   "summary": "check() takes an unused `required` parameter; the sidecar file is read twice; RECEIPT_NOT_BLOB is unreachable."
+  }
+ ],
+ "lane_files_touched": [],
+ "commands": {
+  "fuzz": "python3 <receipts>/fuzz-driver.py <scratch>/gate.py <fixture> <receipts>/revs.env <scratch>/collision.txt <receipts>",
+  "mutants": "python3 <receipts>/mutate.py <scratch>/gate.py <receipts>",
+  "liveness": "python3 <scratch>/gate.py --lane <lane> --certified c2108100... --paths .ufo/evidence/round-56/c2/red-before/round-54-surface.paths --receipt .ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout:positive"
+ }
+}

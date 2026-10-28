@@ -1,0 +1,28 @@
+fixture=/fast/scratch/hyaku/tameshi-r56/T56W1RevCensus/fx2.IJlkkQ head=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1
+=== 1: fresh URL (control) ===
+### control exit=0 findings=16
+tameshi	ok	/fast/scratch/hyaku/tameshi-r56/T56W1RevCensus/fx2.IJlkkQ/root/tameshi-shokunin/corpus/SOURCES.md
+=== 2: duplicate URL, DIFFERENT scope (W04 expected) ===
+### crossscope exit=0 findings=17
+tameshi	W04	S281 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+tameshi	ok	/fast/scratch/hyaku/tameshi-r56/T56W1RevCensus/fx2.IJlkkQ/root/tameshi-shokunin/corpus/SOURCES.md
+=== 3: duplicate URL, SAME scope as S001 (E04 expected) ===
+### samescope exit=1 findings=17
+tameshi	E04	S281 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics within scope Stryker Mutator's own mutant-state and metric definitions
+=== 4: same-scope duplicate that says supersedes S001 (E04 should clear) ===
+### supersedes exit=0 findings=16
+tameshi	ok	/fast/scratch/hyaku/tameshi-r56/T56W1RevCensus/fx2.IJlkkQ/root/tameshi-shokunin/corpus/SOURCES.md
+=== 5: URL with no scheme (blind spot probe) ===
+### noscheme exit=0 findings=16
+tameshi	ok	/fast/scratch/hyaku/tameshi-r56/T56W1RevCensus/fx2.IJlkkQ/root/tameshi-shokunin/corpus/SOURCES.md
+=== 6: same URL as S001 but written without scheme, same scope (blind spot) ===
+### noscheme_dup exit=0 findings=16
+tameshi	ok	/fast/scratch/hyaku/tameshi-r56/T56W1RevCensus/fx2.IJlkkQ/root/tameshi-shokunin/corpus/SOURCES.md
+=== 7: hand checker against a tree WITHOUT the used-by entry ===
+FAIL row 1: | S281 | Candidate source — https://raw.githubusercontent.co...
+  - E11: used-by path corpus/knowledge/receipt-revision-binding.md does not exist in the lane
+checker_exit=1
+=== 8: hand checker on the cross-scope duplicate row ===
+FAIL row 1: | S281 | Candidate source — https://stryker-mutator.io/docs/...
+  - W04: url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics already present as S001 (cross-scope duplicate; reuse the existing row instead of adding one)
+checker_exit=1

@@ -1,0 +1,94 @@
+# every tools/evidence-disposition.py line range the section cites, at C0
+--- :385:395 ---
+   385	# ------------------------------------------------- historical input reading
+   386	
+   387	# G4: every git subprocess runs without inherited GIT_* state, without replace
+   388	# refs and without grafts, so environment/replace/graft attacks cannot rewrite
+   389	# the bytes this gate reads.
+   390	GIT_ENV_OVERRIDES = {
+   391	    "GIT_NO_REPLACE_OBJECTS": "1",
+   392	    "GIT_GRAFT_FILE": "/dev/null",
+   393	    "GIT_CONFIG_NOSYSTEM": "1",
+   394	    "GIT_CONFIG_GLOBAL": "/dev/null",
+   395	}
+--- :406:409 ---
+   406	def git_environment():
+   407	    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+   408	    env.update(GIT_ENV_OVERRIDES)
+   409	    return env
+--- :479:544 ---
+   479	def resolve_historical_anchor(lane):
+   480	    """Resolve one committed anchor shared by G2 and G3."""
+   481	    proc = git_call(lane, ["config", "--get", "lane.branch"])
+   482	    if proc.returncode not in (0, 1):
+   483	        raise _git_failure(proc, "cannot read lane.branch")
+   484	    branch = proc.stdout.decode("utf-8", "replace").strip() if proc.returncode == 0 else ""
+   485	    if not branch:
+   486	        proc = git_call(lane, ["symbolic-ref", "-q", "HEAD"])
+   487	        if proc.returncode == 0:
+   488	            ref = proc.stdout.decode("utf-8", "replace").strip()
+   489	            prefix = "refs/heads/"
+   490	            if ref.startswith(prefix):
+   491	                branch = ref[len(prefix):]
+   492	        elif proc.returncode != 1:
+   493	            raise _git_failure(proc, "cannot resolve HEAD branch")
+   494	
+   495	    if branch:
+   496	        branch_ref = "refs/heads/" + branch
+   497	        proc = git_call(lane, ["check-ref-format", branch_ref])
+   498	        if proc.returncode != 0:
+   499	            raise CouldNotEvaluate(
+   500	                "historical_input_unavailable",
+   501	                "invalid local lane branch {!r}".format(branch),
+   502	            )
+   503	        commit = _commit_of(lane, branch_ref)
+   504	        if commit is None:
+   505	            raise CouldNotEvaluate(
+   506	                "historical_input_unavailable",
+   507	                "lane branch {} does not resolve to a commit".format(branch_ref),
+   508	            )
+   509	        return branch_ref, commit
+   510	
+   511	    if os.path.lexists(str(lane / ".jj")):
+   512	        raise CouldNotEvaluate(
+   513	            "historical_input_unavailable",
+   514	            "jj workspace without a lane.branch binding has no authoritative tip",
+   515	        )
+   516	
+   517	    commit = _commit_of(lane, "HEAD")
+   518	    if commit is None:
+   519	        raise CouldNotEvaluate(
+   520	            "historical_input_unavailable", "HEAD does not resolve to a commit"
+   521	        )
+   522	    proc = git_call(
+   523	        lane,
+   524	        [
+   525	            "for-each-ref",
+   526	            "--contains",
+   527	            commit,
+   528	            "--format=%(refname)",
+   529	            "refs/heads/",
+   530	            "refs/remotes/",
+   531	        ],
+   532	    )
+   533	    if proc.returncode != 0:
+   534	        raise _git_failure(proc, "cannot find a ref containing detached HEAD")
+   535	    containing_refs = [
+   536	        ref for ref in proc.stdout.decode("utf-8", "replace").splitlines()
+   537	        if ref and not ref.endswith("/HEAD")
+   538	    ]
+   539	    if not containing_refs:
+   540	        raise CouldNotEvaluate(
+   541	            "historical_input_unavailable",
+   542	            "detached HEAD {} is on no branch or remote-tracking branch".format(commit),
+   543	        )
+   544	    return "HEAD", commit
+--- :2275:2275 ---
+  2275	    """A detached harness clone anchors at HEAD, not its later remote tip."""
+--- :2910:2915 ---
+  2910	    historical_case(
+  2911	        "v2-registry-clone-detached-anchor",
+  2912	        0,
+  2913	        [],
+  2914	        _setup_hist_registry_clone,
+  2915	    )

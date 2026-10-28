@@ -204,3 +204,42 @@ cites a `mined` row): `python3 .ufo/evidence/round-56/c2/measure.py --lane "$L"
   revision that has since drifted on its own claim surface. The round-56 receipt
   inventory (`.ufo/waves/round-56/w1/receipt-inventory.json`) counts tokens; it
   does not re-gate every historical receipt, and no claim here rests on one.
+## Errata — round 56 wave-2 re-open (2026-10-28)
+
+Corrections are additive; the original wording above remains the freeze-era record.
+
+### ER-R56-K1 — the first S281 quotation is a splice, not a source sentence
+
+Lines 7–10 join two excerpts while presenting the first as one quotation. The L1 re-opened
+S281 on 2026-10-28. At `§Fields`, `subject`, snapshot lines 36–37, the exact text is:
+
+> Set of software artifacts that the attestation applies to. Each element represents a
+> single software artifact. Each element MUST have `digest` set.
+
+The quote at lines 8–10 about subjects matched purely by digest remains verbatim at lines
+54–55. Re-open evidence: `.ufo/waves/round-56/integration/l1-source-reopen.txt`.
+
+### ER-R56-K2 — gate count and digest changed in amendment 1
+
+The frontmatter `recheck:` and §Falsifier item 3 still name the original freeze's
+`GATE_SELFTEST: 14/14 pass`. Amendment 1 at `21eb3c6` changed the gate before controls;
+the C0 gate prints `GATE_SELFTEST: 19/19 pass` (exit 0), and its C0 sha256 is
+`c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9`. The freeze-era
+digest `1d80f8a6…` and 14/14 result remain historical values for `c3e2ca9f`. For a
+current-tree recheck, use 19/19 and verify the source snapshot independently. Receipt:
+`.ufo/waves/round-56/w2/T56W2RevStalePointers.md` P8–P9.
+
+### ER-R56-K3 — the fixture-demo invocation needs its environment
+
+The §Re-derive step 6 commands as printed fail with `HYAKU_SCRATCH` unset (exit 1).
+Use the following from the lane root:
+
+```sh
+export HYAKU_SCRATCH=/fast/scratch/hyaku
+cd /home/vgpnk/Projects/shokunin/tameshi-shokunin
+bash .ufo/waves/round-56/w1/T56W1ScribeKnowledge-receipts/fixture-gate-demo.sh
+bash .ufo/waves/round-56/w1/T56W1ScribeKnowledge-receipts/fixture-gate-demo2.sh
+```
+
+The failing invocation and the corrected commands are preserved in
+`.ufo/waves/round-56/w2/T56W2RevStalePointers.md` P15.

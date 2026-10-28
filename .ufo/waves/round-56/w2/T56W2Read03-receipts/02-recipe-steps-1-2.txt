@@ -1,0 +1,46 @@
+# recipe step 1 — dispositions-before.json (json mode)
+$ python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json
+{
+ "exit": 1,
+ "status": "failed",
+ "counts": {
+  "effective": 12,
+  "expected_checks": 12,
+  "failed": 1,
+  "findings": 1,
+  "passed": 11,
+  "superseded": 0
+ },
+ "findings": [
+  {
+   "detail": "producer_before: stdout lacks 'summary preserves top-level exposed declaration kind'",
+   "expectation": "producer_before",
+   "id": "expected_contains_missing"
+  }
+ ]
+}
+EXIT_OF_COMMAND=1
+
+# recipe step 1 tail — the round-17 dispositions now exit 2
+round-17/dispositions-before.json EXIT=2
+round-17/dispositions.json EXIT=2
+
+# recipe step 2 — dispositions.json (json mode) counts
+{
+ "exit": 0,
+ "status": "clean",
+ "counts": {
+  "effective": 11,
+  "expected_checks": 12,
+  "failed": 0,
+  "findings": 0,
+  "passed": 11,
+  "superseded": 1
+ }
+}
+
+# recipe step 2 — text mode HISTORICAL lines
+EVIDENCE_DISPOSITION: clean exit=0 expected=12 effective=11 superseded=1 passed=11 failed=0 findings=0
+HISTORICAL tools/bash-witness-study.py rev=4acc607dfd79f19d508bd50cdd06b77269fccd1d sha256=49e9e5e20b73f115626fb4f81aac9b238e0f01811230c4fd0ff726c1f350ad80
+HISTORICAL tools/mutate-and-run.sh rev=4acc607dfd79f19d508bd50cdd06b77269fccd1d sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+HISTORICAL tools/pin-disposition.py rev=4acc607dfd79f19d508bd50cdd06b77269fccd1d sha256=297253971dab3a558b470a04162b9d768287844dc0e81bf41a1f9f263ff14f11

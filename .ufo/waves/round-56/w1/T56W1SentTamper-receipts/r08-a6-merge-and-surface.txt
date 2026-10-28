@@ -1,0 +1,32 @@
+# merge commit d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69 has the tree of e5d1da46de6eda63f90564fb6070558641578e15 and the history of the side branch
+$ git -C FIX rev-parse d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69^{tree}  vs  e5d1da46de6eda63f90564fb6070558641578e15^{tree}
+467cd7231590c9b13b88e547c34a58ac24ecfbb2
+467cd7231590c9b13b88e547c34a58ac24ecfbb2
+$ git -C FIX log --format=%H%x20%s d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69
+d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69 merge with the tree of c1, history of side
+# with the full path list
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a6.txt role=positive revs=d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# without --paths
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a6.txt role=positive revs=d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69 code=RECEIPT_REV_MISMATCH rev=d9e9ce1a99be2dcabbbdc2c256ad0dc0a3a68b69 certified=e5d1da46de6e
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+# 6b narrow path list: c2 differs from c1 on surface.txt, list names only other.txt
+other.txt
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a6b.txt role=positive revs=be37462a737c4d14f78af4776a3048f93e222a8f
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# same receipt against the honest full list
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a6b.txt role=positive revs=be37462a737c4d14f78af4776a3048f93e222a8f code=RECEIPT_REV_CONTENT_DRIFT rev=be37462a737c4d14f78af4776a3048f93e222a8f drift=surface.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# 6c LANE: the round's real frozen surface accepts revisions that differ on 9 and 244 paths
+-- rev=6efd2a19d35f457eb49daa82a6c5944fb22baa1f vs 981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1: frozen-surface drift=0 total drift=9
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/narrow-6efd2a19d35f457eb49daa82a6c5944fb22baa1f.txt role=positive revs=6efd2a19d35f457eb49daa82a6c5944fb22baa1f
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+-- rev=fa48c06c3669355fd80e8722eb733c1d6dfdd2f8 vs 981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1: frozen-surface drift=0 total drift=244
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/narrow-fa48c06c3669355fd80e8722eb733c1d6dfdd2f8.txt role=positive revs=fa48c06c3669355fd80e8722eb733c1d6dfdd2f8
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0

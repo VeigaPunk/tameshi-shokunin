@@ -1,0 +1,51 @@
+=== crash detail: directory receipt (fuzz case 27) ===
+=== 27-directory-receipt role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_NOT_BLOB kind=CRASH
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/27-directory-receipt:positive
+exit=1 observed=CRASH codes=none
+
+--- stderr ---
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py", line 331, in <module>
+    sys.exit(run(sys.argv[1:]))
+             ~~~^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py", line 193, in run
+    codes, detail, revs = check(lane, full, path_list, receipt, receipt[1], receipt[2])
+                          ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py", line 98, in check
+    data = p.read_bytes()
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/27-directory-receipt'
+
+=== 28-missing role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_MISSING kind=RIGHT
+=== CLI probe 1: certified 6-hex accepted, receipt 6-hex refused ===
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/23-prefix-6 role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+=== CLI probe 2: certified uppercase accepted, receipt uppercase refused ===
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/22-uppercase-hex role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+=== CLI probe 3: certified unresolvable ===
+GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+exit=2
+=== CLI probe 4: certified given as a tag name ===
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/20-prefix-7 role=positive revs=1eaad2c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+=== CLI probe 5: invalid role ===
+usage: --receipt PATH:positive|verdict|control[:REGEX] (got '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/01-no-rev:bogus')
+exit=1
+=== CLI probe 6: missing --paths file ===
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/no-such-paths.txt'
+exit=1
+=== CLI probe 7: receipt path containing a colon ===
+usage: --receipt PATH:positive|verdict|control[:REGEX] (got '/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/colon:receipt:positive')
+exit=1

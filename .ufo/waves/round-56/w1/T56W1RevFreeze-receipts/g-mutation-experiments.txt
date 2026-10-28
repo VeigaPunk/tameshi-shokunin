@@ -1,0 +1,36 @@
+########## M1: mutate an UNLISTED instrument input (.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout) ##########
+M1=245905239bf18d01fb2ece6b053ce2ebc800ad13
+-- deciding-run FROZEN diff check:
+FROZEN_UNCHANGED=1 freeze=c3e2ca9f020776b3d66c7af854fb82c834674fcf rev=245905239bf18d01fb2ece6b053ce2ebc800ad13
+-- deciding-run freeze-integrity verifier at FREEZE=c3e2ca9f020776b3d66c7af854fb82c834674fcf:
+FREEZE_INTEGRITY: OK files=10 amendments=0
+verifier_exit=0
+
+########## M2: mutate a LISTED instrument (.ufo/evidence/round-56/c1/measure.py) on top of M1 ##########
+M2=cda8dfd245208c201e7829012fe3acb0c8e2d340
+-- deciding-run FROZEN diff check:
+FROZEN_UNCHANGED=0 freeze=c3e2ca9f020776b3d66c7af854fb82c834674fcf rev=cda8dfd245208c201e7829012fe3acb0c8e2d340
+ .ufo/evidence/round-56/c1/measure.py | 2 ++
+ 1 file changed, 2 insertions(+)
+rc=1
+-- deciding-run freeze-integrity verifier at FREEZE=c3e2ca9f020776b3d66c7af854fb82c834674fcf:
+FREEZE_INTEGRITY: OK files=10 amendments=0
+verifier_exit=0
+
+########## M3: rewrite freeze.json digest to match the mutated instrument (amendment NOT recorded) ##########
+freeze.json c1/measure.py digest rewritten to 5f1222b03ba0c670 amendments= []
+M3=a23b5e2d9449d921266c0cc86c64153721bbcada
+-- deciding-run freeze-integrity verifier at FREEZE=M3 (caller-supplied):
+FREEZE_INTEGRITY: OK files=10 amendments=0
+verifier_exit=0
+-- deciding-run FROZEN diff check FREEZE=M3 REV=M3:
+FROZEN_UNCHANGED=1 freeze=a23b5e2d9449d921266c0cc86c64153721bbcada rev=a23b5e2d9449d921266c0cc86c64153721bbcada
+
+########## M4: same, but with a free-text amendment entry ##########
+amendments= [{'whatever': 'no evidence, no commit, no signature'}]
+M4=0e9f288c4b24820f8a92801d9abf0473d3efc2cd
+-- verifier at FREEZE=M4:
+FREEZE_INTEGRITY: OK files=10 amendments=1
+verifier_exit=0
+-- FROZEN diff FREEZE=M4 REV=M4:
+FROZEN_UNCHANGED=1 freeze=0e9f288c4b24820f8a92801d9abf0473d3efc2cd rev=0e9f288c4b24820f8a92801d9abf0473d3efc2cd

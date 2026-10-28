@@ -1,0 +1,35 @@
+### fixture: shared clone of the lane at c3e2ca9f + one commit carrying the four C2 doc surfaces
+toplevel=/fast/scratch/hyaku/tameshi-r56/T56W1ScribeReport/demo
+demo_rev=e9372b6815e2de00a694e3151c8487340e56f100
+e9372b6815e2de00a694e3151c8487340e56f100 demo: the four C2 doc surfaces
+ SKILL.md                                     |   1 +
+ corpus/QUALITY.md                            |  63 ++++++++
+ corpus/knowledge/receipt-revision-binding.md | 206 +++++++++++++++++++++++++++
+ tools/registry.json                          |  18 +++
+ 4 files changed, 288 insertions(+)
+
+### A. the frozen counter (its own bytes at e9372b6815e2de00a694e3151c8487340e56f100)
+EXPLAIN arm1-selftest exit=0 14/14
+EXPLAIN arm2-red54 exit=3 codes=RECEIPT_REV_CONTENT_DRIFT old-gate-accepted=True
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 3/4
+C2_R56: rev=e9372b6815e2 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=3/4 total=2 C2_R56_PASS=false
+
+### B. the same counter with one index corrected (scratch copy, cells[8] -> cells[7])
+             for line in sources.splitlines():
+                 cells = [c.strip() for c in line.strip().strip('|').split('|')]
+-                if len(cells) == 11 and re.fullmatch(r'S\d{3,}', cells[0]) and cells[8] == 'mined':
++                if len(cells) == 11 and re.fullmatch(r'S\d{3,}', cells[0]) and cells[7] == 'mined':
+                     mined.add(cells[0][1:])
+             if cited & mined:
+                 docs += 1
+EXPLAIN arm1-selftest exit=0 14/14
+EXPLAIN arm2-red54 exit=3 codes=RECEIPT_REV_CONTENT_DRIFT old-gate-accepted=True
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 4/4
+C2_R56: rev=e9372b6815e2 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=4/4 total=1 C2_R56_PASS=false
+
+### C. why: SOURCES.md status column index
+| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |

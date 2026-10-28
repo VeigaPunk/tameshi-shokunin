@@ -1672,3 +1672,34 @@ and the frozen receipt exist and the rule is stated nowhere a reader meets it �
 round-56 C2 counter's `docs=0/4` arm) — while round 54's deciding run accepted the set this
 command refuses
 (`.ufo/evidence/round-54/after/deciding-run.exit` reads `DECIDING_RUN_EXIT=0`).
+
+## Corrections appended — round 56 criterion-107 evidence pointers (2026-10-28)
+
+These corrections supersede only criterion 107's evidence pointers and quotations; the
+revision-binding rule and its falsifier are unchanged. The original criterion text is retained.
+
+- **Lesson anchor.** The `Lesson:` pointer to `corpus/lessons/round-56.md` `## Gate` names the
+  source-open table, not the R55.5 disposition it describes. That disposition is at
+  `## Round-55 routed defects — dispositions (this round)`, row `R55.5`. The wrong heading
+  was observed at C0 by `T56W2RevQuality.md`; the correction is heading-anchored.
+- **Scope-gap receipt.** The committed receipt
+  `.ufo/waves/round-56/w1/T56W1ScribeQuality-receipts/107-scope-gap-fabricated-line.txt`
+  reports `GATE OK … revs=077d431e6996`, `verdict=PASS`, exit 0; it does not contain
+  `credited=99 lost=0`. Those numbers describe the fabricated input in the scratch fixture,
+  not the receipt's bytes. The receipt path was not committed at C0 and resolves only after
+  the L1 lands wave evidence. `T56W2RevQuality.md` records both facts. The gate's acceptance
+  of a copied revision token remains the declared blind spot, not a byte-level quote check.
+
+## Erratum — criterion 107 evidence pointers (round 56 wave 2, 2026-10-28)
+
+Criterion 107's `Lesson:` pointer to `corpus/lessons/round-56.md` `## Gate` names the
+source-open table, not the R55.5 disposition it describes. The disposition is under
+`## Round-55 routed defects — dispositions (this round)`, row `R55.5`
+(`T56W2RevQuality.md` findings).
+
+The scope-gap receipt
+`.ufo/waves/round-56/w1/T56W1ScribeQuality-receipts/107-scope-gap-fabricated-line.txt`
+does not contain the quoted payload `credited=99 lost=0`; those bytes were the scratch
+input. The receipt itself says `GATE OK … revs=077d431e6996`,
+`verdict=PASS`, exit 0. The path becomes resolvable at the round's evidence commit; the
+gate's accepted-copied-revision blind spot remains the point of criterion 107.

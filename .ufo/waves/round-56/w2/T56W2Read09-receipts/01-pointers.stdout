@@ -1,0 +1,57 @@
+# T56W2Read09 — pointer resolution for the section
+
+## P1  '--regression' is the ledger replay gate; the tool exists and the command runs
+$ ls tools/mutate-and-run.sh
+-rwxr-xr-x 1 vgpnk vgpnk 112407 Oct 28 16:35 tools/mutate-and-run.sh
+$ grep -n 'VERSION=' tools/mutate-and-run.sh
+185:VERSION='mutate-and-run.sh r10-2 (tameshi-shokunin, 2026-10-14)'
+$ bash tools/mutate-and-run.sh --regression --workdir $S/regwork2   # rc=0, see regression-at-C0.stdout
+REGRESSION_TOOL: /fast/scratch/hyaku/tameshi-r56/T56W2Read09/clone/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=8/10 bash-surface-census=8/10 bash-tsukuroi-census=6/10 bash-mado-verify=4/10 bash-checklist-run=7/15 js-claims-check=7/10 js-round-gate=5/10 js-sources-check=5/10 js-cite-check=5/10 bash-drift-pins=2/10
+REGRESSION_CASE js-kimi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-surface-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-tsukuroi-census: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-mado-verify: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-checklist-run: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=15)
+REGRESSION_CASE js-claims-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-round-gate: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-sources-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE js-cite-check: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION_CASE bash-drift-pins: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=10)
+REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)
+
+## P2  'the registry ran four legs with cases 5-6 not yet embedded' at the round-8/9 boundary
+$ git show 9f1d3c3:tools/mutate-and-run.sh | grep -nE '^#   (js|bash)-'
+75:#   js-kimi-census       kumitate-shokunin/scripts/kimi-census.mjs   8/10 (80 %)
+76:#   bash-surface-census  kagi-shokunin/corpus/surface-census.sh      8/10 (80 %)
+77:#   bash-tsukuroi-census tsukuroi-shokunin/tools/tsukuroi-census.sh  6/10 (60 %)
+78:#   bash-mado-verify     mado-shokunin/tools/mado-verify.sh          4/10 (40 %)
+$ git show c0137451f5b7f22d65f748fc69f1b181f55e1378:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '350p'
+Two measured caveats, stated not smoothed: (a) the tool embeds **4** legs — cases 5/6 (checklist-run, claims-check) carry no `REGRESSION` line at `cf41efaa…`; the leg-cut decision stands with the tool owner (ER-2's named hand-offs, `:282`), nothing re-cut to manufacture a line; (b) the legs replay recorded pins while live gates 3/4 read `stale` — a git-materialized leg cannot be moved by a drifted tree (the tool's own selftest arms: "drifted working tree does not move a git-pinned leg"; "drifted leg swept the pinned blob bytes, not the tree"), so this PASS is a statement about the recorded revisions, not the live files.
+
+## P3  'named debt (the round-9 receipt's wording; ER-4 caveat (a))' — the phrase is the round-9 receipt's
+$ git show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md | sed -n '1244,1260p'
+### The receipt at this boundary
+
+Run at the tick (this lane; `--selftest` 19:58:49Z, `--regression`
+`REGRESSION_DATE 2026-10-14T19:58:59Z`; logs `/tmp/w9-tameshi-t93/selftest.txt`,
+`/tmp/w9-tameshi-t93/regression.txt`):
+
+- `--selftest` → `MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0.
+- `--regression` → 4 legs, each `match=10/10 … flips=0` (killed 8/8/6/4),
+  closing `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
+  killed-delta<=0 flips<=0)`, rc 0, tool `cf41efaa…`; workdir kept
+  `/tmp/w9-tameshi-t93/regression`.
+
+The legs replay their pinned blobs — git-materialized
+(`tools/mutate-and-run.sh:1222-1303`), so the two `stale` substrates cannot move
+them; re-verified at this boundary, since all four legs matched while cases 3–4
+read `stale`. Cases 5–6 were not yet embedded at this boundary (they became legs 5–6 at r10-2; the current tool carries them at `tools/mutate-and-run.sh:88-97`): their rows carried no `REGRESSION`
+line at this boundary — named debt, not smoothed (`fleet-kill-rate-ledger.md:282`; the debt was retired when the legs embedded).
+$ git show c0137451f5b7f22d65f748fc69f1b181f55e1378:corpus/knowledge/fleet-kill-rate-ledger.md | sed -n '282p'
+- **Named follow-ups (not edits, not written here).** Cases 5/6 are not embedded in `--regression`: T8-2 E3 records the target pin / suite / spec for the tool's owner, and T8-1 U5 leaves the leg-cut decision to the same owner — rows 5/6 therefore carry no `REGRESSION` line over themselves. The r3 census's "hermetic fallback" wording is superseded by case 5 (T8-1 U7), and census §5's instrument pin (`597e1419…`, `:251-262`) sits two revisions behind the live tool — a re-pin errata item for the census owner.
+
+## P4  'the operator the arc was built for had no single entry point' — the gap is named in the round-10 record
+$ git show c0137451f5b7f22d65f748fc69f1b181f55e1378:plans/round-10-record-draft.md | grep -n 'single entry point'
+205:| 10 | operability | round-9 state: the cadence's first tick recorded (4/4 legs PASS) but the operator had no single entry point; the registry ran **four** legs (cases 5/6 "not embedded — named debt"); both moved gates `stale` with no re-sweep rows | **the closeout:** `corpus/knowledge/operator-runbook.md` lands (lane T10-1; `e1e349b6…` 511 L / 31 416 B; tool + six-case ledger + protocol + limits + cadence + regression, every line anchored — relocated from the plan's repo-root `HANDOFF.md` per the dispatch) with its receipts executed by the author (tick 20:52:19Z: 4 current · 2 stale · 0 drift; `--selftest` 67/67; `--regression` cases=4 passed=4; append drill on a scratch copy pre-append 36 169 B byte-identical, real ledger sha unchanged; drift falsifier) and the tool-drift errata ER-R1/ER-R2 naming T2; the leg cut **resolves as an embedding** (T10-2 r10-2, `75ed934d…` 1 642 L / +361−60): cases 5/6 = legs 5/6, the checklist leg's control initially SETUP (exit 126, exec bit) then fixed by the blob-mode mirror, **six-leg `--regression` PASS (cases=6 passed=6) recorded by four independent lanes** (T10-2 21:00:24Z · AUD-T10 21:01:53Z · T10-4 21:02:39Z · VER-T10 21:05:10Z; `--selftest` 80/80); companion: T10-3 boundary note `service-standing-state.md` (fleet-visible vs lane-owned, 16 handoff conditions, SC1–SC3), T10-4 SKILL round-10 section (+94/−1), `reports/r10-aud-t10.md` (12-row verdict table: CONFIRMED ×8, P1/P2 SUFFICIENT (latitude) with contamination statement; **finding: the runbook's four-leg lines stale at the landed revision**), PREP-T11's `plans/round-11.plan.md`; **open at close:** the two `stale` gates' re-sweeps (ledger byte-identical `2f25c51e…`, no appended rows), the fresh-executor sufficiency table (`r10-ver-t10.md` absent; VER-T10 executed the loop 21:04–21:06Z), the coverage-map rows, a ledger row for the six-leg registry | my pulse at `cf41efaa…` (selftest 67/67 rc 0; regression cases=4 passed=4, `REGRESSION_DATE 20:52:02Z`); my six-case pin read 20:53:39Z → 4 current · 2 stale · 0 drift (tsukuroi `084951be…`→`c396662e…`; mado `d7edaab4…`→`93e43f8f…`, both = HEAD blobs, ancestors yes, trees clean); tool trajectory per §0.3; T10-2 `regression2.log` (`REGRESSION: PASS (cases=6 passed=6…)`, rc 0) + `selftest3.log` 80/80 at `75ed934d…`; AUD-T10 §2 six-leg table + leg-check `LEGCHECK: PASS (6/6 legs clean)`; VER-T10 `run/regression.log` `PASS (cases=6 passed=6)`, `bounds.log` tool-sha before=after `75ed934d…`; my `diff` of the ledger → unchanged; `grep -c '^\*\*ER-R'` on the runbook → 2 (ER-R1/R2). Re-run 2026-10-14 (SCR-T10) |
+234:  its dispatch; §0–§10 + errata ER-R1/ER-R2): the operator's single entry point —

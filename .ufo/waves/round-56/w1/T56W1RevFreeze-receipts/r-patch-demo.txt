@@ -1,0 +1,36 @@
+=== scratch-clone demonstration of the two proposed patches ===
+patched ok
+--- diff vs frozen:
+--- /dev/fd/63	2026-10-28 15:49:24.738403663 -0300
++++ /fast/scratch/hyaku/tameshi-r56/T56W1RevFreeze/patched-deciding-run.sh	2026-10-28 15:49:24.737002080 -0300
+@@ -13,12 +13,14 @@
+ LANE=$1; REV=$2; FREEZE=$3; OUT=$4
+ case "$LANE" in /*) ;; *) echo "LANE must be absolute"; exit 2;; esac
+ BASE=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1
++FREEZEPIN=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+ FLEET=/home/vgpnk/Projects/shokunin
+ E=.ufo/evidence/round-56
+ SCR=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/tameshi-r56/deciding
+ cd "$LANE" || exit 2
+ REV=$(git rev-parse --verify "$REV^{commit}") || exit 2
+ FREEZE=$(git rev-parse --verify "$FREEZE^{commit}") || exit 2
++[ "$FREEZE" = "$FREEZEPIN" ] || { echo "DECIDING_REFUSED freeze-not-pinned"; exit 3; }
+ python3 - "$LANE" "$FREEZE" "$E" <<'PYV' || { echo "DECIDING_REFUSED freeze-integrity"; exit 3; }
+ import hashlib, json, os, subprocess, sys
+ lane, freeze, E = sys.argv[1], sys.argv[2], sys.argv[3]
+@@ -60,6 +62,7 @@
+ for f in c1/measure.py c2/measure.py no-harm.sh; do
+   mkdir -p "$SCR/code/$(dirname $f)"; git show "$REV:$E/$f" > "$SCR/code/$f" || exit 2
+ done
++git show "$REV:$E/c1/lost-headings-at-base.json" > "$SCR/code/c1/lost-headings-at-base.json" || exit 2
+ git show "$REV:tools/receipt-revision-gate.py" > "$SCR/gate/gate.py" || exit 2
+ git show "$REV:.ufo/evidence/round-48/quality/coldread-precheck.sh" > "$SCR/code/precheck.sh" || exit 2
+ 
+
+--- patched script's pin check against the re-frozen commit M4 (must refuse):
+FREEZEPIN=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+[ "$FREEZE" = "$FREEZEPIN" ] || { echo "DECIDING_REFUSED freeze-not-pinned"; exit 3; }
+DECIDING_REFUSED freeze-not-pinned
+
+--- and against the true freeze commit (must pass):
+pin-ok

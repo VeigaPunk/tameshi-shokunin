@@ -1,0 +1,52 @@
+Round-56 C1 falsification — exact commands (seat T56W1CritC1)
+
+S=/fast/scratch/hyaku/tameshi-r56/T56W1CritC1
+L=$S/lane
+C=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/c1/measure.py
+BASE=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1
+
+# setup (once)
+export HYAKU_SCRATCH=/fast/scratch/hyaku; mkdir -p $S
+git clone --quiet --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $L
+git -C $L checkout --quiet --detach $BASE
+git -C $L rev-parse --show-toplevel          # must print $L
+
+# recon: 18-heading drift map (receipts/drift.txt, drift-compact.json)
+python3 $S/drift.py
+
+# every control: build a state, run the frozen counter against it
+bash $S/run.sh        # E0-base del18 delfail row6 row6wrong wttamper
+bash $S/run2.sh       # repin fabricate unstable tamper
+# silent fabrication variant:
+git -C $L checkout -f -B exp-silent d6fe899da135383a8910861edf2cc235c4bdb941
+python3 - <<'PY'      # strip 'provenance' from entries and 'note' from reader JSONs
+...                   # (see receipts/fixture-run2.sh history / report section 1)
+PY
+git -C $L add -A && git -C $L -c user.name=fixture -c user.email=fixture@example.invalid commit --amend --no-edit
+python3 $C --lane $L --rev $(git -C $L rev-parse HEAD) --work $S/work-silent --explain
+
+# per-run invocation (identical for every state)
+rm -rf $S/work-<state>; mkdir -p $S/work-<state>
+python3 $C --lane $L --rev <state rev> --work $S/work-<state> --explain
+
+# base monitor explain dump (receipts/monitor-base-summary.json)
+cd $L && python3 .ufo/evidence/round-21/coldread/measure.py --repo $L --rev $BASE --explain
+
+# arm-5 scope test (receipts/arm5-scope.txt)
+cd $L && python3 -c '... entry_reason over every section at BASE ...'
+
+# external_inputs validation test (receipts/external-inputs.txt)
+cd $L && python3 -c '... add bogus external_inputs to a credited entry, re-run entry_reason ...'
+
+# instrument digests at base and at the freeze commit
+for p in .ufo/evidence/round-18/measure.py .ufo/evidence/round-21/coldread/measure.py \
+         .ufo/evidence/round-48/quality/coldread-precheck.sh; do
+  git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show c3e2ca9f020776b3d66c7af854fb82c834674fcf:$p | sha256sum
+  git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show $BASE:$p | sha256sum
+done
+
+# census
+/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi; echo exit=$?
+
+# cleanup
+rm -rf -- $S

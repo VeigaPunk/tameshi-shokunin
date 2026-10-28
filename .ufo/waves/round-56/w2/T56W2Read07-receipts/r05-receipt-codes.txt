@@ -1,0 +1,34 @@
+# FINDING 3 evidence — the receipt code the gate emits for each situation, at C0
+# clone: /fast/scratch/hyaku/tameshi-r56/T56W2Read07/clone
+
+# (a) the SKILL table row 1: 'a verdict receipt names another revision' with the --paths surface its own rule cell declares
+$ python3 tools/receipt-revision-gate.py --lane $C --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --paths r54-surface.paths --receipt r54-slice.stdout:verdict
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W2Read07/gate/r54slice.stdout role=verdict revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-base.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-c0.json,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-B-strace-registry-check.log,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-c0-pinned-current.txt,.ufo/waves/round-54/w1/T54W1ExecC2Counter.md
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+# (b) the same receipt as role=positive -> identical code (the roles are one branch)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W2Read07/gate/r54slice.stdout role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-base.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-c0.json,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-B-strace-registry-check.log,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-c0-pinned-current.txt,.ufo/waves/round-54/w1/T54W1ExecC2Counter.md
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+
+# (c) the same receipt with NO --paths -> RECEIPT_REV_MISMATCH (the no-paths variant row 2 mentions)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W2Read07/gate/r54slice.stdout role=verdict revs=077d431e6996 code=RECEIPT_REV_MISMATCH rev=077d431e6996 certified=c21081008adb
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+
+# (d) a receipt whose named rev differs but whose bytes are IDENTICAL on the declared surface -> accepted (row 1's rule cell holds)
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W2Read07/gate/verdict-parent.stdout role=verdict revs=21eb3c63cd0f3190c0deeb8953c6c91c7742cd68
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+# (e) the other two table rows, for completeness
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W2Read07/gate/ctl-unres.stdout role=control revs=7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W2Read07/gate/norev.stdout role=verdict revs=none code=RECEIPT_REV_ABSENT no rev= token
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+# (f) the gate's own suite at C0
+CASE unresolvable-certified-refused PASS
+GATE_SELFTEST: 19/19 pass
+
+# the knowledge note (corpus/knowledge/receipt-revision-binding.md) states the roles share one branch:
+34:| `verdict` | a counter's verdict receipt | identical to `positive` (the code takes the two roles in one branch) |

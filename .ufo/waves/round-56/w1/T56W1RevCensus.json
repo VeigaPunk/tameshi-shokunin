@@ -1,0 +1,127 @@
+{
+  "seat": "T56W1RevCensus",
+  "axis": "freshness",
+  "milestone": "census conformance",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+  "command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+  "live_lane": {
+    "exit": 0,
+    "trailer": "tameshi\tok\t/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md",
+    "rows": 140,
+    "warnings": 16,
+    "warnings_by_code": {"W04": 15, "W01": 1},
+    "errors": 0
+  },
+  "at_base_981c5e8b": {
+    "exit": 0,
+    "trailer": "tameshi\tok\t<scratch>/base-root/tameshi-shokunin/corpus/SOURCES.md",
+    "rows": 140,
+    "warnings": 16,
+    "warnings_by_code": {"W04": 15, "W01": 1},
+    "errors": 0,
+    "findings_identical_to_live_except_trailer_path": true,
+    "tier": {"A": 125, "B": 12, "C": 3, "invalid": 0},
+    "status": {"mined": 113, "queued": 21, "rejected": 6, "invalid": 0},
+    "missing_registry": 0,
+    "overdue_exit": 0,
+    "overdue_rows": 0,
+    "contract_block": {
+      "malformed_nf_not_13": 0,
+      "duplicate_ids": 0,
+      "enum_violations": 0,
+      "missing_used_by": 0,
+      "escaped_pipes": 0,
+      "max_id": "S280",
+      "next_unused_id": "S281"
+    }
+  },
+  "instrument": {
+    "path": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+    "sha256": "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30",
+    "last_commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+    "dirty": false,
+    "selftest": {"exit": 0, "killed": 96, "survived": 0}
+  },
+  "scribe_rows": {
+    "source_file": ".ufo/waves/round-56/w1/T56W1ScribeSources.md",
+    "rows_extracted_identical_to_checked": true,
+    "verdict": "PASS",
+    "conditional": "C0 must land corpus/knowledge/receipt-revision-binding.md in the same commit; otherwise E11 fires on S281",
+    "rows": [
+      {
+        "id": "S281",
+        "kind": "spec",
+        "tier": "A",
+        "status": "mined",
+        "opened": "2026-10-28",
+        "recheck": "on-release",
+        "used_by": ["corpus/knowledge/receipt-revision-binding.md"],
+        "used_by_exists_at_base": false,
+        "columns": 11,
+        "nf": 13,
+        "literal_pipe": false,
+        "escaped_pipe": false,
+        "duplicate_url": false,
+        "anchor_verified_against_retained_snapshot": true,
+        "advisory": "recheck=on-release cannot catch a main-only edit between tags while the anchor claims identity with main 50bf0171; 365d is the scout's own recommendation"
+      },
+      {
+        "id": "S282",
+        "kind": "spec",
+        "tier": "A",
+        "status": "rejected",
+        "opened": "2026-10-28",
+        "recheck": "on-release",
+        "used_by": [],
+        "columns": 11,
+        "nf": 13,
+        "literal_pipe": false,
+        "escaped_pipe": false,
+        "duplicate_url": false,
+        "reject_shape": "REJECTED: <reason>; flip: <what would change the verdict>",
+        "anchor_verified_against_retained_snapshot": true,
+        "advisory": "source URL uses blob/main (moving ref) while the anchor pins blob sha256 efece57a and commit ba7d291a; pinning the URL to ba7d291a would close it"
+      }
+    ],
+    "fixture_census_with_rows_and_entry": {"exit": 0, "rows": 142, "warnings": 16, "status_mined": 114, "status_rejected": 7, "overdue": 0},
+    "fixture_census_with_rows_no_entry": {"exit": 1, "code": "E11", "row": "S281", "message": "missing used-by corpus/knowledge/receipt-revision-binding.md"}
+  },
+  "falsifiers_run": {
+    "fixture1_arms": ["E01 literal pipe", "E01 escaped pipe", "E05 kind=blog", "E07 status=watch", "E08 future opened", "E09 recheck=90 days", "E03 reused id", "E10 community-at-A", "E11 missing used-by"],
+    "fixture2_arms": ["control clean", "W04 cross-scope duplicate", "E04 same-scope duplicate", "E04 cleared by supersedes S001", "blind-spot: scheme-less URL", "blind-spot: scheme-less byte-identical duplicate"],
+    "fixture3_arms": ["rows without entry -> E11", "rows with entry -> exit 0", "counts 142/114/7", "overdue arm sees cadence, 0 overdue", "contract block malformed=0 dupids=0 enumviol=0"],
+    "checker_arms": ["E11 fires without the entry", "E11 clears with --allow-missing-usedby", "W04 fires on the S001 URL"]
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "kind": "frozen instrument defect",
+      "path": ".ufo/evidence/round-56/c2/measure.py",
+      "evidence": "cells = line.strip().strip('|').split('|') then cells[8] == 'mined'; index 7 is status, index 8 is opened. Measured: cells[8] -> mined seen = 0, cells[7] -> mined seen = 113.",
+      "impact": "the C2 docs arm can never add the cited-entry point; S281's mined status is invisible to the deciding counter; C2_R56_PASS unreachable",
+      "action": "report only - instrument is frozen; disposition belongs to the L1"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "kind": "census instrument blind spot",
+      "path": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+      "evidence": "url_of() returns empty unless the cell matches https?://, and E04/W04 are both guarded by u != ''; a scheme-less cell byte-identical to S001 in S001's scope validated exit 0 with 16 findings unchanged",
+      "impact": "DOI-style rows can duplicate a held document with no code raised; duplicate checks for such rows must be shown by grep",
+      "action": "report only - fleet file, not this seat's to edit"
+    },
+    {"id": "F3", "severity": "low", "kind": "curation", "detail": "S281 recheck=on-release vs the anchor's main identity clause; 365d recommended"},
+    {"id": "F4", "severity": "low", "kind": "curation", "detail": "S282 source URL is blob/main while the anchor pins ba7d291a"},
+    {"id": "F5", "severity": "low", "kind": "process", "detail": "no round-56 ## Id allocation line; footer still advertises S281 as next"}
+  ],
+  "residual_risk": [
+    "a fabricated row passes every census rule; the fetch receipt proves bytes, not reading",
+    "the GitHub blob HTML page named in S281's source cell was not opened by this seat; the raw body at the same tag/commit was",
+    "opened dates are unauditable",
+    "url_of lowercases the host only, not the path"
+  ],
+  "tools_installed": [],
+  "receipts_dir": ".ufo/waves/round-56/w1/T56W1RevCensus-receipts/"
+}

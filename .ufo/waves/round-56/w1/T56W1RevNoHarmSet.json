@@ -1,0 +1,250 @@
+{
+  "seat": "T56W1RevNoHarmSet",
+  "item": "no-harm monitor audit (15 monitors)",
+  "script": ".ufo/evidence/round-56/no-harm.sh",
+  "script_sha256": "a13ba1a8433752c8e2d928c129dc4889181f34caa917099d4aaa96ec1d33e3b4",
+  "script_frozen": true,
+  "contract_no_harm_monitors": 15,
+  "emitted_lines": 15,
+  "emitted_names": [
+    "commandD", "coldread-floor", "r45-freshness", "r45-coverage", "S160-count",
+    "registry-rows-not-below-140", "r46-coverage", "r47-coverage", "tools-scope",
+    "registry-rows-not-shrunk", "r49-generator-capability", "r50-shrinker-selftest",
+    "r53-scratch-hygiene", "ledger-not-shrunk", "sources-not-shrunk"
+  ],
+  "count_matches_contract": true,
+  "script_exit_status_at_base": 0,
+  "script_exit_status_note": "exits 0 with one RED line present; the exit code carries no verdict",
+  "runs": {
+    "base_981c5e8b": {"ok": 14, "RED": 1, "receipt": "T56W1RevNoHarmSet-receipts/noharm-at-base.stdout"},
+    "freeze_c3e2ca9f": {"ok": 14, "RED": 1, "receipt": "T56W1RevNoHarmSet-receipts/noharm-at-freeze.stdout"},
+    "stub_gate_bafabeb8": {"ok": 14, "RED": 1, "receipt": "T56W1RevNoHarmSet-receipts/demo7-stub-gate-noharm.stdout"}
+  },
+  "monitors": [
+    {
+      "n": 1, "name": "commandD", "lines": "13-14",
+      "reads": "REV bytes (git show REV:tools/mutate-and-run.sh)",
+      "subject": "number of documented mutation cases in the driver's comment block",
+      "catches": "deletion of the recorded case list from the driver header",
+      "can_turn_red": true,
+      "observed_base": "recorded_cases=10 depth_score=10 ok",
+      "observed_freeze": "recorded_cases=10 depth_score=10 ok",
+      "verdict": "weak",
+      "defect": "depth_score = min(10, n) saturates: 10 documented cases and 40 documented cases are indistinguishable (demo 10), and the count is of comment lines, not of cases the driver executes",
+      "fix_line": "13: print recorded_cases=n and drop the clamp; require n >= the driver's own enumerated case count, or run the driver's --list and compare"
+    },
+    {
+      "n": 2, "name": "coldread-floor", "lines": "15-16",
+      "reads": "WORKING TREE: python3 .ufo/evidence/round-21/coldread/measure.py (which imports .ufo/evidence/round-18/measure.py from the tree); only the ledger/data are REV-bound",
+      "subject": "the cold-read calibration score and credited section count at REV",
+      "catches": "credit loss at REV (RED at base: score=6 credited=46)",
+      "can_turn_red": true,
+      "observed_base": "score=6 credited=46 RED",
+      "observed_freeze": "score=6 credited=46 RED",
+      "verdict": "weak",
+      "defect": "FINDING A1: no self-pin anywhere in the chain (round-18 measure.py has no self_pin, the round-21 wrapper has none, and the JSON payload carries no pass/self_pin field), so an uncommitted edit to the working-tree wrapper turns this line green at a REV that does not earn it (demo 2: score=8 credited=64 ok at c3e2ca9f, whose clean bytes read 6/46). This is the C1-axis monitor and the only RED at base.",
+      "fix_line": "15: precede it with `git diff --quiet \"$REV\" -- .ufo/evidence/round-18/measure.py .ufo/evidence/round-21/coldread/measure.py || s=RED`, or add a self_pin arm to the round-21 wrapper and require self_pin=1 in the parse"
+    },
+    {
+      "n": 3, "name": "r45-freshness", "lines": "17-18",
+      "reads": "WORKING TREE code, REV-bound data; the counter reports self_pin but the monitor discards it",
+      "subject": "fresh (verified+agreed, undisputed) census rows over the population",
+      "catches": "a stale SOURCES row or a disputed review; zero headroom (fresh=71 == floor 71)",
+      "can_turn_red": true,
+      "observed_base": "population=74 fresh=71 score=9 ok",
+      "observed_freeze": "population=74 fresh=71 score=9 ok",
+      "verdict": "weak",
+      "defect": "FINDING A2: the counter prints self_pin=0 and C1_R45_PASS=false after a working-tree edit, and the monitor still prints ok because its grep extracts only population=/fresh= (demo 1). The self-pin guard exists and is thrown away.",
+      "fix_line": "17: add `self_pin=[0-9]+` and `C1_R45_PASS=[a-z]+` to the grep, and require self_pin=1 and C1_R45_PASS=true in the test at line 18 instead of recomputing the ratio"
+    },
+    {
+      "n": 4, "name": "r45-coverage", "lines": "19-20",
+      "reads": "WORKING TREE code, REV-bound data; consumes the counter's C2_R45_PASS token, which embeds self_pin",
+      "subject": "round-45 rows S256,S257 and their two knowledge entries, indexed",
+      "catches": "removal of a round-45 knowledge entry or its README index line; also any tree drift of the counter (demo 6: self_pin=0 -> RED)",
+      "can_turn_red": true,
+      "observed_base": "rows=2 entries=2 C2_R45_PASS=true ok",
+      "observed_freeze": "rows=2 entries=2 C2_R45_PASS=true ok",
+      "verdict": "live",
+      "defect": "none for contamination; brittle only in that the exact string rows=2 entries=2 turns RED if C0 adds a knowledge entry whose line-1 source: cites S256 or S257",
+      "fix_line": "20: none required; if the count arm is to survive legitimate growth, compare against the BASE counts rather than the literals 2/2"
+    },
+    {
+      "n": 5, "name": "S160-count", "lines": "21-22",
+      "reads": "REV bytes (git show REV:corpus/SOURCES.md)",
+      "subject": "presence of exactly one `| S160 ` row",
+      "catches": "deletion or duplication of the S160 row",
+      "can_turn_red": true,
+      "observed_base": "1 ok",
+      "observed_freeze": "1 ok",
+      "verdict": "weak",
+      "defect": "a one-row canary out of 140: any of the other 139 rows can be deleted or rewritten (same id, different content) and this line stays green; the id-set arm it pretends to be is sources-not-shrunk's job",
+      "fix_line": "21-22: replace with a set check that every BASE row id is still present at REV (git show BASE:corpus/SOURCES.md ids subset of REV ids), not a single literal"
+    },
+    {
+      "n": 6, "name": "registry-rows-not-below-140", "lines": "23-24",
+      "reads": "REV bytes (git show REV:corpus/SOURCES.md)",
+      "subject": "count of `| S### |` rows against the literal 140",
+      "catches": "shrinkage below the round-56 base count",
+      "can_turn_red": true,
+      "observed_base": "140 ok",
+      "observed_freeze": "140 ok",
+      "verdict": "weak",
+      "defect": "the constant 140 is the base count hard-coded, duplicating sources-not-shrunk (line 47-49) which derives it from BASE; two monitors on one surface with different semantics, and a legitimate retirement of a row below 140 reads as harm while a rewrite of every row reads as clean",
+      "fix_line": "24: derive from BASE (`R0=$(git show \"$BASE:corpus/SOURCES.md\" | grep -cE ...)`) or delete the monitor as redundant with sources-not-shrunk"
+    },
+    {
+      "n": 7, "name": "r46-coverage", "lines": "25-26",
+      "reads": "WORKING TREE code, REV-bound data; consumes C3_R46_PASS (embeds self_pin)",
+      "subject": "round-46 rows S258,S259,S260, three entries, indexed, covered",
+      "catches": "removal of a round-46 entry/index line/snapshot, and counter tree drift",
+      "can_turn_red": true,
+      "observed_base": "rows=3 entries=3 C3_R46_PASS=true ok",
+      "observed_freeze": "rows=3 entries=3 C3_R46_PASS=true ok",
+      "verdict": "live",
+      "defect": "none for contamination; the exact counts turn RED if C0's new knowledge entry cites S258, S259 or S260",
+      "fix_line": "26: none required"
+    },
+    {
+      "n": 8, "name": "r47-coverage", "lines": "27-28",
+      "reads": "WORKING TREE code, REV-bound data; consumes C3_R47_PASS (embeds self_pin)",
+      "subject": "round-47 rows S261,S263,S264, three entries, indexed, covered",
+      "catches": "removal of a round-47 entry/index line/snapshot, and counter tree drift",
+      "can_turn_red": true,
+      "observed_base": "rows=3 entries=3 C3_R47_PASS=true ok",
+      "observed_freeze": "rows=3 entries=3 C3_R47_PASS=true ok",
+      "verdict": "live",
+      "defect": "none for contamination; the exact counts turn RED if C0's new knowledge entry cites S261, S263 or S264",
+      "fix_line": "28: none required"
+    },
+    {
+      "n": 9, "name": "tools-scope", "lines": "29-31",
+      "reads": "REV bytes (git diff --name-status BASE REV -- tools)",
+      "subject": "the set of tools/ paths changed between BASE and REV against an allowlist",
+      "catches": "an edit to a tools/ file outside the allowlist",
+      "can_turn_red": true,
+      "observed_base": "[] ok (empty set)",
+      "observed_freeze": "[A:tools/receipt-revision-gate.py ] ok",
+      "verdict": "weak",
+      "defect": "FINDING A3: name-status only. An entry added since BASE is reported A: whatever its content, so the round's new gate can be replaced by a no-op and the allowlist still admits it (demo 5b: A:tools/receipt-revision-gate.py ok, bytes `sys.exit(0)`). An empty set is also ok, so a REV that adds no tool at all passes.",
+      "fix_line": "30: for A: entries, compare the blob to the freeze commit's blob (`[ \"$(git rev-parse \"$REV:$p\")\" = \"$(git rev-parse \"c3e2ca9f:$p\")\" ]`); treat the empty set as RED when the round's contract declares an added tool"
+    },
+    {
+      "n": 10, "name": "registry-rows-not-shrunk", "lines": "32-34",
+      "reads": "BASE and REV bytes (tools/registry.json rows length)",
+      "subject": "registry row count monotonicity (base=56)",
+      "catches": "deletion of a registry row",
+      "can_turn_red": true,
+      "observed_base": "base=56 rev=56 ok",
+      "observed_freeze": "base=56 rev=56 ok",
+      "verdict": "live",
+      "defect": "count-only: a row rewritten in place (same id, different command/path) is invisible",
+      "fix_line": "34: add an id-set arm (BASE ids subset of REV ids) beside the count"
+    },
+    {
+      "n": 11, "name": "r49-generator-capability", "lines": "35-38",
+      "reads": "REV bytes (git show REV:tools/pbt-staged-id.py and staged-id-guard.py into $SCR, run from $SCR)",
+      "subject": "400-case property run at seed 4949, exact expected line including the class histogram",
+      "catches": "any change to the generator or guard that moves the class distribution or the violation count",
+      "can_turn_red": true,
+      "observed_base": "cases=400 violations=0 counterexample=none classes=... ok",
+      "observed_freeze": "identical ok",
+      "verdict": "live",
+      "defect": "exact full-line equality: a legitimate improvement to the generator is indistinguishable from a regression, and the line cannot say which arm moved",
+      "fix_line": "37: compare `cases=400 violations=0 counterexample=none` and the histogram as two separate arms so a failure names itself"
+    },
+    {
+      "n": 12, "name": "r50-shrinker-selftest", "lines": "39-41",
+      "reads": "REV bytes (git show REV:tools/shrink-case.py into $SCR, run from $SCR)",
+      "subject": "the shrinker's own selftest exit line",
+      "catches": "a crash (empty output -> RED, demo 4) and any reported failure",
+      "can_turn_red": true,
+      "observed_base": "[SHRINK_SELFTEST: cases=14 failed=0] ok",
+      "observed_freeze": "identical ok",
+      "verdict": "weak",
+      "defect": "FINDING B1: the guard is the suffix glob `*\" failed=0\"`, so a shrinker whose selftest runs zero cases passes (demo 4: `cases=0 failed=0` -> ok). The monitor is vacuous on the input class it claims to guard.",
+      "fix_line": "41: `case \"$K\" in *\"cases=14 failed=0\")` (or parse cases and require cases >= 14)"
+    },
+    {
+      "n": 13, "name": "r53-scratch-hygiene", "lines": "42-43",
+      "reads": "REV bytes (git grep -c at REV over tools/)",
+      "subject": "occurrences of `dir = \"/tmp\"` in tools/",
+      "catches": "one syntactic form of hard-coded /tmp use",
+      "can_turn_red": true,
+      "observed_base": "tmp_hits=0 ok",
+      "observed_freeze": "tmp_hits=0 ok",
+      "verdict": "weak",
+      "defect": "FINDING B2: fails OPEN. `git grep` exits 128 on an unparsable REV and the awk still sums to 0, so an unmeasurable run prints tmp_hits=0 ok (demo 3). The pattern also misses `/tmp` outside an assignment to a variable named dir.",
+      "fix_line": "42: capture the exit status and RED on >1 (`git grep ...; rc=$?; [ $rc -le 1 ] || s=RED`), and widen the pattern to `/tmp` anywhere in tools/"
+    },
+    {
+      "n": 14, "name": "ledger-not-shrunk", "lines": "44-46",
+      "reads": "BASE and REV bytes (.ufo/evidence/round-21/coldread/ledger.json entries length)",
+      "subject": "cold-read ledger entry count monotonicity (base=591)",
+      "catches": "deletion of a ledger entry",
+      "can_turn_red": true,
+      "observed_base": "base=591 rev=591 ok",
+      "observed_freeze": "base=591 rev=591 ok",
+      "verdict": "live",
+      "defect": "count-only: the C1 re-key rewrites bound entries in place, which this monitor cannot see at all; only coldread-floor's credit arm reacts",
+      "fix_line": "46: add an id-set arm plus a section_sha256 arm for entries not named by the re-key directory"
+    },
+    {
+      "n": 15, "name": "sources-not-shrunk", "lines": "47-49",
+      "reads": "BASE and REV bytes (corpus/SOURCES.md row count)",
+      "subject": "SOURCES row count monotonicity (base=140)",
+      "catches": "deletion of a SOURCES row",
+      "can_turn_red": true,
+      "observed_base": "base=140 rev=140 ok",
+      "observed_freeze": "base=140 rev=140 ok",
+      "verdict": "live",
+      "defect": "count-only: a row rewritten in place (same id, different url/quote) is invisible; the census validator, not this monitor, is what catches that",
+      "fix_line": "49: add an id-set arm (BASE ids subset of REV ids)"
+    }
+  ],
+  "verdict_tally": {"live": 7, "weak": 8, "vacuous": 0},
+  "vacuous_note": "no monitor is strictly vacuous (all 15 can turn RED); r50 is vacuous on an empty suite, commandD is vacuous beyond 10 documented cases, and r53 is vacuous whenever git grep errors",
+  "axes_without_monitor": [
+    {
+      "axis": "operability (C2)",
+      "evidence": "a REV whose tools/receipt-revision-gate.py is replaced by `sys.exit(0)  # stub: refuses nothing` produces the identical 15 lines (demo 7, NEW=bafabeb8); tools-scope reports A: and stays ok (demo 5b)",
+      "mitigation": "the C2 counter, outside this set, catches it: selftest=none, C2_R56_PASS=false (demo 9)"
+    },
+    {
+      "axis": "adjacency / the standing calibration row (R55.3)",
+      "evidence": "no monitor opens SCORECARD.md, LOG.md, SKILL.md or corpus/QUALITY.md; nothing checks that the standing row states the score the monitor reads at the commit the row names",
+      "mitigation": "only the C1 counter's restate arm, outside this set"
+    },
+    {
+      "axis": "round-56 coverage (the C2 quartet)",
+      "evidence": "at the freeze rev the C2 documentation is 0/4 (c2/measure.py docs=0/4) and this set is 14 ok / 1 RED (noharm-at-freeze.stdout); r45/r46/r47 coverage monitor other rounds' surfaces",
+      "mitigation": "none inside this set"
+    },
+    {
+      "axis": "the set's own completeness and verdict",
+      "evidence": "the script exits 0 with a RED line (demo 8); no line asserts that 15 monitors ran, and there is no set -e/-u, so a line that never prints leaves no trace"
+    }
+  ],
+  "additional_defect": {
+    "id": "S1",
+    "title": "fixed scratch path $SCR is shared by every concurrent run",
+    "line": "10",
+    "evidence": "two runs at different REVs: the run at c3e2ca9f reported [SHRINK_SELFTEST: cases=14 failed=1] RED while the same rev alone reports failed=0 (demo 13); two runs at the same REV are benign (demo 12)",
+    "fix": "10: SCR=$(mktemp -d \"${HYAKU_SCRATCH:-/fast/scratch/hyaku}/tameshi-r56/no-harm.XXXXXX\")"
+  },
+  "c0_constraints_derived_from_constants": [
+    "corpus/SOURCES.md may gain at most 4 rows while fresh stays 71 (population 74 -> 78 passes, 79 fails the ratio arm) - demo 11",
+    "the new knowledge entry must not have a line-1 `source:` citing S256, S257, S258, S259, S260, S261, S263 or S264, or the exact-count arms of r45/r46/r47 go RED",
+    "corpus/SOURCES.md row count must stay >= 140 and the tools/registry.json row count >= 56",
+    ".ufo/evidence/round-21/coldread/ledger.json must not lose entries (591)",
+    "tools/ name-status between BASE and REV must be a subset of the allowlist (C0's tools/registry.json edit is allowed; the gate itself must stay A:)"
+  ],
+  "attacks_that_found_nothing": [
+    "two concurrent no-harm runs at the same REV: both 15 lines, both 14 ok/1 RED, no divergence (demo 12)",
+    "the 10 REV-byte monitors (commandD, S160-count, registry-rows-not-below-140, tools-scope, both row-count monitors, r49, r50, r53, sources-not-shrunk) are bound to REV bytes and cannot be fed by the working tree",
+    "fail-closed check: 14 of 15 monitors turn RED when their measurement errors (empty output/KeyError/integer-expression error); only r53 fails open"
+  ],
+  "tooling": {
+    "installs": "none; audit used bash, git, python3 (stdlib) already present"
+  }
+}

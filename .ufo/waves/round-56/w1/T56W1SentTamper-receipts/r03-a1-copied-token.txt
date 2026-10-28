@@ -1,0 +1,24 @@
+# A1 fixture: receipt for a FAILING, unrelated claim carrying the certified token
+$ cat /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a1.txt
+CTL CTL_POS_c1 C1_X: rev=e5d1da46de6eda63f90564fb6070558641578e15 credited=0 lost=64 total=64 C1_X_PASS=false
+$ python3 GATE --lane FIX --certified e5d1da46de6eda63f90564fb6070558641578e15 --receipt a1.txt:positive
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a1.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+# A1b a completely unrelated counter's failing receipt
+C9_UNRELATED: rev=e5d1da46de6eda63f90564fb6070558641578e15 docs=0/9 total=9 C9_PASS=false
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a1b.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+# A1c LANE: the real round-54 positive control with only its rev= token replaced
+$ sed 's/rev=077d431e6996/rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c/' r54-slice.stdout
+CTL CTL_POS_c1 C1_R54: rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice-copied.stdout role=positive revs=c21081008adbb6b6fe4e58a0aeec4831b30e318c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# for contrast, the untouched receipt (C2 arm 2):
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice.stdout role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-base.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-c0.json,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-B-strace-registry-check.log,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-c0-pinned-current.txt,.ufo/waves/round-54/w1/T54W1ExecC2Counter.md
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3

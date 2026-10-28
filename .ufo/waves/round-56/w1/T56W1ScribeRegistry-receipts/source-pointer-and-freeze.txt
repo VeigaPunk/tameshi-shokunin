@@ -1,0 +1,31 @@
+$ git -C LANE show c3e2ca9f020776b3d66c7af854fb82c834674fcf:tools/receipt-revision-gate.py | sed -n 10,29p
+Usage:
+  receipt-revision-gate.py --lane LANE --certified REV [--paths FILE]
+                           --receipt PATH:ROLE[:REQUIRE_REGEX] [--receipt ...] [--json]
+  receipt-revision-gate.py --selftest
+
+ROLE is one of:
+  positive  a control whose expected verdict is PASS. Exactly one distinct `rev=`
+            token; it must equal the certified revision, or (when --paths is given)
+            name a revision whose bytes are identical to the certified revision on
+            every path listed in FILE.
+  verdict   a counter's verdict receipt. Same rule as `positive`.
+  control   a control set (several CTL lines, possibly at different revisions).
+            Every `rev=` token must resolve and be an ancestor of, or equal to,
+            the certified revision.
+
+Codes (each a named refusal, exit 3):
+  RECEIPT_MISSING · RECEIPT_EMPTY · RECEIPT_NOT_BLOB · RECEIPT_REV_ABSENT
+  RECEIPT_REV_AMBIGUOUS · RECEIPT_REV_UNRESOLVABLE · RECEIPT_REV_MISMATCH
+  RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR
+  RECEIPT_DIGEST_MISMATCH · RECEIPT_REQUIRED_LINE_MISSING
+
+$ git show <rev>:tools/receipt-revision-gate.py | sha256sum ; sha256sum tools/receipt-revision-gate.py
+1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2  -
+1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2  /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py
+
+$ freeze.json entry
+1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2
+
+$ git -C LANE rev-parse --verify c3e2ca9f020776b3d66c7af854fb82c834674fcf^{commit}
+c3e2ca9f020776b3d66c7af854fb82c834674fcf

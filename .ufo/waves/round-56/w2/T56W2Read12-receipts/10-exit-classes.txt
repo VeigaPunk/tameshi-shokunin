@@ -1,0 +1,72 @@
+# 10 exit-class probes
+--- context-capture (no args) ---
+EXIT=64
+--- context-capture --help ---
+EXIT=0
+--- context-capture --selftest extra ---
+EXIT=64
+--- evidence-disposition (no args) ---
+EXIT=64
+--- evidence-disposition --help ---
+EXIT=0
+--- evidence-disposition --selftest extra ---
+EXIT=64
+--- tampered receipt -> snapshot_tampered/2 ---
+CONTEXT: INVALID (id=snapshot_tampered receipt=/fast/scratch/hyaku/tameshi-r56/T56W2Read12/tampered.json sha256=792f3d1a60ea4569b008e36d315b1fe19f90d3eb400c99cf30b561bea4ef46d3 exit=2 findings=2)
+FINDING snapshot_tampered receipt sha256 792f3d1a60ea4569b008e36d315b1fe19f90d3eb400c99cf30b561bea4ef46d3 is not the pinned 05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a
+FINDING expected_verdict_mismatch expected id=context_consistent exit=0 but recomputed id=snapshot_tampered exit=2
+EXIT=2
+--- missing receipt -> receipt_missing/2 ---
+CONTEXT: INVALID (id=receipt_missing receipt=/tmp/nope.json sha256=<none> exit=2 findings=2)
+FINDING receipt_missing receipt is missing: /tmp/nope.json
+FINDING expected_verdict_mismatch expected id=context_consistent exit=0 but recomputed id=receipt_missing exit=2
+EXIT=2
+--- wrong id/exit pin -> exit 1 ---
+CONTEXT: MISMATCH (id=expected_verdict_mismatch receipt=.ufo/evidence/round-15/frozen/context-clean/receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=1 findings=1)
+FINDING expected_verdict_mismatch expected id=wrong_id exit=1 but recomputed id=context_consistent exit=0
+EXIT=1
+--- symlinked receipt ---
+CONTEXT: OK (id=context_consistent receipt=/fast/scratch/hyaku/tameshi-r56/T56W2Read12/link-receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=0 findings=0)
+EXIT=0
+--- unusable root -> root_unavailable/2 (no traceback) ---
+{
+  "error": {
+    "kind": "root_unavailable",
+    "message": "lane root is not a directory: /nonexistent-root-xyz"
+  },
+  "exit": 2,
+  "findings": [
+    {
+      "detail": "lane root is not a directory: /nonexistent-root-xyz",
+      "expectation": null,
+      "id": "root_unavailable"
+    }
+  ],
+  "id": "root_unavailable",
+  "schema": "evidence-disposition-result-v1",
+  "status": "could_not_evaluate",
+  "tool": "evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)",
+  "tool_sha256": "1609a9df970dcde345b4eceadd35d34d016ba0e3f5c3c02415b51592d42d2d95"
+}
+EXIT=2
+--- malformed dispositions -> dispositions_json_invalid/2 (no traceback) ---
+{
+  "error": {
+    "kind": "dispositions_json_invalid",
+    "message": "malformed JSON: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)"
+  },
+  "exit": 2,
+  "findings": [
+    {
+      "detail": "malformed JSON: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)",
+      "expectation": null,
+      "id": "dispositions_json_invalid"
+    }
+  ],
+  "id": "dispositions_json_invalid",
+  "schema": "evidence-disposition-result-v1",
+  "status": "could_not_evaluate",
+  "tool": "evidence-disposition.py r14 (tameshi-shokunin, 2026-10-20)",
+  "tool_sha256": "1609a9df970dcde345b4eceadd35d34d016ba0e3f5c3c02415b51592d42d2d95"
+}
+EXIT=2

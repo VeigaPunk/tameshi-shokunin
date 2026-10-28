@@ -1,0 +1,181 @@
+{
+ "schema": "tameshi-r56-deciding-refusal-matrix-v1",
+ "seat": "T56W1ExecDecidingDry",
+ "script": ".ufo/evidence/round-56/deciding-run.sh",
+ "script_sha256": "6a63f5058be15f5fc5a3bbbe956f97fbc57c172cc2c68f37b83bb09ccec9c022",
+ "script_sha256_matches_freeze_manifest": true,
+ "clone": {
+  "method": "git clone --shared of the lane, checkout --detach c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+  "toplevel_asserted": "/fast/scratch/hyaku/tameshi-r56/T56W1ExecDecidingDry/clone"
+ },
+ "freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "fixtures": {
+  "note": "fixture SHAs are recorded in T56W1ExecDecidingDry-receipts/01-fixtures.txt and 02-f2-graph.txt"
+ },
+ "items": [
+  {
+   "id": "a", "arm": "a1", "requirement": "tampered freeze manifest (one digest changed)",
+   "fixture": "freeze.json files.no-harm.sh := 64 zero digits, committed as new freeze",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": [],
+   "line": "DECIDING_REFUSED freeze-integrity",
+   "preceded_by": ["FREEZE_INTEGRITY: MISMATCH files=10 amendments=0", "FREEZE_MISMATCH no-harm.sh a13ba1a84337 != 000000000000"],
+   "receipt": "a1.txt"
+  },
+  {
+   "id": "a-variant", "arm": "a2", "requirement": "frozen file bytes changed at the freeze commit (manifest untouched)",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": [],
+   "line": "DECIDING_REFUSED freeze-integrity",
+   "preceded_by": ["FREEZE_INTEGRITY: MISMATCH files=10 amendments=0", "FREEZE_MISMATCH no-harm.sh 5aa2dcbe40cf != a13ba1a84337"],
+   "receipt": "a2.txt"
+  },
+  {
+   "id": "a-escape", "arm": "a3", "requirement": "manifest entry DELETED (files.deciding-run.sh removed)",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-56/control/controls-a.stdout",
+   "preceded_by": ["FREEZE_INTEGRITY: OK files=9 amendments=0"],
+   "finding": "ESCAPE: deleting an entry from freeze.json files{} passes the integrity check; the manifest has no external anchor",
+   "receipt": "a3.txt"
+  },
+  {
+   "id": "b", "arm": "b", "requirement": "REV not equal to HEAD",
+   "fixture": "HEAD=c3e2ca9f (checkout --detach), REV=981c5e8b (base)",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": [],
+   "line": "DECIDING_REFUSED head-is-not-rev",
+   "receipt": "b.txt"
+  },
+  {
+   "id": "c", "arm": "c1missing", "requirement": "missing control receipt",
+   "fixture": "REV=HEAD=freeze; control receipts are absent at the real freeze",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": [],
+   "line": "DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-56/control/controls-a.stdout",
+   "receipt": "c1missing.txt"
+  },
+  {
+   "id": "c-variant", "arm": "c2tree", "requirement": "control receipt is a tree",
+   "fixture": "controls-b.stdout committed as a directory",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED control-receipt-not-a-blob .ufo/evidence/round-56/control/controls-b.stdout",
+   "receipt": "c2tree.txt"
+  },
+  {
+   "id": "c-variant2", "arm": "c3empty", "requirement": "control receipt is an empty blob",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED control-receipt-empty .ufo/evidence/round-56/control/controls-b.stdout",
+   "receipt": "c3empty.txt"
+  },
+  {
+   "id": "d-positive", "arm": "d0", "requirement": "positive control: gate-clean fixture, clean tree, empty OUT",
+   "exit": "bounded kill after 45s (still running no-harm)",
+   "line": "no refusal; proceeded: FREEZE_INTEGRITY OK, GATE PASS (receipt-gate.exit=0), FROZEN_UNCHANGED=1, no-harm started, coldread-precheck.stdout created",
+   "receipt": "d0.txt"
+  },
+  {
+   "id": "d", "arm": "d1", "requirement": "dirty tree (modified tracked file)",
+   "fixture": "one appended line to corpus/SOURCES.md ( M)",
+   "exit": 3, "refused_before_any_run": true,
+   "scr_created": true, "out_files": ["receipt-gate.stdout", "receipt-gate.exit", "clean-tree-before.txt"],
+   "note": "gate 0b ran first by design; refused before no-harm/precheck/census/counters (canary all absent)",
+   "line": "DECIDING_REFUSED dirty-tree  (followed by the porcelain dump incl. ' M corpus/SOURCES.md')",
+   "receipt": "d1.txt"
+  },
+  {
+   "id": "d-variant", "arm": "d2", "requirement": "dirty tree (untracked file outside OUT)",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED dirty-tree",
+   "receipt": "d2.txt"
+  },
+  {
+   "id": "d-escape", "arm": "d3b", "requirement": "untracked path sharing OUT's relative path prefix",
+   "fixture": "?? .ufo/evidence/round-56/dryout-extra.txt with OUT=.ufo/evidence/round-56/dryout",
+   "exit": "bounded kill after 8s (still running no-harm)",
+   "line": "no DECIDING_REFUSED dirty-tree; clean-tree-before.txt contains the foreign ?? line; run proceeded to no-harm",
+   "finding": "ESCAPE: exclusion is an unanchored grep prefix match 'grep -vc \"^?? ${OUT#$LANE/}\"'; any untracked path whose name extends OUT's relative path is silently excluded",
+   "receipt": "d3b.txt"
+  },
+  {
+   "id": "e", "arm": "e1", "requirement": "second invocation (OUT/c1.start present)",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": ["c1.start"],
+   "line": "DECIDING_REFUSED second-invocation c1",
+   "receipt": "e1.txt"
+  },
+  {
+   "id": "e-variant", "arm": "e2", "requirement": "second invocation (OUT/c2.start present)",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": ["c2.start"],
+   "line": "DECIDING_REFUSED second-invocation c2",
+   "receipt": "e2.txt"
+  },
+  {
+   "id": "e-variant2", "arm": "e3", "requirement": "second invocation (both start files)",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED second-invocation c1",
+   "receipt": "e3.txt"
+  },
+  {
+   "id": "f", "arm": "f2", "requirement": "control receipts whose own commit does not descend from the freeze",
+   "fixture": "receipts committed on base-rooted fix-f (not descending from FREEZE), merged --no-ff into freeze-rooted fix-f2 so REV contains the script",
+   "rev": "dc01c2fb8926bf478a88ac2a025bafba14639872",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false, "out_files": [],
+   "line": "DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-56/control/controls-a.stdout",
+   "receipt": "f2.txt"
+  },
+  {
+   "id": "f-reachability", "arm": "f", "requirement": "same, plain base-rooted REV (script absent from REV's tree)",
+   "exit": 127,
+   "line": "bash: .../deciding-run.sh: No such file or directory",
+   "finding": "the refusal is only reachable from a REV whose tree contains deciding-run.sh (e.g. a merge); a side-branch REV predating the freeze cannot run the script at all (exit 127, not a refusal)",
+   "receipt": "f.txt"
+  },
+  {
+   "id": "g", "arm": "g1", "requirement": "receipt-binding gate refuses (real round-54 controls-b as controls-b.stdout)",
+   "exit": 3, "refused_before_any_run": true, "scr_created": true,
+   "gate_exit": 3,
+   "line": "DECIDING_REFUSED receipt-binding GATE: receipts=2 ok=1 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED",
+   "receipt": "g1.txt"
+  },
+  {
+   "id": "g-variant", "arm": "g2", "requirement": "receipt-binding gate refuses (real round-54 CTL_POS_c1 line)",
+   "exit": 3, "refused_before_any_run": true, "gate_exit": 3,
+   "line": "DECIDING_REFUSED receipt-binding GATE: receipts=2 ok=1 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED",
+   "receipt": "g2.txt"
+  },
+  {
+   "id": "g-variant2", "arm": "g4", "requirement": "receipt-binding gate refuses (controls-a names a non-ancestor rev)",
+   "exit": 3, "refused_before_any_run": true, "gate_exit": 3,
+   "line": "DECIDING_REFUSED receipt-binding GATE: receipts=2 ok=1 refused=1 codes=RECEIPT_CONTROL_NOT_ANCESTOR verdict=REFUSED",
+   "receipt": "g4.txt"
+  },
+  {
+   "id": "extra-outdir", "arm": "outdir", "requirement": "OUT does not exist",
+   "exit": 3, "refused_before_any_run": true, "scr_created": false,
+   "line": "DECIDING_REFUSED outdir-missing",
+   "receipt": "outdir.txt"
+  },
+  {
+   "id": "extra-verdict-a", "arm": "va", "requirement": "controls-a.stdout lacks CONTROLS_A verdict line (worktree)",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED controls-a-verdict-missing",
+   "receipt": "va.txt"
+  },
+  {
+   "id": "extra-verdict-b", "arm": "vb", "requirement": "controls-b.stdout lacks CONTROLS_B verdict line (worktree)",
+   "exit": 3, "refused_before_any_run": true,
+   "line": "DECIDING_REFUSED controls-b-verdict-missing",
+   "receipt": "vb.txt"
+  }
+ ],
+ "refusals_not_observed_firing": [
+  "DECIDING_REFUSED control-receipt-not-a-blob/empty - OBSERVED via fixtures c2tree/c3empty",
+  "no refusal in the script is structurally unreachable; every DECIDING_REFUSED line was fired at least once EXCEPT the ones reachable only by construction (all exercised)",
+  "exit-2 paths (LANE relative, cd/rev-parse failure, git show failures at line 61-64) are not DECIDING_REFUSED lines and were not exercised"
+ ],
+ "findings": [
+  "F-1 freeze.json is self-referential: entries deleted from files{} are accepted (a3: FREEZE_INTEGRITY OK files=9). Nothing outside freeze.json pins it; the later FROZEN diff treats FREEZE as baseline.",
+  "F-2 dirty-tree exclusion is an unanchored grep prefix match: untracked paths extending OUT's relative path escape detection (d3b: clean-tree-before.txt lists ?? .ufo/evidence/round-56/dryout-extra.txt, run proceeds to no-harm). The pattern is also unescaped regex.",
+  "F-3 gate 0b and the CONTROLS_* verdict greps read working-tree receipts while the blob checks target REV; both run before dirty-tree, so uncommitted receipt bytes participate in gate evidence (d1: gate ran on worktree copy; refused only later at dirty-tree).",
+  "F-4 second-invocation is per-OUT, not global: a second invocation with a different OUTDIR is not refused; the contract's deciding_invocations=1 is enforced by the wave, not the script.",
+  "F-5 [ -d \"$OUT\" ] accepts a non-empty OUT despite the usage comment saying EMPTY; only c1.start/c2.start are probed.",
+  "F-6 manifest 'amendments' is counted but never validated.",
+  "F-7 control-receipt-not-after-freeze is unreachable from a REV whose tree lacks the script (exit 127); faithful reachability requires a merge-shaped REV (demonstrated)."
+ ]
+}

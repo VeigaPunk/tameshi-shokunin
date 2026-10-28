@@ -1,0 +1,264 @@
+{
+ "schema": "tameshi-round56-w1-seat-findings-v1",
+ "seat": "T56W1ExecC2Counter",
+ "milestone": "C2 counter dry run",
+ "judged_on": "operability",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "counter": ".ufo/evidence/round-56/c2/measure.py",
+ "gate": "tools/receipt-revision-gate.py",
+ "counter_edited": false,
+ "gate_edited": false,
+ "tools_installed": [],
+ "headline": "C2_R56_PASS=true is unreachable at every revision with the frozen counter: arm 6 reads `mined` from cells[8] (the `opened` column) so docs<=3/4, and arm 5 refuses under the planned order because controls.sh names throwaway-clone commits.",
+ "items": {
+  "a_base_gate_missing": {
+   "command": "python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev 981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1 --work EMPTY --explain",
+   "exit": 1,
+   "stdout": "C2_R56: error=gate-missing total=1 C2_R56_PASS=false",
+   "confirmed": true,
+   "subject_absent_proof": "git -C LANE cat-file -t 981c5e8b20a2:tools/receipt-revision-gate.py -> 'path ... exists on disk, but not in 981c5e8b20a2'; the blob first exists at c3e2ca9f0207",
+   "receipts": [
+    "a-base.stdout",
+    "a-base.exit"
+   ]
+  },
+  "b_freeze_reproduces": {
+   "command": "python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev c3e2ca9f020776b3d66c7af854fb82c834674fcf --work EMPTY --explain",
+   "exit": 1,
+   "stdout": "C2_R56: rev=c3e2ca9f0207 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=0/4 total=2 C2_R56_PASS=false",
+   "byte_identical_to": ".ufo/evidence/round-56/before/c2.stdout",
+   "sha256": "5ec46f996321e85d46cab5af1cc266bc1f9d047a74981f98003d7823f486c5e2",
+   "clone_reproduction": "receipts/c-M0.stdout byte-identical as well",
+   "gate_selftest_direct": {
+    "exit": 0,
+    "line": "GATE_SELFTEST: 14/14 pass"
+   },
+   "receipts": [
+    "b-freeze.stdout",
+    "b-freeze.exit",
+    "c-M0.stdout",
+    "gate-selftest.stdout"
+   ]
+  },
+  "c_arm_liveness": {
+   "method": "separate --shared clone per mutant at the freeze, one token changed, commit in the clone (toplevel asserted), frozen counter run against the mutant commit with a fresh empty --work",
+   "mutants": [
+    {
+     "id": "M0",
+     "change": "none",
+     "arm2": "exit=3 RECEIPT_REV_CONTENT_DRIFT",
+     "arm3": "exit=3 RECEIPT_REV_UNRESOLVABLE",
+     "arm4": "exit=3 RECEIPT_REV_ABSENT",
+     "line_total": 2,
+     "receipt": "c-M0.stdout"
+    },
+    {
+     "id": "M2",
+     "change": "red-before slice rev=077d431e6996 -> rev=c21081008adb",
+     "target": "arm2",
+     "before": "exit=3 codes=RECEIPT_REV_CONTENT_DRIFT",
+     "after": "exit=0 codes=none",
+     "other_arms_unchanged": true,
+     "receipt": "c-M2.stdout"
+    },
+    {
+     "id": "M2b",
+     "change": "drop .ufo/evidence/round-21/coldread/ledger.json from the declared surface",
+     "target": "arm2",
+     "before": "CONTENT_DRIFT",
+     "after": "CONTENT_DRIFT (6 other paths drift)",
+     "note": "the arm is not hostage to the ledger path",
+     "receipt": "c-M2b.stdout"
+    },
+    {
+     "id": "M3a",
+     "change": "round-54 control set rev=7df0e0426c98 -> rev=981c5e8b20a2 (resolvable)",
+     "target": "arm3",
+     "before": "exit=3 codes=RECEIPT_REV_UNRESOLVABLE",
+     "after": "exit=3 codes=RECEIPT_REV_AMBIGUOUS",
+     "other_arms_unchanged": true,
+     "receipt": "c-M3a.stdout"
+    },
+    {
+     "id": "M3b",
+     "change": "every rev= in the control set -> c21081008adb",
+     "target": "arm3",
+     "before": "RECEIPT_REV_UNRESOLVABLE",
+     "after": "exit=0 codes=none",
+     "other_arms_unchanged": true,
+     "receipt": "c-M3b.stdout"
+    },
+    {
+     "id": "M4",
+     "change": "append one line naming rev=4c04c1d33377 to the truncated round-55 C2 receipt",
+     "target": "arm4",
+     "before": "exit=3 codes=RECEIPT_REV_ABSENT",
+     "after": "exit=0 codes=none",
+     "other_arms_unchanged": true,
+     "receipt": "c-M4.stdout"
+    }
+   ],
+   "separability": "each mutant moved exactly one arm; arms 2, 3 and 4 are live and receipt-dependent",
+   "gate_detail": {
+    "arm2": "GATE REFUSED role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT drift=ledger.json + 5 more paths; exit=3",
+    "arm3": "GATE REFUSED role=positive revs=077d431e6996,7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98; exit=3",
+    "arm4": "GATE REFUSED role=verdict revs=none code=RECEIPT_REV_ABSENT; exit=3"
+   },
+   "receipts": [
+    "gate-arm234-detail.txt"
+   ]
+  },
+  "d_arm5_own": {
+   "required_files_at_rev": [
+    ".ufo/evidence/round-56/control/controls-a.stdout (role=control: every rev= token resolves in the lane AND is an ancestor of or equal to REV)",
+    ".ufo/evidence/round-56/control/controls-b.stdout (role=positive: exactly one distinct rev= token, equal to REV or byte-identical to REV on frozen-surface.paths)",
+    ".ufo/evidence/round-56/control/frozen-surface.paths (already frozen at the freeze commit; must not change)"
+   ],
+   "required_by": "all three must be in the tree of REV (the counter reads git objects at --rev, never the working tree)",
+   "planned_order": "C0 content -> wave 2 readers + bind at C0 -> PIN (content-final) -> controls.sh LANE BASE PIN FREEZE .ufo/evidence/round-56/control -> commit controls-a/b/exit -> REV -> deciding-run.sh LANE REV FREEZE OUT",
+   "planned_order_produces_passing_arm5": false,
+   "why_not": "controls.sh phase A runs 5 mutation controls in clone_at clones and emits the counter's verdict line verbatim, so 5 of 7 lines name commits that exist only in those throwaway clones; gate role=control -> RECEIPT_REV_UNRESOLVABLE. The identical gate call is deciding-run.sh gate 0b, so the deciding run stops at DECIDING_REFUSED receipt-binding.",
+   "measured": {
+    "no_ancestry": {
+     "arm5": "REFUSED",
+     "codes": "RECEIPT_REV_UNRESOLVABLE",
+     "line_total": 2,
+     "receipt": "d-demo3-NOANCESTOR.stdout",
+     "gate_detail": "demo3-gate.txt",
+     "clone_revs_in_lane": "0 of 5"
+    },
+    "with_ancestry_injection": {
+     "arm5": "PASS",
+     "arm6": "3/4",
+     "line_total": 1,
+     "receipt": "d-demo-PASS.stdout",
+     "cost": "five control commits in the lane's ancestry (git fetch + git merge -s ours); their own trees hold the mutated content, REV's tree does not"
+    },
+    "post_pin_surface_edit": {
+     "arm5": "REFUSED",
+     "codes": "RECEIPT_REV_CONTENT_DRIFT",
+     "receipt": "d-demo2-alldocs.stdout",
+     "cause": "controls-b names PIN while REV drifts on corpus/knowledge/receipt-revision-binding.md"
+    }
+   }
+  }
+ },
+ "defects": [
+  {
+   "id": "D1",
+   "severity": "blocking-claim-killing",
+   "where": ".ufo/evidence/round-56/c2/measure.py:246 (arm 6, knowledge sub-check)",
+   "what": "tests cells[8] == 'mined'; the SOURCES header puts `status` at cells[7] and `opened` at cells[8], so the mined set is always empty and `cited & mined` is always empty",
+   "measured": {
+    "rows": 140,
+    "all_rows_have_11_cells": true,
+    "rows_with_cells8_mined": 0,
+    "rows_with_cells7_mined": 113
+   },
+   "consequence": "docs <= 3/4 hence total >= 1 hence C2_R56_PASS=false at every revision",
+   "proof": "a note citing all 140 S-rows still reads docs=3/4 (d-demo2-alldocs.stdout); instrumented replication shows sub-checks 1/3/4 green and 2 structurally dead (arm6-predicates.txt)",
+   "no_conformant_workaround": "a row with opened=mined trips census E08 (exit 1) -> deciding-run census gate rc=1; shifting the columns leaves cells[8] a date; a row outside ## Registry trips E12",
+   "patch_diff_only": "- if len(cells) == 11 and re.fullmatch(r'S\\d{3,}', cells[0]) and cells[8] == 'mined':\n+ if len(cells) == 11 and re.fullmatch(r'S\\d{3,}', cells[0]) and cells[7] == 'mined':",
+   "receipts": [
+    "census-mined-cell.txt",
+    "arm6-predicates.txt",
+    "SOURCES.frozen.md"
+   ]
+  },
+  {
+   "id": "D2",
+   "severity": "blocking-order-killing",
+   "where": ".ufo/evidence/round-56/controls.sh (emit/run_c1/run_c2/clone_at) vs gate role=control",
+   "what": "phase-A mutation controls run the counter with --rev <mutated clone HEAD>; emit echoes that line, so controls-a.stdout carries 5 rev tokens that exist only in throwaway clones",
+   "consequence": "arm 5 own=REFUSED (RECEIPT_REV_UNRESOLVABLE) and deciding-run.sh gate 0b refuses with the same code; DECIDING_RUN_EXIT != 0",
+   "freeze_time_artifact": "at the freeze the needles are absent so the mutations produce no byte change and no commit; that accident does not carry to a real PIN where rekey entries, reader hashes, the standing row, the gate arm and the red-before slice all exist",
+   "patch_options_require_refreeze": [
+    "controls.sh emits the phase-A verdict without a rev token (or with PIN plus a non-parsed clone= field)",
+    "the gate's control role ignores unresolvable revs it cannot attribute to the lane"
+   ],
+   "receipts": [
+    "demo3-gate.txt",
+    "d-demo3-NOANCESTOR.stdout"
+   ]
+  },
+  {
+   "id": "D3",
+   "severity": "minor",
+   "where": "measure.py arms 2-5 vs gate RECEIPT_DIGEST_MISMATCH",
+   "what": "the frozen .sha256 sidecar is never copied beside the receipt into --work, so the digest code can never fire inside the counter",
+   "consequence": "the contract's cannot_see says the digest sidecar narrows the gap; as frozen it narrows nothing",
+   "receipts": [
+    "sidecar-reachability.txt"
+   ]
+  },
+  {
+   "id": "D4",
+   "severity": "minor",
+   "where": "measure.py arm 6, sub-checks 1/3/4",
+   "what": "the docstring says the SKILL.md `## Standing rules` section must name the gate; the code tests the whole file. QUALITY and registry likewise accept the string anywhere.",
+   "consequence": "a stray mention satisfies the arm; the counter does not police where the rule is written",
+   "receipts": [
+    "arm6-predicates.txt"
+   ]
+  },
+  {
+   "id": "D5",
+   "severity": "note",
+   "where": "measure.py arm 2 docstring",
+   "what": "says the refusal names the cold-read ledger; the gate names six drifted paths and removing the ledger from the surface still refuses",
+   "consequence": "the lesson must not claim a single-path defect where the receipt drifts on six",
+   "receipts": [
+    "gate-arm234-detail.txt",
+    "c-M2b.stdout"
+   ]
+  }
+ ],
+ "cross_checks_for_l1": [
+  "deciding-run.sh gate 0 greps only for the presence of 'CONTROLS_A: n/m as pre-registered', not n == m: a 0/7 control set passes that gate (R55.4 class one level up)",
+  "deciding-run.sh gate 0c gates the counters' own stdout; the C2 verdict line names rev[:12], which resolves uniquely, and no EXPLAIN line carries a rev= token, so gate 0c is sound for C2",
+  "frozen-surface.paths has 10 entries and does not include .ufo/evidence/round-56/control/, so REV adding receipts is content-identical to PIN by construction"
+ ],
+ "files_changed": [
+  ".ufo/waves/round-56/w1/T56W1ExecC2Counter.md",
+  ".ufo/waves/round-56/w1/T56W1ExecC2Counter.json",
+  ".ufo/waves/round-56/w1/T56W1ExecC2Counter-receipts/"
+ ],
+ "receipts_dir": ".ufo/waves/round-56/w1/T56W1ExecC2Counter-receipts/",
+ "receipts": [
+  "SOURCES.frozen.md",
+  "a-base.exit",
+  "a-base.stdout",
+  "arm6-predicates.txt",
+  "b-freeze.exit",
+  "b-freeze.stdout",
+  "c-M0.stdout",
+  "c-M2.stdout",
+  "c-M2b.stdout",
+  "c-M3a.stdout",
+  "c-M3b.stdout",
+  "c-M4.stdout",
+  "census-mined-cell.txt",
+  "census-round-start.txt",
+  "d-demo-PASS.stdout",
+  "d-demo2-alldocs.stdout",
+  "d-demo3-NOANCESTOR.stdout",
+  "demo-revs.txt",
+  "demo3-gate.txt",
+  "gate-arm234-detail.txt",
+  "gate-selftest.stdout",
+  "r54-controls-b.frozen",
+  "r54-deciding.exit",
+  "r55-c2.frozen",
+  "sidecar-reachability.txt",
+  "slice-noledger.paths",
+  "slice.paths",
+  "slice.stdout"
+ ],
+ "round_start_census": {
+  "command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+  "exit": 0,
+  "receipt": "census-round-start.txt"
+ }
+}

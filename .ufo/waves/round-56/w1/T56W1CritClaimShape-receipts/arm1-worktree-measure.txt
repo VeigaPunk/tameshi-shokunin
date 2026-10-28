@@ -1,0 +1,17 @@
+=== precheck reads worktree measure (frozen bytes at REV run in scratch work dir, measure invoked from lane CWD) ===
+# CAND and at FLOOR_REV and prints RED (exit 1) when CAND credits fewer, naming every section that lost credit and
+# the input paths that drifted. Read-only: it reads git objects only.
+# Usage: coldread-precheck.sh LANE FLOOR_REV CAND_REV
+set -u
+LANE=$1; FLOOR=$2; CAND=$3
+cd "$LANE" || exit 2
+M=.ufo/evidence/round-21/coldread/measure.py
+SCR=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/tameshi-r48/coldread-precheck.$$
+mkdir -p "$SCR"; trap 'rm -rf -- "$SCR"' EXIT
+python3 "$M" --repo "$LANE" --rev "$FLOOR" > "$SCR/floor.json" 2>/dev/null || { echo "COLDREAD_PRECHECK error=floor-measure"; exit 2; }
+python3 "$M" --repo "$LANE" --rev "$CAND" > "$SCR/cand.json" 2>/dev/null || { echo "COLDREAD_PRECHECK error=cand-measure"; exit 2; }
+
+=== demo: worktree copy replaced by exit(42) in scratch clone ===
+command: bash clone/.ufo/evidence/round-48/quality/coldread-precheck.sh clone FLOOR CAND
+output: COLDREAD_PRECHECK error=floor-measure
+=> the worktree copy at .ufo/evidence/round-21/coldread/measure.py executed (committed r21 bytes at REV never read by arm1; arm2 mirror does read REV bytes)

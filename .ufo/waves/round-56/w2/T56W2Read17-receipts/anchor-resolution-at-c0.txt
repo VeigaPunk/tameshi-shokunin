@@ -1,0 +1,47 @@
+# T56W2Read17 receipts — anchor resolution at C0
+# clone: git clone --shared <lane> clone && git -C clone checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378
+# HEAD: c0137451f5b7f22d65f748fc69f1b181f55e1378
+
+== A. the four page-local anchors the table cites, at C0 ==
+--- row b cite ':824-828' ---
+   824	Rounds 2–5 measured three fleet gates at tameshi's hand; round 6 turns the
+   825	method outward as the service the fleet census offered
+   826	(`fleet-suite-census.md:249-291`): an opting-in lane brings its own gate, the
+   827	service sweeps it hermetically and read-only, and returns a kill-rate table
+   828	plus recommendations — absorption stays with the owner lane. The first
+--- row b cite ':851-855' ---
+   851	4. Nothing else. The service never edits, repairs or re-pins the gate; a
+   852	   needed change is a recommendation to the owner (round-6 anti-claim,
+   853	   `plans/round-6.plan.md:23-25`).
+   854	
+   855	### The protocol — ordered, fail-closed
+--- row c cite ':834-836' ---
+   834	### The opt-in contract — what the lane brings
+   835	
+   836	1. **A pinned revision** — committed bytes of the gate with sha256, size, line
+--- row f cite ':890-892' ---
+   890	- **Hermetic suites only** — no substrate-drift claim; results are
+   891	  per-revision and per-host (census §5 scope, `fleet-suite-census.md:288-291`).
+   892	- **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:819-820).
+
+== B. where the cited sentences actually are at C0 ==
+--- 841-845 (one-command hermetic suite) ---
+   841	2. **A one-command hermetic suite** invocable against a copy — mado's gate
+   842	   takes `bash "$MUTANT" --selftest`; it must exercise the copy it is handed
+   843	   (mado's selftest re-enters `$0`), print its own executed count and verdict
+   844	   (`MADO_SELFTEST: 28/28 assertions passed` on green), and read no live path
+   845	   (`mutation-case-mado-verify.md:44-49`).
+--- 868-872 (MUTATE: SETUP exit 2 + red control) ---
+   868	2. **Spec parse + uniqueness.** Every `@old` must occur exactly once (non-overlapping count), asserted
+   869	   **before any suite run**; `@new == @old` is refused. Any spec failure is
+   870	   `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
+   871	3. **Control first.** The unmutated copy must run green; a red control exits 2
+   872	   (kills could not be attributed).
+--- 851-853 (never edits/repairs/re-pins) ---
+   851	4. Nothing else. The service never edits, repairs or re-pins the gate; a
+   852	   needed change is a recommendation to the owner (round-6 anti-claim,
+   853	   `plans/round-6.plan.md:23-25`).
+--- 907-909 (Sensitivity, not truth) ---
+   907	- **Sensitivity, not truth** — a sweep measures what the suite can detect,
+   908	  never whether the gate's verdicts are right
+   909	  (`mutation-case-mado-verify.md:229-230`).

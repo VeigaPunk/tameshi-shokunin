@@ -1,0 +1,15 @@
+### R10 — the knowledge entry's OWN falsifier #3 evaluated at C0
+-- note text (corpus/knowledge/receipt-revision-binding.md:155) --
+3. `--selftest` reports anything other than `14/14 pass`, or `codes-closed` fails.
+-- the command the note's recheck line names, run in the lane working tree (= C0 for tools/) --
+GATE_SELFTEST: 19/19 pass
+-- verdict: the note asserts 'anything other than 14/14 pass' is a falsifier; the observed value is 19/19 --
+-- the note's recheck line (line 3) --
+recheck: 180d — `curl -fsSL https://raw.githubusercontent.com/in-toto/attestation/v1.2.0/spec/v1/statement.md | sha256sum` must print `cbe684a1…ebea` (anything else: the tag moved, re-open the row); `python3 tools/receipt-revision-gate.py --selftest` must print `GATE_SELFTEST: 14/14 pass`
+-- note's §Re-derive line 166 comment --
+python3 "$L/tools/receipt-revision-gate.py" --selftest                    # GATE_SELFTEST: 14/14 pass
+-- selftest count at the frozen bytes the note names (c3e2ca9f) vs at C0 --
+c3e2ca9f (frozen): GATE_SELFTEST: 14/14 pass
+C0 working tree:   GATE_SELFTEST: 19/19 pass
+-- tools/registry.json at C0 expects --
+GATE_SELFTEST: 19/19 pass

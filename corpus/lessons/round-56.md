@@ -88,6 +88,14 @@ Proposals 2–5 remain unmined (at most one per round).
   `T56W1ScribeLog-receipts/cited-paths.txt` (three `before/*.stdout` absent
   at the freeze).
 
+### Additional round-56 mistakes (attempt 3; 2026-10-28)
+
+- **class: citation drift — current SKILL.md page-local anchors.** Evidence: `T56W2Read17-receipts/page-wide-sweep.txt` finds 57 of 61 ranges no longer resolve to the bytes they named; the offset is +17 from the round-54 repair (+4 at round-55 C0, +13 at round-56 C0). The service-limits reader's ranges `:824-828`, `:834-836`, `:851-855`, `:890-892`, and `:1023-1169` land on unrelated text. **captured-by:** QUALITY criterion 34 (a citation into a moving file must be anchored by a stable symbol/heading; a line range is secondary). **fix:** no same-round SKILL edit; it would change C0 section hashes and invalidate bound reports. Round 57 must replace these ranges with heading/function anchors and re-read after the change. Red-before: the `git show C0:SKILL.md` ranges and corrected ranges in Read17's receipts; this fix is not credited as landed.
+
+- **class: sourced quotation and recheck drift.** Evidence: W2 `T56W2RevSources.md` F1–F3 shows the S282 sentence is absent from its source, the S281 note splices two passages, and its `14/14` selftest expectation disagrees with the amended C0 gate's `19/19`; the L1's source re-open is retained in `integration/l1-source-reopen.txt`. **captured-by:** CORPUS.md SOURCES rule 1 and QUALITY criteria 35/51/91. **fix:** append-only errata in the knowledge note and this lesson; the replacement quote is present in the re-open record, and the recheck is explicitly superseded. Red-before: exact-string searches for the claimed S282 quote return 0; the C0 gate selftest returns `GATE_SELFTEST: 19/19 pass`.
+
+- **class: claim sizing — C2's no-op control reaches its target.** Evidence: `T56W2CritDoNothingC2.md` v2/v3 scratch trees yield `C2_R56_PASS=true` using two stub controls or a borrowed round-54 receipt with its `rev=` token rewritten; no controls run produced those bytes. **captured-by:** the round prompt's claim-sizing rule (§9), which requires a do-nothing control below target before freeze. **fix:** none this round; the claim/counter are frozen after data. The final C2 counter result is recorded, but C2 is not admitted as a measured improvement; a future claim must preregister a discriminator for control provenance.
+
 ## Round-55 routed defects — dispositions (this round)
 
 | id | disposition | evidence |
@@ -167,3 +175,91 @@ Proposals 2–5 remain unmined (at most one per round).
   artifacts" clause) and F3 (the `<tool>: could-not-evaluate:` byte shape, where three
   of nine modes print `WITNESS_STUDY:`/`ENVDIFF_SETUP:`) are pre-existing round-55-era
   text. Repairs are scheduled together because one re-read covers all three.
+
+## Attempt 3 integration and adjudication notes (2026-10-28)
+
+### Source re-open and additive corrections
+
+The L1 re-opened S281, S282 and the screened-out DSSE candidate on 2026-10-28; exact URLs,
+anchors and quotes are in `.ufo/waves/round-56/integration/l1-source-reopen.txt`. S281's
+located quote remains “Subject artifacts are matched purely by digest, regardless of content
+type.” (11 words, `## Fields` / `subject`, lines 54-55). S282 remains a rejected row; the
+source's actual `## Model` first sentence is “Provenance is an attestation that a particular
+build platform produced a set of software artifacts through execution of the `buildDefinition`.”
+The earlier Gate quote “Provenance is a predicate that describes how a software build was
+executed” is not in that source. The DSSE candidate remains an excluded search result without a
+registry row: its `SERIALIZED_BODY` quote says “Arbitrary byte sequence to be signed.” (7 words,
+`## Signature Definition`, parameters row), and it does not require a subject digest.
+
+The L1 appended errata, without rewriting the C0 evidence: `knowledge/receipt-revision-binding.md`
+records the S281 quote splice, the freeze-era 14/14 versus amended 19/19 gate count, and the
+fixture-demo environment/cwd requirement; `corpus/QUALITY.md` records the corrected criterion-107
+lesson anchor and scope-gap receipt bytes. The source search log records 3 identified/screened,
+1 included (S281), 2 excluded (S282 retained rejected row; DSSE excluded without a row). Rows
+added remain S281 mined and S282 rejected; S283 remains the next unused id.
+
+### Wave-2 findings and dispositions
+
+All 18 C0 reader reports are now present under `w2/` after same-identity completion of Read04 and
+Read15; no seat was replaced. `integration/resolutions.json` carries the explicit minor-gap counts
+for the six headings with findings (13 total). The exact findings and L1 dispositions are in
+`integration/reader-adjudication.md`; the C0 section hashes and reader outputs remain unchanged.
+No `SKILL.md` edit is made before the re-key.
+
+Read17 and the page-wide sweep establish that 57 of 61 distinct page-local line ranges no longer
+resolve to the bytes they cite; the offset is +17 from the round-54 line-anchor repair (+4 in the
+round-55 C0, then +13 in this C0). This is a depth/quality harm outside the frozen no-harm monitor.
+It is deferred to round 57: a same-section edit now would change a C0 section hash and invalidate
+its reader report. The occurrence-count sweep (125/155 shifted by +13) and the distinct-range sweep
+(57/61 stale at C0) count different populations; neither figure replaces the other.
+
+Read04 also records the undercount in the shared JS defect classes; Read06 the S026→S265
+`SOURCES.md` pointer (at the current working tree after the appended search log, the target is
+line 508); Read07 the dash-form boundary, receipt-code mapping and stderr-token shape; Read15 the
+clone `env-diff` invocation's missing `--fleet-root` and the 49→50 active-row count; Read16 two
+non-clean round-26 registry/gate examples. These SKILL page findings remain deferred; no line or
+content fix is claimed.
+
+The C2 do-nothing attack also reached `C2_R56_PASS=true` with two synthetic 79-byte control
+receipts (W2 critic v2); a borrowed round-54 receipt with its revision token rewritten did so too
+(v3). The actual gate correctly binds revision tokens and refuses the retained old receipts, but
+the frozen counter cannot establish that its “own receipts” came from a real controls run. This
+invalidates C2's do-nothing-control admission predicate; no frozen target or counter is changed
+after data. Report the measured C2 line separately from this claim-sizing failure.
+
+## Errata — attempt 3 source and claim adjudication (2026-10-28)
+
+### S282 quote re-opened by L1
+
+The `## Gate` S282 quote at line 21 above is not in the cited SLSA page. The L1 re-opened
+`https://github.com/slsa-framework/slsa/blob/main/spec/build-provenance.md` on 2026-10-28;
+at `## Model`, first paragraph, the exact sentence is “Provenance is an attestation that a
+particular build platform produced a set of software artifacts through execution of the
+`buildDefinition`.” The false quote is superseded by this located passage; the S282 rejection
+and flip remain unchanged. DSSE was also re-opened at its pinned protocol commit and excluded
+without a row. Evidence: `.ufo/waves/round-56/integration/l1-source-reopen.txt`.
+
+### Reader finding dispositions and same-seat completion
+
+The W2 `T56W2Read04` and `T56W2Read15` result strings initially ended before their required
+Markdown/JSON reports. The same two identities were resumed; both reports and receipts are now
+present. No replacement seat was spawned. The frozen reader findings are adjudicated as
+`gap-minor` with the exact per-heading counts in `.ufo/waves/round-56/integration/resolutions.json`;
+the supporting dispositions are in `reader-adjudication.md`. No `SKILL.md` section was edited.
+
+### C2's no-op control reaches the frozen target
+
+`T56W2CritDoNothingC2.md` demonstrates that two 79-byte stub receipts naming the certified
+revision make the frozen C2 counter print `C2_R56_PASS=true`; a borrowed round-54 receipt with
+only its `rev=` token rewritten does so as well. The gate is correctly binding those bytes, but
+the counter cannot show that the receipts came from an actual controls run. This is the
+pre-registered provenance blind spot; it also means the frozen C2 target fails the claim-sizing
+do-nothing discriminator. No counter or target is changed after data. The final measured line is
+reported separately and is not claimed as an admitted improvement.
+
+### Coverage-index debt
+
+`corpus/knowledge/receipt-revision-binding.md` is not indexed in `corpus/README.md`. The C0
+reader-input census shows `corpus/README.md` is a pinned input for the re-key; changing it after
+C0 would invalidate the readers. No frontier expansion is claimed. Owner: tameshi, round 57,
+after the current re-key is safely landed.

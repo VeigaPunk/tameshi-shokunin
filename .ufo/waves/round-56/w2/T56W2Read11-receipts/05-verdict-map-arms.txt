@@ -1,0 +1,69 @@
+# T56W2Read11 receipts — verdict-map arms of both rows, exercised in the scratch clone at C0
+# cwd for every command below: /fast/scratch/hyaku/tameshi-r56/T56W2Read11/clone (git clone --shared of the lane, checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378)
+
+### ROW 1 verdict map: '0 observations, including changed/unavailable; 2 invalid input/could-not-evaluate; selftest 1 failed'
+
+--- arm 0a: observations emitted over the real fleet root (changed legs present) ---
+$ python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin
+status ok counts {'legs': 6, 'unchanged': 1, 'changed': 5, 'unavailable': 0}
+EXIT=0
+
+--- arm 0b: observations emitted with every leg unavailable (empty sibling dirs under a fake fleet root) ---
+$ python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /fast/scratch/hyaku/tameshi-r56/T56W2Read11/fakeroot
+status ok counts {'legs': 6, 'unchanged': 0, 'changed': 0, 'unavailable': 6} reason0 repo_not_git
+EXIT=0
+
+--- arm 2a: invalid usage ---
+$ python3 tools/pin-disposition.py
+status invalid_input kind invalid_usage
+EXIT=2
+
+--- arm 2b: invalid manifest ---
+$ python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/nope.json --root /home/vgpnk/Projects/shokunin
+status invalid_input kind invalid_manifest msg manifest not found: .ufo/evidence/round-13/nope.json
+EXIT=2
+
+--- arm 2c: invalid fleet root ---
+$ python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /nonexistent-root
+status invalid_input kind invalid_root
+EXIT=2
+
+--- arm 2d: could-not-evaluate on a set-but-unusable TMPDIR (round-54 scratch-root class) ---
+$ TMPDIR=/nonexistent-tmpdir-xyz python3 tools/pin-disposition.py --selftest
+pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-tmpdir-xyz' (could-not-evaluate)
+EXIT=2
+
+--- arm 'selftest 1 failed': the selftest exit-1 arm, forced by mutating a selftest expectation in the THROWAWAY clone2 only ---
+mutated the selftest row-count expectation 6 -> 5 in the throwaway clone (clone2), not in the lane
+$ python3 tools/pin-disposition.py --selftest
+SELFTEST_CASE detached-head-uses-branch-tip FAIL (exit=0 expects=0 rows=6 expects=5)
+SELFTEST: FAIL (13/19 failed: unchanged, changed-head, dirty-worktree, missing-worktree-file, missing-repo, foreign-repo-toplevel, missing-pinned-blob, missing-pinned-commit, pinned-blob-mismatch, worktree-outside-repo, worktree-symlink, repo-symlink, detached-head-uses-branch-tip; fixtures kept at /tmp/tameshi-r13-pin-disposition-selftest.rl1a21ip)
+EXIT=1
+
+### ROW 2 verdict map: '0 metadata_consistent/clean; 1 metadata_inconsistent/failed; 2 input_unavailable or snapshot_tampered/could-not-evaluate, including usage'
+
+--- arm 0 ---
+$ python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json
+WITNESS_METADATA: metadata_consistent reason=ok exit=0 companion=/fast/scratch/hyaku/tameshi-r56/T56W2Read11/clone/.ufo/evidence/round-13/witness-metadata.json inputs=summary,declaration,declared,rerun_summary
+EXIT=0
+
+--- arm 1: metadata_inconsistent (companion declaration.kind tampered in the THROWAWAY clone2 only) ---
+tampered companion declaration.kind
+$ python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json
+WITNESS_METADATA: metadata_inconsistent reason=normalized_kind_mismatch exit=1 companion=/fast/scratch/hyaku/tameshi-r56/T56W2Read11/clone2/.ufo/evidence/round-13/witness-metadata.json inputs=-
+WITNESS_METADATA_DETAIL: 'WRONG-KIND'
+EXIT=1
+
+--- arm 2a: input_unavailable (missing companion) ---
+$ python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/nope.json
+WITNESS_METADATA: input_unavailable reason=companion_missing exit=2 companion=/fast/scratch/hyaku/tameshi-r56/T56W2Read11/clone/.ufo/evidence/round-13/nope.json inputs=-
+WITNESS_METADATA_DETAIL: /fast/scratch/hyaku/tameshi-r56/T56W2Read11/clone/.ufo/evidence/round-13/nope.json
+EXIT=2
+
+--- arm 2b: usage (no mode selected) ---
+$ python3 tools/witness-metadata.py
+usage: witness-metadata.py [-h] (--check | --selftest | --emit)
+                           [--lane-root LANE_ROOT] [--companion COMPANION]
+                           [--json]
+witness-metadata.py: error: one of the arguments --check --selftest --emit is required
+EXIT=2

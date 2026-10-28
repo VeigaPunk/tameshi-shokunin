@@ -1,0 +1,24 @@
+# phase A: do-nothing and mutation controls (expected false unless stated)
+CTL CTL_0_c1 C1_R56: rev=981c5e8b20a2 c0=none credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 unstable=0 restate=8 total=5 C1_R56_PASS=false
+CTL_MATCH CTL_0_c1 expected=false actual=false
+CTL CTL_0_c2 C2_R56: rev=c3e2ca9f0207 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=0/4 total=2 C2_R56_PASS=false
+CTL_MATCH CTL_0_c2 expected=false actual=false
+CTL CTL_SKIP_c1 C1_R56: rev=5c66bb7e1d9d c0=28d6e631cead credited=46 lost=18 rekeyed=0/18 readers=18/18 monitor=6/46 unstable=0 restate=8 total=4 C1_R56_PASS=false
+CTL_MATCH CTL_SKIP_c1 expected=false actual=false
+fabricated T56W2Read01.json
+CTL CTL_FAB_c1 C1_R56: rev=177d0d53dcdf c0=28d6e631cead credited=64 lost=0 rekeyed=18/18 readers=17/18 monitor=8/64 unstable=0 restate=8 total=1 C1_R56_PASS=false
+CTL_MATCH CTL_FAB_c1 expected=false actual=false
+row | calibration | 9 | round-21 cold-read monitor `calibration_restraint_score=8`, `sections_covered=64` of 64, `box3_full_
+CTL CTL_RESTATE_c1 C1_R56: rev=0c51e39efef8 c0=28d6e631cead credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 unstable=0 restate=9 total=1 C1_R56_PASS=false
+CTL_MATCH CTL_RESTATE_c1 expected=false actual=false
+CTL CTL_SKIP_c2 C2_R56: rev=0260b7ed72b1 selftest=13/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=3/4 total=3 C2_R56_PASS=false
+CTL_MATCH CTL_SKIP_c2 expected=false actual=false
+CTL CTL_FAB_c2 C2_R56: rev=ae4b64292ab2 selftest=14/14 red54=none red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=3/4 total=3 C2_R56_PASS=false
+CTL_MATCH CTL_FAB_c2 expected=false actual=false
+CONTROLS_A: 7/7 as pre-registered
+# phase B: the positive controls scored at the revision they certify (PIN=55ebd9277e226e3d57e7aaf28463399849bcfe5a)
+CTL CTL_POS_c1 C1_R56: rev=55ebd9277e22 c0=28d6e631cead credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 unstable=0 restate=8 total=0 C1_R56_PASS=true
+CTL_MATCH CTL_POS_c1 expected=true actual=true
+CTL CTL_POS_c2 C2_R56: rev=55ebd9277e22 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=3/4 total=2 C2_R56_PASS=false
+CTL_MISMATCH CTL_POS_c2 expected=true actual=false
+CONTROLS_B: 1/2 as pre-registered

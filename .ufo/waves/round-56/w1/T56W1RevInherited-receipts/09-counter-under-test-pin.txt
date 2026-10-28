@@ -1,0 +1,44 @@
+$ git diff fa48c06c 2dc8633a -- .ufo/waves/round-55/w1/T55W1MutC2-receipts/counter-under-test.sha256
+diff --git a/.ufo/waves/round-55/w1/T55W1MutC2-receipts/counter-under-test.sha256 b/.ufo/waves/round-55/w1/T55W1MutC2-receipts/counter-under-test.sha256
+index 884f917..5930358 100644
+--- a/.ufo/waves/round-55/w1/T55W1MutC2-receipts/counter-under-test.sha256
++++ b/.ufo/waves/round-55/w1/T55W1MutC2-receipts/counter-under-test.sha256
+@@ -1 +1 @@
+-d6ca1d851bb0037368c304f4d80254f7dc5bf76b1c3119cdf0f2a64bca95631a  /fast/scratch/hyaku/tameshi-r55/T55W1MutC2/pristine-measure.py
++0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b  /fast/scratch/hyaku/tameshi-r55/T55W1MutC2/pristine-measure-133b2ce.py
+
+$ git show 981c5e8b:.../counter-under-test.sha256
+d6ca1d851bb0037368c304f4d80254f7dc5bf76b1c3119cdf0f2a64bca95631a  /fast/scratch/hyaku/tameshi-r55/T55W1MutC2/pristine-measure.py
+
+$ git show 981c5e8b:.../superseded-d6ca1d8/README.txt
+These are the FIRST-PASS receipts of this seat, kept for the record and NOT scored.
+
+While this item ran, the lane re-froze the C2 counter twice (e2979f2 amendments 1-7;
+133b2ce amendment 8, which added the ninth allocating mode registry-check --rev and
+changed three denominators). The first pass measured the pre-amendment bytes
+sha256 d6ca1d851bb0037368c304f4d80254f7dc5bf76b1c3119cdf0f2a64bca95631a with a
+hand-built fixed tree; both were abandoned mid-item.
+
+Because an integrator's `git add -A` swept this seat's in-progress directory into
+commit 133b2ce, those first-pass files now live as tracked siblings one level up
+and are left untouched there:
+  ../P-base.meta, ../P-base.stdout            (base, pre-amendment bytes: total=18)
+  ../counter-bytes.txt                        (pre-amendment hashes)
+  ../fixed-tree-line-*.txt                    (hand-built fixed tree, one line each)
+  ../mutants/mN.diff                          (pre-amendment single-edit diffs)
+
+The scored set is ../mutants-133b2ce/, ../verdicts/, ../verdict-lines.txt and
+../counter-under-test.sha256 (0458f632... at rev 133b2ce).
+
+$ git show 981c5e8b:.ufo/waves/round-55/w1/T55W1MutC2.md | sed -n '12p'
+| counter under test | `.ufo/evidence/round-55/c2/measure.py`, sha256 `0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b` = the bytes at rev `133b2ce6d4d86d783db38607343c3654350194b8` (round-55 freeze amendment 8) |
+
+$ git show 981c5e8b:.ufo/evidence/round-55/freeze.json | grep c2/measure.py
+  ".ufo/evidence/round-55/c2/measure.py": "0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b",
+   "what": "c2/measure.py checked the clone out detached; `evidence-disposition --root .` classifies a detached HEAD as historical_input_unavailable, so the lazy and empty arms measured the clone instead of the tool. The clone now checks out a local branch at REV (`r55-rev`). Discovery plumbing only; predicate, arms, denominators and target unchanged. Found by the L1 dry run on an edited clone before any control was scored and before any deciding invocation."
+   "what": "c2/measure.py matched the grammar marker and the eight mode ids against raw text; both documents are hard-wrapped near 78 columns, so a marker split by a newline read as absent. The note and SKILL arms now match against whitespace-normalized text. Predicate unchanged (the documents must state the grammar and name the modes); found by the L1 dry run before any control score or deciding invocation."
+   "what": "c2/measure.py labelled the bash-witness mode `bash-witness-study --selftest` while it is invoked as `bash-witness-study selftest`; the note consequently could not match the label and the note arm read 7/8. The label is now the mode as invoked. Predicate unchanged (the note must name every allocating mode); found by the L1 dry run before any control score or deciding invocation."
+   "what": "c2/measure.py's usable arm took the exit code from the `strace -f` run, and the tracer's overhead makes registry-check's own timeout cases fail (rc 1 at base with a good TMPDIR). The exit code now comes from a plain run; the traced run supplies only the /tmp mkdir census. Same repair as round 54's amendment 2, re-learned by this round's own base receipt before any control score or deciding invocation; predicate and denominators unchanged."
+   "what": "c2/measure.py's mode table held eight allocating modes; wave seat T55W1ExecModeDiscovery showed `registry-check --rev` is a ninth documented allocating mode that emitted `REGISTRY_CHECK: could-not-evaluate (...)` on stdout (empty stderr). The claim's surface is every documented allocating mode, so the counter now measures nine on the grammar arm (the tool was fixed in the same commit). `--rev` builds a full fleet clone (minutes), so it is not run on the empty/usable arms; the note states that and its usable path stays covered by the tool's own self-test. Denominators: grammar 8->9, note 8->9."
+   "what": "c2/measure.py's total subtracts the empty/usable denominators from `len(table)` (14 rows after the ninth mode) while those arms run `cheap` (13), and the note term still subtracted 8; at the all-green state the verdict therefore read total=1 with an empty `bad` map. Bookkeeping only: the two terms now use the denominators they measure. Found by wave-1 seat T55W1ScribeSkill's pinned-counter run before any COMPLETED control set (a phase-A run printed CTL_0_c1 at 14:16:54, the amendment landed at 14:21:00, and no CONTROLS_A verdict existed then or before; the phase-A set decided on is the one at this freeze)."
+

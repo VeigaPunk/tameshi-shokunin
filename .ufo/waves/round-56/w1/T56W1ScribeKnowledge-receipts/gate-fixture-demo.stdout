@@ -1,0 +1,31 @@
+A0=21b88c55de2f977410d9fc107348eed3d410f869
+A1=5749284f34d8085db20cf60500fb972396496822
+SIDE=3441e0157dcd0e3d6010efe243e4d1e03541cccb
+--- 1 same rev, positive
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-pos-a1.txt role=positive revs=5749284f34d8085db20cf60500fb972396496822
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+--- 2 other rev, no --paths
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-pos-a0.txt role=positive revs=21b88c55de2f977410d9fc107348eed3d410f869 code=RECEIPT_REV_MISMATCH rev=21b88c55de2f977410d9fc107348eed3d410f869 certified=5749284f34d8
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+rc=3
+--- 3 other rev, --paths a.txt (identical bytes) -> exception
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-pos-a0.txt role=positive revs=21b88c55de2f977410d9fc107348eed3d410f869
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+--- 4 other rev, --paths a.txt,b.txt (b.txt drifted)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-pos-a0.txt role=positive revs=21b88c55de2f977410d9fc107348eed3d410f869 code=RECEIPT_REV_CONTENT_DRIFT rev=21b88c55de2f977410d9fc107348eed3d410f869 drift=b.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+rc=3
+--- 5 control, both revs ancestors
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-ctl.txt role=control revs=21b88c55de2f977410d9fc107348eed3d410f869,5749284f34d8085db20cf60500fb972396496822
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+--- 6 control, one rev not ancestor
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-ctl-side.txt role=control revs=21b88c55de2f977410d9fc107348eed3d410f869,3441e0157dcd0e3d6010efe243e4d1e03541cccb code=RECEIPT_CONTROL_NOT_ANCESTOR rev=3441e0157dcd0e3d6010efe243e4d1e03541cccb
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_CONTROL_NOT_ANCESTOR verdict=REFUSED
+rc=3
+--- 7 blind spot: fabricated receipt naming the certified rev
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.1w9naA/r-fab.txt role=positive revs=5749284f34d8085db20cf60500fb972396496822
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0

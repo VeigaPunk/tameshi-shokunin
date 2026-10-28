@@ -1,0 +1,72 @@
+{
+ "seat": "T56W1ScribeQuality",
+ "round": 56,
+ "wave": 1,
+ "item": "corpus/QUALITY.md criterion draft (C2 content)",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "target_file": "corpus/QUALITY.md",
+ "append_only": true,
+ "criterion_number": 107,
+ "number_derivation": "git show 981c5e8b:corpus/QUALITY.md | grep -oE '^### Criterion [0-9]+' | awk '{print $3}' | sort -n | tail -1  ->  106; 85 is absent and 83 appears twice (83 and the 83/84 erratum), so next is 107",
+ "block_header": "## Criteria appended — round 56 (2026-10-28)",
+ "heading": "### Criterion 107 — a certified receipt names the revision it was measured against, and the gate refuses the ones that do not",
+ "inserted_lines": 62,
+ "text": "\n## Criteria appended — round 56 (2026-10-28)\n\n### Criterion 107 — a certified receipt names the revision it was measured against, and the gate refuses the ones that do not\n\nEvery receipt a round certifies — a control, a positive control or a verdict — states in its\nown bytes the revision it was measured against (`rev=<sha>` or `\"rev\": \"<sha>\"`), and the lane's\ncertification path runs `tools/receipt-revision-gate.py` over it. A receipt whose named revision\nis content-identical to the certified revision on the surface the round declares with `--paths`\nis accepted even when the two shas differ (the surface did not move); a receipt whose named\nrevision differs on that surface is refused `RECEIPT_REV_CONTENT_DRIFT`, one whose `rev=` does\nnot resolve in the lane is refused `RECEIPT_REV_UNRESOLVABLE`, one that names no revision at all\nis refused `RECEIPT_REV_ABSENT`, and a receipt path that does not exist is refused\n`RECEIPT_MISSING`. The rule is not satisfied by a record that cites a receipt in prose: the\nreceipt is refused or accepted on its own bytes, and a round that lands this rule also lands the\nrefusal of a receipt the lane already accepted. Distinct from criterion 86, which governs *when*\nthe content revision C is designated and what may lie between C and the landing tip; this\ncriterion governs the receipt's own binding, is enforced by a named tool with closed codes, and\nis exercised on receipts accepted before the gate existed.\n\nCheck that can fail: over the real round-54 positive control\n`.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout` — its only `rev=` is\n`077d431e6996`, the round-54 freeze, while round 54 certified `c2108100` — run from any cwd:\n\n```\nL=/home/vgpnk/Projects/shokunin/tameshi-shokunin\npython3 \"$L/tools/receipt-revision-gate.py\" \\\n  --lane \"$L\" --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c \\\n  --paths \"$L/.ufo/evidence/round-56/c2/red-before/round-54-surface.paths\" \\\n  --receipt \"$L/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout:positive\"\necho \"exit=$?\"\n```\n\nIt must print `code=RECEIPT_REV_CONTENT_DRIFT` on the `GATE REFUSED` line and\n`codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED` on the summary line, and exit 3. The same\nreceipt with `--certified 077d431e69965fa4673cd006ab64f6fc387f9e15` — its own revision — must\nprint `verdict=PASS` and exit 0, so the refusal is a content comparison and not a constant. A\ngate that passes this receipt, or that refuses it with a code other than the drift code, is the\nfailing instrument.\n\nLesson: `corpus/lessons/round-56.md` `## Gate` (the R55.5 disposition — round 55's deciding gate\ncould not compare the revision it certifies, and the round-54 control set the old path accepted\nnames `077d431e6996` on `CTL_POS_c1` and `7df0e0426c98` on `CTL_EXIT0` while the round measured\n`c2108100`).\n\nMotivation and scope: `considerthese/2026-10-28.md` (dated 2026-10-28) proposal 1,\n\"Receipt-existence linter for records\". This criterion is that proposal's revision half, not its\nquote half. Existence is checked — the receipt file (`RECEIPT_MISSING`) and the revision it\nnames (`RECEIPT_REV_UNRESOLVABLE`), with criterion 97 covering a cited evidence path at the\nlanding tip — and the receipt's own `rev=` is compared against the certified revision on the\ndeclared surface. What this criterion does NOT cover is byte-for-byte matching of a quoted\ncounter line against committed stdout: a receipt naming the certified revision whose printed\nnumbers are fabricated still passes the gate\n(`.ufo/waves/round-56/w1/T56W1ScribeQuality-receipts/107-scope-gap-fabricated-line.txt`, exit 0\non `rev=077d431e6996 credited=99 lost=0`). That half of the proposal stays unmined.\n\nFalsifier that must fail: the command above at the round-56 freeze `c3e2ca9f`, where the gate\nand the frozen receipt exist and the rule is stated nowhere a reader meets it —\n`corpus/QUALITY.md` names neither `tools/receipt-revision-gate.py` nor any `RECEIPT_*` code (the\nround-56 C2 counter's `docs=0/4` arm) — while round 54's deciding run accepted the set this\ncommand refuses\n(`.ufo/evidence/round-54/after/deciding-run.exit` reads `DECIDING_RUN_EXIT=0`).\n",
+ "falsifier": {
+  "receipt": ".ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout",
+  "paths": ".ufo/evidence/round-56/c2/red-before/round-54-surface.paths",
+  "certified": "c21081008adbb6b6fe4e58a0aeec4831b30e318c",
+  "command": "python3 \"$L/tools/receipt-revision-gate.py\" --lane \"$L\" --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --paths \"$L/.ufo/evidence/round-56/c2/red-before/round-54-surface.paths\" --receipt \"$L/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout:positive\"",
+  "expected_code": "RECEIPT_REV_CONTENT_DRIFT",
+  "expected_summary": "GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED",
+  "expected_exit": 3,
+  "bound_control": {
+   "certified": "077d431e69965fa4673cd006ab64f6fc387f9e15",
+   "expected_verdict": "PASS",
+   "expected_exit": 0
+  },
+  "red_at": "c3e2ca9f020776b3d66c7af854fb82c834674fcf (the freeze; the gate and the red-before slice exist from there, not at base 981c5e8b)"
+ },
+ "pointers": {
+  "lesson": "corpus/lessons/round-56.md ## Gate (R55.5 disposition)",
+  "motivation": "considerthese/2026-10-28.md (2026-10-28) proposal 1 — Receipt-existence linter for records"
+ },
+ "scope_not_covered": "byte-for-byte matching of a quoted counter line against committed stdout (a receipt naming the certified revision with fabricated numbers passes; see receipts/107-scope-gap-fabricated-line.txt)",
+ "distinct_from": [
+  86,
+  97,
+  99,
+  102,
+  103,
+  104,
+  105,
+  106
+ ],
+ "landing_dependencies": [
+  "corpus/lessons/round-56.md must exist at C0 with a ## Gate section",
+  "this seat's receipts dir must be committed in C0 (criterion 97 pointer resolution)",
+  "the registry cell, knowledge note and SKILL ## Standing rules line are other wave-1 seats' items"
+ ],
+ "receipts_dir": ".ufo/waves/round-56/w1/T56W1ScribeQuality-receipts",
+ "receipts": [
+  "107-base-state.txt",
+  "107-red-round54.txt",
+  "107-bound-control-round54.txt",
+  "107-red-round54-nopaths.txt",
+  "107-drift-count.txt",
+  "107-round54-accepted-set.txt",
+  "107-gate-selftest.txt",
+  "107-scratch-clone-demo.txt",
+  "107-scope-gap-fabricated-line.txt",
+  "107-pointer-resolution.txt"
+ ],
+ "findings": [
+  "F107-1 the --paths surface is the round's to declare; without --paths the same receipt reads RECEIPT_REV_MISMATCH (weaker code)",
+  "F107-2 proposal 1's quote half is unmined: a fabricated counter line on the certified rev passes the gate (receipts/107-scope-gap-fabricated-line.txt)",
+  "F107-3 QUALITY.md has 83 twice and no 85; next number derives as 107 via sort -n | tail -1",
+  "F107-4 this seat's receipts dir must be committed in C0 or criterion 97 fails on the criterion's own pointer",
+  "F107-5 hygiene note for the L1: .ufo/evidence/round-56/before/ and census-start.* are untracked at the freeze (the contract cites before/c1.stdout, before/c2.stdout)"
+ ]
+}

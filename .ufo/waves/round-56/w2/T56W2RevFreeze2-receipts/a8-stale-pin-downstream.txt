@@ -1,0 +1,36 @@
+# the stale freeze pin in the wave spec generators and the built specs
+--- .ufo/waves/round-56/build-spec-w1.py ---
+8:FREEZE = "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
+--- .ufo/waves/round-56/build-spec-w2.py ---
+12:FREEZE = "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
+--- .ufo/waves/round-56/build-spec-w3.py ---
+14:FREEZE = "21eb3c63cd0f3190c0deeb8953c6c91c7742cd68"
+
+# the wave-3 seat task that repeats the item's stale-freeze diff
+95:    f"Check `FROZEN_UNCHANGED` at PIN: `git -C {LANE} diff {FREEZE} {PIN} -- {E}/contract.json {E}/freeze.json {E}/c1/measure.py {E}/c1/lost-headings-at-base.json {E}/c2/measure.py {E}/control/frozen-surface.paths {E}/c2/red-before/round-54-surface.paths {E
+
+# c2/measure.py run at the ORIGINAL freeze vs at the AMENDED freeze (the gate suite grew 14 -> 19)
+--- rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf ---
+EXPLAIN arm1-selftest exit=0 14/14
+EXPLAIN arm2-red54 exit=3 codes=RECEIPT_REV_CONTENT_DRIFT old-gate-accepted=True
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 0/4
+C2_R56: rev=c3e2ca9f0207 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=0/4 total=2 C2_R56_PASS=false
+exit=1
+--- rev=21eb3c63cd0f3190c0deeb8953c6c91c7742cd68 ---
+EXPLAIN arm1-selftest exit=0 19/19
+EXPLAIN arm2-red54 exit=3 codes=RECEIPT_REV_CONTENT_DRIFT old-gate-accepted=True
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 0/4
+C2_R56: rev=21eb3c63cd0f selftest=19/19 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=0/4 total=2 C2_R56_PASS=false
+exit=1
+
+# the committed before/ receipt (taken at the original freeze, 14/14)
+EXPLAIN arm1-selftest exit=0 14/14
+EXPLAIN arm2-red54 exit=3 codes=RECEIPT_REV_CONTENT_DRIFT old-gate-accepted=True
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 0/4
+C2_R56: rev=c3e2ca9f0207 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=0/4 total=2 C2_R56_PASS=false

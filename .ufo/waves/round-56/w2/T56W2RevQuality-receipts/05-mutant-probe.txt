@@ -1,0 +1,33 @@
+### MUTATION PROBE: does criterion 107's named RED+GREEN pair discriminate a content-comparing gate
+### from a sha-equality-only gate? Mutant: replace the content comparison with 'sha differs => drift'.
+mutant written
+--- MUTANT on criterion 107 RED command
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 sha-only-mutant
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+--- MUTANT on criterion 107 GREEN command
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout role=positive revs=077d431e6996
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+--- MUTANT on the tool's own --selftest (the ONLY check that kills it)
+CASE matched-positive-accepted PASS
+CASE content-identical-positive-accepted FAIL
+CASE content-drift-refused PASS
+CASE strict-mismatch-refused PASS
+CASE absent-refused PASS
+CASE ambiguous-refused PASS
+CASE unresolvable-refused PASS
+CASE control-ancestors-accepted PASS
+CASE control-not-ancestor-refused PASS
+CASE digest-mismatch-refused PASS
+CASE required-line-refused PASS
+CASE missing-refused PASS
+CASE empty-refused PASS
+CASE codes-closed PASS
+CASE not-blob-refused PASS
+CASE json-rev-parsed PASS
+CASE unknown-role-refused PASS
+CASE zero-receipts-refused PASS
+CASE unresolvable-certified-refused PASS
+GATE_SELFTEST: 18/19 pass
+REAL_EXIT=1

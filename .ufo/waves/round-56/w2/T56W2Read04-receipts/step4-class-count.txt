@@ -1,0 +1,17 @@
+# R5 — step-4 parenthetical vs the note own by-class tally
+$ grep -n "off-by-one count\|dropped arm" corpus/knowledge/mutation-case-kimi-census.md | head -6
+44:| D1 | off-by-one count | K2 counted dir `counted: 18` → `17` (kimi-census.mjs:105) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 (incl. the exact baseline) |
+45:| D2 | off-by-one count (findings cap) | `findings.slice(0, 6)` → `slice(0, 5)` (kimi-census.mjs:378) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |
+47:| D4 | dropped arm | root-stray reporting loop deleted (kimi-census.mjs:351-353) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+48:| D5 | dropped arm (presence gate) | chain presence `gens.length > 0` → `true` (kimi-census.mjs:255) | 1 | `42/43 pass` / `FAIL` | **killed** | 1 |
+55:By class: off-by-one 1/2 · inverted condition 1/1 · dropped arm 2/2 · wrong mode pin 1/1 ·
+
+$ sed -n "55,57p" corpus/knowledge/mutation-case-kimi-census.md   # the note own by-class tally
+By class: off-by-one 1/2 · inverted condition 1/1 · dropped arm 2/2 · wrong mode pin 1/1 ·
+weakened predicate 1/1 · wrong exit mapping 1/1 · weakened secrecy pin 1/1 · wrong
+reported constant 0/1.
+
+$ sed -n "78,80p" corpus/knowledge/mutation-case-kagi-census.md   # bash by-class tally
+By class: wrong `-eq` 1/1 · numeric boundary 1/1 · inverted test 1/1 · dropped branch 1/2 ·
+off-by-one (length) 1/1 · off-by-one (count) 1/1 · wrong exit mapping 1/1 · inverted class select
+1/1 · reported-but-unasserted count 0/1.

@@ -1,0 +1,41 @@
+# FINDING 1 evidence — the byte-shape <tool>: ... vs the tokens the tools print at C0
+# clone: /fast/scratch/hyaku/tameshi-r56/T56W2Read07/clone (git clone --shared, checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378)
+
+$ for m in "tools/bash-witness-study.py selftest" "tools/env-diff.py --selftest"; do TMPDIR=<unusable> python3 $m; done
+--- tools/bash-witness-study.py selftest
+exit=2
+WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+--- tools/env-diff.py --selftest
+exit=2
+ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+
+$ TMPDIR=<unusable> python3 tools/env-diff.py --contract <contract> --out <out> --fleet-root <clone>
+exit=2
+ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+
+# for contrast, the four modes whose token IS the tool name
+--- tools/repeat-control.py --selftest
+exit=2
+repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+--- tools/registry-check.py --selftest
+exit=2
+registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+--- tools/pin-disposition.py --selftest
+exit=2
+pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+--- tools/evidence-disposition.py --selftest
+exit=2
+evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+--- tools/context-capture.py --selftest
+exit=2
+context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+
+# the registry cells at C0 quote each tool's real token (the r55 W2-TOOLDIFF-F3 fix)
+repeat-control-selftest -> "repeat-control: could-not-evaluate: cannot create clone scratch under
+bash-witness-selftest -> "WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under 
+pin-disposition-selftest -> "pin-disposition.py: could-not-evaluate: cannot create clone scratch u
+evidence-disposition-selftest -> "evidence-disposition.py: could-not-evaluate: cannot create clone scra
+context-capture-selftest -> "context-capture.py: could-not-evaluate: cannot create clone scratch u
+registry-check-selftest -> "registry-check: could-not-evaluate: cannot create clone scratch under
+env-diff-selftest -> "ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under 
+receipt-revision-gate-selftest -> Read-only on the lane: the receipt form `receipt-revision-gate.py --la

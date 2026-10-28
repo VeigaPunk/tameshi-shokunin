@@ -1,0 +1,43 @@
+diff --git i/tools/receipt-revision-gate.py w/tools/receipt-revision-gate.py
+index c93c135..3b72112 100755
+--- i/tools/receipt-revision-gate.py
++++ w/tools/receipt-revision-gate.py
+@@ -74,6 +74,17 @@ def drifted_paths(lane, rev_a, rev_b, paths):
+     """Return the listed paths whose bytes differ between two revisions."""
+     if not paths:
+         return ['<no --paths given: content identity is not checkable>']
++    # A pathspec is a pattern language, not a path list: one `:(exclude)…` line
++    # silently empties the comparison, and a path that exists at neither revision
++    # compares equal. Neither outcome is content identity; both are refusals.
++    for p in paths:
++        if p.startswith(':'):
++            return ['<pathspec-magic %s: content identity is not checkable>' % p]
++    absent = [p for p in paths
++              if any(git(['-C', lane, 'cat-file', '-e', '%s:%s' % (r, p)]).returncode != 0
++                     for r in (rev_a, rev_b))]
++    if absent:
++        return ['<absent %s: content identity is not checkable>' % absent[0]]
+     r = git(['-C', lane, 'diff', '--name-only', rev_a, rev_b, '--'] + list(paths))
+     return [p for p in r.stdout.decode().splitlines() if p]
+ 
+@@ -193,7 +204,8 @@ def run(argv):
+         codes, detail, revs = check(lane, full, path_list, receipt, receipt[1], receipt[2])
+         all_codes.extend(codes)
+         rows.append({'receipt': receipt[0], 'role': receipt[1], 'revs': revs,
+-                     'ok': not codes, 'codes': sorted(set(codes)), 'detail': detail})
++                     'ok': not codes, 'codes': sorted(set(codes)), 'detail': detail,
++                     'paths': None if path_list is None else len(path_list)})
+     refused = [r for r in rows if not r['ok']]
+     verdict = 'PASS' if not refused else 'REFUSED'
+     if as_json:
+@@ -201,8 +213,9 @@ def run(argv):
+                           'paths': path_list, 'receipts': rows, 'verdict': verdict}, indent=1))
+     else:
+         for r in rows:
+-            print('GATE %s %s role=%s revs=%s%s'
++            print('GATE %s %s role=%s paths=%s revs=%s%s'
+                   % ('OK' if r['ok'] else 'REFUSED', r['receipt'], r['role'],
++                     'none' if r['paths'] is None else r['paths'],
+                      ','.join(r['revs'] or []) or 'none',
+                      (' code=%s %s' % (','.join(r['codes']), r['detail'])) if r['codes'] else ''))
+         print('GATE: receipts=%d ok=%d refused=%d codes=%s verdict=%s'

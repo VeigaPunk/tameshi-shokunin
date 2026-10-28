@@ -1,0 +1,41 @@
+{
+  "schema": "tameshi-reader-report-r56",
+  "seat": "T56W2Read04",
+  "heading": "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+  "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "section_sha256": "77d88c0226463dfc97f0074a5cafedc1044be0a2a16c85fbb6237ac06a5140da",
+  "section_start": 159,
+  "section_end": 273,
+  "sectionize": "Frozen .ufo/evidence/round-18/measure.py loaded with importlib; raw SKILL.md obtained with git show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md; sectionize returned start=159, end=273, sha256=77d88c0226463dfc97f0074a5cafedc1044be0a2a16c85fbb6237ac06a5140da.",
+  "findings": [
+    {
+      "quote": "two of the JS ten share a class — the :47-48 pair",
+      "why": "The parenthetical undercounts shared-class defects in the cited Kimi manifest. Its table has D1 `off-by-one count` and D2 `off-by-one count (findings cap)` at :44-45, plus D4/D5 `dropped arm` at :47-48. The note's own by-class tally at :55-57 groups these as `off-by-one 1/2` and `dropped arm 2/2`: two duplicated classes, four of ten defects, not one pair. The bash example is consistent with its tally (`dropped branch 1/2` at Kagi :78-80).",
+      "command": "python3 - <<'PY'\np='corpus/knowledge/mutation-case-kimi-census.md'\nlines=open(p, encoding='utf-8').read().split('\\n')\nfor i in (44,45,47,48,55,56,57): print(f'{i}: {lines[i-1]}')\nPY",
+      "output": "44: | D1 | off-by-one count | K2 counted dir `counted: 18` → `17` (kimi-census.mjs:105) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 (incl. the exact baseline) |\n45: | D2 | off-by-one count (findings cap) | `findings.slice(0, 6)` → `slice(0, 5)` (kimi-census.mjs:378) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |\n47: | D4 | dropped arm | root-stray reporting loop deleted (kimi-census.mjs:351-353) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |\n48: | D5 | dropped arm (presence gate) | chain presence `gens.length > 0` → `true` (kimi-census.mjs:255) | 1 | `42/43 pass` / `FAIL` | **killed** | 1 |\n55: By class: off-by-one 1/2 · inverted condition 1/1 · dropped arm 2/2 · wrong mode pin 1/1 ·\n56: weakened predicate 1/1 · wrong exit mapping 1/1 · weakened secrecy pin 1/1 · wrong\n57: reported constant 0/1."
+    }
+  ],
+  "notes": [
+    "Step 5 names a `--check` uniqueness gate and requires literal `all unique`, but the historical `mutate_driver.py` is absent from this tree and the maintained `tools/mutate-and-run.sh` rejects `--check` (exit 64). Its APPLY output differs; Restore discipline item 6 discloses the historical driver is one-off/not in-tree, but this section does not provide a runnable substitute for a new sweep.",
+    "The next section says `One defect per class per sweep` (SKILL.md:276-278), whereas this section says `at least one per class` and points to examples with repeated classes; clarify which governs new sweeps.",
+    "The JS shared-class parenthetical omits D1/D2 at Kimi :44-45; the note's own by-class tally at :55-57 shows `off-by-one 1/2` as well as `dropped arm 2/2`.",
+    "The model citation names Kimi §1 and §3-§6 but omits §2 (surviving-defect analysis), although step 8 cites Kimi :82-99 from §2.",
+    "This section uses the current `$HYAKU_SCRATCH/<lane>-r<round>/<sub>/` shape, while the historical Kill-rate bands section and appendices retain `/tmp/<lane>-r<round>-<n>-work/`; the former matches Standing rules, the latter is historical wording.",
+    "The recipe does not designate a concrete target artifact in step 1; round-16 CR04a reported this as a minor gap, resolving it by choosing the cited Kimi model artifact.",
+    "The maintained driver adjudicates KILLED on nonzero exit alone, while step 7 requires verdict/count adjudication. In a scratch fixture, the mutant printed `SELFTEST: FAIL (1 cases)` but exited 0; the driver recorded SURVIVED. The section names the maintained driver for other behaviors but does not state which verdict rule governs."
+  ],
+  "commands": [
+    "python3 - <<'PY' [importlib-load frozen round-18 measure.py; git show C0:SKILL.md; sectionize(raw)]",
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md",
+    "git status --porcelain -- SKILL.md",
+    "python3 - <<'PY' [print Kimi census lines 44-45,47-48,55-57]",
+    "bash tools/mutate-and-run.sh --check",
+    "timeout 240 bash tools/mutate-and-run.sh --selftest",
+    "bash tools/mutate-and-run.sh --target <scratch-target> --defects <scratch-spec> --suite 'bash \"$MUTANT\" --selftest' --workdir <scratch-work> --label demo2",
+    "grep -rn 'all unique' <scratch-work> (no matches in maintained-driver evidence)",
+    "find . -name 'mutate_driver*' -not -path './.git/*'",
+    "python3 .ufo/evidence/kaika-round-1/coldread/check_uniqueness.py <scratch-spec> <scratch-target>",
+    "timeout 300 bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi"
+  ],
+  "verdict": "gap-minor"
+}

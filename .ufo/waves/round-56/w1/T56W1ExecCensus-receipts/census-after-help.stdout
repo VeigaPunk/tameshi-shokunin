@@ -1,0 +1,29 @@
+# census-after.sh — round-56 after-harness for corpus/SOURCES.md.
+#
+# Runs the fleet census (scripts/sources-census.sh) unchanged, prints
+# `CENSUS exit=N rows=M`, then shape-checks every row NEW relative to --base:
+#   11 columns · no literal or escaped pipe · ISO `opened` · valid `status`.
+# Read-only: never writes the registry; writes only stdout or --out.
+#
+#   census-after.sh [--lane DIR] [--root DIR] [--sources PATH] [--base REV]
+#                   [--label NAME] [--shape-only] [--out PATH]
+#
+#   --lane DIR      lane repo (default /home/vgpnk/Projects/shokunin/tameshi-shokunin)
+#   --root DIR      fleet root handed to sources-census.sh (default its parent)
+#   --sources PATH  registry to shape-check (default LANE/corpus/SOURCES.md);
+#                   when it is not the lane file, the census runs with --file
+#   --base REV      revision whose registry defines "old" rows
+#                   (default: the `base` field of .ufo/evidence/round-56/contract.json)
+#   --label NAME    label for the shape lines (default: lane id, or the dir above corpus/)
+#   --shape-only    skip the census run and shape-check only
+#
+# Output: the census's own TSV, then
+#   CENSUS exit=N rows=M                      (exact line, always printed)
+#   CENSUS_ROWS_SELFCHECK census=M grep=G     (registry rows seen by each reader)
+#   CENSUS_SHAPE<TAB>lane<TAB>id<TAB>CODE<TAB>detail   (one per finding)
+#   CENSUS_SHAPE new_rows=K findings=F
+#
+# Codes: SHAPE_COLUMNS (11 columns) · SHAPE_PIPE (literal or escaped pipe)
+#        · SHAPE_OPENED (ISO date, real calendar day, not future)
+#        · SHAPE_STATUS (queued|mined|rejected) · SHAPE_SECTION (row outside ## Registry)
+#

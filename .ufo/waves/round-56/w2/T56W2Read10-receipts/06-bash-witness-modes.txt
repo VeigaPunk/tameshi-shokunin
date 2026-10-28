@@ -1,0 +1,26 @@
+# 06 bash-witness-study selftest + count + check + run + rerun + usage
+--- selftest:
+  check private root is removed                      ok
+WITNESS_SELFTEST: 51/51 pass
+VERDICT: PASS
+EXIT=0
+--- count:
+counts	killed_on_witness=8	accidental=0	survived=2	inconclusive=0	total=10	witness_classified=10
+declared_none	B5,B10
+unresolved	none
+EXIT=0
+--- check:
+WITNESS_CHECK: DRIFT tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda committed=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+WITNESS_CHECK: FAIL (1 problems; 96 files covered)
+EXIT=1
+--- run:
+WITNESS_STUDY: CANNOT-EVALUATE (runner-drift tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda committed=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5)
+EXIT=2
+--- rerun:
+WITNESS_STUDY: CANNOT-EVALUATE (runner-drift tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda committed=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5)
+EXIT=2
+--- usage (argparse) => 64:
+usage: bash-witness-study.py [-h] [--evidence EVIDENCE] [--kagi KAGI]
+                             {declare,run,rerun,count,check,selftest} ...
+bash-witness-study.py: error: the following arguments are required: mode
+EXIT=64

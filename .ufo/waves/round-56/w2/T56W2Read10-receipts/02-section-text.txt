@@ -1,0 +1,19 @@
+# 02 section text at C0 (lines 1541-1558)
+### Gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| repeated pristine controls | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...` or `--snapshot DIR` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/repeat-control.py --selftest` | `.ufo/evidence/round-12/ControlGate/expected.json`, `mismatch/expected.json`; literal expected IDs/exits in tool selftest | fresh caller-selected DIR; isolated `$TMPDIR` selftest tree (`tameshi-r12-*`); snapshot read-only | tameshi |
+| bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage only (argparse) | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `$TMPDIR` selftest tree (`bash-witness-selftest-private.*`, selftest only); sibling object store read-only | tameshi |
+
+Registry scope is these round-12 instruments; no new conformance assertion is
+made about the historical runner. Witness declarations are integrity-frozen (declaration, mapping, target, spec, summary; `manifest.json` itself is not pinned, seat ReRead08),
+not blind: before declaring, their author had seen the source, the spec, the recorded aggregate outcomes and the per-defect KILLED/SURVIVED entries (`.ufo/evidence/round-12/BashWitness/declaration.json`; seat ReRead08). The declaration's runner pin `75ed934d…` is stale at round 27 (`check` exits 1 DRIFT; `run`/`rerun` refuse, exit 2; `count` never reads the runner; seat Read25, `.ufo/waves/round-27/w1/Read25.md`). The bash study
+deepens one recorded case, never a seventh independently measured gate.
+
+Calibration correction to the historical promotion paragraph above:
+`SHONEN.md` box 3 carried a scope-bounded `[~]` at round 12, not `[ ]`;
+`corpus/lessons/round-1-verifier-spotcheck.md` excludes it from the score.
+Appending this registry does not extend the earlier Appendix A/B cold-read
+to new material or establish full-page instruction sufficiency.
+

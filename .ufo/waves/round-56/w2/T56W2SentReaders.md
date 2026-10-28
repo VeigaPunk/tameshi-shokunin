@@ -1,0 +1,49 @@
+# T56W2SentReaders — reader-report tampering / bind-path audit
+
+## Scope and method
+
+Attacked the round-56 reader-validation/bind path in scratch clones checked out at C0 `c0137451f5b7f22d65f748fc69f1b181f55e1378`. Each fixture had 18 synthetic reports computed with the frozen round-18 `sectionize` (blob SHA-256 `7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37`) so unrelated headings did not obscure each probe. Ran `.ufo/waves/round-56/validate-readers.py` at each fixture commit and `.ufo/waves/round-55/w1/T55W1ExecReKeyDryBind-receipts/binder-r55.py` against the synthetic wave dir. The faithful bind reruns placed OUT inside the fixture lane, then ran the frozen C1 counter at the bound commit. No production files or frozen instruments were edited.
+
+## Required five cases
+
+All commands below were run from the scratch harness; exact driver and inputs are in `T56W2SentReaders-receipts/harness.py` and `scenarios.jsonl`. Validator invocation was `python3 <lane>/.ufo/waves/round-56/validate-readers.py --lane <fixture> --rev <scenario-rev> --c0 c0137451f5b7f22d65f748fc69f1b181f55e1378 --work <empty-dir> --explain`. Binder invocation was `python3 <lane>/.ufo/waves/round-55/w1/T55W1ExecReKeyDryBind-receipts/binder-r55.py <fixture> c0137451f5b7f22d65f748fc69f1b181f55e1378 c0137451f5b7f22d65f748fc69f1b181f55e1378 <out> --headings <frozen-headings.json> --waves .ufo/waves/round-56/w2 --resolutions /nonexistent/round-56-resolutions.json --label 'T56W2SentReaders harness'`.
+
+| Case | Validator result | Binder result | Reaches ledger without validator? |
+|---|---|---|---|
+| 1. Correct section hash, `cand=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1` | exit 1: `REFUSE READER_CAND_MISMATCH ... cand=981c5e8b20a2 c0=c0137451f5b7` | exit 1: `SKIP ## Context gate classification and explicit exit classes — r no-clean-reader`; `REFRESH rekeyed=17 skipped=1 headings=18` | **No.** |
+| 2. Correct JSON, no sibling `.md` | exit 1: `REFUSE READER_MD_MISSING ... no committed sibling .../T56W2Read01.md` | exit 1: `SKIP ## Context gate classification and explicit exit classes — r reader-md-missing`; `REFRESH rekeyed=17 skipped=1 headings=18` | **No.** |
+| 3. Correct heading, sibling section's hash (`6110606e…` instead of this section's `132cfb9e…`) | exit 1: `REFUSE READER_HASH_MISMATCH ... c0-sha256=132cfb9ef1aa` | exit 1: `SKIP ## Context gate classification and explicit exit classes — r no-clean-reader`; `REFRESH rekeyed=17 skipped=1 headings=18` | **No.** |
+| 4. `findings: "looks fine to me"` (non-empty string) | exit 1: `REFUSE READER_FINDINGS_NOT_LIST ... findings='str'` | exit 1: `SKIP ## Context gate classification and explicit exit classes — r reader-has-findings:16>0`; `REFRESH rekeyed=17 skipped=1 headings=18` | **This instance: no**, but the binder counts string characters rather than rejecting the type. Empty string and allowance cases below do reach the ledger. |
+| 5. Two reports for one heading, one correct hash and one sibling hash | exit 1 overall: `REFUSE READER_HASH_MISMATCH ... T56W2Read01b.json`; verdict says `passed=18/18 ... refusals=1 ... READERS_R56_PASS=false` | exit 0: `REFRESH rekeyed=18 skipped=0 headings=18`; binds the valid report and does not record the conflicting file | **Yes, the valid one.** Conflict is silently omitted from the ledger. |
+
+### Direct answer: which of the five can reach the ledger if validation is omitted?
+
+Cases 1–3 are refused by the binder and produce a `SKIP`, so they do not bind that heading. Case 4 is not type-safe: the tested non-empty string is skipped only because its character count exceeds the zero default allowance. The empty-string variant is treated as `[]` and **does** bind with `minor_gaps=0`. Case 5 binds the first candidate that matches heading/C0/hash and silently ignores the conflicting report; it produces no `SKIP`.
+
+Confirmed with the round-56 resolutions file too: for `## Standing rules` (adjudicated allowance 3), `findings: "abc"` was accepted by the binder and recorded as `minor_gaps=3`; `findings: "x"` was recorded as `minor_gaps=1`. Both validator runs refused with `READER_FINDINGS_NOT_LIST`. Thus a malformed string can be reinterpreted as the number of findings when an allowance is configured.
+
+## Additional bind-path failures observed
+
+1. **Validator is not in the bind script.** `grep -n 'validate-readers\|VALIDATOR' .ufo/waves/round-56/bind.sh` produced no matches (exit 1). The wave-1 validator is therefore not a gate in the provided bind sequence. Smallest fix: after the reader-report commit, call the validator with `--rev` set to that commit and `--c0 "$C0"`; abort before binding on nonzero exit.
+2. **Receipt JSONs poison the validator's recursive glob.** The validator uses recursive `git ls-tree -r` over each wave directory, then matches `/T56W\d+.*Read.*\.json$`; it does not restrict the report to a direct child. In a scratch clone, a normal seat receipt path `.ufo/waves/round-56/w2/T56W2Read02-receipts/01-live-dispositions.json` produced `REFUSE READER_HEADING_MISSING ... heading=None` and `READERS_R56_PASS=false` despite 18/18 valid reports. A receipt JSON carrying a heading produced five refusals (`CAND_MISMATCH`, `HASH_MISMATCH`, `FINDINGS_NOT_LIST`, `COMMANDS_EMPTY`, `MD_MISSING`). The same file under `T56W2MutGateOnC0-receipts/` did not match and validation passed. The live W2 tree already contains `.json` files below `T56W2Read02-receipts/`; once committed, these will poison a validator run. Smallest fix: make the validator inspect only direct report files (or explicitly exclude `*-receipts/`) and keep the exact report-name predicate.
+3. **Unvalidated file can be bound.** In a fixture, `AA-binder-pick.json` carried a correct heading/C0/hash but `commands=[]`, with an empty `.md`. The validator passed because it only considers `T56W*Read*.json`; the binder's broad `*.json` glob bound this earlier-sorting file. The ledger's new entry named `AA-binder-pick.json`. Smallest fix: make the binder and validator consume the same exact committed file set.
+4. **Working-tree TOCTOU.** Validator passed the committed report at REV. Before binding, replaced its working-tree copy with `commands=[]` and an empty `.md`. Binder still returned `REFRESH rekeyed=18 skipped=0 headings=18` and recorded that report path. Validator reads git blobs at REV; binder uses `Path(f).read_text()` and `Path(...).exists()` on the live tree. Smallest fix: have the binder read the same committed report blobs at the validated revision (or bind/report-blob digests and enforce equality).
+5. **Binder ignores `.md` contents and `commands`.** An empty `.md` and a report with `commands=[]` were each bound (18/18, no `SKIP`); validator refused them (`READER_MD_MISSING`, and `READER_COMMANDS_EMPTY` plus `READER_MD_MISSING`). The binder only checks that the `.md` path exists. This makes the validator integration essential, not optional.
+6. **Duplicate selection is order-sensitive.** With a second same-heading report sorting before the clean one and carrying one finding, validator returned PASS, but binder stopped at the first candidate and printed `SKIP ... reader-has-findings:1>0` instead of trying the clean candidate. Conversely, the required two-hash case bound the clean candidate and omitted the conflicting one without warning. Smallest fix: reject duplicates explicitly, or validate one canonical report per heading and pass that exact path to the binder.
+
+The faithful bind/counter run confirms the consequences: the empty-string case and the extra invalid-report cases still yielded `arm4-readers 18/18`, `credited=64 lost=0`, `monitor=8/64`; the remaining `total=1` was the unrelated standing-row restatement arm. Cases the binder skipped showed only 17 re-keyed entries and `lost=1`. The counter's arm 4 checks heading/C0/hash, not report schema, `.md`, or command evidence.
+
+## Severity and smallest remediation
+
+- **High — validator absent from bind path; recursive receipt paths can make the validator itself fail.** A strict validator gate is currently not called by `bind.sh`; adding it without narrowing the recursive report search would also make reader-seat receipt JSONs block the gate. Wire the validator after reports are committed, and scope it to intended direct-child report paths.
+- **High — validator/binder input mismatch.** Binder reads a broader, live working-tree set than the validator's committed report set. A non-validator file or post-validation working-tree edit can be bound. Use one pinned committed report set for both stages and record the bound report blob hash.
+- **Medium — malformed findings accepted/reinterpreted.** Require a list before calling `len`; do not let falsy non-list values become an empty list or count string characters.
+- **Medium — duplicate reports can be silently omitted or block valid reports by order.** Refuse duplicate heading reports or select a single explicit, validated path; do not `break` on a rejected candidate while ignoring later reports.
+- **Medium — binder does not enforce command/Markdown evidence.** Enforce the validator's schema/content checks at the binding boundary, or make the validator a mandatory gate over the exact blobs the binder consumes.
+
+## Evidence and verification
+
+- Validator selftest: `python3 .ufo/waves/round-56/validate-readers.py --selftest` → `SELFTEST: cases=30 failed=0` (receipt: `validator-selftest.txt`).
+- Sources census: `bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` → exit 0, `tameshi ok .../corpus/SOURCES.md`.
+- No tools installed or updated.
+- Harness results, ledger-entry extracts, and receipt-glob probes are under `.ufo/waves/round-56/w2/T56W2SentReaders-receipts/`. Machine-readable results use `.jsonl` rather than `.json` so this audit's own receipts cannot match the validator's reader-report glob.

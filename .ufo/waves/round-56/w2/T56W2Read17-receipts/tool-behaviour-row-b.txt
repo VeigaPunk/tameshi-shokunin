@@ -1,0 +1,23 @@
+# T56W2Read17 receipts — row (b) tool behaviour at C0
+# clone at C0 c0137451f5b7f22d65f748fc69f1b181f55e1378
+
+== A. the tool's selftest (the section asserts the SETUP exit class) ==
+$ bash tools/mutate-and-run.sh --selftest
+PASS missing --target exits 64
+PASS --regression refuses --target (exit 64)
+MUTATE_SELFTEST: 107/107 pass
+VERDICT: PASS
+rc=0
+
+== B. spec-parse failure: row (b) says 'MUTATE: SETUP, exit 2, no headline' ==
+$ bash tools/mutate-and-run.sh --target <w>/target.sh --defects <w>/spec.txt --suite ...
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r56/T56W2Read17/w1/target.sh sha256=73cb3858a687a8494ca3323053016282f3dad39d42cf62ca4e79dda2aac7d9ac bytes=2
+spec: line 1: unrecognized line: 'notpresent old string'
+MUTATE: SETUP (spec parse failed)
+rc=2   (no 'MUTATE: DONE' headline printed)
+
+== C. red control: same exit class ==
+CONTROL: RED (exit=1 duration-ms=2 pristine-sha256=5dbad7dd0b9b122dcd9956884390f4aac4738caba8ff53498a7ab6718b176c30)
+  | (no output)
+MUTATE: SETUP (control run on the pristine copy is red (exit=1); cannot attribute kills; log: /fast/scratch/hyaku/tameshi-r56/T56W2Read17/w2/wd/evidence/control.out)
+rc=2

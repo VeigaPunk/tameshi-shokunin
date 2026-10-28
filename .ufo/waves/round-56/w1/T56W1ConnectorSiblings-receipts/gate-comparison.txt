@@ -1,0 +1,30 @@
+# four receipt gates on the two real receipts the lane already accepted
+
+## tameshi tools/receipt-revision-gate.py (the C2 surface), certified c3e2ca9f0207
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-b.stdout role=positive revs=077d431e6996,7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+rc=3
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/after/c2.stdout role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+rc=3
+
+## chousa corpus/evidence/round51/receipt-check.py (QUALITY 84) --root tameshi --tip c3e2ca9f0207
+RECEIPT_NO_REV /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-b.stdout
+RECEIPT_NO_REV /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/after/c2.stdout
+CHECKS=2 OK=0 FAILS=2
+RECEIPT_CHECK=FAIL
+rc=1
+
+## kotodama tools/check-receipt-seq.py (QUALITY 17/19) --root tameshi
+SEQ-/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-b.stdout FAIL missing_headers=['stamped', 'evaluated', 'measured', 'tree']
+SEQ-/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/after/c2.stdout FAIL missing_headers=['stamped', 'evaluated', 'measured', 'tree']
+RECEIPT-SEQ: FAIL
+rc=1
+
+## souji tools/souji-receipt-run.py verify (Q55) --root tameshi
+RECEIPT-MALFORMED	header order or fences do not match receipt v1
+rc=2
+
+## tsukuroi tools/check-report-receipts.py (QUALITY 77) on a tameshi lesson
+{"cited": 0, "unreceipted": 0}
+rc=0

@@ -1,0 +1,41 @@
+fixture: /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture (git init, one commit, toplevel asserted)
+contract.frozen_paths = ["tools/t.py", ".ufo/evidence/round-21/m.py", ".ufo/evidence/round-48/q.sh", ".ufo/evidence/round-56/c1/measure.py", ".ufo/evidence/round-56/freeze.json"]
+
+== C1: both implementations on a manifest mapped the deciding-run.sh way
+$ python3 freeze-gen.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture --rev 7f73fe3fe15d --explain
+FREEZE_GEN_LANE /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture
+FREEZE_GEN_REV 7f73fe3fe15d10cad7c29bff6c74d345e83a4390
+FREEZE_GEN_CONTRACT .ufo/evidence/round-56/contract.json
+FREEZE_GEN_SELF .ufo/evidence/round-56/freeze.json listed=yes
+FREEZE_GEN_FILE .ufo/evidence/round-21/m.py path=.ufo/evidence/round-21/m.py sha256=f80f87866b6c8baf118ef62c04d6eb02cf11def5cd6bd4a5cda6da5be988c736
+FREEZE_GEN_FILE .ufo/evidence/round-48/q.sh path=.ufo/evidence/round-48/q.sh sha256=f960fa2bc2078bf24643310261937fdf1d7db82b20cea28e8c5a03c33ec6107e
+FREEZE_GEN_FILE c1/measure.py path=.ufo/evidence/round-56/c1/measure.py sha256=468baf8deea42076a8ad0f060073de71b21e634d394a5f8796c9ccde30f6df5f
+FREEZE_GEN_FILE tools/t.py path=tools/t.py sha256=9bdd302c5a3e42c57ebce0872447de0efbae4ce0c6d07d9c3db5d0cf80ac4c26
+FREEZE_GEN_SET regenerated=4 manifest=4 amendments=0
+FREEZE_GEN: files=4 ok
+exit=0
+$ python3 <deciding-run.sh heredoc, verbatim> /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture 7f73fe3fe15d .ufo/evidence/round-56
+FREEZE_INTEGRITY: OK files=4 amendments=0
+exit=0
+
+== C2: decoy files under the round dir + a manifest mapped the naive way
+decoys: .ufo/evidence/round-56/.ufo/evidence/round-21/m.py, .ufo/evidence/round-56/.ufo/evidence/round-48/q.sh
+$ python3 freeze-gen.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture --rev ae4eb97a2bee
+FREEZE_GEN: files=4 MISMATCH
+FREEZE_GEN_MISMATCH .ufo/evidence/round-21/m.py f80f87866b6c != f3ce9d2bd7d8
+FREEZE_GEN_MISMATCH .ufo/evidence/round-48/q.sh f960fa2bc207 != 7a5d4ebc8c30
+FREEZE_GEN_MISMATCH tools/t.py 9bdd302c5a3e != 64d79f232eba
+exit=1
+$ python3 <deciding-run.sh heredoc> /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture ae4eb97a2bee .ufo/evidence/round-56
+FREEZE_INTEGRITY: MISMATCH files=4 amendments=0
+FREEZE_MISMATCH .ufo/evidence/round-21/m.py f80f87866b6c != f3ce9d2bd7d8
+FREEZE_MISMATCH .ufo/evidence/round-48/q.sh f960fa2bc207 != 7a5d4ebc8c30
+FREEZE_MISMATCH tools/t.py 9bdd302c5a3e != 64d79f232eba
+exit=1
+$ python3 naive.py /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/fixture ae4eb97a2bee   (negative control: everything relative to the round dir)
+NAIVE_MAPPING: ok []
+
+freeze-gen and deciding-run.sh agree on both fixtures (ok, then MISMATCH on the same
+three verbatim keys: tools/t.py, .ufo/evidence/round-21/m.py, .ufo/evidence/round-48/q.sh);
+the naive all-relative mapping accepts the decoy manifest, so the verbatim rule is
+load-bearing and both implementations implement the same one.

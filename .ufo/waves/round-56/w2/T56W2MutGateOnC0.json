@@ -1,0 +1,273 @@
+{
+ "schema": "tameshi-seat-report-v1",
+ "seat": "T56W2MutGateOnC0",
+ "role": "mutation-tester",
+ "axis": "operability",
+ "milestone": "gate mutants against C0",
+ "round": 56,
+ "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+ "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "frozen_instruments": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "subject": {
+  "path": "tools/receipt-revision-gate.py",
+  "sha256_at_c0": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+  "lines": 359,
+  "baseline_selftest": "19/19 pass",
+  "baseline_exit": 0,
+  "freeze_pin_verified_at_c0": true
+ },
+ "required_mutant_set": {
+  "count": 8,
+  "killed": 8,
+  "survived": 0,
+  "inconclusive": 0,
+  "mutants": [
+   {
+    "id": "M1",
+    "name": "drop-RECEIPT_REV_ABSENT",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "absent-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "crash-or-other-exit",
+    "mutant_sha256": "3aec50e68c26a8eb5a15967398611b157cbead088fa418841010f6b25b9a06d7",
+    "restored_exact": true,
+    "note": "kill is the case assertion; the mutant dies IndexError in the child, it is not a silent acceptance",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "    if not revs:\n        codes.append('RECEIPT_REV_ABSENT')  ->      if False and not revs:\n        codes.append('RECEIPT_REV_ABSENT')"
+   },
+   {
+    "id": "M2",
+    "name": "drifted_paths-returns-empty",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "content-drift-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "silent-acceptance",
+    "restored_exact": true,
+    "note": "re-anchored to the C0 return site (the wave-1 anchor text gained a '+ gone' suffix at C0)",
+    "mutant_sha256": "384b6089da36a62b7c1a194e962e434926f52e26affb983f5432c2e0debfc30b",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "    return [p for p in r.stdout.decode().splitlines() if p] + gone  ->      return []"
+   },
+   {
+    "id": "M3",
+    "name": "is_ancestor-always-true",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "control-not-ancestor-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "silent-acceptance",
+    "restored_exact": true,
+    "mutant_sha256": "38594a200dd7f2aba6330632d6383a5583dafa51ec46b4eb1e4c45fd0b11f433",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "    return git(['-C', lane, 'merge-base', '--is-ancestor', older, newer]).returncode == 0  ->      return True"
+   },
+   {
+    "id": "M4",
+    "name": "skip-digest-check",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "digest-mismatch-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "silent-acceptance",
+    "restored_exact": true,
+    "mutant_sha256": "ffd5f9a58e1997f7e13fffdf21ff280fae00655fe500d6090be98f92e8c03295",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "        if want != got:\n            codes.append('RECEIPT_DIGEST_MISMATCH')  ->          if False and want != got:\n            codes.append('RECEIPT_DIGEST_MISMATCH')"
+   },
+   {
+    "id": "M5",
+    "name": "allow-multiple-revs-in-positive-role",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "ambiguous-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "silent-acceptance",
+    "restored_exact": true,
+    "mutant_sha256": "ca921f3628f0ebcd1105e08e34763901f76e6948830068d19a35352457ecf990",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "        if len(revs) > 1:\n            codes.append('RECEIPT_REV_AMBIGUOUS')  ->          if False and len(revs) > 1:\n            codes.append('RECEIPT_REV_AMBIGUOUS')"
+   },
+   {
+    "id": "M6",
+    "name": "skip-required-line-check",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "required-line-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "silent-acceptance",
+    "restored_exact": true,
+    "mutant_sha256": "58e7647b877ac30f4cb1a8d92f59792d444c8fa6ccd71cbec52e0b29207f6747",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "    if regex is not None and not re.search(regex, text, re.M):  ->      if False and regex is not None and not re.search(regex, text, re.M):"
+   },
+   {
+    "id": "M7",
+    "name": "empty-file-treated-as-present",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "empty-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "degraded-refusal-other-code",
+    "restored_exact": true,
+    "note": "the mutant still refuses but under RECEIPT_REV_ABSENT instead of RECEIPT_EMPTY",
+    "mutant_sha256": "91bd2ece0d95ce8366297e73078fb00c68942e9e72d731d4558795b5d21681b5",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "    if not data.strip():\n        return ['RECEIPT_EMPTY'], 'path=%s' % path, None  ->      if False and not data.strip():\n        return ['RECEIPT_EMPTY'], 'path=%s' % path, None"
+   },
+   {
+    "id": "M8",
+    "name": "drop-RECEIPT_CONTROL_NOT_ANCESTOR",
+    "verdict": "KILLED",
+    "selftest_tally": "18/19",
+    "exit": 1,
+    "failing_cases": [
+     "control-not-ancestor-refused"
+    ],
+    "expected_case_failed": true,
+    "protection_removed": true,
+    "severity": "silent-acceptance",
+    "restored_exact": true,
+    "mutant_sha256": "778b1c6dc2cfae5da8ba0cab38d45bc6f0941079a2b09b657b3766a22b11ca52",
+    "pristine_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "restored_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "old_occurrences": 1,
+    "exact_edit": "            codes.append('RECEIPT_CONTROL_NOT_ANCESTOR')  ->              pass  # mutant: drop RECEIPT_CONTROL_NOT_ANCESTOR"
+   }
+  ]
+ },
+ "wave1_survivors_rechecked": {
+  "count": 6,
+  "killed": 6,
+  "survived": 0,
+  "detail": [
+   {
+    "id": "X1",
+    "wave1": "SURVIVED 14/14",
+    "c0": "KILLED 18/19",
+    "case": "codes-closed"
+   },
+   {
+    "id": "X2",
+    "wave1": "KILLED",
+    "c0": "KILLED 18/19",
+    "case": "unresolvable-refused"
+   },
+   {
+    "id": "X3",
+    "wave1": "SURVIVED 14/14",
+    "c0": "KILLED 18/19",
+    "case": "json-rev-parsed"
+   },
+   {
+    "id": "X4",
+    "wave1": "SURVIVED 14/14",
+    "c0": "KILLED 18/19",
+    "case": "unknown-role-refused"
+   },
+   {
+    "id": "X5",
+    "wave1": "SURVIVED 14/14",
+    "c0": "KILLED 18/19",
+    "case": "zero-receipts-refused"
+   },
+   {
+    "id": "X6",
+    "wave1": "SURVIVED 14/14",
+    "c0": "KILLED 18/19",
+    "case": "unresolvable-certified-refused"
+   }
+  ]
+ },
+ "findings": [
+  {
+   "id": "M2b-coverage-hole",
+   "severity": "minor-report-only",
+   "verdict": "SURVIVED",
+   "statement": "The '<no --paths given: content identity is not checkable>' early return inside drifted_paths() is not pinned by any case of the 19-case selftest. A single exact edit replacing it with '[]' survives the whole suite (19/19 pass, exit 0) and makes the gate ACCEPT a receipt whose rev= differs from the certified revision, when the declared surface is empty.",
+   "command": "python3 M2b-gate.py --selftest",
+   "output": "GATE_SELFTEST: 19/19 pass  (exit 0, no CASE FAIL line)",
+   "consequence_command": "receipt-revision-gate.py --lane REPO --certified <c1> --paths EMPTY.paths --receipt r.txt:positive",
+   "consequence_output": "pristine: exit 3, code=RECEIPT_REV_CONTENT_DRIFT drift=<no --paths given: content identity is not checkable>; mutant: exit 0, GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS",
+   "not_a_c0_regression": "the same edit also survives the wave-1 gate (14/14 pass) \u2014 wave 1's amendment did not reach it",
+   "reachable_in_this_round": false,
+   "reachable_note": "both path files the C2 counter feeds the gate are non-empty (7 and 16 lines); with --paths omitted the gate raises the pinned RECEIPT_REV_MISMATCH instead",
+   "receipt": ".ufo/waves/round-56/w2/T56W2MutGateOnC0-receipts/09-M2b-coverage-hole.txt",
+   "recommendation": "report-only; the gate is a frozen instrument and the L1 integrates. A one-case addition (an empty --paths file must be refused with RECEIPT_REV_CONTENT_DRIFT) closes it in a later round."
+  }
+ ],
+ "notes": [
+  "The C0 gate is not the wave-1 gate: amendment commit 21eb3c6 grew it from 331 to 359 lines and from 14 to 19 selftest cases. Six of the eight wave-1 anchors replay byte-identically; M1 and M2 had to be re-expressed as the same semantic single edit against the C0 bytes (M1 gained a detail line, M2's return gained '+ gone').",
+  "Six of the eight mutants remove their protection by silently accepting (exit 0, verdict=PASS) a receipt the pristine gate refuses; M1 dies with IndexError instead, M7 refuses under a different code.",
+  "The C2 counter's gate arms behave correctly at C0: selftest 19/19 and the three real red-before receipts refused with their named codes RECEIPT_REV_CONTENT_DRIFT / RECEIPT_REV_UNRESOLVABLE / RECEIPT_REV_ABSENT. arm5 is own-receipts-missing because controls.sh has not run at this revision \u2014 pre-bind state, owned by the executor seat.",
+  "All 12 freeze.json file pins re-computed from the C0 tree: 0 mismatches.",
+  "Census validate exited 0 (pre-existing W04 duplicate-URL warnings).",
+  "Tooling: none installed or upgraded. Host python3 3.14.8, git 2.56.0 as found."
+ ],
+ "commands": [
+  "python3 tools/receipt-revision-gate.py --selftest",
+  "git clone --shared <lane> $S/mN && git -C $S/mN checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "python3 $S/driver.py   # the 8 mutants, one exact edit each, fresh clone per mutant",
+  "python3 $S/probe.py    # pristine-vs-mutant behaviour on identical inputs",
+  "python3 $S/xprobe.py   # the six wave-1 survivors re-run at C0",
+  "python3 .ufo/evidence/round-56/c2/measure.py --lane <lane> --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 --work <empty> --explain",
+  "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi"
+ ],
+ "non_interference": {
+  "lane_production_files_edited": 0,
+  "frozen_evidence_written": 0,
+  "gate_sha256_before": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+  "gate_sha256_after": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+  "git_status_production_paths": "empty",
+  "mutating_git_commands_run": "none (clone / rev-parse / checkout --detach / show / status --porcelain only)",
+  "writes": [
+   ".ufo/waves/round-56/w2/T56W2MutGateOnC0.md",
+   ".ufo/waves/round-56/w2/T56W2MutGateOnC0.json",
+   ".ufo/waves/round-56/w2/T56W2MutGateOnC0-receipts/"
+  ]
+ },
+ "report": ".ufo/waves/round-56/w2/T56W2MutGateOnC0.md"
+}

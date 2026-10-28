@@ -1,0 +1,46 @@
+$ bash tools/mutate-and-run.sh
+--- output ---
+mutate-and-run: missing --target
+mutate-and-run.sh — generic mutation runner (tameshi-shokunin)
+
+Usage:
+  mutate-and-run.sh --target FILE --defects SPEC --suite CMD [options]
+  mutate-and-run.sh --regression [--workdir DIR] [--keep]
+  mutate-and-run.sh --selftest
+  mutate-and-run.sh --help
+
+Inputs:
+  --target FILE    artifact to mutate (never written; sha256 pinned before/after)
+  --defects SPEC   defect spec file (format below)
+  --suite CMD      suite command, run as `bash -c CMD` with $MUTANT set to the
+                   artifact under test (the pristine copy for the control run)
+
+Options:
+  --workdir DIR    evidence/work dir (default: mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX")
+  --label NAME     name for the report (default: basename of the target)
+  --timeout N      seconds per suite run (default: 300)
+  --tail N         output tail lines shown per run (default: 8)
+  --keep           --regression only: keep the scratch root also on PASS
+
+--regression replays every recorded mutation case as a leg:
+(js-kimi-census, bash-surface-census, bash-tsukuroi-census, bash-mado-verify,
+bash-checklist-run, js-claims-check, js-round-gate, js-sources-check, js-cite-check,
+bash-drift-pins) at its pinned
+revision, materialized from the repo's git object store (`git show
+<rev>:<path>` — immune to working-tree drift; a missing repo/rev/blob or a pin
+mismatch is a SETUP refusal). Each leg must reproduce its recorded verdict table exactly:
+the recorded kill-rate is the leg's expectation (flips 0, killed-delta 0,
+count exactly the recorded defect count, inconclusive 0, control green, restore
+OK). Exit: 0 all legs PASS · 1 >= 1 leg out of band · 2 cannot verify (missing
+repo/rev/blob / pin mismatch / setup refusal). Fleet trees are never written.
+See the file header for the full contract and evidence layout.
+
+Spec format v1 (one directive per line; '#' comments; blank lines ignored):
+  @defect <id> | <description>
+  @old <text>          exact string to find (count==1 asserted before any run)
+  @new <text>          exact replacement (may be empty)
+  escapes: \n \t \r \\; any other backslash sequence is refused.
+
+Verdicts per defect: KILLED | SURVIVED | INCONCLUSIVE. Exit map (run): 0 done ·
+1 done-with-inconclusive · 2 setup/refusal · 64 usage.
+EXIT=64

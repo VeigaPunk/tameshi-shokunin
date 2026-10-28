@@ -1,0 +1,35 @@
+# T56W2RevCensusAfter receipts — census after C0 (lane tameshi, C0=c0137451f5b7f22d65f748fc69f1b181f55e1378)
+# date: 2026-10-28T19:38:25Z
+
+## R1 — canonical census validate (the assignment command)
+EXIT=0
+stdout lines: 17  stderr bytes: 0
+E-codes: 0  W-codes: 16
+trailer: tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+
+## R2 — census mode counts
+tameshi	rows	142
+tameshi	tier.A	127
+tameshi	tier.B	12
+tameshi	tier.C	3
+tameshi	status.mined	114
+tameshi	status.queued	21
+tameshi	status.rejected	7
+FLEET	rows	3737
+FLEET	tier.A	3112
+FLEET	tier.B	479
+FLEET	tier.C	146
+FLEET	tier.invalid	0
+FLEET	status.queued	280
+FLEET	status.mined	3192
+FLEET	status.rejected	265
+FLEET	status.invalid	0
+FLEET	missing	0
+
+## R3 — row count base vs C0 (script regex and contract-v1 census block)
+981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1 rows=140
+c0137451f5b7f22d65f748fc69f1b181f55e1378 rows=142
+
+## R4 — the two added rows, full text at C0
+156:| S281 | Statement layer specification (in-toto Attestation Framework, Statement v1) — https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md | spec | A | what an in-toto Statement v1 applies to: a subject identified by digest, not git receipt encoding and not DSSE verification | §Fields, `subject` field, snapshot lines 36-37 and 54-55 @ spec/v1/statement.md tag v1.2.0 (commit df02077b; body sha256 cbe684a1…ebea, identical at main 50bf0171), fetched 2026-10-28 | an attestation applies to a subject identified by digest and subjects are matched purely by digest, so a statement naming another revision is about that revision and not evidence for the measured one | mined | 2026-10-28 | on-release | corpus/knowledge/receipt-revision-binding.md |
+157:| S282 | Build: Provenance (SLSA specification, predicate type slsa.dev/provenance/v1) — https://github.com/slsa-framework/slsa/blob/main/spec/build-provenance.md | spec | A | SLSA's build-provenance predicate, not a statement-level subject binding | §Model, first paragraph @ spec/build-provenance.md on main, blob sha256 efece57a…76fc (path last changed ba7d291a, 2026-10-19), fetched 2026-10-28 | REJECTED: the predicate records that a build platform produced artifacts through execution of a buildDefinition, answering who built what and not which revision a measurement certifies; S281 carries the rule; flip: the lane publishes signed build provenance for its own artifacts and needs builder.id and buildType | rejected | 2026-10-28 | on-release | — |

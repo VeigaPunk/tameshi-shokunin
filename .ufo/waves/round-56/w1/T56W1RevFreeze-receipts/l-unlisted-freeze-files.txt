@@ -1,0 +1,43 @@
+=== the two freeze-commit files that no manifest lists ===
+100644 blob 899474b6f198de2cc532fcdd8b7916b0b951e7dd	.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout
+100644 blob f082b82f792d556a50b6612caca3ad5fa871abee	.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256
+100644 blob fdc05d6cc9e8c68d6484425fd86ce0a04f4edf4d	.ufo/evidence/round-56/c2/red-before/round-54-surface.paths
+
+--- sidecar contents:
+3310ff60802af88993006dd1fc59b50cbcbb33b094b02ee532ac5573db455698
+--- receipt sha256 at freeze: 3310ff60802af88993006dd1fc59b50cbcbb33b094b02ee532ac5573db455698
+--- receipt contents:
+CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false
+
+=== does any instrument read the .sha256 sidecar? ===
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py:106:    sidecar = Path(str(p) + '.sha256')
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py:110:        got = hashlib.sha256(data).hexdigest()
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py:305:        Path(p + '.sha256').write_text('0' * 64 + '\n')
+
+=== how c2/measure.py consumes R54_SLICE ===
+    # ---- arm 2: the real round-54 positive control, refused -------------------------
+    red54 = 'none'
+    if show(lane, rev, R54_SLICE) is None or show(lane, rev, R54_PATHS) is None:
+        total += 1
+        red54 = 'slice-missing'
+    else:
+        slice_path = work / 'r54-ctl-pos-c1.stdout'
+        slice_path.write_bytes(show(lane, rev, R54_SLICE))
+        paths_path = work / 'r54-surface.paths'
+        paths_path.write_bytes(show(lane, rev, R54_PATHS))
+        r = run_gate('--lane', lane, '--certified', R54_CERT, '--paths', str(paths_path),
+                     '--receipt', str(slice_path) + ':positive')
+        out = r.stdout.decode('utf-8', 'replace')
+        codes = re.search(r'codes=(\S+) verdict', out)
+        red54 = codes.group(1) if codes else 'none'
+        accepted = show(lane, rev, R54_EXIT)
+        accepted_ok = accepted is not None and accepted.decode().strip() == 'DECIDING_RUN_EXIT=0'
+        if not (r.returncode == 3 and 'RECEIPT_REV_CONTENT_DRIFT' in red54 and accepted_ok):
+            total += 1
+        if a.explain:
+            notes.append('arm2-red54 exit=%d codes=%s old-gate-accepted=%s'
+                         % (r.returncode, red54, accepted_ok))
+
+    # ---- arm 3: the whole round-54 control set, refused -----------------------------
+    red54b = 'none'
+    raw = show(lane, rev, R54_CONTROLS)

@@ -1,0 +1,42 @@
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry.json	2026-10-28 14:30:24.348857286 -0300
++++ /fast/scratch/hyaku/tameshi-r56/T56W1ScribeRegistry/registry-with-row.json	2026-10-28 15:45:41.502682125 -0300
+@@ -1272,6 +1272,39 @@
+     "new-r26"
+    ],
+    "source": "corpus/lessons/round-51-verifier-spotcheck.md@ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4:126"
++  },
++  {
++   "name": "receipt-revision-gate-selftest",
++   "scratch_root": "Read-only on the lane: the receipt form `receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:positive|verdict|control[:REGEX] ... [--json]` reads git objects only (rev-parse, merge-base, diff), clones nothing, writes nothing, stdlib only; `--selftest` is its only allocating mode - one fixture repo in a `tempfile.TemporaryDirectory(prefix='tameshi-r56-gate-')` under TMPDIR, removed on exit (0.4 s) - and with TMPDIR unusable it falls back to the platform default `/tmp` with no could-not-evaluate line and exit 0, so the round-55 scratch-root contract is NOT implemented by this frozen instrument (measured in round 56, reported not edited). Refusal codes, each a named refusal at exit 3: RECEIPT_MISSING, RECEIPT_EMPTY, RECEIPT_NOT_BLOB, RECEIPT_REV_ABSENT, RECEIPT_REV_AMBIGUOUS, RECEIPT_REV_UNRESOLVABLE, RECEIPT_REV_MISMATCH, RECEIPT_REV_CONTENT_DRIFT, RECEIPT_CONTROL_NOT_ANCESTOR, RECEIPT_DIGEST_MISMATCH, RECEIPT_REQUIRED_LINE_MISSING. Verdict line `GATE: receipts=N ok=N refused=N codes=<comma|none> verdict=PASS|REFUSED`; exit 0 iff PASS.",
++   "kind": "selftest",
++   "argv": [
++    "python3",
++    "tools/receipt-revision-gate.py",
++    "--selftest"
++   ],
++   "expect": {
++    "exit": 0,
++    "stdout_contains": [
++     "GATE_SELFTEST: 14/14 pass",
++     "CASE content-drift-refused PASS",
++     "CASE strict-mismatch-refused PASS",
++     "CASE absent-refused PASS",
++     "CASE ambiguous-refused PASS",
++     "CASE unresolvable-refused PASS",
++     "CASE control-not-ancestor-refused PASS",
++     "CASE digest-mismatch-refused PASS",
++     "CASE required-line-refused PASS",
++     "CASE missing-refused PASS",
++     "CASE empty-refused PASS",
++     "CASE codes-closed PASS"
++    ]
++   },
++   "timeout_s": 60,
++   "source": "tools/receipt-revision-gate.py@c3e2ca9f020776b3d66c7af854fb82c834674fcf:10-29",
++   "status": "active",
++   "tags": [
++    "new-r56"
++   ]
+   }
+  ]
+ }

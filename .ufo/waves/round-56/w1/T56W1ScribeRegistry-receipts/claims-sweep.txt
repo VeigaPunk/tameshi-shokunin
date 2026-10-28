@@ -1,0 +1,44 @@
+$ grep -rn "scratch_root" --include=*.py tools/ | grep -v __pycache__
+tools/bash-witness-study.py:209:def strict_scratch_root():
+tools/bash-witness-study.py:1260:        prefix="bash-witness-selftest-private.", dir=strict_scratch_root()))
+tools/repeat-control.py:156:def strict_scratch_root():
+tools/repeat-control.py:629:    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
+tools/pin-disposition.py:165:def strict_scratch_root():
+tools/pin-disposition.py:725:    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=strict_scratch_root())
+tools/evidence-disposition.py:195:def strict_scratch_root():
+tools/evidence-disposition.py:2370:    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=strict_scratch_root()))
+tools/context-capture.py:304:def strict_scratch_root():
+tools/context-capture.py:1643:                                     dir=strict_scratch_root())
+tools/registry-check.py:761:def strict_scratch_root():
+tools/registry-check.py:784:        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+tools/registry-check.py:935:        prefix="tameshi-r17-registry-check-selftest.", dir=strict_scratch_root()
+tools/env-diff.py:36:def strict_scratch_root():
+tools/env-diff.py:80:    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+=> all 15 occurrences are a strict_scratch_root() helper (7 files) for that tool's own mkdtemp; no tool reads a registry row field.
+
+$ grep -n "scratch_root\|Allocating modes\|MARKER" .ufo/evidence/round-56/c2/measure.py
+exit=1 (1 = the frozen round-56 counter does not read a row scratch_root or any marker)
+
+$ grep -rn "Allocating modes" SKILL.md SCORECARD.md corpus/
+exit=1 (1 = no lane document mandates that token)
+
+$ grep -n "scratch_root" .ufo/evidence/round-55/c2/measure.py  (the round-55 counter DID read it)
+5:self-test of each of the seven tools that call `strict_scratch_root()`. It left
+26:  docs     the seven registry `scratch_root` cells carry the GRAMMAR marker;
+246:             if row.get("scratch_root") and any(t in " ".join(row.get("argv", []))
+248:    docs = sum(1 for row in cells if MARKER in row["scratch_root"])
+250:        bad["docs"] = "expected 7 scratch_root cells, found %d" % len(cells)
+
+$ python3 - (rows whose source starts with tools/)
+rows=56 rows_sourcing_tools=0
+
+$ sha256 of deliverables
+00e46403321cdab7b1a1bdff2991c6f95a6b266a735539df04acc599d1480e1d  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ScribeRegistry.md
+cb718946b23044d6b4ec5f38d49c79b7fd44075f03e339d0b75c42aa6f314e72  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ScribeRegistry.json
+
+$ sha256 of deliverables (final, after the Limits edit)
+3db914c469995585a3151191fcdf46df66bf0355887676b21762a1e71547fddc  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ScribeRegistry.md
+cb718946b23044d6b4ec5f38d49c79b7fd44075f03e339d0b75c42aa6f314e72  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ScribeRegistry.json
+
+$ git -C LANE status --porcelain -- tools/ SKILL.md SCORECARD.md LOG.md corpus/
+exit=0 (empty = this seat wrote no lane production file)

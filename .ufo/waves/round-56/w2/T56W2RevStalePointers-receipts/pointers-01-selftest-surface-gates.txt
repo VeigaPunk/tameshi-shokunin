@@ -1,0 +1,85 @@
+# T56W2RevStalePointers receipts — pointer resolution at C0=c0137451f5b7f22d65f748fc69f1b181f55e1378
+# lane=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+
+### R01 selftest count at C0 worktree (knowledge recheck claims 14/14)
+CASE zero-receipts-refused PASS
+CASE unresolvable-certified-refused PASS
+GATE_SELFTEST: 19/19 pass
+exit=0
+
+### R02 selftest count at the freeze c3e2ca9f (knowledge recheck claims 14/14)
+CASE codes-closed PASS
+GATE_SELFTEST: 14/14 pass
+exit=0
+
+### R03 gate sha256 at three revisions
+c3e2ca9f: 1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2  -
+21eb3c6  : c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9  -
+C0       : c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9  -
+worktree : c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9  tools/receipt-revision-gate.py
+
+### R04 frozen-surface.paths line count (knowledge claims nine paths)
+c3e2ca9f: 9
+C0      : 16
+--- C0 list ---
+SKILL.md
+corpus/QUALITY.md
+corpus/SOURCES.md
+corpus/knowledge
+tools/registry.json
+tools/receipt-revision-gate.py
+.ufo/evidence/round-21/coldread/ledger.json
+.ufo/evidence/round-56/c1/measure.py
+.ufo/evidence/round-56/c2/measure.py
+.ufo/evidence/round-56/contract.json
+.ufo/evidence/round-56/freeze.json
+.ufo/evidence/round-56/controls.sh
+.ufo/evidence/round-56/deciding-run.sh
+.ufo/evidence/round-56/no-harm.sh
+.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout
+.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256
+
+### R05 deciding-run.sh gate 0b / 0c line numbers at C0 (knowledge cites 66-74 / 100-107)
+114:# gate 0b (this round's C2): the lane's own receipts must pass the binding gate.
+156:# gate 0c: the verdicts this run just produced must name the certified revision.
+--- at c3e2ca9f ---
+66:# gate 0b (this round's C2): the lane's own receipts must pass the binding gate.
+100:# gate 0c: the verdicts this run just produced must name the certified revision.
+
+### R06 knowledge Re-derive step 6 exactly as written, no HYAKU_SCRATCH, from lane root
+.ufo/waves/round-56/w1/T56W1ScribeKnowledge-receipts/fixture-gate-demo.sh: line 8: HYAKU_SCRATCH: parameter null or not set
+exit=1
+
+### R07 the same script from a foreign cwd
+A0=2ad30f924e14917b3c83b5fed5a72f047aa15921
+A1=72664eb335b91a83fa8d57f52607e7e7e417a056
+SIDE=0ff2c2f8bee30b7bbfc972cee59ba85a10e44d2e
+--- 1 same rev, positive
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-pos-a1.txt role=positive revs=72664eb335b91a83fa8d57f52607e7e7e417a056
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+--- 2 other rev, no --paths
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-pos-a0.txt role=positive revs=2ad30f924e14917b3c83b5fed5a72f047aa15921 code=RECEIPT_REV_MISMATCH rev=2ad30f924e14917b3c83b5fed5a72f047aa15921 certified=72664eb335b9
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+rc=3
+--- 3 other rev, --paths a.txt (identical bytes) -> exception
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-pos-a0.txt role=positive revs=2ad30f924e14917b3c83b5fed5a72f047aa15921
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+--- 4 other rev, --paths a.txt,b.txt (b.txt drifted)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-pos-a0.txt role=positive revs=2ad30f924e14917b3c83b5fed5a72f047aa15921 code=RECEIPT_REV_CONTENT_DRIFT rev=2ad30f924e14917b3c83b5fed5a72f047aa15921 drift=b.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+rc=3
+--- 5 control, both revs ancestors
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-ctl.txt role=control revs=2ad30f924e14917b3c83b5fed5a72f047aa15921,72664eb335b91a83fa8d57f52607e7e7e417a056
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+--- 6 control, one rev not ancestor
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-ctl-side.txt role=control revs=0ff2c2f8bee30b7bbfc972cee59ba85a10e44d2e,2ad30f924e14917b3c83b5fed5a72f047aa15921 code=RECEIPT_CONTROL_NOT_ANCESTOR rev=0ff2c2f8bee30b7bbfc972cee59ba85a10e44d2e
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_CONTROL_NOT_ANCESTOR verdict=REFUSED
+rc=3
+--- 7 blind spot: fabricated receipt naming the certified rev
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeKnowledge/fixture.mGQMQ1/r-fab.txt role=positive revs=72664eb335b91a83fa8d57f52607e7e7e417a056
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+exit=0

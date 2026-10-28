@@ -1,0 +1,218 @@
+{
+ "seat": "T56W1SentTamper",
+ "round": 56,
+ "wave": 1,
+ "role": "sentinel",
+ "judged_on": "operability",
+ "milestone": "receipt forgery attempts",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "target": {
+  "instrument": "tools/receipt-revision-gate.py",
+  "sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+  "sha256_in_freeze_json": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+  "edited": false,
+  "selftest": "14/14 pass",
+  "receipt": "T56W1SentTamper-receipts/r01-gate-identity.txt"
+ },
+ "axes": [
+  {"axis": "operability", "question": "does the gate's PASS mean what the lane's deciding run treats it as meaning?"},
+  {"axis": "falsifiability", "question": "does C2 arm 2 (the gate's own refusal of the real round-54 receipt) survive an adversary who controls the inputs it reads?"},
+  {"axis": "residual honesty", "question": "does the claim text the wave writes overstate what the gate can prove?"}
+ ],
+ "method": {
+  "fixture": "/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix (git init; toplevel asserted before every commit; commits c0, c1=certified, c2, side, a merge commit with c1's tree, a hex-named lightweight tag, an annotated tag, an orphan commit)",
+  "real_receipts": "copies of .ufo/evidence/round-54/control/controls-b.stdout, its CTL_POS_c1 slice, .ufo/evidence/round-55/after/c2.stdout, gated read-only against the lane with --lane <lane>",
+  "gate_invocations": "the exact argv shapes of deciding-run.sh gate 0b (lines 66-74) and gate 0c (lines 100-107), and of c2/measure.py arm 5 (lines 202-220)"
+ },
+ "attacks": [
+  {
+   "id": "A1",
+   "item": "copy the certified revision's rev= token into a receipt for a different claim",
+   "gate_answer": "PASS (exit 0, codes=none)",
+   "accepted": true,
+   "safe_for_lane_use": false,
+   "severity": "high",
+   "exploit_path": "any receipt, whatever it asserts, passes role=positive/verdict if its only rev= token is the certified one; the gate never reads the claim. Demonstrated on the real round-54 positive control: replacing rev=077d431e6996 with rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c turns C2 arm 2's RECEIPT_REV_CONTENT_DRIFT refusal into PASS while the line still reads C1_R54_PASS=false credited=60 lost=4.",
+   "evidence": "T56W1SentTamper-receipts/r03-a1-copied-token.txt",
+   "impact": "the lane can cite gate PASS as evidence that a control passed when the control's own line says it failed; this is exactly the R55.5 shape (a receipt whose verdict is not the one certified) with the token made to match.",
+   "smallest_remediation": "caller-side and unavoidable in the gate: every positive/verdict receipt must be gated with a required line that carries the value, e.g. ':verdict:C2_R56_PASS=true' (deciding-run.sh:102-103 currently passes 'C2_R56_PASS=' with no value), and the report must cite the control's own CTL_MATCH/CONTROLS_x line, never the gate's PASS."
+  },
+  {
+   "id": "A2",
+   "item": "forge the .sha256 sidecar to match a tampered receipt",
+   "gate_answer": "PASS with a recomputed sidecar; RECEIPT_DIGEST_MISMATCH only when the sidecar is stale or unreadable",
+   "accepted": true,
+   "safe_for_lane_use": false,
+   "severity": "medium",
+   "exploit_path": "the sidecar is a plain sha256 of the same bytes, written by whoever writes the receipt: it is a checksum against accidental edits, not tamper evidence. Real round-54 slice falsified (credited 60->64, lost 4->0, C1_R54_PASS false->true) with the sidecar recomputed: PASS. The same bytes with the repo's committed sidecar: RECEIPT_DIGEST_MISMATCH. A receipt with no sidecar at all: PASS.",
+   "evidence": "T56W1SentTamper-receipts/r04-a2-sidecar.txt",
+   "impact": "the only integrity the lane has over a receipt body is self-asserted; and in the round's own arms the sidecar is never consulted (see L3), so the code is dead on the real path.",
+   "smallest_remediation": "state in QUALITY/knowledge that the sidecar detects accidental edits only; if tamper evidence is wanted, gate the receipt as a blob at the certified revision (git cat-file) rather than as a working-tree file, and commit the sidecar beside it."
+  },
+  {
+   "id": "A3",
+   "item": "embed rev=<certified> in a path or a prose sentence with no verdict line",
+   "gate_answer": "PASS by default; RECEIPT_REQUIRED_LINE_MISSING only when the caller passes a required regex",
+   "accepted": true,
+   "safe_for_lane_use": false,
+   "severity": "medium",
+   "exploit_path": "REV_RE (line 43) matches 'rev=' anywhere, including 'artifact: out/rev=<sha>/report.txt written' and 'Reviewed the lane at rev=<sha>; nothing was measured.'. Both PASS as role=positive. The same bytes refuse with REQUIRED_LINE_MISSING only when a regex is supplied.",
+   "evidence": "T56W1SentTamper-receipts/r05-a3-prose-token.txt",
+   "impact": "role=positive without a regex is satisfied by a sentence; the deciding run's gate 0b passes controls-b with no regex (line 69), so a controls-b that merely mentions the token passes.",
+   "smallest_remediation": "require a regex for every positive/verdict receipt in the caller (the gate cannot default one without breaking its own selftest cases 1-7), and make the regex carry the value (see A1)."
+  },
+  {
+   "id": "A4",
+   "item": "JSON receipt whose rev key is a string plus a second rev= in a comment",
+   "gate_answer": "same value twice: PASS (one distinct token); differing values: RECEIPT_REV_AMBIGUOUS (exit 3)",
+   "accepted": false,
+   "safe_for_lane_use": true,
+   "severity": "none",
+   "exploit_path": "REV_RE and JSON_REV_RE are unioned into a set (line 105); two distinct values are refused as ambiguous before any binding test (lines 130-133). Two identical values collapse to one token and gain the forger nothing, because the token still has to be the certified revision.",
+   "evidence": "T56W1SentTamper-receipts/r06-a4-json-rev.txt",
+   "impact": "none observed; the ambiguity guard works as documented.",
+   "smallest_remediation": "none required. Note for the report: a JSON receipt is no weaker than a text one, and no stronger."
+  },
+  {
+   "id": "A5",
+   "item": "name a tag or a tree object instead of a commit",
+   "gate_answer": "tree object: RECEIPT_REV_UNRESOLVABLE; blob object: RECEIPT_REV_UNRESOLVABLE; annotated tag: PASS; lightweight tag whose NAME is hex: PASS, and the same bytes flip verdict when the tag moves",
+   "accepted": true,
+   "safe_for_lane_use": true,
+   "severity": "low",
+   "exploit_path": "resolve() appends '^{commit}' (line 65), so trees and blobs cannot pass; but a ref whose name matches [0-9a-f]{7,40} resolves through the ref, so 'rev=deadbeef' is a mutable alias: PASS at certified=c0, RECEIPT_REV_MISMATCH after the tag moves to c2, PASS at certified=c2 with the same receipt bytes.",
+   "evidence": "T56W1SentTamper-receipts/r07-a5-tag-tree.txt",
+   "impact": "latent only: the lane repo has zero tags (git tag -> count=0), so no hex-named ref exists to alias; the counters also print the resolved sha, not a ref name.",
+   "smallest_remediation": "policy line, not code: receipts name the 40-hex commit the counter resolved; the report states that rev= is resolved through refs, so a hex-shaped ref would be a mutable alias."
+  },
+  {
+   "id": "A6",
+   "item": "name a merge commit whose tree equals the certified tree but whose history differs",
+   "gate_answer": "with --paths: PASS; without --paths: RECEIPT_REV_MISMATCH",
+   "accepted": true,
+   "safe_for_lane_use": false,
+   "severity": "medium",
+   "exploit_path": "the positive/verdict rule is content identity on the declared surface, not commit identity: a commit that is not the measured revision and not even an ancestor of it passes whenever the declared paths do not drift. Sharper on the real lane: with the round's own frozen-surface.paths, a receipt naming 6efd2a19 (9 paths differ from base) and fa48c06c (244 paths differ) both PASS as 'content-identical' to 981c5e8b.",
+   "evidence": "T56W1SentTamper-receipts/r08-a6-merge-and-surface.txt",
+   "impact": "the claim the gate supports is 'same bytes on these 9 paths', not 'measured at this revision'; the frozen surface omits SCORECARD.md, LOG.md, corpus/lessons/**, .ufo/waves/round-56/** and .ufo/evidence/round-56/control/** - i.e. the claim products, not only the claim definitions (independently found by T56W1CritC2).",
+   "smallest_remediation": "state the claim as content identity on a named path list; add the claim's own products (SCORECARD.md, LOG.md, the control receipts) to that list in a future round; the freeze discipline protects the list this round (FROZEN_UNCHANGED, deciding-run.sh:79-80)."
+  },
+  {
+   "id": "A7",
+   "item": "point --paths at a file listing paths that do not exist",
+   "gate_answer": "PASS (exit 0, codes=none) - and the same for a list of real paths plus one git pathspec-magic line",
+   "accepted": true,
+   "safe_for_lane_use": false,
+   "severity": "high",
+   "exploit_path": "git diff --name-only A B -- <path> prints nothing when <path> exists at neither revision, and a ':(exclude)...' entry is a pathspec, not a path: one such line empties the comparison. drifted_paths (lines 73-78) treats the empty result as 'no drift'. Demonstrated on the real round-54 receipt: ghost list -> PASS; the round-54 surface with ':(exclude).ufo/evidence/round-21/coldread/ledger.json' appended -> PASS, where C2 arm 2 requires CONTENT_DRIFT.",
+   "evidence": "T56W1SentTamper-receipts/r09-a7-paths.txt",
+   "impact": "this is a gate defect, not a residual: it makes the gate's content-identity arm vacuous for any caller who does not hand-write the list. The round is protected only because frozen-surface.paths is frozen and FROZEN_UNCHANGED would fail the run - not because the gate checks the list.",
+   "smallest_remediation": "patch drifted_paths to refuse pathspec magic and to refuse a path that does not exist at both revisions (15 lines, keeps CODES at 11 and the selftest at 14/14; demonstrated in r14-patched-gate.txt). Frozen this round: route to round 57 or an amendment, do not apply."
+  }
+ ],
+ "sweep": [
+  {"id": "S1", "probe": "sidecar path is a directory", "answer": "uncaught IsADirectoryError, exit 1, no verdict line", "safe": true, "note": "fail-closed but outside the code vocabulary; a refusal is reported as a traceback, not as a code"},
+  {"id": "S2", "probe": "receipt path is a directory", "answer": "uncaught IsADirectoryError, exit 1", "safe": true, "note": "same"},
+  {"id": "S3", "probe": "--paths file missing", "answer": "uncaught FileNotFoundError, exit 1", "safe": true, "note": "same; a missing list must never read as an empty one, and here it does not"},
+  {"id": "S4", "probe": "binary receipt with a rev= token and NUL bytes", "answer": "PASS", "safe": false, "note": "decode(utf-8, surrogateescape) does not stop the token from matching; same class as A3"},
+  {"id": "S5", "probe": "uppercase hex token", "answer": "RECEIPT_REV_ABSENT", "safe": true, "note": "REV_RE is lowercase-only: a false refusal (operability cost), never a false pass"},
+  {"id": "S6", "probe": "41 hex characters after rev=", "answer": "RECEIPT_REV_ABSENT", "safe": true, "note": "the \\b boundary rejects the over-long token rather than truncating it"},
+  {"id": "S7", "probe": "control role naming the pre-work ancestor", "answer": "PASS", "safe": true, "note": "by design for role=control; it is also why the round-54 defect (a positive control scored at the freeze) is still expressible if a positive control is ever gated as role=control"},
+  {"id": "S8", "probe": "orphan commit with the certified tree, reachable from no ref", "answer": "PASS with --paths", "safe": false, "note": "git rev-parse resolves unreachable objects; content identity again, no reachability requirement"},
+  {"id": "S9", "probe": "symlinked receipt", "answer": "PASS", "safe": false, "note": "the gate reads through symlinks; the receipt need not live where the caller thinks"},
+  {"id": "S10", "probe": "receipt path containing a colon", "answer": "RECEIPT_MISSING on a truncated path", "safe": true, "note": "spec.split(':', 2) makes a colon in a path unusable; fail-closed but misreported"},
+  {"id": "S11", "probe": "sidecar with trailing garbage", "answer": "PASS", "safe": true, "note": "only the first whitespace-separated token is compared"},
+  {"id": "S12", "probe": "--certified given as a hex-named tag", "answer": "PASS (resolves at check time)", "safe": true, "note": "the certified side is as mutable as the receipt side; no hex-named refs exist in the lane"}
+ ],
+ "lane_use_findings": [
+  {
+   "id": "L1",
+   "severity": "high",
+   "finding": "gate 0b passes a control set in which every pre-registered control failed",
+   "evidence": "T56W1SentTamper-receipts/r11-lane-use-gate0b-0c.txt",
+   "detail": "deciding-run.sh:56-57 accept any '^CONTROLS_A: [0-9]*/[0-9]* as pre-registered' and '^CONTROLS_B: ...' line, so 0/2 matches; lines 66-74 then gate controls-a as control and controls-b as positive with no required regex. Reproduced with the round's real frozen-surface.paths: CONTROLS_A: 0/2, CONTROLS_B: 0/2, both CTL_MISMATCH lines present -> GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS, exit 0.",
+   "impact": "the deciding run's control gate certifies that the receipts name a revision, not that any control reached its pre-registered verdict. The round-54 'CTL_MISMATCH ... actual=false' class therefore survives gate 0.",
+   "smallest_remediation": "deciding-run.sh:56-57 should assert the numerator equals the denominator (or the pre-registered count), e.g. grep -qE '^CONTROLS_B: ([0-9]+)/\\1 as pre-registered'; and controls-b should be gated with ':positive:CTL_POS_' plus a check that no '^CTL_MISMATCH' line exists. Caller-side; the gate cannot see 'this control failed'."
+  },
+  {
+   "id": "L2",
+   "severity": "medium",
+   "finding": "gate 0c's required line accepts a false verdict",
+   "evidence": "T56W1SentTamper-receipts/r11-lane-use-gate0b-0c.txt",
+   "detail": "deciding-run.sh:102-103 passes ':verdict:C1_R56_PASS=' and ':verdict:C2_R56_PASS=' with no value, so a receipt reading 'C2_R56_PASS=false' satisfies it: GATE OK, exit 0. The run is saved only by the separate grep -q \"${k^^}_R56_PASS=true\" at line 98.",
+   "impact": "two independent checks, one of which (the gate) certifies nothing about the verdict's value; the safety of the round rests on the other one.",
+   "smallest_remediation": "pass ':verdict:C1_R56_PASS=true' and ':verdict:C2_R56_PASS=true' (one word each) so the gate's own refusal covers the value."
+  },
+  {
+   "id": "L3",
+   "severity": "medium",
+   "finding": "RECEIPT_DIGEST_MISMATCH cannot fire on any receipt the round certifies",
+   "evidence": "T56W1SentTamper-receipts/r04-a2-sidecar.txt",
+   "detail": "c2/measure.py copies each receipt into --work (lines 147,149,171,190,212-214) without its .sha256 sibling, so the sidecar is absent at the gated path and the digest arm is skipped; .ufo/evidence/round-56/control/ contains only frozen-surface.paths, so the round's own controls-a/controls-b have no sidecar at all.",
+   "impact": "the only body-integrity check the gate has is dead on the round's real path; the gate's PASS says nothing about whether the receipt body was edited after the run.",
+   "smallest_remediation": "copy the sidecar with the receipt in measure.py, or gate the committed blob instead; state in the report that the digest arm is exercised only by the selftest."
+  },
+  {
+   "id": "L4",
+   "severity": "low",
+   "finding": "gate 0b reads the path list from the working tree before the clean-tree assertion",
+   "evidence": "T56W1SentTamper-receipts/r11-lane-use-gate0b-0c.txt (argv) and deciding-run.sh:66-77",
+   "detail": "line 68 passes \"$LANE/$E/control/frozen-surface.paths\" (working-tree bytes); the clean-tree check runs at line 76 and FROZEN_UNCHANGED at line 80, both after the gate's verdict. A dirty list would abort the run at line 77 with exit 3, so the ordering is contained - but the gate's verdict is computed against bytes no assertion has yet covered.",
+   "impact": "no live exploit this round; it is the reason A7 matters: the gate never validates the list it is given, so the freeze discipline is the only thing standing between the content arm and vacuity.",
+   "smallest_remediation": "pass the list from git bytes at REV (git show REV:path > work/paths) as c2/measure.py already does."
+  },
+  {
+   "id": "L5",
+   "severity": "medium",
+   "finding": "the R55.1 class returns with one appended line",
+   "evidence": "T56W1SentTamper-receipts/r11-lane-use-gate0b-0c.txt",
+   "detail": "the committed round-55 C2 receipt is refused RECEIPT_REV_ABSENT; appending '\\nrev=4c04c1d33377e5b6a3636199c5fdda197fc670d5\\n' to the same truncated file makes it PASS as role=verdict.",
+   "impact": "the gate's refusal of round 55 is a statement about a token that is one line away from existing; it does not make the round-55 receipt a receipt.",
+   "smallest_remediation": "none in the gate; the report must say the gate refuses the round-55 receipt as it stands and that the refusal is not a property of the file's content."
+  },
+  {
+   "id": "L6",
+   "severity": "high",
+   "finding": "cross-check of T56W1CritC2's kill-shot: C2's docs arm reads the wrong SOURCES column, so C2_R56_PASS=true is unreachable",
+   "evidence": "T56W1SentTamper-receipts/r17-c2-arm6-index.txt",
+   "detail": "independently measured at the freeze: 140 S-rows, 'mined' at cell index 7 in 113 of them, at index 8 in 0; c2/measure.py:245 tests cells[8] == 'mined'. docs therefore caps at 3/4 and total >= 1.",
+   "impact": "the C2 claim cannot pass this round whatever wave 2 writes; the L1 needs this before the deciding run, not after.",
+   "smallest_remediation": "one-character index fix (cells[7]) plus a freeze amendment; the instrument is frozen, so it is the L1's call, and the round must not report C2 as pending content work."
+  }
+ ],
+ "residual_risk": {
+  "statement": "The gate binds a revision token, not a claim, and not a provenance. It can prove that a receipt file mentions exactly one revision token, that the token resolves to a commit, and that the commit is the certified revision or is content-identical to it on a declared path list. It cannot prove that the receipt was written by the run it describes, that its numbers are the ones the run printed, that its body was not edited after the run, that its sidecar was written by anyone but the forger, that the path list is honest or complete, or that a control receipt's own verdict is PASS.",
+  "removed": "the round-54/55 silent classes: a receipt naming no revision (ABSENT), naming a revision absent from the repo (UNRESOLVABLE), naming two revisions (AMBIGUOUS), naming a revision whose declared surface differs (CONTENT_DRIFT). Those four are now loud, and the three real red-before receipts are refused with their named codes (r01, r14).",
+  "not_removed": "everything a forger with write access to the tree can do by choosing the token, the claim text, the sidecar, and the path list - seven acceptances, of which A7 is a gate defect and the rest are inherent.",
+  "how_the_report_must_say_it": [
+   "State C2 as: 'every receipt the lane certifies carries the revision token of the revision it was measured against, and the gate refuses the three real receipts the lane accepted in rounds 54 and 55.' Do not write 'receipts are bound to their revision' without the token qualifier.",
+   "State the negative explicitly: 'the gate accepts a receipt that names the certified revision whatever it asserts; acceptance is evidence about the token, never about the claim.'",
+   "Never cite the gate's verdict=PASS as evidence that a control passed; cite the control's own CTL_MATCH/CONTROLS_x: N/N line.",
+   "Never cite the .sha256 sidecar as tamper evidence; it is a checksum against accidental edits and it is absent at every path the round gates.",
+   "Record that the content-identity arm is only as strong as frozen-surface.paths, and name what the list omits (SCORECARD.md, LOG.md, corpus/lessons/**, .ufo/waves/round-56/**, .ufo/evidence/round-56/control/**).",
+   "Record A7 as a defect of the instrument, routed to round 57 or an amendment, not as a residual the wave accepts."
+  ]
+ },
+ "patch": {
+  "applied": false,
+  "why_not": "tools/receipt-revision-gate.py is in the frozen instrument set (freeze.json, contract.frozen_paths) and deciding-run.sh:79-80 refuses a run whose frozen bytes differ between FREEZE and REV; the gate must not change this round.",
+  "diff": "T56W1SentTamper-receipts/r14-patched-gate.txt shows the applied form in a scratch clone; the diff itself is in the seat's scratch at /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/patch/pathspec-integrity.diff (43 lines, 15 insertions, 2 deletions) and is reproduced in the report.",
+  "effect": "ghost-path and pathspec-magic lists now refuse with RECEIPT_REV_CONTENT_DRIFT naming the offending entry; the selftest stays 14/14; arms 2, 3 and 4 of the C2 counter still refuse with their codes; a legitimate positive at the certified revision still passes; the per-receipt line prints the effective pathspec count so a vacuous list is visible in text mode.",
+  "does_not_fix": ["A1", "A2", "A3", "A5", "A6", "L1", "L2", "L5"]
+ },
+ "tooling": {"installed": [], "note": "no tool was installed or upgraded for this seat; python3 3.14.8 and git 2.56.0 from the host were sufficient"},
+ "census": {"command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "rows": 140, "receipt": "T56W1SentTamper-receipts/r16-census-and-tree.txt"},
+ "lane_writes": [
+  ".ufo/waves/round-56/w1/T56W1SentTamper.md",
+  ".ufo/waves/round-56/w1/T56W1SentTamper.json",
+  ".ufo/waves/round-56/w1/T56W1SentTamper-receipts/ (15 files)"
+ ],
+ "not_tested": [
+  "a receipt on a FIFO or a blocking special file (the gate would block in read_bytes; no timeout is reachable)",
+  "a receipt larger than memory (the gate reads the whole body)",
+  "a TOCTOU window between the gate's digest read and the lane's later use of the same file (the gate re-reads nothing, so an edit after the gate's PASS is invisible to it)",
+  "whether the counters' printed rev= is the revision their work actually used: c1/c2 measure.py read only git objects at the rev they are given, so the token is derived from the argument, not measured; a caller passing the wrong --rev gets a consistent lie"
+ ]
+}

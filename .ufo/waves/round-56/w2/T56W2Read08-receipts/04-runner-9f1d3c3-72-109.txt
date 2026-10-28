@@ -1,0 +1,38 @@
+# --regression (r4-2; r7-1 leg ledger) — the fleet's recorded mutation cases,
+# replayed as legs. Each leg carries its recorded revision pin and its recorded
+# verdict table; the recorded kill-rate is the leg's expectation:
+#   js-kimi-census       kumitate-shokunin/scripts/kimi-census.mjs   8/10 (80 %)
+#   bash-surface-census  kagi-shokunin/corpus/surface-census.sh      8/10 (80 %)
+#   bash-tsukuroi-census tsukuroi-shokunin/tools/tsukuroi-census.sh  6/10 (60 %)
+#   bash-mado-verify     mado-shokunin/tools/mado-verify.sh          4/10 (40 %)
+# Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+# mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
+# mutation-case-mado-verify.md §1. All four defect specs are embedded below
+# (cut from those notes' §7/§8/§9 reproduce manifests; all 40 @old strings
+# re-verified count==1 against the pinned bytes, 2026-10-14).
+# r7-1: the target is NOT read from the fleet working tree. Each leg is
+# materialized from its repo's git object store — `git show <rev>:<path>` — so
+# a working tree that has drifted past the recorded revision (tsukuroi and
+# mado: their pins are ancestors of HEAD) or carries uncommitted edits cannot
+# move a replay. The materialized copy's sha256 must equal the recorded pin;
+# a missing repo/rev/blob or a pin mismatch is a SETUP refusal, never a pass.
+# Each leg then runs as a full CLI sub-invocation of this tool over the
+# materialized copy; the fleet trees are never written.
+# Stated expectation: ledger legs are byte-pinned replays, so their expectation
+# is exact — 0 verdict flips (every measured row must equal the recorded
+# table), killed-delta 0, defects exactly the recorded count, inconclusive 0,
+# control green, MUTATE_RESTORE: OK. The r4-2 tolerance (|killed-recorded| <= 1
+# and at most 1 verdict flip) remains the default for fixture-mode cases and is
+# exercised by --selftest. Inside the stated expectation is PASS; outside it is
+# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+# table outside its expectation) · 2 a case could not be verified — missing
+# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL. Lines:
+# REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_EXPECT /
+# REGRESSION_PIN (one per leg: git source + pinned target sha256; the sweep's
+# own MUTATE_TOOL line carries the tool pin) / REGRESSION_SWEEP /
+# REGRESSION_TABLE / REGRESSION_DEFECT (one per differing row) / REGRESSION_CASE
+# / REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
+# /tmp/tameshi-r4-2-regression.XXXXXX by default; removed on PASS unless --keep,
+# kept on FAIL/SETUP, never removed when --workdir was given. In this mode
+# --target/--defects/--suite/--label are refused (usage error).
+#

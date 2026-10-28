@@ -1,0 +1,21 @@
+# C1: defect-probes --selftest (live lane, C0 tree)
+SELFTEST_CASE replace-one-anchor PASS (one exact replacement)
+SELFTEST_CASE reject-nonunique-anchor PASS (missing and duplicate anchors refused)
+SELFTEST_CASE scrub-inherited-git PASS (env -i omits inherited repo selectors; explicit canary is retained)
+SELFTEST_CASE preserve-nonfinite-json-literal PASS (NaN remains an unquoted JSON token)
+SELFTEST_CASE unique-process-marker PASS (one unique marker for P10 process observation)
+SELFTEST_CASE probe-id-domain PASS (eleven stable probe ids)
+SELFTEST: PASS (6 cases)
+EXIT=0
+
+# C2: defect-probes --rev C0 (live lane; fleet sibling kagi-shokunin present)
+PROBE P10 closed target=tools/registry-check.py:306-322, 385-387 (kill/communicate after timeout) timeout_s=1; setsid checker_exit=1 outer_timeout=False row_timeout=True survivors=[]; setpgid checker_exit=1 outer_timeout=False row_timeout=True survivors=[]
+PROBE P11 closed target=tools/bash-witness-study.py:337-344 (materialize_target git show) rev=fecee8743e52eb8fb5fbb40782934cb619a1a96e clean_exit=0 clean_declared=True; canary GIT_DIR/GIT_WORK_TREE tainted_exit=0 timeout=False canary_changed=False declared=True WITNESS_DECLARE: declaration.json sha256=c55c877dcb5e327e5a94be0921958bb604cff5d9f4321e2a922445fda9c49aff
+DEFECT_PROBES: open=0 closed=11 total=11
+EXIT=0
+
+# C3: defect-probes usage exits
+defect-probes.py: error: --rev is required unless --selftest is given
+EXIT=64
+defect-probes.py: error: --selftest cannot be combined with --rev, --only, or --json
+EXIT=64

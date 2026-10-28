@@ -1,0 +1,35 @@
+{
+  "schema": "tameshi-reader-report-r56",
+  "seat": "T56W2Read12",
+  "heading": "### Round-15 gate/probe registry",
+  "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "section_sha256": "78edbb693cdddcab61902811985918087529c444d3fb01da7bcaf4a674daf4ea",
+  "section_start": 1719,
+  "section_end": 1749,
+  "sectionize": "frozen .ufo/evidence/round-18/measure.py (blob sha256 7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37 at C0), loaded via importlib",
+  "findings": [],
+  "notes": [
+    "Cause wording imprecise, exit class correct: row 2's parenthetical says the round-14 disposition command returns 2 expected_input_digest_mismatch 'because the runner input moved', but the tool's first named mismatch at C0 is tools/bash-witness-study.py (observed f2bb50c77a6b6ffc53fd4e31d06c729f9cface7c1684f232c060f6a4978bf261 vs historical pin 49e9e5e20b73f115626fb4f81aac9b238e0f01811230c4fd0ff726c1f350ad80); tools/mutate-and-run.sh (977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda vs 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5) and tools/pin-disposition.py (c917bc41c3f40dae3eacea492d861211c2a4fe1e530cb9f22c5f8d6ff47d2988 vs 297253971dab3a558b470a04162b9d768287844dc0e81bf41a1f9f263ff14f11) have also drifted, but the tool names only the first. Same minor wording gap recorded by round-18 seat CR42.",
+    "Historical case count: 'the six recorded cases at this write (seven since round 16)' is a snapshot of the round-15 write; tools/registry.json carries 57 rows at C0, so the number must not be read as a live total. Unchanged and correctly time-scoped.",
+    "Row 1 names the negative fixture 'context-missing-env.json' without its path; it is .ufo/evidence/round-14/context-missing-env.json (path given in the preceding section, SKILL.md:1691-1694).",
+    "Row 2's 'before counterpart' resolves to .ufo/evidence/round-14/dispositions-before.json (present at C0); naming the file explicitly would remove the ambiguity.",
+    "The 'cwd = extracted git archive 28aeef4 -> 0' replay needs the lane tree extracted from that commit and --root . relative to it; both are stated, but the 7-hex prefix is unique only in this repo.",
+    "Factual check of the round-17 errata: the round-17 section says this section grew from 30 to 31 lines; at C0 it is 31 lines (1719-1749), consistent.",
+    "Cross-section consistency confirmed: the round-17 registry section states the same live entry (round-18 manifest, exit 0) and the same 'the round-17 manifest now exits 2'; the round-51 registry rows state SELFTEST: PASS (49/49) for context-capture and 66/66 for evidence-disposition, both matching the observed selftests. No contradiction found."
+  ],
+  "commands": [
+    "git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin clone && git -C clone checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378",
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md",
+    "git -C clone archive 28aeef4 | tar -x -C frozen28",
+    "python3 tools/context-capture.py --check",
+    "python3 tools/context-capture.py --selftest",
+    "python3 tools/context-capture.py --check --receipt .ufo/evidence/round-15/frozen/context-clean/receipt.json --expected .ufo/evidence/round-15/frozen/context-clean/expected.json",
+    "python3 tools/context-capture.py --check --receipt .ufo/evidence/round-14/context-missing-env.json --expected .ufo/evidence/round-15/frozen/context-missing-env/expected.json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json",
+    "python3 tools/evidence-disposition.py --selftest",
+    "sha256sum .ufo/evidence/round-14/context-receipt.json .ufo/evidence/round-14/context-missing-env.json",
+    "strace -f -qq -e trace=openat,open,execve -o strace-check.txt python3 tools/context-capture.py --check"
+  ],
+  "verdict": "verified-record"
+}

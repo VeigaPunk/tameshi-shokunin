@@ -1,0 +1,83 @@
+F2 — the SKILL table's first row assigns RECEIPT_REV_MISMATCH to "a verdict receipt names
+another revision" on "the declared `--paths` surface"; the tool emits
+RECEIPT_REV_CONTENT_DRIFT there, and the roles positive/verdict are one branch, so the
+table's row split (by role) does not track the tool's split (by --paths).
+
+CLONE
+export S=/fast/scratch/hyaku/tameshi-r56/T56W2Read07
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone
+git -C $S/clone checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378
+git -C $S/clone rev-parse --show-toplevel   # -> $S/clone   (asserted before any write there)
+C=$S/clone
+git -C $C show c0137451f5b7f22d65f748fc69f1b181f55e1378:.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout > $S/gate/r54slice.stdout
+git -C $C show c0137451f5b7f22d65f748fc69f1b181f55e1378:.ufo/evidence/round-56/c2/red-before/round-54-surface.paths > $S/gate/r54surface.paths
+cat $S/gate/r54slice.stdout
+CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false
+cat $S/gate/r54surface.paths
+.ufo/evidence/round-54/c1/measure.py
+.ufo/evidence/round-21/coldread/ledger.json
+SKILL.md
+corpus/QUALITY.md
+corpus/SOURCES.md
+.ufo/waves/round-54/w1
+.ufo/waves/round-54/w2
+
+COMMAND (row 1, WITH the declared --paths surface — the scenario the row names)
+python3 $C/tools/receipt-revision-gate.py --lane $C --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --paths $S/gate/r54surface.paths --receipt $S/gate/r54slice.stdout:verdict
+OUTPUT
+GATE REFUSED ... role=verdict revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,...
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+COMMAND (the same receipt, role=positive — same code: the roles are one branch)
+python3 $C/tools/receipt-revision-gate.py --lane $C --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --paths $S/gate/r54surface.paths --receipt $S/gate/r54slice.stdout:positive
+OUTPUT
+GATE REFUSED ... role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=...
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+COMMAND (the same receipt WITHOUT --paths — this is where RECEIPT_REV_MISMATCH appears)
+python3 $C/tools/receipt-revision-gate.py --lane $C --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --receipt $S/gate/r54slice.stdout:verdict
+OUTPUT
+GATE REFUSED ... role=verdict revs=077d431e6996 code=RECEIPT_REV_MISMATCH rev=077d431e6996 certified=c21081008adb
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+COMMAND (row 1's rule cell — a differing rev whose bytes are IDENTICAL on the declared surface is accepted)
+printf 'VERDICT: rev=%s C1_R56_PASS=true\n' $(git -C $C rev-parse HEAD^) > $S/gate/verdict-parent.stdout
+printf 'tools/receipt-revision-gate.py\n' > $S/gate/unchanged.paths
+python3 $C/tools/receipt-revision-gate.py --lane $C --certified $(git -C $C rev-parse HEAD) --paths $S/gate/unchanged.paths --receipt $S/gate/verdict-parent.stdout:verdict
+OUTPUT
+GATE OK ... role=verdict revs=21eb3c63cd0f3190c0deeb8953c6c91c7742cd68
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+COMMAND (row 3 — a control set naming an absent revision)
+printf 'CTL A rev=7df0e0426c98\n' > $S/gate/ctl-unres.stdout
+python3 $C/tools/receipt-revision-gate.py --lane $C --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --receipt $S/gate/ctl-unres.stdout:control
+OUTPUT
+GATE REFUSED ... role=control revs=7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+
+COMMAND (row 4 — a receipt naming no revision)
+printf 'VERDICT: nothing here\n' > $S/gate/norev.stdout
+python3 $C/tools/receipt-revision-gate.py --lane $C --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c --receipt $S/gate/norev.stdout:verdict
+OUTPUT
+GATE REFUSED ... role=verdict revs=none code=RECEIPT_REV_ABSENT no rev= token
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+
+COMMAND (the gate's own suite at C0)
+python3 $C/tools/receipt-revision-gate.py --selftest
+OUTPUT
+19 CASE lines, all PASS
+GATE_SELFTEST: 19/19 pass
+exit=0
+
+The lane's own sourced entry agrees that the roles are one branch:
+git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show c0137451f5b7f22d65f748fc69f1b181f55e1378:corpus/knowledge/receipt-revision-binding.md | sed -n '34p'
+| `verdict` | a counter's verdict receipt | identical to `positive` (the code takes the two roles in one branch) |
+
+And the round's own frozen counter gates the same receipt as role=positive WITH --paths and
+expects RECEIPT_REV_CONTENT_DRIFT (.ufo/evidence/round-56/c2/measure.py:153-160).

@@ -1,0 +1,24 @@
+tameshi round 56 attempt 3 — L1 source re-open record
+Access date: 2026-10-28 (read:// static web reader; all three GitHub pages reopened directly by L1)
+
+S281 — admitted, tier A for the Statement v1 subject-digest rule
+URL: https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+Reader resolved to: https://raw.githubusercontent.com/in-toto/attestation/v1.2.0/spec/v1/statement.md
+Anchor: ## Fields > `subject`, IMPORTANT paragraph; quote from the paragraph after the `IMPORTANT:` label:
+“Subject artifacts are matched purely by digest, regardless of content type.” (11 words)
+This matches the round's recorded quote and supports subject-to-artifact identity, not the lane's `rev=` wire encoding.
+
+S282 — rejected and retained as a row
+URL: https://github.com/slsa-framework/slsa/blob/main/spec/build-provenance.md
+Reader resolved to: https://raw.githubusercontent.com/slsa-framework/slsa/main/spec/build-provenance.md
+Anchor: ## Model, first paragraph; exact sentence opened by L1:
+“Provenance is an attestation that a particular build platform produced a set of software artifacts through execution of the buildDefinition.” (20 words)
+This describes build provenance, not the revision a receipt certifies; keep S282 rejected with the existing flip condition.
+
+considerthese/2026-10-28.md, opened directly at lines 73-76: proposal 1 is “Receipt-existence linter for records.” The round mines its revision-binding half into QUALITY criterion 107; byte-exact quoted-line matching is explicitly left unmined.
+
+DSSE candidate — screened out before registry row (the lesson's Gate records the exclusion)
+URL: https://github.com/secure-systems-lab/dsse/blob/b531b787bb3e5f0c3e1c19cee84da1c5d569b061/protocol.md
+Reader resolved to: https://raw.githubusercontent.com/secure-systems-lab/dsse/b531b787bb3e5f0c3e1c19cee84da1c5d569b061/protocol.md
+Anchor: ## Signature Definition, Parameters table, `SERIALIZED_BODY` row: “SERIALIZED_BODY: Arbitrary byte sequence to be signed.” (7 words)
+Reason: DSSE signs an arbitrary payload plus a payload type and does not require that the payload identify a subject digest. A signed statement about another revision can still verify. Flip: the protocol requires verifier enforcement of a payload subject digest matching the evaluated artifact.

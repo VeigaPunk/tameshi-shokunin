@@ -1,0 +1,41 @@
+=== grep for lost-headings path usage / fallbacks in c1/measure.py ===
+6:Usage: c1/measure.py --lane LANE --rev REV --work EMPTY_DIR [--explain]
+21:               c1/lost-headings-at-base.json the ledger at REV carries an entry
+61:LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
+62:HEADINGS = '.ufo/evidence/round-56/c1/lost-headings-at-base.json'
+69:def lane_env():
+76:    return subprocess.run(['git'] + list(args), env=lane_env(),
+80:def show(lane, rev, path):
+81:    r = git(['-C', lane, 'show', '%s:%s' % (rev, path)], check=False)
+85:def resolve(lane, prefix):
+86:    r = git(['-C', lane, 'rev-parse', '--verify', '--quiet', '%s^{commit}' % prefix], check=False)
+90:def is_ancestor(lane, older, newer):
+91:    return git(['-C', lane, 'merge-base', '--is-ancestor', older, newer], check=False).returncode == 0
+101:def monitor_score(lane, rev, r21_bytes, r18_bytes, work, env, tag):
+102:    """Run the frozen round-21 selector (mirrored at its lane-relative path) at REV."""
+106:        target.parent.mkdir(parents=True, exist_ok=True)
+108:    run = subprocess.run([sys.executable, str(mirror / R21), '--repo', lane, '--rev', rev],
+120:    ap.add_argument('--lane', required=True)
+125:    lane = a.lane
+126:    rev = resolve(lane, a.rev)
+131:    work.mkdir(parents=True, exist_ok=True)
+135:    env = lane_env()
+141:    pre = show(lane, rev, PRECHECK)
+147:    run = subprocess.run(['bash', str(pre_path), lane, FLOOR, rev], capture_output=True, env=env)
+161:    r21 = show(lane, rev, R21)
+162:    r18 = show(lane, rev, R18)
+163:    ledger_raw = show(lane, rev, LEDGER)
+168:    covered, score, box3 = monitor_score(lane, rev, r21, r18, work, env, 'rev')
+177:    skill_raw = show(lane, rev, 'SKILL.md')
+179:    frozen = json.loads((Path(__file__).resolve().parent / 'lost-headings-at-base.json').read_text('utf-8'))
+182:    tree = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev,
+191:        c0 = resolve(lane, prefix)
+192:        rekey_ok = (c0 is not None and is_ancestor(lane, c0, rev)
+217:                    and r18_mod.entry_reason(lane, rev, e, True) is None]
+227:    wave_tree = '\n'.join(git(['-C', lane, 'ls-tree', '-r', '--name-only', rev, wd + '/'],
+232:        raw = show(lane, rev, path)
+256:    card = show(lane, rev, 'SCORECARD.md')
+268:            hits = [t for t in re.findall(r'[0-9a-f]{7,40}', cells[3]) if resolve(lane, t)]
+269:            row_commit = resolve(lane, hits[0]) if hits else None
+271:            if row_commit and is_ancestor(lane, row_commit, rev):
+272:                _cov, same_at_row, _b = monitor_score(lane, row_commit, r21, r18, work, env, 'row')

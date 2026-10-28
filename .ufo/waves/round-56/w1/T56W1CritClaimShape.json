@@ -1,0 +1,31 @@
+{
+  "seat": "T56W1CritClaimShape",
+  "wave": "round-56-w1",
+  "item": "claim-sizing audit of C1/C2 vs round-prompt §9 + AXES.md",
+  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+  "freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+  "verdicts": {
+    "a_after_state_concrete": {"C1": "PASS", "C2": "FAIL"},
+    "b_no_unenumerated_universals": {"C1": "PASS", "C2": "FAIL", "base_note": "MINOR"},
+    "c_lowest_non_retired_axis": {"verdict": "PASS", "depth_at_base": 10, "freshness_at_base": 9, "calibration_at_base": 6, "retired": "none"},
+    "d_causal_separability": {"verdict": "PASS_BY_DESIGN", "c2_holds_unobservable_while": "F1", "couplings": ["SKILL.md Standing-rules section shared by C2 docs arm and C1 re-read heading (edit must land in or before C0)", "ledger.json on C2 positive-control surface: C1 wave-3 bind must precede controls receipts or own arm trips RECEIPT_REV_CONTENT_DRIFT"]},
+    "e_do_nothing_control": {"C1": "PASS — counter at untouched base: total=5 PASS=false (CTL_0_c1)", "C2": "PASS — counter at freeze: total=2 PASS=false (CTL_0_c2); at base: error=gate-missing total=1"},
+    "f_sourced_claim": {"verdict": "PASS", "claim": "C2", "source": "S281 in-toto attestation statement.md v1.2.0 (sha256 cbe684a18b812b8b613d9202eb43b2ea24477f91a2ad6ca5be935185a455ebea, quote at lines 54-55)", "caveat": "F5 — no arm verifies the S281 row landed or that the cited mined row was opened this round"}
+  },
+  "findings": [
+    {"id": "F1", "severity": "blocking", "where": ".ufo/evidence/round-56/c2/measure.py:245", "what": "SOURCES.md status column is cells[7]; counter tests cells[8]=='mined' (the 'opened' date) so the mined set is always empty, docs caps at 3/4, C2_R56_PASS unreachable at every revision", "evidence": "T56W1ScribeSources-receipts/c2-arm6-defect.txt (frozen: docs=3/4; patched cells[7]: docs=4/4); receipts/c2-arm6-cells-defect.txt (0 vs 113 rows); prior convention cells[7] in round-49:285 and round-50:352", "fix": "cells[8] -> cells[7]; requires contract/freeze amendment (instrument frozen)"},
+    {"id": "F2", "severity": "major", "where": ".ufo/evidence/round-48/quality/coldread-precheck.sh (invoked by C1 arm1)", "what": "precheck cd's into the lane and invokes the WORKTREE copy of .ufo/evidence/round-21/coldread/measure.py — docstring's 'live working tree is never read' is false; cand_credited movable by uncommitted dirt. Same worktree-invocation in no-harm.sh coldread-floor monitor and the deciding run's extracted precheck", "evidence": "receipts/precheck-worktree-demo.txt (poisoned worktree copy -> error=floor-measure; clean clone -> lost=18 RED)"},
+    {"id": "F3", "severity": "major", "where": ".ufo/evidence/round-56/contract.json claims.C2.before", "what": "contract quotes 'total=6' from a receipt that prints 'total=2' — the R55.2 class inside the frozen claim text", "evidence": "receipts/c2-before-misquote.txt; c2 counter at freeze re-derived total=2"},
+    {"id": "F4", "severity": "major", "where": "contract claims.C2.surface + c2 docstring line 2", "what": "'Every receipt the lane certifies is bound' — universal without enumerating command; counter covers exactly 5 receipt files; ~9 deciding-run receipts ungated; receipt-inventory.json not consumed by any arm", "evidence": "c2/measure.py arms 2-5; deciding-run.sh receipt outputs"},
+    {"id": "F5", "severity": "major", "where": ".ufo/evidence/round-56/c2/measure.py arm6", "what": "(i) cited&mined satisfied by any mined row — no arm checks the new S281 row exists or that the cited row was opened this round; the claim's SOURCES-row requirement has no checking arm. (ii) SKILL cell greps 'receipt-revision-gate' anywhere in SKILL.md, not in '## Standing rules' as the claim requires", "evidence": "c2/measure.py:229-258; T56W1ScribeSources.md draft row"},
+    {"id": "F6", "severity": "note", "what": "Separability design-clean but two landing-order couplings: SKILL Standing-rules edit must be in or before C0 (C1's 18th heading); ledger bind must precede controls receipts (ledger.json on positive-control surface)", "evidence": "frozen-surface.paths; T56W1ScribeSkill-receipts/08-section-record.json"},
+    {"id": "F7", "severity": "minor", "what": "base_note 'byte-identical to fa48c06c for every claim path' — claim-path list never enumerated; verified true for the five named surfaces + ledger.json (all diff-empty fa48c06c..981c5e8b, only .ufo/ changed)", "evidence": "receipts/base-note-check.txt"},
+    {"id": "F8", "severity": "note", "what": ".ufo/evidence/round-56/before/ untracked at this write — records citing before/c1.stdout etc. fail criterion 97 if C0 omits them; S281 snapshot must also be committed at REV", "evidence": "git status --porcelain -> '?? .ufo/evidence/round-56/before/'"},
+    {"id": "F9", "severity": "noise", "what": "peer C2Floor sent bare 'DISALLOWED' to me and T56W1ScribeRegistry; no referent; treated as noise"}
+  ],
+  "receipts_dir": ".ufo/waves/round-56/w1/T56W1CritClaimShape-receipts/",
+  "receipts": ["c1-at-base.stdout", "c2-at-freeze.stdout", "c2-before-misquote.txt", "c2-arm6-cells-defect.txt", "precheck-worktree-demo.txt", "arm1-worktree-measure.txt", "r54-receipt-facts.txt", "commandD-at-base.txt", "r45-freshness-at-base.txt", "base-note-check.txt", "freeze-integrity.txt", "s281-fetch.txt", "census.txt"],
+  "census": "sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi -> tameshi ok, exit 0",
+  "tooling": "none installed; pacman untouched",
+  "lane_files_touched": "none (two scratch clones only)"
+}

@@ -1,0 +1,40 @@
+# clone at the freeze, toplevel asserted, patch applied to tools/receipt-revision-gate.py
+toplevel=/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/clone head=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+ tools/receipt-revision-gate.py | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+GATE_SELFTEST: 14/14 pass
+# ghost paths (was PASS)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice.stdout role=positive paths=1 revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=<absent does/not/exist.txt: content identity is not checkable>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# pathspec magic (was PASS)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice.stdout role=positive paths=6 revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=<pathspec-magic :(exclude).ufo/evidence/round-21/coldread/ledger.json: content identity is not checkable>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# real arm 2 still refuses with CONTENT_DRIFT
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice.stdout role=positive paths=7 revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-base.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-c0.json,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-B-strace-registry-check.log,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-c0-pinned-current.txt,.ufo/waves/round-54/w1/T54W1ExecC2Counter.md
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# real arm 3 still refuses UNRESOLVABLE
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-controls-b.stdout role=positive paths=none revs=077d431e6996,7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+# real arm 4 still refuses ABSENT
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r55-c2-orig.stdout role=verdict paths=none revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+# a legitimate positive at the certified revision still passes
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/legit.stdout role=positive paths=9 revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# what the patch does NOT fix: copied token, forged sidecar, failing control set
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice-falsified.stdout role=positive paths=7 revs=077d431e6996
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice-copied.stdout role=positive paths=7 revs=c21081008adbb6b6fe4e58a0aeec4831b30e318c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/controls-a.stdout role=control paths=9 revs=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1,c3e2ca9f020776b3d66c7af854fb82c834674fcf
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/controls-b.stdout role=positive paths=9 revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS
+exit=0

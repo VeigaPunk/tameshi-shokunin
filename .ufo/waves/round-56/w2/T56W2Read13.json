@@ -1,0 +1,39 @@
+{
+  "heading": "### Round-17 gate/probe registry — re-pin and monitor",
+  "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "section_sha256": "309f83283e7518eb00cf7ce4296daf4bf5e80843ff2b3046755eb55d3ba8fb8c",
+  "findings": [],
+  "notes": [
+    "The pin-disposition TMPDIR exit-2 arm is exercised by the allocating --selftest path only. The normal --manifest/--root probe exits 0 with an unusable TMPDIR because it allocates no scratch (receipt 15 vs. 16); the parenthetical identifies the self-test, but explicitly naming that scope would avoid ambiguity.",
+    "At C0, registry-check --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 from the lane root reports held=48/50, exit 1. The two active differing rows are sources-census (expect 0, got 1) and verify-round15 (expect 0, got 1). At base 981c5e8b the same two rows differ (held=47/49 across 49 active rows), so this is pre-existing tree state, not a false exit-map statement in this section. The lane-internal sources-census-v2 script reports SOURCES_CENSUS: VIOLATIONS for S280 because corpus/knowledge/scratch-root-contract.md contains neither the row id nor Errors.html; the required fleet sources-census.sh validate command separately exits 0.",
+    "The --regression SETUP-2 observation depends on repo identity: a clone without its own sibling-repository layout returns repo_identity_mismatch/SETUP 2; from the lane root with a usable TMPDIR, the regression passes 10/10. An unusable/nonexistent TMPDIR can itself make the control red and produce SETUP 2.",
+    "The registry-check command synopsis omits supported --root and --only options; the listed options are valid, so this is a completeness note rather than a false statement.",
+    "The registry-check clone-failed exit-2 arm was not independently forced; invalid-registry, unknown-rev, no-match --tag, differing-row, all-held selftest, and usage arms were exercised."
+  ],
+  "commands": [
+    "python3 - <<'PY' (importlib-load frozen .ufo/evidence/round-18/measure.py; git show C0:SKILL.md; sectionize; print heading/start/end/sha256)",
+    "git show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md | sed -n '1885,1900p'",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json",
+    "python3 tools/evidence-disposition.py --selftest",
+    "python3 tools/evidence-disposition.py (no arguments)",
+    "python3 tools/registry-check.py --selftest",
+    "python3 tools/registry-check.py --tag no-such-tag-xyz",
+    "python3 tools/registry-check.py --rev deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+    "python3 tools/registry-check.py --bogus-flag",
+    "python3 tools/registry-check.py --registry /fast/scratch/hyaku/tameshi-r56/T56W2Read13/badreg.json",
+    "python3 tools/registry-check.py --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 --json (from scratch clone and from lane root)",
+    "python3 tools/registry-check.py --rev 981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1 --json (from lane root, base comparison)",
+    "python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin",
+    "python3 tools/pin-disposition.py --selftest",
+    "TMPDIR=/nonexistent/nope python3 tools/pin-disposition.py --selftest",
+    "TMPDIR=/nonexistent/nope python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin",
+    "bash tools/mutate-and-run.sh --selftest",
+    "bash tools/mutate-and-run.sh (no arguments)",
+    "bash tools/mutate-and-run.sh --regression --workdir /fast/scratch/hyaku/tameshi-r56/T56W2Read13/regwork3 (lane root, usable TMPDIR)",
+    "bash .ufo/evidence/kaika-round-1/sources-census-v2.sh (lane root; out-of-section state note)",
+    "bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi"
+  ],
+  "verdict": "verified-record"
+}

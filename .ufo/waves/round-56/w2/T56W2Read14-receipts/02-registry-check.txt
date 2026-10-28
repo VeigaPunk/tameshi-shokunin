@@ -1,0 +1,28 @@
+# D1: registry-check --selftest
+SELFTEST_CASE json-report PASS (exit=1)
+SELFTEST_CASE live-root-warning PASS (exit=0)
+SELFTEST: PASS (51 cases)
+EXIT=0
+
+# D2: registry-check --rev C0 (throwaway clone mode)
+ROW command-binding-source-read-red-pinned expect=1 got=1 held
+ROW registry-replay-selftest expect=0 got=0 held
+ROW mte-interop-selftest expect=0 got=0 held
+ROW mte-interop-check expect=0 got=0 held
+ROW receipt-revision-gate-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=48/50 superseded=7
+EXIT=1
+
+# D3: registry-check timeout_s NaN fixture (names the row, exit 2)
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+REGISTRY_CHECK: could-not-evaluate (registry invalid: /fast/scratch/hyaku/tameshi-r56/T56W2Read14/regfx/reg.json: rows[0].timeout_s (row 'bad-timeout-row'): non-finite JSON number NaN)
+EXIT=2
+
+# D4: registry-check timeout_s 90000 (> 86400) fixture (exit 2)
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+REGISTRY_CHECK: could-not-evaluate (registry invalid: rows[0] ('too-big-timeout-row').timeout_s must be a finite positive number <= 86400)
+EXIT=2
+
+# D5: registry-check usage exit
+       registry-check.py --selftest
+EXIT=64

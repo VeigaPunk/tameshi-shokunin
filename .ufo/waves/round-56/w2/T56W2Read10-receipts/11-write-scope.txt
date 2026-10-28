@@ -1,0 +1,33 @@
+# 11 write-scope evidence (no lane writes; TMPDIR honoured; sibling reads are read-only git show)
+--- git status in clone after every command above:
+(empty = no lane writes)
+--- scratch prefixes in the tools:
+629:    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
+1260:        prefix="bash-witness-selftest-private.", dir=strict_scratch_root()))
+--- strict_scratch_root (TMPDIR honoured, no silent /tmp fallback):
+156:def strict_scratch_root():
+157-    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+158-    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+159-    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+160-    import os as _os
+161-    t = _os.environ.get("TMPDIR")
+162-    if t:
+163-        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+164-            raise ScratchRootUnusable(
+165-                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+166-        return t
+167-    return tempfile.gettempdir()
+--- sibling object store read (read-only git show):
+361-def materialize_target(kagi: Path, rev: str) -> bytes:
+362-    if not re.fullmatch(r"[0-9a-f]{40}", rev or ""):
+363-        raise Cannot(f"revision is not an exact 40-hex git id: {rev!r}")
+364-    if not (kagi / ".git").exists() and not (kagi / ".jj").exists():
+365-        raise Cannot(f"kagi object store not found at {kagi}")
+366-    proc = subprocess.run(
+367:        ["git", "-C", str(kagi), "show", "--end-of-options",
+368-         f"{rev}:{TARGET_GIT_PATH}"],
+369-        capture_output=True, check=False, env=git_clean_env())
+370-    if proc.returncode != 0:
+371-        raise Cannot(f"git show {rev}:{TARGET_GIT_PATH} failed: "
+--- kagi sibling repo present and read-only use:
+/home/vgpnk/Projects/shokunin/kagi-shokunin

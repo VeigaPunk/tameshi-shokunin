@@ -1,0 +1,31 @@
+# A2 fixture: stale sidecar (the edit a reviewer would make) vs recomputed sidecar
+$ cat /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a2-tampered.txt
+VERDICT: rev=e5d1da46de6eda63f90564fb6070558641578e15 C1_X_PASS=true
+$ sha256sum over the stale sidecar
+0000000000000000000000000000000000000000000000000000000000000000GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a2-tampered.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15 code=RECEIPT_DIGEST_MISMATCH sidecar=000000000000 got=b4ead2ffea49
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH verdict=REFUSED
+exit=3
+$ sha256sum -c style: sidecar recomputed by the forger
+b4ead2ffea496cdb8da8bd1b1a52970f931869b25caee95196f576d349efc455
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a2-tampered.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# A2b no sidecar at all
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a2b-nosidecar.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+# A2c LANE: the real round-54 slice falsified (credited 60->64, PASS false->true), sidecar recomputed
+CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=4 C1_R54_PASS=true
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice-falsified.stdout role=positive revs=077d431e6996
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# A2d the same bytes with the repo's committed sidecar left in place
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice-falsified.stdout role=positive revs=077d431e6996 code=RECEIPT_DIGEST_MISMATCH sidecar=3310ff60802a got=21d7e53d6e2e
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH verdict=REFUSED
+exit=3
+# A2e sidecar present in the lane's own gate paths?
+$ ls /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/control/
+frozen-surface.paths
+# measure.py copies receipts into --work without their sidecars (lines 147,149,171,190,212-214),
+# so RECEIPT_DIGEST_MISMATCH cannot fire on any real receipt in the round's own arms.

@@ -1,0 +1,32 @@
+# G1: trace-inputs --selftest (promoted collector)
+PASS temp-workdirs-deleted
+PASS no-artifacts-inside-root
+SELFTEST: 30/30
+EXIT=0
+
+# G2: promoted vs round-17 copy are not byte-identical, round-17 copy unchanged since round-17
+f59c9312c56eb458d5e24fc9a40b79c8858d9e1a96174d9a24c8ead1dc4a29f4  tools/trace-inputs.py
+521be95581a5073e47a92aa6c77a0087f101545a9c8d69db620d910ac0953070  .ufo/evidence/round-17/coldread/trace-inputs.py
+2a22ade round-17: build landing — v2 disposition re-pin (R16-OP1), entry-command monitor + registry (R16-MON1), input-keyed measure/trace/assemble (R16-C2b), round-14 recipe historical (C2a), box-3 correction (C2c), receipt correction (EV1), jj fixes (repo-identity guard, GIT_* scrub, branch tip), QUALITY 23-27, S058-S064, wave-1 evidence
+
+# G3: bash-witness-study PIN_BASH/REV_BASH at tools/mutate-and-run.sh:616-617
+PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+REV_BASH=fecee8743e52eb8fb5fbb40782934cb619a1a96e
+
+# G4: 4acc607 is the historical_inputs rev for tools/bash-witness-study.py in round-18 dispositions
+{
+ "rev": "4acc607dfd79f19d508bd50cdd06b77269fccd1d",
+ "reason": "moved by design in round 18 (C2 P11: subprocess environments now drop inherited GIT_* variables); the round-13 receipts were produced with the 49e9e5e2 bytes held at this rev"
+}
+
+# G5: bwrap envelope from defect-probes (fleet read-only)
+Every child runs under bwrap 0.13.1 with this envelope:
+  bwrap --ro-bind / / --dev /dev --proc /proc --bind W W
+    --bind W /mnt --ro-bind FLEET /mnt/source --tmpfs /tmp --bind W/tmp /tmp
+    --unshare-pid --unshare-net --die-with-parent --chdir /mnt/<cwd>
+    env -i PATH=/usr/bin:/bin HOME=/mnt/home XDG_CONFIG_HOME=/mnt/xdg
+    XDG_CACHE_HOME=/mnt/home/.cache TMPDIR=/tmp
+    GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 JJ_CONFIG=
+
+# G6: defect-probes never wrapped in tools/trace-inputs.py (nested ptrace refused -> 2)
+see 05-wrap-defect-probes.txt

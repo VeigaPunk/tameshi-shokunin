@@ -1,0 +1,41 @@
+### R11 QUALITY 107 command, verbatim, from a foreign cwd (/tmp)
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-base.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-c0.json,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-B-strace-registry-check.log,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-c0-pinned-current.txt,.ufo/waves/round-54/w1/T54W1ExecC2Counter.md
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+### R12 same receipt at its own revision 077d431e69965fa4673cd006ab64f6fc387f9e15 (must be PASS/0)
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout role=positive revs=077d431e6996
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+### R13 knowledge Re-derive step 3: controls-b stdout as positive at c21081008adb
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-b.stdout role=positive revs=077d431e6996,7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+
+### R14 knowledge Re-derive step 4: round-55 c2 stdout as verdict at 4c04c1d33377
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/after/c2.stdout role=verdict revs=none code=RECEIPT_REV_ABSENT no rev= token
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+
+### R15 SKILL bullet invocation form, verbatim (no --receipt)
+usage: receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:ROLE[:REGEX] ... [--json] | --selftest
+exit=1
+
+### R16 registry cell selftest command, from lane root
+CASE unresolvable-certified-refused PASS
+GATE_SELFTEST: 19/19 pass
+exit=0
+--- registry cell expects ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json;[print(c['name'],'->',c['expect']['stdout_contains'][0]) for c in json.load(open('tools/registry.json'))['tools'] if c['name']=='receipt-revision-gate-selftest']
+                                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: 'tools'
+
+### R17 registry cell source pointer (tools/receipt-revision-gate.py@21eb3c6:10-29) resolves?
+Usage:
+  receipt-revision-gate.py --lane LANE --certified REV [--paths FILE]
+                           --receipt PATH:ROLE[:REQUIRE_REGEX] [--receipt ...] [--json]
+...
+  RECEIPT_DIGEST_MISMATCH · RECEIPT_REQUIRED_LINE_MISSING

@@ -1,0 +1,60 @@
+F3 — the scratch-root bullet's quoted byte-shape names `<tool>:`; three of the nine
+allocating modes it says were measured print a different leading token
+(WITNESS_STUDY:, ENVDIFF_SETUP: x2). The class, the exit code and the value-naming all
+hold for 9/9 (round-55 counter at C0: grammar=9/9).
+
+CLONE
+export S=/fast/scratch/hyaku/tameshi-r56/T56W2Read07
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone
+git -C $S/clone checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378
+C=$S/clone; U=$S/no-such-tmpdir
+cd $C
+
+COMMAND
+TMPDIR=$U python3 tools/bash-witness-study.py selftest
+OUTPUT
+WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+exit=2
+
+COMMAND
+TMPDIR=$U python3 tools/env-diff.py --selftest
+OUTPUT
+ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+exit=2
+
+COMMAND
+TMPDIR=$U python3 tools/env-diff.py --contract $S/envdiff/contract.json --out $S/envdiff/out3.json --fleet-root $C
+OUTPUT
+ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r56/T56W2Read07/no-such-tmpdir' (could-not-evaluate)
+exit=2
+
+COMMAND (the five modes whose token IS the tool name)
+TMPDIR=$U python3 tools/repeat-control.py --selftest    -> repeat-control: could-not-evaluate: ...
+TMPDIR=$U python3 tools/registry-check.py --selftest    -> registry-check: could-not-evaluate: ...
+TMPDIR=$U python3 tools/pin-disposition.py --selftest    -> pin-disposition.py: could-not-evaluate: ...
+TMPDIR=$U python3 tools/evidence-disposition.py --selftest -> evidence-disposition.py: could-not-evaluate: ...
+TMPDIR=$U python3 tools/context-capture.py --selftest    -> context-capture.py: could-not-evaluate: ...
+(all exit=2, one stderr line each, no RuntimeError/Traceback token)
+
+COMMAND (the frozen registry cells at C0 already quote each tool's REAL token — the page is the odd one out)
+git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show c0137451f5b7f22d65f748fc69f1b181f55e1378:tools/registry.json | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+for r in d['rows']:
+    if r.get('scratch_root'):
+        print(r['name'],'->',r['scratch_root'].split('the token this tool actually prints: ')[-1][:70])
+"
+OUTPUT
+repeat-control-selftest -> "repeat-control: could-not-evaluate: cannot create clone scratch under
+bash-witness-selftest -> "WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under
+pin-disposition-selftest -> "pin-disposition.py: could-not-evaluate: cannot create clone scratch u
+evidence-disposition-selftest -> "evidence-disposition.py: could-not-evaluate: cannot create scra
+context-capture-selftest -> "context-capture.py: could-not-evaluate: cannot create clone scratch
+registry-check-selftest -> "registry-check: could-not-evaluate: cannot create clone scratch under
+env-diff-selftest -> "ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the
+receipt-revision-gate-selftest -> Read-only on the lane: the receipt form ...
+
+Lane precedent: round-55 adjudication W2-TOOLDIFF-F3 accepted that a cell quoting
+`<tool>.py` was false for 4/7 tools and fixed each cell to quote the token its tool
+actually prints (.ufo/evidence/round-55/integrate/resolutions.json). This SKILL page still
+carries the generic `<tool>:` shape.

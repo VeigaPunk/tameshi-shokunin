@@ -1,0 +1,289 @@
+GATE_SHA256=1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2
+FIXTURE=/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds
+A=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 B=1eaad2c99ea0675b5d285ac8b73d6212e1154088 C=233c212305db2c6b9c07830d84f6b78750c8953c SD=6c3db677a8e7af563e9d69d9dd835be72df508de TAGHEX=2765397 COLL=0199b70 BLOB=0199b7037de995878abe73a1dd5b2c94d5fc6f9e
+
+=== 01-no-rev role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/01-no-rev:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/01-no-rev role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 02-two-revs-positive role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_AMBIGUOUS kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/02-two-revs-positive:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_AMBIGUOUS
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/02-two-revs-positive role=positive revs=1eaad2c99ea0675b5d285ac8b73d6212e1154088,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_AMBIGUOUS revs=1eaad2c99ea0675b5d285ac8b73d6212e1154088,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_AMBIGUOUS verdict=REFUSED
+
+=== 03-rev-in-path-mismatch role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=MISLABEL
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/03-rev-in-path-mismatch:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_MISMATCH
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/03-rev-in-path-mismatch role=positive revs=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_MISMATCH rev=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 certified=233c212305db
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+
+=== 04-rev-in-path-certified role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=FALSE_ACCEPT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/04-rev-in-path-certified:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/04-rev-in-path-certified role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 05-json-rev role=verdict certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/05-json-rev:verdict
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/05-json-rev role=verdict revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 06-json-rev-uppercase role=verdict certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/06-json-rev-uppercase:verdict
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/06-json-rev-uppercase role=verdict revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 07-certified-other-claim role=verdict certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=DECLARED_GAP
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/07-certified-other-claim:verdict
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/07-certified-other-claim role=verdict revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 08-sidecar-match role=positive certified=233c212305db paths=- sidecar=MATCH expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/08-sidecar-match:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/08-sidecar-match role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 09-sidecar-mismatch role=positive certified=233c212305db paths=- sidecar=ZERO expected=RECEIPT_DIGEST_MISMATCH kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/09-sidecar-mismatch:positive
+exit=3 observed=REFUSE codes=RECEIPT_DIGEST_MISMATCH
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/09-sidecar-mismatch role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c code=RECEIPT_DIGEST_MISMATCH sidecar=000000000000 got=3ceb945ef13c
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH verdict=REFUSED
+
+=== 10-sidecar-empty role=positive certified=233c212305db paths=- sidecar=EMPTY expected=RECEIPT_DIGEST_MISMATCH kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/10-sidecar-empty:positive
+exit=3 observed=REFUSE codes=RECEIPT_DIGEST_MISMATCH
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/10-sidecar-empty role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c code=RECEIPT_DIGEST_MISMATCH sidecar= got=3ceb945ef13c
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH verdict=REFUSED
+
+=== 11-sidecar-uppercase role=positive certified=233c212305db paths=- sidecar=UPPER expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/11-sidecar-uppercase:positive
+exit=3 observed=REFUSE codes=RECEIPT_DIGEST_MISMATCH
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/11-sidecar-uppercase role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c code=RECEIPT_DIGEST_MISMATCH sidecar=3CEB945EF13C got=3ceb945ef13c
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH verdict=REFUSED
+
+=== 12-tag-lightweight role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/12-tag-lightweight:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/12-tag-lightweight role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 13-tag-annotated role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/13-tag-annotated:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/13-tag-annotated role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 14-tag-shadows-commit-prefix role=positive certified=1eaad2c99ea0 paths=- sidecar=- expected=RECEIPT_REV_MISMATCH kind=FALSE_ACCEPT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 1eaad2c99ea0675b5d285ac8b73d6212e1154088 --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/14-tag-shadows-commit-prefix:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/14-tag-shadows-commit-prefix role=positive revs=2765397
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 15-tag-shadows-certified-prefix role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/15-tag-shadows-certified-prefix:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_MISMATCH
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/15-tag-shadows-certified-prefix role=positive revs=233c212 code=RECEIPT_REV_MISMATCH rev=233c212 certified=233c212305db
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+
+=== 16-rev-in-comment role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=FALSE_ACCEPT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/16-rev-in-comment:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/16-rev-in-comment role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 17-comment-plus-real role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/17-comment-plus-real:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_AMBIGUOUS
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/17-comment-plus-real role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_AMBIGUOUS revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_AMBIGUOUS verdict=REFUSED
+
+=== 18-rev-in-code-fence role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=FALSE_ACCEPT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/18-rev-in-code-fence:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/18-rev-in-code-fence role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 19-fence-plus-real role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/19-fence-plus-real:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_AMBIGUOUS
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/19-fence-plus-real role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_AMBIGUOUS revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_AMBIGUOUS verdict=REFUSED
+
+=== 20-prefix-7 role=positive certified=1eaad2c99ea0 paths=- sidecar=- expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 1eaad2c99ea0675b5d285ac8b73d6212e1154088 --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/20-prefix-7:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/20-prefix-7 role=positive revs=1eaad2c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 21-prefix-12 role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/21-prefix-12:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/21-prefix-12 role=positive revs=233c212305db
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 22-uppercase-hex role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/22-uppercase-hex:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/22-uppercase-hex role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 23-prefix-6 role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=FALSE_REFUSE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/23-prefix-6:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/23-prefix-6 role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 24-prefix-41 role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/24-prefix-41:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/24-prefix-41 role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 25-spaced-rev role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=MISLABEL
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/25-spaced-rev:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/25-spaced-rev role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 26-notrev role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/26-notrev:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/26-notrev role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 27-directory-receipt role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_NOT_BLOB kind=CRASH
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/27-directory-receipt:positive
+exit=1 observed=CRASH codes=none
+
+--- stderr ---
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py", line 331, in <module>
+    sys.exit(run(sys.argv[1:]))
+             ~~~^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py", line 193, in run
+    codes, detail, revs = check(lane, full, path_list, receipt, receipt[1], receipt[2])
+                          ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py", line 98, in check
+    data = p.read_bytes()
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/27-directory-receipt'
+
+=== 28-missing role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_MISSING kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/28-missing:positive
+exit=3 observed=REFUSE codes=RECEIPT_MISSING
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/28-missing role=positive revs=none code=RECEIPT_MISSING path=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/28-missing
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_MISSING verdict=REFUSED
+
+=== 29-empty role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_EMPTY kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/29-empty:positive
+exit=3 observed=REFUSE codes=RECEIPT_EMPTY
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/29-empty role=positive revs=none code=RECEIPT_EMPTY path=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/29-empty
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_EMPTY verdict=REFUSED
+
+=== 30-paths-launder role=positive certified=233c212305db paths=UNCHANGED sidecar=- expected=RECEIPT_REV_CONTENT_DRIFT kind=EXPLOITABLE
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --paths /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/paths-unchanged.txt --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/30-paths-launder:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/30-paths-launder role=positive revs=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 31-paths-drift role=positive certified=233c212305db paths=DRIFT sidecar=- expected=RECEIPT_REV_CONTENT_DRIFT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --paths /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/paths-drift.txt --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/31-paths-drift:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_CONTENT_DRIFT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/31-paths-drift role=positive revs=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_CONTENT_DRIFT rev=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 drift=moved.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+
+=== 32-control-descendant role=control certified=233c212305db paths=- sidecar=- expected=RECEIPT_CONTROL_NOT_ANCESTOR kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/32-control-descendant:control
+exit=3 observed=REFUSE codes=RECEIPT_CONTROL_NOT_ANCESTOR
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/32-control-descendant role=control revs=6c3db677a8e7af563e9d69d9dd835be72df508de code=RECEIPT_CONTROL_NOT_ANCESTOR rev=6c3db677a8e7af563e9d69d9dd835be72df508de
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_CONTROL_NOT_ANCESTOR verdict=REFUSED
+
+=== 33-control-equal role=control certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/33-control-equal:control
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/33-control-equal role=control revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 34-control-multi role=control certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/34-control-multi:control
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/34-control-multi role=control revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 35-control-unresolvable role=control certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_UNRESOLVABLE kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/35-control-unresolvable:control
+exit=3 observed=REFUSE codes=RECEIPT_REV_UNRESOLVABLE
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/35-control-unresolvable role=control revs=deadbeefdead code=RECEIPT_REV_UNRESOLVABLE rev=deadbeefdead
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+
+=== 36-ambiguous-object-prefix role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_UNRESOLVABLE kind=MISLABEL
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/36-ambiguous-object-prefix:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_UNRESOLVABLE
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/36-ambiguous-object-prefix role=positive revs=0199b70 code=RECEIPT_REV_UNRESOLVABLE rev=0199b70
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+
+=== 37-json-plus-text role=verdict certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_AMBIGUOUS kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/37-json-plus-text:verdict
+exit=3 observed=REFUSE codes=RECEIPT_REV_AMBIGUOUS
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/37-json-plus-text role=verdict revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_AMBIGUOUS revs=233c212305db2c6b9c07830d84f6b78750c8953c,27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_AMBIGUOUS verdict=REFUSED
+
+=== 38-json-upper-key role=verdict certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/38-json-upper-key:verdict
+exit=3 observed=REFUSE codes=RECEIPT_REV_ABSENT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/38-json-upper-key role=verdict revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+=== 39-blob-rev role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_UNRESOLVABLE kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/39-blob-rev:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_UNRESOLVABLE
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/39-blob-rev role=positive revs=0199b7037de995878abe73a1dd5b2c94d5fc6f9e code=RECEIPT_REV_UNRESOLVABLE rev=0199b7037de995878abe73a1dd5b2c94d5fc6f9e
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+
+=== 40-required-line role=verdict certified=233c212305db paths=- sidecar=- expected=RECEIPT_REQUIRED_LINE_MISSING kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/40-required-line:verdict:C2_R56_PASS=
+exit=3 observed=REFUSE codes=RECEIPT_REQUIRED_LINE_MISSING
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/40-required-line role=verdict revs=233c212305db2c6b9c07830d84f6b78750c8953c code=RECEIPT_REQUIRED_LINE_MISSING regex='C2_R56_PASS='
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REQUIRED_LINE_MISSING verdict=REFUSED
+
+=== 41-duplicate-rev role=positive certified=233c212305db paths=- sidecar=- expected=ACCEPT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/41-duplicate-rev:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/41-duplicate-rev role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 42-rev-in-url role=positive certified=233c212305db paths=- sidecar=- expected=RECEIPT_REV_ABSENT kind=FALSE_ACCEPT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/42-rev-in-url:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/42-rev-in-url role=positive revs=233c212305db2c6b9c07830d84f6b78750c8953c
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 43-paths-empty-list role=positive certified=233c212305db paths=EMPTYFILE sidecar=- expected=RECEIPT_REV_CONTENT_DRIFT kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --paths /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/paths-emptyfile.txt --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/43-paths-empty-list:positive
+exit=3 observed=REFUSE codes=RECEIPT_REV_CONTENT_DRIFT
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/43-paths-empty-list role=positive revs=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 code=RECEIPT_REV_CONTENT_DRIFT rev=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7 drift=<no --paths given: content identity is not checkable>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+
+=== 44-paths-nonexistent role=positive certified=233c212305db paths=NOFILE sidecar=- expected=RECEIPT_REV_CONTENT_DRIFT kind=FALSE_ACCEPT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --paths /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/paths-nofile.txt --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/44-paths-nonexistent:positive
+exit=0 observed=ACCEPT codes=none
+GATE OK /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/44-paths-nonexistent role=positive revs=27653978b812c14d60ba7eefb9ebdcf9bb4b22f7
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+=== 45-two-causes-one-detail role=positive certified=233c212305db paths=- sidecar=ZERO expected=RECEIPT_DIGEST_MISMATCH,RECEIPT_REV_UNRESOLVABLE kind=RIGHT
+$ /usr/bin/python3 /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/gate.py --lane /fast/scratch/hyaku/tameshi-r56/T56W1ExecGateFuzz/fixture.rq04Ds --certified 233c212305db2c6b9c07830d84f6b78750c8953c --receipt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/45-two-causes-one-detail:positive
+exit=3 observed=REFUSE codes=RECEIPT_DIGEST_MISMATCH,RECEIPT_REV_UNRESOLVABLE
+GATE REFUSED /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w1/T56W1ExecGateFuzz-receipts/fuzz-receipts/45-two-causes-one-detail role=positive revs=deadbeefdead code=RECEIPT_DIGEST_MISMATCH,RECEIPT_REV_UNRESOLVABLE rev=deadbeefdead
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH,RECEIPT_REV_UNRESOLVABLE verdict=REFUSED

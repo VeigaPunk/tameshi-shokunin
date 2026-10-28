@@ -1,0 +1,16 @@
+# T56W2Read11 receipts — proof that this report passes the frozen round-56 reader validator
+# The validator reads reports from the COMMITTED tree (git ls-tree at --rev), so the
+# report was committed in a THROWAWAY scratch clone (the lane was never committed to by this seat).
+# fixture rev = 515bf4fe3e370c41aaf2e3c88c5d19ee63e363ae  (C0 + a commit adding only T56W2Read11.json/.md)
+
+WARN READER_FINDINGS_EMPTY path=.ufo/waves/round-56/w2/T56W2Read11.json
+EXPLAIN PASS '### Round-13 gate/probe registry' sha=896722c49418
+READERS_R56: rev=515bf4fe3e37 c0=c0137451f5b7 r18=7ca87a7c9819 headings=18 passed=1/18 failed=17 refusals=17 warn=1 xrev=0 READERS_R56_PASS=false
+
+# the only line naming this seat's heading:
+EXPLAIN PASS '### Round-13 gate/probe registry' sha=896722c49418
+# -> the validator matched my section_sha256 to the C0 sectionize digest and passed the seat.
+# -> READER_FINDINGS_EMPTY is a WARNING (validator line 322), not a refusal: it fires for every
+#    clean read with an empty findings list. It is the expected state for verdict=verified-record.
+# -> the other 17 headings FAIL with READER_MISSING because no other wave-2 seat has committed yet.
+#    (the L1 integrates). This seat contributes 1/18.

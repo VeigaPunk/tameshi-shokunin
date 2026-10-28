@@ -1,0 +1,28 @@
+# E1: evidence-disposition --selftest WITH jj on PATH
+SELFTEST_CASE usage-selftest-extra PASS (exit=64 expects=64)
+SELFTEST_CASE argv-never-executed PASS (marker absent=True)
+SELFTEST: PASS (66/66)
+EXIT=0
+
+# E2: evidence-disposition --selftest WITHOUT jj on PATH (claim: needs jj)
+SELFTEST_CASE argv-never-executed PASS (marker absent=True)
+SELFTEST: FAIL (3/66 failed: v2-jj-prebookmark-branch-tip, v2-jj-branch-tip, v2-jj-without-lane-branch; fixtures kept at /tmp/tameshi-r14-evidence-disposition-selftest.ln7l8b8h)
+EXIT=1
+
+# E3: evidence-disposition gate, round-18 manifest
+status clean supersedes .ufo/evidence/round-14/dispositions.json
+EXIT=0
+
+# E4: evidence-disposition gate, round-17 manifest (round-17 row claims exit 2)
+status could_not_evaluate id expected_input_digest_mismatch
+EXIT=0
+
+# E5: bash-witness-study count (read-only)
+declared_none	B5,B10
+unresolved	none
+EXIT=0
+
+# E6: bash-witness-study selftest
+WITNESS_SELFTEST: 51/51 pass
+VERDICT: PASS
+EXIT=0

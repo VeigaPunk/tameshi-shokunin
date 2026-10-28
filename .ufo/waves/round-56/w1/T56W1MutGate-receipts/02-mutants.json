@@ -1,0 +1,142 @@
+{
+ "pristine_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+ "baseline": {
+  "exit": 0,
+  "tally": "GATE_SELFTEST: 14/14 pass",
+  "passed": 14,
+  "total": 14,
+  "failed_cases": [],
+  "stdout_tail": "GATE_SELFTEST: 14/14 pass",
+  "stderr_tail": []
+ },
+ "mutants": [
+  {
+   "mutant": "M1-drop-rev-absent",
+   "old": "    if not revs:\n        codes.append('RECEIPT_REV_ABSENT')\n        return codes, detail, None\n",
+   "new": "    if False and not revs:\n        codes.append('RECEIPT_REV_ABSENT')\n        return codes, detail, None\n",
+   "mutated_sha256": "061a583ed390d4d64ba8323e9c5f30a1062da32306dab9ff5c77179fc1b094d2",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "absent-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M2-drifted-paths-empty",
+   "old": "    return [p for p in r.stdout.decode().splitlines() if p]\n",
+   "new": "    return []\n",
+   "mutated_sha256": "c4b98bc80f9e6259cedb315af7d414829995f34105c71eb7222bdf17292b26a3",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "content-drift-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M3-is-ancestor-true",
+   "old": "    return git(['-C', lane, 'merge-base', '--is-ancestor', older, newer]).returncode == 0\n",
+   "new": "    return True\n",
+   "mutated_sha256": "68355af8d029abbe1f9a9edd57389a26dfe4e21eb69df3f9c003b199fc849e06",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "control-not-ancestor-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M4-skip-digest-check",
+   "old": "        if want != got:\n",
+   "new": "        if False and want != got:\n",
+   "mutated_sha256": "e0d0299bf5d70f5464b9745e5115858620229b84812533a6927cb701b2e6c07d",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "digest-mismatch-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M5-accept-multi-rev-positive",
+   "old": "        if len(revs) > 1:\n",
+   "new": "        if False and len(revs) > 1:\n",
+   "mutated_sha256": "3c2134309da23be61ad89f7d42ab1f232894eb53ae8728c11d256ed63180a78e",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "ambiguous-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M6-skip-required-line",
+   "old": "    if regex is not None and not re.search(regex, text, re.M):\n",
+   "new": "    if False and regex is not None and not re.search(regex, text, re.M):\n",
+   "mutated_sha256": "cc110888212a6e41575f10d5a4e7ef47c5fb8a7b38073f5c61b6c9c269daeb83",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "required-line-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M7-empty-file-present",
+   "old": "    if not data.strip():\n        return ['RECEIPT_EMPTY'], 'path=%s' % path, None\n",
+   "new": "    if False and not data.strip():\n        return ['RECEIPT_EMPTY'], 'path=%s' % path, None\n",
+   "mutated_sha256": "5ce04af9424894e5c879ff92e9af9f2fbf9de1218d676ccbdd1e7d454456356f",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "empty-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  },
+  {
+   "mutant": "M8-drop-control-not-ancestor",
+   "old": "            codes.append('RECEIPT_CONTROL_NOT_ANCESTOR')\n",
+   "new": "            pass\n",
+   "mutated_sha256": "c6f1f8224e294170903d11ee63570a47537b33da1e45de7d50f1cec97c2cdc62",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "control-not-ancestor-refused"
+   ],
+   "stderr_tail": [],
+   "verdict": "KILLED",
+   "restored_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+   "restored_exact": true
+  }
+ ]
+}

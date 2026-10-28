@@ -1,0 +1,62 @@
+controls run against the scratch clone at c3e2ca9f0207
+
+[PASS] D1 uncommitted one-byte edit to a frozen file (worktree only)
+    expect=ok exit=0
+    FREEZE_GEN: files=10 ok
+
+[PASS] D2 same edit visible in the worktree, still uncommitted
+    expect=ok exit=0
+    FREEZE_GEN: files=10 ok
+
+[PASS] D3 commit that touches no frozen path
+    expect=ok exit=0
+    FREEZE_GEN: files=10 ok
+
+[PASS] D4 freeze.json header tamper (round 56 -> 57)
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=10 MISMATCH
+    FREEZE_GEN_MISMATCH freeze.json header round=57 != 56
+
+[PASS] D5 freeze.json digest tamper (c1/lost-headings-at-base.json)
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=10 MISMATCH
+    FREEZE_GEN_MISMATCH c1/lost-headings-at-base.json dcfc9f800b8b != 000000000000
+
+[PASS] D6 freeze.json carries a key that is not a contract frozen path
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=10 MISMATCH
+    FREEZE_GEN_MISMATCH 'c1/ghost.py' extra-in-manifest recorded=000000000000 (not a contract frozen path)
+
+[PASS] D7 freeze.json absent at rev
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=10 MISMATCH
+    FREEZE_GEN_MISMATCH freeze.json unreadable-at-rev 5761e060b463
+
+[PASS] D8 contract frozen_paths entry outside every mapping class
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=10 MISMATCH
+    FREEZE_GEN_MISMATCH corpus/QUALITY.md unmappable (not tools/, .ufo/evidence/round-21|48/ or .ufo/evidence/round-56/)
+    FREEZE_GEN_MISMATCH contract.json 104d31dfd2c4 != 2530a54775ae
+
+[PASS] D9 contract path under .ufo/evidence/round-48/ absent at rev
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=11 MISMATCH
+    FREEZE_GEN_MISMATCH .ufo/evidence/round-48/absent.sh unreadable-at-rev d07b8272157e
+    FREEZE_GEN_MISMATCH '.ufo/evidence/round-48/absent.sh' missing-from-manifest regenerated=UNREADABLE
+    FREEZE_GEN_MISMATCH contract.json b9c0a958161b != 2530a54775ae
+
+[PASS] D10 usage: no --rev
+    exit=2 stderr='freeze-gen: --lane and --rev are required\nusage: freeze-gen.py --lane LANE --rev REV [--explain] [--out PATH]'
+
+[PASS] D11 usage: lane is not a repository
+    exit=2 stderr='freeze-gen: lane is not a directory: /fast/scratch/hyaku/tameshi-r56/T56W1ExecFreezeGen/does-not-exist\nusage: freeze-gen'
+
+[PASS] D12 base 981c5e8b20a2 is an ancestor of the freeze c3e2ca9f0207
+
+[PASS] D13 freeze-gen at the pre-freeze base (contract.json and freeze.json absent)
+    expect=MISMATCH exit=1
+    FREEZE_GEN: files=0 MISMATCH
+    FREEZE_GEN_MISMATCH contract.json unreadable-at-rev 981c5e8b20a2
+    FREEZE_GEN_MISMATCH freeze.json unreadable-at-rev 981c5e8b20a2
+
+CONTROLS: 13/13 behaved as pre-registered

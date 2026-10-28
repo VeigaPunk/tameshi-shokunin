@@ -1,0 +1,25 @@
+{
+  "heading": "## Live-tree re-pin and entry-command monitor — round 17",
+  "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "section_sha256": "6395900104ed76b6f9dbfae1bb33384197982447e1db7dbaf89bf2b6b1b9beac",
+  "findings": [],
+  "notes": [
+    "Citation precision (stale-but-true, not a false behavior claim): the sentence cites tools/evidence-disposition.py:385-395 for setting GIT_NO_REPLACE_OBJECTS/GIT_GRAFT_FILE and scrubbing inherited GIT_*. Lines 385-395 contain the G4 comment and override dict; the executable inherited-GIT_* filter is at 406-409 (startswith('GIT_') at 407). The stated behavior is true, and the cited selftests v2-historical-replace-ref and v2-gitdir-env both expect exit 0 and pass. T54W2Read19 previously called this a minor gap routed to round 55; T55W3R03 called :385-395 exact for GIT_ENV_OVERRIDES. The C0 text remains unchanged; L1 may adjudicate this disputed pointer-coverage point.",
+    "Wording precision: 'round 18 adds bash-witness-study.py' can read as file provenance, although the file was added in round 12; round 18 added its GIT_* scrub. In context the intended scrub-set reading is true.",
+    "Step 3 at C0, run in a fleet mirror with sibling lanes, printed REGISTRY_CHECK: held=48/50 superseded=7 and exited 1; sources-census and verify-round15 differed. Both also differed at base 981c5e8, so this is a pre-existing registry observation, not a false claim in this section. mte-interop-check held when siblings were present.",
+    "The lane census validate command exited 0. The task text expects 141 rows, while the counter reports 142 at C0 (base 140; C0 adds S281 and S282)."
+  ],
+  "commands": [
+    "python3 - <<'PY' (importlib-load frozen .ufo/evidence/round-18/measure.py; git show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md; sectionize; select the named heading)",
+    "git show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md | sed -n '1857,1888p' (independent section-byte hash check)",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions-before.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json",
+    "python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json",
+    "python3 tools/evidence-disposition.py --selftest",
+    "python3 tools/registry-check.py --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 (fleet-mirror clone with sibling lanes)",
+    "bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi"
+  ],
+  "verdict": "verified-record"
+}

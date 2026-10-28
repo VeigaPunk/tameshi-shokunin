@@ -1,0 +1,46 @@
+MUTANT M2b — drifted_paths(): the "<no --paths given>" refusal replaced by []
+one exact edit, old occurrences in C0 gate = 1
+
+COMMAND: python3 M2b-gate.py --selftest
+STDOUT:
+CASE matched-positive-accepted PASS
+CASE content-identical-positive-accepted PASS
+CASE content-drift-refused PASS
+CASE strict-mismatch-refused PASS
+CASE absent-refused PASS
+CASE ambiguous-refused PASS
+CASE unresolvable-refused PASS
+CASE control-ancestors-accepted PASS
+CASE control-not-ancestor-refused PASS
+CASE digest-mismatch-refused PASS
+CASE required-line-refused PASS
+CASE missing-refused PASS
+CASE empty-refused PASS
+CASE codes-closed PASS
+CASE not-blob-refused PASS
+CASE json-rev-parsed PASS
+CASE unknown-role-refused PASS
+CASE zero-receipts-refused PASS
+CASE unresolvable-certified-refused PASS
+GATE_SELFTEST: 19/19 pass
+STDERR:
+(empty)
+EXIT: 0
+VERDICT: SURVIVED — the 19-case suite does not pin the "<no --paths given>" branch.
+
+--- consequence: an empty --paths file makes the gate accept a mismatched receipt
+COMMAND (pristine): receipt-revision-gate.py --lane REPO --certified 1282acaddb9dd6aed72f2a9778a6558871b13ea9 --paths EMPTY.paths --receipt r.txt:positive
+  exit 3
+  GATE REFUSED /tmp/t56-m2b-x03gwu_b/r.txt role=positive revs=446c2576ad293eb6b86699d7093bfba246a2d30e code=RECEIPT_REV_CONTENT_DRIFT rev=446c2576ad293eb6b86699d7093bfba246a2d30e drift=<no --paths given: content identity is not checkable>
+  GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+COMMAND (mutant M2b): same, on M2b-gate.py
+  exit 0
+  GATE OK /tmp/t56-m2b-x03gwu_b/r.txt role=positive revs=446c2576ad293eb6b86699d7093bfba246a2d30e
+  GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+The receipt names rev=446c2576ad29 while the certified revision is 1282acaddb9d: a real content mismatch.
+PRISTINE refuses with RECEIPT_REV_CONTENT_DRIFT (exit 3); MUTANT accepts it (exit 0, verdict=PASS).
+
+--- the same hole exists in the wave-1 gate (14 cases): not a C0 regression
+COMMAND: python3 w1-M2b.py --selftest   (wave-1 gate + M2b)
+STDOUT tail: GATE_SELFTEST: 14/14 pass exit 0

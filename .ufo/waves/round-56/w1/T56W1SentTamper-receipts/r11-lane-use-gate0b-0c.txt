@@ -1,0 +1,40 @@
+# deciding-run.sh lines 66-74 (gate 0b) reproduced with the round's real path list,
+# and a control set in which EVERY pre-registered control failed.
+CTL_0_c1 false CTL_0_c1 C1_R56: rev=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1 credited=46 lost=18 C1_R56_PASS=false
+CTL_0_c2 false CTL_0_c2 C2_R56: rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf total=6 C2_R56_PASS=false
+CONTROLS_A: 0/2 as pre-registered
+---
+CTL CTL_POS_c1 C1_R56: rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf credited=46 lost=18 C1_R56_PASS=false
+CTL_MISMATCH CTL_POS_c1 expected=true actual=false
+CTL CTL_POS_c2 C2_R56: rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf total=6 C2_R56_PASS=false
+CTL_MISMATCH CTL_POS_c2 expected=true actual=false
+CONTROLS_B: 0/2 as pre-registered
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/controls-a.stdout role=control revs=981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1,c3e2ca9f020776b3d66c7af854fb82c834674fcf
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/controls-b.stdout role=positive revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS
+exit=0
+# deciding-run.sh lines 56-57: the only acceptance test applied to those files
+controls-a grep exit=0
+controls-b grep exit=0
+# deciding-run.sh lines 100-107 (gate 0c): the required line is 'C1_R56_PASS=' with no value
+C2_R56: rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf total=9 C2_R56_PASS=false
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/verdict-false.txt role=verdict revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# the separate grep that saves it:
+grep exit=1
+# round-55's truncated C2 receipt, refused (C2 arm 4)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r55-c2-orig.stdout role=verdict revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+# the same receipt plus one appended rev= line
+
+rev=4c04c1d33377e5b6a3636199c5fdda197fc670d5
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r55-c2.stdout role=verdict revs=4c04c1d33377e5b6a3636199c5fdda197fc670d5
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# round-54's absent revision
+fatal: Not a valid object name 7df0e0426c98
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/exit0.txt role=positive revs=7df0e0426c98 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3

@@ -1,0 +1,31 @@
+# tree object of the certified revision
+$ printf 'VERDICT: rev=467cd7231590c9b13b88e547c34a58ac24ecfbb2 C1_X_PASS=true'
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a5.txt role=positive revs=467cd7231590c9b13b88e547c34a58ac24ecfbb2 code=RECEIPT_REV_UNRESOLVABLE rev=467cd7231590c9b13b88e547c34a58ac24ecfbb2
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+# blob object
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a5b.txt role=positive revs=4a58007052a65fbc2fc3f910f2855f45a4058e74 code=RECEIPT_REV_UNRESOLVABLE rev=4a58007052a65fbc2fc3f910f2855f45a4058e74
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+# annotated tag (peels to its commit)
+VERDICT: rev=cafebabe C1_X_PASS=true
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a5c.txt role=positive revs=cafebabe
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# lightweight tag whose NAME is hex: rev=deadbeef at c0
+VERDICT: rev=deadbeef C1_X_PASS=true
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a5d.txt role=positive revs=deadbeef
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# the SAME receipt bytes after the tag moves to c2 (token is a mutable ref)
+$ git -C FIX tag -f deadbeef be37462a737c4d14f78af4776a3048f93e222a8f
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a5d.txt role=positive revs=deadbeef code=RECEIPT_REV_MISMATCH rev=deadbeef certified=68a8ffd1e0df
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a5d.txt role=positive revs=deadbeef
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# LANE: tree object of the round-54 certified revision
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/tree.txt role=positive revs=9042461357b17ec37c95984f4816c0a670e04f8f code=RECEIPT_REV_UNRESOLVABLE rev=9042461357b17ec37c95984f4816c0a670e04f8f
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3

@@ -1,0 +1,322 @@
+{
+ "seat": "T56W1MutGate",
+ "round": "round-56",
+ "wave": 1,
+ "item": "mutation-test tools/receipt-revision-gate.py",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "lane_head": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "subject": "tools/receipt-revision-gate.py",
+ "subject_sha256_before": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+ "subject_sha256_after": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+ "baseline_selftest": "GATE_SELFTEST: 14/14 pass",
+ "baseline_exit": 0,
+ "required_mutants": [
+  {
+   "id": "M1-drop-rev-absent",
+   "edit_old": "    if not revs:\n        codes.append('RECEIPT_REV_ABSENT')\n        return codes, detail, None\n",
+   "edit_new": "    if False and not revs:\n        codes.append('RECEIPT_REV_ABSENT')\n        return codes, detail, None\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "absent-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "061a583ed390d4d64ba8323e9c5f30a1062da32306dab9ff5c77179fc1b094d2",
+   "restored_exact": true
+  },
+  {
+   "id": "M2-drifted-paths-empty",
+   "edit_old": "    return [p for p in r.stdout.decode().splitlines() if p]\n",
+   "edit_new": "    return []\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "content-drift-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "c4b98bc80f9e6259cedb315af7d414829995f34105c71eb7222bdf17292b26a3",
+   "restored_exact": true
+  },
+  {
+   "id": "M3-is-ancestor-true",
+   "edit_old": "    return git(['-C', lane, 'merge-base', '--is-ancestor', older, newer]).returncode == 0\n",
+   "edit_new": "    return True\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "control-not-ancestor-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "68355af8d029abbe1f9a9edd57389a26dfe4e21eb69df3f9c003b199fc849e06",
+   "restored_exact": true
+  },
+  {
+   "id": "M4-skip-digest-check",
+   "edit_old": "        if want != got:\n",
+   "edit_new": "        if False and want != got:\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "digest-mismatch-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "e0d0299bf5d70f5464b9745e5115858620229b84812533a6927cb701b2e6c07d",
+   "restored_exact": true
+  },
+  {
+   "id": "M5-accept-multi-rev-positive",
+   "edit_old": "        if len(revs) > 1:\n",
+   "edit_new": "        if False and len(revs) > 1:\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "ambiguous-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "3c2134309da23be61ad89f7d42ab1f232894eb53ae8728c11d256ed63180a78e",
+   "restored_exact": true
+  },
+  {
+   "id": "M6-skip-required-line",
+   "edit_old": "    if regex is not None and not re.search(regex, text, re.M):\n",
+   "edit_new": "    if False and regex is not None and not re.search(regex, text, re.M):\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "required-line-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "cc110888212a6e41575f10d5a4e7ef47c5fb8a7b38073f5c61b6c9c269daeb83",
+   "restored_exact": true
+  },
+  {
+   "id": "M7-empty-file-present",
+   "edit_old": "    if not data.strip():\n        return ['RECEIPT_EMPTY'], 'path=%s' % path, None\n",
+   "edit_new": "    if False and not data.strip():\n        return ['RECEIPT_EMPTY'], 'path=%s' % path, None\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "empty-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "5ce04af9424894e5c879ff92e9af9f2fbf9de1218d676ccbdd1e7d454456356f",
+   "restored_exact": true
+  },
+  {
+   "id": "M8-drop-control-not-ancestor",
+   "edit_old": "            codes.append('RECEIPT_CONTROL_NOT_ANCESTOR')\n",
+   "edit_new": "            pass\n",
+   "tally_before": "GATE_SELFTEST: 14/14 pass",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "control-not-ancestor-refused",
+   "verdict": "KILLED",
+   "mutated_sha256": "c6f1f8224e294170903d11ee63570a47537b33da1e45de7d50f1cec97c2cdc62",
+   "restored_exact": true
+  }
+ ],
+ "required_mutants_killed": 8,
+ "required_mutants_total": 8,
+ "emission_site_sweep": [
+  {
+   "site": "E01-receipt-missing",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "missing-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E02-receipt-empty",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "empty-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E03-rev-absent",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "absent-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E04-rev-unresolvable",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "unresolvable-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E05-rev-ambiguous",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "ambiguous-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E06-rev-mismatch",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "strict-mismatch-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E07-rev-content-drift",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "content-drift-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E08-control-not-ancestor",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "control-not-ancestor-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E09-digest-mismatch",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "digest-mismatch-refused",
+   "verdict": "KILLED"
+  },
+  {
+   "site": "E10-required-line-missing",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "required-line-refused",
+   "verdict": "KILLED"
+  }
+ ],
+ "emission_site_sweep_killed": 10,
+ "code_case_matrix": [
+  {
+   "code": "RECEIPT_MISSING",
+   "selftest_case": "missing-refused",
+   "emission_line": 97,
+   "sweep_site": "E01"
+  },
+  {
+   "code": "RECEIPT_EMPTY",
+   "selftest_case": "empty-refused",
+   "emission_line": 100,
+   "sweep_site": "E02"
+  },
+  {
+   "code": "RECEIPT_NOT_BLOB",
+   "selftest_case": null,
+   "emission_line": null,
+   "sweep_site": null
+  },
+  {
+   "code": "RECEIPT_REV_ABSENT",
+   "selftest_case": "absent-refused",
+   "emission_line": 118,
+   "sweep_site": "E03"
+  },
+  {
+   "code": "RECEIPT_REV_UNRESOLVABLE",
+   "selftest_case": "unresolvable-refused",
+   "emission_line": 124,
+   "sweep_site": "E04"
+  },
+  {
+   "code": "RECEIPT_REV_AMBIGUOUS",
+   "selftest_case": "ambiguous-refused",
+   "emission_line": 132,
+   "sweep_site": "E05"
+  },
+  {
+   "code": "RECEIPT_REV_MISMATCH",
+   "selftest_case": "strict-mismatch-refused",
+   "emission_line": 137,
+   "sweep_site": "E06"
+  },
+  {
+   "code": "RECEIPT_REV_CONTENT_DRIFT",
+   "selftest_case": "content-drift-refused",
+   "emission_line": 142,
+   "sweep_site": "E07"
+  },
+  {
+   "code": "RECEIPT_CONTROL_NOT_ANCESTOR",
+   "selftest_case": "control-not-ancestor-refused",
+   "emission_line": 149,
+   "sweep_site": "E08"
+  },
+  {
+   "code": "RECEIPT_DIGEST_MISMATCH",
+   "selftest_case": "digest-mismatch-refused",
+   "emission_line": 112,
+   "sweep_site": "E09"
+  },
+  {
+   "code": "RECEIPT_REQUIRED_LINE_MISSING",
+   "selftest_case": "required-line-refused",
+   "emission_line": 115,
+   "sweep_site": "E10"
+  }
+ ],
+ "codes_without_emission_site": [
+  "RECEIPT_NOT_BLOB"
+ ],
+ "aux_probes": [
+  {
+   "probe": "X1-codes-closed-length-only",
+   "verdict": "SURVIVED",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "failed_case": null
+  },
+  {
+   "probe": "X2-rev-regex-40hex-only",
+   "verdict": "KILLED",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "failed_case": "unresolvable-refused"
+  },
+  {
+   "probe": "X3-drop-json-rev-tokens",
+   "verdict": "SURVIVED",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "failed_case": null
+  },
+  {
+   "probe": "X4-unknown-role-accepted",
+   "verdict": "SURVIVED",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "failed_case": null
+  },
+  {
+   "probe": "X5-zero-receipts-is-pass",
+   "verdict": "SURVIVED",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "failed_case": null
+  },
+  {
+   "probe": "X6-unresolvable-certified-accepted",
+   "verdict": "SURVIVED",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "failed_case": null
+  }
+ ],
+ "coverage_holes": [
+  "X1-codes-closed-length-only",
+  "X3-drop-json-rev-tokens",
+  "X4-unknown-role-accepted",
+  "X5-zero-receipts-is-pass",
+  "X6-unresolvable-certified-accepted"
+ ],
+ "proposed_patch": {
+  "applied_to_lane": false,
+  "patched_sha256": "387d9df0573ddc796114b185dbd2500e92c0e1d4df8c6634ce92eaf710a4272b",
+  "patched_baseline": "GATE_SELFTEST: 19/19 pass",
+  "mutants_killed_on_patched": 8,
+  "holes_killed_on_patched": 5,
+  "holes_total": 5,
+  "first_iteration_finding": "case asserting only \"not PASS\" let X4 survive; pinned exit==1 + usage: instead"
+ },
+ "defects_reported": [
+  "D1 RECEIPT_NOT_BLOB unreachable + directory receipt crashes (exit 1 traceback, not exit 3 code)",
+  "D2 no selftest case for JSON rev token, unknown role, zero receipts, unresolvable --certified",
+  "D3 dead weight: unused check() parameter required; unused SELFTEST_RECEIPT_DRIFT; empty detail for REV_ABSENT",
+  "M1 kill mechanism is an IndexError, not a named refusal"
+ ],
+ "census_exit": 0,
+ "real_receipt_refusals": [
+  {
+   "receipt": ".ufo/evidence/round-54/control/controls-b.stdout",
+   "role": "verdict",
+   "code": "RECEIPT_REV_UNRESOLVABLE",
+   "exit": 3
+  },
+  {
+   "receipt": ".ufo/evidence/round-54/control/controls-b.stdout",
+   "role": "control",
+   "code": "RECEIPT_REV_UNRESOLVABLE",
+   "exit": 3
+  },
+  {
+   "receipt": ".ufo/evidence/round-55/after/c2.stdout",
+   "role": "verdict",
+   "code": "RECEIPT_REV_ABSENT",
+   "exit": 3
+  }
+ ],
+ "wrote_outside_seat_paths": false,
+ "receipts_dir": ".ufo/waves/round-56/w1/T56W1MutGate-receipts/"
+}

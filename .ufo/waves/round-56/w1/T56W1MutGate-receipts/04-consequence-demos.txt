@@ -1,0 +1,44 @@
+# consequence demos for SURVIVED probes and the RECEIPT_NOT_BLOB gap
+
+## X1 (CODES duplicate survives codes-closed)
+pristine len(CODES)=11 distinct=11 NOT_BLOB_present=True
+x1 len(CODES)=11 distinct=10 NOT_BLOB_present=False
+x1 selftest: GATE_SELFTEST: 14/14 pass
+
+## X3 (JSON rev token dropped survives)
+receipt: {"schema":"x","rev":"c3e2ca9f020776b3d66c7af854fb82c834674fcf","verdict":"PASS"}
+pristine: GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+x3      : GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+
+## X4 (unknown role accepted survives; pristine refuses)
+pristine: usage: --receipt PATH:positive|verdict|control[:REGEX] (got '/fast/scratch/hyaku/tameshi-r56/T56W1MutGate/json-receipt.txt:bogus')
+x4      : GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+## X5 (zero receipts prints PASS survives)
+pristine: usage: receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:ROLE[:REGEX] ... [--json] | --selftest
+  pristine_exit=1
+x5      : GATE: receipts=0 ok=0 refused=0 codes=none verdict=PASS
+  x5_exit=0
+
+## X6 (unresolvable --certified: pristine names a code, mutant crashes)
+pristine: GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+  pristine_exit=2
+x6      : TypeError: 'NoneType' object is not subscriptable
+  x6_exit=1
+
+## RECEIPT_NOT_BLOB: declared, never emitted; a directory receipt crashes
+dir receipt: IsADirectoryError: [Errno 21] Is a directory: '/fast/scratch/hyaku/tameshi-r56/T56W1MutGate'
+  exit=1
+
+## emission site per declared code (line numbers in the lane gate)
+RECEIPT_MISSING                    emit_lines=[97]
+RECEIPT_EMPTY                      emit_lines=[100]
+RECEIPT_NOT_BLOB                   emit_lines=NONE
+RECEIPT_REV_ABSENT                 emit_lines=[118]
+RECEIPT_REV_AMBIGUOUS              emit_lines=[132]
+RECEIPT_REV_UNRESOLVABLE           emit_lines=[124]
+RECEIPT_REV_MISMATCH               emit_lines=[137]
+RECEIPT_REV_CONTENT_DRIFT          emit_lines=[142]
+RECEIPT_CONTROL_NOT_ANCESTOR       emit_lines=[149]
+RECEIPT_DIGEST_MISMATCH            emit_lines=[112]
+RECEIPT_REQUIRED_LINE_MISSING      emit_lines=[115]

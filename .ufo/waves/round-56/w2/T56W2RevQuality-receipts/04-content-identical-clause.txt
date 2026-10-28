@@ -1,0 +1,10 @@
+### criterion 107 clause: 'content-identical on the declared surface is accepted even when the two shas differ'
+### fixture: commit 2 changes other.txt only; the --paths file lists surface.txt
+--- A: certified=R2 (different sha), surface.txt UNCHANGED -> expect ACCEPTED
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W2RevQuality/fx/receipt.stdout role=positive revs=b290e1bd184724be9f07b33071727696a6d36c28
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+--- B: surface.txt CHANGED -> expect RECEIPT_REV_CONTENT_DRIFT
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W2RevQuality/fx/receipt.stdout role=positive revs=b290e1bd184724be9f07b33071727696a6d36c28 code=RECEIPT_REV_CONTENT_DRIFT rev=b290e1bd184724be9f07b33071727696a6d36c28 drift=surface.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3

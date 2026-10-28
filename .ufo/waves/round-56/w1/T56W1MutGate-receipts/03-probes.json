@@ -1,0 +1,73 @@
+{
+ "pristine_sha256": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2",
+ "baseline": {
+  "exit": 0,
+  "tally": "GATE_SELFTEST: 14/14 pass",
+  "passed": 14,
+  "failed_cases": []
+ },
+ "probes": [
+  {
+   "probe": "X1-codes-closed-length-only",
+   "old": "    'RECEIPT_MISSING', 'RECEIPT_EMPTY', 'RECEIPT_NOT_BLOB', 'RECEIPT_REV_ABSENT',",
+   "new": "    'RECEIPT_MISSING', 'RECEIPT_EMPTY', 'RECEIPT_MISSING', 'RECEIPT_REV_ABSENT',",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "exit_after": 0,
+   "failed_cases_after": [],
+   "verdict": "SURVIVED",
+   "restored_exact": true
+  },
+  {
+   "probe": "X2-rev-regex-40hex-only",
+   "old": "REV_RE = re.compile(r'\\brev=([0-9a-f]{7,40})\\b')",
+   "new": "REV_RE = re.compile(r'\\brev=([0-9a-f]{40})\\b')",
+   "tally_after": "GATE_SELFTEST: 13/14 pass",
+   "exit_after": 1,
+   "failed_cases_after": [
+    "unresolvable-refused"
+   ],
+   "verdict": "KILLED",
+   "restored_exact": true
+  },
+  {
+   "probe": "X3-drop-json-rev-tokens",
+   "old": "    revs = sorted(set(REV_RE.findall(text)) | set(JSON_REV_RE.findall(text)))",
+   "new": "    revs = sorted(set(REV_RE.findall(text)))",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "exit_after": 0,
+   "failed_cases_after": [],
+   "verdict": "SURVIVED",
+   "restored_exact": true
+  },
+  {
+   "probe": "X4-unknown-role-accepted",
+   "old": "        if len(parts) < 2 or parts[1] not in ('positive', 'verdict', 'control'):",
+   "new": "        if len(parts) < 2 or parts[1] not in ('positive', 'verdict', 'control', 'bogus'):",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "exit_after": 0,
+   "failed_cases_after": [],
+   "verdict": "SURVIVED",
+   "restored_exact": true
+  },
+  {
+   "probe": "X5-zero-receipts-is-pass",
+   "old": "    if not lane or not certified or not receipts:",
+   "new": "    if not lane or not certified:",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "exit_after": 0,
+   "failed_cases_after": [],
+   "verdict": "SURVIVED",
+   "restored_exact": true
+  },
+  {
+   "probe": "X6-unresolvable-certified-accepted",
+   "old": "    if full is None:\n        print('GATE: error=unresolvable-certified",
+   "new": "    if full is None and False:\n        print('GATE: error=unresolvable-certified",
+   "tally_after": "GATE_SELFTEST: 14/14 pass",
+   "exit_after": 0,
+   "failed_cases_after": [],
+   "verdict": "SURVIVED",
+   "restored_exact": true
+  }
+ ]
+}

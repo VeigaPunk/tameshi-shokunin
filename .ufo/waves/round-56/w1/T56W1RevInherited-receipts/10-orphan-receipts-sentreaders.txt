@@ -1,0 +1,55 @@
+$ git show fa48c06c:.../T55W3SentReaders-receipts/run-receipts.sh | grep -n 'counts.tsv|09-reader-selection|11-c0-read-evidence|02-deliverable-audit'
+22:python3 "$R/audit.py" | tee "$R/02-deliverable-audit.json"
+
+$ git show 2dc8633a:.../run-receipts.sh | grep -n (same pattern)
+22:python3 "$R/audit.py" | tee "$R/02-deliverable-audit.json"
+142:python3 "$S/select.py" "$LANE" "$C0" | tee "$R/09-reader-selection.txt"
+164:python3 "$S/read_evidence.py" "$LANE" "$C0" | tee "$R/11-c0-read-evidence.txt"
+
+$ git show 2dc8633a:.../run-receipts.sh | sed -n '140,166p'   # the two producer commands, discarded by the revert
+        print('   allowed=%-2d -> %s' % (allowed, pick or 'no-clean-reader'))
+PY
+python3 "$S/select.py" "$LANE" "$C0" | tee "$R/09-reader-selection.txt"
+
+echo
+echo "## 10 — evidence that each report read SKILL.md through git at C0"
+cat > "$S/read_evidence.py" <<'PY'
+import os, re, sys
+lane, c0 = sys.argv[1], sys.argv[2]
+seats = {}
+for d in ('w2', 'w3'):
+    p = os.path.join(lane, '.ufo/waves/round-55', d)
+    for f in sorted(os.listdir(p)):
+        m = re.fullmatch(r'(T55W3R\d\d)\.md', f)
+        if m:
+            seats.setdefault(m.group(1), []).append(os.path.join(p, f))
+show = re.compile(r'(show|cat-file)[^\n]{0,80}SKILL\.md')
+print('seat | report | shows a git read of SKILL.md | names C0')
+for s in sorted(seats):
+    for p in seats[s]:
+        t = open(p, encoding='utf-8', errors='replace').read()
+        print('%s | %s | %s | %s' % (s, os.path.relpath(p, lane),
+                                     bool(show.search(t)), c0 in t))
+PY
+python3 "$S/read_evidence.py" "$LANE" "$C0" | tee "$R/11-c0-read-evidence.txt"
+
+echo
+
+$ for f in 09-reader-selection.txt 11-c0-read-evidence.txt; do git cat-file -s 981c5e8b:.../$f; done
+09-reader-selection.txt 7639
+11-c0-read-evidence.txt 1926
+
+$ git ls-tree -r --name-only 981c5e8b | grep -E 'select\.py|read_evidence\.py'
+.ufo/evidence/round-30/coldread/bind-select.py
+
+$ git show 981c5e8b:.../09-reader-selection.txt | head -4
+## Context gate classification and explicit exit classes — round 15
+   cand .ufo/waves/round-55/w2/T55W3R01.json                       findings=0 cand_ok=True
+   allowed=0  -> .ufo/waves/round-55/w2/T55W3R01.json
+   allowed=1  -> .ufo/waves/round-55/w2/T55W3R01.json
+
+$ git show 981c5e8b:.../11-c0-read-evidence.txt | head -3
+seat | report | shows a git read of SKILL.md | names C0
+T55W3R01 | .ufo/waves/round-55/w2/T55W3R01.md | True | True
+T55W3R01 | .ufo/waves/round-55/w3/T55W3R01.md | False | True
+

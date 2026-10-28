@@ -1,0 +1,67 @@
+{
+  "seat": "T56W1ExecCensus",
+  "round": 56,
+  "wave": 1,
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "lane_head_at_work": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+  "census_at_base": {
+    "command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+    "exit": 0,
+    "rows_census_mode": 140,
+    "rows_grep": 140,
+    "stdout_lines": 17,
+    "findings_E": 0,
+    "findings_W": {"W04": 15, "W01": 1},
+    "tier": {"A": 125, "B": 12, "C": 3, "invalid": 0},
+    "status": {"mined": 113, "queued": 21, "rejected": 6, "invalid": 0},
+    "fleet_missing": 0,
+    "registry_sha256": "57ece0e5716deb46ec9d1d6c0c076beab31a9ba82ad323a68e85450b429be112",
+    "registry_identical_at": ["981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1", "c3e2ca9f020776b3d66c7af854fb82c834674fcf", "worktree"],
+    "next_unused_id": "S281"
+  },
+  "after_harness": {
+    "path": ".ufo/waves/round-56/census-after.sh",
+    "executable": true,
+    "bash_syntax_check": "clean",
+    "prints": ["CENSUS exit=N rows=M", "CENSUS_ROWS_SELFCHECK census=M grep=G", "CENSUS_SHAPE lines", "CENSUS_SHAPE_VERDICT"],
+    "codes": ["SHAPE_COLUMNS", "SHAPE_PIPE", "SHAPE_OPENED", "SHAPE_STATUS", "SHAPE_SECTION"],
+    "exit_codes": {"0": "clean", "1": "shape findings or row-count mismatch", "2": "usage/env/unresolvable base", "other": "census's own code"},
+    "new_row_definition": "row id absent from git show <base>:corpus/SOURCES.md",
+    "census_section_identical_to_item_command": true,
+    "clean_lane_run": {
+      "CENSUS": "exit=0 rows=140",
+      "selfcheck": {"census": 140, "grep": 140},
+      "shape": {"new_rows": 0, "findings": 0, "pass": true},
+      "exit": 0,
+      "stderr_bytes": 0
+    }
+  },
+  "demonstration": [
+    {"case": "clean", "mutation": "valid S281, 11 columns, queued, 2026-10-28", "census": "exit=0 rows=141, no E", "shape": "new_rows=1 findings=0 pass=true", "exit": 0},
+    {"case": "m10col", "mutation": "S281 with used-by cell dropped", "census": "E01 S281 fields=10, exit=1", "shape": "SHAPE_COLUMNS columns=10 want=11", "exit": 1},
+    {"case": "escpipe", "mutation": "S281 with escaped pipe in teaches cell", "census": "E01 S281 fields=12, exit=1", "shape": "SHAPE_PIPE escaped pipe (\\|) in row", "exit": 1},
+    {"case": "baddate", "mutation": "S281 status=watch opened=2026-13-45", "census": "E07 + E08, exit=1", "shape": "SHAPE_STATUS + SHAPE_OPENED", "exit": 1},
+    {"case": "future", "mutation": "S281 opened=2027-01-01", "census": "E08, exit=1", "shape": "SHAPE_OPENED future", "exit": 1},
+    {"case": "outside", "mutation": "S281 appended after the last section", "census": "E12, rows=140", "shape": "SHAPE_SECTION + rows_mismatch=true (census=140 grep=141)", "exit": 1},
+    {"case": "badbase", "mutation": "--base 0000000000000000000000000000000000000000", "census": "not run", "shape": "fatal before checks", "exit": 2, "stdout_bytes": 0},
+    {"case": "shapeonly", "mutation": "escpipe fixture with --shape-only", "census": "skipped", "shape": "SHAPE_PIPE, rows_mismatch=n/a", "exit": 1}
+  ],
+  "limits": [
+    "an edited old row is skipped by the shape pass (new = id absent at base); the census's E set still validates it",
+    "no semantic check (source reality, tier fitness, used-by appropriateness)",
+    "depends on the fleet census CLI; a change there fails loudly with exit 2",
+    "SHAPE_PIPE literal-pipes>12 branch is unreachable when an escaped pipe is present (named cause wins)"
+  ],
+  "handoff": {
+    "c0_expected": "CENSUS exit=0 rows=141 and CENSUS_SHAPE_VERDICT pass=true new_rows=1 findings=0 rows_mismatch=false",
+    "registry_cell_id": "S281",
+    "quote_line": "CENSUS exit=0 rows=140 (base)"
+  },
+  "writes": {
+    "lane_production_files": [],
+    "git_mutations": 0,
+    "scratch": "/fast/scratch/hyaku/tameshi-r56/T56W1ExecCensus (removed)"
+  },
+  "blockers": []
+}

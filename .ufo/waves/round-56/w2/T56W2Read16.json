@@ -1,0 +1,57 @@
+{
+  "heading": "### Round-26 gate/probe registry — report interop",
+  "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "section_sha256": "cc23587b353fb780d4310aebc7277e4030729ae767850e2e826d2ff151bdea52",
+  "findings": [
+    {
+      "command": "python3 tools/bash-witness-study.py check",
+      "output": "exit 1\nWITNESS_CHECK: DRIFT tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda committed=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5\nWITNESS_CHECK: FAIL (1 problems; 96 files covered)",
+      "detail": "The command fails at C0 because the round-12 declaration's frozen runner digest differs from tools/mutate-and-run.sh at C0. The row's verdict map does document digest drift as exit 1; the same divergence is recorded in .ufo/evidence/round-15/verification-4.json."
+    },
+    {
+      "command": "python3 tools/registry-check.py --rev HEAD --json",
+      "output": "exit 1\nREGISTRY_CHECK: held=48/50 superseded=7\nDiffering active rows: sources-census expect=0 got=1; verify-round15 expect=0 got=1.",
+      "detail": "The documented entry command is non-clean at C0. The sources-census row reports SOURCES_CENSUS: VIOLATIONS for S280; verify-round15 does not meet its registry expectation. The row's verdict map does document exit 1 as failed."
+    }
+  ],
+  "notes": [
+    "The round-26 mte-interop command, run from a C0 clone with --fleet-root /home/vgpnk/Projects/shokunin, exited 0 with MTE_INTEROP: PASS legs_conforming=10/10. Its selftest exited 0 with MTE_SELFTEST: 17/17 pass. Both mte-interop registry rows and their expected output strings are present in tools/registry.json.",
+    "env-diff's entry command failed from the scratch clone because its default fleet root is derived from the checkout path (classified=0/9, PIN_UNREADABLE); the same command from the live lane path exited 0 with classified=9/9. This is a clone-location artifact, not a C0 failure.",
+    "The fleet census required by the assignment, scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi, exited 0. Separately, the legacy lane-local kaika census is the sources-census registry row that fails on S280.",
+    "The round-51 table's mte-interop write-scope cell lists selftest/fleet/regression TMPDIR prefixes; the implementation also creates a TemporaryDirectory with the bare tameshi-mte- prefix for vendor staging.",
+    "Other round-51 selftest tallies and pinned paths were checked: the listed selftests passed their stated counts/output markers, and all referenced pinned paths resolved. Placeholder entry arguments (for example BUNDLE.json, EXPECTED.json, or CASE.json) were not treated as runnable literal paths."
+  ],
+  "commands": [
+    "Loaded .ufo/evidence/round-18/measure.py sectionize and read c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md lines 2175-2214; computed start=2175 end=2214 sha256=cc23587b353fb780d4310aebc7277e4030729ae767850e2e826d2ff151bdea52.",
+    "uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin",
+    "uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --selftest",
+    "python3 tools/mte-interop.py --selftest",
+    "python3 tools/mte-interop.py (no arguments); python3 tools/mte-interop.py --bogus",
+    "python3 tools/bash-witness-study.py selftest; python3 tools/bash-witness-study.py check; python3 tools/bash-witness-study.py count",
+    "python3 tools/command-binding.py --selftest",
+    "python3 tools/context-capture.py --selftest; python3 tools/context-capture.py --check",
+    "python3 tools/env-diff.py --selftest; python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out DIR/receipt.json --jobs 3 (from scratch clone); same command from live lane path; same command with --fleet-root /home/vgpnk/Projects/shokunin",
+    "python3 tools/evidence-disposition.py --selftest; python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json",
+    "python3 tools/golden-verdict.py --selftest; python3 tools/golden-verdict.py --check-entry corpus/knowledge/golden-comparison-verdict.md",
+    "bash tools/mutate-and-run.sh --selftest; mte-interop --check exercised the runner's --regression path",
+    "python3 tools/pbt-staged-id.py --selftest; python3 tools/pbt-staged-id.py --guard tools/staged-id-guard.py --seed 1 --cases 400 --dump OUT.jsonl",
+    "python3 tools/pin-disposition.py --selftest; python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin",
+    "python3 tools/receipt-measure.py --selftest; python3 tools/receipt-measure.py --repo . --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 --json",
+    "python3 tools/receipt-window.py --selftest",
+    "python3 tools/registry-check.py --selftest; python3 tools/registry-check.py --rev HEAD; python3 tools/registry-check.py --rev HEAD --only mte-interop-check; python3 tools/registry-check.py --rev HEAD --only mutate-and-run-regression; python3 tools/registry-check.py --selftest with TMPDIR=/nonexistent-dir-xyz",
+    "python3 tools/registry-replay.py --selftest",
+    "python3 tools/repeat-control.py --selftest; python3 tools/repeat-control.py --runs 3 --out DIR -- python3 -c 'print(2)'",
+    "python3 tools/round21-measure.py --selftest; python3 tools/round21-measure.py --claim c1 --repo . --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 --json",
+    "python3 tools/shrink-case.py --selftest",
+    "python3 -I tools/staged-id-guard.py --selftest; python3 -I tools/staged-id-guard.py --registry corpus/SOURCES.md --staged .ufo/evidence/round-13/expected.json --json",
+    "python3 tools/tally-audit-v2.py --selftest; python3 tools/tally-audit-v3.py --selftest; python3 tools/tally-audit.py --selftest",
+    "python3 tools/trace-inputs.py --selftest; python3 tools/trace-inputs.py --root . --out RECEIPT.json -- python3 -c 'print(1)'",
+    "python3 tools/wave-accounting.py --selftest",
+    "python3 tools/wave-parent-settle.py --selftest; python3 tools/wave-parent-settle.py --receipt .ufo/waves/round-40/settlement-receipt.json; python3 tools/wave-parent-settle.py --receipt .ufo/waves/round-41/settlement-receipt.json",
+    "python3 tools/wave-route-mix.py --selftest",
+    "python3 tools/witness-metadata.py --selftest; python3 tools/witness-metadata.py --check --lane-root . --companion .ufo/evidence/round-13/witness-metadata.json",
+    "python3 tools/write-path-census-v2.py --selftest; python3 tools/write-path-census-v3.py --selftest; python3 tools/write-path-census-v3.py --file tools/write-path-census-v3.py; python3 tools/write-path-census-v4.py --selftest; python3 tools/write-path-census-v4.py --file tools/write-path-census-v4.py; python3 tools/write-path-census.py --selftest; python3 tools/write-path-census.py --census .",
+    "bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi"
+  ],
+  "verdict": "gap-minor"
+}

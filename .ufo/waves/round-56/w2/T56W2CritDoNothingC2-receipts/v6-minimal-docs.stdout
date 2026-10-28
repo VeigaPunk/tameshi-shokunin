@@ -1,0 +1,29 @@
+# v6 = C0 with the four docs surfaces replaced by minimal one-line cells (weakest text probe).
+# ---- corpus/QUALITY.md (whole file) ----
+The certification path runs tools/receipt-revision-gate.py; content drift is refused RECEIPT_REV_CONTENT_DRIFT.
+# ---- corpus/knowledge/receipt-revision-binding.md (whole file; head before '---') ----
+source: S279
+verified-at: 2026-10-28
+recheck: 180d
+---
+# ---- SKILL.md (whole file) ----
+## Standing rules
+- Bind every receipt: tools/receipt-revision-gate.py
+# ---- tools/registry.json (whole file) ----
+{"gate":"tools/receipt-revision-gate.py","codes":["RECEIPT_REV_ABSENT","RECEIPT_REV_MISMATCH","RECEIPT_REV_CONTENT_DRIFT"]}
+# clone commit: 07e11ba04858be3058309ca35617839860443060 (toplevel asserted)
+#
+EXPLAIN arm1-selftest exit=0 19/19
+EXPLAIN arm2-red54 exit=3 codes=RECEIPT_REV_CONTENT_DRIFT old-gate-accepted=True
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 4/4
+C2_R56: rev=07e11ba04858 selftest=19/19 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=4/4 total=1 C2_R56_PASS=false
+exit=1
+#
+# SOURCES status cells at C0 (counter's own parse: 11 cells, cells[7]):
+S279 cells[7]= mined
+S280 cells[7]= mined
+S281 cells[7]= mined
+S282 cells[7]= rejected
+# The counter never checks the cited S-row is ABOUT the note; any mined S-number in the head scores.

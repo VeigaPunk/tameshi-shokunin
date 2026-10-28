@@ -1,0 +1,465 @@
+# item's literal command (absolute pathspecs), verbatim
+diff --git a/.ufo/evidence/round-56/c2/measure.py b/.ufo/evidence/round-56/c2/measure.py
+index 5c47e1e..1fe7382 100755
+--- a/.ufo/evidence/round-56/c2/measure.py
++++ b/.ufo/evidence/round-56/c2/measure.py
+@@ -9,7 +9,7 @@ Arms (every read is of git objects at REV; the live working tree is never read;
+ scratch lives under --work and never under /tmp):
+ 
+   1. selftest   the gate's own suite (bytes at REV) passes: `--selftest` exit 0 and
+-                `GATE_SELFTEST: 14/14 pass`.
++                `GATE_SELFTEST: N/N pass` (all cases).
+   2. red54      the REAL round-54 positive control, sliced to its CTL_POS_c1 line
+                 (`.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout`,
+                 bytes copied from `.ufo/evidence/round-54/control/controls-b.stdout`
+@@ -145,6 +145,9 @@ def main():
+     else:
+         slice_path = work / 'r54-ctl-pos-c1.stdout'
+         slice_path.write_bytes(show(lane, rev, R54_SLICE))
++        sha_raw = show(lane, rev, R54_SLICE + '.sha256')
++        if sha_raw is not None:
++            Path(str(slice_path) + '.sha256').write_bytes(sha_raw)
+         paths_path = work / 'r54-surface.paths'
+         paths_path.write_bytes(show(lane, rev, R54_PATHS))
+         r = run_gate('--lane', lane, '--certified', R54_CERT, '--paths', str(paths_path),
+@@ -212,6 +215,10 @@ def main():
+         pa.write_bytes(a_raw)
+         pb.write_bytes(b_raw)
+         pp.write_bytes(paths_raw)
++        for base, key in ((pa, OWN_A), (pb, OWN_B)):
++            sib = show(lane, rev, key + '.sha256')
++            if sib is not None:
++                Path(str(base) + '.sha256').write_bytes(sib)
+         r = run_gate('--lane', lane, '--certified', rev, '--paths', str(pp),
+                      '--receipt', str(pa) + ':control',
+                      '--receipt', str(pb) + ':positive')
+@@ -227,10 +234,8 @@ def main():
+     docs = 0
+     quality = show(lane, rev, QUALITY)
+     if quality is not None and GATE in quality.decode('utf-8', 'surrogateescape'):
+-        for code in CODES:
+-            if code in quality.decode('utf-8', 'surrogateescape'):
+-                docs += 1
+-                break
++        if 'RECEIPT_REV_CONTENT_DRIFT' in quality.decode('utf-8', 'surrogateescape'):
++            docs += 1
+     note = show(lane, rev, NOTE)
+     if note is not None:
+         text = note.decode('utf-8', 'surrogateescape')
+@@ -242,13 +247,16 @@ def main():
+             mined = set()
+             for line in sources.splitlines():
+                 cells = [c.strip() for c in line.strip().strip('|').split('|')]
+-                if len(cells) == 11 and re.fullmatch(r'S\d{3,}', cells[0]) and cells[8] == 'mined':
++                if len(cells) == 11 and re.fullmatch(r'S\d{3,}', cells[0]) and cells[7] == 'mined':
+                     mined.add(cells[0][1:])
+             if cited & mined:
+                 docs += 1
+     skill = show(lane, rev, SKILL)
+-    if skill is not None and 'receipt-revision-gate' in skill.decode('utf-8', 'surrogateescape'):
+-        docs += 1
++    if skill is not None:
++        # the rule must sit inside ## Standing rules, not anywhere in the file
++        sm = re.search(r'## Standing rules(.*?)(?:\n## |\Z)', skill.decode('utf-8', 'surrogateescape'), re.S)
++        if sm and 'receipt-revision-gate' in sm.group(1):
++            docs += 1
+     registry = show(lane, rev, REGISTRY)
+     if registry is not None:
+         text = registry.decode('utf-8', 'surrogateescape')
+diff --git a/.ufo/evidence/round-56/contract.json b/.ufo/evidence/round-56/contract.json
+index bd57eed..4f60dcc 100644
+--- a/.ufo/evidence/round-56/contract.json
++++ b/.ufo/evidence/round-56/contract.json
+@@ -1,8 +1,8 @@
+ {
+  "lane": "tameshi",
+  "round": 56,
+- "attempt": 1,
+- "l1": "TameshiR56",
++ "attempt": 2,
++ "l1": "TameshiR56a2",
+  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+  "base_note": "lane tip after the inherited-state sweep (round-55 leftovers committed, post-tip closure rewrites reverted); content files are byte-identical to fa48c06c for every claim path",
+  "shape": "two v1 build/falsify waves plus one v1 post-bind wave (32-64 seats each), 64-128 total",
+@@ -15,17 +15,28 @@
+    "target": "C1_R56_PASS=true with total=0: precheck `lost=0 ok` (64 credited), monitor `64/64 score=8 box3=true`, exactly one `rekey-r56-<c0>` directory with 18/18 frozen headings bound at read_rev=<c0> and passing the frozen round-18 credit algorithm at REV, 18/18 committed reader reports whose `cand` is <c0> and whose `section_sha256` is the section's bytes at REV, no bound entry pinning LOG.md or SCORECARD.md, and the standing calibration row stating the monitor's own score at the commit it names",
+    "counter": "python3 .ufo/evidence/round-56/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+    "kill_rule": "any arm short of its denominator makes C1_R56_PASS=false and the failing arm is named in the report; a heading whose section text cannot be read at C0 is a miss, never a narrowed heading list",
+-   "controls": ["CTL_0", "CTL_SKIP", "CTL_FAB", "CTL_RESTATE", "CTL_POS"],
++   "controls": [
++    "CTL_0",
++    "CTL_SKIP",
++    "CTL_FAB",
++    "CTL_RESTATE",
++    "CTL_POS"
++   ],
+    "cannot_see": "whether a reader actually read the section: the reader's `section_sha256` is computable from the tree without reading, so a fabricated reader report satisfies arm 4. The wave's adversarial seats are the only guard, and the report says so."
+   },
+   "C2": {
+    "axis": "operability",
+    "surface": "the deciding gate's receipt binding: `tools/receipt-revision-gate.py`, the rule it enforces, and the real receipts it refuses",
+    "before": "at the freeze revision the gate exists and the lane's own certification path does not use it: no QUALITY criterion, knowledge entry, SKILL.md rule or registry cell states the binding; the round's own control receipts are not gated; and the receipts the lane already accepted fail the rule - round-54's `CTL_POS_c1` names `rev=077d431e6996` while certifying `c2108100` (drift on `.ufo/evidence/round-21/coldread/ledger.json`), the whole round-54 control set names a revision absent from the repo, and round-55's C2 verdict receipt names no revision at all - verdict `C2_R56: ... total=6 C2_R56_PASS=false` (.ufo/evidence/round-56/before/c2.stdout)",
+-   "target": "C2_R56_PASS=true with total=0: the gate's selftest is 14/14, the three real red-before receipts are refused with their named codes while the round-54 gate's own acceptance (`DECIDING_RUN_EXIT=0`) is on record, the round's own control receipts are accepted at the certified revision, and the rule is stated in QUALITY, a sourced knowledge entry, SKILL.md `## Standing rules` and a registry cell",
++   "target": "C2_R56_PASS=true with total=0: the gate's selftest passes every case, the three real red-before receipts are refused with their named codes while the round-54 gate's own acceptance (`DECIDING_RUN_EXIT=0`) is on record, the round's own control receipts are accepted at the certified revision, and the rule is stated in QUALITY, a sourced knowledge entry, SKILL.md `## Standing rules` and a registry cell",
+    "counter": "python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+    "kill_rule": "any arm short of its denominator makes C2_R56_PASS=false; a refusal the gate reaches for the wrong reason is a miss, named in the report",
+-   "controls": ["CTL_0", "CTL_SKIP", "CTL_FAB", "CTL_POS"],
++   "controls": [
++    "CTL_0",
++    "CTL_SKIP",
++    "CTL_FAB",
++    "CTL_POS"
++   ],
+    "cannot_see": "whether a receipt that names the certified revision was actually produced by the run it claims (a copied `rev=` token passes); the digest sidecar narrows but does not close that gap, and the report says so."
+   }
+  },
+@@ -37,6 +48,8 @@
+   ".ufo/evidence/round-56/c2/measure.py",
+   ".ufo/evidence/round-56/control/frozen-surface.paths",
+   ".ufo/evidence/round-56/c2/red-before/round-54-surface.paths",
++  ".ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256",
++  ".ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout",
+   ".ufo/evidence/round-56/no-harm.sh",
+   ".ufo/evidence/round-56/deciding-run.sh",
+   ".ufo/evidence/round-56/controls.sh",
+@@ -44,5 +57,11 @@
+  ],
+  "no_harm_monitors": 15,
+  "deciding_invocations": 1,
+- "amendments": []
++ "amendments": [
++  {
++   "n": 1,
++   "what": "six discovered defects closed in one amendment commit, all found by wave-1 seats before any control score and before any deciding invocation (predicates, targets and denominators unchanged): (a) c2/measure.py arm6 read SOURCES' status column at index 8 (the opened date) so the knowledge-note docs cell could never score and C2_R56_PASS was unreachable - now cells[7] (T56W1CritC2 kill-shot); arm2/arm5 now copy .sha256 sidecars so the gate's digest binding is live; QUALITY cell requires RECEIPT_REV_CONTENT_DRIFT and the SKILL cell is scoped to ## Standing rules. (b) controls.sh emitted clone-local commit SHAs as `rev=` tokens the receipt gate cannot resolve - emit() relabels them `clone_rev=`; the committed receipts now carry .sha256 siblings (T56W1ExecControls finding, CritC2). (c) deciding-run.sh read control receipts from the worktree and gated them before the dirty-tree check, excluded untracked paths by unanchored prefix, accepted a non-empty OUTDIR, accepted any CONTROLS fraction and CTL_MISMATCH lines, could not run c1/measure.py (frozen input never materialized - RevFreeze H1), did not pin FREEZE to the last freeze.json commit (H2), and hardcoded its FROZEN list (now contract-derived); the freeze-integrity heredoc now checks manifest keys == contract surface, amendment record shape, and that contract.amendments mirrors freeze.json.amendments. (d) receipt-revision-gate.py declared RECEIPT_NOT_BLOB without emitting it (directory receipt crashed) and had no cases for its usage surface - now emits the code and the suite is 19 cases (not-blob, json-rev, unknown-role, zero-receipts, unresolvable-certified); drifted_paths reports paths unresolvable at both revisions. (e) control/frozen-surface.paths omitted the contract, the receipt producers, the deciding script, no-harm, the manifest and the red-before slice (T56W1CritC2 unlisted-path exploit); the surface now lists them (LOG.md and SCORECARD.md stay unbound by design: the row product is written after the bind and verified by the c1 restate arm - recorded as residual). (f) the red-before slice and its .sha256 were committed as frozen inputs but absent from contract.frozen_paths/freeze.json (RevFreeze H3) - now in both manifests.",
++   "prior_freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
++  }
++ ]
+ }
+diff --git a/.ufo/evidence/round-56/control/frozen-surface.paths b/.ufo/evidence/round-56/control/frozen-surface.paths
+index b7c6311..e8791ad 100644
+--- a/.ufo/evidence/round-56/control/frozen-surface.paths
++++ b/.ufo/evidence/round-56/control/frozen-surface.paths
+@@ -7,3 +7,10 @@ tools/receipt-revision-gate.py
+ .ufo/evidence/round-21/coldread/ledger.json
+ .ufo/evidence/round-56/c1/measure.py
+ .ufo/evidence/round-56/c2/measure.py
++.ufo/evidence/round-56/contract.json
++.ufo/evidence/round-56/freeze.json
++.ufo/evidence/round-56/controls.sh
++.ufo/evidence/round-56/deciding-run.sh
++.ufo/evidence/round-56/no-harm.sh
++.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout
++.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256
+diff --git a/.ufo/evidence/round-56/controls.sh b/.ufo/evidence/round-56/controls.sh
+index b701cad..eb00cb7 100755
+--- a/.ufo/evidence/round-56/controls.sh
++++ b/.ufo/evidence/round-56/controls.sh
+@@ -7,6 +7,11 @@
+ # Every CTL line names the revision the counter printed; CTL_MISMATCH means the counter did
+ # not reach the pre-registered boolean and the round must stop.
+ # Scratch: $HYAKU_SCRATCH (default /fast/scratch/hyaku)/tameshi-r56/controls, removed on exit.
++# A CTL line names the revision the counter printed as `rev=`; when that revision
++# exists only inside the scratch clone (the mutation fixtures commit there) it is
++# relabelled `clone_rev=` so a receipt binding to `rev=` never certifies it.
++# The committed receipts carry a `.sha256` sibling (the L1 computes it) which the
++# receipt gate checks as a digest binding.
+ set -u
+ LANE=$1; BASE=$2; PIN=$3; FREEZE=$4; OUT=$5
+ case "$LANE" in /*) ;; *) echo "LANE must be absolute"; exit 2;; esac
+@@ -19,6 +24,21 @@ A_ok=0; A_n=0
+ 
+ emit() { # emit NAME EXPECTED ACTUAL VERDICT_LINE
+   local name=$1 want=$2 got=$3 line=$4
++  # A counter line that names a revision nothing in the lane resolves is
++  # relabelled clone_rev= here: the receipt gate binds `rev=` tokens to lane
++  # revisions, and a clone-local commit SHA (these fixtures commit inside
++  # scratch clones) must not masquerade as a lane revision.
++  local rest=$line out=
++  while [[ $rest =~ (^|.*[^_[:alnum:]])rev=([0-9a-fA-F]+)(.*) ]]; do
++    local sha=${BASH_REMATCH[2]}
++    if git -C "$LANE" rev-parse --verify --quiet "$sha^{commit}" >/dev/null 2>&1; then
++      out="rev=$sha${BASH_REMATCH[3]}$out"
++    else
++      out="clone_rev=$sha${BASH_REMATCH[3]}$out"
++    fi
++    rest=${BASH_REMATCH[1]}
++  done
++  line=$rest$out
+   echo "CTL $name $line"
+   if [ "$want" = "$got" ]; then echo "CTL_MATCH $name expected=$want actual=$got"; echo 1 >> "$SCR/matches"
+   else echo "CTL_MISMATCH $name expected=$want actual=$got"; fi
+diff --git a/.ufo/evidence/round-56/deciding-run.sh b/.ufo/evidence/round-56/deciding-run.sh
+index aa1391e..a0ec18e 100755
+--- a/.ufo/evidence/round-56/deciding-run.sh
++++ b/.ufo/evidence/round-56/deciding-run.sh
+@@ -24,28 +24,74 @@ import hashlib, json, os, subprocess, sys
+ lane, freeze, E = sys.argv[1], sys.argv[2], sys.argv[3]
+ env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+ env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+-fr = json.loads(subprocess.run(['git', '-C', lane, 'show', '%s:%s/freeze.json' % (freeze, E)],
+-                               capture_output=True, env=env, check=True).stdout)
++def show(rev, path):
++    r = subprocess.run(['git', '-C', lane, 'show', '%s:%s' % (rev, path)],
++                       capture_output=True, env=env)
++    return r.stdout if r.returncode == 0 else None
++fr = json.loads(show(freeze, '%s/freeze.json' % E))
++co = json.loads(show(freeze, '%s/contract.json' % E))
+ bad = []
++# manifest key of a contract frozen path: tools/ and .ufo/evidence/round-(21|48)/
++# paths are their own keys; everything else is relative to E; freeze.json is
++# listed and skipped (a file cannot carry its own digest).
++def key(p):
++    if p.startswith(('tools/', '.ufo/evidence/round-21/', '.ufo/evidence/round-48/')):
++        return p
++    if p.startswith(E + '/'):
++        return p[len(E) + 1:]
++    return None
++want_keys = set()
++for p in co.get('frozen_paths', []):
++    k = key(p)
++    if k is None:
++        bad.append('unmappable frozen path %s' % p)
++        continue
++    if k != 'freeze.json':
++        want_keys.add(k)
++if set(fr.get('files', {})) != want_keys:
++    bad.append('manifest keys %s != contract surface %s'
++               % (sorted(fr.get('files', {})), sorted(want_keys)))
+ for rel, want in sorted(fr['files'].items()):
+     path = rel if rel.startswith(('tools/', '.ufo/evidence/round-21/', '.ufo/evidence/round-48/')) else '%s/%s' % (E, rel)
+-    r = subprocess.run(['git', '-C', lane, 'show', '%s:%s' % (freeze, path)],
+-                       capture_output=True, env=env)
+-    if r.returncode != 0:
++    r = show(freeze, path)
++    if r is None:
+         bad.append('%s unreadable' % rel)
+         continue
+-    got = hashlib.sha256(r.stdout).hexdigest()
++    got = hashlib.sha256(r).hexdigest()
+     if got != want:
+         bad.append('%s %s != %s' % (rel, got[:12], want[:12]))
++am = fr.get('amendments') or []
++# an amendment entry is {n, what, prior_freeze}: n counts from 1 and the count
++# of commits that ever touched freeze.json must be len(am)+1 (the original
++# freeze), so a re-frozen instrument without an amendment entry is refused.
++touches = subprocess.run(['git', '-C', lane, 'rev-list', '--count', freeze, '--',
++                          '%s/freeze.json' % E], capture_output=True, env=env)
++try:
++    n_touches = int(touches.stdout.decode().strip())
++except ValueError:
++    n_touches = -1
++shape_ok = all(isinstance(a, dict) and a.get('n') == i + 1 and isinstance(a.get('what'), str)
++               for i, a in enumerate(am))
++if not (shape_ok and n_touches == len(am) + 1):
++    bad.append('amendments=%d inconsistent with %d manifest commits or record shape' % (len(am), n_touches))
++if co.get('amendments') != am:
++    bad.append('contract.json amendments do not mirror freeze.json amendments')
+ print('FREEZE_INTEGRITY: %s files=%d amendments=%d'
+-      % ('OK' if not bad else 'MISMATCH', len(fr['files']), len(fr.get('amendments') or [])))
++      % ('OK' if not bad else 'MISMATCH', len(fr['files']), len(am)))
+ for b in bad:
+     print('FREEZE_MISMATCH', b)
+ sys.exit(0 if not bad else 1)
+ PYV
+ [ -d "$OUT" ] || { echo "DECIDING_REFUSED outdir-missing"; exit 3; }
++for k in c1 c2; do [ -e "$OUT/$k.start" ] && { echo "DECIDING_REFUSED second-invocation $k"; exit 3; }; done
++[ -z "$(ls -A "$OUT" 2>/dev/null)" ] || { echo "DECIDING_REFUSED outdir-not-empty"; exit 3; }
+ [ "$(git rev-parse HEAD)" = "$REV" ] || { echo "DECIDING_REFUSED head-is-not-rev"; exit 3; }
+-CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-b.stdout $E/control/controls-b.exit"
++# the freeze argument must be the last commit that touched freeze.json at REV:
++# freeze.json changes only at the original freeze and at amendment commits, so
++# a revision whose manifest is honest names that commit (H2, T56W1RevFreeze).
++FREEZE_LAST=$(git log -1 --format=%H "$REV" -- "$E/freeze.json")
++[ -n "$FREEZE_LAST" ] && [ "$FREEZE" = "$FREEZE_LAST" ] || { echo "DECIDING_REFUSED freeze-not-last-manifest-commit $FREEZE"; exit 3; }
++CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-a.stdout.sha256 $E/control/controls-b.stdout $E/control/controls-b.exit $E/control/controls-b.stdout.sha256"
+ for f in $CONTROLS; do
+   git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+   [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+@@ -53,30 +99,40 @@ for f in $CONTROLS; do
+   c=$(git log -1 --format=%H "$REV" -- "$f")
+   git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
+ done
+-grep -q '^CONTROLS_A: [0-9]*/[0-9]* as pre-registered' "$LANE/$E/control/controls-a.stdout" 2>/dev/null || { echo "DECIDING_REFUSED controls-a-verdict-missing"; exit 3; }
+-grep -q '^CONTROLS_B: [0-9]*/[0-9]* as pre-registered' "$LANE/$E/control/controls-b.stdout" 2>/dev/null || { echo "DECIDING_REFUSED controls-b-verdict-missing"; exit 3; }
+-for k in c1 c2; do [ -e "$OUT/$k.start" ] && { echo "DECIDING_REFUSED second-invocation $k"; exit 3; }; done
++grep -Eq '^CONTROLS_A: ([0-9]+)/\1 as pre-registered' <(git show "$REV:$E/control/controls-a.stdout") || { echo "DECIDING_REFUSED controls-a-verdict-missing"; exit 3; }
++grep -q 'CTL_MISMATCH' <(git show "$REV:$E/control/controls-a.stdout") && { echo "DECIDING_REFUSED controls-a-mismatch-lines"; exit 3; }
++grep -Eq '^CONTROLS_B: ([0-9]+)/\1 as pre-registered' <(git show "$REV:$E/control/controls-b.stdout") || { echo "DECIDING_REFUSED controls-b-verdict-missing"; exit 3; }
++grep -q 'CTL_MISMATCH' <(git show "$REV:$E/control/controls-b.stdout") && { echo "DECIDING_REFUSED controls-b-mismatch-lines"; exit 3; }
+ rm -rf "$SCR"; mkdir -p "$SCR/code" "$SCR/c1" "$SCR/c2" "$SCR/gate"; export TMPDIR="$SCR"
+ for f in c1/measure.py c2/measure.py no-harm.sh; do
+   mkdir -p "$SCR/code/$(dirname $f)"; git show "$REV:$E/$f" > "$SCR/code/$f" || exit 2
+ done
++git show "$REV:$E/c1/lost-headings-at-base.json" > "$SCR/code/c1/lost-headings-at-base.json" || exit 2
+ git show "$REV:tools/receipt-revision-gate.py" > "$SCR/gate/gate.py" || exit 2
+ git show "$REV:.ufo/evidence/round-48/quality/coldread-precheck.sh" > "$SCR/code/precheck.sh" || exit 2
+ 
+ # gate 0b (this round's C2): the lane's own receipts must pass the binding gate.
++# The receipts are read from the bytes committed at REV, never the worktree (F-3).
++mkdir -p "$SCR/rcpt"
++for f in controls-a.stdout controls-a.stdout.sha256 controls-b.stdout controls-b.stdout.sha256 frozen-surface.paths; do
++  git show "$REV:$E/control/$f" > "$SCR/rcpt/$f" || exit 2
++done
+ python3 "$SCR/gate/gate.py" --lane "$LANE" --certified "$REV" \
+-  --paths "$LANE/$E/control/frozen-surface.paths" \
+-  --receipt "$LANE/$E/control/controls-a.stdout:control" \
+-  --receipt "$LANE/$E/control/controls-b.stdout:positive" \
++  --paths "$SCR/rcpt/frozen-surface.paths" \
++  --receipt "$SCR/rcpt/controls-a.stdout:control" \
++  --receipt "$SCR/rcpt/controls-b.stdout:positive" \
+   > "$OUT/receipt-gate.stdout" 2>&1
+ echo $? > "$OUT/receipt-gate.exit"
+ tail -1 "$OUT/receipt-gate.stdout"
+ [ "$(cat "$OUT/receipt-gate.exit")" = 0 ] || { echo "DECIDING_REFUSED receipt-binding $(tail -1 "$OUT/receipt-gate.stdout")"; exit 3; }
+ 
+ git status --porcelain > "$OUT/clean-tree-before.txt"
+-[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
++# untracked OUTDIR receipts are excluded by anchored prefix: a foreign file whose
++# name merely EXTENDS the outdir's relative path is still dirt (F-2).
++[ "$(grep -vc "^?? ${OUT#$LANE/}/" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+ rc=0
+-FROZEN="$E/contract.json $E/freeze.json $E/c1/measure.py $E/c1/lost-headings-at-base.json $E/c2/measure.py $E/control/frozen-surface.paths $E/c2/red-before/round-54-surface.paths $E/no-harm.sh $E/deciding-run.sh $E/controls.sh tools/receipt-revision-gate.py"
++# the frozen surface is the contract's own list, expanded under E (H3).
++FROZEN=$(python3 -c 'import json,sys; c=json.load(open(sys.argv[1])); print(" ".join(c["frozen_paths"]))' "$E/contract.json") || exit 2
+ if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi
+ bash "$SCR/code/no-harm.sh" "$LANE" "$REV" > "$OUT/no-harm.stdout" 2>&1; echo $? > "$OUT/no-harm.exit"
+ cat "$OUT/no-harm.stdout"; grep -q RED "$OUT/no-harm.stdout" && rc=1
+@@ -106,5 +162,6 @@ echo $? > "$OUT/receipt-gate-verdicts.exit"
+ tail -1 "$OUT/receipt-gate-verdicts.stdout"
+ [ "$(cat "$OUT/receipt-gate-verdicts.exit")" = 0 ] || rc=1
+ git status --porcelain > "$OUT/clean-tree-after.txt"
++[ "$(grep -vc "^?? ${OUT#$LANE/}/" "$OUT/clean-tree-after.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree-after"; cat "$OUT/clean-tree-after.txt"; rc=1; }
+ echo "DECIDING_RUN_EXIT=$rc" | tee "$OUT/deciding-run.exit"
+ exit $rc
+diff --git a/.ufo/evidence/round-56/freeze.json b/.ufo/evidence/round-56/freeze.json
+index 00c1406..c11cc51 100644
+--- a/.ufo/evidence/round-56/freeze.json
++++ b/.ufo/evidence/round-56/freeze.json
+@@ -4,16 +4,24 @@
+  "lane": "tameshi",
+  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+  "files": {
+-  "contract.json": "2530a54775aecde0ead0d989b5bb7a782e5a6fcd7390b41bebb10eea454bb50f",
++  "contract.json": "254dd0983735ae617d4c5d143ce601fc32fa2be4afdf9fb1a7ee8508a02df99b",
+   "c1/measure.py": "048122cf1c7c65d283366837f155925a03a58ecc2eab70e7085b1796bfccb772",
+   "c1/lost-headings-at-base.json": "dcfc9f800b8bc7b25851d80ec384b8e8781ead6a5f8adf9f0a5340479282fd4a",
+-  "c2/measure.py": "d17d36bd263b3e9dfffc265471f5aa0023c70150582cb2f6617afe039d1af6a2",
+-  "control/frozen-surface.paths": "a0ebd3d4216d51036b4ca192fdd7f7dc48ec720e8a1aeb56b47a4d5d595fdae8",
++  "c2/measure.py": "915580190cb1d5c3299e0f36c3beee0738688c423f7f730ff2a20332be5bed6a",
++  "control/frozen-surface.paths": "46c93f105b61d825398e88f80f59f08595909b3ee1abf995161843dd7143f7d8",
+   "c2/red-before/round-54-surface.paths": "95ead282432b1bded8eaa0d9ba60e68f8d4aa06d8947d5488172f13cf0e1d880",
++  "c2/red-before/round-54-ctl-pos-c1.stdout.sha256": "2491775e3a6b2f754bf86226fb81b51493c413fa83c47e347843494457513068",
++  "c2/red-before/round-54-ctl-pos-c1.stdout": "3310ff60802af88993006dd1fc59b50cbcbb33b094b02ee532ac5573db455698",
+   "no-harm.sh": "a13ba1a8433752c8e2d928c129dc4889181f34caa917099d4aaa96ec1d33e3b4",
+-  "deciding-run.sh": "6a63f5058be15f5fc5a3bbbe956f97fbc57c172cc2c68f37b83bb09ccec9c022",
+-  "controls.sh": "df1ee355ce6261729266427e0e5bcd554bf2bdf3b178d7198bd67a3479a79a44",
+-  "tools/receipt-revision-gate.py": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2"
++  "deciding-run.sh": "a644123e764a568fc58b832d470ab59bf1c823359dac41c189e0255c19a644cb",
++  "controls.sh": "65b4b5105668786fd2a89065c54c230b23b3713739fa9622c0bb2bf1b9286920",
++  "tools/receipt-revision-gate.py": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9"
+  },
+- "amendments": []
++ "amendments": [
++  {
++   "n": 1,
++   "what": "six discovered defects closed in one amendment commit, all found by wave-1 seats before any control score and before any deciding invocation (predicates, targets and denominators unchanged): (a) c2/measure.py arm6 read SOURCES' status column at index 8 (the opened date) so the knowledge-note docs cell could never score and C2_R56_PASS was unreachable - now cells[7] (T56W1CritC2 kill-shot); arm2/arm5 now copy .sha256 sidecars so the gate's digest binding is live; QUALITY cell requires RECEIPT_REV_CONTENT_DRIFT and the SKILL cell is scoped to ## Standing rules. (b) controls.sh emitted clone-local commit SHAs as `rev=` tokens the receipt gate cannot resolve - emit() relabels them `clone_rev=`; the committed receipts now carry .sha256 siblings (T56W1ExecControls finding, CritC2). (c) deciding-run.sh read control receipts from the worktree and gated them before the dirty-tree check, excluded untracked paths by unanchored prefix, accepted a non-empty OUTDIR, accepted any CONTROLS fraction and CTL_MISMATCH lines, could not run c1/measure.py (frozen input never materialized - RevFreeze H1), did not pin FREEZE to the last freeze.json commit (H2), and hardcoded its FROZEN list (now contract-derived); the freeze-integrity heredoc now checks manifest keys == contract surface, amendment record shape, and that contract.amendments mirrors freeze.json.amendments. (d) receipt-revision-gate.py declared RECEIPT_NOT_BLOB without emitting it (directory receipt crashed) and had no cases for its usage surface - now emits the code and the suite is 19 cases (not-blob, json-rev, unknown-role, zero-receipts, unresolvable-certified); drifted_paths reports paths unresolvable at both revisions. (e) control/frozen-surface.paths omitted the contract, the receipt producers, the deciding script, no-harm, the manifest and the red-before slice (T56W1CritC2 unlisted-path exploit); the surface now lists them (LOG.md and SCORECARD.md stay unbound by design: the row product is written after the bind and verified by the c1 restate arm - recorded as residual). (f) the red-before slice and its .sha256 were committed as frozen inputs but absent from contract.frozen_paths/freeze.json (RevFreeze H3) - now in both manifests.",
++   "prior_freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
++  }
++ ]
+ }
+diff --git a/tools/receipt-revision-gate.py b/tools/receipt-revision-gate.py
+index c93c135..c77e91a 100755
+--- a/tools/receipt-revision-gate.py
++++ b/tools/receipt-revision-gate.py
+@@ -71,11 +71,17 @@ def is_ancestor(lane, older, newer):
+ 
+ 
+ def drifted_paths(lane, rev_a, rev_b, paths):
+-    """Return the listed paths whose bytes differ between two revisions."""
++    """Return the listed paths whose bytes differ between two revisions; a listed
++    path that exists in neither revision is itself a drift finding."""
+     if not paths:
+         return ['<no --paths given: content identity is not checkable>']
++    gone = []
++    for p in paths:
++        if git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev_a, p)]).returncode != 0 \
++           and git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev_b, p)]).returncode != 0:
++            gone.append('<unresolvable-path:%s>' % p)
+     r = git(['-C', lane, 'diff', '--name-only', rev_a, rev_b, '--'] + list(paths))
+-    return [p for p in r.stdout.decode().splitlines() if p]
++    return [p for p in r.stdout.decode().splitlines() if p] + gone
+ 
+ 
+ def parse_receipts(args):
+@@ -88,13 +94,15 @@ def parse_receipts(args):
+     return out
+ 
+ 
+-def check(lane, certified, paths, receipt, role, required):
++def check(lane, certified, paths, receipt, role):
+     path, role_name, regex = receipt
+     codes = []
+     detail = ''
+     p = Path(path)
+     if not p.exists():
+         return ['RECEIPT_MISSING'], 'path=%s' % path, None
++    if not p.is_file():
++        return ['RECEIPT_NOT_BLOB'], 'path=%s' % path, None
+     data = p.read_bytes()
+     if not data.strip():
+         return ['RECEIPT_EMPTY'], 'path=%s' % path, None
+@@ -116,6 +124,7 @@ def check(lane, certified, paths, receipt, role, required):
+         detail = 'regex=%r' % regex
+     if not revs:
+         codes.append('RECEIPT_REV_ABSENT')
++        detail = detail or 'no rev= token'
+         return codes, detail, None
+     resolved = {}
+     for r in revs:
+@@ -190,7 +199,7 @@ def run(argv):
+     rows = []
+     all_codes = []
+     for receipt in parse_receipts(receipts):
+-        codes, detail, revs = check(lane, full, path_list, receipt, receipt[1], receipt[2])
++        codes, detail, revs = check(lane, full, path_list, receipt, receipt[1])
+         all_codes.extend(codes)
+         rows.append({'receipt': receipt[0], 'role': receipt[1], 'revs': revs,
+                      'ok': not codes, 'codes': sorted(set(codes)), 'detail': detail})
+@@ -212,7 +221,6 @@ def run(argv):
+ 
+ 
+ SELFTEST_RECEIPT_OK = 'VERDICT: rev=%s C1_X_PASS=true\n'
+-SELFTEST_RECEIPT_DRIFT = 'VERDICT: rev=%s C1_X_PASS=true\n'
+ 
+ 
+ def selftest():
+@@ -317,7 +325,27 @@ def selftest():
+         r = call(write_receipt('empty.txt', '\n') + ':positive')
+         cases.append(('empty-refused', r.returncode == 3 and b'RECEIPT_EMPTY' in r.stdout))
+         # 14 the codes list is closed
+-        cases.append(('codes-closed', len(CODES) == 11))
++        cases.append(('codes-closed', len(CODES) == len(set(CODES)) == 11))
++        # 15 a non-regular-file receipt is a named refusal, not a traceback
++        r = call(str(Path(tmp)) + ':positive')
++        cases.append(('not-blob-refused',
++                      r.returncode == 3 and b'RECEIPT_NOT_BLOB' in r.stdout))
++        # 16 a JSON receipt's "rev" token is parsed
++        r = call(write_receipt('json.txt', '{"rev": "%s"}\n' % c2) + ':verdict', certified=c2)
++        cases.append(('json-rev-parsed', r.returncode == 0))
++        # 17 an unknown role is a usage error, not silently a control
++        r = call(write_receipt('role.txt', SELFTEST_RECEIPT_OK % c2) + ':bogus')
++        cases.append(('unknown-role-refused',
++                      r.returncode == 1 and b'usage:' in r.stderr))
++        # 18 zero receipts is a usage error, never a PASS
++        r = call()
++        cases.append(('zero-receipts-refused',
++                      r.returncode == 1 and b'usage:' in r.stderr))
++        # 19 an unresolvable --certified is exit 2 with a named code
++        r = call(write_receipt('ok2.txt', SELFTEST_RECEIPT_OK % c2) + ':positive',
++                 certified='deadbeefdeaddead')
++        cases.append(('unresolvable-certified-refused',
++                      r.returncode == 2 and b'RECEIPT_REV_UNRESOLVABLE' in r.stdout))
+     passed = sum(1 for _, ok in cases if ok)
+     for name, ok in cases:
+         print('CASE %s %s' % (name, 'PASS' if ok else 'FAIL'))
+EXIT=0

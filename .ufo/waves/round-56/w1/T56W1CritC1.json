@@ -1,0 +1,116 @@
+{
+ "seat": "T56W1CritC1",
+ "round": 56,
+ "wave": 1,
+ "target": "C1_R56_PASS=true",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "counter": "python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/c1/measure.py --lane <scratch clone> --rev <rev> --work <empty dir> --explain",
+ "verdict_on_target": "reachable_by_fabrication",
+ "inadmissible_as_instrument_certified_proof": true,
+ "findings": [
+  {
+   "id": "F1",
+   "arm": [3, 4, 6],
+   "severity": "blocking",
+   "title": "the whole target is reachable by fabrication with zero section reads and zero content change",
+   "state": "fixture-build.py fabricate; C0 = base 981c5e8b; 18 appended ledger entries + 1 self-written trace + 18 reader JSONs whose section_sha256 is computed from the tree + one SCORECARD row",
+   "command": "python3 .ufo/evidence/round-56/c1/measure.py --lane $S/lane --rev d6fe899da135383a8910861edf2cc235c4bdb941 --work <empty> --explain",
+   "verdict_substring": "credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 unstable=0 restate=8 total=0 C1_R56_PASS=true",
+   "content_diff": "git diff --stat 981c5e8b..d6fe899 -- . ':!.ufo' => only SCORECARD.md, 2 insertions",
+   "silent_variant": "rev 6aa9d1514d626a52a305e0ca276abcafbb1f4209 -> total=0 C1_R56_PASS=true after stripping provenance/note fields",
+   "contract_error": "claims.C1.cannot_see names arm 4 only; arms 3 and 6 are equally blind (sha256 and read_rev are strings computable from the tree; the row score equals a monitor score that is itself a function of the ledger)",
+   "impacted_axes": ["calibration", "evidence/provenance"],
+   "smallest_correction": "state the claim as ledger credit bound to C0; name arms 3/4/6 in cannot_see; independent-seat reader reports are the only guard"
+  },
+  {
+   "id": "F2",
+   "arm": [1, 2, 3, 6],
+   "severity": "none",
+   "title": "do-nothing controls are refused (positive result)",
+   "controls": [
+    {"attempt": "delete the 18 headings' ledger entries", "rev": "69d0fdb5b333f44df73bddef2f8ed743ebb5e95f", "verdict_substring": "credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 unstable=0 restate=8 total=5 C1_R56_PASS=false", "reason": "17 of 18 are lost by input drift, not entry absence; the 18th has no matching entry"},
+    {"attempt": "delete every failing-verdict entry", "rev": "f79b6931541f480aa98ad7240ed9b49f4218d445", "verdict_substring": "credited=46 lost=18 ... total=5 C1_R56_PASS=false", "reason": "no live veto at base (all 18 lost sections vetoed=False)"},
+    {"attempt": "edit the standing row to 6, bind nothing", "rev": "1b9dce7ed94ea8b31e33ae09a194c5c343f447c2", "verdict_substring": "restate=6 total=4 C1_R56_PASS=false", "reason": "moves arm 6 only"},
+    {"attempt": "row to 6 naming a commit where the score differs", "rev": "a853163190c3b7847a79a5b3c829550453d56d01", "verdict_substring": "EXPLAIN arm6-restate row_score=6 row_commit=0a2010acd1e9 score_at_row=8 ... restate=6 total=5 C1_R56_PASS=false", "reason": "arm 6 compares at the row's own commit"},
+    {"attempt": "re-pin the 18 with fresh pins, no reader", "rev": "75003a47da661fa0d3b11dd1527e3561037473f9", "verdict_substring": "credited=64 lost=0 rekeyed=18/18 readers=0/18 monitor=8/64 unstable=0 restate=8 total=1 C1_R56_PASS=false", "reason": "arm 4 is the only guard, and it is computable (F1)"}
+   ]
+  },
+  {
+   "id": "F3",
+   "arm": [5],
+   "severity": "minor",
+   "title": "unstable=0 at base is an empty domain, not a clean result; arm 5's scope is re-key-bound entries only",
+   "code_anchor": ".ufo/evidence/round-56/c1/measure.py:201 `if rekey_ok:` gates `bound`; base has rekey_dirs=[]",
+   "measured": "6 entries pin LOG.md and 6 pin SCORECARD.md at base (3 headings each); credited sections whose ONLY crediting entries pin LOG.md/SCORECARD.md = 0",
+   "liveness": "state `unstable` -> `unstable=1 restate=8 total=1 C1_R56_PASS=false` (rev d8e1e9281b68ac0bfbac760c58fedd6b20d383e4)",
+   "withdrawn": "the stronger reading that the next LOG/SCORECARD edit would cost credit: every such section has a redundant clean entry",
+   "smallest_correction": "print unstable=<n>/<examined> and build `bound` unconditionally"
+  },
+  {
+   "id": "F4",
+   "arm": [6],
+   "severity": "major",
+   "title": "arm 6 reads only the last calibration row, so the R55.3 stale row survives a PASS",
+   "code_anchor": ".ufo/evidence/round-56/c1/measure.py:266 `cells = rows[-1]`",
+   "measured": "in the PASS state SCORECARD.md still carries line 2579 `| calibration | 8 | ... | d33053f7 | 53 |`; the monitor at d33053f7 reads score 6 covered 57; arm 6 reports restate=8",
+   "smallest_correction": "every calibration row must agree with the monitor at the commit it names"
+  },
+  {
+   "id": "F5",
+   "arm": [1],
+   "severity": "blocking",
+   "title": "arm 1 executes the live working tree, contradicting its docstring",
+   "code_anchor": "c1/measure.py:147 runs the precheck with $LANE; .ufo/evidence/round-48/quality/coldread-precheck.sh:11 `M=.ufo/evidence/round-21/coldread/measure.py` after `cd $LANE`",
+   "command": "uncommitted working-tree edit to the round-21 selector, --rev = base",
+   "verdict_substring": "EXPLAIN arm1-precheck exit=0 ... cand_credited=64 lost=0 ok / EXPLAIN arm2-monitor covered=46 score=6 box3=False / C1_R56: ... credited=64 lost=0 ... monitor=6/46 ... total=4 C1_R56_PASS=false",
+   "impacted_axes": ["calibration", "closure discipline"],
+   "smallest_correction": "measure floor and cand with the same REV mirror arm 2 builds (or run the precheck inside a `git worktree` of REV)"
+  },
+  {
+   "id": "F6",
+   "arm": [1, 2],
+   "severity": "blocking",
+   "title": "no digest pin on the executed historical instruments",
+   "measured_digests": {
+    ".ufo/evidence/round-18/measure.py": "7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37",
+    ".ufo/evidence/round-21/coldread/measure.py": "657f009bdf1cc89ac614ed7c8424858f5f802b5a5330d8917db788f67982f3eb",
+    ".ufo/evidence/round-48/quality/coldread-precheck.sh": "3b07847afc86d0d6c14d2e6c20a6b3778da1798d9304204ec3a360a6301b2924"
+   },
+   "digests_identical_at": ["981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1", "c3e2ca9f020776b3d66c7af854fb82c834674fcf"],
+   "command": "fixture-build.py tamper (doctored round-21 selector committed at REV)",
+   "verdict_substring": "EXPLAIN arm1-precheck exit=0 ... lost=0 ok / EXPLAIN arm2-monitor covered=64 score=8 box3=True / ... total=2 C1_R56_PASS=false",
+   "smallest_correction": "hashlib.sha256 of each instrument blob at REV must equal the freeze digest"
+  },
+  {
+   "id": "F7",
+   "arm": [3],
+   "severity": "major",
+   "title": "external_inputs are collected but never validated (false provenance)",
+   "code_anchor": ".ufo/evidence/round-18/measure.py:605-608 collects; input_reason/trace_reason never read them",
+   "test": "added tameshi@<rev>:SHONEN.md=0*64, /etc/passwd=f*64, nonexistent/path.md=a*64 to a credited entry; entry_reason still None",
+   "smallest_correction": "validate external_inputs like inputs, or drop them from provenance claims"
+  }
+ ],
+ "sweeps_found_nothing": [
+  "narrowing the heading list: arm 1 compares credited heading sets; arm 2 requires covered==64 and box3_full_page==(covered==total)",
+  "duplicate-heading substitution: 63 distinct headings -> lost>=1 and covered!=total",
+  "veto removal: 0 vetoed sections at base; delfail changes nothing",
+  "deleting a drifted input: input-missing is a failure reason, not a pass",
+  "two re-key directories: rekey_ok = len(rekey_dirs)==1",
+  "reader outside w2/w3 or misnamed: not counted",
+  "row naming a commit where the score differs: refused (row6wrong)"
+ ],
+ "recon_drift_map": {
+  "lost_by_input_drift": 17,
+  "lost_by_missing_entry": 1,
+  "missing_entry_heading": "## Standing rules",
+  "drifted_input_set": ["corpus/SOURCES.md", "corpus/QUALITY.md", "tools/registry.json", "tools/context-capture.py", "tools/registry-check.py", "tools/repeat-control.py", "tools/bash-witness-study.py", "tools/evidence-disposition.py", "tools/pin-disposition.py", ".ufo/evidence/round-15/verify.py", ".ufo/evidence/round-21/coldread/ledger.json"],
+  "note": "SKILL.md pins appear drifted but are in IGNORED_INPUTS and never affect credit",
+  "detail": "T56W1CritC1-receipts/drift-compact.json"
+ },
+ "census": {"command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "rows_grep": 142},
+ "tooling": "none installed or upgraded; pacman paused host-wide; python3 stdlib + git only",
+ "receipts_dir": ".ufo/waves/round-56/w1/T56W1CritC1-receipts"
+}

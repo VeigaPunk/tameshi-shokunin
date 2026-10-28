@@ -1,0 +1,75 @@
+{
+  "seat": "T56W1ConnectorSiblings",
+  "round": 56,
+  "wave": 1,
+  "lane": "tameshi-shokunin",
+  "lane_head_at_scan": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+  "method": "read-only grep sweep over sibling lanes (*-shokunin)/{corpus/knowledge,SKILL.md,tools} for rev=, receipt, attestation, provenance, digest, frozen receipt; every rule-bearing hit verified committed at HEAD and five neighbour gates executed on the two real receipts the lane accepted",
+  "receipts_dir": ".ufo/waves/round-56/w1/T56W1ConnectorSiblings-receipts",
+  "c2_subject": {
+    "gate": "tools/receipt-revision-gate.py",
+    "relation": "receipt -> the revision the lane certifies it for",
+    "codes": ["RECEIPT_MISSING", "RECEIPT_EMPTY", "RECEIPT_NOT_BLOB", "RECEIPT_REV_ABSENT", "RECEIPT_REV_AMBIGUOUS", "RECEIPT_REV_UNRESOLVABLE", "RECEIPT_REV_MISMATCH", "RECEIPT_REV_CONTENT_DRIFT", "RECEIPT_CONTROL_NOT_ANCESTOR", "RECEIPT_DIGEST_MISMATCH", "RECEIPT_REQUIRED_LINE_MISSING"]
+  },
+  "hits": [
+    {"id": 1, "sibling": "chousa", "head": "9eef15e7c0e0", "path": "corpus/evidence/round51/receipt-check.py", "anchor": "corpus/QUALITY.md:896 criterion 84", "blob": "75a171b9ce3930a9600acd1654f0c5018b03e2d1", "owns": "receipt header names tool-rev + tool path + optional digest; revision must resolve, be ancestor of tip, and the tool blob at tip must equal the blob at that revision", "codes": ["RECEIPT_NO_REV", "RECEIPT_REV_UNKNOWN", "RECEIPT_REV_UNLANDED", "RECEIPT_TOOL_ABSENT", "RECEIPT_TOOL_MOVED", "RECEIPT_DIGEST_MISMATCH", "RECEIPT_OK"], "relation": "complement", "why": "subject is the tool revision; header form is not rev=, so on both real receipts it prints RECEIPT_NO_REV and never reaches C2's defect"},
+    {"id": 2, "sibling": "kotodama", "head": "44f76d456c1b", "path": "tools/check-receipt-seq.py", "anchor": "corpus/QUALITY.md:55 criterion 17, :59 criterion 19", "blob": "b46e77eb734805d32fd8cde53777e9e99b561694", "owns": "stamped == evaluated == measured revision, tree hash of stamped, counter sha256; --topo carrier parentage; --lands reads committed bytes", "relation": "complement", "why": "binds a receipt to its own run, not to the revision the lane certifies; on both real receipts FAIL missing_headers"},
+    {"id": 3, "sibling": "souji", "head": "0242085909fb", "path": "tools/souji-receipt-run.py", "anchor": "corpus/QUALITY.md:129 Q55, :151 Q61", "blob": "8f78ec1beef35f08b473e942f4c6236f7eaaf592", "owns": "receipt v1 header binds rev + tool + tool_sha256 + cmd + rc; verify refuses RECEIPT-TOOL-DIGEST-MISMATCH; every quoted count needs such a receipt", "relation": "complement", "why": "subject is tool bytes at the named revision; does not ask whether that revision is the certified one; on the round-54 receipt RECEIPT-MALFORMED"},
+    {"id": 4, "sibling": "kama", "head": "7ee8cbdf160f", "path": "tools/round33-gate-receipts.py", "anchor": "corpus/QUALITY.md:315 KQ43", "blob": "900154d7af5514f574fc479e98f15709e5bfdc23", "owns": "gate receipts record argv, source and evaluated revisions, gate/runner digests, numeric exit, stdout/stderr; audit replays each case from its pinned source revision", "relation": "complement", "why": "scoped to kama's own fixture replay; does not gate a round's control/verdict receipts against the certification revision"},
+    {"id": 5, "sibling": "tsukuroi", "head": "b866a1d3d266", "path": "tools/run-receipt.py + tools/check-report-receipts.py", "anchor": "corpus/QUALITY.md:147 criterion 77", "blobs": ["9944bd1899d3b4d3e55b0eeb7d12cddacbf6b9db", "5ea796e2dc5700dc761f69a54b795bb36ddb52b5"], "owns": "a revision-cited gate/measurement is admissible only with a committed receipt whose header names that revision and the tool digest; the checker enforces the citation leg over a report", "relation": "complement", "why": "citation side, not acceptance side; on a tameshi lesson it reports cited=0"},
+    {"id": 6, "sibling": "tsukuroi", "head": "b866a1d3d266", "path": "tools/_revision.py + tools/check-revision-binding.py", "blobs": ["24f398a6b981488218e6cb05c6c1016efa84cf29", "86ef0ad0960271cc27d09005d726d8f75c4017ac"], "owns": "binds a gate's --revision CLI input to a landed commit (branch, resolution, ancestry, pushed-ness); E-REVISION-NOT-LANDED etc.", "relation": "complement", "why": "input revision of a tool; no receipt is read"},
+    {"id": 7, "sibling": "kake", "head": "1a48131577ba", "path": "corpus/QUALITY.md:433 and :450 + .ufo/waves/round-30/witness/witness_receipt_identity.py, witness_claim_receipt_backing.py", "blobs": ["220a934752aa7529aa4fb580f1772cb432d28294", "0b2e3eef2750c2b4eeeea228d3cf50f6a2602304", "9e535cb13336f9bc26da1335307dc466feb551ce"], "owns": "a measurement receipt names the revision it measured and the sha256 of every tool it depends on; every revision a record names as measured has a committed receipt naming it", "relation": "complement", "why": "record-side presence and digest identity (revision -> receipt); witness is a fixed round-30 instrument, not a later-round gate"},
+    {"id": 8, "sibling": "kake", "head": "1a48131577ba", "path": "corpus/knowledge/receipt-integrity.md", "owns": "receipt -> the invocation that wrote it: counterSha256, toolSha256, three defect classes (counter-error receipt, missing tool, planted earlier run)", "relation": "complement", "why": "binds a receipt to a run, not to the revision it is evidence for"},
+    {"id": 9, "sibling": "chousa", "head": "9eef15e7c0e0", "path": "corpus/knowledge/receipt-binding-r38.md + corpus/knowledge/revision-binding-r31.md", "owns": "r38: gate_sha256_pre/post + counter identity, measured by the counter; r31: a claim carries a sha256 pin over exact source bytes (CLAIM_SOURCE_REVISION_MISMATCH)", "relation": "complement", "why": "byte binding of the gate under test; content pin on a claim's source; neither is a receipt->certified-revision rule"},
+    {"id": 10, "sibling": "kaidoku", "head": "dc73587a8b9c", "path": ".ufo/waves/round-17/tools/receipt-validate-v2.py", "anchor": "SKILL.md:866", "blob": "a6d98240c263867e381f81ccd79445397845bfc1", "owns": "receipt digests, pins, mid-run drift, mid maps; 32 selftest cases", "relation": "complement", "why": "integrity of a run's own record; no revision comparison"},
+    {"id": 11, "sibling": "kagi", "head": "69b61db46be4", "path": "corpus/release-clock.py", "anchor": "SKILL.md:48, :442", "blob": "77e26228d298f5df324fc22628f8f828d81bba01", "owns": "replays a pinned rearmed receipt; --observe writes a new receipt and returns RECEIPT-MISMATCH on drift; scope sentence: receipts bind bytes, never provider attestation", "relation": "complement", "why": "observed-vs-pinned comparison inside one tool; the scope sentence is a limit C2 should keep"},
+    {"id": 12, "sibling": "kumitate", "head": "14057f3e3899", "path": "scripts/receipt-attest.mjs + corpus/knowledge/receipt-identity-canonicalization.md", "blob": "0e9baaf05b2df707934eadfbe3f6c5e43afec0e1", "owns": "canonical-JSON record digest as receipt identity, sha256sum text-mode sidecar, nonce ledger whose evidence set is the whole directory; VALID/REPLAY/TAMPERED/UNREADABLE/USAGE", "relation": "complement", "why": "grep -n -iE 'revision|commit' scripts/receipt-attest.mjs prints 0 hits: no revision axis"},
+    {"id": 13, "sibling": "revenger", "head": "6defe31e4af9", "path": "corpus/knowledge/digest-scope-versus-provenance.md", "blob": "a459db90da35268be194da5168a9be283018a4b2", "owns": "digest equality holds only over the exact bytes hashed; reformatting invalidates a digest claim", "relation": "complement", "why": "supplies the semantics of C2's content-identity escape and warns a digest leg is not behaviour"},
+    {"id": 14, "sibling": "game-dev-3d", "head": "89dd182b7094", "path": "corpus/knowledge/unreal-mcp/PROVENANCE.md", "anchor": "SKILL.md:184", "blob": "66ba696469d13fdf107de17c130c0739d987a2c8", "owns": "pin + byte-identity + install receipts for an MCP tree, with the provenance file's own sha256", "relation": "complement", "why": "asset provenance; no receipt/revision relation"},
+    {"id": 15, "sibling": "kama", "head": "7ee8cbdf160f", "path": "corpus/QUALITY.md KQ16 (:61) and KQ74 (:410)", "blob": "bcdf2c9b95d0ffc5aadede61ce87232baca9f9a0", "owns": "capture provenance declared as git show <pinned-commit>:<path>, corroborated by git cat-file blob; a live receipt's provenance admitted only when each digest is bound to the artifact the same run used", "relation": "complement", "why": "provenance of a capture, record-time verification; adjacent subject"}
+  ],
+  "gate_comparison": {
+    "certified": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+    "receipts": {
+      "r54": ".ufo/evidence/round-54/control/controls-b.stdout",
+      "r55": ".ufo/evidence/round-55/after/c2.stdout"
+    },
+    "results": {
+      "tameshi_receipt_revision_gate": {"r54": "RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98", "r55": "RECEIPT_REV_ABSENT"},
+      "chousa_receipt_check": {"r54": "RECEIPT_NO_REV rc=1", "r55": "RECEIPT_NO_REV rc=1"},
+      "kotodama_check_receipt_seq": {"r54": "FAIL missing_headers=['stamped','evaluated','measured','tree'] rc=1", "r55": "same rc=1"},
+      "souji_verify": {"r54": "RECEIPT-MALFORMED rc=2"},
+      "tsukuroi_check_report_receipts": {"on": "corpus/lessons/round-54.md", "out": "{\"cited\": 0, \"unreceipted\": 0} rc=0"}
+    },
+    "reading": "every sibling gate refuses for a different reason than C2's; none reaches the two-token / certified-revision defect"
+  },
+  "must_report_not_absorb": [
+    {"owner": "chousa QUALITY 84", "leg": "RECEIPT_TOOL_MOVED / tool revision at tip", "why": "C2 reads no tool path and has no tip comparison"},
+    {"owner": "kotodama QUALITY 17/19", "leg": "stamped == evaluated == measured exact equality", "why": "C2 deliberately permits rev= != certified on byte-identical declared paths; the content-identity escape must be scoped to the certification relation only or the two rules read as contradictions"},
+    {"owner": "souji Q55, chousa r38, kake, kumitate", "leg": "digest of tool/counter/gate bytes and canonical record identity", "why": "C2's RECEIPT_DIGEST_MISMATCH reads an optional sidecar beside the receipt, not tool digests"},
+    {"owner": "tsukuroi QUALITY 77, kake :450", "leg": "citation backing (revision -> receipt)", "why": "converse direction: C2 gates receipts the lane accepts, not claims a record makes"},
+    {"owner": "kotodama --topo", "leg": "carrier parentage", "why": "C2 has no topology leg; RECEIPT_CONTROL_NOT_ANCESTOR is revision ancestry, not carrier parentage"}
+  ],
+  "naming_risk": {
+    "shared_prefix": "RECEIPT_REV_",
+    "chousa_codes": ["RECEIPT_REV_UNKNOWN", "RECEIPT_REV_UNLANDED"],
+    "tameshi_codes": ["RECEIPT_REV_ABSENT", "RECEIPT_REV_AMBIGUOUS", "RECEIPT_REV_UNRESOLVABLE", "RECEIPT_REV_MISMATCH", "RECEIPT_REV_CONTENT_DRIFT"],
+    "exact_collisions": 0,
+    "action": "the C2 knowledge entry should name chousa QUALITY 84 once as the tool-revision neighbour"
+  },
+  "negative_sweeps": {
+    "sibling_standing_rules_with_receipt_rule": {"mado": 0, "tabi": 0, "tsukuroi": 0, "tameshi": 0},
+    "lanes_with_deciding_run": ["tameshi-shokunin"],
+    "sibling_hits_for_certified_revision_rule": 0,
+    "sibling_files_named_receipt_revision_binding": 0
+  },
+  "verdict": "overlap=complement",
+  "verdict_line": "overlap=complement — six sibling lanes bind receipts to tool revision / stamp==evaluation / tool bytes / citation / carrier parentage; five more lanes own provenance or identity gates; none owns the certification relation, and each neighbour gate refuses the two real receipts for a different reason than C2's",
+  "limits": [
+    "grep-led discovery over three roots per lane; rules stated only in lessons/PROVINCE/SHONEN or wave reports are reached only when they also land in a criterion or tool docstring",
+    "kaidoku, kengaku, tsukuroi, kama, kasegi had dirty worktrees; findings are stated at committed HEAD blobs",
+    "running a sibling gate is not a verdict on that gate's own claim; it was used only as a witness that its rule does not cover C2's class",
+    "a sibling round concurrently editing one of these rules is not visible from here"
+  ],
+  "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0}
+}

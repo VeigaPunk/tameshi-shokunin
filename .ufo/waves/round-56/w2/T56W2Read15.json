@@ -1,0 +1,34 @@
+{
+  "heading": "### Round-21 gate/probe registry — finite environment differential",
+  "cand": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+  "section_sha256": "eccd3ec82207fa69cee544f8f4ebfc0f9a473fe7254b8041ae2f5924f8d00a06",
+  "findings": [
+    {
+      "statement": "The documented env-diff entry does not classify the frozen surfaces when run in the required scratch clone at C0.",
+      "command": "cd /fast/scratch/hyaku/tameshi-r56/T56W2Read15/clone && python3 tools/env-diff.py --contract .ufo/evidence/round-21/c2-contract.json --out /fast/scratch/hyaku/tameshi-r56/T56W2Read15/tameshi-f5-clone-recheck.json",
+      "output": "ENVDIFF: classified=0/9 out=/fast/scratch/hyaku/tameshi-r56/T56W2Read15/tameshi-f5-clone-recheck.json; EXIT=1. The output receipt reports tameshi-runner unavailable PIN_UNREADABLE: tameshi-runner and js-kimi-census unavailable PIN_UNREADABLE: js-kimi-census. The default --fleet-root resolves from the clone's tool path, not the fleet root."
+    },
+    {
+      "statement": "49 active rows from round 26 on",
+      "command": "python3 - <<'PY'\nimport json, subprocess\nraw = subprocess.run(['git','show','c0137451f5b7f22d65f748fc69f1b181f55e1378:tools/registry.json'], capture_output=True, text=True).stdout\nrows = json.loads(raw)['rows']\nprint('total', len(rows), 'active', sum(r.get('status') == 'active' for r in rows))\nPY",
+      "output": "total 57 active 50"
+    }
+  ],
+  "notes": [
+    "Supplying --fleet-root /home/vgpnk/Projects/shokunin to env-diff from the clone yields classified=9/9, exit 0; that required override is absent from the listed entry. The lane-root entry itself passed 9/9.",
+    "The active-row count was 49 at round 26 and round 55; C0 adds active receipt-revision-gate-selftest, making the unqualified 'from round 26 on' count stale at C0. The round-24 count of 47 and the frozen replay count of 43 are historical populations and remain correct.",
+    "A rerun of the retained round-20 route-mix spec is now accepted (exit 0), while .ufo/evidence/round-21/routemix-r20-spec1.json records refusal (exit 1); the section's Round-28 correction already warns that live route-table reruns can differ from retained receipts.",
+    "C1 mutant set includes hooks-off MB08/MB09 and pidfd ownership R07; the 'not demonstrated malicious hooks or PID reuse' limitation is consistent with the round-21 lesson, though it could be read ambiguously."
+  ],
+  "commands": [
+    "Imported .ufo/evidence/round-18/measure.py and used its sectionize() on git show c0137451f5b7f22d65f748fc69f1b181f55e1378:SKILL.md; got start=2007, end=2146, sha256=eccd3ec82207fa69cee544f8f4ebfc0f9a473fe7254b8041ae2f5924f8d00a06.",
+    "git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r56/T56W2Read15/clone; git -C clone checkout --detach c0137451f5b7f22d65f748fc69f1b181f55e1378.",
+    "Ran the section's self-invocations in the C0 clone: env-diff 9/9; wave-route-mix 8/8; round21-measure 13/13; coldread selector 12/12; wave-accounting 8/8 frozen + 16/16 supplemental; command-binding 44/44; registry-replay 10/10; all exit 0.",
+    "Ran the listed env-diff entry from the live lane root: classified=9/9, exit 0; ran it from the required scratch clone without --fleet-root: classified=0/9, exit 1.",
+    "Ran wave-route-mix on the round-21 and round-20 specs; also ran synthetic concentration and unrouted-role specs (both exit 1).",
+    "Ran round21-measure --claim c1 and --claim c2, coldread measure --explain, wave-accounting clean and wrong-count pairs, command-binding clean and source-read pairs, registry-replay --plan, and registry-replay --run with a missing repo (uncaught traceback, exit 1).",
+    "Counted tools/registry.json at C0: 57 total, 50 active; compared round-26 (49 active) and round-55 (49 active).",
+    "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi (exit 0)."
+  ],
+  "verdict": "gap-minor"
+}

@@ -1,0 +1,38 @@
+=== gate sidecar handling (lines 95-125) ===
+    p = Path(path)
+    if not p.exists():
+        return ['RECEIPT_MISSING'], 'path=%s' % path, None
+    data = p.read_bytes()
+    if not data.strip():
+        return ['RECEIPT_EMPTY'], 'path=%s' % path, None
+    # a receipt that git knows must be a blob at the certified revision's tree? No:
+    # the receipt is checked where it lives (working tree or committed), so only
+    # size/type sanity is possible here; --selftest covers the committed case.
+    text = data.decode('utf-8', 'surrogateescape')
+    revs = sorted(set(REV_RE.findall(text)) | set(JSON_REV_RE.findall(text)))
+    sidecar = Path(str(p) + '.sha256')
+    if sidecar.exists():
+        want = sidecar.read_text('utf-8', 'surrogateescape').split()[0] if sidecar.read_text(
+            'utf-8', 'surrogateescape').split() else ''
+        got = hashlib.sha256(data).hexdigest()
+        if want != got:
+            codes.append('RECEIPT_DIGEST_MISMATCH')
+            detail = 'sidecar=%s got=%s' % (want[:12], got[:12])
+    if regex is not None and not re.search(regex, text, re.M):
+        codes.append('RECEIPT_REQUIRED_LINE_MISSING')
+        detail = 'regex=%r' % regex
+    if not revs:
+        codes.append('RECEIPT_REV_ABSENT')
+        return codes, detail, None
+    resolved = {}
+    for r in revs:
+        full = resolve(lane, r)
+        if full is None:
+            codes.append('RECEIPT_REV_UNRESOLVABLE')
+            detail = 'rev=%s' % r
+
+=== every mention of 'amendments' in the lane (tools + round-56 evidence) ===
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/contract.json:47: "amendments": []
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/deciding-run.sh:40:print('FREEZE_INTEGRITY: %s files=%d amendments=%d'
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/deciding-run.sh:41:      % ('OK' if not bad else 'MISMATCH', len(fr['files']), len(fr.get('amendments') or [])))
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/freeze.json:18: "amendments": []

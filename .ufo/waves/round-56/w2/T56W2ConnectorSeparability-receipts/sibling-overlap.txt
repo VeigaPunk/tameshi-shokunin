@@ -1,0 +1,23 @@
+Final-bytes sibling evidence. Current HEADs checked (read-only): chousa 9eef15e7c0e0; kaidoku e4f2cfa5ebff; kake 1a48131577ba; kama 7ee8cbdf160f; kotodama 44f76d456c1b; kumitate 14057f3e3899; revenger 6defe31e4af9; souji 994de3b447e9; tsukuroi fb5a1d8625f0. Grep was scoped to sibling tools/scripts and corpus QUALITY/knowledge for receipt, rev/revision, provenance, attestation, digest terms; no sibling files were written.
+
+Representative final-byte owners and blobs:
+- chousa-shokunin/corpus/evidence/round51/receipt-check.py blob 75a171b9ce39: `tool-rev` must resolve/land, tool at tip must match the named revision's blob; codes RECEIPT_REV_UNKNOWN/UNLANDED, TOOL_MOVED, DIGEST_MISMATCH. Subject is the tool revision, not the revision a tameshi verdict/control is certified against.
+- chousa-shokunin/corpus/knowledge/receipt-binding-r38.md blob 67c073a9566c: binds gate/counter identities and pre/post gate digests; no receipt-to-certified-revision equality.
+- chousa-shokunin/corpus/knowledge/revision-binding-r31.md blob 475697b11989: SHA-256 pin of a claim's source bytes, not certification revision.
+- kotodama-shokunin/tools/check-receipt-seq.py blob b46e77eb7348: stamped == evaluated == measured revision, recorded tree and counter digest; optional carrier-parent relation. On committed tameshi round-54 and round-55 receipts it reported `SEQ-... FAIL missing_headers=['stamped', 'evaluated', 'measured', 'tree']`.
+- souji-shokunin/tools/souji-receipt-run.py blob 8f78ec1beef3: receipt header binds rev, tool path, tool_sha256, command/rc; verify checks the tool blob at named rev. Both tameshi receipts returned `RECEIPT-MALFORMED header order or fences do not match receipt v1`.
+- kama-shokunin/tools/round33-gate-receipts.py blob 900154d7af55; QUALITY KQ43: gate source/evaluated revision, argv, gate/runner digests, exit/stdout/stderr replay.
+- tsukuroi-shokunin/tools/run-receipt.py blob 9944bd1899d3 and tools/check-report-receipts.py blob 5ea796e2dc57: committed receipt for a report-cited revision/tool pair.
+- tsukuroi-shokunin/tools/_revision.py blob 24f398a6b981 and tools/check-revision-binding.py blob 86ef0ad09602: landed --revision CLI input/branch binding; no receipt is checked.
+- kake-shokunin/corpus/knowledge/receipt-integrity.md blob 351afd3bb71b: receipt counterSha256/toolSha256 bind the record to the invocation that wrote it; stale/planted file classes.
+- kumitate-shokunin/scripts/receipt-attest.mjs blob 3ff972d4fbb5: canonical-record digest + sidecar + nonce/replay identity; final source has no revision/commit axis.
+- kaidoku-shokunin/tools/round-46/attest.py blob 7aaa9b72a5c8: resolves --rev and pins its own artifact bytes at that revision; artifact attestation, not receipt-to-certified-revision binding.
+- revenger-shokunin/corpus/knowledge/digest-scope-versus-provenance.md blob a459db90da35: semantics/limits of digest equality and provenance, no gate implementation.
+- souji-shokunin/corpus/knowledge/git-strict-descendant-relation-r40.md blob 0bc3075509b8: register commit must be a strict descendant of receipt_rev; commit-graph ordering, not the deciding revision's receipt-binding gate.
+
+Mechanical visibility probes against the two real tameshi receipts, using the final-byte sibling tools:
+- chousa receipt-check.py on round-54 controls-b: `RECEIPT_NO_REV`, `CHECKS=1 OK=0 FAILS=1`, `RECEIPT_CHECK=FAIL` (its required `tool-rev:` header does not parse tameshi `rev=`).
+- kotodama check-receipt-seq.py with `--root tameshi-lane --lands C0` on committed round-54 controls-b and round-55 c2.stdout: `LANDS PASS`; each `SEQ-... FAIL missing_headers=['stamped', 'evaluated', 'measured', 'tree']`; `RECEIPT-SEQ: FAIL`.
+- souji-receipt-run.py verify with `--root tameshi-lane` on both committed receipts: `RECEIPT-MALFORMED header order or fences do not match receipt v1`.
+
+These gates therefore complement C2: they bind adjacent subjects (tool bytes, own-run identity, report citation, or topology), but do not implement tameshi's decisive relation (receipt rev must equal/content-match the revision being certified; controls must be ancestors). No exact duplicate or contradictory ownership found: overlap=complement.

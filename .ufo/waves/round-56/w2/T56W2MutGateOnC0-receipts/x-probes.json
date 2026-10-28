@@ -1,0 +1,80 @@
+[
+ {
+  "id": "X1",
+  "desc": "CODES entry swapped for a duplicate (NOT_BLOB -> MISSING)",
+  "old": "    'RECEIPT_MISSING', 'RECEIPT_EMPTY', 'RECEIPT_NOT_BLOB', 'RECEIPT_REV_ABSENT',",
+  "new": "    'RECEIPT_MISSING', 'RECEIPT_EMPTY', 'RECEIPT_MISSING', 'RECEIPT_REV_ABSENT',",
+  "tally": "18/19",
+  "failed_cases": [
+   "codes-closed"
+  ],
+  "exit": 1,
+  "verdict": "KILLED",
+  "stderr_last": []
+ },
+ {
+  "id": "X2",
+  "desc": "rev regex narrowed to {40}",
+  "old": "REV_RE = re.compile(r'\\brev=([0-9a-f]{7,40})\\b')",
+  "new": "REV_RE = re.compile(r'\\brev=([0-9a-f]{40})\\b')",
+  "tally": "18/19",
+  "failed_cases": [
+   "unresolvable-refused"
+  ],
+  "exit": 1,
+  "verdict": "KILLED",
+  "stderr_last": []
+ },
+ {
+  "id": "X3",
+  "desc": "JSON rev tokens dropped (JSON_REV_RE not consulted)",
+  "old": "    revs = sorted(set(REV_RE.findall(text)) | set(JSON_REV_RE.findall(text)))",
+  "new": "    revs = sorted(set(REV_RE.findall(text)))",
+  "tally": "18/19",
+  "failed_cases": [
+   "json-rev-parsed"
+  ],
+  "exit": 1,
+  "verdict": "KILLED",
+  "stderr_last": []
+ },
+ {
+  "id": "X4",
+  "desc": "unknown role accepted",
+  "old": "        if len(parts) < 2 or parts[1] not in ('positive', 'verdict', 'control'):",
+  "new": "        if len(parts) < 2:",
+  "tally": "18/19",
+  "failed_cases": [
+   "unknown-role-refused"
+  ],
+  "exit": 1,
+  "verdict": "KILLED",
+  "stderr_last": []
+ },
+ {
+  "id": "X5",
+  "desc": "zero --receipt accepted",
+  "old": "    if not lane or not certified or not receipts:",
+  "new": "    if not lane or not certified:",
+  "tally": "18/19",
+  "failed_cases": [
+   "zero-receipts-refused"
+  ],
+  "exit": 1,
+  "verdict": "KILLED",
+  "stderr_last": []
+ },
+ {
+  "id": "X6",
+  "desc": "unresolvable --certified accepted",
+  "old": "    full = resolve(lane, certified)\n    if full is None:",
+  "new": "    full = resolve(lane, certified) or 'deadbeef'\n    if False:",
+  "tally": "18/19",
+  "failed_cases": [
+   "unresolvable-certified-refused"
+  ],
+  "exit": 1,
+  "verdict": "KILLED",
+  "stderr_last": []
+ }
+]

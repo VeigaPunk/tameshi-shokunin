@@ -1,0 +1,28 @@
+# Round 56 wave 1 — simplification findings
+
+## Axes
+Operability (claim predicate preserved), evidence/provenance (what a removal erases), and maintenance weight. No production or frozen-instrument files changed.
+
+## Ranked disposition (highest confidence first)
+
+1. **`delete` — do not make the optional `freeze-gen.py` a round execution dependency.** The frozen deciding runner independently re-derives freeze integrity from the manifest and bytes at the supplied freeze revision (runner lines 22–45); the actual deciding path does not call `freeze-gen.py`. The helper's extra evidence is a convenient standalone regeneration/mutation demonstration, not required for the C1/C2 predicates or the deciding gate. Removing it from the executed round sequence preserves those predicates; retain it only if its independent demonstration is a deliberate deliverable. This is the safest weight reduction of the named helpers.
+
+2. **`keep` — `control/frozen-surface.paths` and the content-identity exception.** The deciding runner passes this list to gate 0b for the lane's own controls; the C2 arm 2 separately uses a frozen prior receipt slice plus its own historical path list to assert `RECEIPT_REV_CONTENT_DRIFT` (C2 measure lines 140–161). Re-scoring the old positive-control receipt at the current certified revision changes the falsification: it can turn the deliberately stale historical receipt into an accepted/current receipt, losing the evidence that receipt content drift is rejected. The current list additionally bounds which current lane files are fingerprinted, including the gate and both counters. Removing it or changing the positive control to current-revision scoring would remove evidence and risks weakening the claim. The claim predicate does **not** survive that substitution.
+
+3. **`keep` — `c2/red-before/round-54-surface.paths`.** C2 arm 2 explicitly loads this list at the measured revision and uses it with the frozen round-54 positive-control receipt and certificate (measure lines 62–63, 140–151). The round-54 counter has a distinct `FLOOR`, `HEADINGS`, and `WAVE_DIRS` input contract (round-54 C1 measure lines 48–56), not an equivalent receipt-surface list. Substituting a counter input list would no longer hash the same historical surface and could produce a different drift verdict. Deletion loses the explicit historical input boundary; the arm's content-drift predicate is not proven to survive.
+
+4. **`keep` — `deciding-run.sh` gate invocation `receipt-gate-verdicts`.** No C1/C2 *counter arm* reads the generated `receipt-gate-verdicts.*` outputs; however, this is not an unused gate call. It checks the fresh C1/C2 verdict receipts against the exact certified revision and sets `rc=1` on refusal (runner lines 100–107). The C2 claim is that every certified receipt is revision-bound; omitting this check lets a run exit successfully without proving that its own deciding verdicts name the revision being certified. Removing it loses evidence and breaks the end-to-end C2 deciding predicate.
+
+5. **`keep in the wave workflow; not runtime dependencies` — `validate-readers.py` and `bind.sh`.** They are not invoked by the frozen deciding runner (runner lines 88–107). That does not make them dead: wave-1 specs define the validator for wave-2/3 committed reader reports and the binder as L1's controlled PIN/re-key sequence (`build-spec-w1.py` entries for `T56W1ExecReaderSchema` and `T56W1ExecBinderWrap`; confirmed by targeted search below). Deleting them removes the check that reader evidence is tied to the C0 section hashes and the prescribed, refusal-capable re-key sequence. They are operational round workflow tools, not counter runtime tools; keep them if round 56's stated workflow is in scope.
+
+## Evidence collected
+
+- Read frozen path list: `read .ufo/evidence/round-56/control/frozen-surface.paths`; it contains nine paths including `SKILL.md`, `corpus/QUALITY.md`, `corpus/SOURCES.md`, `corpus/knowledge`, registry, gate, ledger and both frozen counters.
+- Read `deciding-run.sh` lines 66–74 and 100–109: first gate validates lane control receipts; second gate validates freshly-produced counter verdicts. The latter's exit participates in the deciding exit status.
+- Read C2 `measure.py` lines 54–69 and 140–180: separate historical `R54_SLICE` and `R54_PATHS`; arm 2 requires refusal code `RECEIPT_REV_CONTENT_DRIFT` and confirms the old round-54 gate accepted the receipt; arm 3 checks a distinct unresolvable-revision case.
+- Read round-54 C1 `measure.py` lines 48–56: its own floor, headings, ledger, and wave-dir inputs do not replace the round-56 historical receipt surface list.
+- Targeted search command (via `grep` tool) for `validate-readers|bind.sh|freeze-gen|receipt-gate-verdicts` across round-56 evidence and waves found the two gate output references only in the deciding runner; helper callsites/specification references are in `build-spec-w1.py`, `spec-w1.json`, `w1-dispatch.json`, and the wave-2 spec. The helper source files are not present in the current wave directory listing; assignments/specs are present.
+- Semantic-reference device was unavailable: `read xd://lsp` returned `No such tool: xd://lsp`. Accordingly, no grep/search result is represented as semantic proof of absence.
+
+## Tradeoff
+The only clear deletion is removing `freeze-gen.py` from the *executed* round dependency path (not necessarily deleting the standalone evidence demonstration). The requested gate/path-list reductions would weaken falsification or the certified-revision check. The workflow helpers have independent prescribed roles despite not being runtime-called by the deciding script.

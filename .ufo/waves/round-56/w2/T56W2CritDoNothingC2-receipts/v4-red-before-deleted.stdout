@@ -1,0 +1,12 @@
+# v4 = C0 minus the three red-before receipt files
+# (.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout{,.sha256}, round-54-surface.paths)
+# clone commit: 9b677d33ce32de873d2a31ae055f1605f5071a9a (toplevel asserted before commit)
+#
+EXPLAIN arm1-selftest exit=0 19/19
+EXPLAIN arm3-red54b exit=3 codes=RECEIPT_REV_UNRESOLVABLE
+EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+EXPLAIN arm6-docs 4/4
+C2_R56: rev=9b677d33ce32 selftest=19/19 red54=slice-missing red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=4/4 total=2 C2_R56_PASS=false
+exit=1
+# No traceback, no error-vs-refuse confusion: missing red evidence is a named arm failure
+# (red54=slice-missing), counter keeps standing. Deletion cannot reach PASS.

@@ -1,0 +1,148 @@
+{
+ "seat": "T56W2RevFreeze2",
+ "round": 56,
+ "wave": 2,
+ "role": "reviewer",
+ "lane": "tameshi",
+ "lane_path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base_rev": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+ "c0_rev": "c0137451f5b7f22d65f748fc69f1b181f55e1378",
+ "freeze_named_by_item": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+ "operative_freeze_at_c0": "21eb3c63cd0f3190c0deeb8953c6c91c7742cd68",
+ "verdict": "gap-minor",
+ "verdict_note": "The item's literal check fails (7 files differ between the item's named freeze c3e2ca9 and C0), but every difference landed in a single properly-recorded amendment commit (21eb3c6, parent = the freeze) with freeze.json.amendments[0].prior_freeze = c3e2ca9 and contract.json mirroring it byte-identically. The freeze is NOT voided; the round's own frozen integrity logic accepts it (FREEZE_INTEGRITY: OK files=12 amendments=1). The operative freeze at C0 is 21eb3c6, not c3e2ca9. The actionable defect was that the wave tooling pinned the stale pre-amendment SHA, which deciding-run.sh refuses; the L1 has since re-pinned build-spec-w3.py to 21eb3c6 (F1 CLOSED). Two wave-3 seat-task defects remain live: F1b (the C2 seat task compares the counter against a before/ receipt taken at the ORIGINAL freeze, so it reports a false 19/19-vs-14/14 mismatch) and F2 (the FROZEN_UNCHANGED seat task checks 11 of the 13 contract frozen paths).",
+ "check_a_item_literal_diff": {
+  "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff c3e2ca9f020776b3d66c7af854fb82c834674fcf c0137451f5b7f22d65f748fc69f1b181f55e1378 -- <the eleven item paths>",
+  "exit": 0,
+  "printed": true,
+  "bytes": 32060,
+  "stat": "7 files changed, 190 insertions(+), 43 deletions(-)",
+  "changed_paths": [
+   ".ufo/evidence/round-56/c2/measure.py",
+   ".ufo/evidence/round-56/contract.json",
+   ".ufo/evidence/round-56/control/frozen-surface.paths",
+   ".ufo/evidence/round-56/controls.sh",
+   ".ufo/evidence/round-56/deciding-run.sh",
+   ".ufo/evidence/round-56/freeze.json",
+   "tools/receipt-revision-gate.py"
+  ],
+  "unchanged_paths": [
+   ".ufo/evidence/round-56/c1/measure.py",
+   ".ufo/evidence/round-56/c1/lost-headings-at-base.json",
+   ".ufo/evidence/round-56/c2/red-before/round-54-surface.paths",
+   ".ufo/evidence/round-56/no-harm.sh"
+  ],
+  "receipt": "a1-item-diff-freeze-to-C0.txt, a2-item-diff-stat.txt"
+ },
+ "check_b_diff_from_operative_freeze": {
+  "command": "git diff 21eb3c63cd0f3190c0deeb8953c6c91c7742cd68 c0137451f5b7f22d65f748fc69f1b181f55e1378 -- <the eleven item paths>",
+  "printed": false,
+  "bytes": 0,
+  "meaning": "byte-identical; the frozen surface did not move between the operative freeze and C0",
+  "receipt": "a3-item-diff-amended-freeze-to-C0.txt"
+ },
+ "check_c_digest_rederivation_at_c0": {
+  "command": "sha256 over 'git show C0:<path>' for every freeze.json key, canonical mapping (tools/ and .ufo/evidence/round-21|48/ verbatim; everything else relative to .ufo/evidence/round-56/)",
+  "manifest_files": 12,
+  "matched": 12,
+  "mismatched": 0,
+  "all_freeze_json_digests_rederive_at_c0": true,
+  "independent_confirmation": "freeze-gen.py --rev C0 -> 'FREEZE_GEN_SET regenerated=12 manifest=12 amendments=1' / 'FREEZE_GEN: files=12 ok' exit=0; deciding-run.sh freeze-integrity heredoc -> 'FREEZE_INTEGRITY: OK files=12 amendments=1' rc=0",
+  "receipt": "a4-freeze-digest-rederivation.txt, a6-freeze-gen.txt, a7-amendment-record.txt"
+ },
+ "check_d_deciding_run_freeze_gate": {
+  "command": "bash .ufo/evidence/round-56/deciding-run.sh <clone-at-C0> c0137451f5b7f22d65f748fc69f1b181f55e1378 <FREEZE> <empty outdir>",
+  "with_freeze_c3e2ca9": {
+   "stdout": "FREEZE_INTEGRITY: OK files=10 amendments=0\nDECIDING_REFUSED freeze-not-last-manifest-commit c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+   "exit": 3
+  },
+  "with_freeze_21eb3c6": {
+   "stdout": "FREEZE_INTEGRITY: OK files=12 amendments=1\nDECIDING_REFUSED control-receipt-missing .ufo/evidence/round-56/control/controls-a.stdout",
+   "exit": 3,
+   "note": "reaches the NEXT gate; the control receipts do not exist at C0 (wave-3 produces them)"
+  },
+  "receipt": "a5-deciding-run-freeze-gate.txt"
+ },
+ "check_e_amendment_integrity": {
+  "commits_touching_frozen_surface_between_freeze_and_c0": ["21eb3c63cd0f3190c0deeb8953c6c91c7742cd68"],
+  "amendment_parent_is_the_freeze": true,
+  "commits_touching_freeze_json_at_c0": 2,
+  "amendments_len_plus_one": 2,
+  "shape_ok": true,
+  "contract_amendments_mirror_freeze_amendments": true,
+  "freeze_gen_files": 12,
+  "amendment_claims_verified": {
+   "a_sources_column_index": "cells[7]=status, cells[8]=opened per the SOURCES header; cells[8]=='mined' was unreachable, cells[7] is the status column",
+   "a_gate_selftest_19": "GATE_SELFTEST: 19/19 pass exit=0",
+   "d_drifted_paths_unresolvable": "implemented at tools/receipt-revision-gate.py:74-79",
+   "denominators_unchanged": "c2/measure.py has the same 6 arm markers, 10 'total += 1' sites and 'docs != 4' at both revisions",
+   "before_any_control_score_or_deciding_invocation": "at C0 the only file under .ufo/evidence/round-56/control/ is frozen-surface.paths; controls-a.stdout / controls-b.stdout / .sha256 sidecars absent; no deciding-run output anywhere"
+  },
+  "receipt": "a7-amendment-record.txt"
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "high",
+   "status": "FIXED by the L1 during this seat",
+   "title": "the wave tooling pinned the pre-amendment freeze c3e2ca9, which deciding-run.sh refuses",
+   "evidence": "build-spec-w1.py:8, build-spec-w2.py:12, build-spec-w3.py:14 all set FREEZE = \"c3e2ca9f020776b3d66c7af854fb82c834674fcf\"; spec-w1.json and spec-w2.json carry the same SHA in their context string. deciding-run.sh:92-93 pins the freeze to the last commit that touched freeze.json at REV. Running the real deciding-run.sh at C0 with FREEZE=c3e2ca9 prints 'DECIDING_REFUSED freeze-not-last-manifest-commit c3e2ca9f020776b3d66c7af854fb82c834674fcf' and exits 3, before any counter runs; with FREEZE=21eb3c6 it reaches the next gate ('control-receipt-missing', expected since the control receipts do not exist at C0). contract.json declares deciding_invocations: 1, so the refused first invocation is spent.",
+   "impact": "the wave-3 FROZEN_UNCHANGED seat task (build-spec-w3.py:95) would run 'git diff c3e2ca9 PIN -- <paths>' which prints the 7-file amendment diff and reports a false 'instruments changed without an amendment' against a legitimately amended freeze; and the deciding run would be spent on a refusal.",
+   "fix_applied_by_l1": "build-spec-w3.py:14 now reads FREEZE = \"21eb3c63cd0f3190c0deeb8953c6c91c7742cd68\" (mtime 16:40:34, after this seat's first report); .ufo/waves/round-56/integration/freeze-pointer-preflight.stdout independently records 'last=21eb3c6... old_matches=false updated=21eb3c6... updated_matches=true'",
+   "residual": "build-spec-w1.py:8 and build-spec-w2.py:12 still carry the old SHA, but both waves are already dispatched and built (spec-w1.json, spec-w2.json exist); those generators cannot produce wave-3's spec and cannot re-poison the deciding run",
+   "owner": "L1 (TameshiR56)",
+   "receipt": "a5-deciding-run-freeze-gate.txt, a8-stale-pin-downstream.txt, a10-l1-fix-and-live-items.txt"
+  },
+  {
+   "id": "F1b",
+   "severity": "medium",
+   "status": "LIVE in build-spec-w3.py",
+   "title": "before/c2.stdout is stale against the amended gate; the wave-3 'run it at the freeze and confirm it matches before/c2.stdout' task cannot pass as written",
+   "evidence": "before/c2.stdout (committed at C0) records 'arm1-selftest exit=0 14/14' and 'C2_R56: rev=c3e2ca9f0207 selftest=14/14 ... total=2'. Byte diff of the C0 c2/measure.py's own output against the committed receipt: at c3e2ca9 -> diff lines 0 (byte-identical); at 21eb3c6 -> diff lines 8 ('EXPLAIN arm1-selftest exit=0 19/19' and 'C2_R56: rev=21eb3c63cd0f selftest=19/19 ... total=2'). build-spec-w3.py:68 still reads 'Then run it at the freeze `{FREEZE}` and confirm it matches `{E}/before/c2.stdout`', and {FREEZE} now interpolates 21eb3c6.",
+   "impact": "the wave-3 seat runs the counter at 21eb3c6 and gets 19/19, then compares it to a receipt that says 14/14, and reports a false mismatch against a correct receipt. The comparison the seat is told to make cannot succeed.",
+   "fix": "either the seat instruction names c3e2ca9 explicitly as the revision the before-receipt was taken at (the correct semantic: the before receipt reproduces at the original freeze), or before/c2.stdout is re-taken at 21eb3c6; both are L1 decisions on a committed receipt and were not edited by this seat",
+   "owner": "L1 (TameshiR56)",
+   "receipt": "a8-stale-pin-downstream.txt, a10-l1-fix-and-live-items.txt"
+  },
+  {
+   "id": "F2",
+   "severity": "low",
+   "status": "LIVE in build-spec-w3.py",
+   "title": "the wave-3 FROZEN_UNCHANGED seat task checks 11 of the 13 contract frozen paths",
+   "evidence": "parsing build-spec-w3.py:95's path list against contract.json@C0 frozen_paths: seat task list (11) vs contract.frozen_paths (13); OMITTED = ['.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256', '.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout']; EXTRA = []. Both omitted files were committed AT the freeze c3e2ca9 but were in no manifest there (wave-1 H3) and were added to both manifests by amendment (f).",
+   "impact": "no false failure (both files are byte-unchanged between the freeze and C0), but the seat's check would not catch a post-freeze mutation of either red-before file, and it is not the check deciding-run.sh itself performs — that one derives FROZEN from contract.frozen_paths and covers all 13",
+   "fix": "derive the comparison list from contract.frozen_paths at the operative freeze rather than hardcoding 11 paths",
+   "owner": "L1 / wave-3 spec",
+   "receipt": "a2-item-diff-stat.txt, a4-freeze-digest-rederivation.txt, a10-l1-fix-and-live-items.txt"
+  }
+ ],
+ "no_defect_confirmed": {
+  "manifest_honest_at_c0": "12/12 freeze.json digests re-derive from the C0 bytes; freeze-gen.py and the deciding run's own freeze-integrity heredoc both agree",
+  "freeze_not_voided": "the only instrument change between the item's freeze and C0 is one recorded amendment commit with prior_freeze set, mirrored in contract.json; n_touches(2) == len(amendments)+1",
+  "frozen_surface_moved_after_amendment": false,
+  "content_files_untouched_by_the_amendment": "SKILL.md, corpus/QUALITY.md, corpus/SOURCES.md, corpus/knowledge/receipt-revision-binding.md, corpus/lessons/round-56.md and tools/registry.json were changed by C0, not by the amendment",
+  "round18_sectionize_unchanged": "git diff c3e2ca9 C0 -- .ufo/evidence/round-18/measure.py is empty; 'def sectionize' present at C0",
+  "counter_denominators_unchanged": "c2/measure.py: 6 arms, 10 'total += 1' sites, 'docs != 4' at both revisions",
+  "no_deciding_invocation_or_control_score_before_the_amendment": true
+ },
+ "residual_risk": [
+  "the deciding run was not driven to completion at C0: the control receipts controls-a.stdout / controls-b.stdout do not exist yet, so the run stops at 'control-receipt-missing' even with the correct freeze; the gate reached is real evidence, not a proxy",
+  "FROZEN_UNCHANGED=1 was verified at C0 against the operative freeze via the deciding run's own 'git diff --quiet $FREEZE $REV -- $FROZEN'; it was not verified at a post-bind PIN",
+  "the amendment's claims (c) and (e) were checked structurally (the code paths and added surface entries exist at C0); re-executing every motivating wave-1 finding is wave-1 scope",
+  "build-spec-w3.py has not been run yet (spec-w3.json does not exist), so F1 is still cheap to fix"
+ ],
+ "census": {
+  "command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+  "exit": 0,
+  "rows": 142,
+  "base_rows": 140,
+  "rows_added_this_round": ["S281", "S282"],
+  "note": "the assignment's '141 rows after this round's one new row' does not match the tree: this round added TWO rows and the census reports 142",
+  "receipt": "a9-census.txt"
+ },
+ "tooling": {
+  "installed": [],
+  "note": "none; git, python3 (3.14), bash, sha256 via hashlib, mktemp, git clone --shared on the host"
+ },
+ "receipts_dir": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/w2/T56W2RevFreeze2-receipts"
+}

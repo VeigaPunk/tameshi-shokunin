@@ -1,0 +1,21 @@
+### fixture: A(freeze)=e084f499199aba9f475c5e63fcb50919c77865c2 B(work)=d8db9982194be8c53a67a39e24c0c8d723937ea1
+
+## situation 1: a verdict receipt names another revision (rev=B, certified=A, no --paths)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeSkill/fixture/r1-verdict-other-rev.txt role=verdict revs=d8db9982194be8c53a67a39e24c0c8d723937ea1 code=RECEIPT_REV_MISMATCH rev=d8db9982194be8c53a67a39e24c0c8d723937ea1 certified=e084f499199a
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+## situation 2: a positive control scored at the freeze (rev=A, certified=B, --paths surface(f2))
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeSkill/fixture/r2-positive-at-freeze.txt role=positive revs=e084f499199aba9f475c5e63fcb50919c77865c2 code=RECEIPT_REV_CONTENT_DRIFT rev=e084f499199aba9f475c5e63fcb50919c77865c2 drift=f2
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+## situation 3: control set whose CTL lines name a revision absent from the repo
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1ScribeSkill/fixture/r3-control-absent-rev.txt role=control revs=7df0e0426c98,e084f499199aba9f475c5e63fcb50919c77865c2 code=RECEIPT_REV_UNRESOLVABLE rev=7df0e0426c98
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+
+## liveness (the gate can also accept): positive control at the certified revision
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1ScribeSkill/fixture/r2-positive-at-freeze.txt role=positive revs=e084f499199aba9f475c5e63fcb50919c77865c2
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0

@@ -1,0 +1,24 @@
+# T56W2Read17 receipts — calibration mechanism (why this heading lost credit, and what the bind needs)
+
+== A. the section's TEXT is byte-identical base vs C0 (frozen round-18 sectionize) ==
+BASE start=1269 end=1298 sha256=7e240e714c6e6fa75a01061ef171238401b3a91fdd69cc86c13f97b151b848f6
+C0   start=1282 end=1311 sha256=7e240e714c6e6fa75a01061ef171238401b3a91fdd69cc86c13f97b151b848f6
+
+== B. the frozen round-21 monitor's credit decision for MY heading ==
+--- monitor --rev 981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1 ---
+  total 64 credited 46
+  MY HEADING credited=False start=1269 reason='input-drift:tools/context-capture.py;input-drift:tools/registry-check.py;input-drift:tools/registry.json;input-drift:tools/repeat-control.py'
+--- monitor --rev c0137451f5b7f22d65f748fc69f1b181f55e1378 ---
+  total 64 credited 46
+  MY HEADING credited=False start=1282 reason='input-drift:tools/context-capture.py;input-drift:tools/registry-check.py;input-drift:tools/registry.json;input-drift:tools/repeat-control.py'
+
+== C. the recorded input pins vs the blobs at C0 (only four drift) ==
+  newest ledger entry: sha256=7e240e714c6e6fa75a01061ef171238401b3a91fdd69cc86c13f97b151b848f6 read_rev=99c3bc88d704566197783f66b211ee0a830e0330 verdict=gap-minor class=record
+  inputs recorded: 39 | DRIFT at C0: ['tools/context-capture.py', 'tools/registry-check.py', 'tools/registry.json', 'tools/repeat-control.py']
+
+== D. bind fragility: what changes this section's sha at REV ==
+  C0 as-is                          : ('7e240e714c6e6fa75a01061ef171238401b3a91fdd69cc86c13f97b151b848f6', 1282, 1311)
+  13-line insert above at 44        : sha 7e240e714c6e6fa7 span 1295-1324  SAME
+  13-line insert above at 200       : sha 7e240e714c6e6fa7 span 1295-1324  SAME
+  13-line insert above at 1200      : sha 7e240e714c6e6fa7 span 1295-1324  SAME
+  an in-section re-pin EDIT         : sha bf9e0f4dd0587894 span 1282-1311  CHANGED -> READER_HASH_XREV_DRIFT

@@ -1,0 +1,19 @@
+# L1's own freeze-pointer preflight (integration/)
+deciding-run freeze precondition at C0: last=21eb3c63cd0f3190c0deeb8953c6c91c7742cd68 old=c3e2ca9f020776b3d66c7af854fb82c834674fcf old_matches=false updated=21eb3c63cd0f3190c0deeb8953c6c91c7742cd68 updated_matches=true
+
+# build-spec FREEZE pins now
+--- .ufo/waves/round-56/build-spec-w1.py ---
+8:FREEZE = "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
+--- .ufo/waves/round-56/build-spec-w2.py ---
+12:FREEZE = "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
+--- .ufo/waves/round-56/build-spec-w3.py ---
+14:FREEZE = "21eb3c63cd0f3190c0deeb8953c6c91c7742cd68"
+
+# F1b: c2/measure.py at each freeze vs the committed before/c2.stdout (byte diff)
+at c3e2ca9 -> diff lines 0 (identical)
+at 21eb3c6 -> diff lines 8 (selftest 19/19 vs 14/14)
+
+# F2: wave-3 seat task path list vs contract.frozen_paths
+seat task list (11) vs contract.frozen_paths (13)
+OMITTED: ['.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256', '.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout']
+EXTRA  : []

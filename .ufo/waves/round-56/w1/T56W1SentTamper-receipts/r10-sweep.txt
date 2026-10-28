@@ -1,0 +1,58 @@
+# sidecar that is a directory
+/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a8-sidecar-dir.txt.sha256
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a8-sidecar-dir.txt.sha256'
+exit=1
+# receipt that is a directory
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a8-receipt-dir'
+exit=1
+# --paths file missing
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/nope.paths'
+exit=1
+# binary receipt with a rev= token
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a8b.bin role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# uppercase hex token
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/e1.txt role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+# 41 hex characters after rev=
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a8e.txt role=positive revs=none code=RECEIPT_REV_ABSENT 
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+# control role naming the freeze-era ancestor (the round-54 defect class, still accepted)
+CTL_0 rev=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a8d.txt role=control revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# orphan commit with the certified tree, unreachable from any ref
+$ git -C FIX branch --contains ORPHAN
+0
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/b3.txt role=positive revs=61bb38ca883a21f337579f96698014c3e747145b
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# symlinked receipt
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/e5-link.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# NUL bytes before the token
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/e6.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# receipt path with a colon in it
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a10-colon.txt.bak role=positive revs=none code=RECEIPT_MISSING path=/fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a10-colon.txt.bak
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_MISSING verdict=REFUSED
+exit=3
+# sidecar with trailing garbage (first token wins)
+b4ead2ffea496cdb8da8bd1b1a52970f931869b25caee95196f576d349efc455
+  *e3.txt
+note: recomputed
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/e3.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# --certified given as a hex-named tag
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/e3.txt role=positive revs=e5d1da46de6eda63f90564fb6070558641578e15
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0

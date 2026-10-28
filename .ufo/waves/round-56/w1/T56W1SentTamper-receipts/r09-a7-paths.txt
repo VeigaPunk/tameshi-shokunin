@@ -1,0 +1,50 @@
+# 7a ghost paths only (c0 really differs from the certified c1 on other.txt)
+does/not/exist.txt
+deep/also-missing.txt
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a7.txt role=positive revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# 7b one ghost path beside a real one
+does/not/exist.txt
+other.txt
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a7b.txt role=positive revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706 code=RECEIPT_REV_CONTENT_DRIFT rev=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706 drift=other.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# 7c git pathspec magic: a complete-looking list plus one exclude line
+surface.txt
+other.txt
+deep/x.txt
+:(exclude)other.txt
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/b1.txt role=positive revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# 7d blanket exclude
+surface.txt
+other.txt
+deep/x.txt
+:(exclude)*
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/b1.txt role=positive revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# 7e the honest list refuses the same receipt
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/b1.txt role=positive revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706 code=RECEIPT_REV_CONTENT_DRIFT rev=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706 drift=other.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# 7f an empty (comment-only) paths file is refused
+GATE REFUSED /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/fix/receipts/a7d.txt role=positive revs=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706 code=RECEIPT_REV_CONTENT_DRIFT rev=68a8ffd1e0df260ee2fbfbea45f50a6ba1248706 drift=<no --paths given: content identity is not checkable>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+# 7g LANE: the real round-54 receipt, ghost paths
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice.stdout role=positive revs=077d431e6996
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+# 7h LANE: the real round-54 receipt, real list plus one surgical exclude
+.ufo/evidence/round-54/c1/measure.py
+.ufo/evidence/round-21/coldread/ledger.json
+SKILL.md
+corpus/QUALITY.md
+corpus/SOURCES.md
+:(exclude).ufo/evidence/round-21/coldread/ledger.json
+GATE OK /fast/scratch/hyaku/tameshi-r56/T56W1SentTamper/lane/r54-slice.stdout role=positive revs=077d431e6996
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
