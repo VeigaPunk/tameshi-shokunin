@@ -1,80 +1,90 @@
 # T54W1ExecC2Counter — C2 verify (frozen counter), round 54
 
-Seat: `T54W1ExecC2Counter` (executor, operability). Lane: `/home/vgpnk/Projects/shokunin/tameshi-shokunin`.
-Every measurement below is pinned to `--rev 59c38109bf119d0e9d4f878644a82babc937bc1e` (C0) unless a line says otherwise.
-Receipts (raw command output) live in `.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/`.
+Seat `T54W1ExecC2Counter` (executor, operability), lane `/home/vgpnk/Projects/shokunin/tameshi-shokunin`.
+Every run below is at `--rev` = C0 `59c38109bf119d0e9d4f878644a82babc937bc1e` (40 chars, derived with
+`git rev-parse 59c3810`, never retyped). Counter bytes are pinned by sha256: the round amended the C2 counter twice while
+this seat ran, so each line names the exact bytes it executed. Raw output: `…/w1/T54W1ExecC2Counter-receipts/`.
 
-## 1. Verdict
+## 0. Answer
 
-The **frozen** counter bytes are sha256 `b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49`
-(`.ufo/evidence/round-54/freeze.json` pins exactly this; the blob at HEAD `3146479` hashes to it; my clones checked out
-at C0 carry the same bytes). Two independent full runs of those bytes at C0 both print:
+**The currently freeze-pinned counter passes at C0.** Bytes sha256 `8528ee85…` (freeze.json pin = HEAD blob = worktree; it
+became the pin at HEAD `fe70474`, the round-54 "amendment 4" revision, and is still the pin at HEAD `077d431`) print:
 
 ```
-C2_R54: rev=59c38109bf11 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=6 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
-EXIT=1
+C2_R54: rev=59c38109bf11 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+EXIT=0
 ```
 
-Run A (work dir 1, 28 Oct 11:26–11:30 local) and run B (work dir 2, 11:33–11:41 local) are byte-identical on that line.
+No arm is short. `sources=3`, not the brief's `sources=1`: the counter counts *each* cited-and-mined S id, and C0 cites
+S277, S278 and S279 (§5), so 3 is correct and not a shortfall.
 
-**Named short arm: `usable`, tool `tools/registry-check.py`.** Its EXPLAIN line, verbatim, in both runs:
+**The bytes frozen when the wave opened do not pass reliably.** At the seat's start the pin was `b4684a3f…`; five runs of
+those exact bytes at C0 gave **4 × `usable_ok=6` / `C2_R54_PASS=false` / exit 1** and **1 × `usable_ok=7` / pass**. The failing
+arm and tool:
 
 ```
 EXPLAIN usable registry-check rc=1 tmp_mkdirs=0
 ```
 
-So the seat brief's expectation — `C2_R54_PASS=true` with `usable_ok=7` — does **not** hold for the frozen instrument on
-this host. It holds only for a **modified, uncommitted working-tree copy** of the counter:
+Amendments 2 and 4 of this round address exactly that (`freeze.json` amendments[]; commits `19c7558`/`097985c`/`fe70474`),
+and with them the arm is stable at 7/7 here (§4).
 
-```
-$ sha256sum .ufo/evidence/round-54/c2/measure.py
-49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8   # != pin b4684a3f…
-$ git status --porcelain -- .ufo/evidence/round-54/c2/measure.py
- M .ufo/evidence/round-54/c2/measure.py
+**One instrument defect stands, independent of any arm:** an unresolvable `--rev` exits 1 with a Python traceback instead of
+the counter's documented `exit 2` setup error (§6 O1).
 
-C2_R54: rev=59c38109bf11 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
-EXIT=0
-```
+## 1. Every run, with its bytes
 
-That copy self-describes as *"Amendment 2: the rc is the plain run and the traced run supplies only the mkdir census — under
-`strace -f` one tool's own timeout tests fail from tracer overhead, so a traced rc measured the tracer."* The diagnosis in
-that sentence is correct (see §4); the copy is nevertheless not the frozen instrument, and the file is modified in the lane's
-working tree without a commit. A byte copy of it is preserved as `…-receipts/counter-worktree-modified.amendment2.py`, and the
-exact diff against the pin is in §6/F3.
+| # | when (UTC) | counter sha256 (first 8) | role | verdict | exit |
+|---|---|---|---|---|---|
+| A | 14:28–14:30 | `b4684a3f` | original freeze pin | `usable_ok=6` … `PASS=false` | 1 |
+| B | 14:33–14:41 | `b4684a3f` | repeat | `usable_ok=6` … `PASS=false` | 1 |
+| C | 14:47:20 | `49280fe5` | amendment 2 | `usable_ok=7` … `PASS=true` | 0 |
+| D | 14:55:51 | `b4684a3f` | original pin, quiet host | `usable_ok=7` … `PASS=true` | 0 |
+| E | 14:56:36 | `b4684a3f` | repeat | `usable_ok=6` … `PASS=false` | 1 |
+| F | 14:59:24 | `b4684a3f` | repeat | `usable_ok=6` … `PASS=false` | 1 |
+| G | 15:04:53 | `49280fe5` | amendment 2, HEAD `4e2de73` | `usable_ok=7` … `PASS=true` | 0 |
+| H | 15:07:46 | `8528ee85` | amendment 4, HEAD `fe70474` | `usable_ok=7` … `PASS=true` | 0 |
+| I | 15:10:48 | `8528ee85` | **authoritative**: a byte copy of the pin (`copy sha == FREEZE_PIN`), HEAD `fe70474` | `usable_ok=7` … `PASS=true` | 0 |
 
-`docs=7 note=1 sources=3` in both cases. The brief's `sources=1` is a brief-side guess: the counter counts *each* cited-and-mined
-S id (`sourced` is incremented per id), and C0 cites S277, S278 and S279, so `sources=3` is the correct value, not a shortfall.
+Runs A/B were not teed; their verdict lines are quoted from the tool output, identical to each other, and the two
+registry-check strace logs are preserved as `counter-strace-registry-check.log` and
+`counter-run-B-strace-registry-check.log`. Runs C–I are teed with the executed sha256 (and, from G on, the HEAD) recorded
+beside the output; run I is the authoritative one because the executed bytes were a copy whose sha256 was checked against
+`freeze.json`'s pin in the same command.
 
-## 2. Independent by-hand reproduction of the unusable arm (required paste)
+So the same *frozen* bytes at the same revision produced both `PASS=false` and `PASS=true` (D vs A/B/E/F). That is not a tree
+property, and §4 shows what it is.
 
-Clone at C0: `git clone --shared` into scratch, `git -C <clone> rev-parse --show-toplevel` printed the clone (not the lane),
-`rev-parse HEAD` printed `59c38109bf119d0e9d4f878644a82babc937bc1e`.
+## 2. Independent hand reproduction — unusable arm, `registry-check`
+
+Clone at C0 (`git clone --shared` into scratch; `git -C <clone> rev-parse --show-toplevel` printed the clone, HEAD printed
+`59c38109bf119d0e9d4f878644a82babc937bc1e`):
 
 ```
 $ cd <clone-at-C0>
 $ env TMPDIR=/nonexistent-x54 PYTHONDONTWRITEBYTECODE=1 python3 tools/registry-check.py --selftest
 EXIT=2
---- stdout ---            (empty)
---- stderr ---
+--- stdout ---   (empty, 0 lines)
+--- stderr ---   (1 line)
 registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-x54' (could-not-evaluate)
 
-stdout lines=0  stderr lines=1
-occurrences of 'could-not-evaluate': stdout 0, stderr 1
-occurrences of 'Traceback (most recent call last)': stdout 0, stderr 0
+occurrences of 'could-not-evaluate' ........ stdout 0, stderr 1
+occurrences of 'Traceback (most recent call last)' ... stdout 0, stderr 0
 ```
-(`…-receipts/hand-unusable-registry-check.stdout` is empty, `…-receipts/hand-unusable-registry-check.stderr` is that single line.)
 
-The frozen counter's own line for the same tool and arm, pasted for comparison:
+Files: `…-receipts/hand-unusable-registry-check.stdout` (empty), `…-receipts/hand-unusable-registry-check.stderr` (that line).
+
+The counter's own reading of the same arm and tool, from a failing run above — both pasted as the item asks:
 
 ```
 EXPLAIN unusable registry-check rc=2 line='registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory'
 ```
 
-Both agree: exit 2, one naming line, the TMPDIR value is named, no traceback.
+They agree: exit 2, exactly one naming line, the TMPDIR value named, no traceback.
 
 ## 3. All seven tools × all three arms, by hand
 
-`env TMPDIR=… python3 <tool> <selftest arg>` in the C0 clone, rc recorded:
+`env TMPDIR=… python3 <tool> <selftest arg>` inside the C0 clone; cell = exit code:
 
 | tool | unusable `/nonexistent-x54` | empty `TMPDIR=""` | usable fresh dir |
 |---|---|---|---|
@@ -86,64 +96,66 @@ Both agree: exit 2, one naming line, the TMPDIR value is named, no traceback.
 | context-capture | 2 (1/0) | 0 | 0 |
 | repeat-control | 2 (1/0) | 0 | 0 |
 
-This matches the frozen counter's `unusable_exit2=7 naming=7 empty_ok=7`. The one arm that does not reproduce is the strace arm,
-and only for registry-check — §4.
+Matches the counter's `unusable_exit2=7 naming=7 empty_ok=7` on every run, including the failing ones — the flip was confined
+to the strace arm, for `registry-check` only.
 
-## 4. Why the usable arm is short: the traced rc measured the tracer
+## 4. Why the pre-amendment strace arm flipped
 
-The frozen arm is `usable_ok += (proc.returncode == 0 and hits == 0)` where `proc` is `strace -f -e trace=mkdir,mkdirat … python3 <tool> <selftest>`.
-For `tools/registry-check.py` the self-test has its own wall-clock assertions; under `strace -f` they trip:
-
-Under strace (four independent runs — two driven by the counter, two by hand in two different C0 clones, one cold-cache):
+The frozen arm read `usable_ok += (proc.returncode == 0 and hits == 0)` where `proc` was
+`strace -f -e trace=mkdir,mkdirat … python3 <tool> <selftest>`. `tools/registry-check.py`'s own self-test asserts a wall-clock
+bound on two process-group escape cases — `tools/registry-check.py:1223` at C0: `and elapsed < 3.5`. Under trace those cases
+take 4.5–12.8 s here:
 
 ```
-SELFTEST_CASE timeout-kills-setsid-pipe FAIL (exit=1 elapsed=4.784s survivor=False marker=False)
+SELFTEST_CASE timeout-kills-setsid-pipe  FAIL (exit=1 elapsed=4.784s survivor=False marker=False)
 SELFTEST_CASE timeout-kills-setpgid-pipe FAIL (exit=1 elapsed=4.596s survivor=False marker=False)
 SELFTEST: FAIL (2 of 51 cases: timeout-kills-setsid-pipe, timeout-kills-setpgid-pipe)
-
-(second clone, cold cache) timeout-kills-setsid-pipe FAIL elapsed=4.527s ; timeout-kills-setpgid-pipe FAIL elapsed=4.711s
-(third, cold cache, later) elapsed=11.563s ; 12.792s
+   (second clone) 4.527s / 4.711s        (cold cache, later) 11.563s / 12.792s
 ```
 
-The bound they cross is the self-test's own, `tools/registry-check.py:1223` at C0: `and elapsed < 3.5`.
-Same tool, same clone, **no strace** (two runs, exact C0):
+The same tool, same clone, **without** strace:
 
 ```
-SELFTEST_CASE timeout-kills-setsid-pipe PASS (exit=1 elapsed=1.701s survivor=False marker=False)
-SELFTEST_CASE timeout-kills-setpgid-pipe PASS (exit=1 elapsed=1.701s survivor=False marker=False)
-SELFTEST: PASS (51 cases)          rc=0
-run 2: 2.033s / 2.037s, SELFTEST: PASS (51 cases), rc=0
+timeout-kills-setsid-pipe PASS elapsed=1.701s ; timeout-kills-setpgid-pipe PASS elapsed=1.701s ; SELFTEST: PASS (51 cases)  rc=0
+run 2:                        2.033s / 2.037s                     SELFTEST: PASS (51 cases)  rc=0
 ```
 
-Scratch behaviour under trace was correct in every failing case: `survivor=False marker=False`, i.e. the process-group kill the
-case exists to prove did happen; and the `/tmp` census is zero:
+In every traced failure `survivor=False marker=False` — the kill the case exists to prove *did* happen; only the clock failed.
+And the `/tmp` census is zero, checked with a regex of my own, not the counter's (`mkdir(|mkdirat(` followed by `"/tmp`), so
+the result does not depend on the amended census regex:
 
 ```
 mkdir/mkdirat lines in the counter's registry-check strace log: 238
-of those, paths under /tmp:                                   0
+of those, paths under /tmp:                                    0
 ```
 
-So the failing rc is ptrace overhead (strace 7.2, Python 3.14.8), not the scratch-root contract.
-The arm's outcome is a function of host contention, not of the tree: the contract's own C2 `before` line records
-`usable_ok=7` at base `d33053f7` while `tools/registry-check.py` is byte-identical at base and C0
-(sha256 `ade15cc008c07d54c77812d27b49079180168d843439b0b1c458292fa0f2a33f` both) and the counter bytes did not change either.
-Same instrument, same tool, `7` before and `6` now — the only variable is the machine's load.
+So the traced rc was measuring ptrace overhead (strace 7.2, Python 3.14.8), which is precisely what `freeze.json`
+amendment 2 says it fixes. **Residual margin, worth knowing for the deciding run:** the amendment takes the rc from the plain
+run, but the plain run still carries registry-check's own `elapsed < 3.5` assertion, and the measured plain values at C0 are
+1.70 s and 2.03 s — about 1.5 s of headroom on a host running >100 concurrent seats. That is the remaining load sensitivity,
+not a fault in either the tool's contract or the counter's predicate.
 
 ## 5. The other arms, and what I opened to check them
 
-- **docs=7** — `tools/registry.json` at C0, the seven `*selftest` rows; every `scratch_root` cell is the same text and contains
-  `TMPDIR`, `empty` and `could-not-evaluate`:
+- **docs=7** — `tools/registry.json` at C0, the seven `*selftest` rows. Every `scratch_root` cell is the same text and
+  contains all three required tokens (`TMPDIR`, `empty`, `could-not-evaluate`):
   `"TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)"`.
-- **note=1** — `corpus/knowledge/scratch-root-contract.md` exists at C0; its three-arm table, the S278 `:163-165` quote and the
-  "the counter's blind spot is stated in the contract" paragraph are present.
-- **sources=3** — `corpus/SOURCES.md` rows S277/S278/S279 are `mined` with `corpus/knowledge/scratch-root-contract.md` in the
-  used-by cell; `corpus/lessons/round-54.md` `## Gate` names each of the three ids with `2026-10-28`, an `http` URL and a located quote.
+- **note=1** — `corpus/knowledge/scratch-root-contract.md` at C0: three-arm table, the S278 `:163-165` quote
+  (`if dirname: dirlist.append(dirname)`), the S277 quote, the S279 search-list sentence, and the paragraph naming the
+  counter's own blind spot.
+- **sources=3** — `corpus/SOURCES.md` rows S277/S278/S279 are `mined`, each with
+  `corpus/knowledge/scratch-root-contract.md` in its used-by cell, each with a located quote and `2026-10-28`;
+  `corpus/lessons/round-54.md` `## Gate` names all three ids with `2026-10-28` and an `https://` URL.
+- The C2 "before" receipt now exists and is committed: `.ufo/evidence/round-54/before/c2.stdout` is 1307 B at HEAD and ends
+  `C2_R54: rev=d33053f7552d … usable_ok=7 … total=13 C2_R54_PASS=false` — i.e. at base the original pin read `usable_ok=7`,
+  consistent with §4's load dependence rather than with a tree difference (`tools/registry-check.py` is byte-identical at base
+  and C0, sha256 `ade15cc0…`).
 
-## 6. Instrument / infrastructure observations (report-only; I changed nothing)
+## 6. Instrument observations (report-only; I changed nothing)
 
-**F1 — unresolvable `--rev` exits 1 with a traceback, not the documented 2.** `measure.py` calls `git(..., check=True)` for
-resolving `--rev`, outside the `Setup` handler, so a bad or momentarily-unavailable rev raises `subprocess.CalledProcessError`
-instead of the documented `C2_R54: error=… total=1 C2_R54_PASS=false` + exit 2:
+**O1 — an unresolvable `--rev` exits 1 with a traceback, not the documented setup exit 2.** `measure.py:96` resolves the rev
+through `git(..., check=True)`, outside the `Setup` handler, so any bad or non-existent rev escapes as
+`subprocess.CalledProcessError`. Deliberate receipt:
 
 ```
 $ python3 .ufo/evidence/round-54/c2/measure.py --lane $PWD --rev deadbeef00 --work <empty> --explain
@@ -151,46 +163,55 @@ Traceback (most recent call last):
   ...
   File ".../c2/measure.py", line 96, in main
     rev = git(['rev-parse', '--verify', '%s^{commit}' % a.rev], lane).stdout.decode().strip()
-subprocess.CalledProcessError: Command '[... 'rev-parse', '--verify', 'deadbeef00^{commit}']' returned non-zero exit status 128.
+subprocess.CalledProcessError: Command '['git', ..., 'rev-parse', '--verify', 'deadbeef00^{commit}']' returned non-zero exit status 128.
 EXIT=1
 ```
-(`…-receipts/counter-unresolvable-rev.txt`)
+Its docstring promises "2 on setup error" and `main()`'s `except Setup` prints `C2_R54: error=… total=1 C2_R54_PASS=false`;
+neither happens. A `check=False` plus `raise Setup(...)` on that one call would make the promise true.
+(`…-receipts/counter-unresolvable-rev.txt`, and the accidental reproduction in
+`…-receipts/counter-F1-unresolvable-rev-39char-literal.txt`.)
 
-**F2 — the lane's object store intermittently cannot resolve C0 itself.** Observed at 14:47Z, 14:51Z and 14:53Z
-(`git cat-file -t 59c38109bf119d0e9d4f878644a82babc937c1e` → `fatal: Not a valid object name`), resolvable again at 14:49Z and
-14:54Z; `git rev-list --all | grep -c '^59c38109'` returned `1` throughout, so the commit is reachable in the graph.
-During the same window the lane's HEAD advanced `59c3810 → 99c3bc8 → 7883e0e → 3146479` ("export from jj"). Any counter
-invocation that lands in such a window dies with F1's traceback instead of a verdict. I lost one full run to this.
-(`…-receipts/counter-run3.txt` is that run.)
-
-**F3 — freeze bookkeeping already trips the round's own frozen gate.** `deciding-run.sh` diffs the freeze commit against REV
-across the FROZEN list and forces `rc=1` on any difference. At HEAD that diff is non-empty:
+**O2 — my own error, recorded so nobody chases it.** I typed the C0 id once as 39 characters
+(`…a82babc937c1e`, missing the `b` of `…937bc1e`). Git rejected it correctly; I first read that rejection as an object-store
+flap and was about to report a lane defect. The byte comparison settled it:
 
 ```
- .ufo/evidence/round-54/c1/measure.py |  8 ++++++--
- .ufo/evidence/round-54/contract.json | 22 ++++++++++++++++++----
- .ufo/evidence/round-54/freeze.json   |  9 +++++++--
+$ printf '%s' "…a82babc937c1e" | od -c | tail -1      -> 0000047 (39 bytes)
+$ printf '%s' "$(git rev-parse 59c3810)" | od -c …    -> 0000050 (40 bytes), ends 'b c 1 e'
+prefix 7..40 of the real id -> every length resolves to commit
 ```
-(amendment 1's own bookkeeping). `c2/measure.py` is still identical to the pin at HEAD, so the gate difference is not the C2
-edit — but a second, committed C2 amendment would add to it unless the freeze commit itself is rewritten.
+**No lane defect exists there**; the store resolved C0 on every occasion I checked it with a correct id
+(`git rev-list --all | grep -c '^59c38109'` → `1`, and `git cat-file -p` printed C0's tree and its parent `441c26be`).
+Every measurement reported above uses the derived 40-char id.
 
-**F4 — the C2 "before" receipt is empty and untracked.** `contract.json` cites
-`unusable_exit2=3 naming=7 empty_ok=7 usable_ok=7 … (measured at d33053f7, .ufo/evidence/round-54/before/c2.stdout)`, but:
+**O3 — the freeze gate needs the current re-freeze commit, not `441c26be`.** `deciding-run.sh` refuses with
+`FROZEN_UNCHANGED=0` (and forces `rc=1`) when the FROZEN paths differ between its FREEZE argument and REV. At the tip I
+checked, with FREEZE = the original freeze commit the wave brief carries:
 
 ```
-$ ls -l .ufo/evidence/round-54/before/c2.stdout
--rw-r--r-- 1 vgpnk vgpnk 0 Oct 28 11:47 …/before/c2.stdout        # 0 bytes, sha256 e3b0c442… (empty)
-$ git ls-files .ufo/evidence/round-54/before/
-(no output)
+$ git diff --stat 441c26be HEAD -- .ufo/evidence/round-54/{contract.json,freeze.json,c1/measure.py,c1/lost-headings-at-base.json,c2/measure.py,no-harm.sh,deciding-run.sh,control/controls.sh}
+ .ufo/evidence/round-54/c1/measure.py   | 19 ++++++++++------
+ .ufo/evidence/round-54/c2/measure.py   | 26 +++++++++++++++-------
+ .ufo/evidence/round-54/contract.json   | 40 +++++++++++++++++++++++++++++-----
+ .ufo/evidence/round-54/deciding-run.sh | 31 ++++++++++++++++++++++++++
+ .ufo/evidence/round-54/freeze.json     | 39 +++++++++++++++++++++++++++------
+ 5 files changed, 128 insertions(+), 27 deletions(-)
 ```
-The baseline that the C2 target is measured against has no receipt at any revision, and `usable_ok=7` in that line is exactly
-the figure that the frozen counter no longer reproduces.
+(HEAD `077d431` at the time of the check.)
+This is round bookkeeping, not a C2 arm, but the deciding invocation must pass the freeze commit that already contains
+amendments 1–4 (or the gate reconciled), otherwise a passing C2 verdict will not survive `deciding-run.sh`.
+
+**O4 — the C2 counter changed twice under this seat** (`49280fe5` amendment 2, then `8528ee85` amendment 4, "the /tmp census
+regex now matches plain mkdir( as well as mkdirat("). Both amendments are real fixes to real defects I measured, and the
+counter now passes; but a reader of the round record must quote the sha with any C2 verdict, because "PASS=false" and
+"PASS=true" are both true statements about C0 depending on which pin is meant.
 
 ## 7. Bounds, tooling, cleanup
 
-- Files written: this report and `.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/` only. No lane file edited; the counter,
-  registry, contract, freeze, ledger and wave spec untouched. No mutating git/jj command: clones were `git clone --shared`
-  into scratch, every `git -C` named the fixture, `rev-parse --show-toplevel` asserted the clone before use.
-- Fixtures and work dirs lived under `/fast/scratch/hyaku/tameshi-r54/T54W1ExecC2Counter/`; the tree was removed at the end.
-- Tools installed or upgraded: none (nothing was needed; pacman is paused host-wide regardless).
-- The census is round-start/end work for the L1, not this seat.
+- Written: this report and `.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/`. No lane file was edited; the counter,
+  registry, contract, freeze, ledger and wave spec are untouched; no mutating git/jj command was run anywhere (clones were
+  `git clone --shared` into scratch, checkouts only, `rev-parse --show-toplevel` asserted before use).
+- Scratch: `/fast/scratch/hyaku/tameshi-r54/T54W1ExecC2Counter/`, removed at the end of the seat (the receipts needed are in
+  the lane's w1 dir, not there).
+- Tools installed or upgraded: none (none was needed; host pacman is paused regardless).
+- Census: round-start/end duty of the L1, not this seat.

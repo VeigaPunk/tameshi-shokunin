@@ -1,0 +1,19 @@
+## the read_rev predicate, byte-exact, from the operative counter
+## file: .ufo/evidence/round-54/c1/measure.py at 8da3539 (sha256 63f5f881...)
+        for h in frozen:
+            good = [e for e in bound
+                    if e.get('heading') == h
+                    and str(e.get('read_rev')) == c0
+                    and (e.get('wrong_expectations') in (0, '0'))
+                    and (e.get('blocking_gaps') in (0, '0'))
+                    and r18_mod.entry_reason(lane, rev, e, True) is None]
+            if good:
+                rekeyed += 1
+    if rekeyed != len(frozen):
+
+## the same predicate in the counter at C1 99c3bc8 (sha256 6a39b387...)
+    tree = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev,
+                '.ufo/evidence/round-21/coldread/'], check=False).stdout.decode()
+    rekey_dirs = sorted({Path(p).name for p in tree.splitlines()
+                         if REKEY_RE.match(Path(p).name) and '/traces/' in p})
+    c0 = None

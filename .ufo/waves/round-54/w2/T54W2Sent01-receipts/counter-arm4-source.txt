@@ -1,0 +1,37 @@
+== counter source lines at sha256 d7749f84... (live lane)
+54:WAVE_DIRS = ('.ufo/waves/round-54/w1', '.ufo/waves/round-54/w2')  # amendment 3: both waves' reader reports
+211:                    and r18_mod.entry_reason(lane, rev, e, True) is None]
+222:                               check=False).stdout.decode() for wd in WAVE_DIRS)
+224:        if not re.search(r'/T54W\d+.*Read.*\.json$', path):
+247:        notes.append('arm4-readers %d/%d' % (reader_ok, len(frozen)))
+
+== arm 4 block
+
+    # ---- arm 4: committed reader reports ------------------------------------------------------------------
+    readers = {}
+    wave_tree = '\n'.join(git(['-C', lane, 'ls-tree', '-r', '--name-only', rev, wd + '/'],
+                               check=False).stdout.decode() for wd in WAVE_DIRS)
+    for path in wave_tree.splitlines():
+        if not re.search(r'/T54W\d+.*Read.*\.json$', path):
+            continue
+        raw = show(lane, rev, path)
+        if raw is None:
+            continue
+        try:
+            d = json.loads(raw.decode('utf-8', 'surrogateescape'))
+        except ValueError:
+            continue
+        if isinstance(d, dict) and isinstance(d.get('heading'), str):
+            readers.setdefault(d['heading'], []).append((path, d))
+    reader_ok = 0
+    for h in frozen:
+        sec = sections.get(h)
+        if sec is None:
+            continue
+        for path, d in readers.get(h, []):
+            if d.get('cand') == c0 and d.get('section_sha256') == sec['sha256']:
+                reader_ok += 1
+                break
+    if reader_ok != len(frozen):
+        total += 1
+    if a.explain:

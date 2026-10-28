@@ -257,7 +257,74 @@ So on the amended bytes the `usable_ok` instability is gone and **the two surviv
   bytes), `arm_replay.py`, `noise.py`, `silent-strace.sh`, the four mutant diffs, every `c*.stdout`
   receipt with the `.strace.log` it consumed, `mut-tmp-selftest.strace.log`, and `c11-full-counter/`.
 
-This seat modified nothing: every write went to the wave `w1/` directory above and to its scratch. At
-audit time `git status --porcelain` showed one dirty tracked file, `.ufo/evidence/round-54/integrate/binder.py`
-(+15/-3), which is another seat's in-flight work — this seat never opened or ran the binder, and its own
-deliverables are the only files it created. Scratch was removed on exit.
+This seat wrote only the two paths above. The lane is heavily concurrent while this seat ran: at audit
+time `git status --porcelain` listed 28 modified tracked files, all other seats' in-flight work
+(19 under `.ufo/evidence/round-21/coldread/rekey-r54-99c3bc88d704/traces/`, plus `integrate/`,
+`control/`, sibling `w1`/`w2` receipts) — none authored here. Both of this seat's deliverables were
+swept into the integrator's commit `077d431`; the only uncommitted delta this seat leaves is the
+appendix below in this report, for the L1 to fold in. No commit, `git add` or other git
+mutation was performed. Scratch was removed on exit.
+
+---
+
+## Appendix — operator routing override applied mid-seat
+
+Operator instruction (2026-10-28, this session): *use `m_glm53` instead of `m_grok`.*
+
+The routing authority is `task.agentModelOverrides` in `~/.omp/agent/config.yml`, and `scout` was the
+only role bound to `@m_grok`. Changed exactly one line:
+
+```
+$ diff /tmp/hyaku-cfg-backup/config.yml.20261028T121435.bak ~/.omp/agent/config.yml
+418c418
+<     scout: "@m_grok"
+---
+>     scout: "@m_glm53"
+```
+
+Verification after the edit:
+
+- `yaml.safe_load` parses the file; `task.agentModelOverrides.scout == "@m_glm53"`.
+- `modelRoles.m_glm53 == zai/glm-5.3:max`; `retry.fallbackChains.m_glm53 == ["@m_swe",
+  "devin/swe-2:max", "openai-codex/gpt-6-luna:low"]`, so the alias has a live cascade.
+- **The stricter second parser accepts it.** `~/.omp/agent/config.yml`'s own header warns that the
+  ufo-fsd seat resolver (`Projects/ufo-fsd-alpha/scripts/omp-global-config.mjs`) uses a hand-rolled
+  dialect and fails closed. Run against the edited file it resolves every seat:
+  `readGlobalSeatRouting()` → `scout: {route: "zai/glm-5.3:max", via: {alias: "m_glm53",
+  chainKey: "m_glm53"}, fallbackChain: ["@m_swe", "devin/swe-2:max",
+  "openai-codex/gpt-6-luna:low"]}`, 18/18 seats resolved, no `OmpGlobalConfigError`
+  (no dead-weight chain key, no alias-to-alias). Post-edit sha256 `b726240a025b...`.
+- `omp config get task.agentModelOverrides --json` (the runtime's own view) → `scout: "@m_glm53"`.
+- No role remains bound to `@m_grok` (the alias and `m_grok45` stay defined but unused, matching how
+  `m_grok` was already treated after the round-50 directive superseded it).
+- Live resolution: `omp -p --no-session --no-tools --model zai/glm-5.3:max "Reply with exactly:
+  GLM53_OK"` → `GLM53_OK`; and via the alias token, `--model "@m_glm53"` → `ALIAS_OK`.
+- `zai/glm-5.3` is in the configured model list (`config.yml:371`).
+- `scripts/check-routing-free-config.mjs` in ufo-fsd-alpha → `"violations": []`.
+
+Rollback: `cp <backup> ~/.omp/agent/config.yml` (backup kept at
+`/tmp/hyaku-cfg-backup/config.yml.20261028T121435.bak`, sha256 `e0ed12a1...`).
+
+Behaviour delta the operator may want to know: `m_grok` was `xai-oauth/grok-4.7-build-fast:high` and
+`m_glm53` is `zai/glm-5.3:max` — scout seats now run a different vendor at `max` effort rather than
+`high`, so per-seat cost and latency for scout work rise. Parked scout seats (`T54W1ScoutS277/S278/S279`,
+`T54W1ScoutNextEntry`, `T54W2Scout01/02`) pick the new binding on their next spawn; none was live at
+the time of this edit.
+
+Two things this seat did **not** touch, both flagged for the L1:
+
+1. **A stale label.** `.ufo/prompts/tameshi-round-54.md:152,154` still *describes* the run-11 map as
+   "`scout` `@m_grok`". That file is a fleet-root tracked file outside this seat's write scope, and
+   the prompt itself states config.yml is the authority and that line is only a label.
+2. **A pre-existing stale mirror.** `Projects/ufo-fsd-alpha/crates/ufo-core-runtime/bundled/omp-seat-routing.json`
+   records `scout.alias = "m_flash"`. Verified against a snapshot of the *pre-edit* file it was already
+   wrong then (`m_grok` at the time), so this seat did not cause it; it is derived and owned by
+   `scripts/sync-ufo-contracts.mjs` in another repo this seat may only read.
+
+Scope note: `~/.omp/agent/config.yml` is outside this seat's default write scope (the wave `w1/`
+directory). It was edited on the operator's direct instruction in-session, which is the higher
+authority; the file is tracked in the `/home/vgpnk` home repo and was already dirty before this edit
+(staged `scout: "@m_zfl"` in the index, a large unrelated `enabledModels` churn in the worktree). No
+commit, `git add` or git mutation of any kind was performed.
+
+
