@@ -2492,3 +2492,23 @@ under this entry.
   three read revisions, inputs pinned at C7). Deciding run at 88afa941:
   C1 honest stop (58/64, six sections named in SCORECARD), C2 verified.
   Fleet census end: exit 0. Report committed on the fleet repo.
+
+## 2026-10-28 — round 54, attempt 2 (this round)
+
+L1 TameshiR54a2, hyaku run 11. Attempt 1 left nothing (no wave dir, no evidence,
+clean tree). Base `d33053f7`; contract frozen at `441c26be`; amendment 1 at
+`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+control score — the freeze pointer the deciding run uses). Claims: C1
+calibration — the cold-read floor (57/64 at base; the round's own content edits
+drift it to 41/64, so the round re-reads and re-keys 23 sections); C2
+operability — one scratch-root exit class across the seven tools
+(`ScratchRootUnusable` → exit 2, the empty-string arm declared, seven registry
+`scratch_root` cells, `corpus/knowledge/scratch-root-contract.md` citing S277–S279
+opened this round). Content: C0 `59c38109` (four tools, registry, note, rows,
+SKILL three-arm rule, lesson Gate/Mistakes, QUALITY 105); C1 `99c3bc88` (25
+wave-1 reader findings adjudicated and fixed — stale line anchors including
+several drifted by this round's own insertion and tool edits, the `C**`
+placeholder, a retained "no leg skips" clause, the runbook pin, two exit-arm
+cells, the round-14 attribution, the S275 page locator, and the `env-diff`
+`--contract` path raising the class uncaught). Waves and deciding receipts to
+follow under this entry.

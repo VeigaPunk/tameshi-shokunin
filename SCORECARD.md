@@ -2555,3 +2555,49 @@ census exit 0. The floor moved 45 → 58 credited; the remaining six sections an
 their exact repair route (re-read at the then-current bytes, re-key) are named
 in the round report's Planned (round 54). Calibration repair is real but
 incomplete; the round reports the miss, not a narrowed target.
+
+## Round 54 — cold-read floor repair (calibration) + one scratch-root exit class (operability) (2026-10-28)
+
+L1 TameshiR54a2, hyaku run 11, attempt 2. Two claims on distinct axes,
+pre-registered with both counters, the controls harness, the 14 no-harm
+monitors and the deciding script in `.ufo/evidence/round-54/contract.json`,
+frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
+one mechanical discovery bug in the C1 counter's re-key arm, found by the binder
+dry run before any control was scored and before any deciding invocation —
+predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+deciding run uses. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
+commit C1 `99c3bc88`. Round shape: one v2 wave of 76 seats (band 64–128) plus
+one v1 wave of 47 seats (band 32–64) = 123 seats. Calibration (8) is the lowest
+non-retired axis and carries C1.
+
+### Standing axis table — re-stated at round 54 (base `d33053f7`)
+
+| Axis | Score (0–10) | Evidence / counting rule | Measured commit | Last-change round |
+|---|---|---|---|---|
+| depth | 10 | command D `recorded_cases=10 depth_score=10` (`tools/mutate-and-run.sh` leg ledger, capped at 10) | `d33053f7` | 51 |
+| calibration | 8 | round-21 cold-read monitor `calibration_restraint_score`; 8 is that monitor's ceiling (two points per restrained, evidence-linked `[~]` box) — at base the **floor** reads 57/64 credited, which is the round-53 honest stop this round repairs | `d33053f7` | 53 |
+| freshness | 9 | `floor(10 * fresh / 73)` from `python3 .ufo/evidence/round-45/freshness/measure.py --lane LANE --rev REV` | `d33053f7` | 48 (restated) |
+
+| Claim | Axis | Before (base `d33053f7`) | Target | Counting command | Controls (freeze bytes) |
+|---|---|---|---|---|---|
+| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true (`.ufo/evidence/round-54/control/`) |
+| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/before/c2.stdout`; the contract's before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |
+
+The after values are read from the deciding receipts under
+`.ufo/evidence/round-54/after/`, never from this table (a deciding line that
+differs voids the row). What the counters cannot see (contract `cannot_see`):
+C1 — whether a reader's judgment of a section is fair or its inputs are the ones
+a reader actually needed; C2 — whether a tool's self-test exercises the branch
+that allocates scratch on its real path, and whether a registry cell describes
+the tool beyond the three named arms.
+
+Capabilities: **none claimed this round** (the two counters are claim
+instruments, not lane capabilities).
+
+**Planned (round 55):** the `merge/tameshi` `delta-debugging-minimization-contract.md`
+entry (refused on capacity this round; its stated-minimality-witness subject
+matches the round-50 shrinker's `cannot_see`); the `env-diff --contract` residue
+(an unusable scratch root is classified `unavailable`, rc 1, not
+could-not-evaluate — outside C2's measured arm); C2's follow-on: make every
+documented mode of the seven tools report the class rather than the self-test
+only; carried from round 53: the service-limits §5 U1 heading re-read.
