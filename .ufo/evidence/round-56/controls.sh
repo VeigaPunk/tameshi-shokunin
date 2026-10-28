@@ -7,6 +7,11 @@
 # Every CTL line names the revision the counter printed; CTL_MISMATCH means the counter did
 # not reach the pre-registered boolean and the round must stop.
 # Scratch: $HYAKU_SCRATCH (default /fast/scratch/hyaku)/tameshi-r56/controls, removed on exit.
+# A CTL line names the revision the counter printed as `rev=`; when that revision
+# exists only inside the scratch clone (the mutation fixtures commit there) it is
+# relabelled `clone_rev=` so a receipt binding to `rev=` never certifies it.
+# The committed receipts carry a `.sha256` sibling (the L1 computes it) which the
+# receipt gate checks as a digest binding.
 set -u
 LANE=$1; BASE=$2; PIN=$3; FREEZE=$4; OUT=$5
 case "$LANE" in /*) ;; *) echo "LANE must be absolute"; exit 2;; esac
@@ -19,6 +24,21 @@ A_ok=0; A_n=0
 
 emit() { # emit NAME EXPECTED ACTUAL VERDICT_LINE
   local name=$1 want=$2 got=$3 line=$4
+  # A counter line that names a revision nothing in the lane resolves is
+  # relabelled clone_rev= here: the receipt gate binds `rev=` tokens to lane
+  # revisions, and a clone-local commit SHA (these fixtures commit inside
+  # scratch clones) must not masquerade as a lane revision.
+  local rest=$line out=
+  while [[ $rest =~ (^|.*[^_[:alnum:]])rev=([0-9a-fA-F]+)(.*) ]]; do
+    local sha=${BASH_REMATCH[2]}
+    if git -C "$LANE" rev-parse --verify --quiet "$sha^{commit}" >/dev/null 2>&1; then
+      out="rev=$sha${BASH_REMATCH[3]}$out"
+    else
+      out="clone_rev=$sha${BASH_REMATCH[3]}$out"
+    fi
+    rest=${BASH_REMATCH[1]}
+  done
+  line=$rest$out
   echo "CTL $name $line"
   if [ "$want" = "$got" ]; then echo "CTL_MATCH $name expected=$want actual=$got"; echo 1 >> "$SCR/matches"
   else echo "CTL_MISMATCH $name expected=$want actual=$got"; fi

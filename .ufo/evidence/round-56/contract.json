@@ -1,8 +1,8 @@
 {
  "lane": "tameshi",
  "round": 56,
- "attempt": 1,
- "l1": "TameshiR56",
+ "attempt": 2,
+ "l1": "TameshiR56a2",
  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
  "base_note": "lane tip after the inherited-state sweep (round-55 leftovers committed, post-tip closure rewrites reverted); content files are byte-identical to fa48c06c for every claim path",
  "shape": "two v1 build/falsify waves plus one v1 post-bind wave (32-64 seats each), 64-128 total",
@@ -15,17 +15,28 @@
    "target": "C1_R56_PASS=true with total=0: precheck `lost=0 ok` (64 credited), monitor `64/64 score=8 box3=true`, exactly one `rekey-r56-<c0>` directory with 18/18 frozen headings bound at read_rev=<c0> and passing the frozen round-18 credit algorithm at REV, 18/18 committed reader reports whose `cand` is <c0> and whose `section_sha256` is the section's bytes at REV, no bound entry pinning LOG.md or SCORECARD.md, and the standing calibration row stating the monitor's own score at the commit it names",
    "counter": "python3 .ufo/evidence/round-56/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
    "kill_rule": "any arm short of its denominator makes C1_R56_PASS=false and the failing arm is named in the report; a heading whose section text cannot be read at C0 is a miss, never a narrowed heading list",
-   "controls": ["CTL_0", "CTL_SKIP", "CTL_FAB", "CTL_RESTATE", "CTL_POS"],
+   "controls": [
+    "CTL_0",
+    "CTL_SKIP",
+    "CTL_FAB",
+    "CTL_RESTATE",
+    "CTL_POS"
+   ],
    "cannot_see": "whether a reader actually read the section: the reader's `section_sha256` is computable from the tree without reading, so a fabricated reader report satisfies arm 4. The wave's adversarial seats are the only guard, and the report says so."
   },
   "C2": {
    "axis": "operability",
    "surface": "the deciding gate's receipt binding: `tools/receipt-revision-gate.py`, the rule it enforces, and the real receipts it refuses",
    "before": "at the freeze revision the gate exists and the lane's own certification path does not use it: no QUALITY criterion, knowledge entry, SKILL.md rule or registry cell states the binding; the round's own control receipts are not gated; and the receipts the lane already accepted fail the rule - round-54's `CTL_POS_c1` names `rev=077d431e6996` while certifying `c2108100` (drift on `.ufo/evidence/round-21/coldread/ledger.json`), the whole round-54 control set names a revision absent from the repo, and round-55's C2 verdict receipt names no revision at all - verdict `C2_R56: ... total=6 C2_R56_PASS=false` (.ufo/evidence/round-56/before/c2.stdout)",
-   "target": "C2_R56_PASS=true with total=0: the gate's selftest is 14/14, the three real red-before receipts are refused with their named codes while the round-54 gate's own acceptance (`DECIDING_RUN_EXIT=0`) is on record, the round's own control receipts are accepted at the certified revision, and the rule is stated in QUALITY, a sourced knowledge entry, SKILL.md `## Standing rules` and a registry cell",
+   "target": "C2_R56_PASS=true with total=0: the gate's selftest passes every case, the three real red-before receipts are refused with their named codes while the round-54 gate's own acceptance (`DECIDING_RUN_EXIT=0`) is on record, the round's own control receipts are accepted at the certified revision, and the rule is stated in QUALITY, a sourced knowledge entry, SKILL.md `## Standing rules` and a registry cell",
    "counter": "python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
    "kill_rule": "any arm short of its denominator makes C2_R56_PASS=false; a refusal the gate reaches for the wrong reason is a miss, named in the report",
-   "controls": ["CTL_0", "CTL_SKIP", "CTL_FAB", "CTL_POS"],
+   "controls": [
+    "CTL_0",
+    "CTL_SKIP",
+    "CTL_FAB",
+    "CTL_POS"
+   ],
    "cannot_see": "whether a receipt that names the certified revision was actually produced by the run it claims (a copied `rev=` token passes); the digest sidecar narrows but does not close that gap, and the report says so."
   }
  },
@@ -37,6 +48,8 @@
   ".ufo/evidence/round-56/c2/measure.py",
   ".ufo/evidence/round-56/control/frozen-surface.paths",
   ".ufo/evidence/round-56/c2/red-before/round-54-surface.paths",
+  ".ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout.sha256",
+  ".ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout",
   ".ufo/evidence/round-56/no-harm.sh",
   ".ufo/evidence/round-56/deciding-run.sh",
   ".ufo/evidence/round-56/controls.sh",
@@ -44,5 +57,11 @@
  ],
  "no_harm_monitors": 15,
  "deciding_invocations": 1,
- "amendments": []
+ "amendments": [
+  {
+   "n": 1,
+   "what": "six discovered defects closed in one amendment commit, all found by wave-1 seats before any control score and before any deciding invocation (predicates, targets and denominators unchanged): (a) c2/measure.py arm6 read SOURCES' status column at index 8 (the opened date) so the knowledge-note docs cell could never score and C2_R56_PASS was unreachable - now cells[7] (T56W1CritC2 kill-shot); arm2/arm5 now copy .sha256 sidecars so the gate's digest binding is live; QUALITY cell requires RECEIPT_REV_CONTENT_DRIFT and the SKILL cell is scoped to ## Standing rules. (b) controls.sh emitted clone-local commit SHAs as `rev=` tokens the receipt gate cannot resolve - emit() relabels them `clone_rev=`; the committed receipts now carry .sha256 siblings (T56W1ExecControls finding, CritC2). (c) deciding-run.sh read control receipts from the worktree and gated them before the dirty-tree check, excluded untracked paths by unanchored prefix, accepted a non-empty OUTDIR, accepted any CONTROLS fraction and CTL_MISMATCH lines, could not run c1/measure.py (frozen input never materialized - RevFreeze H1), did not pin FREEZE to the last freeze.json commit (H2), and hardcoded its FROZEN list (now contract-derived); the freeze-integrity heredoc now checks manifest keys == contract surface, amendment record shape, and that contract.amendments mirrors freeze.json.amendments. (d) receipt-revision-gate.py declared RECEIPT_NOT_BLOB without emitting it (directory receipt crashed) and had no cases for its usage surface - now emits the code and the suite is 19 cases (not-blob, json-rev, unknown-role, zero-receipts, unresolvable-certified); drifted_paths reports paths unresolvable at both revisions. (e) control/frozen-surface.paths omitted the contract, the receipt producers, the deciding script, no-harm, the manifest and the red-before slice (T56W1CritC2 unlisted-path exploit); the surface now lists them (LOG.md and SCORECARD.md stay unbound by design: the row product is written after the bind and verified by the c1 restate arm - recorded as residual). (f) the red-before slice and its .sha256 were committed as frozen inputs but absent from contract.frozen_paths/freeze.json (RevFreeze H3) - now in both manifests.",
+   "prior_freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
+  }
+ ]
 }

@@ -71,11 +71,17 @@ def is_ancestor(lane, older, newer):
 
 
 def drifted_paths(lane, rev_a, rev_b, paths):
-    """Return the listed paths whose bytes differ between two revisions."""
+    """Return the listed paths whose bytes differ between two revisions; a listed
+    path that exists in neither revision is itself a drift finding."""
     if not paths:
         return ['<no --paths given: content identity is not checkable>']
+    gone = []
+    for p in paths:
+        if git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev_a, p)]).returncode != 0 \
+           and git(['-C', lane, 'cat-file', '-e', '%s:%s' % (rev_b, p)]).returncode != 0:
+            gone.append('<unresolvable-path:%s>' % p)
     r = git(['-C', lane, 'diff', '--name-only', rev_a, rev_b, '--'] + list(paths))
-    return [p for p in r.stdout.decode().splitlines() if p]
+    return [p for p in r.stdout.decode().splitlines() if p] + gone
 
 
 def parse_receipts(args):
@@ -88,13 +94,15 @@ def parse_receipts(args):
     return out
 
 
-def check(lane, certified, paths, receipt, role, required):
+def check(lane, certified, paths, receipt, role):
     path, role_name, regex = receipt
     codes = []
     detail = ''
     p = Path(path)
     if not p.exists():
         return ['RECEIPT_MISSING'], 'path=%s' % path, None
+    if not p.is_file():
+        return ['RECEIPT_NOT_BLOB'], 'path=%s' % path, None
     data = p.read_bytes()
     if not data.strip():
         return ['RECEIPT_EMPTY'], 'path=%s' % path, None
@@ -116,6 +124,7 @@ def check(lane, certified, paths, receipt, role, required):
         detail = 'regex=%r' % regex
     if not revs:
         codes.append('RECEIPT_REV_ABSENT')
+        detail = detail or 'no rev= token'
         return codes, detail, None
     resolved = {}
     for r in revs:
@@ -190,7 +199,7 @@ def run(argv):
     rows = []
     all_codes = []
     for receipt in parse_receipts(receipts):
-        codes, detail, revs = check(lane, full, path_list, receipt, receipt[1], receipt[2])
+        codes, detail, revs = check(lane, full, path_list, receipt, receipt[1])
         all_codes.extend(codes)
         rows.append({'receipt': receipt[0], 'role': receipt[1], 'revs': revs,
                      'ok': not codes, 'codes': sorted(set(codes)), 'detail': detail})
@@ -212,7 +221,6 @@ def run(argv):
 
 
 SELFTEST_RECEIPT_OK = 'VERDICT: rev=%s C1_X_PASS=true\n'
-SELFTEST_RECEIPT_DRIFT = 'VERDICT: rev=%s C1_X_PASS=true\n'
 
 
 def selftest():
@@ -317,7 +325,27 @@ def selftest():
         r = call(write_receipt('empty.txt', '\n') + ':positive')
         cases.append(('empty-refused', r.returncode == 3 and b'RECEIPT_EMPTY' in r.stdout))
         # 14 the codes list is closed
-        cases.append(('codes-closed', len(CODES) == 11))
+        cases.append(('codes-closed', len(CODES) == len(set(CODES)) == 11))
+        # 15 a non-regular-file receipt is a named refusal, not a traceback
+        r = call(str(Path(tmp)) + ':positive')
+        cases.append(('not-blob-refused',
+                      r.returncode == 3 and b'RECEIPT_NOT_BLOB' in r.stdout))
+        # 16 a JSON receipt's "rev" token is parsed
+        r = call(write_receipt('json.txt', '{"rev": "%s"}\n' % c2) + ':verdict', certified=c2)
+        cases.append(('json-rev-parsed', r.returncode == 0))
+        # 17 an unknown role is a usage error, not silently a control
+        r = call(write_receipt('role.txt', SELFTEST_RECEIPT_OK % c2) + ':bogus')
+        cases.append(('unknown-role-refused',
+                      r.returncode == 1 and b'usage:' in r.stderr))
+        # 18 zero receipts is a usage error, never a PASS
+        r = call()
+        cases.append(('zero-receipts-refused',
+                      r.returncode == 1 and b'usage:' in r.stderr))
+        # 19 an unresolvable --certified is exit 2 with a named code
+        r = call(write_receipt('ok2.txt', SELFTEST_RECEIPT_OK % c2) + ':positive',
+                 certified='deadbeefdeaddead')
+        cases.append(('unresolvable-certified-refused',
+                      r.returncode == 2 and b'RECEIPT_REV_UNRESOLVABLE' in r.stdout))
     passed = sum(1 for _, ok in cases if ok)
     for name, ok in cases:
         print('CASE %s %s' % (name, 'PASS' if ok else 'FAIL'))

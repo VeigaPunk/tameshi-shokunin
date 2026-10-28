@@ -4,16 +4,24 @@
  "lane": "tameshi",
  "base": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
  "files": {
-  "contract.json": "2530a54775aecde0ead0d989b5bb7a782e5a6fcd7390b41bebb10eea454bb50f",
+  "contract.json": "254dd0983735ae617d4c5d143ce601fc32fa2be4afdf9fb1a7ee8508a02df99b",
   "c1/measure.py": "048122cf1c7c65d283366837f155925a03a58ecc2eab70e7085b1796bfccb772",
   "c1/lost-headings-at-base.json": "dcfc9f800b8bc7b25851d80ec384b8e8781ead6a5f8adf9f0a5340479282fd4a",
-  "c2/measure.py": "d17d36bd263b3e9dfffc265471f5aa0023c70150582cb2f6617afe039d1af6a2",
-  "control/frozen-surface.paths": "a0ebd3d4216d51036b4ca192fdd7f7dc48ec720e8a1aeb56b47a4d5d595fdae8",
+  "c2/measure.py": "915580190cb1d5c3299e0f36c3beee0738688c423f7f730ff2a20332be5bed6a",
+  "control/frozen-surface.paths": "46c93f105b61d825398e88f80f59f08595909b3ee1abf995161843dd7143f7d8",
   "c2/red-before/round-54-surface.paths": "95ead282432b1bded8eaa0d9ba60e68f8d4aa06d8947d5488172f13cf0e1d880",
+  "c2/red-before/round-54-ctl-pos-c1.stdout.sha256": "2491775e3a6b2f754bf86226fb81b51493c413fa83c47e347843494457513068",
+  "c2/red-before/round-54-ctl-pos-c1.stdout": "3310ff60802af88993006dd1fc59b50cbcbb33b094b02ee532ac5573db455698",
   "no-harm.sh": "a13ba1a8433752c8e2d928c129dc4889181f34caa917099d4aaa96ec1d33e3b4",
-  "deciding-run.sh": "6a63f5058be15f5fc5a3bbbe956f97fbc57c172cc2c68f37b83bb09ccec9c022",
-  "controls.sh": "df1ee355ce6261729266427e0e5bcd554bf2bdf3b178d7198bd67a3479a79a44",
-  "tools/receipt-revision-gate.py": "1d80f8a665f83508a05a33827de66ffd53c986e8de25f8f77937707cac78fbd2"
+  "deciding-run.sh": "a644123e764a568fc58b832d470ab59bf1c823359dac41c189e0255c19a644cb",
+  "controls.sh": "65b4b5105668786fd2a89065c54c230b23b3713739fa9622c0bb2bf1b9286920",
+  "tools/receipt-revision-gate.py": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9"
  },
- "amendments": []
+ "amendments": [
+  {
+   "n": 1,
+   "what": "six discovered defects closed in one amendment commit, all found by wave-1 seats before any control score and before any deciding invocation (predicates, targets and denominators unchanged): (a) c2/measure.py arm6 read SOURCES' status column at index 8 (the opened date) so the knowledge-note docs cell could never score and C2_R56_PASS was unreachable - now cells[7] (T56W1CritC2 kill-shot); arm2/arm5 now copy .sha256 sidecars so the gate's digest binding is live; QUALITY cell requires RECEIPT_REV_CONTENT_DRIFT and the SKILL cell is scoped to ## Standing rules. (b) controls.sh emitted clone-local commit SHAs as `rev=` tokens the receipt gate cannot resolve - emit() relabels them `clone_rev=`; the committed receipts now carry .sha256 siblings (T56W1ExecControls finding, CritC2). (c) deciding-run.sh read control receipts from the worktree and gated them before the dirty-tree check, excluded untracked paths by unanchored prefix, accepted a non-empty OUTDIR, accepted any CONTROLS fraction and CTL_MISMATCH lines, could not run c1/measure.py (frozen input never materialized - RevFreeze H1), did not pin FREEZE to the last freeze.json commit (H2), and hardcoded its FROZEN list (now contract-derived); the freeze-integrity heredoc now checks manifest keys == contract surface, amendment record shape, and that contract.amendments mirrors freeze.json.amendments. (d) receipt-revision-gate.py declared RECEIPT_NOT_BLOB without emitting it (directory receipt crashed) and had no cases for its usage surface - now emits the code and the suite is 19 cases (not-blob, json-rev, unknown-role, zero-receipts, unresolvable-certified); drifted_paths reports paths unresolvable at both revisions. (e) control/frozen-surface.paths omitted the contract, the receipt producers, the deciding script, no-harm, the manifest and the red-before slice (T56W1CritC2 unlisted-path exploit); the surface now lists them (LOG.md and SCORECARD.md stay unbound by design: the row product is written after the bind and verified by the c1 restate arm - recorded as residual). (f) the red-before slice and its .sha256 were committed as frozen inputs but absent from contract.frozen_paths/freeze.json (RevFreeze H3) - now in both manifests.",
+   "prior_freeze": "c3e2ca9f020776b3d66c7af854fb82c834674fcf"
+  }
+ ]
 }

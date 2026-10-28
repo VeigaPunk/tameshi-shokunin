@@ -9,7 +9,7 @@ Arms (every read is of git objects at REV; the live working tree is never read;
 scratch lives under --work and never under /tmp):
 
   1. selftest   the gate's own suite (bytes at REV) passes: `--selftest` exit 0 and
-                `GATE_SELFTEST: 14/14 pass`.
+                `GATE_SELFTEST: N/N pass` (all cases).
   2. red54      the REAL round-54 positive control, sliced to its CTL_POS_c1 line
                 (`.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout`,
                 bytes copied from `.ufo/evidence/round-54/control/controls-b.stdout`
@@ -145,6 +145,9 @@ def main():
     else:
         slice_path = work / 'r54-ctl-pos-c1.stdout'
         slice_path.write_bytes(show(lane, rev, R54_SLICE))
+        sha_raw = show(lane, rev, R54_SLICE + '.sha256')
+        if sha_raw is not None:
+            Path(str(slice_path) + '.sha256').write_bytes(sha_raw)
         paths_path = work / 'r54-surface.paths'
         paths_path.write_bytes(show(lane, rev, R54_PATHS))
         r = run_gate('--lane', lane, '--certified', R54_CERT, '--paths', str(paths_path),
@@ -212,6 +215,10 @@ def main():
         pa.write_bytes(a_raw)
         pb.write_bytes(b_raw)
         pp.write_bytes(paths_raw)
+        for base, key in ((pa, OWN_A), (pb, OWN_B)):
+            sib = show(lane, rev, key + '.sha256')
+            if sib is not None:
+                Path(str(base) + '.sha256').write_bytes(sib)
         r = run_gate('--lane', lane, '--certified', rev, '--paths', str(pp),
                      '--receipt', str(pa) + ':control',
                      '--receipt', str(pb) + ':positive')
@@ -227,10 +234,8 @@ def main():
     docs = 0
     quality = show(lane, rev, QUALITY)
     if quality is not None and GATE in quality.decode('utf-8', 'surrogateescape'):
-        for code in CODES:
-            if code in quality.decode('utf-8', 'surrogateescape'):
-                docs += 1
-                break
+        if 'RECEIPT_REV_CONTENT_DRIFT' in quality.decode('utf-8', 'surrogateescape'):
+            docs += 1
     note = show(lane, rev, NOTE)
     if note is not None:
         text = note.decode('utf-8', 'surrogateescape')
@@ -242,13 +247,16 @@ def main():
             mined = set()
             for line in sources.splitlines():
                 cells = [c.strip() for c in line.strip().strip('|').split('|')]
-                if len(cells) == 11 and re.fullmatch(r'S\d{3,}', cells[0]) and cells[8] == 'mined':
+                if len(cells) == 11 and re.fullmatch(r'S\d{3,}', cells[0]) and cells[7] == 'mined':
                     mined.add(cells[0][1:])
             if cited & mined:
                 docs += 1
     skill = show(lane, rev, SKILL)
-    if skill is not None and 'receipt-revision-gate' in skill.decode('utf-8', 'surrogateescape'):
-        docs += 1
+    if skill is not None:
+        # the rule must sit inside ## Standing rules, not anywhere in the file
+        sm = re.search(r'## Standing rules(.*?)(?:\n## |\Z)', skill.decode('utf-8', 'surrogateescape'), re.S)
+        if sm and 'receipt-revision-gate' in sm.group(1):
+            docs += 1
     registry = show(lane, rev, REGISTRY)
     if registry is not None:
         text = registry.decode('utf-8', 'surrogateescape')
