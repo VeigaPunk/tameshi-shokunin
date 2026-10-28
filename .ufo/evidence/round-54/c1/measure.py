@@ -171,8 +171,12 @@ def main():
     # ---- arm 3: the re-key directory and its entries --------------------------------
     tree = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev,
                 '.ufo/evidence/round-21/coldread/'], check=False).stdout.decode()
-    rekey_dirs = sorted({Path(p).name for p in tree.splitlines()
-                         if REKEY_RE.match(Path(p).name) and '/traces/' in p})
+    # amendment 1 (round 54): match the DIRECTORY component of each traced
+    # path, never the file's basename - the round-53 defect this arm exists to
+    # avoid was a pathspec that could not match the directory at all.
+    rekey_dirs = sorted({part for p in tree.splitlines()
+                         if '/traces/' in p
+                         for part in Path(p).parts if REKEY_RE.fullmatch(part)})
     c0 = None
     rekey_ok = len(rekey_dirs) == 1
     if rekey_ok:
