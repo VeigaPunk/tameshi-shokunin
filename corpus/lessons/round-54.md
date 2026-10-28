@@ -79,9 +79,9 @@ line rather than acted on; proposals 2–5 remain unmined (at most one per round
 
 - **105. A counter arm that reads a directory by pathspec is proven on a tree
   where the arm must fire (the positive control), not only on the do-nothing
-  tree. Falsifier: a control receipt in which the arm's own counter reads a
-  non-zero value; a pathspec that returns the directory itself is a defect even
-  when the overall verdict is false for another reason.**
+  tree. Falsifier: a control receipt in which the arm's own counter reads zero
+  (the arm never fired); a pathspec that returns the directory itself is a
+  defect even when the overall verdict is false for another reason.**
 
 ## The method (for the round report)
 

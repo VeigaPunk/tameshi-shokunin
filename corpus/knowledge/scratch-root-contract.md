@@ -55,6 +55,12 @@ tool might use to allocate scratch.
 ## Falsifier
 
 A tool that returns 0 after printing the could-not-evaluate line (control
-CTL_EXIT0), or that names the class without the value, fails the counter. A
+CTL_EXIT0), or that names the class without the value, fails the counter.
+
+One residue is named, not fixed: `tools/context-capture.py` exits 2 with the
+class and the value but prefixes the line with `SELFTEST: FAIL`, a verdict
+token the class forbids; the round-54 C2 arm reads the exit code and the naming
+line, not the absent token, so the arm passes and the vocabulary residue goes
+to round 55 (it is a tool edit, and the fix commit is the round's read revision). A
 tool that regains a `dir="/tmp"` literal fails the round-53 monitor and the C2
 `tmp_mkdirs` arm together.
