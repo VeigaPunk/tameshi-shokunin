@@ -1578,3 +1578,13 @@ A round that edits SKILL.md sections in response to reader findings re-reads eac
 Lesson: `corpus/lessons/round-53.md` `## Mistakes` row 1 (the round-52 fix-pass debris the T52W3 readers routed back).
 
 Falsifier that must fail: at base `6db1d220` the round-52 duplicate "(**ten** since round 51) (ten since round 51)" at SKILL.md (then :1305) is present, and the self-contradicting "Cases 5–6 were still not embedded at this boundary (both are legs 5–6 since round 10-2 …)" at (then :1227-1228) is present; both are gone at the round-53 content candidate `218bc6b5`.
+
+## Criteria appended — round 54 (2026-10-28)
+
+### Criterion 105 — a counter arm is proven on a positive control, not only on the do-nothing tree
+
+A counter arm that reads a directory, a revision or a manifest is proven by a positive control in which that arm must fire: the receipt records the arm's own non-zero count at a tree where the round's work is present. The do-nothing tree cannot prove an arm live — it fails for other reasons, so a dead arm (a pathspec that matches nothing, a key that never appears) looks healthy there. The check that can fail: a positive-control receipt in which the arm's own counter reads zero, or a control run that pre-registers the arm's value without a tree that carries it.
+
+Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+
+Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` on its positive control; the two receipts are `.ufo/evidence/round-53/c1/measure.py` run at `88afa941` and `.ufo/evidence/round-54/control/controls-b.stdout`.

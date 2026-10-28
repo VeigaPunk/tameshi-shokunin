@@ -1,5 +1,5 @@
 ---
-source: S275 — https://doi.org/10.1145/3540250.3558911 — §3.2 (commit-relevant mutants) and §3.3 (subsuming, high-order mutations), p. 4 — author camera-ready (ojda22.github.io/milos-ojdanic/assets/pdfs/change-aware-mutation-testing_camera-ready.pdf), fetched 2026-10-27 by L1 TameshiR53a2 (round-53 assimilation; staged as S161 by corpus-expansion-1, re-pointed by document)
+source: S275 — https://doi.org/10.1145/3540250.3558911 — §3.2 (commit-relevant mutants) and §3.3 (subsuming, high-order mutations), p. 3 (physical) — author camera-ready (ojda22.github.io/milos-ojdanic/assets/pdfs/change-aware-mutation-testing_camera-ready.pdf), fetched 2026-10-27 by L1 TameshiR53a2 (round-53 assimilation; staged as S161 by corpus-expansion-1, re-pointed by document)
 source: S276 — https://arxiv.org/abs/2212.11762 — §Abstract — arXiv:2212.11762v1 (submitted 2022-12-22), fetched 2026-10-27 by L1 TameshiR53a2
 verified-at: 2026-10-27 (both sources re-opened this round; snapshots under `.ufo/evidence/round-53/assimilation/`)
 recheck: 365d

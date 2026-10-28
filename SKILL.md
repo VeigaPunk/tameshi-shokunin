@@ -31,12 +31,12 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a 
   substrate tree is never a mutation target.
 - **The scratch root has three arms.** A tool that allocates scratch through
   `strict_scratch_root()` honours `TMPDIR`: unset → the platform default; empty
-  (`TMPDIR=""`) → unset, because the resolver skips an empty candidate
-  (S278:163-165) and falls through the documented list (S279); set but unusable →
-  exit 2, could-not-evaluate, naming the value — never a silent `/tmp` fallback,
-  never a traceback, never exit 1 (corpus/knowledge/scratch-root-contract.md; the
-  seven tools and their registry `scratch_root` cells, measured by the round-54 C2
-  counter).
+  (`TMPDIR=""`) → unset (the resolver skips an empty candidate, S278:163-165; the
+  documented list follows, S279); set but unusable → exit 2, could-not-evaluate,
+  naming the value — never a silent `/tmp` fallback, never a traceback, never exit
+  1. Measured on each tool's `--selftest`/`selftest` path (round-54 C2 counter);
+  other modes are outside that measurement (corpus/knowledge/scratch-root-contract.md;
+  the seven registry `scratch_root` cells).
 
 ## Source notes
 
@@ -158,7 +158,7 @@ Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<
    (corpus/knowledge/mutation-case-kimi-census.md:20-21), and bash: 16 enumerated cases,
    14 executed +2 skipped (corpus/knowledge/mutation-case-kagi-census.md:27-35,42-43).
    A red control has no kill denominator: stop and record setup failure.
-2. **Pin the artifact — committed bytes only.** Record: path, full sha256,
+2. **Pin the artifact — committed bytes only.** Record: path, full sha256, size,
    mtime, repo revision, and `git status --porcelain --
    <path>` empty (corpus/knowledge/mutation-case-kimi-census.md:13-16;
    corpus/knowledge/mutation-case-kagi-census.md:13-17 — note that gate's 887th line carries no
@@ -170,7 +170,7 @@ Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<
    then `cp -p <artifact> …/pristine.<ext>`; re-verify (`sha256sum`; the bash
    lane additionally `cmp`-verified its copy — corpus/knowledge/mutation-case-kagi-census.md:44-45).
    All edits happen to copies; the original is never a write target.
-4. **Write the defect list from the templates.** 8–12 defects, one per class
+4. **Write the defect list from the templates.** 8–12 defects, at least one per class (two of the JS ten share a class — the :47-48 pair — and the bash exemplar's :70-71 pair does the same)
    (catalog + entry template in the next section), each ONE exact-string
    replacement or single block deletion, each with a pre-registered
    `expect: killed|survived` and the reason — the JS 10-defect manifest is the
@@ -872,11 +872,11 @@ predictions and six survivor classes first, and the prediction held 10/10
   row F); a rate is bounded by its defect vocabulary.
 - **Hermetic suites only** — no substrate-drift claim; results are
   per-revision and per-host (census §5 scope, `fleet-suite-census.md:288-291`).
-- **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:808-809).
+- **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:819-820).
   No-write is by design, "The target is never written" (`tools/mutate-and-run.sh:36-38`); fingerprints prove endpoint identity, not that no transient
   write occurred (the `## Restore discipline` section); sha pair at `mutation-case-mado-verify.md:57-59` (corrected in round 27 after the cold read of seat Read09).
 - **Findings kept, never smoothed.** A survivor is a gap named with its class;
-  a low kill rate is a report, not a service failure (SKILL.md:335). Mado's 40 % is the
+  a low kill rate is a report, not a service failure (SKILL.md:346-347). Mado's 40 % is the
   first point below the 50-80 band (`mutation-case-mado-verify.md:175-176`), and it reads as composition (4 in-surface
   + 6 out-of-surface, measured 4/4 and 0/6), not as a suite regression
   (`mutation-case-mado-verify.md:66-72`).
@@ -949,7 +949,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight ledger rows — six in t
   --regression [--workdir DIR] [--keep]` allocates a fresh default scratch
   `${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
   it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
-  are never removed. Pre-allocation SETUP has no root to retain. Exits0/1/2:
+  are never removed. Pre-allocation SETUP has no root to retain. Exits 0/1/2:
   PASS/FAIL/SETUP (`tools/mutate-and-run.sh:139-143,1519-1548`).
 - **Each leg's bytes come from the repo's git object store, not the working
   tree.** `git show <rev>:<path>` materializes the pinned blob into the case
@@ -958,7 +958,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight ledger rows — six in t
   does not change that blob. The old tsukuroi/mado pins are historical,
   not a statement that their current trees match those recorded bytes.
   A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
-  later legs still run and their statuses aggregate (:1247-1317,1459-1517; tool lines re-verified at C** — the ten-leg runner grew since round 26).
+  later legs still run and their statuses aggregate (:1247-1317,1459-1517; tool lines re-verified at `59c38109` (round 54) — the ten-leg runner grew since round 26).
 - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
   (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
@@ -967,7 +967,7 @@ are `corpus/knowledge/fleet-kill-rate-ledger.md` (eight ledger rows — six in t
 - **Contribution contract — what a leg carries.** A pinned target path,
   Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
   a command exercising `$MUTANT` under controlled fixtures; enumerated,
-  executed and skipped counts distinguished [round 53 correction, seat T53W2R6: the bash-surface-census leg's own recorded table carries 14 executed + 2 skipped — the round-52 'no leg records a skipped count' bracket overstated; the ten-leg registry itself enumerates and executes without skips] (round 52: no leg skips — host-gated branches run sandboxed; the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
+  executed and skipped counts distinguished [round 53 correction, seat T53W2R6: the bash-surface-census leg's own recorded table carries 14 executed + 2 skipped — the round-52 'no leg records a skipped count' bracket overstated; the ten-leg registry itself enumerates and executes without skips] (round 52: the ten legs report no skipped case on this host; the kagi leg's own table is the one that records two, as the bracket above says — the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
   table. Host-gated branches must be excluded/controlled or explicitly named,
   not called hermetic merely because the flag is `--selftest`.
   Current anchors (round 52 re-anchor to the ten-leg table; the round-26 tool recorded :603-629): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,
@@ -1266,7 +1266,7 @@ line at this boundary — named debt, not smoothed (`fleet-kill-rate-ledger.md:2
 
 The note states its own role as "the refusal table the re-sweep cadence
 applies at intake" (`service-limits.md:4-5`); no cadence or ledger text names
-it (`:1010-1154`, `fleet-kill-rate-ledger.md:285`, `fleet-kill-rate-ledger.md:318`) — the
+it (`:1023-1169`, `fleet-kill-rate-ledger.md:285`, `fleet-kill-rate-ledger.md:318`) — the
 intake application is the note's claim, quoted as stated, not a cadence fact
 this page asserts. Each refusal carries a measured anchor —
 a refusal without an anchor is not written; the table states refusals, it does not
@@ -1279,11 +1279,11 @@ divergence between the two is the finding, never smoothed.
 | # | Refusal | What it means | Anchor |
 |---|---|---|---|
 | a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:25-30`; `fleet-suite-census.md:277-286` |
-| b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:813-817`; `:840-844` |
-| c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:823-825` |
+| b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:824-828`; `:851-855` |
+| c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:834-836` |
 | d | Live substrates / sessions | never read; a live-plane probe is a PATH-level stub, never the session | `service-optin-protocol.md:129-132` |
 | e | Credential material / endpoint health | out of province — report, never absorb | `PROVINCE.md:14-18`, `PROVINCE.md:20` |
-| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:879-881`; `fleet-kill-rate-ledger.md:156-158` |
+| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:890-892`; `fleet-kill-rate-ledger.md:156-158` |
 | g | Coordinated multi-edit rewrites | outside the defect vocabulary — no rate claimed | `fleet-kill-rate-ledger.md:220` (U2) |
 | h | The exit-flatten family | a harness boundary — named, not fixed | `service-optin-protocol.md:267-269` |
 | i | A directed-repair re-run presented as a rate | recorded as directed repair, not an independent rate | `fleet-kill-rate-ledger.md:35-36` |
@@ -1303,8 +1303,8 @@ never a re-cut.
 
 ### The operator's runbook — `corpus/knowledge/operator-runbook.md`
 
-- **What it is.** One operator-facing document (`e1e349b6…` / 511 L / 31 416 B,
-  uncommitted worktree file at this read; the sha governs): the tool, the
+- **What it is.** One operator-facing document (`8b2e185f…` / 516 L / 33 515 B,
+  committed at `59c38109`; the sha governs): the tool, the
   six-case ledger, the opt-in protocol, the refusals, the cadence, and the
   regression mode — the loop runnable without oral context. It adds no gate
   measurement of its own; every line restates an anchored source.
@@ -1316,7 +1316,7 @@ never a re-cut.
   append-only errata.
 - **Pointer, not a second home.** Its own rule: where it and an anchored
   source diverge, the anchored source governs — the same rendering/divergence
-  rule this page applies to `service-limits.md` (`:1250-1254`).
+  rule this page applies to `service-limits.md` (`:1276-1277`).
 - **Its receipts were executed at `cf41efaa…` (r7-1, four legs)** — §7's
   embedding-status line and §9's receipts were run there; its errata ER-R1/ER-R2
   record the r10-2 edit in motion and name the T2 remedy (re-run under the new
@@ -1503,7 +1503,7 @@ See `corpus/lessons/round-1.md` for the admitted correction and rejected claims.
 
 ## Repeated controls and gate registry — round 12
 
-Source: S004 and S265 (S026 superseded by S265, `corpus/SOURCES.md:500`) and `corpus/knowledge/repeated-control-precondition.md`;
+Source: S004 and S265 (S026 superseded by S265, `corpus/SOURCES.md:503`) and `corpus/knowledge/repeated-control-precondition.md`;
 runtime evidence: `.ufo/evidence/round-12/verification-final.json`.
 This is a standalone precondition check, not a change to the six-leg runner of round 12.
 
@@ -1548,7 +1548,7 @@ runtime receipts in `.ufo/evidence/round-13/`.
 
 | Observation | Decision | Limit |
 |---|---|---|
-| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+| Recorded target bytes equal the current worktree AND the pin verifies against the manifest digest (`tools/pin-disposition.py:67-71`, `:563-567`) | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
 | Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
 | Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
 | All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
@@ -1603,9 +1603,9 @@ These instructions add no full-page cold-read or independent promotion credit.
 
 Recipe, from this lane root:
 1. Read the historical expectations and raw observations before accepting a
-   later summary; distinguish twelve expected rows from thirteen pinned inputs.
+   later summary; distinguish twelve expected rows from thirteen pinned inputs (both counts belong to `.ufo/evidence/round-13/expected.json`, which the commands below name: twelve expected checks, thirteen inputs).
 2. **Historical (round 14, runner `75ed934d…`):** at `--root .` both manifests now return 2
-   `expected_input_digest_mismatch` (their pinned inputs moved after round 14: three of the thirteen are stale at the live bytes — the runner in round 16, the bash witness-study tool in rounds 18 and 21, and `tools/pin-disposition.py` in round 17, before either named round). Replay with cwd = an extracted
+   `expected_input_digest_mismatch` (the moved pins are the round-13 expected manifest's: three of its thirteen inputs are stale at the live bytes — the runner in round 16, the bash witness-study tool in rounds 18 and 21, and `tools/pin-disposition.py` in round 17, before either named round). Replay with cwd = an extracted
    `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
    → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).
 3. The same command with `.ufo/evidence/round-14/dispositions.json` → 0: the only repair is that row's explicit supersession,
@@ -1728,7 +1728,7 @@ Could-not-evaluate takes precedence over a mismatched expected verdict: an
 edited snapshot or unavailable input stays exit2, with any expectation
 disagreement secondary. A clean result with a wrong id/exit pin becomes
 failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest
-exits0/1/2 for pass/case failure/setup inability and64 for invalid invocation (the disposition selftest: 0 pass, 1 case failure or an uncaught setup traceback; round 17).
+exits 0/1/2 for pass/case failure/could-not-evaluate (setup inability) and 64 for invalid invocation (the disposition selftest: 0 pass, 1 case failure, 2 could-not-evaluate — an unusable scratch root or an unreadable input is named, never a traceback; round 54).
 
 ## Errata — round 16 full-page cold-read
 
@@ -1849,8 +1849,8 @@ new mutation case and no promotion credit.
 | Evidence condition | Decision | Error pattern / limit |
 |---|---|---|
 | A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
-| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) [round 52: when bound the anchor is `refs/heads/<lane.branch>` or the attached branch tip; an unbound non-jj detached root anchors at raw `HEAD` when a local or remote-tracking ref contains it (`tools/evidence-disposition.py:460-525`; selftest `v2-registry-clone-detached-anchor` :2891-2896 expects exit 0, fixture docstring :2256 "anchors at HEAD")] | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
-| The waiver rev is a tree id, dangling, not an ancestor, or shallow | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance. Replace refs, grafts and an inherited `GIT_DIR` are neutralized, not refused: the tool sets `GIT_NO_REPLACE_OBJECTS=1`, `GIT_GRAFT_FILE=/dev/null` and scrubs inherited `GIT_*` (`tools/evidence-disposition.py:368-390`; selftests `v2-historical-replace-ref`, `v2-gitdir-env` expect exit 0; grafts by code reading only). Corrected in round 27, seat Read32 |
+| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) [round 52: when bound the anchor is `refs/heads/<lane.branch>` or the attached branch tip; an unbound non-jj detached root anchors at raw `HEAD` when a local or remote-tracking ref contains it (`tools/evidence-disposition.py:479-544`; selftest `v2-registry-clone-detached-anchor` :2910-2915 expects exit 0, fixture docstring :2275 "anchors at HEAD")] | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| The waiver rev is a tree id, dangling, not an ancestor, or shallow | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance. Replace refs, grafts and an inherited `GIT_DIR` are neutralized, not refused: the tool sets `GIT_NO_REPLACE_OBJECTS=1`, `GIT_GRAFT_FILE=/dev/null` and scrubs inherited `GIT_*` (`tools/evidence-disposition.py:385-395`; selftests `v2-historical-replace-ref`, `v2-gitdir-env` expect exit 0; grafts by code reading only). Corrected in round 27, seat Read32; re-pinned in round 54 after the helper grew. |
 | A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
 | A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
 | A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git (round 18 adds `bash-witness-study.py`; historical `.ufo/evidence/round-16/measure.py` still does not — run it only through `registry-check`, which scrubs) | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
@@ -1876,7 +1876,7 @@ Recipe, from this lane root (round-13/14 evidence bytes stay immutable):
 | `tools/evidence-disposition.py` (v2 manifests) | gate | `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json` (round 18; the round-17 manifest now exits 2) · `--selftest` | 0 clean · 1 failed expectations · 2 could not evaluate (invalid, missing, tampered or unprovenanced input) · 64 usage |
 | `tools/registry-check.py` | gate | `python3 tools/registry-check.py --rev REV [--registry PATH] [--tag TAG] [--json]` · `--selftest` | 0 every active row held · 1 a row differs · 2 registry invalid, rev unresolvable, clone failed, or `--tag` matches no row · 64 usage |
 | `tools/mutate-and-run.sh` (guard + scrub) | gate | `bash tools/mutate-and-run.sh --selftest` · `--regression` | as the round-16 row; a borrowed repo identity is SETUP 2 |
-| `tools/pin-disposition.py` (branch tip) | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` · `--selftest` | as the round-13 row |
+| `tools/pin-disposition.py` (branch tip) | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` · `--selftest` | as the round-13 row, plus exit 2 could-not-evaluate when TMPDIR is set and unusable (round 54: the self-test names the value, no traceback) |
 
 ## Input-keyed cold-read credit — round 17
 
@@ -1955,10 +1955,10 @@ differs only in `--help` output (entry errata ER8-2).
 | `.ufo/evidence/round-18/defect-probes.py` | probe | `python3 .ufo/evidence/round-18/defect-probes.py --rev REV` · `--selftest` | 0 measured (`DEFECT_PROBES: open=N closed=M total=11`) · 2 a probe errored, a pristine selftest was red, or an anchor was not unique · 64 usage. A guard probe is `closed` only when the pristine selftest exits 0 and the guard-removal mutant exits nonzero; children run under bwrap with the fleet read-only; never wrap it in `tools/trace-inputs.py` (P05–P07 run that tool's selftest, and nested ptrace is refused → 2) |
 | `tools/registry-check.py` (round 18) | gate | unchanged CLI | `timeout_s` must be a finite number in (0, 86400] (`NaN`/`Infinity` literals refused at parse; a larger finite value used to crash `communicate()` with exit 1) → 2 naming the row; descendants of a row (including ones that called `setsid`/`setpgid`) are killed at timeout and after the row exits, and pipe draining is bounded — limits: a descendant that changes UID may be unkillable, same-tick PID reuse is not excluded, and an orphan adopted from a pre-existing checker child can be signalled (`.ufo/waves/round-18/w2/SentinelKillCode.md`); survivors fail the row with `cleanup_error` |
 | `tools/evidence-disposition.py` (round 18) | gate | unchanged CLI (`--selftest` now needs `jj` on PATH) | G2/G3 read one anchor commit: `refs/heads/<lane.branch or attached branch>`; a jj-colocated repo with detached HEAD and no `lane.branch` → 2; a detached non-jj clone (`registry-check --rev`) anchors on its checked-out commit only when a branch or remote-tracking ref contains it. HEAD is never read as the tip in a bound lane (jj leaves `HEAD` at `@-`) |
-| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; its pinned round-13 bytes are read from `4acc607` through `.ufo/evidence/round-18/dispositions.json` (the round-17 manifests are superseded) |
+| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; it parses `PIN_BASH`/`REV_BASH` from `tools/mutate-and-run.sh:616-617` (`275d8294…`/`fecee874…`), and `4acc607` is the `historical_inputs` rev recorded for that tool in `.ufo/evidence/round-18/dispositions.json`, which the evidence-disposition gate reads (the round-17 manifests are superseded) |
 | `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | promoted current collector; the historical round-17 evidence copy remains unchanged, not byte-identical to the promoted tool. The promoted selftest discriminates removal of O_RDWR exclusion, private-cache anchoring and root-execve checks |
 | `.ufo/evidence/round-18/measure.py`, `coldread/assemble.py` | probe, gate | as round 17, default ledger `.ufo/evidence/round-18/coldread/ledger.json`; `--carry` copies prior entries verbatim plus a `carried_from` key; `--explain` per bucket | input-keyed credit only: it binds credit to recorded inputs, not to the commands a bucket requires — never cite it as command coverage |
-| `.ufo/evidence/round-19/measure.py` | gate with `--check`; otherwise measurement probe | `python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check` · `--selftest` | 0 all five frozen correction items hold; 1 open item; 2 cannot evaluate; 64 usage. Without `--check`, 0 reports a count, not acceptance. Public-CLI selftest uses inline synthetic snapshots plus four frozen package fixtures and literal expectations (`SOURCE_PINS` binds source-baseline/source-round18-final). `contract.json` describes the population; `before.json`/after receipts are measured outputs, not selftest inputs. No network/Git writes; selftest scratch only; owner tameshi. Metadata reconciliation, not producer authentication, cold-read or required-command coverage; QUALITY37–39, lessonround19, S049. |
+| `.ufo/evidence/round-19/measure.py` | gate with `--check`; otherwise measurement probe | `python3 .ufo/evidence/round-19/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --check` · `--selftest` | 0 all five frozen correction items hold; 1 open item; 2 cannot evaluate; 64 usage. Without `--check`, 0 reports a count, not acceptance. Public-CLI selftest uses inline synthetic snapshots plus four frozen package fixtures and literal expectations (`SOURCE_PINS` binds source-baseline/source-round18-final). `contract.json` describes the population; `before.json`/after receipts are measured outputs, not selftest inputs. No network/Git writes; selftest scratch only; owner tameshi. Metadata reconciliation, not producer authentication, cold-read or required-command coverage; QUALITY37–39, `corpus/lessons/round-19.md`, S049. |
 | `.ufo/evidence/round-19/coldread/measure.py` | probe | `python3 .ufo/evidence/round-19/coldread/measure.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV` · `--selftest` | Delegates unchanged credit/trace/veto/CLI rules to frozen round-18 `measure.py`, selecting round-19 `coldread/ledger.json` as default (no legacy overrides). Same exit map and input-keyed-only bound. Round-19 refreshed entries are L1-author source reads, not new blind or independent cold-read/command-coverage evidence; old entries retained verbatim. Inputs/receipt hashes are revision-pinned; external observations remain outside the credited-input predicate. Owner tameshi, read-only except inherited isolated selftest scratch. |
 
 ### Round-20 gate/probe registry — frozen receipt instruments
