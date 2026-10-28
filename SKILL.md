@@ -29,6 +29,14 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a 
   (in the original `/tmp` namespace: both mutation lanes kept every mutant + evidence there —
   mutation-case-kimi-census.md:4-7; mutation-case-kagi-census.md:4-6). The
   substrate tree is never a mutation target.
+- **The scratch root has three arms.** A tool that allocates scratch through
+  `strict_scratch_root()` honours `TMPDIR`: unset → the platform default; empty
+  (`TMPDIR=""`) → unset, because the resolver skips an empty candidate
+  (S278:163-165) and falls through the documented list (S279); set but unusable →
+  exit 2, could-not-evaluate, naming the value — never a silent `/tmp` fallback,
+  never a traceback, never exit 1 (corpus/knowledge/scratch-root-contract.md; the
+  seven tools and their registry `scratch_root` cells, measured by the round-54 C2
+  counter).
 
 ## Source notes
 

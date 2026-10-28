@@ -158,15 +158,20 @@ exit 2  could-not-evaluate invalid input (usage, manifest, fleet root)
 """
 
 
+class ScratchRootUnusable(RuntimeError):
+    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+
+
 def strict_scratch_root():
     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
-    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    fallback to /tmp, preserving CR47 semantics), else the platform default.
+    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
     import os as _os
     t = _os.environ.get("TMPDIR")
     if t:
         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
-            raise RuntimeError(
+            raise ScratchRootUnusable(
                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
         return t
     return tempfile.gettempdir()
@@ -1389,7 +1394,11 @@ def main(argv):
         sys.stdout.write(USAGE)
         return 0
     if argv == ["--selftest"]:
-        return selftest()
+        try:
+            return selftest()
+        except ScratchRootUnusable as exc:
+            sys.stderr.write("pin-disposition.py: could-not-evaluate: {}\n".format(exc))
+            return 2
     if "--selftest" in argv:
         return invalid_input("invalid_usage", "--selftest takes no other arguments")
     try:

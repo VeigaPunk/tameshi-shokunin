@@ -29,15 +29,20 @@ SCHEMA = "tameshi-env-diff-receipt-v1"
 PROFILES = ("host", "clean", "clean_repeat", "tz", "locale", "home", "columns")
 
 
+class ScratchRootUnusable(RuntimeError):
+    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+
+
 def strict_scratch_root():
     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
-    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    fallback to /tmp, preserving CR47 semantics), else the platform default.
+    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
     import os as _os
     t = _os.environ.get("TMPDIR")
     if t:
         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
-            raise RuntimeError(
+            raise ScratchRootUnusable(
                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
         return t
     return tempfile.gettempdir()
@@ -224,7 +229,11 @@ def main(argv=None):
     p.add_argument("--selftest", action="store_true")
     a = p.parse_args(argv)
     if a.selftest:
-        return selftest()
+        try:
+            return selftest()
+        except ScratchRootUnusable as exc:
+            print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+            return 2
     if not a.contract or not a.out or not 1 <= a.jobs <= 3:
         p.error("--contract and --out are required; --jobs must be 1..3")
     try:
