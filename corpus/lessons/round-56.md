@@ -144,3 +144,26 @@ Proposals 2–5 remain unmined (at most one per round).
   receipts directories but no `.json` (Read04/15/16 left nothing). The binder therefore
   cannot reach `rekeyed=18 skipped=0` and C1 is an honest miss this attempt; the seven
   headings stay unbound and the monitor stays at 46/64.
+- **F2 — this round's own `## Standing rules` table states the wrong code for row 1,
+  verified by the L1 against the C0 gate** (four invocations on the same receipt bytes,
+  `rev=077d431e6996` certified `c21081008adb`):
+  `role=verdict paths=1 -> RECEIPT_REV_CONTENT_DRIFT`,
+  `role=verdict paths=0 -> RECEIPT_REV_MISMATCH`,
+  `role=positive paths=1 -> RECEIPT_REV_CONTENT_DRIFT`,
+  `role=positive paths=0 -> RECEIPT_REV_MISMATCH`.
+  The gate selects the code by `--paths` and drift, never by role, so row 1's
+  `RECEIPT_REV_MISMATCH` cell is false in the case it most matters (a verdict receipt
+  gated on the declared surface); row 2's parenthetical is the only true statement of
+  the rule. The table also names four of eleven codes; it never names
+  `RECEIPT_CONTROL_NOT_ANCESTOR`, `RECEIPT_REV_AMBIGUOUS`, `RECEIPT_MISSING`,
+  `RECEIPT_EMPTY`, `RECEIPT_NOT_BLOB`, `RECEIPT_REQUIRED_LINE_MISSING` or
+  `RECEIPT_DIGEST_MISMATCH`. **Deferred to round 57 with the anchor repairs** — fixing
+  it now would break C0 byte-identity (R1) and invalidate the reader reports bound at
+  C0. Receipt: `.ufo/waves/round-56/w2/T56W2RevSkillScope.md` §6a (which withdraws that
+  report's earlier "no false statement" claim) and `T56W2Read07.json` finding F2.
+- **Scope of the round-57 `## Standing rules` repair list — three items, one of them
+  this round's.** Read07's F2 (the role->code mapping above) is the only finding about
+  round-56 text; its F1 (the scratch-namespace "dash form survives only in run
+  artifacts" clause) and F3 (the `<tool>: could-not-evaluate:` byte shape, where three
+  of nine modes print `WITNESS_STUDY:`/`ENVDIFF_SETUP:`) are pre-existing round-55-era
+  text. Repairs are scheduled together because one re-read covers all three.
