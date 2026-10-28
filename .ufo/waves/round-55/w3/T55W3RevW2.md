@@ -1,7 +1,7 @@
 # T55W3RevW2 — wave-2 integrity: 34 seats, dead attempts, and the three `## Standing rules` readers
 
 Role: reviewer (wave 3). Axes: calibration. Milestone: wave-2 integrity.
-Snapshot instant for every count below: **2026-10-28T14:49:02** (the directory was still growing; see §1.1).
+Snapshot instant for every count below: **2026-10-28T14:50:58** (the directory was still growing; see §1).
 Nothing in the lane, in `.ufo/evidence/round-55/*` or in the wave specs was modified. All receipts are in
 `.ufo/waves/round-55/w2/T55W3RevW2-receipts/`.
 
@@ -9,8 +9,8 @@ Nothing in the lane, in `.ufo/evidence/round-55/*` or in the wave specs was modi
 
 ## 0. Verdict in one paragraph
 
-All 34 wave-2 seats were dispatched (`w2.ready.dispatched`, 34 entries); **26 reports had landed at the
-snapshot and 8 had not**, and every one of the 8 belonged to a *live* agent at 14:48 — **no wave-2 seat is
+All 34 wave-2 seats were dispatched (`w2.ready.dispatched`, 34 entries); **27 reports had landed at the
+snapshot and 7 had not**, and every one of the 8 belonged to a *live* agent at 14:48 — **no wave-2 seat is
 dead at the snapshot**, though **11 of 34 seats (32%) lost at least one attempt and ≥20 attempts died
 overall**. The three reader reports are **valid**: each carries `heading = "## Standing rules"`,
 `cand = 9cf0146b…`, and `section_sha256 = acfb671a…`, which I re-derived independently with the frozen
@@ -33,14 +33,15 @@ Command and output: `T55W3RevW2-receipts/08-seat-census.txt`, `12-dead-attempts.
 | 14:41 | 18 / 34 |
 | 14:43:00 | 21 / 34 |
 | 14:47:15 | 25 / 34 |
-| **14:49:02** | **26 / 34** |
+| 14:49:02 | 26 / 34 |
+| **14:50:58** | **27 / 34** |
 
 Growth is real, not noise: `T55W2SentConfig2.md`, `T55W2RevNoteNine.md`, `T55W2SimplDiff.md`,
 `T55W2RevRound54Wording.md`, `T55W2SentStrayWrites.md`, `T55W2CritDoNothing.md`, `T55W2RevNoHarm.md` and
 finally `T55W2RevBaseReceipts.md` landed between 14:41 and 14:52. **Any "N/34" figure must carry its
 timestamp**; the wave is not over.
 
-### 1.1 The eight seats that had not landed at 14:49, and their evidence of life
+### 1.1 The seven seats that had not landed at 14:50, and their evidence of life
 
 `T55W3RevW2-receipts/08-seat-census.txt`; liveness from `proc://` read at 14:48.
 
@@ -55,10 +56,10 @@ timestamp**; the wave is not over.
 | T55W2CritC2Scope | yes | `T55W2CritC2Scope` | 14m37s |
 | T55W2ExecFloorRekeyProbe | no | `T55W2ExecFloorRekeyProbe-3` | 11m11s |
 
-Four of the eight are past 20 minutes with no report; that is a *risk*, not a death. The 26 landed reports
-are all substantive: smallest 3,306 B, every one has a `<seat>-receipts/` directory (receipt 08 plus the
-size sweep in this section), 25 of 26 carry fenced command blocks (`T55W2Connector3.md` carries its commands
-inline and cites its receipts dir).
+Five of the seven are past 20 minutes with no report; that is a *risk*, not a death. The 27 landed reports
+are all substantive: smallest 10,849 B (`T55W2MutReceipts.md`), every one has a `<seat>-receipts/` directory,
+and 26 of 27 carry fenced command blocks (`T55W2Connector3.md` carries its commands inline and cites its
+receipts dir).
 
 ## 2. Which seats died
 
@@ -203,9 +204,9 @@ candidates for one heading, the L1 cannot steer which is bound once the quota is
 (Read03, 7 findings) and the designated wave-3 reader are both unreachable behind `Read01`. One heading, so
 the blast radius is small, but it is the only heading where the question can even arise.
 
-**F3 — medium (record shape).** `w2/` mixes the two waves: at 14:49 it holds 35 `.md` files and 14 reader
-`.json` files, of which 10 and 10 belong to **wave 3** (`T55W3R01/02/03/04/05/07/08/10/12/17`). Counting
-`w2/*.json` as wave-2 reader output overstates wave 2 by 2.5× (4 real wave-2 JSONs: Read01-03, SentScope2).
+**F3 — medium (record shape).** `w2/` mixes the two waves: at 14:50:58 it holds 38 `.md` files and 15 reader
+`.json` files, of which **11 and 11 belong to wave 3** (`R01/02/03/04/05/07/08/10/12/14/17`). Counting
+`w2/*.json` as wave-2 reader output overstates wave 2 by ~2.75× (4 real wave-2 JSONs: Read01-03, SentScope2).
 Cause below (F4); consequence: any wave-2 deliverable count taken by glob is wrong.
 
 **F4 — low/medium (spec defect, wave 3).** Spec `w3`'s "Reader discipline" block was copied verbatim from
@@ -222,7 +223,7 @@ qualifies for any heading.
 
 **Not findings (checked, clean):**
 - Report-trailer compliance: the wave-2 context only fixes the *resolution* of a `Report:` path; it does not
-  mandate the trailer for wave-2 seats, and 22/26 reports have none by design. No defect.
+  mandate the trailer for wave-2 seats, and 23/27 reports have none by design. No defect.
 - `T55W2Connector3.md` has zero fenced blocks but its commands are inline and its receipts dir is populated.
   Not a finding on the evidence I checked; a stricter reading of "runnable receipt (command + output +
   verdict)" could call it thin, and I am not making that call from a title scan.
@@ -231,12 +232,13 @@ qualifies for any heading.
 
 ## 6. Residual risk and verification gaps
 
-- **Counts move.** 18 → 26 reports in eight minutes. My 26/34 is a 14:49:02 reading; the L1 must re-read at
+- **Counts move.** 18 → 27 reports in ten minutes. My 27/34 is a 14:50:58 reading; the L1 must re-read at
   bind time and must not quote this number as final.
 - **"≥20 dead attempts" is a floor.** The dispatch map keeps only the surviving agent id per seat; deaths
   re-spawned under an unsuffixed name are invisible here.
-- **Two long-running seats are the acute risk**: `T55W2MutC2` (27m, no receipts at all) and
-  `T55W2RevGateResidual` (23m). If either dies, its seat has no fallback evidence.
+- **The acute risks are the two oldest seats**: `T55W2MutC2` (27m, no receipts directory at all) and
+  `T55W2CritNinthMode` (28m). `T55W2RevGateResidual` (23m) and `T55W2CritC2Scope` (14m) at least have
+  partial receipts; if any of the four dies, its seat has no complete fallback evidence.
 - **I did not re-verify the readers' `why` claims beyond the three I reproduced** (apostrophe edge, nine/five
   mode sweep, tool-token prefixes). The registry-cell claim (Read02 finding 2) I confirmed only at C0 by
   reading the seven cells — they do quote `<tool>.py:` — and `resolutions.json` `W2-TOOLDIFF-F3` says the
@@ -259,7 +261,7 @@ qualifies for any heading.
 | `05-nine-allocating-five-lazy.txt` | 9/9 allocating rc=2 + grammar, 5/5 lazy rc=0, per-mode prefix table |
 | `06-envdiff-contract-grammar.txt` | `env-diff --contract` with the counter's own fixture: rc=2, grammar True |
 | `07-counter-header-vs-arms.txt` | frozen counter header says 8 allocating; `modes()` returns 9 |
-| `08-seat-census.txt` | 34 dispatched / 26 landed / 8 absent, with receipts-dir state and the wave-3 strays |
+| `08-seat-census.txt` | 34 dispatched / 25 landed / 9 absent at 14:47, with receipts-dir state and the wave-3 strays (later readings in §1) |
 | `09-census.txt` | `sources-census.sh validate` → exit 0, `tameshi ok …/corpus/SOURCES.md` |
 | `10-reader-validation.txt` | canonical sha, per-reader heading/cand/sha/findings/quote grounding, R07 byte-identity |
 | `11-binder-selection.txt` | read-only replay: `RES={}`, `allowed=0`, `SELECTED None`, skip, exit 1 |
@@ -276,7 +278,8 @@ fixture run); `.ufo/evidence/round-18/measure.py` (`sectionize`, `entry_failure`
 `.ufo/evidence/round-55/c2/measure.py` bytes at `133b2ce6`; `.ufo/evidence/round-55/c1/lost-headings-at-c0.json`;
 `.ufo/evidence/round-55/integrate/{binder.py,resolutions.json}`; `.ufo/evidence/round-55/freeze.json` (shape
 only); `.ufo/waves/round-55/spec-w2.json`, `spec-w3.json`, `w2.ready`, `w2.ready.dispatched`, `w3.ready.partial`;
-`.ufo/waves/round-55/w2/*` (26 seat reports, 12 reader JSONs, all receipt dirs, `swarm-registry.json`);
+`.ufo/waves/round-55/w2/*` (27 seat reports, 15 reader JSONs including wave-3 writers, all receipt dirs,
+`swarm-registry.json`);
 `.ufo/waves/round-55/w3/{T55W3R*.json,T55W3R*.md,T55W3R07-receipts/*}`; `scripts/sources-census.sh` (executed).
 
 Tooling: nothing installed, upgraded, or downgraded — no package manager, no `uv`, no `npx`; the whole audit

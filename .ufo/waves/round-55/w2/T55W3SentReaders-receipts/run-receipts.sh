@@ -27,6 +27,7 @@ python3 "$R/quotes.py" | tee "$R/03-quote-presence.txt"
 
 echo
 echo "## 04 — binder against the lane's adjudication file (worktree and HEAD)"
+rm -rf "$S/clone"
 git clone -q --shared "$LANE" "$S/clone"
 git -C "$S/clone" checkout -q "$C0"
 test "$(git -C "$S/clone" rev-parse --show-toplevel)" = "$S/clone" || { echo "clone toplevel mismatch"; exit 1; }
@@ -66,7 +67,7 @@ cat "$S/b5.out" | tee "$R/05-binder-round54-schema.txt"
 echo
 echo "## 06 — worktree-only phrases (post-C0 F1/F2 repairs) in reader artifacts"
 grep -rn "the token this tool actually prints\|REPEAT_CONTROL: setup_error\|wave-2 F1\|wave-2 F2" \
-  "$LANE"/.ufo/waves/round-55/w2/T55W3R* "$LANE"/.ufo/waves/round-55/w3/T55W3R* \
+  "$LANE"/.ufo/waves/round-55/w2/T55W3R[0-9][0-9].* "$LANE"/.ufo/waves/round-55/w3/T55W3R[0-9][0-9].* \
   > "$S/g6.out" 2>&1
 echo "grep-exit=$? (1 = no match)"
 cat "$S/g6.out" | tee "$R/06-worktree-read-sweep.txt"

@@ -112,18 +112,29 @@ bookkeeping. Do not cite 21 for the current bytes.
 Receipt under test: `.ufo/evidence/round-55/control/controls-a.stdout`.
 While I worked it was **rewritten twice**: at 14:38 it held four CTL lines (516 bytes, snapshot
 `T55W2CritDoNothing-receipts/controls-a.snapshot-1438.txt`); at 14:40:00 a restarted phase-A run
-(`controls.sh a LANE 4f7a7040… 0a2010ac…`, pid started 14:39:56) truncated it to `CTL_0_c1`; by
-14:46 it had rewritten four lines (snapshot `controls-a.snapshot-1446.txt`, `CTL_SKIP_c2` still in
-flight). Every line I read — before and after the restart — matches my independent run in the same
-row; the rows below are therefore re-derived, not merely quoted.
+(`controls.sh a LANE 4f7a7040… 0a2010ac…`, pid started 14:39:56) truncated it to `CTL_0_c1`; it then
+rewrote all five lines and the tally (final state `controls-a.final.txt`):
 
-| control | pre-registered | receipt (observed 14:38 and 14:46) | my independent run | agree |
+```
+CTL CTL_0_c1 C1_R55: … total=10 C1_R55_PASS=false
+CTL CTL_0_c2 C2_R55: … grammar=6/9 … total=20 C2_R55_PASS=false
+CTL CTL_SKIP_c1 C1_R55: rev=2fd7f27ca799 … stale=4 classes_corrected=7/10 total=6 C1_R55_PASS=false
+CTL CTL_FAB_c1 C1_R55: rev=61aaf834c377 … stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+CTL CTL_SKIP_c2 C2_R55: rev=13bb9e5d92df … docs=7/7 note=8/9 skill=1/1 total=4 C2_R55_PASS=false
+CONTROLS_A: 5/5 as pre-registered
+```
+
+Every line matches my independent run in the same row (I predicted `total=4` for `CTL_SKIP_c2`
+from the arm values before the line existed, and it read `total=4`), so the rows below are
+re-derived, not merely quoted.
+
+| control | pre-registered | receipt (final) | my independent run | agree |
 |---|---|---|---|---|
-| CTL_0_c1 | false | `total=10 … C1_R55_PASS=false` | `total=10 premise=9/10 stale=4 corrected=0/10` (`f5-c1-base.explain`, `c1-donothing.explain`) | yes |
-| CTL_0_c2 | false | `grammar=6/9 … total=20 … C2_R55_PASS=false` | `grammar=6/9 … total=20` (`c2-donothing.explain`) | yes |
+| CTL_0_c1 | false | `total=10 … false` | `total=10 premise=9/10 stale=4 corrected=0/10` (`f5-c1-base.explain`, `c1-donothing.explain`) | yes |
+| CTL_0_c2 | false | `grammar=6/9 … total=20 … false` | `grammar=6/9 … total=20` (`c2-donothing.explain`) | yes |
 | CTL_SKIP_c1 | false | `stale=4 classes_corrected=7/10 total=6 … false` | `stale=4 classes_corrected=7/10 total=6 … false` (`skip1.explain`) | yes |
 | CTL_FAB_c1 | false | `stale=4 classes_corrected=0/10 total=10 … false` | `stale=4 classes_corrected=0/10 total=10 … false` (`fab1.explain`) | yes |
-| CTL_SKIP_c2 | false | (in flight when I closed; expected `total=4 false` from the arm values) | docs 7/7, note 8/9, skill 1/1, tools untouched → grammar stays 6/9 → total=4, false (§6) | yes |
+| CTL_SKIP_c2 | false | `docs=7/7 note=8/9 skill=1/1 total=4 … false` | predicted total=4 from docs 7/7, note 8/9, skill 1/1, grammar 6/9 (§6) | yes |
 
 My fixtures are rebuilt by `T55W2CritDoNothing-receipts/run-c1-controls.sh` (C1) and
 `T55W2CritDoNothing-receipts/doc-arms.sh` (C2 docs-only), each on a `git clone --shared` at base
@@ -151,7 +162,15 @@ Reading: the docs-only mutant satisfies `docs` (7/7) and `skill` (1/1) outright,
 `note` arm only because its pasted mode list is the **pre-amendment-6 list of eight** — the ninth
 allocating mode `registry-check --rev` is missing. With no `tools/*.py` touched, the nine grammar
 arms are exactly the base arms already measured (6/9). Total would be 3 (grammar) + 1 (note) = 4,
-`C2_R55_PASS=false`. The pre-registered verdict holds, twice over.
+`C2_R55_PASS=false`. Phase A's own receipt confirms it exactly:
+
+```
+CTL CTL_SKIP_c2 C2_R55: rev=13bb9e5d92df grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 \
+  tmp_mkdirs=0 docs=7/7 note=8/9 skill=1/1 total=4 C2_R55_PASS=false
+```
+
+— i.e. documentation alone reaches `docs` and `skill` completely, gets the note to 8/9, and is
+stopped by the three behavioural modes.
 
 Finding (minor, fixable, does not change the verdict): **`CTL_SKIP_c2` is over-determined.** It
 cannot show that the note arm refuses documentation-only work, because its own fixture leaves the

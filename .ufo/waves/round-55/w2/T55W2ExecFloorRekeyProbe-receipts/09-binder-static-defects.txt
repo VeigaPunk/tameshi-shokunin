@@ -1,0 +1,22 @@
+ATTACK: static read of the adapted binder + the measure's gate description, for provenance the bind silently loses.
+COMMANDS
+  sed -n '12,20p;47,54p;106,127p;182,186p' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/integrate/binder.py
+  grep -n "reports\|seats" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/measure.py
+OUTPUT (observations)
+1. binder.py:184 writes the seat label 'L1 TameshiR55a2 re-key (round 54)'. Every round-55 re-key entry therefore
+   carries a 'round 54' provenance string (the round-54 binder's own label survived the adaptation). Observed in the
+   committed probe entries: seats ['T55W2Read01', 'L1 TameshiR55a2 re-key (round 54)'].
+2. binder.py:15 (docstring) says readers are looked for in .ufo/waves/round-55/w1/*.json; binder.py:47 globs
+   WAVE_DIRS = ('.ufo/waves/round-55/w2', '.ufo/waves/round-55/w3'). The docstring is stale; the code is right for
+   this wave.
+3. binder.py:15-19 (docstring) says "a reader with findings is NOT re-keyed ... only an adjudicated, fixed-and-
+   re-read section is bound in a later pass"; with RES[heading] >= n the code binds a reader WITH findings and writes
+   verdict gap-minor / minor_gaps=n (receipt 06). Doc and behaviour disagree about what the adjudication means.
+4. The ledger entry records the reader as a PATH ('reports': [json, md]) with no digest, and the round-18/21 measure's
+   gates cover inputs, traces and section sha only - `grep -n "reports\|seats"` finds no gate that reads either. A
+   report edited after the bind (or after the deciding commit) does not drift the entry. The section sha is pinned;
+   the evidence prose is not.
+VERDICT: none of these blocks the bind; all four are provenance defects the L1 can fix in one line each (label:
+'L1 TameshiR55 re-key (round 55)'; docstring: w2/w3; either reword the docstring's findings rule or make RES=0 the
+only admission). Item 4 is a residual to record, not a repair: it is the same property the round-54 and round-53
+entries already carry.

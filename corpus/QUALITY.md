@@ -1605,8 +1605,8 @@ claimed the control passed. Round 55's `controls.sh` phase B re-scores every con
 the revision it certifies, and its `deciding-run.sh` gate refuses a control receipt that
 does not descend from the freeze.
 
-Erratum on criterion 105: 105's own falsifier quoted the same round-54 positive control
-as printing `rekeyed=7/7`. Its receipt prints `rekeyed=3/7` and `CTL_MISMATCH`; the
-7-of-7 reading belongs to a re-score at the deciding revision. 105 stands (an arm is
+Erratum on criterion 105: 105's own falsifier quoted the same round-54 control
+as printing 7 of 7. Its receipt prints 3 of 7 and `CTL_MISMATCH`; the 7-of-7
+reading belongs to a re-score at the deciding revision. 105 stands (an arm is
 proven on a tree where it must fire) and its example is corrected here rather than
 deleted.
