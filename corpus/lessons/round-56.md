@@ -119,3 +119,28 @@ Proposals 2–5 remain unmined (at most one per round).
 - Neither counter sees whether the pinned-input surface a re-key entry carries
   is the surface the section's bytes actually depend on; the drift map
   (`.ufo/waves/round-56/w1/drift-map.json`) is the wave-1 recon, not a gate.
+
+## Round-57 deferrals (named here because they cannot be repaired this round)
+
+- **F1 — the round's +13-line insertion moved 125 of SKILL.md's 155 page-local `:NNN`
+  anchors by +13** (109 were already stale by +4 from round 55). Twenty-nine of the
+  shifted anchors sit inside the eighteen headings being re-read, and two readers
+  reported it as a true finding (`T56W2Read17` 4 findings in `### The service's limits`,
+  `T56W2Read06` 1 finding in `## Repeated controls and gate registry — round 12`, whose
+  `corpus/SOURCES.md:503` cite is 2 off because this round added S281/S282 at lines
+  156-157). **Adjudicated gap-minor, not repaired**: a text fix would cost eighteen
+  re-reads, so the repairs are round 57's first item. Receipts:
+  `.ufo/waves/round-56/w2/T56W2RevSkillScope.md` §3a,
+  `.ufo/evidence/round-56/integrate/resolutions.json`.
+- **R1 — SKILL.md byte-identity between C0 and the deciding revision is unenforced.**
+  `SKILL.md` is not in `contract.json` `frozen_paths`, is in the binder's DROP list (so
+  bind step 3c cannot see it) and is in round-18's `IGNORED_INPUTS`. Measured with the
+  frozen binder: one post-C0 line takes the monitor 47/64 -> 46/64 and makes arm 4
+  refuse the reader report. `validate-readers.py` already computes this as
+  `READER_HASH_XREV_DRIFT`; the deciding path must run it at the candidate revision
+  before the bind. Not closed this round — recorded so round 57 instruments it.
+- **Blocker, not a deferral: seven of eighteen reader reports do not exist at C0.**
+  `T56W2Read02`, `Read03`, `Read04`, `Read13`, `Read14`, `Read15`, `Read16` left
+  receipts directories but no `.json` (Read04/15/16 left nothing). The binder therefore
+  cannot reach `rekeyed=18 skipped=0` and C1 is an honest miss this attempt; the seven
+  headings stay unbound and the monitor stays at 46/64.
