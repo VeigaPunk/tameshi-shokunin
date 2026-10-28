@@ -1610,3 +1610,65 @@ as printing 7 of 7. Its receipt prints 3 of 7 and `CTL_MISMATCH`; the 7-of-7
 reading belongs to a re-score at the deciding revision. 105 stands (an arm is
 proven on a tree where it must fire) and its example is corrected here rather than
 deleted.
+
+## Criteria appended — round 56 (2026-10-28)
+
+### Criterion 107 — a certified receipt names the revision it was measured against, and the gate refuses the ones that do not
+
+Every receipt a round certifies — a control, a positive control or a verdict — states in its
+own bytes the revision it was measured against (`rev=<sha>` or `"rev": "<sha>"`), and the lane's
+certification path runs `tools/receipt-revision-gate.py` over it. A receipt whose named revision
+is content-identical to the certified revision on the surface the round declares with `--paths`
+is accepted even when the two shas differ (the surface did not move); a receipt whose named
+revision differs on that surface is refused `RECEIPT_REV_CONTENT_DRIFT`, one whose `rev=` does
+not resolve in the lane is refused `RECEIPT_REV_UNRESOLVABLE`, one that names no revision at all
+is refused `RECEIPT_REV_ABSENT`, and a receipt path that does not exist is refused
+`RECEIPT_MISSING`. The rule is not satisfied by a record that cites a receipt in prose: the
+receipt is refused or accepted on its own bytes, and a round that lands this rule also lands the
+refusal of a receipt the lane already accepted. Distinct from criterion 86, which governs *when*
+the content revision C is designated and what may lie between C and the landing tip; this
+criterion governs the receipt's own binding, is enforced by a named tool with closed codes, and
+is exercised on receipts accepted before the gate existed.
+
+Check that can fail: over the real round-54 positive control
+`.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout` — its only `rev=` is
+`077d431e6996`, the round-54 freeze, while round 54 certified `c2108100` — run from any cwd:
+
+```
+L=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+python3 "$L/tools/receipt-revision-gate.py" \
+  --lane "$L" --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c \
+  --paths "$L/.ufo/evidence/round-56/c2/red-before/round-54-surface.paths" \
+  --receipt "$L/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout:positive"
+echo "exit=$?"
+```
+
+It must print `code=RECEIPT_REV_CONTENT_DRIFT` on the `GATE REFUSED` line and
+`codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED` on the summary line, and exit 3. The same
+receipt with `--certified 077d431e69965fa4673cd006ab64f6fc387f9e15` — its own revision — must
+print `verdict=PASS` and exit 0, so the refusal is a content comparison and not a constant. A
+gate that passes this receipt, or that refuses it with a code other than the drift code, is the
+failing instrument.
+
+Lesson: `corpus/lessons/round-56.md` `## Gate` (the R55.5 disposition — round 55's deciding gate
+could not compare the revision it certifies, and the round-54 control set the old path accepted
+names `077d431e6996` on `CTL_POS_c1` and `7df0e0426c98` on `CTL_EXIT0` while the round measured
+`c2108100`).
+
+Motivation and scope: `considerthese/2026-10-28.md` (dated 2026-10-28) proposal 1,
+"Receipt-existence linter for records". This criterion is that proposal's revision half, not its
+quote half. Existence is checked — the receipt file (`RECEIPT_MISSING`) and the revision it
+names (`RECEIPT_REV_UNRESOLVABLE`), with criterion 97 covering a cited evidence path at the
+landing tip — and the receipt's own `rev=` is compared against the certified revision on the
+declared surface. What this criterion does NOT cover is byte-for-byte matching of a quoted
+counter line against committed stdout: a receipt naming the certified revision whose printed
+numbers are fabricated still passes the gate
+(`.ufo/waves/round-56/w1/T56W1ScribeQuality-receipts/107-scope-gap-fabricated-line.txt`, exit 0
+on `rev=077d431e6996 credited=99 lost=0`). That half of the proposal stays unmined.
+
+Falsifier that must fail: the command above at the round-56 freeze `c3e2ca9f`, where the gate
+and the frozen receipt exist and the rule is stated nowhere a reader meets it —
+`corpus/QUALITY.md` names neither `tools/receipt-revision-gate.py` nor any `RECEIPT_*` code (the
+round-56 C2 counter's `docs=0/4` arm) — while round 54's deciding run accepted the set this
+command refuses
+(`.ufo/evidence/round-54/after/deciding-run.exit` reads `DECIDING_RUN_EXIT=0`).

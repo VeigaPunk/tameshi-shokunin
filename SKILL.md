@@ -42,6 +42,19 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a 
   corpus/knowledge/scratch-root-contract.md; the seven registry `scratch_root`
   cells).
 
+- **A receipt is evidence only for the revision it names.** A verdict or a
+  positive-control receipt is bound to the revision it certifies by
+  `tools/receipt-revision-gate.py --lane LANE --certified REV`: a receipt that
+  names another revision is refused with a named code, never re-read as if it
+  had been measured at the certified one (round-56 C2; ER-R54-1, R55.5).
+
+  | situation | rule | code |
+  |---|---|---|
+  | a verdict receipt names another revision | refused unless its bytes equal the certified revision on the declared `--paths` surface | `RECEIPT_REV_MISMATCH` |
+  | a positive control was scored at the freeze | refused: the freeze predates the work it certifies and drifts on the frozen surface | `RECEIPT_REV_CONTENT_DRIFT` (no `--paths`: `RECEIPT_REV_MISMATCH`) |
+  | a control set's CTL lines name a revision absent from the repo | refused: the revision cannot be resolved, so nothing is certified | `RECEIPT_REV_UNRESOLVABLE` |
+  | a receipt names no revision at all | refused: nothing is bound | `RECEIPT_REV_ABSENT` |
+
 ## Source notes
 
 The sections below distil the corpus notes; every rule cites its note line.
