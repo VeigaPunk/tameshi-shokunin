@@ -1,0 +1,72 @@
+{
+ "seat": "T55W1MutC2",
+ "item": "mutation-test the frozen C2 operability counter (.ufo/evidence/round-55/c2/measure.py)",
+ "counter_under_test": {
+  "path": ".ufo/evidence/round-55/c2/measure.py",
+  "sha256": "0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b",
+  "rev": "133b2ce6d4d86d783db38607343c3654350194b8",
+  "why_this_rev": "the lane re-froze the counter twice while this item ran (e2979f2 amendments 1-7, 133b2ce amendment 8, which also added the ninth allocating mode and changed three denominators). The item was re-based on the byte set the deciding run will read; the earlier byte set (d6ca1d85) was abandoned mid-item and is not scored here."
+ },
+ "trees": {
+  "base": {"rev": "0a2010acd1e92e4e332774050825e21bcfc7e079", "pristine": "C2_R55: rev=0a2010acd1e9 grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/9 skill=0/1 total=20 C2_R55_PASS=false"},
+  "fixed": {"rev": "133b2ce6d4d86d783db38607343c3654350194b8", "pristine": "C2_R55: rev=133b2ce6d4d8 grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=0 C2_R55_PASS=true"},
+  "break2": {"rev": "4ce8ec98ee9637f50bcb870e2d647bd5121899b3", "kind": "scratch clone of the fixed pole + six deliberate arm violations", "pristine": "C2_R55: rev=4ce8ec98ee96 grammar=4/9 lazy=4/5 empty=12/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=7 C2_R55_PASS=false"},
+  "break3": {"rev": "bfa16792aad2b781567d03f779b7ec89fb0fec44", "kind": "scratch clone of the fixed pole + one deliberate mkdir under /tmp in an allocating mode's usable path", "pristine": "C2_R55: rev=bfa16792aad2 grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=1 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false"}
+ },
+ "protocol": "each mutant is one edited line in a copy of the counter bytes; the same counter CLI (--lane/--rev/--work/--explain) is the detector; the pristine arm of the same tree is its own baseline; a mutant is KILLED when its verdict line differs from the pristine arm of the tree it was scored on",
+ "mutants": [
+  {"id": "m1", "file_line": "measure.py:200", "edit": "grammar arm: `rc == 2` -> `rc in (1, 2)`", "arm": "grammar / exit class", "expected_detector": "an allocating mode that exits 1 with a conforming stderr line must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break2": {"total": 5, "pass": false, "verdict": "KILLED"}, "verdict": "KILLED", "killed_by": "break2"},
+  {"id": "m2", "file_line": "measure.py:201", "edit": "grammar arm: drop `and \"RuntimeError\" not in err + out`", "arm": "grammar / raw-type residue", "expected_detector": "a conforming line plus a second line carrying the raw exception type must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break2": {"total": 6, "pass": false, "verdict": "KILLED"}, "verdict": "KILLED", "killed_by": "break2 (pin-disposition residue line)"},
+  {"id": "m3", "file_line": "measure.py:200", "edit": "grammar arm: `err.splitlines()` -> `(out + err).splitlines()` (accept the line on either stream)", "arm": "grammar / stream separation", "expected_detector": "the frozen line on stdout, stderr empty, must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break2": {"total": 6, "pass": false, "verdict": "KILLED"}, "verdict": "KILLED", "killed_by": "break2 (repeat-control line moved to stdout)"},
+  {"id": "m4", "file_line": "measure.py:248", "edit": "`docs = sum(1 for row in cells if MARKER in row[\"scratch_root\"])` -> `docs = 7`", "arm": "docs (seven registry scratch_root cells)", "expected_detector": "cells without the marker must read 0/7",
+   "base": {"total": 13, "pass": false, "verdict": "KILLED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "verdict": "KILLED", "killed_by": "base (docs 7/7 against a pristine 0/7)"},
+  {"id": "m5", "file_line": "measure.py:209", "edit": "lazy arm: `ok = rc == exp` -> `ok = True`", "arm": "lazy (five non-allocating modes)", "expected_detector": "a non-allocating mode that inspects TMPDIR at parse time must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break2": {"total": 6, "pass": false, "verdict": "KILLED"}, "verdict": "KILLED", "killed_by": "break2 (bash-witness-study count, rc 1 under an unusable TMPDIR)"},
+  {"id": "m6", "file_line": "measure.py:233", "edit": "empty arm: `ok = rc == exp` -> `ok = True if arm == \"empty\" else rc == exp`", "arm": "empty (TMPDIR=\"\")", "expected_detector": "a mode that fails on TMPDIR=\"\" must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break2": {"total": 6, "pass": false, "verdict": "KILLED"}, "verdict": "KILLED", "killed_by": "break2 (context-capture --check, rc 1 on an empty TMPDIR)"},
+  {"id": "m7", "file_line": "measure.py:260", "edit": "`skill = 1 if MARKER in norm(...) else 0` -> `skill = 1`", "arm": "skill (SKILL.md states the grammar)", "expected_detector": "a SKILL.md without the marker must read 0/1",
+   "base": {"total": 19, "pass": false, "verdict": "KILLED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "verdict": "KILLED", "killed_by": "base (skill 1/1 against a pristine 0/1)"},
+  {"id": "m8", "file_line": "measure.py:258", "edit": "note arm: `m[0] in note_txt` -> `m[0].split()[0] in note_txt` (tool name instead of the mode as invoked)", "arm": "note (names all nine allocating modes)", "expected_detector": "a note that names the seven tools but not the modes must read 0/9",
+   "base": {"total": 19, "pass": false, "verdict": "KILLED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "verdict": "KILLED", "killed_by": "base (note 1/9 - only context-capture matched by tool name)"},
+  {"id": "m9", "file_line": "measure.py:200", "edit": "grammar arm: `GRAMMAR.match(l)` -> `MARKER in l` (marker substring instead of the frozen line)", "arm": "grammar / line shape", "expected_detector": "a marker line missing the tool prefix or the `(could-not-evaluate)` suffix must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break2": {"total": 6, "pass": false, "verdict": "KILLED"}, "verdict": "KILLED", "killed_by": "break2 (context-capture line with the class suffix dropped)"},
+  {"id": "m10", "file_line": "measure.py:270", "edit": "`tmp_total = sum(...)` -> `tmp_total = 0` (the /tmp mkdir census is never counted)", "arm": "usable / tmp_mkdirs census", "expected_detector": "an allocating mode that mkdirs under /tmp on a usable TMPDIR must FAIL",
+   "base": {"total": 20, "pass": false, "verdict": "SURVIVED"}, "fixed": {"total": 0, "pass": true, "verdict": "SURVIVED"}, "break3": {"total": 0, "pass": false, "verdict": "KILLED by total (1 -> 0); PASS already false because `bad` still carries `tmp_mkdirs:...`, so the boolean verdict alone would not distinguish it"}, "verdict": "KILLED", "killed_by": "break3"}
+ ],
+ "counts": {
+  "mutants": 10,
+  "killed": 10,
+  "survived": 0,
+  "killed_by_base": 3,
+  "killed_by_fixed": 0,
+  "killed_only_by_a_violated_tree": 7,
+  "base_only_mutation_score": "3/10",
+  "fixed_tree_mutation_score": "0/10",
+  "whole_tree_set_mutation_score": "10/10"
+ },
+ "findings": [
+  {"id": "F1", "severity": "operability", "class": "counter blind spot vs the round's own deliverable",
+   "claim": "At the fixed pole the counter reports grammar 9/9, but `repeat-control --selftest` prints `REPEAT_CONTROL: setup_error` on stdout under an unusable TMPDIR. The round's integration item 1 says 'stdout carries no setup error'; the counter cannot see it because its stdout leg is two literal tokens (`RuntimeError`, `Traceback`), not 'no setup-error token'.",
+   "command": "TMPDIR=<nonexistent> python3 tools/repeat-control.py --selftest  (clone at 133b2ce)",
+   "output": "rc=2; stdout: REPEAT_CONTROL: setup_error; stderr: repeat-control: could-not-evaluate: ...",
+   "receipt": "receipts/fixed-pole-repeat-control-streams.txt"},
+  {"id": "F2", "severity": "record", "class": "frozen before-receipt disagrees with a re-run of the frozen counter",
+   "claim": "`.ufo/evidence/round-55/before/c2.stdout` as committed at 133b2ce prints `total=21` with the arm vector `grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/9 skill=0/1`. The counter's own arithmetic on that vector is 3+7+9+1=20, and an independent re-run at the same rev prints `total=20`. All 42 EXPLAIN lines are byte-identical between the two files; only the total differs. Reported, not fixed (frozen).",
+   "receipt": "receipts/before-receipt-vs-rerun.diff"},
+  {"id": "F3", "severity": "robustness", "class": "the usable arm can flake under host load",
+   "claim": "In a 10-way concurrent batch on the pre-amendment-8 bytes (usable-arm code unchanged), `registry-check --selftest` returned rc 1 on the usable arm in 3 of 9 fixed-tree cells, turning a PASS into `total=1 C2_R55_PASS=false`; a serial re-run of the same three cells gave total=0, and the mode standalone passed 5/5. A deciding run executed while other agents run counters can therefore report a false FAIL.",
+   "receipt": "receipts/registry-check-flake-probe.txt, receipts/verdicts/m7-fixed.meta vs m7-fixed2.meta"},
+  {"id": "F4", "severity": "scoring", "class": "base conflates three grammar failure modes",
+   "claim": "At base both failing modes print the class on stdout and carry `RuntimeError`, so the grammar arm fails them for the stream, the shape and the token at once. Mutants that relax any single leg (m2, m3, m9) still fail base, so base cannot tell the counter's legs apart; only a tree that violates one leg at a time can.",
+   "receipt": "receipts/verdicts/m2-base2.stdout, m3-base2.stdout, m9-base2.stdout (all identical to P-base2)"},
+  {"id": "F5", "severity": "round-blocking", "class": "the pre-registered CTL_BREAK_c2 cannot apply to this round's tree",
+   "claim": "controls.sh:134 rewrites `emit_err(f\"repeat-control: could-not-evaluate: {exc}\")`, which occurs 0 times at the base rev, at 133b2ce and in the worktree; the landed tool emits `emit_err(f\"repeat-control: could-not-evaluate: {message}\")` (tools/repeat-control.py:233). Reproduced in a scratch clone at 133b2ce: the `assert src.count(old) == 1` aborts, the clone stays clean, `gitcommit` exits 1 (no --allow-empty), and `|| exit 2` (controls.sh:136) ends phase b before the control is scored - so controls-b.stdout cannot carry `CONTROLS_B: n/n as pre-registered` and deciding-run.sh:56-57 refuses the deciding run. Secondary: even if the anchor matched, that control trips the line-shape and raw-type legs together and exercises neither the exit class (m1) nor the stderr-only leg (m3); no pre-registered control violates the lazy arm (m5), the empty arm (m6) or the /tmp census (m10).",
+   "receipt": "receipts/ctl-break-anchor-demo.txt"},
+  {"id": "F6", "severity": "scoring", "class": "the docs arm counts cells, it does not identify them",
+   "claim": "`docs` is `sum(...)` over the rows that carry a `scratch_root` cell AND mention one of the seven tool paths, guarded only by `len(cells) != 7` (measure.py:245-249). A tree whose seven cells belong to the wrong modes (or to a ninth allocating mode) still scores 7/7 as long as the marker text is present. Not scored as a mutant (no tree was built for it); recorded as the arm's known limit.",
+   "receipt": "measure.py:245-249"}
+ ]
+}

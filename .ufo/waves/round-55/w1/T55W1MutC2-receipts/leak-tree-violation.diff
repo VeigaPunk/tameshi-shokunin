@@ -1,0 +1,14 @@
+diff --git a/tools/repeat-control.py b/tools/repeat-control.py
+index e9eb1b9..1ad78bd 100755
+--- a/tools/repeat-control.py
++++ b/tools/repeat-control.py
+@@ -627,6 +627,9 @@ def selftest():
+         emit(f"SELFTEST: COULD_NOT_EVALUATE (committed fixture root missing or not a directory: {root})")
+         return 2
+     scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
++    # break3: one deliberate allocation under /tmp (the round-53 regression shape),
++    # so the usable arm's strace census must see it.
++    os.makedirs("/tmp/t55w1mutc2-leak", exist_ok=True)
+     passed = 0
+     failed = []
+ 

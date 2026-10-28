@@ -1,0 +1,19 @@
+# run B (ten-leg --regression at C0, fleet layout): FAIL on leg 3, B9 flipped
+$ bash tools/mutate-and-run.sh --regression --workdir <scratch>/regr2   (tool sha 977de470…, sibling repos cloned --shared from the real lanes; every REGRESSION_PIN verified before its sweep)
+REGRESSION_DEFECT bash-tsukuroi-census B9: measured=KILLED recorded=SURVIVED
+REGRESSION_TABLE bash-tsukuroi-census: match=9/10 recorded-killed=6 measured-killed=7 survived=3 inconclusive=0 flips=1
+REGRESSION_CASE bash-tsukuroi-census: FAIL (out of band: killed-delta=1 flips=1; log: /fast/scratch/hyaku/tameshi-r55/T55W3R09/regr2/bash-tsukuroi-census/sweep.log)
+REGRESSION: FAIL (cases=10 passed=9 failed=1 setup=0)
+
+## the sweep record for B9 (regr2/bash-tsukuroi-census/results.tsv and evidence/B9.out)
+B9	KILLED	1	8521	d5a1ff2211426748b564a0105f46064d9b328703b2b20174f1fed03ce7546650	tsukuroi-census.sh:967
+18:FAIL healthy: journal/boot plane in the rollup: hostname override not honoured — possible host read
+27:TSUKUROI_CENSUS_SELFTEST: FAIL (26 cases, 25 passed, 1 failed)
+
+## direct re-execution of the very same mutant file: 26/26 PASS (the pinned bytes do not flip)
+$ bash mutant-B9.target.tsukuroi-census.sh --selftest
+TSUKUROI_CENSUS_SELFTEST: PASS (26 cases, 26 passed, 0 failed)
+$ bash pristine.target.tsukuroi-census.sh --selftest
+TSUKUROI_CENSUS_SELFTEST: PASS (26 cases, 26 passed, 0 failed)
+$ MUTANT/TARGET/PRISTINE/WORKDIR/DEFECT_ID=B9 exported + bash -c 'bash "$MUTANT" --selftest'
+TSUKUROI_CENSUS_SELFTEST: PASS (26 cases, 26 passed, 0 failed)

@@ -1,0 +1,88 @@
+diff --git a/tools/bash-witness-study.py b/tools/bash-witness-study.py
+index 84257ef..26d2e54 100755
+--- a/tools/bash-witness-study.py
++++ b/tools/bash-witness-study.py
+@@ -1068,6 +1068,11 @@ def cmd_rerun(args) -> int:
+ 
+ 
+ def cmd_count(args) -> int:
++    # break2: the scratch root is inspected at parse time, so a documented
++    # non-allocating mode stops being lazy under an unusable TMPDIR.
++    _tmpdir = os.environ.get("TMPDIR")
++    if _tmpdir and not os.path.isdir(_tmpdir):
++        return 1
+     evidence = Path(args.evidence)
+     declaration = load_declaration(evidence)
+     declared_sha = verify_declared_digest(evidence, declaration)
+diff --git a/tools/context-capture.py b/tools/context-capture.py
+index ad1b2f3..fded109 100755
+--- a/tools/context-capture.py
++++ b/tools/context-capture.py
+@@ -1357,6 +1357,9 @@ def result_from_exception(exc, mode, receipt_path, receipt_sha, expected,
+ 
+ 
+ def run_check(options):
++    # break2: an empty TMPDIR is treated as a path, so the empty arm fails.
++    if os.environ.get("TMPDIR") == "":
++        sys.exit(1)
+     frozen = options["receipt"] is None
+     if frozen:
+         receipt_path = FROZEN_RECEIPT_REL
+@@ -2217,7 +2220,8 @@ def run_selftest():
+     except ScratchRootUnusable as exc:
+         # One stderr line with the frozen grammar: the class is operator-visible,
+         # the exception type never is, and stdout keeps no setup error (round 55).
+-        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
++        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(
++            str(exc).replace(" (could-not-evaluate)", "")))  # break2: suffix dropped
+         return 2
+     except Exception as exc:  # setup failure is loud but never a traceback
+         sys.stdout.write(
+diff --git a/tools/env-diff.py b/tools/env-diff.py
+index 39f2e42..37a0c8a 100644
+--- a/tools/env-diff.py
++++ b/tools/env-diff.py
+@@ -233,7 +233,7 @@ def main(argv=None):
+             return selftest()
+         except ScratchRootUnusable as exc:
+             print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+-            return 2
++            return 1  # break2: the class exits 1
+     if not a.contract or not a.out or not 1 <= a.jobs <= 3:
+         p.error("--contract and --out are required; --jobs must be 1..3")
+     try:
+@@ -262,7 +262,7 @@ def main(argv=None):
+         a.out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
+     except ScratchRootUnusable as exc:
+         print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+-        return 2
++        return 1  # break2: the class exits 1
+     except (OSError, ValueError, KeyError, TypeError) as exc:
+         print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+         return 2
+diff --git a/tools/pin-disposition.py b/tools/pin-disposition.py
+index 772af30..261edb4 100755
+--- a/tools/pin-disposition.py
++++ b/tools/pin-disposition.py
+@@ -1398,6 +1398,8 @@ def main(argv):
+             return selftest()
+         except ScratchRootUnusable as exc:
+             sys.stderr.write("pin-disposition.py: could-not-evaluate: {}\n".format(exc))
++            # break2: the raw exception type leaks on a second line.
++            sys.stderr.write("pin-disposition: setup: RuntimeError: {}\n".format(exc))
+             return 2
+     if "--selftest" in argv:
+         return invalid_input("invalid_usage", "--selftest takes no other arguments")
+diff --git a/tools/repeat-control.py b/tools/repeat-control.py
+index e9eb1b9..52d7960 100755
+--- a/tools/repeat-control.py
++++ b/tools/repeat-control.py
+@@ -230,7 +230,7 @@ def could_not_evaluate(message):
+ 
+     `message` is ScratchRootUnusable's text, which already carries the class token;
+     the exception type never reaches the operator line."""
+-    emit_err(f"repeat-control: could-not-evaluate: {message}")
++    emit(f"repeat-control: could-not-evaluate: {message}")  # break2: wrong stream
+     emit("REPEAT_CONTROL: setup_error")
+     return EXIT_BY_ID["setup_error"]
+ 

@@ -1,0 +1,31 @@
+{
+  "heading": "## The operator's runbook and the six-leg regression (round 10, measured)",
+  "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "section_sha256": "636e850f885cb39904d100f67446e1039aa48c6510c2a66ea6e6d5aaa089faf7",
+  "findings": [
+    {
+      "quote": "The round-7 section's \"Round 7 recorded four legs at r7-1\" (`:926-929`; dated milestones there since round 16)",
+      "why": "At C0 (9cf0146b) SKILL.md 926-929 is the round-3/6 defect text D5/D7/D8/D9, not that sentence; `grep -n 'Round 7 recorded four legs'` puts the quote at 940-942 (receipt 02-anchors-C0.txt). The range did contain the quote at 651773a (line 928) and has not been re-derived since 59c38109 added 8 lines above it (quote 936) and C0 added 4 more (quote 940). Severity: record/anchor drift; the claim's content (four legs at r7-1, dated milestones seven/eight/nine/ten) is true. Correct anchor at C0: `:940-942`."
+    },
+    {
+      "quote": "the round-9 receipt's `cases=4` (`:1226-1228`)",
+      "why": "At C0 lines 1226-1228 are the round-9 ER-4-addendum caveat ('a moving file is never re-interpreted...'); the receipt's `cases=4` closing is at 1239-1240 (receipt 02). At 651773a the same range held the round-9 'cases 5-6 still not embedded - named debt' sentence that round-53 C5's rewording replaced with 'cases=4', and at 59c38109 cases=4 moved to 1235, outside the range (receipt 03). The anchor now names a different sentence than the one cited. Correct anchor at C0: `:1239-1240` (receipt block `:1233-1241`)."
+    },
+    {
+      "quote": "**Reading a receipt** stays the round-7 discipline (`:965-1008`)",
+      "why": "At C0 the `### Reading a receipt - the discipline` heading is line 982 and the subsection runs 982-1026 (next heading 1027); the cited range starts 17 lines early, inside the preceding 'Contribution contract' bullet, and stops mid-item 4 (receipt 02). At CAND0 bcba8924 the heading was 965, so the left edge was then exact; page growth moved it to 978 at 59c38109 and 982 at C0 (receipt 03). Severity: minor anchor drift; the quoted discipline (read the block; PASS exact; FAIL names rows; SETUP is not a verdict) is present and accurate in 982-1026. Correct range at C0: `:982-1026`."
+    },
+    {
+      "quote": "rule this page applies to `service-limits.md` (`:1276-1277`)",
+      "why": "At C0 lines 1276-1277 are the 'a refusal without an anchor is not written ... (Anchors `:...` are this page ...)' parenthetical; the rendering/divergence sentence it names - 'this page is the compact rendering, and a divergence between the two is the finding, never smoothed' - is at 1280-1281 (receipt 02). At round-54 C1 (99c3bc8) those two lines were exactly 1276-1277 (receipt 03, second block), so the drift is caused by C0's own content edit: `git diff 99c3bc8 9cf0146b -- SKILL.md` is one hunk at line 34, +7/-3 (+4 net) in `## Standing rules`, shifting every later line by four. This is the round's own content commit breaking an anchor of a section the round must re-key. Correct anchor at C0: `:1280-1281`."
+    },
+    {
+      "quote": "One operator-facing document (`8b2e185f…` / 516 L / 33 515 B, committed at `59c38109`; the sha governs)",
+      "why": "The digest/size verify (516 L / 33 515 B / 8b2e185f... at C0, 58e5d53 and 59c38109), but the commit pointer is wrong as worded: `git log -1 --format=%H 59c38109 -- corpus/knowledge/operator-runbook.md` returns 58e5d53d6a638fb72042d1f6607b24018aa299a8 (round-18, 2026-10-20); `git show --stat 59c38109 -- corpus/knowledge/operator-runbook.md` is empty, and 59c38109 is the round-54 C0 content commit dated 2026-10-28 (receipt 04). The commit that writes these bytes is 58e5d53. Because 'the sha governs' there is no content risk, but the provenance clause reads false; correct to cite 58e5d53 (or say 'contained at 59c38109')."
+    },
+    {
+      "quote": "`--regression` → six legs at r10-2 (ten at CAND0), all exact: `match=10/10` (legs 1–4, 6), `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`",
+      "why": "The page's ten-leg numbers reproduce (run C: `REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)`, matches 10/10 on legs 1-4 and 6-10, 15/15 on leg 5, flips=0; receipt 08) - but not deterministically. Run B, the identical command against the same tool bytes (sha 977de470..., identical at C0 and CAND0) and the same pinned blobs, ended `REGRESSION: FAIL (cases=10 passed=9 failed=1 setup=0)` with `REGRESSION_DEFECT bash-tsukuroi-census B9: measured=KILLED recorded=SURVIVED` (match=9/10, flips=1); its evidence shows the gate's own selftest case 18 failing with 'hostname override not honoured - possible host read' (receipt 07). Re-executing the very same mutant file directly yields `TSUKUROI_CENSUS_SELFTEST: PASS (26 cases, 26 passed, 0 failed)`, so the pinned bytes are exonerated and the flake is in the unisolated suite: legs 1-6 run `bash \"$MUTANT\" --selftest` with the ambient environment while legs 7-10 run under `env -i ... LC_ALL=C` (tools/mutate-and-run.sh:1461-1507). Severity: note - the claim is a single measured run, not a deterministic property; the section could say 'as measured' or bring legs 1-6 under the same env -i discipline."
+    }
+  ]
+}

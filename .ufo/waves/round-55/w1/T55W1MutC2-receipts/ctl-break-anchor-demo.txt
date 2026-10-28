@@ -1,0 +1,17 @@
+$ git clone --shared lane ctlbreak-demo && git -C ctlbreak-demo checkout 133b2ce6d4d8
+$ python3 - <clone>   # CTL_BREAK_c2 body, copied verbatim from controls.sh:129-137
+occurrences of the anchor 'emit_err(f"repeat-control: could-not-evaluate: {exc}")': 0
+AssertionError: anchor not unique: 0   (python exit=1)
+
+# the clone is therefore unchanged; controls.sh's gitcommit helper (no --allow-empty) cannot commit:
+$ git -C ctlbreak-demo add -A && git -C ctlbreak-demo commit -m 'break control: ...'
+nothing to commit, working tree clean
+gitcommit exit=1   (measured: `git commit --quiet` on a clean clone)
+
+# controls.sh:136 -- gitcommit "$d" "break control: raw exception type on one line" || exit 2
+# -> exit 2, phase b stops before CTL_BREAK_c2 is scored, and no line matching
+#    '^CONTROLS_B: [0-9]*/[0-9]* as pre-registered' can exist for this rev.
+# deciding-run.sh:57 then refuses: DECIDING_REFUSED controls-a/b-verdict-missing.
+
+# what the landed tool emits instead (C0 9cf0146, unchanged at 133b2ce):
+  tools/repeat-control.py:233:    emit_err(f"repeat-control: could-not-evaluate: {message}")

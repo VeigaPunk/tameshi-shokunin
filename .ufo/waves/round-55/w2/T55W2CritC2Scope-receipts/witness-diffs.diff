@@ -1,0 +1,37 @@
+== witness1: diff of the witness commit ==
+diff --git a/tools/registry-check.py b/tools/registry-check.py
+index ea68679..93c1fd3 100755
+--- a/tools/registry-check.py
++++ b/tools/registry-check.py
+@@ -780,6 +780,17 @@ def clone_lane_at_rev(root, rev, sha):
+     root_real = os.path.realpath(root)
+     fleet_root = os.path.dirname(root_real)
+     env = git_env()
++    # WITNESS (T55W2CritC2Scope): real-lane --rev refuses when TMPDIR is unset.
++    # The selftest fixture lane carries one registry row, so this is invisible to
++    # `--selftest` under every TMPDIR arm; only a real-lane --rev reaches it.
++    if not os.environ.get("TMPDIR"):
++        try:
++            with open(os.path.join(root_real, "tools", "registry.json")) as fh:
++                nrows = len(json.load(fh).get("rows", []))
++        except Exception:
++            nrows = 0
++        if nrows > 1:
++            raise RuntimeError("clone scratch needs an explicit TMPDIR")
+     try:
+         work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+== witness2b: diff of the witness commit ==
+diff --git a/tools/registry-check.py b/tools/registry-check.py
+index 846af05..4ad305e 100755
+--- a/tools/registry-check.py
++++ b/tools/registry-check.py
+@@ -782,7 +782,7 @@ def clone_lane_at_rev(root, rev, sha):
+     env = git_env()
+     # WITNESS-2 (T55W2CritC2Scope): real-lane --rev is permanently dead and says the
+     # frozen class line; the selftest fixture lane (1 row) never reaches it.
+-    if os.path.basename(root_real) == "tameshi-shokunin":
++    if len(json.load(open(os.path.join(root_real, "tools", "registry.json"))).get("rows", [])) > 1:
+         raise ScratchRootUnusable(
+             "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % (os.environ.get("TMPDIR") or "<unset>"))
+     try:

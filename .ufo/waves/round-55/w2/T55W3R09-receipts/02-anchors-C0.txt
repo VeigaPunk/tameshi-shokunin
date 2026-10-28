@@ -1,0 +1,113 @@
+=== C0 SKILL.md 926,929
+926:   D5 failure-path exit 2→1 (unobservable on a green run; identical failure
+927:   block); D7 count tolerance `-ne`→`-lt` (undeclared 18th source: pristine
+928:   DIVERGED → mutant CLEAN); D8 sha-pin NOTE text (`drifted` → `matches`);
+929:   D9 boundary proof (a real mid-run change: pristine DIVERGED → mutant
+=== C0 SKILL.md 940,942
+940: replayed at its pinned original revision. Round 7 recorded four legs at
+941: r7-1 (dated milestones: seven from round 16, eight from round 18, nine from
+942: round 26, ten from round 51) — `js-kimi-census`
+=== C0 SKILL.md 1226,1228
+1226: (ER-4's addendum, `:354-360`, records the same continuation at 20:02Z with its
+1227: then-current shas). The tick's clean reading stands at its timestamp; a moving
+1228: file is never re-interpreted, and any re-sweep must pin the revision it measures
+=== C0 SKILL.md 1239,1240
+1239:   closing `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
+1240:   killed-delta<=0 flips<=0)`, rc 0, tool `cf41efaa…`; workdir kept
+=== C0 SKILL.md 965,1008
+965:   later legs still run and their statuses aggregate (:1247-1317,1459-1517; tool lines re-verified at `59c38109` (round 54) — the ten-leg runner grew since round 26).
+966: - **Every kill-rate claim carries the receipt.** Cite `REGRESSION: PASS
+967:   (cases=N passed=N; …)` (N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26, 10 since round 51) with the
+968:   executed tool sha (`REGRESSION_TOOL`) and the per-leg pins
+969:   (`REGRESSION_PIN`) — the receipt is tied to the tool revision that ran and
+970:   to each leg's pinned bytes.
+971: - **Contribution contract — what a leg carries.** A pinned target path,
+972:   Git revision and SHA; one-edit defects with unique `@old` and `@new != @old`;
+973:   a command exercising `$MUTANT` under controlled fixtures; enumerated,
+974:   executed and skipped counts distinguished [round 53 correction, seat T53W2R6: the bash-surface-census leg's own recorded table carries 14 executed + 2 skipped — the round-52 'no leg records a skipped count' bracket overstated; the ten-leg registry itself enumerates and executes without skips] (round 52: the ten legs report no skipped case on this host; the kagi leg's own table is the one that records two, as the bracket above says — the report prints defects/killed/survived/inconclusive, `tools/mutate-and-run.sh:78-79`); and the exact recorded verdict
+975:   table. Host-gated branches must be excluded/controlled or explicitly named,
+976:   not called hermetic merely because the flag is `--selftest`.
+977:   Current anchors (round 52 re-anchor to the ten-leg table; the round-26 tool recorded :603-629): pins/revisions/tables `tools/mutate-and-run.sh:614-643`,
+978:   first-four specs :671-849, inventory :83-108, ten dispatches :1459-1508.
+979:   (U) The recorded case set remains tameshi-carried; no fleet-contributed
+980:   leg is established by this registry.
+981: 
+982: ### Reading a receipt — the discipline
+983: 
+984: 1. **Read the block, not the last line.** `REGRESSION_TOOL` ·
+985:    `REGRESSION_DATE` · `REGRESSION_BAND` · `REGRESSION_EXPECT` · one
+986:    `REGRESSION_PIN` per leg · per leg one `REGRESSION_SWEEP` +
+987:    `REGRESSION_TABLE` + `REGRESSION_CASE` · `REGRESSION_DEFECT` rows for
+988:    differences · `REGRESSION_WORKDIR` · the closing `REGRESSION:
+989:    PASS|FAIL|SETUP` line.
+990: 2. **PASS is exact for ledger legs.** Every case line `PASS (band:
+991:    killed-delta<=0 flips<=0 inconclusive=0 defects=D)` and every
+992:    `REGRESSION_TABLE … match=D/D … flips=0`; the closing line's
+993:    `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; dated milestones: N=8 from round 18, N=9 from round 26, N=10 from round 51). Measured instance (T7-1, 2026-10-14; replayed by this
+994:    lane under the same tool sha `cf41efaa…`): four legs, all `match=10/10 …
+995:    flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
+996:    killed-delta<=0 flips<=0)`, rc 0.
+997: 3. **FAIL names its rows.** `REGRESSION_DEFECT <leg> <id>: measured=…
+998:    recorded=…` (an `ABSENT` on either side counts), `REGRESSION_TABLE …
+999:    flips=n`, and the case's `REGRESSION_CASE … FAIL (out of band: …)`. A
+1000:    doctored table was measured caught: `REGRESSION_DEFECT js-kimi-census D1:
+1001:    measured=KILLED recorded=SURVIVED` → `match=9/10 … flips=1` →
+1002:    `REGRESSION_CASE js-kimi-census: FAIL (out of band: killed-delta=1
+1003:    flips=1)` (negative run, `/tmp/w7-tameshi-1/flip-run.out` — [round 52: that volatile path is gone; the mechanism is corroborated at `reports/r7-aud-t7.md` §3 F4 and `tools/mutate-and-run.sh:2010`]). Quote the rows,
+1004:    never the word; never hand-re-sweep to "confirm" a FAIL — the replay goes
+1005:    through the ledger and the divergence is the finding.
+1006: 4. **SETUP is not a verdict.** A missing repo/rev/blob, a pin mismatch, or a
+1007:    refused sub-sweep means *cannot verify* — never a pass, never a suite
+1008:    failure; the fix is the environment (repo/rev/pin), never a
+=== C0 SKILL.md 982,1026
+982: ### Reading a receipt — the discipline
+983: 
+984: 1. **Read the block, not the last line.** `REGRESSION_TOOL` ·
+985:    `REGRESSION_DATE` · `REGRESSION_BAND` · `REGRESSION_EXPECT` · one
+986:    `REGRESSION_PIN` per leg · per leg one `REGRESSION_SWEEP` +
+987:    `REGRESSION_TABLE` + `REGRESSION_CASE` · `REGRESSION_DEFECT` rows for
+988:    differences · `REGRESSION_WORKDIR` · the closing `REGRESSION:
+989:    PASS|FAIL|SETUP` line.
+990: 2. **PASS is exact for ledger legs.** Every case line `PASS (band:
+991:    killed-delta<=0 flips<=0 inconclusive=0 defects=D)` and every
+992:    `REGRESSION_TABLE … match=D/D … flips=0`; the closing line's
+993:    `cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; dated milestones: N=8 from round 18, N=9 from round 26, N=10 from round 51). Measured instance (T7-1, 2026-10-14; replayed by this
+994:    lane under the same tool sha `cf41efaa…`): four legs, all `match=10/10 …
+995:    flips=0`, `REGRESSION: PASS (cases=4 passed=4; ledger legs exact:
+996:    killed-delta<=0 flips<=0)`, rc 0.
+997: 3. **FAIL names its rows.** `REGRESSION_DEFECT <leg> <id>: measured=…
+998:    recorded=…` (an `ABSENT` on either side counts), `REGRESSION_TABLE …
+999:    flips=n`, and the case's `REGRESSION_CASE … FAIL (out of band: …)`. A
+1000:    doctored table was measured caught: `REGRESSION_DEFECT js-kimi-census D1:
+1001:    measured=KILLED recorded=SURVIVED` → `match=9/10 … flips=1` →
+1002:    `REGRESSION_CASE js-kimi-census: FAIL (out of band: killed-delta=1
+1003:    flips=1)` (negative run, `/tmp/w7-tameshi-1/flip-run.out` — [round 52: that volatile path is gone; the mechanism is corroborated at `reports/r7-aud-t7.md` §3 F4 and `tools/mutate-and-run.sh:2010`]). Quote the rows,
+1004:    never the word; never hand-re-sweep to "confirm" a FAIL — the replay goes
+1005:    through the ledger and the divergence is the finding.
+1006: 4. **SETUP is not a verdict.** A missing repo/rev/blob, a pin mismatch, or a
+1007:    refused sub-sweep means *cannot verify* — never a pass, never a suite
+1008:    failure; the fix is the environment (repo/rev/pin), never a
+1009:    re-interpretation of the recorded table.
+1010: 5. **The ledger proves the instrument, not the gates.** A leg PASS says the
+1011:    tool reproduces the recorded table on the pinned bytes; it does not say the
+1012:    gate protects anything today. The rates live in
+1013:    `fleet-kill-rate-ledger.md` with their composition and revision — and a
+1014:    rate is never implied to hold at a later revision than its sweep pin.
+1015: 6. **Attesting a sibling's claim uses the same discipline** (round-7
+1016:    attestation leg): replay the declared pins read-only, return the receipt —
+1017:    or name the missing piece; the sibling's note is never edited
+1018:    (`plans/round-7.plan.md:11-15`).
+1019: 7. **The ledger's own arms are selftested.** `bash tools/mutate-and-run.sh
+1020:    --selftest` at the pinned r7-1 tool printed `MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0, tool
+1021:    sha256 `cf41efaa…` (a content sha, not a git revision; the tally is the pinned tool's, not the current command's — round 52: the same command prints `MUTATE_SELFTEST: 107/107 pass` / `VERDICT: PASS`, rc 0, at runner sha256 `977de470…` — seat T52W2Fix06's measurement and runner pin, `.ufo/waves/round-52/w2/T52W2Fix06.md` F3, receipt `.ufo/waves/round-52/w2/T52W2Fix06.selftest.out`) — including a git-materialized replay passing at exact
+1022:    tolerance, a drifted working tree not moving a git-pinned leg, pin
+1023:    mismatch / unresolvable revision as SETUP, and a single flipped entry
+1024:    failing loudly. The r4-2 tolerance (`killed-delta<=1 flips<=1`) remains the
+1025:    fixture-mode default and is exercised by the selftest only.
+1026: 
+=== C0 SKILL.md 1276,1277
+1276: a refusal without an anchor is not written; the table states refusals, it does not
+1277: adjudicate them. (Anchors `:…` are this page; `PROVINCE.md` is repo-relative; other bare note names are under `corpus/knowledge/`.) The
+=== C0 SKILL.md 1280,1281
+1280: and the intake-precondition check; this page is the compact rendering, and a
+1281: divergence between the two is the finding, never smoothed.

@@ -1,0 +1,20 @@
+$ git -C lane-fixed2 rev-parse HEAD
+133b2ce6d4d86d783db38607343c3654350194b8
+
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W1MutC2/tmp/no-tmpdir-final python3 tools/repeat-control.py --selftest   # clone at the frozen pole 133b2ce
+rc=2
+--- stdout ---
+REPEAT_CONTROL: setup_error
+--- stderr ---
+repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r55/T55W1MutC2/tmp/no-tmpdir-final' (could-not-evaluate)
+
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W1MutC2/tmp/no-tmpdir-final python3 tools/context-capture.py --selftest
+rc=2
+--- stdout ---
+--- stderr ---
+context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r55/T55W1MutC2/tmp/no-tmpdir-final' (could-not-evaluate)
+
+# the counter's grammar arm scores both modes ok at this rev (see verdicts/P-fixed2.stdout):
+EXPLAIN grammar repeat-control --selftest          rc=2  ok
+EXPLAIN grammar context-capture --selftest         rc=2  ok
+C2_R55: rev=133b2ce6d4d8 grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=0 C2_R55_PASS=true

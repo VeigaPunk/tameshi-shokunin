@@ -1,0 +1,11 @@
+--- pristine-measure-133b2ce.py	2026-10-28 14:21:21.205512885 -0300
++++ m133/m9.py	2026-10-28 14:21:56.993615529 -0300
+@@ -197,7 +197,7 @@
+     unusable = str(work / "no-such-tmpdir")
+     for name, argv, _exp, _alloc, _cheap in allocating:
+         rc, out, err = run(argv, clone, env_with(unusable))
+-        ok = rc == 2 and any(GRAMMAR.match(l) for l in err.splitlines()) \
++        ok = rc == 2 and any(MARKER in l for l in err.splitlines()) \
+             and "RuntimeError" not in err + out and "Traceback" not in err + out
+         if not ok:
+             bad[name] = "grammar rc=%s stderr=%r" % (rc, err.strip().splitlines()[:2])
