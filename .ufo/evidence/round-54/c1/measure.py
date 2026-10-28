@@ -21,8 +21,9 @@ scratch lives under --work and never under /tmp):
                wrong_expectations 0 and blocking_gaps 0, and which passes the
                FROZEN round-18 credit algorithm at REV (no input drift, no
                missing trace).
-  4. readers   for every frozen heading, a committed reader report
-               `.ufo/waves/round-54/w1/*Read*.json` names the heading, pins
+  4. readers   for every frozen heading, a committed reader report in either
+               wave's directory (`w1/*Read*.json`, or `w2/*Read*.json` after
+               amendment 3) names the heading, pins
                `cand` = <c0> and `section_sha256` equal to the sha256 of that
                section's bytes at REV (sections computed by the FROZEN
                round-18 sectionize at REV, never a reimplementation).
@@ -50,7 +51,7 @@ R18 = '.ufo/evidence/round-18/measure.py'
 R21 = '.ufo/evidence/round-21/coldread/measure.py'
 LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
 HEADINGS = '.ufo/evidence/round-54/c1/lost-headings-at-base.json'
-WAVE = '.ufo/waves/round-54/w1'
+WAVE_DIRS = ('.ufo/waves/round-54/w1', '.ufo/waves/round-54/w2')  # amendment 3: both waves' reader reports
 REKEY_RE = re.compile(r'^rekey-r54-([0-9a-f]{12})$')
 UNSTABLE_INPUTS = ('LOG.md', 'SCORECARD.md')
 
@@ -217,8 +218,8 @@ def main():
 
     # ---- arm 4: committed reader reports ------------------------------------------------------------------
     readers = {}
-    wave_tree = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev, WAVE + '/'],
-                    check=False).stdout.decode()
+    wave_tree = '\n'.join(git(['-C', lane, 'ls-tree', '-r', '--name-only', rev, wd + '/'],
+                               check=False).stdout.decode() for wd in WAVE_DIRS)
     for path in wave_tree.splitlines():
         if not re.search(r'/T54W\d+.*Read.*\.json$', path):
             continue
