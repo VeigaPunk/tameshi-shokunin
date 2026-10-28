@@ -1588,3 +1588,25 @@ A counter arm that reads a directory, a revision or a manifest is proven by a po
 Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
 
 Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at the freeze commit (the control never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
+
+### Criterion 106 — a pre-registered control is scored at the revision it certifies
+
+A control that certifies a repair must be scored at the revision the repair is in.
+Cloning the FREEZE commit (the bytes frozen before the work) and calling the result a
+positive control measures the tree the round started from: it cannot fire, and its
+"pass" is an assumption, not a measurement. The receipt must name the revision it
+cloned and that revision must be the candidate under test; a gate that opens on a
+control receipt must compare the receipt's own `rev=` with the revision it decides.
+
+Falsifier that must fail: `.ufo/evidence/round-54/control/controls-b.stdout` — its
+`CTL_POS_c1` line prints `C1_R54_PASS=false` at `rev=077d431e6996` (the freeze) with
+`CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, while four round-54 records
+claimed the control passed. Round 55's `controls.sh` phase B re-scores every control at
+the revision it certifies, and its `deciding-run.sh` gate refuses a control receipt that
+does not descend from the freeze.
+
+Erratum on criterion 105: 105's own falsifier quoted the same round-54 positive control
+as printing `rekeyed=7/7`. Its receipt prints `rekeyed=3/7` and `CTL_MISMATCH`; the
+7-of-7 reading belongs to a re-score at the deciding revision. 105 stands (an arm is
+proven on a tree where it must fire) and its example is corrected here rather than
+deleted.

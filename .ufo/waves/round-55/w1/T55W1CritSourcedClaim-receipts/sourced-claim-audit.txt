@@ -1,0 +1,76 @@
+## note: S280 occurrences
+0
+## note: all S-ids cited
+14:S278
+19:S278
+22:S279
+28:S277
+## note: source: header lines
+(none)
+## note: lines 71-102
+## One line, every mode (round 55)
+
+The class is one stderr line, byte-shaped:
+
+    <tool>: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)
+
+Nine allocating modes carry it — `env-diff --selftest`, `env-diff --contract`,
+`repeat-control --selftest`, `registry-check --selftest`,
+`registry-check --rev`, `bash-witness-study selftest`,
+`pin-disposition --selftest`, `evidence-disposition --selftest`,
+`context-capture --selftest` — each exiting 2 with no `RuntimeError` or
+`Traceback` token on either stream. `registry-check --rev` is measured on the
+unusable arm only: it builds a full fleet clone (minutes), so its usable path is
+covered by the tool's own self-test, which exercises the same helper. The line is the
+contract; the Python type is not: the tools keep their own exception classes
+(`ScratchRootUnusable` in the two round-55 edits, a local class in `env-diff`),
+because seven standalone tools should not depend on one module for a one-line
+rule.
+
+The five non-allocating modes are measured lazy: `repeat-control --snapshot`,
+`bash-witness-study count`, `pin-disposition --read`,
+`evidence-disposition --json`, `context-capture --check` keep their expected
+exit under an unusable `TMPDIR`, because scratch is allocated on the real path,
+not at parse time. A lazy mode's exit 0 is not evidence that the scratch root
+was usable — never read it as a pass.
+
+The counter measures nine allocating modes on the unusable arm, thirteen modes
+on the empty and usable arms, and the seven registry cells plus this note. Its
+blind spot is narrower but real: a documented mode outside the registry and the
+usage text could still allocate scratch unmeasured (the round-55 wave inventories
+that difference), and the grammar is matched on stderr, so a caller that parses
+stdout sees nothing.
+## lesson: S280 occurrences
+11:| S280 | https://www.gnu.org/prep/standards/html_node/Errors.html | 2026-10-28 | §4.4 "Formatting Error Messages": "Error messages from other noninteractive programs should look like this: program:sourcefile:lineno: message" ... "program: message" (17 words; the page's next paragraph adds the lower-case/no-period rule) | **admit, mined** — `corpus/knowledge/scratch-root-contract.md` cites it for the "one program-prefixed line" shape; it is a normative standard (tier A) and it says nothing about the exit code, so the round's exit-2 class is a lane declaration, quoted as such |
+14:Snapshot/extraction receipts: `.ufo/evidence/round-55/assimilation/S280-gnu-errors.txt`
+## evidence tree: S280 occurrences
+## S280 row cells
+0 ''
+1 'S280'
+2 'Formatting Error Messages (GNU Coding Standards §4.4) — https://www.gnu.org/prep/standards/html_node/Errors.html'
+3 'spec'
+4 'A'
+5 "the line shape of a noninteractive program's error message"
+6 "§4.4 Formatting Error Messages @ fetched 2026-10-28 (reader extraction `.ufo/evidence/round-55/assimilation/S280-gnu-errors.txt`, sha256 `edcaf94b`; the quote sits at the section's noninteractive-program rule)"
+7 "`Error messages from other noninteractive programs should look like this: program:sourcefile:lineno: message` ... or `program: message` — one program-prefixed line is the standard's shape, and the message must not begin with a capital letter or end with a period after that prefix"
+8 'mined'
+9 '2026-10-28'
+10 '730d'
+11 'corpus/knowledge/scratch-root-contract.md, corpus/lessons/round-55.md'
+12 ''
+## Gate quote word counts
+q1 12 q2 2 total 14
+## anchor revision: row vs page
+last updated April 27, 2026
+0
+
+## synthetic census (the "duplicate" justification)
+# rejected S281, same URL, different scope -> W04 warning only, census rc 0
+#   (census-synthetic-rejected.txt)
+# non-rejected S281, same URL, different scope -> W04 warning only, census rc 0
+#   (census-synthetic-cross-scope.txt)
+# non-rejected S281, same URL, same scope as S090 -> E04, census rc 1
+#   (census-synthetic-same-scope.txt)
+# So E04 requires same scope AND status != rejected; prompt 2b.1 says
+# "Rejections stay as rows with reason and flip" and the census accepts
+# exactly such a row.

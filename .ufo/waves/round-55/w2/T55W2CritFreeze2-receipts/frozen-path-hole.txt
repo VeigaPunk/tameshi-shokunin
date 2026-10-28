@@ -1,0 +1,24 @@
+# FIXTURE A -- rewrite a contract-frozen path that the deciding FROZEN list omits
+$ git clone --shared LANE /fast/scratch/hyaku/tameshi-r55/T55W2CritFreeze2/receipt-fixture-hole && git -C D checkout -b probe 9cf0146b94dd
+  toplevel check: /fast/scratch/hyaku/tameshi-r55/T55W2CritFreeze2/receipt-fixture-hole == fixture
+
+$ sed -i s/^output=81$/output=999/ D/.ufo/evidence/round-55/c1/staged-at-freeze.txt
+$ sed -i 2695s/staged=81/staged=999/ D/SCORECARD.md
+ .ufo/evidence/round-55/c1/staged-at-freeze.txt | 2 +-
+ SCORECARD.md                                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+$ GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 git -C D -c user.name=crit -c user.email=crit@invalid commit -am ...
+  NEW=cb96e9f15b9087c3232cb39a8b3e4333641f7b6f
+$ git -C D diff --quiet e2979f2 cb96e9f15b90 -- <deciding-run.sh FROZEN list>
+  rc=0 -> FROZEN_UNCHANGED=1   <-- the gate says the frozen set is unchanged
+$ git -C D diff --name-only e2979f2 cb96e9f15b90 -- .ufo/evidence/round-55
+.ufo/evidence/round-55/c1/staged-at-freeze.txt
+   (staged-at-freeze.txt IS a contract.frozen_paths entry; the gate did not look at it)
+$ python3 c1-frozen.py --lane D --rev cb96e9f15b90 --work <empty> --explain
+  EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=999
+  C1_R55: rev=cb96e9f15b90 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+  exit=0
+
+# control: same frozen counter, same clone, unmodified C0
+  EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+  C1_R55: rev=9cf0146b94dd classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true

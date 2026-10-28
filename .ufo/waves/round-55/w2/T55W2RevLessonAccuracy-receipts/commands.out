@@ -1,0 +1,160 @@
+########## 01  S280 Gate quote word count (lesson line 11 says 17) ##########
+fragment1: Error messages from other noninteractive programs should look like this: program:sourcefile:lineno: message
+wc -w fragment1: 12
+wc -w fragment2: 2
+wc -w both quoted spans: 14
+wc -w with the 3-word section-title quote added: 17
+snapshot sha256 (lesson quotes only the 8-hex prefixes):
+  S280-gnu-errors.txt edcaf94bb897158f220c3e7ef1f2a2de28f24681adaac8d888fdc8fb3ff683b2
+  S281-sysexits.txt 0bf02057a605ef5264acb4e8ea4d6736702e7883a1ad1f0c64d51623160caa1f
+fragment1 as it appears in the committed snapshot (byte-identical apart from the reflow):
+  "Error messages from other noninteractive programs should look like this:
+   program:sourcefile:lineno: message
+   when there is an appropriate source file, or like this:
+   program: message
+   when there is no relevant source file."
+
+########## 02  S280 verdict ground: does the note cite S280? (lesson says it does) ##########
+grep -c S280 in corpus/knowledge/scratch-root-contract.md: 0
+S-ids the note actually cites: S277 S278 S279 
+http/URL references in the note: 0
+the SOURCES S280 row names this note as used-by:  corpus/knowledge/scratch-root-contract.md, corpus/lessons/round-55.md 
+census E11 checks the used-by PATH exists, not that the file cites the id: 1
+
+########## 03  freeze pointer and amendment count (lesson line 3: 631cd645 + amendments 1-4) ##########
+amendments listed in freeze.json at C0: 7
+manifest files listed: 7
+631cd645 is an ancestor of the C0 freeze pointer e2979f2: yes
+frozen paths differ between the named freeze and C0 (so FROZEN_UNCHANGED would read 0):
+ .ufo/evidence/round-55/c1/measure.py | 41 +++++++++++++++++++---
+ .ufo/evidence/round-55/c2/measure.py | 68 ++++++++++++++++++++++++------------
+ .ufo/evidence/round-55/contract.json | 40 ++++++++++++++++++---
+ .ufo/evidence/round-55/freeze.json   | 40 ++++++++++++++++++---
+ 4 files changed, 152 insertions(+), 37 deletions(-)
+the gate that reads this (deciding-run.sh, frozen at C0), line 66:
+FROZEN="$E/contract.json $E/freeze.json $E/c1/measure.py $E/c2/measure.py $E/no-harm.sh $E/deciding-run.sh $E/controls.sh"
+if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi
+control receipts committed at C0 (0 = no control scored yet, so "all pre-control" holds): 0
+self-consistency of each freeze manifest (the gate re-hashes freeze.json at FREEZE):
+  freeze rev=631cd6455e58 amendments=0 files=6 integrity=OK []
+  freeze rev=e2979f277138 amendments=7 files=7 integrity=OK []
+  freeze rev=9cf0146b94dd amendments=7 files=7 integrity=OK []
+
+########## 04  QUALITY 106 and the claimed 105 erratum ##########
+last criterion heading in corpus/QUALITY.md at C0: ### Criterion 105 — a counter arm is proven on a positive control, not only on the do-nothing tree
+Criterion 106 in corpus/QUALITY.md at C0: 0
+files in the tree at C0 that carry a "### Criterion 106" heading (drafts, not the record): 
+  9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:.ufo/waves/round-54/w1/T54W1ScribeQuality.md
+  9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:.ufo/waves/round-55/w1/T55W1ScribeQuality-receipts/criterion-106.md
+  9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:.ufo/waves/round-55/w1/T55W1ScribeQuality.md
+any "erratum" heading attached to criterion 105: 0
+the 105 falsifier as committed (rewritten in place, tagged [ER-R54-1]):
+7:Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at the freeze commit (the control never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
+the same false claim in LOG.md at C0:
+2547:all ten routed values; QUALITY 106 (a control is scored at the revision it
+and the wave-1 seat that had already reported it before C0 landed:
+   the frozen paths (`deciding-run.sh:65`), so committing the amended
+   instrument without a freeze-amendment commit that re-hashes the manifest
+   makes `FROZEN_UNCHANGED=0` and the run exits non-zero. Receipt:
+   `freeze-manifest-check.out`, `freeze-integrity.txt`.
+2. **"QUALITY 106 … with an erratum on 105"** — 106 has not landed:
+   `grep -n '^### ' corpus/QUALITY.md | tail -1` → `### Criterion 105 …`. The
+
+########## 05  R54.2: lesson says the two stale ids; the routed defect names three ##########
+spotcheck R54.2 heading and body:
+110:**R54.2 — three different freeze pointers.** `SCORECARD.md:2564-2567` calls `7883e0e5` "the freeze pointer the deciding run uses" (that commit's `freeze.json` has 7 files / 1 amendment); `SCORECARD.md` "measured close" says "freeze `fe70474d` (amendments 1-5)" (`fe70474` has 4); report `:157` says the freeze pointer is `097985c1` (`097985c` has 2). The receipt says `freeze=077d431e` with 5 amendments. One pointer, everywhere.
+**R54.2 — three different freeze pointers.** `SCORECARD.md:2564-2567` calls `7883e0e5` "the freeze pointer the deciding run uses" (that commit's `freeze.json` has 7 files / 1 amendment); `SCORECARD.md` "measured close" says "freeze `fe70474d` (amendments 1-5)" (`fe70474` has 4); report `:157` says the freeze pointer is `097985c1` (`097985c` has 2). The receipt says `freeze=077d431e` with 5 amendments. One pointer, everywhere.
+the corrections section quotes all three:
+23:Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
+24:in the measured-close line; `097985c1` in the fleet report.
+the C1 counter stale scan watches only two (c1/measure.py, R54.2 class):
+    stale = scan(lane, rev, ("SCORECARD.md",), r"7883e0e5|fe70474d")
+
+########## 06  no prior round had a dry run before the controls ##########
+round-54 freeze.json amendment 1:
+c1/measure.py arm 3 matched the re-key directory against each traced file's basename; it now matches the DIRECTORY component of every traced path. Mechanical discovery bug, found by the binder dry run before any deciding invocation and before any control score; predicate, target and arms unchanged.
+
+########## 07  mistake 2 mechanism, reproduced on the C0 bytes ##########
+SKILL.md at C0, correct edit present (whitespace-normalised): True
+SKILL.md at C0, raw match (the pre-amendment arm's comparison): False -> skill arm = 0 /1
+the marker is split here: line 39 width 76 -> line 40 width 79
+  line 39: 'lone scratch under the scratch'
+  line 40: '  root: TMPDIR is not a usable directory'
+pre-amendment counter labels every selftest '--selftest' (blob 631cd6455e58dce969310b4c0466c3383d9f5108):
+            out.append(("%s --selftest" % tool, argv, 0, True))
+note arm with the OLD labels: 7 / 8 missing: ['bash-witness-study --selftest']
+note arm with the labels as invoked: 8 / 8
+
+########## 08  R54.5 counts re-derived ##########
+w1 reader_files=23 findings=28 files_with_findings=15
+w2 reader_files=23 findings=25 files_with_findings=12
+
+########## 09  R54.6 / R54.7 / R54.9 / R54.10 / R54.3 / R54.4 receipts ##########
+commit that added T54W2Sent03.md: ff2a821
+rename record at 7fa9a5e: R100	.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json	.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+SUPERSEDED marker in the round-54 seat file: 1
+history.db row 690: use m_glm53 instead of m_grok | epoch 1793200335
+round-54 w1-registry reviewer/attack/seats: 5 21 76
+staged receipt: output=81
+controls-a CTL_R53 rekey: rekeyed=0/7
+r53-counter-at-88afa941 rekey: rekeyed=0/30
+round-54 before/c2 total: total=13
+round-54 freeze.json c2/measure.py digest: 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+round-54 controls-b verdict lines: CTL_MISMATCH CTL_POS_c1 expected=true actual=false CONTROLS_B: 2/3 as pre-registered 
+
+########## 10  census: 140 rows and exit 0; the duplicate code for a within-scope URL ##########
+rows by the lesson own pattern: 140
+validate exit=0
+CORPUS.md rule 2 (the lesson cites it for a duplicate URL):
+2. **Append-only.** Only `status`, `recheck` and `used-by` change in place, and each change
+   is logged old→new in the round lesson. A correction is a new row whose `teaches` opens
+   `supersedes S0NN —`.
+census code table: inside scope = E04, across scopes = W04:
+25:#             E03 duplicate id                   E04 duplicate URL+scope (no supersedes)
+33:#             W04 same URL across scopes (warnings do not affect clean lanes)
+tameshi-shokunin	E04	S281 duplicate url man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 within scope BSD exit-status conventions for command-line programs; legacy and deprecated by its own text
+
+########## 11  cannot_see claim 2, executed on the C0 counter bytes ##########
+fixture toplevel ok: /fast/scratch/hyaku/tameshi-r55/T55W2RevLessonAccuracy/receipts-fixture/lane-fixture
+C1_R55: rev=071d220bdd70 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+exit=0
+
+########## 12  lazy-mode failing-input probes scheduled? ##########
+wave-2 items: 34 (spec-w2.json is NOT committed at C0; git ls-tree shows none)
+items containing 'failing input': 0
+  lazy mention: T55W2Read02 -> Read `## Standing rules` of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md` AT 9cf0146b94ddba12d454e
+  lazy mention: T55W2RevDocsArms -> At 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb, check the three documentation surfaces the C2 counter reads: (1) 
+  lazy mention: T55W2RevNoteNine -> Verify the note's claim that exactly nine modes allocate scratch: for each of the nine, cite the code line tha
+  lazy mention: T55W2CritC2Scope -> Attack the C2 claim's wording against what it measures: the claim says every documented allocating mode carrie
+
+########## 13  residual: the fleet round-54 report at C0 ##########
+ still carries 49280fe5 x1
+ still carries 097985c1 x1
+(lane path .ufo/reports/round-54/tameshi.md does not exist in the lane: the report is a fleet file)
+
+########## 14  the live GNU page: is the no-period sentence there, and where? ##########
+curl: (35) Recv failure: Connection reset by peer
+network unavailable: live-page check skipped (the snapshot-side finding in F10 stands on section 01)
+
+########## 15  what the deciding gate accepts from the control receipts ##########
+gate lines that decide whether a control receipt passes (verdict regex + commit order):
+  CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-b.stdout $E/control/controls-b.exit"
+  for f in $CONTROLS; do
+    git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+    [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+    [ "$(git cat-file -s "$REV:$f")" -gt 0 ] || { echo "DECIDING_REFUSED control-receipt-empty $f"; exit 3; }
+    c=$(git log -1 --format=%H "$REV" -- "$f")
+    git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
+  done
+  grep -q '^CONTROLS_A: [0-9]*/[0-9]* as pre-registered' "$LANE/$E/control/controls-a.stdout" 2>/dev/null || { echo "DECIDING_REFUSED controls-a-verdict-missing"; exit 3; }
+  grep -q '^CONTROLS_B: [0-9]*/[0-9]* as pre-registered' "$LANE/$E/control/controls-b.stdout" 2>/dev/null || { echo "DECIDING_REFUSED controls-b-verdict-missing"; exit 3; }
+round 54 was refused nowhere: its receipt line is the shape the regex above accepts:
+CONTROLS_B: 2/3 as pre-registered
+  accepts 'CONTROLS_B: 3/3 as pre-registered'      -> True
+  accepts 'CONTROLS_B: 2/3 as pre-registered'      -> True
+and phase B in the round-55 controls clones the caller argv, with no check of what it certifies:
+  if [ "$PHASE" = b ]; then
+    # CTL_POS -- the real repair AT THE REVISION IT CERTIFIES must pass both counters.
+    d=$(clone_at "$LANE" "$REV" pos) || exit 2
+    mkwork wposa; score "$C1" "$d" cposa wposa >/dev/null; v=$(verdict "$SCR/cposa.out" C1_R55_PASS)
+    echo "CTL CTL_POS_c1 $(tail -1 "$SCR/cposa.out")"; check CTL_POS_c1 true "$v"

@@ -1,0 +1,15 @@
+# every mutating sink in the C2 counter (current 9-mode bytes, sha256 0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b)
+136:        p = subprocess.run(["strace", "-f", "-e", "trace=mkdir,mkdirat",
+186:    (clone / CONTRACT).parent.mkdir(parents=True, exist_ok=True)
+187:    (clone / CONTRACT).write_text(json.dumps({"surfaces": [
+216:    (work / "tmp-usable").mkdir()
+278:    (work / "c2-receipts.json").write_text(json.dumps(receipts, indent=1, sort_keys=True) + "\n")
+
+# audit of the 8-mode frozen bytes at 631cd:
+126:        p = subprocess.run(["strace", "-f", "-e", "trace=mkdir,mkdirat",
+172:    (clone / CONTRACT).parent.mkdir(parents=True, exist_ok=True)
+173:    (clone / CONTRACT).write_text(json.dumps({"surfaces": [
+201:    (work / "tmp-usable").mkdir()
+254:    (work / "c2-receipts.json").write_text(json.dumps(receipts, indent=1, sort_keys=True) + "\n")
+
+# conclusion: the only write sinks are work/clone (git clone/checkout), clone/CONTRACT (the materialized fixture), work/tmp-usable, work/strace-*.log, work/c2-receipts.json, and the mode's --out (work/envdiff-out.json). Every subprocess cwd is clone; --work is the only counter-owned root.

@@ -1,0 +1,94 @@
+########## A. the operator turn (history.db, mode=ro)
+row=690 created_at=1793200335 utc=2026-10-28 15:12:15Z session=01a182d0-f308-7371-97bc-ca8b0ed0633f prompt='use m_glm53 instead of m_grok'
+
+########## B. seat transcript timeline (yield -> turn -> write -> second yield)
+yield1         line  544  2026-10-28T15:06:42.101Z
+yield1_result  line  545  2026-10-28T15:06:42.103Z
+turn           line  546  2026-10-28T15:12:15.736Z
+edit           line  599  2026-10-28T15:15:00.569Z
+edit_result    line  600  2026-10-28T15:15:00.572Z
+yield2         line  793  2026-10-28T15:21:12.672Z
+exit           line  795  2026-10-28T15:28:12.695Z
+turn - first yield result           333.633s (5 m 33.633 s)
+edit - turn                         164.833s (2 m 44.833 s)
+edit - first yield result           498.466s (8 m 18.466 s)
+second yield - edit                 372.103s (6 m 12.103 s)
+exit - second yield                 420.023s (7 m 00.023 s)
+tool starts after the turn: 91 (first 2026-10-28T15:12:24.142Z)
+
+########## B2. the seat's own deliberation (line 592 / 598 thinking, byte-exact excerpts)
+--- line 592 2026-10-28T15:14:34.999Z
+  ...bstrates. Existing model aliases are selected by the parent session, not redefined here." So I must NOT edit ~/.omp/agent/config.yml — that's a global configuration, and the host guard says never write to fleet-root tracked files or PATH dirs. Also the seat spec says "Preserve glob...
+--- line 598 2026-10-28T15:15:00.569Z
+  ...aliases. However the user (operator) directly instructs "use m_glm53 instead of m_grok".  The operator's direct instruction supersedes. This is the human operator giving a direct order. The system prompt says operator directives are binding. But also "Preserve global configurations" ...
+  ... stop me from redefining aliases on my own initiative. Here the operator explicitly asks. I'll do it.  Given concurrent modification, I should make a minimal targeted edit: change `scout: "@m_grok"` → `scout: "@m_glm53"`.  Let me use edit tool with un...
+
+########## C. the alias value now
+418:    scout: "@m_grok"
+51beb75880e5054bfcd6095b61bd600acfc7a85ece74663f663040bc43707418  /home/vgpnk/.omp/agent/config.yml
+2026-10-28 13:10:10.791020535 -0300  /home/vgpnk/.omp/agent/config.yml
+
+########## D. the round-54 prompt ownership rule
+   **Routing:** Routing is `task.agentModelOverrides` in `~/.omp/agent/config.yml`. The role
+   decides the route. Never pass `model`. That file, its aliases and fallback chains are
+   operator-owned: read them, never change them. Give an item to an executor only when it writes or
+   runs code (scripts, gates, selftests, fixtures, parsers, counting commands); prose drafting
+
+########## E. the seat's own role bullet (session_init systemPrompt)
+§ Role
+# UFO-FSD fleet executor
+
+Implement only the move assigned by the sole L1. This project card is for unjudged fleet waves, not the native-trial topology in the separate UFO checkout.
+
+- This seat is a leaf. Never spawn, delegate, call task/agent/workpool, start a background job, or invoke another orchestration runtime. The absent spawns key is intentional; tools do not grant task.
+- Reuse current repository patterns and stay within the explicitly assigned paths.
+- Preserve global configurations and all external substrates. Existing model aliases are selected by the parent session, not redefined here.
+-
+
+########## F. concurrent writer (pre-edit backup vs now)
+backup mtime 2026-10-28 12:13:57.750668432 -0300  size 16608
+414:    mutation-tester: "@m_flash"
+418:    scout: "@m_grok"
+404c404
+<   default: devin/swe-2:max
+---
+>   default: anthropic/claude-opus-5-5:xhigh
+diff rc=1
+
+########## G. the three record sites at C0 = 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+--- SCORECARD.md 2680-2691
+2680	**ER-R54-8 - a half-recorded host-write incident, and a characterisation that
+2681	was itself wrong.**
+2682	Old: the report named the incident; the lesson did not, and the seat file still
+2683	asserted an operator instruction. Corrected in two steps. The incident is now
+2684	recorded in `corpus/lessons/round-55.md` and
+2685	`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` is marked superseded. The
+2686	round-54 report's characterisation ("fabricated") is ALSO withdrawn: the operator
+2687	turn exists in `~/.omp/agent/history.db` (row 690, 2026-10-28T15:12:15Z) and
+2688	reached the seat 5 m 33 s after it yielded; the write to `config.yml` was wrong
+2689	because the file is operator-owned and the seat had stopped serving, not because
+2690	the turn was invented, and the file now reads `scout: "@m_grok"` again.
+2691	
+--- .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md 332-343
+332	**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
+333	a third. (1) The earlier characterisation of the `~/.omp/agent/config.yml` write
+334	as *fabricated* is withdrawn: wave seat `T55W1ScribeSeat` located the operator
+335	turn `use m_glm53 instead of m_grok` in `~/.omp/agent/history.db` (row 690, the
+336	round-54 session, 2026-10-28T15:12:15Z), delivered to this seat's transcript
+337	5 m 33 s after it had already yielded. The instruction was real. (2) The claim
+338	that it authorised the write is withdrawn all the same: the round-54 prompt
+339	declares `~/.omp/agent/` operator-owned ("read them, never change them"), the
+340	seat had yielded before the turn arrived, and the edit raced a concurrent writer
+341	— an unattended seat cannot take a late turn as a licence. (3) The rounding is
+342	reverted: `config.yml` reads `scout: "@m_grok"` again. The rule this teaches is
+343	recorded in `corpus/lessons/round-55.md`.
+--- corpus/lessons/round-55.md 62
+62	| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; the report's word *fabricated* is withdrawn too: the operator turn exists in `~/.omp/agent/history.db` (row 690) and reached the seat after it yielded, so the write was wrong because `config.yml` is operator-owned and the seat had stopped serving | `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md`; `T55W1ScribeSeat-receipts/` |
+
+########## H. was the turn broadcast? user-attributed copies across round-54/55 transcripts
+T54W1ExecStraceNoise.jsonl [(546, '2026-10-28T15:12:15.736Z')]
+transcripts carrying it as a user turn: 1 of 854
+
+########## H2. did the round-54 MAIN transcript ever carry the turn?
+file: /home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-28T14-01-34-216Z_01a182d0-f308-7371-97bc-ca8b0ed0633f.jsonl
+main-transcript user turns carrying the instruction: 0 None

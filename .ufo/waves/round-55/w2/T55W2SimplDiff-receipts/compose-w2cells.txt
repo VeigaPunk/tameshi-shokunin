@@ -1,0 +1,11 @@
+$ cp <lane worktree>/tools/registry.json worktree-cells-source.json   # sibling seat cell text, snapshot 14:42
+$ python3 make-minimal.py <lane> registry.minimal-with-w2-cells.json worktree-cells-source.json
+patched cells: 7 (bash-witness-selftest,context-capture-selftest,env-diff-selftest,evidence-disposition-selftest,pin-disposition-selftest,registry-check-selftest,repeat-control-selftest)
+lines base/out: 1028/1028
+payload == source(worktree-cells-source.json): True
+$ git diff --numstat <that file> registry.minimal-with-w2-cells.json
+1026	1275	tools/registry.json   (the reformat undo)
+$ git apply --check registry-w2cells-to-minimal.diff   # fresh clone at C0 carrying the w2 cells
+APPLIES_CLEANLY_ON_W2_CELLS
+$ git diff --numstat 0a2010acd1 -- tools/registry.json   (after apply)
+7	7	tools/registry.json

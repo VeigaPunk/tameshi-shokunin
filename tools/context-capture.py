@@ -2216,8 +2216,14 @@ def run_selftest():
         return harness.finish()
     except ScratchRootUnusable as exc:
         # One stderr line with the frozen grammar: the class is operator-visible,
-        # the exception type never is, and stdout keeps no setup error (round 55).
-        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
+        # the exception type never is, and stdout keeps no setup error. A stream
+        # that refuses the line (/dev/full, closed pipe) must not change the class
+        # from could-not-evaluate to a verdict (round 55, wave-2 F1).
+        try:
+            sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
+            sys.stderr.flush()
+        except (OSError, ValueError):
+            pass
         return 2
     except Exception as exc:  # setup failure is loud but never a traceback
         sys.stdout.write(

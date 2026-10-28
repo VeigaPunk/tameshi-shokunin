@@ -1,0 +1,89 @@
+# Control: a tree that carries the R54.2 pointer, the R54.3 total and the R54.9 staged claim ONLY in corpus/QUALITY.md and LOG.md
+# (no stale token in SCORECARD.md) -- does the C1 stale arm see them?
+# clone: ctl3 @ db78d38d57cc61bc7b3a72194e37e8838a31bc6a (C0 + the two file appends)
+$ git -C ctl3 show --stat --oneline HEAD
+db78d38 control3: stale pointer/total/staged survive only in QUALITY.md and LOG.md
+ LOG.md            | 2 ++
+ corpus/QUALITY.md | 3 +++
+ 2 files changed, 5 insertions(+)
+$ git -C ctl3 show HEAD -- corpus/QUALITY.md LOG.md | head -40
+commit db78d38d57cc61bc7b3a72194e37e8838a31bc6a
+Author: rev <r@l>
+Date:   Wed Oct 28 14:44:54 2026 -0300
+
+    control3: stale pointer/total/staged survive only in QUALITY.md and LOG.md
+
+diff --git a/LOG.md b/LOG.md
+index 15cd54d..1a58212 100644
+--- a/LOG.md
++++ b/LOG.md
+@@ -2551,3 +2551,5 @@ duplicate of S090. The one SKILL.md section the edit drifts (`## Standing
+ rules`) is re-keyed with a fresh reader at C0. Round shape: one v2 wave of 75
+ seats (band 64–128, 28 attack roles = 37.3 %) plus one v1 wave over what it
+ produced. Waves measured close and deciding receipts follow under this entry.
++
++Round-54 close still cites `7883e0e5` as the freeze pointer.
+diff --git a/corpus/QUALITY.md b/corpus/QUALITY.md
+index fb73f02..0c9c3ad 100644
+--- a/corpus/QUALITY.md
++++ b/corpus/QUALITY.md
+@@ -1588,3 +1588,6 @@ A counter arm that reads a directory, a revision or a manifest is proven by a po
+ Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+ 
+ Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at the freeze commit (the control never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
++
++Surviving wrong quote: `total=14` packages and pointer `fe70474d`.
++Also `the other 84 staged entries`.
+
+# amendment-8 bytes (5e8f50d1)
+$ python3 c1-frozen133.py --lane ctl3 --rev db78d38d --work <empty> --explain
+EXPLAIN R54.1 ok premise=ok corrected=ok stale=0 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=db78d38d57cc classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+RC=0
+
+$ python3 c1-head.py --lane ctl3 --rev db78d38d --work <empty> --explain
+EXPLAIN R54.1 ok premise=ok corrected=ok stale=0 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=db78d38d57cc classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+RC=0
+
+# proof the stale tokens really stand at the measured rev db78d38d (C1 still reads total=0):
+$ git -C ctl3 grep -nE '7883e0e5|fe70474d|total=14|84 staged' db78d38d -- LOG.md corpus/QUALITY.md
+db78d38d:LOG.md:2555:Round-54 close still cites `7883e0e5` as the freeze pointer.
+db78d38d:corpus/QUALITY.md:1592:Surviving wrong quote: `total=14` packages and pointer `fe70474d`.
+db78d38d:corpus/QUALITY.md:1593:Also `the other 84 staged entries`.
+
+# the rows' stale-arm file surfaces at 133b2ce (grep of the frozen bytes):
+34:RECORD = (
+35:    "SCORECARD.md",
+36:    "corpus/QUALITY.md",
+37:    "corpus/lessons/round-54.md",
+38:    "LOG.md",
+84:    """Occurrences of a regex in the record files at REV, corrections excluded."""
+100:    """Whitespace-normalized whole-document search (amendment 5).
+106:    """
+166:    """The staged package count, read from the committed receipt (amendment 7).
+177:    """The first commit in history order that touches PATH (filt kept for call-site clarity)."""
+200:    stale = scan(lane, rev, RECORD, r"CTL_POS_c1 true")
+201:    stale += scan(lane, rev, ("corpus/QUALITY.md", "corpus/lessons/round-54.md"),
+203:    stale += scan_span(lane, rev, RECORD,
+212:    stale = scan(lane, rev, ("SCORECARD.md",), r"7883e0e5|fe70474d")
+220:    stale = scan(lane, rev, ("SCORECARD.md",), r"total=14")
+262:    stale = scan(lane, rev, ("corpus/lessons/round-54.md",), r"84 staged")

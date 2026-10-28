@@ -1,0 +1,48 @@
+# Executable scripts in the wave that contain a mutating git verb: every target
+
+--- .ufo/waves/round-55/w2/T55W2MutC1-receipts/reproduce.py
+12:Clones live under --scratch (git clone --shared, never the lane); every git call
+171:    edit(Path(d) / C2_BEFORE, "total=13 C2_R54_PASS=false", "total=15 C2_R54_PASS=false")
+--- .ufo/waves/round-55/w2/T55W2Read03-receipts/driver.sh
+4:# Writes only its own directory and $HYAKU_SCRATCH/tameshi-r55/T55W2Read03.
+10:export HYAKU_SCRATCH=${HYAKU_SCRATCH:-/fast/scratch/hyaku}
+11:S=$HYAKU_SCRATCH/tameshi-r55/T55W2Read03
+17:  git clone --shared -q "$L" "$S/clone"
+21:git checkout -q "$CAND" || exit 92
+41:# ------------------------------- 01 tool scratch root vs the HYAKU_SCRATCH rule
+46:  echo '$ git -C "$L" grep -c "HYAKU" '"$CAND"' -- tools      # does any tool read $HYAKU_SCRATCH?'
+47:  git -C "$L" grep -c "HYAKU" "$CAND" -- tools; echo "rc=$? (1 = no match)"
+49:  echo '$ HYAKU_SCRATCH=$HYAKU_SCRATCH strace -f -e trace=mkdir,mkdirat -o log env -u TMPDIR python3 tools/repeat-control.py --selftest'
+54:  echo "mkdir calls under \$HYAKU_SCRATCH: $(grep -c 'tameshi-r55' "$S/strace-unset.log")"
+56:  echo 'VERDICT: "the platform default" is /tmp; strict_scratch_root() never consults $HYAKU_SCRATCH, so with TMPDIR unset the tool scratch root and the section'"'"'s seat-scratch namespace are two different roots.'
+64:  echo '$ git clone --no-hardlinks $L $S/clonesize   # same flags registry-check.py:800-810 uses'
+66:  git clone -q --no-hardlinks "$L" "$S/clonesize"
+82:  echo 'VERDICT: the section names nine allocating modes by construction (7+2) and the frozen contract says 9/9, but its cited counter header says 8 and its total still subtracts (8 - note): a perfect tree scores total=-1, PASS=false.'
+--- .ufo/waves/round-55/w1/T55W1RevColdread-receipts/commands.sh
+1:# seat T55W1RevColdread — commands, all read-only against the lane; fixtures under HYAKU_SCRATCH
+2:S=/fast/scratch/hyaku/tameshi-r55/T55W1RevColdread
+6:git -C "$L" show $B:SKILL.md > "$S/SKILL-base.md"
+11:git clone --shared "$L" "$S/clone"; git -C "$S/clone" checkout --detach $B
+12:git -C "$S/clone" apply "$L/.ufo/waves/round-55/w1/T55W1ExecC2Full-receipts/patches.diff"
+14:git -C "$S/clone" add -A; git -C "$S/clone" commit -m 'round-55 PIN simulation'      # C0=2ff57a1f76bd
+23:git -C "$S/clone" add -A; git -C "$S/clone" commit -m 'round-55 re-key: 18 bound reader entries'   # c94ad673
+--- .ufo/waves/round-55/w1/T55W1ScribeQuality-receipts/rescore-positive.sh
+14:# Scratch: $HYAKU_SCRATCH (default /fast/scratch/hyaku)/tameshi-r55/T55W1ScribeQuality-rescore
+19:SCR=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/tameshi-r55/T55W1ScribeQuality-rescore.$$
+23:FREEZE=$(git -C "$LANE" rev-parse --verify "$FREEZE^{commit}") || exit 2
+24:REV=$(git -C "$LANE" rev-parse --verify "$REV^{commit}") || exit 2
+26:  git -C "$LANE" show "$FREEZE:$E/$f" > "$SCR/code/$f" || exit 2
+28:echo "RESCORE counter=$E/c1/measure.py at=$(git -C "$LANE" rev-parse "$FREEZE:$E/c1/measure.py" | cut -c1-12) sha256=$(sha256sum "$SCR/code/c1/measure.py" | cut -d' ' -f1)"
+31:git clone --shared --quiet "$LANE" "$d" >/dev/null 2>&1 || exit 2
+32:git -C "$d" checkout --quiet -B r55-cert "$REV" >/dev/null 2>&1 || exit 2
+33:HEAD=$(git -C "$d" rev-parse HEAD)
+43:v=$(grep -oE 'C1_R54_PASS=(true|false)' "$SCR/c1.out" | tail -1 | cut -d= -f2)
+
+# l1-rekey.commands.sh is a command sheet for the L1 integrator (lane commits under L1 authority), not an outside-lane write:
+65:git -C "$LANE" add -A .ufo/evidence/round-21/coldread
+
+# Every fixture clone target is $HYAKU_SCRATCH/tameshi-r55/<seat>; toplevel assertions present:
+3
+toplevel assertions found (files above)
+
+# Conclusion: no script writes to ~/.omp, ~/.config, ~/.local, /etc, /usr, /opt, the fleet root, or another lane. Clones and fixture repos live under HYAKU_SCRATCH; lane writes are either receipts or the L1's own commit sheet.

@@ -1,0 +1,86 @@
+{
+ "seat": "T55W1ExecRegistryGate",
+ "item": "registry gate regression after the seven-cell scratch_root reword plus the two tool patches",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "tip_measured": "133b2ce6d4d86d783db38607343c3654350194b8",
+ "tip_integration_commit": "9cf0146",
+ "verdict": "no registry-gate regression",
+ "verdict_basis": [
+  "registry-check.py --selftest rc 0 / SELFTEST: PASS (51 cases) at base, draft A, draft B and tip",
+  "registry-replay.py --selftest rc 0 / REGISTRY_REPLAY_SELFTEST: 10/10 pass at base, draft A, draft B and tip",
+  "registry-check --only registry-check-selftest and --only registry-replay-selftest each held 1/1 at draft A, draft B and tip",
+  "registry row diff base..tip: 56 rows, names equal, exactly 7 changed fields, all scratch_root"
+ ],
+ "gate_inert_reason": "registry_errors() (tools/registry-check.py:181-289) does not validate the scratch_root field; no row argv reads a cell; --selftest uses hermetic fixture registries and never reads tools/registry.json",
+ "runs": [
+  {"state": "base", "rev": "0a2010acd1e92e4e332774050825e21bcfc7e079", "registry_check_selftest": {"rc": 0, "tail": "SELFTEST: PASS (51 cases)"}, "registry_replay_selftest": {"rc": 0, "tail": "REGISTRY_REPLAY_SELFTEST: 10/10 pass"}},
+  {"state": "draftA", "composition": ["T55W1ExecCells-receipts/registry-cells.patch", "T55W1ExecRepPatch-receipts/patch.diff", "T55W1ExecCcPatch-receipts/context-capture.patch"], "registry_check_selftest": {"rc": 0, "tail": "SELFTEST: PASS (51 cases)"}, "registry_replay_selftest": {"rc": 0, "tail": "REGISTRY_REPLAY_SELFTEST: 10/10 pass"}, "gate_rows": {"registry-check-selftest": "held", "registry-replay-selftest": "held"}},
+  {"state": "draftB", "composition": ["T55W1ExecC2Full-receipts/patches.diff"], "registry_check_selftest": {"rc": 0, "tail": "SELFTEST: PASS (51 cases)"}, "registry_replay_selftest": {"rc": 0, "tail": "REGISTRY_REPLAY_SELFTEST: 10/10 pass"}, "gate_rows": {"registry-check-selftest": "held", "registry-replay-selftest": "held"}},
+  {"state": "tip", "rev": "133b2ce6d4d86d783db38607343c3654350194b8", "registry_check_selftest": {"rc": 0, "tail": "SELFTEST: PASS (51 cases)"}, "registry_replay_selftest": {"rc": 0, "tail": "REGISTRY_REPLAY_SELFTEST: 10/10 pass"}, "gate_rows": {"registry-check-selftest": "held", "registry-replay-selftest": "held"}}
+ ],
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "high",
+   "kind": "cell_claim_mismatch_and_stdout_setup_error",
+   "cell": "repeat-control-selftest",
+   "cell_quotes": "repeat-control.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)",
+   "observed_stderr_first_line": "repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)",
+   "observed_stdout": "REPEAT_CONTROL: setup_error",
+   "violates": "round-55 integration item 1 (stdout carries no setup error); cell's quoted prefix",
+   "counter_effect": "none: the frozen grammar arm checks rc, a grammar-matching stderr line and absence of RuntimeError/Traceback, not stdout",
+   "fix_exists_in": "T55W1ExecC2Full-receipts/patches.diff (measured: stdout empty, prefix repeat-control.py, rc 2)",
+   "command": "env TMPDIR=<nonexistent> python3 tools/repeat-control.py --selftest"
+  },
+  {
+   "id": "F2",
+   "severity": "medium",
+   "kind": "cell_prefix_mismatch",
+   "cell": "registry-check-selftest",
+   "cell_quotes": "registry-check.py: could-not-evaluate: ...",
+   "observed_prefix": "registry-check",
+   "counter_effect": "none: GRAMMAR prefix admits [A-Za-z][A-Za-z0-9_.-]*(\\.py)?"
+  },
+  {
+   "id": "F3",
+   "severity": "medium",
+   "kind": "cell_prefix_mismatch",
+   "cell": "bash-witness-selftest",
+   "cell_quotes": "bash-witness-study.py: could-not-evaluate: ...",
+   "observed_prefix": "WITNESS_STUDY",
+   "counter_effect": "none: GRAMMAR prefix admits [A-Za-z][A-Za-z0-9_.-]*(\\.py)?"
+  },
+  {
+   "id": "F4",
+   "severity": "medium",
+   "kind": "cell_prefix_mismatch",
+   "cell": "env-diff-selftest",
+   "cell_quotes": "env-diff.py: could-not-evaluate: ...",
+   "observed_prefix": "ENVDIFF_SETUP",
+   "counter_effect": "none: GRAMMAR prefix admits [A-Za-z][A-Za-z0-9_.-]*(\\.py)?"
+  },
+  {
+   "id": "F5",
+   "severity": "medium",
+   "kind": "cell_coverage_gap",
+   "cells": ["repeat-control-selftest", "bash-witness-selftest", "pin-disposition-selftest", "evidence-disposition-selftest", "context-capture-selftest", "registry-check-selftest", "env-diff-selftest"],
+   "detail": "each tip cell ends 'Allocating modes: selftest.' (registry-check adds --rev, env-diff adds --contract); none lists the class's allocating set, which integration item 2 asks the cells to state. The C2 docs arm only checks the marker substring.",
+   "drafts_that_did_list_all_eight": "T55W1ExecCells-receipts/registry-cells.patch"
+  },
+  {
+   "id": "F6",
+   "severity": "medium",
+   "kind": "draft_pairing",
+   "detail": "Draft A pairs the ExecCells cells ('nothing on stdout', prefix repeat-control.py) with the standalone RepPatch patch (stdout token, prefix repeat-control): cell text false under that pairing (measured). The consolidated C2Full patch pairs a cell family with the stdout-free handler: true (measured)."
+  }
+ ],
+ "brief_vs_landed_drift": {
+  "brief": "eight allocating modes, grammar=6/8, note=0/8",
+  "landed_contract_and_counter": "nine allocating modes (freeze amendment 6 adds registry-check --rev), grammar=6/9, note=0/9",
+  "tip_measurement": "9/9 allocating modes print the grammar line on unusable TMPDIR",
+  "action": "reported only; frozen files not edited"
+ },
+ "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "rc": 0, "note": "139-row floor; only W04 duplicate-url warnings"},
+ "production_files_changed": [],
+ "receipts_dir": ".ufo/waves/round-55/w1/T55W1ExecRegistryGate-receipts/"
+}

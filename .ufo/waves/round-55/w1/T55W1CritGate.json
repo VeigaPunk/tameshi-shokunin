@@ -1,0 +1,52 @@
+{
+  "seat": "T55W1CritGate",
+  "round": 55,
+  "wave": 1,
+  "target": ".ufo/evidence/round-55/deciding-run.sh",
+  "target_sha256": "af11d7551d8af1c75ba647704cbf72911d591c9ab28df060b669fd2549c34e2b",
+  "target_edited": false,
+  "lane_mutated": false,
+  "freeze": "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "method": "git clone --shared of the lane, detached at the freeze; one or more commits added inside the clone only; the frozen script invoked unmodified with HYAKU_SCRATCH set per run",
+  "refusal_paths": [
+    {"id": "R1", "line": 12, "refusal": "LANE must be absolute", "exit": 2, "verdict": "holds", "fixture": "b1", "receipt": "b1-lane-relative.out"},
+    {"id": "R2", "line": 17, "refusal": "cd LANE", "exit": 2, "verdict": "holds_by_inspection", "fixture": null, "receipt": null},
+    {"id": "R3", "line": 18, "refusal": "REV unresolvable", "exit": 2, "verdict": "holds", "fixture": "b2", "receipt": "b2-rev-unresolvable.out"},
+    {"id": "R4", "line": 19, "refusal": "FREEZE unresolvable", "exit": 2, "verdict": "holds", "fixture": "b3", "receipt": "b3-freeze-unresolvable.out"},
+    {"id": "R5", "lines": "20-43", "refusal": "freeze-integrity over the manifest's declared keys", "exit": 3, "verdict": "holds", "fixture": "a1", "receipt": "a1-frozen-covered-tamper.out"},
+    {"id": "R6", "lines": "24-33", "refusal": "manifest key set vs contract.frozen_paths", "exit": null, "verdict": "defeated", "finding": "F2", "fixture": "a2", "receipt": "a2-manifest-keydrop.out"},
+    {"id": "R7", "lines": "18-20,52", "refusal": "the FREEZE argument itself", "exit": null, "verdict": "defeated", "finding": "F1", "fixture": "a5", "receipt": "a5-selfcert-freeze-eq-rev.out"},
+    {"id": "R8", "line": 44, "refusal": "outdir-missing", "exit": 3, "verdict": "holds", "fixture": "c1,c1b", "receipt": "c1-outdir-missing.out, c1b-outdir-is-file.out"},
+    {"id": "R9", "line": 45, "refusal": "head-is-not-rev", "exit": 3, "verdict": "holds", "fixture": "b5", "receipt": "b5-head-not-rev.out"},
+    {"id": "R10", "line": 48, "refusal": "control-receipt-missing", "exit": 3, "verdict": "holds", "fixture": "a0", "receipt": "a0-control-missing.out"},
+    {"id": "R11", "line": 49, "refusal": "control-receipt-not-a-blob", "exit": 3, "verdict": "holds_for_trees", "fixture": "b6", "receipt": "b6-receipt-is-tree.out"},
+    {"id": "R12", "line": 50, "refusal": "control-receipt-empty", "exit": 3, "verdict": "holds_for_zero_bytes", "fixture": "a3", "receipt": "a3-receipt-empty.out"},
+    {"id": "R13", "lines": "48-55", "refusal": "receipt content is the receipt", "exit": null, "verdict": "defeated", "finding": "F3", "fixtures": ["a4", "a6", "a10b"], "receipts": ["a4-receipt-onebyte.out", "a6-symlink-receipts.out", "a10b-dirty-receipt-assume-unchanged.out"]},
+    {"id": "R14", "line": 52, "refusal": "control-receipt-not-after-freeze", "exit": 3, "verdict": "holds", "fixture": "a7", "receipt": "a7-receipt-before-freeze.out"},
+    {"id": "R15", "lines": "48-55", "refusal": "receipt exit side and control counts", "exit": null, "verdict": "defeated", "finding": "F4", "fixtures": ["b8", "b9"], "receipts": ["b8-controls-exit-ignored.out", "b9-zero-of-zero-receipt.out"]},
+    {"id": "R16", "line": 56, "refusal": "second-invocation", "exit": 3, "verdict": "holds_for_regular_marker_defeated_for_dangling_symlink", "finding": "F6", "fixtures": ["a9", "a12"], "receipts": ["a9-second-invocation.out", "a12-second-invocation-dangling-symlink.out"]},
+    {"id": "R17", "lines": "57-58", "refusal": "dirty-tree", "exit": 3, "verdict": "holds_for_ordinary_dirt_defeated_by_index_flag", "finding": "F5", "fixtures": ["a8", "a10a", "a10b"], "receipts": ["a8-dirty-untracked-outside-outdir.out", "a10a-dirty-receipt-NO-FLAG.out", "a10b-dirty-receipt-assume-unchanged.out"]},
+    {"id": "R18", "line": 58, "refusal": "OUTDIR exclusion scope", "exit": null, "verdict": "defeated", "finding": "F5", "fixture": "a11", "receipt": "a11-outdir-prefix-exclusion.out"},
+    {"id": "R19", "line": 66, "refusal": "FROZEN_UNCHANGED=0", "exit": null, "verdict": "not_a_refusal", "finding": "F7", "fixtures": ["b7", "b7b"], "receipts": ["b7-frozen-drift-nonfatal.out", "b7b-frozen-drift-to-end.out"]}
+  ],
+  "findings": [
+    {"id": "F1", "severity": "critical", "title": "FREEZE is unauthenticated; FREEZE == REV accepted, so manifest + counters + 'pre-registered' receipts can be minted in one commit", "axis": "calibration", "evidence": "a5: FREEZE_INTEGRITY OK, FROZEN_UNCHANGED=1, no DECIDING_REFUSED, run entered the counters", "correction": "hardcode FREEZE_SHA next to BASE; require FREEZE==FREEZE_SHA, FREEZE!=REV and is-ancestor(FREEZE,REV)"},
+    {"id": "F2", "severity": "critical", "title": "freeze.json key set never compared to contract.frozen_paths; dropping a key hides a tampered C1 counter and the gate prints OK files=5", "axis": "calibration", "evidence": "a2", "correction": "compare set(fr['files']) to set(contract['frozen_paths']) minus the manifest"},
+    {"id": "F3", "severity": "critical", "title": "receipt existence read from the REV blob, receipt content grepped from the working tree; symlink (mode 120000) receipts and assume-unchanged both pass the whole gate", "axis": "calibration", "evidence": "a6 (blob size 20 = link target, gate cleared), a10b (1-byte blob + verdict in worktree, status clean), a10a (same tamper, no flag, refused dirty-tree)", "correction": "require mode 100644 via git ls-tree, and grep 'git show REV:path' instead of the working-tree path"},
+    {"id": "F4", "severity": "high", "title": "controls-*.exit never read and n/m never bound to the CTL lines or contract.claims.C*.controls; exit=1 and 0/0 both pass", "axis": "calibration", "evidence": "b8, b9", "correction": "require exit blob == 0; require n == m == count of '^CTL ' lines == len(contract claims.CX.controls), and each named control present"},
+    {"id": "F5", "severity": "high", "title": "dirty-tree guard is plain git status (blind to index flags) and its OUTDIR exclusion is an unanchored prefix regex", "axis": "operability", "evidence": "a10b, a11 (decidingX/ excused, filter count 0)", "correction": "audit git ls-files -v for non-H flags; use -uall; anchor the exclusion with a fixed-string full-line match"},
+    {"id": "F6", "severity": "medium", "title": "second-invocation marker uses [ -e ] (follows symlinks) and OUTDIR emptiness is never required, so a dangling link defeats the one-invocation rule; the start stamp is then written through the link", "axis": "operability", "evidence": "a12 (marker absent, gate cleared, marker still absent after the run); symlink write-through verified in symmech/", "correction": "[ -e ] || [ -h ] for markers; refuse unless OUTDIR is empty"},
+    {"id": "F7", "severity": "medium", "title": "FROZEN_UNCHANGED=0 is printed and then ignored: the run proceeds into the counters and consumes the single invocation after the drift is known", "axis": "operability", "evidence": "b7 (FROZEN_UNCHANGED=0, no refusal, no-harm and counter receipts written)", "correction": "emit DECIDING_REFUSED frozen-drift and exit 3 at the point of detection"},
+    {"id": "F8", "severity": "low", "title": "three duplicate authorities that agree today: hardcoded 15 vs contract.no_harm_monitors, hardcoded frozen path list vs contract.frozen_paths, contract.deciding_invocations never read", "axis": "calibration", "evidence": "cross-check printed from the freeze bytes; all values agree at 631cd64", "correction": "derive all three from contract.json at REV"}
+  ],
+  "defences_confirmed_sound": ["LANE absolute", "REV/FREEZE resolution", "outdir existence (absent and plain-file)", "head-is-not-rev", "control-receipt-missing", "receipt not a tree", "receipt zero bytes", "receipt genuinely authored before the freeze", "freeze-integrity over the manifest's declared keys (MISMATCH exits 1 -> refusal)"],
+  "probe_answers": {
+    "receipt_committed_before_freeze": "refused (a7); defeated in the other direction because the freeze may be cut after the receipts exist (a5) and because ancestry tracks the path's last touching commit, not the bytes",
+    "empty_file_still_a_blob": "0 bytes refused (a3); a 1-byte blob passes the size arm and only dies at the working-tree grep (a4), which a10b then satisfies",
+    "dirty_file_matching_outdir_exclusion": "no dirty file needed: an untracked sibling directory is excused (a11) and a tracked file can be dirtied invisibly (a10b)",
+    "frozen_stdout_mismatch_exit_0": "not reachable: freeze-integrity MISMATCH exits 1 and is wired to the refusal (a1); line 66 prints FROZEN_UNCHANGED=0 and sets rc=1 but does not refuse (F7)"
+  },
+  "census": {"start": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "rows_claimed": 139}},
+  "tools_installed": []
+}

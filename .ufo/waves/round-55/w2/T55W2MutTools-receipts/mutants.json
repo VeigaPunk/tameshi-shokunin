@@ -1,0 +1,72 @@
+[
+ {
+  "branch": "m-rc-revert",
+  "rev": "56efd4a83cfd745b561567298dba5de18b67a089",
+  "target_mode": "repeat-control --selftest",
+  "stat": "tools/repeat-control.py | 22 +---------------------\n 1 file changed, 1 insertion(+), 21 deletions(-)",
+  "diff": "diff --git a/tools/repeat-control.py b/tools/repeat-control.py\nindex e9eb1b9..0d662e5 100755\n--- a/tools/repeat-control.py\n+++ b/tools/repeat-control.py\n@@ -145,14 +145,6 @@ USAGE = (\n )\n \n \n-class ScratchRootUnusable(RuntimeError):\n-    \"\"\"A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).\n-\n-    The operator-visible class is one line on stderr with the frozen grammar\n-    (`repeat-control: could-not-evaluate: ...`); this type exists so the refusal\n-    cannot be swallowed by the generic setup handler that prints the raw type.\"\"\"\n-\n-\n def strict_scratch_root():\n     \"\"\"Scratch root for mkdtemp: TMPDIR when set (must be a usable directory \u2014\n     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent\n@@ -161,7 +153,7 @@ def strict_scratch_root():\n     t = _os.environ.get(\"TMPDIR\")\n     if t:\n         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):\n-            raise ScratchRootUnusable(\n+            raise RuntimeError(\n                 \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)\" % t)\n         return t\n     return tempfile.gettempdir()\n@@ -225,16 +217,6 @@ def setup_failure(message):\n     return EXIT_BY_ID[\"setup_error\"]\n \n \n-def could_not_evaluate(message):\n-    \"\"\"The scratch-root refusal: one stderr line, the frozen grammar, exit 2 (round 55).\n-\n-    `message` is ScratchRootUnusable's text, which already carries the class token;\n-    the exception type never reaches the operator line.\"\"\"\n-    emit_err(f\"repeat-control: could-not-evaluate: {message}\")\n-    emit(\"REPEAT_CONTROL: setup_error\")\n-    return EXIT_BY_ID[\"setup_error\"]\n-\n-\n def classify(records):\n     \"\"\"Apply the fixed precedence to the saved per-run observations.\"\"\"\n     if any(not record[\"available\"] for record in records):\n@@ -922,8 +904,6 @@ def dispatch(argv):\n def main(argv):\n     try:\n         status = dispatch(argv)\n-    except ScratchRootUnusable as exc:\n-        status = could_not_evaluate(str(exc))\n     except Exception as exc:  # noqa: BLE001 - never let a traceback exit 1\n         status = setup_failure(f\"{type(exc).__name__}: {exc}\")\n     # A terminal that refused output must not change the class at shutdown:\n"
+ },
+ {
+  "branch": "m-cc-revert",
+  "rev": "db6f5e0b89c3b06a563648ef67934d4f63ab29c3",
+  "target_mode": "context-capture --selftest",
+  "stat": "tools/context-capture.py | 11 +----------\n 1 file changed, 1 insertion(+), 10 deletions(-)",
+  "diff": "diff --git a/tools/context-capture.py b/tools/context-capture.py\nindex ad1b2f3..9208999 100755\n--- a/tools/context-capture.py\n+++ b/tools/context-capture.py\n@@ -297,10 +297,6 @@ expected schema (exactly four keys):\n \"\"\"\n \n \n-class ScratchRootUnusable(RuntimeError):\n-    \"\"\"A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).\"\"\"\n-\n-\n def strict_scratch_root():\n     \"\"\"Scratch root for mkdtemp: TMPDIR when set (must be a usable directory \u2014\n     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent\n@@ -309,7 +305,7 @@ def strict_scratch_root():\n     t = _os.environ.get(\"TMPDIR\")\n     if t:\n         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):\n-            raise ScratchRootUnusable(\n+            raise RuntimeError(\n                 \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)\" % t)\n         return t\n     return tempfile.gettempdir()\n@@ -2214,11 +2210,6 @@ def run_selftest():\n         harness = SelftestHarness()\n         run_selftest_cases(harness)\n         return harness.finish()\n-    except ScratchRootUnusable as exc:\n-        # One stderr line with the frozen grammar: the class is operator-visible,\n-        # the exception type never is, and stdout keeps no setup error (round 55).\n-        sys.stderr.write(\"context-capture.py: could-not-evaluate: {}\\n\".format(exc))\n-        return 2\n     except Exception as exc:  # setup failure is loud but never a traceback\n         sys.stdout.write(\n             \"SELFTEST: FAIL (setup error: {}: {})\\n\".format(\n"
+ },
+ {
+  "branch": "m-reg-revert",
+  "rev": "9b2eaaf2b038ba39c8dbb552671afdf1112eef36",
+  "target_mode": "registry-check --rev",
+  "stat": "tools/registry-check.py | 14 +-------------\n 1 file changed, 1 insertion(+), 13 deletions(-)",
+  "diff": "diff --git a/tools/registry-check.py b/tools/registry-check.py\nindex ea68679..96d762e 100755\n--- a/tools/registry-check.py\n+++ b/tools/registry-check.py\n@@ -754,10 +754,6 @@ def resolve_rev(root, rev):\n \n \n \n-class ScratchRootUnusable(RuntimeError):\n-    \"\"\"A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).\"\"\"\n-\n-\n def strict_scratch_root():\n     \"\"\"Scratch root for mkdtemp: TMPDIR when set (must be a usable directory \u2014\n     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent\n@@ -766,7 +762,7 @@ def strict_scratch_root():\n     t = _os.environ.get(\"TMPDIR\")\n     if t:\n         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):\n-            raise ScratchRootUnusable(\n+            raise RuntimeError(\n                 \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)\" % t)\n         return t\n     return tempfile.gettempdir()\n@@ -1848,9 +1844,6 @@ def main(argv):\n             return usage_failure(\"--selftest takes no further arguments\")\n         try:\n             return selftest()\n-        except ScratchRootUnusable as exc:\n-            print(f\"registry-check: could-not-evaluate: {exc}\", file=sys.stderr)\n-            return 2\n         except RuntimeError as exc:\n             print(f\"registry-check: could-not-evaluate: {exc}\", file=sys.stderr)\n             return 2\n@@ -1932,11 +1925,6 @@ def main(argv):\n         fleet_root = os.path.dirname(os.path.realpath(root_requested))\n         try:\n             work, root = clone_lane_at_rev(root_requested, rev, sha)\n-        except ScratchRootUnusable as exc:\n-            # The class, not a verdict: one stderr line with the frozen grammar,\n-            # exit 2, and stdout carries no could-not-evaluate verdict (round 55).\n-            print(f\"registry-check: could-not-evaluate: {exc}\", file=sys.stderr)\n-            return 2\n         except RuntimeError as exc:\n             report = {\n                 \"schema\": REPORT_SCHEMA,\n"
+ },
+ {
+  "branch": "m-rc-drop-value",
+  "rev": "46919de656b67086c2c12109244bcafd48ad33d8",
+  "target_mode": "repeat-control --selftest",
+  "stat": "tools/repeat-control.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diff": "diff --git a/tools/repeat-control.py b/tools/repeat-control.py\nindex e9eb1b9..b105602 100755\n--- a/tools/repeat-control.py\n+++ b/tools/repeat-control.py\n@@ -162,7 +162,7 @@ def strict_scratch_root():\n     if t:\n         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):\n             raise ScratchRootUnusable(\n-                \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)\" % t)\n+                \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory (could-not-evaluate)\")\n         return t\n     return tempfile.gettempdir()\n \n"
+ },
+ {
+  "branch": "m-rc-drop-class",
+  "rev": "6edf771bb26e42e3bee9f6fe3fb093c034a76379",
+  "target_mode": "repeat-control --selftest",
+  "stat": "tools/repeat-control.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diff": "diff --git a/tools/repeat-control.py b/tools/repeat-control.py\nindex e9eb1b9..23c7bb2 100755\n--- a/tools/repeat-control.py\n+++ b/tools/repeat-control.py\n@@ -162,7 +162,7 @@ def strict_scratch_root():\n     if t:\n         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):\n             raise ScratchRootUnusable(\n-                \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)\" % t)\n+                \"cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r\" % t)\n         return t\n     return tempfile.gettempdir()\n \n"
+ },
+ {
+  "branch": "m-rc-drop-label",
+  "rev": "b6c5b6893f7b5ba80c14c35709ba88d73a6136ed",
+  "target_mode": "repeat-control --selftest",
+  "stat": "tools/repeat-control.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diff": "diff --git a/tools/repeat-control.py b/tools/repeat-control.py\nindex e9eb1b9..772cfa3 100755\n--- a/tools/repeat-control.py\n+++ b/tools/repeat-control.py\n@@ -230,7 +230,7 @@ def could_not_evaluate(message):\n \n     `message` is ScratchRootUnusable's text, which already carries the class token;\n     the exception type never reaches the operator line.\"\"\"\n-    emit_err(f\"repeat-control: could-not-evaluate: {message}\")\n+    emit_err(f\"repeat-control: {message}\")\n     emit(\"REPEAT_CONTROL: setup_error\")\n     return EXIT_BY_ID[\"setup_error\"]\n \n"
+ },
+ {
+  "branch": "m-rc-stdout",
+  "rev": "7aeb829acc9c56478534fe9ffb55c1cb5b687259",
+  "target_mode": "repeat-control --selftest",
+  "stat": "tools/repeat-control.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diff": "diff --git a/tools/repeat-control.py b/tools/repeat-control.py\nindex e9eb1b9..c768747 100755\n--- a/tools/repeat-control.py\n+++ b/tools/repeat-control.py\n@@ -230,7 +230,7 @@ def could_not_evaluate(message):\n \n     `message` is ScratchRootUnusable's text, which already carries the class token;\n     the exception type never reaches the operator line.\"\"\"\n-    emit_err(f\"repeat-control: could-not-evaluate: {message}\")\n+    emit(f\"repeat-control: could-not-evaluate: {message}\")\n     emit(\"REPEAT_CONTROL: setup_error\")\n     return EXIT_BY_ID[\"setup_error\"]\n \n"
+ },
+ {
+  "branch": "m-cc-stdout",
+  "rev": "56ad1289efa591edf427eb7ee7d5fcec325e240b",
+  "target_mode": "context-capture --selftest",
+  "stat": "tools/context-capture.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diff": "diff --git a/tools/context-capture.py b/tools/context-capture.py\nindex ad1b2f3..bf81ea5 100755\n--- a/tools/context-capture.py\n+++ b/tools/context-capture.py\n@@ -2217,7 +2217,7 @@ def run_selftest():\n     except ScratchRootUnusable as exc:\n         # One stderr line with the frozen grammar: the class is operator-visible,\n         # the exception type never is, and stdout keeps no setup error (round 55).\n-        sys.stderr.write(\"context-capture.py: could-not-evaluate: {}\\n\".format(exc))\n+        sys.stdout.write(\"context-capture.py: could-not-evaluate: {}\\n\".format(exc))\n         return 2\n     except Exception as exc:  # setup failure is loud but never a traceback\n         sys.stdout.write(\n"
+ },
+ {
+  "branch": "m-reg-stdout",
+  "rev": "7530d5ba9fd37caa076c4298e7f7375f156d4923",
+  "target_mode": "registry-check --rev",
+  "stat": "tools/registry-check.py | 4 +---\n 1 file changed, 1 insertion(+), 3 deletions(-)",
+  "diff": "diff --git a/tools/registry-check.py b/tools/registry-check.py\nindex ea68679..8acd873 100755\n--- a/tools/registry-check.py\n+++ b/tools/registry-check.py\n@@ -1933,9 +1933,7 @@ def main(argv):\n         try:\n             work, root = clone_lane_at_rev(root_requested, rev, sha)\n         except ScratchRootUnusable as exc:\n-            # The class, not a verdict: one stderr line with the frozen grammar,\n-            # exit 2, and stdout carries no could-not-evaluate verdict (round 55).\n-            print(f\"registry-check: could-not-evaluate: {exc}\", file=sys.stderr)\n+            print(f\"registry-check: could-not-evaluate: {exc}\", file=sys.stdout)\n             return 2\n         except RuntimeError as exc:\n             report = {\n"
+ },
+ {
+  "branch": "m-rc-wrong-prefix",
+  "rev": "913cdfca57a3e21d9ada2fc597a46dbafbaa10b5",
+  "target_mode": "repeat-control --selftest",
+  "stat": "tools/repeat-control.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diff": "diff --git a/tools/repeat-control.py b/tools/repeat-control.py\nindex e9eb1b9..773883d 100755\n--- a/tools/repeat-control.py\n+++ b/tools/repeat-control.py\n@@ -230,7 +230,7 @@ def could_not_evaluate(message):\n \n     `message` is ScratchRootUnusable's text, which already carries the class token;\n     the exception type never reaches the operator line.\"\"\"\n-    emit_err(f\"repeat-control: could-not-evaluate: {message}\")\n+    emit_err(f\"env-diff: could-not-evaluate: {message}\")\n     emit(\"REPEAT_CONTROL: setup_error\")\n     return EXIT_BY_ID[\"setup_error\"]\n \n"
+ }
+]

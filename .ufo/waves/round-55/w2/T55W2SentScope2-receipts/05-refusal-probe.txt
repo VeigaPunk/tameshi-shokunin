@@ -1,0 +1,37 @@
+=== clone at C0 into scratch, verify toplevel, never in the lane ===
+$ git -C clone rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r55/T55W2SentScope2/c0-probe
+$ git -C clone checkout --detach 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+$ git -C clone rev-parse HEAD
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+
+=== every allocating mode with a set-but-unusable TMPDIR: rc, stderr line count, stdout grep ===
+repeat-control           rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-repeat-control' (could-not-evaluate)
+context-capture          rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-context-capture' (could-not-evaluate)
+registry-check           rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-registry-check' (could-not-evaluate)
+bash-witness-study       rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-bash-witness-study' (could-not-evaluate)
+pin-disposition          rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-pin-disposition' (could-not-evaluate)
+evidence-disposition     rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-evidence-disposition' (could-not-evaluate)
+env-diff                 rc=2 stderr_lines=1 RuntimeError_in_streams=0 Traceback_in_streams=0
+    stderr: ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-probe-env-diff' (could-not-evaluate)
+
+=== non-allocating modes stay lazy with the same bad TMPDIR (must not refuse) ===
+context-capture-check    rc=0 stderr_lines=0
+
+=== documented cell token vs emitted token, all seven ===
+row                              documented                 emitted            match
+repeat-control-selftest          repeat-control.py          repeat-control     MISMATCH
+bash-witness-selftest            bash-witness-study.py      WITNESS_STUDY      MISMATCH
+pin-disposition-selftest         pin-disposition.py         pin-disposition.py ok
+evidence-disposition-selftest    evidence-disposition.py    evidence-disposition.py ok
+context-capture-selftest         context-capture.py         context-capture.py ok
+registry-check-selftest          registry-check.py          registry-check     MISMATCH
+env-diff-selftest                env-diff.py                ENVDIFF_SETUP      MISMATCH
+
+cells whose documented tool token no run emits: 4/7

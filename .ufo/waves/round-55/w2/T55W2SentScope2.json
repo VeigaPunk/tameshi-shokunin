@@ -1,0 +1,132 @@
+{
+  "seat": "T55W2SentScope2",
+  "role": "sentinel",
+  "item": "scope audit of C0",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "rev_audited": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "freeze": "e2979f277138da503af27b263b783f626f109be4",
+  "head_at_audit": "133b2ce6d4d86d783db38607343c3654350194b8",
+  "receipts": ".ufo/waves/round-55/w2/T55W2SentScope2-receipts/",
+  "receipt_driver": "bash .ufo/waves/round-55/w2/T55W2SentScope2-receipts/receipts.sh",
+  "path_inventory": {
+    "base_to_c0_paths": 1285,
+    "freeze_to_c0_paths": 1273,
+    "under_w1": 1254,
+    "outside_w1": 19,
+    "outside_lane": 0,
+    "gitlinks": 0,
+    "symlinks": 0,
+    "dotdot_or_absolute": 0,
+    "sibling_lane_segments": 0,
+    "non_100644_status_on_new_files": 20,
+    "verdict": "pass"
+  },
+  "frozen": {
+    "frozen_paths": 8,
+    "freeze_manifest_entries": 7,
+    "manifest_subset_of_frozen_paths": true,
+    "freeze_to_c0_intersection": 0,
+    "frozen_files_dirty_in_worktree": 0,
+    "base_to_c0_note": "all 8 frozen paths appear in base..C0 with status A (added by the freeze commit e2979f2), untouched by C0",
+    "ufo_state_or_watchdog_touched": false,
+    "verdict": "pass"
+  },
+  "registry_json": {
+    "numstat": "1275 insertions, 1026 deletions",
+    "semantic_diffs": 7,
+    "rows_freeze": 56,
+    "rows_c0": 56,
+    "row_key_order_identical": true,
+    "changed_paths": [
+      "/rows[2]/scratch_root",
+      "/rows[4]/scratch_root",
+      "/rows[6]/scratch_root",
+      "/rows[14]/scratch_root",
+      "/rows[18]/scratch_root",
+      "/rows[27]/scratch_root",
+      "/rows[40]/scratch_root"
+    ],
+    "reserialization": {
+      "bytes_freeze": 28902,
+      "bytes_c0": 27999,
+      "lines_freeze": 1028,
+      "lines_c0": 1277,
+      "indent_freeze": 2,
+      "indent_c0": 1,
+      "c0_equals_dumps_freeze_plus_7_cells_indent1": true
+    },
+    "verdict": "pass_semantic_but_reserialized"
+  },
+  "tool_diffs": {
+    "tools/repeat-control.py": {"numstat": "21+/1-", "hunks": 4, "in_scope": true},
+    "tools/context-capture.py": {"numstat": "10+/1-", "hunks": 3, "in_scope": true},
+    "tools/registry-check.py": {"numstat": "13+/1-", "hunks": 4, "in_scope": true,
+      "note": "two refusal handlers: selftest branch and --rev branch; the --rev handler is load-bearing because the pre-existing RuntimeError fallback emitted the verdict on stdout"},
+    "verdict": "pass"
+  },
+  "refusal_probe_at_c0": {
+    "exit_class": "2 for all seven allocating modes",
+    "stderr_lines": 1,
+    "runtime_error_token": 0,
+    "traceback_token": 0,
+    "lazy_mode": "context-capture --check rc=0, no scratch refusal",
+    "emitted_tokens": {
+      "repeat-control.py": "repeat-control",
+      "context-capture.py": "context-capture.py",
+      "registry-check.py": "registry-check",
+      "bash-witness-study.py": "WITNESS_STUDY",
+      "pin-disposition.py": "pin-disposition.py",
+      "evidence-disposition.py": "evidence-disposition.py",
+      "env-diff.py": "ENVDIFF_SETUP"
+    },
+    "registry_cells_documenting_a_token_no_run_emits": 4
+  },
+  "worktree": {
+    "snapshot_utc": "2026-10-28T17:27:27Z",
+    "head": "133b2ce6d4d86d783db38607343c3654350194b8",
+    "porcelain": {"untracked": 148, "modified": 38, "deleted": 10, "total": 196},
+    "production_surfaces_dirty": 0,
+    "frozen_files_dirty": 0,
+    "dirty_outside_waves_round55": [
+      ".ufo/evidence/round-55/before/c2.stdout",
+      ".ufo/evidence/round-55/c1/lost-headings-at-c0.json",
+      ".ufo/evidence/round-55/control/",
+      ".ufo/evidence/round-55/integrate/"
+    ],
+    "verdict": "stray_writes_present_all_under_dot_ufo"
+  },
+  "post_dispatch_marker": {
+    "marker": "2026-10-28T14:16:09",
+    "spec_and_dispatch_bytes_unchanged": true,
+    "c0_commit_time": "2026-10-28 14:16:39 -0300",
+    "files_under_round55_newer_than_marker": 719,
+    "w1_newer_than_marker": 368,
+    "w2_newer_than_marker": 338,
+    "committed_w1_reports_now_dirty": 10,
+    "verdict": "artefact_immutable_snapshot_mid_flight"
+  },
+  "census": {"exit": 0, "rows": 140, "verdict": "pass"},
+  "findings": [
+    {"id": "F1", "severity": "medium", "axis": "calibration",
+     "what": "4 of 7 registry scratch_root cells quote a literal tool token no run emits (repeat-control.py, bash-witness-study.py, registry-check.py, env-diff.py); the c2 docs arm only matches the could-not-evaluate marker so docs=7/7 passes",
+     "evidence": "receipts/05-refusal-probe.txt",
+     "fix": "use emitted tokens or the note's <tool>: placeholder; assert the token in the docs arm"},
+    {"id": "F2", "severity": "low", "axis": "maintainability",
+     "what": "tools/registry.json re-serialized end-to-end (indent 2->1): 1275+/1026- for seven cells; semantically lossless",
+     "evidence": "receipts/03-registry-semantic.txt",
+     "fix": "patch the seven strings in place"},
+    {"id": "F3", "severity": "medium", "axis": "evidence integrity",
+     "what": ".ufo/evidence/round-55/before/c2.stdout truncated in the worktree (-16 lines incl. the C2_R55 total=21 verdict); committed blob intact at C0 and HEAD",
+     "evidence": "receipts/09-base-receipt-drift.txt"},
+    {"id": "F4", "severity": "low-medium", "axis": "evidence integrity",
+     "what": "untracked writes inside .ufo/evidence/round-55/: c1/lost-headings-at-c0.json, control/controls-a.stdout, integrate/binder.py, integrate/resolutions.json",
+     "evidence": "receipts/06-worktree-status.txt"},
+    {"id": "F5", "severity": "informational", "axis": "record freshness",
+     "what": "C0 cut 30s after the w1 marker; 10 wave-1 reports rewritten after the commit, 368 w1 files newer than the marker",
+     "evidence": "receipts/07-post-dispatch-writes.txt"},
+    {"id": "F6", "severity": "informational", "axis": "consistency",
+     "what": "repeat-control's refusal also emits REPEAT_CONTROL: setup_error on stdout; context-capture and registry-check emit nothing on stdout",
+     "evidence": "receipts/05-refusal-probe.txt"}
+  ]
+}

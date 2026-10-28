@@ -1,0 +1,35 @@
+# Control: C0 with 'CTL_POS_c1 true' reintroduced in SCORECARD.md outside the corrections section (ctl @ 2670851a5e9e)
+$ git -C ctl show --stat --oneline HEAD
+2670851 control: reintroduce R54.1 and R54.3 stale tokens at C0
+ SCORECARD.md               | 2 ++
+ corpus/lessons/round-54.md | 2 ++
+ 2 files changed, 4 insertions(+)
+
+$ git -C ctl diff 9cf0146 -- SCORECARD.md
+diff --git c/SCORECARD.md w/SCORECARD.md
+index 54faed3..d95d471 100644
+--- c/SCORECARD.md
++++ w/SCORECARD.md
+@@ -2618,6 +2618,8 @@ Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to
+ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+ 
+ 
++The phase-B positive control is recorded as `CTL_POS_c1 true` (wave-1 float, unamended).
++
+ ## Round 55 - round-54 record corrections
+ 
+ The round-54 non-author spot-check (`corpus/lessons/round-54-verifier-spotcheck.md`)
+
+$ python3 c1-frozen133.py --lane ctl --rev 2670851a --work <empty> --explain
+EXPLAIN R54.1 FAIL premise=ok corrected=ok stale=1 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.1 stale: SCORECARD.md:2621: The phase-B positive control is recorded as `CTL_POS_c1 true` (wave-1 float, unamended).
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=2670851a5e9e classes=10 premise=10/10 stale=1 classes_corrected=10/10 total=1 C1_R55_PASS=false
+RC=0
+
+$ python3 c1-head.py --lane ctl --rev 2670851a --work <empty> --explain
+EXPLAIN R54.1 FAIL premise=ok corrected=ok stale=2 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.1 stale: SCORECARD.md:2621: The phase-B positive control is recorded as `CTL_POS_c1 true` (wave-1 float, unamended).
+EXPLAIN R54.1 stale: SCORECARD.md@297017: itive control is recorded as `CTL_POS_c1 true` (wave-1 float
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=2670851a5e9e classes=10 premise=10/10 stale=1 classes_corrected=10/10 total=1 C1_R55_PASS=false

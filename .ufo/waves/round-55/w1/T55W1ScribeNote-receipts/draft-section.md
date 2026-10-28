@@ -14,7 +14,7 @@ so what an operator sees is
     repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/no/such/dir' (could-not-evaluate)
 
 The leading token is each tool's own name, not a fixed string: at round 55
-the eight modes print `ENVDIFF_SETUP`, `repeat-control`, `registry-check`,
+the nine modes print `ENVDIFF_SETUP`, `repeat-control`, `registry-check`,
 `WITNESS_STUDY`, `pin-disposition.py`, `evidence-disposition.py` and
 `context-capture.py`. The pattern admits a letter followed by letters,
 digits, `_`, `.` or `-`; the value is the `%r` rendering of the rejected
@@ -25,16 +25,19 @@ line, `program: message`, and the message does not begin with a capital letter
 when it follows the program name (S280) — which is why the class is one line
 and why `could-not-evaluate` is lower-case.
 
-### The eight allocating modes
+### The nine allocating modes
 
 `env-diff --selftest`, `env-diff --contract`, `repeat-control --selftest`,
-`registry-check --selftest`, `bash-witness-study selftest`,
-`pin-disposition --selftest`, `evidence-disposition --selftest`,
-`context-capture --selftest`. Each exits 2 under a set-but-unusable
-`TMPDIR`, prints that one line on stderr, and prints no `RuntimeError` or
-`Traceback` token on either stream. The arm's meaning is S277's ("a pathname
-of a directory made available for programs that need a place to create
-temporary files"); the empty value stays the round-54 arm (S278
+`registry-check --selftest`, `registry-check --rev`,
+`bash-witness-study selftest`, `pin-disposition --selftest`,
+`evidence-disposition --selftest`, `context-capture --selftest`. Each exits 2
+under a set-but-unusable `TMPDIR`, prints that one line on stderr, and prints
+no `RuntimeError` or `Traceback` token on either stream. `registry-check
+--rev` clones the lane at a revision, so the counter marks it expensive and
+measures it on the unusable arm only; its usable path is the tool's own
+self-test, which runs the same helper. The arm's meaning is S277's ("a
+pathname of a directory made available for programs that need a place to
+create temporary files"); the empty value stays the round-54 arm (S278
 `_candidate_tempdir_list`:163-165 and S279's documented order).
 
 ### The five lazy modes
@@ -70,7 +73,7 @@ unmeasured.
 
 Sources: S277-S279 remain the authority for the `TMPDIR` arms above (S277 the
 definition, S278 the resolver's skip-empty rule, S279 the documented order),
-and S280 is the authority for the one-line shape. The eight-mode and
+and S280 is the authority for the one-line shape. The nine-mode and
 five-mode inventories are the round-55 counter's own table
 (`.ufo/evidence/round-55/c2/measure.py`) — a lane measurement, not a sourced
 claim.

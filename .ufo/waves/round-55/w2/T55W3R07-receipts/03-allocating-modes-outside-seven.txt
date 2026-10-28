@@ -1,0 +1,138 @@
+# 03 — allocating modes documented outside the seven strict tools
+
+Claim under test (SKILL.md ## Standing rules): "Measured on every documented
+allocating mode — the seven self-tests plus `env-diff --contract` and
+`registry-check --rev` — as one stderr line ... exit 2".
+
+## 3a — registry rows documenting a selftest with no scratch_root cell
+$ python3 - /home/vgpnk/Projects/shokunin/tameshi-shokunin 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb <<'PY'
+import json, subprocess, sys
+lane, rev = sys.argv[1], sys.argv[2]
+d = json.loads(subprocess.run(['git', '-C', lane, 'show', rev + ':tools/registry.json'],
+                              capture_output=True, check=True).stdout)
+sel = [(i, r) for i, r in enumerate(d['rows']) if r.get('kind') == 'selftest']
+print('selftest rows:', len(sel))
+for i, r in sel:
+    if 'scratch_root' not in r:
+        print('ROW %-3d %-32s argv=%s' % (i, r['name'], ' '.join(r['argv'])))
+PY
+selftest rows: 30
+ROW 8   witness-metadata-selftest        argv=python3 tools/witness-metadata.py --selftest
+ROW 19  mutate-and-run-selftest          argv=bash tools/mutate-and-run.sh --selftest
+ROW 22  measure-round16-selftest         argv=python3 .ufo/evidence/round-16/measure.py --selftest
+ROW 28  measure-round17-selftest         argv=python3 .ufo/evidence/round-17/measure.py --selftest
+ROW 29  trace-inputs-round17-selftest    argv=python3 .ufo/evidence/round-17/coldread/trace-inputs.py --selftest
+ROW 30  assemble-round17-selftest        argv=python3 .ufo/evidence/round-17/coldread/assemble.py --selftest
+ROW 31  trace-inputs-selftest            argv=python3 tools/trace-inputs.py --selftest
+ROW 32  measure-round18-selftest         argv=python3 .ufo/evidence/round-18/measure.py --selftest
+ROW 33  assemble-round18-selftest        argv=python3 .ufo/evidence/round-18/coldread/assemble.py --selftest
+ROW 34  defect-probes-selftest           argv=python3 .ufo/evidence/round-18/defect-probes.py --selftest
+ROW 35  round19-correction-ruler-selftest argv=python3 .ufo/evidence/round-19/measure.py --selftest
+ROW 36  round19-coldread-selector-selftest argv=python3 .ufo/evidence/round-19/coldread/measure.py --selftest
+ROW 37  receipt-window-selftest          argv=python3 tools/receipt-window.py --selftest
+ROW 38  receipt-measure-selftest         argv=python3 tools/receipt-measure.py --selftest
+ROW 39  round20-coldread-selector-selftest argv=python3 .ufo/evidence/round-20/coldread/measure.py --selftest
+ROW 41  wave-route-mix-selftest          argv=python3 tools/wave-route-mix.py --selftest
+ROW 42  round21-measure-selftest         argv=python3 tools/round21-measure.py --selftest
+ROW 43  round21-coldread-selector-selftest argv=python3 .ufo/evidence/round-21/coldread/measure.py --selftest
+ROW 45  wave-accounting-selftest         argv=python3 tools/wave-accounting.py --selftest
+ROW 47  command-binding-selftest         argv=python3 tools/command-binding.py --selftest
+ROW 50  command-binding-selftest-r24     argv=python3 tools/command-binding.py --selftest
+ROW 53  registry-replay-selftest         argv=python3 tools/registry-replay.py --selftest
+ROW 54  mte-interop-selftest             argv=uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --selftest
+[exit=0]
+
+## 3b — the tool docs say the selftest allocates a fixture tree
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:tools/witness-metadata.py | sed -n '43,46p'
+No mode writes inside the lane.  The only writes are the isolated fixture
+tree created by --selftest under tempfile.mkdtemp() and removed in a
+finally block.
+"""
+[exit=0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:tools/trace-inputs.py | sed -n '576,584p'
+    """A private directory that is NOT inside root and not equal to it."""
+    cands = [tempfile.gettempdir(), "/var/tmp", "/dev/shm",
+             os.path.expanduser("~/.cache"), "/tmp"]
+    seen = set()
+    for cand in cands:
+        if not cand or cand in seen:
+            continue
+        seen.add(cand)
+        try:
+[exit=0]
+
+## 3c — behaviour under a set-but-unusable TMPDIR (plain runs, cwd = clone at C0)
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0 && TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0/no-such-tmpdir python3 tools/witness-metadata.py --selftest >/tmp/wm.o 2>/tmp/wm.e; echo "exit=$? stdout-tail=$(tail -1 /tmp/wm.o) stderr-lines=$(wc -l </tmp/wm.e)"; rm -f /tmp/wm.o /tmp/wm.e
+exit=0 stdout-tail=SELFTEST: PASS 39/39 stderr-lines=0
+[exit=0]
+
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0 && TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0/no-such-tmpdir python3 tools/trace-inputs.py --selftest >/tmp/ti.o 2>/tmp/ti.e; echo "exit=$? stdout-tail=$(tail -1 /tmp/ti.o) stderr-lines=$(wc -l </tmp/ti.e)"; rm -f /tmp/ti.o /tmp/ti.e
+exit=0 stdout-tail=SELFTEST: 30/30 stderr-lines=0
+[exit=0]
+
+## 3d — the same runs under strace to prove who allocated where
+# (strace perturbs nested tracing, so these exits are NOT the behaviour
+#  evidence; 3c is. The mkdir lines are the allocation evidence.)
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0 && TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0/no-such-tmpdir strace -f -e trace=mkdir,mkdirat -o /tmp/st.a python3 tools/witness-metadata.py --selftest >/dev/null 2>/tmp/se.a; echo "strace-exit=$? stderr-lines=$(wc -l </tmp/se.a)"; grep -m2 'mkdir("/tmp/' /tmp/st.a; rm -f /tmp/st.a /tmp/se.a
+strace-exit=0 stderr-lines=0
+2469208 mkdir("/tmp/witness-metadata-selftest-iha4wdst", 0700) = 0
+2469208 mkdir("/tmp/witness-metadata-selftest-iha4wdst/01-corrected-companion-green", 0777) = 0
+[exit=0]
+
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0 && TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0/no-such-tmpdir strace -f -e trace=mkdir,mkdirat -o /tmp/st.b python3 tools/trace-inputs.py --selftest >/dev/null 2>/tmp/se.b; echo "strace-exit=$? stderr-lines=$(wc -l </tmp/se.b)"; grep -m2 'mkdir("/tmp/' /tmp/st.b; rm -f /tmp/st.b /tmp/se.b
+strace-exit=1 stderr-lines=0
+2489250 mkdir("/tmp/trace-inputs-selftest-qud6_gk_", 0700) = 0
+2489250 mkdir("/tmp/trace-inputs-selftest-qud6_gk_/fleet", 0777) = 0
+[exit=0]
+
+## 3e — how many of those rows name an allocating call in their target script
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0 && python3 - 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb <<'PY'
+import json, subprocess, sys
+rev = sys.argv[1]
+d = json.loads(subprocess.run(['git', '-C', '.', 'show', rev + ':tools/registry.json'],
+                              capture_output=True, check=True).stdout)
+rows = [(i, r) for i, r in enumerate(d['rows'])
+        if r.get('kind') == 'selftest' and 'scratch_root' not in r]
+hits = []
+for i, r in rows:
+    path = [a for a in r['argv'] if a.endswith(('.py', '.sh', '.mjs'))]
+    if not path:
+        continue
+    src = subprocess.run(['git', '-C', '.', 'show', rev + ':' + path[0]],
+                         capture_output=True).stdout.decode('utf-8', 'replace')
+    alloc = [m for m in ('mkdtemp(', 'TemporaryDirectory(', 'TemporaryFile(') if m in src]
+    if alloc:
+        hits.append((i, r['name'], path[0], alloc))
+print('selftest rows without a scratch_root cell:', len(rows))
+print('of those, target script mentions an allocating call:', len(hits))
+for i, n, p, a in hits:
+    print('  ROW %-3d %-34s %-46s %s' % (i, n, p, ','.join(a)))
+PY
+selftest rows without a scratch_root cell: 23
+of those, target script mentions an allocating call: 21
+  ROW 8   witness-metadata-selftest          tools/witness-metadata.py                      mkdtemp(
+  ROW 22  measure-round16-selftest           .ufo/evidence/round-16/measure.py              mkdtemp(
+  ROW 28  measure-round17-selftest           .ufo/evidence/round-17/measure.py              mkdtemp(
+  ROW 29  trace-inputs-round17-selftest      .ufo/evidence/round-17/coldread/trace-inputs.py mkdtemp(
+  ROW 30  assemble-round17-selftest          .ufo/evidence/round-17/coldread/assemble.py    TemporaryDirectory(
+  ROW 31  trace-inputs-selftest              tools/trace-inputs.py                          mkdtemp(
+  ROW 32  measure-round18-selftest           .ufo/evidence/round-18/measure.py              mkdtemp(
+  ROW 33  assemble-round18-selftest          .ufo/evidence/round-18/coldread/assemble.py    TemporaryDirectory(
+  ROW 34  defect-probes-selftest             .ufo/evidence/round-18/defect-probes.py        mkdtemp(
+  ROW 35  round19-correction-ruler-selftest  .ufo/evidence/round-19/measure.py              TemporaryDirectory(
+  ROW 36  round19-coldread-selector-selftest .ufo/evidence/round-19/coldread/measure.py     TemporaryDirectory(
+  ROW 37  receipt-window-selftest            tools/receipt-window.py                        TemporaryDirectory(
+  ROW 38  receipt-measure-selftest           tools/receipt-measure.py                       TemporaryDirectory(
+  ROW 39  round20-coldread-selector-selftest .ufo/evidence/round-20/coldread/measure.py     TemporaryDirectory(
+  ROW 42  round21-measure-selftest           tools/round21-measure.py                       TemporaryDirectory(
+  ROW 43  round21-coldread-selector-selftest .ufo/evidence/round-21/coldread/measure.py     TemporaryDirectory(
+  ROW 45  wave-accounting-selftest           tools/wave-accounting.py                       TemporaryDirectory(
+  ROW 47  command-binding-selftest           tools/command-binding.py                       TemporaryDirectory(
+  ROW 50  command-binding-selftest-r24       tools/command-binding.py                       TemporaryDirectory(
+  ROW 53  registry-replay-selftest           tools/registry-replay.py                       TemporaryDirectory(
+  ROW 54  mte-interop-selftest               tools/mte-interop.py                           mkdtemp(,TemporaryDirectory(
+[exit=0]
+
+## 3e — for contrast: the nine contracted modes (full sweep is 01-scratch-arms.txt)
+All nine exit 2 with exactly one stderr line matching the counter's GRAMMAR.

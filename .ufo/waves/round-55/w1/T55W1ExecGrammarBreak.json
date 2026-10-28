@@ -1,0 +1,117 @@
+{
+ "seat": "T55W1ExecGrammarBreak",
+ "round": 55,
+ "wave": "w1",
+ "axis": "operability",
+ "milestone": "grammar arm sensitivity",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "freeze_pointer_at_score": "133b2ce",
+ "counter": {
+  "path": ".ufo/evidence/round-55/c2/measure.py",
+  "sha256": "0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b",
+  "amendments": 8,
+  "allocating_modes": 9,
+  "note": "run from an exact copy of these bytes; the freeze manifest verifies against disk for all seven frozen files"
+ },
+ "fixture": {
+  "clone_source": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "patched_commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "worktree_per_break": true,
+  "tool_sha256": {
+   "tools/repeat-control.py": "a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd",
+   "tools/context-capture.py": "f1043425085a08dde643723eea957f4a34b4f3db67b4ec000b17333186b08734"
+  },
+  "content_unchanged_since": "git diff --stat 9cf0146 HEAD -- tools/ SKILL.md SCORECARD.md corpus/ LOG.md is empty"
+ },
+ "runs": [
+  {
+   "name": "baseline",
+   "mutation": "none",
+   "rev": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+   "exit": 0,
+   "verdict": "C2_R55: rev=9cf0146b94dd grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=0 C2_R55_PASS=true",
+   "bad_non_tmp_keys": []
+  },
+  {
+   "name": "break 1 - prefix removed",
+   "mutation": "emit_err(f\"repeat-control: {message}\")",
+   "rev": "bab75e5db270c9a72336944ca395d816fa2e4181",
+   "exit": 1,
+   "verdict": "C2_R55: rev=bab75e5db270 grammar=8/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false",
+   "bad_non_tmp_keys": ["repeat-control --selftest"],
+   "predicate_split": {"grammar_match": false, "runtimeerror_token": false, "rc": 2}
+  },
+  {
+   "name": "break 2 - RuntimeError appended",
+   "mutation": "emit_err(f\"repeat-control: could-not-evaluate: {message} RuntimeError\")",
+   "rev": "0951af66951a97b2ff75940af00962eac811515f",
+   "exit": 1,
+   "verdict": "C2_R55: rev=0951af66951a grammar=8/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false",
+   "bad_non_tmp_keys": ["repeat-control --selftest"],
+   "predicate_split": {"grammar_match": false, "runtimeerror_token": true, "rc": 2}
+  },
+  {
+   "name": "break 2b - token inside a still-matching line (extra)",
+   "mutation": "emit_err(\"repeat-control: could-not-evaluate: \" + message.replace(\"directory: '\", \"directory: 'RuntimeError \", 1))",
+   "rev": "ad10185bddde267d31f8a758c846524a451659d5",
+   "exit": 1,
+   "verdict": "C2_R55: rev=ad10185bddde grammar=8/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false",
+   "bad_non_tmp_keys": ["repeat-control --selftest"],
+   "predicate_split": {"grammar_match": true, "runtimeerror_token": true, "rc": 2}
+  },
+  {
+   "name": "break 3 - exit 0 instead of 2",
+   "mutation": "could_not_evaluate returns 0",
+   "rev": "1eb2cb46333a2fed0f1832f1b4b670b0d637ae2d",
+   "exit": 1,
+   "verdict": "C2_R55: rev=1eb2cb46333a grammar=8/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false",
+   "bad_non_tmp_keys": ["repeat-control --selftest"],
+   "predicate_split": {"grammar_match": true, "runtimeerror_token": false, "rc": 0}
+  },
+  {
+   "name": "break 4 - context-capture prefix removed (extra)",
+   "mutation": "sys.stderr.write(\"context-capture.py: {}\\n\".format(exc))",
+   "rev": "017781471c9d77bff3fe8325c7657c015135c2fa",
+   "exit": 1,
+   "verdict": "C2_R55: rev=017781471c9d grammar=8/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false",
+   "bad_non_tmp_keys": ["context-capture --selftest"],
+   "predicate_split": {"grammar_match": false, "runtimeerror_token": false, "rc": 2}
+  }
+ ],
+ "sensitivity": {
+  "baseline_total": 0,
+  "delta_per_break": 1,
+  "grammar_modes_lost": 1,
+  "other_arms_stable": ["lazy=5/5", "empty=13/13", "usable=13/13", "tmp_mkdirs=0", "docs=7/7", "note=9/9", "skill=1/1"]
+ },
+ "superseded_instruments": {
+  "d6ca1d85": "8 allocating modes, pre-amendment; first sensitivity result, receipts under superseded-preamendment-8modes/",
+  "36ca47d3": "9 allocating modes with totals arithmetic mixing len(table) with the 13-mode arms; all-green tree read total=1 with bad={} (why amendment 8 exists); receipts under superseded-total-bug-36ca47d3/"
+ },
+ "findings": [
+  {"id": "F1", "severity": "blocker for phase B", "what": "frozen controls.sh CTL_BREAK_c2 anchor 'emit_err(f\"repeat-control: could-not-evaluate: {exc}\")' has count 0 in tools/repeat-control.py (line 233 names the parameter 'message'); the assert fires, gitcommit fails, controls.sh b exits 2 before CONTROLS_B and deciding-run refuses controls-b-verdict-missing"},
+  {"id": "F2", "severity": "cosmetic, frozen file", "what": "c2/measure.py docstring says 8 allocating modes and grammar=N/8 while the code measures 9 and prints N/9"},
+  {"id": "F3", "severity": "environmental", "what": "the /fast scratch tree (clone + receipts) and a sibling script were deleted at ~13:54 by an external sweep; all runs re-executed and receipts stored in the lane"},
+  {"id": "F4", "severity": "resolved by L1", "what": "working-tree freeze.json did not pin the working-tree bytes at seat start; amendments 1-8 re-froze on the amended bytes and the manifest now verifies file-by-file"},
+  {"id": "F5", "severity": "observation", "what": "the base receipt re-measured before amendment 1 showed lazy/empty/usable at full denominators with a detached clone, so amendment 1's symptom is not reproducible from that receipt"}
+ ],
+ "receipts": {
+  "dir": ".ufo/waves/round-55/w1/T55W1ExecGrammarBreak-receipts",
+  "final": [
+   "baseline.out", "baseline.receipts.json",
+   "mut1-no-prefix.out", "mut1-no-prefix.receipts.json",
+   "mut2-token.out", "mut2-token.receipts.json",
+   "mut2b-token-inside.out", "mut2b-token-inside.receipts.json",
+   "mut3-exit0.out", "mut3-exit0.receipts.json",
+   "mut4-cc-no-prefix.out", "mut4-cc-no-prefix.receipts.json",
+   "diff-mut1-no-prefix.patch", "diff-mut2-token.patch", "diff-mut2b-token-inside.patch",
+   "diff-mut3-exit0.patch", "diff-mut4-cc-no-prefix.patch",
+   "grammar-vs-token.py", "grammar-vs-token.out",
+   "counter-run-sha.txt", "status-final.txt", "status.txt",
+   "probe-registry-check-branch.out", "probe-registry-check-detached.out",
+   "probe-registry-check-exact-tmpdir-run1.out", "probe-registry-check-exact-tmpdir-run2.out"
+  ],
+  "superseded": ["superseded-preamendment-8modes/", "superseded-total-bug-36ca47d3/"]
+ }
+}

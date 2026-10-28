@@ -1,0 +1,23 @@
+ATTACK: the adapted round-55 binder against the lane's own adjudication file.
+SETUP (scratch clone; the lane is never written):
+  git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone
+  git -C $S/clone checkout 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+  cp <lane>/.ufo/evidence/round-55/integrate/{binder.py,resolutions.json} $S/clone/.ufo/evidence/round-55/integrate/
+  cp <lane>/.ufo/evidence/round-55/c1/lost-headings-at-c0.json $S/clone/.ufo/evidence/round-55/c1/
+  cp <lane>/.ufo/waves/round-55/w2/T55W2Read0*.{json,md} $S/clone/.ufo/waves/round-55/w2/
+  cp <lane>/.ufo/waves/round-55/w3/*.{json,md}      $S/clone/.ufo/waves/round-55/w3/
+  mkdir $S/clone/.ufo/evidence/round-21/coldread/rekey-r55-9cf0146b94dd
+COMMAND
+  TMPDIR=$S/tmp python3 .ufo/evidence/round-55/integrate/binder.py \
+      $S/clone 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb \
+      $S/clone/.ufo/evidence/round-21/coldread/rekey-r55-9cf0146b94dd
+OUTPUT (rc=1, stdout empty)
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r55/T55W2ExecFloorRekeyProbe/clone/.ufo/evidence/round-55/integrate/binder.py", line 54, in <module>
+    RES[item['heading']] = int(item['n'])
+                               ~~~~^^^^^
+KeyError: 'n'
+VERDICT: the binder cannot run at all against the round-55 resolutions file. The round-54 file it inherits parses
+that file as a list of {heading, n} adjudications (binder.py:52-54); round-55's resolutions.json is a decision log
+whose items carry {id, from, finding, decision, evidence} with no 'n' key, so the module-level parse raises before
+main(). binder.py sha256 cbe49ffa...; resolutions.json sha256 ef6baf5b...

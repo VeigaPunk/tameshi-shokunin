@@ -1,0 +1,35 @@
+{
+  "heading": "## Standing rules",
+  "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "section_sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767",
+  "findings": [
+    {
+      "quote": "`strict_scratch_root()` honours `TMPDIR`: unset → the platform default; empty (`TMPDIR=\"\"`) → unset",
+      "why": "The executor cannot resolve which root applies, because the section names two scratch roots with two unnamed defaults and never links them: this bullet's 'platform default' and the preceding bullet's `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`). Measured at C0 (receipts 01, 02): `env -u TMPDIR python3 -c 'import tempfile;print(tempfile.gettempdir())'` prints `/tmp`; `git grep -c HYAKU 9cf0146b -- tools` returns no match, so no tool reads the seat namespace; `HYAKU_SCRATCH=... strace ... repeat-control.py --selftest` makes 44 mkdir calls under `/tmp` and 0 under `$HYAKU_SCRATCH`. Following both bullets literally therefore puts tool scratch in `/tmp`, which the same section bounds to 'files under 50 MB' — and the mode the same bullet names, `registry-check --rev`, copies a 383 MB tree (`git clone --no-hardlinks`, the flags at tools/registry-check.py:800-810). Nothing in the section says to export TMPDIR inside the namespace."
+    },
+    {
+      "quote": "Measured on every documented allocating mode — the seven self-tests plus `env-diff --contract` and `registry-check --rev` — as one stderr line",
+      "why": "The measured set cannot be enumerated from this text plus the artifacts it cites: 'the seven self-tests' are never named (only the registry's seven `scratch_root` cells identify them), 'documented' has no definition, and the cited 'round-55 C2 counter' contradicts the sentence it is cited for. Receipt 03: the counter's own `modes()` returns 9 allocating and 5 lazy modes, the frozen C2 target says '9/9 allocating modes', but the counter's header line 17 says '8 allocating modes' and its total still subtracts `(8 - note)` while the note arm's denominator is `len(allocating)` = 9 — so at C0 even an all-green tree scores total=-1, PASS=false, and the section's claim cannot be verified by the artifact it cites. (The tip 133b2ce, freeze amendment 8, repairs the two denominator terms; the header at C0 remains 8.)"
+    },
+    {
+      "quote": "2; the five non-allocating modes stay lazy (round-55 C2 counter; corpus/knowledge/scratch-root-contract.md; the seven registry `scratch_root` cells).",
+      "why": "This is the clause a next round's editor can make false without noticing, because nothing automated watches it. The only counter arm that reads SKILL.md for this rule is `skill = 1 if MARKER in norm(...)` (counter line 260, unchanged at tip 133b2ce): a substring test for the grammar marker. Receipt 04, on a C0 clone: rewriting 'the seven self-tests' to 'the seventeen self-tests' and 'the five non-allocating' to 'the ninety non-allocating' leaves `skill` at 1. The registry-cell arm does fail when a tool is added or removed, but its message points at the registry rows, so an editor fixes the rows and never learns that this sentence's numerals, the mode names and the cell count also had to change."
+    },
+    {
+      "quote": "Read-only substrates unless PROVINCE.md declares a write surface; detection-and-report for operator-owned remediation.",
+      "why": "The permission condition has no referent at C0, so an executor cannot compute it: `git grep -n -i 'write surface' 9cf0146b -- PROVINCE.md AGENTS.md` returns 0 matches (receipt 06). 'Substrates' is undefined (which paths are substrates — corpus? SCORECARD.md? sibling lanes?), and PROVINCE.md is unrooted, so the reader must guess both the file and the sentence shape that would count as a declaration. PROVINCE.md does say the lane owns 'this lane's runner, corpus and source registry', but whether that is a declared write surface is exactly the judgement the rule leaves open."
+    },
+    {
+      "quote": "Secrets shape-only, never content-read.",
+      "why": "An undefined terminal. At C0 there is no definition of 'shape' anywhere: 0 definitional hits across corpus, tools, AGENTS.md and PROVINCE.md (receipt 06); the phrase appears only as this rule, its restatements (AGENTS.md:5, operator-runbook.md:258, service-limits.md:50/118/120) and one operational example the section does not cite (`ls -l` path presence, corpus/knowledge/gates-survey-kagi.md:617). An executor cannot decide the concrete cases the rule exists for — whether a sha256, a byte length, a file mode or a key name counts as shape (permitted) or as reading the secret's content (forbidden)."
+    },
+    {
+      "quote": "w1/w2 occurrence counts: 0 dash-form seat trees across rounds 48-52, thousands of the slash form",
+      "why": "This bullet violates the section's own third rule ('Every claim: measured anchor (path:line, command output, evidence id)'). The counts carry no anchor, 'thousands' is unquantified, and the evidence they paraphrase lives in a file the section does not cite (.ufo/evidence/round-53/integrate/resolutions.json:4, which names T53W1Read07.md — receipt 06). 'The host scratch directive of 2026-10-25' is likewise not an artifact: a fleet-wide grep resolves the phrase only to copies of SKILL.md and round-53 wave notes (receipt 06), so a next reader cannot distinguish the directive from the sentence that invokes it."
+    },
+    {
+      "quote": "as one stderr line, `<tool>: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)`, exit 2",
+      "why": "The class contract fixes the stderr line but leaves the other stream undefined, and the shipped tools differ there. Receipt 08 sweeps the seven self-tests under an unusable TMPDIR: all exit 2 with the grammar on stderr; six write 0 bytes to stdout, while `repeat-control` writes `REPEAT_CONTROL: setup_error` (28 bytes) to stdout — a second verdict token naming a different class. That is compliant with 'one stderr line' as written, but a caller that parses the tool's verdict stream cannot tell could-not-evaluate from a test failure, and the cited counter only forbids the `RuntimeError`/`Traceback` tokens on either stream, so nothing measures this."
+    }
+  ]
+}

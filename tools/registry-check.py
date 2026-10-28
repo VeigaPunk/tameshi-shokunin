@@ -1848,11 +1848,12 @@ def main(argv):
             return usage_failure("--selftest takes no further arguments")
         try:
             return selftest()
-        except ScratchRootUnusable as exc:
-            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
-            return 2
-        except RuntimeError as exc:
-            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+        except RuntimeError as exc:  # ScratchRootUnusable is a RuntimeError
+            try:
+                print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+                sys.stderr.flush()
+            except (OSError, ValueError):
+                pass
             return 2
 
     root = default_root()
@@ -1933,9 +1934,20 @@ def main(argv):
         try:
             work, root = clone_lane_at_rev(root_requested, rev, sha)
         except ScratchRootUnusable as exc:
-            # The class, not a verdict: one stderr line with the frozen grammar,
-            # exit 2, and stdout carries no could-not-evaluate verdict (round 55).
-            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+            # The class, not a verdict: one stderr line with the frozen grammar and
+            # exit 2. Under --json the machine report is still emitted (it is what
+            # the docstring promises), carrying the refusal as its error field; a
+            # stream that refuses either write must not change the class
+            # (round 55, wave-2 F1/F2).
+            report = {"schema": REPORT_SCHEMA, "root": root_requested, "rev": rev,
+                      "error": f"could-not-evaluate: {exc}"}
+            try:
+                if as_json:
+                    emit(json.dumps(report, indent=2, sort_keys=True))
+                print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+                sys.stderr.flush()
+            except (OSError, ValueError):
+                pass
             return 2
         except RuntimeError as exc:
             report = {

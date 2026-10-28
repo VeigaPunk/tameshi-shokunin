@@ -1,0 +1,25 @@
+# stream-state matrix — TMPDIR=/nonexistent/x, stderr or stdout redirected to /dev/full
+## base
+context-capture --selftest  2>/dev/full : rc=SELFTEST: FAIL (setup error: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate))
+2
+registry-check  --selftest  2>/dev/full : rc=1
+registry-check  --rev HEAD  2>/dev/full : rc=REGISTRY_CHECK: could-not-evaluate (cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate))
+2
+repeat-control  --selftest  2>/dev/full : rc=REPEAT_CONTROL: setup_error
+2
+context-capture --selftest  >/dev/full  : rc=1
+repeat-control  --selftest  >/dev/full  : rc=2
+registry-check  --rev HEAD  >/dev/full  : rc=1
+## c0
+context-capture --selftest  2>/dev/full : rc=1
+registry-check  --selftest  2>/dev/full : rc=1
+registry-check  --rev HEAD  2>/dev/full : rc=1
+repeat-control  --selftest  2>/dev/full : rc=REPEAT_CONTROL: setup_error
+2
+context-capture --selftest  >/dev/full  : rc=2
+repeat-control  --selftest  >/dev/full  : rc=2
+registry-check  --rev HEAD  >/dev/full  : rc=2
+## F6: base vs C0 selftest-unusable delta
+stdout identical
+stderr identical
+rc base=2 c0=2

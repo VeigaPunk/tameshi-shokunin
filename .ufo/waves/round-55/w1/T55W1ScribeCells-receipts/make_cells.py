@@ -37,7 +37,8 @@ ROWS = [
      "`--check` allocates nothing and is outside it"),
     ("registry-check-selftest", "registry-check",
      "`--selftest` and `--rev` (fleet-mirror clone)",
-     "the live `--root` mode opens no scratch root of its own"),
+     "`--rev` sits on the unusable arm only (its usable path is `--selftest`, traced "
+     "above) and the live `--root` mode opens no scratch root of its own"),
     ("env-diff-selftest", "ENVDIFF_SETUP",
      "`--selftest` and `--contract`",
      "no other mode allocates"),
@@ -56,7 +57,9 @@ def patch(text):
             cur = stripped[len('"name": "'):].rstrip('",\n')
         if '"scratch_root":' in line:
             assert cur in names, "scratch_root on unexpected row: %r" % cur
-            out.append('      "scratch_root": ' + json.dumps(CELLS[cur], ensure_ascii=False) + ",\n")
+            # preserve the file's own indentation (the tree re-serializes at 3 spaces)
+            indent = line[:len(line) - len(line.lstrip(" "))]
+            out.append(indent + '"scratch_root": ' + json.dumps(CELLS[cur], ensure_ascii=False) + ",\n")
             replaced += 1
             continue
         out.append(line)

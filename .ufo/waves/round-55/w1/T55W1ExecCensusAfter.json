@@ -1,0 +1,443 @@
+{
+ "seat": "T55W1ExecCensusAfter",
+ "round": 55,
+ "wave": 1,
+ "role": "executor",
+ "milestone": "census guard on a candidate append",
+ "judged_on": "freshness",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "lane_head": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "access_date": "2026-10-28",
+ "item": "build the append block the L1 will land in scratch (copy corpus/, add the proposed rows, validate), then prove the guard catches an indented duplicate id and an 11-column row with a literal pipe",
+ "append_block": {
+  "source_seat": "T55W1ScribeSources",
+  "source_rows_to_append": 0,
+  "source_note": "both drafts withdrawn: S280 already existed, the sysexits(3) draft duplicated S090",
+  "rows_landed_by_round_55": [
+   "S280"
+  ],
+  "insertion_point": "corpus/SOURCES.md:155, last Registry row, immediately before '## Paths' (line 158)",
+  "footer_note_line": 517,
+  "variants": [
+   {
+    "id": "lane-as-is",
+    "origin": "corpus/SOURCES.md:155",
+    "scope_qualified": false,
+    "note": "kind=spec; teaches now states casing and no-period rules; byte-identical to neither the scribe pre-patch nor post-patch file"
+   },
+   {
+    "id": "scribe-proposed",
+    "origin": "T55W1ScribeSources.json .corrections[0].proposed_row",
+    "scope_qualified": false,
+    "note": "widens scope to 'casing and final punctuation, and nothing about exit codes' and the anchor to byte offsets"
+   },
+   {
+    "id": "reviewer-rewrite",
+    "origin": "T55W1RevSources.json .verdicts[0].row_as_reviewer_would_write",
+    "scope_qualified": true,
+    "note": "qualifies the scope as GNU's own convention and names the page revision"
+   }
+  ]
+ },
+ "registry": {
+  "path": "corpus/SOURCES.md",
+  "sha256_start": "57ece0e5716deb46ec9d1d6c0c076beab31a9ba82ad323a68e85450b429be112",
+  "sha256_end": "57ece0e5716deb46ec9d1d6c0c076beab31a9ba82ad323a68e85450b429be112",
+  "mtime_local": "2026-10-28 14:00:16 -0300",
+  "rows_round_start": 139,
+  "rows_candidate": 140,
+  "rows_live_end": 140,
+  "every_row_NF": 13,
+  "ends_with_newline": true
+ },
+ "candidates": [
+  {
+   "id": "cand0-lane-as-is",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "stderr_bytes": 0,
+   "mode": "validate --file",
+   "ok_line": true
+  },
+  {
+   "id": "cand1-corrected-s280",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "stderr_bytes": 0,
+   "mode": "validate --file",
+   "ok_line": true
+  },
+  {
+   "id": "cand2-reviewer-s280",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "stderr_bytes": 0,
+   "mode": "validate --file",
+   "ok_line": true
+  },
+  {
+   "id": "cand-lane-dir",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "stderr_bytes": 0,
+   "mode": "validate <lane-dir> (the round-end code path)",
+   "ok_line": true
+  },
+  {
+   "id": "cand0-default-today",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "stderr_bytes": 0,
+   "mode": "validate --file (item's literal command, no --today)",
+   "ok_line": true
+  }
+ ],
+ "baseline_agreement": {
+  "candidate_vs_base_warning_diff_lines": 0,
+  "candidate_W": 16,
+  "base_W": 16,
+  "append_vs_candidate_diff_lines": 0,
+  "reading": "the round-55 append adds no finding and the candidate warning set equals the base-rev receipt"
+ },
+ "required_findings": {
+  "indented_duplicate_2sp": {
+   "present": true,
+   "codes": [
+    "E03",
+    "E04"
+   ],
+   "rc": 1,
+   "lines": [
+    "E03\tS280 duplicate id",
+    "E04\tS280 duplicate url www.gnu.org/prep/standards/html_node/Errors.html within scope the line shape of a noninteractive program's error message"
+   ]
+  },
+  "eleven_column_literal_pipe": {
+   "present": true,
+   "codes": [
+    "E01"
+   ],
+   "fields": 12,
+   "rc": 1,
+   "lines": [
+    "E01\tS281 fields=12"
+   ]
+  }
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "kind": "hazard",
+   "title": "0-3-space indentation is the only parsed window; 4-space or tab indent makes a row invisible",
+   "evidence": [
+    "fx-dup-4sp rc=0 rows=140 E=0",
+    "fx-dup-tab rc=0 rows=140 E=0",
+    "fx-pipe-4sp rc=0 rows=140 E=0"
+   ],
+   "impact": "a row pasted with a tab or four spaces is not counted, not validated and exits 0"
+  },
+  {
+   "id": "F2",
+   "kind": "guard limit",
+   "title": "E01 is arithmetic (fields=NF-2): a literal pipe compensated by one missing cell parses silently",
+   "evidence": [
+    "fx-pipe-absorbed rc=0 rows=141 E=0",
+    "census status.queued 21 -> 22",
+    "overdue cadence S281 recheck=30d opened=2026-10-28",
+    "fx-pipe-shift rc=1 E07 status=pipe E08 opened=mined (the detectable counterpart)"
+   ],
+   "impact": "never place a literal pipe inside a cell; shifted columns can pass every enum check"
+  },
+  {
+   "id": "F3",
+   "kind": "guard limit",
+   "title": "E04 keys on exact scope-string equality; a reworded scope downgrades a duplicate URL to W04 (warn-only)",
+   "evidence": [
+    "fx-dup-reworded-scope rc=0 W04 only",
+    "fx-supersedes rc=0 (supersedes token, same scope)",
+    "fx-supersedes-absent rc=1 E04 (same scope, no token)"
+   ],
+   "impact": "both correction forms (in place, or new row with supersedes) are census-admissible"
+  },
+  {
+   "id": "F4",
+   "kind": "setup fact",
+   "title": "E11 resolves used-by against dirname(file)/.. so a corpus/ copy needs the tools/ files two rows name",
+   "evidence": [
+    "MISSING tools/tally-audit.py",
+    "MISSING tools/tally-audit-v3.py"
+   ],
+   "impact": "candidate has 0 E11 once tools/ is present; the round-55 row's used-by resolves"
+  },
+  {
+   "id": "F5",
+   "kind": "arbitration limit",
+   "title": "the census is variant-blind across the three S280 forms (all NF=13, rc=0, 16 W)",
+   "evidence": [
+    "cand0/cand1/cand2 all rc=0 140 rows 0 E 16 W"
+   ],
+   "impact": "the L1 must choose the row on C1/substance grounds, not on validation output"
+  },
+  {
+   "id": "F6",
+   "kind": "guard works",
+   "title": "duplicate id is refused regardless of URL",
+   "evidence": [
+    "fx-dup-diff-url rc=1 E03 S280 duplicate id"
+   ],
+   "impact": "id reuse for a different source is caught"
+  },
+  {
+   "id": "F7",
+   "kind": "guard works",
+   "title": "EOF append outside Registry is E12; the round-55 row sits correctly at line 155 and the file ends with a newline",
+   "evidence": [
+    "fx-eof-outside rc=1 E12 S281 row outside Registry section",
+    "od -c tail: ... e ) . \\n"
+   ],
+   "impact": "append inside the table, never at EOF"
+  }
+ ],
+ "discrepancies_reported_not_fixed": [
+  {
+   "where": "seat spec Census line",
+   "claims": "139 rows now (S001-S279)",
+   "tree": "140 rows (S280 is this round's append)",
+   "note": "round-start vs round-candidate; not a defect"
+  },
+  {
+   "where": "corpus/lessons/round-55.md:16",
+   "claims": "exit 0, 140 rows",
+   "tree": "140 rows, validate exit 0",
+   "note": "matches; the earlier '141 rows' claim has been corrected"
+  },
+  {
+   "where": "frozen counter set pointer",
+   "assignment_says": "frozen counter set 631cd6455e58dce969310b4c0466c3383d9f5108",
+   "tree": "HEAD is 133b2ce ('round-55: freeze amendment 8 … Freeze pointer moves to this commit')",
+   "note": "the L1's own amendment moved the freeze pointer; this seat read the frozen set only and changed nothing"
+  }
+ ],
+ "freshness": {
+  "captured_utc": [
+   "2026-10-28T17:16:56Z",
+   "2026-10-28T17:20:25Z"
+  ],
+  "registry_sha256_unchanged_during_seat": true,
+  "live_validate_rc": 0,
+  "live_rows": 140,
+  "live_E": 0,
+  "live_W": 16
+ },
+ "scope": {
+  "lane_production_files_edited": 0,
+  "written": [
+   "T55W1ExecCensusAfter.md",
+   "T55W1ExecCensusAfter.json",
+   "T55W1ExecCensusAfter-receipts/"
+  ],
+  "git_mutations": 0,
+  "jj": false,
+  "tmp_usage": "none"
+ },
+ "tooling": {
+  "installs": 0,
+  "upgrades": 0,
+  "used": [
+   "bash",
+   "gawk",
+   "rsync",
+   "coreutils",
+   "python3",
+   "jq (pre-existing)"
+  ]
+ },
+ "runs": [
+  {
+   "fixture": "cand0-lane-as-is",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter"
+  },
+  {
+   "fixture": "cand1-corrected-s280",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/cand1-corrected-s280"
+  },
+  {
+   "fixture": "fx-dup-0sp",
+   "rc": 1,
+   "rows": 141,
+   "E": 2,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-0sp"
+  },
+  {
+   "fixture": "fx-dup-1sp",
+   "rc": 1,
+   "rows": 141,
+   "E": 2,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-1sp"
+  },
+  {
+   "fixture": "fx-dup-2sp",
+   "rc": 1,
+   "rows": 141,
+   "E": 2,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-2sp"
+  },
+  {
+   "fixture": "fx-dup-3sp",
+   "rc": 1,
+   "rows": 141,
+   "E": 2,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-3sp"
+  },
+  {
+   "fixture": "fx-dup-4sp",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-4sp"
+  },
+  {
+   "fixture": "fx-dup-diff-url",
+   "rc": 1,
+   "rows": 141,
+   "E": 1,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-diff-url"
+  },
+  {
+   "fixture": "fx-pipe-11col",
+   "rc": 1,
+   "rows": 141,
+   "E": 1,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-pipe-11col"
+  },
+  {
+   "fixture": "fx-pipe-4sp",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/fx-pipe-4sp"
+  },
+  {
+   "fixture": "fx-pipe-absorbed",
+   "rc": 0,
+   "rows": 141,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/fx-pipe-absorbed"
+  },
+  {
+   "fixture": "fx-supersedes",
+   "rc": 0,
+   "rows": 141,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/fx-supersedes"
+  },
+  {
+   "fixture": "fx-supersedes-absent",
+   "rc": 1,
+   "rows": 141,
+   "E": 1,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-supersedes-absent"
+  },
+  {
+   "fixture": "fx-dup-tab",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-tab"
+  },
+  {
+   "fixture": "fx-pipe-shift",
+   "rc": 1,
+   "rows": 141,
+   "E": 2,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-pipe-shift"
+  },
+  {
+   "fixture": "fx-eof-outside",
+   "rc": 1,
+   "rows": 141,
+   "E": 1,
+   "W": 16,
+   "ok_line": 0,
+   "root": "T55W1ExecCensusAfter/fx/fx-eof-outside"
+  },
+  {
+   "fixture": "cand2-reviewer-s280",
+   "rc": 0,
+   "rows": 140,
+   "E": 0,
+   "W": 16,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/cand2-reviewer-s280"
+  },
+  {
+   "fixture": "fx-dup-reworded-scope",
+   "rc": 0,
+   "rows": 141,
+   "E": 0,
+   "W": 17,
+   "ok_line": 1,
+   "root": "T55W1ExecCensusAfter/fx/fx-dup-reworded-scope"
+  }
+ ],
+ "candidate_count": 3,
+ "fixture_count": 15,
+ "lane_head_start": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "lane_head_end": "133b2ce",
+ "lane_head_moves_during_seat": [
+  "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "e2979f2",
+  "9cf0146",
+  "133b2ce"
+ ],
+ "registry_committed_at_head": true,
+ "registry_committed_sha256": "57ece0e5716deb46ec9d1d6c0c076beab31a9ba82ad323a68e85450b429be112",
+ "registry_committed_rows": 140
+}

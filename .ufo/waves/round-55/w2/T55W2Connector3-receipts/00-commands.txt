@@ -1,0 +1,41 @@
+T55W2Connector3 — commands run (all from /fast/scratch/hyaku/tameshi-r55/T55W2Connector3,
+clones of the four sibling lanes at their pinned HEADs; fleet root read-only)
+
+clones
+  git clone --shared /home/vgpnk/Projects/shokunin/kumitate-shokunin kumitate   # HEAD 14057f3e3899180c95713bace088fb9c0d0046e3
+  git clone --shared /home/vgpnk/Projects/shokunin/kagi-shokunin     kagi       # HEAD 69b61db46be4ed955994f6f1d1cba522bc5f4e97
+  git clone --shared /home/vgpnk/Projects/shokunin/tsukuroi-shokunin tsukuroi   # HEAD d7cfc27308e8af51b76b5cfe0c656acc1788cefb
+  git clone --shared /home/vgpnk/Projects/shokunin/mado-shokunin     mado       # HEAD 3b55b6e91e40f455dd56b2985e4ffc087ada92d5
+  git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin tameshi
+  git -C tameshi checkout 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb              # C0
+
+live guards (stdout and stderr captured separately; rc echoed)
+  cd kumitate && node scripts/surface-probe.mjs --src /nonexistent/T55W2probe
+  cd kumitate && node scripts/cite-check.mjs   --src /nonexistent/T55W2cite
+  cd kagi && bash corpus/scope-gate.sh --data /nonexistent/adj.tsv
+  cd kagi && PATH=/nonexistent /bin/bash corpus/scope-gate.sh
+  cd tsukuroi && python3 tools/check-freshness-r17.py --revision zzzznotarev
+  cd mado && python3 tools/mado-assessment.py --check /nonexistent/a.json --root /nonexistent-root
+  cd mado && python3 tools/mado-tripwire.py /nonexistent/x.jsonl
+  cd tameshi && TMPDIR=/nonexistent/T55W2 python3 tools/repeat-control.py --selftest
+
+nine allocating modes at C0 under a set-but-unusable TMPDIR
+  for m in "repeat-control.py --selftest" "context-capture.py --selftest" "registry-check.py --selftest" \
+           "env-diff.py --selftest" "pin-disposition.py --selftest" "evidence-disposition.py --selftest" \
+           "bash-witness-study.py selftest"; do
+    TMPDIR=/nonexistent/T55W2 python3 tools/$tool $mode   # stdout/stderr captured per mode
+  done
+
+citation pinning (line numbers re-resolved at each lane HEAD, never at a working tree)
+  git -C <lane> show HEAD:<path> | sed -n '<line>p'      # for every path:line cited in the report
+
+negative sweep (literal label emitted by production code?)
+  git -C <lane> grep -n "could-not-evaluate" -- '*.mjs' '*.js' '*.py' '*.sh'
+
+censuses
+  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi
+
+# env-diff --contract before the counter-generated fixture existed (setup artefact, not a round defect):
+#   cd tameshi && TMPDIR=/nonexistent/T55W2 python3 tools/env-diff.py --contract .ufo/evidence/round-55/c2/fixture-contract.json --out ../envdiff-out.json --fleet-root "$PWD"
+#   -> rc=2, stderr: ENVDIFF_SETUP: [Errno 2] No such file or directory: ".ufo/evidence/round-55/c2/fixture-contract.json"
+# after generating the file exactly as c2/measure.py:186-189 does, the arm prints the frozen grammar (tameshi-eight-modes-streams.txt).

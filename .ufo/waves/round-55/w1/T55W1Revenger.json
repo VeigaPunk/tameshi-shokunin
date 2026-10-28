@@ -1,0 +1,141 @@
+{
+ "seat": "T55W1Revenger",
+ "round": 55,
+ "wave": "w1",
+ "role": "revenger",
+ "judged_on": "calibration",
+ "milestone": "reconstruct round-54's control intent",
+ "lane_tip_at_read": "133b2ce6d4d86d783db38607343c3654350194b8",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "round55_freeze_first": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "round55_freeze_now": "133b2ce6d4d86d783db38607343c3654350194b8",
+ "reconstructed_contract": {
+  "statement": "phase A is scored at the FREEZE bytes before any work; phase B at the final content revision, before the deciding run. The instrument is frozen at FREEZE; the subject is the tree at REV; the receipt records both.",
+  "source_1": ".ufo/evidence/round-54/control/controls.sh:1-13 (header; unchanged since 441c26be)",
+  "source_2": "signature `controls.sh b LANE FREEZE REV OUTDIR`: FREEZE used only for `git show \"$FREEZE:$E/<counter>\"`, REV used only as `clone_at` target",
+  "source_3": "in-body comments (`CTL_POS — the real repair at REV must pass both counters`) and contract.json claims.C1/C2.controls with CTL_POS pre-registered true",
+  "evidence": "same committed harness bytes give CONTROLS_B: 3/3 at REV=c2108100 (receipts/r54-phaseB-at-certified-rev.stdout)"
+ },
+ "answers": {
+  "q1_does_phase_B_score_the_revision_it_certifies": {
+   "round_54": "no in fact (scored the freeze 077d431e); yes in capability (3/3 at c2108100 with identical bytes)",
+   "round_55": "yes mechanically — clones $REV at controls.sh:121, counters echo rev=133b2ce6d4d8 and both read true; but the clone line is identical to round 54's, so the header's claim of a R54.1 repair is a comment, not a mechanism"
+  },
+  "q2_does_it_refuse_a_control_that_could_not_fire": {
+   "round_54": "no — it reported CTL_MISMATCH / 2/3 / exit 1 and the gate ignored all three; the records then asserted the opposite",
+   "round_55": "no — no subject guard (REV==FREEZE accepted), gate unchanged (accepts 0/3, never reads .exit, never compares rev=), and CTL_BREAK_c2's anchor is dead at every revision so phase B aborts with exit 2 and no CONTROLS_B line"
+  }
+ },
+ "mechanism_of_the_round54_error": [
+  "the harness clones $REV (never FREEZE) at every revision of the file: 441c26be, 19c7558, 077d431e, c2108100",
+  "it was handed the freeze: controls-b.stdout prints rev=077d431e6996 on both CTL_POS lines, and 077d431e is the round-54 freeze",
+  "the content revision did not exist yet: 7fa9a5e^ == 077d431e, the receipt was first committed in 7fa9a5e (12:21:35), and c2108100 is 12:22:15 (40 s later)",
+  "the 2/3 is the fingerprint of a half-carrying tree: C2's fix (99c3bc88) is an ancestor of the freeze, C1's re-key (7fa9a5e) is not; frozen counters at the freeze reproduce the receipt byte-for-byte (C1 total=4 false, C2 total=0 true)",
+  "the gate opened anyway: 4 non-empty blobs descending from FREEZE + regex ^CONTROLS_B: [0-9]*/[0-9]*, with n/m never compared, .exit (value 1) never read, rev= never compared to REV"
+ ],
+ "findings": [
+  {
+   "id": "RV55-F1",
+   "severity": "blocking",
+   "file": ".ufo/evidence/round-55/controls.sh",
+   "line": 134,
+   "frozen": true,
+   "defect": "CTL_BREAK_c2's anchor literal `emit_err(f\"repeat-control: could-not-evaluate: {exc}\")` does not exist in the tree it must break; the landed fix uses `{message}`. count({exc})=0 at base, at the round-55 freeze 631cd645, and at the tip 133b2ce.",
+   "consequence": "the assert raises, gitcommit finds nothing to commit, `|| exit 2` fires, and phase B exits 2 WITHOUT printing CONTROLS_B — so the receipt the deciding gate requires cannot be produced at any revision",
+   "command": "bash .ufo/evidence/round-55/controls.sh b <lane> 133b2ce 133b2ce <outdir>",
+   "receipt": "receipts/r55-phaseB-at-HEAD.stdout, receipts/ctl-break-anchor.stdout"
+  },
+  {
+   "id": "RV55-F2",
+   "severity": "medium",
+   "file": ".ufo/evidence/round-55/controls.sh",
+   "line": "58-59",
+   "frozen": true,
+   "defect": "CTL_SKIP_c1's REN derivation (`git log --format=%H --diff-filter=R $REV -- <new-path>`) returns empty at every revision: rename pairing needs both sides in the pathspec",
+   "consequence": "the 'values-only' control pastes an empty value for R54.7, so its comment 'carrying every corrected value' is false and that class is never exercised with a correct value",
+   "command": "git -C <lane> log --format=%H --diff-filter=R <rev> -- .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json",
+   "receipt": "receipts/ctl-skip-ren-derivation.stdout"
+  },
+  {
+   "id": "RV55-F3",
+   "severity": "high",
+   "file": ".ufo/evidence/round-55/deciding-run.sh",
+   "line": "50-56",
+   "frozen": true,
+   "defect": "the control gate requires only presence/size/ancestry plus `^CONTROLS_[AB]: [0-9]*/[0-9]* as pre-registered`; it never requires n==m, never reads controls-*.exit, and never compares the receipts' rev= prefix to REV. Textually identical to round-54 :52-59.",
+   "consequence": "CONTROLS_B: 0/3 opens the gate; round 54's own receipt (2/3, exit 1, 1 CTL_MISMATCH) opened it and DECIDING_RUN_EXIT was 0",
+   "command": "bash receipts/gate-reproduction.stdout producer against a clone at c2108100",
+   "receipt": "receipts/gate-reproduction.stdout"
+  },
+  {
+   "id": "RV55-F4",
+   "severity": "medium",
+   "file": "both .ufo/evidence/round-54/control/controls.sh and round-55/controls.sh",
+   "frozen": true,
+   "defect": "OUTDIR (5th positional) is parsed and never used; the harness writes no invocation receipt, so a caller's arguments are unauditable except through the counter's rev= field",
+   "consequence": "the 'receipt re-stated at the freeze (bytes unchanged; the verdict line above stands)' trailer of round-54 commit 5564954 could not be falsified from the harness's own output",
+   "command": "grep -c '$OUT' <controls.sh>  ->  0",
+   "receipt": "inline (report §4)"
+  },
+  {
+   "id": "RV55-F5",
+   "severity": "medium",
+   "file": ".ufo/evidence/round-55/deciding-run.sh",
+   "line": "50-52",
+   "frozen": true,
+   "defect": "requiring each receipt's last touching commit to descend from FREEZE rewards re-committing a stale receipt after the freeze",
+   "consequence": "exactly what round-54 commit 5564954 did ('control receipts re-stated at the freeze commit (the gate requires their last commit to descend from it)')",
+   "command": "git log --format='%h %s' -- .ufo/evidence/round-54/control/controls-b.stdout",
+   "receipt": "inline (report §3)"
+  }
+ ],
+ "minimal_correct_shape": [
+  "harness refuses REV that cannot carry the claim: resolves; merge-base --is-ancestor FREEZE REV; rev-list --count FREEZE..REV > 0; exit 3 with nothing scored",
+  "gate binds the receipt to the certified revision: every CTL line's rev=<12 hex> must be a prefix of REV",
+  "gate reads the verdict instead of matching it: ^CONTROLS_B: ([0-9]+)/\\1 as pre-registered$ and controls-b.exit content == 0",
+  "mutation controls prove they fired: exactly one anchor, identifier-invariant (\\{[a-z_]+\\}), refuse BY NAME (CTL_x CANNOT-FIRE) instead of aborting with a traceback",
+  "harness writes stdout + exit code + argv into OUTDIR so no receipt is ever 're-stated' by hand"
+ ],
+ "guard_demonstration": {
+  "refuse_rev_equals_freeze": "REFUSE rev-carries-no-work-beyond-freeze count=0 rc=3",
+  "refuse_non_descendant": "REFUSE rev-does-not-descend-from-freeze rc=3",
+  "admit_content_revision": "ADMIT rev-carries-3-commits-beyond-freeze rc=0",
+  "gate_teeth_exercised": {
+   "n_equals_m": {
+    "3/3": "ADMITTED",
+    "2/3": "REFUSED",
+    "0/3": "REFUSED"
+   },
+   "rev_binding": {
+    "rev=077d431e6996 vs REV=c2108100": "REFUSED",
+    "rev=c21081008adb vs REV=c2108100": "ADMITTED"
+   }
+  }
+ },
+ "residual_risk_for_round_55": "phase B certifies whatever it is handed. If the L1 hands it the current freeze 133b2ce, both CTL_POS read true there (already observed) and the gate accepts the receipt — a clean repeat of R54.1 with no mismatch line to give it away. Only the rev=-prefix check (tooth 2) catches it, and it is not in the frozen gate.",
+ "census": {
+  "command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+  "exit": 0,
+  "rows_read": 140
+ },
+ "tooling": {
+  "installs": [],
+  "upgrades": [],
+  "note": "no PATH writes; pacman untouched"
+ },
+ "lane_writes": [
+  ".ufo/waves/round-55/w1/T55W1Revenger.md",
+  ".ufo/waves/round-55/w1/T55W1Revenger.json",
+  ".ufo/waves/round-55/w1/T55W1Revenger-receipts/ (7 receipt files)"
+ ],
+ "confidence": {
+  "handed_the_freeze_not_hardcoded": "high",
+  "cause_is_ordering_content_rev_did_not_exist": "high",
+  "author_intent_score_at_REV_with_freeze_bytes": "high",
+  "gate_let_the_failure_through": "high",
+  "round55_rescores_at_REV": "high",
+  "round55_does_not_refuse_a_control_that_could_not_fire": "high",
+  "phaseB_as_frozen_cannot_emit_CONTROLS_B": "high",
+  "whether_the_round_will_be_handed_a_wrong_REV": "unknown (L1's call)"
+ }
+}

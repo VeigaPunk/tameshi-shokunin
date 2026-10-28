@@ -1,0 +1,18 @@
+# Which entry fields the credit rule actually reads.
+# Command: python3 - <<'PY' with round-18/measure.py imported, on the lane at
+# 631cd6455e58dce969310b4c0466c3383d9f5108, over the first crediting entry with 1..15 inputs:
+#   '### The mado run (T6-1, 2026-10-14) — measured'  inputs=1 verdict=gap-minor class=record
+#   m.entry_reason(LANE, rev, entry, strict=True) with one field mutated per line
+
+baseline          None                     # credits
+bogus start/end   None                     # start=999, end=999 -> still credits
+bogus heading     None                     # heading='### nonsense' -> still credits (matching is by section sha256)
+bogus read_rev    None                     # read_rev='nonsense' -> still credits
+bogus skill_sha   None                     # skill_sha256='f'*64 -> still credits
+bogus reports     None                     # reports=['nope/none.md'], seats=['nobody'] -> still credits
+no traces         traces-unrecorded        # strict mode requires >=1 trace when commands_executed_count>0
+
+# Same result on the bound `## Standing rules` entry of the demo fixture
+# (read_rev 7cb40bad…, inputs 2497): baseline None, bogus start/end None,
+# bogus heading None, bogus read_rev None, bogus skill_sha None, no traces
+# traces-unrecorded, and dropping SKILL.md from inputs still None.

@@ -1,0 +1,59 @@
+# 1. freeze.json manifest re-derivation (bytes at each commit, via git cat-file)
+
+$ git -C LANE cat-file -p e2979f277138:.ufo/evidence/round-55/freeze.json   # round=55 amendments=7 files=7
+  OK      .ufo/evidence/round-55/c1/measure.py                           5e8f50d1815309e8c3a1
+  OK      .ufo/evidence/round-55/c1/staged-at-freeze.txt                 921ad4196b76a43a8977
+  OK      .ufo/evidence/round-55/c2/measure.py                           36ca47d36c4befc1148a
+  OK      .ufo/evidence/round-55/contract.json                           31d5c8adf961139f4f88
+  OK      .ufo/evidence/round-55/controls.sh                             7c0cacb56c67915567a5
+  OK      .ufo/evidence/round-55/deciding-run.sh                         af11d7551d8af1c75ba6
+  OK      .ufo/evidence/round-55/no-harm.sh                              d93469db5a55632c2f17
+  VERDICT e2979f2 (pointer named by the wave-2 assignment): 7/7 re-derived
+  manifest hashes itself: no
+
+$ git -C LANE cat-file -p 133b2ce6d4d8:.ufo/evidence/round-55/freeze.json   # round=55 amendments=8 files=7
+  OK      .ufo/evidence/round-55/c1/measure.py                           5e8f50d1815309e8c3a1
+  OK      .ufo/evidence/round-55/c1/staged-at-freeze.txt                 921ad4196b76a43a8977
+  OK      .ufo/evidence/round-55/c2/measure.py                           0458f632087f665fbafc
+  OK      .ufo/evidence/round-55/contract.json                           fe5f90501a02cf2afe26
+  OK      .ufo/evidence/round-55/controls.sh                             7c0cacb56c67915567a5
+  OK      .ufo/evidence/round-55/deciding-run.sh                         af11d7551d8af1c75ba6
+  OK      .ufo/evidence/round-55/no-harm.sh                              d93469db5a55632c2f17
+  VERDICT 133b2ce (lane HEAD; commit message "Freeze pointer moves to this commit"): 7/7 re-derived
+  manifest hashes itself: no
+
+# 2. coverage and set equality
+
+rev e2979f277138
+  contract.frozen_paths: 8 entries
+  freeze.files:          7 entries
+  deciding FROZEN:       7 entries  contract.json freeze.json measure.py measure.py no-harm.sh deciding-run.sh controls.sh
+  contract - manifest:   ['.ufo/evidence/round-55/freeze.json']
+  manifest - contract:   []
+  contract - deciding:   ['.ufo/evidence/round-55/c1/staged-at-freeze.txt']
+  deciding - contract:   []
+  SET_EQUAL contract==deciding: False
+  freeze.amendments == contract.amendments: True (7 vs 7)
+
+rev 133b2ce
+  contract.frozen_paths: 8 entries
+  freeze.files:          7 entries
+  deciding FROZEN:       7 entries  contract.json freeze.json measure.py measure.py no-harm.sh deciding-run.sh controls.sh
+  contract - manifest:   ['.ufo/evidence/round-55/freeze.json']
+  manifest - contract:   []
+  contract - deciding:   ['.ufo/evidence/round-55/c1/staged-at-freeze.txt']
+  deciding - contract:   []
+  SET_EQUAL contract==deciding: False
+  freeze.amendments == contract.amendments: True (8 vs 8)
+
+# 3. deciding-run.sh FROZEN gate, verbatim line 65 list, against candidate REVs
+
+$ git -C LANE diff --quiet e2979f2 9cf0146b94dd -- <FROZEN list>
+  rc=0 -> FROZEN_UNCHANGED=1  (C0, wave-1 content)
+
+$ git -C LANE diff --quiet e2979f2 133b2ce6d4d8 -- <FROZEN list>
+  rc=1 -> FROZEN_UNCHANGED=0  (lane HEAD, amendment 8)
+ .ufo/evidence/round-55/c2/measure.py | 4 ++--
+ .ufo/evidence/round-55/contract.json | 4 ++++
+ .ufo/evidence/round-55/freeze.json   | 8 ++++++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)

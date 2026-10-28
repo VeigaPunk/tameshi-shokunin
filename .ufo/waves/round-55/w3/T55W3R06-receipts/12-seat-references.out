@@ -1,0 +1,23 @@
+$ git show C0:.ufo/waves/round-27/w1/Read25.md | grep -nE "75ed934d|DRIFT|never reads|refuse"
+18:- check exits 1 with "WITNESS_CHECK: DRIFT tools/mutate-and-run.sh sha256=fb91ef7621f5de67f9845dba2d3cba8fc567b0f05e4490cfc927622b0929f9de committed=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5" (Read25-10; tools/bash-witness-study.py:11
+19:- run and rerun refuse before any sweep starts, with "WITNESS_STUDY: CANNOT-EVALUATE (runner-drift ...)" and exit 2 (Read25-25, Read25-26). The refusal is raised in ensure_target_and_spec (:569). _prepare (:928-934) calls it, and cmd_run and cmd_rerun (:101
+20:- count, the entry command the section lists, exits 0 and never reads the runner (Read25-4 inputs; cmd_count at :1051-1125).
+52:3. Add one sentence after the table: "At 2227 the runner pin is stale. check exits 1 (DRIFT). run and rerun refuse with CANNOT-EVALUATE runner-drift (exit 2). count does not read the runner. The extracted spec still matches d2ad3f29...; re-declare the runne
+58:- No sweep was run. run and rerun refuse before one starts, so the sweep's behaviour at this revision is unobserved.
+80:    "B1 undisclosed runner-pin drift: the frozen runner pin (declaration.json inputs.runner sha256 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5) does not match tools/mutate-and-run.sh (sha256 fb91ef7621f5de67f9845dba2d3cba8fc567b0f05e449
+101:    "grep -n -E 'EXIT_[A-Z]+ *=|mkdtemp|tameshi-r12|RUNNER *=|EVIDENCE_DEFAULT *=|KAGI_DEFAULT *=|def cmd_[a-z]+|DRIFT|SWEEP_DIR *=|SELF *=|EVIDENCE_ROOT *=' tools/bash-witness-study.py tools/repeat-control.py",
+
+$ git show C0:.ufo/waves/round-27/residual/ReRead08.md | grep -nE "manifest|not blind|disclosure"
+21:    "W1 (line 1508): \"not blind: their author inherited prior source/spec exposure\" understates the disclosed exposure. The disclosure key in .ufo/evidence/round-12/BashWitness/declaration.json (receipt 1) says the author had seen recorded aggregate outcomes of this leg before declaring: the re
+27:    "M4 (line 1507): \"integrity-frozen (... manifest)\" overstates the manifest. check validates each listed digest, but nothing pins manifest.json itself: manifest_files excludes it (tools/bash-witness-study.py line 828), and neither summary.json nor declaration.json names it (receipts 1, 37). 
+31:    "python3 -c 'import sys;[print(open(p).read()[:200000]) for p in sys.argv[1:]]' .ufo/evidence/round-12/ControlGate/expected.json .ufo/evidence/round-12/ControlGate/mismatch/expected.json .ufo/evidence/round-12/BashWitness/declaration.json .ufo/evidence/round-12/BashWitness/declared.tsv .ufo/e
+33:    "grep -n -E '^def |add_argument|add_parser|sys\\.exit|return [0-9]|selftest|DRIFT|refus|bash-witness-selftest-private|runner|75ed|expected|declaration\\.json|declared\\.tsv|manifest\\.json' tools/bash-witness-study.py",
+60:    "wc -c .ufo/evidence/round-12/ControlGate/expected.json .ufo/evidence/round-12/ControlGate/mismatch/expected.json .ufo/evidence/round-12/BashWitness/declaration.json .ufo/evidence/round-12/BashWitness/declared.tsv .ufo/evidence/round-12/BashWitness/manifest.json SHONEN.md corpus/lessons/round
+65:    "grep -n -E 'EXIT_USAGE|EXIT_CANNOT|EXIT_FAIL|manifest' tools/bash-witness-study.py",
+67:    "grep -n -E 'manifest|sha256' .ufo/evidence/round-12/BashWitness/summary.json"
+105:    ".ufo/evidence/round-12/BashWitness/manifest.json",
+121:    ".ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/manifest.json",
+230:    ".ufo/evidence/round-12/BashWitness/manifest.json": "273ffc39308a6c55bdb1c8f7a86bac9f95886ec470773c99b4d1e2db5b25e1cf",
+246:    ".ufo/evidence/round-12/BashWitness/rerun-20261020T035435Z/manifest.json": "80ae3ea7e5cdf1fa94960b7ed2cc7c7e3bc5e26002d58d7fe22c0a8f57c49d3f",
+378:5. Integrity list (line 1507). check ties declared.tsv, pristine.sh and the spec to digests in declaration.json (lines 1133-1147; receipt 36). It requires declaration.json and summary.json to be listed in the manifest (lines 1182-1191) and checks every listed digest (lines 1196-1216). manifest.j
+380:6. Exposure sentence (line 1508). The disclosure in declaration.json (1) says the author had seen recorded aggregate outcomes and per-defect KILLED/SURVIVED entries before declaring. The page names only source/spec exposure (W1).

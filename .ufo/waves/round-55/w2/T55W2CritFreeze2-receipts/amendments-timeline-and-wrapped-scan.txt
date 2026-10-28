@@ -1,0 +1,37 @@
+# FIXTURE B -- amendment 5 says "no stale assertion may stand in the lane's records"; only R54.1 gets a span scan
+$ git clone --shared LANE /fast/scratch/hyaku/tameshi-r55/T55W2CritFreeze2/receipt-fixture-wrap ; toplevel=/fast/scratch/hyaku/tameshi-r55/T55W2CritFreeze2/receipt-fixture-wrap
+$ printf "\nThe other 84\nstaged entries were refused for capacity.\n" >> D/LOG.md   # a hard-wrapped stale assertion
+  NEW=7ecf77812db3b507901926ad41fbeadc4cfbb6cd
+$ git -C D show HEAD:LOG.md | tail -2
+  The other 84
+  staged entries were refused for capacity.
+$ python3 c1-frozen.py --lane D --rev 7ecf77812db3 --work <empty> --explain
+  EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+  C1_R55: rev=7ecf77812db3 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+  exit=0
+$ python3 - D <<'PY'   # same document, two matchers
+line-scoped hits: 0
+span hits: 1
+  -> the falsehood is present; the line-scoped R54.9 arm cannot see it; C1 still reads PASS
+
+# TIMELINE (amendment order vs control receipts)
+133b2ce ct=1793208060 2026-10-28 14:21:00 -0300 round-55: freeze amendment 8 — c2/measure.py totals use the de
+9cf0146 ct=1793207799 2026-10-28 14:16:39 -0300 round-55: C0 — one scratch-root line in three tools (repeat-co
+e2979f2 ct=1793207785 2026-10-28 14:16:25 -0300 round-55: freeze amendments 1-7 — counters re-frozen on the am
+$ stat -c "birth=%w mtime=%y size=%s %n" .ufo/evidence/round-55/control/controls-a.stdout
+birth=2026-10-28 14:16:54.626165715 -0300 mtime=2026-10-28 14:27:23.787684157 -0300 size=516 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/control/controls-a.stdout
+$ cat .ufo/evidence/round-55/control/controls-a.stdout
+CTL CTL_0_c1 C1_R55: rev=0a2010acd1e9 classes=10 premise=9/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+CTL CTL_0_c2 C2_R55: rev=0a2010acd1e9 grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/9 skill=0/1 total=20 C2_R55_PASS=false
+CTL CTL_SKIP_c1 C1_R55: rev=3072ab35ab42 classes=10 premise=9/10 stale=4 classes_corrected=7/10 total=6 C1_R55_PASS=false
+CTL CTL_FAB_c1 C1_R55: rev=81cdf66875fe classes=10 premise=9/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+$ git -C LANE log --all --oneline -- .ufo/evidence/round-55/control | wc -l   # committed control receipts
+0
+$ pgrep -af "controls.sh a"   # phase-A scoring IN FLIGHT
+748996 bash .ufo/evidence/round-55/controls.sh a /home/vgpnk/Projects/shokunin/tameshi-shokunin 133b2ce6d4d86d783db38607343c3654350194b8 0a2010acd1e92e4e332774050825e21bcfc7e079 .ufo/evidence/round-55/control
+$ ps -o lstart= -p 748996
+Wed Oct 28 14:21:12 2026
+  reading: controls-a.stdout inode born 14:16:54 (an earlier phase-A redirect) -> a scored CTL_0_c1
+  line existed before amendment 8 (committed 14:21:00); the live phase-A run started after it and
+  scores at FREEZE=133b2ce. No control receipt is committed, so the gate still refuses
+  control-receipt-missing; the freeze discipline is enforced by timestamps, not by the script.

@@ -1,0 +1,170 @@
+{
+ "seat": "T55W1RevLedger",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "frozen_base": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "contract_base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "axes": ["calibration"],
+ "credit_rule": {
+  "source": ".ufo/evidence/round-18/measure.py (frozen), selected through .ufo/evidence/round-21/coldread/measure.py",
+  "section_key": "sha256 of the sectionize() body of SKILL.md at the measured revision; matched against entry['sha256'] only (measure.py:209-255, 602-612)",
+  "gates_in_order": [
+   "findings/shape: verdict in the six strings, not in {gap-blocking, wrong-expectation, not-executed}, blocking_gaps==0, wrong_expectations==0 as JSON ints (:459)",
+   "class gate: instruction -> verdict in {executed-ok, gap-minor} and commands_executed_count>=1; record -> verdict in {verified-record, gap-minor} (:477)",
+   "commands gate: commands_executed_count > 0 for every class (:513)",
+   "input gate: inputs minus IGNORED_INPUTS non-empty; every key canonical lane-relative; git ls-tree REV -- p names one 100644/100755 entry; sha256(git cat-file blob REV:p) equals the recorded digest (:330-353)",
+   "trace gate: >=1 committed trace blob at REV, schema tameshi-trace-inputs-v1, trace inputs a subset of entry inputs with equal digests, no unbound live-lane external read (:373-457)",
+   "aggregation: covered iff >=1 entry credits AND no veto-eligible entry whose inputs still verify at REV (:612-655)"
+  ],
+  "ignored_inputs_at_runtime": [
+   "SKILL.md",
+   ".ufo/evidence/round-17/coldread/ledger.json",
+   ".ufo/evidence/round-18/coldread/ledger.json",
+   ".ufo/evidence/round-21/coldread/ledger.json"
+  ],
+  "not_inputs_to_credit": [
+   "read_rev (never read by any credit path; probe: read_rev='nonsense' still credits)",
+   "the reader report (*.json under .ufo/waves/**) - never opened by the credit rule; only the binder reads it",
+   "entry['reports'] and entry['seats'] - written by the binder, validated by nothing",
+   "entry['skill_sha256'], entry['start'], entry['end'] - matching is by section sha256 alone",
+   "entry['external_inputs'] - aggregated into output only"
+  ]
+ },
+ "binder": {
+  "script": ".ufo/evidence/round-54/integrate/binder.py",
+  "frozen_argv": ["python3", "<binder.py>", "<LANE>", "<C0>", "<PIN>", "<OUTDIR>"],
+  "frozen_argv_note": "exactly four positional arguments, no flags (binder.py:44); the frozen script hard-codes the round-54 heading files (:50-52), round-54 wave dirs (:48) and the round-54 resolutions file (:53), so it cannot re-key round 55 unmodified",
+  "round55_argv": [
+   "python3", "<round55 binder, e.g. T55W1ExecReKeyDryBind-receipts/binder-r55.py>",
+   "<LANE>", "<C0>", "<PIN>", "<LANE>/.ufo/evidence/round-21/coldread/rekey-r55-<C0[:12]>",
+   "--headings", "<json list file of exact heading strings>",
+   "--waves", ".ufo/waves/round-55/w1",
+   "--label", "L1 TameshiR55 re-key (round 55)"
+  ],
+  "outdir_constraint": "must be inside LANE: the trace path is os.path.relpath(OUT, LANE)+'/traces/section-NN.json' (:167); a '..' component fails canonical_lane_path and the section reads trace-missing:<path> (measured)",
+  "writes": "<LANE>/.ufo/evidence/round-21/coldread/ledger.json (working tree, binder.py:197) plus OUT/traces/*.json and OUT/refresh-receipts.json - the L1 must commit all of them",
+  "drop": {
+   "LOG.md": "rewritten every round after the bind; keeping it makes the fresh entry stale at the next record commit (round-53 failure mode). Counterfactual: post-pin SCORECARD.md edit without DROP -> entry_reason='input-drift:SCORECARD.md', section uncovered",
+   "SCORECARD.md": "same as LOG.md",
+   "SKILL.md": "the page being sectioned; its per-section sha is the ledger key and the credit rule already ignores it (IGNORED_INPUTS)",
+   ".ufo/evidence/round-21/coldread/ledger.json": "the binder's own output; also in IGNORED_INPUTS"
+  },
+  "drops_also": [
+   "any input path whose blob is absent at PIN (blob_at(pin,p) is None) - appended to the receipt's dropped list",
+   "nothing else: inputs are re-hashed from the PIN blob, never carried from the prior entry's recorded digest"
+  ],
+  "reader_fields_read": ["heading", "cand", "section_sha256", "findings"],
+  "reader_fields_ignored": ["skill_sha256", "section", "seat", "method", "checks", "milestone", "axes", "anything else"],
+  "reader_sibling_requirement": "<same stem>.md must exist next to the .json (existence only; zero bytes accepted)",
+  "empty_findings": "accepted: len(findings)=0 <= allowed -> REKEY, minor_gaps=0. A reader with NO findings key is also accepted (d.get('findings') or []). A reader with more findings than allowed with no --resolutions file (allowed=0) is refused with 'reader-has-findings:N>0'"
+ },
+ "minimal_reader_json": {
+  "template": {
+   "heading": "## Standing rules",
+   "cand": "<C0: full 40-hex resolved content commit>",
+   "section_sha256": "<sectionize(SKILL.md at C0)['## Standing rules']['sha256']>",
+   "findings": []
+  },
+  "sibling": "<same stem>.md",
+  "field_rules": {
+   "heading": "must equal the sectionizer's heading string byte for byte (em dashes included)",
+   "cand": "compared to `git rev-parse --verify <C0>^{commit}` (binder.py:78,118): a 12-hex prefix never matches, and the commit must exist in the LANE object store",
+   "section_sha256": "the section BODY sha from the frozen round-18 sectionizer extracted at C0 - not the sha of SKILL.md",
+   "findings": "empty list (or omit); anything non-empty needs an adjudicated --resolutions count"
+  },
+  "derived_at": {
+   "frozen_base_631cd64": {
+    "start": 17,
+    "end": 40,
+    "section_sha256": "61736dcebc2d3d148255f9b3edd0ceb1c7cf2284f2969475b8da838ded9a78fc",
+    "skill_sha256": "b5ff9727485da844a0c93d8f5914f957eba03d2c37cda59e8e38fd7a04ada195"
+   },
+   "lane_worktree_at_audit_time": {
+    "start": 17,
+    "end": 44,
+    "section_sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767",
+    "skill_sha256": "e0ce89f7866062062f4987358e353c8626c18f56d2eb1589225af99f44d695a6",
+    "note": "SKILL.md changed under this seat while it worked (a157f37d -> e0ce89f7); every value must be re-derived at the landed commit"
+   },
+   "unusable_dry_bind_reader": {
+    "path": ".ufo/waves/round-55/w1/T55W1ExecReKeyDryBind.reader.json",
+    "cand": "314cfe29036a2347b138761b9eb7d6e06dad41f8",
+    "cand_present_in_lane": false,
+    "pin": "03d434abe5c14358d5a75bff70397c7efe5697f4",
+    "pin_present_in_lane": false,
+    "stale_section_sha256": "4f959fd727cdb630d2507de403b2cb20ae5c14ccc170c527a0d708f997e08b9b",
+    "why_unusable": "the binder resolves C0 with git -C LANE rev-parse and compares the reader's cand to that string; a clone-only commit can never be the bind's C0, and the section sha predates the current SKILL.md bytes"
+   }
+  }
+ },
+ "measured": {
+  "coldread_at_frozen_base_631cd64": {"sections_covered": 64, "sections_total": 64, "calibration_restraint_score": 8, "box3_full_page": true},
+  "coldread_at_content_revision_with_round55_production_edits": {"sections_covered": 46, "sections_total": 64, "calibration_restraint_score": 6, "box3_full_page": false, "lost": 18},
+  "coldread_after_rekey_of_standing_rules_only": {"sections_covered": 47, "sections_total": 64, "calibration_restraint_score": 6, "box3_full_page": false},
+  "coldread_after_rekey_of_all_18": {"sections_covered": 64, "sections_total": 64, "calibration_restraint_score": 8, "box3_full_page": true},
+  "coldread_after_rekey_all_18_then_SCORECARD_and_LOG_edited": {"sections_covered": 64, "sections_total": 64, "calibration_restraint_score": 8, "box3_full_page": true, "note": "DROP absorbs them"},
+  "coldread_after_rekey_standing_rules_only_then_QUALITY_md_edited": {"sections_covered": 46, "sections_total": 64, "box3_full_page": false, "note": "post-PIN edit of a pinned input costs credit"},
+  "coldread_after_rekey_all_18_then_six_pinned_inputs_edited": {"sections_covered": 46, "sections_total": 64, "calibration_restraint_score": 6, "box3_full_page": false, "note": "PIN must be the last commit touching any pinned input"},
+  "carried_inputs_object_types_at_frozen_base": {"blob": 2497, "non_blob": 0},
+  "no_harm_floor_requirement": "NOHARM coldread-floor ok iff score>=8 and credited>=64; deciding-run.sh exits non-zero on any RED line"
+ },
+ "headings_that_lose_credit_at_the_content_revision": [
+  "## Standing rules",
+  "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence",
+  "## The leg ledger — replay, receipt, and how it is read (round 7, measured)",
+  "### Triggers T1–T3 and the re-pin rule",
+  "### The service's limits — what tameshi refuses to mutation-test",
+  "## The operator's runbook and the six-leg regression (round 10, measured)",
+  "## Repeated controls and gate registry — round 12",
+  "### Gate/probe registry",
+  "## Pin disposition and provenance correction — round 13",
+  "### Round-13 gate/probe registry",
+  "## Effective expectation reconciliation — round 14",
+  "## Context gate classification and explicit exit classes — round 15",
+  "### Round-15 gate/probe registry",
+  "## Live-tree re-pin and entry-command monitor — round 17",
+  "### Round-17 gate/probe registry — re-pin and monitor",
+  "### Round-18 gate/probe registry — routed-defect closure",
+  "### Round-21 gate/probe registry — finite environment differential",
+  "### Round-26 gate/probe registry — report interop"
+ ],
+ "heading_drift_causes": {
+  "corpus/QUALITY.md": 9,
+  "corpus/SOURCES.md": 17,
+  "tools/registry.json": 15,
+  "tools/context-capture.py": 11,
+  "tools/registry-check.py": 10,
+  "tools/repeat-control.py": 11,
+  "note": "counts are sections whose pinned input union contains the path; the union over these six is exactly the 18 headings above"
+ },
+ "binder_behaviours_measured": {
+  "clean_reader_empty_findings": "REKEY",
+  "reader_without_sibling_md": "SKIP reader-md-missing",
+  "reader_cand_12_hex": "SKIP no-clean-reader",
+  "reader_stale_section_sha": "SKIP no-clean-reader",
+  "reader_heading_not_in_headings_file": "SKIP no-clean-reader (the heading is never looked up)",
+  "reader_with_1_finding_no_resolutions": "SKIP reader-has-findings:1>0",
+  "reader_without_findings_key": "REKEY (accepted as clean)",
+  "reader_with_wrong_skill_sha256": "REKEY (reader claim discarded)",
+  "reader_sibling_md_zero_bytes": "REKEY (existence only)",
+  "dirty_reader_sorts_before_clean": "SKIP reader-has-findings (the loop breaks at the first cand+sha match)",
+  "clean_reader_sorts_before_dirty": "REKEY",
+  "outdir_outside_lane": "REKEY written, then entry_reason='trace-missing:../outside-out/traces/section-01.json'"
+ },
+ "findings": [
+  {"severity": "critical", "id": "F1", "what": "the re-key obligation is 18 headings, not 1: only re-keying `## Standing rules` leaves 47/64 against a >=64 no-harm monitor, so deciding-run.sh exits non-zero"},
+  {"severity": "critical", "id": "F2", "what": "the existing dry-bind reader is unusable: cand/pin commits exist in no lane object and its section sha predates the current SKILL.md bytes"},
+  {"severity": "high", "id": "F3", "what": "a dirty reader that sorts before a clean one blocks the heading (binder.py:121-124 break)"},
+  {"severity": "high", "id": "F4", "what": "ORDERING: the six files the round edits are pinned inputs of 18 sections and are not in DROP, so corpus/QUALITY.md and corpus/SOURCES.md must be landed at or before PIN"},
+  {"severity": "medium", "id": "F5", "what": "an omitted findings key is accepted as clean; the binder cannot distinguish it from a real clean read"},
+  {"severity": "medium", "id": "F6", "what": "the reader's skill_sha256 is never checked"},
+  {"severity": "medium", "id": "F7", "what": "'newest prior entry' is max() on the read_rev string, so it picked the round-17 entry over the round-54 one for `## Standing rules`"},
+  {"severity": "medium", "id": "F8", "what": "a failing prior verdict is rewritten to executed-ok/verified-record, and blocking/wrong counts are hard-coded 0: the binder can never emit a failing entry"},
+  {"severity": "medium", "id": "F9", "what": "commands_executed_count is synthesized as 1+len(inputs) = 2498, not a command count"},
+  {"severity": "medium", "id": "F10", "what": "read_rev, reports, seats, external_inputs, start, end, skill_sha256 are validated by no counter - the enforced rev binding is the section sha plus the input digests"},
+  {"severity": "low", "id": "F11", "what": "the bound entry is verdict=gap-minor with minor_gaps=0"},
+  {"severity": "low", "id": "F12", "what": "binder docstring says SKILL.md's ignored status is left to the credit algorithm while DROP also drops SKILL.md"},
+  {"severity": "low", "id": "F13", "what": "blob_at() uses git show, not git cat-file blob, so a directory input would be hashed from a tree listing and later rejected as input-not-blob (none of the 2497 carried inputs is a non-blob at the frozen base)"},
+  {"severity": "frozen-doc", "id": "F14", "what": "reported not fixed: .ufo/evidence/round-55/no-harm.sh:5-7 says the 64/64 cold-read floor is the obligation for 'the one SKILL.md section its edit drifts', while 18 sections lose credit (17 from the round's record/tool edits)"}
+ ],
+ "receipts": ".ufo/waves/round-55/w1/T55W1RevLedger-receipts/"
+}

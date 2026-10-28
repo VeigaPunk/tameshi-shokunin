@@ -98,5 +98,7 @@ The counter measures nine allocating modes on the unusable arm, thirteen modes
 on the empty and usable arms, and the seven registry cells plus this note. Its
 blind spot is narrower but real: a documented mode outside the registry and the
 usage text could still allocate scratch unmeasured (the round-55 wave inventories
-that difference), and the grammar is matched on stderr, so a caller that parses
-stdout sees nothing.
+that difference). The grammar is matched on stderr, so a caller that reads only
+stdout sees no class line - but it can still see each tool's own verdict token
+there (`REPEAT_CONTROL: setup_error` is the one that remains), which is why a
+parser must read the exit code and stderr, never stdout alone.

@@ -1,0 +1,14 @@
+$ env -u TMPDIR python3 -c "import tempfile;print(tempfile.gettempdir())"
+/tmp
+
+$ git -C "$L" grep -c "HYAKU" 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb -- tools      # does any tool read $HYAKU_SCRATCH?
+rc=1 (1 = no match)
+
+$ HYAKU_SCRATCH=$HYAKU_SCRATCH strace -f -e trace=mkdir,mkdirat -o log env -u TMPDIR python3 tools/repeat-control.py --selftest
+rc=0
+mkdir calls under /tmp : 44
+mkdir calls under $HYAKU_SCRATCH: 0
+2677252 mkdir("/tmp/tameshi-r12-repeat-control-selftest.c0_ml5t2", 0700) = 0
+2677252 mkdir("/tmp/tameshi-r12-repeat-control-selftest.c0_ml5t2/fixtures", 0777) = 0
+2677252 mkdir("/tmp/tameshi-r12-repeat-control-selftest.c0_ml5t2/out", 0777) = 0
+VERDICT: "the platform default" is /tmp; strict_scratch_root() never consults $HYAKU_SCRATCH, so with TMPDIR unset the tool scratch root and the section's seat-scratch namespace are two different roots.

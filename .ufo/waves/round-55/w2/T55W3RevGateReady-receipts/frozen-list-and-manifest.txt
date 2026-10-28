@@ -1,0 +1,86 @@
+### FROZEN list vs contract.frozen_paths
+-- at freeze 133b2ce: FROZEN (from deciding-run.sh) --
+FROZEN="$E/contract.json $E/freeze.json $E/c1/measure.py $E/c2/measure.py $E/no-harm.sh $E/deciding-run.sh $E/controls.sh"
+-- at freeze 133b2ce: contract.frozen_paths --
+  .ufo/evidence/round-55/contract.json
+  .ufo/evidence/round-55/freeze.json
+  .ufo/evidence/round-55/c1/measure.py
+  .ufo/evidence/round-55/c2/measure.py
+  .ufo/evidence/round-55/no-harm.sh
+  .ufo/evidence/round-55/deciding-run.sh
+  .ufo/evidence/round-55/controls.sh
+  .ufo/evidence/round-55/c1/staged-at-freeze.txt
+-- symmetric difference at freeze --
+  1,7c1,8
+  < $E/c1/measure.py
+  < $E/c2/measure.py
+  < $E/contract.json
+  < $E/controls.sh
+  < $E/deciding-run.sh
+  < $E/freeze.json
+  < $E/no-harm.sh
+  ---
+  > .ufo/evidence/round-55/c1/measure.py
+  > .ufo/evidence/round-55/c1/staged-at-freeze.txt
+  > .ufo/evidence/round-55/c2/measure.py
+  > .ufo/evidence/round-55/contract.json
+  > .ufo/evidence/round-55/controls.sh
+  > .ufo/evidence/round-55/deciding-run.sh
+  > .ufo/evidence/round-55/freeze.json
+  > .ufo/evidence/round-55/no-harm.sh
+  diff_rc=0
+
+-- at HEAD 4f7a704: FROZEN --
+FROZEN="$E/contract.json $E/freeze.json $E/c1/measure.py $E/c1/staged-at-freeze.txt $E/c2/measure.py $E/no-harm.sh $E/deciding-run.sh $E/controls.sh"
+-- at HEAD 4f7a704: contract.frozen_paths --
+  .ufo/evidence/round-55/contract.json
+  .ufo/evidence/round-55/freeze.json
+  .ufo/evidence/round-55/c1/measure.py
+  .ufo/evidence/round-55/c2/measure.py
+  .ufo/evidence/round-55/no-harm.sh
+  .ufo/evidence/round-55/deciding-run.sh
+  .ufo/evidence/round-55/controls.sh
+  .ufo/evidence/round-55/c1/staged-at-freeze.txt
+
+### HEAD freeze.json re-derives at HEAD?
+OK   .ufo/evidence/round-55/c1/measure.py 83dfbbb066c201b1
+OK   .ufo/evidence/round-55/c1/staged-at-freeze.txt 921ad4196b76a43a
+OK   .ufo/evidence/round-55/c2/measure.py 0458f632087f665f
+OK   .ufo/evidence/round-55/contract.json 2af5325a0e77f637
+OK   .ufo/evidence/round-55/controls.sh 7c0cacb56c679155
+OK   .ufo/evidence/round-55/deciding-run.sh 28d4fa8aaacfcd2b
+OK   .ufo/evidence/round-55/no-harm.sh d93469db5a55632c
+HEAD_FREEZE_INTEGRITY OK files=7 amendments=9
+
+### FROZEN_UNCHANGED as deciding-run computes it, freeze->HEAD, with each list
+-- pre-amendment-9 list (7), freeze 133b2ce -> C0 9cf0146:
+   FROZEN_UNCHANGED=0
+      .ufo/evidence/round-55/c2/measure.py | 4 ++--
+      .ufo/evidence/round-55/contract.json | 4 ----
+      .ufo/evidence/round-55/freeze.json   | 8 ++------
+      3 files changed, 4 insertions(+), 12 deletions(-)
+-- pre-amendment-9 list (7), freeze 133b2ce -> HEAD 4f7a704:
+   FROZEN_UNCHANGED=0
+      .ufo/evidence/round-55/c1/measure.py   | 14 +++++++++++---
+      .ufo/evidence/round-55/contract.json   |  8 ++++++--
+      .ufo/evidence/round-55/deciding-run.sh |  2 +-
+      .ufo/evidence/round-55/freeze.json     | 12 ++++++++----
+      4 files changed, 26 insertions(+), 10 deletions(-)
+-- post-amendment-9 list (8), freeze 133b2ce -> HEAD 4f7a704:
+   FROZEN_UNCHANGED=0
+      .ufo/evidence/round-55/c1/measure.py   | 14 +++++++++++---
+      .ufo/evidence/round-55/contract.json   |  8 ++++++--
+      .ufo/evidence/round-55/deciding-run.sh |  2 +-
+      .ufo/evidence/round-55/freeze.json     | 12 ++++++++----
+      4 files changed, 26 insertions(+), 10 deletions(-)
+
+### if the deciding run used HEAD's fixed deciding-run.sh, the freeze manifest would fail:
+  freeze.json@133b2ce pins deciding-run.sh = af11d7551d8af1c7
+  deciding-run.sh@HEAD sha256 = 28d4fa8aaacfcd2b
+### HEAD 4f7a704: FROZEN vs contract.frozen_paths, set comparison
+SET_EQUAL=1 entries=8
+### freeze 133b2ce: same comparison
+SET_EQUAL=0 missing_from_FROZEN: .ufo/evidence/round-55/c1/staged-at-freeze.txt 
+### census rows
+SOURCES.md S-rows=140
+census_exit=0

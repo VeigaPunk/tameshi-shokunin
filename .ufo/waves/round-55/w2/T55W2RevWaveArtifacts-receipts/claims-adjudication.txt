@@ -1,0 +1,43 @@
+# clause 3 - four+ claims falsified at C0, with the bytes that falsify them
+
+## C1. T55W1ScribeSources.md:224-232 + T55W1ScribeSources-receipts/peer-er10-restore.txt:8-15
+  quote: "the restored files are `T55W1Er10.json` 3640 B sha256 `2e15a640...` and
+          `T55W1Er10.md` 11366 B sha256 `128c8e83...`"
+  C0 T55W1Er10.json     11908 B sha256 a70ea19db384b077
+  C0 T55W1Er10.md        1181 B sha256 f32e53597d177968
+  verdict: FALSIFIED - neither restored byte-string is in the tree (0/1254 matches, er10-bytes.txt).
+
+## C2. T55W1RevWave.md:240-241 and 257 (wave self-audit)
+  quote: "Restored at 13:58:54: T55W1Er10.json 3 640 B ... T55W1Er10.md 11 366 B";
+         "the R54.10 JSON draft is therefore absent from the tree again at 14:02:46, while its `.md` (13:58:54, 11 366 B) still survives"
+  C0 md: 1181 B sha256 f32e5359..., first line "# T55W1Er10 - pointer"
+  verdict: FALSIFIED for the .md half - a third write (T55W1ScribeMistakeSweep, 17:16:14.887Z) replaced it 10 s before C0.
+
+## C3. T55W1Rev08.md:197-202 and the "Stable across both instants (hashes I verified myself)" block at 391-399
+  quote: "`T55W1Er10.json` (sha256 `2e15a640...`) and `T55W1Er10.md` (sha256 `128c8e83...`). Note first that these are the *restored* bytes"
+  fact : C0 T55W1Er10.json = a70ea19d... / 11908 B, seat=T55W1ExecRekeyPrep, no `old` key
+  verdict: the "stable" digests are absent at C0; the R54.10 agree verdict ("old[0] is a byte-exact substring") cannot be re-derived from any revision.
+
+## C4. T55W1Rev05.md:199
+  quote: "`T55W1Er10.json` is the sources seat (S280/S281), not an R54.10 draft."
+  fact : at C0 the file is the RekeyPrep payload; it was the sources seat only 13:56:04-13:58:54 local.
+  verdict: STALE at C0 (third occupant).
+
+## C5. T55W1ScribeNote.md:158-160
+  quote: "my writes sit only under the untracked `.ufo/waves/round-55/` (`T55W1ScribeNote.md`, `T55W1Er10.md`, `T55W1ScribeNote-receipts/`)"
+  fact : writes at 16:51:08.181Z, 16:52:34.857Z, edit 16:55:20.478Z (er10-write-timeline.txt); at C0 the path holds the 1181 B MistakeSweep pointer.
+  verdict: true when made, false at C0; the write itself targeted another seat report path.
+
+## C6. T55W1ScribeMistakeSweep.md:7-9 vs its own write
+  quote: "I wrote only `.ufo/waves/round-55/w1/T55W1ScribeMistakeSweep.{md,json}` and `.ufo/waves/round-55/w1/T55W1ScribeMistakeSweep-receipts/`."
+  fact : its session records a write to T55W1Er10.md at 2026-10-28T17:16:14.887Z, and the surviving 1181 B pointer is that payload.
+  verdict: the scope declaration omits one write, to another seat path; no wave artifact attributes the pointer.
+
+## C7. T55W1ExecNoHarm.md:207 cites a receipt no commit carries
+  quote: "| `coldread-at-base.json` | full coldread measure output at base |"
+  fact : worktree 3022874 B; ABSENT at C0 and at HEAD c31cdd9; not gitignored; git status "??".
+  verdict: committed report cites an artifact only the live worktree carries.
+
+## C8. T55W1RevQuality.md:226 (.ufo/evidence/round-NN/quality/ precedent)
+  fact : only c100-falsifier.py in the tree is .ufo/waves/round-50/w1/T50ExecAppendOnly/receipts/c100-falsifier.py; no .ufo/evidence/round-55/quality/ at C0.
+  verdict: correctly framed as a proposal (its F5), not a false claim; recorded for completeness.

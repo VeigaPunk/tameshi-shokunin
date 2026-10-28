@@ -1,0 +1,36 @@
+## command: python3 tools/context-capture.py --check
+CONTEXT: OK (id=context_consistent receipt=.ufo/evidence/round-14/context-receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=0 findings=0)
+rc=0
+
+## command: python3 tools/context-capture.py --selftest | tail -1
+SELFTEST: PASS (49/49)
+## command: python3 tools/context-capture.py --selftest >/dev/null
+rc=0
+
+## command: python3 tools/context-capture.py --help   (section: help exits0, non-verdict informational mode)
+rc=0
+
+## command: python3 tools/context-capture.py --check --receipt   (section: 64 usage, no receipt)
+rc=64
+
+## command: TMPDIR=/nonexistent-r55 python3 tools/context-capture.py --selftest   (section: 2 could-not-evaluate, named, never a traceback)
+context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-r55' (could-not-evaluate)
+rc=2
+
+## command: TMPDIR= python3 tools/context-capture.py --selftest   (empty TMPDIR reads as unset)
+rc=0
+
+## command: --check --receipt FILE --expected FILE with a valid expected pin   (section: 0 clean)
+CONTEXT: OK (id=context_consistent receipt=/fast/scratch/hyaku/tameshi-r55/T55W3R12/unread2/receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=0 findings=0)
+rc=0
+
+## command: same, receipt chmod 000   (section: unavailable input stays could-not-evaluate)
+CONTEXT: INVALID (id=receipt_unreadable receipt=/fast/scratch/hyaku/tameshi-r55/T55W3R12/unread2/receipt.json sha256=<none> exit=2 findings=2)
+FINDING receipt_unreadable cannot read receipt: Permission denied
+FINDING expected_verdict_mismatch expected id=context_consistent exit=0 but recomputed id=receipt_unreadable exit=2
+rc=2
+
+## command: same, valid-but-different exit pin (exit 1) on a clean result   (section: failed/exit1)
+CONTEXT: MISMATCH (id=expected_verdict_mismatch receipt=/fast/scratch/hyaku/tameshi-r55/T55W3R12/unread2/receipt.json sha256=05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a exit=1 findings=1)
+FINDING expected_verdict_mismatch expected id=context_consistent exit=1 but recomputed id=context_consistent exit=0
+rc=1

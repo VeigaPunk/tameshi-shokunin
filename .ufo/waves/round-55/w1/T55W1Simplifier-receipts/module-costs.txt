@@ -1,0 +1,36 @@
+### 0. fixture: base 0a2010ac + tools/scratch_root.py + one import line per tool; handlers unchanged
+
+### 1. subset copy of one converted tool (round-17/18 staged subsets took 3/33 and 4/33)
+rc=1
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r55/T55W1Simplifier/arms/subset5/context-capture.py", line 305, in <module>
+    from scratch_root import ScratchRootUnusable, strict_scratch_root
+
+### 2. python3 -I on the same file (the lane documents -I for three of its tools)
+rc=1
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r55/T55W1Simplifier/clone/tools/context-capture.py", line 305, in <module>
+    from scratch_root import ScratchRootUnusable, strict_scratch_root
+ModuleNotFoundError: No module named 'scratch_root'
+
+### 3. tools/__pycache__ left in the lane (see pycache.txt for the scripted run)
+tools/__pycache__ left behind by the sibling import (fixture: base + tools/scratch_root.py)
+invocation: python3 tools/<tool>.py --bogus-flag   (module import runs before any mode)
+  env-diff               rc=64 pycache=['scratch_root.cpython-314.pyc']
+  repeat-control         rc=64 pycache=['scratch_root.cpython-314.pyc']
+  registry-check         rc=64 pycache=['scratch_root.cpython-314.pyc']
+  bash-witness-study     rc=64 pycache=['scratch_root.cpython-314.pyc']
+  pin-disposition        rc=2  pycache=['scratch_root.cpython-314.pyc']
+  evidence-disposition   rc=64 pycache=['scratch_root.cpython-314.pyc']
+  context-capture        rc=64 pycache=[]
+
+### 4. frozen no-harm tools-scope (verbatim monitor lines) with an A: file under tools/
+NOHARM tools-scope [M:tools/bash-witness-study.py M:tools/context-capture.py M:tools/env-diff.py M:tools/evidence-disposition.py M:tools/pin-disposition.py M:tools/registry-check.py M:tools/registry.json M:tools/repeat-control.py A:tools/scratch_root.py ] RED
+
+### 5. net lines, lane HEAD 133b2ce -> module
+ 8 files changed, 36 insertions(+), 88 deletions(-)
+
+### 6. env-diff single-blob sandbox with a converted python tool (bwrap present)
+ENVDIFF: classified=0/1 out=/fast/scratch/hyaku/tameshi-r55/T55W1Simplifier/arms/blob4.json
+surface py-surface classification unavailable clean_exit 1
+stderr_tail 'Traceback (most recent call last):\n  File "/tmp/w/target.sh", line 305, in <module>\n    from scratch_root import ScratchRootUnusable, strict_scratch_root\nModuleNotFoundError: No module named \'scratch_root\'\n'

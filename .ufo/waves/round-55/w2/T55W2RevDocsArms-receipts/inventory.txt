@@ -1,0 +1,28 @@
+$ # every strict_scratch_root() call site and its enclosing function
+$ python3 - <<'PY'  (AST walk over the seven tools at C0)
+repeat-control           1 call site(s)
+   line 629   func=selftest               class=[]
+bash-witness-study       1 call site(s)
+   line 1260  func=cmd_selftest           class=[]
+pin-disposition          1 call site(s)
+   line 725   func=selftest               class=[]
+evidence-disposition     1 call site(s)
+   line 2370  func=selftest               class=[]
+context-capture          1 call site(s)
+   line 1643  func=__init__               class=['SelftestHarness']
+registry-check           2 call site(s)
+   line 784   func=clone_lane_at_rev      class=[]
+   line 935   func=selftest               class=[]
+env-diff                 1 call site(s)
+   line 80    func=execute                class=[]
+
+$ # documented modes per tool (usage text / subcommands)
+repeat-control : --runs N --out DIR -- COMMAND | --snapshot DIR | --selftest   (docstring :11-15)
+bash-witness   : declare | run | rerun | count | check | selftest               (add_parser :1755-1775)
+pin-disposition: default | --read | --selftest
+evidence-disp  : default | --json | --selftest
+context-capture: --check [--receipt --expected] | --json | --selftest          (docstring :16-30)
+registry-check : --root | --rev | --registry | --only | --tag | --json | --selftest  (docstring :11-12)
+env-diff       : --contract FILE --out FILE | --selftest                      (docstring :4-5)
+
+ALLOCATING (reaches strict_scratch_root): 9 modes -- selftest x7, env-diff --contract, registry-check --rev

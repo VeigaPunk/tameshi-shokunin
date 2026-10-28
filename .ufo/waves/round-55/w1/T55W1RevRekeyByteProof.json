@@ -1,0 +1,87 @@
+{
+ "seat": "T55W1RevRekeyByteProof",
+ "role": "reviewer",
+ "axis": "calibration",
+ "milestone": "attack the reader deliverable the re-key needs",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "frozen_counter_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "validator": {
+  "path": ".ufo/waves/round-55/w1/T55W1RevRekeyByteProof-receipts/validate-reader.py",
+  "sha256": "1ff880532fa79bced799914756aba321b614b8053f78fe232654ee8839f4c59d",
+  "lines": 262,
+  "modes": ["canonical", "binder", "counter", "all"],
+  "quote_check": "--quote-check adds the honesty arm the credit code lacks",
+  "exit": "0 iff every named file is accepted"
+ },
+ "contract": {
+  "fields": ["heading", "cand", "section_sha256", "findings"],
+  "sibling": "<stem>.md must exist",
+  "section_definition": "frozen round-18 sectionize: heading line through the line before the next ^#{1,3}(\\s|$) outside a fence, trailing whitespace-only lines stripped, joined with \\n, no trailing newline, surrogateescape",
+  "credit_predicates": [
+   {"code": ".ufo/evidence/round-54/integrate/binder.py:117", "section_rev": "c0", "rule": "cand == c0 AND section_sha256 == section at c0"},
+   {"code": ".ufo/evidence/round-54/c1/measure.py:241", "section_rev": "REV", "rule": "cand == c0 AND section_sha256 == section at REV"},
+   {"code": ".ufo/evidence/round-18/measure.py:610-613", "section_rev": "REV", "rule": "the bound ledger entry's sha256 must equal the section at REV; that digest is the only lookup key"}
+  ],
+  "rules": [
+   {"id": "R1", "rule": "cand is the full 40-hex sha of a commit in the lane, and the reader read those bytes", "test": "m1 abbreviated cand rejected cand-not-full-sha"},
+   {"id": "R2", "rule": "section_sha256 from reader-section.py at cand, never a hashed copy", "test": "m3 sha of another section rejected"},
+   {"id": "R3", "rule": "no commit after cand may change SKILL.md before the deciding run", "test": "reader at C55 judged at C56 rejected counter-section_sha256-mismatch-at-rev; coverage 63/64"},
+   {"id": "R4", "rule": "findings [] or [{quote, why}] with quote verbatim in the section at cand", "test": "m7 invented quote accepted by binder mode, rejected by --quote-check"},
+   {"id": "R5", "rule": "sibling <stem>.md exists", "test": "forged has no sibling"},
+   {"id": "R6", "rule": "filename must not match /T54W\\d+[A-Za-z]*Read\\d+\\.json$/", "test": "round-55/c1/measure.py:138 is the R54.5 counter's regex"},
+   {"id": "R7", "rule": "bind with PIN = the final content revision; no pinned input may change afterwards", "test": "post-bind tools/registry.json edit: 64/64 -> 53/64 input-drift"}
+  ],
+  "pinned_inputs_round55_edits": [
+   "corpus/QUALITY.md", "corpus/SOURCES.md", "tools/repeat-control.py",
+   "tools/context-capture.py", "tools/registry.json", "tools/registry-check.py",
+   "SHONEN.md", "PROVINCE.md"
+  ],
+  "dropped_inputs": ["LOG.md", "SCORECARD.md", "SKILL.md", ".ufo/evidence/round-21/coldread/ledger.json"]
+ },
+ "verdicts": {
+  "round54_w1_readers": {"files": 23, "accepted": 23, "rejected": 0, "mode": "canonical+quote-check", "findings": 28},
+  "round54_both_waves": {"files": 46, "accepted": 46, "rejected": 0, "findings": 53},
+  "forged": {"file": ".ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json",
+             "sha256": "749abcdbf960fff9f4ee4fb448312cae604527208dbdb4870392bfc7b84faa7f",
+             "accepted": 0,
+             "primary_reason": "section_sha256-mismatch-at-cand",
+             "by_mode": {"canonical": "REJECT", "binder": "REJECT", "counter": "REJECT", "all": "REJECT"}}
+ },
+ "mutants": [
+  {"id": "m1", "change": "cand abbreviated to 12 hex", "canonical": "REJECT", "binder": "REJECT"},
+  {"id": "m2", "change": "honest read of the later commit", "canonical": "ACCEPT (quote-check REJECTs)", "binder": "REJECT binder-cand-not-c0"},
+  {"id": "m3", "change": "sha of another section", "canonical": "REJECT", "binder": "REJECT"},
+  {"id": "m4", "change": "heading typo", "canonical": "REJECT", "binder": "REJECT"},
+  {"id": "m5", "change": "findings = dict", "canonical": "REJECT", "binder": "REJECT"},
+  {"id": "m6", "change": "findings = string", "canonical": "REJECT", "binder": "REJECT"},
+  {"id": "m7", "change": "invented quote", "canonical": "REJECT", "binder": "ACCEPT"},
+  {"id": "m8", "change": "findings key absent", "canonical": "ACCEPT", "binder": "ACCEPT"},
+  {"id": "m9", "change": "cand = 40 zeros", "canonical": "REJECT", "binder": "REJECT"}
+ ],
+ "coverage_chain": [
+  {"rev": "631cd6455e58", "label": "baseline", "covered": "64/64", "standing": "credited"},
+  {"rev": "45680d9838f6", "label": "content commit, ledger unchanged", "covered": "63/64", "standing": "no-ledger-entry"},
+  {"rev": "76b30b94b6f9", "label": "after the frozen binder bound the fresh reader", "covered": "64/64", "standing": "credited"},
+  {"rev": "ae3cb23973e1", "label": "later SKILL.md edit, reader still at C55", "covered": "63/64", "standing": "no-ledger-entry"},
+  {"rev": "cd736a5a9429", "label": "SKILL.md bytes restored", "covered": "64/64", "standing": "credited"},
+  {"rev": "231220211d5b", "label": "one pinned input edited after the bind", "covered": "53/64", "standing": "input-drift:tools/registry.json"}
+ ],
+ "findings": [
+  {"id": "F1", "severity": "blocking", "what": "the re-key gates no-harm (sections_covered >= 64, round-55/no-harm.sh:16-17) and the deciding-run precheck (deciding-run.sh:70-71); the SKILL edit alone takes it to 63/64"},
+  {"id": "F2", "severity": "blocking", "what": "a post-bind edit to any pinned input costs 11 credited sections (64/64 -> 53/64); bind with PIN = the final content revision"},
+  {"id": "F3", "severity": "blocking", "what": "a correct reader at cand is rejected by arm 4 once SKILL.md moves on; cand must be the last SKILL.md commit"},
+  {"id": "F4", "severity": "medium", "what": "the credit code never verifies findings[].quote; an invented quote is credited by binder mode (m7)"},
+  {"id": "F5", "severity": "medium", "what": "non-list findings (dict/string) is counted by len() and would be credited; the validator rejects it (stricter, safe direction)"},
+  {"id": "F6", "severity": "low", "what": "findings may be absent entirely; the contract should still require the key"},
+  {"id": "F7", "severity": "low", "what": "file placement and name: binder globs round-54 wave dirs with no name filter; R54.5 counts only /T54W...Read....json$"}
+ ],
+ "provisional": {
+  "warning": "derived from uncommitted working-tree SKILL.md; the L1 must re-derive at the content commit",
+  "skill_sha256": "e0ce89f7866062062f4987358e353c8626c18f56d2eb1589225af99f44d695a6",
+  "standing_rules": {"start": 17, "end": 44, "section_sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767"}
+ },
+ "crosscheck": {"r54_5_regex_counts": "w1=28 w2=25 sections=12", "matches_round55_c1_measure_py_131_151": true},
+ "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0},
+ "lane_writes": [],
+ "tooling_installs": []
+}

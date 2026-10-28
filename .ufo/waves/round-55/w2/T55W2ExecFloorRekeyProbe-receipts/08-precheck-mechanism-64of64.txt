@@ -1,0 +1,17 @@
+ATTACK (mechanism, not deliverables): is 64/64 reachable at all from this C0 with this binder shape?
+For the 9 headings that still had no C0-matching reader at probe time I added synthetic readers
+(PROBE-STUB-08/09/12-18.{json,md}: heading, cand=C0, section_sha256 = the frozen sectionize's sha at C0,
+findings []) and re-ran the binder over all 18 headings. These stubs live only in the scratch clone; they are a
+layout/credit arithmetic probe and are NOT deliverables of this wave.
+COMMAND
+  TMPDIR=$S/tmp python3 .ufo/evidence/round-55/integrate/binder.py $S/clone <C0> <C0> <rekey dir>   # REFRESH rekeyed=18 skipped=0
+  git -C $S/clone add -A && git -C $S/clone commit -m "probe: r55 rekey mechanism probe"   # 97d8f759e575
+  python3 .ufo/evidence/round-21/coldread/measure.py --repo $S/clone --rev 97d8f759e575... --explain > m-bind2.json
+  bash .ufo/evidence/round-48/quality/coldread-precheck.sh $S/clone 0a2010acd1e9... 97d8f759e575...
+OUTPUT
+  measure: credited 64 of 64 (no uncredited section)
+COLDREAD_PRECHECK floor=0a2010acd1e9 floor_credited=64 cand=97d8f759e575 cand_credited=64 lost=0 ok
+VERDICT: yes - 64/64 is reachable exactly when all 18 headings in lost-headings-at-c0.json each get a reader JSON
+pinned at C0 whose section_sha256 equals the frozen sectionize's sha for that section. The binder writes 18 entries;
+the precheck returns floor_credited=64 cand_credited=64 lost=0 ok. What remains is wave-3 deliverables, not
+mechanics: 9 of the 18 headings had no C0-pinned reader at probe time.

@@ -1,0 +1,15 @@
+{
+  "heading": "### Gate/probe registry",
+  "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "section_sha256": "99285e24a71a8d2a0ea3fd6bcafe7e080acb23bfd653e7cbb3b71dfdc5144c77",
+  "findings": [
+    {
+      "quote": "0 clean; 1 failed; 2 and 64 could-not-evaluate",
+      "why": "The cell names neither of the tool's finding IDs. tools/repeat-control.py at C0 declares EXIT_BY_ID controls_match 0, controls_mismatch 1, and lists baseline_nonzero/command_unavailable/snapshot_tampered/setup_error as 2 with invalid_usage 64, all documented 'could-not-evaluate' (docstring lines 41-48: '`baseline_nonzero`, `command_unavailable`, `snapshot_tampered`, `setup_error` and `invalid_usage` are could-not-evaluate'). Exit 1 is `controls_mismatch` — the N controls disagreed — and the same docstring warns 'exit 1 says the observations disagreed, nothing about the mutation denominator'. 'failed' reads as the probed command failing, which is a different event (a benign nonzero baseline is exit 2, not 1). Reproduced: `--runs 3` on a stable command exits 0 controls_match; snapshot mode on the committed mismatch directory exits 1 controls_mismatch. Minor, non-blocking: 'failed' is defensible as the gate's own verdict, and ReRead08 (round 27) raised exactly this as M3; it stands unchanged at C0. Repair: use the tool's IDs, or say '1 controls disagreed'."
+    },
+    {
+      "quote": "seat ReRead08",
+      "why": "Two citations ('(declaration, mapping, target, spec, summary; `manifest.json` itself is not pinned, seat ReRead08)' and '(`.ufo/evidence/round-12/BashWitness/declaration.json`; seat ReRead08)') name a seat with no path, commit or report, and no seat of that name exists under .ufo/waves/round-12/ at C0. The name resolves to two different artifacts a reader must find by search: .ufo/waves/round-27/residual/ReRead08.md (the review that produced the manifest-pinning and exposure corrections this prose adopts) and .ufo/waves/round-49/w2/T49W2Reread08.{md,json}. This is the same gap ReRead08 raised as M2 for 'seat Read25', which was repaired by adding `.ufo/waves/round-27/w1/Read25.md`; the ReRead08 citations were left pathless, so the repair is asymmetric. Minor, non-blocking. Repair: cite `.ufo/waves/round-27/residual/ReRead08.md`."
+    }
+  ]
+}

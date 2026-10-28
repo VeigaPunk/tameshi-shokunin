@@ -1,0 +1,112 @@
+== SKILL.md 50-95 ==
+    50	
+    51	- `corpus/knowledge/gates-survey-kumitate.md` — the six kumitate suites: exit
+    52	  maps, case counts, mutation controls, fail-closed arms, verdict asserts.
+    53	- `corpus/knowledge/gates-survey-kagi.md` — the six kagi gates: exit lattice,
+    54	  POLICY refusals, five evidence-discipline habits, findings F-1/F-2.
+    55	- `corpus/knowledge/verification-patterns-fleet.md` — the shared verifier shape
+    56	  (P1–P10, ≥2 independent lanes) vs two lane-specific encodings.
+    57	- `corpus/knowledge/mutation-case-kimi-census.md` (round 2) — the JS worked
+    58	  case: `kimi-census.mjs` 43-case suite vs 10 single-edit mutants → 8/10 killed
+    59	  (80 %); survivors D2/D10; full protect/gap inventory, driver spec, unknowns.
+    60	- `corpus/knowledge/mutation-case-kagi-census.md` (round 3) — the bash worked
+    61	  case: `surface-census.sh` 16-case selftest vs 10 single-edit mutants → 8/10
+    62	  killed (80 %); survivors B5 (fixture-absent arm) / B10 (unread count);
+    63	  kill-width and survivor-class comparison in §4, driver spec in §7.
+    64	- `plans/round-3.plan.md` — the round-3 axis move (depth + operability) and its
+    65	  pre-registered anti-claim: a wild divergence between the JS and bash
+    66	  kill-rates IS the finding (language-class differences in what suites protect).
+    67	
+    68	The notes are live artifacts — the kagi survey records its own line numbers
+    69	moving mid-survey and pins refs to a sha (gates-survey-kagi.md:420-438). All
+    70	refs below were re-resolved by line number on 2026-10-14; a reader on a
+    71	differing revision re-resolves rather than trusts.
+    72	
+    73	## Gate-shape decision table — hermetic vs live vs audit-lane
+    74	
+    75	| Shape | Answers | Runs against | Green means (and only means) | Source |
+    76	|---|---|---|---|---|
+    77	| **Hermetic suite** (`--selftest`) | does the tool's own machinery work | fixtures under `mkdtemp` only, cleaned in `finally`; no live path read | every asserted case fired on generated data; passes in any repo state | gates-survey-kumitate.md:19-31 |
+    78	| **Live gate** (default mode) | what the current substrate state is | the live host/tree, read-only | measured counts on the verdict line; exit lattice 0/1/2 (kagi folds usage/setup into 2; 64 is kumitate's hermetic usage code) | gates-survey-kagi.md:24-31, 75-88 |
+    79	| **Audit lane** | do claims about a named revision still hold | retained outputs + the committed revision | per-claim verdict (`CONFIRMED`/`UNVERIFIABLE`); byte-identity first | verification-patterns-fleet.md:28-35, 69-74 |
+    80	
+    81	Rules:
+    82	
+    83	- **Hermetic means no live path is read.** All six kumitate suites build
+    84	  fixtures under `mkdtemp` and remove them in `finally`
+    85	  (gates-survey-kumitate.md:28-31); claims-check's hermeticity is proven from
+    86	  outside by env poisoning — `UFO_SRC=/nonexistent … --selftest` → PASS
+    87	  (gates-survey-kumitate.md:218-222). A live assertion inside a suite stays
+    88	  gated (`--integrations`), never smuggled into the hermetic group
+    89	  (gates-survey-kumitate.md:51-58).
+    90	- **A live gate may not pass on nothing.** The kagi ledger refuses coverage over
+    91	  a scorecard with no round tables, and a cell audit where no cell cites a claim
+    92	  row — "the audit would be vacuous" (gates-survey-kagi.md:139-143).
+    93	- **An audit lane re-executes recipes, not prose.** Kaidoku r5 audits re-ran the
+    94	  recipes: 8/8 compare outputs byte-identical including a 63 MB request;
+    95	  `UNVERIFIABLE` means "cannot re-run or no evidence either way"
+
+== SKILL.md 478-540 ==
+   478	  replication. Band interiors were unprobed at round 3 (both at 80 %, SKILL.md:335-339); round 5 measured 60 % inside the band (:684-685, :736-738);
+   479	  verb-path U2 and host-stability U5 remain open (:193-206).
+   480	
+   481	## No-permissiveness audit recipe
+   482	
+   483	Goal: prove a change did not make anything pass by absence — no finding went
+   484	quiet, no arm stopped firing, no claim passed on a warning line. In order:
+   485	
+   486	1. **Fix the revision under audit.** Line refs pin to a sha; a reader on a
+   487	   differing revision re-resolves. Stamps are recomputed (`ok=56 stale=0`),
+   488	   never re-typed (gates-survey-kagi.md:246-254, 420-438).
+   489	2. **Capture the before-set; compare against it.** Prior rows/ledgers are the
+   490	   regression fence — "prior rows 0-mismatch", "all 102 prior ledger rows +
+   491	   receipts byte-stable" (verification-patterns-fleet.md:37-39).
+   492	3. **Compare by byte-identity; scrub volatility only by an explicit list**
+   493	   (pids, timing, paths, ASLR, decimal wobble), and keep residual line drift in
+   494	   a named field (`provenance_only_line_diff`)
+   495	   (verification-patterns-fleet.md:32-35).
+   496	4. **Match verdicts fail-closed:** a claim passes only when the exit code equals
+   497	   the expected one AND the expected ERE matches the last non-empty output line;
+   498	   a verdict-shaped string followed by failure fails (`reason=verdict-not-final`)
+   499	   (gates-survey-kagi.md:161-168).
+   500	5. **Abstention is declared, counted, exit-neutral — and proven both ways.**
+   501	   `[substrate]` rows `DEFER … reason=substrate-absent`; the guard is the
+   502	   both-paths selftest; only-ABSENT/SKIP output may exit 0
+   503	   (gates-survey-kagi.md:187-197).
+   504	6. **Zero-work is a defect, not a green** (gates-survey-kagi.md:139-143).
+   505	7. **Falsifications and defects are findings, never softened;** the verifier
+   506	   catches what the author missed; post-verification changes carry their own
+   507	   proof (verification-patterns-fleet.md:46-57).
+   508	8. **Leave holes named as unknowns, not as green:** live verdicts unmeasured for
+   509	   five of six kagi gates; the kumitate integration group not executed
+   510	   (gates-survey-kagi.md:442-465; gates-survey-kumitate.md:320-331).
+   511	
+   512	## Fail-closed arm taxonomy
+   513	
+   514	Exit 2 is not one class. A red run means different things — read the arm:
+   515	
+   516	| Arm | Fires when | Shape | Source |
+   517	|---|---|---|---|
+   518	| **SETUP** — cannot measure | input missing/unusable (`--src` gone, `op` absent, fixture dir not a dir) | exit 2, a named line before any effect (`ADJACENCY_SCOPE: SETUP (…)`), never a bare death | gates-survey-kagi.md:93-99 |
+   519	| **Malformed committed data** | a census row / declaration is malformed | census `die`s exit 2 ("not a verdict"); scope-gate accumulates `BAD-ROW` → `DEFECT` exit 1 — opposite calls, both deliberate | gates-survey-kagi.md:100-106 |
+   520	| **POLICY** — refused before the effect | the act would leak/overstep: non-regular or `op://`-carrying op-side paths; claim rows outside a 5-verb allowlist (quote-stripped before matching; 23 denied verbs); nested self-audit; stamp-set shrink without `--prune`; checklist rows naming `op.env`; hashing a no-hash path | refused before exec: exit 2 structural, except `drift-pins.sh`, which prints the POLICY line and returns its DRIFT verdict, exit 1 (`drift-pins.sh:142-148`, `:252-258`; round 17) | gates-survey-kagi.md:107-138 |
+   521	| **Zero-work** | the gate would report over nothing | refused; a gate that measures nothing must not exit 0 | gates-survey-kagi.md:139-143 |
+   522	| **Deferral** | substrate absent for a `[substrate]`-tagged row | `DEFER … reason=substrate-absent`, counted, not executed, never FAIL; guards: tag lives in the data file, both-paths selftest | gates-survey-kagi.md:187-197 |
+   523	
+   524	Rules:
+   525	
+   526	- **Declare arms as tokens and prove coverage — or say it is unproven.** Proxy
+   527	  12/12 arms fired; claims 5/5; kimi-census 1 token, 3 cases; round-gate 7
+   528	  declared / 6 fired (`INTERNAL_ERROR` uncovered); surface-probe and cite-check
+   529	  have no token enum: each asserts one CLI `--src` exit-2 arm, the rest of their
+   530	  exit-2 paths have no arm accounting (gates-survey-kumitate.md:287-292).
+   531	- **Name the arm in the verdict:** `FAIL-CLOSED (TOKEN)`, never a free-form
+   532	  string; where no enum exists the suite can neither declare nor assert arm
+   533	  coverage (gates-survey-kumitate.md:106-118).
+   534	- **An arm that cannot fire on this host is an unknown, not a pass:**
+   535	  `BREADTH-EXCEEDS` never fires while live child counts sit far below their pins
+   536	  (gates-survey-kagi.md:279-291); whether the two zero-POLICY gates simply lack
+   537	  that surface is unrecorded (gates-survey-kagi.md:145-153).
+   538	- **Known gate-internal holes, carried not hidden:** cite-check's empty-scan
+   539	  exit-2 is asserted only as an in-process condition, not the CLI `return 2`
+   540	  mapping (gates-survey-kumitate.md:70-81).

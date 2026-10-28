@@ -1,4 +1,12 @@
-$ registry-check's own child launcher (tools/registry-check.py:949-959 at 631cd645)
+$ git -C <clone at 631cd645> show/sed the two call sites
+
+=== tools/registry-check.py:929-932 (selftest scratch) ===
+def selftest():
+    scratch = tempfile.mkdtemp(
+        prefix="tameshi-r17-registry-check-selftest.", dir=strict_scratch_root()
+    )
+
+=== tools/registry-check.py:945-954 (child launcher: cwd=scratch at 950) ===
     def run_child(args, extra_env=None):
         env = row_env()
         if extra_env:
@@ -9,9 +17,8 @@ $ registry-check's own child launcher (tools/registry-check.py:949-959 at 631cd6
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env=env,
-        )
 
-$ context-capture's hermeticity case (tools/context-capture.py:1780-1786 at 631cd645)
+=== tools/context-capture.py:1776-1782 (hermetic-no-lane-path) ===
     def finish(self):
         lane_leak = any(
             DEFAULT_LANE_ROOT in text for text in self.outputs)
@@ -19,3 +26,22 @@ $ context-capture's hermeticity case (tools/context-capture.py:1780-1786 at 631c
             "hermetic-no-lane-path", not lane_leak,
             "default lane root absent from subprocess output"
             if not lane_leak else "subprocess output names the live lane root")
+
+=== tools/context-capture.py:138 ===
+DEFAULT_LANE_ROOT = os.path.dirname(os.path.dirname(SELF))
+
+=== tools/bash-witness-study.py:209-222 (strict_scratch_root) ===
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default.
+    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise ScratchRootUnusable(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+

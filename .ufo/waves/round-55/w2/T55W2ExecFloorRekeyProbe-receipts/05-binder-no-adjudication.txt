@@ -1,0 +1,12 @@
+ATTACK: bind with no adjudication file (the state a caller reaches if resolutions.json is absent at LANE).
+COMMAND
+  mv $S/clone/.ufo/evidence/round-55/integrate/resolutions.json $S/resolutions-r55-asfound.json
+  TMPDIR=$S/tmp python3 .ufo/evidence/round-55/integrate/binder.py $S/clone <C0> <C0> <rekey dir>
+OUTPUT (rc=1; full 18 lines in scratch v2a-binder.out, the decisive lines)
+SKIP ## Standing rules reader-has-findings:2>0
+REFRESH rekeyed=3 skipped=15 headings=18
+VERDICT: without an adjudication the binder SKIPS '## Standing rules' with reader-has-findings:2>0 (binder.py:118-121)
+and the section stays uncredited - all three wave-2 readers carry findings, so a zero-findings gate can never bind
+this section. Same run bound the three w3 headings whose readers reported zero findings (REKEY ... T55W3R01/R02/R05).
+SNAPSHOT: T55W2Read01.json sha256 ec7009d8..., Read02 7b566b14..., Read03 d7a48ddd... (the wave is live; these are
+the bytes this probe validated).

@@ -1,0 +1,18 @@
+# cmd: python3 - <<EOF  (apply the frozen formula and the tip-of-lane formula to the arm values the base receipt printed)
+printed line: grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/9 skill=0/1
+frozen formula at C0 (c2/measure.py:271-273)  total = 21
+tip formula (133b2ce, amendment 8)           total = 20
+sum of the failures the line prints           total = 20
+
+# cmd: git diff 9cf0146 133b2ce -- .ufo/evidence/round-55/c2/measure.py | grep -E "^[-+].*total =" -A2
+@@ -269,8 +269,8 @@ def main():
+     lazy_ok = sum(1 for m in lazy if "lazy:" + m[0] not in bad)
+     tmp_total = sum(int(v.split()[0]) for k, v in bad.items() if k.startswith("tmp_mkdirs:"))
+     total = (len(allocating) - grammar_ok) + (len(lazy) - lazy_ok) \
+-        + (len(table) - empty_ok) + (len(table) - usable_ok) \
+-        + tmp_total + (7 - docs) + (8 - note) + (1 - skill)
++        + (len(cheap) - empty_ok) + (len(cheap) - usable_ok) \
++        + tmp_total + (7 - docs) + (len(allocating) - note) + (1 - skill)
+     receipts = {"rev": a.rev, "fixture_sha256": fixture_sha, "bad": bad,
+
+# cmd: git status --porcelain -- .ufo/evidence/round-55/before/c2.stdout ; git diff -- .ufo/evidence/round-55/before/c2.stdout  (frozen file edited in the working tree, uncommitted)

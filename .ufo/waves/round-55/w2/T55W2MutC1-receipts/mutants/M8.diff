@@ -1,0 +1,10 @@
+@@ -198,8 +198,7 @@
+     cb = text(lane, rev, ".ufo/evidence/round-54/control/controls-b.stdout") or ""
+     premise = "CTL_MISMATCH" in cb and "CONTROLS_B: 2/3" in cb
+     stale = scan(lane, rev, RECORD, r"CTL_POS_c1 true")
+-    stale += scan(lane, rev, ("corpus/QUALITY.md", "corpus/lessons/round-54.md"),
+-                  r"(positive control[^\n]{0,160}rekeyed=7/7)|(rekeyed=7/7[^\n]{0,160}positive control)")
++    # MUTANT M8: R54.1 line-scoped record arm dropped; the span arm remains
+     stale += scan_span(lane, rev, RECORD,
+                        r"positive control.{0,160}rekeyed=7/7|rekeyed=7/7.{0,160}positive control")
+     row("R54.1", premise, stale, "CTL_MISMATCH" in corr and "2/3" in corr,

@@ -22,3 +22,11 @@ repeat-control-stdout.txt     the stdout residue, the proposed one-line fix, and
 bash-witness-invocations.txt  bash-witness-study.py takes the `selftest` subcommand; the
                               `--selftest` flag is an argparse usage error (rc 64)
 source-fetches.txt            the two round-55 source fetches: HTTP 200, size, sha256, locators
+c2-base-amended.stdout       the amended C2 bytes re-run at base: usable=12/13 (registry-check --selftest rc=1), total=19; the frozen receipt's 18 is the pre-amendment instrument
+freeze-integrity-at-c0.txt     the manifest check after the L1 re-froze it: freeze.json at e2979f2 lists amendments 1-7 and 7/7 pins match the C0 bytes; no frozen path differs e2979f2..9cf0146
+c1-base-refrozen.stdout       C1 at base with the re-frozen bytes: premise=9/10 (R54.9 staged=0), stale=4 classes / 11 occurrences
+c1-c0-explain.stdout          C1 at C0 9cf0146: premise=10/10 stale=0 total=0 PASS
+registry-check-rev-mode.txt   registry-check --rev at C0: rc 2, stderr grammar, stdout empty (the pre-C0 worktree printed its token on stdout)
+c2-c0-amendment7*            C2 at C0 with the amendment-7 bytes: every arm green, bad={}, total=1 PASS=false (the defect amendment 8 repairs)
+c2-c0-amendment8*            C2 at C0 with the amendment-8 bytes: total=0 C2_R55_PASS=true
+c2-base-amendment8*          C2 at base with the amendment-8 bytes: grammar=6/9 … total=20 (the committed receipt's 21 was one higher than its own arms)

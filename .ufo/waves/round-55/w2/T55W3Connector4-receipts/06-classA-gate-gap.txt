@@ -1,0 +1,17 @@
+## class A: tameshi r55 fix side and its own named residual
+
+$ grep -n "^ *python3.*--rev" <lane>/.ufo/evidence/round-55/controls.sh   # phase B scores at the clone HEAD
+37:  python3 "$py" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/$w" > "$SCR/$tag.out" 2>&1
+
+$ grep -c CTL <lane>/.ufo/evidence/round-55/deciding-run.sh   # 0 = the gate never reads a CTL line
+0
+
+## the lesson states the residual itself (corpus/lessons/round-55.md, "What the counters cannot see"):
+- Neither counter sees the deciding gate's own blind spots: `deciding-run.sh`
+  checks each control receipt's existence, blob-ness, size and commit order, but
+  never compares the `rev=` a `CTL` line names with the revision under test (wave
+  seat T55W1ScribeLesson). Recorded as a residual, not fixed: the gate is frozen.
+
+## cross-lane: the check tameshi names as missing, already shipped elsewhere
+$ sed -n 13p ../kotodama-shokunin/corpus/lessons/round-56.md
+| `:121` §5 item 3 and `:60` §2 Gaps | receipts did not name the revision they measured | `reports/round-56/dry-run.py run --rev REV` measures in a sandbox clone and prints `# measured-revision`; `check` fails a receipt without it | done: `declaration-dry-run.txt:2` names `b4b7db9`; ExecReceiptRevision showed `check` exits 1 on the round-55 receipt and exits 0 once the revision test is removed (`.ufo/waves/round-56/build/ExecReceiptRevision.md`) |

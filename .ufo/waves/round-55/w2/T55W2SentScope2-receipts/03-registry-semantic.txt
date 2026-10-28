@@ -1,0 +1,35 @@
+$ git -C LANE diff --numstat FREEZE..C0 -- tools/registry.json
+1275	1026	tools/registry.json
+
+=== structural + value diff of the parsed JSON (freeze vs C0) ===
+rows: 56 -> 56  schema: tameshi-entry-registry-v1 -> tameshi-entry-registry-v1
+rows carrying scratch_root: 7 -> 7
+semantic diffs: 7
+  VAL              /rows[2]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "repeat-control.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value>\' (c
+  VAL              /rows[4]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "bash-witness-study.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value>\
+  VAL              /rows[6]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value>\' (
+  VAL              /rows[14]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value
+  VAL              /rows[18]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value>\' (
+  VAL              /rows[27]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "registry-check.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value>\' (c
+  VAL              /rows[40]/scratch_root
+      freeze: 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and no
+      C0    : 'One stderr line, exit 2, could-not-evaluate: "env-diff.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \'<value>\' (could-n
+
+=== serialization: was the file rewritten? ===
+freeze: 28902 bytes, 1028 newlines
+C0    : 27999 bytes, 1277 newlines
+freeze reproduces as json.dumps(obj, indent=N)+NL for N in none
+C0 reproduces as json.dumps(obj, indent=N)+NL for N in [1]
+C0 bytes == json.dumps(freeze_obj_with_7_cells_patched, indent=1)+NL : True

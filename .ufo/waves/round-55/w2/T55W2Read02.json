@@ -1,0 +1,19 @@
+{
+ "heading": "## Standing rules",
+ "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+ "section_sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767",
+ "findings": [
+  {
+   "quote": "root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)`",
+   "why": "The template asserts single quotes unconditionally, but every tool formats the value with %r (repeat-control.py:164, context-capture.py:312, registry-check.py:769, env-diff.py:46, pin-disposition.py:175, evidence-disposition.py:205, bash-witness-study.py:219). A TMPDIR that contains an apostrophe and no double quote is repr'd in double quotes, so the emitted line is `... usable directory: \"/fast/.../it's-not-a-dir\" (could-not-evaluate)` and the counter's frozen GRAMMAR (`'.+'`) does not match it: measured rc=2 with one stderr line at repeat-control, context-capture and registry-check (receipts/apostrophe-tmpdir.txt; GRAMMAR_match=False for all three). The class claim survives (one stderr line, exit 2, no traceback); the byte-shape does not hold for every value. The C2 counter cannot see it: its unusable arm uses a fixed path with no quote."
+  },
+  {
+   "quote": "corpus/knowledge/scratch-root-contract.md; the seven registry `scratch_root`",
+   "why": "Four of the seven cited cells quote a process-line prefix the tool never emits: repeat-control cell `repeat-control.py:` vs emitted `repeat-control:`; registry-check cell `registry-check.py:` vs `registry-check:`; env-diff cell `env-diff.py:` vs `ENVDIFF_SETUP:`; bash-witness-study cell `bash-witness-study.py:` vs `WITNESS_STUDY:`. Only pin-disposition/evidence-disposition/context-capture cells match their tools byte-for-byte. The frozen GRAMMAR still accepts all four because its prefix class is `[A-Za-z][A-Za-z0-9_.-]*`, and the counter's docs arm matches only MARKER (the suffix), so the counter cannot distinguish. Consequence for this section: its `<tool>` placeholder silently covers two prefixes that do not name the tool at all, and the receipt it cites is not the bytes in the tools."
+  },
+  {
+   "quote": "Measured on every documented allocating mode — the seven self-tests plus\n  `env-diff --contract` and `registry-check --rev` — as one stderr line,",
+   "why": "The nine-mode content is true (9/9 allocating modes measured rc=2 with a GRAMMAR-matching stderr line; the five lazy modes rc=0 with empty stderr), but the cited C2 counter cannot return PASS at C0 at any state. Measured with its C0 bytes (36ca47d3) against a C0 clone: every arm green (grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1) and the verdict still reads `total=1 C2_R55_PASS=false`, exit 1. The cause is arithmetical: with len(table)=14, cheap=13 and note=9, the all-green total is (len(table)-empty_ok)+(len(table)-usable_ok)+(8-note)=2-1=1, while PASS requires total==0 and an empty bad map. So the receipt the section cites cannot affirm the claim it is cited for, even though direct measurement of the nine modes confirms the claim. Post-C0 commit 133b2ce changes exactly these terms and records the same symptom; it is not the C0 receipt."
+  }
+ ]
+}

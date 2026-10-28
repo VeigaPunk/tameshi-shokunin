@@ -1,0 +1,15 @@
+{
+  "heading": "## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence",
+  "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "section_sha256": "77d88c0226463dfc97f0074a5cafedc1044be0a2a16c85fbb6237ac06a5140da",
+  "findings": [
+    {
+      "quote": "and errata, unknowns \u2014 the two mutation-case notes are the model\n    (mutation-case-kimi-census.md \u00a71, \u00a73-\u00a76;\n    mutation-case-kagi-census.md \u00a71-\u00a77)",
+      "why": "Step 10's shape list requires 'survivor probes' (SKILL.md:248), but the kimi half of the pointer omits the only section that holds them: the note's \u00a72 'Surviving-defect class analysis' (corpus/knowledge/mutation-case-kimi-census.md:80-107) carries both non-equivalence probes (D2 at :90-91 \u2014 pristine `+22 more` vs mutant `+23 more`; D10 at :98-99 \u2014 `frozen=25` vs `frozen=24`), while \u00a73 (:135-142) carries only the not-protected inventory, with no probe command or output. The kagi half of the same pointer is '\u00a71-\u00a77', which includes its \u00a72 (the probe paragraph at :107-123), so the two halves disagree about whether the probe section is part of the model. Non-blocking: step 8 of the same section (SKILL.md:230-233) cites kimi:82-99, which lies inside \u00a72, so a reader following the whole section does reach the probes. Fix shape: '\u00a71-\u00a76' for kimi, matching the kagi pointer. Receipt: .ufo/waves/round-55/w2/T55W3R04-receipts/findings.out (kimi heading list + probe lines + \u00a73 excerpt)."
+    },
+    {
+      "quote": "survivor probes, reproduce spec (driver manifest + commands), calibration\n    and errata, unknowns",
+      "why": "The step tells the recorder to write a reproduce spec as 'driver manifest + commands' and names the two case notes as the model, but both notes' reproduce specs are on record as insufficient: the kagi note's Erratum R21 (corpus/knowledge/mutation-case-kagi-census.md:271-275) states that the old \u00a77 commands depend on an unversioned scratch `mutate_driver.py` and 'do not by themselves recreate that driver after scratch loss', directing readers to `bash tools/mutate-and-run.sh --regression`; `## Restore discipline` item 6 (SKILL.md:411-415) says the same, and that route exists in the tree (tools/mutate-and-run.sh:139-143 documents the --regression exit map). The section names the maintained driver only for two implementation details (:434 at SKILL.md:189, :579-583 at SKILL.md:226) and contains no occurrence of 'regression', 'unversioned' or 'scratch loss' (0 lines), while its opening calls the recipe 'self-contained' (SKILL.md:149). A sweep recorded exactly per step 10 therefore reproduces the shape R21 records as non-rebuilding. Non-blocking: step 9 points the reader at `## Restore discipline`, whose item 6 carries both the caveat and the replay route. Receipt: .ufo/waves/round-55/w2/T55W3R04-receipts/findings.out (0-hit token scan, R21 lines, Restore item 6, --regression lines)."
+    }
+  ]
+}

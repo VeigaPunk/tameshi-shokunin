@@ -1,0 +1,15 @@
+# cmd: git show 9cf0146:corpus/QUALITY.md | grep -nE "round 55|Round 55"
+(no output = QUALITY carries no round-55 section)
+
+# cmd: git show 9cf0146:corpus/QUALITY.md | grep -cE "^### Criterion [0-9]+"
+30
+
+# cmd: git show 9cf0146:corpus/QUALITY.md | tail -12
+
+### Criterion 105 — a counter arm is proven on a positive control, not only on the do-nothing tree
+
+A counter arm that reads a directory, a revision or a manifest is proven by a positive control in which that arm must fire: the receipt records the arm's own non-zero count at a tree where the round's work is present. The do-nothing tree cannot prove an arm live — it fails for other reasons, so a dead arm (a pathspec that matches nothing, a key that never appears) looks healthy there. The check that can fail: a positive-control receipt in which the arm's own counter reads zero, or a control run that pre-registers the arm's value without a tree that carries it.
+
+Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+
+Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at the freeze commit (the control never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.

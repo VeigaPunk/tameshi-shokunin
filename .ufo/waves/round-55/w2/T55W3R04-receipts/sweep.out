@@ -1,0 +1,590 @@
+SECTION CUT BY FROZEN .ufo/evidence/round-18/measure.py sectionize()
+  rev      9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+  heading  ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+  lines    146-260 (1-based, trailing blank lines stripped)
+  sha256   77d88c0226463dfc97f0074a5cafedc1044be0a2a16c85fbb6237ac06a5140da
+  sections in file: 64
+
+  sha256 re-derived from lines 146-260: 77d88c0226463dfc97f0074a5cafedc1044be0a2a16c85fbb6237ac06a5140da (MATCH)
+
+--- citation tokens found by regex in the section ---
+  36 tokens:
+    corpus/knowledge/mutation-case-kimi-census.md:4-7
+    corpus/knowledge/mutation-case-kagi-census.md:24-38
+    corpus/knowledge/gates-survey-kumitate.md:19-31
+    corpus/knowledge/mutation-case-kimi-census.md:20-21
+    corpus/knowledge/mutation-case-kagi-census.md:27-35
+    corpus/knowledge/mutation-case-kimi-census.md:13-16
+    corpus/knowledge/mutation-case-kagi-census.md:13-17
+    corpus/knowledge/mutation-case-kagi-census.md:44-45
+    :47-48
+    :70-71
+    corpus/knowledge/mutation-case-kimi-census.md:41-53
+    :155-166
+    corpus/knowledge/mutation-case-kimi-census.md:183-191
+    corpus/knowledge/mutation-case-kagi-census.md:184-191
+    tools/mutate-and-run.sh:434
+    mutation-case-kimi-census.md:22-25
+    mutation-case-kagi-census.md:44-47
+    mutation-case-kimi-census.md:26-28
+    mutation-case-kagi-census.md:48-49
+    mutation-case-kimi-census.md:30-33
+    mutation-case-kagi-census.md:27-35
+    mutation-case-kimi-census.md:59-76
+    mutation-case-kagi-census.md:67
+    mutation-case-kagi-census.md:88-91
+    mutation-case-kimi-census.md:44-53
+    tools/mutate-and-run.sh:579-583
+    mutation-case-kimi-census.md:29-31
+    mutation-case-kagi-census.md:50-53
+    mutation-case-kimi-census.md:82-99
+    mutation-case-kagi-census.md:111-114
+    :118-122
+    :252-254
+    mutation-case-kimi-census.md:34-35
+    mutation-case-kagi-census.md:54-56
+    mutation-case-kimi-census.md:20-21
+    mutation-case-kagi-census.md:50-53
+
+--- heading/path anchors, resolved at 9cf0146 ---
+  corpus/knowledge/mutation-case-kimi-census.md        blob OK
+  corpus/knowledge/mutation-case-kagi-census.md        blob OK
+  corpus/knowledge/gates-survey-kumitate.md            blob OK
+  corpus/knowledge/gates-survey-kagi.md                blob OK
+  corpus/README.md                                     blob OK
+  corpus/QUALITY.md                                    blob OK
+  tools/mutate-and-run.sh                              blob OK
+  corpus/SOURCES.md                                    blob OK
+  SKILL.md headings referenced by name                 
+    ## The mutation bar                      -> line [109]
+    ## Restore discipline                    -> line [390]
+    ## Errata — round 16                     -> line [1737]
+    ## Defect-taxonomy templates             -> line [261]
+    ## Standing rules                        -> line [17]
+
+--- claim table (each claim -> cited range -> verbatim lines, needle check) ---
+CLAIM: step1 hermetic control: no live-path/host effects
+  cite corpus/knowledge/mutation-case-kimi-census.md:4-7
+       4: axis: depth). Substrate: kumitate-shokunin **read-only** — every mutant is a copy under
+       5: `/tmp/tameshi-r2-1-work/`, and no fleet file was written. No live `~/.kimi-code` path was
+       6: read: every run is `--selftest` (fixtures under the suite's own `mkdtemp` root) or `--root`
+       7: pointed at an empty dir under `/tmp`.
+    needle '--selftest' -> present
+    needle 'mkdtemp' -> present
+    needle '--root' -> present
+
+CLAIM: step1 host-gated branches excluded/controlled
+  cite corpus/knowledge/mutation-case-kagi-census.md:24-38
+      24: - O: the selftest builds every fixture under `mktemp -d` and re-invokes the gate as
+      25:   `bash "${BASH_SOURCE[0]}" verify --root "$R/host" --census/--shapes/--baseline "$R/…"`
+      26:   (`surface-census.sh:694-764`) — the verify/shape path reads no live path.
+      27: - O: the two trailing verb cases are substrate-gated: `command -v "$JANITOR"` (`:817`) records
+      28:   `skip-case … substrate-absent (handler not on PATH)` (`:820-823`) and does not execute the verbs
+      29:   block. Measured host facts: `the-janitor` is **MISSING** from PATH; `tmux has-session -t janitor`
+      30:   rc=1. Control output confirms `skip-case 15` / `skip-case 16`.
+      31: - O: kagi's own log records the round-18 repair of exactly this edge: `--selftest` "failed 2/16 on
+      32:   any handler-absent host … now `skip-case …` (count still 16)" (`LOG.md:741-744`).
+      33: - O: the case counter counts skips as cases — control shows `ok-case 01..14` + `skip-case 15`/`16`,
+      34:   epilogue `SELFTEST: PASS (16 cases)` (`:846-847`); the hermetic case set here is 14, plus 2
+      35:   substrate-gated cases that performed no execution.
+      36: - (I) On a handler-present host the two cases would exec the real binary (scratch overrides only —
+      37:   header `:45-46`); a verbs-logic mutant's verdict would then be host-dependent. All mutants below
+      38:   edit verify/shapes logic, so this does not touch the measured table; kept as U2.
+    needle 'mktemp -d' -> present
+    needle 'substrate-gated' -> present
+    needle 'skip-case' -> present
+
+CLAIM: step1 kumitate count+verdict shape
+  cite corpus/knowledge/gates-survey-kumitate.md:19-31
+      19: | gate | exit | last summary lines (verbatim from capture) |
+      20: |---|---|---|
+      21: | cite-check | 0 | `62/62 cases passed (hermetic)` / `VERDICT: PASS` |
+      22: | surface-probe | 0 | `42/42 cases passed` / `VERDICT: PASS` |
+      23: | round-gate | 0 | `ROUND_GATE_SELFTEST: 60/60 pass` / `VERDICT: PASS` |
+      24: | proxy-check | 0 | `PROXY_SELFTEST: 102/102 pass` / `VERDICT: PASS` |
+      25: | claims-check | 0 | `CLAIMS_SELFTEST: 39/39 pass` / `VERDICT: PASS` |
+      26: | kimi-census | 0 | `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS` |
+      27: 
+      28: O: every suite builds its fixtures under `mkdtempSync(join(tmpdir(), ...))`
+      29: and removes them in a `finally` block — cite-check.mjs:1842,
+      30: surface-probe.mjs:984, round-gate.mjs:690, proxy-check.mjs:1245,
+      31: claims-check.mjs:600, kimi-census.mjs:472.
+    needle 'cases passed' -> present
+    needle 'VERDICT: PASS' -> present
+
+CLAIM: step1 kimi control green 43/43 exit 0
+  cite corpus/knowledge/mutation-case-kimi-census.md:20-21
+      20: - O: control run, unmutated copy — `node pristine.mjs --selftest` →
+      21:   `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0 (node v24.21.0).
+    needle 'KIMI_CENSUS_SELFTEST: 43/43 pass' -> present
+    needle 'VERDICT: PASS' -> present
+    needle 'exit 0' -> present
+
+CLAIM: step1 bash 16 cases, 14 executed +2 skipped
+  cite corpus/knowledge/mutation-case-kagi-census.md:27-35
+      27: - O: the two trailing verb cases are substrate-gated: `command -v "$JANITOR"` (`:817`) records
+      28:   `skip-case … substrate-absent (handler not on PATH)` (`:820-823`) and does not execute the verbs
+      29:   block. Measured host facts: `the-janitor` is **MISSING** from PATH; `tmux has-session -t janitor`
+      30:   rc=1. Control output confirms `skip-case 15` / `skip-case 16`.
+      31: - O: kagi's own log records the round-18 repair of exactly this edge: `--selftest` "failed 2/16 on
+      32:   any handler-absent host … now `skip-case …` (count still 16)" (`LOG.md:741-744`).
+      33: - O: the case counter counts skips as cases — control shows `ok-case 01..14` + `skip-case 15`/`16`,
+      34:   epilogue `SELFTEST: PASS (16 cases)` (`:846-847`); the hermetic case set here is 14, plus 2
+      35:   substrate-gated cases that performed no execution.
+    needle '16 cases' -> present
+    needle 'skip-case 15' -> present
+    needle '14' -> present
+
+CLAIM: step1 bash control exit 0
+  cite corpus/knowledge/mutation-case-kagi-census.md:42-43
+      42: - O: control run, unmutated byte copy — `bash control.sh --selftest` →
+      43:   `SELFTEST: PASS (16 cases)`, exit 0, 1.0 s wall.
+    needle 'SELFTEST: PASS (16 cases)' -> present
+    needle 'exit 0' -> present
+
+CLAIM: step2 pin: path/sha/size/mtime/rev/clean
+  cite corpus/knowledge/mutation-case-kimi-census.md:13-16
+      13: Artifact under test (O: `sha256sum`, `stat`, `git rev-parse`): sha256
+      14: `83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426`, 896 lines, 43273 B,
+      15: mtime 2026-10-13 18:53:12; kumitate repo `175de6ba2e9e904010411b19cab27e0af9aad3d4`,
+      16: `git status --porcelain -- scripts/kimi-census.mjs` empty.
+    needle 'sha256' -> present
+    needle '43273 B' -> present
+    needle 'mtime' -> present
+    needle 'repo' -> present
+    needle 'git status --porcelain' -> present
+
+CLAIM: step2 kagi pin + 887th line no newline
+  cite corpus/knowledge/mutation-case-kagi-census.md:13-17
+      13: Artifact under test (O: `sha256sum`, `stat`, `git`): sha256
+      14: `275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f`, 44212 B, 886 newlines (the
+      15: 887th line carries no trailing newline — `tail -c1` prints `c`), mtime 2026-10-14 09:47:15 -0300,
+      16: mode 755; kagi `HEAD fecee8743e52eb8fb5fbb40782934cb619a1a96e`,
+      17: `git status --porcelain -- corpus/surface-census.sh` empty.
+    needle '44212 B' -> present
+    needle '887th line carries no trailing newline' -> present
+    needle 'git status --porcelain' -> present
+
+CLAIM: step2 G-R2-1 dirty-pin lesson row
+  cite corpus/README.md:11-11
+      11: | `knowledge/gates-survey-kagi.md` — round-2 addendum (G-R2-1…6, append-only) | §1 claim-ledger pin corrected: **79301 B / sha256 first16 `93c5827202b9cdec`** — the surveyed 79294/`357fb245` was an intermediate dirty-tree state never committed; substrate moved 09:58:55, kagi's own round-18 `fecee87` (10:05:10) re-pinned `stamps.tsv` (G-R2-1); §9 item 4's last-non-empty-line citation corrected `:53-56` → `:26-28` (G-R2-2); denied verbs 22 → **23** (G-R2-3); re-verified set held: six selftests 16/13/29/34/61/97 = 250, `--falsify` exit 1 `caught=16/18 failed=2` with the same two `SCOPE BREADTH-EXCEEDS` lines, F-1/F-2 standing and `corpus/README.md:43` still unqualified "18/18" (G-R2-4); §8.1 [UNK] discharged — the mid-survey writer was kagi's own in-flight round-18 [INF] (G-R2-5); live verdicts 5/6 + F-2 fix stay sibling-owned recommendations (G-R2-6) | kagi-shokunin read-only @ `fecee87`; `sha256sum`/`stat -c %s`, DENY_RE pipeline → 23, `sed -n` line checks, spot selftests + `--falsify` re-run 2026-10-14 |
+    needle 'G-R2-1' -> present
+    needle 'intermediate dirty-tree state' -> present
+
+CLAIM: step2 gates-survey-kagi errata block
+  cite corpus/knowledge/gates-survey-kagi.md:545-558
+     545: ### Errata (round 2)
+     546: 
+     547: Applied 2026-10-14 by TAMESHI-R2-2 from the wave-1 review trail (the wave's
+     548: audits re-verified anchors+counts — commit `3da686c`; wave record LOG.md:42-48
+     549: and the carried round-2 items LOG.md:64-66; per plans/round-2.plan.md:10).
+     550: Append-only: nothing above is edited; new entries go to the bottom of this
+     551: list. Round-2 re-measurements were run by this lane 2026-10-14 (scratch
+     552: `/tmp/tameshi-r2-2-work/`).
+     553: 
+     554: **G-R2-1 (measured — corrected pin, §1).** The table's `claim-ledger.sh` row
+     555: reads `79294` bytes / sha256 first16 `357fb24554cd0447`; the live file at the
+     556: committed revision is **`79301` / `93c5827202b9cdec`** (1319 lines held). The
+     557: surveyed bytes were an intermediate dirty-tree state that was never committed
+     558: (`git cat-file -t 357fb24554cd0447` → fatal: not a valid object name); the
+    needle '### Errata (round 2)' -> present
+    needle 'G-R2-1' -> present
+    needle 'intermediate dirty-tree state' -> present
+
+CLAIM: step3 scratch copy + cmp
+  cite corpus/knowledge/mutation-case-kagi-census.md:44-45
+      44: - O: each defect = ONE exact-string replacement applied to a fresh copy of `pristine.sh` (a
+      45:   `cp -p` byte copy, `cmp`-verified); the driver asserts the old string occurs exactly once before
+    needle 'cp -p' -> present
+    needle 'cmp`-verified' -> present
+
+CLAIM: step4 manifest shape (JS ten)
+  cite corpus/knowledge/mutation-case-kimi-census.md:41-53
+      41: | # | Defect class | Injected defect (ref = edit site) | Exit | Suite line | Verdict | Failing cases |
+      42: |---|---|---|---|---|---|---|
+      43: | — | control | unmutated copy | 0 | `43/43 pass` / `VERDICT: PASS` | green | 0 |
+      44: | D1 | off-by-one count | K2 counted dir `counted: 18` → `17` (kimi-census.mjs:105) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 (incl. the exact baseline) |
+      45: | D2 | off-by-one count (findings cap) | `findings.slice(0, 6)` → `slice(0, 5)` (kimi-census.mjs:378) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |
+      46: | D3 | inverted condition | `if (!e.children.includes(n))` → `if (e.children.includes(n))` (kimi-census.mjs:332) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 |
+      47: | D4 | dropped arm | root-stray reporting loop deleted (kimi-census.mjs:351-353) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+      48: | D5 | dropped arm (presence gate) | chain presence `gens.length > 0` → `true` (kimi-census.mjs:255) | 1 | `42/43 pass` / `FAIL` | **killed** | 1 |
+      49: | D6 | wrong mode pin | `server.token` floor `0o600` → `0o644` (kimi-census.mjs:124) | 1 | `41/43 pass` / `FAIL` | **killed** | 2 |
+      50: | D7 | weakened predicate (floor semantics) | `(mode & floor) !== floor` → `(mode & floor) === 0` (kimi-census.mjs:306) | 1 | `41/43 pass` / `FAIL` | **killed** | 2 |
+      51: | D8 | wrong exit-code mapping | `failClosed` `return 2` → `return 1` (kimi-census.mjs:396) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+      52: | D9 | weakened secrecy pin | secret kind pin `isLeaf(kind)` → `kind === 'file'` (kimi-census.mjs:292) | 1 | `41/43 pass` / `FAIL` | **killed** | 2 |
+      53: | D10 | wrong reported constant | `FROZEN.K2 25` → `24` (kimi-census.mjs:145) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |
+    needle 'D1' -> present
+    needle 'D10' -> present
+
+CLAIM: step4 driver spec (JS ten)
+  cite corpus/knowledge/mutation-case-kimi-census.md:155-166
+     155: ```
+     156: D1  kimi-census.mjs:105   kind: 'dir', counted: 18 },                  -> kind: 'dir', counted: 17 },
+     157: D2  kimi-census.mjs:378   findings.slice(0, 6).map                    -> findings.slice(0, 5).map
+     158: D3  kimi-census.mjs:332     if (!e.children.includes(n)) {            ->   if (e.children.includes(n)) {
+     159: D4  kimi-census.mjs:351-353   the three-line `for (const n of strays) { err(...) }` block deleted
+     160: D5  kimi-census.mjs:255   const present = gens.length > 0;            -> const present = true;
+     161: D6  kimi-census.mjs:124   kind: 'file', secret: true, modeFloor: 0o600 }, -> …0o644 },
+     162: D7  kimi-census.mjs:306   (mode & m.modeFloor) !== m.modeFloor        -> (mode & m.modeFloor) === 0
+     163: D8  kimi-census.mjs:396   return 2;                                   -> return 1;
+     164: D9  kimi-census.mjs:292   ? (… : isLeaf(kind))                        -> ? (… : kind === 'file')
+     165: D10 kimi-census.mjs:145   FROZEN K2: 25                               -> K2: 24
+     166: ```
+    needle 'D1  kimi-census.mjs:105' -> present
+    needle 'D10 kimi-census.mjs:145' -> present
+
+CLAIM: step4 JS pair sharing a class at :47-48
+  cite corpus/knowledge/mutation-case-kimi-census.md:47-48
+      47: | D4 | dropped arm | root-stray reporting loop deleted (kimi-census.mjs:351-353) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+      48: | D5 | dropped arm (presence gate) | chain presence `gens.length > 0` → `true` (kimi-census.mjs:255) | 1 | `42/43 pass` / `FAIL` | **killed** | 1 |
+    needle 'dropped arm' -> present
+    needle 'dropped arm (presence gate)' -> present
+
+CLAIM: step4 bash pair sharing a class at :70-71
+  cite corpus/knowledge/mutation-case-kagi-census.md:70-71
+      70: | B4 | dropped branch | symlink arm deleted (`:200-204`) | 1 | `1/16` / FAIL | **killed** | 1 (symlink-swap) |
+      71: | B5 | dropped branch | exec x-bit arm deleted (`:214-217`) | 0 | `16 cases` / PASS | **survived** | 0 |
+    needle 'dropped branch' -> present
+    needle 'dropped branch' -> present
+
+CLAIM: step4 E1 pre-registration kept (JS)
+  cite corpus/knowledge/mutation-case-kimi-census.md:183-191
+     183: ## 5. Calibration and errata (append-only)
+     184: 
+     185: E1 — the author's pre-run expectation held for 9/10 defects; it was **wrong on D7**. The
+     186: expectation filed D7 as a survivor (reasoning: "the loose fixtures lack the floor bits
+     187: entirely, so both predicates fire"). Measured: both loose fixtures go CLEAN under D7 and
+     188: the mutant dies on the two mode cases. The error was in the *reasoning about the fixture
+     189: modes*, not the edit: credentials 0o500 vs floor 0o700 and server.token 0o400 vs floor
+     190: 0o600 share bits with their floors, so `(mode & floor) === 0` admits them while
+     191: `!== floor` rejects them (§3, D7). Recorded as a calibration miss.
+    needle 'E1' -> present
+    needle 'wrong on D7' -> present
+    needle 'calibration miss' -> present
+
+CLAIM: step4 E1 miscalled counts kept (bash)
+  cite corpus/knowledge/mutation-case-kagi-census.md:184-191
+     184: ## 5. Calibration and errata (append-only)
+     185: 
+     186: E1 — the pre-run expectation predicted the killed/survived verdict on **10/10** mutants but the
+     187: failing-case *counts* on only 6/10: B2 (predicted 1, measured 2), B3 (predicted 2, measured 3),
+     188: B6 (predicted 1, measured 2) all gained case 04 `runtime-absent`. Cause: I read case 04 as
+     189: special-purpose, but it is a second exit-0 green fixture — the full clean tree minus one runtime
+     190: row (`:770`) — so every defect that fires on green data kills it too. The miss was in reasoning
+     191: about the fixtures, not the edits (same shape as round-2 E1).
+    needle 'E1' -> present
+    needle 'failing-case *counts* on only 6/10' -> present
+
+CLAIM: step5 uniqueness gate: count==1 + all unique
+  cite corpus/knowledge/mutation-case-kimi-census.md:22-25
+      22: - O: each defect = ONE exact-string replacement applied to a fresh copy of the pristine
+      23:   copy; the driver asserts the old string occurs exactly once before writing
+      24:   (`mutate_driver.py --check` → `all unique`, first-line match on all 10). No defect
+      25:   compounds with another.
+    needle 'asserts the old string occurs exactly once' -> present
+    needle 'all unique' -> present
+    needle 'first-line match' -> present
+
+CLAIM: step5 bash records assert + all unique
+  cite corpus/knowledge/mutation-case-kagi-census.md:44-47
+      44: - O: each defect = ONE exact-string replacement applied to a fresh copy of `pristine.sh` (a
+      45:   `cp -p` byte copy, `cmp`-verified); the driver asserts the old string occurs exactly once before
+      46:   writing (`mutate_driver.py --check` → `all unique`, all 10). No defect compounds with another;
+      47:   the kagi original was never written, and no live host surface was read by any run.
+    needle 'asserts the old string occurs exactly once' -> present
+    needle 'all unique' -> present
+
+CLAIM: step5 maintained driver prints failing count
+  cite tools/mutate-and-run.sh:434-434
+     434:         sys.stderr.write('APPLY FAIL id=%s line=%d old-string-count=%d expected=1\n' % (did, d['line'], count))
+    needle 'old-string-count=%d expected=1' -> present
+
+CLAIM: step6 kimi per-defect evidence
+  cite corpus/knowledge/mutation-case-kimi-census.md:26-28
+      26: - O: per-defect evidence: `node mutant-<id>.mjs --selftest` full stdout →
+      27:   `evidence/<id>.selftest.txt`; exit code + mutant sha256 → `evidence/<id>.meta.json`;
+      28:   aggregate → `evidence/results.json`.
+    needle 'selftest.txt' -> present
+    needle 'meta.json' -> present
+    needle 'results.json' -> present
+
+CLAIM: step6 kagi records duration/summary
+  cite corpus/knowledge/mutation-case-kagi-census.md:48-49
+      48: - O: per-defect evidence: full combined output → `evidence/<id>.selftest.txt`; exit code + mutant
+      49:   sha256 + wall time + case summary → `evidence/<id>.meta.json`; aggregate → `evidence/results.json`.
+    needle 'wall time' -> present
+    needle 'case summary' -> present
+
+CLAIM: step6 timeouts 300 s / 280 s
+  cite corpus/knowledge/mutation-case-kimi-census.md:29-31
+      29: - O: **kill rate 8/10 (80 %)**; survivors D2, D10. No inconclusive run — each of the
+      30:   11 runs (control + 10) produced a definitive suite verdict; the whole sweep took 7.0 s
+      31:   wall against the 300 s timeout.
+    needle '300 s timeout' -> present
+
+CLAIM: step6 timeouts 300 s / 280 s (bash)
+  cite corpus/knowledge/mutation-case-kagi-census.md:50-53
+      50: - O: **kill rate 8/10 (80 %)**; survivors B5, B10. No inconclusive run — each of the 11 runs
+      51:   produced a definitive suite verdict; the suite count held (`(<n>/16 cases)` on every run; green
+      52:   runs printed exactly `SELFTEST: PASS (16 cases)`); the whole sweep took 11.0 s wall for 11 runs
+      53:   (~1.0 s each) against the 280 s per-run bound.
+    needle '280 s per-run bound' -> present
+
+CLAIM: step7 denominators held 43
+  cite corpus/knowledge/mutation-case-kimi-census.md:30-33
+      30:   11 runs (control + 10) produced a definitive suite verdict; the whole sweep took 7.0 s
+      31:   wall against the 300 s timeout.
+      32: - O: suite count held: every mutant run still enumerated the full suite (`<n>/43`), and
+      33:   all three green runs printed exactly `KIMI_CENSUS_SELFTEST: 43/43 pass`.
+    needle '43' -> present
+
+CLAIM: step7 denominators held 16
+  cite corpus/knowledge/mutation-case-kagi-census.md:27-35
+      27: - O: the two trailing verb cases are substrate-gated: `command -v "$JANITOR"` (`:817`) records
+      28:   `skip-case … substrate-absent (handler not on PATH)` (`:820-823`) and does not execute the verbs
+      29:   block. Measured host facts: `the-janitor` is **MISSING** from PATH; `tmux has-session -t janitor`
+      30:   rc=1. Control output confirms `skip-case 15` / `skip-case 16`.
+      31: - O: kagi's own log records the round-18 repair of exactly this edge: `--selftest` "failed 2/16 on
+      32:   any handler-absent host … now `skip-case …` (count still 16)" (`LOG.md:741-744`).
+      33: - O: the case counter counts skips as cases — control shows `ok-case 01..14` + `skip-case 15`/`16`,
+      34:   epilogue `SELFTEST: PASS (16 cases)` (`:846-847`); the hermetic case set here is 14, plus 2
+      35:   substrate-gated cases that performed no execution.
+    needle '16' -> present
+
+CLAIM: step7 denominators held 16 (kill-rate row)
+  cite corpus/knowledge/mutation-case-kagi-census.md:50-53
+      50: - O: **kill rate 8/10 (80 %)**; survivors B5, B10. No inconclusive run — each of the 11 runs
+      51:   produced a definitive suite verdict; the suite count held (`(<n>/16 cases)` on every run; green
+      52:   runs printed exactly `SELFTEST: PASS (16 cases)`); the whole sweep took 11.0 s wall for 11 runs
+      53:   (~1.0 s each) against the 280 s per-run bound.
+    needle '16 cases' -> present
+
+CLAIM: step7 failing labels required
+  cite corpus/knowledge/mutation-case-kimi-census.md:59-76
+      59: Failing-case labels of the narrow kills (O: `evidence/<id>.selftest.txt`):
+      60: 
+      61: - D4 (3): `UNLISTED: a planted undeclared root child …`; `UNLISTED: a hidden root child is
+      62:   gated too …`; `root enum is orthogonal to counted-dir drift …` — exactly the three
+      63:   root-enumeration cases; no other case moves.
+      64: - D5 (1): `MEMBER_MISSING: the drift chain vanished entirely (presence is gated)` — a
+      65:   single-case tripwire.
+      66: - D6 (2): `SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)`;
+      67:   `secrecy: server.token is a FIFO → still CLEAN …` (collateral, see §3).
+      68: - D7 (2): `SHAPE_DRIFT: credentials/ below its 0700 floor`; `SHAPE_DRIFT: server.token
+      69:   below its 0600 floor …`.
+      70: - D8 (3): the three fail-closed cases (`--root /nonexistent`, unreadable root, `--json`
+      71:   fail-closed).
+      72: - D9 (2): `secrecy: server.token is a FIFO → still CLEAN …`; `secrecy: a dangling symlink
+      73:   token is never followed (lstat-only → CLEAN)`.
+      74: - D1/D3 (16 each): the exact green baseline (`green fixture → CLEAN exit 0, members=49
+      75:   checked=49 chain=3 info=4`), the two `--json` family/totals cases, and 13 more — the
+      76:   remaining CLEAN/exact-line cases plus the count-string (`'19 children, 18 declared'`)
+    needle 'Failing-case labels' -> present
+    needle 'D4 (3)' -> present
+
+CLAIM: step7 bash grammar line 1/16 FAIL
+  cite corpus/knowledge/mutation-case-kagi-census.md:67-67
+      67: | B1 | wrong `-eq` (guard inversion) | scan guard `-eq 0` → `-ne 0` (`surface-census.sh:241`) | 1 | `1/16` / FAIL | **killed** | 1 (undeclared-file) |
+    needle '1/16' -> present
+    needle 'FAIL' -> present
+
+CLAIM: step7 bash failing labels
+  cite corpus/knowledge/mutation-case-kagi-census.md:82-103
+      82: Failing-case labels (O: `evidence/<id>.selftest.txt`, exact bad-case lines):
+      83: 
+      84: - B1 (1): `bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0`. The guard
+      85:   inversion makes `verify_unlisted` return early whenever scan dirs **exist** (`:241-242`), so the
+      86:   UNLISTED arm goes quiet; the clean case still passes because its fixture has no stray child to
+      87:   miss — the single case that pins the arm is the one that fires.
+      88: - B4 (1): `bad-case 07 symlink-swap want exit=1 token=SURFACE LINK got exit=1` — the **exit code
+      89:   still matched** (the deleted arm's symlink falls into the regular-file arm and prints
+      90:   `SURFACE DIVERGED`); the token assert is what killed it. A suite asserting only exit would have
+      91:   passed this deletion.
+      92: - B7 (1): `bad-case 10 sqlite-unavailable exit=1` — the case demands the exact substring
+      93:   `unverified=3` (`:782`); +2 per event → `unverified=6`. This is the suite's only exact-count
+      94:   string over the UNVERIFIED class.
+      95: - B2 (2) / B6 (2): both die on the same two cases — 01 `clean` and 04 `runtime-absent` — the
+      96:   suite's two exit-0 green fixtures (case 04 is the full green fixture minus one runtime row,
+      97:   `:770`).
+      98: - B3 (3): 01 and 04 (the `==`-flipped predicate fires on *agreement* for every checked op.env row)
+      99:   plus 06 `crosscheck-disagree` (`token=SURFACE CROSSCHECK got exit=0` — it can no longer fire).
+     100: - B8 (2): 13 `malformed-row` and 14 `fused-shape-row` — the two exit-2 setup cases (`got exit=1`
+     101:   each).
+     102: - B9 (2): 03 `asset-gone` (missing asset reported ABSENT, exit 0) and 04 `runtime-absent` (missing
+     103:   runtime reported GONE, exit 1) — the two classes swap.
+    needle 'bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0' -> present
+
+CLAIM: step7 token-only kill B4
+  cite corpus/knowledge/mutation-case-kagi-census.md:88-91
+      88: - B4 (1): `bad-case 07 symlink-swap want exit=1 token=SURFACE LINK got exit=1` — the **exit code
+      89:   still matched** (the deleted arm's symlink falls into the regular-file arm and prints
+      90:   `SURFACE DIVERGED`); the token assert is what killed it. A suite asserting only exit would have
+      91:   passed this deletion.
+    needle 'bad-case 07 symlink-swap' -> present
+    needle 'exit code' -> present
+
+CLAIM: step7 round-2 numbers 8/10 11 runs 7.0 s
+  cite corpus/knowledge/mutation-case-kimi-census.md:29-31
+      29: - O: **kill rate 8/10 (80 %)**; survivors D2, D10. No inconclusive run — each of the
+      30:   11 runs (control + 10) produced a definitive suite verdict; the whole sweep took 7.0 s
+      31:   wall against the 300 s timeout.
+    needle '8/10 (80 %)' -> present
+    needle '11 runs' -> present
+    needle '7.0 s' -> present
+
+CLAIM: step7 round-3 numbers
+  cite corpus/knowledge/mutation-case-kagi-census.md:50-53
+      50: - O: **kill rate 8/10 (80 %)**; survivors B5, B10. No inconclusive run — each of the 11 runs
+      51:   produced a definitive suite verdict; the suite count held (`(<n>/16 cases)` on every run; green
+      52:   runs printed exactly `SELFTEST: PASS (16 cases)`); the whole sweep took 11.0 s wall for 11 runs
+      53:   (~1.0 s each) against the 280 s per-run bound.
+    needle '8/10 (80 %)' -> present
+    needle '11.0 s' -> present
+
+CLAIM: step8 D2 probe +22/+23
+  cite corpus/knowledge/mutation-case-kimi-census.md:82-99
+      82: **D2 — render truncation off-by-one (kimi-census.mjs:378).** O: 43/43 PASS.
+      83: O: the boundary is never exercised — a probe copy (pristine + `appendFileSync` of
+      84: `findings.length` at `renderVerdict` entry; output unchanged, still 43/43) logged all 28
+      85: text-mode verify runs the suite makes: findings-count distribution `0×8, 1×19, 2×1`,
+      86: **max = 2**. O: the DRIFT verdict is asserted only by prefix —
+      87: `lastLine(run).startsWith('KIMI_CENSUS: DRIFT')` (kimi-census.mjs:498) plus substrings;
+      88: the only exact verdict-line assert is the CLEAN line (`lastLine(r) === 'KIMI_CENSUS:
+      89: CLEAN (members=49 checked=49 chain=3 info=4)'`, kimi-census.mjs:511-512).
+      90: O (non-equivalence): on an empty root (28 findings) — pristine prints six ids then
+      91: `+22 more`; D2 prints five ids then `+23 more`; both exit 1. The mutant is observably
+      92: different on ≥6-finding input and the suite cannot see it.
+      93: 
+      94: **D10 — wrong reported constant (kimi-census.mjs:145).** O: 43/43 PASS.
+      95: O: the only assert touching the frozen block is `j.totals.frozen.K5 === 3`
+      96: (kimi-census.mjs:526); the text `FAMILY … frozen=${FROZEN[f]}` line
+      97: (kimi-census.mjs:415) and `totals.frozen` (kimi-census.mjs:365) carry no assert anywhere.
+      98: O (non-equivalence): same empty root — pristine `FAMILY K2  members=0  checked=0
+      99: frozen=25`; D10 `… frozen=24`.
+    needle '+22 more' -> present
+    needle '+23 more' -> present
+
+CLAIM: step8 D10 probe frozen=24/25
+  cite corpus/knowledge/mutation-case-kimi-census.md:82-99
+      82: **D2 — render truncation off-by-one (kimi-census.mjs:378).** O: 43/43 PASS.
+      83: O: the boundary is never exercised — a probe copy (pristine + `appendFileSync` of
+      84: `findings.length` at `renderVerdict` entry; output unchanged, still 43/43) logged all 28
+      85: text-mode verify runs the suite makes: findings-count distribution `0×8, 1×19, 2×1`,
+      86: **max = 2**. O: the DRIFT verdict is asserted only by prefix —
+      87: `lastLine(run).startsWith('KIMI_CENSUS: DRIFT')` (kimi-census.mjs:498) plus substrings;
+      88: the only exact verdict-line assert is the CLEAN line (`lastLine(r) === 'KIMI_CENSUS:
+      89: CLEAN (members=49 checked=49 chain=3 info=4)'`, kimi-census.mjs:511-512).
+      90: O (non-equivalence): on an empty root (28 findings) — pristine prints six ids then
+      91: `+22 more`; D2 prints five ids then `+23 more`; both exit 1. The mutant is observably
+      92: different on ≥6-finding input and the suite cannot see it.
+      93: 
+      94: **D10 — wrong reported constant (kimi-census.mjs:145).** O: 43/43 PASS.
+      95: O: the only assert touching the frozen block is `j.totals.frozen.K5 === 3`
+      96: (kimi-census.mjs:526); the text `FAMILY … frozen=${FROZEN[f]}` line
+      97: (kimi-census.mjs:415) and `totals.frozen` (kimi-census.mjs:365) carry no assert anywhere.
+      98: O (non-equivalence): same empty root — pristine `FAMILY K2  members=0  checked=0
+      99: frozen=25`; D10 `… frozen=24`.
+    needle 'frozen=25' -> present
+    needle 'frozen=24' -> present
+
+CLAIM: step8 B5 probe exec 644 vs no execute bit
+  cite corpus/knowledge/mutation-case-kagi-census.md:111-114
+     111: `grep -n -- '-x ' surface-census.sh` → `214`). O (non-equivalence): on a probe row `asset exec -`
+     112: whose file is not executable, pristine prints
+     113: `SURFACE DIVERGED … (declared exec, no execute bit)` exit 1; B5 prints
+     114: `SURFACE OK       … (exec 644)` exit 0 (`evidence/probe-B5-non-equivalence.txt`). I: this is a
+    needle 'SURFACE DIVERGED' -> present
+    needle 'no execute bit' -> present
+    needle 'SURFACE OK' -> present
+    needle 'exec 644' -> present
+
+CLAIM: step8 B10 probe ok=0/ok=1
+  cite corpus/knowledge/mutation-case-kagi-census.md:118-122
+     118: **B10 — CLEAN-summary count (`surface-census.sh:862`).** O: 16/16 PASS. O: no case asserts the
+     119: summary counts — `run_case` checks exit + one substring token only (`:747-760`), and the summary
+     120: line's fields are read by no case. O (non-equivalence): green one-row fixture → pristine
+     121: `SURFACE_CENSUS: CLEAN (assets=1 runtime=0 scanned=0 ok=1 absent=0 skipped=0)`; B10
+     122: `… ok=0 …`; both exit 0 (`evidence/probe-B10-non-equivalence.txt`). Same class as round-2's D10
+    needle 'ok=1' -> present
+    needle 'ok=0' -> present
+
+CLAIM: step8 B5/B10 sensitivity expectations
+  cite corpus/knowledge/mutation-case-kagi-census.md:252-254
+     252: Sensitivity checks expected from the note alone: B5's run must print `SURFACE OK … (exec 644)`
+     253: exit 0 (pristine prints `SURFACE DIVERGED … no execute bit`, exit 1); B10's summary must read
+     254: `ok=0` (pristine `ok=1`), both exit 0.
+    needle 'SURFACE OK … (exec 644)' -> present
+    needle 'ok=0' -> present
+
+CLAIM: step9 endpoint identity (no after-revision)
+  cite corpus/knowledge/mutation-case-kimi-census.md:34-35
+      34: - O: restore proof — original sha256 before `83016d45…4f426` and after `83016d45…4f426`;
+      35:   size 43273 B and mtime unchanged; kumitate working tree clean for that path.
+    needle 'sha256 before' -> present
+    needle 'mtime unchanged' -> present
+    needle 'working tree clean' -> present
+
+CLAIM: step9 endpoint identity (bash)
+  cite corpus/knowledge/mutation-case-kagi-census.md:54-56
+      54: - O: restore proof — kagi sha256 before `275d8294…53009f` and after `275d8294…53009f`; 44212 B and
+      55:   mtime 09:47:15 unchanged; `git status --porcelain` for the path empty; `/tmp/…/pristine.sh` still
+      56:   `cmp`-identical to the kagi original after the sweep.
+    needle 'sha256 before' -> present
+    needle 'mtime' -> present
+    needle 'git status --porcelain' -> present
+
+CLAIM: step10 model note JS sections
+  cite corpus/knowledge/mutation-case-kimi-census.md:80-107
+      80: ## 2. Surviving-defect class analysis
+      81: 
+      82: **D2 — render truncation off-by-one (kimi-census.mjs:378).** O: 43/43 PASS.
+      83: O: the boundary is never exercised — a probe copy (pristine + `appendFileSync` of
+      84: `findings.length` at `renderVerdict` entry; output unchanged, still 43/43) logged all 28
+      85: text-mode verify runs the suite makes: findings-count distribution `0×8, 1×19, 2×1`,
+      86: **max = 2**. O: the DRIFT verdict is asserted only by prefix —
+      87: `lastLine(run).startsWith('KIMI_CENSUS: DRIFT')` (kimi-census.mjs:498) plus substrings;
+      88: the only exact verdict-line assert is the CLEAN line (`lastLine(r) === 'KIMI_CENSUS:
+      89: CLEAN (members=49 checked=49 chain=3 info=4)'`, kimi-census.mjs:511-512).
+      90: O (non-equivalence): on an empty root (28 findings) — pristine prints six ids then
+      91: `+22 more`; D2 prints five ids then `+23 more`; both exit 1. The mutant is observably
+      92: different on ≥6-finding input and the suite cannot see it.
+      93: 
+      94: **D10 — wrong reported constant (kimi-census.mjs:145).** O: 43/43 PASS.
+      95: O: the only assert touching the frozen block is `j.totals.frozen.K5 === 3`
+      96: (kimi-census.mjs:526); the text `FAMILY … frozen=${FROZEN[f]}` line
+      97: (kimi-census.mjs:415) and `totals.frozen` (kimi-census.mjs:365) carry no assert anywhere.
+      98: O (non-equivalence): same empty root — pristine `FAMILY K2  members=0  checked=0
+      99: frozen=25`; D10 `… frozen=24`.
+     100: 
+     101: **Shared class: reported-but-unasserted surfaces.** Both survivors change *displayed
+     102: report* data and nothing the suite's asserts read. D2 lives in the verdict line's tail
+     103: past the asserted prefix; D10 lives in a constant only *reported* (the header itself calls
+     104: FROZEN an aid "for callers that compare to round 19/20", kimi-census.mjs:144-145).
+     105: I: the suite's assert vocabulary (exit code + prefix + substrings + selected counts)
+     106: pins behavior, not reporting completeness — a mutant confined to reporting survives by
+     107: construction. Whether other gates share this class is unmeasured (U4).
+    needle '## 2. Surviving-defect class analysis' -> present
+
+CLAIM: cost profile node version
+  cite corpus/knowledge/mutation-case-kimi-census.md:20-21
+      20: - O: control run, unmutated copy — `node pristine.mjs --selftest` →
+      21:   `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0 (node v24.21.0).
+    needle 'node v24.21.0' -> present
+
+CLAIM: cross-host unknown Kimi U5
+  cite corpus/knowledge/mutation-case-kimi-census.md:204-205
+     204: - U5 — kill-rate stability across node versions/hosts: measured only on node v24.21.0,
+     205:   this host, 2026-10-14.
+    needle 'U5' -> present
+    needle 'kill-rate stability' -> present
+
+CLAIM: cross-host unknown Kagi U5
+  cite corpus/knowledge/mutation-case-kagi-census.md:203-204
+     203: - U5 — kill-rate stability across hosts/toolchains (bash 5.x, sqlite3, python3, awk measured only
+     204:   on this host, 2026-10-14; ~1.0 s per run).
+    needle 'U5' -> present
+    needle 'kill-rate stability' -> present
+
+--- summary ---
+  claims checked: 44
+  missing needles: 0

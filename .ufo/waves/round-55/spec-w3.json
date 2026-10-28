@@ -1,0 +1,296 @@
+{
+ "wave": "round-55-w3",
+ "reportDir": ".ufo/waves/round-55/w3",
+ "template": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n## Your item\n\n{{item}}\n\nWork the item end to end, then write your report file and return your findings.\n",
+ "context": "# Goal\ntameshi round 55 (hyaku run 11; L1 TameshiR55), wave 3 \u2014 the re-key readers and the final attacks. Lane repo /home/vgpnk/Projects/shokunin/tameshi-shokunin (absolute paths only: seat tools start at the fleet root /home/vgpnk/Projects/shokunin). Base `0a2010acd1e92e4e332774050825e21bcfc7e079`; counter freeze `133b2ce6d4d86d783db38607343c3654350194b8` (7 amendments, all pre-control, all in `.ufo/evidence/round-55/freeze.json`); **content commit C0 `9cf0146b94ddba12d454ebf7288ce6e5c5d535bb`** \u2014 wave 1 landed, this wave attacks it.\n\n# What wave 1 and the L1 landed at C0 (attack all of it)\n- **C1 calibration** (contract `.ufo/evidence/round-55/contract.json`): the lane's record must agree with the tree on ten routed defects of the round-54 spot-check. `SCORECARD.md` now carries a `## Round 55 - round-54 record corrections` section (ER-R54-1..10: old -> new, derived value, receipt) and the stale assertions were fixed in place. Counter: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c1/measure.py --lane LANE --rev 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb --work <empty dir> --explain`. Base receipt: `total=10 premise=9/10 stale=4` (`.ufo/evidence/round-55/before/c1.stdout`).\n- **C2 operability**: one stderr line, one exit class, nine documented allocating modes. `tools/repeat-control.py`, `tools/context-capture.py` and `tools/registry-check.py` now raise `ScratchRootUnusable` and print `tool: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)`; the seven `tools/registry.json` `scratch_root` cells, `corpus/knowledge/scratch-root-contract.md` (its `## One line, every mode` section) and the SKILL.md `## Standing rules` scratch bullet state it. Counter: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c2/measure.py --lane LANE --rev 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb --work <empty dir> --explain`. Base receipt: `grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 docs=0/7 note=0/9 skill=0/1 total=21`.\n- **One SKILL.md section drifted** by that edit (`## Standing rules`); three seats of this wave read it at C0 so the round can re-key its ledger entry.\n\n# Reader discipline (only the three reader seats)\nRead `## Standing rules` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (the section's bytes at that revision, not the working tree). Write `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w2/<your-seat-name>.json` = `{\"heading\": \"## Standing rules\", \"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\", \"section_sha256\": \"<sha of the section at that rev>\", \"findings\": [...]}`. Compute the sha with the frozen sectionizer `.ufo/evidence/round-18/measure.py` (`--repo`, `--rev`, its `sectionize`) - do not invent a hashing scheme. `findings` is a list of `{\"quote\", \"why\"}`; an empty list is a legitimate, valuable verdict for a clean section. Write the same facts in `<your-seat-name>.md` with the commands you ran and name every artifact you opened.\n\n# Attack discipline (every non-reader seat)\nName what you attack, and put a runnable receipt in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w2/<your-seat-name>.md` (command + output + verdict); fixtures belong under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w2/<your-seat-name>-receipts/`. Never edit a lane production file, a frozen file (`.ufo/evidence/round-55/*`, `contract.json`, `freeze.json`) or the wave spec: work on `git clone --shared` copies at C0 in scratch. A finding without a command and its output is not a finding; an attack that finds nothing must show the sweep it ran.\n\n# Bounds\n- Read-only: the fleet root outside the lane, sibling lanes, `/home/vgpnk/Projects/shokuknow`, `.ufo/state/`, `.ufo/watchdog.log`, `.scratch/`, `~/.omp/`. Write scope: ONLY `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w2/`.\n- Scratch: `export HYAKU_SCRATCH=/fast/scratch/hyaku; S=$HYAKU_SCRATCH/tameshi-r55/<your-seat-name>` with `trap 'rm -rf -- \"$S\"' EXIT`; NEVER `rm -rf` the shared parent (a wave-1 seat did and destroyed peers' clones). `/tmp` only for files under 50 MB.\n- Never run a mutating git/jj command in the lane. Fixtures: `D=$(mktemp -d)`, every git call names `-C \"$D\"`, `git -C \"$D\" rev-parse --show-toplevel` must equal `$D` before any commit there.\n- Tooling authorization (operator, 2026-10-19): you may install or upgrade tools that help the task - read `/home/vgpnk/.omp/agent/RULES.md` first (official channels, update-safety gate) and record tool/version/channel/reason in your report. **pacman transactions are PAUSED host-wide**: install via `uv tool`/`npx`/an official binary in `~/.local/bin`, or route around it.\n- Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin - write it at /home/vgpnk/Projects/shokunin/tameshi-shokunin/<that path>. Never message `agent://all`; message only your L1 (`TameshiR55`).\n- Census: `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` must exit 0 (140 rows).\n\n# Why this wave exists\nThe round's content edits (three tools, seven registry cells, the note, SKILL.md, SCORECARD, QUALITY, SOURCES) drift the cold-read credit of 18 SKILL.md sections: the credit rule pins each section's prior inputs, so a changed `tools/*.py`, `corpus/SOURCES.md` or `corpus/QUALITY.md` forfeits every section that pinned it. The round therefore re-reads those 18 sections at C0 and binds a fresh reader entry for each (the round-54 mechanism). Eighteen of this wave's seats are those readers; the rest attack the round's own record, the re-key mechanism and the deciding artefacts.\n",
+ "items": [
+  {
+   "name": "T55W3R01",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Context gate classification and explicit exit classes \u2014 round 15` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Context gate classification and explicit exit classes \\u2014 round 15\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R02",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Effective expectation reconciliation \u2014 round 14` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Effective expectation reconciliation \\u2014 round 14\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R03",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Live-tree re-pin and entry-command monitor \u2014 round 17` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Live-tree re-pin and entry-command monitor \\u2014 round 17\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R04",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Mutation-sweep recipe \\u2014 numbered steps; bounded cold-read evidence\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R05",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Pin disposition and provenance correction \u2014 round 13` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Pin disposition and provenance correction \\u2014 round 13\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R06",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Repeated controls and gate registry \u2014 round 12` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Repeated controls and gate registry \\u2014 round 12\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R07",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## Standing rules` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## Standing rules\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R08",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## The leg ledger \u2014 replay, receipt, and how it is read (round 7, measured)` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## The leg ledger \\u2014 replay, receipt, and how it is read (round 7, measured)\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R09",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `## The operator's runbook and the six-leg regression (round 10, measured)` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"## The operator's runbook and the six-leg regression (round 10, measured)\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R10",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Gate/probe registry` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Gate/probe registry\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R11",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Round-13 gate/probe registry` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Round-13 gate/probe registry\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R12",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Round-15 gate/probe registry` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Round-15 gate/probe registry\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R13",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Round-17 gate/probe registry \u2014 re-pin and monitor` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Round-17 gate/probe registry \\u2014 re-pin and monitor\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R14",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Round-18 gate/probe registry \u2014 routed-defect closure` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Round-18 gate/probe registry \\u2014 routed-defect closure\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R15",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Round-21 gate/probe registry \u2014 finite environment differential` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Round-21 gate/probe registry \\u2014 finite environment differential\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R16",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Round-26 gate/probe registry \u2014 report interop` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Round-26 gate/probe registry \\u2014 report interop\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R17",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### The service's limits \u2014 what tameshi refuses to mutation-test` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### The service's limits \\u2014 what tameshi refuses to mutation-test\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3R18",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "re-key reader",
+   "item": "Read the SKILL.md section `### Triggers T1\u2013T3 and the re-pin rule` AT 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md`, cut between that heading and the next heading of the same or higher level) and judge it against the tree: do its paths, anchors, counts and cited notes resolve at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb? Write the reader JSON per the wave context's Reader discipline with `\"heading\": \"### Triggers T1\\u2013T3 and the re-pin rule\"`, `\"cand\": \"9cf0146b94ddba12d454ebf7288ce6e5c5d535bb\"`, the section's sha256 from the frozen round-18 sectionizer, and a `findings` list. A clean read with the sweep shown is a valuable verdict; an invented finding is not. Name every artifact you opened."
+  },
+  {
+   "name": "T55W3RevFloor",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "floor arithmetic",
+   "item": "Re-derive the floor at base and C0: run the round-21 measure at both and the round-48 precheck (`bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-48/quality/coldread-precheck.sh /home/vgpnk/Projects/shokunin/tameshi-shokunin 0a2010acd1e92e4e332774050825e21bcfc7e079 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb`), then compare the lost set with `.ufo/evidence/round-55/c1/lost-headings-at-c0.json` (18 headings). Report: credited counts, the lost set, and whether every loss is attributable to a file THIS ROUND changed (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --name-only 0a2010acd1e92e4e332774050825e21bcfc7e079 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb`). A loss caused by something else is a finding."
+  },
+  {
+   "name": "T55W3RevBinderInputs",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "binder input choice",
+   "item": "For three of the 18 sections (pick one that lost credit for `corpus/SOURCES.md`, one for a tool, one for `corpus/QUALITY.md`), read the round-54 binder (`/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/integrate/binder.py`) and say exactly which inputs a re-key entry would pin, whether those are the right inputs for that section's claims, and whether the DROP list should include anything else for THIS round. Report the three input sets as they would be written."
+  },
+  {
+   "name": "T55W3CritRekeyLoop",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "is the re-key a self-certifying loop",
+   "item": "Attack the re-key mechanism: a reader confirms the section's bytes and the binder records the current input hashes, so the floor returns to 64/64 by construction. Is that a measurement or a ritual? Read the round-21 credit code and the binder, then argue both ways with evidence. State what the mechanism can and cannot certify, and what a reader would have to do for the credit to mean something. This is the round's most important question; answer it plainly."
+  },
+  {
+   "name": "T55W3SentReaders",
+   "role": "sentinel",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "reader deliverable integrity",
+   "item": "Audit the 18 reader deliverables this wave writes (`/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w3/T55W3R*.json`): each must name one of the 18 lost headings, carry `cand` = 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb, a `section_sha256` that equals the section computed by the frozen round-18 sectionizer at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb, and a findings list. Recompute all 18 shas yourself and report mismatches, duplicates, missing headings and any reader that read the working tree instead of 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb. Report the table."
+  },
+  {
+   "name": "T55W3MutReader",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "mutate a reader deliverable",
+   "item": "In a scratch copy, corrupt three reader deliverables (wrong sha, wrong cand, heading misspelled) and run the round-55 binder (adapt it in scratch) to show each is refused or skipped rather than bound. Then corrupt a *finding-bearing* reader into an empty list and show that the binder's rule (findings must be adjudicated) still holds. Report the three verdicts."
+  },
+  {
+   "name": "T55W3RevCounterGreen",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "counters at C0 after amendment 8",
+   "item": "Score both frozen counters at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb with fresh work dirs from the bytes at 133b2ce6d4d86d783db38607343c3654350194b8: C1 must read `total=0 C1_R55_PASS=true` and C2 `total=0 C2_R55_PASS=true`. Paste both verdict lines and every EXPLAIN line that is not `ok`. If either is not green, the finding is the exact arm and value - the round cannot decide on a red counter."
+  },
+  {
+   "name": "T55W3CritOverrun",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "the seat overrun",
+   "item": "The round dispatched 75 + 34 + 32 = 141 seats against a 64-128 band (hard ceiling 256). The third wave exists because 18 sections needed fresh readers after the content edits. Argue whether that was the right call: what were the alternatives (a RED floor with a disclosed miss; re-keying fewer sections; a smaller wave), what would each have cost the claims, and is the overrun the lesser defect? Report a verdict and the exact sentence the report should carry."
+  },
+  {
+   "name": "T55W3RevW2",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "wave-2 integrity",
+   "item": "Audit wave 2's deliverables under `.ufo/waves/round-55/w2/`: how many of the 34 reports exist, which seats died, and whether the three reader reports are valid (heading/cand/sha) or redundant with wave 3's reader for `## Standing rules`. Report counts, dead seats and a verdict on which reader the binder should use."
+  },
+  {
+   "name": "T55W3RevGateReady",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "deciding readiness",
+   "item": "Check the deciding run is ready at 133b2ce6d4d86d783db38607343c3654350194b8: both control receipts (`.ufo/evidence/round-55/control/controls-a.stdout/.exit`, `controls-b.stdout/.exit`) exist, are non-empty blobs at the freeze, carry `CONTROLS_A/B: n/n as pre-registered`, and their exit files read 0; `freeze.json` re-derives; `deciding-run.sh`'s FROZEN list equals the contract's. Report each check with its command and say what is still missing (phase B cannot exist yet - say so)."
+  },
+  {
+   "name": "T55W3RevReportSections",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "report contract",
+   "item": "List the report sections the round prompt requires (`Work performed`, `Landed changes`, `Before -> after measurements`, `Sources & frontier`, `Trend verdicts`, `SHONEN`, plus `Stale-lane` and tool installs) and, for each, name the evidence the round already has and the evidence still missing at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb (the deciding receipts do not exist yet). Produce the skeleton the report should follow, with the exact command each `before -> after` line will cite."
+  },
+  {
+   "name": "T55W3CritShonen",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "SHONEN at C0",
+   "item": "Read `SHONEN.md` and the report's future SHONEN section: the four boxes are `[~]` with pointers. Verify each pointer still resolves at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb and states what the box claims; say which box the round's work could legitimately upgrade (with what non-author verifier - none is available in-round, so likely none) and which is now understated. Report per box."
+  },
+  {
+   "name": "T55W3Connector4",
+   "role": "connector",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "cross-lane lesson overlap",
+   "item": "Compare this round's two mined mistakes (`.ufo/evidence/round-55/` lesson at 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb: a control scored before the work it certifies; a wrapped marker) with sibling lanes' lessons from the same week (`../*/corpus/lessons/round-5*.md`, read-only). Is either class already a fleet pattern another lane recorded? If yes, name the lane and line and say whether tameshi's statement adds anything; if no, say the sweep found none."
+  },
+  {
+   "name": "T55W3SimplReaders",
+   "role": "simplifier",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "could fewer readers do",
+   "item": "Eighteen readers re-read eighteen sections whose bytes did not change - only their pinned inputs did. Check whether the credit rule really needs a reader per section or whether one reader could bind several sections (read the round-21 code and the binder). If one deliverable can cover several headings, say how many readers the round actually needed, and what the excess cost. Report a verdict with the code line that decides it."
+  },
+  {
+   "name": "T55W3RevengerBinder",
+   "role": "revenger",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "the binder's intent",
+   "item": "Reconstruct what the round-54 binder was built to do and whether this round's reuse is sound: read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/integrate/binder.py` and the round-54 lesson's method section. Report the invariants it protects (read_rev, inputs at PIN, DROP list, replace-on-second-pass), which of them this round must respect, and the one argument the L1 must pass to make them hold. Name any invariant the code does not enforce."
+  }
+ ]
+}

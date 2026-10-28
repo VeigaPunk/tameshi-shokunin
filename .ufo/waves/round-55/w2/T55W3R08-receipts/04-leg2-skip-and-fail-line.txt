@@ -1,0 +1,26 @@
+### A. leg-2 target at its pinned bytes, run as the leg runs it
+$ git -C <kagi lane> show fecee874:corpus/surface-census.sh > sc-pinned.sh; sha256sum sc-pinned.sh
+275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f  /fast/scratch/hyaku/tameshi-r55/T55W3R08/r1/sc-pinned.sh
+  (PIN_BASH at C0 = 275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f)
+$ command -v the-janitor
+the-janitor: absent (exit 1)
+$ TMPDIR=$PWD/runlog bash sc-pinned.sh --selftest   (rc=0)
+ok-case lines: 14
+skip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)
+skip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)
+SELFTEST: PASS (16 cases)
+
+### B. the same suite inside a real --regression leg at C0 bytes (leg 2 sweep, control + per-defect)
+11:  | skip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)
+12:  | skip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)
+20:  | skip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)
+21:  | skip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)
+skip-case lines in leg-2 sweep.log: 22
+
+### C. the emitted case line for that leg (scratch-clone table deliberately flipped B5 SURVIVED->KILLED to force FAIL)
+$ TMPDIR=<scratch> bash tools/mutate-and-run.sh --regression --workdir <scratch>/work   -> rc=1
+REGRESSION_PIN bash-surface-census: source=git repo=/fast/scratch/hyaku/tameshi-r55/T55W3R08/r2/fleet/kagi-shokunin rev=fecee8743e52eb8fb5fbb40782934cb619a1a96e path=corpus/surface-census.sh mode=100755 sha256=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+REGRESSION_DEFECT bash-surface-census B5: measured=SURVIVED recorded=KILLED
+REGRESSION_TABLE bash-surface-census: match=9/10 recorded-killed=9 measured-killed=8 survived=2 inconclusive=0 flips=1
+REGRESSION_CASE bash-surface-census: FAIL (out of band: killed-delta=1 flips=1; log: /fast/scratch/hyaku/tameshi-r55/T55W3R08/r2/work/bash-surface-census/sweep.log)
+REGRESSION: FAIL (cases=10 passed=2 failed=1 setup=7)

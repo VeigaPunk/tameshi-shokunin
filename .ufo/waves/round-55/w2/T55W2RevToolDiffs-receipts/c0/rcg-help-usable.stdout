@@ -1,0 +1,80 @@
+registry-check.py — entry-registry monitor (tameshi-shokunin, round 17).
+
+Operability repair (R16-MON1): the lane's registered entry commands are the
+contract surface a cold read runs against; this monitor replays every active
+row of `tools/registry.json` and reports how many rows still return their
+registered outcome.
+
+Interface (round-17 contract B, hardened in wave 1 follow-up):
+
+    python3 tools/registry-check.py [--root DIR] [--rev REV]         [--registry PATH] [--only NAME] [--tag TAG]... [--json]
+    python3 tools/registry-check.py --selftest
+
+Registry schema `tameshi-entry-registry-v1` (tools/registry.json):
+
+    {"schema": "tameshi-entry-registry-v1",
+     "rows": [{"name": "<unique, ^[a-z0-9][a-z0-9-]*$>",
+               "kind": "gate|probe|selftest",
+               "argv": ["<program>", "<arg>", ...],   # exec'd directly, no shell
+               "expect": {"exit": <int>,
+                          "stdout_contains": ["<needle>", ...]},   # optional
+               "timeout_s": <positive number>,
+               "source": "<file>@<7-40 hex rev>:<line>[-<line>]",
+               "status": "active|superseded",
+               "superseded_by": "<name of an existing active row>",
+               "tags": ["<tag>", ...]},                # optional
+              ...]}
+
+Run semantics: every active row and every superseded row RUNS, with
+cwd = the lane root (or the clone root under --rev), stdin /dev/null,
+shell=False, in a scrubbed environment (every inherited `GIT_*` variable is
+removed; `PYTHONDONTWRITEBYTECODE=1` is added). Superseded rows still execute
+so their observed outcome stays visible; they are excluded from N/M and
+counted in `superseded=K`. A row holds when its exit equals expect.exit AND
+every stdout_contains needle appears in stdout (literal, case-sensitive,
+ANDed, over the retained tail) AND, under --rev, its argv names no absolute
+path under the live fleet root (`non_hermetic_argv`).
+On Linux, timeout cleanup marks this process as a child subreaper before rows
+start, then signals only row-owned `/proc` identities through pidfds after
+rechecking start time and ancestry. Process-group changes do not affect this
+walk; a double-forked descendant cannot reparent past the subreaper. Descendants
+that change UID may become unreadable or unkillable, and start-time granularity
+leaves a same-tick PID-reuse residual.
+
+Per-row lines and trailer (fixed):
+
+    ROW <name> expect=<exit> got=<exit|timeout|unavailable|non-hermetic> held|differs
+    ROW <name> superseded expect=<exit> got=<exit|...>
+    REGISTRY_CHECK: held=<N>/<M> superseded=<K>
+
+Exits: 0 all held · 1 any differs · 2 could-not-evaluate (registry
+unreadable/invalid, root or rev missing, clone failure, --only/--tag miss) ·
+64 usage.
+
+--root DIR   lane to run against; default: the lane containing this script
+             (the parent of tools/). Live mode prints a stderr warning that
+             rows may write into the root; prefer --rev.
+--rev REV    resolve REV^{commit} in the source lane, clone it into a
+             fleet-mirror layout and run there: a mkdtemp fleet/ holds a
+             symlink per `*-shokunin` sibling of the lane (the lane itself
+             excluded) plus a `git clone` checked out detached at the resolved
+             sha, matching the wave sandbox layout so tools that resolve
+             sibling lanes still work. The commit actually graded is reported
+             as `rev_resolved`. The mkdtemp is removed afterwards.
+--registry PATH  registry file to grade; resolved against the caller's cwd.
+             With --rev this grades the old rev against a newer registry
+             (e.g. the live tree's); omit it to use the clone's own
+             tools/registry.json.
+--only NAME  run exactly the named row (any status); a tag filter that
+             excludes it is an evaluation error, not an empty pass.
+--tag TAG    select rows carrying any of the given tags (repeatable);
+             `superseded_by` targets resolve against the full registry.
+--json       machine report on stdout (schema
+             `tameshi-registry-check-report-v1`, additive fields:
+             registry_sha256, rev_resolved, per-row stdout/stderr tails); the
+             human ROW/REGISTRY_CHECK lines move to stderr.
+--selftest   hermetic; fixtures only under the scratch root (TMPDIR), never touches the lane; its
+             own git calls use the same scrubbed environment (a decoy
+             GIT_DIR must not move any fixture or canary HEAD).
+
+Dependencies: python3 stdlib; git only for --rev (and --selftest's fixtures).

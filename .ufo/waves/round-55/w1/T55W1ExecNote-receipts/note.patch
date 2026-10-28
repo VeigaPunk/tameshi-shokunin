@@ -1,8 +1,8 @@
 diff --git a/corpus/knowledge/scratch-root-contract.md b/corpus/knowledge/scratch-root-contract.md
-index 255e9cf..9e9be0e 100644
+index 255e9cf..3b52f14 100644
 --- a/corpus/knowledge/scratch-root-contract.md
 +++ b/corpus/knowledge/scratch-root-contract.md
-@@ -57,10 +57,91 @@ tool might use to allocate scratch.
+@@ -57,10 +57,97 @@ tool might use to allocate scratch.
  A tool that returns 0 after printing the could-not-evaluate line (control
  CTL_EXIT0), or that names the class without the value, fails the counter.
  
@@ -36,10 +36,14 @@ index 255e9cf..9e9be0e 100644
 +
 +    repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/no/such/dir' (could-not-evaluate)
 +
-+The leading token is each tool's own name, not a fixed string: at round 55
-+the eight modes print `ENVDIFF_SETUP`, `repeat-control`, `registry-check`,
-+`WITNESS_STUDY`, `pin-disposition.py`, `evidence-disposition.py` and
-+`context-capture.py`. The pattern admits a letter followed by letters,
++The leading token is each tool's own setup label, not a fixed string: at round
++55 `env-diff`'s two modes print `ENVDIFF_SETUP`, `bash-witness-study` prints
++`WITNESS_STUDY`, and the other five print their own names (`repeat-control`,
++`registry-check`, `pin-disposition.py`, `evidence-disposition.py`,
++`context-capture.py`) — `env-diff` and `registry-check` each cover two modes.
++A caller keys on the tail from
++`: could-not-evaluate: cannot create clone scratch under the scratch root:`
++onward, never on the prefix. The pattern admits a letter followed by letters,
 +digits, `_`, `.` or `-`; the value is the `%r` rendering of the rejected
 +pathname, so a path holding a quote is echoed with its quotes, and the line
 +is a diagnostic — not an invocation to re-enter in a shell. The shape itself
@@ -48,17 +52,20 @@ index 255e9cf..9e9be0e 100644
 +when it follows the program name (S280) — which is why the class is one line
 +and why `could-not-evaluate` is lower-case.
 +
-+### The eight allocating modes
++### The nine allocating modes
 +
 +`env-diff --selftest`, `env-diff --contract`, `repeat-control --selftest`,
-+`registry-check --selftest`, `bash-witness-study selftest`,
-+`pin-disposition --selftest`, `evidence-disposition --selftest`,
-+`context-capture --selftest`. Each exits 2 under a set-but-unusable
-+`TMPDIR`, prints that one line on stderr, and prints no `RuntimeError` or
-+`Traceback` token on either stream. The arm's meaning is S277's ("a pathname
-+of a directory made available for programs that need a place to create
-+temporary files"); the empty value stays the round-54 arm (S278
-+`_candidate_tempdir_list`:163-165 and S279's documented order).
++`registry-check --selftest`, `registry-check --rev`,
++`bash-witness-study selftest`, `pin-disposition --selftest`,
++`evidence-disposition --selftest`, `context-capture --selftest`. Each exits 2
++under a set-but-unusable `TMPDIR`, prints that one line on stderr, and prints
++no `RuntimeError` or `Traceback` token on either stream. `registry-check --rev`
++is measured on the grammar arm only: it builds a full fleet clone, so its
++usable path stays with the tool's own self-test (the counter's `cheap` flag).
++The arm's meaning is S277's ("a pathname of a directory made available for
++programs that need a place to create temporary files"); the empty value stays
++the round-54 arm (S278 `_candidate_tempdir_list`:163-165 and S279's documented
++order).
 +
 +### The five lazy modes
 +
@@ -74,18 +81,17 @@ index 255e9cf..9e9be0e 100644
 +### The boundary: a line grammar, not a shared type
 +
 +The contract is the operator-visible line, not a shared Python type. No
-+module implements it once: six of the seven tools declare their own local
-+`ScratchRootUnusable(RuntimeError)`, and `registry-check` declares no class
-+at all, raising the builtin `RuntimeError` with the same message text. The six
-+are `tools/env-diff.py`, `tools/repeat-control.py`,
++module implements it once: each of the seven tools declares its own local
++`ScratchRootUnusable(RuntimeError)` — in `tools/env-diff.py`,
++`tools/repeat-control.py`, `tools/registry-check.py`,
 +`tools/bash-witness-study.py`, `tools/pin-disposition.py`,
-+`tools/evidence-disposition.py` and `tools/context-capture.py`; the seventh is
-+`tools/registry-check.py`.
-+Nothing is imported between tools, and a tool could satisfy the contract
-+with no exception class at all — `registry-check` is that case. Seven
-+standalone scripts should not depend on one module (or on one another) for
-+a one-line rule; what must stay equal is the bytes on stderr and the exit
-+code, not the type name.
++`tools/evidence-disposition.py` and `tools/context-capture.py` — seven
++near-copies of the helper under the same class name, with no import between
++them. A tool could satisfy the contract with no exception class at all: the
++type only exists so a tool can catch its own refusal at the entry point. Seven
++standalone scripts should not depend on one module (or
++on one another) for a one-line rule; what must stay equal is the bytes on
++stderr and the exit code, not the type name.
 +
 +Two edges are stated, not hidden. The counter reads stderr, so a caller
 +that parses stdout finds no class line — and `repeat-control` still prints
@@ -97,7 +103,7 @@ index 255e9cf..9e9be0e 100644
 +
 +Sources: S277-S279 remain the authority for the `TMPDIR` arms above (S277 the
 +definition, S278 the resolver's skip-empty rule, S279 the documented order),
-+and S280 is the authority for the one-line shape. The eight-mode and
++and S280 is the authority for the one-line shape. The nine-mode and
 +five-mode inventories are the round-55 counter's own table
 +(`.ufo/evidence/round-55/c2/measure.py`) — a lane measurement, not a sourced
 +claim.

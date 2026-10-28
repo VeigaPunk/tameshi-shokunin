@@ -1,0 +1,47 @@
+$ git -C <lane> show 9cf0146b:corpus/lessons/round-55.md | sha256sum
+57c3d2e6b42d845414f4f8673f85284adf691a78ed9c476868e69951d519812c  -
+$ sha256sum <lane>/corpus/lessons/round-55.md   # working tree
+57c3d2e6b42d845414f4f8673f85284adf691a78ed9c476868e69951d519812c  /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-55.md
+
+## the two mined classes, verbatim at C0 (lines 20-41)
+
+- **class: a control scored at a revision that predates the work it certifies.**
+  evidence: round 54's phase-B positive control (`CTL_POS_c1`) cloned the
+  FREEZE commit `077d431e`, which predates the re-key `7fa9a5e`, so it printed
+  `CTL_MISMATCH CTL_POS_c1 expected=true actual=false` / `CONTROLS_B: 2/3`
+  (`.ufo/evidence/round-54/control/controls-b.stdout`), while four lane records —
+  including a QUALITY criterion written in the same round — asserted it passed
+  (`corpus/lessons/round-54-verifier-spotcheck.md`, R54.1). captured-by: none —
+  the phase-B harness had no arm requiring that its clone match the revision it
+  scores, so a control that could not fire looked like a pass that did.
+  fix: round 55's `controls.sh` phase B clones the revision it certifies and its
+  `deciding-run.sh` gate refuses any control receipt not descending from the
+  freeze; QUALITY 106 states the rule and its falsifier is that same receipt.
+  The counter for this class is C1's `R54.1` row, which now requires the receipt's
+  `CTL_MISMATCH`/`2/3` to appear in the corrections section.
+
+- **class: a predicate that counted a document as stating a rule when a line
+  break had split it.** evidence: this round's own C2 arm 7 matched the grammar
+  marker against raw `SKILL.md` text, so a marker wrapped at 78 columns read as
+  absent (`skill=0/1` on a correct edit); the note arm had the same shape for
+  the `bash-witness-study selftest` label, which the counter itself spelled
+  `--selftest`. captured-by: the freeze-time dry run on an edited clone (no
+  prior round had a dry run *before* the controls). fix: amendments 2 and 3
+
+## the lesson's only location at C0 (no copy under .ufo/evidence/round-55/)
+$ git -C <lane> ls-tree -r --name-only 9cf0146b -- .ufo/evidence/round-55 | cut -d/ -f1 | sort -u
+assimilation
+before
+c1
+c2
+contract.json
+controls.sh
+deciding-run.sh
+freeze.json
+no-harm.sh
+$ git -C <lane> ls-tree -r --name-only 9cf0146b | grep -i lesson | grep -v ^corpus/lessons/ | grep -c "round-55"
+32
+
+## the sharper form of the claim: files named *lesson* under .ufo/evidence/round-55 at C0 =
+0
+(the 32 round-55 hits outside corpus/lessons/ are wave seat reports and receipts, e.g. .ufo/waves/round-55/w1/T55W1ScribeLesson-draft-round-55.md — a draft, not the committed lesson)

@@ -1,0 +1,140 @@
+# 05 — paths, anchors, counts and cited notes resolve at C0
+
+## 5a — S278:163-165 and S279 (corpus/SOURCES.md at C0)
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:corpus/SOURCES.md | grep -n '^| S278 \|^| S279 '
+153:| S278 | CPython 3.12.7 Lib/tempfile.py, `_candidate_tempdir_list` — https://raw.githubusercontent.com/python/cpython/v3.12.7/Lib/tempfile.py | code | A | the reference resolver's own TMPDIR search | `_candidate_tempdir_list` :163-165 @ v3.12.7 (sha256 fb44155f...) | `for envname in 'TMPDIR', 'TEMP', 'TMP': dirname = _os.getenv(envname); if dirname: dirlist.append(dirname)` — an empty value is skipped, so empty behaves as unset and the next candidate wins | mined | 2026-10-28 | on-release | corpus/knowledge/scratch-root-contract.md |
+154:| S279 | tempfile — Generate temporary files and directories (Python 3 documentation) — https://docs.python.org/3/library/tempfile.html | docs | A | the documented search order behind the resolver | §tempfile.gettempdir @ fetched 2026-10-28 (sha256 6b0edccf...) | "The list is: The directory named by the TMPDIR environment variable" then TEMP, TMP and platform locations — the documented order a missing or empty TMPDIR falls through | mined | 2026-10-28 | on-release | corpus/knowledge/scratch-root-contract.md |
+[exit=0]
+
+## 5b — the cited mutation-case lines (kimi:4-7, kagi:4-6)
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:corpus/knowledge/mutation-case-kimi-census.md | sed -n '4,7p'
+axis: depth). Substrate: kumitate-shokunin **read-only** — every mutant is a copy under
+`/tmp/tameshi-r2-1-work/`, and no fleet file was written. No live `~/.kimi-code` path was
+read: every run is `--selftest` (fixtures under the suite's own `mkdtemp` root) or `--root`
+pointed at an empty dir under `/tmp`.
+[exit=0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:corpus/knowledge/mutation-case-kagi-census.md | sed -n '4,6p'
+axes: depth + operability). Substrate: kagi-shokunin **read-only** — every mutant is a copy under
+`/tmp/tameshi-r3-1-work/`, and the kagi tree was not written (restore proof §0); this note is the
+only fleet file written by this run. No external site was contacted; no secret file was
+[exit=0]
+
+## 5c — corpus/knowledge/scratch-root-contract.md headings at C0
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:corpus/knowledge/scratch-root-contract.md | grep -n '^#'
+1:# The scratch-root contract — three arms, one exit class (round 54)
+9:## Three arms
+32:## Why the class is uniform
+45:## What measures it
+55:## Falsifier
+71:## One line, every mode (round 55)
+[exit=0]
+
+## 5d — seven registry scratch_root cells
+$ python3 - /home/vgpnk/Projects/shokunin/tameshi-shokunin 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb <<'PY'
+import json, subprocess, sys
+lane, rev = sys.argv[1], sys.argv[2]
+d = json.loads(subprocess.run(['git', '-C', lane, 'show', rev + ':tools/registry.json'],
+                              capture_output=True, check=True).stdout)
+cells = [(i, r['name']) for i, r in enumerate(d['rows']) if 'scratch_root' in r]
+print('count:', len(cells))
+for i, n in cells:
+    print('  row %-3d %s' % (i, n))
+PY
+count: 7
+  row 2   repeat-control-selftest
+  row 4   bash-witness-selftest
+  row 6   pin-disposition-selftest
+  row 14  evidence-disposition-selftest
+  row 18  context-capture-selftest
+  row 27  registry-check-selftest
+  row 40  env-diff-selftest
+[exit=0]
+
+## 5e — namespace form counts in run artifacts at C0 (rounds 48-52)
+$ for n in 48 49 50 51 52; do printf 'round-%s slash=%s dash=%s\n' $n "$(git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin grep -o -E "tameshi-r$n/" 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb -- .ufo | wc -l)" "$(git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin grep -o -E "tameshi-r$n-" 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb -- .ufo | wc -l)"; done
+round-48 slash=312 dash=0
+round-49 slash=661 dash=22
+round-50 slash=4830 dash=19
+round-51 slash=2274 dash=11
+round-52 slash=172 dash=1
+[exit=0]
+
+dash-form hits, deduplicated (schema ids and selftest prefixes, no seat tree):
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin grep -h -o -E 'tameshi-r(48|49|50|51|52)-[A-Za-z0-9_.-]*' 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb -- .ufo | sort -u
+tameshi-r49-c1-corrections-v1
+tameshi-r49-c2-panel-v1
+tameshi-r49-freeze-v1
+tameshi-r49-reads-v1
+tameshi-r49-w2-precheck-sections-v1
+tameshi-r50-c2-hidden-panel-v1
+tameshi-r50-defects-v1
+tameshi-r50-freeze-v1
+tameshi-r50-recurrence-walk-v1
+tameshi-r50-sandboxed-confirm-v1
+tameshi-r50-synthetic-hidden-probe-v1
+tameshi-r51-c1-selftest-
+tameshi-r51-c2-selftest-
+tameshi-r51-c3-selftest-
+tameshi-r51-freeze-v1
+tameshi-r51-frontier-expected-v1
+tameshi-r51-tools-base-v1
+tameshi-r52-freeze-v1
+[exit=0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree -r --name-only 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb | grep -cE 'tameshi-r(4[89]|5[012])-'
+0
+[exit=1]
+
+## 5f — the round-53 correction seat the parenthetical cites
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree -r --name-only 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb | grep 'round-53.*T53W2R4'
+.ufo/waves/round-53/w2r/T53W2R4.json
+.ufo/waves/round-53/w2r/T53W2R4.md
+[exit=0]
+
+## 5g — the round-16 errata block discloses its own in-place repairs
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:SKILL.md | sed -n '1737,1752p'
+## Errata — round 16 full-page cold-read
+
+Round 16 cold-read every section of this page (snapshot sha256
+`97cf436b…3580`, 51 buckets = preamble + 50 headings outside code fences)
+with 30 cold-read seats (CR01–CR27, three of them with a/b replicas); reports
+`.ufo/waves/round-16/w1/CR*.md`, re-reads `w2/RR*.md` and `w3/RX*.md`, ledger
+`.ufo/evidence/round-16/coldread/ledger.json` (assembled from those reports by
+`coldread/assemble.py`; it holds the merged verdict and gap counts per bucket).
+The page edits are in-place repairs, and so are this table's own cells: a
+later row's corrections of an earlier row stay visible in git
+(`git log -p -- SKILL.md`), not as appended rows. Wrong expectations were repaired
+in place with the line count of every edited section unchanged (except `### Round-15 gate/probe registry`, +1 blank separator; see the round-17 section), so every
+`SKILL.md:<line>` self-anchor still resolves; the old wording stays in git
+(`git show e69b488:SKILL.md`, sha256 `97cf436b…`; also
+`.ufo/evidence/round-16/coldread/SKILL.snapshot.md`). Repairs:
+
+[exit=0]
+
+## 5h — PROVINCE.md: exists; no 'write surface' declaration (grep count 0)
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:PROVINCE.md | grep -c -i 'write surface'
+0
+[exit=1]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:PROVINCE.md | grep -n -i 'read-only\|read only'
+17:gate code (read-only probes; recommendations travel in round reports).
+30:read-only primary surfaces — kumitate `scripts/kimi-census.mjs` and
+55:`js-round-gate`, probed read-only as a kumitate `scripts/*` primary surface.
+79:`js-sources-check`, probed read-only as a kumitate `scripts/*` primary surface
+104:library are read-only external surfaces; the lane owns only the export method.
+113:`js-cite-check`, probed read-only as a kumitate `scripts/*` primary surface
+[exit=0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb PROVINCE.md
+100644 blob 6154fe44c2916027583bd63c4001b1b252819d57	PROVINCE.md
+[exit=0]
+
+## 5i — the round-55 C2 counter the bullet cites
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb .ufo/evidence/round-55/c2/measure.py
+100755 blob 652524e8a7363070263291bc7d3291e11174be71	.ufo/evidence/round-55/c2/measure.py
+[exit=0]
+
+## 5j — the arm semantics that DID resolve, re-shown here for the verdict
+nine allocating modes: exit 2 + one GRAMMAR stderr line each (01-scratch-arms.txt);
+five lazy modes: exit 0 under the unusable TMPDIR; TMPDIR='' and unset: exit 0.

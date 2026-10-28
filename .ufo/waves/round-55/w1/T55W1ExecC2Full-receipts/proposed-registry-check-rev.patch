@@ -1,0 +1,38 @@
+diff --git a/tools/registry-check.py b/tools/registry-check.py
+index 96d762e..08d1d47 100755
+--- a/tools/registry-check.py
++++ b/tools/registry-check.py
+@@ -754,6 +754,10 @@ def resolve_rev(root, rev):
+ 
+ 
+ 
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
++
++
+ def strict_scratch_root():
+     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+@@ -762,8 +766,8 @@ def strict_scratch_root():
+     t = _os.environ.get("TMPDIR")
+     if t:
+         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+-            raise RuntimeError(
+-                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++            raise ScratchRootUnusable(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '%s' (could-not-evaluate)" % t)
+         return t
+     return tempfile.gettempdir()
+ 
+@@ -1925,6 +1929,11 @@ def main(argv):
+         fleet_root = os.path.dirname(os.path.realpath(root_requested))
+         try:
+             work, root = clone_lane_at_rev(root_requested, rev, sha)
++        except ScratchRootUnusable as exc:
++            # Round 55 (proposed, not this seat's item): the --rev mode allocates
++            # scratch, so it carries the same one-line class as the self-tests.
++            emit_err(f"registry-check.py: could-not-evaluate: {exc}")
++            return 2
+         except RuntimeError as exc:
+             report = {
+                 "schema": REPORT_SCHEMA,

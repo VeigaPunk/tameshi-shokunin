@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/tameshi-r55/T55W2MutC2/counter/pristine.py	2026-10-28 14:22:26.806618400 -0300
++++ /fast/scratch/hyaku/tameshi-r55/T55W2MutC2/counter/M3_grammar_stdout_and_stderr.py	2026-10-28 14:31:51.749405968 -0300
+@@ -197,7 +197,7 @@
+     unusable = str(work / "no-such-tmpdir")
+     for name, argv, _exp, _alloc, _cheap in allocating:
+         rc, out, err = run(argv, clone, env_with(unusable))
+-        ok = rc == 2 and any(GRAMMAR.match(l) for l in err.splitlines()) \
++        ok = rc == 2 and any(GRAMMAR.match(l) for l in (err + "\n" + out).splitlines()) \
+             and "RuntimeError" not in err + out and "Traceback" not in err + out
+         if not ok:
+             bad[name] = "grammar rc=%s stderr=%r" % (rc, err.strip().splitlines()[:2])

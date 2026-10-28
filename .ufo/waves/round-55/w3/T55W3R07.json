@@ -1,0 +1,24 @@
+{
+ "heading": "## Standing rules",
+ "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+ "section_sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767",
+ "bounds": {
+  "start": 17,
+  "end": 44,
+  "text_lines": [
+   17,
+   43
+  ]
+ },
+ "sectionizer": ".ufo/evidence/round-18/measure.py (frozen), sectionize(); sha256 over the section text through the line before the next heading, trailing blank lines stripped",
+ "findings": [
+  {
+   "quote": "Measured on every documented allocating mode \u2014 the seven self-tests plus",
+   "why": "Scoped to the seven tools that call strict_scratch_root(), the clause is true and I measured it: all nine modes it names (the seven self-tests + env-diff --contract + registry-check --rev) exit 2 at C0 with exactly ONE stderr line matching the counter's GRAMMAR and no RuntimeError/Traceback token on either stream (receipt 01-scratch-arms.txt). Read as written - a lane-wide completeness claim - it does not resolve against the C0 tree: tools/registry.json documents 30 selftest rows, 23 of them with no scratch_root cell, and 21 of those 23 name a target script containing mkdtemp()/TemporaryDirectory() (receipt 03 3a/3e). Two were executed under a set-but-unusable TMPDIR: witness-metadata-selftest (row 8) exits 0, 'SELFTEST: PASS 39/39', zero stderr lines, and strace records mkdir(\"/tmp/witness-metadata-selftest-<rand>\"); trace-inputs-selftest (row 31) exits 0, 'SELFTEST: 30/30', zero stderr lines, and strace records mkdir(\"/tmp/trace-inputs-selftest-<rand>\") (receipt 03 3c/3d). That is the silent /tmp fallback the same bullet forbids, in registry-documented modes - so the cited note's blind spot ('a documented mode outside the registry and the usage text') does not cover them. Either the sentence must name its universe (the seven strict tools) or the nine is not every documented allocating mode at C0."
+  },
+  {
+   "quote": "root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)`",
+   "why": "The documented byte shape fixes a single-quoted value, but every strict tool substitutes it via %r, so a TMPDIR value containing a single quote is emitted double-quoted: TMPDIR=\"/nonexistent-r55'q\" yields 'repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: \"/nonexistent-r55'q\" (could-not-evaluate)', exit 2 (receipt 04-quote-value.txt). The frozen counter's own GRAMMAR (measure.py:47-50, \"directory: '.+' \") returns False on that exact line, so a legitimate refusal under such a value would be counted as a failed arm. Edge only: values without a quote render exactly as documented, and the nine-mode sweep above passes."
+  }
+ ]
+}

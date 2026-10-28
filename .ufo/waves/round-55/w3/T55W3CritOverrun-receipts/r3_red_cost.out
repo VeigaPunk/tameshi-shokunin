@@ -1,0 +1,17 @@
+at C0, with no re-key entries: credited=46/64 score=6
+missing=18 reasons={"input-drift": 17, "no-ledger-entry": 1}
+first three missing:
+  - ## Standing rules : no-ledger-entry
+  - ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence : input-drift:corpus/QUALITY.md;input-drift:corpus/SOURCES.md;input-drift:tools/context-capture.py;input-drift:tools/registry-check.py;input-drift:tools
+  - ## The leg ledger — replay, receipt, and how it is read (round 7, measured) : input-drift:corpus/SOURCES.md
+
+pre-registered floor (no-harm.sh):
+CR=$(python3 .ufo/evidence/round-21/coldread/measure.py --repo "$LANE" --rev "$REV" 2>/dev/null | python3 -c 'import json,sys; d=json.load(sys.stdin); print("score=%s credited=%d" % (d["calibration_restraint_score"], d["coldread"]["sections_covered"]))')
+python3 -c 'import sys; s=dict(kv.split("=") for kv in sys.argv[1].split()); sys.exit(0 if int(s["score"])>=8 and int(s["credited"])>=64 else 1)' "$CR" && s=ok || s=RED; echo "NOHARM coldread-floor $CR $s"
+
+deciding gate on the same floor (deciding-run.sh):
+git show "$REV:.ufo/evidence/round-48/quality/coldread-precheck.sh" > "$SCR/code/precheck.sh" || exit 2
+bash "$SCR/code/precheck.sh" "$LANE" "$BASE" "$REV" > "$OUT/coldread-precheck.stdout" 2>&1; echo $? > "$OUT/coldread-precheck.exit"
+tail -1 "$OUT/coldread-precheck.stdout"; [ "$(cat "$OUT/coldread-precheck.exit")" = 0 ] || rc=1
+
+NO_REKEY_MONITOR=RED

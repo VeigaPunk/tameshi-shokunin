@@ -2523,18 +2523,19 @@ follow under this entry.
 
 L1 TameshiR55, hyaku run 11. Base `0a2010ac`; contract, both counters, the
 controls harness, the 15 no-harm monitors and the deciding script frozen at
-`631cd645`, amended four times before any control was scored or any deciding
+`631cd645` and amended nine times in six freeze commits (the pointer of record is
+`4f7a7040`) before any completed control set or any deciding
 invocation ran (all four recorded in `freeze.json`; each was found by the L1's
 own dry run on an edited clone and each changed discovery plumbing only).
 Claims: **C1 calibration** (the lowest non-retired axis, 8) — the lane's record
 must agree with the tree on the ten routed defects the round-54 non-author
-spot-check pinned (R54.1–R54.10): at base `premise=10/10 stale=4
+spot-check pinned (R54.1–R54.10): at base `premise=9/10 stale=4
 classes_corrected=0/10 total=10 C1_R55_PASS=false`
 (`.ufo/evidence/round-55/before/c1.stdout`), target `total=0` with every value
 DERIVED from a receipt. **C2 operability** — one exit class, one line, every
 documented allocating mode of the seven tools (not the self-test only): at base
-`grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8
-skill=0/1 total=18 C2_R55_PASS=false`
+`grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/9
+skill=0/1 total=20 C2_R55_PASS=false`
 (`.ufo/evidence/round-55/before/c2.stdout`); `repeat-control` and
 `context-capture` printed the raw exception type (and `context-capture` printed
 on stdout), and the class covered only `--selftest`.
@@ -2542,7 +2543,7 @@ on stdout), and the class covered only `--selftest`.
 Content (C0): both tools now raise `ScratchRootUnusable` and print the frozen
 grammar on stderr with exit 2; the seven registry `scratch_root` cells, the note
 (`## One line, every mode`) and the SKILL.md scratch rule state the grammar and
-the eight allocating modes plus the five lazy ones; `SCORECARD.md` gains the
+the nine allocating modes plus the five lazy ones; `SCORECARD.md` gains the
 `## Round 55 - round-54 record corrections` section and the in-place fixes for
 all ten routed values; QUALITY 106 (a control is scored at the revision it
 certifies) with an erratum on 105; `corpus/lessons/round-55.md`; SOURCES S280

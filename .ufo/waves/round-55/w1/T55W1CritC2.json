@@ -1,0 +1,167 @@
+{
+ "seat": "T55W1CritC2",
+ "axis": "operability",
+ "claim": "C2",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "counters_attacked": {
+  "frozen_at_631cd645": {
+   "sha256": "9d076812d9c0fcd2d06dc7543e5a99bc2bfcdaf85f10ee6da9d0b5ea0b346dac",
+   "result_on_any_tree": "unsatisfiable",
+   "evidence": [
+    "F1",
+    "F2"
+   ]
+  },
+  "worktree_0458f632": {
+   "sha256": "0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b",
+   "state": "uncommitted at report time; freeze.json uncommitted lists it"
+  }
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "blocking",
+   "claim": "frozen set unusable-arm unreachable",
+   "evidence": "c2-frozen.py:212-216 takes rc from strace; registry-check --selftest rc=1 under strace 3/3 runs (3 timeout cases); base run of frozen bytes: usable=12/13 total=19 vs committed receipt usable=13/13 total=18",
+   "receipts": [
+    "01-frozen-bytes-base-run.stdout",
+    "06-registry-check-under-strace.out"
+   ]
+  },
+  {
+   "id": "F2",
+   "severity": "blocking",
+   "claim": "frozen set note-arm unreachable for a truthful note",
+   "evidence": "c2-frozen.py:90 labels every selftest '--selftest'; truthful note matches 7/8 (missing 'bash-witness-study --selftest')",
+   "receipts": [
+    "10-frozen-note-labels.txt"
+   ]
+  },
+  {
+   "id": "F3",
+   "severity": "blocking",
+   "claim": "deciding-run FROZEN_UNCHANGED refuses the amended counters when FREEZE=631cd645",
+   "evidence": "git diff --quiet 631cd645 HEAD -- <frozen paths> non-empty (4 files, +180/-41)"
+  },
+  {
+   "id": "F4",
+   "severity": "major",
+   "claim": "grammar arm does not enforce one line and does not police stdout",
+   "evidence": "any(GRAMMAR.match(l)) + token-only stdout check; variant a3 PASS with 3 stderr lines + 2 stdout setup lines"
+  },
+  {
+   "id": "F5",
+   "severity": "major",
+   "claim": "grammar arm does not bind the value",
+   "evidence": "variant a4b PASS with TMPDIR value '<redacted>'"
+  },
+  {
+   "id": "F6",
+   "severity": "major",
+   "claim": "grammar arm does not bind the tool identity",
+   "evidence": "variant a5 PASS with prefix 'zeta.helper'; pattern accepts 'a:'"
+  },
+  {
+   "id": "F7",
+   "severity": "minor",
+   "claim": "grammar not closed over legal TMPDIR values (false negative)",
+   "evidence": "correct %r line for a TMPDIR containing an apostrophe is double-quoted; GRAMMAR.match False"
+  },
+  {
+   "id": "F8",
+   "severity": "major",
+   "claim": "lazy arm's pass means only rc==0",
+   "evidence": "context-capture --check stubbed to 'return 0' passes; base prints a verdict document"
+  },
+  {
+   "id": "F9",
+   "severity": "major",
+   "claim": "empty arm tests only the exit code, not S278 fall-through",
+   "evidence": "tool treating TMPDIR='' as a path mkdirs in the clone cwd and exits 0; census never runs on the empty arm"
+  },
+  {
+   "id": "F10",
+   "severity": "major",
+   "claim": "docs arm is a marker-fragment substring paste",
+   "evidence": "MARKER fragment, no grammar, no mode ids; 7 synthetic rows naming only tools/env-diff.py score (7,7)"
+  },
+  {
+   "id": "F11",
+   "severity": "major",
+   "claim": "note arm is a label list; grammar not required; a negating note passes",
+   "evidence": "labels only: 9/9, marker False; negating note: 9/9, marker True"
+  },
+  {
+   "id": "F12",
+   "severity": "major",
+   "claim": "skill arm satisfied by an HTML comment or a 'never do this' sentence",
+   "evidence": "skill_arm=1 for both; the Standing-rules replacement is unmeasured"
+  },
+  {
+   "id": "F13",
+   "severity": "major",
+   "claim": "census misses 3 of 4 /tmp creations; empty trace log reads as zero",
+   "evidence": "tmp_mkdirs=1 for a probe creating abs dir + file + chdir-relative dir + O_TMPFILE; only a missing log is flagged"
+  },
+  {
+   "id": "F14",
+   "severity": "blocking",
+   "claim": "cheapest tree reaches total=0 without fixing the two tools",
+   "evidence": "3 lines per tool keyed on the counter's fixture name + marker pastes; class still RuntimeError for any other unusable TMPDIR; no-harm tools-scope and registry-row-names green"
+  },
+  {
+   "id": "F15",
+   "severity": "major",
+   "claim": "W's 9th allocating mode (registry-check --rev) is outside the round's stated work set",
+   "evidence": "base --rev handler prints 'REGISTRY_CHECK: could-not-evaluate (...)' on stdout; grammar 8/9 -> total=1"
+  },
+  {
+   "id": "F16",
+   "severity": "major",
+   "claim": "provenance: worktree before/c2.stdout is 0 bytes; committed receipt not reproducible from frozen bytes",
+   "evidence": "wc -c = 0 in worktree; committed 43 lines total=18 vs frozen-bytes run total=19"
+  },
+  {
+   "id": "F17",
+   "severity": "minor",
+   "claim": "printed total is not a defect count; it can go negative while bad is non-empty (verdict is total==0 and not bad)",
+   "evidence": "(7,7,{}) for 7 marker-only rows; (9,9,{'docs': 'expected 7 ... found 9'}) for 9 rows; docs>7 contributes 7-docs<0",
+   "receipts": [
+    "12-docs-arm-cellcount.txt"
+   ]
+  }
+ ],
+ "axes_impacted": [
+  "operability",
+  "calibration"
+ ],
+ "smallest_safe_correction": [
+  "re-cut the freeze commit with the amended counters and pass it as FREEZE",
+  "randomise the unusable TMPDIR fixture name",
+  "grammar: exactly one stderr line, equal to the canonical line with the actual TMPDIR value, empty stdout, prefix bound to the mode's own tool",
+  "lazy: compare (rc, stdout) against the usable-TMPDIR run; strace lazy modes",
+  "empty: strace and reject any relative/cwd mkdir; scrub TEMP/TMP",
+  "docs/note/skill: require the full grammar and the row's mode id; note requires marker + 9 allocating + 5 lazy labels; skill requires the marker inside '## Standing rules' and absence of the round-54 sentence",
+  "census: trace openat, resolve relative paths, fail on an empty trace log"
+ ],
+ "sweeps_with_no_finding": [
+  "stdout-only emission fails the grammar arm (a6)",
+  "trailing-text, verdict-prefixed, empty-value, double-quoted-value lines all fail the pattern",
+  "registry-check --rev does carry the grammar in the lane worktree and exits 2 in 75 ms",
+  "docs cell-count guard rejects an inflated cell count"
+ ],
+ "cheapest_tree": {
+  "path": "$HYAKU_SCRATCH/tameshi-r55/T55W1CritC2/cheap/tree",
+  "commit": "252742953e0c",
+  "diff_vs_base": "6 files, +19/-82 (3 lines per broken tool, 2 lines registry-check, marker pastes)",
+  "mechanism": "both tools special-case the counter's fixed fixture name (TMPDIR endswith 'no-such-tmpdir') and print a fabricated value; strict_scratch_root and the class untouched",
+  "score_with_worktree_counter": "grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=0 C2_R55_PASS=true",
+  "score_with_frozen_counter_at_631cd645": "unsatisfiable (F1, F2)",
+  "residual_behaviour": "for any other unusable TMPDIR the tools still print 'setup: RuntimeError:' / 'SELFTEST: FAIL (setup error: RuntimeError: ...)' and exit 2",
+  "monitors_that_stay_green": [
+   "no-harm tools-scope",
+   "no-harm registry-row-names-unchanged"
+  ]
+ }
+}

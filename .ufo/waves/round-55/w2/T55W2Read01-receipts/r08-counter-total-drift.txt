@@ -1,0 +1,45 @@
+== C0 counter total formula (blob 36ca47d3…) ==
+    grammar_ok = sum(1 for m in allocating if m[0] not in bad)
+    lazy_ok = sum(1 for m in lazy if "lazy:" + m[0] not in bad)
+    tmp_total = sum(int(v.split()[0]) for k, v in bad.items() if k.startswith("tmp_mkdirs:"))
+    total = (len(allocating) - grammar_ok) + (len(lazy) - lazy_ok) \
+        + (len(table) - empty_ok) + (len(table) - usable_ok) \
+        + tmp_total + (7 - docs) + (8 - note) + (1 - skill)
+    receipts = {"rev": a.rev, "fixture_sha256": fixture_sha, "bad": bad,
+                "grammar": grammar_ok, "lazy": lazy_ok, "empty": empty_ok,
+                "usable": usable_ok, "docs": docs, "note": note, "skill": skill,
+                "allocating": [m[0] for m in allocating], "note_names": note_names}
+    (work / "c2-receipts.json").write_text(json.dumps(receipts, indent=1, sort_keys=True) + "\n")
+    print("C2_R55: rev=%s grammar=%d/%d lazy=%d/%d empty=%d/%d usable=%d/%d "
+          "tmp_mkdirs=%d docs=%d/7 note=%d/9 skill=%d/1 total=%d C2_R55_PASS=%s" % (
+              a.rev[:12], grammar_ok, len(allocating), lazy_ok, len(lazy),
+              empty_ok, len(cheap), usable_ok, len(cheap), tmp_total, docs, note,
+              skill, total, "true" if total == 0 and not bad else "false"))
+    return 0 if total == 0 and not bad else 1
+== lane-head 133b2ce total formula (blob 0458f632…) ==
+    grammar_ok = sum(1 for m in allocating if m[0] not in bad)
+    lazy_ok = sum(1 for m in lazy if "lazy:" + m[0] not in bad)
+    tmp_total = sum(int(v.split()[0]) for k, v in bad.items() if k.startswith("tmp_mkdirs:"))
+    total = (len(allocating) - grammar_ok) + (len(lazy) - lazy_ok) \
+        + (len(cheap) - empty_ok) + (len(cheap) - usable_ok) \
+        + tmp_total + (7 - docs) + (len(allocating) - note) + (1 - skill)
+    receipts = {"rev": a.rev, "fixture_sha256": fixture_sha, "bad": bad,
+                "grammar": grammar_ok, "lazy": lazy_ok, "empty": empty_ok,
+                "usable": usable_ok, "docs": docs, "note": note, "skill": skill,
+                "allocating": [m[0] for m in allocating], "note_names": note_names}
+    (work / "c2-receipts.json").write_text(json.dumps(receipts, indent=1, sort_keys=True) + "\n")
+    print("C2_R55: rev=%s grammar=%d/%d lazy=%d/%d empty=%d/%d usable=%d/%d "
+          "tmp_mkdirs=%d docs=%d/7 note=%d/9 skill=%d/1 total=%d C2_R55_PASS=%s" % (
+              a.rev[:12], grammar_ok, len(allocating), lazy_ok, len(lazy),
+              empty_ok, len(cheap), usable_ok, len(cheap), tmp_total, docs, note,
+              skill, total, "true" if total == 0 and not bad else "false"))
+    return 0 if total == 0 and not bad else 1
+== head docstring stale lines 17/25/28 ==
+  grammar  8 allocating modes (the seven self-tests + `env-diff --contract`):
+           allocating modes issue no mkdir under /tmp (strace census);
+           names all eight allocating modes;
+== blob shas ==
+36ca47d36c4befc1148a911600c1a5c79efae5e4811f27fa2f9698c17b1ae786  -
+0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c2/measure.py
+== commit that moved the freeze ==
+133b2ce 2026-10-28T14:21:00-03:00 round-55: freeze amendment 8 — c2/measure.py totals use the denominators they measure (cheap 13 in the empty/usable terms, allocating 9 in the note term); at the all-green state the verdict read total=1 with an empty bad map. Freeze pointer moves to this commit

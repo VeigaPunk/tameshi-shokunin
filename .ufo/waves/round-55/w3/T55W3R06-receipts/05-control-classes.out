@@ -1,0 +1,37 @@
+$ python3 tools/repeat-control.py --runs 3 --out $S/rc-match -- bash -c "echo hi"
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd
+REPEAT_RUN 1 exit=0 stdout-bytes=3 stderr-bytes=0
+REPEAT_RUN 2 exit=0 stdout-bytes=3 stderr-bytes=0
+REPEAT_RUN 3 exit=0 stdout-bytes=3 stderr-bytes=0
+REPEAT_COMPARE identical=yes runs=3
+REPEAT_OUT /fast/scratch/hyaku/tameshi-r55/T55W3R06/rc-match
+REPEAT_CONTROL: controls_match
+exit=0
+
+$ python3 tools/repeat-control.py --runs 3 --out $S/rc-nonzero -- false
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd
+REPEAT_RUN 1 exit=1 stdout-bytes=0 stderr-bytes=0
+REPEAT_RUN 2 exit=1 stdout-bytes=0 stderr-bytes=0
+REPEAT_RUN 3 exit=1 stdout-bytes=0 stderr-bytes=0
+REPEAT_COMPARE identical=yes runs=3
+REPEAT_OUT /fast/scratch/hyaku/tameshi-r55/T55W3R06/rc-nonzero
+REPEAT_CONTROL: baseline_nonzero
+exit=2
+
+$ python3 tools/repeat-control.py --runs 3 --out $S/rc-unavail -- tameshi-r12-no-such-command
+REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd
+REPEAT_RUN 1 exit=unavailable stdout-bytes=0 stderr-bytes=67
+REPEAT_RUN 2 exit=unavailable stdout-bytes=0 stderr-bytes=67
+REPEAT_RUN 3 exit=unavailable stdout-bytes=0 stderr-bytes=67
+REPEAT_COMPARE identical=no runs=3
+REPEAT_OUT /fast/scratch/hyaku/tameshi-r55/T55W3R06/rc-unavail
+REPEAT_CONTROL: command_unavailable
+exit=2
+
+$ python3 tools/repeat-control.py --runs 2 --out $S/rc-runs2 -- true    # floor of 3
+REPEAT_CONTROL: invalid_usage
+exit=64
+
+$ python3 tools/repeat-control.py --runs 3 --out $S/rc-match -- true     # DIR must not exist
+REPEAT_CONTROL: invalid_usage
+exit=64

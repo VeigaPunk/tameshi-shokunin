@@ -1,0 +1,17 @@
+{
+  "heading": "### Triggers T1\u2013T3 and the re-pin rule",
+  "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "section_sha256": "2350210704efcc3becfbcd40a63775ad591910039744ac6d072881b3deef7801",
+  "section_start": 1087,
+  "section_end": 1109,
+  "findings": [
+    {
+      "quote": "instances at round 8 (2026-10-14): tsukuroi `084951be\u2026` (6/10) \u2192 `bba6cdf6\u2026`; mado\n  `d7edaab4\u2026` (4/10) \u2192 `90d50cdd\u2026` \u2192 `7da4ec50\u2026` (both have moved again since; re-read, never carry).",
+      "why": "Minor record-precision gap, residual from round 27 (ReRead07 MG1, Read15 MG6) and unapplied at C0. The artifact the trigger rests on records the mado live reading as `dc864c6a\u2026` (2 186 L, worktree dirty) and the reading as `stale + drift` (corpus/knowledge/fleet-kill-rate-ledger.md:302), with `90d50cdd\u2026` only as the HEAD blob of that read. The section lists the HEAD blob as the instance a reader should re-measure and drops both the dirty live bytes and the drift qualifier, so a reader following T1's own action ('re-measure at the live revision') is pointed at a blob the cited ledger row does not call the live reading. The chain itself is otherwise correct: all three mado blobs are committed on 2026-10-14 (eead56b2 14:33:30 -03:00 \u2192 d7edaab4, 0c20a76f 16:06:31 \u2192 90d50cdd, 12c8f08a 16:55:09 \u2192 7da4ec50) and tsukuroi's 084951be (165307fe) \u2192 bba6cdf6 (aa136d69 and 72b038da) also holds."
+    },
+    {
+      "quote": "`75ed934d\u2026` (18:28, r10-2 \u2014 `RerunSweep.md:93`)",
+      "why": "Minor pointer-precision gap only (the labels are true). .ufo/waves/round-16/w2/RerunSweep.md:93 at C0 reads 'durations, and the tool sha (75ed934d \u2192 89722ddb, the commit-expected r16 tool \u2014': it carries the sha, not the date 18:28 nor the version label r10-2. r10-2 is stated at :22 ('the recorded 13:40:15Z sweep ran 75ed934d\u2026adc5 (r10-2, pre-ledger-embedding)'), the 18:28 stamp is commit 606716f7's committer time (2026-10-14T18:28:23-03:00, blob 75ed934d), and the label is corroborated at corpus/knowledge/closeout-r11.md:69. A pointer of \u00abRerunSweep.md:21-23\u00bb (or a ledger/closeout citation) would carry the whole parenthetical; :93 carries only the sha."
+    }
+  ]
+}

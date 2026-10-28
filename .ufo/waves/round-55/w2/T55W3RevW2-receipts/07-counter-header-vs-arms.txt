@@ -1,0 +1,30 @@
+# the frozen counter's own header vs the arms it measures (Read03 finding 2)
+
+Arms (frozen):
+
+  grammar  8 allocating modes (the seven self-tests + `env-diff --contract`):
+           with TMPDIR set to a nonexistent path, exit 2, at least one STDERR
+           line matching GRAMMAR, and no `RuntimeError`/`Traceback` on either
+           stream;
+--- denominators in the total
+            print("EXPLAIN %-6s %-34s %d/%d %s" % (
+                arm, "", got, want, "ok" if got == want else "FAIL"))
+
+    grammar_ok = sum(1 for m in allocating if m[0] not in bad)
+    lazy_ok = sum(1 for m in lazy if "lazy:" + m[0] not in bad)
+    tmp_total = sum(int(v.split()[0]) for k, v in bad.items() if k.startswith("tmp_mkdirs:"))
+    total = (len(allocating) - grammar_ok) + (len(lazy) - lazy_ok) \
+        + (len(cheap) - empty_ok) + (len(cheap) - usable_ok) \
+        + tmp_total + (7 - docs) + (len(allocating) - note) + (1 - skill)
+    receipts = {"rev": a.rev, "fixture_sha256": fixture_sha, "bad": bad,
+                "grammar": grammar_ok, "lazy": lazy_ok, "empty": empty_ok,
+                "usable": usable_ok, "docs": docs, "note": note, "skill": skill,
+                "allocating": [m[0] for m in allocating], "note_names": note_names}
+    (work / "c2-receipts.json").write_text(json.dumps(receipts, indent=1, sort_keys=True) + "\n")
+    print("C2_R55: rev=%s grammar=%d/%d lazy=%d/%d empty=%d/%d usable=%d/%d "
+          "tmp_mkdirs=%d docs=%d/7 note=%d/9 skill=%d/1 total=%d C2_R55_PASS=%s" % (
+              a.rev[:12], grammar_ok, len(allocating), lazy_ok, len(lazy),
+              empty_ok, len(cheap), usable_ok, len(cheap), tmp_total, docs, note,
+              skill, total, "true" if total == 0 and not bad else "false"))
+    return 0 if total == 0 and not bad else 1
+

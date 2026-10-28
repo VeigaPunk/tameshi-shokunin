@@ -1,0 +1,46 @@
+$ git show 9cf0146b:.ufo/evidence/round-55/c2/measure.py | sed -n '17,32p;261,283p'
+  grammar  8 allocating modes (the seven self-tests + `env-diff --contract`):
+           with TMPDIR set to a nonexistent path, exit 2, at least one STDERR
+           line matching GRAMMAR, and no `RuntimeError`/`Traceback` on either
+           stream;
+  lazy     5 non-allocating modes keep their expected exit under the same
+           unusable TMPDIR (scratch is allocated lazily, never at parse time);
+  empty    13 modes with TMPDIR="" (declared unset) exit their expected code;
+  usable   13 modes with a fresh TMPDIR exit their expected code, and the eight
+           allocating modes issue no mkdir under /tmp (strace census);
+  docs     the seven registry `scratch_root` cells carry the GRAMMAR marker;
+  note     `corpus/knowledge/scratch-root-contract.md` states the grammar and
+           names all eight allocating modes;
+  skill    `SKILL.md` carries the grammar marker.
+
+Verdict line:
+`C2_R55: rev=... grammar=N/8 lazy=N/5 empty=N/13 usable=N/13 tmp_mkdirs=N docs=N/7 note=N/8 skill=N/1 total=N C2_R55_PASS=true|false`
+    for arm, got, want in (("docs", docs, 7), ("note", note, len(allocating)), ("skill", skill, 1)):
+        if got != want:
+            bad.setdefault(arm, "%d/%d" % (got, want))
+        if a.explain:
+            print("EXPLAIN %-6s %-34s %d/%d %s" % (
+                arm, "", got, want, "ok" if got == want else "FAIL"))
+
+    grammar_ok = sum(1 for m in allocating if m[0] not in bad)
+    lazy_ok = sum(1 for m in lazy if "lazy:" + m[0] not in bad)
+    tmp_total = sum(int(v.split()[0]) for k, v in bad.items() if k.startswith("tmp_mkdirs:"))
+    total = (len(allocating) - grammar_ok) + (len(lazy) - lazy_ok) \
+        + (len(table) - empty_ok) + (len(table) - usable_ok) \
+        + tmp_total + (7 - docs) + (8 - note) + (1 - skill)
+    receipts = {"rev": a.rev, "fixture_sha256": fixture_sha, "bad": bad,
+                "grammar": grammar_ok, "lazy": lazy_ok, "empty": empty_ok,
+                "usable": usable_ok, "docs": docs, "note": note, "skill": skill,
+                "allocating": [m[0] for m in allocating], "note_names": note_names}
+    (work / "c2-receipts.json").write_text(json.dumps(receipts, indent=1, sort_keys=True) + "\n")
+    print("C2_R55: rev=%s grammar=%d/%d lazy=%d/%d empty=%d/%d usable=%d/%d "
+          "tmp_mkdirs=%d docs=%d/7 note=%d/9 skill=%d/1 total=%d C2_R55_PASS=%s" % (
+              a.rev[:12], grammar_ok, len(allocating), lazy_ok, len(lazy),
+              empty_ok, len(cheap), usable_ok, len(cheap), tmp_total, docs, note,
+              skill, total, "true" if total == 0 and not bad else "false"))
+
+$ python3 -c 'json.load(freeze.json)["amendments"][5]'
+{
+ "n": 6,
+ "what": "c2/measure.py's mode table held eight allocating modes; wave seat T55W1ExecModeDiscovery showed `registry-check --rev` is a ninth documented allocating mode that emitted `REGISTRY_CHECK: could-not-evaluate (...)` on stdout (empty stderr). The claim's surface is every documented allocating mode, so the counter now measures nine on the grammar arm (the tool was fixed in the same commit). `--rev` builds a full fleet clone (minutes), so it is not run on the empty/usable arms; the note states that and its usable path stays covered by the tool's own self-test. Denominators: grammar 8->9, note 8->9."
+}

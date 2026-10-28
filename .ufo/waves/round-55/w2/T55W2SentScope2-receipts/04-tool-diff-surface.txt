@@ -1,0 +1,78 @@
+########## tools/repeat-control.py
+$ git -C LANE diff --numstat FREEZE..C0 -- tools/repeat-control.py
+21	1	tools/repeat-control.py
+$ git -C LANE diff -U0 FREEZE..C0 -- tools/repeat-control.py   (hunk headers + added lines only)
+--- a/tools/repeat-control.py
++++ b/tools/repeat-control.py
+@@ -147,0 +148,8 @@ USAGE = (
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).
++    The operator-visible class is one line on stderr with the frozen grammar
++    (`repeat-control: could-not-evaluate: ...`); this type exists so the refusal
++    cannot be swallowed by the generic setup handler that prints the raw type."""
+@@ -156 +164 @@ def strict_scratch_root():
++            raise ScratchRootUnusable(
+@@ -219,0 +228,10 @@ def setup_failure(message):
++def could_not_evaluate(message):
++    """The scratch-root refusal: one stderr line, the frozen grammar, exit 2 (round 55).
++    `message` is ScratchRootUnusable's text, which already carries the class token;
++    the exception type never reaches the operator line."""
++    emit_err(f"repeat-control: could-not-evaluate: {message}")
++    emit("REPEAT_CONTROL: setup_error")
++    return EXIT_BY_ID["setup_error"]
+@@ -906,0 +925,2 @@ def main(argv):
++    except ScratchRootUnusable as exc:
++        status = could_not_evaluate(str(exc))
+
+########## tools/context-capture.py
+$ git -C LANE diff --numstat FREEZE..C0 -- tools/context-capture.py
+10	1	tools/context-capture.py
+$ git -C LANE diff -U0 FREEZE..C0 -- tools/context-capture.py   (hunk headers + added lines only)
+--- a/tools/context-capture.py
++++ b/tools/context-capture.py
+@@ -299,0 +300,4 @@ expected schema (exactly four keys):
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+@@ -308 +312 @@ def strict_scratch_root():
++            raise ScratchRootUnusable(
+@@ -2212,0 +2217,5 @@ def run_selftest():
++    except ScratchRootUnusable as exc:
++        # One stderr line with the frozen grammar: the class is operator-visible,
++        # the exception type never is, and stdout keeps no setup error (round 55).
++        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
++        return 2
+
+########## tools/registry-check.py
+$ git -C LANE diff --numstat FREEZE..C0 -- tools/registry-check.py
+13	1	tools/registry-check.py
+$ git -C LANE diff -U0 FREEZE..C0 -- tools/registry-check.py   (hunk headers + added lines only)
+--- a/tools/registry-check.py
++++ b/tools/registry-check.py
+@@ -756,0 +757,4 @@ def resolve_rev(root, rev):
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+@@ -765 +769 @@ def strict_scratch_root():
++            raise ScratchRootUnusable(
+@@ -1846,0 +1851,3 @@ def main(argv):
++        except ScratchRootUnusable as exc:
++            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
++            return 2
+@@ -1927,0 +1935,5 @@ def main(argv):
++        except ScratchRootUnusable as exc:
++            # The class, not a verdict: one stderr line with the frozen grammar,
++            # exit 2, and stdout carries no could-not-evaluate verdict (round 55).
++            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
++            return 2
+
+=== functions touched (AST): each added hunk must land in the refusal or the --rev handler ===
+--- tools/repeat-control.py
+   scratch call @629 inside selftest()
+   handler      @925 inside main()
+--- tools/context-capture.py
+   scratch call @1643 inside __init__()
+   handler      @2217 inside run_selftest()
+--- tools/registry-check.py
+   scratch call @784 inside clone_lane_at_rev()
+   scratch call @935 inside selftest()
+   handler      @1851 inside main()
+   handler      @1935 inside main()

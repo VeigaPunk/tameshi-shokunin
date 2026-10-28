@@ -1,0 +1,32 @@
+# R3 — what a second sysexits row would actually trip: census codes, on a synthetic root
+# fixture root: /tmp/tmp.DmyFjHS4UI/root   (each lane is a <name>-shokunin dir with corpus/SOURCES.md; rows carry used-by = — except D)
+$ scripts/sources-census.sh validate --root $ROOT <lane-dir>
+
+## A: same URL, SAME scope string, no supersedes marker
+a-shokunin	W03	S090 mined but unused
+a-shokunin	E04	S281 duplicate url man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 within scope BSD exit-status conventions for command-line programs
+a-shokunin	W03	S281 mined but unused
+exit=1
+
+## B: same URL, SAME scope string, teaches opens "supersedes S090 — ..."
+b-shokunin	W03	S090 mined but unused
+b-shokunin	W03	S281 mined but unused
+b-shokunin	ok	/tmp/tmp.DmyFjHS4UI/root/b-shokunin/corpus/SOURCES.md
+exit=0
+
+## C: same URL, DIFFERENT scope string (the likely shape: S090 keeps EX_USAGE, the candidate teaches the deprecation)
+c-shokunin	W03	S090 mined but unused
+c-shokunin	W04	S281 duplicate url man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 across scopes
+c-shokunin	W03	S281 mined but unused
+c-shokunin	ok	/tmp/tmp.DmyFjHS4UI/root/c-shokunin/corpus/SOURCES.md
+exit=0
+
+## D: used-by names an existing file that never cites the id (the S280 shape at C0)
+note.md cites S090: 0
+d-shokunin	W03	S090 mined but unused
+d-shokunin	ok	/tmp/tmp.DmyFjHS4UI/root/d-shokunin/corpus/SOURCES.md
+exit=0
+
+# reading: E04 is the within-scope duplicate bar and "supersedes S090" clears it; W04 is the
+# across-scope duplicate and is a warning that does not affect a clean lane; E11 checks only that
+# the used-by path EXISTS, never that the file cites the row.

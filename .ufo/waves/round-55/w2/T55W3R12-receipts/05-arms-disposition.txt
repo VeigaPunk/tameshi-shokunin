@@ -1,0 +1,39 @@
+## the section's disposition entry commands, at C0
+
+## command: python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions.json --json
+exit = 2 | status = could_not_evaluate | id = expected_input_digest_mismatch | first finding = expected_input_digest_mismatch | counts = None
+process rc = 2
+
+## command: python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions.json --json
+exit = 2 | status = could_not_evaluate | id = expected_input_digest_mismatch | first finding = expected_input_digest_mismatch | counts = None
+process rc = 2
+
+## command: python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json
+exit = 0 | status = clean | id = None | first finding = None | counts = {'effective': 11, 'expected_checks': 12, 'failed': 0, 'findings': 0, 'passed': 11, 'superseded': 1}
+process rc = 0
+
+## command: python3 tools/evidence-disposition.py --selftest | tail -1
+SELFTEST: PASS (66/66)
+## command: python3 tools/evidence-disposition.py --selftest >/dev/null
+rc=0
+
+## command: python3 tools/evidence-disposition.py --help
+rc=0
+
+## command: python3 tools/evidence-disposition.py --selftest --json   (section: 64 usage)
+rc=64
+
+## command: TMPDIR=/nonexistent-r55 python3 tools/evidence-disposition.py --selftest   (section: 2, named, no traceback)
+evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent-r55' (could-not-evaluate)
+rc=2
+
+## command: TMPDIR= python3 tools/evidence-disposition.py --selftest
+rc=0
+
+## command: --dispositions <chmod 000 file>   (section: an unreadable input is named, never a traceback)
+{
+  "error": {
+    "kind": "dispositions_unreadable",
+    "message": "dispositions: Permission denied"
+  },
+rc=2

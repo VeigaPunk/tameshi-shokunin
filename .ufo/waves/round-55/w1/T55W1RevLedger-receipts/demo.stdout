@@ -1,0 +1,48 @@
+== fixtures: clone at the frozen base; C0 carries only the SKILL.md ## Standing rules edit ==
+C0=7cb40bad7f9db502d2bd83afdff9c489e5d4af54 section={"start": 17, "end": 44, "heading": "## Standing rules", "sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767"} skill_sha256=e0ce89f7866062062f4987358e353c8626c18f56d2eb1589225af99f44d695a6
+base-state ledger entries for the heading at C0: 8
+
+== ARM A: findings: [] + sibling .md -> bound; DROP keeps the record files out ==
+PIN=5b2ea08d806b63ee7b08ff570ef12d064f279b44
+BIND[armA] rc=0 REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=T55W1RevLedger.reader | REFRESH rekeyed=1 skipped=0 headings=1
+
+== ARM B: SCORECARD.md edited AFTER the pin ==
+MEASURE rev1 (nothing moved after PIN) rev=944c5da092 covered=49/64 restraint=6 gate=strict ledger_committed=True standing={"credited": true, "vetoed": false, "reason": "credited"}
+MEASURE rev2 (SCORECARD.md moved after PIN) rev=96f8edf295 covered=49/64 restraint=6 gate=strict ledger_committed=True standing={"credited": true, "vetoed": false, "reason": "credited"}
+
+== ARM C: the binder refusals and the silent acceptances (one probe per state) ==
+BIND[C1-no-md] rc=1 SKIP ## Standing rules reader-md-missing | REFRESH rekeyed=0 skipped=1 headings=1
+   probe C1-no-md :: json with no sibling .md
+BIND[C2-short-cand] rc=1 SKIP ## Standing rules no-clean-reader | REFRESH rekeyed=0 skipped=1 headings=1
+   probe C2-short-cand :: cand a 12-hex prefix
+BIND[C3-stale-sha] rc=1 SKIP ## Standing rules no-clean-reader | REFRESH rekeyed=0 skipped=1 headings=1
+   probe C3-stale-sha :: section_sha256 not the tree value
+BIND[C4-wrong-heading] rc=1 SKIP ## Standing rules no-clean-reader | REFRESH rekeyed=0 skipped=1 headings=1
+   probe C4-wrong-heading :: clean reader for a heading not in HEADINGS
+BIND[C5-findings] rc=1 SKIP ## Standing rules reader-has-findings:1>0 | REFRESH rekeyed=0 skipped=1 headings=1
+   probe C5-findings :: findings=1 with no resolutions file
+BIND[C6-no-findings-key] rc=0 REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=probe | REFRESH rekeyed=1 skipped=0 headings=1
+   probe C6-no-findings-key :: reader json with NO findings key at all
+BIND[C7-wrong-skill-sha] rc=0 REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=probe | REFRESH rekeyed=1 skipped=0 headings=1
+   probe C7-wrong-skill-sha :: skill_sha256 not the whole-file value
+BIND[C8-empty-md] rc=0 REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=probe | REFRESH rekeyed=1 skipped=0 headings=1
+   probe C8-empty-md :: sibling .md present but zero bytes
+BIND[C9-dirty-sorts-first] rc=1 SKIP ## Standing rules reader-has-findings:1>0 | REFRESH rekeyed=0 skipped=1 headings=1
+   probe C9-dirty-sorts-first :: a dirty reader sorting before a clean one
+BIND[C10-clean-sorts-first] rc=0 REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=a-clean | REFRESH rekeyed=1 skipped=0 headings=1
+   probe C10-clean-sorts-first :: a clean reader sorting before a dirty one
+
+== ARM D: counterfactual DROP without SCORECARD.md/LOG.md ==
+BIND[armD] rc=0 REKEY ## Standing rules start=17 inputs=2499 dropped=0 reader=T55W1RevLedger.reader | REFRESH rekeyed=1 skipped=0 headings=1
+counterfactual entry keys that DROP would have removed: []
+COUNTERFACTUAL REV1 entry_reason=None
+COUNTERFACTUAL REV2 entry_reason=input-drift:SCORECARD.md
+MEASURE counterfactual rev1 rev=fb9cdf26b2 covered=49/64 restraint=6 gate=strict ledger_committed=True standing={"credited": true, "vetoed": false, "reason": "credited"}
+MEASURE counterfactual rev2 (no DROP of SCORECARD.md) rev=42155f8674 covered=48/64 restraint=6 gate=strict ledger_committed=True standing={"credited": false, "vetoed": false, "reason": "input-drift:SCORECARD.md"}
+
+== ARM E: what the credit rule checks on the bound entry (field by field) ==
+bound fields: {"skill_sha256": "e0ce89f7866062062f4987358e353c8626c18f56d2eb1589225af99f44d695a6", "start": 17, "end": 44, "sha256": "acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767", "class": "instruction", "verdict": "gap-minor", "blocking_gaps": 0, "wrong_expectations": 0, "minor_gaps": 0, "commands_executed_count": 2498, "read_rev": "7cb40bad7f9db502d2bd83afdff9c489e5d4af54", "traces": [".ufo/evidence/round-21/coldread/rekey-r55-7cb40bad7f9d/traces/section-01.json"], "seats": ["T55W1RevLedger.reader", "L1 fixture re-key"]}
+inputs=2497 dropped-keys-absent=['LOG.md', 'SCORECARD.md', 'SKILL.md'] external_inputs=2497
+entry_reason @rev1=None  @rev2=None
+entry_reason with read_rev="nonsense"=None
+entry_reason with skill_sha256=f*64=None

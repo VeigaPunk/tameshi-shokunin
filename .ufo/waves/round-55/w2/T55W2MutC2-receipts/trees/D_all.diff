@@ -1,0 +1,81 @@
+diff --git a/corpus/knowledge/scratch-root-contract.md b/corpus/knowledge/scratch-root-contract.md
+index c3a7201..b05c573 100644
+--- a/corpus/knowledge/scratch-root-contract.md
++++ b/corpus/knowledge/scratch-root-contract.md
+@@ -76,10 +76,10 @@ The class is one stderr line, byte-shaped:
+ 
+ Nine allocating modes carry it — `env-diff --selftest`, `env-diff --contract`,
+ `repeat-control --selftest`, `registry-check --selftest`,
+-`registry-check --rev`, `bash-witness-study selftest`,
++`registry-check rev`, `bash-witness-study selftest`,
+ `pin-disposition --selftest`, `evidence-disposition --selftest`,
+ `context-capture --selftest` — each exiting 2 with no `RuntimeError` or
+-`Traceback` token on either stream. `registry-check --rev` is measured on the
++`Traceback` token on either stream. `registry-check rev` is measured on the
+ unusable arm only: it builds a full fleet clone (minutes), so its usable path is
+ covered by the tool's own self-test, which exercises the same helper. The line is the
+ contract; the Python type is not: the tools keep their own exception classes
+diff --git a/tools/context-capture.py b/tools/context-capture.py
+index ad1b2f3..73368a5 100755
+--- a/tools/context-capture.py
++++ b/tools/context-capture.py
+@@ -2218,6 +2218,7 @@ def run_selftest():
+         # One stderr line with the frozen grammar: the class is operator-visible,
+         # the exception type never is, and stdout keeps no setup error (round 55).
+         sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
++        sys.stdout.write("SELFTEST: FAIL (setup error: RuntimeError: {})\n".format(exc))
+         return 2
+     except Exception as exc:  # setup failure is loud but never a traceback
+         sys.stdout.write(
+diff --git a/tools/pin-disposition.py b/tools/pin-disposition.py
+index 772af30..4c724d8 100755
+--- a/tools/pin-disposition.py
++++ b/tools/pin-disposition.py
+@@ -1397,7 +1397,7 @@ def main(argv):
+         try:
+             return selftest()
+         except ScratchRootUnusable as exc:
+-            sys.stderr.write("pin-disposition.py: could-not-evaluate: {}\n".format(exc))
++            sys.stdout.write("pin-disposition.py: could-not-evaluate: {}\n".format(exc))
+             return 2
+     if "--selftest" in argv:
+         return invalid_input("invalid_usage", "--selftest takes no other arguments")
+diff --git a/tools/registry-check.py b/tools/registry-check.py
+index ea68679..21716ef 100755
+--- a/tools/registry-check.py
++++ b/tools/registry-check.py
+@@ -766,7 +766,7 @@ def strict_scratch_root():
+     t = _os.environ.get("TMPDIR")
+     if t:
+         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+-            raise ScratchRootUnusable(
++            raise RuntimeError(
+                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+         return t
+     return tempfile.gettempdir()
+diff --git a/tools/registry.json b/tools/registry.json
+index d5adf29..1159abf 100644
+--- a/tools/registry.json
++++ b/tools/registry.json
+@@ -132,7 +132,7 @@
+   },
+   {
+    "name": "pin-disposition-selftest",
+-   "scratch_root": "One stderr line, exit 2, could-not-evaluate: \"pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)\", with no RuntimeError/Traceback token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 55, corpus/knowledge/scratch-root-contract.md). Allocating modes: selftest.",
++   "scratch_root": "One stderr line, exit 2, could-not-evaluate: \"pin-disposition.py: could-not-evaluate: cannot create clone scratch under its scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)\", with no RuntimeError/Traceback token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 55, corpus/knowledge/scratch-root-contract.md). Allocating modes: selftest.",
+    "kind": "selftest",
+    "argv": [
+     "python3",
+diff --git a/tools/repeat-control.py b/tools/repeat-control.py
+index e9eb1b9..a1e297b 100755
+--- a/tools/repeat-control.py
++++ b/tools/repeat-control.py
+@@ -232,7 +232,7 @@ def could_not_evaluate(message):
+     the exception type never reaches the operator line."""
+     emit_err(f"repeat-control: could-not-evaluate: {message}")
+     emit("REPEAT_CONTROL: setup_error")
+-    return EXIT_BY_ID["setup_error"]
++    return 1
+ 
+ 
+ def classify(records):

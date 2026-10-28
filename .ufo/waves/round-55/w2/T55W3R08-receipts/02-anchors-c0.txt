@@ -1,0 +1,61 @@
+### C0 blob: tools/mutate-and-run.sh  (sha256, lines)
+977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda  /fast/scratch/hyaku/tameshi-r55/T55W3R08/mutate.sh
+2159
+
+### :139-143 (exit map for --regression)   — claimed: Exits 0/1/2 PASS/FAIL/SETUP
+139: # FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+140: # table outside its expectation) · 2 a case could not be verified — missing
+141: # repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL, or (r30) the
+142: # counted pass/fail/setup statuses do not add up to the case count (SETUP
+143: # "case-tally mismatch"; --selftest runs the tally block under fixed statuses). Lines:
+
+### :614-643 (pins/revisions/tables)       — claimed block
+614:PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+615:REV_JS=175de6ba2e9e904010411b19cab27e0af9aad3d4
+632:PIN_DRIFTPINS=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb
+633:REV_DRIFTPINS=e64e81b8eb96f3682b00c1e7a291e84420b280fa
+634:TABLE_JS='D1:KILLED,D2:SURVIVED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,D10:SURVIVED'
+643:TABLE_DRIFTPINS='K_MODE_CMP:KILLED,K_GONE_ARM:SURVIVED,K_AMBIG_GT:SURVIVED,K_COUNT_GE:KILLED,K_SHAPE_OPTIN:SURVIVED,S_SHA_CMP:SURVIVED,S_HARDLINK:SURVIVED,S_POLICY:SURVIVED,S_DUP_UNIQ:SURVIVED,S_USAGE_EXIT:SURVIVED'
+
+### :671-849 (first-four specs)            — first line and closing EOT of the 4th spec
+671: regression_specs() { # <dir> — write the ten embedded case specs
+849: EOT
+
+### :83-108 (inventory)                    — ten legs are 88-97
+83: #
+84: # --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+88: #   js-kimi-census        kumitate-shokunin/scripts/kimi-census.mjs   8/10 (80 %)
+97: #   bash-drift-pins       kagi-shokunin/corpus/drift-pins.sh          2/10 (20 %)
+98: # Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+108: # Leg 9's spec is the round-26 pre-registration committed in 622d31d before
+
+### :1459-1508 (ten dispatches)            — first and last
+1459:   regression_case_git js-kimi-census \
+1508:   st_driftpins=$?
+
+### :1519-1548 (PASS/FAIL/SETUP + exits)
+1520:    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\n' \
+1523:    exit 1
+1526:    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\n' \
+1529:    exit 2
+1535:    printf 'REGRESSION: SETUP (case-tally mismatch: cases=%s counted=%s)\n' \
+1538:    exit 2
+1540:  printf 'REGRESSION: PASS (cases=%s passed=%s; ledger legs exact: killed-delta<=0 flips<=0)\n' \
+1548:  exit 0
+
+### :1302-1306 (REGRESSION_PIN forms)
+1302:     printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s mode=%s sha256=%s\n' \
+1303:       "$name" "$repo" "$rev" "$path" "$blob_mode" "$pin"
+1304:   else
+1305:     printf 'REGRESSION_PIN %s: source=file target=%s sha256=%s\n' "$name" "$target" "$pin"
+1306:   fi
+
+### :1275-1317 (git materialization window) — bounds
+1275:     local dst="$cwd/target.$(basename "$path")" blob_mode
+1317:   fi
+
+### :2010 (negative-run mechanism pointer)
+2008:   grep -qF 'REGRESSION_DEFECT fixture S: measured=SURVIVED recorded=KILLED' "$root/rg14.out"
+2009:   st 'exact expectation flip names the flipped row' $?
+2010:   grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1 flips=1;' "$root/rg14.out"
+2011:   st 'exact expectation flip reports killed-delta=1 flips=1' $?

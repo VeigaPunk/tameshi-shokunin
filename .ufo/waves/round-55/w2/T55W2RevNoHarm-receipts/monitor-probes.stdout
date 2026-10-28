@@ -1,0 +1,20 @@
+=== PROBE A: drop the round's only new source row (S280) ===
+dropped_rows=1
+clone_rev=4b3b629
+NOHARM S160-count 1 ok
+NOHARM registry-rows-not-below-139 139 ok
+NOHARM sources-not-shrunk base=139 rev=139 ok
+=== PROBE B: rename one registry row ===
+clone_rev=de1141e renamed_row=repeat-control-snapshot-clean-renamed
+NOHARM registry-row-names-unchanged count=56 RED
+=== PROBE C: touch a tool outside the tools-scope allowlist ===
+clone_rev=a5cf15e
+NOHARM tools-scope [M:tools/context-capture.py M:tools/registry-check.py M:tools/registry.json M:tools/repeat-control.py M:tools/shrink-case.py ] RED
+=== PROBE D: keep the ledger's entry count, destroy every entry ===
+entries_before=591 entries_after=591
+clone_rev=60e4b76
+NOHARM ledger-not-shrunk base=591 rev=591 ok
+NOHARM coldread-floor score=6 credited=0 RED
+=== PROBE E: delete the S160 row ===
+NOHARM S160-count 0 RED
+restored clone rev=9cf0146

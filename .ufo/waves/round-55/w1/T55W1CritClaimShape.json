@@ -1,0 +1,123 @@
+{
+ "seat": "T55W1CritClaimShape",
+ "item": "claim shape: causal separability, axis harm, axis naming, do-nothing controls",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "measured_revs": {
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "initial_freeze": "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "refreeze_amendments_1_7": "e2979f2",
+  "refreeze_amendment_8": "133b2ce",
+  "content_commit_C0": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "note": "the tree moved three times while this seat measured; HEAD at the end of the run was 133b2ce"
+ },
+ "verdicts": {
+  "separability_c1_independent_of_c2": {
+   "verdict": "PASS",
+   "evidence": "C1 rows identical at base and at a C2-only tree (both premise=9/10 stale=4 classes_corrected=0/10 total=10); C1_R55_PASS=true (total=0) at C0 with all six C2 files reverted to base",
+   "receipts": ["T55W1CritClaimShape-receipts/c1-base.stdout", "T55W1CritClaimShape-receipts/c1-c2only.stdout", "T55W1CritClaimShape-receipts/c1-c0minusC2.stdout"]
+  },
+  "separability_c2_independent_of_c1": {
+   "verdict": "PASS with one load-sensitive arm",
+   "evidence": "C2 at a C1-only tree differed from base by one arm (empty:registry-check --selftest rc=1) which passed 6/6 on aimed re-runs at both trees; no tools/*.py|*.sh mentions SCORECARD.md, QUALITY.md or LOG.md",
+   "receipts": ["T55W1CritClaimShape-receipts/c2-at-C1-only-oldbytes-receipts.json", "T55W1CritClaimShape-receipts/cross-tree-measurements.txt"]
+  },
+  "freshness_harm_from_c1_record_edit": {
+   "verdict": "NONE, structurally",
+   "evidence": "population = corpus/SOURCES.md rows with status=mined and id <= S160; the round adds one row S280 and edits no mined row"
+  },
+  "coldread_harm": {
+   "verdict": "YES: 18 of 64 sections and 2 axis points at C0 (calibration 8 -> 6); the record declares one section",
+   "evidence": "coldread at base 64/64 score 8; SKILL.md-only 63/64 score 6; tool/note/registry-only 49/64 score 6; C0 46/64 score 6; HEAD 133b2ce 46/64 score 6",
+   "receipts": ["T55W1CritClaimShape-receipts/coldread-C0.json", "T55W1CritClaimShape-receipts/coldread-HEAD.json", "T55W1CritClaimShape-receipts/cross-tree-measurements.txt"]
+  },
+  "lowest_non_retired_axis": {
+   "verdict": "PASS",
+   "evidence": "standing table SCORECARD.md:2574-2580 reads depth 10, calibration 8, freshness 9; Retired: none retired; both claims name a surface, not only a number",
+   "caveat": "C1 does not move the calibration axis's instrument (round-21 cold-read monitor), so the round can claim 8 held, never 8 moved; SCORECARD.md has no round-55 claim block yet"
+  },
+  "do_nothing_control_per_claim": {
+   "verdict": "PASS",
+   "evidence": "controls.sh phase A: one base clone, CTL_0_c1 requires C1_R55_PASS=false, CTL_0_c2 requires C2_R55_PASS=false; plus CTL_SKIP_c1/CTL_FAB_c1 and CTL_SKIP_c2/CTL_BREAK_c2 and CTL_POS_c1/CTL_POS_c2 at the certified revision",
+   "gap": "no pre-registered control isolates the two claims from each other; this seat supplies fixtures",
+   "defect": "CTL_BREAK_c2's anchor no longer exists in the C0 tool, so that control cannot fire (F6)"
+  }
+ },
+ "coldread_sections": {
+  "base_0a2010ac": {"score": 8, "sections": 64, "covered": 64},
+  "skill_md_only": {"score": 6, "sections": 64, "covered": 63, "uncovered": ["## Standing rules"]},
+  "tools_note_registry_only": {"score": 6, "sections": 64, "covered": 49, "uncovered_count": 15},
+  "c2_five_files": {"score": 6, "sections": 64, "covered": 49, "uncovered_count": 15},
+  "C0_9cf0146": {"score": 6, "sections": 64, "covered": 46, "uncovered_count": 18},
+  "HEAD_133b2ce": {"score": 6, "sections": 64, "covered": 46, "uncovered_count": 18},
+  "ledger_touched_by_round": false
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "blocking",
+   "summary": "the cold-read re-key obligation is 18 sections, not 1; no-harm coldread-floor is RED at C0 (score 6, credited 46 of 64)",
+   "evidence_command": "python3 .ufo/evidence/round-21/coldread/measure.py --repo LANE --rev 9cf0146 (and 133b2ce)",
+   "correction": "re-key the 18 headings with fresh readers bound to the current input digests before the deciding run, and state 18 in LOG.md and the round-55 block"
+  },
+  {
+   "id": "F2",
+   "severity": "blocking-for-record",
+   "summary": "three freeze pointers for one round (631cd64 -> e2979f2 -> 133b2ce); only 133b2ce satisfies FREEZE_INTEGRITY and FROZEN_UNCHANGED",
+   "evidence_command": "gate 0 replay at 133b2ce: FREEZE_INTEGRITY OK files=7 amendments=8; git diff --quiet 133b2ce HEAD over the frozen list -> 0",
+   "correction": "name exactly one pointer (133b2ce) in every record surface; pass FREEZE=133b2ce to deciding-run.sh; keep superseded pointers only in erratum text"
+  },
+  {
+   "id": "F3",
+   "severity": "sharpness-disclosure",
+   "summary": "C1's stale arm is a 160-char proximity predicate and flags a truthful corrected sentence (corpus/lessons/round-54.md line 75 / offset 4293 / 5821)",
+   "evidence_command": "c1/measure.py --lane <C1-record-only tree> --rev 13abf75 --explain",
+   "correction": "keep the plain statement in the excluded corrections section; phrase the lesson so the deciding-revision count and the failed control are more than 160 characters apart; disclose the limit; do not edit the counter"
+  },
+  {
+   "id": "F4",
+   "severity": "hazard",
+   "summary": "C2's empty arm can fail under load: empty:registry-check --selftest rc=1 observed once, 6/6 aimed re-runs pass at both revisions",
+   "evidence_command": "c2/measure.py at a C1-only tree (c2-receipts.json bad map) + 3x python3 tools/registry-check.py --selftest at two revisions",
+   "correction": "run the single deciding invocation on a quiet host; if one cheap-arm mode fails with all others green, record it as unavailability; do not re-run the deciding script"
+  },
+  {
+   "id": "F5",
+   "severity": "record-accuracy",
+   "summary": "committed before/c2.stdout prints total=21, which is the pre-amendment-8 arithmetic; the frozen formula gives 20 for the same arms; the contract's C2 before text quotes 21",
+   "evidence_command": "python3 re-derivation of the frozen formula from the receipt's own arms at e2979f2 and 133b2ce",
+   "correction": "re-run the frozen counter at base, commit the new before/c2.stdout, correct the before quote, declare a re-measure; add before receipts to freeze.json in a future round"
+  },
+  {
+   "id": "F6",
+   "severity": "control-defect",
+   "summary": "CTL_BREAK_c2's anchor emit_err(f\"repeat-control: could-not-evaluate: {exc}\") no longer exists (C0 emits {message}), so the control commits an unmodified clone and cannot fire; controls.sh does not check the snippet's exit status",
+   "evidence_command": "anchor occurrences: 0; AssertionError: anchor not unique: 0; snippet_exit=1",
+   "correction": "re-freeze controls.sh with the anchor that exists in the C0 tool and with '|| exit 2' after the edit snippet, then re-score phase B; note deciding-run.sh greps the CONTROLS_B line without checking the ratio"
+  },
+  {
+   "id": "F7",
+   "severity": "disclosure",
+   "summary": "R54.9's premise after amendment 7 reads a round-55 receipt (c1/staged-at-freeze.txt), so premise=9/10 at base is structural; the C1 target's 'every class prints premise=ok' is unreachable at base by construction",
+   "correction": "state the base premise as 9/10 by construction; keep the premise=10/10 target for the content revision"
+  }
+ ],
+ "rejects": {
+  "claims": [],
+  "as_pre_registered": [
+   "the 'one SKILL.md section' re-key obligation (measured: 18)",
+   "CTL_BREAK_c2 (cannot fire at the current frozen bytes)"
+  ],
+  "conditional": "the round's calibration no-harm claim if it ships with only the single-section re-key"
+ },
+ "sweeps_that_found_nothing": [
+  "tools-scope: git diff base..HEAD -- tools names only the four allowlisted tools",
+  "no tools/*.py|*.sh mention SCORECARD.md, QUALITY.md or LOG.md",
+  "C2 registry denominators 9/9, 5/5, 13/13, 7/7, /9, /1 match modes() and the contract's C2 target after amendments 6-8",
+  "cold-read ledger hash-identical to base (the round never touched it)",
+  "evidence-disposition --json returns 2 on a detached HEAD and 0 on a branch at base, C1-only and C2-only trees alike",
+  "registry-check --selftest 3/3 at the C1-only tree and 3/3 at base"
+ ],
+ "scratch": "$HYAKU_SCRATCH/tameshi-r55/T55W1CritClaimShape",
+ "tools_installed": []
+}

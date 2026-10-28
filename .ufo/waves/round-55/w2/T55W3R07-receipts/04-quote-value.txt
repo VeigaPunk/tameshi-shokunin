@@ -1,0 +1,35 @@
+# 04 — the '<value>' quoting edge in the documented byte shape
+
+Documented shape: <tool>: could-not-evaluate: ... TMPDIR is not a usable
+directory: '<value>' (could-not-evaluate). The tools substitute the value
+with %r, so a value holding a single quote renders double-quoted.
+
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W3R07/lane-c0 && TMPDIR="/nonexistent-r55'q" python3 tools/repeat-control.py --selftest >/dev/null 2>/fast/scratch/hyaku/tameshi-r55/T55W3R07/quote.stderr; echo "exit=$?"; cat /fast/scratch/hyaku/tameshi-r55/T55W3R07/quote.stderr
+exit=2
+repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: "/nonexistent-r55'q" (could-not-evaluate)
+[exit=0]
+
+The frozen counter's GRAMMAR regex pins the single-quoted form:
+$ grep -n -A3 '^GRAMMAR = re.compile' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c2/measure.py
+47:GRAMMAR = re.compile(
+48-    r"^[A-Za-z][A-Za-z0-9_.-]*(?:\.py)?: could-not-evaluate: cannot create clone "
+49-    r"scratch under the scratch root: TMPDIR is not a usable directory: '.+' "
+50-    r"\(could-not-evaluate\)$")
+[exit=0]
+
+That regex against the actual stderr line above:
+$ python3 - <<'PY'
+import importlib.util
+spec = importlib.util.spec_from_file_location(
+    'c2', '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c2/measure.py')
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+line = open('/fast/scratch/hyaku/tameshi-r55/T55W3R07/quote.stderr').read().strip()
+print('actual line:', line)
+print('GRAMMAR.match ->', bool(m.GRAMMAR.match(line)))
+print('quote char actually used:', repr(line.split('directory: ')[1][0]))
+PY
+actual line: repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: "/nonexistent-r55'q" (could-not-evaluate)
+GRAMMAR.match -> False
+quote char actually used: '"'
+[exit=0]
+

@@ -1,0 +1,28 @@
+$ find FLEET /tmp -maxdepth 2 -type d \( -name D= -o -name S= -o -name E= -o -name W= -o -name T= \)
+/home/vgpnk/Projects/shokunin/D=
+
+$ find FLEET -maxdepth 2 -type d -name "*=*"
+/home/vgpnk/Projects/shokunin/D=
+
+--- full tree of the misroot ---
+/home/vgpnk/Projects/shokunin/D=
+/home/vgpnk/Projects/shokunin/D=/fast
+/home/vgpnk/Projects/shokunin/D=/fast/scratch
+/home/vgpnk/Projects/shokunin/D=/fast/scratch/hyaku
+/home/vgpnk/Projects/shokunin/D=/fast/scratch/hyaku/tameshi-r54
+/home/vgpnk/Projects/shokunin/D=/fast/scratch/hyaku/tameshi-r54/T54W2Sent02
+/home/vgpnk/Projects/shokunin/D=/fast/scratch/hyaku/tameshi-r54/T54W2Sent02/pinned.7U6Avg
+/home/vgpnk/Projects/shokunin/D=/fast/scratch/hyaku/tameshi-r54/T54W2Sent02/pinned.7U6Avg/w-base2
+dirs=8 files=0
+top: /home/vgpnk/Projects/shokunin/D= mode=drwxr-xr-x size=8 mtime=2026-10-28 12:07:44.082520575 -0300
+
+--- why porcelain cannot see it: git has no entry for empty directories ---
+$ git -C FLEET status --porcelain | grep -c "^.. D=" ; echo got:
+0
+$ git -C FLEET ls-files -o --exclude-standard | grep -c "D="
+0
+$ git -C FLEET check-ignore -v D=  (no ignore rule; nothing to report)
+check-ignore exit=1
+
+--- same class inside the tameshi lane (depth 2) ---
+lane-misroot-dirs=0

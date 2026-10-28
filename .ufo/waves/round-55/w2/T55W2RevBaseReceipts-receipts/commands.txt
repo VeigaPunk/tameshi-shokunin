@@ -1,0 +1,114 @@
+# T55W2RevBaseReceipts — commands, exit codes, hashes, timings
+# Seat scratch: export HYAKU_SCRATCH=/fast/scratch/hyaku; S=$HYAKU_SCRATCH/tameshi-r55/T55W2RevBaseReceipts
+# All runs: fresh EMPTY --work dir under S; lane = /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# Base rev everywhere: 0a2010acd1e92e4e332774050825e21bcfc7e079
+# Python 3.14.8, /usr/bin/strace present. No tool installed or upgraded (none needed).
+# Wall times are the harness-reported job durations; the c2 counter runs a full
+# fleet clone for `registry-check --rev`, which is why it is minutes, not seconds.
+
+## 1. extract the COUNTER BYTES from the frozen commit (never the working tree)
+git -C $LANE show e2979f2:.ufo/evidence/round-55/c1/measure.py > c1-measure.py
+   sha256 5e8f50d1815309e8c3a1c914191b6032b7dceff27ba42d87a676b3f78e30ac5e
+git -C $LANE show e2979f2:.ufo/evidence/round-55/c2/measure.py > c2-measure.py
+   sha256 36ca47d36c4befc1148a911600c1a5c79efae5e4811f27fa2f9698c17b1ae786
+# both equal the pins in e2979f2:.ufo/evidence/round-55/freeze.json (see manifest-check.txt)
+
+## 2. extract the COMMITTED receipts at the same commit
+git -C $LANE show e2979f2:.ufo/evidence/round-55/before/c1.stdout > frozen-c1.stdout
+   sha256 9ff15582913036539f10a8511e67dd392eafeee245c1295380265136e707cedb  (2763 bytes)
+git -C $LANE show e2979f2:.ufo/evidence/round-55/before/c2.stdout > frozen-c2.stdout
+   sha256 b69942232ace01dfd6f895a295d2976f59405cf61ff8620696af861df789b4f4  (2696 bytes)
+
+## 3. C1 at base with the frozen bytes
+mkdir -p work-c1   # verified empty: `ls -A work-c1 | wc -l` -> 0
+python3 ./c1-measure.py --lane $LANE --rev 0a2010acd1e92e4e332774050825e21bcfc7e079 \
+        --work $S/work-c1 --explain > repro-c1.stdout 2> repro-c1.stderr
+   exit=1   stderr empty
+   C1_R55: rev=0a2010acd1e9 classes=10 premise=9/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+cmp -l frozen-c1.stdout repro-c1.stdout ; echo $?
+   0   byte-identical; sha256 9ff15582…, equal to the committed receipt
+   work-c1/c1-derivations.json written (3155 bytes)
+
+## 4. C1 again, a second empty work dir (determinism, not sanity)
+mkdir -p work-c1b
+python3 ./c1-measure.py ... --work $S/work-c1b --explain > repro-c1-run2.stdout 2>&1
+   exit=1; cmp frozen-c1.stdout repro-c1-run2.stdout -> 0 (identical)
+   cmp work-c1/c1-derivations.json work-c1b/c1-derivations.json -> 0 (identical)
+
+## 5. C1 with a bogus --staged-root (proves no live-worktree / sibling-lane input)
+mkdir -p work-c1c
+python3 ./c1-measure.py ... --work $S/work-c1c --staged-root /nonexistent/path --explain
+   exit=1; cmp frozen-c1.stdout repro-c1-bogus-staged-root.stdout -> 0 (identical)
+
+## 6. C2 at base with the frozen bytes
+mkdir -p work-c2   # empty
+python3 ./c2-measure.py --lane $LANE --rev 0a2010acd1e92e4e332774050825e21bcfc7e079 \
+        --work $S/work-c2 --explain > repro-c2.stdout 2> repro-c2.stderr
+   exit=1   stderr empty   wall 444.37 s
+   C2_R55: rev=0a2010acd1e9 grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 \
+           docs=0/7 note=0/9 skill=0/1 total=21 C2_R55_PASS=false
+cmp -l frozen-c2.stdout repro-c2.stdout ; echo $?
+   0   byte-identical; sha256 b6994223…, equal to the committed receipt
+# The c2 counter prints no path and no timing field: every EXPLAIN line is
+# id/tool/rc/state, and the verdict line is counts only. A byte difference
+# therefore cannot be explained away as a path or a timing.
+
+## 7. the tree moved while this seat ran: HEAD 133b2ce -> 4f7a704 (F4 c31cdd9, F5 4f7a704)
+#    current pins: c1/measure.py 83dfbbb066c201b17a72cf6d36ee8c9a725fe922e792057bc02bd2238bc73c3c
+#                  c2/measure.py 0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b
+git -C $LANE show 4f7a704:.ufo/evidence/round-55/c1/measure.py > c1-measure-4f7a704.py
+git -C $LANE show 133b2ce:.ufo/evidence/round-55/c2/measure.py > c2-measure-133b2ce.py  (== 0458f6…)
+
+mkdir -p work-c1-head
+python3 ./c1-measure-4f7a704.py --lane $LANE --rev 0a2010ac… --work $S/work-c1-head --explain
+   exit=1  -> repro-c1-headbytes.stdout
+git -C $LANE show HEAD:.ufo/evidence/round-55/before/c1.stdout > head-c1.stdout
+cmp head-c1.stdout repro-c1-headbytes.stdout -> 0
+   sha256 acce50f714b68a2f22111e36dc05ca00d3aab7a29ea38d4b46d44c721c665478 (3314 bytes)
+
+mkdir -p work-c2-head
+python3 ./c2-measure-133b2ce.py --lane $LANE --rev 0a2010ac… --work $S/work-c2-head --explain
+   exit=1  wall 392.32 s  -> repro-c2-headbytes.stdout
+   C2_R55: rev=0a2010acd1e9 grammar=6/9 … note=0/9 skill=0/1 total=20 C2_R55_PASS=false
+# the current receipt is the counter's stdout plus its exit trailer:
+{ cat repro-c2-headbytes.stdout; echo "exit=1"; } > repro-c2-headbytes-with-exit.stdout
+cmp head-c2.stdout repro-c2-headbytes-with-exit.stdout -> 0
+   sha256 406ffe9c36e4ceb2ebab68638715af82d54ce470678a0d16817ab25a6d00c012 (2703 bytes)
+
+## 8. byte region where the two counter generations disagree at base
+cmp repro-c2.stdout repro-c2-headbytes.stdout
+   differ: char 2677, line 44   ('1' -> '0', total=21 -> 20)
+diff -u repro-c2.stdout repro-c2-headbytes.stdout
+   only the verdict line's total field; all 43 EXPLAIN lines identical
+# the arithmetic behind it (arithmetic-probe.txt):
+#   e2979f2 total term  (8 - note) while the line prints note=%d/9  -> 21
+#   recomputed from the printed denominators                          -> 22
+#   0458f6  total term  (len(allocating) - note) and len(cheap)       -> 20
+
+## 9. current c1 at C0 (does the counter still pass with the LOG disagreement in place?)
+mkdir -p work-c1-c0
+python3 ./c1-measure-4f7a704.py --lane $LANE --rev 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb \
+        --work $S/work-c1-c0 --explain > repro-c1-at-C0-headbytes.stdout 2>&1
+   exit=0
+   C1_R55: rev=9cf0146b94dd classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+
+## 10. manifest pins and the LOG comparison
+see manifest-check.txt and log-vs-receipts.txt in this directory.
+
+## cleanup
+scratch S removed at the end of the seat (trap 'rm -rf -- "$S"' EXIT); the shared
+parent /fast/scratch/hyaku/tameshi-r55 was never touched.
+
+## 11. c1 receipt generations (e2979f2 vs 4f7a704) — differing regions
+diff -u <(git show e2979f2:.ufo/evidence/round-55/before/c1.stdout) \
+        <(git show 4f7a704:.ufo/evidence/round-55/before/c1.stdout)  > c1-receipt-generations.diff
+   38 diff lines; 13 added `EXPLAIN … stale:` detail lines, 8 re-truncated;
+   R54.1 6->7, R54.2 3->6, R54.3 1->2, R54.9 1->2 hits; VERDICT LINE IDENTICAL
+   (the stale arm counts rows, not hits). Each receipt reproduces from its own bytes.
+
+## 12. c2 sidecar receipts (work-c2 vs work-c2-head) — the only path difference
+diff -u c2-receipts-e2979f2.json c2-receipts-0458f632.json
+   only bad["repeat-control --selftest"], whose text embeds the --work path
+   (`…/work-c2/no-such-tmpdir` vs `…/work-c2-head/no-such-tmpdir`);
+   all arm counts, fixture_sha256, allocating and note_names identical.
+   The PRINTED receipt has no path field, so it is stable across work dirs.

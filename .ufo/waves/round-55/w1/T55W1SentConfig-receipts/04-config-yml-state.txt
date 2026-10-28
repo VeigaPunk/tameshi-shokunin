@@ -1,0 +1,81 @@
+# ~/.omp/agent/config.yml state (host-owned file; read-only checks)
+2026-10-28T14:22:45-03:00
+
+$ stat -c "%y %z %s %i" /home/vgpnk/.omp/agent/config.yml
+2026-10-28 13:10:10.791020535 -0300 2026-10-28 13:10:10.792020532 -0300 16624 240723117
+
+$ sha256sum /home/vgpnk/.omp/agent/config.yml
+51beb75880e5054bfcd6095b61bd600acfc7a85ece74663f663040bc43707418  /home/vgpnk/.omp/agent/config.yml
+
+$ grep -n "scout:" /home/vgpnk/.omp/agent/config.yml
+418:    scout: "@m_grok"
+
+$ git -C /home/vgpnk status --porcelain -- .omp/agent/config.yml
+MM .omp/agent/config.yml
+
+$ git -C /home/vgpnk diff -- .omp/agent/config.yml | grep scout
+-    scout: "@m_zfl"
++    scout: "@m_grok"
+
+$ git -C /home/vgpnk show :.omp/agent/config.yml | grep "scout:"   # index (pre-existing staged state)
+    scout: "@m_zfl"
+
+# in-round baseline receipt (recorded at 13:54:09, before this seat ran)
+$ sha256sum /home/vgpnk/.omp/agent/config.yml
+[rc=0]
+51beb75880e5054bfcd6095b61bd600acfc7a85ece74663f663040bc43707418  /home/vgpnk/.omp/agent/config.yml
+
+$ stat -c '%y  %n' /home/vgpnk/.omp/agent/config.yml
+[rc=0]
+2026-10-28 13:10:10.791020535 -0300  /home/vgpnk/.omp/agent/config.yml
+
+$ grep -n 'scout:' /home/vgpnk/.omp/agent/config.yml
+[rc=0]
+418:    scout: "@m_grok"
+
+$ grep -n 'm_glm53\|m_grok:' /home/vgpnk/.omp/agent/config.yml | sed -n '1,6p'
+[rc=0]
+391:  m_glm53: zai/glm-5.3:max
+392:  m_grok: xai-oauth/grok-4.7-build-fast:high
+494:    m_glm53:
+498:    m_grok:
+
+$ ls -la --time-style=+%Y-%m-%dT%H:%M:%S /home/vgpnk/.omp/agent/ | grep -i 'config'
+[rc=0]
+-rw------- 1 vgpnk vgpnk    16624 2026-10-28T13:10:10 config.yml
+-rw------- 1 vgpnk vgpnk    14978 2026-10-27T09:07:01 config.yml.pre-connector-haiku-20261027
+-rw------- 1 vgpnk vgpnk    14941 2026-10-27T03:32:44 config.yml.pre-kfc-roles-20261027
+-rw------- 1 vgpnk vgpnk    14978 2026-10-27T08:21:20 config.yml.pre-kfc-swe-only-20261027
+-rw------- 1 vgpnk vgpnk    14972 2026-10-27T16:08:23 config.yml.pre-kfc-to-sonnet-20261027
+-rw------- 1 vgpnk vgpnk    14972 2026-10-27T13:44:20 config.yml.pre-mflash-commandcode-20261027
+-rw------- 1 vgpnk vgpnk    14978 2026-10-27T09:06:56 config.yml.pre-more-zfl-20261027
+
+$ cd /home/vgpnk && git status --porcelain -- .omp/agent/config.yml; git diff -- .omp/agent/config.yml | grep -n 'scout'
+[rc=0]
+MM .omp/agent/config.yml
+406:-    scout: "@m_zfl"
+423:+    scout: "@m_grok"
+receipt mtime: 2026-10-28 13:54:09.585150182 -0300
+
+# timeline (epoch + local)
+1793201137 2026-10-28 12:25:37.919588557 -0300  .ufo/evidence/round-54/after
+1793200825 2026-10-28 12:20:25.803169818 -0300  .ufo/waves/round-54/w1
+1793205223 2026-10-28 13:33:43.174719447 -0300  .ufo/evidence/round-55/no-harm.sh
+1793205589 2026-10-28 13:39:49.760572078 -0300  .ufo/waves/round-55/spec-w1.json
+1793203810 2026-10-28 13:10:10.791020535 -0300  /home/vgpnk/.omp/agent/config.yml
+
+# no new edit backup: newest config.yml.pre-* predates the round
+/home/vgpnk/.omp/agent/config.yml.pre-kfc-to-sonnet-20261027
+/home/vgpnk/.omp/agent/config.yml.pre-mflash-commandcode-20261027
+/home/vgpnk/.omp/agent/config.yml.pre-connector-haiku-20261027
+2026-10-27 16:08:23.627703010 -0300 /home/vgpnk/.omp/agent/config.yml.pre-kfc-to-sonnet-20261027
+
+# files newer than the round start in ~/.omp/agent (maxdepth 1); config.yml is absent
+2026-10-28T13:50:00.7579544370 /home/vgpnk/.omp/agent/history.db-shm
+2026-10-28T14:18:21.8314406870 /home/vgpnk/.omp/agent/models.db-shm
+2026-10-28T14:18:21.8314980470 /home/vgpnk/.omp/agent/models.db-wal
+2026-10-28T14:21:57.3445729260 /home/vgpnk/.omp/agent/agent.db
+2026-10-28T14:22:40.0324777720 /home/vgpnk/.omp/agent/agent.db-shm
+2026-10-28T14:22:45.1056451580 /home/vgpnk/.omp/agent/agent.db-wal
+
+# conclusion: last write 2026-10-28T13:10:10-0300 = 23 min BEFORE the round-55 first artifact (13:33:43) and 45 min AFTER round-54's last evidence (12:25:37). mtime + sha256 identical at 13:54:09 and now; alias @m_grok. Unmodified during round 55.

@@ -1,0 +1,11 @@
+{
+  "heading": "## Live-tree re-pin and entry-command monitor \u2014 round 17",
+  "cand": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "section_sha256": "6395900104ed76b6f9dbfae1bb33384197982447e1db7dbaf89bf2b6b1b9beac",
+  "findings": [
+    {
+      "quote": "| `tools/registry-check.py` | gate | `python3 tools/registry-check.py --rev REV [--registry PATH] [--tag TAG] [--json]` \u00b7 `--selftest` | 0 every active row held \u00b7 1 a row differs \u00b7 2 registry invalid, rev unresolvable, clone failed, or `--tag` matches no row \u00b7 64 usage |",
+      "why": "At C0 that command has two further exit-2 causes the row's 'or' list does not name: (a) `--only <name>` matching no row \u2014 `REGISTRY_CHECK: could-not-evaluate (--only 'no-such-row' matches no registry row)`, rc=2, and `--only` is missing from the row's own synopsis although the tool accepts it (tools/registry-check.py:11-12 at C0); (b) an unusable scratch root, added by the very commit under test \u2014 `registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope' (could-not-evaluate)`, rc=2, from `class ScratchRootUnusable` (tools/registry-check.py:757) raised by `strict_scratch_root()` (:769-770). Severity: nit, and the exit class (2) is unchanged, so nothing in the section is contradicted and no exit-1/exit-0 claim moves. Counter-reading, stated so the judge can weigh it: 'clone failed' is general enough to absorb a scratch-root refusal, and the row reads as a non-exhaustive summary, so a reader could still map both refusals onto exit 2 by class."
+    }
+  ]
+}

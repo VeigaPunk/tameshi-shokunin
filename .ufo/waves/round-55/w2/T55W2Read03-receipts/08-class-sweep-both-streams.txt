@@ -1,0 +1,11 @@
+$ python3 class-sweep.py   # TMPDIR=/nonexistent-r55-sweep, cwd = C0 clone
+mode                   rc  grammar  stdout_b  stdout first line
+repeat-control         2   yes      28        'REPEAT_CONTROL: setup_error'
+registry-check         2   yes      0         ''
+bash-witness-study     2   yes      0         ''
+pin-disposition        2   yes      0         ''
+evidence-disposition   2   yes      0         ''
+context-capture        2   yes      0         ''
+env-diff               2   yes      0         ''
+
+VERDICT: the seven self-tests all exit 2 with the grammar on stderr, but "one stderr line" leaves the other stream undefined: repeat-control emits REPEAT_CONTROL: setup_error (28 bytes) on stdout, a second verdict token naming a different class. A caller that parses stdout cannot tell could-not-evaluate from a test failure; the cited counter tests only stderr + the RuntimeError/Traceback tokens, so it stays green.

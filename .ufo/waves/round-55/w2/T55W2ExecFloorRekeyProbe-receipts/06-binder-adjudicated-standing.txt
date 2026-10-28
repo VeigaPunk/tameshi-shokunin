@@ -1,0 +1,30 @@
+ATTACK: does '## Standing rules' bind when the adjudication admits readings with findings?
+ADJUDICATION USED FOR THE DRY RUN (scratch only; n = the reader's own finding count, not a recommendation):
+  [{"heading": "## Standing rules", "n": 2}, ... 8 other headings with their readers' counts]
+COMMAND
+  cp $S/resolutions-dryrun.json $S/clone/.ufo/evidence/round-55/integrate/resolutions.json
+  git -C $S/clone checkout -- .ufo/evidence/round-21/coldread/ledger.json
+  TMPDIR=$S/tmp python3 .ufo/evidence/round-55/integrate/binder.py $S/clone <C0> <C0> <rekey dir>   # rc=1 (9 other SKIPs)
+OUTPUT
+REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=T55W2Read01
+REFRESH rekeyed=9 skipped=9 headings=18
+LEDGER ENTRY WRITTEN (read back from the committed bind b8678cb809ed)
+  {'start': 17, 'end': 44, 'sha256': 'acfb671afd767c32476f57b040399972f6c870cd7dde3d821c344cae1a9ad767',
+   'class': 'instruction', 'verdict': 'gap-minor', 'minor_gaps': 2, 'wrong_expectations': 0,
+   'commands_executed_count': 2498,
+   'read_rev': '9cf0146b94ddba12d454ebf7288ce6e5c5d535bb',
+   'seats': ['T55W2Read01', 'L1 TameshiR55a2 re-key (round 54)'],
+   'traces': ['.ufo/evidence/round-21/coldread/rekey-r55-9cf0146b94dd/traces/section-07.json'],
+   'inputs': 2497}
+
+VARIANT: the same bind with n=12 for '## Standing rules' (a generous adjudication covering the union of findings)
+  cp $S/resolutions-n12.json $S/clone/.ufo/evidence/round-55/integrate/resolutions.json
+  TMPDIR=$S/tmp python3 .ufo/evidence/round-55/integrate/binder.py ...    # rc=0
+OUTPUT
+REKEY ## Standing rules start=17 inputs=2497 dropped=0 reader=T55W2Read01
+REFRESH rekeyed=18 skipped=0 headings=18
+  ledger entry read back: seats ['T55W2Read01', ...], minor_gaps 2, verdict gap-minor
+VERDICT: with n>=2 the section binds and its entry records T55W2Read01 only. Raising n to 12 changes nothing:
+the binder takes the FIRST matching reader in sorted order (binder.py:106-127), so Read02 (3 findings) and Read03
+(7 findings) never reach the ledger and the entry's minor_gaps stays at Read01's 2. The two readers whose findings
+attack the section's cited C2 counter are dropped from the record by the bind, not by any adjudication.

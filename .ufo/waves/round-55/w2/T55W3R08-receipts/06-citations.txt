@@ -1,0 +1,54 @@
+### every artifact this section cites, resolved at C0 (git cat-file -e)
+tools/mutate-and-run.sh                                        blob
+corpus/knowledge/fleet-kill-rate-ledger.md                     blob
+corpus/knowledge/scratch-root-contract.md                      blob
+reports/r7-aud-t7.md                                           blob
+plans/round-7.plan.md                                          blob
+.ufo/waves/round-52/w2/T52W2Fix06.md                           blob
+.ufo/waves/round-52/w2/T52W2Fix06.selftest.out                 blob
+.ufo/waves/round-53/w2r/T53W2R6.md                             blob
+
+### the ledger row structure the section counts (eight rows = six in §1/ER-2 + r16 + r18 appends)
+41:## 1. Measured — the four fleet sweeps (all 2026-10-14)
+45:| 1 | kumitate · `scripts/kimi-census.mjs` (r2) | 43 cases | **8/10 (80 %)** — 10 kill-aimed | D2 findings-cap boundary (reported tail past a prefix assert); D10 `FROZEN.K2` reported constant (unasserted) | **no** — pin unchanged r2 → today; survivors unabsorbed | r2 · `83016d45…` (896 L) · manual driver, scratch `/tmp/tameshi-r2-1-work/` |
+46:| 2 | kagi · `corpus/surface-census.sh` (r3) | 16 cases (14 hermetic + 2 substrate-gated `skip-case`) | **8/10 (80 %)** — 10 kill-aimed | B5 deleted exec x-bit arm (fixture-absent / unreached arm); B10 CLEAN-summary `ok=` field (reported-but-unasserted) | **no** — pin unchanged r3 → today; note left gaps as recommendations only | r3 · `275d8294…` (886 L) · manual driver, scratch `/tmp/tameshi-r3-1-work/` |
+47:| 3 | tsukuroi · `tools/tsukuroi-census.sh` (r5) | 26 cases | **6/10 (60 %)** — 6 kill-aimed (6/6) + 4 hole-aimed (0/4) | B7 default sample cap (cap unreached); B8 usage exit map (out-of-band, CLI parser no case); B9 roll-line fields (unasserted verdict fields); B10 PCI-unreadable branch (unreached arm; probe flips BLOCKED→HEALTHY) | **yes, owner** (lane S5-1): 26 → 35 cases at `aae45531`; replay of the 4 survivors: **B10 killed, B7/B8/B9 still survived** | r5 · `084951be…` (976 newlines) · manual driver, scratch `/tmp/w5-tameshi-1-work/` |
+48:| 4 | mado · `tools/mado-verify.sh` (r6) | 28 assertions (scenarios A–D) | **4/10 (40 %)** — 4 in-surface (4/4) + 6 out-of-surface (0/6); assertion set and kill set co-extensive on this spec | D3 SKIP→PASS row unread; D5 failing-selftest exit 2→1 unobservable; D7 include-count tolerance never reached; D8 sha-pin NOTE claims untested match; D9 boundary safety row asserted only in its PASS direction (new class); R1 tomllib arm unreachable in-suite | **yes, owner** (lane M6-1): +88/−0 inside `selftest()`, 28 → 53 assertions at `c4c1afb7`; **same spec re-run: 10/10 (100 %)** — directed repair. Residuals unabsorbed: rc-6 dead arm, exit-flatten family, 51 live-plane row sites, 2 out-of-band usage exits | r6 · `d7edaab4…` (1,098 L) · harness `597e1419…` (R1); whole spec re-cut under `b56c6e57…` with identical verdicts + mutant shas (scribe) |
+239:## Errata (append-only)
+272:**ER-2 — the fifth and sixth cases land: kagi `corpus/checklist-run.sh` and kumitate `scripts/claims-check.mjs` — six gates measured (O; appended 2026-10-14 by T8-3, tameshi round 8).** Two independent sweeps ran this round — service form, targets read-only, predictions pre-registered before each run, one scratch per lane (`/tmp/w8-tameshi-t81/`, `/tmp/w8-t8-2-claims/`); each note is its run's only fleet file. §1's table is not edited; these rows are the append U9's own rule prescribes (`:235-237`; the update rule `:170-172`). Columns per §0.
+299:| 1 | kimi-census | `83016d45…` | `83016d45…` | `83016d45…` | clean | current |
+300:| 2 | surface-census | `275d8294…` | `275d8294…` | `275d8294…` | clean | current |
+301:| 3 | tsukuroi-census | `084951be…` | `bba6cdf6…` (1 472 L) | `bba6cdf6…` | clean | **stale** |
+302:| 4 | mado-verify | `d7edaab4…` | `dc864c6a…` (2 186 L) | `90d50cdd…` | dirty | **stale + drift** |
+326:| 1 | kimi-census | `83016d45…` @ `175de6ba` | `83016d45…` | yes | clean · yes | current |
+327:| 2 | surface-census | `275d8294…` @ `fecee874` | `275d8294…` | yes | clean · yes | current |
+328:| 3 | tsukuroi-census | `084951be…` @ `165307fe` | `bba6cdf6…` (1 472 L / 73 919 B) | yes | clean · yes | **stale** |
+329:| 4 | mado-verify | `d7edaab4…` @ `eead56b2` | `7da4ec50…` (2 887 L / 131 612 B) | yes | clean · yes | **stale** |
+403:## Round 16 — seventh row appended (2026-10-20)
+424:## Round 18 — eighth row appended (2026-10-20)
+439:## Round 52 — §3 drift-pins cell superseded (2026-10-27)
+
+### r7-aud-t7.md §1 (the four-leg instance the section quotes: match=10/10 ×4, cases=4 passed=4, rc 0)
+## 1. Run it yourself — primary run (O)
+
+`bash tools/mutate-and-run.sh --regression --workdir /tmp/w7-aud-t7-regr/run1`,
+2026-10-14T18:34:47Z, **exit 0, 44.9 s wall**; output
+`/tmp/w7-aud-t7-evidence/run1.out`. Headline lines, verbatim:
+
+```
+REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=8/10 bash-surface-census=8/10 bash-tsukuroi-census=6/10 bash-mado-verify=4/10
+REGRESSION_TABLE js-kimi-census: match=10/10 recorded-killed=8 measured-killed=8 survived=2 inconclusive=0 flips=0
+REGRESSION_TABLE bash-surface-census: match=10/10 recorded-killed=8 measured-killed=8 survived=2 inconclusive=0 flips=0
+
+### who measured the four legs: ledger §5 pulse (cases=2 at the loose band) vs the four-leg exact-band run
+- `tools/mutate-and-run.sh` @ `b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb`
+  (1,080 L): `--selftest` → `MUTATE_SELFTEST: 55/55 pass` / `VERDICT: PASS`,
+  rc 0; `--regression` → `REGRESSION: PASS (cases=2 passed=2; band
+  killed-delta<=1 flips<=1)`, rc 0 — both run today by this lane (23.4 s
+  total; log `/tmp/w7-tameshi-t72/regression`, `MUTATE_TOOL` line carries the
+- **§5 / ER-1 supersession (embedding + tool).** §5's "cases=2 at this write" and ER-1 item 1's in-flight revision are superseded: the harness at `cf41efaa8be5f52d…` (r7-1; 1 341 L / 61 632 B) carries **four** materialized legs and passes them at the exact band — `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, every leg `match=10/10 flips=0` (O: T8-2's run 2026-10-14T19:14:16Z, `mutation-case-kumitate-claims.md` §
+
+- O: `bash tools/mutate-and-run.sh --regression --workdir /tmp/w8-t8-2-claims/regression`
+  at 19:14:16Z, tool `cf41efaa…` →
+  `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, rc 0,
+  46 s wall. Legs, materialized from their repos' object stores (pin verified inside the

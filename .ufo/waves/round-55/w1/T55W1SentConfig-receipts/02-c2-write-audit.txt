@@ -1,0 +1,52 @@
+# C2 counter write audit (host-write boundary)
+# audited bytes: .ufo/evidence/round-55/c2/measure.py @ 631cd6455e58dce969310b4c0466c3383d9f5108 = 9d076812d9c0fcd2d06dc7543e5a99bc2bfcdaf85f10ee6da9d0b5ea0b346dac
+# (the run started before the L1's 14:12 amendment to the 9-mode counter; it printed grammar=6/8 note=0/8, i.e. the 8-mode frozen bytes)
+# command: strace -f -y -e trace=openat,openat2,creat,mkdir,mkdirat,rename,renameat,renameat2,unlink,unlinkat,symlink,symlinkat,link,linkat,chdir -o STRACE python3 .ufo/evidence/round-55/c2/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 631cd6455e58dce969310b4c0466c3383d9f5108 --work /fast/scratch/hyaku/tameshi-r55/T55W1SentConfig/c2work --explain
+# elapsed 659s (outer-strace overhead); last score line:
+C2_R55: rev=631cd6455e58 grammar=6/8 lazy=5/5 empty=12/13 usable=12/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=20 C2_R55_PASS=false
+# tracer-overhead failure (not a counter defect): registry-check --selftest rc=1 on the empty/usable arms; the unwrapped base run (T55W1ExecNoHarm-receipts/c2-base-rerun.explain.txt) is 13/13/13.
+
+# parser output
+link       tmp            488
+link       work           488
+mkdir      bwrap-ns       100
+mkdir      tmp            2086
+mkdir      work           2933
+mkdirat    bwrap-ns       797
+openat     bwrap-ns       1097
+openat     dev            4066
+openat     tmp            3442
+openat     work           19251
+rename     tmp            559
+rename     work           577
+renameat   tmp            248
+renameat   work           248
+symlink    tmp            52
+symlink    work           53
+symlinkat  bwrap-ns       600
+unlink     tmp            1141
+unlink     work           1143
+unlinkat   tmp            4564
+unlinkat   work           4563
+
+lane total: 0
+
+HOST-OUTSIDE total: 0
+
+# control probe under the identical filter: an outside-W write is flagged HOST-OUTSIDE, an inside-W write is work
+3881210 openat(AT_FDCWD</home/vgpnk/Projects/shokunin>, "/fast/scratch/hyaku/tameshi-r55/T55W1SentConfig/probe-outside2.txt", O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0666) = 3</fast/scratch/hyaku/tameshi-r55/T55W1SentConfig/probe-outside2.txt>
+3881210 openat(AT_FDCWD</home/vgpnk/Projects/shokunin>, "/fast/scratch/hyaku/tameshi-r55/T55W1SentConfig/c2work/probe-inside2.txt", O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0666) = 3</fast/scratch/hyaku/tameshi-r55/T55W1SentConfig/c2work/probe-inside2.txt>
+
+# counter-created entries under --work (my probe-* test files excluded)
+c2-receipts.json
+clone
+envdiff-out.json
+strace-bash-witness-study-selftest.log
+strace-context-capture-selftest.log
+strace-env-diff-contract.log
+strace-env-diff-selftest.log
+strace-evidence-disposition-selftest.log
+strace-pin-disposition-selftest.log
+strace-registry-check-selftest.log
+strace-repeat-control-selftest.log
+tmp-usable

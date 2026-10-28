@@ -1,0 +1,99 @@
+# Tool-patch scope: the round's executable changes and their scratch/exit surface
+
+## changed Python files (631cd..HEAD)
+10	1	tools/context-capture.py
+13	1	tools/registry-check.py
+21	1	tools/repeat-control.py
+
+## hunk headers + changed lines per file (no other production line is touched)
+--- tools/repeat-control.py
+@@ -147,0 +148,8 @@ USAGE = (
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).
++    The operator-visible class is one line on stderr with the frozen grammar
++    (`repeat-control: could-not-evaluate: ...`); this type exists so the refusal
++    cannot be swallowed by the generic setup handler that prints the raw type."""
+@@ -156 +164 @@ def strict_scratch_root():
+-            raise RuntimeError(
++            raise ScratchRootUnusable(
+@@ -219,0 +228,10 @@ def setup_failure(message):
++def could_not_evaluate(message):
++    """The scratch-root refusal: one stderr line, the frozen grammar, exit 2 (round 55).
++    `message` is ScratchRootUnusable's text, which already carries the class token;
++    the exception type never reaches the operator line."""
++    emit_err(f"repeat-control: could-not-evaluate: {message}")
++    emit("REPEAT_CONTROL: setup_error")
++    return EXIT_BY_ID["setup_error"]
+@@ -906,0 +925,2 @@ def main(argv):
++    except ScratchRootUnusable as exc:
++        status = could_not_evaluate(str(exc))
+--- tools/context-capture.py
+@@ -299,0 +300,4 @@ expected schema (exactly four keys):
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+@@ -308 +312 @@ def strict_scratch_root():
+-            raise RuntimeError(
++            raise ScratchRootUnusable(
+@@ -2212,0 +2217,5 @@ def run_selftest():
++    except ScratchRootUnusable as exc:
++        # One stderr line with the frozen grammar: the class is operator-visible,
++        # the exception type never is, and stdout keeps no setup error (round 55).
++        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
++        return 2
+--- tools/registry-check.py
+@@ -756,0 +757,4 @@ def resolve_rev(root, rev):
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+@@ -765 +769 @@ def strict_scratch_root():
+-            raise RuntimeError(
++            raise ScratchRootUnusable(
+@@ -1846,0 +1851,3 @@ def main(argv):
++        except ScratchRootUnusable as exc:
++            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
++            return 2
+@@ -1927,0 +1935,5 @@ def main(argv):
++        except ScratchRootUnusable as exc:
++            # The class, not a verdict: one stderr line with the frozen grammar,
++            # exit 2, and stdout carries no could-not-evaluate verdict (round 55).
++            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
++            return 2
+
+## every scratch allocation site in the seven tools
+tools/repeat-control.py:157:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/repeat-control.py:629:    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
+tools/context-capture.py:12:writes nothing; the only writes are --selftest fixtures under mkdtemp.
+tools/context-capture.py:27:      / the scratch root (tempfile.mkdtemp(dir=tempfile.gettempdir())), pinning literal expected ids and
+tools/context-capture.py:305:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/context-capture.py:1642:        self.root = tempfile.mkdtemp(prefix="context-capture-selftest-",
+tools/registry-check.py:60:             fleet-mirror layout and run there: a mkdtemp fleet/ holds a
+tools/registry-check.py:65:             as `rev_resolved`. The mkdtemp is removed afterwards.
+tools/registry-check.py:762:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/registry-check.py:775:    """Clone the lane detached at sha into a fleet-mirror mkdtemp.
+tools/registry-check.py:784:        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+tools/registry-check.py:934:    scratch = tempfile.mkdtemp(
+tools/env-diff.py:37:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/bash-witness-study.py:210:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/bash-witness-study.py:1259:    private_root = Path(tempfile.mkdtemp(
+tools/bash-witness-study.py:1264:        root = Path(tempfile.mkdtemp(
+tools/pin-disposition.py:166:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/pin-disposition.py:725:    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=strict_scratch_root())
+tools/evidence-disposition.py:196:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+tools/evidence-disposition.py:2370:    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=strict_scratch_root()))
+
+## no literal /tmp scratch dir (no-harm r53 check, at HEAD)
+(no output = 0 literal /tmp scratch sites)
+
+## strict_scratch_root call sites (one per allocating mode path)
+repeat-control: 2
+context-capture: 2
+registry-check: 3
+
+## the refusal path writes nothing (strace, TMPDIR=<nonexistent>)
+repeat-control:  0 mutating syscalls (see 07)
+context-capture: 0 mutating syscalls (see 07)
+registry-check:  only /dev/null O_RDWR, no mkdir/symlink/unlink (see 07)
+
+## output contract on the refusal
+repeat-control: stderr = 1 grammar line; stdout = REPEAT_CONTROL: setup_error (the tool verdict marker - no exception type, no traceback)
+context-capture: stderr = 1 grammar line; stdout = 0 bytes
+registry-check: stderr = 1 grammar line; stdout = 0 bytes

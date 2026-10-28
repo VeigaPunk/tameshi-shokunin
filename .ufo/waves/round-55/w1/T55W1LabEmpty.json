@@ -9,7 +9,7 @@
   "conjunct_b_no_cwd_creation": "CONFIRMED on this host (platform temp usable); CONTINGENT in general: getcwd() is the last _candidate_tempdir_list entry and is reachable when /tmp,/var/tmp,/usr/tmp are all unusable"
  },
  "evidence": {
-  "helper_source": "tools/bash-witness-study.py:209-221 (and the same helper copied into the six other tools): `t = os.environ.get('TMPDIR'); if t:` -> '' is falsy -> tempfile.gettempdir(); no abspath, no chdir guard",
+  "helper_source": "tools/bash-witness-study.py:209-222 (and the same helper copied into the six other tools): `t = os.environ.get('TMPDIR'); if t:` -> '' is falsy -> tempfile.gettempdir(); no abspath, no chdir guard",
   "cpython_source": "/usr/lib/python3.14/tempfile.py:164-166 (if dirname: skip empty), :176-180 (getcwd is the last candidate), :197-199 (candidates abspath'd except '.')",
   "runtime": {
    "os.environ.get('TMPDIR')": "",
@@ -67,23 +67,32 @@
    }
   ],
   "strace_empty": {
+   "method": "strace -f -e trace=openat,mkdir,mkdirat,chdir,fchdir; every creation attributed by a per-pid chdir replay (attribute.py); openat(<dirfd>,..) counted separately because a directory fd is not the cwd",
+   "withdrawn_first_passes": [
+    "grep O_CREAT + absolute clone prefix: blind to relative paths",
+    "naive 'relative => cwd': mis-attributes openat(<dirfd>, 'null') (over-reported 39/269)"
+   ],
    "bash-witness-study": {
     "rc": 0,
-    "mkdir_under_tmp": 51,
-    "mkdir_not_under_tmp": 21,
-    "relative_mkdirs_proved_inside_tmp": "chdir('/tmp/...') precedes every relative '.git/...' mkdir",
-    "openat_O_CREAT_under_cwd": 0,
-    "openat_O_CREAT_under_tmp": 161
+    "under_launcher_cwd": 0,
+    "under_tmp": 272,
+    "pivoted_namespace": 0,
+    "dirfd_relative": 0
    },
    "context-capture": {
     "rc": 0,
-    "mkdir_under_tmp": 48,
-    "openat_O_CREAT_under_cwd": 0
+    "under_launcher_cwd": 0,
+    "under_tmp": 127,
+    "pivoted_namespace": 0,
+    "dirfd_relative": 0
    },
    "env-diff": {
     "rc": 0,
-    "mkdir_under_tmp": 146,
-    "openat_O_CREAT_under_cwd": 0
+    "under_launcher_cwd": 0,
+    "under_tmp": 326,
+    "pivoted_namespace": 43,
+    "dirfd_relative": 602,
+    "pivot_proof": "unshare(CLONE_NEWUSER) x43, mount('tmpfs','/tmp') x43, pivot_root('/tmp','oldroot') x43"
    }
   },
   "cwd_candidate_reachable": "tempfile._get_default_tempdir(['/nonexistent-a', cwd]) returned the cwd (in-process, no host change)",
@@ -184,7 +193,7 @@
    "arm": "rel-present",
    "rc": 1,
    "cause": "relativity of TMPDIR",
-   "mechanism": "selftest scratch = mkdtemp(dir='tmp-rel') = tmp-rel/tameshi-r17-...; run_child() launches children with cwd=scratch (registry-check.py:949-959), so the child re-resolves 'tmp-rel' under tmp-rel/tameshi-r17-.../ -> absent -> could-not-evaluate exit 2; six rev-* cases fail",
+   "mechanism": "selftest scratch = mkdtemp(dir='tmp-rel') = tmp-rel/tameshi-r17-... (registry-check.py:929-932); run_child() launches children with cwd=scratch (registry-check.py:945-954, cwd= at 950), so the child re-resolves 'tmp-rel' under tmp-rel/tameshi-r17-.../ -> absent -> could-not-evaluate exit 2; six rev-* cases fail",
    "failing_cases": [
     "gitdir-scrub-rev",
     "rev-clone-detached",
@@ -200,7 +209,7 @@
    "arm": "rel-present AND abs-same-dir",
    "rc": 1,
    "cause": "scratch root inside the lane tree, not relativity",
-   "mechanism": "hermetic-no-lane-path (context-capture.py:1780-1786) trips because DEFAULT_LANE_ROOT (line 138) appears in subprocess output; a relative TMPDIR resolves into the lane, so the arm produces the same condition",
+   "mechanism": "hermetic-no-lane-path (context-capture.py:1779-1782) trips because DEFAULT_LANE_ROOT (line 138) appears in subprocess output; a relative TMPDIR resolves into the lane, so the arm produces the same condition",
    "control": "TMPDIR=<abs dir outside the lane> -> 49/49 PASS"
   }
  ],
@@ -225,6 +234,24 @@
    "evidence": "receipt 01; TEMP and TMP are unset on this host, so the arm is sound here"
   }
  ],
+ "proposed_refusal_demonstration": {
+  "patch": "in strict_scratch_root(): if not _os.path.isabs(t): raise ScratchRootUnusable('... TMPDIR is not a usable directory: %r (could-not-evaluate)' % t)",
+  "measured_in_clone": {
+   "TMPDIR=tmp-rel": 2,
+   "TMPDIR=.": 2,
+   "TMPDIR=<absolute usable>": 0,
+   "TMPDIR=''": 0
+  },
+  "restored": "sha256 matched before-hash; git status for the file empty",
+  "counter_impact": "none \u2014 no frozen C2 arm sets a relative TMPDIR; the change is therefore unmeasured and must be a routed defect, not a round-55 edit",
+  "receipt": "12-proposed-refusal-demonstration.txt"
+ },
+ "census": {
+  "command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+  "exit": 0,
+  "rows": 140,
+  "last_row": "S280"
+ },
  "receipts": [
   "01-resolver-mechanism.txt",
   "02-empty-arm-seven-selftests.txt",
@@ -236,6 +263,7 @@
   "08-arm-matrix-relative-absolute.txt",
   "09-edge-arms.txt",
   "10-registry-check-selftest-nondeterminism.txt",
-  "11-context-capture-location-cause.txt"
+  "11-context-capture-location-cause.txt",
+  "12-proposed-refusal-demonstration.txt"
  ]
 }

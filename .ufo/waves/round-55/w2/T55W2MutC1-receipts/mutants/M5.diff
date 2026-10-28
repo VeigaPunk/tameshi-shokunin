@@ -1,0 +1,15 @@
+@@ -132,10 +132,10 @@
+     counts = {}
+     for wave in ("w1", "w2"):
+         total = files = 0
+-        r = git(lane, "ls-tree", "-r", "--name-only", rev,
+-                "--", ".ufo/waves/round-54/%s" % wave)
+-        names = [n for n in r.stdout.split()
+-                 if re.search(r"/T54W\d+[A-Za-z]*Read\d+\.json$", n)]
++        root = Path(lane) / ".ufo" / "waves" / "round-54" / wave
++        names = [str(p.relative_to(lane)) for p in sorted(root.rglob("*.json"))
++                 if re.search(r"/T54W\d+[A-Za-z]*Read\d+\.json$",
++                              "/" + str(p.relative_to(lane)))]
+         for rel in sorted(names):
+             raw = text(lane, rev, rel)
+             if raw is None:

@@ -1,0 +1,88 @@
+{
+  "seat": "T55W1Simplifier",
+  "item": "minimal two-tool grammar fix vs one shared tools/scratch_root.py; C2 counter dead-arm audit",
+  "decision": {
+    "option": "minimal-per-tool",
+    "shared_module_warranted": false,
+    "claim_delivered_by": "handler arm per tool (prefix/stream/exit), not by the helper",
+    "why_not_module": [
+      "frozen no-harm tools-scope monitor allow-lists 8 M: paths; A:tools/scratch_root.py is RED and no-harm.sh is in contract.frozen_paths",
+      "env-diff, one of the seven, surfaces a tool as one git blob into bwrap: a converted python tool classifies unavailable with ModuleNotFoundError",
+      "python3 -I drops the script directory from sys.path (rc=1 ModuleNotFoundError); the lane documents -I for three tools",
+      "subset copies (round 17 staged 3/33, round 18 4/33) die at import with rc=1 + traceback, reintroducing R53.6's defect class",
+      "6 of 7 converted tools leave tools/__pycache__/scratch_root.cpython-314.pyc on any invocation, even a usage error",
+      "deliverable 3 of this round requires the note to state the class is 'not a shared Python type'"
+    ],
+    "module_net_lines_at_lane_head": -52,
+    "module_fixture_diffstat": "8 files changed, 36 insertions(+), 88 deletions(-)"
+  },
+  "duplication": {
+    "base": {
+      "rev": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+      "helper_lines_total": 88,
+      "helper_distinct_bodies": 2,
+      "helper_variants": {"80194a6d": {"lines": 12, "tools": ["repeat-control", "registry-check", "context-capture"]}, "b161cc82": {"lines": 13, "tools": ["env-diff", "bash-witness-study", "pin-disposition", "evidence-disposition"]}},
+      "raise_tokens": {"raise ScratchRootUnusable(": 4, "raise RuntimeError(": 3},
+      "class_blocks": {"copies": 4, "lines": 8, "variants": 1, "absent": ["repeat-control", "registry-check", "context-capture"]},
+      "seven_files_lines": 11955
+    },
+    "lane_head_c0": {
+      "rev": "133b2ce6d4d86d783db38607343c3654350194b8",
+      "helper_lines_total": 88,
+      "helper_distinct_bodies": 2,
+      "raise_tokens": {"raise ScratchRootUnusable(": 7},
+      "class_blocks": {"copies": 7, "lines": 14, "variants": 3, "absent": []},
+      "seven_files_lines": 11996
+    },
+    "trend": "class token converged 2->1 (good); class block 4 copies/1 variant -> 7 copies/3 variants (+6 code lines) — the minimal fix trades divergence for copies, deliberately"
+  },
+  "minimal_patch_demonstration": {
+    "fixture_rev": "1cebefd245c11ac56896d637aa8dd3d87ab3f49b",
+    "files": ["tools/repeat-control.py", "tools/context-capture.py"],
+    "diffstat": "2 files changed, 20 insertions(+), 2 deletions(-)",
+    "real_arms": {"grammar": "8/9", "lazy": "5/5", "failing_mode": "registry-check --rev (stdout + parenthesis shape; unfixable without a third tool)"},
+    "landed_equivalent": {"rev": "9cf0146", "tools_touched": 3, "note": "C0 also converts registry-check --rev; lane HEAD real grammar 9/9, stderr=1 line per mode"},
+    "open_reading": "repeat-control keeps REPEAT_CONTROL: setup_error on stdout; counter permits it, seat brief says stdout carries no setup error — the round report must state which is meant"
+  },
+  "c2_counter_audit": {
+    "counters_audited": {
+      "pre_amendment_8": {"sha256": "36ca47d36c4befc1148a911600c1a5c79efae5e4811f27fa2f9698c17b1ae786", "rev": "9cf0146"},
+      "amendment_8": {"sha256": "0458f632087f665fbafc07efc6920d32febf7551d9fc5964d0c87fa0e139476b", "rev": "133b2ce"}
+    },
+    "denominators_current": {"table": 14, "allocating": 9, "lazy": 5, "cheap": 13, "docs": 7, "note": 9, "skill": 1},
+    "dead_arms": [],
+    "aggregate_unreachable_pre_amd8": true,
+    "aggregate_unreachable_evidence": "S0 all-perfect with conforming docs -> total=1 PASS=false bad={} (amd8 -> total=0 PASS=true)",
+    "findings": [
+      {"n": 1, "kind": "accounting", "what": "bad['strace:…'] is set on a missing trace log but no total term includes the strace: class; total prints 0 while PASS=false (S11)"},
+      {"n": 2, "kind": "leniency", "what": "grammar arm is 'any stderr line matches' + two token bans, not exactly-one-line; duplicate or extra stderr lines are conformant (S5, S6)"},
+      {"n": 3, "kind": "unsatisfiable-for-a-conforming-tool", "what": "grammar's '<value>' assumes %r single quotes; a TMPDIR containing ' prints double-quoted and no longer matches — real run of pin-disposition, rc=2, one correct line, GRAMMAR false"},
+      {"n": 4, "kind": "leniency", "what": "note arm counts substring presence over whitespace-collapsed text; denominator is now 9 (registry-check --rev included), one more than deliverable 3's 'eight allocating modes'"}
+    ],
+    "matrix": {
+      "S0": {"perturbation": "all perfect", "pre_amd8": "total=1 PASS=false", "amd8": "total=0 PASS=true", "live": true},
+      "S1": {"perturbation": "grammar line, exit 3", "amd8": "grammar 8/9", "live": true},
+      "S2": {"perturbation": "grammar line on stdout", "amd8": "grammar 8/9", "live": true},
+      "S3": {"perturbation": "grammar + Traceback", "amd8": "grammar 8/9", "live": true},
+      "S4": {"perturbation": "grammar + RuntimeError", "amd8": "grammar 8/9", "live": true},
+      "S5": {"perturbation": "grammar line twice", "amd8": "grammar 9/9 PASS", "live": false, "note": "leniency finding 2"},
+      "S6": {"perturbation": "grammar + stray second stderr line", "amd8": "grammar 9/9 PASS", "live": false, "note": "leniency finding 2"},
+      "S7": {"perturbation": "lazy mode allocates", "amd8": "lazy 4/5", "live": true},
+      "S8": {"perturbation": "'' treated as unusable", "amd8": "empty 12/13", "live": true},
+      "S9": {"perturbation": "usable-arm rc=1", "amd8": "usable 12/13", "live": true},
+      "S10": {"perturbation": "/tmp mkdir in census", "amd8": "tmp_mkdirs=8", "live": true},
+      "S11": {"perturbation": "strace log missing", "amd8": "total=0 PASS=false", "live": true, "note": "accounting finding 1"},
+      "B-docs": {"perturbation": "one registry cell loses the marker", "amd8": "docs 6/7", "live": true},
+      "B-note": {"perturbation": "one mode name dropped", "amd8": "note 8/9", "live": true},
+      "B-skill": {"perturbation": "SKILL.md loses the marker", "amd8": "skill 0/1", "live": true}
+    }
+  },
+  "receipts": [
+    "dup-ledger.py", "dup-ledger.out", "arm-matrix.py", "arm-matrix.out", "arm-matrix.amd8.out",
+    "doc-arms.txt", "real-arms.txt", "grammar-lane-head.txt", "apostrophe-real.txt",
+    "module-costs.txt", "pycache.txt", "make-module-fixture.py", "make-conforming-fixture.py",
+    "c2-measure.frozen.py", "c2-measure.amd8.py"
+  ],
+  "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0},
+  "tools_installed": []
+}

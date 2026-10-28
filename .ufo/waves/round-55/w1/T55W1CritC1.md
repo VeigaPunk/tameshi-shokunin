@@ -8,19 +8,20 @@ counter under attack: `.ufo/evidence/round-55/c1/measure.py`, scored in two byte
 | byte set | sha256 | where |
 |---|---|---|
 | frozen | `77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783` | freeze commit `631cd6455e58dce969310b4c0466c3383d9f5108` (also the entry in `freeze.json`) |
-| wave-1 amendment | `711507e7b5bdd060a67b42162d043aabaef339408b3291a3c6ca39599d566dcd` | working-tree `c1/measure.py`, mtime `2026-10-28 14:00:09 -0300` |
+| amendment 5 | `711507e7b5bdd060a67b42162d043aabaef339408b3291a3c6ca39599d566dcd` | working-tree `c1/measure.py` at 14:00:09, scored while amendments 5-6 were being written |
+| current (amendments 1-7) | `5e8f50d1815309e8c3a1c914191b6032b7dceff27ba42d87a676b3f78e30ac5e` | working-tree `c1/measure.py` at 14:12:07; `freeze.json` and `contract.json` both pin it (8 amendments) |
 
 Receipt for the first row: `T55W1CritC1-receipts/counter-bytes.txt`.
 
 ## Verdict
 
 **The C1 design is falsified.** A tree that performs **no correction at all** reaches
-`total=0 C1_R55_PASS=true`, exit 0, under the frozen bytes **and** under the wave-1
-amendment. My fixture's corrections section literally says it makes no correction and that
-its strings were copied from the counter's own `--explain` output; the counter scores it as
-ten calibrations. The two files that carry the stale text in `corpus/` are deleted, and the
-stale text in `SCORECARD.md` is placed inside the exempt block by inserting one heading
-line above it — not one byte of it is edited.
+`total=0 C1_R55_PASS=true`, exit 0, under the frozen bytes, under amendment 5, and under the
+current working bytes (amendments 1-7). My fixture's corrections section literally says it
+makes no correction and that its strings were copied from the counter's own `--explain`
+output; the counter scores it as ten calibrations. The two files that carry the stale text in
+`corpus/` are deleted, and the stale text in `SCORECARD.md` is placed inside the exempt block
+by inserting one heading line above it — not one byte of it is edited.
 
 ```
 frozen  E1B-SELFDECLARED  total=0 C1_R55_PASS=true   T55W1CritC1-receipts/frozen-e1bselfdeclared.stdout
@@ -40,7 +41,7 @@ properties the tree has:
 Falsification is therefore not a matter of guessing the authors: the counter cannot
 distinguish my non-repair from a repair, so `C1_R55_PASS=true` does not evidence calibration.
 
-## The cheapest tree (E1B, 5 operations, no correction)
+## The cheapest tree (E1B, four steps, no correction)
 
 Built in a `git clone --shared` of the lane at BASE, every git call `-C "$D"`, toplevel
 asserted equal to `$D` before the commit (`/fast/scratch/hyaku/tameshi-r55/T55W1CritC1/clones/g-declare`,
@@ -71,14 +72,64 @@ The tree file itself: `T55W1CritC1-receipts/e1b-tree.txt` (corrections block, th
 deletion, and `LOG.md:2500` still calling `7883e0e5` "the freeze pointer the deciding run
 uses" while the receipt says `077d431e`).
 
-### The no-harm gate does not see it
+### The no-harm gate sees the edit, not the falsehood
 
-`no-harm.sh` on the same rev: 14 ok, 1 RED (`T55W1CritC1-receipts/no-harm-on-e1b.stdout`).
-The RED is `coldread-floor score=6 credited=58` — that monitor is calibrated to the round's
-deciding revision and is RED on any base+1 fixture that lacks the L1's re-key work. No
-monitor's predicate reads `corpus/QUALITY.md` or `corpus/lessons/round-54.md`; `tools-scope`,
-`ledger-not-shrunk`, `sources-not-shrunk` and the rest are ok. Deleting two record files is
-unpoliced outside the C1 counter.
+`no-harm.sh` on the same rev: 14 ok, 1 RED (`T55W1CritC1-receipts/no-harm-on-e1b.stdout`);
+the RED is `coldread-floor score=6 credited=58` against a required 8/64. I isolated the
+cause rather than assuming it (`T55W1CritC1-receipts/coldread-isolation.stdout`):
+
+| tree | change | coldread |
+|---|---|---|
+| BASE `0a2010ac` | none | score=8 credited=64 ok |
+| `m-only-scorcard` | the corrections heading + token block in `SCORECARD.md` only | score=8 credited=64 ok |
+| `m-only-delete` | `git rm` the two `corpus/` record files only | score=6 credited=58 RED |
+| `m-only-hyphen` | the typography edits only (`positive-control`, `84  staged`) | score=6 credited=58 RED |
+
+So the gate is byte-sensitive to exactly the two record files and blind to the corrections
+section: six cold-read credits are bound to those files' bytes, and *any* change to them —
+correction, cosmetic change, or deletion — loses the same six. Two consequences:
+
+- My tree is not gate-free, but neither is the honest repair: clearing the R54.1/R54.9 stale
+  patterns requires editing those two files, so both trees owe the same six-section re-key.
+  The re-key certifies that a reader re-read a section at the content commit; it does not
+  check that the record is now true. The gate therefore adds an identical cost to a
+  non-repair and to a repair, and cannot tell them apart.
+- `tools-scope`, `ledger-not-shrunk`, `sources-not-shrunk`, the coverage monitors and
+  `registry-row-names-unchanged` are ok on the deleting tree: the only thing that noticed the
+  1721-line record deletion was an unrelated cold-read byte check.
+
+### Against the newest bytes (5e8f50d1, amendments 1-7)
+
+The L1 amended the c1 counter twice after the freeze (amendments 5 and 7; 6 is c2-only). I
+re-scored the exploit against the current bytes rather than leaving the finding pinned to a
+superseded revision (`T55W1CritC1-receipts/latest-delete.stdout`, `latest-cosmetic.stdout`,
+`latest-provenance.stdout`):
+
+```
+n-latest-delete    rev=a1bb5e04d62a  C1_R55: ... stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+n-latest-cosmetic  rev=4a54ab063b35  C1_R55: ... stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+n-latest-prov      rev=d5f6ad6c49bd  C1_R55: ... total=0 C1_R55_PASS=true  (R54.4 derived=c2 digest=deadbeef)
+```
+
+Two amendments landed in between and they are the L1's, not mine:
+
+- **Amendment 7** closed two of my preliminary observations: `staged_count()` now reads the
+  committed `.ufo/evidence/round-55/c1/staged-at-freeze.txt` instead of
+  `/home/vgpnk/Projects/shokuknow` (the E8 non-hermetic path), and R54.8's seat arm now
+  requires `SUPERSEDED (round 55` rather than any occurrence of "superseded" (the E10 seat
+  token). To reach `total=0` on the current bytes my tree therefore adds four lines of
+  boilerplate — the `output=81` receipt and one `SUPERSEDED (round 55 …` line — and still
+  corrects nothing: the ten defects' false assertions are deleted or hidden exactly as before.
+- The structural holes are untouched: `corrections()`/`scan()` are byte-identical to the
+  frozen version, so absence-as-compliance, the positional exemption and token-presence all
+  survive; R54.2/R54.3/R54.9 still pass their own single-file tuples (R54.2's
+  `("SCORECARD.md",)` at latest line 212), so `LOG.md`'s `7883e0e5` still scores clean; R54.10
+  still hard-codes `r53-counter-at-88afa941` (latest line 273); only `Setup` is caught (line
+  323); the verdict still does not assert `len(rows)`.
+
+Credit where due: the amendment cycle is real — it fixed the wrapped-line blindness, the
+record-set omission, the live staged path and the pre-existing token, each found by a wave-1
+seat. It did not touch the three properties this seat falsifies.
 
 ## Five further counterexamples (all measured)
 
@@ -86,9 +137,9 @@ unpoliced outside the C1 counter.
 
 Same inserted heading and token block; `positive control` → `positive-control` on **every**
 line of `corpus/QUALITY.md` and `corpus/lessons/round-54.md`; `84 staged` → `84  staged`.
-Every false claim stays readable. `total=0` on **both** byte sets
-(`frozen-e2bcosmetic.stdout`, `amended-e2bcosmetic.stdout`; revs `88ed0c2334a6`,
-`e56a6eb75515`).
+Every false claim stays readable. `total=0` on the frozen bytes, on amendment 5, and on the
+current bytes (`frozen-e2bcosmetic.stdout`, `amended-e2bcosmetic.stdout`,
+`latest-cosmetic.stdout`; revs `88ed0c2334a6`, `e56a6eb75515`, `4a54ab063b35`).
 
 This also defeats **amendment 5**: the amendment's `scan_span` catches the one line whose
 words are split across a wrap (`corpus/lessons/round-54.md@4260 ... positive control ...
@@ -121,16 +172,18 @@ derives `w1=30` and accepts `w1=30 w2=25 sections=12` — `R54.5 ok`. Receipt:
 `frozen-e10-steer.stdout`, `amended-e10-steer.stdout`. The derivation reads a set the author
 can extend; it is not anchored to the round-54 registry.
 
-### E8 — the verdict depends on a live external project
+### E8 — the verdict depended on a live external project (closed by amendment 7)
 
-Scoring the passing tree with `--staged-root <empty dir>` gives
-`premise=9/10 ... total=1`. The default is `STAGED_DEFAULT =
-"/home/vgpnk/Projects/shokuknow"` (`measure.py:39`), globbed at measure time
-(`measure.py:142`). The same revision therefore scores PASS or FAIL depending on a mutable
-working copy outside the lane, outside the freeze, and outside the counter's arguments
-(`frozen-e8-stagedroot.stdout`, `amended-e8-stagedroot.stdout`). A premise that can flip on
-host state is a denominator defect: R54.9's target includes `staged=81`, but 81 is not a
-property of the revision.
+Scoring the passing tree with `--staged-root <empty dir>` gave
+`premise=9/10 ... total=1`. The default was `STAGED_DEFAULT =
+"/home/vgpnk/Projects/shokuknow"` (`measure.py:39` in the frozen/amendment-5 bytes), globbed
+at measure time (`measure.py:142`). The same revision therefore scored PASS or FAIL depending
+on a mutable working copy outside the lane, outside the freeze, and outside the counter's
+arguments (`frozen-e8-stagedroot.stdout`, `amended-e8-stagedroot.stdout`). **Amendment 7
+closed this**: `staged_count()` now reads the committed
+`.ufo/evidence/round-55/c1/staged-at-freeze.txt`. The finding is kept because it is what the
+frozen and amendment-5 bytes did, and because the shape (a premise read from something other
+than the revision) is what F4 still exhibits.
 
 ### Nine classes still PASS
 
@@ -178,7 +231,7 @@ because the `startswith(HEADING)` test runs before the `## ` break (frozen `meas
   Level-3 headings (`### Round 54 — measured close`) do not end the block, so nested
   subsections are exempt too.
 - **Second `## ` intervenes** → the block is truncated at that heading. Measured
-  (`i-frozen-intervene`, `b2221f28a844`): `corrections()` returns length 0, the tokens after
+  (`i-frozen-intervene`, `eb5a9a1e8c7a`; amended copy `0ead04cd2bfa`): `corrections()` returns length 0, the tokens after
   the break are invisible (`classes_corrected=0/10`) and the stale lines after the break come
   back into scope (`stale=3`) → `total=10`. So an author who writes the round-55 block
   between the corrections heading and its content loses all ten corrections silently. This
@@ -204,13 +257,15 @@ case of a class passing on a dead premise. But there are four quiet behaviours:
 2. **A premise can be satisfied by an edited receipt.** R54.4's premise is `bool(digest)`
    where the digest comes from a mutable manifest (E5B); R54.1's premise is two substrings of
    a mutable receipt.
-3. **A premise can fail on host state.** R54.9 (E8).
-4. **Half of R54.8 was already true at base.** The "seat file marked superseded" arm is
+3. **A premise could fail on host state.** R54.9 (E8); closed by amendment 7's committed
+   staged receipt.
+4. **Half of R54.8 was already true at base.** The "seat file marked superseded" arm was
    `"superseded" in seat.lower()`, and the base seat file already contains the word in an
    unrelated round-50 sentence (`T54W1ExecStraceNoise.md:299`, "the round-50 directive
-   superseded it"). It is satisfied with zero work. (Same class of defect: R54.10's
+   superseded it"). It was satisfied with zero work; **amendment 7 closed it** by requiring
+   `SUPERSEDED (round 55`. (Same class of defect, still open: R54.10's
    `r53-counter-at-88afa941` is a **hard-coded literal** in the counter, not a derivation —
-   `measure.py` R54.10 row — so one of the ten "derived" arms cannot be derived at all.)
+   latest `measure.py:273` — so one of the ten "derived" arms cannot be derived at all.)
 
 ## Impacted axes
 
@@ -222,26 +277,32 @@ case of a class passing on a dead premise. But there are four quiet behaviours:
 - **evidence standard / operability of the round's instrument.** A frozen instrument was
   edited during wave 1 and the manifest was not updated (below); a crash and an honest miss
   are indistinguishable by exit code; the verdict does not assert its own denominator.
-- **no-harm** is unaffected in kind: no monitor covers the record files, so the gate does not
-  compensate for the counter's blindness.
+- **no-harm** constrains the edit, not the content: cold-read credit is byte-bound to the two
+  record files, so every C1 repair — the honest one included — owes the same six-section
+  re-key. No monitor's predicate asks whether a correction was made, so the gate does not
+  compensate for the counter's blindness; it adds the same cost to a non-repair.
 
 ## Freeze-state observation (reported, not fixed)
 
-While this seat ran, the working-tree counter changed under it:
+While this seat ran, the working-tree counter changed twice under it. The state I scored at
+14:00 and the reconciled state at 14:12:
 
 ```
-freeze.json (working) pins c1/measure.py at  77abe1e9…   (3 amendments)
-working c1/measure.py is                      711507e7…   (mtime 14:00:09)
-contract.json (working) records               5 amendments (5 = the c1 change)
+14:00  freeze.json (working) pins c1/measure.py at  77abe1e9…   (3 amendments)
+       working c1/measure.py is                      711507e7…   (mtime 14:00:09)
+       contract.json (working) records               5 amendments
+14:12  freeze.json and contract.json both pin        5e8f50d1…   (8 amendments, 8 = c2 only)
 ```
 
-So at the time of scoring, the frozen counter's bytes and the freeze manifest's digest
-disagreed, and the manifest listed 3 amendments against the contract's 5. `controls.sh`
-extracts the counter from the FREEZE **commit**, so phase A/B would score `77abe1e9` while
-the amendment's intent is `711507e7`. I scored both byte sets and pinned every result to a
-digest (`counter-bytes.txt`); I did not edit any frozen byte, contract, manifest or script.
-Whether the L1 still intends to commit amendment 5 (the file and manifest were mid-edit) is
-the L1's call — but the amendment as written does not close this finding.
+At 14:00 the manifest digest and the counter bytes disagreed and the manifest listed 3
+amendments against the contract's 5; by 14:12 the L1 had reconciled both files and the
+manifest matches the bytes. `controls.sh` extracts the counter from the FREEZE **commit**, so
+a control scored between those states would have run `77abe1e9` while the amendment's intent
+was `711507e7`. I scored all three byte sets and pinned every result to a digest
+(`counter-bytes.txt`, `latest-*.stdout`); I did not edit any frozen byte, contract, manifest
+or script. This is a record of the window, not an accusation — but a seat that verified
+digests during it would have seen `FROZEN_UNCHANGED` false, and the window is why my three
+byte sets exist.
 
 ## Smallest safe correction
 
@@ -278,9 +339,10 @@ updated in the same commit — never edited in place):
 8. **R54.8's seat arm** must match a line that names the correction
    (e.g. `Superseded .*R54\.8`), not any occurrence of "superseded" (base already has one).
 
-With (1)+(2)+(3.1)+(5), all of E1B, E1-delete, E2B, E5B and the nine-class verdict fail. I
-am not asserting a counter can judge whether a correction's prose is *fair* (the contract's
-`cannot_see` concedes that); it can and must refuse to certify a tree that made no correction.
+With (1), (2), the R54.4 half of (3), and (5), all of E1B, E1-delete, E2B, E5B and the
+nine-class verdict fail. I am not asserting a counter can judge whether a correction's prose
+is *fair* (the contract's `cannot_see` concedes that); it can and must refuse to certify a
+tree that made no correction.
 
 ## Sweep that found nothing (shown, so the nulls are visible)
 
@@ -308,9 +370,10 @@ am not asserting a counter can judge whether a correction's prose is *fair* (the
 export HYAKU_SCRATCH=/fast/scratch/hyaku
 S=$HYAKU_SCRATCH/tameshi-r55/T55W1CritC1
 # fixtures (clone --shared at BASE, toplevel asserted, one commit each)
-python3 $S/drive3.py    # E1B, E2B, E4, E5B (both byte sets)
-python3 $S/drive4.py    # E3c intervening heading
+python3 $S/drive3.py    # E1B, E2B, E4, E5B (frozen + amendment-5 bytes)
+python3 $S/drive4.py    # E3c intervening heading + corrections() readout
 python3 $S/drive5.py    # R54.5 steerability; R54.8 base token
+python3 $S/drive6.py    # the same exploit against the current bytes (5e8f50d1)
 # the decisive run, frozen bytes
 python3 $S/code/c1-frozen.py --lane $S/clones/g-declare \
   --rev b9317eff8a18 --work $(mktemp -d) --explain

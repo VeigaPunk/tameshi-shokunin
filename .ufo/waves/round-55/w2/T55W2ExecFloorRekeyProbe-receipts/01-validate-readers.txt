@@ -1,0 +1,28 @@
+COMMAND
+python3 - <<'EOF'
+import importlib.util,hashlib,json,subprocess,os,glob
+root='/home/vgpnk/Projects/shokunin/tameshi-shokunin'
+spec=importlib.util.spec_from_file_location('r18',root+'/.ufo/evidence/round-18/measure.py')
+m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+env={k:v for k,v in os.environ.items() if not k.startswith('GIT_')}
+env.update(GIT_CONFIG_GLOBAL='/dev/null',GIT_CONFIG_NOSYSTEM='1')
+C0='9cf0146b94ddba12d454ebf7288ce6e5c5d535bb'
+skill=subprocess.run(['git','-C',root,'show',C0+':SKILL.md'],capture_output=True,env=env,check=True).stdout
+secs=m.sectionize(skill); hits=[s for s in secs if s['heading']=='## Standing rules']
+for f in sorted(glob.glob(root+'/.ufo/waves/round-55/w2/T55W2Read0*.json')):
+    d=json.load(open(f))
+    print(f.split('/')[-1],
+          'heading=',d.get('heading')=='## Standing rules',
+          'cand=',d.get('cand')==C0,
+          'sha=',d.get('section_sha256')==hits[0]['sha256'],
+          'findings-list=',isinstance(d.get('findings'),list),
+          'n_findings=',len(d.get('findings') or []),
+          'items-shape=',all(sorted(x)==['quote','why'] for x in d.get('findings') or []))
+EOF
+OUTPUT
+T55W2Read01.json heading= True cand= True sha= True findings-list= True n_findings= 2 items-shape= True
+T55W2Read02.json heading= True cand= True sha= True findings-list= True n_findings= 3 items-shape= True
+T55W2Read03.json heading= True cand= True sha= True findings-list= True n_findings= 7 items-shape= True
+VERDICT: three of three readers satisfy the four required fields (heading, cand, section_sha256, findings list);
+every finding item is {quote, why} with string values, and every quote occurs in the section text (whitespace-
+normalised match against SKILL.md:17-44 at C0).

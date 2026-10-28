@@ -1,0 +1,74 @@
+== LOG.md 277-298 numbered ==
+   277	  node v24.21.0).
+   278	  SCORECARD round-3 moves: depth improved (second kill-rate on a second
+   279	  language — same 80 % headline, divergence finding in kill width +
+   280	  survivor composition; counting commands in the move-log row), operability
+   281	  improved (first tool, selftest 24/24, both fleet cases reproduced through
+   282	  it; counting commands in the move-log row).
+   283	  SHONEN.md boxes updated with the audit lanes as named non-author
+   284	  verifiers (`[x]` per PROTOCOL.md mark spec — each box cites its verifier's
+   285	  retained evidence): SKILL craft → TAMESHI-B3 (appendix manifests replayed
+   286	  end-to-end through the tool), end-to-end task → TAMESHI-B1 (independent
+   287	  driver replay of the bash case's control + kill + both survivors),
+   288	  no-oral-context → TAMESHI-B2 (the executor's D5 kill re-run through the
+   289	  tool, same verdict + same mutant sha), PROVINCE accuracy → TAMESHI-B3
+   290	  (`MUTATE_RESTORE: OK` ×2, both sibling trees porcelain-clean — read-only
+   291	  discipline held by every lane that touched a substrate).
+   292	  Carried to round 4 (recommendations, not absorbed): kumitate integration
+   293	  groups + round-gate `INTERNAL_ERROR` arm, kagi live verdicts 5/6 + F-2's
+   294	  two-lines-per-path fix — still sibling-owned; bash U2/U3 (verbs-path
+   295	  mutants are host-gated) and U4 (fallback `checklist-run.sh` unmeasured);
+   296	  both cases' U1 (coordinated multi-edit rewrites) and U5 (cross-host
+   297	  stability); the 50 % crossover remains unprobed — both measurements sit
+   298	  at 80 %, so the band interiors are still unmeasured; the executor's U3
+
+== mutate-and-run.sh 78-120 ==
+    78	#   MUTATE: DONE|DEGRADED (target=… defects=… killed=… survived=… inconclusive=… kill-rate=…%)
+    79	#   MUTATE: SETUP (<reason>)   — refused before/instead of a sweep
+    80	#
+    81	# Exit map (run): 0 done · 1 done-with-inconclusive (DEGRADED) · 2 setup/refusal ·
+    82	# 64 usage error.
+    83	#
+    84	# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+    85	# mutation cases, replayed as legs. Each leg carries its recorded revision pin
+    86	# and its recorded verdict table; the recorded kill-rate is the leg's
+    87	# expectation:
+    88	#   js-kimi-census        kumitate-shokunin/scripts/kimi-census.mjs   8/10 (80 %)
+    89	#   bash-surface-census   kagi-shokunin/corpus/surface-census.sh      8/10 (80 %)
+    90	#   bash-tsukuroi-census  tsukuroi-shokunin/tools/tsukuroi-census.sh  6/10 (60 %)
+    91	#   bash-mado-verify      mado-shokunin/tools/mado-verify.sh          4/10 (40 %)
+    92	#   bash-checklist-run    kagi-shokunin/corpus/checklist-run.sh       7/15 (47 %)
+    93	#   js-claims-check       kumitate-shokunin/scripts/claims-check.mjs  7/10 (70 %)
+    94	#   js-round-gate         kumitate-shokunin/scripts/round-gate.mjs    5/10 (50 %)
+    95	#   js-sources-check      kumitate-shokunin/scripts/sources-check.mjs 5/10 (50 %)
+    96	#   js-cite-check         kumitate-shokunin/scripts/cite-check.mjs    5/10 (50 %)
+    97	#   bash-drift-pins       kagi-shokunin/corpus/drift-pins.sh          2/10 (20 %)
+    98	# Sources: corpus/knowledge/mutation-case-kimi-census.md §1,
+    99	# mutation-case-kagi-census.md §1, mutation-case-tsukuroi-census.md §1,
+   100	# mutation-case-mado-verify.md §1, mutation-case-kagi-checklist.md §2,
+   101	# mutation-case-kumitate-claims.md §1, mutation-case-kumitate-round-gate.md §1,
+   102	# .ufo/evidence/round-18/sources-check/sources-check.defects.spec (leg 8),
+   103	# .ufo/evidence/round-26/cite-check/cite-check.defects.spec (leg 9),
+   104	# .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (leg 10).
+   105	# Leg 8's spec is the round-18 pre-registration committed in 93d22aa before
+   106	# any mutant ran; its table is the measured 2026-10-20 sweep (19:41Z,
+   107	# .ufo/evidence/round-18/sources-check/sweep/sweep.txt; 10/10 predictions held).
+   108	# Leg 9's spec is the round-26 pre-registration committed in 622d31d before
+   109	# any mutant ran; its table is the measured 2026-10-22 sweep (10:02Z,
+   110	# .ufo/evidence/round-26/cite-check/sweep/sweep.txt; 10/10 verdict predictions held).
+   111	# Leg 10's spec is the round-51 pre-registration committed in fe335384 before
+   112	# any mutant ran; its table is the measured 2026-10-26 sweep (23:53:02Z,
+   113	# .ufo/evidence/round-51/c2/sweep/sweep.txt; 7/10 verdict predictions held).
+   114	# All ten defect specs are embedded below (legs 1–4 cut from those notes'
+   115	# §7/§8/§9 reproduce manifests, all 40 @old strings re-verified count==1
+   116	# against the pinned bytes 2026-10-14; legs 5–6 are the recorded T8-1/T8-2
+   117	# spec files, their 25 @old strings re-verified count==1 against the pinned
+   118	# blobs at r10-2; leg 7's spec is the pre-registered round-16 spec verbatim
+   119	# and its table is the measured 2026-10-20 sweep; leg 8 likewise: the round-18
+   120	# pre-registered spec verbatim and its measured sweep table; leg 10 likewise: the
+
+== legs in --regression (count of 'leg'/'L1..' rows) ==
+13
+== occurrences of 'six' in mutate-and-run.sh ==
+14:# the fifth and sixth legs; r16 (TAMESHI-R16) adds the seventh measured gate,
+84:# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's

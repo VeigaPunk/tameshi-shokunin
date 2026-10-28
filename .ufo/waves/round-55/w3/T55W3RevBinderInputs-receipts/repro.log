@@ -1,0 +1,159 @@
+### 0. clone (--shared) at HEAD so the post-freeze lost-headings file exists in the worktree
+clone=/fast/scratch/hyaku/tameshi-r55/T55W3RevBinderInputs/repro/clone head=4f7a7040a57e7aed17db941be9c27b300aafb783
+radix=52075b7d5351
+
+### 1. independent derivation of the lost set at C0 (derive.py)
+sections=64 tree=17020 entries=591
+LOST start=17 heading=## Standing rules drift=0 round_cause=-
+LOST start=146 heading=## Mutation-sweep recipe — numbered steps; bounded cold-read evidence drift=6 round_cause=corpus/QUALITY.md,corpus/SOURCES.md,tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST start=936 heading=## The leg ledger — replay, receipt, and how it is read (round 7, measured) drift=1 round_cause=corpus/SOURCES.md
+LOST start=1087 heading=### Triggers T1–T3 and the re-pin rule drift=10 round_cause=corpus/QUALITY.md,corpus/SOURCES.md,tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST start=1269 heading=### The service's limits — what tameshi refuses to mutation-test drift=4 round_cause=tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST start=1299 heading=## The operator's runbook and the six-leg regression (round 10, measured) drift=1 round_cause=tools/registry.json
+LOST start=1508 heading=## Repeated controls and gate registry — round 12 drift=2 round_cause=corpus/SOURCES.md,tools/repeat-control.py
+LOST start=1528 heading=### Gate/probe registry drift=2 round_cause=tools/repeat-control.py
+LOST start=1546 heading=## Pin disposition and provenance correction — round 13 drift=1 round_cause=corpus/SOURCES.md
+LOST start=1577 heading=### Round-13 gate/probe registry drift=3 round_cause=corpus/SOURCES.md
+LOST start=1593 heading=## Effective expectation reconciliation — round 14 drift=2 round_cause=corpus/SOURCES.md,tools/context-capture.py
+LOST start=1639 heading=## Context gate classification and explicit exit classes — round 15 drift=8 round_cause=corpus/SOURCES.md,tools/context-capture.py,tools/registry.json
+LOST start=1706 heading=### Round-15 gate/probe registry drift=1 round_cause=tools/context-capture.py
+LOST start=1844 heading=## Live-tree re-pin and entry-command monitor — round 17 drift=6 round_cause=corpus/QUALITY.md,corpus/SOURCES.md,tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST start=1876 heading=### Round-17 gate/probe registry — re-pin and monitor drift=5 round_cause=corpus/SOURCES.md,tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST start=1955 heading=### Round-18 gate/probe registry — routed-defect closure drift=4 round_cause=corpus/QUALITY.md,corpus/SOURCES.md,tools/registry-check.py,tools/registry.json
+LOST start=1994 heading=### Round-21 gate/probe registry — finite environment differential drift=6 round_cause=corpus/QUALITY.md,corpus/SOURCES.md,tools/registry-check.py,tools/registry.json
+LOST start=2162 heading=### Round-26 gate/probe registry — report interop drift=4 round_cause=tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+CREDITED=46 LOST=18
+DECLARED=18 SET_EQUAL=True
+
+### 2. the committed round-55 resolutions.json cannot feed the binder's RES map
+54/integrate/resolutions.json                        items=12 keys=['findings', 'heading', 'kind', 'n', 'reader', 'routed']
+55/integrate/resolutions.json                        items=21 keys=['decision', 'evidence', 'finding', 'from', 'id']
+round-54 items carry heading+n (the per-heading findings budget); round-55 items carry neither -> binder.py:54 KeyError: n
+--- as committed, against the round-55 tree:
+  File "/fast/scratch/hyaku/tameshi-r55/T55W3RevBinderInputs/repro/bind/binder.py", line 54, in <module>
+    RES[item['heading']] = int(item['n'])
+                               ~~~~^^^^^
+KeyError: 'n'
+
+### 3. scratch-only adaptation (tolerate the round-55 schema) + bind at PIN=9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+52:if RES_PATH.exists():
+53-    for item in json.loads(RES_PATH.read_text('utf-8')):
+54-        if 'heading' in item and 'n' in item:
+--- synthetic reader reports for the three attacked headings (scratch clone only):
+wrote 3 synthetic readers under /fast/scratch/hyaku/tameshi-r55/T55W3RevBinderInputs/repro/clone/.ufo/waves/round-55/w3
+rc=1
+REKEY ## The leg ledger — replay, receipt, and how it is read (rou start=936 inputs=30 dropped=0 reader=T55W3BinderProbe01
+REKEY ### Gate/probe registry start=1528 inputs=124 dropped=0 reader=T55W3BinderProbe02
+REKEY ### Round-21 gate/probe registry — finite environment differ start=1994 inputs=75 dropped=0 reader=T55W3BinderProbe03
+REFRESH rekeyed=3 skipped=15 headings=18
+
+### 4. the three input sets as they would be written (entry.inputs, PIN=9cf0146b94ddba12d454ebf7288ce6e5c5d535bb)
+## The leg ledger — replay, receipt, and how it is read (round inputs=  30 class=record verdict=gap-minor cmd=31
+    round cause among them: ['corpus/SOURCES.md']
+    seats: ['T55W3BinderProbe01', 'L1 TameshiR55a2 re-key (round 54)']
+### Gate/probe registry                                        inputs= 124 class=record verdict=gap-minor cmd=125
+    round cause among them: ['tools/repeat-control.py']
+    seats: ['T55W3BinderProbe02', 'L1 TameshiR55a2 re-key (round 54)']
+### Round-21 gate/probe registry — finite environment differen inputs=  75 class=instruction verdict=gap-minor cmd=76
+    round cause among them: ['corpus/QUALITY.md', 'corpus/SOURCES.md', 'tools/registry-check.py', 'tools/registry.json']
+    seats: ['T55W3BinderProbe03', 'L1 TameshiR55a2 re-key (round 54)']
+wrote /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w3/T55W3RevBinderInputs-receipts/04-three-input-sets.json
+
+### 5. pinned vs cited (does the written set match the section's claims?)
+== ## The leg ledger — replay, receipt, and how it is read (round 7, measured) (lines 936-949, 30 pins written)
+   CITED PINNED   tools/mutate-and-run.sh
+   CITED PINNED   corpus/knowledge/fleet-kill-rate-ledger.md
+   .     PINNED   corpus/README.md
+   .     PINNED   corpus/SOURCES.md
+   cited-and-pinned=2  pinned-total=30  uncited-pins=28
+== ### Gate/probe registry (lines 1528-1545, 124 pins written)
+   CITED PINNED   tools/repeat-control.py
+   CITED PINNED   tools/bash-witness-study.py
+   CITED PINNED   .ufo/evidence/round-12/ControlGate/expected.json
+   CITED PINNED   .ufo/evidence/round-12/ControlGate/mismatch/expected.json
+   CITED PINNED   .ufo/evidence/round-12/BashWitness/declaration.json
+   CITED PINNED   .ufo/evidence/round-12/BashWitness/declared.tsv
+   CITED PINNED   .ufo/evidence/round-12/BashWitness/manifest.json
+   CITED PINNED   SHONEN.md
+   CITED PINNED   corpus/lessons/round-1-verifier-spotcheck.md
+   cited-and-pinned=9  pinned-total=124  uncited-pins=115
+== ### Round-21 gate/probe registry — finite environment differential (lines 1994-2133, 75 pins written)
+   CITED PINNED   corpus/QUALITY.md
+   CITED PINNED   corpus/lessons/round-21.md
+   CITED PINNED   corpus/knowledge/hermetic-env-differential.md
+   CITED PINNED   tools/env-diff.py
+   CITED PINNED   tools/wave-route-mix.py
+   CITED PINNED   tools/round21-measure.py
+   CITED PINNED   tools/wave-accounting.py
+   CITED PINNED   .ufo/evidence/round-21/c2-contract.json
+   CITED PINNED   .ufo/evidence/round-21/f5/receipt.json
+   .     PINNED   tools/registry-check.py
+   .     PINNED   tools/registry.json
+   .     PINNED   corpus/SOURCES.md
+   cited-and-pinned=8  pinned-total=75  uncited-pins=67
+
+### 6. what the round plans to edit AFTER the readers read C0 (its own resolutions)
+tools/repeat-control.py --selftest         rc=2  repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+tools/bash-witness-study.py selftest       rc=2  WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+tools/pin-disposition.py --selftest        rc=2  pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+tools/evidence-disposition.py --selftest   rc=2  evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+tools/context-capture.py --selftest        rc=2  context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+tools/registry-check.py --selftest         rc=2  registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+tools/env-diff.py --selftest               rc=2  ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/x' (could-not-evaluate)
+--- F1 (write failure must still be exit 2):
+context-capture --selftest 2>/dev/full rc=1
+--- F2 (--json must still emit the machine report):
+registry-check --rev --json stdout bytes=0
+--- the seven registry cells vs the tokens the tools actually print (C0):
+  bash-witness-selftest          cell=bash-witness-study.py:   actual=WITNESS_STUDY:   FALSE
+  context-capture-selftest       cell=context-capture.py:      actual=context-capture.py: OK
+  env-diff-selftest              cell=env-diff.py:             actual=ENVDIFF_SETUP:   FALSE
+  evidence-disposition-selftest  cell=evidence-disposition.py: actual=evidence-disposition.py: OK
+  pin-disposition-selftest       cell=pin-disposition.py:      actual=pin-disposition.py: OK
+  registry-check-selftest        cell=registry-check.py:       actual=registry-check:  FALSE
+  repeat-control-selftest        cell=repeat-control.py:       actual=repeat-control:  FALSE
+
+### 7. C1 exposure: re-keyed sections whose written set holds a file the round will edit
+     42 pins  ## Context gate classification and explicit exit classes — ['tools/registry.json', 'tools/context-capture.py']
+     42 pins  ## Effective expectation reconciliation — round 14         ['tools/context-capture.py']
+     78 pins  ## Live-tree re-pin and entry-command monitor — round 17   ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+   7702 pins  ## Mutation-sweep recipe — numbered steps; bounded cold-re ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+   2497 pins  ## Standing rules                                          ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+     11 pins  ## The operator's runbook and the six-leg regression (roun ['tools/registry.json']
+     38 pins  ### Round-15 gate/probe registry                           ['tools/context-capture.py']
+     51 pins  ### Round-17 gate/probe registry — re-pin and monitor      ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+     71 pins  ### Round-18 gate/probe registry — routed-defect closure   ['tools/registry.json', 'tools/registry-check.py']
+     75 pins  ### Round-21 gate/probe registry — finite environment diff ['tools/registry.json', 'tools/registry-check.py']
+     74 pins  ### Round-26 gate/probe registry — report interop          ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+     39 pins  ### The service's limits — what tameshi refuses to mutatio ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+     89 pins  ### Triggers T1–T3 and the re-pin rule                     ['tools/registry.json', 'tools/context-capture.py', 'tools/registry-check.py']
+pins written over the 18 headings: 11188
+EXPOSED=13/18 sections re-drift if the round lands its own C1 tool/registry edits with PIN=9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+
+### 7b. counterfactual: what a bigger DROP list would credit WITHOUT a read
+DROP+corpus/SOURCES.md                                                    frees  3 of 17 declared-lost sections with no read: ## Pin disposition and p, ## The leg ledger, ### Round-13 gate/probe 
+DROP+corpus/QUALITY.md                                                    frees  0 of 17 declared-lost sections with no read: -
+DROP+tools/registry.json                                                  frees  1 of 17 declared-lost sections with no read: ## The operator's runboo
+DROP+tools/context-capture.py,tools/registry-check.py                     frees  1 of 17 declared-lost sections with no read: ### Round-15 gate/probe 
+DROP+tools/repeat-control.py                                              frees  1 of 17 declared-lost sections with no read: ### Gate/probe registry
+DROP+.ufo/evidence/round-55/assimilation/S280-gnu-errors.txt,.ufo/evidence/ frees 17 of 17 declared-lost sections with no read: ## Context gate classifi, ## Effective expectation, ## Live-tree re-pin and , ## Mutation-sweep recipe, ## Pin
+
+### 8. provenance of the binder's heading input
+$ git -C LANE cat-file -e 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:.ufo/evidence/round-55/c1/lost-headings-at-c0.json; echo rc=$?
+rc=128
+$ git -C LANE log --oneline -- .ufo/evidence/round-55/c1/lost-headings-at-c0.json
+4f7a704 round-55: F5 — amendment 9 (the staged-count receipt joins deciding-run's FROZEN list; the whitespace-collapsed stale pass runs for every C1 row), base C1 receipt re-measured with these bytes (total=10, premise 9/10, stale 4)
+$ jq -r .frozen_paths[] contract.json | grep lost-headings  (contract freeze at 133b2ce)
+frozen_paths: ['.ufo/evidence/round-55/contract.json', '.ufo/evidence/round-55/freeze.json', '.ufo/evidence/round-55/c1/measure.py', '.ufo/evidence/round-55/c2/measure.py', '.ufo/evidence/round-55/no-harm.sh', '.ufo/evidence/round-55/deciding-run.sh', '.ufo/evidence/round-55/controls.sh', '.ufo/evidence/round-55/c1/staged-at-freeze.txt']
+lost-headings frozen? False
+$ the binder reads it from the WORKING TREE, not from a rev:
+12:For every heading in .ufo/evidence/round-55/c1/lost-headings-at-c0.json:
+49:HEADINGS = sorted(set(json.loads(Path(LANE, E, 'c1/lost-headings-at-c0.json').read_text('utf-8'))))
+$ docstring says w1, code reads w2+w3:
+15:  2. find a committed reader report .ufo/waves/round-55/w1/*.json whose heading
+47:WAVE_DIRS = ('.ufo/waves/round-55/w2', '.ufo/waves/round-55/w3')  # w3 carries the 18 re-key readers
+96:    for f in sorted(sum((glob.glob(str(Path(LANE, wd, '*.json'))) for wd in WAVE_DIRS), [])):
+$ stale round label in the written seats field:
+184:            'seats': [Path(f).stem, 'L1 TameshiR55a2 re-key (round 54)'],
+
+### done: receipts under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w3/T55W3RevBinderInputs-receipts ; scratch kept at /fast/scratch/hyaku/tameshi-r55/T55W3RevBinderInputs/repro

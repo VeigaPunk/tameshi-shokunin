@@ -1,5 +1,5 @@
 diff --git a/SKILL.md b/SKILL.md
-index 8482934..b6e2fa8 100644
+index 8482934..71311e1 100644
 --- a/SKILL.md
 +++ b/SKILL.md
 @@ -34,8 +34,14 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a
@@ -11,23 +11,23 @@ index 8482934..b6e2fa8 100644
 +  1. The class is one line grammar, not a shared Python type: `<tool>:
 +  could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is
 +  not a usable directory: '<value>' (could-not-evaluate)` on stderr with exit 2.
-+  Measured on all 13 documented modes of the seven tools (round-55 C2 counter):
-+  the eight that allocate scratch (the seven self-tests plus `env-diff
-+  --contract`) and the five that stay lazy (`repeat-control --snapshot`,
++  Measured on the round-55 C2 counter's 14 documented modes: the nine
++  allocating modes (the seven self-tests, `env-diff --contract` and
++  `registry-check --rev`) and the five lazy modes (`repeat-control --snapshot`,
 +  `bash-witness-study count`, `pin-disposition --read`, `evidence-disposition
 +  --json`, `context-capture --check`) (corpus/knowledge/scratch-root-contract.md;
    the seven registry `scratch_root` cells).
  
  ## Source notes
 diff --git a/corpus/knowledge/scratch-root-contract.md b/corpus/knowledge/scratch-root-contract.md
-index 255e9cf..e2e66a3 100644
+index 255e9cf..5911566 100644
 --- a/corpus/knowledge/scratch-root-contract.md
 +++ b/corpus/knowledge/scratch-root-contract.md
-@@ -42,25 +42,85 @@ R53.6). Round 54 gives each of the four a `ScratchRootUnusable(RuntimeError)`
+@@ -42,25 +42,90 @@ R53.6). Round 54 gives each of the four a `ScratchRootUnusable(RuntimeError)`
  subclass raised by the helper and caught at the entry point, printing one line
  that names the value and the class.
  
-+## One line: the grammar, all eight allocating modes (round 55)
++## One line: the grammar, every allocating mode (round 55)
 +
 +The class is one operator-visible line on stderr and exit 2. A caller parses the
 +line; it is not a shared Python type — each of the seven tools defines its own
@@ -49,25 +49,29 @@ index 255e9cf..e2e66a3 100644
 +so a `TMPDIR` containing a single quote would leave the five outside the grammar —
 +observed by construction, and outside the counter's fixtures.
 +
-+### The eight allocating modes
++### The allocating modes
 +
-+Each of these allocates clone scratch and must exit 2 with that line on stderr
-+and nothing on stdout when `TMPDIR` is set but unusable (round-55 C2 arm
-+`grammar`):
++Every mode below allocates clone scratch and must exit 2 with that line on
++stderr and nothing on stdout when `TMPDIR` is set but unusable (round-55 C2 arm
++`grammar`); the last row is measured by the same arm and does not conform yet.
 +
 +| mode | tool |
 +|---|---|
 +| `repeat-control --selftest` | tools/repeat-control.py |
 +| `registry-check --selftest` | tools/registry-check.py |
-+| `bash-witness-study selftest` | tools/bash-witness-study.py (the round-55 counter's label for this row is `bash-witness-study --selftest`; the invocation takes a subcommand, not a flag) |
++| `bash-witness-study selftest` | tools/bash-witness-study.py (the freeze-commit bytes of the round-55 counter label this row `bash-witness-study --selftest`; amendment 3 re-labels it to the invocation — the mode takes a subcommand, not a flag) |
 +| `pin-disposition --selftest` | tools/pin-disposition.py |
 +| `evidence-disposition --selftest` | tools/evidence-disposition.py |
 +| `context-capture --selftest` | tools/context-capture.py |
 +| `env-diff --selftest` | tools/env-diff.py |
 +| `env-diff --contract` | tools/env-diff.py |
++| `registry-check --rev` | tools/registry-check.py — routed, not fixed: at this revision it prints `REGISTRY_CHECK: could-not-evaluate (…)` on stdout (exit 2), not this line on stderr |
 +
-+The last one is the mode round 54 left outside the contract: it is not a
-+self-test, and it allocates its scratch only after the contract file parses.
++`env-diff --contract` is the mode round 54 left outside the contract: it is not
++a self-test, and it allocates its scratch only after the contract file parses.
++`registry-check --rev` clones the lane at a revision, so it is the second
++non-self-test allocating mode; the counter measures it on the grammar arm only
++(a full fleet clone is minutes) and leaves its ordinary exit to the self-test.
 +
 +### The five lazy modes
 +
@@ -93,15 +97,16 @@ index 255e9cf..e2e66a3 100644
 -spot is stated in the contract: it sees the self-test path, not every branch a
 -tool might use to allocate scratch.
 +`python3 .ufo/evidence/round-55/c2/measure.py` widens that to every documented
-+mode of the seven tools — 13 modes under three `TMPDIR` states: the 8
-+allocating modes exit 2 with the line above and no `RuntimeError`/`Traceback` on
-+either stream, the 5 lazy modes keep their exit, all 13 keep their expected exit
-+on the empty and the usable arms, the allocating modes make no `mkdir` under
-+`/tmp` under `strace`, and the seven registry cells, this note and `SKILL.md`
-+carry the grammar (round 54's counter saw only the self-tests). The remaining
-+blind spot stands: a mode the registry does not document may allocate scratch on
-+its first statement, and the counter checks that the line is present, not how a
-+caller parses it — by prefix or as the whole line.
++mode of the seven tools — 14 documented modes: the 9 allocating modes must exit
++2 with the line above and no `RuntimeError`/`Traceback` on either stream (the
++ninth, `registry-check --rev`, is measured on that arm alone and is still
++routed), the 5 lazy modes keep their exit, the 13 cheap modes keep their
++expected exit on the empty and the usable arms, the allocating modes make no
++`mkdir` under `/tmp` under `strace`, and the seven registry cells, this note and
++`SKILL.md` carry the grammar (round 54's counter saw only the self-tests). The
++remaining blind spot stands: a mode the registry does not document may allocate
++scratch on its first statement, and the counter checks that the line is present,
++not how a caller parses it — by prefix or as the whole line.
  
  ## Falsifier
  

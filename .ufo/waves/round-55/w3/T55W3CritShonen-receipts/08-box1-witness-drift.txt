@@ -1,0 +1,30 @@
+$ for rev in 284ab0f0 0a2010ac 9cf0146; do git show $rev:SKILL.md | grep -nF "<heading>"; done
+== 284ab0f0 ==
+Gate-shape decision table                58:## Gate-shape decision table — hermetic vs live vs audit-lane
+No-permissiveness audit recipe           466:## No-permissiveness audit recipe
+Fail-closed arm taxonomy                 497:## Fail-closed arm taxonomy
+== 0a2010ac ==
+Gate-shape decision table                69:## Gate-shape decision table — hermetic vs live vs audit-lane
+No-permissiveness audit recipe           477:## No-permissiveness audit recipe
+Fail-closed arm taxonomy                 508:## Fail-closed arm taxonomy
+== 9cf0146b ==
+Gate-shape decision table                73:## Gate-shape decision table — hermetic vs live vs audit-lane
+No-permissiveness audit recipe           481:## No-permissiveness audit recipe
+Fail-closed arm taxonomy                 512:## Fail-closed arm taxonomy
+
+$ git diff --stat 0a2010ac..9cf0146 -- SKILL.md
+ SKILL.md | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+containment at C0 (byte test):
+  headings named "No-permissiveness" inside 466-495: 1
+  497-525 row: 8:6. **Zero-work is a defect, not a green** (gates-survey-kagi.md:139-143).
+  497-525 row: 22:| **SETUP** — cannot measure | input missing/unusable (`--src` gone, `op` absent, fixture dir not a dir) | exit 2, a named line before any effect (`ADJACENCY_SCOPE: SETUP (…)`), never a bare death | gates-survey-kagi.md:93-99 |
+  497-525 row: 23:| **Malformed committed data** | a census row / declaration is malformed | census `die`s exit 2 ("not a verdict"); scope-gate accumulates `BAD-ROW` → `DEFECT` exit 1 — opposite calls, both deliberate | gates-survey-kagi.md:100-106 |
+  497-525 row: 24:| **POLICY** — refused before the effect | the act would leak/overstep: non-regular or `op://`-carrying op-side paths; claim rows outside a 5-verb allowlist (quote-stripped before matching; 23 denied verbs); nested self-audit; stamp-set shrink without `--prune`; checklist rows naming `op.env`; hashing a no-hash path | refused before exec: exit 2 structural, except `drift-pins.sh`, which prints the POLICY line and returns its DRIFT verdict, exit 1 (`drift-pins.sh:142-148`, `:252-258`; round 17) | gates-survey-kagi.md:107-138 |
+  497-525 row: 25:| **Zero-work** | the gate would report over nothing | refused; a gate that measures nothing must not exit 0 | gates-survey-kagi.md:139-143 |
+  497-525 row: 26:| **Deferral** | substrate absent for a `[substrate]`-tagged row | `DEFER … reason=substrate-absent`, counted, not executed, never FAIL; guards: tag lives in the data file, both-paths selftest | gates-survey-kagi.md:187-197 |
+  58-92 row: 16:## Gate-shape decision table — hermetic vs live vs audit-lane
+  58-92 row: 20:| **Hermetic suite** (`--selftest`) | does the tool's own machinery work | fixtures under `mkdtemp` only, cleaned in `finally`; no live path read | every asserted case fired on generated data; passes in any repo state | gates-survey-kumitate.md:19-31 |
+  58-92 row: 21:| **Live gate** (default mode) | what the current substrate state is | the live host/tree, read-only | measured counts on the verdict line; exit lattice 0/1/2 (kagi folds usage/setup into 2; 64 is kumitate's hermetic usage code) | gates-survey-kagi.md:24-31, 75-88 |
+  58-92 row: 22:| **Audit lane** | do claims about a named revision still hold | retained outputs + the committed revision | per-claim verdict (`CONFIRMED`/`UNVERIFIABLE`); byte-identity first | verification-patterns-fleet.md:28-35, 69-74 |

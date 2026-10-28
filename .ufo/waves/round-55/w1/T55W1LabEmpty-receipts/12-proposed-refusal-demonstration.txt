@@ -1,0 +1,23 @@
+$ # PROPOSED PATCH DEMONSTRATION — clone only, restored afterwards
+$ # added to strict_scratch_root():
+$ #   if not _os.path.isabs(t): raise ScratchRootUnusable("... TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+
+TMPDIR=tmp-rel                  rc=2  WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: 'tmp-rel' (could-not-evaluate)
+TMPDIR=.                        rc=2  WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '.' (could-not-evaluate)
+TMPDIR=/fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/ext-tmp rc=0  
+TMPDIR=(empty)                  rc=0  
+
+$ # restoration: git -C <clone> checkout -- tools/bash-witness-study.py
+$ sha256sum -c helper-before.sha
+tools/bash-witness-study.py: OK
+$ git -C <clone> status --porcelain -- tools/bash-witness-study.py | wc -l
+0
+
+Conclusion: the one-line isabs guard turns rel-present and dot into exit 2 with the frozen
+class line, and leaves an absolute usable root and the empty arm at exit 0.
+
+Counter impact: NONE of the frozen C2 arms sets a relative TMPDIR (they set an absolute
+unusable path, "", or an absolute usable dir — c2/measure.py:189-215), so this change is
+invisible to the counter in both directions. That is exactly why it cannot be folded into
+round 55: it would be an UNMEASURED behaviour change (today rel-present and dot exit 0).
+Route it to a later round together with an arm that measures it; do not land it silently.

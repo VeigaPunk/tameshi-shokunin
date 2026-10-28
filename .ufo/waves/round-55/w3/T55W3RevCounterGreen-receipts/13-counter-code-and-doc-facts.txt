@@ -1,0 +1,34 @@
+# frozen c2/measure.py (sha 0458f632; identical at 133b2ce and 4f7a704) docstring vs code
+$ sed -n '15,33p' c2-frozen133.py
+Arms (frozen):
+
+  grammar  8 allocating modes (the seven self-tests + `env-diff --contract`):
+           with TMPDIR set to a nonexistent path, exit 2, at least one STDERR
+           line matching GRAMMAR, and no `RuntimeError`/`Traceback` on either
+           stream;
+  lazy     5 non-allocating modes keep their expected exit under the same
+           unusable TMPDIR (scratch is allocated lazily, never at parse time);
+  empty    13 modes with TMPDIR="" (declared unset) exit their expected code;
+  usable   13 modes with a fresh TMPDIR exit their expected code, and the eight
+           allocating modes issue no mkdir under /tmp (strace census);
+  docs     the seven registry `scratch_root` cells carry the GRAMMAR marker;
+  note     `corpus/knowledge/scratch-root-contract.md` states the grammar and
+           names all eight allocating modes;
+  skill    `SKILL.md` carries the grammar marker.
+
+Verdict line:
+`C2_R55: rev=... grammar=N/8 lazy=N/5 empty=N/13 usable=N/13 tmp_mkdirs=N docs=N/7 note=N/8 skill=N/1 total=N C2_R55_PASS=true|false`
+Exit 0 iff PASS, 1 on a failed arm, 2 on setup error. --work must be empty; the
+
+$ python3 facts13.py
+c2: allocating mode rows in modes(): 9  (6 selftests + env-diff --selftest + env-diff --contract + registry-check --rev)
+c2: verdict interpolates len(allocating): True
+c1: scan_span defs/calls: 1 (1 def + 0 calls = dead)
+c1: collapsed pass joins with a space: True
+
+# c1/measure.py after amendment 9 (sha 83dfbbb0)
+$ grep -n 'scan_span' c1-head.py
+109:def scan_span(lane, rev, paths, pattern):
+$ grep -n 'staged_root' c1-head.py
+196:def classes(lane, rev, staged_root):
+305:    rows = classes(lane, a.rev, a.staged_root)

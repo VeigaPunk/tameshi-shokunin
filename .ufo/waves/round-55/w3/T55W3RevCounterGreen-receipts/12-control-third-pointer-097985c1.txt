@@ -1,0 +1,22 @@
+# Control: ER-R54-2 names THREE old pointers (7883e0e5, fe70474d, 097985c1); only two are in the row's stale pattern.
+# ctl7 @ 63952e382ce7c55b6f122b7a8ba215098196f8fc = C0 + one SCORECARD line naming 097985c1 as the freeze pointer
+$ git -C ctl7 grep -n 097985c1 HEAD -- SCORECARD.md
+HEAD:SCORECARD.md:2621:The fleet report still names the third pointer `097985c1` as the freeze pointer.
+HEAD:SCORECARD.md:2646:in the measured-close line; `097985c1` in the fleet report.
+
+$ python3 c1-head.py --lane ctl7 --rev HEAD --work <empty> --explain
+EXPLAIN R54.1 ok premise=ok corrected=ok stale=0 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=63952e382ce7 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+RC=0
+
+$ grep -n '7883e0e5|fe70474d' c1-head.py   # the R54.2 stale pattern, unchanged from 133b2ce
+220:    stale = scan(lane, rev, ("SCORECARD.md",), r"7883e0e5|fe70474d")

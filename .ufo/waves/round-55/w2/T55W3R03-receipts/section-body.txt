@@ -1,0 +1,31 @@
+## Live-tree re-pin and entry-command monitor — round 17
+
+Sources: `corpus/lessons/round-16-verifier-spotcheck.md` §3 and §6 (routed
+R16-OP1, R16-MON1); S062 (`git rev-parse --show-toplevel`), S063 (git
+repository discovery and `GIT_*` environment), S061 (jj leaves Git `HEAD`
+detached at `@-`). This section restores the round-14 capability's live
+verdict and adds the monitor that would have caught its loss. It claims no
+new mutation case and no promotion credit.
+
+| Evidence condition | Decision | Error pattern / limit |
+|---|---|---|
+| A lane instrument pinned by historical `expected.json` moved by a committed change | Append a v2 manifest whose `historical_inputs` reads that path's pinned bytes from a 40-hex ancestor commit | Waive only paths that moved: a waiver of an unchanged file exits 2 `historical_input_unneeded`; evidence paths can never be waived (`historical_input_forbidden`) |
+| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) [round 52: when bound the anchor is `refs/heads/<lane.branch>` or the attached branch tip; an unbound non-jj detached root anchors at raw `HEAD` when a local or remote-tracking ref contains it (`tools/evidence-disposition.py:479-544`; selftest `v2-registry-clone-detached-anchor` :2910-2915 expects exit 0, fixture docstring :2275 "anchors at HEAD")] | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| The waiver rev is a tree id, dangling, not an ancestor, or shallow | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance. Replace refs, grafts and an inherited `GIT_DIR` are neutralized, not refused: the tool sets `GIT_NO_REPLACE_OBJECTS=1`, `GIT_GRAFT_FILE=/dev/null` and scrubs inherited `GIT_*` (`tools/evidence-disposition.py:385-395`; selftests `v2-historical-replace-ref`, `v2-gitdir-env` expect exit 0; grafts by code reading only). Corrected in round 27, seat Read32; re-pinned in round 54 after the helper grew. |
+| A registered command's outcome changes after an instrument edit | Re-pin or supersede in the same round; sweep every mention | "By design" names the mechanism; it never excuses the outcome |
+| A registry row stops holding its admitted outcome | `registry-check.py` reports `differs`, exit 1 | A row leaves `active` only as `superseded` with `superseded_by`, and still runs |
+| A tool or fixture runs git while the caller exported `GIT_DIR`/`GIT_WORK_TREE` | Every lane tool scrubs `GIT_*` before git (round 18 adds `bash-witness-study.py`; historical `.ufo/evidence/round-16/measure.py` still does not — run it only through `registry-check`, which scrubs) | Unscrubbed fixture commits moved this lane's HEAD and index in round 17 |
+| A repo path has no `.git` of its own inside a git super-repo | Runner regression leg: SETUP `repo_identity_mismatch`, exit 2 | Without the guard git silently answers from the parent repo's objects |
+
+Recipe, from this lane root (round-13/14 evidence bytes stay immutable):
+
+1. `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json` (round 18; round 17's two now exit 2)
+   → 1 `failed`, the `producer_before` expectation unresolved (`"expectation": "producer_before"`).
+2. The same command with `.ufo/evidence/round-18/dispositions.json` → 0 `clean`,
+   `"effective": 11`, `"superseded": 1`; text mode prints one `HISTORICAL <path> rev=<rev> sha256=<sha>` line per waived instrument.
+3. `python3 tools/registry-check.py --rev <40-hex lane commit>` replays every row of
+   `tools/registry.json` in a scratch clone (siblings symlinked beside it) and ends with
+   `REGISTRY_CHECK: held=N/M superseded=K`. Grade an older rev with `--registry <current registry file>`.
+   Run it with `--rev`, never on the live tree: some rows write receipts into their root.
+4. Read a sibling's or this lane's committed bytes at the branch tip `refs/heads/<branch>`
+   (`tools/pin-disposition.py` head rows carry `branch` and `head_differs_from_branch`), never at `HEAD`.

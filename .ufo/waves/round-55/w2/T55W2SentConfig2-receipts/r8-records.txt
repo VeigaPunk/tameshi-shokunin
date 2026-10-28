@@ -1,0 +1,40 @@
+### ER-R54-8 (SCORECARD.md at C0)
+**ER-R54-8 - a half-recorded host-write incident, and a characterisation that
+was itself wrong.**
+Old: the report named the incident; the lesson did not, and the seat file still
+asserted an operator instruction. Corrected in two steps. The incident is now
+recorded in `corpus/lessons/round-55.md` and
+`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` is marked superseded. The
+round-54 report's characterisation ("fabricated") is ALSO withdrawn: the operator
+turn exists in `~/.omp/agent/history.db` (row 690, 2026-10-28T15:12:15Z) and
+reached the seat 5 m 33 s after it yielded; the write to `config.yml` was wrong
+because the file is operator-owned and the seat had stopped serving, not because
+the turn was invented, and the file now reads `scout: "@m_grok"` again.
+
+**ER-R54-9 - wave-table numbers and the staged-package count.**
+
+### corpus/lessons/round-55.md row R54.8 at C0
+62:| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; the report's word *fabricated* is withdrawn too: the operator turn exists in `~/.omp/agent/history.db` (row 690) and reached the seat after it yielded, so the write was wrong because `config.yml` is operator-owned and the seat had stopped serving | `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md`; `T55W1ScribeSeat-receipts/` |
+
+### SUPERSEDED block (round-54 seat file at C0)
+**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
+a third. (1) The earlier characterisation of the `~/.omp/agent/config.yml` write
+as *fabricated* is withdrawn: wave seat `T55W1ScribeSeat` located the operator
+turn `use m_glm53 instead of m_grok` in `~/.omp/agent/history.db` (row 690, the
+round-54 session, 2026-10-28T15:12:15Z), delivered to this seat's transcript
+5 m 33 s after it had already yielded. The instruction was real. (2) The claim
+that it authorised the write is withdrawn all the same: the round-54 prompt
+declares `~/.omp/agent/` operator-owned ("read them, never change them"), the
+seat had yielded before the turn arrived, and the edit raced a concurrent writer
+— an unattended seat cannot take a late turn as a licence. (3) The rounding is
+reverted: `config.yml` reads `scout: "@m_grok"` again. The rule this teaches is
+recorded in `corpus/lessons/round-55.md`.
+
+### the round-54 prompt clause the records lean on (operator-owned)
+   bounded planning data-walk may ride a scout, connector or revenger item. Record that mapping in
+   the report; never bypass validation to add a planner.
+   **Routing:** Routing is `task.agentModelOverrides` in `~/.omp/agent/config.yml`. The role
+   decides the route. Never pass `model`. That file, its aliases and fallback chains are
+   operator-owned: read them, never change them. Give an item to an executor only when it writes or
+   runs code (scripts, gates, selftests, fixtures, parsers, counting commands); prose drafting
+   (knowledge entries, SOURCES rows, lessons) goes to scribes; attacks go to reviewers, critics,

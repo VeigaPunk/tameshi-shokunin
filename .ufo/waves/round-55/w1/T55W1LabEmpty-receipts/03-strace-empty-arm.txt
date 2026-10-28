@@ -1,30 +1,47 @@
-$ cd /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane && env TMPDIR= strace -f -e trace=mkdir,mkdirat,openat,unlinkat,rmdir -o strace-empty-bws.log python3 tools/bash-witness-study.py selftest
-rc=0 (VERDICT: PASS)
+HOW THIS RECEIPT WAS PRODUCED (and why the first pass was wrong)
+  strace -f -e trace=openat,mkdir,mkdirat,chdir,fchdir -o attr-<tool>.log python3 tools/<tool>.py <mode>   # TMPDIR=""
+  python3 attribute.py attr-<tool>.log
 
---- mkdir/mkdirat under /tmp (count) ---
-51
---- mkdir/mkdirat NOT under /tmp (count) ---
-21
---- openat with O_CREAT under the clone CWD (count) ---
-0
---- openat with O_CREAT under /tmp (count) ---
-161
---- first 3 mkdir under /tmp ---
-1909246 mkdir("/tmp/bash-witness-selftest-private.g5zn6_tr", 0700) = 0
-1909246 mkdir("/tmp/bash-witness-selftest-private.g5zn6_tr/bash-witness-selftest.8tifr84t", 0700) = 0
-1909246 mkdir("/tmp/bash-witness-selftest-private.g5zn6_tr/bash-witness-selftest.8tifr84t/command-pin-fixture", 0777) = 0
+A naive grep for "O_CREAT" + the absolute clone prefix reports 0 but is blind to RELATIVE
+paths. A naive "relative = cwd" classifier over-reports, because openat(<dirfd>, "name")
+resolves against a directory fd, not the cwd (env-diff has 602 of those). attribute.py
+classifies open/openat(AT_FDCWD,...) as cwd-resolved, replays per-pid chdir, and counts
+dirfd-relative calls separately.
 
-$ chdir proof that the 21 relative '.git/objects' mkdirs land inside the tempdir
-$   (second trace: strace -f -e trace=mkdir,mkdirat,chdir,fchdir -o strace-empty-bws2.log, same TMPDIR=)
+log: attr-bash-witness-study.log
+  chdir calls seen: 20
+  A. cwd-resolved creations: 60 {'under_/tmp': 60, 'under_launcher_cwd': 0, 'elsewhere': 0}
+  A. absolute creations: 212 {'under_/tmp': 212, 'under_launcher_cwd': 0, 'elsewhere': 0}
+  B. dirfd-relative (never the cwd): 0
+  creations attributed to launcher cwd without a chdir proof: 0
+  *** creations under the launcher cwd: 0 []
+
+log: attr-env-diff.log
+  chdir calls seen: 222
+  A. cwd-resolved creations: 146 {'under_/tmp': 103, 'under_launcher_cwd': 0, 'elsewhere': 43}
+  A. absolute creations: 223 {'under_/tmp': 223, 'under_launcher_cwd': 0, 'elsewhere': 0}
+  B. dirfd-relative (never the cwd): 602
+  creations attributed to launcher cwd without a chdir proof: 0
+  *** creations under the launcher cwd: 0 []
+
+log: attr-context-capture.log
+  chdir calls seen: 47
+  A. cwd-resolved creations: 0 {'under_/tmp': 0, 'under_launcher_cwd': 0, 'elsewhere': 0}
+  A. absolute creations: 127 {'under_/tmp': 127, 'under_launcher_cwd': 0, 'elsewhere': 0}
+  B. dirfd-relative (never the cwd): 0
+  creations attributed to launcher cwd without a chdir proof: 0
+  *** creations under the launcher cwd: 0 []
+
+env-diff: the 43 cwd-resolved creations that are NOT under /tmp are "/proc" and "/dev"
+inside a mount namespace whose root is a tmpfs mounted under /tmp:
+     43 pivot_root("/tmp", "oldroot")   = 0
+     43 pivot_root(".", ".")            = 0
+     43 mount("tmpfs", "/tmp", "tmpfs", MS_NOSUID|MS_NODEV, NULL) = 0
+
+chdir proof that the relative ".git/objects" mkdirs of bash-witness-study are in /tmp:
 5:1928884 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
 19:1928902 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
 20:1928902 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
 21:1928902 mkdir(".git/objects/30", 0777)  = 0
 24:1928934 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
 25:1928934 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
-26:1928934 mkdir(".git/objects/9a", 0777)  = 0
-27:1928934 mkdir(".git/objects/9b", 0777)  = 0
-
-$ same trace for context-capture and env-diff (O_CREAT under CWD / mkdir under /tmp)
-context-capture  rc=0 O_CREAT_under_CWD=0 mkdir_under_tmp=48
-env-diff         rc=0 O_CREAT_under_CWD=0 mkdir_under_tmp=146

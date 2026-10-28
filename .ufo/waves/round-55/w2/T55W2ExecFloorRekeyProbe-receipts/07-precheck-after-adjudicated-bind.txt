@@ -1,0 +1,21 @@
+ATTACK: after binding the three w2 readers (via the dry-run adjudication above), does the frozen round-48
+precheck return to 64/64? Bind committed in the scratch clone as b8678cb809edd08d6f32f2456f44482785c1b0b2.
+COMMAND
+  python3 .ufo/evidence/round-21/coldread/measure.py --repo $S/clone --rev b8678cb809ed... --explain > m-bind.json
+  bash .ufo/evidence/round-48/quality/coldread-precheck.sh $S/clone \
+       0a2010acd1e92e4e332774050825e21bcfc7e079 b8678cb809edd08d6f32f2456f44482785c1b0b2
+OUTPUT
+  measure rc=0: credited 55 of 64; {'## Standing rules': start 17, end 44, credited True, vetoed False, reason 'credited'}
+LOST ## The leg ledger — replay, receipt, and how it is read (round 7, measured) | drifted=corpus/SOURCES.md
+LOST ## The operator's runbook and the six-leg regression (round 10, measured) | drifted=tools/registry.json
+LOST ### Round-15 gate/probe registry | drifted=tools/context-capture.py
+LOST ### Round-17 gate/probe registry — re-pin and monitor | drifted=corpus/SOURCES.md,tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST ### Round-18 gate/probe registry — routed-defect closure | drifted=corpus/QUALITY.md,corpus/SOURCES.md,tools/registry-check.py,tools/registry.json
+LOST ### Round-21 gate/probe registry — finite environment differential | drifted=.ufo/evidence/round-15/verify.py,corpus/QUALITY.md,corpus/SOURCES.md,tools/env-diff.py,tools/registry-check.py,tools/registry.json
+LOST ### Round-26 gate/probe registry — report interop | drifted=tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST ### The service's limits — what tameshi refuses to mutation-test | drifted=tools/context-capture.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+LOST ### Triggers T1–T3 and the re-pin rule | drifted=corpus/QUALITY.md,corpus/SOURCES.md,corpus/knowledge/service-limits.md,tools/bash-witness-study.py,tools/context-capture.py,tools/evidence-disposition.py,tools/pin-disposition.py,tools/registry-check.py,tools/registry.json,tools/repeat-control.py
+COLDREAD_PRECHECK floor=0a2010acd1e9 floor_credited=64 cand=b8678cb809ed cand_credited=55 lost=9 RED
+VERDICT: the section credits (reason 'credited'), and the precheck is still RED at 55/64: the other 9 headings
+listed in lost-headings-at-c0.json have no C0-pinned reader yet, so the bind cannot restore them. Standing rules
+alone moves 46 -> 47 of the 18; the 9 sections the w3 readers had reached at probe time move it to 55.
