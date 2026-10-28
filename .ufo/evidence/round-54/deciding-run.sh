@@ -29,7 +29,8 @@ fr = json.loads(subprocess.run(['git', '-C', lane, 'show', '%s:%s/freeze.json' %
                                capture_output=True, env=env, check=True).stdout)
 bad = []
 for rel, want in sorted(fr['files'].items()):
-    r = subprocess.run(['git', '-C', lane, 'show', '%s:%s/%s' % (freeze, E, rel)],
+    path = rel if rel.startswith('.ufo/') else '%s/%s' % (E, rel)
+    r = subprocess.run(['git', '-C', lane, 'show', '%s:%s' % (freeze, path)],
                        capture_output=True, env=env)
     if r.returncode != 0:
         bad.append('%s unreadable' % rel)
