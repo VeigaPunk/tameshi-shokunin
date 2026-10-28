@@ -49,9 +49,13 @@ PYV
 CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-b.stdout $E/control/controls-b.exit"
 for f in $CONTROLS; do
   git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+  [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+  [ "$(git cat-file -s "$REV:$f")" -gt 0 ] || { echo "DECIDING_REFUSED control-receipt-empty $f"; exit 3; }
   c=$(git log -1 --format=%H "$REV" -- "$f")
   git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
 done
+grep -q '^CONTROLS_A: [0-9]*/[0-9]* as pre-registered' "$LANE/$E/control/controls-a.stdout" 2>/dev/null || { echo "DECIDING_REFUSED controls-a-verdict-missing"; exit 3; }
+grep -q '^CONTROLS_B: [0-9]*/[0-9]* as pre-registered' "$LANE/$E/control/controls-b.stdout" 2>/dev/null || { echo "DECIDING_REFUSED controls-b-verdict-missing"; exit 3; }
 for k in c1 c2; do [ -e "$OUT/$k.start" ] && { echo "DECIDING_REFUSED second-invocation $k"; exit 3; }; done
 git status --porcelain > "$OUT/clean-tree-before.txt"
 [ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }

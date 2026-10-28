@@ -1,0 +1,95 @@
+=== Refusal anchors at C1 ===
+--- SKILL.md:824,828 ---
+   824	2. **A one-command hermetic suite** invocable against a copy — mado's gate
+   825	   takes `bash "$MUTANT" --selftest`; it must exercise the copy it is handed
+   826	   (mado's selftest re-enters `$0`), print its own executed count and verdict
+   827	   (`MADO_SELFTEST: 28/28 assertions passed` on green), and read no live path
+   828	   (`mutation-case-mado-verify.md:44-49`).
+--- SKILL.md:851,855 ---
+   851	2. **Spec parse + uniqueness.** Every `@old` must occur exactly once (non-overlapping count), asserted
+   852	   **before any suite run**; `@new == @old` is refused. Any spec failure is
+   853	   `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
+   854	3. **Control first.** The unmutated copy must run green; a red control exits 2
+   855	   (kills could not be attributed).
+--- SKILL.md:834,836 ---
+   834	4. Nothing else. The service never edits, repairs or re-pins the gate; a
+   835	   needed change is a recommendation to the owner (round-6 anti-claim,
+   836	   `plans/round-6.plan.md:23-25`).
+--- SKILL.md:890,892 ---
+   890	- **Sensitivity, not truth** — a sweep measures what the suite can detect,
+   891	  never whether the gate's verdicts are right
+   892	  (`mutation-case-mado-verify.md:229-230`).
+
+=== Does :1023-1169 mention service-limits? ===
+55:  doctored-pin refusal is a different arm, selftested
+
+=== fleet-kill-rate-ledger.md:285 and :318 at C1 ===
+   280	- **§3 supersession (cells, not edits).** The §3 queue rows `claims-check` (`:111`) and `checklist-run` (`:121`) said "unmeasured by sweep"; rows 5/6 are the measurements that supersede those cells — §3's tables stay as written. Eight queue rows stand: kumitate's cite-check, surface-probe, round-gate, proxy-check; kagi's drift-pins, op-ref-probe, scope-gate, claim-ledger.
+   281	- **§5 / ER-1 supersession (embedding + tool).** §5's "cases=2 at this write" and ER-1 item 1's in-flight revision are superseded: the harness at `cf41efaa8be5f52d…` (r7-1; 1 341 L / 61 632 B) carries **four** materialized legs and passes them at the exact band — `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, every leg `match=10/10 flips=0` (O: T8-2's run 2026-10-14T19:14:16Z, `mutation-case-kumitate-claims.md` §6; corroborated `reports/r7-aud-t7.md` §1). U3 (`:221-223`) narrows: the tsukuroi and mado tables now ARE re-verified by the harness's own `--regression` — at their recorded pins, under `cf41efaa…`; the candidates' live revisions are not what the legs replay (pin read in ER-3).
+   282	- **Named follow-ups (not edits, not written here).** Cases 5/6 are not embedded in `--regression`: T8-2 E3 records the target pin / suite / spec for the tool's owner, and T8-1 U5 leaves the leg-cut decision to the same owner — rows 5/6 therefore carry no `REGRESSION` line over themselves. The r3 census's "hermetic fallback" wording is superseded by case 5 (T8-1 U7), and census §5's instrument pin (`597e1419…`, `:251-262`) sits two revisions behind the live tool — a re-pin errata item for the census owner.
+   283	- **Sources pinned at this append (re-measured immediately before the write):** `corpus/knowledge/mutation-case-kagi-checklist.md` @ `43da70e6…` (367 `wc -l`; unterminated final line / 22 952 B); `corpus/knowledge/mutation-case-kumitate-claims.md` @ `3da1312e…` (409 `wc -l`; unterminated final line / 29 236 B). Cells above are the notes' own §2/§6 hand-off rows; case 5's note self-identifies as the third service engagement (`PROVINCE.md:14-18` absorption rule).
+   284	
+   285	**ER-3 — the re-sweep cadence: when an owner requests one, and what comes back (policy + executed pin read; appended 2026-10-14 by T8-3).** U9 (`:235-237`) recorded this ledger's update as "a convention, not a mechanism". The mechanism is three triggers, stated from the owner's side, plus one mechanical pin read that says which trigger fired. It governs the six measured rows above; a first sweep of an unmeasured §3 gate is not a re-sweep.
+   286	
+   287	*The pin read (one command set per case, run at the boundary — the executed instance follows):*
+   288	
+   289	    sha256sum <gate-file>                                # vs the case row's recorded pin
+   290	    git -C <owner-repo> show HEAD:<path> | sha256sum     # is the recorded revision the HEAD blob?
+---
+   314	*What the cadence is not.* No daemon and no timer: the ledger stays the standing view + this policy + the pin read as an executed command at a round boundary; who runs it remains the dispatcher's call ([O] no round created a background process; [U] whether a fleet driver would invoke it unaided). Divergence between a cadence re-sweep and an owner's own receipt is the FINDING (per-revision, per-host scope) — never smoothed.
+   315	
+   316	New errata entries go below this one.
+   317	
+   318	**ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by T9-1, tameshi round 9; `plans/round-9.plan.md` leg 1).** ER-3 landed the cadence as policy + one executed read; this is the policy's first invocation at a round boundary — the receipt. No §1–§4 cell is edited; the moved cells are append-only readings, old tables stand at their revisions, and a moved pin is never re-interpreted.
+   319	
+   320	*Tick — exact command set and scratch.* Per case, ER-3's command set verbatim (`sha256sum <gate-file>`; `git -C <repo> show HEAD:<path> | sha256sum`; `git -C <repo> status --porcelain -- <path>`) plus the ancestor check `git -C <repo> merge-base --is-ancestor <rev> HEAD`; then the harness itself: `bash tools/mutate-and-run.sh --selftest` and `bash tools/mutate-and-run.sh --regression --workdir /tmp/w9-tameshi-t91/regression`. Scratch `/tmp/w9-tameshi-t91/` (`tick.log` = both harness runs; `pin-read.log` = the raw six-case read, second pass 20:00:29Z). Tool at the tick `cf41efaa8be5f52d…` (1 341 L / 61 632 B, r7-1): **held** vs ER-2's pin (`:281`).
+   321	
+   322	*Pin read (executed at the tick, 19:58Z; second raw pass 20:00:29Z, same readings):*
+
+=== service-limits.md:4-5 at C1 ===
+     1	# Service limits — what tameshi refuses to mutation-test, and why (T9-2, round 9)
+     2	
+     3	Written 2026-10-14 by lane T9-2 (tameshi round 9, leg 3 of
+     4	`plans/round-9.plan.md:47-69`). Role: the **refusal table the re-sweep cadence
+     5	applies at intake** — what this service will not sweep, the trigger that fires
+     6	each refusal, what happens instead, and the measured reason. It is the
+     7	complement of the standing offer (`fleet-suite-census.md:269-275`): the offer
+     8	states what a sweep needs; this note states what no sweep is run against. It
+     9	states refusals; it does not adjudicate them (out-of-province → report, never
+    10	absorb, `PROVINCE.md:20`). The same table renders compactly on the method page
+
+=== C0 vs C1 for relevant SKILL lines (old anchors) ===
+C0 :1010-1015 / :1250-1254 / :1506 / :1551 / :1606
+  1010	   rate is never implied to hold at a later revision than its sweep pin.
+  1011	6. **Attesting a sibling's claim uses the same discipline** (round-7
+  1012	   attestation leg): replay the declared pins read-only, return the receipt —
+  1013	   or name the missing piece; the sibling's note is never edited
+  1014	   (`plans/round-7.plan.md:11-15`).
+  1015	7. **The ledger's own arms are selftested.** `bash tools/mutate-and-run.sh
+---
+  1250	  never an edit of the recorded table.
+  1251	- **The intake precondition round 8 named is present, not errata.** The opt-in
+  1252	  protocol carries the re-pin rule — "A moved substrate needs a re-pin, never a
+  1253	  re-interpretation of the old table"
+  1254	  (`corpus/knowledge/service-optin-protocol.md:59-62`) — cited here.
+---
+  1504	## Repeated controls and gate registry — round 12
+  1505	
+  1506	Source: S004 and S265 (S026 superseded by S265, `corpus/SOURCES.md:500`) and `corpus/knowledge/repeated-control-precondition.md`;
+  1507	runtime evidence: `.ufo/evidence/round-12/verification-final.json`.
+  1508	This is a standalone precondition check, not a change to the six-leg runner of round 12.
+---
+  1548	
+  1549	| Observation | Decision | Limit |
+  1550	|---|---|---|
+  1551	| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+  1552	| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
+---
+  1603	
+  1604	Recipe, from this lane root:
+  1605	1. Read the historical expectations and raw observations before accepting a
+  1606	   later summary; distinguish twelve expected rows from thirteen pinned inputs.
+  1607	2. **Historical (round 14, runner `75ed934d…`):** at `--root .` both manifests now return 2
+  1608	   `expected_input_digest_mismatch` (their pinned inputs moved after round 14: three of the thirteen are stale at the live bytes — the runner in round 16, the bash witness-study tool in rounds 18 and 21, and `tools/pin-disposition.py` in round 17, before either named round). Replay with cwd = an extracted
+  1609	   `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
+  1610	   → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).

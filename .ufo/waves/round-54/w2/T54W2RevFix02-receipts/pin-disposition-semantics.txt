@@ -1,0 +1,117 @@
+=== pin-disposition docstring 60-80 ===
+    55	  result_reuse    literal "not_established" on every row
+    56	
+    57	The document also carries `observed_at` (UTC, stamped after the rows are read,
+    58	so it marks the end of the read window) and `not_compared`, a static list of
+    59	inputs this probe
+    60	deliberately does not measure: mode/exec-bit, runner/defect-spec version, suite
+    61	command and harness, interpreter/toolchain, environment, dependencies, fixture
+    62	and companion files, timeouts. `content_status` is a raw-byte comparison only;
+    63	a chmod-only change with identical bytes stays `unchanged` while still carrying
+    64	result_reuse=not_established. The historical executable-bit counterexample
+    65	(round 10) is why mode stays visible in `not_compared` rather than inferred.
+    66	
+    67	Content status semantics: `unchanged` requires a readable regular worktree file,
+    68	verified pinned evidence (the manifest digest equals the blob at the recorded
+    69	commit), and byte equality with expected_sha256. A missing repo, path, commit or
+    70	blob, a pin/digest disagreement, a symlink or a non-regular file can never be
+    71	`unchanged`; those classify as `unavailable` with a reason. A readable file
+    72	whose bytes differ from a verified pin is `changed`. The branch tip may
+    73	differ from the pinned commit while the content is still `unchanged`; the
+    74	branch tip is reported separately and never substituted for the worktree
+    75	observation.
+    76	
+    77	Exit map: 0 observations emitted, including drift and unavailable legs (this is
+    78	a probe, not a gate) · 2 could-not-evaluate invalid input (usage, missing/
+    79	unreadable/schema-invalid manifest, fleet root not a directory), still emitted
+    80	as a JSON error document on stdout.
+    81	
+    82	Read-only guarantees: the tool never writes to a target repo or worktree. Git is
+    83	used only through read-only plumbing (`rev-parse`, `symbolic-ref`,
+    84	`show-ref`, `for-each-ref`, `cat-file`), never `status`, `diff` or
+    85	`hash-object`; the index, filters and hooks are never invoked. Inherited
+
+=== pin-disposition content_status logic 540-580 ===
+   540	        row["head"] = {
+   541	            "branch": None,
+   542	            "commit": None,
+   543	            "blob_sha256": None,
+   544	            "status": "unavailable",
+   545	            "reason": repo_reason,
+   546	            "head_differs_from_branch": None,
+   547	        }
+   548	        row["worktree"] = {
+   549	            "path": os.path.join(root_real, repo, *path.split("/")),
+   550	            "sha256": None,
+   551	            "status": "unavailable",
+   552	            "reason": repo_reason,
+   553	        }
+   554	        row["content_status"] = "unavailable"
+   555	        row["result_reuse"] = RESULT_REUSE
+   556	        return row
+   557	
+   558	    pinned = pinned_observation(repo_real, entry["pinned_commit"], path, expected)
+   559	    head = head_observation(repo_real, path)
+   560	    worktree = worktree_observation(repo_real, path)
+   561	    if worktree["sha256"] is None:
+   562	        content_status = "unavailable"
+   563	    elif pinned["status"] != "verified":
+   564	        # A readable file cannot be called unchanged against unverified evidence.
+   565	        content_status = "unavailable"
+   566	        worktree["status"] = "unavailable"
+   567	        worktree["reason"] = "pin_not_verified"
+   568	    elif worktree["sha256"] == expected:
+   569	        content_status = "unchanged"
+   570	        worktree["status"] = "unchanged"
+   571	    else:
+   572	        content_status = "changed"
+   573	        worktree["status"] = "changed"
+   574	    row["pinned"] = pinned
+   575	    row["head"] = head
+   576	    row["worktree"] = worktree
+   577	    row["content_status"] = content_status
+   578	    row["result_reuse"] = RESULT_REUSE
+   579	    return row
+   580	
+
+=== Does "unchanged" require ALL three conditions? ===
+21:pinned_commit is not full 40-hex, whose expected_sha256 is not full 64-hex, or
+26:cross-checks the delivered manifest against the unchanged
+32:             "pinned_commit": <40 lowercase hex>, "expected_sha256": <64 lowercase hex>}, ...]}
+41:            verified|mismatch|unavailable, reason
+53:            unchanged|changed|unavailable (content_status mirrors it), reason
+54:  content_status  unchanged | changed | unavailable (raw bytes only)
+63:a chmod-only change with identical bytes stays `unchanged` while still carrying
+67:Content status semantics: `unchanged` requires a readable regular worktree file,
+68:verified pinned evidence (the manifest digest equals the blob at the recorded
+69:commit), and byte equality with expected_sha256. A missing repo, path, commit or
+71:`unchanged`; those classify as `unavailable` with a reason. A readable file
+72:whose bytes differ from a verified pin is `changed`. The branch tip may
+73:differ from the pinned commit while the content is still `unchanged`; the
+124:# with identical bytes stays content_status=unchanged; it is simply unmeasured.
+301:        "expected_sha256": expected,
+334:                    result["status"] = "verified"
+338:    if result["status"] != "verified":
+529:    expected = entry["expected_sha256"]
+535:            "expected_sha256": expected,
+563:    elif pinned["status"] != "verified":
+564:        # A readable file cannot be called unchanged against unverified evidence.
+567:        worktree["reason"] = "pin_not_verified"
+569:        content_status = "unchanged"
+570:        worktree["status"] = "unchanged"
+631:        for key in ("leg", "repo", "path", "pinned_commit", "expected_sha256"):
+668:        if not DIGEST_RE.fullmatch(entry["expected_sha256"]):
+671:                "leg {} expected_sha256 is not a full 64-hex sha256 digest".format(leg),
+695:    counts = {"legs": len(rows), "unchanged": 0, "changed": 0, "unavailable": 0}
+865:                    "expected_sha256": SELFTEST_V1_SHA256,
+872:                    "expected_sha256": SELFTEST_V1_SHA256,
+879:                    "expected_sha256": SELFTEST_V1_SHA256,
+886:                    "expected_sha256": SELFTEST_V1_SHA256,
+893:                    "expected_sha256": SELFTEST_V1_SHA256,
+900:                    "expected_sha256": SELFTEST_V1_SHA256,
+929:                entry["expected_sha256"] = SELFTEST_V2_SHA256
+934:                entry["expected_sha256"] = "0b09cbb5"
+975:                    verified, verified_detail = verify(payload)
+977:                    verified, verified_detail = False, "verify-crashed={!r}".format(exc)
+978:                ok = ok and verified
+979:                detail += " " + verified_detail

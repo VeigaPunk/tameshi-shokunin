@@ -1,0 +1,48 @@
+=== D1: exact line numbers of D1/D2 and B4/B5 at C1 ===
+--- kimi ---
+    41	| # | Defect class | Injected defect (ref = edit site) | Exit | Suite line | Verdict | Failing cases |
+    42	|---|---|---|---|---|---|---|
+    43	| — | control | unmutated copy | 0 | `43/43 pass` / `VERDICT: PASS` | green | 0 |
+    44	| D1 | off-by-one count | K2 counted dir `counted: 18` → `17` (kimi-census.mjs:105) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 (incl. the exact baseline) |
+    45	| D2 | off-by-one count (findings cap) | `findings.slice(0, 6)` → `slice(0, 5)` (kimi-census.mjs:378) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |
+    46	| D3 | inverted condition | `if (!e.children.includes(n))` → `if (e.children.includes(n))` (kimi-census.mjs:332) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 |
+    47	| D4 | dropped arm | root-stray reporting loop deleted (kimi-census.mjs:351-353) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+    48	| D5 | dropped arm (presence gate) | chain presence `gens.length > 0` → `true` (kimi-census.mjs:255) | 1 | `42/43 pass` / `FAIL` | **killed** | 1 |
+    49	| D6 | wrong mode pin | `server.token` floor `0o600` → `0o644` (kimi-census.mjs:124) | 1 | `41/43 pass` / `FAIL` | **killed** | 2 |
+    50	| D7 | weakened predicate (floor semantics) | `(mode & floor) !== floor` → `(mode & floor) === 0` (kimi-census.mjs:306) | 1 | `41/43 pass` / `FAIL` | **killed** | 2 |
+    51	| D8 | wrong exit-code mapping | `failClosed` `return 2` → `return 1` (kimi-census.mjs:396) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+    52	| D9 | weakened secrecy pin | secret kind pin `isLeaf(kind)` → `kind === 'file'` (kimi-census.mjs:292) | 1 | `41/43 pass` / `FAIL` | **killed** | 2 |
+    53	| D10 | wrong reported constant | `FROZEN.K2 25` → `24` (kimi-census.mjs:145) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |
+    54	
+    55	By class: off-by-one 1/2 · inverted condition 1/1 · dropped arm 2/2 · wrong mode pin 1/1 ·
+--- kagi ---
+    64	| # | Defect class | Injected defect (ref = edit site) | Exit | Suite line | Verdict | Failing cases |
+    65	|---|---|---|---|---|---|---|
+    66	| — | control | unmutated copy | 0 | `16 cases` / PASS | green | 0 |
+    67	| B1 | wrong `-eq` (guard inversion) | scan guard `-eq 0` → `-ne 0` (`surface-census.sh:241`) | 1 | `1/16` / FAIL | **killed** | 1 (undeclared-file) |
+    68	| B2 | numeric boundary off-by-one | rows floor `-ge` → `-gt` (`:435`) | 1 | `2/16` / FAIL | **killed** | 2 (clean, runtime-absent) |
+    69	| B3 | inverted test | CROSSCHECK `!=` → `==` (`:229`) | 1 | `3/16` / FAIL | **killed** | 3 (clean, runtime-absent, crosscheck-disagree) |
+    70	| B4 | dropped branch | symlink arm deleted (`:200-204`) | 1 | `1/16` / FAIL | **killed** | 1 (symlink-swap) |
+    71	| B5 | dropped branch | exec x-bit arm deleted (`:214-217`) | 0 | `16 cases` / PASS | **survived** | 0 |
+    72	| B6 | off-by-one (length) | magic `head -c len+1` → `len` (`:371`) | 1 | `2/16` / FAIL | **killed** | 2 (clean, runtime-absent) |
+    73	| B7 | off-by-one (count) | `N_UNVERIFIED + 1` → `+ 2` (`:405-406`) | 1 | `1/16` / FAIL | **killed** | 1 (sqlite-unavailable) |
+    74	| B8 | wrong exit mapping | `die` `exit 2` → `1` (`:85`) | 1 | `2/16` / FAIL | **killed** | 2 (malformed-row, fused-shape-row) |
+    75	| B9 | inverted class select | missing-branch `runtime` → `asset` (`:191`) | 1 | `2/16` / FAIL | **killed** | 2 (asset-gone, runtime-absent) |
+    76	| B10 | reported-but-unasserted count | CLEAN summary `ok=` arg `$N_OK` → `$N_ABSENT` (`:862`) | 0 | `16 cases` / PASS | **survived** | 0 |
+
+=== Read02 full findings ===
+heading ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+sha c413b4268eb842637f17df2396d06ab53cbffe5ba4fb063b6ee37165a800e65e
+--- finding 1 ---
+quote: defects, one per class
+why: the same sentence names the JS 10-defect manifest as the shape, but that manifest puts two defects in one class (mutation-case-kimi-census.md:44-45 are both 'off-by-one count' and its own by-class tally at :55 reads 'off-by-one 1/2 ... dropped arm 2/2' for the :47-48 pair), and the bash exemplar does the same (mutation-case-kagi-census.md:70-71 are both 'dropped branch'), so the 'one per class' rule contradicts the exemplar it cites.
+--- finding 2 ---
+quote: size and mtime unchanged
+why: step 9 says to re-run step 2's checks and compare size, but step 2's recorded set is path, full sha256, mtime, repo revision and git status with no size (SKILL.md:160-163), so the size comparison has no before value even though both cited pin records carry one (mutation-case-kimi-census.md:14 '43273 B'; mutation-case-kagi-census.md:14 '44212 B').
+
+=== Read01 full ===
+--- finding 1 ---
+quote: set but unusable →
+  exit 2, could-not-evaluate, naming the value — never a silent `/tmp` fallback,
+  never a traceback, never exit 1
+why: The sentence states the set-but-unusable arm as the class of any tool that allocates through `strict_scratch_root()`, but at C0 env-diff's own documented `--contract` mode raises `ScratchRootUnusable` outside its `--selftest` catch — traceback, exit 1, no could-not-evaluate line (receipt T54W1Read01-receipts/nonself-envdiff.err) — while the note it cites (corpus/knowledge/scratch-root-contract.md:51-53) and the round-54 contract's C2 `cannot_see` limit the measured class to the self-test path, so the rule is false as stated outside that unstated scope.

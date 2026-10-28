@@ -1,0 +1,23 @@
+{
+  "heading": "## Live-tree re-pin and entry-command monitor — round 17",
+  "cand": "59c38109bf119d0e9d4f878644a82babc937bc1e",
+  "section_sha256": "037c9df3076fc7ada495b906b9bf458e9d06099bfaf9d1270b88de0acb4151f3",
+  "findings": [
+    {
+      "quote": "`tools/evidence-disposition.py:368-390`",
+      "why": "At C0 that range ends on the opening brace GIT_ENV_OVERRIDES = { at line 390, so the constants the cell names (GIT_NO_REPLACE_OBJECTS and GIT_GRAFT_FILE, lines 391-392, closing brace 395) fall outside it; C0's own +5-line ScratchRootUnusable insertion pushed the block from 385-390 out of the cited range."
+    },
+    {
+      "quote": "`tools/evidence-disposition.py:460-525`",
+      "why": "At C0 resolve_historical_anchor runs 479-544, so 460-525 begins inside the shallow-repository check and stops at the for-each-ref argument list, excluding the containing_refs filter (535-538) and return \"HEAD\", commit (544) that implement the raw-HEAD anchor the cell cites."
+    },
+    {
+      "quote": "selftest `v2-registry-clone-detached-anchor` :2891-2896 expects exit 0",
+      "why": "At C0 lines 2891-2896 hold the v2-historical-tag-object case, which expects exit 2, while v2-registry-clone-detached-anchor with exit 0 sits at 2910-2915, so the cited range names a different selftest with the opposite expected exit."
+    },
+    {
+      "quote": "fixture docstring :2256 \"anchors at HEAD\"",
+      "why": "At C0 line 2256 is a bare closing parenthesis inside _setup_hist_jj_branch_tip; the docstring 'A detached harness clone anchors at HEAD, not its later remote tip.' is at 2275, inside _setup_hist_registry_clone."
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+=== ASSERT F7: bash-witness provenance (correction) ===
+| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; its pinned round-13 bytes are read from `4acc607` through `.ufo/evidence/round-18/dispositions.json` (the round-17 manifests are superseded) |
+| `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | promoted current collector; the historical round-17 evidence copy remains unchanged, not byte-identical to the promoted tool. The promoted selftest discriminates removal of O_RDWR exclusion, private-cache anchoring and root-execve checks |
+---
+| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; it parses `PIN_BASH`/`REV_BASH` from `tools/mutate-and-run.sh:616-617` (`275d8294…`/`fecee874…`), and `4acc607` is the `historical_inputs` rev recorded for that tool in `.ufo/evidence/round-18/dispositions.json`, which the evidence-disposition gate reads (the round-17 manifests are superseded) |
+| `tools/trace-inputs.py` | probe | `python3 tools/trace-inputs.py --root DIR --out FILE -- ARGV…` · `--selftest` | promoted current collector; the historical round-17 evidence copy remains unchanged, not byte-identical to the promoted tool. The promoted selftest discriminates removal of O_RDWR exclusion, private-cache anchoring and root-execve checks |
+tool refs at C1:
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:72:selftest cannot reach a real op/custody surface. REV_BASH must be an exact
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:198:PIN_RE = re.compile(r"^(PIN_BASH)=([0-9a-f]{64})$", re.M)
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:199:REV_RE = re.compile(r"^(REV_BASH)=([0-9a-f]{40})$", re.M)
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:285:    missing = [k for k in ("PIN_BASH", "REV_BASH") if k not in pins]
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:593:    if pins["PIN_BASH"] != expected_target:
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:594:        raise Cannot(f"pin-mismatch PIN_BASH={pins['PIN_BASH']} "
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:596:    facts["pin_bash"] = pins["PIN_BASH"]
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:597:    facts["rev_bash"] = pins["REV_BASH"]
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:883:    data = materialize_target(Path(args.kagi), pins["REV_BASH"])
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:885:    if target_sha != pins["PIN_BASH"]:
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:886:        raise Fail(f"materialized target sha256={target_sha} != PIN_BASH={pins['PIN_BASH']}")
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:894:            "runner_sha256": runner_sha, "rev": pins["REV_BASH"]}
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:916:                "source": f"git -C {Path(args.kagi)} show {pins['REV_BASH']}:{TARGET_GIT_PATH}",
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:917:                "rev": pins["REV_BASH"],
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:918:                "pin": pins["PIN_BASH"],
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:937:    print(f"WITNESS_DECLARE: target sha256={target_sha} (pin {pins['PIN_BASH']})")
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:1392:            "PIN_BASH=" + "a" * 64 + "\n"
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:1393:            "REV_BASH=" + "b" * 40 + "\n"
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:1408:              runner_pins(runner) == {"PIN_BASH": "a" * 64, "REV_BASH": "b" * 40})
+99c3bc88d704566197783f66b211ee0a830e0330:tools/bash-witness-study.py:1409:        short_pin = runner.replace("PIN_BASH=" + "a" * 64, "PIN_BASH=" + "a" * 40)
+VERDICT: MEANING_CHANGED but CORRECTION of false provenance. Not over-reach.

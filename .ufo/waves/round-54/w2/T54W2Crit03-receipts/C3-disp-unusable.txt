@@ -1,0 +1,32 @@
+=== C3 disposition selftest exit on unusable TMPDIR at C1 clone ===
+/fast/scratch/hyaku/tameshi-r54/T54W2Crit03/cloneVBgWMm/lane
+99c3bc88d704566197783f66b211ee0a830e0330
+CMD: TMPDIR=/fast/scratch/hyaku/tameshi-r54/T54W2Crit03/no-such-scratch-root-923625 python3 tools/evidence-disposition.py --selftest (expect exit 2)
+EXIT:2
+--- stderr ---
+evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r54/T54W2Crit03/no-such-scratch-root-923625' (could-not-evaluate)
+EXIT:2
+--- traceback? ---
+NO_TRACEBACK
+--- code: setup/process error path ---
+            else:
+                dispositions_bytes = _json_bytes(_dispositions(fx, rows))
+            dispositions_path = lane / ".ufo" / "evidence" / "round-13" / "dispositions.json"
+            _write_bytes(dispositions_path, dispositions_bytes)
+            if mutate is not None:
+                mutate(fx)
+            proc = run_cli(lane, dispositions_path, fx.get("env_extra"))
+        except Exception as exc:  # fixture setup or process failure
+            record(name, False, "setup/process error: {}: {}".format(type(exc).__name__, exc))
+            return
+        checks = [(proc.returncode == expected_exit, "exit={} expects={}".format(proc.returncode, expected_exit))]
+        payload = None
+        try:
+            payload = json.loads(proc.stdout)
+        except ValueError:
+            checks.append((False, "stdout is not JSON: {!r}".format(proc.stdout[:200])))
+        if payload is not None:
+            ids = sorted(finding["id"] for finding in payload.get("findings", []))
+            checks.append((ids == sorted(expected_ids), "ids={!r} expects={!r}".format(ids, sorted(expected_ids))))
+            checks.append((payload.get("exit") == expected_exit, "payload exit={!r}".format(payload.get("exit"))))
+            checks.append(

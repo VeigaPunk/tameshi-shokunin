@@ -1,0 +1,52 @@
+# registry row state under a set-but-unusable TMPDIR, live mode, clone at 99c3bc8 (registry.json identical to C0)
+# clone: /fast/scratch/hyaku/tameshi-r54/T54W1ExecRegistryGate/lane-c0 (git clone --shared under seat scratch; show-toplevel asserted by 'git -C $C rev-parse --show-toplevel')
+
+$ TMPDIR=/nonexistent/seat-root python3 tools/registry-check.py --root $C --only env-diff-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW env-diff-selftest expect=0 got=2 differs
+REGISTRY_CHECK: held=0/1 superseded=0
+EXIT=1
+
+$ TMPDIR=/nonexistent/seat-root python3 tools/registry-check.py --root $C --only registry-check-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW registry-check-selftest expect=0 got=2 differs
+REGISTRY_CHECK: held=0/1 superseded=0
+EXIT=1
+
+$ TMPDIR=/nonexistent/seat-root python3 tools/registry-check.py --root $C --only receipt-measure-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW receipt-measure-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+$ TMPDIR=/nonexistent/seat-root python3 tools/registry-check.py --root $C --only witness-metadata-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW witness-metadata-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+$ TMPDIR=/nonexistent/seat-root python3 tools/registry-check.py --root $C --only trace-inputs-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW trace-inputs-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+## control: usable TMPDIR for the same rows
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r54/T54W1ExecRegistryGate python3 tools/registry-check.py --root $C --only env-diff-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW env-diff-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r54/T54W1ExecRegistryGate python3 tools/registry-check.py --root $C --only receipt-measure-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW receipt-measure-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r54/T54W1ExecRegistryGate python3 tools/registry-check.py --root $C --only witness-metadata-selftest
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+ROW witness-metadata-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+

@@ -1,0 +1,68 @@
+trace=.ufo/evidence/round-21/coldread/rekey-r54-99c3bc88d704/traces/section-03.json
+input_key=corpus/SOURCES.md
+good=4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f992
+bad=4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f990
+live_path=/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md
+wrong_live=a7a12053c4b7f700e1373ed00679b0d60c1f9dd6018e8cf42ce95067c92da46d
+skill_sha=b5ff9727485da844a0c93d8f5914f957eba03d2c37cda59e8e38fd7a04ada195
+--- trace bytes at baseline (## Standing rules) ---
+{
+ "inputs": {
+  "corpus/SOURCES.md": "4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f992"
+ },
+ "schema": "tameshi-trace-inputs-v1"
+}
+### R1 counter exit=1
+EXPLAIN arm1-precheck exit=1 COLDREAD_PRECHECK floor=ef19d8e1e7ba floor_credited=64 cand=ee6a527d86b5 cand_credited=63 lost=1 RED
+EXPLAIN arm2-monitor exit=0 covered=63 score=6
+EXPLAIN arm3-rekey dirs=['rekey-r54-99c3bc88d704'] c0=99c3bc88d704566197783f66b211ee0a830e0330
+EXPLAIN arm4-readers 7/7
+C1_R54: rev=ee6a527d86b5 c0=99c3bc88d704 credited=63 lost=1 rekeyed=6/7 readers=7/7 monitor=6/63 unstable=0 total=3 C1_R54_PASS=false
+### R1 selector covered=63/64 score=6
+    section '## Standing rules' credited=False vetoed=False reasons=['trace-input-drift:corpus/SOURCES.md']
+    MISSING '## Standing rules' reason=trace-input-drift:corpus/SOURCES.md
+--- trace bytes at R1 ---
+{
+ "inputs": {
+  "corpus/SOURCES.md": "4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f990"
+ },
+ "schema": "tameshi-trace-inputs-v1"
+}
+### R2 counter exit=1
+EXPLAIN arm1-precheck exit=1 COLDREAD_PRECHECK floor=ef19d8e1e7ba floor_credited=64 cand=94e862a86120 cand_credited=63 lost=1 RED
+EXPLAIN arm2-monitor exit=0 covered=63 score=6
+EXPLAIN arm3-rekey dirs=['rekey-r54-99c3bc88d704'] c0=99c3bc88d704566197783f66b211ee0a830e0330
+EXPLAIN arm4-readers 7/7
+C1_R54: rev=94e862a86120 c0=99c3bc88d704 credited=63 lost=1 rekeyed=6/7 readers=7/7 monitor=6/63 unstable=0 total=3 C1_R54_PASS=false
+### R2 selector covered=63/64 score=6
+    section '## Standing rules' credited=False vetoed=False reasons=['live-lane-read:/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md']
+    MISSING '## Standing rules' reason=live-lane-read:/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md
+--- trace bytes at R2 ---
+{
+ "inputs": {
+  "corpus/SOURCES.md": "4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f992"
+ },
+ "live_lane_reads": {
+  "/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md": "a7a12053c4b7f700e1373ed00679b0d60c1f9dd6018e8cf42ce95067c92da46d"
+ },
+ "schema": "tameshi-trace-inputs-v1"
+}
+### R3 counter exit=0
+EXPLAIN arm1-precheck exit=0 COLDREAD_PRECHECK floor=ef19d8e1e7ba floor_credited=64 cand=dc1f10bea414 cand_credited=64 lost=0 ok
+EXPLAIN arm2-monitor exit=0 covered=64 score=8
+EXPLAIN arm3-rekey dirs=['rekey-r54-99c3bc88d704'] c0=99c3bc88d704566197783f66b211ee0a830e0330
+EXPLAIN arm4-readers 7/7
+C1_R54: rev=dc1f10bea414 c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true
+### R3 selector covered=64/64 score=8
+    section '## Standing rules' credited=True vetoed=False reasons=['credited']
+--- trace bytes at R3 ---
+{
+ "inputs": {
+  "corpus/SOURCES.md": "4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f992"
+ },
+ "live_lane_reads": {
+  "/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md": "b5ff9727485da844a0c93d8f5914f957eba03d2c37cda59e8e38fd7a04ada195"
+ },
+ "schema": "tameshi-trace-inputs-v1"
+}
+REVS baseline=e26cd9304a6a94decbbdbd881aeaafb64d6074eb R1=ee6a527d86b5d3fcb37ec818653cfb0bcb7bfac5 R2=94e862a86120b3e5bbbbab55837fdaf1c76042cc R3=dc1f10bea41468906220e108efd51920349f27d7

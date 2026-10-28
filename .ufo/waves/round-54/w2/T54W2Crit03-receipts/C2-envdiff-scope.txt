@@ -1,0 +1,103 @@
+=== C2 env-diff ScratchRoot handling at C0 vs C1 ===
+--- C0 catches ---
+2:"""Run pinned selftests under the finite F5 environment profiles.
+4:Usage: env-diff.py --contract FILE --out FILE [--fleet-root DIR] [--jobs N]
+5:       env-diff.py --selftest
+32:class ScratchRootUnusable(RuntimeError):
+40:    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+45:            raise ScratchRootUnusable(
+90:                interp, "/tmp/w/" + target.name, "--selftest"]
+95:        except OSError as exc:
+99:        except subprocess.TimeoutExpired:
+102:            except ProcessLookupError:
+152:                    ("mjs" if surface["interp"] == "node" else "sh"), "--selftest"]}
+157:    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+162:def selftest():
+200:        contract = {"surfaces": [{"name": "wrong-pin", "repo": "fixture", "rev": rev,
+202:        cp, op = root / "contract.json", root / "receipt.json"
+203:        cp.write_text(json.dumps(contract))
+205:                                "--contract", str(cp), "--out", str(op), "--fleet-root", tmp],
+223:def main(argv=None):
+225:    p.add_argument("--contract", type=Path)
+229:    p.add_argument("--selftest", action="store_true")
+231:    if a.selftest:
+233:            return selftest()
+234:        except ScratchRootUnusable as exc:
+236:            return 2
+237:    if not a.contract or not a.out or not 1 <= a.jobs <= 3:
+238:        p.error("--contract and --out are required; --jobs must be 1..3")
+240:        raw = a.contract.read_bytes()
+241:        contract = json.loads(raw)
+242:        surfaces = contract["surfaces"]
+248:        report = {"schema": SCHEMA, "contract_sha256": digest(raw),
+263:    except (OSError, ValueError, KeyError, TypeError) as exc:
+265:        return 2
+--- C1 catches ---
+2:"""Run pinned selftests under the finite F5 environment profiles.
+4:Usage: env-diff.py --contract FILE --out FILE [--fleet-root DIR] [--jobs N]
+5:       env-diff.py --selftest
+32:class ScratchRootUnusable(RuntimeError):
+40:    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+45:            raise ScratchRootUnusable(
+90:                interp, "/tmp/w/" + target.name, "--selftest"]
+95:        except OSError as exc:
+99:        except subprocess.TimeoutExpired:
+102:            except ProcessLookupError:
+152:                    ("mjs" if surface["interp"] == "node" else "sh"), "--selftest"]}
+157:    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+162:def selftest():
+200:        contract = {"surfaces": [{"name": "wrong-pin", "repo": "fixture", "rev": rev,
+202:        cp, op = root / "contract.json", root / "receipt.json"
+203:        cp.write_text(json.dumps(contract))
+205:                                "--contract", str(cp), "--out", str(op), "--fleet-root", tmp],
+223:def main(argv=None):
+225:    p.add_argument("--contract", type=Path)
+229:    p.add_argument("--selftest", action="store_true")
+231:    if a.selftest:
+233:            return selftest()
+234:        except ScratchRootUnusable as exc:
+236:            return 2
+237:    if not a.contract or not a.out or not 1 <= a.jobs <= 3:
+238:        p.error("--contract and --out are required; --jobs must be 1..3")
+240:        raw = a.contract.read_bytes()
+241:        contract = json.loads(raw)
+242:        surfaces = contract["surfaces"]
+248:        report = {"schema": SCHEMA, "contract_sha256": digest(raw),
+263:    except ScratchRootUnusable as exc:
+265:        return 2
+266:    except (OSError, ValueError, KeyError, TypeError) as exc:
+268:        return 2
+--- C1 ScratchRootUnusable catch context ---
+                  "profiles": {name: ("inherited minus GIT_*" if name == "host" else profile_env(name))
+                               for name in PROFILES}, "surfaces": rows}
+        report["instrument_sha256"] = digest(Path(__file__).read_bytes())
+        report["measurement_interval"] = {
+            "start": started_at, "end": datetime.now(timezone.utc).isoformat()
+        }
+        report["argv"] = [sys.executable, *sys.argv]
+        for command in ("node", "bash"):
+            version = subprocess.run([command, "--version"], capture_output=True,
+                                     env=parent_env(), timeout=10)
+            report["host"][command] = version.stdout.decode("utf-8", "replace").splitlines()[0]
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
+    except ScratchRootUnusable as exc:
+        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+        return 2
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+        return 2
+    done = sum(r.get("classification") != "unavailable" for r in rows)
+    print(f"ENVDIFF: classified={done}/{len(rows)} out={a.out}")
+    return 0 if done == len(rows) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+--- Does C1 still raise ScratchRoot outside the new catch? ---
+32:class ScratchRootUnusable(RuntimeError):
+36:def strict_scratch_root():
+45:            raise ScratchRootUnusable(
+80:    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+234:        except ScratchRootUnusable as exc:
+263:    except ScratchRootUnusable as exc:

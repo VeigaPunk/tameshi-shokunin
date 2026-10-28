@@ -1,0 +1,1279 @@
+{
+  "schema": "tameshi-entry-registry-v1",
+  "rows": [
+    {
+      "name": "repeat-control-snapshot-clean",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ],
+      "note": "extra free-text row key written by a seat"
+    },
+    {
+      "name": "repeat-control-snapshot-mismatch",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate/mismatch"
+      ],
+      "expect": {
+        "exit": 1
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "repeat-control-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "bash-witness-count",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        "tools/bash-witness-study.py",
+        "count"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "unresolved\tnone"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1504",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "bash-witness-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/bash-witness-study.py",
+        "selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "WITNESS_SELFTEST:"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1504",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "pin-disposition-read",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        "tools/pin-disposition.py",
+        "--manifest",
+        ".ufo/evidence/round-13/pin-manifest.json",
+        "--root",
+        "/home/vgpnk/Projects/shokunin"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"unavailable\": 0"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1552",
+      "status": "active",
+      "tags": [
+        "baseline",
+        "fleet-live"
+      ],
+      "external": true
+    },
+    {
+      "name": "pin-disposition-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/pin-disposition.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1552",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "witness-metadata-check",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/witness-metadata.py",
+        "--check",
+        "--companion",
+        ".ufo/evidence/round-13/witness-metadata.json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "metadata_consistent"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1553",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "witness-metadata-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/witness-metadata.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1553",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round17",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-17/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"status\": \"clean\"",
+          "\"effective\": 11",
+          "\"superseded\": 1"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1681",
+      "status": "superseded",
+      "tags": [
+        "baseline"
+      ],
+      "superseded_by": "evidence-disposition-round18"
+    },
+    {
+      "name": "evidence-disposition-round17-before",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-17/dispositions-before.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"expectation\": \"producer_before\"",
+          "\"status\": \"failed\""
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "superseded",
+      "tags": [
+        "new-r17"
+      ],
+      "superseded_by": "evidence-disposition-round18-before"
+    },
+    {
+      "name": "evidence-disposition-round18",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-18/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"status\": \"clean\"",
+          "\"effective\": 11",
+          "\"superseded\": 1"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@58e5d53:1923-1932",
+      "status": "active",
+      "tags": [
+        "baseline",
+        "new-r18"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round18-before",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-18/dispositions-before.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"expectation\": \"producer_before\"",
+          "\"status\": \"failed\""
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@58e5d53:1923-1932",
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ]
+    },
+    {
+      "name": "evidence-disposition-round14-superseded",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--root",
+        ".",
+        "--dispositions",
+        ".ufo/evidence/round-14/dispositions.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1681",
+      "status": "superseded",
+      "superseded_by": "evidence-disposition-round18",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "evidence-disposition-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/evidence-disposition.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1681",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-frozen",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "context_consistent"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-missing-env",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--receipt",
+        ".ufo/evidence/round-15/frozen/context-missing-env/receipt.json",
+        "--expected",
+        ".ufo/evidence/round-15/frozen/context-missing-env/expected.json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "missing_injected_environment"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-mapping-suffix",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--check",
+        "--receipt",
+        ".ufo/evidence/round-15/frozen/mapping-suffix/receipt.json",
+        "--expected",
+        ".ufo/evidence/round-15/frozen/mapping-suffix/expected.json"
+      ],
+      "expect": {
+        "exit": 1
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "context-capture-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/context-capture.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1680",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "mutate-and-run-selftest",
+      "kind": "selftest",
+      "argv": [
+        "bash",
+        "tools/mutate-and-run.sh",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MUTATE_SELFTEST:",
+          "VERDICT: PASS"
+        ]
+      },
+      "timeout_s": 180,
+      "source": "SKILL.md@98bea7d:1810",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "mutate-and-run-regression",
+      "kind": "gate",
+      "argv": [
+        "bash",
+        "tools/mutate-and-run.sh",
+        "--regression"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "REGRESSION: PASS"
+        ]
+      },
+      "timeout_s": 900,
+      "source": "SKILL.md@98bea7d:1810",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "measure-round16-rev",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/measure.py",
+        "--rev",
+        "HEAD",
+        "--repo",
+        "."
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"calibration_restraint_score\":",
+          "\"coldread\":"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1811",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "measure-round16-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST:"
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1811",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "assemble-round16-selftest",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: all checks passed"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1812",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "reattribute-round16-selftest",
+      "kind": "probe",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-16/attribution/reattribute.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1813",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "sources-census",
+      "kind": "gate",
+      "argv": [
+        "bash",
+        ".ufo/evidence/kaika-round-1/sources-census-v2.sh"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SOURCES_CENSUS: CLEAN (contract v1 + H4 id-or-path)"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SCORECARD.md@98bea7d:240",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "verify-round15",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-15/verify.py",
+        "--rev",
+        "7650fe4db89f3a706aed63d048ac47e02289cc72"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "measure-historical-preserved: PASS"
+        ]
+      },
+      "timeout_s": 60,
+      "source": "SCORECARD.md@98bea7d:247",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ],
+      "external": true
+    },
+    {
+      "name": "registry-check-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/registry-check.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 180,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "measure-round17-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST:"
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "trace-inputs-round17-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/coldread/trace-inputs.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "superseded",
+      "tags": [
+        "new-r17"
+      ],
+      "superseded_by": "trace-inputs-selftest"
+    },
+    {
+      "name": "assemble-round17-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-17/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: all checks passed"
+        ]
+      },
+      "timeout_s": 120,
+      "source": "SKILL.md@98bea7d:1806",
+      "status": "active",
+      "tags": [
+        "new-r17"
+      ]
+    },
+    {
+      "name": "trace-inputs-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/trace-inputs.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "timeout_s": 120,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "measure-round18-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MEASURE_SELFTEST: "
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "assemble-round18-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/coldread/assemble.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "defect-probes-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-18/defect-probes.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: PASS"
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r18"
+      ],
+      "source": "SKILL.md@58e5d53:1923-1932"
+    },
+    {
+      "name": "round19-correction-ruler-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-19/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELFTEST: "
+        ]
+      },
+      "timeout_s": 180,
+      "status": "active",
+      "tags": [
+        "new-r19"
+      ],
+      "source": "SKILL.md@55e1d312c4e8ac67aefad80099bd27581ff805c9:1935"
+    },
+    {
+      "name": "round19-coldread-selector-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-19/coldread/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELECTOR_SELFTEST: "
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r19"
+      ],
+      "source": "SKILL.md@55e1d312c4e8ac67aefad80099bd27581ff805c9:1936"
+    },
+    {
+      "name": "receipt-window-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/receipt-window.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "RECEIPT_WINDOW_SELFTEST: 20/20 pass"
+        ]
+      },
+      "timeout_s": 60,
+      "status": "active",
+      "tags": [
+        "new-r20"
+      ],
+      "source": "SKILL.md@c51eb32f3c8588cd391907db774af0f1d3c355c6:1949"
+    },
+    {
+      "name": "receipt-measure-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/receipt-measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "RECEIPT_MEASURE_SELFTEST: 10/10 pass"
+        ]
+      },
+      "timeout_s": 180,
+      "status": "active",
+      "tags": [
+        "new-r20"
+      ],
+      "source": "SKILL.md@c51eb32f3c8588cd391907db774af0f1d3c355c6:1950"
+    },
+    {
+      "name": "round20-coldread-selector-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-20/coldread/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELECTOR_SELFTEST: 12/12 pass"
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r20"
+      ],
+      "source": "SKILL.md@4fc1b80bd73527ae9da78731a58d76ecdc6c37a6:1951"
+    },
+    {
+      "name": "env-diff-selftest",
+      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/env-diff.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ENVDIFF_SELFTEST: 9/9 pass"
+        ]
+      },
+      "timeout_s": 120,
+      "status": "active",
+      "tags": [
+        "new-r21"
+      ],
+      "source": "SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1975"
+    },
+    {
+      "name": "wave-route-mix-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/wave-route-mix.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ROUTEMIX_SELFTEST: 8/8 pass"
+        ]
+      },
+      "timeout_s": 30,
+      "status": "active",
+      "tags": [
+        "new-r21"
+      ],
+      "source": "SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1976"
+    },
+    {
+      "name": "round21-measure-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/round21-measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ROUND21_MEASURE_SELFTEST: 13/13 pass"
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r21"
+      ],
+      "source": "SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1977"
+    },
+    {
+      "name": "round21-coldread-selector-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/evidence/round-21/coldread/measure.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "SELECTOR_SELFTEST: 12/12 pass"
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r21"
+      ],
+      "source": "SKILL.md@370f2dffe66f00c3c7412c962bf3e8fcbe75dfdb:1978"
+    },
+    {
+      "name": "wave-accounting-frozen-entry",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/wave-accounting.py",
+        "--bundle",
+        ".ufo/evidence/round-22/bundle.json",
+        "--expected",
+        ".ufo/evidence/round-22/expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"completed\": 66",
+          "\"dead\": 80",
+          "\"seats\": 146",
+          "\"finding_ids\": []"
+        ]
+      },
+      "timeout_s": 30,
+      "status": "active",
+      "tags": [
+        "new-r22"
+      ],
+      "source": "SKILL.md@66a25abf9a07f99df6f8584044a83a21349706a1:1997"
+    },
+    {
+      "name": "wave-accounting-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/wave-accounting.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "ACCOUNTING_SELFTEST: 8/8 pass",
+          "ACCOUNTING_EXTRA_SELFTEST: 16/16 pass",
+          "FINDING: SELFTEST_PASS"
+        ]
+      },
+      "timeout_s": 30,
+      "status": "active",
+      "tags": [
+        "new-r22"
+      ],
+      "source": "SKILL.md@66a25abf9a07f99df6f8584044a83a21349706a1:1997"
+    },
+    {
+      "name": "wave-accounting-wrong-count-entry",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/wave-accounting.py",
+        "--bundle",
+        ".ufo/evidence/round-22/wrong-count-bundle.json",
+        "--expected",
+        ".ufo/evidence/round-22/wrong-count-expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "TOTAL_MISMATCH",
+          "\"completed\": 66",
+          "\"dead\": 80"
+        ]
+      },
+      "timeout_s": 30,
+      "status": "active",
+      "tags": [
+        "new-r22"
+      ],
+      "source": "SKILL.md@66a25abf9a07f99df6f8584044a83a21349706a1:1997"
+    },
+    {
+      "name": "command-binding-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/command-binding.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "COMMAND_BINDING_SELFTEST: 38/38 pass"
+        ]
+      },
+      "timeout_s": 120,
+      "status": "superseded",
+      "superseded_by": "command-binding-selftest-r24",
+      "tags": [
+        "new-r23"
+      ],
+      "source": "SKILL.md@496d212bc46789cdf8cafab72978bdb7f4182963:2019"
+    },
+    {
+      "name": "command-binding-frozen-clean",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/command-binding.py",
+        "--bundle",
+        ".ufo/evidence/round-23/replay/bundle.json",
+        "--expected",
+        ".ufo/evidence/round-23/replay/expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"finding_ids\": []"
+        ]
+      },
+      "timeout_s": 30,
+      "status": "superseded",
+      "superseded_by": "command-binding-frozen-clean-pinned",
+      "tags": [
+        "new-r23"
+      ],
+      "source": "SKILL.md@496d212bc46789cdf8cafab72978bdb7f4182963:2019"
+    },
+    {
+      "name": "command-binding-source-read-red",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/command-binding.py",
+        "--bundle",
+        ".ufo/evidence/round-23/source-read-bundle.json",
+        "--expected",
+        ".ufo/evidence/round-23/source-read-expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"finding_ids\": [\"ARGV_MISMATCH\"]"
+        ]
+      },
+      "timeout_s": 30,
+      "status": "superseded",
+      "superseded_by": "command-binding-source-read-red-pinned",
+      "tags": [
+        "new-r23"
+      ],
+      "source": "SKILL.md@496d212bc46789cdf8cafab72978bdb7f4182963:2019"
+    },
+    {
+      "name": "command-binding-selftest-r24",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/command-binding.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "COMMAND_BINDING_SELFTEST: 44/44 pass"
+        ]
+      },
+      "timeout_s": 120,
+      "status": "active",
+      "tags": [
+        "new-r24"
+      ],
+      "source": ".ufo/waves/round-23/fresh-adjudication.json@6a1821a8897eea6e7d9669292160ec9593669409:53-59"
+    },
+    {
+      "name": "command-binding-frozen-clean-pinned",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/command-binding.py",
+        "--bundle",
+        ".ufo/evidence/round-23/replay/bundle.json",
+        "--expected",
+        ".ufo/evidence/round-23/replay/expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "\"finding_ids\": []",
+          "\"bundle_sha256\": \"3d6c99b70b3e30b9dc4c25c327d90d956e069836ddcc6e024180cbc6267a50b9\""
+        ]
+      },
+      "timeout_s": 30,
+      "status": "active",
+      "tags": [
+        "new-r24"
+      ],
+      "source": ".ufo/waves/round-23/fresh-adjudication.json@6a1821a8897eea6e7d9669292160ec9593669409:66"
+    },
+    {
+      "name": "command-binding-source-read-red-pinned",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/command-binding.py",
+        "--bundle",
+        ".ufo/evidence/round-23/source-read-bundle.json",
+        "--expected",
+        ".ufo/evidence/round-23/source-read-expected.json",
+        "--json"
+      ],
+      "expect": {
+        "exit": 1,
+        "stdout_contains": [
+          "\"finding_ids\": [\"ARGV_MISMATCH\"]",
+          "\"bundle_sha256\": \"db620668efe12c00f55518b993c3ffd20dc254f3ace8f06bc82bb661a580d3cf\""
+        ]
+      },
+      "timeout_s": 30,
+      "status": "active",
+      "tags": [
+        "new-r24"
+      ],
+      "source": ".ufo/waves/round-23/fresh-adjudication.json@6a1821a8897eea6e7d9669292160ec9593669409:66"
+    },
+    {
+      "name": "registry-replay-selftest",
+      "kind": "selftest",
+      "argv": [
+        "python3",
+        "tools/registry-replay.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "REGISTRY_REPLAY_SELFTEST: 10/10 pass"
+        ]
+      },
+      "timeout_s": 120,
+      "status": "active",
+      "tags": [
+        "new-r24"
+      ],
+      "source": ".ufo/waves/round-23/fresh-adjudication.json@6a1821a8897eea6e7d9669292160ec9593669409:74-93"
+    },
+    {
+      "name": "mte-interop-selftest",
+      "kind": "selftest",
+      "argv": [
+        "uv",
+        "run",
+        "--no-project",
+        "--with",
+        "jsonschema==4.25.1",
+        "python3",
+        "tools/mte-interop.py",
+        "--selftest"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MTE_SELFTEST: 17/17 pass"
+        ]
+      },
+      "timeout_s": 300,
+      "status": "active",
+      "tags": [
+        "new-r26"
+      ],
+      "source": "corpus/lessons/round-25-verifier-spotcheck.md@d4140796f4e48e8ec81b793facba73fbd03b4443:189-192"
+    },
+    {
+      "name": "mte-interop-check",
+      "kind": "gate",
+      "argv": [
+        "uv",
+        "run",
+        "--no-project",
+        "--with",
+        "jsonschema==4.25.1",
+        "python3",
+        "tools/mte-interop.py",
+        "--check"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "MTE_INTEROP: PASS legs_conforming=10/10"
+        ]
+      },
+      "timeout_s": 900,
+      "status": "active",
+      "tags": [
+        "new-r26"
+      ],
+      "source": "corpus/lessons/round-51-verifier-spotcheck.md@ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4:126"
+    }
+  ],
+  "registry_note": "a top-level note no reader reads"
+}

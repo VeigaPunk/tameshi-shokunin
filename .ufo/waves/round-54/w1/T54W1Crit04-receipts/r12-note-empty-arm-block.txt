@@ -1,0 +1,23 @@
+=== R12 note empty-arm block at C0 ===
+## Three arms
+
+| Arm | `TMPDIR` | Behaviour | Exit class |
+|---|---|---|---|
+| unset | absent | the platform default (`tempfile.gettempdir()`) is used | — |
+| empty | `""` | **unset**: Python's resolver skips an empty candidate, so the next candidate wins (S278) and the platform default applies | — |
+| unusable | a path that is not a writable directory | the tool refuses before it allocates: the value is named, the class is printed, nothing falls back to `/tmp` | **2, could-not-evaluate** |
+
+The empty arm is not a convenience. The reference implementation reads
+`for envname in 'TMPDIR', 'TEMP', 'TMP': dirname = _os.getenv(envname); if dirname:
+dirlist.append(dirname)` (S278 `_candidate_tempdir_list`:163-165), so an empty
+`TMPDIR` never becomes a candidate directory; the documented list also starts at
+"the directory named by the TMPDIR environment variable" and then falls through
+(S279). A tool that treated `""` as a path would try to allocate under the
+working directory — a silent, wrong scratch root — which is why the arm is
+declared rather than left to whatever `os.path.isdir("")` happens to return.
+
+The standard fixes only the variable's meaning, not its empty-string handling:
+`TMPDIR` "shall represent a pathname of a directory made available for programs
+that need a place to create temporary files" (S277). The empty arm is therefore
+a lane declaration that follows the resolver the lane actually calls, and the
+registry rows say so.

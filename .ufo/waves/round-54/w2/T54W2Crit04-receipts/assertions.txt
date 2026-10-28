@@ -1,0 +1,61 @@
+=== A1: note sentences citing S279 ===
+append(dirname)` (S278 `_candidate_tempdir_list`:163-165), so an empty `TMPDIR` never becomes a candidate directory; the documented list also starts at "the directory named by the TMPDIR environment variable" and then falls through (S279).
+
+=== A2: S279 assimilation gettempdir list; empty/unset/fallthrough scans ===
+Python searches a standard list of directories to find one which
+the calling user can create files in.  The list is:
+
+The directory named by the TMPDIR environment variable.
+The directory named by the TEMP environment variable.
+The directory named by the TMP environment variable.
+A platform-specific location:
+
+On Windows, the directories
+%USERPROFILE%\AppData\Local\Temp,
+%SYSTEMROOT%\Temp, C:\TEMP,
+C:\TMP, \TEMP, and
+\TMP, in that order.
+On all other platforms, the directories /tmp, /var/tmp, and
+/usr/tmp, in that order.
+
+
+As a last resort, the current working directory.
+
+The result of this search is cached
+---
+'empty' in gettempdir-block=False in_full_doc=False
+'unset' in gettempdir-block=False in_full_doc=False
+'missing' in gettempdir-block=False in_full_doc=False
+'falls through' in gettempdir-block=False in_full_doc=False
+'fall through' in gettempdir-block=False in_full_doc=False
+
+=== A3: S278 lines 163-165 (empty skip is HERE, not S279) ===
+   163	    for envname in 'TMPDIR', 'TEMP', 'TMP':
+   164	        dirname = _os.getenv(envname)
+   165	        if dirname: dirlist.append(dirname)
+   163	    for envname in 'TMPDIR', 'TEMP', 'TMP':
+   164	        dirname = _os.getenv(envname)
+   165	        if dirname: dirlist.append(dirname)
+
+=== A4: SOURCES.md S279 located-quote cell (editorial empty fallthrough) ===
+| S279 | tempfile — Generate temporary files and directories (Python 3 documentation) — https://docs.python.org/3/library/tempfile.html | docs | A | the documented search order behind the resolver | §tempfile.gettempdir @ fetched 2026-10-28 (sha256 6b0edccf...) | "The list is: The directory named by the TMPDIR environment variable" then TEMP, TMP and platform locations — the documented order a missing or empty TMPDIR falls through | mined | 2026-10-28 | on-release | corpus/knowledge/scratch-root-contract.md |
+
+=== A5: empty arm declaration sentence present ===
+17:The empty arm is not a convenience. The reference implementation reads
+28:that need a place to create temporary files" (S277). The empty arm is therefore
+29:a lane declaration that follows the resolver the lane actually calls, and the
+50:the empty arm, 7/7 exit 0 on a usable root with no `mkdir` under `/tmp` under
+
+=== A6: S277 TMPDIR paragraph has no empty-string language ===
+'TMPDIR\nThis variable shall represent a pathname of a directory made available for programs that need a place to create temporary\nfiles.'
+empty False
+unset False
+null False
+absent False
+
+=== A7: lesson QUALITY bar at C1 ===
+`corpus/knowledge/scratch-root-contract.md`, which states the three arms and
+says explicitly that the empty arm is a lane declaration following the resolver,
+because S277 fixes only the variable's meaning. Province: verification-fixture
+craft (a gate's scratch root and exit class) — in scope. QUALITY bar: each claim
+in the note cites its row with a located quote; no claim outruns its source.

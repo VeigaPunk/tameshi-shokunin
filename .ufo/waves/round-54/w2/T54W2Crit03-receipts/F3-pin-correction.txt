@@ -1,0 +1,24 @@
+=== ASSERT F3: pin-disposition unchanged (correction, not over-reach) ===
+--- C0 SKILL row ---
+
+| Observation | Decision | Limit |
+|---|---|---|
+| Recorded target bytes equal the current worktree | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+--- C1 SKILL row ---
+
+| Observation | Decision | Limit |
+|---|---|---|
+| Recorded target bytes equal the current worktree AND the pin verifies against the manifest digest (`tools/pin-disposition.py:67-71`, `:563-567`) | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+--- tool unchanged C0..C1? ---
+--- tool docstring already required pin verify (C0 :67-71 area) ---
+Content status semantics: `unchanged` requires a readable regular worktree file,
+verified pinned evidence (the manifest digest equals the blob at the recorded
+commit), and byte equality with expected_sha256. A missing repo, path, commit or
+blob, a pin/digest disagreement, a symlink or a non-regular file can never be
+`unchanged`; those classify as `unavailable` with a reason. A readable file
+whose bytes differ from a verified pin is `changed`. The branch tip may
+differ from the pinned commit while the content is still `unchanged`; the
+branch tip is reported separately and never substituted for the worktree
+observation.
+
+VERDICT: MEANING_CHANGED but CORRECTION (SKILL understated the tool). Not over-reach: the new AND clause restates tools/pin-disposition.py's pre-existing unchanged predicate.

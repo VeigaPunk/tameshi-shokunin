@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""T54W1Sent04 git shim (attack fixture; NOT lane code, never installed on PATH globally).
+
+Why it exists: `.ufo/evidence/round-54/c2/measure.py` clones `--lane` and checks out
+`--rev` inside its own `--work` dir, so a patch that lives only in a scratch working
+tree is discarded before the counter ever runs a tool. The seat bounds forbid
+`git commit` / `git add` / `git reset` anywhere, so the patch is injected instead at
+the single point where the counter materialises the tree under test: right after its
+own `git -C <work>/clone checkout --quiet <rev>` returns 0.
+
+Every other git invocation (rev-parse, show, clone, ...) is passed through untouched
+to the real binary. The shim never writes anything except the patch it was given, into
+the throwaway clone the counter itself created.
+"""
+import os
+import subprocess
+import sys
+
+REAL = os.environ.get("SHIM_REAL_GIT", "/usr/bin/git")
+PATCH = os.environ.get("SHIM_PATCH", "")
+WORK = os.environ.get("SHIM_WORK", "")
+
+
+def split(args):
+    """Return (repo_dir_or_None, args_without_-C)."""
+    d = None
+    rest = []
+    i = 0
+    while i < len(args):
+        if args[i] == "-C" and i + 1 < len(args):
+            d = args[i + 1]
+            i += 2
+            continue
+        rest.append(args[i])
+        i += 1
+    return d, rest
+
+
+def main():
+    args = sys.argv[1:]
+    rc = subprocess.call([REAL] + args)
+    if rc != 0 or not PATCH or not WORK:
+        return rc
+    d, rest = split(args)
+    if not d or not rest or rest[0] != "checkout":
+        return rc
+    d_real = os.path.realpath(d)
+    if not d_real.startswith(os.path.realpath(WORK) + os.sep) or os.path.basename(d_real) != "clone":
+        return rc
+    r = subprocess.run([REAL, "-C", d_real, "apply", os.path.abspath(PATCH)],
+                       capture_output=True, text=True)
+    sys.stderr.write("SHIM: git apply %s in %s -> rc=%d %s\n"
+                     % (os.path.abspath(PATCH), d_real, r.returncode, r.stderr.strip()))
+    return rc if r.returncode == 0 else 3
+
+
+if __name__ == "__main__":
+    sys.exit(main())

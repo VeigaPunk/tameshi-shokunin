@@ -1,0 +1,25 @@
+=== G: --contract unusable at C0 (pre-fix contrast) ===
+rc=1
+has_traceback=1
+has_could_not_evaluate=2
+--- stderr tail ---
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "/fast/scratch/hyaku/tameshi-r54/T54W2Crit02/clone/tameshi-c0/tools/env-diff.py", line 247, in <lambda>
+    rows = list(pool.map(lambda s: surface_result(a.fleet_root, s), surfaces))
+                                   ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W2Crit02/clone/tameshi-c0/tools/env-diff.py", line 156, in surface_result
+    row.update(probe(payload, surface["interp"]))
+               ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W2Crit02/clone/tameshi-c0/tools/env-diff.py", line 130, in probe
+    profiles = {name: execute(payload, interp, name) for name in PROFILES}
+                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W2Crit02/clone/tameshi-c0/tools/env-diff.py", line 80, in execute
+    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+                                                                        ~~~~~~~~~~~~~~~~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W2Crit02/clone/tameshi-c0/tools/env-diff.py", line 45, in strict_scratch_root
+    raise ScratchRootUnusable(
+        "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r54/T54W2Crit02/never-created-tmpdir-r54-crit02' (could-not-evaluate)

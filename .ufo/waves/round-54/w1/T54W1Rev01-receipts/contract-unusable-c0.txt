@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 272, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 247, in main
+    rows = list(pool.map(lambda s: surface_result(a.fleet_root, s), surfaces))
+  File "/usr/lib/python3.14/concurrent/futures/_base.py", line 645, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/usr/lib/python3.14/concurrent/futures/_base.py", line 312, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 247, in <lambda>
+    rows = list(pool.map(lambda s: surface_result(a.fleet_root, s), surfaces))
+                                   ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 156, in surface_result
+    row.update(probe(payload, surface["interp"]))
+               ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 130, in probe
+    profiles = {name: execute(payload, interp, name) for name in PROFILES}
+                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 80, in execute
+    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+                                                                        ~~~~~~~~~~~~~~~~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/work/env-diff.py", line 45, in strict_scratch_root
+    raise ScratchRootUnusable(
+        "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r54/T54W1Rev01/usable-root/missing-dir-xyz' (could-not-evaluate)
+EXIT:1

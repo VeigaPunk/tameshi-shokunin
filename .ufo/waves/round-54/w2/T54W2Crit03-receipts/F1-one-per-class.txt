@@ -1,0 +1,32 @@
+=== ASSERT F1: recipe step 4 exclusivity → coverage ===
+CMD: git show C0/C1 SKILL.md | nl -ba | sed -n '170,176p'
+--- C0 ---
+   170	   then `cp -p <artifact> …/pristine.<ext>`; re-verify (`sha256sum`; the bash
+   171	   lane additionally `cmp`-verified its copy — corpus/knowledge/mutation-case-kagi-census.md:44-45).
+   172	   All edits happen to copies; the original is never a write target.
+   173	4. **Write the defect list from the templates.** 8–12 defects, one per class
+   174	   (catalog + entry template in the next section), each ONE exact-string
+   175	   replacement or single block deletion, each with a pre-registered
+   176	   `expect: killed|survived` and the reason — the JS 10-defect manifest is the
+--- C1 ---
+   170	   then `cp -p <artifact> …/pristine.<ext>`; re-verify (`sha256sum`; the bash
+   171	   lane additionally `cmp`-verified its copy — corpus/knowledge/mutation-case-kagi-census.md:44-45).
+   172	   All edits happen to copies; the original is never a write target.
+   173	4. **Write the defect list from the templates.** 8–12 defects, at least one per class (two of the JS ten share a class — the :47-48 pair — and the bash exemplar's :70-71 pair does the same)
+   174	   (catalog + entry template in the next section), each ONE exact-string
+   175	   replacement or single block deletion, each with a pre-registered
+   176	   `expect: killed|survived` and the reason — the JS 10-defect manifest is the
+
+CMD: nl kimi :44-48 (two shared-class pairs)
+    44	| D1 | off-by-one count | K2 counted dir `counted: 18` → `17` (kimi-census.mjs:105) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 (incl. the exact baseline) |
+    45	| D2 | off-by-one count (findings cap) | `findings.slice(0, 6)` → `slice(0, 5)` (kimi-census.mjs:378) | 0 | `43/43 pass` / `PASS` | **survived** | 0 |
+    46	| D3 | inverted condition | `if (!e.children.includes(n))` → `if (e.children.includes(n))` (kimi-census.mjs:332) | 1 | `27/43 pass` / `FAIL` | **killed** | 16 |
+    47	| D4 | dropped arm | root-stray reporting loop deleted (kimi-census.mjs:351-353) | 1 | `40/43 pass` / `FAIL` | **killed** | 3 |
+    48	| D5 | dropped arm (presence gate) | chain presence `gens.length > 0` → `true` (kimi-census.mjs:255) | 1 | `42/43 pass` / `FAIL` | **killed** | 1 |
+
+CMD: nl kagi :70-71
+    70	| B4 | dropped branch | symlink arm deleted (`:200-204`) | 1 | `1/16` / FAIL | **killed** | 1 (symlink-swap) |
+    71	| B5 | dropped branch | exec x-bit arm deleted (`:214-217`) | 0 | `16 cases` / PASS | **survived** | 0 |
+
+VERDICT: MEANING_CHANGED (rule relaxed). C0 required exclusive one-defect-per-class; C1 requires at least-one and explicitly blesses sharing. The fix cites ':47-48 pair' (D4/D5 dropped arm) while the off-by-one share that Read02 led with is :44-45 (D1/D2); both pairs share, but renaming the rule to fit the exemplar is over-reach.
+MINIMAL_NON_MEANING_CHANGE: keep 'one per class'; add 'the JS exemplar currently doubles off-by-one (:44-45) and dropped arm (:47-48); treat doubles as named debt, not the recipe'.

@@ -1,0 +1,29 @@
+160:    dirlist = []
+161:
+162:    # First, try the environment.
+163:    for envname in 'TMPDIR', 'TEMP', 'TMP':
+164:        dirname = _os.getenv(envname)
+165:        if dirname: dirlist.append(dirname)
+166:
+167:    # Failing that, try OS-specific locations.
+168:    if _os.name == 'nt':
+169:        dirlist.extend([ _os.path.expanduser(r'~\AppData\Local\Temp'),
+170:                         _os.path.expandvars(r'%SYSTEMROOT%\Temp'),
+171:                         r'c:\temp', r'c:\tmp', r'\temp', r'\tmp' ])
+172:    else:
+173:        dirlist.extend([ '/tmp', '/var/tmp', '/usr/tmp' ])
+174:
+175:    # As a last resort, the current directory.
+176:    try:
+177:        dirlist.append(_os.getcwd())
+178:    except (AttributeError, OSError):
+179:        dirlist.append(_os.curdir)
+180:
+181:    return dirlist
+182:
+183:def _get_default_tempdir():
+184:    """Calculate the default directory to use for temporary files.
+185:    This routine should be called exactly once.
+---
+contains if dirname: True
+contains getcwd last resort: True

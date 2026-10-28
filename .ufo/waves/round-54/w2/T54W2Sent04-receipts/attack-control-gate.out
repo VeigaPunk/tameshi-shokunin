@@ -1,0 +1,97 @@
+
+########## 0. object census: does ANY commit carry the four pre-registered receipts?
++ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --all --oneline -- .ufo/evidence/round-54/control/controls-a.stdout .ufo/evidence/round-54/control/controls-b.stdout
+19c7558 round-54: re-freeze (amendment 2, all 11 contract paths hashed, freeze-digest gate in the deciding script), base receipts, phase-A control receipts, section manifest, binder and wave specs
+7e533b1 
+revs carrying controls-b.stdout: 0
+
+########## 1. C1 (no receipts at all), HEAD==REV, empty outdir: refuse, nothing executed
+rc=3
+DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-54/control/controls-a.stdout
+outdir-files=0
+scratch-root-exists=NO
+clean-tree-after: []
+
+########## 2. same state, invoked a second time: same refusal (no marker was ever written)
+rc=3
+DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-54/control/controls-a.stdout
+outdir-files=0
+scratch-root-exists=NO
+
+########## 3. receipts present (a bytes from the tip, b fabricated), clean tree, witness file -> control gate OPENS
+fixture HEAD=b095921d8067fb73538f237591d29e55d51ef0b0
+  controls-a.stdout type=blob sha=7c9c666568c26b17a8d7a04673015dcad1145c68
+  controls-a.exit type=blob sha=573541ac9702dd3969c9bc859d2b91ec1f7e6e56
+  controls-b.stdout type=blob sha=105cdf63b8f5380052407809ce9cf3614420d827
+  controls-b.exit type=blob sha=573541ac9702dd3969c9bc859d2b91ec1f7e6e56
+rc=3
+DECIDING_REFUSED dirty-tree
+?? FIXTURE_DIRTY
+outdir-files=1
+scratch-root-exists=NO
+clean-tree-after: []
+
+########## 4. the SAME invocation after a prior c1 start marker: second-invocation refusal
+rc=3
+DECIDING_REFUSED second-invocation c1
+outdir-files=1
+scratch-root-exists=NO
+outdir: c1.start
+
+########## 5. and with the marker at c2.start: second-invocation c2 refusal
+rc=3
+DECIDING_REFUSED second-invocation c2
+outdir-files=1
+scratch-root-exists=NO
+
+########## 6. existence-only receipt check: four ZERO-BYTE blobs satisfy the control gate
+  controls-a.stdout type=blob size=0
+  controls-a.exit type=blob size=0
+  controls-b.stdout type=blob size=0
+  controls-b.exit type=blob size=0
+rc=3
+DECIDING_REFUSED dirty-tree
+?? FIXTURE_DIRTY
+outdir-files=1
+scratch-root-exists=NO
+
+########## 6b. non-blob receipts: four TREE objects at the receipt paths also satisfy the gate
+  controls-a.stdout type=tree cat-file-exit=0
+  controls-a.exit type=tree cat-file-exit=0
+  controls-b.stdout type=tree cat-file-exit=0
+  controls-b.exit type=tree cat-file-exit=0
+rc=3
+DECIDING_REFUSED dirty-tree
+ D .ufo/evidence/round-54/control/controls-a.exit
+ D .ufo/evidence/round-54/control/controls-a.stdout
+ D .ufo/evidence/round-54/control/controls-b.exit
+ D .ufo/evidence/round-54/control/controls-b.stdout
+outdir-files=1
+scratch-root-exists=NO
+
+########## 7. shipped tip (097985c), FREEZE=the round's recorded freeze 441c26be: stale manifest, then refusal
+rc=3
+FREEZE_INTEGRITY: OK files=7 amendments=0
+DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-54/control/controls-b.stdout
+outdir-files=0
+scratch-root-exists=NO
+
+########## 8. shipped tip as its own FREEZE: the phase-A receipt predates it
+rc=3
+FREEZE_INTEGRITY: OK files=10 amendments=2
+DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-54/control/controls-a.stdout
+outdir-files=0
+scratch-root-exists=NO
+
+########## 9. the script's own frozen-diff predicate, over the 11 frozen paths
+git diff --quiet 441c26bec5e4..99c3bc88d704566197783f66b211ee0a830e0330 -> rc=0 (FROZEN_UNCHANGED=1)
+git diff --quiet 441c26bec5e4..097985c18b9a186c310bd35890b95b733cbb7f5b -> rc=1 (FROZEN_UNCHANGED=0)
+git diff --quiet 19c7558..097985c18b9a186c310bd35890b95b733cbb7f5b -> rc=1 (FROZEN_UNCHANGED=0)
+git diff --quiet 097985c18b9a186c310bd35890b95b733cbb7f5b..097985c18b9a186c310bd35890b95b733cbb7f5b -> rc=0 (FROZEN_UNCHANGED=1)
++ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --stat 441c26bec5e4 097985c18b9a186c310bd35890b95b733cbb7f5b -- .ufo/evidence/round-54/contract.json .ufo/evidence/round-54/freeze.json .ufo/evidence/round-54/c1/measure.py .ufo/evidence/round-54/c1/lost-headings-at-base.json .ufo/evidence/round-54/c2/measure.py .ufo/evidence/round-54/no-harm.sh .ufo/evidence/round-54/deciding-run.sh .ufo/evidence/round-54/control/controls.sh .ufo/evidence/round-48/quality/coldread-precheck.sh .ufo/evidence/round-21/coldread/measure.py .ufo/evidence/round-18/measure.py
+ .ufo/evidence/round-54/c1/measure.py   |  8 ++++++--
+ .ufo/evidence/round-54/c2/measure.py   | 24 +++++++++++++++++-------
+ .ufo/evidence/round-54/contract.json   | 28 +++++++++++++++++++++++-----
+ .ufo/evidence/round-54/deciding-run.sh | 27 +++++++++++++++++++++++++++
+ .ufo/evidence/round-54/freeze.json     | 27 ++++++++++++++++++++-------
+ 5 files changed, 93 insertions(+), 21 deletions(-)

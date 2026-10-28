@@ -1,0 +1,53 @@
+# T2 at C0 (clone HEAD 59c38109bf119d0e9d4f878644a82babc937bc1e, tools/env-diff.py sha256 ab193692d78d591fa7c9e55ba9c53cbe88376354adf548cd9d5034ce722bfe56)
+# fixture /fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/fx.tdBvfX (repo '.', fleet-root $D)
+
+## arm=nonexistent TMPDIR=/nonexistent
+exit=1
+traceback_lines=1
+receipt_written=no
+--- stderr (first 2 / last 3) ---
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/clone-c0/tools/env-diff.py", line 272, in <module>
+...
+    raise ScratchRootUnusable(
+        "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent' (could-not-evaluate)
+
+## arm=read-only-dir TMPDIR=/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/ro
+exit=1
+traceback_lines=1
+receipt_written=no
+--- stderr (first 2 / last 3) ---
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/clone-c0/tools/env-diff.py", line 272, in <module>
+...
+    raise ScratchRootUnusable(
+        "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/ro' (could-not-evaluate)
+
+## arm=regular-file TMPDIR=/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/notadir
+exit=1
+traceback_lines=1
+receipt_written=no
+--- stderr (first 2 / last 3) ---
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/clone-c0/tools/env-diff.py", line 272, in <module>
+...
+    raise ScratchRootUnusable(
+        "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/notadir' (could-not-evaluate)
+
+## stale --out left untouched (exit 1, no rewrite)
+exit=1 file_after={"stale": true}
+
+## 3-surface contract, bad TMPDIR (same class, not single-surface)
+exit=1 traceback_lines=1 receipt_written=no
+
+## control: --selftest at C0, same three roots
+arm=nonexistent exit=2 traceback_lines=0 stderr_lines=1
+arm=read-only-dir exit=2 traceback_lines=0 stderr_lines=1
+arm=regular-file exit=2 traceback_lines=0 stderr_lines=1
+
+## control: --contract, empty and usable TMPDIR (the path works otherwise)
+empty exit=0 last='ENVDIFF: classified=1/1 out=/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/run/c0-empty.json'
+usable exit=0 last='ENVDIFF: classified=1/1 out=/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/run/c0-ok.json'

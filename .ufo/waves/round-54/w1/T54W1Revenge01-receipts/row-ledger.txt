@@ -1,0 +1,35 @@
+# every registry row whose argv names one of the four edited tools; got replayed at base d33053f and C0 59c3810
+# driver: cd <clone>; python3 tools/registry-check.py --root . --only <row>
+[base] ROW bash-witness-count | expect=0 | got=0 held
+[base] ROW bash-witness-selftest | expect=0 | got=0 held
+[base] ROW pin-disposition-read | expect=0 | got=0 held
+[base] ROW pin-disposition-selftest | expect=0 | got=0 held
+[base] ROW evidence-disposition-round17 superseded | expect=0 | got=2
+[base] ROW evidence-disposition-round17-before superseded | expect=1 | got=2
+[base] ROW evidence-disposition-round18 | expect=0 | got=0 held
+[base] ROW evidence-disposition-round18-before | expect=1 | got=1 held
+[base] ROW evidence-disposition-round14-superseded superseded | expect=0 | got=2
+[base] ROW evidence-disposition-selftest | expect=0 | got=0 held
+[base] ROW env-diff-selftest | expect=0 | got=0 held
+[c0] ROW bash-witness-count | expect=0 | got=0 held
+[c0] ROW bash-witness-selftest | expect=0 | got=0 held
+[c0] ROW pin-disposition-read | expect=0 | got=0 held
+[c0] ROW pin-disposition-selftest | expect=0 | got=0 held
+[c0] ROW evidence-disposition-round17 superseded | expect=0 | got=2
+[c0] ROW evidence-disposition-round17-before superseded | expect=1 | got=2
+[c0] ROW evidence-disposition-round18 | expect=0 | got=0 held
+[c0] ROW evidence-disposition-round18-before | expect=1 | got=1 held
+[c0] ROW evidence-disposition-round14-superseded superseded | expect=0 | got=2
+[c0] ROW evidence-disposition-selftest | expect=0 | got=0 held
+[c0] ROW env-diff-selftest | expect=0 | got=0 held
+
+# rows with expect.exit==1 (all 8) and expect.exit==2 (0) in tools/registry.json at C0
+exit=1 repeat-control-snapshot-mismatch              status=active     argv=python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate/mismatch
+exit=1 evidence-disposition-round17-before           status=superseded argv=python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-17/dispositions-before.json --json
+exit=1 evidence-disposition-round18-before           status=active     argv=python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions-before.json --json
+exit=1 context-capture-missing-env                   status=active     argv=python3 tools/context-capture.py --check --receipt .ufo/evidence/round-15/frozen/context-missing-env/receipt.json --expected .ufo/evidence/round-15/frozen/context-missing-env/expected.json
+exit=1 context-capture-mapping-suffix                status=active     argv=python3 tools/context-capture.py --check --receipt .ufo/evidence/round-15/frozen/mapping-suffix/receipt.json --expected .ufo/evidence/round-15/frozen/mapping-suffix/expected.json
+exit=1 wave-accounting-wrong-count-entry             status=active     argv=python3 tools/wave-accounting.py --bundle .ufo/evidence/round-22/wrong-count-bundle.json --expected .ufo/evidence/round-22/wrong-count-expected.json --json
+exit=1 command-binding-source-read-red               status=superseded argv=python3 tools/command-binding.py --bundle .ufo/evidence/round-23/source-read-bundle.json --expected .ufo/evidence/round-23/source-read-expected.json --json
+exit=1 command-binding-source-read-red-pinned        status=active     argv=python3 tools/command-binding.py --bundle .ufo/evidence/round-23/source-read-bundle.json --expected .ufo/evidence/round-23/source-read-expected.json --json
+count exit=2 rows: 0

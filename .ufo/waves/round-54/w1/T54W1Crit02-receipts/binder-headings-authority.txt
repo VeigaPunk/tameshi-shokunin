@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Round-54 re-key binder: bind committed wave reader reports to ledger entries.
+
+Usage: binder.py LANE C0 PIN OUTDIR
+
+  LANE    absolute lane path
+  C0      the content commit the readers read (section bytes and skill sha)
+  PIN     the revision whose bytes the entries' inputs are pinned at (>= C0:
+          it carries the round's record edits, which readers do not read)
+  OUTDIR  an existing empty dir: .ufo/evidence/round-21/coldread/rekey-r54-<C0short>/
+
+For every heading in .ufo/evidence/round-54/c1/lost-headings-at-c0.json (plus the
+frozen seven at base, as a union):
+  1. compute start/end/sha256 of the section at C0 with the FROZEN round-18
+     sectionize (extracted at C0);
+  2. find a committed reader report .ufo/waves/round-54/w1/*.json whose heading
+     matches, whose cand is C0 and whose section_sha256 is that sha; a reader
+     with findings is NOT re-keyed (the section is listed for the L1's
+     adjudication file, and only an adjudicated, fixed-and-re-read section is
+     bound in a later pass);
+  3. inputs = union of the section's prior ledger entries' inputs, restricted to
+     canonical blobs at PIN, with LOG.md and SCORECARD.md dropped (they change
+     every round after the bind - the round-53 failure mode) and SKILL.md's
+     ignored status left to the credit algorithm;
+  4. emit one trace (schema tameshi-trace-inputs-v1, rev C0, inputs pinned at
+     PIN, no live working-tree reads) and one ledger entry (read_rev C0,
+     wrong_expectations 0, blocking_gaps 0, class/verdict carried from the
+     section's newest prior entry).
+
+An entry this driver wrote earlier (same heading, same read_rev, same trace
+directory) is REPLACED, so a second pass over a later PIN does not grow the
+ledger. Prints REKEY/SKIP lines and `REFRESH rekeyed=<n> skipped=<n>`;
+exit 0 iff no skip.  Stdlib only; scratch via TMPDIR, never /tmp.
+"""
+import glob
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+LANE, C0, PIN, OUT = sys.argv[1], sys.argv[2], sys.argv[3], Path(sys.argv[4])
+E = '.ufo/evidence/round-54'
+LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
+R18 = '.ufo/evidence/round-18/measure.py'
+WAVE = '.ufo/waves/round-54/w1'
+DROP = ('LOG.md', 'SCORECARD.md', 'SKILL.md')
+HEADINGS = json.loads(Path(LANE, E, 'c1/lost-headings-at-c0.json').read_text('utf-8'))
+BASE7 = json.loads(Path(LANE, E, 'c1/lost-headings-at-base.json').read_text('utf-8'))
+HEADINGS = sorted(set(HEADINGS) | set(BASE7))
+
+
+def git(args, check=True):
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    return subprocess.run(['git', '-C', LANE] + args, env=env, capture_output=True, check=check)
+
+
+def show(rev, path, check=True):
+    return git(['show', '%s:%s' % (rev, path)], check=check).stdout
+
+
+def blob_at(rev, path):
+    if git(['cat-file', '-e', '%s:%s' % (rev, path)], check=False).returncode != 0:
+        return None
+    return show(rev, path)
+
+
+def resolve(rev):
+    return git(['rev-parse', '--verify', '%s^{commit}' % rev]).stdout.decode().strip()
+
+
+def main():
+    c0, pin = resolve(C0), resolve(PIN)
+    work = Path(os.environ.get('TMPDIR') or OUT)
+    work.mkdir(parents=True, exist_ok=True)
+    r18 = work / 'r18-binder.py'
+    r18.write_bytes(show(c0, R18))

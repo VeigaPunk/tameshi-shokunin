@@ -1,0 +1,103 @@
+===== tools/registry-check.py handlers =====
+756:
+757:def strict_scratch_root():
+758:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+759:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+760:    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+761:    import os as _os
+762:    t = _os.environ.get("TMPDIR")
+763:    if t:
+764:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+---
+779:    try:
+780:        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+781:    except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+782:        raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
+783:    try:
+784:        fleet = os.path.join(work, "fleet")
+785:        os.mkdir(fleet)
+786:        try:
+787:            siblings = sorted(os.listdir(fleet_root))
+---
+781:    except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+782:        raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
+783:    try:
+784:        fleet = os.path.join(work, "fleet")
+785:        os.mkdir(fleet)
+786:        try:
+787:            siblings = sorted(os.listdir(fleet_root))
+788:        except OSError:
+789:            siblings = []
+---
+930:    scratch = tempfile.mkdtemp(
+931:        prefix="tameshi-r17-registry-check-selftest.", dir=strict_scratch_root()
+932:    )
+933:    passed = 0
+934:    failed = []
+935:
+936:    def record(name, ok, detail):
+937:        nonlocal passed
+938:        if ok:
+---
+1846:            return selftest()
+1847:        except RuntimeError as exc:
+1848:            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+1849:            return 2
+1850:
+1851:    root = default_root()
+1852:    rev = None
+1853:    registry = None
+1854:    only = None
+---
+1927:            work, root = clone_lane_at_rev(root_requested, rev, sha)
+1928:        except RuntimeError as exc:
+1929:            report = {
+1930:                "schema": REPORT_SCHEMA,
+1931:                "root": root_requested,
+1932:                "rev": rev,
+1933:                "rev_resolved": sha,
+1934:                "error": str(exc),
+1935:            }
+---
+===== tools/context-capture.py handlers =====
+299:
+300:def strict_scratch_root():
+301:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+302:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+303:    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+304:    import os as _os
+305:    t = _os.environ.get("TMPDIR")
+306:    if t:
+307:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+---
+1638:        self.root = tempfile.mkdtemp(prefix="context-capture-selftest-",
+1639:                                     dir=strict_scratch_root())
+1640:        self.passed = 0
+1641:        self.failed = []
+1642:        self.outputs = []
+1643:        self.counter = 0
+1644:
+1645:    def case_dir(self, name):
+1646:        self.counter += 1
+---
+===== tools/repeat-control.py handlers =====
+147:
+148:def strict_scratch_root():
+149:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+150:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+151:    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+152:    import os as _os
+153:    t = _os.environ.get("TMPDIR")
+154:    if t:
+155:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+---
+610:        return 2
+611:    scratch = tempfile.mkdtemp(prefix="tameshi-r12-repeat-control-selftest.", dir=strict_scratch_root())
+612:    passed = 0
+613:    failed = []
+614:
+615:    def record_case(name, ok, detail):
+616:        nonlocal passed
+617:        if ok:
+618:            passed += 1
+---

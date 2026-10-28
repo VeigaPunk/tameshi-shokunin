@@ -1,0 +1,18 @@
+=== H: registry cell + catch order at C1 ===
+ROW env-diff-selftest
+ARGV ['python3', 'tools/env-diff.py', '--selftest']
+CELL TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)
+--- catch order ---
+   263	    except ScratchRootUnusable as exc:
+   264	        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+   265	        return 2
+   266	    except (OSError, ValueError, KeyError, TypeError) as exc:
+   267	        print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+   268	        return 2
+--- surface_result unavailable catch ---
+   157	    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+   158	        row.update(classification="unavailable", sensitive_to=[], error=str(exc))
+--- isinstance ScratchRootUnusable of unavailable tuple? ---
+issubclass OSError False
+issubclass ValueError False
+issubclass TimeoutExpired False

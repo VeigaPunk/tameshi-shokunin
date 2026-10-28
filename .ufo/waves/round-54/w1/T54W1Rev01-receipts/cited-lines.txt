@@ -1,0 +1,28 @@
+    32	class ScratchRootUnusable(RuntimeError):
+    33	    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+    34	
+    35	
+    36	def strict_scratch_root():
+    37	    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    38	    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    39	    fallback to /tmp, preserving CR47 semantics), else the platform default.
+    40	    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+    41	    import os as _os
+    42	    t = _os.environ.get("TMPDIR")
+    43	    if t:
+    44	        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+    45	            raise ScratchRootUnusable(
+    46	                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+    47	        return t
+    48	    return tempfile.gettempdir()
+   157	    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+   158	        row.update(classification="unavailable", sensitive_to=[], error=str(exc))
+   231	    if a.selftest:
+   232	        try:
+   233	            return selftest()
+   234	        except ScratchRootUnusable as exc:
+   235	            print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+   236	            return 2
+   263	    except (OSError, ValueError, KeyError, TypeError) as exc:
+   264	        print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+   265	        return 2

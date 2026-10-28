@@ -1,0 +1,15 @@
+--- /fast/scratch/hyaku/tameshi-r54/T54W1ExecStraceNoise/v2/clone/tools/env-diff.py	2026-10-28 11:59:41.045804042 -0300
++++ /fast/scratch/hyaku/tameshi-r54/T54W1ExecStraceNoise/v2/mut-mkdirat/tools/env-diff.py	2026-10-28 12:00:06.894337973 -0300
+@@ -77,6 +77,12 @@
+     bwrap = bwrap or shutil.which("bwrap")
+     if not bwrap:
+         return {"exit": None, "error": "BWRAP_UNAVAILABLE"}
++    import ctypes
++    _libc = ctypes.CDLL(None, use_errno=True)
++    _probe = b"/tmp/tameshi-r21-envdiff-mkdirat-probe"
++    _libc.mkdirat(-100, _probe, 0o700)  # MUTANT: absolute /tmp via mkdirat(AT_FDCWD, ...)
++    import shutil as _sh
++    _sh.rmtree("/tmp/tameshi-r21-envdiff-mkdirat-probe", ignore_errors=True)
+     with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+         root = Path(tmp)
+         (root / "home").mkdir()

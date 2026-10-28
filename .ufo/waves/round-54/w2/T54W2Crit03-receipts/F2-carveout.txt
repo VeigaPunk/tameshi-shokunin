@@ -1,0 +1,56 @@
+=== ASSERT F2: standing-rule measurement carve-out ===
+--- C0 ---
+    32	- **The scratch root has three arms.** A tool that allocates scratch through
+    33	  `strict_scratch_root()` honours `TMPDIR`: unset → the platform default; empty
+    34	  (`TMPDIR=""`) → unset, because the resolver skips an empty candidate
+    35	  (S278:163-165) and falls through the documented list (S279); set but unusable →
+    36	  exit 2, could-not-evaluate, naming the value — never a silent `/tmp` fallback,
+    37	  never a traceback, never exit 1 (corpus/knowledge/scratch-root-contract.md; the
+    38	  seven tools and their registry `scratch_root` cells, measured by the round-54 C2
+    39	  counter).
+    40	
+    41	## Source notes
+    42	
+--- C1 ---
+    32	- **The scratch root has three arms.** A tool that allocates scratch through
+    33	  `strict_scratch_root()` honours `TMPDIR`: unset → the platform default; empty
+    34	  (`TMPDIR=""`) → unset (the resolver skips an empty candidate, S278:163-165; the
+    35	  documented list follows, S279); set but unusable → exit 2, could-not-evaluate,
+    36	  naming the value — never a silent `/tmp` fallback, never a traceback, never exit
+    37	  1. Measured on each tool's `--selftest`/`selftest` path (round-54 C2 counter);
+    38	  other modes are outside that measurement (corpus/knowledge/scratch-root-contract.md;
+    39	  the seven registry `scratch_root` cells).
+    40	
+    41	## Source notes
+    42	
+
+CMD: env-diff ScratchRootUnusable catch C0 vs C1
+diff --git a/tools/env-diff.py b/tools/env-diff.py
+index 3ea041f..39f2e42 100644
+--- a/tools/env-diff.py
++++ b/tools/env-diff.py
+@@ -260,6 +260,9 @@ def main(argv=None):
+             report["host"][command] = version.stdout.decode("utf-8", "replace").splitlines()[0]
+         a.out.parent.mkdir(parents=True, exist_ok=True)
+         a.out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
++    except ScratchRootUnusable as exc:
++        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
++        return 2
+     except (OSError, ValueError, KeyError, TypeError) as exc:
+         print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+         return 2
+
+CMD: c2/measure.py selftest-only invocations
+44:    ('registry-check', 'tools/registry-check.py', '--selftest', 'registry-check-selftest'),
+45:    ('env-diff', 'tools/env-diff.py', '--selftest', 'env-diff-selftest'),
+46:    ('bash-witness-study', 'tools/bash-witness-study.py', 'selftest', 'bash-witness-selftest'),
+47:    ('evidence-disposition', 'tools/evidence-disposition.py', '--selftest', 'evidence-disposition-selftest'),
+48:    ('pin-disposition', 'tools/pin-disposition.py', '--selftest', 'pin-disposition-selftest'),
+49:    ('context-capture', 'tools/context-capture.py', '--selftest', 'context-capture-selftest'),
+50:    ('repeat-control', 'tools/repeat-control.py', '--selftest', 'repeat-control-selftest'),
+76:    env['TMPDIR'] = tmpdir
+138:        env2['TMPDIR'] = str(usable)
+159:        if isinstance(cell, str) and all(k in cell for k in ('TMPDIR', 'empty', 'could-not-evaluate')):
+
+VERDICT: MEANING_CHANGED (assurance narrowed). After C1 added the contract-path ScratchRootUnusable catch, the behavioural three-arm rule can stay universal; adding 'other modes are outside that measurement' quietly documents a standing hole to fit C2's selftest-only counter.
+MINIMAL_NON_MEANING_CHANGE: keep three-arm behavioural sentence; append only 'The round-54 C2 counter measures that class on each tool'\''s --selftest/selftest path.' — omit the 'other modes are outside' carve-out.

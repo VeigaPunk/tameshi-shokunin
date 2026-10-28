@@ -1,0 +1,52 @@
+=== git diff --stat ===
+ SKILL.md          | 60 +++++++++++++++++++++++++++----------------------------
+ tools/env-diff.py |  3 +++
+ 2 files changed, 33 insertions(+), 30 deletions(-)
+
+=== SKILL.md:1727-1731 at C1 (run-together residue) ===
+  1727	Could-not-evaluate takes precedence over a mismatched expected verdict: an
+  1728	edited snapshot or unavailable input stays exit2, with any expectation
+  1729	disagreement secondary. A clean result with a wrong id/exit pin becomes
+  1730	failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest
+  1731	exits 0/1/2 for pass/case failure/could-not-evaluate (setup inability) and 64 for invalid invocation (the disposition selftest: 0 pass, 1 case failure, 2 could-not-evaluate — an unusable scratch root or an unreadable input is named, never a traceback; round 54).
+
+=== evidence-disposition.py:385-409 at C1 (scrub outside cite) ===
+   385	# ------------------------------------------------- historical input reading
+   386	
+   387	# G4: every git subprocess runs without inherited GIT_* state, without replace
+   388	# refs and without grafts, so environment/replace/graft attacks cannot rewrite
+   389	# the bytes this gate reads.
+   390	GIT_ENV_OVERRIDES = {
+   391	    "GIT_NO_REPLACE_OBJECTS": "1",
+   392	    "GIT_GRAFT_FILE": "/dev/null",
+   393	    "GIT_CONFIG_NOSYSTEM": "1",
+   394	    "GIT_CONFIG_GLOBAL": "/dev/null",
+   395	}
+   396	
+   397	
+   398	def _stderr_text(proc):
+   399	    if proc.stderr is None:
+   400	        return ""
+   401	    if isinstance(proc.stderr, bytes):
+   402	        return proc.stderr.decode("utf-8", "replace").strip()
+   403	    return str(proc.stderr).strip()
+   404	
+   405	
+   406	def git_environment():
+   407	    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+   408	    env.update(GIT_ENV_OVERRIDES)
+   409	    return env
+
+=== QUALITY 104 criterion head ===
+### Criterion 104 — a fix-pass hunk is re-read before commit
+
+A round that edits SKILL.md sections in response to reader findings re-reads each applied hunk before commit: no section may gain a duplicate parenthetical, a self-contradicting sentence, or a citation whose receipt does not establish the cited clause (command, exit and pinned bytes). The check that can fail: a duplicate-phrase scan over the touched sections lists zero hits, and every new citation resolves to a receipt establishing its clause. Round 53's fix pass (`.ufo/evidence/round-53/`) is the worked example; the wave-2 lint seat's report is the round's receipt.
+
+Lesson: `corpus/lessons/round-53.md` `## Mistakes` row 1 (the round-52 fix-pass debris the T52W3 readers routed back).
+
+Falsifier that must fail: at base `6db1d220` the round-52 duplicate "(**ten** since round 51) (ten since round 51)" at SKILL.md (then :1305) is present, and the self-contradicting "Cases 5–6 were still not embedded at this boundary (both are legs 5–6 since round 10-2 …)" at (then :1227-1228) is present; both are gone at the round-53 content candidate `218bc6b5`.
+
+=== run-together scan on hunk windows ===
+1728: hit 'exit2, with ' in: edited snapshot or unavailable input stays exit2, with any expectation
+1730: hit 'exit1. Help ' in: failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest
+1730: hit 'exits0 only a' in: failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest

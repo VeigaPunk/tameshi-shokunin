@@ -1,0 +1,63 @@
+=== SKILL.md:563-567 at C1 (bare colon would resolve here) ===
+   560	# write driver + manifest (below), then:
+   561	python3 "$W/mutate_driver.py" --check   # per-defect occurrences + 'all unique'
+   562	python3 "$W/mutate_driver.py" --run     # control + 10 mutants, writes evidence/
+   563	# survivor probes (must show the mutant observably different off-suite):
+   564	node "$W/mutant-D2.mjs"  --root "$W/empty-root" | tail -1   # …5 ids, '+23 more' (node exits 1)
+   565	node "$W/mutant-D10.mjs" --root "$W/empty-root" | grep 'FAMILY K2'  # frozen=24
+   566	```
+   567	
+   568	**Driver contract (write from this spec):** load pristine text; `--check`:
+   569	`count(old)==1` per defect, print occurrences + first line, final line
+   570	`CHECK: all unique`, else exit 1; `--run`: for each defect assert uniqueness and
+   571	`new != old`, write `mutant-<id>.mjs` from a fresh replacement, run
+   572	`node mutant-<id>.mjs --selftest` (timeout 300 s), save stdout →
+   573	`evidence/<id>.selftest.txt`, and `{sha256, exit, duration, summary, verdict,
+   574	fails}` → `evidence/<id>.meta.json`; control first (`D00-control`); aggregate
+   575	`evidence/results.json`. Killed ⇔ exit ≠ 0 or `VERDICT: PASS` absent, with the
+
+=== Pin disposition section: any bare-anchor convention? ===
+10:| Recorded target bytes equal the current worktree AND the pin verifies against the manifest digest (`tools/pin-disposition.py:67-71`, `:563-567`) | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+19:2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+
+=== How other cells in same table cite tools ===
+  1549	| Observation | Decision | Limit |
+  1550	|---|---|---|
+  1551	| Recorded target bytes equal the current worktree AND the pin verifies against the manifest digest (`tools/pin-disposition.py:67-71`, `:563-567`) | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+  1552	| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
+  1553	| Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
+  1554	| All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
+  1555	| Frozen summary kind is null but the frozen declaration's top-level kind is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
+  1556	
+  1557	Recipe from this lane root:
+  1558	
+  1559	1. Read the manifest's recorded source and the output's `not_compared` list before the rows.
+  1560	2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+  1561	   observes only hashes and git metadata. Retain stdout with its sibling branch-tip
+  1562	   commits before treating it as a dated reading. It executes no sibling gate.
+  1563	3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json`
+  1564	   checks the new companion against digest-anchored frozen sources.
+  1565	4. The original round-12 summary and rerun summary retain their historical
+  1566	   null fields. The companion normalizes the canonical summary only; the
+  1567	   rerun null is explicitly outside its normalized scope. The producer's
+  1568	   wrong-nesting bug is fixed separately for future summary generation;
+  1569	   its regression selftest asserts the exact top-level exposed kind.
+  1570	5. Do not rerun a sibling's gate to obtain closure evidence. A non-author
+
+=== Nearby SKILL citations of pin-disposition with dual ranges ===
+1551:| Recorded target bytes equal the current worktree AND the pin verifies against the manifest digest (`tools/pin-disposition.py:67-71`, `:563-567`) | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+
+=== dispositions.json inputs include expected.json? ===
+['.ufo/evidence/round-13/expected.json', '.ufo/evidence/round-13/verification.json', '.ufo/evidence/round-13/producer-oracle-repair.json']
+True
+
+=== Exact :1606 sentence ===
+1. Read the historical expectations and raw observations before accepting a$
+   later summary; distinguish twelve expected rows from thirteen pinned inputs (both counts belong to `.ufo/evidence/round-13/expected.json`, which the commands below name: twelve expected checks, thirteen inputs).$
+2. **Historical (round 14, runner `75ed934dM-bM-^@M-&`):** at `--root .` both manifests now return 2$
+   `expected_input_digest_mismatch` (the moved pins are the round-13 expected manifest's: three of its thirteen inputs are stale at the live bytes M-bM-^@M-^T the runner in round 16, the bash witness-study tool in rounds 18 and 21, and `tools/pin-disposition.py` in round 17, before either named round). Replay with cwd = an extracted$
+
+=== Recipe commands: do they literally name expected.json? ===
+3:   later summary; distinguish twelve expected rows from thirteen pinned inputs (both counts belong to `.ufo/evidence/round-13/expected.json`, which the commands below name: twelve expected checks, thirteen inputs).
+6:   `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
+8:3. The same command with `.ufo/evidence/round-14/dispositions.json` → 0: the only repair is that row's explicit supersession,

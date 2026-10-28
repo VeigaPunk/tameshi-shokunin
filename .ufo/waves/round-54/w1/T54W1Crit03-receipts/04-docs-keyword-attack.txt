@@ -1,0 +1,44 @@
+=== live cells at C0 ===
+registry-check-selftest: sha16=08b1cc092867b917 len=266
+env-diff-selftest: sha16=08b1cc092867b917 len=266
+bash-witness-selftest: sha16=08b1cc092867b917 len=266
+evidence-disposition-selftest: sha16=08b1cc092867b917 len=266
+pin-disposition-selftest: sha16=08b1cc092867b917 len=266
+context-capture-selftest: sha16=08b1cc092867b917 len=266
+repeat-control-selftest: sha16=08b1cc092867b917 len=266
+TEXT= 'TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)'
+identical_across_seven= True
+
+=== counter docs predicate (measure.py L149) ===
+all(k in cell for k in ('TMPDIR', 'empty', 'could-not-evaluate'))
+live_docs_count= 7
+
+=== forged cells vs docs predicate ===
+LABEL=invert-exit
+CELL='TMPDIR set but unusable => exit 0 with empty stderr; never prints could-not-evaluate; falls back to /tmp'
+  docs_pass=True parts={TMPDIR:True, empty:True, cne:True}
+LABEL=wrong-exit-1
+CELL='TMPDIR may be empty; could-not-evaluate is never used; unusable TMPDIR exits 1 with a traceback'
+  docs_pass=True parts={TMPDIR:True, empty:True, cne:True}
+LABEL=opposite-arms
+CELL='When TMPDIR is empty the tool treats it as a path and allocates under cwd; unusable TMPDIR is ignored and could-not-evaluate is never emitted'
+  docs_pass=True parts={TMPDIR:True, empty:True, cne:True}
+LABEL=missing-keyword-control
+CELL='TMPDIR set but unusable => exit 2 naming the value; usable root holds mkdtemps; no /tmp mkdir'
+  docs_pass=False parts={TMPDIR:True, empty:False, cne:False}
+
+=== live cell claim atoms ===
+  contains 'TMPDIR set but unusable => exit 2': True
+  contains 'could-not-evaluate': True
+  contains 'the value is named': True
+  contains 'no traceback': True
+  contains 'TMPDIR empty => unset': True
+  contains 'the platform default applies': True
+  contains 'a usable TMPDIR holds every mkdtemp': True
+  contains 'nothing is created under /tmp': True
+
+=== C2 cannot_see ===
+whether a tool's self-test exercises the branch that allocates scratch on its real path, and whether a registry cell describes the tool as it now behaves beyond the three named arms
+
+=== C2 target (docs clause) ===
+C2_R54_PASS=true: 7/7 self-tests exit 2 with a naming could-not-evaluate line and no traceback on a set-but-unusable TMPDIR, 7/7 exit 0 on an empty TMPDIR (declared unset) and on a usable one with no mkdir under /tmp, the seven registry rows carry the scratch_root cell, and the note corpus/knowledge/scratch-root-contract.md cites an S row mined this round with the lesson Gate naming its URL and 2026-10-28

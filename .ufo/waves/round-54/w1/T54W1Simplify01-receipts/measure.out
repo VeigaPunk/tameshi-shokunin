@@ -1,0 +1,145 @@
+===== 1. base d33053f vs C0 59c3810, one set-but-unusable TMPDIR =====
+### base d33053f (no class)  TMPDIR=/nonexistent/nope-r54
+env-diff.py                    rc=1 lines=18 traceback=1 could-not-evaluate=2
+    | RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-evaluate)
+evidence-disposition.py        rc=1 lines=13 traceback=1 could-not-evaluate=2
+    | RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-evaluate)
+pin-disposition.py             rc=1 lines=13 traceback=1 could-not-evaluate=2
+    | RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-evaluate)
+bash-witness-study.py          rc=1 lines=14 traceback=1 could-not-evaluate=2
+    | RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-evaluate)
+context-capture.py             rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | SELFTEST: FAIL (setup error: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-
+registry-check.py              rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-eva
+repeat-control.py              rc=2 lines=2 traceback=0 could-not-evaluate=1
+    | REPEAT_CONTROL: setup_error
+
+### C0 59c3810 (class + arm)  TMPDIR=/nonexistent/nope-r54
+env-diff.py                    rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-eval
+evidence-disposition.py        rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (coul
+pin-disposition.py             rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not
+bash-witness-study.py          rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-eval
+context-capture.py             rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | SELFTEST: FAIL (setup error: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-
+registry-check.py              rc=2 lines=1 traceback=0 could-not-evaluate=1
+    | registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-eva
+repeat-control.py              rc=2 lines=2 traceback=0 could-not-evaluate=1
+    | REPEAT_CONTROL: setup_error
+
+===== 2. duplication measurement (7 copies of strict_scratch_root) =====
+context-capture        helper_lines=12 sha=80194a6dde3ff6bd raises=RuntimeError       class=-
+registry-check         helper_lines=12 sha=80194a6dde3ff6bd raises=RuntimeError       class=-
+repeat-control         helper_lines=12 sha=80194a6dde3ff6bd raises=RuntimeError       class=-
+env-diff               helper_lines=13 sha=b161cc8238791e59 raises=ScratchRootUnusable class=class
+evidence-disposition   helper_lines=13 sha=b161cc8238791e59 raises=ScratchRootUnusable class=class
+pin-disposition        helper_lines=13 sha=b161cc8238791e59 raises=ScratchRootUnusable class=class
+bash-witness-study     helper_lines=13 sha=b161cc8238791e59 raises=ScratchRootUnusable class=class
+
+distinct strict_scratch_root bodies: 2
+   ['context-capture', 'registry-check', 'repeat-control']
+   ['env-diff', 'evidence-disposition', 'pin-disposition', 'bash-witness-study']
+
+diff between the two variants:
+   --- A:['context-capture', 'registry-check', 'repeat-control']
+   +++ B:['env-diff', 'evidence-disposition', 'pin-disposition', 'bash-witness-study']
+   @@ -4 +4,2 @@
+   -    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+   +    fallback to /tmp, preserving CR47 semantics), else the platform default.
+   +    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+   @@ -9 +10 @@
+   -            raise RuntimeError(
+   +            raise ScratchRootUnusable(
+
+helper lines duplicated: 7 copies = 88 lines; class = 2 lines x 4 ; arm = 3 lines x 4
+
+===== 3. import-graph: does any tool import a sibling module? =====
+tool files: 29 local/relative imports: []
+staged subset copies of tools/ (historical practice):
+   .ufo/waves/round-17/staged/tools   3 files (live tools/ has 33 entries)
+   .ufo/waves/round-18/staged/tools   4 files (live tools/ has 33 entries)
+
+===== 4. what a tools/scratch_root.py module would cost =====
+4a. subset copy (one tool file staged alone, as round-17 staged 3 of 33):
+    from scratch_root import ScratchRootUnusable
+ModuleNotFoundError: No module named 'scratch_root'
+    rc=1
+4b. by-path load (registry-replay's spec_from_file_location on tools/registry-check.py):
+    ModuleNotFoundError: No module named 'scratch_root'
+    rc=3
+4c. cross-revision: exec_module on revision A's runner with sys.path[0] at revision B's tools dir:
+    runner saw helper: revB-helper
+4d. instrument hashes cover __file__ only (a sibling module would not be hashed):
+   tools/env-diff.py:252:        report["instrument_sha256"] = digest(Path(__file__).read_bytes())
+   tools/evidence-disposition.py:230:def tool_sha256():
+   tools/evidence-disposition.py:1457:        "tool_sha256": tool_sha256(),
+   tools/pin-disposition.py:192:def tool_sha256():
+   tools/pin-disposition.py:208:        "tool_sha256": tool_sha256(),
+   tools/bash-witness-study.py:811:            "sha256": sha256_file(Path(__file__).resolve()),
+   tools/bash-witness-study.py:1635:                "runner": {"sha256": sha256_file(RUNNER)},
+
+===== 5. laundering test: typed arm vs bare-RuntimeError arm =====
+5a. C0 code + a RuntimeError raised inside evidence-disposition's selftest (injected in the clone):
+    rc=1 traceback=1
+    | RuntimeError: injected interior bug: jj status failed
+5b. same file with the arm widened to 'except RuntimeError':
+    rc=2 traceback=0
+    | evidence-disposition.py: could-not-evaluate: injected interior bug: jj status failed
+5c. one of the three tools without the class, context-capture, same injection:
+    rc=2 traceback=0
+    | SELFTEST: FAIL (setup error: RuntimeError: injected interior bug: fixture case crashed)
+
+===== 6. conformance checks unchanged =====
+  rows with scratch_root cell: 7
+  cell text: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the pla...
+  census validate rc=0 (last line: tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md)
+
+===== 7. does the arm cover every path that allocates scratch? =====
+   env-diff               line    80 inside execute
+   evidence-disposition   line  2370 inside selftest
+   pin-disposition        line   725 inside selftest
+   bash-witness-study     line  1260 inside cmd_selftest
+   context-capture        line  1639 inside __init__
+   registry-check         line   780 inside clone_lane_at_rev
+   registry-check         line   931 inside selftest
+   repeat-control         line   611 inside selftest
+  -> env-diff also allocates on its run path (execute), not only in selftest.
+  fixture toplevel: /fast/scratch/hyaku/tameshi-r54/T54W1Simplify01/repro/fixrepo
+  7a. env-diff RUN path, usable TMPDIR (control):
+    rc=0 last=ENVDIFF: classified=1/1 out=/fast/scratch/hyaku/tameshi-r54/T54W1Simplify01/repro/r-ok.json
+  7b. env-diff RUN path, unusable TMPDIR:
+    rc=1 traceback=1
+    | ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-r54' (could-not-evaluate
+
+===== 8. what the lane's own registry runner does with the class =====
+  8a. registry-check --only env-diff-selftest under an unusable TMPDIR:
+    rc=1
+    | ROW env-diff-selftest expect=0 got=2 differs
+    | REGISTRY_CHECK: held=0/1 superseded=0
+  8b. the contract note's rule this is measured against:
+    36:could-not-evaluate (2), never 1 (a verdict of "differs"/"failed") and never a
+
+===== 9. the current tip (the lane moved while this seat ran) =====
+  tip=3146479c21387dc5affe56f334aba1f770386b61  (round-54: round record (standings, both claim rows, planned round 55) and the LOG entry, pre-decidin)
+   env-diff               class_blocks=1 arm_sites=[263, 234]
+   evidence-disposition   class_blocks=1 arm_sites=[3231]
+   pin-disposition        class_blocks=1 arm_sites=[1399]
+   bash-witness-study     class_blocks=1 arm_sites=[1788]
+   totals: class_blocks=4 arm_sites=5
+  9a. env-diff RUN path at the tip, unusable TMPDIR:
+    rc=2 traceback=0 lines=1
+    | ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/nope-
+  9b. the commit that closed it:
+    99c3bc8 round-54: C1 fix pass — 26 wave-1 reader findings adjudicated and fixed (stale SKILL anchors at C0, the C** placeholder, exit-arm drift after the scratch-root change, the runbook pin, S275 page locator, the env-diff run-path class), QUALITY 105
+
+===== 10. the one intra-file deletion candidate: merge env-diff's two identical arms =====
+  10a. C0 shape + a genuine selftest ValueError (the selftest branch is outside the outer try):
+    rc=1 traceback=1 file_lines=273
+  10b. the merged arm (inner arm deleted, selftest inside the outer try), same ValueError:
+    rc=2 traceback=0 file_lines=269
+    | ENVDIFF_SETUP: injected selftest ValueError
+[scratch kept at /fast/scratch/hyaku/tameshi-r54/T54W1Simplify01/repro]

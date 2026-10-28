@@ -1,0 +1,2 @@
+class ScratchRootUnusable(RuntimeError):
+    pass

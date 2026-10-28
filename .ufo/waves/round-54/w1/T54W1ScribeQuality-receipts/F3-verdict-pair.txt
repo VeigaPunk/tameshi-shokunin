@@ -1,0 +1,27 @@
+# F3 verdict pair (same clone bytes, same TMPDIR, only the strace wrapper varies)
+cwd=$S/rc-clone rev=59c38109bf11 registry-check.py blob=96d762ea6829ede011c1d80a7d5b1a0d8d818b8b
+strace: strace -- version 7.2 kernel: 7.2.11-arch1-1
+
+## without wrapper
+cmd: TMPDIR=usable python3 tools/registry-check.py --selftest
+rc=0
+SELFTEST: PASS (51 cases)
+
+## with wrapper (the C2 usable arm's argv)
+cmd: TMPDIR=usable strace -f -e trace=mkdir,mkdirat -o LOG python3 tools/registry-check.py --selftest
+rc=1
+SELFTEST_CASE timeout-kills-setsid-pipe FAIL (exit=1 elapsed=4.592s survivor=False marker=False)
+SELFTEST_CASE timeout-kills-setpgid-pipe FAIL (exit=1 elapsed=4.574s survivor=False marker=False)
+SELFTEST: FAIL (2 of 51 cases: timeout-kills-setsid-pipe, timeout-kills-setpgid-pipe)
+SELFTEST: FAIL (2 of 51 cases: timeout-kills-setsid-pipe, timeout-kills-setpgid-pipe)
+
+## base revision, same pair (blob identical)
+cmd: TMPDIR=usable python3 tools/registry-check.py --selftest (base d33053f)
+rc=0
+SELFTEST: PASS (51 cases)
+cmd: wrapped, base d33053f
+rc=1
+SELFTEST_CASE timeout-kills-setsid-pipe FAIL (exit=1 elapsed=9.860s survivor=False marker=False)
+SELFTEST_CASE timeout-kills-setpgid-pipe FAIL (exit=1 elapsed=9.693s survivor=False marker=False)
+SELFTEST: FAIL (2 of 51 cases: timeout-kills-setsid-pipe, timeout-kills-setpgid-pipe)
+SELFTEST: FAIL (2 of 51 cases: timeout-kills-setsid-pipe, timeout-kills-setpgid-pipe)

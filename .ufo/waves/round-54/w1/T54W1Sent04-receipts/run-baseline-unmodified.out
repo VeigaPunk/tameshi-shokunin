@@ -1,0 +1,34 @@
+T54W1Sent04 — baseline C2 run at C0, UNMODIFIED counter (verbatim transcription of the
+run's output; this one run was not tee'd to disk, so it is copied here from the tool output
+of the run itself. Every other receipt in this directory is a machine-written .out file.)
+
+Command (lane's on-disk counter at the time; the 6-figure below matches the frozen b4684a3f
+traced-rc behaviour, but this run did not hash the file — the two pinned attack runs are the
+load-bearing evidence):
+
+  export HYAKU_SCRATCH=/fast/scratch/hyaku; S=$HYAKU_SCRATCH/tameshi-r54/T54W1Sent04
+  mkdir -p "$S/tmp"; cd "$S"; export TMPDIR=$S/tmp
+  python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c2/measure.py \
+    --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin \
+    --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --work "$S/work-base" --explain
+
+Output (verbatim):
+
+/usr/bin/strace
+Python 3.14.8
+EXPLAIN unusable registry-check rc=2 line='registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory'
+EXPLAIN unusable env-diff rc=2 line='ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory:'
+EXPLAIN unusable bash-witness-study rc=2 line='WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory:'
+EXPLAIN unusable evidence-disposition rc=2 line='evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable '
+EXPLAIN unusable pin-disposition rc=2 line='pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable direc'
+EXPLAIN unusable context-capture rc=2 line='SELFTEST: FAIL (setup error: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable di'
+EXPLAIN unusable repeat-control rc=2 line='repeat-control: setup: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable director'
+EXPLAIN usable registry-check rc=1 tmp_mkdirs=0
+C2_R54: rev=59c38109bf11 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=6 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
+BASELINE_RC=1
+
+Verdict: 7/7 exit 2 on the unusable arm, 7/7 naming, 7/7 empty, docs 7, note 1, sources 3 —
+i.e. every arm the two attacks target is here intact; the single failing cell is the usable
+arm for registry-check, which is the hermeticity finding in T54W1Sent04.md §5 (measured
+independently: plain selftest rc=0 51/51, the counter's own `strace -f` command rc=1 with
+timeout-kills-setsid-pipe / timeout-kills-setpgid-pipe failing at 9.8 s / 8.2 s).

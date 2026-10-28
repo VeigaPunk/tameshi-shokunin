@@ -1,0 +1,124 @@
+keys ['wave', 'reportDir', 'template', 'context', 'items']
+{
+  "name": "T54W1Read23",
+  "role": "scribe",
+  "axes": [
+    "calibration"
+  ],
+  "milestone": "C1 cold-read re-read at C0",
+  "item": "Cold-read the SKILL.md section `### Round-26 gate/probe registry \u2014 report interop` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+}
+====
+{
+  "name": "T54W1ExecRegistryGate",
+  "role": "executor",
+  "axes": [
+    "operability"
+  ],
+  "milestone": "registry rows still return their outcomes",
+  "item": "Run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py --selftest` (expect exit 0) and then `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --only registry-check-selftest` plus the six other `*-selftest` rows one at a time, pasting each exit. The seven rows gained a `scratch_root` field: prove the field does not change any row's registered outcome and that the registry still validates (no schema violation)."
+}
+====
+{
+  "name": "T54W1ExecDryBinder",
+  "role": "executor",
+  "axes": [
+    "calibration"
+  ],
+  "milestone": "dry-run binder input map",
+  "item": "For each of the 23 headings in `.ufo/evidence/round-54/c1/lost-headings-at-c0.json`, read the ledger at C0 and list the union of the section's prior entries' input paths, flagging every path that is (a) absent at C0, (b) `LOG.md` or `SCORECARD.md`, or (c) a file this round still edits. Emit a machine `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>-input-map.json` with one object per heading: {heading, inputs: {path: sha256 at C0}, dropped: [paths], unstable: [paths]}. This is the binder's expected input set; a heading whose map is empty or entirely unstable is a section that cannot be re-keyed and must be named."
+}
+====
+{
+  "name": "T54W1ExecManifest",
+  "role": "executor",
+  "axes": [
+    "calibration"
+  ],
+  "milestone": "section manifest at C0",
+  "item": "Using `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/reader-section.py`, compute for each of the 23 lost headings its start, end and section_sha256 at C0 and write `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/section-manifest.json` as a list of those objects. Then hash the SKILL.md blob at C0 once and record it in the same file under \"skill_sha256\". This is the manifest the binder and the counter will be compared against."
+}
+====
+{
+  "name": "T54W1ExecEmptyStrace",
+  "role": "executor",
+  "axes": [
+    "operability"
+  ],
+  "milestone": "empty TMPDIR reaches the default",
+  "item": "Under `TMPDIR=\"\"`, run each of the seven self-tests under `strace -f -e trace=mkdir,mkdirat -o LOG` and report the mkdir paths each tool used. The declared arm says empty = unset, so the platform default applies; show the paths and state whether any tool silently allocated under the working directory. Report the seven (tool, exit, first mkdir path) triples."
+}
+====
+{
+  "name": "T54W1ExecCitations",
+  "role": "executor",
+  "axes": [
+    "depth"
+  ],
+  "milestone": "section citations still resolve",
+  "item": "For each of the 23 lost sections, extract every lane-relative path the section names and check it exists as a blob at C0 (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file -e 59c38109bf119d0e9d4f878644a82babc937bc1e:<path>`); extract every `file:line` reference to a lane file and check the line count allows it. Report a per-section count of citations checked vs unresolved, and name any citation that cannot resolve. No edits."
+}
+====
+{
+  "name": "T54W1ConnPreBind",
+  "role": "connector",
+  "axes": [
+    "calibration",
+    "adjacency"
+  ],
+  "milestone": "cross-claim pre-bind map",
+  "item": "Cross the two claims: for each of the 23 lost headings, which of them pin any of the four tools C0 edited or `tools/registry.json`, and which of them pin files the L1 will still write (LOG.md, SCORECARD.md, corpus/lessons/round-54.md)? Produce the map and the rule the binder must apply (pin at C0, drop unstable paths, never fabricate an input). Name any heading where the map is ambiguous and say which reading you would defend."
+}
+====
+{
+  "name": "T54W1Crit02",
+  "role": "critic",
+  "axes": [
+    "discernment? calibration"
+  ],
+  "milestone": "falsify the claims",
+  "item": "Falsify the claims: the seven-heading frozen set vs 23 actual. C1 froze seven headings at base but the round must re-key 23 at C0. Decide whether the frozen counter is therefore too weak: enumerate which of the 23 are NOT among the seven, show how the precheck arm still covers them, and say whether a closure could accept C1_R54_PASS=true while a section's entry is a fig leaf. Give a verdict: the frozen predicate is adequate / it needs an amendment, with the exact sentence. Write a runnable receipt for every assertion (command + output) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+}
+====
+{
+  "name": "T54W1Crit03",
+  "role": "critic",
+  "axes": [
+    "discernment? calibration"
+  ],
+  "milestone": "falsify the claims",
+  "item": "Falsify the claims: C2's registry cell vs behaviour. Attack the `scratch_root` cell on the seven rows: does each cell describe what its tool now does? Run the three arms by hand for one tool and compare word by word. Then attack the docs arm itself: a cell that contains the three keywords can still be wrong \u2014 construct a cell that would pass the counter's keyword test while describing different behaviour, and say whether the contract's `cannot_see` covers it. Write a runnable receipt for every assertion (command + output) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+}
+====
+{
+  "name": "T54W1MutB02",
+  "role": "mutation-tester",
+  "axes": [
+    "operability"
+  ],
+  "milestone": "probe the scratch-root boundary",
+  "item": "Boundary probe (a mutation-tester seat; the policy refuses a standalone labrat lane): non-writable TMPDIR. Create a directory, chmod 500 it, and run two of the seven tools' self-tests with TMPDIR pointing there (as a non-root user; report your uid). Expect exit 2 with the naming line. Then chmod back. Report both tools' exits and lines, and say whether `os.access(t, W_OK)` is the right test or whether the allocation itself should be the test. Use your scratch dir; report command, exit, and the naming line for every arm."
+}
+====
+{
+  "name": "T54W1Revenge03",
+  "role": "revenger",
+  "axes": [
+    "operability"
+  ],
+  "milestone": "the selftest entry points",
+  "item": "The mapping is at each tool's entry point. Enumerate every documented invocation of the seven tools (their `--help`, USAGE strings, registry argv, SKILL text) and show that each one, under an unusable TMPDIR, exits 2 with a naming line and no traceback. Report the matrix of invocation x exit code; a `--selftest`-only proof that misses another documented mode is the finding."
+}
+====
+{
+  "name": "T54W1Simplify02",
+  "role": "simplifier",
+  "axes": [
+    "depth"
+  ],
+  "milestone": "the registry cell wording",
+  "item": "The `scratch_root` cell is one ~45-word sentence repeated on seven rows. Decide whether that is the right home or whether one registry-level note plus a one-word cell would govern the same behaviour with less duplication. Check what reads those rows (registry-check validates fields, not prose) and give the deletion you would make with its cost. No edits."
+}
+====
+type_items <class 'list'> len 76
+top items <class 'list'>

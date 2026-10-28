@@ -1,0 +1,22 @@
+# fixture: .ufo/waves/round-54/w1/T54W1ExecRegistryGate-receipts/registry-mutated.json (registry.json at C0 with three scratch_root mutations)
+$ diff <(git show C0:tools/registry.json) registry-mutated.json
+55c55
+<       "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+---
+>       "scratch_root": "TOTALLY WRONG CLAIM",
+631d630
+<       "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+906c905
+<       "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
+---
+>       "scratch_root": 12345,
+
+$ python3 tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --registry .ufo/waves/round-54/w1/T54W1ExecRegistryGate-receipts/registry-mutated.json --only repeat-control-selftest
+ROW repeat-control-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+
+$ ... --only env-diff-selftest
+ROW env-diff-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0

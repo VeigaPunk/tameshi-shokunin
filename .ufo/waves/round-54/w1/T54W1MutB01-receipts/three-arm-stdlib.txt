@@ -1,0 +1,32 @@
+===== ARM empty: TMPDIR='' =====
+CMD: python3 -c "import tempfile,os; os.environ['TMPDIR']=''; print(tempfile.gettempdir())"
+/tmp
+exit=0
+naming_line: (none — tempfile.gettempdir() does not reject)
+
+===== ARM unusable: nonexistent path =====
+CMD: python3 -c "import tempfile,os; os.environ['TMPDIR']='/fast/scratch/hyaku/tameshi-r54/T54W1MutB01/no-such-dir-xyz'; print(tempfile.gettempdir())"
+/tmp
+exit=0
+naming_line: (none — tempfile.gettempdir() does not reject; falls through to /tmp)
+
+===== ARM unset: TMPDIR absent =====
+CMD: env -u TMPDIR python3 -c "import tempfile,os; print(tempfile.gettempdir())"
+/tmp
+TMPDIR= None
+exit=0
+naming_line: (none — tempfile.gettempdir() does not reject)
+
+===== CONTRAST: tools/env-diff.py strict_scratch_root on unusable =====
+cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/fast/scratch/hyaku/tameshi-r54/T54W1MutB01/no-such-dir-xyz' (could-not-evaluate)
+exit=2
+
+===== CONTRAST: tools empty arm =====
+/tmp
+exit=0
+
+===== os.path.isdir('') / getenv truthiness =====
+isdir_empty= False
+bool_empty= False
+getenv_empty_set= None
+getenv_empty= '' truthy= False

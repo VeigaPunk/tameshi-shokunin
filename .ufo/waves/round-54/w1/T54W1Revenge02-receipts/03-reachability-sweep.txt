@@ -1,0 +1,116 @@
+# T-reach: instrumented reachability of strict_scratch_root at C0
+# clone HEAD=59c38109bf119d0e9d4f878644a82babc937bc1e; tools loaded from /fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/clone-c0/tools (sha256 per file in 05-call-sites-at-c0.txt)
+# probe: module-level strict_scratch_root replaced by a sentinel that records the call and raises ScratchRootUnusable; every case ran with TMPDIR=/nonexistent
+# import check: each module imported cleanly under TMPDIR=/nonexistent before its case; no import-time call raised
+# fixture: /fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/fx.tdBvfX/contract.json, fleet-root /fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/fx.tdBvfX, repo '.'
+{
+  "schema": "pin-disposition-v1",
+  "tool": "pin-disposition.py r17 (tameshi-shokunin, 2026-10-20)",
+  "tool_sha256": "c917bc41c3f40dae3eacea492d861211c2a4fe1e530cb9f22c5f8d6ff47d2988",
+  "status": "invalid_input",
+  "error": {
+    "kind": "invalid_manifest",
+    "message": "manifest not found: /fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/fx.tdBvfX/absent.json"
+  },
+  "result_reuse": "not_established",
+  "result_reuse_reason": "identical target content does not establish environment, dependency, fixture or suite-command identity",
+  "legs": []
+}
+{
+  "schema": "pin-disposition-v1",
+  "tool": "pin-disposition.py r17 (tameshi-shokunin, 2026-10-20)",
+  "tool_sha256": "c917bc41c3f40dae3eacea492d861211c2a4fe1e530cb9f22c5f8d6ff47d2988",
+  "status": "invalid_input",
+  "error": {
+    "kind": "invalid_usage",
+    "message": "no arguments (see --help)"
+  },
+  "result_reuse": "not_established",
+  "result_reuse_reason": "identical target content does not establish environment, dependency, fixture or suite-command identity",
+  "legs": []
+}
+{
+  "error": {
+    "kind": "dispositions_missing",
+    "message": "/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/fx.tdBvfX/absent.json"
+  },
+  "exit": 2,
+  "findings": [
+    {
+      "detail": "/fast/scratch/hyaku/tameshi-r54/T54W1Revenge02/fx.tdBvfX/absent.json",
+      "expectation": null,
+      "id": "dispositions_missing"
+    }
+  ],
+  "id": "dispositions_missing",
+  "schema": "evidence-disposition-result-v1",
+  "status": "could_not_evaluate",
+  "tool": "evidence-disposition.py r18 (tameshi-shokunin, 2026-10-20): branch-tip v2 historical inputs",
+  "tool_sha256": "f09d1e490b94edb75364825c3941eb88cfb88a76ae26a2b9257e923ac123ea93"
+}
+{
+ "env-diff [--selftest]": {
+  "reached": true,
+  "rc": 2
+ },
+ "env-diff [--fleet-root FLEETFX --contract CONTRACT --out OUT]": {
+  "reached": true,
+  "exc": "ScratchRootUnusable",
+  "msg": "PROBE-REACHED"
+ },
+ "env-diff [--contract MISSING --out OUT]": {
+  "reached": false,
+  "rc": 2
+ },
+ "env-diff []": {
+  "reached": false,
+  "SystemExit": 64
+ },
+ "bash-witness-study [selftest]": {
+  "reached": true,
+  "rc": 2
+ },
+ "bash-witness-study [count]": {
+  "reached": false,
+  "rc": 0
+ },
+ "bash-witness-study [--evidence EMPTYEV run]": {
+  "reached": false,
+  "rc": 2
+ },
+ "bash-witness-study [--evidence EMPTYEV rerun]": {
+  "reached": false,
+  "rc": 2
+ },
+ "bash-witness-study [--evidence EMPTYEV check]": {
+  "reached": false,
+  "rc": 2
+ },
+ "pin-disposition [--selftest]": {
+  "reached": true,
+  "rc": 2
+ },
+ "pin-disposition [--manifest MISSING --root FLEET]": {
+  "reached": false,
+  "rc": 2
+ },
+ "pin-disposition []": {
+  "reached": false,
+  "rc": 2
+ },
+ "evidence-disposition [--selftest]": {
+  "reached": true,
+  "rc": 2
+ },
+ "evidence-disposition [--root LANE --dispositions MISSING --json]": {
+  "reached": false,
+  "rc": 2
+ },
+ "evidence-disposition []": {
+  "reached": false,
+  "rc": 64
+ }
+}
+
+# decisive single case: env-diff --contract at C0 with the sentinel installed
+reached=True uncaught=ScratchRootUnusable msg=SENTINEL-REACHED

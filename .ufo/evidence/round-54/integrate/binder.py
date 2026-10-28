@@ -45,11 +45,16 @@ LANE, C0, PIN, OUT = sys.argv[1], sys.argv[2], sys.argv[3], Path(sys.argv[4])
 E = '.ufo/evidence/round-54'
 LEDGER = '.ufo/evidence/round-21/coldread/ledger.json'
 R18 = '.ufo/evidence/round-18/measure.py'
-WAVE = '.ufo/waves/round-54/w1'
+WAVE_DIRS = ('.ufo/waves/round-54/w1', '.ufo/waves/round-54/w2')  # both waves; w2 carries the C1 reads
 DROP = ('LOG.md', 'SCORECARD.md', 'SKILL.md')
 HEADINGS = json.loads(Path(LANE, E, 'c1/lost-headings-at-c0.json').read_text('utf-8'))
 BASE7 = json.loads(Path(LANE, E, 'c1/lost-headings-at-base.json').read_text('utf-8'))
 HEADINGS = sorted(set(HEADINGS) | set(BASE7))
+RES_PATH = Path(LANE, E, 'integrate/resolutions.json')
+RES = {}
+if RES_PATH.exists():
+    for item in json.loads(RES_PATH.read_text('utf-8')):
+        RES[item['heading']] = int(item['n'])
 
 
 def git(args, check=True):
@@ -91,7 +96,7 @@ def main():
     rekey_rel = os.path.relpath(OUT, LANE)
 
     readers = {}
-    for f in sorted(glob.glob(str(Path(LANE, WAVE, '*.json')))):
+    for f in sorted(sum((glob.glob(str(Path(LANE, wd, '*.json'))) for wd in WAVE_DIRS), [])):
         try:
             d = json.loads(Path(f).read_text('utf-8'))
         except ValueError:
@@ -106,14 +111,15 @@ def main():
         if sec is None:
             skipped.append((h, 'no-section-at-c0'))
             continue
+        allowed = RES.get(h, 0)
         good = None
         for f, d in readers.get(h, []):
             if d.get('cand') != c0 or d.get('section_sha256') != sec['sha256']:
                 continue
             findings = d.get('findings') or []
             md = Path(f[:-5] + '.md')
-            if findings:
-                skipped.append((h, 'reader-has-findings:%d' % len(findings)))
+            if len(findings) > allowed:
+                skipped.append((h, 'reader-has-findings:%d>%d' % (len(findings), allowed)))
                 good = None
                 break
             if not md.exists():
@@ -146,6 +152,11 @@ def main():
         verdict = newest.get('verdict', 'verified-record')
         if verdict in ('gap-blocking', 'wrong-expectation', 'not-executed'):
             verdict = 'verified-record' if klass == 'record' else 'executed-ok'
+        n_find = len(d.get('findings') or [])
+        if n_find:
+            # an adjudicated minor gap: the section credits with its reader's
+            # findings named in the ledger (verdict gap-minor, minor_gaps counted).
+            verdict = 'gap-minor'
         trace_rel = '%s/traces/section-%02d.json' % (rekey_rel, n)
         trace = {
             'schema': 'tameshi-trace-inputs-v1',
@@ -166,7 +177,8 @@ def main():
             'skill_sha256': skill_sha,
             'start': sec['start'], 'end': sec['end'], 'heading': h,
             'sha256': sec['sha256'], 'class': klass, 'verdict': verdict,
-            'blocking_gaps': 0, 'wrong_expectations': 0, 'minor_gaps': 0,
+            'blocking_gaps': 0, 'wrong_expectations': 0,
+            'minor_gaps': len(d.get('findings') or []),
             'commands_executed_count': 1 + len(inputs),
             'read_rev': c0,
             'inputs': dict(sorted(inputs.items())),

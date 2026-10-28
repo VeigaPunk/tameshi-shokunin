@@ -1,0 +1,75 @@
+=== LINE CENSUS ===
+01 cites=- | # The scratch-root contract — three arms, one exit class (round 54)
+02 cites=- | 
+03 cites=- | Every lane tool that allocates scratch through a `strict_scratch_root()` helper
+04 cites=- | shares one contract. Before round 53 the helpers were seven near-copies of the
+05 cites=- | same fifteen lines and only some of their callers mapped the failure to the
+06 cites=- | documented class; round 54 makes the mapping uniform and this note is the rule
+07 cites=- | the seven tools and their registry rows now name.
+08 cites=- | 
+09 cites=- | ## Three arms
+10 cites=- | 
+11 cites=- | | Arm | `TMPDIR` | Behaviour | Exit class |
+12 cites=- | |---|---|---|---|
+13 cites=- | | unset | absent | the platform default (`tempfile.gettempdir()`) is used | — |
+14 cites=['S278'] | | empty | `""` | **unset**: Python's resolver skips an empty candidate, so the next candidate wins (S278) and the platform default applies | — |
+15 cites=- | | unusable | a path that is not a writable directory | the tool refuses before it allocates: the value is named, the class is printed, nothing falls back to `/tmp` | **2, could-not-evaluate** |
+16 cites=- | 
+17 cites=- | The empty arm is not a convenience. The reference implementation reads
+18 cites=- | `for envname in 'TMPDIR', 'TEMP', 'TMP': dirname = _os.getenv(envname); if dirname:
+19 cites=['S278'] | dirlist.append(dirname)` (S278 `_candidate_tempdir_list`:163-165), so an empty
+20 cites=- | `TMPDIR` never becomes a candidate directory; the documented list also starts at
+21 cites=- | "the directory named by the TMPDIR environment variable" and then falls through
+22 cites=['S279'] | (S279). A tool that treated `""` as a path would try to allocate under the
+23 cites=- | working directory — a silent, wrong scratch root — which is why the arm is
+24 cites=- | declared rather than left to whatever `os.path.isdir("")` happens to return.
+25 cites=- | 
+26 cites=- | The standard fixes only the variable's meaning, not its empty-string handling:
+27 cites=- | `TMPDIR` "shall represent a pathname of a directory made available for programs
+28 cites=['S277'] | that need a place to create temporary files" (S277). The empty arm is therefore
+29 cites=- | a lane declaration that follows the resolver the lane actually calls, and the
+30 cites=- | registry rows say so.
+31 cites=- | 
+32 cites=- | ## Why the class is uniform
+33 cites=- | 
+34 cites=- | A set-but-unusable `TMPDIR` is an environment fact, not a failed measurement: the
+35 cites=- | gate did not run, so no verdict may be printed and the exit class is
+36 cites=- | could-not-evaluate (2), never 1 (a verdict of "differs"/"failed") and never a
+37 cites=- | traceback. Round 53 removed the silent `/tmp` fallback in seven tools and its
+38 cites=- | own closure spot-check routed the residue: four of the seven still raised an
+39 cites=- | uncaught `RuntimeError` from the self-test path (rc 1 with a traceback of the
+40 cites=- | message), so the class existed in three tools and not in four (routed defect
+41 cites=- | R53.6). Round 54 gives each of the four a `ScratchRootUnusable(RuntimeError)`
+42 cites=- | subclass raised by the helper and caught at the entry point, printing one line
+43 cites=- | that names the value and the class.
+44 cites=- | 
+45 cites=- | ## What measures it
+46 cites=- | 
+47 cites=- | `python3 .ufo/evidence/round-54/c2/measure.py` runs each of the seven tools'
+48 cites=- | self-tests under three `TMPDIR` states (unusable, empty, usable) and reads the
+49 cites=- | registry rows: 7/7 exit 2 with the naming line and no traceback, 7/7 exit 0 on
+50 cites=- | the empty arm, 7/7 exit 0 on a usable root with no `mkdir` under `/tmp` under
+51 cites=- | `strace`, and 7/7 rows carrying the `scratch_root` cell. The counter's blind
+52 cites=- | spot is stated in the contract: it sees the self-test path, not every branch a
+53 cites=- | tool might use to allocate scratch.
+54 cites=- | 
+55 cites=- | ## Falsifier
+56 cites=- | 
+57 cites=- | A tool that returns 0 after printing the could-not-evaluate line (control
+58 cites=- | CTL_EXIT0), or that names the class without the value, fails the counter. A
+59 cites=- | tool that regains a `dir="/tmp"` literal fails the round-53 monitor and the C2
+60 cites=- | `tmp_mkdirs` arm together.
+
+=== PARAGRAPH CLAIMS WITH/WITHOUT S-CITE ===
+[meta] cites=NONE :: # The scratch-root contract — three arms, one exit class (round 54)
+[prose] cites=NONE :: Every lane tool that allocates scratch through a `strict_scratch_root()` helper shares one contract. Before round 53 the helpers were seven near-copies of the s
+[meta] cites=NONE :: ## Three arms
+[meta] cites=['S278'] :: | Arm | `TMPDIR` | Behaviour | Exit class | |---|---|---|---| | unset | absent | the platform default (`tempfile.gettempdir()`) is used | — | | empty | `""` | *
+[prose] cites=['S278', 'S279'] :: The empty arm is not a convenience. The reference implementation reads `for envname in 'TMPDIR', 'TEMP', 'TMP': dirname = _os.getenv(envname); if dirname: dirli
+[prose] cites=['S277'] :: The standard fixes only the variable's meaning, not its empty-string handling: `TMPDIR` "shall represent a pathname of a directory made available for programs t
+[meta] cites=NONE :: ## Why the class is uniform
+[prose] cites=NONE :: A set-but-unusable `TMPDIR` is an environment fact, not a failed measurement: the gate did not run, so no verdict may be printed and the exit class is could-not
+[meta] cites=NONE :: ## What measures it
+[prose] cites=NONE :: `python3 .ufo/evidence/round-54/c2/measure.py` runs each of the seven tools' self-tests under three `TMPDIR` states (unusable, empty, usable) and reads the regi
+[meta] cites=NONE :: ## Falsifier
+[prose] cites=NONE :: A tool that returns 0 after printing the could-not-evaluate line (control CTL_EXIT0), or that names the class without the value, fails the counter. A tool that 

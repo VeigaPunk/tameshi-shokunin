@@ -1,0 +1,36 @@
+=== Recipe lines 1604-1612 exact ===
+  1604	Recipe, from this lane root:
+  1605	1. Read the historical expectations and raw observations before accepting a
+  1606	   later summary; distinguish twelve expected rows from thirteen pinned inputs (both counts belong to `.ufo/evidence/round-13/expected.json`, which the commands below name: twelve expected checks, thirteen inputs).
+  1607	2. **Historical (round 14, runner `75ed934d…`):** at `--root .` both manifests now return 2
+  1608	   `expected_input_digest_mismatch` (the moved pins are the round-13 expected manifest's: three of its thirteen inputs are stale at the live bytes — the runner in round 16, the bash witness-study tool in rounds 18 and 21, and `tools/pin-disposition.py` in round 17, before either named round). Replay with cwd = an extracted
+  1609	   `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
+  1610	   → 1, failing the unresolved producer_before assertion (a matching exit 1 alone is insufficient).
+  1611	3. The same command with `.ufo/evidence/round-14/dispositions.json` → 0: the only repair is that row's explicit supersession,
+  1612	   keeping raw receipt/check and both passing replacements. Live-tree form: the round-17 re-pin section (round-18 manifests since then).
+
+=== Does any command argv text contain expected.json? ===
+3:   later summary; distinguish twelve expected rows from thirteen pinned inputs (both counts belong to `.ufo/evidence/round-13/expected.json`, which the commands below name: twelve expected checks, thirteen inputs).
+6:   `git archive 28aeef4` tree: `python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-14/dispositions-before.json --json`
+8:3. The same command with `.ufo/evidence/round-14/dispositions.json` → 0: the only repair is that row's explicit supersession,
+
+=== dispositions-before inputs keys ===
+['.ufo/evidence/round-13/expected.json', '.ufo/evidence/round-13/verification.json', '.ufo/evidence/round-13/producer-oracle-repair.json']
+
+=== Hunk-by-hunk checklist ===
+H1 SKILL:1269 :1010-1154 -> :1023-1169
+  cadence heading at 1023; next ## at 1170; no service-limits in range; PASS
+H2 SKILL:1282-1286 refusal b/c/f anchors
+  :824-828 hermetic suite; :851-855 SETUP exit2; :834-836 never edits; :890-892 sensitivity; PASS
+H3 SKILL:1306-1307 runbook pin
+  8b2e185f / 516 L / 33515 B / committed at 59c38109; PASS
+H4 SKILL:1319 :1250-1254 -> :1276-1277
+  1276-1277 compact rendering / divergence finding; PASS
+H5 SKILL:1506 SOURCES.md:500 -> :503
+  :503 Round 48 superseding S026; PASS
+H6 SKILL:1551 unchanged requires pin verify
+  pin-disposition.py:67-71 and :563-567 match; PASS
+H7 SKILL:1606 name expected.json + counts
+  counts 12/13 match; "commands below name" OVERSTATES
+H8 SKILL:1608 moved pins are round-13 expected
+  exactly 3 stale: mutate-and-run, bash-witness-study, pin-disposition; PASS

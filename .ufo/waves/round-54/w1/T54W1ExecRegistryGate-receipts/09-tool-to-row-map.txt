@@ -1,0 +1,73 @@
+# which tools call/define strict_scratch_root(), and do their selftest rows carry the cell?
+tools/bash-witness-study.py
+tools/context-capture.py
+tools/env-diff.py
+tools/evidence-disposition.py
+tools/pin-disposition.py
+tools/registry-check.py
+tools/repeat-control.py
+---
+tools/bash-witness-study.py:2
+tools/context-capture.py:2
+tools/env-diff.py:2
+tools/evidence-disposition.py:2
+tools/pin-disposition.py:2
+tools/registry-check.py:3
+tools/repeat-control.py:2
+
+# tools carrying the helper: ['tools/bash-witness-study.py', 'tools/context-capture.py', 'tools/env-diff.py', 'tools/evidence-disposition.py', 'tools/pin-disposition.py', 'tools/registry-check.py', 'tools/repeat-control.py']
+repeat-control-selftest          argv-tool=tools/repeat-control.py          cell=yes
+bash-witness-selftest            argv-tool=tools/bash-witness-study.py      cell=yes
+pin-disposition-selftest         argv-tool=tools/pin-disposition.py         cell=yes
+witness-metadata-selftest        argv-tool=tools/witness-metadata.py        cell=NO
+evidence-disposition-selftest    argv-tool=tools/evidence-disposition.py    cell=yes
+context-capture-selftest         argv-tool=tools/context-capture.py         cell=yes
+mutate-and-run-selftest          argv-tool=?                                cell=NO
+measure-round16-selftest         argv-tool=.ufo/evidence/round-16/measure.py cell=NO
+registry-check-selftest          argv-tool=tools/registry-check.py          cell=yes
+measure-round17-selftest         argv-tool=.ufo/evidence/round-17/measure.py cell=NO
+trace-inputs-round17-selftest    argv-tool=.ufo/evidence/round-17/coldread/trace-inputs.py cell=NO
+assemble-round17-selftest        argv-tool=.ufo/evidence/round-17/coldread/assemble.py cell=NO
+trace-inputs-selftest            argv-tool=tools/trace-inputs.py            cell=NO
+measure-round18-selftest         argv-tool=.ufo/evidence/round-18/measure.py cell=NO
+assemble-round18-selftest        argv-tool=.ufo/evidence/round-18/coldread/assemble.py cell=NO
+defect-probes-selftest           argv-tool=.ufo/evidence/round-18/defect-probes.py cell=NO
+round19-correction-ruler-selftest argv-tool=.ufo/evidence/round-19/measure.py cell=NO
+round19-coldread-selector-selftest argv-tool=.ufo/evidence/round-19/coldread/measure.py cell=NO
+receipt-window-selftest          argv-tool=tools/receipt-window.py          cell=NO
+receipt-measure-selftest         argv-tool=tools/receipt-measure.py         cell=NO
+round20-coldread-selector-selftest argv-tool=.ufo/evidence/round-20/coldread/measure.py cell=NO
+env-diff-selftest                argv-tool=tools/env-diff.py                cell=yes
+wave-route-mix-selftest          argv-tool=tools/wave-route-mix.py          cell=NO
+round21-measure-selftest         argv-tool=tools/round21-measure.py         cell=NO
+round21-coldread-selector-selftest argv-tool=.ufo/evidence/round-21/coldread/measure.py cell=NO
+wave-accounting-selftest         argv-tool=tools/wave-accounting.py         cell=NO
+command-binding-selftest         argv-tool=tools/command-binding.py         cell=NO
+command-binding-selftest-r24     argv-tool=tools/command-binding.py         cell=NO
+registry-replay-selftest         argv-tool=tools/registry-replay.py         cell=NO
+mte-interop-selftest             argv-tool=tools/mte-interop.py             cell=NO
+
+# other selftest rows (no cell) still run without the helper:
+  witness-metadata-selftest ['python3', 'tools/witness-metadata.py', '--selftest']
+  mutate-and-run-selftest ['bash', 'tools/mutate-and-run.sh', '--selftest']
+  measure-round16-selftest ['python3', '.ufo/evidence/round-16/measure.py', '--selftest']
+  measure-round17-selftest ['python3', '.ufo/evidence/round-17/measure.py', '--selftest']
+  trace-inputs-round17-selftest ['python3', '.ufo/evidence/round-17/coldread/trace-inputs.py', '--selftest']
+  assemble-round17-selftest ['python3', '.ufo/evidence/round-17/coldread/assemble.py', '--selftest']
+  trace-inputs-selftest ['python3', 'tools/trace-inputs.py', '--selftest']
+  measure-round18-selftest ['python3', '.ufo/evidence/round-18/measure.py', '--selftest']
+  assemble-round18-selftest ['python3', '.ufo/evidence/round-18/coldread/assemble.py', '--selftest']
+  defect-probes-selftest ['python3', '.ufo/evidence/round-18/defect-probes.py', '--selftest']
+  round19-correction-ruler-selftest ['python3', '.ufo/evidence/round-19/measure.py', '--selftest']
+  round19-coldread-selector-selftest ['python3', '.ufo/evidence/round-19/coldread/measure.py', '--selftest']
+  receipt-window-selftest ['python3', 'tools/receipt-window.py', '--selftest']
+  receipt-measure-selftest ['python3', 'tools/receipt-measure.py', '--selftest']
+  round20-coldread-selector-selftest ['python3', '.ufo/evidence/round-20/coldread/measure.py', '--selftest']
+  wave-route-mix-selftest ['python3', 'tools/wave-route-mix.py', '--selftest']
+  round21-measure-selftest ['python3', 'tools/round21-measure.py', '--selftest']
+  round21-coldread-selector-selftest ['python3', '.ufo/evidence/round-21/coldread/measure.py', '--selftest']
+  wave-accounting-selftest ['python3', 'tools/wave-accounting.py', '--selftest']
+  command-binding-selftest ['python3', 'tools/command-binding.py', '--selftest']
+  command-binding-selftest-r24 ['python3', 'tools/command-binding.py', '--selftest']
+  registry-replay-selftest ['python3', 'tools/registry-replay.py', '--selftest']
+  mte-interop-selftest ['uv', 'run', '--no-project', '--with', 'jsonschema==4.25.1', 'python3', 'tools/mte-interop.py', '--selftest']

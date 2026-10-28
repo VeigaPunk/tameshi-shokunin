@@ -1,0 +1,27 @@
+label=mutated
+sha256=6a64a2590a9ef2f5df965160a76937c57de3fc6e04fbea43c8bb31871bd70b16
+exit=1
+combined<<EOF
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1MutB02/clone/tools/env-diff.py", line 272, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1MutB02/clone/tools/env-diff.py", line 233, in main
+    return selftest()
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1MutB02/clone/tools/env-diff.py", line 175, in selftest
+    row = probe(("#!/bin/bash\n" + script + "\n").encode(), "bash")
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1MutB02/clone/tools/env-diff.py", line 130, in probe
+    profiles = {name: execute(payload, interp, name) for name in PROFILES}
+                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r54/T54W1MutB02/clone/tools/env-diff.py", line 80, in execute
+    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/fast/scratch/hyaku/tameshi-r54/T54W1MutB02/nonwritable-tmpdir/tameshi-r21-envdiff.gaje3l4g'
+EOF
+detector_pass_clean_exit2=0

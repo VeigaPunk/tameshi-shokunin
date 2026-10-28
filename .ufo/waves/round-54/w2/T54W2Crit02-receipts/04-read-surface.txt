@@ -1,0 +1,25 @@
+   136	def read_surface(fleet, surface):
+   137	    repo = fleet / surface["repo"]
+   138	    proc = subprocess.run(["git", "-C", str(repo), "show",
+   139	                           surface["rev"] + ":" + surface["path"]],
+   140	                          env=parent_env(), capture_output=True, timeout=30)
+   141	    if proc.returncode:
+   142	        raise ValueError("PIN_UNREADABLE: " + surface["name"])
+   143	    actual = digest(proc.stdout)
+   144	    if surface.get("blob_sha256", actual) != actual:
+   145	        raise ValueError("PIN_MISMATCH: " + surface["name"])
+   146	    return proc.stdout, actual
+   147	
+   148	
+   149	def surface_result(fleet, surface):
+   150	    row = {"surface": surface["name"], "pin": {k: surface[k] for k in ("repo", "rev", "path")},
+   151	           "argv": [surface["interp"], "/tmp/w/target." +
+   152	                    ("mjs" if surface["interp"] == "node" else "sh"), "--selftest"]}
+   153	    try:
+   154	        payload, actual = read_surface(fleet, surface)
+   155	        row["pin"]["blob_sha256"] = actual
+   156	        row.update(probe(payload, surface["interp"]))
+   157	    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+   158	        row.update(classification="unavailable", sensitive_to=[], error=str(exc))
+   159	    return row
+   160	

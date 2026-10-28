@@ -1,0 +1,91 @@
+=== B3 pin-disposition unchanged logic ===
+--- C0 :67-71 ---
+deliberately does not measure: mode/exec-bit, runner/defect-spec version, suite
+command and harness, interpreter/toolchain, environment, dependencies, fixture
+and companion files, timeouts. `content_status` is a raw-byte comparison only;
+a chmod-only change with identical bytes stays `unchanged` while still carrying
+result_reuse=not_established. The historical executable-bit counterexample
+(round 10) is why mode stays visible in `not_compared` rather than inferred.
+
+Content status semantics: `unchanged` requires a readable regular worktree file,
+verified pinned evidence (the manifest digest equals the blob at the recorded
+commit), and byte equality with expected_sha256. A missing repo, path, commit or
+blob, a pin/digest disagreement, a symlink or a non-regular file can never be
+`unchanged`; those classify as `unavailable` with a reason. A readable file
+whose bytes differ from a verified pin is `changed`. The branch tip may
+differ from the pinned commit while the content is still `unchanged`; the
+branch tip is reported separately and never substituted for the worktree
+observation.
+
+Exit map: 0 observations emitted, including drift and unavailable legs (this is
+a probe, not a gate) · 2 could-not-evaluate invalid input (usage, missing/
+unreadable/schema-invalid manifest, fleet root not a directory), still emitted
+as a JSON error document on stdout.
+--- C0 :563-567 ---
+        row["result_reuse"] = RESULT_REUSE
+        return row
+
+    pinned = pinned_observation(repo_real, entry["pinned_commit"], path, expected)
+    head = head_observation(repo_real, path)
+    worktree = worktree_observation(repo_real, path)
+    if worktree["sha256"] is None:
+        content_status = "unavailable"
+    elif pinned["status"] != "verified":
+        # A readable file cannot be called unchanged against unverified evidence.
+        content_status = "unavailable"
+        worktree["status"] = "unavailable"
+        worktree["reason"] = "pin_not_verified"
+    elif worktree["sha256"] == expected:
+        content_status = "unchanged"
+        worktree["status"] = "unchanged"
+    else:
+        content_status = "changed"
+        worktree["status"] = "changed"
+    row["pinned"] = pinned
+    row["head"] = head
+--- C1 :67-71 ---
+deliberately does not measure: mode/exec-bit, runner/defect-spec version, suite
+command and harness, interpreter/toolchain, environment, dependencies, fixture
+and companion files, timeouts. `content_status` is a raw-byte comparison only;
+a chmod-only change with identical bytes stays `unchanged` while still carrying
+result_reuse=not_established. The historical executable-bit counterexample
+(round 10) is why mode stays visible in `not_compared` rather than inferred.
+
+Content status semantics: `unchanged` requires a readable regular worktree file,
+verified pinned evidence (the manifest digest equals the blob at the recorded
+commit), and byte equality with expected_sha256. A missing repo, path, commit or
+blob, a pin/digest disagreement, a symlink or a non-regular file can never be
+`unchanged`; those classify as `unavailable` with a reason. A readable file
+whose bytes differ from a verified pin is `changed`. The branch tip may
+differ from the pinned commit while the content is still `unchanged`; the
+branch tip is reported separately and never substituted for the worktree
+observation.
+
+Exit map: 0 observations emitted, including drift and unavailable legs (this is
+a probe, not a gate) · 2 could-not-evaluate invalid input (usage, missing/
+unreadable/schema-invalid manifest, fleet root not a directory), still emitted
+as a JSON error document on stdout.
+--- C1 :563-567 ---
+        row["result_reuse"] = RESULT_REUSE
+        return row
+
+    pinned = pinned_observation(repo_real, entry["pinned_commit"], path, expected)
+    head = head_observation(repo_real, path)
+    worktree = worktree_observation(repo_real, path)
+    if worktree["sha256"] is None:
+        content_status = "unavailable"
+    elif pinned["status"] != "verified":
+        # A readable file cannot be called unchanged against unverified evidence.
+        content_status = "unavailable"
+        worktree["status"] = "unavailable"
+        worktree["reason"] = "pin_not_verified"
+    elif worktree["sha256"] == expected:
+        content_status = "unchanged"
+        worktree["status"] = "unchanged"
+    else:
+        content_status = "changed"
+        worktree["status"] = "changed"
+    row["pinned"] = pinned
+    row["head"] = head
+--- diff pin-disposition C0..C1 ---
+(empty means tool unchanged; SKILL rule changed to match tool)

@@ -1,0 +1,12 @@
+=== first execute() call vs the bare TemporaryDirectory in the env-diff selftest
+76:def execute(payload, interp, profile, timeout=600, bwrap=None):
+130:    profiles = {name: execute(payload, interp, name) for name in PROFILES}
+162:def selftest():
+180:    missing = execute(b"exit 0\n", "bash", "clean", bwrap="/nonexistent/tameshi-bwrap")
+182:    timed = execute(b"sleep 5\n", "bash", "clean", timeout=0.02)
+186:    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff-pin.") as tmp:
+
+=== bare site vs the helper, TMPDIR set to a nonexistent path
+TMPDIR = /nonexistent/tameshi-bare
+strict_scratch_root() raises ScratchRootUnusable: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/tameshi-bare' (could-not-evaluate)
+bare TemporaryDirectory (env-diff.py:186 form) -> /tmp/tameshi-r21-envdiff-pin.lz_qdlyk

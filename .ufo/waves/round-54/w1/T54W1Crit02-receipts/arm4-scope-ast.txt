@@ -1,0 +1,36 @@
+# ---- arm 4: committed reader reports ------------------------------------------------------------------
+    readers = {}
+    wave_tree = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev, WAVE + '/'],
+                    check=False).stdout.decode()
+    for path in wave_tree.splitlines():
+        if not re.search(r'/T54W\d+.*Read.*\.json$', path):
+            continue
+        raw = show(lane, rev, path)
+        if raw is None:
+            continue
+        try:
+            d = json.loads(raw.decode('utf-8', 'surrogateescape'))
+        except ValueError:
+            continue
+        if isinstance(d, dict) and isinstance(d.get('heading'), str):
+            readers.setdefault(d['heading'], []).append((path, d))
+    reader_ok = 0
+    for h in frozen:
+        sec = sections.get(h)
+        if sec is None:
+            continue
+        for path, d in readers.get(h, []):
+            if d.get('cand') == c0 and d.get('section_sha256') == sec['sha256']:
+                reader_ok += 1
+                break
+    if reader_ok != len(frozen):
+        total += 1
+    if a.explain:
+        notes.append('arm4-readers %d/%d' % (reader_ok, len(frozen)))
+        for note in notes:
+            print('EXPLAIN ' + note)
+
+    
+---
+lost-headings-at-c0.json referenced? False
+stable scans only bound (rekey traces)? True

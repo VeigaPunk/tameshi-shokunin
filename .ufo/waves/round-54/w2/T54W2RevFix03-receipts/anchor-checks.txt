@@ -1,0 +1,73 @@
+## sed anchors at C1
+### evidence-disposition.py:479-544 (head+tail)
+def resolve_historical_anchor(lane):
+    """Resolve one committed anchor shared by G2 and G3."""
+    proc = git_call(lane, ["config", "--get", "lane.branch"])
+    if proc.returncode not in (0, 1):
+        raise _git_failure(proc, "cannot read lane.branch")
+    branch = proc.stdout.decode("utf-8", "replace").strip() if proc.returncode == 0 else ""
+    if not containing_refs:
+        raise CouldNotEvaluate(
+            "historical_input_unavailable",
+            "detached HEAD {} is on no branch or remote-tracking branch".format(commit),
+        )
+    return "HEAD", commit
+### evidence-disposition.py:385-410
+# ------------------------------------------------- historical input reading
+
+# G4: every git subprocess runs without inherited GIT_* state, without replace
+# refs and without grafts, so environment/replace/graft attacks cannot rewrite
+# the bytes this gate reads.
+GIT_ENV_OVERRIDES = {
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_GRAFT_FILE": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+}
+
+
+def _stderr_text(proc):
+    if proc.stderr is None:
+        return ""
+    if isinstance(proc.stderr, bytes):
+        return proc.stderr.decode("utf-8", "replace").strip()
+    return str(proc.stderr).strip()
+
+
+def git_environment():
+    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+    env.update(GIT_ENV_OVERRIDES)
+    return env
+
+### evidence-disposition.py:2274-2276
+def _setup_hist_registry_clone(fx):
+    """A detached harness clone anchors at HEAD, not its later remote tip."""
+    lane = fx["lane"]
+### evidence-disposition.py:2910-2915
+    historical_case(
+        "v2-registry-clone-detached-anchor",
+        0,
+        [],
+        _setup_hist_registry_clone,
+    )
+### mutate-and-run.sh:616-617
+PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+REV_BASH=fecee8743e52eb8fb5fbb40782934cb619a1a96e
+### SKILL.md:1727-1731
+Could-not-evaluate takes precedence over a mismatched expected verdict: an
+edited snapshot or unavailable input stays exit2, with any expectation
+disagreement secondary. A clean result with a wrong id/exit pin becomes
+failed/exit1. Help exits0 only as a non-verdict informational mode; context-capture's selftest
+exits 0/1/2 for pass/case failure/could-not-evaluate (setup inability) and 64 for invalid invocation (the disposition selftest: 0 pass, 1 case failure, 2 could-not-evaluate — an unusable scratch root or an unreadable input is named, never a traceback; round 54).
+### SKILL.md:1852-1853
+| A waived path's live bytes differ from `<anchor>:<path>` (round 18: the branch tip `refs/heads/<lane.branch>`, not `HEAD`) [round 52: when bound the anchor is `refs/heads/<lane.branch>` or the attached branch tip; an unbound non-jj detached root anchors at raw `HEAD` when a local or remote-tracking ref contains it (`tools/evidence-disposition.py:479-544`; selftest `v2-registry-clone-detached-anchor` :2910-2915 expects exit 0, fixture docstring :2275 "anchors at HEAD")] | Could not evaluate, exit 2 `historical_input_uncommitted` | A worktree edit is tampering, not a by-design move |
+| The waiver rev is a tree id, dangling, not an ancestor, or shallow | Could not evaluate, exit 2 | The pinned sha256 still guards content; these guard provenance. Replace refs, grafts and an inherited `GIT_DIR` are neutralized, not refused: the tool sets `GIT_NO_REPLACE_OBJECTS=1`, `GIT_GRAFT_FILE=/dev/null` and scrubs inherited `GIT_*` (`tools/evidence-disposition.py:385-395`; selftests `v2-historical-replace-ref`, `v2-gitdir-env` expect exit 0; grafts by code reading only). Corrected in round 27, seat Read32; re-pinned in round 54 after the helper grew. |
+### SKILL.md:1879
+| `tools/pin-disposition.py` (branch tip) | probe | `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin` · `--selftest` | as the round-13 row, plus exit 2 could-not-evaluate when TMPDIR is set and unusable (round 54: the self-test names the value, no traceback) |
+### SKILL.md:1958
+| `tools/bash-witness-study.py` (round 18) | probe | unchanged CLI | every git child drops all inherited `GIT_*` and pins `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`; it parses `PIN_BASH`/`REV_BASH` from `tools/mutate-and-run.sh:616-617` (`275d8294…`/`fecee874…`), and `4acc607` is the `historical_inputs` rev recorded for that tool in `.ufo/evidence/round-18/dispositions.json`, which the evidence-disposition gate reads (the round-17 manifests are superseded) |
+### SKILL.md:1961 (tail)
+k/Git writes; selftest scratch only; owner tameshi. Metadata reconciliation, not producer authentication, cold-read or required-command coverage; QUALITY37–39, `corpus/lessons/round-19.md`, S049. |
+
+### pin-disposition unusable TMPDIR
+exit=2; stderr names TMPDIR path; verified earlier

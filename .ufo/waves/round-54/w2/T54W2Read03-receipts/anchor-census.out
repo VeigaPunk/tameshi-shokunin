@@ -1,0 +1,81 @@
+== A1 fleet-suite-census.md:288-291 ==
+ 288| **Scope of the offer, stated so it is not over-claimed:** single-edit mutants
+ 289| only (coordinated edits are unmeasured everywhere, matrix §7); hermetic suites
+ 290| only (no substrate-drift claim, matrix U5); results are per-revision and
+ 291| per-host (no cross-host stability claim, matrix U5).
+== A2 SKILL.md:819-820 (porcelain-clean precondition) ==
+ 819| 1. **A pinned revision** — committed bytes of the gate with sha256, size, line
+ 820|    count, mtime, and a porcelain-clean sibling tree at open. Mado's pin:
+== A3 tools/mutate-and-run.sh:36-38 ==
+  36| # red? Per-defect verdicts: KILLED (suite exit != 0) | SURVIVED (suite exit 0) |
+  37| # INCONCLUSIVE (timeout 124, or 126/127 = suite not runnable). The target is
+  38| # never written: every mutant is a fresh byte copy of the pinned pristine copy,
+== A3b verbatim quote probe: 'The target is never written' ==
+0
+contiguous-occurrences(0=wrapped only)
+== A4 heading '## Restore discipline' ==
+386:## Restore discipline — before/after identity, not continuous non-write proof
+== A5 mutation-case-mado-verify.md:57-59 ==
+  57| - O: control — `CONTROL: GREEN (exit=0 duration-ms=475 …)`, `MADO_SELFTEST: 28/28 assertions
+  58|   passed`; `MUTATE_RESTORE: OK (target-sha256 before=d7edaab4…d0e13 after=d7edaab4…d0e13
+  59|   pristine-sha256=d7edaab4…d0e13)`; the fleet file was re-hashed after the probes too: unchanged.
+== A6 SKILL.md:346-347 ==
+ 346| - **Bands are a report convention, not a pass/fail gate.** An 8/10 admits, and so
+ 347|   does a <50 % — with the gap recorded in the table, not softened
+== A7 mado:175-176 ==
+ 175| Headline sequence: **80 % (JS r2) · 80 % (kagi bash r3) · 60 % (tsukuroi bash r5) · 40 %
+ 176| (mado bash r6)**. The fourth point is the first below the 50–80 band, and its cause is
+== A8 mado:66-72 ==
+  66| - Composition, stated before the run: **4 defects were cut at sites whose assertions this lane
+  67|   could name in the suite's own scenarios** ("in-surface": D1, D2, D4, D6) and **6 at seams it
+  68|   predicted unasserted** ("out-of-surface": D3, D5, D7, D8, D9, R1). Measured: **4/4 killed
+  69|   and 0/6 killed**. The split is by construction, so the honest reading is neither "weak" nor
+  70|   "strong": here the suite's assertion set and its kill set are **co-extensive** — nothing
+  71|   outside the asserted surface was caught, and nothing inside it escaped. The 40 % rate is
+  72|   composition, not a regression of the suite (band-amendment precedent, §4).
+== A9 mado:237-238 ==
+ 237| - **U6** — whether mado accepts any §8 recommendation is a decision of mado's lane; this note
+ 238|   records the findings unabsorbed.
+== A9b mado:240-260 ==
+ 240| ## 8. Recommendation to the owner (mado) — recommendations only, no patch
+ 241| 
+ 242| Ranked by yield; each names the swept mutant it would kill (measured evidence, not opinion).
+ 243| 
+ 244| 1. **Add a live-plane scenario with a PATH-stub `hyprctl`** (the suite already owns the
+ 245|    mechanism at `:400-406`; extend it from *starving* the command to *answering* it). Highest
+ 246|    yield: 51 of 106 row sites are unexercised, so every live-plane defect is invisible today.
+ 247| 2. **Assert the boundary proof in its FAIL direction** — a scenario where a plane file changes
+ 248|    mid-run. Kills D9 and turns the gate's own safety row into a protected claim. (Probe P9 is
+ 249|    the mechanism, in the note.)
+ 250| 3. **Assert the `counts:` line and the SKIP row** (both unread today): kills D3 and protects the
+ 251|    counters consumers may parse.
+ 252| 4. **Add an 18th-source fixture case** — kills D7 and pins the include-graph census as an exact
+ 253|    count rather than a tolerance.
+ 254| 5. **Assert the NOTE rows** (`sha_pin` match vs drift, `backups` count): kills D8 for the file
+ 255|    plane and makes the pin discipline checkable.
+ 256| 6. **Exercise the degradation arms** with PATH wrappers (missing `python3`/`tomllib`): kills R1
+ 257|    and protects "UNKNOWN, never a pass".
+ 258| 7. **Make the suite observe its own failure exit code** (e.g. the no-op-`sed` self-failure
+ 259|    technique of probe P5, or a wrapped invocation asserting exit 2): kills D5 and protects the
+ 260|    declared exit map's tool-error channel.
+== A10 mado:17-23 ==
+  17| **Incident I1 — the harness itself moved mid-round, by a concurrent lane.** Both the sweep and
+  18| the regression run were executed against `tameshi-shokunin/tools/mutate-and-run.sh` sha256
+  19| `597e141989065e038a1c2b35359ab3d20b565d3c959c2eec64166ecb1ff6331b` (pinned in both logs:
+  20| `MUTATE_TOOL`, `REGRESSION_TOOL`; same pin the round-6 draft records at
+  21| `plans/round-6-record-draft.md:50`). Re-pin at 17:46:15Z: sha256 `b56c6e57…2bcb`, 46850 B,
+  22| mtime 14:46:08 -0300. **Every number in this note is tied to `597e1419…`**; whether the new
+  23| revision reproduces this table is **U** (§7). Recorded, not smoothed; nothing was repaired.
+== A11 mado:229-230 (cited for 'sensitivity, not truth') ==
+ 229|   against the *real* config planes are right; only what its suite can detect.
+ 230| - **U3** — tool drift (I1): reproduction under the current harness revision `b56c6e57…` is
+== A11b control: mado:228-229 (where the clause actually sits) ==
+ 228| - **U2** — suite sensitivity ≠ gate truth: nothing here measures whether the gate's verdicts
+ 229|   against the *real* config planes are right; only what its suite can detect.
+== A12 matrix row F ==
+739:| F coordinated edits | unprobed | unprobed | unprobed (10 single edits) | **unknown in all three** (U1 each) |
+== A11c was this off-by-one introduced this round? (note untouched since round 6) ==
+4494715 probation round 6 (training r5): see LOG
+ 228| - **U2** — suite sensitivity ≠ gate truth: nothing here measures whether the gate's verdicts
+ 229|   against the *real* config planes are right; only what its suite can detect.
+ 230| - **U3** — tool drift (I1): reproduction under the current harness revision `b56c6e57…` is

@@ -1,0 +1,27 @@
+---- measure.py sha256 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8 ----
+---- arm block replayed (verbatim slice) ----
+tmp_mkdirs = 0
+usable_ok = 0
+for name, path, arg, _row in TOOLS:
+    # amendment 2 (round 54): the rc arm is the PLAIN run, the traced run
+    # contributes only the mkdir census. Under `strace -f` one tool's own
+    # timeout tests fail (tracer overhead), so a traced rc measured the
+    # tracer, not the tool; the substance (exit 0 on a usable root, zero
+    # mkdir under /tmp) is unchanged.
+    rc_plain, _ = run_tool(str(clone), path, arg, str(usable))
+    log = work / ('strace-%s.log' % name)
+    env2 = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env2['TMPDIR'] = str(usable)
+    subprocess.run(['strace', '-f', '-e', 'trace=mkdir,mkdirat', '-o', str(log),
+                    sys.executable, path, arg],
+                   cwd=str(clone), env=env2, capture_output=True, timeout=TIMEOUT)
+    hits = len(re.findall(r'mkdir(?:at)\([^)]*"/tmp', log.read_text(errors='replace')))
+    tmp_mkdirs += hits
+    usable_ok += (rc_plain == 0 and hits == 0)
+    if a.explain and (rc_plain != 0 or hits):
+        notes.append('usable %s rc=%d tmp_mkdirs=%d' % (name, rc_plain, hits))
+
+---- end arm block ----
+---- original regex: mkdir(?:at)\([^)]*"/tmp
+---- arm regex patched to: mkdir(?:at)?\([^)]*"/tmp ----
+REPLAY hits=88 usable_ok=0 log_lines=780 notes=['usable env-diff rc=0 tmp_mkdirs=88']

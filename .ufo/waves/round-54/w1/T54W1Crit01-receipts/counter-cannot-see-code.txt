@@ -1,0 +1,42 @@
+--- needle 'findings' (0 hits) ---
+--- needle '.md' (3 hits) ---
+29:  5. stable    no entry bound under rekey-r54-* pins LOG.md or SCORECARD.md as an
+55:UNSTABLE_INPUTS = ('LOG.md', 'SCORECARD.md')
+167:    skill_raw = show(lane, rev, 'SKILL.md')
+--- needle 'inputs' (2 hits) ---
+196:            inputs = e.get('inputs') or {}
+198:                if p in inputs:
+--- needle 'section_sha256' (2 hits) ---
+26:               `cand` = <c0> and `section_sha256` equal to the sha256 of that
+236:            if d.get('cand') == c0 and d.get('section_sha256') == sec['sha256']:
+--- needle 'cannot' (0 hits) ---
+--- arm4 reader acceptance (exact) ---
+214:    # ---- arm 4: committed reader reports ------------------------------------------------------------------
+215:    readers = {}
+216:    wave_tree = git(['-C', lane, 'ls-tree', '-r', '--name-only', rev, WAVE + '/'],
+217:                    check=False).stdout.decode()
+218:    for path in wave_tree.splitlines():
+219:        if not re.search(r'/T54W\d+.*Read.*\.json$', path):
+220:            continue
+221:        raw = show(lane, rev, path)
+222:        if raw is None:
+223:            continue
+224:        try:
+225:            d = json.loads(raw.decode('utf-8', 'surrogateescape'))
+226:        except ValueError:
+227:            continue
+228:        if isinstance(d, dict) and isinstance(d.get('heading'), str):
+229:            readers.setdefault(d['heading'], []).append((path, d))
+230:    reader_ok = 0
+231:    for h in frozen:
+232:        sec = sections.get(h)
+233:        if sec is None:
+234:            continue
+235:        for path, d in readers.get(h, []):
+236:            if d.get('cand') == c0 and d.get('section_sha256') == sec['sha256']:
+237:                reader_ok += 1
+238:                break
+239:    if reader_ok != len(frozen):
+240:        total += 1
+241:    if a.explain:
+242:        notes.append('arm4-readers %d/%d' % (reader_ok, len(frozen)))

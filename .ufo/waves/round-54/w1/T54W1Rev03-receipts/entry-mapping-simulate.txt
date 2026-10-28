@@ -1,0 +1,40 @@
+pin ScratchRootUnusable isinstance RuntimeError: True
+pin catch tuple would match: True
+pin mkdtemp+strict_scratch_root line: 725
+candidate try line: 769 prev= 
+--- if swallowed by pin RuntimeError catch, format would be SELFTEST: COULD_NOT_EVALUATE ---
+--- actual CLI unusable path uses entry mapping (checked in receipt files) ---
+usage: evidence-disposition.py --root LANE --dispositions FILE [--json]
+       evidence-disposition.py --selftest
+
+Expectation-disposition gate: every frozen expected check appears exactly once
+in rows; effective rows must satisfy their original expectation from a named
+receipt check; the one configured producer_before supersession must retain a
+genuinely mismatched raw observation and pass both oracle replacements.
+
+exit 0   clean
+exit 1   failed semantic expectation
+exit 2   could-not-evaluate bad/missing/tampered input
+exit 64  usage error
+
+Receipt/raw_receipt values are lane-relative paths pinned in `inputs`. The tool
+never executes receipt argv. `--selftest` builds isolated /tmp fixtures.
+evidence-dispositions-v2 manifests add `supersedes` (pinned v1 manifest path)
+and `historical_inputs` (tools/* expected inputs read as git blobs at the
+declared rev after a repo-identity guard). A waiver is refused when the live
+bytes still equal the pin (historical_input_unneeded) or differ from the
+selected committed anchor (historical_input_uncommitted); revs must be commits
+ancestral to that same anchor.
+ev_help TMPDIR='' main ['--help'] rc= 0 expect= 0 ok= True
+usage: pin-disposition.py --manifest PATH --root FLEET
+       pin-disposition.py --selftest
+
+Read-only pin/content disposition probe for the six recorded mutation-ledger
+legs. Emits one JSON document on stdout. Every row carries
+result_reuse=not_established: a matching content pin does not establish that a
+recorded result may be reused.
+
+exit 0  observations emitted (drift and unavailable legs included)
+exit 2  could-not-evaluate invalid input (usage, manifest, fleet root)
+pin_help TMPDIR='' main ['--help'] rc= 0 expect= 0 ok= True
+ev_empty_argv TMPDIR='' main [] rc= 64 expect= 64 ok= True

@@ -1,0 +1,26 @@
+   385	# ------------------------------------------------- historical input reading
+   386	
+   387	# G4: every git subprocess runs without inherited GIT_* state, without replace
+   388	# refs and without grafts, so environment/replace/graft attacks cannot rewrite
+   389	# the bytes this gate reads.
+   390	GIT_ENV_OVERRIDES = {
+   391	    "GIT_NO_REPLACE_OBJECTS": "1",
+   392	    "GIT_GRAFT_FILE": "/dev/null",
+   393	    "GIT_CONFIG_NOSYSTEM": "1",
+   394	    "GIT_CONFIG_GLOBAL": "/dev/null",
+   395	}
+   396	
+   397	
+   398	def _stderr_text(proc):
+   399	    if proc.stderr is None:
+   400	        return ""
+   401	    if isinstance(proc.stderr, bytes):
+   402	        return proc.stderr.decode("utf-8", "replace").strip()
+   403	    return str(proc.stderr).strip()
+   404	
+   405	
+   406	def git_environment():
+   407	    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+   408	    env.update(GIT_ENV_OVERRIDES)
+   409	    return env
+   410	

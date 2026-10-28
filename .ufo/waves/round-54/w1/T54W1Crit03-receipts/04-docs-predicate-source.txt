@@ -1,0 +1,6 @@
+    for row in rows if isinstance(rows, list) else []:
+        by_name[row.get('name')] = row
+    for _name, _path, _arg, row_name in TOOLS:
+        cell = (by_name.get(row_name) or {}).get('scratch_root')
+        if isinstance(cell, str) and all(k in cell for k in ('TMPDIR', 'empty', 'could-not-evaluate')):
+            docs += 1

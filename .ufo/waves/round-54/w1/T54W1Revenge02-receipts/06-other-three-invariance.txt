@@ -1,0 +1,12 @@
+# T-invariance: non-selftest entry points of the other three tools never reach the scratch root at C0
+# arms: TMPDIR=/nonexistent  vs  TMPDIR='' (declared unset). Identical stdout => the mode is scratch-independent.
+bw-count: exit_bad=0 exit_empty=0 stdout=identical traceback_bad=0 traceback_empty=0 last='unresolved	none'
+bw-check: exit_bad=1 exit_empty=1 stdout=identical traceback_bad=0 traceback_empty=0 last='WITNESS_CHECK: FAIL (1 problems; 96 files covered)'
+pin: exit_bad=0 exit_empty=0 stdout=identical traceback_bad=0 traceback_empty=0 last='}'
+evd: exit_bad=0 exit_empty=0 stdout=identical traceback_bad=0 traceback_empty=0 last='}'
+
+# T-arms: four selftests at C0, TMPDIR unset / empty / unusable / usable
+env-diff: unset=0 empty=0 unusable=2 usable=0  unusable_line='ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent' (could-not-evaluate)'
+bash-witness-study: unset=0 empty=0 unusable=2 usable=0  unusable_line='WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent' (could-not-evaluate)'
+pin-disposition: unset=0 empty=0 unusable=2 usable=0  unusable_line='pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent' (could-not-evaluate)'
+evidence-disposition: unset=0 empty=0 unusable=2 usable=0  unusable_line='evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent' (could-not-evaluate)'

@@ -1,0 +1,14 @@
+diff --git a/tools/env-diff.py b/tools/env-diff.py
+index 3ea041f..39f2e42 100644
+--- a/tools/env-diff.py
++++ b/tools/env-diff.py
+@@ -260,6 +260,9 @@ def main(argv=None):
+             report["host"][command] = version.stdout.decode("utf-8", "replace").splitlines()[0]
+         a.out.parent.mkdir(parents=True, exist_ok=True)
+         a.out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
++    except ScratchRootUnusable as exc:
++        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
++        return 2
+     except (OSError, ValueError, KeyError, TypeError) as exc:
+         print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+         return 2

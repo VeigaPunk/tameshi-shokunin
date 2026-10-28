@@ -1,0 +1,29 @@
+== git resolved to: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1Sent04-receipts/git
+== patch: 098cddd22092ddd1183c220386a005c11fb6b3af08f3030092266addf38e665f  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1Sent04-receipts/attackA-env-diff-exit0.patch
+== counter under test: b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49  /fast/scratch/hyaku/tameshi-r54/T54W1Sent04/measure-frozen.py
+== lane clean-state check (read-only): git -C LANE rev-parse = 097985c18b9a186c310bd35890b95b733cbb7f5b
+== RUN: python3 /fast/scratch/hyaku/tameshi-r54/T54W1Sent04/measure-frozen.py --lane LANE --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --work /fast/scratch/hyaku/tameshi-r54/T54W1Sent04/work-a2 --explain
+EXPLAIN unusable registry-check rc=2 line='registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory'
+EXPLAIN unusable env-diff rc=0 line='ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory:'
+EXPLAIN unusable bash-witness-study rc=2 line='WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory:'
+EXPLAIN unusable evidence-disposition rc=2 line='evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable '
+EXPLAIN unusable pin-disposition rc=2 line='pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable direc'
+EXPLAIN unusable context-capture rc=2 line='SELFTEST: FAIL (setup error: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable di'
+EXPLAIN unusable repeat-control rc=2 line='repeat-control: setup: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable director'
+C2_R54: rev=59c38109bf11 tools=7 unusable_exit2=6 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
+COUNTER_RC=1
+== tree the counter actually measured (its own clone) — diff against C0:
+diff --git i/tools/env-diff.py w/tools/env-diff.py
+index 3ea041f..1ac1a3f 100644
+--- i/tools/env-diff.py
++++ w/tools/env-diff.py
+@@ -233,7 +233,7 @@ def main(argv=None):
+             return selftest()
+         except ScratchRootUnusable as exc:
+             print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+-            return 2
++            return 0
+     if not a.contract or not a.out or not 1 <= a.jobs <= 3:
+         p.error("--contract and --out are required; --jobs must be 1..3")
+     try:
+== end

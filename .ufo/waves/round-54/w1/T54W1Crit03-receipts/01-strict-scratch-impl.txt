@@ -1,0 +1,156 @@
+===== tools/env-diff.py =====
+36:def strict_scratch_root():
+37:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+38:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+39:    fallback to /tmp, preserving CR47 semantics), else the platform default.
+40:    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+41:    import os as _os
+42:    t = _os.environ.get("TMPDIR")
+43:    if t:
+44:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+45:            raise ScratchRootUnusable(
+46:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+47:        return t
+48:    return tempfile.gettempdir()
+49:
+50:
+HIT 32:class ScratchRootUnusable(RuntimeError):
+    33:    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+    34:
+    35:
+    36:def strict_scratch_root():
+    37:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+HIT 234:        except ScratchRootUnusable as exc:
+    235:            print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+    236:            return 2
+    237:    if not a.contract or not a.out or not 1 <= a.jobs <= 3:
+    238:        p.error("--contract and --out are required; --jobs must be 1..3")
+    239:    try:
+===== tools/bash-witness-study.py =====
+209:def strict_scratch_root():
+210:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+211:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+212:    fallback to /tmp, preserving CR47 semantics), else the platform default.
+213:    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+214:    import os as _os
+215:    t = _os.environ.get("TMPDIR")
+216:    if t:
+217:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+218:            raise ScratchRootUnusable(
+219:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+220:        return t
+221:    return tempfile.gettempdir()
+222:
+223:
+HIT 205:class ScratchRootUnusable(RuntimeError):
+    206:    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+    207:
+    208:
+    209:def strict_scratch_root():
+    210:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+HIT 1788:    except ScratchRootUnusable as exc:
+    1789:        print(f"WITNESS_STUDY: could-not-evaluate: {exc}", file=sys.stderr)
+    1790:        return EXIT_CANNOT
+    1791:    except Fail as exc:
+    1792:        print(f"WITNESS_STUDY: {exc}", file=sys.stderr)
+    1793:        return EXIT_FAIL
+===== tools/evidence-disposition.py =====
+195:def strict_scratch_root():
+196:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+197:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+198:    fallback to /tmp, preserving CR47 semantics), else the platform default.
+199:    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+200:    import os as _os
+201:    t = _os.environ.get("TMPDIR")
+202:    if t:
+203:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+204:            raise ScratchRootUnusable(
+205:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+206:        return t
+207:    return tempfile.gettempdir()
+208:
+209:
+HIT 191:class ScratchRootUnusable(RuntimeError):
+    192:    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+    193:
+    194:
+    195:def strict_scratch_root():
+    196:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+HIT 3231:        except ScratchRootUnusable as exc:
+    3232:            sys.stderr.write("evidence-disposition.py: could-not-evaluate: {}\n".format(exc))
+    3233:            return 2
+    3234:    try:
+    3235:        return run_mode(options["root"], options["dispositions"], options["json"])
+    3236:    except CouldNotEvaluate as exc:
+===== tools/pin-disposition.py =====
+165:def strict_scratch_root():
+166:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+167:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+168:    fallback to /tmp, preserving CR47 semantics), else the platform default.
+169:    An empty TMPDIR is unset (round 54, corpus/knowledge/scratch-root-contract.md)."""
+170:    import os as _os
+171:    t = _os.environ.get("TMPDIR")
+172:    if t:
+173:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+174:            raise ScratchRootUnusable(
+175:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+176:        return t
+177:    return tempfile.gettempdir()
+178:
+179:
+HIT 161:class ScratchRootUnusable(RuntimeError):
+    162:    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+    163:
+    164:
+    165:def strict_scratch_root():
+    166:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+HIT 1399:        except ScratchRootUnusable as exc:
+    1400:            sys.stderr.write("pin-disposition.py: could-not-evaluate: {}\n".format(exc))
+    1401:            return 2
+    1402:    if "--selftest" in argv:
+    1403:        return invalid_input("invalid_usage", "--selftest takes no other arguments")
+    1404:    try:
+===== tools/registry-check.py =====
+757:def strict_scratch_root():
+758:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+759:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+760:    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+761:    import os as _os
+762:    t = _os.environ.get("TMPDIR")
+763:    if t:
+764:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+765:            raise RuntimeError(
+766:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+767:        return t
+768:    return tempfile.gettempdir()
+769:
+===== tools/context-capture.py =====
+300:def strict_scratch_root():
+301:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+302:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+303:    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+304:    import os as _os
+305:    t = _os.environ.get("TMPDIR")
+306:    if t:
+307:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+308:            raise RuntimeError(
+309:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+310:        return t
+311:    return tempfile.gettempdir()
+312:
+313:
+===== tools/repeat-control.py =====
+148:def strict_scratch_root():
+149:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+150:    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+151:    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+152:    import os as _os
+153:    t = _os.environ.get("TMPDIR")
+154:    if t:
+155:        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+156:            raise RuntimeError(
+157:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+158:        return t
+159:    return tempfile.gettempdir()
+160:
+161:

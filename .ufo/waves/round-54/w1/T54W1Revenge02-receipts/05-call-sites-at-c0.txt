@@ -1,0 +1,40 @@
+# T-sites: every strict_scratch_root definition and call at C0
+## tools/env-diff.py sha256=ab193692d78d591fa7c9e55ba9c53cbe88376354adf548cd9d5034ce722bfe56
+32:class ScratchRootUnusable(RuntimeError):
+36:def strict_scratch_root():
+80:    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+## tools/bash-witness-study.py sha256=f2bb50c77a6b6ffc53fd4e31d06c729f9cface7c1684f232c060f6a4978bf261
+205:class ScratchRootUnusable(RuntimeError):
+209:def strict_scratch_root():
+1260:        prefix="bash-witness-selftest-private.", dir=strict_scratch_root()))
+## tools/pin-disposition.py sha256=c917bc41c3f40dae3eacea492d861211c2a4fe1e530cb9f22c5f8d6ff47d2988
+161:class ScratchRootUnusable(RuntimeError):
+165:def strict_scratch_root():
+725:    scratch = tempfile.mkdtemp(prefix="tameshi-r13-pin-disposition-selftest.", dir=strict_scratch_root())
+## tools/evidence-disposition.py sha256=f09d1e490b94edb75364825c3941eb88cfb88a76ae26a2b9257e923ac123ea93
+191:class ScratchRootUnusable(RuntimeError):
+195:def strict_scratch_root():
+2370:    scratch = Path(tempfile.mkdtemp(prefix="tameshi-r14-evidence-disposition-selftest.", dir=strict_scratch_root()))
+
+# T-map: the except clauses in each main() at C0
+## tools/env-diff.py
+157:    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+234:        except ScratchRootUnusable as exc:
+263:    except (OSError, ValueError, KeyError, TypeError) as exc:
+## tools/bash-witness-study.py
+247:    except (OSError, UnicodeDecodeError) as exc:
+1374:        except (OSError, subprocess.SubprocessError):
+1788:    except ScratchRootUnusable as exc:
+## tools/pin-disposition.py
+1335:    except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
+1399:        except ScratchRootUnusable as exc:
+1407:    except InvalidInput as exc:
+## tools/evidence-disposition.py
+421:    except (OSError, subprocess.TimeoutExpired) as exc:
+616:    except CouldNotEvaluate:
+2427:        except Exception as exc:  # fixture setup or process failure
+3107:    except Exception as exc:
+3122:        except Exception as exc:
+3231:        except ScratchRootUnusable as exc:
+3236:    except CouldNotEvaluate as exc:
+3238:    except Exception as exc:  # fail closed, never exit 1 on an internal error

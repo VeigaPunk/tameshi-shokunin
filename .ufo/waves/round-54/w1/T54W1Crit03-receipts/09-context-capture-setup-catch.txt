@@ -1,0 +1,42 @@
+2210:        harness = SelftestHarness()
+2211:        run_selftest_cases(harness)
+2212:        return harness.finish()
+2213:    except Exception as exc:  # setup failure is loud but never a traceback
+2214:        sys.stdout.write(
+2215:            "SELFTEST: FAIL (setup error: {}: {})\n".format(
+2216:                type(exc).__name__, exc))
+2217:        return 2
+2218:    finally:
+2219:        if harness is not None:
+2220:            shutil.rmtree(harness.root, ignore_errors=True)
+2221:
+2222:
+---
+2212:        return harness.finish()
+2213:    except Exception as exc:  # setup failure is loud but never a traceback
+2214:        sys.stdout.write(
+2215:            "SELFTEST: FAIL (setup error: {}: {})\n".format(
+2216:                type(exc).__name__, exc))
+2217:        return 2
+2218:    finally:
+2219:        if harness is not None:
+2220:            shutil.rmtree(harness.root, ignore_errors=True)
+2221:
+2222:
+2223:# ------------------------------------------------------------------------ CLI
+2224:
+---
+2310:            exc, "frozen" if options["receipt"] is None else "explicit",
+2311:            options["receipt"] or FROZEN_RECEIPT_REL, None, None, None)
+2312:        return emit(result, options["json"])
+2313:    except Exception as exc:  # fail closed, never traceback on retained data
+2314:        failure = CouldNotEvaluate(
+2315:            "internal_error", "{}: {}".format(type(exc).__name__, exc))
+2316:        result = result_from_exception(
+2317:            failure, "frozen" if options["receipt"] is None else "explicit",
+2318:            options["receipt"] or FROZEN_RECEIPT_REL, None, None, None)
+2319:        return emit(result, options["json"])
+2320:
+2321:
+2322:if __name__ == "__main__":
+---

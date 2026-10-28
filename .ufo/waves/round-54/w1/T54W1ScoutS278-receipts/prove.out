@@ -1,0 +1,128 @@
+HTTP 200 BYTES 32236
+SHA256 fb44155f430fac1923d3d7b6af1a0210edcfb580291d664e66f338491d68b62b
+NEWLINE_KIND LF
+NLINES 952
+PYTHON 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+--- LINES 156-181 ---
+156|def _candidate_tempdir_list():
+157|    """Generate a list of candidate temporary directories which
+158|    _get_default_tempdir will try."""
+159|
+160|    dirlist = []
+161|
+162|    # First, try the environment.
+163|    for envname in 'TMPDIR', 'TEMP', 'TMP':
+164|        dirname = _os.getenv(envname)
+165|        if dirname: dirlist.append(dirname)
+166|
+167|    # Failing that, try OS-specific locations.
+168|    if _os.name == 'nt':
+169|        dirlist.extend([ _os.path.expanduser(r'~\AppData\Local\Temp'),
+170|                         _os.path.expandvars(r'%SYSTEMROOT%\Temp'),
+171|                         r'c:\temp', r'c:\tmp', r'\temp', r'\tmp' ])
+172|    else:
+173|        dirlist.extend([ '/tmp', '/var/tmp', '/usr/tmp' ])
+174|
+175|    # As a last resort, the current directory.
+176|    try:
+177|        dirlist.append(_os.getcwd())
+178|    except (AttributeError, OSError):
+179|        dirlist.append(_os.curdir)
+180|
+181|    return dirlist
+NOTE_JOIN_MATCH True
+JOINED for envname in 'TMPDIR', 'TEMP', 'TMP': dirname = _os.getenv(envname); if dirname: dirlist.append(dirname)
+--- IF DIRNAME ---
+None truth False skipped True
+'' truth False skipped True
+' ' truth True skipped False
+'/tmp' truth True skipped False
+'0' truth True skipped False
+=== all three absent mode=list env={} ===
+rc 0
+getenv TMPDIR=None skipped=True
+getenv TEMP=None skipped=True
+getenv TMP=None skipped=True
+dirlist_head ['/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 4
+empty_in_dirlist False
+none_in_dirlist False
+=== TMPDIR empty, TEMP/TMP absent mode=list env={'TMPDIR': ''} ===
+rc 0
+getenv TMPDIR='' skipped=True
+getenv TEMP=None skipped=True
+getenv TMP=None skipped=True
+dirlist_head ['/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 4
+empty_in_dirlist False
+none_in_dirlist False
+=== all three empty mode=list env={'TMPDIR': '', 'TEMP': '', 'TMP': ''} ===
+rc 0
+getenv TMPDIR='' skipped=True
+getenv TEMP='' skipped=True
+getenv TMP='' skipped=True
+dirlist_head ['/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 4
+empty_in_dirlist False
+none_in_dirlist False
+=== TMPDIR single space mode=list env={'TMPDIR': ' '} ===
+rc 0
+getenv TMPDIR=' ' skipped=False
+getenv TEMP=None skipped=True
+getenv TMP=None skipped=True
+dirlist_head [' ', '/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 5
+empty_in_dirlist False
+none_in_dirlist False
+=== empty TMPDIR, usable TEMP mode=winner env={'TMPDIR': '', 'TEMP': '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp'} ===
+rc 0
+getenv TMPDIR='' skipped=True
+getenv TEMP='/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp' skipped=False
+getenv TMP=None skipped=True
+dirlist_head ['/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp', '/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 5
+empty_in_dirlist False
+none_in_dirlist False
+winner /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp
+=== empty TMPDIR, missing TEMP mode=winner env={'TMPDIR': '', 'TEMP': '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/no-such-dir'} ===
+rc 0
+getenv TMPDIR='' skipped=True
+getenv TEMP='/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/no-such-dir' skipped=False
+getenv TMP=None skipped=True
+dirlist_head ['/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/no-such-dir', '/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 5
+empty_in_dirlist False
+none_in_dirlist False
+winner /tmp
+=== all empty, selector mode=winner env={'TMPDIR': '', 'TEMP': '', 'TMP': ''} ===
+rc 0
+getenv TMPDIR='' skipped=True
+getenv TEMP='' skipped=True
+getenv TMP='' skipped=True
+dirlist_head ['/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 4
+empty_in_dirlist False
+none_in_dirlist False
+winner /tmp
+=== all absent, selector mode=winner env={} ===
+rc 0
+getenv TMPDIR=None skipped=True
+getenv TEMP=None skipped=True
+getenv TMP=None skipped=True
+dirlist_head ['/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 4
+empty_in_dirlist False
+none_in_dirlist False
+winner /tmp
+=== usable TMPDIR mode=winner env={'TMPDIR': '/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp'} ===
+rc 0
+getenv TMPDIR='/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp' skipped=False
+getenv TEMP=None skipped=True
+getenv TMP=None skipped=True
+dirlist_head ['/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp', '/tmp', '/var/tmp', '/usr/tmp', '/home/vgpnk/Projects/shokunin']
+dirlist_len 5
+empty_in_dirlist False
+none_in_dirlist False
+winner /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ScoutS278-receipts/work/usable-temp
+abspath_empty_eq_cwd True
+join_empty probe

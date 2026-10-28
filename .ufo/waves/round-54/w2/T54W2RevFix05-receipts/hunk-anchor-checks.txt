@@ -1,0 +1,176 @@
+## SKILL.md:819-820 (porcelain open precondition) n=2197
+819|1. **A pinned revision** — committed bytes of the gate with sha256, size, line
+820|   count, mtime, and a porcelain-clean sibling tree at open. Mado's pin:
+
+## SKILL.md:346-347 (bands report convention) n=2197
+346|- **Bands are a report convention, not a pass/fail gate.** An 8/10 admits, and so
+347|  does a <50 % — with the gap recorded in the table, not softened
+
+## SKILL.md:1023-1025 (re-sweep cadence heading) n=2197
+1023|## The re-sweep cadence and the six-case confidence statement (round 8, measured)
+1024|
+1025|Round 7 left its own gap open in writing: "this ledger's update cadence is a
+
+## SKILL.md:824-828 (hermetic suite requirement) n=2197
+824|2. **A one-command hermetic suite** invocable against a copy — mado's gate
+825|   takes `bash "$MUTANT" --selftest`; it must exercise the copy it is handed
+826|   (mado's selftest re-enters `$0`), print its own executed count and verdict
+827|   (`MADO_SELFTEST: 28/28 assertions passed` on green), and read no live path
+828|   (`mutation-case-mado-verify.md:44-49`).
+
+## SKILL.md:851-855 (spec parse SETUP) n=2197
+851|2. **Spec parse + uniqueness.** Every `@old` must occur exactly once (non-overlapping count), asserted
+852|   **before any suite run**; `@new == @old` is refused. Any spec failure is
+853|   `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
+854|3. **Control first.** The unmutated copy must run green; a red control exits 2
+855|   (kills could not be attributed).
+
+## SKILL.md:834-836 (never edits gate) n=2197
+834|4. Nothing else. The service never edits, repairs or re-pins the gate; a
+835|   needed change is a recommendation to the owner (round-6 anti-claim,
+836|   `plans/round-6.plan.md:23-25`).
+
+## SKILL.md:890-892 (sensitivity not truth) n=2197
+890|- **Sensitivity, not truth** — a sweep measures what the suite can detect,
+891|  never whether the gate's verdicts are right
+892|  (`mutation-case-mado-verify.md:229-230`).
+
+## SKILL.md:1276-1277 (rendering divergence rule) n=2197
+1276|and the intake-precondition check; this page is the compact rendering, and a
+1277|divergence between the two is the finding, never smoothed.
+
+## corpus/SOURCES.md:503-503 (S265 supersession note) n=514
+503|- Round 48: four rows added, S265-S268 (superseding held S026, S048, S093, S108; snapshots and receipts under `.ufo/evidence/round-48/freshness/sources/`). The 
+
+## tools/pin-disposition.py:67-71 (unchanged semantics) n=1412
+67|Content status semantics: `unchanged` requires a readable regular worktree file,
+68|verified pinned evidence (the manifest digest equals the blob at the recorded
+69|commit), and byte equality with expected_sha256. A missing repo, path, commit or
+70|blob, a pin/digest disagreement, a symlink or a non-regular file can never be
+71|`unchanged`; those classify as `unavailable` with a reason. A readable file
+
+## tools/pin-disposition.py:563-567 (pin_not_verified branch) n=1412
+563|    elif pinned["status"] != "verified":
+564|        # A readable file cannot be called unchanged against unverified evidence.
+565|        content_status = "unavailable"
+566|        worktree["status"] = "unavailable"
+567|        worktree["reason"] = "pin_not_verified"
+
+## tools/evidence-disposition.py:479-544 (resolve_historical_anchor) n=3246
+479|def resolve_historical_anchor(lane):
+480|    """Resolve one committed anchor shared by G2 and G3."""
+481|    proc = git_call(lane, ["config", "--get", "lane.branch"])
+482|    if proc.returncode not in (0, 1):
+483|        raise _git_failure(proc, "cannot read lane.branch")
+484|    branch = proc.stdout.decode("utf-8", "replace").strip() if proc.returncode == 0 else ""
+485|    if not branch:
+486|        proc = git_call(lane, ["symbolic-ref", "-q", "HEAD"])
+487|        if proc.returncode == 0:
+488|            ref = proc.stdout.decode("utf-8", "replace").strip()
+489|            prefix = "refs/heads/"
+490|            if ref.startswith(prefix):
+491|                branch = ref[len(prefix):]
+492|        elif proc.returncode != 1:
+493|            raise _git_failure(proc, "cannot resolve HEAD branch")
+494|
+495|    if branch:
+496|        branch_ref = "refs/heads/" + branch
+497|        proc = git_call(lane, ["check-ref-format", branch_ref])
+498|        if proc.returncode != 0:
+499|            raise CouldNotEvaluate(
+500|                "historical_input_unavailable",
+501|                "invalid local lane branch {!r}".format(branch),
+502|            )
+503|        commit = _commit_of(lane, branch_ref)
+504|        if commit is None:
+505|            raise CouldNotEvaluate(
+506|                "historical_input_unavailable",
+507|                "lane branch {} does not resolve to a commit".format(branch_ref),
+508|            )
+509|        return branch_ref, commit
+510|
+511|    if os.path.lexists(str(lane / ".jj")):
+512|        raise CouldNotEvaluate(
+513|            "historical_input_unavailable",
+514|            "jj workspace without a lane.branch binding has no authoritative tip",
+515|        )
+516|
+517|    commit = _commit_of(lane, "HEAD")
+518|    if commit is None:
+519|        raise CouldNotEvaluate(
+520|            "historical_input_unavailable", "HEAD does not resolve to a commit"
+521|        )
+522|    proc = git_call(
+523|        lane,
+524|        [
+525|            "for-each-ref",
+526|            "--contains",
+527|            commit,
+528|            "--format=%(refname)",
+529|            "refs/heads/",
+530|            "refs/remotes/",
+531|        ],
+532|    )
+533|    if proc.returncode != 0:
+534|        raise _git_failure(proc, "cannot find a ref containing detached HEAD")
+535|    containing_refs = [
+536|        ref for ref in proc.stdout.decode("utf-8", "replace").splitlines()
+537|        if ref and not ref.endswith("/HEAD")
+538|    ]
+539|    if not containing_refs:
+540|        raise CouldNotEvaluate(
+541|            "historical_input_unavailable",
+542|            "detached HEAD {} is on no branch or remote-tracking branch".format(commit),
+543|        )
+544|    return "HEAD", commit
+
+## tools/evidence-disposition.py:385-395 (GIT_ENV_OVERRIDES only) n=3246
+385|# ------------------------------------------------- historical input reading
+386|
+387|# G4: every git subprocess runs without inherited GIT_* state, without replace
+388|# refs and without grafts, so environment/replace/graft attacks cannot rewrite
+389|# the bytes this gate reads.
+390|GIT_ENV_OVERRIDES = {
+391|    "GIT_NO_REPLACE_OBJECTS": "1",
+392|    "GIT_GRAFT_FILE": "/dev/null",
+393|    "GIT_CONFIG_NOSYSTEM": "1",
+394|    "GIT_CONFIG_GLOBAL": "/dev/null",
+395|}
+
+## tools/evidence-disposition.py:406-409 (actual GIT_* scrub) n=3246
+406|def git_environment():
+407|    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+408|    env.update(GIT_ENV_OVERRIDES)
+409|    return env
+
+## tools/evidence-disposition.py:2275-2275 (anchors at HEAD docstring) n=3246
+2275|    """A detached harness clone anchors at HEAD, not its later remote tip."""
+
+## tools/evidence-disposition.py:2910-2915 (detached-anchor case) n=3246
+2910|    historical_case(
+2911|        "v2-registry-clone-detached-anchor",
+2912|        0,
+2913|        [],
+2914|        _setup_hist_registry_clone,
+2915|    )
+
+## tools/mutate-and-run.sh:616-617 (PIN_BASH REV_BASH) n=2159
+616|PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f
+617|REV_BASH=fecee8743e52eb8fb5fbb40782934cb619a1a96e
+
+## tools/mutate-and-run.sh:78-79 (MUTATE DONE/SETUP lines) n=2159
+78|#   MUTATE: DONE|DEGRADED (target=… defects=… killed=… survived=… inconclusive=… kill-rate=…%)
+79|#   MUTATE: SETUP (<reason>)   — refused before/instead of a sweep
+
+## tools/env-diff.py:263-268 (ScratchRootUnusable before OSError) n=275
+263|    except ScratchRootUnusable as exc:
+264|        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+265|        return 2
+266|    except (OSError, ValueError, KeyError, TypeError) as exc:
+267|        print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+268|        return 2
+
+## tools/env-diff.py:32-33 (class docstring) n=275
+32|class ScratchRootUnusable(RuntimeError):
+33|    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
+

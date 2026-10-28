@@ -1,0 +1,24 @@
+=== R4 S279 gettempdir text ===
+PAT .{0,80}gettempdir.{0,500}
+hits 3
+---
+dtemp() now always returns an absolute path, even if dir is relative. tempfile. gettempdir ( ) ¶ Return the name of the directory used for temporary files. This defines the default value for the dir argument to all functions in this module. Python searches a standard list of directories to find one which the calling user can create files in. The list is: The directory named by the TMPDIR environment variable. The directory named by the TEMP environment variable. The directory named by the TMP environment variable. A platform-specific location: On Windows, the directories %USERPROFILE
+---
+urn any tempdir value regardless of type so long as it was not None . tempfile. gettempdirb ( ) ¶ Same as gettempdir() but the return value is in bytes. Added in version 3.5. tempfile. gettempprefix ( ) ¶ Return the filename prefix used to create temporary files. This does not contain the directory component. tempfile. gettempprefixb ( ) ¶ Same as gettempprefix() but the return value is in bytes. Added in version 3.5. The module uses a global variable to store the name of the directory used for temporary files returned by gettempdir() . It can be set directly to override the selectio
+---
+s except gettempprefix() it is initialized following the algorithm described in gettempdir() . Note Beware that if you set tempdir to a bytes value, there is a nasty side effect: The global default return type of mkstemp() and mkdtemp() changes to bytes when no explicit prefix , suffix , or dir arguments of type str are supplied. Please do not write code expecting or depending on this. This awkward behavior is maintained for compatibility with the historical implementation. Examples ¶ Here are some examples of typical usage of the tempfile module: &gt;&gt;&gt; import tempfile # creat
+
+PAT .{0,80}TMPDIR.{0,400}
+hits 3
+---
+t the user of the application can control the directory location by setting the TMPDIR , TEMP or TMP environment variables. There is thus no guarantee that the generated filename will have any nice properties, such as not requiring quoting when passed to external commands via os.popen() . If any of suffix , prefix , and dir are not None , they must be the same type. If they are bytes, the returned name will be bytes instead of str. If you want to force a bytes return value with oth
+---
+h the calling user can create files in. The list is: The directory named by the TMPDIR environment variable. The directory named by the TEMP environment variable. The directory named by the TMP environment variable. A platform-specific location: On Windows, the directories %USERPROFILE%\AppData\Local\Temp , %SYSTEMROOT%\Temp , C:\TEMP , C:\TMP , \TEMP , and \TMP , in that order. On all other platforms, the directories /tmp , /var/tmp , and /usr/tmp , in that order. As a last resort
+---
+using the context manager &gt;&gt;&gt; with tempfile . TemporaryDirectory () as tmpdirname : ... print ( 'created temporary directory' , tmpdirname ) &gt;&gt;&gt; # directory and contents have been removed Deprecated functions and variables ¶ A historical way to create temporary files was to first generate a file name with the mktemp() function and then create a file using this name. Unfortunately this is not secure, because a different process may create a file with this name in t
+
+PAT .{0,80}The list is.{0,500}
+hits 1
+---
+ard list of directories to find one which the calling user can create files in. The list is: The directory named by the TMPDIR environment variable. The directory named by the TEMP environment variable. The directory named by the TMP environment variable. A platform-specific location: On Windows, the directories %USERPROFILE%\AppData\Local\Temp , %SYSTEMROOT%\Temp , C:\TEMP , C:\TMP , \TEMP , and \TMP , in that order. On all other platforms, the directories /tmp , /var/tmp , and /usr/tmp , in that order. As a last resort, the current working directory. The result of this search is cac
+

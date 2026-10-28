@@ -1,0 +1,22 @@
+--- /fast/scratch/hyaku/tameshi-r54/T54W1ExecStraceNoise/v2/clone/tools/env-diff.py	2026-10-28 11:59:41.045804042 -0300
++++ /fast/scratch/hyaku/tameshi-r54/T54W1ExecStraceNoise/v2/mut-cwdrel/tools/env-diff.py	2026-10-28 12:00:06.894023982 -0300
+@@ -25,6 +25,7 @@
+ import tempfile
+ import time
+ 
++import os as _os0
+ SCHEMA = "tameshi-env-diff-receipt-v1"
+ PROFILES = ("host", "clean", "clean_repeat", "tz", "locale", "home", "columns")
+ 
+@@ -77,7 +78,10 @@
+     bwrap = bwrap or shutil.which("bwrap")
+     if not bwrap:
+         return {"exit": None, "error": "BWRAP_UNAVAILABLE"}
+-    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
++    _cwd = _os0.getcwd()
++    _os0.chdir("/tmp")  # MUTANT: allocate under /tmp via a cwd-relative dir
++    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=".") as tmp:
++        _os0.chdir(_cwd)
+         root = Path(tmp)
+         (root / "home").mkdir()
+         (root / "tmp").mkdir()

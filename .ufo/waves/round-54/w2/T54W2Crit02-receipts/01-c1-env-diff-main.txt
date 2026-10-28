@@ -1,0 +1,80 @@
+    76	def execute(payload, interp, profile, timeout=600, bwrap=None):
+    77	    bwrap = bwrap or shutil.which("bwrap")
+    78	    if not bwrap:
+    79	        return {"exit": None, "error": "BWRAP_UNAVAILABLE"}
+    80	    with tempfile.TemporaryDirectory(prefix="tameshi-r21-envdiff.", dir=strict_scratch_root()) as tmp:
+    81	        root = Path(tmp)
+    82	        (root / "home").mkdir()
+    83	        (root / "tmp").mkdir()
+    84	        target = root / ("target.mjs" if interp == "node" else "target.sh")
+    85	        target.write_bytes(payload)
+    86	        target.chmod(0o755)
+    87	        argv = [bwrap, "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc",
+    88	                "--tmpfs", "/tmp", "--bind", tmp, "/tmp/w", "--unshare-net",
+    89	                "--die-with-parent", "--chdir", "/tmp/w",
+    90	                interp, "/tmp/w/" + target.name, "--selftest"]
+   149	def surface_result(fleet, surface):
+   150	    row = {"surface": surface["name"], "pin": {k: surface[k] for k in ("repo", "rev", "path")},
+   151	           "argv": [surface["interp"], "/tmp/w/target." +
+   152	                    ("mjs" if surface["interp"] == "node" else "sh"), "--selftest"]}
+   153	    try:
+   154	        payload, actual = read_surface(fleet, surface)
+   155	        row["pin"]["blob_sha256"] = actual
+   156	        row.update(probe(payload, surface["interp"]))
+   157	    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+   158	        row.update(classification="unavailable", sensitive_to=[], error=str(exc))
+   159	    return row
+   160	
+   223	def main(argv=None):
+   224	    p = Parser(description=__doc__)
+   225	    p.add_argument("--contract", type=Path)
+   226	    p.add_argument("--out", type=Path)
+   227	    p.add_argument("--fleet-root", type=Path, default=Path(__file__).resolve().parents[2])
+   228	    p.add_argument("--jobs", type=int, default=3)
+   229	    p.add_argument("--selftest", action="store_true")
+   230	    a = p.parse_args(argv)
+   231	    if a.selftest:
+   232	        try:
+   233	            return selftest()
+   234	        except ScratchRootUnusable as exc:
+   235	            print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+   236	            return 2
+   237	    if not a.contract or not a.out or not 1 <= a.jobs <= 3:
+   238	        p.error("--contract and --out are required; --jobs must be 1..3")
+   239	    try:
+   240	        raw = a.contract.read_bytes()
+   241	        contract = json.loads(raw)
+   242	        surfaces = contract["surfaces"]
+   243	        if not isinstance(surfaces, list) or not surfaces:
+   244	            raise ValueError("surfaces must be a nonempty list")
+   245	        started_at = datetime.now(timezone.utc).isoformat()
+   246	        with concurrent.futures.ThreadPoolExecutor(a.jobs) as pool:
+   247	            rows = list(pool.map(lambda s: surface_result(a.fleet_root, s), surfaces))
+   248	        report = {"schema": SCHEMA, "contract_sha256": digest(raw),
+   249	                  "host": {"uname": platform.platform(), "python": platform.python_version()},
+   250	                  "profiles": {name: ("inherited minus GIT_*" if name == "host" else profile_env(name))
+   251	                               for name in PROFILES}, "surfaces": rows}
+   252	        report["instrument_sha256"] = digest(Path(__file__).read_bytes())
+   253	        report["measurement_interval"] = {
+   254	            "start": started_at, "end": datetime.now(timezone.utc).isoformat()
+   255	        }
+   256	        report["argv"] = [sys.executable, *sys.argv]
+   257	        for command in ("node", "bash"):
+   258	            version = subprocess.run([command, "--version"], capture_output=True,
+   259	                                     env=parent_env(), timeout=10)
+   260	            report["host"][command] = version.stdout.decode("utf-8", "replace").splitlines()[0]
+   261	        a.out.parent.mkdir(parents=True, exist_ok=True)
+   262	        a.out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
+   263	    except ScratchRootUnusable as exc:
+   264	        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
+   265	        return 2
+   266	    except (OSError, ValueError, KeyError, TypeError) as exc:
+   267	        print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+   268	        return 2
+   269	    done = sum(r.get("classification") != "unavailable" for r in rows)
+   270	    print(f"ENVDIFF: classified={done}/{len(rows)} out={a.out}")
+   271	    return 0 if done == len(rows) else 1
+   272	
+   273	
+   274	if __name__ == "__main__":
+   275	    sys.exit(main())
