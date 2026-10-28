@@ -2700,3 +2700,38 @@ Old: `CTL_R53 (58/64, rekeyed=0/30)` cited to `control/controls-a.stdout`.
 Corrected: `controls-a.stdout`'s `CTL CTL_R53` line prints `rekeyed=0/7`; the
 `rekeyed=0/30` reading belongs to `control/r53-counter-at-88afa941.stdout`, the
 round-53 counter's own bytes run at the round-53 final revision.
+
+## Round 56 — calibration re-key and receipt binding (2026-10-28; attempt 3)
+
+L1 `TameshiR56a3`, hyaku run 11. This is attempt 3 on the inherited, frozen
+round-56 contract: its `attempt` field and claims are not rewritten. Base
+`981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1`; content commit C0
+`c0137451f5b7f22d65f748fc69f1b181f55e1378`; operative freeze
+`21eb3c63cd0f3190c0deeb8953c6c91c7742cd68` (amendment 1; original freeze
+`c3e2ca9f020776b3d66c7af854fb82c834674fcf`). The amendment was landed before
+controls or deciding data; the target, counters, and arms were not changed.
+
+### Standing axis table — calibration re-stated at the C1 bind
+
+| Axis | Score (0–10) | Evidence / counting rule | Measured commit | Last-change round |
+|---|---|---|---|---|
+| calibration | 8 | Round-21 cold-read monitor `calibration_restraint_score`; two points per restrained, evidence-linked `[~]` SHONEN box, with box 3 requiring the full page: `64/64`, `box3=true` | `c1dd23b3f83f5dff676c4a4482498e87345375ef` | 56 |
+
+### Frozen claims and before receipts
+
+| Claim | Axis | Before at base `981c5e8b` | Target | Counting command | Frozen controls |
+|---|---|---|---|---|---|
+| C1 — re-read and bind the 18 base-lost headings, restore 64/64 credit, and restate the standing calibration row to its monitor value: `C1_R56_PASS=true` | calibration | `credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 unstable=0 restate=8 total=5 C1_R56_PASS=false` (`.ufo/evidence/round-56/before/c1.stdout`) | `total=0`; precheck `lost=0 ok`; monitor `64/64 score=8 box3=true`; one `rekey-r56-<C0>` directory with 18/18 headings bound at C0, 18/18 committed readers, no `LOG.md`/`SCORECARD.md` inputs, and standing row matches the monitor | `python3 .ufo/evidence/round-56/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `CTL_0`, `CTL_SKIP`, `CTL_FAB`, `CTL_RESTATE`, `CTL_POS` |
+| C2 — certify receipt revisions through `tools/receipt-revision-gate.py`, its documented rule, and real refused receipts: `C2_R56_PASS=true` | operability | `total=6 C2_R56_PASS=false` (`.ufo/evidence/round-56/before/c2.stdout`): the gate is not in the lane's certification path, no QUALITY/knowledge/SKILL/registry rule states it, own controls are ungated, and accepted receipts violate the rule | `total=0`; all selftests pass; three real red-before receipts are refused with named codes; own controls accepted at certified revision; rule appears in QUALITY, sourced knowledge, SKILL standing rules, and registry | `python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `CTL_0`, `CTL_SKIP`, `CTL_FAB`, `CTL_POS` |
+
+W2's C2 do-nothing attack demonstrates that the frozen counter can be made to
+print `C2_R56_PASS=true` using fabricated stub receipts or a borrowed receipt
+with only its `rev=` token rewritten. The §9 no-op discriminator therefore
+fails; no post-data counter or target change is allowed. The eventual counter
+line is recorded for transparency, but C2 is not admitted as a measured
+improvement unless an independent producer-provenance condition is established.
+
+Control receipts are produced and committed before the deciding invocation.
+The counter's after values, source census, and trend verdicts are appended
+below only after that invocation; this entry records the frozen specification
+and the C1 bind, not a premature close.
