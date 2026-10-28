@@ -1,0 +1,56 @@
+{
+  "seat": "T55W1ExecC1Full",
+  "round": 55,
+  "wave": "w1",
+  "item": "C1 dry run at the target",
+  "frozen_counter_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "edited_commit_ephemeral": "1a92b7839c3d5fe5ecdbe936c7eed246b77062f2",
+  "patch": ".ufo/waves/round-55/w1/T55W1ExecC1Full-receipts/proposed.patch",
+  "state_at_frozen_set": {
+    "line": "C1_R55: rev=631cd6455e58 classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false",
+    "receipt": "-receipts/c1-at-frozen-set.stdout"
+  },
+  "state_at_edited_rev": {
+    "line": "C1_R55: rev=1a92b7839c3d classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true",
+    "exit": 0,
+    "receipt": "-receipts/c1-at-fixed-rev.stdout"
+  },
+  "classes": [
+    {"id": "R54.1", "derived": "CTL_MISMATCH + 2/3 (arm rekeyed=3/7)", "command": "grep -n 'CTL_MISMATCH\\|CONTROLS_B' .ufo/evidence/round-54/control/controls-b.stdout", "receipt": ".ufo/evidence/round-54/control/controls-b.stdout", "stale_before": 3, "stale_after": 0, "ok": true},
+    {"id": "R54.2", "derived": "freeze pointer=077d431e (5 amendments, 10 files)", "command": "grep -o 'freeze=[0-9a-f]\\{40\\}' .ufo/evidence/round-54/after/frozen.stdout", "receipt": ".ufo/evidence/round-54/after/frozen.stdout", "stale_before": 3, "stale_after": 0, "ok": true},
+    {"id": "R54.3", "derived": "total=13", "command": "grep -o 'total=[0-9]*' .ufo/evidence/round-54/before/c2.stdout", "receipt": ".ufo/evidence/round-54/before/c2.stdout", "stale_before": 1, "stale_after": 0, "ok": true},
+    {"id": "R54.4", "derived": "c2 digest=8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790", "command": "python3 -c 'import json;print(json.load(open(\".ufo/evidence/round-54/freeze.json\"))[\"files\"][\"c2/measure.py\"])'", "receipt": ".ufo/evidence/round-54/freeze.json", "stale_before": 0, "stale_after": 0, "ok": true},
+    {"id": "R54.5", "derived": "w1=28 w2=25 sections=12", "command": "git ls-tree -r --name-only <rev> -- .ufo/waves/round-54/<wave> + findings length sum over T54W*Read*.json", "receipt": ".ufo/waves/round-54/{w1,w2}/*Read*.json", "stale_before": 0, "stale_after": 0, "ok": true},
+    {"id": "R54.6", "derived": "sweep commit=ff2a821", "command": "git log --reverse --format=%h <rev> -- .ufo/waves/round-54/w2/T54W2Sent03.md", "receipt": ".ufo/waves/round-54/w2/T54W2Sent03.md", "stale_before": 0, "stale_after": 0, "ok": true},
+    {"id": "R54.7", "derived": "rename commit=7fa9a5e (R100)", "command": "git show --name-status --format= 7fa9a5e | grep forged-reader.json", "receipt": "rename line R100 old new", "stale_before": 0, "stale_after": 0, "ok": true},
+    {"id": "R54.8", "derived": "config.yml + fabricated + seat marked", "command": "grep -n -i superseded .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md; corpus/lessons/round-54-verifier-spotcheck.md R54.8", "receipt": "seat file + spot-check R54.8", "stale_before": 0, "stale_after": 0, "ok": true},
+    {"id": "R54.9", "derived": "reviewers=5 attack=21/76 seats=76 staged=81", "command": "python3 -c 'json role_mix.reviewer/attack_seats/seats'; glob merge/tameshi/knowledge/**/*.md", "receipt": ".ufo/waves/round-54/w1-registry.json + /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge", "stale_before": 1, "stale_after": 0, "ok": true},
+    {"id": "R54.10", "derived": "controls-a rekeyed=0/7; 0/30 belongs to r53-counter-at-88afa941.stdout", "command": "grep -n 'CTL_R53' .ufo/evidence/round-54/control/controls-a.stdout; grep -n 'rekeyed=' .ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout", "receipt": "both control receipts", "stale_before": 0, "stale_after": 0, "ok": true}
+  ],
+  "controls": [
+    {"id": "A", "shape": "corrections section only, in-place fixes reverted", "rewarded": "total=4 C1_R55_PASS=false", "exit": 1, "receipt": "-receipts/control-a-section-only.stdout"},
+    {"id": "B", "shape": "in-place fixes only, corrections section removed", "rewarded": "total=10 C1_R55_PASS=false", "exit": 1, "receipt": "-receipts/control-b-inplace-only.stdout"}
+  ],
+  "files_changed": [
+    "SCORECARD.md",
+    "corpus/QUALITY.md",
+    "corpus/lessons/round-54.md",
+    "LOG.md",
+    ".ufo/waves/round-54/w1/T54W1ExecStraceNoise.md"
+  ],
+  "counter_weaknesses_reported_not_fixed": [
+    "R54.2 stale scan excludes LOG.md (false pointer sentence passed unrepaired)",
+    "R54.1 regex is same-line scoped; a wrapped 'positive control ... rekeyed=7/7' claim passes",
+    "R54.8 corrected arm is satisfied by an unrelated 'superseded' substring in the seat file",
+    "R54.9 premise reads the out-of-lane /home/vgpnk/Projects/shokuknow tree"
+  ],
+  "conformance": {
+    "skill_md_touched": false,
+    "frozen_paths_diff": "empty",
+    "census_exit": 0,
+    "lane_mutations": "none (report and receipts written only under .ufo/waves/round-55/w1/T55W1ExecC1Full*)"
+  },
+  "blockers": [],
+  "tooling": {"installed": [], "upgraded": [], "note": "none needed"}
+}

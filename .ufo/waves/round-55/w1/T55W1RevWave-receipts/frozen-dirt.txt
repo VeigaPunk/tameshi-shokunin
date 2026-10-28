@@ -1,0 +1,38 @@
+=== 1. frozen set vs HEAD (git status --porcelain) ===
+ M .ufo/evidence/round-55/before/c2.stdout
+ M .ufo/evidence/round-55/c1/measure.py
+ M .ufo/evidence/round-55/c2/measure.py
+ M .ufo/evidence/round-55/contract.json
+ M .ufo/evidence/round-55/freeze.json
+?? .ufo/evidence/round-55/assimilation/
+
+=== 2. before/c2.stdout: worktree vs HEAD blob ===
+worktree bytes: 139  mtime: 2026-10-28 13:59:44.059050302 -0300
+HEAD blob bytes: 2634
+--- worktree content:
+C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false
+[EOF]
+--- HEAD content, first 3 and last 1:
+EXPLAIN grammar repeat-control --selftest          rc=2  FAIL
+EXPLAIN grammar registry-check --selftest          rc=2  ok
+EXPLAIN grammar bash-witness-study --selftest      rc=2  ok
+...
+C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false
+
+=== 3. before/c1.stdout untouched? ===
+worktree bytes: 2276  HEAD: 2276  identical: yes
+
+=== 4. freeze.json hash re-derivation at 2026-10-28T14:00:22-03:00 ===
+MISMATCH .ufo/evidence/round-55/contract.json manifest=ed6871e17697d652 tree=5de4f37b14db6e50
+MISMATCH .ufo/evidence/round-55/c1/measure.py manifest=77abe1e9daf40bec tree=711507e7b5bdd060
+MISMATCH .ufo/evidence/round-55/c2/measure.py manifest=ab3ae751469164f0 tree=d6ca1d851bb00373
+MATCH    .ufo/evidence/round-55/no-harm.sh manifest=d93469db5a55632c tree=d93469db5a55632c
+MATCH    .ufo/evidence/round-55/deciding-run.sh manifest=af11d7551d8af1c7 tree=af11d7551d8af1c7
+MATCH    .ufo/evidence/round-55/controls.sh manifest=7c0cacb56c679155 tree=7c0cacb56c679155
+freeze.json lists amendments: [1, 2, 3]
+contract.json lists amendments: [1, 2, 3, 4, 5]
+
+=== 5. no spec item authorizes a write to the frozen before receipt ===
+items naming before/c2.stdout: ['T55W1Er03']
+    T55W1Er03 -> ufo/evidence/round-54/before/c2.stdout`, which prints `total=13`
+items containing a shell redirect onto it: []

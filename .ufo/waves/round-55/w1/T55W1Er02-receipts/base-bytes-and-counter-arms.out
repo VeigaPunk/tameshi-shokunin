@@ -1,0 +1,42 @@
+## old strings must be byte-exact at the round base and at the frozen counter set
+rev=0a2010acd1e92e4e332774050825e21bcfc7e079
+  scorecard 68d5b62d4674491ec994924afed4e1a03b9b4d77c57e9f5890afc0741725c70b  -
+  log       04dcdb7339260324dd14e67923aa753c611837716cdee80feed4842aed511ca9  -
+  stale_hashes_in_SCORECARD 3
+  false_clause_in_LOG 1
+rev=631cd6455e58dce969310b4c0466c3383d9f5108
+  scorecard 68d5b62d4674491ec994924afed4e1a03b9b4d77c57e9f5890afc0741725c70b  -
+  log       04dcdb7339260324dd14e67923aa753c611837716cdee80feed4842aed511ca9  -
+  stale_hashes_in_SCORECARD 3
+  false_clause_in_LOG 1
+
+## the counter scan set (frozen source)
+34:RECORD = (
+35-    "SCORECARD.md",
+36-    "corpus/QUALITY.md",
+37-    "corpus/lessons/round-54.md",
+38-)
+
+## R54.2 arm (frozen source)
+177:    # R54.2 -- three freeze pointers for one round; the receipt names one.
+178-    fr = text(lane, rev, ".ufo/evidence/round-54/after/frozen.stdout") or ""
+179-    m = re.search(r"freeze=([0-9a-f]{40})", fr)
+180-    ptr = m.group(1) if m else None
+181-    stale = scan(lane, rev, ("SCORECARD.md",), r"7883e0e5|fe70474d")
+182-    row("R54.2", ptr is not None, stale, bool(ptr) and ptr[:8] in corr,
+183-        "freeze pointer=%s" % (ptr[:8] if ptr else "none"))
+
+## corrections() boundary rule (frozen source)
+66:def corrections(lane, rev):
+67-    body = text(lane, rev, "SCORECARD.md")
+68-    if body is None:
+69-        return ""
+70-    out, on = [], False
+71-    for line in body.splitlines():
+72-        if line.startswith(HEADING):
+73-            on = True
+74-            continue
+75-        if on and line.startswith("## "):
+76-            break
+77-        if on:
+78-            out.append(line)

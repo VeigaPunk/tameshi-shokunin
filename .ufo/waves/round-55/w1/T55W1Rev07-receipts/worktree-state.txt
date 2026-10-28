@@ -1,0 +1,29 @@
+$ cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 - <<'PY'
+
+import importlib.util, os, hashlib
+LANE="/home/vgpnk/Projects/shokunin/tameshi-shokunin"
+spec=importlib.util.spec_from_file_location("m", LANE+"/.ufo/evidence/round-55/c1/measure.py")
+m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+def wt(lane, rev, p):
+    fp=os.path.join(lane,p)
+    return open(fp,encoding="utf-8",errors="replace").read() if os.path.exists(fp) else None
+m.text = wt
+print("counter sha256:", hashlib.sha256(open(LANE+"/.ufo/evidence/round-55/c1/measure.py","rb").read()).hexdigest())
+for p in ("SCORECARD.md","LOG.md","corpus/lessons/round-54.md"):
+    print(p,"sha256:",hashlib.sha256(open(LANE+"/"+p,"rb").read()).hexdigest())
+corr=m.corrections(LANE,"WT")
+print("R54.2: stale(=7883e0e5|fe70474d in SCORECARD, corrections excluded) =",len(m.scan(LANE,"WT",("SCORECARD.md",),r"7883e0e5|fe70474d")),"| 077d431e in corr =","077d431e" in corr)
+print("R54.9: stale(=84 staged) =",len(m.scan(LANE,"WT",("corpus/lessons/round-54.md",),r"84 staged")),"| want in corr =","reviewers=5 attack=21/76 seats=76" in corr and "staged=81" in corr)
+print("R54.9 derived =","reviewers=5 attack=21/76 seats=76 staged="+str(m.staged_count("/home/vgpnk/Projects/shokuknow")))
+print("LOG still carries the false pointer clause:", "the freeze pointer the deciding run uses" in open(LANE+"/LOG.md",encoding="utf-8").read())
+
+PY
+counter sha256: 711507e7b5bdd060a67b42162d043aabaef339408b3291a3c6ca39599d566dcd
+SCORECARD.md sha256: 22b9fffd0109b5490a432c91970279c8438204b6618fafd3ef22dda8959c75ce
+LOG.md sha256: 4482f48a5a778acb2a36065602d3a9d239af30d0d8cd33618b90783a35bd66d1
+corpus/lessons/round-54.md sha256: e0eeb6a392dac1a27cdf27772f3c2041bfcab426a60453404034754e551b5970
+R54.2: stale(=7883e0e5|fe70474d in SCORECARD, corrections excluded) = 0 | 077d431e in corr = True
+R54.9: stale(=84 staged) = 0 | want in corr = True
+R54.9 derived = reviewers=5 attack=21/76 seats=76 staged=81
+LOG still carries the false pointer clause: False
+[exit 0]

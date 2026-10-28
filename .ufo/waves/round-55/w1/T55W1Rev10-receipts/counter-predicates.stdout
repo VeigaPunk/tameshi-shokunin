@@ -1,0 +1,54 @@
+# frozen C1 counter predicate lines for R54.5 / R54.8 (bytes at 631cd6455e58dce969310b4c0466c3383d9f5108)
+199:    # R54.5 -- finding counts must match the committed reader files.
+200-    counts = finding_counts(lane, rev)
+201-    w1, w2 = counts["w1"][0], counts["w2"]
+202-    wanted = "w1=%d w2=%d sections=%d" % (w1, w2[0], w2[1])
+--
+220:    # R54.8 -- the config.yml write incident is in the record and the seat text
+221-    # that claimed operator authority is marked superseded.
+222-    seat = text(lane, rev, ".ufo/waves/round-54/w1/T54W1ExecStraceNoise.md") or ""
+223-    row("R54.8", bool(seat), [],
+
+# RECORD set (what the stale arm scans)
+RECORD = (
+    "SCORECARD.md",
+    "corpus/QUALITY.md",
+    "corpus/lessons/round-54.md",
+)
+
+# finding_counts() -- the derivation
+def finding_counts(lane, rev):
+    counts = {}
+    for wave in ("w1", "w2"):
+        total = files = 0
+        r = git(lane, "ls-tree", "-r", "--name-only", rev,
+                "--", ".ufo/waves/round-54/%s" % wave)
+        names = [n for n in r.stdout.split()
+                 if re.search(r"/T54W\d+[A-Za-z]*Read\d+\.json$", n)]
+        for rel in sorted(names):
+            raw = text(lane, rev, rel)
+            if raw is None:
+                continue
+            try:
+                data = json.loads(raw)
+            except ValueError:
+                continue
+            n = len(data.get("findings") or [])
+            total += n
+            files += 1 if n else 0
+        counts[wave] = (total, files)
+    return counts
+
+
+def wave_numbers(lane, rev):
+
+# R54.5 row passes an EMPTY stale list: 
+203:    row("R54.5", w1 > 0 and w2[0] > 0, [], wanted in corr, wanted)
+# R54.8 row: premise is only bool(seat):
+223:    row("R54.8", bool(seat), [],
+224-        "superseded" in seat.lower() and "config.yml" in corr and "fabricated" in corr,
+
+# 'superseded' pre-exists in the seat file at base (line 299), so the R54.8 seat arm is true at base:
+- `omp config get task.agentModelOverrides --json` (the runtime's own view) → `scout: "@m_glm53"`.
+- No role remains bound to `@m_grok` (the alias and `m_grok45` stay defined but unused, matching how
+  `m_grok` was already treated after the round-50 directive superseded it).

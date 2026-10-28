@@ -1,0 +1,21 @@
+# per-tool exception classes and cross-imports
+$ grep -n "^class ScratchRootUnusable" tools/*.py
+tools/bash-witness-study.py:205:class ScratchRootUnusable(RuntimeError):
+tools/context-capture.py:300:class ScratchRootUnusable(RuntimeError):
+tools/env-diff.py:32:class ScratchRootUnusable(RuntimeError):
+tools/evidence-disposition.py:191:class ScratchRootUnusable(RuntimeError):
+tools/pin-disposition.py:161:class ScratchRootUnusable(RuntimeError):
+tools/repeat-control.py:148:class ScratchRootUnusable(RuntimeError):
+
+$ grep -n "class ScratchRootUnusable" tools/registry-check.py
+0
+
+$ grep -n "raise RuntimeError" tools/registry-check.py (scratch helper)
+766:                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+782:        raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
+
+$ grep -rn "ScratchRootUnusable" tools/*.py | grep -c import
+0
+
+$ ls tools | grep scratch   (no shared module)
+0

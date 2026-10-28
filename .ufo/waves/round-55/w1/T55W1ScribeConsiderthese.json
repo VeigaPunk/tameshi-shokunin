@@ -1,0 +1,126 @@
+{
+ "seat": "T55W1ScribeConsiderthese",
+ "round": 55,
+ "wave": 1,
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "freeze": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "item": "considerthese mining: at most one still-unimplemented proposal touching verification-fixture craft, grounded, with its landing drafted",
+ "files_read": [
+  "considerthese/2026-10-28.md",
+  "considerthese/2026-10-26.md",
+  "considerthese/2026-10-25.md"
+ ],
+ "picked": {
+  "source": "considerthese/2026-10-28.md",
+  "source_lines": "77-78",
+  "proposal": 2,
+  "title": "Counter-arm liveness check",
+  "quote": "For each frozen counter, list its arms and require one committed input per arm that moves that arm's tally away from zero. A passing control set did not reveal that round 53's re-key arm could never fire.",
+  "scope_class": "verification-fixture craft",
+  "implemented": false,
+  "why_unimplemented": [
+   "no tool or criterion enumerates a counter's arms and requires a committed input per arm; searched: filenames *arm* under tools/ .ufo/evidence corpus (only unrelated mutation-matrix and round-17 trace files), and the phrases 'per-arm', 'each arm', 'arm census', 'arm inventory' across md/py/sh/json",
+   "QUALITY 105 (corpus/QUALITY.md:1584-1586) proves one arm per round on a positive control at 'a tree where the round's work is present', which a zero-is-good guard arm cannot satisfy; its falsifier (:1590) is the rekey arm only",
+   "neither round-54 nor round-55 control script contains an input that moves tmp_mkdirs: grep -c tmp_mkdirs prints 0 for both",
+   "corpus/lessons/round-54.md:57-60 records 'proposals 2-5 remain unmined'"
+  ],
+  "landing_drafted": {
+   "kind": "QUALITY criterion 106",
+   "after": 105,
+   "text": "An arm of a frozen counter has a committed input that moves it, not only a control that passes: for each arm the lane commits a receipt where the arm's value differs from its passing value; for a guard arm whose passing value is zero that input is a mutant reintroducing the defect the arm guards.",
+   "falsifier": "arm-census.py --lane LANE --rev 631cd64 prints the C2_R55 tmp_mkdirs row with nonzero=0 at the freeze commit; the same command over a tree that commits the mutant control prints nonzero>=1",
+   "tool": ".ufo/evidence/round-56/quality/arm-census.py (interface --lane --rev [--json OUT] [--quiet]; exit 0 as a census)",
+   "lesson_row": "round-55 ## Mistakes row: class 'an arm with no committed input that moves it (a zero-is-good guard arm)', evidence C2_R54/C2_R55 tmp_mkdirs, captured-by none, fix criterion 106 + committed mutant control",
+   "sources_row": "NOT OWED — the claim is internal to the lane (its own counters and receipts); a SOURCES row would need an external carrier with a located quote in the census-validated register. Upstream operator input dated 2026-10-28 is cited by path."
+  }
+ },
+ "grounding_opened": [
+  {"path": "corpus/QUALITY.md", "lines": "1584-1590", "what": "criterion 105 and its falsifier (the rekey arm)"},
+  {"path": "corpus/QUALITY.md", "lines": "1428-1434", "what": "criterion 97 (evidence pointers resolve) — the implemented half of proposal 1"},
+  {"path": "corpus/lessons/round-54.md", "lines": "57-60,64-83", "what": "considerthese mining note; the dead-arm Mistakes row; criterion 105 draft"},
+  {"path": ".ufo/evidence/round-55/c2/measure.py", "lines": "7-35,138-146,208-221", "what": "the counter's own arm list; tmp_mkdirs implementation; the census arm"},
+  {"path": ".ufo/evidence/round-55/controls.sh", "lines": "51,53,71,87,112,123,125,140", "what": "the frozen control set (no /tmp-fallback input)"},
+  {"path": ".ufo/evidence/round-54/control/controls.sh", "lines": "whole", "what": "round-54 control set (same absence)"},
+  {"path": ".ufo/evidence/round-48/quality/pointer-check.py", "lines": "1-20", "what": "path-only pointer check; strips :N suffixes"},
+  {"path": "considerthese/2026-10-26.md", "lines": "66-69", "what": "status block: 2026-10-25 proposals 1,2,3,5 mined; 4 not"}
+ ],
+ "arm_census": {
+  "tool": ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-census.py",
+  "method": "reads committed blobs (git show REV:path); every C[12]_R\\d+ verdict line, bare or control-prefixed; tallies each key=value arm",
+  "at_base_0a2010ac": {"receipts_scanned": 1127, "arms": 414, "arms_with_no_nonzero": 63},
+  "at_freeze_631cd64": {"receipts_scanned": 1129, "arms": 428, "arms_with_no_nonzero": 68},
+  "live_examples": [
+   {"counter": "C2_R54", "arm": "tmp_mkdirs", "observations": 5, "max": 0, "nonzero": 0,
+    "receipts": [".ufo/evidence/round-54/before/c2.stdout", ".ufo/evidence/round-54/after/c2.stdout", ".ufo/evidence/round-54/control/controls-a.stdout", ".ufo/evidence/round-54/control/controls-b.stdout"]},
+   {"counter": "C2_R55", "arm": "tmp_mkdirs", "observations": 1, "max": 0, "nonzero": 0,
+    "receipts": [".ufo/evidence/round-55/before/c2.stdout"]},
+   {"counter": "C1_R55", "arm": "classes_corrected", "observations": 1, "max": 0, "nonzero": 0,
+    "receipts": [".ufo/evidence/round-55/before/c1.stdout"]},
+   {"counter": "C1_R53", "arm": "rekeyed", "observations": 1, "max": 0, "nonzero": 0,
+    "receipts": [".ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout"]}
+  ],
+  "not_a_defect_by_itself": "many zero-observed arms are 0/N base tallies moved by a later committed receipt (e.g. C1_R30 equiv_pass reads 0/4, 2/4, 4/4) or refusal counters (C1_R47 unobservable=0); the criterion requires existence of some committed moving input, not a design judgement"
+ },
+ "demonstration": {
+  "fixture": "git clone --shared of the lane at base, detached 0a2010ac; toplevel asserted before commit",
+  "mutant": "tools/env-diff.py strict_scratch_root(): 'return t' -> 'return \"/tmp\"' (one line, fixture clone only)",
+  "command": "env TMPDIR=<fresh usable dir> strace -f -e trace=mkdir,mkdirat -o LOG python3 tools/env-diff.py --selftest; count lines with 'mkdir' and '\"/tmp'",
+  "base": {"exit": 0, "total_mkdir_lines": 625, "tmp_mkdirs": 0, "tool_selftest": "ENVDIFF_SELFTEST: 9/9 pass"},
+  "mutant": {"exit": 0, "total_mkdir_lines": 625, "tmp_mkdirs": 132, "tool_selftest": "ENVDIFF_SELFTEST: 9/9 pass"},
+  "conclusion": "the arm is live and discriminates purely on the /tmp prefix; the lane has never committed an input that moves it, and the tool's own fixture stays green"
+ },
+ "dispositions": [
+  {"file": "2026-10-28", "n": 1, "title": "receipt-existence linter", "scope": "record verification", "status": "out of scope; path half implemented as QUALITY 97 + pointer-check.py"},
+  {"file": "2026-10-28", "n": 2, "title": "counter-arm liveness check", "scope": "verification-fixture craft", "status": "PICKED — unimplemented"},
+  {"file": "2026-10-28", "n": 3, "title": "cold-read cost forecast", "scope": "planning", "status": "out of scope; QUALITY 98 is a post-edit precheck"},
+  {"file": "2026-10-28", "n": 4, "title": "assimilation backlog burn-down", "scope": "process", "status": "out of scope"},
+  {"file": "2026-10-28", "n": 5, "title": "stale closure-pointer sweep", "scope": "record hygiene", "status": "out of scope; pointer-check strips :N suffixes"},
+  {"file": "2026-10-26", "n": 1, "title": "crash-resume integrity check", "scope": "fixture craft", "status": "already mined: .ufo/evidence/round-53/verify-freeze.sh"},
+  {"file": "2026-10-26", "n": 2, "title": "nondeterminism fix list", "scope": "row hygiene", "status": "out of scope"},
+  {"file": "2026-10-26", "n": 3, "title": "recurring-defect tracker", "scope": "closure process", "status": "out of scope; corpus/routed-defects.json is the ledger"},
+  {"file": "2026-10-26", "n": 4, "title": "host and scratch budget readout", "scope": "capacity", "status": "out of scope"},
+  {"file": "2026-10-26", "n": 5, "title": "carrier fallback register", "scope": "sourcing", "status": "out of scope"},
+  {"file": "2026-10-25", "n": 1, "title": "measured-to-landing drift check", "scope": "fixture/record", "status": "mined: QUALITY 86"},
+  {"file": "2026-10-25", "n": 2, "title": "cumulative mismatch-class regression", "scope": "fixture", "status": "mined: round-46 C1 restatement"},
+  {"file": "2026-10-25", "n": 3, "title": "dead-code debt list", "scope": "fixture", "status": "mined: round-47 dead-code scan"},
+  {"file": "2026-10-25", "n": 4, "title": "round tempo and capacity", "scope": "capacity", "status": "out of scope"},
+  {"file": "2026-10-25", "n": 5, "title": "proposal uptake ledger", "scope": "records", "status": "mined in round 48 drafts"}
+ ],
+ "observations_reported_not_fixed": [
+  {"what": "round-54 lesson mis-attributes 2026-10-28 proposal 1 as 'the contract-debt table'",
+   "check": "git grep -n 'contract-debt\\|contract debt' 0a2010ac -- considerthese/ prints nothing; the file has one commit 9b9cd57 (2026-10-28 09:46 -0300, ancestor of base) equal to the worktree; mtime 10:43:53 is later than the commit",
+   "consequence": "proposal 1 was not mined as described; proposal 2 is still the only in-scope open item"},
+  {"what": ".ufo/evidence/round-55/before/c2.stdout changed under this seat",
+   "check": "committed blob at 631cd64 is 2634 bytes: 43 lines, EXPLAIN per mode, line 43 'usable=13/13 tmp_mkdirs=0 total=18'; the worktree copy was 0 bytes at 13:53 and 139 bytes at 13:59 (one C2_R55 line, no EXPLAIN lines); an earlier worktree read showed usable=12/13 total=19",
+   "consequence": "every number here is taken from the committed blob; the C2 owner must confirm which run the round cites"},
+  {"what": "the frozen set named by the item (631cd64) does not carry the amended counter, and the amended set is uncommitted",
+   "check": "git diff --stat against 631cd64 shows .ufo/evidence/round-55/{contract.json,freeze.json,c2/measure.py} modified; committed contract has amendments=[] and worktree has 4; committed c2/measure.py has no r55-rev checkout, worktree has one",
+   "consequence": "a reader running the counter from 631cd64 runs pre-amendment bytes; the L1 must commit the amended set and have the round name the commit its deciding receipts bind. This census is unaffected: it reads only committed receipts and does not run the counter."},
+  {"what": "the full-counter demo run was destroyed by a scratch wipe",
+   "check": ".ufo/evidence/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-fire-demo.stdout: FileNotFoundError on <work>/clone after 4m42s; the scratch tree was emptied mid-run",
+   "consequence": "not attributed to the counter; not rerun; the targeted strace comparison carries the claim"}
+ ],
+ "receipts": [
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-census.py",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-liveness-census.txt",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-census-0a2010acd1e92e4e332774050825e21bcfc7e079.json",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-census-631cd6455e58dce969310b4c0466c3383d9f5108.json",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/tmp-arm-control-coverage.txt",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-fire-mutant.patch",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/base.env-diff-selftest.strace",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/mut-env-diff-ignores-scratch-root.strace",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/base.env-diff-selftest.stdout",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/mut.env-diff-selftest.stdout",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/arm-fire-demo.stdout",
+  ".ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/scratch-path.txt"
+ ],
+ "limits": [
+  "the census is textual: arms printed under another key, counters without key=value summaries, and non-numeric values are invisible or unjudged",
+  "nonzero=0 is not by itself a defect; an author may declare an intentionally unreachable arm",
+  "no arm design was judged; only whether a committed input moves it",
+  "C1_R55 classes_corrected is listed at the freeze commit because round-55 deciding receipts do not exist yet (.ufo/evidence/round-55/after/ absent at the time of this seat)"
+ ],
+ "production_edits": "none — report, JSON and receipts only; no lane checkout/commit, no jj",
+ "tooling": "no install or upgrade; python3 3.14, git, /usr/bin/strace already present; no pacman attempted"
+}

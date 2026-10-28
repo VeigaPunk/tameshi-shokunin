@@ -1,0 +1,15 @@
+# sweep 1 evidence: the 'record quotes a value its receipt does not print' class, r53 -> r54
+
+## cmd: git show 0a2010ac:corpus/lessons/round-53-verifier-spotcheck.md | grep -n 'quote does not match'
+78:1. **R53.1 — frozen C1 counter rekey arm structurally dead.** `c1/measure.py` (frozen bytes, tip-verified) lists rekey dirs via `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` — returns the directory itself, so `rekey-dir-count=0` at every revision; every committed C1 mutation-test receipt is INCONCLUSIVE; the SCORECARD's `total=6` quote does not match the counter's actual `total=37` output. Fix the pathspec (trailing slash or basename match), re-run at the final revision, commit receipts, correct the SCORECARD quote.
+
+## cmd: git show 0a2010ac:corpus/lessons/round-54-verifier-spotcheck.md | grep -nE 'R54\.(3|4|10)'
+112:**R54.3 — `SCORECARD.md:2584` quotes `total=14`** from `.ufo/evidence/round-54/before/c2.stdout`, but that receipt prints `total=13` (my re-run at base: 13), and the contract's `before` text prints 13 too; the pare
+114:**R54.4 — stale c2 digest in the report.** Report "Bind and decide" cites "the frozen counter's own bytes … `d7749f84…` (c1) and `49280fe5…` (c2)". `d7749f84` is right; `49280fe5` is the **pre-amendment-4** b
+233:**R54.10 — the phase-A control quote does not match its cited receipt.** The report quotes
+
+## the four instances of one class:
+   r53 R53.1  SCORECARD quotes total=6; the counter prints total=37
+   r54 R54.3  SCORECARD quotes total=14 under before/c2.stdout; that file prints total=13
+   r54 R54.4  report cites c2 digest 49280fe5; freeze.json pins 8528ee85
+   r54 R54.10 report quotes rekeyed=0/30 under controls-a.stdout; that file prints rekeyed=0/7

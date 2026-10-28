@@ -1,0 +1,27 @@
+EXPLAIN R54.1 ok premise=ok corrected=ok stale=0 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=b267f8178507 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+RC=0
+
+## reproduce (blind spot 1: the stale scan is token-literal)
+# clone = a snapshot of the lane worktree over 631cd6455e58dce969310b4c0466c3383d9f5108,
+#         committed as 6241812865f093e772a53a0832d35022d22f59b6 (C1 total=0 there).
+git clone --shared <lane> "$S/blind" && git -C "$S/blind" checkout --detach 62418128
+python3 - "$S/blind" <<'PY'
+import pathlib, sys
+p = pathlib.Path(sys.argv[1]) / "SCORECARD.md"; t = p.read_text()
+old = "CTL_POS_c1 `CTL_MISMATCH` `2/3` at the revision it cloned"
+assert old in t
+p.write_text(t.replace(old, "CTL_POS_c1: true (the counter's positive control)", 1))
+PY
+git -C "$S/blind" add -A && git -C "$S/blind" -c user.name=b -c user.email=b@invalid commit -qm paraphrase
+python3 <frozen c1/measure.py> --lane "$S/blind" --rev HEAD --work <empty> --explain
+# reads total=0 C1_R55_PASS=true with the false claim restored as a paraphrase.

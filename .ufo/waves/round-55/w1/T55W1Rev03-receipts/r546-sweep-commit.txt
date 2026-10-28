@@ -1,0 +1,48 @@
+# R54.6 sweep commit derivation at base 0a2010acd1e92e4e332774050825e21bcfc7e079
+
+== exists at base (git cat-file -e)
+  YES .ufo/waves/round-54/w2/T54W2Sent03.md
+  YES .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+  YES .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+
+== exists at 0263c71 (closure tip before the sweep)
+  NO  .ufo/waves/round-54/w2/T54W2Sent03.md
+  NO  .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+  NO  .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+
+== commits touching each path, reachable from base, oldest first
+-- .ufo/waves/round-54/w2/T54W2Sent03.md
+   ff2a821a1e83acd92bb4d62bad15f380973a55ea 0263c71ed6ec930603f5e37578ef46e498c96111 2026-10-28 12:54:32 -0300 tameshi-shokunin <tameshi@shokunin.local> round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)
+-- .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+   ff2a821a1e83acd92bb4d62bad15f380973a55ea 0263c71ed6ec930603f5e37578ef46e498c96111 2026-10-28 12:54:32 -0300 tameshi-shokunin <tameshi@shokunin.local> round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)
+-- .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+   ff2a821a1e83acd92bb4d62bad15f380973a55ea 0263c71ed6ec930603f5e37578ef46e498c96111 2026-10-28 12:54:32 -0300 tameshi-shokunin <tameshi@shokunin.local> round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)
+
+== blobs
+   T54W2Sent03.md                                                         base=7448be1be6510bfc261b5b120ce14c0a54489d88 sweep=7448be1be6510bfc261b5b120ce14c0a54489d88 tip=7448be1be6510bfc261b5b120ce14c0a54489d88
+   c1committed-positive.stdout                                            base=c63fc96c958c09377f2e8eb56fced010c7d11dba sweep=c63fc96c958c09377f2e8eb56fced010c7d11dba tip=c63fc96c958c09377f2e8eb56fced010c7d11dba
+   rejection-attribution.txt                                              base=4cdc204cd232a2df6321ef9217810037dfd9e7ff sweep=4cdc204cd232a2df6321ef9217810037dfd9e7ff tip=4cdc204cd232a2df6321ef9217810037dfd9e7ff
+
+== clean-tree witnesses (committed at base)
+-- before:
+   ?? .ufo/evidence/round-54/after/
+-- after:
+   ?? .ufo/evidence/round-54/after/
+   ?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+   ?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+   ?? .ufo/waves/round-54/w2/T54W2Sent03.md
+
+== deciding-run.sh clean-tree handling (lines 60-61, 87-89)
+   git status --porcelain > "$OUT/clean-tree-before.txt"
+   [ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+   git status --porcelain > "$OUT/clean-tree-after.txt"
+   echo "DECIDING_RUN_EXIT=$rc" | tee "$OUT/deciding-run.exit"
+   exit $rc
+
+== Sent03 receipts dir size, closure tip vs base
+   at 0263c71: 33 files
+   at base   : 35 files
+
+== w2 top-level seat .md present at closure tip but absent at base (and vice versa)
+45a46
+> .ufo/waves/round-54/w2/T54W2Sent03.md

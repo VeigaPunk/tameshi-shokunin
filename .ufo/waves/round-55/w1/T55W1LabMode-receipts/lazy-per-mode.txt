@@ -1,0 +1,44 @@
+## base (tool bytes recorded in results JSON)
+pin-disposition --manifest                                 expected=0 unusable_rc=0 usable_rc=0 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/pin-disposition.py --manifest /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/pin-manifest-mismatch.json --root /home/vgpnk/Projects/shokunin
+context-capture --check --receipt/--expected (mismatch)    expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/context-capture.py --check --receipt .ufo/evidence/round-14/context-receipt.json --expected /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/context-expected-exit1.json --json
+context-capture --check --receipt/--expected (tampered)    expected=2 unusable_rc=2 usable_rc=2 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/context-capture.py --check --receipt .ufo/evidence/round-14/context-receipt.json --expected /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/context-expected-tampered.json --json
+context-capture --check (frozen receipt)                   expected=0 unusable_rc=0 usable_rc=0 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/context-capture.py --check --json
+evidence-disposition --root . --dispositions (heavy, clean) expected=0 unusable_rc=0 usable_rc=0 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json
+evidence-disposition --root ed-lane (failing)              expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/evidence-disposition.py --root /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/ed-lane --dispositions /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/ed-lane/.ufo/evidence/x/dispositions.json --json
+repeat-control --snapshot (mismatch)                       expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate/mismatch
+bash-witness-study count (tampered counts)                 expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/bash-witness-study.py count --evidence /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/bashwitness
+control:repeat-control --selftest                          rc=2 grammar=0 class_ok=False
+control:context-capture --selftest                         rc=2 grammar=0 class_ok=False
+control:pin-disposition --selftest                         rc=2 grammar=1 class_ok=True
+control:evidence-disposition --selftest                    rc=2 grammar=1 class_ok=True
+control:bash-witness-study selftest                        rc=2 grammar=1 class_ok=True
+## integrated (tool bytes recorded in results JSON)
+pin-disposition --manifest                                 expected=0 unusable_rc=0 usable_rc=0 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/pin-disposition.py --manifest /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/pin-manifest-mismatch.json --root /home/vgpnk/Projects/shokunin
+context-capture --check --receipt/--expected (mismatch)    expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/context-capture.py --check --receipt .ufo/evidence/round-14/context-receipt.json --expected /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/context-expected-exit1.json --json
+context-capture --check --receipt/--expected (tampered)    expected=2 unusable_rc=2 usable_rc=2 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/context-capture.py --check --receipt .ufo/evidence/round-14/context-receipt.json --expected /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/context-expected-tampered.json --json
+context-capture --check (frozen receipt)                   expected=0 unusable_rc=0 usable_rc=0 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/context-capture.py --check --json
+evidence-disposition --root . --dispositions (heavy, clean) expected=0 unusable_rc=0 usable_rc=0 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json
+evidence-disposition --root ed-lane (failing)              expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/evidence-disposition.py --root /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/ed-lane --dispositions /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/ed-lane/.ufo/evidence/x/dispositions.json --json
+repeat-control --snapshot (mismatch)                       expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/repeat-control.py --snapshot .ufo/evidence/round-12/ControlGate/mismatch
+bash-witness-study count (tampered counts)                 expected=1 unusable_rc=1 usable_rc=1 mkdir_unusable=0 mkdir_usable=0 marker=False vb=False verdict=lazy-holds
+    argv: python3 tools/bash-witness-study.py count --evidence /fast/scratch/hyaku/tameshi-r55/T55W1LabMode/work/bashwitness
+control:repeat-control --selftest                          rc=2 grammar=1 class_ok=True
+control:context-capture --selftest                         rc=2 grammar=1 class_ok=True
+control:pin-disposition --selftest                         rc=2 grammar=1 class_ok=True
+control:evidence-disposition --selftest                    rc=2 grammar=1 class_ok=True
+control:bash-witness-study selftest                        rc=2 grammar=1 class_ok=True

@@ -1,0 +1,13 @@
+pin-disposition --manifest                                 rc=0/0 expected=0 mkdir_scratch=0 creat_scratch=0 lazy-holds
+context-capture --check --receipt/--expected (mismatch)    rc=1/1 expected=1 mkdir_scratch=0 creat_scratch=0 lazy-holds
+context-capture --check --receipt/--expected (tampered)    rc=2/2 expected=2 mkdir_scratch=0 creat_scratch=0 lazy-holds
+context-capture --check (frozen receipt)                   rc=0/0 expected=0 mkdir_scratch=0 creat_scratch=0 lazy-holds
+evidence-disposition --root . --dispositions (heavy, clean) rc=0/0 expected=0 mkdir_scratch=0 creat_scratch=0 lazy-holds
+evidence-disposition --root ed-lane (failing)              rc=1/1 expected=1 mkdir_scratch=0 creat_scratch=0 lazy-holds
+repeat-control --snapshot (mismatch)                       rc=1/1 expected=1 mkdir_scratch=0 creat_scratch=0 lazy-holds
+bash-witness-study count (tampered counts)                 rc=1/1 expected=1 mkdir_scratch=0 creat_scratch=0 lazy-holds
+control:repeat-control --selftest                          rc=2 grammar=0 FAIL
+control:context-capture --selftest                         rc=2 grammar=0 FAIL
+control:pin-disposition --selftest                         rc=2 grammar=1 ok
+control:evidence-disposition --selftest                    rc=2 grammar=1 ok
+control:bash-witness-study selftest                        rc=2 grammar=1 ok

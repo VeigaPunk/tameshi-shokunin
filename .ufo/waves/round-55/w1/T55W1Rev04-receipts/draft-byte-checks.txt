@@ -1,0 +1,21 @@
+draft JSONs: .ufo/waves/round-55/w1/T55W1Er07.json (R54.7), T55W1Er08.json (R54.8)
+base tree read: git -C CLONE show 0a2010ac:<path>
+
+== T55W1Er07.json id=R54.7 old=2 new=2
+derived: rename commit=7fa9a5e (7fa9a5e0104bc181872401547987d6744f3b570d, R100, 100% similarity); .ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json absent at 631cd645/base/HEAD, .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json present
+  old#1 (32 bytes): 'the deletion lands in `7fa9a5e0`'
+  old#2 (65 bytes): 'deletion is unstaged and must be recorded in the next lane commit'
+== T55W1Er08.json id=R54.8 old=3 new=3
+derived: config.yml + fabricated + seat marked
+  old#1 (183 bytes): "It was edited on the operator's direct instruction in-session, which is the higher\nauthori"
+  old#2 (38 bytes): '  nothing was carried in uncommitted.\n'
+  old#3 (76 bytes): 'depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.\n\n'
+
+$ python3 (anchor occurrence counts against the base blobs)
+R54.8 old occ=1 endswith=False  .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+R54.8 old occ=1 endswith=True  corpus/lessons/round-54.md
+R54.8 old occ=1 endswith=True  SCORECARD.md
+R54.7 old#1 in fleet report: occ=1
+R54.7 old#1 in any lane blob: git grep below
+$ git -C CLONE grep -n "the deletion lands" 0a2010ac
+0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54-verifier-spotcheck.md:120:**R54.7 — forged-file disposition is imprecise.** `077d431` swept `.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json` into history; `7fa9a5e` **renames** it (`R100`) to `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json`, where it still sits in the tree as the incident receipt. The report says "the deletion lands in `7fa9a5e0`" — say "renamed into the receipts dir". It never credited and cannot: the path fails arm 4's `/T54W\d+.*Read.*\.json$/` and its `section_sha256` (`b90c1f79…`) is not the genuine reader's (`61736dce…`) nor any section at `c0`.

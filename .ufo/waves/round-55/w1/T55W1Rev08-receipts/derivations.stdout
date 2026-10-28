@@ -1,0 +1,67 @@
+$ git show 0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/evidence/round-54/freeze.json  | python3 -c ...files["c1/measure.py"],files["c2/measure.py"]
+c1/measure.py d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812
+c2/measure.py 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+
+$ for c in <blob owners>: git show $c:.ufo/evidence/round-54/c2/measure.py | sha256sum
+441c26be   c2 b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49
+59c38109   c2 b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49
+99c3bc88   c2 b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49
+19c75588   c2 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8
+7e533b1    c2 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8
+fe70474d   c2 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+077d431e   c2 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+c2108100   c2 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+
+$ for c in 59c38109 99c3bc88 c2108100: c1 blob sha
+59c38109   c1 6a39b38770e828aaa7624644169b07aed18f2f26477170c12d85a33799b1efec
+99c3bc88   c1 6a39b38770e828aaa7624644169b07aed18f2f26477170c12d85a33799b1efec
+c2108100   c1 d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812
+
+$ census regex in the c2 blob at each owner
+441c26be   mkdir(?:at)\([^)
+19c75588   mkdir(?:at)\([^)
+fe70474d   mkdir(?:at)?\([^)
+
+$ git cat-file -e 0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/reports/round-54/tameshi.md   # the two wrong assertions live in the FLEET report
+fatal: path '.ufo/reports/round-54/tameshi.md' does not exist in '0a2010acd1e92e4e332774050825e21bcfc7e079'
+rc=128
+
+$ git grep -n 49280fe5 0a2010acd1e92e4e332774050825e21bcfc7e079 -- SCORECARD.md corpus/QUALITY.md corpus/lessons/round-54.md   # RECORD files only
+rc=1
+$ git grep -n "0/30" 0a2010acd1e92e4e332774050825e21bcfc7e079 -- SCORECARD.md corpus/QUALITY.md corpus/lessons/round-54.md
+0a2010acd1e92e4e332774050825e21bcfc7e079:SCORECARD.md:885:green owning controls (disposition66/66, registry51 cases, trace30/30,
+0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/QUALITY.md:1588:Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/QUALITY.md:1590:Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` on its positive control; the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
+0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54.md:67:  slash), which returns the directory itself, so `rekeyed` was `0/30` at every
+0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54.md:104:  (`rekeyed=0/30` at the round-53 final revision). QUALITY 105 lands with it.
+rc=0
+
+$ git show 0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/evidence/round-54/control/controls-a.stdout | sed -n 3p
+CTL CTL_R53 C1_R54: rev=88afa9415454 c0=none credited=58 lost=6 rekeyed=0/7 readers=0/7 monitor=6/58 unstable=0 total=4 C1_R54_PASS=false
+$ git show 0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout | sed -n 1p
+C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false
+
+$ fleet report:122 (verbatim)
+  The frozen counter's own bytes at the deciding revision are the freeze-manifest digest `d7749f84…` (c1) and `49280fe5…` (c2) — cite those, not the C1 blobs, which predate amendments 1–5.
+$ fleet report:49-52 (verbatim)
+- **Phase-A controls, scored at the freeze bytes before any seat ran**
+  (`control/controls-a.stdout`, committed): `CTL_0_c1` and `CTL_0_c2` (do
+  nothing at base) both `false`; `CTL_R53` (the round-53 final tree, 58/64,
+  `rekeyed=0/30`) `false`; `CTL_FAB` (a hand-bound entry with a valid trace and
+
+$ python3 -c: Er04 old == report:122 ?
+BYTE_IDENTICAL True
+changed char positions [111, 112, 115, 116, 117]
+old digest nifest digest `d7749 | new digest nifest digest `d7749
+
+$ python3 -c: T55W1Er10.json top-level keys (assigned R54.10 draft path)
+keys: ['id', 'what', 'cited_receipt', 'owner_receipt_of_0_30', 'old_source', 'old']
+id field: R54.10
+seat field: None
+$ head -3 T55W1Er10.md
+# T55W1Er10 — R54.10 correction draft (C1 calibration)
+
+Seat: wave-1 executor, round 55 (hyaku run 11). Lane:
+$ ls T55W1Er09.json T55W1Er09.md
+ls: cannot access '.ufo/waves/round-55/w1/T55W1Er09.md': No such file or directory
+.ufo/waves/round-55/w1/T55W1Er09.json

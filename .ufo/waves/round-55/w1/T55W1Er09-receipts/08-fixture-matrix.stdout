@@ -1,0 +1,27 @@
+Five fixtures, each = lane HEAD 631cd645 + one edit set; counter at each fixture tip.
+
+########## FIXTURE A  rev=d75ba1cfef744d1b64b5a53188f773de0ea080d2 ##########
+# edit: in-place fix ONLY (corpus/lessons/round-54.md 84->81 staged); no corrections block
+EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=d75ba1cfef74 classes=10 premise=10/10 stale=3 classes_corrected=0/10 total=10 C1_R55_PASS=false
+
+########## FIXTURE B  rev=cab35d637d95b1dbdfe6c2ce130e99cdf7eda0a1 ##########
+# edit: in-place fix + the draft ER-R54.9 corrections block (both derived tokens)
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=cab35d637d95 classes=10 premise=10/10 stale=3 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+########## FIXTURE C  rev=53fe18326657f62b677d5b9a1dedddd9a8ad740f ##########
+# mutant: as B, with the corrections block's `staged=81` token deleted
+EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=53fe18326657 classes=10 premise=10/10 stale=3 classes_corrected=0/10 total=10 C1_R55_PASS=false
+
+########## FIXTURE D  rev=cdd913e78ac8646ddfc404d052cfad895d13bf00 ##########
+# mutant: as B, with the corrections block's `reviewers=5 attack=21/76 seats=76` token deleted
+EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=cdd913e78ac8 classes=10 premise=10/10 stale=3 classes_corrected=0/10 total=10 C1_R55_PASS=false
+
+########## FIXTURE E  rev=b18a5714b66ae433ce7bee5009c7a8001524777f ##########
+# mutant: corrections block present, lesson line 51 LEFT STALE (84)
+EXPLAIN R54.9 FAIL premise=ok corrected=ok stale=1 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.9 stale: corpus/lessons/round-54.md:51: - **The other 84 staged `merge/tameshi` entries** — REFUSED for the same capacity
+C1_R55: rev=b18a5714b66a classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=10 C1_R55_PASS=false

@@ -1,0 +1,12 @@
+context-capture: the failure is LOCATION (scratch inside the lane root), not relativity.
+
+$ cd $L && env TMPDIR=$S/ext-tmp python3 tools/context-capture.py --selftest   # outside the lane
+  SELFTEST: PASS (49/49)
+
+$ cd $L && env TMPDIR=$PWD/tmp-rel python3 tools/context-capture.py --selftest  # inside the lane
+  SELFTEST_CASE hermetic-no-lane-path FAIL subprocess output names the live lane root
+  SELFTEST: FAIL (1/49 failed: hermetic-no-lane-path)
+
+The case (tools/context-capture.py:1780-1786):
+  lane_leak = any(DEFAULT_LANE_ROOT in text for text in self.outputs)
+  DEFAULT_LANE_ROOT = os.path.dirname(os.path.dirname(SELF))   (line 138)

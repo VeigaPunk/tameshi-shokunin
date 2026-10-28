@@ -1,0 +1,23 @@
+$ git show 631cd6455e58dce969310b4c0466c3383d9f5108:.ufo/evidence/round-55/before/c2.stdout | grep tmp_mkdirs
+43:C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false
+
+$ grep -rn 'tmp_mkdirs=' <lane>/.ufo/evidence/round-54 --include=*.stdout
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/after/c2.stdout:8:C2_R54: rev=c21081008adb tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/before/c2.stdout:8:C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=0 note=0 sources=0 total=13 C2_R54_PASS=false
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-a.stdout:2:CTL CTL_0_c2 C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=0 note=0 sources=0 total=13 C2_R54_PASS=false
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-b.stdout:3:CTL CTL_POS_c2 C2_R54: rev=077d431e6996 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls-b.stdout:4:CTL CTL_EXIT0 C2_R54: rev=7df0e0426c98 tools=7 unusable_exit2=6 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
+
+$ grep -c 'tmp_mkdirs' <lane>/.ufo/evidence/round-55/controls.sh <lane>/.ufo/evidence/round-54/control/controls.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/controls.sh:0
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/control/controls.sh:0
+
+$ grep -nE 'CTL_[A-Za-z0-9_]+' <lane>/.ufo/evidence/round-55/controls.sh
+51:  echo "CTL CTL_0_c1 $(tail -1 "$SCR/c0a.out")"; check CTL_0_c1 false "$v"
+53:  echo "CTL CTL_0_c2 $(tail -1 "$SCR/c0b.out")"; check CTL_0_c2 false "$v"
+71:  echo "CTL CTL_SKIP_c1 $(tail -1 "$SCR/csk1.out")"; check CTL_SKIP_c1 false "$v"
+87:  echo "CTL CTL_FAB_c1 $(tail -1 "$SCR/cfab1.out")"; check CTL_FAB_c1 false "$v"
+112:  echo "CTL CTL_SKIP_c2 $(tail -1 "$SCR/csk2.out")"; check CTL_SKIP_c2 false "$v"
+123:  echo "CTL CTL_POS_c1 $(tail -1 "$SCR/cposa.out")"; check CTL_POS_c1 true "$v"
+125:  echo "CTL CTL_POS_c2 $(tail -1 "$SCR/cposb.out")"; check CTL_POS_c2 true "$v"
+140:  echo "CTL CTL_BREAK_c2 $(tail -1 "$SCR/cbrk.out")"; check CTL_BREAK_c2 false "$v"

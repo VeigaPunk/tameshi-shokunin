@@ -1,0 +1,79 @@
+$ grep -n "probe.status=could-not-evaluate" souji-shokunin/tools/souji-repo-structure.sh
+211:  printf 'probe.status=could-not-evaluate probe.error=config-unreadable rc=%s key=extensions.partialClone\n' \
+231:  printf 'probe.status=could-not-evaluate probe.error=config-unreadable rc=%s key=remote-promisor\n' \
+279:  printf 'probe.status=could-not-evaluate probe.error=structure-failed rc=%s\n' \
+287:  printf 'probe.status=could-not-evaluate probe.error=structure-stderr\n' >&2
+293:  printf 'probe.status=could-not-evaluate probe.error=unexpected-structure-output\n' >&2
+
+$ grep -n "PASS_RE = \|LINE_RE = " tsukuroi-shokunin/tools/score-selftest-mounts-r41.py tsukuroi-shokunin/tools/score-storage-hidden-r39.py
+tsukuroi-shokunin/tools/score-selftest-mounts-r41.py:68:PASS_RE = re.compile(r'^TSUKUROI_CENSUS_SELFTEST: PASS \((\d+) cases, (\d+) passed, 0 failed\)$')
+tsukuroi-shokunin/tools/score-storage-hidden-r39.py:58:LINE_RE = re.compile(r'^STORAGE btrfs-device-stats state=(HEALTHY|DEGRADED|BLOCKED) filesystems=(\d+) '
+
+$ grep -n "def emit(result" -A6 tsukuroi-shokunin/tools/check-boot-writers.py
+520:def emit(result, revision, branch, branch_tip):
+521-    status = {PASS: "PASS", FAIL: "FAIL", CANNOT: "CANNOT_EVALUATE"}[result.code]
+522-    payload = {"status": status, "revision": revision, "branch": branch,
+523-               "branch_tip": branch_tip, "counts": result.counts,
+524-               "findings": [{"id": item.id, "site": item.site, "detail": item.detail}
+525-                            for item in result.findings]}
+526-    print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+# CITATION INTEGRITY: every cited file vs its lane HEAD
+$ for f in <28 cited files>; do git -C <lane> diff --quiet HEAD -- <path>; done
+kumitate-shokunin/SKILL.md                               CLEAN
+kumitate-shokunin/scripts/wave-census.mjs                CLEAN
+kagi-shokunin/SKILL.md                                   CLEAN
+kagi-shokunin/corpus/scope-gate.sh                       CLEAN
+kagi-shokunin/corpus/claim-ledger.sh                     CLEAN
+kagi-shokunin/corpus/knowledge/adjacency-scope.md        CLEAN
+kagi-shokunin/corpus/knowledge/claim-ledger.md           CLEAN
+tsukuroi-shokunin/SKILL.md                               CLEAN
+tsukuroi-shokunin/tools/_revision.py                     CLEAN
+tsukuroi-shokunin/tools/check-boot-writers.py            CLEAN
+tsukuroi-shokunin/tools/score-selftest-mounts-r41.py     CLEAN
+tsukuroi-shokunin/tools/score-storage-hidden-r39.py      CLEAN
+tsukuroi-shokunin/corpus/QUALITY.md                      CLEAN
+mado-shokunin/SKILL.md                                   CLEAN
+mado-shokunin/tools/mado-tripwire.py                     CLEAN
+mado-shokunin/tools/mado-assessment.py                   CLEAN
+souji-shokunin/SKILL.md                                  CLEAN
+souji-shokunin/tools/souji-repo-structure.sh             CLEAN
+souji-shokunin/tools/souji-cert-evidence.py              CLEAN
+kama-shokunin/tools/seat-report-immutability.py          CLEAN
+kama-shokunin/tools/report-landing-audit.py              CLEAN
+kaidoku-shokunin/SKILL.md                                CLEAN
+tabi-shokunin/SKILL.md                                   CLEAN
+lore-shokunin/corpus/tools/README.md                     CLEAN
+mori-shokunin/tools/mori-round13-regressions.py          CLEAN
+game-dev-3d-shokunin/reports/round-103/gate/exit-codes.md CLEAN
+tameshi-shokunin/PROVINCE.md                             CLEAN
+PROTOCOL.md                                              CLEAN
+
+# lane tree dirtiness at scan (for contrast)
+kumitate-shokunin        HEAD=14057f3e38 dirty=0
+kagi-shokunin            HEAD=69b61db46b dirty=0
+tsukuroi-shokunin        HEAD=d7cfc27308 dirty=33
+mado-shokunin            HEAD=3b55b6e91e dirty=0
+souji-shokunin           HEAD=a512efb574 dirty=5
+kama-shokunin            HEAD=7ee8cbdf16 dirty=1
+kaidoku-shokunin         HEAD=22fd0d6bdc dirty=68
+tameshi-shokunin         HEAD=631cd6455e dirty=21
+
+# SIBLING MOTION DURING SCAN (siblings commit concurrently):
+#   souji  read at da920356f9 -> at write time a512efb574 (cited files byte-identical across the move)
+#   kaidoku read at b5c4ea603d -> 22fd0d6bdc -> c0112995817
+# Cited lines re-verified BY CONTENT at current HEAD:
+kaidoku-shokunin/SKILL.md                            :1457  | CHPE structural profile / gate | `python3 -I -B tools/round-33/chpe_profile.py <DLL>`; `--findings
+kaidoku-shokunin/SKILL.md                            :1460  | Frozen round-32 oracle adapter / probe | `python3 -I -B tools/round-33/r32_oracle_adapter.py <DLL>
+kagi-shokunin/corpus/scope-gate.sh                   :83      printf 'scope-gate: SETUP (cannot resolve the script directory — is dirname on PATH?)\n' >&2
+kagi-shokunin/corpus/scope-gate.sh                   :102   die() { printf 'scope-gate: %s\n' "$1" >&2; exit 2; }
+kagi-shokunin/corpus/scope-gate.sh                   :184       printf 'ADJACENCY_SCOPE: SETUP (data file not found: %s)\n' "$DATA"; exit 2
+kagi-shokunin/corpus/knowledge/adjacency-scope.md    :154   | `ADJACENCY_SCOPE: SETUP (…)` / `scope-gate: <msg>` | 2 | setup or usage error |
+mado-shokunin/tools/mado-tripwire.py                 :138   First line: MADO_TRIPWIRE: clean | permitted_only | findings | could_not_evaluate
+mado-shokunin/tools/mado-tripwire.py                 :3365              ok = out[0] == "MADO_TRIPWIRE: " + case["want_label"]
+mado-shokunin/tools/mado-tripwire.py                 :3455      except BaseException as exc:  # never let an internal error read as "findings"
+kama-shokunin/tools/seat-report-immutability.py      :410           print("%s: could-not-evaluate: %s" % (NAME, e))
+kama-shokunin/tools/report-landing-audit.py          :1621          print(f"could-not-evaluate: {exc}", file=sys.stderr)
+souji-shokunin/tools/souji-repo-structure.sh         :287     printf 'probe.status=could-not-evaluate probe.error=structure-stderr\n' >&2
+souji-shokunin/SKILL.md                              :207   | souji-repo-structure | probe | `bash tools/souji-repo-structure.sh --repo PATH` | 0 clean metadata
+tsukuroi-shokunin/tools/score-selftest-mounts-r41.py :68    PASS_RE = re.compile(r'^TSUKUROI_CENSUS_SELFTEST: PASS \((\d+) cases, (\d+) passed, 0 failed\)$')
+kumitate-shokunin/SKILL.md                           :624   | receipt-attest | gate | `node scripts/receipt-attest.mjs run --out <base> [--stdin] -- <cmd...>` �

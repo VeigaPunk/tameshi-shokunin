@@ -1,0 +1,237 @@
+diff --git i/.ufo/evidence/round-55/before/c2.stdout w/.ufo/evidence/round-55/before/c2.stdout
+index 6364f1e..159bb37 100644
+--- i/.ufo/evidence/round-55/before/c2.stdout
++++ w/.ufo/evidence/round-55/before/c2.stdout
+@@ -1,43 +1 @@
+-EXPLAIN grammar repeat-control --selftest          rc=2  FAIL
+-EXPLAIN grammar registry-check --selftest          rc=2  ok
+-EXPLAIN grammar bash-witness-study --selftest      rc=2  ok
+-EXPLAIN grammar pin-disposition --selftest         rc=2  ok
+-EXPLAIN grammar evidence-disposition --selftest    rc=2  ok
+-EXPLAIN grammar context-capture --selftest         rc=2  FAIL
+-EXPLAIN grammar env-diff --selftest                rc=2  ok
+-EXPLAIN grammar env-diff --contract                rc=2  ok
+-EXPLAIN lazy repeat-control --snapshot             rc=0  ok
+-EXPLAIN lazy bash-witness-study count              rc=0  ok
+-EXPLAIN lazy pin-disposition --read                rc=0  ok
+-EXPLAIN lazy evidence-disposition --json           rc=0  ok
+-EXPLAIN lazy context-capture --check               rc=0  ok
+-EXPLAIN empty  repeat-control --selftest          rc=0  ok
+-EXPLAIN empty  registry-check --selftest          rc=0  ok
+-EXPLAIN empty  bash-witness-study --selftest      rc=0  ok
+-EXPLAIN empty  pin-disposition --selftest         rc=0  ok
+-EXPLAIN empty  evidence-disposition --selftest    rc=0  ok
+-EXPLAIN empty  context-capture --selftest         rc=0  ok
+-EXPLAIN empty  env-diff --selftest                rc=0  ok
+-EXPLAIN empty  env-diff --contract                rc=0  ok
+-EXPLAIN empty  repeat-control --snapshot          rc=0  ok
+-EXPLAIN empty  bash-witness-study count           rc=0  ok
+-EXPLAIN empty  pin-disposition --read             rc=0  ok
+-EXPLAIN empty  evidence-disposition --json        rc=0  ok
+-EXPLAIN empty  context-capture --check            rc=0  ok
+-EXPLAIN usable repeat-control --selftest          rc=0  ok
+-EXPLAIN usable registry-check --selftest          rc=0  ok
+-EXPLAIN usable bash-witness-study --selftest      rc=0  ok
+-EXPLAIN usable pin-disposition --selftest         rc=0  ok
+-EXPLAIN usable evidence-disposition --selftest    rc=0  ok
+-EXPLAIN usable context-capture --selftest         rc=0  ok
+-EXPLAIN usable env-diff --selftest                rc=0  ok
+-EXPLAIN usable env-diff --contract                rc=0  ok
+-EXPLAIN usable repeat-control --snapshot          rc=0  ok
+-EXPLAIN usable bash-witness-study count           rc=0  ok
+-EXPLAIN usable pin-disposition --read             rc=0  ok
+-EXPLAIN usable evidence-disposition --json        rc=0  ok
+-EXPLAIN usable context-capture --check            rc=0  ok
+-EXPLAIN docs                                      0/7 FAIL
+-EXPLAIN note                                      0/8 FAIL
+-EXPLAIN skill                                     0/1 FAIL
+ C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false
+diff --git i/.ufo/evidence/round-55/c1/measure.py w/.ufo/evidence/round-55/c1/measure.py
+index b6c343f..7e2143c 100755
+--- i/.ufo/evidence/round-55/c1/measure.py
++++ w/.ufo/evidence/round-55/c1/measure.py
+@@ -35,6 +35,7 @@ RECORD = (
+     "SCORECARD.md",
+     "corpus/QUALITY.md",
+     "corpus/lessons/round-54.md",
++    "LOG.md",
+ )
+ STAGED_DEFAULT = "/home/vgpnk/Projects/shokuknow"
+ 
+@@ -95,6 +96,28 @@ def scan(lane, rev, paths, pattern):
+     return hits
+ 
+ 
++def scan_span(lane, rev, paths, pattern):
++    """Whitespace-normalized whole-document search (amendment 5).
++
++    A hard-wrapped claim splits across lines, so a line-scoped regex can miss a
++    falsehood that is plainly there (round-54 lesson `proves the arm ... requires
++    rekeyed=7/7`, split over two lines). This arm searches the document with all
++    whitespace runs collapsed and reports the match's offset instead of a line.
++    """
++    rx = re.compile(pattern)
++    hits = []
++    for path in paths:
++        body = text(lane, rev, path)
++        if body is None:
++            continue
++        if path == "SCORECARD.md":
++            body = body.replace(corrections(lane, rev), "")
++        flat = " ".join(body.split())
++        for m in rx.finditer(flat):
++            hits.append("%s@%d: %s" % (path, m.start(), flat[max(0, m.start() - 40):m.end() + 20]))
++    return hits
++
++
+ def derive_freeze_digest(lane, rev, name):
+     raw = text(lane, rev, ".ufo/evidence/round-54/freeze.json")
+     if raw is None:
+@@ -171,6 +194,8 @@ def classes(lane, rev, staged_root):
+     stale = scan(lane, rev, RECORD, r"CTL_POS_c1 true")
+     stale += scan(lane, rev, ("corpus/QUALITY.md", "corpus/lessons/round-54.md"),
+                   r"(positive control[^\n]{0,160}rekeyed=7/7)|(rekeyed=7/7[^\n]{0,160}positive control)")
++    stale += scan_span(lane, rev, RECORD,
++                       r"positive control.{0,160}rekeyed=7/7|rekeyed=7/7.{0,160}positive control")
+     row("R54.1", premise, stale, "CTL_MISMATCH" in corr and "2/3" in corr,
+         "CTL_MISMATCH + 2/3")
+ 
+diff --git i/.ufo/evidence/round-55/c2/measure.py w/.ufo/evidence/round-55/c2/measure.py
+index 8ddfb6c..9d89ca4 100755
+--- i/.ufo/evidence/round-55/c2/measure.py
++++ w/.ufo/evidence/round-55/c2/measure.py
+@@ -87,7 +87,10 @@ def modes(work, clone):
+         ("context-capture", ["python3", "tools/context-capture.py", "--selftest"]),
+     )
+     for tool, argv in selftests:
+-        out.append(("%s --selftest" % tool, argv, 0, True))
++        # The label is the mode AS INVOKED: bash-witness-study takes a subcommand,
++        # not a --selftest flag (amendment 3).
++        label = "%s selftest" % tool if tool == "bash-witness-study" else "%s --selftest" % tool
++        out.append((label, argv, 0, True))
+     out.append(("env-diff --selftest", ["python3", "tools/env-diff.py", "--selftest"], 0, True))
+     out.append(("env-diff --contract",
+                 ["python3", "tools/env-diff.py", "--contract", CONTRACT,
+@@ -161,7 +164,11 @@ def main():
+     r = git(work, "clone", "--shared", "--no-checkout", str(lane), str(clone))
+     if r.returncode:
+         raise Setup("clone failed: %s" % r.stderr.strip())
+-    r = git(clone, "checkout", "-q", "--detach", a.rev)
++    # The clone's HEAD is put on a local branch, not detached: one measured mode
++    # (evidence-disposition --root .) classifies a detached HEAD as
++    # historical_input_unavailable, so a detached checkout would score the clone's
++    # shape instead of the tool. Amendment 1, before any deciding invocation.
++    r = git(clone, "checkout", "-q", "-B", "r55-rev", a.rev)
+     if r.returncode:
+         raise Setup("checkout of %s failed: %s" % (a.rev, r.stderr.strip()))
+     if not (clone / FIXTURE).exists():
+@@ -201,16 +208,20 @@ def main():
+     (work / "tmp-usable").mkdir()
+     for arm, tmpdir in (("empty", ""), ("usable", str(work / "tmp-usable"))):
+         for name, argv, exp, alloc in table:
++            rc, _out, _err = run(argv, clone, env_with(tmpdir))
+             if arm == "usable" and alloc:
++                # The census run supplies ONLY the /tmp mkdir count: under
++                # `strace -f` a tool's own timing cases can fail from tracer
++                # overhead (round 54's amendment 2, re-learned here by the base
++                # receipt: registry-check rc 1 under the tracer alone), so the
++                # exit code is the plain run's (amendment 4).
+                 log = work / ("strace-%s.log" % re.sub(r"[^a-z0-9]+", "-", name.lower()))
+-                rc = trace(argv, clone, env_with(tmpdir), log)
++                trace(argv, clone, env_with(tmpdir), log)
+                 n = tmp_mkdirs(log)
+                 if n is None:
+                     bad["strace:" + name] = "no trace log"
+                 elif n:
+                     bad["tmp_mkdirs:" + name] = "%d mkdir under /tmp" % n
+-            else:
+-                rc, _out, _err = run(argv, clone, env_with(tmpdir))
+             ok = rc == exp
+             if arm == "empty":
+                 empty_ok += 1 if ok else 0
+@@ -229,11 +240,16 @@ def main():
+     docs = sum(1 for row in cells if MARKER in row["scratch_root"])
+     if len(cells) != 7:
+         bad["docs"] = "expected 7 scratch_root cells, found %d" % len(cells)
+-    note_txt = (clone / NOTE).read_text() if (clone / NOTE).exists() else ""
++    # The marker and the mode ids are matched against whitespace-normalized text:
++    # both documents are hard-wrapped near 78 columns, so a line break inside the
++    # grammar is a typographic fact, not a missing statement (amendment 2).
++    def norm(text):
++        return " ".join(text.split())
++
++    note_txt = norm((clone / NOTE).read_text()) if (clone / NOTE).exists() else ""
+     note_names = [m for m in allocating if m[0] in note_txt]
+     note = len(note_names)
+-    skill_txt = (clone / "SKILL.md").read_text()
+-    skill = 1 if MARKER in skill_txt else 0
++    skill = 1 if MARKER in norm((clone / "SKILL.md").read_text()) else 0
+     for arm, got, want in (("docs", docs, 7), ("note", note, 8), ("skill", skill, 1)):
+         if got != want:
+             bad.setdefault(arm, "%d/%d" % (got, want))
+diff --git i/.ufo/evidence/round-55/contract.json w/.ufo/evidence/round-55/contract.json
+index 052f8ef..7541602 100644
+--- i/.ufo/evidence/round-55/contract.json
++++ w/.ufo/evidence/round-55/contract.json
+@@ -49,5 +49,26 @@
+  ],
+  "no_harm_monitors": 15,
+  "deciding_invocations": 1,
+- "amendments": []
++ "amendments": [
++  {
++   "n": 1,
++   "what": "c2/measure.py checked the clone out detached; `evidence-disposition --root .` classifies a detached HEAD as historical_input_unavailable, so the lazy and empty arms measured the clone instead of the tool. The clone now checks out a local branch at REV (`r55-rev`). Discovery plumbing only; predicate, arms, denominators and target unchanged. Found by the L1 dry run on an edited clone before any control was scored and before any deciding invocation."
++  },
++  {
++   "n": 2,
++   "what": "c2/measure.py matched the grammar marker and the eight mode ids against raw text; both documents are hard-wrapped near 78 columns, so a marker split by a newline read as absent. The note and SKILL arms now match against whitespace-normalized text. Predicate unchanged (the documents must state the grammar and name the modes); found by the L1 dry run before any control score or deciding invocation."
++  },
++  {
++   "n": 3,
++   "what": "c2/measure.py labelled the bash-witness mode `bash-witness-study --selftest` while it is invoked as `bash-witness-study selftest`; the note consequently could not match the label and the note arm read 7/8. The label is now the mode as invoked. Predicate unchanged (the note must name every allocating mode); found by the L1 dry run before any control score or deciding invocation."
++  },
++  {
++   "n": 4,
++   "what": "c2/measure.py's usable arm took the exit code from the `strace -f` run, and the tracer's overhead makes registry-check's own timeout cases fail (rc 1 at base with a good TMPDIR). The exit code now comes from a plain run; the traced run supplies only the /tmp mkdir census. Same repair as round 54's amendment 2, re-learned by this round's own base receipt before any control score or deciding invocation; predicate and denominators unchanged."
++  },
++  {
++   "n": 5,
++   "what": "c1/measure.py's stale scan was line-scoped (a regex window that forbade a newline) and read three record files; wave-1 seat T55W1Er01 found a falsehood the window could not see (`corpus/lessons/round-54.md` splits `proves the arm ... requires rekeyed=7/7` across two lines) and pointed at LOG.md, which still carried R54.2's stale pointer. The scan now also searches each record document with whitespace collapsed (reporting an offset) and LOG.md joins the record set. The predicate is unchanged and now stricter: no stale assertion may stand in the lane's records outside the corrections section."
++  }
++ ]
+ }
+diff --git i/.ufo/evidence/round-55/freeze.json w/.ufo/evidence/round-55/freeze.json
+index 2b2e70e..315641a 100644
+--- i/.ufo/evidence/round-55/freeze.json
++++ w/.ufo/evidence/round-55/freeze.json
+@@ -1,13 +1,26 @@
+ {
+  "round": 55,
+  "files": {
+-  ".ufo/evidence/round-55/contract.json": "2388cb50323f3090f99c9920fd810f0359660e1fc2423ed568f660b884107037",
++  ".ufo/evidence/round-55/contract.json": "ed6871e17697d652ab2ca5db5af3003c616daa6f3a67ce32498eb045b637b987",
+   ".ufo/evidence/round-55/c1/measure.py": "77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783",
+-  ".ufo/evidence/round-55/c2/measure.py": "9d076812d9c0fcd2d06dc7543e5a99bc2bfcdaf85f10ee6da9d0b5ea0b346dac",
++  ".ufo/evidence/round-55/c2/measure.py": "ab3ae751469164f06a29bb87d0ee474248c4ee54b07cf64574e57895484eb95f",
+   ".ufo/evidence/round-55/no-harm.sh": "d93469db5a55632c2f175066852cc40a3e70379377da85f9b706b5d54fff76c9",
+   ".ufo/evidence/round-55/deciding-run.sh": "af11d7551d8af1c75ba647704cbf72911d591c9ab28df060b669fd2549c34e2b",
+   ".ufo/evidence/round-55/controls.sh": "7c0cacb56c67915567a5b85746199a139c3e5971450262ffb47a16b5c431f2e0"
+  },
+- "amendments": [],
++ "amendments": [
++  {
++   "n": 1,
++   "what": "c2/measure.py checked the clone out detached; `evidence-disposition --root .` classifies a detached HEAD as historical_input_unavailable, so the lazy and empty arms measured the clone instead of the tool. The clone now checks out a local branch at REV (`r55-rev`). Discovery plumbing only; predicate, arms, denominators and target unchanged. Found by the L1 dry run on an edited clone before any control was scored and before any deciding invocation."
++  },
++  {
++   "n": 2,
++   "what": "c2/measure.py matched the grammar marker and the eight mode ids against raw text; both documents are hard-wrapped near 78 columns, so a marker split by a newline read as absent. The note and SKILL arms now match against whitespace-normalized text. Predicate unchanged (the documents must state the grammar and name the modes); found by the L1 dry run before any control score or deciding invocation."
++  },
++  {
++   "n": 3,
++   "what": "c2/measure.py labelled the bash-witness mode `bash-witness-study --selftest` while it is invoked as `bash-witness-study selftest`; the note consequently could not match the label and the note arm read 7/8. The label is now the mode as invoked. Predicate unchanged (the note must name every allocating mode); found by the L1 dry run before any control score or deciding invocation."
++  }
++ ],
+  "note": "manifest covers every contract.frozen_paths entry except freeze.json itself (the manifest)."
+ }

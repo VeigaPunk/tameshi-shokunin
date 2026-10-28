@@ -1,0 +1,16 @@
+# R54.4 c2 digest
+## sha256 of c2/measure.py
+19c7558 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8  -
+7e533b1 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8  -
+077d431e 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790  -
+c2108100 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790  -
+## freeze.json@077d431e pins
+  "c2/measure.py": "8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790",
+   "what": "c2/measure.py arm 3 ran each self-test under `strace -f` and required that run's rc: the tracer's overhead makes registry-check's own two timeout cases fail (elapsed ~9.6 s vs its < 3.5 s assertion) at base and at C0, so the arm measured the tracer. The rc now comes from a plain run and the traced run supplies only the /tmp mkdir census. Substance unchanged: 7/7 exit 0 on a usable root and zero mkdir under /tmp. Found by wave-1 attack seats (ExecExitClass F2, ExecEmptyStrace) before the deciding run; disclosed in the report, SCORECARD and lesson."
+   "what": "c2/measure.py arm 3's census regex `mkdir(?:at)\\(` required the `at` suffix, so the plain `mkdir(` that os.mkdir/tempfile.mkdtemp issue was never counted and the arm could not fire on the silent-fallback defect it guards. Now `mkdir(?:at)?\\(`. Found by wave-2 seat T54W2Exec02 with a positive control (a real mkdir(\"/tmp/...\") logged one line, the frozen regex found zero); the reading tmp_mkdirs=0 is unchanged at every revision (a repaired regex also finds zero across all seven traces)."
+## regex in the 49280fe5 bytes
+142:        hits = len(re.findall(r'mkdir(?:at)\([^)]*"/tmp', log.read_text(errors='replace')))
+## regex in the 8528ee85 bytes
+142:        hits = len(re.findall(r'mkdir(?:at)?\([^)]*"/tmp', log.read_text(errors='replace')))
+## git blob id at 19c7558 (49280fe5 is a sha256, not a blob)
+16302ef26b0dd6da4ccc7fd58fd3308c13dd1a70

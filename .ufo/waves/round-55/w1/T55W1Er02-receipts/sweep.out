@@ -1,0 +1,18 @@
+## every occurrence of the round-54 pointer candidates in the lane records at 631cd645 (base 0a2010ac is byte-identical for SCORECARD.md and LOG.md)
+631cd645:LOG.md:2500:`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+631cd645:LOG.md:2517:  `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true`; `C2_R54: rev=c21081008adb tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true`; FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c; precheck `COLDREAD_PRECHECK floor=d33053f7552d floor_credited=57 cand=c21081008adb cand_credited=64 lost=0 ok`; census exit 0; no-harm 14 ok, 0 RED.
+631cd645:SCORECARD.md:2564:frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
+631cd645:SCORECARD.md:2567:predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+631cd645:SCORECARD.md:2608:freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+
+## every 'freeze pointer' phrase in those files at 631cd645
+631cd645:LOG.md:2501:control score — the freeze pointer the deciding run uses). Claims: C1
+631cd645:SCORECARD.md:2567:predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+
+## the routed defect (round-54 non-author spot-check)
+`CTL CTL_POS_c1 … c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 … C1_R54_PASS=false`, `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3 as pre-registered`, exit 1. Yet the record asserts the opposite in four places: report `:162` ("proven live by the phase-B positive control"), `SCORECARD.md:2583` ("`CTL_POS_c1 true`"), `corpus/QUALITY.md:1590` ("the round-54 counter's arm prints `rekeyed=7/7` on its positive control … both are committed"), `corpus/lessons/round-54.md:74,101` ("proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`)"). Cause: phase B clones at the **freeze** commit `077d431e`, which predates the full re-key (`7fa9a5e`), so the control could not fire; it was never re-scored at the deciding tree. Second cause: `deciding-run.sh:57-58` greps `^CONTROLS_[AB]: [0-9]*/[0-9]* as pre-registered`, which **accepts `2/3`** — amendment 5 hardened zero-byte/tree objects only, so a *failing* control opened the deciding gate. The claim itself is unaffected: the arm is live (`0/7` at base, `3/7` at the freeze tree, `7/7` at the deciding rev; the closure reproduced `7/7`). Fix: require `n==n` and `controls-b.exit==0`, re-score phase B at the deciding tree, and append a correction entry (QUALITY is append-only) naming the superseded sentence.
+
+**R54.2 — three different freeze pointers.** `SCORECARD.md:2564-2567` calls `7883e0e5` "the freeze pointer the deciding run uses" (that commit's `freeze.json` has 7 files / 1 amendment); `SCORECARD.md` "measured close" says "freeze `fe70474d` (amendments 1-5)" (`fe70474` has 4); report `:157` says the freeze pointer is `097985c1` (`097985c` has 2). The receipt says `freeze=077d431e` with 5 amendments. One pointer, everywhere.
+
+**R54.3 — `SCORECARD.md:2584` quotes `total=14`** from `.ufo/evidence/round-54/before/c2.stdout`, but that receipt prints `total=13` (my re-run at base: 13), and the contract's `before` text prints 13 too; the parenthetical's claimed "delta" inverts the two and hides that no `14` exists in any receipt. (Also note: the contract's `C2.before` string was expanded at `077d431e`, after the pre-registration commit `441c26be` — disclosed, but the disclosure should say so.)
+

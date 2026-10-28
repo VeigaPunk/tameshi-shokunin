@@ -1,0 +1,138 @@
+{
+  "seat": "T55W1RevWave",
+  "role": "reviewer",
+  "milestone": "self-audit of the wave",
+  "audited_at": "2026-10-28T14:00:22-03:00",
+  "spec": {
+    "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/spec-w1.json",
+    "sha256": "ccaf69cd107bec95b8596feb8c488b162ad34d772ed6bfc1f3957b20cf8db1ff",
+    "bytes": 67544,
+    "mtime": "2026-10-28 13:39:49 -0300",
+    "builder": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/build-spec-w1.py",
+    "builder_sha256": "aed227c0acb0890d1c31503fe16bf9b42ca52f6fc21d92d28c48325f1222d51c",
+    "items": 75
+  },
+  "checks": {
+    "A_seat_count": {
+      "requirement": "seat count in the v2 band 64-128",
+      "measured": { "spec_items": 75, "dispatch_spawn": 75, "dispatch_resume": 0, "dispatch_total": 75, "policy_waveMinLanes": 64, "policy_waveMaxLanes": 128, "swarm_registry_members": 75, "ready_partial_keys_at_1359": 60 },
+      "verdict": "PASS",
+      "receipt": "audit-counts.txt#A"
+    },
+    "B_attack_share": {
+      "requirement": "attack-role share >= 25% (reviewer/critic/mutation-tester/labrat)",
+      "measured": { "attack": 28, "total": 75, "share_pct": 37.33, "reviewer": 18, "critic": 6, "mutation_tester": 4, "labrat": 0, "note": "the spec's vocabulary has no labrat role; the two lab-style probes T55W1LabMode/T55W1LabEmpty are filed as mutation-tester and counted" },
+      "verdict": "PASS",
+      "receipt": "audit-counts.txt#B"
+    },
+    "C_distinct_and_naming_target": {
+      "requirement": "every item distinct and naming what it attacks",
+      "measured": { "unique_names": 75, "unique_item_texts": 75, "unique_milestones": 75, "milestones_with_gt1_owner": 0, "attack_items_naming_a_target": 28, "pairs_jaccard_ge_0_60": 45, "pairs_jaccard_ge_0_927": 45, "max_pair_jaccard": 0.963, "jaccard_family": "Rev01-Rev10 only", "r54_rows_covered_twice": 9, "r54_rows_covered_once": ["R54.7"], "r54_rows_covered_thrice": ["R54.5"], "r54_rows_never_covered": [] },
+      "verdict": "PASS_WITH_RESERVATION",
+      "receipt": "distinctness.txt"
+    },
+    "D_no_frozen_or_production_edit": {
+      "requirement": "no item asking a seat to edit a frozen file or a lane production file",
+      "measured": { "items_naming_a_prod_or_frozen_path": 50, "keyword_flagged": 10, "hard_violations_after_adjudication": 0, "clone_restricted_mutators": 14, "clone_restricted_mutator_ids": [22, 23, 24, 25, 26, 27, 28, 29, 30, 34, 55, 56, 69, 71], "copy_to_scratch_items": [72], "items_authorising_a_write_to_the_frozen_before_receipt": [] },
+      "verdict": "PASS",
+      "receipt": "edit-scope-sweep.txt"
+    },
+    "E_absolute_paths": {
+      "requirement": "every item naming absolute paths",
+      "measured": { "conforming": 55, "total": 75, "relative_only": 8, "no_path_at_all": 12, "relative_only_items": ["T55W1ScribeMistakeSweep", "T55W1ExecNote", "T55W1ExecC1Full", "T55W1ExecC2Full", "T55W1ExecRekeyPrep", "T55W1ExecModeDiscovery", "T55W1Simplifier", "T55W1CritSourcedClaim"], "no_path_items": ["T55W1ScribeScratchDoc", "T55W1ExecC1FixOnly", "T55W1ExecGrammarBreak", "T55W1RevNote", "T55W1CritC2", "T55W1ScoutModes", "T55W1ScoutReceipts", "T55W1Connector1", "T55W1Connector2", "T55W1LabMode", "T55W1LabEmpty", "T55W1CritClaimShape"] },
+      "verdict": "FAIL",
+      "receipt": "path-conformance.txt"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "HIGH",
+      "title": "six items route into T55W1Er10.{json,md}; the collision caused a real lost update on the R54.10 C1 draft",
+      "evidence": {
+        "owner_item": 9,
+        "co_writers": { "T55W1ScribeNote": 10, "T55W1ScribeCells": 12, "T55W1ScribeSources": 14, "T55W1ScribeConsiderthese": 19, "T55W1ScribeMistakeSweep": 21, "T55W1ExecRekeyPrep": 29 },
+        "spec_items_mentioning_T55W1Er10": 7,
+        "observed_state_1356": {
+          "T55W1Er10.json": "byte-identical to T55W1ScribeSources.json, sha256 21973e575585f7ea9b017fea89caa2b0eaf8ba3228b92a23997d739ee191ca27, 12697 B, mtime 13:56:04",
+          "T55W1Er10.md": "carried the sources report, sha256 fbf17903ad81cdab8e5a23e50463ee88f656da8ee81d543ad1b7d3656e284390, 12400 B, mtime 13:56:23, first line '# T55W1Er10 - the sources C2's uniform-line claim rests on'"
+        },
+        "seat_admission": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w1/T55W1ScribeSources-receipts/peer-er10-restore.txt",
+        "seat_admission_quote": "collision: seat T55W1ScribeSources wrote .ufo/waves/round-55/w1/T55W1Er10.{json,md} at 13:51-13:56 ... overwriting seat T55W1Er10's own deliverables ... recovery: the peer's exact write/edit payloads were read from its session log ~/.omp/agent/sessions/.../T55W1Er10.jsonl ... replayed in order.",
+        "restored_at_135854": { "T55W1Er10.json": "3640 B sha256 2e15a6401a4aaa609dafd2feb0aabac170e743da0aecd106ee8cd6b824bfd45d", "T55W1Er10.md": "11366 B sha256 128c8e839b3e5fd3a4eb6dfa6b93a711ef7482ae6642352ba795a9e097cdeb61" },
+        "broken_producer_consumer_edge": "item 24 (T55W1ExecCells) is told to read .../w1/T55W1ScribeCells.json; item 12 told that scribe to write T55W1Er10.json; ls of T55W1ScribeCells.json -> No such file or directory; the cells exist only in T55W1ScribeCells-receipts/cells.diff",
+        "owner_report_missing": "T55W1ScribeCells.{md,json} absent; only T55W1ScribeCells-receipts/ exists",
+        "occurrence_2": {
+          "observed_at": "2026-10-28T14:02:46-03:00",
+          "writer_seat_field": "T55W1ExecRekeyPrep",
+          "writer_item": 29,
+          "writer_instruction": "Write the JSON the L1's binder needs as `T55W1Er10.json`",
+          "file": "T55W1Er10.json",
+          "bytes": 11908,
+          "sha256": "a70ea19db384b077a731fe20a99501a2ef097685a79db84f1db0e1c224abf7a5",
+          "byte_identical_to": "T55W1ExecRekeyPrep.json",
+          "consequence": "the R54.10 JSON draft is absent from the tree again; only T55W1Er10.md (11366 B, 13:58:54) survives"
+        }
+      },
+      "impact": "the clobbered path is the JSON feeding the L1's corrections section for R54.10, one of C1's ten classes. It was destroyed, restored by peer session-log replay, and destroyed again 3 minutes later by a different co-writer - the defect recurs for every co-writer that lands",
+      "recommendation": "item 10 -> T55W1ScribeNote.md; 12 -> T55W1ScribeCells.{json,md}; 14 -> T55W1ScribeSources.{json,md}; 19 -> T55W1ScribeConsiderthese.md; 21 -> T55W1ScribeMistakeSweep.md; 29 -> T55W1ExecRekeyPrep.json; add a build-time assertion that the set of deliverable paths has cardinality 75 and each deliverable shares its item's name prefix; and have the L1 restore the R54.10 JSON from the peer session log before integrating",
+      "receipts": ["collision.txt", "collision-recurrence.txt"]
+    },
+    {
+      "id": "F2",
+      "severity": "MEDIUM",
+      "title": "20/75 items violate the absolute-path rule (8 relative-only, 12 name no path)",
+      "evidence": "path-conformance.txt lists all 75 rows; the two ambiguous cases are T55W1Connector1 (relative globs scripts/*.mjs and corpus/*.sh into four sibling lanes whose roots are never given) and T55W1Connector2 (bare corpus/lessons/round-5N*.md readable as the tameshi lane, where such files also exist)",
+      "recommendation": "prefix the lane root in the 8 relative-only items; give the 12 no-path items the absolute path of their target",
+      "receipt": "path-conformance.txt"
+    },
+    {
+      "id": "F3",
+      "severity": "MEDIUM",
+      "title": "three items are padding and would be rejected",
+      "evidence": {
+        "T55W1ScribeScratchDoc_item20": "no target file, no output path, no acceptance test; restates the grammar already carried by item 10(a),(c) and critiqued by item 53",
+        "T55W1ScribeSeat_item18": "duplicates item 8 on (a) the SUPERSEDED annotation for .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md and (b) the lesson paragraph naming config.yml + fabricated; only (c) the lane rule is new",
+        "T55W1CritClaimShape_item68": "the only attack item with no command ('Report a verdict per question with the evidence you read'); its five questions are owned by the frozen contract, item 50, item 29 and items 52/53/74"
+      },
+      "recommendation": "drop item 20 (or fold one line into item 10); merge item 18's (c) into item 8 and drop 18; convert item 68 into an executable separability test (run each counter with the other claim's artefacts absent) or drop it",
+      "receipt": "distinctness.txt"
+    },
+    {
+      "id": "F4",
+      "severity": "LOW",
+      "title": "the ten row-reviewers are one template (45 pairs at Jaccard >= 0.927)",
+      "evidence": "distinctness.txt; 9 of 10 R54 rows double-covered, R54.5 triple, R54.7 single",
+      "impact": "none on detection quality - deliberate double-blind on the lowest axis (calibration 8); recorded so '75 distinct items' is not read as '75 distinct problems'",
+      "recommendation": "keep as is; consider varying the required artefact (command, byte quote, or clone demo) per reviewer so the reports are separable",
+      "receipt": "distinctness.txt"
+    },
+    {
+      "id": "F5",
+      "severity": "LOW",
+      "title": "three build deliverables have no attacker: LOG.md entry (16), round-55 lesson (13), round-55 SCORECARD block prose (17)",
+      "evidence": "cross-reference scan in distinctness.txt plus the item texts; the counters never read LOG.md, so the round's own log entry is checked by nothing",
+      "recommendation": "extend item 21's sweep (3) to the round-55 LOG entry and give RevColdread the lesson file; one attacker each, no new reviewer of the same ten rows"
+    }
+  ],
+  "padding": [
+    { "item": 20, "seat": "T55W1ScribeScratchDoc", "reason": "no target, no output path, content duplicated by items 10 and 53", "action": "drop or fold into item 10" },
+    { "item": 18, "seat": "T55W1ScribeSeat", "reason": "2 of 3 artefacts duplicate item 8 (T55W1Er08)", "action": "merge (c) into item 8, drop 18" },
+    { "item": 68, "seat": "T55W1CritClaimShape", "reason": "verdict-only, no command, questions owned elsewhere", "action": "convert to an executable separability test or drop" }
+  ],
+  "out_of_item_observations": {
+    "subject": "frozen set state during the wave - NOT attributable to this spec; refer to T55W1CritFreeze, T55W1SentScope, T55W1SentConfig",
+    "git_status": ["M .ufo/evidence/round-55/before/c2.stdout", "M .ufo/evidence/round-55/c1/measure.py", "M .ufo/evidence/round-55/c2/measure.py", "M .ufo/evidence/round-55/contract.json", "M .ufo/evidence/round-55/freeze.json", "?? .ufo/evidence/round-55/assimilation/"],
+    "before_c2_stdout": { "worktree_bytes": 139, "head_bytes": 2634, "worktree_mtime": "2026-10-28 13:59:44", "worktree_content": "verdict line + 'Wall time: 3.49 seconds' (an eval-cell footer); all 43 EXPLAIN lines lost", "also_observed_empty_at": "13:53:52" },
+    "before_c1_stdout": { "worktree_bytes": 2276, "head_bytes": 2276, "identical": true },
+    "freeze_manifest": { "mismatch": ["contract.json", "c1/measure.py", "c2/measure.py"], "match": ["no-harm.sh", "deciding-run.sh", "controls.sh"], "freeze_json_amendments": [1, 2, 3], "contract_json_amendments": [1, 2, 3, 4, 5] },
+    "spec_authorisation_of_that_write": "none - no item names it, no item contains a shell redirect onto it; two items are harmed as written (17 must quote it, 31 must cmp against it)",
+    "receipt": "frozen-dirt.txt"
+  },
+  "residual_risk": [
+    "the spec was audited while it ran: 60/75 seats up at 13:59:45 and files were rewritten during the audit; A/B/C/E are deterministic functions of the spec (unchanged: 67544 B, mtime 13:39:49, sha256 ccaf69cd), D's live-state evidence is time-stamped",
+    "A-E are structural, not semantic: each item's stated premise was not verified. Item 14's premise was already stale at dispatch - it offered sysexits(3) as a candidate row while corpus/SOURCES.md:99 already held it as S090, and the L1 appended S280 mid-wave, so the seat spent its budget on a withdrawal",
+    "no LSP-backed check applied (JSON spec + Markdown report); all evidence is python3/git/ls output, quoted in the receipts"
+  ],
+  "tooling": { "installed": [], "note": "no tool installed or upgraded; python3 and git sufficed, so the RULES.md install path was not used" }
+}

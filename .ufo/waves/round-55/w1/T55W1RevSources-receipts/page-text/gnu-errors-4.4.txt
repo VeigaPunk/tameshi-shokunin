@@ -1,0 +1,68 @@
+Errors (GNU Coding Standards)
+
+Next: Standards for Interfaces Generally, Previous: Library Behavior, Up: Program Behavior for All Programs   [Contents][Index]
+
+4.4 Formatting Error Messages ¶
+
+Error messages from compilers should look like this:
+
+sourcefile:lineno: message
+
+If you want to mention the column number, use one of these formats:
+
+sourcefile:lineno:column: message
+sourcefile:lineno.column: message
+
+Line numbers should start from 1 at the beginning of the file, and
+column numbers should start from 1 at the beginning of the line.
+(Both of these conventions are chosen for compatibility.) Calculate
+column numbers assuming that space and all ASCII printing characters
+have equal width, and assuming tab stops every 8 columns. For
+non-ASCII characters, Unicode character widths should be used when in
+a UTF-8 locale; GNU libc and GNU gnulib provide suitable
+wcwidth functions.
+
+The error message can also give both the starting and ending positions
+of the erroneous text. There are several formats so that you can
+avoid redundant information such as a duplicate line number.
+Here are the possible formats:
+
+sourcefile:line1.column1-line2.column2: message
+sourcefile:line1.column1-column2: message
+sourcefile:line1-line2: message
+
+When an error is spread over several files, you can use this format:
+
+file1:line1.column1-file2:line2.column2: message
+
+Error messages from other noninteractive programs should look like this:
+
+program:sourcefile:lineno: message
+
+when there is an appropriate source file, or like this:
+
+program: message
+
+when there is no relevant source file.
+
+If you want to mention the column number, use this format:
+
+program:sourcefile:lineno:column: message
+
+In an interactive program (one that is reading commands from a
+terminal), it is better not to include the program name in an error
+message. The place to indicate which program is running is in the
+prompt or with the screen layout. (When the same program runs with
+input from a source other than a terminal, it is not interactive and
+would do best to print error messages using the noninteractive style.)
+
+The string message should not begin with a capital letter when
+it follows a program name and/or file name, because that isn’t the
+beginning of a sentence. (The sentence conceptually starts at the
+beginning of the line.) Also, it should not end with a period.
+
+Error messages from interactive programs, and other messages such as
+usage messages, should start with a capital letter. But they should not
+end with a period.
+
+Next: Standards for Interfaces Generally, Previous: Library Behavior, Up: Program Behavior for All Programs   [Contents][Index]

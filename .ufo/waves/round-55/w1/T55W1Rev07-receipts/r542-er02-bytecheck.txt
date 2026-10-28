@@ -1,0 +1,32 @@
+$ python3 - <<'PY'
+import json,subprocess,hashlib
+L='/home/vgpnk/Projects/shokunin/tameshi-shokunin';BASE='0a2010acd1e92e4e332774050825e21bcfc7e079'
+d=json.load(open(L+'/.ufo/waves/round-55/w1/T55W1Er02.json'))
+for p in ('SCORECARD.md','LOG.md'):
+    b=subprocess.run(['git','-C',L,'show',BASE+':'+p],capture_output=True).stdout.decode()
+    print(p,'sha256',hashlib.sha256(b.encode()).hexdigest())
+for i,(o,n) in enumerate(zip(d['old'],d['new'])):
+    p='SCORECARD.md' if i<3 else 'LOG.md'
+    b=subprocess.run(['git','-C',L,'show',BASE+':'+p],capture_output=True).stdout.decode()
+    print('pair'+str(i),p,'old_occurrences='+str(b.count(o)))
+PY
+SCORECARD.md sha256 68d5b62d4674491ec994924afed4e1a03b9b4d77c57e9f5890afc0741725c70b
+LOG.md sha256 04dcdb7339260324dd14e67923aa753c611837716cdee80feed4842aed511ca9
+pair0 SCORECARD.md old_occurrences=1
+pair1 SCORECARD.md old_occurrences=1
+pair2 SCORECARD.md old_occurrences=1
+pair3 LOG.md old_occurrences=1
+[exit 0]
+
+$ git -C /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone show --stat --format='%H %s' f764588b5497c255348b7d061d1da74d2cd361f3
+f764588b5497c255348b7d061d1da74d2cd361f3 fixture: Er02 pairs 1-4 verbatim
+
+ LOG.md       |  3 ++-
+ SCORECARD.md | 11 +++++++----
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev f764588b5497c255348b7d061d1da74d2cd361f3 --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/work-b --explain 2>&1 | grep -E 'R54.2|C1_R55'
+EXPLAIN R54.2 FAIL premise=ok corrected=miss stale=0 derived=freeze pointer=077d431e
+C1_R55: rev=f764588b5497 classes=10 premise=10/10 stale=3 classes_corrected=0/10 total=10 C1_R55_PASS=false
+[exit 0]

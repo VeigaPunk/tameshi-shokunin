@@ -1,0 +1,60 @@
+{
+  "id": "R54.5",
+  "seat": "T55W1Er05",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "what": "Round-54 finding counts: the report's '25 wave-1 findings' and '22 wave-2 findings in 9 of the 23 sections' must match the committed reader reports. Re-derived at base 0a2010ac over the reader JSONs only (names matching /T54W\\d+[A-Za-z]*Read\\d+\\.json$; every JSON under *-receipts/ excluded). Reader files: 23 per wave; findings: 28 (w1) and 25 (w2); wave-2 files carrying at least one finding: 12.",
+  "old": [
+    "- **Adjudication and fix pass (C1 `99c3bc88`).** The 23 wave-1 readers returned\n  **25 findings**; the L1 re-derived every one against the C0 bytes and fixed",
+    "- **Wave-2 readings and their dispositions.** The fresh read returned 22 findings\n  in 9 of the 23 sections. Every one was adjudicated against the bytes and is",
+    "**F10 — the minor-gap path credits under the frozen algorithm; the in-progress adjudication covers 9 headings and 22 findings.**",
+    "lists 9 headings / 22 findings as `minor-gap` routed to round 55"
+  ],
+  "new": [
+    "- **Adjudication and fix pass (C1 `99c3bc88`).** The 23 wave-1 readers returned\n  **28 findings**; the L1 re-derived every one against the C0 bytes and fixed",
+    "- **Wave-2 readings and their dispositions.** The fresh read returned 25 findings\n  in 12 of the 23 sections. Every one was adjudicated against the bytes and is",
+    "**F10 — the minor-gap path credits under the frozen algorithm; the committed adjudication carries 12 section-entries and 25 findings.**",
+    "records the untracked 15:05:38Z snapshot (9 headings / 22 findings); the committed `.ufo/evidence/round-54/integrate/resolutions.json` carries 12 section-entries / 25 findings as `minor-gap` routed to round 55"
+  ],
+  "derived": "w1=28 w2=25 sections=12",
+  "command": "L=/home/vgpnk/Projects/shokunin/tameshi-shokunin; R0=0a2010acd1e92e4e332774050825e21bcfc7e079; for w in w1 w2; do git -C \"$L\" ls-tree -r --name-only \"$R0\" -- \".ufo/waves/round-54/$w\" | grep -E '/T54W[0-9]+[A-Za-z]*Read[0-9]+\\.json$' | while read -r f; do printf '%s ' \"$(basename \"$f\")\"; git -C \"$L\" show \"$R0:$f\" | jq -r '(.findings // []) | length'; done | awk -v w=\"$w\" '{t+=$2; s+=($2>0); n++} END{printf \"%s: reader_files=%d findings=%d sections_with_findings=%d\\n\", w, n, t, s}'; done",
+  "output": "w1: reader_files=23 findings=28 sections_with_findings=15\nw2: reader_files=23 findings=25 sections_with_findings=12",
+  "insert": "This is the string the `## Round 55 - round-54 record corrections` section must carry (the frozen C1 counter matches it verbatim): `w1=28 w2=25 sections=12` - 28 findings across 23 wave-1 reader reports (15 of them carrying at least one finding), 25 findings across 12 of the 23 wave-2 reader reports; re-derived at base `0a2010ac` from the committed reader JSONs (`.ufo/waves/round-54/{w1,w2}/T54W*Read*.json`, `-receipts/` JSON excluded).",
+  "sites": [
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:61-62 (fleet report, round-54; whole-file quote containment 1 occurrence)",
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:79-80 (fleet report, round-54; whole-file quote containment 1 occurrence)",
+    ".ufo/waves/round-54/w2/T54W2Scribe01.md:230 at 0a2010ac (lane seat report, historical)",
+    ".ufo/waves/round-54/w2/T54W2Scribe01.md:97 at 0a2010ac (lane seat report, historical)"
+  ],
+  "disposition": [
+    "corrected in the corrections section (fleet report sentence restated with the derived count)",
+    "corrected in the corrections section (fleet report sentence restated with the derived count)",
+    "supersession note only: the seat file is a historical seat artifact and stays byte-identical; the committed resolutions.json supersedes its untracked-snapshot count",
+    "supersession note only: the seat file is a historical seat artifact and stays byte-identical; the committed resolutions.json supersedes its untracked-snapshot count"
+  ],
+  "per_wave": {
+    "w1": {"reader_files": 23, "findings": 28, "sections_with_findings": 15},
+    "w2": {"reader_files": 23, "findings": 25, "sections_with_findings": 12}
+  },
+  "notes": [
+    "The frozen counter's `sections` field is the WAVE-2 count only: measure.py:202 builds `wanted = \"w1=%d w2=%d sections=%d\" % (w1, w2[0], w2[1])`, i.e. w1 = wave-1 findings, w2 = wave-2 findings, sections = wave-2 reader files with at least one finding. The wave-1 files-with-findings count is 15 and must NOT be written into the `sections=` field.",
+    "Independent agreement: the frozen counter's own base receipt prints `EXPLAIN R54.5 FAIL premise=ok corrected=miss stale=0 derived=w1=28 w2=25 sections=12` (.ufo/evidence/round-55/before/c1.stdout).",
+    "Independent cross-check: `.ufo/evidence/round-54/integrate/resolutions.json` at base is 12 section-entries / 25 findings, matching the wave-2 derivation.",
+    "Counts are stable at the lane tip 631cd64 (same 28/25/12); the only round-54 wave-file change between base and tip is `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` (+6 lines, not a reader report).",
+    "Receipt exclusion is real but not load-bearing for the count: 53 JSON files sit under `*-receipts/` in round-54 and 0 of them match the reader pattern; the forged reader `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` does not match it either.",
+    "R54.5 has no stale arm in the frozen counter (stale=0 at base); the wrong numbers survive only in the fleet report and in the historical seat report, so the corrected arm (the triple in the corrections section) is the decisive one."
+  ],
+  "receipts": [
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/derive-oneliner.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/json-command-roundtrip.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/base-w1.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/base-w2.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/tip-w1.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/tip-w2.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/filter-and-exclusion.txt",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/resolutions-crosscheck.txt",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/old-claim-report.txt",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/old-claim-seat.txt",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/quote-containment.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er05-receipts/derive_counts.py"
+  ]
+}

@@ -1,0 +1,21 @@
+Nondeterminism of registry-check --selftest (the two timeout cases), same state, same CWD:
+
+$ cd $L && env -u TMPDIR python3 tools/registry-check.py --selftest    # 14:13
+SELFTEST_CASE live-root-warning PASS (exit=0)
+SELFTEST: FAIL (1 of 51 cases: timeout-kills-setpgid-pipe)
+
+$ cd $L && env -u TMPDIR python3 tools/registry-check.py --selftest    # 14:20
+SELFTEST: PASS (51 cases)
+
+$ cd $L && env TMPDIR=$S/ext-tmp python3 tools/registry-check.py --selftest
+SELFTEST: PASS (51 cases)
+
+The failing case detail (from the rel-present arm):
+SELFTEST_CASE timeout-kills-group PASS (exit=1 marker=False)
+SELFTEST_CASE timeout-kills-setsid-pipe FAIL (exit=1 elapsed=3.547s survivor=False marker=False)
+SELFTEST_CASE timeout-kills-setpgid-pipe FAIL (exit=1 elapsed=3.555s survivor=False marker=False)
+SELFTEST: FAIL (8 of 51 cases: gitdir-scrub-rev, timeout-kills-setsid-pipe, timeout-kills-setpgid-pipe, rev-clone-detached, rev-clone-held, rev-resolved-reported, rev-non-hermetic-argv, rev-external-declared)
+
+Load at measurement time:
+  peer registry-check selftest processes: 19
+  loadavg: 29.97 51.99 47.23 27/8295 3450283

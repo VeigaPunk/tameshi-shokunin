@@ -1,0 +1,39 @@
+$ sed -n 48,52p kagi-shokunin/corpus/scope-gate.sh
+# defect above it. A missing/empty input file is a setup error (`die`, exit 2).
+# Exit      0 clean · 1 any defect · 2 usage/setup error (a missing input prints
+#           `ADJACENCY_SCOPE: SETUP (…)` before exiting — never a bare death)
+#
+# `unresolved` (ownership awaiting an integrator ruling) and `contested` are
+
+$ sed -n 78,84p kagi-shokunin/corpus/scope-gate.sh
+# Bootstrap failures must not be readable as "drift found": exit 1 means a
+# defect here, so a broken environment (no `dirname`, an unreadable script dir)
+# prints SETUP and exits 2 (round-16 executor D4/F4 — the same class is present
+# in corpus/surface-census.sh:75 and is reported, not silently shared).
+if ! SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"; then
+  printf 'scope-gate: SETUP (cannot resolve the script directory — is dirname on PATH?)\n' >&2
+  exit 2
+
+$ sed -n 102,102p kagi-shokunin/corpus/scope-gate.sh
+die() { printf 'scope-gate: %s\n' "$1" >&2; exit 2; }
+
+$ sed -n 151,160p kagi-shokunin/corpus/knowledge/adjacency-scope.md
+| `ADJACENCY_ABSTAIN: rows=N` | — | exit-neutral: a `runtime` census row legitimately absent abstains from R9 |
+| `ADJACENCY_ASSET_ABSENT: rows=N` | — | named asset absence; breadth may independently turn it into drift |
+| `SCOPE_MAP: <path>\t owned\|shared \t <prefix>\t[<owner>]` | — | `--map` prints the partition, then verifies |
+| `ADJACENCY_SCOPE: SETUP (…)` / `scope-gate: <msg>` | 2 | setup or usage error |
+| `SCOPE_SELFTEST: PASS (61 cases)` / `SCOPE_FALSIFY: PASS (caught=18/18 failed=0)` | 0 | scratch proof / shipped-data mutations |
+
+## The decisions that make it honest
+
+- **`unresolved` and `contested` are declared classes, exit-neutral.** The
+  integrator has not ruled on `$HOME/.config/opencode` and kake/kagi both claim
+
+$ sed -n 212,218p kagi-shokunin/corpus/knowledge/claim-ledger.md
+- **Declaration.** Exactly one line per entry, starting at column 1, in one of
+  two strict forms. Every line that *begins* `Reverify` but is not a
+  `Reverify: ` declaration (a missing space, a detached colon) is a setup error
+  (exit 2) rather than an invisible miss — otherwise a typo would read as
+  `UNDECLARED` and the reader would fix the wrong thing (round-14 planner).
+  - `Reverify: R11-04, R11-05` — comma-separated ids (optional space), each of
+    which must be a row id in `corpus/claim-ledger.tsv` (`MISSING-ID`, exit 1);

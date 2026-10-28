@@ -1,0 +1,73 @@
+diff --git c/.ufo/evidence/round-55/c2/measure.py w/.ufo/evidence/round-55/c2/measure.py
+index 8ddfb6c..9d89ca4 100755
+--- c/.ufo/evidence/round-55/c2/measure.py
++++ w/.ufo/evidence/round-55/c2/measure.py
+@@ -87,7 +87,10 @@ def modes(work, clone):
+         ("context-capture", ["python3", "tools/context-capture.py", "--selftest"]),
+     )
+     for tool, argv in selftests:
+-        out.append(("%s --selftest" % tool, argv, 0, True))
++        # The label is the mode AS INVOKED: bash-witness-study takes a subcommand,
++        # not a --selftest flag (amendment 3).
++        label = "%s selftest" % tool if tool == "bash-witness-study" else "%s --selftest" % tool
++        out.append((label, argv, 0, True))
+     out.append(("env-diff --selftest", ["python3", "tools/env-diff.py", "--selftest"], 0, True))
+     out.append(("env-diff --contract",
+                 ["python3", "tools/env-diff.py", "--contract", CONTRACT,
+@@ -161,7 +164,11 @@ def main():
+     r = git(work, "clone", "--shared", "--no-checkout", str(lane), str(clone))
+     if r.returncode:
+         raise Setup("clone failed: %s" % r.stderr.strip())
+-    r = git(clone, "checkout", "-q", "--detach", a.rev)
++    # The clone's HEAD is put on a local branch, not detached: one measured mode
++    # (evidence-disposition --root .) classifies a detached HEAD as
++    # historical_input_unavailable, so a detached checkout would score the clone's
++    # shape instead of the tool. Amendment 1, before any deciding invocation.
++    r = git(clone, "checkout", "-q", "-B", "r55-rev", a.rev)
+     if r.returncode:
+         raise Setup("checkout of %s failed: %s" % (a.rev, r.stderr.strip()))
+     if not (clone / FIXTURE).exists():
+@@ -201,16 +208,20 @@ def main():
+     (work / "tmp-usable").mkdir()
+     for arm, tmpdir in (("empty", ""), ("usable", str(work / "tmp-usable"))):
+         for name, argv, exp, alloc in table:
++            rc, _out, _err = run(argv, clone, env_with(tmpdir))
+             if arm == "usable" and alloc:
++                # The census run supplies ONLY the /tmp mkdir count: under
++                # `strace -f` a tool's own timing cases can fail from tracer
++                # overhead (round 54's amendment 2, re-learned here by the base
++                # receipt: registry-check rc 1 under the tracer alone), so the
++                # exit code is the plain run's (amendment 4).
+                 log = work / ("strace-%s.log" % re.sub(r"[^a-z0-9]+", "-", name.lower()))
+-                rc = trace(argv, clone, env_with(tmpdir), log)
++                trace(argv, clone, env_with(tmpdir), log)
+                 n = tmp_mkdirs(log)
+                 if n is None:
+                     bad["strace:" + name] = "no trace log"
+                 elif n:
+                     bad["tmp_mkdirs:" + name] = "%d mkdir under /tmp" % n
+-            else:
+-                rc, _out, _err = run(argv, clone, env_with(tmpdir))
+             ok = rc == exp
+             if arm == "empty":
+                 empty_ok += 1 if ok else 0
+@@ -229,11 +240,16 @@ def main():
+     docs = sum(1 for row in cells if MARKER in row["scratch_root"])
+     if len(cells) != 7:
+         bad["docs"] = "expected 7 scratch_root cells, found %d" % len(cells)
+-    note_txt = (clone / NOTE).read_text() if (clone / NOTE).exists() else ""
++    # The marker and the mode ids are matched against whitespace-normalized text:
++    # both documents are hard-wrapped near 78 columns, so a line break inside the
++    # grammar is a typographic fact, not a missing statement (amendment 2).
++    def norm(text):
++        return " ".join(text.split())
++
++    note_txt = norm((clone / NOTE).read_text()) if (clone / NOTE).exists() else ""
+     note_names = [m for m in allocating if m[0] in note_txt]
+     note = len(note_names)
+-    skill_txt = (clone / "SKILL.md").read_text()
+-    skill = 1 if MARKER in skill_txt else 0
++    skill = 1 if MARKER in norm((clone / "SKILL.md").read_text()) else 0
+     for arm, got, want in (("docs", docs, 7), ("note", note, 8), ("skill", skill, 1)):
+         if got != want:
+             bad.setdefault(arm, "%d/%d" % (got, want))

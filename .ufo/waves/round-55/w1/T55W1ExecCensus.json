@@ -1,0 +1,158 @@
+{
+  "seat": "T55W1ExecCensus",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "lane_bounds": "leaf member — no subagent dispatch except the single labrat",
+  "base_rev": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "census_command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+  "base": {
+    "exit": 0,
+    "row_count_grep": 139,
+    "sources_sha256": "4a466c10d6bb4935d20b8fb74a2d4ec08b315ceb67a2896a83f84e5d1258f992",
+    "e_codes": 0,
+    "warning_count": 16,
+    "warning_codes": {
+      "W04": 15,
+      "W01": 1
+    },
+    "note": "measured on the lane worktree before any round-55 append; the worktree SOURCES.md was byte-identical to the base rev (same sha256) and a --shared clone checked out at base reproduced the identical finding set"
+  },
+  "end": {
+    "exit": 0,
+    "row_count_grep": 140,
+    "sources_sha256": "c78c0ab988c2bfc893f7951218da11467341fdae33255b34eb2eb355ef7a793b",
+    "e_codes": 0,
+    "warning_count": 16,
+    "warning_delta_vs_base": [],
+    "note": "round-55 append wave landed S280 inside ## Registry while this seat ran; the 16 warnings are the same set as at base, none new"
+  },
+  "warnings": [
+    {
+      "code": "W04",
+      "detail": "S047 duplicate url pitest.org/quickstart/incremental_analysis across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S048 duplicate url pitest.org/quickstart/incremental_analysis across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S075 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S076 duplicate url docs.jj-vcs.dev/latest/git-compatibility across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S077 duplicate url man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S078 duplicate url man7.org/linux/man-pages/man2/open.2.html across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S081 duplicate url bazel.build/reference/test-encyclopedia across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S092 duplicate url bazel.build/remote/caching across scopes"
+    },
+    {
+      "code": "W01",
+      "detail": "S101 tierC mined used-by=corpus/knowledge/witness-equivalence-rule.md"
+    },
+    {
+      "code": "W04",
+      "detail": "S104 duplicate url cgit.git.savannah.gnu.org/cgit/bash.git/plain/doc/bashref.texi?id=b8c60bc9ca365f8261fa97900b6fa939f6ebc303 across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S160 duplicate url stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S265 duplicate url testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S266 duplicate url pitest.org/quickstart/incremental_analysis across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S267 duplicate url github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S268 duplicate url www.tensorflow.org/federated/golden_tests?hl=zh-cn across scopes"
+    },
+    {
+      "code": "W04",
+      "detail": "S274 duplicate url bazel.build/basics/hermeticity across scopes"
+    }
+  ],
+  "guard_fixtures": [
+    {
+      "name": "fx-a",
+      "insertion": "two-space-indented S999 row at the end of ## Registry, S279 url+scope, distinct id",
+      "expected": "E04",
+      "observed": [
+        "E04 S999 duplicate url docs.python.org/3/library/tempfile.html within scope ..."
+      ],
+      "exit": 1,
+      "rows_in_fixture": 140,
+      "receipt": "T55W1ExecCensus-receipts/fx-a.tsv"
+    },
+    {
+      "name": "fx-b",
+      "insertion": "two-space-indented verbatim S279 row at the end of ## Registry",
+      "expected": "E03 and E04",
+      "observed": [
+        "E03 S279 duplicate id",
+        "E04 S279 duplicate url ... within scope ..."
+      ],
+      "exit": 1,
+      "rows_in_fixture": 140,
+      "receipt": "T55W1ExecCensus-receipts/fx-b.tsv"
+    },
+    {
+      "name": "fx-c",
+      "insertion": "four-space-indented S999 duplicate (indented code per parser contract)",
+      "expected": "ignored, exit 0",
+      "observed": [],
+      "exit": 0,
+      "rows_in_fixture": 139,
+      "receipt": "T55W1ExecCensus-receipts/fx-c.tsv"
+    },
+    {
+      "name": "fx-d1-newline-closed",
+      "insertion": "S999 duplicate appended at EOF after closing the missing trailing newline",
+      "expected": "E12 row outside Registry section",
+      "observed": [
+        "E12 S999 row outside Registry section"
+      ],
+      "exit": 1,
+      "receipt": "T55W1ExecCensus-receipts/fx-d1-newline-closed.tsv"
+    },
+    {
+      "name": "fx-d2-no-trailing-newline",
+      "insertion": "S999 duplicate appended with a plain >> onto the unterminated last line",
+      "expected": "no finding: the row fused into the last ## Id allocation bullet and is invisible to the guard (append hazard)",
+      "observed": [],
+      "exit": 0,
+      "receipt": "T55W1ExecCensus-receipts/fx-d2-no-trailing-newline.tsv"
+    }
+  ],
+  "conformance": {
+    "required": "exit 0",
+    "base_exit": 0,
+    "end_exit": 0,
+    "row_count_expected": "139 rows at base (S001-S279); 140 after the round-55 S280 append",
+    "id_gaps": {
+      "S038-S039": "documented: allocated, never written, retired (SOURCES.md Id allocation)",
+      "S098": "documented: seat SrcBashCase could not open the source",
+      "S109-S131, S133-S151": "documented: round-40 refusals, never appended (corpus/lessons/round-40.md)",
+      "S161-S255": "documented: staged ids reserved by document for the package"
+    }
+  }
+}

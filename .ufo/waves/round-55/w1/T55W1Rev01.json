@@ -1,0 +1,143 @@
+{
+ "seat": "T55W1Rev01",
+ "round": 55,
+ "item": "C1 calibration rows R54.1 and R54.2",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "frozen_counter_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "measured_at": "2026-10-28T14:00-14:07-03:00",
+ "classes": [
+  {
+   "id": "R54.1",
+   "agree_with_defect_as_stated": true,
+   "defect_text_locations_in_lane": [
+    "SCORECARD.md:2583 (round-54 C1 row, controls cell ends `CTL_POS_c1 true`)",
+    "corpus/QUALITY.md:1590 (criterion 105 falsifier: 'prints rekeyed=7/7 on its positive control')",
+    "corpus/lessons/round-54.md:74-76 (## Mistakes fix: 'proves the arm on the positive control CTL_POS_c1, which requires rekeyed=7/7')",
+    "corpus/lessons/round-54.md:100-101 ('proven live by the positive control ... rekeyed=7/7')"
+   ],
+   "defect_text_locations_outside_lane": [
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:162 ('proven live by the phase-B positive control')"
+   ],
+   "derived": {
+    "value": "CTL_MISMATCH + 2/3",
+    "receipt": ".ufo/evidence/round-54/control/controls-b.stdout",
+    "receipt_lines": [
+     "CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false",
+     "CTL_MISMATCH CTL_POS_c1 expected=true actual=false",
+     "CONTROLS_B: 2/3 as pre-registered"
+    ],
+    "exit": 1,
+    "exit_receipt": ".ufo/evidence/round-54/control/controls-b.exit",
+    "note": "the exit code is in the sibling .exit file, not in the stdout; the spot-check conflates the two"
+   },
+   "replay": {
+    "counter_sha256": "d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812",
+    "counter_blob": "e96da3547e3dc4cdcad57ea1f4809320f84f5d32 (identical at 077d431e, c2108100, 0a2010ac)",
+    "at_077d431e": "C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false (rc=1)",
+    "at_c2108100": "C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true (rc=0)",
+    "matches_committed_lines": "both, field for field"
+   },
+   "cause_verified_at_077d431e": {
+    "frozen_headings": 7,
+    "no_bound_entry": ["### The boundaries - what a service run is not", "### Using the ledger", "### Round-26 gate/probe registry - report interop"],
+    "bound_but_failing": [{"heading": "## Mutation-sweep recipe - numbered steps; bounded cold-read evidence", "reason": "input-drift:.ufo/evidence/round-21/coldread/ledger.json"}],
+    "credited": ["## Standing rules", "### The operator's runbook - corpus/knowledge/operator-runbook.md", "### Round-14 historical registry - superseded by round 15"],
+    "credited_count": 3,
+    "arithmetic": "7 - 3 - 1 = 3 = rekeyed=3/7"
+   },
+   "spotcheck_overstated": [
+    {
+     "claim": "'controls-b.stdout' (committed, unchanged across all 5 revisions that touch it)",
+     "status": "imprecise",
+     "bytes": "git log -<base> -- .ufo/evidence/round-54/control/controls-b.stdout -> 2 commits (7fa9a5e adds, 5564954 re-states); blob 8333e8ce -> d910366b; git diff 7fa9a5e 5564954 shows an appended blank line + the note 'bytes unchanged; the verdict line above stands'. The four verdict lines are byte-identical across the five revisions that CONTAIN it.",
+     "severity": "minor"
+    },
+    {
+     "claim": "prints ... 'CONTROLS_B: 2/3 as pre-registered', exit 1",
+     "status": "conflation",
+     "bytes": "exit 1 is controls-b.exit; the stdout has no exit code",
+     "severity": "minor"
+    }
+   ],
+   "draft": {
+    "path": ".ufo/waves/round-55/w1/T55W1Er01.json",
+    "byte_accurate": true,
+    "old_strings": {"count": 4, "occurrences_at_base": "1 each", "occurrences_at_631cd645": "1 each", "line_numbers": [2583, 1590, 74, 100], "sha256_match": "4/4"},
+    "new_strings": {"count": 4, "sha256_match": "4/4", "occurrences_at_base": 0},
+    "applies_once_each": true,
+    "demo": {"commit": "426e3fdb11e4e3b71e4da89e0df7f28b44bf9026", "cols": "built by this seat (the draft's own demo e95332d9 is unreachable from the lane)", "result_frozen_counter": "R54.1 ok premise=ok corrected=ok stale=0", "result_amended_counter": "R54.1 ok premise=ok corrected=ok stale=0"},
+    "residual_claim_verified": "line-scoped regex finds 1 match (line 101) at base; multiline-aware finds 2 (lines 74, 101)",
+    "errors": [
+     {"field": "cause.one_line and corrections_section_block", "claim": "control/controls.sh:145 holds `clone_at \"$LANE\" \"$REV\" pos`", "actual": "line 142; line 145 is `python3 \"$C2\" --lane ... --work \"$SCR/wposb\"`", "command": "git show 0a2010ac:.ufo/evidence/round-54/control/controls.sh | grep -n 'clone_at \"$LANE\" \"$REV\" pos'", "severity": "major"},
+     {"field": "cause.tree_facts[1]", "claim": "the re-key directory holds 202 files at 077d431e and 206 at 7fa9a5e", "actual": "202/206 is the .ufo/evidence/round-21/coldread/ tree; the re-key directory holds 20/24", "command": "git ls-tree -r --name-only <rev> .ufo/evidence/round-21/coldread/rekey-r54-99c3bc88d704/ | wc -l", "severity": "minor"}
+    ]
+   },
+   "landing_blocker": {
+    "id": "F1",
+    "severity": "blocker",
+    "what": "the worktree's reworded correction at corpus/lessons/round-54.md:74-78 puts `(`rekeyed=7/7`); the pre-registered positive control ...` on one line, which the committed counter's stale arm matches; the amendment-5 span arm matches two more sites (103-104 splits 'positive / control')",
+    "current_file_sha256": {"corpus/lessons/round-54.md": "e0eeb6a392dac1a27cdf27772f3c2041bfcab426a60453404034754e551b5970", "SCORECARD.md": "22b9fffd0109b5490a432c91970279c8438204b6618fafd3ef22dda8959c75ce", "LOG.md": "4482f48a5a778acb2a36065602d3a9d239af30d0d8cd33618b90783a35bd66d1"},
+    "demo": "6888a3721a02 (631cd645 + the four worktree record files, byte-identical)",
+    "frozen_counter": "EXPLAIN R54.1 FAIL premise=ok corrected=ok stale=1 ... corpus/lessons/round-54.md:75 | C1_R55: premise=10/10 stale=1 classes_corrected=10/10 total=1 C1_R55_PASS=false",
+    "amended_counter": "EXPLAIN R54.1 FAIL premise=ok corrected=ok stale=3 (line 75 + @4293 + @5821) | total=1 C1_R55_PASS=false",
+    "fix": "apply Er01 new[2]/new[3] verbatim, or drop the word 'positive' from both sentences; re-wrapping alone does not satisfy the amendment-5 span arm",
+    "note": "the corrected sentence is now true; this is a proxy-predicate collision, not a record falsehood"
+   }
+  },
+  {
+   "id": "R54.2",
+   "agree_with_defect_as_stated": true,
+   "defect_text_locations_in_lane": [
+    "SCORECARD.md:2564 (amendment 1 (`7883e0e5`) fixes)",
+    "SCORECARD.md:2567-2568 ('and `7883e0e5` is the freeze pointer the deciding run uses')",
+    "SCORECARD.md:2608 ('freeze `fe70474d` (amendments 1-5)')",
+    "LOG.md:2500-2501 ('`7883e0e5` ... the freeze pointer the deciding run uses') - outside the counter's scan set"
+   ],
+   "defect_text_locations_outside_lane": [
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:157 ('the freeze pointer 097985c1')"
+   ],
+   "derived": {
+    "value": "freeze pointer=077d431e",
+    "receipt": ".ufo/evidence/round-54/after/frozen.stdout",
+    "receipt_line": "FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c",
+    "confirmation": "deciding-run.sh:67 writes that line from its own $FREEZE variable",
+    "amendments_per_commit": {"441c26be": {"files": 7, "amendments": 0}, "7883e0e5": {"files": 7, "amendments": 1}, "097985c1": {"files": 10, "amendments": 2}, "fe70474d": {"files": 10, "amendments": 4}, "077d431e": {"files": 10, "amendments": 5}},
+    "ancestry": "fe70474d -> 077d431e -> 7fa9a5e -> c2108100"
+   },
+   "spotcheck_overstated": [
+    {"claim": "SCORECARD.md:2564-2567 calls 7883e0e5 'the freeze pointer the deciding run uses'", "status": "nit: the clause spans 2567-2568; 2564 is the amendment-1 mention", "severity": "nit"}
+   ],
+   "draft": {
+    "path": ".ufo/waves/round-55/w1/T55W1Er02.json",
+    "byte_accurate": true,
+    "old_strings": {"count": 4, "occurrences_at_base": "1 each", "occurrences_at_631cd645": "1 each", "line_numbers": [2564, 2567, 2608, 2500], "blob_sha256_prefixes": {"SCORECARD.md": "68d5b62d4674491e", "LOG.md": "04dcdb73392603"}},
+    "new_strings": {"count": 4, "occurrences_at_base": 0},
+    "applies_once_each": true,
+    "demo": {"commit": "426e3fdb11e4e3b71e4da89e0df7f28b44bf9026", "arm_transition": "FAIL stale=3 -> ok stale=0 (both counter byte sets)"},
+    "structural_gap": "no corrections_section_block field (Er01 has one); the L1 had to author the ER-R54-2 prose - the integrated block does carry 077d431e",
+    "unverified_by_instrument": "pair D (LOG.md:2500-2501) - LOG is outside the counter's scan set, and R54.2's scan is still ('SCORECARD.md',) after amendment 5 (c1/measure.py:206)"
+   }
+  }
+ ],
+ "findings": [
+  {"id": "F1", "class": "R54.1", "severity": "blocker", "summary": "the worktree's reworded lesson correction trips the counter's own R54.1 stale arm at corpus/lessons/round-54.md:75 (and two spans under amendment 5) -> C1 total=1, PASS=false with 10/10 classes corrected", "evidence": "T55W1Rev01-receipts/c1-frozen-on-worktree-record-state.txt, c1-amended-on-worktree-record-state.txt"},
+  {"id": "F2", "class": "R54.1", "severity": "major", "summary": "Er01 cites control/controls.sh:145 for `clone_at ... pos`; the line is 142 (145 is the C2 counter invocation)", "evidence": "T55W1Rev01-receipts/controls-sh-line.txt"},
+  {"id": "F3", "class": "R54.1", "severity": "minor", "summary": "Er01 says the re-key directory holds 202/206 files; those are the coldread tree counts, the re-key dir holds 20/24", "evidence": "git ls-tree counts (report)"},
+  {"id": "F4", "class": "R54.1", "severity": "minor", "summary": "spot-check: 'unchanged across all 5 revisions that touch it' (2 commits touch it; blob drifts once; verdict lines stable) and 'prints ... exit 1' (exit is in the sibling .exit)", "evidence": "T55W1Rev01-receipts/controls-b-evidence.txt"}
+ ],
+ "frozen_set_observations": [
+  {"id": "F5", "what": "c1/measure.py R54.1's premise and corrected arms test the literals 'CTL_MISMATCH' and '2/3' instead of parsing CONTROLS_B: X/Y; R54.3 derives its value, R54.1 does not", "action": "reported, not fixed (frozen)"},
+  {"id": "F6", "what": "worktree freeze.json has 3 amendments and 3/6 pins mismatch the files on disk (c1 77abe1e9->711507e7, c2 ab3ae751->d6ca1d85, contract ed6871e1->5de4f37b); worktree contract.json has 5 amendments; the committed set 631cd645 was self-consistent (0 amendments, 6/6 pins)", "action": "reported, not fixed (frozen)"},
+  {"id": "F7", "what": "amendment 5's text says 'The predicate is unchanged and now stricter' - a stricter scan is a predicate change; and R54.2's stale scan stays ('SCORECARD.md',), so the LOG.md site it cites is not instrument-covered", "action": "reported, not fixed (frozen)"}
+ ],
+ "residual": [
+  "the committed counter is blind to the base 74-76 claim (1 line-scoped match at :101 vs 2 multiline matches at 74 and 101); the draft discloses this",
+  "the live dirty worktree cannot be scored directly (the counter reads git objects); demo-wt substitutes with byte-identical record files (sha256 in the receipt)",
+  "the drafts' own demo commits e95332d9 and 5a8d8a84 are unreachable from the lane; equivalent demos were rebuilt",
+  "the round-54 control harness itself was not re-run; its .exit files carry the exit codes and both replay lines match the committed receipts"
+ ],
+ "receipts": ".ufo/waves/round-55/w1/T55W1Rev01-receipts/ (14 files; index in the report)",
+ "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "rows_now": 140, "note": "the round added rows above the 139 at round start"},
+ "tooling": {"installed": "none", "upgraded": "none", "path_writes": "none"},
+ "lane_writes": [".ufo/waves/round-55/w1/T55W1Rev01.md", ".ufo/waves/round-55/w1/T55W1Rev01.json", ".ufo/waves/round-55/w1/T55W1Rev01-receipts/"]
+}

@@ -1,0 +1,24 @@
+fixtures: git clone --shared LANE at 631cd645; toplevel asserted before each commit;
+corrections section appended to SCORECARD.md only (no seat-file edit, no lesson edit):
+  ## Round 55 - round-54 record corrections
+  ER-R54-8: the seat self-authorised a write to `~/.omp/agent/config.yml` on a fabricated "operator routing override".
+
+=== demoA  (seat superseded-token count: 1)
+EXPLAIN R54.7 FAIL premise=ok corrected=miss stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+=== demoB  (seat superseded-token count: 0)
+EXPLAIN R54.7 FAIL premise=ok corrected=miss stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 FAIL premise=ok corrected=miss stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+
+demoB differs from demoA only by replacing the single pre-existing "superseded" token
+at .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md:299 ("...the round-50 directive superseded it")
+with "displaced". Same corrections section, same base seat text otherwise.
+
+=== demoC  (corrections section carries only: "ER-R54-7: the forged reader was renamed at 7fa9a5e.")
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+$ git -C demoC show HEAD:.ufo/waves/round-54/w2/T54W2Sent01.md | grep -n "deletion is unstaged"
+188:deletion is unstaged and must be recorded in the next lane commit. The L1 (`TameshiR54a2`) was messaged

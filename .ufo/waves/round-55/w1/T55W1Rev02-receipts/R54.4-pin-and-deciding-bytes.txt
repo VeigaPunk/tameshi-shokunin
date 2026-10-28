@@ -1,0 +1,31 @@
+=== round-54 freeze.json files["c2/measure.py"] at base ===
+8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+c1/measure.py: d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812
+amendments: 5
+=== same pin at the deciding revision c2108100 ===
+8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+amendments: 5
+=== sha256 of the counter bytes AT the deciding revision ===
+8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790  -
+=== sha256 of c1/measure.py at the deciding revision (spotcheck: d7749f84 is right) ===
+d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812  -
+=== 49280fe5 is the content at which commits ===
+441c26b b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49  -
+19c7558 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8  -
+7e533b1 49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8  -
+fe70474 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790  -
+=== 7e533b1 identity (empty-subject commit) ===
+H=7e533b16726d4a5b13c671b5cbeb53bce0557aa4 P=3146479c21387dc5affe56f334aba1f770386b61 CI=2026-10-28 11:51:50 -0300 S=[]
+=== census regex before/after amendment 4 ===
+142:        hits = len(re.findall(r'mkdir(?:at)\([^)]*"/tmp', log.read_text(errors='replace')))
+=== freeze.json amendment 4 text ===
+c2/measure.py arm 3's census regex `mkdir(?:at)\(` required the `at` suffix, so the plain `mkdir(` that os.mkdir/tempfile.mkdtemp issue was never counted and the arm could not fire on the silent-fallback defect it guards. Now `mkdir(?:at)?\(`. Found by wave-2 seat T54W2Exec02 with a positive control (a real mkdir("/tmp/...") logged one line, the frozen regex found zero); the reading tmp_mkdirs=0 is unchanged at every revision (a repaired regex also finds zero across all seven traces).
+=== deciding-run.sh extracts the counter from REV and runs it ===
+for f in c1/measure.py c1/lost-headings-at-base.json c2/measure.py no-harm.sh; do mkdir -p "$SCR/code/$(dirname $f)"; git show "$REV:$E/$f" > "$SCR/code/$f" || exit 2; done
+    c2) python3 "$SCR/code/c2/measure.py" --lane "$LANE" --rev "$REV" --work "$SCR/c2" --explain > "$OUT/c2.stdout" 2>&1 ;;
+=== after/frozen.stdout ===
+FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c
+=== the stale assertion is in the FLEET report (still uncorrected today) ===
+122:  The frozen counter's own bytes at the deciding revision are the freeze-manifest digest `d7749f84…` (c1) and `49280fe5…` (c2) — cite those, not the C1 blobs, which predate amendments 1–5.
+=== the lane carries no .ufo/reports/round-54 ===
+.ufo/reports/round-1/tameshi.md

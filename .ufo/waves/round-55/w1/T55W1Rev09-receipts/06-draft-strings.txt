@@ -1,0 +1,42 @@
+#################### T55W1Er03.json
+## old
+[0]"`unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/before/c2.stdout`; the contract's before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed)"
+
+## new
+[0]"`unusable_exit2=3 docs=0 note=0 sources=0 total=13` false (`.ufo/evidence/round-54/before/c2.stdout`; that receipt and the contract's `before` text both print `total=13`; the `14`/`13` 'delta' the round-54 parenthetical claimed inverted the two - the `14` is the wave-1 rerun `c2-frozen-bytes-at-base.out` (`usable_ok=6`), not this receipt [ER-R54-3])"
+
+## pair_minimal
+{'old': '`unusable_exit2=3 docs=0 note=0 sources=0 total=14`', 'new': '`unusable_exit2=3 docs=0 note=0 sources=0 total=13`'}
+
+## cell_at_base
+"| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/before/c2.stdout`; the contract's before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |"
+
+## cell_current_worktree
+"| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=13` false (`.ufo/evidence/round-54/before/c2.stdout`; the `14`/`13` 'delta' the round-54 parenthetical claimed inverted the two [ER-R54-3]) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |"
+
+## derived
+'total=13'
+
+## parenthetical_note
+'The round-54 row\'s parenthetical read: "the contract\'s before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed". Both halves are misassigned. (a) The recorded receipt - the very file the row cites - prints 13, so no delta exists between the receipt and the contract; (b) the only 14 in the tree is `.ufo/waves/round-54/w1/T54W1ExecFreeze-receipts/c2-frozen-bytes-at-base.out:9`, a wave-1 rerun with `usable_ok=6` (`EXPLAIN usable registry-check rc=1`), carried into the round-54 scribe work order at `.ufo/waves/round-54/spec-w2.json:428` (\'the recorded base C2 line is `total=14` with `usable_ok=6`\'). Calling 14 \'the recorded receipt\' inverted the two and made a host-dependent rerun look like the baseline.'
+
+#################### T55W1Er06.json
+## old
+[0]"are tracked in the lane at this round's base (`git ls-files` names each), so\n  nothing was carried in uncommitted."
+[1]'no-harm 14 ok / 0 RED,\ncensus exit 0.'
+[2]'**ER-R54-6 - round work uncommitted at closure.**\nOld: three seat deliverables untracked when the round filed.\nCorrected: they are committed; the sweep that committed them is `ff2a821`.\nReceipts: `.ufo/waves/round-54/w2/T54W2Sent03.md` and\n`.ufo/waves/round-54/w2/T54W2Sent03-receipts/{c1committed-positive.stdout,rejection-attribution.txt}`.'
+
+## new
+[0]"are tracked in the lane at this round's base (`git ls-files` names each), so\n  nothing was carried in uncommitted. This round's own wave did leave three seat\n  deliverables uncommitted at its closure — `.ufo/waves/round-54/w2/T54W2Sent03.md`\n  and its two cited receipts (`c1committed-positive.stdout`,\n  `rejection-attribution.txt`) — written into the lane after the deciding run's\n  before snapshot and swept byte-identical at `ff2a821` (QUALITY 77) [ER-R54-6]."
+[1]"no-harm 14 ok / 0 RED,\ncensus exit 0. The run's after snapshot (`.ufo/evidence/round-54/after/clean-tree-after.txt`,\n12:25:37 local) recorded three untracked seat deliverables — `T54W2Sent03.md` and\nits two cited receipts — so the clean-tree precondition held only at the before\nsnapshot (12:22:17); the closure swept them byte-identical at `ff2a821`\n(QUALITY 77) [ER-R54-6]."
+[2]"**ER-R54-6 - three seat deliverables untracked at the round-54 closure.**\nOld (byte-exact, `.ufo/evidence/round-54/deciding-run.sh:8`, frozen): `the working tree must be clean`.\nOld (byte-exact, `.ufo/evidence/round-54/after/clean-tree-before.txt`, 12:22:17 local): `?? .ufo/evidence/round-54/after/`.\nOld (byte-exact, `.ufo/evidence/round-54/after/clean-tree-after.txt`, 12:25:37 local): `?? .ufo/evidence/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout`, `?? .ufo/evidence/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt`, `?? .ufo/waves/round-54/w2/T54W2Sent03.md`.\nCorrected: the three are committed, and the commit that adds all three is `ff2a821` (parent `0263c71e`, 12:54:32 local). Their blobs at `ff2a821` are their blobs at the base (`7448be1b`, `c63fc96c`, `4cdc204c`), and the non-author spot-check `cmp`-verified the bytes before and after the sweep. Rule broken: QUALITY 77 — `A seat's report is lane evidence: it is written under the lane's own wave directory, and a lane's own count of its residual reports must match the files that are actually committed there.` The round's own precondition was tested once, at the before snapshot, and never again; the after snapshot recorded the violation and `DECIDING_RUN_EXIT=0` did not read it.\nDerivation: `git log --reverse --format=%H 0a2010acd1e9 -- .ufo/waves/round-54/w2/T54W2Sent03.md | head -1` → `ff2a821a1e83acd92bb4d62bad15f380973a55ea` (7-hex `ff2a821`), the round-55 C1 counter's `first_commit` arm."
+
+## derived
+'sweep commit=ff2a821'
+
+## output
+'exists at base: YES (3/3)\nbase blob 7448be1be6510bfc261b5b120ce14c0a54489d88  ff2a821 blob 7448be1be6510bfc261b5b120ce14c0a54489d88\nbase blob c63fc96c958c09377f2e8eb56fced010c7d11dba  ff2a821 blob c63fc96c958c09377f2e8eb56fced010c7d11dba\nbase blob 4cdc204cd232a2df6321ef9217810037dfd9e7ff  ff2a821 blob 4cdc204cd232a2df6321ef9217810037dfd9e7ff\nfirst commit (all three): ff2a821a1e83acd92bb4d62bad15f380973a55ea\nC1 row at base:                  EXPLAIN R54.6 FAIL premise=ok corrected=miss stale=0 derived=sweep commit=ff2a821\nC1 row with this correction:     EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821  (fixture commit d5f61832224f178eb8a3cd8c975f4a48a7668d36, scratch clone; no other R54 row changed)'
+
+## what
+"Three seat deliverables were untracked at the round-54 closure and were swept later: .ufo/waves/round-54/w2/T54W2Sent03.md and its two cited receipts (.ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout, .../rejection-attribution.txt). All three exist at the base 0a2010acd1e9; the deciding run's before snapshot (clean-tree-before.txt) does not list them and its after snapshot (clean-tree-after.txt) does, so they were written into the lane between the two snapshots of one deciding invocation; exactly one commit in the lane's history adds all three, ff2a821a1e83acd92bb4d62bad15f380973a55ea (parent 0263c71ed6ec930603f5e37578ef46e498c96111, 2026-10-28 12:54:32 -0300, message 'bytes unchanged'). Rule broken: QUALITY 77 (a seat's report is lane evidence and a lane that claims it must carry it committed in its own wave directory). The round's own precondition, frozen in .ufo/evidence/round-54/deciding-run.sh:8, is asserted only at line 61 on the before snapshot; line 87 writes the after witness and never reads it, so DECIDING_RUN_EXIT=0 on a tree that was not clean during the run."
+

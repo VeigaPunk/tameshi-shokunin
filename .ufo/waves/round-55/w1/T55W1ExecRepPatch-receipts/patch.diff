@@ -1,0 +1,39 @@
+diff --git i/tools/repeat-control.py w/tools/repeat-control.py
+index 0d662e5..9aa3ca5 100755
+--- i/tools/repeat-control.py
++++ w/tools/repeat-control.py
+@@ -145,6 +145,14 @@ USAGE = (
+ )
+ 
+ 
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).
++
++    A distinct type so main() can answer with the frozen grammar line instead of
++    the generic setup line that leaks the Python type name. The operator-visible
++    class is the line, not this class (scratch-root-contract §1)."""
++
++
+ def strict_scratch_root():
+     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+@@ -153,7 +161,7 @@ def strict_scratch_root():
+     t = _os.environ.get("TMPDIR")
+     if t:
+         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+-            raise RuntimeError(
++            raise ScratchRootUnusable(
+                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+         return t
+     return tempfile.gettempdir()
+@@ -904,6 +912,10 @@ def dispatch(argv):
+ def main(argv):
+     try:
+         status = dispatch(argv)
++    except ScratchRootUnusable as exc:
++        emit_err(f"repeat-control: could-not-evaluate: {exc}")
++        emit("REPEAT_CONTROL: setup_error")
++        status = EXIT_BY_ID["setup_error"]
+     except Exception as exc:  # noqa: BLE001 - never let a traceback exit 1
+         status = setup_failure(f"{type(exc).__name__}: {exc}")
+     # A terminal that refused output must not change the class at shutdown:

@@ -1,0 +1,26 @@
+## second invocation: sentinel is OUT-scoped
+$ bash gate.sh fix1 F R /fast/scratch/hyaku/tameshi-r55/T55W1CritFreeze/out-second-1   # first invocation, OUT outside LANE
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+$ bash gate.sh fix1 F R /fast/scratch/hyaku/tameshi-r55/T55W1CritFreeze/out-second-1   # second invocation, same OUT
+FREEZE_INTEGRITY: OK files=6 amendments=0
+DECIDING_REFUSED second-invocation c1
+exit=3
+$ bash gate.sh fix1 F R /fast/scratch/hyaku/tameshi-r55/T55W1CritFreeze/out-second-2   # second invocation, different empty OUT
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+$ bash gate.sh fix1 F R /fast/scratch/hyaku/tameshi-r55/T55W1CritFreeze/out-second-2   # OUT is no longer empty (docs say EMPTY inside LANE; neither is checked)
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+
+## clean-tree check is a regex: OUT name ".*" hides every untracked line
+$ git -C fix5 status --porcelain
+?? junkfile
+[end]
+$ bash gate.sh fix5 <F> <R> fix5/.*
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0

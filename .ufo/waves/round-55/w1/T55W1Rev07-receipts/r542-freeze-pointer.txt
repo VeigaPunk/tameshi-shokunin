@@ -1,0 +1,21 @@
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/evidence/round-54/after/frozen.stdout
+FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c
+[exit 0]
+
+$ for c in 441c26be 7883e0e5 097985c1 fe70474d 077d431e; do printf '%s: ' $c; git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show $c:.ufo/evidence/round-54/freeze.json | python3 -c "import json,sys; d=json.load(sys.stdin); print('files='+str(len(d['files']))+' amendments='+str(len(d.get('amendments') or [])))"; done
+441c26be: files=7 amendments=0
+7883e0e5: files=7 amendments=1
+097985c1: files=10 amendments=2
+fe70474d: files=10 amendments=4
+077d431e: files=10 amendments=5
+[exit 0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format='%h %ad %s' --date=iso -7 -- .ufo/evidence/round-54/freeze.json
+077d431 2026-10-28 12:05:19 -0300 round-54: amendment 5 — control gate requires non-empty blobs and the CONTROLS_A/B verdict lines; wave-1/2 reports, the 19-heading re-key and the adjudication file committed
+fe70474 2026-10-28 12:05:19 -0300 round-54: amendment 4 — the C2 /tmp census regex now matches plain mkdir( as well as mkdirat( (the frozen suffix requirement made the arm unable to fire); manifest re-hashed, integrity OK
+4e2de73 2026-10-28 12:00:39 -0300 round-54: amendment 3 — the C1 reader arm scans both wave directories (w1 and w2); manifest re-hashed and integrity OK
+097985c 2026-10-28 11:52:14 -0300 round-54: freeze-digest gate resolves the three inherited counter bodies by their repo paths (the round-54 evidence keys stay round-relative); manifest re-hashed, integrity OK 10/10
+19c7558 2026-10-28 11:51:50 -0300 round-54: re-freeze (amendment 2, all 11 contract paths hashed, freeze-digest gate in the deciding script), base receipts, phase-A control receipts, section manifest, binder and wave specs
+7883e0e 2026-10-28 11:44:51 -0300 round-54: amendment 1 — C1 arm 3 discovers the re-key directory from each traced path's directory component (the basename match could never fire); found by the binder dry run before any control score or deciding invocation
+441c26b 2026-10-28 11:19:07 -0300 round-54: claim contract, both counters, no-harm monitors, controls harness and freeze manifest (pre-seat)
+[exit 0]

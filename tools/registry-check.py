@@ -754,6 +754,10 @@ def resolve_rev(root, rev):
 
 
 
+class ScratchRootUnusable(RuntimeError):
+    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+
+
 def strict_scratch_root():
     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
@@ -762,7 +766,7 @@ def strict_scratch_root():
     t = _os.environ.get("TMPDIR")
     if t:
         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
-            raise RuntimeError(
+            raise ScratchRootUnusable(
                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
         return t
     return tempfile.gettempdir()
@@ -1844,6 +1848,9 @@ def main(argv):
             return usage_failure("--selftest takes no further arguments")
         try:
             return selftest()
+        except ScratchRootUnusable as exc:
+            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+            return 2
         except RuntimeError as exc:
             print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
             return 2
@@ -1925,6 +1932,11 @@ def main(argv):
         fleet_root = os.path.dirname(os.path.realpath(root_requested))
         try:
             work, root = clone_lane_at_rev(root_requested, rev, sha)
+        except ScratchRootUnusable as exc:
+            # The class, not a verdict: one stderr line with the frozen grammar,
+            # exit 2, and stdout carries no could-not-evaluate verdict (round 55).
+            print(f"registry-check: could-not-evaluate: {exc}", file=sys.stderr)
+            return 2
         except RuntimeError as exc:
             report = {
                 "schema": REPORT_SCHEMA,

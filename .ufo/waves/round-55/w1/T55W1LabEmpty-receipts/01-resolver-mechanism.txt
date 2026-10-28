@@ -1,0 +1,24 @@
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane && env TMPDIR= python3 -c '...'
+os.environ.get(TMPDIR) = ''
+bool(get)              = False
+candidates             = ['/tmp', '/var/tmp', '/usr/tmp', '/fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane']
+gettempdir()           = /tmp
+cwd                    = /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane
+
+$ CPython source, /usr/lib/python3.14/tempfile.py:163-166 (the 'if dirname:' skip)
+    # First, try the environment.
+    for envname in 'TMPDIR', 'TEMP', 'TMP':
+        dirname = _os.getenv(envname)
+        if dirname: dirlist.append(dirname)
+
+$ CPython source, :176-180 (getcwd is the last candidate)
+    # As a last resort, the current directory.
+    try:
+        dirlist.append(_os.getcwd())
+    except (AttributeError, OSError):
+        dirlist.append(_os.curdir)
+
+$ CPython source, :197-199 (candidates abspath'd except '.')
+    for dir in dirlist:
+        if dir != _os.curdir:
+            dir = _os.path.abspath(dir)

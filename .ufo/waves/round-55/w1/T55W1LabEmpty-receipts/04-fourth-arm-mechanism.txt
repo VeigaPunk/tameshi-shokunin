@@ -1,0 +1,10 @@
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane && env TMPDIR=tmp-rel python3 -c 'import helper; strict_scratch_root()'
+strict_scratch_root() -> 'tmp-rel' (absolute? False )
+mkdtemp would join to: tmp-rel/X -> abs /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane/tmp-rel/X
+
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane/tmp-rel/nest && env TMPDIR=tmp-rel python3 ../../tools/repeat-control.py --selftest
+rc=2
+repeat-control: setup: RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: 'tmp-rel' (could-not-evaluate)
+
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane/tmp-rel/nest && env TMPDIR= python3 ../../tools/repeat-control.py --selftest
+rc=0   (empty arm is cwd-independent)

@@ -1,0 +1,26 @@
+== fixture: one record carrying BOTH scorings of CTL_POS_c1 (the R54.1 correction form) ==
+record .ufo/fixture/record.md: lines 1 and 7 are the mis-scored and the re-scored control line
+
+== (a) check the mis-scored receipt against that record ==
+$ c106-controls.py --lane clone --rev ca81c8f --certifies c21081008adbb --control CTL_POS_c1=.ufo/evidence/round-54/control/controls-b.stdout --expect CTL_POS_c1=true --record .ufo/fixture/record.md
+FAIL CTL_POS_c1 rev scored_at=077d431e6996 certifies=c21081008adb
+FAIL CTL_POS_c1 verdict line=C1_R54_PASS=false expected=true
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+658 credited=64 receipt=credited=60
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+658 lost=0 receipt=lost=4
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+658 rekeyed=7/7 receipt=rekeyed=3/7
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+658 readers=7/7 receipt=readers=6/7
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+658 monitor=8/64 receipt=monitor=6/60
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+658 total=0 receipt=total=4
+C106: controls=1 pass=0 fail=1
+EXIT=1
+
+== (b) check the re-scored receipt against the same record ==
+$ c106-controls.py --lane clone --rev ca81c8f --certifies c21081008adbb --control CTL_POS_c1=.ufo/fixture/rescored.stdout --expect CTL_POS_c1=true --record .ufo/fixture/record.md
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+4 credited=60 receipt=credited=64
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+4 lost=4 receipt=lost=0
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+4 rekeyed=3/7 receipt=rekeyed=7/7
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+4 readers=6/7 receipt=readers=7/7
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+4 monitor=6/60 receipt=monitor=8/64
+FAIL CTL_POS_c1 paraphrase .ufo/fixture/record.md+4 total=4 receipt=total=0
+C106: controls=1 pass=0 fail=1
+EXIT=1

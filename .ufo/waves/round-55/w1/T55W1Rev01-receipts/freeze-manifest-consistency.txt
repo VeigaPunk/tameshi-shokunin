@@ -1,0 +1,24 @@
+# command: python3 - <<'PY' (sha256 each freeze.json pin vs the file on disk)
+worktree freeze.json: amendments=3 files=6
+worktree contract.json: amendments=5 frozen_paths=7
+.ufo/evidence/round-55/c1/measure.py           pin=77abe1e9daf4 cur=711507e7b5bd MISMATCH
+.ufo/evidence/round-55/c2/measure.py           pin=ab3ae7514691 cur=d6ca1d851bb0 MISMATCH
+.ufo/evidence/round-55/contract.json           pin=ed6871e17697 cur=5de4f37b14db MISMATCH
+.ufo/evidence/round-55/controls.sh             pin=7c0cacb56c67 cur=7c0cacb56c67 OK
+.ufo/evidence/round-55/deciding-run.sh         pin=af11d7551d8a cur=af11d7551d8a OK
+.ufo/evidence/round-55/no-harm.sh              pin=d93469db5a55 cur=d93469db5a55 OK
+
+# committed set at 631cd645: freeze.json amendments and the blobs it pins
+amendments=0 files=6
+.ufo/evidence/round-55/c1/measure.py           committed_sha256=77abe1e9daf4
+.ufo/evidence/round-55/c2/measure.py           committed_sha256=9d076812d9c0
+.ufo/evidence/round-55/contract.json           committed_sha256=2388cb50323f
+.ufo/evidence/round-55/controls.sh             committed_sha256=7c0cacb56c67
+.ufo/evidence/round-55/deciding-run.sh         committed_sha256=af11d7551d8a
+.ufo/evidence/round-55/no-harm.sh              committed_sha256=d93469db5a55
+
+# amendment 5 text (contract.json)
+c1/measure.py's stale scan was line-scoped (a regex window that forbade a newline) and read three record files; wave-1 seat T55W1Er01 found a falsehood the window could not see (`corpus/lessons/round-54.md` splits `proves the arm ... requires rekeyed=7/7` across two lines) and pointed at LOG.md, which still carried R54.2's stale pointer. The scan now also searches each record document with whitespace collapsed (reporting an offset) and LOG.md joins the record set. The predicate is unchanged and now stricter: no stale assertion may stand in the lane's records outside the corrections section.
+
+# R54.2 stale scan in the amended counter (still SCORECARD-only):
+206:    stale = scan(lane, rev, ("SCORECARD.md",), r"7883e0e5|fe70474d")

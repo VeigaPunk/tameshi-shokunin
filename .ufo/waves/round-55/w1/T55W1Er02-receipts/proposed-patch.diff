@@ -1,0 +1,70 @@
+diff --git a/LOG.md b/LOG.md
+index 704b05a..b00f124 100644
+--- a/LOG.md
++++ b/LOG.md
+@@ -2498,7 +2498,8 @@ under this entry.
+ L1 TameshiR54a2, hyaku run 11. Attempt 1 left nothing (no wave dir, no evidence,
+ clean tree). Base `d33053f7`; contract frozen at `441c26be`; amendment 1 at
+ `7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+-control score — the freeze pointer the deciding run uses). Claims: C1
++control score; the round's freeze pointer is `077d431e`, see the round-55
++record corrections in `SCORECARD.md`). Claims: C1
+ calibration — the cold-read floor (57/64 at base; the round's own content edits
+ drift it to 41/64, so the round re-reads and re-keys 23 sections); C2
+ operability — one scratch-root exit class across the seven tools
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 6f5f95a..38ae19e 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -2561,11 +2561,14 @@ incomplete; the round reports the miss, not a narrowed target.
+ L1 TameshiR54a2, hyaku run 11, attempt 2. Two claims on distinct axes,
+ pre-registered with both counters, the controls harness, the 14 no-harm
+ monitors and the deciding script in `.ufo/evidence/round-54/contract.json`,
+-frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
++frozen at `441c26be` before any seat ran; **amendment 1** (one follow-up
++commit) fixes
+ one mechanical discovery bug in the C1 counter's re-key arm, found by the binder
+ dry run before any control was scored and before any deciding invocation —
+-predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+-deciding run uses. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
++predicate, target and arms unchanged. The round has **one freeze pointer,
++`077d431e`** (the fifth and last amendment), which is what the deciding
++receipt prints [ER-R54-2]. Base `d33053f7`; content commit C0 `59c38109`;
++fix-pass
+ commit C1 `99c3bc88`. Round shape: one v2 wave of 76 seats (band 64–128) plus
+ one v1 wave of 47 seats (band 32–64) = 123 seats. Calibration (8) is the lowest
+ non-retired axis and carries C1.
+@@ -2605,7 +2608,7 @@ only; carried from round 53: the service-limits §5 U1 heading re-read.
+ ### Round 54 — measured close (appended after the deciding invocation)
+ 
+ One deciding invocation at the post-re-key revision (`.ufo/evidence/round-54/after/`),
+-freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
++freeze `077d431e` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+ census exit 0.
+ 
+ - **C1** `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true` — **verifies**.
+@@ -2616,3 +2619,24 @@ census exit 0.
+ Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to the credited count in the C1 line above);
+ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+ 
++## Round 55 - round-54 record corrections
++
++**ER-R54-2 - three freeze pointers for one round.**
++Old (line numbers as the record stood at `631cd645`): `7883e0e5` at
++`SCORECARD.md:2564` and again at `SCORECARD.md:2567` as "the freeze pointer the
++deciding run uses"; `fe70474d` in the round-54 measured-close line
++(`SCORECARD.md:2608`); `097985c1` in the fleet report; and the same "the freeze
++pointer the deciding run uses" clause under `7883e0e5` in `LOG.md:2500-2501`.
++`LOG.md` is outside the counter's scan set (SCORECARD.md, corpus/QUALITY.md,
++corpus/lessons/round-54.md), so that last pair is a record fix the counter
++cannot see.
++Corrected: one pointer, `077d431e`, derived from the tree rather than chosen.
++The deciding receipt's `freeze=` field is the `FREEZE` commit
++`.ufo/evidence/round-54/deciding-run.sh` echoes in its `FROZEN_UNCHANGED` line,
++and `git show 077d431e:.ufo/evidence/round-54/freeze.json` reads `amendments=5`
++(last), against `7883e0e5` `amendments=1`, `097985c1` `amendments=2` and
++`fe70474d` `amendments=4`; `git log -1 --format=%H 077d431e --
++.ufo/evidence/round-54` returns `077d431e69965fa4673cd006ab64f6fc387f9e15`.
++Receipt: `.ufo/evidence/round-54/after/frozen.stdout`
++(`FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15
++rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`).

@@ -1,0 +1,276 @@
+diff --git a/SKILL.md b/SKILL.md
+index 8482934..b6e2fa8 100644
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -34,8 +34,14 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a
+   (`TMPDIR=""`) → unset (the resolver skips an empty candidate, S278:163-165; the
+   documented list follows, S279); set but unusable → exit 2, could-not-evaluate,
+   naming the value — never a silent `/tmp` fallback, never a traceback, never exit
+-  1. Measured on each tool's `--selftest`/`selftest` path (round-54 C2 counter);
+-  other modes are outside that measurement (corpus/knowledge/scratch-root-contract.md;
++  1. The class is one line grammar, not a shared Python type: `<tool>:
++  could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is
++  not a usable directory: '<value>' (could-not-evaluate)` on stderr with exit 2.
++  Measured on all 13 documented modes of the seven tools (round-55 C2 counter):
++  the eight that allocate scratch (the seven self-tests plus `env-diff
++  --contract`) and the five that stay lazy (`repeat-control --snapshot`,
++  `bash-witness-study count`, `pin-disposition --read`, `evidence-disposition
++  --json`, `context-capture --check`) (corpus/knowledge/scratch-root-contract.md;
+   the seven registry `scratch_root` cells).
+ 
+ ## Source notes
+diff --git a/corpus/knowledge/scratch-root-contract.md b/corpus/knowledge/scratch-root-contract.md
+index 255e9cf..e2e66a3 100644
+--- a/corpus/knowledge/scratch-root-contract.md
++++ b/corpus/knowledge/scratch-root-contract.md
+@@ -42,25 +42,85 @@ R53.6). Round 54 gives each of the four a `ScratchRootUnusable(RuntimeError)`
+ subclass raised by the helper and caught at the entry point, printing one line
+ that names the value and the class.
+ 
++## One line: the grammar, all eight allocating modes (round 55)
++
++The class is one operator-visible line on stderr and exit 2. A caller parses the
++line; it is not a shared Python type — each of the seven tools defines its own
++`ScratchRootUnusable(RuntimeError)` beside its own copy of
++`strict_scratch_root()`, and no module imports a common class. That is why the
++claim is the grammar below and not "the tools raise one type": two of the seven
++raised a bare `RuntimeError`, and one printed the failure on stdout
++(`SELFTEST: FAIL`), until round 55 moved both to this line.
++
++```
++^[A-Za-z][A-Za-z0-9_.-]*(\.py)?: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' \(could-not-evaluate\)$
++```
++
++The prefix is the tool's own name (`repeat-control.py`, `context-capture.py`,
++`pin-disposition.py`, `evidence-disposition.py`, `registry-check`,
++`ENVDIFF_SETUP`), so a caller may match the whole line or the suffix from
++`: could-not-evaluate:`. The value is the raw `TMPDIR` in single quotes; five
++helpers render it with `%r` and the two round-55 fixes with an explicit `'%s'`,
++so a `TMPDIR` containing a single quote would leave the five outside the grammar —
++observed by construction, and outside the counter's fixtures.
++
++### The eight allocating modes
++
++Each of these allocates clone scratch and must exit 2 with that line on stderr
++and nothing on stdout when `TMPDIR` is set but unusable (round-55 C2 arm
++`grammar`):
++
++| mode | tool |
++|---|---|
++| `repeat-control --selftest` | tools/repeat-control.py |
++| `registry-check --selftest` | tools/registry-check.py |
++| `bash-witness-study selftest` | tools/bash-witness-study.py (the round-55 counter's label for this row is `bash-witness-study --selftest`; the invocation takes a subcommand, not a flag) |
++| `pin-disposition --selftest` | tools/pin-disposition.py |
++| `evidence-disposition --selftest` | tools/evidence-disposition.py |
++| `context-capture --selftest` | tools/context-capture.py |
++| `env-diff --selftest` | tools/env-diff.py |
++| `env-diff --contract` | tools/env-diff.py |
++
++The last one is the mode round 54 left outside the contract: it is not a
++self-test, and it allocates its scratch only after the contract file parses.
++
++### The five lazy modes
++
++These do not touch the scratch root, so the same unusable `TMPDIR` is not an
++environment fact for them and they keep their ordinary exit (round-55 C2 arm
++`lazy`):
++
++| mode | expected exit on unusable `TMPDIR` |
++|---|---|
++| `repeat-control --snapshot` | 0 (fixture matches) |
++| `bash-witness-study count` | 0 |
++| `pin-disposition --read` | 0 |
++| `evidence-disposition --json` | 0 |
++| `context-capture --check` | 0 |
++
+ ## What measures it
+ 
+-`python3 .ufo/evidence/round-54/c2/measure.py` runs each of the seven tools'
+-self-tests under three `TMPDIR` states (unusable, empty, usable) and reads the
+-registry rows: 7/7 exit 2 with the naming line and no traceback, 7/7 exit 0 on
+-the empty arm, 7/7 exit 0 on a usable root with no `mkdir` under `/tmp` under
+-`strace`, and 7/7 rows carrying the `scratch_root` cell. The counter's blind
+-spot is stated in the contract: it sees the self-test path, not every branch a
+-tool might use to allocate scratch.
++`python3 .ufo/evidence/round-55/c2/measure.py` widens that to every documented
++mode of the seven tools — 13 modes under three `TMPDIR` states: the 8
++allocating modes exit 2 with the line above and no `RuntimeError`/`Traceback` on
++either stream, the 5 lazy modes keep their exit, all 13 keep their expected exit
++on the empty and the usable arms, the allocating modes make no `mkdir` under
++`/tmp` under `strace`, and the seven registry cells, this note and `SKILL.md`
++carry the grammar (round 54's counter saw only the self-tests). The remaining
++blind spot stands: a mode the registry does not document may allocate scratch on
++its first statement, and the counter checks that the line is present, not how a
++caller parses it — by prefix or as the whole line.
+ 
+ ## Falsifier
+ 
+ A tool that returns 0 after printing the could-not-evaluate line (control
+ CTL_EXIT0), or that names the class without the value, fails the counter.
+ 
+-One residue is named, not fixed: `tools/context-capture.py` exits 2 with the
+-class and the value but prefixes the line with `SELFTEST: FAIL`, a verdict
+-token the class forbids; the round-54 C2 arm reads the exit code and the naming
+-line, not the absent token, so the arm passes and the vocabulary residue goes
+-to round 55 (it is a tool edit, and the fix commit is the round's read revision). A
+-tool that regains a `dir="/tmp"` literal fails the round-53 monitor and the C2
+-`tmp_mkdirs` arm together.
++One residue round 54 named and did not fix (fixed in round 55, above):
++`tools/context-capture.py` exited 2 with the class and the value but prefixed
++the line with `SELFTEST: FAIL`, a verdict token the class forbids; the round-54
++C2 arm read the exit code and the naming line, not the absent token, so the arm
++passed and the vocabulary residue went to round 55 — both it and
++`repeat-control.py` now print `<tool>: could-not-evaluate: …` on stderr and
++nothing on stdout. A tool that regains a `dir="/tmp"` literal fails the
++round-53 monitor and the C2 `tmp_mkdirs` arm together.
+diff --git a/tools/context-capture.py b/tools/context-capture.py
+index 9208999..34402f1 100755
+--- a/tools/context-capture.py
++++ b/tools/context-capture.py
+@@ -297,16 +297,22 @@ expected schema (exactly four keys):
+ """
+ 
+ 
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
++
++
+ def strict_scratch_root():
+     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+-    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    fallback to /tmp, preserving CR47 semantics), else the platform default.
++    Round 55: the unusable arm is one stderr line, exit 2
++    (corpus/knowledge/scratch-root-contract.md)."""
+     import os as _os
+     t = _os.environ.get("TMPDIR")
+     if t:
+         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+-            raise RuntimeError(
+-                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++            raise ScratchRootUnusable(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '%s' (could-not-evaluate)" % t)
+         return t
+     return tempfile.gettempdir()
+ 
+@@ -2210,6 +2216,11 @@ def run_selftest():
+         harness = SelftestHarness()
+         run_selftest_cases(harness)
+         return harness.finish()
++    except ScratchRootUnusable as exc:
++        # Round 55: the class is one line on stderr, exit 2; nothing about the
++        # setup failure goes to stdout (a caller reads the class, not a verdict).
++        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
++        return 2
+     except Exception as exc:  # setup failure is loud but never a traceback
+         sys.stdout.write(
+             "SELFTEST: FAIL (setup error: {}: {})\n".format(
+diff --git a/tools/registry.json b/tools/registry.json
+index 3f77bfc..adb0ca8 100644
+--- a/tools/registry.json
++++ b/tools/registry.json
+@@ -41,7 +41,7 @@
+     },
+     {
+       "name": "repeat-control-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": [
+         "python3",
+@@ -84,7 +84,7 @@
+     },
+     {
+       "name": "bash-witness-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": [
+         "python3",
+@@ -132,7 +132,7 @@
+     },
+     {
+       "name": "pin-disposition-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": [
+         "python3",
+@@ -330,7 +330,7 @@
+     },
+     {
+       "name": "evidence-disposition-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": [
+         "python3",
+@@ -421,7 +421,7 @@
+     },
+     {
+       "name": "context-capture-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": [
+         "python3",
+@@ -617,7 +617,7 @@
+     },
+     {
+       "name": "registry-check-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": [
+         "python3",
+@@ -859,7 +859,7 @@
+     },
+     {
+       "name": "env-diff-selftest",
+-      "scratch_root": "TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp (round 54, corpus/knowledge/scratch-root-contract.md)",
++      "scratch_root": "TMPDIR set but unusable => exit 2 with one stderr line, could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate) — the value is named, no traceback, no RuntimeError token; TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp. The class covers all eight allocating modes — repeat-control --selftest, registry-check --selftest, bash-witness-study selftest, pin-disposition --selftest, evidence-disposition --selftest, context-capture --selftest, env-diff --selftest, env-diff --contract (round 55, corpus/knowledge/scratch-root-contract.md)",
+       "kind": "selftest",
+       "argv": ["python3", "tools/env-diff.py", "--selftest"],
+       "expect": {"exit": 0, "stdout_contains": ["ENVDIFF_SELFTEST: 9/9 pass"]},
+diff --git a/tools/repeat-control.py b/tools/repeat-control.py
+index 0d662e5..0a47b78 100755
+--- a/tools/repeat-control.py
++++ b/tools/repeat-control.py
+@@ -145,16 +145,22 @@ USAGE = (
+ )
+ 
+ 
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR: could-not-evaluate (exit 2), never a traceback."""
++
++
+ def strict_scratch_root():
+     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+-    fallback to /tmp, preserving CR47 semantics), else the platform default."""
++    fallback to /tmp, preserving CR47 semantics), else the platform default.
++    Round 55: the unusable arm is one stderr line, exit 2
++    (corpus/knowledge/scratch-root-contract.md)."""
+     import os as _os
+     t = _os.environ.get("TMPDIR")
+     if t:
+         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+-            raise RuntimeError(
+-                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
++            raise ScratchRootUnusable(
++                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '%s' (could-not-evaluate)" % t)
+         return t
+     return tempfile.gettempdir()
+ 
+@@ -904,6 +910,11 @@ def dispatch(argv):
+ def main(argv):
+     try:
+         status = dispatch(argv)
++    except ScratchRootUnusable as exc:
++        # Round 55: one operator-visible line on stderr, exit 2 — no `setup:`
++        # prefix, no exception type, no stdout setup error.
++        emit_err(f"repeat-control.py: could-not-evaluate: {exc}")
++        status = EXIT_BY_ID["setup_error"]
+     except Exception as exc:  # noqa: BLE001 - never let a traceback exit 1
+         status = setup_failure(f"{type(exc).__name__}: {exc}")
+     # A terminal that refused output must not change the class at shutdown:

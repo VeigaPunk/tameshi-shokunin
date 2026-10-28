@@ -1,0 +1,20 @@
+# counter arms on scratch-clone fixtures (frozen c1/measure.py bytes, --work empty each run)
+# clone: /fast/scratch/hyaku/tameshi-r55/T55W1Rev03/lane2 @ 631cd645..., fixtures committed inside it only
+
+== fixture A: 84b0413fc64bb26c5f3a706ea145f8e46e69093f T55W1Rev03 fixture A: Er05 insert + Er06 new[2] in corrections section
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+C1_R55: rev=84b0413fc64b classes=10 premise=10/10 stale=4 classes_corrected=2/10 total=8 C1_R55_PASS=false
+
+== fixture B: 77095d2f6eea04797f11d6f0500b576badbf7fc2 T55W1Rev03 fixture B: round-54 wrong triple restored (negative control)
+EXPLAIN R54.5 FAIL premise=ok corrected=miss stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+C1_R55: rev=77095d2f6eea classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+== fixture C: 58e25701b4afdf0c774731b1261edbc90d92b3b0 T55W1Rev03 fixture C: sweep sha one byte off (negative control)
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 FAIL premise=ok corrected=miss stale=0 derived=sweep commit=ff2a821
+C1_R55: rev=58e25701b4af classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+# fixture A = Er05 'insert' paragraph + Er06 new[2] verbatim; B = the round-54 wrong triple restored;
+# C = A with ff2a821 -> ff2a820 (one hex digit)

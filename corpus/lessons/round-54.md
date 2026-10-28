@@ -48,7 +48,7 @@ Rejects (this round's set):
   round's centre of gravity is the C1 floor repair plus the C2 exit class. Flip:
   it is the next-ranked entry for round 55 (its subject, a stated minimality
   witness, matches the round-50 shrinker's `cannot_see` line).
-- **The other 84 staged `merge/tameshi` entries** — REFUSED for the same capacity
+- **The other 80 staged `merge/tameshi` entries** — REFUSED for the same capacity
   reason; they stay reserved by document.
 
 Assimilation verdict: one theme (the scratch-root contract) with three rows and
@@ -71,9 +71,11 @@ line rather than acted on; proposals 2–5 remain unmined (at most one per round
   counter had no arm-level self-test, and the round-53 control scored the
   do-nothing tree (which fails for other reasons), so a dead arm looked
   healthy. fix: this round's counter lists the re-key directory with
-  `git ls-tree -r` and proves the arm on the positive control CTL_POS_c1, which
-  requires `rekeyed=7/7`; the control receipts are committed before the deciding
-  run (`.ufo/evidence/round-54/control/`).
+  `git ls-tree -r` and the arm's own count is read at the deciding revision
+  (7 of 7); the control pre-registered in phase B was cloned at the freeze
+  commit, printed `CTL_MISMATCH` (3 of 7) and therefore never fired
+  [ER-R54-1, round-55 correction]; the control receipts are committed under
+  `.ufo/evidence/round-54/control/`.
 
 ## QUALITY criterion (drafted; lands with the round commit)
 
@@ -97,8 +99,10 @@ pin only artifacts those edits did not touch, and the deciding run re-derives
 
 - **R53.1** (the frozen round-53 C1 counter's rekey arm was dead) — FIXED: this
   round's counter lists the re-key directory with `git ls-tree -r` (a recursive
-  listing, so the directory's own name cannot shadow the match), and the arm is
-  proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`).
+  listing, so the directory's own name cannot shadow the match), and the arm
+  reads 7 of 7 at the deciding revision; the control
+  pre-registered in phase B was cloned at the freeze commit and printed
+  `CTL_MISMATCH` (3 of 7), so it never fired [ER-R54-1, round-55 correction].
   The dead arm's own receipt is kept:
   `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`
   (`rekeyed=0/30` at the round-53 final revision). QUALITY 105 lands with it.

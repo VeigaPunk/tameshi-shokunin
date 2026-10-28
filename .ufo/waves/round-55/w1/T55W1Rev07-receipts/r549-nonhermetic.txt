@@ -1,0 +1,33 @@
+$ find /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/staged4/merge/tameshi/knowledge -name '*.md' | wc -l
+81
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev e1b6b75d1c0e45879968287acfb657c928349e5f --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/w-q1 --explain --staged-root /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/staged4 2>&1 | grep -E 'R54.9|C1_R55'
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=e1b6b75d1c0e classes=10 premise=10/10 stale=2 classes_corrected=10/10 total=2 C1_R55_PASS=false
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev e1b6b75d1c0e45879968287acfb657c928349e5f --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/w-q2 --explain 2>&1 | grep -E 'R54.9|C1_R55'
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=e1b6b75d1c0e classes=10 premise=10/10 stale=2 classes_corrected=10/10 total=2 C1_R55_PASS=false
+[exit 0]
+
+$ echo probe > /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/staged4/merge/tameshi/knowledge/corpus/knowledge/zz-probe.md; find /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/staged4/merge/tameshi/knowledge -name '*.md' | wc -l
+82
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev e1b6b75d1c0e45879968287acfb657c928349e5f --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/w-q3 --explain --staged-root /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/staged4 2>&1 | grep -E 'R54.9|C1_R55'
+EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=82
+C1_R55: rev=e1b6b75d1c0e classes=10 premise=10/10 stale=2 classes_corrected=9/10 total=3 C1_R55_PASS=false
+[exit 0]
+
+$ grep -n 'STAGED_DEFAULT =' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c1/measure.py
+40:STAGED_DEFAULT = "/home/vgpnk/Projects/shokuknow"
+[exit 0]
+
+$ grep -n 'def staged_count' -A3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c1/measure.py
+165:def staged_count(root):
+166-    return len([p for p in glob.glob(os.path.join(root, "merge/tameshi/knowledge/**/*.md"),
+167-                                     recursive=True)])
+168-
+[exit 0]

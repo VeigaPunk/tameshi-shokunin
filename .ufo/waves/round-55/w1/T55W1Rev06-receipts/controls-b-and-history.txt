@@ -1,0 +1,42 @@
+$ cat .ufo/evidence/round-54/control/controls-b.stdout
+CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false
+CTL_MISMATCH CTL_POS_c1 expected=true actual=false
+CTL CTL_POS_c2 C2_R54: rev=077d431e6996 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+CTL CTL_EXIT0 C2_R54: rev=7df0e0426c98 tools=7 unusable_exit2=6 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
+CONTROLS_B: 2/3 as pre-registered
+
+# receipt re-stated at the round-54 freeze 077d431e (bytes unchanged; the verdict line above stands)
+
+$ cat .ufo/evidence/round-54/control/controls-b.exit
+1
+
+# receipt re-stated at the round-54 freeze 077d431e (bytes unchanged; the verdict line above stands)
+
+$ git log --all --format="%h %ad %s" --date=iso -- <receipt>
+39333cc 2026-10-28 12:22:02 -0300 
+4824911 2026-10-28 12:22:02 -0300 
+5564954 2026-10-28 12:22:02 -0300 round-54: control receipts re-stated at the freeze commit (the gate requires their last commit to descend from it); late wave receipts
+58b78c1 2026-10-28 12:21:35 -0300 
+7fa9a5e 2026-10-28 12:21:35 -0300 round-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)
+$ git rev-list --all --count -- <receipt>
+5
+$ git cat-file -e 077d431e:<receipt>
+fatal: path '.ufo/evidence/round-54/control/controls-b.stdout' exists on disk, but not in '077d431e'
+ABSENT
+$ blobs at the 5 revisions that touch it
+39333cc d910366b5f89760c1d47bed7d7570c11a6992a58
+4824911 d910366b5f89760c1d47bed7d7570c11a6992a58
+58b78c1 8333e8ce6fb07f627cb4f42cf0dafc24b3e7b83f
+7fa9a5e 8333e8ce6fb07f627cb4f42cf0dafc24b3e7b83f
+5564954 d910366b5f89760c1d47bed7d7570c11a6992a58
+$ git diff 7fa9a5e 5564954 -- <receipt>
+diff --git a/.ufo/evidence/round-54/control/controls-b.stdout b/.ufo/evidence/round-54/control/controls-b.stdout
+index 8333e8c..d910366 100644
+--- a/.ufo/evidence/round-54/control/controls-b.stdout
++++ b/.ufo/evidence/round-54/control/controls-b.stdout
+@@ -3,3 +3,5 @@ CTL_MISMATCH CTL_POS_c1 expected=true actual=false
+ CTL CTL_POS_c2 C2_R54: rev=077d431e6996 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+ CTL CTL_EXIT0 C2_R54: rev=7df0e0426c98 tools=7 unusable_exit2=6 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
+ CONTROLS_B: 2/3 as pre-registered
++
++# receipt re-stated at the round-54 freeze 077d431e (bytes unchanged; the verdict line above stands)

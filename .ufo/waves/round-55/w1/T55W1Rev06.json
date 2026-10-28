@@ -1,0 +1,127 @@
+{
+  "seat": "T55W1Rev06",
+  "role": "reviewer (non-author re-derivation)",
+  "milestone": "attack C1 rows R54.1, R54.5",
+  "judged_axis": "calibration",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "frozen_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "frozen_c1_measure_sha256": "77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783",
+  "base_row_frozen_bytes": "C1_R55: rev=0a2010acd1e9 classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false",
+  "classes": [
+    {
+      "id": "R54.1",
+      "agree_with_defect": true,
+      "derived": "CTL_MISMATCH + 2/3",
+      "derived_full": "rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false; CTL_MISMATCH CTL_POS_c1 expected=true actual=false; CONTROLS_B: 2/3 as pre-registered; exit 1",
+      "premise_receipt": ".ufo/evidence/round-54/control/controls-b.stdout (present at base; unchanged verdict lines since 7fa9a5e)",
+      "stale_sites_at_base_frozen_bytes": [
+        "SCORECARD.md:2583 (`CTL_POS_c1 true`)",
+        "corpus/QUALITY.md:1590 (`rekeyed=7/7` on its positive control)",
+        "corpus/lessons/round-54.md:101 (`proven live by the positive control ... rekeyed=7/7`)"
+      ],
+      "stale_sites_missed_by_frozen_regex": [
+        "corpus/lessons/round-54.md:74-75 (two-line sentence; the line regex cannot cross the newline)"
+      ],
+      "stale_count_frozen_bytes": 3,
+      "distinct_stale_assertions": 4,
+      "replay": {
+        "at_077d431e": "C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false (exit 1)",
+        "at_c21081008adb": "C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true (exit 0)",
+        "byte_identical_to_receipt": true
+      },
+      "spotcheck_overstated": [
+        "`unchanged across all 5 revisions that touch it`: 5 revisions is right (git rev-list --all --count = 5) but the file has 2 distinct blobs (8333e8ce / d910366b); 5564954 appends 2 lines, and the path is absent at 077d431e. Only the 5 verdict lines are unchanged.",
+        "`in four places` followed by five file:line citations (report:162, SCORECARD:2583, QUALITY:1590, lessons:74,101). Four files, five occurrences."
+      ],
+      "draft": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w1/T55W1Er01.json",
+      "draft_byte_accurate": false,
+      "draft_defects": [
+        "cause.one_line and corrections_section_block cite `control/controls.sh:145`; `clone_at \"$LANE\" \"$REV\" pos` is line 142 (sha256 3f1e5f5c, identical at base and 077d431e). Line 145 is the C2 python invocation.",
+        "cause.tree_facts[1] says `the re-key directory holds 202 files at 077d431e and 206 at 7fa9a5e`; the re-key dir holds 20/24. 202/206 is `.ufo/evidence/round-21/coldread` (the parent directory)."
+      ],
+      "draft_verified": [
+        "old[1..4] texts present byte-identically at base; each sha256 field equals sha256(text)",
+        "derived string present in controls-b.stdout; corrections_section_block carries `CTL_MISMATCH` and `2/3`",
+        "3 headings with no bound entry (boundaries / Using the ledger / Round-26) + 1 with a stale ledger.json pin (Mutation-sweep: 3a086406768e vs d2c72d772751) + 3 credit = rekeyed 3/7",
+        "7fa9a5e adds traces 08/17/18/23 and ledger 587 -> 591",
+        "both replays reproduce the receipt line byte-for-byte"
+      ],
+      "draft_unverifiable": [
+        "verdict.demo_commit e95332d971e17d56552ccab18606288047c5293d is not an object in the lane repo (git cat-file -t fails), so the arms-on-demo row cannot be audited from lane bytes"
+      ]
+    },
+    {
+      "id": "R54.5",
+      "agree_with_defect": true,
+      "derived": "w1=28 w2=25 sections=12",
+      "derived_detail": {
+        "w1": {"reader_files": 23, "findings": 28, "distinct_payloads": 28, "files_with_findings": 15},
+        "w2": {"reader_files": 23, "findings": 25, "distinct_payloads": 25, "files_with_findings": 12}
+      },
+      "stale_count_frozen_bytes": 0,
+      "crosschecks": {
+        "resolutions.json": "12 section-entries / 25 findings / all minor-gap",
+        "ledger": "23 entries bound under rekey-r54-99c3bc88d704; minor_gaps sum 25 over 12 entries",
+        "stable_at_tip_631cd645": true
+      },
+      "spotcheck_overstated": [],
+      "draft": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w1/T55W1Er05.json",
+      "draft_byte_accurate": true,
+      "draft_verified": [
+        "old[1]/old[2] are at fleet report lines 61-62 and 79-80 byte-identically; old[3]/old[4] at .ufo/waves/round-54/w2/T54W2Scribe01.md:230 and :97",
+        "insert carries the exact counter substring `w1=28 w2=25 sections=12`; `sections` is the w2 count only (measure.py:202), and w1's 15 files-with-findings must not enter it",
+        "counts reproduce at base and at tip 631cd645"
+      ],
+      "draft_notes": [
+        "new[3]/new[4] read as in-place replacements of a historical seat file, while disposition says the seat file stays byte-identical; the corrections section must carry the supersession sentence explicitly (insert carries only the counts)."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "high",
+      "id": "F1",
+      "title": "live c1 counter bytes differ from the frozen pin, with the amendment unrecorded and a base premise regressed to 9/10",
+      "evidence": "worktree .ufo/evidence/round-55/c1/measure.py sha256 5e8f50d1..., mtime 2026-10-28 14:12:07 -0300 (rewritten twice while this seat ran: a 14:11:18 run of the worktree copy already showed the span scan and stale=6 for R54.1 at premise=10/10); freeze.json pin 77abe1e9...; amendments [1,2,3] all c2; the c1 diff (36+/5-) adds LOG.md to RECORD, a whitespace-normalized span scan labelled `amendment 5`, and staged_count reading the untracked .ufo/evidence/round-55/c1/staged-at-freeze.txt (absent at 0a2010ac). The amended counter's own before/c1.stdout reads `premise=9/10` / `staged=0` for R54.9.",
+      "disposition": "report only (frozen set); L1 to record the amendment in freeze.json with the new pin, commit the staged receipt, and regenerate the base receipt at a rev that contains it"
+    },
+    {
+      "severity": "medium",
+      "id": "F2",
+      "title": "Er01 cites controls.sh:145 for the phase-B clone; the call is at line 142",
+      "evidence": "grep -n 'clone_at \"$LANE\" \"$REV\" pos' -> 142; line 145 = the C2 python invocation; digest identical at base and 077d431e",
+      "disposition": "fix the citation in cause.one_line and corrections_section_block before landing"
+    },
+    {
+      "severity": "medium",
+      "id": "F3",
+      "title": "Er01 says the re-key directory holds 202/206 files; those are the parent coldread directory counts",
+      "evidence": "rekey-r54-99c3bc88d704: 20 (077d431e) / 24 (7fa9a5e); .ufo/evidence/round-21/coldread: 202 / 206",
+      "disposition": "fix the noun; the causal argument (4 traces, 4 ledger entries) is unaffected"
+    },
+    {
+      "severity": "low",
+      "id": "F4",
+      "title": "spotcheck's receipt-immutability parenthetical is byte-false",
+      "evidence": "5 revisions touch controls-b.stdout but there are 2 blobs; 5564954 appends 2 lines; the path is absent at 077d431e",
+      "disposition": "note only; the verdict lines are unchanged and the defect stands"
+    },
+    {
+      "severity": "low",
+      "id": "F5",
+      "title": "frozen R54.1 stale arm cannot see the two-line lessons claim",
+      "evidence": "frozen regex is line-scoped with [^\\n]{0,160}; lessons 74-75 splits `positive control` from `rekeyed=7/7`; stale=3 vs 4 distinct assertions",
+      "disposition": "note; the live amendment's span scan catches it, but reports 6 hits for 4 distinct assertions (double counts)"
+    },
+    {
+      "severity": "low",
+      "id": "F6",
+      "title": "Er01 lists a true clause among the corrected old text",
+      "evidence": "QUALITY:1590 calling controls-b.stdout `the round-54 positive control` is correct and remains correct in the proposed new text",
+      "disposition": "tighten the Old: wording to the false value only"
+    }
+  ],
+  "receipts_dir": ".ufo/waves/round-55/w1/T55W1Rev06-receipts/",
+  "tooling": "none installed or upgraded"
+}

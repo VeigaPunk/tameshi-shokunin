@@ -1,0 +1,21 @@
+$ registry-check's own child launcher (tools/registry-check.py:949-959 at 631cd645)
+    def run_child(args, extra_env=None):
+        env = row_env()
+        if extra_env:
+            env.update(extra_env)
+        return subprocess.run(
+            [sys.executable, SELF] + args,
+            cwd=scratch,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+        )
+
+$ context-capture's hermeticity case (tools/context-capture.py:1780-1786 at 631cd645)
+    def finish(self):
+        lane_leak = any(
+            DEFAULT_LANE_ROOT in text for text in self.outputs)
+        self.record(
+            "hermetic-no-lane-path", not lane_leak,
+            "default lane root absent from subprocess output"
+            if not lane_leak else "subprocess output names the live lane root")

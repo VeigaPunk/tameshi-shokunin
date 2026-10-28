@@ -1,0 +1,241 @@
+{
+ "seat": "T55W1LabEmpty",
+ "kind": "probe",
+ "lane_rev": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "probe_cwd": "/fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane",
+ "hypothesis": {
+  "text": "an empty TMPDIR is unset for these tools, and nothing is created in the working directory when it is empty",
+  "conjunct_a_empty_is_unset": "CONFIRMED",
+  "conjunct_b_no_cwd_creation": "CONFIRMED on this host (platform temp usable); CONTINGENT in general: getcwd() is the last _candidate_tempdir_list entry and is reachable when /tmp,/var/tmp,/usr/tmp are all unusable"
+ },
+ "evidence": {
+  "helper_source": "tools/bash-witness-study.py:209-221 (and the same helper copied into the six other tools): `t = os.environ.get('TMPDIR'); if t:` -> '' is falsy -> tempfile.gettempdir(); no abspath, no chdir guard",
+  "cpython_source": "/usr/lib/python3.14/tempfile.py:164-166 (if dirname: skip empty), :176-180 (getcwd is the last candidate), :197-199 (candidates abspath'd except '.')",
+  "runtime": {
+   "os.environ.get('TMPDIR')": "",
+   "bool(...)": false,
+   "candidates": [
+    "/tmp",
+    "/var/tmp",
+    "/usr/tmp",
+    "/fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane"
+   ],
+   "gettempdir()": "/tmp"
+  },
+  "empty_arm": [
+   {
+    "mode": "repeat-control --selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   },
+   {
+    "mode": "registry-check --selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   },
+   {
+    "mode": "bash-witness-study selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   },
+   {
+    "mode": "pin-disposition --selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   },
+   {
+    "mode": "evidence-disposition --selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   },
+   {
+    "mode": "context-capture --selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   },
+   {
+    "mode": "env-diff --selftest",
+    "rc": 0,
+    "created_under_cwd": [],
+    "changed_under_cwd": []
+   }
+  ],
+  "strace_empty": {
+   "bash-witness-study": {
+    "rc": 0,
+    "mkdir_under_tmp": 51,
+    "mkdir_not_under_tmp": 21,
+    "relative_mkdirs_proved_inside_tmp": "chdir('/tmp/...') precedes every relative '.git/...' mkdir",
+    "openat_O_CREAT_under_cwd": 0,
+    "openat_O_CREAT_under_tmp": 161
+   },
+   "context-capture": {
+    "rc": 0,
+    "mkdir_under_tmp": 48,
+    "openat_O_CREAT_under_cwd": 0
+   },
+   "env-diff": {
+    "rc": 0,
+    "mkdir_under_tmp": 146,
+    "openat_O_CREAT_under_cwd": 0
+   }
+  },
+  "cwd_candidate_reachable": "tempfile._get_default_tempdir(['/nonexistent-a', cwd]) returned the cwd (in-process, no host change)",
+  "empty_falls_through_to_resolver": "TMPDIR='' + TEMP=<dir> -> gettempdir()=<dir>, so the fallback is the resolver, not '/tmp' literally"
+ },
+ "fourth_arm_relative_tmpdir": {
+  "declared_arms_in_contract": [
+   "unset",
+   "empty",
+   "unusable"
+  ],
+  "measured_arms": {
+   "rel-absent": {
+    "repeat-control --selftest": 2,
+    "registry-check --selftest": 2,
+    "bash-witness-study selftest": 2,
+    "pin-disposition --selftest": 2,
+    "evidence-disposition --selftest": 2,
+    "context-capture --selftest": 2,
+    "env-diff --selftest": 2
+   },
+   "rel-present": {
+    "repeat-control --selftest": 0,
+    "registry-check --selftest": 1,
+    "bash-witness-study selftest": 0,
+    "pin-disposition --selftest": 0,
+    "evidence-disposition --selftest": 0,
+    "context-capture --selftest": 1,
+    "env-diff --selftest": 0
+   },
+   "abs-same-dir": {
+    "repeat-control --selftest": 0,
+    "registry-check --selftest": 0,
+    "bash-witness-study selftest": 0,
+    "pin-disposition --selftest": 0,
+    "evidence-disposition --selftest": 0,
+    "context-capture --selftest": 1,
+    "env-diff --selftest": 0
+   },
+   "tilde": {
+    "repeat-control selftest": 2,
+    "bash-witness-study selftest": 2,
+    "env-diff selftest": 2,
+    "pin-disposition selftest": 2,
+    "context-capture selftest": 2,
+    "evidence-disposition selftest": 2
+   },
+   "file": {
+    "repeat-control selftest": 2,
+    "bash-witness-study selftest": 2,
+    "env-diff selftest": 2,
+    "pin-disposition selftest": 2,
+    "context-capture selftest": 2,
+    "evidence-disposition selftest": 2
+   },
+   "ro-dir": {
+    "repeat-control selftest": 2,
+    "bash-witness-study selftest": 2,
+    "env-diff selftest": 2,
+    "pin-disposition selftest": 2,
+    "context-capture selftest": 2,
+    "evidence-disposition selftest": 2
+   },
+   "space": {
+    "repeat-control selftest": 2,
+    "bash-witness-study selftest": 2,
+    "env-diff selftest": 2,
+    "pin-disposition selftest": 2,
+    "context-capture selftest": 2,
+    "evidence-disposition selftest": 2
+   },
+   "unset": {
+    "repeat-control selftest": 0,
+    "bash-witness-study selftest": 0,
+    "env-diff selftest": 0,
+    "pin-disposition selftest": 0,
+    "context-capture selftest": 0,
+    "evidence-disposition selftest": 0
+   },
+   "dot": {
+    "repeat-control selftest": 0,
+    "registry-check selftest": 0,
+    "bash-witness-study selftest": 0,
+    "pin-disposition selftest": 0,
+    "evidence-disposition selftest": 0,
+    "context-capture selftest": 1,
+    "env-diff selftest": 0
+   }
+  },
+  "rel_absent": "indistinguishable from unusable: all seven exit 2",
+  "rel_present": "honoured as a CWD-relative path: scratch allocated inside the working directory; repeat-control/bash-witness-study/pin-disposition/evidence-disposition/env-diff still exit 0",
+  "abs_same_dir": "registry-check exits 0 and leaves nothing -> its rel-present failure is caused by RELATIVITY, not by the location",
+  "dot": "TMPDIR='.' allocates directly in the CWD and can never be 'unusable' (isdir('.') is always true)"
+ },
+ "differing_tools": [
+  {
+   "tool": "registry-check",
+   "arm": "rel-present",
+   "rc": 1,
+   "cause": "relativity of TMPDIR",
+   "mechanism": "selftest scratch = mkdtemp(dir='tmp-rel') = tmp-rel/tameshi-r17-...; run_child() launches children with cwd=scratch (registry-check.py:949-959), so the child re-resolves 'tmp-rel' under tmp-rel/tameshi-r17-.../ -> absent -> could-not-evaluate exit 2; six rev-* cases fail",
+   "failing_cases": [
+    "gitdir-scrub-rev",
+    "rev-clone-detached",
+    "rev-clone-held",
+    "rev-resolved-reported",
+    "rev-non-hermetic-argv",
+    "rev-external-declared"
+   ],
+   "control": "abs-same-dir rc=0 51/51; TMPDIR unset with lane/tmp-rel present -> no rev-* failure (only the load-flaky timeout case)"
+  },
+  {
+   "tool": "context-capture",
+   "arm": "rel-present AND abs-same-dir",
+   "rc": 1,
+   "cause": "scratch root inside the lane tree, not relativity",
+   "mechanism": "hermetic-no-lane-path (context-capture.py:1780-1786) trips because DEFAULT_LANE_ROOT (line 138) appears in subprocess output; a relative TMPDIR resolves into the lane, so the arm produces the same condition",
+   "control": "TMPDIR=<abs dir outside the lane> -> 49/49 PASS"
+  }
+ ],
+ "not_a_finding": [
+  "registry-check's timeout-kills-setsid/setpgid cases fail nondeterministically under host load with ANY TMPDIR state (same state, same cwd: rc=1 at 14:13, rc=0 51/51 at 14:20)",
+  "one stale /tmp/tameshi-r17-registry-check-selftest.* seen once while ~40 concurrent peer selftests ran; later runs left nothing -> not attributable"
+ ],
+ "counter_blind_spots": [
+  "the frozen C2 counter's `empty` arm checks exit codes only (no strace), so 'empty -> platform default' is proven by exit code there and by this probe's syscall trace",
+  "the counter has no relative arm; the contract declares three arms and does not name this fourth observable class",
+  "the contract's blind-spot paragraph names unregistered modes and stdout-vs-stderr only"
+ ],
+ "frozen_counter_issues_reported_not_fixed": [
+  {
+   "counter": "c2/measure.py",
+   "issue": "registry-check --selftest is one of the 8 grammar modes and is also in the lazy/empty/usable arms; its two timeout cases are load-sensitive, so a busy host can turn a contract-pass into C2_R55_PASS=false",
+   "evidence": "TMPDIR unset: rc=1 (14:13) then rc=0 51/51 (14:20), same cwd"
+  },
+  {
+   "counter": "c2/measure.py",
+   "issue": "env_with(\"\") sets TMPDIR='' but does not clear TEMP/TMP, so on a host where TEMP is set to a relative path the 'empty' arm silently measures a different root (demonstrated: TMPDIR='' + TEMP=<dir> -> gettempdir()=<dir>)",
+   "evidence": "receipt 01; TEMP and TMP are unset on this host, so the arm is sound here"
+  }
+ ],
+ "receipts": [
+  "01-resolver-mechanism.txt",
+  "02-empty-arm-seven-selftests.txt",
+  "03-strace-empty-arm.txt",
+  "04-fourth-arm-mechanism.txt",
+  "05-failing-tool-sources.txt",
+  "06-controls-relative-vs-absolute.txt",
+  "07-cwd-allocation-strace.txt",
+  "08-arm-matrix-relative-absolute.txt",
+  "09-edge-arms.txt",
+  "10-registry-check-selftest-nondeterminism.txt",
+  "11-context-capture-location-cause.txt"
+ ]
+}

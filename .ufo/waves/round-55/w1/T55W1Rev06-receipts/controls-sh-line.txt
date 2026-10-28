@@ -1,0 +1,17 @@
+$ grep -n clone_at "\$LANE" "\$REV" pos .ufo/evidence/round-54/control/controls.sh
+142:  d=$(clone_at "$LANE" "$REV" pos) || exit 2
+$ sed -n 140,146p (base bytes)
+if [ "$PHASE" = b ]; then
+  # CTL_POS — the real repair at REV must pass both counters.
+  d=$(clone_at "$LANE" "$REV" pos) || exit 2
+  python3 "$C1" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/wposa" > "$SCR/cposa" 2>&1; v=$(verdict "$SCR/cposa" C1_R54_PASS)
+  echo "CTL CTL_POS_c1 $(tail -1 "$SCR/cposa")"; check CTL_POS_c1 true "$v"
+  python3 "$C2" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/wposb" > "$SCR/cposb" 2>&1; v=$(verdict "$SCR/cposb" C2_R54_PASS)
+  echo "CTL CTL_POS_c2 $(tail -1 "$SCR/cposb")"; check CTL_POS_c2 true "$v"
+$ sed -n 145p
+  python3 "$C2" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/wposb" > "$SCR/cposb" 2>&1; v=$(verdict "$SCR/cposb" C2_R54_PASS)
+$ sha256 at 077d431e vs base
+3f1e5f5ce26159d914faa4f4339ba2e5f1484eb6b3be9f032a02be575203e6b4  -
+3f1e5f5ce26159d914faa4f4339ba2e5f1484eb6b3be9f032a02be575203e6b4  -
+$ line 142 at 077d431e
+  d=$(clone_at "$LANE" "$REV" pos) || exit 2

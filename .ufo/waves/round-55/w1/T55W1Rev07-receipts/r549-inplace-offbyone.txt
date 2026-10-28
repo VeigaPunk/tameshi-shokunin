@@ -1,0 +1,39 @@
+$ git -C /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone log --oneline -4
+e1b6b75 fixture: worktree corrections section appended
+7373713 fixture: R54.9 in-place 80
+5d38a6b fixture: R54.9 in-place 81
+f764588 fixture: Er02 pairs 1-4 verbatim
+[exit 0]
+
+$ git -C /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone show 5d38a6b:corpus/lessons/round-54.md | grep -n 'staged `merge'
+51:- **The other 81 staged `merge/tameshi` entries** — REFUSED for the same capacity
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev 5d38a6bad20a46da9d4687fcf9c15ecc21895eea --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/w-81 --explain 2>&1 | grep -E 'R54.9|C1_R55'
+EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=5d38a6bad20a classes=10 premise=10/10 stale=2 classes_corrected=0/10 total=10 C1_R55_PASS=false
+[exit 0]
+
+$ git -C /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone show 7373713:corpus/lessons/round-54.md | grep -n 'staged `merge'
+51:- **The other 80 staged `merge/tameshi` entries** — REFUSED for the same capacity
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev 7373713 --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/w-80 --explain 2>&1 | grep -E 'R54.9|C1_R55'
+EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=7373713 classes=10 premise=10/10 stale=2 classes_corrected=0/10 total=10 C1_R55_PASS=false
+[exit 0]
+
+$ python3 /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone/.ufo/evidence/round-55/c1/measure.py --lane /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone --rev e1b6b75d1c0e45879968287acfb657c928349e5f --work /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/w-corr --explain 2>&1 | grep -E 'R54.9|R54.2|C1_R55'
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+C1_R55: rev=e1b6b75d1c0e classes=10 premise=10/10 stale=2 classes_corrected=10/10 total=2 C1_R55_PASS=false
+[exit 0]
+
+$ git -C /fast/scratch/hyaku/tameshi-r55/T55W1Rev07/clone show e1b6b75:SCORECARD.md | grep -n 'ER-R54-9' -A5
+2688:**ER-R54-9 - wave-table numbers and the staged-package count.**
+2689-Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged entries".
+2690-Corrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) from
+2691-`.ufo/waves/round-54/w1-registry.json`, and `staged=81` staged `.md` files under
+2692-`merge/tameshi/knowledge` (read-only count of the source package).
+2693-
+[exit 0]

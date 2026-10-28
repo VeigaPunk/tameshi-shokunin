@@ -1,0 +1,47 @@
+$ find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -name '*.md' | wc -l
+81
+[exit 0]
+
+$ git -C /home/vgpnk/Projects/shokuknow ls-tree -r --name-only HEAD -- merge/tameshi/knowledge | grep -c '\.md$'
+67
+[exit 0]
+
+$ git -C /home/vgpnk/Projects/shokuknow status --porcelain -- merge/tameshi/knowledge | grep -cE '^ D.*\.md$'
+4
+[exit 0]
+
+$ git -C /home/vgpnk/Projects/shokuknow ls-files --others --exclude-standard -- merge/tameshi/knowledge | grep -c '\.md$'
+18
+[exit 0]
+
+$ stat -c '%y %n' /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge
+2026-10-24 23:33:20.208733785 -0300 /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge
+2026-10-24 23:33:20.210108184 -0300 /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge
+[exit 0]
+
+$ find /home/vgpnk/Projects/shokuknow/merge/tameshi -name '*.md' | wc -l
+87
+[exit 0]
+
+$ find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -name '*.md' -newermt '2026-10-28 00:00' | wc -l
+0
+[exit 0]
+
+$ python3 - <<'PY'
+import subprocess,glob,os
+L='/home/vgpnk/Projects/shokunin/tameshi-shokunin'
+names=sorted(os.path.basename(p) for p in glob.glob('/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/**/*.md',recursive=True))
+ad=[n for n in names if subprocess.run(['git','-C',L,'cat-file','-e','0a2010ac:corpus/knowledge/'+n],capture_output=True).returncode==0]
+print('staged present',len(names),'already adopted at base',len(ad))
+print('adopted:',ad)
+print('the other (minus delta entry):',len(names)-1,'of which already adopted:',len([n for n in ad if n!='delta-debugging-minimization-contract.md']),'-> pending',len(names)-1-len([n for n in ad if n!='delta-debugging-minimization-contract.md']))
+PY
+staged present 81 already adopted at base 11
+adopted: ['change-aware-resweep-cadence.md', 'delta-debugging-minimization-contract.md', 'flaky-aware-verdict-evidence.md', 'pit-outcome-vocabulary.md', 'r5-undetected-flaky-failures.md', 'r6-flaky-failures-cluster.md', 'r8-flakiness-not-static.md', 'r8-flaky-cost-baseline.md', 'r8-gtest-order-and-seed.md', 'r8-gtest-primer-independence.md', 'r9-false-red-rate.md']
+the other (minus delta entry): 80 of which already adopted: 10 -> pending 70
+[exit 0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format='%h %ad %s' --date=short --reverse -- corpus/knowledge/delta-debugging-minimization-contract.md | head -2
+79f44b5 2026-10-26 round-50: content — F6 entries (pilot + admitted DD contract), S271 and S022/S024 cells, README round-50 F6 line, round-50 lesson, QUALITY 100-101, routed fixes (R40.2/R40.3/R40.4 corrections, R46.4 appended fold, R45.2/R47.2 receipts, R49.2 successor counters)
+b28a978 2026-10-26 round-50: content (deciding) revision — wave-2 integration (S022 status restored for no-harm, cost decomposition marked as inference, README F6 cost wording, R40.4 re-pointed, ledger lines re-located), wave-2 results and reports, Planned carry-overs, hidden panel revealed
+[exit 0]

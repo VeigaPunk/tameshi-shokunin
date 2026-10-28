@@ -1,0 +1,12 @@
+Verification gap (re-execution only, not the value):
+
+  python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev d33053f7552db4bd290c99a36979760f544c41ad --work <empty dir> --explain
+
+was started twice in this seat's scratch (a bash tool deadline of 300 s, then an explicit 600 s
+timeout) and produced no verdict line by the deadline: the counter runs seven tool selftests
+under strace -f, so it is minutes-long on a loaded host. No partial output was retained.
+
+Consequence: total=13 is derived from (a) the committed receipt verdict line, (b) the counter's
+own total formula applied to that line, (c) the contract C2.before text at 441c26b/19c7558/077d431e,
+(d) the round-55 C1 counter at base and at the integrated snapshot. The gap is on re-execution,
+not on the value.

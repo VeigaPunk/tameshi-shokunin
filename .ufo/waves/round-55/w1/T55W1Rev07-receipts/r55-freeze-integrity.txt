@@ -1,0 +1,47 @@
+$ cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 - <<'PY'
+
+import json,hashlib,os
+L="/home/vgpnk/Projects/shokunin/tameshi-shokunin"
+fz=json.load(open(L+"/.ufo/evidence/round-55/freeze.json"))
+print("freeze.json amendments:", len(fz.get("amendments") or []))
+ct=json.load(open(L+"/.ufo/evidence/round-55/contract.json"))
+print("contract.json amendments:", len(ct.get("amendments") or []), "-> n:", [a["n"] for a in ct.get("amendments") or []])
+for p,h in fz["files"].items():
+    fp=os.path.join(L,p); cur=hashlib.sha256(open(fp,"rb").read()).hexdigest()
+    print(("OK      " if cur==h else "MISMATCH"), p, "pin="+h[:12], "file="+cur[:12], "mtime="+str(os.path.getmtime(fp)))
+print("c1 diff vs HEAD:")
+
+PY
+freeze.json amendments: 3
+contract.json amendments: 5 -> n: [1, 2, 3, 4, 5]
+MISMATCH .ufo/evidence/round-55/contract.json pin=ed6871e17697 file=5de4f37b14db mtime=1793206809.5146437
+MISMATCH .ufo/evidence/round-55/c1/measure.py pin=77abe1e9daf4 file=711507e7b5bd mtime=1793206809.5141516
+MISMATCH .ufo/evidence/round-55/c2/measure.py pin=ab3ae7514691 file=d6ca1d851bb0 mtime=1793206208.763096
+OK       .ufo/evidence/round-55/no-harm.sh pin=d93469db5a55 file=d93469db5a55 mtime=1793205223.1747193
+OK       .ufo/evidence/round-55/deciding-run.sh pin=af11d7551d8a file=af11d7551d8a mtime=1793205318.6628013
+OK       .ufo/evidence/round-55/controls.sh pin=7c0cacb56c67 file=7c0cacb56c67 mtime=1793205318.662299
+c1 diff vs HEAD:
+[exit 0]
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff --stat -- .ufo/evidence/round-55/c1/measure.py .ufo/evidence/round-55/c2/measure.py .ufo/evidence/round-55/contract.json .ufo/evidence/round-55/before/c2.stdout
+ .ufo/evidence/round-55/before/c2.stdout | 42 ---------------------------------
+ .ufo/evidence/round-55/c1/measure.py    | 25 ++++++++++++++++++++
+ .ufo/evidence/round-55/c2/measure.py    | 32 ++++++++++++++++++-------
+ .ufo/evidence/round-55/contract.json    | 23 +++++++++++++++++-
+ 4 files changed, 71 insertions(+), 51 deletions(-)
+[exit 0]
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show HEAD:.ufo/evidence/round-55/c1/measure.py | sha256sum
+77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783  -
+[exit 0]
+$ sed -n '60,70p' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/deciding-run.sh
+for f in c1/measure.py c2/measure.py no-harm.sh; do
+  mkdir -p "$SCR/code/$(dirname $f)"; git show "$REV:$E/$f" > "$SCR/code/$f" || exit 2
+done
+git show "$REV:.ufo/evidence/round-48/quality/coldread-precheck.sh" > "$SCR/code/precheck.sh" || exit 2
+rc=0
+FROZEN="$E/contract.json $E/freeze.json $E/c1/measure.py $E/c2/measure.py $E/no-harm.sh $E/deciding-run.sh $E/controls.sh"
+if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi
+bash "$SCR/code/no-harm.sh" "$LANE" "$REV" > "$OUT/no-harm.stdout" 2>&1; echo $? > "$OUT/no-harm.exit"
+cat "$OUT/no-harm.stdout"; grep -q RED "$OUT/no-harm.stdout" && rc=1
+[ "$(grep -c '^NOHARM .* ok$' "$OUT/no-harm.stdout")" = 15 ] || { echo "NOHARM_OK_COUNT!=15"; rc=1; }
+bash "$SCR/code/precheck.sh" "$LANE" "$BASE" "$REV" > "$OUT/coldread-precheck.stdout" 2>&1; echo $? > "$OUT/coldread-precheck.exit"
+[exit 0]

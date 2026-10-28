@@ -1,0 +1,36 @@
+diff --git i/tools/context-capture.py w/tools/context-capture.py
+index 9208999..6c1d18c 100755
+--- i/tools/context-capture.py
++++ w/tools/context-capture.py
+@@ -297,6 +297,10 @@ expected schema (exactly four keys):
+ """
+ 
+ 
++class ScratchRootUnusable(RuntimeError):
++    """A set-but-unusable TMPDIR, reported as one operator-visible line (round 55)."""
++
++
+ def strict_scratch_root():
+     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+@@ -305,7 +309,7 @@ def strict_scratch_root():
+     t = _os.environ.get("TMPDIR")
+     if t:
+         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+-            raise RuntimeError(
++            raise ScratchRootUnusable(
+                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+         return t
+     return tempfile.gettempdir()
+@@ -2210,6 +2214,11 @@ def run_selftest():
+         harness = SelftestHarness()
+         run_selftest_cases(harness)
+         return harness.finish()
++    except ScratchRootUnusable as exc:
++        # The class is one operator-visible line grammar: the exception type never
++        # appears, the line goes to stderr, and stdout carries no setup error.
++        sys.stderr.write("context-capture.py: could-not-evaluate: {}\n".format(exc))
++        return 2
+     except Exception as exc:  # setup failure is loud but never a traceback
+         sys.stdout.write(
+             "SELFTEST: FAIL (setup error: {}: {})\n".format(

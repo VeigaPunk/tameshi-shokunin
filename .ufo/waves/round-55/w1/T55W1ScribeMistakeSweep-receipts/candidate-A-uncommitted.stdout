@@ -1,0 +1,41 @@
+# candidate A: uncommitted-work-at-closure recurs r52/r53/r54 and has no instrument
+
+## cmd: for r in 52 53 54; git show REV:corpus/lessons/round-$r-verifier-spotcheck.md | grep -n 'uncommitted round work'
+r52 :18:| uncommitted round work | `git -C …/tameshi-shokunin status --porcelain` | 4 untracked: `.ufo/evidence/round-52/integrate/build-readers.py`, `.ufo/waves/round-52/w3.ready`, `w3.ready.dispatched`, `w3/` | defect (status-neutral) |
+r52 :86:4. **R52.4 uncommitted round work.** 4 untracked files (`.ufo/evidence/round-52/integrate/build-readers.py`, `.ufo/waves/round-52/w3.ready`, `w3.ready.dispatched`, `w3/`): commit under the round-53 entry or revert; a lane repo must not carry uncommitted round work into the next round.
+r53 :20:| uncommitted round work | `git -C …/tameshi-shokunin status --porcelain` | empty | pass |
+r53 :86:9. **R53.9 — uncommitted round work (found at closure).** six lane-authored round-53 files are untracked at the push tip: `.ufo/waves/round-53/w1-results.json`, `.ufo/waves/round-53/w2-results.json`, `.ufo/waves/round-53/w1/T53W1ExecR523.md`, `.ufo/waves/round-53/w2/T53W2CritClaims.md`, `.ufo/waves/round-53/w2/T53W2ExecR523B.md`, `.ufo/waves/round-53/w2/T53W2RevW1Specialists.md` (the late-straggler seats the report names as "landed late"; timestamps 11:26–11:30 -03 postdate the close commit). The report asserts wave results and seat reports "are committed under .ufo/waves/round-53/" — these six are not. Commit them under the round-54 entry or revert; a lane repo must not carry uncommitted round work into the next round.
+r54 :26:| uncommitted round work | `git status --porcelain` → 3 untracked (`T54W2Sent03.md`, `c1committed-positive.stdout`, `rejection-attribution.txt`) | **fail** at closure as filed → R54.6; closure swept them (below) |
+r54 :118:**R54.6 — uncommitted round work at closure.** `T54W2Sent03.md` (the seat report whose arm-3 blind spots the round routes) plus the two receipts it cites (`c1committed-positive.stdout`, `rejection-attribution.txt`) were untracked at closure; the deciding run's own `after/clean-tree-after.txt` records them as `??`, i.e. the tree was dirty *during* the measurement the gate calls clean. Every other w2 seat report is committed. The closure swept these three files byte-identical under lane identity (durability commit, named below); the lane must not leave seat deliverables uncommitted again.
+r54 :155:| uncommitted round work | `git status --porcelain` → empty | pass (R54.6 resolved by `ff2a821`) |
+
+## cmd: git show REV:.ufo/evidence/round-54/after/clean-tree-before.txt; :.ufo/evidence/round-54/after/clean-tree-after.txt
+--- before:
+?? .ufo/evidence/round-54/after/
+--- after:
+?? .ufo/evidence/round-54/after/
+?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+?? .ufo/waves/round-54/w2/T54W2Sent03.md
+--- delta (after minus before):
+> ?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+> ?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+> ?? .ufo/waves/round-54/w2/T54W2Sent03.md
+
+## cmd: grep -n 'clean-tree' .ufo/evidence/round-{52,53,54,55}-/deciding-run.sh  (the gate asymmetry)
+--- round-52:
+29:git status --porcelain > "$OUT/clean-tree-before.txt"
+30:[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+54:git status --porcelain > "$OUT/clean-tree-after.txt"
+--- round-53:
+29:git status --porcelain > "$OUT/clean-tree-before.txt"
+30:[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+56:git status --porcelain > "$OUT/clean-tree-after.txt"
+--- round-54:
+60:git status --porcelain > "$OUT/clean-tree-before.txt"
+61:[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+87:git status --porcelain > "$OUT/clean-tree-after.txt"
+--- round-55 (frozen, working tree):
+57:git status --porcelain > "$OUT/clean-tree-before.txt"
+58:[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+86:git status --porcelain > "$OUT/clean-tree-after.txt"

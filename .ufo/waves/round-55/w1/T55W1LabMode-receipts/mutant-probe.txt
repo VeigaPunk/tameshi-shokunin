@@ -1,0 +1,27 @@
+# mutant: pin-disposition run_mode allocates via tempfile.gettempdir() (silent /tmp fallback)
+before b6dfadd5d5d5163b091ce6efbc0302f43dc2bbf631c06093dc59d74d244c4d08
+after  c917bc41c3f40dae3eacea492d861211c2a4fe1e530cb9f22c5f8d6ff47d2988 (restored, pristine)
+
+# the injected hunk
+ def run_mode(manifest_path, root_path):
++    # round-55 lab mutant: a plausible refactor that materializes a
++    # receipt copy under the scratch root before reading the manifest.
++    tempfile.mkdtemp(prefix="r55-lab-mutant.", dir=tempfile.gettempdir())
+     entries = read_manifest(manifest_path)
+
+# mutant probe (scoped to pin-disposition)
+pin-disposition --manifest                                 rc=0/0 expected=0 mkdir_scratch=1 creat=2 FALSIFIED
+
+# mutant census, unusable arm (straced)
+usable rc=0
+  stdout_lines=197 stderr=''
+  mkdir_total=1
+unusable rc=0
+  stdout_lines=197 stderr=''
+  mkdir_total=1
+   2510469 mkdir("/tmp/r55-lab-mutant.pct1l9eq", 0700) = 0
+   2510469 openat(AT_FDCWD, "/fast/scratch/hyaku/tameshi-r55/T55W1LabMode/out-mut-only/no-such-tmpdir/r4g0kahp", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = -1 ENOENT (No such file or directory)
+   2510469 openat(AT_FDCWD, "/tmp/idve9umb", O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC, 0600) = 3
+
+# restored probe
+pin-disposition --manifest               rc=0/0 expected=0 mkdir_scratch=0 lazy-holds

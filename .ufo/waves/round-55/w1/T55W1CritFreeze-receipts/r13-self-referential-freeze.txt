@@ -1,0 +1,17 @@
+## FREEZE is caller-supplied: passing FREEZE=REV makes integrity and FROZEN self-referential
+$ bash gate.sh fix1 00cc9c62157d7c586378a92fcb993325192af5a3 00cc9c62157d7c586378a92fcb993325192af5a3 out   # FREEZE == REV
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+$ bash frozen-gate.sh fix1 00cc9c62157d7c586378a92fcb993325192af5a3 00cc9c62157d7c586378a92fcb993325192af5a3 out
+FROZEN_UNCHANGED=1 freeze=00cc9c62157d7c586378a92fcb993325192af5a3 rev=00cc9c62157d7c586378a92fcb993325192af5a3
+FROZEN_RC=0
+gate_exit=0
+
+$ the script never constrains FREEZE: no "FREEZE != REV", no ancestry-from-BASE, no pin to the contract freeze
+4:LANE=$1; FREEZE=$2; REV=$3; OUT=$4
+8:FREEZE=$(git rev-parse --verify "$FREEZE^{commit}") || exit 2
+9:python3 - "$LANE" "$FREEZE" "$E" <<'PYV' || { echo "DECIDING_REFUSED freeze-integrity"; exit 3; }
+27:print('FREEZE_INTEGRITY: %s files=%d amendments=%d'
+30:    print('FREEZE_MISMATCH', b)
+41:  git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }

@@ -1,0 +1,26 @@
+# receipt 03 - timeline: worktree mtimes vs the deciding run's own timestamps
+# commands: stat -c '%y %n' <files> ; cat .ufo/evidence/round-54/after/{c1,c2}.{start,end}
+# NOTE: mtimes are worktree metadata, not committed bytes: supporting evidence only. The
+# load-bearing proof is receipt 02 (before/after witness pair inside one script invocation).
+
+2026-10-28 12:22:17.579637072 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/after/clean-tree-before.txt
+2026-10-28 12:25:37.918588557 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/after/clean-tree-after.txt
+2026-10-28 12:22:46.010631041 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+2026-10-28 12:24:05.147612677 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+2026-10-28 12:24:55.889599803 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w2/T54W2Sent03.md
+
+== deciding run windows (UTC, from the receipts themselves)
+c1.start c1.end c2.start c2.end: 2026-10-28T15:23:33Z 2026-10-28T15:24:42Z 2026-10-28T15:24:42Z 2026-10-28T15:25:37Z
+
+== the committing history of the receipts directory
+ff2a821 2026-10-28 12:54:32 -0300 round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)
+c210810 2026-10-28 12:22:15 -0300 round-54: late wave output (receipts)
+7fa9a5e 2026-10-28 12:21:35 -0300 round-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)
+
+== reading (local -0300, UTC = local+3h)
+   before snapshot       12:22:17 local = 15:22:17Z
+   c210810 commit of the 30 receipts 12:22:15 local (2 s before the snapshot)
+   rejection-attribution.txt         12:22:46 local (after the snapshot, during no-harm/precheck)
+   c1 window             12:23:33-12:24:42 local; c1committed-positive.stdout 12:24:05 local (inside it)
+   c2 window             12:24:42-12:25:37 local; T54W2Sent03.md 12:24:55 local (inside it)
+   after snapshot        12:25:37 local

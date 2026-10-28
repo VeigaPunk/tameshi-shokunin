@@ -1,0 +1,29 @@
+# note lines 71-98
+    71	## One line, every mode (round 55)
+    72	
+    73	The class is one stderr line, byte-shaped:
+    74	
+    75	    <tool>: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)
+    76	
+    77	Eight allocating modes carry it — `env-diff --selftest`, `env-diff --contract`,
+    78	`repeat-control --selftest`, `registry-check --selftest`,
+    79	`bash-witness-study selftest`, `pin-disposition --selftest`,
+    80	`evidence-disposition --selftest`, `context-capture --selftest` — each exiting 2
+    81	with no `RuntimeError` or `Traceback` token on either stream. The line is the
+    82	contract; the Python type is not: the tools keep their own exception classes
+    83	(`ScratchRootUnusable` in the two round-55 edits, a local class in `env-diff`),
+    84	because seven standalone tools should not depend on one module for a one-line
+    85	rule.
+    86	
+    87	The five non-allocating modes are measured lazy: `repeat-control --snapshot`,
+    88	`bash-witness-study count`, `pin-disposition --read`,
+    89	`evidence-disposition --json`, `context-capture --check` keep their expected
+    90	exit under an unusable `TMPDIR`, because scratch is allocated on the real path,
+    91	not at parse time. A lazy mode's exit 0 is not evidence that the scratch root
+    92	was usable — never read it as a pass.
+    93	
+    94	The counter measures 13 modes in three arms plus the seven registry cells and
+    95	this note, and its blind spot is narrower but real: a documented mode outside
+    96	the registry and the usage text could still allocate scratch unmeasured (the
+    97	round-55 wave inventories that difference), and the grammar is matched on
+    98	stderr, so a caller that parses stdout sees nothing.

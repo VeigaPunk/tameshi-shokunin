@@ -1,0 +1,17 @@
+# candidate A demo: the same gate expression the deciding script applies BEFORE the run,
+# applied to the round-54 AFTER file, would have refused (exit 3). The script never applies it.
+
+## the gate expression, copied from .ufo/evidence/round-54/deciding-run.sh:61
+[ "$(grep -vc "^?? \.ufo/evidence/round-54/after/" "$OUT/clean-tree-before.txt")" = 0 ]
+
+## applied to clean-tree-before.txt (what the run did):
+dirty_lines=0  -> gate result: PASS
+
+## applied to clean-tree-after.txt (never applied by any round 52-55 script):
+dirty_lines=3  -> gate result would be: REFUSE exit 3
+
+## cmd: grep -c "clean-tree-after.txt" .ufo/evidence/round-54/deciding-run.sh  (only a write, no test)
+87:git status --porcelain > "$OUT/clean-tree-after.txt"
+
+## cmd: grep -c "DECIDING_REFUSED dirty-tree" .ufo/evidence/round-54/deciding-run.sh  (one gate, before)
+61:[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }

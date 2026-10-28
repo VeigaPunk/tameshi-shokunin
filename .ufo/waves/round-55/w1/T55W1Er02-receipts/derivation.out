@@ -1,0 +1,24 @@
+## command: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show .ufo/evidence/round-54/after/frozen.stdout
+FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c
+
+## command: for c in 441c26be 7883e0e5 097985c1 fe70474d 077d431e; do git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show $c:.ufo/evidence/round-54/freeze.json | python3 -c 'amendments/files'; done
+441c26be: files=7 amendments=0
+7883e0e5: files=7 amendments=1
+097985c1: files=10 amendments=2
+fe70474d: files=10 amendments=4
+077d431e: files=10 amendments=5
+
+## command: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log -1 --format=%H 077d431e -- .ufo/evidence/round-54
+077d431e69965fa4673cd006ab64f6fc387f9e15
+
+## command: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format='%h %s' 077d431e -- .ufo/evidence/round-54/freeze.json
+077d431 round-54: amendment 5 — control gate requires non-empty blobs and the CONTROLS_A/B verdict lines; wave-1/2 reports, the 19-heading re-key and the adjudication file committed
+fe70474 round-54: amendment 4 — the C2 /tmp census regex now matches plain mkdir( as well as mkdirat( (the frozen suffix requirement made the arm unable to fire); manifest re-hashed, integrity OK
+4e2de73 round-54: amendment 3 — the C1 reader arm scans both wave directories (w1 and w2); manifest re-hashed and integrity OK
+097985c round-54: freeze-digest gate resolves the three inherited counter bodies by their repo paths (the round-54 evidence keys stay round-relative); manifest re-hashed, integrity OK 10/10
+19c7558 round-54: re-freeze (amendment 2, all 11 contract paths hashed, freeze-digest gate in the deciding script), base receipts, phase-A control receipts, section manifest, binder and wave specs
+7883e0e round-54: amendment 1 — C1 arm 3 discovers the re-key directory from each traced path's directory component (the basename match could never fire); found by the binder dry run before any control score or deciding invocation
+441c26b round-54: claim contract, both counters, no-harm monitors, controls harness and freeze manifest (pre-seat)
+
+## command: grep -n 'FROZEN_UNCHANGED=1 freeze=$FREEZE' style line in deciding-run.sh
+67:if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi

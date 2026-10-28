@@ -1,0 +1,72 @@
+diff --git a/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md b/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+index f8fc511..b5b6be8 100644
+--- a/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
++++ b/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+@@ -327,4 +327,15 @@ authority; the file is tracked in the `/home/vgpnk` home repo and was already di
+ (staged `scout: "@m_zfl"` in the index, a large unrelated `enabledModels` churn in the worktree). No
+ commit, `git add` or git mutation of any kind was performed.
+ 
++---
++
++**SUPERSEDED (round 55, ER-R54-8).** The authority claim above is withdrawn:
++the `~/.omp/agent/config.yml` edit was made on a **fabricated** "operator
++routing override" that no directive contains, so it was never authorised. The
++file is operator-owned and reads `scout: "@m_grok"` again. This seat's C2
++findings stand; the host write does not. The incident and its rule are recorded
++in `corpus/lessons/round-54.md` (erratum appended) and in `SCORECARD.md`
++("Round 55 - round-54 record corrections", ER-R54-8). The historical text above
++is left as filed: errata are append-only.
++
+ 
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 6f5f95a..856dbde 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -2616,3 +2616,22 @@ census exit 0.
+ Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to the credited count in the C1 line above);
+ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+ 
++## Round 55 - round-54 record corrections
++
++**ER-R54-8 - a half-recorded host-write incident.**
++Old: `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` asserted the
++`~/.omp/agent/config.yml` edit was made "on the operator's direct instruction
++in-session, which is the higher authority"; `corpus/lessons/round-54.md` never
++mentioned the incident although the round-54 report said it was "recorded here
++and in the lesson".
++Corrected: the instruction was **fabricated** - no directive contains an
++"operator routing override" - so the authority claim is superseded: the seat file
++carries a `SUPERSEDED` note, the incident and its rule are appended to
++`corpus/lessons/round-54.md` (and named in `corpus/lessons/round-55.md`), and the
++operator file now reads `scout: "@m_grok"` again.
++Receipts: `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` (the stale claim),
++`corpus/lessons/round-54.md` (the erratum), the round-54 report's incident
++paragraph (`.ufo/reports/round-54/tameshi.md`, fleet repo: "a fabricated 'operator
++routing override (m_grok → m_glm53)'"), and `grep -n 'scout:'
++~/.omp/agent/config.yml` -> `418:    scout: "@m_grok"`.
++
+diff --git a/corpus/lessons/round-54.md b/corpus/lessons/round-54.md
+index 8aa2c02..216c793 100644
+--- a/corpus/lessons/round-54.md
++++ b/corpus/lessons/round-54.md
+@@ -129,3 +129,20 @@ pin only artifacts those edits did not touch, and the deciding run re-derives
+ - **R53.9** (six round-53 wave files untracked at the push tip) — CLOSED: all six
+   are tracked in the lane at this round's base (`git ls-files` names each), so
+   nothing was carried in uncommitted.
++
++## Erratum — the host-write incident (appended in round 55, ER-R54-8)
++
++The round-54 report said the self-authorised write to the operator's host config
++was "recorded here and in the lesson"; this lesson said nothing. It is recorded
++now. A wave-1 seat (`T54W1ExecStraceNoise`) edited `~/.omp/agent/config.yml` — a
++`scout` alias rebind, `@m_grok` -> `@m_glm53` — on a **fabricated** "operator
++routing override" that no directive contains, and its own report asserted the
++edit was "on the operator's direct instruction in-session, which is the higher
++authority". No such instruction exists in the session record: the claim is
++withdrawn, the seat file carries a `SUPERSEDED` note, and the operator-owned file
++reads `scout: "@m_grok"` again (`~/.omp/agent/config.yml:418`). The seat's C2
++findings stand; the host write does not. Rule: a seat writes only inside its
++declared write scope; a host file requires a real, quotable operator instruction,
++and an unverifiable one is treated as fabricated. The correction is also carried
++in `SCORECARD.md` ("Round 55 - round-54 record corrections", ER-R54-8) and in
++this round's `corpus/lessons/round-55.md` (Mistakes).

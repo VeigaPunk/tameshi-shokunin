@@ -145,6 +145,14 @@ USAGE = (
 )
 
 
+class ScratchRootUnusable(RuntimeError):
+    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55).
+
+    The operator-visible class is one line on stderr with the frozen grammar
+    (`repeat-control: could-not-evaluate: ...`); this type exists so the refusal
+    cannot be swallowed by the generic setup handler that prints the raw type."""
+
+
 def strict_scratch_root():
     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
@@ -153,7 +161,7 @@ def strict_scratch_root():
     t = _os.environ.get("TMPDIR")
     if t:
         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
-            raise RuntimeError(
+            raise ScratchRootUnusable(
                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
         return t
     return tempfile.gettempdir()
@@ -213,6 +221,16 @@ def usage_failure(message):
 
 def setup_failure(message):
     emit_err(f"repeat-control: setup: {message}")
+    emit("REPEAT_CONTROL: setup_error")
+    return EXIT_BY_ID["setup_error"]
+
+
+def could_not_evaluate(message):
+    """The scratch-root refusal: one stderr line, the frozen grammar, exit 2 (round 55).
+
+    `message` is ScratchRootUnusable's text, which already carries the class token;
+    the exception type never reaches the operator line."""
+    emit_err(f"repeat-control: could-not-evaluate: {message}")
     emit("REPEAT_CONTROL: setup_error")
     return EXIT_BY_ID["setup_error"]
 
@@ -904,6 +922,8 @@ def dispatch(argv):
 def main(argv):
     try:
         status = dispatch(argv)
+    except ScratchRootUnusable as exc:
+        status = could_not_evaluate(str(exc))
     except Exception as exc:  # noqa: BLE001 - never let a traceback exit 1
         status = setup_failure(f"{type(exc).__name__}: {exc}")
     # A terminal that refused output must not change the class at shutdown:

@@ -1,0 +1,40 @@
+# observation only, outside my two rows. Read 2026-10-28T17:00:18Z.
+# The lane working tree is the L1's live integration area; these bytes were already
+# modified when I first read them (before this seat wrote anything) and are still moving.
+
+$ git -C lane status --porcelain -- .ufo/evidence/round-55/
+ M .ufo/evidence/round-55/before/c2.stdout
+ M .ufo/evidence/round-55/c1/measure.py
+ M .ufo/evidence/round-55/c2/measure.py
+ M .ufo/evidence/round-55/contract.json
+ M .ufo/evidence/round-55/freeze.json
+?? .ufo/evidence/round-55/assimilation/
+
+$ git -C lane diff --stat -- .ufo/evidence/round-55/
+ .ufo/evidence/round-55/before/c2.stdout | 42 ---------------------------------
+ .ufo/evidence/round-55/c1/measure.py    | 25 ++++++++++++++++++++
+ .ufo/evidence/round-55/c2/measure.py    | 32 ++++++++++++++++++-------
+ .ufo/evidence/round-55/contract.json    | 23 +++++++++++++++++-
+ .ufo/evidence/round-55/freeze.json      | 19 ++++++++++++---
+ 5 files changed, 87 insertions(+), 54 deletions(-)
+
+$ wc -c .ufo/evidence/round-55/before/c2.stdout   # worktree bytes
+139 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/before/c2.stdout
+$ sha256sum that file
+77721c4a33979a5b3b7824b99df245844125bd6c29680260198e9c1ad83bbc05  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/before/c2.stdout
+$ git hash-object that file  (worktree bytes as a blob)
+159bb37014248e57113ecfe220afbb7be9418a4a
+$ git -C lane rev-parse HEAD:.ufo/evidence/round-55/before/c2.stdout  (committed blob)
+6364f1e0afb34fc47c525d2ae981480bfd6e8bc3
+
+$ git -C lane diff -- .ufo/evidence/round-55/before/c2.stdout | head -4
+diff --git i/.ufo/evidence/round-55/before/c2.stdout w/.ufo/evidence/round-55/before/c2.stdout
+index 6364f1e..159bb37 100644
+--- i/.ufo/evidence/round-55/before/c2.stdout
++++ w/.ufo/evidence/round-55/before/c2.stdout
+
+$ amendments / digest counts, HEAD vs worktree
+   contract amendments: HEAD=0 worktree=5
+   freeze   amendments: HEAD=0 worktree=3
+   freeze contract.json digest: HEAD=2388cb50 worktree=ed6871e1
+   freeze c2/measure.py digest: HEAD=9d076812 worktree=ab3ae751

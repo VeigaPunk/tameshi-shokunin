@@ -1,0 +1,87 @@
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 6f5f95a..ad1a134 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -2580,7 +2580,7 @@ non-retired axis and carries C1.
+ 
+ | Claim | Axis | Before (base `d33053f7`) | Target | Counting command | Controls (freeze bytes) |
+ |---|---|---|---|---|---|
+-| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true (`.ufo/evidence/round-54/control/`) |
++| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false (`controls-a.stdout`); CTL_POS_c1 `CTL_MISMATCH` `2/3` — phase B cloned the freeze `077d431e`, before the re-key `7fa9a5e`, so the arm read `rekeyed=3/7` and the pre-registered `true` was unreachable; the same arm reads `rekeyed=7/7` in the deciding run at the content revision [ER-R54-1] (`.ufo/evidence/round-54/control/`) |
+ | C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/before/c2.stdout`; the contract's before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |
+ 
+ The after values are read from the deciding receipts under
+@@ -2616,3 +2616,28 @@ census exit 0.
+ Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to the credited count in the C1 line above);
+ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+ 
++
++## Round 55 - round-54 record corrections
++
++**ER-R54-1 — a pre-registered control is recorded as passing while its committed
++receipt prints `CTL_MISMATCH` / `2/3`.**
++Old: `SCORECARD.md:2583` ended `CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false,
++CTL_POS_c1 true (`.ufo/evidence/round-54/control/`)`;
++`corpus/QUALITY.md:1590` said the round-54 arm "prints `rekeyed=7/7` on its positive
++control" and called that "the round-54 positive control";
++`corpus/lessons/round-54.md:74-77` said the arm "proves" itself "on the positive control
++CTL_POS_c1, which requires `rekeyed=7/7`", and `:100-101` said it was "proven live by
++the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`)".
++Corrected: `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3`
++(exit 1) — `.ufo/evidence/round-54/control/controls-b.stdout`. Cause: phase B
++(`.ufo/evidence/round-54/control/controls.sh:145`) clones `$REV`, and phase B was
++invoked at the freeze `077d431e`, which predates the re-key `7fa9a5e`: at `077d431e`
++three of the seven frozen headings have no bound entry at all and a fourth
++(`## Mutation-sweep recipe — numbered steps; bounded cold-read evidence`) has one whose
++pinned `.ufo/evidence/round-21/coldread/ledger.json` no longer matches; `7fa9a5e` adds
++four re-key traces (sections 08, 17, 18, 23) and four ledger entries (587 -> 591) and
++refreshes the rest. Replaying the frozen counter bytes at both revisions gives
++`rekeyed=3/7 ... total=4 C1_R54_PASS=false` at `077d431e` (byte-identical to the
++receipt's line) and `rekeyed=7/7 ... total=0 C1_R54_PASS=true` at the deciding revision
++`c21081008adb` (`.ufo/evidence/round-54/after/c1.stdout`). The arm is live; the control
++was scored on the wrong tree.
+diff --git a/corpus/QUALITY.md b/corpus/QUALITY.md
+index bf8c254..8fb2098 100644
+--- a/corpus/QUALITY.md
++++ b/corpus/QUALITY.md
+@@ -1587,4 +1587,4 @@ A counter arm that reads a directory, a revision or a manifest is proven by a po
+ 
+ Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+ 
+-Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` on its positive control; the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
++Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself) - a dead arm; and the round-54 phase-B control is the criterion's second falsifier, hit by that round: it pre-registered `true` on a tree that cannot carry it, cloning the freeze commit `077d431e` before the re-key `7fa9a5e`, so its arm printed `rekeyed=3/7` with `CTL_MISMATCH` (`CONTROLS_B: 2/3`, `.ufo/evidence/round-54/control/controls-b.stdout`). The arm does read `rekeyed=7/7` at the content revision the deciding run measured (`.ufo/evidence/round-54/after/c1.stdout`); the round-53 counter's receipt is `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`.
+diff --git a/corpus/lessons/round-54.md b/corpus/lessons/round-54.md
+index 8aa2c02..240ab19 100644
+--- a/corpus/lessons/round-54.md
++++ b/corpus/lessons/round-54.md
+@@ -71,9 +71,12 @@ line rather than acted on; proposals 2–5 remain unmined (at most one per round
+   counter had no arm-level self-test, and the round-53 control scored the
+   do-nothing tree (which fails for other reasons), so a dead arm looked
+   healthy. fix: this round's counter lists the re-key directory with
+-  `git ls-tree -r` and proves the arm on the positive control CTL_POS_c1, which
+-  requires `rekeyed=7/7`; the control receipts are committed before the deciding
+-  run (`.ufo/evidence/round-54/control/`).
++  `git ls-tree -r`, and the arm reads `rekeyed=7/7` in the deciding run
++  (`.ufo/evidence/round-54/after/c1.stdout`). The phase-B control is not that
++  proof: it was cloned at the freeze `077d431e`, which predates the re-key
++  `7fa9a5e`, and printed `CTL_MISMATCH` (`rekeyed=3/7`, `CONTROLS_B: 2/3`)
++  [ER-R54-1]; the control receipts are committed before the deciding run
++  (`.ufo/evidence/round-54/control/`).
+ 
+ ## QUALITY criterion (drafted; lands with the round commit)
+ 
+@@ -97,8 +100,12 @@ pin only artifacts those edits did not touch, and the deciding run re-derives
+ 
+ - **R53.1** (the frozen round-53 C1 counter's rekey arm was dead) — FIXED: this
+   round's counter lists the re-key directory with `git ls-tree -r` (a recursive
+-  listing, so the directory's own name cannot shadow the match), and the arm is
+-  proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`).
++  listing, so the directory's own name cannot shadow the match), and the arm
++  prints `rekeyed=7/7` in the deciding run
++  (`.ufo/evidence/round-54/after/c1.stdout`). The pre-registered control was
++  cloned at the freeze `077d431e`, which predates the re-key `7fa9a5e`, and
++  printed `CTL_MISMATCH` (`rekeyed=3/7`, `CONTROLS_B: 2/3`), so it never fired
++  [ER-R54-1, round-55 correction].
+   The dead arm's own receipt is kept:
+   `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`
+   (`rekeyed=0/30` at the round-53 final revision). QUALITY 105 lands with it.

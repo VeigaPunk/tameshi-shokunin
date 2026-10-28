@@ -1,0 +1,27 @@
+CMD (cwd=/fast/scratch/hyaku/tameshi-r55/T55W1ExecModeDiscovery/base): python3 tools/evidence-disposition.py --help
+TMPDIR=<unset>
+RC=0
+--- STDOUT ---
+usage: evidence-disposition.py --root LANE --dispositions FILE [--json]
+       evidence-disposition.py --selftest
+
+Expectation-disposition gate: every frozen expected check appears exactly once
+in rows; effective rows must satisfy their original expectation from a named
+receipt check; the one configured producer_before supersession must retain a
+genuinely mismatched raw observation and pass both oracle replacements.
+
+exit 0   clean
+exit 1   failed semantic expectation
+exit 2   could-not-evaluate bad/missing/tampered input
+exit 64  usage error
+
+Receipt/raw_receipt values are lane-relative paths pinned in `inputs`. The tool
+never executes receipt argv. `--selftest` builds isolated /tmp fixtures.
+evidence-dispositions-v2 manifests add `supersedes` (pinned v1 manifest path)
+and `historical_inputs` (tools/* expected inputs read as git blobs at the
+declared rev after a repo-identity guard). A waiver is refused when the live
+bytes still equal the pin (historical_input_unneeded) or differ from the
+selected committed anchor (historical_input_uncommitted); revs must be commits
+ancestral to that same anchor.
+
+--- STDERR ---

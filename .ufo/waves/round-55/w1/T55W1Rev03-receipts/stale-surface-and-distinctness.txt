@@ -1,0 +1,27 @@
+# frozen counter's own base rows (committed receipt)
+$ grep -E 'R54\.(5|6)' .ufo/evidence/round-55/before/c1.stdout
+EXPLAIN R54.5 FAIL premise=ok corrected=miss stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 FAIL premise=ok corrected=miss stale=0 derived=sweep commit=ff2a821
+
+# stale surface: the two wrong-count registers in the lane at base
+$ git -C lane show 0a2010acd1e92e4e332774050825e21bcfc7e079:SCORECARD.md | grep -nE '25 findings|22 findings|9 of the 23|9 headings|25 wave-1|28 wave-1' -> (no output)
+   (none)
+$ same for corpus/QUALITY.md and corpus/lessons/round-54.md
+   -- corpus/QUALITY.md
+      (none)
+   -- corpus/lessons/round-54.md
+      (none)
+
+# lane-wide at base: where the wrong counts do live
+   0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/waves/round-54/w2/T54W2Scribe01.md:97:- The L1's adjudication of wave-2 findings is in progress in the worktree: `.ufo/evidence/round-54/integrate/resolutions.json` (untracked at `15:05:38Z`) lists 9 headings / 22 findings as `minor-gap` routed to round 55, and `binder.py` is edited (uncommitted) to bind a report with up to that many findings as `verdict = 'gap-minor'` with `minor_gaps` counted. The frozen credit algorithm admits that verdict (see F10).
+   0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/waves/round-54/w2/T54W2Scribe01.md:230:**F10 — the minor-gap path credits under the frozen algorithm; the in-progress adjudication covers 9 headings and 22 findings.**
+   0a2010acd1e92e4e332774050825e21bcfc7e079:.ufo/waves/round-54/w2/T54W2Scribe01.md:231:`.ufo/evidence/round-18/measure.py:125-128` defines `FAIL_VERDICTS` (three) and puts `gap-minor` in `VALID_VERDICTS`, `EXEC_VERDICTS` and `REC_VERDICTS`; `entry_failure` (459-474) and `entry_credit_reason` (477-511) veto on `blocking_gaps` and `wrong_expectations` only — `minor_gaps` is never consulted. The live binder's `verdict = 'gap-minor'` with `minor_gaps = len(findings)` therefore credits. As of `2026-10-28T15:05:38Z`, `.ufo/evidence/round-54/integrate/resolutions.json` (untracked) adjudicates 9 headings / 22 findings as `minor-gap` routed to round 55, the largest being `### Round-21 gate/probe registry — finite environment differential` with 11. The report must state that such a credit carries named findings rather than a clean read, and must quote the final `refresh-receipts.json` for the headings actually bound.
+   0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54-verifier-spotcheck.md:101:- **discernment — unchanged (disagreement with the lane's "improved").** For: 25 findings re-derived and routed, arm-3 blind spots disclosed unprompted, the forged-file incident and the mutation survivors named — all of it verified genuine here. Against: a pre-registered positive control is reported as passing when its committed receipt prints `CTL_MISMATCH … expected=true actual=false` / `CONTROLS_B: 2/3`, in four files including a newly landed QUALITY criterion; and the round's own finding counts do not match its committed artifacts (R54.5). Net: no movement over a base that carried the same class of record falsehood (r53 closure, SCORECARD `total=6` vs the counter's `37`).
+   0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54-verifier-spotcheck.md:116:**R54.5 — finding counts do not match the committed artifacts.** Report `:62` says the 23 wave-1 readers returned **25** findings; the committed `w1/*Read*.json` carry **28** distinct findings. Report `:79,100` says wave 2 returned **22 findings in 9 of 23 sections**; the committed w2 readers carry **25 findings in 12 sections**, and `integrate/resolutions.json` is **12 section-entries / 25 findings**, with the ledger's `minor_gaps` summing to **25 over 12 entries**. Re-derive both counts with a command.
+   0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54-verifier-spotcheck.md:243:`w1/*Read*.json` total **28**. Wave 2: committed readers **25 findings in 12 sections**, which is
+
+# receipts/ JSON that the reader pattern must exclude
+   receipts-dir JSON in round-54: 53 ; matching reader pattern: 0
+
+# finding-object distinctness (sum of array lengths vs distinct JSON objects)
+   finding objects: 53 distinct: 53 repeated: 0

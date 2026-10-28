@@ -1,0 +1,14 @@
+$ git -C CLONE grep -n "deletion lands" 0a2010ac
+0a2010acd1e92e4e332774050825e21bcfc7e079:corpus/lessons/round-54-verifier-spotcheck.md:120:**R54.7 — forged-file disposition is imprecise.** `077d431` swept `.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json` into history; `7fa9a5e` **renames** it (`R100`) to `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json`, where it still sits in the tree as the incident receipt. The report says "the deletion lands in `7fa9a5e0`" — say "renamed into the receipts dir". It never credited and cannot: the path fails arm 4's `/T54W\d+.*Read.*\.json$/` and its `section_sha256` (`b90c1f79…`) is not the genuine reader's (`61736dce…`) nor any section at `c0`.
+
+$ python3 (count + context in the fleet report)
+count=1
+"t `077d431e` before the seat's own delete step; it never\n    credited (its path fails the counter's reader regex and its `section_sha256`\n    was a guess), and the deletion lands in `7fa9a5e0`.\n  - Wave-2 mutation re-sweep"
+fleet report sha256=d1e293f5b3f6a8a964b795fa93672f38af5725f3dfa090497cec42eb9ba521c0
+
+$ git -C CLONE show 0a2010ac:.ufo/waves/round-54/w2/T54W2Sent01.md | sed -n 186,190p   # lane-local stale disposition
+`/T54W\d+.*Read.*\.json$/` (lowercase `reader`), and the sha is a guess. The worktree file was deleted at
+12:13 (`git status --porcelain` → ` D .ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json`); the
+deletion is unstaged and must be recorded in the next lane commit. The L1 (`TameshiR54a2`) was messaged
+with the path/blob/digest and the remediation. Receipt: `forged-committed-incident.txt`.
+

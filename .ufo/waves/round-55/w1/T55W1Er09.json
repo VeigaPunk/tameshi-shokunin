@@ -1,0 +1,150 @@
+{
+  "id": "R54.9",
+  "seat": "T55W1Er09",
+  "axis": "calibration",
+  "milestone": "C1 R54.9 correction draft",
+  "what": "Round-54's records carry three wave-table / package-count assertions that the tree contradicts: (a) corpus/lessons/round-54.md:51 says the OTHER 84 staged merge/tameshi entries; (b) /home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:8 states attack-role share 26.3 % in w1; (c) the same report :58 itemizes 4 reviewers. The tree yields 81 staged .md files under merge/tameshi/knowledge, reviewers=5, attack_seats=21 of 76 seats = 27.6 %, and a 76-seat role_mix whose sum equals len(items)=76. The report's 26.3 % is exactly 20/76 = its own 4 reviewers + 4 critics + 12 mutation-testers, so (b) and (c) are ONE missing reviewer seat, not two independent arithmetic errors; the same missing seat explains the report's 75-seat itemization (23+13+4+4+2+12+4+4+4+3+2=75).",
+  "old": [
+    "- **The other 84 staged `merge/tameshi` entries** — REFUSED for the same capacity",
+    "`ufo-wave-policy.json`) = **123 seats**, attack-role share 26.3 % in w1 and",
+    "  2 connectors, 12 mutation-testers, 4 critics, 4 reviewers, 4 sentinels,"
+  ],
+  "new": [
+    "- **The other 81 staged `merge/tameshi` entries** — REFUSED for the same capacity",
+    "`ufo-wave-policy.json`) = **123 seats**, attack-role share 27.6 % in w1 and",
+    "  2 connectors, 12 mutation-testers, 4 critics, 5 reviewers, 4 sentinels,"
+  ],
+  "old_location": [
+    "corpus/lessons/round-54.md:51 (lane, present at base 0a2010ac and at HEAD 631cd645)",
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:8 (fleet report, outside the lane repo, read-only)",
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:58 (fleet report, outside the lane repo, read-only)"
+  ],
+  "new_location": [
+    "corpus/lessons/round-54.md:51 (this is the only one of the three the C1 counter scans: scan(lane, rev, (\"corpus/lessons/round-54.md\",), r\"84 staged\"))",
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:8 (proposed in-place fix; harness-owned path, NOT written by this seat)",
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:58 (proposed in-place fix; harness-owned path, NOT written by this seat)"
+  ],
+  "derived": {
+    "reviewers": 5,
+    "attack_seats": 21,
+    "seats": 76,
+    "attack_share_pct": 27.6,
+    "role_mix_sum": 76,
+    "items_len": 76,
+    "staged_md_under_knowledge": 81,
+    "staged_files_total_under_knowledge": 81,
+    "non_md_files_under_knowledge": 0,
+    "staged_md_under_amendments": 4,
+    "all_md_in_package": 87,
+    "other_than_the_separately_named_entry": 80,
+    "corrections_block_tokens_required_by_the_counter": [
+      "reviewers=5 attack=21/76 seats=76",
+      "staged=81"
+    ]
+  },
+  "command": [
+    "python3 -c \"import json; d=json.load(open('/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1-registry.json')); rm=d['role_mix']; print('reviewers=%d attack=%d/%d seats=%d' % (rm['reviewer'], d['attack_seats'], d['seats'], d['seats'])); print('attack_share=%.1f%%' % (100.0*d['attack_seats']/d['seats'])); print('role_mix_sum=%d items=%d' % (sum(rm.values()), len(d['items'])))\"",
+    "find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -name '*.md' | wc -l",
+    "python3 -c \"import glob; print(len(glob.glob('/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/**/*.md', recursive=True)))\"",
+    "find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -type f | wc -l; find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -type f ! -name '*.md' | wc -l",
+    "python3 .ufo/evidence/round-55/c1/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 631cd6455e58dce969310b4c0466c3383d9f5108 --work <empty> --explain"
+  ],
+  "output": [
+    "reviewers=5 attack=21/76 seats=76",
+    "attack_share=27.6%",
+    "role_mix_sum=76 items=76",
+    "81",
+    "81",
+    "81",
+    "0",
+    "EXPLAIN R54.9 FAIL premise=ok corrected=miss stale=1 derived=reviewers=5 attack=21/76 seats=76 staged=81",
+    "EXPLAIN R54.9 stale: corpus/lessons/round-54.md:51: - **The other 84 staged `merge/tameshi` entries** — REFUSED for the same capacity"
+  ],
+  "corrections_block_draft": "**ER-R54.9 - wave-table numbers and the staged-package count.**\nOld: `4 reviewers` and `attack-role share 26.3 % in w1` (`.ufo/reports/round-54/tameshi.md:8,58`); \"The other 84 staged `merge/tameshi` entries\" (`corpus/lessons/round-54.md:51`).\nCorrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) re-derived from `.ufo/waves/round-54/w1-registry.json` `role_mix`/`attack_seats`/`seats` (`reviewer` 5, scribe 27, executor 13, scout 4, connector 2, mutation-tester 12, critic 4, sentinel 4, revenger 3, simplifier 2; sum 76 = `len(items)`), and `staged=81` staged `.md` files under `merge/tameshi/knowledge` (read-only count, both by `find -name '*.md'` and by the recursive glob the round-55 counter uses). The report's 26.3 % is 20/76 — its own 4 reviewers + 4 critics + 12 mutation-testers — so the 4-reviewer itemization and the 26.3 % share are one missing seat, not two independent errors.\nReceipt: `.ufo/waves/round-55/w1/T55W1Er09-receipts/` (01-registry-derive, 02-staged-count, 03-arithmetic, 06-attack-role-arithmetic).",
+  "counter_arms": {
+    "premise": "wave_numbers() reads role_mix.reviewer / attack_seats / seats out of the committed w1-registry.json, and staged_count() globs the package -> both non-empty => premise ok at every revision tested",
+    "stale": "regex r\"84 staged\" over corpus/lessons/round-54.md, corrections excluded -> 1 hit at base and at HEAD 631cd645, 0 after the in-place fix",
+    "corrected": "corrections block must contain both \"reviewers=5 attack=21/76 seats=76\" and \"staged=81\""
+  },
+  "fixture_matrix": {
+    "A": {
+      "edit": "in-place fix only (84 -> 81 staged), no corrections block",
+      "rev": "d75ba1cfef744d1b64b5a53188f773de0ea080d2",
+      "R54.9": "FAIL stale=0 corrected=miss",
+      "C1_R55": "total=10"
+    },
+    "B": {
+      "edit": "in-place fix + corrections block with both derived tokens",
+      "rev": "cab35d637d95b1dbdfe6c2ce130e99cdf7eda0a1",
+      "R54.9": "ok",
+      "C1_R55": "classes_corrected=1/10"
+    },
+    "C": {
+      "edit": "as B, `staged=81` token deleted from the block",
+      "rev": "53fe18326657f62b677d5b9a1dedddd9a8ad740f",
+      "R54.9": "FAIL corrected=miss",
+      "C1_R55": "total=10"
+    },
+    "D": {
+      "edit": "as B, `reviewers=5 attack=21/76 seats=76` token deleted from the block",
+      "rev": "cdd913e78ac8646ddfc404d052cfad895d13bf00",
+      "R54.9": "FAIL corrected=miss",
+      "C1_R55": "total=10"
+    },
+    "E": {
+      "edit": "corrections block present, lesson line 51 left stale",
+      "rev": "b18a5714b66ae433ce7bee5009c7a8001524777f",
+      "R54.9": "FAIL stale=1 corrected=ok",
+      "C1_R55": "stale=4 total=10"
+    },
+    "G": {
+      "edit": "strict other-reading: 'the other 80 of the 81 staged'",
+      "rev": "4cf0417a3658a5393f69d85067ae64f8b6943957",
+      "R54.9": "ok",
+      "C1_R55": "R54.9 ok; the counter still reads the block's staged=81"
+    }
+  },
+  "open_reading": {
+    "question": "does \"the other N\" mean N = 81 (all staged files) or N = 80 (81 minus the entry the preceding bullet names)?",
+    "resolved_by": "the counter arm, not by taste: it requires the token \"staged=81\" in the corrections block, so 81 is the number the round must print",
+    "both_forms_pass": "fixture B (81) and fixture G (80 of the 81) both clear R54.9; neither is stale because the regex is r\"84 staged\"",
+    "recommendation": "keep the L1's integrated single-number form (81); if a reader objects that the preceding bullet names one of the 81, fixture G's wording 'the other 80 of the 81' also clears and is strictly more honest"
+  },
+  "receipts": [
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/01-registry-derive.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/02-staged-count.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/03-arithmetic.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/04-adoption-probe.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/05-other-qualifier.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/06-attack-role-arithmetic.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/07-byte-identity.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/08-fixture-matrix.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/11-census.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/12-byte-exact-quotes.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/13-head-plus-scorecard-and-lesson.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/14-head-plus-scorecard-quality-lesson-C1.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/15-strict-other-reading.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/16-package-inventory.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/17-byte-exact-block-C1.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/21-candidate-readings.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/22-origin-of-84.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/23-head-state-R54.9.stdout",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/18-proposed-ER-R54-9.patch",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/24-census-final.stdout"
+  ],
+  "lane_files_written": [
+    ".ufo/waves/round-55/w1/T55W1Er09.json",
+    ".ufo/waves/round-55/w1/T55W1Er09.md",
+    ".ufo/waves/round-55/w1/T55W1Er09-receipts/ (16 stdout files)"
+  ],
+  "lane_production_files_written": [],
+  "census": {
+    "command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi",
+    "exit_start": 0,
+    "exit_end": 0,
+    "last_line": "tameshi\tok\t/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md",
+    "committed_rows_head": 139,
+    "working_tree_rows": 140,
+    "note": "S280 uncommitted in the L1's tree"
+  }
+}

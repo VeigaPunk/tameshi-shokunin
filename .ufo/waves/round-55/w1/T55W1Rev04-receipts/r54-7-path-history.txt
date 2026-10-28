@@ -1,0 +1,33 @@
+$ git -C CLONE (at base 0a2010ac) cat-file -e <rev>:<path>  # presence matrix
+d33053f OLD=absent NEW=absent
+59c3810 OLD=absent NEW=absent
+c210810 OLD=absent NEW=present
+0263c71 OLD=absent NEW=present
+650987a OLD=absent NEW=present
+ff2a821 OLD=absent NEW=present
+077d431 OLD=present NEW=absent
+7fa9a5e OLD=absent NEW=present
+0a2010a OLD=absent NEW=present
+631cd64 OLD=absent NEW=present
+
+$ git -C CLONE show --name-status -M --format="%H%n%s" 7fa9a5e -- <both paths>
+7fa9a5e0104bc181872401547987d6744f3b570d
+round-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)
+
+R100	.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json	.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+
+$ git -C CLONE show --name-status --format="%H %P" 077d431 -- <OLD path>
+077d431e69965fa4673cd006ab64f6fc387f9e15 fe70474dac3ae14d458b8f9119ba0ed483f0d5d5
+
+A	.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json
+$ git -C CLONE cat-file -e 077d431^:<OLD path>
+fatal: path '.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json' does not exist in '077d431^'
+fatal: absent at 077d431^ (proof 077d431 ADDED it)
+
+$ git -C CLONE rev-parse <rev>:<path>   # blob identity OLD@077d431 vs NEW@base/frozen
+90f66a2e44168a0adf8e9b08a1c70c035d40c0af
+90f66a2e44168a0adf8e9b08a1c70c035d40c0af
+90f66a2e44168a0adf8e9b08a1c70c035d40c0af
+
+$ git -C CLONE log --reverse --format="%H %s" 0a2010ac -- <NEW path>   # counter first_commit semantics
+7fa9a5e0104bc181872401547987d6744f3b570d round-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)

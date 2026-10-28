@@ -2497,15 +2497,15 @@ under this entry.
 
 L1 TameshiR54a2, hyaku run 11. Attempt 1 left nothing (no wave dir, no evidence,
 clean tree). Base `d33053f7`; contract frozen at `441c26be`; amendment 1 at
-`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
-control score — the freeze pointer the deciding run uses). Claims: C1
+a follow-up commit (one mechanical C1 arm bug, found by the binder dry run
+before any control score; the round's one freeze pointer is `077d431e`). Claims: C1
 calibration — the cold-read floor (57/64 at base; the round's own content edits
 drift it to 41/64, so the round re-reads and re-keys 23 sections); C2
 operability — one scratch-root exit class across the seven tools
 (`ScratchRootUnusable` → exit 2, the empty-string arm declared, seven registry
 `scratch_root` cells, `corpus/knowledge/scratch-root-contract.md` citing S277–S279
 opened this round). Content: C0 `59c38109` (four tools, registry, note, rows,
-SKILL three-arm rule, lesson Gate/Mistakes, QUALITY 105); C1 `99c3bc88` (25
+SKILL three-arm rule, lesson Gate/Mistakes, QUALITY 105); C1 `99c3bc88` (28
 wave-1 reader findings adjudicated and fixed — stale line anchors including
 several drifted by this round's own insertion and tool edits, the `C**`
 placeholder, a retained "no leg skips" clause, the runbook pin, two exit-arm
@@ -2518,3 +2518,36 @@ follow under this entry.
   Re-key bound 23 of 23 headings; skipped: none.
   C1 verdict: verifies. C2 verdict: verifies. DECIDING_RUN_EXIT=DECIDING_RUN_EXIT=0.
   Fleet census end: exit 0. Report committed on the fleet repo.
+
+## 2026-10-28 — round 55, attempt 1 (this round)
+
+L1 TameshiR55, hyaku run 11. Base `0a2010ac`; contract, both counters, the
+controls harness, the 15 no-harm monitors and the deciding script frozen at
+`631cd645`, amended four times before any control was scored or any deciding
+invocation ran (all four recorded in `freeze.json`; each was found by the L1's
+own dry run on an edited clone and each changed discovery plumbing only).
+Claims: **C1 calibration** (the lowest non-retired axis, 8) — the lane's record
+must agree with the tree on the ten routed defects the round-54 non-author
+spot-check pinned (R54.1–R54.10): at base `premise=10/10 stale=4
+classes_corrected=0/10 total=10 C1_R55_PASS=false`
+(`.ufo/evidence/round-55/before/c1.stdout`), target `total=0` with every value
+DERIVED from a receipt. **C2 operability** — one exit class, one line, every
+documented allocating mode of the seven tools (not the self-test only): at base
+`grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8
+skill=0/1 total=18 C2_R55_PASS=false`
+(`.ufo/evidence/round-55/before/c2.stdout`); `repeat-control` and
+`context-capture` printed the raw exception type (and `context-capture` printed
+on stdout), and the class covered only `--selftest`.
+
+Content (C0): both tools now raise `ScratchRootUnusable` and print the frozen
+grammar on stderr with exit 2; the seven registry `scratch_root` cells, the note
+(`## One line, every mode`) and the SKILL.md scratch rule state the grammar and
+the eight allocating modes plus the five lazy ones; `SCORECARD.md` gains the
+`## Round 55 - round-54 record corrections` section and the in-place fixes for
+all ten routed values; QUALITY 106 (a control is scored at the revision it
+certifies) with an erratum on 105; `corpus/lessons/round-55.md`; SOURCES S280
+(GNU Coding Standards §4.4) admitted, the sysexits candidate refused as a
+duplicate of S090. The one SKILL.md section the edit drifts (`## Standing
+rules`) is re-keyed with a fresh reader at C0. Round shape: one v2 wave of 75
+seats (band 64–128, 28 attack roles = 37.3 %) plus one v1 wave over what it
+produced. Waves measured close and deciding receipts follow under this entry.

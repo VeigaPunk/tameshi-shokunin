@@ -1,0 +1,7 @@
+## lazy modes issue zero mkdir under an unusable TMPDIR (strace -f -e trace=mkdir,mkdirat)
+repeat-control.py rc=0 mkdir-calls=0
+evidence-disposition.py rc=0 mkdir-calls=0
+## an allocating mode refuses before any mkdir
+env-diff --selftest rc=2 mkdir-calls=0
+## contrast: the same lazy mode with a USABLE TMPDIR does mkdir (so the census can see them)
+control env-diff --selftest rc=0 mkdir-calls=625

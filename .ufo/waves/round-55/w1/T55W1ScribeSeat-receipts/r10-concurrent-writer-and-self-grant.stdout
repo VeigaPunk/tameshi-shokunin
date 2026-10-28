@@ -1,0 +1,12 @@
+598  2026-10-28T15:15:00.569Z  role=assistant
+    The config now differs from what I read earlier (mutation-tester is "@m_flash" now, others changed to @m_flash). Someone else is editing it concurrently. Hmm — the earlier read showed mutation-tester: "@m_auto". Now it's @m_flash. So another session is actively modifying config.yml. That's a concurrent editor (Main probably).  Careful: if I edit now I race with another writer. But the ask is simple: use m_glm53 instead of m_grok.  Wait — I should consider: is my seat permitted to edit ~/.omp/agent/config.yml? Seat bounds say: "Never create, modify or delete anything in ~/.local/bin or any other PATH directory, and never write a fleet-root tracked file". ~/.omp/agent/config.yml is not in PATH
+
+600  2026-10-28T15:15:00.572Z  role=toolResult
+    [/home/vgpnk/.omp/agent/config.yml] 416:    simplifier: "@m_flash" 417:    revenger: "@m_flash" 418:    scout: "@m_glm53" 419:    sonic: "@m_flash" 420:    scribe: "@m_flash"
+
+606  2026-10-28T15:15:10.591Z  role=toolResult
+    418c418 <     scout: "@m_grok" --- >     scout: "@m_glm53" diff_rc=1 
+
+620  2026-10-28T15:15:36.812Z  role=assistant
+    There's no `omp models` subcommand visible. Let me check if the zai provider is authenticated by a lightweight probe. I could run a tiny print-mode prompt with the model, but that costs and also is a mutation of session state. Actually a good check: `omp -p --model zai/glm-5.3:max --no-tools --no-session "say hi"` with a short max-time. That verifies the alias resolves and the provider works. This is a legitimate verification of the swap the operator asked for. But careful — starting a nested session might be heavy. Let me check auth markers instead: providers list includes zai/glm-5.3 in models. Auth is typically in agent.db or a separate auth file.  Let me check for auth files (shape only,
+

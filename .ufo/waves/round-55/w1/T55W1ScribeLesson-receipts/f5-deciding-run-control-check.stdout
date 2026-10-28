@@ -1,0 +1,16 @@
+## how the deciding run treats the pre-registered control receipts
+$ sed -n "46,53p" .ufo/evidence/round-55/deciding-run.sh
+CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-b.stdout $E/control/controls-b.exit"
+for f in $CONTROLS; do
+  git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+  [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+  [ "$(git cat-file -s "$REV:$f")" -gt 0 ] || { echo "DECIDING_REFUSED control-receipt-empty $f"; exit 3; }
+  c=$(git log -1 --format=%H "$REV" -- "$f")
+  git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
+done
+
+$ grep -n "rev=" .ufo/evidence/round-55/deciding-run.sh
+66:if git diff --quiet "$FREEZE" "$REV" -- $FROZEN; then echo "FROZEN_UNCHANGED=1 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; else echo "FROZEN_UNCHANGED=0 freeze=$FREEZE rev=$REV" | tee "$OUT/frozen.stdout"; git diff --stat "$FREEZE" "$REV" -- $FROZEN | tee -a "$OUT/frozen.stdout"; rc=1; fi
+
+# the only rev= use is the FROZEN_UNCHANGED line at :66; no comparison is made
+# between the `rev=` printed on a CTL line and $REV.

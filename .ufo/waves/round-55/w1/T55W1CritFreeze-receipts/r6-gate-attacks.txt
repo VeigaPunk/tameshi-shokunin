@@ -1,0 +1,49 @@
+### gate harness = deciding-run.sh lines 20-58, verbatim (see r5): bash gate.sh LANE FREEZE REV OUT
+
+## fix1 well-formed freeze + post-freeze control receipts
+$ bash gate.sh fix1 370a97ef81bc13cadcfc3b7c5cc808f0241f6581 00cc9c62157d7c586378a92fcb993325192af5a3 out
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+
+## fix2 manifest files={} (hashes nothing) -- contract frozen_paths never consulted
+$ bash gate.sh fix2 <F> <R> out
+FREEZE_INTEGRITY: OK files=0 amendments=0
+GATE_OPENED
+exit=0
+
+## fix3 controls-a.exit is a 0-byte blob at REV
+$ bash gate.sh fix3 <F> <R> out
+FREEZE_INTEGRITY: OK files=6 amendments=0
+DECIDING_REFUSED control-receipt-empty .ufo/evidence/round-55/control/controls-a.exit
+exit=3
+
+## fix4 control receipts last touched BEFORE the freeze commit (stale)
+$ bash gate.sh fix4 <F> <R> out
+FREEZE_INTEGRITY: OK files=6 amendments=0
+DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-55/control/controls-a.stdout
+exit=3
+
+## fix5 verdict is "CONTROLS_A: 0/0 as pre-registered"
+$ bash gate.sh fix5 <F> <R> out
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+
+## fix6 REV blob is the single byte "x"; worktree carries the verdict; index flag assume-unchanged
+$ git -C fix6 cat-file -s REV:...controls-a.stdout
+1
+$ git -C fix6 status --porcelain
+[end]
+$ bash gate.sh fix6 <F> <R> out
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0
+
+## fix8 controls-a.exit and controls-b.exit committed as "1"
+$ git -C fix8 cat-file blob REV:...controls-a.exit
+1
+$ bash gate.sh fix8 <F> <R> out
+FREEZE_INTEGRITY: OK files=6 amendments=0
+GATE_OPENED
+exit=0

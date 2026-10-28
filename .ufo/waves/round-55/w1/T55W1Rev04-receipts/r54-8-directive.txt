@@ -1,0 +1,60 @@
+$ sed -n 150,160p /home/vgpnk/Projects/shokunin/.ufo/prompts/tameshi-round-54.md
+which seems the one that works best; make sure to adapt to the 64-128 per round directive; max
+ceiling of 256 | use the same model delegations we were using as before | i want you to use
+m_flash for all roles; only use m_grok for the scout role" — later amended: "m_flash on high
+effort" (alias already :high, unchanged).
+- **Routing: run-11 map** (never pass `model`): every role `@m_flash` except `scout` `@m_grok`.
+  That includes L1 seats (`task`), closures (`main`), planners, executors, scribes, reviewers,
+  critics, connectors, sentinels, revengers, labrats, mutation-testers, simplifiers, sonic,
+  distiller and seance — `task.agentModelOverrides` in `~/.omp/agent/config.yml` is the
+  authority; this line is the label. m_flash is cursor/deepseek-v41-flash-1017:high.
+- **Fresh-start rule applies at run-11 start to mori, souji and tabi** (each blocked at run-10
+  end by three rejected closures in a row; the run-start directive lifts streak blocks). Their
+
+$ sed -n 254,264p /home/vgpnk/Projects/shokunin/.ufo/prompts/tameshi-round-54.md
+m_mim, m_glm53 | delegate accordingly. | i want the swarm rounds to be of 64-100 subagents per
+shokunin;" — then: "use more m_flash"; "oh, its m_kfc; my bad, not m_kcode"; "also, include
+m_antigravity as the connector"; "stop with the m_glm53 roles assignment, use m_flash".
+- **Round size: 64–100 seats in total, every round** (floor 64 is the directive, ceiling 100). Shape:
+  one v2 wave of 64–100, or two v1 waves (32–64 each) summing to 64–100. Residual calls count
+  toward the 100. The capacity rule's "size near the band floor" means 64 this run.
+- **Run-7 routing** (global role map; never pass `model`): task/main/planner `@m_opus` (operator, later in run: "use m_opus (high) on planner, task, main"; was `@m_kfc`);
+  reviewer/mutation-tester/security-reviewer `@m_zfl`; connector `@m_antigravity`;
+  scout/distiller/seance `@m_mim`; executor/labrat/scribe/sonic/simplifier/critic/revenger/sentinel
+  `@m_flash` (m_glm53 dropped by the operator). Every wave carries a few connector seats
+  (cross-claim/cross-source pattern finding). **"use more m_flash":** m_flash roles carry the
+
+$ grep -cin "operator routing override" /home/vgpnk/Projects/shokunin/.ufo/prompts/tameshi-round-54.md
+0
+$ grep -n m_glm53 /home/vgpnk/Projects/shokunin/.ufo/prompts/tameshi-round-54.md
+200:  each amendment supersedes the one before: ~17:45 critic `@m_flash` → `@m_glm53` → `@m_kfc`;
+254:m_mim, m_glm53 | delegate accordingly. | i want the swarm rounds to be of 64-100 subagents per
+256:m_antigravity as the connector"; "stop with the m_glm53 roles assignment, use m_flash".
+263:  `@m_flash` (m_glm53 dropped by the operator). Every wave carries a few connector seats
+
+$ sed -n 371,395p /home/vgpnk/Projects/shokunin/.ufo/prompts/tameshi-round-54.md   # config is operator-owned, never change
+   bounded planning data-walk may ride a scout, connector or revenger item. Record that mapping in
+   the report; never bypass validation to add a planner.
+   **Routing:** Routing is `task.agentModelOverrides` in `~/.omp/agent/config.yml`. The role
+   decides the route. Never pass `model`. That file, its aliases and fallback chains are
+   operator-owned: read them, never change them. Give an item to an executor only when it writes or
+   runs code (scripts, gates, selftests, fixtures, parsers, counting commands); prose drafting
+   (knowledge entries, SOURCES rows, lessons) goes to scribes; attacks go to reviewers, critics,
+   mutation-testers and scouts. A seat keeps the route chain it captured at spawn, also when
+   resumed. Record a seat's actual answering model when a claim depends on it. Report every seat
+   that dies, with its last error text; a dead seat stays dead in the evidence. When a coordinator
+   receives a provider backoff, respect it and resume the same identity; never restart a duplicate
+   writer.
+   **REA MCP:** the operator authorized disabling the OMP `rea` MCP entry for this phase; the
+   orchestrator set `"enabled": false` in `~/.omp/agent/mcp.json` at 10:12 -03 (pre-edit copy
+   `~/.omp/agent/mcp.json.pre-disable-20261020T1015`). An unidentified writer rewrote that file at
+   13:35:56 -03: the rea pin is now `rea-agents@6.7.0` and `enabled: false` is gone (reported by
+   kaidoku r19; left for the operator to decide). The file is operator-owned either way: never edit
+   or restore it. Do REA work through the CLI (`npx -y rea-agents@6.5.0 <command>`), never through
+   `xd://mcp__rea_*` devices.
+   **Capacity:** the session's job and concurrency limits are `async.maxJobs` and
+   `task.maxConcurrency` in `~/.omp/agent/config.yml` (operator-owned: read them, never change
+   them). Several lanes run at once, so a `task` call can still be refused at the job limit; the
+   refusal ("Background job limit reached") spawns nothing. Never split or shrink a wave below its
+   band, and never poll or loop on retries: resend the same payload after one of your own running
+   jobs settles. **Run-6 amendment (the swarm is the operator's directive, not optional):** if you

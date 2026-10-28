@@ -1,0 +1,44 @@
+== patch applied to c106-controls.py ==
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w1/T55W1ScribeQuality-receipts/c106-controls.py	2026-10-28 13:52:12.291365147 -0300
++++ /fast/scratch/hyaku/tameshi-r55/T55W1RevQuality/c106-controls-patched.py	2026-10-28 14:00:57.411102373 -0300
+@@ -71,10 +71,16 @@
+ 
+ 
+ def paraphrases(body, rel, name, keys, verdict):
+-    """Restatements of the control after a mention of its name."""
++    """Restatements of the control after a mention of its name.
++
++    Verbatim verdict lines (a line beginning with `CTL <name> `) are the quote
++    arm's subject, not paraphrase material: a record that carries the receipt's
++    line and its re-scored sibling must not be failed for the sibling's values.
++    """
+     out = []
+-    for m in re.finditer(re.escape(name), body):
+-        tail = body[m.end():m.end() + CLAIM_WINDOW]
++    prose = "\n".join(l for l in body.splitlines() if not l.startswith("CTL "))
++    for m in re.finditer(re.escape(name), prose):
++        tail = prose[m.end():m.end() + CLAIM_WINDOW]
+         bm = BARE_VERDICT.match(tail)
+         if bm is not None and verdict is not None and bm.group(1) != verdict:
+             out.append("%s+%d bare `%s` receipt=%s"
+
+== patched run: base fail (must stay red, identical FAIL set) ==
+FAIL CTL_POS_c1 rev scored_at=077d431e6996 certifies=c21081008adb
+FAIL CTL_POS_c1 verdict line=C1_R54_PASS=false expected=true
+FAIL CTL_POS_c1 paraphrase SCORECARD.md+294678 bare `true` receipt=false
+FAIL CTL_POS_c1 paraphrase corpus/lessons/round-54.md+4354 rekeyed=7/7 receipt=rekeyed=3/7
+FAIL CTL_POS_c1 paraphrase corpus/lessons/round-54.md+5819 rekeyed=7/7 receipt=rekeyed=3/7
+FAIL CTL_POS_c1 quote NOT_QUOTED in any --record: CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/6
+C106: controls=1 pass=0 fail=1
+EXIT=1
+
+== patched run: both-scorings record, re-scored control (must go green) ==
+OK CTL_POS_c1 rev=c21081008adb CTL CTL_POS_c1 C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true
+C106: controls=1 pass=1 fail=0
+EXIT=0
+
+== patched run: both-scorings record, mis-scored control (must stay red on rev+verdict) ==
+FAIL CTL_POS_c1 rev scored_at=077d431e6996 certifies=c21081008adb
+FAIL CTL_POS_c1 verdict line=C1_R54_PASS=false expected=true
+C106: controls=1 pass=0 fail=1
+EXIT=1

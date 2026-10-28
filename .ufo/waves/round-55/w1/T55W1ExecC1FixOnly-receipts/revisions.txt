@@ -1,0 +1,20 @@
+# clone and revisions (arm A = assigned tree, arm B = control)
+clone=/fast/scratch/hyaku/tameshi-r55/T55W1ExecC1FixOnly/lane
+clone_toplevel=/fast/scratch/hyaku/tameshi-r55/T55W1ExecC1FixOnly/lane
+base_rev=631cd6455e58dce969310b4c0466c3383d9f5108
+armA_rev=da4fe8515ec5ebb3eee1d4ae2d17fffb83206dc8
+armB_rev=c467c1c7b2ad8d0ee93274bfc8149422acdc810b
+armA_commit=round-55 differential: round-54 stale assertions corrected in place, no corrections section added
+armB_commit=round-55 differential control arm B: corrections section carrying receipt-derived values on top of the in-place fixes
+armA_diffstat:  .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md |  6 ++++++; SCORECARD.md                                   | 12 ++++++------; corpus/QUALITY.md                              |  2 +-; corpus/lessons/round-54.md                     | 10 +++++++---; 4 files changed, 20 insertions(+), 10 deletions(-);
+clone_status_empty=yes
+counter_sha256=77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783
+
+# reproduction (after a host sweep removed the first scratch clone)
+rebuild: git clone --shared LANE CLONE; checkout --detach 631cd64; git apply inplace-edits.diff; commit
+armA_repro_rev=e378d921b3ab34d799ecc8068e029a09b873c3e0
+armA_repro_verdict=C1_R55: rev=e378d921b3ab classes=10 premise=10/10 stale=0 classes_corrected=0/10 total=10 C1_R55_PASS=false
+armA_repro_rows_identical_to_first_run=yes (10/10 EXPLAIN lines; verdict differs only in rev prefix)
+armB_repro_rev=ba9695c516beaa98b43e82815f0c21a34d8489c7
+armB_repro_verdict=C1_R55: rev=ba9695c516be classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+armB_repro_rows_identical_to_first_run=yes

@@ -1,0 +1,162 @@
+{
+  "seat": "T55W1ScribeScorecard",
+  "item": "SCORECARD round-55 block (claims block + standing axis table + corrections skeleton + Planned round 56)",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "counter_freeze_commit": "631cd64",
+  "block_heading": "## Round 55 — round-54 record repair (calibration) + one-line scratch-root class across every documented mode (operability) (2026-10-28)",
+  "corrections_heading": "## Round 55 - round-54 record corrections",
+  "corrections_heading_rule": "the frozen counter's corrections() reads from this exact heading to the next line starting with '## '; '### ' subheadings do not terminate it; the section is therefore last in the file",
+  "claims": [
+    {
+      "id": "C1",
+      "axis": "calibration",
+      "before_line": "C1_R55: rev=0a2010acd1e9 classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false",
+      "before_receipt": ".ufo/evidence/round-55/before/c1.stdout",
+      "before_rederived_identical": true,
+      "target": "total=0 (premise=ok + zero stale outside the corrections section + derived value present, for all ten classes)",
+      "counting_command": "python3 .ufo/evidence/round-55/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+      "controls": ["CTL_0_c1 false", "CTL_SKIP_c1 false", "CTL_FAB_c1 false", "CTL_POS_c1 true (phase B, at the revision it certifies)"]
+    },
+    {
+      "id": "C2",
+      "axis": "operability",
+      "before_line": "C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false",
+      "before_receipt": ".ufo/evidence/round-55/before/c2.stdout",
+      "before_receipt_state": "0 bytes in the worktree; the line above is the committed blob at 631cd64 (43 lines, 2634 bytes)",
+      "target": "total=0 (8/8 grammar, 5/5 lazy, 13/13 empty, 13/13 usable, 0 tmp mkdirs, docs 7/7, note 8/8, skill 1/1)",
+      "counting_command": "python3 .ufo/evidence/round-55/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+      "controls": ["CTL_0_c2 false", "CTL_SKIP_c2 false", "CTL_POS_c2 true", "CTL_BREAK_c2 false"]
+    }
+  ],
+  "corrections": [
+    {
+      "id": "R54.1",
+      "old": "round-54 C1 row: `CTL_POS_c1 true`; QUALITY 105 falsifier and round-54 lesson: the positive control prints rekeyed=7/7",
+      "corrected": "CTL_MISMATCH, CTL_POS_c1 expected=true actual=false, CONTROLS_B: 2/3",
+      "derived": "CTL_MISMATCH + 2/3",
+      "derivation": "grep 'CTL_POS_c1\\|CONTROLS_B' .ufo/evidence/round-54/control/controls-b.stdout",
+      "receipt": ".ufo/evidence/round-54/control/controls-b.stdout",
+      "counter_requires": ["CTL_MISMATCH", "2/3"],
+      "stale_pattern": "CTL_POS_c1 true"
+    },
+    {
+      "id": "R54.2",
+      "old": "7883e0e5 as 'the freeze pointer the deciding run uses'; fe70474d in the round-54 measured-close line",
+      "corrected": "one pointer, 077d431e (five amendments)",
+      "derived": "freeze pointer=077d431e",
+      "derivation": "grep -o 'freeze=[0-9a-f]\\{40\\}' .ufo/evidence/round-54/after/frozen.stdout",
+      "receipt": ".ufo/evidence/round-54/after/frozen.stdout",
+      "counter_requires": ["077d431e"],
+      "stale_pattern": "7883e0e5|fe70474d"
+    },
+    {
+      "id": "R54.3",
+      "old": "total=14 in the round-54 C2 claim row",
+      "corrected": "total=13",
+      "derived": "total=13",
+      "derivation": "first total=(\\d+) match of .ufo/evidence/round-54/before/c2.stdout",
+      "receipt": ".ufo/evidence/round-54/before/c2.stdout",
+      "counter_requires": ["total=13"],
+      "stale_pattern": "total=14"
+    },
+    {
+      "id": "R54.4",
+      "old": "49280fe5 for .ufo/evidence/round-54/c2/measure.py",
+      "corrected": "8528ee85 (the bytes that decided)",
+      "derived": "c2 digest=8528ee85",
+      "derivation": "the c2/measure.py entry of .ufo/evidence/round-54/freeze.json",
+      "receipt": ".ufo/evidence/round-54/freeze.json",
+      "counter_requires": ["8528ee85", "c2/measure.py"],
+      "stale_pattern": null
+    },
+    {
+      "id": "R54.5",
+      "old": "25 wave-1 findings; 22 wave-2 findings in 9 sections",
+      "corrected": "w1=28 w2=25 sections=12",
+      "derived": "w1=28 w2=25 sections=12",
+      "derivation": "git ls-tree -r --name-only REV -- .ufo/waves/round-54/w1|w2, keep /T54W\\d+[A-Za-z]*Read\\d+\\.json$/, sum len(json['findings']) per file; files with an empty list are not sections",
+      "receipt": ".ufo/waves/round-54/w1/ and .ufo/waves/round-54/w2/ committed reader JSONs",
+      "counter_requires": ["w1=28 w2=25 sections=12"],
+      "stale_pattern": null
+    },
+    {
+      "id": "R54.6",
+      "old": "three wave-2 seat deliverables untracked at closure",
+      "corrected": "committed; the sweep is ff2a821",
+      "derived": "sweep commit=ff2a821",
+      "derivation": "first commit in history order touching .ufo/waves/round-54/w2/T54W2Sent03.md",
+      "receipt": ".ufo/waves/round-54/w2/T54W2Sent03.md and T54W2Sent03-receipts/{c1committed-positive.stdout,rejection-attribution.txt}",
+      "counter_requires": ["ff2a821"],
+      "stale_pattern": null
+    },
+    {
+      "id": "R54.7",
+      "old": "'the deletion lands in 7fa9a5e0'",
+      "corrected": "renamed (R100) into .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json at 7fa9a5e; still in the tree as the incident receipt, cannot credit",
+      "derived": "rename commit=7fa9a5e",
+      "derivation": "first commit touching the new path; git show --name-status 7fa9a5e prints R100",
+      "receipt": ".ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json",
+      "counter_requires": ["renamed", "7fa9a5e"],
+      "stale_pattern": null
+    },
+    {
+      "id": "R54.8",
+      "old": "incident in the report only; lesson silent; seat file asserted an operator instruction authorised the edit",
+      "corrected": "the write to ~/.omp/agent/config.yml was fabricated (no operator instruction in the session record); scout reads @m_grok again (config.yml:418); incident recorded in corpus/lessons/round-55.md; seat file marked SUPERSEDED (round 55, ER-R54-8)",
+      "derived": "config.yml + fabricated + seat marked",
+      "derivation": "the seat file's superseded marker plus the lesson-55 incident row",
+      "receipt": ".ufo/waves/round-54/w1/T54W1ExecStraceNoise.md (superseded block); corpus/lessons/round-55.md (R54.8 row)",
+      "counter_requires": ["config.yml", "fabricated", "and 'superseded' in the seat file"],
+      "stale_pattern": null
+    },
+    {
+      "id": "R54.9",
+      "old": "4 reviewers; 26.3 % attack share; 'the other 84 staged merge/tameshi entries'",
+      "corrected": "reviewers=5 attack=21/76 seats=76 (27.6 %); staged=81",
+      "derived": "reviewers=5 attack=21/76 seats=76 staged=81",
+      "derivation": "w1-registry.json keys role_mix.reviewer, attack_seats, seats; glob('<package>/merge/tameshi/knowledge/**/*.md', recursive=True) with package root /home/vgpnk/Projects/shokuknow",
+      "receipt": ".ufo/waves/round-54/w1-registry.json; the staged package directory listing (read-only, outside the lane)",
+      "counter_requires": ["reviewers=5 attack=21/76 seats=76", "staged=81"],
+      "stale_pattern": "84 staged (scanned in corpus/lessons/round-54.md only)"
+    },
+    {
+      "id": "R54.10",
+      "old": "CTL_R53 (58/64, rekeyed=0/30) cited to control/controls-a.stdout",
+      "corrected": "controls-a.stdout prints rekeyed=0/7; 0/30 belongs to control/r53-counter-at-88afa941.stdout",
+      "derived": "controls-a rekeyed=0/7",
+      "derivation": "grep 'CTL_R53' .ufo/evidence/round-54/control/controls-a.stdout",
+      "receipt": ".ufo/evidence/round-54/control/controls-a.stdout; .ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout",
+      "counter_requires": ["controls-a.stdout", "rekeyed=0/7", "r53-counter-at-88afa941"],
+      "stale_pattern": null
+    }
+  ],
+  "standing_axes": [
+    {"axis": "depth", "score": 10, "measurement": "recorded_cases=10 depth_score=10", "rev": "0a2010ac", "last_change_round": 51},
+    {"axis": "calibration", "score": 8, "measurement": "COLDREAD_PRECHECK floor_credited=64 cand_credited=64 lost=0 ok (floor intact); C1 is the monitor's record arm", "rev": "0a2010ac", "last_change_round": 53},
+    {"axis": "freshness", "score": 9, "measurement": "C1_R45 fresh=71 score=9 verified=73", "rev": "0a2010ac", "last_change_round": 48}
+  ],
+  "planned_round_56": [
+    {"item": "six documented registry modes no counter exercises", "pending": true, "evidence": "tools/registry.json: 19 rows reference the seven tools, the counter measures 13", "names": ["repeat-control-snapshot-mismatch", "evidence-disposition-round14-superseded", "evidence-disposition-round17", "evidence-disposition-round17-before", "context-capture-missing-env", "context-capture-mapping-suffix"]},
+    {"item": "caller-side parse fixture for the grammar (whole line and prefix)", "pending": true, "evidence": "C2 cannot_see, contract.json"},
+    {"item": "usable-arm timing exposure (registry-check selftest wall-clock cases)", "pending": true, "evidence": "base re-run with the amended counter printed usable=12/13 total=19; the same selftest alone prints rc=0"},
+    {"item": "one entry from the 81-entry staged package", "pending": true, "evidence": "81 .md files under /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge; none adopted this round"},
+    {"item": "corpus/knowledge/service-limits.md §5 U1 heading re-read (carried since round 53)", "pending": true, "evidence": "U1 at :220; no receipt under .ufo/evidence/round-53/, round-54/ or round-55/"},
+    {"item": "corpus/knowledge/delta-debugging-minimization-contract.md adoption", "pending": false, "evidence": "already adopted (corpus/knowledge/delta-debugging-minimization-contract.md, added round 50 at b28a978); excluded from the Planned line"},
+    {"item": "env-diff --contract could-not-evaluate residue", "pending": false, "evidence": "already emits the grammar at base (grammar=6/8; the two misses are repeat-control and context-capture); excluded from the Planned line"}
+  ],
+  "demo": {
+    "clone": "/fast/scratch/hyaku/tameshi-r55/T55W1ScribeScorecard/demo/clone",
+    "revision": "69e16a739f44",
+    "c1": "C1_R55: rev=69e16a739f44 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true",
+    "mutant_invented_staged_count": "classes_corrected=9/10 total=1 C1_R55_PASS=false (R54.9 corrected=miss)",
+    "mutant_stale_positive_control": "stale=1 total=1 C1_R55_PASS=false (R54.1 stale=1 at SCORECARD.md:2658)"
+  },
+  "findings": [
+    {"id": "F1", "what": "freeze manifest does not pin the counter bytes it describes and records fewer amendments than the bytes name", "severity": "blocks the deciding run's freeze-integrity gate"},
+    {"id": "F2", "what": "before/c2.stdout is 0 bytes in the worktree; content survives only at 631cd64", "severity": "the C2 before row cites a path that reads empty"},
+    {"id": "F3", "what": "registry-check --selftest rc=1 under concurrent load inside the usable arm (usable=12/13 total=19); the same re-run on a quiet host printed usable=13/13 total=18, identical to the frozen receipt; the selftest alone prints PASS (51 cases) rc=0", "severity": "deciding run must be quiet, or the arm must name its timing cases"},
+    {"id": "F4", "what": "lesson-55 claims 141 SOURCES rows; the tree has 140 (last S280)", "severity": "record-only"},
+    {"id": "F5", "what": "round-54 lesson refuses a delta-debugging entry that is already in corpus/knowledge and no longer in the staged package", "severity": "unmapped stale claim, not scanned by C1"}
+  ]
+}

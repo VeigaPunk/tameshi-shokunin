@@ -1,0 +1,128 @@
+{
+  "seat": "T55W1CritC1",
+  "claim_attacked": "C1 (calibration, the round-54 routed-defect counter)",
+  "verdict": "design falsified: a tree that makes no correction reaches total=0 C1_R55_PASS=true under the frozen counter bytes and under the wave-1 amendment",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "counters": {
+    "frozen": {
+      "sha256": "77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783",
+      "source": "freeze commit 631cd6455e58dce969310b4c0466c3383d9f5108 (also freeze.json entry)"
+    },
+    "amended": {
+      "sha256": "711507e7b5bdd060a67b42162d043aabaef339408b3291a3c6ca39599d566dcd",
+      "source": "working-tree c1/measure.py, mtime 2026-10-28T14:00:09-03:00 (contract amendment 5, uncommitted)"
+    }
+  },
+  "fixtures": [
+    {"tag": "E1B-SELFDECLARED", "rev": {"frozen": "b9317eff8a18", "amended": "9bf882d8e30a"}, "result": {"frozen": "total=0 PASS", "amended": "total=0 PASS"}, "receipts": ["frozen-e1bselfdeclared.stdout", "amended-e1bselfdeclared.stdout", "e1b-tree.txt", "no-harm-on-e1b.stdout"]},
+    {"tag": "E1-DELETE", "rev": {"frozen": "acce1054a2f3", "amended": "2c72cc17fe9c"}, "result": {"frozen": "total=0 PASS", "amended": "total=0 PASS"}, "receipts": ["frozen-e1-delete.stdout", "amended-e1-delete.stdout"]},
+    {"tag": "E2B-COSMETIC", "rev": {"frozen": "88ed0c2334a6", "amended": "e56a6eb75515"}, "result": {"frozen": "total=0 PASS", "amended": "total=0 PASS"}, "receipts": ["frozen-e2bcosmetic.stdout", "amended-e2bcosmetic.stdout"]},
+    {"tag": "E5B-PROVENANCE", "rev": {"frozen": "5d3c49760027", "amended": "cc4a629178f4"}, "result": {"frozen": "total=0 PASS", "amended": "total=0 PASS"}, "receipts": ["frozen-e5bprovenance.stdout", "amended-e5bprovenance.stdout", "e5b-provenance.txt"]},
+    {"tag": "E3C-INTERVENING-HEADING", "rev": {"frozen": "b2221f28a844", "amended": "9be5e37a10e9"}, "result": {"frozen": "total=10 corrected=0/10 stale=3", "amended": "total=10 corrected=0/10 stale=3"}, "receipts": ["frozen-e3c-intervene.stdout", "amended-e3c-intervene.stdout", "probes.stdout"]},
+    {"tag": "E4-DUPLICATE-HEADING", "rev": {"frozen": "dba510e3472b", "amended": "68f8c6e25e69"}, "result": {"frozen": "total=3 corr_len=5268 contiguous=False", "amended": "total=3 corr_len=5268 contiguous=False"}, "receipts": ["frozen-e4dupe.stdout", "amended-e4dupe.stdout", "probes.stdout"]},
+    {"tag": "E7-CRASH", "rev": {"frozen": "452ba8cc4027", "amended": "90352069127f"}, "result": {"frozen": "exit=1 no verdict line", "amended": "exit=1 no verdict line"}, "receipts": ["frozen-e7-crash.stdout", "amended-e7-crash.stdout"]},
+    {"tag": "E8-STAGEDROOT", "rev": {"frozen": "97bcd25515cc", "amended": "54c0f56d4bc9"}, "result": {"frozen": "premise=9/10 total=1", "amended": "premise=9/10 total=2"}, "receipts": ["frozen-e8-stagedroot.stdout", "amended-e8-stagedroot.stdout"]},
+    {"tag": "E10-STEERABLE-DERIVATION", "rev": {"frozen": "1c0d570baa5b", "amended": "7229b6f57d55"}, "result": {"frozen": "R54.5 ok derived=w1=30", "amended": "R54.5 ok derived=w1=30"}, "receipts": ["frozen-e10-steer.stdout", "amended-e10-steer.stdout"]},
+    {"tag": "E0-CTL_SKIP-REPLAY", "rev": {"frozen": "89c2de6c7e7b", "amended": "94777cea8137"}, "result": {"frozen": "total=4", "amended": "total=4"}, "receipts": ["frozen-e0-skip.stdout"]},
+    {"tag": "BASE-REPRODUCTION", "rev": {"frozen": "0a2010acd1e9", "amended": "0a2010acd1e9"}, "result": {"frozen": "total=10 premise=10/10 stale=4", "amended": "total=10 premise=10/10 stale=4"}, "receipts": ["frozen-base.stdout"]},
+    {"tag": "NINE-CLASS-COUNTER", "rev": {"frozen": "b9317eff8a18"}, "result": {"frozen": "classes=9 total=0 PASS exit 0"}, "receipts": ["nine-class.stdout"]}
+  ],
+  "findings": [
+    {
+      "id": "C1-F1",
+      "severity": "blocker",
+      "title": "absence of a record file reads as compliance",
+      "detail": "scan() does `if body is None: continue` (frozen measure.py:82-96), so git rm corpus/QUALITY.md corpus/lessons/round-54.md removes every stale hit in them. The E1B tree deletes 1721 lines of record and still scores total=0 on both byte sets.",
+      "evidence": ["frozen-e1bselfdeclared.stdout", "amended-e1bselfdeclared.stdout", "e1b-tree.txt"]
+    },
+    {
+      "id": "C1-F2",
+      "severity": "blocker",
+      "title": "the corrections exemption is positional, not grammatical",
+      "detail": "corrections() returns the text between the heading and the next `## ` heading (measure.py:66-80) and scan() subtracts that text before matching. Inserting the heading above the round-54 block puts every stale line inside the exempt block without editing one byte. The block also runs to EOF when it is the last section, so the exemption grows.",
+      "evidence": ["frozen-e1bselfdeclared.stdout", "e1b-tree.txt", "probes.stdout"]
+    },
+    {
+      "id": "C1-F3",
+      "severity": "blocker",
+      "title": "the corrected arm is token presence, so it cannot tell a correction from a copy",
+      "detail": "Every class's corrected arm is `token in corr`; the counter prints those tokens in --explain. A section that states it makes no correction and pastes them scores 10/10 (E1B). No receipt-pointer or old->new grammar is checked.",
+      "evidence": ["frozen-e1bselfdeclared.stdout", "amended-e1bselfdeclared.stdout"]
+    },
+    {
+      "id": "C1-F4",
+      "severity": "major",
+      "title": "R54.4 never hashes the bytes it certifies; the manifest is editable",
+      "detail": "derive_freeze_digest() reads .ufo/evidence/round-54/freeze.json and the counter never computes sha256 of c2/measure.py at rev. Rewriting the manifest yields R54.4 ok with a digest the tree does not have (E5B: certifies deadbeef, actual 8528ee85).",
+      "evidence": ["frozen-e5bprovenance.stdout", "amended-e5bprovenance.stdout", "e5b-provenance.txt"]
+    },
+    {
+      "id": "C1-F5",
+      "severity": "major",
+      "title": "the stale scan is defeated by typography (survives amendment 5)",
+      "detail": "`positive control` -> `positive-control` and `84 staged` -> `84  staged` leave every false claim readable and score stale=0 on both byte sets. Amendment 5's whitespace-collapsed span scan catches only the one line whose words are split across a wrap.",
+      "evidence": ["frozen-e2bcosmetic.stdout", "amended-e2bcosmetic.stdout"]
+    },
+    {
+      "id": "C1-F6",
+      "severity": "major",
+      "title": "stale scope is per class and misses records that state the claim",
+      "detail": "RECORD omits LOG.md in the frozen bytes (LOG.md:2500 carried R54.2's false 'freeze pointer the deciding run uses' for 7883e0e5). Amendment 5 adds LOG.md to RECORD but R54.2/R54.3/R54.9 pass their own single-file tuples (measure.py:206,214,256), so R54.2 still reports stale=0 on the amended counter with LOG.md unchanged. SKILL.md is unscanned. The spotcheck lesson is correctly excluded.",
+      "evidence": ["amended-e1bselfdeclared.stdout", "e1b-tree.txt"]
+    },
+    {
+      "id": "C1-F7",
+      "severity": "major",
+      "title": "the verdict depends on a live external project (non-hermetic)",
+      "detail": "STAGED_DEFAULT=/home/vgpnk/Projects/shokuknow (measure.py:39) is globbed at measure time (measure.py:142). The same passing revision scores PASS with it present and total>=1 with it absent, so R54.9's `staged=81` is not a property of the revision.",
+      "evidence": ["frozen-e8-stagedroot.stdout", "amended-e8-stagedroot.stdout"]
+    },
+    {
+      "id": "C1-F8",
+      "severity": "major",
+      "title": "the verdict does not assert its denominator",
+      "detail": "total is computed over whatever rows exist (measure.py:278-284); a copy with row(\"R54.6\", ...) removed prints classes=9 total=0 PASS=true and exits 0. A lost class is never reported as could-not-evaluate.",
+      "evidence": ["nine-class.stdout"]
+    },
+    {
+      "id": "C1-F9",
+      "severity": "major",
+      "title": "a crash is scored as a failed class, not as could-not-evaluate",
+      "detail": "Only Setup is caught (measure.py:291-294). A malformed round-54 freeze.json dies with AttributeError at measure.py:126 and exits 1 with no verdict line, the same code as an honest miss.",
+      "evidence": ["frozen-e7-crash.stdout", "amended-e7-crash.stdout"]
+    },
+    {
+      "id": "C1-F10",
+      "severity": "major",
+      "title": "numeral premises are satisfied by pre-existing or self-authored text",
+      "detail": "R54.8's 'seat marked superseded' is satisfied at base by an unrelated round-50 clause (T54W1ExecStraceNoise.md:299); R54.10's r53-counter-at-88afa941 is hard-coded in the counter, not derived; R54.5's counts are derived from any file matching T54W\\d+[A-Za-z]*Read\\d+\\.json, so adding T54W1Read99.json moves the required value to w1=30 and R54.5 passes.",
+      "evidence": ["frozen-e10-steer.stdout", "amended-e10-steer.stdout"]
+    },
+    {
+      "id": "C1-F11",
+      "severity": "process",
+      "title": "frozen counter edited mid-wave with an inconsistent manifest",
+      "detail": "Working c1/measure.py is 711507e7 (mtime 14:00:09) while working freeze.json pins 77abe1e9 and lists 3 amendments against contract.json's 5. controls.sh extracts from the freeze commit, so controls would score 77abe1e9 while the amendment intends 711507e7. Reported, not fixed; both byte sets were scored and pinned by digest.",
+      "evidence": ["counter-bytes.txt"]
+    }
+  ],
+  "smallest_safe_correction": [
+    "scan()/scan_span(): a missing record file fails the class; require every RECORD path exists at rev",
+    "replace the positional exemption with a per-line correction grammar (R54.N old: X -> new: Y (receipt: PATH)); exempt only matching lines and require the heading exactly once",
+    "bind values to the tree: R54.4 sha256(c2/measure.py at rev) equals the quoted digest and the manifest entry; R54.2 forbids any non-receipt 8-hex pointer; R54.5 counts only registry-named readers; R54.10 derives 88afa941 from the receipt filename",
+    "every class's stale scan uses RECORD (drop the per-class tuples at 195/206/214/256)",
+    "assert len(rows)==10 and the id set, else exit 2",
+    "catch Exception -> C1_SETUP could-not-evaluate exit 2, keep 1 for a failed class",
+    "delete STAGED_DEFAULT as a live path; take the staged count from a lane-committed artefact or freeze staged=81 in the contract",
+    "R54.8 seat arm matches a line naming R54.8, not any occurrence of 'superseded'"
+  ],
+  "sweep_nulls": [
+    "base reproduces before/c1.stdout exactly (premise=10/10 stale=4 corrected=0/10 total=10)",
+    "CTL_SKIP replay (tokens at EOF, no stale work) is refused: total=4",
+    "spotcheck lesson correctly excluded from RECORD",
+    "all four base stale hits are genuine false assertions (no base false positive)",
+    "intervening heading and duplicate heading fail closed for the author"
+  ],
+  "tools_installed": []
+}

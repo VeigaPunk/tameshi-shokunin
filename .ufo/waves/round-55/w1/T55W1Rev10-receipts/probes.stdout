@@ -1,0 +1,42 @@
+# frozen C1 counter (bytes at 631cd6455e58dce969310b4c0466c3383d9f5108) run against my own fixture commits
+
+== fixture ins  rev=a1374d1 ==
+   change: a1374d1 probe ins
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.8 FAIL premise=ok corrected=miss stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+== fixture s15  rev=f9e356d ==
+   change: f9e356d probe s15
+EXPLAIN R54.5 FAIL premise=ok corrected=miss stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.8 FAIL premise=ok corrected=miss stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+
+== fixture stale  rev=3a8eae4 ==
+   change: 3a8eae4 probe stale
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.8 FAIL premise=ok corrected=miss stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+== fixture r548only  rev=ca48501 ==
+   change: ca48501 probe r548only
+EXPLAIN R54.5 FAIL premise=ok corrected=miss stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=1/10 total=9 C1_R55_PASS=false
+
+== fixture none  rev=8163247 ==
+   change: 8163247 probe none
+EXPLAIN R54.5 FAIL premise=ok corrected=miss stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.8 FAIL premise=ok corrected=miss stale=0 derived=config.yml + fabricated + seat marked
+C1_R55: rev=HEAD classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false
+
+# fixture contents (what each commit changed)
+-- ins:  1 file changed, 4 insertions(+)
+-- s15:  1 file changed, 4 insertions(+)
+-- stale:  1 file changed, 6 insertions(+)
+-- r548only:  1 file changed, 4 insertions(+)
+ins      : SCORECARD.md + corrections section carrying Er05's insert string verbatim (token w1=28 w2=25 sections=12)
+s15      : same, token rewritten sections=15
+stale    : same as ins PLUS 'the 23 wave-1 readers returned 25 findings.' injected ABOVE the corrections heading
+r548only : SCORECARD.md + a corrections section saying 'the ~/.omp/agent/config.yml host edit was **fabricated**' and NOTHING else (no seat edit, no lessons edit)
+none     : SCORECARD.md + a corrections section with no correction text

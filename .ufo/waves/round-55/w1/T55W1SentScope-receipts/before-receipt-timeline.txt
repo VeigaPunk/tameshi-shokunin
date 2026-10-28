@@ -1,0 +1,33 @@
+# before/c2.stdout rewrite timeline (working tree vs frozen commit)
+$ git show 631cd64:.ufo/evidence/round-55/before/c2.stdout | wc -lc
+     43    2634
+$ wc -lc .ufo/evidence/round-55/before/c2.stdout
+  1 139 .ufo/evidence/round-55/before/c2.stdout
+$ cat .ufo/evidence/round-55/before/c2.stdout
+C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false
+
+# corroborating seat receipts (recorded BEFORE my audit)
+--- T55W1ExecCountersAtBase.md F4
+**F4 — `before/c2.stdout` was rewritten three times during the wave.** Observed:
+139 B with `usable=12/13 total=19` at 13:47; 0 B at 13:50 (truncated in place);
+139 B with `usable=13/13 total=18` at 13:59 (byte-identical to my run-2 verdict
+line, sha256 `77721c4a33979a5b...`). A `cmp` taken mid-write reads a torn or empty
+receipt. This seat's receipts are therefore compared against `git show
+HEAD:...`, never against the mutable working-tree copy. Related: this seat's
+scratch dir `/fast/scratch/hyaku/tameshi-r55/T55W1ExecCountersAtBase` was deleted
+by an outside process at ~13:54 (only a directory created afterwards survived),
+which cost run 1's artifacts; run 1's stream is retained as a harness-delivered
+transcript (`c2-mine-run1.stdout.txt`, 2636 bytes; provenance in
+--- T55W1ScribeLog-receipts/before-receipt-drift.txt
+# before/c2.stdout: committed at the freeze vs worktree (observed 2026-10-28)
+committed:
+C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false
+worktree:
+0 bytes
+
+# earlier in this round the worktree copy read (observed before the L1 re-ran it):
+C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=12/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=19 C2_R55_PASS=false
+
+# git diff --stat for the receipt
+ .ufo/evidence/round-55/before/c2.stdout | 43 ---------------------------------
+ 1 file changed, 43 deletions(-)

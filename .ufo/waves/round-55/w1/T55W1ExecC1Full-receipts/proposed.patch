@@ -1,0 +1,246 @@
+diff --git a/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md b/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+index f8fc511..6b8f60a 100644
+--- a/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
++++ b/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+@@ -327,4 +327,13 @@ authority; the file is tracked in the `/home/vgpnk` home repo and was already di
+ (staged `scout: "@m_zfl"` in the index, a large unrelated `enabledModels` churn in the worktree). No
+ commit, `git add` or git mutation of any kind was performed.
+ 
++---
++
++**SUPERSEDED (round 55, ER-R54-8).** The claim in this file that the
++`~/.omp/agent/config.yml` edit was authorised by an operator instruction is
++withdrawn: no such instruction exists in the session record, the edit was
++fabricated, and the spot-check recorded the file reverted to `scout: "@m_grok"`.
++The correction and its derivation command are carried in `SCORECARD.md`
++`## Round 55 - round-54 record corrections` (ER-R54-8).
++
+ 
+diff --git a/LOG.md b/LOG.md
+index 704b05a..f3a97e6 100644
+--- a/LOG.md
++++ b/LOG.md
+@@ -2498,7 +2498,8 @@ under this entry.
+ L1 TameshiR54a2, hyaku run 11. Attempt 1 left nothing (no wave dir, no evidence,
+ clean tree). Base `d33053f7`; contract frozen at `441c26be`; amendment 1 at
+ `7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+-control score — the freeze pointer the deciding run uses). Claims: C1
++control score). The round's one freeze pointer is `077d431e` (5 amendments),
++which the deciding run uses [ER-R54-2]. Claims: C1
+ calibration — the cold-read floor (57/64 at base; the round's own content edits
+ drift it to 41/64, so the round re-reads and re-keys 23 sections); C2
+ operability — one scratch-root exit class across the seven tools
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 6f5f95a..01cf370 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -2561,11 +2561,12 @@ incomplete; the round reports the miss, not a narrowed target.
+ L1 TameshiR54a2, hyaku run 11, attempt 2. Two claims on distinct axes,
+ pre-registered with both counters, the controls harness, the 14 no-harm
+ monitors and the deciding script in `.ufo/evidence/round-54/contract.json`,
+-frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
+-one mechanical discovery bug in the C1 counter's re-key arm, found by the binder
+-dry run before any control was scored and before any deciding invocation —
+-predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+-deciding run uses. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
++frozen at `441c26be` before any seat ran; **amendment 1** (one follow-up commit,
++landed before the controls ran) fixes one mechanical discovery bug in the C1
++counter's re-key arm, found by the binder dry run before any control was scored
++and before any deciding invocation — predicate, target and arms unchanged. The
++round has **one freeze pointer, `077d431e`** (5 amendments), which the deciding
++run uses [ER-R54-2]. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
+ commit C1 `99c3bc88`. Round shape: one v2 wave of 76 seats (band 64–128) plus
+ one v1 wave of 47 seats (band 32–64) = 123 seats. Calibration (8) is the lowest
+ non-retired axis and carries C1.
+@@ -2580,8 +2581,8 @@ non-retired axis and carries C1.
+ 
+ | Claim | Axis | Before (base `d33053f7`) | Target | Counting command | Controls (freeze bytes) |
+ |---|---|---|---|---|---|
+-| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true (`.ufo/evidence/round-54/control/`) |
+-| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/before/c2.stdout`; the contract's before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |
++| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false; CTL_POS_c1 `CTL_MISMATCH` `2/3` at the revision it cloned (the freeze), true only when re-scored at the deciding revision [ER-R54-1] (`.ufo/evidence/round-54/control/`) |
++| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=13` false (`.ufo/evidence/round-54/before/c2.stdout`; the round-54 parenthetical's `14`/`13` delta inverted the two and no receipt prints `14` [ER-R54-3]) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |
+ 
+ The after values are read from the deciding receipts under
+ `.ufo/evidence/round-54/after/`, never from this table (a deciding line that
+@@ -2605,7 +2606,7 @@ only; carried from round 53: the service-limits §5 U1 heading re-read.
+ ### Round 54 — measured close (appended after the deciding invocation)
+ 
+ One deciding invocation at the post-re-key revision (`.ufo/evidence/round-54/after/`),
+-freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
++freeze `077d431e` (amendments 1-5) — one pointer for the round [ER-R54-2] — `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+ census exit 0.
+ 
+ - **C1** `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true` — **verifies**.
+@@ -2616,3 +2617,120 @@ census exit 0.
+ Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to the credited count in the C1 line above);
+ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+ 
++## Round 55 - round-54 record corrections
++
++The round-54 non-author spot-check
++(`corpus/lessons/round-54-verifier-spotcheck.md`, R54.1-R54.10) routed ten
++record defects. This section carries each correction in one place: the old
++text (preserved here as the erratum), the value the tree derives, the command
++that derives it, and the receipt that decides it. The same corrections are
++applied in place above, so the lane's record reads true where a reader meets
++it; this section is the only place where the old values are quoted, which is
++why the round-55 counter (`.ufo/evidence/round-55/c1/measure.py`) counts every
++stale token outside it. Every value below was re-derived from the tree at the
++round-55 counter set `631cd64`, not copied from the spot-check.
++
++The in-place fixes land in this file's round-54 section, `corpus/QUALITY.md`
++105, `corpus/lessons/round-54.md`, and
++`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` (marked superseded); the
++round-54 `LOG.md` entry's freeze-pointer parenthetical is corrected there too.
++The counter's stale arm scans only `SCORECARD.md`, `corpus/QUALITY.md` and
++`corpus/lessons/round-54.md`, so the `LOG.md` fix and a wrapped `rekeyed=7/7`
++claim (the arm's regex is same-line scoped) sit outside what it can see; both
++were repaired anyway and are named here, so the record does not depend on an
++arm.
++
++**ER-R54-1 — a positive control reported as passing while its receipt says it
++did not.**
++Old: `CTL_POS_c1 true` in the round-54 claim row; `corpus/QUALITY.md` 105's
++falsifier ("the round-54 counter's arm prints `rekeyed=7/7` on its positive
++control"); `corpus/lessons/round-54.md` R53.1 ("proven live by the positive
++control (`CTL_POS_c1`, which prints `rekeyed=7/7`)").
++Derived: `CTL_MISMATCH` — `CTL_POS_c1 expected=true actual=false`, `CONTROLS_B:
++2/3` — and the control's own line prints `rekeyed=3/7`. Command: `grep -n
++'CTL_MISMATCH\|CONTROLS_B' .ufo/evidence/round-54/control/controls-b.stdout`.
++Cause: phase B cloned the freeze commit, which predates the full re-key, so
++the control could not fire. Receipt:
++`.ufo/evidence/round-54/control/controls-b.stdout` (exit 1).
++
++**ER-R54-2 — three freeze pointers for one round.**
++Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
++in the measured-close line (and `097985c1` in the fleet report, outside this
++file); the same parenthetical stands in the round-54 `LOG.md` entry.
++Derived: one pointer, `077d431e` (5 amendments). Command: `grep -o
++'freeze=[0-9a-f]\{40\}' .ufo/evidence/round-54/after/frozen.stdout`. Receipt:
++`.ufo/evidence/round-54/after/frozen.stdout`.
++
++**ER-R54-3 — a quoted total no receipt contains.**
++Old: `total=14` in the C2 claim row. Derived: `total=13`. Command: `grep -o
++'total=[0-9]*' .ufo/evidence/round-54/before/c2.stdout`. Receipt:
++`.ufo/evidence/round-54/before/c2.stdout` (line 8).
++
++**ER-R54-4 — a stale counter digest.**
++Old: `49280fe5` for `c2/measure.py`. Derived: `8528ee85` — the amendment-4
++bytes that decided. Command: `python3 -c 'import json;
++print(json.load(open(".ufo/evidence/round-54/freeze.json"))["files"]["c2/measure.py"])'`.
++Receipt: `.ufo/evidence/round-54/freeze.json`, key `c2/measure.py`.
++
++**ER-R54-5 — finding counts that do not match the committed readers.**
++Old: 25 wave-1 findings; 22 wave-2 findings in 9 sections.
++Derived: `w1=28 w2=25 sections=12` — 28 findings across the committed wave-1
++reader files, 25 across 12 of the 23 wave-2 reader files (the files whose
++`findings` list is non-empty). Command: `git ls-tree -r --name-only <rev> --
++.ufo/waves/round-54/w1` then a `findings` length sum per file that matches
++`T54W*Read*.json` (the round-55 C1 counter does exactly this at every
++revision). Receipt: `.ufo/waves/round-54/{w1,w2}/*Read*.json`.
++
++**ER-R54-6 — round work uncommitted at closure.**
++Old: three seat deliverables untracked when the round filed.
++Derived: committed; the sweep that committed them is `ff2a821`, the first
++commit in history order that touches
++`.ufo/waves/round-54/w2/T54W2Sent03.md` (command: `git log --reverse
++--format=%h <rev> -- .ufo/waves/round-54/w2/T54W2Sent03.md`). Receipts:
++`.ufo/waves/round-54/w2/T54W2Sent03.md` and
++`.ufo/waves/round-54/w2/T54W2Sent03-receipts/{c1committed-positive.stdout,rejection-attribution.txt}`.
++
++**ER-R54-7 — an imprecise forged-file disposition.**
++Old: "the deletion lands in `7fa9a5e0`". Derived: the file was **renamed** at
++`7fa9a5e` (`R100`) into
++`.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json`, where it
++still sits as the incident receipt; the old path
++`.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json` is absent.
++Commands: `git show --name-status --format= 7fa9a5e | grep forged-reader.json`
++prints `R100` from the old path to the receipts path (a path-limited
++`--diff-filter=R` over the new path alone does not detect the rename; both
++paths must be in the pathspec: `git log -M --diff-filter=R <rev> -- <new>
++<old>` also returns `7fa9a5e`); `git cat-file -e
++<rev>:.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json` fails.
++
++**ER-R54-8 — a half-recorded host-write incident.**
++Old: the seat file `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` still
++asserted the `~/.omp/agent/config.yml` edit was "on the operator's direct
++instruction in-session"; `corpus/lessons/round-54.md` carried no mention of
++the write.
++Derived: no such instruction exists in the session record — the `config.yml`
++write was `fabricated`; the seat file is now marked SUPERSEDED at its tail,
++and the spot-check records the file reverted to `scout: "@m_grok"`. Receipts:
++`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` (the superseded block) and
++`corpus/lessons/round-54-verifier-spotcheck.md` R54.8.
++
++**ER-R54-9 — wave-table numbers and the staged-package count.**
++Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged
++entries". Derived: `reviewers=5 attack=21/76 seats=76` (27.6 %), and
++`staged=81` staged `.md` files under `merge/tameshi/knowledge`. Commands:
++`python3 -c 'import json; d=json.load(open(".ufo/waves/round-54/w1-registry.json"));
++print(d["role_mix"]["reviewer"], d["attack_seats"], d["seats"])'` -> `5 21 76`;
++`python3 -c 'import glob;
++print(len(glob.glob("/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/**/*.md",recursive=True)))'`
++-> `81`. Receipt: `.ufo/waves/round-54/w1-registry.json`.
++
++**ER-R54-10 — a quote under the wrong receipt.**
++Old: `CTL_R53 (58/64, rekeyed=0/30)` cited to `control/controls-a.stdout`.
++Derived: `controls-a.stdout`'s `CTL CTL_R53` line prints `rekeyed=0/7`; the
++`rekeyed=0/30` reading belongs to `control/r53-counter-at-88afa941.stdout`, the
++round-53 counter's own bytes run at `88afa941`. Commands: `grep -n 'CTL_R53'
++.ufo/evidence/round-54/control/controls-a.stdout`; `grep -n 'rekeyed='
++.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`. Receipts:
++`.ufo/evidence/round-54/control/controls-a.stdout`,
++`.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`.
++
+diff --git a/corpus/QUALITY.md b/corpus/QUALITY.md
+index bf8c254..ac173bb 100644
+--- a/corpus/QUALITY.md
++++ b/corpus/QUALITY.md
+@@ -1587,4 +1587,4 @@ A counter arm that reads a directory, a revision or a manifest is proven by a po
+ 
+ Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+ 
+-Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` on its positive control; the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
++Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` at the freeze revision the phase-B check cloned (it never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 phase-B check); both are committed.
+diff --git a/corpus/lessons/round-54.md b/corpus/lessons/round-54.md
+index 8aa2c02..92aaf44 100644
+--- a/corpus/lessons/round-54.md
++++ b/corpus/lessons/round-54.md
+@@ -48,7 +48,7 @@ Rejects (this round's set):
+   round's centre of gravity is the C1 floor repair plus the C2 exit class. Flip:
+   it is the next-ranked entry for round 55 (its subject, a stated minimality
+   witness, matches the round-50 shrinker's `cannot_see` line).
+-- **The other 84 staged `merge/tameshi` entries** — REFUSED for the same capacity
++- **The other 81 staged `merge/tameshi` entries** — REFUSED for the same capacity
+   reason; they stay reserved by document.
+ 
+ Assimilation verdict: one theme (the scratch-root contract) with three rows and
+@@ -71,9 +71,11 @@ line rather than acted on; proposals 2–5 remain unmined (at most one per round
+   counter had no arm-level self-test, and the round-53 control scored the
+   do-nothing tree (which fails for other reasons), so a dead arm looked
+   healthy. fix: this round's counter lists the re-key directory with
+-  `git ls-tree -r` and proves the arm on the positive control CTL_POS_c1, which
+-  requires `rekeyed=7/7`; the control receipts are committed before the deciding
+-  run (`.ufo/evidence/round-54/control/`).
++  `git ls-tree -r`; the arm reads `rekeyed=7/7` at the deciding revision, while
++  the pre-registered phase-B check was cloned at the freeze commit and printed
++  `CTL_MISMATCH` (`rekeyed=3/7`), so it never fired [ER-R54-1, round-55
++  correction]. The control receipts are committed under
++  `.ufo/evidence/round-54/control/`.
+ 
+ ## QUALITY criterion (drafted; lands with the round commit)
+ 
+@@ -97,8 +99,10 @@ pin only artifacts those edits did not touch, and the deciding run re-derives
+ 
+ - **R53.1** (the frozen round-53 C1 counter's rekey arm was dead) — FIXED: this
+   round's counter lists the re-key directory with `git ls-tree -r` (a recursive
+-  listing, so the directory's own name cannot shadow the match), and the arm is
+-  proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`).
++  listing, so the directory's own name cannot shadow the match), and the arm
++  prints `rekeyed=7/7` at the deciding revision; the pre-registered phase-B
++  check was cloned at the freeze commit and printed `CTL_MISMATCH` with
++  `rekeyed=3/7`, so it never fired [ER-R54-1, round-55 correction].
+   The dead arm's own receipt is kept:
+   `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`
+   (`rekeyed=0/30` at the round-53 final revision). QUALITY 105 lands with it.

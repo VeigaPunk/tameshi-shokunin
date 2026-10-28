@@ -1,0 +1,64 @@
+# live lane state observed during the audit (read-only; timestamp 2026-10-28T17:05:27Z)
+lane HEAD: 631cd6455e58dce969310b4c0466c3383d9f5108
+
+## tracked modifications in the lane working tree:
+ M .ufo/evidence/round-55/before/c2.stdout
+ M .ufo/evidence/round-55/c1/measure.py
+ M .ufo/evidence/round-55/c2/measure.py
+ M .ufo/evidence/round-55/contract.json
+ M .ufo/evidence/round-55/freeze.json
+ M .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+ M LOG.md
+ M SCORECARD.md
+ M SKILL.md
+ M corpus/QUALITY.md
+ M corpus/SOURCES.md
+ M corpus/knowledge/scratch-root-contract.md
+ M corpus/lessons/round-54.md
+ M tools/context-capture.py
+ M tools/registry-check.py
+ M tools/registry.json
+ M tools/repeat-control.py
+?? .ufo/evidence/round-55/assimilation/
+?? .ufo/waves/round-55/
+?? corpus/lessons/round-55.md
+
+## frozen set: committed at 631cd6455e58dce969310b4c0466c3383d9f5108 vs live working tree
+c1/measure.py DIFFERS
+c2/measure.py DIFFERS
+contract.json DIFFERS
+freeze.json DIFFERS
+before/c1.stdout IDENTICAL
+before/c2.stdout DIFFERS
+no-harm.sh IDENTICAL
+deciding-run.sh IDENTICAL
+controls.sh IDENTICAL
+
+## live c1/measure.py predicate lines vs 631cd6455e58dce969310b4c0466c3383d9f5108
+1,5c1,5
+< 199:    # R54.5 -- finding counts must match the committed reader files.
+< 202:    wanted = "w1=%d w2=%d sections=%d" % (w1, w2[0], w2[1])
+< 203:    row("R54.5", w1 > 0 and w2[0] > 0, [], wanted in corr, wanted)
+< 220:    # R54.8 -- the config.yml write incident is in the record and the seat text
+< 223:    row("R54.8", bool(seat), [],
+---
+> 224:    # R54.5 -- finding counts must match the committed reader files.
+> 227:    wanted = "w1=%d w2=%d sections=%d" % (w1, w2[0], w2[1])
+> 228:    row("R54.5", w1 > 0 and w2[0] > 0, [], wanted in corr, wanted)
+> 245:    # R54.8 -- the config.yml write incident is in the record and the seat text
+> 248:    row("R54.8", bool(seat), [],
+
+## live c1/measure.py added/changed hunks vs 631cd6455e58dce969310b4c0466c3383d9f5108
++    "LOG.md",
++def scan_span(lane, rev, paths, pattern):
++    """Whitespace-normalized whole-document search (amendment 5).
++    A hard-wrapped claim splits across lines, so a line-scoped regex can miss a
++    falsehood that is plainly there (round-54 lesson `proves the arm ... requires
++    rekeyed=7/7`, split over two lines). This arm searches the document with all
++    whitespace runs collapsed and reports the match's offset instead of a line.
++    """
++    rx = re.compile(pattern)
++    hits = []
+
+## amendments declared in the live working tree
+contract amendments=5 freeze amendments=3 freeze files=6

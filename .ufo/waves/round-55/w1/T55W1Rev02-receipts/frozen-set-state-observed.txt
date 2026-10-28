@@ -1,0 +1,48 @@
+=== frozen set at the commit the round names (631cd645) vs the worktree, now ===
+contract.json    at631cd645=2388cb50 worktree=5de4f37b manifest_pin=ed6871e1  MISMATCH
+c1/measure.py    at631cd645=77abe1e9 worktree=711507e7 manifest_pin=77abe1e9  MISMATCH
+c2/measure.py    at631cd645=9d076812 worktree=d6ca1d85 manifest_pin=ab3ae751  MISMATCH
+no-harm.sh       at631cd645=d93469db worktree=d93469db manifest_pin=d93469db  MATCH
+deciding-run.sh  at631cd645=af11d755 worktree=af11d755 manifest_pin=af11d755  MATCH
+controls.sh      at631cd645=7c0cacb5 worktree=7c0cacb5 manifest_pin=7c0cacb5  MATCH
+
+=== manifest amendments at 631cd645 vs worktree ===
+631cd645: 0 amendments
+worktree : 3 amendments
+
+=== c1/measure.py worktree diff vs 631cd645 (the unrecorded amendment) ===
++    "LOG.md",
++def scan_span(lane, rev, paths, pattern):
++    """Whitespace-normalized whole-document search (amendment 5).
++
++    A hard-wrapped claim splits across lines, so a line-scoped regex can miss a
++    falsehood that is plainly there (round-54 lesson `proves the arm ... requires
++    rekeyed=7/7`, split over two lines). This arm searches the document with all
++    whitespace runs collapsed and reports the match's offset instead of a line.
++    """
++    rx = re.compile(pattern)
++    hits = []
++    for path in paths:
++        body = text(lane, rev, path)
++        if body is None:
++            continue
++        if path == "SCORECARD.md":
++            body = body.replace(corrections(lane, rev), "")
++        flat = " ".join(body.split())
++        for m in rx.finditer(flat):
++            hits.append("%s@%d: %s" % (path, m.start(), flat[max(0, m.start() - 40):m.end() + 20]))
+
+=== before/c2.stdout: 43 lines at 631cd645, 1 line in the worktree ===
+631cd645 lines: 43
+worktree lines: 1
+
+=== the pinned instrument I measured with ===
+77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783  /fast/scratch/hyaku/tameshi-r55/T55W1Rev02/c1-measure.py
+=== amended instrument reading the current records ===
+EXPLAIN R54.1 FAIL premise=ok corrected=ok stale=3 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.1 stale: corpus/lessons/round-54.md:75: (`rekeyed=7/7`); the pre-registered positive control was cloned at the freeze
+EXPLAIN R54.1 stale: corpus/lessons/round-54.md@4293: ount is read at the deciding revision (`rekeyed=7/7`); the pre-registered positive control was cloned at the f
+EXPLAIN R54.1 stale: corpus/lessons/round-54.md@5821:  shadow the match), and the arm prints `rekeyed=7/7` at the deciding revision; the pre-registered positive control was cloned at the f
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+C1_R55: rev=d3af2c5a4270 classes=10 premise=10/10 stale=1 classes_corrected=10/10 total=1 C1_R55_PASS=false

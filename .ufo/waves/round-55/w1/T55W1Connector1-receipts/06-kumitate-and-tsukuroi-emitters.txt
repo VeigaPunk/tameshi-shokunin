@@ -1,0 +1,34 @@
+$ sed -n 594,596p kumitate-shokunin/SKILL.md
+`--checklists` mode runs the commands listed below. Verdict map for every gate row: `0` → clean,
+`1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
+this lane (kumitate L1). Round 46 adds one **runner**, `cap-run`, which is not a gate: it exits with its child's
+
+$ sed -n 624,624p kumitate-shokunin/SKILL.md
+| receipt-attest | gate | `node scripts/receipt-attest.mjs run --out <base> [--stdin] -- <cmd...>` → `RECEIPT: WROTE <base>.txt`; `node scripts/receipt-attest.mjs verify [--ledger <dir>] <file>` → `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid · 1 replayed or tampered · 2 unreadable · 64 usage), contract `kumitate-receipt-attest-v3` (round 53; rounds 51/52 semantics preserved: receipt form, digest, sidecar, verdicts, exit map; additions: field whitelist with unknown fields unreadable; exactly two lines + trailing newline; prelude value must match the Z-only millisecond profile; sidecar recorded name must equal the receipt basename; half-pair removal on sidecar write failure; wall clocks must parse finite AND round-trip byte-exact; `--stdin` delivers the nonce on the child's stdin and records stdin_sha256; ledger skip of unattested priors stated in the contract): a receipt is a `run-at:` display prelude plus one canonical-JSON line whose `digest` field is the sha256 of that line's canonical JSON with the `digest` field removed (sorted keys, recursive, one line), and whose sidecar `<base>.txt.sha256` is the GNU `sha256sum` text-mode digest of the exact receipt bytes — the prelude included; the inner digest binds every semantic field (argv, exit, mono span, nonce, stdout/stderr sha256, wall instants), the prelude is bound by the sidecar only, and `--ledger` rejects a nonce bound to a **different** record digest (a byte-identical duplicate is exempt; v3: the evidence set is the WHOLE ledger directory — attested receipts count under any filename, non-receipt entries skip with a note) | `--selftest` (`ATTEST_SELFTEST: PASS`; 51 hermetic cases, one per contract clause — among them the flake-injection arm that must read `RECEIPT: REPLAY`, the sidecar-mismatch arm that must read `RECEIPT: TAMPERED` and the v3 arms that hide a nonce-reusing twin under a non-`.txt` name) | the receipt bytes' inner digest, the sidecar digest and the clock ordering inside the script; `pin.receipt-attest` in the `kumitate-gate-pins-v1` block |
+
+$ sed -n 528,537p tsukuroi-shokunin/tools/check-boot-writers.py
+
+
+def _emit_cannot(fid, site, detail, revision, branch, branch_tip):
+    return emit(_result(CANNOT, [_finding(fid, site, detail)]),
+                revision, branch, branch_tip)
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description="Verify round-19 /boot/limine.conf writer attribution.",
+
+$ sed -n 64,66p tsukuroi-shokunin/tools/score-selftest-mounts-r41.py
+
+COUNTER_ID = 'score-selftest-mounts-r41'
+CENSUS = 'tools/tsukuroi-census.sh'
+
+$ sed -n 56,59p tsukuroi-shokunin/tools/score-storage-hidden-r39.py
+CHILD_ENV_BASE = {'PATH': '/usr/bin:/bin', 'LC_ALL': 'C'}
+UUID_RE = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+LINE_RE = re.compile(r'^STORAGE btrfs-device-stats state=(HEALTHY|DEGRADED|BLOCKED) filesystems=(\d+) '
+                     r'devices=(\d+) nonzero=(\d+)(?: detail=(\S+))?$')
+
+$ sed -n 165,166p tsukuroi-shokunin/corpus/QUALITY.md
+84. **A one-line machine grammar echoes only validated tokens (R38-ECHO-UNVALIDATED):** a tool that prints a `key=value` line other tools parse (PLANE, HANDOFF, DRIFT, STORAGE, a receipt line) writes into it only tokens it has matched against a closed pattern (an enum, `^[0-9]+$`, a fixed-shape id); a name read from the host or a fixture (a directory basename, a file name, a unit name) that fails the pattern makes the reading BLOCKED with a fixed reason token and is never echoed. Failing example: round-38 C1 at `52ffd65` echoed the raw `devinfo` basename into `detail=`, and a fixture name containing a newline printed a second, forged `TSUKUROI_CENSUS: HEALTHY` line ahead of the real BLOCKED rollup (`.ufo/waves/round-38/w1/C1SentGrammar.md` F1); fixed at the hardening commit with a `bad-devid` case. Test: a fixture whose name carries a newline, a space and `=` yields exactly one line of the grammar. Lesson: `corpus/lessons/round-38.md` Mistakes R38-ECHO-UNVALIDATED.
+

@@ -61,6 +61,42 @@ One residue is named, not fixed: `tools/context-capture.py` exits 2 with the
 class and the value but prefixes the line with `SELFTEST: FAIL`, a verdict
 token the class forbids; the round-54 C2 arm reads the exit code and the naming
 line, not the absent token, so the arm passes and the vocabulary residue goes
-to round 55 (it is a tool edit, and the fix commit is the round's read revision). A
+to round 55 (it is a tool edit, and the fix commit is the round's read revision).
+Round 55 closed that residue: `context-capture` and `repeat-control` now print
+the one line of the next section, and the round-55 counter measures every
+documented allocating mode, not the self-test only. A
 tool that regains a `dir="/tmp"` literal fails the round-53 monitor and the C2
 `tmp_mkdirs` arm together.
+
+## One line, every mode (round 55)
+
+The class is one stderr line, byte-shaped:
+
+    <tool>: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)
+
+Nine allocating modes carry it — `env-diff --selftest`, `env-diff --contract`,
+`repeat-control --selftest`, `registry-check --selftest`,
+`registry-check --rev`, `bash-witness-study selftest`,
+`pin-disposition --selftest`, `evidence-disposition --selftest`,
+`context-capture --selftest` — each exiting 2 with no `RuntimeError` or
+`Traceback` token on either stream. `registry-check --rev` is measured on the
+unusable arm only: it builds a full fleet clone (minutes), so its usable path is
+covered by the tool's own self-test, which exercises the same helper. The line is the
+contract; the Python type is not: the tools keep their own exception classes
+(`ScratchRootUnusable` in the two round-55 edits, a local class in `env-diff`),
+because seven standalone tools should not depend on one module for a one-line
+rule.
+
+The five non-allocating modes are measured lazy: `repeat-control --snapshot`,
+`bash-witness-study count`, `pin-disposition --read`,
+`evidence-disposition --json`, `context-capture --check` keep their expected
+exit under an unusable `TMPDIR`, because scratch is allocated on the real path,
+not at parse time. A lazy mode's exit 0 is not evidence that the scratch root
+was usable — never read it as a pass.
+
+The counter measures nine allocating modes on the unusable arm, thirteen modes
+on the empty and usable arms, and the seven registry cells plus this note. Its
+blind spot is narrower but real: a documented mode outside the registry and the
+usage text could still allocate scratch unmeasured (the round-55 wave inventories
+that difference), and the grammar is matched on stderr, so a caller that parses
+stdout sees nothing.

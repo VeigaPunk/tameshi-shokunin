@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- The GNU coding standards, last updated April 27, 2026.
+
+Copyright © 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
+2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+2024, 2025, 2026 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+"GNU Free Documentation License". -->
+<title>Errors (GNU Coding Standards)</title>
+
+<meta name="description" content="Errors (GNU Coding Standards)">
+<meta name="keywords" content="Errors (GNU Coding Standards)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Index.html" rel="index" title="Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Program-Behavior.html" rel="up" title="Program Behavior">
+<link href="User-Interfaces.html" rel="next" title="User Interfaces">
+<link href="Libraries.html" rel="prev" title="Libraries">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/software/gnulib/manual.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Errors">
+<div class="nav-panel">
+<p>
+Next: <a href="User-Interfaces.html" accesskey="n" rel="next">Standards for Interfaces Generally</a>, Previous: <a href="Libraries.html" accesskey="p" rel="prev">Library Behavior</a>, Up: <a href="Program-Behavior.html" accesskey="u" rel="up">Program Behavior for All Programs</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Formatting-Error-Messages"><span>4.4 Formatting Error Messages<a class="copiable-link" href="#Formatting-Error-Messages"> &para;</a></span></h3>
+<a class="index-entry-id" id="index-formatting-error-messages"></a>
+<a class="index-entry-id" id="index-error-messages_002c-formatting"></a>
+
+<p>Error messages from compilers should look like this:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">sourcefile</var>:<var class="var">lineno</var>: <var class="var">message</var>
+</pre></div>
+
+<p>If you want to mention the column number, use one of these formats:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">sourcefile</var>:<var class="var">lineno</var>:<var class="var">column</var>: <var class="var">message</var>
+<var class="var">sourcefile</var>:<var class="var">lineno</var>.<var class="var">column</var>: <var class="var">message</var>
+
+</pre></div>
+
+<p>Line numbers should start from 1 at the beginning of the file, and
+column numbers should start from 1 at the beginning of the line.
+(Both of these conventions are chosen for compatibility.)  Calculate
+column numbers assuming that space and all ASCII printing characters
+have equal width, and assuming tab stops every 8 columns.  For
+non-ASCII characters, Unicode character widths should be used when in
+a UTF-8 locale; GNU libc and GNU gnulib provide suitable
+<code class="code">wcwidth</code> functions.
+</p>
+<p>The error message can also give both the starting and ending positions
+of the erroneous text.  There are several formats so that you can
+avoid redundant information such as a duplicate line number.
+Here are the possible formats:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">sourcefile</var>:<var class="var">line1</var>.<var class="var">column1</var>-<var class="var">line2</var>.<var class="var">column2</var>: <var class="var">message</var>
+<var class="var">sourcefile</var>:<var class="var">line1</var>.<var class="var">column1</var>-<var class="var">column2</var>: <var class="var">message</var>
+<var class="var">sourcefile</var>:<var class="var">line1</var>-<var class="var">line2</var>: <var class="var">message</var>
+</pre></div>
+
+<p>When an error is spread over several files, you can use this format:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">file1</var>:<var class="var">line1</var>.<var class="var">column1</var>-<var class="var">file2</var>:<var class="var">line2</var>.<var class="var">column2</var>: <var class="var">message</var>
+</pre></div>
+
+<p>Error messages from other noninteractive programs should look like this:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">program</var>:<var class="var">sourcefile</var>:<var class="var">lineno</var>: <var class="var">message</var>
+</pre></div>
+
+<p>when there is an appropriate source file, or like this:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">program</var>: <var class="var">message</var>
+</pre></div>
+
+<p>when there is no relevant source file.
+</p>
+<p>If you want to mention the column number, use this format:
+</p>
+<div class="example">
+<pre class="example-preformatted"><var class="var">program</var>:<var class="var">sourcefile</var>:<var class="var">lineno</var>:<var class="var">column</var>: <var class="var">message</var>
+</pre></div>
+
+<p>In an interactive program (one that is reading commands from a
+terminal), it is better not to include the program name in an error
+message.  The place to indicate which program is running is in the
+prompt or with the screen layout.  (When the same program runs with
+input from a source other than a terminal, it is not interactive and
+would do best to print error messages using the noninteractive style.)
+</p>
+<p>The string <var class="var">message</var> should not begin with a capital letter when
+it follows a program name and/or file name, because that isn&rsquo;t the
+beginning of a sentence.  (The sentence conceptually starts at the
+beginning of the line.)  Also, it should not end with a period.
+</p>
+<p>Error messages from interactive programs, and other messages such as
+usage messages, should start with a capital letter.  But they should not
+end with a period.
+</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="User-Interfaces.html">Standards for Interfaces Generally</a>, Previous: <a href="Libraries.html">Library Behavior</a>, Up: <a href="Program-Behavior.html">Program Behavior for All Programs</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

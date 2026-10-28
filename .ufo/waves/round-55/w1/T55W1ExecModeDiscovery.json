@@ -1,0 +1,495 @@
+{
+ "seat": "T55W1ExecModeDiscovery",
+ "round": 55,
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base_rev": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "method": "enumerated each of the seven strict_scratch_root() tools' documented invocations from (a) tools/registry.json rows that name them and (b) each tool's --help/usage/docstring, then read the tool to decide whether that invocation reaches a tempfile.*(dir=strict_scratch_root()) call, then probed every mode outside the counter with TMPDIR set to a nonexistent directory",
+ "counter_file": ".ufo/evidence/round-55/c2/measure.py",
+ "counter_modes": [
+  {
+   "id": "repeat-control --selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "registry-check --selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "bash-witness-study selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "pin-disposition --selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "evidence-disposition --selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "context-capture --selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "env-diff --selftest",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "env-diff --contract",
+   "allocating": true,
+   "expected_exit": 0
+  },
+  {
+   "id": "repeat-control --snapshot",
+   "allocating": false,
+   "expected_exit": 0
+  },
+  {
+   "id": "bash-witness-study count",
+   "allocating": false,
+   "expected_exit": 0
+  },
+  {
+   "id": "pin-disposition --read",
+   "allocating": false,
+   "expected_exit": 0
+  },
+  {
+   "id": "evidence-disposition --json",
+   "allocating": false,
+   "expected_exit": 0
+  },
+  {
+   "id": "context-capture --check",
+   "allocating": false,
+   "expected_exit": 0
+  }
+ ],
+ "counter_counts": {
+  "total": 13,
+  "allocating": 8,
+  "lazy": 5
+ },
+ "documented_mode_count": 21,
+ "documented_allocating_count": 9,
+ "documented_modes": [
+  {
+   "id": "env-diff --contract --out",
+   "tool": "env-diff.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "docstring/usage line 4 (--help r05-help-env-diff.txt); registry row env-diff-selftest documents only the selftest",
+   "verdict": "allocates",
+   "code": "tools/env-diff.py:80 TemporaryDirectory(prefix='tameshi-r21-envdiff.', dir=strict_scratch_root()) inside execute(); reached surface_result:192 -> probe:170 -> execute:70; reached only after contract parse and after bwrap is found (:78)",
+   "probe": "r06b-grammar-check-nine-allocating-modes.txt rc=2 grammar=1"
+  },
+  {
+   "id": "env-diff --selftest",
+   "tool": "env-diff.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "docstring/usage line 5; registry row env-diff-selftest",
+   "verdict": "allocates",
+   "code": "tools/env-diff.py:80 via probe() in selftest(); the selftest's own pin fixture at :186 uses the default temp dir, not the scratch root",
+   "probe": "r06b rc=2 grammar=1"
+  },
+  {
+   "id": "repeat-control run (--runs N --out DIR -- COMMAND)",
+   "tool": "repeat-control.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "USAGE tools/repeat-control.py:141-145 (--help r05-help-repeat-control.txt); SKILL.md:2181 gateway row",
+   "verdict": "does not allocate",
+   "code": "tools/repeat-control.py:240 run_mode -> :326 run_controls -> :329 os.makedirs(out_dir, exist_ok=False); strict_scratch_root is called only at :611 inside selftest()",
+   "probe": "r09-repeat-control-run-unusable.txt rc=0 REPEAT_CONTROL: controls_match under TMPDIR=<nonexistent>"
+  },
+  {
+   "id": "repeat-control --snapshot",
+   "tool": "repeat-control.py",
+   "in_counter": true,
+   "allocating": false,
+   "documented": "USAGE :143; registry rows repeat-control-snapshot-clean/mismatch",
+   "verdict": "does not allocate",
+   "code": "tools/repeat-control.py:463 snapshot_mode (read-only)",
+   "probe": "frozen counter lazy arm"
+  },
+  {
+   "id": "repeat-control --selftest",
+   "tool": "repeat-control.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "USAGE :144; registry row repeat-control-selftest",
+   "verdict": "allocates",
+   "code": "tools/repeat-control.py:611 mkdtemp(..., dir=strict_scratch_root())",
+   "probe": "r06b rc=2 grammar=0 (the round-55 build target, r55 not yet in this base)"
+  },
+  {
+   "id": "registry-check run --root (live)",
+   "tool": "registry-check.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "USAGE tools/registry-check.py:118-122 (--help r05-help-registry-check.txt); docstring Interface lines 11-15",
+   "verdict": "does not allocate",
+   "code": "tools/registry-check.py:1909 work = None; :1910 if rev is not None: ... ; live branch :1943 root = os.path.abspath(root_requested) never calls clone_lane_at_rev",
+   "probe": "r12-registry-check-live-unusable.txt rc=1 (row differs: its child tool is the one that honours TMPDIR); no scratch class line from registry-check itself"
+  },
+  {
+   "id": "registry-check run --rev",
+   "tool": "registry-check.py",
+   "in_counter": false,
+   "allocating": true,
+   "documented": "USAGE :119 and docstring Interface line 12 ('[--root DIR] [--rev REV]'); --help r05-help-registry-check.txt; SKILL.md:2180 says '--rev fixture trees via mkdtemp under the scratch root ($TMPDIR; a set-but-unusable TMPDIR is could-not-evaluate)'",
+   "verdict": "ALLOCATES (unmeasured by the counter)",
+   "code": "tools/registry-check.py:780 work = tempfile.mkdtemp(prefix='tameshi-registry-check-', dir=strict_scratch_root()) inside clone_lane_at_rev (:770), called from main :1927 under ':1910 if rev is not None:'; only after resolve_rev succeeds (:1918)",
+   "probe": "r07 rc=2, stderr empty, stdout 'REGISTRY_CHECK: could-not-evaluate (cannot create clone scratch ...)' -> GRAMMAR match 0 on stderr (r06b); r08 strace mkdir(\"<TMPDIR>/tameshi-registry-check-...\",0700)"
+  },
+  {
+   "id": "registry-check --selftest",
+   "tool": "registry-check.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "USAGE :120; registry row registry-check-selftest",
+   "verdict": "allocates",
+   "code": "tools/registry-check.py:930-931 mkdtemp(..., dir=strict_scratch_root())",
+   "probe": "r08b rc=2 grammar=1"
+  },
+  {
+   "id": "bash-witness-study declare",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring modes list (declare ...); argparse subcommand :1766-1777 (--help r05-help-bash-witness-study.txt)",
+   "verdict": "does not allocate",
+   "code": "tools/bash-witness-study.py:865 cmd_declare; the only mkdtemp calls in the file are :1259-1260 inside cmd_selftest (:1247)",
+   "probe": "r11b rc=1 refusal 'declared.tsv already exists' with no scratch class line"
+  },
+  {
+   "id": "bash-witness-study run",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring subcommand docs; argparse :1766-1777",
+   "verdict": "does not allocate (via strict_scratch_root)",
+   "code": "tools/bash-witness-study.py:1029 cmd_run -> _execute_sweep; children run tools/mutate-and-run.sh which itself does mktemp -d \"${TMPDIR:-/tmp}/...\" (:491) -- a child allocation outside the strict_scratch_root class",
+   "probe": "r11c rc=2 runner-drift before any sweep; no scratch class line"
+  },
+  {
+   "id": "bash-witness-study rerun",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring; argparse :1766-1777",
+   "verdict": "does not allocate (via strict_scratch_root)",
+   "code": "tools/bash-witness-study.py:1037 cmd_rerun -> _execute_sweep; same child-runner caveat as run",
+   "probe": "r11d rc=2 runner-drift before any sweep"
+  },
+  {
+   "id": "bash-witness-study count",
+   "tool": "bash-witness-study.py",
+   "in_counter": true,
+   "allocating": false,
+   "documented": "docstring; registry row bash-witness-count",
+   "verdict": "does not allocate",
+   "code": "tools/bash-witness-study.py:1070 cmd_count (read-only)",
+   "probe": "r11e rc=0 under unusable TMPDIR"
+  },
+  {
+   "id": "bash-witness-study check",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring; argparse :1766-1777",
+   "verdict": "does not allocate",
+   "code": "tools/bash-witness-study.py:1147 cmd_check (digest check only)",
+   "probe": "r11a rc=1 WITNESS_CHECK: DRIFT, no scratch class line"
+  },
+  {
+   "id": "bash-witness-study selftest",
+   "tool": "bash-witness-study.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "docstring; registry row bash-witness-selftest",
+   "verdict": "allocates",
+   "code": "tools/bash-witness-study.py:1259-1260 mkdtemp(..., dir=strict_scratch_root())",
+   "probe": "r06b rc=2 grammar=1"
+  },
+  {
+   "id": "pin-disposition --manifest PATH --root FLEET",
+   "tool": "pin-disposition.py",
+   "in_counter": true,
+   "allocating": false,
+   "documented": "USAGE :148-150; registry row pin-disposition-read",
+   "verdict": "does not allocate",
+   "code": "tools/pin-disposition.py USAGE/main; only :725 (selftest) calls strict_scratch_root",
+   "probe": "r13 rc=0 JSON under unusable TMPDIR"
+  },
+  {
+   "id": "pin-disposition --selftest",
+   "tool": "pin-disposition.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "USAGE :149; registry row pin-disposition-selftest",
+   "verdict": "allocates",
+   "code": "tools/pin-disposition.py:725",
+   "probe": "r06b rc=2 grammar=1"
+  },
+  {
+   "id": "evidence-disposition --root LANE --dispositions FILE [--json]",
+   "tool": "evidence-disposition.py",
+   "in_counter": true,
+   "allocating": false,
+   "documented": "USAGE :167-168; registry rows evidence-disposition-round18/-before etc.",
+   "verdict": "does not allocate",
+   "code": "tools/evidence-disposition.py USAGE/main; only :2370 (selftest) calls strict_scratch_root",
+   "probe": "r14 rc=0 under unusable TMPDIR"
+  },
+  {
+   "id": "evidence-disposition --selftest",
+   "tool": "evidence-disposition.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "USAGE :168; registry row evidence-disposition-selftest",
+   "verdict": "allocates",
+   "code": "tools/evidence-disposition.py:2370",
+   "probe": "r06b rc=2 grammar=1"
+  },
+  {
+   "id": "context-capture --check (frozen receipt)",
+   "tool": "context-capture.py",
+   "in_counter": true,
+   "allocating": false,
+   "documented": "USAGE :271-272, Modes block; registry row context-capture-frozen",
+   "verdict": "does not allocate",
+   "code": "tools/context-capture.py check path writes nothing; strict_scratch_root referenced only at :1638-1639 inside class SelftestHarness (:1636)",
+   "probe": "frozen counter lazy arm; r10 sibling form rc=1 with no class line"
+  },
+  {
+   "id": "context-capture --check --receipt FILE --expected FILE",
+   "tool": "context-capture.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "USAGE :271-272 explicit form; registry rows context-capture-missing-env and context-capture-mapping-suffix",
+   "verdict": "does not allocate",
+   "code": "tools/context-capture.py:1636-1639 only (SelftestHarness); the check path writes nothing (docstring :9, :19)",
+   "probe": "r10 rc=1 CONTEXT: MISMATCH under unusable TMPDIR, no scratch class line"
+  },
+  {
+   "id": "context-capture --selftest",
+   "tool": "context-capture.py",
+   "in_counter": true,
+   "allocating": true,
+   "documented": "USAGE :272; registry row context-capture-selftest",
+   "verdict": "allocates",
+   "code": "tools/context-capture.py:1638-1639",
+   "probe": "r06b rc=2 stderr_lines=0 grammar=0 bad=True (round-55 build fixes this; base is the pre-fix revision)"
+  },
+  {
+   "id": "help (-h/--help) for the seven tools",
+   "tool": "all",
+   "in_counter": false,
+   "allocating": false,
+   "usage_mode": true,
+   "documented": "every tool's --help (r05-help-*.txt); context-capture KNOWN_ARGUMENTS :266 names -h/--help",
+   "verdict": "does not allocate",
+   "code": "handled before any scratch: registry-check.py:1861-1863 returns from main before work (:1909); repeat-control.py:897-901 dispatch -h before run_mode; context-capture.ts:266 KNOWN_ARGUMENTS",
+   "probe": "r05-help-*.txt rc=0 for all seven"
+  }
+ ],
+ "difference_count": 8,
+ "difference": [
+  {
+   "id": "repeat-control run (--runs N --out DIR -- COMMAND)",
+   "tool": "repeat-control.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "USAGE tools/repeat-control.py:141-145 (--help r05-help-repeat-control.txt); SKILL.md:2181 gateway row",
+   "verdict": "does not allocate",
+   "code": "tools/repeat-control.py:240 run_mode -> :326 run_controls -> :329 os.makedirs(out_dir, exist_ok=False); strict_scratch_root is called only at :611 inside selftest()",
+   "probe": "r09-repeat-control-run-unusable.txt rc=0 REPEAT_CONTROL: controls_match under TMPDIR=<nonexistent>"
+  },
+  {
+   "id": "registry-check run --root (live)",
+   "tool": "registry-check.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "USAGE tools/registry-check.py:118-122 (--help r05-help-registry-check.txt); docstring Interface lines 11-15",
+   "verdict": "does not allocate",
+   "code": "tools/registry-check.py:1909 work = None; :1910 if rev is not None: ... ; live branch :1943 root = os.path.abspath(root_requested) never calls clone_lane_at_rev",
+   "probe": "r12-registry-check-live-unusable.txt rc=1 (row differs: its child tool is the one that honours TMPDIR); no scratch class line from registry-check itself"
+  },
+  {
+   "id": "registry-check run --rev",
+   "tool": "registry-check.py",
+   "in_counter": false,
+   "allocating": true,
+   "documented": "USAGE :119 and docstring Interface line 12 ('[--root DIR] [--rev REV]'); --help r05-help-registry-check.txt; SKILL.md:2180 says '--rev fixture trees via mkdtemp under the scratch root ($TMPDIR; a set-but-unusable TMPDIR is could-not-evaluate)'",
+   "verdict": "ALLOCATES (unmeasured by the counter)",
+   "code": "tools/registry-check.py:780 work = tempfile.mkdtemp(prefix='tameshi-registry-check-', dir=strict_scratch_root()) inside clone_lane_at_rev (:770), called from main :1927 under ':1910 if rev is not None:'; only after resolve_rev succeeds (:1918)",
+   "probe": "r07 rc=2, stderr empty, stdout 'REGISTRY_CHECK: could-not-evaluate (cannot create clone scratch ...)' -> GRAMMAR match 0 on stderr (r06b); r08 strace mkdir(\"<TMPDIR>/tameshi-registry-check-...\",0700)"
+  },
+  {
+   "id": "bash-witness-study declare",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring modes list (declare ...); argparse subcommand :1766-1777 (--help r05-help-bash-witness-study.txt)",
+   "verdict": "does not allocate",
+   "code": "tools/bash-witness-study.py:865 cmd_declare; the only mkdtemp calls in the file are :1259-1260 inside cmd_selftest (:1247)",
+   "probe": "r11b rc=1 refusal 'declared.tsv already exists' with no scratch class line"
+  },
+  {
+   "id": "bash-witness-study run",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring subcommand docs; argparse :1766-1777",
+   "verdict": "does not allocate (via strict_scratch_root)",
+   "code": "tools/bash-witness-study.py:1029 cmd_run -> _execute_sweep; children run tools/mutate-and-run.sh which itself does mktemp -d \"${TMPDIR:-/tmp}/...\" (:491) -- a child allocation outside the strict_scratch_root class",
+   "probe": "r11c rc=2 runner-drift before any sweep; no scratch class line"
+  },
+  {
+   "id": "bash-witness-study rerun",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring; argparse :1766-1777",
+   "verdict": "does not allocate (via strict_scratch_root)",
+   "code": "tools/bash-witness-study.py:1037 cmd_rerun -> _execute_sweep; same child-runner caveat as run",
+   "probe": "r11d rc=2 runner-drift before any sweep"
+  },
+  {
+   "id": "bash-witness-study check",
+   "tool": "bash-witness-study.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "docstring; argparse :1766-1777",
+   "verdict": "does not allocate",
+   "code": "tools/bash-witness-study.py:1147 cmd_check (digest check only)",
+   "probe": "r11a rc=1 WITNESS_CHECK: DRIFT, no scratch class line"
+  },
+  {
+   "id": "context-capture --check --receipt FILE --expected FILE",
+   "tool": "context-capture.py",
+   "in_counter": false,
+   "allocating": false,
+   "documented": "USAGE :271-272 explicit form; registry rows context-capture-missing-env and context-capture-mapping-suffix",
+   "verdict": "does not allocate",
+   "code": "tools/context-capture.py:1636-1639 only (SelftestHarness); the check path writes nothing (docstring :9, :19)",
+   "probe": "r10 rc=1 CONTEXT: MISMATCH under unusable TMPDIR, no scratch class line"
+  }
+ ],
+ "difference_allocating": [
+  "registry-check run --rev"
+ ],
+ "findings": [
+  {
+   "id": "D1",
+   "severity": "counter-defect (frozen; report only)",
+   "claim": "c2/measure.py docstring lines 12-13 and 17: 'only the self-test was measured, so env-diff --contract (the one other documented mode that allocates scratch) was outside the contract'; 'grammar 8 allocating modes (the seven self-tests + env-diff --contract)'. Contract target: 8/8 allocating modes.",
+   "fact": "registry-check run --rev is a documented mode (usage + docstring + SKILL.md:2180) that allocates at tools/registry-check.py:780 via clone_lane_at_rev; the documented allocating population is 9, not 8.",
+   "evidence": [
+    "r07-registry-check-rev-unusable.txt",
+    "r08-registry-check-rev-usable.txt (+ .strace)",
+    "r06b-grammar-check-nine-allocating-modes.txt",
+    "r05-help-registry-check.txt",
+    "r16-skill-md-registry-check-rev-doc.txt",
+    "r21-registry-check-selftest-rev-case-assertion.txt"
+   ],
+   "impact": "With TMPDIR set-but-unusable the mode exits 2 but prints 'REGISTRY_CHECK: could-not-evaluate (...)' on stdout, stderr empty: no frozen-grammar line. A complete 9-mode counter would read grammar=6/9 at base, and could not be 8/8 without editing registry-check.py (not in the round's integration list). As frozen, C2_R55_PASS=true is reachable while a documented allocating mode violates the class.",
+   "pinned_shape": "The tool's own selftest --rev cases (registry-check.py:1640-1646) record rev-unknown with check_lines(proc, ['REGISTRY_CHECK: could-not-evaluate']) -- the paren/stdout shape is asserted by the selftest, so aligning --rev with the frozen grammar would require changing that assertion as well. The counter's grammar arm runs only --selftest, which reaches strict_scratch_root at :930 before the --rev cases block, so the mode is never observed."
+  },
+  {
+   "id": "D2",
+   "severity": "docs-gap (L1-owned; report only)",
+   "claim": "Round-55 note says 'Eight allocating modes carry it' (worktree corpus/knowledge/scratch-root-contract.md:77) and 'the round-55 counter measures every documented allocating mode' (:66-67); the registry cell registry-check-selftest says 'Allocating modes: selftest.'",
+   "fact": "The honest count is nine; registry-check's cell must say 'selftest, --rev' and the note must name registry-check --rev. The note's own blind-spot paragraph locates the hole 'outside the registry and the usage text'; this hole is inside both the usage text and SKILL.md:2180.",
+   "evidence": [
+    "r20-current-note-claims.txt",
+    "r04-registry-scratch-cells-base.txt",
+    "r16-skill-md-registry-check-rev-doc.txt"
+   ],
+   "impact": "Adding the ninth name does not break the frozen counter: the note arm counts only that its eight labels appear, and the docs arm only needs the MARKER substring, so the docs can be made true without touching frozen files."
+  },
+  {
+   "id": "D3",
+   "severity": "boundary note (not a defect under the frozen surface)",
+   "claim": "bash-witness-study run/rerun are documented modes that can cause scratch to be created under $TMPDIR.",
+   "fact": "They do not call strict_scratch_root; they shell out to tools/mutate-and-run.sh, whose mktemp -d \"${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX\" (tools/mutate-and-run.sh:491) is a child allocation. At base the runner-drift precondition stops both before the sweep (r11c/r11d), so this is code-read only.",
+   "impact": "A bad TMPDIR there yields the runner's SETUP message, not the frozen grammar; the counter's surface ('the seven tools that call strict_scratch_root()') excludes it, so this is recorded, not scored."
+  }
+ ],
+ "probes": {
+  "unusable_tmpdir_grammar_9_allocating": "r06b-grammar-check-nine-allocating-modes.txt",
+  "rc_and_class_per_difference": {
+   "repeat-control run": 0,
+   "registry-check run --root (live)": 1,
+   "registry-check run --rev": 2,
+   "bash-witness declare": 1,
+   "bash-witness run": 2,
+   "bash-witness rerun": 2,
+   "bash-witness check": 1,
+   "context-capture --check --receipt": 1
+  }
+ },
+ "census": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi -> rc 0 (r17-census-validate.txt)",
+ "tooling": "no installs or upgrades; python3, git, strace, bwrap 0.13.1 already present",
+ "files_changed": [
+  "(report only) .ufo/waves/round-55/w1/T55W1ExecModeDiscovery.md",
+  ".ufo/waves/round-55/w1/T55W1ExecModeDiscovery.json",
+  ".ufo/waves/round-55/w1/T55W1ExecModeDiscovery-receipts/**"
+ ],
+ "usage_mode_outside_counter": [
+  {
+   "id": "help (-h/--help) for the seven tools",
+   "tool": "all",
+   "in_counter": false,
+   "allocating": false,
+   "usage_mode": true,
+   "documented": "every tool's --help (r05-help-*.txt); context-capture KNOWN_ARGUMENTS :266 names -h/--help",
+   "verdict": "does not allocate",
+   "code": "handled before any scratch: registry-check.py:1861-1863 returns from main before work (:1909); repeat-control.py:897-901 dispatch -h before run_mode; context-capture.ts:266 KNOWN_ARGUMENTS",
+   "probe": "r05-help-*.txt rc=0 for all seven"
+  }
+ ],
+ "receipts_dir": ".ufo/waves/round-55/w1/T55W1ExecModeDiscovery-receipts/",
+ "frozen_artifact_observations": [
+  {
+   "id": "O1",
+   "what": "before/c2.stdout is 0 bytes in the worktree; HEAD carries 43 lines ending 'C2_R55: rev=0a2010acd1e9 grammar=6/8 \u2026 total=18 C2_R55_PASS=false'",
+   "evidence": [
+    "r22-before-c2-committed.txt",
+    "r18-lane-state.txt"
+   ],
+   "fixed": false
+  },
+  {
+   "id": "O2",
+   "what": "freeze.json pins contract.json ed6871e1\u2026 and c2/measure.py ab3ae751\u2026; neither worktree (contract 0b99dd8c\u2026, measure d6ca1d85\u2026) nor HEAD (contract 2388cb50\u2026, measure 9d076812\u2026) matches; contract has 4 amendments, freeze has 3; c1/measure.py, no-harm.sh, deciding-run.sh, controls.sh all match; recheck at 2026-10-28T14:00:26-03:00: contract 5de4f37b\u2026 (5 amendments), c1/measure.py 711507e7\u2026 now also mismatched, c2/measure.py d6ca1d85\u2026 unchanged, the three .sh match \u2014 3/6 pinned files disagree with the manifest and the tree is still churning under the wave",
+   "evidence": [
+    "r24-freeze-pin-vs-tree.txt",
+    "r23-c2-measure-worktree-vs-head.diff",
+    "r24b-freeze-pin-recheck.txt"
+   ],
+   "fixed": false
+  }
+ ],
+ "sweep_receipts_added": [
+  "r21-registry-check-selftest-rev-case-assertion.txt",
+  "r22-before-c2-committed.txt",
+  "r23-c2-measure-worktree-vs-head.diff",
+  "r24-freeze-pin-vs-tree.txt",
+  "r16-skill-md-registry-check-rev-doc.txt",
+  "r17-census-validate.txt",
+  "r18-lane-state.txt",
+  "r19-registry-check-unchanged-in-worktree.txt",
+  "r20-current-note-claims.txt",
+  "r24b-freeze-pin-recheck.txt"
+ ]
+}

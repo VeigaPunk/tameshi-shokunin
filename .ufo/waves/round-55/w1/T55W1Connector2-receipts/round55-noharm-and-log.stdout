@@ -1,0 +1,23 @@
+== round-55 no-harm.sh (frozen at 631cd64) clean-tree monitors ==
+== round-55 no-harm.sh monitor labels ==
+2:# Round-55 no-harm monitors. Usage: no-harm.sh LANE REV. Every line prints "NOHARM <name> <observed> <ok|RED>".
+15:python3 -c 'import sys; sys.exit(0 if int(sys.argv[1].split("depth_score=")[1]) >= 10 else 1)' "$D" && s=ok || s=RED; echo "NOHARM commandD $D $s"
+17:python3 -c 'import sys; s=dict(kv.split("=") for kv in sys.argv[1].split()); sys.exit(0 if int(s["score"])>=8 and int(s["credited"])>=64 else 1)' "$CR" && s=ok || s=RED; echo "NOHARM coldread-floor $CR $s"
+19:python3 -c 'import sys; s=dict(kv.split("=") for kv in sys.argv[1].split()); p=int(s["population"]); f=int(s["fresh"]); print("score=%d" % (10*f//p)); sys.exit(0 if f>=71 and 10*f//p>=9 else 1)' "$F" > "$SCR/fs" && s=ok || s=RED; echo "NOHARM r45-freshness ${F}$(cat "$SCR/fs") $s"
+21:[ "$G" = "rows=2 entries=2 C2_R45_PASS=true " ] && s=ok || s=RED; echo "NOHARM r45-coverage $G$s"
+23:[ "$S" = 1 ] && s=ok || s=RED; echo "NOHARM S160-count $S $s"
+25:[ "$R" -ge 139 ] && s=ok || s=RED; echo "NOHARM registry-rows-not-below-139 $R $s"
+27:[ "$H" = "rows=3 entries=3 C3_R46_PASS=true " ] && s=ok || s=RED; echo "NOHARM r46-coverage $H$s"
+29:[ "$I" = "rows=3 entries=3 C3_R47_PASS=true " ] && s=ok || s=RED; echo "NOHARM r47-coverage $I$s"
+32:echo "NOHARM tools-scope [${T}] $s"
+35:[ "$N0" = "$N1" ] && s=ok || s=RED; echo "NOHARM registry-row-names-unchanged count=$(echo "$N1" | wc -w) $s"
+39:echo "NOHARM r49-generator-capability [$P] $s"
+42:case "$K" in *" failed=0") s=ok;; *) s=RED;; esac; echo "NOHARM r50-shrinker-selftest [$K] $s"
+44:[ "$Q" = 0 ] && s=ok || s=RED; echo "NOHARM r53-scratch-hygiene tmp_hits=$Q $s"
+47:[ "$L1" -ge "$L0" ] && s=ok || s=RED; echo "NOHARM ledger-not-shrunk base=$L0 rev=$L1 $s"
+50:[ "$C1N" -ge "$C0" ] && s=ok || s=RED; echo "NOHARM sources-not-shrunk base=$C0 rev=$C1N $s"
+== LOG.md round-52 entry present at base? ==
+2444:## 2026-10-27 — round 52 (honest stop, run wrap-up)
+2448:honest-stop report is at `.ufo/reports/round-52/tameshi.md` (fleet commit
+2453:criterion 103; S274; `corpus/lessons/round-52.md`. The round-52 closure
+2461:until round 53's repair. No claim is admitted by the round-52 report itself;

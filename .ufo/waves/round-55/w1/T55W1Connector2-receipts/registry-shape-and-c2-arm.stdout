@@ -1,0 +1,90 @@
+== registry.json shape ==
+{
+  "schema": "tameshi-entry-registry-v1",
+  "rows": [
+    {
+      "name": "repeat-control-snapshot-clean",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/repeat-control.py",
+        "--snapshot",
+        ".ufo/evidence/round-12/ControlGate"
+      ],
+      "expect": {
+        "exit": 0
+      },
+      "timeout_s": 60,
+      "source": "SKILL.md@98bea7d:1503",
+      "status": "active",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "name": "repeat-control-snapshot-mismatch",
+      "kind": "gate",
+      "argv": [
+        "python3",
+        "tools/repeat-cont
+== scratch_root cells (7) ==
+top type dict ['schema', 'rows']
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+- None :: TMPDIR set but unusable => exit 2, could-not-evaluate (the value is named, no traceback); TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is create
+== round-54 c2 measure: unusable arm ==
+
+
+def git(args, lane, check=True):
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    return subprocess.run(['git', '-C', lane] + list(args), env=env,
+                          capture_output=True, text=False, check=check)
+
+
+def show(lane, rev, path):
+    r = git(['show', '%s:%s' % (rev, path)], lane, check=False)
+    return r.stdout if r.returncode == 0 else None
+
+
+def run_tool(clone, tool_path, arg, tmpdir, extra_env=None):
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env['TMPDIR'] = tmpdir
+    env['PYTHONDONTWRITEBYTECODE'] = '1'
+    if extra_env:
+        env.update(extra_env)
+    proc = subprocess.run([sys.executable, tool_path, arg], cwd=clone, env=env,
+                          capture_output=True, timeout=TIMEOUT)
+    text = (proc.stdout + proc.stderr).decode('utf-8', 'replace')
+    return proc.returncode, text
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--lane', required=True)
+    ap.add_argument('--rev', required=True)
+    ap.add_argument('--work', required=True)
+    ap.add_argument('--explain', action='store_true')
+    a = ap.parse_args()
+    lane = a.lane
+    work = Path(a.work)
+    work.mkdir(parents=True, exist_ok=True)
+    if any(work.iterdir()):
+        print('C2_R54: error=work-not-empty total=1 C2_R54_PASS=false')
+        return 2
+    rev = git(['rev-parse', '--verify', '%s^{commit}' % a.rev], lane).stdout.decode().strip()
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    clone = work / 'clone'
+    subprocess.run(['git', 'clone', '--shared', '--quiet', lane, str(clone)],
+                   env=env, check=True, capture_output=True)
+    subprocess.run(['git', '-C', str(clone), 'checkout', '--quiet', rev],
+                   env=env, check=True, capture_output=True)
+
+    unusable = work / 'unusable-tmpdir-r54'   # deliberately never created
+    usable = work / 'usable-tmpdir'
+    usable.mkdir()

@@ -1,0 +1,25 @@
+# per-line application of the frozen counter's two R54.1 stale patterns to each pair
+# (a pair spanning several lines is scored line by line, as measure.scan does)
+
+pair 1  SCORECARD.md
+   old: 1 of 1 lines hit -> STALE (counter sees it)
+   new: 0 of 1 lines hit
+      OLD-HIT CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true (`.ufo/evidence/round-54/control/`)
+
+pair 2  corpus/QUALITY.md
+   old: 1 of 1 lines hit -> STALE (counter sees it)
+   new: 0 of 1 lines hit
+      OLD-HIT Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathsp
+
+pair 3  corpus/lessons/round-54.md
+   old: 0 of 3 lines hit -> counter-BLIND
+   new: 0 of 6 lines hit
+
+pair 4  corpus/lessons/round-54.md
+   old: 1 of 2 lines hit -> STALE (counter sees it)
+   new: 0 of 6 lines hit
+      OLD-HIT   proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`).
+
+pair 3 is the false claim the counter cannot see: its old text hits ZERO lines,
+because `requires `rekeyed=7/7`` sits on line 75 while `positive control` sits on
+line 74 - and measure.scan's regex forbids a newline inside its 160-character window.

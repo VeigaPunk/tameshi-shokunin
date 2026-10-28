@@ -1,0 +1,30 @@
+$ cd /fast/scratch/hyaku/tameshi-r55/T55W1LabEmpty/lane && env TMPDIR= strace -f -e trace=mkdir,mkdirat,openat,unlinkat,rmdir -o strace-empty-bws.log python3 tools/bash-witness-study.py selftest
+rc=0 (VERDICT: PASS)
+
+--- mkdir/mkdirat under /tmp (count) ---
+51
+--- mkdir/mkdirat NOT under /tmp (count) ---
+21
+--- openat with O_CREAT under the clone CWD (count) ---
+0
+--- openat with O_CREAT under /tmp (count) ---
+161
+--- first 3 mkdir under /tmp ---
+1909246 mkdir("/tmp/bash-witness-selftest-private.g5zn6_tr", 0700) = 0
+1909246 mkdir("/tmp/bash-witness-selftest-private.g5zn6_tr/bash-witness-selftest.8tifr84t", 0700) = 0
+1909246 mkdir("/tmp/bash-witness-selftest-private.g5zn6_tr/bash-witness-selftest.8tifr84t/command-pin-fixture", 0777) = 0
+
+$ chdir proof that the 21 relative '.git/objects' mkdirs land inside the tempdir
+$   (second trace: strace -f -e trace=mkdir,mkdirat,chdir,fchdir -o strace-empty-bws2.log, same TMPDIR=)
+5:1928884 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
+19:1928902 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
+20:1928902 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
+21:1928902 mkdir(".git/objects/30", 0777)  = 0
+24:1928934 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
+25:1928934 chdir("/tmp/bash-witness-selftest-private.4l8y3vk2/bash-witness-selftest.i9ijml4a/command-pin-fixture") = 0
+26:1928934 mkdir(".git/objects/9a", 0777)  = 0
+27:1928934 mkdir(".git/objects/9b", 0777)  = 0
+
+$ same trace for context-capture and env-diff (O_CREAT under CWD / mkdir under /tmp)
+context-capture  rc=0 O_CREAT_under_CWD=0 mkdir_under_tmp=48
+env-diff         rc=0 O_CREAT_under_CWD=0 mkdir_under_tmp=146

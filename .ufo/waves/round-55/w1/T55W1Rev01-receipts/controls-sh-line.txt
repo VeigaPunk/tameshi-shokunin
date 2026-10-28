@@ -1,0 +1,16 @@
+# command: git show 0a2010ac:.ufo/evidence/round-54/control/controls.sh | sed -n '140,148p'
+     1	if [ "$PHASE" = b ]; then
+     2	  # CTL_POS — the real repair at REV must pass both counters.
+     3	  d=$(clone_at "$LANE" "$REV" pos) || exit 2
+     4	  python3 "$C1" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/wposa" > "$SCR/cposa" 2>&1; v=$(verdict "$SCR/cposa" C1_R54_PASS)
+     5	  echo "CTL CTL_POS_c1 $(tail -1 "$SCR/cposa")"; check CTL_POS_c1 true "$v"
+     6	  python3 "$C2" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/wposb" > "$SCR/cposb" 2>&1; v=$(verdict "$SCR/cposb" C2_R54_PASS)
+     7	  echo "CTL CTL_POS_c2 $(tail -1 "$SCR/cposb")"; check CTL_POS_c2 true "$v"
+     8	
+     9	  # CTL_EXIT0 — a tool made to print the class line but return 0 must fail C2.
+
+# grep -n 'clone_at "$LANE" "$REV" pos'
+142:  d=$(clone_at "$LANE" "$REV" pos) || exit 2
+
+# line 145 of that blob:
+  python3 "$C2" --lane "$d" --rev "$(git -C "$d" rev-parse HEAD)" --work "$SCR/wposb" > "$SCR/cposb" 2>&1; v=$(verdict "$SCR/cposb" C2_R54_PASS)

@@ -1,0 +1,57 @@
+# lane object-DB writes during the wave (no ref/history change)
+$ find .git/objects -type f -newermt "2026-10-28 13:40:00" | wc -l
+5250
+$ ... by minute
+      7 13:56
+      9 14:03
+      2 14:04
+      4 14:05
+      1 14:06
+   3666 14:07
+   1561 14:08
+$ git count-objects -v
+count: 8266
+size: 88716
+in-pack: 15726
+packs: 2
+size-pack: 26146
+prune-packable: 0
+garbage: 0
+size-garbage: 0
+
+# sample late objects: types and fixture-tree contents
+--- 187cc437209afd5e3aac2c6b61f6c0b1f03fe71c tree
+040000 tree 4e56b3d6b884d479211aeed26a4bc468a5c3e5b4	before
+040000 tree 20b4a4e27a8c455705a1efb34c3d430433b11191	c1
+040000 tree 19bbb2a0fc7b20056a2435ac577e41355599079e	c2
+100644 blob 052f8ef580b3311089d992e99ee28ac258225bb8	contract.json
+--- 9be07e1d241b2d200fc61f0a8adafec4a547f659 tree
+040000 tree 711b0b40295aecccc9565ca2d0761a7874152408	fleet-round-1-interactive
+040000 tree c3a0747cfff22af95577b4a270d83feee4c4a041	round-12
+040000 tree 9c991208166ad0b7298bb4c71dd00001368e1550	round-13
+040000 tree 6119da71351e6d50bba26b7f75b67631005f1ded	round-14
+--- 23420e330acf53842781ffecb71e984bdc0758f7 tree
+100644 blob 6154fe44c2916027583bd63c4001b1b252819d57	PROVINCE.md
+100644 blob 6da7a3a566366e6f3c3345bc5b0c7e1e7388f857	SKILL.md
+040000 tree 5be1213c60df3c1f40fa99ec28d34ecfa7c8f438	corpus
+040000 tree 37721e455a2b71d45aa2ed6db4525a715b3a9fb4	tools
+
+# reachability: all commit objects minus reachable-by-ref
+$ git cat-file --batch-all-objects --batch-check | awk commits | comm -23 vs git rev-list --all
+all_commits=1708 reachable=1700 unreachable=8
+0559c60abbed30367d620f1057face4644db1d3c   tree 530221d05ce562768f60d3476f83c151f114c138 | parent f8832ef310a8e07930fc0419834ca1858ad41386 | author tameshi <tameshi@selftest> 1792510173 -0300 |
+32f84145ffc2ec8b809e5bb8c20f3968fa655263   tree 846baa0cfa89f6ef80a4a73f6476995529c2ba3a | parent 28aeef498cc070c3183271b709bc79d344ff547a | author tameshi-shokunin <tameshi@shokunin.local> 179
+4db567012141376b346457306be845618f8d11a1   tree 4b825dc642cb6eb9a060e54bf8d69288fbee4904 | author tameshi-shokunin <tameshi@shokunin.local> 1792453155 -0300 | committer tameshi-shokunin <tamesh
+95f951a83cf0a55414319d7f31b5700e595a75b8   tree a3c19c7b0e0b6c204d07900f56a2a1a6d23fce11 | parent 28aeef498cc070c3183271b709bc79d344ff547a | author tameshi-shokunin <tameshi@shokunin.local> 179
+c950c71011f1c644efde48b552c42d5d3a6e40a8   tree 34dbf7ca2a09185930146e3033547e3da03bbdc5 | parent a21e9104723e7a46b794b03b8fdcdd1455696f7e | author tameshi-shokunin <tameshi@shokunin.local> 179
+e16adb7d8f4f8756b6ece293fe4bfcb8c2a813e2   tree e493a3e03c7828f74b3d9b58ab0b6ab72894b060 | parent 0559c60abbed30367d620f1057face4644db1d3c | author tameshi <tameshi@selftest> 1792510173 -0300 |
+f32e6543851378a1d108140f43511eff8bd111c7   tree 4b62b759e403e8807f2b419eb3f6d026b210592e | parent 28aeef498cc070c3183271b709bc79d344ff547a | author tameshi-shokunin <tameshi@shokunin.local> 179
+f8832ef310a8e07930fc0419834ca1858ad41386   tree 1c47acfa9c18ab1ef19d1406c520d6142c10afd5 | parent 98bea7da5801f4bc58e4187690ee1687c8a5061f | author tameshi <tameshi@selftest> 1792510173 -0300 |
+
+# controlled probe: does staging a --shared clone write into the lane object DB?
+$ git clone --shared --no-checkout LANE S/clone; git -C S/clone checkout -B probe 631cd64; git -C S/clone add -A; git -C S/clone commit
+lane_objects before=8277 after_add=8277 after_commit=8277   (clone had a clean tree; clone_objects=1)
+=> a shared clone stages/commits into its own object dir; the lane is not written by that path.
+
+# the same object file re-written during the audit (mtime moved, inode stable)
+240716873 inode ctime=2026-10-28 14:05:40.360126561 -0300 mtime=2026-10-28 14:05:40.360126561 -0300 .git/objects/9b/e07e1d241b2d200fc61f0a8adafec4a547f659

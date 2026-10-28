@@ -1,0 +1,90 @@
+{
+ "seat": "T55W1ExecCountersAtBase",
+ "round": 55,
+ "wave": "w1",
+ "item": "independent base receipts",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base_rev": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "lane_head_when_read": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "commands": {
+  "c1": "python3 .ufo/evidence/round-55/c1/measure.py --lane LANE --rev 0a2010acd1e92e4e332774050825e21bcfc7e079 --work <fresh empty> --explain",
+  "c2": "python3 .ufo/evidence/round-55/c2/measure.py --lane LANE --rev 0a2010acd1e92e4e332774050825e21bcfc7e079 --work <fresh empty> --explain"
+ },
+ "c1": {
+  "certified_run": "run A, 2026-10-28 13:49 -0300",
+  "counter_sha256": "77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783",
+  "counter_matches_freeze_pin_at_run_time": true,
+  "exit": 1,
+  "verdict_line": "C1_R55: rev=0a2010acd1e9 classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false",
+  "target_total": 10,
+  "sha256_mine": "be43a5fcc6eb3171511c861045bbd86cc21dac54295c16b63b7387bd1594f9b4",
+  "sha256_committed": "be43a5fcc6eb3171511c861045bbd86cc21dac54295c16b63b7387bd1594f9b4",
+  "cmp": "identical",
+  "differing_bytes": 0,
+  "stale_rows": ["R54.1", "R54.2", "R54.3", "R54.9"],
+  "stale_lines": 8,
+  "derived": {
+   "R54.1": "CTL_MISMATCH + 2/3",
+   "R54.2": "freeze pointer=077d431e",
+   "R54.3": "total=13",
+   "R54.4": "c2 digest=8528ee85",
+   "R54.5": "w1=28 w2=25 sections=12",
+   "R54.6": "sweep commit=ff2a821",
+   "R54.7": "rename commit=7fa9a5e",
+   "R54.8": "config.yml + fabricated + seat marked",
+   "R54.9": "reviewers=5 attack=21/76 seats=76 staged=81",
+   "R54.10": "controls-a rekeyed=0/7"
+  },
+  "later_rerun_not_certified": {
+   "when": "2026-10-28 14:02 -0300",
+   "counter_sha256": "711507e7b5bdd060a67b42162d043aabaef339408b3291a3c6ca39599d566dcd",
+   "note": "amendment 5 (span scan + LOG.md): R54.1 stale 3 -> 6; stream differs; base tree unchanged"
+  }
+ },
+ "c2": {
+  "certified_run": "run 2, 2026-10-28 13:55-14:01 -0300",
+  "counter_sha256": "d6ca1d851bb0037368c304f4d80254f7dc5bf76b1c3119cdf0f2a64bca95631a",
+  "exit": 1,
+  "verdict_line": "C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false",
+  "target_total": 18,
+  "verdict_line_identical_to_committed": true,
+  "stream_sha256_mine": "f771d8492afc26d489d8cb4c476fd022c4d3335b12b2b21cf2ea69b7945c87e8",
+  "stream_sha256_committed": "789f94e194841415ab125898b185e495a542fffa002772a21a84da4b2300ac58",
+  "stream_bytes": 2634,
+  "differing_bytes": 30,
+  "differing_regions": [
+   {"bytes": "158-167", "line": 3, "cols": "36-45", "committed": "bash-witness-study --selftest", "mine": "bash-witness-study selftest"},
+   {"bytes": "937-946", "line": 16, "cols": "35-44", "committed": "bash-witness-study --selftest", "mine": "bash-witness-study selftest"},
+   {"bytes": "1704-1713", "line": 29, "cols": "35-44", "committed": "bash-witness-study --selftest", "mine": "bash-witness-study selftest"}
+  ],
+  "untimed_untraced_path_text_present": false,
+  "run_under_freeze_pinned_counter": {
+   "when": "2026-10-28 13:49-13:53 -0300",
+   "counter_sha256": "ab3ae751469164f06a29bb87d0ee474248c4ee54b07cf64574e57895484eb95f",
+   "verdict_line": "C2_R55: rev=0a2010acd1e9 grammar=6/8 lazy=5/5 empty=13/13 usable=12/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=19 C2_R55_PASS=false",
+   "failing_arm": "usable:registry-check --selftest rc=1 expected=0",
+   "cause": "usable arm takes the exit code from `strace -f`; registry-check --selftest returns 1 under the tracer (timing/pidfd cases), 0 untraced"
+  },
+  "premise_checks": {
+   "grammar": "6/8 at base; the two non-matching modes are repeat-control (stderr, contains RuntimeError) and context-capture (stdout, contains RuntimeError)",
+   "env_diff_contract": {"unusable_tmpdir": {"rc": 2, "grammar_match": true}, "usable_tmpdir": {"rc": 0, "stdout": "ENVDIFF: classified=1/1"}},
+   "registry_check_plain_usable": {"rc": 0, "stdout": "SELFTEST: PASS (51 cases)", "seconds": 28.3}
+  }
+ },
+ "findings": [
+  {"id": "F1", "summary": "committed c2 receipt is not byte-reproducible by the frozen counter: 3 label regions (amendment 3); verdict identical; no numeric effect"},
+  {"id": "F2", "summary": "c2 baseline is counter-version dependent: the freeze-pinned counter (ab3ae751) reads usable=12/13 total=19 and can never reach PASS=true; amendment 4 is load-bearing"},
+  {"id": "F3", "summary": "freeze.json pins stale vs live frozen files (c1 77abe1e9->711507e7, c2 ab3ae751->d6ca1d85, contract ed6871e1->5de4f37b); freeze lists 3 amendments, contract 5; freeze.json rewritten again at 14:04 (d1bb8c2a)"},
+  {"id": "F4", "summary": "before/c2.stdout rewritten live: 139B total=19 (13:47), 0B (13:50), 139B total=18 (13:59); compare against git show HEAD:, never the working tree"}
+ ],
+ "risks": [
+  "content revision carrying the current amended frozen bytes yields FROZEN_UNCHANGED=0 -> deciding-run rc=1 (faithful scratch fixture, frozen-unchanged-simulation.txt); gate 0 FREEZE_INTEGRITY OK at 631cd64",
+  "freeze manifest must be brought in line with contract amendments 4-5 and the current pins",
+  "working tree is dirty; deciding-run.sh requires a clean tree",
+  "mid-flight reads of before/*.stdout can be torn"
+ ],
+ "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "stdout_lines": 17, "duplicate_url_notices": 15, "tier_notes": 1, "error_rows": 0, "sources_rows_at_read": 140, "highest_id_at_read": "S280"},
+ "tooling_installed": [],
+ "production_files_modified_by_seat": [],
+ "receipts_dir": ".ufo/waves/round-55/w1/T55W1ExecCountersAtBase-receipts/"
+}

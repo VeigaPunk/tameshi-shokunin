@@ -1,0 +1,59 @@
+# R54.6 evidence sweep — clone detached at 0a2010ac
+$ git show 0a2010ac:.ufo/evidence/round-54/after/clean-tree-before.txt | cat -A
+?? .ufo/evidence/round-54/after/$
+$ git show 0a2010ac:.ufo/evidence/round-54/after/clean-tree-after.txt | cat -A
+?? .ufo/evidence/round-54/after/$
+?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout$
+?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt$
+?? .ufo/waves/round-54/w2/T54W2Sent03.md$
+$ md5sum/wc of the after witness
+67d032029d5a6be71a658b6ba3c61756  -
+222
+
+$ git rev-list --all --objects | grep -c 'evidence/round-54/w2/'   # the draft's quoted prefix: never existed
+0
+
+$ git check-ignore -v .ufo/waves/round-54/w2/T54W2Sent03.md  (empty = not ignored)
+rc=1
+
+$ ls-tree of the three at base + first commit + ff2a821 blobs
+-- .ufo/waves/round-54/w2/T54W2Sent03.md
+   base   7448be1be6510bfc261b5b120ce14c0a54489d88
+   ff2a821 7448be1be6510bfc261b5b120ce14c0a54489d88
+   first  ff2a821a1e83acd92bb4d62bad15f380973a55ea
+-- .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+   base   c63fc96c958c09377f2e8eb56fced010c7d11dba
+   ff2a821 c63fc96c958c09377f2e8eb56fced010c7d11dba
+   first  ff2a821a1e83acd92bb4d62bad15f380973a55ea
+-- .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+   base   4cdc204cd232a2df6321ef9217810037dfd9e7ff
+   ff2a821 4cdc204cd232a2df6321ef9217810037dfd9e7ff
+   first  ff2a821a1e83acd92bb4d62bad15f380973a55ea
+
+$ git show --no-patch --format='H=%H P=%P D=%ad S=%s' --date=iso ff2a821
+H=ff2a821a1e83acd92bb4d62bad15f380973a55ea P=0263c71ed6ec930603f5e37578ef46e498c96111 D=2026-10-28 12:54:32 -0300 S=round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)
+
+$ git log --diff-filter=A over .ufo/waves/round-54/w2/*.md — only T54W2Sent03.md added after 0263c71e
+ff2a821 .ufo/waves/round-54/w2/T54W2Sent03.md
+
+$ stat -c '%y %n' of the two witnesses (lane worktree mtimes; NOT committed bytes)
+2026-10-28 12:22:17.579637072 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/after/clean-tree-before.txt
+2026-10-28 12:25:37.918588557 -0300  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/after/clean-tree-after.txt
+$ cat after/{c1.start,c2.end}
+2026-10-28T15:23:33Z
+2026-10-28T15:25:37Z
+
+$ cat after/deciding-run.exit
+DECIDING_RUN_EXIT=0
+
+$ git show 0a2010ac:.ufo/evidence/round-54/deciding-run.sh | sed -n '8p;60,61p;87p'
+# the bytes committed at REV (git show into scratch), never from the working tree; the working tree must be clean
+git status --porcelain > "$OUT/clean-tree-before.txt"
+[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+git status --porcelain > "$OUT/clean-tree-after.txt"
+
+$ QUALITY 77 text at base (corpus/QUALITY.md:916-919)
+### Criterion 77 — a seat report belongs in the lane repo, and a lane that claims it must carry it
+
+A seat's report is lane evidence: it is written under the lane's own wave directory, and a
+lane's own count of its residual reports must match the files that are actually committed

@@ -1,0 +1,19 @@
+{
+ "id": "R54.2",
+ "what": "SCORECARD.md names three round-54 freeze pointers (7883e0e5 at :2564 and :2567; fe70474d at :2608) where the deciding receipt names one (077d431e). LOG.md:2500-2501 repeats the false 'freeze pointer the deciding run uses' clause under 7883e0e5; LOG.md is outside the frozen counter's scan set (SCORECARD.md, corpus/QUALITY.md, corpus/lessons/round-54.md), so pair D is a record fix the counter cannot see. Pairs are in location order: old[0]/new[0] = SCORECARD.md:2564, old[1]/new[1] = SCORECARD.md:2567-2568, old[2]/new[2] = SCORECARD.md:2608, old[3]/new[3] = LOG.md:2500-2501. Every old string is byte-exact against the lane blobs at 631cd645 and at base 0a2010ac (SCORECARD.md sha256 68d5b62d4674491e..., LOG.md sha256 04dcdb73392603...) and occurs exactly once; each new string is what the scratch-clone demonstration applied.",
+ "old": [
+  "frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes",
+  "predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the\ndeciding run uses. Base `d33053f7`; content commit C0 `59c38109`; fix-pass",
+  "freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,",
+  "`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any\ncontrol score — the freeze pointer the deciding run uses). Claims: C1"
+ ],
+ "new": [
+  "frozen at `441c26be` before any seat ran; **amendment 1** (one follow-up\ncommit) fixes",
+  "predicate, target and arms unchanged. The round has **one freeze pointer,\n`077d431e`** (the fifth and last amendment), which is what the deciding\nreceipt prints [ER-R54-2]. Base `d33053f7`; content commit C0 `59c38109`;\nfix-pass",
+  "freeze `077d431e` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,",
+  "`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any\ncontrol score; the round's freeze pointer is `077d431e`, see the round-55\nrecord corrections in `SCORECARD.md`). Claims: C1"
+ ],
+ "derived": "freeze pointer=077d431e - the deciding receipt (.ufo/evidence/round-54/after/frozen.stdout) prints freeze=077d431e69965fa4673cd006ab64f6fc387f9e15, that field is the FREEZE commit deciding-run.sh echoes, and at 077d431e freeze.json reads amendments=5 (last) against 7883e0e5 amendments=1, 097985c1 amendments=2 and fe70474d amendments=4; 441c26be (the pre-amendment contract freeze) reads amendments=0",
+ "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show .ufo/evidence/round-54/after/frozen.stdout; for c in 441c26be 7883e0e5 097985c1 fe70474d 077d431e; do git -C LANE show $c:.ufo/evidence/round-54/freeze.json; done | amendments/files count; git -C LANE log -1 --format=%H 077d431e -- .ufo/evidence/round-54; python3 LANE/.ufo/evidence/round-55/c1/measure.py --lane <clone> --rev <rev> --work <empty> --explain  # run at rev 631cd645 (before) and at the clone HEAD 5a8d8a843a47c2224a822fa99123de9629d07e53 (pairs A-D + the ER-R54-2 paragraph applied)",
+ "output": "FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c\n441c26be: files=7 amendments=0\n7883e0e5: files=7 amendments=1\n097985c1: files=10 amendments=2\nfe70474d: files=10 amendments=4\n077d431e: files=10 amendments=5\n077d431e69965fa4673cd006ab64f6fc387f9e15\nEXPLAIN R54.2 FAIL premise=ok corrected=miss stale=3 derived=freeze pointer=077d431e  (rev 631cd645)\nEXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e  (rev 5a8d8a84)"
+}

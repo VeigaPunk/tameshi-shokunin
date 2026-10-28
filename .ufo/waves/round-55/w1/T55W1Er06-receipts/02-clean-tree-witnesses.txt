@@ -1,0 +1,31 @@
+# receipt 02 - the deciding run's clean-tree witnesses and the precondition it states
+# commands: cat .ufo/evidence/round-54/after/clean-tree-{before,after}.txt ; grep -n 'clean' .ufo/evidence/round-54/deciding-run.sh ; cat .ufo/evidence/round-54/after/deciding-run.exit
+
+== deciding-run.sh:8 (state of the file; frozen by round-54 contract.json frozen_paths)
+# the bytes committed at REV (git show into scratch), never from the working tree; the working tree must be clean
+
+== deciding-run.sh:60-61 (the ONLY assertion of that precondition)
+git status --porcelain > "$OUT/clean-tree-before.txt"
+[ "$(grep -vc "^?? ${OUT#$LANE/}" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+
+== deciding-run.sh:87 (the after witness is written, never asserted)
+git status --porcelain > "$OUT/clean-tree-after.txt"
+
+== clean-tree-before.txt (byte-exact, 12:22:17 local)
+?? .ufo/evidence/round-54/after/$
+
+== clean-tree-after.txt (byte-exact, 12:25:37 local)
+?? .ufo/evidence/round-54/after/$
+?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout$
+?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt$
+?? .ufo/waves/round-54/w2/T54W2Sent03.md$
+
+== deciding-run.exit
+DECIDING_RUN_EXIT=0
+
+== verdict: the three paths are absent from the before snapshot and present in the after snapshot
+   absent-before=3  present-after=3 — they were created inside a single invocation of this script
+   (line 60 snapshot -> line 87 snapshot). These three paths are touched by exactly one commit in
+   the lane's history, ff2a821 (12:54:32 local, 29 min after the run ended). Their sibling receipts
+   in the same directory were committed at c210810 (12:22:15 local, 2 s before the before
+   snapshot), which is why only these three are `??`.

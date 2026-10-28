@@ -1,0 +1,37 @@
+== round-54 lesson disposition lines 96-132 verbatim ==
+## Round-53 routed defects — dispositions (this round)
+
+- **R53.1** (the frozen round-53 C1 counter's rekey arm was dead) — FIXED: this
+  round's counter lists the re-key directory with `git ls-tree -r` (a recursive
+  listing, so the directory's own name cannot shadow the match), and the arm is
+  proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`).
+  The dead arm's own receipt is kept:
+  `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`
+  (`rekeyed=0/30` at the round-53 final revision). QUALITY 105 lands with it.
+- **R53.2** (deciding receipts never committed) — FIXED by construction: this
+  round's deciding run writes `.ufo/evidence/round-54/after/` and the report
+  cites the receipts from there; nothing is quoted in past tense before it runs.
+- **R53.3** (phase-B controls unbacked) — FIXED: `control/controls-b.stdout` and
+  `controls-b.exit` are committed before the deciding run, which refuses to run
+  without them.
+- **R53.4** (a receipt anchored at a revision absent from the object DB) — FIXED:
+  every receipt this round names revisions resolved in the lane's own object
+  store, and the C2 counter runs the tool bytes from a clone of the lane at REV.
+- **R53.5** (stale freeze receipts) — FIXED: `freeze.json` is regenerated at
+  freeze time and the deciding run prints `FROZEN_UNCHANGED=1` against it; no
+  amendment is recorded.
+- **R53.6** (the CR47 exit class missing in four of seven tools) — FIXED by C2:
+  the four now raise `ScratchRootUnusable` and map it to exit 2 with a naming
+  line; the C2 counter's unusable arm is 7/7.
+- **R53.7** ("inputs pinned at C7" was imprecise) — FIXED: the binder records
+  `read_rev` (the read commit, C0) and the pin revision (PIN) separately, in the
+  trace's `rev_reason` and in `refresh-receipts.json`; the report states both.
+- **R53.8** (the S275 page locator) — FIXED: the quote was located this round on
+  physical page 3 of the committed camera-ready snapshot (printed footer 1787),
+  and the `p. 4` cells in `corpus/SOURCES.md` and
+  `corpus/knowledge/change-aware-resweep-cadence.md` now read `p. 3 (physical)`.
+  The round-53 lesson's own line is left as the historical record (errata are
+  append-only); this entry is the correction.
+- **R53.9** (six round-53 wave files untracked at the push tip) — CLOSED: all six
+  are tracked in the lane at this round's base (`git ls-files` names each), so
+  nothing was carried in uncommitted.

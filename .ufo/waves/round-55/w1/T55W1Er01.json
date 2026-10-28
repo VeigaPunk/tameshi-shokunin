@@ -1,0 +1,136 @@
+{
+ "id": "R54.1",
+ "what": "The round-54 phase-B pre-registered control CTL_POS_c1 is recorded as passing (SCORECARD's C1 controls cell ends `CTL_POS_c1 true`; corpus/QUALITY.md:1590 and corpus/lessons/round-54.md:74-76 and :100-101 call the control the arm's proof at `rekeyed=7/7`) while its committed receipt .ufo/evidence/round-54/control/controls-b.stdout prints `CTL_MISMATCH CTL_POS_c1 expected=true actual=false` and `CONTROLS_B: 2/3 as pre-registered` with exit 1. Three lane files carry the false claim; the fourth place named by the routed defect (the fleet round-54 report :162) is outside this lane.",
+ "old": [
+  {
+   "n": 1,
+   "path": "SCORECARD.md",
+   "at_base": "line 2583, final (controls) cell",
+   "sha256": "b08bc816ec45e213d0a5b53044d096a2b3e743fbd4816afe1a2e4be83092ddb5",
+   "text": "CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true (`.ufo/evidence/round-54/control/`)"
+  },
+  {
+   "n": 2,
+   "path": "corpus/QUALITY.md",
+   "at_base": "line 1590 (criterion 105 falsifier, whole line)",
+   "sha256": "470a3d41df308ceab97d5ffec1835cb94b134eca2aac3ce491dee9b7481bf027",
+   "text": "Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` on its positive control; the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed."
+  },
+  {
+   "n": 3,
+   "path": "corpus/lessons/round-54.md",
+   "at_base": "lines 74-76 (## Mistakes, `fix:`)",
+   "sha256": "221ea94cc7d0364452a18616a613c5da7f541c2fccf6456ab98e4a98596ef748",
+   "text": "  `git ls-tree -r` and proves the arm on the positive control CTL_POS_c1, which\n  requires `rekeyed=7/7`; the control receipts are committed before the deciding\n  run (`.ufo/evidence/round-54/control/`)."
+  },
+  {
+   "n": 4,
+   "path": "corpus/lessons/round-54.md",
+   "at_base": "lines 100-101 (R53.1 disposition)",
+   "sha256": "33853cfa4ccf09ae340d1cecf0c652abb23863390fd1e75a96a4d474a71fc389",
+   "text": "  listing, so the directory's own name cannot shadow the match), and the arm is\n  proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`)."
+  }
+ ],
+ "new": [
+  {
+   "n": 1,
+   "path": "SCORECARD.md",
+   "sha256": "7211bf1fd0358e2439d1e30c8f535a0b8ef2b4a910c956d031f5f7e16f93e54a",
+   "text": "CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false (`controls-a.stdout`); CTL_POS_c1 `CTL_MISMATCH` `2/3` — phase B cloned the freeze `077d431e`, before the re-key `7fa9a5e`, so the arm read `rekeyed=3/7` and the pre-registered `true` was unreachable; the same arm reads `rekeyed=7/7` in the deciding run at the content revision [ER-R54-1] (`.ufo/evidence/round-54/control/`)"
+  },
+  {
+   "n": 2,
+   "path": "corpus/QUALITY.md",
+   "sha256": "38b3179ca99c1400172e247bb27cc84a034340ec9309a01f301dbaec57788269",
+   "text": "Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself) - a dead arm; and the round-54 phase-B control is the criterion's second falsifier, hit by that round: it pre-registered `true` on a tree that cannot carry it, cloning the freeze commit `077d431e` before the re-key `7fa9a5e`, so its arm printed `rekeyed=3/7` with `CTL_MISMATCH` (`CONTROLS_B: 2/3`, `.ufo/evidence/round-54/control/controls-b.stdout`). The arm does read `rekeyed=7/7` at the content revision the deciding run measured (`.ufo/evidence/round-54/after/c1.stdout`); the round-53 counter's receipt is `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout`."
+  },
+  {
+   "n": 3,
+   "path": "corpus/lessons/round-54.md",
+   "sha256": "0394d92351f75a139ea2442bc250cdcd4731c0bfa5f60b692ba1d71407465fdf",
+   "text": "  `git ls-tree -r`, and the arm reads `rekeyed=7/7` in the deciding run\n  (`.ufo/evidence/round-54/after/c1.stdout`). The phase-B control is not that\n  proof: it was cloned at the freeze `077d431e`, which predates the re-key\n  `7fa9a5e`, and printed `CTL_MISMATCH` (`rekeyed=3/7`, `CONTROLS_B: 2/3`)\n  [ER-R54-1]; the control receipts are committed before the deciding run\n  (`.ufo/evidence/round-54/control/`)."
+  },
+  {
+   "n": 4,
+   "path": "corpus/lessons/round-54.md",
+   "sha256": "a73e3cf70330aeac3fc3c57d3cc7a9d97864a7102b1c01264317f5624c502f9d",
+   "text": "  listing, so the directory's own name cannot shadow the match), and the arm\n  prints `rekeyed=7/7` in the deciding run\n  (`.ufo/evidence/round-54/after/c1.stdout`). The pre-registered control was\n  cloned at the freeze `077d431e`, which predates the re-key `7fa9a5e`, and\n  printed `CTL_MISMATCH` (`rekeyed=3/7`, `CONTROLS_B: 2/3`), so it never fired\n  [ER-R54-1, round-55 correction]."
+  }
+ ],
+ "derived": "`CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3 as pre-registered`, exit 1, at rev=077d431e6996 (the counter line reads credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false). The arm is live: the same frozen counter bytes read rekeyed=7/7 total=0 C1_R54_PASS=true at the deciding revision c21081008adb (.ufo/evidence/round-54/after/c1.stdout).",
+ "command": [
+  "git -C LANE show 0a2010acd1e92e4e332774050825e21bcfc7e079:SCORECARD.md | sed -n '2583p'",
+  "git -C LANE show 0a2010ac...:corpus/QUALITY.md | sed -n '1590p'",
+  "git -C LANE show 0a2010ac...:corpus/lessons/round-54.md | sed -n '74,76p;100,101p'",
+  "cat .ufo/evidence/round-54/control/controls-b.stdout",
+  "git -C LANE merge-base --is-ancestor 077d431e 7fa9a5e ; git -C LANE merge-base --is-ancestor 7fa9a5e 0a2010ac",
+  "git -C LANE diff --name-status 077d431e 7fa9a5e -- .ufo/evidence/round-21/coldread/ | grep -E '^A|^D'",
+  "python3 <frozen round-54 c1/measure.py extracted from freeze 077d431e> --lane <clone at REV> --rev <clone HEAD> --work <empty dir>  # REV = 077d431e, then c21081008adb"
+ ],
+ "output": [
+  "CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false",
+  "CTL_MISMATCH CTL_POS_c1 expected=true actual=false",
+  "CONTROLS_B: 2/3 as pre-registered",
+  "077d431e IS ancestor of 7fa9a5e / 7fa9a5e IS ancestor of 0a2010ac",
+  "A .ufo/evidence/round-21/coldread/rekey-r54-99c3bc88d704/traces/section-08.json (+ section-17, section-18, section-23)",
+  "replay at 077d431e: C1_R54: rev=077d431e6996 ... rekeyed=3/7 ... total=4 C1_R54_PASS=false (exit 1)",
+  "replay at c21081008adb: C1_R54: rev=c21081008adb ... rekeyed=7/7 ... total=0 C1_R54_PASS=true (exit 0)"
+ ],
+ "cause": {
+  "one_line": "phase B clones the revision it is handed (control/controls.sh:145: `clone_at \"$LANE\" \"$REV\" pos`) and was handed the FREEZE commit 077d431e, which predates the re-key 7fa9a5e, so the rekey arm could only read 3/7 and the pre-registered `true` was unreachable on that tree.",
+  "tree_facts": [
+   "077d431e is an ancestor of 7fa9a5e, which is an ancestor of the round-55 base 0a2010ac.",
+   "7fa9a5e adds four re-key traces (section-08, 17, 18, 23) and four ledger entries (587 -> 591) and refreshes the existing re-key traces; the re-key directory holds 202 files at 077d431e and 206 at 7fa9a5e.",
+   "Of the seven frozen headings (round-54 c1/lost-headings-at-base.json), at 077d431e three have no bound entry at all (`### The boundaries - what a service run is not`, `### Using the ledger`, `### Round-26 gate/probe registry - report interop`) and a fourth (`## Mutation-sweep recipe - numbered steps; bounded cold-read evidence`) has one whose pinned .ufo/evidence/round-21/coldread/ledger.json sha256 no longer matches at that revision; the other three (`## Standing rules`, `### The operator's runbook ...`, `### Round-14 historical registry ...`) credit. 7 - 3 - 1 = 3 credited, i.e. rekeyed=3/7."
+  ]
+ },
+ "reruns": {
+  "receipt_line_reproduced": true,
+  "note": "Replaying the frozen counter bytes over a clone at 077d431e reproduces the CTL_POS_c1 line of controls-b.stdout byte-for-byte, so the mismatch is forced by the revision, not by a counter fault. The control was never re-scored at the content revision: the deciding run executed the counter, and after/c1.stdout's rekeyed=7/7 comes from there."
+ },
+ "verdict": {
+  "r54_1_arms_at_base": {
+   "premise": true,
+   "stale_hits": 3,
+   "corrected": false,
+   "ok": false
+  },
+  "r54_1_arms_on_demo": {
+   "premise": true,
+   "stale_hits": 0,
+   "corrected": true,
+   "ok": true
+  },
+  "demo_commit": "e95332d971e17d56552ccab18606288047c5293d",
+  "note": "arms scored with the frozen counter's own scan()/corrections()/text() functions, not a re-implementation"
+ },
+ "residual": [
+  {
+   "path": "corpus/lessons/round-54.md",
+   "lines_at_base": "74-76",
+   "lines_at_head_631cd645": "74-76",
+   "claim": "`git ls-tree -r` and proves the arm on the positive control CTL_POS_c1, which requires `rekeyed=7/7`",
+   "status": "still present at the round-55 base 631cd6455e58dce969310b4c0466c3383d9f5108, and still present in the lane worktree when this seat read it. The C1 stale arm cannot see it: its regex allows at most 160 characters on ONE line and the claim breaks across 74/75/76. Pair 3 is the fix; the routed defect (corpus/lessons/round-54-verifier-spotcheck.md:108) names `:74,101` explicitly."
+  }
+ ],
+ "out_of_scope": [
+  "the fleet round-54 report :162 (fleet file, not writable from this lane)",
+  "the lane's other nine routed classes (R54.2-R54.10) - other seats' drafts",
+  "the corrections-section assembly itself (the L1's job; this JSON supplies the R54.1 block text and values)"
+ ],
+ "corrections_section_block": "**ER-R54-1 - a pre-registered control is recorded as passing while its committed\nreceipt prints `CTL_MISMATCH` / `2/3`.**\nOld: `SCORECARD.md:2583` ended `CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true\n(`.ufo/evidence/round-54/control/`)`; `corpus/QUALITY.md:1590` said the round-54 arm \"prints\n`rekeyed=7/7` on its positive control\" and called that receipt \"the round-54 positive control\";\n`corpus/lessons/round-54.md:74-76` said the arm \"proves\" itself \"on the positive control\nCTL_POS_c1, which requires `rekeyed=7/7`\", and `:100-101` said it was \"proven live by the\npositive control (`CTL_POS_c1`, which prints `rekeyed=7/7`)\".\nCorrected: `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3` (exit 1) -\n`.ufo/evidence/round-54/control/controls-b.stdout`. Cause: phase B clones the revision it is\nhanded (`control/controls.sh:145`) and was handed the freeze `077d431e`, which predates the\nre-key `7fa9a5e`: at `077d431e` three of the seven frozen headings have no bound entry and a\nfourth pins a `ledger.json` whose sha256 no longer matches, so the arm read\n`rekeyed=3/7 ... total=4 C1_R54_PASS=false`; `7fa9a5e` adds four re-key traces (sections 08,\n17, 18, 23) and four ledger entries (587 -> 591). Replaying the frozen counter bytes at both\nrevisions gives that exact line at `077d431e` and `rekeyed=7/7 ... total=0 C1_R54_PASS=true`\nat the deciding revision `c21081008adb` - the arm is live, the control was scored on the wrong\ntree. The control itself was never re-scored at the content revision; the deciding run ran the\ncounter, which is where `after/c1.stdout`'s `7/7` comes from.",
+ "receipts": [
+  ".ufo/waves/round-55/w1/T55W1Er01-receipts/"
+ ],
+ "incident": {
+  "who": "T55W1Er01 (this seat) - own error, not a lane defect",
+  "command": "rm -rf /fast/scratch/hyaku/tameshi-r55",
+  "intended": "remove only .../tameshi-r55/T55W1Er01 and .../tameshi-r55/T55W1Er01-demo2",
+  "printed": [
+   "rm: cannot remove '/fast/scratch/hyaku/tameshi-r55/T55W1Er09': Directory not empty (os error 39)",
+   "rm: cannot remove '/fast/scratch/hyaku/tameshi-r55/T55W1ScribeLog': Directory not empty (os error 39)"
+  ],
+  "effect": "sibling seat scratch directories under the shared parent were deleted to the extent permissions allowed; /fast/scratch is outside the lane, so no lane artifact was touched; peers that lost a clone mid-run should re-derive",
+  "evidence": ".ufo/waves/round-55/w1/T55W1Er01-receipts/scratch-incident.txt"
+ }
+}

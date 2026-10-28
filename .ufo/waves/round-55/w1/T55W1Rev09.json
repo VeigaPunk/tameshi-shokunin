@@ -1,0 +1,130 @@
+{
+  "seat": "T55W1Rev09",
+  "role": "reviewer",
+  "item": "attack C1 rows R54.3 and R54.6: re-derive the corrected value from the receipts and the tree at base; judge the filed defect, the spot-check wording, and the L1 correction draft",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "lane_base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "frozen_counter_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "report": ".ufo/waves/round-55/w1/T55W1Rev09.md",
+  "receipts_dir": ".ufo/waves/round-55/w1/T55W1Rev09-receipts/",
+  "tooling": {"installed": [], "upgraded": [], "path_dirs_touched": [], "reason": "no install needed for records-only reads"},
+  "census": {"command": "scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "sources_rows_worktree": 140, "receipt": "census.txt"},
+  "classes": [
+    {
+      "id": "R54.3",
+      "defect_agreed": true,
+      "defect_summary": "SCORECARD.md:2584 at base quotes `total=14` and attributes it to .ufo/evidence/round-54/before/c2.stdout, which prints `total=13`; the parenthetical's 14/13 delta inverts the two.",
+      "derived": "total=13",
+      "derivation": [
+        {"method": "cited receipt bytes", "command": "git show 0a2010ac:.ufo/evidence/round-54/before/c2.stdout | tail -1", "output": "C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=0 note=0 sources=0 total=13 C2_R54_PASS=false"},
+        {"method": "immutability", "command": "git log --format='%h %ad %s' -- .ufo/evidence/round-54/before/c2.stdout; md5sum", "output": "one commit only (19c7558); md5 40d7268931751ada54de3ed81b3d6511"},
+        {"method": "counter formula over the receipt fields", "command": "git show 0a2010ac:.ufo/evidence/round-54/c2/measure.py | sed -n '181,185p'", "output": "total = sum(7-count for count in (exit2,naming,empty_ok,usable_ok,docs)) + (0 if note else 1) + (0 if sourced else 1) => (7-3)+(7-7)+(7-7)+(7-7)+(7-0)+1+1 = 13"},
+        {"method": "frozen verification", "command": "sha256sum .ufo/evidence/round-54/c2/measure.py vs freeze.json files['c2/measure.py']", "output": "8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790 (both)"},
+        {"method": "round-55 C1 counter at base", "command": "python3 .ufo/evidence/round-55/c1/measure.py --lane <clone> --rev 0a2010ac --work <empty> --explain", "output": "EXPLAIN R54.3 FAIL premise=ok corrected=miss stale=1 derived=total=13"}
+      ],
+      "spotcheck_overstated": true,
+      "overstatements": [
+        {
+          "quote": "the parenthetical's claimed \"delta\" inverts the two and hides that no `14` exists in any receipt",
+          "why_false": "two committed receipt files carry a full `total=14` C2 verdict line and are byte-identical (md5 fb1a54eae198add85b5297b6a0824df1, both added by 077d431): .ufo/waves/round-54/w1/T54W1ExecFreeze-receipts/c2-frozen-bytes-at-base.out:9 and .ufo/waves/round-54/w1/T54W1ScribeScorecard-receipts/c2-at-base.explain.txt:9; 33 lines across 13 files under .ufo/waves/round-54 carry the token",
+          "true_scope": "no `14` exists under .ufo/evidence/round-54 (0 hits) nor in the cited receipt",
+          "evidence_receipt": "03-r543-sweep.txt"
+        }
+      ],
+      "spotcheck_correct_notes": ["the contract's C2.before string was expanded at 077d431e after 441c26be; both versions print total=13"],
+      "draft": "T55W1Er03.json",
+      "draft_byte_accurate": {
+        "old": "yes: old[0] occurs exactly once in base SCORECARD.md, line 2584",
+        "cell_at_base": "yes: byte-identical to base line 2584",
+        "cell_current_worktree": "yes: byte-identical to worktree line 2585",
+        "new": "yes: contains total=13, contains no total=14",
+        "derived/command/receipts": "yes: reproduced from the tree",
+        "prose_overclaim": "no: parenthetical_note and correction_entry both say 'the only total=14 in the tree is c2-frozen-bytes-at-base.out:9', falsified by the byte-identical twin receipt and 11 other files; the draft's provenance-of-14.txt is a partial sweep (10 lines vs 33)"
+      },
+      "integration_note": "old[0] no longer occurs in the worktree (the L1 applied the shorter [ER-R54-3] wording at line 2585); a literal old->new apply fails. Both the worktree wording and new[0] satisfy the counter; do not paste correction_entry verbatim.",
+      "proposed_replacement": {
+        "wrong": "the only `total=14` in the tree is `.ufo/waves/round-54/w1/T54W1ExecFreeze-receipts/c2-frozen-bytes-at-base.out:9`",
+        "right": "the `14` is a round-54 wave-1 rerun reading, committed twice as byte-identical receipts (`.ufo/waves/round-54/w1/T54W1ExecFreeze-receipts/c2-frozen-bytes-at-base.out:9` and `.ufo/waves/round-54/w1/T54W1ScribeScorecard-receipts/c2-at-base.explain.txt:9`, both md5 `fb1a54eae198add85b5297b6a0824df1`, both added by `077d431`) and quoted in three seat reports; the cited base receipt prints `usable_ok=7 ... total=13`."
+      },
+      "findings": [
+        {"severity": "medium", "id": "R54.3-F1", "claim": "The draft's report-level note asserts a uniqueness the tree falsifies.", "evidence": "git grep -l 'C2_R54:.*total=14' 0a2010ac -- . -> 5 files; the two receipt files are byte-identical (md5 fb1a54eae198add85b5297b6a0824df1)"},
+        {"severity": "low", "id": "R54.3-F2", "claim": "The spot-check's 'no 14 in any receipt' needs the qualifier '.ufo/evidence/round-54/'.", "evidence": "git grep -n 'total=14' 0a2010ac -- .ufo/evidence/round-54 -> 0; .ufo/waves/round-54 -> 33 lines / 13 files"}
+      ]
+    },
+    {
+      "id": "R54.6",
+      "defect_agreed": true,
+      "defect_summary": "Three seat deliverables were untracked at the round-54 closure (.ufo/waves/round-54/w2/T54W2Sent03.md and its two cited receipts); the deciding run's after witness records them as ??; every other w2 seat report is committed; the closure swept them byte-identically at ff2a821.",
+      "derived": "sweep commit=ff2a821",
+      "derivation": [
+        {"method": "before/after witnesses", "command": "git show 0a2010ac:.ufo/evidence/round-54/after/clean-tree-{before,after}.txt | cat -A", "output": "before: only '?? .ufo/evidence/round-54/after/'; after adds '?? .ufo/waves/round-54/w2/' x3 (T54W2Sent03.md + its two receipts)"},
+        {"method": "witness bytes", "command": "md5sum/wc of clean-tree-after.txt", "output": "67d032029d5a6be71a658b6ba3c61756, 222 bytes, 4 lines"},
+        {"method": "not ignored", "command": "git check-ignore -v .ufo/waves/round-54/w2/T54W2Sent03.md", "output": "silent, rc=1 (not ignored)"},
+        {"method": "first adding commit", "command": "git log --reverse --format=%H 0a2010ac -- .ufo/waves/round-54/w2/T54W2Sent03.md | head -1", "output": "ff2a821a1e83acd92bb4d62bad15f380973a55ea"},
+        {"method": "sweep identity and parentage", "command": "git show --no-patch --format='H=%H P=%P D=%ad S=%s' --date=iso ff2a821", "output": "ff2a821a1e83acd92bb4d62bad15f380973a55ea, parent 0263c71ed6ec930603f5e37578ef46e498c96111, 2026-10-28 12:54:32 -0300, author tameshi-shokunin"},
+        {"method": "bytes unchanged", "command": "git rev-parse {0a2010ac,ff2a821}:<path> for all three", "output": "7448be1be6510bfc261b5b120ce14c0a54489d88 / c63fc96c958c09377f2e8eb56fced010c7d11dba / 4cdc204cd232a2df6321ef9217810037dfd9e7ff (equal at both revs)"},
+        {"method": "every other w2 report committed", "command": "git ls-tree + git log --diff-filter=A over .ufo/waves/round-54/w2/*.md", "output": "only T54W2Sent03.md added after 0263c71e (by ff2a821); 49 md files total"},
+        {"method": "round-55 C1 counter at base", "command": "python3 .ufo/evidence/round-55/c1/measure.py --lane <clone> --rev 0a2010ac --work <empty> --explain", "output": "EXPLAIN R54.6 FAIL premise=ok corrected=miss stale=0 derived=sweep commit=ff2a821"}
+      ],
+      "spotcheck_overstated": true,
+      "overstatements": [
+        {
+          "quote": "the tree was dirty *during* the measurement the gate calls clean",
+          "why_false": "clean-tree-after.txt is written at deciding-run.sh:87, after both counters return (c2.end 15:25:37Z; witness mtime 12:25:37.918 = 13 ms later). The witnesses bound (12:22:17, 12:25:37] and cannot isolate the 15:23:33-15:25:37Z counter windows. The draft's own `what` says 'between the two snapshots', which is the accurate phrasing.",
+          "true_scope": "the tree was dirty by the end of the deciding invocation; the files were created after the before snapshot (12:22:17)",
+          "evidence_receipt": "06-r546-sweep.txt"
+        },
+        {
+          "quote": "the measurement the gate calls clean",
+          "why_false": "clean-tree-before.txt itself contains '?? .ufo/evidence/round-54/after/'; it passes only because deciding-run.sh:61 tolerates '?? $OUT/...'. The gate never asserted a git-clean tree.",
+          "true_scope": "clean except the gate's own receipt directory",
+          "evidence_receipt": "06-r546-sweep.txt"
+        }
+      ],
+      "draft": "T55W1Er06.json",
+      "draft_byte_accurate": {
+        "old[0]": "yes: corpus/lessons/round-54.md, exactly once in base and worktree",
+        "old[1]": "yes: SCORECARD.md base:2608-2609, exactly once in base and worktree",
+        "old[2]": "occurrence yes (worktree SCORECARD.md:2667, exactly once) but 0 at base: it is a worktree anchor and is not labelled as one",
+        "derived/output/command": "yes: blobs, first commit and counter lines reproduce",
+        "new[0]": "yes",
+        "new[1]": "true only under deciding-run.sh:61's tolerance for its own receipt dir; the 12:22:17 label is an uncommitted mtime",
+        "new[2]": "NO: the two quoted `??` lines use the prefix `.ufo/evidence/round-54/w2/`, which the witness does not contain and which has never existed in any ref (git rev-list --all --objects | grep -c = 0); the file reads `.ufo/waves/round-54/w2/`. The draft's own receipt 02 and the correct bytes agree with each other and both contradict new[2]."
+      },
+      "blocking_defect": {
+        "id": "D1",
+        "severity": "medium",
+        "location": "T55W1Er06.json new[2] (and T55W1Er06-receipts/06-proposed.diff:26)",
+        "wrong": "`?? .ufo/evidence/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout`, `?? .ufo/evidence/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt`",
+        "right": "`?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout`, `?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt`",
+        "proof": "clean-tree-after.txt md5 67d032029d5a6be71a658b6ba3c61756, 222 bytes, 4 lines, every path `?? .ufo/waves/round-54/w2/`; git rev-list --all --objects | grep -c 'evidence/round-54/w2/' -> 0",
+        "why_the_counter_misses_it": "the C1 counter scans SCORECARD.md only for the R54.3 token; paths in prose are unchecked, so a fixture with the drafts applied still reports total=0 while writing the false quote at SCORECARD.md:2674"
+      },
+      "non_blocking_defect": {
+        "id": "D2",
+        "severity": "low",
+        "claim": "12:22:17 / 12:25:37 are lane-worktree mtimes (stat), not committed bytes; no committed byte contains either time (git grep -> only c1.start 15:23:33Z and c2.end 15:25:37Z). The draft's receipt 03 labels them supporting-only, but new[1]/new[2] present them as checkable."
+      },
+      "findings": [
+        {"severity": "medium", "id": "R54.6-F1", "claim": "new[2]'s 'Old (byte-exact, ...)' quote of clean-tree-after.txt names a directory that never existed.", "evidence": "git rev-list --all --objects | grep -c 'evidence/round-54/w2/' -> 0; the witness bytes read .ufo/waves/..."},
+        {"severity": "low", "id": "R54.6-F2", "claim": "Timestamps in new[1]/new[2] are mtime-only and not reproducible from a clone.", "evidence": "stat -c '%y' shows 12:22:17.579 and 12:25:37.918; git grep at base finds no such byte"},
+        {"severity": "low", "id": "R54.6-F3", "claim": "old[2] anchors the worktree (the L1's own ER-R54-6 entry), not the base; the draft does not say so.", "evidence": "old[2] hits: worktree SCORECARD.md only (1), base 0"}
+      ]
+    }
+  ],
+  "counter_runs": {
+    "at_base": {"rev": "0a2010acd1e92e4e332774050825e21bcfc7e079", "line": "C1_R55: rev=0a2010acd1e9 classes=10 premise=10/10 stale=4 classes_corrected=0/10 total=10 C1_R55_PASS=false", "receipt": "03-06-counter-at-base.stdout"},
+    "worktree_record_fixture": {"fixture": "22a8363cf086d82f9cdda212699c7484d6a18450", "line": "C1_R55: rev=22a8363cf086 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true", "receipt": "03-06-counter-worktree-fixture.stdout"},
+    "drafts_applied_fixture": {"fixture": "ad15fd1840c7f3fd45e172d29b6074724cd636c9", "line": "C1_R55: rev=ad15fd1840c7 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true", "new_stale_lines": 0, "note": "the fixture still contained the D1 wrong-path quote at SCORECARD.md:2674 — the counter cannot see it", "receipt": "03-06-counter-drafts-applied.stdout"}
+  },
+  "verdicts": {
+    "R54.3": "agree with the defect; derived total=13; draft integrate-able bytes accurate; fix the 'only 14' prose",
+    "R54.6": "agree with the defect (soften 'during'); derived sweep commit=ff2a821; draft new[2] has a blocking wrong-path quote (D1)"
+  },
+  "axes": {"calibration": "improved (two record falsehoods removed from the correction drafts, both values re-derived from committed bytes)", "depth": "unchanged", "coverage": "unchanged", "freshness": "unchanged", "adjacency": "unchanged", "operability": "unchanged"},
+  "residual_risk": [
+    "round-54 C2 counter not re-executed here (background-job cap); total=13 rests on the receipt bytes, the frozen formula, the freeze-pin sha256 match, the round-55 C1 counter, and the empty rerun-vs-retained.diff",
+    "mtimes (12:22:17 / 12:25:37) are not reproducible from git",
+    "the cause of the 14/13 split (registry-check usable-arm flake under load) is [INFERENCE], not reproduced"
+  ]
+}

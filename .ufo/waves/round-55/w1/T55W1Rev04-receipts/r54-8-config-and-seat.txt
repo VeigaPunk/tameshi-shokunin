@@ -1,0 +1,48 @@
+$ sed -n 410,425p ~/.omp/agent/config.yml
+     1	    main: "@m_flash"
+     2	    executor: "@m_flash"
+     3	    planner: "@m_flash"
+     4	    labrat: "@m_flash"
+     5	    mutation-tester: "@m_flash"
+     6	    sentinel: "@m_flash"
+     7	    simplifier: "@m_flash"
+     8	    revenger: "@m_flash"
+     9	    scout: "@m_grok"
+    10	    sonic: "@m_flash"
+    11	    scribe: "@m_flash"
+    12	    distiller: "@m_flash"
+    13	    seance: "@m_flash"
+    14	    critic: "@m_flash"
+    15	    reviewer: "@m_flash"
+    16	    connector: "@m_flash"
+$ grep -n "scout:" ~/.omp/agent/config.yml
+418:    scout: "@m_grok"
+$ git -C /home/vgpnk status --porcelain -- .omp/agent/config.yml
+MM .omp/agent/config.yml
+$ git -C /home/vgpnk rev-parse --show-toplevel
+/home/vgpnk
+
+$ git -C CLONE show 0a2010ac:.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md | sed -n 316,331p
+1. **A stale label.** `.ufo/prompts/tameshi-round-54.md:152,154` still *describes* the run-11 map as
+   "`scout` `@m_grok`". That file is a fleet-root tracked file outside this seat's write scope, and
+   the prompt itself states config.yml is the authority and that line is only a label.
+2. **A pre-existing stale mirror.** `Projects/ufo-fsd-alpha/crates/ufo-core-runtime/bundled/omp-seat-routing.json`
+   records `scout.alias = "m_flash"`. Verified against a snapshot of the *pre-edit* file it was already
+   wrong then (`m_grok` at the time), so this seat did not cause it; it is derived and owned by
+   `scripts/sync-ufo-contracts.mjs` in another repo this seat may only read.
+
+Scope note: `~/.omp/agent/config.yml` is outside this seat's default write scope (the wave `w1/`
+directory). It was edited on the operator's direct instruction in-session, which is the higher
+authority; the file is tracked in the `/home/vgpnk` home repo and was already dirty before this edit
+(staged `scout: "@m_zfl"` in the index, a large unrelated `enabledModels` churn in the worktree). No
+commit, `git add` or git mutation of any kind was performed.
+
+
+
+$ git -C CLONE show 0a2010ac:<seat file> | grep -nic superseded   # unrelated occurrence used by the C1 arm
+1
+$ git -C CLONE show 0a2010ac:<seat file> | grep -n superseded
+299:  `m_grok` was already treated after the round-50 directive superseded it).
+
+$ git -C CLONE show 0a2010ac:corpus/lessons/round-54.md | grep -ni "config|host write|.yml"   # the lesson is silent
+(no match)

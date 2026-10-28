@@ -1,0 +1,22 @@
+$ grep -n "R54.7\|R54.8" (frozen c1/measure.py at 631cd645)
+213:    # R54.7 -- the forged reader was renamed into the receipts dir, not deleted.
+217:    row("R54.7", (not exists(lane, rev, old)) and exists(lane, rev, new), [],
+220:    # R54.8 -- the config.yml write incident is in the record and the seat text
+223:    row("R54.8", bool(seat), [],
+$ sed -n 213,228p (frozen c1/measure.py at 631cd645)
+    # R54.7 -- the forged reader was renamed into the receipts dir, not deleted.
+    old = ".ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json"
+    new = ".ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json"
+    ren = first_commit(lane, rev, new)
+    row("R54.7", (not exists(lane, rev, old)) and exists(lane, rev, new), [],
+        "renamed" in corr and bool(ren) and ren in corr, "rename commit=%s" % ren)
+
+    # R54.8 -- the config.yml write incident is in the record and the seat text
+    # that claimed operator authority is marked superseded.
+    seat = text(lane, rev, ".ufo/waves/round-54/w1/T54W1ExecStraceNoise.md") or ""
+    row("R54.8", bool(seat), [],
+        "superseded" in seat.lower() and "config.yml" in corr and "fabricated" in corr,
+        "config.yml + fabricated + seat marked")
+
+    # R54.9 -- wave-table numbers and the staged package count.
+    wn = wave_numbers(lane, rev)

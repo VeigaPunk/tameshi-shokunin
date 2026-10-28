@@ -1,0 +1,29 @@
+{
+ "id": "R54.7",
+ "what": "forged-file disposition: the sentinel's forged reader was not deleted but RENAMED into the receipts dir at 7fa9a5e; it can never credit (path outside the reader pattern, section_sha256 matches no section at c0)",
+ "old": [
+  "the deletion lands in `7fa9a5e0`",
+  "deletion is unstaged and must be recorded in the next lane commit"
+ ],
+ "new": [
+  "the file was **renamed** into `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` at `7fa9a5e0104bc181872401547987d6744f3b570d` (`R100`), where it still sits as the incident receipt; it can never credit: that path fails arm 4's `/T54W\\d+.*Read.*\\.json$/`, and its `section_sha256` (`b90c1f799d0ce42a9fbb04b156ce9d5b4bb7395235b2fc9ca4b426669feb9927`) matches no section of `SKILL.md` at `c0=99c3bc88d704566197783f66b211ee0a830e0330` (the genuine `## Standing rules` section sha is `61736dcebc2d3d148255f9b3edd0ceb1c7cf2284f2969475b8da838ded9a78fc`)",
+  "deletion was recorded in `7fa9a5e0104bc181872401547987d6744f3b570d` as a rename (`R100`) into `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json`; the forged bytes were never removed from the tree"
+ ],
+ "derived": "rename commit=7fa9a5e (7fa9a5e0104bc181872401547987d6744f3b570d, R100, 100% similarity); .ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json absent at 631cd645/base/HEAD, .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json present",
+ "command": [
+  "git -C LANE cat-file -e <rev>:<path>   # revs base 0a2010ac, 077d431e, 7fa9a5e, frozen 631cd645, HEAD",
+  "git -C LANE show --name-status -M --format='%H%n%s' 7fa9a5e0104bc181872401547987d6744f3b570d -- .ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json",
+  "git -C LANE log --reverse --format=%H 631cd6455e58dce969310b4c0466c3383d9f5108 -- .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json   # counter first_commit semantics",
+  "python3 -c 're.search(r\"/T54W\\\\d+.*Read.*\\\\.json$\", path)'   # arm-4 pattern, round-54 c1/measure.py:224, over both paths",
+  "python3 <import round-18 sectionize from c0; git show c0:SKILL.md>   # 64 sections; forged sha matches none, genuine sha = ## Standing rules",
+  "python3 .ufo/evidence/round-55/c1/measure.py --lane LANE --rev 631cd6455e58dce969310b4c0466c3383d9f5108 --work <empty> --explain   # R54.7 row"
+ ],
+ "output": [
+  "base 0a2010ac: OLD absent / NEW present | 077d431e: OLD present / NEW absent | 7fa9a5e: OLD absent / NEW present | frozen 631cd645: OLD absent / NEW present | HEAD: OLD absent / NEW present",
+  "7fa9a5e0104bc181872401547987d6744f3b570d\nround-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)\n\nR100\t.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json\t.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json",
+  "7fa9a5e0104bc181872401547987d6744f3b570d",
+  "arm-4 r54 pattern on NEW path: False (no capital-Read token; basename is forged-reader.json); on OLD path: False; round-55 finding_counts pattern /T54W\\d+[A-Za-z]*Read\\d+\\.json$ on NEW: False",
+  "sections at c0: 64; forged sha b90c1f79... matches sections: [] ; genuine sha 61736dce... matches: ['## Standing rules']",
+  "EXPLAIN R54.7 FAIL premise=ok corrected=miss stale=0 derived=rename commit=7fa9a5e"
+ ]
+}

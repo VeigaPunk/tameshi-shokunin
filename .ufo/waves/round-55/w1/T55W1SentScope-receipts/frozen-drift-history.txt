@@ -1,0 +1,29 @@
+# frozen-set drift against 631cd645 2026-10-28T17:08:55Z
+$ git diff --stat -- .ufo/evidence/round-55
+ .ufo/evidence/round-55/before/c2.stdout | 42 ---------------------------------
+ .ufo/evidence/round-55/c1/measure.py    | 25 ++++++++++++++++++++
+ .ufo/evidence/round-55/c2/measure.py    | 32 ++++++++++++++++++-------
+ .ufo/evidence/round-55/contract.json    | 23 +++++++++++++++++-
+ .ufo/evidence/round-55/freeze.json      | 19 ++++++++++++---
+ 5 files changed, 87 insertions(+), 54 deletions(-)
+
+$ python3 contract/freeze amendment counts + per-file hash check
+contract amendments 5 [1, 2, 3, 4, 5]
+freeze   amendments 3 [1, 2, 3]
+freeze contract hash pin ed6871e17697d652
+DRIFT .ufo/evidence/round-55/contract.json manifest=ed6871e17697d652 worktree=5de4f37b14db6e50
+DRIFT .ufo/evidence/round-55/c1/measure.py manifest=77abe1e9daf40bec worktree=711507e7b5bdd060
+DRIFT .ufo/evidence/round-55/c2/measure.py manifest=ab3ae751469164f0 worktree=d6ca1d851bb00373
+OK    .ufo/evidence/round-55/no-harm.sh manifest=d93469db5a55632c worktree=d93469db5a55632c
+OK    .ufo/evidence/round-55/deciding-run.sh manifest=af11d7551d8af1c7 worktree=af11d7551d8af1c7
+OK    .ufo/evidence/round-55/controls.sh manifest=7c0cacb56c679155 worktree=7c0cacb56c679155
+
+# amendment 5 (contract) verbatim
+c1/measure.py's stale scan was line-scoped (a regex window that forbade a newline) and read three record files; wave-1 seat T55W1Er01 found a falsehood the window could not see (`corpus/lessons/round-54.md` splits `proves the arm ... requires rekeyed=7/7` across two lines) and pointed at LOG.md, which still carried R54.2's stale pointer. The scan now also searches each record document with whitespace collapsed (reporting an offset) and LOG.md joins the record set. The predicate is unchanged and now stricter: no stale assertion may stand in the lane's records outside the corrections section.
+
+# mtimes
+2026-10-28 14:00:09.514643650 -0300 6262 .ufo/evidence/round-55/contract.json
+2026-10-28 13:49:59.356199982 -0300 2144 .ufo/evidence/round-55/freeze.json
+2026-10-28 14:00:09.514151510 -0300 12772 .ufo/evidence/round-55/c1/measure.py
+2026-10-28 13:50:08.763096039 -0300 13298 .ufo/evidence/round-55/c2/measure.py
+2026-10-28 13:59:44.059050302 -0300 139 .ufo/evidence/round-55/before/c2.stdout

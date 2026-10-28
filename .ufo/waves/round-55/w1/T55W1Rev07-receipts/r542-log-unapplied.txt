@@ -1,0 +1,32 @@
+$ sha256sum /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md
+e7603904316a178e39586c2457ff0d6df9dc561d429c2500d2adb9638718b675  /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md
+3b4d010bc5e57c77ef1d9f994d1d80cc91b6bdc9580583e0f1bb29ea904a7137  /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md
+[exit 0]
+
+$ grep -n '7883e0e5\|fe70474d' /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md /home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md:2500:`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md:2643:Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
+[exit 0]
+
+$ sed -n '2499,2502p' /home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md
+clean tree). Base `d33053f7`; contract frozen at `441c26be`; amendment 1 at
+`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+control score — the freeze pointer the deciding run uses). Claims: C1
+calibration — the cold-read floor (57/64 at base; the round's own content edits
+[exit 0]
+
+$ python3 -c "import json;L='/home/vgpnk/Projects/shokunin/tameshi-shokunin';d=json.load(open(L+'/.ufo/waves/round-55/w1/T55W1Er02.json'));log=open(L+'/LOG.md',encoding='utf-8').read();print('Er02 old[3] occurrences in worktree LOG.md:',log.count(d['old'][3]));print('Er02 new[3] occurrences in worktree LOG.md:',log.count(d['new'][3]))"
+Er02 old[3] occurrences in worktree LOG.md: 1
+Er02 new[3] occurrences in worktree LOG.md: 0
+[exit 0]
+
+$ grep -n 'R54.2 --' -A7 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-55/c1/measure.py
+177:    # R54.2 -- three freeze pointers for one round; the receipt names one.
+178-    fr = text(lane, rev, ".ufo/evidence/round-54/after/frozen.stdout") or ""
+179-    m = re.search(r"freeze=([0-9a-f]{40})", fr)
+180-    ptr = m.group(1) if m else None
+181-    stale = scan(lane, rev, ("SCORECARD.md",), r"7883e0e5|fe70474d")
+182-    row("R54.2", ptr is not None, stale, bool(ptr) and ptr[:8] in corr,
+183-        "freeze pointer=%s" % (ptr[:8] if ptr else "none"))
+184-
+[exit 0]

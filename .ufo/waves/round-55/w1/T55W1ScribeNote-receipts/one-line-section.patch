@@ -1,0 +1,96 @@
+From fbd75fafe3ae2801e341077560b71143e2ea2a1d Mon Sep 17 00:00:00 2001
+From: scribe <scribe@local>
+Date: Wed, 28 Oct 2026 13:53:17 -0300
+Subject: [PATCH] draft: round-55 one-line section (S280 cited)
+
+---
+ corpus/knowledge/scratch-root-contract.md | 76 +++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+
+diff --git a/corpus/knowledge/scratch-root-contract.md b/corpus/knowledge/scratch-root-contract.md
+index 255e9cf..aaa8b29 100644
+--- a/corpus/knowledge/scratch-root-contract.md
++++ b/corpus/knowledge/scratch-root-contract.md
+@@ -64,3 +64,79 @@ line, not the absent token, so the arm passes and the vocabulary residue goes
+ to round 55 (it is a tool edit, and the fix commit is the round's read revision). A
+ tool that regains a `dir="/tmp"` literal fails the round-53 monitor and the C2
+ `tmp_mkdirs` arm together.
++
++## One line, every mode (round 55)
++
++Round 55 closed the round-54 residue (`context-capture` no longer prefixes
++`SELFTEST: FAIL`; it and `repeat-control` print the line below) and widened
++the measurement from the self-test to every documented allocating mode. The
++class is one stderr line, matched by the counter's own pattern
++(`.ufo/evidence/round-55/c2/measure.py`, `GRAMMAR`):
++
++    ^[A-Za-z][A-Za-z0-9_.-]*(?:\.py)?: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '.+' \(could-not-evaluate\)$
++
++so what an operator sees is
++
++    repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/no/such/dir' (could-not-evaluate)
++
++The leading token is each tool's own name, not a fixed string: at round 55
++the eight modes print `ENVDIFF_SETUP`, `repeat-control`, `registry-check`,
++`WITNESS_STUDY`, `pin-disposition.py`, `evidence-disposition.py` and
++`context-capture.py`. The pattern admits a letter followed by letters,
++digits, `_`, `.` or `-`; the value is the `%r` rendering of the rejected
++pathname, so a path holding a quote is echoed with its quotes, and the line
++is a diagnostic — not an invocation to re-enter in a shell. The shape itself
++is the standard's: a noninteractive program's message is one program-prefixed
++line, `program: message`, and the message does not begin with a capital letter
++when it follows the program name (S280) — which is why the class is one line
++and why `could-not-evaluate` is lower-case.
++
++### The eight allocating modes
++
++`env-diff --selftest`, `env-diff --contract`, `repeat-control --selftest`,
++`registry-check --selftest`, `bash-witness-study selftest`,
++`pin-disposition --selftest`, `evidence-disposition --selftest`,
++`context-capture --selftest`. Each exits 2 under a set-but-unusable
++`TMPDIR`, prints that one line on stderr, and prints no `RuntimeError` or
++`Traceback` token on either stream. The arm's meaning is S277's ("a pathname
++of a directory made available for programs that need a place to create
++temporary files"); the empty value stays the round-54 arm (S278
++`_candidate_tempdir_list`:163-165 and S279's documented order).
++
++### The five lazy modes
++
++`repeat-control --snapshot`, `bash-witness-study count`,
++`pin-disposition --read`, `evidence-disposition --json`,
++`context-capture --check` keep their expected exit under the same unusable
++`TMPDIR`. None of them allocates scratch: they work on the real tree, and
++the scratch root is consulted on first use — never at import or argument
++parse — by the modes that clone. A lazy mode's exit 0 is therefore not
++evidence that the scratch root was usable: it is never a pass on this
++contract, and the counter measures it only as "unchanged exit".
++
++### The boundary: a line grammar, not a shared type
++
++The contract is the operator-visible line, not a shared Python type. No
++module implements it once: six of the seven tools declare their own local
++`ScratchRootUnusable(RuntimeError)`, and `registry-check` declares no class
++at all, raising the builtin `RuntimeError` with the same message text.
++Nothing is imported between tools, and a tool could satisfy the contract
++with no exception class at all — `registry-check` is that case. Seven
++standalone scripts should not depend on one module (or on one another) for
++a one-line rule; what must stay equal is the bytes on stderr and the exit
++code, not the type name.
++
++Two edges are stated, not hidden. The counter reads stderr, so a caller
++that parses stdout finds no class line — and `repeat-control` still prints
++its own `REPEAT_CONTROL: setup_error` there, a documented finding id that
++maps to exit 2 and belongs to that tool's vocabulary, not to the cross-tool
++class. And the inventory's only authority is the registry plus the tools'
++usage text: a documented mode in neither place would allocate scratch
++unmeasured.
++
++Sources: S277-S279 remain the authority for the `TMPDIR` arms above (S277 the
++definition, S278 the resolver's skip-empty rule, S279 the documented order),
++and S280 is the authority for the one-line shape. The eight-mode and
++five-mode inventories are the round-55 counter's own table
++(`.ufo/evidence/round-55/c2/measure.py`) — a lane measurement, not a sourced
++claim.
+-- 
+2.56.0
+

@@ -1,0 +1,252 @@
+{
+ "seat": "T55W1CritFreeze",
+ "round": 55,
+ "wave": 1,
+ "freeze": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "verdict": "freeze-of-record at 631cd645 is internally sound (6/6 hashes, coverage complete, no self-hash, FROZEN list == contract list); the deciding-run gate logic has seven demonstrated holes; the frozen C2 counter cannot pass C2 (usable=12/13 holds total>=1 on any tree); and the amendments that would fix it are structurally unregistrable",
+ "freeze_checks": {
+  "hashes_re_derived_at_rev": "6/6 OK",
+  "contract_frozen_paths": 7,
+  "manifest_entries": 6,
+  "uncovered_frozen_path": ".ufo/evidence/round-55/freeze.json (the manifest itself; stated in freeze.note)",
+  "manifest_hashes_itself": false,
+  "deciding_FROZEN_equals_contract": true,
+  "deciding_FROZEN_entries": 7,
+  "rev_freeze_amendments": 0,
+  "worktree_freeze_amendments": 3,
+  "worktree_contract_amendments_at_snapshot": 5,
+  "worktree_manifest_re_derives_from_no_revision": true
+ },
+ "checks": [
+  {
+   "id": "C1",
+   "what": "every freeze.json sha256 re-derived at 631cd645",
+   "command": "git show 631cd645:.ufo/evidence/round-55/freeze.json; sha256(git show 631cd645:<path>)",
+   "result": "6/6 OK, MISMATCH=0",
+   "receipt": "r1-freeze-at-rev.txt"
+  },
+  {
+   "id": "C2",
+   "what": "coverage of contract.frozen_paths",
+   "command": "set difference contract.frozen_paths / freeze.files / deciding-run.sh FROZEN",
+   "result": "7 paths, 6 hashed; only freeze.json uncovered; 0 extra",
+   "receipt": "r2-coverage-sets.txt"
+  },
+  {
+   "id": "C3",
+   "what": "manifest does not hash itself",
+   "command": "'.ufo/evidence/round-55/freeze.json' in freeze.files",
+   "result": "False (correct); stated in freeze.note",
+   "receipt": "r2-coverage-sets.txt"
+  },
+  {
+   "id": "C4",
+   "what": "deciding FROZEN list == contract frozen_paths",
+   "command": "normalise /round-55/ prefixes, set-compare",
+   "result": "True, 7 == 7",
+   "receipt": "r2-coverage-sets.txt"
+  },
+  {
+   "id": "C5",
+   "what": "gate harness is the frozen bytes",
+   "command": "cmp gate.sh[9:47] vs 631cd645:deciding-run.sh[20:58]",
+   "result": "IDENTICAL, 39 lines",
+   "receipt": "r5-harness-provenance.txt"
+  },
+  {
+   "id": "C6",
+   "what": "freeze integrity on the real lane",
+   "command": "bash gate.sh <lane-clone> 631cd645 631cd645 out",
+   "result": "FREEZE_INTEGRITY OK files=6 amendments=0; control-receipt-missing (correct at freeze time)",
+   "receipt": "r10-real-lane-gate.txt"
+  },
+  {
+   "id": "C7",
+   "what": "empty control receipt",
+   "command": "fix3 gate",
+   "result": "REFUSED control-receipt-empty",
+   "receipt": "r6-gate-attacks.txt"
+  },
+  {
+   "id": "C8",
+   "what": "pre-freeze control receipt",
+   "command": "fix4 gate",
+   "result": "REFUSED control-receipt-not-after-freeze",
+   "receipt": "r6-gate-attacks.txt"
+  },
+  {
+   "id": "C9",
+   "what": "manifest listing no files",
+   "command": "fix2 gate",
+   "result": "OPENED, FREEZE_INTEGRITY OK files=0",
+   "receipt": "r6-gate-attacks.txt"
+  },
+  {
+   "id": "C10",
+   "what": "vacuous verdict line",
+   "command": "fix5 gate; grep candidates",
+   "result": "OPENED; 0/0, 9/0, 0/99, / accepted",
+   "receipt": "r6-gate-attacks.txt, r7-regex.txt"
+  },
+  {
+   "id": "C11",
+   "what": "stale worktree content hidden by assume-unchanged",
+   "command": "fix6 gate",
+   "result": "git status empty; OPENED",
+   "receipt": "r6-gate-attacks.txt"
+  },
+  {
+   "id": "C12",
+   "what": "exit receipts content ignored",
+   "command": "fix8 gate",
+   "result": "controls-*.exit committed as 1; OPENED",
+   "receipt": "r6-gate-attacks.txt"
+  },
+  {
+   "id": "C13",
+   "what": "second invocation",
+   "command": "fix1 gate with OUT1 sentinels then OUT2",
+   "result": "same OUT refused; different OUT opens",
+   "receipt": "r7-out-and-clean-tree-attacks.txt"
+  },
+  {
+   "id": "C14",
+   "what": "OUT contract (empty, inside LANE)",
+   "command": "fix1 gate with out-of-lane and non-empty OUT",
+   "result": "both OPENED; only [ -d ] checked",
+   "receipt": "r7-out-and-clean-tree-attacks.txt"
+  },
+  {
+   "id": "C15",
+   "what": "clean-tree filter is a regex",
+   "command": "fix5 with untracked junkfile, OUT named .*",
+   "result": "OPENED on a dirty tree",
+   "receipt": "r7-out-and-clean-tree-attacks.txt"
+  },
+  {
+   "id": "C16",
+   "what": "FROZEN gate vs amended content commit",
+   "command": "frozen-gate.sh fix9 <root=631cd645> <head=worktree contract+c2>",
+   "result": "FROZEN_UNCHANGED=0, FROZEN_RC=1",
+   "receipt": "r8-frozen-gate-amendment.txt"
+  },
+  {
+   "id": "C16b",
+   "what": "frozen C2 counter at base from its own bytes",
+   "command": "python3 frozen-c2.py --lane LANE --rev 0a2010ac --work <empty> --explain",
+   "result": "grammar=6/8 lazy=5/5 empty=13/13 usable=12/13 tmp_mkdirs=0 docs=0/7 note=0/8 skill=0/1 total=19 C2_R55_PASS=false",
+   "receipt": "r12-c2-frozen-at-base.out"
+  },
+  {
+   "id": "C17",
+   "what": "frozen usable arm under its own tracer",
+   "command": "strace -f -e trace=mkdir,mkdirat python3 tools/registry-check.py --selftest (good TMPDIR, rev clone)",
+   "result": "plain rc=0 (51/51); strace rc=1 (timeout-kills-*-pipe), 3/3",
+   "receipt": "r11-regcheck-plain.out, r11-regcheck-strace.out, r11-regcheck-strace2.out"
+  },
+  {
+   "id": "C18",
+   "what": "census conformance",
+   "command": "scripts/sources-census.sh validate --root FLEET tameshi",
+   "result": "exit 0 (W04 warnings only)",
+   "receipt": "r9-census.txt"
+  },
+  {
+   "id": "C19",
+   "what": "FREEZE is caller-supplied",
+   "command": "gate.sh fix1 <REV> <REV>; frozen-gate.sh fix1 <REV> <REV>",
+   "result": "FREEZE_INTEGRITY OK; FROZEN_UNCHANGED=1; OPENED",
+   "receipt": "r13-self-referential-freeze.txt"
+  }
+ ],
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "blocker",
+   "title": "FROZEN gate forbids the contract's amendments; no state lets C2 pass",
+   "evidence": "frozen-gate.sh: FROZEN_UNCHANGED=0 when contract.json+c2/measure.py are amended (r8); c2 counter reads REV bytes so uncommitted amendments never run; freeze.json at rev has amendments=[]",
+   "smallest_safe_correction": "re-anchor at a new freeze commit carrying the amended bytes and a regenerated manifest, and pass that commit as FREEZE; keep 631cd645 as the superseded freeze"
+  },
+  {
+   "id": "F2",
+   "severity": "blocker",
+   "title": "frozen C2 counter cannot pass C2 and its own before receipt is not reproducible",
+   "evidence": "counter run from 631cd645 bytes at base: usable=12/13 total=19 PASS=false vs frozen receipt usable=13/13 total=18; registry-check plain rc=0 vs strace rc=1, reproduced 3/3",
+   "smallest_safe_correction": "apply amendment 4 under a new freeze (plain rc; trace only for the /tmp census) and re-derive the before receipt; absent a re-freeze report C2 as a counter defect (miss)"
+  },
+  {
+   "id": "F3",
+   "severity": "high",
+   "title": "working-tree freeze.json re-derives from no revision",
+   "evidence": "contract entry ed6871e1 = contract with exactly 3 amendments; worktree contract now 5 amendments (5de4f37b); no such blob in the object DB",
+   "smallest_safe_correction": "regenerate the manifest in the same commit as the bytes and re-derive all entries from that commit"
+  },
+  {
+   "id": "F4",
+   "severity": "medium",
+   "title": "verdict grep reads the working tree; assume-unchanged hides drift",
+   "evidence": "fix6: REV blob 1 byte, worktree verdict, git status empty, gate opens",
+   "smallest_safe_correction": "grep the receipt extracted from REV; refuse when git ls-files -v shows assume-unchanged/skip-worktree"
+  },
+  {
+   "id": "F5",
+   "severity": "medium",
+   "title": "verdict regex accepts 0/0 and empty numerators",
+   "evidence": "0/0, 9/0, 0/99 and / accepted (r7-regex)",
+   "smallest_safe_correction": "[1-9][0-9]*/[1-9][0-9]* and compare to the pre-registered count"
+  },
+  {
+   "id": "F6",
+   "severity": "medium",
+   "title": "controls-*.exit content never read",
+   "evidence": "fix8: exit receipts committed as 1, gate opens",
+   "smallest_safe_correction": "require the blob content to be 0"
+  },
+  {
+   "id": "F7",
+   "severity": "medium",
+   "title": "integrity check does not enforce manifest coverage",
+   "evidence": "fix2: files={} prints OK files=0 and the gate opens",
+   "smallest_safe_correction": "in the integrity block, refuse unless freeze.files covers contract.frozen_paths minus freeze.json"
+  },
+  {
+   "id": "F8",
+   "severity": "medium",
+   "title": "second-invocation guard is OUT-scoped",
+   "evidence": "different/out-of-lane/non-empty OUT all open (r7)",
+   "smallest_safe_correction": "round-global sentinel plus refusal on an existing deciding-run.exit receipt; require OUT under LANE and empty"
+  },
+  {
+   "id": "F9",
+   "severity": "low",
+   "title": "clean-tree filter is an unescaped regex",
+   "evidence": "OUT named .* hides ?? junkfile and the gate opens",
+   "smallest_safe_correction": "grep -vF, or parse git status --porcelain -z in Python"
+  },
+  {
+   "id": "F10",
+   "severity": "high",
+   "title": "FREEZE is caller-supplied and unconstrained; FREEZE=REV self-certifies",
+   "evidence": "gate opens and FROZEN_UNCHANGED=1 with FREEZE=REV (r13); no FREEZE!=REV, no ancestor-of-BASE check, no pin to the contract freeze",
+   "smallest_safe_correction": "take FREEZE from the contract or a fixed constant and refuse unless FREEZE is an ancestor of BASE and FREEZE != REV"
+  }
+ ],
+ "non_findings": [
+  "all six hashes re-derive at 631cd645",
+  "manifest does not hash itself",
+  "only uncovered frozen_path is the manifest, as stated",
+  "deciding FROZEN list equals contract frozen_paths (normalised, 7==7)",
+  "0-byte control blob at REV refused",
+  "control receipt last touched before FREEZE refused",
+  "HEAD==REV enforced; counters/no-harm/precheck read from REV"
+ ],
+ "observed_lane_mutations": [
+  "uncommitted edits to c1/measure.py, c2/measure.py, contract.json (5 amendments), freeze.json (3-amendment generation)",
+  ".ufo/evidence/round-55/before/c2.stdout truncated to 0 bytes in the working tree (rev blob intact, 43 lines)"
+ ],
+ "tools_installed": [],
+ "census": "exit 0",
+ "report": ".ufo/waves/round-55/w1/T55W1CritFreeze.md",
+ "receipts": ".ufo/waves/round-55/w1/T55W1CritFreeze-receipts/"
+}

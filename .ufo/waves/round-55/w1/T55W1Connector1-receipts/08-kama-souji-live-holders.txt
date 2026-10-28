@@ -1,0 +1,66 @@
+$ sed -n 1613,1630p kama-shokunin/tools/report-landing-audit.py
+    try:
+        if args.selftest:
+            return selftest()
+        status, doc = run(args)
+        print(json.dumps(doc, indent=1, sort_keys=True) if args.json
+              else render(doc), flush=True)
+        return status
+    except EvalError as exc:
+        print(f"could-not-evaluate: {exc}", file=sys.stderr)
+        return 2
+    except OSError as exc:
+        try:
+            print(f"could-not-evaluate: output: {exc}", file=sys.stderr)
+        except OSError:
+            pass
+        return 2
+    except Exception as exc:  # an unanticipated error is never a verdict
+        try:
+
+$ sed -n 285,295p souji-shokunin/tools/souji-repo-structure.sh
+fi
+if [[ -s $probe_tmp/structure.err ]]; then
+  printf 'probe.status=could-not-evaluate probe.error=structure-stderr\n' >&2
+  emit_stderr_file "$probe_tmp/structure.err"
+  exit 4
+fi
+if [[ ! -s $probe_tmp/structure.out ]] ||
+  ! grep -q '^objects\.commits\.count=' "$probe_tmp/structure.out"; then
+  printf 'probe.status=could-not-evaluate probe.error=unexpected-structure-output\n' >&2
+  exit 4
+fi
+
+$ sed -n 606,620p kama-shokunin/tools/seat-report-immutability.py   (selftest asserts the class exit)
+            and exit_code(res99) == 1,
+            "exit(46-52)=%d exit(99)=%d" % (exit_code(res46), exit_code(res99)),
+        )
+
+        # could-not-evaluate paths
+        codes = []
+        for spec, rev in (("46-52", "no-such-rev"), ("77-78", "HEAD"), ("4x", "HEAD")):
+            try:
+                bad = evaluate(d, rev, spec)
+                codes.append(exit_code(bad))
+            except EvalError:
+                codes.append(2)
+        arm("could-not-evaluate-exits-2", codes == [2, 2, 2], "codes=%s" % codes)
+
+        # non-repository
+
+$ sed -n 176,184p souji-shokunin/tools/souji-cert-evidence.py   (live class vocabulary)
+    EXIT_CLEAN: "clean",
+    EXIT_FAILED: "failed",
+    EXIT_COULD_NOT_EVALUATE: "could-not-evaluate",
+}
+CODE_BY_VERDICT = {
+    "clean": EXIT_CLEAN,
+    "failed": EXIT_FAILED,
+    "could-not-evaluate": EXIT_COULD_NOT_EVALUATE,
+}
+
+$ sed -n 189,192p souji-shokunin/SKILL.md   (documented gate map)
+## Gate registry
+
+Gate map: 0 clean · 1 failed · 2 could-not-evaluate. Other codes are
+explicit below. The four legacy receipt/action tools are **probes**, not

@@ -1,0 +1,12 @@
+$ grep -n 'CTL CTL_R53' controls-a.stdout
+3:CTL CTL_R53 C1_R54: rev=88afa9415454 c0=none credited=58 lost=6 rekeyed=0/7 readers=0/7 monitor=6/58 unstable=0 total=4 C1_R54_PASS=false
+
+$ grep -c 'rekeyed=0/30' controls-a.stdout
+0
+
+$ sed -n '1,2p' r53-counter-at-88afa941.stdout
+C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false
+PROBLEM precheck-not-green rc=1 last='RECHECK floor=ef19d8e1e7ba floor_credited=64 cand=88afa9415454 cand_credited=58 lost=6 RED'
+
+$ grep -c 'rekeyed=0/7' r53-counter-at-88afa941.stdout
+0

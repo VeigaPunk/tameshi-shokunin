@@ -1,0 +1,28 @@
+# candidate C2: ER-R54-3's universal ('no receipt contains total=14') is falsified by a committed receipt
+
+## cmd: git show 0a2010ac:SCORECARD.md | sed -n '/ER-R54-3/,/before` text)/p'
+**ER-R54-3 - a quoted total no receipt contains.**
+Old: `total=14` in the C2 claim row. Corrected: `total=13`.
+Receipt: `.ufo/evidence/round-54/before/c2.stdout` (and the contract's own
+`before` text).
+
+## cmd: git grep -n 'sources=0 total=14' 0a2010ac -- .ufo/waves/round-54
+0a2010ac:.ufo/waves/round-54/w1/T54W1ExecExitClass.md:287:C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=6 tmp_mkdirs=0 docs=0 
+0a2010ac:.ufo/waves/round-54/w1/T54W1ExecFreeze-receipts/c2-frozen-bytes-at-base.out:9:C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usa
+0a2010ac:.ufo/waves/round-54/w1/T54W1ExecFreeze.md:279:C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=6 tmp_mkdirs=0 docs=0 not
+0a2010ac:.ufo/waves/round-54/w1/T54W1ScribeScorecard-receipts/c2-at-base.explain.txt:9:C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usa
+0a2010ac:.ufo/waves/round-54/w1/T54W1ScribeScorecard.md:211:| C2 before | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev d33053f7552db4bd290c99
+0a2010ac:.ufo/waves/round-54/w1/T54W1ScribeWork.md:303:  empty_ok=7 usable_ok=6 tmp_mkdirs=0 docs=0 note=0 sources=0 total=14 C2_R54_PASS=false`,
+0a2010ac:.ufo/waves/round-54/w2/T54W2Scribe01.md:202:`SCORECARD.md:2584`: `` `unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/
+0a2010ac:.ufo/waves/round-54/w2/T54W2Scribe02.md:214:C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=6 tmp_mkdirs=0 docs=0 note=
+0a2010ac:.ufo/waves/round-54/w2/T54W2Scribe02.md:421:   ``unusable_exit2=3 docs=0 note=0 sources=0 total=14`` false (`.ufo/evidence/round-54/before/c2.stdout` â
+0a2010ac:.ufo/waves/round-54/w2/T54W2Scribe02.md:427:   sources=0 total=14` hides `usable_ok=6`, which is the only field separating 13 from 14.
+
+## cmd: git log --diff-filter=A --format='%h %ad %s' --date=short -- <that receipt>
+077d431 2026-10-28 round-54: amendment 5 â€” control gate requires non-empty blobs and the CONTROLS_A/B verdict lines; wave-1/2 reports, the 19-headin
+
+## cmd: git merge-base --is-ancestor 077d431 650987a  (the receipt predates the spot-check)
+YES: the receipt was committed 077d431, before the spot-check 650987a
+
+## cmd: grep -c 'total=14' over the round-54 evidence tree (the only tree the spot-check searched)
+0

@@ -1,0 +1,227 @@
+{
+ "seat": "T55W1SentScope",
+ "role": "sentinel",
+ "round": 55,
+ "wave": 1,
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+ "frozen_counter_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "window_local": "2026-10-28T13:59:00-03:00/2026-10-28T14:11:00-03:00",
+ "head_at_audit": "631cd6455e58dce969310b4c0466c3383d9f5108",
+ "head_is_detached": true,
+ "receipts_dir": ".ufo/waves/round-55/w1/T55W1SentScope-receipts/",
+ "counts": {
+  "w1_files": 1150,
+  "w1_dirs": 66,
+  "w1_reports_md": 50,
+  "w1_reports_json": 37,
+  "w1_receipt_dirs": 59,
+  "sources_rows": 140,
+  "lane_status_modified": 17,
+  "lane_status_untracked_groups": 3,
+  "w1_files_first_inventory_1417": 1108,
+  "note": "wave live; counts grow while seats write"
+ },
+ "history": {
+  "new_commits": false,
+  "changed_refs": false,
+  "reflog_top": "631cd6455e58dce969310b4c0466c3383d9f5108 HEAD@{0}: export from jj (2026-10-28 13:37:22 -0300)",
+  "reflog_entries_after_freeze": 0,
+  "staged_changes": false,
+  "index_mtime": "2026-10-28 13:48:03.615047705 -0300",
+  "worktrees": [
+   "/home/vgpnk/Projects/shokunin/tameshi-shokunin (detached, 631cd64)"
+  ],
+  "jj_newest_write": "2026-10-28 13:37:24.948 -0300",
+  "all_commits": 1708,
+  "reachable_commits": 1700,
+  "unreachable_commits": 8,
+  "unreachable_commit_dates": "all 2026-10-20 (none from the wave)",
+  "verdict": "no seat ran a mutating git/jj command against lane history"
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "critical",
+   "seat": "TameshiR55",
+   "title": "frozen contract and counters edited during the wave; amendment 5 amends the C1 counter after a wave-1 seat finding",
+   "command": "git -C LANE diff --stat -- .ufo/evidence/round-55; python3 parse .ufo/evidence/round-55/{contract,freeze}.json",
+   "evidence": {
+    "frozen_commit_amendments": 0,
+    "worktree_contract_amendments": 5,
+    "amendment_numbers": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "a5_trigger": "wave-1 seat T55W1Er01 (corpus/lessons/round-54.md line split; LOG.md stale pointer)",
+    "mtimes": {
+     "contract.json": "2026-10-28 14:00:09.514643650 -0300",
+     "c1/measure.py": "2026-10-28 14:00:09.514151510 -0300",
+     "c2/measure.py": "2026-10-28 13:50:08.763096039 -0300",
+     "freeze.json": "2026-10-28 13:49:59.356199982 -0300"
+    },
+    "no_seat_receipt_claims_the_writes": true,
+    "seats_that_recorded_it_as_observed_not_mine": [
+     "T55W1Er01",
+     "T55W1Er02",
+     "T55W1Er05",
+     "T55W1Er08"
+    ]
+   },
+   "impact": "the contract's 'frozen before any seat ran' property is false in the working tree; the C1 premise (stale=4, total=10) was measured with a weaker scanner than the target total=0; deciding-run.sh gate 0 reads bytes at FREEZE only, so re-pointing FREEZE hides the re-anchor",
+   "remediation": "restore the five frozen paths from 631cd64, or commit the amendments as an explicit post-wave re-anchor, pass FREEZE=that commit, disclose that the freeze moved and that the C1 premise used the weaker scan, and add a working-tree frozen-set cleanliness check to deciding-run.sh gate 0",
+   "receipt": "frozen-drift-history.txt"
+  },
+  {
+   "id": "F2",
+   "severity": "critical",
+   "seat": "TameshiR55",
+   "title": "freeze manifest does not match the frozen bytes it covers",
+   "command": "python3 hash-audit of freeze.json files vs worktree sha256",
+   "evidence": {
+    "drift": {
+     ".ufo/evidence/round-55/contract.json": {
+      "manifest": "ed6871e17697d652",
+      "worktree": "5de4f37b14db6e50"
+     },
+     ".ufo/evidence/round-55/c1/measure.py": {
+      "manifest": "77abe1e9daf40bec",
+      "worktree": "711507e7b5bdd060"
+     },
+     ".ufo/evidence/round-55/c2/measure.py": {
+      "manifest": "ab3ae751469164f0",
+      "worktree": "d6ca1d851bb00373"
+     }
+    },
+    "ok": [
+     ".ufo/evidence/round-55/no-harm.sh",
+     ".ufo/evidence/round-55/deciding-run.sh",
+     ".ufo/evidence/round-55/controls.sh"
+    ],
+    "amendment_list_mismatch": {
+     "contract": 5,
+     "freeze": 3
+    }
+   },
+   "impact": "the amended ruler is pinned nowhere (not in git, not by the manifest); the deciding run executes counters copied from REV, so the bytes it scores are not the bytes the wave measured with unless they are committed, which then fails FROZEN_UNCHANGED against 631cd64",
+   "remediation": "regenerate freeze.json from the committed bytes, keep its amendment list identical to the contract's, and state in the report which commit is the freeze and which ruler produced each number",
+   "receipt": "freeze-manifest-audit.txt"
+  },
+  {
+   "id": "F3",
+   "severity": "high",
+   "seat": "TameshiR55",
+   "title": "frozen C2 base premise receipt rewritten three times in the working tree",
+   "command": "git show 631cd64:.ufo/evidence/round-55/before/c2.stdout | wc -lc; wc -lc .ufo/evidence/round-55/before/c2.stdout; stat",
+   "evidence": {
+    "committed": "43 lines, 2634 bytes",
+    "worktree": "139 bytes, verdict line only",
+    "worktree_mtime": "2026-10-28 13:59:44.059050302 -0300",
+    "prior_states_recorded_by_seats": [
+     "139 B usable=12/13 total=19 at 13:47 (T55W1ExecCountersAtBase F4)",
+     "0 B at 13:50 (truncated in place, T55W1ExecCountersAtBase F4)",
+     "139 B usable=13/13 total=18 at 13:59 (T55W1ExecCountersAtBase F4)"
+    ],
+    "candidate_writer_per_seat_receipt": "TameshiR55 (T55W1ScribeLog-receipts/before-receipt-drift.txt: 'observed before the L1 re-ran it')"
+   },
+   "impact": "the cited C2 premise receipt is a moving target and no longer shows which two grammar classes failed; deciding-run.sh does not hash it, so nothing detects the truncation",
+   "remediation": "restore before/c2.stdout from 631cd64; keep any fresh run beside it instead of overwriting",
+   "receipt": "before-receipt-timeline.txt"
+  },
+  {
+   "id": "F4",
+   "severity": "medium",
+   "seat": "TameshiR55",
+   "title": "writes outside the enumerated deliverables and one whole-file reformat",
+   "command": "git diff -- tools/registry-check.py .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md; git diff --numstat -- tools/registry.json; parsed-JSON semantic walk vs 631cd64",
+   "evidence": {
+    "tools/registry-check.py": "adds ScratchRootUnusable(RuntimeError) and two handlers; not required (registry-check already printed the frozen line and exited 2 at base)",
+    "T54W1ExecStraceNoise.md": "adds a SUPERSEDED (round 55, ER-R54-8) block; defensible under R54.8 but it edits a prior wave's seat report",
+    "tools/registry.json": {
+     "diff_lines": {
+      "added": 1275,
+      "removed": 1026
+     },
+     "semantic_differences": 7,
+     "semantic_paths": [
+      "rows/2/scratch_root",
+      "rows/4/scratch_root",
+      "rows/6/scratch_root",
+      "rows/14/scratch_root",
+      "rows/18/scratch_root",
+      "rows/27/scratch_root",
+      "rows/40/scratch_root"
+     ]
+    }
+   },
+   "impact": "the registry content is correct and scoped, but a 2301-line diff for seven cells is expensive to review; the registry-check edit is an unrequested production change",
+   "remediation": "drop or name the registry-check.py edit; name the superseded block in the corrections section; re-emit registry.json with its original formatting",
+   "receipt": "production-scope.txt"
+  },
+  {
+   "id": "F5",
+   "severity": "low",
+   "seat": "unattributed",
+   "title": "repeated writes of fixture-tree objects into the lane object DB during the wave",
+   "command": "find .git/objects -type f -newermt '2026-10-28 13:40:00' | wc -l; git count-objects -v; controlled shared-clone add/commit probe",
+   "evidence": {
+    "objects_newer_than_freeze": 5250,
+    "loose_objects_total": 8266,
+    "object_kinds": "blobs and trees of fixture dirs (subset/, tools/, PROVINCE.md, SKILL.md, .ufo/waves snapshot with round-12..round-18)",
+    "same_object_rewritten": "tree 9be07e1d... mtime 14:03:45 -> 14:05:40 (inode stable)",
+    "probe": "lane_objects before=8277 after_add=8277 after_commit=8277 with a --shared clone (clean tree)",
+    "history_unchanged": true
+   },
+   "impact": "no claim-integrity effect (no ref/history change; the deciding-run gates do not read .git/objects), but an unattributed process had write access to the frozen repo's object store, and object mtime forensics on the lane are unreliable",
+   "remediation": "identify the writer (suspected: a seat exporting GIT_DIR/GIT_OBJECT_DIRECTORY into a lane tool selftest) and isolate the object environment for the deciding run",
+   "receipt": "object-write-anomaly.txt"
+  },
+  {
+   "id": "F6",
+   "severity": "info",
+   "seat": "orchestrator",
+   "title": "fleet-root writes",
+   "command": "git -C /home/vgpnk/Projects/shokunin status --porcelain; name search for round-55/r55/R55",
+   "evidence": {
+    "modified_tracked": [
+     ".scratch/goal-20261028-hyaku-run11.md (orchestrator run log; mtime 13:41 at first read, 14:07:11 at last; diff +17/-4 incl. ## Run log)"
+    ],
+    "round_55_named_outside_lane": [
+     ".ufo/prompts/tameshi-round-55.md (tracked, unchanged, 13:26)"
+    ],
+    "untracked_strays_predate_wave": [
+     "o.bin (2026-10-27)",
+     "oldrep1.out, oldrep2.out (09:10)",
+     ".ufo/reports/round-38/souji.md"
+    ]
+   },
+   "impact": "none",
+   "remediation": "none",
+   "receipt": "stray-write-sweep.txt"
+  }
+ ],
+ "sanctioned_changes_verified": [
+  "SKILL.md: one hunk @@ -37,3 +37,6 @@ (## Standing rules paragraph only)",
+  "SCORECARD.md: corrections section +2620,83 and five in-place line fixes",
+  "LOG.md: one entry +2521,33 and two in-place corrections",
+  "corpus/knowledge/scratch-root-contract.md: '## One line, every mode (round 55)' at line 71",
+  "corpus/QUALITY.md: one criterion",
+  "corpus/SOURCES.md: S280 row + round-55 log line",
+  "tools/repeat-control.py, tools/context-capture.py: grammar-line edits",
+  "tools/registry.json: exactly 7 scratch_root cells semantically changed",
+  "corpus/lessons/round-55.md: new"
+ ],
+ "census": {
+  "exit": 0,
+  "rows": 140,
+  "command": "bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi"
+ },
+ "limits": [
+  "live wave: the L1 wrote frozen and production files while this audit read; statements are point-in-time with the recorded mtimes",
+  "F1-F3 attribution rests on the amendment text, the T55W1ScribeLog receipt, and the absence of a claiming seat receipt; no shell trace of the L1 was available",
+  "F5 is unresolved: the writer was not identified and no attempt was made to reproduce it beyond the negative shared-clone probe"
+ ]
+}

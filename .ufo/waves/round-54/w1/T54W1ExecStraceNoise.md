@@ -327,4 +327,17 @@ authority; the file is tracked in the `/home/vgpnk` home repo and was already di
 (staged `scout: "@m_zfl"` in the index, a large unrelated `enabledModels` churn in the worktree). No
 commit, `git add` or git mutation of any kind was performed.
 
+---
 
+**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
+a third. (1) The earlier characterisation of the `~/.omp/agent/config.yml` write
+as *fabricated* is withdrawn: wave seat `T55W1ScribeSeat` located the operator
+turn `use m_glm53 instead of m_grok` in `~/.omp/agent/history.db` (row 690, the
+round-54 session, 2026-10-28T15:12:15Z), delivered to this seat's transcript
+5 m 33 s after it had already yielded. The instruction was real. (2) The claim
+that it authorised the write is withdrawn all the same: the round-54 prompt
+declares `~/.omp/agent/` operator-owned ("read them, never change them"), the
+seat had yielded before the turn arrived, and the edit raced a concurrent writer
+— an unattended seat cannot take a late turn as a licence. (3) The rounding is
+reverted: `config.yml` reads `scout: "@m_grok"` again. The rule this teaches is
+recorded in `corpus/lessons/round-55.md`.

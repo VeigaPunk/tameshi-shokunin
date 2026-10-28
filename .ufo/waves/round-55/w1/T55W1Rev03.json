@@ -1,0 +1,155 @@
+{
+  "seat": "T55W1Rev03",
+  "role": "reviewer",
+  "round": 55,
+  "milestone": "attack C1 rows R54.5,R54.6",
+  "axis": "calibration",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "0a2010acd1e92e4e332774050825e21bcfc7e079",
+  "counter_set": "631cd6455e58dce969310b4c0466c3383d9f5108",
+  "report": ".ufo/waves/round-55/w1/T55W1Rev03.md",
+  "classes": [
+    {
+      "id": "R54.5",
+      "agree_with_defect": true,
+      "defect_as_stated": "The round-54 report says the 23 wave-1 readers returned 25 findings and wave 2 returned 22 findings in 9 of 23 sections; the committed reader JSONs carry 28 and 25-in-12, integrate/resolutions.json is 12 entries / 25 findings, and the ledger's minor_gaps sum to 25 over 12 entries.",
+      "derived": "w1=28 w2=25 sections=12",
+      "command": "L=/home/vgpnk/Projects/shokunin/tameshi-shokunin; R=0a2010acd1e92e4e332774050825e21bcfc7e079; for w in w1 w2; do git -C \"$L\" ls-tree -r --name-only \"$R\" -- \".ufo/waves/round-54/$w\" | grep -E '/T54W[0-9]+[A-Za-z]*Read[0-9]+\\.json$' | while read -r f; do git -C \"$L\" show \"$R:$f\" | python3 -c 'import json,sys;print(len(json.load(sys.stdin).get(\"findings\") or []))'; done | awk '{t+=$1; if($1>0)s++; n++} END{print \"files=\"n\" findings=\"t\" with=\"s}'; done",
+      "output": "w1: reader_files=23 findings=28 sections_with_findings=15\nw2: reader_files=23 findings=25 sections_with_findings=12\n(identical at 631cd6455e58dce969310b4c0466c3383d9f5108)",
+      "independent_checks": {
+        "w2_heading_identity_with_resolutions": "the same 12 headings and the same per-heading counts as .ufo/evidence/round-54/integrate/resolutions.json; only-in-readers=[] only-in-resolutions=[]",
+        "resolutions_totals": {"entries": 12, "findings": 25, "per_entry": [1, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 11]},
+        "ledger": {"finite_entries": 591, "bound_read_rev_99c3bc88": 23, "verdicts": {"gap-minor": 23}, "minor_gaps_sum": 25, "entries_with_minor_gaps": 12, "distribution": {"0": 11, "1": 8, "2": 3, "11": 1}, "blocking_gaps": 0, "wrong_expectations": 0},
+        "distinctness": {"finding_objects": 53, "distinct_by_canonical_json": 53, "repeated": 0},
+        "receipt_exclusion": {"round54_receipts_json": 53, "matching_reader_pattern": 0},
+        "stale_tokens_in_record_at_base": {"SCORECARD.md": 0, "corpus/QUALITY.md": 0, "corpus/lessons/round-54.md": 0},
+        "where_wrong_counts_live": ["/home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md:62 (25 w1)", ":79-80 (22 in 9)", ":99-101 (All 22 / the nine sections)", ".ufo/waves/round-54/w2/T54W2Scribe01.md:97", ":230-231"]
+      },
+      "spotcheck_claims": [
+        {"claim": "report :62 says 25 wave-1 findings", "verdict": "holds", "evidence": ".ufo/reports/round-54/tameshi.md:61-62"},
+        {"claim": "committed w1 readers carry 28 distinct findings", "verdict": "holds", "evidence": "23 files, 28 findings, 28 distinct by canonical JSON"},
+        {"claim": "report :79,100 says 22 findings in 9 of 23 sections", "verdict": "holds", "evidence": ":79-80 and :99-101"},
+        {"claim": "committed w2 readers carry 25 findings in 12 sections", "verdict": "holds", "evidence": "23 files, 25 findings, 12 non-zero"},
+        {"claim": "integrate/resolutions.json is 12 section-entries / 25 findings", "verdict": "holds", "evidence": "12 entries, 25 findings, same headings"},
+        {"claim": "ledger minor_gaps sum to 25 over 12 entries", "verdict": "holds", "evidence": "23 bound entries at read_rev 99c3bc88…, sum 25 over 12"},
+        {"claim": "fix-pass commit 99c3bc8 says 26 wave-1 findings", "verdict": "holds", "evidence": "git log -1 99c3bc8 subject"},
+        {"claim": "'28 distinct findings' is reproducible from the sentence alone", "verdict": "imprecise", "evidence": "the counting rule (sum of the findings array over /T54W\\d+[A-Za-z]*Read\\d+\\.json$/) is not stated inline; the word 'distinct' is however literally true"}
+      ],
+      "spotcheck_overstated": false,
+      "draft": {
+        "path": ".ufo/waves/round-55/w1/T55W1Er05.json",
+        "byte_accurate": true,
+        "accurate_fields": ["derived", "command", "output", "per_wave", "old[0]", "old[1]", "old[2]", "old[3]", "sites", "notes[0]", "notes[1]", "notes[2]", "notes[4]", "notes[5]", "insert"],
+        "inaccurate_fields": ["notes[3]"],
+        "issues": [
+          "notes[3] says the T54W1ExecStraceNoise.md +6-line change is 'between base and tip'; the base→tip diff over .ufo/waves/round-54 is empty and the +6 lines exist only in the uncommitted worktree",
+          "sites stop at fleet report :79-80; the spot-check's own citation is :79,100, so :99-101 ('All 22 … the nine sections bind with minor_gaps equal to their finding count') stays uncorrected in the record",
+          "disposition[2]/disposition[3] promise a 'supersession note' for T54W2Scribe01.md but the corrections text carries none (0 occurrences of T54W2Scribe01 in SCORECARD.md)",
+          "new[2]/new[3] must not be applied to T54W2Scribe01.md: .ufo/waves/round-<N>/ is append-only once committed"
+        ]
+      }
+    },
+    {
+      "id": "R54.6",
+      "agree_with_defect": true,
+      "defect_as_stated": "T54W2Sent03.md and the two receipts it cites (c1committed-positive.stdout, rejection-attribution.txt) were untracked at the round-54 closure; the deciding run's after/clean-tree-after.txt records them as ??; the closure swept them byte-identical under lane identity.",
+      "derived": "sweep commit=ff2a821",
+      "command": "git -C $LANE log --reverse --format='%H %P %ad %s' --date=iso 0a2010acd1e92e4e332774050825e21bcfc7e079 -- .ufo/waves/round-54/w2/T54W2Sent03.md ; git -C $LANE cat-file -e {0a2010acd1e9,0263c71}:<path> (all three) ; git -C $LANE rev-parse {0a2010acd1e9,ff2a821,HEAD}:<path> (all three)",
+      "output": "exists at base: YES x3\nexists at 0263c71: NO x3\nff2a821a1e83acd92bb4d62bad15f380973a55ea 0263c71ed6ec930603f5e37578ef46e498c96111 2026-10-28 12:54:32 -0300 tameshi-shokunin <tameshi@shokunin.local> round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)\nblobs base=sweep=tip: 7448be1be6510bfc261b5b120ce14c0a54489d88 / c63fc96c958c09377f2e8eb56fced010c7d11dba / 4cdc204cd232a2df6321ef9217810037dfd9e7ff",
+      "independent_checks": {
+        "commits_touching_each_path": 1,
+        "commit_also_adds": true,
+        "later_modifications": 0,
+        "clean_tree_before": "?? .ufo/evidence/round-54/after/",
+        "clean_tree_after": ["?? .ufo/evidence/round-54/after/", "?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout", "?? .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt", "?? .ufo/waves/round-54/w2/T54W2Sent03.md"],
+        "deciding_run_reads_after_snapshot": false,
+        "deciding_run_evidence": "deciding-run.sh:60-61 writes and refuses on clean-tree-before; :87 writes clean-tree-after with no check; :88 prints DECIDING_RUN_EXIT",
+        "sent03_receipts_dir_files": {"at_0263c71": 33, "at_base": 35},
+        "w2_top_level_md_added_after_closure": [".ufo/waves/round-54/w2/T54W2Sent03.md"]
+      },
+      "spotcheck_claims": [
+        {"claim": "three seat deliverables untracked at closure", "verdict": "holds", "evidence": "absent at 0263c71, present at base, listed ?? in clean-tree-after.txt"},
+        {"claim": "after/clean-tree-after.txt records them as ??", "verdict": "holds", "evidence": "byte transcript in receipt"},
+        {"claim": "every other w2 seat report is committed", "verdict": "holds", "evidence": "set diff 0263c71→base over w2/*.md is one added file"},
+        {"claim": "closure swept them under lane identity", "verdict": "holds", "evidence": "author/committer tameshi-shokunin <tameshi@shokunin.local> at ff2a821"},
+        {"claim": "swept byte-identical (cmp-verified before and after)", "verdict": "not_tree_derivable", "evidence": "pre-sweep bytes were untracked; only ff2a821's message ('bytes unchanged') and the spot-check's own note assert it; verifiable weaker fact is that blobs are identical at sweep/base/tip and no later commit touches them"},
+        {"claim": "the two receipts it cites", "verdict": "imprecise", "evidence": "the seat's receipts dir has 33 committed files at 0263c71 and 35 at base and the report's Receipts section enumerates them; the two were the only untracked receipts, not the only cited ones"},
+        {"claim": "the tree was dirty during the measurement", "verdict": "supported_by_bracketing", "evidence": "before 12:22:17 local clean of them; after 12:25:37 local (= c2.end 15:25:37Z) dirty; T54W2Sent03.md mtime 12:24:55 inside the c2 window (mtimes are filesystem facts, not commit-attested)"}
+      ],
+      "spotcheck_overstated": false,
+      "draft": {
+        "path": ".ufo/waves/round-55/w1/T55W1Er06.json",
+        "byte_accurate": true,
+        "byte_accuracy_caveat": "old[2] is byte-exact only against the L1's uncommitted worktree SCORECARD.md:2667; it has 0 occurrences in the committed tree at base, so that pair is an insertion/replacement inside the pending corrections section, not a repair of a committed byte",
+        "accurate_fields": ["derived", "output", "old[0] (base lessons/round-54.md:130, worktree :132)", "old[1] (base SCORECARD.md:2608, worktree :2609)", "new[0] absent pre-integration", "new[1] absent pre-integration", "new[2] absent pre-integration", "QUALITY 77 quote (whitespace-normalised)"],
+        "inaccurate_fields": [],
+        "issues": [
+          "old[2] anchors the L1's dirty draft, not a base byte (0 occurrences at 0a2010ac); label it as replacing the pending ER-R54-6 block",
+          "'its two cited receipts' repeats the spot-check's imprecision (33 other receipts are committed and cited)",
+          "the three 'Old (byte-exact, <receipt>)' lines label witness receipts as 'Old', off the section's stated convention",
+          "'Rule broken: QUALITY 77' is a loose citation: the criterion's own falsifier is the fleet-root misrooting case, though its rule sentence does bind a lane's own count to committed files"
+        ]
+      }
+    }
+  ],
+  "counter_arms": {
+    "fixtures": {
+      "A": {"commit": "84b0413fc64bb26c5f3a706ea145f8e46e69093f", "content": "Er05 insert paragraph + Er06 new[2] verbatim", "R54.5": "ok", "R54.6": "ok", "C1_R55": "total=8"},
+      "B": {"commit": "77095d2f6eea04797f11d6f0500b576badbf7fc2", "content": "round-54 wrong triple w1=25 w2=22 sections=9 restored", "R54.5": "FAIL corrected=miss", "R54.6": "ok", "C1_R55": "total=9"},
+      "C": {"commit": "58e25701b4afdf0c774731b1261edbc90d92b3b0", "content": "A with ff2a821 -> ff2a820", "R54.5": "ok", "R54.6": "FAIL corrected=miss", "C1_R55": "total=9"}
+    },
+    "conclusion": "both arms are live and independent; no counter byte was modified"
+  },
+  "counter_observations_report_not_fix": [
+    "R54.5 and R54.6 pass a literal empty list as their stale arm, so C1's condition (b) (zero stale occurrences outside the corrections section) is unmeasured for these two classes",
+    "R54.5's premise (w1>0 and w2[0]>0) and R54.6's premise (three paths exist at REV) do not test their defects' premises; R54.6's counter never reads .ufo/evidence/round-54/after/clean-tree-after.txt",
+    "first_commit() runs git log --reverse <rev> -- <path> with no --diff-filter=A; it equals the adding commit here only because each path has exactly one commit",
+    "the corrected arms are substring tests over the corrections section, so they prove presence, not assertion"
+  ],
+  "findings": [
+    {"id": "F-1", "severity": "minor", "class": "R54.5", "title": "Er05 notes[3] misattributes an uncommitted worktree edit to the tip", "evidence": "git diff --stat 0a2010ac 631cd64 -- .ufo/waves/round-54 is empty; git diff --stat -- .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md shows '6 ++++++'", "effect_on_C1": "none"},
+    {"id": "F-2", "severity": "minor", "class": "R54.5", "title": "correction sites omit fleet report :99-101, so a wrong assertion the spot-check cites (:100) stays uncorrected", "evidence": "tameshi.md:99-101 'All 22 … the nine sections bind with verdict gap-minor and minor_gaps equal to their finding count'", "effect_on_C1": "none (arm is the triple), but the calibration claim is weaker than it reads"},
+    {"id": "F-3", "severity": "minor", "class": "R54.5", "title": "disposition promises a supersession note for T54W2Scribe01.md that the corrections text does not carry", "evidence": "SCORECARD.md contains 0 occurrences of T54W2Scribe01 (whole file), 0 of reports/round-54", "effect_on_C1": "none"},
+    {"id": "F-4", "severity": "minor", "class": "R54.6", "title": "Er06 old[2] targets the L1's uncommitted draft, not a committed byte", "evidence": "old[2] count=1 in worktree SCORECARD.md:2667, count=0 at 0a2010ac and 0 lane-wide in the committed tree", "effect_on_C1": "none"},
+    {"id": "F-5", "severity": "minor", "class": "R54.6", "title": "'its two cited receipts' is imprecise in both the spot-check and the draft", "evidence": "T54W2Sent03-receipts has 33 files at 0263c71 and 35 at base; the report's Receipts section enumerates them", "effect_on_C1": "none"},
+    {"id": "F-6", "severity": "note", "class": "R54.6", "title": "the byte-identical sweep is not tree-derivable", "evidence": "no committed digest of the pre-sweep bytes exists; ff2a821's message is the only in-tree assertion", "effect_on_C1": "none"}
+  ],
+  "cross_cutting_observation": {
+    "scope": "outside R54.5/R54.6; report only, nothing fixed",
+    "observed_at": "2026-10-28T17:00:18Z",
+    "facts": {
+      "worktree_modified_frozen_paths": [".ufo/evidence/round-55/before/c2.stdout", ".ufo/evidence/round-55/c1/measure.py", ".ufo/evidence/round-55/c2/measure.py", ".ufo/evidence/round-55/contract.json", ".ufo/evidence/round-55/freeze.json"],
+      "contract_amendments": {"HEAD": 0, "worktree": 5},
+      "freeze_amendments": {"HEAD": 0, "worktree": 3},
+      "freeze_digest_contract_json": {"HEAD": "2388cb50", "worktree": "ed6871e1"},
+      "before_c2_stdout": {"committed_blob": "6364f1e0afb34fc47c525d2ae981480bfd6e8bc3", "worktree_bytes": 139, "worktree_blob": "159bb37014248e57113ecfe220afbb7be9418a4a", "earlier_sample": "empty blob e69de29 between reads (in flight)"}
+    },
+    "risk": "a frozen base receipt is being replaced in the worktree while the committed freeze certifies an unamended contract; the deciding run must execute from bytes at a committed freeze and the base receipt must remain the base reading or be re-derived at base and disclosed as an amendment",
+    "effect_on_this_seat": "none; all my derivations used committed bytes at 631cd64"
+  },
+  "residual_risk": [
+    "no committed round-55 integrate revision exists yet, so the arm-liveness result is about fixture commits in a scratch clone, not the deciding run",
+    "reader counts depend on the findings-array convention; I did not audit whether each finding is a genuine defect",
+    "12:22:17 and 12:24:55 are filesystem mtimes, not commit-attested; the ordering is independently attested by c1.start 15:23:33Z and c2.end 15:25:37Z",
+    "before/c2.stdout moved during my read; a later C2 base reading must be re-taken"
+  ],
+  "receipts": [
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/derive-reader-counts.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/reader-section-identity.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/stale-surface-and-distinctness.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/r546-sweep-commit.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/anchor-containment.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/counter-arms-live.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/fixtureA.stdout",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/fixtureB.stdout",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/fixtureC.stdout",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/frozen-path-worktree-observation.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/reader-findings-per-file.txt",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/census.stdout",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/census.stderr",
+    ".ufo/waves/round-55/w1/T55W1Rev03-receipts/census.exit"
+  ],
+  "census": {"command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi", "exit": 0, "warnings": "W01/W04 only"},
+  "tooling": {"installed": [], "note": "no install or upgrade was needed; nothing was written to any PATH directory"},
+  "production_files_touched": []
+}

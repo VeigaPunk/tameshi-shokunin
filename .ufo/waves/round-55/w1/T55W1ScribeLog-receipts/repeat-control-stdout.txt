@@ -1,0 +1,30 @@
+# repeat-control.py: stdout on the unusable-scratch path (round-55 item 1: "stdout carries no setup error")
+
+# candidate tree (L1 worktree, rev 63d08ed1a32f9d9718872f20efbfb08daac60268)
+$ TMPDIR=/nonexistent/r55/probe python3 tools/repeat-control.py --selftest
+rc=2
+stdout='REPEAT_CONTROL: setup_error\n'
+stderr="repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/r55/probe' (could-not-evaluate)\n"
+
+# proposed one-line removal
+```diff
+diff --git i/tools/repeat-control.py w/tools/repeat-control.py
+index e9eb1b9..124b941 100755
+--- i/tools/repeat-control.py
++++ w/tools/repeat-control.py
+@@ -232,5 +232,4 @@ def could_not_evaluate(message):
+     the exception type never reaches the operator line."""
+     emit_err(f"repeat-control: could-not-evaluate: {message}")
+-    emit("REPEAT_CONTROL: setup_error")
+     return EXIT_BY_ID["setup_error"]
+```
+
+# patched clone (rev e5f8a52c69c848110f8732c287966ce27def69aa)
+rc=2
+stdout=''
+stderr="repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/r55/probe' (could-not-evaluate)\n"
+
+# regression: patched tool, usable TMPDIR, own selftest
+rc=0
+stdout_tail=['SELFTEST_CASE snapshot-committed-mismatch PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)', 'SELFTEST: PASS (29 cases)']
+stderr=''

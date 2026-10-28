@@ -1,0 +1,30 @@
+# the note's claim: 'six of the seven tools declare their own local ScratchRootUnusable(RuntimeError), and registry-check declares no class at all'
+tools/bash-witness-study.py:205:class ScratchRootUnusable(RuntimeError):
+tools/context-capture.py:300:class ScratchRootUnusable(RuntimeError):
+tools/env-diff.py:32:class ScratchRootUnusable(RuntimeError):
+tools/evidence-disposition.py:191:class ScratchRootUnusable(RuntimeError):
+tools/pin-disposition.py:161:class ScratchRootUnusable(RuntimeError):
+tools/registry-check.py:757:class ScratchRootUnusable(RuntimeError):
+tools/repeat-control.py:148:class ScratchRootUnusable(RuntimeError):
+-- registry-check: which exception does it raise? --
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise ScratchRootUnusable(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+def clone_lane_at_rev(root, rev, sha):
+    """Clone the lane detached at sha into a fleet-mirror mkdtemp.
+
+    Returns (workdir, clone_root) on success; caller removes workdir.
+    Raises RuntimeError on any git failure.
+    """
+    root_real = os.path.realpath(root)
+    fleet_root = os.path.dirname(root_real)
+    env = git_env()
+    try:
+        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+    except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)

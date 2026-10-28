@@ -1,0 +1,22 @@
+$ python3 - <<'PY'
+
+import json, subprocess
+L="/home/vgpnk/Projects/shokunin/tameshi-shokunin"; BASE="0a2010acd1e92e4e332774050825e21bcfc7e079"
+d=json.load(open(L+"/.ufo/waves/round-55/w1/T55W1ExecC1FixOnly.json"))
+for f in d["fixes"]:
+    if f["class"]!="R54.9": continue
+    b=subprocess.run(["git","-C",L,"show",BASE+":corpus/lessons/round-54.md"],capture_output=True).stdout.decode()
+    print("ExecC1FixOnly R54.9 old_occurrences_at_base =", b.count(f["old"]))
+    print("draft new  :", f["new"])
+wt=open(L+"/corpus/lessons/round-54.md",encoding="utf-8").read()
+print("integrated :", [l for l in wt.splitlines() if "staged `merge" in l][0])
+print("draft 81 total vs integrated 'the other 81': integrated line present =", "- **The other 81 staged" in wt)
+print("draft new present in integrated file =", "The staged `merge/tameshi` package (81" in wt)
+
+PY
+ExecC1FixOnly R54.9 old_occurrences_at_base = 0
+draft new  : - **The staged `merge/tameshi` package (81 `.md` entries under `knowledge/`, counted this round)** — the rest are REFUSED for the same capacity reason
+integrated : - **The other 81 staged `merge/tameshi` entries** — REFUSED for the same capacity
+draft 81 total vs integrated 'the other 81': integrated line present = True
+draft new present in integrated file = False
+[exit 0]

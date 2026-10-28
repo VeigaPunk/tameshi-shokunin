@@ -1,0 +1,61 @@
+--- a/corpus/QUALITY.md
++++ b/corpus/QUALITY.md
+@@ -1588,3 +1588,58 @@
+ Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict).
+ 
+ Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at the freeze commit (the control never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) and `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
++
++## Criteria appended — round 55 (2026-10-28)
++
++### Criterion 106 — a pre-registered control is scored at the revision it certifies, and its verdict line is quoted
++
++A control that certifies a revision is scored at that revision. A control cloned at a
++freeze commit, a base commit or any other ancestor measures the tree before the work it
++is meant to prove, so its verdict carries nothing about the claim; the defect does not
++show in the verdict word either, because such a control prints the same line shape as a
++live one. Two things are therefore read from the receipt, because the author can supply
++neither from memory: the `rev=<sha>` its own line carries, which must resolve to the
++revision the claim certifies, and the verdict line itself, which the record quotes
++verbatim. Restating a control in the author's words turns the instrument into a second
++assertion — round 54's phase-B control was cloned at the freeze commit `077d431e`
++(predating the re-key `7fa9a5e`), printed the short fall `rekeyed=3/7` with
++`CTL_MISMATCH … expected=true actual=false` and `CONTROLS_B: 2/3`, and four record files
++reported it as a control that fired (routed as R54.1; [ER-R54-1]). A control scored at a
++freeze commit may be reported as a freeze-time measurement, but it cannot be the arm
++that certifies a later revision.
++
++Check that can fail: `python3 .ufo/waves/round-55/w1/T55W1ScribeQuality-receipts/c106-controls.py --lane LANE --rev REV --certifies CERT --control NAME=PATH --record PATH [--expect NAME=true]` reads each named receipt from `REV`'s objects and runs four arms: `rev` — the control's own `rev=` token resolves to CERT; `verdict` — the same line's `…_PASS=` equals the pre-registered expectation; `quote` — some `--record` carries that line whitespace-normalized and verbatim; `paraphrase` — no record restates the control after naming it: within a 120-character forward claim window, a bare `true`/`false` or a `key=value` for a key the receipt's line carries with another value. It prints `OK <name> …` per passing control, `FAIL <name> <arm> …` per failure, then `C106: controls=N pass=N fail=N`; exit 0 iff `fail=0`, 1 on any failed arm, 2 on setup (a receipt or record absent at REV, an unresolvable revision, a non-repository LANE, no `--record`).
++
++Lesson: `corpus/lessons/round-54-verifier-spotcheck.md` R54.1 — the control that was
++recorded as firing, the receipt that says it did not, and the four files that restated it.
++
++Falsifier that must fail: at base `0a2010ac` the round-54 receipt
++`.ufo/evidence/round-54/control/controls-b.stdout` prints its control at
++`rev=077d431e6996 … rekeyed=3/7 … total=4 C1_R54_PASS=false`, then
++`CTL_MISMATCH CTL_POS_c1 expected=true actual=false` and `CONTROLS_B: 2/3`, exit 1,
++while the round-54 claim certifies `c21081008adb`; the check exits 1 with
++`FAIL CTL_POS_c1 rev`, `FAIL CTL_POS_c1 verdict`, `FAIL CTL_POS_c1 quote` (no base
++record carries the line), and `FAIL CTL_POS_c1 paraphrase` on `SCORECARD.md`'s bare
++`true` and on the lesson's restated re-key count
++(receipt `.ufo/waves/round-55/w1/T55W1ScribeQuality-receipts/c106-fail.stdout`). That
++same control re-scored at the certified revision passes: it prints
++`rev=c21081008adb … credited=64 lost=0 rekeyed=7/7 … total=0 C1_R54_PASS=true` with
++`CONTROLS_B: 1/1 as pre-registered` (in the same receipts directory,
++`c106-pass.stdout`, produced by `rescore-positive.sh`).
++
++## Erratum — 2026-10-28
++
++**QUALITY 105's falsifier is the receipt that refutes its claim (found by R54.1).**
++Criterion 105 landed with a falsifier saying its round-54 arm fires on the control and
++prints the full re-key count there. The receipt that falsifier names,
++`.ufo/evidence/round-54/control/controls-b.stdout`, prints that control at
++`rev=077d431e6996` with `rekeyed=3/7`, then `CTL_MISMATCH CTL_POS_c1 expected=true
++actual=false` and `CONTROLS_B: 2/3`, exit 1: the arm never fired, because the control
++was cloned at the freeze commit instead of the revision it was meant to certify. The
++false text is quoted in full in `SCORECARD.md`'s
++`## Round 55 - round-54 record corrections` (ER-R54-1), the only place the old values
++may stand. Criterion 105's rule is not withdrawn — an arm is proven only where it must
++fire — and its falsifier now stands corrected in place; the quote obligation that would
++have caught the restatement is criterion 106. The independent positive at the certified
++revision is `.ufo/evidence/round-54/after/c1.stdout`: `rev=c21081008adb … credited=64
++lost=0 … total=0 C1_R54_PASS=true`.

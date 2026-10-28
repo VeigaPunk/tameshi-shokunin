@@ -1,0 +1,22 @@
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w1/T55W1ScribeQuality-receipts/c106-controls.py	2026-10-28 13:52:12.291365147 -0300
++++ /fast/scratch/hyaku/tameshi-r55/T55W1RevQuality/c106-controls-patched.py	2026-10-28 14:00:57.411102373 -0300
+@@ -71,10 +71,16 @@
+ 
+ 
+ def paraphrases(body, rel, name, keys, verdict):
+-    """Restatements of the control after a mention of its name."""
++    """Restatements of the control after a mention of its name.
++
++    Verbatim verdict lines (a line beginning with `CTL <name> `) are the quote
++    arm's subject, not paraphrase material: a record that carries the receipt's
++    line and its re-scored sibling must not be failed for the sibling's values.
++    """
+     out = []
+-    for m in re.finditer(re.escape(name), body):
+-        tail = body[m.end():m.end() + CLAIM_WINDOW]
++    prose = "\n".join(l for l in body.splitlines() if not l.startswith("CTL "))
++    for m in re.finditer(re.escape(name), prose):
++        tail = prose[m.end():m.end() + CLAIM_WINDOW]
+         bm = BARE_VERDICT.match(tail)
+         if bm is not None and verdict is not None and bm.group(1) != verdict:
+             out.append("%s+%d bare `%s` receipt=%s"

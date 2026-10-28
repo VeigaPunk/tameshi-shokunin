@@ -1,0 +1,33 @@
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 0a2010ac:.ufo/waves/round-54/w1-registry.json | python3 -c "import json,sys;d=json.load(sys.stdin);rm=d['role_mix'];print('role_mix',rm);print('sum',sum(rm.values()));print('seats',d['seats'],'attack_seats',d['attack_seats']);a=rm['reviewer']+rm['critic']+rm['mutation-tester'];print('attack-by-role',a,'=',round(100.0*a/d['seats'],2),'%');print('report-4-reviewers',rm['critic']+4+rm['mutation-tester'],'=',round(100.0*(rm['critic']+4+rm['mutation-tester'])/d['seats'],2),'%')"
+role_mix {'scribe': 27, 'executor': 13, 'scout': 4, 'connector': 2, 'mutation-tester': 12, 'critic': 4, 'reviewer': 5, 'sentinel': 4, 'revenger': 3, 'simplifier': 2}
+sum 76
+seats 76 attack_seats 21
+attack-by-role 21 = 27.63 %
+report-4-reviewers 20 = 26.32 %
+[exit 0]
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 0a2010ac:.ufo/waves/round-54/w2-registry.json | python3 -c "import json,sys;d=json.load(sys.stdin);rm=d['role_mix'];print('seats',d['seats'],'attack_seats',d['attack_seats'],'by-role',rm['reviewer']+rm['critic']+rm['mutation-tester'],'=',round(100.0*(rm['reviewer']+rm['critic']+rm['mutation-tester'])/d['seats'],2),'%')"
+seats 47 attack_seats 12 by-role 12 = 25.53 %
+[exit 0]
+
+$ sed -n '5,11p;55,62p' /home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md
+`freeze.json`); content commit C0 `59c38109`; fix-pass commit C1 `99c3bc88`.
+Round shape: **one v2 wave of 76 seats** (w1, band 64–128 under
+`ufo-wave-policy-v2.json`) **plus one v1 wave of 47 seats** (w2, band 32–64 under
+`ufo-wave-policy.json`) = **123 seats**, attack-role share 26.3 % in w1 and
+25.5 % in w2 (roles: reviewer, critic, mutation-tester; `labrat` and `distiller`
+are refused as swarm roles by the validator, so those probes ride
+mutation-tester/reviewer seats — recorded in each item's text).
+- **Wave 1 — 76 seats** (`spec-w1.json`, `w1-dispatch.json`, `w1-registry.json`,
+  `w1.ready`; seat deliverables under `.ufo/waves/round-54/w1/`): 23 reader seats
+  (one per uncredited section at C0), 13 executors, 4 scribes, 4 scouts,
+  2 connectors, 12 mutation-testers, 4 critics, 4 reviewers, 4 sentinels,
+  3 revengers, 2 simplifiers. Every item named an absolute path and its own
+  attack target; seats wrote only under the wave dir and their own scratch.
+- **Adjudication and fix pass (C1 `99c3bc88`).** The 23 wave-1 readers returned
+  **25 findings**; the L1 re-derived every one against the C0 bytes and fixed
+[exit 0]
+
+$ python3 -c "print('itemization sum =', 23+13+4+4+2+12+4+4+4+3+2)"
+itemization sum = 75
+[exit 0]

@@ -1,0 +1,43 @@
+d5f61832224f178eb8a3cd8c975f4a48a7668d36 T55W1Er06 fixture: ER-R54-6 correction draft (SCORECARD close + lesson disclosure + corrections entry)
+
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 6f5f95a..1c05e04 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -2607,5 +2607,9 @@ only; carried from round 53: the service-limits §5 U1 heading re-read.
+ One deciding invocation at the post-re-key revision (`.ufo/evidence/round-54/after/`),
+ freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+-census exit 0.
++census exit 0. The run's after snapshot (`.ufo/evidence/round-54/after/clean-tree-after.txt`,
++12:25:37 local) recorded three untracked seat deliverables — `T54W2Sent03.md` and
++its two cited receipts — so the clean-tree precondition held only at the before
++snapshot (12:22:17); the closure swept them byte-identical at `ff2a821`
++(QUALITY 77) [ER-R54-6].
+ 
+ - **C1** `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true` — **verifies**.
+@@ -2617,2 +2621,12 @@ Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to
+ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+ 
++## Round 55 - round-54 record corrections
++
++**ER-R54-6 - three seat deliverables untracked at the round-54 closure.**
++Old (byte-exact, `.ufo/evidence/round-54/deciding-run.sh:8`, frozen): `the working tree must be clean`.
++Old (byte-exact, `.ufo/evidence/round-54/after/clean-tree-before.txt`, 12:22:17 local): `?? .ufo/evidence/round-54/after/`.
++Old (byte-exact, `.ufo/evidence/round-54/after/clean-tree-after.txt`, 12:25:37 local): `?? .ufo/evidence/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout`, `?? .ufo/evidence/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt`, `?? .ufo/waves/round-54/w2/T54W2Sent03.md`.
++Corrected: the three are committed, and the commit that adds all three is `ff2a821` (parent `0263c71e`, 12:54:32 local). Their blobs at `ff2a821` are their blobs at the base (`7448be1b`, `c63fc96c`, `4cdc204c`), and the non-author spot-check `cmp`-verified the bytes before and after the sweep. Rule broken: QUALITY 77 — `A seat's report is lane evidence: it is written under the lane's own wave directory, and a lane's own count of its residual reports must match the files that are actually committed there.` The round's own precondition was tested once, at the before snapshot, and never again; the after snapshot recorded the violation and `DECIDING_RUN_EXIT=0` did not read it.
++Derivation: `git log --reverse --format=%H 0a2010acd1e9 -- .ufo/waves/round-54/w2/T54W2Sent03.md | head -1` → `ff2a821a1e83acd92bb4d62bad15f380973a55ea` (7-hex `ff2a821`), the round-55 C1 counter's `first_commit` arm.
++
++
+diff --git a/corpus/lessons/round-54.md b/corpus/lessons/round-54.md
+index 8aa2c02..77c24fd 100644
+--- a/corpus/lessons/round-54.md
++++ b/corpus/lessons/round-54.md
+@@ -129,3 +129,7 @@ pin only artifacts those edits did not touch, and the deciding run re-derives
+ - **R53.9** (six round-53 wave files untracked at the push tip) — CLOSED: all six
+   are tracked in the lane at this round's base (`git ls-files` names each), so
+-  nothing was carried in uncommitted.
++  nothing was carried in uncommitted. This round's own wave did leave three seat
++  deliverables uncommitted at its closure — `.ufo/waves/round-54/w2/T54W2Sent03.md`
++  and its two cited receipts (`c1committed-positive.stdout`,
++  `rejection-attribution.txt`) — written into the lane after the deciding run's
++  before snapshot and swept byte-identical at `ff2a821` (QUALITY 77) [ER-R54-6].

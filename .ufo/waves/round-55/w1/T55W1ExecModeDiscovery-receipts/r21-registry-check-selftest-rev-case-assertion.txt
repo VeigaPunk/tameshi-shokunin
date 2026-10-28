@@ -1,0 +1,18 @@
+CMD: sed -n '1634,1650p' tools/registry-check.py   (cwd=/fast/scratch/hyaku/tameshi-r55/T55W1ExecModeDiscovery/base, base 0a2010ac)
+            "pidfd-revalidates-ownership",
+            scope_rejected and not sent.called,
+            f"ownership_change_rejected={scope_rejected} signals={sent.call_count}",
+        )
+
+
+        # --- --rev cases ---------------------------------------------------
+        proc = run_child(["--root", git_lane, "--rev", "0" * 40])
+        record(
+            "rev-unknown",
+            proc.returncode == 2
+            and check_lines(proc, ["REGISTRY_CHECK: could-not-evaluate"]),
+            f"exit={proc.returncode}",
+        )
+
+        for label, bad_rev in (
+            ("rev-path-like", "tools/registry.json"),

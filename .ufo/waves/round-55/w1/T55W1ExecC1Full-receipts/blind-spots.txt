@@ -1,0 +1,25 @@
+### blind spot A: R54.2's sentence in LOG.md, outside the counter's scan surface
+$ git grep -n -E '7883e0e5|fe70474d|097985c1' <frozen-set> -- '*.md' ':!.ufo/evidence' ':!.ufo/waves' ':!corpus/lessons/round-54-verifier-spotcheck.md'
+631cd6455e58dce969310b4c0466c3383d9f5108:LOG.md:2500:`7883e0e5` (one mechanical C1 arm bug, found by the binder dry run before any
+631cd6455e58dce969310b4c0466c3383d9f5108:SCORECARD.md:2564:frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
+631cd6455e58dce969310b4c0466c3383d9f5108:SCORECARD.md:2567:predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+631cd6455e58dce969310b4c0466c3383d9f5108:SCORECARD.md:2608:freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+
+### blind spot B: wrapped 'positive control ... rekeyed=7/7' at the frozen set (the arm's regex is same-line scoped)
+$ git show <frozen-set>:corpus/lessons/round-54.md | sed -n '72,78p'
+  do-nothing tree (which fails for other reasons), so a dead arm looked
+  healthy. fix: this round's counter lists the re-key directory with
+  `git ls-tree -r` and proves the arm on the positive control CTL_POS_c1, which
+  requires `rekeyed=7/7`; the control receipts are committed before the deciding
+  run (`.ufo/evidence/round-54/control/`).
+
+## QUALITY criterion (drafted; lands with the round commit)
+
+### the arm's own regex, applied to that line (no match = blind spot)
+line1 matches: False | joined matches: True | each line alone: [False, False]
+
+### both repaired at 1a92b7839c3d5fe5ecdbe936c7eed246b77062f2
+1a92b7839c3d5fe5ecdbe936c7eed246b77062f2:SCORECARD.md:2657:Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
+
+### corrected R54.7 command reproduces
+R100	.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json	.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json

@@ -34,9 +34,13 @@ Appendix A/B mutants (`.ufo/evidence/kaika-round-1/coldread/`); round 16 adds a 
   (`TMPDIR=""`) → unset (the resolver skips an empty candidate, S278:163-165; the
   documented list follows, S279); set but unusable → exit 2, could-not-evaluate,
   naming the value — never a silent `/tmp` fallback, never a traceback, never exit
-  1. Measured on each tool's `--selftest`/`selftest` path (round-54 C2 counter);
-  other modes are outside that measurement (corpus/knowledge/scratch-root-contract.md;
-  the seven registry `scratch_root` cells).
+  1. Measured on every documented allocating mode — the seven self-tests plus
+  `env-diff --contract` and `registry-check --rev` — as one stderr line,
+  `<tool>: could-not-evaluate: cannot create clone scratch under the scratch
+  root: TMPDIR is not a usable directory: '<value>' (could-not-evaluate)`, exit
+  2; the five non-allocating modes stay lazy (round-55 C2 counter;
+  corpus/knowledge/scratch-root-contract.md; the seven registry `scratch_root`
+  cells).
 
 ## Source notes
 

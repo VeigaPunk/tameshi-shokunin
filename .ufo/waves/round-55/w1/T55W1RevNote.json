@@ -1,0 +1,43 @@
+{
+ "seat": "T55W1RevNote",
+ "round": 55,
+ "target": "corpus/knowledge/scratch-root-contract.md ## One line, every mode (lines 71-98) + existing text",
+ "states": {
+  "A_draft": {"head": "631cd64", "note_mtime": "13:41", "c2_measure_mtime": "13:50", "registry_check": "base (no ScratchRootUnusable, --rev prints on stdout)"},
+  "B_now": {"registry_check_mtime": "14:01:35", "change": "ScratchRootUnusable added + --rev catch on stderr; note/registry/SKILL/counter unchanged"}
+ },
+ "claims": [
+  {"id": "C1a", "note_lines": "77-80 vs .ufo/evidence/round-55/c2/measure.py:78-98", "claim": "the note's eight allocating mode names equal the counter's eight", "verdict": "holds", "evidence": "T55W1RevNote-receipts/06-counter-note-and-docs-arms.txt (8/8)"},
+  {"id": "C1b", "note_lines": "77-80, 65-67", "claim": "eight is the allocating-mode set / the counter measures every documented allocating mode", "verdict": "wrong", "evidence": "receipts/02 (State A: rc=2 class on STDOUT, NOMATCH) and receipts/12 (State B: stderr grammar, still unmeasured); tools/registry-check.py:60-65 documented --rev, :780 allocates; counter measures 8"},
+  {"id": "C2a", "note_lines": "87-92", "claim": "the five lazy modes do not allocate scratch", "verdict": "holds", "evidence": "receipts/04 (one strict_scratch_root call site per tool, all selftest)"},
+  {"id": "C2b", "note_lines": "91-92", "claim": "they stay lazy because scratch is allocated on the real path, not at parse time", "verdict": "wrong", "evidence": "receipts/04: those five paths never call strict_scratch_root()"},
+  {"id": "C2c", "note_lines": "88", "claim": "`pin-disposition --read` is a mode", "verdict": "wrong", "evidence": "receipts/03 (rc=2, unknown argument: --read; usage is --manifest/--root)"},
+  {"id": "C3", "note_lines": "73-75", "claim": "the quoted grammar matches the frozen regex byte for byte", "verdict": "overreaches", "evidence": "receipts/05: literal core matches and 8/8 real lines MATCH; token charset, non-empty value, ^...$ anchoring unstated; <tool> is not the emitted token"},
+  {"id": "C4", "note_lines": "14, 17-24, 26-30", "claim": "S277-S279 say what the note says", "verdict": "holds", "evidence": "receipts/07 (S277 quote exact + no TMPDIR empty rule; S278:163-165 exact; S279 list sentence exact)"},
+  {"id": "C5", "note_lines": "81-85", "claim": "no shared Python type is claimed", "verdict": "holds", "evidence": "receipts/09 (7 local helpers, no shared module, no cross-import); parenthetical stale: 3 round-55 tool edits at State B, 7/7 tools define ScratchRootUnusable now, env-diff's class is itself named ScratchRootUnusable"},
+  {"id": "C6", "note_lines": "5-7", "claim": "the seven registry rows name the rule", "verdict": "overreaches", "evidence": "receipts/06: 4/7 cells quote a prefix the tool does not print; registry-check cell says 'Allocating modes: selftest.' (omits --rev)"},
+  {"id": "C7", "note_lines": "94-96", "claim": "13 modes in three arms plus the seven registry cells and this note", "verdict": "wrong", "evidence": "c2/measure.py:190-258: four execution blocks over three TMPDIR values; docs, note AND skill arms (SKILL.md omitted in the sentence)"},
+  {"id": "C8", "note_lines": "97-98", "claim": "a caller that parses stdout sees nothing", "verdict": "wrong", "evidence": "receipts/01: repeat-control stdout = REPEAT_CONTROL: setup_error (tools/repeat-control.py:228-235)"},
+  {"id": "C9", "note_lines": "3-4", "claim": "before round 53 the helpers were seven near-copies of the same fifteen lines", "verdict": "wrong", "evidence": "receipts/11: first appearance 5b703c6 (round-53), 12 lines each; pre-round-53 tree uses dir=\"/tmp\""}
+ ],
+ "round_integrity_reports": [
+  {"id": "I1", "what": "uncommitted amendments to frozen paths while the wave ran", "evidence": "contract.json 14:00 (amendments 0->5), c1/measure.py 14:00 (+25), c2/measure.py 13:50 (+32/-12), freeze.json 13:49 (amendments 1-3 only)", "impact": "if committed with FREEZE=631cd64, deciding-run.sh:64 gives FROZEN_UNCHANGED=0; needs a re-freeze with re-hashed manifest"},
+  {"id": "I2", "what": "freeze.json hashes do not match its own files", "evidence": "receipts/13: contract ed6871e1 != 5de4f37b, c1 77abe1e9 != 711507e7, c2 ab3ae751 != d6ca1d85; committed blobs at 631cd64 are self-consistent (FREEZE_INTEGRITY OK)", "impact": "manifest is only valid at the freeze commit, not for the round's final bytes"},
+  {"id": "I3", "what": "freeze.json amendment ledger under-reports contract.json (3 vs 5)", "evidence": "receipts/13"},
+  {"id": "I4", "what": "the base receipt the contract cites was rewritten mid-wave", "evidence": "receipts/13: .ufo/evidence/round-55/before/c2.stdout went 43 lines -> the verdict line only; the 42 EXPLAIN lines (incl. the 'pin-disposition --read' label) are gone from the worktree", "impact": "contract's per-mode before claims lose their receipt; the verdict line still supports grammar=6/8"}
+ ],
+ "frozen_counter_reports": [
+  {"path": ".ufo/evidence/round-55/c2/measure.py", "line": "12-13", "issue": "claims env-diff --contract is 'the one other documented mode that allocates scratch'; registry-check --rev also allocates and is unmeasured"},
+  {"path": ".ufo/evidence/round-55/c2/measure.py", "line": "105", "issue": "label 'pin-disposition --read' names a flag the tool rejects; argv is the --manifest/--root mode"},
+  {"path": ".ufo/evidence/round-55/contract.json", "line": "C2 surface / cannot_see", "issue": "surface says 'every documented mode', cannot_see excuses only 'a mode the registry does not document'; registry-check --rev is usage-documented and registry-absent"},
+  {"path": ".ufo/evidence/round-55/c2/measure.py", "line": "249-251", "issue": "note arm checks only the eight mode names, not the grammar or taxonomy: this draft scores note=8/8 with C1b/C2c/C3 defects present"}
+ ],
+ "holds_extra": [
+  "the eight named modes (State A): rc 2, one stderr line matching the frozen regex, no RuntimeError/Traceback on either stream (receipts 01, 05)",
+  "round-54 before/after numbers quoted in the existing text (receipt 08)",
+  "round-54 'four of the seven rc 1 / three rc 2' and 'each of the four got a ScratchRootUnusable subclass' (receipts 08, 09)",
+  "three-arms table unset/unusable rows match every helper (receipt 04); empty row's 'platform default applies' holds only when TEMP/TMP are unset"
+ ],
+ "production_files_edited": [],
+ "receipts_dir": ".ufo/waves/round-55/w1/T55W1RevNote-receipts/"
+}

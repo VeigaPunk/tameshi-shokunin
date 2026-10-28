@@ -1,0 +1,45 @@
+$ sed -n 134,140p mado-shokunin/tools/mado-tripwire.py
+(--frozen); 1 at least one unpermitted finding / frozen verdict mismatch;
+2 could-not-evaluate (usage, refused/unreadable path, no .jsonl, invalid
+line, internal error; --frozen also: malformed expected.json, tampered or
+unpinned snapshot). Exit 2 wins over 1.
+First line: MADO_TRIPWIRE: clean | permitted_only | findings | could_not_evaluate
+            MADO_TRIPWIRE_FROZEN: frozen_match | frozen_verdict_mismatch |
+            frozen_error | snapshot_tampered | unpinned_legacy
+
+$ sed -n 2918,2922p mado-shokunin/tools/mado-tripwire.py
+
+def emit(label, payload):
+    print("MADO_TRIPWIRE: %s" % label)
+    print(json.dumps(payload, ensure_ascii=True, sort_keys=True))
+
+
+$ sed -n 3360,3367p mado-shokunin/tools/mado-tripwire.py
+        got = sorted(key(f, False) for f in (verdict or {}).get("findings", []))
+        exp = sorted(key(w, True) for w in want)
+        first_ok = out[0].startswith("MADO_TRIPWIRE: ") if out else False
+        ok = verdict is not None and first_ok and got_exit == want_exit and got == exp
+        if ok and "want_label" in case:
+            ok = out[0] == "MADO_TRIPWIRE: " + case["want_label"]
+        if ok and "want_error_contains" in case:
+            ok = case["want_error_contains"] in str((verdict or {}).get("error", ""))
+
+$ sed -n 3452,3458p mado-shokunin/tools/mado-tripwire.py
+        sys.exit(run_with_stack(main, sys.argv[1:]))
+    except SystemExit:
+        raise
+    except BaseException as exc:  # never let an internal error read as "findings"
+        if sys.argv[1:2] == ["--frozen"]:
+            frozen_error("internal %s" % type(exc).__name__, None, [])
+            sys.exit(2)
+
+$ sed -n 409,412p kama-shokunin/tools/seat-report-immutability.py
+    except EvalError as e:
+        print("%s: could-not-evaluate: %s" % (NAME, e))
+        return 2
+    report(res)
+
+$ sed -n 84,86p kama-shokunin/tools/seat-report-immutability.py
+class EvalError(Exception):
+    """Could not evaluate (exit 2)."""
+

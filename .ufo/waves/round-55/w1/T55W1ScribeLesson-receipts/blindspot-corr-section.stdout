@@ -1,0 +1,24 @@
+EXPLAIN R54.1 ok premise=ok corrected=ok stale=0 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=1ba9aee40e15 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+RC=0
+
+## reproduce (blind spot 2: the corrections section is excluded wholesale)
+# same snapshot clone at 62418128, with the plant appended AFTER the last ER entry.
+python3 - "$S/blind" <<'PY'
+import pathlib, sys
+p = pathlib.Path(sys.argv[1]) / "SCORECARD.md"
+p.write_text(p.read_text() + "\n**ER-R54-99 - planted.** The round-54 freeze pointer is "
+             "`7883e0e5` and `CTL_POS_c1 true` at every revision.\n")
+PY
+git -C "$S/blind" add -A && git -C "$S/blind" -c user.name=b -c user.email=b@invalid commit -qm plant
+python3 <frozen c1/measure.py> --lane "$S/blind" --rev HEAD --work <empty> --explain
+# reads total=0 C1_R55_PASS=true with a new wrong assertion inside the section.
