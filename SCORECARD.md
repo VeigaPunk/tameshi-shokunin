@@ -2601,3 +2601,18 @@ matches the round-50 shrinker's `cannot_see`); the `env-diff --contract` residue
 could-not-evaluate — outside C2's measured arm); C2's follow-on: make every
 documented mode of the seven tools report the class rather than the self-test
 only; carried from round 53: the service-limits §5 U1 heading re-read.
+
+### Round 54 — measured close (appended after the deciding invocation)
+
+One deciding invocation at the post-re-key revision (`.ufo/evidence/round-54/after/`),
+freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+census exit 0.
+
+- **C1** `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true` — **verifies**.
+- **C2** `C2_R54: rev=c21081008adb tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true` — **verifies**.
+- Precheck at the deciding revision: `COLDREAD_PRECHECK floor=d33053f7552d floor_credited=57 cand=c21081008adb cand_credited=64 lost=0 ok`.
+- Re-key: 23 of 23 headings bound; skipped: none.
+
+Numeric axes: calibration unchanged at 8 (the floor moved from 57/64 at base to the credited count in the C1 line above);
+depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+

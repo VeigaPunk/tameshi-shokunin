@@ -2512,3 +2512,9 @@ placeholder, a retained "no leg skips" clause, the runbook pin, two exit-arm
 cells, the round-14 attribution, the S275 page locator, and the `env-diff`
 `--contract` path raising the class uncaught). Waves and deciding receipts to
 follow under this entry.
+
+  (close) Deciding run (one invocation, `.ufo/evidence/round-54/after/`):
+  `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true`; `C2_R54: rev=c21081008adb tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true`; FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c; precheck `COLDREAD_PRECHECK floor=d33053f7552d floor_credited=57 cand=c21081008adb cand_credited=64 lost=0 ok`; census exit 0; no-harm 14 ok, 0 RED.
+  Re-key bound 23 of 23 headings; skipped: none.
+  C1 verdict: verifies. C2 verdict: verifies. DECIDING_RUN_EXIT=DECIDING_RUN_EXIT=0.
+  Fleet census end: exit 0. Report committed on the fleet repo.
