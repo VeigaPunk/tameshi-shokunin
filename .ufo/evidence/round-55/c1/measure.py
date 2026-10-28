@@ -81,7 +81,14 @@ def corrections(lane, rev):
 
 
 def scan(lane, rev, paths, pattern):
-    """Occurrences of a regex in the record files at REV, corrections excluded."""
+    """Occurrences of a regex in the record files at REV, corrections excluded.
+
+    Two passes, one predicate: line-scoped (for the readable `path:line` pointer)
+    and whitespace-collapsed (a hard-wrapped claim splits across lines, so a
+    line-scoped window can miss a falsehood that is plainly there). The collapsed
+    pass is applied to EVERY row, not only the one whose defect was wrapped
+    (round-55 amendment 9; the R54.1 case that motivated it is `corpus/lessons/
+    round-54.md` splitting `the control ... requires rekeyed=7/7`)."""
     rx = re.compile(pattern)
     hits = []
     for path in paths:
@@ -93,6 +100,9 @@ def scan(lane, rev, paths, pattern):
         for n, line in enumerate(body.splitlines(), 1):
             if rx.search(line):
                 hits.append("%s:%d: %s" % (path, n, line.strip()[:160]))
+        flat = " ".join(body.split())
+        for m in rx.finditer(flat):
+            hits.append("%s@%d: %s" % (path, m.start(), flat[max(0, m.start() - 30):m.end() + 15]))
     return hits
 
 
@@ -200,8 +210,6 @@ def classes(lane, rev, staged_root):
     stale = scan(lane, rev, RECORD, r"CTL_POS_c1 true")
     stale += scan(lane, rev, ("corpus/QUALITY.md", "corpus/lessons/round-54.md"),
                   r"(positive control[^\n]{0,160}rekeyed=7/7)|(rekeyed=7/7[^\n]{0,160}positive control)")
-    stale += scan_span(lane, rev, RECORD,
-                       r"positive control.{0,160}rekeyed=7/7|rekeyed=7/7.{0,160}positive control")
     row("R54.1", premise, stale, "CTL_MISMATCH" in corr and "2/3" in corr,
         "CTL_MISMATCH + 2/3")
 
