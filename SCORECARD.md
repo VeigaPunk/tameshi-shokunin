@@ -2715,14 +2715,14 @@ controls or deciding data; the target, counters, and arms were not changed.
 
 | Axis | Score (0–10) | Evidence / counting rule | Measured commit | Last-change round |
 |---|---|---|---|---|
-| calibration | 8 | Round-21 cold-read monitor `calibration_restraint_score`; two points per restrained, evidence-linked `[~]` SHONEN box, with box 3 requiring the full page: `64/64`, `box3=true` | `c1dd23b3f83f5dff676c4a4482498e87345375ef` | 56 |
+| calibration | 8 | round-21 cold-read monitor `calibration_restraint_score`; two points per restrained, evidence-linked `[~]` SHONEN box, with box 3 requiring the full page: `64/64`, `box3=true` | `c1dd23b3f83f5dff676c4a4482498e87345375ef` | 56 |
 
 ### Frozen claims and before receipts
 
 | Claim | Axis | Before at base `981c5e8b` | Target | Counting command | Frozen controls |
 |---|---|---|---|---|---|
 | C1 — re-read and bind the 18 base-lost headings, restore 64/64 credit, and restate the standing calibration row to its monitor value: `C1_R56_PASS=true` | calibration | `credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 unstable=0 restate=8 total=5 C1_R56_PASS=false` (`.ufo/evidence/round-56/before/c1.stdout`) | `total=0`; precheck `lost=0 ok`; monitor `64/64 score=8 box3=true`; one `rekey-r56-<C0>` directory with 18/18 headings bound at C0, 18/18 committed readers, no `LOG.md`/`SCORECARD.md` inputs, and standing row matches the monitor | `python3 .ufo/evidence/round-56/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `CTL_0`, `CTL_SKIP`, `CTL_FAB`, `CTL_RESTATE`, `CTL_POS` |
-| C2 — certify receipt revisions through `tools/receipt-revision-gate.py`, its documented rule, and real refused receipts: `C2_R56_PASS=true` | operability | `total=6 C2_R56_PASS=false` (`.ufo/evidence/round-56/before/c2.stdout`): the gate is not in the lane's certification path, no QUALITY/knowledge/SKILL/registry rule states it, own controls are ungated, and accepted receipts violate the rule | `total=0`; all selftests pass; three real red-before receipts are refused with named codes; own controls accepted at certified revision; rule appears in QUALITY, sourced knowledge, SKILL standing rules, and registry | `python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `CTL_0`, `CTL_SKIP`, `CTL_FAB`, `CTL_POS` |
+| C2 — certify receipt revisions through `tools/receipt-revision-gate.py`, its documented rule, and real refused receipts: `C2_R56_PASS=true` | operability | Base `.ufo/evidence/round-56/before/c2-at-base.stdout`: `error=gate-missing total=1 C2_R56_PASS=false`; original-freeze `.ufo/evidence/round-56/before/c2.stdout`: `selftest=14/14 docs=0/4 total=2 C2_R56_PASS=false`. The contract's `total=6` baseline text is unsupported by either receipt | `total=0`; all selftests pass; three real red-before receipts are refused with named codes; own controls accepted at certified revision; rule appears in QUALITY, sourced knowledge, SKILL standing rules, and registry | `python3 .ufo/evidence/round-56/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `CTL_0`, `CTL_SKIP`, `CTL_FAB`, `CTL_POS` |
 
 W2's C2 do-nothing attack demonstrates that the frozen counter can be made to
 print `C2_R56_PASS=true` using fabricated stub receipts or a borrowed receipt
