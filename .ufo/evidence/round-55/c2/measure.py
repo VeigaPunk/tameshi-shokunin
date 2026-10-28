@@ -269,8 +269,8 @@ def main():
     lazy_ok = sum(1 for m in lazy if "lazy:" + m[0] not in bad)
     tmp_total = sum(int(v.split()[0]) for k, v in bad.items() if k.startswith("tmp_mkdirs:"))
     total = (len(allocating) - grammar_ok) + (len(lazy) - lazy_ok) \
-        + (len(table) - empty_ok) + (len(table) - usable_ok) \
-        + tmp_total + (7 - docs) + (8 - note) + (1 - skill)
+        + (len(cheap) - empty_ok) + (len(cheap) - usable_ok) \
+        + tmp_total + (7 - docs) + (len(allocating) - note) + (1 - skill)
     receipts = {"rev": a.rev, "fixture_sha256": fixture_sha, "bad": bad,
                 "grammar": grammar_ok, "lazy": lazy_ok, "empty": empty_ok,
                 "usable": usable_ok, "docs": docs, "note": note, "skill": skill,
