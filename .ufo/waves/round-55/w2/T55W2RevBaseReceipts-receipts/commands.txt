@@ -112,3 +112,17 @@ diff -u c2-receipts-e2979f2.json c2-receipts-0458f632.json
    (`…/work-c2/no-such-tmpdir` vs `…/work-c2-head/no-such-tmpdir`);
    all arm counts, fixture_sha256, allocating and note_names identical.
    The PRINTED receipt has no path field, so it is stable across work dirs.
+
+## 13. HEAD advanced to 51d1f0e mid-seat ("LOG values reconciled to the receipts")
+git log --oneline 4f7a704..HEAD
+   51d1f0e round-55: C1 fix pass — ... LOG values reconciled to the receipts, ...
+git diff --name-only 4f7a704 HEAD -- .ufo/evidence/round-55/
+   after/c1.stdout, control/controls-a.stdout, integrate/adjudicate.py,
+   integrate/resolutions.json   -> no frozen path, no before/ receipt
+per-path `git diff --quiet 4f7a704 HEAD -- <frozen path>` x8 + before/{c1,c2}.stdout: all clean
+git show HEAD:LOG.md | sed -n '2523,2532p'   -> log-at-head-51d1f0e.txt
+   reconciled values: C1 `premise=9/10`, C2 `grammar=6/9 … note=0/9 … total=20`
+   residual: "amended nine times in six freeze commits … (all four recorded in
+   freeze.json; each … changed discovery plumbing only)" — 9 vs 4 in one
+   sentence, 5 commits touch freeze.json, and amendments 8/9 are not plumbing.
+git rev-list --count 631cd64..HEAD -- .ufo/evidence/round-55/freeze.json  -> 4

@@ -1,0 +1,9 @@
+--- a/.ufo/evidence/round-55/integrate/binder.py
++++ b/.ufo/evidence/round-55/integrate/binder.py
+@@ -51,6 +51,7 @@ RES_PATH = Path(LANE, E, 'integrate/resolutions.json')
+ RES = {}
+ if RES_PATH.exists():
+     for item in json.loads(RES_PATH.read_text('utf-8')):
+-        RES[item['heading']] = int(item['n'])
++        if isinstance(item, dict) and 'heading' in item and 'n' in item:
++            RES[item['heading']] = int(item['n'])

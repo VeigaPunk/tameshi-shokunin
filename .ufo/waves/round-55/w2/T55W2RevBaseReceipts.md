@@ -14,17 +14,26 @@ at `e2979f2`. The same is true one level up: the receipts committed at the tree'
 *current* pointer (`4f7a704`, nine amendments) also reproduce byte-for-byte from
 the counters pinned there.
 
-**No — the record's statement of the base values is not reproducible.** `LOG.md`
-carries the round-55 entry landed at C0: it quotes `premise=10/10` for C1 and
-`grammar=6/8 … note=0/8 … total=18` for C2, both attributed to the two `before/`
-files. Those are exactly the values of the **first freeze `631cd64`**. At the
-commit that landed the LOG entry (`9cf0146`) the same two paths print
-`premise=9/10` and `grammar=6/9 … note=0/9 … total=21`, and at HEAD `… total=20`
-— because amendments 5-8 re-measured the receipts and the LOG paragraph was
-carried over unchanged. This is the round-54 R54.3 class
-('the record quotes a value its receipt does not print') reappearing inside
-round 55's own record — at the commit that repaired ten instances of it in
-round 54's record. See F1/F2.
+**No at measurement time — and it was repaired during this seat.** Through
+`4f7a704` the round-55 `LOG.md` entry (landed at C0, `9cf0146`) quoted
+`premise=10/10` for C1 and `grammar=6/8 … note=0/8 … total=18` for C2, both
+attributed to the two `before/` files — exactly the values of the **first freeze
+`631cd64`**, while the same paths printed `premise=9/10` and `… total=21`
+(`9cf0146`/`e2979f2`) then `… total=20` (`4f7a704`). That is the round-54 R54.3
+class ('the record quotes a value its receipt does not print') reappearing inside
+round 55's own record, at the commit that repaired ten instances of it in round
+54's record.
+
+Commit `51d1f0e` ("LOG values reconciled to the receipts") landed while this seat
+was measuring: the C1 and C2 before values in the LOG now read `premise=9/10` and
+`… note=0/9 … total=20`, i.e. the receipts' bytes — **F1 is closed and the repair
+is correct** (verified against both receipts at HEAD). The same edit left the
+freeze sentence self-contradictory: it now says *"amended nine times in six
+freeze commits (the pointer of record is `4f7a7040`) … (all four recorded in
+`freeze.json`)"* — nine versus four in one sentence, six freeze commits where
+five commits touch `freeze.json`, and "each changed discovery plumbing only"
+against amendments 8 and 9. **F2 is therefore open, and newly self-contradictory.**
+See F1/F2.
 
 ## Method
 
@@ -69,6 +78,13 @@ verdict line's `total=` field differs between the two counter generations. So
 the arm results — nine grammar, five lazy, thirteen empty, thirteen usable, zero
 tmp mkdirs, docs/note/skill — are stable across two independent executions.
 
+Timeline: HEAD advanced `133b2ce` → `4f7a704` → `51d1f0e` → `4c04c1d` while this seat ran.
+None of the eight frozen paths and neither `before/` receipt changed across those
+commits (`git diff --quiet` per path: all clean; `freeze.json` byte-identical at
+`4f7a704` and `51d1f0e`), so every row above still describes HEAD. The commits
+changed `after/c1.stdout`, `control/controls-a.stdout`, `integrate/*`, the LOG
+and lane tools.
+
 ## Every differing byte region
 
 The c2 counter prints no path and no timing field (each EXPLAIN line is
@@ -111,9 +127,16 @@ across the two counter generations, as are the `bad` key set
 
 ## Findings
 
-### F1 (medium-high) — the round-55 LOG entry quotes base values its receipts do not print
+### F1 (medium-high; CLOSED at `51d1f0e` while this seat ran) — the round-55 LOG entry quoted base values its receipts do not print
 
-`LOG.md:2531` (at HEAD, `4f7a704`): *"at base `premise=10/10 stale=4
+Status: open when measured at `9cf0146`/`e2979f2`/`4f7a704`; repaired by
+`51d1f0e` ("LOG values reconciled to the receipts"). Verified at HEAD: the LOG now
+reads `premise=9/10 … total=10` for C1 and `grammar=6/9 … note=0/9 … total=20` for
+C2, which are exactly the two receipts' verdict fragments
+(`log-at-head-51d1f0e.txt`). The finding is recorded because the mechanism
+matters for the round, not because work remains.
+
+`LOG.md:2531` (as committed at C0 and unchanged through `4f7a704`): *"at base `premise=10/10 stale=4
 classes_corrected=0/10 total=10 C1_R55_PASS=false` (`.ufo/evidence/round-55/before/c1.stdout`)"*.
 `LOG.md:2536-2537`: *"`grammar=6/8 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0
 docs=0/7 note=0/8 skill=0/1 total=18 C2_R55_PASS=false`
@@ -149,29 +172,46 @@ Suggested repair (a record edit, not a counter edit, since the counter's predica
 is the ten routed defects): correct the two LOG lines to the receipts' bytes, or
 mark them as the pre-amendment state with the receipt line quoted beside them.
 
-### F2 (medium) — the LOG states a freeze that never existed as a commit
+### F2 (medium; OPEN — present at `51d1f0e` and unchanged at `4c04c1d`, aggravated by the F1 repair) — the LOG states a freeze that never existed as a commit, and now contradicts itself
 
-`LOG.md:2523-2528` (at HEAD): *"contract, both counters, the controls harness,
+At `4f7a704` (`LOG.md:2523-2528`): *"contract, both counters, the controls harness,
 the 15 no-harm monitors and the deciding script frozen at `631cd645`, amended four
 times before any control was scored or any deciding invocation ran (all four
-recorded in `freeze.json`; …)"*.
+recorded in `freeze.json`; …)"*. `freeze.json` amendment counts by commit:
+`631cd64` = **0**, `e2979f2` (the commit that carries the sentence) = **7**,
+`133b2ce`/`c31cdd9` = **8**, `4f7a704` = **9**. No commit in `631cd64..HEAD` ever
+listed four amendments; `e2979f2` is the only freeze commit between `631cd64` and
+`133b2ce` and it lists all seven at once. That is the R54.2 class (several freeze
+pointers for one round), which this round repaired in `SCORECARD.md` only —
+`LOG.md` is in the C1 record set by amendment 5.
 
-`freeze.json` amendment counts by commit: `631cd64` = **0**, `e2979f2` (the commit
-that carries this sentence) = **7**, `133b2ce`/`c31cdd9` = **8**, `4f7a704` = **9**.
-No commit in `631cd64..HEAD` ever listed four amendments — `e2979f2` is the only
-freeze commit between `631cd64` and `133b2ce` and it lists all seven at once. The
-sentence therefore names a freeze pointer and an amendment count that `freeze.json`
-never carried, in the record set the C1 amendment 5 explicitly added (`LOG.md`
-"joins the record set"). This is the R54.2 class (several freeze pointers for one
-round), which this round repaired in `SCORECARD.md` only.
+At `51d1f0e` and still at `4c04c1d` the same sentence reads (`LOG.md:2526-2529`, quoted verbatim in
+`log-at-head-51d1f0e.txt`):
 
-Mechanism [INFERENCE, supported by the numbers]: the LOG paragraph is a snapshot
-of the state partway between the two freezes — its receipts are exactly
-`631cd64`'s, its amendment count (four) matches no commit but sits between
-`631cd64` (0) and `e2979f2` (7) — and it was committed at C0 unchanged. The same
-commit landed the re-frozen receipts and `freeze.json`, so the draft and the
-artifacts it describes first met in one tree and were never compared. F1 and F2
-are the two halves of one drafting-timing defect.
+> *"`631cd645` and amended nine times in six freeze commits (the pointer of record
+> is `4f7a7040`) before any completed control set or any deciding invocation ran
+> (all four recorded in `freeze.json`; each was found by the L1's own dry run on an
+> edited clone and each changed discovery plumbing only)."*
+
+Four claims, three of them false at HEAD:
+
+| claim | tree |
+|---|---|
+| "amended nine times" | freeze.json lists 9 — true |
+| "in six freeze commits" | 4 commits touch `freeze.json` after `631cd64`, 5 including it |
+| "(all four recorded in `freeze.json`)" | contradicts "nine" in the same sentence; freeze.json lists 9 |
+| "each changed discovery plumbing only" | amendment 8 changed the total's arithmetic (C0 verdict 1→0, base 21→20); amendment 9 changed `deciding-run.sh`'s FROZEN list and the C1 stale scope |
+
+The "six" and the surviving "all four" are the residue of the F1/LOG reconciliation
+edit itself — the values above were fixed, the freeze clause beside them was
+half-rewritten. The record-agreement predicate cannot catch any of this: the C1
+stale patterns are the ten round-54 strings, and the C1 counter prints
+`total=0 C1_R55_PASS=true` at C0 with this sentence standing in `LOG.md`.
+
+Repair: one clause — *"frozen at `631cd645`, amended nine times over four further
+freeze commits (`e2979f2`, `133b2ce`, `c31cdd9`, `4f7a704`; the pointer of record
+is `4f7a704`)"* — and drop "each changed discovery plumbing only" or scope it to
+amendments 1-7.
 
 ### F3 (low) — the c2 base receipt is the only one of the pair with an exit trailer
 
@@ -225,12 +265,14 @@ not cite 21 as its base anywhere, and `contract.json` at HEAD correctly says 20.
 
 ## Artifacts opened
 
-Lane (rev-addressed): `.ufo/evidence/round-55/freeze.json` @ `e2979f2`,
-`133b2ce`, `4f7a704`, `631cd64`; `.ufo/evidence/round-55/contract.json` @ `e2979f2`,
-`4f7a704`; `.ufo/evidence/round-55/c1/measure.py` @ `e2979f2`, `4f7a704`;
+Lane (rev-addressed): `.ufo/evidence/round-55/freeze.json` @ `631cd64`,
+`e2979f2`, `133b2ce`, `c31cdd9`, `4f7a704`, `51d1f0e`;
+`.ufo/evidence/round-55/contract.json` @ `e2979f2`, `4f7a704`;
+`.ufo/evidence/round-55/c1/measure.py` @ `e2979f2`, `4f7a704`;
 `.ufo/evidence/round-55/c2/measure.py` @ `e2979f2`, `133b2ce`, `4f7a704`;
-`.ufo/evidence/round-55/before/{c1,c2}.stdout` @ `e2979f2`, `4f7a704`; `LOG.md` @
-`e2979f2`, `9cf0146`, `4f7a704`; `SCORECARD.md` @ `4f7a704`;
+`.ufo/evidence/round-55/before/{c1,c2}.stdout` @ `631cd64`, `9cf0146`,
+`e2979f2`, `4f7a704`, `51d1f0e`; `LOG.md` @ `9cf0146`, `e2979f2`, `4f7a704`,
+`51d1f0e`; `SCORECARD.md` @ `4f7a704`;
 `.ufo/evidence/round-55/integrate/resolutions.json` (worktree);
 `.ufo/waves/round-55/w1/T55W1ScribeLog.md` and its receipts
 (`c2-base-amended.stdout`, `before-receipt-drift.txt`). Round-54 receipts
@@ -241,7 +283,8 @@ Receipts for this report: `T55W2RevBaseReceipts-receipts/`
 `manifest-check.txt` — 7/7 pin match at `e2979f2` and at `4f7a704`;
 `log-vs-receipts.txt` — the LOG paragraph against the three receipt
 generations, token by token; `arithmetic-probe.txt`; `cmp-worktree-c2.txt`;
-`c1-receipt-generations.diff`; the four counter blobs
+`c1-receipt-generations.diff`; `log-at-head-51d1f0e.txt` — the reconciled LOG
+sentence with its four claims checked against the tree; the four counter blobs
 (`c1-measure-e2979f2.py`, `c2-measure-e2979f2.py`, `c1-measure-4f7a704.py`,
 `c2-measure-133b2ce.py`); the committed receipts (`expected-*`, `head-before-*`);
 all six reproduction outputs; both `c2-receipts-*.json` sidecars; both

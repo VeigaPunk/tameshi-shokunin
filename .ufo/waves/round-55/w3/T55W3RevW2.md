@@ -1,7 +1,8 @@
 # T55W3RevW2 — wave-2 integrity: 34 seats, dead attempts, and the three `## Standing rules` readers
 
 Role: reviewer (wave 3). Axes: calibration. Milestone: wave-2 integrity.
-Snapshot instant for every count below: **2026-10-28T14:50:58** (the directory was still growing; see §1).
+Snapshot instant for every count below: **2026-10-28T14:51:51** (the directory was still growing; §1 shows the
+series, and each reading carries its own instant).
 Nothing in the lane, in `.ufo/evidence/round-55/*` or in the wave specs was modified. All receipts are in
 `.ufo/waves/round-55/w2/T55W3RevW2-receipts/`.
 
@@ -9,15 +10,15 @@ Nothing in the lane, in `.ufo/evidence/round-55/*` or in the wave specs was modi
 
 ## 0. Verdict in one paragraph
 
-All 34 wave-2 seats were dispatched (`w2.ready.dispatched`, 34 entries); **27 reports had landed at the
-snapshot and 7 had not**, and every one of the 8 belonged to a *live* agent at 14:48 — **no wave-2 seat is
+All 34 wave-2 seats were dispatched (`w2.ready.dispatched`, 34 entries); **28 reports had landed at the
+snapshot and 6 had not**, and every one of the six belonged to a *live* agent at 14:48 — **no wave-2 seat is
 dead at the snapshot**, though **11 of 34 seats (32%) lost at least one attempt and ≥20 attempts died
 overall**. The three reader reports are **valid**: each carries `heading = "## Standing rules"`,
 `cand = 9cf0146b…`, and `section_sha256 = acfb671a…`, which I re-derived independently with the frozen
 round-18 sectionizer over `git cat-file blob C0:SKILL.md` (one match in 64 sections), and **all 12 of their
 finding quotes are verbatim in the C0 section bytes**. They are **not content-redundant** with wave 3's
 reader (only the `'<value>'` quoting edge appears twice), but they **are binding-redundant**: four valid
-candidates now carry the same `(heading, cand, sha)` triple, and the shipped binder
+readers (five files — R07 exists in both wave directories) carry the same `(heading, cand, sha)` triple, and the shipped binder
 (`.ufo/evidence/round-55/integrate/binder.py`) can bind exactly one. **As shipped it binds none of them**:
 `resolutions.json` has no item with a `heading` key, so the findings quota is 0, and the first candidate in
 path order (2 findings) trips the loop's `break` — `## Standing rules` is skipped and the binder would exit 1.
@@ -34,31 +35,31 @@ Command and output: `T55W3RevW2-receipts/08-seat-census.txt`, `12-dead-attempts.
 | 14:43:00 | 21 / 34 |
 | 14:47:15 | 25 / 34 |
 | 14:49:02 | 26 / 34 |
-| **14:50:58** | **27 / 34** |
+| 14:50:58 | 27 / 34 |
+| **14:51:51** | **28 / 34** |
 
 Growth is real, not noise: `T55W2SentConfig2.md`, `T55W2RevNoteNine.md`, `T55W2SimplDiff.md`,
 `T55W2RevRound54Wording.md`, `T55W2SentStrayWrites.md`, `T55W2CritDoNothing.md`, `T55W2RevNoHarm.md` and
-finally `T55W2RevBaseReceipts.md` landed between 14:41 and 14:52. **Any "N/34" figure must carry its
+finally `T55W2RevBaseReceipts.md` and `T55W2MutTools.md` landed between 14:41 and 14:52. **Any "N/34" figure must carry its
 timestamp**; the wave is not over.
 
-### 1.1 The seven seats that had not landed at 14:50, and their evidence of life
+### 1.1 The six seats that had not landed at 14:51:51, and their evidence of life
 
-`T55W3RevW2-receipts/08-seat-census.txt`; liveness from `proc://` read at 14:48.
+`T55W3RevW2-receipts/13-landing-final.txt` (counts) and `08-seat-census.txt` (per-seat receipts state);
+liveness from `proc://` read at 14:48, so the uptimes are that reading's.
 
 | seat | receipts dir present | live agent at 14:48 | uptime |
 |---|---|---|---|
 | T55W2CritNinthMode | yes | `T55W2CritNinthMode-3` | 28m01s |
 | T55W2MutC2 | no | `T55W2MutC2` | 27m09s |
-| T55W2MutTools | yes | `T55W2MutTools-4` | 24m37s |
 | T55W2CritClaimShape2 | no | `T55W2CritClaimShape2-3` | 23m03s |
-| T55W2RevGateResidual | yes | `T55W2RevGateResidual` | 23m00s |
 | T55W2RevMistakes | no | `T55W2RevMistakes-3` | 14m46s |
 | T55W2CritC2Scope | yes | `T55W2CritC2Scope` | 14m37s |
 | T55W2ExecFloorRekeyProbe | no | `T55W2ExecFloorRekeyProbe-3` | 11m11s |
 
-Five of the seven are past 20 minutes with no report; that is a *risk*, not a death. The 27 landed reports
+Three of the six are past 20 minutes with no report; that is a *risk*, not a death. The 28 landed reports
 are all substantive: smallest 10,849 B (`T55W2MutReceipts.md`), every one has a `<seat>-receipts/` directory,
-and 26 of 27 carry fenced command blocks (`T55W2Connector3.md` carries its commands inline and cites its
+and 27 of 28 carry fenced command blocks (`T55W2Connector3.md` carries its commands inline and cites its
 receipts dir).
 
 ## 2. Which seats died
@@ -105,7 +106,7 @@ C0 (the readers' `why` fields are not substring-checked; only the quotes they at
 All three w2 reports name their commands and their artifacts (`T55W2Read01.md:13,164-173`,
 `T55W2Read02.md:20-31,245`, `T55W2Read03.md:5-18,175-176`), and all three state the section sha.
 
-**Validity verdict: all three wave-2 reader reports are valid reader entries.** I reproduced two of their
+**Validity verdict: all three wave-2 reader reports are valid reader entries.** I reproduced three of their
 load-bearing claims myself rather than trusting the seats:
 
 - `'<value>'` quoting edge (Read02 finding 1): `TMPDIR="…/no-such-r55'q"` on a C0 clone prints
@@ -128,7 +129,8 @@ the bookkeeping change that removes it. Findings read at C0 remain correct state
 
 ## 4. Redundant with wave 3's reader, or not?
 
-Content: **not redundant.** Over the four deliverables there are 12 distinct claims (2+3+7+2); exactly
+Content: **not redundant.** The four deliverables hold 14 findings behind 13 distinct claims (2+3+7+2, with
+one claim stated twice); exactly
 **one** is duplicated: the `'<value>'` quoting edge, stated by `T55W2Read02` finding 1 and `T55W3R07`
 finding 2. R07 finding 1 is its own, stronger claim (lane-wide completeness: `tools/registry.json` documents
 30 selftest rows, 23 without a `scratch_root` cell, 21 of those naming a `mkdtemp`/`TemporaryDirectory`
@@ -154,6 +156,11 @@ SELECTED: None
 SKIPPED: [('## Standing rules', 'reader-has-findings:2>0')]
 binder exit would be: 1 (0 iff no skip)
 ```
+
+Context from the other 17 headings, for scale: at 14:52, 15 of the 18 reader JSONs exist, and only **5**
+headings (R01, R02, R05, R13, R14) have a zero-finding reader that can bind today; 10 have findings-only
+readers and 3 (R09, R15, R16) have no reader yet. `## Standing rules` is therefore not special in needing an
+adjudication item — but it is the only heading where a second wave's readers also compete for the bind.
 
 Three facts, each with its line in `binder.py`:
 
@@ -204,7 +211,7 @@ candidates for one heading, the L1 cannot steer which is bound once the quota is
 (Read03, 7 findings) and the designated wave-3 reader are both unreachable behind `Read01`. One heading, so
 the blast radius is small, but it is the only heading where the question can even arise.
 
-**F3 — medium (record shape).** `w2/` mixes the two waves: at 14:50:58 it holds 38 `.md` files and 15 reader
+**F3 — medium (record shape).** `w2/` mixes the two waves: at 14:51:51 it holds 39 `.md` files and 15 reader
 `.json` files, of which **11 and 11 belong to wave 3** (`R01/02/03/04/05/07/08/10/12/14/17`). Counting
 `w2/*.json` as wave-2 reader output overstates wave 2 by ~2.75× (4 real wave-2 JSONs: Read01-03, SentScope2).
 Cause below (F4); consequence: any wave-2 deliverable count taken by glob is wrong.
@@ -212,9 +219,11 @@ Cause below (F4); consequence: any wave-2 deliverable count taken by glob is wro
 **F4 — low/medium (spec defect, wave 3).** Spec `w3`'s "Reader discipline" block was copied verbatim from
 `w2` and tells the 18 readers to write
 `…/.ufo/waves/round-55/**w2**/<your-seat-name>.json`, while `T55W3SentReaders` is told to audit
-`…/w3/T55W3R*.json`. The seats split: R01–R05 have a `.json` only in `w2/` (and two differing `.md` copies,
-so the `w2` copy of R01–R05 is a *different file*, not a twin), R06/R11/R13 wrote to `w3/` only, R07/R10 wrote
-identical copies to both. The sentinel's audit path therefore undercounts the readers it is meant to audit.
+`…/w3/T55W3R*.json`. The seats split at 14:50:58: **10 of 15** readers (R01–R05, R08, R10, R12, R14, R17)
+have a `.json` **only** in `w2/`; 4 (R06, R11, R13, R18) wrote to `w3/` only; R07 wrote byte-identical copies
+to both. Worse, of the 9 readers with an `.md` in both directories, **all 9 differ** (R01-R05, R08, R12, R14,
+R17 — e.g. `w2/T55W3R01.md` = 422abcfed66a, `w3/T55W3R01.md` = 493d82035795), so the `w2` copy is a
+*different document*, not a twin, and nothing records which one is final.
 This is outside wave 2's own scope but it is what pollutes wave 2's directory.
 
 **F5 — low.** `binder.py:15` documents step 2 as "find a committed reader report `.ufo/waves/round-55/w1/*.json`"
@@ -223,7 +232,8 @@ qualifies for any heading.
 
 **Not findings (checked, clean):**
 - Report-trailer compliance: the wave-2 context only fixes the *resolution* of a `Report:` path; it does not
-  mandate the trailer for wave-2 seats, and 23/27 reports have none by design. No defect.
+  mandate the trailer for wave-2 seats, and 24/29 reports have none by design (5 carry it: RevSources2,
+  RevGateResidual, RevER548, RevNoteNine, SimplDiff). No defect.
 - `T55W2Connector3.md` has zero fenced blocks but its commands are inline and its receipts dir is populated.
   Not a finding on the evidence I checked; a stricter reading of "runnable receipt (command + output +
   verdict)" could call it thin, and I am not making that call from a title scan.
@@ -232,13 +242,16 @@ qualifies for any heading.
 
 ## 6. Residual risk and verification gaps
 
-- **Counts move.** 18 → 27 reports in ten minutes. My 27/34 is a 14:50:58 reading; the L1 must re-read at
-  bind time and must not quote this number as final.
+- **Counts move.** 18 → 29 reports in twelve minutes. My headline is the 28/34 of
+  `13-landing-final.txt` (14:51:51); a last check at 14:53 read 29/34 (`T55W2RevGateResidual` and
+  `T55W2CritC2Scope` landed after it). The L1 must re-read at bind time and must not quote any of these as
+  final.
 - **"≥20 dead attempts" is a floor.** The dispatch map keeps only the surviving agent id per seat; deaths
   re-spawned under an unsuffixed name are invisible here.
-- **The acute risks are the two oldest seats**: `T55W2MutC2` (27m, no receipts directory at all) and
-  `T55W2CritNinthMode` (28m). `T55W2RevGateResidual` (23m) and `T55W2CritC2Scope` (14m) at least have
-  partial receipts; if any of the four dies, its seat has no complete fallback evidence.
+- **The acute risk is `T55W2MutC2`** (27m at the 14:48 reading, no receipts directory at all) and next
+  `T55W2CritNinthMode` (28m). If either dies its seat has no fallback evidence. Two seats I had listed as
+  absent (`T55W2RevGateResidual`, `T55W2CritC2Scope`) landed while I was writing this section — good evidence
+  for how fast the picture moves, and for why no dead-seat call from one snapshot should be trusted.
 - **I did not re-verify the readers' `why` claims beyond the three I reproduced** (apostrophe edge, nine/five
   mode sweep, tool-token prefixes). The registry-cell claim (Read02 finding 2) I confirmed only at C0 by
   reading the seven cells — they do quote `<tool>.py:` — and `resolutions.json` `W2-TOOLDIFF-F3` says the
@@ -266,6 +279,9 @@ qualifies for any heading.
 | `10-reader-validation.txt` | canonical sha, per-reader heading/cand/sha/findings/quote grounding, R07 byte-identity |
 | `11-binder-selection.txt` | read-only replay: `RES={}`, `allowed=0`, `SELECTED None`, skip, exit 1 |
 | `12-dead-attempts.txt` | 11 retried seats, ≥20 dead attempts implied, landing count at snapshot |
+| `13-landing-final.txt` | the 14:51:51 reading: 28/34 landed, 6 absent, directory mix |
+
+A later reading (14:53, inline, not receipted) gave 29/34; see §6.
 
 ## 8. Artifacts opened
 
@@ -278,7 +294,7 @@ fixture run); `.ufo/evidence/round-18/measure.py` (`sectionize`, `entry_failure`
 `.ufo/evidence/round-55/c2/measure.py` bytes at `133b2ce6`; `.ufo/evidence/round-55/c1/lost-headings-at-c0.json`;
 `.ufo/evidence/round-55/integrate/{binder.py,resolutions.json}`; `.ufo/evidence/round-55/freeze.json` (shape
 only); `.ufo/waves/round-55/spec-w2.json`, `spec-w3.json`, `w2.ready`, `w2.ready.dispatched`, `w3.ready.partial`;
-`.ufo/waves/round-55/w2/*` (27 seat reports, 15 reader JSONs including wave-3 writers, all receipt dirs,
+`.ufo/waves/round-55/w2/*` (28 seat reports, 15 reader JSONs including wave-3 writers, all receipt dirs,
 `swarm-registry.json`);
 `.ufo/waves/round-55/w3/{T55W3R*.json,T55W3R*.md,T55W3R07-receipts/*}`; `scripts/sources-census.sh` (executed).
 

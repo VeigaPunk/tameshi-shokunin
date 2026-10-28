@@ -29,6 +29,7 @@ lane, so moving the freeze pointer forward does not lose the reading:
 | C1 @ C0 | `83dfbbb0` (4f7a704, = worktree) | shared clone | `04-c1-amendment9-bytes-at-C0.stdout` |
 | C1 @ C0 | `83dfbbb0` | real lane | `05-c1-worktree-bytes-real-lane-at-C0.stdout` |
 | C2 @ C0 | `0458f632` (133b2ce = 4f7a704) | shared clone | `11-c2-amendment8-bytes-at-C0.stdout` |
+| C2 @ C0 | `0458f632` | real lane | `15-c2-real-lane-at-C0.stdout` |
 
 Commands (work dirs created empty, `--work` guard honoured):
 

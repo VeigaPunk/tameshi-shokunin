@@ -1,0 +1,28 @@
+$ grep -n "seat" .ufo/evidence/round-18/measure.py .ufo/evidence/round-21/coldread/measure.py   # no hits: the credit algorithm never reads seat identity
+.ufo/evidence/round-18/measure.py:0
+.ufo/evidence/round-21/coldread/measure.py:0
+
+$ sed -n "604,613p;105,127p" .ufo/evidence/round-18/measure.py .ufo/evidence/round-55/integrate/binder.py
+--- round-18/measure.py:605-612 (entry sha -> one bucket; coverage joins on section sha)
+            if isinstance(entry.get('sha256'), str):
+                by_sha.setdefault(entry['sha256'], []).append(entry)
+    for sec in sections:
+        matches = by_sha.get(sec['sha256'], [])
+--- round-55/integrate/binder.py:101-102,113-127 (one heading per report; first match wins)
+        if isinstance(d, dict) and isinstance(d.get('heading'), str):
+            readers.setdefault(d['heading'], []).append((f, d))
+        for f, d in readers.get(h, []):
+            if d.get('cand') != c0 or d.get('section_sha256') != sec['sha256']:
+                continue
+            findings = d.get('findings') or []
+            md = Path(f[:-5] + '.md')
+            if len(findings) > allowed:
+                skipped.append((h, 'reader-has-findings:%d>%d' % (len(findings), allowed)))
+                good = None
+                break
+            if not md.exists():
+                skipped.append((h, 'reader-md-missing'))
+                good = None
+                break
+            good = (f, d)
+            break
