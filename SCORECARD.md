@@ -2735,3 +2735,21 @@ Control receipts are produced and committed before the deciding invocation.
 The counter's after values, source census, and trend verdicts are appended
 below only after that invocation; this entry records the frozen specification
 and the C1 bind, not a premature close.
+
+### Round 56 results (attempt 4, L1 `TameshiR56a4`) — measured at REV `1b44bace0974157f6b6b969f44acd4ce7d2b1661`
+
+Counting commands are the frozen ones above, run by `deciding-run.sh` from the bytes committed at REV
+(`DECIDING_RUN_EXIT=0`, `.ufo/evidence/round-56/after/deciding-run.exit`); receipts under
+`.ufo/evidence/round-56/after/`, committed at `18bbdab7`.
+
+| Claim | Axis | Before (base `981c5e8b`) | After (REV `1b44bace`) | Counter line | Verdict |
+|---|---|---|---|---|---|
+| C1 — cold-read floor re-bound, standing row restated | calibration | monitor `46/64` score 6; `lost=18 rekeyed=0/18 readers=0/18 total=5` (`before/c1.stdout`) | monitor `64/64` score 8 `box3=True`; `lost=0 rekeyed=18/18 readers=18/18 restate=8 total=0` | `after/c1.stdout` `C1_R56_PASS=true` | **measured pass.** Controls: `CONTROLS_A 7/7` (`CTL_0` total 5, `CTL_SKIP` 4, `CTL_FAB` 1, `CTL_RESTATE` 1) and `CONTROLS_B 2/2` (`CTL_POS_c1` total 0 at the revision it certifies), `control/controls-{a,b}.stdout`. Cannot see: whether a reader read its section (a fabricated report passes arm 4 when its hash is computed); 13 of 18 bound entries carry `external_inputs` digest labels that are not the C0 blob digests (lesson `## Attempt 4`). |
+| C2 — receipt-revision gate certified by the deciding path | operability | `selftest=14/14 docs=0/4 total=2` at the original freeze; `error=gate-missing total=1` at base (`before/c2.stdout`, `before/c2-at-base.stdout`) | `selftest=19/19`, three real receipts refused (`RECEIPT_REV_CONTENT_DRIFT`, `RECEIPT_REV_UNRESOLVABLE`, `RECEIPT_REV_ABSENT`), `own=PASS`, `docs=4/4`, `total=0` | `after/c2.stdout` `C2_R56_PASS=true` | **reached on the counter, not admitted as a measured improvement.** The wave-2 do-nothing attack (`w2/T56W2CritDoNothingC2.md`) reaches `C2_R56_PASS=true` with two 79-byte stub receipts or a borrowed round-54 receipt with its `rev=` token rewritten, so the target fails the §9 do-nothing discriminator; the counter and target were not changed after data. The gate itself refuses the real round-54 and round-55 receipts for the named codes (arms 2–4), and the bootstrap generation of this round's own controls scored `own-receipts-missing` (`integration/controls-bootstrap-8c20d5.stdout`). Operator rules. |
+
+Standing axis table at the round end: `calibration` 8 (monitor `64/64`, `box3=true`, row commit `c1dd23b3f83f`, last change round 56)
+is unchanged in value from the row the round found; what changed is that the monitor now reads it (6 at base, 8 at REV).
+Other axes: no change claimed; no-harm monitors 15 of 15 `ok` at REV (`after/no-harm.stdout`); registry rows 140 → 142 (S281 mined, S282 rejected;
+`NOHARM sources-not-shrunk base=140 rev=142`). Unmonitored residuals named, not claimed fixed: SKILL.md page-local anchors (57 of 61 distinct ranges
+stale, 125 of 155 anchors moved +13 by this round's C0, lesson `## Round-57 deferrals` F1), the standing-rules table's role→code row (F2), and R1.
+Do-nothing control for C1: `CTL_0_c1` at base scores total 5, `CTL_SKIP_c1` (re-key entries removed) total 4 — neither reaches `total=0`.

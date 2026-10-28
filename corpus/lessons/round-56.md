@@ -99,9 +99,9 @@ Proposals 2–5 remain unmined (at most one per round).
 
 | id | disposition | evidence |
 |---|---|---|
-| R55.1 | FIXED by C2's deciding gate: `deciding-run.sh` gate 0c runs `tools/receipt-revision-gate.py --certified REV` on the verdicts the run just produced (`receipt-gate-verdicts.stdout`), so a committed `c1.stdout`/`c2.stdout` that does not name the certified revision is refused (`RECEIPT_REV_ABSENT` or `RECEIPT_REV_MISMATCH`) and `DECIDING_RUN_EXIT` cannot read 0 without it | `.ufo/evidence/round-56/deciding-run.sh`; red-before: `.ufo/evidence/round-55/after/c2.stdout` refused `RECEIPT_REV_ABSENT` in `.ufo/evidence/round-56/before/c2.stdout` (`red55=`); after: `.ufo/evidence/round-56/after/{c2.stdout,receipt-gate-verdicts.stdout}` `<L1 fills>` |
+| R55.1 | FIXED by C2's deciding gate: `deciding-run.sh` gate 0c runs `tools/receipt-revision-gate.py --certified REV` on the verdicts the run just produced (`receipt-gate-verdicts.stdout`), so a committed `c1.stdout`/`c2.stdout` that does not name the certified revision is refused (`RECEIPT_REV_ABSENT` or `RECEIPT_REV_MISMATCH`) and `DECIDING_RUN_EXIT` cannot read 0 without it | `.ufo/evidence/round-56/deciding-run.sh`; red-before: `.ufo/evidence/round-55/after/c2.stdout` refused `RECEIPT_REV_ABSENT` in `.ufo/evidence/round-56/before/c2.stdout` (`red55=`); after: `.ufo/evidence/round-56/after/receipt-gate-verdicts.stdout` reads `GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS` at REV `1b44bace0974` and `.ufo/evidence/round-56/after/deciding-run.exit` reads `DECIDING_RUN_EXIT=0` |
 | R55.2 | CARRIED — stated as a rule and exercised as a convention, but no instrument can fail it: every value this round's records quote names the committed receipt that carries it, and verdicts are quoted from the counter's own line, never a seat paraphrase (the ScribeLog draft's rule; the report skeleton's `<fill: receipt path>` slots). QUALITY 107 binds the receipt's `rev=`; its scope sentence declares the byte-for-byte quote half unmined — claiming R55.2 instrumented-fixed would repeat the defect | the rule: `corpus/QUALITY.md` criterion 107 scope paragraph; the round-55 receipt: `.ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out` (`total=1 C2_R55_PASS=false` where the report quoted `total=0`) |
-| R55.3 | FIXED by C1: the 18 lost headings are re-read at one content commit C0 and bound under one `rekey-r56-<c0>` directory, the precheck must read `lost=0` (64 credited), the monitor `64/64 score=8 box3=true`, and the standing calibration row is restated to the score the monitor reads at the commit the row names (arm 6 `restate`) | `.ufo/evidence/round-56/contract.json` C1 target; red-before: `.ufo/evidence/round-56/before/c1.stdout` (`credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 restate=8`); after: `.ufo/evidence/round-56/after/{coldread-precheck.stdout,c1.stdout}` `<L1 fills>` |
+| R55.3 | FIXED by C1: the 18 lost headings are re-read at one content commit C0 and bound under one `rekey-r56-<c0>` directory, the precheck must read `lost=0` (64 credited), the monitor `64/64 score=8 box3=true`, and the standing calibration row is restated to the score the monitor reads at the commit the row names (arm 6 `restate`) | `.ufo/evidence/round-56/contract.json` C1 target; red-before: `.ufo/evidence/round-56/before/c1.stdout` (`credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 restate=8`); after: `.ufo/evidence/round-56/after/c1.stdout` reads `C1_R56: rev=1b44bace0974 c0=c0137451f5b7 credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 unstable=0 restate=8 total=0 C1_R56_PASS=true` and `after/coldread-precheck.stdout` reads `lost=0 ok`. Residual: 13 of the 18 bound entries label `external_inputs` `tameshi@C0:corpus/SOURCES.md` (13) / `corpus/QUALITY.md` (6) with the PIN digest, not the C0 blob digest (L1 re-derived with `git show C0:<path>` sha256; seat `T56W3Led13`): the frozen counter does not read `external_inputs`, so the pass does not certify those labels. |
 | R55.4 | FIXED by construction: the control set is the frozen `.ufo/evidence/round-56/controls.sh`, phase B scores the positive controls at the revision they certify (PIN), both phase receipts are committed before the deciding run which refuses without their `CONTROLS_A:`/`CONTROLS_B:` verdict lines — nothing is described from memory before the receipts exist | `.ufo/evidence/round-56/controls.sh`, `deciding-run.sh` (control-receipt-missing / controls-*-verdict-missing refusals); the round-55 receipt: `.ufo/evidence/round-55/control/controls-a.stdout` (`CTL_SKIP_c2 … total=4`, `CONTROLS_A: 5/5` — committed before the report claimed it "still running") |
 | R55.5 | FIXED by C2: `tools/receipt-revision-gate.py` binds each receipt's `rev=` to the certified revision (drift on the declared surface → `RECEIPT_REV_CONTENT_DRIFT`; unresolvable → `RECEIPT_REV_UNRESOLVABLE`; absent → `RECEIPT_REV_ABSENT`), and `deciding-run.sh` applies it to the round's own control receipts (gate 0b) and to the verdicts it produces (gate 0c); QUALITY 107 states the rule and its falsifier is the gate's refusal of the real round-54 receipt | `tools/receipt-revision-gate.py`; red-before: `.ufo/evidence/round-56/before/c2.stdout` (`red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE`, `docs=0/4`) on `.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout` and `.ufo/evidence/round-54/control/controls-b.stdout`, which the old path accepted (`.ufo/evidence/round-54/after/deciding-run.exit` `DECIDING_RUN_EXIT=0`) |
 | R55.6 | FIXED for the inherited files and gated going forward: the seven uncommitted round-55 receipts were swept into the base at `981c5e8b` (round-56 start, contract `base_note`) and `6efd2a1`; the frozen `deciding-run.sh` refuses a dirty tree before and after the deciding run (`clean-tree-before.txt` / `clean-tree-after.txt`); the class recurred this round and is caught in `## Mistakes` (the untracked `before/` receipts) | `git log 981c5e8b` (`6efd2a1`, `981c5e8` messages name R55.6/R55.7); `.ufo/evidence/round-56/deciding-run.sh`; the round-55 receipt: `corpus/lessons/round-55-verifier-spotcheck.md` item R55.6 and its seven-file list |
@@ -262,3 +262,61 @@ reported separately and is not claimed as an admitted improvement.
 reader-input census shows `corpus/README.md` is a pinned input for the re-key; changing it after
 C0 would invalidate the readers. No frontier expansion is claimed. Owner: tameshi, round 57,
 after the current re-key is safely landed.
+
+## Attempt 4 — landing record and mistakes (L1 TameshiR56a4, 2026-10-28)
+
+Attempt 4 inherited three finished waves (w1 37, w2 34, w3 37 = 108 seats, no seat replaced), C0, the
+bind and three uncommitted pieces; it swept them, ran the controls and the deciding run, and wrote
+the record. Landed sequence: `caf6742a` (wave-3 deliverables, bootstrap control receipts),
+`888d342e` (five >1 MiB receipts named as files, PIN2), `1b44bace` (final control receipts, REV),
+`18bbdab7` (deciding-run receipts). Deciding run: `.ufo/evidence/round-56/after/deciding-run.exit`
+`DECIDING_RUN_EXIT=0`, `C1_R56 … total=0 C1_R56_PASS=true`, `C2_R56 … total=0 C2_R56_PASS=true`, all
+at `rev=1b44bace0974`; `no-harm.stdout` 15 of 15 `NOHARM … ok`; census exit 0 (`after/census.stdout`).
+
+- **class: control design — the C2 positive control cannot pass on the first controls run.**
+  evidence: `integration/controls-bootstrap-8c20d5.stdout` (`CTL_POS_c2 … own=own-receipts-missing
+  total=1`, `CONTROLS_B: 1/2`). C2 arm 5 reads the round's committed `controls-a/b.stdout` at the
+  certified revision; those cannot exist before the first controls run, so a single-generation
+  `controls.sh` can never print `CONTROLS_B: 2/2` and `deciding-run.sh` refuses `CTL_MISMATCH`.
+  captured-by: none — the pre-registration never ran the controls end to end before wave 3.
+  fix: two generations without touching a frozen byte. Generation 1 (bootstrap, `CONTROLS_B 1/2`) is
+  committed at `caf6742a`; generation 2 is scored at `888d342e`, the commit that carries
+  generation 1 (`integration/controls-final-888d34.stdout`, `CONTROLS_A: 7/7`, `CONTROLS_B: 2/2`),
+  and is what `control/controls-{a,b}.stdout` holds; the gate accepts generation-1 receipts there
+  because the declared surface has not changed since `8c20d5c3`
+  (`GATE OK … role=positive revs=888d342e1080` in `after/receipt-gate.stdout`). Shown able to fail:
+  the bootstrap receipts themselves (`own-receipts-missing`). Round 57: pre-register the two
+  generations in `controls.sh`'s header.
+
+- **class: predicate/text mismatch — a frozen counter predicate read a prose cell case-sensitively.**
+  evidence: `T56W3ExecControlsA.md` finding: `c1/measure.py:275` tests `'round-21' in cells[2]`; the
+  standing row spelled `Round-21`, so `CTL_POS_c1` read `restate` false at `2f5512a8`
+  (`w3/T56W3ExecControlsB-receipts/controls-b.stdout`). captured-by: none (the restate arm had no
+  fixture with the capitalised cell). fix: the row text was corrected at `8c20d5c3`; the counter stays
+  frozen. The `CTL_RESTATE_c1` control (row asserts 9) remains the arm's only discriminator.
+
+- **class: deliverable absent — seats reported a report path that was never written.** evidence:
+  `T56W3Led13` wrote its report at the fleet root (misroot, copied byte-exact into
+  `.ufo/waves/round-56/w3/T56W3Led13.md`, `cmp` clean, the fleet copy deleted); `T56W3ExecC1Run`
+  named `.ufo/waves/round-56/w3/T56W3ExecC1Run.md` and no such file exists in the lane (its result
+  string in `w3-results.json` is the only record; a session-log copy exists under the omp sessions
+  directory and is not citable). captured-by: wave-context path rules (absolute paths, seat prompts)
+  — they failed for two seats of 37. fix: the result strings are retained as the record; neither seat
+  is a claim input.
+
+- **class: label drift the frozen counter cannot see — `external_inputs` digests.** evidence: for 13
+  of the 18 bound `rekey-r56` entries (ledger indices 591–598, 601, 603–605, 608) 19 `external_inputs`
+  labels `tameshi@<C0>:corpus/SOURCES.md` (13) and `corpus/QUALITY.md` (6) carry a digest that is not
+  the sha256 of `git show C0:<path>` (L1 re-derived; seat `T56W3Led13`). The counter and the cold-read
+  monitor credit the entries by their `inputs`, so `C1_R56_PASS=true` stands, but the labels are
+  false statements in the committed ledger. captured-by: none. fix: not repaired — the ledger is a
+  frozen surface path and a rewrite would invalidate the bind; round 57 records the PIN as the
+  digest's referent or re-binds.
+
+### What attempt 4 did not do
+
+No `SKILL.md`, `corpus/QUALITY.md`, `corpus/SOURCES.md`, `corpus/knowledge/`, `tools/` or ledger byte
+changed after C0/PIN (the deciding run's `FROZEN_UNCHANGED=1` and the monitor's 64/64 at the final
+tip both depend on it). The round-57 repair list stays: F1 anchors, R1 SKILL byte-identity, F2/Read07
+standing-rules table, the `corpus/README.md` index entry for `receipt-revision-binding.md`, and the
+`external_inputs` labels above.

@@ -2552,3 +2552,31 @@ duplicate of S090. The one SKILL.md section the edit drifts (`## Standing
 rules`) is re-keyed with a fresh reader at C0. Round shape: one v2 wave of 75
 seats (band 64–128, 28 attack roles = 37.3 %) plus one v1 wave over what it
 produced. Waves measured close and deciding receipts follow under this entry.
+
+## 2026-10-28 — round 56 (calibration re-key, receipt-revision gate; attempts 1–4, L1 `TameshiR56a4` landed)
+
+Round 55's non-author closure rejected it as harmed (`corpus/lessons/round-55-verifier-spotcheck.md`): its own
+edits cost the cold-read monitor 18 of 64 credited sections (64/64 score 8 → 46/64 score 6), the re-key never
+landed (R55.3), and the deciding gate could not compare the revision it certifies (R55.5). Round 56 declared two
+claims on the frozen contract (`.ufo/evidence/round-56/contract.json`, base `981c5e8b`, operative freeze
+`21eb3c63`, one pre-scoring amendment): **C1 calibration** — re-read and re-key the 18 lost headings at one
+content commit C0 `c0137451`, restate the standing row to the monitor's reading — and **C2 operability** —
+`tools/receipt-revision-gate.py` bound into the deciding path with the rule in QUALITY 107, a sourced
+knowledge entry (`corpus/knowledge/receipt-revision-binding.md`, S281 in-toto Statement v1), SKILL.md
+`## Standing rules` and the registry.
+
+Measured by `deciding-run.sh` at REV `1b44bace0974157f6b6b969f44acd4ce7d2b1661` (`DECIDING_RUN_EXIT=0`,
+`.ufo/evidence/round-56/after/`): `C1_R56: … credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 …
+restate=8 total=0 C1_R56_PASS=true` (before: `credited=46 lost=18 rekeyed=0/18 readers=0/18 monitor=6/46 total=5`);
+`C2_R56: … selftest=19/19 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT
+own=PASS docs=4/4 total=0 C2_R56_PASS=true` (before: `selftest=14/14 … docs=0/4 total=2`). Controls:
+`CONTROLS_A: 7/7`, `CONTROLS_B: 2/2` (`control/controls-{a,b}.stdout`; a bootstrap generation scored `1/2` because the C2
+positive control reads the round's own committed receipts — lesson `## Attempt 4`). No-harm monitors 15 of 15 ok.
+Registry 140 → 142 rows (S281 mined, S282 rejected); census exit 0.
+
+Honest limits: C2's target fails the §9 do-nothing discriminator (two stub receipts or a `rev=`-rewritten borrowed
+receipt reach `total=0`, `w2/T56W2CritDoNothingC2.md`) — reached on the counter, not admitted as a measured
+improvement; C1 cannot see whether a reader read its section, and 13 of the 18 bound entries carry false
+`external_inputs` digest labels the counter never reads. Round-57 repairs named in the lesson: SKILL anchors
+(F1), byte-identity (R1), standing-rules code table (F2), README index, `external_inputs` labels.
+Round shape: three v1 waves, 37 + 34 + 37 = 108 seats (report has the role mix); attempt 4 ran no new wave.
