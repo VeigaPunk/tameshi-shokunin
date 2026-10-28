@@ -15,7 +15,10 @@ declared contract, and this counter measures whether the tree at REV keeps it:
                 and the knowledge note must state.
   3. usable     with TMPDIR a fresh directory, each self-test exits 0 and strace
                 shows no mkdir under /tmp (the silent-fallback defect round 53
-                removed must not return).
+                removed must not return). Amendment 2: the rc is the plain run and
+                the traced run supplies only the mkdir census — under `strace -f`
+                one tool's own timeout tests fail from tracer overhead, so a traced
+                rc measured the tracer.
   4. docs       `tools/registry.json` at REV carries a `scratch_root` cell on each
                 of the seven rows, and every cell names TMPDIR, the empty-string
                 arm and the could-not-evaluate exit class.
@@ -122,18 +125,25 @@ def main():
             notes.append('empty %s rc=%d' % (name, rc2))
 
     tmp_mkdirs = 0
+    usable_ok = 0
     for name, path, arg, _row in TOOLS:
+        # amendment 2 (round 54): the rc arm is the PLAIN run, the traced run
+        # contributes only the mkdir census. Under `strace -f` one tool's own
+        # timeout tests fail (tracer overhead), so a traced rc measured the
+        # tracer, not the tool; the substance (exit 0 on a usable root, zero
+        # mkdir under /tmp) is unchanged.
+        rc_plain, _ = run_tool(str(clone), path, arg, str(usable))
         log = work / ('strace-%s.log' % name)
         env2 = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
         env2['TMPDIR'] = str(usable)
-        proc = subprocess.run(['strace', '-f', '-e', 'trace=mkdir,mkdirat', '-o', str(log),
-                               sys.executable, path, arg],
-                              cwd=str(clone), env=env2, capture_output=True, timeout=TIMEOUT)
+        subprocess.run(['strace', '-f', '-e', 'trace=mkdir,mkdirat', '-o', str(log),
+                        sys.executable, path, arg],
+                       cwd=str(clone), env=env2, capture_output=True, timeout=TIMEOUT)
         hits = len(re.findall(r'mkdir(?:at)\([^)]*"/tmp', log.read_text(errors='replace')))
         tmp_mkdirs += hits
-        usable_ok += (proc.returncode == 0 and hits == 0)
-        if a.explain and (proc.returncode != 0 or hits):
-            notes.append('usable %s rc=%d tmp_mkdirs=%d' % (name, proc.returncode, hits))
+        usable_ok += (rc_plain == 0 and hits == 0)
+        if a.explain and (rc_plain != 0 or hits):
+            notes.append('usable %s rc=%d tmp_mkdirs=%d' % (name, rc_plain, hits))
 
     docs = 0
     try:

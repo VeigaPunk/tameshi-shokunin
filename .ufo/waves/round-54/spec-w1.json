@@ -1,0 +1,698 @@
+{
+ "wave": "round-54-w1",
+ "reportDir": ".ufo/waves/round-54/w1",
+ "template": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n## Your item\n\n{{item}}\n\nWork the item end to end, then write your report file and return your findings.\n",
+ "context": "# Goal\ntameshi round 54 (hyaku run 11; L1 TameshiR54a2), ONE v2 wave (build + attack together). Lane repo /home/vgpnk/Projects/shokunin/tameshi-shokunin (absolute paths only: seat tools start at the fleet root /home/vgpnk/Projects/shokunin, so every read/edit/write names an absolute path under the lane).\n\n# Frozen claims (contract .ufo/evidence/round-54/contract.json, freeze 441c26be)\n- C1 calibration (lowest non-retired axis, 8): the cold-read floor must read 64/64 credited at the deciding revision. At base d33053f7552d it reads credited=57 lost=7; at the content commit C0 59c38109bf11 it reads credited=41 lost=23 because this round's own edits drifted inputs. The 23 headings in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/lost-headings-at-c0.json` are the re-read set; the frozen seven are in `c1/lost-headings-at-base.json`. Counter: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --work EMPTY_DIR --explain`.\n- C2 operability: one scratch-root exit class across the seven tools that call `strict_scratch_root()` — 7/7 self-tests exit 2 (could-not-evaluate, naming the TMPDIR value, no traceback) on a set-but-unusable TMPDIR; 7/7 exit 0 on TMPDIR=\"\" (declared unset) and on a usable root with no mkdir under /tmp; the seven `tools/registry.json` rows carry the `scratch_root` cell; `corpus/knowledge/scratch-root-contract.md` cites S277-S279 opened 2026-10-28. Counter: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c2/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev REV --work EMPTY_DIR --explain`.\n\n# What C0 changed (commit 59c38109bf119d0e9d4f878644a82babc937bc1e)\n`tools/env-diff.py`, `tools/bash-witness-study.py`, `tools/evidence-disposition.py`, `tools/pin-disposition.py`: each helper raises `ScratchRootUnusable(RuntimeError)` (message unchanged) and each entry point maps it to exit 2 with one naming `could-not-evaluate` line. `tools/registry.json`: a `scratch_root` cell on the seven selftest rows. `corpus/knowledge/scratch-root-contract.md` new; `corpus/SOURCES.md` rows S277-S279; `corpus/lessons/round-54.md` (Gate, Mistakes, QUALITY 105); `SKILL.md` `## Standing rules` gained the three-arm scratch-root bullet.\n\n# Reader discipline (the 23 `*Read*` items only)\n1. Run `cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 .ufo/waves/round-54/reader-section.py /home/vgpnk/Projects/shokunin/tameshi-shokunin 59c38109bf119d0e9d4f878644a82babc937bc1e \"<the heading exactly as given>\"` (scratch: export TMPDIR=/fast/scratch/hyaku/tameshi-r54/<your-seat-name> after mkdir -p). It prints start, end and `section_sha256` at C0. Read the section's bytes with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 59c38109bf119d0e9d4f878644a82babc937bc1e:SKILL.md` (lines start..end), never a working-tree read.\n2. Cold-read the section as an executor with no oral context: does every rule name its anchor (file:line / command / evidence id)? Does any sentence contradict another in the same section? Does any cited path, command or count still resolve at C0 (open what it points at)? Is a table cell stale against the artifact it cites?\n3. Write TWO files under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/`: `<your-seat-name>.json` exactly\n   `{\"heading\": \"<heading>\", \"cand\": \"59c38109bf119d0e9d4f878644a82babc937bc1e\", \"section_sha256\": \"<the sha reader-section.py printed>\", \"findings\": [{\"quote\": \"<a byte-exact substring of the section>\", \"why\": \"<one sentence>\"}]}`\n   and `<your-seat-name>.md` with the same findings written out (each `quote` byte-exact, plus what you opened and what you checked). An empty `findings` list is a legitimate result and must be accompanied by the opened artifacts in the MD. Every quote you report must occur byte-exact in BOTH the section and your MD: an unfixed finding blocks that section's credit, so report only what you can defend and never invent a defect to look thorough.\n4. Do NOT edit SKILL.md or any lane file. A section that needs a fix is reported, never fixed.\n\n# Attack discipline (the attack items)\nEvery attack item names what it attacks and must produce a runnable receipt in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md` (command, output, verdict) plus, where it writes a fixture, the fixture under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>-receipts/`. An attack that finds nothing must show the sweep it ran. Never edit the lane's production files, the counters, the contract, the freeze, the ledger or the wave spec; work on `git clone --shared` copies under your scratch. A finding without a command and its output is not a finding.\n\n# Seat bounds (binding)\n- Read-only: the fleet root outside the lane, sibling lanes, /home/vgpnk/Projects/shokuknow, `.ufo/state/`, `.ufo/watchdog.log`, `/home/vgpnk/Projects/shokunin/.scratch/`, `tools/registry.json` and every lane file. Write scope: ONLY `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/` (your deliverables and receipts). Never run a mutating git/jj command anywhere; never commit, push, fetch, reset, or `git add`; create fixtures with `D=$(mktemp -d)` under your scratch and name `-C \"$D\"` on every git call.\n- Scratch: `export HYAKU_SCRATCH=/fast/scratch/hyaku`; your tree is `$HYAKU_SCRATCH/tameshi-r54/<your-seat-name>/`; `trap 'rm -rf -- \"$S\"' EXIT`. `/tmp` only for files under 50 MB; a seat that leaves its tree behind reports that as its own defect.\n- Tooling authorization (operator, 2026-10-19): you may install or upgrade tools that help the task — read `/home/vgpnk/.omp/agent/RULES.md` first (official channels, update-safety gate), and record tool/version/channel/reason in your report. **pacman transactions are PAUSED host-wide**: install via `uv tool`/`npx`/an official binary in `~/.local/bin`, or file nothing and route around it.\n- Every `Report:` trailer path the harness renders is relative to /home/vgpnk/Projects/shokunin/tameshi-shokunin — write it at /home/vgpnk/Projects/shokunin/tameshi-shokunin/<that path>. Never message `agent://all`; message only your own L1 (`TameshiR54a2`).\n\n# Census (round start and end, conformance)\n`/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` must exit 0; 139 rows now (S001-S279).",
+ "items": [
+  {
+   "name": "T54W1Read01",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Standing rules` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read02",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Mutation-sweep recipe — numbered steps; bounded cold-read evidence` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read03",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### The boundaries — what a service run is not` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read04",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## The leg ledger — replay, receipt, and how it is read (round 7, measured)` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read05",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Using the ledger` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read06",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### The tick and the pin read` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read07",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Triggers T1–T3 and the re-pin rule` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read08",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### The service's limits — what tameshi refuses to mutation-test` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read09",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## The operator's runbook and the six-leg regression (round 10, measured)` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read10",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### The operator's runbook — `corpus/knowledge/operator-runbook.md`` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read11",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Repeated controls and gate registry — round 12` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read12",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Gate/probe registry` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read13",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Pin disposition and provenance correction — round 13` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read14",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-13 gate/probe registry` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read15",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Effective expectation reconciliation — round 14` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read16",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-14 historical registry — superseded by round 15` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read17",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Context gate classification and explicit exit classes — round 15` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read18",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-15 gate/probe registry` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read19",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `## Live-tree re-pin and entry-command monitor — round 17` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read20",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-17 gate/probe registry — re-pin and monitor` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read21",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-18 gate/probe registry — routed-defect closure` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read22",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-21 gate/probe registry — finite environment differential` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1Read23",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 cold-read re-read at C0",
+   "item": "Cold-read the SKILL.md section `### Round-26 gate/probe registry — report interop` at content commit 59c38109bf119d0e9d4f878644a82babc937bc1e and write the JSON + MD deliverables per the wave context's Reader discipline (findings byte-exact, opened artifacts named in the MD). Report every rule whose anchor no longer resolves, every stale table cell and every self-contradiction you can defend."
+  },
+  {
+   "name": "T54W1ExecC1Counter",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "C1 verify — frozen counter",
+   "item": "Attack nothing; verify the instrument. Run the FROZEN C1 counter at C0: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --work <empty scratch dir> --explain`. Record the verdict line and every EXPLAIN line. Explain, arm by arm, why the verdict is what it is at C0 (no re-key dir yet, readers partially present). Then run it a second time with the work dir pre-populated and show that it refuses (work-not-empty). State whether the instrument can reach the target at a later revision with entries only."
+  },
+  {
+   "name": "T54W1ExecC2Counter",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "C2 verify — frozen counter",
+   "item": "Run the FROZEN C2 counter at C0: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c2/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --work <empty scratch dir> --explain`. Should print C2_R54_PASS=true with unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=1. If any arm is short, name it with the EXPLAIN line and the tool. Independently reproduce one arm by hand (registry-check under TMPDIR=/nonexistent-x54: exit code and the single naming line) and paste both."
+  },
+  {
+   "name": "T54W1ExecNoHarm",
+   "role": "executor",
+   "axes": [
+    "calibration",
+    "operability"
+   ],
+   "milestone": "no-harm at C0",
+   "item": "Run `bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/no-harm.sh /home/vgpnk/Projects/shokunin/tameshi-shokunin 59c38109bf119d0e9d4f878644a82babc937bc1e` and paste all 14 NOHARM lines with their ok/RED. For every RED, name the monitor, its observed value, and whether it is the C1 miss itself (coldread-floor at 41) or a new harm. Verify the count is 14 and the exit code."
+  },
+  {
+   "name": "T54W1ExecCensus",
+   "role": "executor",
+   "axes": [
+    "discernment? coverage"
+   ],
+   "milestone": "sources census + rows",
+   "item": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`; paste the exit code and the warning lines. Then parse `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md` yourself: count rows (0-3 leading spaces), assert exactly 11 cells for S277, S278, S279, and check each row's status=mined, opened=2026-10-28, and used-by naming `corpus/knowledge/scratch-root-contract.md`. Report any row that would fail the census for a reason the census did not print."
+  },
+  {
+   "name": "T54W1ExecRegistryGate",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "registry rows still return their outcomes",
+   "item": "Run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py --selftest` (expect exit 0) and then `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 59c38109bf119d0e9d4f878644a82babc937bc1e --only registry-check-selftest` plus the six other `*-selftest` rows one at a time, pasting each exit. The seven rows gained a `scratch_root` field: prove the field does not change any row's registered outcome and that the registry still validates (no schema violation)."
+  },
+  {
+   "name": "T54W1ExecRegistryFull",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "registry full check",
+   "item": "Run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 59c38109bf119d0e9d4f878644a82babc937bc1e` (the full 56-row check) and paste the summary line and every not-held row. Time-box it; if it cannot finish, say so with the elapsed time and what it printed. This is the round-52 C1 surface and must not regress."
+  },
+  {
+   "name": "T54W1ExecDryBinder",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "dry-run binder input map",
+   "item": "For each of the 23 headings in `.ufo/evidence/round-54/c1/lost-headings-at-c0.json`, read the ledger at C0 and list the union of the section's prior entries' input paths, flagging every path that is (a) absent at C0, (b) `LOG.md` or `SCORECARD.md`, or (c) a file this round still edits. Emit a machine `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>-input-map.json` with one object per heading: {heading, inputs: {path: sha256 at C0}, dropped: [paths], unstable: [paths]}. This is the binder's expected input set; a heading whose map is empty or entirely unstable is a section that cannot be re-keyed and must be named."
+  },
+  {
+   "name": "T54W1ExecManifest",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "section manifest at C0",
+   "item": "Using `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/reader-section.py`, compute for each of the 23 lost headings its start, end and section_sha256 at C0 and write `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/section-manifest.json` as a list of those objects. Then hash the SKILL.md blob at C0 once and record it in the same file under \"skill_sha256\". This is the manifest the binder and the counter will be compared against."
+  },
+  {
+   "name": "T54W1ExecExitClass",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "no exit-class regression in the four tools",
+   "item": "Diff each of the four edited tools (env-diff, bash-witness-study, evidence-disposition, pin-disposition) between d33053f7552db4bd290c99a36979760f544c41ad and 59c38109bf119d0e9d4f878644a82babc937bc1e (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff d33053f7552db4bd290c99a36979760f544c41ad 59c38109bf119d0e9d4f878644a82babc937bc1e -- tools/...`) and prove with commands that every other exit class is unchanged: usage (64), FAIL (1) and SETUP (2) arms each still return their old code. Use each tool's own frozen fixtures; run both revisions in scratch clones and compare the exit codes side by side."
+  },
+  {
+   "name": "T54W1ExecEmptyStrace",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "empty TMPDIR reaches the default",
+   "item": "Under `TMPDIR=\"\"`, run each of the seven self-tests under `strace -f -e trace=mkdir,mkdirat -o LOG` and report the mkdir paths each tool used. The declared arm says empty = unset, so the platform default applies; show the paths and state whether any tool silently allocated under the working directory. Report the seven (tool, exit, first mkdir path) triples."
+  },
+  {
+   "name": "T54W1ExecStraceNoise",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "strace arm robustness",
+   "item": "The C2 counter's `tmp_mkdirs` arm counts `mkdir(\"/tmp...` lines in its own strace log. Attack it: run one tool's selftest under a usable TMPDIR with a pre-existing noisy process writing to /tmp, and show whether the arm could ever see a foreign mkdir (it reads its own log file, so argue from the log). Then show a case where a tool that DID allocate under /tmp would be caught (install a temporary mutant copy of one tool in scratch that hardcodes /tmp and run the arm against it)."
+  },
+  {
+   "name": "T54W1ExecFreeze",
+   "role": "executor",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "freeze integrity",
+   "item": "Re-implement the round-53 crash-resume check for this round (scratch script, do not add a file): for every path in `.ufo/evidence/round-54/freeze.json`, compute sha256 of the blob at 441c26bec5e4c1cc31bc2a840f311cb8d1965259 and compare to the recorded digest; paste a table of matches. Then verify `contract.json`'s `frozen_paths` equals the freeze manifest's file list (modulo freeze.json itself) and that both counters run from those bytes."
+  },
+  {
+   "name": "T54W1ExecCitations",
+   "role": "executor",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "section citations still resolve",
+   "item": "For each of the 23 lost sections, extract every lane-relative path the section names and check it exists as a blob at C0 (`git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file -e 59c38109bf119d0e9d4f878644a82babc937bc1e:<path>`); extract every `file:line` reference to a lane file and check the line count allows it. Report a per-section count of citations checked vs unresolved, and name any citation that cannot resolve. No edits."
+  },
+  {
+   "name": "T54W1ScribeWork",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "report draft — work performed",
+   "item": "Draft the round report's **Work performed** section (the round's declared claims first, then one bullet per work item with an evidence pointer) from `.ufo/evidence/round-54/contract.json`, the C0 commit 59c38109bf119d0e9d4f878644a82babc937bc1e and the wave's own receipts as they appear in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/`. Write it at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`; the L1 will merge it. No claim language beyond the frozen predicates."
+  },
+  {
+   "name": "T54W1ScribeMeasure",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "report draft — measurements",
+   "item": "Draft the **Before → after measurements** and **Landed changes** sections: for each claim, the counting command, the base value from `.ufo/evidence/round-54/before/` (or the CTL_0 line in `.ufo/evidence/round-54/control/controls-a.stdout`), the C0 value, and the commit each was measured at. Keep the target wording identical to contract.json. Write to `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+  },
+  {
+   "name": "T54W1ScribeQuality",
+   "role": "scribe",
+   "axes": [
+    "discernment? calibration"
+   ],
+   "milestone": "QUALITY criterion draft",
+   "item": "Read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md`'s last ten criteria and the round-53 lesson's QUALITY 104. Draft criterion 105 (counter arm proven on a positive control) and any one further criterion the C0 changes justify, each with a falsifier that a command can decide. Name the criterion numbers you would use and where they would land. No edits to QUALITY.md."
+  },
+  {
+   "name": "T54W1ScribeScorecard",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "SCORECARD rows draft",
+   "item": "Draft the SCORECARD.md additions for round 54: the standing axis table restated at C0 (depth 10, calibration 8, freshness 9 with their counting commands), the two claim rows with before/target/after placeholders the L1 fills from receipts, the capabilities note (none claimed this round), and the round-55 planned list from the round-53 carry-overs plus what C0 leaves open. Write to `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`; quote the exact command that yields each number."
+  },
+  {
+   "name": "T54W1ScoutS277",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "source S277 re-opened independently",
+   "item": "Re-open S277 yourself: `curl -fsSL --max-time 60 https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html`, sha256 it, and locate the TMPDIR sentence in the text. Report the sha, the located sentence and its word count, and whether the SOURCES row's anchor cell describes where you found it. Snapshot under your scratch, not the lane."
+  },
+  {
+   "name": "T54W1ScoutS278",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "source S278 re-opened independently",
+   "item": "Re-open S278 yourself: `curl -fsSL --max-time 60 https://raw.githubusercontent.com/python/cpython/v3.12.7/Lib/tempfile.py`, sha256 it, and locate `_candidate_tempdir_list`. Report the exact lines the row cites (:163-165), the sha, and whether `if dirname:` really skips an empty value. Then check the note's sentence against what you read and say whether it outruns the source."
+  },
+  {
+   "name": "T54W1ScoutS279",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "source S279 re-opened independently",
+   "item": "Re-open S279 yourself: `curl -fsSL --max-time 60 https://docs.python.org/3/library/tempfile.html`, sha256 it, and locate the search-list sentence the row quotes. Report the sha, the quote, and whether the note attributes the empty-string rule to the docs (it must not — the docs say nothing about empty). Name any sentence in `corpus/knowledge/scratch-root-contract.md` that S279 does not support."
+  },
+  {
+   "name": "T54W1ScoutNextEntry",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "milestone": "next assimilation candidate surveyed",
+   "item": "Read `/home/vgpnk/Projects/shokuknow/merge/tameshi/MERGE-REPORT.md` and `/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/delta-debugging-minimization-contract.md` (read-only; never run campaign tools there). Report: its target path, its `source:` staged ids, the rows it would need appended (ids + URLs), and whether it fits the lane's round-50 shrinker's stated blind spots. Name the first thing that would make it fail the QUALITY bar."
+  },
+  {
+   "name": "T54W1ConnPreBind",
+   "role": "connector",
+   "axes": [
+    "calibration",
+    "adjacency"
+   ],
+   "milestone": "cross-claim pre-bind map",
+   "item": "Cross the two claims: for each of the 23 lost headings, which of them pin any of the four tools C0 edited or `tools/registry.json`, and which of them pin files the L1 will still write (LOG.md, SCORECARD.md, corpus/lessons/round-54.md)? Produce the map and the rule the binder must apply (pin at C0, drop unstable paths, never fabricate an input). Name any heading where the map is ambiguous and say which reading you would defend."
+  },
+  {
+   "name": "T54W1ConnDuplicateNote",
+   "role": "connector",
+   "axes": [
+    "adjacency"
+   ],
+   "milestone": "duplicate-note scan",
+   "item": "Search `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/` for notes that already state any part of the scratch-root contract (env-diff contract drift, service limits, the tools registry notes, the round-53 lesson) and report where the new note `scratch-root-contract.md` duplicates or contradicts them. Name each overlap with file:line; propose the sentence the new note should carry to point at the older home instead of restating it. No edits."
+  },
+  {
+   "name": "T54W1MutC101",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "attack the C1 counter",
+   "item": "Attack the frozen C1 counter by mutation: delete the `if reader_ok != len(frozen)` failure (make the readers arm advisory) and show the counter still passes at a tree with no reader JSONs. Work on a scratch copy of the counter (byte-identical copy, one exact edit, assert the old string occurs exactly once) and a `git clone --shared` of the lane; run the mutant at base d33053f7552d and at C0 59c38109bf11 with the command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane CLONE --rev REV --work EMPTY`. Record: the exact edit, the clone revision, the mutant's verdict line, and whether the mutant SURVIVED (produced the same verdict as the frozen counter) or was KILLED (verdict changed). A survivor is a finding: name the arm it exposes and the sentence the contract would need."
+  },
+  {
+   "name": "T54W1MutC102",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "attack the C1 counter",
+   "item": "Attack the frozen C1 counter by mutation: replace `str(e.get(\"read_rev\")) == c0` with a `startswith(c0[:12])` test and find a tree where that admits an entry the exact test refuses. Work on a scratch copy of the counter (byte-identical copy, one exact edit, assert the old string occurs exactly once) and a `git clone --shared` of the lane; run the mutant at base d33053f7552d and at C0 59c38109bf11 with the command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane CLONE --rev REV --work EMPTY`. Record: the exact edit, the clone revision, the mutant's verdict line, and whether the mutant SURVIVED (produced the same verdict as the frozen counter) or was KILLED (verdict changed). A survivor is a finding: name the arm it exposes and the sentence the contract would need."
+  },
+  {
+   "name": "T54W1MutC103",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "attack the C1 counter",
+   "item": "Attack the frozen C1 counter by mutation: delete the `unstable` accounting and show a tree whose entries pin LOG.md still passes. Work on a scratch copy of the counter (byte-identical copy, one exact edit, assert the old string occurs exactly once) and a `git clone --shared` of the lane; run the mutant at base d33053f7552d and at C0 59c38109bf11 with the command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane CLONE --rev REV --work EMPTY`. Record: the exact edit, the clone revision, the mutant's verdict line, and whether the mutant SURVIVED (produced the same verdict as the frozen counter) or was KILLED (verdict changed). A survivor is a finding: name the arm it exposes and the sentence the contract would need."
+  },
+  {
+   "name": "T54W1MutC104",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "attack the C1 counter",
+   "item": "Attack the frozen C1 counter by mutation: make `entry_reason(..., strict=True)` into `strict=False` semantics in the credit call and show what it admits. Work on a scratch copy of the counter (byte-identical copy, one exact edit, assert the old string occurs exactly once) and a `git clone --shared` of the lane; run the mutant at base d33053f7552d and at C0 59c38109bf11 with the command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane CLONE --rev REV --work EMPTY`. Record: the exact edit, the clone revision, the mutant's verdict line, and whether the mutant SURVIVED (produced the same verdict as the frozen counter) or was KILLED (verdict changed). A survivor is a finding: name the arm it exposes and the sentence the contract would need."
+  },
+  {
+   "name": "T54W1MutC105",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "attack the C1 counter",
+   "item": "Attack the frozen C1 counter by mutation: replace the section-sha match with a heading match in the frozen round-18 module (copy it) and show a tree where a stale section credits. Work on a scratch copy of the counter (byte-identical copy, one exact edit, assert the old string occurs exactly once) and a `git clone --shared` of the lane; run the mutant at base d33053f7552d and at C0 59c38109bf11 with the command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane CLONE --rev REV --work EMPTY`. Record: the exact edit, the clone revision, the mutant's verdict line, and whether the mutant SURVIVED (produced the same verdict as the frozen counter) or was KILLED (verdict changed). A survivor is a finding: name the arm it exposes and the sentence the contract would need."
+  },
+  {
+   "name": "T54W1MutC106",
+   "role": "mutation-tester",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "attack the C1 counter",
+   "item": "Attack the frozen C1 counter by mutation: relax the precheck arm's `lost=0 ok` to `lost<=7` and show the base tree then satisfies arm 1 while the verdict should be false. Work on a scratch copy of the counter (byte-identical copy, one exact edit, assert the old string occurs exactly once) and a `git clone --shared` of the lane; run the mutant at base d33053f7552d and at C0 59c38109bf11 with the command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c1/measure.py --lane CLONE --rev REV --work EMPTY`. Record: the exact edit, the clone revision, the mutant's verdict line, and whether the mutant SURVIVED (produced the same verdict as the frozen counter) or was KILLED (verdict changed). A survivor is a finding: name the arm it exposes and the sentence the contract would need."
+  },
+  {
+   "name": "T54W1MutC204",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "attack the C2 counter",
+   "item": "Attack the frozen C2 counter by mutation: change `ok = (rc == 2 and ...)` to `ok = (rc in (0, 2) and ...)` and show the mutant still passes at C0. Scratch copy, one exact edit (assert uniqueness), `git clone --shared` of the lane at C0, command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c2/measure.py --lane CLONE --rev REV --work EMPTY`. Record the edit, the verdict line and SURVIVED/KILLED with the arm it exposes."
+  },
+  {
+   "name": "T54W1MutC205",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "attack the C2 counter",
+   "item": "Attack the frozen C2 counter by mutation: make the `tmp_mkdirs` arm vacuously true (usable_ok += 1) and show the mutant passes at C0. Scratch copy, one exact edit (assert uniqueness), `git clone --shared` of the lane at C0, command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c2/measure.py --lane CLONE --rev REV --work EMPTY`. Record the edit, the verdict line and SURVIVED/KILLED with the arm it exposes."
+  },
+  {
+   "name": "T54W1MutC206",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "attack the C2 counter",
+   "item": "Attack the frozen C2 counter by mutation: require only \"TMPDIR\" in the cell and show the mutant passes at C0. Scratch copy, one exact edit (assert uniqueness), `git clone --shared` of the lane at C0, command `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-54/c2/measure.py --lane CLONE --rev REV --work EMPTY`. Record the edit, the verdict line and SURVIVED/KILLED with the arm it exposes."
+  },
+  {
+   "name": "T54W1Crit01",
+   "role": "critic",
+   "axes": [
+    "discernment? calibration"
+   ],
+   "milestone": "falsify the claims",
+   "item": "Falsify the claims: C1's input sufficiency. The C1 predicate binds a fresh entry per heading to a reader report and a trace. Attack the *sufficiency* direction: construct the strongest tree that satisfies every arm but should not count as a re-read (for example: a reader report whose findings are empty but whose MD checks nothing; an entry whose inputs are one unrelated file). Say whether the counter would pass and what the frozen contract cannot see here. Quote the contract's `cannot_see` and say whether it covers your construction. Write a runnable receipt for every assertion (command + output) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+  },
+  {
+   "name": "T54W1Crit02",
+   "role": "critic",
+   "axes": [
+    "discernment? calibration"
+   ],
+   "milestone": "falsify the claims",
+   "item": "Falsify the claims: the seven-heading frozen set vs 23 actual. C1 froze seven headings at base but the round must re-key 23 at C0. Decide whether the frozen counter is therefore too weak: enumerate which of the 23 are NOT among the seven, show how the precheck arm still covers them, and say whether a closure could accept C1_R54_PASS=true while a section's entry is a fig leaf. Give a verdict: the frozen predicate is adequate / it needs an amendment, with the exact sentence. Write a runnable receipt for every assertion (command + output) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+  },
+  {
+   "name": "T54W1Crit03",
+   "role": "critic",
+   "axes": [
+    "discernment? calibration"
+   ],
+   "milestone": "falsify the claims",
+   "item": "Falsify the claims: C2's registry cell vs behaviour. Attack the `scratch_root` cell on the seven rows: does each cell describe what its tool now does? Run the three arms by hand for one tool and compare word by word. Then attack the docs arm itself: a cell that contains the three keywords can still be wrong — construct a cell that would pass the counter's keyword test while describing different behaviour, and say whether the contract's `cannot_see` covers it. Write a runnable receipt for every assertion (command + output) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+  },
+  {
+   "name": "T54W1Crit04",
+   "role": "critic",
+   "axes": [
+    "discernment? calibration"
+   ],
+   "milestone": "falsify the claims",
+   "item": "Falsify the claims: the sourced claim. The C2 claim is the round's sourced claim (S277-S279). Attack its logic: does `corpus/knowledge/scratch-root-contract.md` claim anything the three rows do not support? Check the empty-string arm sentence by sentence against S278 and S279; check the \"standard fixes only the meaning\" sentence against S277. Name every sentence that overreaches and the minimal rewrite that would not. Write a runnable receipt for every assertion (command + output) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/<your-seat-name>.md`."
+  },
+  {
+   "name": "T54W1Rev01",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "review a C0 diff",
+   "item": "Review the C0 change to tools/env-diff.py: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff d33053f7552db4bd290c99a36979760f544c41ad 59c38109bf119d0e9d4f878644a82babc937bc1e -- tools/env-diff.py`. Check: the exception class cannot be swallowed by an existing broad catch that now returns the wrong class; the mapping is at the entry point and covers every caller that reaches the helper; the message still names the value; no exit class changed for the other arms; no docstring now lies about the code. Run at least one command per claim (import the module and call the helper with TMPDIR unset/empty/unusable). Report findings with severity and file:line."
+  },
+  {
+   "name": "T54W1Rev02",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "review a C0 diff",
+   "item": "Review the C0 change to tools/bash-witness-study.py: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff d33053f7552db4bd290c99a36979760f544c41ad 59c38109bf119d0e9d4f878644a82babc937bc1e -- tools/bash-witness-study.py`. Check: the exception class cannot be swallowed by an existing broad catch that now returns the wrong class; the mapping is at the entry point and covers every caller that reaches the helper; the message still names the value; no exit class changed for the other arms; no docstring now lies about the code. Run at least one command per claim (import the module and call the helper with TMPDIR unset/empty/unusable). Report findings with severity and file:line."
+  },
+  {
+   "name": "T54W1Rev03",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "review a C0 diff",
+   "item": "Review the C0 change to tools/evidence-disposition.py plus tools/pin-disposition.py: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff d33053f7552db4bd290c99a36979760f544c41ad 59c38109bf119d0e9d4f878644a82babc937bc1e -- tools/evidence-disposition.py tools/pin-disposition.py`. Check: the exception class cannot be swallowed by an existing broad catch that now returns the wrong class; the mapping is at the entry point and covers every caller that reaches the helper; the message still names the value; no exit class changed for the other arms; no docstring now lies about the code. Run at least one command per claim (import the module and call the helper with TMPDIR unset/empty/unusable). Report findings with severity and file:line."
+  },
+  {
+   "name": "T54W1Rev04",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "review a C0 diff",
+   "item": "Review the C0 change to tools/registry.json plus SKILL.md: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin diff d33053f7552db4bd290c99a36979760f544c41ad 59c38109bf119d0e9d4f878644a82babc937bc1e -- tools/registry.json SKILL.md`. Check: the exception class cannot be swallowed by an existing broad catch that now returns the wrong class; the mapping is at the entry point and covers every caller that reaches the helper; the message still names the value; no exit class changed for the other arms; no docstring now lies about the code. Run at least one command per claim (import the module and call the helper with TMPDIR unset/empty/unusable). Report findings with severity and file:line."
+  },
+  {
+   "name": "T54W1Sent01",
+   "role": "sentinel",
+   "axes": [
+    "operability",
+    "calibration"
+   ],
+   "milestone": "abuse the instruments",
+   "item": "Sentinel attack: forge a reader report. Fabricate a reader JSON at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-54/w1/T54W1ReadForged.json` with a guessed section_sha256 and no MD, then run the frozen C1 counter at a tree where the other arms would otherwise pass (a scratch clone with a hand-bound entry for that heading) and show the verdict stays false. Delete your file afterwards; the receipt keeps the bytes. Never touch the lane's own files; everything happens in your scratch clone. Report the counter verdict lines and the exact patch bytes."
+  },
+  {
+   "name": "T54W1Sent02",
+   "role": "sentinel",
+   "axes": [
+    "operability",
+    "calibration"
+   ],
+   "milestone": "abuse the instruments",
+   "item": "Sentinel attack: pin LOG.md. In a scratch clone at C0, hand-bind one entry whose inputs include LOG.md and whose trace records that sha, then commit a LOG.md change and run the frozen C1 counter at the new revision. Show the entry stops crediting (input-drift) and name the arm that catches a re-key with this failure mode. Never touch the lane's own files; everything happens in your scratch clone. Report the counter verdict lines and the exact patch bytes."
+  },
+  {
+   "name": "T54W1Sent03",
+   "role": "sentinel",
+   "axes": [
+    "operability",
+    "calibration"
+   ],
+   "milestone": "abuse the instruments",
+   "item": "Sentinel attack: fabricate a trace. In a scratch clone at C0, hand-bind an entry with a trace JSON whose recorded input sha differs from the blob at C0 and show the frozen C1 counter refuses to credit it (`trace-input-drift`). Then bind one with a real sha but a `live_lane_reads` entry naming a live path at a wrong digest and show that is refused too (`live-lane-read`). Never touch the lane's own files; everything happens in your scratch clone. Report the counter verdict lines and the exact patch bytes."
+  },
+  {
+   "name": "T54W1Sent04",
+   "role": "sentinel",
+   "axes": [
+    "operability",
+    "calibration"
+   ],
+   "milestone": "abuse the instruments",
+   "item": "Sentinel attack: print the class but exit 0. In a scratch clone at C0, patch one of the four tools so it prints the could-not-evaluate line and returns 0 on the unusable arm, and run the frozen C2 counter. It must print false with unusable_exit2=6. Then patch a different tool to raise a traceback on the same arm and show `naming` or the traceback check catches it. Report both verdict lines. Never touch the lane's own files; everything happens in your scratch clone. Report the counter verdict lines and the exact patch bytes."
+  },
+  {
+   "name": "T54W1MutB01",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "probe the scratch-root boundary",
+   "item": "Boundary probe (a mutation-tester seat; the policy refuses a standalone labrat lane): empty TMPDIR in the stdlib. Probe `python3 -c \"import tempfile,os; os.environ['TMPDIR']=''; print(tempfile.gettempdir())\"` and the same with TMPDIR pointing at a nonexistent path, and with TMPDIR unset. Report the three results and whether `tempfile.gettempdir()` itself rejects an unusable TMPDIR (it does not, the tools do). State the consequence for the note's empty arm. Use your scratch dir; report command, exit, and the naming line for every arm."
+  },
+  {
+   "name": "T54W1MutB02",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "probe the scratch-root boundary",
+   "item": "Boundary probe (a mutation-tester seat; the policy refuses a standalone labrat lane): non-writable TMPDIR. Create a directory, chmod 500 it, and run two of the seven tools' self-tests with TMPDIR pointing there (as a non-root user; report your uid). Expect exit 2 with the naming line. Then chmod back. Report both tools' exits and lines, and say whether `os.access(t, W_OK)` is the right test or whether the allocation itself should be the test. Use your scratch dir; report command, exit, and the naming line for every arm."
+  },
+  {
+   "name": "T54W1MutB03",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "probe the scratch-root boundary",
+   "item": "Boundary probe (a mutation-tester seat; the policy refuses a standalone labrat lane): TMPDIR is a file. Create a regular file, point TMPDIR at it, and run two tools' self-tests. Expect exit 2 (not a usable directory) with the value named. Then probe the boundary: a symlink to a directory, and a directory that exists but is on a read-only mount if one is available. Report each exit and whether the class is stable. Use your scratch dir; report command, exit, and the naming line for every arm."
+  },
+  {
+   "name": "T54W1Revenge01",
+   "role": "revenger",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "who depended on the old class",
+   "item": "Find every dependency on the OLD behaviour of the four edited tools: `grep -n` the lane for their exits (`could-not-evaluate`, `RuntimeError`, `--selftest`, `selftest`) across SKILL.md, corpus/, tools/*.json, tools/*.py, .ufo/evidence/round-52 and round-53; read the registry rows whose `expect.exit` is 1 or 2. Report every row, sentence or helper that would now see a different exit code or message and say whether it is a defect. No edits."
+  },
+  {
+   "name": "T54W1Revenge02",
+   "role": "revenger",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "the four tools' undocumented paths",
+   "item": "For each of the four edited tools, find the paths that reach `strict_scratch_root()` and DO NOT go through the mapped entry point (a helper called before the try, a module-level import-time call). Show with a command that each such path still fails closed. Report any path that can still traceback."
+  },
+  {
+   "name": "T54W1Revenge03",
+   "role": "revenger",
+   "axes": [
+    "operability"
+   ],
+   "milestone": "the selftest entry points",
+   "item": "The mapping is at each tool's entry point. Enumerate every documented invocation of the seven tools (their `--help`, USAGE strings, registry argv, SKILL text) and show that each one, under an unusable TMPDIR, exits 2 with a naming line and no traceback. Report the matrix of invocation x exit code; a `--selftest`-only proof that misses another documented mode is the finding."
+  },
+  {
+   "name": "T54W1Simplify01",
+   "role": "simplifier",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "the four copies of the class",
+   "item": "The four tools now each declare a five-line `ScratchRootUnusable` class and a three-line mapping. Decide whether that duplication is warranted (no shared module exists; tools are standalone by design) or whether it is a needless abstraction that should be one helper. Ground the answer in how the tools are invoked (registry argv, siblings copying them) and name the minimal change, with the deletion it makes possible. No edits."
+  },
+  {
+   "name": "T54W1Simplify02",
+   "role": "simplifier",
+   "axes": [
+    "depth"
+   ],
+   "milestone": "the registry cell wording",
+   "item": "The `scratch_root` cell is one ~45-word sentence repeated on seven rows. Decide whether that is the right home or whether one registry-level note plus a one-word cell would govern the same behaviour with less duplication. Check what reads those rows (registry-check validates fields, not prose) and give the deletion you would make with its cost. No edits."
+  },
+  {
+   "name": "T54W1RevDedup01",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "milestone": "dedupe against rounds 48-53",
+   "item": "Dedupe seat (a reviewer; the policy refuses a standalone distiller lane). Read the routed defects of rounds 48-53 (`.ufo/reports/round-5{0..3}/tameshi.md` if present, and `corpus/lessons/round-4{8,9}.md`, `round-5{0,1,2,3}.md`). Deduplicate: which of this round's C1/C2 arms restate an earlier claim's arm, and which round-54 obligation is already covered by an existing QUALITY criterion (so the new criterion 105 would be a duplicate)? Name each duplicate pair and the one C1/C2 arm that is genuinely new."
+  }
+ ]
+}

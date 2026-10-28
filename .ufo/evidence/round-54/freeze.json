@@ -1,18 +1,26 @@
 {
  "round": 54,
  "files": {
-  "c1/measure.py": "63f5f88147b898ee795dc925a04668d473c1fc845e370947307e3ea141a0b77b",
+  ".ufo/evidence/round-18/measure.py": "7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37",
+  ".ufo/evidence/round-21/coldread/measure.py": "657f009bdf1cc89ac614ed7c8424858f5f802b5a5330d8917db788f67982f3eb",
+  ".ufo/evidence/round-48/quality/coldread-precheck.sh": "3b07847afc86d0d6c14d2e6c20a6b3778da1798d9304204ec3a360a6301b2924",
   "c1/lost-headings-at-base.json": "a953d2e87116effc943f56a532b785cae8c8f44a104635083634c05fe0b8bb10",
-  "c2/measure.py": "b4684a3f555e8cbfda6fc9c7208827a3816a60cf53186269fdec41d5025e9e49",
-  "contract.json": "e15bffb3e888dd39bfc2a0932f054a416a506351c1be850427989792b08c380e",
-  "no-harm.sh": "1aa2fa9df9eac9380be0d24d0191a4c25f93030895db8d5fbeba6147920b639a",
-  "deciding-run.sh": "8a26856a81b6c8505b6f076a227b62c31fb04b179bd74aae706e70d8c7e44194",
-  "control/controls.sh": "3f1e5f5ce26159d914faa4f4339ba2e5f1484eb6b3be9f032a02be575203e6b4"
+  "c1/measure.py": "63f5f88147b898ee795dc925a04668d473c1fc845e370947307e3ea141a0b77b",
+  "c2/measure.py": "49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8",
+  "contract.json": "7283e67655e88ebe493baa3fe2f9259b70e6d1c4d5bb8de46bd5161df9d29615",
+  "control/controls.sh": "3f1e5f5ce26159d914faa4f4339ba2e5f1484eb6b3be9f032a02be575203e6b4",
+  "deciding-run.sh": "8f4eab3176e46595a7c63f197b3bf81b6b84b415a7aeee10cce3a20639c2cf9c",
+  "no-harm.sh": "1aa2fa9df9eac9380be0d24d0191a4c25f93030895db8d5fbeba6147920b639a"
  },
  "amendments": [
   {
    "n": 1,
-   "what": "c1/measure.py arm 3 matched the re-key directory against each traced file's basename; it now matches the DIRECTORY component of every traced path. Mechanical discovery bug, found by the binder dry run before any control was scored and before any deciding invocation; predicate, target and both counters' arms are unchanged."
+   "what": "c1/measure.py arm 3 matched the re-key directory against each traced file's basename; it now matches the DIRECTORY component of every traced path. Mechanical discovery bug, found by the binder dry run before any deciding invocation and before any control score; predicate, target and arms unchanged."
+  },
+  {
+   "n": 2,
+   "what": "c2/measure.py arm 3 ran each self-test under `strace -f` and required that run's rc: the tracer's overhead makes registry-check's own two timeout cases fail (elapsed ~9.6 s vs its < 3.5 s assertion) at base and at C0, so the arm measured the tracer. The rc now comes from a plain run and the traced run supplies only the /tmp mkdir census. Substance unchanged: 7/7 exit 0 on a usable root and zero mkdir under /tmp. Found by wave-1 attack seats (ExecExitClass F2, ExecEmptyStrace) before the deciding run; disclosed in the report, SCORECARD and lesson."
   }
- ]
+ ],
+ "note": "manifest covers every contract.frozen_paths entry except freeze.json itself (the manifest); 11 contract paths = 10 hashed files + this file."
 }

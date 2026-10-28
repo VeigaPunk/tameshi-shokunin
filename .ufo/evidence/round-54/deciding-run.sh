@@ -17,6 +17,32 @@ SCR=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/tameshi-r54/deciding
 cd "$LANE" || exit 2
 REV=$(git rev-parse --verify "$REV^{commit}") || exit 2
 FREEZE=$(git rev-parse --verify "$FREEZE^{commit}") || exit 2
+# Freeze-integrity gate (round 54, after the round-53 receipt layer was found to cite
+# undigested files): re-derive every sha256 recorded in freeze.json from the bytes at
+# FREEZE. A mismatch refuses with nothing run.
+python3 - "$LANE" "$FREEZE" "$E" <<'PYV' || { echo "DECIDING_REFUSED freeze-integrity"; exit 3; }
+import hashlib, json, os, subprocess, sys
+lane, freeze, E = sys.argv[1], sys.argv[2], sys.argv[3]
+env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+fr = json.loads(subprocess.run(['git', '-C', lane, 'show', '%s:%s/freeze.json' % (freeze, E)],
+                               capture_output=True, env=env, check=True).stdout)
+bad = []
+for rel, want in sorted(fr['files'].items()):
+    r = subprocess.run(['git', '-C', lane, 'show', '%s:%s/%s' % (freeze, E, rel)],
+                       capture_output=True, env=env)
+    if r.returncode != 0:
+        bad.append('%s unreadable' % rel)
+        continue
+    got = hashlib.sha256(r.stdout).hexdigest()
+    if got != want:
+        bad.append('%s %s != %s' % (rel, got[:12], want[:12]))
+print('FREEZE_INTEGRITY: %s files=%d amendments=%d'
+      % ('OK' if not bad else 'MISMATCH', len(fr['files']), len(fr.get('amendments') or [])))
+for b in bad:
+    print('FREEZE_MISMATCH', b)
+sys.exit(0 if not bad else 1)
+PYV
 [ -d "$OUT" ] || { echo "DECIDING_REFUSED outdir-missing"; exit 3; }
 [ "$(git rev-parse HEAD)" = "$REV" ] || { echo "DECIDING_REFUSED head-is-not-rev"; exit 3; }
 CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-b.stdout $E/control/controls-b.exit"
