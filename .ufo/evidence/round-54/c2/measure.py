@@ -15,7 +15,7 @@ declared contract, and this counter measures whether the tree at REV keeps it:
                 and the knowledge note must state.
   3. usable     with TMPDIR a fresh directory, each self-test exits 0 and strace
                 shows no mkdir under /tmp (the silent-fallback defect round 53
-                removed must not return). Amendment 2: the rc is the plain run and
+                removed must not return). Amendment 4: the census regex matches mkdir( and mkdirat( (the frozen `(?:at)` required the suffix, so a plain mkdir could never be counted). Amendment 2: the rc is the plain run and
                 the traced run supplies only the mkdir census — under `strace -f`
                 one tool's own timeout tests fail from tracer overhead, so a traced
                 rc measured the tracer.
@@ -139,7 +139,7 @@ def main():
         subprocess.run(['strace', '-f', '-e', 'trace=mkdir,mkdirat', '-o', str(log),
                         sys.executable, path, arg],
                        cwd=str(clone), env=env2, capture_output=True, timeout=TIMEOUT)
-        hits = len(re.findall(r'mkdir(?:at)\([^)]*"/tmp', log.read_text(errors='replace')))
+        hits = len(re.findall(r'mkdir(?:at)?\([^)]*"/tmp', log.read_text(errors='replace')))
         tmp_mkdirs += hits
         usable_ok += (rc_plain == 0 and hits == 0)
         if a.explain and (rc_plain != 0 or hits):
