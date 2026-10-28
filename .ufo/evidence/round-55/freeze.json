@@ -1,13 +1,43 @@
 {
  "round": 55,
  "files": {
-  ".ufo/evidence/round-55/contract.json": "2388cb50323f3090f99c9920fd810f0359660e1fc2423ed568f660b884107037",
-  ".ufo/evidence/round-55/c1/measure.py": "77abe1e9daf40bec2c9d7a7c12724e766e2f98d222c287fde6097df819b60783",
-  ".ufo/evidence/round-55/c2/measure.py": "9d076812d9c0fcd2d06dc7543e5a99bc2bfcdaf85f10ee6da9d0b5ea0b346dac",
+  ".ufo/evidence/round-55/contract.json": "31d5c8adf961139f4f887689aaa370f6203ab7e191b534990fe2f8f8a88ff8fa",
+  ".ufo/evidence/round-55/c1/measure.py": "5e8f50d1815309e8c3a1c914191b6032b7dceff27ba42d87a676b3f78e30ac5e",
+  ".ufo/evidence/round-55/c2/measure.py": "36ca47d36c4befc1148a911600c1a5c79efae5e4811f27fa2f9698c17b1ae786",
   ".ufo/evidence/round-55/no-harm.sh": "d93469db5a55632c2f175066852cc40a3e70379377da85f9b706b5d54fff76c9",
   ".ufo/evidence/round-55/deciding-run.sh": "af11d7551d8af1c75ba647704cbf72911d591c9ab28df060b669fd2549c34e2b",
-  ".ufo/evidence/round-55/controls.sh": "7c0cacb56c67915567a5b85746199a139c3e5971450262ffb47a16b5c431f2e0"
+  ".ufo/evidence/round-55/controls.sh": "7c0cacb56c67915567a5b85746199a139c3e5971450262ffb47a16b5c431f2e0",
+  ".ufo/evidence/round-55/c1/staged-at-freeze.txt": "921ad4196b76a43a897751ea9754b934caa987d2bdf13ea38592dbd7c343a861"
  },
- "amendments": [],
+ "amendments": [
+  {
+   "n": 1,
+   "what": "c2/measure.py checked the clone out detached; `evidence-disposition --root .` classifies a detached HEAD as historical_input_unavailable, so the lazy and empty arms measured the clone instead of the tool. The clone now checks out a local branch at REV (`r55-rev`). Discovery plumbing only; predicate, arms, denominators and target unchanged. Found by the L1 dry run on an edited clone before any control was scored and before any deciding invocation."
+  },
+  {
+   "n": 2,
+   "what": "c2/measure.py matched the grammar marker and the eight mode ids against raw text; both documents are hard-wrapped near 78 columns, so a marker split by a newline read as absent. The note and SKILL arms now match against whitespace-normalized text. Predicate unchanged (the documents must state the grammar and name the modes); found by the L1 dry run before any control score or deciding invocation."
+  },
+  {
+   "n": 3,
+   "what": "c2/measure.py labelled the bash-witness mode `bash-witness-study --selftest` while it is invoked as `bash-witness-study selftest`; the note consequently could not match the label and the note arm read 7/8. The label is now the mode as invoked. Predicate unchanged (the note must name every allocating mode); found by the L1 dry run before any control score or deciding invocation."
+  },
+  {
+   "n": 4,
+   "what": "c2/measure.py's usable arm took the exit code from the `strace -f` run, and the tracer's overhead makes registry-check's own timeout cases fail (rc 1 at base with a good TMPDIR). The exit code now comes from a plain run; the traced run supplies only the /tmp mkdir census. Same repair as round 54's amendment 2, re-learned by this round's own base receipt before any control score or deciding invocation; predicate and denominators unchanged."
+  },
+  {
+   "n": 5,
+   "what": "c1/measure.py's stale scan was line-scoped (a regex window that forbade a newline) and read three record files; wave-1 seat T55W1Er01 found a falsehood the window could not see (`corpus/lessons/round-54.md` splits `proves the arm ... requires rekeyed=7/7` across two lines) and pointed at LOG.md, which still carried R54.2's stale pointer. The scan now also searches each record document with whitespace collapsed (reporting an offset) and LOG.md joins the record set. The predicate is unchanged and now stricter: no stale assertion may stand in the lane's records outside the corrections section."
+  },
+  {
+   "n": 6,
+   "what": "c2/measure.py's mode table held eight allocating modes; wave seat T55W1ExecModeDiscovery showed `registry-check --rev` is a ninth documented allocating mode that emitted `REGISTRY_CHECK: could-not-evaluate (...)` on stdout (empty stderr). The claim's surface is every documented allocating mode, so the counter now measures nine on the grammar arm (the tool was fixed in the same commit). `--rev` builds a full fleet clone (minutes), so it is not run on the empty/usable arms; the note states that and its usable path stays covered by the tool's own self-test. Denominators: grammar 8->9, note 8->9."
+  },
+  {
+   "n": 7,
+   "what": "c1/measure.py derived R54.9's staged-package count from the live `merge/tameshi` worktree (a sibling directory that other lanes edit: one added file moved total 0 -> 3); the count now comes from the committed receipt `.ufo/evidence/round-55/c1/staged-at-freeze.txt` (command + output). Also R54.8's seat-file arm accepted any occurrence of `superseded`, which the base file already contained at an unrelated line; it now requires `SUPERSEDED (round 55`. Both found by wave seats T55W1Rev07 / T55W1Rev04 before any control score."
+  }
+ ],
  "note": "manifest covers every contract.frozen_paths entry except freeze.json itself (the manifest)."
 }

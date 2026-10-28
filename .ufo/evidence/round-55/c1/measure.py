@@ -35,6 +35,7 @@ RECORD = (
     "SCORECARD.md",
     "corpus/QUALITY.md",
     "corpus/lessons/round-54.md",
+    "LOG.md",
 )
 STAGED_DEFAULT = "/home/vgpnk/Projects/shokuknow"
 
@@ -95,6 +96,28 @@ def scan(lane, rev, paths, pattern):
     return hits
 
 
+def scan_span(lane, rev, paths, pattern):
+    """Whitespace-normalized whole-document search (amendment 5).
+
+    A hard-wrapped claim splits across lines, so a line-scoped regex can miss a
+    falsehood that is plainly there (round-54 lesson `proves the arm ... requires
+    rekeyed=7/7`, split over two lines). This arm searches the document with all
+    whitespace runs collapsed and reports the match's offset instead of a line.
+    """
+    rx = re.compile(pattern)
+    hits = []
+    for path in paths:
+        body = text(lane, rev, path)
+        if body is None:
+            continue
+        if path == "SCORECARD.md":
+            body = body.replace(corrections(lane, rev), "")
+        flat = " ".join(body.split())
+        for m in rx.finditer(flat):
+            hits.append("%s@%d: %s" % (path, m.start(), flat[max(0, m.start() - 40):m.end() + 20]))
+    return hits
+
+
 def derive_freeze_digest(lane, rev, name):
     raw = text(lane, rev, ".ufo/evidence/round-54/freeze.json")
     if raw is None:
@@ -139,9 +162,15 @@ def wave_numbers(lane, rev):
         return None
 
 
-def staged_count(root):
-    return len([p for p in glob.glob(os.path.join(root, "merge/tameshi/knowledge/**/*.md"),
-                                     recursive=True)])
+def staged_count(lane, rev):
+    """The staged package count, read from the committed receipt (amendment 7).
+
+    Deriving it from the live `merge/tameshi` worktree made the claim depend on
+    another lane's uncommitted edits (a +1 file moved total 0 -> 3). The receipt
+    carries the command and the number it printed; the tree cannot move it."""
+    raw = text(lane, rev, ".ufo/evidence/round-55/c1/staged-at-freeze.txt") or ""
+    m = re.search(r"^output=(\d+)$", raw, re.M)
+    return int(m.group(1)) if m else 0
 
 
 def first_commit(lane, rev, path, filt=None):
@@ -171,6 +200,8 @@ def classes(lane, rev, staged_root):
     stale = scan(lane, rev, RECORD, r"CTL_POS_c1 true")
     stale += scan(lane, rev, ("corpus/QUALITY.md", "corpus/lessons/round-54.md"),
                   r"(positive control[^\n]{0,160}rekeyed=7/7)|(rekeyed=7/7[^\n]{0,160}positive control)")
+    stale += scan_span(lane, rev, RECORD,
+                       r"positive control.{0,160}rekeyed=7/7|rekeyed=7/7.{0,160}positive control")
     row("R54.1", premise, stale, "CTL_MISMATCH" in corr and "2/3" in corr,
         "CTL_MISMATCH + 2/3")
 
@@ -221,12 +252,12 @@ def classes(lane, rev, staged_root):
     # that claimed operator authority is marked superseded.
     seat = text(lane, rev, ".ufo/waves/round-54/w1/T54W1ExecStraceNoise.md") or ""
     row("R54.8", bool(seat), [],
-        "superseded" in seat.lower() and "config.yml" in corr and "fabricated" in corr,
+        "SUPERSEDED (round 55" in seat and "config.yml" in corr and "fabricated" in corr,
         "config.yml + fabricated + seat marked")
 
     # R54.9 -- wave-table numbers and the staged package count.
     wn = wave_numbers(lane, rev)
-    staged = staged_count(staged_root)
+    staged = staged_count(lane, rev)
     want9 = ("reviewers=%d attack=%d/%d seats=%d" % (wn[0], wn[1], wn[2], wn[2])) if wn else "unavailable"
     stale = scan(lane, rev, ("corpus/lessons/round-54.md",), r"84 staged")
     row("R54.9", wn is not None and staged > 0, stale,
