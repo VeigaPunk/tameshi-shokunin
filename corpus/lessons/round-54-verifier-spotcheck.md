@@ -130,3 +130,124 @@ Census (also the sourced-claim gate's own check): `scripts/sources-census.sh val
 The three files under R54.6 were committed byte-identical (`cmp`-verified before and after) by the closure through `scripts/hyaku/jj-lane.sh commit … --as tameshi`, message naming them as the lane's own wave-2 seat files. No lane-authored byte was modified, and this spot-check is a separate commit on top. Nothing else in the lane was written; the fleet writes were limited to `MANIFEST.json`.
 
 Tooling: no installs or upgrades were needed for this closure; nothing was added to any PATH directory.
+
+---
+
+## Erratum — second non-author pass (re-dispatch at lane HEAD `650987a0`)
+
+author: hyaku closure (non-author integrator, @m_zfl) — same role, fresh pass
+date: 2026-10-28
+This section appends to the filed bytes; nothing above is rewritten or superseded.
+
+**Why this pass exists.** The orchestrator re-rendered the closure prompt with the lane HEAD
+*after* the round set to `650987a0d6fc285b37f0f9e63a3aae864af9cd5a` (the closure's own durability
+sweep `ff2a821` plus this file's commit `650987a` on top of the lane's `0263c71e`) and one extra
+`complete tameshi round=54` line in the mutable watchdog digest. The lane's round work did not
+change between `0263c71e` and `650987a`: only the three swept seat files and this file differ.
+The MANIFEST row `rounds[874]` named `commit: tameshi-shokunin@0263c71e`; this pass re-verifies at
+the re-anchored tip and records the pointer correction through a `closure-correction` entry.
+
+## Conformance, re-checked at `650987a`
+
+| check | command (observed this pass) | result |
+|---|---|---|
+| lane pushed, nothing ahead | `scripts/hyaku/jj-lane.sh state …/tameshi-shokunin` → `branch=master local=650987a remote=650987a ahead=0 behind=0`; `git ls-remote origin refs/heads/master` = `650987a0…` | pass |
+| uncommitted round work | `git status --porcelain` → empty | pass (R54.6 resolved by `ff2a821`) |
+| cited commits exist and are ancestors of `master` | `git merge-base --is-ancestor` over `d33053f7 441c26be 59c38109 99c3bc88 077d431e 7fa9a5e0 0263c71e 097985c1 c2108100 650987a0` | 10/10 pass |
+| report identity / SHONEN / marker rule | fleet `git log -- .ufo/reports/round-54/tameshi.md` → `tameshi-shokunin <tameshi@shokunin.local> fcb8d8db`; `grep -c '^## SHONEN'` → 1, four `[~]`; real report | pass |
+| prompt carries the contract | `.ufo/prompts/tameshi-round-54.md`: §1 mission/axes binding, §3 “at least 8 L2 subagents … ONE batched AgentSwarm call” (matches `MISSION.md` §L2 concurrency), §5 commit-then-push + push scope + L0, report path, commit-before-report, SHONEN heading, hash-citation rule, lane write scope | pass |
+| wave bands | `w1-registry.json` 76 seats (v2 64–128), attack 21 (27.6 %); `w2-registry.json` 47 seats (v1 32–64), attack 12 (25.5 %) | pass (report's “26.3 %” for w1 is wrong — R54.9) |
+
+## Claims — re-measured this pass (frozen counter bytes, `--work` outside `/tmp`)
+
+C1, run yourself at each end (`c1/measure.py`, bytes pinned by `freeze.json@077d431e`, `d7749f84…`):
+
+```
+--rev d33053f7  C1_R54: rev=d33053f7552d c0=none credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 unstable=0 total=4 C1_R54_PASS=false
+--rev 59c38109  C1_R54: rev=59c38109bf11 c0=none credited=41 lost=23 rekeyed=0/7 readers=0/7 monitor=6/41 unstable=0 total=4 C1_R54_PASS=false
+--rev c2108100  C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true
+```
+
+C2, same counter discipline (`c2/measure.py`, `8528ee85…`):
+
+```
+--rev d33053f7  C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=0 note=0 sources=0 total=13 C2_R54_PASS=false
+--rev c2108100  C2_R54: rev=c21081008adb tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+```
+
+Both match the committed receipts exactly. A first C2 attempt of this pass used `--work` under `/tmp`
+and read `tmp_mkdirs=2020`/`usable_ok=0`; the census matches `"/tmp` by design and the counter's
+docstring puts scratch outside `/tmp`, so that reading measured my scratch placement, not the lane —
+re-run under the fleet `.scratch` reproduces the receipt. Recorded so no later reader mistakes it
+for a lane defect.
+
+Structural checks I ran myself (not copied):
+
+- freeze integrity: 10/10 `freeze.json` digests re-derived at `077d431e`, `amendments=5`;
+  `git diff 077d431e c2108100 -- <10 frozen paths>` → identical.
+- ledger: 591 entries; 23 bound under `rekey-r54-99c3bc88d704`, all `read_rev=99c3bc88d704…`;
+  `verdict=gap-minor` 23/23; `minor_gaps` 0×11, 1×8, 2×3, 11×1 = **25 over 12 entries**;
+  `blocking_gaps` 0 and `wrong_expectations` 0 everywhere; no bound entry’s `inputs` names
+  `LOG.md`, `SCORECARD.md` or the round-21 ledger; **23/23** `sha256` and `start/end` equal the
+  sectionized `SKILL.md` at `c0` (round-18 `sectionize`, surrogate-escape).
+- readers: 46 reader files (23 w1 at `cand=59c38109`, 23 w2 at `cand=99c3bc88`); each
+  `section_sha256` equals the section at **its own** `cand` — 0 mismatches; `SKILL.md` is
+  byte-identical at `c0` and the deciding rev.
+- receipts: `frozen.stdout` (rev `c2108100`), `no-harm` 14 ok / 0 RED, `DECIDING_RUN_EXIT=0`,
+  `coldread-precheck` 64/64 — read as committed evidence, not re-executed (a sibling’s gate is
+  evidence-verified, per PROTOCOL §Gate standard).
+- census: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi` →
+  exit **0** (W01/W04 only); rows `136 → 139`.
+
+**Re-measured vs evidence-verified:** C1 and C2 are re-measured (both ends, my own runs);
+no-harm, the frozen-precheck run and the census receipt are evidence-verified; the census command
+was also re-run by me.
+
+## Discernment spot-check (re-opened this pass)
+
+| item | decision | re-opened source | agree/disagree | reason |
+|---|---|---|---|---|
+| S277 POSIX.1-2024 §8.1 (`TMPDIR`) | admit | committed snapshot `.ufo/evidence/round-54/assimilation/S277-posix-env.html` | **agree** | the 21-word quote is present verbatim (“TMPDIR This variable shall represent a pathname of a directory made available for programs that need a place to create temporary files”); URL, access date and tier A are in the lesson Gate and the row |
+| S278 CPython 3.12.7 `tempfile.py` | admit | snapshot `S278-tempfile.py:163-165` | **agree** | `for envname in 'TMPDIR', 'TEMP', 'TMP': dirname = _os.getenv(envname); if dirname: dirlist.append(dirname)` — empty is skipped, so empty behaves as unset |
+| S279 Python `tempfile` docs | admit | snapshot `S279-tempfile-docs.html` | **agree** | “The list is: The directory named by the TMPDIR environment variable” is first in the documented order; 11 words |
+| `merge/tameshi` `delta-debugging-minimization-contract.md` | reject | lane `corpus/knowledge/delta-debugging-minimization-contract.md` at `d33053f7` (present, `79f44b5`, round 50); staged `/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/corpus/knowledge/…` holds the same name | **disagree** | the entry is already adopted in the lane, so “REFUSED this round on capacity” and the round-55 “next-ranked” plan misstate a non-pending item; the staged count is **81** `.md` under `knowledge` (`find … -name '*.md' | wc -l`), not 84 |
+
+## Per-axis verdicts and trends (stand)
+
+| Axis | Verdict | Evidence |
+|---|---|---|
+| calibration | **improved** | C1 re-measured 57/64 → 64/64, monitor 6/57 → 8/64 |
+| operability | **improved** | C2 re-measured 3/7 → 7/7 on the unusable arm; empty/usable 7/7; docs 0 → 7, note 0 → 1, sources 0 → 3 |
+| depth | unchanged | no capability claimed; QUALITY 105 added (R54.1 counter-signal) |
+| coverage | unchanged | no frontier row advanced (F6 held); census +3 rows on owned ground |
+| freshness | unchanged | `NOHARM r45-freshness … score=9 ok` |
+| adjacency | unchanged | no contested-scope claim |
+
+No axis harmed: `SCORECARD.md` over `abae0a04..650987a` is **61 insertions / 0 deletions**; the
+only `SKILL.md` deletions are the fix pass’s corrected anchors, and the cold-read floor at the
+deciding rev is 64/64. Trends stand: expansion **unchanged**, quality **improved**, discernment
+**unchanged** (disagreement with the lane’s “improved”, as filed above).
+
+## Routed defects — one new this pass
+
+**R54.10 — the phase-A control quote does not match its cited receipt.** The report quotes
+`CTL_R53 (the round-53 final tree, 58/64, rekeyed=0/30)` under the pointer
+`control/controls-a.stdout`, but that file’s `CTL_R53` line prints `rekeyed=0/7` (the round-54
+counter’s arm-3 denominator). `0/30` belongs to the round-53 counter’s own receipt
+`control/r53-counter-at-88afa941.stdout`. Re-derive:
+`cat .ufo/evidence/round-54/control/controls-a.stdout`. Same shape as R54.3/R54.4: a real number
+cited against the wrong file.
+
+**R54.5 extended.** Three values now name the wave-1 finding count: report “25”, the fix-pass
+commit subject `99c3bc8` “26 wave-1 reader findings adjudicated and fixed”, and the committed
+`w1/*Read*.json` total **28**. Wave 2: committed readers **25 findings in 12 sections**, which is
+what the ledger’s `minor_gaps` sum (25 over 12 entries) records — the report’s “22 in 9” and “the
+nine sections” are both undercounts.
+
+R54.1–R54.9 as filed above are unaffected by this pass; each was re-confirmed against the bytes
+(CONTROLS_B `CTL_MISMATCH … expected=true actual=false` / `2/3`; `total=14` vs the receipt’s
+`total=13`; `49280fe5` vs the pinned `8528ee85`; the `R100` rename; the `config.yml` incident
+still unrecorded in the lesson and still asserted as operator-authorised in the seat file).
+
+All verdicts and the admission stand. No lane-authored byte was modified by this pass; this
+section is the only write in the lane.
