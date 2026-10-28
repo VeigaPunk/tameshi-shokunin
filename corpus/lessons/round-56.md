@@ -8,8 +8,7 @@ R55.5 — the deciding gate cannot compare the revision it certifies — is C2.
 R55.1, R55.2, R55.4, R55.6 and R55.7 are disposed below. Base `981c5e8b`
 (`.ufo/evidence/round-56/contract.json`); the contract, both counters,
 `tools/receipt-revision-gate.py`, `controls.sh`, `no-harm.sh` and
-`deciding-run.sh` are frozen at `c3e2ca9f` (`.ufo/evidence/round-56/freeze.json`,
-`amendments` `<L1 fills>`). Content commit C0 `<L1 fills>`; deciding receipts
+`deciding-run.sh` are frozen at the original freeze `c3e2ca9f020776b3d66c7af854fb82c834674fcf`; `freeze.json` records one pre-scoring amendment at operative freeze `21eb3c63cd0f3190c0deeb8953c6c91c7742cd68` (amendment 1; the contract, targets, counters and arms are unchanged). Content commit C0 `c0137451f5b7f22d65f748fc69f1b181f55e1378`; deciding receipts
 under `.ufo/evidence/round-56/after/`.
 
 ## Gate (sources opened this round)
@@ -24,7 +23,7 @@ Snapshot/extraction receipts: `.ufo/evidence/round-56/assimilation/in-toto-state
 (sha256 `cbe684a18b812b8b613d9202eb43b2ea24477f91a2ad6ca5be935185a455ebea`, 2492 B;
 pinned tag `v1.2.0` `df02077b`, byte-identical at `main` `50bf0171`), extraction metadata
 `in-toto-statement-v1.json`, full text `in-toto-statement-v1.extract.txt`. Census at round
-end: `<L1 fills>` (`scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`).
+end: exit 0, 142 rows, 16 warnings (15 W04 duplicate-URL notices and one W01 S101 tier-C notice), no errors (`integration/census-pre-pin.{stdout,stderr,exit}`); command `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi`.
 
 considerthese mining: `considerthese/2026-10-28.md` proposal 1 (the
 receipt-existence linter for records) is mined into `corpus/QUALITY.md`
