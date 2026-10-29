@@ -1,0 +1,782 @@
+#!/usr/bin/env python3
+"""Round-57 C2 counter (operability): the receipt-binding gate is operable from the entry
+registry, and the SKILL tells the truth about the codes it emits.
+
+Usage:
+  python3 measure.py --lane LANE --rev REV [--work EMPTY_DIR] [--explain]
+  python3 measure.py --selftest [--lane LANE] [--rev REV]
+
+Every read of the lane is of git objects at REV (never the live working tree, never a committed
+receipt: expected exits come from registry-check running the committed rows, and the standing-rules
+code is recomputed by RUNNING the gate on a fixture this counter builds). All scratch lives under
+--work (TMPDIR for children); /tmp is never named. Stdlib + git only.
+
+Arms (each an integer shortfall; total = their sum; PASS iff total == 0):
+
+  rows      tools/registry.json at REV has >= 3 active `gate` rows whose argv is
+            `python3 tools/receipt-revision-gate.py ... --receipt ...` without `--selftest`;
+            together they expect the exits 0, 2 and 3; every row expecting 2 or 3 carries a
+            `RECEIPT_*` code that the gate's CODES defines in `expect.stdout_contains`.
+            shortfall = max(0, 3 - gate_rows) + missing exits of {0,2,3} + refusal rows without a
+            known named code.
+  executed  `registry-check.py --root LANE --rev REV --only NAME` (registry-check bytes at REV,
+            clone under --work) for each such row: held=h/n. shortfall = n - h.
+  mutants   three single-edit mutants of the gate (mutants.json, sha256 pinned below; each `old`
+            must occur exactly once in the gate at REV) are applied to the gate inside a
+            `git clone --shared` of REV and the rows rerun live there (`--root CLONE --only`); a
+            mutant is killed when a row that held on the unmutated clone now differs with an
+            integer exit. mutants=k/3, shortfall = 3 - k (an unappliable mutant is not killed).
+  skill_row the `### Gate/probe registry` section of SKILL.md (until the next heading of level
+            <= 3) has a table row naming `receipt-revision-gate.py` whose `Verdict map` cell
+            carries the whole-token exit codes 0, 2 and 3. shortfall = 1 - skill_row.
+  codes     every distinct `RECEIPT_[A-Z_]+` token inside `## Standing rules` is a member of the
+            gate's CODES (parsed from the gate's source by ast); codes_known=n/m, shortfall =
+            m - n (+1 when the section carries no token at all).
+  cell      the Standing-rules table row whose first cell starts `a verdict receipt names another
+            revision` carries, in its last cell, exactly the set {code the gate emits}: the counter
+            builds a repo (revision A, then B differing on one path listed in a `--paths` file),
+            writes a receipt naming A, runs the gate with role `verdict` at certified B and reads
+            the code from the gate's output. standing_cell=ok or WRONG:<codes the cell carries,
+            comma-joined | none when the row or any code is absent | fixture when the gate did not
+            refuse>. shortfall 0|1.
+
+Verdict line (last stdout line):
+  C2_R57: self=<sha12> rev=<rev12> gate_rows=<n> exits=<0,2,3|none> held=<h>/<n> mutants=<k>/3
+  skill_row=<0|1> codes_known=<n>/<m> standing_cell=<ok|WRONG:...> total=<n> C2_R57_PASS=<true|false>
+Exit 0 iff PASS, 1 otherwise, 2 on setup error (unresolvable REV, non-empty --work).
+
+What it cannot see: that three mutants are the defects that matter (a stated sample of a 359-line
+gate); exits the committed rows do not exercise (the other codes stay covered by the gate's own
+19-case selftest row); that a SKILL cell is understood by a reader (the round-21 monitor's job).
+
+--selftest [--lane LANE] [--rev REV]: builds synthetic lanes in a scratch dir (gate and
+registry-check bytes taken from LANE@REV; default lane = the lane that holds this file, REV =
+HEAD) and prints `C2_R57_SELFTEST: n/n pass`; one fixture per arm moves that arm away from zero.
+"""
+import argparse
+import ast
+import contextlib
+import io
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+GATE = 'tools/receipt-revision-gate.py'
+REGCHECK = 'tools/registry-check.py'
+REGISTRY = 'tools/registry.json'
+SKILL = 'SKILL.md'
+MUTANTS_PATH = '.ufo/evidence/round-57/c2/mutants.json'
+MUTANTS_SHA256 = 'd51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de'
+GATE_ROWS_FLOOR = 3
+WANT_EXITS = (0, 2, 3)
+VERDICT_CELL_HEAD = 'a verdict receipt names another revision'
+CODE_RE = re.compile(r'RECEIPT_[A-Z_]*[A-Z]')
+
+
+class Setup(Exception):
+    pass
+
+
+def lane_env():
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1', PYTHONDONTWRITEBYTECODE='1')
+    return env
+
+
+def git(*args, cwd=None, check=False):
+    proc = subprocess.run(['git'] + list(args), cwd=cwd, env=lane_env(), capture_output=True)
+    if check and proc.returncode != 0:
+        raise Setup('git %s: %s' % (' '.join(args), proc.stderr.decode('utf-8', 'replace').strip()))
+    return proc
+
+
+def show(lane, rev, path):
+    proc = git('-C', lane, 'show', '%s:%s' % (rev, path))
+    return proc.stdout if proc.returncode == 0 else None
+
+
+def resolve(lane, rev):
+    proc = git('-C', lane, 'rev-parse', '--verify', '--quiet', '%s^{commit}' % rev)
+    return proc.stdout.decode().strip() if proc.returncode == 0 else None
+
+
+def sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+# ---------------------------------------------------------------------------- parsing helpers
+
+def gate_codes(gate_src):
+    """The gate's CODES tuple, parsed (never imported) from its source."""
+    try:
+        tree = ast.parse(gate_src)
+    except SyntaxError:
+        return ()
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'CODES'
+                                                for t in node.targets):
+            try:
+                value = ast.literal_eval(node.value)
+            except ValueError:
+                return ()
+            return tuple(v for v in value if isinstance(v, str))
+    return ()
+
+
+def split_cells(line):
+    """Cells of a markdown table row; a `|` inside a backtick span does not split."""
+    cells, cur, tick = [], [], False
+    for ch in line.strip():
+        if ch == '`':
+            tick = not tick
+        if ch == '|' and not tick:
+            cells.append(''.join(cur).strip())
+            cur = []
+        else:
+            cur.append(ch)
+    cells.append(''.join(cur).strip())
+    if cells and cells[0] == '':
+        cells = cells[1:]
+    if cells and cells[-1] == '':
+        cells = cells[:-1]
+    return cells
+
+
+def is_separator(line):
+    return bool(re.match(r'^\s*\|[\s:|-]+\|\s*$', line)) and '-' in line
+
+
+def standing_rules(skill_text):
+    m = re.search(r'^## Standing rules[ \t]*\n(.*?)(?=^## |\Z)', skill_text, re.M | re.S)
+    return m.group(1) if m else None
+
+
+def registry_section(skill_text):
+    lines = skill_text.split('\n')
+    out = None
+    for line in lines:
+        if out is None:
+            if line.strip() == '### Gate/probe registry':
+                out = []
+            continue
+        if re.match(r'^#{1,3} ', line):
+            break
+        out.append(line)
+    return out
+
+
+def skill_row_ok(skill_text):
+    """1 when a table row of `### Gate/probe registry` names the gate and its Verdict map cell
+    carries the whole-token exit codes 0, 2 and 3."""
+    section = registry_section(skill_text)
+    if not section:
+        return 0, 'no ### Gate/probe registry section'
+    header = None
+    for i, line in enumerate(section):
+        if not line.lstrip().startswith('|'):
+            header = None
+            continue
+        if i + 1 < len(section) and is_separator(section[i + 1]) and not is_separator(line):
+            header = [c.lower() for c in split_cells(line)]
+            continue
+        if is_separator(line) or header is None:
+            continue
+        cells = split_cells(line)
+        if 'receipt-revision-gate.py' not in line:
+            continue
+        if 'verdict map' not in header:
+            return 0, 'table has no Verdict map column'
+        idx = header.index('verdict map')
+        if idx >= len(cells):
+            continue
+        cell = cells[idx]
+        have = [d for d in '023' if re.search(r'(?<![0-9A-Za-z_.])%s(?![0-9A-Za-z_.])' % d, cell)]
+        if len(have) == 3:
+            return 1, 'verdict map=%s' % cell[:80]
+        return 0, 'row names the gate but its Verdict map carries only %s' % ','.join(have or ['none'])
+    return 0, 'no table row names receipt-revision-gate.py'
+
+
+def standing_cell(skill_text):
+    """(codes carried by the verdict-receipt row's last cell | None when the row is absent,
+    tokens of the whole section | None when the section is absent)."""
+    body = standing_rules(skill_text)
+    if body is None:
+        return None, None
+    tokens = sorted(set(CODE_RE.findall(body)))
+    row = None
+    for line in body.split('\n'):
+        if not line.lstrip().startswith('|') or is_separator(line):
+            continue
+        cells = split_cells(line)
+        if cells and cells[0].lower().startswith(VERDICT_CELL_HEAD):
+            row = cells
+            break
+    if row is None:
+        return None, tokens
+    return sorted(set(CODE_RE.findall(row[-1]))), tokens
+
+
+def is_gate_row(row):
+    if not isinstance(row, dict) or row.get('kind') != 'gate' or row.get('status') != 'active':
+        return False
+    argv = row.get('argv')
+    if not isinstance(argv, list) or len(argv) < 2 or not all(isinstance(x, str) for x in argv):
+        return False
+    return (os.path.basename(argv[0]).startswith('python') and argv[1] == GATE
+            and '--selftest' not in argv and '--receipt' in argv)
+
+
+def row_exit(row):
+    expect = row.get('expect')
+    value = expect.get('exit') if isinstance(expect, dict) else None
+    return value if isinstance(value, int) and not isinstance(value, bool) else None
+
+
+def row_named_codes(row):
+    needles = row.get('expect', {}).get('stdout_contains', []) if isinstance(row.get('expect'), dict) else []
+    found = set()
+    for n in needles if isinstance(needles, list) else []:
+        if isinstance(n, str):
+            found.update(CODE_RE.findall(n))
+    return found
+
+
+# ---------------------------------------------------------------------------- running things
+
+ROW_RE = re.compile(r'^ROW (\S+) expect=(\S+) got=(\S+) (held|differs)\s*$', re.M)
+
+
+def run_row(rc_path, root, name, rev, work, env):
+    """Run one registry row through registry-check; ('held'|'differs'|'error', got)."""
+    cmd = [sys.executable, str(rc_path), '--root', str(root)]
+    if rev is not None:
+        cmd += ['--rev', rev]
+    cmd += ['--only', name]
+    proc = subprocess.run(cmd, capture_output=True, cwd=str(work), env=env)
+    out = proc.stdout.decode('utf-8', 'replace')
+    m = ROW_RE.search(out)
+    if not m or m.group(1) != name:
+        return 'error', 'rc=%d' % proc.returncode
+    return m.group(4), m.group(3)
+
+
+def child_env(work):
+    env = lane_env()
+    tmp = Path(work) / 'tmp'
+    tmp.mkdir(parents=True, exist_ok=True)
+    env['TMPDIR'] = str(tmp)
+    return env
+
+
+def clone_at(lane, rev, dest):
+    git('clone', '-q', '--shared', str(lane), str(dest), check=True)
+    git('-C', str(dest), 'checkout', '-q', '--detach', rev, check=True)
+
+
+def load_mutants(raw):
+    data = json.loads(raw.decode('utf-8'))
+    out = []
+    for m in data['mutants']:
+        out.append((m['id'], m['name'], m['old'], m['new']))
+    return out
+
+
+def apply_mutant(gate_bytes, old, new):
+    text = gate_bytes.decode('utf-8')
+    if text.count(old) != 1:
+        return None
+    return text.replace(old, new).encode('utf-8')
+
+
+def build_cell_fixture(work, gate_path):
+    """Scratch repo: A, then B differing on one listed path; a verdict receipt naming A.
+    Returns (emitted codes set, exit, detail) from RUNNING the gate at certified B."""
+    d = Path(tempfile.mkdtemp(prefix='c2-cell-', dir=str(work)))
+    env = lane_env()
+    ident = ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid']
+
+    def g(*args):
+        return subprocess.run(['git', '-C', str(d)] + ident + list(args), env=env, capture_output=True)
+
+    g('init', '-q')
+    top = g('rev-parse', '--show-toplevel').stdout.decode().strip()
+    if os.path.realpath(top) != os.path.realpath(str(d)):
+        raise Setup('cell fixture toplevel %s != %s' % (top, d))
+    (d / 'surface.txt').write_text('one\n')
+    g('add', '-A')
+    g('commit', '-q', '-m', 'A')
+    rev_a = g('rev-parse', 'HEAD').stdout.decode().strip()
+    (d / 'surface.txt').write_text('two\n')
+    g('commit', '-q', '-a', '-m', 'B')
+    rev_b = g('rev-parse', 'HEAD').stdout.decode().strip()
+    paths = d.parent / (d.name + '.paths')
+    paths.write_text('surface.txt\n')
+    receipt = d.parent / (d.name + '.receipt')
+    receipt.write_text('VERDICT: rev=%s C1_X_PASS=true\n' % rev_a)
+    proc = subprocess.run([sys.executable, str(gate_path), '--lane', str(d), '--certified', rev_b,
+                           '--paths', str(paths), '--receipt', '%s:verdict' % receipt],
+                          capture_output=True, env=env, cwd=str(d.parent))
+    out = proc.stdout.decode('utf-8', 'replace')
+    m = re.search(r'^GATE: .*codes=(\S+) verdict=(\w+)', out, re.M)
+    codes = set()
+    if m and m.group(1) != 'none':
+        codes = set(m.group(1).split(','))
+    return codes, proc.returncode, (m.group(2) if m else 'none')
+
+
+# ---------------------------------------------------------------------------- the counter
+
+def measure(lane, rev, work, mutants_raw, explain):
+    """Return {arm tallies, notes}; `rev` is a full sha already resolved in `lane`."""
+    work = Path(work)
+    work.mkdir(parents=True, exist_ok=True)
+    env = child_env(work)
+    notes = []
+    res = {'gate_rows': 0, 'exits': 'none', 'held': 0, 'rows_n': 0, 'mutants': 0, 'skill_row': 0,
+           'codes_known': 0, 'codes_total': 0, 'standing_cell': 'WRONG:none',
+           'short': {k: 0 for k in ('rows', 'executed', 'mutants', 'skill', 'codes', 'cell')}}
+    short = res['short']
+    gate_raw = show(lane, rev, GATE)
+    rc_raw = show(lane, rev, REGCHECK)
+    reg_raw = show(lane, rev, REGISTRY)
+    skill_raw = show(lane, rev, SKILL)
+    bindir = work / 'bin'
+    bindir.mkdir(exist_ok=True)
+    codes = ()
+    if gate_raw is not None:
+        (bindir / 'receipt-revision-gate.py').write_bytes(gate_raw)
+        codes = gate_codes(gate_raw)
+    else:
+        notes.append('gate-missing at rev')
+    if rc_raw is not None:
+        (bindir / 'registry-check.py').write_bytes(rc_raw)
+    else:
+        notes.append('registry-check-missing at rev')
+
+    # ---- arm rows ----------------------------------------------------------------------
+    rows = []
+    if reg_raw is not None:
+        try:
+            registry = json.loads(reg_raw.decode('utf-8'))
+            rows = [r for r in registry.get('rows', []) if is_gate_row(r)]
+        except (ValueError, AttributeError):
+            notes.append('registry-unparseable')
+    else:
+        notes.append('registry-missing at rev')
+    exits = sorted({row_exit(r) for r in rows if row_exit(r) is not None})
+    unnamed = [r['name'] for r in rows
+               if row_exit(r) in (2, 3) and not (row_named_codes(r) & set(codes))]
+    missing = [e for e in WANT_EXITS if e not in exits]
+    short['rows'] = max(0, GATE_ROWS_FLOOR - len(rows)) + len(missing) + len(unnamed)
+    res['gate_rows'] = len(rows)
+    res['rows_n'] = len(rows)
+    res['exits'] = ','.join(str(e) for e in exits if e in WANT_EXITS) or 'none'
+    notes.append('rows gate_rows=%d exits=%s missing_exits=%s refusal_rows_without_known_code=%s'
+                 % (len(rows), res['exits'], missing or 'none', unnamed or 'none'))
+
+    # ---- arm executed --------------------------------------------------------------------
+    rc_path = bindir / 'registry-check.py'
+    held = 0
+    if rows and rc_raw is not None:
+        for r in rows:
+            state, got = run_row(rc_path, lane, r['name'], rev, work, env)
+            notes.append('executed %s expect=%s got=%s %s' % (r['name'], row_exit(r), got, state))
+            held += state == 'held'
+    res['held'] = held
+    short['executed'] = len(rows) - held
+
+    # ---- arm mutants ---------------------------------------------------------------------
+    killed = 0
+    if rows and gate_raw is not None and rc_raw is not None and mutants_raw is not None:
+        clone = work / 'mut'
+        try:
+            clone_at(lane, rev, clone)
+            gate_in_clone = clone / GATE
+            baseline = {r['name'] for r in rows
+                        if run_row(rc_path, clone, r['name'], None, work, env)[0] == 'held'}
+            notes.append('mutants baseline-held=%d/%d' % (len(baseline), len(rows)))
+            for mid, mname, old, new in load_mutants(mutants_raw):
+                mutated = apply_mutant(gate_raw, old, new)
+                if mutated is None:
+                    notes.append('mutant %s %s: old string not unique in gate (not killed)' % (mid, mname))
+                    continue
+                gate_in_clone.write_bytes(mutated)
+                try:
+                    diff = []
+                    for r in rows:
+                        if r['name'] not in baseline:
+                            continue
+                        state, got = run_row(rc_path, clone, r['name'], None, work, env)
+                        if state == 'differs' and got.lstrip('-').isdigit():
+                            diff.append('%s(got=%s)' % (r['name'], got))
+                finally:
+                    gate_in_clone.write_bytes(gate_raw)
+                killed += bool(diff)
+                notes.append('mutant %s %s: %s' % (mid, mname, 'killed by ' + ','.join(diff)
+                                                    if diff else 'SURVIVED'))
+        finally:
+            shutil.rmtree(clone, ignore_errors=True)
+    elif mutants_raw is None:
+        notes.append('mutants: mutants.json unavailable or pin mismatch')
+    res['mutants'] = killed
+    short['mutants'] = 3 - killed
+
+    # ---- arm skill_row -------------------------------------------------------------------
+    skill_text = skill_raw.decode('utf-8', 'surrogateescape') if skill_raw is not None else ''
+    ok, why = skill_row_ok(skill_text)
+    res['skill_row'] = ok
+    short['skill'] = 1 - ok
+    notes.append('skill_row %d (%s)' % (ok, why))
+
+    # ---- arms codes + cell ---------------------------------------------------------------
+    carried, tokens = standing_cell(skill_text)
+    tokens = tokens or []
+    known = [t for t in tokens if t in codes]
+    res['codes_known'] = len(known)
+    res['codes_total'] = len(tokens)
+    short['codes'] = (len(tokens) - len(known)) + (1 if not tokens else 0)
+    notes.append('codes tokens=%s unknown=%s' % (tokens, [t for t in tokens if t not in codes]))
+    emitted, gexit, gverdict = set(), None, 'none'
+    if gate_raw is not None:
+        emitted, gexit, gverdict = build_cell_fixture(work, bindir / 'receipt-revision-gate.py')
+    notes.append('cell gate emitted=%s exit=%s verdict=%s; table cell carries=%s'
+                 % (sorted(emitted), gexit, gverdict, carried))
+    if gexit != 3 or len(emitted) != 1:
+        res['standing_cell'] = 'WRONG:fixture'
+        short['cell'] = 1
+    elif carried is not None and set(carried) == emitted:
+        res['standing_cell'] = 'ok'
+    else:
+        res['standing_cell'] = 'WRONG:%s' % (','.join(carried) if carried else 'none')
+        short['cell'] = 1
+    res['total'] = sum(short.values())
+    res['notes'] = notes
+    return res
+
+
+def verdict_line(self_sha, rev, res):
+    return ('C2_R57: self=%s rev=%s gate_rows=%d exits=%s held=%d/%d mutants=%d/3 skill_row=%d '
+            'codes_known=%d/%d standing_cell=%s total=%d C2_R57_PASS=%s'
+            % (self_sha, rev[:12], res['gate_rows'], res['exits'], res['held'], res['rows_n'],
+               res['mutants'], res['skill_row'], res['codes_known'], res['codes_total'],
+               res['standing_cell'], res['total'], 'true' if res['total'] == 0 else 'false'))
+
+
+def self_sha():
+    return sha256(Path(__file__).read_bytes())[:12]
+
+
+def main_measure(a):
+    lane = str(Path(a.lane).resolve())
+    rev = resolve(lane, a.rev)
+    if rev is None:
+        print('C2_R57: error=unresolvable-rev total=1 C2_R57_PASS=false')
+        return 2
+    own_work = a.work is None
+    work = Path(tempfile.mkdtemp(prefix='c2-r57-')) if own_work else Path(a.work)
+    work.mkdir(parents=True, exist_ok=True)
+    if not own_work and any(work.iterdir()):
+        print('C2_R57: error=work-not-empty total=1 C2_R57_PASS=false')
+        return 2
+    try:
+        raw = show(lane, rev, MUTANTS_PATH)
+        if raw is None or sha256(raw) != MUTANTS_SHA256:
+            raw = None
+        res = measure(lane, rev, work, raw, a.explain)
+    except Setup as exc:
+        print('C2_R57: error=setup %s total=1 C2_R57_PASS=false' % str(exc).replace('\n', ' '))
+        return 2
+    finally:
+        if own_work:
+            shutil.rmtree(work, ignore_errors=True)
+        else:
+            for child in work.iterdir():
+                if child.is_dir() and not child.is_symlink():
+                    shutil.rmtree(child, ignore_errors=True)
+                else:
+                    child.unlink()
+    if a.explain:
+        for k, v in res['short'].items():
+            print('EXPLAIN shortfall %s=%d' % (k, v))
+        for n in res['notes']:
+            print('EXPLAIN ' + n)
+    print(verdict_line(self_sha(), rev, res))
+    return 0 if res['total'] == 0 else 1
+
+
+# ---------------------------------------------------------------------------- selftest
+
+FX_SKILL = """# fixture
+
+## Standing rules
+
+- A receipt is evidence only for the revision it names.
+
+  | situation | rule | code |
+  |---|---|---|
+  | a verdict receipt names another revision | refused unless equal on `--paths` | `{cell}` |
+  | a receipt names no revision at all | refused | `RECEIPT_REV_ABSENT`{extra} |
+
+## Source notes
+
+### Gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command |
+|---|---|---|---|---|
+{row}
+## Later
+
+text
+"""
+
+FX_SKILL_NOCODES = """# fixture
+
+## Standing rules
+
+- A receipt is evidence only for the revision it names. No code is named here.
+
+## Source notes
+
+### Gate/probe registry
+
+| Name | Kind | Entry command | Verdict map | Self-test command |
+|---|---|---|---|---|
+{row}
+## Later
+
+text
+"""
+
+FX_ROW = ('| receipt revision gate | gate | `python3 tools/receipt-revision-gate.py --lane LANE --certified REV '
+          '| FILE` | 0 PASS; 2 unresolvable certified; 3 refused | `python3 tools/receipt-revision-gate.py --selftest` |\n')
+
+
+def fx_registry(rev_a, drop=(), expect_override=None, selftest_argv=False,
+                needle_override=None):
+    base = [('c2-fx-ok', 0, 'verdict=PASS', 'HEAD', 'fx/ok.paths'),
+            ('c2-fx-drift', 3, 'RECEIPT_REV_CONTENT_DRIFT', 'HEAD', 'fx/drift.paths'),
+            ('c2-fx-unresolvable', 2, 'RECEIPT_REV_UNRESOLVABLE', 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+             'fx/ok.paths')]
+    rows = []
+    for name, ex, needle, cert, paths in base:
+        if name in drop:
+            continue
+        argv = ['python3', GATE, '--lane', '.', '--certified', cert, '--paths', paths,
+                '--receipt', 'fx/receipt.txt:verdict']
+        if selftest_argv:
+            argv = ['python3', GATE, '--selftest']
+        if expect_override and name in expect_override:
+            ex = expect_override[name]
+        if needle_override and name in needle_override:
+            needle = needle_override[name]
+        rows.append({'name': name, 'kind': 'gate', 'argv': argv,
+                     'expect': {'exit': ex, 'stdout_contains': [needle]}, 'timeout_s': 30,
+                     'source': '%s@%s:1' % (GATE, rev_a[:12]), 'status': 'active'})
+    return {'schema': 'tameshi-entry-registry-v1', 'rows': rows}
+
+
+def build_lane(parent, name, gate_bytes, rc_bytes, registry_fn=fx_registry, skill_kwargs=None,
+               registry_kwargs=None, skill_text=None, mutants_text=None):
+    d = Path(parent) / name
+    d.mkdir()
+    env = lane_env()
+    ident = ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid']
+
+    def g(*args):
+        return subprocess.run(['git', '-C', str(d)] + ident + list(args), env=env, capture_output=True)
+
+    g('init', '-q')
+    top = g('rev-parse', '--show-toplevel').stdout.decode().strip()
+    if os.path.realpath(top) != os.path.realpath(str(d)):
+        raise Setup('fixture toplevel %s != %s' % (top, d))
+    (d / 'tools').mkdir()
+    (d / 'surface').mkdir()
+    (d / 'fx').mkdir()
+    (d / 'tools' / 'receipt-revision-gate.py').write_bytes(gate_bytes)
+    (d / 'tools' / 'registry-check.py').write_bytes(rc_bytes)
+    (d / 'surface' / 'a.txt').write_text('a\n')
+    (d / 'surface' / 'b.txt').write_text('b1\n')
+    g('add', '-A')
+    g('commit', '-q', '-m', 'A')
+    rev_a = g('rev-parse', 'HEAD').stdout.decode().strip()
+    (d / 'surface' / 'b.txt').write_text('b2\n')
+    (d / 'fx' / 'receipt.txt').write_text('VERDICT: rev=%s C1_X_PASS=true\n' % rev_a)
+    (d / 'fx' / 'ok.paths').write_text('surface/a.txt\n')
+    (d / 'fx' / 'drift.paths').write_text('surface/b.txt\n')
+    kw = dict(cell='RECEIPT_REV_CONTENT_DRIFT', extra='', row=FX_ROW)
+    kw.update(skill_kwargs or {})
+    (d / 'SKILL.md').write_text(skill_text if skill_text is not None else FX_SKILL.format(**kw))
+    if mutants_text is not None:
+        (d / '.ufo' / 'evidence' / 'round-57' / 'c2').mkdir(parents=True)
+        (d / '.ufo' / 'evidence' / 'round-57' / 'c2' / 'mutants.json').write_text(mutants_text)
+    (d / 'tools' / 'registry.json').write_text(json.dumps(registry_fn(rev_a, **(registry_kwargs or {})),
+                                                          indent=1) + '\n')
+    g('add', '-A')
+    g('commit', '-q', '-m', 'B')
+    return str(d), g('rev-parse', 'HEAD').stdout.decode().strip()
+
+
+def tampered_mutants():
+    """A byte-valid mutants.json whose sha256 differs from the pin (same mutants)."""
+    data = json.loads((Path(__file__).resolve().parent / 'mutants.json').read_text('utf-8'))
+    data['mutants'][0]['effect'] = data['mutants'][0]['effect'] + ' (tampered)'
+    return json.dumps(data, indent=1) + '\n'
+
+
+def pin_case(lane_dir, head, work):
+    """Run the counter's own measurement entry point (main_measure) on a lane whose
+    committed mutants.json fails the sha256 pin; it must refuse to grade the mutants.
+    Returns (ok, detail)."""
+    buf = io.StringIO()
+    ns = argparse.Namespace(lane=lane_dir, rev=head, work=str(work), explain=True)
+    with contextlib.redirect_stdout(buf):
+        rc = main_measure(ns)
+    out = buf.getvalue()
+    ok = (rc != 0 and 'mutants.json unavailable or pin mismatch' in out
+          and 'mutants=0/3' in out)
+    lines = [ln for ln in out.strip().splitlines() if ln.strip()]
+    return ok, (lines[-1][:160] if lines else 'no output')
+
+
+def selftest(a):
+    lane = str(Path(a.lane).resolve()) if a.lane else str(Path(__file__).resolve().parents[4])
+    rev = resolve(lane, a.rev or 'HEAD')
+    if rev is None:
+        print('C2_R57_SELFTEST: error=unresolvable lane/rev (pass --lane LANE --rev REV)')
+        return 2
+    gate_raw = show(lane, rev, GATE)
+    rc_raw = show(lane, rev, REGCHECK)
+    mutants_raw = (Path(__file__).resolve().parent / 'mutants.json').read_bytes()
+    if gate_raw is None or rc_raw is None:
+        print('C2_R57_SELFTEST: error=gate or registry-check missing at %s' % rev[:12])
+        return 2
+    if sha256(mutants_raw) != MUTANTS_SHA256:
+        print('C2_R57_SELFTEST: error=mutants.json sha256 differs from the pin')
+        return 2
+    scratch = Path(tempfile.mkdtemp(prefix='c2-r57-selftest-'))
+    results = []
+
+    def case(name, ok, detail=''):
+        results.append(ok)
+        print('CASE %s %s%s' % (name, 'PASS' if ok else 'FAIL', (' ' + detail) if detail else ''))
+
+    built = {}
+
+    def run(name, **kw):
+        parent = scratch / name
+        parent.mkdir()
+        gate = kw.pop('gate', gate_raw)
+        lane_dir, head = build_lane(parent, 'lane', gate, rc_raw, **kw)
+        built[name] = (lane_dir, head)
+        return measure(lane_dir, head, scratch / (name + '-work'), mutants_raw, False)
+
+    try:
+        r = run('good')
+        case('good fixture: every arm 0', r['total'] == 0 and r['held'] == 3 and r['mutants'] == 3
+             and r['standing_cell'] == 'ok' and r['exits'] == '0,2,3' and r['skill_row'] == 1,
+             verdict_line('-', 'x' * 12, r))
+        r = run('norefusal', registry_kwargs=dict(drop=('c2-fx-unresolvable',)))
+        case('rows arm: no exit-2 row -> rows shortfall', r['short']['rows'] >= 2 and r['exits'] == '0,3',
+             'short=%s' % r['short'])
+        r = run('forged', registry_kwargs=dict(selftest_argv=True))
+        case('rows arm (forgery): selftest-argv rows are not gate rows',
+             r['gate_rows'] == 0 and r['short']['rows'] >= 3, 'gate_rows=%d' % r['gate_rows'])
+        r = run('unheld', registry_kwargs=dict(expect_override={'c2-fx-drift': 0}))
+        case('executed arm: a row expecting the wrong exit does not hold',
+             r['held'] == 2 and r['short']['executed'] == 1, 'held=%d/%d' % (r['held'], r['rows_n']))
+        r = run('onlyok', registry_kwargs=dict(drop=('c2-fx-drift', 'c2-fx-unresolvable')))
+        case('mutants arm: an exit-0-only row kills no mutant',
+             r['mutants'] == 0 and r['short']['mutants'] == 3, 'mutants=%d/3' % r['mutants'])
+        r = run('nodrift', registry_kwargs=dict(drop=('c2-fx-drift',)))
+        case('mutants arm: without the drift row M1 and M2 survive',
+             r['mutants'] == 1, 'mutants=%d/3 (only M3 killed by the exit-2 row)' % r['mutants'])
+        r = run('nonunique', gate=gate_raw.replace(b'                if drift:\n', b'                if bool(drift):\n'))
+        case('mutants arm: a mutant whose old string is absent is not killed (uniqueness assert)',
+             r['mutants'] == 2 and any('not unique' in n for n in r['notes']), 'mutants=%d/3' % r['mutants'])
+        r = run('norow', skill_kwargs=dict(row=''))
+        case('skill_row arm: no gate row -> 0', r['skill_row'] == 0 and r['short']['skill'] == 1)
+        r = run('thinmap', skill_kwargs=dict(row=FX_ROW.replace('0 PASS; 2 unresolvable certified; 3 refused',
+                                                                  '0 PASS; 3 refused')))
+        case('skill_row arm: verdict map without the 2 -> 0', r['skill_row'] == 0)
+        r = run('bogus', skill_kwargs=dict(extra=' and `RECEIPT_BOGUS_CODE`'))
+        case('codes arm: a token the gate does not define is counted',
+             r['codes_total'] - r['codes_known'] == 1 and r['short']['codes'] == 1,
+             'codes_known=%d/%d' % (r['codes_known'], r['codes_total']))
+        r = run('cellwrong', skill_kwargs=dict(cell='RECEIPT_REV_MISMATCH'))
+        case('cell arm: the stale RECEIPT_REV_MISMATCH cell is WRONG while the code is still a defined one',
+             r['standing_cell'] == 'WRONG:RECEIPT_REV_MISMATCH' and r['short']['cell'] == 1
+             and r['short']['codes'] == 0, r['standing_cell'])
+        r = run('cellgone', skill_kwargs=dict(cell='see the gate'))
+        case('cell arm: a cell with no code is WRONG:none', r['standing_cell'] == 'WRONG:none')
+        # the emitted code is computed by running the gate: a gate whose drift branch refuses with
+        # MISMATCH moves the 'correct' cell to wrong
+        mutated = apply_mutant(gate_raw, "codes.append('RECEIPT_REV_CONTENT_DRIFT')",
+                               "codes.append('RECEIPT_REV_MISMATCH')")
+        r = run('emits', gate=mutated)
+        case('cell arm: truth comes from running the gate (a gate emitting MISMATCH flips the verdict)',
+             mutated is not None and r['standing_cell'] == 'WRONG:RECEIPT_REV_CONTENT_DRIFT',
+             r['standing_cell'])
+        r = run('nogate', gate=b'import sys\nsys.exit(0)\n')
+        case('cell arm: a gate that does not refuse -> WRONG:fixture',
+             r['standing_cell'] == 'WRONG:fixture' and r['total'] > 0)
+
+        # --- proposed cases (round-57 wave-2 mutation findings) -----------------------
+        # P1 (kills M3): a refusal row whose named code the gate does not define is counted.
+        r = run('badneedle', registry_kwargs=dict(needle_override={'c2-fx-drift': 'RECEIPT_REV_NOT_A_CODE'}))
+        case('rows arm: a refusal row naming an undefined code is counted',
+             r['short']['rows'] >= 1, 'short=%s' % r['short'])
+        # P2 (kills M5): a row that did not hold at baseline cannot supply kill credit.
+        r = run('unheld2', registry_kwargs=dict(expect_override={'c2-fx-drift': 0}))
+        case('mutants arm: a row that did not hold at baseline supplies no kill credit',
+             r['mutants'] == 1, 'mutants=%d/3 (only M3 killed by the exit-2 row)' % r['mutants'])
+        # P3 (kills M6): a lane whose committed mutants.json fails the sha256 pin is refused.
+        r = run('badpin', mutants_text=tampered_mutants())
+        lane_dir, head = built['badpin']
+        w = scratch / 'badpin-mainwork'
+        w.mkdir()
+        ok3, out3 = pin_case(lane_dir, head, w)
+        case('mutants pin: a lane whose committed mutants.json fails the sha256 pin is refused',
+             ok3, out3)
+        # P4 (kills M8): a standing-rules section that names no code is a shortfall.
+        r = run('nocodes', skill_text=FX_SKILL_NOCODES.format(row=FX_ROW))
+        case('codes arm: a standing-rules section naming no code is a shortfall',
+             r['codes_total'] == 0 and r['short']['codes'] >= 1,
+             'codes_known=%d/%d short=%s' % (r['codes_known'], r['codes_total'], r['short']['codes']))
+        # P5 (kills M9): a cell carrying the emitted code PLUS another code is WRONG.
+        r = run('superset', skill_kwargs=dict(cell='RECEIPT_REV_CONTENT_DRIFT and `RECEIPT_REV_ABSENT`'))
+        case('cell arm: a cell carrying the emitted code plus another code is WRONG',
+             r['standing_cell'] != 'ok' and r['short']['cell'] == 1, r['standing_cell'])
+        # P6 (kills M12): the verdict line's PASS field follows the total.
+        r = run('good2')
+        case('verdict line: C2_R57_PASS=false whenever the total is non-zero',
+             'C2_R57_PASS=false' in verdict_line('-', 'x' * 12, dict(r, total=1)))
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+    print('C2_R57_SELFTEST: %d/%d pass' % (sum(results), len(results)))
+    return 0 if all(results) else 1
+
+
+def main(argv):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--lane')
+    ap.add_argument('--rev')
+    ap.add_argument('--work')
+    ap.add_argument('--explain', action='store_true')
+    ap.add_argument('--selftest', action='store_true')
+    a = ap.parse_args(argv)
+    if a.selftest:
+        return selftest(a)
+    if not a.lane or not a.rev:
+        ap.error('--lane and --rev are required')
+    return main_measure(a)
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

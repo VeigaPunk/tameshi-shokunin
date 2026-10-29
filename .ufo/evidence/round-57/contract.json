@@ -1,0 +1,188 @@
+{
+ "lane": "tameshi",
+ "round": 57,
+ "attempt": 1,
+ "l1": "TameshiR57",
+ "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+ "base_note": "lane tip at round start (round-56 closure spot-check committed; tracked=0 untracked=0)",
+ "shape": "three v1 waves (w1 build+first falsifiers 32-64, w2 falsify 32-64, w3 readers+post-bind falsifiers 32-64), 64-128 total",
+ "lowest_axis": "calibration (8, the round-21 monitor's ceiling and the lane's saturation line; freshness 9, depth 10; operability/coverage/adjacency carry no standing score)",
+ "amendments": [
+  {
+   "n": 1,
+   "what": "(a) C1 target rewritten as one predicate sentence; its clauses map to counter TERMS (claims.C1.predicate_terms). (b) The round-50 floors (fixed >= 20, declined <= 14) are replaced by the blind-panel arm (panel_over, budget 5); FIXED_FLOOR=0 and DECLINED_CAP=999 stay as non-binding arms, so fixed_short and declined_over are always 0; THIS_ROUND_FLOOR=6 stays binding (this_round_short). (c) Keys match as a whole token or whole path suffix, not as a substring. (d) A fixed row's excerpt must be introduced by its commit (absent at the routing commit and at the commit's first parent), and the commit must name the item id or the evidence path named in the item text. (e) Planned ids are read from the newest `**Planned (round N)` paragraph by round number, with id regex R50-R56. (f) Each row carries status_at_base; base_status_bad refuses a status_at_base outside the three statuses or a fixed-at-base row whose status is not fixed; fixed_bad refuses a status_at_base of fixed unless the commit is an ancestor of BASE. (g) The counter's BASE constant is 5e3569969b532310d2b8a3d130901757a3df356b; the inherited round-50 constant e3729de862f73ae080d98fcf522a7081ce16e40a is replaced. (h) The 49 BASE rows are checked for canonical JSON equality (sorted keys), not byte identity: the counter compares canonical forms. (i) C2 target tightened (claims.C2.target): the exit map names exit 1 as usage; the SKILL verdict-map cell names RECEIPT_REV_UNRESOLVABLE; a gate row's stdout_contains element that names a code must equal a CODES member. The C2 counter must be changed to match before freeze (its row_named_codes finds codes as substrings today).",
+   "why": "Wave-1 critics. T57W1CritClaimShape B2: a floor on a status rewards claiming, not agreeing. T57W1CritC1 sections 1-6: one commit adding a 51-line file and 51 fixed rows passed the round-50 arms once the planned regex was fixed; open was a free sink; the planned regex R4x never matched R5x; the inherited BASE default counted pre-base fixes as this round's; substring keys accepted unrelated lines (open, mined, /tmp, a commit hash); the inherited extractor found 41 items where 51 exist. T57W1CritC2 sections 1-4: kill credit from a selftest-in-disguise row, prefix needles (RECEIPT_REV), a vacuous code arm when the table has no codes, mutants applied to a copy and then graded with --rev. T57W1CritDoNothing: the open arm and the do-nothing controls.",
+   "evidence": ".ufo/waves/round-57/w1/T57W1CritC1.md; .ufo/waves/round-57/w1/T57W1CritC2.md; .ufo/waves/round-57/w1/T57W1CritClaimShape.md; .ufo/waves/round-57/w1/T57W1CritDoNothing.md; .ufo/waves/round-57/dry-c1-explain.txt (the L1 dry run of the amended counter on the working-tree ledger at 21:50:18, total=21: not a committed scoring)",
+   "before_scoring": "No committed REV has been scored under amendment 1. This record is written after the L1 dry run in dry-c1-explain.txt (21:50:18), which scored the working-tree ledger; the record does not assert that no ledger row changed in response to it, and the L1 must state that in the round report."
+  },
+  {
+   "n": 2,
+   "what": "(a) Evidence paths are canonicalised before the path rules (a leading './' no longer evades the HARD/spot-check exclusions). (b) The item tie of amendment 1(d) also holds when the blind panel's fixing commit for the id is a prefix of the row's commit (a pre-base fix cannot name an id that did not exist). (c) Panel provenance arm (term panel_prov): each id's panel detail names a seat whose file .ufo/waves/round-57/w2/<seat>.json (or w3 for re-seats) exists at REV with the pinned sha256 and the same verdict, and whose name is listed in the orchestrator-written wave results file. (d) The panel was run as one blind reviewer per two items (25 seats), not three per item; three seats disclosed a blindness breach and their six ids were re-seated by three fresh blind seats in wave 3, whose verdict replaces the original for those ids in panel.json (the original verdicts stay in the seat files).",
+   "why": "T57W2SentC1: six forgeries reach total=0 on the amendment-1 counter by forging panel.json and by a './' prefix; the pre-base fix commits (R51.1, R51.3, R53.6, R54.5, R54.10) cannot name ids and were unrepairable under the tie rule; the panel produced commit identifications for them.",
+   "evidence": ".ufo/waves/round-57/w2/T57W2SentC1.md; .ufo/waves/round-57/w2/T57W2Repair*.md; .ufo/waves/round-57/w2/T57W2Panel*.json",
+   "before_any_scoring": true
+  }
+ ],
+ "claims": {
+  "C1": {
+   "axis": "calibration",
+   "surface": "the lane's routed-defect ledger `corpus/routed-defects.json` against the routed items of the seven closure spot-checks of rounds 50-56 (`corpus/lessons/round-5{0..6}-verifier-spotcheck.md`)",
+   "before": "the ledger at BASE holds 49 rows (rounds 40-49: 31 fixed / 7 open / 11 declined; `git show BASE:corpus/routed-defects.json`) and none of the 51 items of the frozen set `.ufo/evidence/round-57/c1/defects.json` has a row; the counter run on a scratch commit that adds only the frozen set to BASE prints `C1_R57: self=63a88c257490 rev=aa691617c08b rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=pin spot=ok total=58 C1_R57_PASS=false` (receipt `.ufo/waves/round-57/w2/T57W2CritFreeze-receipts/before-c1.txt`; the earlier pointer `.ufo/evidence/round-57/before/c1.stdout` is absent because `before/` is empty; the item count is 51, not about 52)",
+   "predicate": "`C1_R57_PASS=true` iff at REV (1) `corpus/routed-defects.json` holds the 49 BASE rows, each canonically equal (sorted-key JSON) to its BASE form, plus exactly one row for each of the 51 items of the frozen set `.ufo/evidence/round-57/c1/defects.json` (sha256 bef2293ba3db863b03247e9867b11aa2501aa54af0b098ce0f974817f485dee9) and no other row; (2) each of the 51 rows has a status and a status_at_base in fixed|open|declined, and status_at_base is fixed exactly where the row's status is fixed and the row's commit is an ancestor of BASE; (3) each row's evidence items resolve under the round-50 rules (lane path not excluded, lines in range, span at most 30, excerpt of 15-400 characters present in the lines) and at least one item carries a key matched as a whole token or a whole path suffix; (4) a fixed row's commit is a full hash, an ancestor of REV and not an ancestor of the item's routing commit, touches a keyed evidence path, introduces that excerpt (absent at the routing commit and at the commit's first parent), names the item id or the path in the item text, and its evidence lines carry no acknowledgement word; (5) an open row's id appears in the newest `**Planned (round N)` paragraph of SCORECARD.md at REV, with N compared as an integer; (6) a declined row's reason has at least 40 characters; (7) the seven spot-check files at REV have the sha256 values pinned in the frozen set; (8) at least 6 fixed rows that pass (4) have commits that are not ancestors of BASE; and (9) at most 5 of the 51 status_at_base values differ from the blind panel verdicts in `.ufo/evidence/round-57/c1/panel.json` (sha256 pinned in measure.py).",
+   "target": "`C1_R57_PASS=true` iff at REV (1) `corpus/routed-defects.json` holds the 49 BASE rows, each canonically equal (sorted-key JSON) to its BASE form, plus exactly one row for each of the 51 items of the frozen set `.ufo/evidence/round-57/c1/defects.json` (sha256 bef2293ba3db863b03247e9867b11aa2501aa54af0b098ce0f974817f485dee9) and no other row; (2) each of the 51 rows has a status and a status_at_base in fixed|open|declined, and status_at_base is fixed exactly where the row's status is fixed and the row's commit is an ancestor of BASE; (3) each row's evidence items resolve under the round-50 rules (lane path not excluded, lines in range, span at most 30, excerpt of 15-400 characters present in the lines) and at least one item carries a key matched as a whole token or a whole path suffix; (4) a fixed row's commit is a full hash, an ancestor of REV and not an ancestor of the item's routing commit, touches a keyed evidence path, introduces that excerpt (absent at the routing commit and at the commit's first parent), names the item id or the path in the item text, and its evidence lines carry no acknowledgement word; (5) an open row's id appears in the newest `**Planned (round N)` paragraph of SCORECARD.md at REV, with N compared as an integer; (6) a declined row's reason has at least 40 characters; (7) the seven spot-check files at REV have the sha256 values pinned in the frozen set; (8) at least 6 fixed rows that pass (4) have commits that are not ancestors of BASE; and (9) at most 5 of the 51 status_at_base values differ from the blind panel verdicts in `.ufo/evidence/round-57/c1/panel.json` (sha256 pinned in measure.py).",
+   "predicate_terms": {
+    "(1) 49 BASE rows canonically unchanged": [
+     "old49"
+    ],
+    "(1) one row per item, no other row": [
+     "missing",
+     "duplicate",
+     "extra"
+    ],
+    "(1) frozen set sha256": [
+     "defects_pin"
+    ],
+    "(2) status and status_at_base validity and coherence": [
+     "bad_status",
+     "base_status_bad"
+    ],
+    "(3) evidence resolves and a whole-token key matches": [
+     "evidence_bad",
+     "key_miss"
+    ],
+    "(4) fixed row: commit, ancestry, base coherence, introduction, item tie, acknowledgement words": [
+     "fixed_bad"
+    ],
+    "(5) open row named in newest Planned paragraph": [
+     "open_unplanned"
+    ],
+    "(6) declined reason length": [
+     "declined_bad"
+    ],
+    "(7) seven spot-check files byte-equal": [
+     "spotcheck_changed"
+    ],
+    "(8) six fixes carried by commits after BASE": [
+     "this_round_short"
+    ],
+    "(9) panel budget and panel pin": [
+     "panel_over",
+     "panel_pin"
+    ],
+    "reported, never binding (always 0 under amendment 1)": [
+     "fixed_short",
+     "declined_over"
+    ]
+   },
+   "verdict_line_tokens": {
+    "C1_R57:": "prefix",
+    "self=": "sha12 of measure.py",
+    "rev=": "REV sha12",
+    "rows=have/51": "missing, duplicate, extra (have = rows matched to set ids)",
+    "agree=n/51": "items with no fault term",
+    "old49=ok|CHANGED": "old49 term is 0 or not",
+    "fixed=, declined=": "stat counts, informational",
+    "thisround=": "fixed rows carried by commits not ancestors of BASE (stat fixed_this_round); this_round_short = max(0, 6 - thisround)",
+    "panel=pin|k/5": "pin: panel_pin term; k: disagreements counted, budget 5 (panel_over = max(0, k - 5))",
+    "spot=ok|DRIFT": "spotcheck_changed term",
+    "total=": "sum of every TERMS term",
+    "C1_R57_PASS=true|false": "true iff total = 0"
+   },
+   "terms_line": "`C1_R57_TERMS:` prints fixed= open= declined= fixed_this_round= and then the 18 terms missing, extra, duplicate, old49, spotcheck_changed, defects_pin, bad_status, evidence_bad, key_miss, fixed_bad, open_unplanned, declined_bad, fixed_short, declined_over, this_round_short, panel_pin, panel_over, base_status_bad; EXPLAIN lines name each refused row and its reason",
+   "counter": "python3 .ufo/evidence/round-57/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+   "freeze_precondition": "before the freeze, `python3 .ufo/evidence/round-57/c1/measure.py --selftest` exits 0 and prints `C1_R57_SELFTEST: n/n pass`, and the docstring arms list matches the TERMS above (measured at this seat: `C1_R57_SELFTEST: 11/45 pass`, exit 1; receipt `.ufo/waves/round-57/w2/T57W2CritFreeze-receipts/c1-selftest.txt`)",
+   "enumeration": {
+    "items": "python3 -c \"import json;d=json.load(open('.ufo/evidence/round-57/c1/defects.json'))['defects'];print(len(d),len({x['id'] for x in d}))\" prints 51 51",
+    "spot_files": "python3 -c \"import json;d=json.load(open('.ufo/evidence/round-57/c1/defects.json'))['defects'];print(sorted({x['file'] for x in d}))\" prints the seven round-50..56 spot-check paths",
+    "base_rows": "git show 5e3569969b532310d2b8a3d130901757a3df356b:corpus/routed-defects.json | python3 -c \"import json,sys;print(len(json.load(sys.stdin)['defects']))\" prints 49",
+    "rev_rows": "git show REV:corpus/routed-defects.json | python3 -c \"import json,sys;d=json.load(sys.stdin)['defects'];print(len(d),len({r['id'] for r in d}))\" prints 100 100 when the ledger is complete (49 + 51)",
+    "planned": "git show REV:SCORECARD.md | grep -n '^\\*\\*Planned (round' lists the Planned paragraphs; the counter takes the one with the largest N",
+    "panel_verdicts": "python3 -c \"import json;print(len(json.load(open('.ufo/evidence/round-57/c1/panel.json'))['verdicts']))\" prints 51 once panel.json exists (it does not exist at this seat)"
+   },
+   "kill_rule": "C1_R57_PASS=false whenever total is above 0, and the report names each failing term from the TERMS line and each refused row from its EXPLAIN line; a refused row is a miss that adds to a term, never a removed item; the item set, the keys in defects.json, THIS_ROUND_FLOOR=6, PANEL_ALLOWED=5, the planned-id regex and the newest-paragraph rule are not changed after the first committed scoring run at REV; a change after that starts attempt 2 with its own amendments entry",
+   "controls": [
+    "CTL_0",
+    "CTL_SKIP",
+    "CTL_FAB",
+    "CTL_OPEN",
+    "CTL_POS"
+   ],
+   "cannot_see": "(a) that a keyed, new excerpt semantically resolves the defect (the counter checks presence, keying, introduction at the commit and the item tie, not support; support is attacked per row by wave-2 seats and sampled by the closure); (b) that the 51-item set is complete (the set is what extract-defects.py emits; its recall is attacked by a reviewer who re-reads the seven files by eye); (c) that an open row is still open at REV: the open arm checks only that the id is named in the newest Planned paragraph (judge(), measure.py lines 272-275) and the panel arm compares status_at_base with the panel at BASE, so an item fixed after BASE and filed as open passes unless a closure sample catches it (inference from the code; the same open arm passed 31 open rows in the wave-1 do-nothing run, T57W1CritC1 section 1, S3); (d) that the panel's up to five disagreements are right: the budget lets up to five status_at_base values that differ from the panel pass; (e) that a key is relevant: keys are frozen in defects.json and checked for presence as a whole token, not for relevance; (f) that a fixed commit's message naming the item id reflects the work; (g) that a declined reason is more than its length (length check only)"
+  },
+  "C2": {
+   "axis": "operability",
+   "surface": "the entry registry `tools/registry.json` and the receipt-binding gate `tools/receipt-revision-gate.py`: the gate had a selftest row but no executed `gate` rows, its exit-code map lived only in the tool header, and the SKILL `## Standing rules` receipt table states a code the gate does not emit for a verdict receipt gated on a declared surface (R56.2, R56.6)",
+   "before": "at base the registry has 22 `gate`-kind rows and none runs `tools/receipt-revision-gate.py` (only the `receipt-revision-gate-selftest` row, which is not admitted as a gate row); the SKILL gate/probe registry table has no row for it; the `## Standing rules` receipt table cell for a verdict receipt that names another revision reads `RECEIPT_REV_MISMATCH`, where the gate emits `RECEIPT_REV_CONTENT_DRIFT` whenever `--paths` is given (round-56 lesson `## Round-57 deferrals` F2; closure D-C2a); the pre-C0 counter run is not committed (`.ufo/evidence/round-57/before/` is empty) and this seat did not re-measure it",
+   "target": "`C2_R57_PASS=true` with total=0: `tools/registry.json` at REV holds at least 3 active `gate`-kind rows whose argv runs `python3 tools/receipt-revision-gate.py` with `--receipt` and without `--selftest` (enumerated by the counter's is_gate_row), which together expect exit 0, exit 2 and exit 3 (exit 1 is the gate's usage exit and no row expects it); each row expecting exit 2 or exit 3 has an element of `expect.stdout_contains` equal to a member of the gate's CODES, and the exit-2 row's element is exactly `RECEIPT_REV_UNRESOLVABLE`; `registry-check.py --rev REV --only` reports held=N/N for those rows; each of the three counter-applied gate mutants (M1 accept-on-drift, M2 wrong refusal code, M3 exit 0 on unresolvable) turns at least one of those rows red, so mutants=3/3; the SKILL `### Gate/probe registry` table has a row naming `receipt-revision-gate` whose Verdict map cell names exit 0 (PASS), exit 1 (usage), exit 2 (`RECEIPT_REV_UNRESOLVABLE`) and exit 3 (refused); and the code cell of the SKILL `## Standing rules` row beginning `a verdict receipt names another revision` equals exactly the code the gate emits on a counter-built fixture with a non-empty `--paths` surface and drifting bytes, while every `RECEIPT_*` token in that section is a member of CODES (AST-parsed from the gate)",
+   "enumeration": {
+    "gate_rows": "git show REV:tools/registry.json | python3 -c \"import json,sys;r=json.load(sys.stdin)['rows'];print([x['name'] for x in r if x.get('kind')=='gate' and x.get('status')=='active' and '--receipt' in x.get('argv',[]) and '--selftest' not in x.get('argv',[]) and 'tools/receipt-revision-gate.py' in x.get('argv',[])])\" lists the admitted rows (at HEAD 06e9849: receipt-gate-accept, receipt-gate-content-drift, receipt-gate-unresolvable-certified)",
+    "codes": "python3 -c \"import ast;t=ast.parse(open('tools/receipt-revision-gate.py').read());c=[n for n in t.body if isinstance(n,ast.Assign) and getattr(n.targets[0],'id','')=='CODES'][0];print(len(ast.literal_eval(c.value)))\" prints 11 (the gate's own selftest asserts 11)",
+    "standing_tokens": "the RECEIPT_* tokens inside the SKILL.md `## Standing rules` section, from the counter's standing_rules() extraction; the non-vacuity floor is at least 4 table data rows and at least 4 distinct tokens"
+   },
+   "counter": "python3 .ufo/evidence/round-57/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain",
+   "kill_rule": "any arm short of its denominator makes C2_R57_PASS=false; expected exits are recomputed by the counter on counter-built fixtures and by registry-check on the committed rows, never read from a committed receipt (the round-56 C2 arm-5 forgery route)",
+   "controls": [
+    "CTL_0",
+    "CTL_SKIP",
+    "CTL_FAB",
+    "CTL_MUT",
+    "CTL_POS"
+   ],
+   "cannot_see": "whether the three mutants are the defects that matter (they are a stated sample of a 359-line gate); exits the committed fixtures do not exercise (RECEIPT_MISSING/EMPTY/NOT_BLOB/AMBIGUOUS/DIGEST_MISMATCH/REQUIRED_LINE_MISSING stay covered by the 19-case selftest row, not by gate rows); the Standing-rules row 2 (`a positive control was scored at the freeze`), whose cell carries a parenthetical code, is not equality-checked by the cell arm; registry-check matches stdout_contains as literal substrings, so the element-equality rule is enforced by the counter's own code, not by registry-check"
+  }
+ },
+ "panel": {
+  "file": ".ufo/evidence/round-57/c1/panel.json",
+  "status": "NOT RUN when this contract was written: the file is absent at the lane (c1/ holds defects.json, extract-defects.py, keys.json, measure.py), and measure.py's PANEL_SHA256 is the placeholder PIN_PENDING_SET_BY_L1_AFTER_THE_BLIND_PANEL",
+  "shape": "{\"schema\": \"tameshi-c1-panel-v1\", \"base\": BASE, \"verdicts\": {id: fixed|open|declined}, \"detail\": {id: {seat, commit}}, \"files\": {seat: sha256 of the seat file}}",
+  "seats": "25 leaf reviewer seats T57W2Panel*, one per two items (one per three for the last), each in a scratch clone detached at BASE, forbidden to read the lane working tree, the round-57 waves/evidence and any ledger row; three seats disclosed a breach (T57W2PanelR515R516, T57W2PanelR525R526, T57W2PanelR542R543) and their ids R51.5 R51.6 R52.5 R52.6 R54.2 R54.3 were re-seated in wave 3 by three fresh seats T57W3Reseat*; for those six ids the re-seat verdict is the panel verdict",
+  "question": "AT BASE: is the item's defect fixed in the tree, still open, or stated by its own text as not a defect (declined); each verdict cites path:lines at BASE",
+  "consolidation": "one verdict per id (the seat's; the re-seat's for the six breached ids); no majority vote; a verdict that matches no status counts as a disagreement",
+  "allowed_disagreements": 5,
+  "why_5": "a judgement fixed before any scoring: about a tenth of 51 (5.1, rounded down), the residue the L1 accepts from honest disagreement on items whose base state is contestable; it is not a measured rate, and the arm is a budget, not a truth claim",
+  "adjudication": "the L1 re-checks every disagreement at BASE (for fixed: commit ancestry and the excerpt; for open or declined: the cited lines) and records in the round report one line per disagreement: id, the ledger status_at_base, the panel verdict, the L1's finding (ledger right, panel right, or both wrong) and the cite; adjudication never changes the count, because the counter counts every disagreement; panel.json is not edited after its commit; a panel found wrong beyond the budget fails C1 and is not re-run inside this attempt",
+  "order": "(1) freeze defects.json and keys.json; (2) run the panel from the BASE clone; (3) commit panel.json; (4) write sha256(panel.json) into measure.py's PANEL_SHA256 and the docstring arms; (5) freeze measure.py and contract.json; (6) score committed REV only",
+  "pin": "measure.py PANEL_SHA256 = sha256 of the committed panel.json at the frozen revision; panel_pin=1 when the file is absent or its digest differs"
+ },
+ "no_harm": {
+  "cold_read_floor": "round-21 monitor at REV reads credited=64/64 score=8 box3=true (the round's SOURCES/QUALITY/README/SKILL/tools edits drift ledger inputs; the headings that lose credit at C0 are re-read at C0 by wave-3 readers and re-bound under one `rekey-r57-<c0>` directory; no claim rests on this arm, it is a no-harm monitor a do-nothing run passes trivially)",
+  "others": "the fifteen round-56 monitors re-based (no-harm.sh), the round-56 receipt gate selftest 19/19, `registry-check.py --rev REV` full-registry held count not below base"
+ },
+ "frontier": {
+  "census": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi (start: exit 0, 142 rows S001-S282)",
+  "mined_mistake": "one row in corpus/lessons/round-57.md `## Mistakes`, class/evidence/captured-by/fix",
+  "sourced_claim": "C2's registry/exit-map rule or C1's ledger rule cites an S-row opened this round (S283+), located quote in the lesson `## Gate`",
+  "assimilation": "considerthese/2026-10-28.md proposal 3 (cold-read cost forecast at planning time) mined as a lesson + QUALITY criterion + tools/forecast tool if landed; merge/tameshi theme: none this round"
+ },
+ "routed_defects_from_round_56": {
+  "R56.1": "SKILL page-local line anchors: not repaired this round (a 25-section edit costs ~25 re-reads in the same round that must re-read the SOURCES/QUALITY/README drift); ledger row records it open with the cost forecast as evidence",
+  "R56.2": "C2 arm (standing-rules code truth)",
+  "R56.3": "fixed in C0 (recheck 19/19 errata + README index), ledger row",
+  "R56.4": "ledger row; referent record only if a wave-1 seat establishes the referents",
+  "R56.5": "C2 kill_rule (counter recomputes, never reads receipts) and controls header pre-registers generations",
+  "R56.6": "C2 gate rows",
+  "R56.7": "report phrasing corrected in the report (D-CF1)"
+ },
+ "frozen_paths": [
+  ".ufo/evidence/round-57/c1/extract-defects.py",
+  ".ufo/evidence/round-57/c1/keys.json",
+  ".ufo/evidence/round-57/c1/defects.json",
+  ".ufo/evidence/round-57/c1/measure.py",
+  ".ufo/evidence/round-57/c1/panel.json",
+  ".ufo/evidence/round-57/c2/measure.py",
+  ".ufo/evidence/round-57/c2/mutants.json",
+  ".ufo/evidence/round-57/control/gen_ledger.py",
+  ".ufo/evidence/round-57/control/gen_registry.py",
+  ".ufo/evidence/round-57/controls.sh",
+  ".ufo/evidence/round-57/deciding-run.sh",
+  ".ufo/evidence/round-57/no-harm.sh",
+  ".ufo/evidence/round-57/contract.json",
+  "tools/receipt-revision-gate.py",
+  "tools/registry.json",
+  "tools/registry-check.py",
+  "tools/fixtures/receipt-gate/accept.receipt",
+  "tools/fixtures/receipt-gate/drift.paths",
+  "tools/fixtures/receipt-gate/drift.receipt"
+ ],
+ "frozen_notes": "panel.json does not exist yet and is listed so the freeze pins it when committed; freeze.json is the freeze record and is not listed; the seven spot-check files and the 49 BASE ledger rows are pinned by sha256 and canonical form inside the counter, not by this list; control/ is listed by its two file names, and a third file in control/ changes the frozen set and needs its own amendments entry"
+}
