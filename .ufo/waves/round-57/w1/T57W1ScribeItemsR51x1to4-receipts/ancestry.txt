@@ -1,0 +1,30 @@
+# Lane base 5e3569969b532310d2b8a3d130901757a3df356b; spot-check adding commit ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4
+# command: git -C <clone of lane at base> merge-base --is-ancestor <a> <b>; echo $?
+bcba892<=base exit 0
+bcba892<=ef19d8e exit 1 (not an ancestor)
+ef19d8e<=base exit 0
+# git -C <clone> log -1 --format='%H %an %ad %s' --date=iso bcba892
+bcba8924894216268afc4171f06eb8c28e912b46 tameshi-shokunin 2026-10-27 01:42:33 -0300 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+# git -C <clone> log --format='added spot-check: %H %s' --diff-filter=A ef19d8e -- corpus/lessons/round-51-verifier-spotcheck.md
+added spot-check: ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 round-51 verifier spot-check (integrator, hyaku): non-author admit/reject
+# git -C <clone> show --stat --format= bcba892
+ .ufo/evidence/round-21/coldread/ledger.json        | 606 ++++++++++++++++++++-
+ .../round-52/integrate/apply-corrections.py        |  56 ++
+ .../round-52/integrate/apply-corrections.stdout    |   2 +
+ SCORECARD.md                                       |  11 +
+ SKILL.md                                           |  12 +-
+ corpus/knowledge/fleet-kill-rate-ledger.md         |   4 +
+ tools/registry.json                                |   4 +-
+ tools/round21-measure.py                           |  11 +-
+ 8 files changed, 695 insertions(+), 11 deletions(-)
+# spot-check blob sha256 at ef19d8e and at base (equal)
+f3aab8dda10934959d7969b6a01c641dcd09d096d8dd4a0a94e63fb347306a79  (ef19d8e)
+f3aab8dda10934959d7969b6a01c641dcd09d096d8dd4a0a94e63fb347306a79  (base)
+# pickaxe: each fix phrase first appears, and is last changed, in bcba892 (git log -S ... base -- paths)
+'auto mktemp under ${TMPDIR:-/tmp}'      -> bcba892 only
+'ten ledger legs'                        -> bcba892 only
+'fleet-bound, not hermetic'              -> bcba892 only
+'legs_conforming=10/10' (registry)       -> bcba892 only
+'"corrections"' (round-21 ledger)        -> bcba892 only
+'mutate-and-run.sh:139-143,1519-1548'    -> 7ff81a5 (round-52 wave-2 fix-reads), not bcba892
+# no-harm scope for the registry edit: .ufo/evidence/round-52/no-harm.sh:6,33 allows M:tools/registry.json and M:tools/round21-measure.py

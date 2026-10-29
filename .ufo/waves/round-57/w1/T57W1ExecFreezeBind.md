@@ -1,0 +1,37 @@
+# T57W1ExecFreezeBind - freeze generator and bind wrapper (round 57, wave 1)
+
+Staged (nothing installed, no lane file touched):
+- `stage/.ufo/waves/round-57/freeze-gen.py` sha256 fb7b456dc1fbf4f67efb1c68876e18fe91bae4b20a72647cedf8a5912fa06b54 (264 lines, stdlib)
+- `stage/.ufo/waves/round-57/bind.sh` sha256 555cbe708d62a0511f38127fa7635c25417d901d71e09a02299b2d0d85387b71 (369 lines, executable)
+Receipts: `T57W1ExecFreezeBind-receipts/` (freeze-gen-dryrun.txt, bind-A-phase1/phase2.stdout, bind-B-phase1.stdout, bind-neg-*.stdout, monitor-before-after.txt, mkdrift.py, stage-sha256.txt).
+
+## 1. freeze-gen.py
+Derived from the round-56 generator; same mapping (`tools/`, `.ufo/evidence/round-21/`, `.ufo/evidence/round-48/` verbatim; other paths relative to `.ufo/evidence/round-57/`; freeze.json listed-and-skipped; unmappable / duplicate / non-round-tripping / unreadable / empty frozen_paths fail closed). I kept the round-21/48 verbatim prefixes (superset of the brief's `tools/*` + `round-57/*`; round-56's deciding-run uses all three and the L1 may freeze the monitor/precheck).
+- `--check` (also the default with no mode flag): compares digests, key set, header (schema/round/lane/base) and, new, `contract.round == 57`, against the manifest committed at REV. Prints `FREEZE_GEN: files=N ok|MISMATCH`; exit 0/1; 2 = usage; `--check --out` refused (exit 2).
+- `--out PATH` (generation): writes the manifest (header from contract, `amendments` carried from a committed manifest else `[]`). First generation (REV has the contract, no freeze.json yet) prints `FREEZE_GEN: files=N generated`, exit 0; if a manifest is committed the bytes are compared (difference = MISMATCH). Refuses to write when any frozen file is unreadable or the set is empty.
+- Gap the round-56 tool had and this closes: it could only compare, so the first freeze.json had to come from a separate heredoc. Now the L1 runs `freeze-gen.py --lane L --rev <commit carrying the contract with frozen_paths> --out .ufo/evidence/round-57/freeze.json`, commits it, then `--check` at the freeze commit.
+Dry run on a scratch clone of base with a synthetic contract (6 frozen paths, 5 keys): generated; check before commit = MISMATCH (`freeze.json unreadable-at-rev`); check after = ok; regeneration byte-identical (`cmp`); edited `tools/receipt-revision-gate.py` = MISMATCH with the key and both digests; header `round` tampered = MISMATCH; `--check --out` = exit 2; the lane's base contract (empty frozen_paths) = MISMATCH. Not tested: a contract path under neither prefix (unchanged round-56 code path).
+
+## 2. bind.sh
+Derived from round-56 bind.sh; changes:
+1. Step 1 computes `lost = credited(FLOOR) - credited(C0)` (monitor, `--explain`), FLOOR default = base `5e35699...` (guard: floor must credit every section, exit 2). Writes `.ufo/evidence/round-57/c1/lost-headings-at-c0.json` (JSON list, indent 1, no trailing newline, same shape as round-56's frozen list). 1a: the round-48 precheck at C0 is run too and its `LOST` heading set must equal the monitor's (exit 3 on disagreement; its RED exit is expected and ignored). Empty lost set: monitor at C0 must read 64/64 score 8 (exit 8 otherwise), `BIND_PASS ... headings=0`.
+2. Step 1c (new): per lost heading exactly ONE json in `$WAVES` (default `.ufo/waves/round-57/w3`) with `heading`, `cand == C0`, `section_sha256 == sha256 of the section at C0` (round-18 sectionizer extracted at C0, as the binder does); it must be named `T57W3*Read*.json`; json and `.md` committed at PIN and byte-equal to the working tree. Closes the round-56 note that the binder takes the first sorted match, so a non-reader json could be bound. Exit 9.
+3. Binder: round-55 binder, `--headings` = the committed lost file, `--waves`, explicit `--resolutions` (default `/nonexistent/round-57-resolutions.json` = zero findings), rekey dir `rekey-r57-<c0[:12]>`, stale-dir guard for r57 only.
+4. Commits nothing. Two phases, same command: phase 1 (no BIND_REV) ends `BIND_STAGED` after a stray-change check; phase 2 (`BIND_REV=<L1 commit>`) re-runs steps 0-3 (byte-identical: all binder argv paths are stable repo paths, not scratch) then `BIND_TREE` requires the ledger, the rekey dir and the lost file in the working tree to equal BIND_REV's blobs (exit 5), then pinned-input drift PIN..BIND_REV (exit 6), precheck at BIND_REV `lost=0 ok` (exit 7), monitor 64/64 score 8 box3 (exit 8). PIN defaults to C0 and must be an ancestor of BIND_REV.
+5. R56.4 resolved in the wrapper: step 3a reads each bound entry's `external_inputs`, parses `tameshi@<rev>:<path>` and compares the recorded digest with sha256 of that blob at the label's revision; prints `BIND_LABEL_MISMATCH` lines and `BIND_LABELS: n_mismatch=<k>` (+ `BIND_LABELS_DETAIL`). Informational. Root cause stated: the binder labels C0 but digests the blob at PIN (`binder-r55.py`: `'tameshi@%s:%s' % (c0, p): s` with `s` from `blob_at(pin, p)`), so k>0 exactly when an input moved C0->PIN; PIN == C0 gives 0.
+
+## 3. Dry run (scratch clone of 5e35699, fixture identity, never the lane)
+Synthetic drift: one word in one line of `SKILL.md` section `## The mutation bar - nominal vs load-bearing` (line count unchanged), committed = C0; a synthetic reader pair `T57W3SynthRead01.{json,md}` (cand=C0, real section sha) committed = PIN.
+Monitor (monitor-before-after.txt): base 64/64 score 8 box3=true -> C0 63/64 score 6 box3=false (lost=1, reason `no-ledger-entry`: the section sha moved) -> BIND_REV 64/64 score 8 box3=true.
+- A phase 1: LOST 1, precheck agrees (`lost=1 RED`), READERS bad=0, REKEY 1, `BIND_LABELS: n_mismatch=0`, `BIND_STAGED`, exit 0.
+- A phase 2 (BIND_REV = fixture commit of ledger + rekey dir + lost file): BIND_TREE bad=0, PINNED pinned-changed=0, precheck `cand_credited=64 lost=0 ok`, MONITOR 64/64 score=8, `BIND_PASS`, exit 0.
+- B (PIN moves `corpus/knowledge/gates-survey-kagi.md` after C0): `BIND_LABEL_MISMATCH ... recorded=91e2a678bacc blob-at-label=4734f0a0bd28`, `BIND_LABELS: n_mismatch=1` (phase 1 only; phase 2 would be short because the moved file also uncredits other headings' entries - which is what 3c/4/5 are for).
+- Negative: reader cand wrong -> `matching-reports=0`, exit 9; a second non-reader json (`Zzz-notes.json`) copying the reader's heading/cand/sha -> `matching-reports=2`, exit 9.
+Not exercised: exits 4 (binder SKIP), 5 phase-1 stray, 6, 7, 8 on a short monitor (their code is carried from round 56 or is a straight guard; no run). `bash -n` and `py_compile` pass.
+
+## 4. Facts for the L1
+- The monitor takes ~3.7 min per run on this host under load (75 min CPU); a full phase 1 is 4 monitor runs (floor, C0, precheck's floor and cand), phase 2 adds 3 more (precheck floor+cand at BIND_REV, monitor). Run in the background; budget ~15 + ~25 min.
+- The lost file is written to the lane working tree at `.ufo/evidence/round-57/c1/lost-headings-at-c0.json`; phase-1's stray check allows exactly it and `.ufo/evidence/round-21/coldread/`; commit those plus nothing else. It is not in any freeze list unless the L1 adds it; if the C1 counter pins it, freeze after BIND (it is generated, not authored).
+- Re-run phase 2 with the same `W` not required (argv paths are repo paths), but `HYAKU_SCRATCH` must exist.
+- Risks: floor = base 5e35699 (credits 64/64, measured here: `base.json` 64/64 score 8); the binder's DROP list is unchanged (LOG, SCORECARD, SKILL, ledger), so any other content-file edit between PIN and BIND_REV is caught only by 3c/4/5.
+- Tools installed: none.

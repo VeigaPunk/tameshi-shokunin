@@ -1,0 +1,60 @@
+{
+  "seat": "T57W1RevGateSurface",
+  "item": "receipt-revision-gate exit-code and code table by execution",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "gate": "tools/receipt-revision-gate.py",
+  "gate_sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+  "gate_lines": 359,
+  "gate_matches_base_bytes": true,
+  "tools_installed": [],
+  "tooling_versions_used": {"python3": "3.14.8", "git": "2.56.0"},
+  "lane_files_edited": [],
+  "exit_paths": [
+    {"exit": 0, "emitted_at": "receipt-revision-gate.py:220 (return 0 if verdict == 'PASS'); :358 (--selftest 19/19)", "condition": "every receipt ok (no code)", "fixture_cases": ["01", "02", "09", "17", "31", "36", "38", "39", "33"]},
+    {"exit": 3, "emitted_at": "receipt-revision-gate.py:220", "condition": "at least one receipt refused; verdict line codes=<named>", "fixture_cases": ["03", "04", "05", "06", "07", "08", "10", "11", "12", "13", "14", "15", "16", "21", "23", "29", "30", "37"]},
+    {"exit": 2, "emitted_at": "receipt-revision-gate.py:190-194", "condition": "resolve(lane, --certified) returns None: unresolvable certified revision OR lane that is not a git repo / does not exist; printed as 'GATE: error=unresolvable-certified ... codes=RECEIPT_REV_UNRESOLVABLE'; runs before receipts are parsed", "fixture_cases": ["18", "19", "20", "32", "42"]},
+    {"exit": 1, "emitted_at": "receipt-revision-gate.py:92 (bad ROLE), :183-184 (unknown flag or positional), :187-188 (missing --lane/--certified/--receipt), :358 with no-args; :353 selftest failing (not observed)", "condition": "usage error via SystemExit(str); no named code", "fixture_cases": ["24", "25", "26", "28", "34", "35"]},
+    {"exit": 1, "emitted_at": "uncaught exception: :173,:175,:177,:179 IndexError (flag with no value); :197 FileNotFoundError or UnicodeDecodeError (--paths file); :106 read_bytes PermissionError (untested)", "condition": "traceback, no named code, no usage text", "fixture_cases": ["22", "27", "43"]}
+  ],
+  "argparse_used": false,
+  "argparse_note": "the gate parses argv by hand; no argparse exit 2 exists. Exit 2 means only an unresolvable --certified (or lane).",
+  "codes": [
+    {"code": "RECEIPT_MISSING", "emit_lines": [103], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["14"], "observed": "rc 3, code RECEIPT_MISSING"},
+    {"code": "RECEIPT_EMPTY", "emit_lines": [108], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["15"], "observed": "rc 3, code RECEIPT_EMPTY"},
+    {"code": "RECEIPT_NOT_BLOB", "emit_lines": [105], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["16", "29"], "observed": "rc 3; directory receipt; empty receipt path ':positive' resolves to '.'"},
+    {"code": "RECEIPT_REV_ABSENT", "emit_lines": [126], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["05", "30"], "observed": "rc 3; case 30 is a 6-hex rev= token that REV_RE (7-40 hex) does not match, detail 'no rev= token'"},
+    {"code": "RECEIPT_REV_AMBIGUOUS", "emit_lines": [141], "roles": ["positive", "verdict"], "mode": "both", "fixture_cases": ["06", "07"], "observed": "rc 3; case 07 is one commit named by abbreviated and full sha, refused; control role accepts the same input (extra 41)"},
+    {"code": "RECEIPT_REV_UNRESOLVABLE", "emit_lines": [133, 192], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["08", "11", "18", "19", "20", "32", "42"], "observed": "line 133: receipt rev, rc 3; line 192: certified rev, rc 2 (the only exit-2 emission)"},
+    {"code": "RECEIPT_REV_MISMATCH", "emit_lines": [146], "roles": ["positive", "verdict"], "mode": "only-without-paths", "fixture_cases": ["04", "23", "40a"], "observed": "rc 3 when paths is None (line 145); also when --paths '' (line 196 treats empty string as absent)"},
+    {"code": "RECEIPT_REV_CONTENT_DRIFT", "emit_lines": [151], "roles": ["positive", "verdict"], "mode": "only-with-paths", "fixture_cases": ["03", "21", "37", "40b"], "observed": "rc 3 when paths given and listed bytes differ; also for empty paths file (drift detail '<no --paths given ...>') and for a listed path absent from both revs"},
+    {"code": "RECEIPT_CONTROL_NOT_ANCESTOR", "emit_lines": [158], "roles": ["control"], "mode": "both", "fixture_cases": ["10"], "observed": "rc 3; control naming a side-branch rev"},
+    {"code": "RECEIPT_DIGEST_MISMATCH", "emit_lines": [120], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["12"], "observed": "rc 3; sidecar of 64 zeros"},
+    {"code": "RECEIPT_REQUIRED_LINE_MISSING", "emit_lines": [123], "roles": ["positive", "verdict", "control"], "mode": "both", "fixture_cases": ["13"], "observed": "rc 3; REGEX C1_X_PASS= absent"}
+  ],
+  "unreachable_codes": [],
+  "codes_reachable_only_with_paths": ["RECEIPT_REV_CONTENT_DRIFT"],
+  "codes_reachable_only_without_paths": ["RECEIPT_REV_MISMATCH"],
+  "selftest": {"command": "python3 tools/receipt-revision-gate.py --selftest", "result": "GATE_SELFTEST: 19/19 pass rc 0", "codes_covered": 11, "fixture_case": "33"},
+  "discrepancies": [
+    {"id": "D1", "severity": "high", "artifact": "SKILL.md line 53 (standing-rules verdict row)", "claim": "verdict receipt naming another revision on the declared --paths surface -> RECEIPT_REV_MISMATCH", "observed": "with --paths: RECEIPT_REV_CONTENT_DRIFT (rc 3) when bytes drift, PASS when identical; RECEIPT_REV_MISMATCH only without --paths", "evidence": ["03", "37", "02", "04", "40a", "40b"], "fix": "row 53 code cell: RECEIPT_REV_CONTENT_DRIFT with --paths; RECEIPT_REV_MISMATCH without --paths"},
+    {"id": "D2", "severity": "high", "artifact": "receipt-revision-gate.py header line 25; registry.json row receipt-revision-gate-selftest scratch_root text", "claim": "'Codes (each a named refusal, exit 3)'", "observed": "RECEIPT_REV_UNRESOLVABLE for --certified exits 2", "evidence": ["18", "19", "20", "32", "42"], "fix": "state the exit-2 case for --certified"},
+    {"id": "D3", "severity": "high", "artifact": "receipt-revision-gate.py header line 32; proposed 0/2/3 map", "claim": "'Exit 0 iff PASS' with no other exits documented", "observed": "exit 1 is used for usage errors and uncaught tracebacks (fixtures 22, 24-28, 27, 34, 35, 43). The 0/2/3 map in T57W1ExecStandingRules.md is incomplete.", "evidence": ["22", "24", "25", "26", "27", "28", "34", "35", "43"], "fix": "map must read 0 PASS; 1 usage or uncaught error (no named code); 2 certified/lane unresolvable; 3 refused with named codes"},
+    {"id": "D4", "severity": "medium", "artifact": "receipt-revision-gate.py header line 31 (verdict line format) and --json contract", "claim": "verdict line 'GATE: receipts=N ok=N refused=N codes=... verdict=...'; --json emits schema tameshi-receipt-gate-v1", "observed": "exit-2 path prints 'GATE: error=unresolvable-certified receipts=N verdict=REFUSED codes=...' and ignores --json (prints text)", "evidence": ["18", "19"], "fix": "document the exit-2 line form; emit JSON or document text-only on that path"},
+    {"id": "D5", "severity": "medium", "artifact": "receipt-revision-gate.py code comment lines 153-154", "claim": "accepted content-identical rev != certified: 'the line says so'", "observed": "GATE OK line prints revs=<other rev> with no marker that rev differs from certified", "evidence": ["02"], "fix": "either print a marker in the OK line or correct the comment"},
+    {"id": "D6", "severity": "medium", "artifact": "receipt-revision-gate.py lines 76-77 (drifted_paths empty-list branch) reached via run() line 196-198", "claim": "branch message '<no --paths given: content identity is not checkable>'", "observed": "reached when --paths names a file with no path lines; emits RECEIPT_REV_CONTENT_DRIFT rc 3 with a message saying no --paths was given", "evidence": ["21"], "fix": "usage error (exit 1) or could-not-evaluate for an empty paths file; fix the message"},
+    {"id": "D7", "severity": "low", "artifact": "receipt-revision-gate.py line 196 (if paths:)", "claim": "--paths FILE flag", "observed": "--paths '' is silently treated as absent: strict RECEIPT_REV_MISMATCH rc 3, no usage error", "evidence": ["23"], "fix": "reject empty --paths as usage (exit 1) or treat by is-not-None"},
+    {"id": "D8", "severity": "low", "artifact": "receipt-revision-gate.py lines 64-66, 189-194", "claim": "RECEIPT_REV_UNRESOLVABLE names an unresolvable revision", "observed": "a nonexistent or non-git --lane also yields RECEIPT_REV_UNRESOLVABLE rc 2 (names the revision, not the lane)", "evidence": ["20"], "fix": "distinct code or documented conflation"},
+    {"id": "D9", "severity": "medium", "artifact": "receipt-revision-gate.py run() order lines 186-201", "claim": "usage and refusal codes are named", "observed": "certified resolution (190-194) precedes receipt parsing (201) and --paths read (197): an unresolvable --certified hides a bad ROLE (rc 2, not 1) and a missing --paths file (rc 2, not traceback). Exit code of a multi-error call depends on check order.", "evidence": ["32", "42", "25"], "fix": "document the check order or validate arguments before resolving"},
+    {"id": "D10", "severity": "medium", "artifact": "receipt-revision-gate.py lines 170-185, 197, 106 (uncaught exceptions) and header line 25", "claim": "every refusal is a named code", "observed": "flag with no value (IndexError), missing --paths file (FileNotFoundError), unreadable paths file or receipt (PermissionError untested) escape as tracebacks with exit 1 and no named code", "evidence": ["22", "27", "43"], "fix": "catch OSError/IndexError into usage exit 1 with a message"},
+    {"id": "D11", "severity": "medium", "artifact": "receipt-revision-gate.py line 140 (len(revs) > 1) vs control role (no ambiguity check); header line 16 'Exactly one distinct rev= token'", "claim": "positive ambiguity is about 'distinct rev= token'", "observed": "token strings, not resolved commits: one commit named abbreviated+full is RECEIPT_REV_AMBIGUOUS for positive/verdict (rc 3) but PASS for control (extra 41). resolved{} is computed but not used for ambiguity.", "evidence": ["07", "41"], "fix": "compare resolved commits, or document token-level ambiguity and make control consistent"},
+    {"id": "D12", "severity": "low", "artifact": "receipt-revision-gate.py line 43 (REV_RE 7-40 hex) and SKILL row 56", "claim": "RECEIPT_REV_ABSENT means 'names no revision at all'", "observed": "a 6-hex rev= token is invisible to the regex: RECEIPT_REV_ABSENT with detail 'no rev= token' although a too-short revision is named", "evidence": ["30"], "fix": "detail text, or a short-rev code; SKILL row 56 wording"},
+    {"id": "D13", "severity": "low", "artifact": "receipt-revision-gate.py line 90 (split(':', 2)) and header line 12", "claim": "--receipt PATH:ROLE[:REGEX]", "observed": "a PATH containing ':' is a usage error exit 1 (role parsed from the path fragment)", "evidence": ["28"], "fix": "document or parse from the right"},
+    {"id": "D14", "severity": "low", "artifact": "receipt-revision-gate.py lines 109-111", "claim": "code comment", "observed": "unfinished self-correction in source: 'a receipt that git knows must be a blob at the certified revision's tree? No:'", "evidence": ["source read"], "fix": "delete or rewrite the comment"}
+  ],
+  "executor_report_agreement": {
+    "file": ".ufo/waves/round-57/w1/T57W1ExecStandingRules.md",
+    "rows_checked": 8,
+    "rows_agree_with_my_fixtures": 8,
+    "not_covered_by_executor": ["D2 (registry row 1278 still says each refusal is exit 3)", "D3 (their 0/2/3 map omits exit 1)", "D5", "D6 message wording (they confirmed the code, not the wording)", "D7-D13"]
+  }
+}

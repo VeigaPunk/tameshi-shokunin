@@ -1,0 +1,82 @@
+[
+ {
+  "id": "R53.4",
+  "status": "fixed",
+  "commit": "SIMULATED-A-28856a61ec9c269f2cd1bd3a3b2e1ec6c8719cac",
+  "evidence": [
+   {
+    "path": ".ufo/waves/round-53/w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout",
+    "lines": "1-1",
+    "excerpt": "C2_R53: rev=5e3569969b53 tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=2 docs=ok total=0 C2_R53_PASS=true"
+   }
+  ],
+  "keys": [
+   "c2-counter-repaired.stdout",
+   "5e3569969b53",
+   "cr47=rc=2"
+  ],
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "Only after the staged receipt is committed in the integration commit (replace commit with the real hash).",
+  "verdict_basis": "Fixed after integration: the integration commit touches the receipt and the new rev line is absent at 2ef0a5a."
+ },
+ {
+  "id": "R53.5",
+  "status": "fixed",
+  "commit": "SIMULATED-B-b997f8d29abed00cc3b4affcb520ad55b5e96571",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-53/verify-freeze.stdout",
+    "lines": "1-1",
+    "excerpt": "FREEZE 9e09db2 files=8 amendments=7"
+   },
+   {
+    "path": "LOG.md",
+    "lines": "2468-2469",
+    "excerpt": "freeze `9e09db2` (amendments 1–7, prior freeze `cf872769`, all disclosed in `freeze.json`)"
+   }
+  ],
+  "keys": [
+   "verify-freeze.stdout",
+   "9e09db2",
+   "amendments=7"
+  ],
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "Requires BOTH the staged receipt and the costly LOG.md pointer edit (receipt alone is partial). Commit B contains both edits; replace with the real integration commit.",
+  "verdict_basis": "Fixed after integration only if both the receipt refresh and the LOG.md pointer correction land in the integration commit; the new excerpts are absent at 2ef0a5a and the commit touches both paths."
+ },
+ {
+  "id": "R53.6",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "tools/env-diff.py",
+    "lines": "234-236",
+    "excerpt": "except ScratchRootUnusable as exc: print(\"ENVDIFF_SETUP: could-not-evaluate: %s\" % exc, file=sys.stderr) return 2"
+   },
+   {
+    "path": "tools/bash-witness-study.py",
+    "lines": "1788-1790",
+    "excerpt": "except ScratchRootUnusable as exc: print(f\"WITNESS_STUDY: could-not-evaluate: {exc}\", file=sys.stderr) return EXIT_CANNOT"
+   },
+   {
+    "path": "tools/evidence-disposition.py",
+    "lines": "3231-3233",
+    "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"evidence-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+   },
+   {
+    "path": "tools/pin-disposition.py",
+    "lines": "1399-1401",
+    "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"pin-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+   }
+  ],
+  "commit": "59c38109bf119d0e9d4f878644a82babc937bc1e",
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "59c3810 (round-54 C0) routes a set-but-unusable TMPDIR to ScratchRootUnusable and exit 2 in the four named tools; run at base with TMPDIR=/nonexistent: rc=2 for all four, rc=1 traceback at 2ef0a5a.",
+  "keys": [
+   "ScratchRootUnusable",
+   "could-not-evaluate",
+   "TMPDIR"
+  ],
+  "verdict_basis": "Fixed: 59c3810 is an ancestor of base and not of 2ef0a5a, touches all four tools, the catch sites are absent at 2ef0a5a, and runtime rc changes from 1 (traceback) to 2 at base."
+ }
+]

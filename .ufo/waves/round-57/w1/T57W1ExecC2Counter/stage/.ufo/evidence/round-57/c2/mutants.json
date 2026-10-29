@@ -1,0 +1,28 @@
+{
+ "schema": "tameshi-c2-gate-mutants-v1",
+ "gate": "tools/receipt-revision-gate.py",
+ "rule": "each `old` occurs exactly once in the gate at REV; the counter replaces it with `new` in a copy inside a scratch clone, reruns the gate rows, and counts the mutant killed when a row that held before the edit differs after it",
+ "mutants": [
+  {
+   "id": "M1",
+   "name": "accept-on-drift",
+   "effect": "a content-drifting receipt on a declared --paths surface is accepted (the drift branch never refuses)",
+   "old": "                if drift:\n                    codes.append('RECEIPT_REV_CONTENT_DRIFT')",
+   "new": "                if False:\n                    codes.append('RECEIPT_REV_CONTENT_DRIFT')"
+  },
+  {
+   "id": "M2",
+   "name": "wrong-refusal-code",
+   "effect": "the drift branch refuses with RECEIPT_REV_MISMATCH instead of RECEIPT_REV_CONTENT_DRIFT",
+   "old": "codes.append('RECEIPT_REV_CONTENT_DRIFT')",
+   "new": "codes.append('RECEIPT_REV_MISMATCH')"
+  },
+  {
+   "id": "M3",
+   "name": "exit-0-on-unresolvable",
+   "effect": "an unresolvable certified revision exits 0 instead of 2",
+   "old": "% len(receipts))\n        return 2\n",
+   "new": "% len(receipts))\n        return 0\n"
+  }
+ ]
+}

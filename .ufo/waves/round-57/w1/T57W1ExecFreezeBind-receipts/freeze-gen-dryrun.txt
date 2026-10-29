@@ -1,0 +1,33 @@
+--- first generation (--out, no committed manifest)
+FREEZE_GEN_OUT /fast/scratch/hyaku/tameshi-r57/T57W1ExecFreezeBind/fz2/.ufo/evidence/round-57/freeze.json bytes=637 identical=no sha256=d8ad2f9aa053d8819a68fe263b93f2b397cac086a8fc0708d2e3e3b9b8ce9d09
+FREEZE_GEN: files=5 generated
+exit=0
+--- --check before the manifest is committed
+FREEZE_GEN: files=5 MISMATCH
+FREEZE_GEN_MISMATCH freeze.json unreadable-at-rev 96b9569159a6
+exit=1
+--- --check
+FREEZE_GEN: files=5 ok
+exit=0
+--- regenerate --out, byte compare
+FREEZE_GEN_OUT /fast/scratch/hyaku/tameshi-r57/T57W1ExecFreezeBind/regen.json bytes=637 identical=yes sha256=d8ad2f9aa053d8819a68fe263b93f2b397cac086a8fc0708d2e3e3b9b8ce9d09
+FREEZE_GEN: files=5 ok
+exit=0
+BYTE_IDENTICAL
+--- frozen tool edited
+FREEZE_GEN: files=5 MISMATCH
+FREEZE_GEN_MISMATCH tools/receipt-revision-gate.py 46121668cf12 != c60772ceb0ce
+exit=1
+--- manifest header tampered
+FREEZE_GEN: files=5 MISMATCH
+FREEZE_GEN_MISMATCH freeze.json header round=56 != 57
+exit=1
+--- --check with --out
+freeze-gen: --check never writes; drop --out or drop --check
+usage: freeze-gen.py --lane LANE --rev REV [--check] [--explain] [--out PATH]
+exit=2
+--- lane base (empty frozen_paths, no freeze.json)
+FREEZE_GEN: files=0 MISMATCH
+FREEZE_GEN_MISMATCH contract.json unreadable-at-rev 5e3569969b53
+FREEZE_GEN_MISMATCH freeze.json unreadable-at-rev 5e3569969b53
+exit=1

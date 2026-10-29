@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-WVF23W3');
+    </script>
+    
+    
+    <meta charset="utf-8">
+    <meta content="initial-scale=1, minimum-scale=1, width=device-width" name="viewport"><title>Google SRE - Postmortem Practices for Incident Management</title>
+    <meta name="description" content="SRE postmortem practices for documenting incidents, understanding root causes, and preventing recurrence. Explore blameless postmortemculture and best practices.">
+
+    
+    <meta name="referrer" content="no-referrer" />
+    <link rel="canonical" href="https://sre.google/workbook/postmortem-culture/">
+      <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+      <link rel="icon" type="image/png" sizes="32x32" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+      <link rel="icon" type="image/png" sizes="16x16" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+      <link rel="shortcut icon" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700|Material+Icons"><link href="/css/sre-book.min.css" rel="stylesheet">
+    <script src="/js/detect.min.js"></script>
+  </head>
+
+  <body>
+    
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WVF23W3"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    
+    
+    <main>
+      <div>
+  <div id="curtain" class="menu-closed"></div>
+  <div class="header clearfix">
+    <a id="burger-menu" class="expand"></a>
+    <h2 class="chapter-title">
+      Chapter 10 - Postmortem Culture: Learning from Failure
+    </h2>
+  </div>
+  <div id="overlay-element" class="expands">
+    <div class="logo">
+      <a href="https://www.google.com">
+        <img src="/img/dynamic/sre-book/632142839b17938ba5b6f27f37695c51.webp" alt="Google">
+      </a>
+    </div>
+    <ol id="drop-down" class="dropdown-content"><li>
+        <a href="/workbook/table-of-contents/" class="menu-buttons">Table of Contents</a>
+      </li>
+        <li>
+          <a href="/workbook/foreword-I/" class="menu-buttons">
+            
+              Foreword I
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/foreword-II/" class="menu-buttons">
+            
+              Foreword II
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/preface/" class="menu-buttons">
+            
+              Preface
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/how-sre-relates/" class="menu-buttons">
+            
+              1. How SRE Relates to DevOps
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/part-I-foundations/" class="menu-buttons">
+            
+              Part I - Foundations
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/implementing-slos/" class="menu-buttons">
+            
+              2. Implementing SLOs
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/slo-engineering-case-studies/" class="menu-buttons">
+            
+              3. SLO Engineering Case Studies
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/monitoring/" class="menu-buttons">
+            
+              4. Monitoring
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/alerting-on-slos/" class="menu-buttons">
+            
+              5. Alerting on SLOs
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/eliminating-toil/" class="menu-buttons">
+            
+              6. Eliminating Toil
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/simplicity/" class="menu-buttons">
+            
+              7. Simplicity
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/part-II-practices/" class="menu-buttons">
+            
+              Part II - Practices
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/on-call/" class="menu-buttons">
+            
+              8. On-Call
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/incident-response/" class="menu-buttons">
+            
+              9. Incident Response
+            
+          </a>
+        </li>
+      
+        <li class="active">
+          <a href="/workbook/postmortem-culture/" class="menu-buttons">
+            
+              10. Postmortem Culture: Learning from Failure
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/managing-load/" class="menu-buttons">
+            
+              11. Managing Load
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/non-abstract-design/" class="menu-buttons">
+            
+              12. Introducing Non-Abstract Large System Design
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/data-processing/" class="menu-buttons">
+            
+              13. Data Processing Pipelines
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/configuration-design/" class="menu-buttons">
+            
+              14. Configuration Design and Best Practices
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/configuration-specifics/" class="menu-buttons">
+            
+              15. Configuration Specifics
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/canarying-releases/" class="menu-buttons">
+            
+              16. Canarying Releases
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/part-III-processes/" class="menu-buttons">
+            
+              Part III - Processes
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/overload/" class="menu-buttons">
+            
+              17. Identifying and Recovering from Overload
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/engagement-model/" class="menu-buttons">
+            
+              18. SRE Engagement Model
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/reaching-beyond/" class="menu-buttons">
+            
+              19. SRE: Reaching Beyond Your Walls
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/team-lifecycles/" class="menu-buttons">
+            
+              20. SRE Team Lifecycles
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/organizational-change/" class="menu-buttons">
+            
+              21. Organizational Change Management in SRE
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/conclusion/" class="menu-buttons">
+            
+              Conclusion
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/slo-document/" class="menu-buttons">
+            
+              Appendix A. Example SLO Document
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/error-budget-policy/" class="menu-buttons">
+            
+              Appendix B. Example Error Budget Policy
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/postmortem-analysis/" class="menu-buttons">
+            
+              Appendix C. Results of Postmortem Analysis
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/index/" class="menu-buttons">
+            
+              Index
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/editors/" class="menu-buttons">
+            
+              About the Editors
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/workbook/colophon/" class="menu-buttons">
+            
+              Colophon
+            
+          </a>
+        </li>
+      
+    </ol>
+  </div>
+</div>
+
+      
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+
+    
+    <div id="maia-main" role="main">
+      <div class="content" id="content">
+        
+        
+        
+        <h1 class="heading jumptargets" id="postmortem-culture-learning-from-failure">Postmortem Culture: Learning from Failure</h1>
+<p class="byline author">By Daniel Rogers, Murali Suriar, Sue Lueder,<br>Pranjal Deo, and Divya Sudhakar<br>with Gary O’Connor and Dave Rensin
+</p>
+<p>
+  Our experience shows that a truly blameless postmortem culture results in more reliable systems—which is why we believe this practice is important to creating and maintaining a successful SRE organization.
+</p>
+<p>
+  Introducing postmortems into an organization is as much a cultural change as it is a technical one. Making such a shift can seem daunting. The key takeaway from this chapter is that making this change is possible, and needn’t seem like an insurmountable challenge. Don’t emerge from an incident hoping that your systems will eventually remedy themselves. You can start small by introducing a very basic postmortem procedure, and then reflect and tune your process to best suit your organization—as with many things, there is no one size that fits all.
+</p>
+<p>
+  When written well, acted upon, and widely shared, postmortems can be a very effective tool for driving positive organizational change and preventing repeat outages. To illustrate the principles of good postmortem writing, this chapter presents a case study of an actual outage that happened at Google. An example of a poorly written postmortem highlights the reasons why “bad” postmortem practices are damaging to an organization that’s trying to create a healthy postmortem culture. We then compare the bad postmortem with the actual postmortem that was written after the incident, highlighting the principles and best practices of a high-quality postmortem.
+</p>
+<p>
+  The second part of this chapter shares what we’ve learned about creating incentives for nurturing of a robust postmortem culture and how to recognize (and remedy) the early signs that the culture is breaking down.
+</p>
+<p>
+  Finally, we provide tools and templates that you can use to bootstrap a postmortem culture.
+</p>
+<p>
+  For a comprehensive discussion on blameless postmortem philosophy, see <a href="/sre-book/postmortem-culture/">Chapter 15</a> in our first book, <span class="italic">Site Reliability Engineering</span>.
+</p>
+<h2 class="heading jumptargets" id="case-study">Case Study</h2>
+<p>
+  This case study features a routine rack decommission that led to an increase in service latency for our users. A bug in our maintenance automation, combined with insufficient rate limits, caused thousands of servers carrying production traffic to simultaneously go offline.
+</p>
+<p>
+  While the majority of Google’s servers are located in our proprietary datacenters, we also have racks of proxy/cache machines in colocation facilities (or “colos”). Racks in colos that contain our proxy machines are called <span class="italic">satellites</span>. Because satellites undergo regular maintenance and upgrades, a number of satellite racks are being installed or decommissioned at any point in time. At Google, these maintenance processes are largely automated.
+</p>
+<p>
+  The decommission process overwrites the full content of all drives in the rack using a process we call <span class="italic">diskerase</span>. Once a machine is sent to diskerase, the data it once stored is no longer retrievable. The steps for a typical rack decommission are as follows:
+</p>
+<pre class="code-indentation">
+
+# Get all active machines in "satellite"
+machines = GetMachines(satellite)
+
+# Send all candidate machines matching "filter" to decom
+SendToDecom(candidates=GetAllSatelliteMachines(),
+            filter=machines)
+
+</pre>
+<p>
+  Our case study begins with a satellite rack that was marked for decommissioning. The diskerase step of the decommission process finished successfully, but the automation responsible for the remainder of the machine decommission failed. To debug the failure, we retried the decommission process. The second decommission ran as follows:
+</p>
+<pre class="code-indentation">
+# Get all active machines in "satellite"
+machines = GetMachines(satellite)
+<em>
+# "machines" is an empty list, because the decom flow has already run.
+# API bug: an empty list is treated as "no filter", rather than "act on no
+# machines"
+</em>
+# Send all candidate machines matching "filter" to decom
+SendToDecom(candidates=GetAllSatelliteMachines(),
+            filter=machines)
+
+# Send all machines in "candidates" to diskerase.
+
+</pre>
+<p>
+  Within minutes, the disks of all satellite machines, globally, were erased. The machines were rendered inert and could no longer accept connections from users, so subsequent user connections were routed directly to our datacenters. As a result, users experienced a slight increase in latency. Thanks to good capacity planning, very few of our users noticed the issue during the two days it took us to reinstall machines in the affected colo racks. Following the incident, we spent several weeks auditing and adding more sanity checks to our automation to make our decommission workflow idempotent.
+</p>
+<p>
+  Three years after this outage, we experienced a similar incident: a number of satellites were drained, resulting in increased user latency. The action items implemented from the original postmortem dramatically reduced the blast radius and rate of the second incident.
+</p>
+<p>
+  Suppose you were the person responsible for writing the postmortem for this case study. What would you want to know, and what actions would you propose to prevent this outage from happening again?
+</p>
+<p>
+  Let’s start with a not-so-great postmortem for this incident.
+</p>
+<h1 class="heading jumptargets" id="bad-postmortem">Bad Postmortem</h1>
+<aside data-type="sidebar" class="highlight pagebreak-before" id="all-satellite-machines-sent-to-diskerase">
+  <h5 class="subheaders jumptargets" align="center">Postmortem: All Satellite Machines Sent to Diskerase</h5>
+<em>2014-August-11</em>
+<p>
+  <em>Owner: </em>maxone@, logantwo@, sydneythree@, dylanfour@
+</p>
+<p>
+  <em>Shared with: </em>satellite-infra-team@
+</p>
+<p>
+  <em>Status: </em>Final
+</p>
+<p>
+  <em>Incident date: </em>2014-August-11
+</p>
+<p>
+  <em>Published: </em>2014-December-30
+</p>
+<p><em>Executive Summary</em></p>
+<p>
+  <em>Impact: </em>All Satellite machines are sent to diskerase, which practically wiped out Google Edge.
+</p>
+<p>
+  <em>Root cause: </em>dylanfour@ ignored the automation setup and ran the cluster turnup logic manually, which triggered an existing bug.
+</p>
+<p>
+  <em>Problem Summary</em>
+</p>
+<p>
+  <em>Duration of problem: </em>40min
+</p>
+<p>
+  <em>Product(s) affected: </em>satellite-infra-team
+</p>
+<p>
+  <em>% of product affected: </em>All satellite clusters.
+</p>
+<p>
+  <em>User impact: </em>All queries that normally go to satellites were served from the core instead, causing increased latency.
+</p>
+<p>
+  <em>Revenue impact: </em>Some ads were not served due to the lost queries. Exact revenue impact unknown at this time.
+</p>
+<p>
+  <em>Detection:</em>Monitoring alert.
+</p>
+<p>
+  <em>Resolution:</em>Diverting traffic to core followed by manual repair of edge clusters.
+</p>
+<p>
+  <em>Background (optional)</em>
+</p>
+<p>
+  <em>Impact</em>
+</p>
+<p class="italic">
+  User impact
+</p>
+<ul class="simplelist">
+  <li>
+    All queries that normally go to satellites were instead served from the core, causing increased latency to user traffic.
+  </li>
+</ul>
+<p class="italic">Revenue impact</p>
+<ul class="simplelist">
+  <li>
+    Some ads were not served due to the lost queries.
+  </li>
+</ul>
+<p>
+  <em>Root Causes and Trigger</em>
+</p>
+<p>
+  Cluster turnup/turndown automation is not meant to be idempotent. The tool has safeguards to ensure that certain steps cannot be run more than once. Unfortunately, there is nothing to stop someone from running the code manually as many times as they want. None of the documentation mentioned this gotcha. As a result, most team members think it’s okay to run the process multiple times if it doesn’t work.
+</p>
+<p>
+  This is exactly what happened during a routine decommissioning of a rack. The rack was being replaced with a new Iota-based satellite. dylanfour@ completely ignored the fact that the turnup had already executed once and was stuck in the first attempt. Due to careless ignorance, they triggered a bad interaction that assigned all the satellite machines to the diskerase team.
+</p>
+<p><em>Recovery Efforts</em></p>
+<p><em>Lessons Learned</em></p>
+<p>Things that went well</p>
+<ul>
+  <li>
+    Alerting caught the issue immediately.
+  </li>
+  <li>
+    Incident management went well.
+  </li>
+</ul>
+<p>Things that went poorly</p>
+<ul>
+  <li>
+    The team (especially maxone@, logantwo@) never wrote any documentation to tell SREs not to run the automation multiple times, which is ridiculous.
+  </li>
+  <li>
+    On-call did not act soon enough to prevent most satellite machines from being erased. This is not the first time that on-call failed to react in time.
+  </li>
+</ul>
+<p>Where we got lucky</p>
+<ul>
+  <li>
+    Core was able to serve all the traffic that normally would have gone to the Edge. I can’t believe we survived this one!!!
+  </li>
+</ul>
+<p><em>Action Items</em></p>
+<table>
+    <thead>
+        <tr>
+          <th>Action Item</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th>Tracking Bug</th>
+        </tr>
+    </thead>
+      <tbody>
+        <tr>
+          <td><p>Make automation better.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P2</p></td>
+          <td><p>logantwo@</p></td>
+          <td></td>
+        </tr>
+        <tr>
+            <td><p>Improve paging and alerting.</p></td>
+            <td><p>detect</p></td>
+            <td><p>P2</p></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+          <td><p>sydneythree@ needs to learn proper cross-site handoff protocol so nobody has to work on duplicate issues.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P2</p></td>
+          <td></td>
+          <td><p>BUG6789</p></td>
+        </tr>
+        <tr>
+          <td><p>Train humans not to run unsafe commands.</p></td>
+          <td><p>prevent</p></td>
+          <td><p>P2</p></td>
+          <td></td>
+          <td></td>
+        </tr>
+     </tbody>
+</table>
+<p><em>Glossary</em></p>
+</aside>
+<h5 class="subheaders jumptargets" id="why-is-this-postmortem-bad">Why Is This Postmortem Bad?</h5>
+<p>The example “bad” postmortem contains a number of common failure modes that we try to avoid. The following sections explain how to improve upon this postmortem.</p>
+<h6 class="subheaders-small jumptargets" id="missing-context">Missing context</h6>
+<p>
+  From the outset, our <a href="../../sre-book/example-postmortem/">example postmortem</a> introduces terminology that’s specific to traffic serving (e.g., “satellites”) and lower layers of machine management automation at Google (e.g., “diskerase”). If you need to provide additional context as part of the postmortem, use the Background and/or Glossary sections (which can link to longer documents). In this case, both sections were blank.
+</p>
+<p>
+  If you don’t properly contextualize content when <a href="/sre-book/example-postmortem/">writing a postmortem</a>, the document might be misunderstood or even ignored. It’s important to remember that your audience extends beyond the immediate team.
+</p>
+<h6 class="subheaders-small jumptargets" id="key-details-omitted">Key details omitted</h6>
+<p>
+  Multiple sections contain high-level summaries but lacked important details. For example:
+</p>
+<p class="italic">Problem summary</p>
+<ul class="simplelist">
+  <li>For outages affecting multiple services, you should present <a href="/workbook/postmortem-analysis/">numbers to give a consistent representation</a> of impact. The only numerical data our example provides is the duration of the problem. We don’t have enough details to estimate the size or impact of the outage. Even if there is no concrete data, a well-informed estimate is better than no data at all. After all, if you don’t know how to measure it, then you can’t know it’s fixed!</li>
+</ul>
+<p class="italic">Root causes and trigger</p>
+<ul class="simplelist">
+  <li>
+    Identifying the root causes and trigger is one of the most important reasons to write a postmortem. Our example contains a small paragraph that describes the root causes and trigger, but it doesn’t explore the lower-level details of the issue.
+  </li>
+</ul>
+<p class="italic">Recovery efforts</p>
+<ul class="simplelist">
+  <li>
+    A postmortem acts as the record of an incident for its readers. A good postmortem will let readers know what happened, how the issue was mitigated, and how users were impacted. The answers to many of these questions are typically found in the Recovery Efforts section, which was left empty in our example.
+  </li>
+</ul>
+<p>
+  If an outage merits a postmortem, you should also take the time to accurately capture and document the necessary details. The reader should get a complete view of the outage and, more importantly, learn something new.
+</p>
+<h6 class="subheaders-small jumptargets" id="key-action-item-characteristics-missing">Key action item characteristics missing</h6>
+<p>
+  The Action Items (AIs) section of our example is missing the core aspects of an actionable plan to prevent recurrence. For example:
+</p>
+<ul>
+  <li>
+    The action items are mostly mitigative. To minimize the likelihood of the outage recurring, you should include some preventative action items and fixes. The one “preventative” action item suggests we “make humans less error-prone.” In general, trying to change human behavior is less reliable than changing automated systems and processes. (Or as Dan Milstein <a href="https://product.hubspot.com/blog/bid/64771/Post-Mortems-at-HubSpot-What-I-Learned-From-250-Whys" target="_blank" rel="noopener noreferrer">once quipped</a>: “Let’s plan for a future where we’re all as stupid as we are today.”)
+  </li>
+  <li>
+    All of the action items have been tagged with an equal priority. There’s no way to determine which action to tackle first.
+  </li>
+  <li>
+    The first two action items in the list use ambiguous phrases like “Improve” and “Make better.” These terms are vague and open to interpretation. Using unclear language makes it difficult to measure and understand success criteria.
+  </li>
+  <li>
+    Only one action item was assigned a tracking bug. Without a formal tracking process, action items from postmortems are often forgotten, resulting in outages.
+  </li>
+</ul>
+<aside data-type="sidebar" class="highlight pagebreak-before note-highlight">
+<h6 class="subheaders-small jumptargets" id="note-1" align="center">Note</h6>
+<p class="note">
+  In the words of Ben Treynor Sloss, Google’s VP for 24/7 Operations: “To our users, a postmortem without subsequent action is indistinguishable from no postmortem. Therefore, all postmortems which follow a user-affecting outage must have at least one P[01] bug associated with them. I personally review exceptions. There are very few exceptions.”
+</p>
+</aside>
+<h6 class="subheaders-small jumptargets" id="counterproductive-finger-pointing">Counterproductive finger pointing</h6>
+<p>
+  Every postmortem has the potential to lapse into a blameful narrative. Let’s take a look at some examples:
+</p>
+<p class="italic">Things that went poorly</p>
+<ul class="simplelist">
+  <li>
+    The entire team is blamed for the outage, while two members (maxone@ and logantwo@) are specifically called out.
+  </li>
+</ul>
+<p class="italic">Action items</p>
+<ul class="simplelist">
+  <li>
+    The last item in the list targets sydneythree@ for succumbing to pressure and mismanaging the cross-site handoff.
+  </li>
+</ul>
+<p class="italic">Root causes and trigger</p>
+<ul class="simplelist">
+  <li>
+    dylanfour@ is held solely responsible for the outage.
+  </li>
+</ul>
+<p>
+  It may seem like a good idea to highlight individuals in a postmortem. Instead, this practice leads team members to become risk-averse because they’re afraid of being publicly shamed. They may be motivated to cover up facts critical to understanding and preventing recurrence.
+</p>
+<h6 class="subheaders-small jumptargets" id="animated-language">Animated language</h6>
+<p>
+A postmortem is a factual artifact that should be free from personal judgments and subjective language. It should consider multiple perspectives and be respectful of others. Our example postmortem contains multiple examples of undesirable language:
+</p>
+<p class="italic">Root causes and trigger</p>
+<ul class="simplelist">
+  <li>
+    Superfluous language (e.g., “careless ignorance”)
+  </li>
+</ul>
+<p class="italic">Things that went poorly</p>
+<ul class="simplelist">
+  <li>
+    Animated text (e.g., “which is ridiculous”)
+  </li>
+</ul>
+<p class="italic">Where we got lucky</p>
+<ul class="simplelist">
+  <li>
+    An exclamation of disbelief (e.g., “I can't believe we survived this one!!!”)
+  </li>
+</ul>
+<p>
+  Animated language and dramatic descriptions of events distract from the key message and erode psychological safety. Instead, provide verifiable data to justify the severity of a statement.
+</p>
+<h6 class="subheaders-small jumptargets" id="missing-ownership">Missing ownership</h6>
+<p>
+  Declaring official ownership results in accountability, which leads to action. Our example postmortem contains several examples of missing ownership:
+</p>
+<ul>
+  <li>
+    The postmortem lists four owners. Ideally, an owner is a single point of contact who is responsible for the postmortem, follow-up, and completion.
+  </li>
+  <li>
+    The Action Items section has little or no ownership for its entries. Actions items without clear owners are less likely to be resolved.
+  </li>
+</ul>
+<p>
+  It’s better to have a single owner and multiple collaborators.
+</p>
+<h6 class="subheaders-small jumptargets" id="limited-audience">Limited audience</h6>
+<p>
+  Our example postmortem was shared only among members of the team. By default, the document should have been accessible to everyone at the company. We recommend proactively sharing your postmortem as widely as possible—perhaps even with your customers. The value of a postmortem is proportional to the learning it creates. The more people that can learn from past incidents, the less likely they are to be repeated. A thoughtful and honest postmortem is also a key tool in restoring shaken trust.
+</p>
+<p>
+  As your experience and comfort grows, you will also likely expand your “audience” to nonhumans. Mature postmortem cultures often add machine-readable tags (and other metadata) to enable downstream analytics.
+</p>
+<h6 class="subheaders-small jumptargets" id="delayed-publication">Delayed publication</h6>
+<p>
+  Our example postmortem was published four months after the incident. In the interim, had the incident recurred (which in reality, did happen), team members likely would have forgotten key details that a timely postmortem would have captured.
+</p>
+<h1 class="heading jumptargets" id="good-postmortem">Good Postmortem</h1>
+<aside data-type="sidebar" class="highlight pagebreak-before note-highlight">
+<h6 class="subheaders-small jumptargets" id="note-2" align="center">Note</h6>
+<p class="note">
+  This is an actual postmortem. In some cases, we fictionalized names of individuals and teams. We also replaced actual values with placeholders to protect sensitive capacity information. In the postmortems that you create for your internal consumption, you should absolutely include specific numbers!
+</p>
+</aside>
+<aside data-type="sidebar" class="highlight pagebreak-before" id="all-satellite-machines-sent-to-diskerase">
+  <h2 class="subheaders jumptargets" align="center" id="postmortem-all-satellite-machines-sent-to-diskerase">Postmortem: All Satellite Machines Sent to Diskerase</h2>
+ <p><em>2014-August-11</em></p>
+ <p><em>Owner: </em>Postmortem: maxone@, logantwo@,Datacenter Automation: sydneythree@,Network: dylanfour@,Server Management: finfive@</p>
+ <p><em>Shared with: </em><a href="mailto: all_engineering_employees@google.com"><span class="italic"> all_engineering_employees@google.com</span></a></p>
+ <p><em>Status: </em>Final</p>
+<p><em>Incident date: </em>Mon, August 11, 2014, 17:10 to 17:50 PST8PDT</p>
+<p><em>Published: </em>Fri, August 15, 2014</p>
+<p><em>Executive Summary</em></p>
+<p><em>Impact: </em>Frontend queries dropped,Some ads were not served,There was a latency increase for all services normally served from satellite for nearly two days</p>
+<p><em>Root cause: </em>A bug in turndown automation caused all satellite machines, instead of just one rack of satellite machines, to be sent to diskerase. This resulted in all satellite machines entering the decom workflow, which wiped their disks. The result was a global satellite frontend outage.</p>
+<p><em>Problem Summary</em></p>
+<p><em>Duration of problem: </em>Main outage: Mon, August 11, 17:10 to 17:50 PST8PDT,<p>Reconstruction work and residual pains through Wed, August 13, 07:46 PST8PDT, then the incident was closed.</p></p>
+<p><em>Product(s) affected: </em> Frontend Infrastructure, specifically all satellite locations.</p>
+<p><em>% of product affected: </em>Global—all traffic normally served from satellites (typically 60% of global queries).</p>
+<p><em>User impact: </em>[Value redacted] frontend queries dropped over a period of 40 minutes ([value redacted] QPS averaged over the period, [value redacted] % of global traffic).<p>Latency increase for all services normally served from satellite for nearly two days.</p></p>
+<p><em>Revenue impact:</em> The exact revenue impact unknown at this time.</p>
+<p><em>Detection: </em>Blackbox alerting: traffic-team was paged with “satellite <code>a12bcd34</code> failing too many HTTP requests” for ~every satellite in the world.</p>
+<p><em>Resolution: </em>The outage itself was rapidly mitigated by moving all of Google’s frontend traffic to core clusters, at the cost of additional latency for user traffic.</p>
+<p><em>Background (optional)</em></p>
+<p>
+  If you’re unfamiliar with frontend traffic serving and the lower layers of serving automation at Google, read the glossary before you continue.
+</p>
+<p><em>Impact</em></p>
+<p>User impact</p>
+<ul>
+  <li>
+    [Value redacted] frontend queries dropped over a period of [value redacted] minutes. [Value redacted] QPS averaged over the period, [value redacted] % of global traffic. Our monitoring suggests a much larger crater; however, the data was unreliable as it ceased monitoring satellites that were still serving, thinking they were turned down. The appendix describes how the above numbers were estimated.
+  </li>
+  <li>
+    There was a latency increase for all services normally served from satellite for nearly two days:
+  </li>
+  <ul>
+    <li>
+      [Value redacted] ms RTT spikes for countries near core clusters
+    </li>
+    <li>
+      Up to+[value redacted] ms for locations relying more heavily on satellites (e.g., Australia, New Zealand, India)
+    </li>
+  </ul>
+</ul>
+<p>Revenue impact</p>
+<p>Some ads were not served due to the lost queries. The exact revenue impact is unknown at this time:</p>
+<ul>
+  <li>
+    Display and video: The data has very wide error bars due to day-on-day fluctuations, but we estimate between [value redacted] % and [value redacted] % of revenue loss on the day of the outage.
+  </li>
+  <li>
+    Search: [Value redacted] % to [value redacted] % loss between 17:00 to 18:00, again with wide error bars.
+  </li>
+</ul>
+<p>Team impact</p>
+<ul>
+  <li>
+    The Traffic team spent ~48 hours with all hands on deck rebuilding satellites.
+  </li>
+  <li>
+    NST had a higher-than-normal interrupt/pager load because they needed to traffic-engineer overloaded peering links.
+  </li>
+  <li>
+    Some services may have seen increased responses served at their frontends due to reduced cache hit rate in the GFEs.
+  </li>
+  <ul>
+    <li>
+      For example, see this thread [link] about [cache-dependent service].
+    </li>
+    <li>
+      [Cache-dependent service] saw their cache hit rate at the GFEs drop from [value redacted ] % to [value redacted] % before slowly recovering.
+    </li>
+  </ul>
+</ul>
+<p>Incident document</p>
+<p>[The link to our incident tracking document has been redacted.]</p>
+<p><em>Root Causes and Trigger</em></p>
+<p>
+  A longstanding input validation bug in the Traffic Admin server was triggered by the manual reexecution of a workflow to decommission the <code>a12bcd34</code> satellite. The bug removed the machine constraint on the decom action, sending all satellite machines to decommission.
+</p>
+<p>
+  From there, datacenter automation executed the decom workflow, wiping the hard drives of the majority of satellite machines before this action could be stopped.
+</p>
+<p>
+  The Traffic Admin server provides a <code>ReleaseSatelliteMachines</code> RPC. This handler initiates satellite decommission using three MDB API calls:
+</p>
+<ul>
+  <li>
+    Look up the rack name associated with the edge node (e.g., <code>a12bcd34</code> -> &lt;rack name&gt;).
+  </li>
+  <li>
+    Look up the machine names associated with the rack (&lt;rack&gt; -> &lt;machine 1&gt;, &lt;machine 2&gt;, etc.).
+  </li>
+  <li>
+    Reassign those machines to diskerase, which indirectly triggers the decommission workflow.
+  </li>
+</ul>
+<p>
+  This procedure is not idempotent, due to a known behavior of the MDB API combined with a missing safety check. If a satellite node was previously successfully sent to decom, step 2 above returns an empty list, which is interpreted in step 3 as the absence of a constraint on a machine hostname.
+</p>
+<p>
+  This dangerous behavior has been around for a while, but was hidden by the workflow that invokes the unsafe operation: the workflow step invoking the RPC is marked “run once,” meaning that the workflow engine will not reexecute the RPC once it has succeeded.
+</p>
+<p>
+  However, “run once” semantics don’t apply across multiple instances of a workflow. When the Cluster Turnup team manually started another run of the workflow for <code>a12bcd34</code>, this action triggered the <code>admin_server</code> bug.
+</p>
+<p><em>Timeline/Recovery Efforts</em></p>
+<p>
+  [The link to our Timeline log has been elided for book publication. In a real postmortem, this information would always be included.]
+</p>
+<p><em>Lessons Learned</em></p>
+<p>Things that went well</p>
+<ul>
+  <li>
+    Evacuating the edge. GFEs in core are explicitly capacity-planned to allow this to happen, as is the production backbone (aside from peering links; see the Outage list in the next section). This edge evacuation allowed the Traffic team to mitigate promptly without fear.
+  </li>
+  <li>
+    Automatic mitigation of catastrophic satellite failure. Cover routes automatically pull traffic from failing satellites back to core clusters, and satellites drain themselves when abnormal churn is detected.
+  </li>
+  <li>
+    Satellite decom/diskerase worked very effectively and rapidly, albeit as a <a href="https://en.wikipedia.org/wiki/Confused_deputy_problem" target="_blank" rel="noopener noreferrer">confused deputy</a>.
+  </li>
+  <li>
+    The outage triggered a quick IMAG response via OMG and the tool proved useful for ongoing incident tracking. The cross-team response was excellent, and OMG further helped keep everyone talking to each other.
+  </li>
+</ul>
+<p>
+  Things that went poorly
+</p>
+<p>Outage</p>
+<ul>
+  <li>
+    The Traffic Admin server lacked the appropriate sanity checks on the commands it sent to MDB. All commands should be idempotent, or at least fail-safe on repeat invocations.
+  </li>
+  <li>
+    MDB did not object to the missing hostname constraint in the ownership change request.
+  </li>
+  <li>
+    The decom workflow doesn’t cross-check decom requests with other data sources (e.g., planned rack decoms). As a result, there were no objections to the request to trash (many) geographically diverse machines.
+  </li>
+  <li>
+    The decom workflow is not rate-limited. Once the machines entered decom, disk erase and other decom steps proceeded at maximum speed.
+  </li>
+  <li>
+    Some peering links between Google and the world were overloaded as a result of the egress traffic shifting to different locations when satellites stopped serving, and their queries were instead served from core. This resulted in short bursts of congestion to select peers until satellites were restored, and mitigation work by NST to match.
+  </li>
+</ul>
+<p>Recovery</p>
+<ul>
+  <li>
+    Reinstalls of satellite machines were slow and unreliable. Reinstallations use TFTP to transmit data, which works poorly when transmitting to satellites at the end of high-latency links.
+  </li>
+  <li>
+    The Autoreplacer infrastructure was not able to handle the simultaneous setup of [value redacted] of GFEs at the time of the outage. Matching the velocity of automated setups required the labor of many SREs working in parallel performing manual setups. The factors below contributed to the initial slowness of the automation:
+  </li>
+  <ul>
+    <li>
+      Overly strict SSH timeouts prevented reliable Autoreplacer operation on very remote satellites.
+    </li>
+    <li>
+      A slow kernel upgrade process was executed regardless of whether the machine already had the correct version.
+    </li>
+    <li>
+      A concurrency regression in Autoreplacer prevented running more than two machine setup tasks per worker machine.
+    </li>
+    <li>
+      Confusion about the behavior of the Autoreplacer wasted time and effort.
+    </li>
+  </ul>
+  <li>
+    The monitoring configuration delta safety checks (25% change) did not trigger when 23% of the targets were removed, but did trigger when the same contents (29% of what remained) were readded. This caused a 30-minute delay in reenabling monitoring of the satellites.
+  </li>
+  <li>
+    “The installer” has limited staffing. As a result, making changes is difficult and slow.
+  </li>
+  <li>
+    Use of superuser powers to claw machines back from diskerase left a lot of zombie state, causing ongoing cleanup pain.
+  </li>
+</ul>
+<p>Where we got lucky</p>
+<ul>
+  <li>
+    GFEs in core clusters are managed very differently from satellite GFEs. As a result, they were not affected by the decom rampage.
+  </li>
+  <li>
+    Similarly, YouTube’s CDN is run as a distinct piece of infrastructure, so YouTube video serving was not affected. Had this failed, the outage would have been much more severe and prolonged.
+  </li>
+</ul>
+<p><em>Action Items</em></p>
+<p>
+  Due to the wide-reaching nature of this incident, we split action items into five themes:
+</p>
+<ol type="1">
+  <li>
+    Prevention/risk education
+  </li>
+  <li>
+    Emergency response
+  </li>
+  <li>
+    Monitoring/alerting
+  </li>
+  <li>
+    Satellite/edge provisioning
+    </li>
+    <li>
+      Cleanup/miscellaneous
+    </li>
+</ol>
+   <table>
+      <caption class="jumptarget"><span class="label">Table 10-8. </span>Prevention/risk education</caption>
+      <thead>
+        <tr>
+          <th>Action items</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th>Tracking bug</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><p>Audit all systems capable of turning live servers into paperweights (i.e., not just repairs and diskerase workflow).</p></td>
+          <td><p>investigate</p></td>
+          <td><p>P1</p></td>
+          <td><p>sydneythree@</p></td>
+          <td><p>BUG1234</p></td>
+        </tr>
+        <tr>
+          <td><p>File bugs to track implementation of bad input rejection to all systems identified in BUG1234.</p></td>
+          <td><p>prevent</p></td>
+          <td><p>P1</p></td>
+          <td><p>sydneythree@</p></td>
+          <td><p>BUG1235</p></td>
+        </tr>
+        <tr>
+          <td><p>Disallow any single operation from affecting servers spanning namespace/class boundaries.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P1</p></td>
+          <td><p>maxone@</p></td>
+          <td><p>BUG1236</p></td>
+        </tr>
+         <tr>
+          <td><p>Traffic admin server needs a safety check to not operate on more than [value redacted] number of nodes.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P1</p></td>
+          <td><p>mdylanfour@</p></td>
+          <td><p>BUG1237</p></td>
+        </tr>
+        <tr>
+          <td><p>Traffic admin server should ask &lt;safety check service&gt; to approve destructive work.</p></td>
+          <td><p>prevent</p></td>
+          <td><p>P0</p></td>
+          <td><p>logantwo@</p></td>
+          <td><p>BUG1238</p></td>
+        </tr>
+        <tr>
+          <td><p>MDB should reject operations that do not provide values for an expected-present constraint.</p></td>
+          <td><p>prevent</p></td>
+          <td><p>P0</p></td>
+          <td><p>louseven@</p></td>
+          <td><p>BUG1239</p></td>
+        </tr>
+     </tbody>
+    </table>
+   <table>
+      <caption class="jumptarget"><span class="label">Table 10-9. </span>Emergency response</caption>
+      <thead>
+        <tr>
+          <th>Action items</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th>Tracking bug</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><p>Ensure that serving from core does not overload egress network links.</p></td>
+          <td><p>repair</p></td>
+          <td><p>P2</p></td>
+          <td><p>rileysix@</p></td>
+          <td><p>BUG1240</p></td>
+        </tr>
+        <tr>
+          <td><p>Ensure decom workflow problems are noted under [the link to our emergency stop doc has been redacted] and [the link to our escalations contact page has been redacted].</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P2</p></td>
+          <td><p>logantwo@</p></td>
+          <td><p>BUG1241</p></td>
+        </tr>
+        <tr>
+          <td><p>Add a big-red-button<sup><a class="jumptarget" data-type="noteref" id="ch10fn1-marker" href="#ch10fn1">1</a></sup> disable approach to decom workflows.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P0</p></td>
+          <td><p>maxone@</p></td>
+          <td><p>BUG1242</p></td>
+        </tr>
+     </tbody>
+    </table>
+   <table>
+      <caption class="jumptarget"><span class="label">Table 10-10. </span>Monitoring/alerting</caption>
+      <thead>
+        <tr>
+          <th>Action items</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th>Tracking bug</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><p>Monitoring target safety checks should not allow you to push a change that cannot be rolled back.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P2</p></td>
+          <td><p>dylanfour@</p></td>
+          <td><p>BUG1243</p></td>
+        </tr>
+        <tr>
+          <td><p>Add an alert when more than [value redacted] % of our machines have been taken away from us. Machines were taken from satellites at 16:38 while the world started paging only at around 17:10.</p></td>
+          <td><p>detect</p></td>
+          <td><p>P1</p></td>
+          <td><p>rileysix@</p></td>
+          <td><p>BUG1244</p></td>
+        </tr>
+     </tbody>
+    </table>
+   <table>
+      <caption class="jumptarget"><span class="label">Table 10-11. </span>Satellite/edge provisioning</caption>
+      <thead>
+        <tr>
+          <th>Action items</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th>Tracking bug</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><p>Use iPXE to use HTTPS to make reinstalls more reliable/faster.</p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P2</p></td>
+          <td><p>dylanfour@</p></td>
+          <td><p>BUG1245</p></td>
+        </tr>
+     </tbody>
+    </table>
+   <table>
+      <caption class="jumptarget"><span class="label">Table 10-12. </span>Cleanup/miscellaneous</caption>
+      <thead>
+        <tr>
+          <th>Action items</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th>Tracking bug</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><p>Review MDB-related code in our tools and bring the admin server backup to unwedge turnups/turndowns.</p></td>
+          <td><p>repair</p></td>
+          <td><p>P2</p></td>
+          <td><p>rileysix@</p></td>
+          <td><p>BUG1246</p></td>
+        </tr>
+        <tr>
+          <td><p>Schedule DiRT tests:
+            <ul>
+              <li>
+                Bring back satellite after diskerase.
+              </li>
+              <li>
+                Do the same for YouTube CDN.
+              </li>
+            </ul></p></td>
+          <td><p>mitigate</p></td>
+          <td><p>P2</p></td>
+          <td><p>louseven@</p></td>
+          <td><p>BUG1247</p></td>
+        </tr>
+     </tbody>
+    </table>
+<p><em>Glossary</em></p>
+<p class="italic">Admin server</p>
+<ul class="simplelist">
+  <li>
+    An RPC server that enables automation to execute privileged operations for frontend serving infrastructure. The automation server is most visibly involved in the implementation of PCRs and cluster turnups/turndowns.
+  </li>
+</ul>
+<p class="italic">Autoreplacer</p>
+<ul class="simplelist">
+  <li>
+    A system that moves non-Borgified servers from machine to machine. It’s used to keep services running in the face of machine failures, and also to support forklifts and colo reconfigs.
+  </li>
+</ul>
+<p class="italic">Borg</p>
+<ul class="simplelist">
+  <li>
+    A cluster management system designed to manage tasks and machine resources on a massive scale. Borg owns all of the machines in a Borg cell, and assigns tasks to machines that have resources available.
+  </li>
+</ul>
+<p class="italic">Decom</p>
+<ul class="simplelist">
+  <li>
+    An abbreviation of <span class="italic">decommissioning</span>. Decom of equipment is a process that is relevant to many operational teams.
+  </li>
+</ul>
+<p class="italic">Diskerase</p>
+<ul class="simplelist">
+  <li>
+    A process (and associated hardware/software systems) to securely wipe production hard drives before they leave Google datacenters. Diskerase is a step in the decom workflow.
+  </li>
+</ul>
+<p class="italic">GFE (Google Front End)</p>
+<ul class="simplelist">
+  <li>
+    The server that the outside world connects to for (almost) all Google services.
+  </li>
+</ul>
+<p class="italic">IMAG (Incident Management at Google)</p>
+<ul class="simplelist">
+  <li>
+    A program that establishes a standard, consistent way to handle all types of incidents—from system outages to natural disasters—and organize an effective response.
+  </li>
+</ul>
+<p class="italic">MDB (Machine Database)</p>
+<ul class="simplelist">
+  <li>
+    A system that stores all sorts of information about the state of Google machine inventory.
+  </li>
+</ul>
+<p class="italic">OMG (Outage Management at Google)</p>
+<ul class="simplelist">
+  <li>
+    An incident management dashboard/tool that serves as a central place for tracking and managing all ongoing incidents at Google.
+  </li>
+</ul>
+<p class="italic">Satellites</p>
+<ul>
+  <li>
+    Small, inexpensive racks of machine that serve only nonvideo, frontend traffic from the edge of Google’s network. Almost none of the traditional production cluster infrastructure is available for satellites. Satellites are distinct from the CDN that serves YouTube video content from the edge of Google’s network, and from other places on the wider internet. YouTube CDN was not affected by this incident.
+  </li>
+</ul>
+<p><em>Appendix</em></p>
+<p class="italic">Why is <code><span class="italic">ReleaseSatelliteMachines</span></code> not idempotent?</p>
+<ul class="simplelist">
+  <li>
+    [The response to this question has been elided.]
+  </li>
+</ul>
+<p class="italic">What happened after the Admin Server assigned all satellites to the diskerase-team?</p>
+<ul class="simplelist">
+  <li>
+    [The response to this question has been elided.]
+  </li>
+</ul>
+<p class="italic">What was the true <a href="/sre-book/production-environment#xref_production-environment_job-and-data-organization">QPS</a> loss during the outage?</p>
+<ul class="simplelist">
+  <li>
+    [The response to this question has been elided.]
+  </li>
+</ul>
+<p class="italic">IRC logs</p>
+<ul class="simplelist">
+  <li>
+    [The IRC logs have been elided.]
+  </li>
+</ul>
+<p><em>Graphs</em></p>
+<p class="italic">Faster latency statistics—what have satellites ever done for us?</p>
+<ul class="simplelist">
+  <li>
+    Empirically from this outage, satellites shave [value redacted] ms latency off many locations near core clusters, and up to [value redacted] ms off locations further from our backbone:
+  </li>
+  <li>
+    [The explanation of the graphs has been elided.]
+  </li>
+</ul>
+<p class="italic">Core vs. Edge serving load</p>
+<ul class="simplelist">
+  <li>
+    A nice illustration of the reconstruction effort. Being able to once again serve 50% of traffic from the edge took about 36 hours, and returning to the normal traffic balance took an additional 12 hours (see <a data-type="xref" href="#core-vs-edge-qps-breakdown">Figure 10-1</a> and <a data-type="xref" href="#core-vs-edge-qps-breakdown-alternate-representation">Figure 10-2</a>).
+  </li>
+</ul>
+<p class="italic">Peering strain from traffic shifts</p>
+<ul class="simplelist">
+  <li>
+    [Graph elided.]
+  </li>
+  <li>
+    The graph shows packet loss aggregated by network region. There were a few short spikes during the event itself, but the majority of the loss occurred as various regions entered peak with little/no satellite coverage.
+  </li>
+</ul>
+<p class="italic">Person vs. Machine, the GFE edition</p>
+<ul class="simplelist">
+  <li>
+    [Graph explanation of human vs. automated machine setup rates elided.]
+  </li>
+</ul>
+<figure id="core-vs-edge-qps-breakdown" class="horizontal vertical jumptarget">
+      <img src="/img/dynamic/sre-workbook/fd355c1ad105cb194d34fabf10c76ab8.webp" alt="core-vs-edge-qps-breakdown">
+      <figcaption><span class="label">Figure 10-1. </span>Core vs. Edge QPS breakdown</figcaption>
+</figure>
+<figure id="core-vs-edge-qps-breakdown-alternate-representation" class="horizontal vertical jumptarget">
+      <img src="/img/dynamic/sre-workbook/e4c25b33c4244fb423e5df7223c02c79.webp" alt="core-vs-edge-qps-breakdown-alternate-representation">
+      <figcaption><span class="label">Figure 10-2. </span>Core vs. Edge QPS breakdown (alternate representation)</figcaption>
+</figure>
+</aside>
+<h5 class="subheaders jumptargets" id="why-is-this-postmortem-better">Why Is This Postmortem Better?</h5>
+<p>
+  This postmortem exemplifies several good writing practices.
+</p>
+<h6 class="subheaders-small jumptargets" id="clarity">Clarity</h6>
+<p>
+  The postmortem is well organized and explains key terms in sufficient detail. For example:
+</p>
+<p class="italic">Glossary</p>
+<ul class="simplelist">
+  <li>
+    A well-written glossary makes the postmortem accessible and comprehensible to a broad audience. 
+  </li>
+</ul>
+<p class="italic">Action items</p>
+<ul class="simplelist">
+  <li>
+    This was a large incident with many action items. Grouping action items by theme makes it easier to assign owners and priorities.
+  </li>
+</ul>
+<p class="italic">Quantifiable metrics</p>
+<ul class="simplelist">
+  <li>
+    The postmortem presents useful data on the incident, such as cache hit ratios, traffic levels, and duration of the impact. Relevant sections of the data are presented with links back to the original sources. This data transparency removes ambiguity and provides context for the reader.
+  </li>
+</ul>
+<h6 class="subheaders-small jumptargets" id="concrete-action-items">Concrete action items</h6>
+<p>
+  A postmortem with no action items is ineffective. These action items have a few notable characteristics:
+</p>
+<p class="italic">Ownership</p>
+<ul class="simplelist">
+  <li>
+    All action items have both an owner and a tracking number.
+  </li>
+</ul>
+<p class="italic">Prioritization</p>
+<ul class="simplelist">
+  <li>
+    All action items are assigned a priority level.
+  </li>
+</ul>
+<p class="italic">Measurability</p>
+<ul class="simplelist">
+  <li>
+    The action items have a verifiable end state (e.g., “Add an alert when more than X% of our machines have been taken away from us”).
+  </li>
+</ul>
+<p class="italic">Preventative action</p>
+<ul class="simplelist">
+  <li>
+    Each action item “theme” has Prevent/Mitigate action items that help avoid outage recurrence (for example, “Disallow any single operation from affecting servers spanning namespace/class boundaries”).
+  </li>
+</ul>
+<h6 class="subheaders-small jumptargets" id="blamelessness">Blamelessness</h6>
+<p>
+  The authors focused on the gaps in system design that permitted undesirable failure modes. For example:
+</p>
+<p class="italic">Things that went poorly</p>
+<ul class="simplelist">
+  <li>
+    No individual or team is blamed for the incident.
+  </li>
+</ul>
+<p class="italic">Root cause and trigger</p>
+<ul class="simplelist">
+  <li>
+    Focuses on “what” went wrong, not “who” caused the incident.
+  </li>
+</ul>
+<p class="italic">Action items</p>
+<ul class="simplelist">
+  <li>
+    Are aimed at improving the system instead of improving people.
+  </li>
+</ul>
+<h6 class="subheaders-small jumptargets" id="dept">Depth</h6>
+<p>
+  Rather than only investigating the proximate area of the system failure, the postmortem explores the impact and system flaws across multiple teams. Specifically:
+</p>
+<p class="italic">Impact</p>
+<ul class="simplelist">
+  <li>
+    This section contains lots of details from various perspectives, making it balanced and objective.
+  </li>
+</ul>
+<p class="italic">Root cause and trigger</p>
+<ul class="simplelist">
+  <li>
+    This section performs a deep dive on the incident and arrives at a root cause and trigger.
+  </li>
+</ul>
+<p class="italic">Data-driven conclusions</p>
+<ul class="simplelist">
+  <li>
+    All of the conclusions presented are based on facts and data. Any data used to arrive at a conclusion is linked from the document.
+  </li>
+</ul>
+<p class="italic">Additional resources</p>
+<ul class="simplelist">
+  <li>
+    These present further useful information in the form of graphs. Graphs are explained to give context to readers who aren’t familiar with the system.
+  </li>
+</ul>
+<h6 class="subheaders-small jumptargets" id="promptness">Promptness</h6>
+<p>
+  The postmortem was written and circulated less than a week after the incident was closed. A prompt postmortem tends to be more accurate because information is fresh in the contributors’ minds. The people who were affected by the outage are waiting for an explanation and some demonstration that you have things under control. The longer you wait, the more they will fill the gap with the products of their imagination. That seldom works in your favor!
+</p>
+<h6 class="subheaders-small jumptargets" id="conciseness">Conciseness</h6>
+<p>
+  The incident was a global one, impacting multiple systems. As a result, the postmortem recorded and subsequently parsed a lot of data. Lengthy data sources, such as chat transcripts and system logs, were abstracted, with the unedited versions linked from the main document. Overall, the postmortem strikes a balance between verbosity and readability.
+</p>
+<h1 class="heading jumptargets" id="organizational-incentives">Organizational Incentives</h1>
+<p>
+  Ideally, senior leadership should support and encourage effective postmortems. This section describes how an organization can incentivize a healthy postmortem culture. We highlight warning signs that the culture is failing and offer some solutions. We also provide tools and templates to streamline and automate the postmortem process.
+</p>
+<h5 class="subheaders jumptargets" id="model-and-enforce-blameless-behavior">Model and Enforce Blameless Behavior</h5>
+<p>
+  To properly support postmortem culture, engineering leaders should consistently exemplify blameless behavior and encourage blamelessness in every aspect of postmortem discussion. You can use a few concrete strategies to enforce blameless behavior in an organization.
+</p>
+<h6 class="subheaders-small jumptargets" id="use-blameless-language">Use blameless language</h6>
+<p>Blameful language stifles collaboration between teams. Consider the following scenario:</p>
+<ul class="simplelist">
+  <li>
+    Sandy missed a service Foo training and wasn’t sure how to run a particular update command. The delay ultimately prolonged an outage.
+  </li>
+  <li>
+    SRE Jesse [to Sandy’s manager]: “You’re the manager; why aren’t you making sure that everyone finishes the training?”
+  </li>
+</ul>
+<p>
+  The exchange includes a leading question that will instantly put the recipient on the defensive. A more balanced response would be:
+</p>
+<ul class="simplelist">
+  <li>
+    SRE Jesse [to Sandy’s manager]: “Reading the postmortem, I see that the on-caller missed an important training that would have allowed them to resolve the outage more quickly. Maybe team members should be required to complete this training before joining the on-call rotation? Or we could remind them that if they get stuck to please quickly escalate. After all, escalation is not a sin—especially if it helps lower customer pain! Long term, we shouldn't really rely so much on training, as it’s easy to forget in the heat of the moment.”
+  </li>
+</ul>
+<h6 class="subheaders-small jumptargets" id="include-all-incident-participants-in-postmortem-authoring">Include all incident participants in postmortem authoring</h6>
+<p>
+  It can be easy to overlook key contributing factors to an outage when the postmortem is written in isolation or by a single team.
+</p>
+<h6 class="subheaders-small jumptargets" id="gather-feedback">Gather feedback</h6>
+<p>
+  A clear review process and communication plan for postmortems can help prevent blameful language and perspectives from propagating within an organization. For a suggested structured review process, see the section <a data-type="xref" href="#postmortem-checklist">Postmortem checklist</a>.
+</p>
+<h5 class="subheaders jumptargets" id="reward-postmortem-outcomes">Reward Postmortem Outcomes</h5>
+<p>
+  When well written, acted upon, and widely shared, postmortems are an effective vehicle for driving positive organizational change and preventing repeat outages. Consider the following strategies to incentivize postmortem culture.
+</p>
+<h6 class="subheaders-small jumptargets" id="reward-action-item-closeout">Reward action item closeout</h6>
+<p>
+  If you reward engineers for writing postmortems, but not for closing the associated action items, you risk an unvirtuous cycle of unclosed postmortems. Ensure that incentives are balanced between writing the postmortem and successfully implementing its action plan.
+</p>
+<h6 class="subheaders-small jumptargets" id="reward-positive-organizational-change">Reward positive organizational change</h6>
+<p>
+  You can incentivize widespread implementation of postmortem lessons by presenting postmortems as an opportunity to expand impact across an organization. Reward this level of impact with peer bonuses, positive performance reviews, promotion, and the like.
+</p>
+<h6 class="subheaders-small jumptargets" id="highlight-improved-reliability">Highlight improved reliability</h6>
+<p>
+  Over time, an effective postmortem culture leads to fewer outages and more reliable systems. As a result, teams can focus on feature velocity instead of infrastructure patching. It’s intrinsically motivating to highlight these improvements in reports, presentations, and performance reviews.
+</p>
+<h6 class="subheaders-small jumptargets" id="hold-up-postmortem-owners-as-leaders">Hold up postmortem owners as leaders</h6>
+<p>
+  Celebrating postmortems through emails or meetings, or by giving the authors an opportunity to present lessons learned to an audience, can appeal to individuals that appreciate public accolades. Setting up the owner as an “expert” on a type of failure and its avoidance can be rewarding for many engineers who seek peer acknowledgment. For example, you might hear someone say, “Talk to Sara, she’s an expert now. She just coauthored a postmortem where she figured out how to fix that gap!”
+</p>
+<h6 class="subheaders-small jumptargets" id="gamification">Gamification</h6>
+<p>
+  Some individuals are incentivized by a sense of accomplishment and progress toward a larger goal, such as fixing system weaknesses and increasing reliability. For these individuals, a scoreboard or burndown of postmortem action items can be an incentive. At Google, we hold “FixIt” weeks twice a year. SREs who close the most postmortem action items receive small tokens of appreciation and (of course) bragging rights. <a data-type="xref" href="#postmortem-leaderboard">Figure 10-3</a> shows an example of a postmortem leaderboard.
+</p>
+<figure id="postmortem-leaderboard" class="horizontal vertical jumptarget">
+      <img src="/img/dynamic/sre-workbook/5b258677ca3d62dd91f3935993928831.webp" alt="postmortem-leaderboard">
+      <figcaption><span class="label">Figure 10-3. </span>Postmortem leaderboard</figcaption>
+</figure>
+<h5 class="subheaders jumptargets" id="share-postmortems-openly">Share Postmortems Openly</h5>
+<p>
+  In order to maintain a healthy postmortem culture within an organization, it’s important to share postmortems as widely as possible. Implementing even one of the following tactics can help.
+</p>
+<h6 class="subheaders-small jumptargets" id="Share-announcements-across-the-organization">Share announcements across the organization</h6>
+<p>
+  Announce the availability of the postmortem draft on your internal communication channels, email, Slack, and the like. If you have a regular company all-hands, make it a practice to share a recent postmortem of interest.
+</p>
+<h6 class="subheaders-small jumptargets" id="conduct-cross-team-reviews">Conduct cross-team reviews</h6>
+<p>
+  Conduct cross-team reviews of postmortems. In these reviews, a team walks though their incident while other teams ask questions and learn vicariously. At Google, several offices have informal Postmortem Reading Clubs that are open to all employees.
+</p>
+<p>
+  In addition, a cross-functional group of developers, SREs, and organizational leaders reviews the overall postmortem process. These folks meet monthly to review the effectiveness of the postmortem process and template.
+</p>
+<h6 class="subheaders-small jumptargets" id="hold-training-exercises">Hold training exercises</h6>
+<p>
+  Use the <a href="/sre-book/accelerating-sre-on-call#xref_training_disaster-rpg">Wheel of Misfortune</a> when training new engineers: a cast of engineers reenacts a previous postmortem, assuming roles laid out in the postmortem. The original Incident Commander attends to help make the experience as “real” as possible.
+</p>
+<h6 class="subheaders-small jumptargets" id="report-incidents-and-outages-weekly">Report incidents and outages weekly</h6>
+<p>
+  Create a weekly outage report containing the incidents and outages from the past seven days. Share the report with as wide an audience as possible. From the weekly outages, compile and share a periodic greatest hits report.
+</p>
+<h5 class="subheaders jumptargets" id="respond-to-postmortem-culture-failures">Respond to Postmortem Culture Failures</h5>
+<p>
+  The breakdown of postmortem culture may not always be obvious. The following are some common failure patterns and recommended solutions.
+</p>
+<h6 class="subheaders-small jumptargets" id="avoiding-association">Avoiding association</h6>
+<p>
+  Disengaging from the postmortem process is a sign that postmortem culture at an organization is failing. For example, suppose SRE Director Parker overhears the following conversation:
+</p>
+<ul class="simplelist">
+  <li>
+    SWE Sam: Wow, did you hear about that huge blow-up?
+  </li>
+  <li>
+    SWE Riley: Yeah, it was terrible. They’ll have to write a postmortem now.
+  </li>
+  <li>
+    SWE Sam: Oh no! I’m so glad I’m not involved with that.
+  </li>
+  <li>
+    SWE Riley: Yeah, I really wouldn’t want to be in the meeting where that one is discussed.
+  </li>
+</ul>
+<p>
+  Ensuring that high-visibility postmortems are <a data-type="xref" href="#postmortem-checklist">reviewed</a> for blameful prose can help prevent this kind of avoidance. In addition, sharing high-quality examples and discussing how those involved were rewarded can help reengage individuals.
+</p>
+<h6 class="subheaders-small jumptargets" id="failing-to-reinforce-the-culture">Failing to reinforce the culture</h6>
+<p>
+  Responding when a senior executive uses blameful language can be challenging. Consider the following statement made by senior leadership at a meeting about an outage:
+</p>
+<ul class="simplelist">
+  <li>VP Ash: I know we are supposed to be blameless, but this is a safe space. Someone must have known beforehand this was a bad idea, so why didn’t you listen to that person?</li>
+</ul>
+<p>Mitigate the damage by moving the narrative in a more constructive direction. For example:
+</p>
+<ul class="simplelist">
+  <li>
+    SRE Dana: Hmmm, I’m sure everyone had the best intent, so to keep it blameless, maybe we ask generically if there were any warning signs we could have heeded, and why we might have dismissed them.
+  </li>
+</ul>
+<p>
+  Individuals act in good faith and make decisions based on the best information available. Investigating the source of misleading information is much more beneficial to the organization than assigning blame. (If you have encountered Agile principles, this should <a href="https://martinfowler.com/bliki/PrimingPrimeDirective.html" target="_blank" rel="noopener noreferrer">be familiar to you</a>.)
+</p>
+<h6 class="subheaders-small jumptargets" id="lacking-time-to-write-postmortems">Lacking time to write postmortems</h6>
+<p>
+  Quality postmortems take time to write. When a team is overloaded with other tasks, the quality of postmortems suffers. Subpar postmortems with incomplete action items make a recurrence far more likely. Postmortems are letters you write to future team members: it’s very important to keep a consistent quality bar, lest you accidentally teach future teammates a bad lesson. Prioritize postmortem work, track the postmortem completion and review, and allow teams adequate time to implement the associated action plan. The tooling we discuss in the section <a data-type="xref" href="#tools-and-templates">Tools and Templates</a> can help with these activities.
+</p>
+<h6 class="subheaders-small jumptargets" id="repeating-incidents">Repeating incidents</h6>
+<p>
+  If teams are experiencing failures that mirror previous incidents, it’s time to dig deeper. Consider asking questions like:
+</p>
+<ul>
+  <li>
+    Are action items taking too long to close?
+  </li>
+  <li>
+    Is feature velocity trumping reliability fixes?
+  </li>
+  <li>
+    Are the right action items being captured in the first place?
+  </li>
+  <li>
+    Is the faulty service overdue for a refactor?
+  </li>
+  <li>
+    Are people putting Band-Aids on a more serious problem?
+  </li>
+</ul>
+<p>
+  If you uncovered a systemic process or technical problem, it’s time to take a step back and consider the overall service health. Bring the postmortem collaborators from each similar incident together to discuss the best course of action to prevent repeats.
+</p>
+<h1 class="heading jumptargets" id="tools-and-templates">Tools and Templates</h1>
+<p>
+  A set of tools and templates can bootstrap a postmortem culture by making writing postmortems and managing the associated data easier. There are a number of resources from Google and other companies that you can leverage in this space.
+</p>
+<h5 class="subheaders jumptargets" id="postmortem-templates">Postmortem Templates</h5>
+<p>
+  Templates make it easier to write complete postmortems and share them across an organization. Using a standard format makes postmortems more accessible for readers outside the domain. You can customize the template to fit your needs. For example, it may be useful to capture team-specific metadata like hardware make/model for a datacenter team, or Android versions affected for a mobile team. You can then add customizations as the team matures and performs more sophisticated postmortems.
+</p>
+<h6 class="subheaders-small jumptargets" id="googles-template">Google’s template</h6>
+<p>
+  Google has shared a version of our postmortem template in Google Docs format at <a href="https://drive.google.com/corp/drive/folders/1t7fO8M3EZFeuu4GmzvStd0TGDI4bDCeb" target="_blank" rel="noopener noreferrer"><span class="italic">https://g.co/SiteReliabilityWorkbookMaterials</span></a>. Internally, we primarily use Docs to write postmortems because it facilitates collaboration via shared editing rights and comments. Some of our internal tools prepopulate this template with metadata to make the postmortem easier to write. We leverage <a href="https://developers.google.com/apps-script/" target="_blank" rel="noopener noreferrer">Google Apps Script</a> to automate parts of the authoring, and capture a lot of the data into specific sections and tables to make it easier for our postmortem repository to parse out data for analysis.
+</p>
+<h6 class="subheaders-small jumptargets" id="other-industry-templates">Other industry templates</h6>
+<p>Several other companies and individuals have shared their postmortem templates:</p>
+<ul>
+  <li>
+    <a href="https://response.pagerduty.com/after/post_mortem_template/" target="_blank" rel="noopener noreferrer">Pager Duty</a>
+  </li>
+  <li>
+    <a href="https://gist.github.com/mlafeldt/6e02ea0caeebef1205b47f31c2647966" target="_blank" rel="noopener noreferrer">An adaptation of the original Google Site Reliability Engineering book template</a>
+  </li>
+  <li>
+    <a href="https://github.com/dastergon/postmortem-templates/tree/master/templates" target="_blank" rel="noopener noreferrer">A list of four templates hosted on GitHub</a>
+  </li>
+  <li>
+    <a href="https://gist.github.com/juliandunn/52b4fbde451628e0fe48" target="_blank" rel="noopener noreferrer">GitHub user Julian Dunn</a>
+  </li>
+  <li>
+    <a href="https://serverfault.com/questions/29188/documenting-an-outage-for-a-post-mortem-review" target="_blank" rel="noopener noreferrer">Server Fault</a>
+  </li>
+</ul>
+<h5 class="subheaders jumptargets" id="postmortem-tooling">Postmortem Tooling</h5>
+<p>
+  As of this writing, Google’s postmortem management tooling is not available for external use (check our <a href="https://cloud.google.com/blog/" target="_blank" rel="noopener noreferrer">blog</a> for the latest updates). We can, however, explain how our tools facilitate postmortem culture.
+</p>
+<h6 class="subheaders-small jumptargets" id="postmortem-creation">Postmortem creation</h6>
+<p>Our incident management tooling collects and stores a lot of useful data about an incident and pushes that data automatically into the postmortem. Examples of data we push includes:</p>
+<ul>
+  <li>
+    Incident Commander and other roles
+  </li>
+  <li>
+    Detailed incident timeline and IRC logs
+  </li>
+  <li>
+    Services affected and root-cause services
+  </li>
+  <li>
+    Incident severity
+  </li>
+  <li>
+    Incident detection mechanisms
+  </li>
+</ul>
+<h6 class="subheaders-small jumptargets" id="postmortem-checklist">Postmortem checklist</h6>
+<p>
+  To help authors ensure a postmortem is properly completed, we provide a postmortem checklist that walks the owner through key steps. Here are just a few example checks on the list:
+</p>
+<ul>
+  <li>
+    Perform a complete assessment of incident impact.
+  </li>
+  <li>
+    Conduct sufficiently detailed root-cause analysis to drive action item planning.
+  </li>
+  <li>
+    Ensure action items are vetted and approved by the technical leads of the service.
+  </li>
+  <li>
+    Share the postmortem with the wider organization.
+  </li>
+</ul>
+<p>The full checklist is available at <a href="https://drive.google.com/corp/drive/folders/1t7fO8M3EZFeuu4GmzvStd0TGDI4bDCeb" target="_blank" rel="noopener noreferrer"><span class="italic">https://g.co/SiteReliabilityWorkbookMaterials</span></a>.</p>
+<h6 class="subheaders-small jumptargets" id="postmortem-storage">Postmortem storage</h6>
+<p>
+  We store postmortems in a tool called Requiem so it’s easy for any Googler to find them. Our incident management tool automatically pushes all postmortems to Requiem, and anyone in the organization can post their postmortem for all to see. We have thousands of postmortems stored, dating back to 2009. Requiem parses out metadata from individual postmortems and makes it available for searching, analysis, and reporting.
+</p>
+<h6 class="subheaders-small jumptargets" id="postmortem-follow-up">Postmortem follow-up</h6>
+ 
+<p>
+  Our postmortems are stored in Requiem’s database. Any resulting action items are filed as bugs in our centralized bug tracking system. Consequently, we can monitor the closure of action items from each postmortem. With this level of tracking, we can ensure that action items don’t slip through the cracks, leading to increasingly unstable services. <a data-type="xref" href="#postmortem-action-item-monitoring">Figure 10-4</a> shows a mockup of postmortem action item monitoring enabled by our tooling.
+</p>
+<figure id="postmortem-action-item-monitoring" class="horizontal vertical jumptarget">
+      <img src="/img/dynamic/sre-workbook/d7ba1cd39ea15ef10a817a63a66704b9.webp" alt="postmortem-action-item-monitoring">
+      <figcaption><span class="label">Figure 10-4. </span>Postmortem action item monitoring</figcaption>
+</figure>
+<h6 class="subheaders-small jumptargets" id="postmortem-analysis">Postmortem analysis</h6>
+<p>
+  Our postmortem management tool stores its information in a database for analysis. Teams can use the data to write reports about their postmortem trends and identify their most vulnerable systems. This helps us uncover underlying sources of instability or incident management dysfunctions that may otherwise go unnoticed. For example, <a data-type="xref" href="#postmortem-analysis">Figure 10-5</a> shows charts that were built with our analysis tooling. These charts show us trends like how many postmortems we have per month per organization, incident mean duration, time to detect, time to resolve, and blast radius.
+</p>
+<aside data-type="sidebar" class="highlight pagebreak-before note-highlight">
+<h6 class="subheaders-small jumptargets" id="note-3" align="center">Note</h6>
+<h6 class="subheaders-small note jumptargets" id="a-simple-way-to-get-started"><em>A simple way to get started</em></h6>
+<p class="note">
+We have provided a simple postmortem template and sheet with some Apps Scripts that will parse metadata from postmortems using the template. Use these tools to experiment with rudimentary postmortem indexing and analysis.
+</p>
+</aside>
+<figure id="postmortem-analysis" class="horizontal vertical jumptarget">
+      <img src="/img/dynamic/sre-workbook/5d19a4ef059e60c9ac5e973f90404313.webp" alt="postmortem-analysis">
+      <figcaption><span class="label">Figure 10-5. </span>Postmortem analysis</figcaption>
+</figure>
+<h6 class="subheaders-small jumptargets" id="other-industry-tools">Other industry tools</h6>
+<p>Here are some third-party tools that can help you create, organize, and analyze postmortems:</p>
+<ul>
+  <li>
+    <a href="https://www.pagerduty.com/features/post-mortems/" target="_blank" rel="noopener noreferrer">Pager Duty Postmortems</a>
+  </li>
+  <li>
+    <a href="https://github.com/etsy/morgue" target="_blank" rel="noopener noreferrer">Morgue by Etsy</a>
+  </li>
+  <li>
+    <a href="https://victorops.com/blog/importance-of-post-mortems" target="_blank" rel="noopener noreferrer">VictorOps</a>
+  </li>
+</ul>
+<p>
+  Although it’s impossible to fully automate every step of writing postmortems, we’ve found that postmortem templates and tooling make the process run more smoothly. These tools free up time, allowing authors to focus on the critical aspects of the postmortem, such as root-cause analysis and action item planning.
+</p>
+<h1 class="heading jumptargets" id="conclusion">Conclusion</h1>
+<p>
+  Ongoing investment in cultivating a postmortem culture pays dividends in the form of fewer outages, a better overall experience for users, and more trust from the people that depend on you. Consistent application of these practices results in better system design, less downtime, and more effective and happier engineers. If the worst does happen and an incident recurs, you will suffer less damage and recover faster and have even more data to continue reinforcing production.
+</p>
+<div data-type="footnotes" class="footnotes">
+  <p data-type="footnote" id="ch10fn1"><sup><a class="jumptargets" href="#ch10fn1-marker">1</a></sup>A general term for a shut-down switch (e.g., an emergency power-off button) to be used in catastrophic circumstances to avert further damage.
+  </p>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="footer">
+      <div class="maia-aux">
+        <div class="previous">
+          
+            
+            
+            
+
+            <a href="/workbook/incident-response/">
+              <p class="footer-caption">Previous</p>
+              <p class="chapter-link">
+                
+                  Chapter 9 - Incident Response
+                
+              </p>
+            </a>
+          
+        </div>
+        <div class="next">
+          
+            
+            
+            
+
+            <a href="/workbook/managing-load/">
+              <p class="footer-caption">Next</p>
+              <p class="chapter-link">
+                
+                  Chapter 11 - Managing Load
+                
+              </p>
+            </a>
+          
+        </div>
+
+        
+          <p class="footer-link">Copyright © 2018 Google, Inc. Published by O'Reilly Media, Inc. Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a></p>
+        
+      </div>
+    </div>
+
+  
+
+      
+    </main>
+    
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-touch.min.js"></script><script src="/js/sre-book.min.js"></script><div style="display: none;"><svg xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <svg id="chevron-left" viewBox="0 0 24 24"><path d="M16.41 5.41L15 4l-8 8 8 8 1.41-1.41L9.83 12"></path></svg>
+    <svg id="chevron-right" viewBox="0 0 24 24"><path d="M7.59 18.59L9 20l8-8-8-8-1.41 1.41L14.17 12"></path></svg>
+    <svg id="expand-less" viewBox="0 0 24 24"><path d="M18.59 16.41L20 15l-8-8-8 8 1.41 1.41L12 9.83"></path></svg>
+    <svg id="expand-more" viewBox="0 0 24 24"><path d="M5.41 7.59L4 9l8 8 8-8-1.41-1.41L12 14.17"></path></svg>
+    <svg id="arrow-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+    <svg id="arrow-forward" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"></path></svg>
+    <svg id="arrow-upward" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"></path></svg>
+    <svg id="arrow-downward" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"></path></svg>
+    <svg id="arrow-left" viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"></path></svg>
+    <svg id="arrow-right" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"></path></svg>
+    <svg id="arrow-drop-up" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"></path></svg>
+    <svg id="arrow-drop-down" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"></path></svg>
+    <svg id="help" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"></path></svg>
+    <svg id="menu" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg>
+    <svg id="more-vert" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+    <svg id="drive-pdf" viewBox="0 0 24 24"><path d="M7 11.5h1v-1H7v1zM19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9.5 8.5c0 .83-.67 1.5-1.5 1.5H7v2H5.5V9H8c.83 0 1.5.67 1.5 1.5v1zm10-1H17v1h1.5V13H17v2h-1.5V9h4v1.5zm-5 3c0 .83-.67 1.5-1.5 1.5h-2.5V9H13c.83 0 1.5.67 1.5 1.5v3zm-2.5 0h1v-3h-1v3z"></path></svg>
+    <svg id="file-download" viewBox="0 0 24 24"><path d="M4 15h2v3h12v-3h2v3c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2m11.59-8.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5-1.41-1.41z"></path></svg>
+    <svg id="open-in-new" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path></svg>
+    <svg id="phone" viewBox="0 0 24 24"><path d="M16.01 14.46l-2.62 2.62a16.141 16.141 0 0 1-6.5-6.5l2.62-2.62a.98.98 0 0 0 .27-.9L9.13 3.8c-.09-.46-.5-.8-.98-.8H4c-.56 0-1.03.47-1 1.03a17.92 17.92 0 0 0 2.43 8.01 18.08 18.08 0 0 0 6.5 6.5 17.92 17.92 0 0 0 8.01 2.43c.56.03 1.03-.44 1.03-1v-4.15c0-.48-.34-.89-.8-.98l-3.26-.65a.99.99 0 0 0-.9.27z"></path></svg>
+    <svg id="email" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-.8 2L12 10.8 4.8 6h14.4zM4 18V7.87l8 5.33 8-5.33V18H4z"></path></svg>
+    <svg id="instagram" viewBox="0 0 24 24"><path d="M12,0 C15.3,0 15.7,0 17,0 C18.3,0.1 19.1,0.3 19.9,0.6 C20.7,0.9 21.3,1.3 22,2 C22.7,2.7 23.1,3.4 23.3,4.2 C23.6,5 23.8,5.8 23.9,7.1 C24,8.3 24,8.7 24,12 C24,15.3 24,15.7 23.9,16.9 C23.8,18.2 23.6,19 23.3,19.8 C23,20.6 22.6,21.2 21.9,21.9 C21.3,22.6 20.6,23 19.8,23.3 C19,23.6 18.2,23.8 16.9,23.9 C15.7,24 15.3,24 12,24 C8.7,24 8.3,24 7,24 C5.7,23.9 4.9,23.7 4.1,23.4 C3.3,23.1 2.7,22.7 2,22 C1.3,21.3 0.9,20.6 0.7,19.8 C0.4,19 0.2,18.2 0.1,16.9 C0,15.7 0,15.3 0,12 C0,8.7 0,8.3 0.1,7.1 C0.1,5.8 0.3,4.9 0.6,4.1 C0.9,3.4 1.3,2.7 2,2 C2.7,1.3 3.4,0.9 4.1,0.6 C4.9,0.3 5.8,0.1 7.1,0.1 C8.3,0 8.7,0 12,0 Z M12,2.2 C8.8,2.2 8.4,2.2 7.2,2.2 C6,2.3 5.3,2.5 4.9,2.6 C4.4,2.9 4,3.1 3.5,3.5 C3.1,3.9 2.8,4.3 2.6,4.9 C2.5,5.3 2.3,6 2.3,7.2 C2.2,8.4 2.2,8.8 2.2,12 C2.2,15.2 2.2,15.5 2.3,16.8 C2.3,17.9 2.5,18.6 2.7,19 C2.9,19.6 3.2,20 3.6,20.4 C4,20.8 4.4,21.1 5,21.3 C5.4,21.5 6,21.6 7.2,21.7 C8.4,21.8 8.8,21.8 12,21.8 C15.2,21.8 15.5,21.8 16.8,21.7 C17.9,21.7 18.6,21.5 19,21.3 C19.6,21.1 20,20.8 20.4,20.4 C20.8,20 21.1,19.6 21.3,19 C21.5,18.6 21.6,18 21.7,16.8 C21.8,15.6 21.8,15.2 21.8,12 C21.8,8.8 21.8,8.5 21.7,7.2 C21.7,6.1 21.5,5.4 21.3,5 C21.1,4.4 20.8,4 20.4,3.6 C20,3.2 19.6,2.9 19,2.7 C18.6,2.5 18,2.4 16.8,2.3 C15.6,2.2 15.2,2.2 12,2.2 Z M12,5.8 C15.4,5.8 18.2,8.6 18.2,12 C18.2,15.4 15.4,18.2 12,18.2 C8.6,18.2 5.8,15.4 5.8,12 C5.8,8.6 8.6,5.8 12,5.8 Z M12,16 C14.2,16 16,14.2 16,12 C16,9.8 14.2,8 12,8 C9.8,8 8,9.8 8,12 C8,14.2 9.8,16 12,16 Z M18.4,7 C17.6268014,7 17,6.37319865 17,5.6 C17,4.82680135 17.6268014,4.2 18.4,4.2 C19.1731986,4.2 19.8,4.82680135 19.8,5.6 C19.8,6.37319865 19.1731986,7 18.4,7 Z"></path></svg>
+    <svg id="link" viewBox="0 0 24 24"><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2z"></path><path d="M8 11h8v2H8z"></path></svg>
+    <svg id="post-blogger" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4 7v1c0 .55.45 1 1 1s1 .45 1 1v3c0 1.66-1.34 3-3 3H9c-1.66 0-3-1.34-3-3V8c0-1.66 1.34-3 3-3h4c1.66 0 3 1.34 3 3v1zm-6.05 1h2.6c.55 0 1-.45 1-1s-.45-1-1-1h-2.6c-.55 0-1 .45-1 1s.45 1 1 1zM14 13H9.95c-.55 0-1 .45-1 1s.45 1 1 1H14c.55 0 1-.45 1-1s-.45-1-1-1z"></path></svg>
+    <svg id="post-facebook" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 2v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v7h-3v-7h-2v-3h2V7.5C13 5.57 14.57 4 16.5 4H19z"></path></svg>
+    <svg id="post-linkedin" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 19H5v-9h3v9zM6.5 8.31c-1 0-1.81-.81-1.81-1.81S5.5 4.69 6.5 4.69s1.81.81 1.81 1.81S7.5 8.31 6.5 8.31zM19 19h-3v-5.3c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V19h-3v-9h3v1.2c.52-.84 1.59-1.4 2.5-1.4 1.93 0 3.5 1.57 3.5 3.5V19z"></path></svg>
+    <svg id="share" viewBox="0 0 24 24"><path d="M18 16c-.79 0-1.5.31-2.03.81L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.53.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.48.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.05 4.12c-.05.22-.09.45-.09.69 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3zm0-12c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"></path></svg>
+    <svg id="twitter" viewBox="0 0 24 24"><path d="M7.5,21.8c9.1,0,14-7.5,14-14c0-0.2,0-0.4,0-0.6c1-0.7,1.8-1.6,2.5-2.5c-0.9,0.4-1.8,0.7-2.8,0.8c1-0.6,1.8-1.6,2.2-2.7 c-1,0.6-2,1-3.1,1.2c-0.9-1-2.2-1.6-3.6-1.6c-2.7,0-4.9,2.2-4.9,4.9c0,0.4,0,0.8,0.1,1.1C7.7,8.1,4.1,6.1,1.7,3.1 C1.2,3.9,1,4.7,1,5.6c0,1.7,0.9,3.2,2.2,4.1C2.4,9.7,1.6,9.5,1,9.1c0,0,0,0,0,0.1c0,2.4,1.7,4.4,4,4.8c-0.4,0.1-0.8,0.2-1.3,0.2 c-0.3,0-0.6,0-0.9-0.1c0.6,2,2.4,3.4,4.6,3.4c-1.7,1.3-3.8,2.1-6.1,2.1c-0.4,0-0.8,0-1.2-0.1C2.2,20.9,4.8,21.8,7.5,21.8"></path></svg>
+    <svg id="video-youtube" viewBox="0 0 24 24"><path d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path></svg>
+    <svg id="video-youtube-white" viewBox="0 0 24 24"><path fill="#fff" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path></svg>
+    <svg id="video-youtube-black" viewBox="0 0 24 24"><path fill="#000" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path><polygon fill="#fff" points="9.6,15.5 9.6,8.5 16,12.1 "></polygon></svg>
+    <svg id="video-youtube-red" viewBox="0 0 24 24"><path fill="#f00" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path><polygon fill="#fff" points="9.6,15.5 9.6,8.5 16,12.1 "></polygon></svg>
+    <svg id="video-youtube-white" viewBox="0 0 24 24"><path fill="#fff" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path></svg>
+    <svg id="close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+    <svg id="expand-all" viewBox="0 0 24 24"><path d="M16.59 9.41L18 8l-6-6-6 6 1.41 1.41L12 4.83l4.59 4.58zM12 19.17l-4.59-4.58L6 16l6 6 6-6-1.41-1.41L12 19.17z"></path></svg>
+    <svg id="play-circle-filled" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"></path></svg>
+    <svg id="search" viewBox="0 0 24 24"><path d="M20.49 19l-5.73-5.73C15.53 12.2 16 10.91 16 9.5A6.5 6.5 0 1 0 9.5 16c1.41 0 2.7-.47 3.77-1.24L19 20.49 20.49 19zM5 9.5C5 7.01 7.01 5 9.5 5S14 7.01 14 9.5 11.99 14 9.5 14 5 11.99 5 9.5z"></path></svg>
+    <svg id="google-color-logo" viewBox="0 0 74 24"><path fill="#4285F4" d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.39-1.34 3.1-.86.86-2.2 1.8-4.54 1.8-3.62 0-6.45-2.92-6.45-6.54s2.83-6.54 6.45-6.54c1.95 0 3.38.77 4.43 1.76L15.4 2.5C13.94 1.08 11.98 0 9.24 0 4.28 0 .11 4.04.11 9s4.17 9 9.13 9c2.68 0 4.7-.88 6.28-2.52 1.62-1.62 2.13-3.91 2.13-5.75 0-.57-.04-1.1-.13-1.54H9.24z"></path><path fill="#EA4335" d="M25 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"></path><path fill="#4285F4" d="M53.58 7.49h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.81c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.5 3.1 3.54.01 2.03-1.36 3.5-3.1 3.5z"></path><path fill="#FBBC05" d="M38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"></path><path fill="#34A853" d="M58 .24h2.51v17.57H58z"></path><path fill="#EA4335" d="M68.26 15.52c-1.3 0-2.22-.59-2.82-1.76l7.77-3.21-.26-.66c-.48-1.3-1.96-3.7-4.97-3.7-2.99 0-5.48 2.35-5.48 5.81 0 3.26 2.46 5.81 5.76 5.81 2.66 0 4.2-1.63 4.84-2.57l-1.98-1.32c-.66.96-1.56 1.6-2.86 1.6zm-.18-7.15c1.03 0 1.91.53 2.2 1.28l-5.25 2.17c0-2.44 1.73-3.45 3.05-3.45z"></path></svg>
+    <svg id="google-solid-logo" viewBox="0 0 74 24"><path d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.39-1.34 3.1-.86.86-2.2 1.8-4.54 1.8-3.62 0-6.45-2.92-6.45-6.54s2.83-6.54 6.45-6.54c1.95 0 3.38.77 4.43 1.76L15.4 2.5C13.94 1.08 11.98 0 9.24 0 4.28 0 .11 4.04.11 9s4.17 9 9.13 9c2.68 0 4.7-.88 6.28-2.52 1.62-1.62 2.13-3.91 2.13-5.75 0-.57-.04-1.1-.13-1.54H9.24zm15.76-2c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52zm28.58-8.03h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.81c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.5 3.1 3.54.01 2.03-1.36 3.5-3.1 3.5zM38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52zM58 .24h2.51v17.57H58zm10.26 15.28c-1.3 0-2.22-.59-2.82-1.76l7.77-3.21-.26-.66c-.48-1.3-1.96-3.7-4.97-3.7-2.99 0-5.48 2.35-5.48 5.81 0 3.26 2.46 5.81 5.76 5.81 2.66 0 4.2-1.63 4.84-2.57l-1.98-1.32c-.66.96-1.56 1.6-2.86 1.6zm-.18-7.15c1.03 0 1.91.53 2.2 1.28l-5.25 2.17c0-2.44 1.73-3.45 3.05-3.45z"></path></svg>
+    <svg id="pdf" viewBox="0 0 24 24">
+      <g id="Resources" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="SRE-Resources" transform="translate(-588.000000, -1354.000000)" fill-rule="nonzero">
+          <g id="Group-5" transform="translate(189.000000, 1096.000000)">
+            <g id="Group-9" transform="translate(32.000000, 258.000000)">
+              <g id="x-WebAssets-/-Card-Icons-/-PDF" transform="translate(367.000000, 0.000000)">
+                <g>
+                  <rect id="Rectangle-5-Copy" fill-opacity="0" fill="#FFFFFF" x="0" y="0" width="24" height="24"></rect>
+                  <path d="M12,14 L13.3333334,14 L13.3333334,10 L12,10 L12,14 Z M15.3333333,14 C15.3333333,15.1066666 14.44,16 13.3333334,16 L10,16 L10,8 L13.3333334,8 C14.44,8 15.3333333,8.89333337 15.3333333,10 L15.3333333,14 Z M22,10 L18.6666666,10 L18.6666666,11.3333333 L20.6666666,11.3333333 L20.6666666,13.3333334 L18.6666666,13.3333334 L18.6666666,16 L16.6666666,16 L16.6666666,8 L22,8 L22,10 Z M8.66666666,11.3333333 C8.66666666,12.44 7.77333333,13.3333334 6.66666667,13.3333334 L5.33333333,13.3333334 L5.33333333,16 L3.33333333,16 L3.33333333,8 L6.66666667,8 C7.77333333,8 8.66666666,8.89333337 8.66666666,10 L8.66666666,11.3333333 Z M2.66666667,0 C1.19333333,0 0,1.19333333 0,2.66666667 L0,21.3333333 C0,22.8066667 1.19333333,24 2.66666667,24 L21.3333333,24 C22.8066667,24 24,22.8066667 24,21.3333333 L24,2.66666667 C24,1.19333333 22.8066667,0 21.3333333,0 L2.66666667,0 Z M5.33333333,11.3333333 L6.66666667,11.3333333 L6.66666667,10 L5.33333333,10 L5.33333333,11.3333333 Z" id="icon-PDF/one-pager" fill="#1A73E8"></path>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <svg id="slides_icon" viewBox="0 0 32 32">
+      <g id="Resources" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="SRE-Resources" transform="translate(-221.000000, -1128.000000)" fill="#FFB800" fill-rule="nonzero">
+          <g id="Group-5" transform="translate(189.000000, 1096.000000)">
+            <path d="M60.442468,32 L35.5397443,32 C33.5831017,32 32,33.6 32,35.5555556 L32,60.4444444 C32,62.4 33.5831017,64 35.5397443,64 L60.442468,64 C62.3991106,64 64,62.4 64,60.4444444 L64,35.5555556 C64,33.6 62.3991106,32 60.442468,32 Z M60.442468,55.1111111 L35.5397443,55.1111111 L35.5397443,40.8888889 L60.442468,40.8888889 L60.442468,55.1111111 Z" id="Shape"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <svg id="video_icon" viewBox="0 0 24 24" fill="#1d72e8"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+    <svg id="rss-feed" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#1a73e8"><path d="M0 0h24v24H0V0z" fill="none"/><circle cx="6.18" cy="17.82" r="2.18"/><path d="M5.59 10.23c-.84-.14-1.59.55-1.59 1.4 0 .71.53 1.28 1.23 1.4 2.92.51 5.22 2.82 5.74 5.74.12.7.69 1.23 1.4 1.23.85 0 1.54-.75 1.41-1.59-.68-4.2-3.99-7.51-8.19-8.18zm-.03-5.71C4.73 4.43 4 5.1 4 5.93c0 .73.55 1.33 1.27 1.4 6.01.6 10.79 5.38 11.39 11.39.07.73.67 1.28 1.4 1.28.84 0 1.5-.73 1.42-1.56-.73-7.34-6.57-13.19-13.92-13.92z"/></svg>
+    <svg id="podcast" fill="none" height="32" viewBox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m14 12c0 .74-.4 1.38-1 1.72v8.28h-2v-8.28c-.6-.35-1-.98-1-1.72 0-1.1.9-2 2-2s2 .9 2 2zm-2-6c-3.31 0-6 2.69-6 6 0 1.74.75 3.31 1.94 4.4l1.42-1.42c-.83-.73-1.36-1.79-1.36-2.98 0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.19-.53 2.25-1.36 2.98l1.42 1.42c1.19-1.09 1.94-2.66 1.94-4.4 0-3.31-2.69-6-6-6zm0-4c-5.52 0-10 4.48-10 10 0 2.85 1.2 5.41 3.11 7.24l1.42-1.42c-1.55-1.46-2.53-3.53-2.53-5.82 0-4.41 3.59-8 8-8s8 3.59 8 8c0 2.29-.98 4.36-2.53 5.82l1.42 1.42c1.91-1.83 3.11-4.39 3.11-7.24 0-5.52-4.48-10-10-10z" fill="#1a73e8"></path></svg>
+    <svg id="video-yt" width="64px" height="47px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 47" fill="none">
+      <path d="M62.5778 7.29166C61.92 4.43333 59.744 2.16667 56.8889 1.45833C52 0 32 0 32.7111 0C32 0 12 0 7.11111 1.45833C4.256 2.16667 2.08 4.43333 1.42222 7.29166C0 12.5 0 23.3333 0 23.3333C0 23.3333 0 34.1667 1.42222 39.375C2.08 42.2333 4.256 44.5 7.11111 45.2083C12 46.6667 32 46.6667 32.7111 46.6667C32 46.6667 52 46.6667 56.8889 45.2083C59.744 44.5 61.92 42.2333 62.5778 39.375C64 34.1667 64 23.3333 64 23.3333C64 23.3333 64 12.5 62.5778 7.29166Z" fill="#FF0000"/>
+      <path d="M24 32V13.3333L41.3333 23.3846L24 32Z" fill="white"/>
+    </svg>
+    <svg id="article" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <path d="M23.0833 56.75H46V51.75H23.0833V56.75ZM23.0833 42.5H56.9167V37.5H23.0833V42.5ZM23.0833 28.25H56.9167V23.25H23.0833V28.25ZM15 70C13.6667 70 12.5 69.5 11.5 68.5C10.5 67.5 10 66.3333 10 65V15C10 13.6667 10.5 12.5 11.5 11.5C12.5 10.5 13.6667 10 15 10H65C66.3333 10 67.5 10.5 68.5 11.5C69.5 12.5 70 13.6667 70 15V65C70 66.3333 69.5 67.5 68.5 68.5C67.5 69.5 66.3333 70 65 70H15ZM15 65H65V15H15V65Z" fill="white"/>
+    </svg>
+    <svg id="filter-tick" xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">
+      <path d="M5.59 11.1698L1.42 6.99984L0 8.40984L5.59 13.9998L17.59 1.99984L16.18 0.589844L5.59 11.1698Z" fill="#1A73E8"/>
+    </svg>
+    <svg id="developer_mode_icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#041E49"><path d="M344-296 160-480l184-184 42 44-140 140 140 140-42 44Zm-144 30h60v76h440v-76h60v166q0 24-18 42t-42 18H260q-24 0-42-18t-18-42v-166Zm60-440h-60v-154q0-24 18-42t42-18h440q24 0 42 18t18 42v154h-60v-64H260v64Zm0 576v30h440v-30H260Zm0-700h440v-30H260v30Zm356 534-42-44 140-140-140-140 42-44 184 184-184 184ZM260-830v-30 30Zm0 700v30-30Z"/></svg>
+    <svg id="play" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="m17 13h16v23h-16z" fill="#202124"/><g fill="#fff"><path d="m0 0h48v48h-48z" fill-opacity=".01"/><path clip-rule="evenodd" d="m24 4c-11.04 0-20 8.96-20 20s8.96 20 20 20 20-8.96 20-20-8.96-20-20-20zm-4 29v-18l12 9z" fill-rule="evenodd"/></g></svg>
+    <svg id="watch-video" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m8 .5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm-1.5 10.875v-6.75l4.5 3.375z" fill="#1a73e8" fill-rule="evenodd"/></svg>
+    <svg id="modal-play" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="m17 13h16v23h-16z" fill="#202124"/><g fill="#fff"><path d="m0 0h48v48h-48z" fill-opacity=".01"/><path clip-rule="evenodd" d="m24 4c-11.04 0-20 8.96-20 20s8.96 20 20 20 20-8.96 20-20-8.96-20-20-20zm-4 29v-18l12 9z" fill-rule="evenodd"/></g></svg>
+    <svg id="modal-pause" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m20 38h-8v-28h8zm8 0v-28h8v28z" fill="#fff" fill-rule="evenodd"/></svg>
+    <svg id="circle-1" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#4285F4"/><text x="14" y="20" font-size="14px" text-anchor="middle" fill="#FFFF">1</text></svg>
+    <svg id="circle-2" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#F9AB00"/><text x="14" y="20" text-anchor="middle" fill="#FFFF">2</text></svg>
+    <svg id="circle-3" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#34A853"/><text x="14" y="20" text-anchor="middle" fill="#FFFF">3</text></svg>
+    <svg id="twitter-X" height="24" viewBox="0 0 23 20" width="24" xmlns="http://www.w3.org/2000/svg" fill="none"><path d="m11.902344 8.464844 7.445312-8.464844h-1.765625l-6.464843 7.347656-5.160157-7.347656h-5.957031l7.808594 11.113281-7.808594 8.875h1.765625l6.824219-7.761719 5.453125 7.761719h5.957031zm-2.417969 2.746094-.789063-1.105469-6.296874-8.804688h2.710937l5.082031 7.105469.789063 1.105469 6.605469 9.238281h-2.710938zm0 0" fill="#000"/></svg>
+    <svg id="read-more-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 9L13.9425 7.9425L9.75 12.1275V3H8.25V12.1275L4.065 7.935L3 9L9 15L15 9Z" fill="white"/></svg>
+    <svg id="open-in-new-white" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none" style=""><path fill-rule="evenodd" clip-rule="evenodd" d="M12.25 12.25H1.75V1.75H7V0.25H1.75C0.9175 0.25 0.25 0.925 0.25 1.75V12.25C0.25 13.075 0.9175 13.75 1.75 13.75H12.25C13.075 13.75 13.75 13.075 13.75 12.25V7H12.25V12.25ZM8.5 0.25V1.75H11.1925L3.82 9.1225L4.8775 10.18L12.25 2.8075V5.5H13.75V0.25H8.5Z" fill="white"/></svg>
+    <svg id="load-more-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M15 9L13.9425 7.9425L9.75 12.1275V3H8.25V12.1275L4.065 7.935L3 9L9 15L15 9Z" fill="#1A73E8"/>
+    </svg>
+    <svg id="show-less-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M3 9L4.0575 10.0575L8.25 5.8725V15H9.75V5.8725L13.935 10.065L15 9L9 3L3 9Z" fill="#1A73E8"/>
+    </svg>
+
+  </defs>
+</svg></div>
+  </body>
+</html>

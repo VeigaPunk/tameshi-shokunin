@@ -1,0 +1,120 @@
+[
+ {
+  "id": "R51.1",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "tools/registry.json",
+    "lines": "1266-1266",
+    "excerpt": "MTE_INTEROP: PASS legs_conforming=10/10"
+   },
+   {
+    "path": "tools/mte-interop.py",
+    "lines": "343-343",
+    "excerpt": "MTE_INTEROP: %s legs_conforming=%d/%d"
+   }
+  ],
+  "commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+  "seat": "T57W1ScribeItemsR51x1to4",
+  "note": "Row mte-interop-check now expects legs_conforming=10/10 (was 9/9) in bcba892; the round-52 no-harm.sh tools-scope allows M:tools/registry.json. A green registry-check receipt was not re-run in this seat.",
+  "keys": [
+   "mte-interop-check",
+   "tools/registry.json",
+   "registry-check --only mte-interop-check"
+  ],
+  "verdict_basis": "Item says the registered gate expects 9/9 but the tool can only print a ten-leg count. At spot-check commit ef19d8e the row reads legs_conforming=9/9 (tools/registry.json:1014). bcba892 (descendant of ef19d8e, not its ancestor) changes it to 10/10, which is the text at base (tools/registry.json:1266) and matches the tool's print format (tools/mte-interop.py:343, ten LEG_TABLE entries :74-78). Defect no longer holds statically; the green registry-check receipt was not re-run."
+ },
+ {
+  "id": "R51.2",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "SKILL.md",
+    "lines": "2179-2179",
+    "excerpt": "leg set not equal to the ten ledger legs"
+   },
+   {
+    "path": "SKILL.md",
+    "lines": "2192-2192",
+    "excerpt": "caller-chosen --workdir (or auto mktemp under ${TMPDIR:-/tmp}) for run and --regression"
+   },
+   {
+    "path": "SKILL.md",
+    "lines": "202-202",
+    "excerpt": "the maintained driver also prints the failing count: `tools/mutate-and-run.sh:434`"
+   },
+   {
+    "path": "SKILL.md",
+    "lines": "970-970",
+    "excerpt": "PASS/FAIL/SETUP (`tools/mutate-and-run.sh:139-143,1519-1548`)"
+   }
+  ],
+  "commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+  "seat": "T57W1ScribeItemsR51x1to4",
+  "note": "Three of the four stale statements were corrected in bcba892 (ten ledger legs; runner row honours TMPDIR; pointers :434 and :579-583). The :937-950 regression pointer was re-anchored later, in 7ff81a5 (round 52, wave-2 fix-reads), to 139-143,1519-1548; the base text at 139-143 is the exit map.",
+  "keys": [
+   ":2136",
+   "/tmp",
+   ":174",
+   ":211",
+   ":937-950"
+  ],
+  "verdict_basis": "Four stale statements listed in the item. At base: SKILL.md:2179 reads 'ten ledger legs' (was 'nine', absent-check at ef19d8e holds); SKILL.md:2192 names the runner default scratch as ${TMPDIR:-/tmp} (was bare /tmp), matching tools/mutate-and-run.sh:148-160,491,1432; SKILL.md:202 points at tools/mutate-and-run.sh:434, the APPLY FAIL count print (was :425, a different line); SKILL.md:970 points at 139-143,1519-1548 (was 126-136,1273-1294,1364-1384, which at ef19d8e are not the exit map), re-anchored in 7ff81a5 (round 52). The first three are bcba892 changes; the fourth is recorded in the note."
+ },
+ {
+  "id": "R51.3",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-21/coldread/ledger.json",
+    "lines": "112211-112211",
+    "excerpt": "wrong_expectations 0 was written from code (round-51 refresh.py:227)"
+   },
+   {
+    "path": ".ufo/evidence/round-21/coldread/ledger.json",
+    "lines": "112193-112193",
+    "excerpt": "\"wrong_expectations\": 3,"
+   },
+   {
+    "path": ".ufo/evidence/round-52/coldread/refresh.py",
+    "lines": "216-216",
+    "excerpt": "'wrong_expectations': len(reader['findings'])"
+   }
+  ],
+  "commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+  "seat": "T57W1ScribeItemsR51x1to4",
+  "note": "bcba892 appends the top-level \"corrections\" list (20 records, append-only) to the round-21 ledger; each record names the round-51 refresh.py:227 zero and carries the recorded count. The refresh instrument itself was not changed by this fix.",
+  "keys": [
+   "wrong_expectations",
+   "refresh.py",
+   "coldread/refresh.py"
+  ],
+  "verdict_basis": "Item offers two repairs: a named correction, or supersession with recorded counts. bcba892 appends a 20-record top-level 'corrections' list to the round-21 ledger (base line 112187); record 1 names the round-51 refresh.py:227 zero and carries the recorded count (wrong_expectations 3, line 112193) and the routed_by link. The round-52 re-key instrument (f1a3246, .ufo/evidence/round-52/coldread/refresh.py:216) writes len(findings) instead of the literal 0. The frozen round-51 refresh.py:227 still writes 0; the corrections record that rather than rewriting it."
+ },
+ {
+  "id": "R51.4",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "tools/round21-measure.py",
+    "lines": "10-11",
+    "excerpt": "so the selftest is fleet-bound, not hermetic"
+   },
+   {
+    "path": "SKILL.md",
+    "lines": "2200-2200",
+    "excerpt": "fleet-bound, not hermetic (since round 52 it reads the sibling blobs at the fleet root"
+   }
+  ],
+  "commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+  "seat": "T57W1ScribeItemsR51x1to4",
+  "note": "bcba892 takes the second branch of the item: the selftest is declared fleet-bound, not hermetic, in the tool docstring and the SKILL gate row. The pre-registration is the SCORECARD round-52 section in the same commit; the R51.5 mutation attack is not part of this row.",
+  "keys": [
+   "tools/round21-measure.py",
+   "--selftest",
+   "hermetic",
+   "fleet-bound"
+  ],
+  "verdict_basis": "Item allows either a hermetic selftest or a declared fleet-bound row class. bcba892 takes the second: tools/round21-measure.py:9-12 declares the selftest fleet-bound, not hermetic, and reads the c2 fixture's blobs at the FLEET literal (:77); SKILL.md:2200 carries the same declaration in the gate row. The ef19d8e text has neither. The pre-registration sits in the SCORECARD round-52 section committed in bcba892. The R51.5 mutation attack is outside this row."
+ }
+]

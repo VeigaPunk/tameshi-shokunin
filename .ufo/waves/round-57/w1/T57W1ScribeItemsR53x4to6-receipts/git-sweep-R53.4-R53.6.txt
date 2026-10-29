@@ -1,0 +1,62 @@
+$ git cat-file -t 9c6ef7bc80c0
+[rc=128]
+fatal: Not a valid object name 9c6ef7bc80c0
+
+$ git log --oneline 2ef0a5a..5e3569969b5 -- .ufo/waves/round-53/w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout
+[rc=0]
+
+$ git show 5e3569969b532310d2b8a3d130901757a3df356b:.ufo/waves/round-53/w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout
+[rc=0]
+C2_R53: rev=9c6ef7bc80c0 tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=1 docs=ok total=0 C2_R53_PASS=true
+
+$ git log --oneline 2ef0a5a..5e3569969b5 -- .ufo/evidence/round-53/verify-freeze.stdout
+[rc=0]
+
+$ git show 5e3569969b532310d2b8a3d130901757a3df356b:.ufo/evidence/round-53/verify-freeze.stdout
+[rc=0]
+FREEZE e62d99711a0d files=8 amendments=5
+AMENDMENT 1 c1/measure.py NUL-byte syntax fix (reader-cand arm); no predicate, target or control chang
+AMENDMENT 2 c1/measure.py fails soft when round-53 evidence is absent at the measured rev (do-nothing 
+AMENDMENT 3 c2 doc patterns bound to stale /tmp forms (an $HYAKU_SCRATCH/tameshi-f5.json invocation is
+AMENDMENT 4 c2 git-grep arm accepts exit 1 (no matches) instead of raising; same predicate
+AMENDMENT 5 re-key scope extended to the 30 headings the round's own edits left credit-lost at candida
+FREEZE_INTEGRITY: OK
+
+$ git show 5e3569969b532310d2b8a3d130901757a3df356b:LOG.md | sed -n 2468,2469p
+[rc=0]
+limit; nothing to inherit. Base `6db1d220`; freeze `e62d9971` (amendments
+1–5, all disclosed in `freeze.json`). Claims: C1 calibration — the
+
+$ git log --oneline 2ef0a5a..5e3569969b5 -- LOG.md | head -3
+[rc=0]
+2fec07e round-56 (attempt 4): results - SCORECARD after rows, LOG entry, lesson attempt-4 record, misrooted T56W3Led13 report swept in
+51d1f0e round-55: C1 fix pass — stream-refusal exit class in context-capture/registry-check (rc 2 under /dev/full), registry-check --rev --json keeps its machine report, seven registry cells quote the token each tool prints, the note stops claiming stdout is empty, QUALITY 106 + 105 erratum, LOG values reconciled to the receipts, wave-1/2/3 artifacts and the adjudication record
+9cf0146 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+
+$ git merge-base --is-ancestor 9e09db2 5e3569969b5 && echo 9e09db2-ancestor-of-base
+[rc=0]
+9e09db2-ancestor-of-base
+
+$ git show 5e3569969b532310d2b8a3d130901757a3df356b:.ufo/evidence/round-53/freeze.json | grep -n '"n": 7'
+[rc=0]
+48:   "n": 7,
+
+$ git show 59c38109bf119d0e9d4f878644a82babc937bc1e --stat --format=%H%n%s | head -12
+[rc=0]
+59c38109bf119d0e9d4f878644a82babc937bc1e
+round-54: C0 content — one scratch-root exit class across seven tools (ScratchRootUnusable -> exit 2), registry scratch_root cells, scratch-root contract note + S277-S279, SKILL three-arm rule, lesson Gate/Mistakes
+
+ .../round-54/assimilation/S277-posix-env.html      | 872 +++++++++++++++++++
+ .../round-54/assimilation/S278-tempfile.py         | 952 +++++++++++++++++++++
+ .../round-54/assimilation/S279-tempfile-docs.html  | 822 ++++++++++++++++++
+ SKILL.md                                           |   8 +
+ corpus/SOURCES.md                                  |   5 +
+ corpus/knowledge/scratch-root-contract.md          |  60 ++
+ corpus/lessons/round-54.md                         |  94 ++
+ tools/bash-witness-study.py                        |  12 +-
+ tools/env-diff.py                                  |  15 +-
+
+$ git merge-base --is-ancestor 59c38109bf119d0e9d4f878644a82babc937bc1e 2ef0a5ad429de7f204b0e8138b2f36dcbb32a626 && echo ANC || echo not-ancestor-of-routed-at
+[rc=0]
+not-ancestor-of-routed-at
+

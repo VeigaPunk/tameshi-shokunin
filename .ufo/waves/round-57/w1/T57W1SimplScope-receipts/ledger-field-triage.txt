@@ -1,0 +1,19 @@
+# ledger field reads (round-50 measure.py branches; staged round-57 C1 counter has the same branches)
+$ grep -n "status == 'fixed'\|reason = row\|commit = row" .ufo/evidence/round-50/c1/measure.py
+227:        if status == 'fixed':
+228:            commit = row.get('commit')
+261:            reason = row.get('reason')
+
+# seat/note readers in tools and round-50/57 counters
+(end)
+
+# dead-field rows and status vs payload presence
+distinct seats 11
+dead-field R40.5 declined ['commit', 'reason']
+dead-field R44.1 fixed ['commit', 'reason']
+dead-field R44.2 declined ['commit', 'reason']
+dead-field R45.1 open ['commit', 'reason']
+dead-field R45.3 declined ['commit', 'reason']
+dead-field R45.4 open ['commit', 'reason']
+status x payload [(('declined', 'reason'), 11), (('fixed', 'commit'), 31), (('open', 'neither'), 7)]
+note empty ['R41.7']

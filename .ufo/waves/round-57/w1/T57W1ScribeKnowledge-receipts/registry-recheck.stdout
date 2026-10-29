@@ -1,0 +1,22 @@
+== before: base registry, tag new-r57 (expect could-not-evaluate: no such rows)
+REGISTRY_CHECK: could-not-evaluate (--tag ['new-r57'] selects no registry row)
+rc=2
+== after: staged registry at scratch commit f2e1fd993bac1edc9e3ca1709a7df99aa0f526ee, tag new-r57 (expect held=3/3)
+ROW receipt-gate-accept expect=0 got=0 held
+ROW receipt-gate-content-drift expect=3 got=3 held
+ROW receipt-gate-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=3/3 superseded=0
+rc=0
+== per-row (--only takes one name)
+ROW receipt-gate-accept expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+rc=0
+ROW receipt-gate-content-drift expect=3 got=3 held
+REGISTRY_CHECK: held=1/1 superseded=0
+rc=0
+ROW receipt-gate-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=1/1 superseded=0
+rc=0
+== registry-check selftest (scratch only)
+SELFTEST: PASS (51 cases)
+rc=0

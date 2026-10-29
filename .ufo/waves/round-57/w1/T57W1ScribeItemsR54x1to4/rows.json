@@ -1,0 +1,109 @@
+[
+ {
+  "id": "R54.1",
+  "status": "fixed",
+  "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "seat": "T57W1ScribeItemsR54x1to4",
+  "keys": [
+   "CTL_POS_c1",
+   "CTL_MISMATCH",
+   "ER-R54-1",
+   "rekeyed=7/7"
+  ],
+  "evidence": [
+   {
+    "path": "corpus/QUALITY.md",
+    "lines": "1602-1604",
+    "excerpt": "`CTL_POS_c1` line prints `C1_R54_PASS=false` at `rev=077d431e6996` (the freeze) with `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, while four round-54 records claimed the control passed."
+   },
+   {
+    "path": "corpus/lessons/round-54.md",
+    "lines": "105-105",
+    "excerpt": "`CTL_MISMATCH` (3 of 7), so it never fired [ER-R54-1, round-55 correction]."
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2636-2637",
+    "excerpt": "Corrected: `CTL_MISMATCH` - `CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3` at the revision the control cloned."
+   }
+  ],
+  "note": "Fixed by 9cf0146 (round-55 C0 record corrections): SCORECARD ER-R54-1 and the claim row, QUALITY 105 erratum falsifier, lesson round-54 lines 77 and 105 now record CTL_MISMATCH and \"never fired\". Residual outside the lane tree: fleet report .ufo/reports/round-54/tameshi.md:162 still reads \"proven live by the phase-B positive control\" (fleet fcb8d8db, unchanged to fleet HEAD).",
+  "verdict_basis": "The lane-tree sites the item names were corrected at 9cf0146, which touches all three of the cited paths; the three excerpts are absent at routed_at 650987a and present at base. The fleet report copy is not a lane file and is recorded as a residual."
+ },
+ {
+  "id": "R54.2",
+  "status": "fixed",
+  "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "seat": "T57W1ScribeItemsR54x1to4",
+  "keys": [
+   "one freeze pointer",
+   "ER-R54-2",
+   "077d431e",
+   "097985c1"
+  ],
+  "evidence": [
+   {
+    "path": "SCORECARD.md",
+    "lines": "2568-2569",
+    "excerpt": "The round has **one freeze pointer, `077d431e`** (5 amendments), which the deciding run uses [ER-R54-2]."
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2645-2646",
+    "excerpt": "Corrected: one pointer, `077d431e` (5 amendments), which is what the deciding receipt prints."
+   }
+  ],
+  "note": "Fixed by 9cf0146: SCORECARD round-54 standing text and ER-R54-2 name one freeze pointer, 077d431e. Residual outside the lane tree: fleet report .ufo/reports/round-54/tameshi.md:157 still names freeze pointer 097985c1 (fleet fcb8d8db, unchanged to fleet HEAD).",
+  "verdict_basis": "Both lane-side pointer sites (the round standing text and the measured-close entry) were rewritten at 9cf0146; both excerpts are absent at 650987a and present at base. The fleet report residual is outside the lane tree."
+ },
+ {
+  "id": "R54.3",
+  "status": "fixed",
+  "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "seat": "T57W1ScribeItemsR54x1to4",
+  "keys": [
+   "total=14",
+   "total=13",
+   "ER-R54-3"
+  ],
+  "evidence": [
+   {
+    "path": "SCORECARD.md",
+    "lines": "2585-2585",
+    "excerpt": "`unusable_exit2=3 docs=0 note=0 sources=0 total=13` false"
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2650-2650",
+    "excerpt": "Old: `total=14` in the C2 claim row. Corrected: `total=13`."
+   }
+  ],
+  "note": "Fixed by 9cf0146: the round-54 C2 claim row prints total=13 (the before receipt value); ER-R54-3 records the old and corrected values. The lane tree has no remaining total=14 claim for this row.",
+  "verdict_basis": "The claim row at 650987a read total=14 (grep at 650987a shows \"sources=0 total=14\"); at base it reads total=13 and ER-R54-3 is present, both excerpts absent at routed_at."
+ },
+ {
+  "id": "R54.4",
+  "status": "declined",
+  "seat": "T57W1ScribeItemsR54x1to4",
+  "keys": [
+   "49280fe5",
+   "8528ee85",
+   "c2/measure.py"
+  ],
+  "reason": "The only surface still carrying the stale c2 digest 49280fe5 is the fleet report .ufo/reports/round-54/tameshi.md line 122 (fleet fcb8d8db, unchanged to fleet HEAD). That file is outside the lane tree, a lane seat cannot edit it, and the lane record already corrects the value (SCORECARD ER-R54-4 names 8528ee85, the pinned c2/measure.py bytes in freeze.json).",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-54/freeze.json",
+    "lines": "9-9",
+    "excerpt": "\"c2/measure.py\": \"8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790\""
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2655-2656",
+    "excerpt": "Old: `49280fe5` for `c2/measure.py`. Corrected: `8528ee85` - the amendment-4 bytes that decided."
+   }
+  ],
+  "note": "Not a lane surface: the defect is the fleet report copy at its line 122 (digest), 157 (pointer) and 162 (phrase). Lane-side correction already present at 9cf0146 (ER-R54-4). A fleet-root correction would be operator-owned; no lane seat may write it.",
+  "verdict_basis": "The item names only the fleet report; the lane tree holds the pinned value (freeze.json) and the correction (ER-R54-4), both resolvable at base, so the disposition is a fleet-ownership declination rather than a lane fix."
+ }
+]

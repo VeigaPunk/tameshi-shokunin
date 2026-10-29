@@ -1,0 +1,39 @@
+== extra-37 paths with unresolvable path (drift detail)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r57/T57W1RevGateSurface/rcpt/pos_c0.txt role=positive revs=c3afd1b0dbe82913cd3b5edad8acb35bd76a98ed code=RECEIPT_REV_CONTENT_DRIFT rev=c3afd1b0dbe82913cd3b5edad8acb35bd76a98ed drift=<unresolvable-path:nope-not-anywhere.txt>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+rc=3
+== extra-38 certified==receipt rev with --paths (PASS)
+GATE OK /fast/scratch/hyaku/tameshi-r57/T57W1RevGateSurface/rcpt/pos_c1.txt role=positive revs=ce0c6c66c9750373c817c0488f0405c4af60e9aa
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+== extra-39 verdict role, --paths, rev==certified
+GATE OK /fast/scratch/hyaku/tameshi-r57/T57W1RevGateSurface/rcpt/pos_c1.txt role=verdict revs=ce0c6c66c9750373c817c0488f0405c4af60e9aa
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+== extra-40 toggle --paths on same receipt (verdict role, certified C2, receipt C0)
+GATE REFUSED /fast/scratch/hyaku/tameshi-r57/T57W1RevGateSurface/rcpt/pos_c0.txt role=verdict revs=c3afd1b0dbe82913cd3b5edad8acb35bd76a98ed code=RECEIPT_REV_MISMATCH rev=c3afd1b0dbe82913cd3b5edad8acb35bd76a98ed certified=4a02423ca1c3
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+rc=3
+GATE OK /fast/scratch/hyaku/tameshi-r57/T57W1RevGateSurface/rcpt/pos_c0.txt role=verdict revs=c3afd1b0dbe82913cd3b5edad8acb35bd76a98ed
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+== extra-41 control role ambiguity n/a; control with same commit twice
+GATE OK /fast/scratch/hyaku/tameshi-r57/T57W1RevGateSurface/rcpt/ctl_same.txt role=control revs=ce0c6c66c975,ce0c6c66c9750373c817c0488f0405c4af60e9aa
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+rc=0
+== extra-42 paths file missing combined with unresolvable certified (order)
+GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+rc=2
+== extra-43 usage: --lane missing value
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py", line 359, in <module>
+    sys.exit(run(sys.argv[1:]))
+             ~~~^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py", line 173, in run
+    i += 1; lane = argv[i]
+                   ~~~~^^^
+IndexError: list index out of range
+rc=1
+== extra-44 selftest with TMPDIR unusable (scratch contract probe)
+GATE_SELFTEST: 19/19 pass
+rc=0

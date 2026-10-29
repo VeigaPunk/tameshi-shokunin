@@ -1,0 +1,32 @@
+--- a/corpus/QUALITY.md
++++ b/corpus/QUALITY.md
+@@ -1703,3 +1703,29 @@
+ input. The receipt itself says `GATE OK … revs=077d431e6996`,
+ `verdict=PASS`, exit 0. The path becomes resolvable at the round's evidence commit; the
+ gate's accepted-copied-revision blind spot remains the point of criterion 107.
++
++## Criteria appended — round 57 (2026-10-28)
++
++### Criterion 108 — every routed item of a closure gets one ledger row in the following round, and a row's cited receipt resolves
++
++A non-author closure routes its items: the numbered list under its verdict-and-routing heading, or the bold-led items under its routed-defects heading. In the round after the closure, every routed item has exactly one row in `corpus/routed-defects.json`. Its `id` is the item label `R<round>.<n>`; its `status` is `fixed`, `open` or `declined` as the tree shows it at the landing tip under the evidence rules of `.ufo/evidence/round-50/c1/measure.py`. A row whose `evidence` or `reason` cites a receipt in the past tense ("printed", "ran", "is recorded at") names a path that resolves at the revision that lands the row (`git cat-file -e LAND:path`). A row whose path does not resolve is `open`, and its `reason` names the missing path. Criterion 97 checks the record blocks it lists (SCORECARD, LOG, QUALITY, lessons); the ledger is not among them, so this criterion checks it.
++
++Lesson: `corpus/lessons/round-56-verifier-spotcheck.md` §6, routed items R56.1–R56.7, which the next ledger must carry as rows. Motivation: `considerthese/2026-10-28.md` proposal 1 (receipt-existence linter for records).
++
++Falsifier that must fail: at base `5e3569969b532310d2b8a3d130901757a3df356b` the ledger holds 49 rows whose ids are `R40.*`–`R49.*` only, so rounds 50–56 have 0 rows for their routed items. The command `git show 5e3569969b532310d2b8a3d130901757a3df356b:corpus/routed-defects.json | python3 -c "import json,sys;d=json.load(sys.stdin);ids=[x['id'] for x in d['defects']];print('rows',len(ids),'rows_r50_56',sum(1 for i in ids if 50<=int(i[1:].split('.')[0])<=56))"` prints `rows 49 rows_r50_56 0`. The past-tense case is the round-53 record that cites `.ufo/evidence/round-53/after/`: `git ls-tree --name-only 5e3569969b532310d2b8a3d130901757a3df356b .ufo/evidence/round-53/after/` prints nothing, and the closure found the directory absent (considerthese proposal 1, R53.2).
++
++### Criterion 109 — a gate with a selftest has an executed gate row that pins its exit map
++
++A lane tool whose verdict is an exit code with named refusal codes, and that has a `--selftest` mode, has at least one `tools/registry.json` row of `kind: "gate"` that runs the tool on a committed receipt, asserts its exit code, and names each exit code the tool's header documents with its class. For `tools/receipt-revision-gate.py` the map is 0 = PASS, 2 = certified revision unresolvable, 3 = refused with a named code. A `selftest`-kind row proves that the fixtures pass; it does not pin the exit map a consumer relies on, so it does not satisfy this criterion. A SKILL.md standing-rule cell that names a refusal code for this tool is checked against the same map; criterion 103 keeps the cell and the row in step.
++
++Lesson: `corpus/lessons/round-56-verifier-spotcheck.md` §1 D-CF3 and §6 R56.6 (the gate's only registry row is `selftest`; the exit map lives in the SKILL text and the gate header).
++
++Falsifier that must fail: at base `5e3569969b532310d2b8a3d130901757a3df356b`, `tools/registry.json` has one row naming `tools/receipt-revision-gate.py`, `receipt-revision-gate-selftest` (kind `selftest`, `expect.exit` 0, the `GATE_SELFTEST: 19/19 pass` line and eleven `CASE` lines, no exit 2 or exit 3 class), and no `gate`-kind row names it. `git show 5e3569969b532310d2b8a3d130901757a3df356b:tools/registry.json | python3 -c "import json,sys;d=json.load(sys.stdin);print('gate-rows-naming-gate',sum(1 for x in d['rows'] if x.get('kind')=='gate' and 'receipt-revision-gate.py' in json.dumps(x)))"` prints `gate-rows-naming-gate 0`. Round 57's C2 counter requires at least three such rows with exit-map expectations, so it fails at base.
++
++### Criterion 110 — a planned edit to a monitored file is priced in cold-read credit before the first content edit, and a miss is named
++
++The round's contract carries a `coldread_forecast` key, committed before the round's first content edit (the contract commit is an ancestor of the first content commit). It has one entry per planned edit to a file the round-21 cold-read monitor pins (SKILL.md, `corpus/QUALITY.md`, `corpus/SOURCES.md`, `corpus/README.md`, a knowledge entry, or a tool a ledger entry pins). Each entry gives the file, the credited sections the edit is predicted to lose, and the re-read seats that loss needs (one fresh reader per lost heading). A prediction is measured, not estimated: the edit as drafted is committed in a scratch clone and run through `coldread-precheck.sh` (criterion 98), and the entry records its `lost=` value. An entry not yet measured reads `unmeasured`, and the lesson says so. At the candidate revision the measured `lost` is set beside the forecast sum. A measured loss above the forecast is a named miss in the lesson, and the forecast is not rewritten after the measurement.
++
++Lesson: `corpus/lessons/round-52-verifier-spotcheck.md` (the round-52 verdict, rejected-harmed: credited 64 → 45, 19 sections lost). Motivation: `considerthese/2026-10-28.md` proposal 3 (cold-read cost forecast at planning time).
++
++Falsifier that must fail: `.ufo/evidence/round-52/contract.json` has no `coldread_forecast` key (its top-level keys are `schema, round, lane, l1, date, base, axes_at_base, claims, separability, no_harm, controls, deciding, frontier_step, amendments`). Its `no_harm.coldread_note` prices three sections, for `tools/registry.json` and `tools/round21-measure.py`, and says only that "the SKILL.md corrections drop the sections they touch". The round-52 candidate measured `lost=19 RED` (round-52 closure). The measurement that a forecast must state for a QUALITY append is `coldread-precheck.sh LANE 5e3569969b532310d2b8a3d130901757a3df356b CAND`, where CAND adds two lines to `corpus/QUALITY.md` at base: it prints `cand_credited=58 lost=6 RED` (`.ufo/waves/round-57/w1/T57W1ScribeQuality-receipts/precheck-quality-2line.txt`), so a forecast of zero for that edit fails this criterion.

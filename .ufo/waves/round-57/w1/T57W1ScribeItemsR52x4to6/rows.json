@@ -1,0 +1,77 @@
+[
+ {
+  "id": "R52.4",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-52/integrate/build-readers.py",
+    "lines": "5-6",
+    "excerpt": "the wave results are committed before refresh runs"
+   },
+   {
+    "path": ".ufo/waves/round-52/w3.ready",
+    "lines": "1-1",
+    "excerpt": "{\"lane\":\"tameshi\",\"round\":52,\"wave\":\"w3\""
+   }
+  ],
+  "commit": "6db1d220b337c35ff1e25bf9cfd74abc9db1498d",
+  "seat": "T57W1ScribeItemsR52x4to6",
+  "note": "The four untracked round-52 files were committed by 6db1d22 (round-52 w3 closure salvage). Base tracks all four and the worktree carries no round-52 untracked work.",
+  "keys": [
+   ".ufo/evidence/round-52/integrate/build-readers.py",
+   ".ufo/waves/round-52/w3.ready",
+   "w3.ready.dispatched"
+  ],
+  "verdict_basis": "The cited surface changed: commit 6db1d22 tracks build-readers.py, w3.ready, w3.ready.dispatched and the w3/ folder; the defect (uncommitted round work) no longer holds at base."
+ },
+ {
+  "id": "R52.5",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "tools/registry-check.py",
+    "lines": "786-786",
+    "excerpt": "raise RuntimeError(f\"cannot create clone scratch under the scratch root: {exc}\") from exc"
+   },
+   {
+    "path": "tools/registry-check.py",
+    "lines": "78-78",
+    "excerpt": "fixtures only under the scratch root (TMPDIR), never touches the lane"
+   }
+  ],
+  "commit": "218bc6b5c25d6a3c57dd44600febd552f0167cee",
+  "seat": "T57W1ScribeItemsR52x4to6",
+  "note": "Commit 218bc6b replaced the literal dir=\"/tmp\" mkdtemp at routed_at line 766 with tempfile.gettempdir() and the /tmp error text with the scratch-root wording; 5b703c6 later routed it through strict_scratch_root() (TMPDIR-honouring). Base has no executable /tmp literal in tools/registry-check.py.",
+  "keys": [
+   "/tmp",
+   "tools/registry-check.py:766",
+   "tools/registry-check.py"
+  ],
+  "verdict_basis": "Commit 218bc6b touches tools/registry-check.py; both cited excerpts are absent at routed_at (c1d49d7 has dir=\"/tmp\" and \"under /tmp\") and present at base; the hardcode the item names is gone."
+ },
+ {
+  "id": "R52.6",
+  "status": "open",
+  "evidence": [
+   {
+    "path": "SCORECARD.md",
+    "lines": "37-37",
+    "excerpt": "`harmed` / `unchanged` / `unprovable-but-better` verdict."
+   },
+   {
+    "path": "SHONEN.md",
+    "lines": "5-5",
+    "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources"
+   }
+  ],
+  "seat": "T57W1ScribeItemsR52x4to6",
+  "note": "Report contract is fleet-owned: the round-52 report (fleet 53fdd555, .ufo/reports/round-52/tameshi.md) and the prompt (fleet .ufo/prompts/tameshi-round-52.md) live outside the lane. No lane commit after c1d49d7 changed the trend vocabulary (SCORECARD.md:37 identical at routed_at and base) or added the sections or per-box SHONEN lines to any lane file. Open; the lane-side residue belongs in the round-57 report and must be named in the round-57 Planned paragraph.",
+  "keys": [
+   "SHONEN",
+   "[~]",
+   "unprovable-but-better",
+   "Landed changes"
+  ],
+  "verdict_basis": "No lane commit after routed_at changed a lane surface that the item names; the only lane-visible rule (SCORECARD vocabulary, lane SHONEN per-box form) is unchanged, so the item still holds at base."
+ }
+]

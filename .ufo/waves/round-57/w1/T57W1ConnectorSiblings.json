@@ -1,0 +1,43 @@
+{
+  "seat": "T57W1ConnectorSiblings",
+  "item": "sibling-overlap scan (read-only)",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "lanes_scanned": 21,
+  "ledgers": [
+    {"lane": "kengaku", "file": "corpus/routed-findings.jsonl", "rows": 75, "status_vocab": {"open": 31, "closed": 41, "blocked": 1, "refused": 2}, "gate": "plans/routed_open.py (SKILL.md:636)", "path_line": "kengaku-shokunin/plans/routed_open.py:15,24"},
+    {"lane": "kengaku", "file": "corpus/defects.jsonl + corpus/defects-round35.jsonl", "rows": 9, "status_vocab": {"open": 0, "closed": 9}, "gate": "plans/defect_ledger.py", "path_line": "kengaku-shokunin/plans/defect_ledger.py:7"},
+    {"lane": "kagi", "file": "corpus/closure-dispositions.json", "rows": 15, "status_vocab": {"fixed": 6, "no-action": 5, "reported": 3, "operator-owned": 1}, "gate": "corpus/closure-dispositions.py (SKILL.md:751; exit 0/1/2)", "path_line": "kagi-shokunin/corpus/closure-dispositions.py:16,21,34"},
+    {"lane": "kaidoku", "file": "none (computed over six R17 defects)", "rows": 6, "status_vocab": {"open": "named/substance checks", "closed": "both sets pass"}, "gate": "round-18/tools/routed-defects.py --strict (SKILL.md:921)", "path_line": "kaidoku-shokunin/SKILL.md:921"},
+    {"lane": "mado", "file": "none (ages.md generated, tracked at .ufo/waves/round-46/w1/ScrRoutedAges/ages.md, 42 rows)", "rows": 42, "status_vocab": "prose rule (criterion 90 identity+age)", "gate": "none", "path_line": "mado-shokunin/corpus/QUALITY.md:454,490"},
+    {"lane": "kama", "file": "none (lesson tables)", "rows": null, "status_vocab": "not machine-checked", "gate": "none", "path_line": "kama-shokunin/corpus/lessons/round-16.md:74"},
+    {"lane": "tameshi", "file": "corpus/routed-defects.json", "rows": 49, "status_vocab": {"fixed": 31, "declined": 11, "open": 7}, "gate": "none", "path_line": "tameshi-shokunin/corpus/routed-defects.json"}
+  ],
+  "gate_registries_with_exit_maps": [
+    {"lane": "kama", "evidence": "SKILL.md:303,373,396,1258-1263,1357-1359; tools/gate-registry-check.py grades empty-exit-map (:26,:208)"},
+    {"lane": "kaidoku", "evidence": "SKILL.md:779,919,1015,1698; tools/round-45/registry-scope.json + c2-counter.py"},
+    {"lane": "kengaku", "evidence": "SKILL.md:634-636"},
+    {"lane": "kagi", "evidence": "SKILL.md:34-49,751"},
+    {"lane": "kumitate", "evidence": "SKILL.md:615-626"},
+    {"lane": "souji", "evidence": "SKILL.md:244-248"},
+    {"lane": "mori", "evidence": "SKILL.md:187-191"},
+    {"lane": "tsukuroi", "evidence": "SKILL.md:1707-1778"},
+    {"lane": "tameshi", "evidence": "SKILL.md:1543-2093; tools/registry.json 57 rows all with expect.exit; tools/registry-check.py:21,35"}
+  ],
+  "two_lane_rule": [
+    {"pattern": "closure-routed items as typed rows with executable/pointer check and exit-coded gate", "lanes": ["kengaku", "kagi"], "third_instance": "kaidoku round-18 routed-defects.py", "status": "meets PROVINCE.md:14-16 two-lane rule"},
+    {"pattern": "age field from first routing round", "lanes": ["mado (criterion 90)", "kengaku (opened_round)"], "status": "two lanes; mado is prose plus generated file"},
+    {"pattern": "gate registry grades exit-map presence", "lanes": ["kama", "kaidoku"], "status": "meets two-lane rule; tameshi already has expected-exit JSON rows"}
+  ],
+  "contested_scope": [
+    {"item": "kengaku routed-findings.jsonl / routed_open.py / defect_ledger.py", "reason": "product-lane bookkeeping; PROVINCE.md:14-16 and :20 - cite the method, do not absorb"},
+    {"item": "kagi corpus/closure-dispositions.py", "reason": "PROVINCE.md:7-9 owns kagi corpus/*check*.sh and census gates; this file is neither named nor *check*.sh - reported, not claimed"},
+    {"item": "kengaku dual routed ledgers (routed-findings vs defects)", "reason": "two status enums in one lane; craft conflict for the L1 to decide"}
+  ],
+  "routed_item_already_noted": "tameshi corpus/lessons/round-50.md:164 (kengaku defect_ledger.py per-row check) - still absent from tameshi routed-defects.json",
+  "considerthese_convergence": ["kengaku considerthese/2026-10-26.md:37", "mado considerthese/2026-10-26.md:49"],
+  "receipts": [".ufo/waves/round-57/w1/T57W1ConnectorSiblings-receipts/sweep.txt", ".ufo/waves/round-57/w1/T57W1ConnectorSiblings-receipts/linemap.txt"],
+  "tools_installed": [],
+  "lane_edits": [],
+  "checks_run": ["ls -d *-shokunin (21 lanes)", "glob ledger/registry files", "grep routed/exit-map patterns over corpus, knowledge, lessons, SKILL.md, tools", "python sweep of ledger vocabularies and SKILL gate rows (receipts/sweep.txt)", "line-level reads of cited rows (receipts/linemap.txt)"],
+  "checks_not_run": ["sibling gates not executed (read-only seat)", "kama lesson routed-table status vocabulary not counted", "grep capped at 20 matches per file"]
+}

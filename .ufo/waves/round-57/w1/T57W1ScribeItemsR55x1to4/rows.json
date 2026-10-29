@@ -1,0 +1,107 @@
+[
+  {
+    "id": "R55.1",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": ".ufo/evidence/round-56/deciding-run.sh",
+        "lines": "156-156",
+        "excerpt": "gate 0c: the verdicts this run just produced must name the certified revision."
+      },
+      {
+        "path": ".ufo/evidence/round-56/after/receipt-gate-verdicts.stdout",
+        "lines": "3-3",
+        "excerpt": "GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS"
+      },
+      {
+        "path": ".ufo/evidence/round-56/before/c2.stdout",
+        "lines": "4-4",
+        "excerpt": "EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT"
+      }
+    ],
+    "commit": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+    "seat": "T57W1ScribeItemsR55x1to4",
+    "note": "Fix landed in round 56 (not this round); counts toward FIXED_FLOOR only, not the this-round floor. Caveat from wave-1 review: the verdict receipts are produced in the working tree, so committing them is an unenforced step.",
+    "keys": [
+      "gate 0c",
+      "--certified",
+      "receipt-gate-verdicts",
+      "deciding-run.sh",
+      "RECEIPT_REV_ABSENT"
+    ],
+    "verdict_basis": "Gate 0c (deciding-run.sh, added by freeze commit c3e2ca9f, which is not an ancestor of the spot-check fa48c06) runs receipt-revision-gate.py --certified on the verdict receipts the run produces, so a verdict that does not name the certified revision is refused; the gate refuses the round-55 truncated c2 receipt (RECEIPT_REV_ABSENT) and passes the round-56 verdicts at 1b44bace0974. Matches the round-56 lesson disposition FIXED."
+  },
+  {
+    "id": "R55.2",
+    "status": "open",
+    "evidence": [
+      {
+        "path": ".ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out",
+        "lines": "44-44",
+        "excerpt": "total=1 C2_R55_PASS=false"
+      },
+      {
+        "path": ".ufo/waves/round-56/w3/T56W3ScribeRecords.md",
+        "lines": "30-30",
+        "excerpt": "both quote **`total=6`** and cite `before/c2.stdout`"
+      }
+    ],
+    "seat": "T57W1ScribeItemsR55x1to4",
+    "note": "Carried. Needs a checker that compares quoted totals to the receipt line they name; no such instrument exists. The report that quoted total=0 is fleet-side (.ufo/reports/round-55/tameshi.md), outside lane evidence.",
+    "keys": [
+      "c2-integrated.out",
+      "total=1",
+      "T56W3ScribeRecords.md",
+      "total=6",
+      "R55.2"
+    ],
+    "verdict_basis": "The committed receipt c2-integrated.out:44 still reads total=1 C2_R55_PASS=false, and the round-56 wave-3 record (T56W3ScribeRecords.md:30, V13) shows the same class recurring (a quoted total=6 against before/c2.stdout total=2). No lane instrument checks quoted bytes; round-56 lesson disposition CARRIED. Still true at base."
+  },
+  {
+    "id": "R55.3",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": "SCORECARD.md",
+        "lines": "2718-2718",
+        "excerpt": "calibration | 8 | round-21 cold-read monitor `calibration_restraint_score`; two points per restrained, evidence-linked `[~]` SHONEN box, with box 3 requiring the full page: `64/64`, `box3=true`"
+      }
+    ],
+    "commit": "2f5512a8ab0771fb2eee463ec16db359174f5edd",
+    "seat": "T57W1ScribeItemsR55x1to4",
+    "note": "Fix landed in round 56 (not this round). The row is restated to the score the monitor reads at the commit the row names; the fix is verified only as far as the base monitor run goes.",
+    "keys": [
+      "calibration",
+      "c1dd23b",
+      "box3=true",
+      "R55.3",
+      "monitor=8/64"
+    ],
+    "verdict_basis": "SCORECARD.md at base carries the restated standing calibration row (score 8, measured commit c1dd23b, last change round 56), added by 2f5512a, which is not an ancestor of the spot-check fa48c06. The 18 lost cold-read headings were re-keyed at C0 (round-56 lesson R55.3 FIXED); the round-21 monitor reading at base is verified separately in receipts (see report)."
+  },
+  {
+    "id": "R55.4",
+    "status": "open",
+    "evidence": [
+      {
+        "path": ".ufo/waves/round-56/w3/T56W3ScribeRecords.md",
+        "lines": "148-148",
+        "excerpt": "R55.4 — stale control sentence (\"still running at filing\") | **carried**"
+      },
+      {
+        "path": ".ufo/waves/round-56/w1/T56W1RevRound55Dispositions.md",
+        "lines": "12-12",
+        "excerpt": "Correct disposition is `carried`"
+      }
+    ],
+    "seat": "T57W1ScribeItemsR55x1to4",
+    "note": "Carried, not fixed. The lesson corpus/lessons/round-56.md row still says FIXED by construction and contradicts the wave-3 record; the L1 must align them. A fix needs a falsifier that reads status claims against receipts (new counter arm and a QUALITY criterion), not a patch.",
+    "keys": [
+      "R55.4",
+      "still running at filing",
+      "T56W3ScribeRecords.md",
+      "T56W1RevRound55Dispositions.md"
+    ],
+    "verdict_basis": "The round-56 wave-1 review (T56W1RevRound55Dispositions.md:12, F2) found the lesson claim FIXED by construction overclaimed: deciding-run.sh checks receipt existence and verdict-line presence, never report prose against a receipt; the round-56 wave-3 record (T56W3ScribeRecords.md:148) disposes R55.4 as carried. The round-55 sentence itself sits in the fleet-side report (.ufo/reports/round-55/tameshi.md:93), still unchanged. Still true at base."
+  }
+]

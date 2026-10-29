@@ -1,0 +1,85 @@
+LANES 21 audio-shokunin chousa-shokunin game-dev-2d-shokunin game-dev-3d-shokunin kagi-shokunin kaidoku-shokunin kake-shokunin kama-shokunin kasegi-shokunin kengaku-shokunin kotoba-shokunin kotodama-shokunin kumitate-shokunin lore-shokunin mado-shokunin mori-shokunin revenger-shokunin souji-shokunin tabi-shokunin tameshi-shokunin tsukuroi-shokunin
+## ledger files (corpus/ and root, json/jsonl)
+  kagi-shokunin/corpus/closure-dispositions.json
+  kengaku-shokunin/corpus/defects-round35.jsonl
+  kengaku-shokunin/corpus/defects.jsonl
+  kengaku-shokunin/corpus/routed-findings.jsonl
+  tameshi-shokunin/corpus/routed-defects.json
+kengaku routed-findings.jsonl rows 75 status {'closed': 41, 'open': 31, 'blocked': 1, 'refused': 2}
+kengaku routed-findings.jsonl disposition {'fixed-verified': 41, 'accepted-risk': 28, 'refused-out-of-scope': 2, 'routed': 4}
+kengaku defects.jsonl rows 5 status {'closed': 5}
+kengaku defects-round35.jsonl rows 4 status {'closed': 4}
+kagi closure-dispositions schema kagi-closure-dispositions-v1 rows 15 disposition {'no-action': 5, 'reported': 3, 'fixed': 6, 'operator-owned': 1}
+tameshi routed-defects schema tameshi-routed-defects-v1 rows 49 status {'fixed': 31, 'declined': 11, 'open': 7} fields ['commit', 'evidence', 'id', 'note', 'reason', 'seat', 'status']
+## SKILL.md registry-style rows (kind cell)
+ chousa-shokunin/SKILL.md kinds={'gate': 44, 'probe': 1} rows_with_exit_wording=44
+ kagi-shokunin/SKILL.md kinds={'gate': 7, 'helper': 2} rows_with_exit_wording=7
+ kaidoku-shokunin/SKILL.md kinds={'gate': 93, 'probe': 72, 'capability': 1} rows_with_exit_wording=151
+ kake-shokunin/SKILL.md kinds={'gate': 50, 'probe': 1, 'selftest': 1} rows_with_exit_wording=34
+ kama-shokunin/SKILL.md kinds={'probe': 10, 'gate': 29, 'measurement': 55, 'capability': 13, 'helper': 1, 'selftest': 1} rows_with_exit_wording=84
+ kasegi-shokunin/SKILL.md kinds={'gate': 21} rows_with_exit_wording=21
+ kengaku-shokunin/SKILL.md kinds={'gate': 57, 'probe': 17} rows_with_exit_wording=74
+ kotoba-shokunin/SKILL.md kinds={'gate': 64} rows_with_exit_wording=2
+ kotodama-shokunin/SKILL.md kinds={'gate': 59, 'probe': 1, 'selftest': 1} rows_with_exit_wording=52
+ kumitate-shokunin/SKILL.md kinds={'gate': 23, 'probe': 2, 'runner': 1, 'helper': 1, 'demo': 1} rows_with_exit_wording=17
+ mado-shokunin/SKILL.md kinds={'gate': 20, 'probe': 19, 'selftest': 2} rows_with_exit_wording=22
+ mori-shokunin/SKILL.md kinds={'gate': 54, 'probe': 11} rows_with_exit_wording=22
+ revenger-shokunin/SKILL.md kinds={'gate': 2} rows_with_exit_wording=0
+ souji-shokunin/SKILL.md kinds={'probe': 11, 'gate': 69, 'capability': 2} rows_with_exit_wording=45
+ tabi-shokunin/SKILL.md kinds={'gate': 41, 'probe': 1, 'measurement': 1} rows_with_exit_wording=10
+ tameshi-shokunin/SKILL.md kinds={'gate': 43, 'probe': 22, 'runner': 3} rows_with_exit_wording=49
+ tsukuroi-shokunin/SKILL.md kinds={'probe': 213, 'gate': 712, 'selftest': 13} rows_with_exit_wording=352
+tameshi tools/registry.json rows 57 kinds {'gate': 22, 'selftest': 31, 'probe': 4} with expect.exit 57
+## cited lines
+--- tameshi-shokunin/PROVINCE.md
+13: 
+14: **Refuses:** product domains — every lane's gate remains its own; tameshi
+15: owns only the reusable craft (a pattern is admitted from evidence in TWO
+16: independent lanes before it is claimed general). Never edits a sibling's
+--- kengaku-shokunin/SKILL.md
+634: | `round51-routing` | gate | `python3 plans/round51_routing.py --lane . --run-checks` (`--ledger PATH`, `--scratch DIR` keeps the scratch, `--selftest`; without `--run-checks` the `fixed-verified` che
+635: | `round51-surfaces` | gate | `python3 plans/round51_surfaces.py --lane .` (lane root; `--manifest PATH` default `plans/round51-surfaces.json`, `--province PATH` default `PROVINCE.md`, `--selftest`) |
+636: | `routed-findings` | gate | `python3 plans/routed_open.py --lane .` (lane root; `--file PATH` default `corpus/routed-findings.jsonl`, `--list`, `--observe`, `--timeout N` default 180 s, `--selftest`)
+--- kengaku-shokunin/plans/routed_open.py
+3: 
+4: One file, one row per routed finding: `corpus/routed-findings.jsonl` (override with `--file`).
+5: The defect ledgers (`corpus/defects*.jsonl`) are refused by name: they are pinned by
+6: `plans/ledger_tip.py` and the round-40 C1 mutant table, so routed findings never move them.
+7: 
+8: Row (JSON object per line):
+9: 
+--- kagi-shokunin/SKILL.md
+751: | closure disposition review | gate | `python3 corpus/closure-dispositions.py` (R23-02) | 0 clean; 1 failed (missing/duplicate/unknown obligation, unresolved fixed pointer, rejected disposition); 2 se
+--- kaidoku-shokunin/SKILL.md
+921: | routed-defects | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-18/tools/routed-defects.py --root <LANE> --rev <REV> --strict`; 0 all six R17 routed 
+--- mado-shokunin/corpus/QUALITY.md
+454: 90. Every routed defect keeps one identity and an age from the round that first routed it: each round's lesson
+455: carries the open routed items with their first locator (`round-N-verifier-spotcheck.md:<line>`) and their age in
+--- kama-shokunin/SKILL.md
+303: | Name | Kind / entry command | Exit map | Self-test / pinned values | Write scope |
+304: |---|---|---|---|---|
+305: | Registered reconciliation | gate: `bash tools/kama-probe.sh check` (`--json` optional) | 0 clean; 2 failed/drift; 1 could-not-evaluate/probe error | `bash tools/test-snapshot.sh` exercises clean fix
+--- kama-shokunin/tools/gate-registry-check.py
+1: #!/usr/bin/env python3
+2: """gate-registry-check.py -- instrument-registry gate: occurrence + meaning.
+3: 
+4: Every tracked round counter is a lane instrument; an instrument that SKILL.md
+5: never names cannot be graded, re-run or retired by a reader. Round 32 repairs
+6: the round-28 occurrence-only gate (routed by the round-31 closure: a thin row
+7: with empty cells, a row with an empty exit map, and a row citing a
+8: nonexistent path all flipped the gate to exit 0).
+--- tameshi-shokunin/corpus/lessons/round-50.md
+164:   element that would close the C1 forgery routes, a per-row executable check (`T50W2ConnSiblingLedger.md`, kengaku
+--- kengaku-shokunin/plans/defect_ledger.py
+1: #!/usr/bin/env python3
+2: """Persistent routed-defect ledger checker (round 35, C2 calibration).
+3: 
+4: Mined from considerthese/2026-10-25.md proposal 2 ("one persistent routed-defect ledger instead of
+5: a new plans/roundNN_defects.py per round"). `corpus/defects.jsonl` holds one JSON object per routed
+6: defect: id, class, opened_round, source (spot-check path:line), check (a function name below),
+7: status (open|closed), closed_round, recurrence_of. This script re-runs EVERY row's check at the
+8: current tip, forever, and counts calibration mismatches: a row the ledger calls `closed` whose
+--- kaidoku-shokunin/tools/round-45/registry-scope.json
+1: {
+2:  "scope": "the instruments named as instruments by the round-44 and round-45 frozen claim files",
+3:  "why": "Round-44's closure routed the missing SKILL.md registry rows for tools/round-44/{c1,c2}-counter.py (grep -c round-44 SKILL.md == 0). The scope is the whole claim-carrying instrument set of th

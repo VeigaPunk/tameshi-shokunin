@@ -1,0 +1,97 @@
+{
+  "seat": "T57W1ScribeSourcesRow",
+  "round": "57",
+  "wave": "w1",
+  "lane": "tameshi",
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "item": "SOURCES rows draft (after scouts): S283-S285, staged diff, census scratch run, gate block",
+  "inputs": {
+    "scout_A": ".ufo/waves/round-57/w1/T57W1ScoutSourceA.json (present; receipts re-derived by this seat)",
+    "scout_B": "absent after 6 polls at 1-minute intervals; drafted against the three candidates present in its receipt directory (sre-book, sre-workbook, atlassian); accepted-sha file lists only the workbook"
+  },
+  "rows": [
+    {
+      "id": "S283",
+      "source": "GNU Grep Manual, §2.3 Exit Status",
+      "url": "https://www.gnu.org/software/grep/manual/grep.html",
+      "kind": "docs",
+      "tier": "A",
+      "status": "queued",
+      "opened": "2026-10-28",
+      "recheck": "365d",
+      "used_by": "—",
+      "note": "scout A proposed status mined; corrected to queued because no admitted knowledge entry cites it in the staged set"
+    },
+    {
+      "id": "S284",
+      "source": "Postmortem Culture: Learning from Failure (Google SRE Workbook, chapter 10)",
+      "url": "https://sre.google/workbook/postmortem-culture/",
+      "kind": "docs",
+      "tier": "A",
+      "status": "queued",
+      "opened": "2026-10-28",
+      "recheck": "180d",
+      "used_by": "—",
+      "note": "admitted from scout B receipts (accepted-sha file lists this page)"
+    },
+    {
+      "id": "S285",
+      "source": "Postmortems: Enhance Incident Management Processes (Atlassian Incident Management Handbook)",
+      "url": "https://www.atlassian.com/incident-management/handbook/postmortems",
+      "kind": "docs",
+      "tier": "B",
+      "status": "rejected",
+      "opened": "2026-10-28",
+      "recheck": "on-release",
+      "used_by": "—",
+      "note": "REJECTED row; vendor self-description, no outcome data; not in scout B accepted list"
+    }
+  ],
+  "not_rowed": [
+    {
+      "url": "https://sre.google/sre-book/postmortem-culture/",
+      "reason": "fetched by scout B, not in accepted-sha list; no quote taken; L1 decision needed"
+    },
+    {
+      "url": "https://man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3",
+      "reason": "already held as S090 (mined); duplicate under CORPUS rule 2"
+    },
+    {
+      "url": "git diff --exit-code documentation (no URL recorded by scout A)",
+      "reason": "named by scout A, not fetched (one-source scope); lead only, not a judgment"
+    }
+  ],
+  "artifacts": {
+    "diff": ".ufo/waves/round-57/w1/T57W1ScribeSourcesRow/stage/corpus/SOURCES.diff",
+    "gate_block": ".ufo/waves/round-57/w1/T57W1ScribeSourcesRow/gate-block.md",
+    "receipts": ".ufo/waves/round-57/w1/T57W1ScribeSourcesRow-receipts/"
+  },
+  "checks": {
+    "census_validate_after_patch": {
+      "command": "scripts/sources-census.sh validate --file <scratch-root>/corpus/SOURCES.md (run from scratch root carrying corpus/ and tools/)",
+      "exit": 0,
+      "warnings": "15 W04 + 1 W01 (unchanged set from round 56); E-codes 0",
+      "receipt": ".ufo/waves/round-57/w1/T57W1ScribeSourcesRow-receipts/census-after.stdout"
+    },
+    "patch_applies_to_base_copy": "patch -p1 --dry-run and patch -p1 on a copy of lane corpus/ at base: applied, result byte-equal to the scratch edit",
+    "registry_rows": {"before": 142, "after": 145},
+    "status_histogram": {"before": "mined=114 queued=21 rejected=7", "after": "mined=114 queued=23 rejected=8"},
+    "malformed_rows_NF_not_13": 0,
+    "duplicate_ids": 0,
+    "enum_violations": 0,
+    "negative_sweeps_on_base": "gnu.org/software/grep, sre.google, atlassian.com/incident, postmortem: no match in lane corpus at base (receipt sweeps-base-negative.stdout)"
+  },
+  "byte_change_scope": {
+    "file": "corpus/SOURCES.md",
+    "hunks": "registry (3 rows after S282), search log (one bullet after round-56 bullet), id allocation tail (round-57 line)",
+    "not_touched": ["corpus/QUALITY.md", "corpus/README.md", "SKILL.md", "knowledge entries"],
+    "no_harm_consequence": "any byte change to SOURCES.md can drop round-21 cold-read credit; L1 re-keys in wave 3 at C0"
+  },
+  "tooling_installs": [],
+  "findings": [
+    "scout A's sysexits(3) grounding candidate is already the mined row S090; the round-55 refusal covers it",
+    "scout A's proposed mined status for S283 is not supported by any staged knowledge entry; queued",
+    "census --file resolves used-by paths relative to the scratch root; a root without tools/ and corpus/knowledge yields 171 false E11 errors (control run, discarded, not kept as evidence)",
+    "SRE book ch. 15 was fetched but no row decided; L1 to rule"
+  ]
+}

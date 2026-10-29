@@ -1,0 +1,41 @@
+CASE happy exit=0 :: DECIDING_RUN_EXIT=0
+c1.end c1.exit c1.start c1.stdout c2.end c2.exit c2.start c2.stdout census.exit census.stderr census.stdout clean-tree-after.txt coldread-precheck.exit coldread-precheck.stdout deciding-run.exit deciding-run.stdout no-harm.exit no-harm.stdout receipt-gate-verdicts.exit receipt-gate-verdicts.stdout 
+CASE happy-second-invocation exit=3 :: DECIDING_REFUSED second-invocation c1
+CASE wrong-rev-ancestor exit=3 :: DECIDING_REFUSED rev-is-not-head-of-fresh-clone rev=596780bf4fc96c3f44d8a4f4e0024cba07353730 head=8198285163447843a2a1f422d2040dc9e2966f9d
+CASE wrong-rev-unresolvable exit=3 :: DECIDING_REFUSED rev-unresolvable
+CASE wrong-base-is-rev exit=3 :: DECIDING_REFUSED base-not-proper-ancestor-of-rev
+CASE wrong-rev-lane-head-moved exit=3 :: DECIDING_REFUSED rev-is-not-head-of-fresh-clone rev=7c3af3d099d2db96444809e3ecc75e9a3673ad24 head=6f5f14971a5e12924efeab73bc79c78b3c08ce3a
+CASE tampered-freeze-digest exit=3 :: DECIDING_REFUSED freeze-integrity
+FREEZE_INTEGRITY: MISMATCH files=6 amendments=0 freeze=98193d40d778
+FREEZE_MISMATCH c1/measure.py e59e9ff9eb27 != 000000000000 at freeze
+FREEZE_MISMATCH c1/measure.py e59e9ff9eb27 != 000000000000 at rev
+FREEZE_MISMATCH amendments=0 inconsistent with 2 manifest commits or record shape
+CASE tampered-frozen-file-after-freeze exit=3 :: DECIDING_REFUSED freeze-integrity
+FREEZE_INTEGRITY: MISMATCH files=6 amendments=0 freeze=7297e6df0bac
+FREEZE_MISMATCH c1/measure.py 8efa8a4aaa81 != e59e9ff9eb27 at rev
+CASE script-differs-from-committed exit=3 :: DECIDING_REFUSED script-not-committed-bytes .ufo/evidence/round-57/deciding-run.sh
+CASE missing-counter exit=3 :: DECIDING_REFUSED counter-missing .ufo/evidence/round-57/c2/measure.py
+CASE missing-no-harm exit=3 :: DECIDING_REFUSED counter-missing .ufo/evidence/round-57/no-harm.sh
+CASE ctl-mismatch exit=3 :: DECIDING_REFUSED controls-a-mismatch-lines
+CASE controls-b-verdict-missing exit=3 :: DECIDING_REFUSED controls-b-verdict-missing
+CASE control-receipt-missing exit=3 :: DECIDING_REFUSED control-receipt-missing .ufo/evidence/round-57/control/controls-b.stdout
+CASE precheck-red exit=3 :: DECIDING_REFUSED coldread-precheck-red exit=1
+0
+CASE counter-fails-pass-false exit=1 :: DECIDING_RUN_EXIT=1
+COUNTER_NOT_PASS c2
+COUNTER_PASS_FALSE_LINE c2
+DECIDING_RUN_EXIT=1
+CASE dirty-tree exit=3 :: DECIDING_REFUSED dirty-tree
+CASE outdir-not-empty exit=3 :: DECIDING_REFUSED outdir-not-empty
+CASE outdir-missing exit=3 :: DECIDING_REFUSED outdir-missing
+CASE outdir-outside-lane exit=3 :: DECIDING_REFUSED outdir-not-in-lane /fast/scratch/hyaku/tameshi-r57/T57W1ExecDeciding-proof
+CASE relative-lane exit=2 :: 
+CASE final-gate-refuses-verdict-naming-unresolvable-rev exit=1 :: DECIDING_RUN_EXIT=1
+GATE: receipts=2 ok=1 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+CASE no-harm-red exit=1 :: DECIDING_RUN_EXIT=1
+NOHARM_RED
+NOHARM_OK_COUNT ok=18 total=19 min=18
+CASE no-harm-too-few exit=1 :: DECIDING_RUN_EXIT=1
+NOHARM_OK_COUNT ok=9 total=9 min=18
+CASE counter-exit-nonzero exit=1 :: DECIDING_RUN_EXIT=1
+COUNTER_EXIT_NONZERO c2

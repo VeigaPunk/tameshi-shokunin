@@ -1,0 +1,86 @@
+{
+  "seat": "T57W1ScribeItemsR55x1to4",
+  "milestone": "ledger rows R55.1-4",
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "spotcheck": {"path": "corpus/lessons/round-55-verifier-spotcheck.md", "added_by": "fa48c06c3669355fd80e8722eb733c1d6dfdd2f8", "sha256_at_added": "see verify.out"},
+  "rows_file": ".ufo/waves/round-57/w1/T57W1ScribeItemsR55x1to4/rows.json",
+  "items": [
+    {
+      "id": "R55.1",
+      "status": "fixed",
+      "commit": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+      "commit_subject": "round-56: freeze the claim instruments (contract, c1/c2 counters, receipt-revision gate, controls, no-harm, deciding run)",
+      "fix_mechanism": "deciding-run.sh gate 0c runs tools/receipt-revision-gate.py --certified REV on the verdict receipts the run produces",
+      "red_before": ".ufo/evidence/round-56/before/c2.stdout line 4 (RECEIPT_REV_ABSENT for the round-55 receipt)",
+      "green_after": ".ufo/evidence/round-56/after/receipt-gate-verdicts.stdout line 3 (verdict=PASS, revs=1b44bace0974)",
+      "fixable": "none needed",
+      "landed": "round 56, not this round (ancestor of base); counts to FIXED_FLOOR only",
+      "caveat": "verdict receipts are written to the working tree; committing them is unenforced (wave-1 review)"
+    },
+    {
+      "id": "R55.2",
+      "status": "open",
+      "defect_still_true_at_base": true,
+      "evidence_lines": [
+        ".ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out:44 reads total=1 C2_R55_PASS=false",
+        ".ufo/waves/round-56/w3/T56W3ScribeRecords.md:30 (V13) records the same class recurring: total=6 quoted against before/c2.stdout total=2"
+      ],
+      "round56_disposition": "CARRIED (lesson round-56.md row R55.2; T56W1RevRound55Dispositions.md row R55.2)",
+      "fixable": "fixable-costly",
+      "uncredits": {
+        "pinned_file": "corpus/QUALITY.md (criterion 107 scope sentence would change)",
+        "cold_read_entries": 73,
+        "headings": {
+          "### Round-20 gate/probe registry — frozen receipt instruments": 19,
+          "# tameshi-shokunin": 13,
+          "## Live-tree re-pin and entry-command monitor — round 17": 7,
+          "### Round-21 gate/probe registry — finite environment differential": 7,
+          "## Mutation-sweep recipe — numbered steps; bounded cold-read evidence": 7,
+          "### Triggers T1–T3 and the re-pin rule": 5,
+          "### Round-18 gate/probe registry — routed-defect closure": 5,
+          "## Standing rules": 4,
+          "## Ninth recorded case — round 26": 2,
+          "## No-permissiveness audit recipe": 1,
+          "## The cadence's first scheduled tick, and the service's limits (round 9, measured)": 1,
+          "## Gate-shape decision table — hermetic vs live vs audit-lane": 1,
+          "### Where to enter — four readers": 1
+        },
+        "also": "a real fix needs a new C2 counter arm (quote-vs-receipt check), i.e. a freeze amendment; the SKILL.md ## Standing rules heading is excluded by the task"
+      },
+      "staged": null
+    },
+    {
+      "id": "R55.3",
+      "status": "fixed",
+      "commit": "2f5512a8ab0771fb2eee463ec16db359174f5edd",
+      "commit_subject": "round-56: restate calibration at the C1 bind",
+      "fix_mechanism": "SCORECARD.md standing calibration row restated to score 8 at measured commit c1dd23b with 64/64 box3=true; 18 lost cold-read headings re-keyed at C0 c0137451f5b7",
+      "base_monitor": {"command": "python3 .ufo/evidence/round-21/coldread/measure.py --repo <scratch clone at base> --rev 5e3569969b532310d2b8a3d130901757a3df356b", "calibration_restraint_score": 8, "sections_covered": 64, "sections_total": 64, "box3_full_page": true, "exit": 0},
+      "fixable": "none needed",
+      "landed": "round 56, not this round"
+    },
+    {
+      "id": "R55.4",
+      "status": "open",
+      "defect_still_true_at_base": true,
+      "evidence_lines": [
+        ".ufo/waves/round-56/w3/T56W3ScribeRecords.md:148 R55.4 carried",
+        ".ufo/waves/round-56/w1/T56W1RevRound55Dispositions.md:12 F2 overclaim: FIXED by construction is wrong, correct disposition carried",
+        "fleet-side (not lane evidence): .ufo/reports/round-55/tameshi.md:93 still holds the stale sentence"
+      ],
+      "round56_disposition": "lesson round-56.md row says FIXED by construction (overclaim); wave-1 F2 and wave-3 record say carried",
+      "fixable": "fixable-cheap for the lane record only; the defect itself is not cheap",
+      "staged": ".ufo/waves/round-57/w1/T57W1ScribeItemsR55x1to4/stage/corpus/lessons/round-56.md (one row, line 105, changed from FIXED to CARRIED); diff in T57W1ScribeItemsR55x1to4-receipts/R55.4-lesson-row.diff",
+      "lesson_pins": "corpus/lessons/round-56.md is pinned by 0 cold-read entries (ledger.json)",
+      "costly_part": "a falsifier that reads status claims against receipts needs a new counter arm (freeze amendment) and a QUALITY criterion (QUALITY.md, 73 entries, 13 headings, see R55.2)"
+    }
+  ],
+  "counter_replay": {
+    "pass1_frozen_rules_no_planned_paragraph": {"stat": {"fixed": 2, "open": 2, "declined": 0, "fixed_this_round": 0}, "counts": {"open_unplanned": 2}, "total": 2},
+    "pass2_planned_ids_stubbed_to_R55_2_R55_4": {"stat": {"fixed": 2, "open": 2, "declined": 0, "fixed_this_round": 0}, "counts": {}, "total": 0},
+    "note": "open_unplanned is expected until the round-57 SCORECARD Planned paragraph names R55.2 and R55.4; the round-50 planned_ids regex only matches R4x ids, so it cannot match R55.x as written"
+  },
+  "tools_installed": [],
+  "lane_writes": "none to tracked lane files; untracked outputs only under .ufo/waves/round-57/w1/T57W1ScribeItemsR55x1to4* and the scratch dir",
+  "unresolved": []
+}

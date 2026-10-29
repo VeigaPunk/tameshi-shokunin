@@ -1,0 +1,203 @@
+{
+ "schema": "tameshi-entry-registry-v1",
+ "rows": [
+  {
+   "name": "cheap-echo-gate",
+   "kind": "gate",
+   "argv": [
+    "sh",
+    "-c",
+    "echo 'GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS'; echo tools/receipt-revision-gate.py >/dev/null"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "verdict=PASS"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-selftest-disguise",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "-c",
+    "import subprocess,sys;sys.exit(subprocess.call([sys.executable,'tools/receipt-revision-gate.py','--selftest']))"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "GATE_SELFTEST: 19/19 pass"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-self-receipt-exit3",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "HEAD",
+    "--receipt",
+    "tools/receipt-revision-gate.py:verdict"
+   ],
+   "expect": {
+    "exit": 3,
+    "stdout_contains": [
+     "RECEIPT_REV_UNRESOLVABLE"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-any-refusal-exit3",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "HEAD",
+    "--receipt",
+    "tools/registry.json:verdict"
+   ],
+   "expect": {
+    "exit": 3,
+    "stdout_contains": [
+     "verdict=REFUSED"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-prefix-needle-exit3",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "HEAD",
+    "--receipt",
+    "tools/registry.json:verdict"
+   ],
+   "expect": {
+    "exit": 3,
+    "stdout_contains": [
+     "RECEIPT_REV"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-unresolvable-exit2",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "deadbeefdeadbeef",
+    "--receipt",
+    "no-such-file.txt:verdict"
+   ],
+   "expect": {
+    "exit": 2,
+    "stdout_contains": [
+     "RECEIPT_REV_UNRESOLVABLE"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-exit0-existing-r56-control",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "5e3569969b532310d2b8a3d130901757a3df356b",
+    "--receipt",
+    ".ufo/evidence/round-56/control/controls-a.stdout:control"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "verdict=PASS"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  },
+  {
+   "name": "cheap-missing-exit3",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "HEAD",
+    "--receipt",
+    "nope-missing.txt:positive"
+   ],
+   "expect": {
+    "exit": 3,
+    "stdout_contains": [
+     "RECEIPT_MISSING"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:1",
+   "status": "active",
+   "tags": [
+    "cheap-probe"
+   ]
+  }
+ ]
+}

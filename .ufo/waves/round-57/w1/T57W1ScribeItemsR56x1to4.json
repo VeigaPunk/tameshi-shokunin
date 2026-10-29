@@ -1,0 +1,185 @@
+{
+ "seat": "T57W1ScribeItemsR56x1to4",
+ "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+ "items": [
+  "R56.1",
+  "R56.2",
+  "R56.3",
+  "R56.4"
+ ],
+ "verdicts": {
+  "R56.1": {
+   "status": "open",
+   "fixability": "fixable-costly"
+  },
+  "R56.2": {
+   "status": "open",
+   "fixability": "fixable-costly"
+  },
+  "R56.3": {
+   "status": "open",
+   "fixability": "fixable-cheap (recheck line, staged) + fixable-costly (README index line)"
+  },
+  "R56.4": {
+   "status": "open",
+   "fixability": "fixable-cheap (referent recorded in a new round-57 note, staged)"
+  }
+ },
+ "rows": [
+  {
+   "id": "R56.1",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SKILL.md",
+     "lines": "491-491",
+     "excerpt": "Band interiors were unprobed at round 3 (both at 80 %, SKILL.md:335-339)"
+    },
+    {
+     "path": "SKILL.md",
+     "lines": "335-339",
+     "excerpt": "Shared survivor classes across the two cases, named"
+    },
+    {
+     "path": "corpus/README.md",
+     "lines": "100-100",
+     "excerpt": "`SKILL.md:14-15` and `:133-135` still call full-sweep/bash"
+    },
+    {
+     "path": "corpus/QUALITY.md",
+     "lines": "253-253",
+     "excerpt": "A bare line anchor into such a file expires with the next"
+    }
+   ],
+   "seat": "T57W1ScribeItemsR56x1to4",
+   "keys": [
+    "SKILL.md:",
+    "bare line anchor",
+    "page-local"
+   ],
+   "fixability": "fixable-costly",
+   "fixability_detail": "Any fix edits SKILL.md (measured: one cell change in SKILL.md row 53 uncredits `## Standing rules`, score 8->6, receipts/p1) and/or the corpus files that cite SKILL lines (measured: one README table row uncredits 6 headings, score 8->6, receipts/p2). Line 491 sits in `## Cross-language divergence — bash vs JS (round 3, measured)` (SKILL.md:433 heading). Not staged.",
+   "note": "167 SKILL line-anchor citations across 32 corpus files at base (receipts/r3). SKILL.md:335-339 does not hold the \"80 %\" passage that SKILL.md:491 cites (0 matches). Page-local anchors remain; QUALITY 34 applies.",
+   "verdict_basis": "Open at base: `git rev-list --count 5e35699..HEAD` = 0, so no later lane commit touches the cited surface. SKILL.md:491 cites SKILL.md:335-339 for the 80 % passage, and lines 335-339 hold other text, so the bare-line-anchor defect still holds at base."
+  },
+  {
+   "id": "R56.2",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "SKILL.md",
+     "lines": "53-53",
+     "excerpt": "a verdict receipt names another revision | refused unless its bytes equal the certified revision on the declared `--paths` surface | `RECEIPT_REV_MISMATCH`"
+    },
+    {
+     "path": "tools/receipt-revision-gate.py",
+     "lines": "145-146",
+     "excerpt": "if paths is None: codes.append('RECEIPT_REV_MISMATCH')"
+    },
+    {
+     "path": "tools/receipt-revision-gate.py",
+     "lines": "148-151",
+     "excerpt": "else: drift = drifted_paths(lane, full, certified, paths) if drift: codes.append('RECEIPT_REV_CONTENT_DRIFT')"
+    }
+   ],
+   "seat": "T57W1ScribeItemsR56x1to4",
+   "keys": [
+    "RECEIPT_REV_MISMATCH",
+    "RECEIPT_REV_CONTENT_DRIFT",
+    "--paths"
+   ],
+   "fixability": "fixable-costly",
+   "fixability_detail": "Fix = SKILL.md row 53 cell to `RECEIPT_REV_CONTENT_DRIFT` (no `--paths`: `RECEIPT_REV_MISMATCH`), same line count. Touches SKILL.md: measured (receipts/p1, probe rev 827e6554) uncredits `## Standing rules` only, score 8->6. Not staged (SKILL.md excluded from cheap moves).",
+   "note": "Row 53 is in `## Standing rules` (SKILL.md:17-57). The gate emits RECEIPT_REV_CONTENT_DRIFT on the --paths branch and RECEIPT_REV_MISMATCH only when paths is None (gate lines 145-151).",
+   "verdict_basis": "Open at base: SKILL.md:53 names RECEIPT_REV_MISMATCH for a verdict receipt on a declared --paths surface, but tools/receipt-revision-gate.py:148-151 emits RECEIPT_REV_CONTENT_DRIFT on that branch; the cell is false as written."
+  },
+  {
+   "id": "R56.3",
+   "status": "open",
+   "evidence": [
+    {
+     "path": "corpus/knowledge/receipt-revision-binding.md",
+     "lines": "3-3",
+     "excerpt": "`python3 tools/receipt-revision-gate.py --selftest` must print `GATE_SELFTEST: 14/14 pass`"
+    },
+    {
+     "path": "corpus/knowledge/receipt-revision-binding.md",
+     "lines": "224-225",
+     "excerpt": "The frontmatter `recheck:` and §Falsifier item 3 still name the original freeze's"
+    },
+    {
+     "path": "tools/registry.json",
+     "lines": "1288-1288",
+     "excerpt": "GATE_SELFTEST: 19/19 pass"
+    }
+   ],
+   "seat": "T57W1ScribeItemsR56x1to4",
+   "keys": [
+    "14/14",
+    "recheck:",
+    "19/19"
+   ],
+   "fixability": "fixable-cheap (recheck line, staged) + fixable-costly (README index line)",
+   "fixability_detail": "Recheck line: staged at stage/corpus/knowledge/receipt-revision-binding.md (line 3 only; patch in the seat dir). No ledger entry pins that file (0 inputs references); measured probe rev 585084b4 scores 64/64, score 8. README index: a one-row insert at corpus/README.md:14 (probe rev 8f6a44d3) uncredits 6 headings (`## Standing rules`, `## Mutation-sweep recipe — numbered steps; bounded cold-read evidence`, `## The leg ledger — replay, receipt, and how it is read (round 7, measured)`, `### Triggers T1–T3 and the re-pin rule`, `### The map — where a reader enters, artifact by artifact`, `## Live-tree re-pin and entry-command monitor — round 17`), score 8->6.",
+   "note": "Line 3 `recheck:` runs `--selftest` and expects `GATE_SELFTEST: 14/14 pass`; base selftest prints `GATE_SELFTEST: 19/19 pass` (exit 0, receipts/r2). The ER-R56-K2 errata (lines 224-229) records the drift but does not change line 3. Falsifier line 155 and re-derive comment line 166 still say 14/14 and are left for the L1 to decide.",
+   "verdict_basis": "Open at base: knowledge/receipt-revision-binding.md:3 still requires `GATE_SELFTEST: 14/14 pass`, and the base gate and tools/registry.json:1288 both say 19/19; the entry is indexed 0 times in corpus/README.md."
+  },
+  {
+   "id": "R56.4",
+   "status": "open",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-21/coldread/ledger.json",
+     "lines": "89370-89370",
+     "excerpt": "\"tameshi@c0137451f5b7f22d65f748fc69f1b181f55e1378:corpus/SOURCES.md\": \"6c2096d8091f5d5be87a638f1a90ab6322a203c2be516d59dcfb970d4f55a6d3\""
+    },
+    {
+     "path": ".ufo/evidence/round-21/coldread/ledger.json",
+     "lines": "89641-89641",
+     "excerpt": "\"tameshi@c0137451f5b7f22d65f748fc69f1b181f55e1378:corpus/QUALITY.md\": \"54c49d3873b03acfa5ac4db7e0b7e6621808d80eee3b5ae60b90ad0fa2e2aab7\""
+    }
+   ],
+   "seat": "T57W1ScribeItemsR56x1to4",
+   "keys": [
+    "tameshi@c0137451",
+    "corpus/SOURCES.md",
+    "corpus/QUALITY.md",
+    "external_inputs"
+   ],
+   "fixability": "fixable-cheap (referent recorded in a new round-57 note, staged)",
+   "fixability_detail": "Staged at stage/.ufo/evidence/round-57/coldread-referent-r56.md: records the referent commit 877eedee and the digests. Labels in .ufo/evidence/round-21/coldread/ledger.json are NOT re-bound: that file is pinned by 6 entries (re-binding it would uncredit those headings). A new file is pinned by no entry.",
+   "note": "Bound entries 591-608 (18). SOURCES label mismatches on 13 entries and QUALITY on 6; 13 of 18 entries mismatch at least once. Every mismatched label equals sha256 of git show 877eedee (receipts/r5). C0 is c013745, which precedes 877eede and the bind c1dd23b. The monitor does not verify external_inputs (round-18 measure.py:605-608).",
+   "verdict_basis": "Open at base: the labels read `tameshi@c0137451…` but their digests equal the blobs at 877eede, not C0, on all 19 mismatched rows; no commit after base changes the ledger file."
+  }
+ ],
+ "probes": {
+  "p3_knowledge_recheck_line": {
+   "rev": "585084b4eddec58f7099666cbfbb9bf03f406dff",
+   "score": 8,
+   "covered": "64/64"
+  },
+  "p1_skill_row53": {
+   "rev": "827e655427de29e68cd181801aae472f576f2454",
+   "score": 6,
+   "covered": "63/64",
+   "uncovered": [
+    "## Standing rules"
+   ]
+  },
+  "p2_readme_index_row": {
+   "rev": "8f6a44d3a9aa50fd0fb32b481b1ae5fb7cfea877",
+   "score": 6,
+   "covered": "58/64",
+   "uncovered": 6
+  }
+ },
+ "base_monitor": {
+  "score": 8,
+  "covered": "64/64"
+ },
+ "unrun": [
+  "scripts/sources-census.sh validate not run on probes (no SOURCES.md byte change in any probe)",
+  "C1 counter not run: round-57 measure.py is not mine"
+ ],
+ "ledger_planned_note": "open rows need R56.1-R56.4 named in the newest **Planned (round 57) paragraph of SCORECARD.md (round-50 rule); the round-50 planned_ids regex matches only R4x ids, so the round-57 counter must use R5x."
+}

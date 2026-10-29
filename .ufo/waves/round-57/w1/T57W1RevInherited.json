@@ -1,0 +1,106 @@
+{
+  "seat": "T57W1RevInherited",
+  "lane_name": "tameshi",
+  "round": 57,
+  "wave": "w1",
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "read_only": true,
+  "tools_installed": [],
+  "lane": {
+    "head_equals_base": true,
+    "head_detached": true,
+    "tracked_modifications": 0,
+    "untracked_dirs": [".ufo/evidence/round-57/", ".ufo/waves/round-57/"],
+    "stash_entries": 0,
+    "worktrees": ["/home/vgpnk/Projects/shokunin/tameshi-shokunin"],
+    "jj_lane_state": "branch=master local=base remote=base ahead=0 behind=0 head=detached tracked=0 untracked=2",
+    "receipts": ["R/01", "R/02"]
+  },
+  "watchdog": {
+    "round57_lane_dead_no_report": false,
+    "round57_launch": "2026-10-28T20:35:21-03:00 launch tameshi round=57 pgid=3886721 driver=hyaku-inline attempt=1",
+    "round57_complete": false,
+    "pgid_3886721_live_members": 0,
+    "receipts": ["R/03", "R/08"]
+  },
+  "fleet_root": {
+    "untracked_naming_tameshi_r57": [],
+    "staged_entries": 0,
+    "intent_to_add_entries": 40,
+    "modified_tracked": [".scratch/goal-20261028-hyaku-run11.md"],
+    "untracked": ["lane3/", ".scratch/closure-r54/lane/", ".scratch/closure-r54/work-c2/clone/", ".scratch/closure-r54/work-c2-base/clone/"],
+    "tracked_prompt": ".ufo/prompts/tameshi-round-57.md",
+    "reports_round57_tameshi_md": false,
+    "report_baseline": "57 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipts": ["R/04"]
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "medium",
+      "title": "contract before-receipts absent; counters not installed in lane",
+      "evidence": "before/ c1/ c2/ control/ after/ integrate/ have 0 entries; before/c1.stdout, before/c2.stdout, c1/measure.py, c2/measure.py absent",
+      "action": "L1 produces before/ receipts from installed counters before any post-state claim",
+      "receipts": ["R/05", "R/09"]
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "title": "staged __pycache__ would be installed by stage-collect --install",
+      "evidence": "w1/T57W1ExecC1Counter/stage/.ufo/evidence/round-57/c1/__pycache__/measure.cpython-314.pyc; stage-collect.py has no pycache/pyc handling",
+      "action": "delete __pycache__ under stage/ trees or add exclusion before install",
+      "receipts": ["R/05", "R/07"]
+    },
+    {
+      "id": "F3",
+      "severity": "low",
+      "title": "T57W1RevCensus-receipts outside w1/",
+      "evidence": ".ufo/waves/round-57/T57W1RevCensus-receipts/ at wave root; spec requires w1/<seat>-receipts/",
+      "action": "owner or L1 moves it into w1/ when the seat finishes",
+      "receipts": ["R/07"]
+    },
+    {
+      "id": "F4",
+      "severity": "info",
+      "title": "L1 liveness evidenced by dispatcher log and mtimes, not own process",
+      "evidence": "pgid 3886721 has no members; 47 tameshi seats are children of inline omp pid 923625 (fleet cwd); dispatcher 'spawned tameshi 57 w1 47' at 21:06:13",
+      "action": "none; note watchdog pgid is stale for inline driver",
+      "receipts": ["R/03", "R/08"]
+    },
+    {
+      "id": "F5",
+      "severity": "info",
+      "title": "no round-57 tameshi misroot at fleet root",
+      "evidence": "untracked-all grep for tameshi|round-57|round 57|r57 empty; no tameshi.md in .ufo/reports/round-57",
+      "action": "none",
+      "receipts": ["R/04"]
+    },
+    {
+      "id": "F6",
+      "severity": "info",
+      "title": "lane tree clean at base",
+      "evidence": "status shows only the two round-57 untracked dirs; HEAD equals base",
+      "action": "none",
+      "receipts": ["R/01", "R/02", "R/05"]
+    },
+    {
+      "id": "F7",
+      "severity": "info",
+      "title": "authorship mapped by prefix, roster and content headers",
+      "evidence": "22 w1 seat dirs all in 47-entry roster; 5 retry spawn ids; w1-validate.stderr 0 bytes",
+      "action": "none",
+      "receipts": ["R/06", "R/07"]
+    },
+    {
+      "id": "F8",
+      "severity": "caveat",
+      "title": "crude raw spot-check counts disagree with contract for r51 and r54",
+      "evidence": "pattern counts r50 4, r51 12, r52 6, r53 9, r54 0, r55 7, r56 7 vs contract 4,8,6,9,10,7,7",
+      "action": "extractor seat T57W1ExecExtract reconciles; not an inherited-state defect",
+      "receipts": ["R/09"]
+    }
+  ],
+  "ledger_check": {"rows": 49, "fixed": 31, "open": 7, "declined": 11, "rows_r5x": 0},
+  "census_before_exit": 0,
+  "unverified": ["counter before-readings rows=0/N and gate_rows=0", "contract base facts beyond ledger shape and census exit"]
+}

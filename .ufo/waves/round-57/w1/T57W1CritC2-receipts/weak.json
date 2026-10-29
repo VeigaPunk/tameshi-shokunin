@@ -1,0 +1,61 @@
+{
+ "schema": "tameshi-entry-registry-v1",
+ "rows": [
+  {
+   "name": "w-any-refusal-drift",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "HEAD",
+    "--paths",
+    "fixtures/c2/surface-drift.paths",
+    "--receipt",
+    "fixtures/c2/verdict-old.txt:verdict"
+   ],
+   "expect": {
+    "exit": 3,
+    "stdout_contains": [
+     "verdict=REFUSED"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@64cd04a1923136db1779333877a5fc1767adc009:1",
+   "status": "active",
+   "tags": [
+    "c2-probe"
+   ]
+  },
+  {
+   "name": "w-prefix-drift",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "tools/receipt-revision-gate.py",
+    "--lane",
+    ".",
+    "--certified",
+    "HEAD",
+    "--paths",
+    "fixtures/c2/surface-drift.paths",
+    "--receipt",
+    "fixtures/c2/verdict-old.txt:verdict"
+   ],
+   "expect": {
+    "exit": 3,
+    "stdout_contains": [
+     "RECEIPT_REV"
+    ]
+   },
+   "timeout_s": 60,
+   "source": "tools/receipt-revision-gate.py@64cd04a1923136db1779333877a5fc1767adc009:1",
+   "status": "active",
+   "tags": [
+    "c2-probe"
+   ]
+  }
+ ]
+}

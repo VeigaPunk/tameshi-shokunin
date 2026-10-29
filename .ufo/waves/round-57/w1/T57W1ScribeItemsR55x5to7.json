@@ -1,0 +1,58 @@
+{
+  "seat": "T57W1ScribeItemsR55x5to7",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "source": "corpus/lessons/round-55-verifier-spotcheck.md items R55.5-R55.7",
+  "routed_at": "fa48c06c3669355fd80e8722eb733c1d6dfdd2f8",
+  "items": [
+    {
+      "id": "R55.5",
+      "status": "fixed",
+      "commit": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+      "keys": ["R55.5", "receipt-revision-gate.py", "deciding-run.sh", "RECEIPT_REV_CONTENT_DRIFT"],
+      "evidence_paths": ["tools/receipt-revision-gate.py", ".ufo/evidence/round-56/deciding-run.sh"],
+      "fixable": null,
+      "basis": "c3e2ca9f adds the gate and gate 0b; absent at fa48c06; live run refuses round-54 control with RECEIPT_REV_CONTENT_DRIFT exit 3 and passes at own rev exit 0"
+    },
+    {
+      "id": "R55.6",
+      "status": "fixed",
+      "commit": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+      "keys": ["base.json", "cand.json", "rekey.json", "coldread-HEAD.json", "inputs.json"],
+      "evidence_paths": [
+        ".ufo/waves/round-55/w1/T55W1ExecRekeyPrep-receipts/base.json",
+        ".ufo/waves/round-55/w1/T55W1ExecRekeyPrep-receipts/cand.json",
+        ".ufo/waves/round-55/w1/T55W1ExecRekeyPrep-receipts/rekey.json",
+        ".ufo/waves/round-55/w1/T55W1ExecNoHarm-receipts/coldread-at-base.json",
+        ".ufo/waves/round-55/w1/T55W1CritClaimShape-receipts/coldread-HEAD.json",
+        ".ufo/waves/round-55/w2/T55W2ScoutColdread-receipts/inputs.json"
+      ],
+      "fixable": null,
+      "basis": "seven receipts added by 981c5e8b, absent at fa48c06, present at base; six cited, floor.json not cited"
+    },
+    {
+      "id": "R55.7",
+      "status": "declined",
+      "reason": "Closure-environment contamination: a non-lane seat wrote inside the lane tree during the round-55 closure (an uncommitted green C2_R55 line and 14 deleted receipts). The lane cannot fence a closure harness write scope; round 56 reverted the committed bytes at 6efd2a1 and recorded the residual as harness-owned, not lane debt.",
+      "keys": ["R55.7", "after/c2.stdout", "T55W1MutC2-receipts"],
+      "evidence_paths": ["corpus/lessons/round-56.md"],
+      "fixable": null,
+      "basis": "spot-check labels it closure-environment (not lane debt); round-56 lesson records lane-side revert and harness-side residual"
+    }
+  ],
+  "checks": {
+    "resolver_evidence_items": 10,
+    "resolver_all_resolve": true,
+    "fixture_measure_class_failures": 0,
+    "fixture_measure_stat": {"fixed": 2, "open": 0, "declined": 1},
+    "negative_control_R55_5_commit_base": {"fixed_bad": 1, "note": "fixed-not-new R55.5"},
+    "gate_red_exit": 3,
+    "gate_red_codes": "RECEIPT_REV_CONTENT_DRIFT",
+    "gate_green_exit": 0
+  },
+  "unresolved": [],
+  "open_items_staged": [],
+  "tools_installed": [],
+  "receipts_dir": ".ufo/waves/round-57/w1/T57W1ScribeItemsR55x5to7-receipts/",
+  "rows": ".ufo/waves/round-57/w1/T57W1ScribeItemsR55x5to7/rows.json",
+  "report": ".ufo/waves/round-57/w1/T57W1ScribeItemsR55x5to7.md"
+}

@@ -1,0 +1,59 @@
+## M1 (committed scratch mutant)
+diff --git a/tools/receipt-revision-gate.py b/tools/receipt-revision-gate.py
+index c77e91a..dee0db1 100755
+--- a/tools/receipt-revision-gate.py
++++ b/tools/receipt-revision-gate.py
+@@ -147,7 +147,7 @@ def check(lane, certified, paths, receipt, role):
+                 detail = 'rev=%s certified=%s' % (revs[0], certified[:12])
+             else:
+                 drift = drifted_paths(lane, full, certified, paths)
+-                if drift:
++                if drift and False:
+                     codes.append('RECEIPT_REV_CONTENT_DRIFT')
+                     detail = 'rev=%s drift=%s' % (revs[0], ','.join(drift[:6]))
+             # else: content-identical on the declared surface — accepted, and the
+
+94ec8ff2c4cd02d225d347920a3776cd23c876bb mutant M1 (scratch)
+
+ tools/receipt-revision-gate.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+## M2 (committed scratch mutant)
+diff --git a/tools/receipt-revision-gate.py b/tools/receipt-revision-gate.py
+index c77e91a..648638a 100755
+--- a/tools/receipt-revision-gate.py
++++ b/tools/receipt-revision-gate.py
+@@ -148,7 +148,7 @@ def check(lane, certified, paths, receipt, role):
+             else:
+                 drift = drifted_paths(lane, full, certified, paths)
+                 if drift:
+-                    codes.append('RECEIPT_REV_CONTENT_DRIFT')
++                    codes.append('RECEIPT_REV_MISMATCH')
+                     detail = 'rev=%s drift=%s' % (revs[0], ','.join(drift[:6]))
+             # else: content-identical on the declared surface — accepted, and the
+             # line says so (role=positive, rev != certified but bytes equal).
+
+3a35b90967c163c801c40ec104c77c61bdf760eb mutant M2 (scratch)
+
+ tools/receipt-revision-gate.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+## M3 (committed scratch mutant)
+diff --git a/tools/receipt-revision-gate.py b/tools/receipt-revision-gate.py
+index c77e91a..27d17bc 100755
+--- a/tools/receipt-revision-gate.py
++++ b/tools/receipt-revision-gate.py
+@@ -191,7 +191,7 @@ def run(argv):
+     if full is None:
+         print('GATE: error=unresolvable-certified receipts=%d verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE'
+               % len(receipts))
+-        return 2
++        return 0
+     path_list = None
+     if paths:
+         path_list = [ln.strip() for ln in Path(paths).read_text('utf-8').splitlines()
+
+4b7634cfbfdbbb24ef1a3d41fcee03a795247092 mutant M3 (scratch)
+
+ tools/receipt-revision-gate.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)

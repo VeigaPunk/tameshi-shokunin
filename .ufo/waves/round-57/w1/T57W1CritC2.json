@@ -1,0 +1,62 @@
+{
+  "seat": "T57W1CritC2",
+  "item": "falsify C2 before the counter exists",
+  "lane": "tameshi",
+  "round": 57,
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "contract_edited": false,
+  "lane_files_edited": false,
+  "report": ".ufo/waves/round-57/w1/T57W1CritC2.md",
+  "receipts": ".ufo/waves/round-57/w1/T57W1CritC2-receipts/",
+  "fixture_commit_scratch_only": "64cd04a1923136db1779333877a5fc1767adc009",
+  "cheap_tree_do_nothing": {
+    "rows": 8,
+    "live_held": "8/8",
+    "rev_base_held": "8/8",
+    "mutant_kills": {
+      "M1-accept-on-drift": "1 row red (cheap-selftest-disguise, a selftest in disguise, not a gate row)",
+      "M2-wrong-code": "1 row red (cheap-selftest-disguise)",
+      "M3-exit0-unresolvable": "2 rows red (cheap-selftest-disguise, cheap-unresolvable-exit2)"
+    },
+    "verdict": "cheap set gives arm (a) by count; arm (c) passes only if a selftest-in-disguise row or the pre-existing receipt-revision-gate-selftest row is credited as a gate kill"
+  },
+  "existing_selftest_row_kills": {
+    "M1-accept-on-drift": "red (0/1 held)",
+    "M2-wrong-code": "red (0/1 held)",
+    "M3-exit0-unresolvable": "red (0/1 held)"
+  },
+  "minimal_three_row_set": {
+    "rows": ["g-exit0-identical-surface", "g-exit3-content-drift", "g-exit2-unresolvable-certified"],
+    "live_held": "3/3",
+    "rev_F1_held": "3/3",
+    "mutant_kills": {
+      "M1-accept-on-drift": "g-exit3-content-drift red (2/3 held), in-place --root and committed --rev",
+      "M2-wrong-code": "g-exit3-content-drift red (2/3 held), in-place --root and committed --rev",
+      "M3-exit0-unresolvable": "g-exit2-unresolvable-certified red (2/3 held), in-place --root and committed --rev"
+    }
+  },
+  "mutant_routing": {
+    "copy_of_gate_mutated": "rows held 3/3: copy is never executed (wrong route)",
+    "in_place_mutation_graded_with_rev": "rows held 3/3: re-clone at REV drops the uncommitted mutant (wrong route)",
+    "in_place_mutation_graded_with_root": "mutant visible (right route)",
+    "committed_mutant_graded_with_rev": "mutant visible and hermetic (right route)"
+  },
+  "loopholes": [
+    "mutant arm credited by pre-existing receipt-revision-gate-selftest row or selftest-in-disguise row (measured red under M1-M3)",
+    "prefix needle RECEIPT_REV and generic needle verdict=REFUSED leave M2 alive (weak needles held 2/2 under M2)",
+    "code-truth arm vacuous when table names no code: 0 RECEIPT tokens, all() True",
+    "code-truth 'defined' by text grep cannot distinguish emitted from docstring (4 occurrences in base and M1)",
+    "empty --paths file yields RECEIPT_REV_CONTENT_DRIFT with a no-paths detail; SKILL row 2 parenthetical is true only for an absent flag",
+    "unresolvable listed path is reported as drift (<unresolvable-path:P>); a counter fixture with a bogus path proves nothing",
+    "row locator ambiguous: row 2 also contains --paths; locate row 1 by exact first cell"
+  ],
+  "proposed_rewrites": {
+    "skill_line_53": "| a verdict receipt names another revision | refused unless its bytes equal the certified revision on the declared `--paths` surface; with no `--paths` the code is `RECEIPT_REV_MISMATCH` | `RECEIPT_REV_CONTENT_DRIFT` |",
+    "counter_gate_admission": "kind gate, status active, argv[0] in {python3,python}, argv[1]=='tools/receipt-revision-gate.py', '--selftest' absent, no -c/-m",
+    "counter_needles": "exit 3 rows need an element equal to a CODES member; exit 2 rows need RECEIPT_REV_UNRESOLVABLE",
+    "counter_mutant_route": "fresh git clone --shared at REV, one in-place replacement asserted count==1, git status lists only the gate, registry-check run from the mutant clone with the REV registry; or commit the mutant and use --rev",
+    "counter_code_truth": "row located by exact first cell; code cell equals emitted code exactly; >=4 rows and >=4 tokens; CODES via ast; every token in CODES",
+    "gate_probe_row": "Name receipt-revision-gate; Verdict map cell contains 0, 2, 3 as exits and RECEIPT_REV_UNRESOLVABLE"
+  },
+  "tools_installed": []
+}

@@ -1,0 +1,49 @@
+# sed -n 760,790p tools/registry-check.py
+
+def strict_scratch_root():
+    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+    import os as _os
+    t = _os.environ.get("TMPDIR")
+    if t:
+        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+            raise ScratchRootUnusable(
+                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+        return t
+    return tempfile.gettempdir()
+
+def clone_lane_at_rev(root, rev, sha):
+    """Clone the lane detached at sha into a fleet-mirror mkdtemp.
+
+    Returns (workdir, clone_root) on success; caller removes workdir.
+    Raises RuntimeError on any git failure.
+    """
+    root_real = os.path.realpath(root)
+    fleet_root = os.path.dirname(root_real)
+    env = git_env()
+    try:
+        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+    except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+        raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
+    try:
+        fleet = os.path.join(work, "fleet")
+        os.mkdir(fleet)
+        try:
+# grep -o "total=1[34]" SCORECARD.md line 2584
+# ls round-55 c2-integrated
+after
+assimilation
+before
+c1
+c2
+contract.json
+control
+controls.sh
+deciding-run.sh
+freeze.json
+.ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out
+# git blame-free check: is registry-check.py TMPDIR line in base
+78:--selftest   hermetic; fixtures only under the scratch root (TMPDIR), never touches the lane; its
+758:    """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+762:    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —

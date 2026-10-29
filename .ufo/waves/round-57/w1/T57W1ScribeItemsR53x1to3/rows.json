@@ -1,0 +1,177 @@
+[
+ {
+  "id": "R53.1",
+  "status": "open",
+  "seat": "T57W1ScribeItemsR53x1to3",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-53/c1/measure.py",
+    "lines": "94-95",
+    "excerpt": "r = git(['-C', lane, 'ls-tree', '--name-only', rev, '.ufo/evidence/round-21/coldread'])"
+   },
+   {
+    "path": ".ufo/evidence/round-53/c1/measure.py",
+    "lines": "96-97",
+    "excerpt": "if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)]"
+   },
+   {
+    "path": ".ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout",
+    "lines": "1-1",
+    "excerpt": "C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false"
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2550-2551",
+    "excerpt": "`C1_R53_PASS=false`, `total=6`."
+   }
+  ],
+  "note": "frozen round-53 counter: pathspec lacks trailing slash and the basename is compared as full path; rekeyed=0/30 at every rev; SCORECARD quotes total=6 where the counter prints total=37 at 88afa941 (round-54 successor counter fixes the class; this frozen file is unchanged)",
+  "keys": [
+   "rekey-dir-count",
+   "ls-tree",
+   "rekeyed=0",
+   "total=6",
+   "coldread"
+  ],
+  "verdict_basis": "Still true at base: round-53 c1/measure.py lines 94-97 are unchanged (git log shows no commit after 2ef0a5a touching .ufo/evidence/round-53); the counter run at 88afa941 prints rekeyed=0/30 and total=37 while SCORECARD quotes total=6.",
+  "disposition": "fixable-costly",
+  "disposition_basis": "Staged counter patch (stage/.ufo/evidence/round-53/c1/measure.py) turns rekeyed=0/30 into 28/30 at 88afa941, but it changes a file pinned by round-53 freeze.json (c1/measure.py digest da891491...) and rewrites the frozen dead-arm record cited by round-54 (control/r53-counter-at-88afa941.stdout). No cold-read heading is uncredited (monitor 64/64 score 8 on the fixture). The SCORECARD total=37 correction is part of the cheap SCORECARD diff.",
+  "staged_fix_variant": {
+   "status": "fixed",
+   "commit": "cf61f0860ca1a89709bc5cf7172e65b5cee0e7b6 (fixture commit for verification only; the L1 substitutes its own commit)",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-53/c1/measure.py",
+     "lines": "96-97",
+     "excerpt": "if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n.rsplit('/', 1)[-1])]"
+    },
+    {
+     "path": ".ufo/evidence/round-53/direct-runs/c1-patched-counter-at-88afa941.stdout",
+     "lines": "1-1",
+     "excerpt": "C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=28/30 readers=25/30 total=8 C1_R53_PASS=false"
+    }
+   ],
+   "keys": [
+    "rekey-dir-count",
+    "ls-tree",
+    "rekeyed=0",
+    "rekeyed=28",
+    "total=6",
+    "total=37",
+    "coldread",
+    "rekey-r53"
+   ],
+   "verify": "pass"
+  }
+ },
+ {
+  "id": "R53.2",
+  "status": "open",
+  "seat": "T57W1ScribeItemsR53x1to3",
+  "evidence": [
+   {
+    "path": "LOG.md",
+    "lines": "2489-2490",
+    "excerpt": "break-one controls all printed false as pre-registered. Deciding receipts: `.ufo/evidence/round-53/after/`."
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2543-2543",
+    "excerpt": "Deciding run at `88afa941` (`.ufo/evidence/round-53/after/`): **C1 honest stop** —"
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2526-2526",
+    "excerpt": "Deciding run (`.ufo/evidence/round-53/after/`): FROZEN_UNCHANGED=1 (freeze"
+   }
+  ],
+  "note": "past-tense pointers to round-53/after/ receipts that were never produced; corrected by the staged SCORECARD/LOG diff",
+  "keys": [
+   "round-53/after",
+   "deciding run",
+   "deciding receipts",
+   "after/"
+  ],
+  "verdict_basis": "Still true at base: LOG.md:2489-2490 and SCORECARD.md:2526,2543 cite .ufo/evidence/round-53/after/ in past tense and no path under that directory exists in the tree at base (git ls-tree -r finds none); no later commit touches the round-53 evidence tree.",
+  "disposition": "fixable-cheap",
+  "disposition_basis": "Staged stage/SCORECARD.md.diff and stage/LOG.md.diff correct the past-tense after/ pointers and the total=6 quote; staged direct-run receipts under stage/.ufo/evidence/round-53/direct-runs/ (c1 total=37 and c2 PASS at 88afa941, plus the patched c1 run) are additive. Measured: round-21 monitor 64/64 score 8 on the SCORECARD+LOG diff alone (clone-sc 4d9027c0) and on all staged files (fixture cf61f086). Note: SCORECARD and LOG are not in the round-21 ledger inputs; three rekey-r53 trace receipts name SCORECARD.md externally but credit was unaffected.",
+  "staged_fix_variant": {
+   "status": "fixed",
+   "commit": "cf61f0860ca1a89709bc5cf7172e65b5cee0e7b6 (fixture commit for verification only; the L1 substitutes its own commit)",
+   "evidence": [
+    {
+     "path": "LOG.md",
+     "lines": "2489-2490",
+     "excerpt": "Deciding receipts: none committed (round-57 R53.2; `.ufo/evidence/round-53/after/` does not exist)."
+    },
+    {
+     "path": ".ufo/evidence/round-53/direct-runs/c1-at-88afa941.stdout",
+     "lines": "1-1",
+     "excerpt": "C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false"
+    }
+   ],
+   "keys": [
+    "round-53/after",
+    "direct-runs",
+    "after/",
+    "deciding run"
+   ],
+   "verify": "pass"
+  }
+ },
+ {
+  "id": "R53.3",
+  "status": "open",
+  "seat": "T57W1ScribeItemsR53x1to3",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-53/control/break-fixtures.py",
+    "lines": "169-169",
+    "excerpt": "print('CONTROLS_B: total=%d pass=%d' % (len(results), sum(results)))"
+   },
+   {
+    "path": ".ufo/evidence/round-53/control/break-fixtures.py",
+    "lines": "98-99",
+    "excerpt": "r = git(['ls-tree', '--name-only', CAND, '.ufo/evidence/round-21/coldread'])  rekey = [n for n in r.stdout.split('\\n') if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)][0]"
+   },
+   {
+    "path": "SCORECARD.md",
+    "lines": "2518-2519",
+    "excerpt": "unmodified candidate printed true (receipts `.ufo/evidence/round-53/control/`)."
+   }
+  ],
+  "note": "no CONTROLS_B receipt is committed under .ufo/; the phase-B script dies with IndexError at its rekey discovery (same pathspec class as R53.1) and its C1 leg is false for the dead-arm reason at 88afa941",
+  "keys": [
+   "CONTROLS_B",
+   "break-fixtures",
+   "phase B",
+   "control/"
+  ],
+  "verdict_basis": "Still true at base: no path under .ufo/ at base contains a round-53 CONTROLS_B tally (git grep CONTROLS_B finds only the script print and round-54/55/56 receipts); break-fixtures.py lines 98-99 use the same non-matching pathspec.",
+  "disposition": "fixable-costly",
+  "disposition_basis": "No CONTROLS_B receipt can be produced from the committed script: control/break-fixtures.py crashes with IndexError at line 99 (rekey discovery, same pathspec class as R53.1). The staged patched copy runs and prints CONTROLS_B: total=7 pass=6, but (a) it requires editing the frozen script (freeze digest c80f5a8c... in round-53 freeze.json), (b) every C1 fixture and the C1 probe are false for the dead-arm reason (PROBLEM rekey-dir-count=0 is printed by the frozen counter at every revision), so the C1 leg cannot discriminate, and (c) PROBE_C1_CANDIDATE is FAIL at 88afa941, contradicting the SCORECARD claim that the unmodified candidate printed true.",
+  "staged_fix_variant": {
+   "status": "fixed",
+   "commit": "cf61f0860ca1a89709bc5cf7172e65b5cee0e7b6 (fixture commit for verification only; the L1 substitutes its own commit)",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-53/control/controls-b.stdout",
+     "lines": "8-8",
+     "excerpt": "CONTROLS_B: total=7 pass=6"
+    },
+    {
+     "path": ".ufo/evidence/round-53/control/break-fixtures.py",
+     "lines": "98-99",
+     "excerpt": "rekey = [n.rsplit('/', 1)[-1] for n in r.stdout.split('\\n') if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n.rsplit('/', 1)[-1])][0]"
+    }
+   ],
+   "keys": [
+    "CONTROLS_B",
+    "break-fixtures",
+    "phase B",
+    "rekey-r53"
+   ],
+   "verify": "pass"
+  }
+ }
+]

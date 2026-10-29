@@ -1,0 +1,29 @@
+{
+  "seat": "T57W1SimplScope",
+  "item": "deletion candidates: SKILL receipt table, C2 arms, ledger fields",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "edited_lane_files": [],
+  "installs": [],
+  "unavailable_inputs": ["T57W1CritDoNothing.md (absent)", "round-57 c2/measure.py (not in lane; staged copy read, selftest receipt quoted, not re-run)"],
+  "ranked_deletions": [
+    {"rank": 1, "id": "D1", "target": "SKILL.md Standing rules receipt table row 2 (positive control)", "action": "delete row; keep row-1 prefix 'a verdict receipt names another revision' and add '(positive controls take the same branch)'", "control_lost": "none", "evidence": ["receipts/c1-positive-equal-bytes-on-surface.stdout", "receipts/c2-verdict-equal-bytes-on-surface.stdout", "receipts/c3-positive-drift-on-surface.stdout", "receipts/c4-verdict-drift-on-surface.stdout", "receipts/c5-positive-no-paths.stdout", "receipts/c6-verdict-no-paths.stdout"], "no_harm": "one row removed; page-local anchors below SKILL.md:54 shift -1 line"},
+    {"rank": 2, "id": "D2", "target": "SKILL.md row 1 code cell and parenthetical", "action": "code cell = RECEIPT_REV_CONTENT_DRIFT alone (R56.2); situation = '--paths lists at least one path'; drop '(no --paths: RECEIPT_REV_MISMATCH)' from the table and keep it in gate docstring", "control_lost": "none; the cell arm requires exactly one code and this satisfies it", "evidence": ["receipts/c4-verdict-drift-on-surface.stdout", "receipts/c5-positive-no-paths.stdout", "receipts/c7-empty-paths-file-identical-bytes.stdout"], "no_harm": "in-line edit of SKILL.md:53; no line-count change"},
+    {"rank": 3, "id": "D3", "target": "ledger routed-defects.json 'seat' field (new rows R50-R56 only)", "action": "stop storing seat; provenance kept in merge outputs/overrides", "control_lost": "none: round-50 and staged round-57 C1 counters read id/status/evidence/commit/reason only; no seat or note read in tools/ or the round-50/57 evidence", "evidence": ["ledger-field-triage.txt", ".ufo/evidence/round-50/integrate/merge-ledger.py:35 (seat derived from disposer file name)"], "no_harm": "does not touch R40-R49 rows; ledger is not pinned as a frozen instrument input"},
+    {"rank": 4, "id": "D4", "target": "ledger dead payloads", "action": "do not write commit on non-fixed rows or reason on non-declined rows (new rows only)", "control_lost": "none: commit read only in fixed branch, reason only in declined branch (round-50 measure.py:227-228, 261)", "dead_instances": {"commit_on_declined": ["R40.5", "R44.2", "R45.3"], "commit_on_open": ["R45.1", "R45.4"], "reason_on_open": ["R45.1", "R45.4"], "reason_on_fixed": ["R44.1"]}, "evidence": ["ledger-field-triage.txt"], "no_harm": "do not rewrite R40-R49 bytes"},
+    {"rank": 5, "id": "D5", "target": "ledger note field", "action": "keep (not recommended for deletion now)", "control_lost": "none if deleted; 48 of 49 notes are non-empty human rationale", "evidence": ["ledger-field-triage.txt"]}
+  ],
+  "not_recommended": [
+    {"id": "N1", "target": "C2 codes arm", "why": "droppable only with pointer cells in rows 3-4; as the table stands it is the sole check on non-verdict codes (staged selftest 'codes arm' breaker)"},
+    {"id": "N2", "target": "whole SKILL receipt table", "why": "R56.2 contract wording requires the verdict cell to state the emitted code; pointer-only cell fails cell arm (WRONG:none)"},
+    {"id": "N3", "target": "ledger status field", "why": "branch selector; not derivable today without D4; after D4 presence maps 31 fixed/11 declined/7 open bijectively, but keep explicit"}
+  ],
+  "c2_arms_droppable": [],
+  "c2_arms_unique_breaker": {"rows": "no exit-2 row; forgery", "executed": "wrong-exit row", "mutants": "exit-0-only row; no drift row; non-unique old", "skill_row": "no gate row; map without 2", "codes": "undefined token in another row", "cell": "stale MISMATCH cell; no code; gate emits MISMATCH; gate does not refuse"},
+  "corrections": [
+    "gate --help is not help: usage line, exit 1",
+    "gate exit 2 (unresolvable certified) undocumented in docstring; exit 1 (usage) undocumented",
+    "SKILL.md:55 row 3 scoped to control sets; gate emits UNRESOLVABLE for any role",
+    "SKILL table lacks rows for CONTROL_NOT_ANCESTOR, AMBIGUOUS, REQUIRED_LINE_MISSING, DIGEST_MISMATCH"
+  ],
+  "receipts_dir": ".ufo/waves/round-57/w1/T57W1SimplScope-receipts/"
+}

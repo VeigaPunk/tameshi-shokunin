@@ -1,0 +1,56 @@
+{
+  "seat": "T57W1ScribeItemsR52x4to6",
+  "wave": "round-57/w1",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "spot_check": "corpus/lessons/round-52-verifier-spotcheck.md",
+  "spot_check_added_at": "c1d49d76be4028df2a68322e7117ff3aafaccd5c",
+  "items": [
+    {
+      "id": "R52.4",
+      "status": "fixed",
+      "commit": "6db1d220b337c35ff1e25bf9cfd74abc9db1498d",
+      "fixability": "none-needed",
+      "staged_patch": null,
+      "verdict_basis": "Commit 6db1d22 tracks build-readers.py, w3.ready, w3.ready.dispatched and the w3/ folder; the defect (uncommitted round work) no longer holds at base."
+    },
+    {
+      "id": "R52.5",
+      "status": "fixed",
+      "commit": "218bc6b5c25d6a3c57dd44600febd552f0167cee",
+      "fixability": "none-needed",
+      "staged_patch": null,
+      "verdict_basis": "Commit 218bc6b touches tools/registry-check.py and removes the literal dir=\"/tmp\" mkdtemp at routed_at line 766; base has no executable /tmp literal (5b703c6 later routes via strict_scratch_root)."
+    },
+    {
+      "id": "R52.6",
+      "status": "open",
+      "commit": null,
+      "fixability": "not-fixable",
+      "staged_patch": null,
+      "verdict_basis": "No lane commit after routed_at changed a lane surface the item names: SCORECARD.md:37 vocabulary is identical at routed_at and base, SHONEN.md is untouched since routed_at, lane .ufo/reports holds only round-1. The report and prompt that carry the contract are fleet-owned (fleet .ufo/reports/round-52/tameshi.md, fleet .ufo/prompts/tameshi-round-52.md)."
+    }
+  ],
+  "rows_file": ".ufo/waves/round-57/w1/T57W1ScribeItemsR52x4to6/rows.json",
+  "receipts_dir": ".ufo/waves/round-57/w1/T57W1ScribeItemsR52x4to6-receipts",
+  "fixture_round50_rules": {
+    "rev": "9ebb6db5c88e5cb59c9cfd6d7794007b8b5fd5b5 (scratch clone, ledger holding only R52.4-6 rows)",
+    "counts_nonzero": {"open_unplanned": 1},
+    "total": 1,
+    "stat": {"fixed": 2, "open": 1, "declined": 0, "fixed_this_round": 2},
+    "note": "open_unplanned R52.6 is expected until the L1 names R52.6 in the newest Planned (round 57) paragraph of SCORECARD.md"
+  },
+  "negative_controls": {
+    "A_wrong_commit_for_R52.5": {"commit": "6db1d22", "result": "fixed-not-new R52.5, fixed_bad=1"},
+    "B_planned_paragraph_round50_regex": {"result": "round-50 planned regex R4\\d finds no R52.6; staged round-57 regex R5[0-6] finds R52.6; round-50 counter still open_unplanned=1"}
+  },
+  "unresolved": [],
+  "staged_patches": [],
+  "installed_tools": [],
+  "findings_for_L1": [
+    "Name R52.6 in the newest **Planned (round 57): paragraph of SCORECARD.md at the content-final rev, or the open row counts as open_unplanned. The inherited round-50 planned regex (R4\\d) can never credit an R5x id; the staged round-57 counter's R5[0-6] regex does.",
+    "SCORECARD.md is a plain cold-read input pinned by 6 entries under 3 headings (## Standing rules; ## Mutation-sweep recipe; ## The cadence's first scheduled tick). Batch the planned-paragraph edit with the other SCORECARD edits before the content-final commit so the re-key runs once.",
+    "The two fixed rows (R52.4, R52.5) count as fixed_this_round=2 against the round-50 floor (BASE e3729de); the L1 decides the floors.",
+    "Lane worktree at base shows only the wave's own staging untracked (.ufo/evidence/round-57/, .ufo/waves/round-57/); the L1 must commit them under the round-57 entry so the R52.4 defect class does not recur."
+  ]
+}

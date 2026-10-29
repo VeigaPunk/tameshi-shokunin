@@ -1,0 +1,479 @@
+{
+  "schema": "ufo-swarm-registry-v1",
+  "wave": "round-57-w1",
+  "createdAt": "2026-10-28T23:49:43.919Z",
+  "updatedAt": "2026-10-28T23:49:48.821Z",
+  "reportDir": ".ufo/waves/round-57/w1",
+  "members": {
+    "T57W1ExecExtract": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Build and stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecExtract/stage/.ufo/evidence/round-57/c1/extract-defects.py` (stdlib only; `--lane LANE --rev REV [--manual KEYS_JSON]`), the successor of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/../../round-50/c1/extract-defects.py` covering rounds 50-56 under the id rule in the context, and run it at `5e3569969b532310d2b8a3d130901757a3df356b` to stage `.../round-57/c1/defects.json` (schema `tameshi-r57-defects-v1`; keep the round-50 per-item fields: id, round, file, line, end, routed_at, file_sha256, text, keys). `routed_at` is the commit that ADDED the spot-check file (git log --diff-filter=A). Verify the count by eye against the seven files (state the count per round and quote the first five words of every item in your report so a reviewer can diff it). Keys: start from the round-50 `keys_of` heuristic, then curate by hand a `keys.json` entry per id (2-5 strings a correct evidence excerpt would contain; avoid generic names). The 15 triage scribes (`T57W1Scribe*Items*`) also return per-id keys; do NOT wait for them — the L1 merges. Selftest: `--selftest` builds a synthetic spot-check set in scratch and checks labelled, unlabelled and two-heading cases. Report the exact command lines and the sha256 of defects.json.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "defect-set extractor"
+    },
+    "T57W1ExecC1Counter": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Build and stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecC1Counter/stage/.ufo/evidence/round-57/c1/measure.py` (stdlib only; `--lane LANE --rev REV [--work DIR] [--explain]`, `--selftest [--work DIR]`), the round-57 successor of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py` (read it and its `--selftest` first). Statement set: `.ufo/evidence/round-57/c1/defects.json` (sha256 pinned in the counter; the extractor seat `T57W1ExecExtract` stages it - until it exists test on a synthetic set). Ledger: `corpus/routed-defects.json` at REV; the NEW rows are those whose id is in the set; the 49 original rows (ids R40-R49) must be byte-identical (as canonical JSON objects) to their bytes at base `5e3569969b532310d2b8a3d130901757a3df356b` (arm `old49`). Keep the round-50 agreement rules verbatim for fixed/open/declined. Floors for the new rows: fixed >= 20, declined <= 14, at least 6 `fixed` rows carried by commits after BASE (`THIS_ROUND_FLOOR=6`). Spot-check files must be byte-equal (sha256) to the frozen set at REV. Arms and verdict line: `C1_R57: self=<sha12> rev=<rev12> rows=<have>/<N> agree=<n>/<N> old49=<ok|CHANGED> fixed=<n> declined=<n> thisround=<n> spot=<ok|DRIFT> total=<n> C1_R57_PASS=<true|false>`; exit 0 iff pass, 1 miss, 2 setup. HARD-excluded evidence paths: the ledger, the spot-checks, `.ufo/evidence/round-57/c1/`, `.ufo/evidence/round-57/control/`, `.ufo/evidence/round-57/contract.json`, `freeze.json`. Read only git objects at REV (never the working tree); honour `--work`/TMPDIR; no hardcoded `/tmp`. Arm liveness: for EACH arm produce one synthetic fixture that moves the tally away from zero (the lane's round-53 lesson: a counter arm that can never fire). The selftest must contain those fixtures and print `C1_R57_SELFTEST: n/n pass`.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "C1 successor counter"
+    },
+    "T57W1ExecC2Counter": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Build and stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecC2Counter/stage/.ufo/evidence/round-57/c2/measure.py` (stdlib only; `--lane LANE --rev REV [--work DIR] [--explain]`, `--selftest`) implementing the C2 target in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/contract.json` exactly. Arms (each an integer tally, total = sum of shortfalls; verdict line `C2_R57: self=<sha12> rev=<rev12> gate_rows=<n> exits=<set> held=<h>/<n> mutants=<k>/3 skill_row=<0|1> codes_known=<n>/<m> standing_cell=<ok|WRONG:<code>> total=<n> C2_R57_PASS=<true|false>`, exit 0 iff pass): (1) rows: `tools/registry.json` at REV has >= 3 active `gate` rows whose argv runs `tools/receipt-revision-gate.py` without `--selftest`, expecting between them exits 0, 2 and 3; refusal rows carry the named code in `stdout_contains`; (2) executed: `python3 tools/registry-check.py --rev REV --only <name>` (read the CLI in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py` docstring) for each such row in a clone under `--work`, held N/N; (3) mutants: apply three single-edit gate mutants from `.ufo/evidence/round-57/c2/mutants.json` (you author it: M1 accept-on-drift - `paths is not None` drift branch returns PASS; M2 wrong refusal code on the drift branch; M3 exit 0 instead of the unresolvable-certified exit 2; assert each old string is unique in the gate before editing) to a COPY of the gate in a scratch clone of REV, rerun the rows, require >= 1 row differs per mutant; (4) SKILL: the `### Gate/probe registry` table in `SKILL.md` at REV has a row naming `receipt-revision-gate.py` with the tokens `0`, `2`, `3` in its verdict-map cell; (5) code truth: every `RECEIPT_[A-Z_]+` token inside SKILL `## Standing rules` is a member of the gate's `CODES` (import or parse it) and the table row whose condition cell starts `a verdict receipt names another revision` carries exactly the code the gate emits when the counter builds a fixture (fixture repo in scratch: receipt names revision A, certified revision B, A and B differ on one path listed in the `--paths` file; role verdict) - compute it by RUNNING the gate. Read git objects at REV only (clone with `git clone --shared` under `--work`; honour TMPDIR). Arm liveness: for EACH arm one synthetic fixture that moves it away from zero, in `--selftest` (`C2_R57_SELFTEST: n/n pass`). Never read a committed receipt to decide an arm.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "C2 counter"
+    },
+    "T57W1ExecControls": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Build and stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecControls/stage/.ufo/evidence/round-57/controls.sh` (`controls.sh LANE BASE REV OUTDIR`, bash, `set -u`, scratch under `${HYAKU_SCRATCH:-/fast/scratch/hyaku}/tameshi-r57/controls` removed on exit). READ `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/controls.sh` first and keep its good parts (the `emit` relabelling of unresolvable `rev=` to `clone_rev=`, the match/mismatch lines) but fix its recorded flaw (round-56 lesson `## Attempt 4`, first Mistakes row): there must be ONE generation - no control may read a committed receipt of the same round, and the header must state in a comment block that controls are recomputed, never read (R56.5). Controls, each built in a fresh `git clone --shared` of the lane with `git -C` calls only and a fixture identity: C1: `CTL_0_c1` (counter at BASE, expected false), `CTL_SKIP_c1` (ledger with 51 new rows all `declined` with a 45-char reason: expected false by the declined cap), `CTL_FAB_c1` (rows `fixed` with an invented excerpt: expected false), `CTL_OPEN_c1` (rows `open` while SCORECARD names none: expected false), `CTL_POS_c1` (scored at REV in a clone of REV: expected true). C2: `CTL_0_c2` (at BASE, false), `CTL_SKIP_c2` (three registry rows whose `expect.exit` is wrong: false), `CTL_FAB_c2` (rows pointing at missing fixture receipts: false), `CTL_MUT_c2` (rows that only run an accepting fixture, so no mutant turns a row red: false), `CTL_POS_c2` (at REV: true). The synthetic row/ledger generators are python snippets you write into `.ufo/evidence/round-57/control/` (stage them) and use for the dry run, where the counters do not exist yet use the round-50 counter semantics and the instruments the sibling seats stage (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecC1Counter/stage/` and `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecC2Counter/stage/` when they appear; poll at most 3 times at one-minute intervals via file existence, then dry-run the structure with stubs and say so). Verdict summary lines `CONTROLS_A: m/n` (phase A: all but POS) and `CONTROLS_B: m/n` (POS), each CTL line names the revision the counter printed.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "controls harness (C1 and C2)"
+    },
+    "T57W1ExecNoHarm": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecNoHarm/stage/.ufo/evidence/round-57/no-harm.sh` (`no-harm.sh LANE BASE REV`): copy `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/no-harm.sh` (49 lines, 15 monitors), re-base it for round 57 (REV/BASE names, base values from `5e3569969b532310d2b8a3d130901757a3df356b`: read each monitor's baseline by running it at BASE in a scratch clone and report the 15 values), and ADD three monitors: `r56-gate-selftest` (`python3 tools/receipt-revision-gate.py --selftest` at REV prints `GATE_SELFTEST: 19/19 pass`), `registry-check-full` (`python3 tools/registry-check.py --rev REV` held count not below the BASE held count; measure BASE's count and its wall time and report both), `old49-ledger` (the 49 original rows of `corpus/routed-defects.json` at REV equal their bytes at BASE as parsed JSON objects). Every monitor prints one `NOHARM <name> ... ok|RED` line, reads git objects at REV only, honours TMPDIR. Run at BASE (expected all ok except none) and report which are RED/ok and the total wall time (the L1 plans wave timing from it).",
+      "axes": [
+        "freshness"
+      ],
+      "milestone": "no-harm monitor re-base"
+    },
+    "T57W1ExecDeciding": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecDeciding/stage/.ufo/evidence/round-57/deciding-run.sh` (`deciding-run.sh LANE BASE REV OUTDIR`) from `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-56/deciding-run.sh` (167 lines; read it, and its refusal matrix in the round-56 report/lesson). Must: verify the freeze manifest digests of `freeze.json` (the freeze is `tameshi-freeze-v1`, files keyed repo-relative to `.ufo/evidence/round-57/` or `tools/`), refuse when REV != HEAD of a fresh clone, when a CTL_MISMATCH exists in `controls-a/b.stdout`, when the cold-read precheck is RED; run C1 and C2 counters then no-harm.sh; capture every stdout/exit under OUTDIR; print `DECIDING_RUN_EXIT=<n>`. Do NOT depend on the receipt gate reading same-round receipts as a precondition of controls (that circularity made round 56's CONTROLS_B 1/2 on first run): the receipt gate runs LAST and only certifies the receipts this script just produced. Prove with a scratch clone: tampered freeze digest -> refusal; wrong REV -> refusal; missing counter -> refusal; and the happy path on synthetic stubs. Report the refusal strings.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "deciding-run script"
+    },
+    "T57W1ExecFreezeBind": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Stage two scripts. (1) `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecFreezeBind/stage/.ufo/waves/round-57/freeze-gen.py` (stdlib only): regenerates `.ufo/evidence/round-57/freeze.json` (`tameshi-freeze-v1`) from `contract.json` `frozen_paths` (map `tools/*` and `.ufo/evidence/round-57/*` as `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/freeze-gen.py` does; read it), `--check` mode prints `FREEZE_GEN: files=N ok|MISMATCH`. (2) `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecFreezeBind/stage/.ufo/waves/round-57/bind.sh`: derive from `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-56/bind.sh` (202 lines) but the drift set is NOT a frozen list: step 1 computes the lost headings at the content commit C0 as (floor credited headings) minus (credited at C0) using the round-21 monitor (`/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py`) and the precheck `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-48/quality/coldread-precheck.sh`, writes it to `.ufo/evidence/round-57/c1/lost-headings-at-c0.json`, and the same script then requires one committed reader report per lost heading (`T57W3*Read*.json`, `cand` == C0, `section_sha256` == the section's sha256 at C0), runs the round-55 binder `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-55/w1/T55W1ExecReKeyDryBind-receipts/binder-r55.py` with an explicit `--resolutions` path, commits nothing itself (the L1 commits via jj-lane.sh), and measures the monitor at BIND_REV (64/64 required, exit 8 otherwise). Resolve the round-56 R56.4 defect inside the wrapper: after binding, list each bound entry whose `external_inputs` digest label is not the sha256 of the blob it names at C0 and print `BIND_LABELS: n_mismatch=<k>` (so the referent can be recorded). Dry-run both against a scratch clone of `5e3569969b532310d2b8a3d130901757a3df356b` with a synthetic one-heading drift (edit one line of one SKILL.md section in the scratch clone and commit it with a fixture identity) and report what the monitor says before/after.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "freeze generator and bind wrapper"
+    },
+    "T57W1ExecForecast": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Mine `/home/vgpnk/Projects/shokunin/tameshi-shokunin/considerthese/2026-10-28.md` proposal 3 (cold-read cost forecast at planning time). Stage `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecForecast/stage/tools/cold-read-forecast.py` (stdlib only; `--lane LANE --rev REV --paths P1 P2 ... [--json]`, `--selftest`): reads the round-21 ledger `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` (entries: heading, start/end, sha256, inputs{path: sha256}) at REV and, for each planned-to-change path (a file the round will edit), lists the headings whose entry pins that path as an input (they lose credit) and, for SKILL.md paths, says SKILL.md is DROPPED from input drift but a changed section's own sha256 voids that section; prints `FORECAST: paths=<n> headings=<k> readers=<k> of 64` and the heading list. Calibrate against two measured facts: appending one line to each of corpus/QUALITY.md, corpus/SOURCES.md, corpus/README.md plus adding a knowledge file made 14 headings lose credit (64 -> 50; the monitor's per-section `reason` strings are `input-drift:<path>`), and the round-56 C0 edits (registry.json, SKILL.md `## Standing rules`) cost 18. Run the forecast for this round's planned edit set: corpus/SOURCES.md, corpus/QUALITY.md, corpus/README.md, corpus/routed-defects.json, tools/registry.json, SKILL.md (section `## Standing rules` and the `### Gate/probe registry` table), corpus/knowledge/receipt-revision-binding.md (R56.3 errata), a new knowledge entry, SCORECARD.md, LOG.md. Report the heading list and expected reader count. The forecast is validated in wave 3 against the measured drift (the L1 will report forecast vs measured); make it fail loudly (exit 2) when a path is absent from every ledger entry but is in the monitor's input universe.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "cold-read cost forecast tool (considerthese proposal 3)"
+    },
+    "T57W1ExecRegistryRows": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Author the C2 registry content, staged. (1) Fixture receipts under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecRegistryRows/stage/tools/fixtures/receipt-gate/` (small committed text files in the shape the gate reads; read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py` and its `--selftest` cases first): one receipt that the gate ACCEPTS (exit 0) at a certified revision that exists in this repo's history (use `5e3569969b532310d2b8a3d130901757a3df356b` as the certified revision so every clone resolves it), one it REFUSES with `RECEIPT_REV_CONTENT_DRIFT` (exit 3) via a `--paths` file, one that makes the gate exit 2 (an unresolvable certified revision: read where the gate returns 2 - the round-56 closure says line 194). (2) Three registry rows (match an existing `gate` row's keys exactly: name, kind gate, argv, expect{exit, stdout_contains}, timeout_s, source `<file>@<7-40 hex rev>:<line>[-line]` pointing at the gate at `5e3569969b532310d2b8a3d130901757a3df356b`, status active, tags) and the `diff -u` against `5e3569969b532310d2b8a3d130901757a3df356b:tools/registry.json`. Rows must pass `python3 tools/registry-check.py --rev <rev> --only <name>`: registry-check runs rows in a clone with cwd = clone root and refuses absolute fleet paths (`non_hermetic_argv`), so fixtures must be tracked files at that revision - since the fixtures are not committed yet, prove the rows by running them in a scratch clone of `5e3569969b532310d2b8a3d130901757a3df356b` where you ADD the fixtures and registry rows in a throwaway fixture commit (identity `fixture`, `-C` clone, never the lane) and run `registry-check.py --rev HEAD-of-clone --only ...`. Report held counts and exits. (3) Record the three exits you observed with the exact stdout line the gate prints for each.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "gate rows and fixtures (C2 content)"
+    },
+    "T57W1ExecStandingRules": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Stage `diff -u` patches (base bytes `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 5e3569969b532310d2b8a3d130901757a3df356b:SKILL.md`) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecStandingRules/stage/skill-standing-rules.diff`: (1) in `## Standing rules` (SKILL.md lines 17-57 at base) correct the receipt table (lines 52-56) so it is TRUE: build a scratch fixture repo and RUN `/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py` for role in (verdict, positive) x (--paths given, --paths absent) x (receipt rev differs from certified, with and without drift on the listed path) and tabulate the exact code and exit; row 1's cell `RECEIPT_REV_MISMATCH` is wrong for a verdict receipt gated on a declared surface (the gate emits `RECEIPT_REV_CONTENT_DRIFT` whenever `--paths` is given and the surface drifted); keep EVERY edited line count identical (same number of lines in the file after the patch: a +N shift moves every page-local `:NNN` anchor below it) - if a cell needs more words, shorten another cell, do not add lines. (2) in `### Gate/probe registry` (SKILL.md around line 1543-1546) add ONE row for the gate: Name, Kind gate, Entry command, Verdict map (`0 PASS; 2 certified revision unresolvable; 3 refused with a named code`), Self-test command, Pinned values, Write scope, Owner - one new line only; state how many lines the file grows by and which anchors below move (count the page-local `:NNN` anchors after line 1546 with `grep -nE` and list them) so the L1 can decide whether to insert the row or replace an existing row's cell instead. Report the executed truth table verbatim.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "SKILL standing-rules truth (R56.2) and registry-table row"
+    },
+    "T57W1ScribeItemsR50x1to4": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R50.1-4` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-50-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR50x1to4/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR50x1to4/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R50.1-4"
+    },
+    "T57W1ScribeItemsR51x1to4": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R51.1-4` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-51-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR51x1to4/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR51x1to4/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R51.1-4"
+    },
+    "T57W1ScribeItemsR51x5to8": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R51.5-8` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-51-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR51x5to8/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR51x5to8/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R51.5-8"
+    },
+    "T57W1ScribeItemsR52x1to3": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R52.1-3` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-52-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR52x1to3/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR52x1to3/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R52.1-3"
+    },
+    "T57W1ScribeItemsR52x4to6": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R52.4-6` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-52-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR52x4to6/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR52x4to6/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R52.4-6"
+    },
+    "T57W1ScribeItemsR53x1to3": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R53.1-3` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-53-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR53x1to3/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR53x1to3/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R53.1-3"
+    },
+    "T57W1ScribeItemsR53x4to6": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R53.4-6` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-53-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR53x4to6/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR53x4to6/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R53.4-6"
+    },
+    "T57W1ScribeItemsR53x7to9": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R53.7-9` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-53-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR53x7to9/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR53x7to9/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R53.7-9"
+    },
+    "T57W1ScribeItemsR54x1to4": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R54.1-4` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-54-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR54x1to4/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR54x1to4/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R54.1-4"
+    },
+    "T57W1ScribeItemsR54x5to7": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R54.5-7` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-54-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR54x5to7/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR54x5to7/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R54.5-7"
+    },
+    "T57W1ScribeItemsR54x8to10": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R54.8-10` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-54-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR54x8to10/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR54x8to10/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R54.8-10"
+    },
+    "T57W1ScribeItemsR55x1to4": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R55.1-4` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-55-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR55x1to4/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR55x1to4/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R55.1-4"
+    },
+    "T57W1ScribeItemsR55x5to7": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R55.5-7` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-55-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR55x5to7/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR55x5to7/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R55.5-7"
+    },
+    "T57W1ScribeItemsR56x1to4": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R56.1-4` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-56-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR56x1to4/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR56x1to4/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R56.1-4"
+    },
+    "T57W1ScribeItemsR56x5to7": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Triage the routed items `R56.5-7` (id rule in the context) of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-56-verifier-spotcheck.md` into ledger rows for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json` at lane base `5e3569969b532310d2b8a3d130901757a3df356b`. For each item: (a) read it and the committed bytes it cites; (b) decide against the TREE at base: `fixed` (a later lane commit changed the cited surface so the defect no longer holds - name the commit with `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log` and prove the excerpt you cite is absent at the commit that added the spot-check and present after it), `open` (still true at base; a fixable patch may be staged), or `declined` (not the lane's to fix, e.g. closure-environment, operator-owned, or a statement the closure itself withdrew - reason >= 40 chars); (c) write the row exactly as the round-50 schema: `{id, status, evidence:[{path, lines:'a-b', excerpt}], commit (fixed only: full 40-hex), reason (declined only), seat, note}` where evidence paths are lane files that are NOT spot-checks, the ledger or round-57 c1/control files, `lines` span <= 30, and `excerpt` is 15-400 chars and appears verbatim (whitespace-normalised) inside those lines at the cited revision; at least one evidence excerpt must contain one of the item's keys - supply 2-5 keys per id in `keys`. Verify every excerpt with a script (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-50/c1/measure.py` for the exact resolution rule and reuse its resolver functions by import, never copy-edit the original). Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR56x5to7/rows.json` (list of rows with a `keys` field and a `verdict_basis` sentence each) and the report. For each item you judge `open` and cheaply fixable WITHOUT touching SKILL.md or any section covered by the cold-read ledger (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/ledger.json` input sets - a fix that changes a pinned input costs re-reads), stage the patch under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeItemsR56x5to7/stage/` and say `fixable-cheap`; otherwise `fixable-costly` with the heading(s) it would uncredit, or `not-fixable` with the reason. Do not decide the floors; the L1 does. A row you cannot ground is reported as `unresolved`, never guessed.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "ledger rows R56.5-7"
+    },
+    "T57W1ScoutSourceA": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Open ONE external primary source that grounds C2's rule that a gate's registry row pins an exit-code map (0 pass / a could-not-evaluate code / a refusal code) and that exit 2 conventionally means a usage or could-not-evaluate condition (candidates: GNU grep manual 'Exit Status' - 0 match, 1 none, 2 trouble; the git documentation for `git diff --exit-code`; the sysexits(3) man page). Fetch it, save the bytes' sha256 and the URL, access date, section anchor and a verbatim <=25-word quote with its location to `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScoutSourceA.md` and `.json`; say honestly whether it supports the claim 'exit 2 = could not evaluate, distinct from exit 1 = answer is no' or only the weaker 'exit codes are a documented contract'. Also check `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md` (`grep -nE`) that the URL is not already a row (rows S001-S282) and report the tier you would give it (A/B/C scoped to a stated scope) and the id range free (next unused id: S283).",
+      "axes": [
+        "freshness"
+      ],
+      "milestone": "source candidate A: exit-status maps"
+    },
+    "T57W1ScoutSourceB": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Open ONE external primary source that grounds C1's practice (a ledger of review/postmortem action items tracked to closure with an owner and a verifiable state, so that a record cannot run ahead of the tree). Candidates: Google SRE Book 'Postmortem Culture: Learning from Failure' (action items tracked to closure), the Atlassian incident-handbook postmortem page, or the NIST/ISO corrective-action tracking text; prefer the first. Fetch it; save sha256, URL, access date, section anchor, a verbatim <=25-word quote with its location, to `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScoutSourceB.md` and `.json`; say what it does NOT claim. Check `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md` for an existing row on the same URL (rows S001-S282) and give the tier/scope you would assign. Also open ONE rejected candidate (a source that sounds relevant but does not support the claim) and quote the line that shows it does not.",
+      "axes": [
+        "freshness"
+      ],
+      "milestone": "source candidate B: closure follow-through ledger"
+    },
+    "T57W1ScoutDrift": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Produce `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScoutDrift.json`: for the round's planned edit set (corpus/SOURCES.md, corpus/QUALITY.md, corpus/README.md, corpus/routed-defects.json, tools/registry.json, SKILL.md `## Standing rules` + `### Gate/probe registry` row, corpus/knowledge/receipt-revision-binding.md errata, a new knowledge entry, SCORECARD.md, LOG.md, corpus/lessons/round-57.md) which headings of the 64 lose credit, by measurement not by guess: in a scratch clone of the lane at `5e3569969b532310d2b8a3d130901757a3df356b` apply each planned path's smallest edit (append one blank-plus-text line; for SKILL.md change one word inside the section) ONE PATH AT A TIME, commit it in the clone (fixture identity, `-C`), run `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py --repo <clone> --rev <clone HEAD>` (about 40 s each; run up to 4 in parallel in four separate clones) and record the lost headings and reasons per path, then the union. Report the table path -> headings, the union size, and the minimal reader count. This is the planning-time cost the round commits to (considerthese proposal 3); wave 3 compares it with the measured drift at C0.",
+      "axes": [
+        "coverage"
+      ],
+      "milestone": "cold-read drift forecast evidence"
+    },
+    "T57W1ScribeSourcesRow": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Wait for `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScoutSourceA.json` and `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScoutSourceB.json` (poll file existence at most 6 times at one-minute intervals; if absent, draft against the candidates named in their items and say so). Draft the `corpus/SOURCES.md` rows as 11 pipe-columns exactly per contract v1 (`/home/vgpnk/Projects/shokunin/CORPUS.md` section SOURCES.md): ids S283 (and S284 if both admitted, S285 a rejected candidate), no `|` inside any cell, `recheck` an ISO date or `90d`/`180d`/`on-release`, `status` `mined` only for a row an admitted knowledge entry cites, `queued` otherwise, `rejected` with `REJECTED: <reason>; flip: <what would change the verdict>`. Stage a `diff -u` against `5e3569969b532310d2b8a3d130901757a3df356b:corpus/SOURCES.md` at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeSourcesRow/stage/corpus/SOURCES.diff` plus a scratch census run: copy the lane `corpus/` to scratch, apply, `scripts/sources-census.sh validate --file <scratch>/corpus/SOURCES.md` must exit 0 (report the exit and warnings). Draft also the lesson `## Gate` block for the new rows (URL, access date, located quote per row) at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeSourcesRow/gate-block.md`.",
+      "axes": [
+        "coverage"
+      ],
+      "milestone": "SOURCES rows draft (after scouts)"
+    },
+    "T57W1ScribeKnowledge": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Draft `corpus/knowledge/gate-row-exit-map.md` (staged at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeKnowledge/stage/corpus/knowledge/gate-row-exit-map.md`): opens with the provenance trio (`source:` citing the S-row from the source scouts' reports in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScoutSource*.json` plus the gate path; `verified-at:` the base revision `5e3569969b532310d2b8a3d130901757a3df356b`; `recheck:` a runnable command, not a count - e.g. `python3 tools/registry-check.py --rev REV --only <row names>` expecting `REGISTRY_CHECK: held=3/3`; check the real names with `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecRegistryRows.json` when present, else leave `<name>` placeholders and say so). Content: why a gate needs executed rows beyond its selftest (a selftest proves the tool against its own fixtures; a registry row proves the entry command as the lane calls it), the 0/2/3 map, the code-by-condition truth table from `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecStandingRules.md` (when present), what the three rows do NOT cover (the six codes only the selftest covers). Every number carries its command; a negative claim carries its sweep. <= 120 lines. Also draft the R56.3 repairs as append-only text: an errata block for `corpus/knowledge/receipt-revision-binding.md` stating its `recheck:` now reads `GATE_SELFTEST: 19/19 pass` (verify by running the selftest) and the new `corpus/README.md` coverage-map row indexing both entries (diff -u against base bytes; state the line counts).",
+      "axes": [
+        "coverage"
+      ],
+      "milestone": "knowledge entry draft: registry gate rows"
+    },
+    "T57W1ScribeQuality": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Draft up to three append-only `corpus/QUALITY.md` criteria (numbered after the current maximum - derive it with `grep -nE '^(#+ )?[0-9]+\\\\.' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md` and read the last three for shape) with the lesson each cites (`corpus/lessons/round-57.md` will exist): (a) a ledger-of-routed-defects criterion (every closure-routed item has a row and a disposition within one round; a record row that cites a past-tense receipt must resolve, from considerthese 2026-10-28 proposal 1 and the R50 ledger), (b) a gate that has a selftest also has executed registry rows (exit-map pinned) - evidence: the round-56 closure D-CF3/R56.6, (c) cold-read cost is forecast at planning time and compared with measured drift (considerthese 2026-10-28 proposal 3). Stage a `diff -u` at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeQuality/stage/corpus/QUALITY.diff`; each criterion states its falsifier (the command or counter that would fail).",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "QUALITY criteria draft"
+    },
+    "T57W1ScribeRecords": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Draft three SKELETONS with every unmeasured value as `<TBD:name>` (never invent a measured value): (1) the SCORECARD round-57 block (claims table with axis, before, target, counting command, frozen controls; standing axis table row for calibration unchanged at 8 until the monitor says otherwise; Planned (round 58) paragraph that names every ledger row left `open` by id - the C1 `open` rule reads the newest `**Planned (round` paragraph; read the round-56 block `/home/vgpnk/Projects/shokunin/tameshi-shokunin/SCORECARD.md` lines 2704-2755 and the Planned paragraph shape in the round-50 block), (2) the LOG.md round-57 entry (append-only; read the last three), (3) `corpus/lessons/round-57.md` with `## Gate` (admits, rejects with reasons and flip conditions, spot-check slot), `## Mistakes` (class, evidence, captured-by, fix; include as one row the round-56 lesson's own first mistake and what this round's controls.sh did about it, with a fix shown able to fail), `## Round-56 dispositions` (R56.1-R56.7: what this round does for each, citing the contract's `routed_defects_from_round_56`). Stage at `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ScribeRecords/stage/<repo-relative path>`.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "SCORECARD, LOG and lesson skeletons"
+    },
+    "T57W1CritC1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Falsify C1 in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/contract.json` before any counter exists. Answer with commands and outputs: (1) can a do-nothing control reach `C1_R57_PASS=true`? Construct the cheapest tree: e.g. 51 rows all `fixed` pointing at the fixing commit of ANY nearby change with a trivially new excerpt (the round-50 rules require keyed + new + path touched by the commit: how cheap is that, measure it on 5 real items by attempting it), 20 `fixed` + 14 `declined` + rest `open` with Planned naming them. Which floor numbers (20 fixed, 14 declined, 6 this-round fixes) are reachable only by real work, and which a bulk-decline reaches? Recommend exact floors with the number of items you could and could not close in 20 minutes by honest triage. (2) Is `open -> id named in the newest Planned paragraph` forgeable by naming every id there? (3) Attack the universal clause risks in the target sentence (any 'every'/'all' without an enumeration). Propose rewritten target/kill sentences if needed; never edit the contract.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "falsify C1 contract"
+    },
+    "T57W1CritC2": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Falsify C2 in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/contract.json` before any counter exists. (1) Do-nothing: which cheap trees reach `C2_R57_PASS=true`? (rows whose argv is `[echo]`-like or run the gate against a receipt/fixture that cannot exit anything but the expected code; rows whose `expect` is satisfied by ANY refusal code; a row that runs `--selftest` in disguise). Try each in a scratch clone with `registry-check.py` and report which pass. (2) Is mutant-kill by rows meaningful if the mutants are applied to a COPY of the gate while the rows call `tools/receipt-revision-gate.py` - how does the counter route the rows to the mutated copy (a path the registry row names is fixed)? Propose the exact mechanism that makes a mutant visible to unchanged rows (e.g. mutate in place inside a scratch clone). (3) Does the code-truth arm (SKILL tokens vs the gate's CODES and the executed fixture) have a loophole (a table that names no code at all)? Report proposed exact rewrites; never edit the contract.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "falsify C2 contract"
+    },
+    "T57W1CritClaimShape": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Audit both claims against the fleet's claim-sizing rules (§9 of `/home/vgpnk/Projects/shokunin/.ufo/prompts/tameshi-round-57.md`, and `/home/vgpnk/Projects/shokunin/AXES.md`): one concrete value a closure re-derives with one command over committed bytes; no universal clauses without an enumerating command; a do-nothing control cannot reach the target; claims are causally separable (C1's rows R56.2/R56.6 are 'fixed' only if C2's content lands - is C1 still verifiable without C2? propose the exact wording that makes it so); the predicate is one sentence in the plan, one condition in the counter, one label in the receipt. List defects with proposed replacement sentences.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "claim-shape audit"
+    },
+    "T57W1CritDoNothing": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Build the cheapest control that SKIPS the claimed work for each claim and score it with the frozen counter once the staged counters exist (`/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecC1Counter/stage/` and `.../T57W1ExecC2Counter/stage/`; poll for them at most 8 times at two-minute intervals; if they never appear, design the controls against the contract and the round-50 counter and say so). For C1: copy the ledger to scratch, add 51 rows by script (a) all declined, (b) all open + a Planned paragraph naming them, (c) fixed with excerpts taken from the evidence path's own first 15-400 chars that include the key. For C2: (a) three rows that call the gate with `--help`, (b) three rows against a fixture that is hard-wired, (c) SKILL tokens deleted. Report each control's verdict line and arm tallies verbatim. A control that reaches PASS is a defect of the counter or target: say which arm and propose the fix.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "do-nothing control designer"
+    },
+    "T57W1RevExtractRecall": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Independently count the routed items in the seven spot-check files WITHOUT the extractor: read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-50-verifier-spotcheck.md` .. `round-56-verifier-spotcheck.md` by eye, list every defect the closure routes to the lane for the next round (including items that sit outside the 'routed' heading, e.g. a conformance defect `D-CF*`, a closure erratum, items in `## Closure disposition`), and compare with the ~51 the extractor staged by `T57W1ExecExtract` (read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecExtract.json` when it exists; poll file existence at most 8 times at one-minute intervals). Report: items you count per file with line numbers; the set difference both ways; for each item outside the extractor's set whether the closure routes it to the lane. Never edit.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "extractor recall (independent)"
+    },
+    "T57W1RevInherited": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Audit the inherited state at round start: `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin status --porcelain` and `/home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh state /home/vgpnk/Projects/shokunin/tameshi-shokunin` (read-only), any `lane-dead-no-report tameshi round=57` line in `/home/vgpnk/Projects/shokunin/.ufo/watchdog.log` (none expected), untracked files, files under `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/` and `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/` and who authored them (they are this round's L1's), and the fleet root `git -C /home/vgpnk/Projects/shokunin status --porcelain` for untracked files naming tameshi round 57 (misroot). Report each with a command and its output. Never edit.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "inherited-state audit"
+    },
+    "T57W1RevGateSurface": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py` in full and produce the complete exit-code and code table by RUNNING it: for each code in `CODES` and each exit path (0, 2, 3, argparse usage), name the line where it is emitted, the condition, and one fixture command that reproduces it in a scratch repo (`git -C \"$D\" ...`, fixture identity). Mark which of the eleven codes are reachable ONLY under `--paths`, which only without, and which are unreachable (dead code). This table is the ground truth the C2 counter and the SKILL cell are judged against; report discrepancies with `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecStandingRules.md` and with the header docstring of the gate.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "gate exit-code truth"
+    },
+    "T57W1RevCensus": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Verify the census conformance at the round start (`census-before.stdout`/`.exit` in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/`): re-run the command, compare, report row count, warning count by class, and the id list S001-S282 contiguity (`comm`/`awk` sweep: any gap or duplicate). Then verify the scratch directive on this wave: after every seat of wave 1 is done is `/fast/scratch/hyaku/tameshi-r57/` empty? (poll at the END of your item only; report what you observe, do not delete other seats' trees).",
+      "axes": [
+        "freshness"
+      ],
+      "milestone": "census and scratch hygiene"
+    },
+    "T57W1MutGate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Build the C2 mutant bank: 8 single-edit mutants of a COPY of `/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-revision-gate.py` in fresh scratch clones (assert the old string unique, one edit each): accept-on-drift, wrong refusal code, exit 0 instead of 2, exit 0 instead of 3, drop the ambiguity check, swap ancestor test, always-print PASS verdict line, return before reading `--paths`. For each mutant report whether `--selftest` kills it (the lane's 19-case suite) and which three candidate registry rows (exit 0 accept / exit 3 CONTENT_DRIFT / exit 2 unresolvable, fixtures per `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecRegistryRows.md` when it exists - poll at most 8 times at two-minute intervals) kill it. Output `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1MutGate.json` as `[{id, old, new, selftest_kills, rows_kill}]` so the C2 counter's `mutants.json` can take three of them.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "gate mutant bank for C2"
+    },
+    "T57W1SentLedger": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "sentinel",
+      "item": "Attack the round-50 ledger rules the successor counter inherits (`/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py`). Craft ledger rows that the rules accept for items that are NOT fixed: (1) `fixed` with a real commit that touches a keyed path for an unrelated reason and an excerpt that is new but off-topic, (2) `open` rows whose ids are named in a Planned paragraph that also names every id, (3) evidence whose excerpt sits in a path the commit touches but in a comment line. Score each against the round-50 counter's `--selftest`-style harness in a scratch clone and report which forgeries pass. For each pass, propose the cheapest extra check (e.g. keyed-excerpt must share >= 3 words with the item text; fixed row's commit message or diff must mention an item key) and state its false-reject cost on the 31 existing `fixed` rows (measure it).",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "forge the ledger"
+    },
+    "T57W1LabratRegistryCheck": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Hypothesis H: `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-check.py --rev REV --only <row>` can execute a `gate` row whose argv names a committed fixture and a `--certified <BASE>` revision, and the row's exit/stdout_contains are honoured under the `--rev` clone (hermetic, no absolute fleet path). Probe in scratch: clone the lane at `5e3569969b532310d2b8a3d130901757a3df356b`, add a fixture receipt and a registry row in a throwaway fixture commit (identity `fixture`, `-C`), run registry-check with `--rev` of that commit, record the ROW line and trailer, the wall time, whether `--certified 5e3569969b532310d2b8a3d130901757a3df356b` resolves inside the registry-check clone (shared clone? depth?), and what happens to a row expecting exit 3. Report CONFIRMED/REFUTED with raw outputs; if refuted, name the minimal workaround.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "does registry-check run fixtures at a pinned revision"
+    },
+    "T57W1LabratFloor": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Hypothesis H: editing `corpus/routed-defects.json` (appending 51 rows), `tools/registry.json` (3 rows) and `corpus/knowledge/*.md` costs cold-read headings only through the ledger input sets, and appending to `corpus/lessons/round-57.md` / `SCORECARD.md` / `LOG.md` costs none. Probe in scratch clones of `5e3569969b532310d2b8a3d130901757a3df356b` (fixture commit identity, `-C`), one path per clone (up to 4 in parallel), measure with `python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py --repo <clone> --rev <HEAD>` (about 40 s) the credited count for: routed-defects.json append; registry.json append; a NEW knowledge file; the lesson file; SCORECARD.md; LOG.md. Report credited/64 and the lost heading set per path with raw JSON receipts. This overlaps `T57W1ScoutDrift` on purpose (independent check); say where you disagree.",
+      "axes": [
+        "calibration"
+      ],
+      "milestone": "cold-read floor cost of a ledger JSON edit"
+    },
+    "T57W1ConnectorSiblings": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "connector",
+      "item": "Scan the sibling lanes read-only (`/home/vgpnk/Projects/shokunin/*-shokunin/`: `grep -rln` over `corpus/knowledge`, `SKILL.md`, `tools/`, `*.json` for `routed-defects`, `routed defect`, `closure-routed`, `registry.json` with `kind` gate, `exit-code map`) and report: which lanes keep a ledger of closure-routed items and with what status vocabulary; which lanes register gate entry commands with exit maps; whether any is general enough that tameshi's ledger/registry craft should cite it (two independent lanes rule, `PROVINCE.md` line 13-15); contested scope, if any, is reported not absorbed. Cite path:line for every finding; no edits.",
+      "axes": [
+        "adjacency"
+      ],
+      "milestone": "sibling-overlap scan"
+    },
+    "T57W1ConnectorCross": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "connector",
+      "item": "Find patterns that connect C1 and C2 and the round-56 lessons: both claims fail the same way (a record that runs ahead of its receipt: R54.3, R55.2, R56 D-C2a/b). Read `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-56.md` `## Mistakes`, `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-56-verifier-spotcheck.md` §2-§6 and the 49 ledger rows' reasons; produce `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ConnectorCross.md` listing (a) the recurring defect classes with counts per class over the 100 routed items (49 ledger + ~51 new, from the extractor's output when `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecExtract.json` exists), (b) for each class the criterion in `/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md` that should have caught it (cite the criterion number with grep) or `none`, (c) the three classes with the most `none`. This feeds the round's mined mistake (frontier step). Do not draft the mistake row.",
+      "axes": [
+        "adjacency"
+      ],
+      "milestone": "cross-claim pattern finder"
+    },
+    "T57W1SimplScope": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "simplifier",
+      "item": "Propose deletions that preserve verified behavior, in this round's plan: (1) the SKILL `## Standing rules` receipt table next to `tools/receipt-revision-gate.py --help` - is the table redundant (one source of truth: could the cell point at the gate header instead of restating codes, so the next code change cannot make the table false again)? Test by listing which cells state codes and which state conditions; (2) the C2 arms - which arm could be dropped without letting any control through (use `/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1CritDoNothing.md` results when present); (3) the 15-seat triage: could the ledger rows be generated from fewer fields? Return a ranked list with the evidence for each; never edit.",
+      "axes": [
+        "operability"
+      ],
+      "milestone": "delete what is not needed"
+    }
+  }
+}

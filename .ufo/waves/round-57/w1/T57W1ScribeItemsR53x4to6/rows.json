@@ -1,0 +1,85 @@
+[
+ {
+  "id": "R53.4",
+  "status": "open",
+  "evidence": [
+   {
+    "path": ".ufo/waves/round-53/w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout",
+    "lines": "1-1",
+    "excerpt": "C2_R53: rev=9c6ef7bc80c0 tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=1 docs=ok total=0 C2_R53_PASS=true"
+   }
+  ],
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "Receipt still names rev 9c6ef7bc80c0 (git cat-file -t fails: absent from lane object DB) and records cr47=rc=1; no commit since round 53 touched the file. Staged re-anchored receipt at 5e3569969b53 (round-53 C2 counter re-run at base, cr47=rc=2).",
+  "keys": [
+   "c2-counter-repaired.stdout",
+   "9c6ef7bc80c0",
+   "cr47=rc=1"
+  ],
+  "verdict_basis": "Still true at base: the cited line is unchanged since 2ef0a5a (no later commit touches the receipt) and 9c6ef7bc80c0 does not resolve in the lane object DB, so the open status holds."
+ },
+ {
+  "id": "R53.5",
+  "status": "open",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-53/verify-freeze.stdout",
+    "lines": "1-1",
+    "excerpt": "FREEZE e62d99711a0d files=8 amendments=5"
+   },
+   {
+    "path": "LOG.md",
+    "lines": "2468-2469",
+    "excerpt": "freeze `e62d9971` (amendments 1–5, all disclosed in `freeze.json`)"
+   },
+   {
+    "path": ".ufo/evidence/round-53/freeze.json",
+    "lines": "49-49",
+    "excerpt": "\"what\": \"no-harm.sh line-40 bash syntax error fixed (single-quote grep pattern) and tools-scope allows the 7 C2-declared tool patches; monitors unchanged\","
+   }
+  ],
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "verify-freeze.stdout still reads amendments=5 while freeze.json at base records seven amendments (final freeze 9e09db2); LOG.md pins freeze e62d9971 (amendments 1-5). Receipt refresh staged; LOG pointer correction is costly (LOG.md is pinned by 10 cold-read entries).",
+  "keys": [
+   "verify-freeze.stdout",
+   "e62d9971",
+   "amendments=5"
+  ],
+  "verdict_basis": "Still true at base: verify-freeze.stdout and the LOG.md line are unchanged since 2ef0a5a, while freeze.json at base lists amendments 1-7 and 9e09db2 is an ancestor of base, so the stale pin is still present."
+ },
+ {
+  "id": "R53.6",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "tools/env-diff.py",
+    "lines": "234-236",
+    "excerpt": "except ScratchRootUnusable as exc: print(\"ENVDIFF_SETUP: could-not-evaluate: %s\" % exc, file=sys.stderr) return 2"
+   },
+   {
+    "path": "tools/bash-witness-study.py",
+    "lines": "1788-1790",
+    "excerpt": "except ScratchRootUnusable as exc: print(f\"WITNESS_STUDY: could-not-evaluate: {exc}\", file=sys.stderr) return EXIT_CANNOT"
+   },
+   {
+    "path": "tools/evidence-disposition.py",
+    "lines": "3231-3233",
+    "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"evidence-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+   },
+   {
+    "path": "tools/pin-disposition.py",
+    "lines": "1399-1401",
+    "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"pin-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+   }
+  ],
+  "commit": "59c38109bf119d0e9d4f878644a82babc937bc1e",
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "59c3810 (round-54 C0) routes a set-but-unusable TMPDIR to ScratchRootUnusable and exit 2 in the four named tools; run at base with TMPDIR=/nonexistent: rc=2 for all four, rc=1 traceback at 2ef0a5a.",
+  "keys": [
+   "ScratchRootUnusable",
+   "could-not-evaluate",
+   "TMPDIR"
+  ],
+  "verdict_basis": "Fixed: 59c3810 is an ancestor of base and not of 2ef0a5a, touches all four tools, the catch sites are absent at 2ef0a5a, and runtime rc changes from 1 (traceback) to 2 at base."
+ }
+]

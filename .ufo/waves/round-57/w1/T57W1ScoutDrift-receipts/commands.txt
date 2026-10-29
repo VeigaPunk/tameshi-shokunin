@@ -1,0 +1,38 @@
+# Commands (all run from /fast/scratch/hyaku; every git call names -C; no mutating git in the lane)
+
+# Base re-derivation (pristine shared clone at lane base)
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/pristine"
+git -C "$S/pristine" checkout --detach 5e3569969b532310d2b8a3d130901757a3df356b
+# -> toplevel asserted == $S/pristine; HEAD == 5e3569969b532310d2b8a3d130901757a3df356b
+TMPDIR=$S/tmp python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py \
+  --repo "$S/pristine" --rev 5e3569969b532310d2b8a3d130901757a3df356b
+# -> exit 0, sections_covered 64/64, calibration_restraint_score 8  (base.stdout, 112.3 s wall)
+
+# Eleven probe clones: git clone --shared "$S/pristine" "$S/<clone>"; one single-path edit each
+# (edit tool / write tool; JSON probes got a minimal JSON-valid byte change instead of a raw append);
+# pre-commit assert for every clone: git -C "$D" rev-parse --show-toplevel == "$D"
+# batch 1: c-sources c-quality c-readme c-routed      (81.5 s, 4-way parallel)
+# batch 2: c-registry c-skill c-knowerrata c-newknow  (64.2 s, 4-way parallel)
+# batch 3: c-scorecard c-log c-lessons                (74.4 s, 3-way parallel)
+bash "$S/run-batch.sh" <clones>   # per clone: add -A; commit -c user.name=fixture -c user.email=fixture@example.invalid;
+                                  # then the monitor below with --explain > receipts/<clone>.stdout
+
+# Monitor, once per probe clone at its own probe commit (all exit 0):
+python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-21/coldread/measure.py \
+  --repo "$S/<clone>" --rev <clone HEAD> --explain
+
+# Probe commits (clone -> HEAD):
+c-sources     a80cdf96f47c67b9687b0cfb6a2555d125abfd14
+c-quality     049edc87784eafe11df9b1679764bcdbeebb81f8
+c-readme      915a86a6ee20bc53f6099a7a586755085952cdfd
+c-routed      adffd8cdc05cf1e411a241bf066ccf868ef118c1
+c-registry    7b1cbc10f12756d04d5425e8a40319f035d655df
+c-skill       d592ad991b06ab45a9d0413c46369270c27ba438
+c-knowerrata  9c1c60265f3d2e5d579f4fcebc97ac4d6f6725ce
+c-newknow     515f12e5cfcf723802998ea4583aaa8adbe68758
+c-scorecard   32750423f39106dbdeb46f190b4227111bb533bd
+c-log         89201b069af0c54ff46e49baa9ce8ac6a070dee2
+c-lessons     8bc41759a9ce1799f02e7dbc8f1153ae6c318748
+
+# Pre-run worktree check (batch 2/3 clones; each shows exactly its one intended change):
+git -C "$S/<clone>" status --porcelain

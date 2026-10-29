@@ -1,0 +1,94 @@
+$ --lane FIXTURE --certified c964dc6b55bc0ab2bcf8795a3b70538182a6bed2 --receipt RCPT/rcpt-verdict-r1.txt:verdict
+GATE REFUSED RCPT/rcpt-verdict-r1.txt role=verdict revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_MISMATCH rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 certified=c964dc6b55bc
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified c964dc6b55bc0ab2bcf8795a3b70538182a6bed2 --paths RCPT/paths.txt --receipt RCPT/rcpt-verdict-r1.txt:verdict
+GATE OK RCPT/rcpt-verdict-r1.txt role=verdict revs=86ed323749ffa1d84232fcac83393d3abba7bfd3
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --receipt RCPT/rcpt-verdict-r1.txt:verdict
+GATE REFUSED RCPT/rcpt-verdict-r1.txt role=verdict revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_MISMATCH rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 certified=75fdf1c28743
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --paths RCPT/paths.txt --receipt RCPT/rcpt-verdict-r1.txt:verdict
+GATE REFUSED RCPT/rcpt-verdict-r1.txt role=verdict revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_CONTENT_DRIFT rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 drift=surf.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified c964dc6b55bc0ab2bcf8795a3b70538182a6bed2 --receipt RCPT/rcpt-positive-r1.txt:positive
+GATE REFUSED RCPT/rcpt-positive-r1.txt role=positive revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_MISMATCH rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 certified=c964dc6b55bc
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified c964dc6b55bc0ab2bcf8795a3b70538182a6bed2 --paths RCPT/paths.txt --receipt RCPT/rcpt-positive-r1.txt:positive
+GATE OK RCPT/rcpt-positive-r1.txt role=positive revs=86ed323749ffa1d84232fcac83393d3abba7bfd3
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --receipt RCPT/rcpt-positive-r1.txt:positive
+GATE REFUSED RCPT/rcpt-positive-r1.txt role=positive revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_MISMATCH rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 certified=75fdf1c28743
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --paths RCPT/paths.txt --receipt RCPT/rcpt-positive-r1.txt:positive
+GATE REFUSED RCPT/rcpt-positive-r1.txt role=positive revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_CONTENT_DRIFT rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 drift=surf.txt
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --receipt RCPT/r3.txt:verdict
+GATE OK RCPT/r3.txt role=verdict revs=75fdf1c287430fe8e9cead7d41b1b736403a7a87
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+exit=0
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --receipt RCPT/bad.txt:verdict
+GATE REFUSED RCPT/bad.txt role=verdict revs=deadbeefdeadbeef code=RECEIPT_REV_UNRESOLVABLE rev=deadbeefdeadbeef
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --receipt RCPT/none.txt:verdict
+GATE REFUSED RCPT/none.txt role=verdict revs=none code=RECEIPT_REV_ABSENT no rev= token
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified 0000000000000000000000000000000000000001 --receipt RCPT/r3.txt:verdict
+GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+exit=2
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --paths RCPT/paths.txt --receipt RCPT/rcpt-verdict-r1.txt:verdict --json
+{
+ "schema": "tameshi-receipt-gate-v1",
+ "certified": "75fdf1c287430fe8e9cead7d41b1b736403a7a87",
+ "paths": [
+  "surf.txt"
+ ],
+ "receipts": [
+  {
+   "receipt": "RCPT/rcpt-verdict-r1.txt",
+   "role": "verdict",
+   "revs": [
+    "86ed323749ffa1d84232fcac83393d3abba7bfd3"
+   ],
+   "ok": false,
+   "codes": [
+    "RECEIPT_REV_CONTENT_DRIFT"
+   ],
+   "detail": "rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 drift=surf.txt"
+  }
+ ],
+ "verdict": "REFUSED"
+}
+exit=3
+
+$ --lane FIXTURE --certified 75fdf1c287430fe8e9cead7d41b1b736403a7a87 --receipt RCPT/ctl.txt:control
+GATE REFUSED RCPT/ctl.txt role=control revs=deadbeefdeadbeef code=RECEIPT_REV_UNRESOLVABLE rev=deadbeefdeadbeef
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+
+$ --lane FIXTURE --certified c964dc6b55bc0ab2bcf8795a3b70538182a6bed2 --paths RCPT/emptypaths.txt --receipt RCPT/rcpt-verdict-r1.txt:verdict
+GATE REFUSED RCPT/rcpt-verdict-r1.txt role=verdict revs=86ed323749ffa1d84232fcac83393d3abba7bfd3 code=RECEIPT_REV_CONTENT_DRIFT rev=86ed323749ffa1d84232fcac83393d3abba7bfd3 drift=<no --paths given: content identity is not checkable>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+

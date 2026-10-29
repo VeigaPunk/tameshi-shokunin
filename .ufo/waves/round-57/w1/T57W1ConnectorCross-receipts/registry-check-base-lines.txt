@@ -1,0 +1,22 @@
+# base: git show 5e356996:tools/registry-check.py | sed -n 758,775p | cat -n
+758:     """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+759: 
+760: 
+761: def strict_scratch_root():
+762:     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+763:     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+764:     fallback to /tmp, preserving CR47 semantics), else the platform default."""
+765:     import os as _os
+766:     t = _os.environ.get("TMPDIR")
+767:     if t:
+768:         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+769:             raise ScratchRootUnusable(
+770:                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+771:         return t
+772:     return tempfile.gettempdir()
+773: 
+774: def clone_lane_at_rev(root, rev, sha):
+775:     """Clone the lane detached at sha into a fleet-mirror mkdtemp.
+# base: grep -n "gettempdir\|environ.get(\"TMPDIR\")\|/tmp" tools/registry-check.py
+766:    t = _os.environ.get("TMPDIR")
+772:    return tempfile.gettempdir()

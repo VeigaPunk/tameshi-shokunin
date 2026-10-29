@@ -1,0 +1,70 @@
+{
+  "seat": "T57W1CritClaimShape",
+  "role": "critic",
+  "milestone": "claim-shape audit",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "lane_head_at_audit": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "rules_applied": ["prompt s6 item 9 (claim sizing), tameshi-round-57.md lines 529-551", "AXES.md calibration signal and split rule", "prompt s1 lane axes: depth + calibration"],
+  "verdicts": {
+    "C1": {"axis": "calibration", "admissible_as_declared": false, "blocking": ["C1-B1", "C1-B2", "C1-B3", "C1-B4a", "C1-B4b"], "separable_from_C2": "verifiable without C2 after C1-B4a and with the three C2-routed rows scored as ordinary rows; not content-separable as written"},
+    "C2": {"axis": "operability", "admissible_as_declared": true, "conditional_on": ["C2-1", "C2-2", "C2-3", "C2-4", "C2-5", "S1"], "separable_from_C1": true}
+  },
+  "evidence": {
+    "E1_do_nothing_reach_C1": {
+      "control": "CTL_JUNK: one commit appends 49 keyed marker lines to corpus/QUALITY.md; second commit marks all 49 rows fixed",
+      "commit_step_A": "84ea6bca0bd8c092eaf70eb55e07ee1d5fb75333",
+      "commit_step_B": "1ab5e1456e277c9b8322be82d5b031e6669b72cb",
+      "counter": "round-50 c1/measure.py (inherited by round-57 C1; round-57 counter not yet staged)",
+      "result": "exit 0; C1_R50: defects=49 rows=49 fixed=49 fixed_this_round=49 evidence_bad=0 fixed_bad=0 total=0 C1_R50_PASS=true",
+      "contrast_CTL_FAB": {"commit": "92f589182a16300b66e7c9a64e4148f201e7c877", "result": "exit 1; evidence_bad=49 total=54 C1_R50_PASS=false"},
+      "receipts": ".ufo/waves/round-57/w1/T57W1CritClaimShape-receipts/ctl_junk_B.stdout, ctl_fab_B.stdout, ctl_junk_result.json"
+    },
+    "E2_gate_exit_probes": {
+      "receipts": ".ufo/waves/round-57/w1/T57W1CritClaimShape-receipts/gate-exit-map-probe.txt",
+      "rows": [
+        {"situation": "no args", "exit": 1, "code": null},
+        {"situation": "certified REV unresolvable", "exit": 2, "code": "RECEIPT_REV_UNRESOLVABLE"},
+        {"situation": "receipt REV unresolvable", "exit": 3, "code": "RECEIPT_REV_UNRESOLVABLE"},
+        {"situation": "verdict drift on SKILL.md with --paths", "exit": 3, "code": "RECEIPT_REV_CONTENT_DRIFT"},
+        {"situation": "verdict names other rev, no --paths", "exit": 3, "code": "RECEIPT_REV_MISMATCH"},
+        {"situation": "verdict names other rev, same bytes on tools/receipt-window.py", "exit": 0, "code": null}
+      ]
+    },
+    "greps": {
+      "round50_planned_regex": "measure.py:111 \\bR4\\d\\.\\d+\\b",
+      "round50_BASE": "measure.py:272 BASE = e3729de8",
+      "gate_rows_referencing_gate": 1,
+      "gate_rows_referencing_gate_kind": "selftest",
+      "gate_slash_tmp_hardcoded": false,
+      "standing_rules_tokens_defined_by_gate": true,
+      "skill_lines": 2214,
+      "skill_newest_gate_probe_table": "SKILL.md:2175 '### Round-26 gate/probe registry — report interop'",
+      "before_dir_files": 0,
+      "frozen_paths": []
+    }
+  },
+  "defects": [
+    {"id": "S1", "scope": "shared", "claim": "C2 (also C1 saturation)", "defect": "C2 moves operability, not a prompt-s1 lane axis; contract says no standing score", "replacement": "axis: operability (not a prompt-s1 lane axis; no standing score; verdict by counts; operator rules on binding); or capability acquisition"},
+    {"id": "S2", "scope": "shared", "claim": "C1,C2", "defect": "before pointers before/c1.stdout and before/c2.stdout do not exist", "replacement": "before = stdout of <counter> --lane LANE --rev 5e3569969b532310d2b8a3d130901757a3df356b --work EMPTY_DIR --explain, committed before first ledger or registry commit"},
+    {"id": "S3", "scope": "shared", "claim": "C1,C2", "defect": "frozen_paths is empty although C1 relies on a frozen set", "replacement": "frozen_paths: defects.json, c1/measure.py, c2/measure.py, seven spot-check files, 49 original ledger rows, 22 gate rows of registry"},
+    {"id": "C1-B1", "claim": "C1", "defect": "target reachable by CTL_JUNK (E1); CTL_JUNK not pre-registered", "replacement": "fixed requires a removal witness: excerpt present in path at routed_at and absent at REV; items without one are open or declined. Fallback: narrow claim text to ledger-to-tree agreement under new-keyed-excerpt rule and state that a CTL_JUNK pass means bookkeeping, not calibration."},
+    {"id": "C1-B2", "claim": "C1", "defect": "floors fixed>=20, declined<=14, this-round>=6 reward claimed fixes, inverting calibration", "replacement": "C1_R57_PASS=true iff ledger has exactly one row for each of frozen N=51 items and disagreement total is 0; status mix and this-round counts printed, not gated."},
+    {"id": "C1-B3", "claim": "C1", "defect": "counted object is ledger, not SHONEN/SCORECARD (AXES calibration signal); calibration=8 is the saturation line so the scored axis cannot move", "replacement": "C1 counts disagreements between ledger, newest SCORECARD Planned paragraph and tree; records sub-axis calibration.routed-ledger with split reason in SCORECARD.md, or retires the score."},
+    {"id": "C1-B4a", "claim": "C1", "defect": "inherited planned regex R4\\d matches no R5x id; open R5x rows always fail", "replacement": "planned-id pattern \\bR5[0-6]\\.\\d+\\b and \\bR4\\d\\.\\d+\\b"},
+    {"id": "C1-B4b", "claim": "C1", "defect": "inherited BASE constant e3729de8 makes this-round count since round 50", "replacement": "pass --base 5e3569969b532310d2b8a3d130901757a3df356b; drop arm under C1-B2"},
+    {"id": "C1-N", "claim": "C1", "defect": "N not concrete: before says ~52, expected 51 (4+8+6+9+10+7+7)", "replacement": "N = 51, printed by extract-defects.py at base and pinned; before line reads rows=0/51 (count not re-derived by this seat)"},
+    {"id": "C1-S", "claim": "C1", "defect": "surface says 'the routed items' (universal, no enumerating command)", "replacement": "the 51 items of frozen c1/defects.json; completeness is the extractor's recall, not measured by C1"},
+    {"id": "C1-G", "claim": "C1", "defect": "freeze guards (49 rows byte-identical, seven spot-checks byte-equal) inside claim total", "replacement": "move to frozen_paths (S3)"},
+    {"id": "C1-L", "claim": "C1", "defect": "line-exact evidence: C2 or any SKILL line shift breaks C1 rows", "replacement": "evidence resolves when normalised excerpt occurs in path at REV, within stated lines if still there else exactly once in file; drift printed as note"},
+    {"id": "C1-R", "claim": "C1", "defect": "conditional statuses (R56.4 'only if', R56.7 report-only fix)", "replacement": "R56.4 open (Planned round 57); R56.7 open or fixed by lesson errata line"},
+    {"id": "C2-1", "claim": "C2", "defect": "exit map 0/2/3 omits exit 1 (usage) and is not a function of code (UNRESOLVABLE gives 2 or 3)", "replacement": "exit 0 PASS; exit 2 only when --certified does not resolve; exit 3 when any receipt refused (named code on stdout); exit 1 usage or crash"},
+    {"id": "C2-2", "claim": "C2", "defect": "arm 'every RECEIPT_* token is a code the gate defines' already true at base (gate lines 46-49)", "replacement": "Standing-rules row 53 cell reads RECEIPT_REV_CONTENT_DRIFT (no --paths: RECEIPT_REV_MISMATCH, mirroring row 54) and equals the code emitted on a counter-built drifting fixture"},
+    {"id": "C2-3", "claim": "C2", "defect": "rows '>= 3' vague", "replacement": "exactly four gate rows: (a) exit 0 same-bytes with --paths tools/receipt-window.py; (b) exit 2 unresolvable certified; (c) exit 3 CONTENT_DRIFT with --paths SKILL.md; (d) exit 3 MISMATCH with no --paths; never --selftest"},
+    {"id": "C2-4", "claim": "C2", "defect": "mutants unnamed; 'unresolvable' ambiguous between exit 2 and 3", "replacement": "M1 line 150 'if drift:' never true; M2 line 151 CONTENT_DRIFT replaced by MISMATCH; M3 line 194 return 2 replaced by return 0; each killed iff at least one of rows (a)-(d) fails under registry-check --rev REV --only"},
+    {"id": "C2-5", "claim": "C2", "defect": "SKILL gate/probe table unnamed (about 20 such tables)", "replacement": "row appended under '### Round-26 gate/probe registry — report interop' (SKILL.md:2175), exits cell carries the C2-1 map"},
+    {"id": "C2-6", "claim": "C2", "defect": "SKILL edits must not shift lines above 2175 (C1 coupling)", "replacement": "one in-place cell change at line 53 and one appended row after line 2175; no other SKILL line moves"}
+  ],
+  "separability_wording": "C1 verifies with C2 absent: rows R56.2, R56.5 and R56.6 are fixed only if a post-routing commit at or below REV adds a new keyed excerpt to their path, and are otherwise open and named in the newest Planned (round 57) paragraph; C1's predicate reads no C2 receipt, and C2's commits change no C1 arm.",
+  "not_run": ["round-57 counters (not staged)", "N=51 extraction re-derivation", "registry-check held=N/N output", "semantic support of keyed excerpts"],
+  "tools_installed": []
+}

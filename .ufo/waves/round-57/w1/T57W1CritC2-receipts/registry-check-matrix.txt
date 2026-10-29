@@ -1,0 +1,209 @@
+### proposed rows vs UNMUTATED-F1
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --tag c2-probe
+exit=0
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=3 held
+ROW g-exit2-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=3/3 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### cheap rows vs UNMUTATED-F1
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/cheap-registry.json --tag cheap-probe
+exit=0
+ROW cheap-echo-gate expect=0 got=0 held
+ROW cheap-selftest-disguise expect=0 got=0 held
+ROW cheap-self-receipt-exit3 expect=3 got=3 held
+ROW cheap-any-refusal-exit3 expect=3 got=3 held
+ROW cheap-prefix-needle-exit3 expect=3 got=3 held
+ROW cheap-unresolvable-exit2 expect=2 got=2 held
+ROW cheap-exit0-existing-r56-control expect=0 got=0 held
+ROW cheap-missing-exit3 expect=3 got=3 held
+REGISTRY_CHECK: held=8/8 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### weak needles vs UNMUTATED-F1
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/weak.json --tag c2-probe
+exit=0
+ROW w-any-refusal-drift expect=3 got=3 held
+ROW w-prefix-drift expect=3 got=3 held
+REGISTRY_CHECK: held=2/2 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### proposed rows vs M1-accept-on-drift(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --tag c2-probe
+exit=1
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=0 differs
+ROW g-exit2-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=2/3 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### cheap rows vs M1-accept-on-drift(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/cheap-registry.json --tag cheap-probe
+exit=1
+ROW cheap-echo-gate expect=0 got=0 held
+ROW cheap-selftest-disguise expect=0 got=1 differs
+ROW cheap-self-receipt-exit3 expect=3 got=3 held
+ROW cheap-any-refusal-exit3 expect=3 got=3 held
+ROW cheap-prefix-needle-exit3 expect=3 got=3 held
+ROW cheap-unresolvable-exit2 expect=2 got=2 held
+ROW cheap-exit0-existing-r56-control expect=0 got=0 held
+ROW cheap-missing-exit3 expect=3 got=3 held
+REGISTRY_CHECK: held=7/8 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### weak needles vs M1-accept-on-drift(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/weak.json --tag c2-probe
+exit=1
+ROW w-any-refusal-drift expect=3 got=0 differs
+ROW w-prefix-drift expect=3 got=0 differs
+REGISTRY_CHECK: held=0/2 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### proposed rows vs M2-wrong-code(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --tag c2-probe
+exit=1
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=3 differs
+ROW g-exit2-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=2/3 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### cheap rows vs M2-wrong-code(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/cheap-registry.json --tag cheap-probe
+exit=1
+ROW cheap-echo-gate expect=0 got=0 held
+ROW cheap-selftest-disguise expect=0 got=1 differs
+ROW cheap-self-receipt-exit3 expect=3 got=3 held
+ROW cheap-any-refusal-exit3 expect=3 got=3 held
+ROW cheap-prefix-needle-exit3 expect=3 got=3 held
+ROW cheap-unresolvable-exit2 expect=2 got=2 held
+ROW cheap-exit0-existing-r56-control expect=0 got=0 held
+ROW cheap-missing-exit3 expect=3 got=3 held
+REGISTRY_CHECK: held=7/8 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### weak needles vs M2-wrong-code(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/weak.json --tag c2-probe
+exit=0
+ROW w-any-refusal-drift expect=3 got=3 held
+ROW w-prefix-drift expect=3 got=3 held
+REGISTRY_CHECK: held=2/2 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### proposed rows vs M3-exit0-unresolvable(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --tag c2-probe
+exit=1
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=3 held
+ROW g-exit2-unresolvable-certified expect=2 got=0 differs
+REGISTRY_CHECK: held=2/3 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### cheap rows vs M3-exit0-unresolvable(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/cheap-registry.json --tag cheap-probe
+exit=1
+ROW cheap-echo-gate expect=0 got=0 held
+ROW cheap-selftest-disguise expect=0 got=1 differs
+ROW cheap-self-receipt-exit3 expect=3 got=3 held
+ROW cheap-any-refusal-exit3 expect=3 got=3 held
+ROW cheap-prefix-needle-exit3 expect=3 got=3 held
+ROW cheap-unresolvable-exit2 expect=2 got=0 differs
+ROW cheap-exit0-existing-r56-control expect=0 got=0 held
+ROW cheap-missing-exit3 expect=3 got=3 held
+REGISTRY_CHECK: held=6/8 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### weak needles vs M3-exit0-unresolvable(in-place)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/weak.json --tag c2-probe
+exit=0
+ROW w-any-refusal-drift expect=3 got=3 held
+ROW w-prefix-drift expect=3 got=3 held
+REGISTRY_CHECK: held=2/2 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### proposed rows committed-mutant route M1
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --rev 94ec8ff2c4cd02d225d347920a3776cd23c876bb --tag c2-probe
+exit=1
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=0 differs
+ROW g-exit2-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=2/3 superseded=0
+
+
+### proposed rows committed-mutant route M2
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --rev 3a35b90967c163c801c40ec104c77c61bdf760eb --tag c2-probe
+exit=1
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=3 differs
+ROW g-exit2-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=2/3 superseded=0
+
+
+### proposed rows committed-mutant route M3
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --rev 4b7634cfbfdbbb24ef1a3d41fcee03a795247092 --tag c2-probe
+exit=1
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=3 held
+ROW g-exit2-unresolvable-certified expect=2 got=0 differs
+REGISTRY_CHECK: held=2/3 superseded=0
+
+
+### proposed rows at --rev F1 (hermetic baseline)
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/proposed.json --rev 64cd04a1923136db1779333877a5fc1767adc009 --tag c2-probe
+exit=0
+ROW g-exit0-identical-surface expect=0 got=0 held
+ROW g-exit3-content-drift expect=3 got=3 held
+ROW g-exit2-unresolvable-certified expect=2 got=2 held
+REGISTRY_CHECK: held=3/3 superseded=0
+
+
+### cheap rows at --rev BASE
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/clone --registry /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/cheap-registry.json --rev 5e3569969b532310d2b8a3d130901757a3df356b --tag cheap-probe
+exit=0
+ROW cheap-echo-gate expect=0 got=0 held
+ROW cheap-selftest-disguise expect=0 got=0 held
+ROW cheap-self-receipt-exit3 expect=3 got=3 held
+ROW cheap-any-refusal-exit3 expect=3 got=3 held
+ROW cheap-prefix-needle-exit3 expect=3 got=3 held
+ROW cheap-unresolvable-exit2 expect=2 got=2 held
+ROW cheap-exit0-existing-r56-control expect=0 got=0 held
+ROW cheap-missing-exit3 expect=3 got=3 held
+REGISTRY_CHECK: held=8/8 superseded=0
+
+
+### existing gate selftest row vs M1 in-place
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M1-accept-on-drift --tag new-r56
+exit=1
+ROW receipt-revision-gate-selftest expect=0 got=1 differs
+REGISTRY_CHECK: held=0/1 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### existing gate selftest row vs M2 in-place
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M2-wrong-code --tag new-r56
+exit=1
+ROW receipt-revision-gate-selftest expect=0 got=1 differs
+REGISTRY_CHECK: held=0/1 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+
+
+### existing gate selftest row vs M3 in-place
+$ (cwd=/fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable) python3 tools/registry-check.py --root /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/mut-M3-exit0-unresolvable --tag new-r56
+exit=1
+ROW receipt-revision-gate-selftest expect=0 got=1 differs
+REGISTRY_CHECK: held=0/1 superseded=0
+registry-check: warning: live --root mode runs rows in the lane; rows may write into the root (use --rev to grade a throwaway clone)
+

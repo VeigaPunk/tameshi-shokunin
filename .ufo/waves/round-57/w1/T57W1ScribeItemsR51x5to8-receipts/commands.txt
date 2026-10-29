@@ -1,0 +1,13 @@
+# commands run (all git calls read-only on the lane; mutating calls only in the scratch clone $S/clone)
+git -C tameshi-shokunin log --format=%h %cI -- corpus/lessons/round-51.md   (ef19d8e..base: no commits)
+git -C tameshi-shokunin log --format=%h %cI -- corpus/knowledge/fleet-kill-rate-ledger.md (ef19d8e..base: bcba892)
+git -C tameshi-shokunin merge-base --is-ancestor bcba892 5e35699   -> ancestor of base
+git -C tameshi-shokunin merge-base --is-ancestor bcba892 ef19d8e  -> NOT ancestor (exit 1)
+git -C tameshi-shokunin log --diff-filter=A --format=%H ... corpus/lessons/round-51-verifier-spotcheck.md -> ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4
+git grep -n 'lessons/round-51.md' / 'round-51.md:[0-9]' at base -> no anchored cites
+git grep -c 'corpus/lessons/round-51.md' in .ufo/evidence/round-21/coldread/ledger.json -> 0
+git grep -n 'drift-pins' / 'kagi' over corpus/lessons/round-5[2-6]*.md and .ufo/waves/round-5[3-6]* -> only round-52 Gate line 15 (rejected routing draft)
+git -C /home/vgpnk/Projects/shokunin show HEAD:.ufo/reports/round-5{2,3,4,5,6}/tameshi.md | grep -ci kagi -> 0 lines each (existence: blob for all five)
+git show base:.ufo/evidence/round-50/c1/measure.py  -> $S/measure50.py sha256 ceee320c9ad84c89a7846fd746a072a60758a465d25ff80343fb95e0bd88ae29 (byte-equal to lane working tree)
+round-50 measure.py imported by importlib (no edits); functions used: norm, show, check_evidence, measure, planned_ids (monkeypatched only in diagnostic runs)
+scratch fixture: git clone --shared lane $S/clone; checkout --detach base; fixture commits with -c user.name=fixture -c user.email=fixture@example.invalid -C $S/clone (toplevel asserted == $S/clone first)

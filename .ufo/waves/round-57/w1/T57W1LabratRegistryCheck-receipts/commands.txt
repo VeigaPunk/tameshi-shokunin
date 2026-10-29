@@ -1,0 +1,8 @@
+# Fixture (scratch): git clone --shared LANE CL; git -C CL checkout --detach BASE; switch -c r57-probe;
+# fixtures/r57-probe/positive.txt (rev=BASE), stale.txt (rev=BASE^); 7 probe rows appended to tools/registry.json;
+# commit by fixture identity; FIX = b9e08c13badb22179c2eb986b798f9b2b5ce78fb
+# Driver per row:  python3 LANE/tools/registry-check.py --root CL --rev FIX --only ROW [--json]
+# Control:         python3 LANE/tools/registry-check.py --root CL --rev BASE --only receipt-revision-gate-selftest
+# TMPDIR run:      TMPDIR=<scratch>/tmpdir python3 ... --rev FIX --only r57-probe-gate-held --json
+# Gate direct:     python3 tools/receipt-revision-gate.py --lane . --certified BASE   (in CL) -> rc=1 usage
+# Clone cost:      git clone -q --no-hardlinks -c core.hooksPath=/dev/null LANE <scratch>/costclone (13.572 s, 173M .git)

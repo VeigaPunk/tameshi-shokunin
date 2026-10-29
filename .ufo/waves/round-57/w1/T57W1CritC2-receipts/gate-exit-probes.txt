@@ -1,0 +1,34 @@
+## exit3 self-as-receipt
+$ python3 tools/receipt-revision-gate.py --lane . --certified HEAD --receipt tools/receipt-revision-gate.py:verdict
+exit=3
+GATE REFUSED tools/receipt-revision-gate.py role=verdict revs=deadbeefdead code=RECEIPT_REV_UNRESOLVABLE rev=deadbeefdead
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+
+## exit2 unresolvable certified
+$ python3 tools/receipt-revision-gate.py --lane . --certified deadbeefdeadbeef --receipt fixtures/c2/verdict-old.txt:verdict
+exit=2
+GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+
+## exit3 drift, --paths
+$ python3 tools/receipt-revision-gate.py --lane . --certified HEAD --paths fixtures/c2/surface-drift.paths --receipt fixtures/c2/verdict-old.txt:verdict
+exit=3
+GATE REFUSED fixtures/c2/verdict-old.txt role=verdict revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf code=RECEIPT_REV_CONTENT_DRIFT rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf drift=tools/receipt-revision-gate.py
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+
+## exit0 identical surface
+$ python3 tools/receipt-revision-gate.py --lane . --certified HEAD --paths fixtures/c2/surface-same.paths --receipt fixtures/c2/verdict-base.txt:verdict
+exit=0
+GATE OK fixtures/c2/verdict-base.txt role=verdict revs=5e3569969b532310d2b8a3d130901757a3df356b
+GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+
+## exit3 drift, EMPTY --paths file
+$ python3 tools/receipt-revision-gate.py --lane . --certified HEAD --paths /fast/scratch/hyaku/tameshi-r57/T57W1CritC2/empty.paths --receipt fixtures/c2/verdict-old.txt:verdict
+exit=3
+GATE REFUSED fixtures/c2/verdict-old.txt role=verdict revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf code=RECEIPT_REV_CONTENT_DRIFT rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf drift=<no --paths given: content identity is not checkable>
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+
+## exit3 drift, NO --paths
+$ python3 tools/receipt-revision-gate.py --lane . --certified HEAD --receipt fixtures/c2/verdict-old.txt:verdict
+exit=3
+GATE REFUSED fixtures/c2/verdict-old.txt role=verdict revs=c3e2ca9f020776b3d66c7af854fb82c834674fcf code=RECEIPT_REV_MISMATCH rev=c3e2ca9f020776b3d66c7af854fb82c834674fcf certified=64cd04a19231
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED

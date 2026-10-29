@@ -1,0 +1,12 @@
+# round-50 counter measure() (imported, unmodified) over fixture ledgers; defects = the four R51.5-8 items (routed_at ef19d8e, spot-check sha f3aab8dd...)
+# floors set to 0 so only per-row terms print; fixed_floor=0 declined_cap=99 this_round_floor=0
+[A as-written counter (planned regex R4x only)] rev=dc2cfde61b72 stat={'fixed': 1, 'open': 3, 'declined': 0, 'fixed_this_round': 0} nonzero={'open_unplanned': 3} total=3
+   EXPLAIN open-unplanned R51.5 / R51.6 / R51.8
+[A with R5x-aware planned regex (diagnostic)] rev=dc2cfde61b72 ... nonzero={'open_unplanned': 3} total=3
+[E planned R5x present, as-written regex] rev=37de375d6c79 stat={'fixed': 1, 'open': 3, ...} nonzero={'open_unplanned': 3} total=3
+[E planned R5x present, R5x-aware regex (diagnostic)] rev=37de375d6c79 stat={'fixed': 1, 'open': 3, ...} nonzero={} total=0
+[D R51.6 fixed by patch commit ac7f6c44, R51.8 still cites base lines 88] rev=491074cf054b stat={'fixed': 2, 'open': 2, ...'fixed_this_round': 1} nonzero={'evidence_bad': 1, 'open_unplanned': 1} total=2
+   EXPLAIN evidence-bad R51.8 excerpt-not-in-lines corpus/lessons/round-51.md   (the patch shifts :88 to :93)
+[D2 patch landed + R51.8 re-cited to :93] rev=fdf8faf2cc95 stat={'fixed': 2, 'open': 2, 'declined': 0, 'fixed_this_round': 1} nonzero={'open_unplanned': 2} total=2
+   EXPLAIN open-unplanned R51.5 / R51.8
+# reading: every evidence item resolves; R51.7 fixed passes; R51.6 fixed-by-patch passes (fixed_this_round=1); the only residual terms are open_unplanned, because the round-50 planned_ids() regex (measure.py:111, r'\bR4\d\.\d+\b') cannot match R5x ids.

@@ -1,0 +1,14 @@
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -50,9 +50,9 @@
+ 
+   | situation | rule | code |
+   |---|---|---|
+-  | a verdict receipt names another revision | refused unless its bytes equal the certified revision on the declared `--paths` surface | `RECEIPT_REV_MISMATCH` |
++  | a verdict receipt names another revision (a positive receipt gates identically) | refused unless its bytes equal the certified revision on the declared `--paths` surface | `RECEIPT_REV_MISMATCH` without `--paths`; with `--paths`: `RECEIPT_REV_CONTENT_DRIFT` if the surface drifted, else PASS |
+   | a positive control was scored at the freeze | refused: the freeze predates the work it certifies and drifts on the frozen surface | `RECEIPT_REV_CONTENT_DRIFT` (no `--paths`: `RECEIPT_REV_MISMATCH`) |
+-  | a control set's CTL lines name a revision absent from the repo | refused: the revision cannot be resolved, so nothing is certified | `RECEIPT_REV_UNRESOLVABLE` |
++  | a control set's CTL lines name a revision absent from the repo | refused: the revision cannot be resolved, so nothing is certified | `RECEIPT_REV_UNRESOLVABLE` (exit 3; an unresolvable `--certified` itself exits 2) |
+   | a receipt names no revision at all | refused: nothing is bound | `RECEIPT_REV_ABSENT` |
+ 
+ ## Source notes

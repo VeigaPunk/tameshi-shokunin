@@ -1,0 +1,11 @@
+$ python3 tools/receipt-revision-gate.py --help ; echo exit=$?
+usage: receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:ROLE[:REGEX] ... [--json] | --selftest
+exit=1
+
+$ python3 tools/receipt-revision-gate.py --lane . --certified deadbeefdeadbeef --receipt X:verdict
+GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+exit=2
+
+$ python3 tools/receipt-revision-gate.py --selftest | tail -1
+GATE_SELFTEST: 19/19 pass
+exit=0

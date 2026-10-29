@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-WVF23W3');
+    </script>
+    
+    
+    <meta charset="utf-8">
+    <meta content="initial-scale=1, minimum-scale=1, width=device-width" name="viewport"><title>Google SRE - Blameless Postmortem for System Resilience</title>
+    <meta name="description" content="Blameless postmortems in SRE culture. Incident study that focus on root cause analysis and preventive actions, for culture of continuous improvement.">
+
+    
+    <meta name="referrer" content="no-referrer" />
+    <link rel="canonical" href="https://sre.google/sre-book/postmortem-culture/">
+      <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+      <link rel="icon" type="image/png" sizes="32x32" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+      <link rel="icon" type="image/png" sizes="16x16" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+      <link rel="shortcut icon" href="/img/dynamic/sre-book/5f9eb2a891f8e628eee90de8b7199e3b.webp">
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700|Material+Icons"><link href="/css/sre-book.min.css" rel="stylesheet">
+    <script src="/js/detect.min.js"></script>
+  </head>
+
+  <body>
+    
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WVF23W3"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    
+    
+    <main>
+      <div>
+  <div id="curtain" class="menu-closed"></div>
+  <div class="header clearfix">
+    <a id="burger-menu" class="expand"></a>
+    <h2 class="chapter-title">
+      Chapter 15 - Postmortem Culture: Learning from Failure
+    </h2>
+  </div>
+  <div id="overlay-element" class="expands">
+    <div class="logo">
+      <a href="https://www.google.com">
+        <img src="/img/dynamic/sre-book/632142839b17938ba5b6f27f37695c51.webp" alt="Google">
+      </a>
+    </div>
+    <ol id="drop-down" class="dropdown-content"><li>
+        <a href="/sre-book/table-of-contents/" class="menu-buttons">Table of Contents</a>
+      </li>
+        <li>
+          <a href="/sre-book/foreword/" class="menu-buttons">
+            
+              Foreword
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/preface/" class="menu-buttons">
+            
+              Preface
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/part-I-introduction/" class="menu-buttons">
+            
+              Part I - Introduction
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/introduction/" class="menu-buttons">
+            
+              1. Introduction
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/production-environment/" class="menu-buttons">
+            
+              2. The Production Environment at Google, from the Viewpoint of an SRE
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/part-II-principles/" class="menu-buttons">
+            
+              Part II - Principles
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/embracing-risk/" class="menu-buttons">
+            
+              3. Embracing Risk
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/service-level-objectives/" class="menu-buttons">
+            
+              4. Service Level Objectives
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/eliminating-toil/" class="menu-buttons">
+            
+              5. Eliminating Toil
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/monitoring-distributed-systems/" class="menu-buttons">
+            
+              6. Monitoring Distributed Systems
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/automation-at-google/" class="menu-buttons">
+            
+              7. The Evolution of Automation at Google
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/release-engineering/" class="menu-buttons">
+            
+              8. Release Engineering
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/simplicity/" class="menu-buttons">
+            
+              9. Simplicity
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/part-III-practices/" class="menu-buttons">
+            
+              Part III - Practices
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/practical-alerting/" class="menu-buttons">
+            
+              10. Practical Alerting
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/being-on-call/" class="menu-buttons">
+            
+              11. Being On-Call
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/effective-troubleshooting/" class="menu-buttons">
+            
+              12. Effective Troubleshooting
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/emergency-response/" class="menu-buttons">
+            
+              13. Emergency Response
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/managing-incidents/" class="menu-buttons">
+            
+              14. Managing Incidents
+            
+          </a>
+        </li>
+      
+        <li class="active">
+          <a href="/sre-book/postmortem-culture/" class="menu-buttons">
+            
+              15. Postmortem Culture: Learning from Failure
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/tracking-outages/" class="menu-buttons">
+            
+              16. Tracking Outages
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/testing-reliability/" class="menu-buttons">
+            
+              17. Testing for Reliability
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/software-engineering-in-sre/" class="menu-buttons">
+            
+              18. Software Engineering in SRE
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/load-balancing-frontend/" class="menu-buttons">
+            
+              19. Load Balancing at the Frontend
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/load-balancing-datacenter/" class="menu-buttons">
+            
+              20. Load Balancing in the Datacenter
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/handling-overload/" class="menu-buttons">
+            
+              21. Handling Overload
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/addressing-cascading-failures/" class="menu-buttons">
+            
+              22. Addressing Cascading Failures
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/managing-critical-state/" class="menu-buttons">
+            
+              23. Managing Critical State: Distributed Consensus for Reliability
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/distributed-periodic-scheduling/" class="menu-buttons">
+            
+              24. Distributed Periodic Scheduling with Cron
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/data-processing-pipelines/" class="menu-buttons">
+            
+              25. Data Processing Pipelines
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/data-integrity/" class="menu-buttons">
+            
+              26. Data Integrity: What You Read Is What You Wrote
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/reliable-product-launches/" class="menu-buttons">
+            
+              27. Reliable Product Launches at Scale
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/part-IV-management/" class="menu-buttons">
+            
+              Part IV - Management
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/accelerating-sre-on-call/" class="menu-buttons">
+            
+              28. Accelerating SREs to On-Call and Beyond
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/dealing-with-interrupts/" class="menu-buttons">
+            
+              29. Dealing with Interrupts
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/operational-overload/" class="menu-buttons">
+            
+              30. Embedding an SRE to Recover from Operational Overload
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/communication-and-collaboration/" class="menu-buttons">
+            
+              31. Communication and Collaboration in SRE
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/evolving-sre-engagement-model/" class="menu-buttons">
+            
+              32. The Evolving SRE Engagement Model
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/part-V-conclusions/" class="menu-buttons">
+            
+              Part V - Conclusions
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/lessons-learned/" class="menu-buttons">
+            
+              33. Lessons Learned from Other Industries
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/conclusion/" class="menu-buttons">
+            
+              34. Conclusion
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/availability-table/" class="menu-buttons">
+            
+              Appendix A. Availability Table
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/service-best-practices/" class="menu-buttons">
+            
+              Appendix B. A Collection of Best Practices for Production Services
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/incident-document/" class="menu-buttons">
+            
+              Appendix C. Example Incident State Document
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/example-postmortem/" class="menu-buttons">
+            
+              Appendix D. Example Postmortem
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/launch-checklist/" class="menu-buttons">
+            
+              Appendix E. Launch Coordination Checklist
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/production-meeting/" class="menu-buttons">
+            
+              Appendix F. Example Production Meeting Minutes
+            
+          </a>
+        </li>
+      
+        <li>
+          <a href="/sre-book/bibliography/" class="menu-buttons">
+            
+              Bibliography
+            
+          </a>
+        </li>
+      
+    </ol>
+  </div>
+</div>
+
+      
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+  
+    
+    
+      
+    
+  
+
+  
+  
+    
+  
+
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+  
+
+    
+    <div id="maia-main" role="main">
+      <div class="content" id="content">
+        
+          
+          
+          
+          <h1 class="heading jumptargets" id="postmortem-culture-learning-from-failure">Postmortem Culture: Learning from Failure</h1>
+<p class="byline author">Written by John Lunney and Sue Lueder<br>Edited by Gary O’ Connor</p>
+<blockquote>
+  <p class="quote">The cost of failure is education.</p>
+  <p class="author">Devin Carraway</p>
+</blockquote>
+<p>As SREs, we work with large-scale, complex, distributed systems. We constantly enhance our services with new features and add new systems. Incidents and outages are inevitable given our scale and velocity of change. When an incident occurs, we fix the underlying issue, and services return to their normal operating conditions. Unless we have some formalized process of learning from these incidents in place, they may recur ad infinitum. Left unchecked, incidents can multiply in complexity or even cascade, overwhelming a system and its operators and ultimately impacting our users. Therefore, postmortems are an essential tool for SRE.</p>
+<p>The postmortem concept is well known in the technology industry <a href="/sre-book/bibliography#All12">[All12]</a>. A postmortem is a written record of an incident, its impact, the actions taken to mitigate or resolve it, the root cause(s), and the follow-up actions to prevent the incident from recurring. This chapter describes criteria for deciding when to conduct postmortems, some best practices around postmortems, and advice on how to cultivate a postmortem culture based on the experience we’ve gained over the years.</p>
+<h2 class="heading jumptargets" id="googles-postmortem-philosophy">Google’s Postmortem Philosophy</h2>
+<p>The primary goals of <a href="../../sre-book/example-postmortem/">writing a postmortem</a> are to ensure that the incident is documented, that all contributing root cause(s) are well understood, and, especially, that effective preventive actions are put in place to reduce the likelihood and/or impact of recurrence. A detailed survey of root-cause analysis techniques is beyond the scope of this chapter (instead, see <a href="/sre-book/bibliography#Roo04">[Roo04]</a>); however, articles, best practices, and tools abound in the system quality domain. Our teams use a variety of techniques for root-cause analysis and choose the technique best suited to their services. Postmortems are expected after any significant undesirable event. Writing a postmortem is not punishment—it is a learning opportunity for the entire company. The postmortem process does present an inherent cost in terms of time or effort, so we are deliberate in choosing when to write one. Teams have some internal flexibility, but common <a href="/workbook/postmortem-analysis/">postmortem triggers</a> include:</p>
+<ul>
+  <li>
+    User-visible downtime or degradation beyond a certain threshold
+  </li>
+  <li>
+    Data loss of any kind
+  </li>
+  <li>
+    On-call engineer intervention (release rollback, rerouting of traffic, etc.)
+  </li>
+  <li>
+    A resolution time above some threshold
+  </li>
+  <li>
+    A monitoring failure (which usually implies manual incident discovery)
+  </li>
+</ul>
+<p>It is important to define postmortem criteria before an incident occurs so that everyone knows when a postmortem is necessary. In addition to these objective triggers, any stakeholder may request a postmortem for an event.</p>
+<p>Blameless postmortems are a tenet of SRE culture. For a postmortem to be truly blameless, it must focus on identifying the contributing causes of the incident without indicting any individual or team for bad or inappropriate behavior. A blamelessly written postmortem assumes that everyone involved in an incident had good intentions and did the right thing with the information they had. If a culture of finger pointing and shaming individuals or teams for doing the &quot;wrong&quot; thing prevails, people will not bring issues to light for fear of punishment.</p>
+<p>Blameless culture originated in the healthcare and avionics industries where mistakes can be fatal. These industries nurture an environment where every &quot;mistake&quot; is seen as an opportunity to strengthen the system. When postmortems shift from allocating blame to investigating the systematic reasons why an individual or team had incomplete or incorrect information, effective prevention plans can be put in place. You can’t &quot;fix&quot; people, but you can fix systems and processes to better support people making the right choices when designing and maintaining complex systems.</p>
+<p>When an outage does occur, a postmortem is not written as a formality to be forgotten. Instead the postmortem is seen by engineers as an opportunity not only to fix a weakness, but to make Google more resilient as a whole. While a blameless postmortem doesn’t simply vent frustration by pointing fingers, it <em>should</em> call out where and how services can be improved. Here are two examples:</p>
+<dl class="desc-list">
+  <dt class="dt-heading jumptargets" id="pointing-fingers">Pointing fingers</dt>
+  <dd>&quot;We need to rewrite the entire complicated backend system! It’s been breaking weekly for the last three quarters and I’m sure we’re all tired of fixing things onesy-twosy. Seriously, if I get paged one more time I’ll rewrite it myself…&quot;</dd>
+  <dt class="dt-heading jumptargets" id="blameless">Blameless</dt>
+  <dd>&quot;An action item to rewrite the entire backend system might actually prevent these annoying pages from continuing to happen, and the maintenance manual for this version is quite long and really difficult to be fully trained up on. I’m sure our future on-callers will thank us!&quot;</dd>
+</dl>
+<h5 class="subheaders jumptargets" id="best-practice-avoid-blame-and-keep-it-constructive">Best Practice: Avoid Blame and Keep It Constructive</h5>
+<p>Blameless postmortems can be challenging to write, because the postmortem format clearly identifies the actions that led to the incident. Removing blame from a postmortem gives people the confidence to escalate issues without fear. It is also important not to stigmatize frequent production of postmortems by a person or team. An atmosphere of blame risks creating a culture in which incidents and issues are swept under the rug, leading to greater risk for the organization <a href="/sre-book/bibliography#Boy13">[Boy13]</a>.</p>
+<h1 class="heading jumptargets" id="collaborate-and-share-knowledge">Collaborate and Share Knowledge</h1>
+<p>We value collaboration, and the postmortem process is no exception. The postmortem workflow includes collaboration and knowledge-sharing at every stage.</p>
+<p>Our postmortem documents are Google Docs, with an in-house template (see <a href="/sre-book/example-postmortem/">Example Postmortem</a>). Regardless of the specific tool you use, look for the following key features:</p>
+<dl class="desc-list">
+  <dt class="italic jumptargets" id="real-time-collaboration">Real-time collaboration</dt>
+  <dd>Enables the rapid collection of data and ideas. Essential during the early creation of a postmortem.</dd>
+  <dt class="italic jumptargets" id="an-open-commenting-annotation">An open commenting/annotation system</dt>
+  <dd>Makes crowdsourcing solutions easy and improves coverage.</dd>
+  <dt class="italic jumptargets" id="email-notifications">Email notifications</dt>
+  <dd>Can be directed at collaborators within the document or used to loop in others to provide input.</dd>
+</dl>
+<p>Writing a postmortem also involves formal review and publication. In practice, teams share the first postmortem draft internally and solicit a group of senior engineers to assess the draft for completeness. Review criteria might include:</p>
+<ul>
+  <li>
+    Was key incident data collected for posterity?
+  </li>
+  <li>
+    Are the impact assessments complete?
+  </li>
+  <li>
+    Was the root cause sufficiently deep?
+  </li>
+  <li>
+    Is the action plan appropriate and are resulting bug fixes at appropriate priority?
+  </li>
+  <li>
+    Did we share the outcome with relevant stakeholders?
+  </li>
+</ul>
+<p>Once the initial review is complete, the postmortem is shared more broadly, typically with the larger engineering team or on an internal mailing list. Our goal is to share postmortems to the widest possible audience that would benefit from the knowledge or lessons imparted. Google has stringent rules around access to any piece of information that might identify an end-user,<sup><a class="jumptarget" id="id-D04I1SPc1iK-marker" href="#id-D04I1SPc1iK">80</a></sup> and even internal documents like postmortems never include such information.</p>
+<h5 class="subheaders jumptargets" id="best-practice-no-postmortem-left-unreviewed">Best Practice: No Postmortem Left Unreviewed</h5>
+<p>An unreviewed postmortem might as well never have existed. To ensure that each completed draft is reviewed, we encourage regular review sessions for postmortems. In these meetings, it is important to close out any ongoing discussions and comments, to capture ideas, and to finalize the state.</p>
+<p>Once those involved are satisfied with the document and its action items, the postmortem is added to a team or organization repository of past incidents.<sup><a class="jumptarget" id="id-4DBuqSVu9iy-marker" href="#id-4DBuqSVu9iy">81</a></sup> Transparent sharing makes it easier for others to find and learn from the postmortem.</p>
+<h1 class="heading jumptargets" id="introducing-a-postmortem-culture">Introducing a Postmortem Culture</h1>
+<p>Introducing a postmortem culture to your organization is easier said than done; such an effort requires continuous cultivation and reinforcement. We reinforce a collaborative postmortem culture through senior management’s active participation in the review and collaboration process. Management can encourage this culture, but blameless postmortems are ideally the product of engineer self-motivation. In the spirit of nurturing the postmortem culture, SREs proactively create activities that disseminate what we learn about system infrastructure. Some example activities include:</p>
+<dl class="desc-list">
+  <dt class="dt-heading jumptargets" id="postmortem-of-the-month">Postmortem of the month</dt>
+  <dd>In a monthly newsletter, an interesting and well-written postmortem is shared with the entire organization.</dd>
+  <dt class="dt-heading jumptargets" id="google-postmortem-group">Google+ postmortem group</dt>
+  <dd>This group shares and discusses internal and external postmortems, best practices, and commentary about postmortems.</dd>
+  <dt class="dt-heading jumptargets" id="postmortem-reading-clubs">Postmortem reading clubs</dt>
+  <dd>Teams host regular postmortem reading clubs, in which an interesting or impactful postmortem is brought to the table (along with some tasty refreshments) for an open dialogue with participants, nonparticipants, and new Googlers about what happened, what lessons the incident imparted, and the aftermath of the incident. Often, the postmortem being reviewed is months or years old!</dd>
+  <dt class="dt-heading jumptargets" id="wheel-of-misfortune">Wheel of Misfortune</dt>
+  <dd>New SREs are often treated to the Wheel of Misfortune exercise (see <a href="/sre-book/accelerating-sre-on-call#xref_training_disaster-rpg">Disaster Role Playing</a>), in which a previous postmortem is reenacted with a cast of engineers playing roles as laid out in the postmortem. The original incident commander attends to help make the experience as &quot;real&quot; as possible.</dd>
+</dl>
+<p>One of the biggest challenges of introducing postmortems to an organization is that some may question their value given the cost of their preparation. The following strategies can help in facing this challenge:</p>
+<ul>
+  <li>
+    Ease postmortems into the workflow. A trial period with several complete and successful postmortems may help prove their value, in addition to helping to identify what criteria should initiate a postmortem.
+  </li>
+  <li>
+    Make sure that writing effective postmortems is a rewarded and celebrated practice, both publicly through the social methods mentioned earlier, and through individual and team performance management.
+  </li>
+  <li>
+    Encourage senior leadership’s acknowledgment and participation. Even Larry Page talks about the high value of postmortems!
+  </li>
+</ul>
+<h5 class="subheaders jumptargets" id="best-practice-visibly-reward-people-for-doing-the-right-thing">Best Practice: Visibly Reward People for Doing the Right Thing</h5>
+<p>Google’s founders Larry Page and Sergey Brin host TGIF, a weekly all-hands held live at our headquarters in Mountain View, California, and broadcast to Google offices around the world. A 2014 TGIF focused on &quot;The Art of the Postmortem,&quot; which featured SRE discussion of high-impact incidents. One SRE discussed a release he had recently pushed; despite thorough testing, an unexpected interaction inadvertently took down a critical service for four minutes. The incident only lasted four minutes because the SRE had the presence of mind to roll back the change immediately, averting a much longer and larger-scale outage. Not only did this engineer receive two peer bonuses<sup><a class="jumptarget" id="id-JJ7umIlF2Tyuq-marker" href="#id-JJ7umIlF2Tyuq">82</a></sup> immediately afterward in recognition of his quick and level-headed handling of the incident, but he also received a huge round of applause from the TGIF audience, which included the company’s founders and an audience of Googlers numbering in the thousands. In addition to such a visible forum, Google has an array of internal social networks that drive peer praise toward well-written <a href="/sre-book/managing-incidents/">postmortems</a> and exceptional incident handling. This is one example of many where recognition of these contributions comes from peers, CEOs, and everyone in between.<sup><a class="jumptarget" id="id-9vbuDtvF7TXuQ-marker" href="#id-9vbuDtvF7TXuQ">83</a></sup></p>
+<h5 class="subheaders jumptargets" id="best-practice-ask-for-feedback-on-postmortem-effectiveness">Best Practice: Ask for Feedback on Postmortem Effectiveness</h5>
+<p>At Google, we strive to address problems as they arise and share innovations internally. We regularly survey our teams on how the postmortem process is supporting their goals and how the process might be improved. We ask questions such as: Is the culture supporting your work? Does writing a postmortem entail too much toil (see <a href="/sre-book/eliminating-toil/">Eliminating Toil</a>)? What best practices does your team recommend for other teams? What kinds of tools would you like to see developed? The survey results give the SREs in the trenches the opportunity to ask for improvements that will increase the effectiveness of the postmortem culture.</p>
+<p>Beyond the operational aspects of incident management and follow-up, postmortem practice has been woven into the culture at Google: it’s now a cultural norm that any significant incident is followed by a comprehensive postmortem.</p>
+<h1 class="heading jumptargets" id="conclusion-and-ongoing-improvements">Conclusion and Ongoing Improvements</h1>
+<p>We can say with confidence that thanks to our continuous investment in cultivating a postmortem culture, Google weathers fewer outages and fosters a better user experience. Our &quot;Postmortems at Google&quot; working group is one example of our commitment to the culture of blameless postmortems. This group coordinates postmortem efforts across the company: pulling together postmortem templates, automating postmortem creation with data from tools used during an incident, and helping automate data extraction from postmortems so we can perform trend analysis. We’ve been able to collaborate on best practices from products as disparate as YouTube, Google Fiber, Gmail, Google Cloud, AdWords, and Google Maps. While these products are quite diverse, they all conduct postmortems with the universal goal of learning from our darkest hours.</p>
+<p>With a large number of postmortems produced each month across Google, tools to aggregate postmortems are becoming more and more useful. These tools help us identify common themes and areas for improvement across product boundaries. To facilitate comprehension and automated analysis, we have recently enhanced our postmortem template (see <a href="/sre-book/example-postmortem/">Example Postmortem</a>) with additional metadata fields. Future work in this domain includes machine learning to help predict our weaknesses, facilitate real-time incident investigation, and reduce duplicate incidents.</p>
+<div class="footnotes"><p id="id-D04I1SPc1iK"><sup><a class="jumptargets" href="#id-D04I1SPc1iK-marker">80</a></sup>See <a href="https://www.google.com/policies/privacy/" target="_blank" rel="noopener noreferrer"><em>https://www.google.com/policies/privacy/</em></a>.</p><p id="id-4DBuqSVu9iy"><sup><a class="jumptargets" href="#id-4DBuqSVu9iy-marker">81</a></sup>If you’d like to start your own repository, Etsy has released <a href="https://github.com/etsy/morgue" target="_blank" rel="noopener noreferrer"><em>Morgue</em></a>, a tool for managing postmortems.</p><p id="id-JJ7umIlF2Tyuq"><sup><a class="jumptargets" href="#id-JJ7umIlF2Tyuq-marker">82</a></sup>Google’s Peer Bonus program is a way for fellow Googlers to recognize colleagues for exceptional efforts and involves a token cash reward.</p><p id="id-9vbuDtvF7TXuQ"><sup><a class="jumptargets" href="#id-9vbuDtvF7TXuQ-marker">83</a></sup>For further discussion of this particular incident, see <a href="/sre-book/emergency-response/">Emergency Response</a>.</p></div>
+        
+      </div>
+    </div>
+
+    
+    <div class="footer">
+      <div class="maia-aux">
+        <div class="previous">
+          
+            
+            
+            
+            
+              
+            
+
+            
+            <a href="/sre-book/managing-incidents/">
+              <p class="footer-caption">Previous</p>
+              <p class="chapter-link">
+                
+                  Chapter 14 - Managing Incidents
+                
+              </p>
+            </a>
+            
+          
+        </div>
+        <div class="next">
+          
+            
+            
+            
+            
+              
+            
+
+            
+            <a href="/sre-book/tracking-outages/">
+              <p class="footer-caption">Next</p>
+              <p class="chapter-link">
+                
+                  Chapter 16 - Tracking Outages
+                
+              </p>
+            </a>
+            
+          
+        </div>
+
+        
+          
+            
+              <p class="footer-link">Copyright © 2017 Google, Inc. Published by O'Reilly Media, Inc. Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a></p>
+            
+          
+        
+      </div>
+    </div>
+
+  
+
+      
+    </main>
+    
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-touch.min.js"></script><script src="/js/sre-book.min.js"></script><div style="display: none;"><svg xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <svg id="chevron-left" viewBox="0 0 24 24"><path d="M16.41 5.41L15 4l-8 8 8 8 1.41-1.41L9.83 12"></path></svg>
+    <svg id="chevron-right" viewBox="0 0 24 24"><path d="M7.59 18.59L9 20l8-8-8-8-1.41 1.41L14.17 12"></path></svg>
+    <svg id="expand-less" viewBox="0 0 24 24"><path d="M18.59 16.41L20 15l-8-8-8 8 1.41 1.41L12 9.83"></path></svg>
+    <svg id="expand-more" viewBox="0 0 24 24"><path d="M5.41 7.59L4 9l8 8 8-8-1.41-1.41L12 14.17"></path></svg>
+    <svg id="arrow-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+    <svg id="arrow-forward" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"></path></svg>
+    <svg id="arrow-upward" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"></path></svg>
+    <svg id="arrow-downward" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"></path></svg>
+    <svg id="arrow-left" viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"></path></svg>
+    <svg id="arrow-right" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"></path></svg>
+    <svg id="arrow-drop-up" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"></path></svg>
+    <svg id="arrow-drop-down" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"></path></svg>
+    <svg id="help" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"></path></svg>
+    <svg id="menu" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg>
+    <svg id="more-vert" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+    <svg id="drive-pdf" viewBox="0 0 24 24"><path d="M7 11.5h1v-1H7v1zM19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9.5 8.5c0 .83-.67 1.5-1.5 1.5H7v2H5.5V9H8c.83 0 1.5.67 1.5 1.5v1zm10-1H17v1h1.5V13H17v2h-1.5V9h4v1.5zm-5 3c0 .83-.67 1.5-1.5 1.5h-2.5V9H13c.83 0 1.5.67 1.5 1.5v3zm-2.5 0h1v-3h-1v3z"></path></svg>
+    <svg id="file-download" viewBox="0 0 24 24"><path d="M4 15h2v3h12v-3h2v3c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2m11.59-8.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5-1.41-1.41z"></path></svg>
+    <svg id="open-in-new" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path></svg>
+    <svg id="phone" viewBox="0 0 24 24"><path d="M16.01 14.46l-2.62 2.62a16.141 16.141 0 0 1-6.5-6.5l2.62-2.62a.98.98 0 0 0 .27-.9L9.13 3.8c-.09-.46-.5-.8-.98-.8H4c-.56 0-1.03.47-1 1.03a17.92 17.92 0 0 0 2.43 8.01 18.08 18.08 0 0 0 6.5 6.5 17.92 17.92 0 0 0 8.01 2.43c.56.03 1.03-.44 1.03-1v-4.15c0-.48-.34-.89-.8-.98l-3.26-.65a.99.99 0 0 0-.9.27z"></path></svg>
+    <svg id="email" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-.8 2L12 10.8 4.8 6h14.4zM4 18V7.87l8 5.33 8-5.33V18H4z"></path></svg>
+    <svg id="instagram" viewBox="0 0 24 24"><path d="M12,0 C15.3,0 15.7,0 17,0 C18.3,0.1 19.1,0.3 19.9,0.6 C20.7,0.9 21.3,1.3 22,2 C22.7,2.7 23.1,3.4 23.3,4.2 C23.6,5 23.8,5.8 23.9,7.1 C24,8.3 24,8.7 24,12 C24,15.3 24,15.7 23.9,16.9 C23.8,18.2 23.6,19 23.3,19.8 C23,20.6 22.6,21.2 21.9,21.9 C21.3,22.6 20.6,23 19.8,23.3 C19,23.6 18.2,23.8 16.9,23.9 C15.7,24 15.3,24 12,24 C8.7,24 8.3,24 7,24 C5.7,23.9 4.9,23.7 4.1,23.4 C3.3,23.1 2.7,22.7 2,22 C1.3,21.3 0.9,20.6 0.7,19.8 C0.4,19 0.2,18.2 0.1,16.9 C0,15.7 0,15.3 0,12 C0,8.7 0,8.3 0.1,7.1 C0.1,5.8 0.3,4.9 0.6,4.1 C0.9,3.4 1.3,2.7 2,2 C2.7,1.3 3.4,0.9 4.1,0.6 C4.9,0.3 5.8,0.1 7.1,0.1 C8.3,0 8.7,0 12,0 Z M12,2.2 C8.8,2.2 8.4,2.2 7.2,2.2 C6,2.3 5.3,2.5 4.9,2.6 C4.4,2.9 4,3.1 3.5,3.5 C3.1,3.9 2.8,4.3 2.6,4.9 C2.5,5.3 2.3,6 2.3,7.2 C2.2,8.4 2.2,8.8 2.2,12 C2.2,15.2 2.2,15.5 2.3,16.8 C2.3,17.9 2.5,18.6 2.7,19 C2.9,19.6 3.2,20 3.6,20.4 C4,20.8 4.4,21.1 5,21.3 C5.4,21.5 6,21.6 7.2,21.7 C8.4,21.8 8.8,21.8 12,21.8 C15.2,21.8 15.5,21.8 16.8,21.7 C17.9,21.7 18.6,21.5 19,21.3 C19.6,21.1 20,20.8 20.4,20.4 C20.8,20 21.1,19.6 21.3,19 C21.5,18.6 21.6,18 21.7,16.8 C21.8,15.6 21.8,15.2 21.8,12 C21.8,8.8 21.8,8.5 21.7,7.2 C21.7,6.1 21.5,5.4 21.3,5 C21.1,4.4 20.8,4 20.4,3.6 C20,3.2 19.6,2.9 19,2.7 C18.6,2.5 18,2.4 16.8,2.3 C15.6,2.2 15.2,2.2 12,2.2 Z M12,5.8 C15.4,5.8 18.2,8.6 18.2,12 C18.2,15.4 15.4,18.2 12,18.2 C8.6,18.2 5.8,15.4 5.8,12 C5.8,8.6 8.6,5.8 12,5.8 Z M12,16 C14.2,16 16,14.2 16,12 C16,9.8 14.2,8 12,8 C9.8,8 8,9.8 8,12 C8,14.2 9.8,16 12,16 Z M18.4,7 C17.6268014,7 17,6.37319865 17,5.6 C17,4.82680135 17.6268014,4.2 18.4,4.2 C19.1731986,4.2 19.8,4.82680135 19.8,5.6 C19.8,6.37319865 19.1731986,7 18.4,7 Z"></path></svg>
+    <svg id="link" viewBox="0 0 24 24"><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2z"></path><path d="M8 11h8v2H8z"></path></svg>
+    <svg id="post-blogger" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4 7v1c0 .55.45 1 1 1s1 .45 1 1v3c0 1.66-1.34 3-3 3H9c-1.66 0-3-1.34-3-3V8c0-1.66 1.34-3 3-3h4c1.66 0 3 1.34 3 3v1zm-6.05 1h2.6c.55 0 1-.45 1-1s-.45-1-1-1h-2.6c-.55 0-1 .45-1 1s.45 1 1 1zM14 13H9.95c-.55 0-1 .45-1 1s.45 1 1 1H14c.55 0 1-.45 1-1s-.45-1-1-1z"></path></svg>
+    <svg id="post-facebook" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 2v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v7h-3v-7h-2v-3h2V7.5C13 5.57 14.57 4 16.5 4H19z"></path></svg>
+    <svg id="post-linkedin" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 19H5v-9h3v9zM6.5 8.31c-1 0-1.81-.81-1.81-1.81S5.5 4.69 6.5 4.69s1.81.81 1.81 1.81S7.5 8.31 6.5 8.31zM19 19h-3v-5.3c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V19h-3v-9h3v1.2c.52-.84 1.59-1.4 2.5-1.4 1.93 0 3.5 1.57 3.5 3.5V19z"></path></svg>
+    <svg id="share" viewBox="0 0 24 24"><path d="M18 16c-.79 0-1.5.31-2.03.81L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.53.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.48.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.05 4.12c-.05.22-.09.45-.09.69 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3zm0-12c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"></path></svg>
+    <svg id="twitter" viewBox="0 0 24 24"><path d="M7.5,21.8c9.1,0,14-7.5,14-14c0-0.2,0-0.4,0-0.6c1-0.7,1.8-1.6,2.5-2.5c-0.9,0.4-1.8,0.7-2.8,0.8c1-0.6,1.8-1.6,2.2-2.7 c-1,0.6-2,1-3.1,1.2c-0.9-1-2.2-1.6-3.6-1.6c-2.7,0-4.9,2.2-4.9,4.9c0,0.4,0,0.8,0.1,1.1C7.7,8.1,4.1,6.1,1.7,3.1 C1.2,3.9,1,4.7,1,5.6c0,1.7,0.9,3.2,2.2,4.1C2.4,9.7,1.6,9.5,1,9.1c0,0,0,0,0,0.1c0,2.4,1.7,4.4,4,4.8c-0.4,0.1-0.8,0.2-1.3,0.2 c-0.3,0-0.6,0-0.9-0.1c0.6,2,2.4,3.4,4.6,3.4c-1.7,1.3-3.8,2.1-6.1,2.1c-0.4,0-0.8,0-1.2-0.1C2.2,20.9,4.8,21.8,7.5,21.8"></path></svg>
+    <svg id="video-youtube" viewBox="0 0 24 24"><path d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path></svg>
+    <svg id="video-youtube-white" viewBox="0 0 24 24"><path fill="#fff" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path></svg>
+    <svg id="video-youtube-black" viewBox="0 0 24 24"><path fill="#000" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path><polygon fill="#fff" points="9.6,15.5 9.6,8.5 16,12.1 "></polygon></svg>
+    <svg id="video-youtube-red" viewBox="0 0 24 24"><path fill="#f00" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path><polygon fill="#fff" points="9.6,15.5 9.6,8.5 16,12.1 "></polygon></svg>
+    <svg id="video-youtube-white" viewBox="0 0 24 24"><path fill="#fff" d="M23.74 7.1s-.23-1.65-.95-2.37c-.91-.96-1.93-.96-2.4-1.02C17.04 3.47 12 3.5 12 3.5s-5.02-.03-8.37.21c-.46.06-1.48.06-2.39 1.02C.52 5.45.28 7.1.28 7.1S.04 9.05 0 10.98V13c.04 1.94.28 3.87.28 3.87s.24 1.65.96 2.38c.91.95 2.1.92 2.64 1.02 1.88.18 7.91.22 8.12.22 0 0 5.05.01 8.4-.23.46-.06 1.48-.06 2.39-1.02.72-.72.96-2.37.96-2.37s.24-1.94.25-3.87v-2.02c-.02-1.93-.26-3.88-.26-3.88zM9.57 15.5V8.49L16 12.13 9.57 15.5z"></path></svg>
+    <svg id="close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+    <svg id="expand-all" viewBox="0 0 24 24"><path d="M16.59 9.41L18 8l-6-6-6 6 1.41 1.41L12 4.83l4.59 4.58zM12 19.17l-4.59-4.58L6 16l6 6 6-6-1.41-1.41L12 19.17z"></path></svg>
+    <svg id="play-circle-filled" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"></path></svg>
+    <svg id="search" viewBox="0 0 24 24"><path d="M20.49 19l-5.73-5.73C15.53 12.2 16 10.91 16 9.5A6.5 6.5 0 1 0 9.5 16c1.41 0 2.7-.47 3.77-1.24L19 20.49 20.49 19zM5 9.5C5 7.01 7.01 5 9.5 5S14 7.01 14 9.5 11.99 14 9.5 14 5 11.99 5 9.5z"></path></svg>
+    <svg id="google-color-logo" viewBox="0 0 74 24"><path fill="#4285F4" d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.39-1.34 3.1-.86.86-2.2 1.8-4.54 1.8-3.62 0-6.45-2.92-6.45-6.54s2.83-6.54 6.45-6.54c1.95 0 3.38.77 4.43 1.76L15.4 2.5C13.94 1.08 11.98 0 9.24 0 4.28 0 .11 4.04.11 9s4.17 9 9.13 9c2.68 0 4.7-.88 6.28-2.52 1.62-1.62 2.13-3.91 2.13-5.75 0-.57-.04-1.1-.13-1.54H9.24z"></path><path fill="#EA4335" d="M25 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"></path><path fill="#4285F4" d="M53.58 7.49h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.81c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.5 3.1 3.54.01 2.03-1.36 3.5-3.1 3.5z"></path><path fill="#FBBC05" d="M38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"></path><path fill="#34A853" d="M58 .24h2.51v17.57H58z"></path><path fill="#EA4335" d="M68.26 15.52c-1.3 0-2.22-.59-2.82-1.76l7.77-3.21-.26-.66c-.48-1.3-1.96-3.7-4.97-3.7-2.99 0-5.48 2.35-5.48 5.81 0 3.26 2.46 5.81 5.76 5.81 2.66 0 4.2-1.63 4.84-2.57l-1.98-1.32c-.66.96-1.56 1.6-2.86 1.6zm-.18-7.15c1.03 0 1.91.53 2.2 1.28l-5.25 2.17c0-2.44 1.73-3.45 3.05-3.45z"></path></svg>
+    <svg id="google-solid-logo" viewBox="0 0 74 24"><path d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.39-1.34 3.1-.86.86-2.2 1.8-4.54 1.8-3.62 0-6.45-2.92-6.45-6.54s2.83-6.54 6.45-6.54c1.95 0 3.38.77 4.43 1.76L15.4 2.5C13.94 1.08 11.98 0 9.24 0 4.28 0 .11 4.04.11 9s4.17 9 9.13 9c2.68 0 4.7-.88 6.28-2.52 1.62-1.62 2.13-3.91 2.13-5.75 0-.57-.04-1.1-.13-1.54H9.24zm15.76-2c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52zm28.58-8.03h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.81c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.5 3.1 3.54.01 2.03-1.36 3.5-3.1 3.5zM38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52zM58 .24h2.51v17.57H58zm10.26 15.28c-1.3 0-2.22-.59-2.82-1.76l7.77-3.21-.26-.66c-.48-1.3-1.96-3.7-4.97-3.7-2.99 0-5.48 2.35-5.48 5.81 0 3.26 2.46 5.81 5.76 5.81 2.66 0 4.2-1.63 4.84-2.57l-1.98-1.32c-.66.96-1.56 1.6-2.86 1.6zm-.18-7.15c1.03 0 1.91.53 2.2 1.28l-5.25 2.17c0-2.44 1.73-3.45 3.05-3.45z"></path></svg>
+    <svg id="pdf" viewBox="0 0 24 24">
+      <g id="Resources" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="SRE-Resources" transform="translate(-588.000000, -1354.000000)" fill-rule="nonzero">
+          <g id="Group-5" transform="translate(189.000000, 1096.000000)">
+            <g id="Group-9" transform="translate(32.000000, 258.000000)">
+              <g id="x-WebAssets-/-Card-Icons-/-PDF" transform="translate(367.000000, 0.000000)">
+                <g>
+                  <rect id="Rectangle-5-Copy" fill-opacity="0" fill="#FFFFFF" x="0" y="0" width="24" height="24"></rect>
+                  <path d="M12,14 L13.3333334,14 L13.3333334,10 L12,10 L12,14 Z M15.3333333,14 C15.3333333,15.1066666 14.44,16 13.3333334,16 L10,16 L10,8 L13.3333334,8 C14.44,8 15.3333333,8.89333337 15.3333333,10 L15.3333333,14 Z M22,10 L18.6666666,10 L18.6666666,11.3333333 L20.6666666,11.3333333 L20.6666666,13.3333334 L18.6666666,13.3333334 L18.6666666,16 L16.6666666,16 L16.6666666,8 L22,8 L22,10 Z M8.66666666,11.3333333 C8.66666666,12.44 7.77333333,13.3333334 6.66666667,13.3333334 L5.33333333,13.3333334 L5.33333333,16 L3.33333333,16 L3.33333333,8 L6.66666667,8 C7.77333333,8 8.66666666,8.89333337 8.66666666,10 L8.66666666,11.3333333 Z M2.66666667,0 C1.19333333,0 0,1.19333333 0,2.66666667 L0,21.3333333 C0,22.8066667 1.19333333,24 2.66666667,24 L21.3333333,24 C22.8066667,24 24,22.8066667 24,21.3333333 L24,2.66666667 C24,1.19333333 22.8066667,0 21.3333333,0 L2.66666667,0 Z M5.33333333,11.3333333 L6.66666667,11.3333333 L6.66666667,10 L5.33333333,10 L5.33333333,11.3333333 Z" id="icon-PDF/one-pager" fill="#1A73E8"></path>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <svg id="slides_icon" viewBox="0 0 32 32">
+      <g id="Resources" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="SRE-Resources" transform="translate(-221.000000, -1128.000000)" fill="#FFB800" fill-rule="nonzero">
+          <g id="Group-5" transform="translate(189.000000, 1096.000000)">
+            <path d="M60.442468,32 L35.5397443,32 C33.5831017,32 32,33.6 32,35.5555556 L32,60.4444444 C32,62.4 33.5831017,64 35.5397443,64 L60.442468,64 C62.3991106,64 64,62.4 64,60.4444444 L64,35.5555556 C64,33.6 62.3991106,32 60.442468,32 Z M60.442468,55.1111111 L35.5397443,55.1111111 L35.5397443,40.8888889 L60.442468,40.8888889 L60.442468,55.1111111 Z" id="Shape"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <svg id="video_icon" viewBox="0 0 24 24" fill="#1d72e8"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+    <svg id="rss-feed" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#1a73e8"><path d="M0 0h24v24H0V0z" fill="none"/><circle cx="6.18" cy="17.82" r="2.18"/><path d="M5.59 10.23c-.84-.14-1.59.55-1.59 1.4 0 .71.53 1.28 1.23 1.4 2.92.51 5.22 2.82 5.74 5.74.12.7.69 1.23 1.4 1.23.85 0 1.54-.75 1.41-1.59-.68-4.2-3.99-7.51-8.19-8.18zm-.03-5.71C4.73 4.43 4 5.1 4 5.93c0 .73.55 1.33 1.27 1.4 6.01.6 10.79 5.38 11.39 11.39.07.73.67 1.28 1.4 1.28.84 0 1.5-.73 1.42-1.56-.73-7.34-6.57-13.19-13.92-13.92z"/></svg>
+    <svg id="podcast" fill="none" height="32" viewBox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m14 12c0 .74-.4 1.38-1 1.72v8.28h-2v-8.28c-.6-.35-1-.98-1-1.72 0-1.1.9-2 2-2s2 .9 2 2zm-2-6c-3.31 0-6 2.69-6 6 0 1.74.75 3.31 1.94 4.4l1.42-1.42c-.83-.73-1.36-1.79-1.36-2.98 0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.19-.53 2.25-1.36 2.98l1.42 1.42c1.19-1.09 1.94-2.66 1.94-4.4 0-3.31-2.69-6-6-6zm0-4c-5.52 0-10 4.48-10 10 0 2.85 1.2 5.41 3.11 7.24l1.42-1.42c-1.55-1.46-2.53-3.53-2.53-5.82 0-4.41 3.59-8 8-8s8 3.59 8 8c0 2.29-.98 4.36-2.53 5.82l1.42 1.42c1.91-1.83 3.11-4.39 3.11-7.24 0-5.52-4.48-10-10-10z" fill="#1a73e8"></path></svg>
+    <svg id="video-yt" width="64px" height="47px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 47" fill="none">
+      <path d="M62.5778 7.29166C61.92 4.43333 59.744 2.16667 56.8889 1.45833C52 0 32 0 32.7111 0C32 0 12 0 7.11111 1.45833C4.256 2.16667 2.08 4.43333 1.42222 7.29166C0 12.5 0 23.3333 0 23.3333C0 23.3333 0 34.1667 1.42222 39.375C2.08 42.2333 4.256 44.5 7.11111 45.2083C12 46.6667 32 46.6667 32.7111 46.6667C32 46.6667 52 46.6667 56.8889 45.2083C59.744 44.5 61.92 42.2333 62.5778 39.375C64 34.1667 64 23.3333 64 23.3333C64 23.3333 64 12.5 62.5778 7.29166Z" fill="#FF0000"/>
+      <path d="M24 32V13.3333L41.3333 23.3846L24 32Z" fill="white"/>
+    </svg>
+    <svg id="article" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <path d="M23.0833 56.75H46V51.75H23.0833V56.75ZM23.0833 42.5H56.9167V37.5H23.0833V42.5ZM23.0833 28.25H56.9167V23.25H23.0833V28.25ZM15 70C13.6667 70 12.5 69.5 11.5 68.5C10.5 67.5 10 66.3333 10 65V15C10 13.6667 10.5 12.5 11.5 11.5C12.5 10.5 13.6667 10 15 10H65C66.3333 10 67.5 10.5 68.5 11.5C69.5 12.5 70 13.6667 70 15V65C70 66.3333 69.5 67.5 68.5 68.5C67.5 69.5 66.3333 70 65 70H15ZM15 65H65V15H15V65Z" fill="white"/>
+    </svg>
+    <svg id="filter-tick" xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">
+      <path d="M5.59 11.1698L1.42 6.99984L0 8.40984L5.59 13.9998L17.59 1.99984L16.18 0.589844L5.59 11.1698Z" fill="#1A73E8"/>
+    </svg>
+    <svg id="developer_mode_icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#041E49"><path d="M344-296 160-480l184-184 42 44-140 140 140 140-42 44Zm-144 30h60v76h440v-76h60v166q0 24-18 42t-42 18H260q-24 0-42-18t-18-42v-166Zm60-440h-60v-154q0-24 18-42t42-18h440q24 0 42 18t18 42v154h-60v-64H260v64Zm0 576v30h440v-30H260Zm0-700h440v-30H260v30Zm356 534-42-44 140-140-140-140 42-44 184 184-184 184ZM260-830v-30 30Zm0 700v30-30Z"/></svg>
+    <svg id="play" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="m17 13h16v23h-16z" fill="#202124"/><g fill="#fff"><path d="m0 0h48v48h-48z" fill-opacity=".01"/><path clip-rule="evenodd" d="m24 4c-11.04 0-20 8.96-20 20s8.96 20 20 20 20-8.96 20-20-8.96-20-20-20zm-4 29v-18l12 9z" fill-rule="evenodd"/></g></svg>
+    <svg id="watch-video" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m8 .5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm-1.5 10.875v-6.75l4.5 3.375z" fill="#1a73e8" fill-rule="evenodd"/></svg>
+    <svg id="modal-play" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="m17 13h16v23h-16z" fill="#202124"/><g fill="#fff"><path d="m0 0h48v48h-48z" fill-opacity=".01"/><path clip-rule="evenodd" d="m24 4c-11.04 0-20 8.96-20 20s8.96 20 20 20 20-8.96 20-20-8.96-20-20-20zm-4 29v-18l12 9z" fill-rule="evenodd"/></g></svg>
+    <svg id="modal-pause" fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m20 38h-8v-28h8zm8 0v-28h8v28z" fill="#fff" fill-rule="evenodd"/></svg>
+    <svg id="circle-1" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#4285F4"/><text x="14" y="20" font-size="14px" text-anchor="middle" fill="#FFFF">1</text></svg>
+    <svg id="circle-2" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#F9AB00"/><text x="14" y="20" text-anchor="middle" fill="#FFFF">2</text></svg>
+    <svg id="circle-3" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#34A853"/><text x="14" y="20" text-anchor="middle" fill="#FFFF">3</text></svg>
+    <svg id="twitter-X" height="24" viewBox="0 0 23 20" width="24" xmlns="http://www.w3.org/2000/svg" fill="none"><path d="m11.902344 8.464844 7.445312-8.464844h-1.765625l-6.464843 7.347656-5.160157-7.347656h-5.957031l7.808594 11.113281-7.808594 8.875h1.765625l6.824219-7.761719 5.453125 7.761719h5.957031zm-2.417969 2.746094-.789063-1.105469-6.296874-8.804688h2.710937l5.082031 7.105469.789063 1.105469 6.605469 9.238281h-2.710938zm0 0" fill="#000"/></svg>
+    <svg id="read-more-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 9L13.9425 7.9425L9.75 12.1275V3H8.25V12.1275L4.065 7.935L3 9L9 15L15 9Z" fill="white"/></svg>
+    <svg id="open-in-new-white" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none" style=""><path fill-rule="evenodd" clip-rule="evenodd" d="M12.25 12.25H1.75V1.75H7V0.25H1.75C0.9175 0.25 0.25 0.925 0.25 1.75V12.25C0.25 13.075 0.9175 13.75 1.75 13.75H12.25C13.075 13.75 13.75 13.075 13.75 12.25V7H12.25V12.25ZM8.5 0.25V1.75H11.1925L3.82 9.1225L4.8775 10.18L12.25 2.8075V5.5H13.75V0.25H8.5Z" fill="white"/></svg>
+    <svg id="load-more-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M15 9L13.9425 7.9425L9.75 12.1275V3H8.25V12.1275L4.065 7.935L3 9L9 15L15 9Z" fill="#1A73E8"/>
+    </svg>
+    <svg id="show-less-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M3 9L4.0575 10.0575L8.25 5.8725V15H9.75V5.8725L13.935 10.065L15 9L9 3L3 9Z" fill="#1A73E8"/>
+    </svg>
+
+  </defs>
+</svg></div>
+  </body>
+</html>

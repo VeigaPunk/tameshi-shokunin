@@ -1,0 +1,91 @@
+--- a/tools/registry.json
++++ b/tools/registry.json
+@@ -1305,6 +1305,88 @@
+    "tags": [
+     "new-r56"
+    ]
++  },
++  {
++   "name": "receipt-gate-accept",
++   "kind": "gate",
++   "argv": [
++    "python3",
++    "tools/receipt-revision-gate.py",
++    "--lane",
++    ".",
++    "--certified",
++    "5e3569969b532310d2b8a3d130901757a3df356b",
++    "--receipt",
++    "tools/fixtures/receipt-gate/accept.receipt:positive"
++   ],
++   "expect": {
++    "exit": 0,
++    "stdout_contains": [
++     "GATE OK tools/fixtures/receipt-gate/accept.receipt role=positive",
++     "GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS"
++    ]
++   },
++   "timeout_s": 60,
++   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:220",
++   "status": "active",
++   "tags": [
++    "new-r57"
++   ]
++  },
++  {
++   "name": "receipt-gate-content-drift",
++   "kind": "gate",
++   "argv": [
++    "python3",
++    "tools/receipt-revision-gate.py",
++    "--lane",
++    ".",
++    "--certified",
++    "5e3569969b532310d2b8a3d130901757a3df356b",
++    "--paths",
++    "tools/fixtures/receipt-gate/drift.paths",
++    "--receipt",
++    "tools/fixtures/receipt-gate/drift.receipt:positive"
++   ],
++   "expect": {
++    "exit": 3,
++    "stdout_contains": [
++     "code=RECEIPT_REV_CONTENT_DRIFT",
++     "GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED"
++    ]
++   },
++   "timeout_s": 60,
++   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:149-152",
++   "status": "active",
++   "tags": [
++    "new-r57"
++   ]
++  },
++  {
++   "name": "receipt-gate-unresolvable-certified",
++   "kind": "gate",
++   "argv": [
++    "python3",
++    "tools/receipt-revision-gate.py",
++    "--lane",
++    ".",
++    "--certified",
++    "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
++    "--receipt",
++    "tools/fixtures/receipt-gate/accept.receipt:positive"
++   ],
++   "expect": {
++    "exit": 2,
++    "stdout_contains": [
++     "GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE"
++    ]
++   },
++   "timeout_s": 60,
++   "source": "tools/receipt-revision-gate.py@5e3569969b532310d2b8a3d130901757a3df356b:190-194",
++   "status": "active",
++   "tags": [
++    "new-r57"
++   ]
+   }
+  ]
+ }

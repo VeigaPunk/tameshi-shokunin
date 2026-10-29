@@ -1,0 +1,105 @@
+[
+ {
+  "id": "R55.5",
+  "status": "fixed",
+  "keys": [
+   "R55.5",
+   "receipt-revision-gate.py",
+   "deciding-run.sh",
+   "RECEIPT_REV_CONTENT_DRIFT"
+  ],
+  "evidence": [
+   {
+    "path": "tools/receipt-revision-gate.py",
+    "lines": "4-7",
+    "excerpt": "The round-54/55 defect this gate exists for (ER-R54-1, R55.5): a positive control was scored at the FREEZE commit, which predated the work it certified, and every gate in the lane accepted it because none compared the `rev=` a receipt names with the revision under test."
+   },
+   {
+    "path": "tools/receipt-revision-gate.py",
+    "lines": "27-28",
+    "excerpt": "RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR"
+   },
+   {
+    "path": ".ufo/evidence/round-56/deciding-run.sh",
+    "lines": "120-122",
+    "excerpt": "python3 \"$SCR/gate/gate.py\" --lane \"$LANE\" --certified \"$REV\""
+   }
+  ],
+  "commit": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+  "note": "gate added and wired into deciding-run.sh gate 0b at c3e2ca9f (round-56 freeze); the item text (deciding gate never compares a CTL rev= with the revision under test) no longer holds at base",
+  "verdict_basis": "Cited surface changed at c3e2ca9f, which is an ancestor of base and not of fa48c06; both excerpts are absent at fa48c06 (the gate file does not exist there; the deciding script has no gate call there). Live run at base (clone, receipts saved): the gate refuses the round-54 positive control with RECEIPT_REV_CONTENT_DRIFT exit 3 at its named rev 077d431e6996 and passes it at its own rev exit 0, so the comparison is real.",
+  "seat": "T57W1ScribeItemsR55x5to7"
+ },
+ {
+  "id": "R55.6",
+  "status": "fixed",
+  "keys": [
+   "base.json",
+   "cand.json",
+   "rekey.json",
+   "coldread-HEAD.json",
+   "inputs.json"
+  ],
+  "evidence": [
+   {
+    "path": ".ufo/waves/round-55/w1/T55W1ExecRekeyPrep-receipts/base.json",
+    "lines": "1-2",
+    "excerpt": "{ \"calibration_restraint_score\": 8,"
+   },
+   {
+    "path": ".ufo/waves/round-55/w1/T55W1ExecRekeyPrep-receipts/cand.json",
+    "lines": "1-2",
+    "excerpt": "{ \"calibration_restraint_score\": 6,"
+   },
+   {
+    "path": ".ufo/waves/round-55/w1/T55W1ExecRekeyPrep-receipts/rekey.json",
+    "lines": "1-2",
+    "excerpt": "{ \"calibration_restraint_score\": 8,"
+   },
+   {
+    "path": ".ufo/waves/round-55/w1/T55W1ExecNoHarm-receipts/coldread-at-base.json",
+    "lines": "1-2",
+    "excerpt": "{ \"calibration_restraint_score\": 8,"
+   },
+   {
+    "path": ".ufo/waves/round-55/w1/T55W1CritClaimShape-receipts/coldread-HEAD.json",
+    "lines": "1-2",
+    "excerpt": "{ \"calibration_restraint_score\": 6,"
+   },
+   {
+    "path": ".ufo/waves/round-55/w2/T55W2ScoutColdread-receipts/inputs.json",
+    "lines": "1-2",
+    "excerpt": "{ \"floor\": \"0a2010acd1e92e4e332774050825e21bcfc7e079\","
+   }
+  ],
+  "commit": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+  "note": "the seven uncommitted round-55 receipts were committed at 981c5e8b (round-56 start) and re-swept at 6efd2a1; six are cited here, floor.json (not cited) is in the same commit",
+  "verdict_basis": "The seven paths are added by 981c5e8b, an ancestor of base and not of fa48c06; each is absent at fa48c06 (show returns nothing), so the cited excerpts are new. Every cited path is a round-55 receipt inside .ufo/waves (a SOFT path), so each path ends with one of the row keys as the resolver requires.",
+  "seat": "T57W1ScribeItemsR55x5to7"
+ },
+ {
+  "id": "R55.7",
+  "status": "declined",
+  "keys": [
+   "R55.7",
+   "after/c2.stdout",
+   "T55W1MutC2-receipts"
+  ],
+  "evidence": [
+   {
+    "path": "corpus/lessons/round-56.md",
+    "lines": "60-61",
+    "excerpt": "evidence: during the round-55 closure, `.ufo/evidence/round-55/after/c2.stdout` was rewritten after the tip with `C2_R55: rev=4c04c1d33377 … total=0"
+   },
+   {
+    "path": "corpus/lessons/round-56.md",
+    "lines": "108-108",
+    "excerpt": "| R55.7 | PARTIALLY DISPOSED — lane side repaired, harness side residual: the post-tip closure rewrites"
+   }
+  ],
+  "reason": "Closure-environment contamination: a non-lane seat wrote inside the lane tree during the round-55 closure (an uncommitted green C2_R55 line and 14 deleted receipts). The lane cannot fence a closure harness write scope; round 56 reverted the committed bytes at 6efd2a1 and recorded the residual as harness-owned, not lane debt.",
+  "note": "closure-environment, not lane debt; the spot-check itself labels it so (R55.7); lane side reverted at 6efd2a1 (round 56), harness side residual",
+  "verdict_basis": "The spot-check item says \"closure-environment contamination (not lane debt)\"; the cited round-56 lesson records the same and records the lane-side revert at 6efd2a1 with the harness-side residual. Declined is the status the spec reserves for closure-environment items; no lane file change can address a concurrent seat writing outside its scope.",
+  "seat": "T57W1ScribeItemsR55x5to7"
+ }
+]

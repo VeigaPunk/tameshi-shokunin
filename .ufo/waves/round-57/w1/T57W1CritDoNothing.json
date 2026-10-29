@@ -1,0 +1,48 @@
+{
+  "seat": "T57W1CritDoNothing",
+  "lane": "tameshi",
+  "round": 57,
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "lane_head_at_end": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "installs": [],
+  "c1": {
+    "counter_staged_sha256": "936a520c31af5746ae8e5cf212c920db95d35f610c18e32de2a16f80c716fe85",
+    "defects_staged_sha256": "bef2293ba3db863b03247e9867b11aa2501aa54af0b098ce0f974817f485dee9",
+    "items": 51,
+    "scratch_pin_note": "controls ran on a scratch copy with DEFECTS_SHA256 set to the defects sha256; self=fec8bba613ef is that copy",
+    "controls": [
+      {"name": "C1_CTL_0", "kind": "baseline", "total": 77, "pass": false, "rows": "0/51", "agree": "0/51", "fixed": 0, "declined": 0, "thisround": 0, "terms": {"missing": 51, "fixed_short": 20, "this_round_short": 6}},
+      {"name": "C1_CTL_DECLINE", "kind": "do-nothing (a) all declined", "total": 63, "pass": false, "rows": "50/51", "agree": "50/51", "fixed": 0, "declined": 50, "thisround": 0, "terms": {"missing": 1, "declined_over": 36, "fixed_short": 20, "this_round_short": 6}},
+      {"name": "C1_CTL_OPEN", "kind": "do-nothing (b) all open + Planned paragraph", "total": 27, "pass": false, "rows": "50/51", "agree": "50/51", "fixed": 0, "declined": 0, "thisround": 0, "terms": {"missing": 1, "open": 50, "fixed_short": 20, "this_round_short": 6}},
+      {"name": "C1_CTL_FAB", "kind": "do-nothing (c) fixed, literal excerpt, newest touching commit", "total": 45, "pass": false, "rows": "50/51", "agree": "12/51", "fixed": 50, "declined": 0, "thisround": 0, "terms": {"missing": 1, "fixed_bad": 38, "this_round_short": 6}},
+      {"name": "C1_CTL_FAB_SEARCH", "kind": "adversarial (c) fresh-excerpt search", "total": 15, "pass": false, "rows": "50/51", "agree": "42/51", "fixed": 50, "declined": 0, "thisround": 0, "terms": {"missing": 1, "fixed_bad": 8, "this_round_short": 6}},
+      {"name": "C1_CTL_FAB_TEXT", "kind": "probe: one commit quotes excerpts into a new file (no repair)", "total": 0, "pass": true, "rows": "51/51", "agree": "51/51", "fixed": 51, "declined": 0, "thisround": 51, "terms": {}},
+      {"name": "C1_CTL_FAB_TEXT_APPEND", "kind": "probe: one commit appends quotes to LOG.md (no repair)", "total": 1, "pass": false, "rows": "51/51", "agree": "50/51", "fixed": 51, "declined": 0, "thisround": 50, "terms": {"fixed_bad": 1}}
+    ]
+  },
+  "c2": {
+    "counter_staged_sha256": "7d49e3c493b3096f3375bc19ba960049faf6ef76590c4ed2674dbb69a5d2b9cd",
+    "mutants_sha256": "d51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de",
+    "controls": [
+      {"name": "C2_CTL_0", "kind": "baseline", "total": 11, "pass": false, "arms": {"rows": 6, "executed": 0, "mutants": 3, "skill": 1, "codes": 0, "cell": 1}},
+      {"name": "C2_CTL_HELP", "kind": "do-nothing (a) three --help rows claiming 0/2/3", "total": 8, "pass": false, "arms": {"rows": 0, "executed": 3, "mutants": 3, "skill": 1, "codes": 0, "cell": 1}},
+      {"name": "C2_CTL_HELP_HONEST", "kind": "variant (a): --help rows expecting exit 1", "total": 8, "pass": false, "arms": {"rows": 3, "executed": 0, "mutants": 3, "skill": 1, "codes": 0, "cell": 1}},
+      {"name": "C2_CTL_HARD", "kind": "do-nothing (b) three hard-wired fixture rows", "total": 4, "pass": false, "arms": {"rows": 0, "executed": 0, "mutants": 2, "skill": 1, "codes": 0, "cell": 1}},
+      {"name": "C2_CTL_SKILL", "kind": "do-nothing (c) RECEIPT tokens deleted from Standing rules", "total": 12, "pass": false, "arms": {"rows": 6, "executed": 0, "mutants": 3, "skill": 1, "codes": 1, "cell": 1}},
+      {"name": "C2_CTL_STACK", "kind": "cheap honest-looking set: hard rows + SKILL row + cell corrected", "total": 2, "pass": false, "arms": {"rows": 0, "executed": 0, "mutants": 2, "skill": 0, "codes": 0, "cell": 0}},
+      {"name": "C2_CTL_SKILLMAP", "kind": "probe: bogus verdict map 0 ok; 2 ok; 3 ok", "total": 10, "pass": false, "arms": {"rows": 6, "executed": 0, "mutants": 3, "skill": 0, "codes": 0, "cell": 1}},
+      {"name": "C2_CTL_REF", "kind": "liveness: stack + genuine drift row", "total": 0, "pass": true, "arms": {"rows": 0, "executed": 0, "mutants": 0, "skill": 0, "codes": 0, "cell": 0}}
+    ]
+  },
+  "findings": [
+    {"id": "F1", "axis": "C1 fixed arm", "type": "counter defect", "summary": "a single commit that only quotes excerpts into a new file reaches C1_R57_PASS=true; freshness treats an absent-at-routing path as fresh", "fix": "refuse keyed paths absent at routed_at; require item id in fixing commit message or keyed path named by the spot-check item"},
+    {"id": "F2", "axis": "C1 target", "type": "target defect", "summary": "R56.7 keys have zero admissible BASE hits (spot-check and SOFT paths only); every control shows missing=1", "fix": "freeze-time key admissibility check; re-key R56.7"},
+    {"id": "F3", "axis": "C1 reporting", "type": "reporting defect", "summary": "fixed=/declined= count rows that fail their own checks (CTL_FAB: fixed=50, agree=12/51)", "fix": "count only agreeing rows"},
+    {"id": "F4", "axis": "C1 agree arm", "type": "weak", "summary": "a search-based do-nothing agrees on 42/51 rows by citing unrelated later commits", "fix": "F1 (ii) first"},
+    {"id": "F5", "axis": "C2 skill arm", "type": "counter defect", "summary": "skill arm is presence-only; a digits-only verdict map 0 ok; 2 ok; 3 ok passes", "fix": "require exit-2/3 code names and PASS in the verdict-map cell"},
+    {"id": "F6", "axis": "C2 mutants arm", "type": "no defect", "summary": "hard-wired rows kill only M3; a genuine drift row kills 3/3 (CTL_REF PASS)", "fix": "none"},
+    {"id": "F7", "axis": "harness", "type": "my fault", "summary": "first C2 run used an invalid registry source field; registry-check rc=2 correctly propagated; fixed", "fix": "none"}
+  ],
+  "receipts_dir": ".ufo/waves/round-57/w1/T57W1CritDoNothing-receipts/",
+  "report": ".ufo/waves/round-57/w1/T57W1CritDoNothing.md"
+}

@@ -1,0 +1,103 @@
+[
+ {
+  "id": "R56.5",
+  "status": "open",
+  "seat": "T57W1ScribeItemsR56x5to7",
+  "keys": [
+   "controls.sh",
+   "pre-regist",
+   "own-receipts",
+   "OWN_A"
+  ],
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-56/controls.sh",
+    "lines": "3-3",
+    "excerpt": "Phase A (before the deciding run): every control must reach its pre-registered verdict."
+   },
+   {
+    "path": ".ufo/evidence/round-56/controls.sh",
+    "lines": "4-5",
+    "excerpt": "Phase B (after the ledger bind): the positive controls are scored AT the revision they"
+   },
+   {
+    "path": ".ufo/evidence/round-56/c2/measure.py",
+    "lines": "205-205",
+    "excerpt": "a_raw = show(lane, rev, OWN_A)"
+   },
+   {
+    "path": ".ufo/evidence/round-56/c2/measure.py",
+    "lines": "208-210",
+    "excerpt": "if a_raw is None or b_raw is None or paths_raw is None: total += 1 own = 'own-receipts-missing'"
+   }
+  ],
+  "note": "R56.5 at base: controls.sh header names only Phase A/B, no generation pre-registration; C2 arm 5 reads the committed own controls (show OWN_A) and only checks presence, no producer/provenance discriminator. Fix staged in round 57 by T57W1ExecControls (one generation, recomputed); not a round-56 edit.",
+  "verdict_basis": "Still true at base 5e35699: the frozen header (lines 3-5) pre-registers Phase A/B only and mentions no bootstrap or scored generation; the arm-5 code reads committed receipts via show(OWN_A) (line 205) and reports only missing-or-present (lines 208-210); grep of controls.sh for generation|bootstrap|provenance|producer and of c2/measure.py for provenance|producer returns nothing. No later commit exists, so fixed is impossible (routed_at equals base).",
+  "triage": "fixable-cheap",
+  "fix_note": "Fix already staged in round 57 by T57W1ExecControls at .ufo/waves/round-57/w1/T57W1ExecControls/stage/.ufo/evidence/round-57/controls.sh (header: ONE GENERATION, controls recomputed, never read). Round-56 frozen files are not edited. Counter-side discriminator is the round-57 C2 counter (T57W1ExecC2Counter); no pinned cold-read input touched."
+ },
+ {
+  "id": "R56.6",
+  "status": "open",
+  "seat": "T57W1ScribeItemsR56x5to7",
+  "keys": [
+   "receipt-revision-gate",
+   "registry.json",
+   "exit 3",
+   "selftest"
+  ],
+  "evidence": [
+   {
+    "path": "tools/registry.json",
+    "lines": "1277-1277",
+    "excerpt": "\"name\": \"receipt-revision-gate-selftest\","
+   },
+   {
+    "path": "tools/registry.json",
+    "lines": "1279-1279",
+    "excerpt": "\"kind\": \"selftest\","
+   },
+   {
+    "path": "tools/receipt-revision-gate.py",
+    "lines": "25-25",
+    "excerpt": "Codes (each a named refusal, exit 3):"
+   },
+   {
+    "path": "tools/receipt-revision-gate.py",
+    "lines": "192-194",
+    "excerpt": "codes=RECEIPT_REV_UNRESOLVABLE' % len(receipts)) return 2"
+   }
+  ],
+  "note": "R56.6 at base: the only registry row naming the gate is the selftest row (kind selftest, expects GATE_SELFTEST 19/19). The exit map is in the gate header (exit 3) and the unresolvable branch (exit 2). No gate-kind row exists. Folds into the round-57 registry rows (T57W1ExecRegistryRows) rather than a separate patch.",
+  "verdict_basis": "Still true at base: tools/registry.json holds one receipt-revision row (line 1277), kind selftest (line 1281), and no gate-kind row whose argv names tools/receipt-revision-gate.py; the 0/2/3 map sits in the gate header (line 25 exit 3) and the unresolvable branch (lines 192-194 return 2). No later commit exists, so fixed is impossible at base.",
+  "triage": "fixable-costly",
+  "fix_note": "Adding a gate-kind row for receipt-revision-gate.py edits tools/registry.json, which 148 cold-read entries pin under 16 headings: \"## Context gate classification and explicit exit classes — round 15\" (17), \"## Live-tree re-pin and entry-command monitor — round 17\" (22), \"### Round-17 gate/probe registry — re-pin and monitor\" (14), \"### Round-18 gate/probe registry — routed-defect closure\" (20), \"### Round-20 gate/probe registry — frozen receipt instruments\" (13), \"### Round-21 gate/probe registry — finite environment differential\" (18), \"### Round-26 gate/probe registry — report interop\" (6), \"## Standing rules\" (4), \"### The service's limits — what tameshi refuses to mutation-test\" (5), \"### Triggers T1–T3 and the re-pin rule\" (5), \"## Mutation-sweep recipe — numbered steps; bounded cold-read evidence\" (5), \"## The operator's runbook and the six-leg regression (round 10, measured)\" (14), \"### Where to enter — four readers\" (1), \"## Seventh recorded case and full-page cold-read — round 16\" (2), \"## Ninth recorded case — round 26\" (1), \"## The cadence's first scheduled tick, and the service's limits (round 9, measured)\" (1). No separate patch staged: the round-57 registry rows (T57W1ExecRegistryRows) must make the same edit, so the L1 folds it there and pays the cost once."
+ },
+ {
+  "id": "R56.7",
+  "status": "open",
+  "seat": "T57W1ScribeItemsR56x5to7",
+  "keys": [
+   "C0/PIN",
+   "byte changed after",
+   "receipt-revision-binding.md",
+   "SOURCES.md"
+  ],
+  "evidence": [
+   {
+    "path": "corpus/lessons/round-56.md",
+    "lines": "318-319",
+    "excerpt": "No `SKILL.md`, `corpus/QUALITY.md`, `corpus/SOURCES.md`, `corpus/knowledge/`, `tools/` or ledger byte changed after C0/PIN"
+   },
+   {
+    "path": "corpus/knowledge/receipt-revision-binding.md",
+    "lines": "207-207",
+    "excerpt": "## Errata — round 56 wave-2 re-open (2026-10-28)"
+   }
+  ],
+  "note": "R56.7 at base: the lesson still states no byte changed after C0/PIN. QUALITY.md +31, SOURCES.md +2 and receipt-revision-binding.md +39 landed in 877eede between C0 c0137451 and PIN 8c20d5c. Errata staged as an append-only block in corpus/lessons/round-56.md (not pinned by the cold-read ledger).",
+  "verdict_basis": "Still true at base: corpus/lessons/round-56.md lines 318-319 carry the false sentence; git log c0137451..8c20d5c -- corpus/QUALITY.md corpus/SOURCES.md corpus/knowledge lists only 877eede, and git diff --stat c0137451 8c20d5c shows QUALITY +31, SOURCES +2, knowledge +39, so the sentence is false for the C0-to-PIN interval (the spot-check D-CF1 says the same). The base lesson has no errata for it.",
+  "triage": "fixable-cheap",
+  "fix_note": "Errata patch staged: stage/corpus/lessons/round-56.md (full file = base + one appended errata block; diff at .ufo/waves/round-57/w1/T57W1ScribeItemsR56x5to7/round-56-lesson-errata.diff). corpus/lessons/round-56.md is not an input of any cold-read ledger entry (checked), so no pinned input changes."
+ }
+]
