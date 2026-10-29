@@ -1,0 +1,187 @@
+{
+  "schema": "tameshi-seat-report-v1",
+  "seat": "T57W2RevSkillTruth",
+  "round": 57,
+  "wave": 2,
+  "lane": "tameshi",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "content_commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9",
+  "axis_judged": "operability",
+  "milestone": "gate truth vs SKILL and registry rows at C0",
+  "verdict": "The three committed registry rows are TRUE at C0 and TRUE in every descendant constructible; the standing-rules table they certify is half true (D1); the drift row does not discriminate the case it is named for (D3); the C2 counter's mutants arm is dead at every committed revision because mutants.json is not in the tree (D2).",
+  "lane_edited": false,
+  "lane_mutating_git_run": false,
+  "environment": {
+    "python": "3.14.8",
+    "git": "2.56.0",
+    "tools_installed": [],
+    "pacman_transactions": 0,
+    "scratch": "/fast/scratch/hyaku/tameshi-r57/T57W2RevSkillTruth (removed on exit)"
+  },
+  "gate_bytes": {
+    "sha256": "c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9",
+    "identical_at_base_and_c0": true
+  },
+  "registry_check": {
+    "command": "python3 tools/registry-check.py --rev ca75c2674645ab6bdadeecb8584007c74342bfa9 --tag new-r57",
+    "stdout": [
+      "ROW receipt-gate-accept expect=0 got=0 held",
+      "ROW receipt-gate-content-drift expect=3 got=3 held",
+      "ROW receipt-gate-unresolvable-certified expect=2 got=2 held",
+      "REGISTRY_CHECK: held=3/3 superseded=0"
+    ],
+    "rc": 0,
+    "held": "3/3",
+    "at_wave1_evidence_commit_06e9849": "held=3/3",
+    "full_registry_base": "held=46/50 superseded=7",
+    "full_registry_c0": "held=49/53 superseded=7",
+    "pre_existing_red_rows_identical_at_both": [
+      "mutate-and-run-regression",
+      "sources-census",
+      "verify-round15",
+      "mte-interop-check"
+    ]
+  },
+  "c2_counter": {
+    "command": "python3 .ufo/evidence/round-57/c2/measure.py --lane LANE --rev ca75c2674645ab6bdadeecb8584007c74342bfa9 --work W --explain",
+    "verdict_line": "C2_R57: self=7d49e3c493b3 rev=ca75c2674645ab6bdadeecb8584007c74342bfa9 gate_rows=3 exits=0,2,3 held=3/3 mutants=0/3 skill_row=1 codes_known=4/4 standing_cell=ok total=3 C2_R57_PASS=false",
+    "shortfalls": {"rows": 0, "executed": 0, "mutants": 3, "skill": 0, "codes": 0, "cell": 0},
+    "cause": "mutants.json is read from the git object at the measured revision (.ufo/evidence/round-57/c2/mutants.json) and that path is not committed at ca75c26 nor at 06e9849",
+    "with_tree_present_via_dry_c2": "C2_R57: ... held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R57_PASS=true",
+    "mutants_killed": {"M1": "receipt-gate-content-drift", "M2": "receipt-gate-content-drift", "M3": "receipt-gate-unresolvable-certified"}
+  },
+  "gate_truth_table_at_c0": {
+    "codes_reachable": 11,
+    "codes_dead": 0,
+    "exits_observed": [0, 1, 2, 3],
+    "mismatch_code": "RECEIPT_REV_MISMATCH (only without --paths)",
+    "content_drift_code": "RECEIPT_REV_CONTENT_DRIFT (only with --paths)",
+    "positive_and_verdict_identical": true,
+    "agrees_with_w1_exec_standing_rules": true,
+    "agrees_with_w1_rev_gate_surface": true,
+    "matrix": [
+      {"role": "verdict", "paths": "absent", "rev": "other", "code": "RECEIPT_REV_MISMATCH", "exit": 3},
+      {"role": "verdict", "paths": "surface.txt", "rev": "other", "code": "none", "exit": 0},
+      {"role": "verdict", "paths": "surface.txt+moved.txt", "rev": "other", "code": "RECEIPT_REV_CONTENT_DRIFT", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "other", "code": "RECEIPT_REV_MISMATCH", "exit": 3},
+      {"role": "positive", "paths": "surface.txt", "rev": "other", "code": "none", "exit": 0},
+      {"role": "positive", "paths": "surface.txt+moved.txt", "rev": "other", "code": "RECEIPT_REV_CONTENT_DRIFT", "exit": 3},
+      {"role": "positive", "paths": "empty file", "rev": "other", "code": "RECEIPT_REV_CONTENT_DRIFT", "exit": 3},
+      {"role": "positive", "paths": "missing file", "rev": "other", "code": "none", "exit": 1, "note": "uncaught FileNotFoundError traceback, no usage text"},
+      {"role": "verdict", "paths": "absent", "rev": "no rev token", "code": "RECEIPT_REV_ABSENT", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "two revs", "code": "RECEIPT_REV_AMBIGUOUS", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "deadbeefdeadbeef", "code": "RECEIPT_REV_UNRESOLVABLE", "exit": 3},
+      {"role": "control", "paths": "absent", "rev": "ancestors", "code": "none", "exit": 0},
+      {"role": "control", "paths": "absent", "rev": "non-ancestor", "code": "RECEIPT_CONTROL_NOT_ANCESTOR", "exit": 3},
+      {"role": "control", "paths": "absent", "rev": "two revs", "code": "none", "exit": 0},
+      {"role": "verdict", "paths": "absent", "rev": "c2", "code": "RECEIPT_DIGEST_MISMATCH", "exit": 3},
+      {"role": "verdict", "paths": "absent", "rev": "c2", "code": "RECEIPT_REQUIRED_LINE_MISSING", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "-", "code": "RECEIPT_MISSING", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "-", "code": "RECEIPT_EMPTY", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "-", "code": "RECEIPT_NOT_BLOB", "exit": 3},
+      {"role": "positive", "paths": "absent", "rev": "certified unresolvable", "code": "RECEIPT_REV_UNRESOLVABLE", "exit": 2},
+      {"role": "-", "paths": "absent", "rev": "lane missing", "code": "RECEIPT_REV_UNRESOLVABLE", "exit": 2},
+      {"role": "bogus", "paths": "absent", "rev": "-", "code": "none", "exit": 1, "note": "usage"},
+      {"role": "-", "paths": "absent", "rev": "no receipts", "code": "none", "exit": 1, "note": "usage"},
+      {"role": "-", "paths": "absent", "rev": "flag without value", "code": "none", "exit": 1, "note": "uncaught IndexError traceback"}
+    ]
+  },
+  "findings": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "title": "SKILL.md:53 standing-rules row: the code cell contradicts the row's own rule cell for the no---paths case, and there is no cell for a declared-but-empty --paths file",
+      "evidence": "SKILL.md:53 (rule cell says 'with no --paths the code is RECEIPT_REV_MISMATCH', code cell says RECEIPT_REV_CONTENT_DRIFT); measured: positive/old/no-paths -> RECEIPT_REV_MISMATCH exit 3; positive/old/paths-empty-file -> RECEIPT_REV_CONTENT_DRIFT exit 3 with detail '<no --paths given: content identity is not checkable>' although --paths WAS given",
+      "affected": ["SKILL.md:53"],
+      "counter_blind_spot": "the counter's cell arm builds only the --paths fixture, so it reads ok; its codes arm is satisfied because both tokens are in CODES",
+      "recommended_fix": "amend the rule cell to state the three-way truth, and add a table row whose first cell does not start with 'a verdict receipt names another revision' (the counter matches that prefix and takes the first hit)",
+      "staged_by_seat": false,
+      "staged_fix_reason": "SKILL.md byte changes are the L1's to install and must be re-keyed under rekey-r57-<c0> in wave 3"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "title": "the C2 counter's mutants arm is dead at every committed revision: mutants.json is untracked, so C2_R57_PASS=false total=3 at C0 and at the wave-1 commit",
+      "evidence": "measure.py reads MUTANTS_PATH via show(lane, rev, ...) at the measured revision; git ls-tree -r ca75c26 -- .ufo/evidence/round-57 lists only coldread-referent-r56.md (same at 06e9849); counter output 'shortfall mutants=3', 'mutants: mutants.json unavailable or pin mismatch', 'C2_R57_PASS=false total=3'",
+      "affected": [".ufo/evidence/round-57/c2/mutants.json (install)", ".ufo/evidence/round-57/c2/measure.py (install)"],
+      "staged_copy_exists": ".ufo/waves/round-57/w1/T57W1ExecC2Counter/stage/.ufo/evidence/round-57/c2/{measure.py,mutants.json}",
+      "sha256_verified": {"mutants.json": "d51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de", "measure.py": "7d49e3c493b3096f3375bc19ba960049faf6ef76590c4ed2674dbb69a5d2b9cd"},
+      "recommended_fix": "install both files into the lane tree at the content commit the deciding run grades; with the tree present the same counter at the same bytes prints mutants=3/3 total=0 C2_R57_PASS=true",
+      "staged_by_seat": false,
+      "staged_fix_reason": "the install is the L1's, and the staged copies already exist under the wave-1 seat's stage/ tree"
+    },
+    {
+      "id": "D3",
+      "severity": "low-medium",
+      "title": "the committed drift row does not discriminate 'the path was added' from 'the path's bytes changed'; a mutant that breaks content-identity on an existing surface survives all three rows",
+      "evidence": "the drift surface corpus/lessons/round-56-verifier-spotcheck.md is MISSING at receipt rev c34e2b1 and EXISTS at certified rev 5e35699 (git cat-file -e on both); mutant M4 (drifted_paths returns only paths added between revs) leaves 'REGISTRY_CHECK: held=3/3 superseded=0' while wrongly accepting a same-path-different-bytes receipt (PASS rc=0 where the pristine gate gives RECEIPT_REV_CONTENT_DRIFT rc=3); positive control M1 is killed by the same method (held=2/3); mutant M6 (added-only inverted) is killed (held=2/3)",
+      "counter_blind_spot": "the counter's cell arm DOES catch M4 (its fixture is a same-path byte change: M4 -> emitted=[] exit=0 -> standing_cell=WRONG:fixture); the gap is in the registry ROW set, not in the counter",
+      "affected": ["tools/fixtures/receipt-gate/drift.paths", "tools/fixtures/receipt-gate/drift.receipt", "tools/registry.json"],
+      "recommended_fix": "re-make the drift fixture over a surface whose bytes differ between two revs where it exists at both (no path in corpus/ differs in bytes between c34e2b1 and 5e35699 while existing at both - measured) and add a registry row for the added-file case",
+      "staged_by_seat": false,
+      "staged_fix_reason": "a new fixture requires a content commit by the L1's installer"
+    },
+    {
+      "id": "D4",
+      "severity": "low",
+      "title": "registry-check validates the `source` field's shape only; it never resolves the revision nor checks that the cited line means what the row asserts",
+      "evidence": "repointing receipt-gate-content-drift's source to tools/receipt-revision-gate.py@5e35699...:1 (not the drift branch) leaves held=3/3 rc=0; registry-check.py:108 SOURCE_RE = ^[^@]+@[0-9a-f]{7,40}:[0-9]+(-[0-9]+)?$",
+      "affected": ["tools/registry-check.py"],
+      "note": "the three C0 rows' pins are correct today (verified at 5e35699: :220 is the verdict return, :149-152 is the drift branch, :190-194 is the certified-resolution/return-2 block); this is a lane-wide property of registry-check, recorded as residual risk not as a defect of the C0 rows",
+      "staged_by_seat": false
+    },
+    {
+      "id": "D5",
+      "severity": "low",
+      "title": "SKILL.md:1547's scratch cell omits the /tmp fallback clause that the registry's own scratch_root cell states",
+      "evidence": "with TMPDIR set to a non-existent directory: tempfile.gettempdir() -> /tmp, the selftest prints GATE_SELFTEST: 19/19 pass and exits 0, and grep -c 'could-not-evaluate' over the output is 0; the registry's receipt-revision-gate-selftest scratch_root cell states the fallback and that the round-55 scratch-root contract is not implemented by this frozen instrument",
+      "affected": ["SKILL.md:1547"],
+      "recommended_fix": "add the fallback clause to the scratch cell in the same re-key pass; the gate itself is frozen and correctly documented in the registry",
+      "staged_by_seat": false
+    }
+  ],
+  "code_coverage": {
+    "codes_total": 11,
+    "in_skill_standing_rules": ["RECEIPT_REV_ABSENT", "RECEIPT_REV_CONTENT_DRIFT", "RECEIPT_REV_MISMATCH", "RECEIPT_REV_UNRESOLVABLE"],
+    "not_in_skill_md": ["RECEIPT_MISSING", "RECEIPT_EMPTY", "RECEIPT_NOT_BLOB", "RECEIPT_REV_AMBIGUOUS", "RECEIPT_CONTROL_NOT_ANCESTOR", "RECEIPT_DIGEST_MISMATCH", "RECEIPT_REQUIRED_LINE_MISSING"],
+    "scoped_elsewhere": "the gate's own header docstring lists all 11 by name; the registry's receipt-revision-gate-selftest scratch_root cell enumerates all 11; corpus/knowledge/gate-row-exit-map.md (landed at C0) tabulates all 11",
+    "unscoped_codes": [],
+    "emitted_by_the_three_c0_rows": ["RECEIPT_REV_CONTENT_DRIFT", "RECEIPT_REV_UNRESOLVABLE"],
+    "emitted_by_no_registry_row": ["RECEIPT_MISSING", "RECEIPT_EMPTY", "RECEIPT_NOT_BLOB", "RECEIPT_REV_ABSENT", "RECEIPT_REV_AMBIGUOUS", "RECEIPT_REV_MISMATCH", "RECEIPT_CONTROL_NOT_ANCESTOR", "RECEIPT_DIGEST_MISMATCH", "RECEIPT_REQUIRED_LINE_MISSING"]
+  },
+  "shelf_life": {
+    "holds_3_of_3": [
+      "baseline at C0",
+      "descendant commit touching an unrelated file (corpus/UNRELATED-TOUCH.txt); certified rev 5e35699 and receipt rev c34e2b1 both still resolve in the descendant",
+      "descendant commit changing the drift surface corpus/lessons/round-56-verifier-spotcheck.md",
+      "descendant commit deleting the drift surface",
+      "descendant commit repointing tools/fixtures/receipt-gate/drift.paths at another path",
+      "live mode (no --rev) at C0",
+      "the real lane's wave-1 evidence commit 06e9849"
+    ],
+    "rots_to": [
+      {"perturbation": "descendant commit editing accept.receipt's rev= token", "result": "held=2/3; receipt-gate-accept expect=0 got=3 differs"},
+      {"perturbation": "descendant commit renaming accept.receipt", "result": "held=2/3; receipt-gate-accept expect=0 got=3 differs"},
+      {"perturbation": "descendant commit repointing drift.paths at a path that differs in neither pinned rev", "result": "held=0/1 on that row; expect=3 got=0 differs"},
+      {"perturbation": "history rewritten so 5e35699 and c34e2b1 become unreachable (orphan + ref delete + gc --prune=now)", "result": "held=1/3; receipt-gate-accept expect=0 got=2 differs; receipt-gate-content-drift expect=3 got=2 differs"}
+    ],
+    "fuzz_answer": "yes - receipt-gate-content-drift still holds after the drift surface changes later, and even after it is deleted, because the gate compares the two named historical revisions rather than the working tree",
+    "statement": "the rows are stable against everything the lane does ordinarily and rot only under edits to tools/fixtures/receipt-gate/, a repoint of drift.paths at a non-drifting path, or a history rewrite; the first two are caught by the C2 counter's executed arm on every run, the third is the only silent one and shows up as got=2 in the same counter output"
+  },
+  "residual_risk": [
+    "the gate's own header docstring still says 'Codes (each a named refusal, exit 3)' and 'Exit 0 iff PASS' - the exit-2 path and the exit-1 traceback path are undocumented there; the gate is frozen, but SKILL.md:1547 and corpus/knowledge/gate-row-exit-map.md now disagree with it",
+    "the registry's receipt-revision-gate-selftest scratch_root cell says every named refusal is at exit 3, while the exit-2 row C0 added emits RECEIPT_REV_UNRESOLVABLE at exit 2 - the registry contradicts itself on that one code's exit class",
+    "SKILL.md:1547's '1 usage' is narrower than the truth: exit 1 also covers an uncaught traceback (missing --paths file), which the C0 knowledge doc states correctly",
+    "the source field of the three C0 rows is correct today but unverified by any tool",
+    "not measured here: the --json schema on the exit-2 path (confirmed only that --json is ignored there), the PermissionError branch on an unreadable receipt, and the RECEIPT_REV_AMBIGUOUS per-role asymmetry"
+  ],
+  "receipts": [
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/truth-table.py",
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/truth-table.txt",
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/descendant-test.sh",
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/descendant-test.txt",
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/rot-test.sh",
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/rot-test.txt",
+    ".ufo/waves/round-57/w2/T57W2RevSkillTruth-receipts/mutant-tests.txt"
+  ]
+}

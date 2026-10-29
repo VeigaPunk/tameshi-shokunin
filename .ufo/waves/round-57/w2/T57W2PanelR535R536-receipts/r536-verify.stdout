@@ -1,0 +1,37 @@
+# R53.6 verification at BASE 5e3569969b532310d2b8a3d130901757a3df356b
+
+## A. the defect as routed, reproduced at the round-53 tip (ab3a972, when R53.6 was written)
+$ git show ab3a972:tools/env-diff.py > $S/env-diff-r53.py
+$ TMPDIR=/nonexistent/path/xyz python3 $S/env-diff-r53.py --selftest   # round-53 tip bytes
+rc=1
+    raise RuntimeError(
+        "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+RuntimeError: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/path/xyz' (could-not-evaluate)
+
+## B. at BASE, the same invocation on the lane's own bytes
+$ TMPDIR=/nonexistent/path/xyz python3 tools/env-diff.py --selftest   # BASE
+rc=2
+ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: '/nonexistent/path/xyz' (could-not-evaluate)
+
+## C. all seven tools at BASE, TMPDIR set-but-unusable
+bash-witness-study     rc=2  WITNESS_STUDY: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR i
+env-diff               rc=2  ENVDIFF_SETUP: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR i
+evidence-disposition   rc=2  evidence-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root
+pin-disposition        rc=2  pin-disposition.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMP
+registry-check         rc=2  registry-check: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR 
+context-capture        rc=2  context-capture.py: could-not-evaluate: cannot create clone scratch under the scratch root: TMP
+repeat-control         rc=2  repeat-control: could-not-evaluate: cannot create clone scratch under the scratch root: TMPDIR 
+
+## D. the nit: tools/context-capture.py:27 at BASE
+$ sed -n '27p' tools/context-capture.py
+      / the scratch root (tempfile.mkdtemp(dir=tempfile.gettempdir())), pinning literal expected ids and
+
+## E. commits after the spot-check file was added that changed the cited surface
+$ git merge-base --is-ancestor 2ef0a5a 59c3810 && echo '59c3810 is AFTER 2ef0a5a (spot-check add)'
+59c3810 is AFTER 2ef0a5a (spot-check add)
+$ git log --oneline -S'except ScratchRootUnusable' -- tools/pin-disposition.py
+59c3810 round-54: C0 content — one scratch-root exit class across seven tools (ScratchRootUnusable -> exit 2), registry scratch_root cells, scratch-root contract note + S277-S279, SKILL three-arm rule, lesson Gate/Mistakes
+$ git show 59c3810 -- tools/pin-disposition.py | grep -E '^[+-].*(ScratchRootUnusable|EXIT_CANNOT)'
++class ScratchRootUnusable(RuntimeError):
++            raise ScratchRootUnusable(
++        except ScratchRootUnusable as exc:

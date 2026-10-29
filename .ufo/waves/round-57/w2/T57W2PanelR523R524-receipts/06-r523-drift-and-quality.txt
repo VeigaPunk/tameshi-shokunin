@@ -1,0 +1,13 @@
+$ grep -n '\*\*drift\*\*' .ufo/evidence/round-51/coldread/reads/T51W2Read12.md | cut -c1-100
+50:**holds-hist** = historical record, corroborated; **drift** = false/stale at CAND.
+55:| P2 | "`--regression` replays **six** embedded legs" | **drift** | True at the pinned sha; at CA
+63:| P10 | "default scratch `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`" | **drift** | At the sh
+$ sed -n '88,90p' .ufo/evidence/round-51/coldread/reads/T51W2Read12.md
+- **F1 (six vs ten):** CAND runner has ten wired legs — header `:84`, list `:88-97`, `nlegs=10` `:1510`, selftest 10-leg assert `:2075`. **Drift confirmed.**
+- **F2 (TMPDIR):** CAND honors `TMPDIR` for regression/workdir/selftest scratch (`:1432`, `:491`, `:1555`; header `:149-150`). **Drift confirmed** — the section's literal `/tmp/…` default is false at CAND.
+- **F3 (selftest total):** ran the runner `--selftest` at CAND from a `--shared` clone in scratch (TMPDIR under scratch): rc 0, `MUTATE_SELFTEST: 107/107 pass` / `VERDICT: PASS`. The receipt's 80/80 is r10-2-historical. **Drift confirmed; tool green at CAND.**
+$ grep -oE '^### Criterion [0-9]+' corpus/QUALITY.md | sort -t' ' -k3 -n | tail -3
+### Criterion 105
+### Criterion 106
+### Criterion 107
+$ grep -rniE 'reviewer-seat|quote truncation' corpus/QUALITY.md; echo rc=0

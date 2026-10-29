@@ -1,0 +1,28 @@
+# receipt 3 — R51.8: the BASE gate code, run verbatim, still refuses a byte-identical re-score
+# fixture: scratch repo, git -C $D, commits with -c user.name=fixture -c user.email=fixture@example.invalid
+
+--- BASE gate0 extracted verbatim from 5e35699:.ufo/evidence/round-56/deciding-run.sh (lines 94-101) ---
+     1	CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-a.stdout.sha256 $E/control/controls-b.stdout $E/control/controls-b.exit $E/control/controls-b.stdout.sha256"
+     2	for f in $CONTROLS; do
+     3	  git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+     4	  [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+     5	  [ "$(git cat-file -s "$REV:$f")" -gt 0 ] || { echo "DECIDING_REFUSED control-receipt-empty $f"; exit 3; }
+     6	  c=$(git log -1 --format=%H "$REV" -- "$f")
+     7	  git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
+     8	done
+
+$ git -C $D rev-parse --show-toplevel -> /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/tmp.ySvbGdRG3g  (fixture dir: /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/tmp.ySvbGdRG3g)
+
+PRE  (commit that last touched the receipt) = 0a9506c86f39a0946785de2fa1ab96d807486423
+FREEZE                                     = 4b9123a77c57c73c861fc6c7ecbfc17acf54fe0c
+REV                                        = 3612db2da124fe6fcd6e8c0427432ce0538d6f1b
+
+$ git -C $D log -1 --format=%H $REV -- .ufo/evidence/round-56/control/controls-a.stdout
+0a9506c86f39a0946785de2fa1ab96d807486423
+  (the gate's c= ; the re-score committed no new blob, so last-touch is still the PRE-freeze commit)
+
+--- run the extracted BASE gate0 verbatim with REV/FREEZE ---
+DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-56/control/controls-a.stdout
+
+=> RESULT: the BASE gate refuses a receipt that was re-scored byte-identically AFTER the freeze.
+   The defect R51.8 describes (recency dated by git last-touch, not by a freeze stamp) still holds at BASE.

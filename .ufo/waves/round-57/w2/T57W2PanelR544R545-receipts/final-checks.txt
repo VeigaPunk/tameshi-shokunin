@@ -1,0 +1,32 @@
+### R54.4 remaining checks
+$ git show 7e533b1:.ufo/evidence/round-54/c2/measure.py | sha256sum
+49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8  -
+$ git show c2108100:.ufo/evidence/round-54/c1/measure.py | sha256sum   (c1 at deciding rev; freeze pins d7749f84)
+d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812  -
+$ grep c1/measure.py .ufo/evidence/round-54/freeze.json
+  "c1/measure.py": "d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812",
+   "what": "c1/measure.py arm 3 matched the re-key directory against each traced file's basename; it now matches the DIRECTORY component of every traced path. Mechanical discovery bug, found by the binder dry run before any deciding invocation and before any control score; predicate, target and arms unchanged."
+   "what": "c1/measure.py arm 4 scanned only .ufo/waves/round-54/w1/; the round has two waves, so the arm now scans both w1/ and w2/ for reader reports. Discovery-path fix, predicate unchanged (a committed reader report pins the section's bytes at c0); found by wave-2 seat T54W2Exec04 before the deciding run."
+
+### the lane-tree lines that now hold the corrected values
+$ sed -n '2654,2666p' SCORECARD.md
+**ER-R54-4 - a stale counter digest.**
+Old: `49280fe5` for `c2/measure.py`. Corrected: `8528ee85` - the amendment-4
+bytes that decided. Receipt: `.ufo/evidence/round-54/freeze.json`, key
+`c2/measure.py`.
+
+**ER-R54-5 - finding counts that do not match the committed readers.**
+Old: 25 wave-1 findings; 22 wave-2 findings in 9 sections. Corrected (re-derived
+over the committed reader files, `-receipts/` JSON excluded): `w1=28 w2=25 sections=12`
+- 28 findings across 23 wave-1 reader reports, 25 across 12 of the 23 wave-2
+reports. Command: `git ls-tree -r --name-only <rev> -- .ufo/waves/round-54/w1`
+then a `findings` length sum per file (the round-55 c1 counter does exactly this
+at every revision).
+
+$ sed -n '58,59p' corpus/lessons/round-55.md
+| R54.4 | FIXED — the deciding c2 digest is `8528ee85` | `.ufo/evidence/round-54/freeze.json` |
+| R54.5 | FIXED — `w1=28 w2=25 sections=12`, re-derived from the committed reader files | `.ufo/waves/round-54/w1|w2/*Read*.json` |
+$ sed -n '2507,2509p' LOG.md   (lane LOG corrected to 28 wave-1 findings)
+opened this round). Content: C0 `59c38109` (four tools, registry, note, rows,
+SKILL three-arm rule, lesson Gate/Mistakes, QUALITY 105); C1 `99c3bc88` (28
+wave-1 reader findings adjudicated and fixed — stale line anchors including

@@ -1,0 +1,91 @@
+# T57W2PanelR511R512 — R51.2 receipts (lane base 5e3569969b532310d2b8a3d130901757a3df356b)
+
+## A. R51.2 item text (round-51 spot-check routed defect #2, bold label absent -> 2nd item)
+$ sed -n '124,132p' corpus/lessons/round-51-verifier-spotcheck.md
+## Routed defects for the lane next round
+
+1. **R51.1, registry gate made unsatisfiable.** Update the `mte-interop-check` row in `tools/registry.json` to the ten-leg panel and record the change in a scope monitor that allows it. Show `registry-check --only mte-interop-check` green at the fix revision with a committed receipt.
+2. **Stale SKILL statements.** Correct SKILL.md `:2136` "nine ledger legs", the runner row's `/tmp` write scope (the runner honours TMPDIR), and the runner line pointers at `:174`, `:211` and `:937-950` (R51.2/R51.3). Then re-key with fresh readers.
+3. **Cold-read re-key overstates.** `coldread/refresh.py:224-227` writes `wrong_expectations: 0` for every re-keyed section, but T51W2Read20 recorded false statements. Append a named correction to the round-21 ledger, or supersede those entries with the recorded counts, so the calibration record does not claim zero wrong expectations where a reader found some.
+4. **C3 counter / round21-measure.** Either make `tools/round21-measure.py --selftest` hermetic or give the counter a declared fleet-bound row class, with the counter amendment pre-registered (R51.4). Also run the C3 counter's missing mutation attack (R51.5).
+5. **Cross-domain routing owed to kagi.** File the `drift-pins.sh --selftest` unanchored verdict-word grep (`:400`, `:403`, plus the path-printing DRIFT line `:158`) as cross-domain evidence for kagi in the next report, as the entry promises. Do not edit kagi.
+6. **`## Gate` completeness.** List rejected candidates with reasons in the round lesson's `## Gate` section (LEARNING §Files), not only admits and touched rows.
+7. **Ledger cell.** `corpus/knowledge/fleet-kill-rate-ledger.md:119` still reads "unmeasured by sweep" for drift-pins. Append a supersession note pointing at case 10, following the round-8 precedent at `:280`.
+
+## B. 'nine ledger legs' at the round-51 base (ef19d8e1) -> the defect text
+$ git -C clone show ef19d8e1:SKILL.md | grep -n 'nine ledger legs'
+2136:| `tools/mte-interop.py` | gate with `--check`; selftest | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` · `--se
+
+## C. 'nine ledger legs' at LANE BASE -> should be absent
+$ grep -n 'nine ledger legs' SKILL.md   # expect no output
+(no match at BASE: statement corrected)
+$ grep -n 'ten ledger legs' SKILL.md
+2179:| `tools/mte-interop.py` | gate with `--check`; selftest | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` · `--selftest` | 0 PASS (ev
+
+## D. runner-row write scope: /tmp -> ${TMPDIR:-/tmp}
+$ git -C clone show ef19d8e1:SKILL.md | grep 'fleet mutation runner' | tr '|' '\n' | tail -2 | cut -c1-260
+ tameshi 
+
+--- at BASE ---
+ tameshi 
+
+
+## E. runner line pointers :174/:211 (SKILL) -> the runner lines they name
+$ git -C clone show ef19d8e1:SKILL.md | sed -n '174p;211p'
+   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:425`) (mutation-case-kimi-census.md:22-25;
+     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:569-574`). Round 2: 8/10 = 80 %,
+--- at BASE, SKILL names these runner lines ---
+202:   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:434`) (mutation-case-kimi-census.md:22-25;
+239:     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:579-583`). Round 2: 8/10 = 80 %,
+
+## F. the runner targets the SKILL now names
+$ sed -n '434p;579,583p' tools/mutate-and-run.sh
+        sys.stderr.write('APPLY FAIL id=%s line=%d old-string-count=%d expected=1\n' % (did, d['line'], count))
+  pct=$(( (200 * killed + total) / (2 * total) ))
+  if [[ "$inconcl" -gt 0 ]]; then
+    printf 'MUTATE: DEGRADED (target=%s defects=%s killed=%s survived=%s inconclusive=%s kill-rate=%s%%)\n' \
+      "$LABEL" "$total" "$killed" "$survived" "$inconcl" "$pct"
+    exit 1
+
+## G. runner unchanged between the spot-check commit and BASE (so the pointers still land)
+$ git -C clone diff --stat ef19d8e1 5e3569969b532310d2b8a3d130901757a3df356b -- tools/mutate-and-run.sh
+(empty = runner byte-identical: :434 and :579-583 are the same lines the SKILL now cites)
+
+## H. the runner write scope really honours TMPDIR
+$ grep -n 'mktemp -d' tools/mutate-and-run.sh
+148:# / REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
+157:# printed as MUTATE_EVIDENCE. Default: mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX".
+217:  --workdir DIR    evidence/work dir (default: mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX")
+491:    WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX") || die_setup 'mktemp -d failed'
+1432:    root=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX") || die_setup 'mktemp -d failed'
+1555:  root=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-selftest.XXXXXX") || {
+
+## I. fixing commits, all AFTER the spot-check file was added (ef19d8e1, 2026-10-27T00:48:14-03:00)
+$ git -C clone log --format='%H %an %cI %s' -- SKILL.md | head -4
+c0137451f5b7f22d65f748fc69f1b181f55e1378 tameshi-shokunin 2026-10-28T16:20:00-03:00 round-56 C0: receipt-binding rule (SKILL standing rules), QUALITY criterion 107, knowledge entry receipt-revision-binding, SOURCES S281-S282, lesson round-56, registry cell, before/ receipts, assimilation + census-start evidence
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb tameshi-shokunin 2026-10-28T14:16:39-03:00 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+99c3bc88d704566197783f66b211ee0a830e0330 tameshi-shokunin 2026-10-28T11:38:37-03:00 round-54: C1 fix pass — 26 wave-1 reader findings adjudicated and fixed (stale SKILL anchors at C0, the C** placeholder, exit-arm drift after the scratch-root change, the runbook pin, S275 page locator, the env-diff run-path class), QUALITY 105
+59c38109bf119d0e9d4f878644a82babc937bc1e tameshi-shokunin 2026-10-28T11:23:06-03:00 round-54: C0 content — one scratch-root exit class across seven tools (ScratchRootUnusable -> exit 2), registry scratch_root cells, scratch-root contract note + S277-S279, SKILL three-arm rule, lesson Gate/Mistakes
+$ git -C clone log --format='%H %an %cI %s' -S'mutate-and-run.sh:434' -- SKILL.md
+bcba8924894216268afc4171f06eb8c28e912b46 tameshi-shokunin 2026-10-27T02:39:44-03:00 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+02ec217c4d0afabe727fde2e261b7951d28fb4e9 tameshi-shokunin 2026-10-27T00:21:07-03:00 round-51: attempt 3 content revision — discard attempt-2 uncommitted SKILL.md pointer draft (restored to f133b47 bytes: the w2 readers read those sections, an unread edit would void the re-key), copy the 20 w2 reader rows into coldread/reads, name the attempt-3 L1 in refresh entries, census start a3
+53afb4aa03ea8e449b5c0aa47a13e339190a6be5 tameshi-shokunin 2026-10-27T00:15:39-03:00 round-51: hyaku run-9 orchestrator salvage of unlanded attempt-2 w2 seat output, integration probes, SKILL draft and the w2 results record (L1 died in the orchestrator session exit 2026-10-26 23:57:36 -03, SIGHUP during an operator omp update; not a landed round)
+$ git -C clone log --format='%H %an %cI %s' -S'ten ledger legs' -- SKILL.md
+bcba8924894216268afc4171f06eb8c28e912b46 tameshi-shokunin 2026-10-27T02:39:44-03:00 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+$ git -C clone log --format='%H %an %cI %s' -S'auto mktemp under ${TMPDIR:-/tmp}' -- SKILL.md
+bcba8924894216268afc4171f06eb8c28e912b46 tameshi-shokunin 2026-10-27T02:39:44-03:00 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+
+## J. R51.2's 're-key with fresh readers' clause: ledger corrections + fresh-reader re-key entries at BASE
+$ python3 (ledger.json: corrections count, sum wrong_expectations, latest fresh-reader entries)
+corrections records: 20  sum wrong_expectations: 73
+corrections readers: ['T51W2Read01', 'T51W2Read02', 'T51W2Read03', 'T51W2Read04', 'T51W2Read05', 'T51W2Read06'] ...
+  ## Mutation-sweep recipe — numbered steps; bounded cold-re rev=651773ab9e32 seats=['T53W2R1', 'L1 TameshiR53a2 re-key (round 53)'] wrong=0 sha_bound=True
+  ## Mutation-sweep recipe — numbered steps; bounded cold-re rev=99c3bc88d704 seats=['T54W2Read02', 'L1 TameshiR54a2 re-key (round 54)'] wrong=0 sha_bound=True
+  ## Mutation-sweep recipe — numbered steps; bounded cold-re rev=c0137451f5b7 seats=['T56W2Read04', 'L1 TameshiR56a3 re-key (round 56)'] wrong=0 sha_bound=True
+  ## The leg ledger — replay, receipt, and how it is read (r rev=651773ab9e32 seats=['T53W2Read05', 'L1 TameshiR53a2 re-key (round 53)'] wrong=0 sha_bound=True
+  ## The leg ledger — replay, receipt, and how it is read (r rev=99c3bc88d704 seats=['T54W2Read04', 'L1 TameshiR54a2 re-key (round 54)'] wrong=0 sha_bound=True
+  ## The leg ledger — replay, receipt, and how it is read (r rev=c0137451f5b7 seats=['T56W2Read08', 'L1 TameshiR56a3 re-key (round 56)'] wrong=0 sha_bound=True
+
+## K. R51.2's second half as a distinct item in the same round (item 3 = cold-read re-key overstates)
+$ grep -n 'wrong_expectations' .ufo/evidence/round-52/coldread/refresh.py
+216:                     'blocking_gaps': 0, 'wrong_expectations': len(reader['findings']), 'minor_gaps': 0,

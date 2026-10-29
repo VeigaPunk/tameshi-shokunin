@@ -1,0 +1,56 @@
+# receipt 2 — R51.8: last-touch recency still in the BASE deciding gate (BASE = 5e3569969b532310d2b8a3d130901757a3df356b)
+
+$ git -C $C show 5e35699:.ufo/evidence/round-56/deciding-run.sh | awk 'NR>=94 && NR<=101'
+94: CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-a.stdout.sha256 $E/control/controls-b.stdout $E/control/controls-b.exit $E/control/controls-b.stdout.sha256"
+95: for f in $CONTROLS; do
+96:   git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+97:   [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+98:   [ "$(git cat-file -s "$REV:$f")" -gt 0 ] || { echo "DECIDING_REFUSED control-receipt-empty $f"; exit 3; }
+99:   c=$(git log -1 --format=%H "$REV" -- "$f")
+100:   git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
+101: done
+
+$ for r in 52 53 54 55 56: git -C $C show 5e35699:.ufo/evidence/round-$r/deciding-run.sh | grep -n 'git log -1 --format=%H'
+round-52: 25:  c=$(git log -1 --format=%H "$REV" -- "$f")
+round-53: 25:  c=$(git log -1 --format=%H "$REV" -- "$f")
+round-54: 54:  c=$(git log -1 --format=%H "$REV" -- "$f")
+round-55: 51:  c=$(git log -1 --format=%H "$REV" -- "$f")
+round-56: 92:FREEZE_LAST=$(git log -1 --format=%H "$REV" -- "$E/freeze.json")
+99:  c=$(git log -1 --format=%H "$REV" -- "$f")
+
+$ git -C $C grep -Il '^FREEZE=' 5e35699 -- '.ufo/evidence/'   # files carrying a FREEZE= stamp
+5e35699:.ufo/evidence/round-46/deciding-run.sh
+5e35699:.ufo/evidence/round-47/deciding-run.sh
+5e35699:.ufo/evidence/round-49/deciding-run.sh
+5e35699:.ufo/evidence/round-50/deciding-run.sh
+5e35699:.ufo/evidence/round-51/deciding-run.sh
+5e35699:.ufo/evidence/round-52/deciding-run.sh
+5e35699:.ufo/evidence/round-53/deciding-run.sh
+5e35699:.ufo/evidence/round-54/control/controls.sh
+5e35699:.ufo/evidence/round-54/deciding-run.sh
+5e35699:.ufo/evidence/round-55/controls.sh
+5e35699:.ufo/evidence/round-55/deciding-run.sh
+5e35699:.ufo/evidence/round-56/deciding-run.sh
+  -> every hit is a deciding-run.sh / controls.sh SCRIPT; no control receipt carries a FREEZE= header
+
+$ git -C $C grep -ln 'freeze-stamp' 5e35699 -- corpus/   # any freeze-stamp rule stated in the corpus
+5e35699:corpus/lessons/round-51.md
+  -> only corpus/lessons/round-51.md, i.e. the routed defect text itself (still unrouted/unfixed)
+
+$ git -C $C show 5e35699:corpus/QUALITY.md | awk 'NR==1451'   # criterion 99 still dates a receipt by last-touch
+1451: commit that last touched it does not descend from the freeze, or when its receipt directory already holds a start receipt
+
+$ git -C $C grep -rn 're-score' 5e35699 -- corpus/lessons/round-5[2-6]*.md   # any later lesson claiming the re-score case
+5e35699:corpus/lessons/round-55.md:55:| R54.1 | FIXED — the positive-control claim is corrected to the receipt's `CTL_MISMATCH` / `2/3`, and round 55 re-scores its own control at the revision it certifies | `SCORECARD.md` ER-R54-1; `.ufo/evidence/round-54/control/controls-b.stdout`; QUALITY 106 |
+
+$ git -C $C show 5e35699:.ufo/evidence/round-51/integrate/a3/deciding-invocation-1-refused.txt   # the original refusal
+attempt-3 invocation 1 at 2026-10-27T03:23:42Z: FREEZE=9d023aed5e71391c7819d1256e19a35b26fdcb31 -> DECIDING_REFUSED control-receipt-not-after-freeze .ufo/evidence/round-51/control/controls.exit (gate 0, nothing run, no receipt written in after/)
+
+$ git -C $C show 5e35699:corpus/lessons/round-51.md | awk 'NR==88' | cut -c1-700   # the lane's own mistake row
+| `receipt-recency-by-last-touch` — the deciding gate dates a receipt by the last commit that changed its bytes, so a byte-identical re-score after an amendment reads as "not after freeze" | `integrate/a3/deciding-invocation-1-refused.txt`; `git log --format=%h 7e548bee -- .ufo/evidence/round-51/control/controls.exit` → `f0129a55` only; `controls.stdout` at `6d8c11e3` names rev `9d023aed` | QUALITY 99 (deciding-run gate 0) covers missing receipts, not re-scored identical ones | Routed, not fixed: the round-52 deciding gate should bind each control receipt to a freeze-stamped header line (`FREEZE=<sha>` inside the receipt) rather than to git last-touch. Not yet shown able to fail. |
+
+$ git -C $C show 5e35699:corpus/lessons/round-55.md | awk 'NR>=89 && NR<=92'   # round-55 records the same blind spot as a residual
+89: - Neither counter sees the deciding gate's own blind spots: `deciding-run.sh`
+90:   checks each control receipt's existence, blob-ness, size and commit order, but
+91:   never compares the `rev=` a `CTL` line names with the revision under test (wave
+92:   seat T55W1ScribeLesson). Recorded as a residual, not fixed: the gate is frozen.

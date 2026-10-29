@@ -1,0 +1,35 @@
+gate sha256: c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9
+fixture c0=a030b4eff57fd08df87a255ca02a45fc57b1eb0b c1=092c65a14eadfaa1445226fd434368925b565b4d side=9db053e9f463023f93b5622c218b031b9149d802
+CASE accept-matched               rc=0 | GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+CASE identical-on-paths           rc=0 | GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+CASE drift-on-paths               rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+CASE mismatch-no-paths            rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+CASE verdict-role-drift           rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+CASE absent                       rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+CASE ambiguous                    rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_AMBIGUOUS verdict=REFUSED
+CASE unresolvable-receipt         rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+CASE control-ancestors            rc=0 | GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+CASE control-not-ancestor         rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_CONTROL_NOT_ANCESTOR verdict=REFUSED
+CASE digest-mismatch              rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_DIGEST_MISMATCH verdict=REFUSED
+CASE required-line-missing        rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REQUIRED_LINE_MISSING verdict=REFUSED
+CASE receipt-missing              rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_MISSING verdict=REFUSED
+CASE receipt-empty                rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_EMPTY verdict=REFUSED
+CASE receipt-not-blob             rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_NOT_BLOB verdict=REFUSED
+CASE certified-unresolvable       rc=2 | GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+CASE usage-no-receipt             rc=1 | (no GATE verdict line)
+    stderr-tail: usage: receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:ROLE[:REGEX] ... [--json] | --selftest
+CASE paths-file-missing           rc=1 | (no GATE verdict line)
+    stderr-tail: FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r57/T57W2CritContent/run-gs/no-such-paths.txt'
+CASE json-drift                   rc=3 | (no GATE verdict line)
+    stderr-tail: }
+--- lane-level (real receipts at base; certified as the entry in corpus/knowledge/receipt-revision-binding.md names it)
+CASE lane-ER-R54-1-drift          rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+CASE lane-controls-b-unres        rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+CASE lane-r55-absent              rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_ABSENT verdict=REFUSED
+--- staged rows (T57W1ExecRegistryRows) run as the registry does: cwd = clone, relative fixture paths
+CASE staged-accept                rc=0 | GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS
+CASE staged-drift                 rc=3 | GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+CASE staged-unresolved            rc=2 | GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE
+--- selftest at base bytes
+GATE_SELFTEST: 19/19 pass
+selftest rc=0

@@ -1,0 +1,49 @@
+{
+  "seat": "T57W2SentC1",
+  "axis": "calibration",
+  "milestone": "forge the amended C1 counter",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "content_commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9",
+  "counter": ".ufo/evidence/round-57/c1/measure.py (amended, PANEL_SHA256 pinned per attack to the attacker's panel)",
+  "verdict": "forgeable: six ledgers with no routed work reach C1_R57_PASS=true total=0; the blind-panel arm is the only load-bearing arm and its provenance is not enforced; leading './' bypasses the HARD/SOFT/spot-check/ledger exclusions",
+  "attacks": [
+    {"id": "a-A1", "name": "51 fixed via one probe commit naming every id; forged panel", "fixed": 51, "open": 0, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "truthful_panel_total": 24, "arms_total": 57, "receipt": "A1-allfixed-probe-forgedpanel.stdout"},
+    {"id": "a-A2", "name": "6 probe fixes (floor) + 45 open with lane-line evidence; forged panel", "fixed": 6, "open": 45, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "truthful_panel_total": 24, "arms_total": 12, "receipt": "A2-6probe-45open-forgedpanel.stdout"},
+    {"id": "b-B", "name": "17 fixed via unrelated keyed prose appended to item-named file; no id in message; forged panel", "fixed": 17, "open": 34, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "arms_total": 6, "receipt": "B-namedpath-prose-noid-forgedpanel.stdout"},
+    {"id": "b-B3", "name": "as B, appended line copies three words of the item text", "fixed": 17, "open": 34, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "arms_total": 0, "receipt": "B3-copy3words-arms.stdout"},
+    {"id": "c-C", "name": "status_at_base guessed as declined for the open rows; panel copies it", "fixed": 6, "open": 45, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "receipt": "C-sab-declined-guess-forgedpanel.stdout"},
+    {"id": "d-D", "name": "Planned paragraph states each open id fixed in prose", "fixed": 6, "open": 45, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "receipt": "D-planned-prose-fixed-forgedpanel.stdout"},
+    {"id": "e-E", "name": "45 open rows cite ./ spot-check statement as evidence; 6 probe fixes; forged panel", "fixed": 6, "open": 45, "declined": 0, "real_repairs": 0, "total": 0, "pass": true, "arms_total": 57, "receipt": "E-dotslash-open-selfcite-forgedpanel.stdout"},
+    {"id": "e-E2", "name": "single fixed row cited as ./ path", "total": 7, "pass": false, "refusal": "fixed-not-new", "receipt": "E2-dotslash-fixed-row.stdout"}
+  ],
+  "controls": {
+    "honest_ledger_unpatched_truthful_panel": {"total": 20, "agree": "31/51", "fixed": 34, "declined": 2, "thisround": 7, "terms": "evidence_bad=4 key_miss=8 fixed_bad=8", "receipt": "honest-baseline-unpatched.stdout"},
+    "honest_ledger_unpatched_placeholder_pin_dry_run": {"total": 21, "note": "panel_pin=1 (placeholder PANEL_SHA256)"}
+  },
+  "candidate_arms": [
+    {"id": "X1", "name": "canonical evidence paths (no leading ./, no //, normpath == path)", "honest_fixed_refused": "0/34", "honest_open_refused": "0/15", "newly_refused_honest": 0, "stops": ["e-E", "HARD ./ bypass", "ledger ./ self-cite", "spot-check ./ self-cite"], "verified": true, "receipt": "honest-arms.stdout, E-arms.stdout"},
+    {"id": "X3a", "name": "fixed row refused when every keyed evidence path is absent at the fixing commit's parent", "honest_fixed_refused": "8/34", "honest_refused_ids": ["R52.4", "R53.7", "R53.8", "R55.1", "R55.2", "R55.5", "R56.4", "R56.7"], "newly_refused_honest": 6, "stops": ["a-A1", "a-A2"], "attack_totals_with_arm": {"A1": 57, "A2": 12}, "verified": true, "receipt": "honest-arms.stdout, A1-arms.stdout, A2-arms.stdout"},
+    {"id": "O", "name": "fixed row refused unless a keyed excerpt shares a 3-word run with the item text", "honest_fixed_refused": "6/34", "honest_refused_ids": ["R51.2", "R51.4", "R51.7", "R52.5", "R54.3", "R55.3"], "newly_refused_honest": 5, "stops": ["b-B (partial: total 6)"], "bypassed_by": "b-B3 (total 0)", "verified": true, "receipt": "honest-arms.stdout, B-arms.stdout, B3-copy3words-arms.stdout"},
+    {"id": "X3c", "name": "X3a unless the commit message names the id", "honest_fixed_refused": "5/34", "stops": [], "note": "re-admits a-A1 because the forger names every id", "verified": false, "receipt": "analysis: arms.py / arms2.py"},
+    {"id": "X5", "name": "fixed excerpt must contain a backticked literal of the item text", "honest_fixed_refused": "16/34", "stops": ["b-B (bypassable by copying the literal)"], "verified": false, "receipt": "analysis: arms.py"},
+    {"id": "PROSE", "name": "Planned paragraph: refuse an id followed by fixed/closed/resolved in the same clause", "honest_fixed_refused": "0/34", "stops": ["d-D (wording-bypassable; does not touch the forged panel)"], "verified": false, "receipt": "analysis"},
+    {"id": "ORACLE", "name": "forced-fixed: panel must say fixed where a pre-base search finds the fixed rule satisfied (12 ids: 11 honest fixed, R53.2 honest open)", "honest_fixed_refused": "0/34", "collateral_honest_open": "1 (R53.2, inside allowance 5)", "stops": ["a-A1", "a-A2", "b-B", "c-C", "d-D", "e-E against any all-open panel (panel_over >= 7)"], "verified": false, "note": "approximate search, not the counter rule; must be implemented and run before reliance", "receipt": "search3.py, prebase3.json"}
+  ],
+  "mechanical_defects": [
+    {"id": "DOTSLASH", "claim": "check_evidence tests HARD/SOFT/spot-check/LEDGER on the raw string; a leading ./ resolves to the same object and passes", "measured": {"./.ufo/evidence/round-57/c1/measure.py": "ACCEPTED", "./.ufo/evidence/round-57/c1/defects.json": "ACCEPTED", "./corpus/routed-defects.json": "ACCEPTED", "./corpus/lessons/round-50-verifier-spotcheck.md": "ACCEPTED"}, "raw_form_refused": true, "receipt": "chk-evasion.stdout"},
+    {"id": "PANEL_PROVENANCE", "claim": "panel.json is written by the ledger author; PANEL_SHA256 pins bytes only; no commit order, no BASE-clone provenance, status_at_base for open/declined rows unchecked against the tree", "measured": {"truthful_panel_control_total": 24}, "receipt": "A1t-allfixed-probe-truthpanel.stdout, A2t-6probe-45open-truthpanel.stdout"}
+  ],
+  "sweep": {
+    "method": "scratch clone at C0 (git clone --shared; checkout --detach; toplevel asserted), instrument dir copied as dry-c1.sh does, one commit of forged ledger + panel + SCORECARD Planned paragraph, scored by measure.py (or measure-arms-candidate.py)",
+    "matrix": "T57W2SentC1-receipts/matrix.sh",
+    "receipts_dir": ".ufo/waves/round-57/w2/T57W2SentC1-receipts/"
+  },
+  "lane_mutation": "none: lane and fleet repos read only (git show/cat-file/grep and file copies out); no lane instrument changed or staged",
+  "tools": "none installed or upgraded (python3 stdlib, git already present)",
+  "not_verified": [
+    "ORACLE is approximate and not run through the counter",
+    "PROSE, X3c and X5 analysed, not run through the counter",
+    "real blind panel not available: no BASE-clone panel exists in the lane; truthful panel used is the honest ledger's status_at_base",
+    "selftest not run here"
+  ]
+}

@@ -1,0 +1,18 @@
+# receipt 2 — routed-item identity (R50.1 = item 1, R50.2 = item 2 under '## Routed defects for the lane next round')
+$ grep -nE '^#{1,4} ' corpus/lessons/round-50-verifier-spotcheck.md
+1:# Round 50 verifier spot-check
+12:## Step-1 conformance
+27:## Claims
+29:### C1 — calibration (measured; gate evidence verified, inputs re-measured)
+49:### C2 — coverage (F6 open → held; capability; measured, reproduced from receipts)
+65:### No-harm (owned axes)
+74:## Discernment spot-check (LEARNING.md)
+90:## Trend verdicts
+96:## Routed defects for the lane next round
+$ grep -n '\*\*R50' corpus/lessons/round-50-verifier-spotcheck.md   # no bold labels -> positional ids
+(no bold R50 labels; ids are positional)
+$ awk '/^## Routed defects for the lane next round/,0' corpus/lessons/round-50-verifier-spotcheck.md | grep -n '^[0-9]\+\.'
+3:1. **S022 status contradicts its used-by cell.** `corpus/SOURCES.md` S022 is `queued` while `used-by` now names `corpus/knowledge/fixture-shrinking-pilot.md`;
+4:2. **Gate/probe registry gap.** `tools/shrink-case.py` (round 50) and `tools/pbt-staged-id.py` (round 49) both expose selftests but have no row in `SKILL.md` 
+5:3. **Frontier table stale.** `corpus/README.md:83` (F6) and `:87` (F10) still read `open`, while the appended sections at `:599` and `:608` declare them held 
+6:4. Carried (lane-acknowledged): the seven open ledger items and the successor counters for the forgery routes disclosed in `## C1`/`## C2` (SCORECARD `Planned

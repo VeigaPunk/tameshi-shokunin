@@ -1,0 +1,24 @@
+### R54.4 derivation
+$ git show 077d431e:.ufo/evidence/round-54/freeze.json | grep c2/measure.py
+  "c2/measure.py": "8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790",
+   "what": "c2/measure.py arm 3 ran each self-test under `strace -f` and required that run's rc: the tracer's overhead makes registry-check's own two timeout cases fail (elapsed ~9.6 s vs its < 3.5 s assertion) at base and at C0, so the arm measured the tracer. The rc now comes from a plain run and the traced run supplies only the /tmp mkdir census. Substance unchanged: 7/7 exit 0 on a usable root and zero mkdir under /tmp. Found by wave-1 attack seats (ExecExitClass F2, ExecEmptyStrace) before the deciding run; disclosed in the report, SCORECARD and lesson."
+   "what": "c2/measure.py arm 3's census regex `mkdir(?:at)\\(` required the `at` suffix, so the plain `mkdir(` that os.mkdir/tempfile.mkdtemp issue was never counted and the arm could not fire on the silent-fallback defect it guards. Now `mkdir(?:at)?\\(`. Found by wave-2 seat T54W2Exec02 with a positive control (a real mkdir(\"/tmp/...\") logged one line, the frozen regex found zero); the reading tmp_mkdirs=0 is unchanged at every revision (a repaired regex also finds zero across all seven traces)."
+$ git show c2108100:.ufo/evidence/round-54/c2/measure.py | sha256sum   (deciding rev)
+8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790  -
+$ git show 19c7558:.ufo/evidence/round-54/c2/measure.py | sha256sum   (pre-amendment-4 blob)
+49280fe55bd9361c284ddb1b9e757fd3ec3267f60eed4ca587e1bfe446b718c8  -
+$ git log --format='%H %ad %s' --date=iso -S 'ER-R54-4' -- SCORECARD.md
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 2026-10-28 14:16:25 -0300 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+$ grep -n '49280fe5' SCORECARD.md corpus/lessons/round-54.md corpus/QUALITY.md LOG.md  (record set at base)
+/fast/scratch/hyaku/tameshi-r57/T57W2PanelR544R545/clone/SCORECARD.md:2655:Old: `49280fe5` for `c2/measure.py`. Corrected: `8528ee85` - the amendment-4
+### R54.5 derivation
+$ python: sum(len(findings)) over .ufo/waves/round-54/w1,w2 *Read*.json at HEAD
+w1: reader files=23 files_with_findings=15 total_findings=28
+w2: reader files=23 files_with_findings=12 total_findings=25
+Traceback (most recent call last):
+  File "<stdin>", line 14, in <module>
+AttributeError: 'list' object has no attribute 'keys'
+$ grep -n 'w1=28 w2=25 sections=12' SCORECARD.md corpus/lessons/round-55.md
+/fast/scratch/hyaku/tameshi-r57/T57W2PanelR544R545/clone/SCORECARD.md:2661:over the committed reader files, `-receipts/` JSON excluded): `w1=28 w2=25 sections=12`
+/fast/scratch/hyaku/tameshi-r57/T57W2PanelR544R545/clone/corpus/lessons/round-55.md:59:| R54.5 | FIXED — `w1=28 w2=25 sections=12`, re-derived from the committed reader files | `.ufo/waves/round-54/w1|w2/*Read*.json` |
+$ grep -nE '25 findings|22 findings|9 of 23|nine sections' SCORECARD.md corpus/lessons/round-54.md corpus/QUALITY.md LOG.md

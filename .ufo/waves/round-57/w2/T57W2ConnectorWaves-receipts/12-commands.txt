@@ -1,0 +1,220 @@
+# 12 every command quoted in T57W2ConnectorWaves.md, in order, with its exit status
+# seat T57W2ConnectorWaves, round 57 wave 2, lane /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# base 5e3569969b532310d2b8a3d130901757a3df356b
+# date 2026-10-28
+#
+# Scratch: export HYAKU_SCRATCH=/fast/scratch/hyaku
+#          S=$HYAKU_SCRATCH/tameshi-r57/T57W2ConnectorWaves
+# Clones:  git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/<name>"
+#          git -C "$S/<name>" checkout --detach <rev>
+# Fixture commits were made ONLY inside those clones, with
+#          git -C "$S/<name>" -c user.name=fixture -c user.email=fixture@example.invalid commit
+# No mutating git command ran in the lane or in the fleet repo.
+# Every git call below names -C.
+
+## --- setup ------------------------------------------------------------------
+export HYAKU_SCRATCH=/fast/scratch/hyaku
+S=$HYAKU_SCRATCH/tameshi-r57/T57W2ConnectorWaves; mkdir -p "$S"
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/clone"          # rc 0
+git -C "$S/clone" checkout --detach 5e3569969b532310d2b8a3d130901757a3df356b        # rc 0
+git -C "$S/clone" rev-parse HEAD                                                     # 5e3569969b53...
+git -C "$S/clone" rev-parse --show-toplevel                                           # $S/clone
+
+## --- §0 Sweep A: seat co-occurrence -----------------------------------------
+cd /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1
+for pat in 'R4\\d' 'exit 1' 'RECEIPT_REV_CONTENT_DRIFT' 'gate-kind\|kind .gate.\|gate row' \
+           '64/64\|64 of 64' 'total=14\|total=13' 'R56\.2' 'R54\.8' 'R52\.3' \
+           'open_unplanned' 'planned_ids'; do
+  n=$(grep -l -- "$pat" *.md 2>/dev/null | wc -l); echo "$n seats  <- $pat"
+  grep -l -- "$pat" *.md 2>/dev/null | sed 's/^/      /' | paste -sd' ' -
+done                                                                                  # rc 0
+# -> receipt 01-seat-occurrence-sweep.txt
+
+## --- §0 Sweep B: the L1's own dry runs ---------------------------------------
+cd /home/vgpnk/Projects/shokunin/tameshi-shokunin
+bash .ufo/waves/round-57/dry-c1.sh                                                     # rc 0
+bash .ufo/waves/round-57/dry-c2.sh                                                     # rc 0
+# -> receipts 02-dry-c1.stdout, 03-dry-c2.stdout
+
+## --- §0 Sweep C: the two rule sets over the same inputs ----------------------
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/clone50b"        # rc 0
+git -C "$S/clone50b" checkout --detach 06e9849                                        # rc 0
+cp corpus/routed-defects.json "$S/clone50b/corpus/routed-defects.json"
+git -C "$S/clone50b" -c user.name=fixture -c user.email=fixture@example.invalid add corpus/routed-defects.json
+git -C "$S/clone50b" -c user.name=fixture -c user.email=fixture@example.invalid commit -qm "fixture ledger"
+cd "$S/clone50b"
+python3 - <<'PY'   # import the round-50 measure module, call measure() over the round-57 defect set
+import importlib.util, json, subprocess
+L='/fast/scratch/hyaku/tameshi-r57/T57W2ConnectorWaves/clone50b'
+spec=importlib.util.spec_from_file_location('m50',L+'/.ufo/evidence/round-50/c1/measure.py')
+m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+defs=json.load(open('/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/defects.json'))
+rev=subprocess.run(['git','-C',L,'rev-parse','HEAD'],capture_output=True,text=True).stdout.strip()
+ex=[]; out=m.measure(L,rev,defs['defects'],True,fixed_floor=0,declined_cap=999,this_round_floor=0,
+                      base='5e3569969b532310d2b8a3d130901757a3df356b',explain=lambda *a: ex.append(a))
+print(out[1]); print(out[3])
+PY
+# -> counts {'extra':49,'evidence_bad':4,'key_miss':8,'fixed_bad':1,'open_unplanned':10} total=72
+# -> receipt 04-rule-comparison.txt
+
+## --- §1.1 the inherited planned-id regex ------------------------------------
+grep -n "R4\\\\d" "$S/clone/.ufo/evidence/round-50/c1/measure.py"                    # rc 0
+# -> 111:    for rid in re.findall(r'\bR4\d\.\d+\b', para):
+grep -n "PLANNED_ID" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+# -> 81: PLANNED_ID = re.compile(r'\bR5[0-6]\.\d+\b')
+
+## --- §1.3 the gate's exit 1 --------------------------------------------------
+cd "$S/clone"
+python3 tools/receipt-revision-gate.py --lane . --certified 5e3569969b532310d2b8a3d130901757a3df356b --receipt x:verdict
+# -> rc 1, usage text on stderr, no named code
+
+## --- §1.4 the SKILL standing-rules cell --------------------------------------
+sed -n '145,152p' tools/receipt-revision-gate.py                                     # rc 0
+# -> 146: codes.append('RECEIPT_REV_MISMATCH')   (paths is None branch)
+# -> 151: codes.append('RECEIPT_REV_CONTENT_DRIFT')  (the --paths drift branch)
+sed -n '53p' SKILL.md                                                                # rc 0
+# -> the C0 cell: | a verdict receipt names another revision (a positive receipt gates identically) | … | `RECEIPT_REV_CONTENT_DRIFT` |
+
+## --- §1.5 the registry gate rows ---------------------------------------------
+python3 -c "import json;r=json.load(open('tools/registry.json'))['rows'];\
+print([(x['name'],x['kind']) for x in r if 'receipt-revision' in json.dumps(x)])"
+# -> base: [('receipt-revision-gate-selftest','selftest')]
+
+## --- §2.1 the round-51 id namespace ------------------------------------------
+sed -n '126,133p' corpus/lessons/round-51-verifier-spotcheck.md                   # rc 0
+sed -n '94,98p'   corpus/lessons/round-51.md                                        # rc 0
+sed -n '129p' corpus/lessons/round-51-verifier-spotcheck.md | grep -o "mutation attack (R51\.5)"   # rc 0
+sed -n '89p'  corpus/lessons/round-51-verifier-spotcheck.md | grep -o "The lane disclosed this as R51\.2" # rc 0
+sed -n '89,92p' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/extract-defects.py
+# -> receipt 07-id-namespace.txt
+
+## --- §2.2 R54.8 ---------------------------------------------------------------
+grep -c -i "config" corpus/lessons/round-54.md                                     # -> 0
+grep -c -i "config" corpus/lessons/round-55.md                                     # -> 1
+sed -n '122p' corpus/lessons/round-54-verifier-spotcheck.md                        # rc 0
+sed -n '62p'  corpus/lessons/round-55.md                                           # rc 0
+
+## --- §2.3 R52.3 ---------------------------------------------------------------
+git -C "$S/clone" log --oneline c1d49d76be4028df2a68322e7117ff3aafaccd5c..5e3569969b532310d2b8a3d130901757a3df356b -- corpus/lessons/round-52.md
+# -> (empty)
+sed -n '27p' corpus/lessons/round-52.md                                            # rc 0
+grep -o "R52.3 (over-count re-derivation)" .ufo/evidence/round-53/contract.json    # rc 0
+
+## --- §2.4 R55.4 ---------------------------------------------------------------
+sed -n '105p' corpus/lessons/round-56.md                                           # rc 0
+sed -n '12p;22p;94p' .ufo/waves/round-56/w1/T56W1RevRound55Dispositions.md          # rc 0
+
+## --- §2.5 the mutant that survives the selftest ------------------------------
+git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/mg2"         # rc 0
+git -C "$S/mg2" checkout --detach 5e3569969b532310d2b8a3d130901757a3df356b        # rc 0
+mkdir -p "$S/mgtmp"
+python3 - "$S/mg2" "$S/mgtmp" <<'PY'
+import subprocess,sys,os
+c,tmp=sys.argv[1],sys.argv[2]
+p=os.path.join(c,'tools/receipt-revision-gate.py'); s=open(p).read()
+old="or 'none', verdict))"; new="or 'none', 'PASS'))"
+print("count of old string:", s.count(old)); assert s.count(old)==1
+open(p,'w').write(s.replace(old,new))
+r=subprocess.run(['python3',p,'--selftest'],capture_output=True,text=True,cwd=c,env={**os.environ,'TMPDIR':tmp})
+print("selftest rc:",r.returncode); print(r.stdout.strip().splitlines()[-1])
+PY
+# -> count 1; selftest rc 0; GATE_SELFTEST: 19/19 pass
+# -> receipt 08-mutant-selftest-survivor.txt
+
+## --- §2.6 R52.5's fixing commit ----------------------------------------------
+git -C "$S/clone" log --oneline -S"fixtures only under the scratch root (TMPDIR)" -- tools/registry-check.py
+git -C "$S/clone" show 218bc6b5c25d6a3c57dd44600febd552f0167cee -- tools/registry-check.py | grep -n "^[+-].*tmp"
+git -C "$S/clone" merge-base --is-ancestor c1d49d76be4028df2a68322e7117ff3aafaccd5c 218bc6b5c25d6a3c57dd44600febd552f0167cee
+# -> rc 0 (descends from the routed commit)
+git -C "$S/clone" show c1d49d76:tools/registry-check.py | grep -c "fixtures only under the scratch root (TMPDIR)"   # -> 0
+git -C "$S/clone" show 218bc6b5:tools/registry-check.py | grep -c "fixtures only under the scratch root (TMPDIR)"     # -> 1
+git -C "$S/clone" show 51d1f0eb9ae087245edc024c31b1b4091c422fa4 -- tools/registry-check.py | grep -c "^+.*fallback to /tmp"  # -> 0
+
+## --- §2.7 the old49 arm -------------------------------------------------------
+grep -n "old49\|OLD_COUNT" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+# (dry-c1 reports old49=0; the round-50 rules report extra=49 — receipt 04)
+
+## --- §2.8 the floors and the blind panel --------------------------------------
+sed -n '66,74p' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+# -> FIXED_FLOOR = 0; THIS_ROUND_FLOOR = 6; DECLINED_CAP = 999; PANEL_PATH / PANEL_SHA256 placeholder
+ls -la /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/panel.json
+# -> No such file or directory
+grep -n "panel-pin\|panel_over" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+
+## --- §2.9 the tie rule's sub-conditions --------------------------------------
+sed -n '242,259p' /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+python3 - <<'PY'   # per-row: msg_names_id / path touched by commit / path named by item text
+import json,re,subprocess,os
+lane='/home/vgpnk/Projects/shokunin/tameshi-shokunin'
+def git(*a): return subprocess.run(['git','-C',lane]+list(a),capture_output=True,text=True).stdout
+defs=json.load(open(f'{lane}/.ufo/evidence/round-57/c1/defects.json'))
+defmap={d['id']:d for d in defs['defects']}
+led=json.load(open(f'{lane}/corpus/routed-defects.json'))
+for r in led['defects']:
+    if r['id'] not in ('R51.3','R53.6','R53.7','R54.7','R54.9','R54.10','R55.1','R55.3'): continue
+    c=r['commit']; d=defmap[r['id']]
+    msg=git('log','-1','--format=%B',c)
+    files=set(git('diff-tree','--no-commit-id','--name-only','-r',c).split())
+    itext=(d.get('text','')+' '+d.get('extended_text',''))
+    names_id=re.search(r'(?<![\w.])'+re.escape(r['id'])+r'(?!\d)',msg) is not None
+    print(f"--- {r['id']} commit={c[:12]} msg_names_id={names_id}")
+    for e in r['evidence']:
+        touched=e['path'] in files
+        named=(e['path'] in itext) or (os.path.basename(e['path']) in itext)
+        print(f"      touched={touched!s:5} named={named!s:5} {e['path']}")
+PY
+# -> receipt 05-fixed-not-new-subconditions.txt
+
+## --- §2.10 the C2 row-admission rule -----------------------------------------
+grep -n "kind.*gate\|'--selftest' not in\|argv\[1\] == GATE" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c2/measure.py
+# (dry-c2 reports gate_rows=3, held=3/3 — receipt 03)
+
+## --- §3.2 the key sets --------------------------------------------------------
+grep -n "d\['keys'\]" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+# -> 217, 225: the keys come from the DEFECT SET, not from the ledger row
+sha256sum /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/keys.json \
+          /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w1/T57W1ExecExtract/stage/.ufo/evidence/round-57/c1/keys.json
+# -> both 90a7b423a4237e94f5a9953a5a774b73ec199fb76041c55da99e76a0e9da8c07
+grep -n "keys" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/build-ledger.py
+# -> 15:  r.pop('verdict_basis', None); r.pop('keys', None)
+python3 - <<'PY'   # key_miss under extractor keys vs under the scribes' own keys
+# -> 9 rows fail with extractor keys; 2 fail with scribe keys; 51/51 key sets differ
+# -> receipt 06-key-miss-attribution.txt
+PY
+
+## --- §3.3 the soft-path rule --------------------------------------------------
+grep -n "soft-excluded-path" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+# -> 177:  if path.startswith(SOFT) and not any(path.endswith(k) for k in keys):
+grep -n "^SOFT" /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+# -> 82: SOFT = ('.ufo/waves/', '.ufo/reports/')
+# (dry-c1 evidence_bad rows: R53.9 x2, R54.8, R55.4 x2, R55.6 x4 — receipt 02)
+
+## --- §3.1 the items' named surfaces at HEAD ----------------------------------
+sed -n '23p' corpus/lessons/round-53.md
+sed -n '318,319p' corpus/lessons/round-56.md
+sed -n '3p' corpus/knowledge/receipt-revision-binding.md
+sed -n '44p' .ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out
+git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show ca75c2674645ab6bdadeecb8584007c74342bfa9 --name-only --format="" | grep -c "round-5[0-6].md"
+# -> 0
+# -> receipt 09-item-surface-status.txt
+
+## --- §5 the base ledger under the round-50 counter ----------------------------
+cd "$S/clone"
+python3 .ufo/evidence/round-50/c1/measure.py --lane "$S/clone" --rev 5e3569969b532310d2b8a3d130901757a3df356b --explain
+# -> total=9 C1_R50_PASS=false  (evidence_bad=3 R41.6/R42.3/R49.3; open_unplanned=6)
+# -> receipt 10-base-ledger-under-round50.txt
+
+## --- §5 status_at_base coherence ----------------------------------------------
+grep -n "fixed-base-incoherent" -B3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py
+python3 - <<'PY'   # (sab=='fixed') != is_ancestor(commit, BASE) over the 51 new rows
+# -> 0 incoherent rows
+# -> receipt 11-status-at-base-coherence.txt
+
+## --- §5 the ledger is uncommitted ----------------------------------------------
+git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin status --short corpus/routed-defects.json
+# ->  M corpus/routed-defects.json
+
+## --- tools -------------------------------------------------------------------
+git --version        # git version 2.56.0
+python3 --version    # Python 3.14.8
+# Installed or upgraded: NONE. No pacman, no uv, no npm, no PATH directory touched.

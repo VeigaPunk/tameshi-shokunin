@@ -1,0 +1,225 @@
+--- tools/cold-read-forecast.py	2026-10-28 21:42:18.947919922 -0300
++++ .ufo/waves/round-57/w2/T57W2RevForecast/stage/tools/cold-read-forecast.py	2026-10-28 22:39:12.940581933 -0300
+@@ -11,8 +11,13 @@
+   cold-read-forecast.py --lane LANE --rev REV --paths P1 [P2 ...]
+         [--skill-section "## Heading"]... [--skill-lines A-B]... [--strict] [--json]
+   cold-read-forecast.py --lane LANE --rev REV --diff-to REV2 [--json]
+-        retrospective calibration: the planned set is what changed REV -> REV2
+-        (git diff --name-only; SKILL.md sections whose text differs).
++        retrospective calibration: the planned set is what changed REV -> REV2.
++        MEASURED, not simulated: the credit rule is evaluated at BOTH revs
++        (the ledger, SKILL.md and the tree of each), and the lost headings are
++        those the monitor covers at REV but not at REV2. A heading added at
++        REV2 (no ledger entry) is lost; a heading removed at REV2 is gone from
++        the page and costs no reader; a heading whose SKILL.md text changed is
++        lost with reason `section-sha-void`.
+   cold-read-forecast.py --selftest
+ 
+ Reads only git blobs at REV (never the worktree): the lane's SKILL.md and the
+@@ -533,9 +538,114 @@
+         'notes': notes, 'exit': exit_code}
+ 
+ 
++def section_uncovered(model, index):
++    """(covered, reasons) for one section at MODEL's own rev."""
++    if not model.matches[index]:
++        return False, ['no-ledger-entry']
++    return model.covered(index, set())
++
++
++def uncovered_sections(model):
++    """Every section the monitor leaves uncovered at MODEL's rev."""
++    out = []
++    for i, sec in enumerate(model.sections):
++        covered, reasons = section_uncovered(model, i)
++        if not covered:
++            out.append({'index': i, 'start': sec['start'], 'end': sec['end'],
++                        'heading': sec['heading'], 'reasons': reasons})
++    return out
++
++
++def entry_causes(base, target, heading):
++    """New failure causes for HEADING: entries that credited at base, fail at target.
++
++    Only entries that CREDITED at base count: an entry already stale at base
++    proves nothing about the change (the monitor's stale-does-not-veto rule).
++    """
++    causes = set()
++    for i, sec in enumerate(base.sections):
++        if sec['heading'] != heading:
++            continue
++        for entry in base.matches[i]:
++            if base.entry_reason(entry, set()) is not None:
++                continue
++            reason = target.entry_reason(entry, set())
++            if reason:
++                causes.update(part for part in reason.split(';') if part)
++    return sorted(causes)
++
++
++def diff_forecast(base, target, paths, strict=False):
++    """Retrospective calibration: covered at BASE, uncovered at TARGET.
++
++    The target rev is measured with the tool's own credit rule -- the rule the
++    frozen monitor runs -- so the lost set is exactly the monitor's uncredited
++    set at the target, minus what was already uncredited at base. A SKILL.md
++    section EDITED between the revs has no ledger entry at the target
++    (`no-ledger-entry`): one fresh reader, reason `section-sha-void`. A
++    section ADDED between the revs is uncovered at the target for the same
++    reason and is a lost heading too. A section REMOVED between the revs is
++    gone from the page: it costs no reader and is not a lost heading.
++    """
++    base_unc = uncovered_sections(base)
++    target_unc = uncovered_sections(target)
++    base_unc_headings = {u['heading'] for u in base_unc}
++    lost = []
++    for u in target_unc:
++        if u['heading'] in base_unc_headings:
++            continue
++        if not target.matches[u['index']]:
++            edited = any(s['heading'] == u['heading'] for s in base.sections)
++            reasons = ['section-sha-void'] if edited else ['no-ledger-entry']
++        else:
++            reasons = entry_causes(base, target, u['heading']) or ['no-ledger-entry']
++        lost.append({'start': u['start'], 'end': u['end'], 'heading': u['heading'],
++                     'reasons': reasons})
++    by_path = {}
++    for item in lost:
++        for reason in item['reasons']:
++            if ':' in reason:
++                by_path.setdefault(reason.split(':', 1)[1], []).append(item['start'])
++    classes = {}
++    for path in paths:
++        if path == SKILL:
++            classes[path] = 'PRICED'      # measured at the target rev
++        elif path == LEDGER_PATH:
++            classes[path] = 'UNPRICED'    # the credit SET itself changed
++        else:
++            classes[path] = classify(base, path, True)
++    exit_code = 0
++    notes = []
++    for path in paths:
++        cls = classes[path]
++        if cls == 'UNPRICED':
++            exit_code = 2
++            notes.append('FORECAST_UNPRICED: %s is read directly by the monitor and pinned by no entry; '
++                         'its cost cannot be forecast' % path)
++        elif strict and cls in ('UNPINNED', 'STALE-ONLY'):
++            exit_code = 2
++            notes.append('FORECAST_UNPINNED: %s is %s (strict)' % (path, cls))
++    target_shas = {s['sha256'] for s in target.sections}
++    edited_starts = sorted(sec['start'] for sec in base.sections
++                           if sec['sha256'] not in target_shas
++                           and any(s['heading'] == sec['heading'] for s in target.sections))
++    return {
++        'rev': base.rev, 'target_rev': target.rev, 'paths': list(paths), 'classes': classes,
++        'sections_total': len(base.sections),
++        'target_sections_total': len(target.sections),
++        'base_covered': len(base.sections) - len(base_unc),
++        'target_covered': len(target.sections) - len(target_unc),
++        'already_uncovered': [{'start': u['start'], 'heading': u['heading']} for u in base_unc],
++        'skill_sections_edited': edited_starts,
++        'lost': lost, 'headings': len(lost), 'readers': len(lost),
++        'by_path': {p: sorted(v) for p, v in sorted(by_path.items())},
++        'notes': notes, 'exit': exit_code}
++
++
+ def render(result):
++    total = result.get('target_sections_total', result['sections_total'])
+     out = ['FORECAST: paths=%d headings=%d readers=%d of %d' % (
+-        len(result['paths']), result['headings'], result['readers'], result['sections_total'])]
++        len(result['paths']), result['headings'], result['readers'], total)]
+     out.append('BASE: covered=%d of %d at %s' % (
+         result['base_covered'], result['sections_total'], result['rev'][:12]))
+     for path in result['paths']:
+@@ -582,11 +692,15 @@
+         if other is None:
+             raise CouldNotEvaluate('--diff-to %r does not resolve' % args.diff_to)
+         paths = diff_inputs(repo, rev, other)
+-        if SKILL in paths:
+-            after = {s['sha256'] for s in sectionize(
+-                read_blobs(repo, [tree_modes(repo, other)[SKILL][1]]).popitem()[1])}
+-            lines += ['%d-%d' % (s['start'], s['end']) for s in model.sections
+-                      if s['sha256'] not in after]
++        other_model = Model(repo, other)
++        result = diff_forecast(model, other_model, paths, strict=args.strict)
++        text = json.dumps(result, indent=1, sort_keys=True) if args.json else render(result)
++        try:
++            print(text)
++            sys.stdout.flush()
++        except BrokenPipeError:
++            os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
++        return result['exit']
+     else:
+         if not args.paths:
+             raise Usage('--paths (or --diff-to) is required')
+@@ -673,6 +787,7 @@
+             handle.write(content)
+     fx_git(root, 'add', '-A')
+     fx_git(root, 'commit', '-q', '-m', 'base')
++    base = fx_git(root, 'rev-parse', 'HEAD')
+     fx_git(root, 'checkout', '-q', '-b', 'edited')
+     with open(os.path.join(root, 'a.txt'), 'a') as handle:
+         handle.write('more\n')
+@@ -681,6 +796,27 @@
+         handle.write(sk)
+     fx_git(root, 'add', '-A')
+     fx_git(root, 'commit', '-q', '-m', 'edit')
++    tip = fx_git(root, 'rev-parse', 'HEAD')
++    # a heading ADDED after base: no ledger entry matches its sha256
++    fx_git(root, 'checkout', '-q', '-b', 'added', base)
++    with open(os.path.join(root, SKILL), 'a') as handle:
++        handle.write('\n## Zed\n\nzed body\n')
++    fx_git(root, 'add', '-A')
++    fx_git(root, 'commit', '-q', '-m', 'add heading')
++    added = fx_git(root, 'rev-parse', 'HEAD')
++    # a heading REMOVED after base: the page shrinks, no heading is lost
++    fx_git(root, 'checkout', '-q', '-b', 'removed', base)
++    with open(os.path.join(root, SKILL), 'w') as handle:
++        handle.write(FX_SKILL.replace('## Epsilon\n\neps body\n', ''))
++    fx_git(root, 'add', '-A')
++    fx_git(root, 'commit', '-q', '-m', 'remove heading')
++    removed = fx_git(root, 'rev-parse', 'HEAD')
++    # SKILL.md deleted after base: the target rev cannot be measured at all
++    fx_git(root, 'checkout', '-q', '-b', 'noskill', base)
++    fx_git(root, 'rm', '-q', SKILL)
++    fx_git(root, 'commit', '-q', '-m', 'delete SKILL')
++    noskill = fx_git(root, 'rev-parse', 'HEAD')
++    return base, tip, added, removed, noskill
+ 
+ 
+ def selftest():
+@@ -697,9 +833,7 @@
+         fx_git(repo, 'init', '-q')
+         if fx_git(repo, 'rev-parse', '--show-toplevel') != os.path.realpath(repo):
+             raise RuntimeError('fixture toplevel mismatch')
+-        build_fixture(repo)
+-        base = fx_git(repo, 'rev-parse', 'HEAD~1')
+-        tip = fx_git(repo, 'rev-parse', 'HEAD')
++        base, tip, added, removed, noskill = build_fixture(repo)
+ 
+         def cli(*argv, env=None):
+             e = dict(os.environ, **(env or {}))
+@@ -753,6 +887,22 @@
+         case('--diff-to: a.txt drift + edited Gamma section priced together',
+              code == 0 and sorted(l['heading'] for l in res['lost']) == ['## Alpha', '## Gamma']
+              and res['classes']['a.txt'] == 'PRICED')
++        code, res, _ = jcli('--rev', base, '--diff-to', tip)
++        case('--diff-to: the target rev is measured, not simulated (base vs target counts)',
++             code == 0 and res['base_covered'] == 5 and res['target_covered'] == 3
++             and res['target_sections_total'] == 6
++             and res['target_rev'] == tip)
++        code, res, _ = jcli('--rev', base, '--diff-to', added)
++        case('--diff-to: a heading ADDED at the target has no ledger entry and is lost',
++             code == 0 and [l['heading'] for l in res['lost']] == ['## Zed']
++             and res['lost'][0]['reasons'] == ['no-ledger-entry'])
++        code, res, _ = jcli('--rev', base, '--diff-to', removed)
++        case('--diff-to: a heading REMOVED at the target is gone, not lost',
++             code == 0 and res['lost'] == []
++             and res['target_sections_total'] == 5)
++        code, out, err = cli('--rev', base, '--diff-to', noskill)
++        case('--diff-to with SKILL.md deleted at the target: exit 2, no traceback',
++             code == 2 and 'Traceback' not in err and 'Traceback' not in out)
+         code, _, err = cli('--rev', '--evil', '--paths', 'a.txt')
+         case('option-like rev: exit 64', code == 64)
+         code, _, err = cli('--rev', base, '--paths', '../x')

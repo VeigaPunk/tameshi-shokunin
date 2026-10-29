@@ -1,0 +1,26 @@
+# R02 R50.3: the superseding table landed by a lane commit AFTER the spot-check file
+$ git -C $S/clone log --oneline -S'## Round 51 — frontier status table re-stated' -- corpus/README.md
+6d8c11e round-51: integrate frontier/S022 correction, sourced tenth case, registry rows, runner panel and controls
+$ git -C $S/clone merge-base --is-ancestor 9962033 6d8c11e ; echo rc=$?
+rc=0
+$ git -C $S/clone merge-base --is-ancestor 6d8c11e 5e3569969b532310d2b8a3d130901757a3df356b ; echo rc=$?
+rc=0
+$ git -C $S/clone log -1 --format='%h %an <%ae> %ci %s' 6d8c11e
+6d8c11e tameshi-shokunin <tameshi@shokunin.local> 2026-10-26 22:32:17 -0300 round-51: integrate frontier/S022 correction, sourced tenth case, registry rows, runner panel and controls
+
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:corpus/README.md | sed -n '610,612p;621p;625p'
+## Round 51 — frontier status table re-stated (calibration)
+
+The status table at `corpus/README.md:76-87` is superseded as a whole: its status cells were never re-stated after the rounds that moved them (rounds 1, 21, 25, 27, 38, 49, 50), so seven of the ten cells no longer read what the lane later declared. Nothing above this line is rewritten — the coverage map is corrected by appending only — and each row below carries the latest wording with a pointer to the lines that declare its status.
+| F6 | fixture minimization for survivors | S022, S023, S024, S271 | held (round 50) — README.md:608 | before: B5 probe fixture size: unmeasured → after: held for the method on killing cases — one shrinker to a 1-minimal sub-case with a stated run cost (round 50); the round-29 B5 survivor is not discharged and stays masked → next: shrink on a second gate, or discharge B5 |
+| F10 | PBT generators for gate fixtures | S018, S019, S020, S021, S269, S270 | held (round 49) — README.md:599 | before: no PBT fixture method → after: one generator against a named fixture gate, conditioned on the round-49 deciding receipt printing C2_R49_PASS=true; next: a second gate, or shrinking (README.md:599) |
+
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:corpus/README.md | sed -n '83p;87p'   # old table rows (append-only, still 'open')
+| F6 | fixture minimization for survivors | S022, S023, S024 | open | B5 probe fixture size: unmeasured → reduced size + kill check |
+| F10 | PBT generators for gate fixtures | S018, S019, S020, S021 | open | no PBT fixture method → one generator against a named fixture gate |
+
+$ git -C $S/clone diff --stat 6d8c11e 5e3569969b532310d2b8a3d130901757a3df356b -- corpus/README.md   # only the round-53 F7 note since
+ corpus/README.md | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+$ git -C $S/clone diff 6d8c11e 5e3569969b532310d2b8a3d130901757a3df356b -- corpus/README.md | grep -E '^[+-].*\| F(6|10) \|' | wc -l   # F6/F10 rows changed since = 0
+0

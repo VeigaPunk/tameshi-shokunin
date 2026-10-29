@@ -1,0 +1,13 @@
+$ git -C $C log --oneline fa48c06c..5e35699 -- .ufo/evidence/round-55/after/c2.stdout   # no lane commit fixed the truncated receipt
+(empty = unchanged since the round-55 spot-check fa48c06c)
+
+$ git -C $C grep -ln 'C2_R55_PASS=true' 5e35699 -- .ufo/evidence/   # evidence-tree receipts carrying a green C2_R55
+5e35699:.ufo/evidence/round-55/c2/measure.py
+5e35699:.ufo/evidence/round-55/contract.json
+
+$ git -C $C show 5e35699:.ufo/evidence/round-55/after/c2.stdout | grep -c C2_R55   # verdict line present?
+0
+
+$ git -C $C show 5e35699:.ufo/evidence/round-56/before/c2.stdout | grep arm4   # round-56 counter feeds the round-55 receipt as a RED case
+4:EXPLAIN arm4-red55 exit=3 codes=RECEIPT_REV_ABSENT
+6:C2_R56: rev=c3e2ca9f0207 selftest=14/14 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=own-receipts-missing docs=0/4 total=2 C2_R56_PASS=false

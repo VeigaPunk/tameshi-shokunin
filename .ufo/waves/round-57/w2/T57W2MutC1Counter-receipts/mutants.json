@@ -1,0 +1,86 @@
+[
+  {
+    "id": "M01-key-regex-lookaround-drop",
+    "old": "        if re.search(r'(?<![\\w-])' + re.escape(k) + r'(?![\\w-])', low, re.IGNORECASE):",
+    "new": "        if re.search(re.escape(k), low, re.IGNORECASE):",
+    "note": "key-token match loses the whole-token look-arounds: a key now matches as a substring of a longer word"
+  },
+  {
+    "id": "M02-introduced-check-removed",
+    "old": "            prev = show(lane, parents[0], item['path']) if parents else None\n            if prev is not None and norm(item['excerpt']) in norm(prev.decode('utf-8', 'replace')):\n                continue",
+    "new": "            prev = None",
+    "note": "amendment-1 'introduced by the commit' check (excerpt absent at the commit's first parent) removed"
+  },
+  {
+    "id": "M03-item-tie-check-removed",
+    "old": "            if not (names_id or item['path'] in item_text or os.path.basename(item['path']) in item_text):",
+    "new": "            if False:",
+    "note": "commit-to-item tie (message names the id, or the item text names the evidence path) no longer required"
+  },
+  {
+    "id": "M04-names-id-regex-loosened",
+    "old": "        names_id = re.search(r'(?<![\\w.])' + re.escape(d['id']) + r'(?!\\d)', msg) is not None",
+    "new": "        names_id = re.search(re.escape(d['id']), msg) is not None",
+    "note": "commit-message id match loses its boundary look-arounds: R50.1 matches R50.10"
+  },
+  {
+    "id": "M05-planned-round-ge-to-lt",
+    "old": "        if m and int(m.group(1)) >= best:",
+    "new": "        if m and int(m.group(1)) < best:",
+    "note": "newest-**Planned (round N)** paragraph selection inverted: no paragraph is selected, planned ids empty"
+  },
+  {
+    "id": "M06-base-status-coherence-removed",
+    "old": "    if sab not in STATUSES or (sab == 'fixed' and status != 'fixed'):",
+    "new": "    if sab not in STATUSES:",
+    "note": "base-status coherence dropped: a row may claim status_at_base=fixed while claiming a non-fixed status"
+  },
+  {
+    "id": "M07-sab-fixed-vs-ancestor-flipped",
+    "old": "        if (sab == 'fixed') != is_ancestor(lane, commit, base):",
+    "new": "        if (sab == 'fixed') == is_ancestor(lane, commit, base):",
+    "note": "status_at_base='fixed' vs commit-after-base coherence check inverted"
+  },
+  {
+    "id": "M08-panel-pin-check-removed",
+    "old": "        if pblob is None or hashlib.sha256(pblob).hexdigest() != panel_pin:",
+    "new": "        if pblob is None:",
+    "note": "panel content pin no longer checked: any panel file at REV is accepted"
+  },
+  {
+    "id": "M09-panel-allowed-ge",
+    "old": "            counts['panel_over'] = max(0, len(dis) - panel_allowed)",
+    "new": "            counts['panel_over'] = max(0, len(dis) - panel_allowed + 1)",
+    "note": "panel disagreement allowance '>' becomes '>=' (one fewer disagreement tolerated)"
+  },
+  {
+    "id": "M10-panel-verdict-lookup-default",
+    "old": "            dis = [d['id'] for d in defects if (by_id.get(d['id']) or {}).get('status_at_base') != verdicts.get(d['id'])]",
+    "new": "            dis = [d['id'] for d in defects if (by_id.get(d['id']) or {}).get('status_at_base') != verdicts.get(d['id'], 'fixed')]",
+    "note": "a panel verdict absent from panel.json defaults to 'fixed' instead of disagreeing"
+  },
+  {
+    "id": "M11-hard-path-list-shortened",
+    "old": "HARD = ('.ufo/evidence/round-57/c1/', '.ufo/evidence/round-57/control/', '.ufo/evidence/round-57/contract.json',\n        '.ufo/evidence/round-57/freeze.json')",
+    "new": "HARD = ('.ufo/evidence/round-57/c1/', '.ufo/evidence/round-57/control/', '.ufo/evidence/round-57/contract.json')",
+    "note": "freeze.json dropped from the HARD (non-evidence) path list"
+  },
+  {
+    "id": "M12-old49-comparison-weakened",
+    "old": "        if len(seen) != 1 or seen[0] != was:",
+    "new": "        if len(seen) != 1:",
+    "note": "old49 arm checks only the row COUNT, not canonical equality with the BASE bytes"
+  },
+  {
+    "id": "M13-base-ancestor-guard-removed",
+    "old": "    if not is_ancestor(lane, base, rev):",
+    "new": "    if False:",
+    "note": "BASE-must-be-ancestor-of-REV setup guard removed"
+  },
+  {
+    "id": "M14-this-round-floor-off-by-one",
+    "old": "    counts['this_round_short'] = max(0, this_round_floor - stat['fixed_this_round'])",
+    "new": "    counts['this_round_short'] = max(0, this_round_floor - stat['fixed_this_round'] - 1)",
+    "note": "this-round floor off by one: one fewer post-base fix is required"
+  }
+]

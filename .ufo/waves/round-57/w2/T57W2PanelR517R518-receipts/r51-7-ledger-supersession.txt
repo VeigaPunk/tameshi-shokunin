@@ -1,0 +1,25 @@
+# receipt 1 — R51.7: ledger supersession note at BASE
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone log --oneline -1 -S '§3 drift-pins cell superseded' -- corpus/knowledge/fleet-kill-rate-ledger.md
+bcba892 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone merge-base --is-ancestor ef19d8e bcba892 (spot-check commit -> fix commit)
+YES: bcba892 is a strict descendant of ef19d8e (the commit that added corpus/lessons/round-51-verifier-spotcheck.md)
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone show bcba892 -- corpus/knowledge/fleet-kill-rate-ledger.md | grep '^+'
++++ b/corpus/knowledge/fleet-kill-rate-ledger.md
++
++## Round 52 — §3 drift-pins cell superseded (2026-10-27)
++
++- **§3 supersession (cell, not edit; round-8 precedent `:280`).** The §3 queue row `drift-pins` (`:119`) said "unmeasured by sweep"; round 51 measured kagi `corpus/drift-pins.sh` @ `e64e81b8` (blob `c138d34c…`) as recorded case 10: `MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)` (`.ufo/evidence/round-51/c2/sweep/sweep.txt:31`), wired as the ru
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone show 5e35699:corpus/knowledge/fleet-kill-rate-ledger.md | awk 'NR>=439 && NR<=441'
+439: ## Round 52 — §3 drift-pins cell superseded (2026-10-27)
+440: 
+441: - **§3 supersession (cell, not edit; round-8 precedent `:280`).** The §3 queue row `drift-pins` (`:119`) said "unmeasured by sweep"; round 51 measured kagi `corpus/drift-pins.sh` @ `e64e81b8` (blob `c138d34c…`) as recorded case 10: `MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)` (`.ufo/evidence/round-51/c2/sweep/sweep.txt:31`), wired as the runner's tenth leg (`REGRESSION: PASS (cases=10 passed=10 …)`, `.ufo/evidence/round-51/after/c2.stdout:22`); entry `corpus/knowledge/mutation-case-kagi-drift-pins.md`. That case 10 measurement supersedes the cell; §3's table stays as written. Three of the eight survivors are harness-masked by the gate's own unanchored verdict grep (`corpus/lessons/round-51.md`), so 2/10 is a floor on the gate's detecting power, not its ceiling. Routed by the round-51 spot-check, defect 7.
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone show 5e35699:corpus/knowledge/fleet-kill-rate-ledger.md | awk 'NR==119'   # the §3 cell itself, unchanged by design
+119: | drift-pins | 13 | `c138d34c7f0dfe95` | unmeasured by sweep; hermetic |
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone show 5e35699:corpus/knowledge/fleet-kill-rate-ledger.md | awk 'NR==280'   # round-8 precedent
+280: - **§3 supersession (cells, not edits).** The §3 queue rows `claims-check` (`:111`) and `checklist-run` (`:121`) said "unmeasured by sweep"; rows 5/6 are the measurements that supersede those cells — §3's tables stay as written. Eight queue rows stand: kumitat
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone ls-tree 5e35699 corpus/knowledge/mutation-case-kagi-drift-pins.md   # case-10 entry exists at BASE
+100644 blob 688e8efd932498263074e58be12eae1bb1a9cb77	corpus/knowledge/mutation-case-kagi-drift-pins.md
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone show 5e35699:.ufo/evidence/round-51/c2/sweep/sweep.txt | awk 'NR==31'
+31: MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)
+$ git -C /fast/scratch/hyaku/tameshi-r57/T57W2PanelR517R518/clone show 5e35699:.ufo/evidence/round-51/after/c2.stdout | awk 'NR==22'
+22: REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)

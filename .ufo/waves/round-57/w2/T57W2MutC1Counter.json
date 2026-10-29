@@ -1,0 +1,263 @@
+[
+  {
+    "id": "M01-key-regex-lookaround-drop",
+    "old": "        if re.search(r'(?<![\\w-])' + re.escape(k) + r'(?![\\w-])', low, re.IGNORECASE):",
+    "new": "        if re.search(re.escape(k), low, re.IGNORECASE):",
+    "killed_by": [
+      "key token: hyphen after",
+      "key token: underscore after",
+      "key token: hyphen before",
+      "key token: letter after",
+      "key token: letter before",
+      "key token: BACKTICK in BACKTICK_RE excerpt",
+      "key token: TICK_RE in BACKTICK_RE excerpt"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M02-introduced-check-removed",
+    "old": "            prev = show(lane, parents[0], item['path']) if parents else None\n            if prev is not None and norm(item['excerpt']) in norm(prev.decode('utf-8', 'replace')):\n                continue",
+    "new": "            prev = None",
+    "killed_by": [
+      "introduced: excerpt already at the first parent refused"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M03-item-tie-check-removed",
+    "old": "            if not (names_id or item['path'] in item_text or os.path.basename(item['path']) in item_text):",
+    "new": "            if False:",
+    "killed_by": [
+      "forgery: excerpt quoted into a new file under an unrelated message refused",
+      "message naming R50.12 / xR50.1 / v1.R50.1 does not name R50.1",
+      "tie: a different path in the item text refused"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M04-names-id-regex-loosened",
+    "old": "        names_id = re.search(r'(?<![\\w.])' + re.escape(d['id']) + r'(?!\\d)', msg) is not None",
+    "new": "        names_id = re.search(re.escape(d['id']), msg) is not None",
+    "killed_by": [
+      "message naming R50.12 / xR50.1 / v1.R50.1 does not name R50.1"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M05-planned-round-ge-to-lt",
+    "old": "        if m and int(m.group(1)) >= best:",
+    "new": "        if m and int(m.group(1)) < best:",
+    "killed_by": [
+      "good ledger passes",
+      "good verdict line fields",
+      "defects pin mismatch counted",
+      "missing row counted (rows arm)",
+      "duplicate row counted",
+      "extra row counted",
+      "bad status counted (agree arm)",
+      "status_at_base absent refused",
+      "fixed at base but declined now refused",
+      "declined at base, fixed after base passes",
+      "fixed at base needs a commit that is an ancestor of BASE",
+      "commit an ancestor of BASE needs fixed at base",
+      "fixed at base with an ancestor commit passes",
+      "fix commit before routing refused",
+      "open not in Planned refused",
+      "forgery: excerpt quoted into a new file under an unrelated message refused",
+      "same quote under a message naming the id passes (control)",
+      "message naming R50.12 / xR50.1 / v1.R50.1 does not name R50.1",
+      "tie: evidence path named by the item text passes",
+      "tie: evidence basename named by the item text passes",
+      "tie: evidence path named by extended_text passes",
+      "tie: a different path in the item text refused",
+      "introduced: excerpt already at the first parent refused",
+      "introduced: excerpt added by the commit passes (control)",
+      "routed_at: excerpt present at routing, dropped, re-added by the commit refused",
+      "key token: parentheses and case (positive)",
+      "key token: comma after (positive)",
+      "key token: path suffix docs/wave-slots",
+      "key token: path suffix wave-slots",
+      "key token: BACKTICK in BACKTICK_RE excerpt",
+      "key token: TICK_RE in BACKTICK_RE excerpt",
+      "key token: compile in BACKTICK_RE excerpt",
+      "key token: BACKTICK_RE in BACKTICK_RE excerpt",
+      "planned: newer paragraph first, round 10 beats round 9",
+      "planned: newer paragraph last, round 10 beats round 9",
+      "fixed floor counted",
+      "declined cap counted",
+      "fix older than base is not this round",
+      "this-round floor counted",
+      "panel file absent at REV is a pin miss",
+      "panel agrees: panel=0/5, pass",
+      "panel pin mismatch: panel_pin=1, panel=pin",
+      "panel exactly allowed disagreements passes",
+      "panel one over allowed: panel_over=1",
+      "panel over counts the excess only",
+      "panel without a verdict for an id disagrees",
+      "older round evidence path is allowed",
+      "edited spot-check counted (spot arm)",
+      "rewritten old row counted (old49 arm)",
+      "key/row order is not a change (canonical)",
+      "cli good exits 0, verdict is last line"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M06-base-status-coherence-removed",
+    "old": "    if sab not in STATUSES or (sab == 'fixed' and status != 'fixed'):",
+    "new": "    if sab not in STATUSES:",
+    "killed_by": [
+      "fixed at base but open now refused",
+      "fixed at base but declined now refused"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M07-sab-fixed-vs-ancestor-flipped",
+    "old": "        if (sab == 'fixed') != is_ancestor(lane, commit, base):",
+    "new": "        if (sab == 'fixed') == is_ancestor(lane, commit, base):",
+    "killed_by": [
+      "good ledger passes",
+      "good verdict line fields",
+      "defects pin mismatch counted",
+      "missing row counted (rows arm)",
+      "duplicate row counted",
+      "extra row counted",
+      "status_at_base outside the enum refused",
+      "fixed at base but open now refused",
+      "fixed at base but declined now refused",
+      "declined at base, fixed after base passes",
+      "fixed at base needs a commit that is an ancestor of BASE",
+      "commit an ancestor of BASE needs fixed at base",
+      "fixed at base with an ancestor commit passes",
+      "commit not touching evidence refused",
+      "ack line is not a fix",
+      "ack control: ack-free line of the fix commit passes",
+      "ack control: carried line of the same commit refused",
+      "forgery: excerpt quoted into a new file under an unrelated message refused",
+      "same quote under a message naming the id passes (control)",
+      "tie: evidence path named by the item text passes",
+      "tie: evidence basename named by the item text passes",
+      "tie: evidence path named by extended_text passes",
+      "introduced: excerpt already at the first parent refused",
+      "introduced: excerpt added by the commit passes (control)",
+      "routed_at: excerpt present at routing, dropped, re-added by the commit refused",
+      "key token: hyphen after",
+      "key token: underscore after",
+      "key token: hyphen before",
+      "key token: letter after",
+      "key token: letter before",
+      "key token: parentheses and case (positive)",
+      "key token: comma after (positive)",
+      "key token: path suffix docs/wave-slots",
+      "key token: path suffix wave-slots",
+      "key token: path suffix docs/xwave-slots",
+      "key token: path suffix docs/wave-slots-notes",
+      "key token: compile in BACKTICK_RE excerpt",
+      "key token: BACKTICK_RE in BACKTICK_RE excerpt",
+      "planned: newer paragraph first, round 10 beats round 9",
+      "planned: newer paragraph last, round 10 beats round 9",
+      "fixed floor counted",
+      "declined cap counted",
+      "fix older than base is not this round",
+      "this-round floor counted",
+      "panel file absent at REV is a pin miss",
+      "panel agrees: panel=0/5, pass",
+      "panel pin mismatch: panel_pin=1, panel=pin",
+      "panel exactly allowed disagreements passes",
+      "panel one over allowed: panel_over=1",
+      "panel over counts the excess only",
+      "panel without a verdict for an id disagrees",
+      "row status_at_base against panel verdict disagrees",
+      "older round evidence path is allowed",
+      "edited spot-check counted (spot arm)",
+      "rewritten old row counted (old49 arm)",
+      "key/row order is not a change (canonical)",
+      "cli good exits 0, verdict is last line"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M08-panel-pin-check-removed",
+    "old": "        if pblob is None or hashlib.sha256(pblob).hexdigest() != panel_pin:",
+    "new": "        if pblob is None:",
+    "killed_by": [
+      "panel pin mismatch: panel_pin=1, panel=pin",
+      "cli default panel pin (PANEL_SHA256) is a miss: exit 1, panel=pin"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M09-panel-allowed-ge",
+    "old": "            counts['panel_over'] = max(0, len(dis) - panel_allowed)",
+    "new": "            counts['panel_over'] = max(0, len(dis) - panel_allowed + 1)",
+    "killed_by": [
+      "panel exactly allowed disagreements passes",
+      "panel one over allowed: panel_over=1",
+      "panel over counts the excess only",
+      "panel without a verdict for an id disagrees",
+      "row status_at_base against panel verdict disagrees"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M10-panel-verdict-lookup-default",
+    "old": "            dis = [d['id'] for d in defects if (by_id.get(d['id']) or {}).get('status_at_base') != verdicts.get(d['id'])]",
+    "new": "            dis = [d['id'] for d in defects if (by_id.get(d['id']) or {}).get('status_at_base') != verdicts.get(d['id'], 'fixed')]",
+    "killed_by": [],
+    "verdict": "SURVIVED",
+    "note": "a panel verdict absent from panel.json defaults to 'fixed' instead of disagreeing",
+    "proposed_selftest_case": {
+      "name": "panel without a verdict for a fixed-at-base id disagrees",
+      "placement": "selftest(), after the 'row status_at_base against panel verdict disagrees' case",
+      "code": "counts, _, total, kv, _ = run(variant(lambda r: r[0].update(status_at_base='fixed')), base=fix, panel={'R50.2': 'open', 'R50.3': 'declined'}, allowed=0, **NF)\ncase('panel without a verdict for a fixed-at-base id disagrees', counts['panel_over'] == 1\n     and total == 1 and kv['panel'] == '1/0')",
+      "kills": "M10-panel-verdict-lookup-default",
+      "verified": "staged counter + case: 96/96 pass (exit 0); staged counter + case + M10 mutation: 95/96 pass (the new case FAILs) -- receipts/selftest-with-proposed-case.txt, receipts/selftest-M10-mutant-with-proposed-case.txt",
+      "masked_defect": "with M10 a panel file that omits a verdict for an id whose row claims status_at_base='fixed' is scored panel=0/0 and the counter PASSES (receipts/M10-probe.txt: pristine panel=1/0 C1_R57_PASS=false, mutant panel=0/0 C1_R57_PASS=true)"
+    },
+    "staged_file": ".ufo/waves/round-57/w2/T57W2MutC1Counter/stage/.ufo/evidence/round-57/c1/measure.py",
+    "staged_sha256": "3bf1dd7185b85a2276e942dac75e06f17e1b91b0be2010b579d2512208e40d79",
+    "after_proposed_case_verdict": "KILLED",
+    "after_proposed_case_killed_by": [
+      "panel without a verdict for a fixed-at-base id disagrees"
+    ]
+  },
+  {
+    "id": "M11-hard-path-list-shortened",
+    "old": "HARD = ('.ufo/evidence/round-57/c1/', '.ufo/evidence/round-57/control/', '.ufo/evidence/round-57/contract.json',\n        '.ufo/evidence/round-57/freeze.json')",
+    "new": "HARD = ('.ufo/evidence/round-57/c1/', '.ufo/evidence/round-57/control/', '.ufo/evidence/round-57/contract.json')",
+    "killed_by": [
+      "hard path refused: freeze.json"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M12-old49-comparison-weakened",
+    "old": "        if len(seen) != 1 or seen[0] != was:",
+    "new": "        if len(seen) != 1:",
+    "killed_by": [
+      "rewritten old row counted (old49 arm)"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M13-base-ancestor-guard-removed",
+    "old": "    if not is_ancestor(lane, base, rev):",
+    "new": "    if False:",
+    "killed_by": [
+      "BASE not an ancestor of REV is setup"
+    ],
+    "verdict": "KILLED"
+  },
+  {
+    "id": "M14-this-round-floor-off-by-one",
+    "old": "    counts['this_round_short'] = max(0, this_round_floor - stat['fixed_this_round'])",
+    "new": "    counts['this_round_short'] = max(0, this_round_floor - stat['fixed_this_round'] - 1)",
+    "killed_by": [
+      "fix older than base is not this round",
+      "this-round floor counted",
+      "default floors are non-binding constants"
+    ],
+    "verdict": "KILLED"
+  }
+]

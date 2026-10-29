@@ -1,0 +1,121 @@
+# T57W2PanelR511R512 — blind panel receipts (lane base 5e3569969b532310d2b8a3d130901757a3df356b)
+# scratch clone: git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone ; checkout --detach 5e3569969b532310d2b8a3d130901757a3df356b
+
+## 0. identity
+5e3569969b532310d2b8a3d130901757a3df356b
+/fast/scratch/hyaku/tameshi-r57/T57W2PanelR511R512/clone
+
+## 1. R51.1 — registry row at BASE (the cited surface)
+$ git -C clone show 5e3569969b532310d2b8a3d130901757a3df356b:tools/registry.json | sed -n '1250,1275p'
+  {
+   "name": "mte-interop-check",
+   "kind": "gate",
+   "argv": [
+    "uv",
+    "run",
+    "--no-project",
+    "--with",
+    "jsonschema==4.25.1",
+    "python3",
+    "tools/mte-interop.py",
+    "--check"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "MTE_INTEROP: PASS legs_conforming=10/10"
+    ]
+   },
+   "timeout_s": 900,
+   "status": "active",
+   "tags": [
+    "new-r26"
+   ],
+   "source": "corpus/lessons/round-51-verifier-spotcheck.md@ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4:126"
+  },
+
+## 2. R51.1 — the row was 9/9 (unsatisfiable) at the round-51 spot-check commit
+$ git -C clone show ef19d8e1:tools/registry.json | grep -n legs_conforming
+1014:      "expect": {"exit": 0, "stdout_contains": ["MTE_INTEROP: PASS legs_conforming=9/9"]},
+$ git -C clone show ef19d8e1:tools/registry.json | grep -n '"name": "mte-interop-check"'
+1011:      "name": "mte-interop-check",
+
+## 3. R51.1 — reachable terminal line: LEG_TABLE size and the print statement
+LEG_TABLE entries = 10
+['MTE_INTEROP: PASS|FAIL legs_conforming=N/M, or MTE_INTEROP: SETUP (<reason>).', "print('MTE_INTEROP: %s legs_conforming=%d/%d' % ('PASS' if conforming == len(legs) else 'FAIL',"]
+['if set(legs) != set(LEG_TABLE) or set(tables) != set(LEG_TABLE):']
+
+## 4. R51.1 — the fixing lane commit (AFTER the spot-check file was added)
+$ git -C clone log --format='%H %an %cI %s' -- tools/registry.json | head -3
+c0137451f5b7f22d65f748fc69f1b181f55e1378 tameshi-shokunin 2026-10-28T16:20:00-03:00 round-56 C0: receipt-binding rule (SKILL standing rules), QUALITY criterion 107, knowledge entry receipt-revision-binding, SOURCES S281-S282, lesson round-56, registry cell, before/ receipts, assimilation + census-start evidence
+51d1f0eb9ae087245edc024c31b1b4091c422fa4 tameshi-shokunin 2026-10-28T14:50:53-03:00 round-55: C1 fix pass — stream-refusal exit class in context-capture/registry-check (rc 2 under /dev/full), registry-check --rev --json keeps its machine report, seven registry cells quote the token each tool prints, the note stops claiming stdout is empty, QUALITY 106 + 105 erratum, LOG values reconciled to the receipts, wave-1/2/3 artifacts and the adjudication record
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb tameshi-shokunin 2026-10-28T14:16:39-03:00 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+$ git -C clone show bcba8924 -- tools/registry.json
+commit bcba8924894216268afc4171f06eb8c28e912b46
+Author: tameshi-shokunin <tameshi@shokunin.local>
+Date:   Tue Oct 27 01:42:33 2026 -0300
+
+    round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+
+diff --git a/tools/registry.json b/tools/registry.json
+index 3e852fd..aaf37cb 100644
+--- a/tools/registry.json
++++ b/tools/registry.json
+@@ -1011,11 +1011,11 @@
+       "name": "mte-interop-check",
+       "kind": "gate",
+       "argv": ["uv", "run", "--no-project", "--with", "jsonschema==4.25.1", "python3", "tools/mte-interop.py", "--check"],
+-      "expect": {"exit": 0, "stdout_contains": ["MTE_INTEROP: PASS legs_conforming=9/9"]},
++      "expect": {"exit": 0, "stdout_contains": ["MTE_INTEROP: PASS legs_conforming=10/10"]},
+       "timeout_s": 900,
+       "status": "active",
+       "tags": ["new-r26"],
+-      "source": "corpus/lessons/round-25-verifier-spotcheck.md@d4140796f4e48e8ec81b793facba73fbd03b4443:189-192"
++      "source": "corpus/lessons/round-51-verifier-spotcheck.md@ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4:126"
+     }
+   ]
+ }
+$ git -C clone merge-base --is-ancestor bcba8924 5e3569969b532310d2b8a3d130901757a3df356b && echo ancestor-of-BASE
+ancestor-of-BASE
+$ git -C clone merge-base --is-ancestor ef19d8e1 bcba8924 && echo spotcheck-is-ancestor-of-fix
+spotcheck-is-ancestor-of-fix
+
+## 5. R51.1 — scope monitor that allows the registry change
+$ git -C clone show 5e3569969b532310d2b8a3d130901757a3df356b:.ufo/evidence/round-52/no-harm.sh | sed -n '1,12p;30,36p'
+#!/bin/bash
+# Round-52 no-harm monitors. Usage: no-harm.sh LANE REV. Every line prints "NOHARM <name> <observed> <ok|RED>".
+# Eleven monitors carried from round 51 (.ufo/evidence/round-51/no-harm.sh) with declared re-bases, frozen before any seat:
+#  - commandD: depth_score >= 10 (round 51 measured 10; below 10 is harm);
+#  - registry-rows-not-below-133 (round 51 ended at 133 rows);
+#  - tools-scope: only M:tools/registry.json (C1: the mte-interop-check row follows the ten-leg panel) and
+#    M:tools/round21-measure.py (C1: hermetic self-test) may change under tools/ since BASE;
+#  - everything else as in round 51 (cold-read floor score>=8 credited>=64; freshness fresh>=71 and score>=9;
+#    r45/r46/r47 coverage; S160 count; r49 generator; r50 shrinker self-test).
+# Scratch: $HYAKU_SCRATCH (default /fast/scratch/hyaku)/tameshi-r52/no-harm, removed on exit.
+LANE=$1; REV=$2
+BASE=ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4
+I=$(python3 .ufo/evidence/round-47/coverage/measure.py --lane "$LANE" --rev "$REV" | tail -1 | grep -oE 'rows=[0-9]+|entries=[0-9]+|C3_R47_PASS=[a-z]+' | tr '\n' ' ')
+[ "$I" = "rows=3 entries=3 C3_R47_PASS=true " ] && s=ok || s=RED; echo "NOHARM r47-coverage $I$s"
+T=$(git diff --name-status --no-renames "$BASE" "$REV" -- tools | tr '\t' ':' | tr '\n' ' ')
+s=ok; for t in $T; do case "$t" in M:tools/registry.json|M:tools/round21-measure.py) ;; *) s=RED;; esac; done
+echo "NOHARM tools-scope [${T}] $s"
+git show "$REV:tools/pbt-staged-id.py" > "$SCR/pbt.py"; git show "$REV:tools/staged-id-guard.py" > "$SCR/guard.py"
+P=$(cd "$SCR" && python3 -I "$SCR/pbt.py" --guard "$SCR/guard.py" --seed 4949 --cases 400 --dump "$SCR/d.jsonl" | tail -1)
+
+## 6. R51.1 — committed green receipt at the fix revision
+$ git -C clone ls-tree -r --name-only HEAD | grep -E 'T52W1ExecRegRow-only.out|registry-check-only-mte.stdout'
+.ufo/waves/round-52/w1/T52W1ExecRegRow-only.out
+.ufo/waves/round-52/w2/T52W2ExecC1Probe/registry-check-only-mte.stdout
+$ cat .ufo/waves/round-52/w1/T52W1ExecRegRow-only.out
+ROW mte-interop-check expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+exit=0
+$ cat .ufo/waves/round-52/w2/T52W2ExecC1Probe/registry-check-only-mte.stdout
+ROW mte-interop-check expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+EXIT=0
+$ grep -n 'rev bcba8924' .ufo/waves/round-52/w2/T52W2ExecC1Probe.md
+30:    --rev bcba8924894216268afc4171f06eb8c28e912b46 --work "$S/w" --explain
+189:  `python3 tools/registry-check.py --root /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev bcba8924… --only mte-interop-check`).
+$ git -C clone log --format='%H %cI' -1 -- .ufo/waves/round-52/w2/T52W2ExecC1Probe/registry-check-only-mte.stdout
+7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135 2026-10-27T03:16:56-03:00 round-52: wave-2 fix-reads applied in-line (59), round21 row cell, shrink-case scope; QUALITY 103; S274; lesson; wave-2 evidence

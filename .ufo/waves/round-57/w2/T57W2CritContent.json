@@ -1,0 +1,44 @@
+{
+  "seat": "T57W2CritContent",
+  "wave": 2,
+  "round": 57,
+  "item": "attack C0 content",
+  "target_commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "verdict": "C0 mostly sound; 8 defects: 5 errors in new prose (D1-D5), 2 in QUALITY (D6 unsatisfiable criterion, D7 wrong source), 1 untracked cited receipt (D8); D1-D5 cost zero cold-read credit; D6/D7 add zero readers only if they land before the wave-3 re-read binds",
+  "staged_diff": ".ufo/waves/round-57/w2/T57W2CritContent/stage/T57W2CritContent.diff",
+  "receipts": ".ufo/waves/round-57/w2/T57W2CritContent-receipts/",
+  "defects": [
+    {"id": "D1", "path": "corpus/lessons/round-57.md", "lines": "19-24", "kind": "misquote", "monitored": false, "cold_read_cost": 0, "summary": "R55.2 quotes 'grammar=9/9 ... total=0' which does not occur in T55W1ScribeSkill.md; the report's only total=0 (line 157) is the labelled 8-mode run; the report is lane-side, not fleet-side", "fix": "staged: rewrite R55.2 bullet with report lines 148/157 and receipt c2-integrated.out:44; route the item as a verifier misquote"},
+    {"id": "D2", "path": "corpus/knowledge/gate-row-exit-map.md", "lines": "92-93", "kind": "self-contradiction", "monitored": false, "cold_read_cost": 0, "summary": "says the header documents could-not-evaluate exit 2; the header (tools/receipt-revision-gate.py:25,:32) documents only 0 and 3; line 29 of the same file says so", "fix": "staged: exit 2 is in the code (:194) and the SKILL row, not the header"},
+    {"id": "D3", "path": "corpus/knowledge/gate-row-exit-map.md", "lines": "95-96", "kind": "stale", "monitored": false, "cold_read_cost": 0, "summary": "routed item 2 (SKILL Standing rules row one names RECEIPT_REV_MISMATCH) is closed by C0 at SKILL.md:53 but still reads as open", "fix": "staged: one-line fixed-at-C0 note"},
+    {"id": "D4", "path": "corpus/lessons/round-57.md", "lines": "25-31", "kind": "unnamed-revision", "monitored": false, "cold_read_cost": 0, "summary": "R56.7 says the sentence holds from the pinned bind revision to the round's final tip, naming no revisions; the sentence holds from 877eedee to base (empty monitored-path diff) and is false for any tip after C0 (11 files changed)", "fix": "staged: name 877eedee..5e3569969b53"},
+    {"id": "D5", "path": "corpus/lessons/round-57.md", "lines": "17", "kind": "wrong-path", "monitored": false, "cold_read_cost": 0, "summary": "cites 'CORPUS.md SOURCES rule 1'; the lane has no CORPUS.md; the rule is the fleet-root CORPUS.md Rules item 1 (lines 112-114); counts (20/20) are right", "fix": "staged: name the fleet-root file"},
+    {"id": "D6", "path": "corpus/QUALITY.md", "lines": "1727", "kind": "unsatisfiable-criterion", "monitored": true, "cold_read_cost": "0 extra headings (QUALITY.md marginal headings=0 at ca75c26; C0 already loses 18); binds only if it lands before the wave-3 re-read", "summary": "criterion 110 requires a coldread_forecast key in the round contract committed before the first content edit; round-57 contract.json is untracked and has no such key, so round 57 fails the criterion it lands", "fix": "staged: 'From round 58 on,'"},
+    {"id": "D7", "path": "corpus/QUALITY.md", "lines": "1719", "kind": "wrong-source", "monitored": true, "cold_read_cost": "same as D6", "summary": "criterion 109 derives the exit map from the tool header, which documents only 0 and 3; the map it states includes 2", "fix": "staged: 'its SKILL.md exit-map row documents'"},
+    {"id": "D8", "path": "corpus/SOURCES.md", "lines": "160", "kind": "untracked-evidence", "monitored": true, "cold_read_cost": "0 if fixed by committing the receipt; a SOURCES byte costs the Registry heading", "summary": "S285 receipt .ufo/waves/round-57/w1/T57W1ScoutSourceB-receipts/atlassian-postmortems.html is untracked (??) and absent from every commit; its sha256 2644d1c9 and size 2313661 match the row and the quote is true; criterion 97 does not list SOURCES", "fix": "commit the receipt (preferred) or name the >1 MiB named-file practice in the row; no SOURCES diff staged"}
+  ],
+  "checked_clean": [
+    "SKILL.md:53 and :1547 vs gate behaviour (selftest 19/19; control unresolvable rc 3; --certified unresolvable rc 2)",
+    "SKILL.md line count 2214 at base and C0; zero page-local SKILL anchors overlap lines 53 or 1544-1552",
+    "three gate registry rows: registry-check held=3/3 superseded=0; each row held 1/1 via --only; base tag could-not-evaluate rc 2",
+    "gate-sweep: 13 rc-3 refusal cases, rc 2 certified-unresolvable, rc 1 usage and --paths traceback",
+    "lane-demo: 11 codes defined and emitted by the sweep; 2 by staged rows; 9 by none",
+    "QUALITY 108 falsifier: rows 49 rows_r50_56 0; round-53/after absent; lesson sec 6 has R56.1-R56.7",
+    "QUALITY 109 falsifier: gate-rows-naming-gate 0 at base, 3 at C0; D-CF3 present",
+    "QUALITY 110 falsifier: round-52 contract has no coldread_forecast; precheck receipt reads cand_credited=58 lost=6 RED",
+    "S283: fetched grep manual 248692 B sha 517177d0; quote verbatim; receipt lines 1208-1209 contain it",
+    "S284: fetched SRE workbook 103251 B sha 25b55c64; quote verbatim; receipt line 666 contains it",
+    "S285 quote 'We practice blameless postmortems at Atlassian' present in the page",
+    "ledger labels entries 591-608: 13 SOURCES and 6 QUALITY labels mismatch c0137451 and match 877eedee (0 mismatch)",
+    "errata ER-R57-K1: 19/19, gate sha256 c60772ce; ER-R56-K2 exists",
+    "README coverage row: table shape and numbers match",
+    "R53.8: lesson lines 23 and 31-32; quotes count 20 and 20 words",
+    "R56.7: lesson lines 316-318; diff stats QUALITY +31, SOURCES +2, receipt-revision-binding +39 reproduce"
+  ],
+  "not_attacked": [
+    "tools/cold-read-forecast.py (C0): outside the item list; its retrospective and marginal modes were run, its code was not reviewed",
+    "uncommitted corpus/routed-defects.json working-tree edit"
+  ],
+  "tools_installed": []
+}

@@ -1,0 +1,58 @@
+### env
+clone=/fast/scratch/hyaku/tameshi-r57/T57W2PanelR561R562/clone
+base=5e3569969b532310d2b8a3d130901757a3df356b
+5e3569969b532310d2b8a3d130901757a3df356b
+
+### R1: base is the commit that ADDED the round-56 spot-check file
+5e35699 round-56 verifier spot-check (integrator, hyaku): non-author admit/reject
+
+### R1: commits after the spot-check file add, up to base (SKILL.md + gate) => none inside base
+(empty above = no lane commit between spot-check add and base)
+
+### R1: item text (routed item 1 under '## 6. Verdict and routing')
+130:1. **R56.1** Replace SKILL page-local line anchors with heading/function anchors (QUALITY 34), then re-read the touched sections; do not insert text above line 45 again without re-deriving anchors in the same commit.
+
+### R1: all page-local line anchors in SKILL.md at base
+grep: warning: stray \ before d
+491:  replication. Band interiors were unprobed at round 3 (both at 80 %, SKILL.md:335-339); round 5 measured 60 % inside the band (:684-685, :736-738);
+492:  verb-path U2 and host-stability U5 remain open (:193-206).
+892:- **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:819-820).
+896:  a low kill rate is a report, not a service failure (SKILL.md:346-347). Mado's 40 % is the
+974:  `REGRESSION_PIN` names repo/rev/path/mode/sha256 (:1302-1306). Working-tree drift
+
+### R1: QUALITY criterion 34 (the rule the item cites)
+34. A citation into a file that moves, or that the lane does not own, is
+    anchored by function or symbol name and the cited rev. A line range is a
+    secondary aid. A bare line anchor into such a file expires with the next
+    edit to that file. A paragraph anchor names a quoted sentence or a heading.
+    Captured by: `detect_branch` moved to line 115 in fleet `5d8a3b5`, while
+
+### R1: resolve anchor SKILL.md:335-339 at base (cited by SKILL.md:491) -- does it hold the 8/10 passage?
+grep -c '8/10 killed' over 335-339 => 0
+actual location of the passage:
+346:**8/10 killed (80 %)**; control `43/43 pass`, the suite count held on every
+350:**8/10 killed (80 %)**; control `SELFTEST: PASS (16 cases)`, count held, no
+625:**8/10 killed (80 %)**, survivors B5/B10, control `SELFTEST: PASS (16 cases)`,
+=> anchor STALE at base: 335-339 holds 'Shared survivor classes', not the kill-rate passage
+
+### R2: item text (routed item 2)
+131:2. **R56.2** Fix the `## Standing rules` row 1 code for `role=verdict` with `--paths` (`RECEIPT_REV_CONTENT_DRIFT`), and make the docs arm check code-to-role truth, not code presence.
+
+### R2: SKILL.md standing-rules table row 1 at base (the false cell)
+53:  | a verdict receipt names another revision | refused unless its bytes equal the certified revision on the declared `--paths` surface | `RECEIPT_REV_MISMATCH` |
+
+### R2: gate emission logic at base (tools/receipt-revision-gate.py)
+27:  RECEIPT_REV_AMBIGUOUS · RECEIPT_REV_UNRESOLVABLE · RECEIPT_REV_MISMATCH
+28:  RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR
+47:    'RECEIPT_REV_AMBIGUOUS', 'RECEIPT_REV_UNRESOLVABLE', 'RECEIPT_REV_MISMATCH',
+48:    'RECEIPT_REV_CONTENT_DRIFT', 'RECEIPT_CONTROL_NOT_ANCESTOR',
+145:            if paths is None:
+146:                codes.append('RECEIPT_REV_MISMATCH')
+151:                    codes.append('RECEIPT_REV_CONTENT_DRIFT')
+281:                      r.returncode == 3 and b'RECEIPT_REV_CONTENT_DRIFT' in r.stdout))
+285:                      r.returncode == 3 and b'RECEIPT_REV_MISMATCH' in r.stdout))
+
+### R2: docs arm of the round-56 C2 counter at base -- presence-only, not code-to-role truth
+160:        if not (r.returncode == 3 and 'RECEIPT_REV_CONTENT_DRIFT' in red54 and accepted_ok):
+237:        if 'RECEIPT_REV_CONTENT_DRIFT' in quality.decode('utf-8', 'surrogateescape'):
+258:        if sm and 'receipt-revision-gate' in sm.group(1):

@@ -1,0 +1,76 @@
+# T57W2PanelR511R512 — the :937-950 block's replacement pointers, resolved against runner bytes at BASE
+
+## 1. SKILL.md BASE :965-969 (the 'One command replays every leg' bullet) and :971-977
+- **One command replays every leg.** `bash tools/mutate-and-run.sh
+  --regression [--workdir DIR] [--keep]` allocates a fresh default scratch
+  `${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX` after prerequisite checks. Once allocated,
+  it is removed on PASS unless `--keep`, retained on FAIL/SETUP; caller workdirs
+  are never removed. Pre-allocation SETUP has no root to retain. Exits 0/1/2:
+- **Each leg's bytes come from the repo's git object store, not the working
+  tree.** `git show <rev>:<path>` materializes the pinned blob into the case
+  workdir, mirrors the blob's mode and pins its SHA (`tools/mutate-and-run.sh:1275-1317`);
+  `REGRESSION_PIN` names repo/rev/path/mode/sha256 (:1302-1306). Working-tree drift
+  does not change that blob. The old tsukuroi/mado pins are historical,
+  not a statement that their current trees match those recorded bytes.
+  A missing repo/rev/blob or pin mismatch refuses before that leg's suite;
+
+## 2. runner:1275-1317 — 'git show materializes the pinned blob ... mirrors mode ... pins SHA'
+    local dst="$cwd/target.$(basename "$path")" blob_mode
+    if ! git_clean -C "$repo" show "${rev}:${path}" >"$dst" 2>"$cwd/git-show.err"; then
+      printf 'REGRESSION_CASE %s: SETUP (git show failed: %s@%s:%s; see %s)\n' \
+        "$name" "$repo" "$rev" "$path" "$cwd/git-show.err"
+      return 2
+    fi
+    fi
+    target=$dst
+    printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s mode=%s sha256=%s\n' \
+      "$name" "$repo" "$rev" "$path" "$blob_mode" "$pin"
+  else
+    printf 'REGRESSION_PIN %s: source=file target=%s sha256=%s\n' "$name" "$target" "$pin"
+  fi
+  local tsha
+  if [[ ! -f "$target" ]]; then
+
+## 3. runner:1302-1306 — REGRESSION_PIN names repo/rev/path/mode/sha256
+    printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s mode=%s sha256=%s\n' \
+      "$name" "$repo" "$rev" "$path" "$blob_mode" "$pin"
+  else
+    printf 'REGRESSION_PIN %s: source=file target=%s sha256=%s\n' "$name" "$target" "$pin"
+  fi
+
+## 4. runner:1247 + 1459-1517 — refusal before the leg suite; statuses aggregate
+  if [[ -n "$repo" ]]; then
+    command -v git >/dev/null 2>&1 || {
+      printf 'REGRESSION_CASE %s: SETUP (git missing; cannot materialize the pinned revision)\n' "$name"
+  regression_case_git js-kimi-census \
+    'kumitate-shokunin/scripts/kimi-census.mjs' "$PIN_JS" "$REV_JS" \
+    "$specs/js-kimi-census.spec" 'node "$MUTANT" --selftest' "$TABLE_JS" \
+    "$root/js-kimi-census"
+
+## 5. runner:139-143 + 1519-1548 — exit map and the exit sites
+# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL (measured
+# table outside its expectation) · 2 a case could not be verified — missing
+# repo/rev/blob, pin mismatch, sweep setup refusal — with no FAIL, or (r30) the
+# counted pass/fail/setup statuses do not add up to the case count (SETUP
+# "case-tally mismatch"; --selftest runs the tally block under fixed statuses). Lines:
+  if [[ $nfail -gt 0 ]]; then
+    printf 'REGRESSION: FAIL (cases=%s passed=%s failed=%s setup=%s)\n' \
+      "$nlegs" "$npass" "$nfail" "$nsetup"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    exit 1
+  fi
+  if [[ $nsetup -gt 0 ]]; then
+    printf 'REGRESSION: SETUP (cases=%s passed=%s cannot-verify=%s)\n' \
+      "$nlegs" "$npass" "$nsetup"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    exit 2
+  fi
+  # r30: tally completeness (round-29 routed leg-sum defect). A PASS needs every one of the
+  # nlegs statuses counted; counts that do not sum to nlegs refuse as SETUP (S087: the totals
+
+## 6. the stale pointer set is gone from SKILL.md at BASE
+0
+(0 = every pointer R51.2 named is gone)
+
+## 7. the SKILL mte-interop row at BASE (leg count + registry rows)
+| `tools/mte-interop.py` | gate with `--check`; selftest | `uv run --no-project --with jsonschema==4.25.1 python3 tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin` · `--selftest` | 0 PASS (every leg found conforms, at least one leg) · 1 FAIL · 2 SETUP, could-not-evaluate (for example missing jsonschema or node, vendored package integrity, unsafe tar member, runner regression or metrics failure, leg set not equal to the ten ledger legs) · 64 usage, could-not-evaluate. R

@@ -1,0 +1,9 @@
+    # --- 2. rekey provenance ----------------------------------------------
+    r = git(['-C', lane, 'ls-tree', '--name-only', rev,
+             '.ufo/evidence/round-21/coldread'])
+    rekey_dirs = [n for n in r.stdout.decode().split('\n')
+                  if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)]
+    c0s = []
+    if not rekey_dirs:
+        problems.append('rekey-dir-count=0')
+    else:

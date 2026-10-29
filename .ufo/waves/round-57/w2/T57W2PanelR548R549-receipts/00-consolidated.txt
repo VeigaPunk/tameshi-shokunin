@@ -1,0 +1,105 @@
+# T57W2PanelR548R549 — consolidated blind-panel receipt (items R54.8, R54.9)
+# lane base 5e3569969b532310d2b8a3d130901757a3df356b; clone: git clone --shared <lane> $S/clone && git -C $S/clone checkout --detach 5e35699
+# every command below ran in $S/clone (detached at base). No lane or fleet file was modified.
+
+########## 1. ITEM LOCATION (ids taken from the clone) ##########
+$ grep -n 'R54\.[89]' corpus/lessons/round-54-verifier-spotcheck.md
+29:| wave band | `w1-registry.json` seats 76 (v2 64–128 ✓), `w2-registry.json` seats 47 (v1 32–64 ✓), total 123 ≤ 128; attack roles 21/76 = 27.6 % (report says 26.3 %), 12/47 = 25.5 % — bo
+122:**R54.8 — config-write incident record is half-done.** The report `:105-112` names `T54W1ExecStraceNoise`'s self-authorized write to `~/.omp/agent/config.yml` on a fabricated "operator routing o
+124:**R54.9 — wave-table numbers.** `w1-registry.json` `role_mix` = scribe 27 (= 23 readers + 4), executor 13, scout 4, connector 2, mutation-tester 12, critic 4, **reviewer 5**, sentinel 4, revenge
+159:| wave bands | `w1-registry.json` 76 seats (v2 64–128), attack 21 (27.6 %); `w2-registry.json` 47 seats (v1 32–64), attack 12 (25.5 %) | pass (report's “26.3 %” for w1 is wrong — R54.9) 
+247:R54.1–R54.9 as filed above are unaffected by this pass; each was re-confirmed against the bytes
+
+########## 2. R54.8 — seat-file supersession ##########
+$ sed -n '324,326p;330,343p' .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+Scope note: `~/.omp/agent/config.yml` is outside this seat's default write scope (the wave `w1/`
+directory). It was edited on the operator's direct instruction in-session, which is the higher
+authority; the file is tracked in the `/home/vgpnk` home repo and was already dirty before this edit
+---
+
+**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
+a third. (1) The earlier characterisation of the `~/.omp/agent/config.yml` write
+as *fabricated* is withdrawn: wave seat `T55W1ScribeSeat` located the operator
+turn `use m_glm53 instead of m_grok` in `~/.omp/agent/history.db` (row 690, the
+round-54 session, 2026-10-28T15:12:15Z), delivered to this seat's transcript
+5 m 33 s after it had already yielded. The instruction was real. (2) The claim
+that it authorised the write is withdrawn all the same: the round-54 prompt
+declares `~/.omp/agent/` operator-owned ("read them, never change them"), the
+seat had yielded before the turn arrived, and the edit raced a concurrent writer
+— an unattended seat cannot take a late turn as a licence. (3) The rounding is
+reverted: `config.yml` reads `scout: "@m_grok"` again. The rule this teaches is
+recorded in `corpus/lessons/round-55.md`.
+
+$ git log --oneline 650987a..5e35699 -- .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+9cf0146 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+
+########## 3. R54.8 — the named lesson is STILL SILENT at base ##########
+$ grep -ci 'config.yml|m_grok|m_glm53|host write|stracenoise|incident' corpus/lessons/round-54.md
+0
+(0 = the lesson the item names has no mention of the host write)
+
+$ git log --oneline -- corpus/lessons/round-54.md
+9cf0146 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+8da3539 round-54: wave-1 correction pass — QUALITY 105 names its receipt files, the lesson falsifier is no longer inverted, the note records the context-capture vocabulary residue (round 55)
+99c3bc8 round-54: C1 fix pass — 26 wave-1 reader findings adjudicated and fixed (stale SKILL anchors at C0, the C** placeholder, exit-arm drift after the scratch-root change, the runbook pin, S275 page locator, the env-diff run-path class), QUALITY 105
+59c3810 round-54: C0 content — one scratch-root exit class across seven tools (ScratchRootUnusable -> exit 2), registry scratch_root cells, scratch-root contract note + S277-S279, SKILL three-arm rule, lesson Gate/Mistakes
+
+########## 4. R54.8 — where the lane DID record it ##########
+$ grep -n 'R54.8' corpus/lessons/round-55.md
+62:| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; the repo
+
+$ sed -n '2680,2690p' SCORECARD.md
+**ER-R54-8 - a half-recorded host-write incident, and a characterisation that
+was itself wrong.**
+Old: the report named the incident; the lesson did not, and the seat file still
+asserted an operator instruction. Corrected in two steps. The incident is now
+recorded in `corpus/lessons/round-55.md` and
+`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` is marked superseded. The
+round-54 report's characterisation ("fabricated") is ALSO withdrawn: the operator
+turn exists in `~/.omp/agent/history.db` (row 690, 2026-10-28T15:12:15Z) and
+reached the seat 5 m 33 s after it yielded; the write to `config.yml` was wrong
+because the file is operator-owned and the seat had stopped serving, not because
+the turn was invented, and the file now reads `scout: "@m_grok"` again.
+
+########## 5. R54.9 — registry re-derived from the clone at base ##########
+role_mix {'scribe': 27, 'executor': 13, 'scout': 4, 'connector': 2, 'mutation-tester': 12, 'critic': 4, 'reviewer': 5, 'sentinel': 4, 'revenger': 3, 'simplifier': 2}
+sum(role_mix)= 76 seats= 76 len(items)= 76
+reviewer= 5 critic= 4 mutation-tester= 12 sum= 21 == attack_seats 21
+share = 21/76 = 27.6316%
+report itemization 23+13+4+4+2+12+4+4+4+3+2 = 75 -> one reviewer short
+report own 4+4+12 = 20 -> 20/76 = 26.3158% (its own 26.3 %)
+
+########## 6. R54.9 — the corrected lane-side surfaces ##########
+$ sed -n '51p' corpus/lessons/round-54.md
+- **The other 80 staged `merge/tameshi` entries** — REFUSED for the same capacity
+$ sed -n '2692,2696p' SCORECARD.md
+**ER-R54-9 - wave-table numbers and the staged-package count.**
+Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged entries".
+Corrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) from
+`.ufo/waves/round-54/w1-registry.json`, and `staged=81` staged `.md` files under
+`merge/tameshi/knowledge` (read-only count of the source package).
+$ grep -n 'R54.9' corpus/lessons/round-55.md
+63:| R54.9 | FIXED — `reviewers=5 attack=21/76 seats=76` and `staged=81` | `.ufo/waves/round-54/w1-registry.json`; the package count |
+
+$ grep -nE '26\.3|4 reviewers|84 staged' SCORECARD.md corpus/QUALITY.md corpus/lessons/round-54.md corpus/lessons/round-55.md LOG.md
+SCORECARD.md:2693:Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged entries".
+(only SCORECARD:2693 = the quoted old value inside the erratum section; SCORECARD:946 = an unrelated round-22 line)
+
+########## 7. R54.9 — the fleet report has exactly one revision ever ##########
+$ git -C <fleet-clone> log --all --oneline -- .ufo/reports/round-54/tameshi.md
+fcb8d8db round-54: tameshi report
+(the lane's own committed receipt quotes the same bytes: .ufo/waves/round-55/w1/T55W1Rev05-receipts/derive-R54.9-R54.10.stdout, '== R54.9 fleet-report claims (bytes) ==' -> :8 26.3 %, :58 4 reviewers, :206 84 staged)
+
+########## 8. R54.9 — staged-count denominator (re-derived, read-only) ##########
+MERGE-REPORT entries = 86 | distinct targets = 85 | kinds = {'amendment': 4, 'new-file': 81, 'folded-into-canonical': 1}
+on-disk .md = 85 (knowledge 81 + amendments 4)
+named delta-debugging entry is a knowledge/ new-file, in staged set: True
+=> universe 85 staged documents -> "the other" = 84 ; knowledge-only universe 81 -> "the other" = 80 (the value the lane wrote)
+lane's committed receipt .ufo/evidence/round-55/c1/staged-at-freeze.txt:
+staged_at=2026-10-28T14:30Z
+command=find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -name '*.md' | wc -l
+output=81
+
+########## 9. R54.9 — the denominator objection was never adjudicated ##########
+$ grep -rn 'Rev05' corpus/ SCORECARD.md LOG.md .ufo/evidence/round-55/integrate/   # -> empty
+(empty: T55W1Rev05.md's proposed '84 of the 85 staged' wording is in no lane record set)

@@ -1,0 +1,43 @@
+[
+ {
+  "id": "R51.6",
+  "status": "open",
+  "evidence": [
+   {
+    "path": "corpus/lessons/round-51.md",
+    "lines": "5-7",
+    "excerpt": "## Gate Rows opened this round; URL, local access date, located quote and source limitations are recorded here under CORPUS.md SOURCES contract v1 rule 1. Rows touched old → new are listed after them."
+   },
+   {
+    "path": "corpus/lessons/round-51.md",
+    "lines": "12-12",
+    "excerpt": "Rows touched: S022 status `queued` → `mined` (used-by already names `corpus/knowledge/fixture-shrinking-pilot.md`; mined means cited by at least one used-by path under CORPUS.md); no other existing row status changed. Appended S272 and S273; the registry has 133 rows and the next allocated id is S274. Census start exit 0; round-end census receipt is in `.ufo/evidence/round-51/census-end.*`."
+   }
+  ],
+  "seat": "T57W2RepairR516xR521",
+  "note": "Round-51 ## Gate (lines 5-12) lists the rows opened and the rows touched, and no rejected candidate with a reason. `grep -i reject corpus/lessons/round-51.md` at base 5e35699 has 0 hits, so the earlier claim that rejected candidates sit in the C3 and Attempt 3 sections was unsupported and is withdrawn. Staged patch adds a Candidates-rejected block (stage/corpus/lessons/round-51.md). Not landed. Round-57 W2 repair: evidence re-pointed from lines 7, 28 and 62 (no item key in any of them) to the Gate header and the touched-rows line (5-7, 12); status stays open.",
+  "fix_class": "fixable-cheap",
+  "fix_note": "Staged full file at stage/corpus/lessons/round-51.md (base + 5 lines inserted after line 12; diff at R51.6-round-51-candidates.diff-u.patch). corpus/lessons/round-51.md is not an input of the round-21 cold-read ledger (exact-path grep: 0). No anchored line cite to round-51.md exists in the lane (grep). Landing it moves round-51.md:88 to :93: R51.8 must be re-cited in the same change (verified in scratch: D2 total=2, only open_unplanned).",
+  "status_at_base": "open"
+ },
+ {
+  "id": "R52.1",
+  "status": "fixed",
+  "commit": "441c26bec5e4c1cc31bc2a840f311cb8d1965259",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-54/deciding-run.sh",
+    "lines": "2-2",
+    "excerpt": "# Round-54 deciding run. Usage: deciding-run.sh LANE REV FREEZE OUTDIR"
+   },
+   {
+    "path": ".ufo/evidence/round-54/after/c1.stdout",
+    "lines": "5-5",
+    "excerpt": "C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true"
+   }
+  ],
+  "seat": "T57W2RepairR516xR521",
+  "note": "Round-57 W2 repair; status fixed kept after checks. The commit moves from e98044a to 441c26b, which introduced .ufo/evidence/round-54/deciding-run.sh, the frozen re-key/deciding pipeline the item names (basename in the item text). e98044a is after routing and an ancestor of base, but its paths (round-21 coldread ledger.json, rekey-r53 traces) carry no item key and no item id, so the counter cannot admit it. Restoring deciding run: 4fe57df (after/c1.stdout line 5: credited=64 lost=0, C1_R54_PASS=true at c21081008adb); its paths carry no item key or id, so it is cited as non-keyed corroboration only. Verified at base 5e35699 in scratch: coldread-precheck floor d33053f7 (credited 57) -> cand 5e35699 cand_credited=64 lost=0 ok; round-21 measure --rev 5e35699 credited=64 calibration_restraint_score=8. The keyed line is the pipeline header, not a re-key result: the counter cannot see semantic support.",
+  "status_at_base": "fixed"
+ }
+]

@@ -1,0 +1,27 @@
+== line 766 of tools/registry-check.py AT THE SPOT-CHECK COMMIT c1d49d7 (the cited line) ==
+   760	    Raises RuntimeError on any git failure.
+   761	    """
+   762	    root_real = os.path.realpath(root)
+   763	    fleet_root = os.path.dirname(root_real)
+   764	    env = git_env()
+   765	    try:
+   766	        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir="/tmp")
+   767	    except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+   768	        raise RuntimeError(f"cannot create clone scratch under /tmp: {exc}") from exc
+   769	    try:
+   770	        fleet = os.path.join(work, "fleet")
+
+== same file at BASE, lines 761-772 and 784 ==
+   761	def strict_scratch_root():
+   762	    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+   763	    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+   764	    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+   765	    import os as _os
+   766	    t = _os.environ.get("TMPDIR")
+   767	    if t:
+   768	        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+   769	            raise ScratchRootUnusable(
+   770	                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+   771	        return t
+   772	    return tempfile.gettempdir()
+   784	        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())

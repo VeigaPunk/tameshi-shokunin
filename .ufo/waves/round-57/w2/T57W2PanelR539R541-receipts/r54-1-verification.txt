@@ -1,0 +1,279 @@
+# R54.1 receipts — lane base 5e3569969b532310d2b8a3d130901757a3df356b
+
+## 1. the receipt that refutes the claim (unchanged at BASE)
+CTL CTL_POS_c1 C1_R54: rev=077d431e6996 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 monitor=6/60 unstable=0 total=4 C1_R54_PASS=false
+CTL_MISMATCH CTL_POS_c1 expected=true actual=false
+CTL CTL_POS_c2 C2_R54: rev=077d431e6996 tools=7 unusable_exit2=7 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=0 C2_R54_PASS=true
+CTL CTL_EXIT0 C2_R54: rev=7df0e0426c98 tools=7 unusable_exit2=6 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=7 note=1 sources=3 total=1 C2_R54_PASS=false
+CONTROLS_B: 2/3 as pre-registered
+
+# receipt re-stated at the round-54 freeze 077d431e (bytes unchanged; the verdict line above stands)
+
+## 2. the four claim sites, re-read at BASE
+--- SCORECARD.md:2584 (round-54 C1 claim row controls cell)
+CTL_POS_c1 `CTL_MISMATCH` `2/3` at the revision it cloned (the freeze) and true only when re-scored at the deciding revision [ER-R54-1] (`.ufo/evidence/round-54/control/`) 
+--- SCORECARD.md:2631 (ER-R54-1 erratum, corrections section)
+**ER-R54-1 - a positive control reported as passing while its receipt says it did not.**
+Old: `CTL_POS_c1 true` (round-54 claim row); `corpus/QUALITY.md` 105's falsifier
+(`the round-54 counter's arm prints rekeyed=7/7 on its positive control`);
+`corpus/lessons/round-54.md` (`proven live by the positive control (CTL_POS_c1,
+which prints rekeyed=7/7)`).
+Corrected: `CTL_MISMATCH` - `CTL_POS_c1 expected=true actual=false`, `CONTROLS_B:
+2/3` at the revision the control cloned. The cause is mechanical: phase B cloned
+the FREEZE commit, which predates the re-key, so the control could not fire.
+Receipt: `.ufo/evidence/round-54/control/controls-b.stdout`. Round 55 re-scores
+its own positive control at the revision it certifies (`controls.sh` phase B).
+
+--- corpus/QUALITY.md:1590 (criterion 105 falsifier, rewritten)
+Falsifier that must fail: the round-53 C1 counter's rekey arm prints `rekeyed=0/30` at its own final content revision `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/roun
+d-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at th
+e freeze commit (the control never fired; [ER-R54-1]); the two receipts are `.ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout` (the round-53 counter's bytes run at `88afa941`) a
+nd `.ufo/evidence/round-54/control/controls-b.stdout` (the round-54 positive control); both are committed.
+--- corpus/QUALITY.md:1608-1612 (erratum on criterion 105)
+Erratum on criterion 105: 105's own falsifier quoted the same round-54 control
+as printing 7 of 7. Its receipt prints 3 of 7 and `CTL_MISMATCH`; the 7-of-7
+reading belongs to a re-score at the deciding revision. 105 stands (an arm is
+proven on a tree where it must fire) and its example is corrected here rather than
+deleted.
+--- corpus/lessons/round-54.md:74,76 (rewritten)
+  `git ls-tree -r` and the arm's own count is read at the deciding revision
+  (7 of 7); the control pre-registered in phase B was cloned at the freeze
+  commit, printed `CTL_MISMATCH` (3 of 7) and therefore never fired
+  [ER-R54-1, round-55 correction]; the control receipts are committed under
+--- corpus/lessons/round-54.md:101,106 (rewritten)
+  round's counter lists the re-key directory with `git ls-tree -r` (a recursive
+  listing, so the directory's own name cannot shadow the match), and the arm
+  reads 7 of 7 at the deciding revision; the control
+  pre-registered in phase B was cloned at the freeze commit and printed
+  `CTL_MISMATCH` (3 of 7), so it never fired [ER-R54-1, round-55 correction].
+  The dead arm's own receipt is kept:
+
+## 3. the claim strings no longer stand OUTSIDE the corrections section
+--- 'CTL_POS_c1 true' in SCORECARD.md at BASE
+5e3569969b532310d2b8a3d130901757a3df356b:SCORECARD.md:2632:Old: `CTL_POS_c1 true` (round-54 claim row); `corpus/QUALITY.md` 105's falsifier
+--- 'proven live by the positive control' in corpus/ at BASE
+5e3569969b532310d2b8a3d130901757a3df356b:corpus/lessons/round-54-verifier-spotcheck.md:108:`CTL CTL_POS_c1 … c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 … C1_R54_PASS=false`, `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3 as pre-registered`, exit 1. Yet the record asserts the opposite in four places: report `:162` ("proven live by the phase-B positive control"), `SCORECARD.md:2583` ("`CTL_POS_c1 true`"), `corpus/QUALITY.md:1590` ("the round-54 counter's arm prints `rekeyed=7/7` on its positive control … both are committed"), `corpus/lessons/round-54.md:74,101` ("proven live by the positive control (`CTL_POS_c1`, which prints `rekeyed=7/7`)"). Cause: phase B clones at the **freeze** commit `077d431e`, which predates the full re-key (`7fa9a5e`), so the control could not fire; it was never re-scored at the deciding tree. Second cause: `deciding-run.sh:57-58` greps `^CONTROLS_[AB]: [0-9]*/[0-9]* as pre-registered`, which **accepts `2/3`** — amendment 5 hardened zero-byte/tree objects only, so a *failing* control opened the deciding gate. The claim itself is unaffected: the arm is live (`0/7` at base, `3/7` at the freeze tree, `7/7` at the deciding rev; the closure reproduced `7/7`). Fix: require `n==n` and `controls-b.exit==0`, re-score phase B at the deciding tree, and append a correction entry (QUALITY is append-only) naming the superseded sentence.
+--- QUALITY.md 105 falsifier: does it still claim 7/7 ON the positive control?
+0
+(0 = the false sentence is gone)
+
+## 4. the fixing commit
+2fec07e round-56 (attempt 4): results - SCORECARD after rows, LOG entry, lesson attempt-4 record, misrooted T56W3Led13 report swept in
+8c20d5c round-56: correct scorecard evidence predicates
+2f5512a round-56: restate calibration at the C1 bind
+877eede round-56: integrate wave-one and wave-two evidence
+c013745 round-56 C0: receipt-binding rule (SKILL standing rules), QUALITY criterion 107, knowledge entry receipt-revision-binding, SOURCES S281-S282, lesson round-56, registry cell, before/ receipts, assimilation + census-start evidence
+4c04c1d round-55: C2 — QUALITY 106 erratum reworded so the corrected sentence does not re-trip R54.1's own stale arm; wave-1/2/3 deliverables and receipts as they stand (18 re-key readers still incomplete: the round reports that honestly)
+51d1f0e round-55: C1 fix pass — stream-refusal exit class in context-capture/registry-check (rc 2 under /dev/full), registry-check --rev --json keeps its machine report, seven registry cells quote the token each tool prints, the note stops claiming stdout is empty, QUALITY 106 + 105 erratum, LOG values reconciled to the receipts, wave-1/2/3 artifacts and the adjudication record
+9cf0146 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+ SCORECARD.md                                       |   96 +-
+ corpus/QUALITY.md                                  |    2 +-
+ corpus/lessons/round-54.md                         |   16 +-
+author=tameshi-shokunin <tameshi@shokunin.local>
+subject=round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+ANCESTOR_OK 650987a(round-54 spotcheck) -> 9cf0146
+
+## 5. the FLEET report residue (outside the lane; not lane-owned)
+== fleet-side stale occurrence R54.1 cannot reach ==
+$ grep -n 'proven live by the phase-B positive control' .ufo/reports/round-54/tameshi.md
+162:   by the binder dry run; proven live by the phase-B positive control.
+
+== the premise file counts nine while ten are filed ==
+$ grep -n 'nine routed' corpus/lessons/round-54-verifier-spotcheck.md
+11:verdict: **admitted** — both claims re-measured true at the deciding revision in a scratch clone; no axis harmed; nine routed record/instrument defects, the gravest (R54.1) a **false positive-control claim** contradicted by its own committed receipt.
+$ grep -o 'R54\.[0-9]*' ... | sort -u
+R54.1 R54.10 R54.2 R54.3 R54.4 R54.5 R54.6 R54.7 R54.8 R54.9 
+$ sed -n '247p'
+R54.1–R54.9 as filed above are unaffected by this pass; each was re-confirmed against the bytes
+
+## 6. lane-committed disclosure that the residue is unreachable
+"id": "F5", "severity": "low", "frozen": false, "title": "ER-R54-1 Old: enumeration is 3 of 4 places", "evidence": "fleet report :162 still says 'proven live by the phase-B positive control'; no lane edit can reach it"}
+
+## 7. round-56 gate hardening (n==n + refuse CTL_MISMATCH) at BASE
+grep -Eq '^CONTROLS_A: ([0-9]+)/\1 as pre-registered' <(git show "$REV:$E/control/controls-a.stdout") || { echo "DECIDING_REFUSED controls-a-verdict-missing"; exit 3; }
+grep -q 'CTL_MISMATCH' <(git show "$REV:$E/control/controls-a.stdout") && { echo "DECIDING_REFUSED controls-a-mismatch-lines"; exit 3; }
+grep -Eq '^CONTROLS_B: ([0-9]+)/\1 as pre-registered' <(git show "$REV:$E/control/controls-b.stdout") || { echo "DECIDING_REFUSED controls-b-verdict-missing"; exit 3; }
+grep -q 'CTL_MISMATCH' <(git show "$REV:$E/control/controls-b.stdout") && { echo "DECIDING_REFUSED controls-b-mismatch-lines"; exit 3; }
+rm -rf "$SCR"; mkdir -p "$SCR/code" "$SCR/c1" "$SCR/c2" "$SCR/gate"; export TMPDIR="$SCR"
+
+## 8. frozen round-55 C1 counter re-run AT BASE (independent of any lesson claim)
+EXPLAIN R54.1 ok premise=ok corrected=ok stale=0 derived=CTL_MISMATCH + 2/3
+EXPLAIN R54.2 ok premise=ok corrected=ok stale=0 derived=freeze pointer=077d431e
+EXPLAIN R54.3 ok premise=ok corrected=ok stale=0 derived=total=13
+EXPLAIN R54.4 ok premise=ok corrected=ok stale=0 derived=c2 digest=8528ee85
+EXPLAIN R54.5 ok premise=ok corrected=ok stale=0 derived=w1=28 w2=25 sections=12
+EXPLAIN R54.6 ok premise=ok corrected=ok stale=0 derived=sweep commit=ff2a821
+EXPLAIN R54.7 ok premise=ok corrected=ok stale=0 derived=rename commit=7fa9a5e
+EXPLAIN R54.8 ok premise=ok corrected=ok stale=0 derived=config.yml + fabricated + seat marked
+EXPLAIN R54.9 ok premise=ok corrected=ok stale=0 derived=reviewers=5 attack=21/76 seats=76 staged=81
+EXPLAIN R54.10 ok premise=ok corrected=ok stale=0 derived=controls-a rekeyed=0/7
+C1_R55: rev=5e3569969b53 classes=10 premise=10/10 stale=0 classes_corrected=10/10 total=0 C1_R55_PASS=true
+exit=0
+=== R54.1 fix-clause audit at BASE (each prescribed action) ===
+--- (a) 'require n==n': round-56 deciding-run.sh gate
+102:grep -Eq '^CONTROLS_A: ([0-9]+)/\1 as pre-registered' <(git show "$REV:$E/control/controls-a.stdout") || { echo "DECIDING_REFUSED controls-a-verdict-missing"; exit 3; }
+104:grep -Eq '^CONTROLS_B: ([0-9]+)/\1 as pre-registered' <(git show "$REV:$E/control/controls-b.stdout") || { echo "DECIDING_REFUSED controls-b-verdict-missing"; exit 3; }
+--- (b) refuse CTL_MISMATCH lines (round-56)
+103:grep -q 'CTL_MISMATCH' <(git show "$REV:$E/control/controls-a.stdout") && { echo "DECIDING_REFUSED controls-a-mismatch-lines"; exit 3; }
+105:grep -q 'CTL_MISMATCH' <(git show "$REV:$E/control/controls-b.stdout") && { echo "DECIDING_REFUSED controls-b-mismatch-lines"; exit 3; }
+--- (c) controls-b.exit content checked for 0?
+94:CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-a.stdout.sha256 $E/control/controls-b.stdout $E/control/controls-b.exit $E/control/controls-b.stdout.sha256"
+--- (d) phase B re-scored at the revision it certifies: round-56 control receipts
+# phase B: the positive controls scored at the revision they certify (PIN=888d342e1080660f6e47a5f8b87b8275645bfb94)
+CTL CTL_POS_c1 C1_R56: rev=888d342e1080 c0=c0137451f5b7 credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 unstable=0 restate=8 total=0 C1_R56_PASS=true
+CTL_MATCH CTL_POS_c1 expected=true actual=true
+CTL CTL_POS_c2 C2_R56: rev=888d342e1080 selftest=19/19 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=PASS docs=4/4 total=0 C2_R56_PASS=true
+CTL_MATCH CTL_POS_c2 expected=true actual=true
+CONTROLS_B: 2/2 as pre-registered
+--- (e) correction entry appended (QUALITY append-only): criterion 106 + 105 erratum
+A control that certifies a repair must be scored at the revision the repair is in.
+Cloning the FREEZE commit (the bytes frozen before the work) and calling the result a
+positive control measures the tree the round started from: it cannot fire, and its
+"pass" is an assumption, not a measurement. The receipt must name the revision it
+cloned and that revision must be the candidate under test; a gate that opens on a
+control receipt must compare the receipt's own `rev=` with the revision it decides.
+
+Erratum on criterion 105: 105's own falsifier quoted the same round-54 control
+as printing 7 of 7. Its receipt prints 3 of 7 and `CTL_MISMATCH`; the 7-of-7
+reading belongs to a re-score at the deciding revision. 105 stands (an arm is
+proven on a tree where it must fire) and its example is corrected here rather than
+deleted.
+
+=== round-55 frozen counter: why stale=0 (corrections section excluded from the stale scan) ===
+67:def corrections(lane, rev):
+68-    body = text(lane, rev, "SCORECARD.md")
+69-    if body is None:
+70-        return ""
+71-    out, on = [], False
+72-    for line in body.splitlines():
+73-        if line.startswith(HEADING):
+74-            on = True
+75-            continue
+76-        if on and line.startswith("## "):
+77-            break
+78-        if on:
+79-            out.append(line)
+80-    return "\n".join(out)
+81-
+83:def scan(lane, rev, paths, pattern):
+84-    """Occurrences of a regex in the record files at REV, corrections excluded.
+85-
+86-    Two passes, one predicate: line-scoped (for the readable `path:line` pointer)
+87-    and whitespace-collapsed (a hard-wrapped claim splits across lines, so a
+88-    line-scoped window can miss a falsehood that is plainly there). The collapsed
+89-    pass is applied to EVERY row, not only the one whose defect was wrapped
+90-    (round-55 amendment 9; the R54.1 case that motivated it is `corpus/lessons/
+91-    round-54.md` splitting `the control ... requires rekeyed=7/7`)."""
+92-    rx = re.compile(pattern)
+93-    hits = []
+94-    for path in paths:
+95-        body = text(lane, rev, path)
+--
+109:def scan_span(lane, rev, paths, pattern):
+110-    """Whitespace-normalized whole-document search (amendment 5).
+111-
+112-    A hard-wrapped claim splits across lines, so a line-scoped regex can miss a
+113-    falsehood that is plainly there (round-54 lesson `proves the arm ... requires
+114-    rekeyed=7/7`, split over two lines). This arm searches the document with all
+115-    whitespace runs collapsed and reports the match's offset instead of a line.
+116-    """
+117-    rx = re.compile(pattern)
+118-    hits = []
+119-    for path in paths:
+120-        body = text(lane, rev, path)
+121-        if body is None:
+=== controls-b.exit content check at BASE (round-56 deciding-run.sh) ===
+92-FREEZE_LAST=$(git log -1 --format=%H "$REV" -- "$E/freeze.json")
+93-[ -n "$FREEZE_LAST" ] && [ "$FREEZE" = "$FREEZE_LAST" ] || { echo "DECIDING_REFUSED freeze-not-last-manifest-commit $FREEZE"; exit 3; }
+94:CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-a.stdout.sha256 $E/control/controls-b.stdout $E/control/controls-b.exit $E/control/controls-b.stdout.sha256"
+95-for f in $CONTROLS; do
+96-  git cat-file -e "$REV:$f" 2>/dev/null || { echo "DECIDING_REFUSED control-receipt-missing $f"; exit 3; }
+97-  [ "$(git cat-file -t "$REV:$f")" = blob ] || { echo "DECIDING_REFUSED control-receipt-not-a-blob $f"; exit 3; }
+98-  [ "$(git cat-file -s "$REV:$f")" -gt 0 ] || { echo "DECIDING_REFUSED control-receipt-empty $f"; exit 3; }
+99-  c=$(git log -1 --format=%H "$REV" -- "$f")
+100-  git merge-base --is-ancestor "$FREEZE" "$c" || { echo "DECIDING_REFUSED control-receipt-not-after-freeze $f"; exit 3; }
+
+=== any '.exit' numeric check anywhere in round-56 deciding-run.sh ===
+9:# is refused; each counter gets a start receipt before it runs and an exit receipt after; the counters,
+83:sys.exit(0 if not bad else 1)
+94:CONTROLS="$E/control/controls-a.stdout $E/control/controls-a.exit $E/control/controls-a.stdout.sha256 $E/control/controls-b.stdout $E/control/controls-b.exit $E/control/controls-b.stdout.sha256"
+125:echo $? > "$OUT/receipt-gate.exit"
+137:bash "$SCR/code/no-harm.sh" "$LANE" "$REV" > "$OUT/no-harm.stdout" 2>&1; echo $? > "$OUT/no-harm.exit"
+140:bash "$SCR/code/precheck.sh" "$LANE" "$BASE" "$REV" > "$OUT/coldread-precheck.stdout" 2>&1; echo $? > "$OUT/coldread-precheck.exit"
+141:tail -1 "$OUT/coldread-precheck.stdout"; [ "$(cat "$OUT/coldread-precheck.exit")" = 0 ] || rc=1
+142:"$FLEET/scripts/sources-census.sh" validate --root "$FLEET" tameshi > "$OUT/census.stdout" 2> "$OUT/census.stderr"; echo $? > "$OUT/census.exit"
+143:echo "CENSUS exit=$(cat "$OUT/census.exit")"; [ "$(cat "$OUT/census.exit")" = 0 ] || rc=1
+150:  echo $? > "$OUT/$k.exit"
+153:  [ "$(cat "$OUT/$k.exit")" = 0 ] || rc=1
+161:echo $? > "$OUT/receipt-gate-verdicts.exit"
+163:[ "$(cat "$OUT/receipt-gate-verdicts.exit")" = 0 ] || rc=1
+166:echo "DECIDING_RUN_EXIT=$rc" | tee "$OUT/deciding-run.exit"
+167:exit $rc
+
+=== controls-b.exit file bytes at BASE ===
+0
+1
+
+# receipt re-stated at the round-54 freeze 077d431e (bytes unchanged; the verdict line above stands)
+
+=== lessons/round-54.md: does ANY line still assert 7/7 on the positive control? (scan_span-equivalent) ===
+ criterion (drafted; lands with the round commit)  - **105. A counter arm that reads a directory by pathspec is proven on a tree   where the arm must fire (the positive control), not only on the do-nothing   tree. Falsifier: a control receipt in which the arm's own counter reads zero   (the arm never fired); a pathspec that returns th
+--- reverse order (rekeyed=7/7 ... positive control)
+--- QUALITY.md same
+ `88afa941` (the pathspec `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` returns the directory itself), while the round-54 counter's arm prints `rekeyed=7/7` at its deciding revision and `rekeyed=3/7` with `CTL_MISMATCH` on the control cloned at the freeze commit (the control never fired; [ER-R54-1]); the two recei
+=== FINAL SWEEP: does any LANE record at BASE still assert the round-54 positive control passed? ===
+--- sweep 1: literal 'CTL_POS_c1 true' in lane record files (SCORECARD/LOG/corpus)
+5e3569969b532310d2b8a3d130901757a3df356b:SCORECARD.md:2632:Old: `CTL_POS_c1 true` (round-54 claim row); `corpus/QUALITY.md` 105's falsifier
+5e3569969b532310d2b8a3d130901757a3df356b:corpus/lessons/round-54-verifier-spotcheck.md:108:`CTL CTL_POS_c1 … c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 … C1_R54
+5e3569969b532310d2b8a3d130901757a3df356b:corpus/lessons/round-55-verifier-spotcheck.md:50:| stale tokens outside that section (`7883e0e5`, `fe70474d`, `097985c1`, `CTL_POS_c1 true`
+--- sweep 2: 'rekeyed=7/7' within 160 chars of 'positive control' (whitespace-collapsed), in the four named files
+SCORECARD.md  hits=1
+corpus/QUALITY.md  hits=0
+corpus/lessons/round-54.md  hits=0
+LOG.md  hits=0
+--- sweep 3: 'proven live by the positive control' in the four named files
+SCORECARD.md  hits=1
+corpus/QUALITY.md  hits=0
+corpus/lessons/round-54.md  hits=0
+LOG.md  hits=0
+
+=== R53.9 sweep: lane tree cleanliness at BASE (from the round-56 spot-check committed AT base) ===
+| lane pushed, no leftovers | `jj-lane.sh state` ; `git status --porcelain` ; `git ls-remote origin refs/heads/master` | `local=c34e2b14… remote=c34e2b14… ahead=0 behind=0 tracked=0 untracked=0`; porcelain empty; ls-remote `c34e2b14…` | ok |
+
+=== verdict summary table re-derived ===
+R53.9 tracked-at-base: 6
+R54.1 stale-in-lane-records: 5e3569969b532310d2b8a3d130901757a3df356b:SCORECARD.md:1 
+=== where do the 2 residual SCORECARD hits live? (must be INSIDE the corrections section) ===
+--- corrections-section heading line:
+2621:## Round 55 - round-54 record corrections
+--- line numbers of the hits:
+2632:Old: `CTL_POS_c1 true` (round-54 claim row); `corpus/QUALITY.md` 105's falsifier
+2612:- **C1** `C1_R54: rev=c21081008adb c0=99c3bc88d704 credited=64 lost=0 rekeyed=7/7 readers=7/7 monitor=8/64 unstable=0 total=0 C1_R54_PASS=true` — **verif
+2633:(`the round-54 counter's arm prints rekeyed=7/7 on its positive control`);
+2635:which prints rekeyed=7/7)`).
+--- the ER-R54-1 block (2618-2642):
+     1	depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
+     2	
+     3	
+     4	## Round 55 - round-54 record corrections
+     5	
+     6	The round-54 non-author spot-check (`corpus/lessons/round-54-verifier-spotcheck.md`)
+     7	routed ten record defects. This section carries each correction in one place: the
+     8	old text (preserved here as the erratum), the corrected value, and the receipt
+     9	that decides it. The same corrections were applied in place above so that the
+    10	lane's record reads true where a reader meets it; this section is the only place
+    11	where the old values are quoted, which is why the round-55 counter
+    12	(`.ufo/evidence/round-55/c1/measure.py`) counts every stale token outside it.
+    13	
+    14	**ER-R54-1 - a positive control reported as passing while its receipt says it did not.**
+    15	Old: `CTL_POS_c1 true` (round-54 claim row); `corpus/QUALITY.md` 105's falsifier
+    16	(`the round-54 counter's arm prints rekeyed=7/7 on its positive control`);
+    17	`corpus/lessons/round-54.md` (`proven live by the positive control (CTL_POS_c1,
+    18	which prints rekeyed=7/7)`).
+    19	Corrected: `CTL_MISMATCH` - `CTL_POS_c1 expected=true actual=false`, `CONTROLS_B:
+    20	2/3` at the revision the control cloned. The cause is mechanical: phase B cloned
+    21	the FREEZE commit, which predates the re-key, so the control could not fire.
+    22	Receipt: `.ufo/evidence/round-54/control/controls-b.stdout`. Round 55 re-scores
+    23	its own positive control at the revision it certifies (`controls.sh` phase B).
+    24	
+    25	**ER-R54-2 - three freeze pointers for one round.**

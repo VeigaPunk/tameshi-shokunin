@@ -1,0 +1,57 @@
+== final sweep: any round-53 phase-B output ANYWHERE at BASE ==
+$ git -C $C ls-tree -r --name-only $B | grep -E 'round-53.*(break|phase.?b|controls-b)'
+.ufo/evidence/round-53/control/break-fixtures.py
+
+$ git -C $C grep -ln 'CONTROLS_B: total=' $B -- .
+5e3569969b532310d2b8a3d130901757a3df356b:.ufo/evidence/round-53/control/break-fixtures.py
+(exit 0)
+
+$ git -C $C grep -ln 'PROBE_C1_CANDIDATE\|PROBE_C2_CANDIDATE' $B -- .
+5e3569969b532310d2b8a3d130901757a3df356b:.ufo/waves/round-53/w1-results.json
+5e3569969b532310d2b8a3d130901757a3df356b:.ufo/waves/round-53/w1/T53W1CritClaims.md
+(exit 0)
+
+== what .ufo/evidence/round-53/control/ actually holds at BASE ==
+CONTROLS: total=2 pass=2
+
+== receipt-revision-gate @BASE: does it flag the r53 receipt? ==
+#!/usr/bin/env python3
+"""receipt-revision-gate — bind a receipt to the revision it certifies.
+
+The round-54/55 defect this gate exists for (ER-R54-1, R55.5): a positive control
+was scored at the FREEZE commit, which predated the work it certified, and every
+gate in the lane accepted it because none compared the `rev=` a receipt names with
+the revision under test. A verdict, or a positive control, is evidence only for the
+content it was measured against.
+
+Usage:
+  receipt-revision-gate.py --lane LANE --certified REV [--paths FILE]
+                           --receipt PATH:ROLE[:REQUIRE_REGEX] [--receipt ...] [--json]
+  receipt-revision-gate.py --selftest
+
+ROLE is one of:
+  positive  a control whose expected verdict is PASS. Exactly one distinct `rev=`
+            token; it must equal the certified revision, or (when --paths is given)
+            name a revision whose bytes are identical to the certified revision on
+            every path listed in FILE.
+  verdict   a counter's verdict receipt. Same rule as `positive`.
+  control   a control set (several CTL lines, possibly at different revisions).
+            Every `rev=` token must resolve and be an ancestor of, or equal to,
+            the certified revision.
+
+Codes (each a named refusal, exit 3):
+  RECEIPT_MISSING · RECEIPT_EMPTY · RECEIPT_NOT_BLOB · RECEIPT_REV_ABSENT
+  RECEIPT_REV_AMBIGUOUS · RECEIPT_REV_UNRESOLVABLE · RECEIPT_REV_MISMATCH
+  RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR
+  RECEIPT_DIGEST_MISMATCH · RECEIPT_REQUIRED_LINE_MISSING
+
+Verdict line: `GATE: receipts=N ok=N refused=N codes=<comma|none> verdict=PASS|REFUSED`
+Exit 0 iff PASS. Read-only: git objects only. Stdlib only.
+"""
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile

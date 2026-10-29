@@ -1,0 +1,20 @@
+== R52.6 recurrence at BASE: report-body false claims still routed/open ==
+--- r55 closure: R55.2 and R55.4 (report body overstatements) ---
+123:2. **R55.2 — a quoted total its own receipt contradicts.** Report quotes `T55W1ScribeSkill` as
+131:4. **R55.4 — a stale control sentence.** The report says `CTL_SKIP_c2` "was still running at filing";
+2. **R55.2 — a quoted total its own receipt contradicts.** Report quotes `T55W1ScribeSkill` as
+   `grammar=9/9 … note=9/9 skill=1/1 total=0`; the committed `c2-integrated.out:44` reads
+   `total=1 C2_R55_PASS=false` (`rev=08d64e946006`). This is the R54.3 class recurring inside its own
+   correction round. Fix: quote the receipt or name the run whose line you quote.
+3. **R55.3 — the calibration instrument regressed and the axis row still says 8.** 64/64 → 46/64
+   (score 8 → 6) at C0, unrepaired at HEAD, no SCORECARD restatement. Fix: land the 18-heading re-key
+   (already planned as round 56's first item) **and** restate the row with the score the monitor
+   actually reads until it does.
+4. **R55.4 — a stale control sentence.** The report says `CTL_SKIP_c2` "was still running at filing";
+   the committed `control/controls-a.stdout` (at `4c04c1d3`, 14:51:26 — before the report) already
+   reads `CTL_SKIP_c2 … total=4 C2_R55_PASS=false` and `CONTROLS_A: 5/5 as pre-registered`.
+5. **R55.5 — the deciding gate cannot compare the revision it certifies.** `deciding-run.sh` never
+
+--- r56 closure: D-CF1 (false report claim) + R56.7 routing at BASE ---
+26:- **D-CF1.** The report says no `SKILL.md`/`QUALITY.md`/`SOURCES.md`/`knowledge/` byte changed "after C0/PIN" and that indexing `corpus/README.md` after C0 "would void the readers". In fact `git diff c0137451 877eede --stat -- corpus SKILL.md tools` shows `QUALITY.md` +31, `SOURCES.md` +2 and `knowledge/receipt-revision-binding.md` +39 landed between C0 and the bind commit `c1dd23b3` (append-only errata and a search-log line). The statement is true of attempt 4 and of PIN→tip, not of C0→PIN; the README-index justification is therefore weaker than written (the counter still passed, so the changed sections were not among the 18).
+136:7. **R56.7** Correct the "no byte changed after C0/PIN" phrasing: QUALITY, SOURCES and the knowledge entry grew between C0 and the bind (D-CF1).

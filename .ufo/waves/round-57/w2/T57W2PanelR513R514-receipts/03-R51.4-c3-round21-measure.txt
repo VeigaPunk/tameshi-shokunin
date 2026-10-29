@@ -1,0 +1,44 @@
+# 03 R51.4 — 'C3 counter / round21-measure' (closure item 4) — state AT BASE 5e3569969b532310d2b8a3d130901757a3df356b
+
+## item text (corpus/lessons/round-51-verifier-spotcheck.md:129)
+4. **C3 counter / round21-measure.** Either make `tools/round21-measure.py --selftest` hermetic or give the counter a declared fleet-bound row class, with the counter amendment pre-registered (R51.4). Also run the C3 counter's missing mutation attack (R51.5).
+
+## A. the surface changed after the spot-check (ef19d8e1): bcba8924 touches tools/round21-measure.py
+$ git log --format='%h %ad %s' --date=short -- tools/round21-measure.py   (HEAD = base)
+bcba892 2026-10-27 round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+370f2df 2026-10-21 round-21: kill 18 old guard mutants and add finite F5 environment differential
+$ sed -n '8,12p;77,78p' tools/round21-measure.py
+64 usage. All Git writes stay in private fixture repositories. The c2
+fixture reads the pinned sibling blobs at the fleet root that the subject
+counter itself reads (its `FLEET` literal), so the selftest is fleet-bound,
+not hermetic: it passes from a clone anywhere on this host and fails where
+that fleet root is absent (round 52, routed defect R51.4).
+        fleet = Path(re.search(r'^FLEET = Path\("([^"]+)"\)$',
+                               (EVIDENCE / SCRIPTS["c2"]).read_text(), re.M).group(1))
+
+## B. route 1 (hermetic) and route 2 (counter-level declared fleet-bound row class + pre-registered counter amendment): counter bytes
+$ git diff --stat fe33538405cd97c2f386c10ea91f9cf399d67866 5e3569969b532310d2b8a3d130901757a3df356b -- .ufo/evidence/round-51/c3/measure.py
+(empty = unchanged)
+$ git log --format='%h %s' -- .ufo/evidence/round-51/c3/measure.py
+fe33538 round-51: pre-registration — contract, frozen C1/C2/C3 counters, frontier expectations, tenth-leg spec with predictions (before any mutant), base tool set, controls harness, no-harm, deciding script, census start
+$ grep -n 'fleet' .ufo/evidence/round-51/c3/measure.py   (no class, no fleet-bound row rule)
+(no match)
+
+## C. observable symptom: selftest in a fresh clone outside the lane (this host has the fleet root)
+$ python3 tools/round21-measure.py --selftest; echo EXIT=$?
+ROUND21_MEASURE_SELFTEST: 13/13 pass  EXIT=0   (13 of 13 case lines PASS; see c3 counter line below)
+$ C3 counter at base (c3.base.out, copied to 00-c3-counter-at-base.stdout)
+C3_TOOL tools/round21-measure.py: covered line 2200 selftest exit=0 last=ROUND21_MEASURE_SELFTEST: 13/13 pass
+C3_R51: rev=5e3569969b532310d2b8a3d130901757a3df356b tools=31 rows=32 covered=29 missing=2 deleted=0 selftest_fail_rows=2 total=2 C3_R51_PASS=false
+(fleet root not removed: the 'fails where fleet root is absent' half is NOT exercised)
+
+## D. mutation attack named in the same item (R51.5 clause): any run against the C3 counter bytes?
+$ grep -rl 'C3_R51' --include='*.py' --include='*.diff' .ufo/waves/round-5[2-6]
+.ufo/waves/round-52/w1/T52W1MutC1/M15-c3-total-from-missing.diff
+.ufo/waves/round-52/w1/T52W1MutC1/M16-c3-garbled-pass.diff
+  hits are M15/M16 .diff: they mutate round-52 c1/measure.py parse_c3, not the C3 counter
+$ ls .ufo/waves/round-51/w2 | grep -ci MutC3   (seat T51W2MutC3Counter dispatched at w2-dispatch.json:610)
+0
+$ find .ufo/waves -iname '*MutC3Counter*'  -> .ufo/waves/round-46/w1/MutC3Counter.md, round-47/w1/T47MutC3Counter.md (older rounds, other counters)
+
+## E. not verified here: round-52 C1 counter full run at base (bg job timed out; no result claimed)

@@ -1,0 +1,27 @@
+# R52.5 — ancestry: the fix commits land AFTER the spot-check file was added (c1d49d7) and are ancestors of BASE 5e3569969b532310d2b8a3d130901757a3df356b
+$ git merge-base --is-ancestor c1d49d7 <fix> ; git merge-base --is-ancestor <fix> 5e3569969b532310d2b8a3d130901757a3df356b
+218bc6b: after-spotcheck=yes ancestor-of-BASE=yes
+5b703c6: after-spotcheck=yes ancestor-of-BASE=yes
+9cf0146: after-spotcheck=yes ancestor-of-BASE=yes
+
+== full hashes ==
+c1d49d7 c1d49d76be4028df2a68322e7117ff3aafaccd5c
+218bc6b 218bc6b5c25d6a3c57dd44600febd552f0167cee
+5b703c6 5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e
+9cf0146 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+877eede 877eedee3ddb7fe25d7a6a09922b04ba13e5a99b
+
+== line that now holds (BASE tools/registry-check.py:761-772, :784) ==
+     1	def strict_scratch_root():
+     2	    """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+     3	    round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+     4	    fallback to /tmp, preserving CR47 semantics), else the platform default."""
+     5	    import os as _os
+     6	    t = _os.environ.get("TMPDIR")
+     7	    if t:
+     8	        if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+     9	            raise ScratchRootUnusable(
+    10	                "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+    11	        return t
+    12	    return tempfile.gettempdir()
+    13	        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())

@@ -1,0 +1,36 @@
+=== R54.7 RESIDUAL at BASE ===
+
+$ git -C CLONE grep -n 'deletion is unstaged' HEAD -- .ufo/waves/round-54/w2/T54W2Sent01.md
+HEAD:.ufo/waves/round-54/w2/T54W2Sent01.md:188:deletion is unstaged and must be recorded in the next lane commit. The L1 (`TameshiR54a2`) was messaged
+
+$ git -C CLONE rev-parse 7fa9a5e:<seat> 9cf0146b:<seat> HEAD:<seat>   # blob unchanged => never corrected
+7fa9a5e fb69d0ec0999c0c356efb5a2ed1a3de7940a80cf
+9cf0146b fb69d0ec0999c0c356efb5a2ed1a3de7940a80cf
+HEAD fb69d0ec0999c0c356efb5a2ed1a3de7940a80cf
+
+$ git -C CLONE log --format='%H %s' 650987a..HEAD -- .ufo/waves/round-54/w2/T54W2Sent01.md   # no lane commit after the spot-check touched it
+(empty above = untouched)
+
+$ git -C CLONE grep -n 'SUPERSEDED' HEAD -- .ufo/waves/round-54/w2/T54W2Sent01.md   # absent (contrast R54.8 seat file)
+grep exit=1 (1 = absent)
+
+$ git -C CLONE grep -n 'SUPERSEDED' HEAD -- .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+HEAD:.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md:332:**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
+
+=== counter arm: R54.7 stale arm is the literal [] (vacuous) ===
+252:     # R54.7 -- the forged reader was renamed into the receipts dir, not deleted.
+253:     old = ".ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json"
+254:     new = ".ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json"
+255:     ren = first_commit(lane, rev, new)
+256:     row("R54.7", (not exists(lane, rev, old)) and exists(lane, rev, new), [],
+257:         "renamed" in corr and bool(ren) and ren in corr, "rename commit=%s" % ren)
+
+=== the lane's own reviewer flagged it (F3) ===
+179: | F1 | **high** | C1 row R54.8 | The row flips to `ok` with the seat file untouched; the `superseded` token it tests already exists at `:299`. The "seat marked" arm measures nothing about the incident. | demoA vs demoB, `r54-8-vacuity-demos.txt`; counter `:223-225` |
+180: | F2 | medium | C1 row R54.8 | Premise `bool(seat)` is vacuous; no arm reads the receipt (config.yml / directive) and no arm reads the lesson erratum. | `frozen-counter-rows.txt`; demoA |
+181: | F3 | medium | C1 row R54.7 | Stale arm is `[]` (zero by construction) while the lane-local stale disposition `T54W2Sent01.md:188` remains; corrected arm is `"renamed" in corr and <first_commit(NEW)> in corr` — a one-sentence entry satisfies it without the destination, `R100`, or either sha. | demoC, same receipt |
+182: | F4 | low | `T55W1Er07.json` §5 | "The only place the phrase occurs is the round-54 fleet report" is false — it also occurs in the lane at `corpus/lessons/round-54-verifier-spotcheck.md:120`. | `draft-byte-checks.txt` (`git grep 'the deletion lands' 0a2010ac`) |
+183: | F5 | low | `T55W1Er08.json` | `derived` is the counter's hard-coded literal, not a tree derivation; the draft's demo rev `ff4a7940…` is absent from the lane and cannot be reproduced. | `draft-byte-checks.txt`; `git cat-file -e ff4a7940` |
+
+=== fleet report (out of lane scope) sha unchanged at BASE ===
+189:      "report_sha256": "d1e293f5b3f6a8a964b795fa93672f38af5725f3dfa090497cec42eb9ba521c0",

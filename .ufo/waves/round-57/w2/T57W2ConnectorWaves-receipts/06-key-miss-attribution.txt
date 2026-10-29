@@ -1,0 +1,17 @@
+# 06 key-miss attribution
+# 2026-10-28T22:45:20-03:00
+
+=== A) the counter reads keys from the DEFECT SET (defects.json), not from the ledger row:
+217:        why = check_evidence(lane, rev, item, d['keys'], spotchecks, cache)
+225:    keyed = [item for item in good if has_key(item, d['keys'])]
+
+=== B) installed keys.json is byte-identical to the extractor's staged copy:
+90a7b423a4237e94f5a9953a5a774b73ec199fb76041c55da99e76a0e9da8c07  .ufo/evidence/round-57/c1/keys.json
+90a7b423a4237e94f5a9953a5a774b73ec199fb76041c55da99e76a0e9da8c07  .ufo/waves/round-57/w1/T57W1ExecExtract/stage/.ufo/evidence/round-57/c1/keys.json
+
+=== C) the L1's ledger builder DROPS the scribes' per-row keys:
+15:        r.pop('verdict_basis', None); r.pop('keys', None)
+
+=== D) rows failing key_miss with the EXTRACTOR keys (installed): 9 ['R51.1', 'R51.6', 'R52.1', 'R52.2', 'R52.6', 'R54.5', 'R54.6', 'R54.8', 'R56.1']
+=== E) rows failing key_miss with the SCRIBE keys (dropped by build-ledger.py): 2 ['R51.2', 'R56.4']
+=== F) rows where extractor keys != scribe keys: 51 of 51

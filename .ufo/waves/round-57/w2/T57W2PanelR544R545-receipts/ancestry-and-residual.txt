@@ -1,0 +1,25 @@
+### ancestry: the fix commit is AFTER the spot-check file was added
+$ git merge-base --is-ancestor 0a2010ac 9cf0146 ; echo exit=$?
+exit=0
+$ git merge-base --is-ancestor 9cf0146 5e356996 ; echo exit=$?
+exit=0
+$ git log --format='%H %ad %s' --date=iso --diff-filter=A -- corpus/lessons/round-54-verifier-spotcheck.md
+650987a0d6fc285b37f0f9e63a3aae864af9cd5a 2026-10-28 12:54:39 -0300 round-54 verifier spot-check (integrator, hyaku): non-author admit/reject — both claims re-measured true; R54.1 false positive-control claim routed
+
+### the round-55 counter's own stale arm for R54.4/R54.5 scans the lane record set (RECORD = SCORECARD.md, QUALITY.md, lessons/round-54.md, LOG.md) with the corrections section removed
+$ grep -n 'RECORD = (' -A 7 .ufo/evidence/round-55/c1/measure.py
+34:RECORD = (
+35-    "SCORECARD.md",
+36-    "corpus/QUALITY.md",
+37-    "corpus/lessons/round-54.md",
+38-    "LOG.md",
+39-)
+40-STAGED_DEFAULT = "/home/vgpnk/Projects/shokuknow"
+41-
+
+### residual: the fleet-side round-54 report text (NOT a lane surface) still carries the old strings
+$ git -C /home/vgpnk/Projects/shokunin show HEAD:.ufo/reports/round-54/tameshi.md | sed -n '62p;79p;100p;122p'
+  **25 findings**; the L1 re-derived every one against the C0 bytes and fixed
+- **Wave-2 readings and their dispositions.** The fresh read returned 22 findings
+  `integrate/resolutions.json`; the nine sections bind with verdict
+  The frozen counter's own bytes at the deciding revision are the freeze-manifest digest `d7749f84…` (c1) and `49280fe5…` (c2) — cite those, not the C1 blobs, which predate amendments 1–5.

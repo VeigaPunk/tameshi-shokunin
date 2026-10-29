@@ -1,0 +1,149 @@
+SELFTEST good ledger passes                                           FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST good verdict line fields                                     FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST verdict line shape: panel= before spot=                      ok
+SELFTEST defects pin mismatch counted                                 FAIL
+  last run: {'defects_pin': 1, 'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST missing row counted (rows arm)                               FAIL
+  last run: {'missing': 1, 'open_unplanned': 1} notes=[('open-unplanned', 'R50.2'), ('missing', 'R50.3')]
+SELFTEST duplicate row counted                                        FAIL
+  last run: {'duplicate': 1, 'open_unplanned': 1} notes=[('duplicate', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST extra row counted                                            FAIL
+  last run: {'extra': 1, 'open_unplanned': 1} notes=[('extra', 'R99.1'), ('open-unplanned', 'R50.2')]
+SELFTEST new row in the old id range is extra                         ok
+SELFTEST bad status counted (agree arm)                               FAIL
+  last run: {'bad_status': 1, 'open_unplanned': 1, 'fixed_short': 1, 'this_round_short': 1} notes=[('bad-status', 'R50.1', 'done'), ('open-unplanned', 'R50.2')]
+SELFTEST status_at_base absent refused                                FAIL
+  last run: {'open_unplanned': 1, 'base_status_bad': 1} notes=[('base-status', 'R50.1', None, 'fixed'), ('open-unplanned', 'R50.2')]
+SELFTEST status_at_base outside the enum refused                      ok
+SELFTEST fixed at base but open now refused                           ok
+SELFTEST fixed at base but declined now refused                       FAIL
+  last run: {'open_unplanned': 1, 'base_status_bad': 1} notes=[('open-unplanned', 'R50.2'), ('base-status', 'R50.3', 'fixed', 'declined')]
+SELFTEST declined at base, fixed after base passes                    FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST fixed at base needs a commit that is an ancestor of BASE     FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-base-incoherent', 'R50.1', 'fixed', '6f3ed0c6de7e57237f03f629aa6a569cfb2645a3'), ('open-unplanned', 'R50.2')]
+SELFTEST commit an ancestor of BASE needs fixed at base               FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-base-incoherent', 'R50.1', 'open', '6f3ed0c6de7e57237f03f629aa6a569cfb2645a3'), ('open-unplanned', 'R50.2')]
+SELFTEST fixed at base with an ancestor commit passes                 FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST fix commit before routing refused                            FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1, 'this_round_short': 1} notes=[('fixed-commit', 'R50.1', 'c8f6f89d0f23f69d58d37f817dc4345439d9d89b'), ('open-unplanned', 'R50.2')]
+SELFTEST unknown commit refused                                       ok
+SELFTEST commit not touching evidence refused                         ok
+SELFTEST excerpt present at routing refused                           ok
+SELFTEST ack line is not a fix                                        ok
+SELFTEST ack control: ack-free line of the fix commit passes          ok
+SELFTEST ack control: carried line of the same commit refused         ok
+SELFTEST excerpt not in lines refused                                 ok
+SELFTEST range past end refused                                       ok
+SELFTEST spot-check evidence refused                                  ok
+SELFTEST unkeyed evidence refused                                     ok
+SELFTEST open not in Planned refused                                  FAIL
+  last run: {'open_unplanned': 2, 'fixed_short': 1, 'this_round_short': 1} notes=[('open-unplanned', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST short decline reason refused                                 ok
+SELFTEST forgery: excerpt quoted into a new file under an unrelated message refused FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-not-new', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST same quote under a message naming the id passes (control)    FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST message naming R50.12 / xR50.1 / v1.R50.1 does not name R50.1 FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-not-new', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST tie: evidence path named by the item text passes             FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST tie: evidence basename named by the item text passes         FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST tie: evidence path named by extended_text passes             FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST tie: a different path in the item text refused               FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-not-new', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST introduced: excerpt already at the first parent refused      FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-not-new', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST introduced: excerpt added by the commit passes (control)     FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST routed_at: excerpt present at routing, dropped, re-added by the commit refused FAIL
+  last run: {'fixed_bad': 1, 'open_unplanned': 1} notes=[('fixed-not-new', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST key token: hyphen after                                      ok
+SELFTEST key token: underscore after                                  ok
+SELFTEST key token: hyphen before                                     ok
+SELFTEST key token: letter after                                      ok
+SELFTEST key token: letter before                                     ok
+SELFTEST key token: parentheses and case (positive)                   FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST key token: comma after (positive)                            FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST key token: path suffix docs/wave-slots                       FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST key token: path suffix wave-slots                            FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST key token: path suffix docs/xwave-slots                      ok
+SELFTEST key token: path suffix docs/wave-slots-notes                 ok
+SELFTEST key token: BACKTICK in BACKTICK_RE excerpt                   FAIL
+  last run: {'key_miss': 1, 'open_unplanned': 1} notes=[('key-miss', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST key token: TICK_RE in BACKTICK_RE excerpt                    FAIL
+  last run: {'key_miss': 1, 'open_unplanned': 1} notes=[('key-miss', 'R50.1'), ('open-unplanned', 'R50.2')]
+SELFTEST key token: compile in BACKTICK_RE excerpt                    FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST key token: BACKTICK_RE in BACKTICK_RE excerpt                FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST planned: newer paragraph first, round 10 beats round 9       FAIL
+  last run: {'open_unplanned': 2} notes=[('open-unplanned', 'R50.2'), ('open-unplanned', 'R50.3')]
+SELFTEST planned: newer paragraph last, round 10 beats round 9        FAIL
+  last run: {'open_unplanned': 2} notes=[('open-unplanned', 'R50.2'), ('open-unplanned', 'R50.3')]
+SELFTEST fixed floor counted                                          FAIL
+  last run: {'open_unplanned': 1, 'fixed_short': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST declined cap counted                                         FAIL
+  last run: {'open_unplanned': 1, 'declined_over': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST fix older than base is not this round                        FAIL
+  last run: {'open_unplanned': 1, 'this_round_short': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST this-round floor counted                                     FAIL
+  last run: {'open_unplanned': 1, 'this_round_short': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST default floors are non-binding constants                     ok
+SELFTEST panel file absent at REV is a pin miss                       FAIL
+  last run: {'open_unplanned': 1, 'panel_pin': 1} notes=[('open-unplanned', 'R50.2'), ('panel-pin', '.ufo/evidence/round-57/c1/panel.json')]
+SELFTEST panel agrees: panel=0/5, pass                                FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST panel pin mismatch: panel_pin=1, panel=pin                   FAIL
+  last run: {'open_unplanned': 1, 'panel_pin': 1} notes=[('open-unplanned', 'R50.2'), ('panel-pin', '.ufo/evidence/round-57/c1/panel.json')]
+SELFTEST panel exactly allowed disagreements passes                   FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2'), ('panel-disagree', 'R50.3')]
+SELFTEST panel one over allowed: panel_over=1                         FAIL
+  last run: {'open_unplanned': 1, 'panel_over': 1} notes=[('open-unplanned', 'R50.2'), ('panel-disagree', 'R50.3')]
+SELFTEST panel over counts the excess only                            FAIL
+  last run: {'open_unplanned': 1, 'panel_over': 1} notes=[('open-unplanned', 'R50.2'), ('panel-disagree', 'R50.2'), ('panel-disagree', 'R50.3')]
+SELFTEST panel without a verdict for an id disagrees                  FAIL
+  last run: {'open_unplanned': 1, 'panel_over': 1} notes=[('open-unplanned', 'R50.2'), ('panel-disagree', 'R50.3')]
+SELFTEST row status_at_base against panel verdict disagrees           ok
+SELFTEST panel without a verdict for a fixed-at-base id disagrees     FAIL
+  last run: {'open_unplanned': 1, 'panel_over': 1} notes=[('open-unplanned', 'R50.2'), ('panel-disagree', 'R50.1')]
+SELFTEST hard path refused: c1/keys.json                              ok
+SELFTEST hard path refused: control/ctl.json                          ok
+SELFTEST hard path refused: contract.json                             ok
+SELFTEST hard path refused: freeze.json                               ok
+SELFTEST older round evidence path is allowed                         FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST soft-excluded wave path refused                              ok
+SELFTEST path escape refused                                          ok
+SELFTEST edited spot-check counted (spot arm)                         FAIL
+  last run: {'spotcheck_changed': 1, 'open_unplanned': 1} notes=[('spotcheck-changed', 'corpus/lessons/round-50-verifier-spotcheck.md'), ('open-unplanned', 'R50.2')]
+SELFTEST spot-check absent from the set counted                       ok
+SELFTEST deleted spot-check counted                                   ok
+SELFTEST rewritten old row counted (old49 arm)                        FAIL
+  last run: {'old49': 1, 'open_unplanned': 1} notes=[('old-row-changed', 'R49.1', 1), ('open-unplanned', 'R50.2')]
+SELFTEST deleted old row counted                                      ok
+SELFTEST duplicated old row counted                                   ok
+SELFTEST key/row order is not a change (canonical)                    FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST BASE ledger row count mismatch is setup                      ok
+SELFTEST BASE not an ancestor of REV is setup                         ok
+SELFTEST set id clashing with a BASE row is setup                     ok
+SELFTEST cli good exits 0, verdict is last line                       FAIL
+  last run: {'open_unplanned': 1} notes=[('open-unplanned', 'R50.2')]
+SELFTEST cli miss exits 1 with terms line                             ok
+SELFTEST cli wrong pin exits 1                                        ok
+SELFTEST cli default panel pin (PANEL_SHA256) is a miss: exit 1, panel=pin ok
+SELFTEST cli absent defect set is setup (exit 2)                      ok
+SELFTEST shipped pin is a sha256 or an explicit pending marker        ok
+SELFTEST shipped panel pin is a sha256 or an explicit pending marker  ok
+SELFTEST frozen DEFECTS_SHA256 and BASE are unchanged                 ok
+C1_R57_SELFTEST: 44/96 pass

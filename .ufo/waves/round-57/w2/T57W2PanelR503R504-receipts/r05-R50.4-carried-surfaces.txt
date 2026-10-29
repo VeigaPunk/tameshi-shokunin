@@ -1,0 +1,52 @@
+# R05 R50.4: the seven carried items' surfaces still open at BASE
+--- R45.1 (round-44 counter round-parametric / external-hash exemption):
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:.ufo/evidence/round-44/calibration/measure.py | sed -n '1,20p;350,360p'
+#!/usr/bin/env python3
+"""Round-44 C2 counter — record agreement, successor of the round-43 counter (calibration).
+
+Successor of the round-42 C1 counter. The five round-42 classes are carried
+(m6 registry count, m7 mined S-ids, m8 path cites, m10 presence receipts, m11
+revision reachability) with their extraction rules stated here, and two
+classes are added:
+
+  m12 — SCORECARD contract conformance. The newest `## Round N` block must
+        carry the field `**Planned (round N+1):**` (a prose mention is not the
+SELF_REL = '.ufo/evidence/round-44/calibration/measure.py'
+CONTRACT_REL = '.ufo/evidence/round-44/contract.json'
+SOURCES_REL = 'corpus/SOURCES.md'
+SCORECARD_REL = 'SCORECARD.md'
+LOG_REL = 'LOG.md'
+RECORDS = (
+    'corpus/lessons/round-42.md',
+    'corpus/lessons/round-43.md',
+    seen = set()
+    for name, text in record_texts.items():
+        for token in HEX40.findall(text):
+            if token in seen:
+                continue
+            seen.add(token)
+            if git(lane, 'cat-file', '-e', token).returncode != 0:
+                hits.append('%s:%s' % (name, token))
+    return hits, len(seen)
+
+
+
+--- R45.4 (five anchor-refresh candidates S100/S153/S154/S157/S159): supersede rows present?
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:corpus/SOURCES.md | grep -c 'supersedes S100\|supersedes S153\|supersedes S154\|supersedes S157\|supersedes S159'
+0
+
+--- R46.2 (round-47 counter adopted as operative by a later round?):
+$ for f in $(git -C $S/clone ls-files .ufo/evidence | grep -E 'round-(4[89]|5[0-6])/.*\.sh'); do git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:$f | grep -q 'round-47/c1/measure.py' && echo HIT $f; done
+(no HIT lines)
+
+--- R47.5 / R48.4 / R49.5 (dead brace_depth_at helpers deleted or re-pinned?):
+$ git -C $S/clone grep -n brace_depth_at -- tools/
+tools/tally-audit-v2.py:135:def brace_depth_at(text, offset):
+tools/tally-audit-v3.py:234:def brace_depth_at(text, offset):
+
+--- R49.3 (SKILL.md outside-section stale sentences 1503/1509/1555 still present?):
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:SKILL.md | grep -n -F 'deepens one recorded case, never a seventh independently measured gate'
+1551:deepens one recorded case, never a seventh independently measured gate.
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:SKILL.md | grep -n -F 'No registry row changes rank, SHONEN authority, or the six recorded cases'
+1597:No registry row changes rank, SHONEN authority, or the six recorded cases at
+(note: line numbers drifted to 1551/1597; the stale sentences themselves are still in the file at BASE)

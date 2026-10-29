@@ -1,0 +1,62 @@
+{
+  "seat": "T57W2CritPanel",
+  "role": "critic",
+  "item": "blind-panel arm design (C1 calibration)",
+  "edits": "none",
+  "verdict": "panel arm does not measure what the contract claims; copyable; allowance 5 forgives the under-claims it should catch; no panel selftest case; amended counter selftest 11/45 as shipped",
+  "code_facts": {
+    "panel_arm_lines": "359-373",
+    "dis_formula": "dis = ids where ledger status_at_base != panel verdict; panel_over = max(0, len(dis) - 5)",
+    "constants": {"PANEL_SHA256": "PIN_PENDING_SET_BY_L1_AFTER_THE_BLIND_PANEL", "PANEL_ALLOWED": 5, "FIXED_FLOOR": 0, "DECLINED_CAP": 999, "THIS_ROUND_FLOOR": 6},
+    "status_at_base_checks": "membership L206-209; fixed-only coherence with commit ancestry L238 (fixed_bad); no check for open/declined or post-base fixes",
+    "open_rule": "L274: id in newest Planned paragraph + keyed evidence resolves at REV",
+    "panel_read_by_status": false,
+    "selftest_panel_cases": 0,
+    "selftest_as_shipped": "11/45 pass"
+  },
+  "triage_bounds": {
+    "rows": 51,
+    "status": {"fixed": 27, "open": 22, "declined": 2},
+    "fix_commits_all_ancestors_of_base": true,
+    "forced_by_ancestry_rows": 27,
+    "free_rows_open_or_declined": 24,
+    "post_base_fixes": 0,
+    "c0_changed_triage_evidence_paths": 6,
+    "c0_changed_triage_evidence_paths_of": 56,
+    "items_with_status_words_in_text": 16
+  },
+  "scenarios": [
+    {"ledger": "honest", "panel": "truth", "panel_disagree": 0, "panel_over": 0, "arm": "pass", "nonpanel_faults": 23},
+    {"ledger": "honest", "panel": "wave1_triage_REV_status", "panel_disagree": 0, "panel_over": 0, "arm": "pass", "nonpanel_faults": 23},
+    {"ledger": "honest", "panel": "all_open", "panel_disagree": 29, "panel_over": 24, "arm": "fail", "nonpanel_faults": 23},
+    {"ledger": "honest", "panel": "all_fixed", "panel_disagree": 24, "panel_over": 19, "arm": "fail", "nonpanel_faults": 23},
+    {"ledger": "relabel5_prebase_fixes_to_open", "panel": "truth", "panel_disagree": 5, "panel_over": 0, "arm": "pass", "nonpanel_faults": 23},
+    {"ledger": "relabel27_prebase_fixes_to_open", "panel": "truth", "panel_disagree": 27, "panel_over": 22, "arm": "fail", "nonpanel_faults": 15},
+    {"ledger": "relabel27_prebase_fixes_to_open", "panel": "all_open", "panel_disagree": 2, "panel_over": 0, "arm": "pass", "nonpanel_faults": 15},
+    {"ledger": "relabel51_all_open", "panel": "all_open", "panel_disagree": 0, "panel_over": 0, "arm": "pass", "nonpanel_faults": 15},
+    {"ledger": "relabel8_fixed_not_new_to_open", "panel": "truth", "panel_disagree": 8, "panel_over": 3, "arm": "fail", "nonpanel_faults": 15},
+    {"ledger": "relabel5_of_fixed_not_new_to_open", "panel": "truth", "panel_disagree": 5, "panel_over": 0, "arm": "pass", "nonpanel_faults": 18, "fixed_bad_before": 8, "fixed_bad_after": 3},
+    {"ledger": "relabel8_fixed_not_new_to_open", "panel": "all_open", "panel_disagree": 21, "panel_over": 16, "arm": "fail", "nonpanel_faults": 15}
+  ],
+  "post_base_fix_arithmetic_not_run": "k post-base fixes with honest open status and a REV-answering panel give k disagreements; panel_over = max(0, k-5); floor is 6, so a panel wrong on 5 of 6 passes",
+  "answers": {
+    "independence": "no; lane-dispatched seats are still the lane (LEARNING.md L45-46). Buys fresh context and decorrelated reading only if run on a BASE clone.",
+    "copy_after_commit": "yes for every row whose status_at_base git does not force (24 of 51 now, plus any post-base fix); nothing orders ledger before panel commit.",
+    "status_rests_on_tree_evidence": "panel shows neither. fixed: mechanical; open: needs a REV witness that the defect still stands (current rule accepts fixed-state evidence); declined: 40-char reason only.",
+    "panel_allowed_5": "not defensible; constant without calibration; equals the number of hidden under-claims the arm forgives; exceeds the this-round margin.",
+    "guessing_panels": "all_open fails on honest ledger, passes only with a relabelled ledger; all_fixed fails; wave-1-triage-style REV answers score 0 today (uninformative)."
+  },
+  "cannot_see_proposed": "the blind panel shows only that the ledger's status_at_base field agrees with the panel's verdicts at the panel commit, for the seats' readings of a BASE clone. It does not show that any status is right: (i) the panel is lane-dispatched (LEARNING.md: a subagent the lane dispatched is still the lane), a second lane reading, not an outside or discernment check; (ii) status_at_base is a self-report, forced by commit ancestry only for pre-base fixes; for open and declined rows and post-base fixes the counter does not check it against the tree; (iii) the panel's error rate on semantic base-state questions is unmeasured, so the allowance is a constant; (iv) the panel never reads the REV status; a row's REV status rests only on the mechanical arms, and an under-claimed fix is detected by the panel alone and forgiven up to the allowance; (v) item texts carry routing-time status words in 16 of 51 items, so the panel is not blind to the lane's own claims unless its prompt says otherwise.",
+  "selftest_diagnosis": "status_at_base missing from fixture rows and fixed-not-new from unnamed fixture commit; patched selftest 29/45",
+  "contract_defects": ["no amendments key in contract.json though measure.py cites amendments[0]", "C1 target still says fixed>=20, declined<=14"],
+  "proposed_changes": [
+    "ledger status_at_base committed at A before panel commit P; A ancestor of P; REV value == value at A",
+    "panel_allowed 0 for post-base-fix rows; forced rows take no panel input; free rows report disagreement without a gate until a known-answer control",
+    "panel input from a BASE clone, id + file list + frozen text, status words flagged as routing-time",
+    "open witness: REV-side literal from item text reproduced in cited lines",
+    "panel selftest cases: match passes; one-off fails at allowance 0; ledger disagreeing with panel at P fails; ledger committed after P refused",
+    "record floor amendment in contract.json before scoring"
+  ],
+  "receipts": ".ufo/waves/round-57/w2/T57W2CritPanel-receipts/",
+  "tools_installed": []
+}

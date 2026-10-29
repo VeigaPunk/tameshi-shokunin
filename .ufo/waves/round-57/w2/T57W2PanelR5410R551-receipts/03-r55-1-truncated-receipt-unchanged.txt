@@ -1,0 +1,14 @@
+$ git -C $C show 5e35699:.ufo/evidence/round-55/after/c2.stdout | tail -3
+EXPLAIN empty  evidence-disposition --json        rc=0  ok
+EXPLAIN empty  context-capture --check            rc=0  ok
+EXPLAIN usable repeat-control --selftest          rc=0  ok
+
+$ ... | grep -c 'C2_R55'
+0
+
+$ git -C $C log --oneline fa48c06c..5e35699 -- .ufo/evidence/round-55/after/c2.stdout   # empty => untouched since the round-55 spot-check
+(no output above = no commit touched it)
+
+$ for r in fa48c06c 5e35699; do git -C $C show $r:.ufo/evidence/round-55/after/c2.stdout | sha256sum; done
+89e9e978068b9831396200209e605aaa3900151941d27fe1fcff7245c385814b  -
+89e9e978068b9831396200209e605aaa3900151941d27fe1fcff7245c385814b  -

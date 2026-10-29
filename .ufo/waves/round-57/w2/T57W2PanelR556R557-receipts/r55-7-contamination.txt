@@ -1,0 +1,37 @@
+# R55.7 — closure-environment contamination (non-lane seat wrote inside the lane tree)
+--- (a) the fabricated green line is NOT in the tree at BASE:
+$ git show BASE:.ufo/evidence/round-55/after/c2.stdout | grep -c 'C2_R55: rev=4c04c1d33377'
+0
+$ git show BASE:.ufo/evidence/round-55/after/c2.stdout | sha256sum   (== fa48c06c branch bytes)
+89e9e978068b9831396200209e605aaa3900151941d27fe1fcff7245c385814b  -
+89e9e978068b9831396200209e605aaa3900151941d27fe1fcff7245c385814b  -
+$ git grep -c 'C2_R55: rev=4c04c1d33377' BASE -- .ufo/evidence/   (no evidence file carries it)
+(no match -> exit 1)
+
+--- (b) the 14 deleted T55W1MutC2-receipts files are back at BASE:
+mutants/m1.diff                              EXISTS
+mutants/m2.diff                              EXISTS
+mutants/m3.diff                              EXISTS
+mutants/m4.diff                              EXISTS
+mutants/m5.diff                              EXISTS
+mutants/m6.diff                              EXISTS
+mutants/m7.diff                              EXISTS
+mutants/m8.diff                              EXISTS
+mutants/m9.diff                              EXISTS
+P-base.meta                                  EXISTS
+P-base.stdout                                EXISTS
+counter-bytes.txt                            EXISTS
+fixed-tree-line-context-capture.txt          EXISTS
+fixed-tree-line-repeat-control.txt           EXISTS
+count of T55W1MutC2-receipts paths: at 875bb756 (round-55 tip) vs BASE
+15
+101
+
+--- (c) WHO OWNS THE RESIDUAL — the item text itself (BASE corpus/lessons/round-55-verifier-spotcheck.md:143-146):
+7. **R55.7 — closure-environment contamination (not lane debt).** Concurrent non-author seats write
+   inside the lane repo: `after/c2.stdout` was rewritten after the tip with `C2_R55: rev=4c04c1d33377
+   … total=0 C2_R55_PASS=true` (uncommitted), and 14 tracked `T55W1MutC2-receipts` files were deleted
+   from the working tree mid-closure. That green line is **not** lane evidence and is not cited above.
+
+--- (d) the lane's own disposition at BASE (corpus/lessons/round-56.md:108):
+| R55.7 | PARTIALLY DISPOSED — lane side repaired, harness side residual: the post-tip closure rewrites (the uncommitted green `C2_R55` line in `after/c2.stdout`, the 14 deleted `T55W1MutC2-receipts` files) were reverted to branch bytes at `6efd2a1` before the base; this round's discipline keeps seat writes in `.ufo/waves/…` and scratch clones and the clean-tree gates expose any residue at close, but a non-lane seat writing in the lane tree is outside the lane's write scope — the receipt is the record, not a fence | `corpus/lessons/round-55-verifier-spotcheck.md` item R55.7; `git show 6efd2a1 --stat` (reverted files); contract `base_note` (content bytes identical to `fa48c06c` on every claim path) |

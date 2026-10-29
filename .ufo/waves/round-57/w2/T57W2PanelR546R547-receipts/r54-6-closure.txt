@@ -1,0 +1,44 @@
+=== R54.6 closure evidence at BASE ===
+
+$ git -C CLONE log --format='%H %s' 650987a..HEAD -- .ufo/waves/round-54/w2/T54W2Sent03.md
+
+$ git -C CLONE ls-tree -r --name-only HEAD -- .ufo/waves/round-54/w2 | grep -c 'T54W2Sent03'
+36
+
+$ git -C CLONE rev-parse ff2a821:<3 paths> vs HEAD:<3 paths>  (byte-identical)
+  .ufo/waves/round-54/w2/T54W2Sent03.md
+    ff2a821=7448be1be6510bfc261b5b120ce14c0a54489d88
+    HEAD   =7448be1be6510bfc261b5b120ce14c0a54489d88
+  .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+    ff2a821=c63fc96c958c09377f2e8eb56fced010c7d11dba
+    HEAD   =c63fc96c958c09377f2e8eb56fced010c7d11dba
+  .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+    ff2a821=4cdc204cd232a2df6321ef9217810037dfd9e7ff
+    HEAD   =4cdc204cd232a2df6321ef9217810037dfd9e7ff
+
+=== the deciding-run clean-tree receipts (round-56) show no seat deliverable ?? at BASE ===
+-- round-56/after/clean-tree-before.txt --
+?? .ufo/evidence/round-56/after/
+-- round-56/after/clean-tree-after.txt --
+?? .ufo/evidence/round-56/after/
+-- round-56/after/deciding-run.exit --
+DECIDING_RUN_EXIT=0
+
+=== round-55 counter at BASE (lane's own instrument, R54.6/R54.7 rows) ===
+$ python3 .ufo/evidence/round-55/c1/measure.py --lane CLONE --rev HEAD --work <empty> --explain
+  (run recorded separately in r54-6-tracking.txt / c1-at-base.txt)
+=== R54.6 recurrence at BASE (separate routed item R55.6) ===
+
+$ git -C CLONE log --format='%H %s' 981c5e8b..HEAD | grep -iE 'sweep|R55.6'
+
+$ cat .ufo/evidence/round-56/after/clean-tree-after.txt   # no seat deliverable ?? at the deciding revision
+?? .ufo/evidence/round-56/after/
+
+$ cat .ufo/evidence/round-56/after/deciding-run.exit
+DECIDING_RUN_EXIT=0
+
+=== round-56 lesson row for R55.6 (the recurrence, separately routed) ===
+107:| R55.6 | FIXED for the inherited files and gated going forward: the seven uncommitted round-55 receipts were swept into the base at `981c5e8b` (round-56 start, contract `base_note`) and `6efd2a1`; the frozen `deciding-run.sh` refuses a dirty tree before and after the deciding run (`clean-tree-b
+
+=== round-55 lesson row for R54.6 (the instance closure) ===
+60: | R54.6 | FIXED — the three swept deliverables are committed at `ff2a821` | `.ufo/waves/round-54/w2/T54W2Sent03*` |

@@ -1,0 +1,28 @@
+== R53.3: SCORECARD round-53 phase-B pointer unchanged since before the spot-check ==
+$ git -C $C blame -L 2516,2519 $B -- SCORECARD.md
+09b5be6 (tameshi-shokunin 2026-10-27 11:17:07 -0300 2516) Controls: phase A 2/2 as pre-registered (do-nothing false at base for both
+09b5be6 (tameshi-shokunin 2026-10-27 11:17:07 -0300 2517) counters); phase B break-one fixtures (trace removal, reader-sha corruption,
+09b5be6 (tameshi-shokunin 2026-10-27 11:17:07 -0300 2518) read_rev mismatch, planted /tmp, defeated CR47) each printed false and the
+09b5be6 (tameshi-shokunin 2026-10-27 11:17:07 -0300 2519) unmodified candidate printed true (receipts `.ufo/evidence/round-53/control/`).
+
+$ git -C $C log --format='%H %an %ad %s' --date=short 2ef0a5ad..$B -- .ufo/evidence/round-53/   (empty = nothing changed round-53 evidence after the spot-check)
+(exit 0)
+
+== CONTROLS_B receipts that DO exist at BASE (other rounds, not round-53) ==
+$ git -C $C ls-tree -r --name-only $B | grep -E 'controls-b\.stdout$'
+.ufo/evidence/round-54/control/controls-b.stdout
+.ufo/evidence/round-56/control/controls-b.stdout
+.ufo/waves/round-55/w1/T55W1Connector2-receipts/controls-b.stdout
+.ufo/waves/round-55/w2/T55W2RevGateResidual-receipts/runs/fixture-failed-tally/controls-b.stdout
+.ufo/waves/round-55/w2/T55W2RevGateResidual-receipts/runs/fixture-prev-round/controls-b.stdout
+.ufo/waves/round-55/w2/T55W2RevGateResidual-receipts/runs/fixture-stale-rev/controls-b.stdout
+.ufo/waves/round-55/w2/T55W2RevGateResidual-receipts/runs/fixture-symlink/controls-b.stdout
+.ufo/waves/round-55/w2/T55W2RevGateResidual-receipts/runs/fixture-worktree/controls-b.stdout
+.ufo/waves/round-55/w2/T55W2RevGateResidual-receipts/runs/fixture-zero-zero/controls-b.stdout
+.ufo/waves/round-56/w3/T56W3ExecControlsB-receipts/controls-b.stdout
+
+$ git -C $C show $B:.ufo/evidence/round-56/control/controls-b.stdout | grep CONTROLS_B
+CONTROLS_B: 2/2 as pre-registered
+
+== round-53 deciding-run gate only requires phase-A receipts ==
+22:CONTROLS="$E/control/controls.stdout $E/control/controls.exit"

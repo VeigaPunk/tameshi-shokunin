@@ -1,0 +1,36 @@
+# receipt 5 — R50.2: registry rows exist at BASE
+$ grep -n '^| shrink-case |' SKILL.md ; grep -n '^| pbt staged-id generator |' SKILL.md
+2201:| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant
+2193:| pbt staged-id generator | gate | `python3 tools/pbt-staged-id.py --guard tools/stag
+
+# the section they live in
+$ grep -nE '^#{1,4} .*[Rr]egistry' SKILL.md | tail -4
+1981:### Round-20 gate/probe registry — frozen receipt instruments
+2007:### Round-21 gate/probe registry — finite environment differential
+2175:### Round-26 gate/probe registry — report interop
+2181:#### Gate/probe registry — round 51
+
+# full rows (all 8 columns: Name|Kind|Entry|Verdict map|Self-test|Pinned|Write scope|Owner)
+--- pbt staged-id generator (SKILL.md:2193) ---
+| pbt staged-id generator | gate | `python3 tools/pbt-staged-id.py --guard tools/staged-id-guard.py --seed 1 --cases 400 --dump OUT.jsonl` | 0 clean; 1 failed (violation); 2 could-not-evaluate (usage or setup) | `python3 tools/pbt-staged-id.py --selftest` → PBT_STAGED_ID_SELFTEST: cases=35 failed=0 | none — expected answers are oracle code literals in check() and the selftest; the graded surface is tools/staged-id-guard.py named by --guard | caller-chosen --dump path plus an isolated TMPDIR work root (pbt-staged-id-); selftest scratch under TMPDIR | tameshi |
+--- shrink-case (SKILL.md:2201) ---
+| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant MUTANT.py --case CASE.json --out OUT.json` | 0 shrunk (report written); 1 selftest checks failed; 2 could-not-evaluate (usage, unreadable file, invalid case, case carries no kill) | `python3 tools/shrink-case.py --selftest` → SHRINK_SELFTEST: cases=21 failed=0 | `tools/pbt-staged-id.py` generator imported beside the tool; `tools/staged-id-guard.py` and `.ufo/evidence/round-49/c2/panel.json` for the M02 leg; expected edit literals in the tool source | caller-chosen --out FILE; tempfile.mkdtemp roots under TMPDIR for guard runs and selftest; lane read-only except the CPython bytecode cache (tools/__pycache__) the import of the generator may write | tameshi |
+
+# commits that added them (both AFTER the spot-check file 9962033, both ancestors of BASE)
+$ git blame -L 2193,2193 HEAD -- SKILL.md
+6d8c11e378aa90b12650808e1b79270742935f15 2150 2193 1
+$ git blame -L 2201,2201 HEAD -- SKILL.md
+7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135 2158 2201 1
+9962033 -> 6d8c11e : ANCESTOR
+6d8c11e -> BASE : ANCESTOR
+9962033 -> 7ff81a5 : ANCESTOR
+7ff81a5 -> BASE : ANCESTOR
+
+# 6d8c11e is where BOTH rows first appear
+$ git show 6d8c11e -- SKILL.md | grep -E '^\+.*(shrink-case|pbt-staged-id)' | cut -c1-100
++| pbt staged-id generator | gate | `python3 tools/pbt-staged-id.py --guard tools/staged-id-guard.py
++| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant MUTANT.py --c
+
+# 7ff81a5 revised the shrink-case write-scope cell (bytecode cache)
+-| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant MUTANT.py --case CASE.json --out OUT.json` | 0 shrunk (report written); 1 selftest checks failed; 2 could-not-evaluate (usage, unreadable file, invalid case, case carries no kill) | `python3 tools/shrink-case.py --selftest` → SHRINK_SELFTEST: cases=21 failed=0 | `tools/pbt-staged-id.py` generator imported besi
++| shrink-case | probe | `python3 tools/shrink-case.py --pristine PRISTINE.py --mutant MUTANT.py --case CASE.json --out OUT.json` | 0 shrunk (report written); 1 selftest checks failed; 2 could-not-evaluate (usage, unreadable file, invalid case, case carries no kill) | `python3 tools/shrink-case.py --selftest` → SHRINK_SELFTEST: cases=21 failed=0 | `tools/pbt-staged-id.py` generator imported besi

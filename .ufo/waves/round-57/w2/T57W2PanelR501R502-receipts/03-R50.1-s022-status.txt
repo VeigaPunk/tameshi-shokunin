@@ -1,0 +1,20 @@
+# receipt 3 — R50.1: S022 status cell at BASE
+$ awk -F'|' '/^\| S022 /{print $9, $12}' corpus/SOURCES.md
+status=[ mined ] used-by=[ corpus/knowledge/fixture-shrinking-pilot.md ]
+$ grep -c 'S022' corpus/knowledge/fixture-shrinking-pilot.md
+2
+
+# commit that flipped it (AFTER the spot-check file was added)
+$ git log --oneline -S'| S022 |'  -- corpus/SOURCES.md  (context)
+a41195d round-53: C* content commit — fix pass, S275/S276 assimilation (re-opened this round), round-53 lesson, QUALITY 104, LOG r52+r53 entries, README F7 note
+7ff81a5 round-52: wave-2 fix-reads applied in-line (59), round21 row cell, shrink-case scope; QUALITY 103; S274; lesson; wave-2 evidence
+6d8c11e round-51: integrate frontier/S022 correction, sourced tenth case, registry rows, runner panel and controls
+$ git show 6d8c11e -- corpus/SOURCES.md | grep -E '^[+-]\| S022'
+-| S022 | Test-Case Reduction via Test-Case Generation (MacIver, Donaldson; ECOOP 2020) — https://drops.dagstuhl.de/en
++| S022 | Test-Case Reduction via Test-Case Generation (MacIver, Donaldson; ECOOP 2020) — https://drops.dagstuhl.de/en
+$ git blame -L 33,33 HEAD -- corpus/SOURCES.md
+6d8c11e378aa90b12650808e1b79270742935f15 33 33 1
+
+# ordering: fix commit is AFTER the round-50 spot-check commit 9962033, and IS an ancestor of BASE
+9962033 -> 6d8c11e : ANCESTOR (fix is after the routed item was filed)
+6d8c11e -> BASE : ANCESTOR (fix is present at BASE)

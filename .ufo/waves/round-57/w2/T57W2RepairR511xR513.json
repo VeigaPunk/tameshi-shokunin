@@ -1,0 +1,49 @@
+{
+ "seat": "T57W2RepairR511xR513",
+ "milestone": "repair ledger rows R51.1 R51.3",
+ "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+ "rev_dry_run": "241d82c10a66",
+ "rows_file": ".ufo/waves/round-57/w2/T57W2RepairR511xR513/rows.json",
+ "rows_changed": false,
+ "ids": {
+  "R51.1": {
+   "status": "fixed",
+   "status_changed": false,
+   "status_proven_wrong": false,
+   "repair": "unrepairable",
+   "dry_run_fault": "key-miss",
+   "fix_commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+   "reason": "no keyed excerpt is both present in bcba892 tools/registry.json and at REV and absent at bcba892^; REV registry reformatted by 9cf0146. Counter-admissible span (REV 1251-1266) is not in bcba892 (counter gap F1).",
+   "live_fleet_check": "PASS legs_conforming=10/10 rc=0 (tools/mte-interop.py --check --fleet-root /home/vgpnk/Projects/shokunin, master 06e9849)",
+   "registry_check_rev_master": "differs, held=0/1, MTE_INTEROP: SETUP (regression exit 2)",
+   "committed_receipt": "absent"
+  },
+  "R51.3": {
+   "status": "fixed",
+   "status_changed": false,
+   "status_proven_wrong": false,
+   "repair": "unrepairable",
+   "dry_run_fault": "fixed-not-new",
+   "fix_commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+   "reason": "bcba892 appends the 20 correction records (true fix; round-21 ledger wrong_expectations 0 count at parent 0, at bcba892 20, at master 20) but its message does not name R51.3 and the item text names neither .ufo/evidence/round-21/coldread/ledger.json nor its basename. f1a3246 passes the tie but does not append a correction; refused.",
+   "refused_candidate": "f1a3246105f75bb9f678f20e25878c44db3a2caf"
+  }
+ },
+ "dry_run_lines": [
+  "EXPLAIN key-miss R51.1",
+  "EXPLAIN fixed-not-new R51.3",
+  "C1_R57: self=63a88c257490 rev=241d82c10a66 rows=51/51 agree=31/51 old49=ok fixed=34 declined=2 thisround=7 panel=pin spot=ok total=21 C1_R57_PASS=false"
+ ],
+ "scratch_only_candidates": {
+  "R51.1_counterfeit_span_REV_1251-1266": "R51.1 leaves EXPLAIN; C1_R57 agree=32/51 total=20",
+  "R51.3_f1a3246_refresh_py_216": "R51.3 leaves EXPLAIN; C1_R57 agree=32/51 total=20"
+ },
+ "findings": [
+  "F1 counter gap: fixed arm checks absence at commit^ only, not presence at commit",
+  "F2 R51.3 tie refuses true fix bcba892; L1 decision needed (name R51.3 in a lane commit message, or amend tie)",
+  "F3 R51.1 committed receipt absent; registry-check --rev row differs in mirror (C2 operability)",
+  "F4 panel-pin still PIN_PENDING (unrelated to these rows)"
+ ],
+ "tools": "none installed or upgraded; existing uv 0.13.0 and /usr/bin/python3 used",
+ "receipts": ".ufo/waves/round-57/w2/T57W2RepairR511xR513-receipts/"
+}

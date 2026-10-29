@@ -1,0 +1,11 @@
+# T57W2CritPanel sweep (all reads of the lane are read-only git/file reads; the clone is scratch)
+# 1. amended counter selftest, as shipped (sha256 of measure.py at read time)
+python3 .ufo/evidence/round-57/c1/measure.py --selftest --work $S/w   -> selftest.stdout  (C1_R57_SELFTEST: 11/45 pass)
+# 2. diagnosis copy: status_at_base added to good rows, R50.1 base-consistent, selftest rerun -> selftest_patched2.stdout (29/45)
+#    cause of remaining 'fixed-not-new': fixture commit message does not name R50.1 and the defect has no 'text'
+# 3. panel-arm simulations: drive.py (scratch clone at BASE; ledger+panel committed per variant; measure() called with panel_pin = sha256 of that panel)
+python3 drive.py > drive.stdout
+# 4. relabel-the-fixed-bad-rows variants: variants2.py -> variants2.stdout
+# 5. which row faults the honest triage ledger carries under the amended counter: faults.py -> faults.stdout
+# 6. C0 vs base changed paths against triage evidence paths: c0_changed.txt
+git -C <lane> diff --name-only 5e356996 ca75c267 > c0_changed.txt

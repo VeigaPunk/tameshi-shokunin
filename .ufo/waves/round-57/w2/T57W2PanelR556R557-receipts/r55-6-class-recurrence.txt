@@ -1,0 +1,20 @@
+# R55.6 class recurrence check at BASE (is the class still live?)
+--- (a) the CLASS recurred in round 56 (lane's own record, committed at base):
+$ git show BASE:corpus/lessons/round-56.md | grep -n 'this round.s before-receipts cited while untracked'
+14:## Gate (sources opened this round)
+51:  `981c5e8b` before this round's contract froze; and the frozen
+56:  quoted in the spotcheck; shown able to fail again by this round's own row
+75:- **class: landing — this round's before-receipts cited while untracked.**
+82:  → absent). captured-by: this round's own `## Mistakes` — the same class as
+96:- **class: claim sizing — C2's no-op control reaches its target.** Evidence: `T56W2CritDoNothingC2.md` v2/v3 scratch trees yield `C2_R56_PASS=true` using two stub controls or a borrowed round-54 receipt with its `rev=` token rewritten; no controls run produced those bytes. **captured-by:** the round prompt's claim-sizing rule (§9), which requires a do-nothing control below target before freeze. **fix:** none this round; the claim/counter are frozen after data. The final C2 counter result is recorded, but C2 is not admitted as a measured improvement; a future claim must preregister a discriminator for control provenance.
+
+--- (b) the freeze gate that now refuses a dirty tree (BASE .ufo/evidence/round-56/deciding-run.sh):
+$ git show BASE:.ufo/evidence/round-56/deciding-run.sh | grep -n 'clean-tree\|dirty-tree'
+129:git status --porcelain > "$OUT/clean-tree-before.txt"
+132:[ "$(grep -vc "^?? ${OUT#$LANE/}/" "$OUT/clean-tree-before.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree"; cat "$OUT/clean-tree-before.txt"; exit 3; }
+164:git status --porcelain > "$OUT/clean-tree-after.txt"
+165:[ "$(grep -vc "^?? ${OUT#$LANE/}/" "$OUT/clean-tree-after.txt")" = 0 ] || { echo "DECIDING_REFUSED dirty-tree-after"; cat "$OUT/clean-tree-after.txt"; rc=1; }
+
+--- (c) round-56 closure conformance (BASE corpus/lessons/round-56-verifier-spotcheck.md:18):
+$ git show BASE:corpus/lessons/round-56-verifier-spotcheck.md | sed -n '18p'
+| lane pushed, no leftovers | `jj-lane.sh state` ; `git status --porcelain` ; `git ls-remote origin refs/heads/master` | `local=c34e2b14… remote=c34e2b14… ahead=0 behind=0 tracked=0 untracked=0`; porcelain empty; ls-remote `c34e2b14…` | ok |

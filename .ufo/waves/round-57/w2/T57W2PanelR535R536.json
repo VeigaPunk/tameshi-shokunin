@@ -1,0 +1,23 @@
+{
+  "seat": "T57W2PanelR535R536",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "method": "blind panel: scratch clone only (git clone --shared + checkout --detach 5e35699); no round-57 wave/evidence path, no lane working tree, no ledger row for R53.5/R53.6 was read",
+  "verdicts": {
+    "R53.5": {
+      "verdict": "open",
+      "basis": "BASE .ufo/evidence/round-53/verify-freeze.stdout:1 still reads 'FREEZE e62d99711a0d files=8 amendments=5' (blob a90957d5, identical to 7d8aaac); final freeze 9e09db2 carries 7 amendments. LOG.md:2468 still pins 'freeze e62d9971 (amendments 1-5)'; grep cf872769/9e09db2 LOG.md gives no match. git log 2ef0a5a..HEAD -- .ufo/evidence/round-53/ is empty.",
+      "commit": null
+    },
+    "R53.6": {
+      "verdict": "fixed",
+      "basis": "59c3810 (round-54 C0, after spot-check 2ef0a5a) added ScratchRootUnusable->exit 2 to the four named tools (tools/pin-disposition.py:1399 except ScratchRootUnusable). At BASE all seven tools print 'could-not-evaluate' and exit 2 under TMPDIR=/nonexistent/path/xyz (receipts/r536-verify.stdout C). Nit context-capture.py:27 still names gettempdir().",
+      "commit": "59c38109bf119d0e9d4f878644a82babc937bc1e"
+    }
+  },
+  "notes": {
+    "R53.5": "Round-54 lesson claims R53.5 FIXED ('freeze.json is regenerated at freeze time'), but that regeneration is round-54's own freeze, not the round-53 receipt/pointer the item names. The lane's own round-55 connector seat reaches the same reading: 'Fixed by round 54. Partial, and the disposition sentence is itself false' (.ufo/waves/round-55/w1/T55W1Connector2.md:104).",
+    "R53.6": "Primary defect (4 of 7 tools mapping the class) is closed and re-measured at BASE, not read from any lesson. The routing item's own stated remedy ('make the mapping uniform') is satisfied 7/7. The explicitly-labelled nit (context-capture.py:27 docstring still says gettempdir()) survives at BASE and is recorded here; the code at context-capture.py:1643 already uses strict_scratch_root(), so the docstring is stale.",
+    "declined_check": "Neither item is declined: both sit under '## Routed defects (lane must fix next round)' (corpus/lessons/round-53-verifier-spotcheck.md:76) and no later closure withdraws them.",
+    "no_harm": "No lane file was edited by this seat; no stage/ payload produced."
+  }
+}

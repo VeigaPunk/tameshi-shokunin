@@ -1,0 +1,58 @@
+case                               role      paths                    exit codes                              verdict  note
+positive/match/no-paths            positive  absent                      0 none                               PASS     
+positive/match/paths-surface       positive  surface.txt                 0 none                               PASS     
+positive/old/no-paths              positive  absent                      3 RECEIPT_REV_MISMATCH               REFUSED  
+positive/old/paths-surface(identical) positive  surface.txt                 0 none                               PASS     
+positive/old/paths-all(drift)      positive  surface.txt+moved.txt       3 RECEIPT_REV_CONTENT_DRIFT          REFUSED  
+positive/old/paths-empty-file      positive  empty file                  3 RECEIPT_REV_CONTENT_DRIFT          REFUSED  
+positive/old/paths-missing-file    positive  missing file                1 none                               none     
+positive/no-rev/no-paths           positive  absent                      3 RECEIPT_REV_ABSENT                 REFUSED  
+positive/two-revs/paths-all        positive  surface.txt+moved.txt       3 RECEIPT_REV_AMBIGUOUS              REFUSED  
+positive/dead-rev/no-paths         positive  absent                      3 RECEIPT_REV_UNRESOLVABLE           REFUSED  
+positive/missing-file              positive  absent                      3 RECEIPT_MISSING                    REFUSED  
+positive/empty-file                positive  absent                      3 RECEIPT_EMPTY                      REFUSED  
+positive/dir-receipt               positive  absent                      3 RECEIPT_NOT_BLOB                   REFUSED  
+positive/regex-missing             positive  absent                      3 RECEIPT_REQUIRED_LINE_MISSING      REFUSED  
+verdict/match/no-paths             verdict   absent                      0 none                               PASS     
+verdict/match/paths-surface        verdict   surface.txt                 0 none                               PASS     
+verdict/old/no-paths               verdict   absent                      3 RECEIPT_REV_MISMATCH               REFUSED  
+verdict/old/paths-surface(identical) verdict   surface.txt                 0 none                               PASS     
+verdict/old/paths-all(drift)       verdict   surface.txt+moved.txt       3 RECEIPT_REV_CONTENT_DRIFT          REFUSED  
+verdict/old/paths-empty-file       verdict   empty file                  3 RECEIPT_REV_CONTENT_DRIFT          REFUSED  
+verdict/old/paths-missing-file     verdict   missing file                1 none                               none     
+verdict/no-rev/no-paths            verdict   absent                      3 RECEIPT_REV_ABSENT                 REFUSED  
+verdict/two-revs/paths-all         verdict   surface.txt+moved.txt       3 RECEIPT_REV_AMBIGUOUS              REFUSED  
+verdict/dead-rev/no-paths          verdict   absent                      3 RECEIPT_REV_UNRESOLVABLE           REFUSED  
+verdict/missing-file               verdict   absent                      3 RECEIPT_MISSING                    REFUSED  
+verdict/empty-file                 verdict   absent                      3 RECEIPT_EMPTY                      REFUSED  
+verdict/dir-receipt                verdict   absent                      3 RECEIPT_NOT_BLOB                   REFUSED  
+verdict/regex-missing              verdict   absent                      3 RECEIPT_REQUIRED_LINE_MISSING      REFUSED  
+control/ancestors                  control   absent                      0 none                               PASS     
+control/ancestors+paths            control   surface.txt                 0 none                               PASS     
+control/non-ancestor               control   absent                      3 RECEIPT_CONTROL_NOT_ANCESTOR       REFUSED  
+control/dead-rev                   control   absent                      3 RECEIPT_REV_UNRESOLVABLE           REFUSED  
+control/two-revs                   control   absent                      0 none                               PASS     
+verdict/digest-mismatch            verdict   absent                      3 RECEIPT_DIGEST_MISMATCH            REFUSED  
+positive/certified-unresolvable    positive  absent                      2 RECEIPT_REV_UNRESOLVABLE           REFUSED  
+usage/unknown-role                 bogus     absent                      1 none                               none     
+usage/no-receipts                  -         absent                      1 none                               none     
+usage/flag-without-value           -         absent                      1 none                               none     
+usage/unknown-flag                 -         absent                      1 none                               none     
+usage/paths-empty-string           positive  ''                          3 RECEIPT_REV_MISMATCH               REFUSED  
+positive/lane-missing              positive  absent                      2 none                               none     
+json/certified-unresolvable        positive  absent                      2 none                               none     json=no
+json/drift-refusal                 positive  surface.txt+moved.txt       3 RECEIPT_REV_CONTENT_DRIFT          none     json=yes
+
+CODES emitted across the sweep:
+  RECEIPT_CONTROL_NOT_ANCESTOR       cases=control/non-ancestor
+  RECEIPT_DIGEST_MISMATCH            cases=verdict/digest-mismatch
+  RECEIPT_EMPTY                      cases=positive/empty-file,verdict/empty-file
+  RECEIPT_MISSING                    cases=positive/missing-file,verdict/missing-file
+  RECEIPT_NOT_BLOB                   cases=positive/dir-receipt,verdict/dir-receipt
+  RECEIPT_REQUIRED_LINE_MISSING      cases=positive/regex-missing,verdict/regex-missing
+  RECEIPT_REV_ABSENT                 cases=positive/no-rev/no-paths,verdict/no-rev/no-paths
+  RECEIPT_REV_AMBIGUOUS              cases=positive/two-revs/paths-all,verdict/two-revs/paths-all
+  RECEIPT_REV_CONTENT_DRIFT          cases=positive/old/paths-all(drift),positive/old/paths-empty-file,verdict/old/paths-all(drift),verdict/old/paths-empty-file,json/drift-refusal
+  RECEIPT_REV_MISMATCH               cases=positive/old/no-paths,verdict/old/no-paths,usage/paths-empty-string
+  RECEIPT_REV_UNRESOLVABLE           cases=positive/dead-rev/no-paths,verdict/dead-rev/no-paths,control/dead-rev,positive/certified-unresolvable
+exits observed: [0, 1, 2, 3]

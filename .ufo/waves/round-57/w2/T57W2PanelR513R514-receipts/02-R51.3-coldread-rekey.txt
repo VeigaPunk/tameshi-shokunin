@@ -1,0 +1,42 @@
+# 02 R51.3 — 'Cold-read re-key overstates' (closure item 3) — state AT BASE
+
+## item text (corpus/lessons/round-51-verifier-spotcheck.md:128, item 3 of the routed list)
+3. **Cold-read re-key overstates.** `coldread/refresh.py:224-227` writes `wrong_expectations: 0` for every re-keyed section, but T51W2Read20 recorded false statements. Append a named correction to the round-21 ledger, or supersede those entries with the recorded counts, so the calibration record does not claim zero wrong expectations where a reader found some.
+
+## A. the cited instrument: round-51 refresh.py:224-227 still writes 0 (frozen round-51 evidence path)
+                'skill_sha256': sec['sha256'], 'start': sec['start'], 'end': sec['end'], 'heading': h,
+                'sha256': sec['sha256'], 'class': 'record', 'verdict': 'verified-record',
+                'blocking_gaps': 0, 'wrong_expectations': 0, 'minor_gaps': 0,
+                'commands_executed_count': 1, 'read_rev': cand, 'inputs': inputs, 'traces': [trace_rel],
+                'seats': list(seats) + ['L1 TameshiR51a3 integration (attempt 3)'],
+
+## B. the LIVE successor instrument now counts the reader's findings
+216:                     'blocking_gaps': 0, 'wrong_expectations': len(reader['findings']), 'minor_gaps': 0,
+                     'blocking_gaps': 0, 'wrong_expectations': len(reader['findings']), 'minor_gaps': 0,
+   (introduced by f1a3246105f75bb9f678f20e25878c44db3a2caf, after the spot-check commit)
+
+## C. named corrections appended to the round-21 ledger
+$ grep -n '"corrections"' .ufo/evidence/round-21/coldread/ledger.json
+112187: "corrections": [
+$ git log -S'"corrections"' --oneline -- .ufo/evidence/round-21/coldread/ledger.json
+bcba8924894216268afc4171f06eb8c28e912b46 2026-10-27 01:42:33 -0300 tameshi-shokunin round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+$ python3 -c '...: corrections=20, sum_wrong_expectations=73, one per r51 entry, each names its reader'
+   corrections=20  sum_wrong_expectations=73
+   r51 re-key entries=20  their own wrong_expectations sum=0 (entries unchanged; corrections are parallel)
+   every r51 entry has a correction: True
+   sample correctes clause: ledger entry ## Mutation-sweep recipe — numbered steps; bounded cold-read evidence @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)
+
+## D. the frozen round-52 C2 counter clause m4 (the pre-registered acceptance shape) at BASE
+$ python3 .ufo/evidence/round-52/c2/measure.py --lane $S/clone --rev 5e3569969b532310d2b8a3d130901757a3df356b --explain
+C2_CHECK m4 ok r51_entries=20 corrections=20 bad=[]
+C2_R52: rev=5e3569969b532310d2b8a3d130901757a3df356b m1=0 m2=0 m3=0 m4=0 m5=0 m6=0 total=0 C2_R52_PASS=true
+
+## E. the round-21 cold-read monitor at BASE (axis not regressed)
+$ python3 .ufo/evidence/round-21/coldread/measure.py --rev 5e3569969b532310d2b8a3d130901757a3df356b --repo $S/clone
+   sections_covered=64 calibration_restraint_score=8 overrides_used=False trace_gate=strict
+
+## RESIDUAL (reported, not part of the verdict): later binders still write we=0 for re-keys
+27:     wrong_expectations 0, blocking_gaps 0, class/verdict carried from the
+180:            'blocking_gaps': 0, 'wrong_expectations': 0,
+   (r54 binder puts reader findings in minor_gaps and SKIPS headings over the adjudicated floor —
+    .ufo/evidence/round-54/integrate/resolutions.json; a later design decision, not the r51 surface)

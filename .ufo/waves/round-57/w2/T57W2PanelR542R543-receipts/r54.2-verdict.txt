@@ -1,0 +1,76 @@
+# R54.2 — blind panel receipts (seat T57W2PanelR542R543)
+# clone: /fast/scratch/hyaku/tameshi-r57/T57W2PanelR542R543/clone  (detached at lane base 5e3569969b532310d2b8a3d130901757a3df356b)
+
+$ git -C $C rev-parse HEAD
+5e3569969b532310d2b8a3d130901757a3df356b
+
+--- (1) item text source: the round-54 spot-check file was ADDED at 650987a0 (ancestor of base) ---
+$ git -C $C log --diff-filter=A --format='%H %ad %s' --date=iso -- corpus/lessons/round-54-verifier-spotcheck.md
+650987a0d6fc285b37f0f9e63a3aae864af9cd5a 2026-10-28 12:54:39 -0300 round-54 verifier spot-check (integrator, hyaku): non-author admit/reject — both claims re-measured true; R54.1 false positive-control claim routed
+
+--- (2) R54.2 item text (spot-check:112 region; R54.2 at :110) ---
+**R54.2 — three different freeze pointers.** `SCORECARD.md:2564-2567` calls `7883e0e5` "the freeze pointer the deciding run uses" (that commit's `freeze.json` has 7 files / 1 amendment); `SCORECARD.md` "measured close" says "freeze `fe70474d` (amendments 1-5)" (`fe70474` has 4); report `:157` says the freeze pointer is `097985c1` (`097985c` has 2). The receipt says `freeze=077d431e` with 5 amendments. One pointer, everywhere.
+
+--- (3) BEFORE the fix (spot-check commit 650987a0): three pointers in SCORECARD.md ---
+$ git -C $C grep -n -E '7883e0e5|fe70474d|097985c1' 650987a0d6fc285b37f0f9e63a3aae864af9cd5a -- SCORECARD.md
+650987a0d6fc285b37f0f9e63a3aae864af9cd5a:SCORECARD.md:2564:frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
+650987a0d6fc285b37f0f9e63a3aae864af9cd5a:SCORECARD.md:2567:predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+650987a0d6fc285b37f0f9e63a3aae864af9cd5a:SCORECARD.md:2608:freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+
+--- (4) AT BASE: the same tokens survive ONLY inside the labelled corrections section (>=2621) ---
+$ git -C $C grep -n -E '7883e0e5|fe70474d|097985c1' 5e3569969b532310d2b8a3d130901757a3df356b -- SCORECARD.md
+5e3569969b532310d2b8a3d130901757a3df356b:SCORECARD.md:2643:Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
+5e3569969b532310d2b8a3d130901757a3df356b:SCORECARD.md:2644:in the measured-close line; `097985c1` in the fleet report.
+
+--- (5) AT BASE: the live claim rows now carry ONE pointer ---
+$ git -C $C show 5e356996:SCORECARD.md | sed -n '2568,2569p;2609p;2642,2647p'
+predicate, target and arms unchanged. The round has **one freeze pointer,
+`077d431e`** (5 amendments), which the deciding run uses [ER-R54-2]. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
+freeze `077d431e` (amendments 1-5) — one pointer for the round [ER-R54-2] — `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+**ER-R54-2 - three freeze pointers for one round.**
+Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
+in the measured-close line; `097985c1` in the fleet report.
+Corrected: one pointer, `077d431e` (5 amendments), which is what the deciding
+receipt prints. Receipt: `.ufo/evidence/round-54/after/frozen.stdout`
+(`freeze=077d431e...`).
+
+--- (6) the deciding receipt the correction cites ---
+$ git -C $C show 5e356996:.ufo/evidence/round-54/after/frozen.stdout
+FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c
+
+--- (7) amendments/freeze-files per candidate pointer (item text says 1 / 4 / 2 / 5) ---
+441c26bec5e4c1cc31bc2a840f311cb8d1965259 amendments=0 freeze_files=7
+7883e0e58937d47724b91f1a0475a8785118b696 amendments=1 freeze_files=7
+097985c18b9a186c310bd35890b95b733cbb7f5b amendments=2 freeze_files=10
+fe70474dac3ae14d458b8f9119ba0ed483f0d5d5 amendments=4 freeze_files=10
+077d431e69965fa4673cd006ab64f6fc387f9e15 amendments=5 freeze_files=10
+
+--- (8) the FIXING lane commit: 9cf0146b is AFTER the spot-check add and an ancestor of base ---
+$ git -C $C merge-base --is-ancestor 650987a0 9cf0146b ; echo rc=$?
+rc=0
+$ git -C $C merge-base --is-ancestor 9cf0146b 5e356996 ; echo rc=$?
+rc=0
+$ git -C $C show --stat --format='%H %ad %s' --date=iso 9cf0146b -- SCORECARD.md corpus/lessons/round-55.md
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 2026-10-28 14:16:25 -0300 round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+
+ SCORECARD.md               | 96 +++++++++++++++++++++++++++++++++++++++++++---
+ corpus/lessons/round-55.md | 92 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 182 insertions(+), 6 deletions(-)
+
+--- (9) THIRD CITED SURFACE (fleet report :157) at BASE time: unchanged, never amended ---
+$ git -C $S/fleet log --all --format='%H %ad %an %s' --date=iso -- .ufo/reports/round-54/tameshi.md
+fcb8d8dbeefab4b1f6fd9931b47c87cefff24346 2026-10-28 12:22:33 -0300 tameshi-shokunin round-54: tameshi report
+$ git -C $S/fleet show fcb8d8d:.ufo/reports/round-54/tameshi.md | sed -n '156,158p;121p;182p'
+- **Bind and decide.** The binder bound all **23** headings (REFRESH `rekeyed=23 skipped=0`) at read revision C1 `99c3bc88`, inputs pinned at the pin revision and the round-21 ledger path dropped from the inputs (a seat proved the self-pin would have drifted arm 3). One deciding invocation at **`c2108100`** with freeze **`077d431e`**: `FREEZE_INTEGRITY: OK files=10 amendments=5`, `FROZEN_UNCHANGED=1`, `NOHARM` **14 ok / 0 RED**, `COLDREAD_PRECHECK … cand_credited=64 lost=0 ok`, census exit **0**, `C1_R54_PASS=true`, `C2_R54_PASS=true`, **`DECIDING_RUN_EXIT=0`** (`.ufo/evidence/round-54/after/`).
+Instrument amendments (both disclosed, both before the deciding invocation; the
+freeze pointer `097985c1` carries them and the deciding script refuses any
+manifest mismatch):
+revision `c2108100`; freeze `077d431e`; amendments 1–5 all disclosed above.
+$ git -C $S/fleet grep -n '097985c1' HEAD -- .ufo/reports/
+HEAD:.ufo/reports/round-54/tameshi.md:157:freeze pointer `097985c1` carries them and the deciding script refuses any
+
+--- (10) PROTOCOL.md: a filed report is corrected by an appended erratum naming the superseded text (never a rewrite) ---
+re-grades it `failed` for want of a landed report if the successor never lands it. A filed report is
+a record: a correction to it lands in the correcting round's own report, or as an erratum
+appended after the filed bytes in a new commit and naming the text it supersedes — never a rewrite
+of the filed bytes, labelled or silent.

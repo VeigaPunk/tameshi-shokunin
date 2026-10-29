@@ -1,0 +1,14 @@
+$ git -C $C log --oneline --all -- .ufo/evidence/round-55/after/c2.stdout
+875bb75 round-55: remaining wave-2/3 seat deliverables and receipts as they stand (the round filed before every seat settled; nothing here is a claim input, they are the falsification record)
+
+$ git -C $C show 5e35699:.ufo/evidence/round-55/after/c2.stdout | wc -l
+28
+
+$ git -C $C show 5e35699:.ufo/waves/round-56/w1/T56W1RevInherited.md | sed -n '296,299p'   # lane's own words at BASE
+
+So the counter bytes, the contract, the controls and the C1 verdict at `4c04c1d33377` all survive; the only
+missing round-55 verdict is C2's, which was never committed — the pre-existing R55.1/R55.5 defect.
+
+
+$ git -C $C show 5e35699:corpus/lessons/round-56.md | sed -n '102p'   # the lane claims R55.1 FIXED
+| R55.1 | FIXED by C2's deciding gate: `deciding-run.sh` gate 0c runs `tools/receipt-revision-gate.py --certified REV` on the verdicts the run just produced (`receipt-gate-verdicts.stdout`), so a committed `c1.stdout`/`c2.stdout` that does not name the certified revision is refused (`RECEIPT_REV_ABSENT` or `RECEIPT_REV_MISMATCH`) and `DECIDING_RUN_EXIT` cannot read 0 without it | `.ufo/evidence/round-56/deciding-run.sh`; red-before: `.ufo/evidence/round-55/after/c2.stdout` refused `RECEIPT_REV_ABSENT` in `.ufo/evidence/round-56/before/c2.stdout` (`red55=`); after: `.ufo/evidence/round-56/after/receipt-gate-verdicts.stdout` reads `GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS` at REV `1b44bace0974` and `.ufo/evidence/round-56/after/deciding-run.exit` reads `DECIDING_RUN_EXIT=0` |

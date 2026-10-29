@@ -1,0 +1,57 @@
+[
+ {
+  "id": "R53.6",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": "tools/env-diff.py",
+    "lines": "234-236",
+    "excerpt": "except ScratchRootUnusable as exc: print(\"ENVDIFF_SETUP: could-not-evaluate: %s\" % exc, file=sys.stderr) return 2"
+   },
+   {
+    "path": "tools/bash-witness-study.py",
+    "lines": "1788-1790",
+    "excerpt": "except ScratchRootUnusable as exc: print(f\"WITNESS_STUDY: could-not-evaluate: {exc}\", file=sys.stderr) return EXIT_CANNOT"
+   },
+   {
+    "path": "tools/evidence-disposition.py",
+    "lines": "3231-3233",
+    "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"evidence-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+   },
+   {
+    "path": "tools/pin-disposition.py",
+    "lines": "1399-1401",
+    "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"pin-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+   }
+  ],
+  "commit": "59c38109bf119d0e9d4f878644a82babc937bc1e",
+  "seat": "T57W1ScribeItemsR53x4to6",
+  "note": "59c3810 (round-54 C0) routes a set-but-unusable TMPDIR to ScratchRootUnusable and exit 2 in the four named tools; run at base with TMPDIR=/nonexistent: rc=2 for all four, rc=1 traceback at 2ef0a5a.",
+  "status_at_base": "fixed"
+ },
+ {
+  "id": "R53.7",
+  "status": "fixed",
+  "evidence": [
+   {
+    "path": ".ufo/evidence/round-54/integrate/binder.py",
+    "lines": "166-166",
+    "excerpt": "'rev_reason': 'round-54 re-key: the reader read git objects at C0; inputs pinned at PIN (%s), '"
+   },
+   {
+    "path": ".ufo/evidence/round-54/integrate/binder.py",
+    "lines": "142-142",
+    "excerpt": "b = blob_at(pin, p)"
+   },
+   {
+    "path": ".ufo/evidence/round-54/integrate/binder.py",
+    "lines": "183-183",
+    "excerpt": "'read_rev': c0,"
+   }
+  ],
+  "seat": "T57W1ScribeItemsR53x7to9",
+  "note": "R53.7 (\"inputs pinned at C7\" imprecise). Fixed by the round-54 re-freeze that added the rekey binder: every input blob is read at PIN (blob_at(pin, p)), read_rev C0 is recorded separately, and the trace names the pin revision. Historical round-53 wording survives only in immutable records (.ufo/evidence/round-53/integrate/rekey.py:160 and commit 88afa94 message).",
+  "commit": "19c75588b3c581a0dc84ea87e09d33d88a99ac8e",
+  "status_at_base": "fixed"
+ }
+]

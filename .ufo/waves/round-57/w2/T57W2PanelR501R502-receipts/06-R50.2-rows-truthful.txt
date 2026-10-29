@@ -1,0 +1,34 @@
+# receipt 6 — R50.2: the rows are truthful at BASE (selftests + exit-2 class + pinned values exist)
+$ python3 tools/shrink-case.py --selftest
+SHRINK_SELFTEST: cases=21 failed=0
+exit=0
+
+$ python3 tools/pbt-staged-id.py --selftest
+PBT_STAGED_ID_SELFTEST: cases=35 failed=0
+exit=0
+
+# exit-2 could-not-evaluate class, as the rows claim
+$ python3 tools/shrink-case.py --pristine /nonexistent.py --mutant /n2.py --case /n3.json --out OUT.json
+shrink-case: cannot read the pristine guard /nonexistent.py
+exit=2
+$ python3 tools/pbt-staged-id.py --guard /nonexistent-guard.py --seed 1 --cases 2 --dump D.jsonl
+pbt-staged-id: guard is not a regular file: /nonexistent-guard.py
+exit=2
+
+# entry commands match the real CLIs
+$ python3 tools/shrink-case.py --help
+usage: shrink-case.py [-h] [--pristine PRISTINE] [--mutant MUTANT]
+                      [--case CASE] [--out OUT] [--selftest]
+
+Shrink a killing fixture case to a 1-minimal sub-case (delta debugging,
+$ python3 tools/pbt-staged-id.py --help
+usage: pbt-staged-id.py [-h] [--guard GUARD] [--seed SEED] [--cases CASES]
+                        [--dump DUMP] [--selftest]
+
+Property-based generator for tools/staged-id-guard.py (tameshi round 49, C2 /
+
+# pinned values named by the rows exist
+-rw-r--r-- 1 vgpnk vgpnk  2188 Oct 28 21:52 .ufo/evidence/round-49/c2/panel.json
+-rwxr-xr-x 1 vgpnk vgpnk 53104 Oct 28 21:52 tools/pbt-staged-id.py
+-rwxr-xr-x 1 vgpnk vgpnk 28848 Oct 28 21:52 tools/shrink-case.py
+-rwxr-xr-x 1 vgpnk vgpnk 22931 Oct 28 21:52 tools/staged-id-guard.py

@@ -1,0 +1,155 @@
+--- /fast/scratch/hyaku/tameshi-r57/T57W2MutC2Counter/mut/BASELINE/measure.py	2026-10-28 21:57:25.250613597 -0300
++++ /fast/scratch/hyaku/tameshi-r57/T57W2MutC2Counter/amended/measure.py	2026-10-28 22:21:16.889226654 -0300
+@@ -55,6 +55,8 @@
+ """
+ import argparse
+ import ast
++import contextlib
++import io
+ import hashlib
+ import json
+ import os
+@@ -534,11 +536,30 @@
+ text
+ """
+ 
++FX_SKILL_NOCODES = """# fixture
++
++## Standing rules
++
++- A receipt is evidence only for the revision it names. No code is named here.
++
++## Source notes
++
++### Gate/probe registry
++
++| Name | Kind | Entry command | Verdict map | Self-test command |
++|---|---|---|---|---|
++{row}
++## Later
++
++text
++"""
++
+ FX_ROW = ('| receipt revision gate | gate | `python3 tools/receipt-revision-gate.py --lane LANE --certified REV '
+           '| FILE` | 0 PASS; 2 unresolvable certified; 3 refused | `python3 tools/receipt-revision-gate.py --selftest` |\n')
+ 
+ 
+-def fx_registry(rev_a, drop=(), expect_override=None, selftest_argv=False):
++def fx_registry(rev_a, drop=(), expect_override=None, selftest_argv=False,
++                needle_override=None):
+     base = [('c2-fx-ok', 0, 'verdict=PASS', 'HEAD', 'fx/ok.paths'),
+             ('c2-fx-drift', 3, 'RECEIPT_REV_CONTENT_DRIFT', 'HEAD', 'fx/drift.paths'),
+             ('c2-fx-unresolvable', 2, 'RECEIPT_REV_UNRESOLVABLE', 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+@@ -553,6 +574,8 @@
+             argv = ['python3', GATE, '--selftest']
+         if expect_override and name in expect_override:
+             ex = expect_override[name]
++        if needle_override and name in needle_override:
++            needle = needle_override[name]
+         rows.append({'name': name, 'kind': 'gate', 'argv': argv,
+                      'expect': {'exit': ex, 'stdout_contains': [needle]}, 'timeout_s': 30,
+                      'source': '%s@%s:1' % (GATE, rev_a[:12]), 'status': 'active'})
+@@ -560,7 +583,7 @@
+ 
+ 
+ def build_lane(parent, name, gate_bytes, rc_bytes, registry_fn=fx_registry, skill_kwargs=None,
+-               registry_kwargs=None):
++               registry_kwargs=None, skill_text=None, mutants_text=None):
+     d = Path(parent) / name
+     d.mkdir()
+     env = lane_env()
+@@ -589,7 +612,10 @@
+     (d / 'fx' / 'drift.paths').write_text('surface/b.txt\n')
+     kw = dict(cell='RECEIPT_REV_CONTENT_DRIFT', extra='', row=FX_ROW)
+     kw.update(skill_kwargs or {})
+-    (d / 'SKILL.md').write_text(FX_SKILL.format(**kw))
++    (d / 'SKILL.md').write_text(skill_text if skill_text is not None else FX_SKILL.format(**kw))
++    if mutants_text is not None:
++        (d / '.ufo' / 'evidence' / 'round-57' / 'c2').mkdir(parents=True)
++        (d / '.ufo' / 'evidence' / 'round-57' / 'c2' / 'mutants.json').write_text(mutants_text)
+     (d / 'tools' / 'registry.json').write_text(json.dumps(registry_fn(rev_a, **(registry_kwargs or {})),
+                                                           indent=1) + '\n')
+     g('add', '-A')
+@@ -597,6 +623,28 @@
+     return str(d), g('rev-parse', 'HEAD').stdout.decode().strip()
+ 
+ 
++def tampered_mutants():
++    """A byte-valid mutants.json whose sha256 differs from the pin (same mutants)."""
++    data = json.loads((Path(__file__).resolve().parent / 'mutants.json').read_text('utf-8'))
++    data['mutants'][0]['effect'] = data['mutants'][0]['effect'] + ' (tampered)'
++    return json.dumps(data, indent=1) + '\n'
++
++
++def pin_case(lane_dir, head, work):
++    """Run the counter's own measurement entry point (main_measure) on a lane whose
++    committed mutants.json fails the sha256 pin; it must refuse to grade the mutants.
++    Returns (ok, detail)."""
++    buf = io.StringIO()
++    ns = argparse.Namespace(lane=lane_dir, rev=head, work=str(work), explain=True)
++    with contextlib.redirect_stdout(buf):
++        rc = main_measure(ns)
++    out = buf.getvalue()
++    ok = (rc != 0 and 'mutants.json unavailable or pin mismatch' in out
++          and 'mutants=0/3' in out)
++    lines = [ln for ln in out.strip().splitlines() if ln.strip()]
++    return ok, (lines[-1][:160] if lines else 'no output')
++
++
+ def selftest(a):
+     lane = str(Path(a.lane).resolve()) if a.lane else str(Path(__file__).resolve().parents[4])
+     rev = resolve(lane, a.rev or 'HEAD')
+@@ -619,11 +667,14 @@
+         results.append(ok)
+         print('CASE %s %s%s' % (name, 'PASS' if ok else 'FAIL', (' ' + detail) if detail else ''))
+ 
++    built = {}
++
+     def run(name, **kw):
+         parent = scratch / name
+         parent.mkdir()
+         gate = kw.pop('gate', gate_raw)
+         lane_dir, head = build_lane(parent, 'lane', gate, rc_raw, **kw)
++        built[name] = (lane_dir, head)
+         return measure(lane_dir, head, scratch / (name + '-work'), mutants_raw, False)
+ 
+     try:
+@@ -675,6 +726,37 @@
+         r = run('nogate', gate=b'import sys\nsys.exit(0)\n')
+         case('cell arm: a gate that does not refuse -> WRONG:fixture',
+              r['standing_cell'] == 'WRONG:fixture' and r['total'] > 0)
++
++        # --- proposed cases (round-57 wave-2 mutation findings) -----------------------
++        # P1 (kills M3): a refusal row whose named code the gate does not define is counted.
++        r = run('badneedle', registry_kwargs=dict(needle_override={'c2-fx-drift': 'RECEIPT_REV_NOT_A_CODE'}))
++        case('rows arm: a refusal row naming an undefined code is counted',
++             r['short']['rows'] >= 1, 'short=%s' % r['short'])
++        # P2 (kills M5): a row that did not hold at baseline cannot supply kill credit.
++        r = run('unheld2', registry_kwargs=dict(expect_override={'c2-fx-drift': 0}))
++        case('mutants arm: a row that did not hold at baseline supplies no kill credit',
++             r['mutants'] == 1, 'mutants=%d/3 (only M3 killed by the exit-2 row)' % r['mutants'])
++        # P3 (kills M6): a lane whose committed mutants.json fails the sha256 pin is refused.
++        r = run('badpin', mutants_text=tampered_mutants())
++        lane_dir, head = built['badpin']
++        w = scratch / 'badpin-mainwork'
++        w.mkdir()
++        ok3, out3 = pin_case(lane_dir, head, w)
++        case('mutants pin: a lane whose committed mutants.json fails the sha256 pin is refused',
++             ok3, out3)
++        # P4 (kills M8): a standing-rules section that names no code is a shortfall.
++        r = run('nocodes', skill_text=FX_SKILL_NOCODES.format(row=FX_ROW))
++        case('codes arm: a standing-rules section naming no code is a shortfall',
++             r['codes_total'] == 0 and r['short']['codes'] >= 1,
++             'codes_known=%d/%d short=%s' % (r['codes_known'], r['codes_total'], r['short']['codes']))
++        # P5 (kills M9): a cell carrying the emitted code PLUS another code is WRONG.
++        r = run('superset', skill_kwargs=dict(cell='RECEIPT_REV_CONTENT_DRIFT and `RECEIPT_REV_ABSENT`'))
++        case('cell arm: a cell carrying the emitted code plus another code is WRONG',
++             r['standing_cell'] != 'ok' and r['short']['cell'] == 1, r['standing_cell'])
++        # P6 (kills M12): the verdict line's PASS field follows the total.
++        r = run('good2')
++        case('verdict line: C2_R57_PASS=false whenever the total is non-zero',
++             'C2_R57_PASS=false' in verdict_line('-', 'x' * 12, dict(r, total=1)))
+     finally:
+         shutil.rmtree(scratch, ignore_errors=True)
+     print('C2_R57_SELFTEST: %d/%d pass' % (sum(results), len(results)))

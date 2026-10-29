@@ -1,0 +1,11 @@
+# R01 item identification: round-50 spot-check routed heading (clone bytes only)
+$ sed -n '96,101p' corpus/lessons/round-50-verifier-spotcheck.md
+## Routed defects for the lane next round
+
+1. **S022 status contradicts its used-by cell.** `corpus/SOURCES.md` S022 is `queued` while `used-by` now names `corpus/knowledge/fixture-shrinking-pilot.md`; contract v1 defines `mined` as cited by ≥ 1 used-by path. The status was held back to keep the frozen round-45 freshness monitor at population 73. Fix the cell to `mined` and re-base or supersede that monitor (or record the exception as a named correction), logged old → new in the lesson.
+2. **Gate/probe registry gap.** `tools/shrink-case.py` (round 50) and `tools/pbt-staged-id.py` (round 49) both expose selftests but have no row in `SKILL.md` `### Gate/probe registry` (`:1499-1509`, whose scope sentence still reads "these round-12 instruments"); `git diff --quiet e3729de8 616dee67 -- SKILL.md` → unchanged. Add rows (kind, entry command, verdict map incl. exit 2, selftest spelling, pinned values, write scope) per PROTOCOL §Gate standard, Registry.
+3. **Frontier table stale.** `corpus/README.md:83` (F6) and `:87` (F10) still read `open`, while the appended sections at `:599` and `:608` declare them held (round 49, round 50). Append a superseding table or a note so the coverage map's table agrees with its own sections (PROTOCOL §Evidence standard, corrections sweep every mention).
+4. Carried (lane-acknowledged): the seven open ledger items and the successor counters for the forgery routes disclosed in `## C1`/`## C2` (SCORECARD `Planned (round 51)`).
+
+$ git -C $S/clone log --oneline -- corpus/lessons/round-50-verifier-spotcheck.md
+9962033 round-50 verifier spot-check (integrator, hyaku): non-author admit/reject

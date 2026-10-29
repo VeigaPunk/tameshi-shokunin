@@ -1,0 +1,35 @@
+# 01 scope: clone, base, item->id mapping (BLIND: only the clone at 5e3569969b532310d2b8a3d130901757a3df356b was read)
+
+$ git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone
+$ git -C $S/clone checkout --detach 5e3569969b532310d2b8a3d130901757a3df356b
+5e3569969b532310d2b8a3d130901757a3df356b
+$ git -C $S/clone rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r57/T57W2PanelR513R514/clone
+
+# item text source: corpus/lessons/round-51-verifier-spotcheck.md, heading '## Routed defects for the lane next round'
+$ grep -n '^## Routed defects' corpus/lessons/round-51-verifier-spotcheck.md
+124:## Routed defects for the lane next round
+
+# id rule applied (seat spec): bold label '**R<NN>.<n>' if present, else 1-based position among items under the routed heading.
+# round-51 has 8 items; only item 1 carries a bold label (**R51.1) => R51.3 = item 3, R51.4 = item 4.
+$ sed -n '124,132p' corpus/lessons/round-51-verifier-spotcheck.md
+## Routed defects for the lane next round
+
+1. **R51.1, registry gate made unsatisfiable.** Update the `mte-interop-check` row in `tools/registry.json` to the ten-leg panel and record the change in a scope monitor that allows it. Show `registry-check --only mte-interop-check` green at the fix revision with a committed receipt.
+2. **Stale SKILL statements.** Correct SKILL.md `:2136` "nine ledger legs", the runner row's `/tmp` write scope (the runner honours TMPDIR), and the runner line pointers at `:174`, `:211` and `:937-950` (R51.2/R51.3). Then re-key with fresh readers.
+3. **Cold-read re-key overstates.** `coldread/refresh.py:224-227` writes `wrong_expectations: 0` for every re-keyed section, but T51W2Read20 recorded false statements. Append a named correction to the round-21 ledger, or supersede those entries with the recorded counts, so the calibration record does not claim zero wrong expectations where a reader found some.
+4. **C3 counter / round21-measure.** Either make `tools/round21-measure.py --selftest` hermetic or give the counter a declared fleet-bound row class, with the counter amendment pre-registered (R51.4). Also run the C3 counter's missing mutation attack (R51.5).
+5. **Cross-domain routing owed to kagi.** File the `drift-pins.sh --selftest` unanchored verdict-word grep (`:400`, `:403`, plus the path-printing DRIFT line `:158`) as cross-domain evidence for kagi in the next report, as the entry promises. Do not edit kagi.
+6. **`## Gate` completeness.** List rejected candidates with reasons in the round lesson's `## Gate` section (LEARNING §Files), not only admits and touched rows.
+7. **Ledger cell.** `corpus/knowledge/fleet-kill-rate-ledger.md:119` still reads "unmeasured by sweep" for drift-pins. Append a supersession note pointing at case 10, following the round-8 precedent at `:280`.
+
+# cross-check of the same convention on the COMMITTED ledger at BASE (corpus/routed-defects.json, rounds 40-49):
+#   round-49 closure items 1..6 map one-to-one, in order, to ledger rows R49.1..R49.6.
+$ python3 -c "import json;d=json.load(open('corpus/routed-defects.json'));print([x['id'] for x in d['defects'] if x['id'].startswith('R49')])"
+['R49.1', 'R49.2', 'R49.3', 'R49.4', 'R49.5', 'R49.6']
+R49.1 note: unreadable guard exits 2; F2/F3 guarded; four selftest cases red before, green after  <= closure item 1 'Generator error paths'
+R49.6 note: All four boxes are still [~]; the ask is a promotion act, not a lane edit.  <= closure item 6 'SHONEN'
+
+# row-count arithmetic for the 51 new rows (rounds 50-56 closure spot-checks):
+#   r50=4 (positional) r51=8 r52=6 r53=9 r54=10 r55=7 r56=7  =>  4+8+6+9+10+7+7 = 51
+# => round 51 contributes 8 positional rows; R51.3 = closure item 3, R51.4 = closure item 4.

@@ -1,0 +1,18 @@
+# exact hit counts for the sweep (matching LINES and matching FILES)
+# NOTE: with a rev prefix 'git grep -c' prints REV:file:count -> the count is field 3.
+
+$ git -C $CLONE grep -c 'R52\.5' 5e3569969b532310d2b8a3d130901757a3df356b -- . | awk -F: '{s+=$3} END{print "lines="s}'
+lines=36
+$ git -C $CLONE grep -l 'R52\.5' 5e3569969b532310d2b8a3d130901757a3df356b -- . | wc -l
+25
+
+$ git -C $CLONE grep -c 'R52\.6' 5e3569969b532310d2b8a3d130901757a3df356b -- . | awk -F: '{s+=$3} END{print "lines="s}'
+lines=29
+$ git -C $CLONE grep -l 'R52\.6' 5e3569969b532310d2b8a3d130901757a3df356b -- . | wc -l
+19
+
+== the one line that names R52.5 in a COMMIT MESSAGE ==
+8f47441 round-53: C7 — round-15 verifier re-pin (context-capture.py live-tool digest appended per the re-pin rule; R52.5 class, seat T53W1ExecRegCheck)
+
+== the one line that names R52.6 in a COMMIT MESSAGE ==
+(empty above = none)

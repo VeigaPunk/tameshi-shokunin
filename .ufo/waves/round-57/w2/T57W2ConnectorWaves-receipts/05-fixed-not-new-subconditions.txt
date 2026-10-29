@@ -1,0 +1,51 @@
+# 05 fixed-not-new sub-condition measurement (8 rows)
+# 2026-10-28T22:45:12-03:00
+
+# the installed tie rule, measure.py:242-259 (quoted):
+        # Amendment 1 (wave-1 critics F1): the excerpt must be introduced BY the commit (absent at its first
+        # parent), and the commit must be tied to the item: the evidence path is named by the item's own text,
+        # or the commit message names the item id. A commit that only quotes an excerpt into a new file under
+        # an unrelated message no longer passes.
+        parents = git(lane, 'rev-list', '--parents', '-n', '1', commit).stdout.decode().split()[1:]
+        msg = git(lane, 'log', '-1', '--format=%B', commit).stdout.decode('utf-8', 'replace')
+        names_id = re.search(r'(?<![\w.])' + re.escape(d['id']) + r'(?!\d)', msg) is not None
+        item_text = d.get('text', '') + ' ' + d.get('extended_text', '')
+        for item in keyed:
+            if item['path'] not in files:
+                continue
+            if not (names_id or item['path'] in item_text or os.path.basename(item['path']) in item_text):
+                continue
+            then = show(lane, d['routed_at'], item['path'])
+            if then is not None and norm(item['excerpt']) in norm(then.decode('utf-8', 'replace')):
+                continue
+            prev = show(lane, parents[0], item['path']) if parents else None
+            if prev is not None and norm(item['excerpt']) in norm(prev.decode('utf-8', 'replace')):
+
+--- R51.3  commit=bcba89248942  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        .ufo/evidence/round-21/coldread/ledger.json
+      touched_by_commit=True  named_by_item_text=False -> fails        .ufo/evidence/round-21/coldread/ledger.json
+      touched_by_commit=False named_by_item_text=True  -> fails        .ufo/evidence/round-52/coldread/refresh.py
+--- R53.6  commit=59c38109bf11  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        tools/env-diff.py
+      touched_by_commit=True  named_by_item_text=False -> fails        tools/bash-witness-study.py
+      touched_by_commit=True  named_by_item_text=False -> fails        tools/evidence-disposition.py
+      touched_by_commit=True  named_by_item_text=False -> fails        tools/pin-disposition.py
+--- R53.7  commit=19c75588b3c5  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        .ufo/evidence/round-54/integrate/binder.py
+      touched_by_commit=True  named_by_item_text=False -> fails        .ufo/evidence/round-54/integrate/binder.py
+      touched_by_commit=True  named_by_item_text=False -> fails        .ufo/evidence/round-54/integrate/binder.py
+--- R54.7  commit=9cf0146b94dd  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        SCORECARD.md
+      touched_by_commit=True  named_by_item_text=False -> fails        corpus/lessons/round-55.md
+--- R54.9  commit=9cf0146b94dd  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        corpus/lessons/round-54.md
+      touched_by_commit=True  named_by_item_text=False -> fails        SCORECARD.md
+--- R54.10  commit=9cf0146b94dd  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        SCORECARD.md
+      touched_by_commit=False named_by_item_text=True  -> fails        .ufo/evidence/round-54/control/controls-a.stdout
+--- R55.1  commit=c3e2ca9f0207  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        .ufo/evidence/round-56/deciding-run.sh
+      touched_by_commit=False named_by_item_text=False -> fails        .ufo/evidence/round-56/after/receipt-gate-verdicts.stdout
+      touched_by_commit=False named_by_item_text=True  -> fails        .ufo/evidence/round-56/before/c2.stdout
+--- R55.3  commit=2f5512a8ab07  msg_names_id=False
+      touched_by_commit=True  named_by_item_text=False -> fails        SCORECARD.md

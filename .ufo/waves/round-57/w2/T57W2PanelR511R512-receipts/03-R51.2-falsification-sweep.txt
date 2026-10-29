@@ -1,0 +1,49 @@
+# T57W2PanelR511R512 — falsification sweep for R51.2 (is any cited surface still stale at BASE?)
+
+## 1. every remaining runner pointer in SKILL.md at BASE, checked against the runner bytes
+  1222-1303              -> runner 1222..1303 (82 lines, 82 nonblank) first='regression_case() {'
+  1275-1317              -> runner 1275..1317 (43 lines, 43 nonblank) first='    local dst="$cwd/target.$(basename "$path")" blob_mode'
+  139-143                -> runner 139..143 (5 lines, 5 nonblank) first='# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL ('
+  139-143,1519-1548      -> runner 139..1548 (1410 lines, 1256 nonblank) first='# FAIL. Exit map (--regression): 0 all cases PASS · 1 >= 1 case FAIL ('
+  149-150                -> runner 149..150 (2 lines, 2 nonblank) first='# "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX" by default (r51 hon'
+  2010                   -> runner 2010..2010 (1 lines, 1 nonblank) first="  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1"
+  36-38                  -> runner 36..38 (3 lines, 3 nonblank) first='# red? Per-defect verdicts: KILLED (suite exit != 0) | SURVIVED (suite'
+  434                    -> runner 434..434 (1 lines, 1 nonblank) first="        sys.stderr.write('APPLY FAIL id=%s line=%d old-string-count=%d"
+  579-583                -> runner 579..583 (5 lines, 5 nonblank) first='  pct=$(( (200 * killed + total) / (2 * total) ))'
+  614-633                -> runner 614..633 (20 lines, 20 nonblank) first='PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f42'
+  614-643                -> runner 614..643 (30 lines, 30 nonblank) first='PIN_JS=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f42'
+  616-617                -> runner 616..617 (2 lines, 2 nonblank) first='PIN_BASH=275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb530'
+  78-79                  -> runner 78..79 (2 lines, 2 nonblank) first='#   MUTATE: DONE|DEGRADED (target=… defects=… killed=… survived=… inco'
+  850,925                -> runner 850..925 (76 lines, 76 nonblank) first='  # r10-2 leg 5: kagi corpus/checklist-run.sh @ fecee874 (pin 7e5ec98b'
+  88-97                  -> runner 88..97 (10 lines, 10 nonblank) first='#   js-kimi-census        kumitate-shokunin/scripts/kimi-census.mjs   '
+
+## 2. the two pointers R51.2 named, resolved at BASE
+-- SKILL.md:202 (was :174 at ef19d8e1) --
+   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:434`) (mutation-case-kimi-census.md:22-25;
+-- runner:433-435 --
+    if count != 1:
+        sys.stderr.write('APPLY FAIL id=%s line=%d old-string-count=%d expected=1\n' % (did, d['line'], count))
+        sys.exit(2)
+-- SKILL.md:239 (was :211) --
+     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:579-583`). Round 2: 8/10 = 80 %,
+-- runner:577-583 --
+
+  local pct
+  pct=$(( (200 * killed + total) / (2 * total) ))
+  if [[ "$inconcl" -gt 0 ]]; then
+    printf 'MUTATE: DEGRADED (target=%s defects=%s killed=%s survived=%s inconclusive=%s kill-rate=%s%%)\n' \
+      "$LABEL" "$total" "$killed" "$survived" "$inconcl" "$pct"
+    exit 1
+
+## 3. any remaining hardcoded /tmp write-scope claim about the runner in SKILL.md at BASE?
+2204:| tally audit v3 | gate | `python3 tools/tally-audit-v3.py --runner tools/mutate-and-run.sh` | 0 clean; 1 failed; 2 could-not-evaluate (SETUP: runner unparsable, tally harness structure missing, or argparse usage) | `python3 tools/tally-audit-v3.py --selftest` → TALLY_AUDIT_V3_SELFTEST: 35/35 pass | `tools/mutate-and-run.sh` is the only input read; expected REF_BLOCK, REF_NAMES and the 35 seeded-case panel are literals in the tool, and `.ufo/evidence/round-32/heldout/` is the committed provenance of those seeds (not read at run time) | audit and selftest scratch under TMPDIR, plus one auto-root dir /tmp/tameshi-r4-2-regression.XXXXXX allocated to witness the runner shape and removed at exit; the audited runner is never edited; `--then-regression` lets the runner create its own auto root or caller-chosen --workdir DIR | tameshi |
+
+## 4. 'nine' leg-count claims about mte-interop anywhere in SKILL.md at BASE?
+(none)
+
+## 5. '### Using the ledger' (the heading holding the :937-950 block) re-key at BASE
+  ### Using the ledger                                       latest rev=eb7838b16490 seats=['CR24'] wrong=0 sha_bound=True start=933 end=964
+  ## Mutation-sweep recipe — numbered steps; bounded cold-re latest rev=f2a225ce1283 seats=['L1 TameshiR20-3 author source re-anchor'] wrong=0 sha_bound=True start=131 end=245
+
+## 6. runner byte-identical between the spot-check commit and BASE (so BASE pointers land)
+(empty = identical)

@@ -1,0 +1,54 @@
+=== MUTANT / DISCRIMINATING-POWER TESTS (all in scratch clones; the lane was never edited) ===
+Clone: git clone --no-hardlinks $S/clone $S/mut ; checkout --detach ca75c2674645ab6bdadeecb8584007c74342bfa9
+Method: registry-check live mode (cwd = clone root), which is the method the C2 counter's mutants arm uses
+        (run_row with rev=None -> `registry-check.py --root CLONE --only NAME`).
+
+--- M1 (counter's pinned mutant: accept-on-drift) — POSITIVE CONTROL that the method detects a kill ---
+applied: "if drift:" -> "if False:"
+result: ROW receipt-gate-content-drift expect=3 got=0 differs
+        REGISTRY_CHECK: held=2/3 superseded=0
+=> M1 killed by receipt-gate-content-drift. The method works.
+
+--- M4 (my mutant: drift detected ONLY for a path ADDED between the two revs) ---
+applied: drifted_paths() returns only paths absent at rev_a and present at rev_b, dropping
+         the same-path-different-bytes case (git diff --name-only still runs but its output is discarded)
+(a) the committed drift fixture still refuses:
+    GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED   (rc=3)
+(b) a path present in BOTH revs with DIFFERENT BYTES is now wrongly accepted:
+    MUTATED gate, same-path-different-bytes -> GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS  rc=0
+    (pristine gate on the same fixture: codes=RECEIPT_REV_CONTENT_DRIFT, rc=3)
+(c) the three registry rows against M4:
+    ROW receipt-gate-accept expect=0 got=0 held
+    ROW receipt-gate-content-drift expect=3 got=3 held
+    ROW receipt-gate-unresolvable-certified expect=2 got=2 held
+    REGISTRY_CHECK: held=3/3 superseded=0
+=> M4 SURVIVES all three committed registry rows. The committed drift fixture does not
+   discriminate "the path was ADDED" from "the path's bytes changed", because the committed
+   drift surface corpus/lessons/round-56-verifier-spotcheck.md is MISSING at the receipt rev
+   c34e2b1 and EXISTS at the certified rev 5e35699 (added, not changed).
+
+--- M6 (my mutant: drift detected ONLY for a path present in BOTH revs) ---
+applied: drifted_paths() keeps only diff entries whose path exists at both revs
+(a) the committed drift fixture: GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS  rc=0
+(b) the three registry rows:
+    ROW receipt-gate-accept expect=0 got=0 held
+    ROW receipt-gate-content-drift expect=3 got=0 differs
+    ROW receipt-gate-unresolvable-certified expect=2 got=2 held
+    REGISTRY_CHECK: held=2/3 superseded=0
+=> M6 is killed by receipt-gate-content-drift. So the row is sensitive to the "changed bytes"
+   case only because the fixture ALSO happens to exercise the "added" case; a gate that
+   implements only the "changed bytes" case would be caught, but one that implements only the
+   "added" case would NOT.
+
+--- Does the C2 counter's own cell arm catch M4? (yes) ---
+build_cell_fixture (the counter's own fixture: rev A then B differing on one path listed in --paths)
+  pristine     emitted=['RECEIPT_REV_CONTENT_DRIFT'] exit=3 verdict=REFUSED -> standing_cell=ok
+  M4-mutated   emitted=[] exit=0 verdict=PASS                          -> standing_cell=WRONG:fixture
+=> the counter's `cell` arm DOES catch M4 (it builds a same-path-different-bytes fixture).
+   The three registry rows do not. The gap is in the ROW set, not in the counter.
+
+--- The counter's `source` field is not validated against the row's meaning ---
+repointed receipt-gate-content-drift's source to `tools/receipt-revision-gate.py@5e35699...:1`
+(a line that is NOT the drift branch):  REGISTRY_CHECK: held=3/3 superseded=0  rc=0
+=> registry-check validates only SOURCE_RE's shape (`^[^@]+@[0-9a-f]{7,40}:[0-9]+(-[0-9]+)?$`),
+   never that the rev resolves or that the line means what the row asserts.

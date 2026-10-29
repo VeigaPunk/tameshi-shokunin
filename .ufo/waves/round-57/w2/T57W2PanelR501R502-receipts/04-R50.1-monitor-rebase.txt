@@ -1,0 +1,39 @@
+# receipt 4 — R50.1: the round-45 freshness monitor was re-based/superseded (the item's second half)
+$ grep -n 'r45-freshness' .ufo/evidence/round-51/no-harm.sh
+5:#  - r45-freshness: the axis score floor(10*fresh/population) >= 9 with fresh >= 71. Round 50 pinned the exact
+23:python3 -c 'import sys; s=dict(kv.split("=") for kv in sys.argv[1].split()); p=int(s["population"]); f=int(s["fresh"]); print("score=%d" % (10*f//p)); sys.exit(0 if f>=71 and 10*f//p>=9 else 1)' "$F" > "$SCR/fs" && s=ok || s=RED; echo "NOHARM r45-freshness ${F}$(cat "$SCR/fs") $s"
+
+# the round-51 no-harm.sh header explains the re-base
+#!/bin/bash
+# Round-51 no-harm monitors. Usage: no-harm.sh LANE REV. Every line prints "NOHARM <name> <observed> <ok|RED>".
+# Eleven monitors, carried from round 50 with three declared re-bases (frozen before any seat ran):
+#  - commandD: depth_score >= 9 (C2 may raise it to 10; below 9 is harm);
+#  - r45-freshness: the axis score floor(10*fresh/population) >= 9 with fresh >= 71. Round 50 pinned the exact
+#    population 73; routed defect R50.1 (S022 queued -> mined) lawfully grows the population to 74, which leaves the
+#    score at 9 (71/74), so the exact-population pin is replaced by the score it guarded;
+#  - tools-scope: only M:tools/mutate-and-run.sh (C2's tenth leg) may change under tools/, plus (amendment 2) the four
+#    tools that pin the runner's leg panel and must follow it: tally-audit.py, tally-audit-v2.py, tally-audit-v3.py,
+#    mte-interop.py (their self-tests are C3 rows, so a broken update fails C3);
+
+# round-50's exact-population pin is superseded by a score-based predicate in round-51
+$ grep -c 'population=73 fresh=71' .ufo/evidence/round-50/no-harm.sh
+1
+$ grep -c '10\*f//p' .ufo/evidence/round-51/no-harm.sh
+1
+
+# commit that introduced the re-based monitor (after the spot-check file)
+fe33538 round-51: pre-registration — contract, frozen C1/C2/C3 counters, frontier expectations, tenth-leg spec with predictions (before any mutant), base tool set, controls harness, no-harm, deciding script, census start
+9962033 -> fe33538 : ANCESTOR
+fe33538 -> BASE : ANCESTOR
+
+# the rebased monitor actually passes at BASE (fresh=71, population=74 -> score 9)
+$ python3 .ufo/evidence/round-45/freshness/measure.py --lane $S/clone --rev 5e3569969b532310d2b8a3d130901757a3df356b
+C1_R45: self_pin=1 population=74 entries=73 verified=73 drifted=0 unreachable=0 invalid=0 unreviewed=0 disputed=2 fresh=71 score=9 target=50 rev=5e3569969b532310d2b8a3d130901757a3df356b C1_R45_PASS=true
+$ python3 -c 'p=74; f=71; print("score=%d" % (10*f//p))'   # predicate: 10*f//p >= 9 and f >= 71
+score=9
+
+# old -> new logged in the lesson (the item required 'logged old -> new in the lesson')
+$ grep -n 'S022' corpus/lessons/round-51.md
+12:Rows touched: S022 status `queued` → `mined` (used-by already names `corpus/knowledge/fixture-shrinking-pilot.md`; mined means cited by at least one used-by path under CORPUS.md); no other existi
+16:The stale table at README:76-87 held seven statuses that later lane declarations had changed; the frozen C1 expectation set is `.ufo/evidence/round-51/c1/frontier-expected.json`. The appended round
+35:| `status-usedby-conflict` — S022 was `queued` although its used-by cell named an existing entry | `corpus/SOURCES.md:33` at base; round-50 spot-check routed defect 1; `C1_R51_PASS` base control 

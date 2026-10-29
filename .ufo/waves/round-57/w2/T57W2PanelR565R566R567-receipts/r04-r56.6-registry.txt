@@ -1,0 +1,28 @@
+### R-4  R56.6 — tools/registry.json at BASE has NO gate-kind row for receipt-revision-gate.py
+total rows: 57
+rows naming receipt-revision-gate: [('receipt-revision-gate-selftest', 'selftest')]
+gate-kind rows: ['repeat-control-snapshot-clean', 'repeat-control-snapshot-mismatch', 'witness-metadata-check', 'evidence-disposition-round17', 'evidence-disposition-round17-before', 'evidence-disposition-round18', 'evidence-disposition-round18-before', 'evidence-disposition-round14-superseded', 'context-capture-frozen', 'context-capture-missing-env', 'context-capture-mapping-suffix', 'mutate-and-run-regression', 'assemble-round16-selftest', 'sources-census', 'verify-round15', 'wave-accounting-frozen-entry', 'wave-accounting-wrong-count-entry', 'command-binding-frozen-clean', 'command-binding-source-read-red', 'command-binding-frozen-clean-pinned', 'command-binding-source-read-red-pinned', 'mte-interop-check']
+union of row fields: ['argv', 'expect', 'external', 'kind', 'name', 'scratch_root', 'source', 'status', 'superseded_by', 'tags', 'timeout_s']
+rows carrying an exit/verdict map field: []
+
+$ git show 5e35699:tools/registry.json | grep -n receipt-revision-gate-selftest
+1277:   "name": "receipt-revision-gate-selftest",
+
+### R-4b  the exit-code -> class map lives only in the gate header / SKILL, not in a registry row
+$ git show 5e35699:tools/receipt-revision-gate.py | sed -n '25,32p'
+Codes (each a named refusal, exit 3):
+  RECEIPT_MISSING · RECEIPT_EMPTY · RECEIPT_NOT_BLOB · RECEIPT_REV_ABSENT
+  RECEIPT_REV_AMBIGUOUS · RECEIPT_REV_UNRESOLVABLE · RECEIPT_REV_MISMATCH
+  RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR
+  RECEIPT_DIGEST_MISMATCH · RECEIPT_REQUIRED_LINE_MISSING
+
+Verdict line: `GATE: receipts=N ok=N refused=N codes=<comma|none> verdict=PASS|REFUSED`
+Exit 0 iff PASS. Read-only: git objects only. Stdlib only.
+$ git show 5e35699:tools/receipt-revision-gate.py | sed -n '192,194p'   (the exit-2 line the item cites)
+        print('GATE: error=unresolvable-certified receipts=%d verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE'
+              % len(receipts))
+        return 2
+
+### R-4c  lane registry home = SKILL.md; its gate/probe registry has no receipt-revision-gate row
+47:  `tools/receipt-revision-gate.py --lane LANE --certified REV`: a receipt that
+(only the Standing-rules prose mention above; no registry row)

@@ -1,0 +1,18 @@
+# receipt 2 - R56.3: recheck: line at base still says 14/14
+$ git show 5e35699:corpus/knowledge/receipt-revision-binding.md | grep -n '14/14'
+3:recheck: 180d — `curl -fsSL https://raw.githubusercontent.com/in-toto/attestation/v1.2.0/spec/v1/statement.md | sha256sum` must print `cbe684a1…ebea` (anything else: the tag moved, re-open the row); `python3 tools/receipt-revision-gate.py --selftest` must print `GATE_SELFTEST: 14/14 pass`
+155:3. `--selftest` reports anything other than `14/14 pass`, or `codes-closed` fails.
+166:python3 "$L/tools/receipt-revision-gate.py" --selftest                    # GATE_SELFTEST: 14/14 pass
+225:`GATE_SELFTEST: 14/14 pass`. Amendment 1 at `21eb3c6` changed the gate before controls;
+228:digest `1d80f8a6…` and 14/14 result remain historical values for `c3e2ca9f`. For a
+
+$ git show 5e35699:corpus/knowledge/receipt-revision-binding.md | sed -n '3p'
+recheck: 180d — `curl -fsSL https://raw.githubusercontent.com/in-toto/attestation/v1.2.0/spec/v1/statement.md | sha256sum` must print `cbe684a1…ebea` (anything else: the tag moved, re-open the row); `python3 tools/receipt-revision-gate.py --selftest` must print `GATE_SELFTEST: 14/14 pass`
+
+$ git show 5e35699:corpus/knowledge/receipt-revision-binding.md | sed -n '225,230p'
+`GATE_SELFTEST: 14/14 pass`. Amendment 1 at `21eb3c6` changed the gate before controls;
+the C0 gate prints `GATE_SELFTEST: 19/19 pass` (exit 0), and its C0 sha256 is
+`c60772ceb0ce3f51df57148bd006c9bd4544a5403317dffa87f8bf7ae0569ac9`. The freeze-era
+digest `1d80f8a6…` and 14/14 result remain historical values for `c3e2ca9f`. For a
+current-tree recheck, use 19/19 and verify the source snapshot independently. Receipt:
+`.ufo/waves/round-56/w2/T56W2RevStalePointers.md` P8–P9.

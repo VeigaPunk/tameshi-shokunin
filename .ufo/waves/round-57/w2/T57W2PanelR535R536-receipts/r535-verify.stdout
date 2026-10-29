@@ -1,0 +1,32 @@
+# R53.5 verification at BASE 5e3569969b532310d2b8a3d130901757a3df356b
+
+$ git rev-parse HEAD
+5e3569969b532310d2b8a3d130901757a3df356b
+
+$ git log --oneline 2ef0a5a..HEAD -- .ufo/evidence/round-53/   # commits after spot-check file added, touching round-53 evidence
+(empty = round-53 evidence untouched since the spot-check file was added)
+
+$ git log --oneline -- .ufo/evidence/round-53/verify-freeze.stdout
+7d8aaac round-53: amendment 6 — c1 multi-rekey-dir + sha-only reader binding; re-freeze before wave 2
+
+$ git rev-parse 7d8aaac:.ufo/evidence/round-53/verify-freeze.stdout HEAD:.ufo/evidence/round-53/verify-freeze.stdout
+a90957d5a2527f047962176a4c8414857bc2e228
+a90957d5a2527f047962176a4c8414857bc2e228
+
+$ sed -n '1p' .ufo/evidence/round-53/verify-freeze.stdout   # at BASE
+FREEZE e62d99711a0d files=8 amendments=5
+
+$ python3 -c 'json .ufo/evidence/round-53/freeze.json amendments'   # at BASE
+amendments: 7
+
+$ git show 9e09db2:.ufo/evidence/round-53/freeze.json | amendments   # final freeze (amendment 7)
+amendments at 9e09db2: 7
+
+$ sed -n '2468p' LOG.md   # at BASE
+limit; nothing to inherit. Base `6db1d220`; freeze `e62d9971` (amendments
+
+$ grep -n 'cf872769\|9e09db2' LOG.md   # at BASE (LOG.md pointer)
+exit=1 (1 = no match)
+
+$ grep -n 'amendments 1' LOG.md
+2350:Motivating evidence: the round-47 closure (`corpus/lessons/round-47-verifier-spotcheck.md` routed defect 1) found a one-shot flaky observation restated as a standing value (`six-leg regression ledger`, `REGRESSION: FAIL (cases=9 passed=7`), and asked for N>=3 observations per profile or a declared nondeterministic class (calibration, monitor 6, the lowest non-retired axis). The round-45 freshness ledger carried two non-author disputes (S048, S093 quotes) and three rows without per-snapshot fetch receipts or anchor digests (S026, S093, S108), carried unworked since round 45. Claims, pre-registered at `e73389c0`/`f1cfaad3` and counter-frozen at `755298415f8c4eef3bed0c0d7625e2aacb03d6c2` (`.ufo/evidence/round-48/contract.json`, amendments 1-10, `freeze-2.json`):

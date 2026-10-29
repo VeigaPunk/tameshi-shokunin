@@ -1,0 +1,251 @@
+{
+  "schema": "tameshi-r57-w2-mutation-census-v1",
+  "seat": "T57W2MutC2Counter",
+  "round": 57,
+  "wave": 2,
+  "target": {
+    "instrument": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c2/measure.py",
+    "sha256": "7d49e3c493b3096f3375bc19ba960049faf6ef76590c4ed2674dbb69a5d2b9cd",
+    "mutants_json": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c2/mutants.json",
+    "mutants_json_sha256": "d51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de",
+    "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+    "rev": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  },
+  "detector": {
+    "command": "python3 <mutant-dir>/measure.py --selftest --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev ca75c2674645ab6bdadeecb8584007c74342bfa9",
+    "form": "the counter's own --selftest, run against the lane at C0",
+    "kill_rule": "the mutant is KILLED when the counter's selftest reports a FAIL (exit != 0, pass count < 14/14); SURVIVED when the selftest still passes 14/14",
+    "isolation": "each mutant is a fresh copy of measure.py + a byte-identical mutants.json in its own scratch dir; the lane file is never edited (sha256 verified identical before and after)",
+    "parallelism": "4 concurrent selftests, TMPDIR under /fast/scratch/hyaku"
+  },
+  "baseline": {
+    "exit": 0,
+    "selftest": "C2_R57_SELFTEST: 14/14 pass",
+    "wall_seconds": 127
+  },
+  "mutants": [
+    {
+      "id": "M1",
+      "name": "rows arm admits --selftest rows",
+      "arm": "rows",
+      "edit": "is_gate_row: '--selftest' not in argv and '--receipt' in argv  ->  ('--receipt' in argv or '--selftest' in argv)",
+      "verdict": "KILLED",
+      "selftest": "C2_R57_SELFTEST: 13/14 pass",
+      "exit": 1,
+      "killed_by": ["rows arm (forgery): selftest-argv rows are not gate rows FAIL gate_rows=3"],
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false
+    },
+    {
+      "id": "M2",
+      "name": "exit set check dropped",
+      "arm": "rows",
+      "edit": "missing = [e for e in WANT_EXITS if e not in exits]  ->  missing = []",
+      "verdict": "KILLED",
+      "selftest": "C2_R57_SELFTEST: 13/14 pass",
+      "exit": 1,
+      "killed_by": ["rows arm: no exit-2 row -> rows shortfall FAIL short={'rows': 1, ...}"],
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false
+    },
+    {
+      "id": "M3",
+      "name": "refusal-needle check dropped",
+      "arm": "rows",
+      "edit": "unnamed = [r['name'] for r in rows if row_exit(r) in (2, 3) and not (row_named_codes(r) & set(codes))]  ->  unnamed = []",
+      "verdict": "SURVIVED",
+      "selftest": "C2_R57_SELFTEST: 14/14 pass",
+      "exit": 0,
+      "killed_by": [],
+      "why_survived": "no fixture has a refusal row (exit 2/3) whose stdout_contains names a code the gate does not define; the 'bogus' fixture puts the unknown token in SKILL.md standing rules (codes arm), never in a registry row's needle (rows arm)",
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false,
+      "proposed_selftest_case": {
+        "name": "rows arm: a refusal row naming an undefined code is counted",
+        "fixture": "badneedle (registry_kwargs=dict(needle_override={'c2-fx-drift': 'RECEIPT_REV_NOT_A_CODE'}))",
+        "assertion": "r['short']['rows'] >= 1",
+        "requires_new_knob": "fx_registry(..., needle_override=None) overrides a row's stdout_contains needle",
+        "verified": "amended counter + M3 -> 19/20 pass, this case FAIL (short={'rows': 0, ...})"
+      }
+    },
+    {
+      "id": "M4",
+      "name": "executed arm skips rows",
+      "arm": "executed",
+      "edit": "for r in rows:  ->  for r in []:  (in the executed arm's run_row loop)",
+      "verdict": "KILLED",
+      "selftest": "C2_R57_SELFTEST: 12/14 pass",
+      "exit": 1,
+      "killed_by": ["good fixture: every arm 0 FAIL ... held=0/3 ... total=3", "executed arm: a row expecting the wrong exit does not hold FAIL held=0/3"],
+      "real_verdict_at_c0": "C2_R57_PASS=false total=3 held=0/3 (baseline total=0)",
+      "real_verdict_changed": true
+    },
+    {
+      "id": "M5",
+      "name": "mutant arm kills credit from non-admitted rows",
+      "arm": "mutants",
+      "edit": "if r['name'] not in baseline: continue  ->  if False: continue  (the mutant-arm kill-credit loop)",
+      "verdict": "SURVIVED",
+      "selftest": "C2_R57_SELFTEST: 14/14 pass",
+      "exit": 0,
+      "killed_by": [],
+      "why_survived": "the 'nodrift'/'onlyok' fixtures keep every admitted row holding at baseline, so dropping the baseline membership test changes nothing there; the fixture that does have a non-holding row ('unheld') is never asserted on the mutants arm",
+      "measured_effect": "fixture 'unheld' (expect_override={'c2-fx-drift': 0}): baseline mutants=1/3, M5 mutants=3/3 - a row that never held can now supply kill credit, so an unrelated row's drift silently 'kills' a mutant",
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline; at C0 every gate row holds, so the admitted set is all rows)",
+      "real_verdict_changed": false,
+      "proposed_selftest_case": {
+        "name": "mutants arm: a row that did not hold at baseline supplies no kill credit",
+        "fixture": "unheld2 (registry_kwargs=dict(expect_override={'c2-fx-drift': 0}))",
+        "assertion": "r['mutants'] == 1",
+        "verified": "amended counter + M5 -> 19/20 pass, this case FAIL (mutants=3/3)"
+      }
+    },
+    {
+      "id": "M6",
+      "name": "mutant pin check removed",
+      "arm": "mutants",
+      "edit": "if raw is None or sha256(raw) != MUTANTS_SHA256: raw = None  ->  (removed, in main_measure)",
+      "verdict": "SURVIVED",
+      "selftest": "C2_R57_SELFTEST: 14/14 pass",
+      "exit": 0,
+      "killed_by": [],
+      "why_survived": "the pin lives in main_measure, which --selftest never calls; the selftest reads mutants.json from its own directory and never exercises the lane-at-REV pin path, so no fixture can see the removal",
+      "measured_effect": "with the pin removed a lane whose committed .ufo/evidence/round-57/c2/mutants.json differs from the pinned sha256 is graded with the unpinned file instead of being refused (raw is not nulled, the mutants arm runs on unverified bytes)",
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false,
+      "proposed_selftest_case": {
+        "name": "mutants pin: a lane whose committed mutants.json fails the sha256 pin is refused",
+        "fixture": "badpin: a lane whose committed .ufo/evidence/round-57/c2/mutants.json is a tampered but byte-valid copy",
+        "assertion": "main_measure() on that lane returns non-zero AND prints 'mutants.json unavailable or pin mismatch' AND reports mutants=0/3",
+        "requires_new_knob": "build_lane(..., mutants_text=None) writes a .ufo/evidence/round-57/c2/mutants.json into the fixture lane",
+        "verified": "amended counter + M6 -> 19/20 pass, this case FAIL (counter graded the unpinned file: mutants=3/3, C2_R57_PASS=true)"
+      }
+    },
+    {
+      "id": "M7",
+      "name": "skill_row arm accepts any 0 token",
+      "arm": "skill",
+      "edit": "if len(have) == 3:  ->  if '0' in have:  (skill_row_ok's whole-token exit-code check)",
+      "verdict": "KILLED",
+      "selftest": "C2_R57_SELFTEST: 13/14 pass",
+      "exit": 1,
+      "killed_by": ["skill_row arm: verdict map without the 2 -> 0 FAIL"],
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false
+    },
+    {
+      "id": "M8",
+      "name": "codes arm vacuous-pass when zero tokens",
+      "arm": "codes",
+      "edit": "short['codes'] = (len(tokens) - len(known)) + (1 if not tokens else 0)  ->  short['codes'] = (len(tokens) - len(known))",
+      "verdict": "SURVIVED",
+      "selftest": "C2_R57_SELFTEST: 14/14 pass",
+      "exit": 0,
+      "killed_by": [],
+      "why_survived": "every fixture's standing-rules section names at least one RECEIPT_* token, so the 'no token at all' branch is never reached; the 'bogus' fixture adds a token rather than removing all of them",
+      "measured_effect": "a SKILL whose Standing rules section names no RECEIPT_* code would score codes shortfall 0 instead of 1 - the arm vacuously passes on an empty section",
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false,
+      "proposed_selftest_case": {
+        "name": "codes arm: a standing-rules section naming no code is a shortfall",
+        "fixture": "nocodes: SKILL.md whose Standing rules section names no RECEIPT_* token",
+        "assertion": "r['codes_total'] == 0 and r['short']['codes'] >= 1",
+        "requires_new_knob": "build_lane(..., skill_text=None) writes a whole SKILL.md; a FX_SKILL_NOCODES template",
+        "verified": "amended counter + M8 -> 19/20 pass, this case FAIL (codes_known=0/0 short=0)"
+      }
+    },
+    {
+      "id": "M9",
+      "name": "cell arm compares with in instead of equality",
+      "arm": "cell",
+      "edit": "elif carried is not None and set(carried) == emitted:  ->  elif carried is not None and emitted.issubset(set(carried)):",
+      "verdict": "SURVIVED",
+      "selftest": "C2_R57_SELFTEST: 14/14 pass",
+      "exit": 0,
+      "killed_by": [],
+      "why_survived": "every fixture's verdict cell carries exactly the one code the gate emits, so subset and equality agree; the 'cellwrong' fixture swaps the code but never adds a second one to the same cell",
+      "measured_effect": "a cell carrying the emitted code PLUS another code would be scored 'ok' although the table names more codes than the gate emits",
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false,
+      "proposed_selftest_case": {
+        "name": "cell arm: a cell carrying the emitted code plus another code is WRONG",
+        "fixture": "superset (skill_kwargs=dict(cell='RECEIPT_REV_CONTENT_DRIFT and `RECEIPT_REV_ABSENT`'))",
+        "assertion": "r['standing_cell'] != 'ok' and r['short']['cell'] == 1",
+        "verified": "amended counter + M9 -> 19/20 pass, this case FAIL (standing_cell='ok')"
+      }
+    },
+    {
+      "id": "M10",
+      "name": "cell arm reads the committed table instead of running the gate",
+      "arm": "cell",
+      "edit": "emitted, gexit, gverdict = build_cell_fixture(work, bindir / 'receipt-revision-gate.py')  ->  emitted, gexit, gverdict = set(carried or []), 3, 'REFUSED'",
+      "verdict": "KILLED",
+      "selftest": "C2_R57_SELFTEST: 10/14 pass",
+      "exit": 1,
+      "killed_by": ["cell arm: the stale RECEIPT_REV_MISMATCH cell is WRONG ... FAIL ok", "cell arm: a cell with no code is WRONG:none FAIL", "cell arm: truth comes from running the gate ... FAIL ok", "cell arm: a gate that does not refuse -> WRONG:fixture FAIL"],
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false
+    },
+    {
+      "id": "M11",
+      "name": "base fixture builder drops the drifting path",
+      "arm": "fixture",
+      "edit": "(d / 'fx' / 'drift.paths').write_text('surface/b.txt\\n')  ->  (d / 'fx' / 'drift.paths').write_text('surface/a.txt\\n')",
+      "verdict": "KILLED",
+      "selftest": "C2_R57_SELFTEST: 12/14 pass",
+      "exit": 1,
+      "killed_by": ["good fixture: every arm 0 FAIL ... held=2/3 ... total=3", "mutants arm: a mutant whose old string is absent is not killed (uniqueness assert) FAIL mutants=1/3"],
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline)",
+      "real_verdict_changed": false
+    },
+    {
+      "id": "M12",
+      "name": "verdict line prints PASS on total>0",
+      "arm": "verdict",
+      "edit": "'true' if res['total'] == 0 else 'false'  ->  'true'  (verdict_line's C2_R57_PASS field)",
+      "verdict": "SURVIVED",
+      "selftest": "C2_R57_SELFTEST: 14/14 pass",
+      "exit": 0,
+      "killed_by": [],
+      "why_survived": "no fixture asserts on the verdict LINE's rendered C2_R57_PASS field; the cases assert on res['total'] and the arm tallies, so a lying PASS field is invisible to them",
+      "measured_effect": "the printed verdict line says C2_R57_PASS=true whenever total>0; main_measure's own exit code still follows res['total'], so only the rendered line lies",
+      "real_verdict_at_c0": "C2_R57_PASS=true total=0 (unchanged from baseline; the lane's total is 0 so the lie is latent)",
+      "real_verdict_changed": false,
+      "proposed_selftest_case": {
+        "name": "verdict line: C2_R57_PASS=false whenever the total is non-zero",
+        "fixture": "good2 (the good fixture, re-measured)",
+        "assertion": "'C2_R57_PASS=false' in verdict_line('-', 'x' * 12, dict(r, total=1))",
+        "verified": "amended counter + M12 -> 19/20 pass, this case FAIL"
+      }
+    }
+  ],
+  "tally": {
+    "mutants": 12,
+    "killed": 6,
+    "survived": 6,
+    "killed_ids": ["M1", "M2", "M4", "M7", "M10", "M11"],
+    "survived_ids": ["M3", "M5", "M6", "M8", "M9", "M12"],
+    "real_verdict_changed_at_c0": ["M4"]
+  },
+  "repair": {
+    "amended_counter": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w2/T57W2MutC2Counter/stage/.ufo/evidence/round-57/c2/measure.py",
+    "amended_sha256": "a5138acb2248dbf2d05a575ffd66f1eb685b518843649e5129bb03b8040c5a79",
+    "amended_selftest": "C2_R57_SELFTEST: 20/20 pass",
+    "amended_case_count": 20,
+    "proposed_cases": 6,
+    "all_survivors_killed_by_amended": true,
+    "verification": "for each survivor, the mutant edit was re-applied on top of the amended counter; each then failed exactly its own proposed case (19/20 pass, exit 1)"
+  },
+  "lane_integrity": {
+    "measure_py_sha256_before": "7d49e3c493b3096f3375bc19ba960049faf6ef76590c4ed2674dbb69a5d2b9cd",
+    "measure_py_sha256_after": "7d49e3c493b3096f3375bc19ba960049faf6ef76590c4ed2674dbb69a5d2b9cd",
+    "mutants_json_sha256_before": "d51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de",
+    "mutants_json_sha256_after": "d51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de",
+    "note": "the lane's counter and mutants.json are byte-identical before and after; every mutant ran on a scratch copy"
+  },
+  "tools": {
+    "python3": "system python3 (stdlib only)",
+    "git": "system git (clone --shared into scratch; the lane repo was never mutated)",
+    "installs": "none - no package was installed or upgraded for this seat"
+  }
+}

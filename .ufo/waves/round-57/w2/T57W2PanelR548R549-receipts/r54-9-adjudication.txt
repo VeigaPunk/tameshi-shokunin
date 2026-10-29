@@ -1,0 +1,18 @@
+# R54.9 receipt — adjudications touching the staged denominator in the lane record set
+## resolutions.json: all findings mentioning 'staged'
+W1-STAGED-MUTABLE | T55W1Rev07 | R54.9's staged count was derived from the live merge/tameshi worktree (another lane's uncommitted edits could move the number; a +1 file made total=3) | accepted: the count now comes from the committed receipt .ufo/evidence/round-55/c1/staged-at-freeze.txt (amendment 7)
+W2-FREEZE-STAGED | T55W2CritFreeze2 | deciding-run's FROZEN list omitted the staged-count receipt, so R54.9's derived value was REV-controlled | accepted and fixed at F5 (amendment 9)
+
+## the round-55 counter's R54.9 arm (what it can and cannot see)
+    # R54.9 -- wave-table numbers and the staged package count.
+    wn = wave_numbers(lane, rev)
+    staged = staged_count(lane, rev)
+    want9 = ("reviewers=%d attack=%d/%d seats=%d" % (wn[0], wn[1], wn[2], wn[2])) if wn else "unavailable"
+    stale = scan(lane, rev, ("corpus/lessons/round-54.md",), r"84 staged")
+    row("R54.9", wn is not None and staged > 0, stale,
+        bool(wn) and want9 in corr and ("staged=%d" % staged) in corr,
+        "%s staged=%d" % (want9, staged))
+
+
+## does the arm detect a wrong-but-different number? stale regex is literal '84 staged'
+270:    stale = scan(lane, rev, ("corpus/lessons/round-54.md",), r"84 staged")

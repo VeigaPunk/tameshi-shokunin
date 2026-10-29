@@ -1,0 +1,13 @@
+# sweep: any LIVE lane file at BASE that still asserts 0/30 belongs to controls-a.stdout
+$ git -C $C grep -nE 'controls-a[^\n]*0/30|0/30[^\n]*controls-a' 5e35699 -- corpus/ SCORECARD.md LOG.md .ufo/evidence/
+(rc=1 ; empty = no live lane claim pairs them)
+
+$ git -C $C show 5e35699:.ufo/evidence/round-55/c1/measure.py | sed -n '275,282p'   # the lane's own R54.10 class
+    # R54.10 -- the phase-A CTL_R53 quote belongs to the round-53 counter's receipt.
+    ca = text(lane, rev, ".ufo/evidence/round-54/control/controls-a.stdout") or ""
+    m = re.search(r"CTL CTL_R53[^\n]*rekeyed=(\d+/\d+)", ca)
+    rk = m.group(1) if m else None
+    row("R54.10", bool(rk), [],
+        bool(rk) and "controls-a.stdout" in corr and ("rekeyed=" + rk) in corr
+        and "r53-counter-at-88afa941" in corr, "controls-a rekeyed=%s" % rk)
+

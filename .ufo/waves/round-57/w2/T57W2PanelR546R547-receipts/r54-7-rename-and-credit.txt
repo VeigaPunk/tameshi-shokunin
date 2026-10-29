@@ -1,0 +1,23 @@
+$ git -C CLONE show --name-status -M --format='%H %s' 7fa9a5e -- <old> <new>
+7fa9a5e0104bc181872401547987d6744f3b570d round-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)
+
+R100	.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json	.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+
+$ git -C CLONE ls-tree -r --name-only HEAD | grep -c 'T54W2Sent01-forged-reader.json'   # OLD absent at BASE
+0
+
+$ git -C CLONE ls-tree -r --name-only HEAD | grep 'T54W2Sent01-receipts/forged-reader.json'   # NEW present at BASE
+.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+
+--- python: arm-4 regex + frozen round-18 sectionize at c0 ---
+sections at c0: 64
+forged-w2 (R54.7 subject): path_regex=False cand==c0=True sha==section=False CREDITS=False sha=b90c1f799d0c
+forged-w2 OLD path: ABSENT at BASE (git show HEAD:<path> fails)
+forged-w1 sibling: path_regex=True cand==c0=False sha==section=False CREDITS=False sha=9942353c9537
+genuine reader: path_regex=True cand==c0=True sha==section=True CREDITS=True sha=61736dcebc2d
+forged-w2 sha matches at c0: []
+forged-w1 sha matches at c0: []
+genuine '## Standing rules' sha at c0: 61736dcebc2d
+
+--- git show HEAD:.ufo/evidence/round-21/coldread/ledger.json | grep -c forged-reader ---
+0

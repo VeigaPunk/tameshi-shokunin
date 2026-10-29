@@ -1,0 +1,20 @@
+### corrections section is byte-stable from 9cf0146 to base
+$ git diff 9cf0146 5e356996 -- SCORECARD.md | grep -c 'ER-R54'
+0
+$ git log --format='%H %s' 9cf0146..5e356996 -- SCORECARD.md
+2fec07ec5f22731d118443c98829d92385657475 round-56 (attempt 4): results - SCORECARD after rows, LOG entry, lesson attempt-4 record, misrooted T56W3Led13 report swept in
+8c20d5c351b39d51c8842bccf3ea8dc45171ccfb round-56: correct scorecard evidence predicates
+2f5512a8ab0771fb2eee463ec16db359174f5edd round-56: restate calibration at the C1 bind
+
+### round-56 spot-check claim: SCORECARD diff base->tip adds only the round-56 section
+$ git diff --stat 9cf0146 5e356996 -- SCORECARD.md
+ SCORECARD.md | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+
+### LOG.md round-54 entry at spot-check vs base (25 -> 28 wave-1 findings)
+$ git show 0a2010ac:LOG.md | grep -n 'wave-1 reader findings'
+2509:wave-1 reader findings adjudicated and fixed — stale line anchors including
+$ grep -n 'wave-1 reader findings' LOG.md   (at base)
+2509:wave-1 reader findings adjudicated and fixed — stale line anchors including
+$ git log --format='%H %s' -S '28' --pickaxe-regex -S 'C1 .99c3bc88. \(28' -- LOG.md
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch

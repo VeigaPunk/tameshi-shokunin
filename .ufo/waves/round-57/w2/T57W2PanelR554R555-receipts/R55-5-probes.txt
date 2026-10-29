@@ -1,0 +1,29 @@
+# R55.5 probes — base gate vs receipts (scratch clone only; lane untouched)
+# gate = tools/receipt-revision-gate.py at base 5e35699
+
+## probe 1: CTL line naming a NON-ancestor of the certified revision -> must be refused
+GATE REFUSED /fast/scratch/hyaku/tameshi-r57/T57W2PanelR554R555/ctl-foreign.stdout role=control revs=d3f2cd268432c36612214bae5007d2294fbca61d code=RECEIPT_CONTROL_NOT_ANCESTOR rev=d3f2cd268432c36612214bae5007d2294fbca61d
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_CONTROL_NOT_ANCESTOR verdict=REFUSED
+exit=3
+
+## probe 2: CTL line naming an unresolvable rev -> must be refused
+GATE REFUSED /fast/scratch/hyaku/tameshi-r57/T57W2PanelR554R555/ctl-ghost.stdout role=control revs=deadbeefdeadbeef code=RECEIPT_REV_UNRESOLVABLE rev=deadbeefdeadbeef
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_UNRESOLVABLE verdict=REFUSED
+exit=3
+
+## probe 3: verdict receipt naming the wrong revision -> must be refused
+GATE REFUSED /fast/scratch/hyaku/tameshi-r57/T57W2PanelR554R555/v-wrong.stdout role=verdict revs=21eb3c63cd0f code=RECEIPT_REV_MISMATCH rev=21eb3c63cd0f certified=1b44bace0974
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_MISMATCH verdict=REFUSED
+exit=3
+
+## probe 4: the real round-54 positive control at round-54's certified revision -> QUALITY 107's own falsifier
+GATE REFUSED /fast/scratch/hyaku/tameshi-r57/T57W2PanelR554R555/r54-pos.stdout role=positive revs=077d431e6996 code=RECEIPT_REV_CONTENT_DRIFT rev=077d431e6996 drift=.ufo/evidence/round-21/coldread/ledger.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-base.json,.ufo/waves/round-54/w1/T54W1Crit02-receipts/coldread-at-c0.json,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-B-strace-registry-check.log,.ufo/waves/round-54/w1/T54W1ExecC2Counter-receipts/counter-run-c0-pinned-current.txt,.ufo/waves/round-54/w1/T54W1ExecC2Counter.md
+GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED
+exit=3
+
+## probe 5: base deciding run receipt (gate 0b/0c at the deciding revision)
+2:GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS
+21:C1_R56: rev=1b44bace0974 c0=c0137451f5b7 credited=64 lost=0 rekeyed=18/18 readers=18/18 monitor=8/64 unstable=0 restate=8 total=0 C1_R56_PASS=true
+22:C2_R56: rev=1b44bace0974 selftest=19/19 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=PASS docs=4/4 total=0 C2_R56_PASS=true
+23:GATE: receipts=2 ok=2 refused=0 codes=none verdict=PASS
+24:DECIDING_RUN_EXIT=0

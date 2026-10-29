@@ -1,0 +1,39 @@
+### R-2  R56.5a — controls.sh header at BASE has no controls-generation pre-registration
+$ git -C $C show 5e35699:.ufo/evidence/round-56/controls.sh | sed -n '1,14p'
+#!/bin/bash
+# Round-56 controls. Usage: controls.sh LANE BASE PIN FREEZE OUTDIR
+#   Phase A (before the deciding run): every control must reach its pre-registered verdict.
+#   Phase B (after the ledger bind): the positive controls are scored AT the revision they
+#   certify (PIN, the content-final revision) in a fresh clone - the round-54 lesson, where
+#   CTL_POS_c1 was scored at the freeze and reported as a pass it could not be.
+# Every CTL line names the revision the counter printed; CTL_MISMATCH means the counter did
+# not reach the pre-registered boolean and the round must stop.
+# Scratch: $HYAKU_SCRATCH (default /fast/scratch/hyaku)/tameshi-r56/controls, removed on exit.
+# A CTL line names the revision the counter printed as `rev=`; when that revision
+# exists only inside the scratch clone (the mutation fixtures commit there) it is
+# relabelled `clone_rev=` so a receipt binding to `rev=` never certifies it.
+# The committed receipts carry a `.sha256` sibling (the L1 computes it) which the
+# receipt gate checks as a digest binding.
+
+$ ... | grep -in 'bootstrap|generation'   (expect no match)
+grep-exit=1
+
+$ git -C $C ls-tree -r --name-only 5e35699 | grep controls.sh
+.ufo/evidence/round-49/control/c2-controls.sh
+.ufo/evidence/round-54/control/controls.sh
+.ufo/evidence/round-55/controls.sh
+.ufo/evidence/round-56/controls.sh
+.ufo/waves/round-55/w1/T55W1Rev01-receipts/controls-sh-line.txt
+.ufo/waves/round-55/w1/T55W1Rev06-receipts/controls-sh-line.txt
+.ufo/waves/round-55/w2/T55W2CritDoNothing-receipts/run-c1-controls.sh
+.ufo/waves/round-55/w2/T55W2RevMistakes-receipts/r11-controls-sh-r54-vs-r55.diff
+
+### R-2b  the two generations ARE documented, but in control/BOOTSTRAP.txt (not the header)
+round 56 control receipts - two generations (L1 TameshiR56a4, 2026-10-28)
+Generation 1 (bootstrap, commit caf6742a/888d342e's parent chain; bytes retained at
+.ufo/waves/round-56/integration/controls-bootstrap-8c20d5.stdout): controls.sh at PIN=8c20d5c351b3. CONTROLS_A 7/7,
+CONTROLS_B 1/2 - CTL_POS_c2 scored own=own-receipts-missing, because arm 5 of the C2 counter reads the round's
+committed controls-a/b receipts and none can exist before the first controls run.
+Generation 2 (the files in this directory): controls.sh at PIN=888d342e1080660f6e47a5f8b87b8275645bfb94, the commit that carried
+generation 1 (the bootstrap receipts were accepted by the gate at that revision: the declared surface is unchanged since 8c20d5).
+Raw output: .ufo/waves/round-56/integration/controls-final-888d34.{stdout,stderr,exit}. CONTROLS_A 7/7, CONTROLS_B 2/2.

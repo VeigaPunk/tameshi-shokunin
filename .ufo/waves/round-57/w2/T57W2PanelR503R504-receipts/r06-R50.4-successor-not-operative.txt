@@ -1,0 +1,23 @@
+# R06 R50.4: successor counters for the forgery routes are not operative at BASE
+$ git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:SKILL.md | grep -c 'reads-v2\|sandboxed-confirm'   # registry rows
+0
+$ for f in $(git -C $S/clone ls-files .ufo/evidence | grep -E 'round-5[1-6]/.*\.(sh|py)$'); do git -C $S/clone show 5e3569969b532310d2b8a3d130901757a3df356b:$f | grep -q 'reads-v2\|sandboxed-confirm' && echo HIT $f; done
+(no HIT lines)
+$ for r in 51 52 53 54 55 56; do ... .ufo/evidence/round-$r/c1/measure.py | grep -c 'absent_evidence\|trace_empty'; done   # successor read logic never adopted
+round-51 c1 hits=0
+round-52 c1 hits=0
+round-53 c1 hits=0
+round-54 c1 hits=0
+round-55 c1 hits=0
+round-56 c1 hits=0
+
+$ git -C $S/clone ls-files .ufo/evidence/round-50/successor
+.ufo/evidence/round-50/successor/bwrap-version.txt
+.ufo/evidence/round-50/successor/reads-v2.at-bda60768.stdout
+.ufo/evidence/round-50/successor/reads-v2.py
+.ufo/evidence/round-50/successor/reads-v2.selftest.stdout
+.ufo/evidence/round-50/successor/sandboxed-confirm.json
+.ufo/evidence/round-50/successor/sandboxed-confirm.py
+.ufo/evidence/round-50/successor/sandboxed-confirm.r49-panel.stdout
+.ufo/evidence/round-50/successor/sandboxed-confirm.selftest.stdout
+(the successor counters exist as committed artefacts but no later gate/registry row invokes them)
