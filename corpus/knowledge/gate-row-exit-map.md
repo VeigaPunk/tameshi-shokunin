@@ -89,11 +89,12 @@ The rows are staged in `T57W1ExecRegistryRows`; run at a scratch commit they giv
   `rev=` passes, a sidecar copied with its receipt passes, the claim text is not read.
 - The truth table covers only the conditions the sweep builds.
 - Routed, not fixed here (the gate is a lane production file):
-  1. `paths-file-missing` exits 1 with a traceback. The header's could-not-evaluate class is
-     exit 2; the gate returns 1 from an unguarded `Path(paths).read_text` (:197). Route to the
-     lane's next round.
-  2. `SKILL.md` `## Standing rules`, row one, names `RECEIPT_REV_MISMATCH` for a verdict receipt
-     on a declared surface; the sweep's `verdict-role-drift` emits `RECEIPT_REV_CONTENT_DRIFT` (R56.2).
+  1. `paths-file-missing` exits 1 with a traceback. Exit 2 (could-not-evaluate) is in the code
+     (:194) and in the SKILL row, not in the header; the gate returns 1 from an unguarded
+     `Path(paths).read_text` (:197). Route to the lane's next round.
+  2. Fixed at C0 `ca75c26` (`SKILL.md:53`): `## Standing rules` row one now names
+     `RECEIPT_REV_CONTENT_DRIFT` for a verdict receipt on a declared surface, as the sweep's
+     `verdict-role-drift` emits (R56.2). This entry keeps its base reading.
 
 ## Re-derive
 
