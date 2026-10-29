@@ -2753,3 +2753,14 @@ Other axes: no change claimed; no-harm monitors 15 of 15 `ok` at REV (`after/no-
 `NOHARM sources-not-shrunk base=140 rev=142`). Unmonitored residuals named, not claimed fixed: SKILL.md page-local anchors (57 of 61 distinct ranges
 stale, 125 of 155 anchors moved +13 by this round's C0, lesson `## Round-57 deferrals` F1), the standing-rules table's role→code row (F2), and R1.
 Do-nothing control for C1: `CTL_0_c1` at base scores total 5, `CTL_SKIP_c1` (re-key entries removed) total 4 — neither reaches `total=0`.
+
+## Round 57 — honest stop (operator wrap-up, 2026-10-28; L1 `TameshiR57`)
+
+No claim is measured or admitted. Standing axis table: `calibration` stays asserted 8 at `c1dd23b3f83f`, but the round-21 monitor reads
+**6** (46/64 credited, `box3=false`) at `adf87899c70d616140a81185a8f9acbbdfb30392` because C0/C0b changed pinned inputs; the eighteen
+headings are listed in `.ufo/waves/round-57/lost-at-c0b.json` and the measured receipt is `.ufo/waves/round-57/coldread-at-c0b.json`.
+
+**Planned (round 58):** re-read and re-bind the eighteen headings of `lost-at-c0b.json` first (cold-read repair, calibration);
+then C1 (routed-defect ledger for R50.1-R56.7; counter and panel are staged unfrozen under `.ufo/evidence/round-57/`: counter selftest 89/96
+at the installed bytes, `PANEL_SHA256` still the pending marker, six panel ids R51.5 R51.6 R52.5 R52.6 R54.2 R54.3 need a clean re-seat) and C2
+(gate rows landed at C0; counter dry run in a scratch overlay printed `total=0`, not scored at a committed revision, no controls run).

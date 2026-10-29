@@ -2580,3 +2580,17 @@ improvement; C1 cannot see whether a reader read its section, and 13 of the 18 b
 `external_inputs` digest labels the counter never reads. Round-57 repairs named in the lesson: SKILL anchors
 (F1), byte-identity (R1), standing-rules code table (F2), README index, `external_inputs` labels.
 Round shape: three v1 waves, 37 + 34 + 37 = 108 seats (report has the role mix); attempt 4 ran no new wave.
+
+## 2026-10-28 — round 57 (honest stop, operator wrap-up of hyaku run 11; L1 `TameshiR57`)
+
+Base `5e3569969b532310d2b8a3d130901757a3df356b`. Declared claims: C1 calibration (routed-defect ledger extended to the 51
+routed items of the round 50-56 closures) and C2 operability (executed registry rows for `tools/receipt-revision-gate.py`,
+SKILL registry row, true standing-rules cell). Neither was scored at a committed revision, no freeze was committed and no
+control ran: **neither claim is admitted or measured.** Landed and verified by command: C0 `ca75c2674645ab6bdadeecb8584007c74342bfa9`
+(registry rows + fixtures, SKILL rows 53/1547, S283-S285, QUALITY 108-110, knowledge `gate-row-exit-map.md`, README row,
+errata, lesson corrections) and C0b `adf87899c70d616140a81185a8f9acbbdfb30392` (wave-2 content fixes); sources census exit 0
+(142 -> 145 rows). **Harm named:** at C0b the round-21 cold-read monitor reads 46/64 score 6 (was 64/64 score 8): eighteen
+headings lost credit and the wave-3 readers that would re-bind them were stopped. Round shape: v1 waves 47 + 47 + 34 = 128
+seats dispatched; waves 1 and 2 settled in full, wave 3 produced no reports. The unverified ledger draft is kept at
+`.ufo/waves/round-57/ledger-draft-unverified.json`; `corpus/routed-defects.json` is unchanged from base. Evidence: report
+`.ufo/reports/round-57/tameshi.md` (fleet repo).
