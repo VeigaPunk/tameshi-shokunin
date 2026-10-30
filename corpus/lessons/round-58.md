@@ -91,3 +91,18 @@ Recommendation to kagi: anchor the intended verdict record and distinguish it fr
 
 Evidence: `.ufo/waves/round-58/w1/T58W1Fix08/stage/kagi-crossdomain-r51.5.md` records the read-only source and revision commands.
 
+
+## R53.2 and R53.4 — direct measurements and revision binding
+
+R53.2: direct reruns at `88afa941545469457c78c7f4014bcda1afdee52c` now have committed carriers in `.ufo/evidence/round-53/after/`: `c1.stdout` prints `credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false`; `c2.stdout` prints `cr47=rc=2` and `total=0 C2_R53_PASS=true`. These are round-58 retrospective direct runs, not a claim that round 53 executed its deciding wrapper.
+
+R53.4: the earlier `c2-counter-repaired.stdout` naming scratch revision `9c6ef7bc80c0` is superseded by `.ufo/evidence/round-53/after/c2.stdout`, whose `rev=88afa9415454` resolves in the lane and whose `cr47=rc=2` matches the declared could-not-evaluate class.
+
+Invocation: extract each counter with `git show 88afa941545469457c78c7f4014bcda1afdee52c:.ufo/evidence/round-53/c1/measure.py` (or `c2/measure.py`), then `python3 -I COUNTER --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 88afa941545469457c78c7f4014bcda1afdee52c --work EMPTY_DIR --explain`. The c1 verdict appears before its per-heading PROBLEM details, not on the last stdout line.
+
+## R55.1 — full C2 measurement at the certified revision
+
+At measured revision `4c04c1d3`, the extracted frozen C2 counter prints `C2_R55: rev=4c04c1d3 grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=0 C2_R55_PASS=true`. Full stdout is `.ufo/evidence/round-55/after/c2-full.stdout`; this round-58 rerun supersedes reliance on the truncated historical receipt without deleting that historical artifact.
+
+Invocation: `git show 4c04c1d3:.ufo/evidence/round-55/c2/measure.py`, then `python3 -I COUNTER --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 4c04c1d3 --work EMPTY_DIR --explain` (exit 0).
+
