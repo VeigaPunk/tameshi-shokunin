@@ -2684,3 +2684,50 @@ Counter defect found by the round's own attacks: the frozen counter passes a fin
 
 Sources: S289 (Git `git-cat-file` documentation) admitted; `knowledge/executor-source-binding.md`; registry 148 → 149, census exit 0. Frontier F11 partly held. Tools installed: none.
 
+
+## 2026-10-30 — round 60 (C1 capability re-certification, C2 calibration dispositions; L1 `TameshiR60`, attempt 1)
+
+Motivation: round 59 closed honest-stop because its frozen counter was
+cheat-passable (a fingerprint cheat scored 24/24), and the outside closure
+routed eight defects (`corpus/lessons/round-59-verifier-spotcheck.md` §6).
+Fresh-start round: the last three rejected closures (r57, r58, r59) were
+read before the claims were declared, and every claim targets one routed
+defect. Contract `.ufo/evidence/round-60/contract.json`, plan
+`plans/round-60.plan.md`, freeze `.ufo/evidence/round-60/freeze.json`
+(counter digest `c136561d…`).
+
+Landed: `tools/executor-source-pin-measure.py` (installed discriminating
+counter: 8 class cells × 5 declared paths in one invocation per cell, per-run
+nonce fixtures, shuffled order, empty-blob and corrupt cells) and
+`tools/executor-source-pin.py` v2 (a blob read that fails at plumbing level
+now exits 2 `EXECUTOR_SOURCE_UNAVAILABLE`, closing routed defect 7) — commit
+`da2ae6b361de2d6294c6324a02ae141ff6cb482f`. C2 dispositions: QUALITY criteria
+111–117 (one per round-59 mistake with `captured-by: none`, plus the mined
+`considerthese/2026-10-28.md` proposal 5 and the freeze-digest criterion),
+SOURCES S290 (Python `secrets`) and S291 (Git `index-format`) with the
+`git-ls-tree` page rejected as the mode ground, S103 `used-by` updated, the
+`executor-source-binding` entry amended, the README coverage map and F11
+frontier corrected, SCORECARD annotated (`not admitted (honest stop, closure
+round 59)`; saturation premise restated on the scored axes), lesson
+`corpus/lessons/round-60.md` — commit `68ac8ac03adb60841457702978b31bbc40871796`
+and `b1ba0ebc434fb0c73fef693e3eda20fd1e17ab02`.
+
+Measured: at `da2ae6b361de2d6294c6324a02ae141ff6cb482f` the counter scores
+`passed=8/8 C1_R60_PASS=true` (`.ufo/evidence/round-60/after/cert.out`), a
+repeat run with another nonce and class order scores 8/8, and every control
+arm fails — do-nothing tool-absent 0/8, unfixed v1 tool 7/8 (only the
+`corrupt` cell, the red-before), always-accept 3/8, fingerprint 3/8, sequence
+3/8, hash-only 3/8, first-path-only 6/8, empty-blob-unsound 4/8
+(`.ufo/evidence/round-60/controls/`). C2 counters at the round's final
+revision: R59.* ledger rows 8 (7 fixed, 1 open), QUALITY citations of the
+round-59 lesson 6, SCORECARD annotation 2 (all 0 at base
+`9806562c7efc816bd979923e702ef39bc41cade7` — the do-nothing receipt). The
+cold-read precheck at the round's content revision records `lost=0`
+(`.ufo/evidence/round-60/after/coldread-precheck-final.out`); the pointer
+sweep resolves 21/21 added pointers
+(`.ufo/evidence/round-60/pointer-sweep.json`) and the freeze verification
+classifies the re-run receipts (`INSTRUMENT-OK (receipts re-run)`).
+
+Sources: S290, S291 admitted (registry 149 → 151 rows, census exit 0 before
+and after); S103 `used-by` updated. F11's counter class is now held. Tools
+installed: none (pacman paused host-wide; no install was needed).

@@ -2187,6 +2187,130 @@
     }
    ],
    "assessment": "round-57.md:27-36 supersedes the C0/PIN claim, states both exact intervals and records QUALITY +31, SOURCES +2, knowledge +39; historical diffs confirm it."
+  },
+  {
+   "id": "R59.1",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": "tools/executor-source-pin-measure.py",
+     "lines": "1-27",
+     "excerpt": "installed discriminating counter: per-run nonce fixtures, shuffled class order, empty-blob and corrupt cells; PASS label C1_R60"
+    },
+    {
+     "path": ".ufo/evidence/round-60/controls/ctl-fingerprint.out",
+     "lines": "1-1",
+     "excerpt": "C1_R60 ... passed=3/8 C1_R60_PASS=false (fingerprint cheat fails)"
+    },
+    {
+     "path": ".ufo/evidence/round-60/controls/ctl-sequence.out",
+     "lines": "1-1",
+     "excerpt": "C1_R60 ... passed=3/8 C1_R60_PASS=false (sequence cheat fails)"
+    }
+   ],
+   "assessment": "Round-59 routed defect 1 (frozen counter accepts fingerprint/sequence cheats at 24/24): the nonce counter is installed in tools/, the red receipts are frozen before data, and the amended tool certifies 8/8 at da2ae6b361de2d6294c6324a02ae141ff6cb482f (.ufo/evidence/round-60/after/cert.out). Criterion 111 appended."
+  },
+  {
+   "id": "R59.2",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": "tools/executor-source-pin-measure.py",
+     "lines": "30-34",
+     "excerpt": "PATHS five declared paths; one tool invocation per class cell with ALL --path values"
+    },
+    {
+     "path": ".ufo/evidence/round-60/controls/ctl-first-path-only.out",
+     "lines": "1-1",
+     "excerpt": "C1_R60 ... passed=6/8 C1_R60_PASS=false (first-path-only strawman fails)"
+    }
+   ],
+   "assessment": "Round-59 routed defect 2 (one --path per call admitted a first-path-only strawman at 24/24): the counter declares all five paths in one invocation per cell; symlink sits on paths[1] and corrupt on paths[3] so the strawman misses both. Criterion 112 appended."
+  },
+  {
+   "id": "R59.3",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": ".ufo/waves/round-60/w1.ready",
+     "lines": "1-1",
+     "excerpt": "{\"lane\": \"tameshi\", \"round\": 60, \"wave\": \"w1\", \"l1\": \"TameshiR60\"}"
+    }
+   ],
+   "assessment": "Round-59 routed defect 3 (handoff addressed to a dead L1): the round-60 ready file names the live id TameshiR60 and WAVE-DONE routes to it. Criterion 113 appended."
+  },
+  {
+   "id": "R59.4",
+   "status": "open",
+   "reason": "no in-tree completeness check exists for seat structured results; the wave validator lives in the ufo-fsd-alpha checkout (outside the lane write scope), so the round-60 lane cannot land the validator change; review credit this round is assigned only per criterion 114 manually",
+   "evidence": [
+    {
+     "path": "corpus/QUALITY.md",
+     "lines": "### Criterion 114",
+     "excerpt": "every seat's structured result file is checked for presence and non-emptiness before review credit"
+    }
+   ],
+   "assessment": "Round-59 routed defect 4: the criterion is captured lane-side; the validator-side fix needs an upstream change and stays open for a round with upstream authorization."
+  },
+  {
+   "id": "R59.5",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-60/contract.json",
+     "lines": "no_harm_guards.coldread_forecast",
+     "excerpt": "forecast prices the round's planned edits at 0 headings of 64 (14 already uncovered at base, not counted)"
+    }
+   ],
+   "assessment": "Round-59 routed defect 5 (round-59 contract carried no coldread_forecast): the round-60 contract carries the key and freeze.json digests it before any data run. Criterion 115 appended (the freeze check now tests the key)."
+  },
+  {
+   "id": "R59.6",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": ".ufo/evidence/round-60/after/coldread-precheck-final.out",
+     "lines": "1-1",
+     "excerpt": "COLDREAD_PRECHECK floor=9806562c7efc floor_credited=50 cand=R60REV cand_credited=50 lost=0 ok"
+    }
+   ],
+   "assessment": "Round-59 routed defect 6 (the committed monitor receipt was a base-revision run): the round-60 precheck runs at (base 9806562c -> round-60 final revision) and the receipt lands with the row."
+  },
+  {
+   "id": "R59.7",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": "tools/executor-source-pin.py",
+     "lines": "249-266",
+     "excerpt": "plumbing-failure arm returns EXIT_UNAVAILABLE (exit 2); v1 mapping was DRIFT (exit 1)"
+    },
+    {
+     "path": ".ufo/evidence/round-60/controls/v1-tool-red.out",
+     "lines": "1-1",
+     "excerpt": "C1_R60 rev=9806562c7efc passed=7/8 C1_R60_PASS=false (only the corrupt cell fails: expected 2, observed 1)"
+    }
+   ],
+   "assessment": "Round-59 routed defect 7 + exec-bit boundary (defect 4): the boundary is decided (blob equality over regular modes; mode not bound) and is a tested cell (execbit, expected exit 0); the red-before witness shows the v1 tool failing exactly the corrupt cell. Knowledge entry amended with the new decision-table row (S291)."
+  },
+  {
+   "id": "R59.8",
+   "status": "fixed",
+   "commit": "R60LANE",
+   "evidence": [
+    {
+     "path": "corpus/lessons/round-60.md",
+     "lines": "## Mistakes",
+     "excerpt": "S289 quote word-count drift (18, not 17) recorded as an erratum; Gate blocks carry word counts"
+    }
+   ],
+   "assessment": "Round-59 routed defect 8: the word-count erratum lands in the round-60 lesson ## Mistakes (class reference-drift); round-59 lesson left byte-unchanged per append-only discipline, and every new Gate quote records its word count."
   }
  ]
 }

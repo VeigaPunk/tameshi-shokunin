@@ -162,6 +162,43 @@ defects and is sized so a do-nothing control cannot reach it.
    from the freeze commit (`git show da2ae6b361de2d6294c6324a02ae141ff6cb482f:.ufo/evidence/round-60/controls/ctl-fingerprint.out`).
    Criterion 117 now requires the distinction.
 
+## Wave w1 — what was actually executed, and what was not
+
+The wave was handed off as ONE batched dispatch of **32 seats** (policy band
+32–48; the operator's final ruling fixed the band at exactly 32, which this
+wave matched). The host's usage cap settled the wave after **2 of 32 seats**
+ran: `w1-results.json` records `seats: 32, settled: 2,
+dead_or_never_spawned: 30`, and the 30 never spawned (tranche fill halted by
+the cap). They are reported as cap-cancelled, not as failed seats.
+
+| Seat | Role | What it did | Verdict |
+|---|---|---|---|
+| `T60W1S01` | executor | Independently reproduced the red-before on a scratch fixture it built itself: the unfixed v1 tool exits 1 `EXECUTOR_SOURCE_DRIFT` when the candidate blob cannot be read, and genuine drift produces the same token — v1 cannot tell a plumbing failure from real drift. Cause: `blob_bytes()` returning `None` is folded into the DRIFT branch (`tools/executor-source-pin.py:249-256` at `9806562c…`). | red-before independently reproduced |
+| `T60W1S02` | executor | Green probe ×2 over the amended tool v2 with the working-tree counter: both runs `passed=8/8 C1_R60_PASS=true`, exit 0, nonces `8e61bb8702ebd036` ≠ `4bde7d5306c5f89e`, different class orders, and the five-path invocation evidenced by the tool's `5 declared source blob(s) equal trusted blobs` line (a four-path call would print `4`). | probe PASS (explicitly not certification) |
+
+**Falsification credit is limited to these two seats.** The round's claims rest
+on the L1's own committed instruments and their control family (eight arms,
+all red, plus the frozen digest check), not on a wide independent panel: the
+30 cap-cancelled seats include every planned reviewer, critic,
+mutation-tester, connector, scout and sentinel seat, so no outside-of-the-L1
+attack on the counter landed this round. The closure session may read the
+claims as under-falsified on that ground, and the round says so rather than
+counting unrun seats as credit.
+
+Two seat findings are adopted into the lane's records:
+
+- `T60W1S02`'s precision note — the counter's results JSON records
+  `class/expected/exit/stdout/stderr` per cell, not the argv it used, so the
+  empty-blob declared path is evidenced by the argv construction and the
+  tool's own "5 declared source blob(s)" line rather than by a literal path
+  string in the receipt. Recorded here as a known limit of the receipt's
+  self-description; the counter is **not** changed, because its bytes are
+  frozen (`.ufo/evidence/round-60/freeze.json`) and the kill rule forbids
+  changing the instrument after the first scored run.
+- `T60W1S01`'s root-cause reading of the v1 arm (`blob_bytes()` returning
+  `None` folded into DRIFT) — the same arm the v2 tool now maps to exit 2;
+  the reading is independent confirmation of the defect's mechanism.
+
 ## Verdicts
 
 - **C1, measured.** Before (the round-59 verdict): the counter that
