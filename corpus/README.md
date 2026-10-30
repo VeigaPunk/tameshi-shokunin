@@ -83,7 +83,7 @@ header citing a `mined` `SOURCES.md` row.
 | F6 | fixture minimization for survivors | S022, S023, S024 | open | B5 probe fixture size: unmeasured → reduced size + kill check |
 | F7 | incremental re-sweep granularity | S003, S004, S005, S008, S041 | open | pin-level cadence only → per-leg reuse decisions classified |
 | F8 | oracle anchoring as a survivor class | S012 | open | 0 test-oracle lines → one survivor classified against an independently anchored expectation |
-| F9 | LLM-era mutant generation + equivalence | S007, S009, S043, S044 | open | no LLM-specific search run yet (U) → bounded pilot with an independent outcome check |
+| F9 | LLM-era mutant generation + equivalence | S007, S009, S043, S044, S286, S287 | open — equivalence-cost contract entered (round 58, `knowledge/llm-mutant-equivalence-cost.md`); bounded pilot unmeasured | no LLM-specific search run yet (U) → bounded pilot with an independent outcome check |
 | F10 | PBT generators for gate fixtures | S018, S019, S020, S021 | open | no PBT fixture method → one generator against a named fixture gate |
 
 ## Known gaps
@@ -651,3 +651,10 @@ Appended, not inserted: the rows above keep their line numbers.
 | Note | Holds | Sources |
 |---|---|---|
 | `knowledge/receipt-revision-binding.md` (round 56; errata ER-R57-K1, round 57) and `knowledge/gate-row-exit-map.md` (round 57) | The receipt-revision gate's binding rule; its exit map (0 PASS, 2 could-not-evaluate, 3 refused, and exit 1 as usage or traceback); a code-by-condition truth table measured on the CLI at base `5e3569969b53`; the three registry gate rows (`tools/registry.json`), which emit 2 of the 11 codes; `recheck:` at 19/19 | S281 (in-toto Statement, subject matched by digest); S283 (GNU grep §2.3 exit status); `tools/receipt-revision-gate.py` |
+
+## Coverage map — round 58 addendum (2026-10-30)
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/llm-mutant-equivalence-cost.md` | F9 equivalence-cost counting contract: distinguish non-compilability, duplication and equivalence before interpreting surviving mutants. The Java study's measured improvements do not transfer numerically to this lane's gates. A bounded LLM-mutant pilot remains unmeasured | S286 (arXiv §Abstract), S287 (deck extract lines 230-241) |
+
