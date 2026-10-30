@@ -1,0 +1,145 @@
+{
+  "seat": "T57W3Read08",
+  "heading": "## Repeated controls and gate registry \u2014 round 12",
+  "cand": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "section_sha256": "3a78cbfcef65ada68c09342e5cbc71dc067d2b5258c3afbff6ea94e37a82b831",
+  "section_start": 1521,
+  "section_end": 1540,
+  "findings": [
+    {
+      "severity": "minor",
+      "path": "SKILL.md:1523",
+      "statement": "The S265 source pointer corpus/SOURCES.md:503 points at an unrelated next-unused-id entry; S265 is at line 140 at C0b. Supersession itself remains true.",
+      "command": "python3 -c 'from pathlib import Path; p=Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/corpus/SOURCES.md'\"'\"'); lines=p.read_text().splitlines(); print('\"'\"'corpus/SOURCES.md:503: '\"'\"'+lines[502]); print('\"'\"'S265 row: '\"'\"'+str(next(i for i,l in enumerate(lines,1) if l.startswith('\"'\"'| S265 |'\"'\"')))); print('\"'\"'supersession: '\"'\"'+str(any(l.startswith('\"'\"'| S265 |'\"'\"') and '\"'\"'supersedes S026'\"'\"' in l for l in lines)))'",
+      "output": "corpus/SOURCES.md:503: - Next unused id: S161.\nS265 row: 140\nsupersession: True\n",
+      "exit": 0
+    }
+  ],
+  "notes": [
+    "Axes: calibration, command executability, pointer accuracy, finite-sample honesty, lane non-mutation.",
+    "Recipe placeholders COMMAND ARG... and UNIQUE were instantiated with a non-secret Python command and a fresh external scratch output directory.",
+    "No behavioral discrepancy found: all nine primary sweep commands matched expected exits; the intentional mismatch and unavailable cases are expected outcomes, not failures of the section. Existing-output refusal also matched exit 64.",
+    "The six-leg reference is explicitly historical (round 12), consistent with later sections recording ten legs since round 51.",
+    "LSP unavailable: read xd://lsp returned No such tool; source reading and literal grep were fallbacks, not semantic proof.",
+    "No tools installed or upgraded. No lane content changed; no staging patch because SKILL fixes are deferred to round 58."
+  ],
+  "commands": [
+    {
+      "name": "frozen-sectionizer",
+      "command": "python3 -c 'import importlib.util, subprocess; spec=importlib.util.spec_from_file_location('\"'\"'frozen'\"'\"','\"'\"'/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/measure.py'\"'\"'); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m); raw=subprocess.check_output(['\"'\"'git'\"'\"','\"'\"'-C'\"'\"','\"'\"'/home/vgpnk/Projects/shokunin/tameshi-shokunin'\"'\"','\"'\"'show'\"'\"','\"'\"'adf87899c70d616140a81185a8f9acbbdfb30392:SKILL.md'\"'\"']); sec=next(s for s in m.sectionize(raw) if s['\"'\"'heading'\"'\"']=='\"'\"'## Repeated controls and gate registry \u2014 round 12'\"'\"'); print(sec['\"'\"'start'\"'\"'],sec['\"'\"'end'\"'\"'],sec['\"'\"'sha256'\"'\"'])'",
+      "exit": 0,
+      "stdout": "1521 1540 3a78cbfcef65ada68c09342e5cbc71dc067d2b5258c3afbff6ea94e37a82b831\n",
+      "stderr": ""
+    },
+    {
+      "name": "recipe-match",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/tameshi-r12-controls-UNIQUE -- python3 -c 'import sys; sys.stdout.buffer.write(b\"ok\\x00\\n\"); sys.stderr.write(\"notice\\n\")'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 0,
+      "exit": 0,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_RUN 1 exit=0 stdout-bytes=4 stderr-bytes=7\nREPEAT_RUN 2 exit=0 stdout-bytes=4 stderr-bytes=7\nREPEAT_RUN 3 exit=0 stdout-bytes=4 stderr-bytes=7\nREPEAT_COMPARE identical=yes runs=3\nREPEAT_OUT /fast/scratch/hyaku/tameshi-r57/T57W3Read08/tameshi-r12-controls-UNIQUE\nREPEAT_CONTROL: controls_match\n",
+      "stderr": ""
+    },
+    {
+      "name": "baseline-nonzero",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/nonzero -- python3 -c 'raise SystemExit(7)'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 2,
+      "exit": 2,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_RUN 1 exit=7 stdout-bytes=0 stderr-bytes=0\nREPEAT_RUN 2 exit=7 stdout-bytes=0 stderr-bytes=0\nREPEAT_RUN 3 exit=7 stdout-bytes=0 stderr-bytes=0\nREPEAT_COMPARE identical=yes runs=3\nREPEAT_OUT /fast/scratch/hyaku/tameshi-r57/T57W3Read08/nonzero\nREPEAT_CONTROL: baseline_nonzero\n",
+      "stderr": ""
+    },
+    {
+      "name": "command-unavailable",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/unavailable -- /fast/scratch/hyaku/tameshi-r57/T57W3Read08/not-a-command",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 2,
+      "exit": 2,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_RUN 1 exit=unavailable stdout-bytes=0 stderr-bytes=97\nREPEAT_RUN 2 exit=unavailable stdout-bytes=0 stderr-bytes=97\nREPEAT_RUN 3 exit=unavailable stdout-bytes=0 stderr-bytes=97\nREPEAT_COMPARE identical=no runs=3\nREPEAT_OUT /fast/scratch/hyaku/tameshi-r57/T57W3Read08/unavailable\nREPEAT_CONTROL: command_unavailable\n",
+      "stderr": ""
+    },
+    {
+      "name": "selftest",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --selftest",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 0,
+      "exit": 0,
+      "stdout": "SELFTEST_CASE stable PASS (expected=controls_match/0 observed=controls_match/0 saved-bytes-ok)\nSELFTEST_CASE mismatch-stdout PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-run3-only PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-newline-only PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-stderr PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-exit PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE mismatch-nonzero-exits PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE nonzero-baseline PASS (expected=baseline_nonzero/2 observed=baseline_nonzero/2)\nSELFTEST_CASE child127-baseline PASS (expected=baseline_nonzero/2 observed=baseline_nonzero/2)\nSELFTEST_CASE command-unavailable-enoent PASS (expected=command_unavailable/2 observed=command_unavailable/2)\nSELFTEST_CASE command-unavailable-eacces PASS (expected=command_unavailable/2 observed=command_unavailable/2)\nSELFTEST_CASE command-unavailable-enoexec PASS (expected=command_unavailable/2 observed=command_unavailable/2)\nSELFTEST_CASE invalid-runs-2 PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-runs-1 PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-runs-0 PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-runs-abc PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-missing-separator PASS (expected=invalid_usage/64 observed=invalid_usage/64)\nSELFTEST_CASE invalid-existing-out PASS (expected=invalid_usage/64 observed=invalid_usage/64 refused-out-untouched)\nSELFTEST_CASE stdin-devnull PASS (expected=controls_match/0 observed=controls_match/0 stdin-devnull-ok)\nSELFTEST_CASE snapshot-pass PASS (expected=controls_match/0 observed=controls_match/0)\nSELFTEST_CASE snapshot-mismatch-pass PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST_CASE snapshot-tamper-byte PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-missing PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-unlisted PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-duplicate-key PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-manifest-symlink PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-tamper-observation-symlink PASS (expected=snapshot_tampered/2 observed=snapshot_tampered/2)\nSELFTEST_CASE snapshot-committed-stable PASS (expected=controls_match/0 observed=controls_match/0)\nSELFTEST_CASE snapshot-committed-mismatch PASS (expected=controls_mismatch/1 observed=controls_mismatch/1)\nSELFTEST: PASS (29 cases)\n",
+      "stderr": ""
+    },
+    {
+      "name": "frozen-match",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --snapshot /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/.ufo/evidence/round-12/ControlGate",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 0,
+      "exit": 0,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nSNAPSHOT_INPUTS 9 verified\nSNAPSHOT_EXPECTED id=controls_match exit=0\nSNAPSHOT_OBSERVED id=controls_match exit=0\nREPEAT_CONTROL: controls_match\n",
+      "stderr": ""
+    },
+    {
+      "name": "frozen-mismatch",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --snapshot /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/.ufo/evidence/round-12/ControlGate/mismatch",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 1,
+      "exit": 1,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nSNAPSHOT_INPUTS 9 verified\nSNAPSHOT_EXPECTED id=controls_mismatch exit=1\nSNAPSHOT_OBSERVED id=controls_mismatch exit=1\nREPEAT_CONTROL: controls_mismatch\n",
+      "stderr": ""
+    },
+    {
+      "name": "mismatch-stdout",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/mismatch-stdout -- python3 -c 'from pathlib import Path; import sys; p=Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read08/state-stdout'\"'\"'); n=int(p.read_text())+1 if p.exists() else 1; p.write_text(str(n)); print(n)'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 1,
+      "exit": 1,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_RUN 1 exit=0 stdout-bytes=2 stderr-bytes=0\nREPEAT_RUN 2 exit=0 stdout-bytes=2 stderr-bytes=0\nREPEAT_RUN 3 exit=0 stdout-bytes=2 stderr-bytes=0\nREPEAT_COMPARE identical=no runs=3\nREPEAT_OUT /fast/scratch/hyaku/tameshi-r57/T57W3Read08/mismatch-stdout\nREPEAT_CONTROL: controls_mismatch\n",
+      "stderr": ""
+    },
+    {
+      "name": "mismatch-stderr",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/mismatch-stderr -- python3 -c 'from pathlib import Path; import sys; p=Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read08/state-stderr'\"'\"'); n=int(p.read_text())+1 if p.exists() else 1; p.write_text(str(n)); print(n,file=sys.stderr)'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 1,
+      "exit": 1,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_RUN 1 exit=0 stdout-bytes=0 stderr-bytes=2\nREPEAT_RUN 2 exit=0 stdout-bytes=0 stderr-bytes=2\nREPEAT_RUN 3 exit=0 stdout-bytes=0 stderr-bytes=2\nREPEAT_COMPARE identical=no runs=3\nREPEAT_OUT /fast/scratch/hyaku/tameshi-r57/T57W3Read08/mismatch-stderr\nREPEAT_CONTROL: controls_mismatch\n",
+      "stderr": ""
+    },
+    {
+      "name": "mismatch-exit",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/mismatch-exit -- python3 -c 'from pathlib import Path; import sys; p=Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read08/state-exit'\"'\"'); n=int(p.read_text())+1 if p.exists() else 1; p.write_text(str(n)); sys.exit(n)'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 1,
+      "exit": 1,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_RUN 1 exit=1 stdout-bytes=0 stderr-bytes=0\nREPEAT_RUN 2 exit=2 stdout-bytes=0 stderr-bytes=0\nREPEAT_RUN 3 exit=3 stdout-bytes=0 stderr-bytes=0\nREPEAT_COMPARE identical=no runs=3\nREPEAT_OUT /fast/scratch/hyaku/tameshi-r57/T57W3Read08/mismatch-exit\nREPEAT_CONTROL: controls_mismatch\n",
+      "stderr": ""
+    },
+    {
+      "name": "source-pointer",
+      "command": "python3 -c 'from pathlib import Path; p=Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/corpus/SOURCES.md'\"'\"'); lines=p.read_text().splitlines(); print('\"'\"'corpus/SOURCES.md:503: '\"'\"'+lines[502]); print('\"'\"'S265 row: '\"'\"'+str(next(i for i,l in enumerate(lines,1) if l.startswith('\"'\"'| S265 |'\"'\"')))); print('\"'\"'supersession: '\"'\"'+str(any(l.startswith('\"'\"'| S265 |'\"'\"') and '\"'\"'supersedes S026'\"'\"' in l for l in lines)))'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 0,
+      "exit": 0,
+      "stdout": "corpus/SOURCES.md:503: - Next unused id: S161.\nS265 row: 140\nsupersession: True\n",
+      "stderr": ""
+    },
+    {
+      "name": "existing-output-refusal",
+      "command": "python3 /fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone/tools/repeat-control.py --runs 3 --out /fast/scratch/hyaku/tameshi-r57/T57W3Read08/tameshi-r12-controls-UNIQUE -- python3 -c 'import sys; sys.stdout.buffer.write(b\"ok\\x00\\n\"); sys.stderr.write(\"notice\\n\")'",
+      "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read08/clone",
+      "expected_exit": 64,
+      "exit": 64,
+      "stdout": "REPEAT_CONTROL_TOOL repeat-control.py r12 (tameshi-shokunin, 2026-10-20) tool-sha256=a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd\nREPEAT_CONTROL: invalid_usage\n",
+      "stderr": "repeat-control: --out already exists (refused, never overwritten): /fast/scratch/hyaku/tameshi-r57/T57W3Read08/tameshi-r12-controls-UNIQUE\nusage: repeat-control.py --runs N --out DIR -- COMMAND [ARG...]\n       repeat-control.py --snapshot DIR\n       repeat-control.py --selftest\n"
+    }
+  ],
+  "verdict": "gap-minor",
+  "inputs": {
+    "tools/repeat-control.py": "a8fad68fcbb87d03fb7e5e22fb1f70bd94d36c857a1c4b58171d91b042df80fd",
+    "corpus/SOURCES.md": "6826d85409702d0c7590d96f9f31b8905cd8441782b3a9d52b5ac192d8663a7e",
+    "corpus/knowledge/repeated-control-precondition.md": "e56f5876fa5af3e83b8f13d4076d566f27c1897a4bb5c67c8e2f52406ccf2ee7",
+    ".ufo/evidence/round-12/verification-final.json": "9f3d117af3b613d0a00b7d0a623d31136e36f53cb6fcb5626e42cf0c6e022201"
+  },
+  "residual_risk": [
+    "Finite samples only; no determinism, cross-host reliability, mutation-kill-rate or monitor-total claim.",
+    "Hanging commands were not launched; the absence of built-in timeout is corroborated by implementation documentation, with caller-owned timeout stated in the section."
+  ]
+}

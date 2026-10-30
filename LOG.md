@@ -2594,3 +2594,22 @@ headings lost credit and the wave-3 readers that would re-bind them were stopped
 seats dispatched; waves 1 and 2 settled in full, wave 3 produced no reports. The unverified ledger draft is kept at
 `.ufo/waves/round-57/ledger-draft-unverified.json`; `corpus/routed-defects.json` is unchanged from base. Evidence: report
 `.ufo/reports/round-57/tameshi.md` (fleet repo).
+
+## 2026-10-30 — round 57 continuation, defensive integration
+
+Resumed at `2c51affd`; original C1 calibration and C2 operability targets remain
+binding. Recovered 18 reader records and three clean panel re-seats in wave w3.
+Installed the complete selftest fixtures from T57W3MutC1A2 with an explicit
+19-TERMS docstring; observed `C1_R57_SELFTEST: 110/110 pass`, versus original
+89/96. Receipt: `.ufo/evidence/round-57/integrate/c1-counter-install.stdout`.
+Candidate panel now uses the six clean re-seated judgments; it is not yet pinned.
+Original C2 counter selftest observed 20/20; its baseline-tip run printed total=0,
+but T57W3CritContract B2 proves that does not verify the literal exact-element
+target. A proposed target weakening was withdrawn; original target restored.
+Candidate ledger remains evidence-only at
+`.ufo/waves/round-57/integrate/candidate-ledger.json`; production retains the
+49-row baseline. No original claim admission follows from this integration.
+Lesson Gate/Mistakes records supplied, including source re-open and the failed
+target-weakening approach. Reader findings remain disclosed through resolutions.
+Provider-failed seats remain failed; no duplicate writer or denied workflow is
+launched. The second wave d4 is documentary/defensive review only.

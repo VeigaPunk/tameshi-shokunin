@@ -52,6 +52,11 @@ Arms (all must be clean for PASS):
   floors      fixed >= FIXED_FLOOR and declined <= DECLINED_CAP (non-binding, A1), and at least THIS_ROUND_FLOOR
               fixes carried by commits after BASE (a ledger that only cites history does not pass).
 
+  TERMS (exactly the 19 shortfall terms the counter counts and the verdict/terms lines print):
+  missing, extra, duplicate, old49, spotcheck_changed, defects_pin, bad_status, evidence_bad,
+  key_miss, fixed_bad, open_unplanned, declined_bad, fixed_short, declined_over, this_round_short,
+  panel_pin, panel_over, base_status_bad, panel_prov.
+
 A row agrees with the tree when:
   * `status` and `status_at_base` are valid and coherent (A2);
   * every evidence item {path, lines "a-b", excerpt} resolves at REV: the path is a lane file that is not
@@ -622,12 +627,30 @@ def selftest(work):
             return any(n[0] == tag and tuple(n[1:1 + len(rest)]) == rest for n in N)
 
         def run(new, old=None, pin=True, floor=1, cap=1, mutate=None, trf=1, base=None, spots=(SPOT_PATH,),
-                defs=None, panel=None, ppin=None, allowed=PANEL_ALLOWED, dflt=False):
+                defs=None, panel=None, ppin=None, allowed=PANEL_ALLOWED, dflt=False,
+                panel_opt=None, panel_detail=None):
             rows = json.loads(json.dumps(OLD_ROWS)) if old is None else old
             write(LEDGER, json.dumps({'schema': 'x', 'defects': rows + new['defects']}))
             pp = None
             if panel is not None:
-                pblob = json.dumps({'verdicts': panel})
+                # amendment-2 repair: the panel fixture carries `detail` (a seat per id), the seat's
+                # own wave file, and the wave results list, so the provenance arm has a passing case.
+                opt = panel_opt or {}
+                seat = opt.get('seat', 'T57W2SeatA')
+                wave = opt.get('wave', 'w2')
+                ids = ('R50.1', 'R50.2', 'R50.3')
+                seatverdicts = {i: {'verdict': opt.get('seat_verdicts', {}).get(i, panel.get(i))}
+                                for i in ids}
+                seatblob = json.dumps({'seat': seat, 'verdicts': seatverdicts})
+                write('.ufo/waves/round-57/%s/%s.json' % (wave, seat), seatblob)
+                listed = [seat] if opt.get('listed', True) else []
+                write('.ufo/waves/round-57/%s-results.json' % wave,
+                      json.dumps({'results': [{'name': n} for n in listed]}))
+                det = {i: {'seat': seat, 'commit': (panel_detail or {}).get(i, '')} for i in ids}
+                files = {seat: hashlib.sha256(seatblob.encode()).hexdigest()}
+                if opt.get('sha') is False:
+                    files[seat] = 'f' * 64
+                pblob = json.dumps({'verdicts': panel, 'detail': det, 'files': files})
                 write(PANEL_PATH, pblob)
                 pp = hashlib.sha256(pblob.encode()).hexdigest()
             if mutate:
@@ -842,6 +865,49 @@ def selftest(work):
                                       panel={'R50.2': 'open', 'R50.3': 'declined'}, allowed=0, **NF)
         case('panel without a verdict for a fixed-at-base id disagrees', counts['panel_over'] == 1
              and total == 1 and kv['panel'] == '1/0')
+        # (5c) amendment-2 arms (T57W3MutC1A2): the blind-panel commit tie (A8) and the panel
+        # provenance (A9). Each case moves its tally off zero; each has an independent control.
+        # A8: the panel's commit for a `fixed` id ties the row when it is a prefix of the row's
+        # commit, even when the commit message names no id and the item text names no path.
+        tied = variant(lambda r: refix(r[0], q_forge, 'tools/z.py', '1-1', EX, status_at_base='fixed'))
+        counts, stat, total, kv, _ = run(tied, base=q_forge, panel={'R50.1': 'fixed'},
+                                         panel_detail={'R50.1': q_forge[:7]}, trf=0)
+        case('A8 tie: a panel commit prefix admits the row',
+             total == 0 and stat['fixed'] == 1 and kv['C1_R57_PASS'] == 'true')
+        counts, _, total, kv, _ = run(tied, base=q_forge, panel={'R50.1': 'fixed'},
+                                       panel_detail={'R50.1': 'deadbeef'}, trf=0)
+        case('A8 tie control: a panel commit that is not a prefix refuses the row',
+             counts['fixed_bad'] == 1 and total == 1)
+        counts, _, total, kv, _ = run(tied, base=q_forge, panel={'R50.1': 'fixed'},
+                                       panel_detail={'R50.1': q_forge[:3]}, trf=0)
+        case('A8 tie: a panel commit shorter than 7 hex chars does not tie the row',
+             counts['fixed_bad'] == 1 and total == 1)
+        counts, _, total, kv, _ = run(tied, base=q_forge, panel={'R50.1': 'open'},
+                                       panel_detail={'R50.1': q_forge[:7]}, trf=0)
+        case('A8 tie: a non-fixed panel verdict does not tie the row',
+             counts['fixed_bad'] == 1 and total == 1)
+        # A9: the provenance of the panel's seat.
+        counts, _, total, kv, _ = run(good, panel=GOOD_PANEL, panel_opt={'sha': False})
+        case('A9 provenance: a seat file whose sha does not match the panel pin counts a shortfall',
+             counts['panel_prov'] == 3 and total == 3)
+        counts, _, total, kv, _ = run(good, panel=GOOD_PANEL,
+                                       panel_opt={'seat_verdicts': {'R50.1': 'declined'}})
+        case('A9 provenance: a seat verdict that differs from the panel verdict counts a shortfall',
+             counts['panel_prov'] == 1 and total == 1)
+        counts, _, total, kv, _ = run(good, panel=GOOD_PANEL, panel_opt={'listed': False})
+        case('A9 provenance: a seat that the wave results do not list counts a shortfall',
+             counts['panel_prov'] == 3 and total == 3)
+        counts, _, total, kv, _ = run(good, panel=GOOD_PANEL,
+                                       panel_opt={'seat': 'T57W3SeatA', 'wave': 'w3'})
+        case('A9 provenance: a w3 seat is looked up in w3', counts['panel_prov'] == 0 and total == 0)
+        counts, _, total, kv, _ = run(good, panel=GOOD_PANEL, panel_opt={'sha': False})
+        case('A9 provenance: a shortfall makes the verdict line fail',
+             kv['total'] == '3' and kv['C1_R57_PASS'] == 'false')
+        counts, _, total, kv, _ = run(good, panel=GOOD_PANEL,
+                                       panel_opt={'seat_verdicts': {'R50.3': 'open'}})
+        case('A9 provenance: a declined id is counted too', counts['panel_prov'] == 1 and total == 1)
+        counts, _, total, kv, res = run(good, panel=GOOD_PANEL)
+        case('A9: the terms line carries panel_prov', 'panel_prov=' in terms_line(res))
         # HARD paths
         hards = ('.ufo/evidence/round-57/c1/keys.json', '.ufo/evidence/round-57/control/ctl.json',
                  '.ufo/evidence/round-57/contract.json', '.ufo/evidence/round-57/freeze.json')
@@ -859,6 +925,15 @@ def selftest(work):
         case('soft-excluded wave path refused', counts['evidence_bad'] == 1)
         counts, _, total, _, _ = run(variant(lambda r: r[0]['evidence'][0].update(path='../x.py')))
         case('path escape refused', counts['evidence_bad'] == 1)
+        # Amendment 2 path canonicalisation: both spellings hit the existing exclusions.
+        for path in ('./' + SPOT_PATH, 'corpus//x'):
+            counts, _, total, _, _ = run(variant(lambda r, p=path: r[2]['evidence'][0].update(
+                path=p, lines='1-1', excerpt='1. **Extractor pairing.**')))
+            case('canonical path exclusion: %s' % path, counts['evidence_bad'] == 1 and total == 1)
+        counts, _, total, _, _ = run(variant(lambda r: r[1]['evidence'][0].update(
+            path='corpus//evidence.md', lines='1-1', excerpt='the wave-slots pointer is resolved here')),
+            mutate=lambda: write('corpus/evidence.md', 'the wave-slots pointer is resolved here\n'))
+        case('canonical admissible path passes', counts['evidence_bad'] == 0 and total == 0)
         # arm spot
         counts, _, total, kv, _ = run(good, mutate=lambda: write(SPOT_PATH, SPOT + 'edited\n'))
         case('edited spot-check counted (spot arm)', counts['spotcheck_changed'] == 1 and kv['spot'] == 'DRIFT'
@@ -913,7 +988,8 @@ def selftest(work):
         # cli: exit codes, last line, explain; the selftest never depends on the shipped PANEL_SHA256
         run(good, panel=GOOD_PANEL)
         rev = g('rev-parse', 'HEAD').stdout.decode().strip()
-        psha = hashlib.sha256(json.dumps({'verdicts': GOOD_PANEL}).encode()).hexdigest()
+        with open(os.path.join(repo, PANEL_PATH), 'rb') as fh:
+            psha = hashlib.sha256(fh.read()).hexdigest()
         ck = dict(base=routed, old_expect=2, expected_spots=(SPOT_PATH,), fixed_floor=1, declined_cap=1,
                   this_round_floor=1)
         rc, out = cli(repo, rev, False, dsha, panel_pin=psha, **ck)

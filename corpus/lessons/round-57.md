@@ -34,3 +34,46 @@ answers; the ledger rows `R53.8`, `R55.2` in `corpus/routed-defects.json` point 
   tools` shows `corpus/QUALITY.md` +31, `corpus/SOURCES.md` +2 and
   `corpus/knowledge/receipt-revision-binding.md` +39. This line supersedes the sentence; the
   round-56 lesson is not rewritten.
+
+## Continuation — run 12, 2026-10-30
+
+The round resumed from `2c51affd37e15cd7cd258d76ba0f5f73ff235924`.
+The original claims remain binding; neither candidate integration nor a counter's
+weaker interpretation is an admission. Candidate ledger rows are retained at
+`.ufo/waves/round-57/integrate/candidate-ledger.json`, not installed in the
+production ledger. The independent re-seats replace the six breached judgments
+in the candidate panel before any panel pin or freeze.
+
+## Gate
+
+These rows were opened during the original round-57 attempt; their missing Gate
+record is supplied here from retained source receipts, not represented as new rows.
+S283 was also reopened by this L1 on 2026-10-30 (HTTP 200, 248692 bytes,
+sha256 prefix `517177d02c39c446`, matching its retained snapshot).
+
+| Row | URL and access date | Located quote | Decision |
+|---|---|---|---|
+| S283 | https://www.gnu.org/software/grep/manual/grep.html#Exit-Status — 2026-10-28; reopened 2026-10-30 | §2.3 Exit Status: “Normally the exit status is 0 if a line is selected, 1 if no lines were selected, and 2 if an error occurred.” | admit, mined: grounds grep's tri-state convention, not the lane's code 3 |
+| S284 | https://sre.google/workbook/postmortem-culture/ — 2026-10-28 | “Animated language”: “A postmortem is a factual artifact that should be free from personal judgments and subjective language.” | admit, queued: record wording only; no causal reliability claim |
+| S285 | https://www.atlassian.com/incident-management/handbook/postmortems — 2026-10-28 | “Incident postmortems”, markup stripped: “We practice blameless postmortems at Atlassian to ensure we understand and remediate the root cause of every incident” | reject, retained: vendor self-description without measured outcomes; flip: measured outcomes or an actual lane Jira-postmortem adoption |
+
+Located originals and extraction: `.ufo/waves/round-57/w1/T57W1ScribeSourcesRow/gate-block.md`
+and its referenced scout receipts. No status/recheck/used-by changes in this
+continuation. The prior same-round S283 queued→mined transition is recorded in
+the original round report; its used-by is `corpus/knowledge/gate-row-exit-map.md`.
+The original bounded search remains in SOURCES.md. Assimilation: none added in
+this continuation; the prior attempt mined considerthese/2026-10-28.md proposal 3.
+Outside admit/reject spot-check remains the non-author closure's responsibility.
+
+## Mistakes
+
+| Class | Evidence | Captured-by | Fix and failability |
+|---|---|---|---|
+| Selftest-fixture drift | w3/T57W3CritContract.md B1 and T57W3ExecC1SelftestA2.md: original counter 89/96; partial A7 candidate 92/99 | freeze_precondition requiring n/n, which correctly refused readiness | Installed the mutation seat's complete synthetic panel-provenance fixtures plus explicit docstring TERMS. Same selftest now 110/110; receipt `.ufo/evidence/round-57/integrate/c1-counter-install.stdout`. Red-before reports retained; semantic counter region unchanged |
+| After-observation target weakening | candidate contract amendment 3 briefly changed exact-element C2 requirements to token containment after the critic demonstrated a false green | claim-freeze rule; the L1 caught its own attempted workaround | Weakening withdrawn and original C2 target restored. Counter PASS does not verify that target; the critic's original-tree element audit is the red discriminator. No successful repair or admission claimed |
+| Commit-attribution mismatch | w3/T57W3RowAttack1.md R52.1: pipeline-introduction commit is not the deciding-receipts commit | semantic row review, not the mechanical counter | Candidate is not installed. R52.1 remains unresolved in the candidate until a truthful status/commit/evidence row can be justified without optimizing for counter acceptance |
+| Misquotation repeated inside a correction | original C0 R55.2 text, refuted by w2/T57W2CritContent and corrected at C0b adf87899 | none before source reopening | Superseding lesson above identifies the scribe's actual total=1 record. No standalone preventative checker was demonstrated; not counted as a new proven fix |
+
+Five reader headings retain six minor findings at C0b; their exact findings
+and deferral judgments are in `.ufo/evidence/round-57/integrate/resolutions.json`.
+Binding those records certifies rereading, not that their sections are clean.
