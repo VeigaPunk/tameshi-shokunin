@@ -1,0 +1,58 @@
+{
+  "schema": "tameshi-round-contract-v2",
+  "lane": "tameshi",
+  "round": 60,
+  "declared_at": "2026-10-30",
+  "base": "9806562c7efc816bd979923e702ef39bc41cade7",
+  "base_state": "origin/master, clean tree; numeric axes depth 10, calibration 8, freshness 9 (all at/above saturation line 8); stagnation nudge active on scored axes",
+  "fresh_start": "run-13 fresh-start round: last three rejected closures read (r57 honest-stop, r58 not-admitted, r59 honest-stop + spot-check routed defects 1-8); claims sized to what a do-nothing control cannot reach",
+  "claims": {
+    "C1": {
+      "axis": "operability",
+      "type": "capability-recertification",
+      "sourced": ["S290"],
+      "sentence": "At the round's final lane revision the installed counter tools/executor-source-pin-measure.py (8 shuffled class cells x 5 declared paths in ONE invocation per cell, per-run nonces, shuffled order, corrupt cell expecting exit 2) run on the amended tools/executor-source-pin.py v2 scores passed=8/8 C1_R60_PASS=true, while every control arm scores C1_R60_PASS=false: do-nothing tool-absent 0/8, unfixed v1 tool 7/8 with only the corrupt cell failing, always-accept, fingerprint, sequence, hash-only, first-path-only and empty-blob-unsound each failing.",
+      "counting_command": "python3 -I tools/executor-source-pin-measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev <final-rev> --work <empty scratch dir>",
+      "pass_label": "C1_R60",
+      "cells": 8,
+      "declared_paths": 5,
+      "kill_rule": "any change to the counter's cells, class set, expected exits or PASS condition after the first scored run voids the claim (re-freeze + re-declare required); any control scoring 8/8 kills the counter and the claim honest-stops",
+      "red_receipts": [
+        ".ufo/evidence/round-60/controls/do-nothing-tool-absent.out",
+        ".ufo/evidence/round-60/controls/v1-tool-red.out",
+        ".ufo/evidence/round-60/controls/ctl-always-accept.out",
+        ".ufo/evidence/round-60/controls/ctl-fingerprint.out",
+        ".ufo/evidence/round-60/controls/ctl-sequence.out",
+        ".ufo/evidence/round-60/controls/ctl-hashonly.out",
+        ".ufo/evidence/round-60/controls/ctl-first-path-only.out",
+        ".ufo/evidence/round-60/controls/ctl-empty-unsound.out"
+      ]
+    },
+    "C2": {
+      "axis": "calibration",
+      "type": "axis-move",
+      "sourced": [],
+      "sentence": "The round's final tree records the round-59 closure's routed defects and uncaptured mistakes where the tree can check them: corpus/routed-defects.json carries rows R59.1-R59.8 (fixed rows carry in-tree receipts, non-fixed rows carry status open with reason), corpus/QUALITY.md carries at least 5 new numbered criteria each citing corpus/lessons/round-59.md, SCORECARD.md carries the annotation 'not admitted (honest stop, closure round 59)' on the round-59 C1 capability row and a saturation premise restated on the scored axes, and the cold-read precheck at (base 9806562c -> final revision) is recorded with lost=0.",
+      "counting_commands": [
+        "python3 -c \"import json;d=json.load(open('corpus/routed-defects.json'));rows=[x for x in d['defects'] if x['id'].startswith('R59.')];print(len(rows), sum(1 for x in rows if x['status']=='fixed'))\"",
+        "grep -c 'corpus/lessons/round-59\\.md' corpus/QUALITY.md",
+        "grep -c 'not admitted (honest stop, closure round 59)' SCORECARD.md",
+        "bash .ufo/evidence/round-48/quality/coldread-precheck.sh /home/vgpnk/Projects/shokunin/tameshi-shokunin 9806562c7efc816bd979923e702ef39bc41cade7 <final-rev>"
+      ],
+      "kill_rule": "any counting command ambiguous at adjudication kills the claim honest-stop; receipts that do not resolve at the final revision defeat the claim",
+      "do_nothing_control": "every counting command run at base 9806562c scores zero (0 R59 rows, 0 round-59 criteria, 0 annotations); receipts .ufo/waves/round-60/w1/T60W1S19/receipt.json and the L1 re-run in the round report"
+    }
+  },
+  "no_harm_guards": {
+    "coldread_forecast": {
+      "command": "python3 tools/cold-read-forecast.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 9806562c7efc816bd979923e702ef39bc41cade7 --paths corpus/SOURCES.md corpus/QUALITY.md corpus/knowledge/executor-source-binding.md corpus/lessons/round-60.md SCORECARD.md LOG.md corpus/routed-defects.json tools/executor-source-pin.py tools/executor-source-pin-measure.py",
+      "headings": 0,
+      "readers": 0,
+      "of": 64,
+      "uncovered_at_base_not_counted": 14,
+      "note": "no SKILL.md or PROVINCE.md edits planned; round-21 monitor input bytes unchanged"
+    },
+    "scope": "lane repo only; siblings, fleet repo, .ufo/state/, templates/, scripts/ read-only; seats never commit or push",
+    "scratch": "/fast/scratch/hyaku/tameshi-r60/ deleted on exit; no /tmp over 50 MB"
+  }
+}

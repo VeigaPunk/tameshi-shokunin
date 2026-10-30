@@ -16,10 +16,12 @@ Usage:
 Exit codes:
     0  EXECUTOR_SOURCE_BOUND         every declared regular source blob at the
                                     candidate revision equals the trusted blob
-    1  EXECUTOR_SOURCE_DRIFT         a declared source differs, or is missing /
-                                    nonregular, at the candidate revision
+    1  EXECUTOR_SOURCE_DRIFT         a declared source differs, is missing or
+                                    is nonregular at the candidate revision
     2  EXECUTOR_SOURCE_UNAVAILABLE   bad arguments, invalid trusted commit or
-                                    trusted source, or unresolvable candidate
+                                    trusted source, an unresolvable candidate,
+                                    or a blob read that fails at plumbing
+                                    level (v2: round-59 spot-check defect 7)
 
 Stdlib only. Git is invoked read-only (rev-parse / ls-tree / cat-file) with an
 explicit -C repository, --literal-pathspecs, --no-replace-objects, a sanitized
@@ -248,8 +250,18 @@ def main(argv=None):
             continue
         trusted_bytes = blob_bytes(repo, trusted_oid, env)
         candidate_bytes = blob_bytes(repo, oid, env)
-        if (trusted_bytes is None or candidate_bytes is None
-                or trusted_bytes != candidate_bytes):
+        if trusted_bytes is None or candidate_bytes is None:
+            # A blob read that fails at plumbing level is unresolvable input,
+            # not an observed difference: fail closed as UNAVAILABLE (exit 2),
+            # matching the decision table ("unresolvable input" -> exit 2).
+            # Round-59 spot-check defect 7: this arm previously mapped to
+            # DRIFT (exit 1); the corrupt-blob counter cell kills the v1
+            # mapping (expected 2, observed 1).
+            sys.stderr.write(
+                "EXECUTOR_SOURCE_UNAVAILABLE: %r blob read failed at trusted "
+                "or candidate revision\n" % (path,))
+            return EXIT_UNAVAILABLE
+        if trusted_bytes != candidate_bytes:
             sys.stdout.write(
                 "EXECUTOR_SOURCE_DRIFT: %r differs at candidate revision\n"
                 % (path,))

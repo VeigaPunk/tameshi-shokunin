@@ -2876,3 +2876,31 @@ Nudge-directed frontier move: calibration 8, depth 10 and freshness 9 sit at or 
 
 Standing numeric axes are not re-measured this round: depth 10, calibration 8, freshness 9 as recorded at round 58's close. No axis is harmed. Successor: the frozen counter needs multi-path invocation and per-run nonce fixtures before any C2-like claim; `.ufo/evidence/round-59/successor/measure-nonce.py` is the candidate, shown able to fail (fingerprint 16/24, sequence 10/24, real tool 24/24).
 
+
+## Planned — round 60 (declared 2026-10-30, fresh-start round, frozen before data)
+
+1. **C1 — operability, capability re-certification (sourced S290).** The
+   round-59 executor-source-pin capability re-enters on a discriminating
+   counter: `tools/executor-source-pin-measure.py` (8 shuffled class cells ×
+   5 declared paths in one invocation per cell, per-run nonces, corrupt cell
+   expecting exit 2) scores `passed=8/8 C1_R60_PASS=true` on the amended
+   `tools/executor-source-pin.py` v2 at the final revision, and the control
+   family (do-nothing tool-absent, unfixed v1 tool 7/8 corrupt-only,
+   always-accept, fingerprint, sequence, hash-only, first-path-only,
+   empty-blob-unsound) each scores `C1_R60_PASS=false`. Red receipts frozen
+   before data: `.ufo/evidence/round-60/controls/`. Closes round-59 routed
+   defects 1, 2, 4, 7. Counting command in `plans/round-60.plan.md` and
+   `.ufo/evidence/round-60/contract.json`.
+2. **C2 — calibration.** Round-59 closure routed defects and uncaptured
+   mistakes become tree-checkable records: `corpus/routed-defects.json`
+   rows `R59.1`–`R59.8` with resolving receipts, ≥5 new `QUALITY.md`
+   criteria citing `corpus/lessons/round-59.md`, the round-59 C1 capability
+   row annotated `not admitted (honest stop, closure round 59)`, the
+   saturation premise restated on the scored axes, and the cold-read
+   precheck recorded at (base `9806562c…` → final revision) with `lost=0`.
+
+Stagnation nudge premise stated on the SCORED axes (depth 10, calibration 8,
+freshness 9, all ≥ saturation line 8); coverage/adjacency/operability are
+verdict-only axes this round (round-59 spot-check defect 5). No SKILL.md or
+PROVINCE.md edits planned; `tools/cold-read-forecast.py` prices the planned
+edits at 0 headings of 64.
