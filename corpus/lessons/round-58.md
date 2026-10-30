@@ -106,3 +106,10 @@ At measured revision `4c04c1d3`, the extracted frozen C2 counter prints `C2_R55:
 
 Invocation: `git show 4c04c1d3:.ufo/evidence/round-55/c2/measure.py`, then `python3 -I COUNTER --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 4c04c1d3 --work EMPTY_DIR --explain` (exit 0).
 
+
+## R55.4 — control-completion record corrected
+
+The earlier report sentence that `CTL_SKIP_c2` was still running at filing is superseded: `.ufo/evidence/round-55/control/controls-a.stdout` lines 5-6 already contain `CTL_SKIP_c2 ... total=4 C2_R55_PASS=false` and `CONTROLS_A: 5/5 as pre-registered`. This records completion, not an outstanding run.
+
+Re-derivation: search `CTL_SKIP_c2|CONTROLS_A` in that committed receipt. Both lines exist at measured revision `4c04c1d3`, which predates the round-55 report.
+
