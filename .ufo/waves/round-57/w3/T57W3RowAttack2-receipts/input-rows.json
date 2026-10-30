@@ -1,0 +1,609 @@
+{
+  "tip": "2c51affd37e15cd7cd258d76ba0f5f73ff235924",
+  "rows": {
+    "R52.4": {
+      "id": "R52.4",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-52/integrate/build-readers.py",
+          "lines": "5-6",
+          "excerpt": "the wave results are committed before refresh runs"
+        },
+        {
+          "path": ".ufo/waves/round-52/w3.ready",
+          "lines": "1-1",
+          "excerpt": "{\"lane\":\"tameshi\",\"round\":52,\"wave\":\"w3\""
+        }
+      ],
+      "commit": "6db1d220b337c35ff1e25bf9cfd74abc9db1498d",
+      "seat": "T57W1ScribeItemsR52x4to6",
+      "note": "The four untracked round-52 files were committed by 6db1d22 (round-52 w3 closure salvage). Base tracks all four and the worktree carries no round-52 untracked work.",
+      "status_at_base": "fixed"
+    },
+    "R52.5": {
+      "id": "R52.5",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "tools/registry-check.py",
+          "lines": "786-786",
+          "excerpt": "raise RuntimeError(f\"cannot create clone scratch under the scratch root: {exc}\") from exc"
+        },
+        {
+          "path": "tools/registry-check.py",
+          "lines": "78-78",
+          "excerpt": "fixtures only under the scratch root (TMPDIR), never touches the lane"
+        }
+      ],
+      "commit": "218bc6b5c25d6a3c57dd44600febd552f0167cee",
+      "seat": "T57W1ScribeItemsR52x4to6",
+      "note": "Commit 218bc6b replaced the literal dir=\"/tmp\" mkdtemp at routed_at line 766 with tempfile.gettempdir() and the /tmp error text with the scratch-root wording; 5b703c6 later routed it through strict_scratch_root() (TMPDIR-honouring). Base has no executable /tmp literal in tools/registry-check.py.",
+      "status_at_base": "fixed"
+    },
+    "R52.6": {
+      "id": "R52.6",
+      "status": "open",
+      "evidence": [
+        {
+          "path": "SCORECARD.md",
+          "lines": "37-37",
+          "excerpt": "`harmed` / `unchanged` / `unprovable-but-better` verdict."
+        },
+        {
+          "path": "SHONEN.md",
+          "lines": "5-5",
+          "excerpt": "- [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources"
+        },
+        {
+          "path": "corpus/lessons/round-42.md",
+          "lines": "146-146",
+          "excerpt": "| SHONEN box | standing command a non-author can run | gap |"
+        }
+      ],
+      "seat": "T57W2RepairR522xR526",
+      "note": "Open unchanged. The round-52 report and prompt are fleet-owned (outside the lane); no lane commit after c1d49d7 added the Landed changes / Before -> after sections or per-box SHONEN lines to the round-52 report (not in the lane). Keyed lane line added: corpus/lessons/round-42.md:146 (the per-box SHONEN table header, key 'SHONEN box'), a non-spot-check lane file. Weak semantic support: it shows per-box SHONEN checkability is a known lane gap, not the round-52 report itself. Planned in the round-57 Planned paragraph (dry run).",
+      "status_at_base": "open"
+    },
+    "R53.1": {
+      "id": "R53.1",
+      "status": "open",
+      "seat": "T57W1ScribeItemsR53x1to3",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-53/c1/measure.py",
+          "lines": "94-95",
+          "excerpt": "r = git(['-C', lane, 'ls-tree', '--name-only', rev, '.ufo/evidence/round-21/coldread'])"
+        },
+        {
+          "path": ".ufo/evidence/round-53/c1/measure.py",
+          "lines": "96-97",
+          "excerpt": "if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)]"
+        },
+        {
+          "path": ".ufo/evidence/round-54/control/r53-counter-at-88afa941.stdout",
+          "lines": "1-1",
+          "excerpt": "C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false"
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2550-2551",
+          "excerpt": "`C1_R53_PASS=false`, `total=6`."
+        }
+      ],
+      "note": "frozen round-53 counter: pathspec lacks trailing slash and the basename is compared as full path; rekeyed=0/30 at every rev; SCORECARD quotes total=6 where the counter prints total=37 at 88afa941 (round-54 successor counter fixes the class; this frozen file is unchanged)",
+      "disposition": "fixable-costly",
+      "disposition_basis": "Staged counter patch (stage/.ufo/evidence/round-53/c1/measure.py) turns rekeyed=0/30 into 28/30 at 88afa941, but it changes a file pinned by round-53 freeze.json (c1/measure.py digest da891491...) and rewrites the frozen dead-arm record cited by round-54 (control/r53-counter-at-88afa941.stdout). No cold-read heading is uncredited (monitor 64/64 score 8 on the fixture). The SCORECARD total=37 correction is part of the cheap SCORECARD diff.",
+      "staged_fix_variant": {
+        "status": "fixed",
+        "commit": "cf61f0860ca1a89709bc5cf7172e65b5cee0e7b6 (fixture commit for verification only; the L1 substitutes its own commit)",
+        "evidence": [
+          {
+            "path": ".ufo/evidence/round-53/c1/measure.py",
+            "lines": "96-97",
+            "excerpt": "if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n.rsplit('/', 1)[-1])]"
+          },
+          {
+            "path": ".ufo/evidence/round-53/direct-runs/c1-patched-counter-at-88afa941.stdout",
+            "lines": "1-1",
+            "excerpt": "C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=28/30 readers=25/30 total=8 C1_R53_PASS=false"
+          }
+        ],
+        "keys": [
+          "rekey-dir-count",
+          "ls-tree",
+          "rekeyed=0",
+          "rekeyed=28",
+          "total=6",
+          "total=37",
+          "coldread",
+          "rekey-r53"
+        ],
+        "verify": "pass"
+      },
+      "status_at_base": "open"
+    },
+    "R53.2": {
+      "id": "R53.2",
+      "status": "open",
+      "seat": "T57W1ScribeItemsR53x1to3",
+      "evidence": [
+        {
+          "path": "LOG.md",
+          "lines": "2489-2490",
+          "excerpt": "break-one controls all printed false as pre-registered. Deciding receipts: `.ufo/evidence/round-53/after/`."
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2543-2543",
+          "excerpt": "Deciding run at `88afa941` (`.ufo/evidence/round-53/after/`): **C1 honest stop** \u2014"
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2526-2526",
+          "excerpt": "Deciding run (`.ufo/evidence/round-53/after/`): FROZEN_UNCHANGED=1 (freeze"
+        }
+      ],
+      "note": "past-tense pointers to round-53/after/ receipts that were never produced; corrected by the staged SCORECARD/LOG diff",
+      "disposition": "fixable-cheap",
+      "disposition_basis": "Staged stage/SCORECARD.md.diff and stage/LOG.md.diff correct the past-tense after/ pointers and the total=6 quote; staged direct-run receipts under stage/.ufo/evidence/round-53/direct-runs/ (c1 total=37 and c2 PASS at 88afa941, plus the patched c1 run) are additive. Measured: round-21 monitor 64/64 score 8 on the SCORECARD+LOG diff alone (clone-sc 4d9027c0) and on all staged files (fixture cf61f086). Note: SCORECARD and LOG are not in the round-21 ledger inputs; three rekey-r53 trace receipts name SCORECARD.md externally but credit was unaffected.",
+      "staged_fix_variant": {
+        "status": "fixed",
+        "commit": "cf61f0860ca1a89709bc5cf7172e65b5cee0e7b6 (fixture commit for verification only; the L1 substitutes its own commit)",
+        "evidence": [
+          {
+            "path": "LOG.md",
+            "lines": "2489-2490",
+            "excerpt": "Deciding receipts: none committed (round-57 R53.2; `.ufo/evidence/round-53/after/` does not exist)."
+          },
+          {
+            "path": ".ufo/evidence/round-53/direct-runs/c1-at-88afa941.stdout",
+            "lines": "1-1",
+            "excerpt": "C1_R53: rev=88afa9415454 credited=58 lost=6 rekeyed=0/30 readers=25/30 total=37 C1_R53_PASS=false"
+          }
+        ],
+        "keys": [
+          "round-53/after",
+          "direct-runs",
+          "after/",
+          "deciding run"
+        ],
+        "verify": "pass"
+      },
+      "status_at_base": "open"
+    },
+    "R53.3": {
+      "id": "R53.3",
+      "status": "open",
+      "seat": "T57W1ScribeItemsR53x1to3",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-53/control/break-fixtures.py",
+          "lines": "169-169",
+          "excerpt": "print('CONTROLS_B: total=%d pass=%d' % (len(results), sum(results)))"
+        },
+        {
+          "path": ".ufo/evidence/round-53/control/break-fixtures.py",
+          "lines": "98-99",
+          "excerpt": "r = git(['ls-tree', '--name-only', CAND, '.ufo/evidence/round-21/coldread'])  rekey = [n for n in r.stdout.split('\\n') if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)][0]"
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2518-2519",
+          "excerpt": "unmodified candidate printed true (receipts `.ufo/evidence/round-53/control/`)."
+        }
+      ],
+      "note": "no CONTROLS_B receipt is committed under .ufo/; the phase-B script dies with IndexError at its rekey discovery (same pathspec class as R53.1) and its C1 leg is false for the dead-arm reason at 88afa941",
+      "disposition": "fixable-costly",
+      "disposition_basis": "No CONTROLS_B receipt can be produced from the committed script: control/break-fixtures.py crashes with IndexError at line 99 (rekey discovery, same pathspec class as R53.1). The staged patched copy runs and prints CONTROLS_B: total=7 pass=6, but (a) it requires editing the frozen script (freeze digest c80f5a8c... in round-53 freeze.json), (b) every C1 fixture and the C1 probe are false for the dead-arm reason (PROBLEM rekey-dir-count=0 is printed by the frozen counter at every revision), so the C1 leg cannot discriminate, and (c) PROBE_C1_CANDIDATE is FAIL at 88afa941, contradicting the SCORECARD claim that the unmodified candidate printed true.",
+      "staged_fix_variant": {
+        "status": "fixed",
+        "commit": "cf61f0860ca1a89709bc5cf7172e65b5cee0e7b6 (fixture commit for verification only; the L1 substitutes its own commit)",
+        "evidence": [
+          {
+            "path": ".ufo/evidence/round-53/control/controls-b.stdout",
+            "lines": "8-8",
+            "excerpt": "CONTROLS_B: total=7 pass=6"
+          },
+          {
+            "path": ".ufo/evidence/round-53/control/break-fixtures.py",
+            "lines": "98-99",
+            "excerpt": "rekey = [n.rsplit('/', 1)[-1] for n in r.stdout.split('\\n') if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n.rsplit('/', 1)[-1])][0]"
+          }
+        ],
+        "keys": [
+          "CONTROLS_B",
+          "break-fixtures",
+          "phase B",
+          "rekey-r53"
+        ],
+        "verify": "pass"
+      },
+      "status_at_base": "open"
+    },
+    "R53.4": {
+      "id": "R53.4",
+      "status": "open",
+      "evidence": [
+        {
+          "path": ".ufo/waves/round-53/w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout",
+          "lines": "1-1",
+          "excerpt": "C2_R53: rev=9c6ef7bc80c0 tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=1 docs=ok total=0 C2_R53_PASS=true"
+        }
+      ],
+      "seat": "T57W1ScribeItemsR53x4to6",
+      "note": "Receipt still names rev 9c6ef7bc80c0 (git cat-file -t fails: absent from lane object DB) and records cr47=rc=1; no commit since round 53 touched the file. Staged re-anchored receipt at 5e3569969b53 (round-53 C2 counter re-run at base, cr47=rc=2).",
+      "status_at_base": "open"
+    },
+    "R53.5": {
+      "id": "R53.5",
+      "status": "open",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-53/verify-freeze.stdout",
+          "lines": "1-1",
+          "excerpt": "FREEZE e62d99711a0d files=8 amendments=5"
+        },
+        {
+          "path": "LOG.md",
+          "lines": "2468-2469",
+          "excerpt": "freeze `e62d9971` (amendments 1\u20135, all disclosed in `freeze.json`)"
+        },
+        {
+          "path": ".ufo/evidence/round-53/freeze.json",
+          "lines": "49-49",
+          "excerpt": "\"what\": \"no-harm.sh line-40 bash syntax error fixed (single-quote grep pattern) and tools-scope allows the 7 C2-declared tool patches; monitors unchanged\","
+        }
+      ],
+      "seat": "T57W1ScribeItemsR53x4to6",
+      "note": "verify-freeze.stdout still reads amendments=5 while freeze.json at base records seven amendments (final freeze 9e09db2); LOG.md pins freeze e62d9971 (amendments 1-5). Receipt refresh staged; LOG pointer correction is costly (LOG.md is pinned by 10 cold-read entries).",
+      "status_at_base": "open"
+    },
+    "R53.6": {
+      "id": "R53.6",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "tools/env-diff.py",
+          "lines": "234-236",
+          "excerpt": "except ScratchRootUnusable as exc: print(\"ENVDIFF_SETUP: could-not-evaluate: %s\" % exc, file=sys.stderr) return 2"
+        },
+        {
+          "path": "tools/bash-witness-study.py",
+          "lines": "1788-1790",
+          "excerpt": "except ScratchRootUnusable as exc: print(f\"WITNESS_STUDY: could-not-evaluate: {exc}\", file=sys.stderr) return EXIT_CANNOT"
+        },
+        {
+          "path": "tools/evidence-disposition.py",
+          "lines": "3231-3233",
+          "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"evidence-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+        },
+        {
+          "path": "tools/pin-disposition.py",
+          "lines": "1399-1401",
+          "excerpt": "except ScratchRootUnusable as exc: sys.stderr.write(\"pin-disposition.py: could-not-evaluate: {}\\n\".format(exc)) return 2"
+        }
+      ],
+      "commit": "59c38109bf119d0e9d4f878644a82babc937bc1e",
+      "seat": "T57W1ScribeItemsR53x4to6",
+      "note": "59c3810 (round-54 C0) routes a set-but-unusable TMPDIR to ScratchRootUnusable and exit 2 in the four named tools; run at base with TMPDIR=/nonexistent: rc=2 for all four, rc=1 traceback at 2ef0a5a.",
+      "status_at_base": "fixed"
+    },
+    "R53.8": {
+      "id": "R53.8",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-57.md",
+          "lines": "13-14",
+          "excerpt": "S275 quote \"22 words\" and lines 31-32 call the S276 quote \"19 words\". Counted with `python3 -c 'print(len(q.split()))'` on the two quoted strings as they appear in that lesson, S275 \"by selecting only subsuming commit relevant mutants,"
+        }
+      ],
+      "seat": "TameshiR57",
+      "note": "corrected word counts (20 and 20) appended as a round-57 correction; round-53 lesson untouched",
+      "status_at_base": "open",
+      "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+    },
+    "R53.9": {
+      "id": "R53.9",
+      "status": "fixed",
+      "evidence": [
+        {
+          "path": ".ufo/waves/round-53/w1-results.json",
+          "lines": "188-188",
+          "excerpt": "\"name\": \"T53W1ExecR523\","
+        },
+        {
+          "path": ".ufo/waves/round-53/w2-results.json",
+          "lines": "140-140",
+          "excerpt": "\"name\": \"T53W2CritClaims\","
+        },
+        {
+          "path": ".ufo/waves/round-53/w2-results.json",
+          "lines": "164-164",
+          "excerpt": "\"name\": \"T53W2RevW1Specialists\","
+        }
+      ],
+      "seat": "T57W2RepairR539xR545",
+      "note": "R53.9 (six round-53 files untracked at push tip). Fixed by d33053f \"round-53: land wave receipts that were never committed\", which added all six named files (checked: d33053f adds the six paths; all six are tracked at master; d33053f is an ancestor of the base and not of routed_at 2ef0a5a). Evidence repaired in wave 2: the soft .ufo/waves/ paths of the round-53 seat .md files are not admitted by the amended counter (they do not end with a key), so the evidence now cites the two results JSON files the same commit added (paths end with the keys w1-results.json and w2-results.json; excerpts carry the seat keys T53W1ExecR523, T53W2CritClaims, T53W2RevW1Specialists as whole tokens). Status unchanged.",
+      "commit": "d33053f7552db4bd290c99a36979760f544c41ad",
+      "status_at_base": "fixed"
+    },
+    "R54.1": {
+      "id": "R54.1",
+      "status": "fixed",
+      "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+      "seat": "T57W1ScribeItemsR54x1to4",
+      "evidence": [
+        {
+          "path": "corpus/QUALITY.md",
+          "lines": "1602-1604",
+          "excerpt": "`CTL_POS_c1` line prints `C1_R54_PASS=false` at `rev=077d431e6996` (the freeze) with `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, while four round-54 records claimed the control passed."
+        },
+        {
+          "path": "corpus/lessons/round-54.md",
+          "lines": "105-105",
+          "excerpt": "`CTL_MISMATCH` (3 of 7), so it never fired [ER-R54-1, round-55 correction]."
+        },
+        {
+          "path": "SCORECARD.md",
+          "lines": "2636-2637",
+          "excerpt": "Corrected: `CTL_MISMATCH` - `CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3` at the revision the control cloned."
+        }
+      ],
+      "note": "Fixed by 9cf0146 (round-55 C0 record corrections): SCORECARD ER-R54-1 and the claim row, QUALITY 105 erratum falsifier, lesson round-54 lines 77 and 105 now record CTL_MISMATCH and \"never fired\". Residual outside the lane tree: fleet report .ufo/reports/round-54/tameshi.md:162 still reads \"proven live by the phase-B positive control\" (fleet fcb8d8db, unchanged to fleet HEAD).",
+      "status_at_base": "fixed"
+    },
+    "R54.5": {
+      "id": "R54.5",
+      "status": "fixed",
+      "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+      "evidence": [
+        {
+          "path": "SCORECARD.md",
+          "lines": "2661-2662",
+          "excerpt": "`w1=28 w2=25 sections=12` - 28 findings across 23 wave-1 reader reports, 25 across 12 of the 23 wave-2"
+        },
+        {
+          "path": "corpus/lessons/round-55.md",
+          "lines": "59-59",
+          "excerpt": "| R54.5 | FIXED \u2014 `w1=28 w2=25 sections=12`, re-derived from the committed reader files |"
+        }
+      ],
+      "note": "Lane record corrected in SCORECARD ER-R54-5 and lesson round-55 row. The fleet-side report .ufo/reports/round-54/tameshi.md is outside the lane and still reads 25 / 22 in 9 sections; this seat did not touch it. The \"26\" in commit subject 99c3bc8 is immutable history and is not named by the correction. Wave-2 repair seat T57W2RepairR539xR545: re-derived the counts at base (committed .ufo/waves/round-54/w1 Read JSON: 23 files, 28 findings; w2: 23 files, 25 findings in 12 non-zero sections), which agree with the correction. UNREPAIRABLE under the amended counter: 9cf0146 is the only commit that makes the correction, it does not name R54.5 in its message, and none of the files it touches (SCORECARD.md, corpus/lessons/round-54.md, corpus/lessons/round-55.md, ...) has a path or basename named in the item text, so the fixed-not-new arm refuses it; no commit after routed_at that names R54.5 exists; the keyed lines it adds sit in quoted-item receipts whose paths do not end with a key. Status and commit kept as they were.",
+      "seat": "T57W2RepairR539xR545",
+      "status_at_base": "fixed"
+    }
+  },
+  "definitions": {
+    "R52.4": {
+      "id": "R52.4",
+      "round": 52,
+      "file": "corpus/lessons/round-52-verifier-spotcheck.md",
+      "line": 86,
+      "end": 86,
+      "routed_at": "c1d49d76be4028df2a68322e7117ff3aafaccd5c",
+      "file_sha256": "debffa4f025e56c3f6e9140a7e894bed845a2f0056f9e30c9017bdeca72c12f1",
+      "text": "**R52.4 uncommitted round work.** 4 untracked files (`.ufo/evidence/round-52/integrate/build-readers.py`, `.ufo/waves/round-52/w3.ready`, `w3.ready.dispatched`, `w3/`): commit under the round-53 entry or revert; a lane repo must not carry uncommitted round work into the next round.",
+      "text_chars": 282,
+      "keys": [
+        "build-readers.py",
+        "w3.ready",
+        "untracked"
+      ]
+    },
+    "R52.5": {
+      "id": "R52.5",
+      "round": 52,
+      "file": "corpus/lessons/round-52-verifier-spotcheck.md",
+      "line": 87,
+      "end": 87,
+      "routed_at": "c1d49d76be4028df2a68322e7117ff3aafaccd5c",
+      "file_sha256": "debffa4f025e56c3f6e9140a7e894bed845a2f0056f9e30c9017bdeca72c12f1",
+      "text": "**R52.5 hard-coded `/tmp` in `tools/registry-check.py:766`** (lesson self-routed, scratch directive \u00a77.4): honour TMPDIR/a scratch argument next round.",
+      "text_chars": 151,
+      "keys": [
+        "registry-check.py",
+        "TMPDIR",
+        "tempfile"
+      ]
+    },
+    "R52.6": {
+      "id": "R52.6",
+      "round": 52,
+      "file": "corpus/lessons/round-52-verifier-spotcheck.md",
+      "line": 88,
+      "end": 88,
+      "routed_at": "c1d49d76be4028df2a68322e7117ff3aafaccd5c",
+      "file_sha256": "debffa4f025e56c3f6e9140a7e894bed845a2f0056f9e30c9017bdeca72c12f1",
+      "text": "**R52.6 report-contract repairs.** Add per-box SHONEN lines; add Landed changes and Before \u2192 after sections (or their accepted equivalents); fix the false \"not committed/pushed\" sentence in future reports; keep trend verdicts inside the allowed vocabulary.",
+      "text_chars": 256,
+      "keys": [
+        "Landed changes",
+        "Before \u2192 after",
+        "SHONEN box",
+        "report contract"
+      ]
+    },
+    "R53.1": {
+      "id": "R53.1",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 78,
+      "end": 78,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.1 \u2014 frozen C1 counter rekey arm structurally dead.** `c1/measure.py` (frozen bytes, tip-verified) lists rekey dirs via `git ls-tree --name-only REV .ufo/evidence/round-21/coldread` \u2014 returns the directory itself, so `rekey-dir-count=0` at every revision; every committed C1 mutation-test receipt is INCONCLUSIVE; the SCORECARD's `total=6` quote does not match the counter's actual `total=37` output. Fix the pathspec (trailing slash or basename match), re-run at the final revision, commit receipts, correct the SCORECARD quote.",
+      "text_chars": 534,
+      "keys": [
+        "rekey-dir-count",
+        "ls-tree",
+        "round-21/coldread/",
+        "total=37",
+        "c1/measure.py"
+      ]
+    },
+    "R53.2": {
+      "id": "R53.2",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 79,
+      "end": 79,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.2 \u2014 deciding receipts never committed.** `.ufo/evidence/round-53/after/` (cited by SCORECARD and LOG.md in past tense) does not exist; the report discloses the non-execution, the ledger does not. Commit the direct counter runs at the deciding revision (closure re-ran both: c1 58/6 RED, c2 PASS at 88afa941 and ab3a972) or run deciding-run.sh; correct the past-tense pointers.",
+      "text_chars": 382,
+      "keys": [
+        "round-53/after",
+        "88afa941",
+        "ab3a972",
+        "deciding-run.sh"
+      ]
+    },
+    "R53.3": {
+      "id": "R53.3",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 80,
+      "end": 80,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.3 \u2014 phase-B break-one controls unbacked.** `control/break-fixtures.py` is committed and well-formed, but no `CONTROLS_B:` tally receipt exists anywhere under `.ufo/`; SCORECARD's \"each printed false \u2026 (receipts control/)\" overstates. Commit the phase-B run output.",
+      "text_chars": 270,
+      "keys": [
+        "CONTROLS_B",
+        "break-fixtures.py",
+        "phase-B"
+      ]
+    },
+    "R53.4": {
+      "id": "R53.4",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 81,
+      "end": 81,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.4 \u2014 committed C2 receipt unanchored.** `w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout` names rev `9c6ef7bc80c0`, absent from the lane object DB (scratch-clone rev), and records the superseded `cr47=rc=1` state. Anchor receipts at committed revisions.",
+      "text_chars": 268,
+      "keys": [
+        "c2-counter-repaired.stdout",
+        "9c6ef7bc80c0",
+        "cr47=rc",
+        "T53W1ExecTmpVerify"
+      ]
+    },
+    "R53.5": {
+      "id": "R53.5",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 82,
+      "end": 82,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.5 \u2014 stale freeze receipts/pointers.** committed `verify-freeze.stdout` is amendments=5-era (final freeze: amendment 7 at 9e09db2); LOG.md pins \"freeze e62d9971 (amendments 1\u20135)\" and never names `cf872769`. Refresh the receipt at the final freeze and correct the pointer.",
+      "text_chars": 276,
+      "keys": [
+        "verify-freeze.stdout",
+        "cf872769",
+        "9e09db2",
+        "amendment 7",
+        "e62d9971"
+      ]
+    },
+    "R53.6": {
+      "id": "R53.6",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 83,
+      "end": 83,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.6 \u2014 CR47 exit-class mapping incomplete in 4 of 7 tools.** bash-witness-study, env-diff, evidence-disposition, pin-disposition raise an uncaught RuntimeError (rc=1) on set-but-unusable TMPDIR instead of the declared could-not-evaluate exit 2 (registry-check, context-capture, repeat-control map correctly; no silent /tmp fallback anywhere). The frozen C2 counter binds registry-check only, so C2 verifies; make the mapping uniform or narrow the claim's parenthetical. Nit: `tools/context-capture.py:27` docstring still mentions the old gettempdir() path.",
+      "text_chars": 559,
+      "keys": [
+        "bash-witness-study",
+        "env-diff",
+        "evidence-disposition",
+        "pin-disposition",
+        "TMPDIR"
+      ]
+    },
+    "R53.8": {
+      "id": "R53.8",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 85,
+      "end": 85,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.8 \u2014 S275 locator.** anchor cell \"camera-ready p. 4\" is physical page 3 (the \"pdftotext lines 289\u2013294\" anchor is exact); Gate word-count parentheticals are off by 1\u20132 words. Correct the page cell in SOURCES.md and the knowledge entry.",
+      "text_chars": 239,
+      "keys": [
+        "S275",
+        "camera-ready",
+        "pdftotext"
+      ]
+    },
+    "R53.9": {
+      "id": "R53.9",
+      "round": 53,
+      "file": "corpus/lessons/round-53-verifier-spotcheck.md",
+      "line": 86,
+      "end": 86,
+      "routed_at": "2ef0a5ad429de7f204b0e8138b2f36dcbb32a626",
+      "file_sha256": "97b3ed18391c3435fe4aab45bb7dbe2a997a5d3c0370c9bdcbfd3e7fc00c0b13",
+      "text": "**R53.9 \u2014 uncommitted round work (found at closure).** six lane-authored round-53 files are untracked at the push tip: `.ufo/waves/round-53/w1-results.json`, `.ufo/waves/round-53/w2-results.json`, `.ufo/waves/round-53/w1/T53W1ExecR523.md`, `.ufo/waves/round-53/w2/T53W2CritClaims.md`, `.ufo/waves/round-53/w2/T53W2ExecR523B.md`, `.ufo/waves/round-53/w2/T53W2RevW1Specialists.md` (the late-straggler seats the report names as \"landed late\"; timestamps 11:26\u201311:30 -03 postdate the close commit). The report asserts wave results and seat reports \"are committed under .ufo/waves/round-53/\" \u2014 these six a",
+      "text_chars": 726,
+      "keys": [
+        "w1-results.json",
+        "w2-results.json",
+        "T53W1ExecR523",
+        "T53W2CritClaims",
+        "T53W2RevW1Specialists"
+      ]
+    },
+    "R54.1": {
+      "id": "R54.1",
+      "round": 54,
+      "file": "corpus/lessons/round-54-verifier-spotcheck.md",
+      "line": 107,
+      "end": 108,
+      "routed_at": "650987a0d6fc285b37f0f9e63a3aae864af9cd5a",
+      "file_sha256": "642fedd514a6c20372cd299940adb2e0041f651288c6f4ae6d8530f6b612917d",
+      "text": "**R54.1 \u2014 false positive-control claim (gravest).** `.ufo/evidence/round-54/control/controls-b.stdout` (committed, unchanged across all 5 revisions that touch it) prints `CTL CTL_POS_c1 \u2026 c0=99c3bc88d704 credited=60 lost=4 rekeyed=3/7 readers=6/7 \u2026 C1_R54_PASS=false`, `CTL_MISMATCH CTL_POS_c1 expected=true actual=false`, `CONTROLS_B: 2/3 as pre-registered`, exit 1. Yet the record asserts the opposite in four places: report `:162` (\"proven live by the phase-B positive control\"), `SCORECARD.md:2583` (\"`CTL_POS_c1 true`\"), `corpus/QUALITY.md:1590` (\"the round-54 counter's arm prints `rekeyed=7/7`",
+      "text_chars": 1487,
+      "keys": [
+        "CTL_POS_c1",
+        "controls-b.stdout",
+        "CONTROLS_B",
+        "rekeyed=7/7",
+        "7fa9a5e"
+      ]
+    },
+    "R54.5": {
+      "id": "R54.5",
+      "round": 54,
+      "file": "corpus/lessons/round-54-verifier-spotcheck.md",
+      "line": 116,
+      "end": 116,
+      "routed_at": "650987a0d6fc285b37f0f9e63a3aae864af9cd5a",
+      "file_sha256": "642fedd514a6c20372cd299940adb2e0041f651288c6f4ae6d8530f6b612917d",
+      "text": "**R54.5 \u2014 finding counts do not match the committed artifacts.** Report `:62` says the 23 wave-1 readers returned **25** findings; the committed `w1/*Read*.json` carry **28** distinct findings. Report `:79,100` says wave 2 returned **22 findings in 9 of 23 sections**; the committed w2 readers carry **25 findings in 12 sections**, and `integrate/resolutions.json` is **12 section-entries / 25 findings**, with the ledger's `minor_gaps` summing to **25 over 12 entries**. Re-derive both counts with a command.",
+      "text_chars": 509,
+      "keys": [
+        "resolutions.json",
+        "minor_gaps",
+        "99c3bc8",
+        "25 findings in 12 sections"
+      ],
+      "extended": [
+        [
+          241,
+          245
+        ]
+      ],
+      "extended_text": "**R54.5 extended.** Three values now name the wave-1 finding count: report \u201c25\u201d, the fix-pass commit subject `99c3bc8` \u201c26 wave-1 reader findings adjudicated and fixed\u201d, and the committed `w1/*Read*.json` total **28**. Wave 2: committed readers **25 findings in 12 sections**, which is what the ledger\u2019s `minor_gaps` sum (25 over 12 entries) records \u2014 the report\u2019s \u201c22 in 9\u201d and \u201cthe nine sections\u201d are both undercounts."
+    }
+  }
+}

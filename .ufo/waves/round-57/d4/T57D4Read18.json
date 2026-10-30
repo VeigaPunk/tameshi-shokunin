@@ -1,0 +1,49 @@
+{
+  "seat": "T57D4Read18",
+  "scope": "Documentary audit of T57W3Read18.md/.json and retained receipts against committed C0b",
+  "candidate": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "axes": ["command/result fidelity", "candidate/section identity", "retained-evidence completeness", "non-execution"],
+  "recommendation": "bounded_documentary_agreement_with_provenance_gap",
+  "integration_status": "UNVERIFIED",
+  "admission": false,
+  "findings": [
+    {
+      "id": "STANDALONE_RECEIPT_REVISION_BINDING_MISSING",
+      "severity": "low",
+      "paths": [".ufo/waves/round-57/w3/T57W3Read18.json:4,31-38", ".ufo/waves/round-57/w3/T57W3Read18-receipts/selftest-01.json through selftest-30.json"],
+      "claim": "Standalone selftest observations are attributed to C0b, but their receipts lack observed revision or executable digests and retained checkout/HEAD evidence.",
+      "evidence_command": "Python Eval: print(sorted(set().union(*(set(r) for n,r in receipts.items() if n.startswith('selftest-')))))",
+      "output": ["command", "cwd", "exit", "seconds", "stderr", "stdout"],
+      "qualification": "Missing independent provenance, not proof of wrong-revision execution or fabrication. Registry receipts separately embed C0b rev_resolved.",
+      "recommendation": "Do not treat the standalone sweep as independently candidate-bound; retain identity observations for future executions. No rerun performed."
+    }
+  ],
+  "documentary_checks": {
+    "receipt_files_read": 57,
+    "command_objects": 56,
+    "exact_matching_receipts": 56,
+    "fields_compared": ["command", "cwd", "exit", "stdout", "stderr", "seconds"],
+    "distinct_selftests_with_retained_success_after_retry": 30,
+    "section_start": 2175,
+    "section_end": 2214,
+    "canonical_section_sha256": "cc23587b353fb780d4310aebc7277e4030729ae767850e2e826d2ff151bdea52",
+    "hash_agrees": true,
+    "canonicalization": "Trailing whitespace-only lines stripped; LF joined without trailing newline, following round-18 measure source description; no counter execution.",
+    "registry_observation": {"exit": 1, "held": 51, "total": 53, "superseded": 7, "rev_resolved": "adf87899c70d616140a81185a8f9acbbdfb30392", "active_failed_rows": ["sources-census", "verify-round15"], "both_mte_rows_held": true},
+    "witness_observation": {"exit": 1, "committed_runner_sha256_matches_observed": true, "runner_sha256": "977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda"},
+    "pointer_observations": {"recorded_exists": 90, "committed_file_or_directory": 89, "runtime_location_exception": "tools/__pycache__"}
+  },
+  "audit_evidence": [
+    {"command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show adf87899c70d616140a81185a8f9acbbdfb30392:SKILL.md", "result": "Read committed section; documented exit 1 maps agree with reported reds."},
+    {"command": "Python Eval: compare every report command against retained JSON receipts on six named fields", "output": "COMMAND_RECEIPT_MATCH 56 / 56"},
+    {"command": "Python Eval: hashlib.sha256 of canonicalized lines 2175-2214 from git-show bytes", "output": "CANONICAL_SECTION_SHA256 cc23587b353fb780d4310aebc7277e4030729ae767850e2e826d2ff151bdea52"},
+    {"command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show adf87899c70d616140a81185a8f9acbbdfb30392:tools/mutate-and-run.sh; hash returned bytes in audit process", "output": "977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda"},
+    {"command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree -r --name-only adf87899c70d616140a81185a8f9acbbdfb30392; compare retained pointer paths", "output": "POINTERS 90 MISSING ['tools/__pycache__']"}
+  ],
+  "residual_risk": ["Unsigned observations are not execution authentication.", "Sibling read-only setup and endpoint immutability lack independent setup receipts.", "No round-wide 64/64, saturation, runtime/rerouting or resume-continuity conclusion follows."],
+  "verification_limits": ["Documentary analysis only; no candidate execution, tests, builds or counter imports.", "LSP unavailable: xd://lsp returned No such tool; source/byte inspection is fallback, not semantic proof."],
+  "tools_installed_or_updated": [],
+  "production_or_frozen_files_modified": false,
+  "report": ".ufo/waves/round-57/d4/T57D4Read18.md",
+  "self_evaluation": {"accuracy": 4, "completeness": 4, "clarity": 4, "actionability": 4, "conciseness": 4, "overall": 4.0, "evidence": "Exact receipt/hash comparisons support bounded agreement; unavailable standalone identity observations limit certainty; aggregate details summarized without duplicating receipts.", "improvement": "Retain revision observations with future execution receipts."}
+}

@@ -1,0 +1,68 @@
+T57W3RowR548xR549 — receipts 03: sweeps and findings (commands + outputs)
+
+--- S1: is any commit's message naming R54.8 / R54.9 (A4 names_id sweep)?
+$ git -C $C log --all --format='%H|%s' | grep -E 'R54\.8'
+e2979f277138da503af27b263b783f626f109be4|round-55: freeze amendments 1-7 — counters re-frozen on the amended bytes (...) R54.8 seat token). Base receipts re-measured with these bytes: C1 total=10 (premise 9/10, stale 4), C2 total=21 (grammar 6/9)
+$ git -C $C log --all --format='%H|%s' | grep -E 'R54\.9'
+(no output)
+
+--- S2: is the R54.9 HIGH objection adjudicated anywhere in the lane record set? (panel basis check)
+$ grep -rn 'RevRound54Wording\|T55W1Rev05' corpus/ SCORECARD.md LOG.md .ufo/evidence/round-55/integrate/
+(no output -> unadjudicated; matches the panel's basis)
+$ grep -n 'R54\.9\|staged' corpus/lessons/round-56.md
+(no output)
+$ grep -n 'R54\.9' corpus/lessons/round-57.md
+(no output)
+
+--- S3: the panel's R54.8 caveat, verified by command
+$ git -C $C show 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb:corpus/lessons/round-54.md | grep -ci 'config\.yml'
+0
+$ grep -ci 'config\.yml' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-54.md
+0
+(item part (b) literal demand unmet in the named lesson at base and master — the panel disclosed exactly this
+ and resolved it via the append-only errata convention; see receipts 00 for the convention citations)
+$ git -C $C show master:.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md | grep -n 'SUPERSEDED'
+**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps          <- line 332 block present at master
+...
+$ git -C $C show master:corpus/lessons/round-55.md | sed -n '62,63p'
+| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; ...
+| R54.9 | FIXED — `reviewers=5 attack=21/76 seats=76` and `staged=81` | `.ufo/waves/round-54/w1-registry.json`; the package count |
+
+--- S4: the frozen item text for R54.8 (extractor truncation finding)
+$ python3 - (defects.json)
+len(text)=600  text_chars=701  tail='...the report says the incident is "recorded here **and in the lesson**", but `corpus/l'
+extended_text: absent for R54.8 (only R54.5 carries one)
+=> the A4 path tie can never see 'corpus/lessons/round-54.md' / 'round-55.md' / 'SCORECARD.md' on this item.
+(counter reads d['text'] + d['extended_text'] only; the frozen set is sha-pinned — extractor amendment is a future-attempt item)
+
+--- S5: R54.9 fixed-unrepairability tie sweep
+$ git -C $C log --oneline -- .ufo/waves/round-54/w1-registry.json   (all refs)
+19c7558... (last touch, pre-routing 650987a)
+=> the only item-text path is untouched after routing -> the introduction check can never pass for a fixed row
+   (counter: excerpt must be absent at routed_at AND at the commit's first parent, path must be touched by the commit)
+
+--- S6: ledger state used
+$ python3 - counts
+corpus/routed-defects.json (tracked, clean vs master): 49 rows
+.ufo/waves/round-57/w3/attack-ledger.json (working ledger): 100 rows (49 base + 51 routed; R54.8/R54.9 rows
+ pre-existing from wave 2 with statuses open/open and fixed/fixed respectively — replaced by this seat's rows.json)
+
+--- S7: SCORECARD evidence lines at master (working tree == master for SCORECARD.md, verified via git diff)
+$ git -C $C show master:SCORECARD.md | sed -n '2692,2696p'
+**ER-R54-9 - wave-table numbers and the staged-package count.**
+Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged entries".
+Corrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) from
+`.ufo/waves/round-54/w1-registry.json`, and `staged=81` staged `.md` files under
+`merge/tameshi/knowledge` (read-only count of the source package).
+$ git -C $C show master:corpus/lessons/round-54.md | sed -n '51,52p'
+- **The other 80 staged `merge/tameshi` entries** — REFUSED for the same capacity
+  reason; they stay reserved by document.
+
+--- NOT EXECUTED (L1 handoff order): the specified counter dry run
+$ python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/patch-ledger.py \
+    /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/attack-ledger.json \
+    /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RowR548xR549/rows.json $S/ledger.json
+$ LEDGER=$S/ledger.json bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/dry-c1.sh 80
+(expected: no EXPLAIN line naming R54.8 or R54.9; expected noise: one 'panel-pin' line while PANEL_SHA256 is
+ the pending marker, plus other rows' pre-existing faults — e.g. the wave-2 baseline's fixed_bad/key_miss terms
+ for ids outside this seat; A5 for the open R54.9 is satisfied by the harness's injected Planned paragraph)

@@ -1,0 +1,32 @@
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 2c51affd37e15cd7cd258d76ba0f5f73ff235924:tools/receipt-revision-gate.py
+[displayed lines 4-7]
+2: """receipt-revision-gate — bind a receipt to the revision it certifies.
+3: 
+4: The round-54/55 defect this gate exists for (ER-R54-1, R55.5): a positive control
+5: was scored at the FREEZE commit, which predated the work it certified, and every
+6: gate in the lane accepted it because none compared the `rev=` a receipt names with
+7: the revision under test. A verdict, or a positive control, is evidence only for the
+8: content it was measured against.
+9: 
+10: Usage:
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 2c51affd37e15cd7cd258d76ba0f5f73ff235924:tools/receipt-revision-gate.py
+[displayed lines 27-28]
+25: Codes (each a named refusal, exit 3):
+26:   RECEIPT_MISSING · RECEIPT_EMPTY · RECEIPT_NOT_BLOB · RECEIPT_REV_ABSENT
+27:   RECEIPT_REV_AMBIGUOUS · RECEIPT_REV_UNRESOLVABLE · RECEIPT_REV_MISMATCH
+28:   RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR
+29:   RECEIPT_DIGEST_MISMATCH · RECEIPT_REQUIRED_LINE_MISSING
+30: 
+31: Verdict line: `GATE: receipts=N ok=N refused=N codes=<comma|none> verdict=PASS|REFUSED`
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 2c51affd37e15cd7cd258d76ba0f5f73ff235924:.ufo/evidence/round-56/deciding-run.sh
+[displayed lines 120-122]
+118:   git show "$REV:$E/control/$f" > "$SCR/rcpt/$f" || exit 2
+119: done
+120: python3 "$SCR/gate/gate.py" --lane "$LANE" --certified "$REV" \
+121:   --paths "$SCR/rcpt/frozen-surface.paths" \
+122:   --receipt "$SCR/rcpt/controls-a.stdout:control" \
+123:   --receipt "$SCR/rcpt/controls-b.stdout:positive" \
+124:   > "$OUT/receipt-gate.stdout" 2>&1
+125: echo $? > "$OUT/receipt-gate.exit"

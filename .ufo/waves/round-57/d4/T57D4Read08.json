@@ -1,0 +1,67 @@
+{
+  "seat": "T57D4Read08",
+  "scope": "Documentary-only audit of T57W3Read08 JSON, Markdown and retained receipts against committed C0b",
+  "candidate": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "axes": [
+    "revision and section identity",
+    "receipt consistency",
+    "evidence completeness",
+    "finite-sample honesty",
+    "non-mutation"
+  ],
+  "verdict": "bounded-agreement-with-evidence-gap",
+  "admission": false,
+  "findings": [
+    {
+      "severity": "medium",
+      "id": "D4-08-1",
+      "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3Read08.md:29",
+      "claim": "All execution used a shared scratch clone detached at C0b.",
+      "finding": "Retained records do not independently establish the clone revision. The 12 command records contain no clone/checkout/rev-parse or clean-tree observation. All six decoded command.txt files record tool, tool-sha256, interpreter, python, cwd, runs and argv, but no revision. Candidate metadata and all four input hashes agree with C0b; this is documentary consistency, not proof that every command ran in that revision state.",
+      "recommendation": "Keep revision provenance unverified; retain an existing checkout/HEAD and relevant-input identity receipt if available. Do not rerun the candidate under this recovery assignment."
+    },
+    {
+      "severity": "minor",
+      "id": "D4-08-2",
+      "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/SKILL.md:1523 at adf87899c70d616140a81185a8f9acbbdfb30392",
+      "finding": "The original minor source-pointer finding is confirmed: SOURCES.md:503 is the next-unused-id entry; S265 is at line 140 and explicitly supersedes S026. This is an existing documented defect, not a new runtime discrepancy.",
+      "recommendation": "Preserve the original gap-minor qualification; route correction outside this documentary seat."
+    }
+  ],
+  "agreements": {
+    "section_start": 1521,
+    "section_end": 1540,
+    "section_sha256": "3a78cbfcef65ada68c09342e5cbc71dc067d2b5258c3afbff6ea94e37a82b831",
+    "input_hashes_matching_C0b": 4,
+    "input_hashes_total": 4,
+    "command_records_identical": true,
+    "command_records": 12,
+    "retained_expected_exits_match": true,
+    "raw_observation_groups": 6,
+    "decoded_raw_argv_cwd_tool_hashes_match": true,
+    "selftest_reported_case_lines": 29,
+    "markdown_commands_and_streams_match_receipts": true
+  },
+  "evidence": {
+    "analysis_method": "Python standard-library documentary analysis only; git show for committed source; no imported or executed candidate code",
+    "reproduction_command": "python3 - <<'PY'\nimport base64, hashlib, json, subprocess\nfrom pathlib import Path\nr=Path('/home/vgpnk/Projects/shokunin/tameshi-shokunin')\nb=r/'.ufo/waves/round-57/w3'\nj=json.loads((b/'T57W3Read08.json').read_text())\nc=json.loads((b/'T57W3Read08-receipts/commands.json').read_text())\na=json.loads((b/'T57W3Read08-receipts/raw-observations-base64.json').read_text())\ndef blob(p): return subprocess.check_output(['git','-C',str(r),'show',j['cand']+':'+p])\ns=blob('SKILL.md').decode().split('\\n')[1520:1540]\nwhile s and not s[-1].strip(): s.pop()\nprint('candidate:',j['cand'])\nprint('section:',1521,1540,hashlib.sha256('\\n'.join(s).encode()).hexdigest())\nprint('command copies equal:',j['commands']==c,'records:',len(c))\nprint('recorded expected exits match:',all(x['exit']==x['expected_exit'] for x in c if 'expected_exit' in x))\nprint('input hashes match:',sum(hashlib.sha256(blob(p)).hexdigest()==h for p,h in j['inputs'].items()),'of',len(j['inputs']))\nls=blob('corpus/SOURCES.md').decode().splitlines()\nprint('SOURCES:503:',ls[502])\nprint('S265 lines:',[i for i,l in enumerate(ls,1) if l.startswith('| S265 |')])\nprint('retained command names:',','.join(x['name'] for x in c))\nprint('raw groups:',','.join(a))\nfor n,fs in a.items():\n t=base64.b64decode(fs['command.txt'],validate=True).decode()\n print(n,'command metadata keys:',','.join(l.split('=',1)[0] for l in t.splitlines()))\nPY",
+    "observed_output_summary": [
+      "candidate: adf87899c70d616140a81185a8f9acbbdfb30392",
+      "section: 1521 1540 3a78cbfcef65ada68c09342e5cbc71dc067d2b5258c3afbff6ea94e37a82b831",
+      "command copies equal: True records: 12",
+      "recorded expected exits match: True",
+      "input hashes match: 4 of 4",
+      "SOURCES:503: - Next unused id: S161.",
+      "S265 lines: [140]",
+      "All six raw command metadata key sets: tool,tool-sha256,interpreter,python,cwd,runs,argv"
+    ]
+  },
+  "verification_gaps": [
+    "No candidate gate, test, build, frozen counter or runtime replay executed. Historical outputs are retained claims, not freshly authenticated executions.",
+    "Only six direct-command raw observation groups retained; selftest and frozen snapshots have textual command outputs, not per-case raw observations in this bundle.",
+    "No independent cleanup or lane non-mutation receipt retained in this bundle.",
+    "LSP device unavailable: read xd://lsp returned No such tool; documentary analysis is not semantic caller/definition proof.",
+    "No whole-monitor 64/64 or candidate-integration verification; resume/rerouting/runtime uniqueness outside assigned section."
+  ],
+  "tools_installed": []
+}

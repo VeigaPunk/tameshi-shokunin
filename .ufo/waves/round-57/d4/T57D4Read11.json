@@ -1,0 +1,76 @@
+{
+  "seat": "T57D4Read11",
+  "scope": "Documentary comparison of T57W3Read11 report, numbered receipts, retained pointer script, and committed C0b bytes",
+  "candidate": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "recommendation": "bounded-documentary-agreement-with-provenance-gap",
+  "integration_status": "UNVERIFIED",
+  "admission_granted": false,
+  "axes": ["receipt consistency", "committed-byte identity", "claim boundaries", "provenance completeness"],
+  "findings": [
+    {
+      "severity": "low",
+      "title": "Execution revision and TMPDIR assertions lack retained contemporaneous binding",
+      "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3Read11.md",
+      "line": 10,
+      "evidence": "All seven receipts contain only command,cwd,exit,stdout,stderr. No retained clone HEAD/status or TMPDIR. Pointer sweep imports the sectionizer from live lane at lines 5-6; present sectionizer bytes match C0b but historical execution identity is not established.",
+      "impact": "The intended candidate and retained outputs agree, but the broad detached-C0b/environment assertion is not independently established by these artifacts.",
+      "recommendation": "Qualify execution provenance or cite already-existing contemporaneous revision/environment observations; do not retrofill receipts."
+    }
+  ],
+  "documentary_checks": [
+    {
+      "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show adf87899c70d616140a81185a8f9acbbdfb30392:SKILL.md",
+      "output": "Heading ### Round-13 gate/probe registry at lines 1590-1605; next heading ## Effective expectation reconciliation — round 14 at 1606",
+      "kind": "source-read"
+    },
+    {
+      "command": "Python Eval: normalize committed SKILL lines 1590-1605 using source-read sectionizer rules (trim trailing whitespace-only lines, join with newline, no terminal newline), then hashlib.sha256",
+      "output": "SECTION_HASH_MATCH True 896722c4941841f228810678befe82e9910cc66eb67c3de45d7561ce4668566d",
+      "kind": "data-comparison"
+    },
+    {
+      "command": "Python Eval: load main report and numbered receipts; compare command,cwd,exit,stdout,stderr for each command",
+      "output": "7/7 receipts: all five fields equal; exits [0,0,0,0,0,2,2]",
+      "kind": "data-comparison"
+    },
+    {
+      "command": "Python Eval: inspect numbered receipt keys and intersect with cand,rev,revision,head,tool_sha256,environment,TMPDIR",
+      "output": "Every receipt keys=[command,cwd,exit,stdout,stderr]; intersections=[[],[],[],[],[],[],[]]",
+      "kind": "data-comparison"
+    },
+    {
+      "command": "Python Eval: parse receipt 1 stdout and count SELFTEST_CASE lines in receipts 2 and 4",
+      "output": "counts={legs:6,unchanged:1,changed:5,unavailable:0}; selftest case lines 19 and 39; terminal lines SELFTEST: PASS (19/19) and SELFTEST: PASS 39/39",
+      "kind": "retained-output-inspection"
+    },
+    {
+      "command": "Python Eval: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show REV:PATH at assigned base and C0b for four frozen round-12 inputs; compare bytes",
+      "output": "BASE_C0B_EQUAL True for summary.json, declaration.json, declared.tsv, rerun-20261020T035435Z/summary.json; hashes match retained command 5",
+      "kind": "committed-byte-comparison"
+    },
+    {
+      "command": "Python Eval: compare current live frozen sectionizer bytes with git-show C0b bytes; source-read committed SOURCES S047,S048,S266 and producer metadata",
+      "output": "LIVE_SECTIONIZER_EQUALS_C0B True; source rows match retained command 5; historical producer hash matches companion; repaired producer hash differs exactly as recorded",
+      "kind": "source-and-data-comparison"
+    }
+  ],
+  "section": {
+    "heading": "### Round-13 gate/probe registry",
+    "start": 1590,
+    "end": 1605,
+    "normalized_sha256": "896722c4941841f228810678befe82e9910cc66eb67c3de45d7561ce4668566d",
+    "matches_report": true
+  },
+  "residual_risks": [
+    "Unsigned retained observations do not authenticate historical execution.",
+    "Live fleet disposition observations are time-dependent, not a C0b fleet snapshot or result reuse proof.",
+    "No newly exercised selftest, NO-HARM monitor, continuity, rerouting, saturation or admission result is claimed."
+  ],
+  "verification_gaps": [
+    "LSP unavailable: read xd://lsp returned No such tool; no semantic-reference proof.",
+    "Recovery directive forbids candidate execution; only documentary reads and data comparisons performed."
+  ],
+  "tools_installed_or_upgraded": [],
+  "production_files_edited": [],
+  "report": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/d4/T57D4Read11.md"
+}

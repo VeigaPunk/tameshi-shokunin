@@ -1,0 +1,433 @@
+{
+  "CONTROL.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: PASS (16 cases)\n",
+  "CONTROL.meta.json": {
+    "id": "CONTROL",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/pristine.sh",
+      "--selftest"
+    ],
+    "exit": 0,
+    "summary": [
+      "SELFTEST: PASS (16 cases)"
+    ],
+    "verdict": "survived",
+    "duration_s": 4.093,
+    "sha256": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f",
+    "fails": [],
+    "enumerated": true
+  },
+  "B1.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nbad-case 05 undeclared-file                    want exit=1 token=SURFACE UNLISTED got exit=0\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: CLEAN (assets=3 runtime=7 scanned=3 ok=10 absent=0 skipped=0)\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (1/16 cases)\n",
+  "B1.meta.json": {
+    "id": "B1",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B1.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (1/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 2.115,
+    "sha256": "1d0e511055a74b11307d827913d264d87f43b93e21fdb679556439d96a4ca3cc",
+    "fails": [
+      "bad-case 05 undeclared-file                    want exit=1 token=SURFACE UNLISTED got exit=0"
+    ],
+    "enumerated": true
+  },
+  "B2.selftest.txt": "SELFTEST surfaces+shapes\nbad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE SHAPE    $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 < floor 1 (floor anchors the recorded census; re-anchor after a deliberate reset)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=0 shape=1 unverified=0 ok=10 absent=0 skipped=0)\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nbad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE ABSENT   $STATE/xdg-data/opencode/log/opencode.log (file)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE SHAPE    $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 < floor 1 (floor anchors the recorded census; re-anchor after a deliberate reset)\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode (runtime)\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size_min (runtime)\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=0 shape=1 unverified=0 ok=9 absent=3 skipped=0)\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (2/16 cases)\n",
+  "B2.meta.json": {
+    "id": "B2",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B2.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (2/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 4.845,
+    "sha256": "443ce1fdd35e1a0de2c42ef809d30beef68252ba80972f67c681cc8760a908b3",
+    "fails": [
+      "bad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1",
+      "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1"
+    ],
+    "enumerated": true
+  },
+  "B3.selftest.txt": "SELFTEST surfaces+shapes\nbad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1\n    | SURFACE CROSSCHECK $HOME/.config/the-janitor/op.env (census mode 600 vs drift-baseline 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=1 shape=0 unverified=0 ok=9 absent=0 skipped=0)\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nbad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1\n    | SURFACE CROSSCHECK $HOME/.config/the-janitor/op.env (census mode 600 vs drift-baseline 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE ABSENT   $STATE/xdg-data/opencode/log/opencode.log (file)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode (runtime)\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size_min (runtime)\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=1 shape=0 unverified=0 ok=8 absent=3 skipped=0)\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nbad-case 06 crosscheck-disagree                want exit=1 token=SURFACE CROSSCHECK got exit=0\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: CLEAN (assets=3 runtime=7 scanned=3 ok=10 absent=0 skipped=0)\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (3/16 cases)\n",
+  "B3.meta.json": {
+    "id": "B3",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B3.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (3/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 2.138,
+    "sha256": "5efd188121f8e7b9fb100caa27b973cb4603e1b6157fbf13c4b100a86603ba3d",
+    "fails": [
+      "bad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1",
+      "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1",
+      "bad-case 06 crosscheck-disagree                want exit=1 token=SURFACE CROSSCHECK got exit=0"
+    ],
+    "enumerated": true
+  },
+  "B4.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nbad-case 07 symlink-swap                       want exit=1 token=SURFACE LINK got exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE DIVERGED $HOME/.local/bin/the-janitor (declared exec, live symlink)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=1 gone=0 link=0 unlisted=0 crosscheck=0 shape=0 unverified=0 ok=9 absent=0 skipped=0)\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (1/16 cases)\n",
+  "B4.meta.json": {
+    "id": "B4",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B4.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (1/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 1.724,
+    "sha256": "c5f3b2b9d479fbf37aa28216d58f5f97220405cf0a140eef42409e0e97201a72",
+    "fails": [
+      "bad-case 07 symlink-swap                       want exit=1 token=SURFACE LINK got exit=1"
+    ],
+    "enumerated": true
+  },
+  "B5.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: PASS (16 cases)\n",
+  "B5.meta.json": {
+    "id": "B5",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B5.sh",
+      "--selftest"
+    ],
+    "exit": 0,
+    "summary": [
+      "SELFTEST: PASS (16 cases)"
+    ],
+    "verdict": "survived",
+    "duration_s": 4.973,
+    "sha256": "1e4ea1a6552f65895dd769d733a6c32e590503c0850a74cd3196cd05e2d0b95c",
+    "fails": [],
+    "enumerated": true
+  },
+  "B6.selftest.txt": "SELFTEST surfaces+shapes\nbad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE SHAPE    $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic mismatch (not a 15-byte+ NUL header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=0 shape=1 unverified=0 ok=10 absent=0 skipped=0)\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nbad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE ABSENT   $STATE/xdg-data/opencode/log/opencode.log (file)\n    | SHAPE SHAPE    $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic mismatch (not a 15-byte+ NUL header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode (runtime)\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size_min (runtime)\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=0 shape=1 unverified=0 ok=9 absent=3 skipped=0)\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (2/16 cases)\n",
+  "B6.meta.json": {
+    "id": "B6",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B6.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (2/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 6.778,
+    "sha256": "627a037aaa27104f286acc9220d176dd45df5fe9e1371fc418962d98af793c54",
+    "fails": [
+      "bad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1",
+      "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1"
+    ],
+    "enumerated": true
+  },
+  "B7.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nbad-case 10 sqlite-unavailable                 exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE UNVERIFIED $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables_min (sqlite3 unavailable: /fast/scratch/hyaku/tameshi-r57/T57W3Read02/tmp.JuamUz8bSC/no-such-sqlite3)\n    | SHAPE UNVERIFIED $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables_required (sqlite3 unavailable: /fast/scratch/hyaku/tameshi-r57/T57W3Read02/tmp.JuamUz8bSC/no-such-sqlite3)\n    | SHAPE UNVERIFIED $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows_min (sqlite3 unavailable: /fast/scratch/hyaku/tameshi-r57/T57W3Read02/tmp.JuamUz8bSC/no-such-sqlite3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=0 link=0 unlisted=0 crosscheck=0 shape=0 unverified=6 ok=10 absent=0 skipped=0)\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (1/16 cases)\n",
+  "B7.meta.json": {
+    "id": "B7",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B7.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (1/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 1.541,
+    "sha256": "0c920258f41e6367f0a00b8b51d319372875b1d27b68b8e47a5702a286a31aaa",
+    "fails": [
+      "bad-case 10 sqlite-unavailable                 exit=1"
+    ],
+    "enumerated": true
+  },
+  "B8.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nbad-case 13 malformed-row                      want exit=2 token=bad kind got exit=1\n    | surface-census: row 1: bad kind 'blob'\nbad-case 14 fused-shape-row                    exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | surface-census: note \u2014 pass 1 saw a >5-field row at line 4\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | surface-census: shape row 4: too many fields (fused rows?)\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (2/16 cases)\n",
+  "B8.meta.json": {
+    "id": "B8",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B8.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (2/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 1.296,
+    "sha256": "cce2b52381d0faed40ed7adc8f63f8d9a08d631ed7812357e8aec5ca757b47fa",
+    "fails": [
+      "bad-case 13 malformed-row                      want exit=2 token=bad kind got exit=1",
+      "bad-case 14 fused-shape-row                    exit=1"
+    ],
+    "enumerated": true
+  },
+  "B9.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nbad-case 03 asset-gone                         want exit=1 token=SURFACE GONE got exit=0\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE ABSENT   $HOME/.local/bin/the-janitor (exec)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/log/opencode.log (file 600)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size 11 >= 1\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: CLEAN (assets=3 runtime=7 scanned=3 ok=9 absent=1 skipped=0)\nbad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1\n    | SURFACE OK       $HOME/.config/the-janitor/op.env (file 600)\n    | SURFACE OK       $HOME/.local/bin/the-janitor (exec 755)\n    | SURFACE OK       $HOME/.local/state/tac/daybreak-blue-access.json (file 600)\n    | SURFACE OK       $STATE/client.lock (file 600)\n    | SURFACE OK       $STATE/tac-daybreak-blue.json (file 600)\n    | SURFACE OK       $STATE/xdg-data (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode (dir 700)\n    | SURFACE OK       $STATE/xdg-data/opencode/opencode.db (file 600)\n    | SURFACE OK       $STATE/xdg-data/opencode/log (dir 700)\n    | SURFACE GONE     $STATE/xdg-data/opencode/log/opencode.log (file expected)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db magic (16-byte header)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db mode 600\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db tables 3 >= 3\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db required tables present (3)\n    | SHAPE OK       $HOME/.local/state/the-janitor/xdg-data/opencode/opencode.db rows part 1 >= 1\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log mode (runtime)\n    | SHAPE ABSENT   $HOME/.local/state/the-janitor/xdg-data/opencode/log/opencode.log size_min (runtime)\n    | SHAPE OK       $HOME/.local/state/the-janitor/tac-daybreak-blue.json keys present (2)\n    | SURFACE_CENSUS: DRIFT (diverged=0 gone=1 link=0 unlisted=0 crosscheck=0 shape=0 unverified=0 ok=9 absent=2 skipped=0)\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: FAIL (2/16 cases)\n",
+  "B9.meta.json": {
+    "id": "B9",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B9.sh",
+      "--selftest"
+    ],
+    "exit": 1,
+    "summary": [
+      "SELFTEST: FAIL (2/16 cases)"
+    ],
+    "verdict": "killed",
+    "duration_s": 1.377,
+    "sha256": "e1ee079ac2f3db7ed5f57f2b3d33c732f7913880e18dd91d5128f086d63a10ad",
+    "fails": [
+      "bad-case 03 asset-gone                         want exit=1 token=SURFACE GONE got exit=0",
+      "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1"
+    ],
+    "enumerated": true
+  },
+  "B10.selftest.txt": "SELFTEST surfaces+shapes\nok-case  01 clean                              exit=0 SURFACE OK\nok-case  02 mode-drift                         exit=1 SURFACE DIVERGED\nok-case  03 asset-gone                         exit=1 SURFACE GONE\nok-case  04 runtime-absent                     exit=0 SHAPE ABSENT\nok-case  05 undeclared-file                    exit=1 SURFACE UNLISTED\nok-case  06 crosscheck-disagree                exit=1 SURFACE CROSSCHECK\nok-case  07 symlink-swap                       exit=1 SURFACE LINK\nok-case  08 sqlite-magic                       exit=1 SHAPE SHAPE\nok-case  09 sqlite-magic-prefix-only           exit=1 SHAPE SHAPE\nok-case  10 sqlite-unavailable                 exit=1 UNVERIFIED, unverified=3\nok-case  11 required-table-gone                exit=1 missing tables\nok-case  12 row-floor                          exit=1 rows part 0\nok-case  13 malformed-row                      exit=2 bad kind\nok-case  14 fused-shape-row                    exit=2 fused-row refused\nSELFTEST verbs\nskip-case 15 verbs-sandboxed                    substrate-absent (handler not on PATH)\nskip-case 16 verbs-break-injection              substrate-absent (handler not on PATH)\nSELFTEST: PASS (16 cases)\n",
+  "B10.meta.json": {
+    "id": "B10",
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B10.sh",
+      "--selftest"
+    ],
+    "exit": 0,
+    "summary": [
+      "SELFTEST: PASS (16 cases)"
+    ],
+    "verdict": "survived",
+    "duration_s": 1.349,
+    "sha256": "001b757454954cfac740530139d1416dc26e9dc40c2f7cd1c0e51bbbf2354bbd",
+    "fails": [],
+    "enumerated": true
+  },
+  "results.json": [
+    {
+      "id": "CONTROL",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/pristine.sh",
+        "--selftest"
+      ],
+      "exit": 0,
+      "summary": [
+        "SELFTEST: PASS (16 cases)"
+      ],
+      "verdict": "survived",
+      "duration_s": 4.093,
+      "sha256": "275d8294a94e9eb74caa72043607e9ff12a30414c2d6298a37cbd62ddb53009f",
+      "fails": [],
+      "enumerated": true
+    },
+    {
+      "id": "B1",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B1.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (1/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 2.115,
+      "sha256": "1d0e511055a74b11307d827913d264d87f43b93e21fdb679556439d96a4ca3cc",
+      "fails": [
+        "bad-case 05 undeclared-file                    want exit=1 token=SURFACE UNLISTED got exit=0"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B2",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B2.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (2/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 4.845,
+      "sha256": "443ce1fdd35e1a0de2c42ef809d30beef68252ba80972f67c681cc8760a908b3",
+      "fails": [
+        "bad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1",
+        "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B3",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B3.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (3/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 2.138,
+      "sha256": "5efd188121f8e7b9fb100caa27b973cb4603e1b6157fbf13c4b100a86603ba3d",
+      "fails": [
+        "bad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1",
+        "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1",
+        "bad-case 06 crosscheck-disagree                want exit=1 token=SURFACE CROSSCHECK got exit=0"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B4",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B4.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (1/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 1.724,
+      "sha256": "c5f3b2b9d479fbf37aa28216d58f5f97220405cf0a140eef42409e0e97201a72",
+      "fails": [
+        "bad-case 07 symlink-swap                       want exit=1 token=SURFACE LINK got exit=1"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B5",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B5.sh",
+        "--selftest"
+      ],
+      "exit": 0,
+      "summary": [
+        "SELFTEST: PASS (16 cases)"
+      ],
+      "verdict": "survived",
+      "duration_s": 4.973,
+      "sha256": "1e4ea1a6552f65895dd769d733a6c32e590503c0850a74cd3196cd05e2d0b95c",
+      "fails": [],
+      "enumerated": true
+    },
+    {
+      "id": "B6",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B6.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (2/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 6.778,
+      "sha256": "627a037aaa27104f286acc9220d176dd45df5fe9e1371fc418962d98af793c54",
+      "fails": [
+        "bad-case 01 clean                              want exit=0 token=SURFACE OK got exit=1",
+        "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B7",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B7.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (1/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 1.541,
+      "sha256": "0c920258f41e6367f0a00b8b51d319372875b1d27b68b8e47a5702a286a31aaa",
+      "fails": [
+        "bad-case 10 sqlite-unavailable                 exit=1"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B8",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B8.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (2/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 1.296,
+      "sha256": "cce2b52381d0faed40ed7adc8f63f8d9a08d631ed7812357e8aec5ca757b47fa",
+      "fails": [
+        "bad-case 13 malformed-row                      want exit=2 token=bad kind got exit=1",
+        "bad-case 14 fused-shape-row                    exit=1"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B9",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B9.sh",
+        "--selftest"
+      ],
+      "exit": 1,
+      "summary": [
+        "SELFTEST: FAIL (2/16 cases)"
+      ],
+      "verdict": "killed",
+      "duration_s": 1.377,
+      "sha256": "e1ee079ac2f3db7ed5f57f2b3d33c732f7913880e18dd91d5128f086d63a10ad",
+      "fails": [
+        "bad-case 03 asset-gone                         want exit=1 token=SURFACE GONE got exit=0",
+        "bad-case 04 runtime-absent                     want exit=0 token=SHAPE ABSENT got exit=1"
+      ],
+      "enumerated": true
+    },
+    {
+      "id": "B10",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/mutant-B10.sh",
+        "--selftest"
+      ],
+      "exit": 0,
+      "summary": [
+        "SELFTEST: PASS (16 cases)"
+      ],
+      "verdict": "survived",
+      "duration_s": 1.349,
+      "sha256": "001b757454954cfac740530139d1416dc26e9dc40c2f7cd1c0e51bbbf2354bbd",
+      "fails": [],
+      "enumerated": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+--- /fast/scratch/hyaku/tameshi-r57/T57W3MutC1A2/base-staged.py	2026-10-30 01:42:19.379564695 -0300
++++ /fast/scratch/hyaku/tameshi-r57/T57W3MutC1A2/_r.py	2026-10-30 01:58:04.400225565 -0300
+@@ -627,7 +627,18 @@
+             write(LEDGER, json.dumps({'schema': 'x', 'defects': rows + new['defects']}))
+             pp = None
+             if panel is not None:
+-                pblob = json.dumps({'verdicts': panel})
++                # amendment-2 repair: the panel fixture carries `detail` (a seat per id), the seat's
++                # own wave file, and the wave results list, so the provenance arm has a passing case.
++                seat = 'T57W2SeatA'
++                ids = ('R50.1', 'R50.2', 'R50.3')
++                seatblob = json.dumps({'seat': seat,
++                                       'verdicts': {i: {'verdict': panel.get(i)} for i in ids}})
++                write('.ufo/waves/round-57/w2/%s.json' % seat, seatblob)
++                write('.ufo/waves/round-57/w2-results.json',
++                      json.dumps({'results': [{'name': seat}]}))
++                pblob = json.dumps({'verdicts': panel,
++                                    'detail': {i: {'seat': seat, 'commit': ''} for i in ids},
++                                    'files': {seat: hashlib.sha256(seatblob.encode()).hexdigest()}})
+                 write(PANEL_PATH, pblob)
+                 pp = hashlib.sha256(pblob.encode()).hexdigest()
+             if mutate:
+@@ -922,7 +933,8 @@
+         # cli: exit codes, last line, explain; the selftest never depends on the shipped PANEL_SHA256
+         run(good, panel=GOOD_PANEL)
+         rev = g('rev-parse', 'HEAD').stdout.decode().strip()
+-        psha = hashlib.sha256(json.dumps({'verdicts': GOOD_PANEL}).encode()).hexdigest()
++        with open(os.path.join(repo, PANEL_PATH), 'rb') as fh:
++            psha = hashlib.sha256(fh.read()).hexdigest()
+         ck = dict(base=routed, old_expect=2, expected_spots=(SPOT_PATH,), fixed_floor=1, declined_cap=1,
+                   this_round_floor=1)
+         rc, out = cli(repo, rev, False, dsha, panel_pin=psha, **ck)

@@ -1,0 +1,719 @@
+{
+ "base_files": {
+  "lane_evidence_copy": {
+   "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py",
+   "sha256": "6f3b7627a41dfbad2838f2d1fe31f7f7136a9a3de2fcc4a9bf2cd1c207013ca8"
+  },
+  "note": "the poll found the exec-seat staged copy present; it is byte-identical to the scratch base used (caabfbf7...)",
+  "scratch_base_lane_copy": {
+   "path": "/fast/scratch/hyaku/tameshi-r57/T57W3MutC1A2/base-evidence.py",
+   "sha256": "6f3b7627a41dfbad2838f2d1fe31f7f7136a9a3de2fcc4a9bf2cd1c207013ca8"
+  },
+  "scratch_base_used": {
+   "path": "/fast/scratch/hyaku/tameshi-r57/T57W3MutC1A2/base-staged.py",
+   "sha256": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb"
+  },
+  "staged_exec_seat_copy": {
+   "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3ExecC1SelftestA2/stage/.ufo/evidence/round-57/c1/measure.py",
+   "sha256": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb"
+  }
+ },
+ "baseline": {
+  "after_harness_repair": {
+   "rc": 0,
+   "summary": "C1_R57_SELFTEST: 99/99 pass"
+  },
+  "after_harness_repair_plus_amendment2_cases": {
+   "rc": 0,
+   "summary": "C1_R57_SELFTEST: 110/110 pass"
+  },
+  "raw_shipped_selftest_lane_copy": {
+   "failing_cases": "the same seven panel-arm cases",
+   "rc": 1,
+   "summary": "C1_R57_SELFTEST: 89/96 pass"
+  },
+  "raw_shipped_selftest_staged": {
+   "cause": "the selftest panel fixture writes only {'verdicts': panel} to PANEL_PATH, so panel_provenance() finds no `detail` for any id, seat is None, the seat file is absent, and counts['panel_prov'] == 3 on every panel case",
+   "failing_cases": [
+    "panel agrees: panel=0/5, pass",
+    "panel exactly allowed disagreements passes",
+    "panel one over allowed: panel_over=1",
+    "panel over counts the excess only",
+    "panel without a verdict for an id disagrees",
+    "panel without a verdict for a fixed-at-base id disagrees",
+    "cli good exits 0, verdict is last line"
+   ],
+   "rc": 1,
+   "summary": "C1_R57_SELFTEST: 92/99 pass"
+  },
+  "shipped_selftest_on_pristine_staged_bytes": {
+   "failing_cases": [],
+   "note": "the shipped selftest is RED on the pristine amendment-2 bytes; the raw run is receipt 02-shipped-selftest-staged.out (92/99) and 03-shipped-selftest-lane-copy.out (89/96)",
+   "rc": 0,
+   "summary": "C1_R57_SELFTEST: 99/99 pass"
+  }
+ },
+ "commands_run": [
+  "sha256sum <base copies>",
+  "python3 base-staged.py --selftest --work <dir>",
+  "python3 base-evidence.py --selftest --work <dir>",
+  "python3 repair.py base-staged.py base-repaired.py",
+  "python3 base-repaired.py --selftest --work <dir>",
+  "python3 addcases.py base-repaired.py base-repaired-cases.py proposed-cases.patch",
+  "python3 base-repaired-cases.py --selftest --work <dir>",
+  "python3 probe.py <base> <work-dir>",
+  "python3 drive.py base-staged.py matrix/ work-drive/",
+  "python3 drive.py base-evidence.py matrix-ev/ work-drive-ev/"
+ ],
+ "detectors": [
+  {
+   "command": "python3 <mutant> --selftest --work <dir>",
+   "id": "D1",
+   "name": "the shipped selftest (harness repaired so the amendment-2 arms have a fixture)",
+   "pristine": "0 failures, 99/99 pass",
+   "signal": "the set of failing SELFTEST case names and the exit code"
+  },
+  {
+   "command": "python3 probe.py <mutant> <work-dir>",
+   "id": "D2",
+   "name": "independent amendment-2 probe (scratch, this seat)",
+   "pristine": "every scenario reproduces its expected observation",
+   "signal": "the observable value of each amendment-2 arm (panel_prov, fixed_bad, evidence_bad, terms line)"
+  }
+ ],
+ "final_monitored_content_commit": "adf87899c70d616140a81185a8f9acbbdfb30392",
+ "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+ "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+ "mutants": [
+  {
+   "description": "npath: posixpath.normpath removed",
+   "detectors_that_fired": [
+    "D1-selftest",
+    "D2-probe"
+   ],
+   "id": "M01",
+   "mutant_sha256": "d171f7e500778fffca3346cbf2b0a62a562c0e19e986bf435d2d2eb3ac91aeb1",
+   "new_string_sha256": "5f2103d2ba5f33bdfea3e92cddde3206837a91e3a676f3e547f9050059252190",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "bc868d120bebe4291008542b75d8717221437038475ed33109ff4b58f2336dad",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 1,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 0,
+     "evidence_bad": 1,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "npath_spotcheck"
+   },
+   "probe_observed_keys_that_differed": [
+    "agree",
+    "evidence_bad",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "npath_spotcheck"
+   ],
+   "proposed_case": "already killed by the shipped A7 cases (canonical admissible path passes).",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 98/99 pass",
+    "new_failing_cases": [
+     "canonical admissible path passes"
+    ],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 1,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "KILLED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A8 panel_tie: prefix test startswith(pc[:40]) -> always true",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M02a",
+   "mutant_sha256": "aca07bf557ac35f6a8b6c74aca828df1624cc56e6fbd13a768a125e09bf182cd",
+   "new_string_sha256": "3d1f4af7741fdf96d1e3744b646c90cb14f598ee92533317d96570cde6795adc",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "b8a293f815209c6177f3a34baa33f22a89977777742d8f11f5eafd1d800c5a26",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 1,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 0,
+     "evidence_bad": 0,
+     "fixed_bad": 1,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "tie_always_true"
+   },
+   "probe_observed_keys_that_differed": [
+    "agree",
+    "fixed_bad",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "tie_always_true"
+   ],
+   "proposed_case": "A8 tie control: a panel commit that is not a prefix refuses the row (panel_detail={'R50.1':'deadbeef'}).",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A8 panel_tie: len(pc) >= 7 dropped",
+   "detectors_that_fired": [
+    "D1-selftest",
+    "D2-probe"
+   ],
+   "id": "M02b",
+   "mutant_sha256": "112316ddb12d6f1d76153bf16b50235909e005ec5a784a52079589749ba42538",
+   "new_string_sha256": "d3789e903c2391c128d1eb111dd974471868a64f4d110efe8a65e9ef1cecd3ad",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "b8a293f815209c6177f3a34baa33f22a89977777742d8f11f5eafd1d800c5a26",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 1,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 0,
+     "evidence_bad": 0,
+     "fixed_bad": 1,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "pcommits_filter"
+   },
+   "probe_observed_keys_that_differed": [
+    "agree",
+    "fixed_bad",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "pcommits_filter",
+    "tie_len7_dropped"
+   ],
+   "proposed_case": "A8 tie: a panel commit shorter than 7 hex chars does not tie the row (panel_detail={'R50.1': q_forge[:3]}).",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 96/99 pass",
+    "new_failing_cases": [
+     "forgery: excerpt quoted into a new file under an unrelated message refused",
+     "message naming R50.12 / xR50.1 / v1.R50.1 does not name R50.1",
+     "tie: a different path in the item text refused"
+    ],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 1,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "KILLED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A8 pcommits: restriction to `fixed` verdicts dropped",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M03",
+   "mutant_sha256": "4d4ce3e38a054981d0f3ee1b0d13c037c33bac61b5928e0ec1d31593c86d1ab0",
+   "new_string_sha256": "115e7c644effcd75ad676bb8a4f7035b5607a5a0fd496e0b98da140cbda1b16b",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "1d30f3fe0026940a32701f58a633359ff5fcf19d92e19660e40e28b54eed4023",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 1,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 0,
+     "evidence_bad": 0,
+     "fixed_bad": 1,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "pcommits_filter"
+   },
+   "probe_observed_keys_that_differed": [
+    "agree",
+    "fixed_bad",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "pcommits_filter"
+   ],
+   "proposed_case": "A8 tie: a non-fixed panel verdict does not tie the row (panel verdict 'open' with a panel commit prefix).",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9 provenance: sha check removed",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M04",
+   "mutant_sha256": "9743547c8ea836254c0003dc47e53bd8b47ebb9883e8690ac648a71f4ab16b9f",
+   "new_string_sha256": "4339c4d2b5e64e7bb2f63ee4274f9f8ef4bdfe674be43d6db02731144b8427ad",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "c9822a43bdf27aef4e41c4ff10f0613eebb01bd0f5bcdd61cafaf1a9f375a4c1",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 1,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "prov_loop_skip"
+   },
+   "probe_observed_keys_that_differed": [
+    "panel_prov",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "prov_loop_skip",
+    "prov_sha"
+   ],
+   "proposed_case": "A9 provenance: a seat file whose sha does not match the panel pin counts a shortfall.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9 provenance: verdict-equality removed",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M05",
+   "mutant_sha256": "9fa0c71ad6a53b6fecf9c8524074b9f689b5f20787bbd6a121b1d1a3a7481399",
+   "new_string_sha256": "2e1f56b0c49380b0be505f5d1d57bdeff38f0f8be011331cc2b8037c02c5f781",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "4df741f6fe176f81268d7795a73adaa85b3c49eccedaffbf551984407f1794c8",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 1,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "prov_verdict"
+   },
+   "probe_observed_keys_that_differed": [
+    "panel_prov",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "prov_verdict"
+   ],
+   "proposed_case": "A9 provenance: a seat verdict that differs from the panel verdict counts a shortfall.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9 provenance: 'listed' check removed",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M06",
+   "mutant_sha256": "c3b9bb24371576880d04dc1171caff3ad57ac3e140cc377357daf59a46ed41e7",
+   "new_string_sha256": "d8439783467010a4f378c32882a2634a56691e59fd140b52363fd63c1172d53b",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "c9822a43bdf27aef4e41c4ff10f0613eebb01bd0f5bcdd61cafaf1a9f375a4c1",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 1,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "prov_listed"
+   },
+   "probe_observed_keys_that_differed": [
+    "panel_prov",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "prov_listed"
+   ],
+   "proposed_case": "A9 provenance: a seat that the wave results do not list counts a shortfall.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9 provenance: w3 path routing removed",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M07",
+   "mutant_sha256": "a6cd580871a5784c9ebbd5d3531c03a5d2015a043054f6512870fd4b206736b7",
+   "new_string_sha256": "f1439a198ed5cd461813eef55fbdecd7522f2e9e8a5cd8483377634701d8c48f",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "61f58400c138936885f0edfb140d1d2526b8e707e46b4e678eb08f156b3f86d3",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 0,
+     "evidence_bad": 1,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 1,
+     "terms_has_panel_prov": true,
+     "total": 2
+    },
+    "pristine": {
+     "agree": 0,
+     "evidence_bad": 1,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "npath_spotcheck"
+   },
+   "probe_observed_keys_that_differed": [
+    "panel_prov",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "npath_spotcheck",
+    "pcommits_filter",
+    "prov_count",
+    "prov_listed",
+    "prov_loop_skip",
+    "prov_sha",
+    "prov_verdict",
+    "prov_w2_route",
+    "prov_w3_route",
+    "tie_always_true",
+    "tie_len7_dropped"
+   ],
+   "proposed_case": "A9 provenance: a w3 seat is looked up in w3.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9: panel_prov not added to TERMS",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M08",
+   "mutant_sha256": "9a697840a05de39e509ac8685de0d73e2d7ea4653f366f633cf5daabcaa5927f",
+   "new_string_sha256": "16debaeaca589792660169552adb30a4123b2f5d22a1383f5b29a6c70649621e",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "0d8dd26bbb664adbcba467b32e92cdf2cd2c25c64e6ab29579158a7fca8cb5b4",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 0,
+     "evidence_bad": 1,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": false,
+     "total": 1
+    },
+    "pristine": {
+     "agree": 0,
+     "evidence_bad": 1,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "npath_spotcheck"
+   },
+   "probe_observed_keys_that_differed": [
+    "terms_has_panel_prov"
+   ],
+   "probe_scenarios_that_differed": [
+    "npath_spotcheck",
+    "pcommits_filter",
+    "prov_count",
+    "prov_listed",
+    "prov_loop_skip",
+    "prov_sha",
+    "prov_verdict",
+    "prov_w2_route",
+    "prov_w3_route",
+    "tie_always_true",
+    "tie_len7_dropped"
+   ],
+   "proposed_case": "A9: the terms line carries panel_prov.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9: panel_prov count not assigned",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M09",
+   "mutant_sha256": "df062ae58d3292241bf22b9f4bc1e497ea23f05facccfee4160cc04486fbfc41",
+   "new_string_sha256": "a1919864c5a4096a69348c44659a54e8c8b5793aa1ddb98b7e123393ab8552af",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "d6d4ee59c20514dbddfbee42dc00afbc8f1743c5800458a78474e7841fbb9045",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 1,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "prov_listed"
+   },
+   "probe_observed_keys_that_differed": [
+    "panel_prov",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "prov_listed",
+    "prov_loop_skip",
+    "prov_sha",
+    "prov_verdict",
+    "prov_w2_route"
+   ],
+   "proposed_case": "A9 provenance: a shortfall makes the verdict line fail.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  },
+  {
+   "description": "A9 provenance: loop skipping ids",
+   "detectors_that_fired": [
+    "D2-probe"
+   ],
+   "id": "M10",
+   "mutant_sha256": "49837bf63c3ab598867f215cd2a5732f27d911b680928b7e109af415c8578e42",
+   "new_string_sha256": "a4a37f63967f854ecc23a8cf001d803678a33977e488af334768c3fe9f4ae714",
+   "old_string_occurrences_in_base": 1,
+   "old_string_sha256": "b19a6b9e0537b268ea223e90d7ef9fbb526d6e7002f78550df2453dd3739436b",
+   "probe_first_diff": {
+    "mutant": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 0,
+     "terms_has_panel_prov": true,
+     "total": 0
+    },
+    "pristine": {
+     "agree": 2,
+     "evidence_bad": 0,
+     "fixed_bad": 0,
+     "panel_over": 0,
+     "panel_prov": 1,
+     "terms_has_panel_prov": true,
+     "total": 1
+    },
+    "scenario": "prov_loop_skip"
+   },
+   "probe_observed_keys_that_differed": [
+    "panel_prov",
+    "total"
+   ],
+   "probe_scenarios_that_differed": [
+    "prov_loop_skip",
+    "prov_w2_route"
+   ],
+   "proposed_case": "A9 provenance: a declined id is counted too.",
+   "shipped_selftest_result": {
+    "baseline_failing_cases_hidden": [],
+    "mutant": "C1_R57_SELFTEST: 99/99 pass",
+    "new_failing_cases": [],
+    "pristine": "C1_R57_SELFTEST: 99/99 pass",
+    "rc_mutant": 0,
+    "rc_pristine": 0
+   },
+   "verdict_against_shipped_selftest": "SURVIVED",
+   "verdict_with_proposed_cases": "KILLED"
+  }
+ ],
+ "poll": {
+  "changed_during_seat": false,
+  "polls_used": 1,
+  "present": true,
+  "sha256": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb",
+  "sha256_at_end_of_seat": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb",
+  "target": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3ExecC1SelftestA2/stage/.ufo/evidence/round-57/c1/measure.py"
+ },
+ "restoration": {
+  "exec_seat_staged_copy_sha256_after": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb",
+  "exec_seat_staged_copy_sha256_before": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb",
+  "lane_evidence_copy_sha256_after": "6f3b7627a41dfbad2838f2d1fe31f7f7136a9a3de2fcc4a9bf2cd1c207013ca8",
+  "lane_evidence_copy_sha256_before": "6f3b7627a41dfbad2838f2d1fe31f7f7136a9a3de2fcc4a9bf2cd1c207013ca8",
+  "lane_files_modified": [],
+  "note": "every mutant was built in a fresh scratch copy; the base files were asserted unchanged after each mutation and re-hashed at the end of the seat",
+  "scratch_base_sha256_after": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb",
+  "scratch_base_sha256_before": "caabfbf7ef5470b34bec401af6c9672c59bc56dcbce7e45cf23707621771e1bb"
+ },
+ "round": "round-57 (hyaku run 11, wave 3)",
+ "seat": "T57W3MutC1A2",
+ "staged_proposals": {
+  "applied": false,
+  "files": [
+   ".ufo/evidence/round-57/c1/measure.py (repaired harness + amendment-2 cases, 110/110 green)",
+   "harness-repair.patch (the panel fixture repair alone, 99/99 green)",
+   "selftest-cases.patch (the amendment-2 cases alone, on top of the repair)"
+  ],
+  "note": "nothing was edited in the lane; these are proposals for the L1 to adjudicate",
+  "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3MutC1A2/stage/"
+ },
+ "summary": {
+  "killed_by_the_shipped_selftest_alone": 2,
+  "killed_with_proposed_cases": 11,
+  "mutants_built": 11,
+  "survived_by_the_shipped_selftest_alone": 9,
+  "survived_with_proposed_cases": 0
+ },
+ "task": "mutate amendment 2 of the C1 counter (.ufo/evidence/round-57/c1/measure.py) with single-edit mutants and adjudicate them against the selftest",
+ "tooling": {
+  "installed": "none",
+  "note": "no package was installed or upgraded; python3 3.14.8 and git were already present, so the operator tooling directive was not triggered"
+ }
+}

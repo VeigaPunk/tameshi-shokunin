@@ -1,0 +1,38 @@
+[
+  {
+    "command": "TMPDIR=/fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/tmpdir-probe python3 -c 'import runpy,tempfile,os,shutil; m=runpy.run_path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/clone/tools/registry-check.py'\"'\"'); root=m['\"'\"'strict_scratch_root'\"'\"'](); p=tempfile.mkdtemp(prefix='\"'\"'r525-'\"'\"',dir=root); print('\"'\"'TMPDIR='\"'\"'+os.environ['\"'\"'TMPDIR'\"'\"']); print('\"'\"'strict_scratch_root='\"'\"'+root); print('\"'\"'allocated_under_TMPDIR='\"'\"'+str(os.path.dirname(p)==os.environ['\"'\"'TMPDIR'\"'\"'])); shutil.rmtree(p)'",
+    "exit": 0,
+    "stdout": "TMPDIR=/fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/tmpdir-probe\nstrict_scratch_root=/fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/tmpdir-probe\nallocated_under_TMPDIR=True\n",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/clone show --format=fuller 218bc6b5c25d6a3c57dd44600febd552f0167cee -- tools/registry-check.py",
+    "exit": 0,
+    "stdout": "commit 218bc6b5c25d6a3c57dd44600febd552f0167cee\nAuthor:     tameshi-shokunin <tameshi@shokunin.local>\nAuthorDate: Tue Oct 27 10:15:50 2026 -0300\nCommit:     tameshi-shokunin <tameshi@shokunin.local>\nCommitDate: Tue Oct 27 10:15:50 2026 -0300\n\n    round-53: fix pass \u2014 21 T52 reader findings resolved in SKILL.md (dated milestones, qualified pointers, pin chains, role-as-stated); tools/ /tmp hardcodes honour TMPDIR; recipe+registry scratch docs name HYAKU_SCRATCH\n\ndiff --git a/tools/registry-check.py b/tools/registry-check.py\nindex 08ac9cd1..a03beb47 100755\n--- a/tools/registry-check.py\n+++ b/tools/registry-check.py\n@@ -75,7 +75,7 @@ unreadable/invalid, root or rev missing, clone failure, --only/--tag miss) \u00b7\n              `tameshi-registry-check-report-v1`, additive fields:\n              registry_sha256, rev_resolved, per-row stdout/stderr tails); the\n              human ROW/REGISTRY_CHECK lines move to stderr.\n---selftest   hermetic; fixtures only under /tmp, never touches the lane; its\n+--selftest   hermetic; fixtures only under the scratch root (TMPDIR), never touches the lane; its\n              own git calls use the same scrubbed environment (a decoy\n              GIT_DIR must not move any fixture or canary HEAD).\n \n@@ -763,9 +763,9 @@ def clone_lane_at_rev(root, rev, sha):\n     fleet_root = os.path.dirname(root_real)\n     env = git_env()\n     try:\n-        work = tempfile.mkdtemp(prefix=\"tameshi-registry-check-\", dir=\"/tmp\")\n+        work = tempfile.mkdtemp(prefix=\"tameshi-registry-check-\", dir=tempfile.gettempdir())\n     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never \"differs\" (1)\n-        raise RuntimeError(f\"cannot create clone scratch under /tmp: {exc}\") from exc\n+        raise RuntimeError(f\"cannot create clone scratch under the scratch root: {exc}\") from exc\n     try:\n         fleet = os.path.join(work, \"fleet\")\n         os.mkdir(fleet)\n@@ -914,7 +914,7 @@ def print_human(report, stream=sys.stdout):\n \n def selftest():\n     scratch = tempfile.mkdtemp(\n-        prefix=\"tameshi-r17-registry-check-selftest.\", dir=\"/tmp\"\n+        prefix=\"tameshi-r17-registry-check-selftest.\", dir=tempfile.gettempdir()\n     )\n     passed = 0\n     failed = []\n",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/clone ls-tree -r --name-only HEAD .ufo/reports",
+    "exit": 0,
+    "stdout": ".ufo/reports/round-1/tameshi.md\n",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/clone log '--format=%H %s' c1d49d76be4028df2a68322e7117ff3aafaccd5c..HEAD -- .ufo/reports",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/clone merge-base --is-ancestor c1d49d76be4028df2a68322e7117ff3aafaccd5c 218bc6b5c25d6a3c57dd44600febd552f0167cee",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r57/T57W3ReseatR525R526/clone merge-base --is-ancestor 218bc6b5c25d6a3c57dd44600febd552f0167cee 5e3569969b532310d2b8a3d130901757a3df356b",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

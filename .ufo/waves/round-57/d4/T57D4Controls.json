@@ -1,0 +1,57 @@
+{
+  "seat": "T57D4Controls",
+  "mode": "documentary_defensive_review_only",
+  "axes": ["exit-status correctness", "receipt fidelity", "revision identity", "non-execution"],
+  "candidate_integration": "UNVERIFIED",
+  "admission_granted": false,
+  "findings": [
+    {
+      "id": "controls-exit-success-on-mismatch",
+      "severity": "P2",
+      "summary": "controls.sh ends with a successful echo despite failed totals; historical run4 records mismatch and process exit 0.",
+      "source": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/controls.sh:88-89,109-112,118-124,172-179",
+      "existing_command_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RevControlsDry-receipts/run4/commands.json:134-145",
+      "command": "bash /fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/controls.sh /fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone 5e3569969b532310d2b8a3d130901757a3df356b 332becb09a962561377e922ce13d835766087c30 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RevControlsDry-receipts/run4/controls",
+      "recorded_output": "CTL_MISMATCH CTL_POS_c1 expected=true actual=false counter_exit=1\nCONTROLS_B: 1/2 as pre-registered",
+      "recorded_exit": 0,
+      "executed_by_this_seat": false,
+      "caller_boundary": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/deciding-run.sh:146-153 independently rejects mismatched totals and CTL_MISMATCH; no admission demonstrated",
+      "recommendation": "Require all phase totals to match before returning success and define/enforce expected counter statuses."
+    },
+    {
+      "id": "before-receipt-status-clobber",
+      "severity": "P2",
+      "summary": "Both before receipts retain counter exit 1 but misleadingly end with revision-labelled exit 0 from the fallback echo.",
+      "source": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/integrate/before-runs.sh:15-16,35-36",
+      "documentary_commands": [
+        {
+          "command": "read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/before/c1.stdout:52-56",
+          "output": "C1_R57_PASS=false\ncounter exit=1 (expected: PASS=false)\nc1 rev=73648682ebbdcddf36809e2d7a4980004752065d exit=0"
+        },
+        {
+          "command": "read /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/before/c2.stdout:11-13",
+          "output": "C2_R57_PASS=false\ncounter exit=1 (expected: PASS=false)\nc2 rev=ba4ed823b99ea0ce7122e89f6652c8bac5b0c76a exit=0"
+        }
+      ],
+      "recommendation": "Preserve historical receipts, explicitly correct their interpretation, and save the process status immediately for future trailers."
+    }
+  ],
+  "dry_report_assessment": {
+    "process_exit_receipt_truthful": true,
+    "before_trailers_truthful_as_counter_status": false,
+    "terminal_runner_controls_exit_mislabel": "Acknowledged in dry report line 102; run.py:79-81 uses last counter status instead of controls process status.",
+    "historical_scope": "Synthetic-provenance scratch overlay at 332becb09a962561377e922ce13d835766087c30, not C0b certification"
+  },
+  "verification_gaps": [
+    "No control or gate execution performed; historical receipts not independently reproduced.",
+    "xd://lsp unavailable: No such tool; literal source/caller fallback only.",
+    "Read-only base-to-C0b diff returned no output for four scoped evidence paths; C0b ls-tree likewise returned no entries, so findings apply to local artifacts, not a demonstrated C0b diff.",
+    "No candidate admission or no-harm certification supported."
+  ],
+  "writes": [
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/d4/T57D4Controls.md",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/d4/T57D4Controls.json"
+  ],
+  "installations": [],
+  "self_evaluation": {"accuracy": 4, "completeness": 4, "clarity": 4, "actionability": 4, "conciseness": 4, "overall": 4.0}
+}

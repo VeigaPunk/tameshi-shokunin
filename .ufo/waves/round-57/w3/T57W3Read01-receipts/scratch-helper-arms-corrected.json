@@ -1,0 +1,11 @@
+{
+  "name": "scratch-helper-arms-corrected",
+  "command": "python3 -c 'import importlib.util, os, pathlib, tempfile\nroot=pathlib.Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read01/clone/tools'\"'\"')\nfor name in ('\"'\"'env-diff'\"'\"','\"'\"'repeat-control'\"'\"','\"'\"'registry-check'\"'\"','\"'\"'bash-witness-study'\"'\"','\"'\"'pin-disposition'\"'\"','\"'\"'evidence-disposition'\"'\"','\"'\"'context-capture'\"'\"'):\n s=importlib.util.spec_from_file_location('\"'\"'probe_'\"'\"'+name.replace('\"'\"'-'\"'\"','\"'\"'_'\"'\"'), root/(name+'\"'\"'.py'\"'\"'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m)\n for arm,value in [('\"'\"'unset'\"'\"',None),('\"'\"'empty'\"'\"','\"'\"''\"'\"'),('\"'\"'usable'\"'\"','\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read01'\"'\"')]:\n  if value is None: os.environ.pop('\"'\"'TMPDIR'\"'\"',None)\n  else: os.environ['\"'\"'TMPDIR'\"'\"']=value\n  tempfile.tempdir=None\n  got=m.strict_scratch_root(); expected=value if value else tempfile.gettempdir()\n  assert got==expected,(name,arm,got,expected)\n  print(name,arm,repr(got),'\"'\"'PASS'\"'\"')\n'",
+  "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read01/clone",
+  "environment": {
+    "TMPDIR": "/fast/scratch/hyaku/tameshi-r57/T57W3Read01"
+  },
+  "exit": 0,
+  "stdout": "env-diff unset '/tmp' PASS\nenv-diff empty '/tmp' PASS\nenv-diff usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\nrepeat-control unset '/tmp' PASS\nrepeat-control empty '/tmp' PASS\nrepeat-control usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\nregistry-check unset '/tmp' PASS\nregistry-check empty '/tmp' PASS\nregistry-check usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\nbash-witness-study unset '/tmp' PASS\nbash-witness-study empty '/tmp' PASS\nbash-witness-study usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\npin-disposition unset '/tmp' PASS\npin-disposition empty '/tmp' PASS\npin-disposition usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\nevidence-disposition unset '/tmp' PASS\nevidence-disposition empty '/tmp' PASS\nevidence-disposition usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\ncontext-capture unset '/tmp' PASS\ncontext-capture empty '/tmp' PASS\ncontext-capture usable '/fast/scratch/hyaku/tameshi-r57/T57W3Read01' PASS\n",
+  "stderr": ""
+}

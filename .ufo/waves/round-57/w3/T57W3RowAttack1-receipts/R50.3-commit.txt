@@ -1,0 +1,41 @@
+commit 6d8c11e378aa90b12650808e1b79270742935f15
+Author:     tameshi-shokunin <tameshi@shokunin.local>
+AuthorDate: Mon Oct 26 21:56:21 2026 -0300
+Commit:     tameshi-shokunin <tameshi@shokunin.local>
+CommitDate: Mon Oct 26 22:32:17 2026 -0300
+
+    round-51: integrate frontier/S022 correction, sourced tenth case, registry rows, runner panel and controls
+
+diff --git a/corpus/README.md b/corpus/README.md
+index a1857733..c10d1bd5 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -607,2 +607,28 @@ F10 (PBT generators for gate fixtures): open → **held (round 49)** for its sta
+ 
+ F6 (fixture minimization for survivors): open → **held (round 50)** for the method on killing cases — one shrinker that reduces a gate's killing case to a 1-minimal sub-case and states its run cost — conditioned on the round-50 deciding receipt `.ufo/evidence/round-50/after/c2.stdout` printing `C2_R50_PASS=true`; the round-29 B5 survivor is not discharged (it stays masked, `knowledge/survivor-fixture-minimization.md:53,57`), and if that receipt prints anything else this line is void as of round 50
++
++## Round 51 — frontier status table re-stated (calibration)
++
++The status table at `corpus/README.md:76-87` is superseded as a whole: its status cells were never re-stated after the rounds that moved them (rounds 1, 21, 25, 27, 38, 49, 50), so seven of the ten cells no longer read what the lane later declared. Nothing above this line is rewritten — the coverage map is corrected by appending only — and each row below carries the latest wording with a pointer to the lines that declare its status.
++
++| id | ground | candidate sources | status | next falsifiable move (before → after) |
++|---|---|---|---|---|
++| F1 | external mutation-score semantics + report interop | S001, S002, S086, S087 | held (round 25) — README.md:385-390; F1b open | before: emit one ledger leg as schema JSON and validate it (validator unavailable in round 1) → after: held for the eight recorded ledger legs (round 25, README.md:386-390); remaining: the emitted report names a target by basename with no lane or revision pin (round 26, README.md:412-413) and the 35 recorded survivors stay unclassified for NoCoverage (README.md:396) |
++| F2 | witness-scoped kill verdicts / bash mutation tooling | S006, S257 | partly held (round 1) — README.md:115 | before: the same split on a bash leg (surface-census): undefined → k_witness + k_accidental = 8 → after: still unmeasured; the existing bash leg's declared-witness study is retained separately (README.md:128) and round 45 adds GoogleTest's primer as an upstream instance of the split (README.md:563) |
++| F3 | determinism precondition, flaky-aware verdicts | S004, S011, S025, S026, S027, S040, S256, S258-S264 | open — README.md:589 | before: one control per sweep → after: N ≥ 3 byte-identical controls, or a named mismatch: still unmeasured; the rounds 45-47 entries add upstream statements and published measurements only (README.md:558-589) |
++| F4 | golden / snapshot fixture discipline | S013, S014, S015, S016, S017, S045, S105-S108, S132, S152, S153, S154 | partly held (round 38) — README.md:492-495 | before: update paths that write expected values without an explicit flag: unmeasured → after: the write-path census counted 99 live write sites with 0 unflagged (round 39, README.md:503), and rounds 40-41 added two successor tools; remaining: the cmp and git diff --exit-code lattices, and the shutil.* and handle.write classes outside v2's pattern (README.md:511, README.md:521-523) |
++| F5 | hermetic environment normalization | S015, S016, S028, S079 | Core (round 21) — README.md:330-335; for the nine frozen files | before: runner selftest host vs env -i LANG=C TZ=UTC identical (H3, round 1) → after: the nine frozen files measured the same way (nine clean controls, round 21); the three kumitate gates cite-check, surface-probe and proxy-check stay unmeasured (README.md:335-336) |
++| F6 | fixture minimization for survivors | S022, S023, S024, S271 | held (round 50) — README.md:608 | before: B5 probe fixture size: unmeasured → after: held for the method on killing cases — one shrinker to a 1-minimal sub-case with a stated run cost (round 50); the round-29 B5 survivor is not discharged and stays masked → next: shrink on a second gate, or discharge B5 |
++| F7 | incremental re-sweep granularity | S003, S004, S005, S008, S041, S047 | open — README.md:255-256 | before: pin-level cadence only → after: per-leg reuse decisions classified: not reached; round 13 acquired only the content-disposition prerequisite and round 17 moved no row (README.md:255-256) |
++| F8 | oracle anchoring as a survivor class | S012, S090, S091 | partly held (round 27) — README.md:424-427 | before: 0 test-oracle lines → after: one survivor classified against an independently anchored expectation, one gate at one pin (round 27); bounded to 3 of 4 survivors anchored in the gate's header contract and 1 by convention only (round 29, README.md:433-437) → next: anchor the hole calls on the other eight recorded legs |
++| F9 | LLM-era mutant generation + equivalence | S007, S009, S043, S044 | open — README.md:86 | before: no LLM-specific search run yet (U) → after: bounded pilot with an independent outcome check: untouched; round 43 states F9 is not touched (README.md:555-556) |
++| F10 | PBT generators for gate fixtures | S018, S019, S020, S021, S269, S270 | held (round 49) — README.md:599 | before: no PBT fixture method → after: one generator against a named fixture gate, conditioned on the round-49 deciding receipt printing C2_R49_PASS=true; next: a second gate, or shrinking (README.md:599) |
++
++S022 (`queued` → `mined`): the row's used-by already names `corpus/knowledge/fixture-shrinking-pilot.md`, which cites it (round 50), so the status column is corrected to CORPUS.md's own reading — mined = cited by at least one path in used-by.
++No other SOURCES row changes status here, and every used-by path of a mined row exists at this revision.
++
++## Round 51 — tenth recorded mutation case (depth)
++
++| Entry / ground | Admission and exact scope | Evidence |
++|---|---|---|
++| `knowledge/mutation-case-kagi-drift-pins.md` / Core (recorded legs) | source-headed entry citing mined S272 (the pinned kagi host-drift gate) and S273 (Bash `errexit`/`pipefail` semantics), new this round; tenth ledger leg `bash-drift-pins`, 2/10 killed on the 13-case selftest under the recorded `sandbox-$DEFECT_ID` suite; independent A/B probe shows K_GONE_ARM, K_AMBIG_GT and K_SHAPE_OPTIN are environment-masked and become killed under a neutral sandbox (5/10), so the reported 20% must not be read as gate kill strength; seven of ten predictions held, five other survivors have off-suite witnesses | `.ufo/evidence/round-51/c2/`; `.ufo/waves/round-51/w1/T51LabSandboxLeak.md`, `T51ScribeEntry/` |

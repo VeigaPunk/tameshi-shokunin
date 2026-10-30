@@ -1,0 +1,283 @@
+[
+  {
+    "id": "R54.10",
+    "status": "fixed",
+    "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+    "evidence": [
+      {
+        "path": "SCORECARD.md",
+        "lines": "2700-2702",
+        "excerpt": "Corrected: `controls-a.stdout`'s `CTL CTL_R53` line prints `rekeyed=0/7`; the `rekeyed=0/30` reading belongs to `control/r53-counter-at-88afa941.stdout`, the round-53 counter's own bytes run at the round-53 final revision."
+      },
+      {
+        "path": ".ufo/evidence/round-54/control/controls-a.stdout",
+        "lines": "3-3",
+        "excerpt": "CTL CTL_R53 C1_R54: rev=88afa9415454 c0=none credited=58 lost=6 rekeyed=0/7 readers=0/7 monitor=6/58 unstable=0 total=4 C1_R54_PASS=false"
+      }
+    ],
+    "seat": "T57W1ScribeItemsR54x8to10",
+    "note": "The lane never carried the misquote in a lane file (no lane file at routed_at pairs CTL_R53 with controls-a); the misquote is in the fleet report only. 9cf0146 adds ER-R54-10 to SCORECARD naming the correct pairing: controls-a.stdout prints rekeyed=0/7, 0/30 belongs to r53-counter-at-88afa941.stdout. Fleet report copy untouched by the lane. REPAIR SEAT (T57W2RepairR5410xR551): UNREPAIRABLE under the amended counter - the real fix commit 9cf0146 names no item id in its message and the item text names neither SCORECARD.md nor 9cf0146's files, so the tie rule cannot see it; row left verbatim, status not changed.",
+    "status_at_base": "fixed"
+  },
+  {
+    "id": "R55.2",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": "corpus/lessons/round-57.md",
+        "lines": "21-21",
+        "excerpt": "`.ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out` line 44 reads"
+      },
+      {
+        "path": "corpus/lessons/round-57.md",
+        "lines": "22-22",
+        "excerpt": "`C2_R55: rev=08d64e946006 grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false`;"
+      }
+    ],
+    "seat": "TameshiR57",
+    "note": "superseding record names the receipt line the report mis-quoted; report is fleet-side",
+    "status_at_base": "open",
+    "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  },
+  {
+    "id": "R55.4",
+    "status": "open",
+    "evidence": [
+      {
+        "path": ".ufo/evidence/round-55/control/controls-a.stdout",
+        "lines": "5-6",
+        "excerpt": "CTL CTL_SKIP_c2 C2_R55: rev=13bb9e5d92df grammar=6/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=8/9 skill=1/1 total=4 C2_R55_PASS=false CONTROLS_A: 5/5 as pre-registered"
+      }
+    ],
+    "seat": "T57W2RepairR553xR554",
+    "note": "Carried, not fixed (kept open). The committed control stdout (round-55 control, committed at 4c04c1d3, a file that is not a spot-check, the ledger, or a round-57 instrument) already reads CTL_SKIP_c2 total=4 C2_R55_PASS=false and CONTROLS_A: 5/5 as pre-registered, so the report's 'still running at filing' sentence is stale. The two prior evidence items were .ufo/waves/round-56 paths whose names do not end with a key and were soft-excluded; they are removed, not weakened.",
+    "status_at_base": "open"
+  },
+  {
+    "id": "R55.5",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": "tools/receipt-revision-gate.py",
+        "lines": "4-7",
+        "excerpt": "The round-54/55 defect this gate exists for (ER-R54-1, R55.5): a positive control was scored at the FREEZE commit, which predated the work it certified, and every gate in the lane accepted it because none compared the `rev=` a receipt names with the revision under test."
+      },
+      {
+        "path": "tools/receipt-revision-gate.py",
+        "lines": "27-28",
+        "excerpt": "RECEIPT_REV_CONTENT_DRIFT \u00b7 RECEIPT_CONTROL_NOT_ANCESTOR"
+      },
+      {
+        "path": ".ufo/evidence/round-56/deciding-run.sh",
+        "lines": "120-122",
+        "excerpt": "python3 \"$SCR/gate/gate.py\" --lane \"$LANE\" --certified \"$REV\""
+      }
+    ],
+    "commit": "c3e2ca9f020776b3d66c7af854fb82c834674fcf",
+    "note": "gate added and wired into deciding-run.sh gate 0b at c3e2ca9f (round-56 freeze); the item text (deciding gate never compares a CTL rev= with the revision under test) no longer holds at base",
+    "seat": "T57W1ScribeItemsR55x5to7",
+    "status_at_base": "fixed"
+  },
+  {
+    "id": "R55.6",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": ".ufo/waves/round-55/w1/T55W1ExecNoHarm-receipts/coldread-at-base.json",
+        "lines": "1-2",
+        "excerpt": "{ \"calibration_restraint_score\": 8,"
+      },
+      {
+        "path": ".ufo/waves/round-55/w1/T55W1CritClaimShape-receipts/coldread-HEAD.json",
+        "lines": "1-2",
+        "excerpt": "{ \"calibration_restraint_score\": 6,"
+      }
+    ],
+    "commit": "981c5e8b20a2ada6a4f83464cff8a64fecdd9aa1",
+    "note": "the seven uncommitted round-55 receipts were committed at 981c5e8b (round-56 start; parent 6efd2a1; its stat adds all seven, verified by git show --stat and ls-tree at base); only the two coldread-*.json paths are cited here because the waves/ rule admits a path only when it ends with a key: base.json, cand.json, rekey.json and inputs.json end in none of the keys; floor.json is not cited",
+    "seat": "T57W1ScribeItemsR55x5to7",
+    "status_at_base": "fixed"
+  },
+  {
+    "id": "R55.7",
+    "status": "declined",
+    "evidence": [
+      {
+        "path": "corpus/lessons/round-56.md",
+        "lines": "60-61",
+        "excerpt": "evidence: during the round-55 closure, `.ufo/evidence/round-55/after/c2.stdout` was rewritten after the tip with `C2_R55: rev=4c04c1d33377 \u2026 total=0"
+      },
+      {
+        "path": "corpus/lessons/round-56.md",
+        "lines": "108-108",
+        "excerpt": "| R55.7 | PARTIALLY DISPOSED \u2014 lane side repaired, harness side residual: the post-tip closure rewrites"
+      }
+    ],
+    "reason": "Closure-environment contamination: a non-lane seat wrote inside the lane tree during the round-55 closure (an uncommitted green C2_R55 line and 14 deleted receipts). The lane cannot fence a closure harness write scope; round 56 reverted the committed bytes at 6efd2a1 and recorded the residual as harness-owned, not lane debt.",
+    "note": "closure-environment, not lane debt; the spot-check itself labels it so (R55.7); lane side reverted at 6efd2a1 (round 56), harness side residual",
+    "seat": "T57W1ScribeItemsR55x5to7",
+    "status_at_base": "declined"
+  },
+  {
+    "id": "R56.1",
+    "status": "open",
+    "evidence": [
+      {
+        "path": "SKILL.md",
+        "lines": "491-491",
+        "excerpt": "Band interiors were unprobed at round 3 (both at 80 %, SKILL.md:335-339)"
+      },
+      {
+        "path": "SKILL.md",
+        "lines": "335-339",
+        "excerpt": "Shared survivor classes across the two cases, named"
+      },
+      {
+        "path": "corpus/README.md",
+        "lines": "100-100",
+        "excerpt": "`SKILL.md:14-15` and `:133-135` still call full-sweep/bash"
+      },
+      {
+        "path": "corpus/QUALITY.md",
+        "lines": "253-253",
+        "excerpt": "A bare line anchor into such a file expires with the next"
+      },
+      {
+        "path": "SCORECARD.md",
+        "lines": "2753-2753",
+        "excerpt": "SKILL.md page-local anchors (57 of 61 distinct ranges"
+      }
+    ],
+    "seat": "T57W1ScribeItemsR56x1to4",
+    "fixability": "fixable-costly",
+    "fixability_detail": "Any fix edits SKILL.md (measured: one cell change in SKILL.md row 53 uncredits `## Standing rules`, score 8->6, receipts/p1) and/or the corpus files that cite SKILL lines (measured: one README table row uncredits 6 headings, score 8->6, receipts/p2). Line 491 sits in `## Cross-language divergence \u2014 bash vs JS (round 3, measured)` (SKILL.md:433 heading). Not staged.",
+    "note": "167 SKILL line-anchor citations across 32 corpus files at base (receipts/r3). SKILL.md:335-339 does not hold the \"80 %\" passage that SKILL.md:491 cites (0 matches). Page-local anchors remain; QUALITY 34 applies.",
+    "status_at_base": "open"
+  },
+  {
+    "id": "R56.2",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": "SKILL.md",
+        "lines": "53-53",
+        "excerpt": "| a verdict receipt names another revision (a positive receipt gates identically) | refused unless its bytes equal the certified revision on the declared `--paths` surface; with no `--paths` the code is `RECEIPT_REV_MISMATCH` | `RECEIPT_REV_CONTENT_DRIFT` |"
+      }
+    ],
+    "seat": "TameshiR57",
+    "fixability": "fixable-costly",
+    "fixability_detail": "Fix = SKILL.md row 53 cell to `RECEIPT_REV_CONTENT_DRIFT` (no `--paths`: `RECEIPT_REV_MISMATCH`), same line count. Touches SKILL.md: measured (receipts/p1, probe rev 827e6554) uncredits `## Standing rules` only, score 8->6. Not staged (SKILL.md excluded from cheap moves).",
+    "note": "SKILL standing-rules cell now equals the code the gate emits on a --paths drift fixture (C2 standing_cell arm)",
+    "status_at_base": "open",
+    "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  },
+  {
+    "id": "R56.3",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": "corpus/knowledge/receipt-revision-binding.md",
+        "lines": "251-251",
+        "excerpt": "### ER-R57-K1 \u2014 the `recheck:` value is now 19/19"
+      },
+      {
+        "path": "corpus/README.md",
+        "lines": "653-653",
+        "excerpt": "| `knowledge/receipt-revision-binding.md` (round 56; errata ER-R57-K1, round 57) and `knowledge/gate-row-exit-map.md` (round 57) | The receipt-revision gate's binding rule; its exit map (0 PASS, 2 could-not-evaluate, 3 refused, and exit 1 as usage or traceback); a code-by-condition truth table measured on the CLI at base `5e3569969b53`; the three registry gate rows (`tools/registry.json`), which e"
+      }
+    ],
+    "seat": "TameshiR57",
+    "fixability": "fixable-cheap (recheck line, staged) + fixable-costly (README index line)",
+    "fixability_detail": "Recheck line: staged at stage/corpus/knowledge/receipt-revision-binding.md (line 3 only; patch in the seat dir). No ledger entry pins that file (0 inputs references); measured probe rev 585084b4 scores 64/64, score 8. README index: a one-row insert at corpus/README.md:14 (probe rev 8f6a44d3) uncredits 6 headings (`## Standing rules`, `## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence`, `## The leg ledger \u2014 replay, receipt, and how it is read (round 7, measured)`, `### Triggers T1\u2013T3 and the re-pin rule`, `### The map \u2014 where a reader enters, artifact by artifact`, `## Live-tree re-pin and entry-command monitor \u2014 round 17`), score 8->6.",
+    "note": "errata names the 19/19 recheck; README coverage-map row indexes the entry",
+    "status_at_base": "open",
+    "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  },
+  {
+    "id": "R56.4",
+    "status": "fixed",
+    "evidence": [
+      {
+        "path": ".ufo/evidence/round-57/coldread-referent-r56.md",
+        "lines": "9-9",
+        "excerpt": "- Referent: commit `877eedee3ddb7fe25d7a6a09922b04ba13e5a99b` (round 56, \"integrate wave-one and wave-two evidence\"), which lies between C0 and the bind."
+      }
+    ],
+    "seat": "TameshiR57",
+    "fixability": "fixable-cheap (referent recorded in a new round-57 note, staged)",
+    "fixability_detail": "Staged at stage/.ufo/evidence/round-57/coldread-referent-r56.md: records the referent commit 877eedee and the digests. Labels in .ufo/evidence/round-21/coldread/ledger.json are NOT re-bound: that file is pinned by 6 entries (re-binding it would uncredit those headings). A new file is pinned by no entry.",
+    "note": "referent of the 13/6 mismatching external_inputs labels recorded (commit 877eede between C0 and the bind); labels not re-bound",
+    "status_at_base": "open",
+    "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  },
+  {
+    "id": "R56.5",
+    "status": "open",
+    "seat": "T57W1ScribeItemsR56x5to7",
+    "evidence": [
+      {
+        "path": ".ufo/evidence/round-56/controls.sh",
+        "lines": "3-3",
+        "excerpt": "Phase A (before the deciding run): every control must reach its pre-registered verdict."
+      },
+      {
+        "path": ".ufo/evidence/round-56/controls.sh",
+        "lines": "4-5",
+        "excerpt": "Phase B (after the ledger bind): the positive controls are scored AT the revision they"
+      },
+      {
+        "path": ".ufo/evidence/round-56/c2/measure.py",
+        "lines": "205-205",
+        "excerpt": "a_raw = show(lane, rev, OWN_A)"
+      },
+      {
+        "path": ".ufo/evidence/round-56/c2/measure.py",
+        "lines": "208-210",
+        "excerpt": "if a_raw is None or b_raw is None or paths_raw is None: total += 1 own = 'own-receipts-missing'"
+      }
+    ],
+    "note": "R56.5 at base: controls.sh header names only Phase A/B, no generation pre-registration; C2 arm 5 reads the committed own controls (show OWN_A) and only checks presence, no producer/provenance discriminator. Fix staged in round 57 by T57W1ExecControls (one generation, recomputed); not a round-56 edit.",
+    "triage": "fixable-cheap",
+    "fix_note": "Fix already staged in round 57 by T57W1ExecControls at .ufo/waves/round-57/w1/T57W1ExecControls/stage/.ufo/evidence/round-57/controls.sh (header: ONE GENERATION, controls recomputed, never read). Round-56 frozen files are not edited. Counter-side discriminator is the round-57 C2 counter (T57W1ExecC2Counter); no pinned cold-read input touched.",
+    "status_at_base": "open"
+  },
+  {
+    "id": "R56.6",
+    "status": "fixed",
+    "seat": "TameshiR57",
+    "evidence": [
+      {
+        "path": "tools/registry.json",
+        "lines": "1366-1366",
+        "excerpt": "\"name\": \"receipt-gate-unresolvable-certified\","
+      },
+      {
+        "path": "SKILL.md",
+        "lines": "1547-1547",
+        "excerpt": "| receipt-revision gate | gate | `python3 tools/receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:positive\\|verdict\\|control[:REGEX] ... [--json]` | 0 PASS; 2 certified revision unresolvable (`RECEIPT_REV_UNRESOLVABLE`); 3 refused with a named code; 1 usage | `python3 tools/receipt-revision-gate.py --selftest` | `CODES` tuple and the 19 literal selftest cases in `t"
+      }
+    ],
+    "note": "three executed gate rows (exits 0, 3, 2) and a SKILL gate/probe registry row with the 0/2/3 map",
+    "triage": "fixable-costly",
+    "fix_note": "Adding a gate-kind row for receipt-revision-gate.py edits tools/registry.json, which 148 cold-read entries pin under 16 headings: \"## Context gate classification and explicit exit classes \u2014 round 15\" (17), \"## Live-tree re-pin and entry-command monitor \u2014 round 17\" (22), \"### Round-17 gate/probe registry \u2014 re-pin and monitor\" (14), \"### Round-18 gate/probe registry \u2014 routed-defect closure\" (20), \"### Round-20 gate/probe registry \u2014 frozen receipt instruments\" (13), \"### Round-21 gate/probe registry \u2014 finite environment differential\" (18), \"### Round-26 gate/probe registry \u2014 report interop\" (6), \"## Standing rules\" (4), \"### The service's limits \u2014 what tameshi refuses to mutation-test\" (5), \"### Triggers T1\u2013T3 and the re-pin rule\" (5), \"## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence\" (5), \"## The operator's runbook and the six-leg regression (round 10, measured)\" (14), \"### Where to enter \u2014 four readers\" (1), \"## Seventh recorded case and full-page cold-read \u2014 round 16\" (2), \"## Ninth recorded case \u2014 round 26\" (1), \"## The cadence's first scheduled tick, and the service's limits (round 9, measured)\" (1). No separate patch staged: the round-57 registry rows (T57W1ExecRegistryRows) must make the same edit, so the L1 folds it there and pays the cost once.",
+    "status_at_base": "open",
+    "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  },
+  {
+    "id": "R56.7",
+    "status": "fixed",
+    "seat": "TameshiR57",
+    "evidence": [
+      {
+        "path": "corpus/lessons/round-57.md",
+        "lines": "25-25",
+        "excerpt": "- **R56.7 \u2014 \"no byte changed after C0/PIN\" is true of PIN\u2192tip, not of C0\u2192PIN.** `corpus/lessons/round-56.md`"
+      }
+    ],
+    "note": "phrasing corrected by a superseding record; round-56 lesson untouched",
+    "triage": "fixable-cheap",
+    "fix_note": "Errata patch staged: stage/corpus/lessons/round-56.md (full file = base + one appended errata block; diff at .ufo/waves/round-57/w1/T57W1ScribeItemsR56x5to7/round-56-lesson-errata.diff). corpus/lessons/round-56.md is not an input of any cold-read ledger entry (checked), so no pinned input changes.",
+    "status_at_base": "open",
+    "commit": "ca75c2674645ab6bdadeecb8584007c74342bfa9"
+  }
+]

@@ -1,0 +1,37 @@
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show adf87899c70d616140a81185a8f9acbbdfb30392:corpus/lessons/round-57.md
+# tameshi round 57 — lesson (hyaku run 11, 2026-10-28)
+
+L1 `TameshiR57`, attempt 1. Base `5e3569969b532310d2b8a3d130901757a3df356b`; contract
+`.ufo/evidence/round-57/contract.json`. This file is written in sections as the round lands; the sections
+after `## Corrections to earlier records` are completed from committed receipts at the round's close.
+
+## Corrections to earlier records
+
+Append-only corrections (CORPUS.md: corrections are new entries, never rewrites). Each names the routed item it
+answers; the ledger rows `R53.8`, `R55.2` in `corpus/routed-defects.json` point here.
+
+- **R53.8 — the round-53 lesson's quote word counts are wrong.** `corpus/lessons/round-53.md` line 23 calls the
+  S275 quote "22 words" and lines 31-32 call the S276 quote "19 words". Counted with `python3 -c 'print(len(q.split()))'`
+  on the two quoted strings as they appear in that lesson, S275 "by selecting only subsuming commit relevant mutants,
+  we reduce the number of mutants requiring analysis by around 93% on average" is 20 words and S276 "re-compute
+  mutant suites per release. Sadly, this makes mutation results inconsistent; mutant scores from each release
+  cannot be directly compared" is 20 words. Both are within the 25-word bound of fleet-root `CORPUS.md` rule 1 (a ≤25-word quote); the
+  parentheticals in the round-53 lesson are superseded by this line.
+- **R55.2 — the quoted C2 total is not in the report.** The round-55 verifier
+  (`corpus/lessons/round-55-verifier-spotcheck.md:123-124`) quotes the scribe report as
+  `grammar=9/9 … note=9/9 skill=1/1 total=0`. That string does not occur in
+  `.ufo/waves/round-55/w1/T55W1ScribeSkill.md`. The report quotes the 9-mode run as
+  `total=1 C2_R55_PASS=false` (its line 148; receipt `c2-integrated.out:44`, `rev=08d64e946006`).
+  Its only `total=0` (line 157) is the earlier 8-mode run, `grammar=8/8 … total=0 C2_R55_PASS=true`,
+  labelled as earlier. The 9-mode run is `total=1`, verdict false. This line answers the item; the
+  round-55 wave report is not edited.
+- **R56.7 — "no byte changed after C0/PIN" holds from 877eedee to base only.** The round-56 lesson
+  (`corpus/lessons/round-56.md:318-319`) says no `SKILL.md`, `corpus/QUALITY.md`, `corpus/SOURCES.md`,
+  `corpus/knowledge/`, `tools/` or ledger byte changed after C0/PIN. `git diff --stat
+  877eedee3ddb7fe25d7a6a09922b04ba13e5a99b 5e3569969b532310d2b8a3d130901757a3df356b -- SKILL.md
+  corpus/QUALITY.md corpus/SOURCES.md corpus/knowledge tools` prints nothing, so the sentence holds
+  from the bind input `877eedee` to base `5e35699`, the round-56 tip this round starts from. It is
+  false from C0 `c0137451` to `877eedee`: `git diff --stat c0137451f5b7 877eedee3ddb -- corpus SKILL.md
+  tools` shows `corpus/QUALITY.md` +31, `corpus/SOURCES.md` +2 and
+  `corpus/knowledge/receipt-revision-binding.md` +39. This line supersedes the sentence; the
+  round-56 lesson is not rewritten.

@@ -1,0 +1,79 @@
+{
+  "seat": "T57D4Read02",
+  "mode": "documentary-defensive-only",
+  "cand": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "heading": "## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence",
+  "section_sha256": "77d88c0226463dfc97f0074a5cafedc1044be0a2a16c85fbb6237ac06a5140da",
+  "section_start": 159,
+  "section_end": 273,
+  "recommendation": "bounded-agreement-with-evidence-gaps; no admission",
+  "integration_status": "UNVERIFIED",
+  "findings": [
+    {
+      "id": "D4-READ02-1",
+      "severity": "low",
+      "title": "Replay clone provenance is not retained",
+      "paths": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3Read02.md:20-21",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3Read02.json:21-390"
+      ],
+      "evidence": "All 46 command records match commands.json, but none records the tameshi clone creation/checkout, clone rev-parse HEAD at C0b, or a hash of the clone SKILL.md used by driver commands 17-20. Command 39 hashes git-show C0b instead of that driver input.",
+      "impact": "C0b section identity is independently confirmed; the retained replay inputs (including Appendix manifests and pointer-source clone) are not independently bound to C0b by these receipts. This is missing evidence, not proof of a wrong revision.",
+      "recommendation": "Limit the claim to retained observations until clone revision/input-byte evidence is available; do not rerun under this recovery assignment."
+    },
+    {
+      "id": "D4-READ02-2",
+      "severity": "low",
+      "title": "Survivor probe fixture inputs are not retained",
+      "paths": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3Read02.md:19,29,33",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3Read02-receipts/commands.json"
+      ],
+      "evidence": "Commands 22-28 retain argv, exit and outputs, but retained directory contains only bash-sweep.json, commands.json, js-sweep.json, mutate_driver.py, section.txt, self-evaluation.json. No probe/probe2 census.tsv, shapes.tsv, baseline.tsv, host-file bytes/modes or fixture-construction source is retained; mutate_driver.py only constructs suite mutants.",
+      "impact": "Observed non-equivalence outputs agree with the report, but the exact off-suite input setups cannot be reconstructed from this receipt set alone after scratch deletion.",
+      "recommendation": "Describe survivor probes as output-backed observations with unavailable exact fixture inputs, rather than a fully retained reproduction recipe."
+    }
+  ],
+  "evidence_query": "import json, pathlib\np=pathlib.Path('/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3')\nr=p/'T57W3Read02-receipts'\nd=json.loads((p/'T57W3Read02.json').read_text())\nc=json.loads((r/'commands.json').read_text())\nprint('commands',len(c),'match',c==d['commands'])\nprint('clone HEAD at cand',any('rev-parse' in x['command'] and x['stdout'].strip()==d['cand'] for x in c))\nprint('files',sorted(x.name for x in r.iterdir()))\nprint('fixture construction candidates',[(i+1,x['command']) for i,x in enumerate(c) if any(t in x['command'] for t in ['write_text','chmod','mkdir'])])\n",
+  "evidence_output": {
+    "commands": 46,
+    "commands_match": true,
+    "clone_head_at_cand_recorded": false,
+    "retained_files": [
+      "bash-sweep.json",
+      "commands.json",
+      "js-sweep.json",
+      "mutate_driver.py",
+      "section.txt",
+      "self-evaluation.json"
+    ],
+    "fixture_construction_candidates": [
+      {
+        "index": 40,
+        "command": "mkdir -p /fast/scratch/hyaku/tameshi-r57/T57W3Read02/js/copy-check/evidence"
+      },
+      {
+        "index": 43,
+        "command": "mkdir -p /fast/scratch/hyaku/tameshi-r57/T57W3Read02/bash/copy-check/evidence"
+      }
+    ]
+  },
+  "bounded_agreement": [
+    "C0b section SHA and line bounds match",
+    "all 46 command records identical across report JSON and receipts",
+    "JS and bash each 8 killed / 2 survived / 0 inconclusive, labels retained",
+    "bash each stream 14 executed + 2 skipped",
+    "before/after identity outputs match",
+    "historical committed blob digests and sizes independently match"
+  ],
+  "verification_gaps": [
+    "No independent authentication of historical execution",
+    "No retained tameshi replay clone revision/input hash binding",
+    "Exact off-suite probe fixture bytes and setup absent",
+    "No candidate integration or NO-HARM verification",
+    "LSP unavailable: No such tool"
+  ],
+  "executed_candidate_code": false,
+  "tests_or_builds_run": false,
+  "tools_installed": []
+}

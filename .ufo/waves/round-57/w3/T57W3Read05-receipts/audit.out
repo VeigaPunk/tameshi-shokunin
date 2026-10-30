@@ -1,0 +1,140 @@
+SECTION 1282 1311 7e240e714c6e6fa75a01061ef171238401b3a91fdd69cc86c13f97b151b848f6
+CLONE_HEAD adf87899c70d616140a81185a8f9acbbdfb30392
+CLONE_SKILL_MATCH true
+SECTION_BEGIN
+### The service's limits — what tameshi refuses to mutation-test
+
+The note states its own role as "the refusal table the re-sweep cadence
+applies at intake" (`service-limits.md:4-5`); no cadence or ledger text names
+it (`:1023-1169`, `fleet-kill-rate-ledger.md:285`, `fleet-kill-rate-ledger.md:318`) — the
+intake application is the note's claim, quoted as stated, not a cadence fact
+this page asserts. Each refusal carries a measured anchor —
+a refusal without an anchor is not written; the table states refusals, it does not
+adjudicate them. (Anchors `:…` are this page; `PROVINCE.md` is repo-relative; other bare note names are under `corpus/knowledge/`.) The
+standalone note `corpus/knowledge/service-limits.md` (T9-2, round 9) carries
+the same rows as the detail of record — verbatim anchor quotes, the trigger column
+and the intake-precondition check; this page is the compact rendering, and a
+divergence between the two is the finding, never smoothed.
+
+| # | Refusal | What it means | Anchor |
+|---|---|---|---|
+| a | No pinned revision / no opted-in lane | no sweep — the queue is an offer, not a schedule; a round with no opt-in records the no-opt-in line | `service-optin-protocol.md:25-30`; `fleet-suite-census.md:277-286` |
+| b | No one-command hermetic suite | refused before any suite runs — the request shape requires it; spec/control failures are `MUTATE: SETUP`, exit 2, no headline | `:824-828`; `:851-855` |
+| c | A moved substrate without a re-pin | a recommendation, never an edit — the service never edits, repairs or re-pins a gate | `:834-836` |
+| d | Live substrates / sessions | never read; a live-plane probe is a PATH-level stub, never the session | `service-optin-protocol.md:129-132` |
+| e | Credential material / endpoint health | out of province — report, never absorb | `PROVINCE.md:14-18`, `PROVINCE.md:20` |
+| f | Product semantics — whether a gate's verdicts are right | never measured — sensitivity ≠ truth | `:890-892`; `fleet-kill-rate-ledger.md:156-158` |
+| g | Coordinated multi-edit rewrites | outside the defect vocabulary — no rate claimed | `fleet-kill-rate-ledger.md:220` (U2) |
+| h | The exit-flatten family | a harness boundary — named, not fixed | `service-optin-protocol.md:267-269` |
+| i | A directed-repair re-run presented as a rate | recorded as directed repair, not an independent rate | `fleet-kill-rate-ledger.md:35-36` |
+| j | Foreign scratch | never removed | `service-optin-protocol.md:86-91` |
+
+Anchors re-resolved 2026-10-14 on the live bytes; a reader on a differing revision
+re-resolves rather than trusts.
+
+SECTION_END
+ANCHOR corpus/knowledge/service-limits.md:4-5 exists
+4: `plans/round-9.plan.md:47-69`). Role: the **refusal table the re-sweep cadence
+5: applies at intake** — what this service will not sweep, the trigger that fires
+ANCHOR corpus/knowledge/service-optin-protocol.md:25-30 exists
+25: only; results are per-revision and per-host. The queue
+26: (`fleet-suite-census.md:277-286`) is an offer, not a schedule: at round-7
+27: dispatch it drains only under a fresh opt-in naming a pinned target + a
+28: hermetic suite, the standing default head is surface-probe, and a round with
+29: no opt-in records the no-opt-in line as its complete outcome
+30: (`plans/round-7.plan.md:16-20`).
+ANCHOR corpus/knowledge/service-optin-protocol.md:86-91 exists
+86: - **Scratch namespace per lane.** Every write is lane-scoped (round-7
+87:   convention `/tmp/w7-<lane>-*`). A suite with shared fixture scratch is an
+88:   incident, not a licence: the mado run saw ≥37 foreign
+89:   `/tmp/w5-mado-m52-selftest.*` directories, kept exactly its own 8, and
+90:   removed exactly those paths
+91:   (`corpus/knowledge/mutation-case-mado-verify.md:24-29`).
+ANCHOR corpus/knowledge/service-optin-protocol.md:129-132 exists
+129: - **No live substrate read.** Hermetic suites by construction; where a probe
+130:   needs a live-plane branch it is a PATH-level stub, never the session (mado:
+131:   "no live substrate read — every live-plane probe binary used in §2 was a
+132:   local stub, never the session", `mutation-case-mado-verify.md:8-11`).
+ANCHOR corpus/knowledge/service-optin-protocol.md:267-269 exists
+267: - **U4** — a harness that adjudicates by exit code alone cannot kill the
+268:   exit-flatten family; a stdout-reading harness is a named future, not a
+269:   measurement (`mado-shokunin/corpus/knowledge/gate-mutation-proof.md:103-118`).
+ANCHOR corpus/knowledge/fleet-suite-census.md:277-286 exists
+277: Queue (projection, ordered by expected yield — most static protection last):
+278: 
+279: | Gate | Static state | Why probe it | Sweep prerequisite |
+280: |---|---|---|---|
+281: | cite-check | 62 hermetic cases; **no** meta-check; substring verdict asserts; 1 mutation copy in the *integration* group | everywhere else self-checks at least its declared arms; also the suite with an unexecuted group | hermetic 62-case run on a copy; the integration group stays a declared skip in a hermetic sweep |
+282: | surface-probe | 42 cases; arm meta-check for codes only; no token enum | fail-closed reasons unreachable by the suite's own coverage check; a free-text family with no assert shape | hermetic |
+283: | round-gate | 60 cases; kinds meta-check; 1 uncovered token + 2 uncovered call sites; §13 interval hypothesis (`[26,1059]` floor) | the probe candidates are already named (§13.5–13.7) — a measurement would test them, and would be the third-gate test of matrix rows D/E | hermetic |
+284: | proxy-check | 102 cases; 12/12 arms; literal arithmetic pins; determinism case | fewest static gaps; candidates: `INTERNAL_ERROR` net (`:1044`,`:2351`), per-token detail strings | hermetic; expect low survivor count |
+285: | claims-check | 39 cases; 5/5 arms; one kind-blind detector case | fewest static gaps; candidates: row/verdict seams beyond the one detector | hermetic; expect low survivor count |
+286: | kimi-census | 43 cases; 2 meta-checks | **already measured** 8/10 (r2) — serves as the tool's `--regression` reference case | n/a |
+ANCHOR corpus/knowledge/fleet-kill-rate-ledger.md:35-36 exists
+35:   sibling gate, `PROVINCE.md:16-18`). A post-hardening re-run of the same spec
+36:   is a **directed repair**, not an independent rate; it is recorded as such.
+ANCHOR corpus/knowledge/fleet-kill-rate-ledger.md:156-158 exists
+156:   (matrix §7, unmeasured everywhere); suite sensitivity ≠ gate truth (nothing
+157:   here measures whether a gate's verdicts about the real world are right);
+158:   live-substrate drift (suites are hermetic by construction).
+ANCHOR corpus/knowledge/fleet-kill-rate-ledger.md:220-220 exists
+220: - **U2** — coordinated multi-edit rewrites unmeasured everywhere (matrix §7).
+ANCHOR corpus/knowledge/fleet-kill-rate-ledger.md:285-285 exists
+285: **ER-3 — the re-sweep cadence: when an owner requests one, and what comes back (policy + executed pin read; appended 2026-10-14 by T8-3).** U9 (`:235-237`) recorded this ledger's update as "a convention, not a mechanism". The mechanism is three triggers, stated from the owner's side, plus one mechanical pin read that says which trigger fired. It governs the six measured rows above; a first sweep of an unmeasured §3 gate is not a re-sweep.
+ANCHOR corpus/knowledge/fleet-kill-rate-ledger.md:318-318 exists
+318: **ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by T9-1, tameshi round 9; `plans/round-9.plan.md` leg 1).** ER-3 landed the cadence as policy + one executed read; this is the policy's first invocation at a round boundary — the receipt. No §1–§4 cell is edited; the moved cells are append-only readings, old tables stand at their revisions, and a moved pin is never re-interpreted.
+ANCHOR PROVINCE.md:14-18 exists
+14: **Refuses:** product domains — every lane's gate remains its own; tameshi
+15: owns only the reusable craft (a pattern is admitted from evidence in TWO
+16: independent lanes before it is claimed general). Never edits a sibling's
+17: gate code (read-only probes; recommendations travel in round reports).
+18: Credential material (→ kagi), endpoint health (→ kama).
+ANCHOR PROVINCE.md:20-20 exists
+20: **Out of province → report, never absorb.**
+ANCHOR SKILL.md:824-828 exists
+824: Rounds 2–5 measured three fleet gates at tameshi's hand; round 6 turns the
+825: method outward as the service the fleet census offered
+826: (`fleet-suite-census.md:249-291`): an opting-in lane brings its own gate, the
+827: service sweeps it hermetically and read-only, and returns a kill-rate table
+828: plus recommendations — absorption stays with the owner lane. The first
+ANCHOR SKILL.md:851-855 exists
+851: 4. Nothing else. The service never edits, repairs or re-pins the gate; a
+852:    needed change is a recommendation to the owner (round-6 anti-claim,
+853:    `plans/round-6.plan.md:23-25`).
+854: 
+855: ### The protocol — ordered, fail-closed
+ANCHOR SKILL.md:834-836 exists
+834: ### The opt-in contract — what the lane brings
+835: 
+836: 1. **A pinned revision** — committed bytes of the gate with sha256, size, line
+ANCHOR SKILL.md:890-892 exists
+890: - **Hermetic suites only** — no substrate-drift claim; results are
+891:   per-revision and per-host (census §5 scope, `fleet-suite-census.md:288-291`).
+892: - **Read-only** — target sha before = after (`MUTATE_RESTORE`); the tool emits no tree-clean check, so porcelain-clean is an opt-in precondition at open (SKILL.md:819-820).
+RESOLVED b-hermetic SKILL.md:841-845
+841: 2. **A one-command hermetic suite** invocable against a copy — mado's gate
+842:    takes `bash "$MUTANT" --selftest`; it must exercise the copy it is handed
+843:    (mado's selftest re-enters `$0`), print its own executed count and verdict
+844:    (`MADO_SELFTEST: 28/28 assertions passed` on green), and read no live path
+845:    (`mutation-case-mado-verify.md:44-49`).
+RESOLVED b-setup SKILL.md:868-872
+868: 2. **Spec parse + uniqueness.** Every `@old` must occur exactly once (non-overlapping count), asserted
+869:    **before any suite run**; `@new == @old` is refused. Any spec failure is
+870:    `MUTATE: SETUP (<reason>)`, exit 2 — no headline.
+871: 3. **Control first.** The unmutated copy must run green; a red control exits 2
+872:    (kills could not be attributed).
+RESOLVED c-no-edit SKILL.md:851-853
+851: 4. Nothing else. The service never edits, repairs or re-pins the gate; a
+852:    needed change is a recommendation to the owner (round-6 anti-claim,
+853:    `plans/round-6.plan.md:23-25`).
+RESOLVED f-sensitivity SKILL.md:907-909
+907: - **Sensitivity, not truth** — a sweep measures what the suite can detect,
+908:   never whether the gate's verdicts are right
+909:   (`mutation-case-mado-verify.md:229-230`).
+CADENCE_NAMES_SERVICE_LIMITS False
+LEDGER_NAMES_SERVICE_LIMITS False
+PAGE_ROW_IDS a,b,c,d,e,f,g,h,i,j
+NOTE_ROW_IDS a,b,c,d,e,f,g,h,i,j
+ANCHOR_SWEEP_COMPLETE 17 anchor ranges; rows a-j present in both renderings; no runnable command appears in assigned section
+
+exit=0

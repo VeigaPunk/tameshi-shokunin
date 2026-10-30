@@ -1,0 +1,623 @@
+commit bcba8924894216268afc4171f06eb8c28e912b46
+Author:     tameshi-shokunin <tameshi@shokunin.local>
+AuthorDate: Tue Oct 27 01:42:33 2026 -0300
+Commit:     tameshi-shokunin <tameshi@shokunin.local>
+CommitDate: Tue Oct 27 02:39:44 2026 -0300
+
+    round-52: C1 registry row 10/10 + fleet-bound round21 self-test; C2 SKILL corrections, kill-rate supersession, 20 ledger correction records; SCORECARD pre-registration
+
+diff --git a/.ufo/evidence/round-21/coldread/ledger.json b/.ufo/evidence/round-21/coldread/ledger.json
+index 348ee62c..5b5c9b80 100644
+--- a/.ufo/evidence/round-21/coldread/ledger.json
++++ b/.ufo/evidence/round-21/coldread/ledger.json
+@@ -41488,4 +41488,608 @@
+   "source_read_entries": 34,
+   "read_rev": "8eaae28ec4a3aadcd0b2ef86f7cb0a27a2ffa378"
+- }
++ },
++ "corrections": [
++  {
++   "heading": "## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read01",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read01.md",
++   "wrong_expectations": 3,
++   "findings": [
++    {
++     "quote": "raw pointer `tools/mutate-and-run.sh:425`: CAND line 425 is `d = hits[0]`; the `APPLY FAIL \u2026 old-string-count=%d expected=1` print is at 433-435",
++     "class": "stale-pointer",
++     "skill_statement": "the maintained driver also prints the failing count: `tools/mutate-and-run.sh:425`"
++    },
++    {
++     "quote": "raw pointer `tools/mutate-and-run.sh:569-574`: CAND lines 569-574 are the restore-drift check and `MUTATE_RESTORE: OK`, not the cited division/DEGRADED behavior",
++     "class": "stale-pointer",
++     "skill_statement": "the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:569-574`"
++    },
++    {
++     "quote": "Section says 'corrected in round 27, seat Read03'; the claimed report path does not exist in the CAND tree",
++     "class": "unsupported",
++     "skill_statement": "this shows endpoint identity, not the absence of a transient write (SKILL.md:377-378; corrected in round 27, seat Read03)"
++    }
++   ],
++   "corrects": "ledger entry ## Mutation-sweep recipe \u2014 numbered steps; bounded cold-read evidence @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr01.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "## Restore discipline \u2014 before/after identity, not continuous non-write proof",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read02",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read02.md",
++   "wrong_expectations": 1,
++   "findings": [
++    {
++     "quote": "not a retained-scratch re-run, and no `r3-1-work` scratch appears anywhere in SCORECARD.",
++     "class": "unsupported",
++     "skill_statement": "The historical probes' sensitivity re-runs read the lane's retained scratch"
++    }
++   ],
++   "corrects": "ledger entry ## Restore discipline \u2014 before/after identity, not continuous non-write proof @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr02.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The protocol \u2014 ordered, fail-closed",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read03",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read03.md",
++   "wrong_expectations": 1,
++   "findings": [
++    {
++     "quote": "step 1 clause: \"the original is never a write target unless \\`--workdir\\` is its own directory (keep scratch apart)\" (839) | :490\u2013494, :500, :518, :519, :524, :548 | **FALSIFIED**",
++     "class": "false",
++     "skill_statement": "the original is never a write target unless `--workdir` is its own directory (keep scratch apart)"
++    }
++   ],
++   "corrects": "ledger entry ### The protocol \u2014 ordered, fail-closed @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr03.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The boundaries \u2014 what a service run is not",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read04",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read04.md",
++   "wrong_expectations": 0,
++   "findings": [],
++   "corrects": "ledger entry ### The boundaries \u2014 what a service run is not @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr04.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "## The leg ledger \u2014 replay, receipt, and how it is read (round 7, measured)",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read05",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read05.md",
++   "wrong_expectations": 2,
++   "findings": [
++    {
++     "quote": "Thus the section's progression is stale/incomplete at CAND: it omits the tenth round-51 leg.",
++     "class": "stale-count",
++     "skill_statement": "(r7-1; seven since round 16; eight since round 18; nine since round 26)"
++    },
++    {
++     "quote": "the historical round-18 pointer has moved; current TABLE_* assignments are :634-643. Treating the shorthand as an unqualified CAND pointer would be stale.",
++     "class": "stale-pointer",
++     "skill_statement": "at round 18 the recorded tables sit at `:597-620`"
++    }
++   ],
++   "corrects": "ledger entry ## The leg ledger \u2014 replay, receipt, and how it is read (round 7, measured) @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr05.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### Using the ledger",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read06",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read06.md",
++   "wrong_expectations": 14,
++   "findings": [
++    {
++     "quote": "`tools/mutate-and-run.sh:126-136` | scratch allocation/removal + exits (bullet 1)",
++     "class": "stale-pointer",
++     "skill_statement": "Exits0/1/2: PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`)"
++    },
++    {
++     "quote": "`:1273-1294` (same bullet) | (same) | git-show SETUP refusals",
++     "class": "stale-pointer",
++     "skill_statement": "Exits0/1/2: PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`)"
++    },
++    {
++     "quote": "`:1364-1384` (same bullet) | (same) | comparison-loop tail + expectation computation",
++     "class": "stale-pointer",
++     "skill_statement": "Exits0/1/2: PASS/FAIL/SETUP (`tools/mutate-and-run.sh:126-136,1273-1294,1364-1384`)"
++    },
++    {
++     "quote": "`tools/mutate-and-run.sh:1104-1175` | `git show` materializes pinned blob, validates mode/SHA (bullet 2)",
++     "class": "stale-pointer",
++     "skill_statement": "`git show <rev>:<path>` materializes the pinned blob into the case workdir and validates mode/SHA (`tools/mutate-and-run.sh:1104-1175`)"
++    },
++    {
++     "quote": "`:1159-1160` | `REGRESSION_PIN` names repo/rev/path/pin (bullet 2)",
++     "class": "stale-pointer",
++     "skill_statement": "`REGRESSION_PIN` names repo/rev/path/pin (:1159-1160)"
++    },
++    {
++     "quote": "`:1384-1450 since round 26` | refusal before that leg's suite; later legs still run; statuses aggregate (bullet 2)",
++     "class": "stale-pointer",
++     "skill_statement": "A missing repo/rev/blob or pin mismatch refuses before that leg's suite; later legs still run and their statuses aggregate (:1384-1450 since round 26)"
++    },
++    {
++     "quote": "`tools/mutate-and-run.sh:603-629` | anchor \"pins/revisions/tables\" (bullet 4)",
++     "class": "stale-pointer",
++     "skill_statement": "Current anchors (round 26): pins/revisions/tables `tools/mutate-and-run.sh:603-629`"
++    },
++    {
++     "quote": "`:657-839` | anchor \"first-four specs\" (bullet 4)",
++     "class": "stale-pointer",
++     "skill_statement": "first-four specs :657-839"
++    },
++    {
++     "quote": "`:1384-1428` | anchor \"nine dispatches\" (bullet 4)",
++     "class": "stale-pointer",
++     "skill_statement": "nine dispatches :1384-1428"
++    },
++    {
++     "quote": "Bullet 1's literal scratch path `/tmp/tameshi-r4-2-regression.XXXXXX`.",
++     "class": "false",
++     "skill_statement": "allocates a fresh default scratch `/tmp/tameshi-r4-2-regression.XXXXXX` after prerequisite checks"
++    },
++    {
++     "quote": "round 26)\" is true through round 26, but at CAND receipts print `cases=10`",
++     "class": "stale-count",
++     "skill_statement": "(N=4 at r7-1, 7 since round 16, 8 since round 18, 9 since round 26)"
++    },
++    {
++     "quote": "Bullet 4's \"nine dispatches\": ten at CAND (:1504-1508).",
++     "class": "stale-count",
++     "skill_statement": "nine dispatches"
++    },
++    {
++     "quote": "mirrored (:1285-1300), never compared against a recorded mode.",
++     "class": "unsupported",
++     "skill_statement": "workdir and validates mode/SHA"
++    },
++    {
++     "quote": "\"enumerated, executed and skipped counts distinguished\": the runner has no skip",
++     "class": "unsupported",
++     "skill_statement": "enumerated, executed and skipped counts distinguished"
++    }
++   ],
++   "corrects": "ledger entry ### Using the ledger @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr06.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### Reading a receipt \u2014 the discipline",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read07",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read07.md",
++   "wrong_expectations": 3,
++   "findings": [
++    {
++     "quote": "The N chain is stale: the runner now wires ten legs",
++     "class": "stale-count",
++     "skill_statement": "`cases=N passed=N` (D is 15 for checklist-run, 10 for other current legs; N=8 since round 18, N=9 since round 26)."
++    },
++    {
++     "quote": "`/tmp/w7-tameshi-1/flip-run.out` does not exist",
++     "class": "stale-pointer",
++     "skill_statement": "(negative run, `/tmp/w7-tameshi-1/flip-run.out`)."
++    },
++    {
++     "quote": "exits 0 and prints VERDICT: PASS at CAND \u2014 but the tally is stale",
++     "class": "stale-count",
++     "skill_statement": "`MUTATE_SELFTEST: 67/67 pass` / `VERDICT: PASS`, rc 0 at `cf41efaa\u2026`"
++    }
++   ],
++   "corrects": "ledger entry ### Reading a receipt \u2014 the discipline @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr07.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The tick and the pin read",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read08",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read08.md",
++   "wrong_expectations": 2,
++   "findings": [
++    {
++     "quote": "Current-engine self-test count is stale, but its historical framing matters.",
++     "class": "stale-count",
++     "skill_statement": "the engine's own doctored-pin refusal is a different arm, selftested `MUTATE_SELFTEST: 67/67` (SKILL.md:1062-1064)"
++    },
++    {
++     "quote": "The stated `current`/`stale`/`drift` readings leave a possible history-rewrite case unclassified",
++     "class": "unsupported",
++     "skill_statement": "the target's relation to each repo's branch-tip bytes (`current` / `stale` / `drift`) - SKILL.md:1027-1028; the `stale` rule at :1034 reads \"the recorded revision is an ancestor of `refs/heads/<branch>` and the branch-tip blob differs\", which no label covers for a non-ancestor rewrite"
++    }
++   ],
++   "corrects": "ledger entry ### The tick and the pin read @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr08.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The tick, executed",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read09",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read09.md",
++   "wrong_expectations": 8,
++   "findings": [
++    {
++     "quote": "pointer tools/mutate-and-run.sh:511-518 moved at CAND \u2192 now 614-633",
++     "class": "stale-pointer",
++     "skill_statement": "(`tools/mutate-and-run.sh:511-518`)"
++    },
++    {
++     "quote": "and 'four embedded legs' superseded by ten",
++     "class": "stale-count",
++     "skill_statement": "`PIN_*`/`REV_*` for the four embedded legs"
++    },
++    {
++     "quote": "scratch-root divergence t93 (page) vs t91 (ER-4 ledger:320,341) for the same tick",
++     "class": "unsupported",
++     "skill_statement": "scratch `/tmp/w9-tameshi-t93/pin-read-final.txt`"
++    },
++    {
++     "quote": "REGRESSION_DATE divergence 19:58:59Z (SKILL.md:1215) vs 19:58:18Z (ledger:341)",
++     "class": "false",
++     "skill_statement": "the same regression receipt \u2014 two records of one tick, kept un-merged and agreeing"
++    },
++    {
++     "quote": "'that in-flight edit is now committed as 7da4ec50\u2026' (1187) overstates identity",
++     "class": "false",
++     "skill_statement": "that in-flight edit is now committed as `7da4ec50\u2026`"
++    },
++    {
++     "quote": "'six minutes later' (1186) is 5 min 15 s",
++     "class": "stale-count",
++     "skill_statement": "and, six minutes later, `dc864c6a\u2026` (dirty)"
++    },
++    {
++     "quote": "(1206) stated without its [I] label",
++     "class": "unsupported",
++     "skill_statement": "the owners' own round-9 lanes are editing their gates"
++    },
++    {
++     "quote": "20:03:34Z worktree shas (b54f5732\u2026/31364115\u2026) have no surviving anchor (scratch gone)",
++     "class": "unsupported",
++     "skill_statement": "tsukuroi's worktree `b54f5732\u2026` vs its HEAD blob `bba6cdf6\u2026`"
++    }
++   ],
++   "corrects": "ledger entry ### The tick, executed @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr09.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The receipt at this boundary",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read10",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read10.md",
++   "wrong_expectations": 2,
++   "findings": [
++    {
++     "quote": "**Minor (known class, deepened by this round): anchor rot on `tools/mutate-and-run.sh:733-791`.**",
++     "class": "stale-pointer",
++     "skill_statement": "(`tools/mutate-and-run.sh:733-791`), so the two `stale` substrates cannot move"
++    },
++    {
++     "quote": "so \"still not embedded\" is false of the runner at",
++     "class": "false",
++     "skill_statement": "Cases 5\u20136 are still not embedded: their rows carry no `REGRESSION`"
++    }
++   ],
++   "corrects": "ledger entry ### The receipt at this boundary @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr10.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "## The operator's runbook and the six-leg regression (round 10, measured)",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read11",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read11.md",
++   "wrong_expectations": 3,
++   "findings": [
++    {
++     "quote": "`list :85-89` misses leg 1 at its own governed sha",
++     "class": "stale-pointer",
++     "skill_statement": "list `tools/mutate-and-run.sh:85-89`"
++    },
++    {
++     "quote": "F2 (made false by the round's TMPDIR change): the default scratch is no longer `/tmp/\u2026`",
++     "class": "stale-pointer",
++     "skill_statement": "`mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`"
++    },
++    {
++     "quote": "F3 (made false by the tenth leg): \"replays **six** embedded legs\" and the six-shaped receipt lines are",
++     "class": "stale-count",
++     "skill_statement": "`--regression` replays **six** embedded legs"
++    }
++   ],
++   "corrects": "ledger entry ## The operator's runbook and the six-leg regression (round 10, measured) @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr11.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The six-leg regression \u2014 usage and this round's receipt",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read12",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read12.md",
++   "wrong_expectations": 14,
++   "findings": [
++    {
++     "quote": "\"`--regression` replays **six** embedded legs\" | **drift**",
++     "class": "stale-count",
++     "skill_statement": "`--regression` replays **six**\nembedded legs"
++    },
++    {
++     "quote": "\"list `tools/mutate-and-run.sh:85-89`\" | holds@sha (imprecise) + moved",
++     "class": "stale-pointer",
++     "skill_statement": "(list `tools/mutate-and-run.sh:85-89`"
++    },
++    {
++     "quote": "\"sources `:90-97`\" | holds@sha + moved",
++     "class": "stale-pointer",
++     "skill_statement": "sources `:90-97`"
++    },
++    {
++     "quote": "\"pins/tables `:550-559`\" | holds@sha (partial) + moved",
++     "class": "stale-pointer",
++     "skill_statement": "pins/tables `:550-559`"
++    },
++    {
++     "quote": "\"specs `:766`, `:841`\" | holds@sha + moved",
++     "class": "stale-pointer",
++     "skill_statement": "specs `:766`, `:841`"
++    },
++    {
++     "quote": "\"registry `:1132-1141`\" | holds@sha (partial) + moved",
++     "class": "stale-pointer",
++     "skill_statement": "registry `:1132-1141`"
++    },
++    {
++     "quote": "\"default scratch `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`\" | **drift**",
++     "class": "false",
++     "skill_statement": "default scratch\n  `mktemp -d /tmp/tameshi-r4-2-regression.XXXXXX`"
++    },
++    {
++     "quote": "\"Exit map: 0 all legs PASS \u00b7 1 \u22651 leg FAIL \u00b7 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:115-119`)\" | holds@sha + moved/extended",
++     "class": "stale-pointer",
++     "skill_statement": "Exit\n  map: 0 all legs PASS \u00b7 1 \u22651 leg FAIL \u00b7 2 cannot verify (SETUP) (`tools/mutate-and-run.sh:115-119`)"
++    },
++    {
++     "quote": "\"r10-2 also mirrors the blob's mode \u2026 (`:104-106`, `:932-960`)\" | holds@sha + moved",
++     "class": "stale-pointer",
++     "skill_statement": "a `100755` blob is `chmod +x`'d after materialization (`:104-106`, `:932-960`)"
++    },
++    {
++     "quote": "\"the added selftest arms at `:1488-1527` cover the mirror\" | holds@sha + moved",
++     "class": "stale-pointer",
++     "skill_statement": "the added selftest arms at `:1488-1527` cover the mirror"
++    },
++    {
++     "quote": "\"`--selftest` \u2192 `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0\" | holds-hist, **stale at CAND**",
++     "class": "stale-count",
++     "skill_statement": "`--selftest` \u2192 `MUTATE_SELFTEST: 80/80 pass` / `VERDICT: PASS`, rc 0"
++    },
++    {
++     "quote": "\"`--regression` \u2192 six legs, all exact \u2026 closing `REGRESSION: PASS (cases=6 passed=6; \u2026)`, rc 0\" | holds-hist, stale at CAND",
++     "class": "stale-count",
++     "skill_statement": "`--regression` \u2192 six legs, all exact: `match=10/10` (legs 1\u20134, 6),\n    `match=15/15` (leg 5), every leg `flips=0 inconclusive=0`; closing\n    `REGRESSION: PASS (cases=6 passed=6; ledger legs exact: killed-delta<=0"
++    },
++    {
++     "quote": "\"Each `REGRESSION_PIN` line now carries the blob's `mode=` \u2026 `REGRESSION_EXPECT` lists six recorded rates\" | holds@sha; half stale at CAND",
++     "class": "stale-count",
++     "skill_statement": "`REGRESSION_EXPECT` lists six\n    recorded rates."
++    },
++    {
++     "quote": "The named-debt bullet understates at CAND: no ledger registry row exists and the registry is ten legs.",
++     "class": "stale-count",
++     "skill_statement": "a ledger row recording the six-leg\n  registry is the ledger owner's follow-on"
++    }
++   ],
++   "corrects": "ledger entry ### The six-leg regression \u2014 usage and this round's receipt @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr12.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### The map \u2014 where a reader enters, artifact by artifact",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read13",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read13.md",
++   "wrong_expectations": 6,
++   "findings": [
++    {
++     "quote": "map says the lane held nine cases since round 26, while candidate runner records ten at round 51",
++     "class": "stale-count",
++     "skill_statement": "\u00a73 the six-case ledger (six rows; the lane has held nine cases since round 26)"
++    },
++    {
++     "quote": "runbook \u00a77 says default scratch is `mktemp -d /tmp/...` (:349-351), while candidate runner explicitly honors TMPDIR",
++     "class": "stale-pointer",
++     "skill_statement": "\u00a77 the regression mode"
++    },
++    {
++     "quote": "the map's `one row per gate measured so far` premise is false at CAND",
++     "class": "false",
++     "skill_statement": "one row per gate measured so far \u2014 suite, rate + composition, survivors, last sweep + pin (eight rows; the round-26 ninth case has no row yet)"
++    },
++    {
++     "quote": "The map's `nine since round 26` count is stale at CAND (case 10 was added in round 51).",
++     "class": "stale-count",
++     "skill_statement": "`corpus/knowledge/mutation-case-*.md` (six at round 11; seven since round 16; eight since round 18; nine since round 26)"
++    },
++    {
++     "quote": "The map's nine-leg endpoint is false at CAND.",
++     "class": "stale-count",
++     "skill_statement": "six-leg registry at round 11, seven since round 16, eight since round 18, nine since round 26"
++    },
++    {
++     "quote": "so the universal `addenda ... same shape` gloss is not demonstrated by this new entry",
++     "class": "unsupported",
++     "skill_statement": "round addenda append further tables of the same shape"
++    }
++   ],
++   "corrects": "ledger entry ### The map \u2014 where a reader enters, artifact by artifact @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr13.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### Gate/probe registry",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read14",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read14.md",
++   "wrong_expectations": 0,
++   "findings": [],
++   "corrects": "ledger entry ### Gate/probe registry @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr14.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "## Seventh recorded case and full-page cold-read \u2014 round 16",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read15",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read15.md",
++   "wrong_expectations": 1,
++   "findings": [
++    {
++     "quote": "the leg-count progression \"(`tools/mutate-and-run.sh --regression` \u2192 `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26)\" stops at nine.",
++     "class": "stale-count",
++     "skill_statement": "`tools/mutate-and-run.sh --regression` \u2192 `cases=7` at round 16; `cases=8` since round 18; `cases=9` since round 26"
++    }
++   ],
++   "corrects": "ledger entry ## Seventh recorded case and full-page cold-read \u2014 round 16 @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr15.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### Round-16 gate/probe registry",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read16",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read16.md",
++   "wrong_expectations": 4,
++   "findings": [
++    {
++     "quote": "Note (minor, pre-existing, not a round-51 falsification): the Exits cell omits the `--selftest` failure",
++     "class": "unsupported",
++     "skill_statement": "0 measured \u00b7 2 rev/blob missing \u00b7 64 usage"
++    },
++    {
++     "quote": "Note (premise, undisclosed in this section): the command cell has no `--repo`; the tool defaults",
++     "class": "unsupported",
++     "skill_statement": "`python3 .ufo/evidence/round-16/measure.py --rev REV`"
++    },
++    {
++     "quote": "Note (minor, pre-existing): the tool is argparse-based (:337) and `--bogus` \u2192 **exit 2**",
++     "class": "unsupported",
++     "skill_statement": "0 corrected rule passes the oracle \u00b7 1 it fails"
++    },
++    {
++     "quote": "Note (cosmetic): the \"(round 17)\" tag on \"a heading mismatch\" is imprecise provenance \u2014 the round-16",
++     "class": "unsupported",
++     "skill_statement": "2 usage (argparse), an invalid override or a heading mismatch (round 17)"
++    }
++   ],
++   "corrects": "ledger entry ### Round-16 gate/probe registry @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr16.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "## Live-tree re-pin and entry-command monitor \u2014 round 17",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read17",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read17.md",
++   "wrong_expectations": 0,
++   "findings": [],
++   "corrects": "ledger entry ## Live-tree re-pin and entry-command monitor \u2014 round 17 @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr17.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### Round-17 gate/probe registry \u2014 re-pin and monitor",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read18",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read18.md",
++   "wrong_expectations": 1,
++   "findings": [
++    {
++     "quote": "The cited section's shorthand 'as the round-16 row' does not state this changed scratch behavior or ten-leg contract.",
++     "class": "stale-pointer",
++     "skill_statement": "as the round-16 row; a borrowed repo identity is SETUP 2"
++    }
++   ],
++   "corrects": "ledger entry ### Round-17 gate/probe registry \u2014 re-pin and monitor @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr18.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "## Eighth recorded case \u2014 round 18",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read19",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read19.md",
++   "wrong_expectations": 1,
++   "findings": [
++    {
++     "quote": "so the replay now runs and reports **`cases=10`**. The parenthetical's \"from round 26 on\" stopped being true the moment the tenth leg landed.",
++     "class": "stale-count",
++     "skill_statement": "`bash tools/mutate-and-run.sh --regression` \u2192 `REGRESSION_CASE js-sources-check: PASS`, `cases=8 passed=8` at the round-18 runner (`cases=9 passed=9` from round 26 on, ninth leg js-cite-check; seat Read34)"
++    }
++   ],
++   "corrects": "ledger entry ## Eighth recorded case \u2014 round 18 @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr19.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  },
++  {
++   "heading": "### Round-26 gate/probe registry \u2014 report interop",
++   "read_rev": "02ec217c4d0afabe727fde2e261b7951d28fb4e9",
++   "reader": "T51W2Read20",
++   "reader_file": ".ufo/evidence/round-51/coldread/reads/T51W2Read20.md",
++   "wrong_expectations": 7,
++   "findings": [
++    {
++     "quote": "**HIGH-1 \u2014 SKILL.md:2136, Round-26 row: \"leg set not equal to the nine ledger legs\" is false at CAND.**",
++     "class": "stale-count",
++     "skill_statement": "leg set not equal to the nine ledger legs"
++    },
++    {
++     "quote": "**HIGH-2 \u2014 tools/registry.json:1011-1016 `mte-interop-check` row (status active) is unsatisfiable at CAND, and SKILL.md:2136 repeats its stale \"(9/9)\".**",
++     "class": "stale-count",
++     "skill_statement": "Registry rows `mte-interop-selftest` (17/17) and `mte-interop-check` (9/9)."
++    },
++    {
++     "quote": "**MED-1 \u2014 SKILL.md:2149 (fleet mutation runner row):",
++     "class": "false",
++     "skill_statement": "caller-chosen --workdir (or auto mktemp under /tmp) for run and --regression; selftest under /tmp; fleet leg repos read-only via git show"
++    },
++    {
++     "quote": "**MED-2 \u2014 tools/tally-audit-v3.py:34,408 (echoed by SKILL.md:2161 \"witness the runner shape\"): stale model of the runner's auto root.**",
++     "class": "stale-pointer",
++     "skill_statement": "plus one auto-root dir /tmp/tameshi-r4-2-regression.XXXXXX allocated to witness the runner shape and removed at exit"
++    },
++    {
++     "quote": "**LOW-1 \u2014 SKILL.md:2154 (entry-registry walk row): \"last line SELFTEST: PASS (51 cases) at 84aa673\".**",
++     "class": "false",
++     "skill_statement": "last line SELFTEST: PASS (51 cases) at 84aa673"
++    },
++    {
++     "quote": "**LOW-2 \u2014 SKILL.md:2144 (context receipt replay row): claimed literal \"SELFTEST: PASS (49/49 cases)\".**",
++     "class": "false",
++     "skill_statement": "`python3 tools/context-capture.py --selftest` \u2192 SELFTEST: PASS (49/49 cases)"
++    },
++    {
++     "quote": "**LOW-3 \u2014 SKILL.md:2149 (fleet mutation runner row) pinned-values cell omits the tenth leg's spec.**",
++     "class": "stale-pointer",
++     "skill_statement": "`corpus/knowledge/fleet-kill-rate-ledger.md`, `.ufo/evidence/round-18/sources-check/sources-check.defects.spec`, `.ufo/evidence/round-26/cite-check/cite-check.defects.spec`; leg sha256 pins and verdict tables are literals in the tool"
++    }
++   ],
++   "corrects": "ledger entry ### Round-26 gate/probe registry \u2014 report interop @ 02ec217c: wrong_expectations 0 was written from code (round-51 refresh.py:227)",
++   "source": ".ufo/waves/round-52/w1/T52W1Corr20.json",
++   "routed_by": "corpus/lessons/round-51-verifier-spotcheck.md routed defect 3"
++  }
++ ]
+ }
+\ No newline at end of file

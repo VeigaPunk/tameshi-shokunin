@@ -1,0 +1,52 @@
+[
+ {
+  "id": "R51.4",
+  "status": "open",
+  "status_at_base": "open",
+  "evidence": [
+   {
+    "path": "tools/round21-measure.py",
+    "lines": "10-12",
+    "excerpt": "counter itself reads (its `FLEET` literal), so the selftest is fleet-bound, not hermetic: it passes from a clone anywhere on this host and fails where that fleet root is absent (round 52, routed defect R51.4)."
+   },
+   {
+    "path": "SKILL.md",
+    "lines": "2200-2200",
+    "excerpt": "fleet-bound, not hermetic (since round 52 it reads the sibling blobs at the fleet root that its subject counter c2-count.py names in its FLEET literal, so it passes from a clone anywhere on this host and fails where that fleet root is absent"
+   }
+  ],
+  "seat": "T57W3RowR514xR516",
+  "panel": {
+   "seat": "T57W2PanelR513R514",
+   "verdict": "open",
+   "commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+   "blindness": "all reads inside a detached scratch clone at the base"
+  },
+  "note": "Adjudicated to the blind panel verdict (open) as BOTH status and status_at_base; the wave-1 triage status \"fixed\" (commit bcba8924894216268afc4171f06eb8c28e912b46, which added the fleet-bound declaration to the tools/round21-measure.py docstring and to the SKILL.md gate row) is NOT adopted. The panel was not proven wrong: route 1 of the item (a hermetic --selftest) is not taken - the tool states at tools/round21-measure.py:10-12 that the selftest is fleet-bound, not hermetic - and route 2 (a declared fleet-bound row class in the counter, amendment pre-registered) is not taken either: .ufo/evidence/round-51/c3/measure.py is byte-unchanged since its freeze commit fe33538 and holds zero occurrences of \"fleet\". The item's second clause, the C3 counter's missing mutation attack (R51.5), never ran either: round-51 has T51MutC1Counter and T51MutC2Counter but no C3 mutation attack. Evidence lines are the lane lines that still show the defect. NOTE FOR THE L1: the open arm also requires R51.4 to be named in the newest \"**Planned (round N)\" paragraph of SCORECARD.md at the deciding revision; the current round-58 paragraph names R51.6 but not R51.4."
+ },
+ {
+  "id": "R51.6",
+  "status": "open",
+  "status_at_base": "open",
+  "evidence": [
+   {
+    "path": "corpus/lessons/round-51.md",
+    "lines": "5-7",
+    "excerpt": "## Gate Rows opened this round; URL, local access date, located quote and source limitations are recorded here under CORPUS.md SOURCES contract v1 rule 1. Rows touched old → new are listed after them."
+   },
+   {
+    "path": "corpus/lessons/round-51.md",
+    "lines": "12-12",
+    "excerpt": "Rows touched: S022 status `queued` → `mined` (used-by already names `corpus/knowledge/fixture-shrinking-pilot.md`; mined means cited by at least one used-by path under CORPUS.md); no other existing row status changed. Appended S272 and S273; the registry has 133 rows and the next allocated id is S274. Census start exit 0; round-end census receipt is in `.ufo/evidence/round-51/census-end.*`."
+   }
+  ],
+  "seat": "T57W3RowR514xR516",
+  "panel": {
+   "seat": "T57W3ReseatR515R516",
+   "verdict": "open",
+   "commit": null,
+   "blindness": "the first seat T57W2PanelR515R516 disclosed a breach (it read the fleet repo, the sibling kagi repo and the fleet-root .ufo/ listing), so its \"fixed\" verdict is void; the contract makes the wave-3 re-seat the panel verdict for this id"
+  },
+  "note": "Adjudicated to the panel verdict (open) as BOTH status and status_at_base. The first panel seat T57W2PanelR515R516 said \"fixed\" on the strength of forward practice (7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135 added a \"Candidates rejected\" block to corpus/lessons/round-52.md); that seat disclosed a blindness breach, so its verdict is void, and the clean re-seat T57W3ReseatR515R516 judged the cited surface open: corpus/lessons/round-51.md:5-12 still lists admits and touched rows without rejected candidates, and the file is byte-unchanged since the spot-check that routed the item (ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4). The wave-2 repair triage row already carried status open with this evidence; it is kept. The staged fix (a Candidates-rejected block for corpus/lessons/round-51.md) was never landed, so no commit is claimed."
+ }
+]

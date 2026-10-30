@@ -1,0 +1,33 @@
+T57W3RowR548xR549 — receipts 02: the blind panel file (as committed in the lane at .ufo/evidence/round-57/c1/panel.json)
+
+$ sha256sum .ufo/evidence/round-57/c1/panel.json
+ee6e27e986ebb7b7bafd3d54872b9c9f491bf0a274a7cf18e8d670d1bd1d80f8  .ufo/evidence/round-57/c1/panel.json
+$ grep -n 'PANEL_SHA256' .ufo/evidence/round-57/c1/measure.py | head -5
+29:  A6 blind-panel arm: PANEL_PATH at REV must hash to PANEL_SHA256 (else panel=pin, term panel_pin), and each new
+32:     takes panel_pin (None disables the arm: selftest only) and panel_allowed; the CLI default pin is PANEL_SHA256.
+106:PANEL_SHA256 = 'PIN_PENDING_SET_BY_L1_AFTER_THE_BLIND_PANEL'
+495:    kw.setdefault('panel_pin', PANEL_SHA256)
+913:        # cli: exit codes, last line, explain; the selftest never depends on the shipped PANEL_SHA256
+=> the panel is UNPINNED in the current bytes: panel=None, pcommits={}, panel_pin=1 fault line expected,
+   A8 panel tie and panel-disagree/panel-provenance arms inactive until the L1 pins (contract order step 4).
+
+$ python3 -c "import json;p=json.load(open('.ufo/evidence/round-57/c1/panel.json'))
+for k in ('R54.8','R54.9'): print(k, json.dumps(p['detail'][k]))
+print('files[T57W2PanelR548R549]=', p['files'].get('T57W2PanelR548R549'))"
+R54.8 {"seat": "T57W2PanelR548R549", "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb"}
+R54.9 {"seat": "T57W2PanelR548R549", "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb"}
+files[T57W2PanelR548R549]= 7604acd5d4140cb2886c4c7751abef8d461baba2dc55ee1a523b44c0ac6c5ae6
+
+verdicts (relevant): R54.8 "fixed", R54.9 "open"  (adopted verbatim as status and status_at_base)
+
+Panel seat report (wave-2, read for the adjudication): .ufo/waves/round-57/w2/T57W2PanelR548R549.{json,md}
+- R54.8 basis: 9cf0146 appends '**SUPERSEDED (round 55, ER-R54-8).**' at .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md:332;
+  incident recorded at SCORECARD.md:2680-2690 and corpus/lessons/round-55.md:62; caveat: round-54.md still has 0 config.yml mentions.
+- R54.9 basis: wave half fixed (SCORECARD.md:2694 reviewers=5 attack=21/76 seats=76 (27.6 %)); staged half still wrong
+  (round-54.md:51 'The other 80 staged'; T55W1Rev05/T55W2RevRound54Wording derive 84 of 85, unadjudicated).
+
+Seat-file provenance prerequisites (A9), checked: .ufo/waves/round-57/w2/T57W2PanelR548R549.json IS tracked at master;
+.ufo/waves/round-57/w2-results.json exists (174179 bytes); w3-results.json does not exist yet.
+NOTE: the lane working tree sha256(panel.json) = ee6e27e9... must equal the sha the L1 writes into PANEL_SHA256
+for the panel arm to load at the deciding revision; the panel seat-file sha in panel.files (7604acd5...) must match the
+committed bytes of T57W2PanelR548R549.json at REV (L1's step-4/5 business, not this seat's).

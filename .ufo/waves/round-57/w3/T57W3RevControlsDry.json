@@ -1,0 +1,358 @@
+{
+  "seat": "T57W3RevControlsDry",
+  "axes": [
+    "operability",
+    "control-arm fidelity",
+    "revision identity",
+    "lane isolation"
+  ],
+  "master": "2c51affd37e15cd7cd258d76ba0f5f73ff235924",
+  "scratch_rev": "332becb09a962561377e922ce13d835766087c30",
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "verdict": "gap-minor",
+  "findings": [
+    {
+      "severity": "P1 acceptance blocker",
+      "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/routed-defects.json",
+      "summary": "Current-master overlay has none of the 51 routed rows; positive C1 control fails.",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/controls.sh",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "5e3569969b532310d2b8a3d130901757a3df356b",
+        "332becb09a962561377e922ce13d835766087c30",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RevControlsDry-receipts/run4/controls"
+      ],
+      "output": "CONTROLS_A: 10/10 as pre-registered\nCTL CTL_POS_c1 C1_R57: self=8e64704229ff rev=332becb09a96 rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=51/5 spot=ok total=103 C1_R57_PASS=false\nCTL_MISMATCH CTL_POS_c1 expected=true actual=false counter_exit=1\nCONTROLS_B: 1/2 as pre-registered",
+      "terms": "C1_R57_TERMS: fixed=0 open=0 declined=0 fixed_this_round=0 missing=51 extra=0 duplicate=0 old49=0 spotcheck_changed=0 defects_pin=0 bad_status=0 evidence_bad=0 key_miss=0 fixed_bad=0 open_unplanned=0 declined_bad=0 fixed_short=0 declined_over=0 this_round_short=6 panel_pin=0 panel_over=46 base_status_bad=0 panel_prov=0"
+    },
+    {
+      "severity": "P2 operability",
+      "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/controls.sh:177-179",
+      "summary": "controls.sh exits 0 even when CTL_MISMATCH is printed and CONTROLS_B is 1/2; callers cannot use exit status as a success gate.",
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/controls.sh",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "5e3569969b532310d2b8a3d130901757a3df356b",
+        "332becb09a962561377e922ce13d835766087c30",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RevControlsDry-receipts/run4/controls"
+      ],
+      "output": "CTL_MISMATCH CTL_POS_c1 expected=true actual=false counter_exit=1\nCONTROLS_B: 1/2 as pre-registered\ncontrols.sh process exit=0",
+      "recommendation": "After printing both tallies, exit nonzero unless A_ok == A_n and B_ok == B_n. deciding-run already parses tally contents; preserve that content gate."
+    }
+  ],
+  "controls": {
+    "command": [
+      "bash",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/controls.sh",
+      "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+      "5e3569969b532310d2b8a3d130901757a3df356b",
+      "332becb09a962561377e922ce13d835766087c30",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RevControlsDry-receipts/run4/controls"
+    ],
+    "exit": 0,
+    "stdout": "# controls: one generation; recomputed from lane git objects, no committed receipt read\n# LANE=/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone BASE=5e3569969b532310d2b8a3d130901757a3df356b REV=332becb09a962561377e922ce13d835766087c30\n# phase A: do-nothing and mutation controls (expected false)\nCTL CTL_0_c1 C1_R57: self=8e64704229ff clone_rev=c0949e6873e1 rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=51/5 spot=ok total=154 C1_R57_PASS=false\nCTL_MATCH CTL_0_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_0_c1 missing=51\nCTL CTL_0_c2 C2_R57: self=a5138acb2248 clone_rev=c0949e6873e1 gate_rows=0 exits=none held=0/0 mutants=0/3 skill_row=0 codes_known=4/4 standing_cell=WRONG:RECEIPT_REV_MISMATCH total=11 C2_R57_PASS=false\nCTL_MATCH CTL_0_c2 expected=false actual=false counter_exit=1\nCTL_GEN CTL_SKIP_c1 {\"kept_rows\": 49, \"mode\": \"skip\", \"new_rows\": 51, \"panel_agree\": 2, \"panel_present\": true, \"reason_len\": 45, \"unkeyed\": 0}\nCTL CTL_SKIP_c1 C1_R57: self=8e64704229ff clone_rev=fcd326804a2d rows=51/51 agree=51/51 old49=ok fixed=0 declined=51 thisround=0 panel=49/5 spot=ok total=50 C1_R57_PASS=false\nCTL_MATCH CTL_SKIP_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_SKIP_c1 panel_over=44\nCTL_GEN CTL_FAB_c1 {\"kept_rows\": 49, \"mode\": \"fab\", \"new_rows\": 51, \"panel_agree\": 29, \"panel_present\": true, \"unkeyed\": 0}\nCTL CTL_FAB_c1 C1_R57: self=8e64704229ff clone_rev=aadc7730a943 rows=51/51 agree=0/51 old49=ok fixed=51 declined=0 thisround=0 panel=22/5 spot=ok total=74 C1_R57_PASS=false\nCTL_MATCH CTL_FAB_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_FAB_c1 evidence_bad=51\nCTL_GEN CTL_OPEN_c1 {\"kept_rows\": 49, \"mode\": \"open\", \"new_rows\": 51, \"panel_agree\": 29, \"panel_present\": true, \"planned_ids_blanked\": 0, \"unkeyed\": 0}\nCTL CTL_OPEN_c1 C1_R57: self=8e64704229ff clone_rev=f1524a00bca9 rows=51/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=22/5 spot=ok total=74 C1_R57_PASS=false\nCTL_MATCH CTL_OPEN_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_OPEN_c1 open_unplanned=51\nCTL_GEN CTL_BULKOPEN_c1 {\"kept_rows\": 49, \"mode\": \"bulkopen\", \"new_rows\": 51, \"panel_agree\": 27, \"panel_present\": true, \"planned_ids_named\": 51, \"unkeyed\": 0}\nCTL CTL_BULKOPEN_c1 C1_R57: self=8e64704229ff clone_rev=e86b99e4e6bd rows=51/51 agree=51/51 old49=ok fixed=0 declined=0 thisround=0 panel=24/5 spot=ok total=25 C1_R57_PASS=false\nCTL_MATCH CTL_BULKOPEN_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_BULKOPEN_c1 panel_over=19\nCTL_GEN CTL_QUOTE_c1 {\"file\": \"corpus/ctl-quote-housekeeping.md\", \"lines\": 51, \"mode\": \"quote-file\", \"unkeyed\": 0}\nCTL_GEN CTL_QUOTE_c1 {\"commit\": \"b349ff7f000c7bdfc6730dc8d9f75cdc1165996a\", \"kept_rows\": 49, \"mode\": \"quote\", \"new_rows\": 51, \"panel_agree\": 29, \"panel_present\": true, \"unkeyed\": 0}\nCTL CTL_QUOTE_c1 C1_R57: self=8e64704229ff clone_rev=3772624aeb81 rows=51/51 agree=0/51 old49=ok fixed=51 declined=0 thisround=0 panel=22/5 spot=ok total=74 C1_R57_PASS=false\nCTL_MATCH CTL_QUOTE_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_QUOTE_c1 fixed_bad=51\nCTL_GEN CTL_SKIP_c2 {\"drift_path\": \"LOG.md\", \"gate_rows_removed\": 3, \"mode\": \"skip\", \"rows_added\": 3}\nCTL CTL_SKIP_c2 C2_R57: self=a5138acb2248 clone_rev=47b9c4d2cbca gate_rows=3 exits=0,2,3 held=0/3 mutants=0/3 skill_row=1 codes_known=4/4 standing_cell=ok total=7 C2_R57_PASS=false\nCTL_MATCH CTL_SKIP_c2 expected=false actual=false counter_exit=1\nCTL_GEN CTL_FAB_c2 {\"drift_path\": \"LOG.md\", \"gate_rows_removed\": 3, \"mode\": \"fab\", \"rows_added\": 3}\nCTL CTL_FAB_c2 C2_R57: self=a5138acb2248 clone_rev=7b2fe23aa415 gate_rows=3 exits=0,2,3 held=1/3 mutants=1/3 skill_row=1 codes_known=4/4 standing_cell=ok total=4 C2_R57_PASS=false\nCTL_MATCH CTL_FAB_c2 expected=false actual=false counter_exit=1\nCTL_GEN CTL_MUT_c2 {\"drift_path\": \"LOG.md\", \"gate_rows_removed\": 3, \"mode\": \"mut\", \"rows_added\": 3}\nCTL CTL_MUT_c2 C2_R57: self=a5138acb2248 clone_rev=a271af245f35 gate_rows=3 exits=0,2,3 held=3/3 mutants=1/3 skill_row=1 codes_known=4/4 standing_cell=ok total=2 C2_R57_PASS=false\nCTL_MATCH CTL_MUT_c2 expected=false actual=false counter_exit=1\nCONTROLS_A: 10/10 as pre-registered\n# phase B: the positive controls scored at the revision they certify (REV=332becb09a962561377e922ce13d835766087c30)\nCTL CTL_POS_c1 C1_R57: self=8e64704229ff rev=332becb09a96 rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=51/5 spot=ok total=103 C1_R57_PASS=false\nCTL_MISMATCH CTL_POS_c1 expected=true actual=false counter_exit=1\nCTL CTL_POS_c2 C2_R57: self=a5138acb2248 rev=332becb09a96 gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R57_PASS=true\nCTL_MATCH CTL_POS_c2 expected=true actual=true counter_exit=0\nCONTROLS_B: 1/2 as pre-registered\n",
+    "A": "10/10",
+    "B": "1/2",
+    "mismatches": [
+      "CTL_POS_c1"
+    ],
+    "arm_mismatches": []
+  },
+  "deciding_refusals": {
+    "missing-freeze": {
+      "stdout": "DECIDING_REFUSED counter-missing .ufo/evidence/round-57/freeze.json\n",
+      "exit": 3,
+      "outdir": []
+    },
+    "rev-not-head": {
+      "stdout": "DECIDING_REFUSED rev-is-not-head-of-fresh-clone rev=2c51affd37e15cd7cd258d76ba0f5f73ff235924 head=332becb09a962561377e922ce13d835766087c30\n",
+      "exit": 3,
+      "outdir": []
+    },
+    "missing-panel-pin": {
+      "stdout": "FREEZE_INTEGRITY: OK files=19 amendments=0 freeze=5fce29523aa2\nDECIDING_REFUSED control-receipt-missing .ufo/evidence/round-57/control/controls-a.stdout\n",
+      "exit": 3,
+      "outdir": []
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+        "rev-parse",
+        "master"
+      ],
+      "exit": 0,
+      "stdout": "2c51affd37e15cd7cd258d76ba0f5f73ff235924\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry",
+        "clone",
+        "--shared",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Cloning into '/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone'...\ndone.\n"
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit": 0,
+      "stdout": "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "checkout",
+        "--detach",
+        "2c51affd37e15cd7cd258d76ba0f5f73ff235924"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "HEAD is now at 2c51affd round-57 (honest stop): LOG entry and SCORECARD block (no claim measured; calibration monitor reads 6 at C0b; Planned round 58)\n"
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit": 0,
+      "stdout": "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "add",
+        "-f",
+        ".ufo/waves/round-57/w3/T57W3DrySyntheticPanel.json",
+        ".ufo/waves/round-57/w3-results.json"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit": 0,
+      "stdout": "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "add",
+        "-A"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "-c",
+        "user.name=fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "-qm",
+        "fixture: current master plus working instruments and synthetic pinned panel"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "332becb09a962561377e922ce13d835766087c30\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/controls.sh",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "5e3569969b532310d2b8a3d130901757a3df356b",
+        "332becb09a962561377e922ce13d835766087c30",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RevControlsDry-receipts/run4/controls"
+      ],
+      "exit": 0,
+      "stdout": "# controls: one generation; recomputed from lane git objects, no committed receipt read\n# LANE=/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone BASE=5e3569969b532310d2b8a3d130901757a3df356b REV=332becb09a962561377e922ce13d835766087c30\n# phase A: do-nothing and mutation controls (expected false)\nCTL CTL_0_c1 C1_R57: self=8e64704229ff clone_rev=c0949e6873e1 rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=51/5 spot=ok total=154 C1_R57_PASS=false\nCTL_MATCH CTL_0_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_0_c1 missing=51\nCTL CTL_0_c2 C2_R57: self=a5138acb2248 clone_rev=c0949e6873e1 gate_rows=0 exits=none held=0/0 mutants=0/3 skill_row=0 codes_known=4/4 standing_cell=WRONG:RECEIPT_REV_MISMATCH total=11 C2_R57_PASS=false\nCTL_MATCH CTL_0_c2 expected=false actual=false counter_exit=1\nCTL_GEN CTL_SKIP_c1 {\"kept_rows\": 49, \"mode\": \"skip\", \"new_rows\": 51, \"panel_agree\": 2, \"panel_present\": true, \"reason_len\": 45, \"unkeyed\": 0}\nCTL CTL_SKIP_c1 C1_R57: self=8e64704229ff clone_rev=fcd326804a2d rows=51/51 agree=51/51 old49=ok fixed=0 declined=51 thisround=0 panel=49/5 spot=ok total=50 C1_R57_PASS=false\nCTL_MATCH CTL_SKIP_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_SKIP_c1 panel_over=44\nCTL_GEN CTL_FAB_c1 {\"kept_rows\": 49, \"mode\": \"fab\", \"new_rows\": 51, \"panel_agree\": 29, \"panel_present\": true, \"unkeyed\": 0}\nCTL CTL_FAB_c1 C1_R57: self=8e64704229ff clone_rev=aadc7730a943 rows=51/51 agree=0/51 old49=ok fixed=51 declined=0 thisround=0 panel=22/5 spot=ok total=74 C1_R57_PASS=false\nCTL_MATCH CTL_FAB_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_FAB_c1 evidence_bad=51\nCTL_GEN CTL_OPEN_c1 {\"kept_rows\": 49, \"mode\": \"open\", \"new_rows\": 51, \"panel_agree\": 29, \"panel_present\": true, \"planned_ids_blanked\": 0, \"unkeyed\": 0}\nCTL CTL_OPEN_c1 C1_R57: self=8e64704229ff clone_rev=f1524a00bca9 rows=51/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=22/5 spot=ok total=74 C1_R57_PASS=false\nCTL_MATCH CTL_OPEN_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_OPEN_c1 open_unplanned=51\nCTL_GEN CTL_BULKOPEN_c1 {\"kept_rows\": 49, \"mode\": \"bulkopen\", \"new_rows\": 51, \"panel_agree\": 27, \"panel_present\": true, \"planned_ids_named\": 51, \"unkeyed\": 0}\nCTL CTL_BULKOPEN_c1 C1_R57: self=8e64704229ff clone_rev=e86b99e4e6bd rows=51/51 agree=51/51 old49=ok fixed=0 declined=0 thisround=0 panel=24/5 spot=ok total=25 C1_R57_PASS=false\nCTL_MATCH CTL_BULKOPEN_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_BULKOPEN_c1 panel_over=19\nCTL_GEN CTL_QUOTE_c1 {\"file\": \"corpus/ctl-quote-housekeeping.md\", \"lines\": 51, \"mode\": \"quote-file\", \"unkeyed\": 0}\nCTL_GEN CTL_QUOTE_c1 {\"commit\": \"b349ff7f000c7bdfc6730dc8d9f75cdc1165996a\", \"kept_rows\": 49, \"mode\": \"quote\", \"new_rows\": 51, \"panel_agree\": 29, \"panel_present\": true, \"unkeyed\": 0}\nCTL CTL_QUOTE_c1 C1_R57: self=8e64704229ff clone_rev=3772624aeb81 rows=51/51 agree=0/51 old49=ok fixed=51 declined=0 thisround=0 panel=22/5 spot=ok total=74 C1_R57_PASS=false\nCTL_MATCH CTL_QUOTE_c1 expected=false actual=false counter_exit=1\nCTL_ARM CTL_QUOTE_c1 fixed_bad=51\nCTL_GEN CTL_SKIP_c2 {\"drift_path\": \"LOG.md\", \"gate_rows_removed\": 3, \"mode\": \"skip\", \"rows_added\": 3}\nCTL CTL_SKIP_c2 C2_R57: self=a5138acb2248 clone_rev=47b9c4d2cbca gate_rows=3 exits=0,2,3 held=0/3 mutants=0/3 skill_row=1 codes_known=4/4 standing_cell=ok total=7 C2_R57_PASS=false\nCTL_MATCH CTL_SKIP_c2 expected=false actual=false counter_exit=1\nCTL_GEN CTL_FAB_c2 {\"drift_path\": \"LOG.md\", \"gate_rows_removed\": 3, \"mode\": \"fab\", \"rows_added\": 3}\nCTL CTL_FAB_c2 C2_R57: self=a5138acb2248 clone_rev=7b2fe23aa415 gate_rows=3 exits=0,2,3 held=1/3 mutants=1/3 skill_row=1 codes_known=4/4 standing_cell=ok total=4 C2_R57_PASS=false\nCTL_MATCH CTL_FAB_c2 expected=false actual=false counter_exit=1\nCTL_GEN CTL_MUT_c2 {\"drift_path\": \"LOG.md\", \"gate_rows_removed\": 3, \"mode\": \"mut\", \"rows_added\": 3}\nCTL CTL_MUT_c2 C2_R57: self=a5138acb2248 clone_rev=a271af245f35 gate_rows=3 exits=0,2,3 held=3/3 mutants=1/3 skill_row=1 codes_known=4/4 standing_cell=ok total=2 C2_R57_PASS=false\nCTL_MATCH CTL_MUT_c2 expected=false actual=false counter_exit=1\nCONTROLS_A: 10/10 as pre-registered\n# phase B: the positive controls scored at the revision they certify (REV=332becb09a962561377e922ce13d835766087c30)\nCTL CTL_POS_c1 C1_R57: self=8e64704229ff rev=332becb09a96 rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=51/5 spot=ok total=103 C1_R57_PASS=false\nCTL_MISMATCH CTL_POS_c1 expected=true actual=false counter_exit=1\nCTL CTL_POS_c2 C2_R57: self=a5138acb2248 rev=332becb09a96 gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R57_PASS=true\nCTL_MATCH CTL_POS_c2 expected=true actual=true counter_exit=0\nCONTROLS_B: 1/2 as pre-registered\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/deciding-run.sh",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "5e3569969b532310d2b8a3d130901757a3df356b",
+        "332becb09a962561377e922ce13d835766087c30",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/dry-missing-freeze"
+      ],
+      "exit": 3,
+      "stdout": "DECIDING_REFUSED counter-missing .ufo/evidence/round-57/freeze.json\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/deciding-run.sh",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "5e3569969b532310d2b8a3d130901757a3df356b",
+        "2c51affd37e15cd7cd258d76ba0f5f73ff235924",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/dry-rev-not-head"
+      ],
+      "exit": 3,
+      "stdout": "DECIDING_REFUSED rev-is-not-head-of-fresh-clone rev=2c51affd37e15cd7cd258d76ba0f5f73ff235924 head=332becb09a962561377e922ce13d835766087c30\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit": 0,
+      "stdout": "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "add",
+        "-A"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "-c",
+        "user.name=fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "-qm",
+        "fixture: synthetic integrity-valid freeze with pending panel pin"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "5fce29523aa2ca825c8ba8d7ec84ff1798cd70b9\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/deciding-run.sh",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "5e3569969b532310d2b8a3d130901757a3df356b",
+        "5fce29523aa2ca825c8ba8d7ec84ff1798cd70b9",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/dry-missing-panel-pin"
+      ],
+      "exit": 3,
+      "stdout": "FREEZE_INTEGRITY: OK files=19 amendments=0 freeze=5fce29523aa2\nDECIDING_REFUSED control-receipt-missing .ufo/evidence/round-57/control/controls-a.stdout\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone/.ufo/evidence/round-57/c1/measure.py",
+        "--lane",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/clone",
+        "--rev",
+        "5fce29523aa2ca825c8ba8d7ec84ff1798cd70b9",
+        "--work",
+        "/fast/scratch/hyaku/tameshi-r57/T57W3RevControlsDry/pin-counter-work",
+        "--explain"
+      ],
+      "exit": 1,
+      "stdout": "EXPLAIN missing R50.1\nEXPLAIN missing R50.2\nEXPLAIN missing R50.3\nEXPLAIN missing R50.4\nEXPLAIN missing R51.1\nEXPLAIN missing R51.2\nEXPLAIN missing R51.3\nEXPLAIN missing R51.4\nEXPLAIN missing R51.5\nEXPLAIN missing R51.6\nEXPLAIN missing R51.7\nEXPLAIN missing R51.8\nEXPLAIN missing R52.1\nEXPLAIN missing R52.2\nEXPLAIN missing R52.3\nEXPLAIN missing R52.4\nEXPLAIN missing R52.5\nEXPLAIN missing R52.6\nEXPLAIN missing R53.1\nEXPLAIN missing R53.2\nEXPLAIN missing R53.3\nEXPLAIN missing R53.4\nEXPLAIN missing R53.5\nEXPLAIN missing R53.6\nEXPLAIN missing R53.7\nEXPLAIN missing R53.8\nEXPLAIN missing R53.9\nEXPLAIN missing R54.1\nEXPLAIN missing R54.2\nEXPLAIN missing R54.3\nEXPLAIN missing R54.4\nEXPLAIN missing R54.5\nEXPLAIN missing R54.6\nEXPLAIN missing R54.7\nEXPLAIN missing R54.8\nEXPLAIN missing R54.9\nEXPLAIN missing R54.10\nEXPLAIN missing R55.1\nEXPLAIN missing R55.2\nEXPLAIN missing R55.3\nEXPLAIN missing R55.4\nEXPLAIN missing R55.5\nEXPLAIN missing R55.6\nEXPLAIN missing R55.7\nEXPLAIN missing R56.1\nEXPLAIN missing R56.2\nEXPLAIN missing R56.3\nEXPLAIN missing R56.4\nEXPLAIN missing R56.5\nEXPLAIN missing R56.6\nEXPLAIN missing R56.7\nEXPLAIN panel-pin .ufo/evidence/round-57/c1/panel.json\nC1_R57_TERMS: fixed=0 open=0 declined=0 fixed_this_round=0 missing=51 extra=0 duplicate=0 old49=0 spotcheck_changed=0 defects_pin=0 bad_status=0 evidence_bad=0 key_miss=0 fixed_bad=0 open_unplanned=0 declined_bad=0 fixed_short=0 declined_over=0 this_round_short=6 panel_pin=1 panel_over=0 base_status_bad=0 panel_prov=0\nC1_R57: self=6f3b7627a41d rev=5fce29523aa2 rows=0/51 agree=0/51 old49=ok fixed=0 declined=0 thisround=0 panel=pin spot=ok total=58 C1_R57_PASS=false\n",
+      "stderr": ""
+    }
+  ],
+  "synthetic": {
+    "panel_verdicts": "Copied real working-tree panel (22 fixed,27 open,2 declined); original detail commits retained.",
+    "panel_provenance": "Replaced by one explicitly synthetic seat with committed report/results and matching digest, scratch only.",
+    "counter": "Only PANEL_SHA256 replaced for controls; restored pending value for missing-pin case.",
+    "freeze": "Synthetic schema-valid 19-file manifest with zero amendments matching first manifest commit, scratch only."
+  },
+  "verification_gaps": [
+    "No successful deciding run: missing freeze and missing controls receipts prevent gate 0 completion.",
+    "No explicit missing-panel-pin DECIDING_REFUSED path exists; the experiment reaches control-receipt-missing instead. C1 independently reports panel_pin=1.",
+    "No real-panel provenance or no-harm 64/64 certification; synthetic provenance only.",
+    "LSP unavailable: xd://lsp reports No such tool; textual definition/caller review only.",
+    "Gate-0 OUTDIR emptiness measured; no broad whole-repository zero-mutation claim."
+  ],
+  "prior_attempts": [
+    "Initial run used an empty synthetic panel because the ledger contains only 49 rows; not authoritative.",
+    "run2 preserved all 51 real verdicts but omitted synthetic results provenance; panel_prov=51, not authoritative.",
+    "run3 stopped at git add because synthetic w3-results.json had not been written; no controls executed.",
+    "run4 fixes provenance, runs all twelve controls, and is the authoritative result."
+  ],
+  "tools_installed": [],
+  "staged_changes": []
+}

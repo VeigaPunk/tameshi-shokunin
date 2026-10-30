@@ -1,0 +1,31 @@
+MUTATE_TOOL: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/clone/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+MUTATE_DATE: 2026-10-30T04:45:03Z
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/regression/bash-drift-pins/target.drift-pins.sh sha256=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb bytes=19088
+MUTATE_SPEC: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/regression/specs/bash-drift-pins.spec defects=10
+CONTROL: GREEN (exit=0 duration-ms=224 pristine-sha256=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb)
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT K_MODE_CMP: KILLED (exit=1 duration-ms=223) the file mode is never compared against the baseline
+  | drift-selftest: FAIL mode drift: exit 0 want 1
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT K_GONE_ARM: SURVIVED (exit=0 duration-ms=223) a value pin with zero matches is not reported GONE
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT K_AMBIG_GT: SURVIVED (exit=0 duration-ms=238) ambiguity needs three matches instead of two
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT K_COUNT_GE: KILLED (exit=1 duration-ms=282) a count pin accepts any count at or above the pinned one
+  | drift-selftest: FAIL count drift: no /COUNT.*#1->#2/ in output
+  | DRIFT_SELFTEST: FAIL (1/13 cases)
+DEFECT K_SHAPE_OPTIN: SURVIVED (exit=0 duration-ms=235) the shape assertion never runs
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_SHA_CMP: SURVIVED (exit=0 duration-ms=210) the content hash is never compared against the baseline
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_HARDLINK: SURVIVED (exit=0 duration-ms=201) a path with link count 2 passes the hardlink guard
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_POLICY: SURVIVED (exit=0 duration-ms=222) a secret-bearing baseline row that asks for a hash is no longer refused
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_DUP_UNIQ: SURVIVED (exit=0 duration-ms=236) duplicate baseline rows are never reported
+  | DRIFT_SELFTEST: PASS (13 cases)
+DEFECT S_USAGE_EXIT: SURVIVED (exit=0 duration-ms=206) an unknown argument exits 0 instead of 2
+  | DRIFT_SELFTEST: PASS (13 cases)
+MUTATE_RESTORE: OK (target-sha256 before=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb after=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb pristine-sha256=c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/regression/bash-drift-pins
+MUTATE: DONE (target=bash-drift-pins defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)

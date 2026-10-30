@@ -1,0 +1,115 @@
+## Mutation-sweep recipe — numbered steps; bounded cold-read evidence
+
+Runs a suite's own code through one-exact-edit mutants and measures what it
+catches. The recipe is intended to be self-contained; round 16's full-page
+cold-read executed it end to end (two seats; Errata — round 16).
+Scratch for a sweep: `$HYAKU_SCRATCH` (default `/fast/scratch/hyaku`)/`<lane>-r<round>/<sub>/` (Standing rules; deleted on exit).
+
+1. **Pick the target and prove its control.** Prove the actual run has no
+   live-path or host effects; `--selftest` alone does not establish hermeticity.
+   Use private `--root` fixtures and exclude or control host-gated branches
+   (corpus/knowledge/mutation-case-kimi-census.md:4-7; corpus/knowledge/mutation-case-kagi-census.md:24-38).
+   Require a reported case count, executed/skipped accounting, and verdict:
+   kumitate `n/m pass` (cite-check and surface-probe print `n/m cases passed`) + `VERDICT:` (corpus/knowledge/gates-survey-kumitate.md:19-31);
+   kagi `SELFTEST: PASS (n cases)` includes its enumerated skip entries.
+   Historical controls on the pinned bytes were green:
+   `KIMI_CENSUS_SELFTEST: 43/43 pass` / `VERDICT: PASS`, exit 0
+   (corpus/knowledge/mutation-case-kimi-census.md:20-21), and bash: 16 enumerated cases,
+   14 executed +2 skipped (corpus/knowledge/mutation-case-kagi-census.md:27-35,42-43).
+   A red control has no kill denominator: stop and record setup failure.
+2. **Pin the artifact — committed bytes only.** Record: path, full sha256, size,
+   mtime, repo revision, and `git status --porcelain --
+   <path>` empty (corpus/knowledge/mutation-case-kimi-census.md:13-16;
+   corpus/knowledge/mutation-case-kagi-census.md:13-17 — note that gate's 887th line carries no
+   trailing newline). A pin on uncommitted bytes is a false anchor — the kagi
+   claim-ledger pin was once surveyed from a dirty intermediate state and had to
+   be re-pinned (corpus/README.md G-R2-1 row; corpus/knowledge/gates-survey-kagi.md errata
+   block). If the path is dirty: stop.
+3. **Copy pristine to scratch.** `mkdir -p "$HYAKU_SCRATCH/<lane>-r<round>/<sub>/evidence"`
+   then `cp -p <artifact> …/pristine.<ext>`; re-verify (`sha256sum`; the bash
+   lane additionally `cmp`-verified its copy — corpus/knowledge/mutation-case-kagi-census.md:44-45).
+   All edits happen to copies; the original is never a write target.
+4. **Write the defect list from the templates.** 8–12 defects, at least one per class (two of the JS ten share a class — the :47-48 pair — and the bash exemplar's :70-71 pair does the same)
+   (catalog + entry template in the next section), each ONE exact-string
+   replacement or single block deletion, each with a pre-registered
+   `expect: killed|survived` and the reason — the JS 10-defect manifest is the
+   shape (corpus/knowledge/mutation-case-kimi-census.md:41-53, :155-166). Pre-registration is
+   what makes an expectation miss a calibration datum instead of a
+   rationalization (E1: the author's D7 expectation was wrong and is kept —
+   corpus/knowledge/mutation-case-kimi-census.md:183-191; round 3's E1 kept miscalled case
+   counts — corpus/knowledge/mutation-case-kagi-census.md:184-191).
+5. **Driver `--check` — the fail-closed uniqueness gate.** For every defect:
+   assert `count(old) == 1` in the pristine copy, print the first
+   matching line (the kimi driver; the kagi note records the assert and `all unique` only), and require the literal line `all unique` — both lanes'
+   drivers did exactly this (the maintained driver also prints the failing count: `tools/mutate-and-run.sh:434`) (mutation-case-kimi-census.md:22-25;
+   mutation-case-kagi-census.md:44-47). Require `new != old` in future drivers:
+   a no-op is a driver defect, not a survivor. The cited historical notes do
+   not establish that the round-2 driver carried the `new != old` no-op guard. Any count ≠1 aborts until the string
+   is re-derived from the pinned bytes.
+6. **Run control + mutants.** Control first: run the unmutated copy, record
+   stdout, exit code, summary line, duration — expect the step-1 green. Then per
+   defect, one at a time: fresh copy from pristine → apply the one exact
+   replacement (`str.replace(old, new, 1)`) → assert mutant sha256 ≠ pristine
+   sha256 → run the suite with a timeout (300 s used in round 2, 280 s in round
+   3). For future runs retain full streams plus exit, mutant SHA, duration
+   and summary, then aggregate the rows. Historical Kimi records stdout,
+   exit/SHA/results (mutation-case-kimi-census.md:26-28); Kagi also records
+   duration/summary (mutation-case-kagi-census.md:48-49). No defect compounds;
+   a mutant file is never patched or reused.
+7. **Adjudicate each run against the suite's own verdict.** Green = exit 0 AND
+   the verdict line says PASS with the full count.
+   - **Killed** = the run went red (exit ≠ 0 or the PASS verdict/line broken)
+     *and* the full enumerated count remains, with skipped cases distinguished.
+     Both historical sweeps held their enumerated denominators 43 and 16
+     (mutation-case-kimi-census.md:30-33; mutation-case-kagi-census.md:27-35,50-53).
+     Collect the failing-case labels verbatim; a kill quoted without its failing
+     labels is unverified (mutation-case-kimi-census.md:59-76). Bash grammar:
+     `bad-case 05 undeclared-file want exit=1 token=SURFACE UNLISTED got exit=0`
+     and the failing suite line `1/16` / FAIL as the note records it
+     (mutation-case-kagi-census.md:67,82-103).
+   - **A kill can be token-only, not exit-only.** B4's deleted symlink arm kept
+     the exit code (the row fell into the regular-file arm, `got exit=1` like
+     the expected one) and died on the token assert alone
+     (mutation-case-kagi-census.md:88-91). Adjudicate exit AND token/verdict;
+     never exit alone.
+   - **Survived** = green with the same count as control → a finding, never a
+     footnote; it names a gap until a case pins it
+     (mutation-case-kimi-census.md:44-53).
+   - **Inconclusive** = no definitive verdict (timeout, crash before the
+     summary, count not enumerated). Not a kill. Re-run it; keep every record.
+   - **Kill rate = killed / (killed + survived)** — inconclusive runs sit outside
+     the denominator and are named beside it (neither model exercised this; the maintained driver divides by every defect and marks the run DEGRADED: `tools/mutate-and-run.sh:579-583`). Round 2: 8/10 = 80 %,
+     no inconclusive run, 11 runs in 7.0 s (mutation-case-kimi-census.md:29-31).
+     Round 3: 8/10 = 80 %, 11 runs in 11.0 s (mutation-case-kagi-census.md:50-53).
+8. **Probe every survivor for non-equivalence.** Run the mutant on an input
+   outside the suite's fixtures that exercises the mutated surface; its output
+   must differ from pristine. JS D2 on an empty root: one fewer id and
+   `+23 more` (vs pristine `+22 more`); D10: `frozen=24` (vs 25)
+   (mutation-case-kimi-census.md:82-99). Bash B5: mutant `SURFACE OK … (exec
+   644)` exit 0 where pristine prints `SURFACE DIVERGED … no execute bit` exit
+   1; B10: `ok=0` where pristine prints `ok=1`
+   (mutation-case-kagi-census.md:111-114, :118-122, :252-254). If no observable
+   input differs, the mutant may be *equivalent code* — record that as a
+   calibration item, not as a gap.
+9. **Restore + prove endpoint identity.** Re-run step 2's checks (repo revision included; neither model note records an after-revision)
+   sha256 after == before, size and mtime unchanged, `git status --porcelain --
+   <path>` empty (mutation-case-kimi-census.md:34-35;
+   mutation-case-kagi-census.md:54-56). The sweep's edits all lived in scratch,
+   so this shows endpoint identity, not the absence of a transient write (the `## Restore discipline` section; corrected in round 27, seat Read03); it is the record's headline, not an
+   appendix. Full checklist below (Restore discipline).
+10. **Record the sweep as a note + a corpus row.** Kill-rate table (control +
+    one row per defect: class, exact edit + site, exit, suite line, verdict,
+    failing-case labels), by-class tally, protected/not-protected inventory,
+    survivor probes, reproduce spec (driver manifest + commands), calibration
+    and errata, unknowns — the two mutation-case notes are the model
+    (mutation-case-kimi-census.md §1, §3-§6;
+    mutation-case-kagi-census.md §1-§7). Counts quoted only from executed
+    summary lines (mutation bar above); refs pinned to the record's revision,
+    re-resolved if the substrate moved.
+
+Cost profile to record: wall time, per-run timeout, host/runtime versions.
+Round 2: 7.0 s for 11 runs, node v24.21.0 (mutation-case-kimi-census.md:20-21,29-31);
+round 3: 11.0 s for 11 runs against a 280 s bound
+(mutation-case-kagi-census.md:50-53). Cross-host stability remains unknown:
+Kimi U5 at 204-205; Kagi U5 at 203-204.
+

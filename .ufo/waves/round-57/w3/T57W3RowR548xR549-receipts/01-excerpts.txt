@@ -1,0 +1,32 @@
+T57W3RowR548xR549 — receipts 01: programmatic excerpt extraction (background job output, verbatim)
+Method: python3 in the scratch clone at master; each excerpt is a whitespace-normalised contiguous
+substring of the cited lines (norm = ' '.join(s.split())), exactly the check the counter performs
+(check_evidence: `norm(excerpt) in norm('\n'.join(text[a-1:b]))`). ACK sweep over every cited span.
+
+EXC1 len 220
+"Also R54.8's seat-file arm accepted any occurrence of `superseded`, which the base file already contained at an unrelated line; it now requires `SUPERSEDED (round 55`. Both found by wave seats T55W1Rev07 / T55W1Rev04 bef"
+  (rows.json uses the prefix ending at "...requires `SUPERSEDED (round 55`." — a contiguous substring of the same normalised line 39)
+L62 len 435
+EXC2 len 390
+"| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; the report's word *fabricated* is withdrawn too: the operator turn exists in `~/.omp/agent/history.db` (row 690) and reached the seat after it yielded, so the write was wrong because `config.yml` is operator-owned and the seat had stopped serving | `.ufo/waves/round-54/w1/T54W1ExecS"
+  (rows.json uses the prefix ending at "...the seat had stopped serving" — a contiguous substring of normalised line 62; whole line is 435 chars, so the 400-char cap is respected)
+EXC3 len 121
+'- **The other 80 staged `merge/tameshi` entries** — REFUSED for the same capacity reason; they stay reserved by document.'
+EXC4 len 289
+'Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged entries". Corrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) from `.ufo/waves/round-54/w1-registry.json`, and `staged=81` staged `.md` files under `merge/tameshi/knowledge` (read-only count of the source package).'
+EXC5 len 131
+'| R54.9 | FIXED — `reviewers=5 attack=21/76 seats=76` and `staged=81` | `.ufo/waves/round-54/w1-registry.json`; the package count |'
+ACK check fz39 clean
+ACK check l55-62 clean
+ACK check l54-51 clean
+ACK check sc-2693 clean
+ACK check l55-63 clean
+(ACK list = planned, carried, still open, not worked, stay open, stays open, remain open, remains open,
+ routed to round, not fixed, unfixed, not landed — the counter's ACK_WORDS, checked over each cited span)
+
+Keyed check (A3 whole-token, has_key):
+ freeze.json:39 excerpt  -> 'superseded'  (backtick-delimited)      -> keyed
+ round-55.md:62 excerpt  -> 'config.yml', 'superseded', 'T54W1ExecStraceNoise' -> keyed
+ round-54.md:51-52       -> no key token (unkeyed item; >=1 keyed item present in the row)
+ SCORECARD.md:2693-2696  -> '27.6', 'w1-registry.json'              -> keyed
+ round-55.md:63          -> 'w1-registry.json'                      -> keyed

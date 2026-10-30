@@ -1,0 +1,90 @@
+{
+  "seat": "T57W3RowR543xR544",
+  "round": 57,
+  "wave": 3,
+  "item": "Adjudicate the C1 routed-defect ledger rows R54.3 and R54.4 against the blind panel; write the two full row objects (with status_at_base) for the L1 to install.",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "fix_commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+  "rows_file": ".ufo/waves/round-57/w3/T57W3RowR543xR544/rows.json",
+  "rows": [
+    {
+      "id": "R54.3",
+      "status": "fixed",
+      "status_at_base": "fixed",
+      "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+      "panel_verdict": "open",
+      "panel_seat": "T57W2PanelR542R543",
+      "adjudication": "triage status kept - the panel is proven wrong",
+      "disagrees_with_pinned_panel": true,
+      "disagreement_reason": "The panel seat T57W2PanelR542R543 declared its own verdicts void (blindness_breach) and its 'open' basis rests on 'no lane record discloses the C2.before expansion'; a lane record does disclose it (.ufo/waves/round-55/w1/T55W1Rev02-receipts/R54.3-spotcheck-commit-attribution.txt at base), and the item's own attribution ('expanded at 077d431e') is false - the expansion landed at 19c75588 (amendment 2); 19c75588..077d431e changed only amendments 3-5. The routed defect itself is repaired in the lane record (SCORECARD.md:2585 prints total=13; ER-R54-3 at 2649-2652 records old total=14 -> corrected total=13), and the lane's own disposition table corpus/lessons/round-55.md:57 reads '| R54.3 | FIXED - total=13, the receipt's value |'. No lane line still shows the defect, so no admissible 'open' evidence exists either. The clean ledger-blind wave-3 re-seat T57W3ReseatR542R543 also returns fixed/9cf0146b."
+    },
+    {
+      "id": "R54.4",
+      "status": "fixed",
+      "status_at_base": "fixed",
+      "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+      "panel_verdict": "fixed",
+      "panel_seat": "T57W2PanelR544R545",
+      "adjudication": "panel verdict adopted for both status and status_at_base (nothing fixed this round; 9cf0146b is pre-base)",
+      "disagrees_with_pinned_panel": false,
+      "tie": "A4/A8: the commit message names no id and the only paths 9cf0146b touches whose basename occurs in the item text are under .ufo/waves/ (soft-excluded), so the tie rests on A8 - the panel's commit for this id equals the row's commit",
+      "residue_out_of_lane": "the fleet copy /home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md still prints the stale digest 49280fe5; it is not a lane file (git ls-tree of .ufo/reports/ at base is empty) and a lane seat may not edit it"
+    }
+  ],
+  "commands": [
+    "git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone; git -C $S/clone checkout --detach 5e3569969b532310d2b8a3d130901757a3df356b",
+    "git -C $S/clone merge-base --is-ancestor 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 5e3569969b532310d2b8a3d130901757a3df356b   # exit 0",
+    "git -C $S/clone merge-base --is-ancestor 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 650987a0d6fc285b37f0f9e63a3aae864af9cd5a   # exit 1",
+    "git -C $S/clone diff-tree --no-commit-id --name-only -r --root -m 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb | grep -E 'measure\\.py$|freeze\\.json$'   # only .ufo/waves/ paths (soft-excluded)",
+    "git -C $S/clone blame -L 2585,2585 5e35699 -- SCORECARD.md",
+    "git -C $S/clone show 5e35699:.ufo/evidence/round-54/before/c2.stdout | sed -n '8p'",
+    "git -C $S/clone show 650987a0:SCORECARD.md | sed -n '2584p'",
+    "git -C $S/clone grep -in 'expand' 5e35699 -- SCORECARD.md LOG.md corpus/lessons/round-54.md corpus/lessons/round-55.md corpus/lessons/round-56.md corpus/QUALITY.md   # exit 1",
+    "git -C $S/clone show 5e35699:.ufo/waves/round-55/w1/T55W1Rev02-receipts/R54.3-spotcheck-commit-attribution.txt",
+    "git -C $S/clone diff 441c26bec5e4c1cc31bc2a840f311cb8d1965259 19c75588b3c581a0dc84ea87e09d33d88a99ac8e -- .ufo/evidence/round-54/contract.json",
+    "git -C $S/clone show c21081008adbb6b6fe4e58a0aeec4831b30e318c:.ufo/evidence/round-54/c2/measure.py | sha256sum",
+    "git -C $S/clone show 19c75588b3c581a0dc84ea87e09d33d88a99ac8e:.ufo/evidence/round-54/c2/measure.py | sha256sum",
+    "grep -n '49280fe5' /home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md",
+    "python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/patch-ledger.py /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/attack-ledger.json /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RowR543xR544/rows.json $S/ledger.json",
+    "LEDGER=$S/ledger.json bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/dry-c1.sh 80",
+    "scratch overlay of dry-c1.sh with PANEL_SHA256 pinned to sha256(.ufo/evidence/round-57/c1/panel.json) - three variants: current panel / re-seat panel / re-seat panel + A9 wiring"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "kind": "panel-verdict-falsified",
+      "claim": "The wave-2 blind-panel seat T57W2PanelR542R543 returned 'open' for R54.3 on the basis 'no lane record discloses the C2.before expansion'.",
+      "proof": "git -C $S/clone show 5e35699:.ufo/waves/round-55/w1/T55W1Rev02-receipts/R54.3-spotcheck-commit-attribution.txt prints the contract's C2.before at 441c26b, at 19c7558 and at 077d431e with the diffstat containing the change - the expansion IS disclosed in the lane; the same receipt shows the item's own 'expanded at 077d431e' is false (the change landed at 19c75588; 19c75588..077d431e changed only amendments 3-5). The seat also declares its verdicts void (blindness_breach).",
+      "effect": "R54.3 keeps the triage status 'fixed' / status_at_base 'fixed' with commit 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb. One panel disagreement remains against the currently pinned panel (which records R54.3='open' from the void seat) until the L1 folds the clean re-seat in and re-pins PANEL_SHA256."
+    },
+    {
+      "id": "F2",
+      "kind": "counter-arm-dependency",
+      "claim": "With the panel pinned (PANEL_SHA256 = sha256 of .ufo/evidence/round-57/c1/panel.json) the R54.4 row is clean (tie via A8); while the pin is the pending marker the counter refuses it with 'EXPLAIN fixed-not-new R54.4'.",
+      "proof": "receipts/dry-c1-patched-ledger.txt (unpinned: 'EXPLAIN fixed-not-new R54.4') vs receipts/dry-c1-panel-pinned-current.txt (pinned: no R54.4 line at all). The cause is mechanical: 9cf0146b's message names no id, the item text names no file 9cf0146b touches, and the only paths it touches whose basename occurs in the item text are under .ufo/waves/ (soft-excluded) - receipts/cmd-ancestry-and-tie.txt.",
+      "effect": "The row is correct as written; it needs the L1's pending pin (or the re-seat re-pin) to be judged clean."
+    },
+    {
+      "id": "F3",
+      "kind": "out-of-lane-residue",
+      "claim": "The fleet copy of the round-54 report still prints the stale c2 digest 49280fe5 that R54.4 routes.",
+      "proof": "grep -n '49280fe5' /home/vgpnk/Projects/shokunin/.ufo/reports/round-54/tameshi.md -> the 'Bind and decide' paragraph; git -C $S/clone ls-tree 5e35699 -- .ufo/reports/ -> empty (the report is not a lane file).",
+      "effect": "Operator-owned residue outside the lane; the same class is lane-fixed for R54.2 and R54.7, whose fleet copies are equally stale. Reported, not acted on: a lane seat may not write the fleet report."
+    }
+  ],
+  "checks": [
+    "dry run with the patched ledger (unpinned panel): R54.3 has no EXPLAIN line; R54.4 shows only 'EXPLAIN fixed-not-new R54.4' (the pending pin).",
+    "dry run, panel pinned to the current panel.json: R54.3 shows only 'EXPLAIN panel-disagree R54.3' (the void seat's 'open'); R54.4 is clean; panel disagreements drop 11 -> 10 against the unpatched working ledger.",
+    "dry run, panel rebuilt with the clean re-seat verdict for R54.3 and full A9 wiring (re-seat file committed + w3-results listing the seat): neither R54.3 nor R54.4 appears in any EXPLAIN line.",
+    "no lane file was edited; nothing is staged under .ufo/waves/round-57/w3/T57W3RowR543xR544/stage/ because this seat changes no lane file."
+  ],
+  "artifacts": {
+    "rows": ".ufo/waves/round-57/w3/T57W3RowR543xR544/rows.json",
+    "report": ".ufo/waves/round-57/w3/T57W3RowR543xR544.md",
+    "machine_readable": ".ufo/waves/round-57/w3/T57W3RowR543xR544.json",
+    "receipts": ".ufo/waves/round-57/w3/T57W3RowR543xR544-receipts/"
+  },
+  "tools_installed": "none (python3 + git from the host; no pacman/uv/npx transaction was needed)",
+  "verdict": "rows written; R54.3 keeps the triage status against a falsified panel verdict, R54.4 adopts the panel verdict"
+}

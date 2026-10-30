@@ -1,0 +1,37 @@
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show --format= --unified=2 ca75c2674645ab6bdadeecb8584007c74342bfa9 -- corpus/lessons/round-57.md
+diff --git a/corpus/lessons/round-57.md b/corpus/lessons/round-57.md
+new file mode 100644
+index 00000000..9f377f7d
+--- /dev/null
++++ b/corpus/lessons/round-57.md
+@@ -0,0 +1,30 @@
++# tameshi round 57 — lesson (hyaku run 11, 2026-10-28)
++
++L1 `TameshiR57`, attempt 1. Base `5e3569969b532310d2b8a3d130901757a3df356b`; contract
++`.ufo/evidence/round-57/contract.json`. This file is written in sections as the round lands; the sections
++after `## Corrections to earlier records` are completed from committed receipts at the round's close.
++
++## Corrections to earlier records
++
++Append-only corrections (CORPUS.md: corrections are new entries, never rewrites). Each names the routed item it
++answers; the ledger rows `R53.8`, `R55.2` in `corpus/routed-defects.json` point here.
++
++- **R53.8 — the round-53 lesson's quote word counts are wrong.** `corpus/lessons/round-53.md` line 23 calls the
++  S275 quote "22 words" and lines 31-32 call the S276 quote "19 words". Counted with `python3 -c 'print(len(q.split()))'`
++  on the two quoted strings as they appear in that lesson, S275 "by selecting only subsuming commit relevant mutants,
++  we reduce the number of mutants requiring analysis by around 93% on average" is 20 words and S276 "re-compute
++  mutant suites per release. Sadly, this makes mutation results inconsistent; mutant scores from each release
++  cannot be directly compared" is 20 words. Both are within the 25-word bound of CORPUS.md SOURCES rule 1; the
++  parentheticals in the round-53 lesson are superseded by this line.
++- **R55.2 — a quoted C2 total the receipt contradicts.** The round-55 report quotes the C2 counter run on
++  `T55W1ScribeSkill` as `grammar=9/9 … note=9/9 skill=1/1 total=0`. The committed receipt
++  `.ufo/waves/round-55/w1/T55W1ScribeSkill-receipts/c2-integrated.out` line 44 reads
++  `C2_R55: rev=08d64e946006 grammar=9/9 lazy=5/5 empty=13/13 usable=13/13 tmp_mkdirs=0 docs=7/7 note=9/9 skill=1/1 total=1 C2_R55_PASS=false`;
++  the quoted `total=0` is not a quote of that line. The correct statement of that run is `total=1`, verdict false, at
++  `rev=08d64e946006`. The report is fleet-side and is not edited by the lane; this line is the superseding record.
++- **R56.7 — "no byte changed after C0/PIN" is true of PIN→tip, not of C0→PIN.** `corpus/lessons/round-56.md`
++  lines 318-319 say no `SKILL.md`, `corpus/QUALITY.md`, `corpus/SOURCES.md`, `corpus/knowledge/`, `tools/` or ledger
++  byte changed after C0/PIN. `git diff --stat c0137451f5b7 877eedee3ddb -- corpus SKILL.md tools` shows
++  `corpus/QUALITY.md` +31, `corpus/SOURCES.md` +2 and `corpus/knowledge/receipt-revision-binding.md` +39 between C0
++  and the bind input commit `877eedee`; the sentence holds for the interval from the pinned bind revision to the
++  round's final tip. This line supersedes the sentence; the round-56 lesson is not rewritten.

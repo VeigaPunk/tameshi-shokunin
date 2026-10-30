@@ -1,0 +1,17 @@
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 2c51affd37e15cd7cd258d76ba0f5f73ff235924:tools/registry.json
+[displayed lines 1366-1366]
+1364:   },
+1365:   {
+1366:    "name": "receipt-gate-unresolvable-certified",
+1367:    "kind": "gate",
+1368:    "argv": [
+1369:     "python3",
+
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 2c51affd37e15cd7cd258d76ba0f5f73ff235924:SKILL.md
+[displayed lines 1547-1547]
+1545: | repeated pristine controls | gate | `python3 tools/repeat-control.py --runs 3 --out DIR -- COMMAND ARG...` or `--snapshot DIR` | 0 clean; 1 failed; 2 and 64 could-not-evaluate | `python3 tools/repeat-control.py --selftest` | `.ufo/evidence/round-12/ControlGate/expected.json`, `mismatch/expected.json`; literal expected IDs/exits in tool selftest | fresh caller-selected DIR; isolated `$TMPDIR` selftest tree (`tameshi-r12-*`); snapshot read-only | tameshi |
+1546: | bash declared-witness study | probe | `python3 tools/bash-witness-study.py count` | 0 complete classified sample; 1 unresolved/failed integrity; 2 could-not-evaluate; 64 usage only (argparse) | `python3 tools/bash-witness-study.py selftest` | `.ufo/evidence/round-12/BashWitness/declaration.json`, `declared.tsv`, `manifest.json` | own evidence directory plus isolated `$TMPDIR` selftest tree (`bash-witness-selftest-private.*`, selftest only); sibling object store read-only | tameshi |
+1547: | receipt-revision gate | gate | `python3 tools/receipt-revision-gate.py --lane LANE --certified REV [--paths FILE] --receipt PATH:positive\|verdict\|control[:REGEX] ... [--json]` | 0 PASS; 2 certified revision unresolvable (`RECEIPT_REV_UNRESOLVABLE`); 3 refused with a named code; 1 usage | `python3 tools/receipt-revision-gate.py --selftest` | `CODES` tuple and the 19 literal selftest cases in `tools/receipt-revision-gate.py`; three executed registry rows `receipt-gate-accept`, `receipt-gate-content-drift`, `receipt-gate-unresolvable-certified` on `tools/fixtures/receipt-gate/` | read-only on the lane (git objects only); `--selftest` writes one fixture repo under `$TMPDIR` (`tameshi-r56-gate-*`), removed on exit | tameshi |
+1548: 
+1549: Registry scope is these round-12 instruments plus the round-56 receipt gate; no new conformance assertion is made about the historical runner. Witness declarations are integrity-frozen (declaration, mapping, target, spec, summary; `manifest.json` itself is not pinned, seat ReRead08),
+1550: not blind: before declaring, their author had seen the source, the spec, the recorded aggregate outcomes and the per-defect KILLED/SURVIVED entries (`.ufo/evidence/round-12/BashWitness/declaration.json`; seat ReRead08). The declaration's runner pin `75ed934d…` is stale at round 27 (`check` exits 1 DRIFT; `run`/`rerun` refuse, exit 2; `count` never reads the runner; seat Read25, `.ufo/waves/round-27/w1/Read25.md`). The bash study

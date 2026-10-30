@@ -1,0 +1,73 @@
+MUTATE_TOOL: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/clone/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+MUTATE_DATE: 2026-10-30T04:43:25Z
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/regression/bash-checklist-run/target.checklist-run.sh sha256=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf bytes=24697
+MUTATE_SPEC: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/regression/specs/bash-checklist-run.spec defects=15
+CONTROL: GREEN (exit=0 duration-ms=2160 pristine-sha256=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT A1: SURVIVED (exit=0 duration-ms=2159) section never closes — the '## ' stop becomes an exact two-char header  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT A2: KILLED (exit=1 duration-ms=217) section never opens — the header gate sets in=0  # predict K
+  | checklist-selftest: FAIL padded reason: no /POLICY row C5: reason carries only/ in output
+  | checklist-selftest: FAIL ratio mode: exit 2 want 0
+  | checklist-selftest: FAIL ratio mode defect: exit 2 want 1
+  | checklist-selftest: FAIL ratio mode quiet: exit 2 want 0
+  | checklist-selftest: FAIL ratio mode runs no row: exit 2 want 0
+  | checklist-selftest: FAIL missing tsv: no /SETUP checklist.tsv not readable/ in output
+  | checklist-selftest: FAIL final clean: exit 2 want 0
+  | CHECKLIST_SELFTEST: FAIL (30/34 cases)
+DEFECT B1: SURVIVED (exit=0 duration-ms=2227) id charset loosened to ^[A-Z]+[0-9]+$ (multi-letter ids accepted)  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT B2: KILLED (exit=1 duration-ms=2313) by-hand non-space floor 20 -> 0 (padded reasons accepted)  # predict K
+  | checklist-selftest: FAIL padded reason: exit 0 want 2
+  | CHECKLIST_SELFTEST: FAIL (1/34 cases)
+DEFECT B3: SURVIVED (exit=0 duration-ms=2206) deny list drops `the-janitor stop` (a denied surface re-opens)  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT B4: KILLED (exit=1 duration-ms=394) expect_exit accepts a single integer only (multi-exit rows become POLICY)  # predict K
+  | checklist-selftest: FAIL duplicate lead: exit 2 want 1
+  | checklist-selftest: FAIL empty row output: exit 2 want 1
+  | checklist-selftest: FAIL three-way exit: exit 2 want 0
+  | checklist-selftest: FAIL ratio mode: exit 2 want 0
+  | checklist-selftest: FAIL ratio mode quiet: exit 2 want 0
+  | checklist-selftest: FAIL ratio mode runs no row: exit 2 want 0
+  | checklist-selftest: FAIL final clean: exit 2 want 0
+  | CHECKLIST_SELFTEST: FAIL (21/34 cases)
+DEFECT C1: SURVIVED (exit=0 duration-ms=2199) UNMATCHED-ITEM never reported (condition 0 -> -1)  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT C2: KILLED (exit=1 duration-ms=2202) DUPLICATE-ITEM threshold raised 1 -> 2 (two declarers invisible)  # predict K
+  | checklist-selftest: FAIL duplicate item: no /DUPLICATE-ITEM 4 .2 rows declare it./ in output
+  | CHECKLIST_SELFTEST: FAIL (1/34 cases)
+DEFECT D1: SURVIVED (exit=0 duration-ms=2228) floor_of truncates instead of ceiling (odd item counts)  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT D2: KILLED (exit=1 duration-ms=2201) ratio denominator 2 -> 1 (floor = every item)  # predict K
+  | checklist-selftest: FAIL floor breach: no /RATIO .runnable=2 floor=3 items=6./ in output
+  | checklist-selftest: FAIL three-way exit: exit 1 want 0
+  | checklist-selftest: FAIL ratio mode: exit 1 want 0
+  | checklist-selftest: FAIL ratio mode defect: no /RATIO .runnable=2 floor=3 items=6./ in output
+  | checklist-selftest: FAIL ratio mode quiet: exit 1 want 0
+  | checklist-selftest: FAIL ratio mode runs no row: exit 1 want 0
+  | checklist-selftest: FAIL final clean: exit 1 want 0
+  | CHECKLIST_SELFTEST: FAIL (10/34 cases)
+DEFECT E1: KILLED (exit=1 duration-ms=2216) exit-set membership becomes exact equality (A|B arms never accepted)  # predict K
+  | checklist-selftest: FAIL clean: exit 1 want 0
+  | checklist-selftest: FAIL ratio line: exit 1 want 0
+  | checklist-selftest: FAIL three-way exit: exit 1 want 0
+  | checklist-selftest: FAIL final clean: exit 1 want 0
+  | CHECKLIST_SELFTEST: FAIL (4/34 cases)
+DEFECT E2: SURVIVED (exit=0 duration-ms=2185) row output captured without stderr (2>&1 dropped)  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT F1: KILLED (exit=1 duration-ms=2185) defect path returns 0 — BROKEN still exits 0  # predict K
+  | checklist-selftest: FAIL duplicate reason: exit 0 want 1
+  | checklist-selftest: FAIL floor breach: exit 0 want 1
+  | checklist-selftest: FAIL extra row: exit 0 want 1
+  | checklist-selftest: FAIL undeclared item: exit 0 want 1
+  | checklist-selftest: FAIL duplicate item: exit 0 want 1
+  | checklist-selftest: FAIL duplicate lead: exit 0 want 1
+  | checklist-selftest: FAIL empty row output: exit 0 want 1
+  | CHECKLIST_SELFTEST: FAIL (10/34 cases)
+DEFECT F2: SURVIVED (exit=0 duration-ms=2248) --only BROKEN line prints failed=0  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+DEFECT G1: SURVIVED (exit=0 duration-ms=2263) unknown argument fail-open — exit 2 -> 0  # predict S (hole)
+  | CHECKLIST_SELFTEST: PASS (34 cases)
+MUTATE_RESTORE: OK (target-sha256 before=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf after=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf pristine-sha256=7e5ec98b9e1d0afaa4d4d0f0d91f897236e8a8b4c7912ccad94d86492fd576bf)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r57/T57W3Read03/regression/bash-checklist-run
+MUTATE: DONE (target=bash-checklist-run defects=15 killed=7 survived=8 inconclusive=0 kill-rate=47%)

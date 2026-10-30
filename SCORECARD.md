@@ -2764,3 +2764,19 @@ headings are listed in `.ufo/waves/round-57/lost-at-c0b.json` and the measured r
 then C1 (routed-defect ledger for R50.1-R56.7; counter and panel are staged unfrozen under `.ufo/evidence/round-57/`: counter selftest 89/96
 at the installed bytes, `PANEL_SHA256` still the pending marker, six panel ids R51.5 R51.6 R52.5 R52.6 R54.2 R54.3 need a clean re-seat) and C2
 (gate rows landed at C0; counter dry run in a scratch overlay printed `total=0`, not scored at a committed revision, no controls run).
+
+## Round 57 continuation — 2026-10-30
+
+The original C1 calibration and C2 operability targets remain binding and
+unadmitted. Defensive evidence commit `120a055d78b0f35f7f72c4c2a005ef7770f6d458`
+holds the recovered readers, clean re-seat panel, and C1 selftest repair
+(`110/110`, receipt `.ufo/evidence/round-57/integrate/c1-counter-install.stdout`).
+This selftest count is not an axis score or original-claim measurement.
+C1 candidate ledger is not installed: production remains 49 baseline rows.
+C2 original counter's `total=0` is insufficient: the literal exact-element
+clause fails the critic's documentary check. Proposed containment-based
+target narrowing was withdrawn. No score increment or capability admitted.
+The 46/64 cold-read regression remains a required no-harm check until a
+committed bind is independently measured; reader records alone do not repair it.
+Wave accounting: w3 (34) plus documentary d4 (32), 66 continuation identities;
+original attempt artifacts remain historical, not counted as fresh work.

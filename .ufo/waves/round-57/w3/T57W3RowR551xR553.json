@@ -1,0 +1,110 @@
+{
+  "seat": "T57W3RowR551xR553",
+  "round": 57,
+  "wave": "w3",
+  "judged_on": "calibration",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "lane_base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "cand": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "master_at_dry_run": "2c51affd37e15cd7cd258d76ba0f5f73ff235924",
+  "item": "adjudicate the ledger rows R55.1 and R55.3 against the blind panel",
+  "adjudication_rule": "adopt the panel verdict as both status and status_at_base; keep the triage status only where the panel is disproved by a command",
+  "rows": [
+    {
+      "id": "R55.1",
+      "triage_status": "fixed",
+      "triage_commit": "18bbdab73b26422e33186076be6be433b3358bc1",
+      "panel_seat": "T57W2PanelR5410R551",
+      "panel_verdict": "open",
+      "panel_commit": null,
+      "status": "open",
+      "status_at_base": "open",
+      "commit": null,
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-56/c2/measure.py",
+          "lines": "25-28",
+          "excerpt": "4. red55 round-55's committed C2 verdict receipt (`.ufo/evidence/round-55/after/c2.stdout`, truncated mid-run) gated as `verdict` against 4c04c1d3 is refused `RECEIPT_REV_ABSENT` - the R55.1 class (no verdict at the measured revision).",
+          "keys_matched": ["4c04c1d3", "c2.stdout", "measured revision"]
+        }
+      ],
+      "panel_disproved": false,
+      "why": "the round-55 C2 receipt is still truncated (28 lines, sha256 89e9e978...) and untouched from fa48c06c through base, C0b and master; no committed receipt names C2_R55 at 4c04c1d3 (the green line was an uncommitted post-tip rewrite, reverted at 6efd2a1, per corpus/lessons/round-56.md:59-64); the triage commit 18bbdab is round 56's green verdict at rev 1b44bace, not a round-55 verdict at 4c04c1d3",
+      "l1_action": "name R55.1 in SCORECARD's round-58 Planned paragraph (the counter's open arm requires the id in planned_ids; the master SCORECARD names no R55.*)"
+    },
+    {
+      "id": "R55.3",
+      "triage_status": "fixed",
+      "triage_commit": "8c20d5c351b39d51c8842bccf3ea8dc45171ccfb",
+      "panel_seat": "T57W2PanelR552R553",
+      "panel_verdict": "fixed",
+      "panel_commit": "c1dd23b3f83f5dff676c4a4482498e87345375ef",
+      "status": "fixed",
+      "status_at_base": "fixed",
+      "commit": "c1dd23b3f83f5dff676c4a4482498e87345375ef",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-21/coldread/rekey-r56-c0137451f5b7/traces/section-18.json",
+          "lines": "17-19",
+          "excerpt": "\"L1 TameshiR56a3 re-key (round 56)\", \"section\", \"### Triggers T1–T3 and the re-pin rule\"",
+          "keys_matched": ["re-key"]
+        }
+      ],
+      "panel_disproved": false,
+      "why": "the round-56 re-key commit c1dd23b3 is a full 40-hex ancestor of the lane base, not an ancestor of the routing commit fa48c06c, touches the evidence path, introduces it (absent at fa48c06c and at c1dd23b3^), carries no ACK word in the cited span, and ties to the item by amendment 2's panel_tie arm (the blind panel named this commit); the frozen round-21 monitor reads score 8, 64/64, box3=true at the base",
+      "caveat": "at C0b and at lane master the same monitor reads 6 (46/64, box3=false) because C0/C0b changed the pinned inputs; that regression is wave 3's eighteen-heading re-bind, and the counter forbids status_at_base=fixed with status!=fixed"
+    }
+  ],
+  "verification": {
+    "patch_ledger": "patched 2",
+    "dry_run_unpinned": {
+      "command": "LEDGER=$S/ledger.json bash .ufo/waves/round-57/dry-c1.sh 80",
+      "verdict_line": "C1_R57: self=6f3b7627a41d rev=087bfc5dcead rows=51/51 agree=39/51 old49=ok fixed=33 declined=2 thisround=5 panel=pin spot=ok total=14 C1_R57_PASS=false",
+      "terms": "fixed_bad=7 panel_pin=1 open_unplanned=0 panel_prov=0",
+      "my_ids_in_explain": {"R55.1": false, "R55.3": true},
+      "r55_3_explain": "fixed-not-new R55.3"
+    },
+    "dry_run_pinned": {
+      "command": "LEDGER=$S/ledger.json bash $S/dry-pinned.sh 60   (pin set in a scratch copy of the counter)",
+      "panel_sha256": "b7c77e3423c67b20464733927f5e13fc48ad586374fde6bda51ff37c240f7a90",
+      "verdict_line": "C1_R57: self=716d11adc786 rev=7e0f5eda90f2 rows=51/51 agree=43/51 old49=ok fixed=33 declined=2 thisround=5 panel=10/5 spot=ok total=14 C1_R57_PASS=false",
+      "terms": "fixed_bad=3 panel_pin=0 panel_over=5 panel_prov=0",
+      "my_ids_in_explain": {"R55.1": false, "R55.3": false}
+    },
+    "cold_read_monitor": {
+      "command": "python3 .ufo/evidence/round-21/coldread/measure.py --repo $S/clone --rev <rev>",
+      "base_5e3569969b532310d2b8a3d130901757a3df356b": {"calibration_restraint_score": 8, "sections_covered": 64, "box3_full_page": true},
+      "c0b_adf87899c70d616140a81185a8f9acbbdfb30392": {"calibration_restraint_score": 6, "sections_covered": 46, "box3_full_page": false}
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "instrument",
+      "statement": "with the panel unpinned (PANEL_SHA256 still the pending marker) the C1 counter cannot tie R55.3 to its commit, so the row reports fixed-not-new; with the panel pinned neither R55.1 nor R55.3 appears in any EXPLAIN line",
+      "commands": [
+        "python3 .ufo/waves/round-57/patch-ledger.py .ufo/waves/round-57/w3/attack-ledger.json .ufo/waves/round-57/w3/T57W3RowR551xR553/rows.json $S/ledger.json",
+        "LEDGER=$S/ledger.json bash .ufo/waves/round-57/dry-c1.sh 80",
+        "LEDGER=$S/ledger.json bash $S/dry-pinned.sh 60"
+      ],
+      "sweep": [
+        "git -C $C log --all --format='%H %s' | grep -E 'R55\\.3([^0-9]|$)' -> 0 commits",
+        "every tracked path at master tested with basename in item_text -> 0 hits",
+        "the lane's panel.json sha256 = b7c77e3423c67b20464733927f5e13fc48ad586374fde6bda51ff37c240f7a90"
+      ],
+      "l1_action": "pin PANEL_SHA256 to that digest before the deciding run; do not weaken the tie rule or change the row"
+    }
+  ],
+  "notes": [
+    "the lane's own corpus/lessons/round-56.md calls R55.1 FIXED by C2's deciding gate; that is a forward-looking instrument (the gate refuses a receipt that does not name the certified revision), not the missing round-55 verdict at 4c04c1d3, so the panel's open stands",
+    "the panel's blind arm file .ufo/evidence/round-57/c1/panel.json was read to align R55.3's commit field with panel.detail.R55.3.commit; the statuses were fixed by the L1's adjudication beforehand and no status was tuned to the panel"
+  ],
+  "files": {
+    "rows": ".ufo/waves/round-57/w3/T57W3RowR551xR553/rows.json",
+    "staged_ledger": ".ufo/waves/round-57/w3/T57W3RowR551xR553/stage/corpus/routed-defects.json",
+    "report": ".ufo/waves/round-57/w3/T57W3RowR551xR553.md",
+    "receipts": ".ufo/waves/round-57/w3/T57W3RowR551xR553-receipts/"
+  },
+  "tooling": "none installed or upgraded",
+  "lane_mutations": "none (no lane file edited in place; no git/jj mutation in the lane or the fleet repo)"
+}

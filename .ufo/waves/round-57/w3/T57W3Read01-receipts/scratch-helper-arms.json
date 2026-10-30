@@ -1,0 +1,11 @@
+{
+  "name": "scratch-helper-arms",
+  "command": "python3 -c 'import importlib.util, os, pathlib, tempfile\nroot=pathlib.Path('\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read01/clone/tools'\"'\"')\nfor name in ('\"'\"'env-diff'\"'\"','\"'\"'repeat-control'\"'\"','\"'\"'registry-check'\"'\"','\"'\"'bash-witness-study'\"'\"','\"'\"'pin-disposition'\"'\"','\"'\"'evidence-disposition'\"'\"','\"'\"'context-capture'\"'\"'):\n s=importlib.util.spec_from_file_location('\"'\"'probe_'\"'\"'+name.replace('\"'\"'-'\"'\"','\"'\"'_'\"'\"'), root/(name+'\"'\"'.py'\"'\"'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m)\n for arm,value in [('\"'\"'unset'\"'\"',None),('\"'\"'empty'\"'\"','\"'\"''\"'\"'),('\"'\"'usable'\"'\"','\"'\"'/fast/scratch/hyaku/tameshi-r57/T57W3Read01'\"'\"')]:\n  if value is None: os.environ.pop('\"'\"'TMPDIR'\"'\"',None)\n  else: os.environ['\"'\"'TMPDIR'\"'\"']=value\n  tempfile.tempdir=None\n  got=m.strict_scratch_root(); expected=value if value else None\n  assert got==expected,(name,arm,got,expected)\n  print(name,arm,repr(got),'\"'\"'PASS'\"'\"')\n'",
+  "cwd": "/fast/scratch/hyaku/tameshi-r57/T57W3Read01/clone",
+  "environment": {
+    "TMPDIR": "/fast/scratch/hyaku/tameshi-r57/T57W3Read01"
+  },
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 10, in <module>\n    assert got==expected,(name,arm,got,expected)\n           ^^^^^^^^^^^^^\nAssertionError: ('env-diff', 'unset', '/tmp', None)\n"
+}

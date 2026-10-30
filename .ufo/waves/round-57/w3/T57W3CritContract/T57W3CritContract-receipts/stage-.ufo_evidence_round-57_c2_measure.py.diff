@@ -1,0 +1,47 @@
+--- a/.ufo/evidence/round-57/c2/measure.py
++++ b/.ufo/evidence/round-57/c2/measure.py
+@@ -196,8 +196,8 @@
+         if idx >= len(cells):
+             continue
+         cell = cells[idx]
+-        have = [d for d in '023' if re.search(r'(?<![0-9A-Za-z_.])%s(?![0-9A-Za-z_.])' % d, cell)]
+-        if len(have) == 3:
++        have = [d for d in '0123' if re.search(r'(?<![0-9A-Za-z_.])%s(?![0-9A-Za-z_.])' % d, cell)]
++        if len(have) == 4 and re.search(r'RECEIPT_REV_UNRESOLVABLE', cell):
+             return 1, 'verdict map=%s' % cell[:80]
+         return 0, 'row names the gate but its Verdict map carries only %s' % ','.join(have or ['none'])
+     return 0, 'no table row names receipt-revision-gate.py'
+@@ -239,12 +239,16 @@
+     return value if isinstance(value, int) and not isinstance(value, bool) else None
+ 
+ 
+-def row_named_codes(row):
++def row_named_codes(row, codes):
++    """Codes named by the row's needles, by ELEMENT EQUALITY with a CODES member (amendment 1(i)).
++
++    An element that merely CONTAINS a code (e.g. 'GATE: ... codes=RECEIPT_REV_UNRESOLVABLE') does not
++    name it: the element must equal a CODES member."""
+     needles = row.get('expect', {}).get('stdout_contains', []) if isinstance(row.get('expect'), dict) else []
+     found = set()
+     for n in needles if isinstance(needles, list) else []:
+-        if isinstance(n, str):
+-            found.update(CODE_RE.findall(n))
++        if isinstance(n, str) and n in codes:
++            found.add(n)
+     return found
+ 
+ 
+@@ -372,7 +376,12 @@
+         notes.append('registry-missing at rev')
+     exits = sorted({row_exit(r) for r in rows if row_exit(r) is not None})
+     unnamed = [r['name'] for r in rows
+-               if row_exit(r) in (2, 3) and not (row_named_codes(r) & set(codes))]
++               if row_exit(r) in (2, 3) and not (row_named_codes(r, codes) & set(codes))]
++    # amendment 1(i): the exit-2 row must name exactly RECEIPT_REV_UNRESOLVABLE.
++    for r in rows:
++        if row_exit(r) == 2 and 'RECEIPT_REV_UNRESOLVABLE' not in row_named_codes(r, codes):
++            if r['name'] not in unnamed:
++                unnamed.append(r['name'])
+     missing = [e for e in WANT_EXITS if e not in exits]
+     short['rows'] = max(0, GATE_ROWS_FLOOR - len(rows)) + len(missing) + len(unnamed)
+     res['gate_rows'] = len(rows)

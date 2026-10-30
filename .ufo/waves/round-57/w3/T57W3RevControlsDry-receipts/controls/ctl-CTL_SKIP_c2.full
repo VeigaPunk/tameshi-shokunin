@@ -1,0 +1,18 @@
+EXPLAIN shortfall rows=1
+EXPLAIN shortfall executed=3
+EXPLAIN shortfall mutants=3
+EXPLAIN shortfall skill=0
+EXPLAIN shortfall codes=0
+EXPLAIN shortfall cell=0
+EXPLAIN rows gate_rows=3 exits=0,2,3 missing_exits=none refusal_rows_without_known_code=['ctl-r57-gate-accept']
+EXPLAIN executed ctl-r57-gate-accept expect=2 got=0 differs
+EXPLAIN executed ctl-r57-gate-drift expect=0 got=3 differs
+EXPLAIN executed ctl-r57-gate-unresolvable expect=3 got=2 differs
+EXPLAIN mutants baseline-held=0/3
+EXPLAIN mutant M1 accept-on-drift: SURVIVED
+EXPLAIN mutant M2 wrong-refusal-code: SURVIVED
+EXPLAIN mutant M3 exit-0-on-unresolvable: SURVIVED
+EXPLAIN skill_row 1 (verdict map=0 PASS; 2 certified revision unresolvable (`RECEIPT_REV_UNRESOLVABLE`); 3 refuse)
+EXPLAIN codes tokens=['RECEIPT_REV_ABSENT', 'RECEIPT_REV_CONTENT_DRIFT', 'RECEIPT_REV_MISMATCH', 'RECEIPT_REV_UNRESOLVABLE'] unknown=[]
+EXPLAIN cell gate emitted=['RECEIPT_REV_CONTENT_DRIFT'] exit=3 verdict=REFUSED; table cell carries=['RECEIPT_REV_CONTENT_DRIFT']
+C2_R57: self=a5138acb2248 rev=61e905b16a36 gate_rows=3 exits=0,2,3 held=0/3 mutants=0/3 skill_row=1 codes_known=4/4 standing_cell=ok total=7 C2_R57_PASS=false

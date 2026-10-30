@@ -1,0 +1,113 @@
+53e74a890c70fdcb97487eadb67c2e36faf7bb7b 2026-10-14T13:01:03-03:00 d8abee522efbf27c3570acd68d7bc4b9dd30a3888f6e9c2359020e179a7eda68
+b58b26fbeba8fd972e1d31ac8a9175a81e333b32 2026-10-14T13:57:18-03:00 597e141989065e038a1c2b35359ab3d20b565d3c959c2eec64166ecb1ff6331b
+44947154c23772f766f9f5439090fb5c7ad76e46 2026-10-14T15:17:26-03:00 b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb
+9f1d3c339a7094968041c7708a65dbf7eab9fae6 2026-10-14T16:06:31-03:00 cf41efaa8be5f52d92bf7806ddb3a99a031547bf12a6811b8ef45bce37242c75
+606716f703f7699af458476a31fc78ddc9bf552c 2026-10-14T18:28:23-03:00 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+c699c8c36d6e4eca4b796b81a8247904aa145ec8 2026-10-20T10:49:37-03:00 89722ddb3082abd63136d025e0dfb08dcea9ffd91d58878beb230241b61f5594
+05a224754db3c6fce18f5ec1816a6873bffe3d0e 2026-10-20T11:18:08-03:00 0673d2e5374b94c651238e7497cbebaffb6483348400747b08f9d27cdc8118aa
+POINTER corpus/knowledge/fleet-kill-rate-ledger.md 297 312
+297:| # | case | recorded pin | live | HEAD blob | worktree | reading |
+298:|---|---|---|---|---|---|---|
+299:| 1 | kimi-census | `83016d45…` | `83016d45…` | `83016d45…` | clean | current |
+300:| 2 | surface-census | `275d8294…` | `275d8294…` | `275d8294…` | clean | current |
+301:| 3 | tsukuroi-census | `084951be…` | `bba6cdf6…` (1 472 L) | `bba6cdf6…` | clean | **stale** |
+302:| 4 | mado-verify | `d7edaab4…` | `dc864c6a…` (2 186 L) | `90d50cdd…` | dirty | **stale + drift** |
+303:| 5 | checklist-run | `7e5ec98b…` | `7e5ec98b…` | `7e5ec98b…` | clean | current |
+304:| 6 | claims-check | `e9a21b44…` | `e9a21b44…` | `e9a21b44…` | clean | current |
+305:
+306:*Triggers — an owner should request a re-sweep when any one holds:*
+307:
+308:1. **After hardening.** Any owner edit that absorbs a survivor (or otherwise changes the gate) supersedes the swept revision: the recorded table is a measurement at the old pin, and the owner's own spec re-run closes *that spec* (directed repair, §0) — an independent re-sweep (fresh or extended spec) is the new independent reading. Precedents: tsukuroi 26 → 35 cases, B10 closed / B7–B9 open (§1.3); mado 28 → 53 assertions, same spec 10/10 (§1.4).
+309:2. **After suite changes.** Any change to the suite's executed case set moves the composition the rate is bound to (§0; tsukuroi E3) — the old rate's comparability lapses even where the gate's behaviour is unchanged. Recorded instance: mado 28 → 53.
+310:3. **On substrate drift.** The pin read above reads stale or drift. A moved substrate needs a **re-pin**, never a re-interpretation of the old table — the request shape already carries this (`service-optin-protocol.md:59-62`); both revisions stay in the record.
+311:
+312:*What a re-sweep is, and what comes back.* The service protocol's request shape (`service-optin-protocol.md:54-107`): pinned revision · hermetic one-command suite invocable on a copy · clause-mapped single-edit spec with pre-registered expectations. The run is read-only to the substrate, the note is the only fleet file written, and the outcome lands **as an appended row or errata block in this ledger** — never as an edit of §1–§4. A re-sweep measures the live revision; the old row stands as its revision's record; a rate never travels (per-revision, per-host; §0); `moved=0` is recorded, never manufactured.
+POINTER corpus/knowledge/fleet-kill-rate-ledger.md 318 341
+318:**ER-4 — the cadence fires its first scheduled tick: regression re-run exact · six-case pin read · two drift events recorded (O; appended 2026-10-14 by T9-1, tameshi round 9; `plans/round-9.plan.md` leg 1).** ER-3 landed the cadence as policy + one executed read; this is the policy's first invocation at a round boundary — the receipt. No §1–§4 cell is edited; the moved cells are append-only readings, old tables stand at their revisions, and a moved pin is never re-interpreted.
+319:
+320:*Tick — exact command set and scratch.* Per case, ER-3's command set verbatim (`sha256sum <gate-file>`; `git -C <repo> show HEAD:<path> | sha256sum`; `git -C <repo> status --porcelain -- <path>`) plus the ancestor check `git -C <repo> merge-base --is-ancestor <rev> HEAD`; then the harness itself: `bash tools/mutate-and-run.sh --selftest` and `bash tools/mutate-and-run.sh --regression --workdir /tmp/w9-tameshi-t91/regression`. Scratch `/tmp/w9-tameshi-t91/` (`tick.log` = both harness runs; `pin-read.log` = the raw six-case read, second pass 20:00:29Z). Tool at the tick `cf41efaa8be5f52d…` (1 341 L / 61 632 B, r7-1): **held** vs ER-2's pin (`:281`).
+321:
+322:*Pin read (executed at the tick, 19:58Z; second raw pass 20:00:29Z, same readings):*
+323:
+324:| # | case | recorded pin @ recorded rev | live | live = HEAD blob | worktree · recorded rev ancestor | reading |
+325:|---|---|---|---|---|---|---|
+326:| 1 | kimi-census | `83016d45…` @ `175de6ba` | `83016d45…` | yes | clean · yes | current |
+327:| 2 | surface-census | `275d8294…` @ `fecee874` | `275d8294…` | yes | clean · yes | current |
+328:| 3 | tsukuroi-census | `084951be…` @ `165307fe` | `bba6cdf6…` (1 472 L / 73 919 B) | yes | clean · yes | **stale** |
+329:| 4 | mado-verify | `d7edaab4…` @ `eead56b2` | `7da4ec50…` (2 887 L / 131 612 B) | yes | clean · yes | **stale** |
+330:| 5 | checklist-run | `7e5ec98b…` @ `fecee874` | `7e5ec98b…` | yes | clean · yes | current |
+331:| 6 | claims-check | `e9a21b44…` @ `175de6ba` | `e9a21b44…` | yes | clean · yes | current |
+332:
+333:Headline as measured: `LEDGER: 6 cases in; target current=4 stale=2 drift=0; tool held (cf41efaa…)`. Rows 3/4 are the two ER-3 already read `stale` (row 4 additionally `drift`); mado's `drift` reading is closed — the worktree is clean at this read and the edit is now a commit (below). Rows 1/2/5/6 read `current`, unchanged since ER-3.
+334:
+335:*Drift events recorded (trigger 3 · date · old → new · cause where readable).* Both repos' round-8 commits are stamped 2026-10-14T19:55:09Z — after ER-3's read, before this tick. Mado's commit carried the gate edit; tsukuroi's is the scribe's land (its gate path was last moved by round 7).
+336:
+337:- **row 3, tsukuroi `tools/tsukuroi-census.sh`** — `084951be…` @ `165307fe` (round 4) → **`bba6cdf6…`** @ HEAD `72b038d` (round-8 commit). Readable blob chain: `084951be` (`165307fe`) → `aae45531` (`da95290`, round 5, 17:33:30Z — the owner hardening §1.3 already records as its replay revision) → `bba6cdf6` (`aa136d6`, round 7, 19:06:31Z). Commit messages are round-generic; the writers are the owner's own lanes.
+338:- **row 4, mado `tools/mado-verify.sh`** — `d7edaab4…` @ `eead56b2` (round 5) → **`7da4ec50…`** @ HEAD `12c8f08` (round-8 commit). Chain: `d7edaab4` (`eead56b2`) → `c4c1afb7` (`c8f6667`, round 6, 18:17:26Z — the hardening §1.4 records) → `90d50cdd` (`0c20a76`, round 7, 19:06:31Z) → `7da4ec50` (`12c8f08`). The working-tree transients already on record — `6ea07110…` (round-9 plan [O]) and `dc864c6a…` (ER-3) — resolved into the committed `7da4ec50`; `drift` is superseded by `stale`, not left open.
+339:- [U] what each moved revision's mechanisms do — whether the recorded verdict/survivor classes reproduce at `bba6cdf6…` / `7da4ec50…` — is unmeasured here; that is this round's re-sweep work (its own appended rows), not this receipt.
+340:
+341:*Regression re-run — the instrument's own gate (receipt; workdirs `/tmp/w9-tameshi-t91/regression/` kept).* `MUTATE_SELFTEST: 67/67 pass` · `VERDICT: PASS`, rc 0. `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, rc 0, `REGRESSION_DATE: 2026-10-14T19:58:18Z`; every leg git-materialized at its recorded rev, `MUTATE_RESTORE: OK` per leg (target-sha256 before = after = the pinned bytes):
+POINTER corpus/knowledge/service-optin-protocol.md 225 232
+225:| tool pin (executed) | r4-2 `597e1419…331b`, md5 `26a27d35…` | `597e1419…ff6331b`; re-pin `b56c6e57…` mid-round (I1) |
+226:| target, swept | `tsukuroi-census.sh` `084951be…`, 976 L, 44 947 B | `mado-verify.sh` `d7edaab4…`, 1098 L, 45 334 B |
+227:| suite | `bash "$MUTANT" --selftest` (26 cases) | `bash "$MUTANT" --selftest` (28 assertions) |
+228:| defects → verdicts | 23 → 13 killed / 10 survived (56.5 %; printed 57 %) | 10 → 4 killed / 6 survived (40 %) |
+229:| restore | `MUTATE_RESTORE: OK`, before=after=`084951be…` | OK, before=after=`d7edaab4…`; tree untouched |
+230:| owner hardening | 9 cases, 26 → 35; spec re-run **23/23** at `aae45531…` | six survivor→case mappings (4 new scenarios E/F/H/I + 2 asserts folded into A), 28 → 53 (`+88/−0`, inside `selftest()` only); spec re-run **10/10** at `c4c1afb7…` |
+231:| residue kept | B7/B8/B9 still open at `aae45531` (tameshi replay §6) | rc-6 dead arm; exit-flatten family; 51 live rows |
+232:| second seat | tameshi's independent case on the same bytes: 6/10 (60 %); I1 gate moved mid-run | SCR-T6 re-ran the spec under `b56c6e57…`: 4/10, all ten mutant shas identical |
+POINTER corpus/knowledge/mutation-case-mado-verify.md 17 23
+17:**Incident I1 — the harness itself moved mid-round, by a concurrent lane.** Both the sweep and
+18:the regression run were executed against `tameshi-shokunin/tools/mutate-and-run.sh` sha256
+19:`597e141989065e038a1c2b35359ab3d20b565d3c959c2eec64166ecb1ff6331b` (pinned in both logs:
+20:`MUTATE_TOOL`, `REGRESSION_TOOL`; same pin the round-6 draft records at
+21:`plans/round-6-record-draft.md:50`). Re-pin at 17:46:15Z: sha256 `b56c6e57…2bcb`, 46850 B,
+22:mtime 14:46:08 -0300. **Every number in this note is tied to `597e1419…`**; whether the new
+23:revision reproduces this table is **U** (§7). Recorded, not smoothed; nothing was repaired.
+POINTER plans/round-8.plan.md 69 76
+69:`b56c6e57…` → `4dc69ef9…` (15:27:40, 1247 L / 56518 B: header
+70:`r7-1 leg ledger` — all four fleet specs embedded, each leg materialized from
+71:its repo's git object store `git show <rev>:<path>`, pin mismatch = SETUP,
+72:while the runner body still executed two legs) → `e3f838d4…` (15:28:38,
+73:61305 B: the headline count parameterized, `:965`) → `cf41efaa…` (15:29:01,
+74:61632 B) — still moving at this freeze. Those revisions were
+75:read at their headers, never executed by this lane — the landed revision at
+76:dispatch is the authority, and its mechanism (materialized legs, exact
+POINTER .ufo/waves/round-16/w2/RerunSweep.md 19 24
+19:- Tool: `worktree/tools/mutate-and-run.sh` at c699c8c → sha256
+20:  `89722ddb3082abd63136d025e0dfb08dcea9ffd91d58878beb230241b61f5594` (runner-sha256.txt
+21:  receipt). **Observed delta:** the recorded 13:40:15Z sweep ran `75ed934d…adc5`
+22:  (r10-2, pre-ledger-embedding); this re-run used the committed landing revision
+23:  `89722ddb` (r16, leg 7 embedded). Note §2 records both shas; the tool's
+24:  defect-application and suite-run path is unchanged between them.
+POINTER corpus/knowledge/mutation-case-kumitate-claims.md 315 323
+315:- O: `bash tools/mutate-and-run.sh --regression --workdir /tmp/w8-t8-2-claims/regression`
+316:  at 19:14:16Z, tool `cf41efaa…` →
+317:  `REGRESSION: PASS (cases=4 passed=4; ledger legs exact: killed-delta<=0 flips<=0)`, rc 0,
+318:  46 s wall. Legs, materialized from their repos' object stores (pin verified inside the
+319:  tool): `js-kimi-census` `83016d45…` @ kumitate `175de6b` 8/10 flips=0;
+320:  `bash-surface-census` `275d8294…` @ kagi `fecee87` 8/10; `bash-tsukuroi-census`
+321:  `084951be…` @ tsukuroi `165307fe` 6/10; `bash-mado-verify` `d7edaab4…` @ mado `eead56b2`
+322:  4/10 — every leg `match=10/10 flips=0`.
+323:- O: **this case's table is not embedded**, so the §1 kill-rate claim does not carry a
+POINTER plans/round-6-record-draft.md 243 262
+243:3. **Independent mado re-sweep against the pinned bytes, under the hardened
+244:   tool** (the note's U3, measured). Pinned revision recovered read-only:
+245:   `git -C mado-shokunin show HEAD:tools/mado-verify.sh` → sha256
+246:   `d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13`, 1098 L /
+247:   45334 B (the live tree is now `c4c1afb7…` / 1186 L / 50126 B, `+88/−0`), so
+248:   the sweep was pointed at a byte copy under `/tmp`. Command: `bash
+249:   tools/mutate-and-run.sh --target /tmp/scr-t6-target-d7edaab4.sh --defects
+250:   /tmp/w6-tameshi-mado-verify/spec/mado-verify.defects.spec --suite 'bash
+251:   "$MUTANT" --selftest' --workdir /tmp/w6-scr-t6-mado-sweep --label
+252:   mado-verify-d7edaab4` (spec = the T6-1 spec, sha re-read from the note's §9
+253:   layout). Readings: `MUTATE_TOOL: … sha256=b56c6e57…`; `CONTROL: GREEN
+254:   (exit=0 duration-ms=450 …)`, `MADO_SELFTEST: 28/28 assertions passed`;
+255:   `DEFECT D1/D2/D4/D6: KILLED` (suite exits 2, `FAILED — 27 passed, 1 failed`),
+256:   `DEFECT D3/D5/D7/D8/D9/R1: SURVIVED` (exit 0, 28/28); `MUTATE_RESTORE: OK`
+257:   before=after=`d7edaab4…`; `MUTATE: DONE (target=mado-verify-d7edaab4
+258:   defects=10 killed=4 survived=6 inconclusive=0 kill-rate=40%)`, rc 0, 5.1 s.
+259:   `results.tsv` mutant shas match the note's ten listed prefixes exactly
+260:   (D1 `ec60ae5c8f82`, D2 `41ae4e6e26e6`, D3 `1c0e1d3ee758`, D4 `7902653acf98`,
+261:   D5 `5f0937367e74`, D6 `4b94c1802ba0`, D7 `ce37404f12eb`, D8 `81351c897a8b`,
+262:   D9 `81817f67c950`, R1 `6f3affd3849e`).

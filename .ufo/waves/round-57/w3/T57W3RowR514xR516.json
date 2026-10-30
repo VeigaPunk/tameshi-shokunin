@@ -1,0 +1,116 @@
+{
+  "seat": "T57W3RowR514xR516",
+  "role": "scribe",
+  "wave": "round-57-w3",
+  "lane": "tameshi",
+  "axis": "calibration",
+  "milestone": "ledger rows R51.4 R51.6",
+  "base": "5e3569969b532310d2b8a3d130901757a3df356b",
+  "c0b": "adf87899c70d616140a81185a8f9acbbdfb30392",
+  "scored_revision_of_the_dry_run": "2c51affd37e15cd7cd258d76ba0f5f73ff235924",
+  "rows": [
+    {
+      "id": "R51.4",
+      "status": "open",
+      "status_at_base": "open",
+      "commit": null,
+      "triage_status": "fixed",
+      "triage_commit": "bcba8924894216268afc4171f06eb8c28e912b46",
+      "panel": {
+        "seat": "T57W2PanelR513R514",
+        "verdict": "open",
+        "blindness": "intact (all reads inside a detached scratch clone at the base)",
+        "panel_overturned": false
+      },
+      "evidence": [
+        {
+          "path": "tools/round21-measure.py",
+          "lines": "10-12",
+          "excerpt": "counter itself reads (its `FLEET` literal), so the selftest is fleet-bound, not hermetic: it passes from a clone anywhere on this host and fails where that fleet root is absent (round 52, routed defect R51.4)."
+        },
+        {
+          "path": "SKILL.md",
+          "lines": "2200-2200",
+          "excerpt": "fleet-bound, not hermetic (since round 52 it reads the sibling blobs at the fleet root that its subject counter c2-count.py names in its FLEET literal, so it passes from a clone anywhere on this host and fails where that fleet root is absent"
+        }
+      ],
+      "keys_matched": ["round21-measure.py", "hermetic", "fleet-bound", "R51.4"],
+      "why_open": [
+        "route 1 (hermetic --selftest) not taken: tools/round21-measure.py:10-12 says fleet-bound, not hermetic",
+        "route 2 (declared fleet-bound row class in the counter, amendment pre-registered) not taken: .ufo/evidence/round-51/c3/measure.py holds 0 occurrences of 'fleet' and is byte-unchanged since ef19d8e1..5e356996 (git diff stdout 0 bytes)",
+        "the item's second clause (the C3 counter's missing mutation attack, R51.5) never ran: no round-51 wave file matches c3+mut"
+      ],
+      "changed_from_triage": true,
+      "change": "status fixed -> open, status_at_base fixed -> open, commit dropped"
+    },
+    {
+      "id": "R51.6",
+      "status": "open",
+      "status_at_base": "open",
+      "commit": null,
+      "triage_status": "open",
+      "panel": {
+        "seat": "T57W3ReseatR515R516",
+        "verdict": "open",
+        "blindness": "clean re-seat; the first seat T57W2PanelR515R516 disclosed a breach, so the contract makes the re-seat the panel verdict for this id",
+        "void_first_verdict": {
+          "seat": "T57W2PanelR515R516",
+          "verdict": "fixed",
+          "commit": "7ff81a5b0ab0fbaefd68cf4ef9dcfe687a6d7135"
+        },
+        "panel_overturned": false
+      },
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-51.md",
+          "lines": "5-7",
+          "excerpt": "## Gate Rows opened this round; URL, local access date, located quote and source limitations are recorded here under CORPUS.md SOURCES contract v1 rule 1. Rows touched old → new are listed after them."
+        },
+        {
+          "path": "corpus/lessons/round-51.md",
+          "lines": "12-12",
+          "excerpt": "Rows touched: S022 status `queued` → `mined` (used-by already names `corpus/knowledge/fixture-shrinking-pilot.md`; mined means cited by at least one used-by path under CORPUS.md); no other existing row status changed. Appended S272 and S273; the registry has 133 rows and the next allocated id is S274. Census start exit 0; round-end census receipt is in `.ufo/evidence/round-51/census-end.*`."
+        }
+      ],
+      "keys_matched": ["## Gate"],
+      "why_open": [
+        "corpus/lessons/round-51.md at base holds no line containing 'reject' (grep -in reject: no output)",
+        "the file is byte-unchanged since the routing spot-check ef19d8e1e7baef7172e8a4fa667daf6d3e29daa4 (git diff stdout 0 bytes; no commit touches it up to the base)",
+        "round-52.md's 'Candidates rejected' block (7ff81a5b) is prospective practice in another file, not a repair of the cited round-51 surface"
+      ],
+      "changed_from_triage": false,
+      "change": "confirmation of the wave-2 repair row; note and panel provenance added"
+    }
+  ],
+  "verification": {
+    "patch": "python3 .ufo/waves/round-57/patch-ledger.py .ufo/waves/round-57/w3/attack-ledger.json .ufo/waves/round-57/w3/T57W3RowR514xR516/rows.json $S/ledger.json -> 'patched 2'",
+    "dry_run": "LEDGER=$S/ledger.json bash .ufo/waves/round-57/dry-c1.sh 80",
+    "my_ids_in_explain_fault_lines": false,
+    "terms_line": "C1_R57_TERMS: fixed=33 open=16 declined=2 fixed_this_round=5 missing=0 extra=0 duplicate=0 old49=0 spotcheck_changed=0 defects_pin=0 bad_status=0 evidence_bad=2 key_miss=3 fixed_bad=7 open_unplanned=0 declined_bad=0 fixed_short=0 declined_over=0 this_round_short=1 panel_pin=1 panel_over=0 base_status_bad=0 panel_prov=0",
+    "verdict_line": "C1_R57: self=6f3b7627a41d rev=7650c1a16c9a rows=51/51 agree=39/51 old49=ok fixed=33 declined=2 thisround=5 panel=pin spot=ok total=14 C1_R57_PASS=false",
+    "counter_level_judge_at_master": {
+      "R51.4": "fault=open_unplanned (the newest '**Planned (round N)' paragraph of SCORECARD.md:2763-2766 names R51.6 but not R51.4); fault=None once R51.4 is added",
+      "R51.6": "fault=None"
+    },
+    "unpatched_ledger_terms": "fixed=34 open=15 (the triage R51.4 row was counter-clean and semantically wrong; the counter cannot see the difference)"
+  },
+  "action_for_l1": [
+    "name R51.4 in the newest '**Planned (round N)' paragraph of SCORECARD.md (lines 2763-2766) or the R51.4 row faults open_unplanned at the deciding revision",
+    "merge .ufo/waves/round-57/w3/T57W3RowR514xR516/rows.json into corpus/routed-defects.json with patch-ledger.py; the staged working-ledger snapshot is a merge base, not an overwrite"
+  ],
+  "findings": [],
+  "notes": [
+    "the counter cannot distinguish the wave-1 triage row (R51.4 fixed, commit bcba892) from the adjudicated row (open): both are counter-clean; the blind-panel arm is the only mechanism that catches it",
+    "T57W2ConnectorWaves' key_miss list still names R51.6; the current row is keyed (## Gate at corpus/lessons/round-51.md:5-7) - the connector's finding was taken against the pre-repair evidence pointing (lines 7, 28, 62)",
+    "no lane file was edited by this seat; nothing under .ufo/evidence/round-5[0-6]/ was touched"
+  ],
+  "tools_installed": [],
+  "paths": {
+    "report": ".ufo/waves/round-57/w3/T57W3RowR514xR516.md",
+    "json": ".ufo/waves/round-57/w3/T57W3RowR514xR516.json",
+    "rows": ".ufo/waves/round-57/w3/T57W3RowR514xR516/rows.json",
+    "stage": ".ufo/waves/round-57/w3/T57W3RowR514xR516/stage/.ufo/waves/round-57/w3/attack-ledger.json",
+    "receipts": ".ufo/waves/round-57/w3/T57W3RowR514xR516-receipts/"
+  },
+  "verdict": "adjudicated-open-open"
+}

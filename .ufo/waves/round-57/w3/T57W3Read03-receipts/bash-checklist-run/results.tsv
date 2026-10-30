@@ -1,0 +1,16 @@
+id	verdict	exit	duration-ms	mutant-sha256	desc
+A1	SURVIVED	0	2159	453e0cafdc493d434799a37dba3fef8955522c0691eb26b116fa7b28a17c0e6a	section never closes — the '## ' stop becomes an exact two-char header  # predict S (hole)
+A2	KILLED	1	217	bb745d012913508b79e7c9c84c01886eb555a700baaae8a9bddc74fb268c8e0b	section never opens — the header gate sets in=0  # predict K
+B1	SURVIVED	0	2227	e49527973efe3510f37684dd5e60369ca9910b8e947e8fbc643cf1b82065a704	id charset loosened to ^[A-Z]+[0-9]+$ (multi-letter ids accepted)  # predict S (hole)
+B2	KILLED	1	2313	7ac5b530be8522df27e5d9ea781f1ddda70ce4593ac881ac1629c340e84163db	by-hand non-space floor 20 -> 0 (padded reasons accepted)  # predict K
+B3	SURVIVED	0	2206	b7b7161a6f825cec7fc7b85c9c0fdadcfb80b2ea860a071d077af7bfb41a6244	deny list drops `the-janitor stop` (a denied surface re-opens)  # predict S (hole)
+B4	KILLED	1	394	b7ab8682fa4de0b0a21a39ebe3e755ae4bfcd036c21bea1ed47081bd7d250755	expect_exit accepts a single integer only (multi-exit rows become POLICY)  # predict K
+C1	SURVIVED	0	2199	3c6df6b3b6d68027490c5fd0323172bc3a9c1353937b3bd07fc8d944e4d86f0a	UNMATCHED-ITEM never reported (condition 0 -> -1)  # predict S (hole)
+C2	KILLED	1	2202	ce46b6abffdc497f43456405b9649561b3e29c1e4890854bb677b71707124cd7	DUPLICATE-ITEM threshold raised 1 -> 2 (two declarers invisible)  # predict K
+D1	SURVIVED	0	2228	538345cb96387993b52a77beedc30cf3a9053ad9ce3e837b0fa5ab612a6539bb	floor_of truncates instead of ceiling (odd item counts)  # predict S (hole)
+D2	KILLED	1	2201	01068fee814b4ca58c01a6ad72bccea16b993548f9922bf638995ef93f133b21	ratio denominator 2 -> 1 (floor = every item)  # predict K
+E1	KILLED	1	2216	aeef4468d56a693429d292beba8e1d6460ac8805dc4e83e6f09a5b901d212f50	exit-set membership becomes exact equality (A|B arms never accepted)  # predict K
+E2	SURVIVED	0	2185	40ac2c80f0cf517650c5af59207186c87343fe36dc0c95a7537de856c7eb65ad	row output captured without stderr (2>&1 dropped)  # predict S (hole)
+F1	KILLED	1	2185	8eb8b805064949c49b0b265749b3a4cb71a0ade71f524a921e76a32ccf9a714b	defect path returns 0 — BROKEN still exits 0  # predict K
+F2	SURVIVED	0	2248	fa140e1c1a315d9a966d428c43cf6065500ad3eaf306eeedee7ff4898d991a6d	--only BROKEN line prints failed=0  # predict S (hole)
+G1	SURVIVED	0	2263	68fba490759b2e2cc6629758b5b4fff1f6f8c139e8b060f07d0764edd020bb55	unknown argument fail-open — exit 2 -> 0  # predict S (hole)

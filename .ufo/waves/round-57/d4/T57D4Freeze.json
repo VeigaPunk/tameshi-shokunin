@@ -1,0 +1,65 @@
+{
+  "seat": "T57D4Freeze",
+  "status": "UNVERIFIED",
+  "review_mode": "documentary_defensive_only",
+  "axes": ["input_coverage", "mapping_consistency", "truthful_run_provenance"],
+  "report": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/d4/T57D4Freeze.md",
+  "observed_head_nonatomic": "120a055d78b0f35f7f72c4c2a005ef7770f6d458",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "title": "Executed monitor instruments and live fleet census are outside frozen surface",
+      "evidence": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/contract.json:175-199",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/no-harm.sh:16-28",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/deciding-run.sh:100-117,157-158,189-190",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-48/quality/coldread-precheck.sh:11-15"
+      ],
+      "basis": "Source reads show round-21/45/46/47/48 instrument execution absent from literal frozen_paths, plus external live census execution. No mutation or runtime failure asserted."
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "title": "Generator and deciding-run mappings disagree",
+      "evidence": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/freeze-gen.py:49-50,96-110",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/deciding-run.sh:90-104",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/c1/measure.py:111,249-266"
+      ],
+      "basis": "Generator accepts round-21/48 prefixes that deciding-run rejects; both reject wave provenance paths and round-45/46/47 instruments. Seat blobs have indirect panel.files hash checks; results membership is separate. Present list does not yet exercise mismatching prefixes."
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "title": "Unlisted third control file does not automatically alter frozen set",
+      "evidence": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/contract.json:200",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/freeze-gen.py:152-180",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/deciding-run.sh:100-117,137-153",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/controls.sh:11-14"
+      ],
+      "basis": "Contract asserts third-file freeze-set change; implementations enumerate literal contract entries, not directory contents. Documentary amendment policy must not be represented as automatic coverage."
+    }
+  ],
+  "existing_success_claim_sweep": {
+    "unsupported_completed_freeze_or_controls_claim_found": false,
+    "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree -r --name-only HEAD -- .ufo/evidence/round-57/freeze.json .ufo/evidence/round-57/control .ufo/evidence/round-57/after",
+    "stdout": ".ufo/evidence/round-57/control/gen_ledger.py\n.ufo/evidence/round-57/control/gen_registry.py\n",
+    "status_evidence": [
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-57/contract.json:201",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin/LOG.md:2588-2589,2605-2611",
+      "/home/vgpnk/Projects/shokunin/.ufo/reports/round-57/tameshi.md:3,16-17,39-42,64-66"
+    ],
+    "scope_limit": "Inspected records only; inventory and HEAD observation are not atomic."
+  },
+  "verification_gaps": [
+    "xd://lsp unavailable: No such tool; no semantic references/definition/diagnostics available",
+    "No candidate scripts, gates, controls, tests or builds executed",
+    "No final freeze, controls or 64/64 no-harm execution established",
+    "No admission, rerouting, saturation or resume-continuity conclusion established"
+  ],
+  "tool_installations": [],
+  "production_changes": false,
+  "recommendation": "Retain UNVERIFIED; reconcile input coverage and mapping and correct frozen-notes before any permitted canonical run."
+}

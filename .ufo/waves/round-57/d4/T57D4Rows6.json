@@ -1,0 +1,80 @@
+{
+  "seat": "T57D4Rows6",
+  "mode": "documentary_defensive_review",
+  "integration": "UNVERIFIED",
+  "admission_granted": false,
+  "report": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/d4/T57D4Rows6.md",
+  "axes": ["original_item_fidelity", "revision_commit_identity", "base_vs_current_status", "evidence_completeness"],
+  "results": [
+    {
+      "id": "R55.1",
+      "aggregate_candidate": "unsupported",
+      "writer_staged_candidate": "supported",
+      "supported_status_at_base": "open",
+      "supported_status_at_C0b": "open",
+      "supported_fix_commit": null,
+      "severity": "high",
+      "finding": "Aggregate candidate cites C2_R56 at 1b44bace0974 as repair of missing C2_R55 at 4c04c1d3; these are different rounds and revisions. Writer's open/open correction is supported.",
+      "citations": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-55-verifier-spotcheck.md:118-122",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/attack-ledger.json:1856",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RowR551xR553/rows.json:3-14",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w2/T57W2PanelR5410R551.md:110-142"
+      ],
+      "commands_executed": [
+        {
+          "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 18bbdab73b26422e33186076be6be433b3358bc1:.ufo/evidence/round-56/after/c2.stdout",
+          "output_excerpt": "C2_R56: rev=1b44bace0974 selftest=19/19 red54=RECEIPT_REV_CONTENT_DRIFT red54b=RECEIPT_REV_UNRESOLVABLE red55=RECEIPT_REV_ABSENT own=PASS docs=4/4 total=0 C2_R56_PASS=true"
+        },
+        {
+          "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show adf87899c70d616140a81185a8f9acbbdfb30392:.ufo/evidence/round-55/after/c2.stdout",
+          "output_summary": "28 EXPLAIN lines, no C2_R55 verdict; ends EXPLAIN usable repeat-control --selftest rc=0 ok"
+        }
+      ]
+    },
+    {
+      "id": "R55.3",
+      "aggregate_candidate": "unsupported_as_current_closure",
+      "writer_staged_candidate": "unsupported_as_current_closure",
+      "supported_status_at_base": "fixed",
+      "status_at_C0b": "regressed_per_existing_receipt",
+      "historical_rekey_commit": "c1dd23b3f83f5dff676c4a4482498e87345375ef",
+      "historical_restatement_commit": "2f5512a8ab0771fb2eee463ec16db359174f5edd",
+      "historical_predicate_correction_commit": "8c20d5c351b39d51c8842bccf3ea8dc45171ccfb",
+      "severity": "high",
+      "finding": "Base-only fixed verdict and historical commits are supported, but existing C0b receipt reads 46/64 score 6 while writer reports standing score 8. Current fixed claim needs deciding-revision restoration evidence; counter acceptance does not supply it.",
+      "citations": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-55-verifier-spotcheck.md:127-130",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w2/T57W2PanelR552R553.md:79-137",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RowR551xR553/rows.json:17-29",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RowR551xR553.md:131-137",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-57/w3/T57W3RowR551xR553-receipts/coldread-monitor.txt:1-18"
+      ],
+      "commands_executed": [
+        {
+          "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show --format=fuller --stat c1dd23b3f83f5dff676c4a4482498e87345375ef",
+          "output_summary": "21 changed files: coldread ledger, refresh receipt, 18 traces, binder stdout; no SCORECARD change"
+        },
+        {
+          "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show --format=short --unified=2 2f5512a8ab0771fb2eee463ec16db359174f5edd -- SCORECARD.md",
+          "output_summary": "Adds standing calibration row score 8, 64/64 box3=true, measured commit c1dd23b3"
+        }
+      ],
+      "existing_receipt_not_rerun": {
+        "command": "python3 .ufo/evidence/round-21/coldread/measure.py --repo $S/clone --rev <rev>",
+        "base_output": {"score": 8, "sections_covered": 64, "box3_full_page": true},
+        "C0b_output": {"score": 6, "sections_covered": 46, "box3_full_page": false}
+      }
+    }
+  ],
+  "verification_gaps": [
+    "No deciding-revision restoration established in scoped evidence",
+    "Production ledger lacks these ids; aggregate and staged candidates are separate artifacts",
+    "LSP unavailable: xd://lsp returned No such tool; no semantic LSP claim",
+    "Historical measurements read from existing receipts, not rerun"
+  ],
+  "code_execution": false,
+  "tests_or_builds_run": false,
+  "production_edits": false,
+  "tools_installed_or_upgraded": []
+}

@@ -1,0 +1,66 @@
+T57W3RowR548xR549 — receipts 00: tie/ancestry/introduction evidence
+All git commands run in the scratch clone /fast/scratch/hyaku/tameshi-r57/T57W3RowR548xR549/clone
+(shared clone of /home/vgpnk/Projects/shokunin/tameshi-shokunin, detached at base 5e3569969b532310d2b8a3d130901757a3df356b;
+evidence lines re-verified against master 2c51affd37e15cd7cd258d76ba0f5f73ff235924 via `git show master:<path>`).
+
+$ git merge-base --is-ancestor 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 5e3569969b532310d2b8a3d130901757a3df356b
+9cf0146 ancestor of BASE: yes
+$ git merge-base --is-ancestor 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 650987a0d6fc285b37f0f9e63a3aae864af9cd5a
+9cf0146 NOT ancestor of routed_at: good
+$ git merge-base --is-ancestor e2979f277138da503af27b263b783f626f109be4 5e3569969b532310d2b8a3d130901757a3df356b
+e2979f27 ancestor of base
+$ git merge-base --is-ancestor 650987a0d6fc285b37f0f9e63a3aae864af9cd5a e2979f277138da503af27b263b783f626f109be4
+routed_at ancestor of e2979f27
+$ git rev-list --parents -n 1 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+9cf0146b94ddba12d454ebf7288ce6e5c5d535bb e2979f277138da503af27b263b783f626f109be4
+$ git rev-list --parents -n 1 e2979f277138da503af27b263b783f626f109be4
+e2979f277138da503af27b263b783f626f109be4 631cd6455e58dce969310b4c0466c3383d9f5108
+
+$ git diff-tree --no-commit-id --name-only -r --root -m 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb | grep -E '^(SCORECARD.md|corpus/lessons/round-5[45].md)$'
+SCORECARD.md
+corpus/lessons/round-54.md
+corpus/lessons/round-55.md
+
+$ git log --oneline --diff-filter=A -- corpus/lessons/round-55.md
+9cf0146b round-55: C0 — one scratch-root line in three tools (...) lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+$ git cat-file -e 650987a0d6fc285b37f0f9e63a3aae864af9cd5a:corpus/lessons/round-55.md
+ABSENT at routed_at
+$ git cat-file -e e2979f277138da503af27b263b783f626f109be4:corpus/lessons/round-55.md
+ABSENT at first parent e2979f27 (of 9cf0146)
+
+$ git show 650987a0d6fc285b37f0f9e63a3aae864af9cd5a:SCORECARD.md | grep -c 'ER-R54-8'
+0
+$ git show e2979f277138da503af27b263b783f626f109be4:SCORECARD.md | grep -c 'ER-R54-8'
+0
+
+$ git show e2979f277138da503af27b263b783f626f109be4:.ufo/evidence/round-55/freeze.json | sed -n '39p' | md5sum
+5ced3438d3fc8cbbe4bae4b1ab6b2f05  -
+$ git show master:.ufo/evidence/round-55/freeze.json | sed -n '39p' | md5sum
+5ced3438d3fc8cbbe4bae4b1ab6b2f05  -
+$ git show 631cd6455e58dce969310b4c0466c3383d9f5108:.ufo/evidence/round-55/freeze.json | grep -c 'SUPERSEDED (round 55'
+0
+$ git show 631cd6455e58dce969310b4c0466c3383d9f5108:.ufo/evidence/round-55/c1/measure.py | grep -n 'SUPERSEDED\|"superseded" in seat'
+224:        "superseded" in seat.lower() and "config.yml" in corr and "fabricated" in corr,
+
+$ git show master:.ufo/evidence/round-55/c1/measure.py | grep -n 'SUPERSEDED (round 55'
+263:        "SUPERSEDED (round 55" in seat and "config.yml" in corr and "fabricated" in corr,
+
+$ git diff-tree --no-commit-id --name-only -r -m e2979f27 | sort -u
+.ufo/evidence/round-55/assimilation/S280-gnu-errors.txt
+.ufo/evidence/round-55/assimilation/S281-sysexites.txt
+.ufo/evidence/round-55/before/c1.stdout
+.ufo/evidence/round-55/before/c2.stdout
+.ufo/evidence/round-55/c1/measure.py
+.ufo/evidence/round-55/c1/staged-at-freeze.txt
+.ufo/evidence/round-55/c2/measure.py
+.ufo/evidence/round-55/contract.json
+.ufo/evidence/round-55/freeze.json
+(note: e2979f27 does NOT touch SCORECARD.md / corpus/lessons/* — hence evidence item 2 of the R54.8 row
+ is context, not the introduction witness; item 1 carries the introduction)
+
+$ git ls-tree -r --name-only 5e3569969b532310d2b8a3d130901757a3df356b | grep -i 'config\.yml'
+(none)
+$ git log --all --format='%H|%s' | grep -E 'R54\.8'
+e2979f277138da503af27b263b783f626f109be4|round-55: freeze amendments 1-7 — ... R54.8 seat token). ...
+$ git log --all --format='%H|%s' | grep -E 'R54\.9'
+(no output — no commit names R54.9)
