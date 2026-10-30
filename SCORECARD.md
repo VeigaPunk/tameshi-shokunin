@@ -2819,3 +2819,20 @@ N=2 (last entry round 50), so the lowest-axis obligation is waived; C3 is the nu
 Round shape: one v2 wave round-58-w1 (67 seats, ≥25% attack roles) then one v1 wave round-58-w2 after
 content lands (fresh attacks + the 17 cold-read re-readers the measured forecast prices: the draft overlay
 measures `lost=17 RED`, receipt `.ufo/waves/round-58/l1/forecast-precheck.stdout`).
+
+**Planned (round 59):** remaining routed debts, with evidence strength distinguished from the blind panel's judgment:
+- R50.4: successor counters for the carried forgery routes; the historical seven open ledger items are not claimed resolved.
+- R51.4: `round21-measure.py` selftest/fleet-bound classification and the missing C3 mutation attack need a joint disposition.
+- R51.8: freeze-stamped control receipts need a demonstrated failure discriminator.
+- R52.3: re-derive Corr12 and the disputed over-count judgment from reader-marked failures.
+- R52.6: report-contract repairs need a durable per-clause historical correction record.
+- R53.1: frozen rekey counter's directory discovery is structurally dead; publish a successor, not an edit to frozen history.
+- R53.3: `break-fixtures.py` phase-B run fails at rekey discovery before a CONTROLS_B tally; preserve the failure.
+- R53.5: resolved this round by final amendment 7 verification and LOG correction at `764f87bc`; retain the historical freeze receipts as records.
+- R53.7: the "inputs pinned at C7" claim needs the original pin referents restated.
+- R54.5: findings counts in `integrate/resolutions.json` need a qualifying durable correction chain.
+- R54.6: the blind panel sees the swept files as fixed; their `untracked` disposition lacks qualifying keyed evidence in this ledger.
+- R55.7: a resolved-versus-declined disposition needs its reason bound to the missing `after/c2.stdout` evidence.
+- R56.1: remaining SKILL page-local anchors need heading/function replacements plus re-reading.
+- R56.2: the `RECEIPT_REV_CONTENT_DRIFT` standing-cell fix exists; a complete role-to-code proof chain remains to be linked.
+
