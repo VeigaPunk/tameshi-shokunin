@@ -77,3 +77,31 @@ Outside admit/reject spot-check remains the non-author closure's responsibility.
 Five reader headings retain six minor findings at C0b; their exact findings
 and deferral judgments are in `.ufo/evidence/round-57/integrate/resolutions.json`.
 Binding those records certifies rereading, not that their sections are clean.
+
+## Continuation verification and documentary corrections
+
+At committed `bc3c8895b75aec65e3006193d0c1857641dbb385`, the two-phase bind
+passed: `REFRESH rekeyed=18 skipped=0 headings=18`, `BIND_TREE files=21 bad=0`,
+`PINNED inputs=7721 changed=675 pinned-changed=0`, and
+`MONITOR covered=64/64 score=8 box3=True trace_gate=strict overrides=False`.
+Receipt: `.ufo/evidence/round-57/integrate/bind-phase2.stdout`, exit 0.
+The initial staging invocation exited 5 solely at the dirty-tree guard while
+concurrent wave outputs remained uncommitted; that guard was retained.
+This restores the no-harm floor, not the original routed-defect C1 target.
+
+Documentary wave d4 settled with 32 identities; three supplied no terminal
+output (Contract, SourceA, Records). No replacement review or outside
+verification is imputed to them. The w3 R537xR542 handoff is incomplete and
+its subsequent wake failed with provider 429; no complete row pair was installed.
+R548xR549 released rows but explicitly did not execute its dry verification.
+All terminal outputs remain in the orchestrator's wave result files.
+
+S285 correction from `d4/T57D4SourceB.md`: the old Atlassian HTML snapshot is
+missing, so its historical hash/line anchor was not reverified. The live
+2026-10-30 source under “Incident postmortems” limits the practice to severity
+2 or higher. A scope-preserving short excerpt is “the root cause of every
+incident with a severity of level 2 or higher”. This supersedes the apparently
+unqualified excerpt above, not the immutable registry row. The page has
+citations; the supported rejection is lack of established measured outcomes
+for this lane's purpose, not absence of citations of any kind. The rejection
+and its flip remain unchanged. Historical/live identity stays unverified.

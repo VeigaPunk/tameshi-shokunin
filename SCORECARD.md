@@ -2780,3 +2780,20 @@ The 46/64 cold-read regression remains a required no-harm check until a
 committed bind is independently measured; reader records alone do not repair it.
 Wave accounting: w3 (34) plus documentary d4 (32), 66 continuation identities;
 original attempt artifacts remain historical, not counted as fresh work.
+
+### Continuation result — original claims not admitted
+
+| Claim | Before | After / verdict | Measurement |
+|---|---|---|---|
+| C1 calibration: 51 routed rows | 49 original rows; zero rows for R50–R56 | not met: production ledger deliberately remains the verified 49 rows; candidate semantic defects are not hidden by counter acceptance | `git show REV:corpus/routed-defects.json` JSON row census; candidate and review evidence in round-57 waves |
+| C2 operability: literal registry/code target | base counter total=11, PASS=false | not verified: original counter total=0 at inherited tip, but critic B2 shows exact-element requirement false; no deciding run or controls certification | `before/c2.stdout`; w3/T57W3CritContract.md B2; original target retained |
+
+Standing calibration monitoring (not C1 admission):
+
+| Axis | Score | Counting rule | Measured commit | Round |
+|---|---|---|---|---|
+| calibration | 8 | round-21 monitor: covered=64/64, box3=True; binder phase2 exit 0 | `bc3c8895b75aec65e3006193d0c1857641dbb385` | 57 continuation |
+
+This supersedes the continuation's pre-bind 46/64 warning above. Reader
+provenance gaps and six marked minor findings remain limits on the score.
+No new capability row, coverage credit, promotion, or claim admission follows.

@@ -2613,3 +2613,16 @@ Lesson Gate/Mistakes records supplied, including source re-open and the failed
 target-weakening approach. Reader findings remain disclosed through resolutions.
 Provider-failed seats remain failed; no duplicate writer or denied workflow is
 launched. The second wave d4 is documentary/defensive review only.
+
+Continuation binding result: `bc3c8895b75aec65e3006193d0c1857641dbb385`
+landed the settled wave evidence and 18 recovered cold-read bindings.
+Phase2 at that revision exited 0: covered=64/64 score=8 box3=True,
+strict trace gate and no overrides; precheck lost=0. Receipt
+`.ufo/evidence/round-57/integrate/bind-phase2.stdout`. This repairs the inherited
+no-harm regression but is not the original C1 routed-ledger target.
+Both launched continuation waves settled before filing: 34 w3 + 32 d4 = 66.
+Incomplete or provider-failed outputs remain explicitly unverified.
+Neither original claim is admitted; no freeze, control certification or
+deciding run is represented as completed. d4 source review also exposed the
+missing historical S285 snapshot and its severity restriction, corrected
+append-only in the lesson. Tools installed: none.
