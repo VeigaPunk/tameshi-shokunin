@@ -1729,3 +1729,123 @@ From round 58 on, the round's contract carries a `coldread_forecast` key, commit
 Lesson: `corpus/lessons/round-52-verifier-spotcheck.md` (the round-52 verdict, rejected-harmed: credited 64 → 45, 19 sections lost). Motivation: `considerthese/2026-10-28.md` proposal 3 (cold-read cost forecast at planning time).
 
 Falsifier that must fail: `.ufo/evidence/round-52/contract.json` has no `coldread_forecast` key (its top-level keys are `schema, round, lane, l1, date, base, axes_at_base, claims, separability, no_harm, controls, deciding, frontier_step, amendments`). Its `no_harm.coldread_note` prices three sections, for `tools/registry.json` and `tools/round21-measure.py`, and says only that "the SKILL.md corrections drop the sections they touch". The round-52 candidate measured `lost=19 RED` (round-52 closure). The measurement that a forecast must state for a QUALITY append is `coldread-precheck.sh LANE 5e3569969b532310d2b8a3d130901757a3df356b CAND`, where CAND adds two lines to `corpus/QUALITY.md` at base: it prints `cand_credited=58 lost=6 RED` (`.ufo/waves/round-57/w1/T57W1ScribeQuality-receipts/precheck-quality-2line.txt`), so a forecast of zero for that edit fails this criterion.
+
+## Criteria appended — round 60 (2026-10-30)
+
+Each criterion cites `corpus/lessons/round-59.md` `## Mistakes` (one per mistake that carried `captured-by: none` in `corpus/lessons/round-59-verifier-spotcheck.md` §6 item 3).
+
+### Criterion 111 — a certification counter's arms are proven against a cheat family, not only against do-nothing and always-accept
+
+A capability claim certifies on a counter only after the counter is scored
+against controls that model skip-the-work strategies: a content-recognition
+(fingerprint) cheat, an invocation-sequence cheat, a pinned-hash cheat and an
+always-accept arm, each scoring below the target with a committed receipt.
+Do-nothing and tool-absent arms are necessary but not sufficient: round 59's
+frozen counter passed a fingerprint cheat at 24/24 while its do-nothing arm
+scored 0/24.
+
+Lesson: `corpus/lessons/round-59.md` `## Mistakes` 1 (non-discriminating
+counter; captured-by: none).
+
+Falsifier that must fail: at base
+`9806562c7efc816bd979923e702ef39bc41cade7`,
+`.ufo/evidence/round-59/controls/cheat-cheat-fp.out` reads
+`passed=24/24 C1_R59_PASS=true` — a cheat meeting the target that round 59's
+own control set certified as unreachable. Under the round-60 contract the
+same class of cheat (`.ufo/evidence/round-60/controls/ctl-fingerprint.out`)
+scores `passed=3/8 C1_R60_PASS=false`.
+
+### Criterion 112 — a counter's invocation shape covers the tool's declared interface surface
+
+If a tool's CLI declares a repeatable or multi-value flag, at least one
+counter cell invokes the tool once with the full declared set. Per-flag calls
+prove per-call cells only: they admit a first-K-paths-only strawman, which
+answers from the first declared path and never reads the rest (round 59's
+counter invoked `--path` once per call and a first-path-only strawman scored
+24/24).
+
+Lesson: `corpus/lessons/round-59.md` `## Mistakes` 2 (counter blind to
+multi-path invocations; captured-by: none).
+
+Falsifier that must fail: at the round-60 landing revision, the installed
+counter scores the first-path-only strawman
+(`.ufo/evidence/round-60/controls/ctl-first-path-only.py`)
+`passed=6/8 C1_R60_PASS=false` — the strawman misses the `symlink` cell
+(paths[1]) and the `corrupt` cell (paths[3]) because the counter declares all
+five paths in one invocation.
+
+### Criterion 113 — a wave handoff names the live L1 id
+
+A `<wave>.ready` handoff's `l1` field names the agent that is alive at
+dispatch time, and when a round attempt dies and a retry resumes the round,
+the WAVE-DONE routing is re-pointed to the successor id (the ready file
+itself is never rewritten). A handoff addressed to a dead id delivers the
+wave's results to nobody.
+
+Lesson: `corpus/lessons/round-59.md` `## Mistakes` 3 (handoff addressed to a
+dead L1; captured-by: none).
+
+Falsifier that must fail: `.ufo/waves/round-59/w1.ready` names
+`"l1": "TameshiR59"`; `.ufo/watchdog.log` lines 1995–2002 record that
+attempt's `lane-dead-no-report` at 11:58 before `w1-results.json` existed, so
+the wave's completion message routed to a dead id.
+
+### Criterion 114 — every seat's structured result file is checked for presence and non-emptiness before review credit
+
+Review credit is assigned per seat only when the seat's structured result
+file exists and is non-empty in the wave dir; a seat with a terminal output
+but no result file (or an empty one) gets no review credit until the file is
+recovered or its absence is recorded as the seat's defect. Empty terminal
+outputs are recorded as such, never inferred successful.
+
+Lesson: `corpus/lessons/round-59.md` `## Mistakes` 4 (seat outputs
+incomplete; captured-by: none).
+
+Falsifier that must fail: `.ufo/waves/round-59/w1-results.json` records 64
+settled seats while `.ufo/waves/round-59/w1/` carries no `T59W1S26.md`,
+`T59W1S27.md`, `T59W1S28.md` and no `.json` for `T59W1S26`, `S27`, `S28`,
+`S37`, `S49` — five seats with missing or empty structured results.
+
+### Criterion 115 — a round contract frozen from round 58 on carries `coldread_forecast`, and the freeze check tests the key
+
+The freeze step asserts that the round contract's top-level keys include
+`coldread_forecast` (criterion 110's key) and refuses the freeze otherwise;
+a contract that plans edits to monitored files without the forecast key
+prices nothing and is not frozen.
+
+Lesson: `corpus/lessons/round-59.md` `## Mistakes` 5 (frozen contract has no
+`coldread_forecast`; captured-by: none, criterion 110 existed but the freeze
+check did not test the key).
+
+Falsifier that must fail:
+`git show 764d38f1c31a170c13ea48117a76b84f7dbe470b:.ufo/evidence/round-59/contract.json | python3 -c "import json,sys;print('coldread_forecast' in json.load(sys.stdin))"`
+prints `False` — the round-59 freeze passed without the key. The round-60
+freeze (`.ufo/evidence/round-60/freeze.json` digest of
+`.ufo/evidence/round-60/contract.json`) covers a contract whose top-level
+keys include `coldread_forecast`.
+
+### Criterion 116 — every line or page pointer the round adds is re-resolved against the bytes at the landing revision, and drifted pointers are listed
+
+A pointer the round adds (a `path:line`, a `path:lines` range, a page or
+section reference in a ledger row, criterion, lesson or knowledge entry) is
+re-resolved against the bytes at the revision that lands it, and the sweep's
+result — every pointer resolved, with the pointers that drifted named — is
+committed as a receipt. A pointer that cannot be resolved is corrected or
+recorded as drifted before the report is filed; it is never left as prose.
+
+Lesson: `considerthese/2026-10-28.md` proposal 5 (stale-closure-pointer
+sweep, opened 2026-10-30 by the lane: proposals only, not acted on),
+grounded in this round's own evidence — the round-59 spot-check found the
+S289 quote recorded as 17 words when it is 18 (`corpus/lessons/round-59.md`
+`## Gate`), and the round-59 knowledge entry's decision table said exit 2 for
+unresolvable input while the tool it described mapped that arm to exit 1
+(`tools/executor-source-pin.py:249-256` at the round-59 commit).
+
+Falsifier that must fail: at the round-59 landing revision the pointers the
+round added do not all resolve — `git show
+764d38f1c31a170c13ea48117a76b84f7dbe470b:corpus/lessons/round-59.md | grep
+-n '17 words'` prints the word-count claim that the source page contradicts,
+and `git show 764d38f1c31a170c13ea48117a76b84f7dbe470b:tools/executor-source-pin.py
+| sed -n '249,256p'` prints the exit-1 arm the entry's table did not
+describe. The round-60 sweep receipt names every pointer it resolved and
+every pointer that drifted.

@@ -247,7 +247,7 @@ written and are superseded here:
 | retained invocation-context gate | re-derive bounded raw receipt predicates, check byte-pinned frozen receipts, and distinguish semantic mismatch from unavailable/tampered input through a standalone public-CLI selftest | `python3 .ufo/evidence/round-15/verify.py --rev 7650fe4db89f3a706aed63d048ac47e02289cc72` → exit0, copied-source CLI selftest49/49, registered frozen0, missing-env1, tamper2, usage64; `.ufo/evidence/round-15/verification-3.json`; S051 | round15; lane demonstrated, separate non-author admission pending |
 | hermetic env-differential probe | classify the raw exit/stdout/stderr tuple of nine pinned selftests under seven explicit profiles, separating repeat variation from environmental sensitivity | `python3 tools/env-diff.py --selftest` first actual9/9; real receipt `f5/receipt-initial.json` under `.ufo/evidence/round-21/` classifies9/9 (eight invariant, one raw-output-variable); `corpus/knowledge/hermetic-env-differential.md`, S079/S081 | round21; lane demonstrated, separate non-author admission pending |
 | callback-authoritative wave accounting | reconcile exact registered identities and terminal states while preserving failed seats' partial artifacts; reject mismatched totals and digest tampering | at11f55d64968778aaed07b001fc8b2480c38e1896: frozen counter8/8, actual146-seat replay66 completed/80 failed, wrong-count1/TOTAL_MISMATCH; `.ufo/evidence/round-22/final/verification.json`, S082 | round22; lane demonstrated, separate non-author admission pending |
-| executor-source pin gate | compare each verifier-declared executor source Git blob in a candidate commit to the same path in a verifier-supplied trusted commit; exit 0 bound, 1 drift, 2 unavailable | `python3 -I .ufo/evidence/round-59/measure.py --lane LANE --rev 93acc996cbb7bfed27112e797c9d2392ff4aa6b3 --work EMPTY_DIR` → `passed=24/24 C1_R59_PASS=true`; controls `.ufo/evidence/round-59/controls/` (always-accept 8/24, skipped-work 0/24) | round59; lane demonstrated; counter cheat-passable (fingerprint 24/24, Mistake 1 in `corpus/lessons/round-59.md`); non-author admission pending |
+| executor-source pin gate | compare each verifier-declared executor source Git blob in a candidate commit to the same path in a verifier-supplied trusted commit; exit 0 bound, 1 drift, 2 unavailable | `python3 -I .ufo/evidence/round-59/measure.py --lane LANE --rev 93acc996cbb7bfed27112e797c9d2392ff4aa6b3 --work EMPTY_DIR` → `passed=24/24 C1_R59_PASS=true`; controls `.ufo/evidence/round-59/controls/` (always-accept 8/24, skipped-work 0/24) | round59; lane demonstrated; counter cheat-passable (fingerprint 24/24, Mistake 1 in `corpus/lessons/round-59.md`); **not admitted (honest stop, closure round 59)**. Round 60: re-certified on the installed discriminating counter `tools/executor-source-pin-measure.py` at `da2ae6b361de2d6294c6324a02ae141ff6cb482f` — `passed=8/8 C1_R60_PASS=true` (`.ufo/evidence/round-60/after/cert.out`), full cheat family red (`.ufo/evidence/round-60/controls/`); admission still an operator ruling |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -261,6 +261,15 @@ independent review; depth is capped at 10 recorded cases. **Stagnation
 window N = 2** completed rounds without a capability entering the
 table. Policy choices, not observations; the nudge does not fire now
 (depth 6 < 8; calibration pinned 0, candidate 8 pending).
+
+Round-60 correction (2026-10-30; round-59 spot-check defect 5), appended:
+the paragraphs above are unchanged. The nudge premise is stated **on the
+scored axes only** — depth, calibration and freshness carry numeric scores
+(depth 10, calibration 8, freshness 9 at the round-59 close); coverage,
+adjacency and operability are verdict-only axes with no numeric score, so
+"each owned axis" reads as "each scored axis" from round 60 on. The nudge
+fires on the scored axes (10, 8, 9 — all at or above the line 8) with no
+capability admission since round 50 (window N = 2 exceeded).
 
 ## Planned
 

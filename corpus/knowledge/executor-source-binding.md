@@ -106,3 +106,58 @@ entry records the positive counter result and the control receipts only; executi
 - This is not round-58 C2 certification and does not create author-independent
   trust. No source registry row, coverage admission or deciding score is implied
   by this entry; S289 is admitted in corpus/SOURCES.md at round 59.
+
+## Amendment — round 60 (2026-10-30): installed discriminating counter, v2 plumbing arm, tested boundary
+
+Lines above are unchanged and keep their meaning. This amendment is dated and
+additive; it does not rewrite the round-59 record.
+
+`verified-at:` 2026-10-30 (round 60) — re-measured at lane commit
+`da2ae6b361de2d6294c6324a02ae141ff6cb482f`: the installed counter
+`tools/executor-source-pin-measure.py` scored `passed=8/8 C1_R60_PASS=true`
+(`.ufo/evidence/round-60/after/cert.out`) over the amended
+`tools/executor-source-pin.py` v2 (worktree sha256
+`d49ba88e002e8f77cb281d73770f9c729f96012d49885effb4f3507b51a02ade`, identical
+at the measured commit), with every control arm failing
+(`.ufo/evidence/round-60/controls/`).
+
+### The decision table above gains one row, effective round 60
+
+| Condition | Exit | Signature | Operator decision |
+|---|---:|---|---|
+| A declared blob read fails at plumbing level (trusted or candidate side) | 2 | `EXECUTOR_SOURCE_UNAVAILABLE` | No comparison verdict; the difference is unobservable, not absent. Repair object availability and rerun under verifier control. |
+
+Round-59 spot-check defect 7 recorded that the v1 tool mapped this arm to
+DRIFT (exit 1), contradicting the "unresolvable input" class above. The v2
+tool (`tools/executor-source-pin.py`, lines 249-266 at the round-60 commit)
+maps it to exit 2. The red-before witness is
+`.ufo/evidence/round-60/controls/v1-tool-red.out`: the unfixed tool scores
+`passed=7/8 C1_R60_PASS=false` with only the `corrupt` cell failing
+(expected 2, observed 1) — the fix is shown able to fail.
+
+### Exec-bit boundary: decided and now a tested cell
+
+The boundary is decided, not enlarged (round-59 spot-check defect 4): blob
+equality over declared regular sources is the contract; the mode is not bound
+beyond regular-ness. Git's own index-entry layout is the ground (S291,
+https://git-scm.com/docs/index-format, opened 2026-10-30): "9-bit unix
+permission. Only 0755 and 0644 are valid for regular files. Symbolic links
+and gitlinks have value 0 in this field." The counter's `execbit` cell flips
+modes between 100644 and 100755 at constant bytes and expects exit 0
+(`EXECUTOR_SOURCE_BOUND`); a symlink stays nonregular and drifts.
+
+### The standing instrument is the round-60 counter
+
+`.ufo/evidence/round-59/measure.py` (24 cells, one `--path` per call,
+constant fixtures) remains the frozen round-59 instrument but is superseded
+as the standing counter by `tools/executor-source-pin-measure.py`: 8 shuffled
+class cells (`equal`, `unrelated`, `execbit`, `changed`, `missing`, `symlink`,
+`corrupt`, `unresolvable`) over 5 declared paths (including the empty blob
+`tools/empty-fixture.txt`) in ONE invocation per cell, per-run nonce fixture
+bytes (S290), shuffled order, corrupt cell expecting exit 2. It reports
+`C1_R60 rev=... passed=N/8 C1_R60_PASS=true|false`. Red receipts frozen
+before data: `.ufo/evidence/round-60/controls/` (do-nothing tool-absent 0/8,
+v1 tool 7/8, always-accept 3/8, fingerprint 3/8, sequence 3-5/8, hash-only
+3/8, first-path-only 6/8, empty-blob-unsound 4/8). Sources added this round:
+S290 (secrets), S291 (index-format); S103 (git-hash-object, the
+content-addressed oid-equality ground) now also backs this entry.

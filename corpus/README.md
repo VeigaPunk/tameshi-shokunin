@@ -659,3 +659,26 @@ Appended, not inserted: the rows above keep their line numbers.
 |---|---|---|
 | `knowledge/llm-mutant-equivalence-cost.md` | F9 equivalence-cost counting contract: distinguish non-compilability, duplication and equivalence before interpreting surviving mutants. The Java study's measured improvements do not transfer numerically to this lane's gates. A bounded LLM-mutant pilot remains unmeasured | S286 (arXiv §Abstract), S287 (deck extract lines 230-241) |
 
+
+## Coverage map — round 60 addendum (2026-10-30)
+
+Appended, not inserted: the rows above keep their line numbers.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/executor-source-binding.md` (round 59; amended round 60) | The declared-blob binding rule and its decision table, now with the round-60 amendment: the plumbing-failure arm is exit 2 (`EXECUTOR_SOURCE_UNAVAILABLE`), the exec-bit boundary is decided (blob equality over regular modes; mode not bound beyond regular-ness) and is a tested cell, and the standing instrument is the installed discriminating counter `tools/executor-source-pin-measure.py` (8 cells × 5 declared paths, per-run nonces, empty-blob and corrupt cells) | S289, S290, S291, S103; `.ufo/evidence/round-60/after/cert.out` |
+
+## Frontier — status correction (round 60, appended 2026-10-30)
+
+The `## Frontier` table's F11 row reads "partly held (round 59 …); first-path-
+only blind spot still open". Corrected by the round-60 evidence: F11 is now
+**held for the counter class** — the installed counter
+`tools/executor-source-pin-measure.py` declares all five paths in ONE
+invocation per class cell (the first-path-only blind spot is closed and the
+strawman scores 6/8), carries per-run nonce fixtures and shuffled order
+(fingerprint 3/8, sequence 3–5/8), adds the empty-blob cell, and adds the
+corrupt cell that killed the v1 tool (7/8, corrupt-only failure) until the
+plumbing arm was reconciled to exit 2 (8/8 at
+`da2ae6b361de2d6294c6324a02ae141ff6cb482f`). F11's remaining open ground is
+not a counter gap: it is author-independent trust for the binding itself,
+which the lane does not claim.
