@@ -1,0 +1,107 @@
+{
+ "pristine_sha256": "d4219039f02c1fd389cb47ca2b9968d0335e4254e8477c012fd2cdfbccd3b984",
+ "c0": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+ "lane": "/fast/scratch/hyaku/tameshi-r58/T58W2MutC2/clone",
+ "MUT1": {
+  "selftest_exit": 1,
+  "selftest_seconds": 72.1,
+  "selftest_tail": "C2_R58_SELFTEST: 22/23 pass",
+  "selftest_failing_cases": [
+   "CASE executed arm: a row expecting the wrong exit does not hold FAIL held=3/3"
+  ],
+  "measure_exit": 0,
+  "measure_seconds": 10.0,
+  "verdict_line": "C2_R58: self=3a1f577b6120 rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true",
+  "id": "MUT1",
+  "axis": "executed tally",
+  "old": "            held += state == 'held'\n",
+  "new": "            held += 1\n",
+  "expected": "selftest case \"executed arm: a row expecting the wrong exit does not hold\" asserts held==2/short executed==1; mutant counts every row as held. Installed-registry run at C0 expected to still print PASS (all rows hold).",
+  "mutated_sha256": "3a1f577b6120ee99ae8c7b74d63ba553e65f49ef3040f60984983e1d8abb8159",
+  "killed_by": [
+   "selftest"
+  ],
+  "verdict": "killed"
+ },
+ "MUT2": {
+  "selftest_exit": 1,
+  "selftest_seconds": 73.2,
+  "selftest_tail": "C2_R58_SELFTEST: 19/23 pass",
+  "selftest_failing_cases": [
+   "CASE good fixture: every arm 0 FAIL C2_R58: self=- rev=xxxxxxxxxxxx gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=WRONG:fixture total=1 C2_R58_PASS=false",
+   "CASE cell arm: the stale RECEIPT_REV_MISMATCH cell is WRONG while the code is still a defined one FAIL WRONG:fixture",
+   "CASE cell arm: a cell with no code is WRONG:none FAIL",
+   "CASE cell arm: truth comes from running the gate (a gate emitting MISMATCH flips the verdict) FAIL WRONG:fixture"
+  ],
+  "measure_exit": 1,
+  "measure_seconds": 10.9,
+  "verdict_line": "C2_R58: self=3a34e4b37108 rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=WRONG:fixture total=1 C2_R58_PASS=false",
+  "id": "MUT2",
+  "axis": "cell fixture",
+  "old": "    receipt.write_text('VERDICT: rev=%s C1_X_PASS=true\\n' % rev_a)",
+  "new": "    receipt.write_text('VERDICT: rev=%s C1_X_PASS=true\\n' % rev_b)",
+  "expected": "fixture receipt now names the certified revision, so the gate PASSES (exit 0) -> standing_cell=WRONG:fixture -> selftest \"good fixture: every arm 0\" fails and installed-registry run prints total>=1 PASS=false exit 1.",
+  "mutated_sha256": "3a34e4b37108b05d7636433ca3ad97a9b5eecee977f59e919d7658e6a9403169",
+  "killed_by": [
+   "selftest",
+   "installed-registry-run"
+  ],
+  "verdict": "killed"
+ },
+ "MUT3": {
+  "selftest_exit": 1,
+  "selftest_seconds": 76.7,
+  "selftest_tail": "C2_R58_SELFTEST: 22/23 pass",
+  "selftest_failing_cases": [
+   "CASE codes arm: a token the gate does not define is counted FAIL codes_known=3/3"
+  ],
+  "measure_exit": 0,
+  "measure_seconds": 9.4,
+  "verdict_line": "C2_R58: self=7a7df78657e2 rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true",
+  "id": "MUT3",
+  "axis": "codes parser",
+  "old": "    known = [t for t in tokens if t in codes]\n",
+  "new": "    known = list(tokens)\n",
+  "expected": "strict membership in the gate CODES dropped (lax counting) -> selftest case \"codes arm: a token the gate does not define is counted\" fails; installed-registry run expected to still print PASS (all 4 SKILL tokens are gate CODES at C0).",
+  "mutated_sha256": "7a7df78657e249383acfc8a8cbb3ed7d0e9813099c31f383e53d65ea3715cab5",
+  "killed_by": [
+   "selftest"
+  ],
+  "verdict": "killed"
+ },
+ "MUT4": {
+  "selftest_exit": 1,
+  "selftest_seconds": 76.0,
+  "selftest_tail": "C2_R58_SELFTEST: 21/23 pass",
+  "selftest_failing_cases": [
+   "CASE cell arm: a gate that does not refuse -> WRONG:fixture FAIL",
+   "CASE mutants pin: a lane whose committed mutants.json fails the sha256 pin is refused FAIL C2_R58: self=811de4332b4a rev=681ad18e5e5c gate_rows=3 exits=0,2,3 held=3/3 mutants=0/3 skill_row=1 codes_known=2/2 standing_cell=ok total=0 C2_R58_PASS=true"
+  ],
+  "measure_exit": 0,
+  "measure_seconds": 9.8,
+  "verdict_line": "C2_R58: self=811de4332b4a rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true",
+  "id": "MUT4",
+  "axis": "verdict total",
+  "old": "    res['total'] = sum(short.values())\n",
+  "new": "    res['total'] = 0\n",
+  "expected": "total hard-zeroed -> selftest cases \"cell arm: a gate that does not refuse\" (asserts total>0) and \"mutants pin\" (asserts main_measure rc!=0) fail; installed-registry run at C0 expected to print total=0 PASS=true (indistinguishable, because C0 has no real shortfall).",
+  "mutated_sha256": "811de4332b4a55b81b6112f69a5036ef401250635db2e89ad83ea0959297c61d",
+  "killed_by": [
+   "selftest"
+  ],
+  "verdict": "killed"
+ },
+ "restoration": {
+  "restored_sha256": "d4219039f02c1fd389cb47ca2b9968d0335e4254e8477c012fd2cdfbccd3b984",
+  "bytes_identical": true
+ },
+ "restored_detector": {
+  "selftest_exit": 0,
+  "selftest_seconds": 77.6,
+  "selftest_tail": "C2_R58_SELFTEST: 23/23 pass",
+  "selftest_failing_cases": [],
+  "measure_exit": 0,
+  "measure_seconds": 9.7,
+  "verdict_line": "C2_R58: self=d4219039f02c rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true"
+ }
+}

@@ -1,0 +1,48 @@
+# T58W2Sent02 — grep sweep receipts (hardcoded /tmp + credential material)
+
+## Sweep 1 — round-58 instruments × /tmp  (grep tool, pattern `/tmp`, case-insensitive)
+Paths (13 instrument files):
+.ufo/evidence/round-58/{freeze.json,contract.json,no-harm.sh,controls.sh,deciding-run.sh,
+c1/measure.py,c1/panel.json,c1/keys.json,c1/defects.json,c2/measure.py,c2/mutants.json,
+control/gen_ledger.py,control/gen_registry.py}
+Result: hits ONLY in three files, all legitimate non-path uses:
+- no-harm.sh:47 — the guard's own search PATTERN (`git grep -c -E "dir\s*=\s*[\"']/tmp" "$REV" -- tools/`) inside the r53-scratch-hygiene arm;
+- c2/measure.py:17 — docstring: "All scratch lives under --work (TMPDIR for children); /tmp is never named. Stdlib + git only.";
+- c1/defects.json — defect-row TEXT quoting historical /tmp defects (R52.5 `tools/registry-check.py:766`, R53.6 TMPDIR-exit-class rows).
+Zero hardcoded /tmp PATHS in any round-58 instrument code.
+
+## Sweep 2 — seat-written tool scripts × (/tmp or credential strings)  (grep tool)
+Files: w1/T58W1RevengerC2-receipts/attack.py; w1/T58W1RevExcerpts-receipts/audit.py;
+w2/T58W2RevPanel-receipts/audit.py; w2/T58W2RevSrc3-receipts/sweep.py;
+w2/T58W2Read11-receipts/sweep.py; w2/T58W2Read13-receipts/sweep.py; w2/T58W2Read05-receipts/target.sh
+Pattern: `/tmp|AKIA|PRIVATE KEY|ghp_|github_pat_|xox|api[_-]?key|secret|password|_authToken` (case-insensitive)
+Result: **No matches found** — all seven seat-written tools are clean on both axes.
+
+## Sweep 3 — high-entropy credential formats  (grep tool)
+Paths: .ufo/waves/round-58/** + .ufo/evidence/round-58/** + corpus/knowledge/llm-mutant-equivalence-cost.md
+Pattern: `AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{16,}|gho_[A-Za-z0-9]{16,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|sk-ant-[A-Za-z0-9-]{10,}|sk-proj-[A-Za-z0-9-]{10,}|_authToken\s*=|AQIA[A-Z0-9/+=]{30,}`
+Result: **No matches found**.
+
+## Sweep 4 — keyword-style credential assignments  (grep tool, same three roots)
+Pattern: `(?i)(api[_-]?key|secret|passwd|password|token|credential)[^=\n]{0,24}[:=][ \t]*["']?[A-Za-z0-9+/_=-]{12,}`
+Result: only benign variable assignments — the sole instrument hit is evidence/round-58/c2/measure.py:452 `carried, tokens = standing_cell(skill_text)` (a variable named `tokens` being assigned; "tokens = standing_cell" matches the keyword+assignment shape). All other hits are receipts quoting the same source line or historical text. No credential material.
+
+## Sweep 5 — the round's new fetched extracts × cookies/session tokens  (grep tool)
+Files: w1/T58W1RevSources-receipts/arxiv.html; w2/T58W2RevSrc1-receipts/arxiv-2406.09843.html;
+w2/T58W2RevSrc1-receipts/arxiv-2406.09843-abstract.txt; w2/T58W2RevSrc3-receipts/atlassian-live.html;
+w2/T58W2RevSrc2-receipts/dfcfw-deck.txt; w2/T58W2RevSrc2-receipts/pinned-entry.md; w2/T58W2RevSrc2-receipts/pinned-SOURCES.md
+Pattern: `(?i)(set-cookie|csrf|jsessionid|sessionid|session_id|auth_token|bearer|api[_-]?key)`
+Result: single-file hit — atlassian-live.html:42068, documentation PROSE inside a public Atlassian support article: anchor id/text "step-4-get-your-statuspage-api-key-and-page-id" (a how-to heading, not a key). Adjacent hits :42069-42071 are SSR metadata (composition ids, cloudfront cache metrics — not credentials). No Set-Cookie headers, no CSRF/session/bearer tokens in any extract.
+
+## Sweep 6 — /tmp/hyaku63 source-extract workspace × credentials  (grep tool; Oct-28 residue, checked for completeness)
+Pattern as Sweep 3 + keyword variant over /tmp/hyaku63/*
+Result: all hits are public documentation/source content:
+- README.md:1333/1387/1509 — placeholder `api_key = "sk-no-key-required"` in OpenAI-client example code (literal placeholder in a doc);
+- s210.html — a gitbook CDN media URL param `token=ed25efc6-…` for a public icon asset;
+- sc.cpp/st.cpp/s224.html — llama.cpp/vLLM source where "tokens" means LLM tokens.
+No credential material.
+
+## Context: tools/ TMPDIR contract (grep `(?i)tmpdir|/tmp` over tameshi-shokunin/tools/, excerpts)
+- tools/mutate-and-run.sh:149-150,157,217,491,1432,1555 — `mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-{run,regression,selftest}.XXXXXX"`; ":150-151 … removed on PASS unless --keep, kept on FAIL/SETUP".
+- Six tools carry `strict_scratch_root()` (bash-witness-study.py:210, cold-read-forecast.py:679/824, context-capture.py:305, env-diff.py:37, evidence-disposition.py:196, pin-disposition.py:166, registry-check.py:762, repeat-control.py:157): TMPDIR when set-and-usable, hard `could-not-evaluate` (exit 2) when set-but-unusable, **`return tempfile.gettempdir()` when TMPDIR unset** — the platform default (=/tmp here) is contractual ("TMPDIR empty => unset, the platform default applies", tools/registry.json selftest rows).
+- No tool hardcodes a /tmp write path; the /tmp occurrences are the sanctioned default and census fixtures (write-path-census*.py PLANTED strings, evidence-disposition selftest docstring).

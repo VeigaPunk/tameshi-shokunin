@@ -1,0 +1,206 @@
+# audio-shokunin/corpus/live/r94-simplifier/
+## RECEIPTS.md#7A5D
+ 41:| `r94s_evidence_variantB.txt` | baseline vs variant B |
+*42:| `r94s_evidence_arm_entailment.txt` | the A6 entailment proof (equivalent mutant) |
+ 43:| `r94s_status_exit.txt` | `git status --porcelain` at exit (the r95 author's in-flight merge) |
+ 44:| `r94s_baseline.*`, `r94s_foldA.*`, `r94s_foldB.*` | run stdout/stderr + wall stamps |
+ 45:
+## r94s_evidence_arm_entailment.txt#6E76
+ 28:   line in the band [-120,-110). A mutation tester would score the
+*29:   dropped arm an equivalent mutant.
+
+# chousa-shokunin/
+## SKILL.md#F009
+ 103:| `mechanism-witness` (r35; r47 row repair) | tool | `python3 tools/mechanism-witness.py --gate PATH [--seed N] [--json OUT] [--tmp DIR]` | round-35 aggregate trace witness, superseded for per-record attribution by `tools/argv-witness.py` (r36); kept as the default `--battery` of `corpus/evidence/round35/c2-count.py` and the before-control of `corpus/evidence/round36/c2-count.py`: `exit 0` `WITNESS=pass OUTPUT=9/9` (chunk stamps at least the long-record count, gate exit 1 with DRIFT) · `exit 1` `WITNESS...
+*104:...exit `0` iff matched==120; any other count exit `1`; harness error (fixture gen, missing gate, `--keep`/`--receipt` failure) exit `2`; the v3 counters (`c1-count-v3.py`/`c2-count-v3.py`) add the 12 non-string `"line"`/`"sha256"` claims (round-32 routed defect R2), TOTAL 132, labels `LINE_BINDING_MATCH=n/132`/`REVISION_BINDING_MATCH=n/132`, exit `0` iff matched==132; v2 counters stay frozen and are superseded for that class only | before on the base gate `be7b8d8d`: 50/120 each (do-nothing controls, `c... [col 648]
+ 105:| research-gate round-32 v1 counters | gate | `python3 corpus/evidence/round32/c1-count.py` · `python3 corpus/evidence/round32/c2-count.py` (lane root; `--gate PATH`, `--seed N`, `--receipt OUT.json`; C1 needs /proc/locks) | `APPEND_SERIALIZED=24/24` · `EXEMPT_AUDIT_MATCH=120/120` exit `0`; any other count exit `1`; harness error exit `2`; SUPERSEDED by `corpus/evidence/round32/c1-count-v2.py`/`c2-count-v2.py` (the round-32 row above) — rejected as P1/P2 counters because controls met them under desig...
+ 106:| research-gate round-33 C1 v1/v3 counters | gate | `python3 corpus/evidence/round33/c1-count.py` · `python3 corpus/evidence/round33/c1-count-v3.py` (lane root; `--gate PATH`, `--seed N`, `--receipt OUT.json`) | v1 `TOPLEVEL_FIELD_MATCH=144/144` (superseded by `corpus/evidence/round33/c1-count-v2.py`, design v2, before any candidate; its control receipts stay v1-only evidence) · v3 `TOPLEVEL_FIELD_MATCH=156/156` (gate must exit 1 + `RESEARCH_GATE: DRIFT`; repair E2 replaces v2's six fixed confuser lite...
+ 107:| research-gate round-34 v1/v2 counters | gate | `python3 corpus/evidence/round34/c1-count.py` · `python3 corpus/evidence/round34/c1-count-v2.py` (lane root; `--gate PATH`, `--seed N`, `--receipt OUT.json`) | v1 `LONGSPAN_MATCH=30/30` · v2 `LONGSPAN_MATCH=40/40` exit `0`; any other count exit `1`; harness error exit `2`; both superseded before data by `corpus/evidence/round34/c1-count-v3.py` (design v3, TOTAL 42) — v1 rejected (shoulder bands unexamined, CritC1Shapes), v2 rejected (no class distingui...
+
+## corpus/
+### QUALITY.md#4FE2
+ 863:    adopter's interface on generated packages, never the lane entries. — `corpus/lessons/round-51.md` `## Mistakes` row 2;
+*864:    `corpus/evidence/round51/claims.md` R51-C1; round-50 spot-check routed defect 2.
+ 865:
+ 866:82. **An adopter cites only `source:` ids and lists the ids it leaves in the body.** A default that renumbers every id token turns
+ 867:    a prose mention into a row for an unrelated document; round 50 answered with a check, round 51 makes the reading the default,
+...
+ 900:    five lines must carry `tool-rev: <40-hex> tool: <lane-relative path> [digest: sha256:<64-hex>]`; `RECEIPT_NO_REV`,
+*901:    `RECEIPT_REV_UNKNOWN`, `RECEIPT_REV_UNLANDED` (not an ancestor of the tip), `RECEIPT_TOOL_ABSENT`, `RECEIPT_TOOL_MOVED` (the
+ 902:    tool's blob at the tip differs from its blob at that revision), `RECEIPT_DIGEST_MISMATCH`, else `RECEIPT_OK`; `CHECKS=n OK=n
+ 903:    FAILS=n` (the skill line is a check), `RECEIPT_CHECK=PASS` exit 0, exit 1 on any failure, exit 2 when the root is not a git work tree. Shown able to fail
+ 904:    (ran): the filed round-50 receipt and the current Gates row print `RECEIPT_NO_REV corpus/evidence/round50/measure-after.txt`
+*905:    and `SKILL_NO_PIN SKILL.md`, `FAILS=2` rc 1; scratch receipts print `RECEIPT_REV_UNKNOWN … rev=000…0`, `RECEIPT_REV_UNLANDED …
+ 906:    rev=1fce006153ab`, `RECEIPT_TOOL_MOVED … rev=d603f6f00f78 tool=corpus/evidence/round51/c3-count.py` (the erratum changed that
+ 907:    blob), `RECEIPT_DIGEST_MISMATCH recorded=000000000000 actual=94ddc7dc273c`, `RECEIPT_TOOL_ABSENT`; a header naming the tip and
+ 908:    that blob's digest prints `RECEIPT_OK … rev=cfe6c9fb9b56`, `RECEIPT_CHECK=PASS` rc 0. Named limits: the header is a convention, not a signature — a receipt can name a revision it did not run at; the zero-receipt pass and the `--skill` leg that could not read the Gates table were fixed after W2 (`receipt-check.py` now needs at least one receipt and reads the first table row carrying the header); only the first five lines are read; a receipt
+...
+ 910:    before round 51 stay as filed (append-only) and fail this check by construction. — `corpus/lessons/round-51.md` `## Mistakes`
+*911:    row 1; `corpus/evidence/round51/claims.md` freeze section; round-50 spot-check routed defect 1.
+ 912:
+ 913:85. **A counter's work directories carry random names, its do-nothing controls delegate to a pinned base, and a post-freeze supplement states what the frozen counter cannot see.** The frozen round-51 C1 counter names its subtests `s`, `d1`, `d2`, `renamed-heading`, so a 94-line tool that reads the name out of `--out` and prints canned shapes passes it `LEGS=5/5` (`corpus/evidence/round51/controls/forge-dirname.py`, W1 `R51CritForgeC1`); its id draws can collide and hang it (1/401 per run, `R51ExecSeedRun...
+ 914:
+...
+ 930:
+*931:94. **A routed defect that two closures carry is landed with a test or retired with a reason in the next round, never carried a third time unlanded.** The adopter twin-label defect was routed in round 51 (`round-51-verifier-spotcheck.md` section 6 item 2, "fix with a self-test row each") and carried in round 52 (`round-52-verifier-spotcheck.md` section 6 item 4, "built in scratch and not landed"), with no commit touching the tool in that window (ran: `git log --oneline 41b4dca..5b550133 -- tools/assimila... [col 9]
+ 932:
+ 933:95. **A polarity check covers every script a lane quotes in.** `tools/inference-ground.py` compared polarity only through Latin word stems, so a bullet quoting a CJK phrase from a span that affirms it while asserting `不要求`/`没有`/`未要求` passed `GROUND: PASS` (round-52 closure section 6 item 5; W2 `R52W2ExecInfRegression`). Round 53 adds a clause-bounded six-character CJK negator window (W1 `R53ExecCjkPolarity`). Check: `python3 corpus/evidence/round53/cjk-polarity-check.py` → `CJK_POLARITY...
+ 934:
+...
+ 957:106. **A counter's kill rule cannot be satisfied by a tool that alternates its behaviour or counts its calls.** Round 56's first driver draft took any verdict-vector difference between a gate and its mutant as a kill; a tool that corrupts the first `capture_sha256` cell on odd calls only produces M3's own marker (`S901 capture_sha256`) under the gate and a pass under the M3 gate on the next call, so the clause is "killed" by a tool that never writes a bad digest (round-56 wave `R56DraftMistakes` §1(b), ...
+*958:107. **A frozen mutant set holds no equivalent mutant; a survivor is classified before the target is fixed.** The first M9 (WIN_NL) dropped one of the window filter's two newline guards and could not differ from the gate: with the second edit removed the counter prints `MUTANT M9 WIN_NL SURVIVED`, `KILLED=8/9`, `C1=FAIL` (wave `R56DraftMistakes` §1(a), seed 7, 65 runs). Check: rebuild the set with each mutant's first edit only and run the counter; a survivor the landed builder cannot kill is a mutant-se... [col 37]
+ 959:108. **A report's measurement citation names the revision its committed receipt header names.** Round 55's report said C2/C3 were "measured at `29cfb12a`" and a C2 "re-run at `53f1ce6b`"; the receipts' first lines name `5a35ebd6` and no receipt names `53f1ce6b` (closure D3; `corpus/lessons/round-55.md` `## Corrections`). Check: for every `measured at` / `re-run at` revision in a report, a receipt under the round's evidence whose first line carries that revision; wave `R56DraftMistakes` §2 ran it: round-...
+ 960:109. **A row's table is read from the page layout, not from a multi-column text form's line order.** The round-56 entry as first committed (`99eff0ec`) placed the journal's 灰色文献 row in `表 10` because the cache `.txt` prints the right column's 表 10 title on the line above it; the row belongs to `表7    药品临床综合评价的信息来源情况` (char 20520). Check: `pdftotext <capture>.pdf OUT && python3 -c` printing the offsets of the table titles and the row in OUT — round-56 L1 run: ...
+ 961:110. **A wave item's test recipe is dry-run by the L1 before dispatch.** Round 56's spec told seats to copy the lane with `git archive` and run the gate or the driver on the copy; the copy has no history, the gate's REGRESS leg runs `git show` at its pinned base, and every run prints `ENV_CHANGED` (exit 2), so an attack seat's measurement is void (`R56CritC1Forge` printed `('ENV', 2)` and measured nothing). Check: before writing a `.ready`, run each distinct recipe the items name once (copy, then the cou...
+### README.md#B3C4
+ 963:
+*964:### 2026-10-23 correction — Round30 frontier disposition (routed defect D1)
+ 965:
+ 966:The Round30 held-ground change is limited to pages that omit `</head>` (C1). C2 fetch bounds did not meet their frozen kill rule and are not held ground: `QUOTE_REOPEN_FETCH_BOUND_MATCH` was 26/27 on 3 of 44 fresh-seed runs. The round-30 spot-check's consolidated tally is `corpus/lessons/round-30-verifier-spotcheck.md:109` (this correction was routed at `:165-168`). The three miss receipts record `n=26`, `t=27`, and `predicate_holds=false`: `.ufo/waves/round-30/falsify/RerunC2B/run2.json:478-480`, `.ufo/...
+ 967:
+...
+ 1118:
+*1119:...mes (`grep -o` over `.qcache/001287c436f0e6b1d166ae8d.txt` → 3, 0, 0). The name is inherited from the staged entry `istic-citation-verification-r39.md`, and renaming was blocked by the round-50 freeze; the entry records the same fact in its `ground:` line (`corpus/knowledge/istic-citation-verification-r39.md:6`). The file keeps its name — this line records the drift in the coverage map, which is what the round-50 spot-check routed (`corpus/lessons/round-50-verifier-spotcheck.md:93`, routed defect 4). [col 747]
+ 1120:
+ 1121:## Round52 coverage and frontier (2026-10-26)
+ 1122:
+### SOURCES.md#FAFC
+ 104:| S094 | Improving Explainable Fact-Checking with Claim-Evidence Correlations (Tan, Zou, Aw) — Proceedings of the 31st International Conference on Computational Linguistics, pages 1600–1612 (ACL Anthology 2025.coling-main.108) — https://aclanthology.org/2025.coling-main.108.pdf | paper | A | how reproducible a support judgement is, and whether NOT ENOUGH INFO is a property of a claim or of an evidence set | exact capture slices: char 19167: To avoid claim label reversals due to introduc-; char 2046...
+*105:| S095 | Round 47 verifier spot-check — corpus/lessons/round-47-verifier-spotcheck.md | own-work | A | the round-47 C1 polarity probe's held-out false-refusal findings and routed repair | section 6, "Routed defects", line 62; round-47 capture, read this round | The spot-check measured correct held-out bullets refused and routed the missing false-refusal class for documentation | mined | 2026-10-25 | on-release | corpus/lessons/round-48.md |
+ 106:| S096 | CiNii Research マニュアル, 論文詳細表示画面について (article detail screen) — 国立情報学研究所 (NII) — https://support.nii.ac.jp/ja/cir/manual_articles_detail | docs | A | what a Japanese citation index's reference list is relative to the cited paper's own reference list, and how its counts are derived | section G 参考文献／被引用文献, the two 注意書き notes (capture .txt); located quotes char 3577, char 3599, char 3707, char 3752, char 3801 | CiNii Res...
+ 107:| S097 | J-STAGE 出版社向け, Citation・被引用文献リンク機能 — 科学技術振興機構 (JST) — https://www.jstage.jst.go.jp/static/pages/ForPublishers/TAB2/-char/ja | docs | A | how J-STAGE exposes a published article's citation and cited-by links and when they appear, plus its dark archive and similarity-check service | section 1 (DOI登録機能) and section 2 (引用・被引用文献リンク機能) (capture .txt); located quotes char 2607, char 2760 | a DOI can only be used as a ...
+ 108:| S098 | J-STAGE 編集者・出版社向けFAQ, 引用リンクの付与と問い合わせ — 科学技術振興機構 (JST) — https://www.jstage.jst.go.jp/static/pages/FAQs/TAB2/-char/ja | docs | A | how J-STAGE resolves a reference string to a citable work, and how citation links are queried or withdrawn | the 引用元の所在確認 FAQ answer and its four-step list (capture .txt); located quotes char 29482, char 29641, char 29672, char 29749, char 29775 | a citation link is attached to the works...
+
+### evidence/
+
+#### round31/
+##### c1-count-v3.py#18F4
+ 8:
+*9:Version 3 (round-32 routed defect R2, new file; the v2 counter stays frozen
+ 10:and unedited): v2 plus a fixed non-string "line" class
+ 11:I2_nonstring_line_value (12 claims: number, null, true, false, array, object,
+ 12:two each). Truth is invalid under contract item 1 ("any other value of a
+##### c2-count-v3.py#5082
+ 28:
+*29:Version 3 (round-32 routed defect R2, new file; the v2 counter stays frozen
+ 30:and unedited): v2 plus a fixed non-string "sha256" class
+ 31:I2_nonstring_sha_value (12 claims: number, null, true, false, array, object,
+ 32:two each). Truth is invalid under contract item 1 ("any other value of a
+
+#### round33/
+##### claims.md#1FDD
+ 8:
+*9:One claim this round. The round-32 routed defects D1–D5
+ 10:(`corpus/lessons/round-32-verifier-spotcheck.md:152-169`) are repairs, not claims: D4 is the
+ 11:defect C1 removes; D1 (the exempt-hop counter whose fixture order encodes the truth), D2 (receipt
+ 12:tally), D3 (battery revision header) and D5 (signals by name) are repaired outside the counter and
+
+#### round34/
+##### claims.md#8104
+ 8:
+*9:One claim this round. The round-33 routed defects E1–E5
+ 10:(`corpus/lessons/round-33-verifier-spotcheck.md:155-173`) are repairs, not claims: E1 (fuzz
+ 11:receipts bound to an uncommitted gate), E2 (per-seed confuser counter for the round-33 reader),
+ 12:E3 (stale `SKILL.md:83` range), E4 (receipts labelled on uncommitted gate bytes), E5 (misroot
+
+#### round35/
+##### claims.md#51AF
+ 14:Routed work this round comes from `corpus/lessons/round-34-verifier-spotcheck.md`
+*15:§Routed defects 1–5 and the session closure note (grep-binary pin, `slen`
+ 16:coupling, selftest comment numbering, the keyed-engine output-equivalence class
+ 17:as the work-proof battery candidate).
+ 18:
+
+#### round36/
+##### claims.md#AD98
+ 15:Routed work this round: `corpus/lessons/round-35-verifier-spotcheck.md`
+*16:§Routed defects 1–9, `corpus/evidence/round35/claims.md` §Erratum 1–15 (the
+ 17:ten engine-swap demonstrations and the witness redesign list), and the
+ 18:SCORECARD `Planned — round 36` candidates.
+ 19:
+...
+ 53:(`.ufo/waves/round-36/measure/c1-before-s36001.json`). The four failures are
+*54:the round-35 routed defects: S11 manifest hash shim (the hostile PATH
+ 55:`sha256sum` poisons both fields, run stays exit 0), S12 C-locale decode
+ 56:(`\u00e9` reads `unsupported` under `LC_ALL=C`), S13 pin echo isolation
+ 57:(baseline embeds `GATE_GREP:`, drift reports `-LINE`), S14 drift token (an
+...
+ 160:   scenarios were "the ten demonstrations of `.ufo/waves/round-35/` plus the three routed gate
+*161:   defects" (10 + 3 = 13); the frozen `before` receipt names FOUR routed defects (S11-S14). The
+ 162:   count is 14 and the docstring now says so. No scoring code changed.
+ 163:2. **P2's code is one conjunct stricter than its prose (F3).** `c2-count.py`'s `holds` also
+ 164:   requires `landed.witness == "pass"`, which the P2 sentence and kill rule do not name. The
+
+#### round38/
+##### claims.md#ADC8
+ 326:
+*327:**Erratum 14 (routed defect D1, appended by round 39 — candidate-gate hash
+ 328:supersession).** The body above names candidate gate sha256
+ 329:`37e2b996…` (the pre-integration bytes at the freeze). The landed round-38
+ 330:gate is `0447ad14b6135441f39f9220d02ae2967b810f791a2f1058654ee0c800c3b85a`
+...
+ 338:
+*339:**Erratum 15 (routed defect D2, appended by round 39 — harness-change
+ 340:disclosure).** Between the freeze and the final bytes the counter harness
+ 341:tightened without an erratum naming it: `base_env()` in both counters gained
+ 342:the `PYTHON*` and `POSIXLY_CORRECT` scrubs (the W2RevC1Final/W2RevC2Final
+
+#### round39/
+##### claims.md#F14D
+ 17:
+*18:Routed work this round (round-38 closure routed defects D1–D7): the
+ 19:pre-registered measurement cells from round-38 claims Errata 5/6/11 — the
+ 20:eighth c1 scenario family (PATH `env` shim, PATH `bash` shim, hostile drift,
+ 21:positive override-honoured witness, relative-override refusal) and the
+...
+ 198:- **R3 — knowledge count correction.** The r39 report's `29 → 31` is wrong; the historical `corpus/knowledge/*.md` count was `50 → 52` at the r39 before/tip commits `8c7c867b66e103712ae33e1d076786f50dd3239e` and `6ac1007e6a5d699d0742801026554fac1d900b5d`. Re-derive with `for r in 8c7c867b66e103712ae33e1d076786f50dd3239e 6ac1007e6a5d699d0742801026554fac1d900b5d; do printf '%s ' \"$r\"; git ls-tree -r --name-only \"$r\" -- corpus/knowledge | awk '/\\.md$/ {n++} END {print n+0}'; done`.
+*199:- **R4 — not reproduced from committed artifacts.** The r39 report, committed `w1-spec.json`, and generated `w1-plan.json` all count reviewer 6 / revenger 2 (32 total r39 seats). The verifier spot-check instead says the r39 spec was reviewer 8 / revenger 0. Round 40's independently prepared 33-seat spec is not part of the r39 comparison. No r39 role-mix change is made on contradictory evidence; the exact comparison is recorded in `corpus/evidence/round40/routed-defect-dispositions.json`.
+ 200:- **R5 — runner wording correction.** The SCORECARD phrase “two independent runners” is unsupported: the frozen claims disclose that both cited C1 runs were L1 construction runs and the wave was prepared, not dispatched. The phrase is superseded by “two seeds, both L1 construction runs”; the SCORECARD correction is appended in round 40.
+
+#### round40/
+##### c2-count.py#C760
+ 10:FLEET = ROOT.parent
+*11:DISPOSITIONS = ROOT / "corpus/evidence/round40/routed-defect-dispositions.json"
+ 12:CLAIMS39 = ROOT / "corpus/evidence/round39/claims.md"
+ 13:LESSON39 = ROOT / "corpus/lessons/round-39.md"
+ 14:SCORECARD = ROOT / "SCORECARD.md"
+##### claims.md#50E8
+ 22:
+*23:**Claim.** The four round-39 closure findings R2–R5 each receive an evidence-backed disposition in `routed-defect-dispositions.json`: R2/R3/R5 are corrected; R4 is explicitly marked not reproduced if the committed round-39 spec, validator plan, and report agree against the spot-check's contrary role counts. The counter must re-derive these states from the committed evidence, not count prose labels alone.
+ 24:
+ 25:**P2 (frozen predicate).** C2 is met iff `python3 corpus/evidence/round40/c2-count.py` prints `R39_CALIBRATION_DISPOSITIONS=4/4` and exits 0. The R4 code condition requires exact role-count agreement among the committed spec, validator plan, and report, while the spot-check's contrary statement remains cited.
+ 26:
+
+#### round44/seat-logs/
+##### RevRoutedFreshness.prompt#C1FD
+ 10:
+*11:Read routed defect 2 in the round-43 spot-check. State the scorecard sentence this round must use for freshness. It must not say improved.
+ 12:
+ 13:Write the report at /home/vgpnk/Projects/shokunin/chousa-shokunin/.ufo/waves/round-44/w1/RevRoutedFreshness.md and nowhere else.
+ 14:
+##### RevRoutedParent.prompt#13B9
+ 10:
+*11:Read the routed defect 1 in /home/vgpnk/Projects/shokunin/chousa-shokunin/corpus/lessons/round-43-verifier-spotcheck.md. Map it to predicate R44-C1. Say what committed artifact would close it and what would leave it open.
+ 12:
+ 13:Write the report at /home/vgpnk/Projects/shokunin/chousa-shokunin/.ufo/waves/round-44/w1/RevRoutedParent.md and nowhere else.
+ 14:
+
+#### round46/
+##### claims.md#2DDB
+ 17:lowest non-retired axis (operability, 3/10 — `SCORECARD.md:7`; the stagnation
+*18:nudge is dormant, `SCORECARD.md:492`). C1 and C2 are routed defects from the
+ 19:round-45 closure (D7, D8); C3 is the round-45 plan's narrower AVeriTeC
+ 20:entry plus the flip condition on the round-45 reject.
+ 21:
+
+#### round47/
+##### c2-count.py#35E0
+ 26:  FLOOR is the freeze-tree ENTRY_POINTS (enforced in code — round-46 closure
+*27:  routed defect 2: the round-46 floor was prose only).
+ 28:
+ 29:Prints `ENTRY_POINTS=n (abc=n dependence=+n check_named=+n) FLOOR=f
+ 30:GATES_ROWS=k REGISTERED=n/n UNREGISTERED=k DANGLING=k MISMATCHES=k
+
+Showing files 1-20 of 1010. Use skip=20 for the next page, or narrow paths/pattern.
+
+[Some lines truncated to 512 bytes]

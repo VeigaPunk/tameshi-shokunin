@@ -1,0 +1,146 @@
+{
+  "seat": "T58W2Sent02",
+  "item": "scratch + hygiene sentinel: df /fast; du scratch; hardcoded-/tmp grep over round-58 instruments and seat-written tools; credential scan of new extracts",
+  "c0": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "generated": "2026-10-30T09:12:00-03:00",
+  "receipts": "T58W2Sent02-receipts/{disk.txt,tmp-residue.txt,fresh-writers.txt,greps.txt}",
+  "disk": {
+    "fast": "804G total, 440G used, 364G avail (55%) — no pressure",
+    "tmp_mount": "128G total, 32G used (25%)",
+    "scratch_total_tameshi_r58": {
+      "at_0857": "18G",
+      "at_0900_per_seat_sum": "~12.3G (28 dirs)",
+      "at_0904": "9145 MB (22 dirs)",
+      "reading": "live churn — wave-2 seats finishing and deleting scratch during the sweep [O]"
+    },
+    "scratch_hyaku_by_root": {
+      "kama-r64": 61408,
+      "tameshi-r58": 9149,
+      "kaidoku-r50": 7888,
+      "kaidoku-r52": 3332,
+      "kumitate-r69": 1653,
+      "kasegi-r47": 974,
+      "souji-r44": 299,
+      "note": "kama-r64 is a live lane (peer KamaR64 running); sizes in MB [O]"
+    }
+  },
+  "findings": [
+    {
+      "id": "SENT02-1",
+      "severity": "medium",
+      "title": "Round-58-fresh /tmp scratch litter during wave 2: tools honour TMPDIR but default to /tmp, keep trees on FAIL, and the lane's host guard cannot see it",
+      "commands": [
+        "find /tmp -maxdepth 1 \\( -name 'tameshi*' -o -name 'hyaku*' -o -name 'closure-*tameshi*' \\) -printf '%TY-%Tm-%Td %TH:%TM\\t%p\\n' | sort -r",
+        "ls -la /tmp/tameshi-mte-regression-kzakrvon /tmp/tameshi-r16-CRMeasure-tc4hz053 /tmp/tameshi-r17-MeasureV2-j47nm6kj",
+        "du -sm /tmp/tameshi-r4-2-regression.3gCWbo /tmp/tameshi-r4-2-regression.ZdfeTt /tmp/tameshi-r17-MeasureV2-j47nm6kj /tmp/tameshi-r17-MeasureV2-7ttebcrt /tmp/tameshi-mte-regression-kzakrvon /tmp/tameshi-r16-CRMeasure-tc4hz053",
+        "find /tmp/tameshi-r4-2-regression.3gCWbo /tmp/tameshi-r17-MeasureV2-j47nm6kj -newermt '2026-10-30 09:03' -print | wc -l"
+      ],
+      "evidence": "Six dirs created 2026-10-30 09:00–09:05 (round-58 wave-2 window; now ≈09:12): tameshi-r4-2-regression.{ZdfeTt,3gCWbo}, tameshi-r17-MeasureV2-{j47nm6kj,7ttebcrt}, tameshi-r16-CRMeasure-tc4hz053, tameshi-mte-regression-kzakrvon (mode 0700, all ten mutate-and-run.sh regression legs + regression.stdout). -newermt count after 09:03 = 0, so the runs had finished writing and the dirs were left behind. Cause chain [O in parts, I in the join]: tools/mutate-and-run.sh:1432 `root=$(mktemp -d \"${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX\")`; :150-151 keeps the tree on FAIL/SETUP; tools/registry.json selftest rows contractually bless 'TMPDIR empty => unset, the platform default applies'. The only lane guard, .ufo/evidence/round-58/no-harm.sh:47-48 (r53-scratch-hygiene), greps SOURCE for `dir\\s*=\\s*[\"']/tmp` and never inspects the host /tmp, so source-clean + host-littering passes.",
+      "impact": "Recurring, invisible breach of the round's scratch discipline (/fast/scratch/hyaku or TMPDIR; /tmp only for <50 MB): every round re-litters /tmp the same way (116 accumulated entries, 597 MB, oldest 2026-10-27), a shared tmpfs also carrying browser/agent runtime state. A --regression FAIL leaves its evidence tree in /tmp indefinitely; 0700 on the regression root also hides its contents from non-root inspectors during incident triage.",
+      "remediation_smallest": "Wave-2 seats/dispatch: export TMPDIR under the seat's HYAKU_SCRATCH before running any lane tool. Cheap follow-up for the L1 to route: add a no-harm.sh arm that counts host /tmp/tameshi-* entries (RED if any newer than round start); operator-owned cleanup of the 597 MB (D7 precedent: cleanup is operator-owned and named in the report). No tool code change required — the tool contracts are internally consistent; the gap is seat environment + host-blind guard.",
+      "inference_marks": "Which seat/tool invocation created each fresh dir is INFERENCE from the dir names/fingerprints matching tools (mutate-and-run.sh --regression; r16 CRMeasure; r17 MeasureV2 selftests) — direct attribution not attempted to avoid touching live seats. Everything else above is observed output."
+    },
+    {
+      "id": "SENT02-2",
+      "severity": "medium-low",
+      "title": "Hyaku harness config backup with provider/plan entries sitting in /tmp since Oct 28 (0600)",
+      "commands": [
+        "ls -la /tmp/hyaku-cfg-backup",
+        "stat -c '%a %s %y %n' /tmp/hyaku-cfg-backup/config.yml.20261028T121435.bak",
+        "awk -F': ' '/(token|secret|api|key|password|credential|auth)/{print \"KEY-PRESENT(redacted): \" substr($1,1,48)}' /tmp/hyaku-cfg-backup/config.yml.20261028T121435.bak | sort -u"
+      ],
+      "evidence": "-rw------- 1 vgpnk vgpnk 16608 Oct 28 12:13:57 /tmp/hyaku-cfg-backup/config.yml.20261028T121435.bak. Redacted key-name scan shows provider/plan entries: xai-oauth/grok-4.5, xai-oauth/grok-4.7, xai-oauth/grok-4.7-build-fast, xai-oauth/grok-composer-2.5-fast, alibaba-token-plan/deepseek-v4.1-flash, alibaba-token-plan/qwen3.8-flash, alibaba-token-plan/qwen3.8-max, m_grok, m_grok45. Values were deliberately never read or printed (awk key-name-only extraction).",
+      "impact": "A harness config backup — plausibly carrying auth material for xai-oauth integrations [INFERENCE; values unread] — lives in a world-listable, volatile directory subject to tmp cleaners and to being swept into any broad /tmp collection. 0600 mitigates read access; placement, not perms, is the defect.",
+      "remediation_smallest": "Operator: move the backup out of /tmp (e.g. ~/.config/hyaku/backup/ or delete if superseded); stop creating config backups under /tmp."
+    },
+    {
+      "id": "SENT02-3",
+      "severity": "low",
+      "title": "597 MB of pre-round-58 tameshi/hyaku residue in /tmp (110 entries, 2026-10-27/28)",
+      "commands": [
+        "ls -d /tmp/*tameshi* /tmp/*hyaku* 2>/dev/null   # 116 entries incl. the 6 fresh in SENT02-1",
+        "du -smc /tmp/tameshi* /tmp/hyaku* /tmp/closure-*tameshi* 2>/dev/null | awk 'END{print}'   # -> 597 total (MB)"
+      ],
+      "evidence": "Full dated inventory in tmp-residue.txt: tameshi-r4-2-regression.* ×22, tameshi-r17-MeasureV2-* ×~40, tameshi-r16-CRMeasure-* ×~20, tameshi-mte-regression-* ×20 + mte-fleet, tameshi-r14-evidence-disposition-selftest.* ×3, tameshi-registry-check-* ×2, tameshi-r56-gate-ou1_0v2q, /tmp/hyaku/kaidoku-r39, /tmp/hyaku63 (source-extract workspace), /tmp/hyaku-work2 (strace-env-diff.log), closure-r5{3,5}-tameshi.json.",
+      "impact": "Accumulating shared-tmpfs residue from earlier rounds; each round's tools repeat the pattern (see SENT02-1). Also confounds any future /tmp-based forensics.",
+      "remediation_smallest": "Operator-owned sweep of the Oct-27/28 entries (verify no live process holds them first); D7 precedent — cleanup is operator-owned and named in the report."
+    },
+    {
+      "id": "SENT02-4",
+      "severity": "low",
+      "title": "Stale kaidoku-r50 scratch holds 7.9 GB incl. the only >50 MB files on the scratch filesystem",
+      "commands": [
+        "du -sm /fast/scratch/hyaku/kaidoku-r50",
+        "find /fast/scratch/hyaku -type f -size +50M -printf '%s\\t%p\\n' | sort -rn",
+        "ls -ld --full-time /fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter"
+      ],
+      "evidence": "7888 MB total; w4-MutC1Counter mtime 2026-10-29 19:29:58; six repo-A{0,1,2,3,4,5} git packs of ~139 MB each (139253299–139259479 B) — the only >50 MB files anywhere under /fast/scratch/hyaku. kaidoku lanes have since advanced (kaidoku-r51, kaidoku-r52 exist).",
+      "impact": "Dead weight (≈7.9 GB of 85 GB total scratch) from a finished wave of a finished round; six pack duplicates alone are ~835 MB. No disk pressure today (/fast 364G avail) — hygiene, not operability.",
+      "remediation_smallest": "Operator-owned rm of /fast/scratch/hyaku/kaidoku-r50 after confirming the kaidoku lane has no live consumers."
+    },
+    {
+      "id": "SENT02-5",
+      "severity": "low",
+      "title": "Wave-1 seat scratch retained past wave end (7 dirs, 2822 MB, still present at 09:04)",
+      "commands": [
+        "ls -ld --full-time /fast/scratch/hyaku/tameshi-r58/T58W1*",
+        "du -sm /fast/scratch/hyaku/tameshi-r58/T58W1Lab04 /fast/scratch/hyaku/tameshi-r58/T58W1Lab05 /fast/scratch/hyaku/tameshi-r58/T58W1Lab06 /fast/scratch/hyaku/tameshi-r58/T58W1ExecC2Reg /fast/scratch/hyaku/tameshi-r58/T58W1ExecAssim /fast/scratch/hyaku/tameshi-r58/T58W1Fix02 /fast/scratch/hyaku/tameshi-r58/T58W1Fix03"
+      ],
+      "evidence": "T58W1ExecAssim 476M (mtime 08:34:04), T58W1ExecC2Reg 476M (08:36:14), T58W1Fix02 221M (08:33:28), T58W1Fix03 221M (08:34:24), T58W1Lab04/05/06 476M each (08:34:06/37/37) — all present at 09:04, >30 min after wave-1's last writes and while wave 2 runs. Discipline: each seat deletes its scratch before yielding.",
+      "impact": "≈2.8 GB held past wave end; per-seat deletable, no cross-seat conflict (dirs are private).",
+      "remediation_smallest": "The named wave-1 seats delete their dirs on next contact, or the L1/operator sweeps them; wave-2 seats should keep the trap-rm discipline they are mostly meeting (scratch total fell 18G → 9.1G during this sweep)."
+    }
+  ],
+  "clean_sweeps": [
+    {
+      "name": "round-58 instruments × hardcoded /tmp",
+      "command": "grep tool, pattern '/tmp', over freeze.json, contract.json, no-harm.sh, controls.sh, deciding-run.sh, c1/{measure.py,panel.json,keys.json,defects.json}, c2/{measure.py,mutants.json}, control/{gen_ledger.py,gen_registry.py}",
+      "outcome": "No hardcoded /tmp path in any instrument. Three legitimate non-path hits: no-harm.sh:47 (the guard's own search pattern), c2/measure.py:17 (docstring '/tmp is never named'), c1/defects.json (defect-row text quoting historical R52.5/R53.6)."
+    },
+    {
+      "name": "seat-written tools × /tmp and credential strings",
+      "command": "grep tool, pattern '/tmp|AKIA|PRIVATE KEY|ghp_|github_pat_|xox|api[_-]?key|secret|password|_authToken' (ci), over w1/T58W1RevengerC2-receipts/attack.py, w1/T58W1RevExcerpts-receipts/audit.py, w2/T58W2RevPanel-receipts/audit.py, w2/T58W2RevSrc3-receipts/sweep.py, w2/T58W2Read11-receipts/sweep.py, w2/T58W2Read13-receipts/sweep.py, w2/T58W2Read05-receipts/target.sh",
+      "outcome": "No matches found — all seven tools clean on both axes, including the decisive C2 forgery artifact attack.py."
+    },
+    {
+      "name": "high-entropy credential formats across round-58 evidence + waves + new knowledge file",
+      "command": "grep tool, pattern 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{16,}|gho_[A-Za-z0-9]{16,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|sk-ant-[A-Za-z0-9-]{10,}|sk-proj-[A-Za-z0-9-]{10,}|_authToken\\s*=|AQIA[A-Z0-9/+=]{30,}' over .ufo/waves/round-58/**, .ufo/evidence/round-58/**, corpus/knowledge/llm-mutant-equivalence-cost.md",
+      "outcome": "No matches found."
+    },
+    {
+      "name": "keyword-style credential assignments (same roots)",
+      "command": "grep tool, pattern '(?i)(api[_-]?key|secret|passwd|password|token|credential)[^=\\n]{0,24}[:=][ \\t]*[\"']?[A-Za-z0-9+/_=-]{12,}'",
+      "outcome": "Only benign variable assignments (c2/measure.py:452 'tokens = standing_cell(skill_text)' and receipts quoting it). No credential material."
+    },
+    {
+      "name": "new fetched extracts × cookies/session tokens",
+      "command": "grep tool, pattern '(?i)(set-cookie|csrf|jsessionid|sessionid|session_id|auth_token|bearer|api[_-]?key)' over arxiv.html (w1), arxiv-2406.09843.html/.txt, atlassian-live.html, dfcfw-deck.txt, pinned-entry.md, pinned-SOURCES.md (w2)",
+      "outcome": "Single-file hit: atlassian-live.html:42068 — public documentation prose ('Step 4: Get your Statuspage API key and page ID' anchor in an Opsgenie integration how-to) plus SSR composition metadata. No Set-Cookie, CSRF, session or bearer tokens in any extract."
+    },
+    {
+      "name": "/tmp/hyaku63 source extracts × credentials (Oct-28 residue, completeness)",
+      "command": "grep tool, high-entropy + keyword patterns over /tmp/hyaku63/*",
+      "outcome": "All hits are public-doc content: placeholder api_key = \"sk-no-key-required\" in client-example prose (README.md:1333/1387/1509), a gitbook CDN media token for a public icon (s210.html), LLM-token identifiers in llama.cpp/vLLM sources. No credential material."
+    },
+    {
+      "name": "/tmp oversize files",
+      "command": "find /tmp -maxdepth 1 -type f -size +50M -printf '%s\\t%p\\n'",
+      "outcome": "Empty (exit 0) — no /tmp top-level file ≥50 MB; oversize-scan-exit=0."
+    },
+    {
+      "name": "/tmp credential-bearing dot-dirs",
+      "command": "ls -la /tmp/.aws /tmp/.codex /tmp/.agents /tmp/.git /tmp/.tmp00QCeM /tmp/.tmp02K8Y0; stat -c '%a %U %n' /tmp/.aws",
+      "outcome": "All six dirs EMPTY (755, vgpnk, Oct 29) — no AWS/codex/agent credential material in /tmp."
+    }
+  ],
+  "notes": [
+    "The lane's tool contracts are internally consistent: strict_scratch_root() (7 tools) hard-fails could-not-evaluate on a set-but-unusable TMPDIR and honours TMPDIR when set; mutate-and-run.sh honours TMPDIR. The defect is at the seam: nothing enforces TMPDIR export at seat level, and the only hygiene guard (no-harm.sh:47-48) is source-only, never host-inspecting. SENT02-1 is that seam, evidenced live during this round.",
+    "Registry selftest rows explicitly bless 'the platform default' when TMPDIR is unset — consistent with the tools, in tension with the round dispatch that mandates HYAKU_SCRATCH and /tmp only <50 MB. Worth a routed decision (SKILL/dispatch wording vs tool default) rather than a code fix.",
+    "kama-r64 scratch (61.4 GB) dwarfs everything else on /fast/scratch/hyaku (~85 GB total); it is a live lane (peer KamaR64 running) — monitored only, no judgment made.",
+    "Guard blind spot is the same class the lane has hit before: T58W1Panel07 receipt notes a census regex that required mkdir( with 'at' suffix and missed tempfile.mkdtemp — source-regex guards keep missing mkdtemp-shaped defaults.",
+    "Six of the 116 /tmp entries date from TODAY during wave 2; the remaining 110 (Oct 27–28) span rounds ≈53–57, confirming the pattern is per-round recurring, not a round-58 regression.",
+    "No tools were installed or upgraded this session (none needed); pacman untouched per the host-wide pause."
+  ],
+  "scratch_cleanup": "This seat never created a HYAKU_SCRATCH dir (no /fast/scratch/hyaku/tameshi-r58/T58W2Sent02 exists) and wrote only its designated w2 outputs + receipts; nothing to delete. /tmp was never written by this seat.",
+  "verdict": "findings-recorded"
+}

@@ -1,0 +1,82 @@
+{
+  "seat": "T58W2ScoutCT",
+  "base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "cand": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "milestone": "considerthese confirm",
+  "item": "confirm the ONE still-unimplemented proposal this round mines: verify unimplemented with a tree sweep and quote its text verbatim",
+  "proposal": {
+    "file": "considerthese/2026-10-28.md",
+    "proposal_number": 2,
+    "title": "Counter-arm liveness check",
+    "lines_at_cand": "77-78",
+    "verbatim_lines_at_cand": [
+      "2. **Counter-arm liveness check.** For each frozen counter, list its arms and require one committed input per arm that moves",
+      "   that arm's tally away from zero. A passing control set did not reveal that round 53's re-key arm could never fire."
+    ],
+    "verbatim_joined": "Counter-arm liveness check. For each frozen counter, list its arms and require one committed input per arm that moves that arm's tally away from zero. A passing control set did not reveal that round 53's re-key arm could never fire.",
+    "implemented": false,
+    "confidence": "high (unimplemented), medium-high (that this is the ONE round 58 mines — the L1 report naming it does not exist yet; wave-1's considerthese seat T58W1ScoutCT returned empty output, see identification_basis)"
+  },
+  "identification_basis": [
+    "INFERENCE: the L1 names the mined proposal only in the round-58 report (contract.json line 122: 'considerthese mined separately in the report'), which is not written at dispatch time; no committed or uncommitted round-58 file names it. The identification below is the seat's own, grounded in the cited evidence.",
+    "Round-57 contract precedent (.ufo/evidence/round-57/contract.json:164) shows the naming format: 'considerthese/2026-10-28.md proposal 3 (cold-read cost forecast at planning time) mined as a lesson + QUALITY criterion + tools/forecast tool if landed'.",
+    "Mining order from the round-56 lesson (corpus/lessons/round-56.md:28-33): proposal 1 mined into QUALITY criterion 107 (revision half; quote half declared unmined in the criterion's own scope sentence); 'Proposals 2-5 remain unmined (at most one per round)'. Round 57 then mined proposal 3 (tools/cold-read-forecast.py exists at C0). Remaining from the latest file at C0: proposals 2, 4, 5.",
+    "Round 55's considerthese scribe already picked proposal 2 with the same unimplemented verdict (.ufo/waves/round-55/w1/T55W1ScribeConsiderthese.json: 'implemented': false, 'no tool/criterion enumerates a counter's arms and requires a committed input per arm; QUALITY 105 ... only proves non-zero passing arms on a positive control'); round 55 was rejected-harmed and the draft arm-census never landed as a tool or criterion.",
+    "Round 58's substance is counter-arm integrity: the decisive wave-1 finding is the bent-runner forgery (.ufo/waves/round-58/w1/T58W1RevengerC2-receipts/, attack.py Attack B) where a claimant-authored registry-check.py produces the counter's executed and mutants arms without executing rows — exactly the failure class the proposal names; Planned (round 59) re-carries R53.1, the original dead-arm defect the proposal cites.",
+    "Proposals 4 and 5 are also unimplemented at C0 but do not match anything round 58 does: no assimilation-backlog tracking was built (C3 adopted exactly one merge/tameshi entry; no census of the backlog exists), and the only pointer repair this round is the single routed R53.5 correction (facts.json new_fixes), not a standing sweep."
+  ],
+  "sweeps": [
+    {
+      "name": "verbatim text at C0",
+      "command": "git -C $CLONE show 8063d0a551fc5b3cb5a2d397da7353af53444534:considerthese/2026-10-28.md | grep -n \"Counter-arm\" -A 2",
+      "output": "77:2. **Counter-arm liveness check.** For each frozen counter, list its arms and require one committed input per arm that moves\n78-   that arm's tally away from zero. A passing control set did not reveal that round 53's re-key arm could never fire.\n79-3. **Cold-read cost forecast at planning time.** Before a round's content edits, map each planned SKILL.md edit to the"
+    },
+    {
+      "name": "tools/ has no arm/liveness/backlog/pointer census tool",
+      "command": "git -C $CLONE ls-tree --name-only 8063d0a551fc5b3cb5a2d397da7353af53444534 tools/ | grep -iE 'arm|liveness|fire|burn|assim|pointer|stale|drift'",
+      "output": "(no output; exit=1)"
+    },
+    {
+      "name": "no standing arm-enumeration criterion or tool anywhere in the tracked tree",
+      "command": "git -C $CLONE grep -n -iE \"arm.liveness|away from zero|one committed input per arm|counter-arm\" 8063d0a551fc5b3cb5a2d397da7353af53444534 -- ':!considerthese' ':!.ufo/waves'",
+      "output": "hits only in (a) .ufo/evidence/round-57/c1/measure.py:510 and .ufo/evidence/round-58/c1/measure.py:514 — selftest comments citing the round-53 lesson for the two NEWEST counters; (b) .ufo/evidence/round-57/c2/measure.py:54 and .ufo/evidence/round-58/c2/measure.py:59 — same, selftest docstring; (c) the unrelated literal 'counter-arm' inside tools/mutate-and-run.sh:1863 and its copied snapshots in retained evidence. No QUALITY criterion, no tools/ script, no scripts/ file enumerates the arms of the frozen-counter POPULATION.",
+      "note": "A second run without the ':!.ufo/waves' exclusion additionally matched only retained wave receipts (round-55 scribe drafts and mutation-tester fixtures), never a lane tool, criterion or lesson — the r55 arm-census lives only under .ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/."
+    },
+    {
+      "name": "the r55 draft arm-census was never committed as an instrument",
+      "command": "git -C $CLONE ls-tree -r --name-only 8063d0a551fc5b3cb5a2d397da7353af53444534 .ufo/evidence/round-56/ | grep -iE 'quality|arm'  ; git -C $CLONE ls-tree -r --name-only 8063d0a551fc5b3cb5a2d397da7353af53444534 | grep -iE 'arm-census'",
+      "output": ".ufo/evidence/round-56/ contains only after/no-harm.exit, after/no-harm.stdout, no-harm.sh (no quality/ dir, no arm-census.py); arm-census* paths exist ONLY under .ufo/waves/round-55/w1/T55W1ScribeConsiderthese-receipts/ (retained seat receipts, not lane instruments)."
+    },
+    {
+      "name": "QUALITY criterion 105 does not cover the proposal (independent origin, narrower scope)",
+      "command": "git -C $CLONE show 8063d0a551fc5b3cb5a2d397da7353af53444534:corpus/QUALITY.md | sed -n '1584,1590p'",
+      "output": "### Criterion 105 — a counter arm is proven on a positive control, not only on the do-nothing tree ... Lesson: `corpus/lessons/round-54.md` `## Mistakes` (round 53's `rekeyed=0/30` at every revision while every control still printed the pre-registered verdict). ... Falsifier ... round-53 C1 counter's rekey arm prints rekeyed=0/30 at 88afa941 ...",
+      "note": "Criterion 105 (appended round 54) credits lessons/round-54.md, NOT considerthese; it requires a positive control per arm WITHIN a round's control set for arms that read a directory/revision/manifest. The proposal asks for a standing census over EVERY frozen counter with one committed input per arm — 30 frozen counter files exist at C0 (git ls-tree -r --name-only CAND | grep -cE '(^|/)c[0-9]+/measure\\.py$' = 30, plus non-cN named counters such as round-23/final-measure.py and round-25/c1-measure.py) and no committed instrument enumerates their arms."
+    },
+    {
+      "name": "alternative candidates 4 and 5 are unimplemented too (and unfit for this round)",
+      "command": "git -C $CLONE grep -n -iE \"burn-down|burn down|backlog burn|stale-closure-pointer|re-resolve every line\" 8063d0a551fc5b3cb5a2d397da7353af53444534 -- ':!considerthese' ':!.ufo/waves'",
+      "output": "(no hits outside retained wave receipts; exit shows only .ufo/waves matches for the r55 scribe's own out-of-scope table). No burn-down tool exists for the 85-entry merge/tameshi backlog; the only standing pointer-ish check, tools/pointer-check.py, strips :N suffixes and does not re-resolve line/page pointers (per the r55 scribe's table and the r35-era criterion 72 history)."
+    },
+    {
+      "name": "decisive wave-1 forgery receipts exist (thematic anchor)",
+      "command": "diff /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w1/T58W1RevengerC2-receipts/honest-run.txt /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack-out.txt | head -8 ; head -15 .../attack.py",
+      "output": "honest-run prints all six EXPLAIN shortfall rows=0 with the real executor; attack-out (74 lines) is produced with Attack B: 'a claimant-authored registry-check.py ... the executed AND mutants arms are then produced by claimant code'. The counter prints PASS while its execution arms never genuinely fire."
+    }
+  ],
+  "landing_route_hint": "lesson in corpus/lessons/round-58-verifier-spotcheck.md or a QUALITY criterion in the criterion-105 family, plus a successor route: the planned-round-59 R53.1 item ('frozen rekey counter's directory discovery is structurally dead; publish a successor') is the same defect class; the r55 scribe's retained arm-census.py (63/414 arms live at base 0a2010ac, 68/428 at freeze 631cd64) is a starting point that was never landed.",
+  "notes": [
+    "The two newest counters already carry per-arm selftest fixtures (c1/measure.py:510-515, c2/measure.py:54-59) — the proposal's practice exists for r57/r58 counters only; the standing population-wide check is what remains unimplemented, which is exactly what the round's forgery finding makes load-bearing.",
+    "If the L1's report names proposal 4 or 5 instead, both are confirmed unimplemented by the same sweeps; the tree evidence in this file covers them.",
+    "Round-57's precedent shows the report names the proposal with the mined landing route; this seat supplies the unimplementation evidence either way."
+  ],
+  "commands": [
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --oneline -3",
+    "git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone && git -C $S/clone checkout --detach 8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "git -C $S/clone show 8063d0a551fc5b3cb5a2d397da7353af53444534:considerthese/2026-10-28.md (verbatim quotes, lines 70-90)",
+    "git -C $S/clone ls-tree / grep / show sweeps as listed in sweeps[]"
+  ],
+  "tool_installs": [],
+  "cleanup": "Scratch /fast/scratch/hyaku/tameshi-r58/T58W2ScoutCT (shared clone at C0) removed before yield; nothing written outside the two seat deliverables and the scratch.",
+  "lane_files_edited": []
+}

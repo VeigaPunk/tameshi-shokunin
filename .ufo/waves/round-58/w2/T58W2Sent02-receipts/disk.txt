@@ -1,0 +1,115 @@
+# T58W2Sent02 — disk + scratch accounting receipts (2026-10-30, round-58 wave 2)
+All commands run with cwd = fleet root /home/vgpnk/Projects/shokunin; absolute paths throughout.
+
+## df -h /fast /tmp /home
+```
+Filesystem        Size  Used Avail Use% Mounted on
+/dev/nvme1n1p2    804G  440G  364G  55% /fast
+/dev/nvme1n1p1    128G   32G   97G  25% /tmp
+/dev/mapper/root  930G  362G  533G 41% /home
+```
+
+## du -sh /fast/scratch/hyaku/tameshi-r58   (background job bg_6554, started ~08:57, took 120 s)
+```
+18G	/fast/scratch/hyaku/tameshi-r58
+```
+(The second du in that job, /fast/scratch/hyaku overall, was interrupted at the 120 s deadline; superseded by the per-root du below.)
+
+## du -sm per-seat scratch (~09:00)
+```
+1455	/fast/scratch/hyaku/tameshi-r58/T58W2ExecC2
+990	/fast/scratch/hyaku/tameshi-r58/T58W2Read15
+977	/fast/scratch/hyaku/tameshi-r58/T58W2Read14
+495	/fast/scratch/hyaku/tameshi-r58/T58W2Read09
+495	/fast/scratch/hyaku/tameshi-r58/T58W2Read03
+490	/fast/scratch/hyaku/tameshi-r58/no-harm
+490	/fast/scratch/hyaku/tameshi-r58/T58W2Read06
+486	/fast/scratch/hyaku/tameshi-r58/T58W2RevRows2
+486	/fast/scratch/hyaku/tameshi-r58/T58W2Read17
+486	/fast/scratch/hyaku/tameshi-r58/T58W2MutC1
+485	/fast/scratch/hyaku/tameshi-r58/T58W2ScoutCT
+485	/fast/scratch/hyaku/tameshi-r58/T58W2RevRows4
+485	/fast/scratch/hyaku/tameshi-r58/T58W2ExecNoHarm
+485	/fast/scratch/hyaku/tameshi-r58/T58W2ExecDry
+485	/fast/scratch/hyaku/tameshi-r58/T58W2CritLedger
+485	/fast/scratch/hyaku/tameshi-r58/T58W2CritC3
+476	/fast/scratch/hyaku/tameshi-r58/T58W1Lab06
+476	/fast/scratch/hyaku/tameshi-r58/T58W1Lab05
+476	/fast/scratch/hyaku/tameshi-r58/T58W1Lab04
+476	/fast/scratch/hyaku/tameshi-r58/T58W1ExecC2Reg
+476	/fast/scratch/hyaku/tameshi-r58/T58W1ExecAssim
+221	/fast/scratch/hyaku/tameshi-r58/T58W1Fix03
+221	/fast/scratch/hyaku/tameshi-r58/T58W1Fix02
+8	/fast/scratch/hyaku/tameshi-r58/sources
+1	/fast/scratch/hyaku/tameshi-r58/forecast
+1	/fast/scratch/hyaku/tameshi-r58/c0-drafts
+0	/fast/scratch/hyaku/tameshi-r58/probe-c1-postwave
+0	/fast/scratch/hyaku/tameshi-r58/T58W2MutC2
+```
+Visible dirs sum to ~12.3 GB vs the 18 G total measured minutes earlier — the gap is live churn (seats finishing and deleting scratch mid-sweep), confirmed by the top-level entry count dropping 28 → 24 → 22 across 09:00–09:04.
+
+## du -sm fresh total (~09:04)
+```
+9145	/fast/scratch/hyaku/tameshi-r58
+```
+## ls -la /fast/scratch/hyaku/tameshi-r58/ at 09:04
+22 dirs, 0 files. T58W1* leftovers still present at 09:04: T58W1ExecAssim, T58W1ExecC2Reg, T58W1Fix02, T58W1Fix03, T58W1Lab04, T58W1Lab05, T58W1Lab06.
+
+## ls -ld --full-time of wave-1 leftovers + L1 dirs (~09:03)
+```
+drwxr-xr-x 4 vgpnk vgpnk  73 2026-10-30 08:34:04.414310005 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1ExecAssim
+drwxr-xr-x 5 vgpnk vgpnk  58 2026-10-30 08:36:14.767002996 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1ExecC2Reg
+drwxr-xr-x 4 vgpnk vgpnk  31 2026-10-30 08:33:28.049605309 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1Fix02
+drwxr-xr-x 5 vgpnk vgpnk  54 2026-10-30 08:34:24.893528481 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1Fix03
+drwxr-xr-x 3 vgpnk vgpnk  19 2026-10-30 08:34:06.274099343 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1Lab04
+drwxr-xr-x 3 vgpnk vgpnk  19 2026-10-30 08:34:37.907728761 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1Lab05
+drwxr-xr-x 3 vgpnk vgpnk  19 2026-10-30 08:34:37.210151757 -0300 /fast/scratch/hyaku/tameshi-r58/T58W1Lab06
+drwxr-xr-x 2 vgpnk vgpnk 151 2026-10-30 07:52:25.215315630 -0300 /fast/scratch/hyaku/tameshi-r58/c0-drafts
+drwxr-xr-x 2 vgpnk vgpnk  29 2026-10-30 07:52:54.677017234 -0300 /fast/scratch/hyaku/tameshi-r58/forecast
+drwxr-xr-x 2 vgpnk vgpnk   6 2026-10-30 08:54:44.066676347 -0300 /fast/scratch/hyaku/tameshi-r58/probe-c1-postwave
+drwxr-xr-x 2 vgpnk vgpnk 113 2026-10-30 07:49:04.670784227 -0300 /fast/scratch/hyaku/tameshi-r58/sources
+```
+
+## du -sm /fast/scratch/hyaku/* (~09:05)
+```
+61408	/fast/scratch/hyaku/kama-r64
+9149	/fast/scratch/hyaku/tameshi-r58
+7888	/fast/scratch/hyaku/kaidoku-r50
+3332	/fast/scratch/hyaku/kaidoku-r52
+1653	/fast/scratch/hyaku/kumitate-r69
+974	/fast/scratch/hyaku/kasegi-r47
+299	/fast/scratch/hyaku/souji-r44
+1	/fast/scratch/hyaku/r52ctr.py
+1	/fast/scratch/hyaku/r51ctr.py
+1	/fast/scratch/hyaku/kaidoku-r52-attack-findings.txt
+0	/fast/scratch/hyaku/tsukuroi-r49
+0	/fast/scratch/hyaku/tameshi-r48
+0	/fast/scratch/hyaku/kaidoku-r51
+```
+kama-r64 is a live lane (peer KamaR64 running) — monitored, not judged.
+
+## find /fast/scratch/hyaku -type f -size +50M   (background job bg_6579, 71 s)
+```
+Error getting file size for /fast/scratch/hyaku/tameshi-r58/T58W2Read14/tameshi-mte-regression-no3px_5_/js-round-gate/sandbox-C1060/tmp/kumitate-round-gate-selftest-mgPbeP/07-collision-n1/repo/.git/HEAD.lock: No such file or directory (os error 2)
+139259479	/fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter/repo-A0/.git/objects/pack/pack-81b3eefb711d653154abd446e3ca4f86e634943d.pack
+139257707	/fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter/repo-A5/.git/objects/pack/pack-7a6b495e028166becf3c5b6d628ca184a138c7f3.pack
+139254204	/fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter/repo-A2/.git/objects/pack/pack-743181594b86db3f58854113b38acfa6be0d394e.pack
+139253880	/fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter/repo-A4/.git/objects/pack/pack-120bd8e6d2d1cae2c9869ffc5f247ee018dd900e.pack
+139253798	/fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter/repo-A1/.git/objects/pack/pack-7c03c831e2cd3dc179eea303d0fdfe43ba87edc2.pack
+139253299	/fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter/repo-A3/.git/objects/pack/pack-351405a0f97ce3e4c20d3a826ab7edb6e087334a.pack
+```
+(The ENOENT line is a transient on a file a live seat was rewriting — race, not a defect.)
+The six ~139 MB kaidoku-r50 packs are the ONLY >50 MB files anywhere under /fast/scratch/hyaku.
+
+## /tmp oversize top-level files
+```
+$ date '+%F %T %z'; find /tmp -maxdepth 1 -type f -size +50M -printf '%s\t%p\n'; echo "oversize-scan-exit=$?"
+2026-10-30 09:04:32 -0300
+oversize-scan-exit=0
+```
+No /tmp top-level file reaches 50 MB.
+
+## ls -ld --full-time kaidoku-r50 stale root
+```
+drwxr-xr-x 25 vgpnk vgpnk 4096 2026-10-29 19:29:58.251875180 -0300 /fast/scratch/hyaku/kaidoku-r50/w4-MutC1Counter
+```

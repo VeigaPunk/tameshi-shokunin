@@ -1,0 +1,43 @@
+# 02 — Lane repo status sweep (/home/vgpnk/Projects/shokunin/tameshi-shokunin)
+
+$ git -C <lane> status --porcelain -uall -- ':(exclude).ufo/waves'
+?? .ufo/evidence/round-58/integrate/c1-content-probe.exit
+?? .ufo/evidence/round-58/integrate/c1-content-probe.stdout
+
+$ git -C <lane> diff --name-only            # unstaged tracked modifications
+.ufo/waves/round-58/build-spec-w2.py
+$ git -C <lane> diff --cached --name-only   # staged index
+(empty)
+
+$ git -C <lane> status --porcelain -uall -- .ufo/waves/round-58 | wc -l
+332
+
+$ git -C <lane> ls-files .ufo/waves/round-58/w1 | wc -l
+248
+$ git -C <lane> ls-files .ufo/waves/round-58/w2 | wc -l
+0
+$ git -C <lane> status --porcelain -uall -- .ufo/waves/round-58/w1
+(empty)
+
+Reading:
+- The 332 dirty lines under .ufo/waves/round-58 are: 1 modification
+  ( M build-spec-w2.py) + 331 untracked entries, ALL of which are either
+  wave-2 seat outputs/receipts under w2/ or L1 dispatch machinery at the
+  round root (spec-w2.json, w2-dispatch.json, w2.ready, w2.ready.dispatched,
+  w2/swarm-registry.json) — i.e. in-flight wave-2 state awaiting the L1's
+  settlement commit. Wave-1 outputs are fully tracked (248 files) and
+  porcelain-clean: committed at C0 ("settled wave one") and untouched since.
+- Outside .ufo/waves the ONLY working-tree delta vs HEAD are the two untracked
+  integrate/ probe files (see receipt 05). No tracked file outside the waves
+  root is modified; the staged index is empty (nothing is even staged).
+
+$ stat -c '%y %n' <lane>/.ufo/waves/round-58/build-spec-w2.py
+2026-10-30 08:55:05.577653647 -0300 <lane>/.ufo/waves/round-58/build-spec-w2.py
+
+$ stat -c '%y %s %n' <lane>/.ufo/evidence/round-58/integrate/c1-content-probe.exit <lane>/.ufo/evidence/round-58/integrate/c1-content-probe.stdout
+2026-10-30 08:54:44.661648784 -0300 2 <lane>/.ufo/evidence/round-58/integrate/c1-content-probe.exit
+2026-10-30 08:54:44.661532454 -0300 587 <lane>/.ufo/evidence/round-58/integrate/c1-content-probe.stdout
+
+Read: builder edit at 08:55:05 = 21s after the C0 commit (08:54); probes at
+08:54:44 = the C0 commit second. INFERENCE: both are L1 settlement/dispatch
+activity, not seat writes.

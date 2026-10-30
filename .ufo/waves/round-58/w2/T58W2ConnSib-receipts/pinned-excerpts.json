@@ -1,0 +1,212 @@
+[
+  {
+    "owner": "kengaku-shokunin",
+    "revision": "16ef40fda5b32b93abd3d79f7e1cae48ee46585b",
+    "path": "/home/vgpnk/Projects/shokunin/kengaku-shokunin/corpus/QUALITY.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/kengaku-shokunin",
+      "show",
+      "16ef40fda5b32b93abd3d79f7e1cae48ee46585b:corpus/QUALITY.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      273,
+      295
+    ],
+    "output": "273: ## Round35 criterion \u2014 a routed defect lives in one ledger and re-runs forever\n274: \n275: - **Q23 \u2014 every defect a non-author closure routes to this lane enters `corpus/defects.jsonl` with a\n276:   check in `plans/defect_ledger.py` that is red when the row is written; a row says `closed` only\n277:   while its check passes at the tip.** A defect closed in prose and checked by a one-round counter\n278:   (`plans/round30_defects.py` \u2026 `round33_defects.py`) is checked once and then forgotten: round 34's\n279:   D1 (round-34 work left untracked) recurs round 33's N1 (round-32 wave paths untracked at the tip,\n280:   `plans/round-33-claims.md:87`), and nothing re-ran N1's check after round 33 closed it. The ledger checker re-runs every row at every\n281:   tip and counts a calibration mismatch for a `closed` row whose check fails and for an `open` row\n282:   whose check passes. Executable check: `python3 plans/defect_ledger.py --lane .` \u2014 any\n283:   `agree=NO` line, or a nonzero exit while a round report says its defects are closed, is a failure.\n284:   Each check compares the lane's self-assessment with an observation computed from repo bytes (a\n285:   manifest digest, a tag-stripped capture, the branch tree), so a correctly labelled but false\n286:   sentence does not pass. Shown able to fail: all five round-34 rows red at the round-35 freeze\n287:   (`.ufo/waves/round-35/claims/control-c2-nothing.txt`) and a status-only flip scores `mismatches=4`\n288:   (`control-c2-flip.txt`). The proposal and its date are `considerthese/2026-10-25.md`\n289:   \u00a7Self-improvement suggestions 2 (\"one persistent routed-defect ledger instead of a new\n290:   `plans/roundNN_defects.py` per round\", 2026-10-25); this discharges the debt Q22 named. Limits:\n291:   part (b) of that proposal (block pre-registration when a class recurs twice) is not implemented \u2014\n292:   `recurrence_of` is recorded, not enforced; checks are per-defect functions, so a new routed defect\n293:   still needs code. Mutation scratch runs in a `mktemp` clone outside the lane and commits only\n294:   receipts (round-34 D2: 106,323 committed mirror blobs). Lesson: `corpus/lessons/round-35.md`\n295:   \u00a7Mistakes.",
+    "blob_sha256": "81268cac3be8738ba51b5af5e259163c32ff16ad9e9ff5b36d812cb7d60ae8cf",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "kagi-shokunin",
+    "revision": "c49023b773b69de983f0e6eb7e5867ceb5c2c634",
+    "path": "/home/vgpnk/Projects/shokunin/kagi-shokunin/corpus/closure-dispositions.py",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/kagi-shokunin",
+      "show",
+      "c49023b773b69de983f0e6eb7e5867ceb5c2c634:corpus/closure-dispositions.py"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      2,
+      47
+    ],
+    "output": "2: \"\"\"Turn a non-author closure's decisions into a machine-checked obligation set.\n3: \n4: WHY. Round 22's outside spot-check routed nine defects (D1-D9), re-opened the\n5: discernment sample, and recorded an adjudication. Those are the lane's debts and\n6: its outside signal; before this gate they existed only as prose, so \"we handled\n7: the review\" was a self-certification. This gate parses the closure document,\n8: requires exactly one typed disposition per obligation, and resolves the\n9: pointer a `fixed` disposition names. It never decides whether a fix is good --\n10: it decides whether the lane recorded one and whether the record still resolves.\n11: \n12: WHAT IT READS. The source is a markdown closure record with these H2 sections:\n13: `## Routed defects` (one `- D<N> ...` bullet per defect), `## Discernment\n14: spot-check` (a `| item | decision | ... |` table whose decision cell is\n15: `admit` or `reject`), and `## Adjudication` (a line starting\n16: `**ADMITTED.**`/`**REJECTED...**`). Obligations become `D<N>`, `SPOT-<NN>` in\n17: table order, and `ADJ`. The document's sha256 is pinned by the dispositions\n18: file: a silent edit to the closure invalidates the obligations until the pin is\n19: reviewed.\n20: \n21: DISPOSITIONS. `corpus/closure-dispositions.json` carries `schema`, `source`,\n22: `source_sha256`, and `dispositions` rows `{id, class, disposition, pointer,\n23: note}`. `disposition` is one of `fixed` (pointer required; the pointed file must\n24: name the obligation id and, with `#anchor`, carry a heading containing the\n25: anchor), `reported`, `rejected`, `no-action`, `operator-owned` (pointer optional\n26: but must resolve when present; note >= 24 chars for every kind). Unknown,\n27: missing and duplicate ids are defects; a malformed record exits 2.\n28: \n29: USAGE.\n30:   python3 corpus/closure-dispositions.py [--root DIR] [--source PATH]\n31:                                           [--dispositions PATH] [--selftest]\n32: \n33: VERDICT (last line):\n34:   CLOSURE_DISPOSITIONS: CLEAN (obligations=N fixed=.. reported=..\n35:       operator_owned=.. no_action=.. rejected=.. pointers=..)          exit 0\n36:   CLOSURE_DISPOSITIONS: FAILED (obligations=N dispositions=M missing=..\n37:       unknown=.. unresolved=..)                                       exit 1\n38:   CLOSURE_DISPOSITIONS: SETUP (<reason>)                              exit 2\n39:   --selftest: CLOSURE_DISPOSITIONS_SELFTEST: PASS (N cases)           exit 0\n40: \n41: Bounds: the gate checks record shape, obligation-id coverage and pointer\n42: presence. Obligations are the closure's id list, not the reviewer's verdicts;\n43: a `fixed` pointer proves that a file exists at that path and contains the id\n44: token somewhere (comments count), not that a reviewer saw a fix, that the\n45: target is pinned, or that the fix works. It does not rerun fixes, compare\n46: verdicts, or reach the network; the parent's non-author closure still owns\n47: admission.",
+    "blob_sha256": "8cfaa52fc2ef527600779fb38d01f6335473c754feeb4370ceada949fed7429c",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "kasegi-shokunin",
+    "revision": "82a8bd702900889c70a8fc2dbae91d2095dec800",
+    "path": "/home/vgpnk/Projects/shokunin/kasegi-shokunin/corpus/instruments/r45-routed-defects.py",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/kasegi-shokunin",
+      "show",
+      "82a8bd702900889c70a8fc2dbae91d2095dec800:corpus/instruments/r45-routed-defects.py"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      36,
+      47
+    ],
+    "output": "36:     A limb counts only when the bound artifact bytes carry the content; every\n37:     value is read as a whole token and printed.  READ-ONLY over --root and\n38:     --baseline; never runs git.  Honors TMPDIR (no hardcoded /tmp).\n39: \n40: VERSION 1.1 (erratum E1, predicate and limb names unchanged; v1 digest 82004c700decbc3453baa57919ccff71cbfe322a8d2a71b558d75951c24f04ee)\n41:     Wave 1 falsified v1 (`.ufo/waves/round-45/wave1/R45Rev*`, `R45Mut*`, `R45ExecSelftestC1.md`): vacuous `flip: tbd`, a row inside a code fence,\n42:     a stub freeze-check/selftest that prints the tokens, a weakened claims file replayed from the graded tree, a hand-typed receipt, directory\n43:     `enforced-by` targets.  v1.1 binds CONTENT: the frozen source capture is pinned by sha256, code artifacts (r44-frontier-count.py, freeze-check.py,\n44:     r44-routed-defects.py) are pinned by sha256 so a stub must reproduce the genuine bytes, the claims file replayed by R4 must equal the frozen\n45:     claims sha, rows are read only from the real registry table (not fences/comments), the lesson correction must quote located S072 text, and the\n46:     R5 receipt body must equal the pinned one-run output of the r44 selftest at c950fa3.  source-recheck.py and freeze-check.py run from THIS script's own lane\n47:     (the grader's tool root), never from the graded tree.",
+    "blob_sha256": "090197d7d88ca87c122b113a28a64f6e9cd19c9b6992d4aff4d0922a134ea31e",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "kasegi-shokunin",
+    "revision": "82a8bd702900889c70a8fc2dbae91d2095dec800",
+    "path": "/home/vgpnk/Projects/shokunin/kasegi-shokunin/corpus/instruments/r46-mutant-equivalents/README.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/kasegi-shokunin",
+      "show",
+      "82a8bd702900889c70a8fc2dbae91d2095dec800:corpus/instruments/r46-mutant-equivalents/README.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      1,
+      55
+    ],
+    "output": "1: # Equivalent-mutant proofs \u2014 round 46 attempt 2 (C1)\n2: \n3: Each proof argues that the named single-edit mutant of the round-46 counter cannot change any\n4: verdict on any input tree, so the committed selftest cannot catch it and the battery's\n5: `equivalent` classification is the honest reading. Falsifying any proof (constructing an input\n6: class where the mutated clause flips a verdict) kills the equivalence and with it the claim.\n7: \n8: ## M14-L6-exit-ignored (r46-c1-gate.py:337 `p.returncode == 0 or` dropped)\n9: \n10: Mutant: in L6's per-row survivor test, `if p.returncode == 0 or red != [r[0]]:` becomes\n11: `if red != [r[0]]:`.\n12: \n13: Proof: `entry_mode` (the per-entry check the subprocess runs) exits 0 only when EVERY row reads\n14: `ok=1` \u2014 `ok == len(rows)` is its exit condition. Therefore `p.returncode == 0` implies\n15: `red == []` (no survivor rows), which makes `red != [r[0]]` true for every row already. The\n16: disjunct is thus implied by the other operand on every input: removing it cannot change the\n17: branch. Empirical differential: `m14-equivalence-differential.py` runs the unmutated and M14\n18: counters over 15 trees (the synthetic tip plus 14 single-defect variants: token absent, anchor\n19: moved, short token, hash token, planted in place, overlap tokens, duplicate token, duplicate\n20: anchor range, tautology, one anchor file, five rows, pipe token, anchor symlink, anchor\n21: outside) \u2014 `trees=15 differing=0` (receipt `M14-L6-exit-ignored-receipt.txt`, script\n22: `m14-equivalence-differential.py`, both committed beside this proof).\n23: \n24: ## G6b-integrity-loose (r46-c2-gate.py g6: `base_ok = base_ok and cont == PINS[...] and ledger_ok`)\n25: \n26: Mutant: the v1.3 gate's content-pin and ledger-floor conjuncts dropped from `base_ok`.\n27: \n28: Proof, per the attempt-2 equivalence probe (`G6b-G7a-G7c-equivalence-probe.txt`, C2 seat):\n29: the battery's c2 selftest grades g6 through 13 knowledge-dir mutations; the unmutated and G6b\n30: counters produced 0 differing readings across all 13 (`G6b battery finished: 0 readings differ\n31: across 13 knowledge-dir mutations`). Mechanism: every input class that would make\n32: `cont != PINS[...]` or `ledger_ok == False` true also makes `len(names) == 66` false or\n33: `base_ok`'s name-pin false FIRST (a mutated or shrunk file keeps its name, so the name-set pin\n34: still matches \u2014 but the content mutation classes the selftest builds all rename, delete, nest or\n35: symlink, each of which the surviving conjuncts reject). The conjunct is reachable only by a\n36: content-only, name-stable mutation of a pinned file; the selftest's battery contains no such\n37: tree, and the gate-level H6 of the new f29 gate pins content independently. Residual: a\n38: content-only swap of one pinned knowledge entry is NOT caught when g6 is graded alone through\n39: this battery \u2014 it IS caught by the aggregate gate at the landed tree (the tip tree is a positive;\n40: any content mutation flips `base-intact=0` there). Classified equivalent-on-battery.\n41: \n42: ## G7a-verdict-or (r46-c2-gate.py g7: `rc == 0 and ok_line` -> `rc == 0 or ok_line`)\n43: \n44: Proof (same probe): the census subprocess is the fleet script; on every tree the selftest and\n45: battery build, `rc == 0` implies the `ok` line is present and `rc != 0` implies it is absent, so\n46: `and` and `or` coincide on every reachable input (`G7a/G7c census battery` \u2014 no differing\n47: readings). A tree that decouples them (census exits 0 without an ok line, or fails while\n48: printing one) would require mutating the fleet census script itself, which no lane-side tree\n49: can do. Classified equivalent-on-battery.\n50: \n51: ## G7c-okline-loose (`re.search(r\"^\\S+\\tok\\t\", ...)` -> without the trailing tab)\n52: \n53: Proof (same probe): identical input-class argument to G7a \u2014 the census's ok line always carries\n54: the tab when rc == 0, so loosening the anchor changes no verdict on any reachable tree.\n55: Classified equivalent-on-battery.",
+    "blob_sha256": "27931609b62549addad6377e783108d2c238469475fbc07d040b75795acb5212",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "kotoba-shokunin",
+    "revision": "47dbe8781657de563ff867caca6244d28e3db504",
+    "path": "/home/vgpnk/Projects/shokunin/kotoba-shokunin/corpus/knowledge/g7-span-pinning-round64.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/kotoba-shokunin",
+      "show",
+      "47dbe8781657de563ff867caca6244d28e3db504:corpus/knowledge/g7-span-pinning-round64.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      95,
+      104
+    ],
+    "output": "95: \n96: - **A survivor is not automatically a gap.** S120 \u00a73.2.2: `Equivalent mutants,\n97:   which are semantically equivalent to the mutated program, are a plague in\n98:   mutation testing and cannot generally be detected automatically` (line breaks\n99:   joined; no other shaping). SM2, SM3 and SM5 were argued *not* equivalent by\n100:   divergence rather than assumed: over 20 000 random cells SM2 differs on 3 607 (wave-2 re-measures: 3 567 / 3 505 \u2014 the \u00a711 generator is unrecorded, so the figure is attributable, order-verified, not exactly reproducible) ;\n101:   SM3 differs on any span whose only \u22654-character word is a stopword; SM5\n102:   differs on a span word present in the cited line but absent from the page.\n103:   This record is a divergence set, not a kill rate \u2014 a mutant whose divergence\n104:   set is empty survives legitimately.",
+    "blob_sha256": "c45a7c1531858078e7175f57c08df32495267211e0871cbc59a7fee56c1304a8",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "kotoba-shokunin",
+    "revision": "47dbe8781657de563ff867caca6244d28e3db504",
+    "path": "/home/vgpnk/Projects/shokunin/kotoba-shokunin/corpus/knowledge/g7-span-closure-round65.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/kotoba-shokunin",
+      "show",
+      "47dbe8781657de563ff867caca6244d28e3db504:corpus/knowledge/g7-span-closure-round65.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      22,
+      31
+    ],
+    "output": "22: - **SPAN_FIRST / SPAN_LAST** (`MutW2M7M22` \u00a78a \u2014 judge-level evasion): a cell\n23:   with two backticked spans smuggles the fabrication past the branch whenever\n24:   the fabricated span is not the one the mutant inspects. Two arms, one per\n25:   direction: a fabricated first span is rejected when an honest second span\n26:   follows it, and a fabricated second span is rejected when an honest first\n27:   span precedes it. S121 is the design source for this witness shape: coupling\n28:   two first-order sites into one second-order mutant is a studied strategy,\n29:   measured to reduce equivalent mutants and test effort \u2014 the coupled\n30:   honest-plus-fabricated cell is a first-class adequacy witness, not an\n31:   artificial one.",
+    "blob_sha256": "3fc69bca147fe09c6c08632258807a74d430818dc7f511f2a42d24969462ac19",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "souji-shokunin",
+    "revision": "395552194348873622b39651c971fa909af0d939",
+    "path": "/home/vgpnk/Projects/shokunin/souji-shokunin/corpus/QUALITY.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/souji-shokunin",
+      "show",
+      "395552194348873622b39651c971fa909af0d939:corpus/QUALITY.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      217,
+      218
+    ],
+    "output": "217: | Q87 | A \"documented exit map\" check binds only what it measures: the module docstring read through `ast.get_docstring`, comments stripped with `tokenize.untokenize`, every refusal idiom collected (`raise Refusal(\"TOKEN:` and `REFUSAL TOKEN:`), and whole-token matching in both directions. A raw-substring or first-triple-quoted-literal scan accepts a phantom class and false-rejects a commented-out raise. | static documentation checks in gates and fixtures | run the eleven-variant table: the landing must pass; a commented-out raise must pass; a non-raise exit-2 class, a doc-only phantom class and a prefix-degraded name must each fail | `census/round-38/records/a1-docstring-variants.txt`; `W1RevDocstring` variants a1/c2/d/d2; `corpus/lessons/round-38.md` M5 |\n218: | Q88 | A self-assessment value binds to a commit, not only to a receipt path: the cell must name a 40-hex commit that resolves, is an ancestor of the audited revision, appears on the anchored line, and the receipt blob at that commit must carry the value. A register whose every row repeats `receipt_rev` in the commit cell does not exercise the arm, and an author who writes the line can always name the wrong commit \u2014 say both in the limits. | calibration counters over the lane's own scored cells | run the reconciler with the register pinned at its freeze revision and the fixture: every commit class must have a case, and at least one case must reach `mismatches>=1` with a receipt that exists but disagrees | `census/round-38/records/c1-after2.txt` (`cells=10 mismatches=0`); `census/round-38/records/c1-vacuity2.txt`; `W1MutCounter` 5/5; `W1CritC1` forged-pass demonstration |",
+    "blob_sha256": "faef11f41924b8c7722260565a20a555233cbf56c9ab546d7a470b15de863aa2",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "mado-shokunin",
+    "revision": "f808ca67dc003f1d4c7ffd70b757cbeec0d42f0d",
+    "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/mutation-testing-r28.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin",
+      "show",
+      "f808ca67dc003f1d4c7ffd70b757cbeec0d42f0d:corpus/knowledge/mutation-testing-r28.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      1,
+      28
+    ],
+    "output": "1: ---\n2: source:\n3:   - S183\n4: verified-at: 2026-10-23 (S183 DOI metadata opened; prior-gate references checked)\n5: recheck: on-source-or-gate-change\n6: ---\n7: \n8: # Finite mutation suites: evidence and limits\n9: \n10: ## Scope\n11: \n12: This note uses \u201cmutation score\u201d only as a summary of how a test suite treats a selected, finite mutant population. A score or pass verdict is conditional on the chosen mutants, subject/input population, oracle, harness, and frozen scoring rule. It is not a direct measure of real-fault detection.\n13: \n14: The opened S183 source is Just et al.'s paper identity and title. The DOI reader returned CrossRef metadata with no abstract, so this note attributes no empirical result, method detail, or conclusion to the inaccessible paper text. Its title frames mutant-to-real-fault substitution as a question, not an answer. [S183]\n15: \n16: ## What a finite mutation gate claims\n17: \n18: The round-28 C1 claim is deliberately bounded: its six registered legs test the frozen suite/counter behavior against named round-27 survivors, a rotated held-out set, a public reference set, specified boolean-word inputs, Q36 witness fixtures, and the Q37 population checker. Meeting those predicates at a revision is evidence about those artifacts and that enumerated challenge surface, not a claim that arbitrary real faults will be found. [`.ufo/waves/round-28/registration.md:17-55`]\n19: \n20: A surviving mutant is evidence that the tested suite did not distinguish that mutant under the gate's observations; it is not, by itself, proof of a real defect. A behaviorally equivalent mutant cannot be distinguished by any test that observes the same behavior. If equivalent mutants remain in the counted population, they can appear as survivors; if they are excluded, equivalence classification affects the denominator. Neither mutation score nor a target-met verdict establishes that the selected mutants represent the distribution of real faults.\n21: \n22: ## Limits inherited by C1\n23: \n24: - **Finite population:** conclusions stay within the mutants, subjects, and input cases actually named by the frozen legs; H2 rotation is evidence about H2, not every possible future mutant. The registration separately discloses that leg 1 depends on inherited ephemeral H1 data. [`.ufo/waves/round-28/registration.md:31-55,94-107`]\n25: - **A passing finite suite can miss bypasses:** M26-8 records 6/10 self-test mutants and 3/6 Q37 mutants surviving, alongside Q36's receipt-format failure. This is evidence that initial mutation/fixture sets left concrete paths uncovered, not a population-wide fault-detection estimate. [`corpus/lessons/round-26.md:32`]\n26: - **A counter can reward shortcuts:** M27-3 records flat-scan/shortcut readers meeting earlier counters, followed by v4 pilots missing target. A target must therefore be read with the mutant set and gate revision that produced it; passing a finite rule does not prove general implementation adequacy. [`corpus/lessons/round-27.md:15`]\n27: - **No real-fault substitution result:** S183's opened metadata contains no abstract or article findings. It cannot support a claim that mutation scores predict real-fault detection, nor a quantitative transfer rate. [`corpus/SOURCES.md:195`; DOI reader output, 2026-10-23]\n28: ",
+    "blob_sha256": "23adb98c2fe85b1fddecb4722486d4607b497cd80661db2c90358cd528882781",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "tameshi-shokunin",
+    "revision": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge/llm-mutant-equivalence-cost.md",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "show",
+      "8063d0a551fc5b3cb5a2d397da7353af53444534:corpus/knowledge/llm-mutant-equivalence-cost.md"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      28,
+      58
+    ],
+    "output": "28: ## What this means for the lane's survivor classes\n29: \n30: - **A survivor is not yet a test hole.** The lane's survivor classes (its\n31:   own arm-class matrix, and the B5 / D2 / D10 survivors) are all cases where\n32:   a mutant was *not killed*. S286 reports a higher overall equivalent-mutant\n33:   rate; it does not establish equivalence conditional on survival.\n34:   Inference: classify an LLM-era survivor before calling it a suite gap.\n35:   A non-equivalence witness is an input distinguishing mutant and original;\n36:   this is not an automated proof that arbitrary survivors are equivalent.\n37: - **Three counters, not one.** S286 reports non-compilability, duplication\n38:   and equivalence as three separate rates. The lane's F1 note (compile and\n39:   runtime errors excluded from the score, per its held S001) means a\n40:   non-compilating LLM mutant must not silently enter the denominator.\n41:   Inference: an LLM-era sweep needs three counters.\n42: - **The two literatures agree on the hazard.** S286 quantifies the\n43:   equivalence rate in English; S287 states the same hazard in Chinese and\n44:   adds an explicit statement that the problem admits no automatic solution.\n45: \n46: ## Boundary of this entry\n47: \n48: - S286 measures Java real-world bug benchmarks. The lane's ten recorded\n49:   replay cases span JavaScript and bash gates; that is a different population.\n50:   The numerical transfer is **not measured**: no lane sweep has produced an\n51:   LLM-generated mutant; this entry supplies a counting contract, not a pilot.\n52: - Equivalence stays undecidable (S287): a witness is per-mutant evidence\n53:   (an input where the mutant and the original differ), never a general\n54:   decision procedure. The lane's 1-minimality witness\n55:   (`corpus/knowledge/delta-debugging-minimization-contract.md`) reduces a\n56:   failing case; it does not decide equivalence.\n57: - The F9 pilot move (a bounded LLM-mutant pilot with an independent outcome\n58:   check) remains unmeasured; this entry does not close it.",
+    "blob_sha256": "9f7cc242934ba0ac3e08d032d7175c64a4017fe3f4aa7ab689db32a53ca6c3c7",
+    "working_tree_matches_blob": true
+  },
+  {
+    "owner": "tameshi-shokunin",
+    "revision": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-58/c2/measure.py",
+    "command": [
+      "git",
+      "-C",
+      "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "show",
+      "8063d0a551fc5b3cb5a2d397da7353af53444534:.ufo/evidence/round-58/c2/measure.py"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "selected_lines": [
+      19,
+      33
+    ],
+    "output": "19: Arms (each an integer shortfall; total = their sum; PASS iff total == 0):\n20: \n21:   rows      tools/registry.json at REV has >= 3 active `gate` rows whose argv is\n22:             `python3 tools/receipt-revision-gate.py ... --receipt ...` without `--selftest`;\n23:             together they expect the exits 0, 2 and 3; every row expecting 2 or 3 carries a\n24:             `RECEIPT_*` code that the gate's CODES defines in `expect.stdout_contains`.\n25:             shortfall = max(0, 3 - gate_rows) + missing exits of {0,2,3} + refusal rows without a\n26:             known named code.\n27:   executed  `registry-check.py --root LANE --rev REV --only NAME` (registry-check bytes at REV,\n28:             clone under --work) for each such row: held=h/n. shortfall = n - h.\n29:   mutants   three single-edit mutants of the gate (mutants.json, sha256 pinned below; each `old`\n30:             must occur exactly once in the gate at REV) are applied to the gate inside a\n31:             `git clone --shared` of REV and the rows rerun live there (`--root CLONE --only`); a\n32:             mutant is killed when a row that held on the unmutated clone now differs with an\n33:             integer exit. mutants=k/3, shortfall = 3 - k (an unappliable mutant is not killed).",
+    "blob_sha256": "d4219039f02c1fd389cb47ca2b9968d0335e4254e8477c012fd2cdfbccd3b984",
+    "working_tree_matches_blob": true
+  }
+]

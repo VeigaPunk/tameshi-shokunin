@@ -1,0 +1,31 @@
+$ git -C kagi-shokunin rev-parse HEAD
+c49023b773b69de983f0e6eb7e5867ceb5c2c634
+$ git -C kagi-shokunin show c49023b773b69de983f0e6eb7e5867ceb5c2c634:corpus/drift-pins.sh | sed -n "158p;400p;403p;404p"
+     1	      printf 'DRIFT   %s %s\n' "$p" "${diffs[*]}"; f_bad=$((f_bad + 1))
+     2	    out=$("$0" --baseline "$base" --symbols "$sym" 2>&1) && rc=0 || rc=$?
+     3	    elif ! grep -q "$3" <<< "$out"; then
+     4	      printf 'drift-selftest: FAIL %s: no /%s/ in output\n' "$1" "$3"; fails=$((fails + 1))
+$ git show 38e4e3aff7cf -- corpus/lessons/round-58.md (the R51.5 filing hunk)
+ 
+ Every row below was opened by this lane (L1 fetch) on 2026-10-30; fetch receipts and located
+ extracts are committed at `.ufo/waves/round-58/l1/sources/`.
+@@ -80,3 +82,12 @@ Status/recheck/used-by changes (old→new, append-only log):
+ ## Wave record
+ 
+ (completed at the round's close: wave sizes, role mix, dead seats, results paths)
++
++## R51.5 — cross-domain handoff to kagi
++
++At kagi revision `c49023b773b69de983f0e6eb7e5867ceb5c2c634`, `corpus/drift-pins.sh` lines 400 and 403 use `grep -q "$3" <<< "$out"` to search expected verdict words as unanchored regular expressions. Line 158 prints `DRIFT   %s %s` with path text, which can contaminate such a word search; it is a diagnostic producer, not itself a grep.
++
++Recommendation to kagi: anchor the intended verdict record and distinguish it from path-bearing diagnostics; preserve separate pass/fail assertions. No kagi file was edited. This handoff is included in the round-58 fleet report.
++
++Evidence: `.ufo/waves/round-58/w1/T58W1Fix08/stage/kagi-crossdomain-r51.5.md` records the read-only source and revision commands.
++
+$ stale row assessment vs C0 tree
+ledger R51.5 row says (corpus/routed-defects.json):
+   "id": "R51.5",
+   "status_at_base": "open",
+1226:   "assessment": "Detailed kagi routing exists as a seat draft; next canonical round report omits the cross-domain finding. A draft and rejection of its suggested fix do not file the promised report item."
+but corpus/lessons/round-58.md:88 now files it:
+At kagi revision `c49023b773b69de983f0e6eb7e5867ceb5c2c634`, `corpus/drift-pins.sh` lines 400 and 403 use `grep -q "$3" <<< "$out"` to search expected verdict words as unanchored regular expressions. 

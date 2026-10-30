@@ -42,6 +42,14 @@ You re-read ONE SKILL.md section whose cold-read credit the round's edits drifte
 4. Do NOT edit SKILL.md: findings are adjudicated by the L1 (fixed in this round where cheap, else recorded and routed). A finding without a command and its output is not a finding.
 """
 
+CONTEXT += f"""
+# Ledger-review contract (all T58W2RevRows seats)
+For each assigned id, read its full statement and keys from {LANE}/.ufo/evidence/round-58/c1/defects.json; compare the installed row to the actual tree at C0 and base {BASE}. Check commit ancestry, status_at_base, keyed excerpts, actual semantic resolution, and the current Planned paragraph. A heading/shebang or incidental key match is not substantive proof. Report per-id agree/disagree with commands and output.
+
+# Decisive wave-1 finding
+C2's bent-runner forgery in {LANE}/.ufo/waves/round-58/w1/T58W1RevengerC2-receipts/ makes the frozen counter print PASS without executing the rows, by replacing its unpinned registry-check.py executor. The L1 will report C2 not admitted even if its numerical counter passes. Do not change or weaken the frozen target; inspect and reproduce the attack as evidence. Source-gate rejection wording was corrected before C0 (overall equivalence is not equivalence conditional on survival).
+"""
+
 ITEMS = []
 
 

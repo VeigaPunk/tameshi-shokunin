@@ -1,0 +1,113 @@
+{
+  "seat": "T58W2Sent01",
+  "role": "sentinel",
+  "round": 58,
+  "wave": 2,
+  "milestone": "write scope sweep",
+  "lane_base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "c0": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "generated_at": "2026-10-30T09:09:18-03:00",
+  "verdict": "clean",
+  "scope": "Fleet-root misroot sweep; lane protected-path integrity (corpus/, SKILL.md, tools/, .ufo/evidence/round-50..57) vs base and C0; mutating git/jj command scan of round-58 wave reports (w1+w2).",
+  "findings": [],
+  "findings_note": "No seat write-scope violation found: zero fleet-root untracked files; zero lane modifications or commits outside contracted L1 settlement paths; SKILL.md untouched since base; no seat-claimed edit into a protected path; no mutating git/jj command against lane or fleet in any w1/w2 report or receipt.",
+  "observations": [
+    {
+      "id": "O1",
+      "severity": "informational",
+      "statement": "Only fleet-root delta is tracked file .scratch/goal-20261029-hyaku-run12.md (+64 lines, append-only run-12 recovery journal: seven-L1 recovery, kasegi r46/r47, mado r56 security incident, settlement records). No untracked files at the fleet root; no seat misroots there.",
+      "evidence": "git -C /home/vgpnk/Projects/shokunin status --porcelain -uall -> ' M .scratch/goal-20261029-hyaku-run12.md' only; stat mtime 2026-10-30 05:56:22 -0300 (~3h before C0 08:54).",
+      "attribution": "INFERENCE: fleet driver/L0 journaling predating this round's dispatch; not a tameshi seat write."
+    },
+    {
+      "id": "O2",
+      "severity": "informational",
+      "statement": "Lane tracked file .ufo/waves/round-58/build-spec-w2.py is modified, uncommitted: diff is exactly the appended wave-2 CONTEXT (ledger-review contract + decisive bent-runner-forgery paragraph) that this seat received in its dispatch prompt. Staged index is empty.",
+      "evidence": "git -C <lane> diff --name-only -> build-spec-w2.py; git -C <lane> diff --cached --name-only -> empty; diff content in receipt 05; mtime 08:55:05, 21s after C0 commit (08:54).",
+      "attribution": "INFERENCE: L1 amended its own wave-2 spec builder post-settlement, then dispatched wave 2. L1-owned tooling; outside all four protected categories."
+    },
+    {
+      "id": "O3",
+      "severity": "informational",
+      "statement": "Two UNTRACKED files exist under current-round evidence: .ufo/evidence/round-58/integrate/c1-content-probe.{exit,stdout} (587-byte stdout = frozen c1 counter at rev=C0, total=0 C1_R58_PASS=true, panel=4/5 with four EXPLAIN panel-disagree rows). They are NOT part of the frozen C0 bytes.",
+      "evidence": "lane status ':(exclude).ufo/waves' shows exactly these two entries; mtimes 08:54:44 = C0 commit second; content in receipt 05.",
+      "attribution": "INFERENCE: L1 settlement integration probe, not a seat write. Surfaced so the L1 knows they are uncommitted at wave-2 time."
+    },
+    {
+      "id": "O4",
+      "severity": "low-flag",
+      "statement": "Four NEW files (all 'A', no M/D) were committed since base under PRIOR-round evidence: round-53/after/c1.stdout, round-53/after/c2.stdout, round-53/verify-freeze-final.stdout, round-55/after/c2-full.stdout, in commits 764f87bc (08:41) and 7d5ae605 (08:34), both pre-C0, author AND committer = tameshi-shokunin <tameshi@shokunin.local> (lane-helper identity used exclusively by L1 settlement commits). These are the receipts wave-1 fix items T58W1Fix03/04/05 were instructed to stage; the L1 helper committed them. No prior-round file was modified or deleted; nothing post-C0; nothing uncommitted.",
+      "evidence": "git diff --name-status 2a32aa8..HEAD -- (8 explicit round dirs) -> 4 A entries; git log --format author/committer -1 for both commits; log --name-only -- .ufo/evidence/ since base lists only these plus expected round-58 additions.",
+      "attribution": "Seats did not edit prior-round evidence. INFERENCE: sanctioned append-only additions by the L1 helper during settlement. Flagged because seat-facing contract prose calls round-50..57 evidence read-only; L1 may want a one-line disposition."
+    },
+    {
+      "id": "O5",
+      "severity": "medium",
+      "statement": "Pathspec trap that false-cleans write-scope checks: git wildcard pathspecs must match the FULL path, so '.ufo/evidence/round-5[0-7]' (the exact form printed in the round's contract prose), ':(glob)...round-5[0-7]', and '...round-5[0-7]/' ALL return empty against a real 4-file delta; only '...round-5[0-7]/**' returns the files. A scripted no-changes check using the naive form would report clean falsely. This seat's first check did exactly that and was caught only by cross-checking git log --name-only.",
+      "evidence": "receipt 04: three empty naive/glob/trailing-slash runs vs explicit enumeration returning 4 A files vs '.ufo/evidence/round-5[0-7]/**' returning the same 4.",
+      "attribution": "Observed directly. Smallest remediation: scripted evidence checks must append '/**' (or enumerate round dirs explicitly), never trust the bare bracket pathspec's empty output."
+    },
+    {
+      "id": "O6",
+      "severity": "medium",
+      "statement": "Wave-1 write-scope sweep produced no evidence: T58W1Sent01 was dispatched (w1-dispatch.json spawn record; member of w1.ready.dispatched) but w1-results.json records output:\"\" and no w1/T58W1Sent01.{md,json} exists (w1 is fully tracked at C0, 248 files, none named T58W1Sent01). The wave-2 scribe independently counted Sent01/Sent02 among 'empty identities ... No credit assigned'. Wave 1 therefore has NO recorded write-scope sweep; this report is the first.",
+      "evidence": "receipt 07 (glob result, ls-files counts, w1-results.json:307-311, T58W2ScribeEvidence.md:30).",
+      "attribution": "Observed from retained artifacts. INFERENCE: the seat yielded empty; cause unobservable from the lane."
+    },
+    {
+      "id": "O7",
+      "severity": "informational",
+      "statement": "Grep tool anomaly during this sweep: a round-wide 'git push' search returned three file groups whose windows lack the pattern; file-scoped searches prove w1-dispatch.json and T58W2RevRows2-receipts/structural.json contain no 'push' substring at all and sweep.json's only 'push' occurrences are quoted historical prose ('UNPUSHED' gate labels, 'pushed to origin' narrative, 'push/merge/stash' bounds quote). Net: zero git push executions in round-58 wave content. Reported to xd://report_issue (acknowledged).",
+      "evidence": "receipt 06 items 11.",
+      "attribution": "Observed directly."
+    }
+  ],
+  "checks": [
+    {"name": "fleet-root porcelain", "command": "git -C /home/vgpnk/Projects/shokunin status --porcelain -uall", "result": "only ' M .scratch/goal-20261029-hyaku-run12.md'; zero untracked", "receipt": "receipts/01-fleet-status.txt"},
+    {"name": "fleet staged/unstaged", "command": "git -C /home/vgpnk/Projects/shokunin diff --name-only HEAD; git -C /home/vgpnk/Projects/shokunin diff --cached --name-only", "result": "goal file only; staged empty", "receipt": "receipts/01-fleet-status.txt"},
+    {"name": "lane status outside waves", "command": "git -C <lane> status --porcelain -uall -- ':(exclude).ufo/waves'", "result": "only 2 untracked round-58 integrate probes", "receipt": "receipts/02-lane-status.txt"},
+    {"name": "lane unstaged/staged", "command": "git -C <lane> diff --name-only; git -C <lane> diff --cached --name-only", "result": "build-spec-w2.py only; staged empty", "receipt": "receipts/02-lane-status.txt"},
+    {"name": "wave dir state", "command": "git -C <lane> status --porcelain -uall -- .ufo/waves/round-58 | wc -l; ls-files w1|wc -l; ls-files w2|wc -l; status -- w1", "result": "332 dirty (1 M + 331 untracked, all w2 outputs/dispatch machinery); w1=248 tracked, clean; w2=0 tracked", "receipt": "receipts/02-lane-status.txt"},
+    {"name": "C0 verification", "command": "git -C <lane> log --oneline -3; rev-parse HEAD; log --oneline C0..HEAD; diff --name-status C0..HEAD", "result": "HEAD==C0; no commits and no file changes after C0", "receipt": "receipts/03-lane-head.txt"},
+    {"name": "ancestry", "command": "git -C <lane> merge-base --is-ancestor 2a32aa8 8063d0a", "result": "BASE-IS-ANCESTOR-OF-C0", "receipt": "receipts/03-lane-head.txt"},
+    {"name": "protected-path commits", "command": "git -C <lane> log --format='%h %an %ad %s' --name-status 2a32aa8..HEAD -- corpus SKILL.md tools", "result": "9 commits, all L1-helper identity, item-id messages, pre-C0; SKILL.md untouched; d21ee8ed M tools/registry.json (contracted install)", "receipt": "receipts/04-protected-and-prior-evidence.txt"},
+    {"name": "prior-round evidence", "command": "diff --name-status 2a32aa8..HEAD over 8 explicit round dirs; naive/glob/trailing-slash vs '/**' pathspec; status -uall prior-round", "result": "4 A files (round-53 x3, round-55 x1) committed 764f87bc/7d5ae605 pre-C0 by lane-helper identity; no M/D; nothing uncommitted; naive pathspec false-cleans (see O5)", "receipt": "receipts/04-protected-and-prior-evidence.txt"},
+    {"name": "frozen instruments", "command": "git -C <lane> status --porcelain -uall -- c1 c2 control contract.json freeze.json (round-58)", "result": "empty - frozen counters and forgery receipts byte-identical to C0; decisive target not weakened", "receipt": "receipts/04-protected-and-prior-evidence.txt"},
+    {"name": "mutation scan w1+w2", "command": "12 grep patterns over .ufo/waves/round-58 (lane-targeted/fleet-targeted/bare verbs/jj verbs/checkout-reset/push/rm/sed-i/protected-path writes/cd-into-repo)", "result": "no mutating git/jj command against lane or fleet in any report or receipt; all hits read-only commands, contract prose, scratch-clone fixture commits, or quoted historical records", "receipt": "receipts/06-mutation-scan.txt"},
+    {"name": "w1 sentinel gap", "command": "glob w1/T58W1Sent01*; w1-results.json:307-311; T58W2ScribeEvidence.md:30", "result": "wave-1 sentinel output empty/absent; no retained wave-1 sweep", "receipt": "receipts/07-w1-sentinel-gap.txt"}
+  ],
+  "commands": [
+    "git -C /home/vgpnk/Projects/shokunin status --porcelain -uall",
+    "git -C /home/vgpnk/Projects/shokunin diff --name-only HEAD && git -C /home/vgpnk/Projects/shokunin diff --cached --name-only",
+    "git -C /home/vgpnk/Projects/shokunin diff --stat && git -C /home/vgpnk/Projects/shokunin diff -- .scratch/goal-20261029-hyaku-run12.md",
+    "git -C <lane> status --porcelain -uall -- ':(exclude).ufo/waves'",
+    "git -C <lane> status --porcelain -uall -- .ufo/waves/round-58 | wc -l",
+    "git -C <lane> diff --name-only && git -C <lane> diff --cached --name-only",
+    "git -C <lane> ls-files .ufo/waves/round-58/w1 | wc -l && git -C <lane> ls-files .ufo/waves/round-58/w2 | wc -l && git -C <lane> status --porcelain -uall -- .ufo/waves/round-58/w1",
+    "git -C <lane> log --oneline -3 && git -C <lane> rev-parse HEAD",
+    "git -C <lane> log --oneline 8063d0a..HEAD && git -C <lane> diff --name-status 8063d0a..HEAD",
+    "git -C <lane> merge-base --is-ancestor 2a32aa8 8063d0a",
+    "git -C <lane> diff --name-status 2a32aa8..HEAD -- .ufo/evidence/round-50 ... round-57 (explicit)",
+    "git -C <lane> diff --name-only 2a32aa8..HEAD -- '.ufo/evidence/round-5[0-7]' (naive, FALSE CLEAN)",
+    "git -C <lane> diff --name-only 2a32aa8..HEAD -- ':(glob).ufo/evidence/round-5[0-7]' (FALSE CLEAN)",
+    "git -C <lane> diff --name-only 2a32aa8..HEAD -- '.ufo/evidence/round-5[0-7]/' (FALSE CLEAN)",
+    "git -C <lane> diff --name-only 2a32aa8..HEAD -- '.ufo/evidence/round-5[0-7]/**' (correct: 4 files)",
+    "git -C <lane> log --name-only --oneline 2a32aa8..HEAD -- .ufo/evidence/",
+    "git -C <lane> log --format='%h %an <%ae> %ad %s' --name-status 2a32aa8..HEAD -- corpus SKILL.md tools",
+    "git -C <lane> log --format='%h author=%an committer=%cn %ad %s' -1 764f87bc; same for 7d5ae605",
+    "git -C <lane> status --porcelain -uall -- .ufo/evidence/round-58/{c1,c2,control} contract.json freeze.json",
+    "git -C <lane> diff -- .ufo/waves/round-58/build-spec-w2.py",
+    "stat -c '%y %s %n' on goal file, build-spec-w2.py, both integrate probes",
+    "grep sweeps (12 patterns, gitignore=false) over .ufo/waves/round-58 plus 3 file-scoped follow-ups",
+    "read w1-dispatch.json:455-459,:raw:457; sweep.json:286-291,:raw:289; structural.json:230-235; c1-content-probe.stdout",
+    "test -d .jj for fleet and lane roots (existence only; no jj command run in either repo)"
+  ],
+  "notes": [
+    "No tools installed or updated (none needed); no pacman transaction; no service touched.",
+    "No mutating git/jj command was run by this seat anywhere; every git call was read-only with -C; the lane's jj-colocated working copy was never snapshotted (no jj invocation in lane or fleet).",
+    "Scratch /fast/scratch/hyaku/tameshi-r58/T58W2Sent01 was never created (all work was read-only plus lane-designated deliverable writes); rm -rf executed at yield and absence confirmed.",
+    "Grep tool anomaly (O7) reported to xd://report_issue and acknowledged.",
+    "The decisive wave-1 finding (bent-runner forgery) was treated per contract: frozen target inspected for integrity only, not modified, not re-executed for weakening; its bytes are committed at C0 and clean."
+  ],
+  "scratch_cleanup": "rm -rf -- /fast/scratch/hyaku/tameshi-r58/T58W2Sent01 executed; path absent confirmed before yield"
+}

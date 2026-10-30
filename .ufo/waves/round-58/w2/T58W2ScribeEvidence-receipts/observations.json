@@ -1,0 +1,112 @@
+{
+  "definitions": {
+    "L": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+    "C": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "B": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+    "show": "subprocess.check_output([\"git\",\"-C\",str(L),\"show\",rev+\":\"+path],text=True)"
+  },
+  "commands": [
+    {
+      "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --oneline -3",
+      "output": "8063d0a5; 0fdb71d2; 1d1f70d8 (full output in tool transcript)"
+    },
+    {
+      "command": "Python Eval: w=json.loads(show(C,\".ufo/waves/round-58/w1-results.json\")); len(w[\"results\"]); [x[\"name\"] for x in w[\"results\"] if not (x.get(\"output\") or \"\").strip()]; collections.Counter(x[\"agent\"] for x in w[\"results\"])",
+      "output": {
+        "wave1_registered": 67,
+        "wave1_nonempty_terminal_output": 52,
+        "wave1_empty_terminal_output": 15,
+        "wave1_terminal_status_known": false,
+        "wave1_provider_errors": null,
+        "wave1_roles": {
+          "reviewer": 18,
+          "executor": 32,
+          "scout": 4,
+          "connector": 1,
+          "critic": 6,
+          "revenger": 1,
+          "mutation-tester": 3,
+          "sentinel": 2
+        },
+        "wave1_empty_seats": [
+          "T58W1ScoutCT",
+          "T58W1ScoutReg",
+          "T58W1ScoutKagi",
+          "T58W1ScoutPin",
+          "T58W1CritClaims",
+          "T58W1CritDisc",
+          "T58W1CritBlind",
+          "T58W1CritC1",
+          "T58W1CritC2",
+          "T58W1Mut01",
+          "T58W1Mut02",
+          "T58W1Mut03",
+          "T58W1Sent01",
+          "T58W1Sent02",
+          "T58W1CritC3"
+        ],
+        "wave2_registered": 40,
+        "wave2_roles": {
+          "reviewer": 27,
+          "critic": 3,
+          "mutation-tester": 2,
+          "sentinel": 2,
+          "executor": 3,
+          "connector": 1,
+          "scout": 1,
+          "scribe": 1
+        },
+        "total_registered": 107,
+        "wave2_completed_or_dead": "not established by registry",
+        "source_rows_before": 145,
+        "source_rows_at_C0": 148,
+        "arxiv_entry_count_before": 0,
+        "arxiv_entry_count_at_C0": 1
+      }
+    },
+    {
+      "command": "Python Eval, each rev in [B,C]: s=show(rev,\"corpus/SOURCES.md\"); len(re.findall(r\"^ {0,3}\\| (S\\d{3}) \\|\",s,re.M)); subprocess.check_output([\"git\",\"-C\",str(L),\"ls-tree\",\"-r\",\"--name-only\",rev,\"--\",\"corpus/knowledge\"],text=True).splitlines(); [p for p in names if \"2406.09843\" in show(rev,p)]",
+      "output": {
+        "before": {
+          "sources": 145,
+          "knowledge_hits": []
+        },
+        "C0": {
+          "sources": 148,
+          "knowledge_hits": [
+            "corpus/knowledge/llm-mutant-equivalence-cost.md"
+          ]
+        }
+      }
+    },
+    {
+      "command": "Python Eval: reg=json.loads((L/\".ufo/waves/round-58/w2/swarm-registry.json\").read_text()); len(reg[\"members\"]); collections.Counter(x.get(\"role\") for x in reg[\"members\"].values())",
+      "output": {
+        "registered": 40,
+        "roles": {
+          "reviewer": 27,
+          "critic": 3,
+          "mutation-tester": 2,
+          "sentinel": 2,
+          "executor": 3,
+          "connector": 1,
+          "scout": 1,
+          "scribe": 1
+        }
+      }
+    },
+    {
+      "command": "Python Eval: rows=re.findall(r\"^ROW .*$\",attack,re.M); sum(x.endswith(\" held\") for x in rows), len(rows)",
+      "output": {
+        "records": [
+          "ROW c2-fx-ok expect=0 got=3 differs",
+          "ROW c2-fx-drift expect=3 got=3 held",
+          "ROW c2-fx-unresolvable expect=2 got=2 held"
+        ],
+        "held": 2,
+        "total": 3
+      }
+    }
+  ],
+  "read_failure": "git show C0:.ufo/evidence/round-58/integrate/c1-content-probe.stdout exited 128; retained with working-tree provenance, not silently promoted"
+}

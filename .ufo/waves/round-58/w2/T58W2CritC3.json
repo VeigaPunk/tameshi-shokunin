@@ -1,0 +1,97 @@
+{
+  "seat": "T58W2CritC3",
+  "role": "C3 installed-state critic (F9 entry + S286-S288) at C0",
+  "lane": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+  "base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "cand": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "worktree": "scratch shared clone detached at cand; lane corpus/README.md porcelain clean at C0",
+  "checks": [
+    {
+      "id": "a-counting-command",
+      "requirement": "grep -rl 2406.09843 corpus/knowledge | wc -l prints 1 at C0; S286-S288 row count 3",
+      "command": "cd clone && grep -rl '2406.09843' corpus/knowledge | wc -l && grep -cE '^ {0,3}\\| S(286|287|288) ' corpus/SOURCES.md",
+      "output": "1\n3",
+      "extra": "per-id uniqueness 1/1/1; at base git grep -l 2406.09843 -- corpus/knowledge | wc -l = 0",
+      "result": "pass"
+    },
+    {
+      "id": "b-rule4-rows-cited",
+      "requirement": "CORPUS rule 4 / contract predicate: rows cite no more than the entry cites; appended mined rows are used-by-cited by the entry; no uncited row appended",
+      "command": "grep -E '^\\|[[:space:]]*S28[678][[:space:]]*\\|' corpus/SOURCES.md | awk -F'|' '{print $2, $9, $12}'; grep -qF S286 entry && grep -qF S287 entry; grep -cF S288 entry",
+      "output": "S286 mined used-by=corpus/knowledge/llm-mutant-equivalence-cost.md; S287 mined used-by=same; S288 rejected used-by=—; ID_CITE_S286_S287_OK; entry-cites-S288=0; SOURCES diff base..C0 = exactly +S286 +S287 +S288 rows and -1 arXiv lead bullet, S285 byte-untouched",
+      "result": "pass",
+      "note": "the seat item's paraphrase of rule 4 ('every appended row is cited by the admitted entry') is not the verbatim rule; verbatim rule 4 (fleet CORPUS.md) is 'Expansion is knowledge, not rows'. The installed state satisfies BOTH the verbatim rule and the contract predicate. Under the item's literal paraphrase, S288 (rejected, used-by —, cited by nothing) would read as a violation; under rule 2 (correction = new row superseding S285) and the census (only mined rows need used-by) it is correct."
+    },
+    {
+      "id": "c-boundary-honesty",
+      "requirement": "the entry does not overclaim; boundary section says the transfer is not measured",
+      "command": "read corpus/knowledge/llm-mutant-equivalence-cost.md at C0; verify quotes against committed extracts",
+      "output": "Boundary section: 'The numerical transfer is **not measured**: no lane sweep has produced an LLM-generated mutant; this entry supplies a counting contract, not a pilot.' and 'The F9 pilot move ... remains unmeasured; this entry does not close it.' 'S286 reports a higher overall equivalent-mutant rate; it does not establish equivalence conditional on survival.' Inference labels present. All quoted source strings verified verbatim in the committed extracts (arXiv: 'equivalent mutant rates' x1, '111.29% higher fault detection', '26.60, 10.14, and 3.51 percentage points, respectively', '851 real bugs from two Java real-world bug benchmarks'; deck lines 230-241: class definition at 231, score-precision hazard, undecidability sentence at 241; Atlassian extract: 'severity of level 2 or higher' x1).",
+      "result": "pass"
+    },
+    {
+      "id": "d-readme-f9-row",
+      "requirement": "the F9 README row matches reality",
+      "command": "git show base:corpus/README.md | grep -n '^| F9'; grep -n '^| F9' corpus/README.md; grep -n 'llm-mutant-equivalence-cost' corpus/README.md",
+      "output": "C0 row: sources S007, S009, S043, S044, S286, S287 (all six rows exist; S286/S287 mined used-by=entry); status cell 'open — equivalence-cost contract entered (round 58, knowledge/llm-mutant-equivalence-cost.md); bounded pilot unmeasured' matches the installed entry; coverage-map addendum row (line 659) matches entry content and cites exactly S286/S287. BUT the live row's last column still opens 'no LLM-specific search run yet (U)' — false at C0 (see findings).",
+      "result": "fail (one cell)"
+    },
+    {
+      "id": "receipts-before-append",
+      "requirement": "id-collision check and scratch census validate ran before the append; receipts committed",
+      "command": "ls .ufo/waves/round-58/l1/assimilation/; cat collisions scratch-census.exit; git log --diff-filter=A -- .ufo/waves/round-58/l1/assimilation/collisions corpus/SOURCES.md corpus/knowledge/llm-mutant-equivalence-cost.md",
+      "output": "collisions=S153..S160 (8, matches corrected lesson); scratch-census.exit=0 ('file ok' on the pre-append scratch mirror); census-before.exit=0; all artifacts landed in ancestor commit d28c3044 (receipts committed together with the append, not earlier in history order)",
+      "result": "pass"
+    },
+    {
+      "id": "census-clone",
+      "requirement": "supporting: CORPUS census over the installed registry at C0",
+      "command": "CORPUS.md census trio + H4 id-cite in the C0 clone",
+      "output": "rows=148, malformed=0, mined-used-by-missing=(none), ID_CITE_S286_S287_OK",
+      "result": "pass"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "minor",
+      "statement_false_at_c0": "corpus/README.md:86 F9 row, last column opens 'no LLM-specific search run yet (U)' — at C0 an LLM-specific literature search has run: the previously-unopened arXiv LLM-mutation lead was opened and converted to mined row S286 (lead bullet removed after S286 landed), and the S287 deck was opened and mined, both with used-by pointing at the F9 entry. The cell contradicts the same row's own status cell ('equivalence-cost contract entered (round 58)').",
+      "command": "cd /fast/scratch/hyaku/tameshi-r58/T58W2CritC3/clone && git show 2a32aa8228d5f86a85c81a923a3148bf792a9538:corpus/README.md | grep -n '^| F9' && grep -n '^| F9' corpus/README.md && git diff 2a32aa8228d5f86a85c81a923a3148bf792a9538 8063d0a551fc5b3cb5a2d397da7353af53444534 -- corpus/SOURCES.md | grep -- '--- \\|^- .*arxiv\\|^- .*2406.09843'",
+      "output": "BASE:86 ... | open | no LLM-specific search run yet (U) → bounded pilot ... |; C0:86 ... | open — equivalence-cost contract entered (round 58, `knowledge/llm-mutant-equivalence-cost.md`); bounded pilot unmeasured | no LLM-specific search run yet (U) → bounded pilot ... |; SOURCES diff removes the lead bullet '- *A Comprehensive Study on Large Language Models for Mutation Testing* — https://arxiv.org/abs/2406.09843.'",
+      "smallest_safe_correction": "Update only that cell's before-state, e.g. 'LLM-mutation literature searched (S286/S287 mined, round 58); bounded pilot still unmeasured → bounded pilot with an independent outcome check' — a one-cell README edit, no registry or entry byte changes; or, if the L1 reads the before→after cell as a frozen move descriptor (house precedent: F3-F5 rows kept their old before-cells), record it as accepted staleness and route to a later round.",
+      "receipt": "09-readme-f9-rows.txt"
+    }
+  ],
+  "notes": [
+    "Seat-item paraphrase drift: item (b) states CORPUS rule 4 as 'every appended row is cited by the admitted entry (used-by)'; the verbatim fleet CORPUS.md rule 4 is 'Expansion is knowledge, not rows'. The used-by/uncited-row obligation is the census rule (mined rows) plus the round-58 contract predicate wording. No installed defect; wording difference recorded so the L1 adjudicates against the right text.",
+    "S288 is a rule-2 correction row (teaches opens 'supersedes S285 —'), rejected, used-by —, cited by nothing and citing nothing: correct installed shape; S285's row is byte-untouched (context line in the diff).",
+    "Receipts, SOURCES append and the entry landed in one commit d28c3044 (ancestor of C0). Pre-append execution is evidenced by receipt content (scratch mirror path); commit-order purists would note receipts and append share a commit.",
+    "content-precheck at C0 is RED (COLDREAD_PRECHECK lost=17 at cand 0fdb71d2) — the cold-read credit drift this wave's reader seats audit; not a C3 predicate.",
+    "Live refetches (recheck commands: arXiv curl grep, Atlassian page) were NOT run — cadence 365d, not due; all quote verifications were done against the committed extracts only.",
+    "The entry's 'ten recorded replay cases span JavaScript and bash gates' matches the SKILL.md standing count (ten cases since round 51).",
+    "Coverage-map historical row 624 keeps its round-43 'untouched' record with a README.md:86 line pointer that now targets a changed line — append-only convention, not adjudicated."
+  ],
+  "commands": [
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --oneline -3",
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin merge-base --is-ancestor 2a32aa8228d5f86a85c81a923a3148bf792a9538 8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone && git -C $S/clone checkout --detach 8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "grep -rl 2406.09843 corpus/knowledge | wc -l  (-> 1)",
+    "grep -cE '^ {0,3}\\| S(286|287|288) ' corpus/SOURCES.md  (-> 3)",
+    "git grep -l 2406.09843 2a32aa8228d5f86a85c81a923a3148bf792a9538 -- corpus/knowledge | wc -l  (-> 0)",
+    "git diff 2a32aa8 8063d0a -- corpus/SOURCES.md",
+    "awk used-by extraction over S286/S287/S288 rows",
+    "grep -qF S286/S287 corpus/knowledge/llm-mutant-equivalence-cost.md; grep -cF S288 (-> 0)",
+    "CORPUS census trio + malformed + mined-used-by-missing in clone",
+    "git show base:corpus/README.md | grep -n '^| F9'; grep -n '^| F9' corpus/README.md; grep -n 'llm-mutant-equivalence-cost' corpus/README.md",
+    "sed -n '230,241p' dfcfw-deck.txt; grep quote counts in the three extracts",
+    "cat collisions scratch-census.exit; tail scratch-census.stdout; cat census-before.exit; git log --diff-filter=A over the three paths"
+  ],
+  "verdict": "gap-minor",
+  "deliverables": {
+    "report": ".ufo/waves/round-58/w2/T58W2CritC3.md",
+    "json": ".ufo/waves/round-58/w2/T58W2CritC3.json",
+    "receipts": ".ufo/waves/round-58/w2/T58W2CritC3-receipts/ (12 files)"
+  },
+  "tooling_installs": "none",
+  "scratch": "/fast/scratch/hyaku/tameshi-r58/T58W2CritC3 — deleted before yield"
+}

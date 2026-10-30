@@ -1,0 +1,143 @@
+{
+  "seat": "T58W2CritC2",
+  "cand": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "axes": [
+    "operability",
+    "fixture-to-output correspondence",
+    "execution provenance"
+  ],
+  "counter": {
+    "command": [
+      "python3",
+      "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone/.ufo/evidence/round-58/c2/measure.py",
+      "--lane",
+      "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone",
+      "--rev",
+      "8063d0a551fc5b3cb5a2d397da7353af53444534",
+      "--work",
+      "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/counter",
+      "--explain"
+    ],
+    "output": "EXPLAIN shortfall rows=0\nEXPLAIN shortfall executed=0\nEXPLAIN shortfall mutants=0\nEXPLAIN shortfall skill=0\nEXPLAIN shortfall codes=0\nEXPLAIN shortfall cell=0\nEXPLAIN rows gate_rows=3 exits=0,2,3 missing_exits=none refusal_rows_without_known_code=none\nEXPLAIN executed receipt-gate-accept expect=0 got=0 held\nEXPLAIN executed receipt-gate-content-drift expect=3 got=3 held\nEXPLAIN executed receipt-gate-unresolvable-certified expect=2 got=2 held\nEXPLAIN mutants baseline-held=3/3\nEXPLAIN mutant M1 accept-on-drift: killed by receipt-gate-content-drift(got=0)\nEXPLAIN mutant M2 wrong-refusal-code: killed by receipt-gate-content-drift(got=3)\nEXPLAIN mutant M3 exit-0-on-unresolvable: killed by receipt-gate-unresolvable-certified(got=0)\nEXPLAIN skill_row 1 (verdict map=0 PASS; 2 certified revision unresolvable (`RECEIPT_REV_UNRESOLVABLE`); 3 refuse)\nEXPLAIN codes tokens=['RECEIPT_REV_ABSENT', 'RECEIPT_REV_CONTENT_DRIFT', 'RECEIPT_REV_MISMATCH', 'RECEIPT_REV_UNRESOLVABLE'] unknown=[]\nEXPLAIN cell gate emitted=['RECEIPT_REV_CONTENT_DRIFT'] exit=3 verdict=REFUSED; table cell carries=['RECEIPT_REV_CONTENT_DRIFT']\nC2_R58: self=d4219039f02c rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true\n",
+    "exit": 0
+  },
+  "installed_rows": [
+    {
+      "name": "receipt-gate-accept",
+      "command": [
+        "python3",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone/tools/registry-check.py",
+        "--root",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone",
+        "--only",
+        "receipt-gate-accept",
+        "--json"
+      ],
+      "expect": {
+        "exit": 0,
+        "stdout_contains": [
+          "GATE OK tools/fixtures/receipt-gate/accept.receipt role=positive",
+          "GATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS"
+        ]
+      },
+      "got": 0,
+      "held": true,
+      "stdout": "GATE OK tools/fixtures/receipt-gate/accept.receipt role=positive revs=5e3569969b532310d2b8a3d130901757a3df356b\nGATE: receipts=1 ok=1 refused=0 codes=none verdict=PASS\n",
+      "stdout_missing": []
+    },
+    {
+      "name": "receipt-gate-content-drift",
+      "command": [
+        "python3",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone/tools/registry-check.py",
+        "--root",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone",
+        "--only",
+        "receipt-gate-content-drift",
+        "--json"
+      ],
+      "expect": {
+        "exit": 3,
+        "stdout_contains": [
+          "code=RECEIPT_REV_CONTENT_DRIFT",
+          "GATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED",
+          "RECEIPT_REV_CONTENT_DRIFT"
+        ]
+      },
+      "got": 3,
+      "held": true,
+      "stdout": "GATE REFUSED tools/fixtures/receipt-gate/drift.receipt role=positive revs=c34e2b1486714ad6c1c6cbe706599ddfc9d60d55 code=RECEIPT_REV_CONTENT_DRIFT rev=c34e2b1486714ad6c1c6cbe706599ddfc9d60d55 drift=corpus/lessons/round-56-verifier-spotcheck.md\nGATE: receipts=1 ok=0 refused=1 codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED\n",
+      "stdout_missing": []
+    },
+    {
+      "name": "receipt-gate-unresolvable-certified",
+      "command": [
+        "python3",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone/tools/registry-check.py",
+        "--root",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone",
+        "--only",
+        "receipt-gate-unresolvable-certified",
+        "--json"
+      ],
+      "expect": {
+        "exit": 2,
+        "stdout_contains": [
+          "GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE",
+          "RECEIPT_REV_UNRESOLVABLE"
+        ]
+      },
+      "got": 2,
+      "held": true,
+      "stdout": "GATE: error=unresolvable-certified receipts=1 verdict=REFUSED codes=RECEIPT_REV_UNRESOLVABLE\n",
+      "stdout_missing": []
+    }
+  ],
+  "installed_row_findings": [],
+  "bare_codes": {
+    "RECEIPT_REV_CONTENT_DRIFT": "Observed on content-drift fixture; gate check() emits it only after declared-surface drift.",
+    "RECEIPT_REV_UNRESOLVABLE": "Observed on unresolvable-certified fixture; gate run() emits it before receipt processing.",
+    "conclusion": "Both exact elements are redundant with stronger full-line expectations, but neither is unreachable or spuriously satisfied on its installed path."
+  },
+  "findings": [
+    {
+      "id": "C2-untrusted-executor",
+      "counterexample": "Candidate-controlled registry-check reports held on clean gate and differs on dirty gate without executing any row; cheat gate refuses even the valid fixture. Frozen counter nevertheless reports total=0 PASS=true.",
+      "command": [
+        "python3",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/clone/.ufo/evidence/round-58/c2/measure.py",
+        "--lane",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/forgery/lane",
+        "--rev",
+        "d02da48cc613c6f9a333db814929014c48ab6eb9",
+        "--work",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2CritC2/forgery-counter",
+        "--explain"
+      ],
+      "output": "EXPLAIN shortfall rows=0\nEXPLAIN shortfall executed=0\nEXPLAIN shortfall mutants=0\nEXPLAIN shortfall skill=0\nEXPLAIN shortfall codes=0\nEXPLAIN shortfall cell=0\nEXPLAIN rows gate_rows=3 exits=0,2,3 missing_exits=none refusal_rows_without_known_code=none\nEXPLAIN executed c2-fx-ok expect=0 got=0 held\nEXPLAIN executed c2-fx-drift expect=3 got=3 held\nEXPLAIN executed c2-fx-unresolvable expect=2 got=2 held\nEXPLAIN mutants baseline-held=3/3\nEXPLAIN mutant M1 accept-on-drift: killed by c2-fx-ok(got=1),c2-fx-drift(got=4),c2-fx-unresolvable(got=3)\nEXPLAIN mutant M2 wrong-refusal-code: killed by c2-fx-ok(got=1),c2-fx-drift(got=4),c2-fx-unresolvable(got=3)\nEXPLAIN mutant M3 exit-0-on-unresolvable: killed by c2-fx-ok(got=1),c2-fx-drift(got=4),c2-fx-unresolvable(got=3)\nEXPLAIN skill_row 1 (verdict map=0 PASS; 2 unresolvable certified; 3 refused)\nEXPLAIN codes tokens=['RECEIPT_REV_ABSENT', 'RECEIPT_REV_CONTENT_DRIFT'] unknown=[]\nEXPLAIN cell gate emitted=['RECEIPT_REV_CONTENT_DRIFT'] exit=3 verdict=REFUSED; table cell carries=['RECEIPT_REV_CONTENT_DRIFT']\nC2_R58: self=d4219039f02c rev=d02da48cc613 gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=ok total=0 C2_R58_PASS=true\n",
+      "evidence": [
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2CritC2-receipts/forgery-counter.json",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2CritC2-receipts/forgery-real-executor.json",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2CritC2-receipts/review.py"
+      ],
+      "impacted_axes": [
+        "operability",
+        "execution-evidence integrity",
+        "mutation-evidence integrity"
+      ],
+      "smallest_safe_correction": "Do not admit C2 based on its numerical result. Preserve the frozen target. For a successor contract, bind the executor independently of the candidate and have that trusted executor run both baseline and mutant rows; rebaseline under that new contract.",
+      "classification": "Fixable measurement defect; admission decision belongs to canonical judge, not this review."
+    }
+  ],
+  "scope": "Read-only installed-state critique; no lane source changes and no admission judgment. Only own wave-2 reports/receipts written.",
+  "tools_installed": [],
+  "scratch_removed": true,
+  "self_evaluation": {
+    "accuracy": 4,
+    "completeness": 4,
+    "clarity": 4,
+    "actionability": 4,
+    "conciseness": 4,
+    "evidence": "All three real executor outputs and independent forged-lane contrast retained. Successor correction is a proposal, not implemented or judged. Reports explicitly separate installed row correctness from known counter provenance failure."
+  }
+}

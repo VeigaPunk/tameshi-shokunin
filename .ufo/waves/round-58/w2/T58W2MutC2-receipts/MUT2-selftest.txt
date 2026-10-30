@@ -1,0 +1,24 @@
+CASE good fixture: every arm 0 FAIL C2_R58: self=- rev=xxxxxxxxxxxx gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=WRONG:fixture total=1 C2_R58_PASS=false
+CASE rows arm: no exit-2 row -> rows shortfall PASS short={'rows': 2, 'executed': 0, 'mutants': 1, 'skill': 0, 'codes': 0, 'cell': 1}
+CASE rows arm (forgery): selftest-argv rows are not gate rows PASS gate_rows=0
+CASE executed arm: a row expecting the wrong exit does not hold PASS held=2/3
+CASE mutants arm: an exit-0-only row kills no mutant PASS mutants=0/3
+CASE mutants arm: without the drift row M1 and M2 survive PASS mutants=1/3 (only M3 killed by the exit-2 row)
+CASE mutants arm: a mutant whose old string is absent is not killed (uniqueness assert) PASS mutants=2/3
+CASE skill_row arm: no gate row -> 0 PASS
+CASE skill_row arm: verdict map without the 2 -> 0 PASS
+CASE codes arm: a token the gate does not define is counted PASS codes_known=2/3
+CASE cell arm: the stale RECEIPT_REV_MISMATCH cell is WRONG while the code is still a defined one FAIL WRONG:fixture
+CASE cell arm: a cell with no code is WRONG:none FAIL
+CASE cell arm: truth comes from running the gate (a gate emitting MISMATCH flips the verdict) FAIL WRONG:fixture
+CASE cell arm: a gate that does not refuse -> WRONG:fixture PASS
+CASE rows arm: a refusal row naming an undefined code is counted PASS short={'rows': 1, 'executed': 1, 'mutants': 2, 'skill': 0, 'codes': 0, 'cell': 1}
+CASE mutants arm: a row that did not hold at baseline supplies no kill credit PASS mutants=1/3 (only M3 killed by the exit-2 row)
+CASE mutants pin: a lane whose committed mutants.json fails the sha256 pin is refused PASS C2_R58: self=3a34e4b37108 rev=58c6a74af866 gate_rows=3 exits=0,2,3 held=3/3 mutants=0/3 skill_row=1 codes_known=2/2 standing_cell=WRONG:fixture total=4 C2_R58_P
+CASE codes arm: a standing-rules section naming no code is a shortfall PASS codes_known=0/0 short=1
+CASE cell arm: a cell carrying the emitted code plus another code is WRONG PASS WRONG:fixture
+CASE verdict line: C2_R58_PASS=false whenever the total is non-zero PASS
+CASE rows arm strict: a substring-only code element is not a named code PASS short={'rows': 1, 'executed': 0, 'mutants': 0, 'skill': 0, 'codes': 0, 'cell': 1}
+CASE rows arm strict: an exit-2 row without the exact unresolvable element is counted PASS short={'rows': 1, 'executed': 1, 'mutants': 1, 'skill': 0, 'codes': 0, 'cell': 1}
+CASE rows arm strict: an exit-2 row naming a different exact code is counted PASS short={'rows': 1, 'executed': 1, 'mutants': 1, 'skill': 0, 'codes': 0, 'cell': 1}
+C2_R58_SELFTEST: 19/23 pass

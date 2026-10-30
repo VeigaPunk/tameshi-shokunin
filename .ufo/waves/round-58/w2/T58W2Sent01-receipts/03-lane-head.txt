@@ -1,0 +1,24 @@
+# 03 — Lane HEAD, C0 verification, post-C0 commit check
+
+$ git -C <lane> log --oneline -3
+8063d0a5 round-58: settled wave one, source-interpretation corrections, and decisive executor-forgery falsifier
+0fdb71d2 round-58: adjudicate panel disagreements and link repaired recheck consumer entry point
+1d1f70d8 round-58: R56.3 repair frontmatter recheck and link its existing 19-case erratum
+--- HEAD ---
+8063d0a551fc5b3cb5a2d397da7353af53444534
+
+HEAD == C0 exactly: no commit has landed since dispatch.
+
+$ git -C <lane> log --oneline 8063d0a551fc5b3cb5a2d397da7353af53444534..HEAD
+(empty)
+$ git -C <lane> diff --name-status 8063d0a551fc5b3cb5a2d397da7353af53444534..HEAD
+(empty)
+
+$ git -C <lane> merge-base --is-ancestor 2a32aa8228d5f86a85c81a923a3148bf792a9538 8063d0a551fc5b3cb5a2d397da7353af53444534 && echo BASE-IS-ANCESTOR-OF-C0
+BASE-IS-ANCESTOR-OF-C0
+
+$ jj workspace check (existence only, no jj command run in either repo — a jj
+invocation in a colocated repo snapshots the working copy, i.e. it mutates):
+test -d /home/vgpnk/Projects/shokunin/.jj        -> EXISTS
+test -d <lane>/.jj                               -> EXISTS
+Both repos are jj-colocated; read-only posture via git -C only was maintained.

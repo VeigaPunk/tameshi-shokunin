@@ -1,0 +1,71 @@
+# 06 — Mutation-command scan of round-58 wave reports/receipts (w1 + w2)
+
+All greps run over /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58
+(gitignore=false). Hit disposition for every pattern:
+
+1. PATTERN git -C "?<lane>"? (add|commit|checkout|reset|clean|merge|rebase|revert|stash|push|pull|tag|branch|am|apply|cherry-pick|gc|reflog|filter-branch|filter-repo|replace|worktree|restore|switch|sparse-checkout|notes|rm|mv|fast-import)
+   HITS: T58W1Fix03.md:7, T58W1Fix03-receipts/counter-runs.txt:11,
+         T58W1Fix03/stage/.ufo/evidence/round-53/after/run.log:7
+   ALL are `git -C <lane> merge-base --is-ancestor <a> <b>` — the pattern's
+   `merge` verb matched the `merge-base` prefix. merge-base --is-ancestor is
+   READ-ONLY. Zero true lane-targeted mutations.
+
+2. PATTERN git -C "?<fleet-root>"? (same verb list)
+   RESULT: No matches found.
+
+3. PATTERN jj (-R|--repo|--workspace)? <lane-or-fleet-root>
+   RESULT: No matches found.
+
+4. PATTERN (^|[^-a-zA-Z])(git (commit|push|stash|rebase|revert|cherry-pick|filter-branch|filter-repo|clean|reset)|git checkout --detach <40hex>...lane)
+   HITS: w1/T58W1Panel08.md:206 — prose only: "Git commit-stat output
+   incidentally named round-57 wave paths" (describes a read, no command).
+   Zero executed mutating commands.
+
+5. PATTERN (^|[^-a-zA-Z])jj (commit|new|describe|abandon|squash|rebase|edit|split|restore|duplicate|undo|snapshot|immutable)
+   HIT: w1/T58W1RevC3Gate-receipts/sweep.json:217 — quoted prior-round
+   knowledge text ("`jj new` moves HEAD...", "`jj commit` of a content
+   change..."): documentation prose about jj semantics, not commands run.
+
+6. PATTERN git -C "?<lane>"? (checkout|reset|restore|switch|clean|stash)
+   RESULT: No matches found. (Lane HEAD was never moved; corroborated by
+   HEAD==C0 and clean w1 status.)
+
+7. PATTERN cd /home/vgpnk/Projects/shokunin[^newline]*&&[^newline]*git
+   HIT: w1/T58W1RevC3Gate-receipts/sweep.json:157 — a QUOTED round-5-era
+   historical record ("cd /home/vgpnk/Projects/shokunin/kumitate-shokunin\ngit
+   rev-parse --short HEAD && git status --porcelain") inside a git-show
+   receipt; different lane, read-only commands, not a round-58 execution.
+
+8. PATTERN rm -[a-zA-Z]*...tameshi-shokunin
+   HITS: only the contract template text (`rm -rf -- "$S"` scratch-cleanup
+   instruction) inside spec-w1.json / spec-w2.json / w1-dispatch.json /
+   w2-dispatch.json. No seat rm targeting lane or fleet files.
+
+9. PATTERN (sed -i|perl -i|patch)...tameshi-shokunin/(corpus|tools|SKILL)
+   RESULT: No matches found.
+
+10. PATTERN (path"?:|"|edit|write|tee|>|cp |mv )...tameshi-shokunin/(corpus/|tools/|SKILL\.md|\.ufo/evidence/round-5[0-7])
+    HITS: all read-shaped — e.g. T58W2RevRows3.json "path": ".../corpus/routed-defects.json"
+    (a report ABOUT the file, its commands are git show reads),
+    T58W2ConnSib-receipts/pinned-excerpts.json ("command": ["git","-C",...]),
+    quoted knowledge prose. No seat-claimed edit/write into a protected path.
+
+11. PATTERN git push (round-wide)
+    TOOL ANOMALY: returned 3 file groups (w1-dispatch.json:457, w1/T58W1RevC3Gate-receipts/sweep.json:289, w2/T58W2RevRows2-receipts/structural.json:~232) whose displayed windows do NOT contain the pattern. File-scoped verification:
+      - grep pattern "push" (case-insensitive) over w1-dispatch.json -> No matches found
+      - grep pattern "git push" over structural.json -> No matches found
+      - grep pattern "push" over sweep.json -> 5 windows, ALL quoted prose:
+        "| UNPUSHED | :465 | r27 :1157 — ahead=1 exact |" (gate-label table),
+        "committed in e69b488 ... pushed to origin" (r16 pre-registration
+        narrative), "cite the pushed hash" (drift protocol prose), "nothing in
+        this service pushes an artifact into a sibling lane", "No commits/
+        push/merge/stash/checkout" (quoted r64 verifier bounds).
+    NET: zero `git push` executions in round-58 wave content; the round-wide
+    hit attribution was a grep-tool display artifact. Reported to xd://report_issue.
+
+12. Scratch-clone fixture commits observed in receipts (ALLOWED by contract):
+    run-before.py:11 (L1 instrument) commits in $S/clone with fixture identity;
+    T58W1Panel06 clones --shared into its scratch. All writes land in scratch.
+
+VERDICT: no mutating git/jj command against the lane or fleet repo is recorded
+in any round-58 wave report or receipt, w1 or w2.

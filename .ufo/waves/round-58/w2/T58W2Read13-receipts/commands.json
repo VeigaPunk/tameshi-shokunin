@@ -1,0 +1,127 @@
+[
+  {
+    "command": "python3 -c \"import importlib.util,subprocess; p='/home/vgpnk/Projects/shokunin/tameshi-shokunin'; s=importlib.util.spec_from_file_location('frozen',p+'/.ufo/evidence/round-18/measure.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); raw=subprocess.check_output(['git','-C',p,'show','8063d0a551fc5b3cb5a2d397da7353af53444534:SKILL.md']); sec=next(x for x in m.sectionize(raw) if x['heading']=='## Context gate classification and explicit exit classes \u2014 round 15'); print(sec['start'],sec['end'],sec['sha256'])\"",
+    "exit": 0,
+    "stdout": "1652 1718 132cfb9ef1aa07111af42389e4fe862152e3118b3a8bb66f1d84a6a332e7edf6\n",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone rev-parse HEAD",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "8063d0a551fc5b3cb5a2d397da7353af53444534\n",
+    "stderr": ""
+  },
+  {
+    "command": "git -C /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone diff 2a32aa8228d5f86a85c81a923a3148bf792a9538 8063d0a551fc5b3cb5a2d397da7353af53444534 -- SKILL.md tools/context-capture.py",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "sha256sum /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/capture-context.py",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89  /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/capture-context.py\n",
+    "stderr": ""
+  },
+  {
+    "command": "sha256sum /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-receipt.json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a  /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-receipt.json\n",
+    "stderr": ""
+  },
+  {
+    "command": "sha256sum /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-missing-env.json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208  /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-missing-env.json\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "{\"exit\": 0, \"expected\": {\"exit\": 0, \"id\": \"context_consistent\"}, \"findings\": [], \"id\": \"context_consistent\", \"mode\": \"frozen\", \"receipt\": {\"digest_matches\": true, \"expected_sha256\": \"05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a\", \"path\": \".ufo/evidence/round-14/context-receipt.json\", \"sha256\": \"05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a\"}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"ok\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": true}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --selftest",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "SELFTEST_CASE clean OK expected=context_consistent/0 observed=context_consistent/0 exit=0\nSELFTEST_CASE missing-injected-env OK expected=missing_injected_environment/1 observed=missing_injected_environment/1 exit=1\nSELFTEST_CASE tampered-before-semantic OK expected=snapshot_tampered/2 observed=snapshot_tampered/2 exit=2\nSELFTEST_CASE null-injected-env OK expected=missing_injected_environment/1 observed=missing_injected_environment/1 exit=1\nSELFTEST_CASE comparison-raw-mismatch OK expected=comparison_mismatch/1 observed=comparison_mismatch/1 exit=1\nSELFTEST_CASE comparison-observed-at-lie OK expected=comparison_mismatch/1 observed=comparison_mismatch/1 exit=1\nSELFTEST_CASE payload-digest-lie OK expected=comparison_tool_digest_mismatch/1 observed=comparison_tool_digest_mismatch/1 exit=1\nSELFTEST_CASE injected-run-failed OK expected=comparison_mismatch/1 observed=comparison_mismatch/1 exit=1\nSELFTEST_CASE injected-deep-malformed OK expected=comparison_mismatch/1 observed=comparison_mismatch/1 exit=1\nSELFTEST_CASE control-ineffective OK expected=positive_control_ineffective/1 observed=positive_control_ineffective/1 exit=1\nSELFTEST_CASE control-flag-lie OK expected=positive_control_ineffective/1 observed=positive_control_ineffective/1 exit=1\nSELFTEST_CASE control-exit-zero-poison OK expected=positive_control_ineffective/1 observed=positive_control_ineffective/1 exit=1\nSELFTEST_CASE mapping-check-lie OK expected=mapping_mismatch/1 observed=mapping_mismatch/1 exit=1\nSELFTEST_CASE mapping-failed-wrong-pin OK expected=mapping_mismatch/1 observed=mapping_mismatch/1 exit=1\nSELFTEST_CASE mapping-suffix-swap OK expected=mapping_mismatch/1 observed=mapping_mismatch/1 exit=1\nSELFTEST_CASE mapping-constant-swap OK expected=mapping_mismatch/1 observed=mapping_mismatch/1 exit=1\nSELFTEST_CASE mapping-order-lie OK expected=mapping_mismatch/1 observed=mapping_mismatch/1 exit=1\nSELFTEST_CASE probe-source-lie OK expected=probe_source_digest_mismatch/1 observed=probe_source_digest_mismatch/1 exit=1\nSELFTEST_CASE runner-source-lie OK expected=runner_source_digest_mismatch/1 observed=runner_source_digest_mismatch/1 exit=1\nSELFTEST_CASE probe-flag-false-equal OK expected=probe_source_digest_mismatch/1 observed=probe_source_digest_mismatch/1 exit=1\nSELFTEST_CASE runner-flag-false-equal OK expected=runner_source_digest_mismatch/1 observed=runner_source_digest_mismatch/1 exit=1\nSELFTEST_CASE truthy-matches-declared OK expected=receipt_structure_invalid/2 observed=receipt_structure_invalid/2 exit=2\nSELFTEST_CASE truthy-all-match OK expected=receipt_structure_invalid/2 observed=receipt_structure_invalid/2 exit=2\nSELFTEST_CASE bool-exit OK expected=receipt_structure_invalid/2 observed=receipt_structure_invalid/2 exit=2\nSELFTEST_CASE exclusions-widened OK expected=receipt_structure_invalid/2 observed=receipt_structure_invalid/2 exit=2\nSELFTEST_CASE comparison-container OK expected=receipt_structure_invalid/2 observed=receipt_structure_invalid/2 exit=2\nSELFTEST_CASE duplicate-key OK expected=receipt_json_invalid/2 observed=receipt_json_invalid/2 exit=2\nSELFTEST_CASE malformed-json OK expected=receipt_json_invalid/2 observed=receipt_json_invalid/2 exit=2\nSELFTEST_CASE non-object-json OK expected=receipt_json_invalid/2 observed=receipt_json_invalid/2 exit=2\nSELFTEST_CASE invalid-utf8 OK expected=receipt_json_invalid/2 observed=receipt_json_invalid/2 exit=2\nSELFTEST_CASE receipt-missing OK expected=receipt_missing/2 observed=receipt_missing/2 exit=2\nSELFTEST_CASE snapshot-tampered OK expected=snapshot_tampered/2 observed=snapshot_tampered/2 exit=2\nSELFTEST_CASE expected-missing OK expected=expected_missing/2 observed=expected_missing/2 exit=2\nSELFTEST_CASE expected-invalid OK expected=expected_invalid/2 observed=expected_invalid/2 exit=2\nSELFTEST_CASE expected-verdict-mismatch OK expected=expected_verdict_mismatch/1 observed=expected_verdict_mismatch/1 exit=1\nSELFTEST_CASE stored-verdict-lie OK expected=receipt_verdict_mismatch/1 observed=receipt_verdict_mismatch/1 exit=1\nSELFTEST_CASE retained-invalid-input OK expected=receipt_records_invalid_input/2 observed=receipt_records_invalid_input/2 exit=2\nSELFTEST_CASE expected-digest-invalid OK expected=expected_invalid/2 observed=expected_invalid/2 exit=2\nSELFTEST_CASE expected-duplicate-key OK expected=expected_invalid/2 observed=expected_invalid/2 exit=2\nSELFTEST_CASE baseline-unusable OK expected=baseline_unusable/2 observed=baseline_unusable/2 exit=2\nSELFTEST_CASE usage-no-args OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE usage-receipt-without-expected OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE usage-expected-without-receipt OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE usage-receipt-final-missing OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE usage-receipt-flag-as-value OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE usage-unknown-flag OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE usage-selftest-extra OK expected=usage_error/64 observed_exit=64\nSELFTEST_CASE hermetic-no-lane-path OK default lane root absent from subprocess output\nSELFTEST_CASE hermetic-temp-only OK no unexpected temp-root entries\nSELFTEST: PASS (49/49)\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --receipt /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-missing-env.json --expected /fast/scratch/hyaku/tameshi-r58/T58W2Read13/expected.json --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 1,
+    "stdout": "{\"exit\": 1, \"expected\": {\"exit\": 1, \"id\": \"missing_injected_environment\"}, \"findings\": [{\"detail\": \"receipt.environment.injected_env is absent\", \"id\": \"missing_injected_environment\"}, {\"detail\": \"status recorded 'ok' but raw fields recompute 'mismatch'; exit recorded 0 but raw fields recompute 1; mismatched raw fields carry no stored reasons\", \"id\": \"receipt_verdict_mismatch\"}], \"id\": \"missing_injected_environment\", \"mode\": \"explicit\", \"receipt\": {\"digest_matches\": true, \"expected_sha256\": \"1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208\", \"path\": \"/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-missing-env.json\", \"sha256\": \"1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208\"}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"mismatch\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": true}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --receipt /fast/scratch/hyaku/tameshi-r58/T58W2Read13/duplicate.json --expected /fast/scratch/hyaku/tameshi-r58/T58W2Read13/expected.json --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 2,
+    "stdout": "{\"exit\": 2, \"expected\": {\"exit\": 0, \"id\": \"context_consistent\"}, \"findings\": [{\"detail\": \"receipt is not strict JSON: duplicate JSON key 'schema'\", \"id\": \"receipt_json_invalid\"}, {\"detail\": \"expected id=context_consistent exit=0 but recomputed id=receipt_json_invalid exit=2\", \"id\": \"expected_verdict_mismatch\"}], \"id\": \"receipt_json_invalid\", \"mode\": \"explicit\", \"receipt\": {\"digest_matches\": true, \"expected_sha256\": \"5281ebe052a5f83613ecd687364009c70c452a6b08621dcd79f97e31edec409b\", \"path\": \"/fast/scratch/hyaku/tameshi-r58/T58W2Read13/duplicate.json\", \"sha256\": \"5281ebe052a5f83613ecd687364009c70c452a6b08621dcd79f97e31edec409b\"}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"invalid_input\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --receipt /fast/scratch/hyaku/tameshi-r58/T58W2Read13/wrongtype.json --expected /fast/scratch/hyaku/tameshi-r58/T58W2Read13/expected.json --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 2,
+    "stdout": "{\"exit\": 2, \"expected\": {\"exit\": 0, \"id\": \"context_consistent\"}, \"findings\": [{\"detail\": \"receipt root is not an object\", \"id\": \"receipt_json_invalid\"}, {\"detail\": \"expected id=context_consistent exit=0 but recomputed id=receipt_json_invalid exit=2\", \"id\": \"expected_verdict_mismatch\"}], \"id\": \"receipt_json_invalid\", \"mode\": \"explicit\", \"receipt\": {\"digest_matches\": true, \"expected_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\", \"path\": \"/fast/scratch/hyaku/tameshi-r58/T58W2Read13/wrongtype.json\", \"sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\"}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"invalid_input\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --receipt /fast/scratch/hyaku/tameshi-r58/T58W2Read13/nonutf8.json --expected /fast/scratch/hyaku/tameshi-r58/T58W2Read13/expected.json --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 2,
+    "stdout": "{\"exit\": 2, \"expected\": {\"exit\": 0, \"id\": \"context_consistent\"}, \"findings\": [{\"detail\": \"receipt is not UTF-8\", \"id\": \"receipt_json_invalid\"}, {\"detail\": \"expected id=context_consistent exit=0 but recomputed id=receipt_json_invalid exit=2\", \"id\": \"expected_verdict_mismatch\"}], \"id\": \"receipt_json_invalid\", \"mode\": \"explicit\", \"receipt\": {\"digest_matches\": true, \"expected_sha256\": \"a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89\", \"path\": \"/fast/scratch/hyaku/tameshi-r58/T58W2Read13/nonutf8.json\", \"sha256\": \"a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89\"}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"invalid_input\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --receipt /fast/scratch/hyaku/tameshi-r58/T58W2Read13/edited.json --expected /fast/scratch/hyaku/tameshi-r58/T58W2Read13/expected.json --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 2,
+    "stdout": "{\"exit\": 2, \"expected\": {\"exit\": 0, \"id\": \"context_consistent\"}, \"findings\": [{\"detail\": \"receipt sha256 6a63a776426f003734611998d57e30bb1a9f4f205d0bc7c1276ed39f1c850422 is not the pinned 05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a\", \"id\": \"snapshot_tampered\"}, {\"detail\": \"expected id=context_consistent exit=0 but recomputed id=snapshot_tampered exit=2\", \"id\": \"expected_verdict_mismatch\"}], \"id\": \"snapshot_tampered\", \"mode\": \"explicit\", \"receipt\": {\"digest_matches\": false, \"expected_sha256\": \"05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a\", \"path\": \"/fast/scratch/hyaku/tameshi-r58/T58W2Read13/edited.json\", \"sha256\": \"6a63a776426f003734611998d57e30bb1a9f4f205d0bc7c1276ed39f1c850422\"}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"invalid_input\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --receipt /fast/scratch/hyaku/tameshi-r58/T58W2Read13/absent.json --expected /fast/scratch/hyaku/tameshi-r58/T58W2Read13/expected.json --json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 2,
+    "stdout": "{\"exit\": 2, \"expected\": {\"exit\": 0, \"id\": \"context_consistent\"}, \"findings\": [{\"detail\": \"receipt is missing: /fast/scratch/hyaku/tameshi-r58/T58W2Read13/absent.json\", \"id\": \"receipt_missing\"}, {\"detail\": \"expected id=context_consistent exit=0 but recomputed id=receipt_missing exit=2\", \"id\": \"expected_verdict_mismatch\"}], \"id\": \"receipt_missing\", \"mode\": \"explicit\", \"receipt\": {\"digest_matches\": null, \"expected_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"path\": \"/fast/scratch/hyaku/tameshi-r58/T58W2Read13/absent.json\", \"sha256\": null}, \"schema\": \"tameshi-context-gate-result-v1\", \"status\": \"invalid_input\", \"tool\": \"context-capture.py r15 (tameshi-shokunin, 2026-10-20)\", \"tool_sha256\": \"831b781054d701d7347df62c4044eb274a775967aaf0ce3d49bef4056b111d8d\", \"verdict_matches_expected\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": "python3 /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/tools/context-capture.py --check --unknown",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 64,
+    "stdout": "",
+    "stderr": "usage: context-capture.py --check [--receipt FILE --expected FILE] [--json]\n       context-capture.py --selftest\n\nRetained-receipt gate for the round-14 context observation. `--check` alone\nreplays the frozen clean receipt against its built-in digest/id/exit pin.\n`--check --receipt FILE --expected FILE` pins the receipt sha256 and the exact\nexpected finding id/exit from an expected file.\n\nThe gate re-derives comparison, environment, run, positive-control, source and\nrunner-mapping facts from raw retained fields; stored status/exit/reasons and\nsummary booleans are never trusted. It does not capture, execute the probe,\nread live lane inputs, or write during check; frozen mode reads only the\narchived receipt named by the built-in pin. Explicit mode reads only the\ncaller-selected receipt and expected JSON with the caller's permissions; select\nnon-secret files. No credential probe is executed.\n\nexit 0   clean retained receipt (id=context_consistent)\nexit 1   re-derived or pinned-verdict mismatch (a matched exit-1 pin still\n         reports the retained mismatch as exit 1)\nexit 2   could-not-evaluate receipt/expected/snapshot/internal failure\nexit 64  usage / could-not-evaluate invocation\n\nexpected schema (exactly four keys):\n  {\"schema\": \"tameshi-context-expected-v1\",\n   \"receipt_sha256\": \"<64 lowercase hex>\",\n   \"id\": \"<stable finding id or context_consistent>\",\n   \"exit\": 0 | 1 | 2}\ncontext-capture.py: unknown argument: --unknown\nCONTEXT: USAGE_ERROR (id=usage_error exit=64)\n"
+  },
+  {
+    "command": "sha256sum /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/capture-context.py",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "7313e9a208ac7734d4a5440d04f9a9ea776efe4e1aac07f269f8deca24fe7d89  /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/capture-context.py\n",
+    "stderr": ""
+  },
+  {
+    "command": "sha256sum /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-receipt.json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "05cb55b86446345cc12f2b061c17783a3fd20310824ce62c4aca484787899c1a  /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-receipt.json\n",
+    "stderr": ""
+  },
+  {
+    "command": "sha256sum /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-missing-env.json",
+    "cwd": "/fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone",
+    "exit": 0,
+    "stdout": "1ee9d09bc5277fd17b90c7f21e0ed4126825c97875b32b60dfcc2ca2852aa208  /fast/scratch/hyaku/tameshi-r58/T58W2Read13/clone/.ufo/evidence/round-14/context-missing-env.json\n",
+    "stderr": ""
+  }
+]

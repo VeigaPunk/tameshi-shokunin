@@ -1,0 +1,73 @@
+# T58W2Sent02 — round-58-fresh /tmp scratch dirs (2026-10-30 09:00–09:05), fingerprints
+
+## ls -la of the four identifying dirs (09:08)
+```
+/tmp/tameshi-mte-regression-kzakrvon:
+total 604
+drwx------   13 vgpnk vgpnk   4096 Oct 30 09:01 .
+drwxrwxrwt 5065 root  root  450560 Oct 30 09:08 ..
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 bash-checklist-run
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 bash-drift-pins
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 bash-mado-verify
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 bash-surface-census
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 bash-tsukuroi-census
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 js-cite-check
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 js-claims-check
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 js-kimi-census
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 js-round-gate
+drwxr-xr-x    2 vgpnk vgpnk      6 Oct 30 09:01 js-sources-check
+-rw-r--r--    1 vgpnk vgpnk   2321 Oct 30 09:01 regression.stdout
+drwxr-xr-x    2 vgpnk vgpnk   4096 Oct 30 09:01 specs
+
+/tmp/tameshi-r16-CRMeasure-tc4hz053:
+total 592
+drwx------    3 vgpnk vgpnk     21 Oct 30 09:00 .
+drwxrwxrwt 5065 root  root  450560 Oct 30 09:08 ..
+drwxr-xr-x    6 vgpnk vgpnk     73 Oct 30 09:00 synrepo
+
+/tmp/tameshi-r17-MeasureV2-j47nm6kj:
+total 616
+drwx------    3 vgpnk vgpnk    171 Oct 30 09:01 .
+drwxrwxrwt 5065 root  root  450560 Oct 30 09:08 ..
+-rw-r--r--    1 vgpnk vgpnk     17 Oct 30 09:01 bad-overlay.json
+-rw-r--r--    1 vgpnk vgpnk   2547 Oct 30 09:01 ledger-local.json
+-rw-r--r--    1 vgpnk vgpnk   1379 Oct 30 09:01 overlay-inject.json
+-rw-r--r--    1 vgpnk vgpnk    106 Oct 30 09:01 overlay-trace.json
+-rw-r--r--    1 vgpnk vgpnk     69 Oct 30 09:01 overlay-verdict.json
+-rw-r--r--    1 vgpnk vgpnk   1124 Oct 30 09:01 overlay.json
+drwxr-xr-x    6 vgpnk vgpnk     89 Oct 30 09:01 synrepo
+```
+The ten leg dirs of tameshi-mte-regression-kzakrvon (bash-checklist-run … js-sources-check) match exactly the regression legs of tools/mutate-and-run.sh --regression; the prefix "tameshi-mte-regression-" is that runner's regression-root family (same family as the dir a live seat kept under /fast/scratch/hyaku/tameshi-r58/T58W2Read14/tameshi-mte-regression-no3px_5_/ — see disk.txt).
+
+## Sizes + active-writer check
+```
+$ du -sm /tmp/tameshi-r4-2-regression.3gCWbo /tmp/tameshi-r4-2-regression.ZdfeTt /tmp/tameshi-r17-MeasureV2-j47nm6kj /tmp/tameshi-r17-MeasureV2-7ttebcrt /tmp/tameshi-mte-regression-kzakrvon /tmp/tameshi-r16-CRMeasure-tc4hz053 2>/dev/null
+1	/tmp/tameshi-r4-2-regression.ZdfeTt
+2	/tmp/tameshi-r17-MeasureV2-j47nm6kj
+2	/tmp/tameshi-r17-MeasureV2-7ttebcrt
+1	/tmp/tameshi-mte-regression-kzakrvon
+1	/tmp/tameshi-r16-CRMeasure-tc4hz053
+(3gCWbo: created 09:05, after the du batch)
+
+$ find /tmp/tameshi-r4-2-regression.3gCWbo /tmp/tameshi-r17-MeasureV2-j47nm6kj -newermt '2026-10-30 09:03' -print 2>/dev/null | wc -l
+0
+```
+(no file in the two probed dirs modified after 09:03 — the runs that made them had finished writing; dirs remain)
+
+## Why they landed in /tmp — the tool source (tameshi-shokunin/tools/mutate-and-run.sh, grep excerpts)
+```
+:149|# / REGRESSION_WORKDIR / REGRESSION: PASS|FAIL|SETUP. Scratch root: mktemp -d
+:150|# "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX" by default (r51 honours
+:150-151|# TMPDIR); removed on PASS unless --keep, kept on FAIL/SETUP, ...
+:491 |    WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-run.XXXXXX") || die_setup 'mktemp -d failed'
+:1432|    root=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-regression.XXXXXX") || die_setup 'mktemp -d failed'
+:1555|  root=$(mktemp -d "${TMPDIR:-/tmp}/tameshi-r4-2-selftest.XXXXXX") || {
+```
+→ The runner honours TMPDIR but its DEFAULT root is /tmp. Registry selftest rows (tools/registry.json) state the contract explicitly: "TMPDIR empty => unset, the platform default applies; a usable TMPDIR holds every mkdtemp and nothing is created under /tmp". So every tool passes its own contract while a seat that forgets to export TMPDIR drops its regression/selftest trees into /tmp — and --regression KEEPS the tree on FAIL/SETUP, so failures permanently litter /tmp.
+
+## Guard that cannot see this — .ufo/evidence/round-58/no-harm.sh:47-48
+```
+Q=$(git grep -c -E "dir\s*=\s*[\"']/tmp" "$REV" -- tools/ 2>/dev/null | awk -F: "{s+=\$NF} END {print s+0}")
+[ "$Q" = 0 ] && s=ok || s=RED; echo "NOHARM r53-scratch-hygiene tmp_hits=$Q $s"
+```
+The guard matches only a literal `dir = "/tmp"` assignment in SOURCE. `"${TMPDIR:-/tmp}"` inside mktemp never matches it, and the guard never inspects the HOST /tmp. Source-clean + host-littering is invisible to it (observed live: 6 fresh dirs during wave 2, 116 accumulated).

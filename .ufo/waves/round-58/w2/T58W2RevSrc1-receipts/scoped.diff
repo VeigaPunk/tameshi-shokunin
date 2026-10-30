@@ -1,0 +1,86 @@
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 87ab1dc3..0d97f0ca 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -158,6 +158,9 @@ rows only, and a row is a claim opened in the round that writes it.
+ | S283 | GNU Grep Manual, §2.3 Exit Status — https://www.gnu.org/software/grep/manual/grep.html | docs | A | GNU grep's own exit-status contract for a predicate program: 0 a line is selected, 1 none selected, 2 an error occurred | §2.3 Exit Status (anchor #Exit-Status) @ single-page manual fetched 2026-10-28 (HTTP 200, 248692 B, sha256 517177d0…675f37; snapshot `.ufo/waves/round-57/w1/T57W1ScoutSourceA-receipts/gnu-grep-manual.html`, receipt lines 1208-1209) | one sentence pins three distinct codes, so "answer is no" (1) and "an error occurred" (2) never share a status and a gate can report could-not-evaluate apart from no; -q lets 0 win over an error, a precedence a strict gate must decline; other implementations may exit above 2 | mined | 2026-10-28 | 365d | corpus/knowledge/gate-row-exit-map.md |
+ | S284 | Postmortem Culture: Learning from Failure (Google SRE Workbook, chapter 10) — https://sre.google/workbook/postmortem-culture/ | docs | A | Google SRE's own postmortem practice: the wording and review rules its postmortems follow; not evidence that blameless culture raises reliability | §Why Is This Postmortem Bad? › Animated language @ workbook page fetched 2026-10-28 (HTTP 200, sha256 25b55c64…0bd22; snapshot `.ufo/waves/round-57/w1/T57W1ScoutSourceB-receipts/workbook-postmortem-culture.html`, receipt line 666) | "a postmortem is a factual artifact that should be free from personal judgments and subjective language": blameless wording is a line-by-line check (named individuals, superfluous or animated language), so a record can be audited for it | queued | 2026-10-28 | 180d | — |
+ | S285 | Postmortems: Enhance Incident Management Processes (Atlassian Incident Management Handbook) — https://www.atlassian.com/incident-management/handbook/postmortems | docs | B | a vendor's account of its own postmortem process, as a process reference | §Incident postmortems and §Postmortem process @ handbook page fetched 2026-10-28 (HTTP 200, 2313661 B, sha256 2644d1c9…a87369; snapshot `.ufo/waves/round-57/w1/T57W1ScoutSourceB-receipts/atlassian-postmortems.html`, receipt line 42055) | REJECTED: a vendor's self-description ("We practice blameless postmortems at Atlassian") with no outcome data or cited evidence, and its Jira issue fields and meeting script do not transfer to a lane record; flip: the vendor publishes a measured outcome for this process, or the lane adopts a Jira postmortem issue | rejected | 2026-10-28 | on-release | — |
++| S286 | A Comprehensive Study on Large Language Models for Mutation Testing — https://arxiv.org/abs/2406.09843 | paper | A | LLM-era mutant fault detection and equivalence costs, for F9 | §Abstract @ arXiv:2406.09843v5, fetched 2026-10-30, 44019 B HTML sha256 7af7e470fca3ef38; extract .ufo/waves/round-58/l1/sources/arxiv-2406.09843-abstract.txt | 111.29% higher fault detection accompanies worse non-compilability, duplication and equivalent-mutant rates by 26.60, 10.14 and 3.51 percentage points; distinguish these outcomes before judging survivors | mined | 2026-10-30 | 365d | corpus/knowledge/llm-mutant-equivalence-cost.md |
++| S287 | 大语言模型时代的变异分析 (王博, 北京交通大学 deck) — https://pdf.dfcfw.com/pdf/H3_AP202503221646031757_1.pdf | talk | B | Chinese-language equivalence definition, score-precision hazard and undecidability, for F9 | pdftotext lines 230-241, fetched 2026-10-30, 5409054 B PDF sha256 531abe11d23f2e37; extract .ufo/waves/round-58/l1/sources/dfcfw-deck.txt | equivalence is undecidable in general and degrades mutation-score precision; a per-mutant witness is not a general decision procedure | mined | 2026-10-30 | 365d | corpus/knowledge/llm-mutant-equivalence-cost.md |
++| S288 | Atlassian Incident Management Handbook, postmortems — https://www.atlassian.com/incident-management/handbook/postmortems | docs | C | reachable anchor for the severity-scoped vendor practice statement | Incident postmortems, live fetch 2026-10-30, 2310224 B HTML sha256 0633b142efce0b08; extract .ufo/waves/round-58/l1/sources/atlassian-postmortems.txt | supersedes S285 — REJECTED: vendor self-description scoped to severity 2 or higher, without measured outcomes for this lane; flip: a measured outcome or actual lane adoption of the vendor's postmortem process | rejected | 2026-10-30 | 365d | — |
+ 
+ 
+ ## Paths
+@@ -298,7 +301,6 @@ the six opened this round moved to rows S040–S046 and left this list).
+ - Zeller & Hildebrandt, *Simplifying and Isolating Failure-Inducing Input* (TSE 2002) — doi:10.1109/32.988498.
+ - Regehr et al., *Test-Case Reduction for C Compiler Bugs* (PLDI 2012) — doi:10.1145/2254064.2254104.
+ - MacIver, Hatfield-Dodds et al., *Hypothesis: A new approach to property-based testing* (JOSS 2019) — doi:10.21105/joss.01891.
+-- *A Comprehensive Study on Large Language Models for Mutation Testing* — https://arxiv.org/abs/2406.09843.
+ - *Mutation-Guided Unit Test Generation with a Large Language Model* — https://arxiv.org/abs/2506.02954.
+ - *Detecting Trivial Mutant Equivalences via Compiler Optimisations* (TSE 2018) — https://orbilu.uni.lu/bitstream/10993/31623/1/07882714.pdf.
+ - Cruz, Rocha, Valente, *Snapshot testing in practice: Benefits and drawbacks* (JSS 2023) — doi:10.1016/j.jss.2023.111797.
+diff --git a/corpus/knowledge/llm-mutant-equivalence-cost.md b/corpus/knowledge/llm-mutant-equivalence-cost.md
+new file mode 100644
+index 00000000..12a28edc
+--- /dev/null
++++ b/corpus/knowledge/llm-mutant-equivalence-cost.md
+@@ -0,0 +1,58 @@
++source: S286 — https://arxiv.org/abs/2406.09843 — §Abstract — arXiv:2406.09843 landing page (v5; v1 2024-06-14, revised 2026-01-22) — fetched 2026-10-30, 44019 B HTML, sha256 7af7e470fca3ef38e97d858b308dca20e815a4b919c9c235adae4d4f59c4a86e, extract `.ufo/waves/round-58/l1/sources/arxiv-2406.09843-abstract.txt`
++source: S287 — https://pdf.dfcfw.com/pdf/H3_AP202503221646031757_1.pdf — lines 230-241 of the pdftotext extract — 大语言模型时代的变异分析 deck (王博, 北京交通大学) — fetched 2026-10-30, 5409054 B PDF, sha256 531abe11d23f2e37 (prefix), extract `.ufo/waves/round-58/l1/sources/dfcfw-deck.txt`
++verified-at: 2026-10-30 — both sources opened by this lane this round (L1 fetch receipts under `.ufo/waves/round-58/l1/sources/`)
++recheck: 365d — `curl -fsSL 'https://arxiv.org/abs/2406.09843' | grep -c 'equivalent mutant rates'` (expect 1; string verified in the copy opened 2026-10-30)
++ground: F9 (LLM-era mutant generation + equivalence)
++
++# LLM-era mutants raise fault detection and raise equivalence at the same time, and equivalence is declared undecidable
++
++Admitted in round 58 from the shokuknow `corpus-expansion-1` package
++(`merge/tameshi/knowledge/corpus/knowledge/llm-mutant-equivalence-cost.md`, staged ids S156/S165,
++re-pointed by document to S286/S287 after the id-collision check; package text adapted before
++landing — this entry is the lane's own re-grounding, not a byte copy).
++
++## What the sources state
++
++- S286 evaluates LLM-generated mutants against rule-based ones on 851 real
++  bugs from two Java bug benchmarks: the LLM mutants are "more diverse ...
++  behaviorally closer to real bugs and, most importantly, with 111.29% higher
++  fault detection", but "the LLM-generated mutants have worse non-compilability,
++  duplication, and equivalent mutant rates by 26.60, 10.14, and 3.51 percentage
++  points, respectively" (§Abstract, verified present in the copy opened 2026-10-30).
++- S287 states the equivalence class — "等价变异体：变异后的程序与原始程序在功能上完全相同" — and records
++  the hazards of that class: it "影响变异分数计算的精确度" (degrades the precision of the
++  mutation score), and deciding equivalence is undecidable in general:
++  "判断等价变异体是不可判定问题：不存在一个自动算法完美解决" (extract lines 230-241; the class
++  definition itself is line 231).
++
++## What this means for the lane's survivor classes
++
++- **A survivor is not yet a test hole.** The lane's survivor classes (its
++  own arm-class matrix, and the B5 / D2 / D10 survivors) are all cases where
++  a mutant was *not killed*. S286 reports a higher overall equivalent-mutant
++  rate; it does not establish equivalence conditional on survival.
++  Inference: classify an LLM-era survivor before calling it a suite gap.
++  A non-equivalence witness is an input distinguishing mutant and original;
++  this is not an automated proof that arbitrary survivors are equivalent.
++- **Three counters, not one.** S286 reports non-compilability, duplication
++  and equivalence as three separate rates. The lane's F1 note (compile and
++  runtime errors excluded from the score, per its held S001) means a
++  non-compilating LLM mutant must not silently enter the denominator.
++  Inference: an LLM-era sweep needs three counters.
++- **The two literatures agree on the hazard.** S286 quantifies the
++  equivalence rate in English; S287 states the same hazard in Chinese and
++  adds an explicit statement that the problem admits no automatic solution.
++
++## Boundary of this entry
++
++- S286 measures Java real-world bug benchmarks. The lane's ten recorded
++  replay cases span JavaScript and bash gates; that is a different population.
++  The numerical transfer is **not measured**: no lane sweep has produced an
++  LLM-generated mutant; this entry supplies a counting contract, not a pilot.
++- Equivalence stays undecidable (S287): a witness is per-mutant evidence
++  (an input where the mutant and the original differ), never a general
++  decision procedure. The lane's 1-minimality witness
++  (`corpus/knowledge/delta-debugging-minimization-contract.md`) reduces a
++  failing case; it does not decide equivalence.
++- The F9 pilot move (a bounded LLM-mutant pilot with an independent outcome
++  check) remains unmeasured; this entry does not close it.

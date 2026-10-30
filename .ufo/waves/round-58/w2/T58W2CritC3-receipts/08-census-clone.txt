@@ -1,0 +1,30 @@
+Receipt 08 — CORPUS census run in the C0 clone (cwd clone)
+Commands (from fleet CORPUS.md §Census + H4 id-cite) and outputs:
+
+  grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+148
+
+  awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print "malformed="n+0}' corpus/SOURCES.md
+malformed=0
+
+  # mined rows whose used-by paths do not exist — must print nothing:
+(prints nothing) MINED_USED_BY_MISSING_DONE
+
+  grep -qF S286 corpus/knowledge/llm-mutant-equivalence-cost.md && grep -qF S287 corpus/knowledge/llm-mutant-equivalence-cost.md && echo ID_CITE_S286_S287_OK
+ID_CITE_S286_S287_OK
+
+  grep -cF S288 corpus/knowledge/llm-mutant-equivalence-cost.md
+0    (grep -c exits 1 on zero matches — expected: the entry must not cite the rejected S288)
+
+Committed pre-append census receipts at C0:
+  cat .ufo/waves/round-58/l1/census-before.exit        -> 0
+  tail -4 .ufo/waves/round-58/l1/census-before.stdout  -> tameshi W04 S267/S268/S274 duplicate url warnings; final line:
+      tameshi   ok   /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+  cat .ufo/waves/round-58/l1/assimilation/scratch-census.exit -> 0
+  (scratch-census.stdout shows the census on the pre-append scratch mirror
+   /fast/scratch/hyaku/tameshi-r58/forecast-overlay/corpus/SOURCES.md, verdict "file ok",
+   W04 duplicate-url warnings only; S288 appears among the W04 rows = mirror already carried the appended rows)
+
+Not exercised at C0: a round-END fleet census receipt (the round is not closed; only the
+before-receipts exist). The contract predicate "the fleet census exits 0 at round end"
+belongs to the round closeout, not to this seat's item.

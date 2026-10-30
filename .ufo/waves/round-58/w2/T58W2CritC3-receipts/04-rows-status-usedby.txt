@@ -1,0 +1,15 @@
+Receipt 04 — item (b): status and used-by cells of the three appended rows, at C0 clone
+Command:
+  grep -E '^\|[[:space:]]*S28[678][[:space:]]*\|' corpus/SOURCES.md | awk -F'|' '{...print $2 "| status="$9 "| opened="$10 "| recheck="$11 "| used-by="$12}'
+Output:
+S286 | status=mined | opened=2026-10-30 | recheck=365d | used-by=corpus/knowledge/llm-mutant-equivalence-cost.md
+S287 | status=mined | opened=2026-10-30 | recheck=365d | used-by=corpus/knowledge/llm-mutant-equivalence-cost.md
+S288 | status=rejected | opened=2026-10-30 | recheck=365d | used-by=—
+
+Id-cite direction (the entry names the rows it mines):
+  grep -qF S286 corpus/knowledge/llm-mutant-equivalence-cost.md && grep -qF S287 corpus/knowledge/llm-mutant-equivalence-cost.md && echo ID_CITE_S286_S287_OK
+  grep -cF S288 corpus/knowledge/llm-mutant-equivalence-cost.md
+Output:
+ID_CITE_S286_S287_OK
+0
+(the entry cites S286 and S287; it cites no row beyond what it mines — S288 appears 0 times, matching used-by —)

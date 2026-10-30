@@ -1,0 +1,164 @@
+{
+  "seat": "T58W2MutC2",
+  "role": "mutation-tester",
+  "cand": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "lane_base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "target": ".ufo/evidence/round-58/c2/measure.py",
+  "target_pristine_sha256": "d4219039f02c1fd389cb47ca2b9968d0335e4254e8477c012fd2cdfbccd3b984",
+  "mutants_json_pin_sha256": "d51f558ca7a4f32c301eccd3bc5ce0814b11da8e16dac539058fbb843448e6de",
+  "scratch_clone": "git clone --shared of lane, checkout --detach 8063d0a551fc5b3cb5a2d397da7353af53444534 (under /fast/scratch/hyaku/tameshi-r58/T58W2MutC2, deleted)",
+  "detector": {
+    "selftest": "python3 <copy>/measure.py --selftest --lane <c0-clone> --rev 8063d0a551fc5b3cb5a2d397da7353af53444534",
+    "installed_registry": "python3 <copy>/measure.py --lane <c0-clone> --rev 8063d0a551fc5b3cb5a2d397da7353af53444534 --work <ABSOLUTE workdir> --explain",
+    "baseline": {
+      "selftest_exit": 0,
+      "selftest_tail": "C2_R58_SELFTEST: 23/23 pass",
+      "measure_exit": 0,
+      "verdict_line": "C2_R58: self=d4219039f02c rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true",
+      "receipts": ["base-selftest.txt", "base-measure.txt"]
+    }
+  },
+  "mutants": [
+    {
+      "id": "MUT1",
+      "axis": "executed tally",
+      "line": 404,
+      "old": "            held += state == 'held'",
+      "new": "            held += 1",
+      "diff_receipt": "MUT1.diff",
+      "expected_detector": "selftest case 'executed arm: a row expecting the wrong exit does not hold' (asserts held==2/3, short['executed']==1); installed-registry run NOT expected to catch (all 3 rows hold at C0, so held==3 either way)",
+      "outputs": {
+        "selftest": {
+          "exit": 1,
+          "tail": "C2_R58_SELFTEST: 22/23 pass",
+          "failing_cases": ["CASE executed arm: a row expecting the wrong exit does not hold FAIL held=3/3"]
+        },
+        "installed_registry": {
+          "exit": 0,
+          "verdict_line": "C2_R58: self=3a1f577b6120 rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true"
+        }
+      },
+      "mutated_sha256": "3a1f577b6120ee99ae8c7b74d63ba553e65f49ef3040f60984983e1d8abb8159",
+      "killed_by": ["selftest"],
+      "verdict": "killed",
+      "receipts": ["MUT1-selftest.txt", "MUT1-measure.txt"]
+    },
+    {
+      "id": "MUT2",
+      "axis": "cell fixture",
+      "line": 333,
+      "old": "    receipt.write_text('VERDICT: rev=%s C1_X_PASS=true\\n' % rev_a)",
+      "new": "    receipt.write_text('VERDICT: rev=%s C1_X_PASS=true\\n' % rev_b)",
+      "diff_receipt": "MUT2.diff",
+      "expected_detector": "fixture receipt now names the certified revision, so the gate PASSES (exit 0) -> standing_cell=WRONG:fixture: selftest 'good fixture' + 3 cell-arm cases fail AND installed-registry run prints total>=1 PASS=false",
+      "outputs": {
+        "selftest": {
+          "exit": 1,
+          "tail": "C2_R58_SELFTEST: 19/23 pass",
+          "failing_cases": [
+            "CASE good fixture: every arm 0 FAIL C2_R58: self=- rev=xxxxxxxxxxxx gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=WRONG:fixture total=1 C2_R58_PASS=false",
+            "CASE cell arm: the stale RECEIPT_REV_MISMATCH cell is WRONG while the code is still a defined one FAIL WRONG:fixture",
+            "CASE cell arm: a cell with no code is WRONG:none FAIL",
+            "CASE cell arm: truth comes from running the gate (a gate emitting MISMATCH flips the verdict) FAIL WRONG:fixture"
+          ]
+        },
+        "installed_registry": {
+          "exit": 1,
+          "verdict_line": "C2_R58: self=3a34e4b37108 rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=WRONG:fixture total=1 C2_R58_PASS=false"
+        }
+      },
+      "mutated_sha256": "3a34e4b37108b05d7636433ca3ad97a9b5eecee977f59e919d7658e6a9403169",
+      "killed_by": ["selftest", "installed-registry-run"],
+      "verdict": "killed",
+      "receipts": ["MUT2-selftest.txt", "MUT2-measure.txt"]
+    },
+    {
+      "id": "MUT3",
+      "axis": "codes parser",
+      "line": 454,
+      "old": "    known = [t for t in tokens if t in codes]",
+      "new": "    known = list(tokens)",
+      "diff_receipt": "MUT3.diff",
+      "expected_detector": "reverts strict membership (a token counts only if the gate's CODES defines it) to lax counting -> selftest case 'codes arm: a token the gate does not define is counted' fails; installed-registry run NOT expected to catch (all 4 SKILL tokens are gate CODES at C0)",
+      "outputs": {
+        "selftest": {
+          "exit": 1,
+          "tail": "C2_R58_SELFTEST: 22/23 pass",
+          "failing_cases": ["CASE codes arm: a token the gate does not define is counted FAIL codes_known=3/3"]
+        },
+        "installed_registry": {
+          "exit": 0,
+          "verdict_line": "C2_R58: self=7a7df78657e2 rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true"
+        }
+      },
+      "mutated_sha256": "7a7df78657e249383acfc8a8cbb3ed7d0e9813099c31f383e53d65ea3715cab5",
+      "killed_by": ["selftest"],
+      "verdict": "killed",
+      "receipts": ["MUT3-selftest.txt", "MUT3-measure.txt"]
+    },
+    {
+      "id": "MUT4",
+      "axis": "verdict total",
+      "line": 472,
+      "old": "    res['total'] = sum(short.values())",
+      "new": "    res['total'] = 0",
+      "diff_receipt": "MUT4.diff",
+      "expected_detector": "total hard-zeroed: selftest case 'cell arm: a gate that does not refuse -> WRONG:fixture' (asserts total>0) and 'mutants pin' (asserts main_measure rc!=0 on pin mismatch) fail; installed-registry run NOT expected to catch (C0 has no real shortfall, so a zeroed total is indistinguishable)",
+      "outputs": {
+        "selftest": {
+          "exit": 1,
+          "tail": "C2_R58_SELFTEST: 21/23 pass",
+          "failing_cases": [
+            "CASE cell arm: a gate that does not refuse -> WRONG:fixture FAIL",
+            "CASE mutants pin: a lane whose committed mutants.json fails the sha256 pin is refused FAIL C2_R58: self=811de4332b4a rev=681ad18e5e5c gate_rows=3 exits=0,2,3 held=3/3 mutants=0/3 skill_row=1 codes_known=2/2 standing_cell=ok total=0 C2_R58_PASS=true"
+          ]
+        },
+        "installed_registry": {
+          "exit": 0,
+          "verdict_line": "C2_R58: self=811de4332b4a rev=8063d0a551fc gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true"
+        }
+      },
+      "mutated_sha256": "811de4332b4a55b81b6112f69a5036ef401250635db2e89ad83ea0959297c61d",
+      "killed_by": ["selftest"],
+      "verdict": "killed",
+      "receipts": ["MUT4-selftest.txt", "MUT4-measure.txt"]
+    }
+  ],
+  "decisive_wave1_reproduction": {
+    "attack": "bent-runner forgery (T58W1RevengerC2 ATTACK B): forged fixture lane commits a cheat gate (refuses every verdict receipt with RECEIPT_REV_CONTENT_DRIFT, exits 0/3) plus a bent tools/registry-check.py that NEVER executes a row: on a clean gate worktree it prints 'ROW <name> expect=E got=E held'; only when the counter dirties the gate (mutants arm) does it print a fabricated 'differs' with got=E+1, which the counter credits as mutant kills",
+    "counter_output": "C2_R58: self=- rev=xxxxxxxxxxxx gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=ok total=0 C2_R58_PASS=true",
+    "counterevidence": "the same forged lane under the REAL registry-check (bytes from clone@C0): c2-fx-ok expect=0 got=3 DIFFERS rc=1 (the cheat gate refuses the verdict receipt); c2-fx-drift got=3 held (coincident exit, still sham output); c2-fx-unresolvable got=2 held",
+    "verdict": "reproduced — the counter's PASS was printed without a single row executing; the executed/mutants arms trust the lane's own registry-check.py bytes. Supports the L1's C2-not-admitted call",
+    "receipt": "forgery-repro.txt",
+    "matches_wave1": ".ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack-b-out.txt (same held=3/3 mutants=3/3 fabricated gots)"
+  },
+  "restoration": {
+    "pristine_sha256": "d4219039f02c1fd389cb47ca2b9968d0335e4254e8477c012fd2cdfbccd3b984",
+    "restored_sha256": "d4219039f02c1fd389cb47ca2b9968d0335e4254e8477c012fd2cdfbccd3b984",
+    "bytes_identical": true,
+    "restored_detector": {
+      "selftest": "C2_R58_SELFTEST: 23/23 pass (exit 0)",
+      "installed_registry": "total=0 C2_R58_PASS=true (exit 0), self=d4219039f02c"
+    },
+    "receipts": ["restored-selftest.txt", "restored-measure.txt"]
+  },
+  "notes": [
+    "4/4 mutants killed; every kill is delivered by the counter's own 23-case selftest. Only MUT2 (cell fixture) is also caught by the installed-registry run at C0: on a clean ledger a counter that zeroes/softens an arm still prints total=0, so the selftest is the operative detector for executed-tally, codes-parser and verdict-total defects. That is the same trust pattern the wave-1 forgery exploits upstream (the lane's own registry-check.py is the executor; see decisive_wave1_reproduction).",
+    "Invocation quirk (invocation-side; observed, not an invariant falsification): a RELATIVE --work (and likewise a relative --lane in cell-fixture children) silently corrupts the run — children resolve TMPDIR=<work>/tmp and <work>/c2-cell-* --lane against their own cwd -> all rows rc=2 error, mutants SURVIVE 0/3, cell WRONG:fixture, total=7 PASS=false. A counterfeit FAIL, not a missed PASS. Receipt: quirk-relative-work.txt; root cause verified by instrumented run (run_probe.py; children pass under an absolute work dir).",
+    "round-58 strictness present at C0 and exercised: row_named_codes is element-equality (substring-only 'codes=X ...' elements do not name a code) and the exit-2 row must name RECEIPT_REV_UNRESOLVABLE exactly; both strict selftest cases (P7/P8) pass on pristine bytes.",
+    "Frozen set untouched: lane evidence dir at .ufo/evidence/round-58/c2/ never modified (worked on a byte-identical copy; sha256 verified equal to the C0 blob before and after)."
+  ],
+  "commands": [
+    "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --oneline -3  ->  8063d0a5 newest (=C0)",
+    "git -C <lane> ls-tree 8063d0a5... -- .ufo/evidence/round-58/c2/ && git -C <lane> show 8063d0a5...:...measure.py | sha256sum  ->  d4219039f02c...b984 (== disk file)",
+    "git clone -q --shared <lane> $S/clone && git -C $S/clone checkout -q --detach 8063d0a5...",
+    "python3 cnt/measure.py --selftest --lane clone --rev 8063d0a5...  ->  exit 0, C2_R58_SELFTEST: 23/23 pass",
+    "python3 cnt/measure.py --lane clone --rev 8063d0a5... --work /fast/scratch/hyaku/tameshi-r58/T58W2MutC2/work-base --explain  ->  exit 0, total=0 C2_R58_PASS=true",
+    "python3 run_mutants.py  ->  MUT1 killed [selftest] 22/23; MUT2 killed [selftest+registry] 19/23 + total=1 PASS=false; MUT3 killed [selftest] 22/23; MUT4 killed [selftest] 21/23; restored bytes sha-identical, detector 23/23 + total=0",
+    "python3 repro_forgery.py  ->  forged lane prints total=0 C2_R58_PASS=true; REAL registry-check on same lane: c2-fx-ok expect=0 got=3 differs",
+    "python3 cnt/measure.py --lane clone --rev 8063d0a5... --work work-rel --explain  (relative --work)  ->  exit 1, got=rc=2 error x3, total=7 PASS=false (quirk)"
+  ],
+  "verdict": "verified-record",
+  "tools_installed": "none (python3 + git + stdlib only; no pacman transactions)",
+  "scratch": "/fast/scratch/hyaku/tameshi-r58/T58W2MutC2 — deleted before yield"
+}

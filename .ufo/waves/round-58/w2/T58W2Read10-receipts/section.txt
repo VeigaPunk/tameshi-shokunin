@@ -1,0 +1,31 @@
+## Pin disposition and provenance correction — round 13
+
+Sources: S003 and PIT precision correction S047 (historical S041 retained);
+`corpus/knowledge/incremental-pin-disposition.md`; outside routed
+`corpus/lessons/round-12-verifier-spotcheck.md`, Routed defects item 3;
+runtime receipts in `.ufo/evidence/round-13/`.
+
+| Observation | Decision | Limit |
+|---|---|---|
+| Recorded target bytes equal the current worktree AND the pin verifies against the manifest digest (`tools/pin-disposition.py:67-71`, `:563-567`) | Report `unchanged` content | Mode, dependencies, environment, runner/spec and invocation identity remain unmeasured |
+| Readable verified pin differs from current bytes | Report `changed` content | Re-pin a future owner-opted-in sweep; never transfer an old rate |
+| Repo, commit, path or pin cannot be evaluated | Report `unavailable`, with reason | Never silently borrow the enclosing fleet repo or label it unchanged |
+| All three content identities agree | Keep `result_reuse=not_established` | A content probe is not an incremental verdict cache or mutation re-sweep |
+| Frozen summary kind is null but the frozen declaration's top-level kind is explicit | Retain original bytes and add checked normalized companion | Preserve the exact non-blind kind and exposure disclosure; no retroactive preregistration |
+
+Recipe from this lane root:
+
+1. Read the manifest's recorded source and the output's `not_compared` list before the rows.
+2. `python3 tools/pin-disposition.py --manifest .ufo/evidence/round-13/pin-manifest.json --root /home/vgpnk/Projects/shokunin`
+   observes only hashes and git metadata. Retain stdout with its sibling branch-tip
+   commits before treating it as a dated reading. It executes no sibling gate.
+3. `python3 tools/witness-metadata.py --check --companion .ufo/evidence/round-13/witness-metadata.json`
+   checks the new companion against digest-anchored frozen sources.
+4. The original round-12 summary and rerun summary retain their historical
+   null fields. The companion normalizes the canonical summary only; the
+   rerun null is explicitly outside its normalized scope. The producer's
+   wrong-nesting bug is fixed separately for future summary generation;
+   its regression selftest asserts the exact top-level exposed kind.
+5. Do not rerun a sibling's gate to obtain closure evidence. A non-author
+   closure verifies committed receipts and their measured revision.
+

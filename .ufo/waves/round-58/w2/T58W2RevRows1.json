@@ -1,0 +1,362 @@
+{
+  "seat": "T58W2RevRows1",
+  "cand": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "axes": [
+    "calibration: semantic agreement vs mechanically accepted excerpts",
+    "provenance: commit ancestry, evidence introduction and base coherence",
+    "honesty: executed sweep, bounded residual gaps"
+  ],
+  "verdict": "gap-minor",
+  "summary": {
+    "reviewed": 12,
+    "agree": 10,
+    "disagree": 2,
+    "structural_faults": 0,
+    "base_status_disagreements": 0
+  },
+  "findings": [
+    {
+      "severity": "medium",
+      "ids": [
+        "R51.5"
+      ],
+      "path": "corpus/routed-defects.json",
+      "lines": "1200-1226",
+      "title": "Cross-domain filing marked fixed before canonical report exists",
+      "evidence": "Disagree current fixed; agree base open: round-58 lesson/staged handoff are not evidence that the owed cross-domain item was filed in the canonical fleet report. The report does not exist at inspection, and row assessment itself says the next canonical report omits it. Lesson also falsely labels line 400 a grep; pinned source makes it output capture.",
+      "commands": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/home/vgpnk/Projects/shokunin",
+            "cat-file",
+            "-e",
+            "HEAD:.ufo/reports/round-58/tameshi.md"
+          ],
+          "exit": 128,
+          "stdout": "",
+          "stderr": "fatal: path '.ufo/reports/round-58/tameshi.md' does not exist in 'HEAD'\n",
+          "worktree_path_exists": false,
+          "kagi": {
+            "command": [
+              "git",
+              "-C",
+              "/home/vgpnk/Projects/shokunin/kagi-shokunin",
+              "show",
+              "c49023b773b69de983f0e6eb7e5867ceb5c2c634:corpus/drift-pins.sh"
+            ],
+            "exit": 0,
+            "output": "158:       printf 'DRIFT   %s %s\\n' \"$p\" \"${diffs[*]}\"; f_bad=$((f_bad + 1))\n400:     out=$(\"$0\" --baseline \"$base\" --symbols \"$sym\" 2>&1) && rc=0 || rc=$?\n403:     elif ! grep -q \"$3\" <<< \"$out\"; then\n404:       printf 'drift-selftest: FAIL %s: no /%s/ in output\\n' \"$1\" \"$3\"; fails=$((fails + 1))"
+          }
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone",
+            "show",
+            "8063d0a551fc5b3cb5a2d397da7353af53444534:corpus/lessons/round-58.md"
+          ],
+          "output": "86: ## R51.5 — cross-domain handoff to kagi\n87: \n88: At kagi revision `c49023b773b69de983f0e6eb7e5867ceb5c2c634`, `corpus/drift-pins.sh` lines 400 and 403 use `grep -q \"$3\" <<< \"$out\"` to search expected verdict words as unanchored regular expressions. Line 158 prints `DRIFT   %s %s` with path text, which can contaminate such a word search; it is a diagnostic producer, not itself a grep.\n89: \n90: Recommendation to kagi: anchor the intended verdict record and distinguish it from path-bearing diagnostics; preserve separate pass/fail assertions. No kagi file was edited. This handoff is included in the round-58 fleet report.\n91: \n92: Evidence: `.ufo/waves/round-58/w1/T58W1Fix08/stage/kagi-crossdomain-r51.5.md` records the read-only source and revision commands."
+        }
+      ],
+      "recommended_action": "Keep open and add R51.5 to newest Planned until canonical report filing is evidenced; correct lesson line 88 to identify line 400 as capture, not grep."
+    },
+    {
+      "severity": "medium",
+      "ids": [
+        "R51.6"
+      ],
+      "path": "corpus/routed-defects.json",
+      "lines": "1229-1245",
+      "title": "Future Gate practice substituted for missing historical round-51 rejection record",
+      "evidence": "Disagree current fixed; agree base open: historical round-51 Gate still contains only opened/touched rows. Fix writes current round-58 Gate with current candidates, not a retrospective round-51 correction. Installed assessment explicitly says later Gate improves future practice only.",
+      "commands": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone",
+            "show",
+            "2a32aa8228d5f86a85c81a923a3148bf792a9538:corpus/lessons/round-51.md"
+          ],
+          "output": "5: ## Gate\n6: \n7: Rows opened this round; URL, local access date, located quote and source limitations are recorded here under CORPUS.md SOURCES contract v1 rule 1. Rows touched old → new are listed after them.\n8: \n9: - **S272** — kagi `corpus/drift-pins.sh`, the fleet's host-drift gate, at rev `e64e81b8eb96f3682b00c1e7a291e84420b280fa` (kagi round-9, 2026-09-28; blob SHA-256 `c138d34c7f0dfe950fce0e5e6672cc788b5ad080bc388d4aef118db0e6c70feb`, 451 lines, mode `100755`; unchanged at kagi HEAD). Opened 2026-10-26 read-only with `git -C /home/vgpnk/Projects/shokunin/kagi-shokunin show e64e81b8eb96f3682b00c1e7a291e84420b280fa:corpus/drift-pins.sh`; tier A, kind code. Located quote (15 words), pinned lines 6-7: “v2 compares the live host against two committed baselines and exits non-zero on any change.” The gate's 13-case `--selftest` ran from a scratch copy (exit 0); its oracle at :403 uses an unanchored `grep -q` over captured output. Row S272 is under `corpus/SOURCES.md:147`.\n10: - **S273** — GNU Bash Reference Manual, §The Set Builtin, author copy by Chet Ramey, Edition 5.3, last updated 18 May 2025; `https://tiswww.case.edu/php/chet/bash/bashref.html`, opened 2026-10-26 local time (UTC receipt is 2026-10-27T00:22Z), HTTP 200, 1,040,870 bytes, SHA-256 `b91026acffb159bd1e842e3116a95539bf858e2b57cbfa74df9e3a53379177a4`, snapshot `.ufo/waves/round-51/w1/T51ScribeRowBash/chet-bashref.html`; kind docs, tier A. The requested gnu.org node page was unreachable (eight HTTP 000 / curl 28 attempts, disclosed in the row and seat report); the opened author copy is a distinct URL, while the same manual is already held as Savannah texi rows S097/S104. Located quotes (all ≤25 words): “Exit immediately if a pipeline ... returns a non-zero status” (9); “The shell does not exit if the command that fails is ... any command in a pipeline but the last” (19); “the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status” (20); “the exit status of the last command substitution performed” (9). The empirical composition matters: with `set -euo pipefail`, a zero-match `grep | cut` command substitution can make an assignments-only command exit 1; the manual states the rules separately, and the gate's call context determines whether `-e` applies. Row S273 is under `corpus/SOURCES.md:148`.\n11: \n12: Rows touched: S022 status `queued` → `mined` (used-by already names `corpus/knowledge/fixture-shrinking-pilot.md`; mined means cited by at least one used-by path under CORPUS.md); no other existing row status changed. Appended S272 and S273; the registry has 133 rows and the next allocated id is S274. Census start exit 0; round-end census receipt is in `.ufo/evidence/round-51/census-end.*`.\n13: \n14: ## C1 — calibration: the lane's frontier status and source-status records\n15: \n16: The stale table at README:76-87 held seven statuses that later lane declarations had changed; the frozen C1 expectation set is `.ufo/evidence/round-51/c1/frontier-expected.json`. The appended round-51 table points each status to the declaration; the C1 counter also checks the append-only prefix, S022's status/used-by consistency and mined used-by path existence. Two independent wave-1 readers re-derived all ten statuses and agreed with the frozen set; F11/F12 are fixture ids, not frontier rows (`T51CritExpectedA.md`, `T51CritExpectedB.md`). The probe on the table + S022 fixture printed all ten `FRONTIER Fk: ok`, `status_conflicts=0`, `total=0`, `C1_R51_PASS=true` (`T51ScribeFrontier.md` scratch receipt; the deciding receipt remains `.ufo/evidence/round-51/after/c1.stdout`)."
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone",
+            "diff",
+            "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+            "8063d0a551fc5b3cb5a2d397da7353af53444534",
+            "--",
+            "corpus/lessons/round-51.md"
+          ],
+          "output": "",
+          "exit": 0
+        }
+      ],
+      "recommended_action": "Keep open and add R51.6 to newest Planned, or append a named correction listing actual round-51 rejected candidates and reasons, rather than treating round-58 candidates as the old record."
+    }
+  ],
+  "rows": [
+    {
+      "id": "R50.1",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: S022 is mined with used-by path; round-51 lesson logs queued -> mined; round-51 no-harm explicitly replaces the population pin by the freshness score floor.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R50.1 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R50.2",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: both pbt-staged-id and shrink-case have substantive SKILL registry rows including kind, invocation, exit 2, selftest, pinned values and write scope.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R50.2 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R50.3",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: appended round-51 table explicitly supersedes the old coverage table, with F6 held round 50 and F10 held round 49.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R50.3 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R50.4",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "open",
+      "installed_status": "open",
+      "derived_status_c0": "open",
+      "reason": "Agree open at base and C0: compound carried successor-counter/open-ledger debt remains explicitly preserved in newest Planned round 59; no claim that historical seven items are discharged.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R50.4 structural=None base=open now=open planned=True",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.1",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: registry expects ten legs; pre-registered round-52 tools scope allows registry edit; committed probe names bcba8924894216268afc4171f06eb8c28e912b46 and isolated registry receipt reports held=1/1 EXIT=0. Historical receipt inspected, not rerun live interop.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.1 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.2",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: ten ledger legs and TMPDIR runner scope corrected; cited runner pointers resolve to relevant behavior; follow-on fresh-reader rekey commit 7fa9a5e0104bc181872401547987d6744f3b570d precedes base. Fix spans commits; single keyed excerpt is not the sole semantic evidence.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.2 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.3",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: appended correction names T51W2Read20, replaces code-written zero with seven located findings, identifies old ledger entry, and retains original history. Incidental first heading excerpt was not used as substantive proof.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.3 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.4",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "open",
+      "installed_status": "open",
+      "derived_status_c0": "open",
+      "reason": "Agree open at base and C0: fleet-bound classification landed but compound item also requires missing round-51 C3 mutation attack; current Planned paragraph carries joint debt. No new discriminator receipt was supplied by row.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.4 structural=None base=open now=open planned=True",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.5",
+      "agreement": "disagree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "open",
+      "installed_status": "fixed",
+      "derived_status_c0": "open",
+      "reason": "Disagree current fixed; agree base open: round-58 lesson/staged handoff are not evidence that the owed cross-domain item was filed in the canonical fleet report. The report does not exist at inspection, and row assessment itself says the next canonical report omits it. Lesson also falsely labels line 400 a grep; pinned source makes it output capture.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.5 structural=None base=open now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.6",
+      "agreement": "disagree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "open",
+      "installed_status": "fixed",
+      "derived_status_c0": "open",
+      "reason": "Disagree current fixed; agree base open: historical round-51 Gate still contains only opened/touched rows. Fix writes current round-58 Gate with current candidates, not a retrospective round-51 correction. Installed assessment explicitly says later Gate improves future practice only.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.6 structural=None base=open now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.7",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "fixed",
+      "installed_status": "fixed",
+      "derived_status_c0": "fixed",
+      "reason": "Agree fixed at base and C0: appended round-52 supersession specifically replaces drift-pins unmeasured cell, identifies case 10 and quotes recorded 2/10 sweep plus ten-leg regression.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.7 structural=None base=fixed now=fixed planned=False",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    },
+    {
+      "id": "R51.8",
+      "agreement": "agree",
+      "status_at_base_agree": true,
+      "derived_status_at_base": "open",
+      "installed_status": "open",
+      "derived_status_c0": "open",
+      "reason": "Agree open at base and C0: deciding-run still uses last-touch commit ancestry rather than receipt-content freeze binding; no demonstrated failure discriminator is provided; newest Planned carries debt.",
+      "structural_fault": null,
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "output": "R51.8 structural=None base=open now=open planned=True",
+      "evidence_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit-results.json",
+      "independent_witness_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/independent-witnesses.json"
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.py",
+        "/fast/scratch/hyaku/tameshi-r58/T58W2RevRows1/clone"
+      ],
+      "exit": 0,
+      "stdout_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.stdout",
+      "stderr_receipt": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts/audit.stderr"
+    }
+  ],
+  "receipts": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w2/T58W2RevRows1-receipts",
+  "notes": [
+    "LSP device unavailable: read xd://lsp returned No such tool. Text/git inspection is fallback, not semantic references proof.",
+    "All nine fixed rows have at least one fresh keyed excerpt present in the named fix, absent at routed_at and first parent, touched by fix, and free of ACK_WORDS. Additional incidental excerpts do not establish resolution.",
+    "Pre-base commits do not necessarily name later-assigned ids; frozen A4 path tie/A8 panel-commit tie applies. Both round-58 fixing commit messages name R51.5 and R51.6.",
+    "Some R51.2/R51.3 ancillary excerpts are newer than cited fix, but each also has an actually introduced valid witness; this does not invalidate those rows.",
+    "This is a review recommendation, not an admission or integration judgment."
+  ],
+  "residual_risk": [
+    "Canonical fleet round-58 report may be written later; this recommendation is specifically the observed C0 state, not future filing.",
+    "Open-status agreement means the installed row has not supplied full resolution; it is not exhaustive proof no conceivable historical evidence exists."
+  ],
+  "verification_gaps": [
+    "No live fleet-bound mte interop rerun; inspected committed fix-revision receipt.",
+    "No C2 forgery reproduction in this row-only seat; decisive C2 attack is outside R50/R51 row scope.",
+    "No resume/runtime change exists in assigned row slice."
+  ],
+  "cleanup": "Deleted /fast/scratch/hyaku/tameshi-r58/T58W2RevRows1 before reporting; only required report/receipt outputs remain.",
+  "tool_installs": [],
+  "self_evaluation": {
+    "accuracy": 4,
+    "completeness": 4,
+    "clarity": 4,
+    "actionability": 4,
+    "conciseness": 4,
+    "evidence": "All 12 rows checked structurally and substantively with stored commands and output; historical interop receipt inspected rather than replayed, and report absence is time-scoped."
+  }
+}

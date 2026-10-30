@@ -1,0 +1,24 @@
+=== forged lane (cheat gate + bent registry-check committed) head=91824763e14f
+C2_R58: self=- rev=xxxxxxxxxxxx gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=ok total=0 C2_R58_PASS=true
+    rows gate_rows=3 exits=0,2,3 missing_exits=none refusal_rows_without_known_code=none
+    executed c2-fx-ok expect=0 got=0 held
+    executed c2-fx-drift expect=3 got=3 held
+    executed c2-fx-unresolvable expect=2 got=2 held
+    mutants baseline-held=3/3
+    mutant M1 accept-on-drift: killed by c2-fx-ok(got=1),c2-fx-drift(got=4),c2-fx-unresolvable(got=3)
+    mutant M2 wrong-refusal-code: killed by c2-fx-ok(got=1),c2-fx-drift(got=4),c2-fx-unresolvable(got=3)
+    mutant M3 exit-0-on-unresolvable: killed by c2-fx-ok(got=1),c2-fx-drift(got=4),c2-fx-unresolvable(got=3)
+    skill_row 1 (verdict map=0 PASS; 2 unresolvable certified; 3 refused)
+    codes tokens=['RECEIPT_REV_ABSENT', 'RECEIPT_REV_CONTENT_DRIFT'] unknown=[]
+    cell gate emitted=['RECEIPT_REV_CONTENT_DRIFT'] exit=3 verdict=REFUSED; table cell carries=['RECEIPT_REV_CONTENT_DRIFT']
+
+### the same forged lane under the REAL registry-check (bytes from clone@C0)
+real rc --only c2-fx-ok: rc=1
+ROW c2-fx-ok expect=0 got=3 differs
+REGISTRY_CHECK: held=0/1 superseded=0
+real rc --only c2-fx-drift: rc=0
+ROW c2-fx-drift expect=3 got=3 held
+REGISTRY_CHECK: held=1/1 superseded=0
+real rc --only c2-fx-unresolvable: rc=0
+ROW c2-fx-unresolvable expect=2 got=2 held
+REGISTRY_CHECK: held=1/1 superseded=0

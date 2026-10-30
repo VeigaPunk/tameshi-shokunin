@@ -1,0 +1,79 @@
+# 04 — Protected paths (corpus/, SKILL.md, tools/) and prior-round evidence (.ufo/evidence/round-50..57)
+
+## Commits since base touching corpus/ SKILL.md tools/ (expected round content, all L1-helper identity, all pre-C0)
+
+$ git -C <lane> log --format='%h %an <%ae> %ad %s' --date=format:'%Y-%m-%d %H:%M' --name-status 2a32aa8228d5f86a85c81a923a3148bf792a9538..HEAD -- corpus SKILL.md tools
+8063d0a5 tameshi-shokunin <tameshi@shokunin.local> 2026-10-30 08:54 round-58: settled wave one, ...
+	M	corpus/knowledge/llm-mutant-equivalence-cost.md
+	M	corpus/lessons/round-58.md
+0fdb71d2 ... 08:44 ... 	M corpus/lessons/round-58.md  M corpus/routed-defects.json
+1d1f70d8 ... 08:43 ... 	M corpus/knowledge/receipt-revision-binding.md
+6377ffe4 ... 08:41 ... 	M corpus/routed-defects.json
+6024c8fc ... 08:35 ... 	M corpus/lessons/round-58.md
+7d5ae605 ... 08:34 ... 	M corpus/lessons/round-58.md
+38e4e3af ... 08:33 ... 	M corpus/lessons/round-58.md
+d28c3044 ... 08:32 ... 	M corpus/README.md  M corpus/SOURCES.md  A corpus/knowledge/llm-mutant-equivalence-cost.md
+d21ee8ed ... 08:30 ... 	M tools/registry.json
+d9c3939b ... 08:19 ... 	A corpus/lessons/round-58.md
+
+- SKILL.md: ZERO commits touch it since base; zero working-tree modifications
+  (not in any status output). Untouched.
+- corpus/ and tools/registry.json changes are the round's contracted content
+  install (ledger rows, registry bare-code elements, F9 entry), committed by
+  the L1 through the lane helper ("the L1 alone commits through the lane
+  helper" per the wave-1 contract), each message naming its item ids.
+- No commit after C0; nothing staged; nothing uncommitted in these paths
+  (status shows none).
+
+## Prior-round evidence, committed state since base
+
+NAIVE pathspec (the form the contracts print in prose):
+$ git -C <lane> diff --name-only 2a32aa8..HEAD -- '.ufo/evidence/round-5[0-7]'
+(empty)   <-- FALSE CLEAN
+$ git -C <lane> diff --name-only 2a32aa8..HEAD -- ':(glob).ufo/evidence/round-5[0-7]'
+(empty)   <-- FALSE CLEAN
+$ git -C <lane> diff --name-only 2a32aa8..HEAD -- '.ufo/evidence/round-5[0-7]/'
+(empty)   <-- FALSE CLEAN
+
+Correct form (wildcard pathspecs must match the FULL path):
+$ git -C <lane> diff --name-only 2a32aa8..HEAD -- '.ufo/evidence/round-5[0-7]/**'
+A	.ufo/evidence/round-53/after/c1.stdout      (from explicit form; /** form lists paths)
+A	.ufo/evidence/round-53/after/c2.stdout
+A	.ufo/evidence/round-53/verify-freeze-final.stdout
+A	.ufo/evidence/round-55/after/c2-full.stdout
+
+Explicit enumeration (ground truth, same 4):
+$ git -C <lane> diff --name-status 2a32aa8..HEAD -- .ufo/evidence/round-50 .ufo/evidence/round-51 .ufo/evidence/round-52 .ufo/evidence/round-53 .ufo/evidence/round-54 .ufo/evidence/round-55 .ufo/evidence/round-56 .ufo/evidence/round-57
+A	.ufo/evidence/round-53/after/c1.stdout
+A	.ufo/evidence/round-53/after/c2.stdout
+A	.ufo/evidence/round-53/verify-freeze-final.stdout
+A	.ufo/evidence/round-55/after/c2-full.stdout
+
+Only ADDITIONS (A), no M/D. Carrying commits (both author AND committer =
+tameshi-shokunin <tameshi@shokunin.local>, the lane-helper identity):
+764f87bc 2026-10-30 08:41 round-58: R53.5 final amendment-seven verification receipt and append-only LOG correction
+7d5ae605 2026-10-30 08:34 round-58: R53.2 R53.4 direct committed-revision reruns; R55.1 full C2 verdict at measured revision
+
+These are the receipts wave-1 fix items T58W1Fix03/04/05 staged (their items
+explicitly instructed producing round-53/55 receipts); the L1 helper committed
+them pre-C0. No prior-round file was MODIFIED or DELETED; nothing post-C0;
+nothing uncommitted.
+
+## Prior-round evidence, working tree
+
+$ git -C <lane> status --porcelain -uall -- '.ufo/evidence/round-5[0-7]'
+(empty)
+[note: this porcelain call also used the naive pathspec — cross-checked with
+the full-tree status (receipt 02), whose only entries outside waves are the
+round-58 integrate/ probes, so the empty result is corroborated by an
+independent full listing.]
+
+## Frozen round-58 instruments untouched
+
+$ git -C <lane> status --porcelain -uall -- .ufo/evidence/round-58/c1 .ufo/evidence/round-58/c2 .ufo/evidence/round-58/control .ufo/evidence/round-58/contract.json .ufo/evidence/round-58/freeze.json
+(empty)
+
+The frozen C2 counter and the wave-1 bent-runner forgery receipts
+(w1/T58W1RevengerC2-receipts/, tracked at C0, w1 porcelain-clean) are
+byte-identical to C0: the decisive-finding target was neither weakened nor
+edited by wave 2.

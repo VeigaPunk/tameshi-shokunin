@@ -1,0 +1,120 @@
+{
+  "seat": "T58W2MutC1",
+  "probe": "C1 counter mutations 2 (calibration)",
+  "cand": "8063d0a551fc5b3cb5a2d397da7353af53444534",
+  "target": ".ufo/evidence/round-58/c1/measure.py (scratch copy only; lane file never modified)",
+  "pristine_sha256": "9b7c01673912ec2a9313b98109a62216f0c5a8f9b64c1b459be141d118fb58d6",
+  "detectors": {
+    "real": "python3 <copy> --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 8063d0a551fc5b3cb5a2d397da7353af53444534 --explain (exit 0 iff total==0)",
+    "selftest": "python3 <copy> --selftest --work <scratch>/tmp (exit 0 iff all cases pass)"
+  },
+  "baseline_pristine": {
+    "real_exit": 0,
+    "real_last_line": "C1_R58: self=9b7c01673912 rev=8063d0a551fc rows=51/51 agree=51/51 old49=ok fixed=37 declined=1 thisround=8 panel=4/5 spot=ok total=0 C1_R58_PASS=true",
+    "selftest_exit": 0,
+    "selftest_line": "C1_R58_SELFTEST: 110/110 pass",
+    "note": "both detectors green before any mutation, so no verdict below is inconclusive"
+  },
+  "mutants": [
+    {
+      "id": "M1-old49-comparison",
+      "diff": "line 423: \"if len(seen) != 1 or seen[0] != was:\" -> \"if len(seen) != 1 and seen[0] != was:\"",
+      "mutant_sha256": "8da557a82afdd4b7807b751773fbd980bd4290b41966d6eb90ce43a81ed335ce",
+      "expected": "real run blind on a clean ledger (all 49 BASE rows canonically unchanged -> old49=0 either way); selftest old49-arm cases fail",
+      "real": {
+        "exit": 0,
+        "last_line": "C1_R58: self=8da557a82afd rev=8063d0a551fc rows=51/51 agree=51/51 old49=ok fixed=37 declined=1 thisround=8 panel=4/5 spot=ok total=0 C1_R58_PASS=true",
+        "verdict": "SURVIVED"
+      },
+      "selftest": {
+        "exit": 1,
+        "failures": [
+          "line 96: SELFTEST rewritten old row counted (old49 arm)                FAIL",
+          "then uncaught: File .../measure.py, line 423, in measure -> IndexError: list index out of range (deleted-old-row case reaches seen[0] on an empty list under 'and')"
+        ],
+        "verdict": "KILLED"
+      },
+      "overall": "killed (by selftest only)"
+    },
+    {
+      "id": "M2-planned-regex",
+      "diff": "line 121: PLANNED_ID = re.compile(r'\\bR5[0-6]\\.\\d+\\b') -> re.compile(r'\\bR5[0-5]\\.\\d+\\b')",
+      "mutant_sha256": "44ce0c907d17b748c908edacc2014b7c4d11f2394af12a8115c5411377a7b713",
+      "expected": "real run: R56.1/R56.2 are open at C0 and named in the Planned paragraph -> open_unplanned fires; selftest survives (fixture ids are all R50.x)",
+      "real": {
+        "exit": 1,
+        "evidence": [
+          "EXPLAIN open-unplanned R56.1",
+          "EXPLAIN open-unplanned R56.2",
+          "C1_R58: self=44ce0c907d17 rev=8063d0a551fc rows=51/51 agree=49/51 old49=ok fixed=37 declined=1 thisround=8 panel=4/5 spot=ok total=2 C1_R58_PASS=false"
+        ],
+        "verdict": "KILLED"
+      },
+      "selftest": {
+        "exit": 0,
+        "line": "C1_R58_SELFTEST: 110/110 pass",
+        "verdict": "SURVIVED"
+      },
+      "overall": "killed (by real-lane run only)"
+    },
+    {
+      "id": "M3-disagreement-budget",
+      "diff": "line 115: PANEL_ALLOWED = 5 -> PANEL_ALLOWED = 6",
+      "mutant_sha256": "d5bee233ba87a592fee57b2e090818c78d407759c1541b0eb0e5706f2462c827",
+      "expected": "real run survives (C0 panel disagreements = 4 <= 6, panel_over stays 0); selftest killed by verdict-line assertions pinning panel=0/5",
+      "real": {
+        "exit": 0,
+        "last_line": "C1_R58: self=d5bee233ba87 rev=8063d0a551fc rows=51/51 agree=51/51 old49=ok fixed=37 declined=1 thisround=8 panel=4/6 spot=ok total=0 C1_R58_PASS=true",
+        "verdict": "SURVIVED"
+      },
+      "selftest": {
+        "exit": 1,
+        "line": "C1_R58_SELFTEST: 107/110 pass",
+        "failures": [
+          "SELFTEST good verdict line fields                                     FAIL",
+          "SELFTEST panel agrees: panel=0/5, pass                                FAIL",
+          "SELFTEST cli good exits 0, verdict is last line                       FAIL"
+        ],
+        "verdict": "KILLED"
+      },
+      "overall": "killed (by selftest only)"
+    },
+    {
+      "id": "M4-provenance-digest",
+      "diff": "line 114: PANEL_SHA256 'e65445ba...edd39569f' -> 'f65445ba...edd39569f' (first hex char)",
+      "mutant_sha256": "ea25727d777978d48de9afae8f5e35467b045d56e1857f358fca956f4f1d455f",
+      "expected": "real run killed (panel blob no longer matches pin -> panel_pin=1); selftest survives (it never asserts the shipped pin value; fixture supplies its own pin)",
+      "real": {
+        "exit": 1,
+        "counts_line": "C1_R58_TERMS: fixed=37 open=13 declined=1 fixed_this_round=8 ... fixed_bad=11 ... panel_pin=1 panel_over=0 ... (total=12)",
+        "last_line": "C1_R58: self=ea25727d7779 rev=8063d0a551fc rows=51/51 agree=40/51 old49=ok fixed=37 declined=1 thisround=8 panel=pin spot=ok total=12 C1_R58_PASS=false",
+        "cascade": "panel_pin=1 plus fixed_bad=11 (EXPLAIN fixed-not-new on 11 rows: R50.1 R51.1 R51.3 R53.6 R54.4 R54.7 R54.8 R54.9 ...) because a pin miss empties pcommits, so fixed rows relying on the A8 panel commit-tie lose their tie",
+        "verdict": "KILLED"
+      },
+      "selftest": {
+        "exit": 0,
+        "line": "C1_R58_SELFTEST: 110/110 pass",
+        "verdict": "SURVIVED"
+      },
+      "overall": "killed (by real-lane run only)"
+    }
+  ],
+  "findings": [
+    "Coverage complementarity: the killed-by matrices are disjoint - M1 and M3 are killed only by the selftest, M2 and M4 only by the real-lane run. Running the counter alone against the clean installed ledger would admit the old49-weakening (M1) and the budget-widening (M3); running the selftest alone would admit the planned-range narrowing (M2) and any constant-pin drift (M4). Both detectors are needed; neither subsumes the other.",
+    "The selftest never asserts the shipped PANEL_SHA256/DEFECTS_SHA256 values (only their 64-hex shape), so drift in either pinned constant is invisible to the selftest by construction; the real lane is the only detector for pin constants.",
+    "M1's selftest kill is partly an uncaught IndexError (deleted-old-row case indexes seen[0] on an empty list under 'and') rather than a clean assertion failure; detection still holds (exit 1) but the failure mode is a crash, which matters when reading selftest logs.",
+    "A wrong PANEL_SHA256 costs more than the panel arm: the pin miss also empties pcommits, so 11 fixed rows relying on the A8 panel commit-tie fire fixed-not-new too (total 12 at C0). The pin protects fixed-row adjudication as well as the panel arm."
+  ],
+  "commands": [
+    "python3 $S/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev 8063d0a551fc5b3cb5a2d397da7353af53444534 --explain",
+    "python3 $S/measure.py --selftest --work $S/tmp",
+    "git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin $S/clone; git -C $S/clone checkout --detach 8063d0a551fc5b3cb5a2d397da7353af53444534"
+  ],
+  "restoration": {
+    "working_copy_after_all_mutants": "9b7c01673912ec2a9313b98109a62216f0c5a8f9b64c1b459be141d118fb58d6 (equals lane file and clone blob)",
+    "lane_repo": "untouched by this seat: only read-only git show/rev-parse against it; HEAD still 8063d0a551fc5b3cb5a2d397da7353af53444534; the 7 porcelain entries at check time are orchestrator w2-dispatch artifacts (.ufo/waves/round-58/build-spec-w2.py, w2-dispatch.json, w2.ready*, w2/, spec-w2.json, integrate/), none written by this seat",
+    "scratch_clone": "clean (git status --porcelain empty)"
+  },
+  "receipts_dir": ".ufo/waves/round-58/w2/T58W2MutC1-receipts/",
+  "scratch_cleanup": "done: rm -rf /fast/scratch/hyaku/tameshi-r58/T58W2MutC1 before yield; directory absent afterwards"
+}
