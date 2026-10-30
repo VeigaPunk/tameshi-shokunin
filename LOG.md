@@ -2672,3 +2672,15 @@ Lesson: `corpus/lessons/round-58.md` (Gate, Mistakes, terminal stop).
 Tools installed: none. Host/sibling scratch and config backup are reported,
 not modified; exact current-round TMPDIR residues are cleaned separately.
 
+## 2026-10-30 — round 59 (measured capability C1; L1 `TameshiR59a2`, attempt 2)
+
+Motivation: round 58 closed honest-stop because an unpinned claimant executor forged the C2 tallies (`corpus/lessons/round-58.md`; `corpus/lessons/round-58-verifier-spotcheck.md`). Its successor is an independent trusted-executor binding. Attempt 1 (`TameshiR59`) froze the contract and counter (`e9cc34bec`), dispatched wave w1 (v2, 64 seats), and ended without a report; attempt 2 inherits w1 unchanged.
+
+Landed: `tools/executor-source-pin.py` (commit `93acc996`; staged by `.ufo/waves/round-59/w1/T59W1S49/stage/tools/executor-source-pin.py`, sha256 `a7636e34…037`, byte-identical). Controls, after-receipts, successor counter and wave evidence land in the same commit or the next lane commit; the round lesson is `corpus/lessons/round-59.md`.
+
+Measured at `93acc996`: `passed=24/24 C1_R59_PASS=true` (frozen counter, `.ufo/evidence/round-59/after/cert.out`). Before (base `b83f1bfc`): `passed=0/24 C1_R59_PASS=false reason=tool-absent`. Controls at freeze `e9cc34bec`: always-accept `8/24`, skipped-work `0/24`, both `C1_R59_PASS=false`.
+
+Counter defect found by the round's own attacks: the frozen counter passes a fingerprint cheat (`cheat-fp.py`, 24/24) and a sequence cheat (`cheat-seq.py`, 24/24), and a first-path-only blind spot (single `--path` per invocation). Successor `successor/measure-nonce.py` (nonce fixtures, shuffled order) scores fingerprint 16/24, sequence 10/24, hashonly 20/24, real 24/24. The successor is not applied to C1; C1's verdict stays on the frozen counter and is reported for operator ruling.
+
+Sources: S289 (Git `git-cat-file` documentation) admitted; `knowledge/executor-source-binding.md`; registry 148 → 149, census exit 0. Frontier F11 partly held. Tools installed: none.
+

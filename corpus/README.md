@@ -85,6 +85,7 @@ header citing a `mined` `SOURCES.md` row.
 | F8 | oracle anchoring as a survivor class | S012 | open | 0 test-oracle lines → one survivor classified against an independently anchored expectation |
 | F9 | LLM-era mutant generation + equivalence | S007, S009, S043, S044, S286, S287 | open — equivalence-cost contract entered (round 58, `knowledge/llm-mutant-equivalence-cost.md`); bounded pilot unmeasured | no LLM-specific search run yet (U) → bounded pilot with an independent outcome check |
 | F10 | PBT generators for gate fixtures | S018, S019, S020, S021 | open | no PBT fixture method → one generator against a named fixture gate |
+| F11 | trusted-executor binding by committed blob identity (round-58 C2 successor) | S289 | partly held (round 59, `knowledge/executor-source-binding.md`); frozen counter 24/24 at the tool commit but cheat-passable (fingerprint cheat 24/24) | per-run nonce fixtures + shuffled order: fingerprint 24/24 → 16/24, sequence 24/24 → 10/24, real tool 24/24 (shown able to fail); first-path-only blind spot still open |
 
 ## Known gaps
 
