@@ -23,7 +23,7 @@ round's close.
 
 ## Corrections to earlier records
 
-(to be completed from this round's corrections; append-only)
+The substantive correction sections below preserve the original historical records and distinguish retrospective reruns from contemporaneous deciding executions.
 
 ## Gate
 
@@ -61,7 +61,7 @@ Rejects (assimilation set):
 
 Id collision check (before any append; scratch receipt committed with the wave evidence):
 reg-ids (lane registry, 0–3-leading-space pattern) vs staged-ids (`SOURCES.append.md`);
-collisions listed S156, S165 among others by ID; adopted ids S286/S287/S288 collide with
+The eight collisions are S153–S160 (S156 collides, S165 does not). Both adopted documents receive continuation ids S286/S287; S288 is the new S285 supersession. These adopted ids collide with
 nothing (next unused after S285). The 0–3-space guard was proven on an indented-collision
 fixture (nonempty `collisions`) before any append.
 
@@ -77,7 +77,7 @@ Status/recheck/used-by changes (old→new, append-only log):
 | Class | Evidence | Captured-by | Fix and failability |
 |---|---|---|---|
 | stale-premise | The round-53/54/55 SCORECARD "Planned" paragraphs named the `delta-debugging-minimization-contract` package entry as an adoption candidate; round 50 had already admitted it from the same package (S271). Discovered 2026-10-30 when this round's C3 draft was being built: `ls corpus/knowledge | grep delta` at base → the entry exists, `source: S271`. | none — a planned-item candidate was never required to be swept against the corpus before adoption | Fix (this round): the adoption set was re-selected (F9 entry); the claim's before-state was re-derived at base by command (`grep -rl 2406.09843 corpus/knowledge` → empty at base), not from the planned text. Fix is shown able to fail: the same sweep at base against the delta-debugging paper URL finds the held entry (`grep -l 'delta-debugging.pdf' corpus/knowledge/*.md` → `corpus/knowledge/delta-debugging-minimization-contract.md`), so the guard (an adoption candidate whose subject URL is already cited is refused) has a red case it catches. Carried as a planned-item rule candidate for QUALITY.md |
-| (in-round rows to be appended from wave findings) | | | |
+| number-drift | The draft lesson incorrectly said staged S165 collided; `.ufo/waves/round-58/l1/assimilation/collisions` actually lists only S153–S160. | collision-census receipt review | Corrected the prose to the actual eight-id set before closing. The frozen spacing-tolerant intersection catches the deliberately indented S156 fixture; neither an absent collision nor a filename was inferred as evidence. |
 
 ## Wave record
 

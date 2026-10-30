@@ -60,7 +60,7 @@ HEADINGS = [
     "## The operator's runbook and the six-leg regression (round 10, measured)",
     '### The map — where a reader enters, artifact by artifact',
     '## Repeated controls and gate registry — round 12',
-    '### Gate/probe registry',
+    '### Round-26 gate/probe registry — report interop',
     '## Pin disposition and provenance correction — round 13',
     '### Round-13 gate/probe registry',
     '## Effective expectation reconciliation — round 14',
@@ -97,7 +97,7 @@ add('T58W2RevRows4', 'reviewer',
     'Row re-verification D: same contract for rows R55.1-R55.7 and R56.1-R56.7. Output {0}/T58W2RevRows4.json.'.format(W2),
     axes=['calibration'], milestone='rows R55-R56')
 add('T58W2RevThis', 'reviewer',
-    'This-round-floor reviewer. Verify the >=6 post-base fixes the round claims: list every ledger row whose fix commit is NOT an ancestor of base {0} (run the counter term: python3 -I {{1}}/.ufo/evidence/round-58/c1/measure.py --lane {2} --rev <C0> --work <scratch> --explain and read thisround=<n> plus the per-row EXPLAIN lines); then for two of those fixes, re-run the receipt-producing command yourself (e.g. the round-53 counter at 88afa941 in a scratch clone) and confirm the committed receipt matches your output byte-for-byte or semantically. Output {{1}}/T58W2RevThis.json.'.format(BASE, LANE, LANE),
+    f'This-round-floor reviewer: at {C0}, enumerate rows fixed by commits after {BASE}. Run python3 -I {LANE}/.ufo/evidence/round-58/c1/measure.py --lane {LANE} --rev {C0} --work EMPTY_SCRATCH_DIR --explain. Independently reproduce two fixing measurements and compare to their committed receipts. Output {W2}/T58W2RevThis.json.',
     axes=['calibration'], milestone='this-round fixes')
 add('T58W2RevSrc1', 'reviewer',
     'Source re-opener A. Independently fetch https://arxiv.org/abs/2406.09843 (your own curl, record bytes + sha16), locate the Gate quote in the abstract, and compare with the L1 extract {0}/.ufo/waves/round-58/l1/sources/arxiv-2406.09843-abstract.txt and the committed row S286 + entry corpus/knowledge/llm-mutant-equivalence-cost.md: any contradicted number/date/sha is a finding. Output {1}/T58W2RevSrc1.json.'.format(LANE, W2),
@@ -109,7 +109,7 @@ add('T58W2RevSrc3', 'reviewer',
     'Source re-opener C. Independently fetch the Atlassian page (https://www.atlassian.com/incident-management/handbook/postmortems), locate the severity-2 sentence, and compare with the extract {0}/.ufo/waves/round-58/l1/sources/atlassian-postmortems.txt, the new row S288, and the untouched S285. Verify the supersession shape (CORPUS rule 2: new row, teaches opens supersedes, old row untouched, rejection + flip carried). Output {1}/T58W2RevSrc3.json.'.format(LANE, W2),
     axes=['coverage'], milestone='re-open S288')
 add('T58W2CritLedger', 'critic',
-    'Ledger install critic. Attack the installed ledger at C0: (a) run the frozen counter python3 -I {{1}}/.ufo/evidence/round-58/c1/measure.py --lane {2} --rev <C0> --work <scratch> --explain - it must print C1_R58_PASS=true total=0 at C0 (if the panel pin amendment landed); (b) name the weakest two rows (evidence that cites the round\'s own receipts circularly, or a fixed row whose excerpt does not resolve the defect semantically) and say what a closure spot-check would find; (c) verify the newest Planned paragraph names every row left open (A5). Output {{1}}/T58W2CritLedger.json.'.format(BASE, LANE, LANE),
+    f'Ledger critic: run the frozen C1 counter at {C0}, then semantically audit the weakest five fixed rows. Mere headings, shebangs, incidental key matches or unrelated receipts do not resolve a defect even if the mechanical counter accepts them. Verify every open id is in the newest Planned paragraph. Output {W2}/T58W2CritLedger.json.',
     axes=['calibration'], milestone='installed ledger attack')
 add('T58W2CritC2', 'critic',
     'C2 installed-state critic. Run the frozen C2 counter at C0 (expect total=0 PASS=true), then attack the registry rows semantically: does each of the three rows\' stdout_contains actually match what the gate prints on its fixture (run the rows via registry-check yourself)? Is any bare-code element trivially satisfiable (a code the gate can never emit on that path)? Output {0}/T58W2CritC2.json.'.format(W2),
@@ -118,13 +118,13 @@ add('T58W2CritC3', 'critic',
     'C3 installed-state critic. At C0: (a) the counting command `grep -rl 2406.09843 corpus/knowledge | wc -l` must print 1 and the S286-S288 row count must be 3; (b) CORPUS rule 4: every appended row is cited by the admitted entry (used-by) and no uncited row was appended; (c) the entry does not overclaim (its boundary section must say the transfer is not measured); (d) the F9 README row matches reality. Output {0}/T58W2CritC3.json.'.format(W2),
     axes=['coverage'], milestone='C3 installed attack')
 add('T58W2MutC1', 'mutation-tester',
-    'Counter mutation re-check C1. In a scratch clone at C0, apply 4 fresh single-edit mutants to a COPY of {{1}}/.ufo/evidence/round-58/c1/measure.py inside the clone (different sites than wave-1: the old49 comparison, the planned-paragraph regex, the A6 disagreement allowance, the A9 digest compare), score each against the installed ledger, report killed/survived with diffs. Output {{1}}/T58W2MutC1.json.'.format(BASE, LANE),
+    f'In a scratch clone at {C0}, apply four single-edit mutants to a copy of .ufo/evidence/round-58/c1/measure.py: old49 comparison, Planned regex, disagreement budget, provenance digest. Score against the installed ledger and selftest. Report killed/survived with exact diffs and outputs at {W2}/T58W2MutC1.json.',
     axes=['calibration'], milestone='C1 counter mutations 2')
 add('T58W2MutC2', 'mutation-tester',
-    'Counter mutation re-check C2. Same contract for {{1}}/.ufo/evidence/round-58/c2/measure.py at C0: 4 fresh mutants (the executed arm tally, the cell fixture builder, the codes parser, the verdict-line total). Output {{1}}/T58W2MutC2.json.'.format(LANE),
+    f'In a scratch clone at {C0}, mutate the copied C2 counter at executed tally, cell fixture, codes parser and verdict total. Score each mutation against its selftest and installed registry; report exact diffs and killed/survived outputs at {W2}/T58W2MutC2.json.',
     axes=['operability'], milestone='C2 counter mutations 2')
 add('T58W2RevPanel', 'reviewer',
-    'Panel provenance reviewer. Verify amendment 1: {{1}}/.ufo/evidence/round-58/c1/measure.py PANEL_SHA256 equals the sha256 of the committed {{1}}/.ufo/evidence/round-58/c1/panel.json; the panel covers all 51 ids; every detail.seat file exists at C0 under {{1}}/.ufo/waves/round-58/w1/<seat>.json, hashes to panel.files[seat], its verdict matches the panel, and the seat is listed in {{1}}/.ufo/waves/round-58/w1-results.json (A9). Report disagreements >5 if any. Output {{1}}/T58W2RevPanel.json.'.format(LANE),
+    f'At {C0}, verify PANEL_SHA256 equals the committed panel digest, all 51 ids occur once, detail.seat files under .ufo/waves/round-58/w1 hash to panel.files and their verdicts match, and each seat is named in w1-results.json. Recompute panel disagreements with ledger status_at_base. Output {W2}/T58W2RevPanel.json.',
     axes=['calibration'], milestone='panel provenance')
 add('T58W2Sent01', 'sentinel',
     'Write-scope sentinel. Sweep `git -C /home/vgpnk/Projects/shokunin status --porcelain` and the lane repo for seat misroots at the fleet root; verify no seat edited corpus/, SKILL.md, tools/ or prior-round evidence outside the wave dirs; scan wave reports for mutating git/jj commands in the lane or fleet. Output {0}/T58W2Sent01.json.'.format(W2),
@@ -133,8 +133,14 @@ add('T58W2Sent02', 'sentinel',
     'Scratch + hygiene sentinel. df -h /fast; du -sh /fast/scratch/hyaku/tameshi-r58; grep the round-58 instruments and any seat-written tool for hardcoded /tmp; check the new extracts for credential material. Output {0}/T58W2Sent02.json.'.format(W2),
     axes=['operability'], milestone='scratch sweep')
 add('T58W2ExecDry', 'executor',
-    'Decide-preview executor. In a scratch clone of the lane at C0 (shared clone, detached): run both counters and the no-harm monitors exactly as the deciding run will: python3 -I .ufo/evidence/round-58/c1/measure.py --lane <clone> --rev <C0> --work <scratch> --explain; python3 -I .ufo/evidence/round-58/c2/measure.py --lane <clone> --rev <C0> --work <scratch> --explain; bash .ufo/evidence/round-58/no-harm.sh <clone> {0} <C0> - report all three outputs verbatim plus any RED line. (The bind runs after you; expect coldread-floor RED if your clone predates the bind - report what you see with the commit you measured.) Output {1}/T58W2ExecDry.json.'.format(BASE, W2),
-    axes=['operability'], milestone='decide preview')
+    f'In a shared scratch clone detached at {C0}, run the frozen C1 counter with --lane CLONE --rev {C0} --work EMPTY_DIR --explain. Preserve full stdout and exit status and report every nonzero term. Output {W2}/T58W2ExecDry.json.',
+    axes=['calibration'], milestone='C1 committed replay')
+add('T58W2ExecC2', 'executor',
+    f'In a shared scratch clone detached at {C0}, run the frozen C2 counter with --lane CLONE --rev {C0} --work EMPTY_DIR --explain. Preserve stdout and exit status; independently run each registered receipt-gate row through registry-check. Output {W2}/T58W2ExecC2.json.',
+    axes=['operability'], milestone='C2 committed replay')
+add('T58W2ExecNoHarm', 'executor',
+    f'In a shared scratch clone detached at {C0}, run bash .ufo/evidence/round-58/no-harm.sh CLONE {BASE} {C0}. Preserve all 18 monitor lines and exits. The cold-read floor is expected RED before this wave is bound; other RED lines need explanation. Also run the maintained source census on the committed clone. Output {W2}/T58W2ExecNoHarm.json.',
+    axes=['operability'], milestone='no-harm committed replay')
 add('T58W2ConnSib', 'connector',
     'Sibling overlap scan 2. Same contract as wave 1 T58W1ConnSib but for the INSTALLED state: any sibling lane already holding an LLM-mutant/equivalence entry, a routed-defect ledger, or strict registry-code binding that round 58 must cite instead of absorb. Output {0}/T58W2ConnSib.json.'.format(W2),
     axes=['adjacency'], milestone='sibling overlap 2')
@@ -144,6 +150,10 @@ add('T58W2ScoutCT', 'scout',
 add('T58W2RevLesson', 'reviewer',
     'Lesson reviewer. Read {0}/corpus/lessons/round-58.md (the round\'s own lesson): its Gate records carry YOUR-verifyable facts (fetch dates, byte counts, shas, located quotes) - re-check two of them against the committed extracts; its Mistakes rows name class/evidence/captured-by/fix; flag anything a closure would call fabricated or unverifiable. Output {1}/T58W2RevLesson.json.'.format(LANE, W2),
     axes=['calibration'], milestone='lesson re-check')
+
+add('T58W2ScribeEvidence', 'scribe',
+    f'Evidence scribe: read the round-58 contract, lesson and committed wave-1 results. Draft a concise report-evidence table with each claim, its exact counting command, observed baseline, current candidate outcome, source-census before/after, wave counts and dead-seat errors. Do not infer a pass from intent or a selftest. Write {W2}/T58W2ScribeEvidence.md and a machine-readable facts JSON beside it; never edit the fleet report or lane production files.',
+    axes=['calibration'], milestone='report evidence table')
 
 assert 32 <= len(ITEMS) <= 64, len(ITEMS)
 from collections import Counter
