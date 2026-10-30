@@ -2820,7 +2820,7 @@ Round shape: one v2 wave round-58-w1 (67 seats, ≥25% attack roles) then one v1
 content lands (fresh attacks + the 17 cold-read re-readers the measured forecast prices: the draft overlay
 measures `lost=17 RED`, receipt `.ufo/waves/round-58/l1/forecast-precheck.stdout`).
 
-**Planned (round 59):** remaining routed debts, with evidence strength distinguished from the blind panel's judgment:
+**Planned (round 59):** carry historical open ids R45.1 R45.4 R46.2 R47.5 R48.4 R49.3 R49.5; carry R51.6 (the missing historical Gate reject list); remaining routed debts distinguish durable evidence strength from the blind panel's judgment:
 - R50.4: successor counters for the carried forgery routes; the historical seven open ledger items are not claimed resolved.
 - R51.4: `round21-measure.py` selftest/fleet-bound classification and the missing C3 mutation attack need a joint disposition.
 - R51.8: freeze-stamped control receipts need a demonstrated failure discriminator.

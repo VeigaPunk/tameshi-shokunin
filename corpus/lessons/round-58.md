@@ -27,7 +27,7 @@ The substantive correction sections below preserve the original historical recor
 
 ## Gate
 
-R51.6 — rejected candidates and reasons are recorded below alongside admitted entries; the Gate is not an admits-only list.
+Current Gate practice now includes rejected candidates and reasons. R51.6 itself remains open: this does not reconstruct round 51's missing historical rejected-candidate record.
 
 Every row below was opened by this lane (L1 fetch) on 2026-10-30; fetch receipts and located
 extracts are committed at `.ufo/waves/round-58/l1/sources/`.
@@ -85,7 +85,7 @@ Status/recheck/used-by changes (old→new, append-only log):
 
 ## R51.5 — cross-domain handoff to kagi
 
-At kagi revision `c49023b773b69de983f0e6eb7e5867ceb5c2c634`, `corpus/drift-pins.sh` lines 400 and 403 use `grep -q "$3" <<< "$out"` to search expected verdict words as unanchored regular expressions. Line 158 prints `DRIFT   %s %s` with path text, which can contaminate such a word search; it is a diagnostic producer, not itself a grep.
+At kagi revision `c49023b773b69de983f0e6eb7e5867ceb5c2c634`, `corpus/drift-pins.sh` line 400 captures command output; line 403 uses `grep -q "$3" <<< "$out"` as an unanchored regular expression. Line 158 prints `DRIFT   %s %s` with path text, which can contaminate a verdict-word search; it is a diagnostic producer, not a grep.
 
 Recommendation to kagi: anchor the intended verdict record and distinguish it from path-bearing diagnostics; preserve separate pass/fail assertions. No kagi file was edited. This handoff is included in the round-58 fleet report.
 
@@ -121,4 +121,23 @@ Re-derivation: search `CTL_SKIP_c2|CONTROLS_A` in that committed receipt. Both l
 - **R55.1 replay variation retained.** The L1's full counter rerun at `4c04c1d3` prints `usable=13/13 total=0`; `T58W1Fix05` independently prints `usable=12/13 total=1`, with the registry-check usable selftest failing. Both full receipts are retained. R55.1 is a missing-verdict-record repair, not proof of environment-invariant green behavior.
 - **Cold-read forecast miss named.** R56.3's frontmatter link repair was not in the original per-file draft forecast. The measured content precheck still loses the same 17 headings (`content-precheck.stdout`); the reader set is not silently reduced.
 - **Missing review credit remains missing.** W1's orchestrator handoff contains 67 seats but omits status/id fields. Fifteen seats have empty terminal outputs and no reports: the four scouts, five first critics, three mutation-testers, two sentinels and CritC3. No provider error text was supplied. They are not counted as successful reviews or fabricated as known deaths.
+
+
+## Final wave-2 dispositions
+
+Both waves settled: 67 + 40 = 107 registered seats; 15 W1 and 2 W2 terminal outputs are empty, with no status or provider errors in either handoff. Missing row reviews R52–R53 and R55–R56 remain unverified as reviews; their mechanical measurements and retained item-specific evidence are separate.
+
+- R51.6 is withdrawn from the fixed set: future Gate practice is not a historical round-51 reject list. R51.5's line-400 attribution is corrected above; the final report carries the actual kagi handoff. Its canonical report filing occurs after the lane measurement, and is not represented as present at C0.
+- All seven historical open ids (R45.1, R45.4, R46.2, R47.5, R48.4, R49.3, R49.5) are explicitly carried in Planned; original49 rows stay byte-equal. At-base assessments attached to newly fixed rows are labelled historical and superseded by their actual fixes.
+- The F9 table's last cell is retained as its original before→after pilot baseline, matching that column's heading; it is not a current assertion that no LLM source was opened. The status cell and round-58 coverage addendum name the new sourced contract. The bounded pilot remains unmeasured.
+- Reader14's registry failures (sources-census and verify-round15) and Reader17's missing detached-clone fleet-root prerequisite are accepted inherited minor gaps, not silently greened. They recur from round57's recorded reader limits. The bind retains their counts and adjudications; no gate expectation or frozen target is suppressed.
+- Fetch provenance is bounded: original response counts/hashes were observed by the L1; initial committed carriers were text extracts, not full response snapshots. W2 source reopeners independently matched the arXiv response and PDF size/hash/text, and the live Atlassian sentence. Do not mistake a text-extract digest for the original response digest.
+- The real-runner bent-forgery held-count summary is corrected: the raw transcript shows two held rows out of three, not the earlier summary's one. The decisive fact is unchanged: the genuine runner rejects the supposedly passing valid row, while the bent runner reports full success without execution.
+- Sentinel02 found current-round TMPDIR omissions and retained seat scratch. Only this round's exact scratch paths are cleaned; historical host/sibling residues and host config backup remain operator-owned. No secret values were read or copied.
+
+## considerthese mined
+
+`considerthese/2026-10-28.md` proposal 2: “Counter-arm liveness check. For each frozen counter, list its arms and require one committed input per arm that moves that arm's tally away from zero. A passing control set did not reveal that round 53's re-key arm could never fire.”
+
+Mined as this lesson's successor-gate requirement, not claimed implemented: bind the executor independently before accepting an executed-arm tally. Evidence: W1 revenger's bent-runner forgery and W2 reproductions; `T58W2ScoutCT` records the C0 implementation sweep and why current within-round selftest arms are narrower than a standing counter-arm census.
 
