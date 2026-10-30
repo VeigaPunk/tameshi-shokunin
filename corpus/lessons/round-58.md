@@ -25,7 +25,9 @@ round's close.
 
 (to be completed from this round's corrections; append-only)
 
-## Sources opened this round (Gate records)
+## Gate
+
+R51.6 — rejected candidates and reasons are recorded below alongside admitted entries; the Gate is not an admits-only list.
 
 Every row below was opened by this lane (L1 fetch) on 2026-10-30; fetch receipts and located
 extracts are committed at `.ufo/waves/round-58/l1/sources/`.
@@ -80,3 +82,12 @@ Status/recheck/used-by changes (old→new, append-only log):
 ## Wave record
 
 (completed at the round's close: wave sizes, role mix, dead seats, results paths)
+
+## R51.5 — cross-domain handoff to kagi
+
+At kagi revision `c49023b773b69de983f0e6eb7e5867ceb5c2c634`, `corpus/drift-pins.sh` lines 400 and 403 use `grep -q "$3" <<< "$out"` to search expected verdict words as unanchored regular expressions. Line 158 prints `DRIFT   %s %s` with path text, which can contaminate such a word search; it is a diagnostic producer, not itself a grep.
+
+Recommendation to kagi: anchor the intended verdict record and distinguish it from path-bearing diagnostics; preserve separate pass/fail assertions. No kagi file was edited. This handoff is included in the round-58 fleet report.
+
+Evidence: `.ufo/waves/round-58/w1/T58W1Fix08/stage/kagi-crossdomain-r51.5.md` records the read-only source and revision commands.
+
