@@ -1,0 +1,50 @@
+{
+  "seat": "T59W1S24",
+  "round": 59,
+  "cell": {"path": "tools/-runner.py", "class": "symlink"},
+  "expected": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+  "fixture": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S24/",
+    "scratch_deleted": true,
+    "builder": "build_fixture.py",
+    "commit_map": {
+      "trusted": "ca128b1d44671b6be261f2e113133e7eb7718f05",
+      "equal": "ca128b1d44671b6be261f2e113133e7eb7718f05",
+      "changed": "cc769298973a56d8c85af2cddf57634af70e5515",
+      "missing": "c7d4f4f582cc1486cede26966967f403f2bc7ca1",
+      "unrelated": "53e6ac62abc02de68630b5e92dca1e7ce16e7f66",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "cbcbf08de486da9639ae9053a9be03b4565a2e6b"
+    },
+    "git_object_facts": {
+      "trusted": {"mode": "100644", "type": "blob", "sha": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\\n"},
+      "changed": {"mode": "100644", "type": "blob", "sha": "fbd2ab209ba4a77846c0898c79d4b579331975b7"},
+      "missing": {"entry": null},
+      "unrelated": {"mode": "100644", "type": "blob", "sha": "74e4df76f9a60662749e2aaf076f67e311f66cdb"},
+      "symlink": {"mode": "120000", "type": "blob", "sha": "a66620d9fcdca1d09c541464669234d720772947", "content_raw": "elsewhere.py", "content_bytes": 12, "has_nul": false, "dangling": true}
+    }
+  },
+  "oracle": {
+    "file": "oracle.py",
+    "probe_transcript": "oracle_probe.txt",
+    "results": [
+      {"class": "equal", "exit": 0, "expected": 0, "token": "EXECUTOR_SOURCE_BOUND", "pass": true},
+      {"class": "changed", "exit": 1, "expected": 1, "token": "EXECUTOR_SOURCE_DRIFT", "pass": true},
+      {"class": "missing", "exit": 1, "expected": 1, "token": "EXECUTOR_SOURCE_DRIFT", "pass": true},
+      {"class": "unrelated", "exit": 0, "expected": 0, "token": "EXECUTOR_SOURCE_BOUND", "pass": true},
+      {"class": "unresolvable", "exit": 2, "expected": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "pass": true},
+      {"class": "symlink", "exit": 1, "expected": 1, "token": "EXECUTOR_SOURCE_DRIFT", "reason": "nonregular at candidate (mode=120000)", "pass": true}
+    ]
+  },
+  "counter_review": {
+    "can_misclassify_this_cell": "only for worktree-following implementations: dangling symlink makes open() raise FileNotFoundError and 'git hash-object' fail rc=128; mapping that to exit 2 UNAVAILABLE instead of 1 DRIFT misclassifies. Object-database implementations (ls-tree/cat-file/git show/git diff) all classify correctly.",
+    "leading_dash_hazard": "none at full repo-relative path; git ls-tree accepts 'tools/-runner.py' without '--' (rc=0); hazard only for tools passing bare basename",
+    "counter_blind_spot": "content-only comparators pass this cell because symlink target 'elsewhere.py' differs from trusted bytes; fixture does not exercise a symlink whose target equals trusted content, which would fool mode-ignorant gates into exit 0; discriminating-power limit, not a scoring defect",
+    "frozen_counter_authoritative": true
+  },
+  "tool_absent_at_base": "tools/executor-source-pin.py not present at b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a (production gate not run, not staged; L1 owns measurement)",
+  "installs": [],
+  "env": {"git": "2.56.0", "python": "3.14.8"},
+  "production_touched": false,
+  "report": ".ufo/waves/round-59/w1/T59W1S24.md"
+}

@@ -1,0 +1,55 @@
+# T59W1S33 receipts — same-blob exec-bit adversarial probe
+# git 2.56.0
+
+## 1. candidate tool presence (read-only lane checks)
+$ git -C <lane> cat-file -t b83f1bfc...:tools/executor-source-pin.py
+fatal: path 'tools/executor-source-pin.py' does not exist in 'b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a'
+$ git -C <lane> cat-file -t HEAD:tools/executor-source-pin.py  (HEAD=e9cc34be freeze)
+fatal: path 'tools/executor-source-pin.py' does not exist in 'HEAD'
+
+## 2. fixture A: trusted 100644 -> candidate 100755, same content
+$ git ls-tree c4b8992a -- tools/runner.py
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/runner.py
+$ git ls-tree e42b8d3 -- tools/runner.py
+100755 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/runner.py
+$ git diff <t> <c>  (content portion)
+diff --git a/tools/runner.py b/tools/runner.py
+old mode 100644
+new mode 100755
+(no content lines; mode change only)
+
+## 3. fixture B: trusted 100755 -> candidate 100644 (strip), same content
+100755 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/runner.py
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/runner.py
+ mode change 100755 => 100644 tools/runner.py
+
+## 4. core.filemode=false does not block update-index --chmod
+false
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/runner.py
+100755 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/runner.py
+
+## 5. replica of frozen 24-fixture matrix (scratch re-implementation, frozen counter NOT run)
+REPLICA tool=ref-blob-only.py passed=24/24 PASS=True
+REPLICA tool=ref-mode-strict.py passed=24/24 PASS=True
+
+## 6. divergence on exec-bit fixtures (both refs certified 24/24 above)
+fixture A (644->755):
+EXECUTOR_SOURCE_BOUND
+exit=0
+EXECUTOR_SOURCE_DRIFT
+exit=1
+fixture B (755->644):
+EXECUTOR_SOURCE_BOUND
+exit=0
+EXECUTOR_SOURCE_DRIFT
+exit=1
+
+## 7. adjacent same-root-cause: symlink target string == content -> identical blob
+120000 blob 9d0045dc8f161c8c6f3af65d05dbe9e437bb8db9	tools/runner.py
+trusted blob 9d0045dc8f161c8c6f3af65d05dbe9e437bb8db9 == cand blob (link target string)
+EXECUTOR_SOURCE_BOUND
+blob-only exit=0
+EXECUTOR_SOURCE_DRIFT
+mode-strict exit=1
+
+## 8. base tools/ mode census: 26x 100755, 12x 100644 (exec bit is live in this repo)

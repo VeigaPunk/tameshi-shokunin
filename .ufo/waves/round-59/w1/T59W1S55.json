@@ -1,0 +1,91 @@
+{
+  "seat": "T59W1S55",
+  "round": 59,
+  "wave": "w1",
+  "axis": "operability",
+  "date": "2026-10-30",
+  "task": "Review SOURCES contract and proposed S289 official Git cat-file docs; open live, locate object/blob semantics, narrow tier A scope, propose admit + one rejected adjacent candidate, stage evidence",
+  "contract_read": {
+    "path": ".ufo/evidence/round-59/contract.json",
+    "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "sha256": "849e5d58a4e6d2b54e8fe4a95d7a46a5461412e1afaa97c57b7016fb7bd7e2d3"
+  },
+  "counter_read": {
+    "path": ".ufo/evidence/round-59/measure.py",
+    "sha256": "f6dc274efa7d2bdc8018a9f511747a8c0c5c143058049af4f3d0245c79b2d40b",
+    "frozen_counter_run": false
+  },
+  "sources_contract": {
+    "path": ".ufo/waves/kaika/SOURCES-CONTRACT-v1.md",
+    "rules_applied": [1, 2],
+    "rule1_gate_quotes": [
+      {
+        "quote": "Instead of the content, show the object type identified by <object>.",
+        "location": "git-cat-file(1) OPTIONS -t, Git 2.56.0 (2026-09-27), live fetch 2026-10-30",
+        "words": 10
+      },
+      {
+        "quote": "A suffix : followed by a path names the blob or tree at the given path in the tree-ish object",
+        "location": "gitrevisions(7) <rev>:<path>, Git 2.56.0, live fetch 2026-10-30",
+        "words": 21
+      }
+    ]
+  },
+  "live_open": {
+    "url": "https://git-scm.com/docs/git-cat-file",
+    "fetched_utc": "2026-10-30T14:32:42Z",
+    "bytes": 79360,
+    "sha256": "624464ef7a3d64de06038200bff85ac09389a9d217d379dd660aa6b5165048d7",
+    "local_version_match": "git version 2.56.0; man footer Git 2.56.0 2026-09-27"
+  },
+  "located_semantics": [
+    {"semantics": "cat-file -t prints object type", "doc": "git-cat-file(1) OPTIONS -t", "probe": "blob, exit 0"},
+    {"semantics": "cat-file -p prints blob content bytes", "doc": "git-cat-file(1) OPTIONS -p", "probe": "exact file bytes, exit 0"},
+    {"semantics": "<rev>:<path> names blob/tree at path in tree-ish, spaces supported", "doc": "gitrevisions(7) :230-236", "probe": "tools/space name.py -> blob"},
+    {"semantics": "blob = contents of a file (glossary)", "doc": "gitglossary blob object", "probe": "hash-object == committed blob id"},
+    {"semantics": "symlink stored as blob whose content is the link target", "doc": "probe + object model", "probe": "-t blob, -p prints 'runner.py'"},
+    {"semantics": "missing path at rev -> fatal, non-zero", "doc": "git-cat-file(1)", "probe": "exit 128, 'path ... does not exist'"},
+    {"semantics": "unresolvable all-zero sha -> fatal, non-zero", "doc": "git-cat-file(1)", "probe": "exit 128, 'could not get object info'"}
+  ],
+  "precision_point": "cat-file -t reports 'blob' for both regular files and symlinks; regular-vs-symlink distinction is tree entry mode (100644 vs 120000, git-ls-tree(1)), not blob type. A gate rejecting the symlink fixture class needs tree mode, not -t alone.",
+  "proposal": {
+    "admit": {
+      "id": "S289 (proposed; L1 owns final id collision check)",
+      "source": "git-cat-file(1) manual (git 2.56.0) + gitrevisions(7) <rev>:<path> — https://git-scm.com/docs/git-cat-file",
+      "kind": "docs",
+      "tier": "A",
+      "scope": "Git's own documented object type and content semantics for committed blobs at <rev>:<path>, scoped to the round-59 executor-source-pin gate's declared-blob comparison only",
+      "status": "queued",
+      "recheck": "on-release",
+      "staged_row": ".ufo/waves/round-59/w1/T59W1S55/stage/corpus/SOURCES.md",
+      "census_check": "NF=13 malformed-row awk check prints nothing (clean)"
+    },
+    "rejected_adjacent": {
+      "candidate": "execution attestation inference (byte-equal blobs imply equal execution / behavior)",
+      "verdict": "rejected",
+      "reasons": [
+        "located docs define object storage semantics only; no execution claim",
+        "contract.json trust_boundary: gate checks declared Git blobs only, not execution",
+        "would repeat the round-58 C2 certification overreach"
+      ],
+      "flip": "only via a separate measured execution-attestation layer with its own source row; never by widening S289"
+    }
+  },
+  "installs": [],
+  "writes": [
+    ".ufo/waves/round-59/w1/T59W1S55.md",
+    ".ufo/waves/round-59/w1/T59W1S55.json",
+    ".ufo/waves/round-59/w1/T59W1S55/receipts/git-cat-file.html",
+    ".ufo/waves/round-59/w1/T59W1S55/receipts/git-cat-file.txt",
+    ".ufo/waves/round-59/w1/T59W1S55/receipts/git-cat-file.man.txt",
+    ".ufo/waves/round-59/w1/T59W1S55/receipts/gitrevisions.man.txt",
+    ".ufo/waves/round-59/w1/T59W1S55/receipts/probe-cat-file.txt",
+    ".ufo/waves/round-59/w1/T59W1S55/stage/corpus/SOURCES.md"
+  ],
+  "not_touched": ["production corpus/SOURCES.md", "tools/", "fleet root tracked files", "git/jj state"],
+  "verification_for_l1": [
+    "sha256sum staged receipts against the sha recorded in this JSON",
+    "run SOURCES-CONTRACT-v1 census awk checks on stage/corpus/SOURCES.md (expect malformed=0; S289 unique)",
+    "confirm no S289 id collision before integrating the staged row"
+  ]
+}

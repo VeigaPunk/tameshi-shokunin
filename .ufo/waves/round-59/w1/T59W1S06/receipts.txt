@@ -1,0 +1,52 @@
+# T59W1S06 receipts — cell probe: path 'tools/runner.py', class 'symlink'
+# All commands executed with cwd=/fast/scratch/hyaku/tameshi-r59/T59W1S06 (TMPDIR set there).
+# Git env mirrored from frozen measure.py: env -i PATH HOME GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
+
+## 1. Fixture construction (independent re-implementation of measure.py fixture-0 chain)
+git init -q                                    # root assertion: git rev-parse --show-toplevel -> /fast/scratch/hyaku/tameshi-r59/T59W1S06/fixture-symlink-cell (PASSED)
+printf 'print("real executor")\n' > tools/runner.py
+git add -- tools/runner.py && commit           # trusted  = f40cdb571363c8a01389dc81dfe8a492f171de80
+printf 'print("forged success")\n' > tools/runner.py
+git add -- tools/runner.py && commit           # changed  = 92169e38a6d3e20dcba680e329aac75fddd69781
+rm tools/runner.py && git add -u && commit     # missing  = cb0ef34155ea2f44266c8fa17ce8572087a9acab
+printf 'print("real executor")\n' > tools/runner.py
+printf 'unrelated change\n' > unrelated.txt
+git add -- tools/runner.py unrelated.txt && commit   # unrelated = 11b51e09b241b8783b6dfd6ada29b0a4bed1ecb5
+# unresolvable = 0000000000000000000000000000000000000000 (literal, no commit created)
+rm tools/runner.py && ln -s elsewhere.py tools/runner.py
+git add -- tools/runner.py && commit           # symlink  = 585a0f92c80cf677094538f3ddcecfa01677eae2
+
+## 2. Git source-object verification (git ls-tree <commit> -- tools/runner.py)
+# trusted   : 100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb  (23 bytes: print("real executor")\n)
+# changed   : 100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7  (24 bytes: print("forged success")\n)
+# missing   : <no entry>
+# unrelated : 100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb  (identical to trusted)
+# symlink   : 120000 blob a66620d9fcdca1d09c541464669234d720772947  (12 bytes: elsewhere.py, NO trailing newline)
+# full tree at symlink commit:
+#   120000 blob a66620d9fcdca1d09c541464669234d720772947	tools/runner.py
+#   100644 blob 5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c	unrelated.txt
+# worktree: lrwxrwxrwx tools/runner.py -> elsewhere.py ; readlink -> elsewhere.py ; target absent -> DANGLING
+# git cat-file -t a66620d9... -> blob (symlink stored as blob object, mode 120000)
+
+## 3. Independent oracle: .ufo/waves/round-59/w1/T59W1S06/oracle/cell-oracle.py
+# Reads git objects only (ls-tree / rev-parse), never the worktree; contract exit/token map:
+#   0 EXECUTOR_SOURCE_BOUND / 1 EXECUTOR_SOURCE_DRIFT / 2 EXECUTOR_SOURCE_UNAVAILABLE
+# Command per class (cwd=fixture root):
+#   python3 -I <oracle> --repo . --trusted f40cdb571363c8a01389dc81dfe8a492f171de80 --candidate <C> --path tools/runner.py
+# Observed:
+# trusted      rc=0 expect=0 token_match=yes verdict=OK :: EXECUTOR_SOURCE_BOUND: all declared sources equal trusted blobs
+# changed      rc=1 expect=1 token_match=yes verdict=OK :: EXECUTOR_SOURCE_DRIFT: 'tools/runner.py' differs from trusted blob
+# missing      rc=1 expect=1 token_match=yes verdict=OK :: EXECUTOR_SOURCE_DRIFT: 'tools/runner.py' missing at candidate
+# unrelated    rc=0 expect=0 token_match=yes verdict=OK :: EXECUTOR_SOURCE_BOUND: all declared sources equal trusted blobs
+# unresolvable rc=2 expect=2 token_match=yes verdict=OK :: EXECUTOR_SOURCE_UNAVAILABLE: candidate commit unresolvable
+# symlink      rc=1 expect=1 token_match=yes verdict=OK :: EXECUTOR_SOURCE_DRIFT: 'tools/runner.py' nonregular at candidate (mode=120000 type=blob)
+
+## 4. Config isolation check
+# git -C fixture config --list --show-origin (env-scrubbed): only file:.git/config entries
+# (core.repositoryformatversion=0, core.filemode=true, core.bare=false); no global/system config read.
+# core.symlinks not set -> default true; object store recorded mode 120000 (ground truth).
+
+## 5. Contract edge probe (multi-path, invalid trusted source)
+# python3 -I <oracle> --repo . --trusted f40cdb57... --candidate 585a0f92... --path tools/runner.py --path tools/absent.py
+# Observed: "EXECUTOR_SOURCE_UNAVAILABLE: trusted source for 'tools/absent.py' is not a regular executable-source blob" rc=2
+# (declared path missing at trusted -> UNAVAILABLE, consistent with contract exit_map[2] "invalid trusted ... source")

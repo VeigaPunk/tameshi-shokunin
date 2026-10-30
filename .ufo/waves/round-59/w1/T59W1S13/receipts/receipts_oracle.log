@@ -1,0 +1,73 @@
+=== oracle run 1: candidate=TRUSTED (original fixture), --expect equal ===
+{
+ "path": "tools/日本語.py",
+ "trusted_rev": "a54863a8df37f27780058e7892e6f39a1a318e36",
+ "candidate_rev": "a54863a8df37f27780058e7892e6f39a1a318e36",
+ "trusted_entry": {
+  "mode": "100644",
+  "type": "blob",
+  "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+  "name": "\"tools/\\346\\227\\245\\346\\234\\254\\350\\252\\236.py\""
+ },
+ "candidate_entry": {
+  "mode": "100644",
+  "type": "blob",
+  "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+  "name": "\"tools/\\346\\227\\245\\346\\234\\254\\350\\252\\236.py\""
+ },
+ "trusted_content_sha256_input": "print(\"real executor\")\n",
+ "candidate_content_sha256_input": "print(\"real executor\")\n",
+ "verdict": "equal",
+ "expected_exit": 0,
+ "expected_token": "EXECUTOR_SOURCE_BOUND",
+ "fixture_assumption_ok": true,
+ "notes": [
+  "mode/type/oid identical across trusted and candidate -> bound"
+ ],
+ "expect": "equal",
+ "expect_met": true
+}
+oracle_rc=0
+
+=== oracle run 2: candidate=CHANGED (changed fixture), --expect changed ===
+{
+ "path": "tools/日本語.py",
+ "trusted_rev": "a54863a8df37f27780058e7892e6f39a1a318e36",
+ "candidate_rev": "acf9fdcf5e17c1015e412b54876fe644f8e90070",
+ "trusted_entry": {
+  "mode": "100644",
+  "type": "blob",
+  "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+  "name": "\"tools/\\346\\227\\245\\346\\234\\254\\350\\252\\236.py\""
+ },
+ "candidate_entry": {
+  "mode": "100644",
+  "type": "blob",
+  "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7",
+  "name": "\"tools/\\346\\227\\245\\346\\234\\254\\350\\252\\236.py\""
+ },
+ "trusted_content_sha256_input": "print(\"real executor\")\n",
+ "candidate_content_sha256_input": "print(\"forged success\")\n",
+ "verdict": "drift",
+ "expected_exit": 1,
+ "expected_token": "EXECUTOR_SOURCE_DRIFT",
+ "fixture_assumption_ok": true,
+ "notes": [
+  "mode/type/oid differ across trusted and candidate -> drift"
+ ],
+ "expect": "changed",
+ "expect_met": false
+}
+oracle_rc=1
+
+=== oracle run 3: candidate=0000000000000000000000000000000000000000 (unresolvable probe) ===
+{
+ "path": "tools/日本語.py",
+ "trusted_rev": "a54863a8df37f27780058e7892e6f39a1a318e36",
+ "candidate_rev": "0000000000000000000000000000000000000000",
+ "verdict": "unavailable",
+ "expected_exit": 2,
+ "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+ "reason": "candidate unresolvable: fatal: Needed a single revision"
+}
+oracle_rc=0

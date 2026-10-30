@@ -1,0 +1,64 @@
+Seat T59W1S22 — fixture probe transcript, path 'tools/-runner.py', class 'unrelated'.
+All commands run with cwd under /fast/scratch/hyaku/tameshi-r59/T59W1S22 (TMPDIR set there).
+Env for git/oracle runs: GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 (GIT_* inherited vars scrubbed in scripts).
+
+$ git --version
+git version 2.56.0
+$ python3 --version
+Python 3.14.8
+
+$ python3 build_fixture.py
+toplevel-ok: /fast/scratch/hyaku/tameshi-r59/T59W1S22/fixture-s22
+trusted      c574be8cd2d2a52b4ea87a36a6175f5b2336e009
+changed      d34f23776d06135c3591ad0ebda3fe052a31c5ef
+missing      2665968ad6890c65ed279468d500a2357a1599f9
+unrelated    3e70ad58532cd52f7d05eae81214fbf35667ea86
+unresolvable 0000000000000000000000000000000000000000 (synthetic, no commit)
+symlink      da5a2c7c3ba2696c6699512e61e97702ada0bf84
+wrote versions.json
+
+$ for c in c574be8c d34f2377 2665968a 3e70ad58 da5a2c7c; do git ls-tree $c -- tools/-runner.py; git ls-tree $c -- unrelated.txt; done
+== c574be8cd2d2a52b4ea87a36a6175f5b2336e009 ==          (trusted / equal)
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/-runner.py
+== d34f23776d06135c3591ad0ebda3fe052a31c5ef ==          (changed)
+100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7	tools/-runner.py
+== 2665968ad6890c65ed279468d500a2357a1599f9 ==          (missing)
+(no entry for either path)
+== 3e70ad58532cd52f7d05eae81214fbf35667ea86 ==          (unrelated)
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/-runner.py
+100644 blob 5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c	unrelated.txt
+== da5a2c7c3ba2696c6699512e61e97702ada0bf84 ==          (symlink)
+120000 blob a66620d9fcdca1d09c541464669234d720772947	tools/-runner.py
+100644 blob 5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c	unrelated.txt
+
+$ printf 'print("real executor")\n' | git hash-object --stdin
+74e4df76f9a60662749e2aaf076f67e311f66cdb
+$ printf 'print("forged success")\n' | git hash-object --stdin
+fbd2ab209ba4a77846c0898c79d4b579331975b7
+$ git cat-file -p c574be8c:tools/-runner.py / 3e70ad58:tools/-runner.py
+print("real executor")          (both, byte-identical; trailing newline present)
+$ git cat-file -p 3e70ad58:unrelated.txt
+unrelated change
+$ git cat-file -p da5a2c7c:tools/-runner.py
+elsewhere.py                    (11 bytes, no trailing newline; mode 120000)
+
+Oracle runs (python3 -I oracle.py --repo fixture-s22 --trusted c574be8c... --candidate <rev> --path 'tools/-runner.py'):
+class=equal        candidate=c574be8cd2d2a52b4ea87a36a6175f5b2336e009 exit=0 EXECUTOR_SOURCE_BOUND: declared source blobs equal trusted
+class=changed      candidate=d34f23776d06135c3591ad0ebda3fe052a31c5ef exit=1 EXECUTOR_SOURCE_DRIFT: tools/-runner.py blob differs: trusted=74e4df76f9a60662749e2aaf076f67e311f66cdb candidate=fbd2ab209ba4a77846c0898c79d4b579331975b7
+class=missing      candidate=2665968ad6890c65ed279468d500a2357a1599f9 exit=1 EXECUTOR_SOURCE_DRIFT: tools/-runner.py missing/nonregular at candidate
+class=unrelated    candidate=3e70ad58532cd52f7d05eae81214fbf35667ea86 exit=0 EXECUTOR_SOURCE_BOUND: declared source blobs equal trusted
+class=unresolvable candidate=0000000000000000000000000000000000000000 exit=2 EXECUTOR_SOURCE_UNAVAILABLE: candidate commit unresolvable
+class=symlink      candidate=da5a2c7c3ba2696c6699512e61e97702ada0bf84 exit=1 EXECUTOR_SOURCE_DRIFT: tools/-runner.py missing/nonregular at candidate
+
+Edge cases:
+--trusted deadbeef...  -> exit=2 EXECUTOR_SOURCE_UNAVAILABLE: trusted commit unresolvable
+(missing --path)       -> exit=2 (argparse usage error)
+
+Discrimination probe (would a whole-tree comparator pass this cell?):
+$ git diff --quiet c574be8c 3e70ad58 ; echo $?
+1
+$ git diff --quiet c574be8c 3e70ad58 -- tools/-runner.py ; echo $?
+0
+=> A tool comparing whole trees (or trusting `git diff --quiet` without pathspec)
+   falsely reports DRIFT (exit 1) on the unrelated candidate; the frozen counter
+   correctly scores that as a fail. Declared-path-only comparison is required.

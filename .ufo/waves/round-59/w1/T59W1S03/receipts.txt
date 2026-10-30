@@ -1,0 +1,55 @@
+# T59W1S03 receipts -- fixture cell tools/runner.py x missing
+# All commands run with cwd=/fast/scratch/hyaku/tameshi-r59/T59W1S03,
+# TMPDIR=$PWD, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1,
+# PYTHONDONTWRITEBYTECODE=1 (mirrors frozen measure.py env).
+
+## 1. Fixture construction (build-fixture.sh, replicates measure.py PATHS[0] block)
+$ bash .ufo/waves/round-59/w1/T59W1S03/build-fixture.sh
+TRUSTED=72f85283efdcec71656a24e3b2dfecb192a83d85
+CHANGED=2f9309be58d813d742e5d472e37a71f58d6f0551
+MISSING=81e07c5f3aef8156b3ea96d8cd55c7dd389bf5fe
+UNRELATED=6862662c3e441288753e72cf204e3ae706e9f8e1
+UNRESOLVABLE=0000000000000000000000000000000000000000
+SYMLINK=6c5d87a6904a6ab99add017708a7aecdf0d3e2f6
+DRIVER_OK
+
+## 2. Tree/path inspection per version
+$ git -C fixture ls-tree <rev>            # and: git -C fixture ls-tree <rev> -- tools/runner.py
+TRUSTED : 040000 tree d82c0b9... tools ; path entry 100644 blob 74e4df76... tools/runner.py
+CHANGED : 040000 tree 5c9137ed... tools ; path entry 100644 blob fbd2ab20... tools/runner.py
+MISSING : (no output -- tree is EMPTY)  ; path entry: none
+UNRELATED: 040000 tree d82c0b9... tools + 100644 blob 5a7efe3a... unrelated.txt ; path entry 100644 blob 74e4df76...
+SYMLINK : 040000 tree 391daa4b... tools + unrelated.txt ; path entry 120000 blob a66620d9... tools/runner.py
+
+## 3. Object type / content checks
+$ git -C fixture cat-file -t <rev>:tools/runner.py
+TRUSTED/CHANGED/UNRELATED/SYMLINK -> "blob" rc=0
+MISSING -> rc=128 "fatal: path 'tools/runner.py' exists on disk, but not in '81e07c5f...'"
+$ printf 'print("real executor")\n' | git hash-object --stdin   -> 74e4df76f9a60662749e2aaf076f67e311f66cdb
+$ printf 'print("forged success")\n' | git hash-object --stdin  -> fbd2ab209ba4a77846c0898c79d4b579331975b7
+$ printf 'elsewhere.py' | git hash-object --stdin               -> a66620d9fcdca1d09c541464669234d720772947
+$ git -C fixture ls-tree $MISSING | wc -l                       -> 0
+$ git -C fixture rev-parse --verify $MISSING^{commit}           -> resolves OK (candidate IS a valid commit)
+$ git -C fixture rev-parse --verify 0000...0^{commit}           -> rc=128 "Needed a single revision"
+$ ls -la fixture/tools/  (worktree left at SYMLINK commit by construction order)
+lrwxrwxrwx runner.py -> elsewhere.py     <-- worktree contaminated for ALL cells of this fixture
+
+## 4. Independent oracle (oracle-missing-cell.py), one run per version
+candidate=TRUSTED    -> expected_exit=0 EXECUTOR_SOURCE_BOUND   (trusted_entry=candidate_entry=100644/74e4df76)
+candidate=CHANGED    -> expected_exit=1 EXECUTOR_SOURCE_DRIFT    (blob fbd2ab20 != 74e4df76)
+candidate=MISSING    -> expected_exit=1 EXECUTOR_SOURCE_DRIFT    (candidate_entry=null; commit resolves)
+candidate=UNRELATED  -> expected_exit=0 EXECUTOR_SOURCE_BOUND
+candidate=SYMLINK    -> expected_exit=1 EXECUTOR_SOURCE_DRIFT    (mode 120000 blob a66620d9)
+candidate=UNRESOLVABLE-> expected_exit=2 EXECUTOR_SOURCE_UNAVAILABLE (candidate_commit_resolves=false)
+
+## 5. Probe gates through counter cell shape (counter ok = exit match AND token substring in stdout+stderr)
+probe-gate-naive-bad.py (maps ANY git failure -> UNAVAILABLE/2):
+  TRUSTED    expected 0 observed 0 counter_ok=true
+  CHANGED    expected 1 observed 1 counter_ok=true
+  MISSING    expected 1 observed 2 counter_ok=FALSE   <-- cell catches missing->unavailable collapse
+  UNRESOLVABLE expected 2 observed 2 counter_ok=true
+probe-gate-worktree.py (lstat worktree instead of candidate objects):
+  TRUSTED    expected 0 observed 1 counter_ok=false
+  CHANGED    expected 1 observed 1 counter_ok=true    (credited, wrong reason: saw worktree symlink)
+  MISSING    expected 1 observed 1 counter_ok=TRUE    <-- FALSE CREDIT: never inspected candidate commit
+  UNRESOLVABLE expected 2 observed 2 counter_ok=true

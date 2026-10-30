@@ -1,0 +1,71 @@
+{
+  "seat": "T59W1S36",
+  "round": 59,
+  "adversarial_item": "GIT_DIR poisoning",
+  "frozen_inputs": {
+    "contract": ".ufo/evidence/round-59/contract.json",
+    "counter": ".ufo/evidence/round-59/measure.py",
+    "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+    "tool_at_base": "absent (deliverable under construction; reference oracles used, no candidate implementation claimed)"
+  },
+  "environment": {
+    "git": "2.56.0",
+    "python": "3.14.8",
+    "installs": []
+  },
+  "verdict": {
+    "frozen_counter_vulnerable": false,
+    "tool_contract_vulnerable_if_unsanitized": true,
+    "inside_claim_boundary": false,
+    "summary": "Counter scrubs all GIT_* env vars before its own git calls and before invoking the tool (verified end-to-end with stub-lane canary). A tool that passes ambient env to git is falsely BOUND under GIT_DIR poisoning with a ref candidate, and suffers verdict flips to UNAVAILABLE with full-hash candidates."
+  },
+  "git_primitive_facts": [
+    {
+      "id": "P0/P1/Q1",
+      "fact": "GIT_DIR overrides 'git -C REPO'; --absolute-git-dir shows attacker repo, while --show-toplevel still prints REPO (blind identity check)",
+      "evidence": "evidence/P1-toplevel-vs-gitdir-divergence.log"
+    },
+    {
+      "id": "Q2/Q3/Q4",
+      "fact": "Under redirect: foreign full hashes fail to resolve; HEAD resolves in attacker repo and serves attacker blobs",
+      "evidence": "evidence/T3-naive-poisoned-ref-HEAD.log, evidence/T9-naive-mirror-poisoned-ref-HEAD.log"
+    }
+  ],
+  "attacks": [
+    {"id": "T1", "setup": "clean env, full hash", "naive_exit": 1, "naive_token": "EXECUTOR_SOURCE_DRIFT", "correct_exit": 1, "klass": "control"},
+    {"id": "T9", "setup": "GIT_DIR=mirror repo, candidate=HEAD", "naive_exit": 0, "naive_token": "EXECUTOR_SOURCE_BOUND", "correct_exit": 1, "klass": "false-pass (demonstrated bypass)", "evidence": "evidence/T9-naive-mirror-poisoned-ref-HEAD.log"},
+    {"id": "T3", "setup": "GIT_DIR=attacker without victim objects, candidate=HEAD", "naive_exit": 2, "naive_token": "EXECUTOR_SOURCE_UNAVAILABLE", "correct_exit": 1, "klass": "false-unavailable"},
+    {"id": "T2", "setup": "GIT_DIR=attacker without victim objects, full hash", "naive_exit": 2, "naive_token": "EXECUTOR_SOURCE_UNAVAILABLE", "correct_exit": 1, "klass": "verdict-flip/DoS"},
+    {"id": "T7", "setup": "GIT_DIR=nonexistent", "naive_exit": 2, "naive_token": "EXECUTOR_SOURCE_UNAVAILABLE", "correct_exit": 1, "klass": "DoS masking genuine DRIFT"},
+    {"id": "T10", "setup": "GIT_DIR=mirror containing forged candidate, full hash", "naive_exit": 1, "naive_token": "EXECUTOR_SOURCE_DRIFT", "correct_exit": 1, "klass": "no advantage: full hashes bind content"},
+    {"id": "T8", "setup": "relative GIT_DIR=.git from attacker cwd", "naive_exit": 1, "naive_token": "EXECUTOR_SOURCE_DRIFT", "correct_exit": 1, "klass": "observed non-issue on git 2.56 (resolved against -C dir)"},
+    {"id": "T9b/T11", "setup": "T9/T10 poisonings vs hardened oracle", "naive_exit": 1, "naive_token": "EXECUTOR_SOURCE_DRIFT", "correct_exit": 1, "klass": "defense holds"}
+  ],
+  "counter_immunity_probe": {
+    "id": "C0",
+    "method": "frozen measure.py (evidence path, read-only) run with ambient GIT_DIR/GIT_OBJECT_DIRECTORY/GIT_CEILING_DIRECTORIES poison against scratch stub lane; stub logged its GIT_* env per invocation via T59W1S36_CANARY",
+    "result": "counter completed all 24 fixtures; canary shows exactly {GIT_CONFIG_GLOBAL: /dev/null, GIT_CONFIG_NOSYSTEM: 1} on all 24 invocations; passed=12/24 is stub artifact (stub always exits 1)",
+    "evidence": ["evidence/C0-frozen-counter-poisoned.log", "evidence/C0-canary.jsonl"]
+  },
+  "smallest_sound_behavior": [
+    "Run every git subprocess with env stripped of all GIT_* vars plus GIT_CONFIG_GLOBAL=/dev/null and GIT_CONFIG_NOSYSTEM=1 (mirror the frozen counter's env construction)",
+    "Optional defense in depth: assert --absolute-git-dir (NOT --show-toplevel, which is blind per P1) equals realpath(REPO)/.git or realpath(REPO) for bare repos; exit 2 on mismatch"
+  ],
+  "cli_test": {
+    "path": "stage/tests/cli-env-poison/test-git-dir-poison.sh",
+    "usage": "test-git-dir-poison.sh /path/to/executor-source-pin.py",
+    "assertions": ["clean->1 DRIFT", "poisoned ref candidate->1 DRIFT (not 0, not 2)", "poisoned full hash->1 DRIFT", "poisoned equal->0 BOUND"],
+    "discrimination_observed": "fails naive oracle exactly on poisoned-ref (exit 0 false BOUND); all 4 pass on hardened oracle"
+  },
+  "artifacts": {
+    "stage": "stage/adversarial/git-dir/ (naive-tool.py, hardened-tool.py, build-fixtures.sh, build-mirror.sh, run-attacks.sh)",
+    "evidence": "evidence/ (16 run transcripts, counter canary, fixture ids)",
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S36 deleted after receipt copy"
+  },
+  "residual_risk": [
+    "Real tools/executor-source-pin.py does not exist at base; its env handling is unobservable — run the staged CLI test against it once landed",
+    "Non-GIT_* env axes (PATH/git binary identity) outside this item and already excluded by the contract trust boundary"
+  ],
+  "report": ".ufo/waves/round-59/w1/T59W1S36.md"
+}

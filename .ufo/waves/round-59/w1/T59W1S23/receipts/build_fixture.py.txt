@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Replicate measure.py fixture construction for ONE cell: path='tools/-runner.py'.
+Follows the frozen counter's construction verbatim (same env, same git calls).
+Writes receipts and returns trusted + candidate versions per class."""
+import json, os, subprocess, sys
+from pathlib import Path
+
+SCRATCH = Path('/fast/scratch/hyaku/tameshi-r59/T59W1S23')
+REPO = SCRATCH/'fixture'/'repo'
+RECEIPTS = SCRATCH/'receipts'
+
+PATH = 'tools/-runner.py'
+CLASSES = ['equal', 'changed', 'missing', 'unrelated', 'unresolvable', 'symlink']
+
+def main():
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1',
+               PYTHONDONTWRITEBYTECODE='1', TMPDIR=str(SCRATCH/'fixture'))
+    log = []
+    def run(argv, **kw):
+        r = subprocess.run(argv, capture_output=True, text=True, env=env, timeout=30, **kw)
+        log.append({'argv': argv, 'rc': r.returncode, 'stdout': r.stdout, 'stderr': r.stderr})
+        return r
+    def git(*args):
+        r = run(['git', '-C', str(REPO), *args])
+        if r.returncode:
+            raise RuntimeError(r.stderr)
+        return r.stdout.strip()
+
+    if REPO.exists():
+        import shutil; shutil.rmtree(REPO)
+    REPO.mkdir(parents=True)
+    RECEIPTS.mkdir(parents=True, exist_ok=True)
+    git('init', '-q')
+    top = Path(git('rev-parse', '--show-toplevel')).resolve()
+    assert top == REPO.resolve(), f'fixture root mismatch: {top} != {REPO}'
+    log.append({'argv': ['ASSERT', 'rev-parse --show-toplevel == repo'], 'rc': 0,
+                'stdout': str(top), 'stderr': ''})
+
+    f = REPO/PATH
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text('print("real executor")\n')
+    git('add', '--', PATH)
+    def commit():
+        git('-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
+            '-c', 'commit.gpgsign=false', 'commit', '-qm', 'fixture')
+        return git('rev-parse', 'HEAD')
+    versions = {'equal': commit()}
+    f.write_text('print("forged success")\n')
+    git('add', '--', PATH)
+    versions['changed'] = commit()
+    f.unlink()
+    git('add', '-u')
+    versions['missing'] = commit()
+    f.write_text('print("real executor")\n')
+    (REPO/'unrelated.txt').write_text('unrelated change\n')
+    git('add', '--', PATH, 'unrelated.txt')
+    versions['unrelated'] = commit()
+    versions['unresolvable'] = '0'*40
+    f.unlink()
+    f.symlink_to('elsewhere.py')
+    git('add', '--', PATH)
+    versions['symlink'] = commit()
+
+    # --- Verify Git source-object type/mode/content for each committed version ---
+    obj = {}
+    for cls in ['equal', 'changed', 'missing', 'unrelated', 'symlink']:
+        rev = versions[cls]
+        r = run(['git', '-C', str(REPO), 'ls-tree', rev, '--', PATH])
+        obj[cls] = {'rev': rev, 'ls-tree': r.stdout.strip()}
+        if r.stdout.strip():
+            r2 = run(['git', '-C', str(REPO), 'cat-file', '-t', f'{rev}:{PATH}'])
+            r3 = run(['git', '-C', str(REPO), 'cat-file', 'blob', f'{rev}:{PATH}'])
+            obj[cls]['cat-file -t'] = r2.stdout.strip()
+            obj[cls]['blob'] = r3.stdout
+        # rev-parse resolvability of the candidate
+        r4 = run(['git', '-C', str(REPO), 'rev-parse', '--verify', f'{rev}^{{commit}}'])
+        obj[cls]['candidate-resolvable-rc'] = r4.returncode
+    r5 = run(['git', '-C', str(REPO), 'rev-parse', '--verify', f'{versions["unresolvable"]}^{{commit}}'])
+    obj['unresolvable'] = {'rev': versions['unresolvable'],
+                           'candidate-resolvable-rc': r5.returncode,
+                           'stderr': r5.stderr.strip()}
+
+    (RECEIPTS/'fixture-build.json').write_text(json.dumps(log, indent=1))
+    (RECEIPTS/'fixture-objects.json').write_text(json.dumps(obj, indent=1))
+    (RECEIPTS/'versions.json').write_text(json.dumps(versions, indent=1))
+    print(json.dumps({'versions': versions, 'objects': obj}, indent=1))
+
+if __name__ == '__main__':
+    sys.exit(main())

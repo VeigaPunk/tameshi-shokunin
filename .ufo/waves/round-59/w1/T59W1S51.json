@@ -1,0 +1,84 @@
+{
+  "seat": "T59W1S51",
+  "round": 59,
+  "wave": "w1",
+  "milestone": "Inspect frozen counter for fixture safety: every git mutation scratch-rooted, cleanup failure paths, paths with spaces Unicode and leading dash, process timeout",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "counter_sha256": "f6dc274efa7d2bdc8018a9f511747a8c0c5c143058049af4f3d0245c79b2d40b",
+  "reproduction": {
+    "lane_clone": "scratch-only, read-only use, deleted with scratch",
+    "tool_in_lane_history": false,
+    "control_path_used": true,
+    "main_run": {
+      "probe": "conforming control stub implements exit map via ls-tree blob compare",
+      "result": "C1_R59 passed=24/24 C1_R59_PASS=true",
+      "exit": 0,
+      "work_cleaned": true,
+      "lane_dirty_entries": 0
+    },
+    "tool_absent_at_base": {
+      "result": "C1_R59 passed=0/24 C1_R59_PASS=false reason=tool-absent",
+      "exit": 1,
+      "work_cleaned": true
+    }
+  },
+  "fixture_safety": {
+    "git_mutations_scratch_rooted": {
+      "verdict": "confirmed",
+      "evidence": "strace -f over full 24-fixture run: 0 absolute out-of-scratch writes/mutations excl /dev/null; all -C args absolute under work; fixture root asserted after init; lane 0 dirty after 3 runs",
+      "receipt": "receipts/strace-out-of-scratch.txt"
+    },
+    "cleanup_failure_paths": {
+      "verdict": "flaw_found",
+      "normal_cleanup": "work fully emptied on pass/tool-absent/timeout paths",
+      "flaw": "tool under test flipping one dir to 0o555 makes shutil.rmtree raise PermissionError in finally; fixture-1..3 leak in --work; exit 1 traceback; no onerror/retry",
+      "receipts": ["receipts/run-chmod.stdout", "receipts/run-chmod.stderr"]
+    },
+    "paths_space_unicode_leading_dash": {
+      "verdict": "confirmed_safe",
+      "space": "24/24 incl tools/space name.py",
+      "unicode": "24/24 incl tools/日本語.py, also under LC_ALL=C",
+      "leading_dash": "24/24 incl tools/-runner.py; counter's git add -- is belt-and-suspenders on git 2.56 (slash-containing path not treated as option even without --)",
+      "symlink": "dangling symlink stored as mode 120000 blob; rmtree unlinks, never follows"
+    },
+    "process_timeout": {
+      "verdict": "flaw_found",
+      "timeout_seconds": 30,
+      "flaw": "single hanging tool invocation raises uncaught subprocess.TimeoutExpired; no C1_R59 summary; whole run forfeited; finally still cleans work; worst case ~24x30s+git overhead",
+      "receipt": "receipts/run-hang.stderr"
+    },
+    "hermeticity": {
+      "verdict": "confirmed",
+      "evidence": "run under env -i with hostile GIT_DIR/GIT_WORK_TREE/GIT_CONFIG_GLOBAL/GIT_CONFIG_COUNT/GIT_OBJECT_DIRECTORY and nonexistent HOME: still 24/24 PASS, work cleaned"
+    }
+  },
+  "flaws": [
+    {"id": "F1-timeout-abort", "severity": "medium", "description": "one hanging fixture cell aborts entire count with no verdict", "can_false_pass": false},
+    {"id": "F2-cleanup-fragile", "severity": "medium", "description": "candidate tool can defeat rmtree cleanup via permission flip; fixtures leak in --work; exit 1 traceback", "can_false_pass": false},
+    {"id": "F3-unbounded-capture", "severity": "low", "description": "capture_output without size cap; runaway tool can grow parent RAM up to 30s", "can_false_pass": false},
+    {"id": "F4-token-substring", "severity": "low", "description": "token in stdout+stderr admits echoed argv or BOUNDARY-suffix false pass", "can_false_pass": true}
+  ],
+  "verified_safe": [
+    "all fixture git mutations scratch-rooted (strace)",
+    "hostile GIT_* env cannot redirect fixtures",
+    "space/unicode/leading-dash/symlink paths construct and score correctly",
+    "normal cleanup empties --work on pass, tool-absent, timeout",
+    "non-empty --work rejected with exit 2 before any git activity"
+  ],
+  "stage": {
+    "dir": ".ufo/waves/round-59/w1/T59W1S51/stage",
+    "files": [
+      "tools/stub-conform.py",
+      "tools/stub-hang.py",
+      "tools/stub-chmod.py"
+    ],
+    "production_patch": false
+  },
+  "tooling_installs": [],
+  "scratch": {
+    "path": "/fast/scratch/hyaku/tameshi-r59/T59W1S51",
+    "tmpdir_set": true,
+    "removed_before_yield": true
+  },
+  "report": ".ufo/waves/round-59/w1/T59W1S51.md"
+}

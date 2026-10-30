@@ -1,0 +1,33 @@
+{
+  "seat": "T59W1S07",
+  "round": 59,
+  "wave": "w1",
+  "cell": {"path": "tools/space name.py", "class": "equal"},
+  "fixture": {
+    "trusted_commit": "48de33b1a3024dd93096f5e1837dc721973eb6c0",
+    "changed_commit": "33e70ebc9ef18d3dfdd50a74b36f4ef26056cc62",
+    "trusted_blob": {"type": "blob", "mode": "100644", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\n"},
+    "changed_blob": {"type": "blob", "mode": "100644", "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "content": "print(\"forged success\")\n"}
+  },
+  "oracle": {
+    "path": ".ufo/waves/round-59/w1/T59W1S07/stage/tools/space-name-cell-oracle.py",
+    "results": [
+      {"variant": "equal", "expected_exit": 0, "exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"variant": "changed", "expected_exit": 1, "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT blob-mismatch", "ok": true},
+      {"variant": "unresolvable", "expected_exit": 2, "exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE bad-candidate", "ok": true}
+    ]
+  },
+  "counter_review": {
+    "construction_sound": true,
+    "misclassification_found": false,
+    "notes": [
+      "list-form git add avoids shell quoting issues with space in path",
+      "token check requires both exit code and substring token; residual substring false-pass risk is verifier-side",
+      "python3 -I execution fails env-dependent tools closed",
+      "fixture blobs are mode 100644 regular; equal class must accept non-executable regular source"
+    ]
+  },
+  "production_patch_staged": false,
+  "installs": [],
+  "scratch_removed": true
+}

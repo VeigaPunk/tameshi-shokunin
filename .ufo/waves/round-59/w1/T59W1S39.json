@@ -1,0 +1,109 @@
+{
+  "seat": "T59W1S39",
+  "round": 59,
+  "wave": 1,
+  "adversarial_item": "empty source blob",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze_rev": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "observations": {
+    "tool_absent_at_base": true,
+    "tool_absent_at_head": true,
+    "candidate_implementation_claimed": false,
+    "counter_fixture_contents": [
+      "print(\"real executor\")\\n",
+      "print(\"forged success\")\\n",
+      "unrelated change\\n"
+    ],
+    "counter_ever_commits_empty_blob": false
+  },
+  "attack": {
+    "surface": "empty committed source blob",
+    "method": "frozen counter run via its --tool control override against a scratch lane clone (production lane untouched)",
+    "counter_results": {
+      "broken-empty-drift": {
+        "unsound_behavior": "equal empty blobs reported EXECUTOR_SOURCE_DRIFT exit 1",
+        "passed": 24,
+        "total": 24,
+        "c1_r59_pass": true,
+        "receipt": "receipts/counter-harness-A.log"
+      },
+      "broken-empty-unavail": {
+        "unsound_behavior": "any size-0 blob reported EXECUTOR_SOURCE_UNAVAILABLE exit 2",
+        "passed": 24,
+        "total": 24,
+        "c1_r59_pass": true,
+        "receipt": "receipts/counter-harness-B.log"
+      },
+      "always-accept-control": {
+        "passed": 8,
+        "total": 24,
+        "c1_r59_pass": false,
+        "receipt": "receipts/counter-harness-C.log"
+      },
+      "ref-sound": {
+        "passed": 24,
+        "total": 24,
+        "c1_r59_pass": true,
+        "receipt": "receipts/counter-harness-R.log"
+      }
+    },
+    "verdict": "frozen 24-fixture counter has zero discriminative power on the empty-blob surface; two semantically opposite unsound tools both certify 24/24"
+  },
+  "git_facts": {
+    "empty_blob_oid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "empty_file_tree_entry": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0",
+    "empty_blob_type": "blob",
+    "empty_blob_size": 0,
+    "gitattributes_text_filter_alters_empty_blob": false,
+    "empty_target_symlink_creatable": false,
+    "receipt": "receipts/git-facts.log"
+  },
+  "failed_attacks": [
+    "path-spelling confusion: all four contract spellings share empty OID; EE4 equal-empty passes",
+    "gitattributes filter smuggling cannot resurrect content from a 0-byte blob",
+    "empty-target symlink not creatable (ENOENT)",
+    "injecting empty fixtures into frozen counter rejected (frozen/read-only); demonstrated via counter's own --tool override instead"
+  ],
+  "claim_boundary": {
+    "empty_blob_inside_claim": true,
+    "reason": "an empty committed file at a declared path is a declared regular executable-source blob (mode 100644, type blob, size 0); the contract exit map applies unmodified",
+    "outside_scope": "whether a trusted revision should declare an empty source (trusted revision is verifier-supplied; skipped-work control is separate)"
+  },
+  "proposed_smallest_sound_behavior": [
+    "rev-parse --verify <rev>^{commit} for trusted and candidate; failure -> exit 2 EXECUTOR_SOURCE_UNAVAILABLE",
+    "trusted entry must exist as regular blob (ls-tree -l; type blob, mode 100644/100755) else exit 2",
+    "candidate entry missing or nonregular (symlink 120000, gitlink 160000, tree 040000) -> exit 1 EXECUTOR_SOURCE_DRIFT",
+    "OID inequality -> exit 1 EXECUTOR_SOURCE_DRIFT",
+    "all paths equal -> exit 0 EXECUTOR_SOURCE_BOUND",
+    "no size-0 special case anywhere"
+  ],
+  "proposed_cli_test": {
+    "staged_path": "stage/tools/executor-source-pin-empty-surface-test.py",
+    "usage": "python3 tools/executor-source-pin-empty-surface-test.py <path-to-tool-under-test>",
+    "cases": [
+      {"case": "EE", "trusted": "empty", "candidate": "empty", "expected_exit": 0, "token": "EXECUTOR_SOURCE_BOUND"},
+      {"case": "TE", "trusted": "empty", "candidate": "text", "expected_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      {"case": "ET", "trusted": "text", "candidate": "empty", "expected_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      {"case": "TM", "trusted": "text", "candidate": "missing", "expected_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      {"case": "TSYM", "trusted": "text", "candidate": "symlink", "expected_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      {"case": "EE_UNR", "trusted": "empty", "candidate": "0000000000000000000000000000000000000000", "expected_exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE"},
+      {"case": "EE4", "trusted": "empty", "candidate": "empty", "paths": "all four contract spellings", "expected_exit": 0, "token": "EXECUTOR_SOURCE_BOUND"}
+    ],
+    "discrimination_observed": {
+      "ref-sound": "7/7",
+      "broken-empty-drift": "5/7 (fails EE, EE4)",
+      "broken-empty-unavail": "3/7 (fails EE, TE, ET, EE4)"
+    },
+    "receipts": ["receipts/empty-surface-R.log", "receipts/empty-surface-A.log", "receipts/empty-surface-B.log"]
+  },
+  "tooling": {
+    "installs": [],
+    "note": "git 2.56.0 and python 3.14.8 preexisting; no installs, no service restarts"
+  },
+  "residual_risk": [
+    "frozen counter remains certifying artifact; empty-blob surface ungated unless L1 adopts the staged supplementary probe",
+    "adjacent untested surfaces deliberately not enlarged: mode 100755 vs 100644 with equal OID (passes; mode outside blob identity), tree/gitlink at declared path (nonregular; counter tests symlink only)"
+  ],
+  "harness_sha256": "receipts/harness-sha256.txt",
+  "scratch_deleted": true
+}

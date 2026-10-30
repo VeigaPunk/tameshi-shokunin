@@ -1,0 +1,85 @@
+{
+  "seat": "T59W1S08",
+  "round": 59,
+  "wave": "w1",
+  "cell": {
+    "path": "tools/space name.py",
+    "measure_path_index": 1,
+    "class": "changed",
+    "expected_exit": 1,
+    "expected_token": "EXECUTOR_SOURCE_DRIFT"
+  },
+  "evidence": {
+    "contract": ".ufo/evidence/round-59/contract.json",
+    "counter": ".ufo/evidence/round-59/measure.py",
+    "counter_freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+    "tool_absent_at_base": true
+  },
+  "fixture": {
+    "scratch_root": "/fast/scratch/hyaku/tameshi-r59/T59W1S08",
+    "deleted_before_yield": true,
+    "toplevel_asserted": true,
+    "env_mirrored_to_counter": true,
+    "trusted_commit": "99d2c5da18e0cd4a8c4ba4e1eba93f19f3d5c2a9",
+    "changed_commit": "f65203882545053938e8f85eb929d1fa4001bdfb",
+    "trusted_blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+    "changed_blob": "fbd2ab209ba4a77846c0898c79d4b579331975b7",
+    "content_matches_counter_literals_via_hash_object": true
+  },
+  "oracle": {
+    "file": ".ufo/waves/round-59/w1/T59W1S08/oracle.py",
+    "stdlib_only": true,
+    "no_shell_invocation": true,
+    "runs": [
+      {
+        "class": "equal",
+        "control": true,
+        "candidate": "99d2c5da18e0cd4a8c4ba4e1eba93f19f3d5c2a9",
+        "exit": 0,
+        "token": "EXECUTOR_SOURCE_BOUND",
+        "matches_frozen_expectation": true
+      },
+      {
+        "class": "changed",
+        "control": false,
+        "candidate": "f65203882545053938e8f85eb929d1fa4001bdfb",
+        "exit": 1,
+        "token": "EXECUTOR_SOURCE_DRIFT",
+        "detail": "declared source blob differs from trusted",
+        "matches_frozen_expectation": true
+      },
+      {
+        "class": "unresolvable",
+        "control": true,
+        "candidate": "0000000000000000000000000000000000000000",
+        "exit": 2,
+        "token": "EXECUTOR_SOURCE_UNAVAILABLE",
+        "matches_frozen_expectation": true
+      }
+    ]
+  },
+  "counter_misclassification_review": {
+    "counter_defect_for_this_cell": false,
+    "sound_mechanics": [
+      "path passed as single argv element (no shell splitting of the space)",
+      "expected exit 1 + EXECUTOR_SOURCE_DRIFT per contract exit map",
+      "token matched across stdout+stderr",
+      "env sanitized (GIT_* stripped, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, TMPDIR=work)",
+      "fixture commits use explicit -c user.* identity"
+    ],
+    "residual_tool_side_risks": [
+      "shell interpolation inside the tool would split at the space: false fail (exit 2) or false pass (DRIFT emitted for the wrong reason)",
+      "tool run under sys.executable -I: import-side failures surface as token-less exit 1, correctly counted as fail",
+      "always-DRIFT tool would false-pass this cell but is caught by equal/unrelated cells in the 24-cell grid"
+    ]
+  },
+  "housekeeping": {
+    "installs": [],
+    "git_mutation_only_in_explicit_scratch_fixture": true,
+    "frozen_counter_run_on_production": false,
+    "stage_dir": ".ufo/waves/round-59/w1/T59W1S08/stage",
+    "staged_production_patches": 0
+  },
+  "result": "cell probe complete: oracle classifies original/changed/unresolvable per frozen contract; counter mechanics for this cell verified sound; no production changes staged"
+}

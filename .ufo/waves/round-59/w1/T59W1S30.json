@@ -1,0 +1,54 @@
+{
+  "seat": "T59W1S30",
+  "round": 59,
+  "wave": "w1",
+  "adversarial_item": "NUL path handling",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "candidate_presence": {
+    "lane_HEAD": "absent (git cat-file -e HEAD:tools/executor-source-pin.py, read-only)",
+    "base": "absent (git cat-file -e b83f1bf:tools/executor-source-pin.py, read-only)",
+    "observed_stage": ".ufo/waves/round-59/w1/T59W1S49/stage/tools/executor-source-pin.py (sibling proposal, reviewed read-only, not integrated)"
+  },
+  "verdict": {
+    "inside_claim_boundary": false,
+    "summary": "NUL paths cannot traverse harness argv, filesystem, or git tree-object format; frozen counter has no NUL fixture and cannot gain one; observed candidate's NUL guard (exit 2 + EXECUTOR_SOURCE_UNAVAILABLE) is defense-in-depth and unreachable via the frozen CLI.",
+    "counter_defect": null,
+    "false_pass_path": null
+  },
+  "probes": [
+    {"id": "A", "layer": "argv/subprocess", "attack": "NUL byte in argv to git and python child", "observed": "ValueError: embedded null byte (harness-side, before exec)", "result": "closed"},
+    {"id": "A2", "layer": "execve", "attack": "os.execv with NUL argument", "observed": "ValueError: embedded null byte", "result": "closed"},
+    {"id": "B", "layer": "filesystem", "attack": "os.open/os.stat/builtin open on NUL path", "observed": "ValueError: embedded null character/byte in path", "result": "closed"},
+    {"id": "C1", "layer": "git-object", "attack": "handcrafted tree b'100644 a\\x00b\\x00'+sha via hash-object -w -t tree", "observed": "rc=128, error: object fails fsck: badTree; fatal: refusing to create malformed object", "result": "closed"},
+    {"id": "C2", "layer": "git-object", "attack": "NUL-laden path line to git mktree", "observed": "rc=128, fatal: input format error", "result": "closed"},
+    {"id": "P5", "layer": "CLI-vs-candidate", "attack": "OS-level --path with NUL against staged candidate", "observed": "ValueError: embedded null byte in harness posix_spawn; tool process never created", "result": "closed"},
+    {"id": "Q1", "layer": "in-process argv (only deliverable channel)", "attack": "main(argv=[... '--path','tools/runner\\x00.py'])", "observed": "rc=2, stderr 'EXECUTOR_SOURCE_UNAVAILABLE: invalid --path ...'", "result": "guard-correct"},
+    {"id": "Q2", "layer": "in-process argv", "attack": "newline in --path", "observed": "rc=2 + EXECUTOR_SOURCE_UNAVAILABLE", "result": "guard-correct"},
+    {"id": "Q3", "layer": "in-process argv", "attack": "NUL in --trusted", "observed": "rc=2 + EXECUTOR_SOURCE_UNAVAILABLE (does not resolve)", "result": "guard-correct"},
+    {"id": "Q4", "layer": "in-process argv", "attack": "NUL in --candidate", "observed": "rc=2 + EXECUTOR_SOURCE_UNAVAILABLE (does not resolve)", "result": "guard-correct"},
+    {"id": "Q5", "layer": "smoke", "attack": "clean equal-class fixture vs candidate", "observed": "rc=0, EXECUTOR_SOURCE_BOUND (guard does not break happy path)", "result": "pass"}
+  ],
+  "counter_assessment": {
+    "paths_constant": ["tools/runner.py", "tools/space name.py", "tools/日本語.py", "tools/-runner.py"],
+    "nul_present": false,
+    "hypothetical_nul_in_paths": "fixture construction raises ValueError -> traceback, non-zero exit, C1_R59_PASS never true (fail-closed)",
+    "defect": null
+  },
+  "smallest_sound_behavior": "No change required for C1: NUL is outside the frozen interface domain. Any future non-argv path channel (e.g. --paths-file) must validate and exit 2 + EXECUTOR_SOURCE_UNAVAILABLE on NUL; must not raise uncaught ValueError (exit 1, no token, wrong verdict class).",
+  "exact_test": ".ufo/waves/round-59/w1/T59W1S30/stage/tools/executor-source-pin.py.nul-probe.py TOOL  (T-boundary + T-guard; both pass against T49 staged candidate)",
+  "failed_attacks_preserved_in": ".ufo/waves/round-59/w1/T59W1S30/receipts/nul-path-probes.transcript",
+  "residual_risk": [
+    "future counter revision ingesting paths from file/env would make NUL deliverable; Q1/T-guard is the reference behavior",
+    "PEP 383 surrogateescape argv bytes are a distinct surface from NUL; candidate's ls-tree name decode uses surrogateescape (byte-exact); no defect observed in regions read",
+    "sibling candidates other than T49 not NUL-reviewed",
+    "frozen counter not run (L1 owns measurement); all probes used independent scratch fixtures"
+  ],
+  "installs": [],
+  "artifacts": {
+    "report": ".ufo/waves/round-59/w1/T59W1S30.md",
+    "json": ".ufo/waves/round-59/w1/T59W1S30.json",
+    "receipts": ".ufo/waves/round-59/w1/T59W1S30/receipts/nul-path-probes.transcript",
+    "staged_reference_test": ".ufo/waves/round-59/w1/T59W1S30/stage/tools/executor-source-pin.py.nul-probe.py"
+  }
+}

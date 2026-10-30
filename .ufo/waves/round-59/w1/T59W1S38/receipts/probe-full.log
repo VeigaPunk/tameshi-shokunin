@@ -1,0 +1,46 @@
+
+== 0. fixture root guard ==
+/fast/scratch/hyaku/tameshi-r59/T59W1S38/demo
+
+== 1. trusted commit: non-UTF8 blob b'\xff\xfe\x00exec\n' at tools/runner.py ==
+T=686aa3b4b3c32041bcb557f6367aac9b17b67859
+
+== 2. candidate EQUAL: same bytes, drift only in unrelated file ==
+CE=6e15867a7a8db764a86f0eade77727f2ec8b9003
+
+== 3. candidate DRIFT: single non-UTF8 byte \xfe->\xfd ==
+CD=2e723a488303f00e7dfb85d91729eff3455f8546
+
+== 4. git primitive truth: blob OIDs and raw bytes ==
+OID T :7716e9ef0d87eba2b26684665e1fd487b6736aab
+OID CE:7716e9ef0d87eba2b26684665e1fd487b6736aab
+OID CD:b9ed894c129cadcdcfdd706eee70a6185cab638b
+bytes T :fffe00657865630a
+bytes CD:fffd00657865630a
+
+== 5. ATTACK A: strict-UTF8-decode comparator crashes on EQUAL non-UTF8 case ==
+UNICODE_DECODE_ERROR: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+gate would exit 1 with traceback and NO semantic token -> false DRIFT on a BOUND case
+
+== 6. ATTACK B: lossy decode (errors=replace) turns DRIFT into false BOUND ==
+byte-equal (git truth): False
+replace-decode-equal  : True
+-> a text-projecting gate prints EXECUTOR_SOURCE_BOUND and exits 0 on drifted candidate
+
+== 7. ATTACK C: counter run(text=True) crashes if tool emits non-UTF8 bytes ==
+COUNTER_CRASH UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+-> no C1_R59 verdict line; verdict unrecoverable from counter output
+
+== 8. SMALLEST SOUND BEHAVIOR: blob-OID comparison, encoding-agnostic ==
+equal-nutf8: trusted_oid=7716e9ef0d87 cand_oid=7716e9ef0d87 rc=0 -> BOUND(0)
+drift-nutf8: trusted_oid=7716e9ef0d87 cand_oid=b9ed894c129c rc=0 -> DRIFT(1)
+
+== 9. OID semantics reproduce frozen six-class map (counter's own fixture shape, path tools/runner.py) ==
+equal        expected=0 oid-semantics=0 OK
+changed      expected=1 oid-semantics=1 OK
+missing      expected=1 oid-semantics=1 OK
+unrelated    expected=0 oid-semantics=0 OK
+unresolvable expected=2 oid-semantics=2 OK
+symlink      expected=1 oid-semantics=1 OK
+ALL_FROZEN_CLASSES_REPRODUCED
+DONE

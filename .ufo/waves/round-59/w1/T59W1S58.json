@@ -1,0 +1,91 @@
+{
+  "seat": "T59W1S58",
+  "axes": [
+    "exact-byte provenance",
+    "reproducibility",
+    "bounded source identity"
+  ],
+  "trusted_revision": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "declared_path": "tools/registry-check.py",
+  "attack_path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack.py",
+  "assignment_lines": [
+    131,
+    172
+  ],
+  "forged_bytes": 1267,
+  "trusted_bytes": 72606,
+  "forged_blob": "c92668ee8189e43fd5a09924061d1dc052662966",
+  "trusted_blob": "9f9d0b7c1882ae7bf6d2917036f88c75c74c5b09",
+  "git_hash_object_stdout": "c92668ee8189e43fd5a09924061d1dc052662966",
+  "source_equal": false,
+  "expected_gate_exit": 1,
+  "expected_gate_token": "EXECUTOR_SOURCE_DRIFT",
+  "gate_executed": false,
+  "counter_executed": false,
+  "lsp": "unavailable: xd://lsp returned No such tool",
+  "installs": [],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+        "show",
+        "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a:tools/registry-check.py"
+      ],
+      "exit": 0,
+      "stdout_bytes": 72606
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+        "hash-object",
+        "--stdin"
+      ],
+      "stdin": "exact ast.literal_eval(BENT_RC) bytes",
+      "exit": 0,
+      "stdout": "c92668ee8189e43fd5a09924061d1dc052662966\n"
+    }
+  ],
+  "reconstruction": {
+    "contract": "Compare declared regular Git source blobs at verifier-supplied trusted and candidate commits; identity only, not execution attestation or closure completeness.",
+    "last_known_good_invariant": "Trusted run_row executes row[argv], compares actual returncode and stdout needles, and requires cleanup_ok (trusted source lines 676-720).",
+    "divergence": "BENT_RC never executes row argv; it copies expected exit into got while the gate is clean, or fabricates got=expect+1 when git status reports the gate dirty.",
+    "round58_recorded_outcomes": {
+      "attack-out.txt": "Original bent lane held=3/3 but mutants=2/3 and C2_R58_PASS=false; real runner c2-fx-ok got=3 differs.",
+      "attack-b-out.txt": "Recorded later bent lane held=3/3 mutants=3/3 C2_R58_PASS=true; real runner c2-fx-ok got=3 differs.",
+      "provenance_limit": "attack-b-out.txt is retained output only: no separate attack-b driver is present in the listed receipt directory. Exact changes producing the later gate are not established; BENT_RC bytes are extracted from attack.py, not recovered from the old scratch commit."
+    },
+    "confidence": "High for byte identities and explicit source divergence; later recorded pass is historical receipt evidence only."
+  },
+  "fixture_proof": {
+    "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S58/stage/.ufo/evidence/round-59/fixtures/bent-executor/prove.py",
+    "command": "TMPDIR=/fast/scratch/hyaku/tameshi-r59/T59W1S58 python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S58/stage/.ufo/evidence/round-59/fixtures/bent-executor/prove.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin",
+    "executed": false,
+    "purpose": "Read-only AST extraction and Git blob comparison, no fixture Git mutation, no executor execution."
+  },
+  "self_evaluation": {
+    "accuracy": {
+      "score": 4,
+      "evidence": "Direct byte hashes observed; later-pass driver provenance not reconstructed and explicitly limited."
+    },
+    "completeness": {
+      "score": 4,
+      "evidence": "Exact bytes and reproducible proof staged; gate not run, outside assigned source extraction."
+    },
+    "clarity": {
+      "score": 5,
+      "evidence": "Separates observed hashes, historical receipt, and inferred gate refusal."
+    },
+    "actionability": {
+      "score": 4,
+      "evidence": "Read-only reproduction command provided; proof driver intentionally unexecuted."
+    },
+    "conciseness": {
+      "score": 4,
+      "evidence": "Report includes necessary historical-output distinction."
+    }
+  }
+}

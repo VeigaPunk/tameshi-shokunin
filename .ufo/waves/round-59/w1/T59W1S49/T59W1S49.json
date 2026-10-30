@@ -1,0 +1,62 @@
+{
+  "seat": "T59W1S49",
+  "round": 59,
+  "wave": "w1",
+  "report": ".ufo/waves/round-59/w1/T59W1S49.md",
+  "assignment": "Sole main implementation draft: tools/executor-source-pin.py per contract.json CLI, staged for L1 integration",
+  "contract": {
+    "interface": "python3 TOOL --repo REPO --trusted COMMIT --candidate COMMIT --path PATH [--path PATH ...]",
+    "exit_map": {
+      "0": "EXECUTOR_SOURCE_BOUND",
+      "1": "EXECUTOR_SOURCE_DRIFT",
+      "2": "EXECUTOR_SOURCE_UNAVAILABLE"
+    },
+    "target": 24,
+    "classes": [
+      "equal",
+      "changed",
+      "missing",
+      "unrelated",
+      "unresolvable",
+      "symlink"
+    ],
+    "paths": [
+      "tools/runner.py",
+      "tools/space name.py",
+      "tools/日本語.py",
+      "tools/-runner.py"
+    ]
+  },
+  "staged_tool": {
+    "path": ".ufo/waves/round-59/w1/T59W1S49/stage/tools/executor-source-pin.py",
+    "sha256": "a7636e342793df50fb12419068ba7b3b95a1b3a199d60c010d3395d977de0037",
+    "stdlib_only": true,
+    "git_invocation": "git --no-replace-objects --literal-pathspecs -C REPO <read-only plumbing>; env stripped of GIT_*, GIT_NO_REPLACE_OBJECTS=1, GIT_OPTIONAL_LOCKS=0; 25s per-call timeout",
+    "notes": [
+      "rev-parse --verify --quiet --end-of-options REV^{commit} for both revisions (S57 suggestion applied)",
+      "ls-tree -z exact pathspec per declared path; regular modes 100644/100755 only",
+      "oid equality treated as raw-byte equality (git blob id is a content address); cat-file byte comparison when oids differ",
+      "candidate code never executed; no silent fallback: any plumbing failure is exit 2"
+    ]
+  },
+  "independent_probe": {
+    "description": "Own scratch harness replicating measure.py 24-fixture construction (6 classes x 4 path spellings) plus refs/replace substitution attack and argument-validation probes; NOT the frozen counter",
+    "receipt": ".ufo/waves/round-59/w1/T59W1S49/probe-results.json",
+    "counter_equivalent": {
+      "passed": 24,
+      "total": 24
+    },
+    "extra": {
+      "passed": 10,
+      "total": 10
+    },
+    "replace_attack": "refs/replace mapping changed->trusted created before class loop; tool still exited 1 EXECUTOR_SOURCE_DRIFT for changed class at all four paths (--no-replace-objects confirmed)",
+    "summary_line": "PROBE passed=34/34 PROBE_PASS=True",
+    "all_ok": true
+  },
+  "production_patch_staged": true,
+  "production_edit": false,
+  "installs": [],
+  "scratch_removed": true,
+  "frozen_counter_run": false
+}

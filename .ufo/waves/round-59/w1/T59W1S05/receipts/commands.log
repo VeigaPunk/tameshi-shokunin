@@ -1,0 +1,27 @@
+# Seat T59W1S05 probe: cell path='tools/runner.py' class='unresolvable'
+# All fixture git writes: `git -C /fast/scratch/hyaku/tameshi-r59/T59W1S05/fixture` after
+# asserting `git rev-parse --show-toplevel` == that dir (asserted in build_fixture.py).
+# TMPDIR=/fast/scratch/hyaku/tameshi-r59/T59W1S05 for all runs. No installs.
+
+git --version  => git version 2.56.0
+python3 --version => Python 3.14.8
+
+$ TMPDIR=$W python3 build_fixture.py
+versions: trusted=72f85283efdcec71656a24e3b2dfecb192a83d85 changed=2f9309be58d813d742e5d472e37a71f58d6f0551
+          missing=81e07c5f3aef8156b3ea96d8cd55c7dd389bf5fe unrelated=6862662c3e441288753e72cf204e3ae706e9f8e1
+          unresolvable=0000000000000000000000000000000000000000 symlink=6c5d87a6904a6ab99add017708a7aecdf0d3e2f6
+trusted object facts: cat-file -t => blob; ls-tree => "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb tools/runner.py";
+                      show => print("real executor")
+candidate resolution: 0000000000000000000000000000000000000000
+  rev-parse --verify --quiet 0000..40^{commit} => rc=1 out="" err=""
+  rev-parse --verify 0000..40^{commit}          => "fatal: Needed a single revision"
+  cat-file -t 0000..40                          => rc=128 "fatal: git cat-file: could not get object info"
+symlink commit entry: git ls-tree 6c5d87a6.. -- tools/runner.py => "120000 blob a66620d9.. tools/runner.py" (mode 120000, type blob)
+
+$ ./run_oracle.sh   (python3 -I oracle.py --repo fixture --trusted 72f85283.. --candidate <v> --path tools/runner.py)
+class=equal        exit=0 out=EXECUTOR_SOURCE_BOUND
+class=changed      exit=1 out=EXECUTOR_SOURCE_DRIFT: content differs tools/runner.py
+class=missing      exit=1 out=EXECUTOR_SOURCE_DRIFT: missing at candidate tools/runner.py
+class=unrelated    exit=0 out=EXECUTOR_SOURCE_BOUND
+class=unresolvable exit=2 out=EXECUTOR_SOURCE_UNAVAILABLE: unresolvable revision 0000000000000000000000000000000000000000
+class=symlink      exit=1 out=EXECUTOR_SOURCE_DRIFT: nonregular at candidate tools/runner.py (mode=120000 type=blob)

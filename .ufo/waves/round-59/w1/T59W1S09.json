@@ -1,0 +1,76 @@
+{
+  "seat": "T59W1S09",
+  "round": 59,
+  "wave": "w1",
+  "cell": {"path": "tools/space name.py", "class": "missing"},
+  "frozen_inputs": {
+    "contract_sha256": "849e5d58a4e6d2b54e8fe4a95d7a46a5461412e1afaa97c57b7016fb7bd7e2d3",
+    "measure_sha256": "f6dc274efa7d2bdc8018a9f511747a8c0c5c143058049af4f3d0245c79b2d40b",
+    "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+    "freeze_hash_match": true,
+    "tool_present_in_lane": false,
+    "before_stdout": "C1_R59 rev=b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a passed=0/24 C1_R59_PASS=false reason=tool-absent"
+  },
+  "fixture": {
+    "repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S09/fixture-1",
+    "path": "tools/space name.py",
+    "trusted": "d4ae498f720432b3f9ffd9f6fe4b6529bd54b9a7",
+    "versions": {
+      "equal": "d4ae498f720432b3f9ffd9f6fe4b6529bd54b9a7",
+      "changed": "9e6f6b8cf1444f3a2a48812c4072843c6f456407",
+      "missing": "b9c775dfba25d29d0102e62ae36feb4990e98d9f",
+      "unrelated": "03eaba90ba7a5dfb2645ac244c5317f89ad50445",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "c3dca1212dc18aef9504a567b14e6977ee437826"
+    }
+  },
+  "object_facts": {
+    "trusted_entry": ["100644", "blob", "74e4df76f9a60662749e2aaf076f67e311f66cdb"],
+    "changed_entry": ["100644", "blob", "fbd2ab209ba4a77846c0898c79d4b579331975b7"],
+    "missing_entry": null,
+    "unrelated_entry": ["100644", "blob", "74e4df76f9a60662749e2aaf076f67e311f66cdb"],
+    "symlink_entry": ["120000", "blob", "a66620d9fcdca1d09c541464669234d720772947"],
+    "content_sha256": {
+      "print(\"real executor\")\\n": "872bd7f932b21b09a727a1ce53203edc3bdfaba48861969175b15675829042da",
+      "print(\"forged success\")\\n": "6f82d456a7d577f6351b67fde7c029e2b367b9f9db73ae47d3d9a4467c0ee249"
+    },
+    "worktree_at_run_time": "dangling symlink 'tools/space name.py' -> 'elsewhere.py' for all classes",
+    "blob_mode_ground_truth": "100644 (non-executable; measure.py write_text without chmod)"
+  },
+  "oracle": {
+    "file": ".ufo/waves/round-59/w1/T59W1S09/receipts/oracle_cell.py",
+    "method": "git plumbing only, list argv: rev-parse --verify COMMIT^{commit}; ls-tree REV -- PATH; absent/non-blob/differing-sha at candidate -> DRIFT(1); rev or trusted-source failure -> UNAVAILABLE(2); equal blobs -> BOUND(0)",
+    "results": [
+      {"class": "equal", "exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"class": "changed", "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "reason": "candidate-source-differs", "ok": true},
+      {"class": "missing", "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "reason": "candidate-source-missing", "candidate_entry": null, "ok": true},
+      {"class": "unrelated", "exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"class": "unresolvable", "exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "reason": "candidate-unresolvable", "ok": true},
+      {"class": "symlink", "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "reason": "candidate-source-nonregular-vs-trusted", "ok": true}
+    ],
+    "all_match_counter_expectations": true
+  },
+  "counter_misclassification_review": {
+    "counter_side_mechanics_sound": true,
+    "argv_space_preserved_evidence": "stub_argv.py under exact counter invocation: sys.argv contains '--path', 'tools/space name.py' as one element",
+    "false_pass_vector": "counter checks exit+token only, not mechanism; at run time worktree holds dangling symlink at this path for every class, so a worktree-inspecting tool could emit DRIFT(1) for missing (expected verdict) and pass this cell for the wrong reason; 24-suite still catches it via equal/unrelated expecting 0",
+    "false_fail_vectors": [
+      "unquoted shell=True git show splits rev:path on the space (observed: 'path tools/space does not exist', rc 128); mapping any candidate-lookup failure to UNAVAILABLE(2) scores 2 vs expected 1 on missing",
+      "git cat-file -t on missing path prints misleading stderr 'exists on disk, but not in <rev>' due to run-time symlink; pattern-matching on it could misroute"
+    ],
+    "net": "frozen counter cannot false-pass a wrong exit/token pair for this cell except via the worktree coincidence; it robustly false-fails shell-quoting/error-mapping bugs"
+  },
+  "environment": {
+    "git": "2.56.0",
+    "python": "3.14.8",
+    "installs": [],
+    "scratch_removed_after_receipts_copied": true
+  },
+  "files": {
+    "report": ".ufo/waves/round-59/w1/T59W1S09.md",
+    "json": ".ufo/waves/round-59/w1/T59W1S09.json",
+    "receipts": ".ufo/waves/round-59/w1/T59W1S09/receipts/",
+    "stage": ".ufo/waves/round-59/w1/T59W1S09/stage/ (empty; no production gate staged)"
+  }
+}

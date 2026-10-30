@@ -1,0 +1,63 @@
+{
+  "seat": "T59W1S17",
+  "round": 59,
+  "cell": {
+    "path": "tools/日本語.py",
+    "fixture_index": 2,
+    "class": "unresolvable",
+    "candidate": "0000000000000000000000000000000000000000",
+    "expected_exit": 2,
+    "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE"
+  },
+  "fixture": {
+    "scratch_root": "/fast/scratch/hyaku/tameshi-r59/T59W1S17",
+    "deleted_after_receipts": true,
+    "commits": {
+      "trusted": "ff4ac7bbf552a03921bebe7096d7ef8331fc8359",
+      "changed": "fc705ffc400f480976836bfc9b4305fe8ff2b527",
+      "missing": "5dccc868207b5a921838a665782f13a28e0163fa",
+      "unrelated": "54b9246fd579a93c8f07234cda72726043567791",
+      "unresolvable": "0000000000000000000000000000000000000000"
+    },
+    "head_at_unresolvable_invocation": "54b9246fd579a93c8f07234cda72726043567791"
+  },
+  "source_object_verification": {
+    "path": "tools/日本語.py",
+    "mode_at_trusted": "100644",
+    "type_at_trusted": "blob",
+    "blob_sha": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+    "content": "print(\"real executor\")\n",
+    "content_bytes": 23,
+    "hash_object_recompute_matches": true,
+    "mode_at_unrelated": "100644",
+    "blob_at_unrelated_equals_trusted": true
+  },
+  "unresolvable_semantics_git_2_56_0": {
+    "rev_parse_verify_commit": {"returncode": 128, "stderr": "fatal: Needed a single revision"},
+    "cat_file_e": {"returncode": 1},
+    "cat_file_t": {"returncode": 128, "stderr": "fatal: git cat-file: could not get object info"}
+  },
+  "oracle": {
+    "receipt": ".ufo/waves/round-59/w1/T59W1S17/receipts/T59W1S17-oracle.py",
+    "env": "python3 -I, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, PYTHONDONTWRITEBYTECODE=1, GIT_* stripped",
+    "results": [
+      {"case": "unresolvable", "candidate": "0000000000000000000000000000000000000000", "exit": 2, "expected": 2, "ok": true, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "stream": "stderr"},
+      {"case": "equal", "candidate": "ff4ac7bbf552a03921bebe7096d7ef8331fc8359", "exit": 0, "expected": 0, "ok": true, "token": "EXECUTOR_SOURCE_BOUND", "stream": "stdout"},
+      {"case": "changed", "candidate": "fc705ffc400f480976836bfc9b4305fe8ff2b527", "exit": 1, "expected": 1, "ok": true, "token": "EXECUTOR_SOURCE_DRIFT", "stream": "stderr"},
+      {"case": "missing", "candidate": "5dccc868207b5a921838a665782f13a28e0163fa", "exit": 1, "expected": 1, "ok": true, "token": "EXECUTOR_SOURCE_DRIFT", "stream": "stderr"},
+      {"case": "unrelated", "candidate": "54b9246fd579a93c8f07234cda72726043567791", "exit": 0, "expected": 0, "ok": true, "token": "EXECUTOR_SOURCE_BOUND", "stream": "stdout"}
+    ]
+  },
+  "misclassification_review": {
+    "cause_agnostic_pass_risk": "counter checks exit==2 and token substring in stdout+stderr; fake tool exiting 2 with token in usage banner for a resolvable candidate would pass this cell (demonstrated, receipts/T59W1S17-fake-tool.py)",
+    "substring_not_exact_token": true,
+    "head_fallback_tool_correctly_failed": "HEAD at invocation is UNRELATED whose blob equals trusted, so fallback yields exit 0 vs expected 2",
+    "unicode_crash_correctly_failed": "traceback exit 1 lacks token, expected 2",
+    "env_parity_enforced_by_counter": true,
+    "zero_sha_unresolvable_unambiguous": true,
+    "cell_specific_misclassification_found": false
+  },
+  "installs": [],
+  "production_touched": false,
+  "stage_root_empty": true
+}

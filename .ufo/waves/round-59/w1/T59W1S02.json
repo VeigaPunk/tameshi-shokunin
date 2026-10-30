@@ -1,0 +1,72 @@
+{
+  "seat": "T59W1S02",
+  "round": 59,
+  "wave": "w1",
+  "cell": {
+    "path": "tools/runner.py",
+    "path_index": 0,
+    "class": "changed",
+    "expected_exit": 1,
+    "expected_token": "EXECUTOR_SOURCE_DRIFT"
+  },
+  "contract": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-59/contract.json",
+  "counter": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-59/measure.py",
+  "lane_state": {
+    "freeze_rev": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base_rev": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+    "tool_at_freeze": "absent",
+    "tool_at_base": "absent",
+    "tool_in_worktree": "absent",
+    "note": "counter emits tool-absent passed=0/24 without --tool override; L1 decides measurement"
+  },
+  "fixture": {
+    "scratch_repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S02/fixture/runner-cell (deleted after receipt copy)",
+    "trusted_commit": "d0dcca96c1ed3e991044c8e8eaa25047f8e5e94b",
+    "changed_commit": "822eb6b55247c1811f08aee5572f06726f4b4baf",
+    "trusted_entry": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb",
+    "changed_entry": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7",
+    "trusted_content": "print(\"real executor\")\n",
+    "changed_content": "print(\"forged success\")\n",
+    "blob_ids_timestamp_independent": true,
+    "build_matches_counter_semantics": "git init; write; add -- path; commit; rewrite forged; add; commit"
+  },
+  "oracle": {
+    "path": ".ufo/waves/round-59/w1/T59W1S02/stage/oracle-executor-source-pin.py",
+    "basis": "independent reimplementation of contract exit/token map via git ls-tree/rev-parse plumbing; stdlib only; python3 -I clean"
+  },
+  "probes": [
+    {
+      "name": "original/equal control",
+      "cmd": "python3 -I ORACLE --repo REPO --trusted d0dcca96c1ed3e991044c8e8eaa25047f8e5e94b --candidate d0dcca96c1ed3e991044c8e8eaa25047f8e5e94b --path tools/runner.py",
+      "stdout": "EXECUTOR_SOURCE_BOUND",
+      "exit": 0
+    },
+    {
+      "name": "seat cell: changed",
+      "cmd": "python3 -I ORACLE --repo REPO --trusted d0dcca96c1ed3e991044c8e8eaa25047f8e5e94b --candidate 822eb6b55247c1811f08aee5572f06726f4b4baf --path tools/runner.py",
+      "stdout": "EXECUTOR_SOURCE_DRIFT: tools/runner.py differs (trusted=74e4df76f9a60662749e2aaf076f67e311f66cdb candidate=fbd2ab209ba4a77846c0898c79d4b579331975b7)",
+      "exit": 1
+    }
+  ],
+  "seat_cell_verdict": {
+    "expected_by_counter": "exit 1 + EXECUTOR_SOURCE_DRIFT",
+    "observed_by_oracle": "exit 1 + EXECUTOR_SOURCE_DRIFT",
+    "match": true
+  },
+  "misclassification_review": {
+    "path_spelling_risk": "none: no space, no CJK, no leading dash; argv-form subprocess avoids shell quoting; argparse parses cleanly",
+    "changed_cell_can_false_pass_worktree_confused_tool": true,
+    "detail": "during the changed probe the counter's worktree file already contains the forged content, so a tool that compares the working tree instead of the candidate commit object still emits DRIFT/exit 1 for this cell; this cell alone cannot detect worktree-vs-commit confusion",
+    "token_check": "counter checks token in stdout+stderr combined and requires exact exit equality; a token-only or exit-only match fails closed",
+    "tool_absent_at_freeze": "counter would report passed=0/24 reason=tool-absent; not a per-cell misclassification but blocks certification without --tool",
+    "determinism": "blob ids content-addressed and reproducible across replicas; commit ids timestamp-dependent and differ per replica, which is fine since counter uses its own commits"
+  },
+  "installs": [],
+  "files_written": [
+    ".ufo/waves/round-59/w1/T59W1S02/stage/oracle-executor-source-pin.py",
+    ".ufo/waves/round-59/w1/T59W1S02.md",
+    ".ufo/waves/round-59/w1/T59W1S02.json"
+  ],
+  "no_production_edit": true,
+  "no_git_mutation_outside_scratch": true
+}

@@ -1,0 +1,55 @@
+{
+  "seat": "T59W1S05",
+  "cell": {"path": "tools/runner.py", "class": "unresolvable"},
+  "expected": {"exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE"},
+  "contract_ref": ".ufo/evidence/round-59/contract.json",
+  "counter_ref": ".ufo/evidence/round-59/measure.py",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "environment": {"git": "2.56.0", "python": "3.14.8", "installs": []},
+  "fixture": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S05",
+    "deleted_after_receipts": true,
+    "versions": {
+      "trusted": "72f85283efdcec71656a24e3b2dfecb192a83d85",
+      "changed": "2f9309be58d813d742e5d472e37a71f58d6f0551",
+      "missing": "81e07c5f3aef8156b3ea96d8cd55c7dd389bf5fe",
+      "unrelated": "6862662c3e441288753e72cf204e3ae706e9f8e1",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "6c5d87a6904a6ab99add017708a7aecdf0d3e2f6"
+    },
+    "trusted_object_facts": {
+      "cat_file_t": "blob",
+      "ls_tree": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb tools/runner.py",
+      "content": "print(\"real executor\")"
+    },
+    "symlink_entry": "120000 blob a66620d9fcdca1d09c541464669234d720772947 tools/runner.py",
+    "candidate_resolution": {
+      "rev_parse_verify_quiet_rc": 1,
+      "rev_parse_verify_err": "fatal: Needed a single revision",
+      "cat_file_rc": 128,
+      "cat_file_err": "fatal: git cat-file: could not get object info"
+    }
+  },
+  "oracle": {
+    "file": "T59W1S05/receipts/oracle.py",
+    "independent": true,
+    "results": {
+      "equal": {"exit": 0, "token": "EXECUTOR_SOURCE_BOUND"},
+      "changed": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      "missing": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      "unrelated": {"exit": 0, "token": "EXECUTOR_SOURCE_BOUND"},
+      "unresolvable": {"exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE"},
+      "symlink": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"}
+    },
+    "cell_match": true
+  },
+  "counter_misclassification_review": {
+    "false_fail_risk": "low: all-zero candidate deterministically unresolvable on git 2.56.0; counter env scrubbed (GIT_* stripped, global/system config nulled, pristine fixture, no replace refs)",
+    "false_credit_risk": "inherent: counter credits any exit==2 with EXECUTOR_SOURCE_UNAVAILABLE substring, even if fired for wrong reason (arg parse, trusted-rev-first ordering, internal crash); cell cannot prove candidate resolution was attempted",
+    "order_note": "fixture HEAD is symlink commit during unresolvable run; correct tools ignore HEAD since candidate is explicit",
+    "verdict": "expected contract (exit 2 + EXECUTOR_SOURCE_UNAVAILABLE) confirmed on independent fixture; counter can false-credit but not readily false-fail this cell"
+  },
+  "production_gate_staged": false,
+  "frozen_counter_run_on_production": false
+}

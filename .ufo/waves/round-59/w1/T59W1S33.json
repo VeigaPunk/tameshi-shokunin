@@ -1,0 +1,91 @@
+{
+  "seat": "T59W1S33",
+  "round": 59,
+  "item": "same blob executable bit change",
+  "inputs_read": [
+    ".ufo/evidence/round-59/contract.json",
+    ".ufo/evidence/round-59/measure.py",
+    "/home/vgpnk/.omp/agent/RULES.md"
+  ],
+  "candidate_observed": false,
+  "candidate_presence_check": {
+    "base_b83f1bfc": "tools/executor-source-pin.py absent",
+    "head_e9cc34be": "tools/executor-source-pin.py absent"
+  },
+  "frozen_counter_run_on_production": false,
+  "axes": {
+    "coverage": "frozen counter has zero fixtures that vary file mode",
+    "distinguishability": "24/24 cannot distinguish blob-only from mode-strict implementations",
+    "boundary": "exec-bit flip is on the claim boundary line; frozen text ambiguous",
+    "primitive_robustness": "git update-index --chmod works even with core.filemode=false"
+  },
+  "demonstration": {
+    "fixture_a": {
+      "change": "100644 -> 100755, content identical",
+      "trusted_entry": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb",
+      "candidate_entry": "100755 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb",
+      "content_diff": "empty (mode-only change)"
+    },
+    "fixture_b": {
+      "change": "100755 -> 100644 (strip exec bit), content identical",
+      "trusted_entry": "100755 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb",
+      "candidate_entry": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb"
+    },
+    "replica24_results": {
+      "ref_blob_only": "passed=24/24",
+      "ref_mode_strict": "passed=24/24"
+    },
+    "divergence_on_mode_flip": {
+      "fixture_a": {"blob_only": "exit 0 EXECUTOR_SOURCE_BOUND", "mode_strict": "exit 1 EXECUTOR_SOURCE_DRIFT"},
+      "fixture_b": {"blob_only": "exit 0 EXECUTOR_SOURCE_BOUND", "mode_strict": "exit 1 EXECUTOR_SOURCE_DRIFT"},
+      "control_identical": {"blob_only": "exit 0", "mode_strict": "exit 0"}
+    },
+    "adjacent_variant": {
+      "surface": "symlink whose target string equals trusted content",
+      "observation": "identical blob hash 9d0045dc8f161c8c6f3af65d05dbe9e437bb8db9; blob-only passes symlink as BOUND; contract symlink class expects DRIFT"
+    }
+  },
+  "inside_claim_boundary": "unresolved: Reading 1 (blobs-only per trust boundary 'not execution') puts the mode flip outside the boundary and exit 0 is correct-by-design; Reading 2 ('regular executable-source' pin) puts a 755->644 invocation-breaking flip inside the boundary and blob-only compare is unsound. Decision belongs to L1; this seat does not enlarge the claim.",
+  "smallest_sound_behavior": {
+    "proposal": "compare full tree entries (mode, type, oid) via git ls-tree <rev> -- <path> at both revisions; require present, type blob, and equal triple; any deviation -> exit 1 EXECUTOR_SOURCE_DRIFT; invalid/unresolvable inputs keep exit 2",
+    "properties": [
+      "same git invocation count as rev-parse-per-path",
+      "uniformly covers content, missing, nonregular, and mode flip",
+      "consistent with already-required symlink type check",
+      "keeps all 24 frozen fixtures green (verified on scratch replica with mode-strict ref)",
+      "also closes content-equal-symlink variant"
+    ],
+    "alternative_if_boundary_excludes_mode": "keep blob-only compare and amend claim wording to state file mode is not pinned (documentation fix only)"
+  },
+  "exact_cli_test": {
+    "staged": ".ufo/waves/round-59/w1/T59W1S33/stage/exec-bit-mode-probe.sh",
+    "command": "python3 -I tools/executor-source-pin.py --repo $REPO --trusted $T --candidate $C --path tools/runner.py",
+    "fixture_primitive": "git update-index --chmod=+x|-x (mode-only commits, content untouched)",
+    "cases": ["644->755 flip", "755->644 strip", "identical-entry negative control"],
+    "expected_mode_strict": [1, 1, 0],
+    "expected_blobs_only_boundary": [0, 0, 0],
+    "smoke_tested": "staged probe run against both reference implementations; mode-strict outputs reproduced exactly"
+  },
+  "failed_attacks": [
+    "core.filemode=false as defense: update-index --chmod still records the flip (receipt section 4)",
+    "content diff as detection: git diff is content-empty; only --summary/ls-tree reveal mode (receipt section 2)",
+    "frozen symlink fixture covers type confusion: content-equal symlink target string yields identical blob and blob-only BOUND (receipt section 7)",
+    "attack against Reading 1 of claim: mode flip legitimately outside blobs-only boundary; finding reduces to wording ambiguity plus counter coverage gap"
+  ],
+  "evidence": {
+    "transcript": ".ufo/waves/round-59/w1/T59W1S33/receipts/evidence-transcript.txt",
+    "ref_impls": [
+      ".ufo/waves/round-59/w1/T59W1S33/receipts/ref-blob-only.py",
+      ".ufo/waves/round-59/w1/T59W1S33/receipts/ref-mode-strict.py"
+    ],
+    "replica_driver": ".ufo/waves/round-59/w1/T59W1S33/receipts/replica24.py"
+  },
+  "base_tools_mode_census": {"100755": 26, "100644": 12},
+  "installs": [],
+  "hygiene": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S33 deleted after receipts copied",
+    "fleet_or_lane_mutation": "none",
+    "tmp_use": "none beyond mktemp template in staged probe, under 50MB"
+  },
+  "report_trailer": ".ufo/waves/round-59/w1/T59W1S33.md"
+}

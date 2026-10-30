@@ -1,0 +1,55 @@
+{
+  "seat": "T59W1S56",
+  "role": "executor",
+  "round": 59,
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "files_changed": [
+    ".ufo/waves/round-59/w1/T59W1S56/stage/corpus/lessons/round-59-gate-skeleton.md",
+    ".ufo/waves/round-59/w1/T59W1S56.md",
+    ".ufo/waves/round-59/w1/T59W1S56.json",
+    ".ufo/waves/round-59/w1/T59W1S56/receipts/probe-pin.py",
+    ".ufo/waves/round-59/w1/T59W1S56/receipts/probe-stdout.txt",
+    ".ufo/waves/round-59/w1/T59W1S56/receipts/environment.txt"
+  ],
+  "behavior": "Drafted the round-59 lesson Gate and Mistakes criteria as staged lesson sections (corpus/lessons/round-59-gate-skeleton.md), derived from the round-58 forged-executor failure (T58W1RevengerC2 attack-b receipts) and the failed positive-control locator (ctl-CTL_POS_c1.full). Gate criterion requires candidate-complete rows with disposition/reason/evidence/flip-condition, preserves standing historical rejected targets (S285 rejected status; round-58 C2 certification rejected; R51.6 open, no historical reconstruction), records control dispositions as receipt-backed rows, and explicitly rejects claiming the executor-source-pin gate implements the considerthese/2026-10-28 proposal-2 arm-liveness census (unimplemented; round-58 mined it as successor-gate requirement only). Mistakes criterion requires class/evidence/captured-by/fix-and-failability rows and is seeded with the two worked round-58 rows plus one pre-registered plumbing trap.",
+  "gates": {
+    "trust_boundary": "Gate compares declared Git blobs at candidate vs verifier-supplied trusted revision only; not execution attestation, not closure completeness, not round-58 C2 certification (contract.json trust_boundary, restated in staged Gate section)",
+    "missing_tool_counts_zero": true,
+    "tool_absent_at_base_and_freeze": "git cat-file -e fails for tools/executor-source-pin.py at b83f1bfc and e9cc34be",
+    "counter_executed_by_this_seat": false
+  },
+  "rejections": [
+    {
+      "candidate": "claim: executor-source-pin gate implements considerthese/2026-10-28 proposal-2 counter-arm liveness census",
+      "disposition": "rejected",
+      "reason": "census requires per-counter arm lists with one committed input per arm moving that arm's tally away from zero; pin gate binds one executor's declared blobs for one invocation; round-58 lesson records the census as 'not claimed implemented'",
+      "flip": "committed counter-level census instrument enumerating every frozen counter's arms with per-arm committed live inputs"
+    }
+  ],
+  "historical_preserves": [
+    "S285 status rejected untouched; S288 supersedes locator only",
+    "round-58 C2 certification remains rejected; pin gate is binding prerequisite, not re-certification",
+    "R51.6 open in corpus/routed-defects.json (line 1204-1214); no round-51 historical reject-list reconstruction"
+  ],
+  "probe": {
+    "scope": "6 contract classes x 4 path spellings, public git plumbing only, scratch-only fixtures with toplevel assertion before every git write",
+    "observations": 28,
+    "tmpdir": "/fast/scratch/hyaku/tameshi-r59/T59W1S56/tmp",
+    "key_findings": [
+      "same trusted bytes -> same blob id 2e01eef0c14a... at all four spellings; hash-object --stdin agrees",
+      "changed bytes -> blob fbd2ab209ba4... (counter's own forged text) separable from unrelated (only unrelated.txt moved)",
+      "missing path -> git cat-file -e REV:PATH exit 128",
+      "symlink -> ls-tree mode 120000 blob a66620d9fcdca1d...",
+      "trap: git rev-parse --verify <40-hex> exits 0 for well-formed absent objects (0x40 and deadbeefx5); cat-file -e exits 1 and rev-parse <rev>^{object} exits 128 -> EXECUTOR_SOURCE_UNAVAILABLE must classify by existence, not syntax"
+    ],
+    "receipts": ".ufo/waves/round-59/w1/T59W1S56/receipts/",
+    "environment": "git 2.56.0, Python 3.14.8, no installs"
+  },
+  "limits": [
+    "no C1 verdict produced or implied; frozen counter never executed (production guard; L1 owns deciding measurement)",
+    "production untouched; staged patch only; no git/jj mutation in lane or fleet",
+    "scratch deleted after receipts copied; verified absent",
+    "Mistakes row 3 is pre-registered by this seat, not a landed lane failure"
+  ]
+}

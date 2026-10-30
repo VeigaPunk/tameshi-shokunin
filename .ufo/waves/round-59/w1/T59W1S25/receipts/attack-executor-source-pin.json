@@ -1,0 +1,237 @@
+{
+ "tool": "/fast/scratch/hyaku/tameshi-r59/T59W1S25/snap/executor-source-pin.py",
+ "repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S25/fixtures/fx",
+ "versions": {
+  "trusted": "47de0a3956f4e319331b4336e70f717fcc6460d0",
+  "tree": "85cea191397a4f7128a7c4d7ad9db208a61d558c",
+  "blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+  "changed": "ccac51343fdc5ea6cadc8ba2656eaa4970aff969",
+  "nofile": "2155327ebb370c69328f37a24f218c78203aa654",
+  "syn": "68bd0e206dac1380f5cd86d3f7279ca43b6abdc9",
+  "gitlink": "2a94bb75799f118a281e2e1fa3db697754c00242",
+  "foreign": "c405ef0f464d01ea912a6221a7f8f7990ed52537"
+ },
+ "cases": [
+  {
+   "label": "garbage",
+   "trusted": "not-a-revision",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision 'not-a-revision' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "empty",
+   "trusted": "",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "zeros40",
+   "trusted": "0000000000000000000000000000000000000000",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '0000000000000000000000000000000000000000' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "tree-hash",
+   "trusted": "85cea191397a4f7128a7c4d7ad9db208a61d558c",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '85cea191397a4f7128a7c4d7ad9db208a61d558c' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "blob-hash",
+   "trusted": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '74e4df76f9a60662749e2aaf076f67e311f66cdb' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "abbrev7",
+   "trusted": "47de0a3",
+   "expected_rc": null,
+   "expected_token": null,
+   "rc": 0,
+   "stdout": "EXECUTOR_SOURCE_BOUND: 1 declared source blob(s) equal trusted blobs\n",
+   "stderr": "",
+   "verdict": "observe"
+  },
+  {
+   "label": "uppercase",
+   "trusted": "47DE0A3956F4E319331B4336E70F717FCC6460D0",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 0,
+   "stdout": "EXECUTOR_SOURCE_BOUND: 1 declared source blob(s) equal trusted blobs\n",
+   "stderr": "",
+   "verdict": "VIOLATION"
+  },
+  {
+   "label": "trailing-newline",
+   "trusted": "47de0a3956f4e319331b4336e70f717fcc6460d0\n",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '47de0a3956f4e319331b4336e70f717fcc6460d0\\n' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "leading-space",
+   "trusted": " 47de0a3956f4e319331b4336e70f717fcc6460d0",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision ' 47de0a3956f4e319331b4336e70f717fcc6460d0' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "head-ref",
+   "trusted": "HEAD",
+   "expected_rc": null,
+   "expected_token": "EXECUTOR_SOURCE_BOUND",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted source 'tools/runner.py' is not a regular blob (mode=160000 kind=commit)\n",
+   "verdict": "observe"
+  },
+  {
+   "label": "annotated-tag",
+   "trusted": "v1",
+   "expected_rc": null,
+   "expected_token": "EXECUTOR_SOURCE_BOUND",
+   "rc": 0,
+   "stdout": "EXECUTOR_SOURCE_BOUND: 1 declared source blob(s) equal trusted blobs\n",
+   "stderr": "",
+   "verdict": "observe"
+  },
+  {
+   "label": "trusted-src-absent",
+   "trusted": "2155327ebb370c69328f37a24f218c78203aa654",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted source 'tools/runner.py' absent at trusted revision\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "trusted-src-symlink",
+   "trusted": "68bd0e206dac1380f5cd86d3f7279ca43b6abdc9",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted source 'tools/runner.py' is not a regular blob (mode=120000 kind=blob)\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "trusted-src-gitlink",
+   "trusted": "2a94bb75799f118a281e2e1fa3db697754c00242",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted source 'tools/runner.py' is not a regular blob (mode=160000 kind=commit)\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "foreign-repo-sha",
+   "trusted": "c405ef0f464d01ea912a6221a7f8f7990ed52537",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision 'c405ef0f464d01ea912a6221a7f8f7990ed52537' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "option-like-h",
+   "trusted": "-h",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: argument --trusted: expected one argument\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "option-like-long",
+   "trusted": "--exec=evil",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: argument --trusted: expected one argument\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "long-1000",
+   "trusted": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+   "verdict": "ok"
+  },
+  {
+   "label": "tilde-beyond",
+   "trusted": "HEAD~50",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision 'HEAD~50' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "cand-zeros-control",
+   "trusted": "47de0a3956f4e319331b4336e70f717fcc6460d0",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: candidate revision '0000000000000000000000000000000000000000' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "both-invalid",
+   "trusted": "0000000000000000000000000000000000000000",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '0000000000000000000000000000000000000000' does not resolve to a commit\n",
+   "verdict": "ok"
+  },
+  {
+   "label": "repo-missing",
+   "trusted": "47de0a3956f4e319331b4336e70f717fcc6460d0",
+   "expected_rc": 2,
+   "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+   "rc": 2,
+   "stdout": "",
+   "stderr": "EXECUTOR_SOURCE_UNAVAILABLE: repo '/nonexistent-xyz' is not a directory\n",
+   "verdict": "ok"
+  }
+ ],
+ "violations": 1
+}

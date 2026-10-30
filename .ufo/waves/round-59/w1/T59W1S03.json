@@ -1,0 +1,84 @@
+{
+  "seat": "T59W1S03",
+  "round": 59,
+  "cell": {"path": "tools/runner.py", "class": "missing"},
+  "frozen_evidence": {
+    "contract": ".ufo/evidence/round-59/contract.json",
+    "counter": ".ufo/evidence/round-59/measure.py",
+    "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a"
+  },
+  "expected_contract": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+  "fixture": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S03/fixture",
+    "driver": ".ufo/waves/round-59/w1/T59W1S03/build-fixture.sh",
+    "versions": {
+      "trusted": "72f85283efdcec71656a24e3b2dfecb192a83d85",
+      "changed": "2f9309be58d813d742e5d472e37a71f58d6f0551",
+      "missing": "81e07c5f3aef8156b3ea96d8cd55c7dd389bf5fe",
+      "unrelated": "6862662c3e441288753e72cf204e3ae706e9f8e1",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "6c5d87a6904a6ab99add017708a7aecdf0d3e2f6"
+    },
+    "object_facts": {
+      "trusted_entry": {"mode": "100644", "type": "blob", "blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\n"},
+      "changed_entry": {"mode": "100644", "type": "blob", "blob": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "content": "print(\"forged success\")\n"},
+      "missing_entry": null,
+      "missing_tree_empty": true,
+      "missing_commit_resolves": true,
+      "missing_cat_file_path_rc": 128,
+      "symlink_entry": {"mode": "120000", "type": "blob", "blob": "a66620d9fcdca1d09c541464669234d720772947"},
+      "worktree_contamination": "fixture worktree left checked out at symlink commit; tools/runner.py is a symlink on disk for every cell invocation"
+    }
+  },
+  "oracle": {
+    "script": ".ufo/waves/round-59/w1/T59W1S03/oracle-missing-cell.py",
+    "independent_basis": "git rev-parse --verify <rev>^{commit} and git ls-tree <rev> -- <path> only; no executor-source-pin.py code involved",
+    "verdicts": {
+      "trusted": {"expected_exit": 0, "expected_token": "EXECUTOR_SOURCE_BOUND"},
+      "changed": {"expected_exit": 1, "expected_token": "EXECUTOR_SOURCE_DRIFT"},
+      "missing": {"expected_exit": 1, "expected_token": "EXECUTOR_SOURCE_DRIFT"},
+      "unrelated": {"expected_exit": 0, "expected_token": "EXECUTOR_SOURCE_BOUND"},
+      "symlink": {"expected_exit": 1, "expected_token": "EXECUTOR_SOURCE_DRIFT"},
+      "unresolvable": {"expected_exit": 2, "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE"}
+    },
+    "matches_counter_mapping": true
+  },
+  "probe_gates": {
+    "naive_bad": {
+      "description": "maps ANY git failure (incl. absent path at resolvable candidate) to exit 2 UNAVAILABLE",
+      "results": {"trusted": [0, 0, true], "changed": [1, 1, true], "missing": [1, 2, false], "unresolvable": [2, 2, true]},
+      "reading": "cell correctly REJECTS the missing->unavailable taxonomy collapse"
+    },
+    "worktree_hazard": {
+      "description": "lstat()s the fixture worktree instead of reading candidate commit objects",
+      "results": {"trusted": [0, 1, false], "changed": [1, 1, true], "missing": [1, 1, true], "unresolvable": [2, 2, true]},
+      "reading": "cell FALSELY CREDITS a gate that never inspected the candidate commit; gate still cannot reach 24/24 (fails equal/unrelated)"
+    }
+  },
+  "counter_review": {
+    "can_counter_misclassify_this_cell": "partially, in the crediting direction only",
+    "findings": [
+      "F1: expectation is contract-correct: candidate commit resolves but declared path is absent -> exit 1 + EXECUTOR_SOURCE_DRIFT (contract exit_map 'missing/nonregular at candidate')",
+      "F2: rejecting direction is sound: a gate collapsing absent-path to UNAVAILABLE is failed by this cell (observed exit 2 vs expected 1, probe gate A)",
+      "F3: crediting direction is lenient: exit-1+token match does not prove the gate inspected the candidate commit -- worktree-hazard gate B is credited on this cell while reading only the leftover worktree symlink (probe gate B)",
+      "F4: token check is substring match over stdout+stderr combined; a gate echoing token text for an unrelated reason with the right exit code would be credited; only the full 24-grid bounds this",
+      "F5: counter leaves the fixture worktree checked out at the symlink commit, so worktree-reading gates see a nonregular file in every cell; commit-object reading is required and is what the cell's oracle-verified facts assume"
+    ],
+    "round_level_conclusion": "no 24/24 misclassification path through this cell alone: any gate credited here that lacks genuine object-level per-class logic fails equal/unrelated elsewhere"
+  },
+  "production_gate": {
+    "staged": false,
+    "reason": "seat assignment forbids staging the production gate; tools/executor-source-pin.py absent at freeze commit and in lane working tree (verified: ls-tree e9cc34be tools/ has no executor-source-pin.py)"
+  },
+  "frozen_counter_run_on_production": false,
+  "installs": [],
+  "files_written": [
+    ".ufo/waves/round-59/w1/T59W1S03.md",
+    ".ufo/waves/round-59/w1/T59W1S03.json",
+    ".ufo/waves/round-59/w1/T59W1S03/build-fixture.sh",
+    ".ufo/waves/round-59/w1/T59W1S03/oracle-missing-cell.py",
+    ".ufo/waves/round-59/w1/T59W1S03/receipts.txt"
+  ],
+  "scratch_deleted_before_yield": true
+}

@@ -1,0 +1,58 @@
+{
+  "seat": "T59W1S20",
+  "round": 59,
+  "wave": "w1",
+  "cell": {"path": "tools/-runner.py", "class": "changed"},
+  "expected": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+  "frozen_inputs": {
+    "contract": ".ufo/evidence/round-59/contract.json",
+    "counter": ".ufo/evidence/round-59/measure.py",
+    "counter_freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a"
+  },
+  "fixture": {
+    "scratch_repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S20/fixture-cell",
+    "root_asserted": true,
+    "env_sanitized": ["GIT_*", "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1"],
+    "trusted_commit": "6cc83bfaea0cdb34e238ba15f45959ea892cdd95",
+    "versions": {
+      "equal": "6cc83bfaea0cdb34e238ba15f45959ea892cdd95",
+      "changed": "ab3d945a4da4f0b1c16ff9f0be6df246f1eb930a",
+      "missing": "32f5772cab06fcb71391cfb617db06bcc075d738",
+      "unrelated": "fa730e8f2a9991964e7b1dd70785f679e9de49fc",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "eb4c6834e7563b6e5c2e90bddd8cced68af7812c"
+    },
+    "objects": {
+      "trusted": {"mode": "100644", "type": "blob", "blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "size": 23, "content": "print(\"real executor\")\n"},
+      "changed": {"mode": "100644", "type": "blob", "blob": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "size": 24, "content": "print(\"forged success\")\n"},
+      "blobs_differ": true
+    }
+  },
+  "oracle": {
+    "impl": "stage/probe/oracle.py",
+    "basis": "git plumbing only (rev-parse, ls-tree, cat-file), blob-id comparison",
+    "runs": [
+      {"class": "equal", "exit": 0, "out": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"class": "changed", "exit": 1, "out": "EXECUTOR_SOURCE_DRIFT: blob differs from trusted", "ok": true},
+      {"class": "missing", "exit": 1, "out": "EXECUTOR_SOURCE_DRIFT: path missing at candidate", "ok": true},
+      {"class": "unrelated", "exit": 0, "out": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"class": "unresolvable", "exit": 2, "out": "EXECUTOR_SOURCE_UNAVAILABLE: unresolvable candidate commit", "ok": true},
+      {"class": "symlink", "exit": 1, "out": "EXECUTOR_SOURCE_DRIFT: nonregular source object mode=120000 type=blob", "ok": true}
+    ],
+    "assigned_cell_pass": true
+  },
+  "counter_misclassification_review": {
+    "verdict": "counter cannot misclassify this cell for a tool reading committed blobs",
+    "points": [
+      "pass check is conjunctive: exit code equality AND token substring",
+      "fixture discrimination is content-addressed; identical blob ids across all 4 fixture paths",
+      "env sanitization cannot flip a correct blob comparison",
+      "leading-dash basename never a dash-prefixed argv element; git pathspec safe with/without --",
+      "working-tree-reading tool would still exit 1/DRIFT on this cell (symlink left in worktree); tool defect exposed by other cells, not a counter misclassification"
+    ]
+  },
+  "tooling": [],
+  "production_patch": null,
+  "blockers": []
+}

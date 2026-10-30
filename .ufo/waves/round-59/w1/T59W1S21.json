@@ -1,0 +1,81 @@
+{
+  "seat": "T59W1S21",
+  "round": 59,
+  "wave": "w1",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "cell": {
+    "path": "tools/-runner.py",
+    "path_index": 3,
+    "class": "missing",
+    "expected_exit": 1,
+    "expected_token": "EXECUTOR_SOURCE_DRIFT",
+    "invocation": "python3 -I TOOL --repo REPO --trusted TRUSTED --candidate CANDIDATE --path tools/-runner.py"
+  },
+  "fixture": {
+    "scratch_repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S21/fixture (deleted after receipt copy)",
+    "construction": "independent replication of measure.py per-path fixture for PATHS[3]",
+    "guard": "git rev-parse --show-toplevel asserted equal to fixture dir before mutation",
+    "commits": {
+      "trusted": "831e174a4543dff0b43e9001a7304d09213cae8d",
+      "changed": "dfce66070c740bb72dedbad13c3b6f2fac5a9769",
+      "missing": "5a62d71f4d53c2a203ad724da24923e94f4dae93",
+      "unrelated": "797a6cf45d06f9184dfd5c256db5a20d45e790aa",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "0b18358bfbf8de49661202b8004b6288f57cc7ea"
+    }
+  },
+  "object_verification": {
+    "trusted": {"mode": "100644", "type": "blob", "object": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\\n"},
+    "changed": {"mode": "100644", "type": "blob", "object": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "content": "print(\"forged success\")\\n"},
+    "missing": {"tree_entry": null, "tree_empty": true, "cat_file_rc": 128, "cat_file_stderr": "fatal: path 'tools/-runner.py' exists on disk, but not in '5a62d71f4d53c2a203ad724da24923e94f4dae93'"},
+    "unrelated": {"mode": "100644", "type": "blob", "object": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "extra_blob": "5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c unrelated.txt"},
+    "symlink": {"mode": "120000", "type": "blob", "object": "a66620d9fcdca1d09c541464669234d720772947", "content": "elsewhere.py"},
+    "disk_state_during_tool_invocations": "tools/-runner.py -> elsewhere.py (dangling symlink), identical for all six invocations"
+  },
+  "oracle": {
+    "file": "receipts/oracle_cell.py",
+    "sha256": "f4ef8710e42f5b720e5ceba980ab54964b9dd39f9bcb15b9cb6dd8d4cf334794",
+    "method": "git ls-tree <commit> -- <path> + git rev-parse --verify <rev>^{commit}; no reference to production tool",
+    "runs": [
+      {"class": "equal", "exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "expected_exit": 0, "match": true},
+      {"class": "changed", "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "expected_exit": 1, "match": true},
+      {"class": "missing", "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "expected_exit": 1, "match": true},
+      {"class": "unrelated", "exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "expected_exit": 0, "match": true},
+      {"class": "unresolvable", "exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "expected_exit": 2, "match": true},
+      {"class": "symlink", "exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "expected_exit": 1, "match": true}
+    ],
+    "discriminates": true
+  },
+  "counter_misclassification_review": {
+    "counter_expectation_matches_ground_truth": true,
+    "cell_verdict_confirmed_independent": true,
+    "stream_agnostic_token_check": true,
+    "env_isolation": "GIT_* stripped, global/system config nulled, TMPDIR=work, timeout 30s",
+    "leading_dash_basename_safe_at_counter_layer": true,
+    "basename_first_would_be_argparse_hazard_but_not_this_spelling": true,
+    "changed_vs_missing_expectations_identical_but_contract_maps_both_to_drift": true,
+    "tool_side_hazards_counter_correctly_fails": [
+      "worktree reads (disk is dangling symlink for all six invocations)",
+      "git rev-parse <commit>:<path> rc=128 'exists on disk, but not in' mapped naively to UNAVAILABLE",
+      "history walking instead of commit-tree inspection"
+    ],
+    "conclusion": "frozen counter cannot misclassify this cell on examined evidence; expectation equals independently verified git ground truth"
+  },
+  "receipts": {
+    "dir": ".ufo/waves/round-59/w1/T59W1S21/receipts",
+    "sha256_manifest": "receipts/sha256sums.txt"
+  },
+  "stage": {
+    "dir": ".ufo/waves/round-59/w1/T59W1S21/stage",
+    "production_patches_staged": [],
+    "reason": "probe seat; no production patch required; production gate not staged"
+  },
+  "tooling": {
+    "installs": [],
+    "used": {"git": "2.56.0 (present)", "python": "3.14.8 (present)"},
+    "note": "pacman paused host-wide; no installs needed"
+  },
+  "scratch_cleaned": true,
+  "blockers": []
+}

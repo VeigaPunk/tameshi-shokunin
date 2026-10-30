@@ -1,0 +1,43 @@
+=== STEP 1: init fixture repo (counter parity: GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1) ===
+rev-parse --show-toplevel -> /fast/scratch/hyaku/tameshi-r59/T59W1S19/fx/repo
+ASSERT toplevel == scratch fixture dir: OK
+=== STEP 2: trusted commit (class equal baseline) ===
+worktree mode: 644
+0000000   p   r   i   n   t   (   "   r   e   a   l       e   x   e   c
+0000020   u   t   o   r   "   )  \n
+0000027
+TRUSTED=b1673bd754c7e0e801b9444fa0708fb699a9a738
+--- source-object verification at trusted ---
+ls-tree:
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/-runner.py
+cat-file -t:
+blob
+cat-file -s (bytes):
+23
+cat-file -p:
+0000000   p   r   i   n   t   (   "   r   e   a   l       e   x   e   c
+0000020   u   t   o   r   "   )  \n
+0000027
+ls-files -s (index mode):
+100644 74e4df76f9a60662749e2aaf076f67e311f66cdb 0	tools/-runner.py
+hash-object worktree:
+74e4df76f9a60662749e2aaf076f67e311f66cdb
+rev-parse blob:
+74e4df76f9a60662749e2aaf076f67e311f66cdb
+=== STEP 3: changed commit ===
+CHANGED=22943243873c9db005f816fd13d3a4a648f9ef47
+100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7	tools/-runner.py
+=== STEP 4: missing commit ===
+MISSING=b689912b039b9bf5bc61740ae9863b45cf3d4248
+=== STEP 5: unrelated commit ===
+UNRELATED=f894596cec9c06e87a673ad193efacb660304709
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/-runner.py
+=== STEP 6: symlink commit ===
+SYMLINK=75ae86b9ce1e5fbcfb5b18da555c9cd55cda69e5
+120000 blob a66620d9fcdca1d09c541464669234d720772947	tools/-runner.py
+=== VERSIONS ===
+trusted=b1673bd754c7e0e801b9444fa0708fb699a9a738
+changed=22943243873c9db005f816fd13d3a4a648f9ef47
+missing=b689912b039b9bf5bc61740ae9863b45cf3d4248
+unrelated=f894596cec9c06e87a673ad193efacb660304709
+symlink=75ae86b9ce1e5fbcfb5b18da555c9cd55cda69e5

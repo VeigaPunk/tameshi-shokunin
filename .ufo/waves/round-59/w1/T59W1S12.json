@@ -1,0 +1,81 @@
+{
+  "seat": "T59W1S12",
+  "round": 59,
+  "cell": {
+    "path": "tools/space name.py",
+    "path_index": 1,
+    "class": "symlink",
+    "frozen_expected_exit": 1,
+    "frozen_expected_token": "EXECUTOR_SOURCE_DRIFT"
+  },
+  "inputs_read": [
+    "/home/vgpnk/.omp/agent/RULES.md",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-59/contract.json",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-59/measure.py"
+  ],
+  "installs": [],
+  "fixture": {
+    "built_by": "T59W1S12/evidence/build.log (transcription of frozen measure.py recipe, ix=1)",
+    "repo_scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S12/fixture-space",
+    "repo_deleted_before_yield": true,
+    "env": "GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 PYTHONDONTWRITEBYTECODE=1 TMPDIR=<scratch>",
+    "commits": {
+      "trusted": "30d7e7cf4a3632933ed7a6d4c75f9ed34afc9f99",
+      "equal": "30d7e7cf4a3632933ed7a6d4c75f9ed34afc9f99",
+      "changed": "11f0dd16c6775a47cc5cbb43c4a9ddcf41154a50",
+      "missing": "e7dd9e788b363e7d935eaaf23265fb82bd9c16ed",
+      "unrelated": "8fd7624ddf59cb27dcce6a9515a72a00957996ef",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "2e9dd465d25b81d45ce04cc528cda3f2997d65af"
+    },
+    "object_facts": {
+      "equal": {"mode": "100644", "type": "blob", "hash": "74e4df76f9a60662749e2aaf076f67e311f66cdb"},
+      "changed": {"mode": "100644", "type": "blob", "hash": "fbd2ab209ba4a77846c0898c79d4b579331975b7"},
+      "missing": "path absent from tree",
+      "unrelated": {"mode": "100644", "type": "blob", "hash": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "note": "same blob as trusted; only unrelated.txt added"},
+      "symlink": {"mode": "120000", "type": "blob", "hash": "a66620d9fcdca1d09c541464669234d720772947", "blob_content": "elsewhere.py (12 bytes, no newline)", "worktree": "broken symlink -> elsewhere.py"}
+    }
+  },
+  "oracle": {
+    "source": "T59W1S12/evidence/oracle.py",
+    "basis": "contract.json exit_map only; git plumbing (rev-parse --verify, ls-tree); no measure.py logic",
+    "results_for_cell_path": [
+      {"class": "equal", "expected_exit": 0, "oracle_exit": 0, "oracle_token": "EXECUTOR_SOURCE_BOUND", "match": true},
+      {"class": "changed", "expected_exit": 1, "oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT content-differs", "match": true},
+      {"class": "missing", "expected_exit": 1, "oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT missing-at-candidate", "match": true},
+      {"class": "unrelated", "expected_exit": 0, "oracle_exit": 0, "oracle_token": "EXECUTOR_SOURCE_BOUND", "match": true},
+      {"class": "unresolvable", "expected_exit": 2, "oracle_exit": 2, "oracle_token": "EXECUTOR_SOURCE_UNAVAILABLE candidate-unresolvable", "match": true},
+      {"class": "symlink", "expected_exit": 1, "oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT nonregular-at-candidate mode=120000 type=blob", "match": true}
+    ]
+  },
+  "counter_cross_check": {
+    "where": "scratch only (--tool override, lane = empty scratch repo); production counter untouched",
+    "command_shape": "python3 measure.py --lane <scratch-lane> --rev <head> --work <empty> --tool <oracle.py>",
+    "result": "passed=24/24 C1_R59_PASS=true; cell (tools/space name.py, symlink): expected=1 exit=1 ok=true"
+  },
+  "misclassification_review": {
+    "false_pass_vectors_found": [
+      {"probe": "stub_drift (prints EXECUTOR_SOURCE_DRIFT, exit 1, no real check)", "cell_ok": true, "run_total": "12/24", "meaning": "counter verifies exit code + token substring only; forged reasoning is invisible at cell granularity"},
+      {"probe": "stub_noisy (exit 1 + contradictory EXECUTOR_SOURCE_DRIFT/UNAVAILABLE/BOUND tokens)", "cell_ok": true, "run_total": "12/24", "meaning": "extra/contradictory output is not penalized"}
+    ],
+    "rejected_vectors": [
+      {"probe": "stub_lower (lowercase executor_source_drift, exit 1)", "cell_ok": false, "run_total": "0/24", "meaning": "token match is case-sensitive exact substring; forgery with wrong case is rejected"}
+    ],
+    "false_fail_risk_for_tool_impl": "a conformant tool must classify the committed 120000 blob as DRIFT(1); a tool that resolves the broken worktree symlink and reports UNAVAILABLE(2) would fail this cell though the candidate commit is resolvable (contract exit_map: nonregular at candidate => DRIFT). This is an implementation risk, not a counter defect.",
+    "verdict": "frozen counter classifies this cell correctly for any contract-conformant tool; the cell alone can be false-passed by a token-emitting stub, but the 24-cell matrix aggregate (12/24 for always-DRIFT stubs) prevents overall certification gaming via this cell."
+  },
+  "stage": {
+    "root": ".ufo/waves/round-59/w1/T59W1S12/stage/",
+    "production_patch": "none (instrument probe seat; no production edit staged, production gate not staged)"
+  },
+  "evidence": [
+    "T59W1S12/evidence/build.log",
+    "T59W1S12/evidence/versions.json",
+    "T59W1S12/evidence/evidence-verify.txt",
+    "T59W1S12/evidence/oracle.py",
+    "T59W1S12/evidence/counter-probe.out",
+    "T59W1S12/evidence/probe-stub_drift.out",
+    "T59W1S12/evidence/probe-stub_lower.out",
+    "T59W1S12/evidence/probe-stub_noisy.out"
+  ]
+}

@@ -1,0 +1,501 @@
+{
+ "meta": {
+  "git": "/usr/bin/git",
+  "git_version": "git version 2.56.0",
+  "lab": "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab",
+  "counter_env_git_keys": [
+   "GIT_CONFIG_GLOBAL",
+   "GIT_CONFIG_NOSYSTEM",
+   "GIT_TEMPLATE_DIR"
+  ],
+  "python": "3.14.8"
+ },
+ "axes_named": [
+  "soundness/always-accept-resistance",
+  "fidelity-to-frozen-counter",
+  "claim-boundary precision",
+  "operability of proposed CLI test"
+ ],
+ "demonstrations": [
+  {
+   "id": "A0a-alias-shadows-builtin",
+   "family": "premise",
+   "attack": "repo-local [alias] st = !cmd, invoked as `git st`",
+   "observed": "ALIAS_RAN",
+   "rc": 0,
+   "verdict": "PREMISE CONFIRMED: aliases shadow builtins"
+  },
+  {
+   "id": "A0b-alias-shadows-cat-file",
+   "family": "premise",
+   "attack": "repo-local [alias] cat-file = !cmd, invoked as argv ['git','-C',repo,'cat-file',...] (subprocess family)",
+   "observed": "print(\"forged success\")",
+   "rc": 0,
+   "executed": false,
+   "verdict": "alias did NOT intercept subprocess argv cat-file",
+   "evidence": {
+    "argv": [
+     "/usr/bin/git",
+     "-C",
+     "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a0-premise",
+     "cat-file",
+     "blob",
+     "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+    ],
+    "rc": 0,
+    "out": "print(\"forged success\")\n",
+    "err": ""
+   }
+  },
+  {
+   "id": "A1-textconv-vs-porcelain-diff",
+   "family": "porcelain diff gate (git diff T C -- path)",
+   "attack": "candidate commit carries .gitattributes mapping path to driver; repo-local diff.<drv>.textconv rewrites blob content",
+   "candidate": "7f4232603fe02830e3c0c344387fcdbbbd66dc0f",
+   "textconv_executed": true,
+   "human_diff_rc": 0,
+   "human_diff_out": "",
+   "quiet_diff_rc": 0,
+   "verdict": "SUBVERTED: textconv ran and porcelain diff reports NO difference between trusted and forged blob (rc 0)",
+   "evidence": {
+    "human": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a1-textconv",
+      "diff",
+      "8b8f000b5195d84e4d49aa74b755ff396816cdc9",
+      "7f4232603fe02830e3c0c344387fcdbbbd66dc0f",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "",
+     "err": ""
+    },
+    "quiet": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a1-textconv",
+      "diff",
+      "--quiet",
+      "8b8f000b5195d84e4d49aa74b755ff396816cdc9",
+      "7f4232603fe02830e3c0c344387fcdbbbd66dc0f",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "A2-diff-external-vs-porcelain-diff",
+   "family": "porcelain diff gate",
+   "attack": "repo-local diff.external diverts diff work to attacker command exiting 0",
+   "external_executed": true,
+   "human_diff_rc": 0,
+   "human_diff_out": "",
+   "quiet_diff_rc": 1,
+   "verdict": "SUBVERTED: attacker external diff invoked; porcelain diff empty (rc 0) despite real blob drift",
+   "evidence": {
+    "human": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a2-extdiff",
+      "diff",
+      "8b8f000b5195d84e4d49aa74b755ff396816cdc9",
+      "538229abf5a7219b46e8aa39866c24eaadaba856",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "",
+     "err": ""
+    },
+    "quiet": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a2-extdiff",
+      "diff",
+      "--quiet",
+      "8b8f000b5195d84e4d49aa74b755ff396816cdc9",
+      "538229abf5a7219b46e8aa39866c24eaadaba856",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 1,
+     "out": "",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "A3-alias-hijack-plumbing-gate",
+   "family": "subprocess plumbing gate ([git cat-file blob c:path], [git rev-parse --verify c^{commit}])",
+   "attack": "repo-local [alias] cat-file=!spoof, [alias] rev-parse=!echo <attacker-oid>",
+   "spoofed_content": false,
+   "spoofed_size": false,
+   "spoofed_rev": false,
+   "executed": false,
+   "verdict": "not subverted",
+   "evidence": {
+    "blob": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a3-alias-hijack",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    },
+    "size": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a3-alias-hijack",
+      "cat-file",
+      "-s",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "24\n",
+     "err": ""
+    },
+    "rev": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a3-alias-hijack",
+      "rev-parse",
+      "--verify",
+      "538229abf5a7219b46e8aa39866c24eaadaba856^{commit}"
+     ],
+     "rc": 0,
+     "out": "538229abf5a7219b46e8aa39866c24eaadaba856\n",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "A4-fsmonitor-scoping",
+   "family": "scoping probe",
+   "attack": "repo-local core.fsmonitor external command",
+   "ran_on_status": true,
+   "status_rc": 0,
+   "note": "positive control: status refreshes index; porcelain/plumbing diff scoping probed in A4b",
+   "evidence": {
+    "status": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a4-fsmonitor",
+      "status",
+      "--porcelain"
+     ],
+     "rc": 0,
+     "out": "?? EXECUTED\n?? tools/always-zero.sh\n?? tools/faketool.sh\n?? tools/real-cat-file.sh\n?? tools/spoof-cat-file.sh\n",
+     "err": "warning: Empty last update token.\n"
+    }
+   }
+  },
+  {
+   "id": "A4b-fsmonitor-porcelain-vs-plumbing",
+   "family": "scoping probe",
+   "attack": "same core.fsmonitor repo; porcelain `git diff T C` vs plumbing `git diff-tree --quiet T C`",
+   "ran_on_porcelain_diff": false,
+   "porcelain_diff_rc": 0,
+   "ran_on_plumbing": true,
+   "plumbing_diff_rc": 1,
+   "verdict": "scoping result differs; see fields",
+   "evidence": {
+    "porcelain": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a4-fsmonitor",
+      "diff",
+      "8b8f000b5195d84e4d49aa74b755ff396816cdc9",
+      "538229abf5a7219b46e8aa39866c24eaadaba856",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "diff --git a/tools/runner.py b/tools/runner.py\nindex 74e4df7..fbd2ab2 100644\n--- a/tools/runner.py\n+++ b/tools/runner.py\n@@ -1 +1 @@\n-print(\"real executor\")\n+print(\"forged success\")\n",
+     "err": ""
+    },
+    "plumbing": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a4-fsmonitor",
+      "diff-tree",
+      "--quiet",
+      "8b8f000b5195d84e4d49aa74b755ff396816cdc9",
+      "538229abf5a7219b46e8aa39866c24eaadaba856",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 1,
+     "out": "",
+     "err": "warning: Empty last update token.\n"
+    }
+   }
+  },
+  {
+   "id": "A5-hooks-vs-plumbing",
+   "family": "subprocess plumbing gate",
+   "attack": "post-checkout hook planted; cat-file + ls-tree reads",
+   "executed": false,
+   "blob_has_forged": true,
+   "lstree": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7\ttools/runner.py",
+   "verdict": "IMMUNE: cat-file/ls-tree run no hooks",
+   "evidence": {
+    "cat-file": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a5-hooks",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    },
+    "ls-tree": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a5-hooks",
+      "ls-tree",
+      "538229abf5a7219b46e8aa39866c24eaadaba856",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7\ttools/runner.py\n",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "A6-worktree-config-blade",
+   "family": "subprocess plumbing gate, main worktree",
+   "attack": "poison only in .git/config.worktree, local config additionally enables extensions.worktreeConfig",
+   "executed": false,
+   "verdict": "worktree blade inert in this layout",
+   "evidence": {
+    "argv": [
+     "/usr/bin/git",
+     "-C",
+     "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a6-worktree",
+     "cat-file",
+     "blob",
+     "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+    ],
+    "rc": 0,
+    "out": "print(\"forged success\")\n",
+    "err": ""
+   }
+  },
+  {
+   "id": "A7-alias-neutralization-belts",
+   "family": "belt probe",
+   "attack": "same alias-poisoned repo; belts: B1 `-c alias.cat-file=`, B2 `-c alias.cat-file=cat-file`, B3 `--no-replace-objects -c alias.cat-file=`",
+   "B1_rc": 0,
+   "B1_out": "print(\"forged success\")",
+   "B1_executed": false,
+   "B2_rc": 0,
+   "B2_err": "",
+   "B3_out": "print(\"forged success\")",
+   "verdict": "B1 (empty -c override) neutralizes alias: builtin runs, forged content returned",
+   "evidence": {
+    "B1": {
+     "argv": [
+      "/usr/bin/git",
+      "-c",
+      "alias.cat-file=",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a7-belts",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    },
+    "B2": {
+     "argv": [
+      "/usr/bin/git",
+      "-c",
+      "alias.cat-file=cat-file",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a7-belts",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    },
+    "B3": {
+     "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "-c",
+      "alias.cat-file=",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a7-belts",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "A8-counter-env-scopes",
+   "family": "counter (measure.py) environment inventory",
+   "attack": "measure which config scopes remain live under counter-sanitized env",
+   "global_rc": 0,
+   "global_out": "",
+   "system_rc": 128,
+   "system_err": "fatal: unable to read config file '/etc/gitconfig': No such file or directory",
+   "local_lines": 5,
+   "verdict": "global neutralized (points at /dev/null), system neutralized -> repo-local config is THE live poisoning scope",
+   "evidence": {
+    "global": {
+     "argv": [
+      "/usr/bin/git",
+      "config",
+      "--global",
+      "--list",
+      "--show-origin"
+     ],
+     "rc": 0,
+     "out": "",
+     "err": ""
+    },
+    "system": {
+     "argv": [
+      "/usr/bin/git",
+      "config",
+      "--system",
+      "--list",
+      "--show-origin"
+     ],
+     "rc": 128,
+     "out": "",
+     "err": "fatal: unable to read config file '/etc/gitconfig': No such file or directory\n"
+    },
+    "local_tail": [
+     "core.repositoryformatversion=0",
+     "core.filemode=true",
+     "core.bare=false",
+     "core.logallrefupdates=true",
+     "alias.cat-file=!\"$PWD/tools/spoof-cat-file.sh\""
+    ]
+   }
+  },
+  {
+   "id": "A9-replace-refs-adjacent",
+   "family": "subprocess plumbing gate (cat-file byte compare)",
+   "attack": "refs/replace/fbd2ab209ba4.. -> trusted blob oid; candidate commit untouched",
+   "trusted_blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+   "forged_blob": "fbd2ab209ba4a77846c0898c79d4b579331975b7",
+   "vulnerable_read": "print(\"real executor\")",
+   "hardened_read": "print(\"forged success\")",
+   "lstree": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7\ttools/runner.py",
+   "verdict": "SUBVERTED without --no-replace-objects: forged blob reads as TRUSTED content (byte-compare gate prints BOUND); `--no-replace-objects` restores real content",
+   "evidence": {
+    "vulnerable": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a9-replace-refs",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"real executor\")\n",
+     "err": ""
+    },
+    "hardened": {
+     "argv": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a9-replace-refs",
+      "cat-file",
+      "blob",
+      "538229abf5a7219b46e8aa39866c24eaadaba856:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    },
+    "ls-tree": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a9-replace-refs",
+      "ls-tree",
+      "538229abf5a7219b46e8aa39866c24eaadaba856",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7\ttools/runner.py\n",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "A10-mini-gate-under-full-poison",
+   "family": "emulated minimal sound gate (ls-tree oid+mode compare)",
+   "attack": "repo poisoned simultaneously: alias cat-file/ls-tree/rev-parse, diff.external, core.fsmonitor, textconv+gitattributes",
+   "executed_during_gate": false,
+   "cases": [
+    {
+     "case": "equal",
+     "rc": 0,
+     "token": "EXECUTOR_SOURCE_BOUND",
+     "expected": 0,
+     "detail": "(('100644', '74e4df76f9a60662749e2aaf076f67e311f66cdb'), ('100644', '74e4df76f9a60662749e2aaf076f67e311f66cdb'))"
+    },
+    {
+     "case": "forged-drift",
+     "rc": 1,
+     "token": "EXECUTOR_SOURCE_DRIFT",
+     "expected": 1,
+     "detail": "(('100644', '74e4df76f9a60662749e2aaf076f67e311f66cdb'), ('100644', 'fbd2ab209ba4a77846c0898c79d4b579331975b7'))"
+    },
+    {
+     "case": "unresolvable",
+     "rc": 2,
+     "token": "EXECUTOR_SOURCE_UNAVAILABLE",
+     "expected": 2,
+     "detail": "{'argv': ['/usr/bin/git', '--no-replace-objects', '-c', 'alias.rev-parse=', '-c', 'alias.ls-tree=', '-C', '/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab/a10-mini-gate', 'rev-parse', '--verify', '0000000000000000000000000000000000000000^{commit}'], 'rc': 128, 'out': '', 'err': 'fatal: Needed a single revision\\n'}"
+    }
+   ],
+   "verdict": "SOUND UNDER FULL POISON: all three cases exit as spec (0/1/2) with zero attacker command executions",
+   "evidence": null
+  }
+ ]
+}

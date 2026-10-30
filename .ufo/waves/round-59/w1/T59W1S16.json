@@ -1,0 +1,63 @@
+{
+  "seat": "T59W1S16",
+  "round": 59,
+  "wave": 1,
+  "cell": {
+    "path": "tools/日本語.py",
+    "class": "unrelated",
+    "expected_exit": 0,
+    "expected_token": "EXECUTOR_SOURCE_BOUND"
+  },
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "fixture": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S16/fixture",
+    "deleted_after_receipts": true,
+    "trusted_rev": "ae0826e2bdb0f8928705408e1cacb0794b66294f",
+    "construction_env": {
+      "GIT_CONFIG_GLOBAL": "/dev/null",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "commit_flags": "-c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false"
+    },
+    "unrelated_commit": "8ce251221bef3152891650c401519302d132104c",
+    "unrelated_tree": [
+      {"mode": "100644", "type": "blob", "hash": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "path": "tools/日本語.py"},
+      {"mode": "100644", "type": "blob", "hash": "5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c", "path": "unrelated.txt"}
+    ],
+    "blob_hash_check": {
+      "print(\"real executor\")\\n": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+      "print(\"forged success\")\\n": "fbd2ab209ba4a77846c0898c79d4b579331975b7",
+      "unrelated change\\n": "5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c",
+      "elsewhere.py": "a66620d9fcdca1d09c541464669234d720772947"
+    }
+  },
+  "oracle": {
+    "file": ".ufo/waves/round-59/w1/T59W1S16/oracle_日本語_unrelated.py",
+    "method": "git rev-parse --verify <rev>^{commit} + git ls-tree -z <commit> -- <path>; regular blob modes 100644/100755; mode+hash equality to trusted; raw-bytes path",
+    "matrix": [
+      {"class": "equal", "candidate": "ae0826e2bdb0f8928705408e1cacb0794b66294f", "expected": 0, "observed_exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "match": true},
+      {"class": "changed", "candidate": "d9e2800c4a36d2a2c5d9b79c2b6d316b3ad5d5c1", "expected": 1, "observed_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "match": true},
+      {"class": "missing", "candidate": "897133adfb24e78e6ce3167639b345093dcd1de9", "expected": 1, "observed_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "match": true},
+      {"class": "unrelated", "candidate": "8ce251221bef3152891650c401519302d132104c", "expected": 0, "observed_exit": 0, "token": "EXECUTOR_SOURCE_BOUND", "match": true},
+      {"class": "unresolvable", "candidate": "0000000000000000000000000000000000000000", "expected": 2, "observed_exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "match": true},
+      {"class": "symlink", "candidate": "e0f9474bca905f7e9b25e065f4c6973d3c600cea", "expected": 1, "observed_exit": 1, "token": "EXECUTOR_SOURCE_DRIFT", "match": true}
+    ]
+  },
+  "counter_misclassification_review": {
+    "expected_side_can_flip": false,
+    "false_negative_mechanisms": [
+      "tool reads worktree/index: during all tool runs the fixture worktree holds a broken symlink at tools/日本語.py and the index stages that symlink, so unrelated/equal would read as DRIFT",
+      "tool diffs whole trees instead of declared paths: unrelated.txt addition yields DRIFT",
+      "path NFC/NFD normalization or quoted (non -z) ls-tree parsing breaks non-ASCII path match",
+      "tool requires mode 100755 while fixture uses 100644"
+    ],
+    "false_positive_mechanisms": [],
+    "single_cell_gaming": "impossible within 24-cell matrix: always-accept passes this cell but fails changed/missing/symlink/unresolvable"
+  },
+  "tooling": {
+    "installs": [],
+    "used": {"git": "2.56.0", "python3": "3.14.8"}
+  },
+  "production_touched": false,
+  "counter_run_on_production": false
+}

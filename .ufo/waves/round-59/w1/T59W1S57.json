@@ -1,0 +1,80 @@
+{
+  "seat": "T59W1S57",
+  "late_draft_review": {
+    "path": ".ufo/waves/round-59/w1/T59W1S49/stage/tools/executor-source-pin.py",
+    "snapshot": "6C3A",
+    "method": "static review only after initial report; no draft execution",
+    "mitigated": "Replacement hazard mitigated by --no-replace-objects globally and GIT_NO_REPLACE_OBJECTS=1; inherited GIT_* stripped; argv is shell-free, pathspecs literal, ls-tree uses path separator, cat-file reads raw blobs.",
+    "remaining": "resolve_commit lines 131-132 omit --end-of-options: recommend adding explicit revision option separation; no exploit demonstrated. Global/system/local config remain active trusted-host state. Short trusted-ref ambiguity remains verifier-input boundary."
+  },
+  "axis": "operability",
+  "scope": "Declared executor Git-blob binding only; no execution or closure-completeness attestation",
+  "contract_read": ".ufo/evidence/round-59/contract.json",
+  "counter_read": ".ufo/evidence/round-59/measure.py",
+  "implementation_status": "Tool absent at fleet tools/executor-source-pin.py and base b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a; no implementation-specific pass/fail asserted. Independent Git primitive probes performed without depending on draft delivery.",
+  "git_version": "2.56.0",
+  "installs": [],
+  "fixture": {
+    "repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S57/fixture",
+    "trusted": "9767e896d19964113a467c69dbfe4822c436ad5a",
+    "changed": "578e6870a0ca8a1654b76dad66de2ee923dc86f3",
+    "root_asserted_before_mutation": true,
+    "TMPDIR": "/fast/scratch/hyaku/tameshi-r59/T59W1S57"
+  },
+  "probe_driver": ".ufo/waves/round-59/w1/T59W1S57/probe.py",
+  "probe_invocation": "env TMPDIR=/fast/scratch/hyaku/tameshi-r59/T59W1S57 python3 /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S57/probe.py",
+  "findings": [
+    {
+      "severity": "high if replacements are not disabled",
+      "exploit_path": "Repository-local refs/replace maps changed candidate commit to trusted commit; normal Git object reads then bind replacement contents rather than supplied object contents.",
+      "evidence": "After git -C FIXTURE replace CHANGED TRUSTED, git -C FIXTURE ls-tree -z CHANGED -- tools/runner.py exited 0 and returned blob 51fff255b05322704120ab22c35b8a96b8985bca. With git --no-replace-objects -C FIXTURE ls-tree -z CHANGED -- tools/runner.py, exit 0 returned real changed blob 6541d6efa8ac1cf6ccca653e0fe2c0a6c562f5ba.",
+      "impact": "False equality is possible in implementations that only sanitize inherited GIT_* variables. Local replacements survive that sanitization.",
+      "smallest_remediation": "Apply --no-replace-objects to every Git invocation, or explicitly set GIT_NO_REPLACE_OBJECTS=1 after environment sanitization."
+    },
+    {
+      "severity": "medium verifier-input boundary",
+      "exploit_path": "A branch and tag share an unqualified trusted revision name but point to different commits.",
+      "evidence": "git -C FIXTURE rev-parse --verify --end-of-options ambiguous^{commit} exited 0, returned trusted tag OID 9767e896d19964113a467c69dbfe4822c436ad5a, and warned refname 'ambiguous' is ambiguous; branch pointed to changed OID.",
+      "impact": "A verifier expecting the branch can unintentionally supply the tag's source. This is not an author-independent trust violation when the verifier intentionally supplies the resolved object.",
+      "smallest_remediation": "Verifier supplies a full trusted commit object ID. Resolve revisions once to full IDs before further object reads; do not interpret successful rev-parse as ambiguity rejection."
+    },
+    {
+      "severity": "medium if Git environment inherited",
+      "exploit_path": "Inherited GIT_DIR redirects repository selection despite explicit -C.",
+      "evidence": "GIT_DIR=/fast/scratch/hyaku/tameshi-r59/T59W1S57/nonexistent git -C FIXTURE rev-parse --show-toplevel exited 128: fatal: not a git repository: '/fast/scratch/hyaku/tameshi-r59/T59W1S57/nonexistent'.",
+      "impact": "Untrusted ambient Git variables can redirect or disable reads; environment-based config can also alter Git semantics.",
+      "smallest_remediation": "Remove all inherited GIT_* variables and set intentional controls explicitly, including global/system config isolation and replacement suppression."
+    }
+  ],
+  "safe_primitive_observations": [
+    {
+      "command": "git -C FIXTURE rev-parse --verify --end-of-options --help^{commit}",
+      "exit": 128,
+      "stderr": "fatal: Needed a single revision\n",
+      "meaning": "Option-looking revision was rejected as data, not dispatched as help."
+    },
+    {
+      "command": "git -C FIXTURE --literal-pathspecs ls-tree -z TRUSTED -- -runner.py",
+      "exit": 0,
+      "stdout": "100644 blob fdf847317318c1a09ae412cf3ce0264b357a7b2d\t-runner.py\u0000",
+      "meaning": "Leading-dash root pathname works after option separator."
+    },
+    {
+      "command": "git -C FIXTURE cat-file blob TRUSTED:tools/runner.py",
+      "exit": 0,
+      "stdout": "print(\"trusted\")\n",
+      "stderr": "",
+      "setup": "Untracked .gitattributes marks tools/runner.py filter=boundary; local clean/smudge filters are required and set to nonexistent /nonexistent-t59w1s57-filter.",
+      "meaning": "Raw blob read did not attempt those filters; checkout, --filters, --textconv and diff-based comparisons should not replace raw reads."
+    }
+  ],
+  "trusted_host_boundary": [
+    "Trusted Git/Python executables, PATH and non-GIT loader environment remain required; no hostile-host isolation claim.",
+    "Repository object database/configuration and access permissions remain trusted host state; local config is not fully removed by disabling global/system config.",
+    "[INFERENCE] Missing objects in a configured promisor repository may cause Git lazy fetching and configured helper activity unless lazy fetching is explicitly disabled; not exercised.",
+    "[INFERENCE] Concurrent object/ref/config mutation is outside these static scratch probes; immutable verifier-supplied OIDs and a stable local object store are required.",
+    "No execution of candidate code, offensive helper, fetch, broad tests, frozen counter, or production mutation occurred."
+  ],
+  "counter_gap": "The frozen 24-fixture counter creates fresh repositories and sanitizes inherited Git environment. It does not exercise on-disk replace refs, ambiguous trusted names, malicious local Git config, or inherited-environment resistance of the CLI itself.",
+  "cleanup": "Scratch directory removed after receipts were saved; probe driver retained under seat-owned report directory."
+}

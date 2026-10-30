@@ -1,0 +1,99 @@
+T59W1S52 cross-lane overlap scan — raw probe outputs (all read-only; no installs; no counter run)
+====================================================================================================
+
+Probe 1: province repo tips (git rev-parse HEAD / log -1, read-only)
+  kumitate-shokunin HEAD=1e00955a657a5b955992e23915143e7b3e261bb4 2026-10-30
+  kotoba-shokunin   HEAD=006a834cee4339ede8620e10c3995d5226141c0a 2026-10-30
+  kagi-shokunin     HEAD=c49023b773b69de983f0e6eb7e5867ceb5c2c634 2026-10-26
+  tameshi-shokunin  HEAD=e9cc34bec3f0c670550552bcc962563e7ae3ca58 2026-10-30   (== round-59 committed freeze)
+
+Probe 2: tameshi frozen contract summary (contract.json)
+  tool=tools/executor-source-pin.py
+  interface=python3 TOOL --repo REPO --trusted COMMIT --candidate COMMIT --path PATH [--path PATH ...]
+  exit_map 0=bound(all declared regular executable-source blobs equal trusted)
+           1=EXECUTOR_SOURCE_DRIFT   2=EXECUTOR_SOURCE_UNAVAILABLE
+  classes=equal changed missing unrelated unresolvable symlink ; 4 path spellings ; target=24
+  trust_boundary: declared Git blobs only; NOT execution attestation or closure completeness.
+
+Probe 3: frozen counter measure.py (round-59) structural read
+  - builds 4 fixture repos under --work (git init -q; asserts rev-parse --show-toplevel == fixture dir)
+  - per path: trusted commit; changed/missing/unrelated commits; '0'*40 unresolvable; symlink commit
+  - expected exits: equal/unrelated=0, unresolvable=2, changed/missing/symlink=1
+  - token check: EXECUTOR_SOURCE_BOUND / EXECUTOR_SOURCE_UNAVAILABLE / EXECUTOR_SOURCE_DRIFT in stdout+stderr
+  - env scrub: strips GIT_*, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, PYTHONDONTWRITEBYTECODE=1, TMPDIR=work
+
+Probe 4: sibling mechanism — kagi revision-audit.py (kagi-shokunin@c49023b7)
+  head: "Read-only audit of stamps against current worktree files and immutable history."
+  git_env(): strips GIT_*; sets GIT_OPTIONAL_LOCKS=0, GIT_CONFIG_NOSYSTEM=1, GIT_CONFIG_GLOBAL=/dev/null,
+             GIT_NO_LAZY_FETCH=1, GIT_NO_REPLACE_OBJECTS=1, LC_ALL=C
+  exit: 1 if any STALE/MISSING/DROPPED else 0; 2 on setup failure (line 391-394)
+  per .ufo/waves/round-22/build/AuditPinHistory.md: fixed-argument read-only git cat-file;
+  abbreviated-prefix equality explicitly not proof; commit-type validated OID must equal lowercased full input.
+  Direction: current committed/worktree bytes vs --history revision (repo-internal anchor).
+
+Probe 5: sibling mechanism — kagi drift-pins.sh + drift-baseline.tsv (kagi-shokunin@c49023b7)
+  drift-baseline.tsv header rows (path TAB mode TAB lines TAB sha256):
+    $HOME/.local/bin/the-janitor  755  333  2408b0c9...
+    $HOME/.config/the-janitor/client.py  755  117  8179b241...
+    $HOME/.config/the-janitor/opencode.json 644 29 a318e719...
+    $HOME/.config/the-janitor/config.json  600  23  -        (secret file: mode+lines only, no content hash)
+  Verdicts OK|DRIFT|MISSING|LINK|UNPINNED|EXTRA|DUP ; exit 0 clean / 1 drift / 2 usage-setup.
+  Owns host-file substrate pinning incl. executable-bit column.
+
+Probe 6: sibling mechanism — kumitate counter-pins.mjs + .ufo/pins/counter-pins.json (kumitate@1e00955a)
+  counter-pins.mjs: "pinned-counter registry gate ... frozen round counters (and the instruments they
+  judge) are byte-identical to the hashes the round plans froze ... runnable, fail-closed artifact that
+  any seat can re-execute" (round-53 lesson: pins previously verified only by human-run sha256sum).
+  Verdicts: COUNTER_PINS: CLEAN exit 0 / DRIFT exit 1 / FAIL-CLOSED exit 2 / USAGE exit 64.
+  .ufo/pins/ registry files: anchor-truth.json counter-pins.json fidelity-ratchet.json origin.json
+                            readme-map.json source-captures.json source-dupes.json surface-known.json
+  Pins are sha256 of repo files at HEAD (not commit-vs-commit; no external trusted commit).
+
+Probe 7: sibling mechanism — kotoba check_substrate_pins.py + baseline.json measured_against (kotoba@006a834c)
+  Enforces baseline.json measured_against pins of installed binaries (omp/opencode sha256).
+  Exit ladder 0 pins hold / 1 drift-or-vacuous / 2 unreadable-unsupported / 3 baseline-unreadable;
+  "3 means the baseline cannot be read as a pin document; 1 means the document was read and declares
+  a pin set that does not satisfy the guard — a deleted pin is as loud as a moved substrate".
+  Read-only: "never executes a pinned binary".
+  Owns installed-binary substrate pinning.
+
+Probe 8: sibling mechanism — kotoba check_opencode_repin.py (round-53 frozen counter)
+  Compares declared pins/classes at BASE_REV vs --rev (both revisions repo-internal;
+  git archive extraction). Counter shape: pinned denominator, never read from measured revision.
+
+Probe 9: own-lane prior art — tameshi tools/mutate-and-run.sh REGRESSION_PIN (tameshi@e9cc34be)
+  line 1302: printf 'REGRESSION_PIN %s: source=git repo=%s rev=%s path=%s mode=%s sha256=%s'
+  materializes sibling executor sources at pinned revs via read-only git show; restores exec bit
+  when blob_mode==100755 (chmod +x, lines 1295-1299); SETUP exit 2 on failure.
+  Observed instance (.ufo/evidence/fleet-round-1/capability-demo/h1b-regression.stdout:5):
+    REGRESSION_PIN js-kimi-census: source=git repo=...kumitate-shokunin rev=175de6ba... path=scripts/kimi-census.mjs mode=100644 sha256=83016d45...
+    REGRESSION_PIN bash-surface-census: source=git repo=...kagi-shokunin rev=fecee874... path=corpus/surface-census.sh mode=100755 sha256=275d8294...
+
+Probe 10: own-lane prior art — tameshi tools/receipt-revision-gate.py (round-54/55)
+  "bind a receipt to the revision it certifies"; codes RECEIPT_* exit 3 refusals; read-only git objects;
+  env scrub strips GIT_*, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1.
+
+Probe 11: own-lane prior art — corpus/knowledge/receipt-revision-binding.md
+  S281 in-toto attestation framing: receipts are attestations whose subject is a revision digest;
+  recheck requires receipt-revision-gate --selftest 19/19. Round-59 gate binds the executor source one
+  layer below the receipt.
+
+Probe 12: round-58 forgery class (motive pointer only; T59W1S53/T59W1S58 own the connection)
+  .ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack.py Attack B: claimant-authored
+  registry-check.py prints held/differs — executed arms produced by claimant code. Round-58 C2 closed
+  the class for that counter (counter reads no claimant receipt + gate mutants); round-59 generalizes
+  the declared-source-binding prerequisite as a standalone gate.
+
+Probe 13: true-overlap sweep
+  grep 'trusted|--trusted|candidate' over kagi corpus/*.py, kotoba verifiers/*.py, kumitate scripts/*.mjs:
+  no occurrence of a verifier-supplied trusted commit compared against a candidate commit.
+  CONCLUSION: the round-59 trust geometry (external trusted anchor x CLI-declared paths x candidate
+  commit, git object identity) has no sibling owner; no id/schema/gate collision.
+
+Probe 14: false lexical friends
+  kotoba verifiers/check_overlap_levers.py is a skill-removal-lever content guard (round-51 C2) —
+  unrelated to cross-lane overlap scanning. kagi corpus/stamps.tsv "stamps" and kumitate
+  .ufo/pins are owner-local registries; no shared schema with round-59.
+
+No frozen artifacts read beyond contract.json/measure.py. Counter NOT run. No sibling writes.
+No installs/updates performed (read-only git + file reads sufficed; pacman paused irrelevant).

@@ -1,0 +1,74 @@
+{
+  "seat": "T59W1S06",
+  "round": 59,
+  "wave": "w1",
+  "cell": {"path": "tools/runner.py", "class": "symlink"},
+  "frozen_refs": {
+    "contract": ".ufo/evidence/round-59/contract.json",
+    "counter": ".ufo/evidence/round-59/measure.py",
+    "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a"
+  },
+  "fixture": {
+    "scratch_root": "/fast/scratch/hyaku/tameshi-r59/T59W1S06",
+    "scratch_deleted_before_yield": true,
+    "repo": "fixture-symlink-cell",
+    "env_mirror_of_measure_py": "env -i PATH HOME GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1",
+    "root_assertion": "passed",
+    "commits": {
+      "trusted": "f40cdb571363c8a01389dc81dfe8a492f171de80",
+      "changed": "92169e38a6d3e20dcba680e329aac75fddd69781",
+      "missing": "cb0ef34155ea2f44266c8fa17ce8572087a9acab",
+      "unrelated": "11b51e09b241b8783b6dfd6ada29b0a4bed1ecb5",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "585a0f92c80cf677094538f3ddcecfa01677eae2"
+    },
+    "objects": {
+      "trusted": {"mode": "100644", "blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "bytes": 23, "content": "print(\"real executor\")\\n"},
+      "changed": {"mode": "100644", "blob": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "bytes": 24, "content": "print(\"forged success\")\\n"},
+      "missing": null,
+      "unrelated": {"mode": "100644", "blob": "74e4df76f9a60662749e2aaf076f67e311f66cdb"},
+      "symlink": {"mode": "120000", "blob": "a66620d9fcdca1d09c541464669234d720772947", "bytes": 12, "content": "elsewhere.py", "no_trailing_newline": true, "dangling_target": true, "git_type": "blob"}
+    }
+  },
+  "oracle": {
+    "path": ".ufo/waves/round-59/w1/T59W1S06/oracle/cell-oracle.py",
+    "method": "git-object-only (rev-parse + ls-tree); never dereferences worktree symlinks",
+    "results": [
+      {"class": "trusted", "exit": 0, "expected": 0, "token": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"class": "changed", "exit": 1, "expected": 1, "token": "EXECUTOR_SOURCE_DRIFT", "ok": true},
+      {"class": "missing", "exit": 1, "expected": 1, "token": "EXECUTOR_SOURCE_DRIFT", "ok": true},
+      {"class": "unrelated", "exit": 0, "expected": 0, "token": "EXECUTOR_SOURCE_BOUND", "ok": true},
+      {"class": "unresolvable", "exit": 2, "expected": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "ok": true},
+      {"class": "symlink", "exit": 1, "expected": 1, "token": "EXECUTOR_SOURCE_DRIFT", "ok": true, "detail": "nonregular at candidate (mode=120000 type=blob)"}
+    ],
+    "edge_probe": {"args": "--path tools/runner.py --path tools/absent.py", "exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE", "note": "declared path absent at trusted -> invalid trusted source"}
+  },
+  "counter_misclassification_review": {
+    "construction_deterministic": true,
+    "expectation_matches_contract_exit_map": true,
+    "env_scrub_blocks_config_interference": true,
+    "token_check_covers_stdout_and_stderr": true,
+    "candidate_is_fixture_head": true,
+    "misclassification_found": false,
+    "coverage_limit": "single cell cannot distinguish mode-aware comparison from pure content comparison (both yield DRIFT here); content differs ('elsewhere.py' != trusted bytes)"
+  },
+  "cell_verdict": {
+    "expected_exit": 1,
+    "expected_token": "EXECUTOR_SOURCE_DRIFT",
+    "independent_oracle_confirms": true,
+    "fixture_sound": true
+  },
+  "hygiene": {
+    "production_gate_staged": false,
+    "stage_root": ".ufo/waves/round-59/w1/T59W1S06/stage/",
+    "stage_root_empty_reason": "probe authors no production patch",
+    "frozen_counter_executed_on_lane": false,
+    "installs": [],
+    "tmp_writes": "none below /tmp; TMPDIR pointed at scratch"
+  },
+  "evidence": [
+    ".ufo/waves/round-59/w1/T59W1S06/receipts.txt",
+    ".ufo/waves/round-59/w1/T59W1S06/oracle/cell-oracle.py"
+  ]
+}

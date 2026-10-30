@@ -1,0 +1,57 @@
+### P1 first-only, drift in 2nd path, runner first (expect WRONG 0)
+  exit=0 :: EXECUTOR_SOURCE_BOUND first path equal
+
+### P2 first-only, same evidence, changed path first (order swap)
+  exit=0 :: EXECUTOR_SOURCE_BOUND first path equal
+
+### P3 any-equal, drift in 1st path (expect WRONG 0)
+  exit=0 :: EXECUTOR_SOURCE_BOUND at least one path equal
+
+### P4a ref SECOND (expect 1)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/space name.py
+
+### P4b ref FIRST (expect 1)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/runner.py
+
+### P4c ref UNREL (expect 0)
+  exit=0 :: EXECUTOR_SOURCE_BOUND all declared sources equal
+
+### P4d ref MISS (expect 1)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/日本語.py
+
+### P4e ref SYMLINK (expect 1)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/-runner.py
+
+### P4f ref GITLINK (expect 1)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/runner.py
+
+### P5 ref unresolvable candidate (expect 2)
+  exit=2 :: EXECUTOR_SOURCE_UNAVAILABLE candidate unresolvable
+
+### P6 ref duplicate --path (expect 0)
+  exit=0 :: EXECUTOR_SOURCE_BOUND all declared sources equal
+
+### P7 ref spelling variants, drift in canonical (expect 1)
+  exit=2 :: EXECUTOR_SOURCE_UNAVAILABLE declared source absent/nonregular at trusted: tools//runner.py
+
+### P8 ref vacuous path absent both revs (expect 2)
+  exit=2 :: EXECUTOR_SOURCE_UNAVAILABLE declared source absent/nonregular at trusted: tools/ghost.py
+
+### P10a ref cafe-extra candidate, 4 canonical paths (expect 0)
+  exit=0 :: EXECUTOR_SOURCE_BOUND all declared sources equal
+
+### P10b ref NFD spelling of NFC-committed café (expect 2: strict spelling)
+  exit=2 :: EXECUTOR_SOURCE_UNAVAILABLE declared source absent/nonregular at trusted: tools/café.py
+
+### P10c ref NFC spelling of café (expect 0)
+  exit=2 :: EXECUTOR_SOURCE_UNAVAILABLE declared source absent/nonregular at trusted: tools/café.py
+
+### P11a ref SECOND, canonical order (expect 1)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/space name.py
+
+### P11b ref SECOND, reversed order (expect 1, same verdict)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/space name.py
+
+### P11c ref SECOND, rotated order (expect 1, same verdict)
+  exit=1 :: EXECUTOR_SOURCE_DRIFT tools/space name.py
+

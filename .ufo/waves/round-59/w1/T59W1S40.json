@@ -1,0 +1,42 @@
+{
+  "seat": "T59W1S40",
+  "surface": "source closure omission trust-boundary",
+  "axes": ["claim fidelity", "omission observability", "exact restoration", "operability"],
+  "mutant": "Change committed tools/helper.py output literal; unchanged tools/runner.py imports helper; declare runner only",
+  "expected_detector": "Runner-only comparison accepts; comparison declaring runner and helper rejects mutant",
+  "observed": {
+    "runner_only_git_exit": [0, 0, 0],
+    "complete_closure_git_exit": [0, 1, 0],
+    "frozen_counter_exit": [1, 1, 1],
+    "frozen_counter_output": "passed=0/24 C1_R59_PASS=false reason=tool-absent",
+    "state_order": ["pristine", "mutated", "restored"]
+  },
+  "verdict": {
+    "git_declared_path_detector": "survived",
+    "git_complete_closure_detector": "killed",
+    "actual_gate_counter": "inconclusive: baseline tool absent",
+    "inside_claim_boundary": false,
+    "reason": "Frozen contract makes complete source closure a verifier-supplied prerequisite"
+  },
+  "candidate_implementation_observed": false,
+  "smallest_sound_behavior": "Keep declared-path comparison; pass every verifier-supplied path; do not claim completeness or execution attestation",
+  "proposed_cli_suffixes": [
+    "--repo REPO --trusted TRUSTED --candidate MUTATED --path tools/runner.py",
+    "--repo REPO --trusted TRUSTED --candidate MUTATED --path tools/runner.py --path tools/helper.py"
+  ],
+  "proposed_cli_expectations": ["0 EXECUTOR_SOURCE_BOUND", "1 EXECUTOR_SOURCE_DRIFT"],
+  "proposed_cli_executed": false,
+  "restoration": {
+    "before_sha256": "3a4293df14de1e089f5c2f01a1018d37cd9c06db5fad15c7e6102c99af44c0d6",
+    "mutated_sha256": "e8ed3ef9a0f5991810e4202f5744e50dc37dc5105ca9c73b18b41e495df96543",
+    "after_sha256": "3a4293df14de1e089f5c2f01a1018d37cd9c06db5fad15c7e6102c99af44c0d6",
+    "before_after_tree": "5756ad321d4bf69df0212a13dd7aaf0781fedf12",
+    "exact_bytes_assertion_passed": true,
+    "scratch_deleted": true
+  },
+  "receipt": ".ufo/waves/round-59/w1/T59W1S40/receipts.json",
+  "reproduction": ".ufo/waves/round-59/w1/T59W1S40/probe.py",
+  "report": ".ufo/waves/round-59/w1/T59W1S40.md",
+  "installs": [],
+  "production_changes": []
+}

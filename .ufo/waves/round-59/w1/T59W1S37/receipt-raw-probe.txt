@@ -1,0 +1,48 @@
+== raw probe
+=== toplevel assert
+toplevel=/fast/scratch/hyaku/tameshi-r59/T59W1S37/rawrepo
+=== 1. rev:path with leading slash (aliasing)
+fatal: path '/tools/runner.py' does not exist in '7da75089c82e714f93e3dca1df9ea897c1097474'
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  -
+872bd7f932b21b09a727a1ce53203edc3bdfaba48861969175b15675829042da  -
+=== 2. dotdot traversal rev:path
+fatal: path 'tools/../runner.py' does not exist in '7da75089c82e714f93e3dca1df9ea897c1097474'
+rc=128
+=== 3. tree object via rev:path
+tree 7da75089c82e714f93e3dca1df9ea897c1097474:tools
+
+runner.py
+rc=0
+=== 4. empty path rev:path
+tree 7da75089c82e714f93e3dca1df9ea897c1097474:
+
+tools/
+rc=0
+=== 5. ls-tree pathspec icase magic vs literal magic
+fatal: :(icase)TOOLS/RUNNER.PY: pathspec magic not supported by this command: 'icase'
+ rc=0
+ rc=0
+fatal: Invalid path '/tools': No such file or directory
+ rc=0
+ rc=0
+=== 6. rev:path on path containing colon-magic text
+fatal: Needed a single revision
+rc=128
+=== 7. newline-named file roundtrip
+/fast/scratch/hyaku/tameshi-r59/T59W1S37/raw-probe.sh: line 34: /fast/scratch/hyaku/tameshi-r59/T59W1S37/rawrepo/tools/x
+C1_R59 rev=spoof passed=24/24 C1_R59_PASS=true.py: No such file or directory
+warning: could not open directory 'tools/x
+C1_R59 rev=spoof passed=24/': No such file or directory
+fatal: pathspec 'tools/x
+C1_R59 rev=spoof passed=24/24 C1_R59_PASS=true.py' did not match any files
+On branch master
+nothing to commit, working tree clean
+ rc=0
+=== 8. argparse binding probes
+argv=['--path', '-runner.py'] rc=0 out='SYSTEMEXIT 2' err=['-c: error: argument --path: expected one argument']
+argv=['--path=--trusted'] rc=0 out="PARSED ['--trusted']" err=[]
+argv=['--path', '--'] rc=0 out='SYSTEMEXIT 2' err=['-c: error: argument --path: expected one argument']
+argv=['--path', ''] rc=0 out="PARSED ['']" err=[]
+argv=['--path', '--repo', 'X'] rc=0 out='SYSTEMEXIT 2' err=['-c: error: argument --path: expected one argument']
+argv=['--path=--repo'] rc=0 out="PARSED ['--repo']" err=[]
+=== done

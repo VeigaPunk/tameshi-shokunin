@@ -1,0 +1,74 @@
+{
+  "seat": "T59W1S23",
+  "round": 59,
+  "wave": "w1",
+  "cell": {"path": "tools/-runner.py", "class": "unresolvable"},
+  "frozen_counter": ".ufo/evidence/round-59/measure.py",
+  "contract": ".ufo/evidence/round-59/contract.json",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "environment": {"git": "2.56.0", "python": "3.14.8", "os": "linux 7.2.11-arch1-1"},
+  "installs": [],
+  "fixture": {
+    "builder": "receipts/build_fixture.py.txt (verbatim replica of measure.py construction, single cell)",
+    "repo_scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S23/fixture/repo (deleted before yield)",
+    "env": "GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, GIT_* stripped, TMPDIR=scratch, mirrors measure.py",
+    "root_assert": "git rev-parse --show-toplevel == fixture dir: PASS",
+    "trusted_commit": "93101e4a389bf2ef602cb50ec94246007208046e",
+    "declared_source_trusted": {
+      "ls_tree": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb\ttools/-runner.py",
+      "type": "blob", "mode": "100644", "content_b64": "cHJpbnQoInJlYWwgZXhlY3V0b3IiKQo=",
+      "content_sha1_anchor": "printf 'print(\"real executor\")\\n' | git hash-object --stdin == 74e4df76f9a60662749e2aaf076f67e311f66cdb"
+    },
+    "versions": {
+      "equal": "93101e4a389bf2ef602cb50ec94246007208046e",
+      "changed": "3bdb6876c98981cb3e9ec46e476caa5e4ec23674",
+      "missing": "e477e6465f61932fce253272b9c3c52f945f9651",
+      "unrelated": "086055bf6952511c6f2caa0027f3890fd85460d8",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "c63e98d9627d7d697db3952688f45c3e38611272"
+    },
+    "candidate_resolvability": {
+      "resolvable_classes_rev_parse_verify_caret_commit_rc": 0,
+      "unresolvable_rev_parse_verify_caret_commit_rc": 128,
+      "unresolvable_stderr": "fatal: Needed a single revision"
+    }
+  },
+  "cell_contract": {
+    "expected_exit": 2,
+    "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+    "counter_check": "ok = (exit==2) and ('EXECUTOR_SOURCE_UNAVAILABLE' in stdout+stderr)"
+  },
+  "oracle": {
+    "path": ".ufo/waves/round-59/w1/T59W1S23/stage/oracle-executor-source-pin.py",
+    "nature": "minimal independent oracle for this cell only; NOT the production gate",
+    "resolution_rule": "git rev-parse --verify <candidate>^{commit} nonzero -> print EXECUTOR_SOURCE_UNAVAILABLE to stderr, exit 2; else compare declared blob (mode 100644/type blob/id) trusted vs candidate"
+  },
+  "oracle_results": [
+    {"case": "unresolvable", "candidate": "0000000000000000000000000000000000000000", "exit": 2, "token_present": true, "expected": "2/EXECUTOR_SOURCE_UNAVAILABLE", "ok": true},
+    {"case": "equal/original", "candidate": "93101e4a389bf2ef602cb50ec94246007208046e", "exit": 0, "token_present": true, "expected": "0/EXECUTOR_SOURCE_BOUND", "ok": true},
+    {"case": "changed", "candidate": "3bdb6876c98981cb3e9ec46e476caa5e4ec23674", "exit": 1, "token_present": true, "expected": "1/EXECUTOR_SOURCE_DRIFT", "ok": true}
+  ],
+  "counter_misclassification_review": {
+    "verdict": "frozen counter scores this cell soundly for correct tools; check is necessary-not-sufficient (false-positive surface, no false-negative surface found for this cell)",
+    "false_positive_surface": [
+      "token test is substring over COMBINED stdout+stderr with no exclusivity; a tool printing multiple token names or the token in a usage banner passes",
+      "demonstrated: receipts/vacuity-and-anchor.txt case D — a probe that never consults git exits 2 + token and the counter's exact per-cell check evaluates ok=TRUE"
+    ],
+    "false_negative_surface": [
+      "none identified for this cell: env is GIT_*-scrubbed with config neutralized, 30s timeout ample, token matched on combined streams, -I isolation",
+      "leading-dash path is safe in counter's own git calls (all use '--'); probe A shows git 2.56 ls-tree accepts the leading-dash pathspec even without '--'"
+    ],
+    "tool_side_hazard_observed": "receipts/git-edge-probes.txt case B: git rev-parse --verify <40-hex> WITHOUT ^{commit} returns rc=0 echoing the zeros; a tool not anchoring ^{commit} would resolve the unresolvable candidate (git cat-file -e candidate^{commit} rc=128 confirms nonexistence). Such a tool errs on its own; the frozen counter would correctly score ok=False (expected exit 2, tool emits 1/DRIFT) — counter working as intended, not a counter misclassification"
+  },
+  "boundary_respected": "probe bounded to declared Git blob comparison for one cell; no execution attestation, no closure-completeness claim; production untouched; no git/jj mutation outside explicit -C scratch fixture (root asserted); counter never run on production",
+  "receipts": [
+    "receipts/build_fixture.py.txt",
+    "receipts/fixture-build.json",
+    "receipts/fixture-objects.json",
+    "receipts/versions.json",
+    "receipts/oracle-probe.txt",
+    "receipts/git-edge-probes.txt",
+    "receipts/vacuity-and-anchor.txt"
+  ]
+}

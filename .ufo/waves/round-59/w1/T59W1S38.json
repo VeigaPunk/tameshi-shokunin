@@ -1,0 +1,94 @@
+{
+  "seat": "T59W1S38",
+  "role": "leaf-critic",
+  "round": 59,
+  "wave": "w1",
+  "adversarial_item": "non-UTF8 blob contents",
+  "date": "2026-10-30",
+  "tooling": {"python": "3.14.8", "git": "2.56.0"},
+  "installs": [],
+  "frozen_artifacts": {
+    "contract": ".ufo/evidence/round-59/contract.json",
+    "counter": ".ufo/evidence/round-59/measure.py",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+    "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58"
+  },
+  "candidate_observation": {
+    "tool": "tools/executor-source-pin.py",
+    "present_at_base": false,
+    "present_on_any_lane_ref": false,
+    "evidence": "git cat-file -e b83f1bfc:tools/executor-source-pin.py -> fatal; lane HEAD e9cc34be is the freeze commit; log --all -- tools/executor-source-pin.py empty"
+  },
+  "boundary_determination": {
+    "non_utf8_contents_inside_frozen_24_claim": false,
+    "reason_frozen_excludes": "counter fixture blobs are ASCII literals only: 'print(\"real executor\")\\n', 'print(\"forged success\")\\n', 'unrelated change\\n'; text=True capture throughout",
+    "inside_design_boundary": true,
+    "reason_design_includes": "contract trust_boundary: gate 'checks declared Git blobs only'; Git blob identity is byte-exact, so any content decoding is a lossy projection outside the stated check"
+  },
+  "scratch_demonstration": {
+    "location": "/fast/scratch/hyaku/tameshi-r59/T59W1S38 (deleted after receipts copied)",
+    "fixture_root_asserted": true,
+    "trusted_blob_bytes_hex": "fffe00657865630a",
+    "equal_candidate_oid": "7716e9ef0d87eba2b26684665e1fd487b6736aab",
+    "drift_candidate_oid": "b9ed894c129cadcdcfdd706eee70a6185cab638b",
+    "drift": "single byte fe->fd in non-UTF8 region; git truth: distinct blob OIDs"
+  },
+  "attacks": [
+    {
+      "id": "A",
+      "surface": "gate design: strict UTF-8 decode of blob content",
+      "demonstration": "subprocess git cat-file blob with text=True on byte-identical non-UTF8 blobs",
+      "observed": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff; gate would exit 1 with traceback and no EXECUTOR_SOURCE_* token",
+      "verdict": "false DRIFT on a BOUND case; availability/operability defect on legal Git blobs",
+      "in_frozen_claim": false
+    },
+    {
+      "id": "B",
+      "surface": "gate design: lossy decode errors='replace' comparison",
+      "demonstration": "b'\\xff\\xfe\\x00exec\\n' vs b'\\xff\\xfd\\x00exec\\n' decoded with errors='replace'",
+      "observed": "bytes unequal (git truth), replace-decode equal -> gate prints EXECUTOR_SOURCE_BOUND and exits 0 on drifted candidate",
+      "verdict": "skipped-work acceptance channel invisible to the frozen ASCII 'changed' control; strongest counterexample",
+      "in_frozen_claim": false
+    },
+    {
+      "id": "C",
+      "surface": "frozen counter robustness: run(text=True) capture of tool output",
+      "demonstration": "stub tool writing raw b'\\xffEXECUTOR_SOURCE_BOUND\\n' via counter-identical subprocess discipline",
+      "observed": "UnicodeDecodeError propagates; counter crashes before printing any C1_R59 verdict line",
+      "verdict": "measurement-availability defect; buggy/adversarial tool can abort judging unverifiably",
+      "in_frozen_claim": false
+    }
+  ],
+  "failed_or_out_of_scope_attacks": [
+    {"item": "non-UTF8 path bytes", "reason": "contract freezes paths to four UTF-8 spellings; outside boundary, rejected without demo"},
+    {"item": "locale-dependent counter fixture writes", "reason": "fixture contents are ASCII literals; write_text encoding irrelevant for ASCII"},
+    {"item": "counter JSON print of non-UTF8 (ensure_ascii=False)", "reason": "host Python 3.14.8 defaults to UTF-8 mode; only tool-stdout decode is fragile (attack C)"}
+  ],
+  "smallest_sound_behavior": {
+    "description": "per declared path resolve <commit>:<path> to blob OID in trusted and candidate; compare OID strings; never read or decode content",
+    "ordering": "validate trusted commit and resolve its declared sources first (failure -> exit 2 per exit_map 'invalid trusted commit/source'); validate candidate commit (failure -> exit 2); per-path candidate resolution failure or OID mismatch -> exit 1; all equal -> exit 0 with EXECUTOR_SOURCE_BOUND",
+    "verified": {
+      "frozen_six_class_reproduction": {"equal": 0, "changed": 1, "missing": 1, "unrelated": 0, "unresolvable": 2, "symlink": 1, "all_match": true},
+      "non_utf8_equal": "BOUND(0)",
+      "non_utf8_drift": "DRIFT(1)",
+      "symlink_note": "symlink blob content is its target path; OID differs from trusted regular file naturally",
+      "directory_note": "tree OID vs blob OID mismatches -> DRIFT, matching 'missing/nonregular'"
+    }
+  },
+  "proposed_cli_test": {
+    "placement": "separate guard outside the frozen 24-fixture certification set; scratch only, never against production",
+    "commands": [
+      "python3 tools/executor-source-pin.py --repo R --trusted A --candidate E --path tools/runner.py  # expect exit 0 + EXECUTOR_SOURCE_BOUND",
+      "python3 tools/executor-source-pin.py --repo R --trusted A --candidate D --path tools/runner.py  # expect exit 1 + EXECUTOR_SOURCE_DRIFT"
+    ],
+    "discriminates": "lossy-decode mutant gate exits 0/BOUND on drifted candidate D (observed in attack B), so the pair fails unsound text-projecting implementations"
+  },
+  "critic_verdict": {
+    "counterexample": "text-decoding gate designs (strict or errors='replace') mis-verdict non-UTF8 blobs; frozen ASCII fixtures cannot detect it; counter text=True capture lets a tool abort judging",
+    "evidence": [".ufo/waves/round-59/w1/T59W1S38/receipts/probe-full.log", ".ufo/waves/round-59/w1/T59W1S38/receipts/probe.sh"],
+    "impacted_axes": ["skipped-work control soundness on design boundary", "gate availability/operability on legal blobs", "counter measurement availability"],
+    "smallest_safe_correction": "OID-only comparison without content decode; counter capture hardened to bytes with explicit decode for token matching; two non-UTF8 CLI checks added as a separate non-frozen guard",
+    "boundary_ruling": "attacks A/B inside design boundary but strictly outside frozen claim (no frozen-credit impact); attack C counter robustness for L1 disposition"
+  },
+  "report": ".ufo/waves/round-59/w1/T59W1S38.md"
+}

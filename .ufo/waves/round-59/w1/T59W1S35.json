@@ -1,0 +1,61 @@
+{
+  "seat": "T59W1S35",
+  "round": 59,
+  "adversarial_item": "Git config poisoning",
+  "frozen_contract": "tameshi-shokunin/.ufo/evidence/round-59/contract.json",
+  "frozen_counter": "tameshi-shokunin/.ufo/evidence/round-59/measure.py",
+  "counter_freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "environment": {"git": "/usr/bin/git", "git_version": "git version 2.56.0", "python": "3.14.8", "installs": []},
+  "axes_named": [
+    "soundness/always-accept-resistance",
+    "fidelity-to-frozen-counter",
+    "claim-boundary precision",
+    "operability of proposed CLI test"
+  ],
+  "boundary_statement": {
+    "inside": "candidate repo is adversarial input; gate verdict must be a function of declared blobs only and unflippable to always-accept by repo-carried config/refs; frozen claim's always-accept control fails otherwise",
+    "outside": "scored 24 fixtures and frozen counter (e9cc34b) unchanged; verifier-side env already sanitizes global/system config; no counter edit proposed"
+  },
+  "counter_env_inventory": {
+    "stripped": "all GIT_* env vars",
+    "neutralized": ["GIT_CONFIG_GLOBAL=/dev/null (global empty)", "GIT_CONFIG_NOSYSTEM=1 (system unreadable)"],
+    "live_attacker_reachable": ["repo-local .git/config", "config.worktree when repo enables extensions.worktreeConfig", "refs/replace/* (repo-carried, config-free)"],
+    "evidence": "receipts/probe2-results.json P4/A8"
+  },
+  "findings": [
+    {"id": "F1", "blade": "diff.<drv>.textconv + committed .gitattributes", "family": "porcelain diff incl. --quiet", "result": "SUBVERTED", "detail": "textconv executed; rc 0 on forged blobs; candidate fully self-contained", "evidence": "attack-lab-results.json A1"},
+    {"id": "F2", "blade": "diff.external (local and config.worktree scope)", "family": "porcelain diff (human output)", "result": "SUBVERTED", "detail": "external command executed; rc 0; --quiet shape survives (rc 1); worktree scope live on main worktree", "evidence": "attack-lab-results.json A2; probe2-results.json P3"},
+    {"id": "F3", "blade": "[alias] <builtin>=!cmd", "family": "subprocess plumbing", "result": "REFUTED on git 2.56.0", "detail": "aliases only fire for non-builtin names; builtins unshadowable from repo config", "evidence": "attack-lab-results.json A0b/A3; probe2-results.json P4"},
+    {"id": "F4", "blade": "core.fsmonitor", "family": "invocation scoping", "result": "SCOPED", "detail": "fires under diff-tree (incl. --quiet); not under two-commit porcelain diff, ls-tree, cat-file, rev-parse; -c core.fsmonitor=false neutralizes; diff.autoRefreshIndex=false does not; breaks git commit itself (DoS)", "evidence": "probe2-results.json P1; attack-lab first-run stderr"},
+    {"id": "F5", "blade": "refs/replace (blob and commit level)", "family": "content gates and OID-compare gates", "result": "SUBVERTED", "detail": "commit-level replace makes ls-tree <candidate> show trusted oids (BOUND); blob-level replace makes cat-file return trusted content; --no-replace-objects restores truth", "evidence": "probe2-results.json P2; probe3-results.json; attack-lab-results.json A9"},
+    {"id": "F6", "blade": "hooks", "family": "plumbing reads", "result": "IMMUNE", "detail": "cat-file/ls-tree run no hooks; core.hooksPath belt kept for defense in depth", "evidence": "attack-lab-results.json A5"},
+    {"id": "F7", "blade": "all blades simultaneously", "family": "emulated minimal sound gate (ls-tree mode+oid tuples, --no-replace-objects, belts)", "result": "SOUND", "detail": "correct 0/1/2 on equal/forged/unresolvable; all four path spellings (space, CJK, leading dash) correct; zero attacker command executions", "evidence": "attack-lab-results.json A10; probe3-results.json"}
+  ],
+  "counterexample": {
+    "statement": "a gate satisfying all frozen-fixture behavior classes is flippable to always-accept by repo-carried state",
+    "instantiation": "receipts/mock_porcelain_gate.py (contract-exact semantics) prints EXECUTOR_SOURCE_BOUND rc=0 on forged candidates under textconv poison and under commit-level replace refs",
+    "cli_test_result": {"porcelain_family": "9/11 FAIL (exactly textconv and replace-refs fixtures, poison_live=true)", "sound_shape": "11/11 PASS"},
+    "receipts": ["receipts/cli-test-vs-porcelain.txt", "receipts/cli-test-vs-sound.txt"]
+  },
+  "smallest_sound_behavior": [
+    "git --no-replace-objects rev-parse --verify <rev>^{commit} for both trusted and candidate; any failure -> exit 2",
+    "per declared path compare (mode, oid) tuples from git --no-replace-objects ls-tree <rev> -- <path>; mismatch/absent -> exit 1; all equal -> print EXECUTOR_SOURCE_BOUND exit 0",
+    "argv-only invocation (no shell), builtins only, -- path separator, --no-replace-objects on every call, belts -c core.hooksPath=/dev/null -c core.fsmonitor=false, optional -c safe.directory=*",
+    "never porcelain diff/show/log; never checkout/archive or otherwise materialize the worktree (smudge filters); map unexpected git errors to exit 2"
+  ],
+  "cli_test": {
+    "staged": "tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S35/stage/adversarial_config_test.py",
+    "interface": "python3 TOOL --repo REPO --trusted COMMIT --candidate COMMIT --path PATH [--path PATH ...]",
+    "fixtures": 11,
+    "poison_fixtures": ["textconv+gitattributes-candidate", "diff-external-local-config", "diff-external-worktree-config", "replace-refs-commit-level", "fsmonitor-alias-hooks-drift (asserts zero attacker executions)"],
+    "controls": ["equal", "unresolvable", "bad-trusted", "partial-drift-all-paths", "partial-drift-single-declared-path", "partial-drift-undeclared-path"]
+  },
+  "deliverables": {
+    "report": "tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S35.md",
+    "stage_root": "tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S35/stage/",
+    "receipts_dir": "tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S35/receipts/"
+  },
+  "scratch": {"path": "/fast/scratch/hyaku/tameshi-r59/T59W1S35", "deleted_before_yield": true},
+  "Report": "tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S35.md"
+}

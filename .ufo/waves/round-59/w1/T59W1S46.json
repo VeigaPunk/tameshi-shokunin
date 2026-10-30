@@ -1,0 +1,106 @@
+{
+  "seat": "T59W1S46",
+  "round": 59,
+  "task": "read-only carried-debt recon R49.3: ledger row + original closure, current status, smallest repair with evidence",
+  "head": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "ledger_row": {
+    "path": "corpus/routed-defects.json",
+    "lines": "893-913",
+    "id": "R49.3",
+    "status": "open",
+    "seat": "T50Disp49",
+    "commit_field": null,
+    "note": "All three sentences are byte-unchanged at base; round 49 routed them instead of editing.",
+    "evidence_lines_cited": ["SKILL.md:1503", "SKILL.md:1509", "SKILL.md:1555"],
+    "row_last_revised": "round-50 era (b28a9780); round-58 ledger commits touched other rows only"
+  },
+  "original_closure": {
+    "spotcheck": "corpus/lessons/round-49-verifier-spotcheck.md:124 (routed defect 3: SKILL.md:1503 namespace overlap, 1509, 1555)",
+    "lesson_1503": "corpus/lessons/round-49.md:125-126 (selftest namespace /tmp/tameshi-r12-* overlaps recipe evidence path /tmp/tameshi-r12-controls-UNIQUE; T49ExecR12Cmd.md M3)",
+    "lesson_1509_1555": "corpus/lessons/round-49.md:79 (two true-but-stale sentences outside the seven sections; editing would lapse a credited section; routed below)",
+    "discovery_receipt": ".ufo/waves/round-49/w1/T49ExecR12Cmd.md section M3",
+    "round50_recheck": ".ufo/waves/round-50/w1/T50Cross49.md:53-60,109"
+  },
+  "current_status": {
+    "overall": "open (ledger + SCORECARD.md:2823-2824 Planned round 59; corpus/lessons/round-58.md:131 carry)",
+    "sub_items": [
+      {
+        "key": "A",
+        "routed_line": "SKILL.md:1503",
+        "current_line": "SKILL.md:1545",
+        "state": "still open in substance; wording narrowed at round 53",
+        "current_bytes": "| repeated pristine controls | gate | ... | fresh caller-selected DIR; isolated `$TMPDIR` selftest tree (`tameshi-r12-*`); snapshot read-only | tameshi |",
+        "why_open": "glob `tameshi-r12-*` still matches recipe evidence example `$HYAKU_SCRATCH/tameshi-r12-controls-UNIQUE` (SKILL.md:1534; fnmatch True) and overstates the tool prefix `tameshi-r12-repeat-control-selftest.` (tools/repeat-control.py:629); sibling row SKILL.md:2199 already carries the precise prefix"
+      },
+      {
+        "key": "B",
+        "routed_line": "SKILL.md:1509",
+        "current_line": "SKILL.md:1551",
+        "state": "byte-unchanged since round 12",
+        "current_bytes": "deepens one recorded case, never a seventh independently measured gate.",
+        "why_open": "blame last touch 9df9212d (round 12); git log -S shows no later edit"
+      },
+      {
+        "key": "C",
+        "routed_line": "SKILL.md:1555",
+        "current_line": "SKILL.md:1597-1598",
+        "state": "repaired in substance at round 53 (ledger not updated)",
+        "current_bytes": "No registry row changes rank, SHONEN authority, or the six recorded cases at this write (a seventh case is recorded since round 16, `## Seventh recorded case and full-page cold-read — round 16`).",
+        "why_open": "no remaining edit; ledger row still open with stale pointers"
+      }
+    ],
+    "line_drift": "+42 on all three (round-50 numbers 1503/1509/1555 -> current 1545/1551/1597)"
+  },
+  "probes": [
+    {
+      "name": "repeat-control selftest at HEAD",
+      "command": "TMPDIR=<scratch>/tmp python3 -I tools/repeat-control.py --selftest",
+      "exit": 0,
+      "observed": "SELFTEST: PASS (29 cases); TMPDIR listing empty afterwards (scratch removed on pass)",
+      "receipt": ".ufo/waves/round-59/w1/T59W1S46/repeat-control-selftest-at-head.log"
+    },
+    {
+      "name": "fnmatch overlap",
+      "command": "python3 -c fnmatch checks",
+      "exit": 0,
+      "observed": "recipe-path-matches-cell-glob: True; actual-selftest-prefix-matches-cell-glob: True"
+    },
+    {
+      "name": "blame current lines",
+      "command": "git blame -L 1545,1545 -L 1551,1551 -L 1597,1598 -L 2199,2199 -- SKILL.md",
+      "exit": 0,
+      "observed": "1545=5b703c6f, 1551=9df9212d, 1597-1598=5b703c6f, 2199=5b703c6f"
+    },
+    {
+      "name": "git log -S sentence history",
+      "command": "git log -S for 'a seventh case is recorded since round 16' / 'deepens one recorded case' / old and new registry cell wording",
+      "exit": 0,
+      "observed": "qualifier and cell wording changed only at 5b703c6f (round-53 fix pass 2); 'deepens one recorded case' only at 9df9212d (round 12)"
+    }
+  ],
+  "smallest_repair": [
+    "SKILL.md:1545: replace (`tameshi-r12-*`) with (`tameshi-r12-repeat-control-selftest.*`) — one table row, line-count-neutral, matches tools/repeat-control.py:629 and sibling row :2199",
+    "SKILL.md:1551: qualify the stale count in place, mirroring the round-53 qualifier style used at :1597-1598; single line, line-neutral",
+    "SKILL.md:1597-1598: no edit (already repaired at 5b703c6f)",
+    "corpus/routed-defects.json R49.3 row: status fixed + commit + seat + refreshed evidence lines 1545/1551/1597-1598 + note recording C's round-53 landing; convention per R49.4 row (:916-928)",
+    "adjacent same-class disclosure: tools/repeat-control.py:66-67 docstring says selftest scratch lives under /tmp literally while code uses strict_scratch_root() (:156-160); one-line doc fix, optional rider"
+  ],
+  "checks": [
+    "red-before/green-after: grep -c 'selftest tree (`tameshi-r12-*`)' SKILL.md 1->0; grep -c 'never a seventh independently measured gate' SKILL.md 1->0",
+    "green-after: rerun python3 tools/repeat-control.py --selftest in scratch clone; exit 0, PASS (29 cases), zero TMPDIR residue (reproduced at HEAD this seat)",
+    "byte-conformance: registry cell selftest glob equals the mkdtemp prefix literal at tools/repeat-control.py:629",
+    "credit discipline: repeat round-53's frozen re-key/credit check for the round-12 registry section (corpus/lessons/round-53.md:119-123) since round 49 routed these lines as credit-bearing"
+  ],
+  "confidence": "high",
+  "unknowns": [
+    "exact wording of sub-item B's qualifier is the fixing seat's decision (pattern: SKILL.md:1597-1598 qualifier)"
+  ],
+  "hygiene": {
+    "installs": "none",
+    "git_mutations": "none (read-only queries only)",
+    "clone_created": false,
+    "production_writes": "none",
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S46 (TMPDIR set inside; receipt copied to seat dir; deleted before yield)"
+  }
+}

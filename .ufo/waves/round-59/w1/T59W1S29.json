@@ -1,0 +1,68 @@
+{
+  "seat": "T59W1S29",
+  "role": "critic (leaf)",
+  "round": 59,
+  "lane_base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "surface": "absolute path",
+  "candidate_observed": false,
+  "candidate_tool_absent_evidence": "git cat-file -e base:tools/executor-source-pin.py -> absent; git log --all -- tools/executor-source-pin.py -> empty",
+  "frozen_counter_run": false,
+  "tools_installed": [],
+  "tools_used": {"git": "2.56.0", "python": "3.14.8"},
+  "claim_boundary": {
+    "inside": ["--repo as absolute path (counter passes absolute --repo in all 24 invocations; must exit 0 on equal class)"],
+    "outside_unscored": ["absolute/traversal/trailing-slash/empty --path spellings", "symlinked --repo", "git stderr filesystem-existence oracle"]
+  },
+  "git_primitive_probes": [
+    {"path": "tools/runner.py", "result": "blob rc=0"},
+    {"path": "/tools/runner.py", "result": "fatal: path does not exist in commit rc=128 (no root-anchoring)"},
+    {"path": "./tools/runner.py", "result": "blob rc=0"},
+    {"path": "tools/../tools/runner.py", "result": "fatal: exists on disk but not in commit rc=128 (no tree traversal)"},
+    {"path": "/../tools/runner.py", "result": "does not exist rc=128"},
+    {"path": "../../etc/passwd", "result": "fatal: outside repository rc=128"},
+    {"path": "/etc/passwd", "result": "fatal: exists on disk but not in commit rc=128"},
+    {"path": "tools/runner.py/", "result": "does not exist rc=128"},
+    {"path": "", "result": "root tree (non-blob)"},
+    {"path": "ls-tree -- /tools/runner.py", "result": "fatal: Invalid path '/tools' rc=128 (pathspec syntax differs from object-name syntax)"}
+  ],
+  "successful_attack": {
+    "target": "hybrid gate resolving absolute --path via filesystem (strawman, not candidate)",
+    "demonstration": "trusted=equal, candidate=forged, --path external file byte-equal to trusted blob -> rc=0 EXECUTOR_SOURCE_BOUND despite declared-source drift",
+    "false_bound_cases": ["/etc/passwd", "$WORK/evil.py (external, trusted-equal)"],
+    "counter_blindness": "strawman passes all frozen-style relative fixtures (equal->0, changed->1); frozen counter never sends absolute --path",
+    "receipt": "strawman-demo.txt"
+  },
+  "failed_attacks": [
+    {"id": "A1", "claim": "filesystem-existence oracle via git stderr", "verdict": "failed/informational: failure either way, no false pass"},
+    {"id": "A2", "claim": "symlinked --repo fixture-root confusion", "verdict": "failed: git -C resolves; counter resolve()+toplevel assertion neutralizes"},
+    {"id": "A3", "claim": "pure traversal escape via git object syntax", "verdict": "failed: git refuses 'outside repository'; vulnerability requires filesystem resolution (see successful attack)"},
+    {"id": "A4", "claim": "absolute --path moves a frozen verdict", "verdict": "failed: all 24 fixtures use repo-relative spellings"}
+  ],
+  "sound_behavior_proposal": [
+    "hand --path verbatim to git object lookup; never filesystem-resolve or normalize",
+    "trusted miss/non-blob -> exit 2 EXECUTOR_SOURCE_UNAVAILABLE",
+    "candidate miss/non-blob -> exit 1 EXECUTOR_SOURCE_DRIFT; blob inequality -> exit 1",
+    "optional argv validation (leading /, .. component, empty, NUL) is verdict-neutral under verbatim lookup",
+    "pin ./-component acceptance explicitly (recommend accept; git-resolved, confinement-preserving)"
+  ],
+  "cli_test": {
+    "staged": ".ufo/waves/round-59/w1/T59W1S29/stage/tools/executor-source-pin-abspath-test.sh",
+    "strawman_reference": ".ufo/waves/round-59/w1/T59W1S29/stage/tools/executor-source-pin-abspath-strawman.py",
+    "cases": ["relative equal->0 BOUND", "relative changed->1 DRIFT", "/tools/runner.py->2 UNAVAILABLE", "$WORK/evil.py->2 UNAVAILABLE", "/etc/passwd->2 UNAVAILABLE", "../../etc/passwd->2 UNAVAILABLE", "tools/../tools/runner.py->2 UNAVAILABLE", "tools/runner.py/->2 UNAVAILABLE"],
+    "calibration": {
+      "sound_verbatim_reference": "PASS 8/8",
+      "hostile_hybrid_strawman": "FAIL on absolute external and absolute system (rc=0 EXECUTOR_SOURCE_BOUND)"
+    }
+  },
+  "impact_on_scoring": "none on the frozen 24; absolute --path branch unscored. Finding is an admission-hardening requirement on the implementation L1 admits.",
+  "recommendations": [
+    "admit only implementations passing the staged abspath test",
+    "keep frozen counter unchanged for scoring; run staged test as unscored admission gate",
+    "record ./-component decision",
+    "require gate-owned reason lines (closes A1 oracle as hygiene)"
+  ],
+  "receipts": ".ufo/waves/round-59/w1/T59W1S29-receipts/",
+  "report": ".ufo/waves/round-59/w1/T59W1S29.md",
+  "scratch_deleted": true
+}

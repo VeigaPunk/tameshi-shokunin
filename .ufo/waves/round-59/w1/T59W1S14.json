@@ -1,0 +1,79 @@
+{
+  "seat": "T59W1S14",
+  "round": 59,
+  "wave": "w1",
+  "cell": {
+    "path": "tools/日本語.py",
+    "class": "changed",
+    "expected_exit": 1,
+    "expected_token": "EXECUTOR_SOURCE_DRIFT"
+  },
+  "inputs_read": [
+    "/home/vgpnk/.omp/agent/RULES.md",
+    ".ufo/evidence/round-59/contract.json",
+    ".ufo/evidence/round-59/measure.py"
+  ],
+  "lane_observation": {
+    "tool_at_base_b83f1bfc": "absent",
+    "tool_at_freeze_e9cc34be": "absent",
+    "note": "counter prints tool-absent passed=0/24 when tool missing and no --tool override"
+  },
+  "fixtures": {
+    "scratch_root": "/fast/scratch/hyaku/tameshi-r59/T59W1S14",
+    "scratch_deleted_after_receipt_copy": true,
+    "env": "GIT_* stripped, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, PYTHONDONTWRITEBYTECODE=1, TMPDIR=scratch",
+    "fixtureA_minimal": {
+      "trusted": "66b72636a06a1015f3bce434eed1f147b5a5db50",
+      "changed": "a45722837c34446ac76358596dc08bd2c592b67a"
+    },
+    "fixtureB_full_chain": {
+      "trusted": "2416d2003a9cd8dd4c59820753ee90eb13b1ddd1",
+      "changed": "1a032cc4ec72356d9cabec7c439d4f797c4b5d1d",
+      "missing": "97e4d63a629d95b3cce30d5df0df8da9c4ffcc80",
+      "unrelated": "a26874d483715e153341566c7b265e0cdcb69c31",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "17bdffe517ecc17150660061da0ba91193b8f7cf",
+      "worktree_state_at_tool_run_time": "dangling symlink tools/日本語.py -> elsewhere.py"
+    }
+  },
+  "object_facts": {
+    "trusted": {"mode": "100644", "type": "blob", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "size": 23, "content": "print(\"real executor\")"},
+    "changed": {"mode": "100644", "type": "blob", "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "size": 24, "content": "print(\"forged success\")"},
+    "blobs_equal": false,
+    "blob_oids_path_independent": true,
+    "ls_tree_quoting_note": "git quotes the non-ASCII filename in ls-tree output; --path-filtered meta parsing unaffected"
+  },
+  "oracle": {
+    "file": ".ufo/waves/round-59/w1/T59W1S14/receipts/oracle-changed-jp.py",
+    "decision_source": "committed git objects only (ls-tree <rev> -- <path>); worktree never read",
+    "results": [
+      {"case": "A candidate=CHANGED (assigned cell)", "exit": 1, "stdout": "EXECUTOR_SOURCE_DRIFT candidate-blob=fbd2ab209ba4a77846c0898c79d4b579331975b7 trusted-blob=74e4df76f9a60662749e2aaf076f67e311f66cdb", "frozen_counter_ok": true},
+      {"case": "A candidate=TRUSTED (equal control)", "exit": 0, "stdout": "EXECUTOR_SOURCE_BOUND", "frozen_counter_ok": false},
+      {"case": "A candidate=0000000000000000000000000000000000000000 (unresolvable guard)", "exit": 2, "stdout": "EXECUTOR_SOURCE_UNAVAILABLE candidate-unresolvable", "frozen_counter_ok": false},
+      {"case": "B candidate=CHANGED_B, worktree=dangling symlink", "exit": 1, "stdout": "EXECUTOR_SOURCE_DRIFT candidate-blob=fbd2ab209ba4a77846c0898c79d4b579331975b7 trusted-blob=74e4df76f9a60662749e2aaf076f67e311f66cdb", "frozen_counter_ok": true}
+    ]
+  },
+  "counter_misclassification_review": {
+    "false_pass": {
+      "finding": "confirmed for this cell",
+      "mechanism": "frozen counter builds the full version chain per path before any tool run; worktree is left as dangling symlink tools/日本語.py -> elsewhere.py during all six class invocations; a worktree-reading tool fails the open() and mapping any read failure to DRIFT/exit 1 matches this cell's expected outcome",
+      "demonstration": "strawman-worktree-tool.py scored ok=true by counter rule (exit==1 and token in stdout+stderr) while inspecting zero committed objects",
+      "cell_scope": "hazard covers changed/missing/symlink (expected 1); equal/unrelated/unresolvable reject the strawman"
+    },
+    "false_fail": {
+      "finding": "none on this host",
+      "vectors_checked": ["non-ASCII NFC argv round-trip", "ls-tree core.quotepath quoting", "safe.directory same-user fixtures", "python3 -I isolated mode", "30s timeout headroom", "identical modes 100644 both blobs"],
+      "locale": "en_US.UTF-8"
+    }
+  },
+  "installs": [],
+  "writes": {
+    "report": ".ufo/waves/round-59/w1/T59W1S14.md",
+    "json": ".ufo/waves/round-59/w1/T59W1S14.json",
+    "receipts_dir": ".ufo/waves/round-59/w1/T59W1S14/receipts/",
+    "stage_dir": ".ufo/waves/round-59/w1/T59W1S14/stage/ (empty; no production patch assigned to this seat)"
+  },
+  "blockers": [
+    "tools/executor-source-pin.py absent at base b83f1bfc and freeze e9cc34be; 24/24 verdict depends on the gate implementation owned by other seat(s)"
+  ]
+}

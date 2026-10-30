@@ -1,0 +1,61 @@
+{
+  "seat": "T59W1S50",
+  "round": 59,
+  "lane": "TameshiR59 w1",
+  "claim_boundary": "C1 operability: executor-source-pin gate compares declared executor source Git blobs to verifier-supplied trusted revision. NOT execution attestation or closure-completeness proof.",
+  "frozen_counter": {
+    "path": ".ufo/evidence/round-59/measure.py",
+    "frozen_rev": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "modified": false,
+    "tool_blob_at_frozen_rev": "absent (git show rev:tools/executor-source-pin.py -> path does not exist); --tool override is therefore the only runnable measurement path at this rev"
+  },
+  "interface_under_test": "python3 TOOL --repo REPO --trusted COMMIT --candidate COMMIT --path PATH [--path PATH ...]",
+  "exit_map": {
+    "0": "all declared regular executable-source blobs equal trusted blobs (token EXECUTOR_SOURCE_BOUND expected by counter only as pass-side check)",
+    "1": "EXECUTOR_SOURCE_DRIFT: declared source differs or is missing/nonregular at candidate",
+    "2": "EXECUTOR_SOURCE_UNAVAILABLE: bad args, invalid trusted commit/source, or unresolvable candidate"
+  },
+  "harness": {
+    "always_accept_fake_gate": "stage/harness/fake-gate-accept.py: ignores argv, prints EXECUTOR_SOURCE_BOUND, exit 0",
+    "always_unavailable_fake_gate": "stage/harness/fake-gate-unavailable.py: ignores argv, prints EXECUTOR_SOURCE_UNAVAILABLE on stderr, exit 2",
+    "discriminator_builder": "stage/harness/discriminate.py: parses frozen-counter JSON receipts into per-case rows (path, class, expected, observed exit, observed token, ok)"
+  },
+  "runs": [
+    {
+      "gate": "always-accept",
+      "command": "python3 .ufo/evidence/round-59/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev e9cc34bec3f0c670550552bcc962563e7ae3ca58 --work /fast/scratch/hyaku/tameshi-r59/T59W1S50/work-accept --tool /fast/scratch/hyaku/tameshi-r59/T59W1S50/fake-gate-accept.py",
+      "measure_exit": 1,
+      "summary": "C1_R59 rev=e9cc34bec3f0c670550552bcc962563e7ae3ca58 passed=8/24 C1_R59_PASS=false",
+      "passed": 8,
+      "failed": 16,
+      "false_positive_classes": ["equal", "unrelated"],
+      "caught_classes": ["changed", "missing", "unresolvable", "symlink"],
+      "discriminator": "16/24 rows fail: every changed/missing/symlink row expects exit 1/EXECUTOR_SOURCE_DRIFT, every unresolvable row expects exit 2/EXECUTOR_SOURCE_UNAVAILABLE; fake emits exit 0/EXECUTOR_SOURCE_BOUND uniformly"
+    },
+    {
+      "gate": "always-unavailable",
+      "command": "python3 .ufo/evidence/round-59/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev e9cc34bec3f0c670550552bcc962563e7ae3ca58 --work /fast/scratch/hyaku/tameshi-r59/T59W1S50/work-unavailable --tool /fast/scratch/hyaku/tameshi-r59/T59W1S50/fake-gate-unavailable.py",
+      "measure_exit": 1,
+      "summary": "C1_R59 rev=e9cc34bec3f0c670550552bcc962563e7ae3ca58 passed=4/24 C1_R59_PASS=false",
+      "passed": 4,
+      "failed": 20,
+      "false_positive_classes": ["unresolvable"],
+      "caught_classes": ["equal", "changed", "missing", "unrelated", "symlink"],
+      "discriminator": "20/24 rows fail: every equal/unrelated row expects exit 0, every changed/missing/symlink row expects exit 1/EXECUTOR_SOURCE_DRIFT; fake emits exit 2/EXECUTOR_SOURCE_UNAVAILABLE uniformly. Only the 4 unresolvable rows match, and only because both exit code and token coincide with the fake's constant output"
+    }
+  ],
+  "per_case": "stage/receipts/discriminator.json holds all 48 rows (24 cases x 2 fakes) with observed stdout/stderr",
+  "cross_fake_discriminator": {
+    "always_accept_failing_rows": 16,
+    "always_unavailable_failing_rows": 20,
+    "union_of_caught_classes": ["equal", "changed", "missing", "unrelated", "unresolvable", "symlink"],
+    "conclusion": "The two constant-output fakes disagree on which rows they falsely pass (accept: equal+unrelated; unavailable: unresolvable), so each 24-case run discriminates its fake on at least 16 rows and no constant fake can reach 24/24. A correct gate must produce all three exit codes and both DRIFT and UNAVAILABLE tokens path-dependently."
+  },
+  "verification_notes": {
+    "frozen_counter_unmodified": true,
+    "production_untouched": true,
+    "fixture_git_writes": "only inside counter-created scratch fixture repos under /fast/scratch; each fixture root asserted by counter itself",
+    "no_installs": "no tools installed; python3 stdlib only",
+    "scratch_deleted_before_yield": true
+  }
+}

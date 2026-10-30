@@ -1,0 +1,64 @@
+# T59W1S09 receipts — cell path 'tools/space name.py' x class 'missing'
+# Frozen artifacts verified:
+#   contract.json sha256 849e5d58a4e6d2b54e8fe4a95d7a46a5461412e1afaa97c57b7016fb7bd7e2d3 (matches .ufo/evidence/round-59/freeze.json)
+#   measure.py    sha256 f6dc274efa7d2bdc8018a9f511747a8c0c5c143058049af4f3d0245c79b2d40b (matches freeze.json)
+#   git 2.56.0, python 3.14.8, no installs required/performed.
+#
+# Frozen counter pre-state on production lane (read-only evidence):
+#   .ufo/evidence/round-59/before.exit = 1
+#   .ufo/evidence/round-59/before.stdout = C1_R59 rev=b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a passed=0/24 C1_R59_PASS=false reason=tool-absent
+#   tools/executor-source-pin.py absent from lane at HEAD e9cc34be and in all history (git log --all -- tools/executor-source-pin.py: empty)
+
+== fixture construction (fixture_driver.py, exact mirror of frozen measure.py for PATHS[1])
+cmd: python3 /fast/scratch/hyaku/tameshi-r59/T59W1S09/fixture_driver.py
+out: {"path": "tools/space name.py",
+      "repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S09/fixture-1",
+      "trusted": "d4ae498f720432b3f9ffd9f6fe4b6529bd54b9a7",
+      "versions": {"equal": "d4ae498f720432b3f9ffd9f6fe4b6529bd54b9a7",
+                   "changed": "9e6f6b8cf1444f3a2a48812c4072843c6f456407",
+                   "missing": "b9c775dfba25d29d0102e62ae36feb4990e98d9f",
+                   "unrelated": "03eaba90ba7a5dfb2645ac244c5317f89ad50445",
+                   "unresolvable": "0000000000000000000000000000000000000000",
+                   "symlink": "c3dca1212dc18aef9504a567b14e6977ee437826"}}
+
+== git source-object type/mode/content verification (rev-pinned, list argv)
+cmd: git -C fixture-1 ls-tree <rev> -- 'tools/space name.py'  (and full tree)
+trusted d4ae498f: 100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/space name.py
+changed 9e6f6b8c: 100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7	tools/space name.py
+missing b9c775df: (no output — path absent from tree; tools/ tree still present)
+unrelated 03eaba90: 100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/space name.py
+                    100644 blob 5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c	unrelated.txt
+symlink c3dca121: 120000 blob a66620d9fcdca1d09c541464669234d720772947	tools/space name.py
+
+cmd: printf 'print("real executor")\n' | git hash-object --stdin   -> 74e4df76f9a60662749e2aaf076f67e311f66cdb
+cmd: printf 'print("forged success")\n' | git hash-object --stdin  -> fbd2ab209ba4a77846c0898c79d4b579331975b7
+cmd: sha256sum contents -> real 872bd7f932b21b09a727a1ce53203edc3bdfaba48861969175b15675829042da
+                          forged 6f82d456a7d577f6351b67fde7c029e2b367b9f9db73ae47d3d9a4467c0ee249
+cmd: git -C fixture-1 cat-file -t d4ae498f:tools/space name.py  -> blob (rc 0)
+cmd: git -C fixture-1 cat-file -t b9c775df:'tools/space name.py'
+     -> fatal: path 'tools/space name.py' exists on disk, but not in 'b9c775df...' (rc 128)
+cmd: git -C fixture-1 cat-file -p c3dca121:'tools/space name.py' | od -c -> e l s e w h e r e . p y (12 bytes, no newline)
+
+== on-disk worktree state at tool-run time (after symlink build step)
+cmd: ls -la fixture-1/tools/
+out: lrwxrwxrwx 1 vgpnk vgpnk 12 ... space name.py -> elsewhere.py   (dangling symlink for ALL classes)
+
+== argv preservation through exact counter invocation
+cmd: python3 -I stub_argv.py --repo fixture-1 --trusted d4ae498f... --candidate b9c775df... --path 'tools/space name.py'
+out: ARGV_REPR=['.../stub_argv.py', '--repo', '...', '--trusted', 'd4ae498f...', '--candidate', 'b9c775df...', '--path', 'tools/space name.py']
+     EXECUTOR_SOURCE_BOUND
+     => space path arrives as ONE argv element; frozen counter cannot split it.
+
+== shell-split hazard (what an unquoted shell=True tool would hit)
+cmd: git show b9c775dfba25d29d0102e62ae36feb4990e98d9f:tools/space name.py   (unquoted)
+out: fatal: path 'tools/space' does not exist in 'b9c775dfba25d29d0102e62ae36feb4990e98d9f' (rc 128)
+cmd: git rev-parse --verify '0000000000000000000000000000000000000000^{commit}'
+out: fatal: Needed a single revision (rc 128)
+
+== independent oracle run across all six candidates for this path (oracle_cell.py)
+class=equal       rc=0 expected=0 token=EXECUTOR_SOURCE_BOUND       -> OK  (candidate_entry == trusted_entry, 100644 blob 74e4df76)
+class=changed     rc=1 expected=1 token=EXECUTOR_SOURCE_DRIFT       -> OK  (candidate-source-differs, fbd2ab20)
+class=missing     rc=1 expected=1 token=EXECUTOR_SOURCE_DRIFT       -> OK  (candidate-source-missing, candidate_entry=null)
+class=unrelated   rc=0 expected=0 token=EXECUTOR_SOURCE_BOUND       -> OK  (blob 74e4df76 identical, unrelated.txt ignored)
+class=unresolvable rc=2 expected=2 token=EXECUTOR_SOURCE_UNAVAILABLE -> OK (candidate-unresolvable)
+class=symlink     rc=1 expected=1 token=EXECUTOR_SOURCE_DRIFT       -> OK  (candidate-source-differs, mode 120000 blob a66620d9)

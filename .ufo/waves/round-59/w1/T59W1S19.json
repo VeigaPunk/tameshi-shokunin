@@ -1,0 +1,112 @@
+{
+  "seat": "T59W1S19",
+  "round": 59,
+  "wave": "w1",
+  "cell": {
+    "path": "tools/-runner.py",
+    "path_index": 3,
+    "class": "equal",
+    "expected_exit": 0,
+    "expected_token": "EXECUTOR_SOURCE_BOUND"
+  },
+  "inputs_read": [
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-59/contract.json",
+    "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-59/measure.py",
+    "/home/vgpnk/.omp/agent/RULES.md"
+  ],
+  "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "fixture": {
+    "scratch_root": "/fast/scratch/hyaku/tameshi-r59/T59W1S19",
+    "repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S19/fx/repo",
+    "env_parity": ["GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1"],
+    "toplevel_asserted": true,
+    "path": "tools/-runner.py",
+    "trusted": "b1673bd754c7e0e801b9444fa0708fb699a9a738",
+    "changed": "22943243873c9db005f816fd13d3a4a648f9ef47",
+    "missing": "b689912b039b9bf5bc61740ae9863b45cf3d4248",
+    "unrelated": "f894596cec9c06e87a673ad193efacb660304709",
+    "symlink": "75ae86b9ce1e5fbcfb5b18da555c9cd55cda69e5",
+    "source_object_at_trusted": {
+      "mode": "100644",
+      "type": "blob",
+      "oid": "74e4df76f9a60662749e2aaf076f67a311f66cdb",
+      "bytes": 23,
+      "content": "print(\"real executor\")\\n",
+      "index_mode": "100644",
+      "hash_object_equals_rev_parse": true
+    },
+    "blob_at_changed": "fbd2ab209ba4a77846c0898c79d4b579331975b7",
+    "blob_at_unrelated": "74e4df76f9a60662749e2aaf076f67a311f66cdb",
+    "mode_at_symlink": "120000",
+    "end_state_worktree_is_symlink": true
+  },
+  "oracle": {
+    "file": "receipts/oracle-equal-dash-runner.py",
+    "scope": "single cell: tools/-runner.py / equal; generic single-path contract logic",
+    "invocation": "python3 -I oracle --repo REPO --trusted T --candidate C --path tools/-runner.py",
+    "required_tests": {
+      "equal_candidate_trusted": {
+        "exit": 0,
+        "stdout": "EXECUTOR_SOURCE_BOUND: tools/-runner.py mode=100644 blob=74e4df76f9a60662749e2aaf076f67a311f66cdb bytes=23"
+      },
+      "negative_control_changed": {
+        "exit": 1,
+        "stdout": "EXECUTOR_SOURCE_DRIFT: candidate bytes differ from trusted blob"
+      }
+    },
+    "supplementary_same_path": {
+      "missing": {"exit": 1, "token": "EXECUTOR_SOURCE_DRIFT"},
+      "unrelated": {"exit": 0, "token": "EXECUTOR_SOURCE_BOUND"},
+      "symlink": {"exit": 1, "stdout": "EXECUTOR_SOURCE_DRIFT: non-regular source object at candidate: mode=120000 type=blob"},
+      "unresolvable_zero_commit": {"exit": 2, "token": "EXECUTOR_SOURCE_UNAVAILABLE"}
+    }
+  },
+  "counter_harness_probe": {
+    "note": "frozen measure.py run on scratch with --tool oracle; harness-fidelity observation only, NOT certification (--tool override is documented 'never used for certification')",
+    "lane": "/fast/scratch/hyaku/tameshi-r59/T59W1S19/fx/repo",
+    "rev": "b1673bd754c7e0e801b9444fa0708fb699a9a738",
+    "cell_result": {
+      "path": "tools/-runner.py",
+      "class": "equal",
+      "expected": 0,
+      "exit": 0,
+      "stdout": "EXECUTOR_SOURCE_BOUND: tools/-runner.py mode=100644 blob=74e4df76f9a60662749e2aaf076f67a311f66cdb bytes=23\n",
+      "stderr": "",
+      "ok": true
+    },
+    "dash_runner_row": {"equal": 0, "changed": 1, "missing": 1, "unrelated": 0, "unresolvable": 2, "symlink": 1},
+    "row_all_ok": true,
+    "aggregate": "passed=24/24 C1_R59_PASS=true",
+    "counter_exit": 0,
+    "counter_fixture_blob_matches_independent_fixture": "74e4df76f9a60662749e2aaf076f67a311f66cdb"
+  },
+  "misclassification_review": {
+    "counter_can_misclassify_this_cell_by_construction": false,
+    "empirically_confirmed": true,
+    "points": [
+      "counter guards leading-dash path with '--' in all its git calls; --path value starts with 't' so argparse-safe; row behaves identically to other paths",
+      "GIT_* stripped and global/system gitconfig nulled; deterministic blob confirmed by identical oid across independent constructions",
+      "equal-cell candidate is always the resolvable trusted commit",
+      "tool-side conservative hazard: end-state worktree file is a 120000 symlink; a worktree-reading tool would false-FAIL this cell; commit-reading tools unaffected",
+      "single cell cannot detect skipped-work/always-accept or trusted-to-itself comparison; aggregate 24 cells and claim-external controls cover that shared boundary",
+      "token check is substring-based but combined with exact exit equality, adequate for this cell"
+    ]
+  },
+  "stage": {
+    "root": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-59/w1/T59W1S19/stage",
+    "production_patch": "none required (probe seat); stage left empty",
+    "production_mutated": false,
+    "git_or_jj_mutated_outside_scratch": false
+  },
+  "tooling": {
+    "installs": [],
+    "used": {"git": "2.56.0", "python": "3.14.8"}
+  },
+  "receipts": [
+    "receipts/fixture-build.log",
+    "receipts/oracle-tests.log",
+    "receipts/counter-harness-probe.log",
+    "receipts/oracle-equal-dash-runner.py"
+  ],
+  "scratch_deleted_after_receipt_copy": true
+}

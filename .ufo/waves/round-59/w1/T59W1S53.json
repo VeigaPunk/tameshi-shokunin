@@ -1,0 +1,68 @@
+{
+  "seat": "T59W1S53",
+  "round": 59,
+  "wave": "w1",
+  "role": "connector",
+  "axes": ["operability"],
+  "milestone": "Connect round58 bent-executor forgery to declared source-identity prerequisite",
+  "contract_read": [
+    ".ufo/evidence/round-59/contract.json",
+    ".ufo/evidence/round-59/measure.py"
+  ],
+  "prior_evidence_read_only": [
+    ".ufo/evidence/round-58/c2/measure.py (lines 27-28, 370: counter executes registry-check bytes taken from candidate lane at REV)",
+    ".ufo/evidence/round-58/c2/mutants.json",
+    ".ufo/evidence/round-58/integrate/control-stop.json (\"C2 independently falsified by executor forgery\")",
+    ".ufo/waves/round-58/w1/T59W1RevengerC2-receipts/attack.py (CHEAT_GATE / BENT_RC literals, attack-b-out.txt false PASS)",
+    ".ufo/waves/round-58/w2/T58W2CritC2.md (independent reproduction; real C0 executor rejects: expected 0 got 3, detail=sham)"
+  ],
+  "probe": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S53 (TMPDIR set, deleted before yield)",
+    "mutation": "none (read-only; no fixture git writes, no clone)",
+    "commands": [
+      "python3 AST-literal_eval extraction of BENT_RC and CHEAT_GATE from retained attack.py",
+      "git -C <fleet> show 2a32aa8228d5f86a85c81a923a3148bf792a9538:tools/registry-check.py",
+      "git -C <fleet> show b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a:tools/registry-check.py",
+      "git -C <fleet> ls-tree 2a32aa8228d5 tools/registry-check.py tools/receipt-revision-gate.py",
+      "git -C <fleet> show e9cc34bec3f0c670550552bcc962563e7ae3ca58:tools/executor-source-pin.py"
+    ],
+    "observed": {
+      "BENT_rc_sha256_16": "3c058a32f93023bc",
+      "BENT_rc_len": 1267,
+      "trusted_registry_check_r58_base": {"rc": 0, "bytes": 72606, "sha256_16": "7984540cd3cbfcff", "mode": "100755"},
+      "trusted_registry_check_r59_base": {"rc": 0, "bytes": 72606, "sha256_16": "7984540cd3cbfcff"},
+      "bent_equals_trusted": false,
+      "ls_tree_r58_base": ["100755 blob 9f9d0b7c1882ae7bf6d2917036f88c75c74c5b09 tools/registry-check.py", "100755 blob c77e91a2296cec75b21e44f877adc0965137d772 tools/receipt-revision-gate.py"],
+      "executor_source_pin_at_freeze": "absent (git show rc=128); no implementation assumed or fabricated"
+    }
+  },
+  "connection": "Round-58 C2 false PASS succeeded because the frozen counter executed claimant-authored registry-check.py bytes taken from the candidate lane at REV with no binding to a trusted revision (bent runner fabricates held/mutant tallies; cheat gate never reads receipts). The round-59 pin gate closes that hole as a pre-execution admission filter: byte-inequality, absence, or nonregularity of any declared executor source at the candidate forces non-admission. Counterfactual application to the round-58 forged revision (trusted=pre-attack, path=tools/registry-check.py) lands exactly on exit 1 EXECUTOR_SOURCE_DRIFT.",
+  "gate_can_reject": [
+    "candidate declared source blob differs in raw bytes from trusted -> exit 1 EXECUTOR_SOURCE_DRIFT (the round-58 bent-runner/cheat-gate case)",
+    "declared source missing at candidate -> exit 1",
+    "declared source nonregular at candidate (symlink/gitlink/directory) -> exit 1",
+    "candidate revision unresolvable -> exit 2 EXECUTOR_SOURCE_UNAVAILABLE",
+    "bad arguments; invalid/unresolvable trusted commit; missing/nonregular trusted source -> exit 2",
+    "scope note: only declared paths compared; unrelated tree changes at candidate do not trip the gate (unrelated class -> exit 0)"
+  ],
+  "gate_cannot_certify": [
+    "execution attestation: exit 0 never runs the candidate source and says nothing about whether an executor ran, which bytes ran, or whether held/mutant/verdict tallies reflect real execution",
+    "closure completeness: undeclared bent helpers, undeclared cheat gate, config, or PATH wrappers pass; the declared closure's completeness is verifier-supplied, not verified",
+    "dependency or interpreter identity: blobs compared, not python/git/libc/PATH/environment",
+    "author-independent trust of the trusted revision: a cheat baked into trusted bytes would be certified, not caught",
+    "distinction between forgery and legitimate update: any byte difference is DRIFT; updates must be re-trusted by the verifier",
+    "re-admission of round-58 C2 or admission/scoring of round-59; per contract it is a binding prerequisite, not round-58 C2 certification"
+  ],
+  "boundary_paragraph": "tools/executor-source-pin.py is a bounded source-identity prerequisite, not an execution attestation. Given a verifier-supplied trusted commit and a candidate commit, it compares the raw Git blobs of declared regular executable-source paths and exits 0 only when all declared blobs are byte-equal, 1 (EXECUTOR_SOURCE_DRIFT) when a declared source differs, is missing, or is nonregular at the candidate, and 2 (EXECUTOR_SOURCE_UNAVAILABLE) on bad arguments, an invalid trusted commit/source, or an unresolvable candidate. It exists because round 58's C2 falsification showed a claimant-swapped executor (tools/registry-check.py) fabricating held/mutant tallies while the frozen counter still printed PASS: nothing bound the executed bytes to a trusted revision. Applied pre-execution, this gate rejects that forgery class at the declared-path level. It certifies nothing about execution, dependency or interpreter identity, completeness of the declared closure (undeclared bent helpers pass), or the trustworthiness of the verifier-supplied trusted revision itself; a cheat baked into the trusted bytes would be certified, not caught. Exit 0 authorizes the declared sources to be treated as the trusted sources for subsequent measurement; the honesty of that subsequent measurement remains the verifier's separate responsibility.",
+  "second_order_notes": [
+    "r59 frozen counter extracts the tool from the lane revision and runs it only on verifier-built fixtures with verifier-fixed expected exits/tokens; measured tool remains claimant-authored code, disciplined by the claim's skipped-work/always-accept controls failing",
+    "fixture coverage note: trusted-side nonregular source is not among the 24 fixtures; contract exit_map text maps invalid trusted source to exit 2 (spec coverage note, not a measured defect)"
+  ],
+  "staged_files": [
+    ".ufo/waves/round-59/w1/T59W1S53/stage/fragments/executor-source-pin-boundary.md"
+  ],
+  "tools_installed": "none (pacman untouched)",
+  "counter_run_on_production": false,
+  "scratch_removed": true,
+  "verification": "Read-only byte probe only; no build/lint/test, no gate run, no fixture git mutation, no clone, no production edit, no commit/push."
+}

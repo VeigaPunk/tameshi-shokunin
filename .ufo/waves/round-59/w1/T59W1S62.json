@@ -1,0 +1,63 @@
+{
+  "seat": "T59W1S62",
+  "round": 59,
+  "wave": "w1",
+  "role": "critic",
+  "question": "Can the script discriminate path/class from revision hashes without source comparison? Fixture independence attack.",
+  "frozen_counter": ".ufo/evidence/round-59/measure.py",
+  "probes": [
+    {
+      "name": "cheat-seq",
+      "file": "stage/cheat-seq.py",
+      "strategy": "call-counting state in $TMPDIR; fixed exit transcript 0,1,1,0,2,1 per path; no repo access, no comparison",
+      "passed": "24/24",
+      "verdict": "PASS (false accept: white-box overfit)"
+    },
+    {
+      "name": "cheat-fp",
+      "file": "stage/cheat-fp.py",
+      "strategy": "fingerprint frozen fixture constants (commit message, known blob strings); never reads --trusted",
+      "passed": "24/24",
+      "verdict": "PASS (false accept: white-box overfit)"
+    },
+    {
+      "name": "honest",
+      "file": "stage/honest.py",
+      "strategy": "reference implementation: ls-tree mode+oid equality vs trusted; invalid/nonregular trusted -> 2",
+      "passed": "24/24",
+      "verdict": "PASS (control)"
+    },
+    {
+      "name": "hashonly",
+      "file": "stage/hashonly.py",
+      "strategy": "revision-hash syntax only: candidate==trusted -> 0, 0*40 -> 2, else 1; no repo access",
+      "passed": "20/24",
+      "verdict": "FAIL: exactly the 4 'unrelated' cases (exit 1, expected 0); proves hash-only discrimination capped at 20/24"
+    },
+    {
+      "name": "fixture-hash-determinism",
+      "file": "stage/run1.txt vs stage/run2.txt",
+      "strategy": "instrumented counter copy prints trusted hashes; two runs diffed",
+      "verdict": "fixture commit hashes nondeterministic across runs (wall-clock timestamps); hash hardcoding impossible"
+    }
+  ],
+  "findings": [
+    "Hash-only discrimination bounded at 20/24: the 4 'unrelated' fixtures are the only cases forcing any tree/blob comparison.",
+    "Counter cannot distinguish blob comparison from transcript recognition: two independent cheats (sequence-state, content-fingerprint) pass 24/24.",
+    "State channel: counter sets TMPDIR=<work> once for all 24 invocations; even per-invocation TMPDIR leaves --repo writable and unchecked.",
+    "The 24 cases share trusted commits, content, ordering, and env; they are one deterministic transcript, not independent draws.",
+    "Gap is verifier-fixable (blind fixtures); not repairable by the submitted tool and out of scope for the executor claim."
+  ],
+  "blind_probes_for_l1": [
+    "Permute class order per fixture and randomize path<->fixture assignment (kills sequence cheat).",
+    "Per-invocation fresh TMPDIR plus post-run fixture-repo integrity check (closes both state channels).",
+    "Randomize fixture constants: nonce payload bytes, commit messages, author, repo names (kills fingerprint cheat).",
+    "Content-invariance probe: equal trusted/candidate blobs with nonce content must exit 0.",
+    "Hidden negative controls: path absent at trusted (2); path is a tree at candidate (1); mode-only change 100644->100755 (1); ancestor candidate; multi --path invocation with one drifting path (1).",
+    "Double-run requirement with different seeds for the blind counter.",
+    "Trusted-neglect canary: trusted blob equals forged-content blob, candidate differs (--trusted-ignoring tools fail)."
+  ],
+  "axes_impacted": ["operability"],
+  "tooling_installs": [],
+  "scratch_deleted": true
+}

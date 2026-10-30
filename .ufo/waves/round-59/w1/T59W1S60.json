@@ -1,0 +1,78 @@
+{
+  "seat": "T59W1S60",
+  "round": 59,
+  "wave": "w1",
+  "axis": "operability",
+  "milestone": "Run source census validate at round-start current registry and retain stdout stderr exit; independently count rows/tier/status using Python parser matching 0-3-space contract.",
+  "commands": [
+    {
+      "name": "sources-census validate (registry row 'sources-census' argv)",
+      "cmd": "TMPDIR=/fast/scratch/hyaku/tameshi-r59/T59W1S60 bash .ufo/evidence/kaika-round-1/sources-census-v2.sh",
+      "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "exit": 1,
+      "stdout_receipt": ".ufo/waves/round-59/w1/T59W1S60/receipts/census.stdout",
+      "stderr_receipt": ".ufo/waves/round-59/w1/T59W1S60/receipts/census.stderr",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "independent Python 0-3-space census count",
+      "cmd": "TMPDIR=/fast/scratch/hyaku/tameshi-r59/T59W1S60 PYTHONDONTWRITEBYTECODE=1 python3 .ufo/waves/round-59/w1/T59W1S60/stage/sources-census-count.py",
+      "cwd": "/home/vgpnk/Projects/shokunin/tameshi-shokunin",
+      "exit": 0,
+      "stdout_receipt": ".ufo/waves/round-59/w1/T59W1S60/receipts/pycount.json",
+      "stderr_bytes": 0
+    }
+  ],
+  "census_observed": {
+    "part_A": {
+      "rows": 148,
+      "malformed": 0,
+      "tiers": {"A": 130, "B": 14, "C": 4},
+      "status": {"mined": 117, "queued": 22, "rejected": 9},
+      "dup_ids": [],
+      "enum_tier_inflation_violations": []
+    },
+    "part_B1_informational": {"no_id_cite_count": 26},
+    "part_B2_exit_relevant": {
+      "violations": ["no-id-or-path-cite: S280 corpus/knowledge/scratch-root-contract.md (Errors.html)"],
+      "verdict": "SOURCES_CENSUS: VIOLATIONS"
+    }
+  },
+  "python_independent_count": {
+    "row_rule": "^ {0,3}\\|\\s*S\\d{3,}\\s*\\| (census-valid 0-3-space contract)",
+    "rows": 148,
+    "malformed": 0,
+    "tiers": {"A": 130, "B": 14, "C": 4},
+    "status": {"mined": 117, "queued": 22, "rejected": 9},
+    "kinds": {"spec": 11, "docs": 75, "paper": 32, "code": 17, "tool": 1, "dataset": 1, "talk": 1, "book": 2, "community": 2, "own-work": 6},
+    "dup_ids": [],
+    "enum_violations": [],
+    "column_zero_only_delta": {"rows_0_space": 148, "rows_added_by_0_3_rule": 0, "ids_only_in_0_3": []}
+  },
+  "agreement": {
+    "rows_match": true,
+    "tiers_match": true,
+    "status_match": true,
+    "note": "Python 0-3-space parser reproduces shell census Part A exactly; no indented (1-3 space) rows exist in corpus/SOURCES.md, so the 0-3-space rule adds zero rows over column-zero matching today."
+  },
+  "findings": [
+    "sources-census gate exits 1 at round-start current registry: single B2 violation, S280 (GNU Coding Standards Errors.html) mined row's used-by file corpus/knowledge/scratch-root-contract.md cites neither id S280 nor source basename 'Errors.html'. Registry row 'sources-census' (tools/registry.json:575-586) expects exit 0, so this row would not hold as committed; remediation is out of this seat's scope.",
+    "All Part A contract-v1 checks are clean (148 rows, 13 fields each, enums valid, no dup ids, no tier-A community inflation, no mined used-by missing files)."
+  ],
+  "files_changed": [
+    ".ufo/waves/round-59/w1/T59W1S60/stage/sources-census-count.py",
+    ".ufo/waves/round-59/w1/T59W1S60/receipts/census.stdout",
+    ".ufo/waves/round-59/w1/T59W1S60/receipts/census.stderr",
+    ".ufo/waves/round-59/w1/T59W1S60/receipts/census.exit",
+    ".ufo/waves/round-59/w1/T59W1S60/receipts/pycount.json",
+    ".ufo/waves/round-59/w1/T59W1S60/receipts/pycount.stderr",
+    ".ufo/waves/round-59/w1/T59W1S60.md",
+    ".ufo/waves/round-59/w1/T59W1S60.json"
+  ],
+  "installs": [],
+  "risks": [
+    "sources-census registry row currently red (exit 1) due to B2 S280; L1/parent owns disposition.",
+    "B1 strict id-cite has 26 informational misses; not exit-relevant."
+  ],
+  "blockers": []
+}

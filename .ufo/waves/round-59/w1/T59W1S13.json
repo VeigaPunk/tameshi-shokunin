@@ -1,0 +1,62 @@
+{
+  "seat": "T59W1S13",
+  "round": 59,
+  "cell": {"path": "tools/日本語.py", "path_index": 2, "class": "equal"},
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "frozen_counter": ".ufo/evidence/round-59/measure.py",
+  "contract": ".ufo/evidence/round-59/contract.json",
+  "lane_observation": {
+    "lane_repo_head": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "tool_at_base_rev": "absent (git cat-file: path 'tools/executor-source-pin.py' does not exist in b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a)",
+    "tool_at_freeze_rev": "absent from tree listing of e9cc34be",
+    "tool_in_worktree": "absent (tools/ has no executor-source-pin.py)",
+    "counter_behavior_if_run_at_base_without_tool_override": "prints 'C1_R59 rev=<rev> passed=0/24 C1_R59_PASS=false reason=tool-absent' and exits 1"
+  },
+  "fixture": {
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S13",
+    "fixture_repo": "/fast/scratch/hyaku/tameshi-r59/T59W1S13/fixture",
+    "construction": "independent re-implementation of frozen measure.py steps for ix=2; env scrubbed of GIT_*, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, TMPDIR=scratch",
+    "toplevel_assert": "git rev-parse --show-toplevel resolved to fixture dir: OK",
+    "trusted_commit": "a54863a8df37f27780058e7892e6f39a1a318e36",
+    "changed_commit": "acf9fdcf5e17c1015e412b54876fe644f8e90070",
+    "trusted_entry": {"mode": "100644", "type": "blob", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "size": 23, "content": "print(\"real executor\")\\n", "sha256": "872bd7f932b21b09a727a1ce53203edc3bdfaba48861969175b15675829042da"},
+    "changed_entry": {"mode": "100644", "type": "blob", "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "size": 24, "content": "print(\"forged success\")\\n"},
+    "path_utf8_bytes": "746f6f6c732fe697a5e69cace8aa9e2e7079",
+    "path_normalization": "CJK codepoints U+65E5 U+672C U+8A9E have no canonical decomposition; string is simultaneously NFC and NFD — no normalization ambiguity on any platform"
+  },
+  "counter_crosscheck": {
+    "measure_paths_equals_contract_paths": true,
+    "cell_path_bytes_match_fixture": true,
+    "frozen_expectation_for_cell": {"expected_exit": 0, "required_token_substring": "EXECUTOR_SOURCE_BOUND", "ok_rule": "out.returncode == expected and token in (out.stdout+out.stderr)"}
+  },
+  "oracle": {
+    "script": ".ufo/waves/round-59/w1/T59W1S13/stage/oracle_equal_nihongo.py",
+    "independence": "uses only git plumbing (rev-parse/ls-tree/cat-file); shares no code with the production tool, which is absent at base/freeze",
+    "runs": [
+      {"name": "equal cell: candidate=TRUSTED", "expect": "equal", "verdict": "equal", "expected_exit": 0, "expected_token": "EXECUTOR_SOURCE_BOUND", "expect_met": true, "rc": 0},
+      {"name": "changed fixture: candidate=CHANGED", "expect": "changed", "verdict": "drift (contract category for counter class 'changed')", "expected_exit": 1, "expected_token": "EXECUTOR_SOURCE_DRIFT", "expect_met": true, "rc": 0},
+      {"name": "unresolvable probe: candidate=0000...0000", "verdict": "unavailable", "expected_exit": 2, "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE", "rc": 0}
+    ]
+  },
+  "misclassification_review": {
+    "fixture_sound_for_equal": "candidate commit IS the trusted commit; object graphs identical by construction, so a conforming gate cannot drift on this cell",
+    "unicode_handling": "argv-passed path re-encodes to identical UTF-8 bytes; git stores path bytes verbatim (verified via ls-tree quoted form and ls-files --stage); CJK path is NFC==NFD so no filesystem normalization hazard",
+    "counter_ok_rule_weakness": "token test is substring over stdout+stderr with no exclusion of wrong tokens: a tool printing both EXECUTOR_SOURCE_BOUND and EXECUTOR_SOURCE_DRIFT while exiting 0 would pass this cell; skipped work (never reading the path) is also undetectable in this cell in isolation — the 24-cell aggregate and L1's separate skipped-work/always-accept controls are the compensating gate",
+    "worktree_trap_not_applicable_to_equal": "by the time the counter runs any class, the fixture worktree's tools/日本語.py is a symlink to nonexistent elsewhere.py; a worktree-reading tool would fail this cell, but a blob-comparing conforming gate is unaffected; this is the counter correctly failing a bad tool, not misclassifying a good one",
+    "verdict": "no counter-side construction defect found for cell (tools/日本語.py, equal); expected exit 0 + EXECUTOR_SOURCE_BOUND is the correct and only conforming outcome"
+  },
+  "installs": [],
+  "checks_i_own_not_run": "frozen counter NOT run on production per seat spec; L1 owns deciding measurement",
+  "receipts": [
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/build_fixture.sh",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/cell.env",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/receipts_build.log",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/receipts_counter_review.log",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/receipts_oracle.log",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/receipts_oracle_rerun.log",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/oracle_equal_cell.json",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/oracle_changed_fixture.json",
+    ".ufo/waves/round-59/w1/T59W1S13/receipts/oracle_unresolvable_probe.json"
+  ]
+}

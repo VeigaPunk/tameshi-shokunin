@@ -1,0 +1,103 @@
+{
+  "seat": "T59W1S61",
+  "round": 59,
+  "lane": "L1",
+  "assignment": "check 24-case counter target against do-nothing strategies (absent tool, fake token-only success, fake always-zero) in scratch only",
+  "freeze": {
+    "commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "ancestor_of_head": true,
+    "worktree_matches_frozen_blobs": true,
+    "blobs": {
+      "measure.py": "74e53e313371a4743e63e1ecdc57fbf9096ee95a",
+      "contract.json": "8854e4d5d65c4369a99a9427606a9beff4f7c24a"
+    }
+  },
+  "scratch": {
+    "root": "/fast/scratch/hyaku/tameshi-r59/T59W1S61",
+    "tmpdir_set": true,
+    "deleted_before_yield": true,
+    "lane_repo": {
+      "path": "/fast/scratch/hyaku/tameshi-r59/T59W1S61/lane",
+      "rev": "50269a5d1fe82f309a93d62cc5db373b7a7290ae",
+      "has_tool_file": false,
+      "toplevel_asserted": true
+    }
+  },
+  "counter_target": 24,
+  "counter_logic": {
+    "expected_exit": {"equal": 0, "changed": 1, "missing": 1, "unrelated": 0, "unresolvable": 2, "symlink": 1},
+    "expected_token": {"0": "EXECUTOR_SOURCE_BOUND", "1": "EXECUTOR_SOURCE_DRIFT", "2": "EXECUTOR_SOURCE_UNAVAILABLE"},
+    "ok_rule": "returncode == expected and expected_token in stdout+stderr",
+    "pass_rule": "passed == 24"
+  },
+  "probes": [
+    {
+      "name": "absent-tool",
+      "tool": null,
+      "command": "python3 measure.py --lane <scratch-lane> --rev 50269a5d1fe82f309a93d62cc5db373b7a7290ae --work work-absent",
+      "observed_passed": 0,
+      "observed_summary": "C1_R59 rev=50269a5d1fe82f309a93d62cc5db373b7a7290ae passed=0/24 C1_R59_PASS=false reason=tool-absent",
+      "counter_exit": 1,
+      "reaches_24": false
+    },
+    {
+      "name": "fake-token-only-bound",
+      "tool": "fake-bound.py (prints EXECUTOR_SOURCE_BOUND, exit 0, ignores args)",
+      "command": "python3 measure.py --lane <scratch-lane> --rev 50269a5d… --work work-bound --tool fake-bound.py",
+      "observed_passed": 8,
+      "per_class_pass": {"equal": 4, "changed": 0, "missing": 0, "unrelated": 4, "unresolvable": 0, "symlink": 0},
+      "counter_exit": 1,
+      "reaches_24": false
+    },
+    {
+      "name": "fake-token-only-all-tokens",
+      "tool": "fake-alltokens.py (prints all three tokens, exit 0, ignores args)",
+      "command": "python3 measure.py --lane <scratch-lane> --rev 50269a5d… --work work-alltokens --tool fake-alltokens.py",
+      "observed_passed": 8,
+      "per_class_pass": {"equal": 4, "changed": 0, "missing": 0, "unrelated": 4, "unresolvable": 0, "symlink": 0},
+      "counter_exit": 1,
+      "reaches_24": false
+    },
+    {
+      "name": "fake-always-zero-silent",
+      "tool": "fake-silent-zero.py (exit 0, no output)",
+      "command": "python3 measure.py --lane <scratch-lane> --rev 50269a5d… --work work-silent --tool fake-silent-zero.py",
+      "observed_passed": 0,
+      "per_class_pass": {"equal": 0, "changed": 0, "missing": 0, "unrelated": 0, "unresolvable": 0, "symlink": 0},
+      "counter_exit": 1,
+      "reaches_24": false
+    },
+    {
+      "name": "fake-constant-drift-exit1",
+      "tool": "fake-exit1.py (prints EXECUTOR_SOURCE_DRIFT, exit 1, ignores args; strongest constant fake)",
+      "command": "python3 measure.py --lane <scratch-lane> --rev 50269a5d… --work work-exit1 --tool fake-exit1.py",
+      "observed_passed": 12,
+      "per_class_pass": {"equal": 0, "changed": 4, "missing": 4, "unrelated": 0, "unresolvable": 0, "symlink": 4},
+      "counter_exit": 1,
+      "reaches_24": false
+    }
+  ],
+  "why_none_reaches_24": [
+    "constant exit codes cap at 12/24: expected exits are split {0: 8 cases, 1: 12, 2: 4}; input-blind fakes match one value",
+    "tokens are necessary but not sufficient: per-case expected token is checked, extra tokens ignored; silent always-zero scores 0",
+    "changed vs unrelated require real blob-content comparison (same blob at different commit must pass; changed blob must fail)",
+    "missing vs symlink require candidate tree-entry inspection (absent vs non-regular); unresolvable requires rev resolution of '0'*40 (exit 2)",
+    "even a heuristic argv-hex fake (trusted->0, '0'*40->2, else 1) fails unrelated and caps at 20/24",
+    "absent tool is an explicit tool-absent fail state; counter is verifier-side, frozen, builds all 24 fixtures itself, accepts no implementation-reported credit"
+  ],
+  "conclusion": "target 24 unreachable by all do-nothing strategies tested: 0/8/8/0/12 observed; counter demands genuine declared-blob comparison",
+  "tooling_installs": [],
+  "production_scoring": false,
+  "stage": ".ufo/waves/round-59/w1/T59W1S61/stage/ (empty)",
+  "receipts": [
+    ".ufo/waves/round-59/w1/T59W1S61/receipts/absent-tool.log",
+    ".ufo/waves/round-59/w1/T59W1S61/receipts/fake-bound.log",
+    ".ufo/waves/round-59/w1/T59W1S61/receipts/fake-alltokens.log",
+    ".ufo/waves/round-59/w1/T59W1S61/receipts/fake-silent-zero.log",
+    ".ufo/waves/round-59/w1/T59W1S61/receipts/fake-exit1.log"
+  ],
+  "verification_gaps": [
+    "content-reading-but-dishonest tools not built; heuristic-hex 20/24 bound derived from counter source, not executed",
+    "no certification of production tool at base b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a; L1 owns measurement"
+  ]
+}

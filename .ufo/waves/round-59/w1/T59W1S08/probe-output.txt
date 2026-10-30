@@ -1,0 +1,32 @@
+=== fixture construction (mirrors frozen measure.py, path index 1) ===
+fixture toplevel: /fast/scratch/hyaku/tameshi-r59/T59W1S08/fixture-1
+TRUSTED=99d2c5da18e0cd4a8c4ba4e1eba93f19f3d5c2a9
+CHANGED=f65203882545053938e8f85eb929d1fa4001bdfb
+
+=== git object evidence: source-object type/mode/content ===
+--- trusted commit ---
+100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb	tools/space name.py
+blob
+print("real executor")
+--- changed commit ---
+100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7	tools/space name.py
+blob
+print("forged success")
+--- blob ids ---
+trusted blob:  74e4df76f9a60662749e2aaf076f67e311f66cdb
+changed blob:  fbd2ab209ba4a77846c0898c79d4b579331975b7
+--- trailing- newline/byte check ---
+0000000   p   r   i   n   t   (   "   r   e   a   l       e   x   e   c
+0000020   u   t   o   r   "   )  \n
+0000027
+
+=== oracle runs ===
+--- class equal (control: candidate=trusted; frozen expectation exit=0, token EXECUTOR_SOURCE_BOUND) ---
+EXECUTOR_SOURCE_BOUND: tools/space name.py matches trusted revision
+oracle exit: 0
+--- class changed (frozen expectation exit=1, token EXECUTOR_SOURCE_DRIFT) ---
+EXECUTOR_SOURCE_DRIFT: declared source blob differs from trusted
+oracle exit: 1
+
+=== frozen-counter expected mapping for this cell (from measure.py) ===
+expected=1 token=EXECUTOR_SOURCE_DRIFT for path='tools/space name.py' class=changed

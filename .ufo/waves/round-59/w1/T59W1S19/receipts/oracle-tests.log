@@ -1,0 +1,23 @@
+=== REQUIRED TEST A: cell (path=tools/-runner.py, class=equal) candidate=trusted ===
+EXECUTOR_SOURCE_BOUND: tools/-runner.py mode=100644 blob=74e4df76f9a60662749e2aaf076f67e311f66cdb bytes=23
+exit=0
+
+=== REQUIRED TEST B: sensitivity negative control, candidate=changed ===
+EXECUTOR_SOURCE_DRIFT: candidate bytes differ from trusted blob
+exit=1
+
+=== SUPPLEMENTARY observations for same path row ===
+-- candidate=missing (expect 1 DRIFT):
+EXECUTOR_SOURCE_DRIFT: declared path missing at candidate: tools/-runner.py
+exit=1
+-- candidate=unrelated (expect 0 BOUND, path-scoped):
+EXECUTOR_SOURCE_BOUND: tools/-runner.py mode=100644 blob=74e4df76f9a60662749e2aaf076f67e311f66cdb bytes=23
+exit=0
+-- candidate=symlink (expect 1 DRIFT, mode 120000):
+EXECUTOR_SOURCE_DRIFT: non-regular source object at candidate: mode=120000 type=blob
+exit=1
+-- candidate=0000000000000000000000000000000000000000 (expect 2 UNAVAILABLE):
+EXECUTOR_SOURCE_UNAVAILABLE: unresolvable trusted/candidate revision
+exit=2
+-- end-state worktree check: file is symlink after fixture build (tools must read commits, not worktree):
+lrwxrwxrwx 1 vgpnk vgpnk 12 Oct 30 11:31 /fast/scratch/hyaku/tameshi-r59/T59W1S19/fx/repo/tools/-runner.py -> elsewhere.py

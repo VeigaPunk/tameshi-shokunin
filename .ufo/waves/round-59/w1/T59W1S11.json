@@ -1,0 +1,74 @@
+{
+  "seat": "T59W1S11",
+  "round": 59,
+  "wave": "w1",
+  "cell": {"path": "tools/space name.py", "class": "unresolvable"},
+  "contract": {
+    "interface": "python3 TOOL --repo REPO --trusted COMMIT --candidate COMMIT --path PATH [--path PATH ...]",
+    "expected_exit": 2,
+    "expected_token": "EXECUTOR_SOURCE_UNAVAILABLE",
+    "exit_map": {"0": "EXECUTOR_SOURCE_BOUND", "1": "EXECUTOR_SOURCE_DRIFT", "2": "EXECUTOR_SOURCE_UNAVAILABLE"}
+  },
+  "fixture": {
+    "builder": "independent, mirrors frozen measure.py construction for this single path",
+    "trusted_rev": "e7c340c1c8a65983b72efa28483606db885053c2",
+    "versions": {
+      "equal": "e7c340c1c8a65983b72efa28483606db885053c2",
+      "changed": "a8c30405662c3fade62e2905a5b276d8d473b0a1",
+      "missing": "3a43605f72c8df5991e7c8183670b0e759b6281a",
+      "unrelated": "e9c22996ac8088be5bdf7a28734eb7f82ef87410",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "1374fe5ae8a6fbdcb85da4761a8fc4cda62db1c3"
+    },
+    "trusted_object_evidence": {
+      "cat_file_t": "blob",
+      "ls_tree": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb\ttools/space name.py",
+      "content": "print(\"real executor\")"
+    },
+    "symlink_object_evidence": "120000 blob a66620d9fcdca1d09c541464669234d720772947\ttools/space name.py",
+    "unresolvable_probe": {
+      "argv": ["git", "-C", "<fixture>", "rev-parse", "--verify", "0000000000000000000000000000000000000000^{commit}"],
+      "returncode": 128,
+      "stderr": "fatal: Needed a single revision"
+    }
+  },
+  "oracle": {
+    "artifact": ".ufo/waves/round-59/w1/T59W1S11/stage/tests/oracle-space-name-unresolvable.py",
+    "scope": "cell 'tools/space name.py' only, all six classes cross-checked",
+    "method": "candidate^{commit} must resolve (else exit 2/UNAVAILABLE); declared path must be a blob at candidate and byte-equal trusted blob (else exit 1/DRIFT); else exit 0/BOUND",
+    "results": {
+      "equal": {"oracle_exit": 0, "oracle_token": "EXECUTOR_SOURCE_BOUND", "match": true},
+      "changed": {"oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT", "match": true},
+      "missing": {"oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT", "match": true},
+      "unrelated": {"oracle_exit": 0, "oracle_token": "EXECUTOR_SOURCE_BOUND", "match": true},
+      "unresolvable": {"oracle_exit": 2, "oracle_token": "EXECUTOR_SOURCE_UNAVAILABLE", "match": true},
+      "symlink": {"oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT", "match": true}
+    }
+  },
+  "state_independence_check": {
+    "description": "unresolvable candidate probed against fixture in original state and after mutating working-tree content",
+    "original_rc": 128,
+    "changed_rc": 128,
+    "conclusion": "cell outcome independent of fixture state; candidate 0000000000000000000000000000000000000000 never resolves"
+  },
+  "counter_misclassification_review": {
+    "fixture_construction_risk": "none for this cell: candidate is the constant '0'*40, expected (2, EXECUTOR_SOURCE_UNAVAILABLE) is independent of repo state and of fixture build order",
+    "false_pass_vector": "exit 2 / EXECUTOR_SOURCE_UNAVAILABLE is also the tool's argument-error and trusted-unavailable exit; if the tool mis-parses the space-containing --path or fails to resolve trusted:path, the frozen counter still scores this cell ok because it checks only (returncode, token substring), not failure cause",
+    "false_fail_vector": "low: git rev-parse --verify fails for the all-zeros object under the counter's sanitized env (GIT_CONFIG_GLOBAL=/dev/null, no GIT_* passthrough); a tool mapping any candidate git error to DRIFT(1) instead of UNAVAILABLE(2) would be a genuine tool defect the counter correctly flags",
+    "env_risk": "counter passes argv as a list, so the space in 'tools/space name.py' needs no shell quoting; TMPDIR confined to --work; 30s timeout ample"
+  },
+  "verification": {
+    "commands_run": [
+      "mkdir -p /fast/scratch/hyaku/tameshi-r59/T59W1S11/{work,out}",
+      "TMPDIR=/fast/scratch/hyaku/tameshi-r59/T59W1S11/work python3 probe_space_name.py --work work --out out",
+      "git -C work/fixture-space rev-parse --verify 0000000000000000000000000000000000000000^{commit}  (original and content-mutated states, rc=128 both)"
+    ],
+    "observed": "all six oracle classifications match the frozen counter's expected exit/token contract for path 'tools/space name.py'",
+    "receipts": [".ufo/waves/round-59/w1/T59W1S11/receipts/fixture-receipt.json", ".ufo/waves/round-59/w1/T59W1S11/receipts/run.log"]
+  },
+  "tooling": {
+    "installs": [],
+    "reason": "system git 2.56.0 and python 3.14.8 sufficed; no installs required"
+  },
+  "scope_note": "independent instrument probe only; no production gate staged, no execution attestation claimed"
+}

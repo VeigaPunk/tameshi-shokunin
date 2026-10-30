@@ -1,0 +1,104 @@
+{
+  "seat": "T59W1S10",
+  "round": 59,
+  "wave": "round-59-w1",
+  "cell": {
+    "path": "tools/space name.py",
+    "path_note": "declared source path contains a literal ASCII space (0x20)",
+    "class": "unrelated",
+    "expected_exit": 0,
+    "expected_token": "EXECUTOR_SOURCE_BOUND"
+  },
+  "contract": {
+    "source": ".ufo/evidence/round-59/contract.json",
+    "frozen_counter": ".ufo/evidence/round-59/measure.py",
+    "freeze_commit": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+    "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+    "exit_map": {
+      "0": "all declared regular executable-source blobs equal trusted blobs (EXECUTOR_SOURCE_BOUND)",
+      "1": "EXECUTOR_SOURCE_DRIFT: declared source differs or is missing/nonregular at candidate",
+      "2": "EXECUTOR_SOURCE_UNAVAILABLE: bad arguments, invalid trusted commit/source or unresolvable candidate"
+    }
+  },
+  "tool_presence_at_base": {
+    "command": "git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file -t b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a:tools/executor-source-pin.py",
+    "observed": "fatal: path 'tools/executor-source-pin.py' does not exist in 'b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a'",
+    "note": "gate tool absent at base; this seat stages no production patch, per assignment"
+  },
+  "environment": {
+    "git": "git version 2.56.0",
+    "python": "Python 3.14.8",
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S10",
+    "tmpdir": "/fast/scratch/hyaku/tameshi-r59/T59W1S10",
+    "env_hygiene_replicated_from_measure_py": {
+      "GIT_CONFIG_GLOBAL": "/dev/null",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "GIT_* vars stripped": true
+    },
+    "installs": "none — git 2.56.0 and python 3.14.8 preinstalled; no packages installed or updated"
+  },
+  "fixture_construction": {
+    "method": "byte-faithful independent port of frozen measure.py construction for this single path (fixture-1 equivalent)",
+    "commands_shape": [
+      "git init -q <repo>; assert rev-parse --show-toplevel resolves to repo",
+      "write 'print(\"real executor\")\\n' -> tools/space name.py; git add -- 'tools/space name.py'; commit -> trusted",
+      "write 'print(\"forged success\")\\n'; git add -- path; commit -> changed",
+      "rewrite identical source; write unrelated.txt; git add -- path unrelated.txt; commit -> unrelated"
+    ],
+    "commits": {
+      "trusted(equal)": "dc961e5b9024e1bb1c62cb60aa509cbd687bef0a",
+      "changed": "30da4d2b295ddc36d4b829eb66af433f6ecd1033",
+      "unrelated": "444f1767339707a275963f3b96f53b57a1400784"
+    },
+    "commit_hash_note": "hashes vary per run (committer timestamp); expectations derive from the run's own trusted hash, so classification is deterministic"
+  },
+  "source_object_verification": {
+    "path": "tools/space name.py",
+    "trusted": {"mode": "100644", "type": "blob", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\n"},
+    "unrelated_candidate": {"mode": "100644", "type": "blob", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\n"},
+    "changed_candidate": {"mode": "100644", "type": "blob", "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "content": "print(\"forged success\")\n"},
+    "diff_tree_trusted_to_unrelated": "A\tunrelated.txt  (only change; declared source untouched)",
+    "candidate_commit_resolution": "git rev-parse --verify '444f1767339707a275963f3b96f53b57a1400784^{commit}' -> OK"
+  },
+  "oracle": {
+    "script": "stage/receipts/oracle_cell.py",
+    "independence": "verdict derived solely from git plumbing: rev-parse --verify <rev>^{commit}; ls-tree <rev> -- <path> for mode/type/oid; cat-file -p <oid> for content",
+    "rule": "exit 0 EXECUTOR_SOURCE_BOUND iff candidate entry exists, type=blob, mode in {100644,100755}, and (mode,oid) equal trusted; missing/nonregular/differing -> 1 EXECUTOR_SOURCE_DRIFT; unresolvable commit or bad trusted entry -> 2 EXECUTOR_SOURCE_UNAVAILABLE",
+    "states_tested": [
+      {"class": "equal", "oracle_exit": 0, "oracle_token": "EXECUTOR_SOURCE_BOUND", "frozen_expected_exit": 0, "match": true},
+      {"class": "changed", "oracle_exit": 1, "oracle_token": "EXECUTOR_SOURCE_DRIFT", "frozen_expected_exit": 1, "match": true},
+      {"class": "unrelated", "oracle_exit": 0, "oracle_token": "EXECUTOR_SOURCE_BOUND", "frozen_expected_exit": 0, "match": true}
+    ],
+    "summary_line": "ORACLE_CELL path='tools/space name.py' states=3 match=true (exit 0)"
+  },
+  "frozen_counter_misclassification_review": {
+    "cell_expected": "exit 0, token EXECUTOR_SOURCE_BOUND present in stdout+stderr",
+    "space_path_handling": {
+      "finding": "measure.py makes every subprocess call as an argv list (grep for 'shell=' -> no occurrences; default shell=False), so 'tools/space name.py' is never word-split",
+      "argv_sites": [
+        "git -C <repo> add -- <path>",
+        "[sys.executable, '-I', tool, '--repo', ..., '--trusted', ..., '--candidate', ..., '--path', path]"
+      ],
+      "empirical": "git ls-tree -z HEAD -- 'tools/space name.py' roundtrip returned the entry with the space path intact"
+    },
+    "counter_side_defects_for_this_cell": "none observed",
+    "intended_discrimination_note": "a tool under test that enlarged scope to closure-completeness (failing because unrelated.txt exists at candidate) is scored fail by this cell — that is the contract's designed anti-enlargement check (trust_boundary: declared Git blobs only), not a counter misclassification",
+    "residual_risks": [
+      "tool-side hazard: an implementation that shell-quotes or splits the path internally would see a different/missing file at candidate and exit 1; the counter would then correctly score the cell failed, pinning a real tool bug",
+      "token matching is substring-based on stdout+stderr; a tool printing the wrong token with exit 0 fails the cell (strict, by design)"
+    ]
+  },
+  "scope_compliance": {
+    "production_edits": "none; tool absent at base and no patch staged (assignment: probe only, do not stage production gate)",
+    "frozen_counter_run_on_production": "not run; L1 owns deciding measurement",
+    "scratch_deleted_after_receipt_copy": true,
+    "stage_root": ".ufo/waves/round-59/w1/T59W1S10/stage/"
+  },
+  "receipts": [
+    "stage/receipts/oracle_cell.py",
+    "stage/receipts/oracle_run1.log",
+    "stage/receipts/evidence_raw.log",
+    "stage/receipts/evidence_counter_review.log"
+  ]
+}

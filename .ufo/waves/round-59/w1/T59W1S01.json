@@ -1,0 +1,72 @@
+{
+  "seat": "T59W1S01",
+  "round": 59,
+  "cell": {"path": "tools/runner.py", "class": "equal"},
+  "contract": {
+    "expected_exit": 0,
+    "expected_token": "EXECUTOR_SOURCE_BOUND",
+    "token_stream": "stdout or stderr (counter concatenates both)"
+  },
+  "environment": {
+    "git": "2.56.0",
+    "python": "3.14.8",
+    "scratch": "/fast/scratch/hyaku/tameshi-r59/T59W1S01",
+    "tool_absent_at_base": "tools/executor-source-pin.py not present at b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a (counter prints tool-absent, passed=0/24 until tool exists)"
+  },
+  "fixture": {
+    "construction": "mirrors measure.py ix=0 exactly: git init -q; tools/runner.py = 'print(\"real executor\")\\n'; add; commit as fixture <fixture@example.invalid> gpgsign=false",
+    "trusted": "2393ee61e0c5d7f1fae979f2cad0cc95f44006d4",
+    "changed": "9cab03fc2e6a195c17242310890344ae5093c3d8",
+    "trusted_blob": {
+      "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb",
+      "type": "blob",
+      "mode": "100644",
+      "content": "print(\"real executor\")\n"
+    },
+    "changed_blob": {
+      "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7",
+      "type": "blob",
+      "mode": "100644",
+      "content": "print(\"forged success\")\n"
+    }
+  },
+  "probes": [
+    {
+      "name": "equal",
+      "cmd": "python3 -I stage/oracle-equal-cell.py --repo fixture-0 --trusted 2393ee61... --candidate 2393ee61... --path tools/runner.py",
+      "exit": 0,
+      "stdout": "EXECUTOR_SOURCE_BOUND tools/runner.py blob 74e4df76f9a60662749e2aaf076f67e311f66cdb equal at trusted and candidate",
+      "ok": true
+    },
+    {
+      "name": "changed (negative control on same fixture)",
+      "cmd": "python3 -I stage/oracle-equal-cell.py --repo fixture-0 --trusted 2393ee61... --candidate 9cab03fc... --path tools/runner.py",
+      "exit": 1,
+      "stdout": "EXECUTOR_SOURCE_DRIFT: tools/runner.py blob 74e4df76f9a60662749e2aaf076f67e311f66cdb != fbd2ab209ba4a77846c0898c79d4b579331975b7",
+      "ok": true
+    },
+    {
+      "name": "unresolvable candidate (negative control)",
+      "cmd": "python3 -I stage/oracle-equal-cell.py --repo fixture-0 --trusted 2393ee61... --candidate 0000000000000000000000000000000000000000 --path tools/runner.py",
+      "exit": 2,
+      "stdout": "EXECUTOR_SOURCE_UNAVAILABLE: unresolvable commit 0000000000000000000000000000000000000000",
+      "ok": true
+    }
+  ],
+  "counter_misclassification_review": [
+    "LOW-MODE RISK: fixture blob mode is 100644, not 100755. If the tool requires the exec bit for 'executable-source', the equal cell is falsely failed (exit 1 DRIFT). Contract wording 'regular executable-source blobs' must mean regular blob source of the executor, not mode 100755.",
+    "FALSE-PASS RISK: for the equal cell candidate==trusted, so any tool that only verifies commit resolvability and prints EXECUTOR_SOURCE_BOUND without comparing blobs passes this cell. Counter cannot detect content-blind tools on the equal cell alone; cross-cell changed/missing/symlink classes carry that weight.",
+    "TOKEN PLACEMENT: counter accepts the token on stdout or stderr and does not check for absence of other tokens; a tool emitting both DRIFT and BOUND with exit 0 would pass. Unlikely, noted.",
+    "ENV: counter strips GIT_* vars, sets GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, PYTHONDONTWRITEBYTECODE=1, TMPDIR=work; tool runs under python3 -I (no site-packages) with 30s timeout. Tool must not need user git config, third-party modules, or writes outside the repo read path.",
+    "ARGV: counter passes exactly one --path per invocation for this cell; multi-path aggregation is exercised only if tool sums failures, irrelevant here since single path.",
+    "DETERMINISM: fixture commits are byte-reproducible (fixed identity, gpgsign=false, same content) so trusted hash 2393ee61... is stable across seats; blob compare is content-addressed and immune to commit-hash variance anyway."
+  ],
+  "conclusion": "Cell (tools/runner.py, equal) fixture verified: regular blob, mode 100644, deterministic content; oracle returns exit 0 + EXECUTOR_SOURCE_BOUND on equal, 1 + DRIFT on changed, 2 + UNAVAILABLE on unresolvable. Contract self-consistent; principal misclassification vector is a tool demanding mode 100755 or skipping the blob compare.",
+  "files": [
+    ".ufo/waves/round-59/w1/T59W1S01.md",
+    ".ufo/waves/round-59/w1/T59W1S01.json",
+    ".ufo/waves/round-59/w1/T59W1S01/probes.log",
+    ".ufo/waves/round-59/w1/T59W1S01/stage/oracle-equal-cell.py"
+  ],
+  "installs": []
+}

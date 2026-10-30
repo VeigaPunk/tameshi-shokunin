@@ -1,0 +1,183 @@
+{
+ "meta": {
+  "git_version": "git version 2.56.0"
+ },
+ "probes": [
+  {
+   "id": "P1-fsmonitor-scoping-map",
+   "family": "scoping probe",
+   "attack": "repo-local core.fsmonitor poison; map which invocation shapes consult it",
+   "shapes": {
+    "porcelain-diff-two-commit": {
+     "ran_fsmonitor": false,
+     "rc": 0
+    },
+    "porcelain-diff-quiet": {
+     "ran_fsmonitor": false,
+     "rc": 1
+    },
+    "plumbing-diff-tree": {
+     "ran_fsmonitor": true,
+     "rc": 0
+    },
+    "plumbing-diff-tree-quiet": {
+     "ran_fsmonitor": true,
+     "rc": 1
+    },
+    "plumbing-ls-tree": {
+     "ran_fsmonitor": false,
+     "rc": 0
+    },
+    "plumbing-cat-file": {
+     "ran_fsmonitor": false,
+     "rc": 0
+    },
+    "plumbing-rev-parse": {
+     "ran_fsmonitor": false,
+     "rc": 0
+    }
+   },
+   "belts": {
+    "diff-tree-quiet-fsmonitor-false": {
+     "ran_fsmonitor": false,
+     "rc": 1
+    },
+    "diff-tree-quiet-autoRefresh-false": {
+     "ran_fsmonitor": true,
+     "rc": 1
+    }
+   },
+   "verdict": "fsmonitor consulted by diff-tree (incl. --quiet) but NOT by two-commit porcelain diff, ls-tree, cat-file, or rev-parse; -c core.fsmonitor=false belt neutralizes"
+  },
+  {
+   "id": "P2-commit-level-replace-vs-oid-gate",
+   "family": "ls-tree OID-compare gate",
+   "attack": "refs/replace/968b8c83974a.. -> trusted commit oid",
+   "forged": "968b8c83974ade96b09d90cedac56647dfc5ad5e",
+   "trusted": "5eb56f93c0fcf93fd5a0bbd3c1e72cc339afcb4f",
+   "ls_tree_vulnerable": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb\ttools/runner.py",
+   "ls_tree_hardened": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7\ttools/runner.py",
+   "revparse_vulnerable": "968b8c83974ade96b09d90cedac56647dfc5ad5e",
+   "catfile_vulnerable": "print(\"real executor\")",
+   "verdict": "SUBVERTED check: 100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb\ttools/runner.py",
+   "evidence": {
+    "ls-tree-candidate": {
+     "rc": 0,
+     "out": "100644 blob 74e4df76f9a60662749e2aaf076f67e311f66cdb\ttools/runner.py"
+    },
+    "ls-tree-candidate-no-replace": {
+     "rc": 0,
+     "out": "100644 blob fbd2ab209ba4a77846c0898c79d4b579331975b7\ttools/runner.py"
+    },
+    "rev-parse-candidate": {
+     "rc": 0,
+     "out": "968b8c83974ade96b09d90cedac56647dfc5ad5e"
+    },
+    "rev-parse-candidate-no-replace": {
+     "rc": 0,
+     "out": "968b8c83974ade96b09d90cedac56647dfc5ad5e"
+    },
+    "cat-file-candidate": {
+     "rc": 0,
+     "out": "print(\"real executor\")"
+    },
+    "cat-file-candidate-no-replace": {
+     "rc": 0,
+     "out": "print(\"forged success\")"
+    }
+   }
+  },
+  {
+   "id": "P3-worktree-config-scope",
+   "family": "porcelain diff gate, main worktree",
+   "attack": "diff.external poison in .git/config.worktree vs .git/config, extensions.worktreeConfig=true (local)",
+   "ran_worktree_external": true,
+   "worktree_diff_rc": 0,
+   "ran_local_external": true,
+   "local_diff_rc": 0,
+   "verdict": "WORKTREE CONFIG SCOPE IS LIVE on the main worktree: same subversion as local config",
+   "evidence": {
+    "worktree": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab2/p3-worktree",
+      "diff",
+      "5eb56f93c0fcf93fd5a0bbd3c1e72cc339afcb4f",
+      "968b8c83974ade96b09d90cedac56647dfc5ad5e",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "",
+     "err": ""
+    },
+    "local": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab2/p3-worktree",
+      "diff",
+      "5eb56f93c0fcf93fd5a0bbd3c1e72cc339afcb4f",
+      "968b8c83974ade96b09d90cedac56647dfc5ad5e",
+      "--",
+      "tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "",
+     "err": ""
+    }
+   }
+  },
+  {
+   "id": "P4-alias-resolution-order",
+   "family": "premise control",
+   "attack": "alias.cat-file and alias.zzz both planted; config write verified",
+   "alias_catfile_value": "!echo SHOULD_NOT_RUN_FOR_BUILTINS",
+   "builtin_call_out": "print(\"forged success\")",
+   "builtin_call_rc": 0,
+   "nonbuiltin_call_out": "NONBUILTIN_ALIAS_RAN",
+   "verdict": "RESOLUTION ORDER: git 2.56 runs aliases ONLY for names that are not builtins; builtins are unshadowable via repo config",
+   "evidence": {
+    "cfg": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab2/p4-alias-control",
+      "config",
+      "--local",
+      "--get",
+      "alias.cat-file"
+     ],
+     "rc": 0,
+     "out": "!echo SHOULD_NOT_RUN_FOR_BUILTINS\n",
+     "err": ""
+    },
+    "builtin": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab2/p4-alias-control",
+      "cat-file",
+      "blob",
+      "968b8c83974ade96b09d90cedac56647dfc5ad5e:tools/runner.py"
+     ],
+     "rc": 0,
+     "out": "print(\"forged success\")\n",
+     "err": ""
+    },
+    "nonbuiltin": {
+     "argv": [
+      "/usr/bin/git",
+      "-C",
+      "/fast/scratch/hyaku/tameshi-r59/T59W1S35/lab2/p4-alias-control",
+      "zzz"
+     ],
+     "rc": 0,
+     "out": "NONBUILTIN_ALIAS_RAN\n",
+     "err": ""
+    }
+   }
+  }
+ ]
+}

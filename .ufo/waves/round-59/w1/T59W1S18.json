@@ -1,0 +1,103 @@
+{
+  "seat": "T59W1S18",
+  "round": 59,
+  "kind": "fixture-specific instrument probe",
+  "cell": {
+    "path": "tools/日本語.py",
+    "path_index": 2,
+    "class": "symlink",
+    "expected_exit": 1,
+    "expected_token": "EXECUTOR_SOURCE_DRIFT",
+    "contract_basis": "exit_map.1: a declared source differs or is missing/nonregular at candidate"
+  },
+  "fixture": {
+    "scratch_root": "/fast/scratch/hyaku/tameshi-r59/T59W1S18",
+    "deleted_after_receipts": true,
+    "repo": "fixture-2",
+    "env": {
+      "GIT_CONFIG_GLOBAL": "/dev/null",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "GIT_*": "stripped",
+      "TMPDIR": "<scratch>"
+    },
+    "root_asserted_before_write": true,
+    "versions": {
+      "equal": "08924c987cd13a11e81aacfdf776a8d2089298d9",
+      "changed": "f188a1eb92d6d46f2df19e407f380212b2737ac7",
+      "missing": "8e5fd99996f58fed0eb991ee83d7f2341bf93015",
+      "unrelated": "cff06840ad15ceb3c2cea16767bbba0340a34629",
+      "unresolvable": "0000000000000000000000000000000000000000",
+      "symlink": "df4f60e33d7c699f0633db26fa72f523ce9f7590",
+      "g1_regular_trusted": "1877a25e0c81a6b8aaefee403ce67bf1ee6a8c21",
+      "g2_regular_forged": "465b0734274207f39a97c140a4230444a4d80922"
+    },
+    "object_inspection": {
+      "equal": {"mode": "100644", "type": "blob", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "content": "print(\"real executor\")\\n", "size": 23},
+      "changed": {"mode": "100644", "type": "blob", "oid": "fbd2ab209ba4a77846c0898c79d4b579331975b7", "content": "print(\"forged success\")\\n", "size": 24},
+      "missing": {"entry": null},
+      "unrelated": {"mode": "100644", "type": "blob", "oid": "74e4df76f9a60662749e2aaf076f67e311f66cdb", "unrelated_txt": "100644 blob 5a7efe3a1e6eec7b6fa0f9c4f2384252d295dd7c"},
+      "unresolvable": {"rev_parse_rc": 1},
+      "symlink": {"mode": "120000", "type": "blob", "oid": "a66620d9fcdca1d09c541464669234d720772947", "content": "elsewhere.py", "size": 12, "dangling": true, "target_relative": "elsewhere.py", "worktree": {"is_symlink": true, "is_file": false, "exists": false, "lexists": true}}
+    }
+  },
+  "oracle": {
+    "script": "receipts/oracle.py",
+    "rules": [
+      "trusted unresolvable or trusted path missing/nonregular -> 2 UNAVAILABLE",
+      "candidate unresolvable -> 2 UNAVAILABLE",
+      "candidate path missing -> 1 DRIFT",
+      "candidate entry mode not in {100644,100755} or type != blob -> 1 DRIFT",
+      "blob content differs from trusted -> 1 DRIFT else 0 BOUND"
+    ],
+    "self_test": "first run mis-reported class 'missing' as exit 2; caught by comparing all six classes to the frozen counter expectation table; fixed (entry() now distinguishes bad-commit from absent-path)",
+    "results_original_fixture": {
+      "equal": {"exit": 0, "verdict": "EXECUTOR_SOURCE_BOUND", "match_counter": true},
+      "changed": {"exit": 1, "verdict": "EXECUTOR_SOURCE_DRIFT", "reason": "blob-content-differs", "match_counter": true},
+      "missing": {"exit": 1, "verdict": "EXECUTOR_SOURCE_DRIFT", "reason": "path-missing-at-candidate", "match_counter": true},
+      "unrelated": {"exit": 0, "verdict": "EXECUTOR_SOURCE_BOUND", "match_counter": true},
+      "unresolvable": {"exit": 2, "verdict": "EXECUTOR_SOURCE_UNAVAILABLE", "match_counter": true},
+      "symlink": {"exit": 1, "verdict": "EXECUTOR_SOURCE_DRIFT", "reason": "nonregular-at-candidate mode=120000 type=blob oid=a66620d9fcdca1d09c541464669234d720772947", "match_counter": true}
+    },
+    "results_mutated_fixture": {
+      "g1_regular_trusted": {"exit": 0, "verdict": "EXECUTOR_SOURCE_BOUND"},
+      "g2_regular_forged": {"exit": 1, "verdict": "EXECUTOR_SOURCE_DRIFT", "reason": "blob-content-differs"},
+      "symlink_candidate_while_worktree_at_g2": {"exit": 1, "verdict": "EXECUTOR_SOURCE_DRIFT", "reason": "nonregular-at-candidate mode=120000", "commit_keyed": true}
+    }
+  },
+  "counter_review": {
+    "can_counter_misclassify_this_cell": false,
+    "findings": [
+      "expected=1 and token EXECUTOR_SOURCE_DRIFT for symlink are faithful to contract exit_map.1; grading is exit-equality plus token substring in combined stdout/stderr",
+      "dangling relative symlink (tools/elsewhere.py absent) stores cleanly as mode 120000 blob under counter env; even a hypothetical core.symlinks=false leak would keep this cell's expected outcome (content differs -> DRIFT)",
+      "coverage note: symlink blob content 'elsewhere.py' differs from trusted blob, so pure-content-comparing tools also exit 1; this cell does not by itself force mode inspection, but does catch existence-only tools",
+      "sharpest edge: a tool resolving the symlink via the working tree hits ENOENT and may emit exit 2; contract mandates DRIFT (exit 1) for nonregular-at-candidate, so the counter failing such a tool is correct",
+      "fixture worktree remains at the symlink commit for all 24 runs; worktree-keyed tools misjudge this path's other classes by design and are caught",
+      "git cat-file -t reports 'blob' for the symlink object; only ls-tree/ls-files mode 120000 reveals nonregularity",
+      "ls-tree quotes the non-ASCII path (core.quotepath); counter passes path via argv which round-trips (surrogateescape, Python 3.14 UTF-8); parsing-hazard is tool-side only",
+      "config isolation verified: only .git/config visible inside fixture; unresolvable candidate 0*40 fails rev-parse with rc=1"
+    ]
+  },
+  "commands": [
+    "python3 fixture_build.py | tee fixture_report.json",
+    "python3 -I ./oracle.py --repo $PWD/fixture-2 --trusted 08924c987cd13a11e81aacfdf776a8d2089298d9 --candidate <class-commit> --path 'tools/日本語.py'  (per class, both oracle revisions)",
+    "git -C fixture-2 ls-tree <commit> -- 'tools/日本語.py'; git -C fixture-2 ls-tree <commit> -- unrelated.txt; git rev-parse --verify --quiet '0000000000000000000000000000000000000000^{commit}'",
+    "git -C fixture-2 cat-file -t a66620d9fcdca1d09c541464669234d720772947; git -C fixture-2 cat-file -p a66620d9fcdca1d09c541464669234d720772947",
+    "mutation commits g1/g2 built with explicit -c user.name/-c user.email/-c commit.gpgsign=false inside scratch fixture-2 only"
+  ],
+  "environment": {
+    "python": "3.14.8",
+    "git": "2.56.0",
+    "os": "linux 7.2.11-arch1-1",
+    "fs": "btrfs on /fast (symlink capable)"
+  },
+  "installs": [],
+  "write_scope_compliance": {
+    "fleet_or_lane_mutation": "none",
+    "production_edit": "none",
+    "production_gate_staged": false,
+    "stage_dir": ".ufo/waves/round-59/w1/T59W1S18/stage/ (empty by design)",
+    "frozen_counter_run_on_production": false,
+    "receipts": ".ufo/waves/round-59/w1/T59W1S18/receipts/"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "seat": "T59W1S32",
+  "round": 59,
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "adversarial_item": "multiple paths, one differs",
+  "candidate_observed": false,
+  "axes": ["counter-coverage", "multipath-aggregation-soundness", "vacuous-accept", "path-spelling-authority", "nonregular-objects"],
+  "headline": {
+    "attack": "A1 counter blind spot: frozen counter passes single --path per invocation; a first-path-only gate scores 24/24",
+    "frozen_counter_vs_strawman_first_only": "C1_R59 rev=bb0f386bef139fa3708ccd94b924f1ec804e3514 passed=24/24 C1_R59_PASS=true",
+    "frozen_counter_vs_reference_gate": "C1_R59 rev=bb0f386bef139fa3708ccd94b924f1ec804e3514 passed=24/24 C1_R59_PASS=true",
+    "evidence": "receipts/frozen_counter_summaries.txt"
+  },
+  "attacks_confirmed": [
+    {"id": "A1", "surface": "counter coverage", "result": "first-path-only strawman passes 24/24 frozen while false-accepting multi-path drift", "order_dependent_verdict": {"changed_path_declared_second": 0, "same_evidence_changed_path_first": 1}},
+    {"id": "A2", "surface": "premature saturation", "result": "any-equal strawman passes 24/24 frozen and exits 0 on any multi-path drift where one path matches"},
+    {"id": "A3", "surface": "vacuous declaration", "result": "raw 'git diff --quiet T C -- tools/ghost.py' exits 0; ghost path must map to exit 2 via trusted-side validation"},
+    {"id": "A4", "surface": "nonregular objects", "result": "gitlink (mode 160000) at declared path must exit 1 like symlink; fifo is not committable so nonregular surface is {symlink, gitlink}"}
+  ],
+  "attacks_failed_preserved": [
+    {"id": "F1", "attack": "fifo as nonregular blob", "result": "git add refuses fifos; not representable"},
+    {"id": "F2", "attack": "NFD spelling of tools/日本語.py", "result": "vacuous: name has no decomposition; redone with tools/café.py"},
+    {"id": "F3", "attack": "argparse injection via tools/-runner.py", "result": "value is inert; no injection"},
+    {"id": "F4", "attack": "shell word-splitting on 'space name.py' + hash transcription typo", "result": "produced spurious probe failures; fixed via argv driver and byte-exact hash handling"},
+    {"id": "F5", "attack": "empty --path list", "result": "argparse exits 2; matches exit_map"},
+    {"id": "F6", "attack": "extra undeclared file at candidate", "result": "exit 0 is correct; closure completeness explicitly out of claim"}
+  ],
+  "probes": {
+    "reference_gate": {
+      "changed_one_of_four": 1, "missing_one_of_four": 1, "symlink_one_of_four": 1, "gitlink_one_of_four": 1,
+      "unrelated_only": 0, "unresolvable_candidate": 2, "duplicate_path_idempotent": 0,
+      "order_invariance_24_permutations": [1],
+      "ghost_path": 2, "dot_slash_same_authority": "resolves; drift still caught",
+      "double_slash_spelling": 2, "nfd_spelling_of_nfc_name": 2
+    },
+    "full_log": "receipts/probe_results_final.txt"
+  },
+  "proposed_exact_cli_test": {
+    "path": ".ufo/waves/round-59/w1/T59W1S32/stage/tools/executor-source-pin-multipath-probe.py",
+    "cases": 15,
+    "strawman_first_only": "C1_R59_MULTIPATH passed=6/15 C1_R59_MULTIPATH_PASS=false",
+    "reference_gate": "C1_R59_MULTIPATH passed=15/15 C1_R59_MULTIPATH_PASS=true",
+    "receipt": "receipts/addendum_summaries.txt",
+    "note": "proposed for round+1; round-59 counter is frozen_before_scoring and must not be modified"
+  },
+  "claim_boundary_verdict": {
+    "attack_inside_assignment_boundary": true,
+    "multipath_in_claim_capability_surface": true,
+    "multipath_measured_by_frozen_counter": false,
+    "counter_gap_classification": "frozen tradeoff; do not read C1_R59_PASS as multi-path assurance",
+    "candidate_defect_classification": "a short-circuiting candidate violates frozen exit_map (all declared equal) and must be rejected"
+  },
+  "smallest_sound_behavior": [
+    "resolve candidate to commit first, else exit 2",
+    "every declared path must be a regular blob at trusted, else exit 2 (invalid trusted source)",
+    "compare (type, oid) per declared path at trusted vs candidate; dedupe duplicates; any missing/nonregular/different -> exit 1 naming drifted paths",
+    "verdict independent of --path order; precedence 2 > 1 > 0; no early exit on success"
+  ],
+  "stage_root": ".ufo/waves/round-59/w1/T59W1S32/stage/",
+  "installs": [],
+  "tools_used": {"git": "2.56.0", "python": "3.14.8"},
+  "scratch_deleted": true
+}

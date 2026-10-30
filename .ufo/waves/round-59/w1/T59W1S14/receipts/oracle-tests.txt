@@ -1,0 +1,29 @@
+oracle battery: path=tools/日本語.py class=changed
+== 1. FixtureA minimal: candidate=CHANGED (the assigned cell) ==
+EXECUTOR_SOURCE_DRIFT candidate-blob=fbd2ab209ba4a77846c0898c79d4b579331975b7 trusted-blob=74e4df76f9a60662749e2aaf076f67e311f66cdb
+exit=1
+frozen-counter-check: exit=1 expected=1 token=EXECUTOR_SOURCE_DRIFT in-output=yes ok=true
+
+== 2. FixtureA discrimination control: candidate=TRUSTED (equal) ==
+EXECUTOR_SOURCE_BOUND
+exit=0
+frozen-counter-check: exit=0 expected=1 token=EXECUTOR_SOURCE_DRIFT in-output=no ok=false
+
+== 3. FixtureA guard: candidate=ZEROES (unresolvable) ==
+EXECUTOR_SOURCE_UNAVAILABLE candidate-unresolvable
+exit=2
+frozen-counter-check: exit=2 expected=1 token=EXECUTOR_SOURCE_DRIFT in-output=no ok=false
+
+== 4. FixtureB counter-realistic chain: candidate=CHANGED_B, worktree=dangling-symlink ==
+EXECUTOR_SOURCE_DRIFT candidate-blob=fbd2ab209ba4a77846c0898c79d4b579331975b7 trusted-blob=74e4df76f9a60662749e2aaf076f67e311f66cdb
+exit=1
+frozen-counter-check: exit=1 expected=1 token=EXECUTOR_SOURCE_DRIFT in-output=yes ok=true
+
+== 5. STRAWMAN worktree-reader on FixtureB: candidate=CHANGED_B (never reads candidate commit) ==
+EXECUTOR_SOURCE_DRIFT
+exit=1
+frozen-counter-check: exit=1 expected=1 token=EXECUTOR_SOURCE_DRIFT in-output=yes ok=true
+
+== misclassification review inputs ==
+fixture B worktree at tool-run time: symbolic link -> elsewhere.py (dangling: yes)
+strawman decision source: open(repo/path) only; candidate commit never inspected

@@ -1,0 +1,57 @@
+# T59W1S30 NUL path-handling adversarial probes — observed transcript
+# Host: linux x64, python 3.14, git (system). All fixture git writes used
+# explicit -C under /fast/scratch/hyaku/tameshi-r59/T59W1S30 with toplevel verified.
+# Candidate observed at .ufo/waves/round-59/w1/T59W1S49/stage/tools/executor-source-pin.py
+# (absent at lane HEAD e9cc34b and base b83f1bf — read-only cat-file checks).
+
+== Probe A: NUL delivery through argv (subprocess.run) ==
+$ subprocess.run(["git","rev-parse","a\x00b"], capture_output=True)
+ValueError for 'git' with NUL arg: embedded null byte
+$ subprocess.run([sys.executable,"-c","print(1)","\x00"], capture_output=True)
+ValueError for '/usr/bin/python3' with NUL arg: embedded null byte
+
+== Probe A2: raw execve (os.execv) ==
+$ os.execv("/bin/true", ["/bin/true", "\x00"])
+ValueError: embedded null byte
+
+== Probe B: NUL path at filesystem layer ==
+os.open("tools/a\x00b.py", os.O_RDONLY): ValueError: open: embedded null character in path
+os.stat("x\x00y"):                        ValueError: stat: embedded null character in path
+builtin open("p\x00q","wb"):              ValueError: embedded null byte
+
+== Probe C1: handcrafted git tree object with NUL inside a path name ==
+entry bytes: b"100644 a\x00b\x00" + <20-byte sha>
+$ git -C nulrepo hash-object -w -t tree --stdin
+hash-object rc: 128
+stderr: error: object fails fsck: badTree: cannot be parsed as a tree
+        fatal: refusing to create malformed object
+(subsequent cat-file/ls-tree on the hash: "fatal: Not a valid object name")
+
+== Probe C2: NUL path fed to git mktree (ls-tree format line) ==
+line: b"100644 nul\x00name\t<blob-sha>\n"
+$ git -C nulrepo mktree
+mktree rc: 128  stderr: fatal: input format error: 100644 nul
+(control: a normal single-entry tree b"100644 a\x00"+sha hashes cleanly and
+ ls-tree prints "100644 blob <sha>\ta" — NUL is the entry delimiter, not name data)
+
+== Probe D: exit-code mechanics if NUL reached an UNGUARDED tool ==
+uncaught ValueError in CPython -> exit code 1, traceback on stderr, NO contract token
+(frozen counter would mark fixture failed: fail-closed but wrong token)
+guarded variant ("\x00" in path -> stderr EXECUTOR_SOURCE_UNAVAILABLE, return 2) -> exit 2
+
+== Probe P5: NUL --path at OS level against staged candidate ==
+$ python3 -I <tool> --repo R --trusted T --candidate C --path 'tools/runner.py\x00'
+ValueError: embedded null byte  (raised by harness posix_spawn; tool process never created)
+
+== Probe Q1-Q5: in-process main(argv=[...]) against staged candidate (only deliverable channel) ==
+Q1 nul-path     : rc=2 stderr="EXECUTOR_SOURCE_UNAVAILABLE: invalid --path 'tools/runner\\x00.py'"
+Q2 newline-path : rc=2 stderr="EXECUTOR_SOURCE_UNAVAILABLE: invalid --path 'tools/run\\nner.py'"
+Q3 nul-trusted  : rc=2 stderr="EXECUTOR_SOURCE_UNAVAILABLE: trusted revision '<tr>\\x00' does not resolve to a commit"
+Q4 nul-candidate: rc=2 stderr="EXECUTOR_SOURCE_UNAVAILABLE: candidate revision '<tr>\\x00' does not resolve to a commit"
+Q5 equal-smoke  : rc=0 stdout="EXECUTOR_SOURCE_BOUND: 1 declared source blob(s) equal trusted blobs"
+(tr=86b66974ac9c2c7ed10d60df37e6e35f9ae44195, scratch fixture proberepo, explicit -C, toplevel verified)
+
+== Counter inspection (measure.py, frozen e9cc34b) ==
+PATHS constant = ['tools/runner.py','tools/space name.py','tools/日本語.py','tools/-runner.py'] — no NUL.
+Any NUL in PATHS would raise ValueError at fixture construction (f.write_text / subprocess)
+=> traceback, non-zero exit, no "C1_R59_PASS=true" possible. Counter is fail-closed; no NUL defect.
