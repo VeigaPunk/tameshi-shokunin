@@ -2626,3 +2626,8 @@ Neither original claim is admitted; no freeze, control certification or
 deciding run is represented as completed. d4 source review also exposed the
 missing historical S285 snapshot and its severity restriction, corrected
 append-only in the lesson. Tools installed: none.
+
+## 2026-10-30 — round 58 correction R53.5
+
+The round-53 LOG pointer `e62d9971 (amendments 1–5)` is superseded: the initial freeze is `cf872769ed8a06c7a6b9cb6d20de2b2a3ed5e365`; final amendment 7 is `9e09db2b6c527214b09327b7f261fabd4844d967`. The refreshed `.ufo/evidence/round-53/verify-freeze-final.stdout` prints `FREEZE 9e09db2b6c52 files=8 amendments=7` and `FREEZE_INTEGRITY: OK`; the original `verify-freeze.stdout` remains historical.
+
