@@ -2631,3 +2631,44 @@ append-only in the lesson. Tools installed: none.
 
 The round-53 LOG pointer `e62d9971 (amendments 1–5)` is superseded: the initial freeze is `cf872769ed8a06c7a6b9cb6d20de2b2a3ed5e365`; final amendment 7 is `9e09db2b6c527214b09327b7f261fabd4844d967`. The refreshed `.ufo/evidence/round-53/verify-freeze-final.stdout` prints `FREEZE 9e09db2b6c52 files=8 amendments=7` and `FREEZE_INTEGRITY: OK`; the original `verify-freeze.stdout` remains historical.
 
+
+## 2026-10-30 — round 58 (honest stop; L1 TameshiR58)
+
+Motivation: round57's non-author closure routed the uninstalled 51-item
+disposition ledger, strict element-equality counter, missing S285 snapshot,
+and final-tree monitor receipt. Base `2a32aa8228d5f86a85c81a923a3148bf792a9538`
+was clean. Freeze `e2c2e654` followed the declared five-commit order;
+amendment1 `8bebdfb0` installed the fresh blind panel before the ledger was
+scored. W1/W2 settled67+40=107 seats through ready-file handoff; no task call
+was issued by this L1.
+
+Landed: exact refusal-code elements (`d21ee8ed`); sourced F9 counting contract,
+S286/S287 and S288 supersession (`d28c3044`); delayed kagi handoff and direct
+historical measurement repairs (`38e4e3af`, `7d5ae605`, `6024c8fc`, `764f87bc`);
+recheck consumer correction (`1d1f70d8`); fresh disposition ledger and explicit
+semantic adjudications (`6377ffe4`, `0fdb71d2`); source-interpretation correction
+and both settled waves (`8063d0a5`, `b56f26a8`); seventeen reader bindings
+(`3809b595`). Every commit above is pushed.
+
+Measurement at `b744b8a16c9e3628e777592f2fcda2f1425fc9df`:
+`.ufo/evidence/round-58/direct-final/` contains actual direct C1/C2 PASS lines,
+C3 entries1/rows3, source census exit0 and no-harm18/18 ok (coldread64/64,
+score8; depth10; freshness9). Sources145→148 (A+1/B+1/C+1; mined+2/rejected+1).
+The source claim is ONE new F9 entry; the LLM pilot remains unmeasured.
+
+Admission is refused honestly. The one controls generation at `3809b595`
+scored A10/10, B1/2: C1's positive control caught a bind-shifted line locator.
+The locator was corrected for durable truth, but controls were not rerolled.
+The unchanged deciding wrapper exits3 at `controls-b-verdict-missing` before
+any counter starts. Independently, a bent claimant executor makes the frozen
+C2 counter pass without executing rows (W1 revenger, reproduced by W2).
+Neither counter nor target was weakened after those observations.
+
+Gate/source fixes and sourced frontier growth land; no capability acquisition,
+numeric score increase or all-claims admission follows. Two inherited minor
+reader limitations remain recorded. Seventeen empty terminal outputs have no
+callback status/error metadata; no successful review or known death is inferred.
+Lesson: `corpus/lessons/round-58.md` (Gate, Mistakes, terminal stop).
+Tools installed: none. Host/sibling scratch and config backup are reported,
+not modified; exact current-round TMPDIR residues are cleaned separately.
+

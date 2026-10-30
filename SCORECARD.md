@@ -2836,3 +2836,32 @@ measures `lost=17 RED`, receipt `.ufo/waves/round-58/l1/forecast-precheck.stdout
 - R56.1: remaining SKILL page-local anchors need heading/function replacements plus re-reading.
 - R56.2: the `RECEIPT_REV_CONTENT_DRIFT` standing-cell fix exists; a complete role-to-code proof chain remains to be linked.
 
+
+### Round 58 — measured close: honest stop
+
+Measured revision `b744b8a16c9e3628e777592f2fcda2f1425fc9df`; direct receipts
+`.ufo/evidence/round-58/direct-final/`. The unchanged deciding wrapper refused at
+gate0, exit3: `DECIDING_REFUSED controls-b-verdict-missing`, after printing
+`FREEZE_INTEGRITY: OK files=11 amendments=1 freeze=8bebdfb07bc1`.
+No deciding counter execution is claimed.
+
+| Claim | Before | After at measured revision | Verdict |
+|---|---|---|---|
+| C1 calibration | rows0/51, total154, PASS=false on BASE+instruments no-op control | direct counter rows51/51 agree51/51, old49=ok, fixed36/open14/declined1, thisround7, panel4/5, total0 | numerical after-state reached; **not certified**: the one declared control generation has A10/10 but B1/2 (R51.3 locator shifted in the bind). Locator repaired; failed positive not rerolled |
+| C2 operability | strict counter total2 (substring-only code elements) | direct counter held3/3, mutants3/3, total0; installed rows independently execute correctly | numerical after-state reached; **not admitted**: an unpinned claimant executor fabricates both executed and mutant-kill tallies, reproduced in W1 and W2 |
+| C3 coverage | 0 knowledge entries cite2406.09843; source registry145 rows | 1 admitted F9 entry, 3 new rows (2 mined+1 rejected supersession), registry148, census exit0 | measured pass; F9 counting contract entered, bounded pilot remains unmeasured |
+
+Counting commands remain exactly those declared above. The C3 direct receipt
+uses `git show REV:<path>` and `git ls-tree` to apply the declared predicates to
+committed bytes, not moving worktree contents.
+
+Standing numeric axes remain depth10, calibration8, freshness9 at the measured
+revision: no-harm18/18 ok; cold-read covered64/64 score8 box3=True;
+freshness population74 fresh71 score9; ten recorded cases. The round's monitor
+restoration is not a score increment. No capability row is added.
+
+Successor work: independently bind the trusted executor before any C2-like
+claim; use stable locator semantics or price bind-induced line movement before
+freezing a one-generation positive-control pipeline. Preserve these failed
+receipts and original targets. This round is not an all-claims admission.
+
