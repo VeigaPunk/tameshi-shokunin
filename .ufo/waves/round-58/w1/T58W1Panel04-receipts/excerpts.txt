@@ -1,0 +1,229 @@
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show HEAD:tools/registry-check.py [lines 757-785]
+757: class ScratchRootUnusable(RuntimeError):
+758:     """A set-but-unusable TMPDIR: could-not-evaluate, never a traceback (round 55)."""
+759: 
+760: 
+761: def strict_scratch_root():
+762:     """Scratch root for mkdtemp: TMPDIR when set (must be a usable directory —
+763:     round 53: a set-but-unusable TMPDIR is could-not-evaluate, never a silent
+764:     fallback to /tmp, preserving CR47 semantics), else the platform default."""
+765:     import os as _os
+766:     t = _os.environ.get("TMPDIR")
+767:     if t:
+768:         if not _os.path.isdir(t) or not _os.access(t, _os.W_OK):
+769:             raise ScratchRootUnusable(
+770:                 "cannot create clone scratch under the scratch root: TMPDIR is not a usable directory: %r (could-not-evaluate)" % t)
+771:         return t
+772:     return tempfile.gettempdir()
+773: 
+774: def clone_lane_at_rev(root, rev, sha):
+775:     """Clone the lane detached at sha into a fleet-mirror mkdtemp.
+776: 
+777:     Returns (workdir, clone_root) on success; caller removes workdir.
+778:     Raises RuntimeError on any git failure.
+779:     """
+780:     root_real = os.path.realpath(root)
+781:     fleet_root = os.path.dirname(root_real)
+782:     env = git_env()
+783:     try:
+784:         work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=strict_scratch_root())
+785:     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show HEAD:.ufo/evidence/round-53/c1/measure.py [lines 93-100]
+93:     # --- 2. rekey provenance ----------------------------------------------
+94:     r = git(['-C', lane, 'ls-tree', '--name-only', rev,
+95:              '.ufo/evidence/round-21/coldread'])
+96:     rekey_dirs = [n for n in r.stdout.decode().split('\n')
+97:                   if re.fullmatch(r'rekey-r53-[0-9a-f]{12}', n)]
+98:     c0s = []
+99:     if not rekey_dirs:
+100:         problems.append('rekey-dir-count=0')
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show HEAD:LOG.md [lines 2485-2495]
+2485:   at C5 (`651773ab`). Residual re-reads (recipe, cadence, what-stays-open at
+2486:   C4; standing rules, six-leg, using-the-ledger at C5) closed the loop. The
+2487:   re-key then bound all 30 sections (`.ufo/evidence/round-21/coldread/rekey-r53-*`),
+2488:   the frozen counters decided at the final revision, and the phase-B
+2489:   break-one controls all printed false as pre-registered. Deciding receipts:
+2490:   `.ufo/evidence/round-53/after/`.
+2491:   (close) Final re-key bound 28 sections (`.ufo/evidence/round-21/coldread/rekey-r53-*`,
+2492:   three read revisions, inputs pinned at C7). Deciding run at 88afa941:
+2493:   C1 honest stop (58/64, six sections named in SCORECARD), C2 verified.
+2494:   Fleet census end: exit 0. Report committed on the fleet repo.
+2495: 
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show HEAD:SCORECARD.md [lines 2502-2545]
+2502: 
+2503: L1 TameshiR53a2, hyaku run 10, attempt 2 (attempt 1 died at its first model call
+2504: on a provider quota limit; nothing inherited). Claims frozen at `e62d9971`
+2505: (amendments 1–7, all before the data they govern; `.ufo/evidence/round-53/freeze.json`);
+2506: base `6db1d220`; content commits C* `a41195df` → C5 `651773ab`; final deciding
+2507: revision recorded in `.ufo/evidence/round-53/after/`. Calibration (8) is the
+2508: lowest non-retired axis and was the round-52 closure's harmed axis; C1 repairs
+2509: it. C2 works operability (no numeric score).
+2510: 
+2511: | Claim | Axis | Before (CTL_0) | Target | Counting command | After |
+2512: |---|---|---|---|---|---|
+2513: | C1 the 30 credit-lost cold-read sections are re-keyed, trace-bound to fresh readers, and the frozen precheck reads 64/64 GREEN at the deciding revision: `C1_R53_PASS=true` | calibration (8; floor RED at base) | `cand_credited=45 lost=19 RED` at base; `34/64 lost=30 RED` at the post-fix candidate | `credited=64 lost=0` + `C1_R53_PASS=true` | `python3 .ufo/evidence/round-53/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | (deciding receipt `after/c1.stdout`) |
+2514: | C2 no `dir="/tmp"` under tools/, selftests pass under redirected TMPDIR, CR47 semantics preserved (set-but-unusable TMPDIR = could-not-evaluate), SKILL names no stale /tmp invocation: `C2_R53_PASS=true` | operability | 2 hardcodes + 5 more found in flight; selftest TMPDIR-ignoring | `C2_R53_PASS=true` | `python3 .ufo/evidence/round-53/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | `C2_R53_PASS=true` at every candidate from C** on (e.g. `5b703c6f` probe); deciding receipt `after/c2.stdout` |
+2515: 
+2516: Controls: phase A 2/2 as pre-registered (do-nothing false at base for both
+2517: counters); phase B break-one fixtures (trace removal, reader-sha corruption,
+2518: read_rev mismatch, planted /tmp, defeated CR47) each printed false and the
+2519: unmodified candidate printed true (receipts `.ufo/evidence/round-53/control/`).
+2520: What the counters cannot see (`cannot_see`, unchanged): whether reader
+2521: findings are semantically fair (wave-2 readers + residual re-reads + the
+2522: L1's disclosed adjudications in `integrate/resolutions.json` — 5 over-reach
+2523: adjudications evidence-backed, all rejected or fixed), and whether the fixed
+2524: SKILL statements are true beyond the frozen checks.
+2525: 
+2526: Deciding run (`.ufo/evidence/round-53/after/`): FROZEN_UNCHANGED=1 (freeze
+2527: `7d8aaac6` after amendment 7), 12/12 no-harm ok, frozen precheck GREEN, fleet
+2528: census exit 0, `DECIDING_RUN_EXIT=0`. Numeric axes: calibration 8 (restored,
+2529: was harmed at base); depth 10, freshness 9 unchanged. Capabilities: none
+2530: claimed this round.
+2531: 
+2532: **Planned (round 54):** the routed nits the round-53 readers surfaced
+2533: (remaining locator imprecisions in what-stays-open; the recipe 377-378
+2534: restore-discipline anchors now heading-based but re-verify; service-limits
+2535: §5 U1 heading anchor re-read next round); the 85 unadopted `merge/tameshi`
+2536: entries (next: `r8-predictive-test-selection-cost.md`,
+2537: `delta-debugging-minimization-contract.md`); C2's follow-on: TMPDIR
+2538: empty-string semantics documented in the registry rows; considerthese
+2539: proposals 2–5.
+2540: 
+2541: ### Round 53 — measured close (appended after the deciding attempt)
+2542: 
+2543: Deciding run at `88afa941` (`.ufo/evidence/round-53/after/`): **C1 honest stop** —
+2544: the frozen counter printed `credited=58 lost=6`: 28 of 30 re-keyed sections
+2545: credit; `## Standing rules` and `### Using the ledger` were forfeited (their
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show HEAD:corpus/lessons/round-53.md [lines 1-128]
+1: # Tameshi round 53 — cold-read re-key repair, tools scratch hygiene, honest re-key
+2: 
+3: L1 TameshiR53a2, hyaku run 10, attempt 2 (attempt 1 died at its first model
+4: call on a provider quota limit — nothing to inherit). Base `6db1d220`
+5: (round-52 closure salvage). Claims frozen at `e62d9971` (amendments 1–5;
+6: `.ufo/evidence/round-53/contract.json`, `freeze.json`): C1 calibration — the
+7: cold-read floor repair (R52.1); C2 operability — `tools/` scratch hygiene
+8: (R52.5). Both repair what `corpus/lessons/round-52-verifier-spotcheck.md`
+9: routed back; the round-52 closure rejected-harmed with the frozen cold-read
+10: floor RED at the tip (45/64 credited).
+11: 
+12: ## Gate
+13: 
+14: Rows opened this round (CORPUS.md SOURCES contract v1 rule 1):
+15: 
+16: - **S275** — Change-Aware Mutation Testing for Evolving Systems (Ojdanić et
+17:   al., ESEC/FSE 2022), `https://doi.org/10.1145/3540250.3558911`, opened
+18:   2026-10-27 by L1 TameshiR53a2; the ACM copy is access-controlled (HTTP
+19:   403), so the opened artefact is the author's camera-ready
+20:   `https://ojda22.github.io/milos-ojdanic/assets/pdfs/change-aware-mutation-testing_camera-ready.pdf`
+21:   (HTTP 200, 131622 B, sha256 `4d755c4e…`, snapshot
+22:   `.ufo/evidence/round-53/assimilation/S161-camera-ready.pdf`). Located
+23:   quote (22 words, camera-ready p. 4, pdftotext lines 289–294): "by
+24:   selecting only subsuming commit relevant mutants, we reduce the number of
+25:   mutants requiring analysis by around 93% on average". Assimilated from
+26:   `merge/tameshi` (staged as S161, re-pointed by document to S275).
+27: - **S276** — Keeping Mutation Test Suites Consistent and Relevant with
+28:   Long-Standing Mutants (Ojdanić, Papadakis, Harman), arXiv:2212.11762,
+29:   opened 2026-10-27 by L1 TameshiR53a2 (HTTP 200, 41423 B, sha256
+30:   `d6dc4cf6…`, snapshot
+31:   `.ufo/evidence/round-53/assimilation/S162-arxiv.html`). Located quote (19
+32:   words, abstract): "re-compute mutant suites per release. Sadly, this makes
+33:   mutation results inconsistent; mutant scores from each release cannot be
+34:   directly compared". Assimilated from `merge/tameshi` (staged as S162,
+35:   re-pointed by document to S276).
+36: 
+37: Admits (assimilation set, §10 per-entry gates):
+38: 
+39: - **change-aware-resweep-cadence.md** — ADMITTED. PROVINCE: verification-fixture
+40:   craft (mutation cadence) — in scope. QUALITY bar: every claim cites its
+41:   source with located quotes — holds. Coverage ground: F7 (incremental
+42:   re-sweep granularity) was open — this is new ground, recorded in
+43:   `corpus/README.md`'s frontier table (round-53 addendum). Both cited rows
+44:   re-opened by the L1 this round (access dates and quotes above); the staged
+45:   entry's quotes re-located verbatim in the round's copies before the rows
+46:   were written. Id collision: staged S161/S162 renumbered to S275/S276
+47:   (registry continuation; staged ids S161–S255 stay reserved by document);
+48:   scratch collision check `assimilation/collisions` listed 8 collisions for
+49:   other staged ids, none for the adopted rows; the 0–3-space indented-row
+50:   guard was proven on a scratch fixture before any append.
+51: 
+52: Rejects (assimilation set):
+53: 
+54: - **The other 85 staged `merge/tameshi` entries** — REJECTED this round:
+55:   capacity, not merit. The round's centre of gravity is the R52.1 re-key
+56:   repair; §10 takes ONE theme and 1–3 entries per round. Flip: a later round
+57:   adopts the next-ranked candidates (`r8-predictive-test-selection-cost.md`
+58:   and `delta-debugging-minimization-contract.md` are the next fit against
+59:   open frontier rows).
+60: - **A staged row appended as-is** — REJECTED by rule (§10 scratch
+61:   transformation): the staged S161/S162 rows carry escaped pipes in the
+62:   recheck cells; the appendable rows normalize them to the fleet schema
+63:   (date + `365d` cadence), the stripped re-check commands recorded here:
+64:   S275 — `curl -fsSL
+65:   'https://ojda22.github.io/milos-ojdanic/assets/pdfs/change-aware-mutation-testing_camera-ready.pdf'
+66:   | sha256sum` expect `4d755c4e…`; S276 —
+67:   `curl -fsSL 'https://arxiv.org/abs/2212.11762' | grep -c '52% degrade'`
+68:   expect 1.
+69: 
+70: considerthese mining: `considerthese/2026-10-26.md` proposal 1 (crash-resume
+71: integrity check) mined this round — implemented as
+72: `.ufo/evidence/round-53/verify-freeze.sh` and executed by the L1 at freeze
+73: time (receipt below). Proposals 2–5 remain unmined (at most one per round).
+74: 
+75: ## Mistakes
+76: 
+77: - **class: integration debris from an in-line fix pass.**
+78:   evidence: round 52's L1-applied replacements landed half-applied in at
+79:   least three places — SKILL.md "replays **six** in r10-2 (**ten** since
+80:   round 51) (ten since round 51)" (duplicate parenthetical, fixed this
+81:   round), the contradictory "Cases 5–6 were still not embedded at this
+82:   boundary (both are legs 5–6 since round 10-2 …)" (fixed this round), and
+83:   the round-52 parenthetical claiming "rc 0, at tool sha `977de470…` — see
+84:   `T52W2Fix06.selftest.out`" where the receipt names no command, exit, or
+85:   sha (re-anchored this round to the seat's report + receipt pair). The
+86:   T52W3 readers caught all three as findings 12–14 (`.ufo/waves/round-52/w3/`).
+87:   captured-by: none — no mechanical check guards a fix pass against
+88:   duplicate-parenthetical or self-contradicting edits; the cold-read readers
+89:   caught them one round late. fix: this round's L1 fix pass re-verified each
+90:   replacement hunk in place; wave 2 carries a duplicate-phrase lint over the
+91:   touched sections; a QUALITY criterion is drafted below.
+92: - **class: claim-scope surprise from an honest edit.** evidence: the C2
+93:   tool fixes (7 files) input-drifted 10 sections the round did not intend to
+94:   touch; the frozen re-key scope grew 19 → 30 headings (amendment 5,
+95:   disclosed before wave 1). captured-by: none — the precheck LOST diff after
+96:   the fix pass caught it (45 → 34 credited) before any seat ran. fix:
+97:   amendment 5 froze the 30-heading set; the no-harm floor requires 64/64 at
+98:   the deciding run, so an unrepaired drift cannot land silently.
+99: - **class: freeze-file syntax defect (self-caught, pre-seat).** evidence:
+100:   the first frozen c1 counter carried a NUL byte (syntax error) and its
+101:   do-nothing control crashed instead of printing a verdict; both caught by
+102:   the phase-A control run before wave 1 (amendments 1–2). captured-by: the
+103:   frozen do-nothing control — exactly what it exists for. fix: re-freeze;
+104:   the do-nothing control must print a verdict line (never a traceback) —
+105:   now part of the c1 contract.
+106: 
+107: ## QUALITY criterion (drafted; lands with the round commit)
+108: 
+109: - **104. A fix-pass hunk is re-read before commit; no section may gain a
+110:   duplicate parenthetical, a self-contradicting sentence, or a citation
+111:   whose receipt does not establish the cited clause. Falsifier: a
+112:   duplicate-phrase scan over the touched sections lists zero hits, and every
+113:   new citation resolves to a receipt establishing command, exit and pinned
+114:   bytes.**
+115: 
+116: ## The re-key method (for the round report)
+117: 
+118: The T52W3 reader findings (16 findings across 10 sections, plus the missing
+119: Read18) were fixed L1-inline at `218bc6b5`; the fix pass also closed the
+120: scratch-directive staleness (Standing rules, recipe, registry rows) that the
+121: T52 readers did not reach. The round's own edits drifted 11 further
+122: sections; the frozen re-key set is the 30 headings credit-lost at the
+123: post-fix candidate. Wave 1 re-reads all 30 sections at the content commit;
+124: the L1 then binds fresh ledger entries (trace-bound, read_rev = content
+125: commit, inputs re-pinned at candidate shas) for every heading a fresh reader
+126: cleared; the frozen precheck must print 64/64 GREEN at the deciding run.
+127: S276 is the practice authority for the repair: a pinned long-standing suite
+128: is the consistency device; re-computing per change is the bug.

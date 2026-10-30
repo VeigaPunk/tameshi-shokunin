@@ -1,0 +1,1 @@
+(correction) R53.5: the final round-53 freeze is `9e09db2b6c527214b09327b7f261fabd4844d967` (amendment 7); `cf872769ed8a06c7a6b9cb6d20de2b2a3ed5e365` is the initial freeze, and the older `e62d9971` receipt is superseded. The final integrity check is recorded in `.ufo/evidence/round-53/verify-freeze-final.stdout`.

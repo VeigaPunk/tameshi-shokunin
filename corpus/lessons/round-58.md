@@ -113,3 +113,12 @@ The earlier report sentence that `CTL_SKIP_c2` was still running at filing is su
 
 Re-derivation: search `CTL_SKIP_c2|CONTROLS_A` in that committed receipt. Both lines exist at measured revision `4c04c1d3`, which predates the round-55 report.
 
+
+## Wave-1 decisive falsifiers and corrections
+
+- **C2 does not earn admission from its counter.** `T58W1RevengerC2` reproduced the round-56 failure one layer higher: a claimant-authored `tools/registry-check.py` prints forged held/differs lines without executing rows, and the frozen C2 counter accepts `held=3/3 mutants=3/3 total=0`. The real executor on the same fixture yields only `held=1/3`. Receipts: `.ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack-b-out.txt` and its `attack.py`. The strict exact-element repair is real, but the frozen target fails the do-nothing discriminator. Neither target nor counter is weakened or repaired after this observation; a later numerical PASS will be reported without claiming C2 admission.
+- **C3 rejected wording repaired.** `T58W1RevC3Gate` correctly rejected an overall equivalence rate being rewritten as equivalence conditional on survival, and two original sampled gates being presented as the entire lane population. The entry now distinguishes the overall rate from the conditional probability and names ten replay cases across JS/bash. This is a content correction, not a changed claim target.
+- **R55.1 replay variation retained.** The L1's full counter rerun at `4c04c1d3` prints `usable=13/13 total=0`; `T58W1Fix05` independently prints `usable=12/13 total=1`, with the registry-check usable selftest failing. Both full receipts are retained. R55.1 is a missing-verdict-record repair, not proof of environment-invariant green behavior.
+- **Cold-read forecast miss named.** R56.3's frontmatter link repair was not in the original per-file draft forecast. The measured content precheck still loses the same 17 headings (`content-precheck.stdout`); the reader set is not silently reduced.
+- **Missing review credit remains missing.** W1's orchestrator handoff contains 67 seats but omits status/id fields. Fifteen seats have empty terminal outputs and no reports: the four scouts, five first critics, three mutation-testers, two sentinels and CritC3. No provider error text was supplied. They are not counted as successful reviews or fabricated as known deaths.
+

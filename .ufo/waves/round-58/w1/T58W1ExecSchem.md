@@ -1,0 +1,12 @@
+# T58W1ExecSchem — source-row schema and quote checks
+
+Validated `/fast/scratch/hyaku/tameshi-r58/c0-drafts/sources-append.md` against the 11-column registry header in `corpus/SOURCES.md` (columns: id, source, kind, tier, scope, anchor, teaches, status, opened, recheck, used-by). Each draft row has 12 delimiters / 11 cells; no pipe appears inside a cell. IDs are sequential S286–S288, following the registry's next-unused S286 (tip maximum S285; `corpus/SOURCES.md:532`). Enums: S286 paper/A/mined, S287 talk/B/mined, S288 docs/C/rejected. All use opened/fetched date 2026-10-30 and valid `365d` cadence. Anchors identify section/lines, fetch date, size and SHA (prefixes are explicitly identified where abbreviated), and extract paths resolve in the lane tree: `arxiv-2406.09843-abstract.txt`, `dfcfw-deck.txt`, and `atlassian-postmortems.txt`. S286 and S287 used-by strings exactly match `corpus/knowledge/llm-mutant-equivalence-cost.md`, the specified landing location of the entry draft; S288 is rejected and uses `—`.
+
+Commands/evidence used:
+- Read complete draft rows from `/fast/scratch/hyaku/tameshi-r58/c0-drafts/sources-append.md:raw:1-3`; checked cell counts, values, pipe delimiters, anchors, cadence, and used-by strings directly.
+- Read `corpus/SOURCES.md` lines 8–12 for the registry header and line 532 for the stated next-unused ID.
+- Read entry draft lines 1–5: identifies S286/S287, fetched date, and extract locations; the text names the eventual entry file as `corpus/knowledge/llm-mutant-equivalence-cost.md`.
+- Confirmed lane source extract files exist with directory listing of `.ufo/waves/round-58/l1/sources/`; read `dfcfw-deck.txt` lines 234–245, including the S287 quoted line at 241.
+- Python `len(q.split())` on the exact requested Gate quotes returned `[18, 2, 18]` for S286, S287 (line 241), S288 respectively; all are at most 25 words.
+
+Caveat: `SOURCES.md` references `SOURCES-CONTRACT-v1.md`, but that file was not present at the searched lane paths. Validation therefore uses the actual registry's header and the assignment's explicit field requirements. No lane corpus or source drafts were edited; only this report and its JSON were written. Scratch: none created.

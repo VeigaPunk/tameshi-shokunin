@@ -29,11 +29,11 @@ landing — this entry is the lane's own re-grounding, not a byte copy).
 
 - **A survivor is not yet a test hole.** The lane's survivor classes (its
   own arm-class matrix, and the B5 / D2 / D10 survivors) are all cases where
-  a mutant was *not killed*. S286 shows that in an LLM-mutant setting a
-  materially larger share of un-killed mutants are equivalent. Inference: an
-  LLM-era survivor must be classified against an equivalence witness before
-  it is counted as a gap in the suite — the same non-equivalence witness the
-  lane already requires for rule-based mutants.
+  a mutant was *not killed*. S286 reports a higher overall equivalent-mutant
+  rate; it does not establish equivalence conditional on survival.
+  Inference: classify an LLM-era survivor before calling it a suite gap.
+  A non-equivalence witness is an input distinguishing mutant and original;
+  this is not an automated proof that arbitrary survivors are equivalent.
 - **Three counters, not one.** S286 reports non-compilability, duplication
   and equivalence as three separate rates. The lane's F1 note (compile and
   runtime errors excluded from the score, per its held S001) means a
@@ -45,10 +45,10 @@ landing — this entry is the lane's own re-grounding, not a byte copy).
 
 ## Boundary of this entry
 
-- S286 is measured on Java and on real-world bug benchmarks; the lane's legs
-  are one JavaScript gate and one bash gate. The transfer is **not
-  measured**: no lane sweep has produced an LLM-generated mutant yet, and
-  the entry supplies the counting contract, not a measurement.
+- S286 measures Java real-world bug benchmarks. The lane's ten recorded
+  replay cases span JavaScript and bash gates; that is a different population.
+  The numerical transfer is **not measured**: no lane sweep has produced an
+  LLM-generated mutant; this entry supplies a counting contract, not a pilot.
 - Equivalence stays undecidable (S287): a witness is per-mutant evidence
   (an input where the mutant and the original differ), never a general
   decision procedure. The lane's 1-minimality witness

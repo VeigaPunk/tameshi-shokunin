@@ -1,0 +1,73 @@
+{
+  "seat": "T58W1RevengerC2",
+  "lane_tip_measured": "0fdb71d26fab",
+  "round_56_failure_reconstructed": "the frozen round-56 C2 counter graded committed receipt FILES: the wave-2 do-nothing attack (w2/T56W2CritDoNothingC2.md) reached C2_R56_PASS=true with two 79-byte stub receipts or a borrowed round-54 receipt whose rev= token was rewritten; SCORECARD.md round-56 records C2 reached on the counter but NOT admitted because the no-op discriminator failed",
+  "receipt_read_inventory": {
+    "claim": "the round-58 counter reads no verdict receipt produced by a claimant",
+    "files_read_at_rev_via_git_show": [
+      "tools/receipt-revision-gate.py",
+      "tools/registry-check.py",
+      "tools/registry.json",
+      "SKILL.md",
+      ".ufo/evidence/round-58/c2/mutants.json"
+    ],
+    "files_read_outside_git": [
+      "measure.py itself (self_sha via __file__)",
+      "mutants.json beside __file__ (selftest path only, sha256-pinned)"
+    ],
+    "live_executions": [
+      "registry-check.py (REV bytes, copied into --work/bin) run per gate row: --root LANE --rev REV --only NAME (cloned) and --root CLONE --only NAME (mutant arm)",
+      "receipt-revision-gate.py (REV bytes) run by the cell arm against a scratch fixture repo the counter itself commits (A then B differing on one listed path; receipt naming A written by the counter)"
+    ],
+    "receipt_files_only_as_gate_input": "the three registry rows pass committed fixture receipts (tools/fixtures/receipt-gate/{accept,drift}.receipt) to the gate as UNTRUSTED input: the gate extracts only rev= tokens and verifies them against git objects (rev-parse, diff --name-only on declared --paths); verdict text like C2_FIXTURE_PASS=true is never parsed",
+    "verdict": true
+  },
+  "attacks": [
+    {
+      "id": "A-bypass",
+      "name": "claimant fixture rows bypass the drift surface",
+      "construction": "real gate + real registry-check; three gate rows whose refusal row points at an absent receipt file (fx/no-such.receipt) so exit 3 arrives via RECEIPT_MISSING without ever touching the `if drift:` branch",
+      "verdict_line": "C2_R58: gate_rows=3 exits=0,2,3 held=3/3 mutants=1/3 skill_row=1 codes_known=2/2 standing_cell=ok total=2 C2_R58_PASS=false",
+      "caught_by": "mutants arm",
+      "detail": "executed arm sees 3/3 held (rows are honest); M1 and M2 SURVIVE because no held-baseline row exercises the mutated drift path; M3 killed by the unresolvable row"
+    },
+    {
+      "id": "A2-extlane-relative",
+      "name": "registry row --lane points at a claimant repo (relative fixture files)",
+      "verdict_line": "held=2/3 mutants=1/3 total=3 C2_R58_PASS=false",
+      "caught_by": "executed arm first (row differs: relative --paths/receipt do not exist in the rev clone), mutants arm agrees"
+    },
+    {
+      "id": "A2-extabs",
+      "name": "registry row argv is FULLY absolute into a claimant-owned repo outside the fleet root",
+      "verdict_line": "C2_R58: gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 total=0 C2_R58_PASS=true",
+      "caught_by": "nothing",
+      "detail": "_argv_outside_fleet only flags absolute tokens under the LIVE fleet root (registry-check.py:632-645); /fast/scratch/... escapes. The --rev clone is cosmetic for that row: --lane, --paths and --receipt all resolve outside it, so its verdict was produced by files that never existed at REV. Mutants ARE honestly killed (the real gate did run), so this is a provenance/hermeticity hole, not a vacuous PASS - but the row certifies nothing about REV."
+    },
+    {
+      "id": "B-bent-runner",
+      "name": "claimant-authored registry-check.py + cheat gate",
+      "construction": "tools/registry-check.py replaced by a script that never runs any row: prints 'ROW <n> expect=<e> got=<e> held' when tools/receipt-revision-gate.py is clean in the worktree and 'differs' when the counter's mutant write dirties it. The gate resolves --certified but never reads receipts; the three mutant anchors sit in a string literal plus real code; verdict-role receipts are unconditionally refused with RECEIPT_REV_CONTENT_DRIFT (satisfies the cell arm)",
+      "verdict_line": "C2_R58: gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=2/2 standing_cell=ok total=0 C2_R58_PASS=true",
+      "caught_by": "nothing in the counter",
+      "control": "the same forged lane under the REAL registry-check.py: ROW c2-fx-ok expect=0 got=3 differs (the cheat gate refuses verdict-role receipts, so a real executor exposes it); held=1/3 under the honest runner",
+      "provenance_hole": "the counter sha256-pins mutants.json and re-derives CODES/skill cell by running the gate, but the executed AND mutants arms inherit the artifact-under-test's OWN runner (rc_raw = show(lane, rev, REGCHECK)); a claimant ships the oracle that grades claimant content. A forged runner converts mutants kills into a worktree-dirty check and the gate's semantics are never exercised - the do-nothing failure class returns one level up, at the executor instead of the receipt"
+    }
+  ],
+  "measured_baseline": {
+    "command": "python3 .ufo/evidence/round-58/c2/measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev HEAD --work <abs> --explain",
+    "verdict_line": "C2_R58: self=d4219039f02c rev=0fdb71d26fab gate_rows=3 exits=0,2,3 held=3/3 mutants=3/3 skill_row=1 codes_known=4/4 standing_cell=ok total=0 C2_R58_PASS=true",
+    "note": "--work MUST be absolute: a relative --work makes rc_path resolve as work/work/bin/... and every row reports error rc=2 (found during this sweep; INFERENCE: harnesses already pass an absolute path since the contract's EMPTY_DIR runs green)"
+  },
+  "frozen_paths_gap": "the contract frozen_paths cover only .ufo/evidence/round-58/* instruments; tools/registry-check.py is target content - that is exactly why attack B is admissible: the counter grades a lane whose executor is part of the claimed change",
+  "recommendation": [
+    "counter should not import the artifact-under-test's registry-check to grade it: either execute each gate row's argv itself (argv is already in registry.json at REV) inside its own rev clone, or bind the runner by sha256 to a frozen registry-check blob the way mutants.json is pinned",
+    "flag ANY absolute argv token (not only fleet-rooted ones) in registry rows unless row.external is declared: registry-check._argv_outside_fleet fleet_root is the CLONE's parent under --rev, so every live absolute path escapes today",
+    "harder variant worth a selftest case: bent-runner fixture (assert mutants kills are produced by real gate output, not by ROW-line forgery)"
+  ],
+  "commands_evidence": {
+    "honest": ".ufo/waves/round-58/w1/T58W1RevengerC2-receipts/honest-run.txt",
+    "attacks": ".ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack-out.txt and attack-b-out.txt",
+    "driver": ".ufo/waves/round-58/w1/T58W1RevengerC2-receipts/attack.py"
+  }
+}

@@ -1,0 +1,12 @@
+$ cd $S && python3 .ufo/evidence/round-58/c2/measure.py --lane LANE --rev HEAD --work work-honest --explain
+(relative --work; rc_path resolves as work/work/bin/registry-check.py under cwd=work)
+EXPLAIN executed receipt-gate-accept expect=0 got=rc=2 error
+EXPLAIN executed receipt-gate-content-drift expect=3 got=rc=2 error
+EXPLAIN executed receipt-gate-unresolvable-certified expect=2 got=rc=2 error
+EXPLAIN cell gate emitted=[] exit=2 verdict=none
+C2_R58: self=d4219039f02c rev=6024c8fcc9b0 gate_rows=3 exits=0,2,3 held=0/3 mutants=0/3 skill_row=1 codes_known=4/4 standing_cell=WRONG:fixture total=7 C2_R58_PASS=false
+
+# manual confirmation: identical invocation works when cwd is not ambiguous
+$ python3 tools/registry-check.py --root LANE --rev HEAD --only receipt-gate-accept
+ROW receipt-gate-accept expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0

@@ -1,0 +1,23 @@
+{
+  "seat": "T58W1ExecInstr",
+  "freeze": "e2c2e654ff4c764d554810eabc849370052743d7",
+  "checks": {
+    "c1_selftest": {"command": "python3 -I .ufo/evidence/round-58/c1/measure.py --selftest --work <scratch>", "result": "C1_R58_SELFTEST: 110/110 pass", "exit": 0},
+    "c2_selftest": {"command": "python3 -I .ufo/evidence/round-58/c2/measure.py --selftest --work <scratch>", "result": "C2_R58_SELFTEST: 23/23 pass", "exit": 0},
+    "shell_syntax": {"command": "bash -n .ufo/evidence/round-58/controls.sh .ufo/evidence/round-58/no-harm.sh .ufo/evidence/round-58/deciding-run.sh", "result": "silent", "exit": 0}
+  },
+  "diff_audit": {
+    "c1": {
+      "command": "diff -u .ufo/evidence/round-57/c1/measure.py .ufo/evidence/round-58/c1/measure.py",
+      "result": "differences expected; diff exit 1",
+      "semantic_deltas": ["round labels and C1_R57 output identifiers become C1_R58", "BASE changes to 2a32aa8228d5f86a85c81a923a3148bf792a9538", "defects/panel paths and SHA pin point to round 58", "hard exclusions point to round-58 evidence", "A9 provenance lookup moves from round-57 w2/w3 and result files to round-58 w1 and its results file", "A9 fixture setup now uses round-58 w1 seats", "selftest labels and assertions track the new labels and BASE"]
+    },
+    "c2": {
+      "command": "diff -u .ufo/evidence/round-57/c2/measure.py .ufo/evidence/round-58/c2/measure.py",
+      "result": "differences expected; diff exit 1",
+      "semantic_deltas": ["round labels and C2_R57 output identifiers become C2_R58", "mutants path points to round 58", "row_named_codes now counts only exact stdout_contains elements equal to gate CODES (no substring extraction)", "exit-2 refusal row additionally must name RECEIPT_REV_UNRESOLVABLE exactly", "three strictness selftest cases added", "selftest fixture paths and prefix follow round 58"]
+    },
+    "unexpected_behavioral_change": false
+  },
+  "scratch_removed": true
+}

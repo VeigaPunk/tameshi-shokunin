@@ -1,0 +1,24 @@
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel05/clone show 99c3bc88d704566197783f66b211ee0a830e0330 -- /fast/scratch/hyaku/tameshi-r58/T58W1Panel05/clone/tools/env-diff.py
+exit=0
+stdout:
+commit 99c3bc88d704566197783f66b211ee0a830e0330
+Author: tameshi-shokunin <tameshi@shokunin.local>
+Date:   Wed Oct 28 11:38:37 2026 -0300
+
+    round-54: C1 fix pass — 26 wave-1 reader findings adjudicated and fixed (stale SKILL anchors at C0, the C** placeholder, exit-arm drift after the scratch-root change, the runbook pin, S275 page locator, the env-diff run-path class), QUALITY 105
+
+diff --git a/tools/env-diff.py b/tools/env-diff.py
+index 3ea041f0..39f2e428 100644
+--- a/tools/env-diff.py
++++ b/tools/env-diff.py
+@@ -260,6 +260,9 @@ def main(argv=None):
+             report["host"][command] = version.stdout.decode("utf-8", "replace").splitlines()[0]
+         a.out.parent.mkdir(parents=True, exist_ok=True)
+         a.out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
++    except ScratchRootUnusable as exc:
++        print("ENVDIFF_SETUP: could-not-evaluate: %s" % exc, file=sys.stderr)
++        return 2
+     except (OSError, ValueError, KeyError, TypeError) as exc:
+         print("ENVDIFF_SETUP:", exc, file=sys.stderr)
+         return 2
+stderr:

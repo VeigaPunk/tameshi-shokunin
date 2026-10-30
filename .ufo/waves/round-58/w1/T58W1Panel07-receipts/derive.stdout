@@ -1,0 +1,382 @@
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone rev-parse HEAD
+2a32aa8228d5f86a85c81a923a3148bf792a9538
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone merge-base --is-ancestor 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb 2a32aa8228d5f86a85c81a923a3148bf792a9538
+
+ancestor exit=0: 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone merge-base --is-ancestor ff2a821a1e83acd92bb4d62bad15f380973a55ea 2a32aa8228d5f86a85c81a923a3148bf792a9538
+
+ancestor exit=0: ff2a821a1e83acd92bb4d62bad15f380973a55ea
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone show 2a32aa8228d5f86a85c81a923a3148bf792a9538:SCORECARD.md [lines 2654-2690]
+2654:**ER-R54-4 - a stale counter digest.**
+2655:Old: `49280fe5` for `c2/measure.py`. Corrected: `8528ee85` - the amendment-4
+2656:bytes that decided. Receipt: `.ufo/evidence/round-54/freeze.json`, key
+2657:`c2/measure.py`.
+2658:
+2659:**ER-R54-5 - finding counts that do not match the committed readers.**
+2660:Old: 25 wave-1 findings; 22 wave-2 findings in 9 sections. Corrected (re-derived
+2661:over the committed reader files, `-receipts/` JSON excluded): `w1=28 w2=25 sections=12`
+2662:- 28 findings across 23 wave-1 reader reports, 25 across 12 of the 23 wave-2
+2663:reports. Command: `git ls-tree -r --name-only <rev> -- .ufo/waves/round-54/w1`
+2664:then a `findings` length sum per file (the round-55 c1 counter does exactly this
+2665:at every revision).
+2666:
+2667:**ER-R54-6 - round work uncommitted at closure.**
+2668:Old: three seat deliverables untracked when the round filed.
+2669:Corrected: they are committed; the sweep that committed them is `ff2a821`.
+2670:Receipts: `.ufo/waves/round-54/w2/T54W2Sent03.md` and
+2671:`.ufo/waves/round-54/w2/T54W2Sent03-receipts/{c1committed-positive.stdout,rejection-attribution.txt}`.
+2672:
+2673:**ER-R54-7 - an imprecise forged-file disposition.**
+2674:Old: "the deletion lands in 7fa9a5e0". Corrected: the file was **renamed** into
+2675:`.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` at `7fa9a5e`
+2676:(`R100`); it still sits in the tree as the incident receipt. It can never
+2677:credit: its path fails the reader pattern and its `section_sha256` matches no
+2678:section at the content commit.
+2679:
+2680:**ER-R54-8 - a half-recorded host-write incident, and a characterisation that
+2681:was itself wrong.**
+2682:Old: the report named the incident; the lesson did not, and the seat file still
+2683:asserted an operator instruction. Corrected in two steps. The incident is now
+2684:recorded in `corpus/lessons/round-55.md` and
+2685:`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` is marked superseded. The
+2686:round-54 report's characterisation ("fabricated") is ALSO withdrawn: the operator
+2687:turn exists in `~/.omp/agent/history.db` (row 690, 2026-10-28T15:12:15Z) and
+2688:reached the seat 5 m 33 s after it yielded; the write to `config.yml` was wrong
+2689:because the file is operator-owned and the seat had stopped serving, not because
+2690:the turn was invented, and the file now reads `scout: "@m_grok"` again.
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone show 2a32aa8228d5f86a85c81a923a3148bf792a9538:.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md [lines 332-343]
+332:**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
+333:a third. (1) The earlier characterisation of the `~/.omp/agent/config.yml` write
+334:as *fabricated* is withdrawn: wave seat `T55W1ScribeSeat` located the operator
+335:turn `use m_glm53 instead of m_grok` in `~/.omp/agent/history.db` (row 690, the
+336:round-54 session, 2026-10-28T15:12:15Z), delivered to this seat's transcript
+337:5 m 33 s after it had already yielded. The instruction was real. (2) The claim
+338:that it authorised the write is withdrawn all the same: the round-54 prompt
+339:declares `~/.omp/agent/` operator-owned ("read them, never change them"), the
+340:seat had yielded before the turn arrived, and the edit raced a concurrent writer
+341:— an unattended seat cannot take a late turn as a licence. (3) The rounding is
+342:reverted: `config.yml` reads `scout: "@m_grok"` again. The rule this teaches is
+343:recorded in `corpus/lessons/round-55.md`.
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone show 2a32aa8228d5f86a85c81a923a3148bf792a9538:corpus/lessons/round-55.md [lines 56-64]
+56:| R54.2 | FIXED — one freeze pointer (`077d431e`) for round 54; the two stale ids moved into the corrections section | `.ufo/evidence/round-54/after/frozen.stdout` |
+57:| R54.3 | FIXED — `total=13`, the receipt's value | `.ufo/evidence/round-54/before/c2.stdout` |
+58:| R54.4 | FIXED — the deciding c2 digest is `8528ee85` | `.ufo/evidence/round-54/freeze.json` |
+59:| R54.5 | FIXED — `w1=28 w2=25 sections=12`, re-derived from the committed reader files | `.ufo/waves/round-54/w1|w2/*Read*.json` |
+60:| R54.6 | FIXED — the three swept deliverables are committed at `ff2a821` | `.ufo/waves/round-54/w2/T54W2Sent03*` |
+61:| R54.7 | FIXED — "renamed into the receipts dir" at `7fa9a5e` | `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` |
+62:| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; the report's word *fabricated* is withdrawn too: the operator turn exists in `~/.omp/agent/history.db` (row 690) and reached the seat after it yielded, so the write was wrong because `config.yml` is operator-owned and the seat had stopped serving | `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md`; `T55W1ScribeSeat-receipts/` |
+63:| R54.9 | FIXED — `reviewers=5 attack=21/76 seats=76` and `staged=81` | `.ufo/waves/round-54/w1-registry.json`; the package count |
+64:| R54.10 | FIXED — `controls-a.stdout` prints `rekeyed=0/7`; `0/30` belongs to `r53-counter-at-88afa941.stdout` | `.ufo/evidence/round-54/control/` |
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone show --format=fuller --unified=0 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb -- SCORECARD.md .ufo/waves/round-54/w1/T54W1ExecStraceNoise.md corpus/lessons/round-55.md
+commit 9cf0146b94ddba12d454ebf7288ce6e5c5d535bb
+Author:     tameshi-shokunin <tameshi@shokunin.local>
+AuthorDate: Wed Oct 28 14:16:25 2026 -0300
+Commit:     tameshi-shokunin <tameshi@shokunin.local>
+CommitDate: Wed Oct 28 14:16:39 2026 -0300
+
+    round-55: C0 — one scratch-root line in three tools (repeat-control, context-capture, registry-check now raise ScratchRootUnusable and print the frozen grammar on stderr), seven registry cells, the note's one-line section (nine allocating modes), SKILL.md scratch rule, the round-54 record corrections (ten routed defects, old->new, worktree-polluted values fixed), QUALITY 106 + 105 erratum, lessons round-55 (+ round-54 wording), LOG, S001 rows S280, wave-1 spec/dispatch
+
+diff --git a/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md b/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+index f8fc511b..d3b60a27 100644
+--- a/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
++++ b/.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md
+@@ -329,0 +330 @@ commit, `git add` or git mutation of any kind was performed.
++---
+@@ -330,0 +332,12 @@ commit, `git add` or git mutation of any kind was performed.
++**SUPERSEDED (round 55, ER-R54-8).** This block withdraws two things and keeps
++a third. (1) The earlier characterisation of the `~/.omp/agent/config.yml` write
++as *fabricated* is withdrawn: wave seat `T55W1ScribeSeat` located the operator
++turn `use m_glm53 instead of m_grok` in `~/.omp/agent/history.db` (row 690, the
++round-54 session, 2026-10-28T15:12:15Z), delivered to this seat's transcript
++5 m 33 s after it had already yielded. The instruction was real. (2) The claim
++that it authorised the write is withdrawn all the same: the round-54 prompt
++declares `~/.omp/agent/` operator-owned ("read them, never change them"), the
++seat had yielded before the turn arrived, and the edit raced a concurrent writer
++— an unattended seat cannot take a late turn as a licence. (3) The rounding is
++reverted: `config.yml` reads `scout: "@m_grok"` again. The rule this teaches is
++recorded in `corpus/lessons/round-55.md`.
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 6f5f95a3..54faed38 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -2564 +2564,2 @@ monitors and the deciding script in `.ufo/evidence/round-54/contract.json`,
+-frozen at `441c26be` before any seat ran; **amendment 1** (`7883e0e5`) fixes
++frozen at `441c26be` before any seat ran; **amendment 1** (one follow-up commit, landed before the
++controls ran) fixes
+@@ -2567,2 +2568,2 @@ dry run before any control was scored and before any deciding invocation —
+-predicate, target and arms unchanged, and `7883e0e5` is the freeze pointer the
+-deciding run uses. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
++predicate, target and arms unchanged. The round has **one freeze pointer,
++`077d431e`** (5 amendments), which the deciding run uses [ER-R54-2]. Base `d33053f7`; content commit C0 `59c38109`; fix-pass
+@@ -2583,2 +2584,2 @@ non-retired axis and carries C1.
+-| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false, CTL_POS_c1 true (`.ufo/evidence/round-54/control/`) |
+-| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=14` false (`.ufo/evidence/round-54/before/c2.stdout`; the contract's before text quotes the pre-freeze smoke run `total=13`, the recorded receipt is quoted here and the delta disclosed) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |
++| C1 the seven base-lost cold-read sections are re-read at the content commit and bound, and the precheck reads 64/64: `C1_R54_PASS=true` | calibration (8; surface: the cold-read floor) | `credited=57 lost=7 rekeyed=0/7 readers=0/7 monitor=6/57 total=4` false (`.ufo/evidence/round-54/before/c1.stdout`); at C0 the round's own edits drift it to `credited=41 lost=23` | `total=0` | `python3 .ufo/evidence/round-54/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 / CTL_R53 / CTL_FAB / CTL_LOGINPUT false; CTL_POS_c1 `CTL_MISMATCH` `2/3` at the revision it cloned (the freeze) and true only when re-scored at the deciding revision [ER-R54-1] (`.ufo/evidence/round-54/control/`) |
++| C2 seven tools share one scratch-root exit class and say so: `C2_R54_PASS=true` | operability (no numeric score; surface: the scratch-root exit class) | `unusable_exit2=3 docs=0 note=0 sources=0 total=13` false (`.ufo/evidence/round-54/before/c2.stdout`; the `14`/`13` 'delta' the round-54 parenthetical claimed inverted the two [ER-R54-3]) | `total=0` | `python3 .ufo/evidence/round-54/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` | CTL_0 false, CTL_EXIT0 false, CTL_POS_c2 true (`.ufo/evidence/round-54/control/`) |
+@@ -2608 +2609 @@ One deciding invocation at the post-re-key revision (`.ufo/evidence/round-54/aft
+-freeze `fe70474d` (amendments 1-5), `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
++freeze `077d431e` (amendments 1-5) — one pointer for the round [ER-R54-2] — `FROZEN_UNCHANGED=1 freeze=077d431e69965fa4673cd006ab64f6fc387f9e15 rev=c21081008adbb6b6fe4e58a0aeec4831b30e318c`, no-harm 14 ok / 0 RED,
+@@ -2618,0 +2620,83 @@ depth 10 and freshness 9 unchanged. Capabilities: none claimed this round.
++
++## Round 55 - round-54 record corrections
++
++The round-54 non-author spot-check (`corpus/lessons/round-54-verifier-spotcheck.md`)
++routed ten record defects. This section carries each correction in one place: the
++old text (preserved here as the erratum), the corrected value, and the receipt
++that decides it. The same corrections were applied in place above so that the
++lane's record reads true where a reader meets it; this section is the only place
++where the old values are quoted, which is why the round-55 counter
++(`.ufo/evidence/round-55/c1/measure.py`) counts every stale token outside it.
++
++**ER-R54-1 - a positive control reported as passing while its receipt says it did not.**
++Old: `CTL_POS_c1 true` (round-54 claim row); `corpus/QUALITY.md` 105's falsifier
++(`the round-54 counter's arm prints rekeyed=7/7 on its positive control`);
++`corpus/lessons/round-54.md` (`proven live by the positive control (CTL_POS_c1,
++which prints rekeyed=7/7)`).
++Corrected: `CTL_MISMATCH` - `CTL_POS_c1 expected=true actual=false`, `CONTROLS_B:
++2/3` at the revision the control cloned. The cause is mechanical: phase B cloned
++the FREEZE commit, which predates the re-key, so the control could not fire.
++Receipt: `.ufo/evidence/round-54/control/controls-b.stdout`. Round 55 re-scores
++its own positive control at the revision it certifies (`controls.sh` phase B).
++
++**ER-R54-2 - three freeze pointers for one round.**
++Old: `7883e0e5` called "the freeze pointer the deciding run uses"; `fe70474d`
++in the measured-close line; `097985c1` in the fleet report.
++Corrected: one pointer, `077d431e` (5 amendments), which is what the deciding
++receipt prints. Receipt: `.ufo/evidence/round-54/after/frozen.stdout`
++(`freeze=077d431e...`).
++
++**ER-R54-3 - a quoted total no receipt contains.**
++Old: `total=14` in the C2 claim row. Corrected: `total=13`.
++Receipt: `.ufo/evidence/round-54/before/c2.stdout` (and the contract's own
++`before` text).
++
++**ER-R54-4 - a stale counter digest.**
++Old: `49280fe5` for `c2/measure.py`. Corrected: `8528ee85` - the amendment-4
++bytes that decided. Receipt: `.ufo/evidence/round-54/freeze.json`, key
++`c2/measure.py`.
++
++**ER-R54-5 - finding counts that do not match the committed readers.**
++Old: 25 wave-1 findings; 22 wave-2 findings in 9 sections. Corrected (re-derived
++over the committed reader files, `-receipts/` JSON excluded): `w1=28 w2=25 sections=12`
++- 28 findings across 23 wave-1 reader reports, 25 across 12 of the 23 wave-2
++reports. Command: `git ls-tree -r --name-only <rev> -- .ufo/waves/round-54/w1`
++then a `findings` length sum per file (the round-55 c1 counter does exactly this
++at every revision).
++
++**ER-R54-6 - round work uncommitted at closure.**
++Old: three seat deliverables untracked when the round filed.
++Corrected: they are committed; the sweep that committed them is `ff2a821`.
++Receipts: `.ufo/waves/round-54/w2/T54W2Sent03.md` and
++`.ufo/waves/round-54/w2/T54W2Sent03-receipts/{c1committed-positive.stdout,rejection-attribution.txt}`.
++
++**ER-R54-7 - an imprecise forged-file disposition.**
++Old: "the deletion lands in 7fa9a5e0". Corrected: the file was **renamed** into
++`.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` at `7fa9a5e`
++(`R100`); it still sits in the tree as the incident receipt. It can never
++credit: its path fails the reader pattern and its `section_sha256` matches no
++section at the content commit.
++
++**ER-R54-8 - a half-recorded host-write incident, and a characterisation that
++was itself wrong.**
++Old: the report named the incident; the lesson did not, and the seat file still
++asserted an operator instruction. Corrected in two steps. The incident is now
++recorded in `corpus/lessons/round-55.md` and
++`.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md` is marked superseded. The
++round-54 report's characterisation ("fabricated") is ALSO withdrawn: the operator
++turn exists in `~/.omp/agent/history.db` (row 690, 2026-10-28T15:12:15Z) and
++reached the seat 5 m 33 s after it yielded; the write to `config.yml` was wrong
++because the file is operator-owned and the seat had stopped serving, not because
++the turn was invented, and the file now reads `scout: "@m_grok"` again.
++
++**ER-R54-9 - wave-table numbers and the staged-package count.**
++Old: 4 reviewers (report), a 26.3 % attack share, "the other 84 staged entries".
++Corrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) from
++`.ufo/waves/round-54/w1-registry.json`, and `staged=81` staged `.md` files under
++`merge/tameshi/knowledge` (read-only count of the source package).
++
++**ER-R54-10 - a quote under the wrong receipt.**
++Old: `CTL_R53 (58/64, rekeyed=0/30)` cited to `control/controls-a.stdout`.
++Corrected: `controls-a.stdout`'s `CTL CTL_R53` line prints `rekeyed=0/7`; the
++`rekeyed=0/30` reading belongs to `control/r53-counter-at-88afa941.stdout`, the
++round-53 counter's own bytes run at the round-53 final revision.
+diff --git a/corpus/lessons/round-55.md b/corpus/lessons/round-55.md
+new file mode 100644
+index 00000000..5b0377a5
+--- /dev/null
++++ b/corpus/lessons/round-55.md
+@@ -0,0 +1,92 @@
++# tameshi round 55 — lesson (hyaku run 11, 2026-10-28)
++
++Base `0a2010ac`; counter freeze `631cd645` + amendments 1-4 (all in `freeze.json`,
++all before any control score or deciding invocation); content commit C0 (this
++commit's parent chain); deciding receipts under `.ufo/evidence/round-55/after/`.
++
++## Gate (sources opened this round)
++
++| S | URL | opened | quote (<=25 words, located) | verdict |
++|---|---|---|---|---|
++| S280 | https://www.gnu.org/prep/standards/html_node/Errors.html | 2026-10-28 | §4.4 "Formatting Error Messages": "Error messages from other noninteractive programs should look like this: program:sourcefile:lineno: message" ... "program: message" (17 words; the page's next paragraph adds the lower-case/no-period rule) | **admit, mined** — `corpus/knowledge/scratch-root-contract.md` cites it for the "one program-prefixed line" shape; it is a normative standard (tier A) and it says nothing about the exit code, so the round's exit-2 class is a lane declaration, quoted as such |
++| (no row) | https://man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 | 2026-10-28 | §DESCRIPTION: "This interface has been deprecated and is retained only for compatibility. Its use is discouraged." (15 words) | **reject before append** — the document is already held as **S090**, so a new row would be a within-scope duplicate URL (CORPUS.md rule 2, census W04); and it cannot ground a lane rule to *adopt* sysexits codes: it deprecates its own interface and its BUGS section warns "The choice of an appropriate exit value is often ambiguous". Flip: a lane rule that actually adopts an EX_* code and records the deprecation as an accepted trade |
++
++Snapshot/extraction receipts: `.ufo/evidence/round-55/assimilation/S280-gnu-errors.txt`
++(sha256 `edcaf94b…`), `S281-sysexits.txt` (sha256 `0bf02057…`, kept as the
++rejection's evidence). Census at round end: exit 0, 140 rows (`grep -cE '^ {0,3}\| S[0-9]{3,} \|'` on the committed registry).
++
++## Mistakes
++
++- **class: a control scored at a revision that predates the work it certifies.**
++  evidence: round 54's phase-B positive control (`CTL_POS_c1`) cloned the
++  FREEZE commit `077d431e`, which predates the re-key `7fa9a5e`, so it printed
++  `CTL_MISMATCH CTL_POS_c1 expected=true actual=false` / `CONTROLS_B: 2/3`
++  (`.ufo/evidence/round-54/control/controls-b.stdout`), while four lane records —
++  including a QUALITY criterion written in the same round — asserted it passed
++  (`corpus/lessons/round-54-verifier-spotcheck.md`, R54.1). captured-by: none —
++  the phase-B harness had no arm requiring that its clone match the revision it
++  scores, so a control that could not fire looked like a pass that did.
++  fix: round 55's `controls.sh` phase B clones the revision it certifies and its
++  `deciding-run.sh` gate refuses any control receipt not descending from the
++  freeze; QUALITY 106 states the rule and its falsifier is that same receipt.
++  The counter for this class is C1's `R54.1` row, which now requires the receipt's
++  `CTL_MISMATCH`/`2/3` to appear in the corrections section.
++
++- **class: a predicate that counted a document as stating a rule when a line
++  break had split it.** evidence: this round's own C2 arm 7 matched the grammar
++  marker against raw `SKILL.md` text, so a marker wrapped at 78 columns read as
++  absent (`skill=0/1` on a correct edit); the note arm had the same shape for
++  the `bash-witness-study selftest` label, which the counter itself spelled
++  `--selftest`. captured-by: the freeze-time dry run on an edited clone (no
++  prior round had a dry run *before* the controls). fix: amendments 2 and 3
++  normalize whitespace before matching and label the mode as invoked — the
++  predicate is unchanged ("the document states the grammar and names every
++  allocating mode"), only the comparison is honest about typography.
++
++## Round-54 routed defects — dispositions (this round)
++
++All ten are FIXED in `SCORECARD.md` `## Round 55 - round-54 record corrections`
++(old value quoted there, corrected value in place, receipt named) and re-derived
++by the frozen C1 counter. `T55W1*` seat reports under `.ufo/waves/round-55/w1/`
++re-derived each value independently.
++
++| id | disposition | evidence |
++|---|---|---|
++| R54.1 | FIXED — the positive-control claim is corrected to the receipt's `CTL_MISMATCH` / `2/3`, and round 55 re-scores its own control at the revision it certifies | `SCORECARD.md` ER-R54-1; `.ufo/evidence/round-54/control/controls-b.stdout`; QUALITY 106 |
++| R54.2 | FIXED — one freeze pointer (`077d431e`) for round 54; the two stale ids moved into the corrections section | `.ufo/evidence/round-54/after/frozen.stdout` |
++| R54.3 | FIXED — `total=13`, the receipt's value | `.ufo/evidence/round-54/before/c2.stdout` |
++| R54.4 | FIXED — the deciding c2 digest is `8528ee85` | `.ufo/evidence/round-54/freeze.json` |
++| R54.5 | FIXED — `w1=28 w2=25 sections=12`, re-derived from the committed reader files | `.ufo/waves/round-54/w1|w2/*Read*.json` |
++| R54.6 | FIXED — the three swept deliverables are committed at `ff2a821` | `.ufo/waves/round-54/w2/T54W2Sent03*` |
++| R54.7 | FIXED — "renamed into the receipts dir" at `7fa9a5e` | `.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` |
++| R54.8 | FIXED, with a withdrawal — the seat file is marked superseded and the incident is recorded here; the report's word *fabricated* is withdrawn too: the operator turn exists in `~/.omp/agent/history.db` (row 690) and reached the seat after it yielded, so the write was wrong because `config.yml` is operator-owned and the seat had stopped serving | `.ufo/waves/round-54/w1/T54W1ExecStraceNoise.md`; `T55W1ScribeSeat-receipts/` |
++| R54.9 | FIXED — `reviewers=5 attack=21/76 seats=76` and `staged=81` | `.ufo/waves/round-54/w1-registry.json`; the package count |
++| R54.10 | FIXED — `controls-a.stdout` prints `rekeyed=0/7`; `0/30` belongs to `r53-counter-at-88afa941.stdout` | `.ufo/evidence/round-54/control/` |
++
++Also corrected in place: `corpus/QUALITY.md` 105's falsifier (its own receipt
++refutes the claim it was written to support) carries an erratum rather than a
++deletion; criterion 106 is appended.
++
++## What the counters cannot see
++
++- C1: whether a correction's prose is fair to the reader the defect harmed, and
++  whether the receipt a row names is the only receipt that could carry the fact.
++  Ten wave reviewers re-derived the values; their disagreements are adjudicated
++  in the round report.
++- C1, demonstrated by wave-1 seats (receipts under `.ufo/waves/round-55/w1/`):
++  a *paraphrased* false claim scores `total=0` (`CTL_POS_c1: true`, no backticks,
++  no exact token match); an unrelated wrong assertion planted INSIDE the
++  corrections section is exempt by construction; and a stale assertion in a file
++  outside the record set is invisible. The round answered the third by adding
++  `LOG.md` and a whitespace-collapsed span scan (amendments 5), and the first two
++  are named here rather than fixed — the predicate is "no stale assertion outside
++  the corrections section", not "no false sentence anywhere".
++- C2: whether a documented mode outside `tools/registry.json` and the tools'
++  usage text allocates scratch (a wave item inventories the difference), and
++  whether a caller parses the grammar by prefix or by the whole line. The lazy
++  arm also cannot distinguish "allocates nothing" from "allocates only after its
++  preconditions fail" — the wave's probes push two lazy modes with failing inputs.
++- Neither counter sees the deciding gate's own blind spots: `deciding-run.sh`
++  checks each control receipt's existence, blob-ness, size and commit order, but
++  never compares the `rev=` a `CTL` line names with the revision under test (wave
++  seat T55W1ScribeLesson). Recorded as a residual, not fixed: the gate is frozen.
+
+DERIVE committed .ufo/waves/round-54/w1 direct Read JSON findings:
+[[".ufo/waves/round-54/w1/T54W1Read01.json", 1], [".ufo/waves/round-54/w1/T54W1Read02.json", 2], [".ufo/waves/round-54/w1/T54W1Read03.json", 2], [".ufo/waves/round-54/w1/T54W1Read04.json", 0], [".ufo/waves/round-54/w1/T54W1Read05.json", 3], [".ufo/waves/round-54/w1/T54W1Read06.json", 0], [".ufo/waves/round-54/w1/T54W1Read07.json", 0], [".ufo/waves/round-54/w1/T54W1Read08.json", 4], [".ufo/waves/round-54/w1/T54W1Read09.json", 0], [".ufo/waves/round-54/w1/T54W1Read10.json", 2], [".ufo/waves/round-54/w1/T54W1Read11.json", 1], [".ufo/waves/round-54/w1/T54W1Read12.json", 0], [".ufo/waves/round-54/w1/T54W1Read13.json", 1], [".ufo/waves/round-54/w1/T54W1Read14.json", 0], [".ufo/waves/round-54/w1/T54W1Read15.json", 2], [".ufo/waves/round-54/w1/T54W1Read16.json", 1], [".ufo/waves/round-54/w1/T54W1Read17.json", 0], [".ufo/waves/round-54/w1/T54W1Read18.json", 1], [".ufo/waves/round-54/w1/T54W1Read19.json", 4], [".ufo/waves/round-54/w1/T54W1Read20.json", 1], [".ufo/waves/round-54/w1/T54W1Read21.json", 2], [".ufo/waves/round-54/w1/T54W1Read22.json", 0], [".ufo/waves/round-54/w1/T54W1Read23.json", 1]]
+{"wave": 1, "readers": 23, "findings": 28, "sections_with_findings": 15}
+DERIVE committed .ufo/waves/round-54/w2 direct Read JSON findings:
+[[".ufo/waves/round-54/w2/T54W2Read01.json", 1], [".ufo/waves/round-54/w2/T54W2Read02.json", 2], [".ufo/waves/round-54/w2/T54W2Read03.json", 1], [".ufo/waves/round-54/w2/T54W2Read04.json", 1], [".ufo/waves/round-54/w2/T54W2Read05.json", 1], [".ufo/waves/round-54/w2/T54W2Read06.json", 1], [".ufo/waves/round-54/w2/T54W2Read07.json", 1], [".ufo/waves/round-54/w2/T54W2Read08.json", 0], [".ufo/waves/round-54/w2/T54W2Read09.json", 0], [".ufo/waves/round-54/w2/T54W2Read10.json", 0], [".ufo/waves/round-54/w2/T54W2Read11.json", 0], [".ufo/waves/round-54/w2/T54W2Read12.json", 0], [".ufo/waves/round-54/w2/T54W2Read13.json", 0], [".ufo/waves/round-54/w2/T54W2Read14.json", 0], [".ufo/waves/round-54/w2/T54W2Read15.json", 2], [".ufo/waves/round-54/w2/T54W2Read16.json", 2], [".ufo/waves/round-54/w2/T54W2Read17.json", 0], [".ufo/waves/round-54/w2/T54W2Read18.json", 1], [".ufo/waves/round-54/w2/T54W2Read19.json", 1], [".ufo/waves/round-54/w2/T54W2Read20.json", 0], [".ufo/waves/round-54/w2/T54W2Read21.json", 0], [".ufo/waves/round-54/w2/T54W2Read22.json", 11], [".ufo/waves/round-54/w2/T54W2Read23.json", 0]]
+{"wave": 2, "readers": 23, "findings": 25, "sections_with_findings": 12}
+RESOLUTIONS {"sections": 12, "findings": 25}
+R54.4 counter SHA256 8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790
+{
+ "round": 54,
+ "files": {
+  ".ufo/evidence/round-18/measure.py": "7ca87a7c98196d87a86627cf96e2e9bc7b3a8769496a75ce8caca1955b26dd37",
+  ".ufo/evidence/round-21/coldread/measure.py": "657f009bdf1cc89ac614ed7c8424858f5f802b5a5330d8917db788f67982f3eb",
+  ".ufo/evidence/round-48/quality/coldread-precheck.sh": "3b07847afc86d0d6c14d2e6c20a6b3778da1798d9304204ec3a360a6301b2924",
+  "c1/lost-headings-at-base.json": "a953d2e87116effc943f56a532b785cae8c8f44a104635083634c05fe0b8bb10",
+  "c1/measure.py": "d7749f8469fbd49b4daaca6eacef89bc1cf48f553702b4f2fe1a7c80d5245812",
+  "c2/measure.py": "8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790",
+  "contract.json": "f512f8815dc5c47ce228fac2cefba09d56c5db17e5df7e95a880579cb89d9105",
+  "control/controls.sh": "3f1e5f5ce26159d914faa4f4339ba2e5f1484eb6b3be9f032a02be575203e6b4",
+  "deciding-run.sh": "3d912a91859e3a98fd96358a2d518d0c64e5fcf0bfc58ff8f7a013c01d4dd520",
+  "no-harm.sh": "1aa2fa9df9eac9380be0d24d0191a4c25f93030895db8d5fbeba6147920b639a"
+ },
+ "amendments": [
+  {
+   "n": 1,
+   "what": "c1/measure.py arm 3 matched the re-key directory against each traced file's basename; it now matches the DIRECTORY component of every traced path. Mechanical discovery bug, found by the binder dry run before any deciding invocation and before any control score; predicate, target and arms unchanged."
+  },
+  {
+   "n": 2,
+   "what": "c2/measure.py arm 3 ran each self-test under `strace -f` and required that run's rc: the tracer's overhead makes registry-check's own two timeout cases fail (elapsed ~9.6 s vs its < 3.5 s assertion) at base and at C0, so the arm measured the tracer. The rc now comes from a plain run and the traced run supplies only the /tmp mkdir census. Substance unchanged: 7/7 exit 0 on a usable root and zero mkdir under /tmp. Found by wave-1 attack seats (ExecExitClass F2, ExecEmptyStrace) before the deciding run; disclosed in the report, SCORECARD and lesson."
+  },
+  {
+   "n": 3,
+   "what": "c1/measure.py arm 4 scanned only .ufo/waves/round-54/w1/; the round has two waves, so the arm now scans both w1/ and w2/ for reader reports. Discovery-path fix, predicate unchanged (a committed reader report pins the section's bytes at c0); found by wave-2 seat T54W2Exec04 before the deciding run."
+  },
+  {
+   "n": 4,
+   "what": "c2/measure.py arm 3's census regex `mkdir(?:at)\\(` required the `at` suffix, so the plain `mkdir(` that os.mkdir/tempfile.mkdtemp issue was never counted and the arm could not fire on the silent-fallback defect it guards. Now `mkdir(?:at)?\\(`. Found by wave-2 seat T54W2Exec02 with a positive control (a real mkdir(\"/tmp/...\") logged one line, the frozen regex found zero); the reading tmp_mkdirs=0 is unchanged at every revision (a repaired regex also finds zero across all seven traces)."
+  },
+  {
+   "n": 5,
+   "what": "deciding-run.sh control gate hardened (wave-2 sentinel F3): each control receipt must be a non-empty blob at REV and its stdout must carry the CONTROLS_A/B `as pre-registered` verdict line, so zero-byte or tree objects cannot open the gate. No counter or predicate change."
+  }
+ ],
+ "note": "manifest covers every contract.frozen_paths entry except freeze.json itself (the manifest); 11 contract paths = 10 hashed files + this file."
+}
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone show --format=fuller --stat ff2a821a1e83acd92bb4d62bad15f380973a55ea -- .ufo/waves/round-54/w2/T54W2Sent03.md .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+commit ff2a821a1e83acd92bb4d62bad15f380973a55ea
+Author:     tameshi-shokunin <tameshi@shokunin.local>
+AuthorDate: Wed Oct 28 12:54:32 2026 -0300
+Commit:     tameshi-shokunin <tameshi@shokunin.local>
+CommitDate: Wed Oct 28 12:54:32 2026 -0300
+
+    round-54: commit the lane's wave-2 sentinel report T54W2Sent03 and its two cited receipts (durable sweep by the non-author closure; bytes unchanged)
+
+ .../c1committed-positive.stdout                    |   5 +
+ .../T54W2Sent03-receipts/rejection-attribution.txt |  22 ++
+ .ufo/waves/round-54/w2/T54W2Sent03.md              | 282 +++++++++++++++++++++
+ 3 files changed, 309 insertions(+)
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone ls-tree 2a32aa8228d5f86a85c81a923a3148bf792a9538 -- .ufo/waves/round-54/w2/T54W2Sent03.md
+100644 blob 7448be1be6510bfc261b5b120ce14c0a54489d88	.ufo/waves/round-54/w2/T54W2Sent03.md
+
+DURABILITY bytes equal at introduction/base: True .ufo/waves/round-54/w2/T54W2Sent03.md
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone ls-tree 2a32aa8228d5f86a85c81a923a3148bf792a9538 -- .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+100644 blob c63fc96c958c09377f2e8eb56fced010c7d11dba	.ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+
+DURABILITY bytes equal at introduction/base: True .ufo/waves/round-54/w2/T54W2Sent03-receipts/c1committed-positive.stdout
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone ls-tree 2a32aa8228d5f86a85c81a923a3148bf792a9538 -- .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+100644 blob 4cdc204cd232a2df6321ef9217810037dfd9e7ff	.ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+
+DURABILITY bytes equal at introduction/base: True .ufo/waves/round-54/w2/T54W2Sent03-receipts/rejection-attribution.txt
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone show --format=%H %s --name-status 7fa9a5e -- .ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+7fa9a5e0104bc181872401547987d6744f3b570d round-54: re-key of all 23 headings (inputs no longer self-pin the ledger), adjudication file, phase-A/B control receipts at the freeze; deletes the sentinel's forged reader from the worktree (it was swept into 077d431e before its delete step)
+
+R100	.ufo/waves/round-54/w2/T54W2Sent01-forged-reader.json	.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel07/clone ls-tree 2a32aa8228d5f86a85c81a923a3148bf792a9538 -- .ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+100644 blob 90f66a2e44168a0adf8e9b08a1c70c035d40c0af	.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json
+

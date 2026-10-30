@@ -1,0 +1,172 @@
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone rev-parse HEAD
+2a32aa8228d5f86a85c81a923a3148bf792a9538
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show --format=fuller --stat 6db1d220b337c35ff1e25bf9cfd74abc9db1498d
+commit 6db1d220b337c35ff1e25bf9cfd74abc9db1498d
+Author:     tameshi-shokunin <tameshi@shokunin.local>
+AuthorDate: Tue Oct 27 04:41:18 2026 -0300
+Commit:     tameshi-shokunin <tameshi@shokunin.local>
+CommitDate: Tue Oct 27 04:43:10 2026 -0300
+
+    round-52 w3: commit wave markers and integrate script (closure salvage)
+
+ .ufo/evidence/round-52/integrate/build-readers.py  |   41 +
+ .ufo/waves/round-52/w3.ready                       |    1 +
+ .ufo/waves/round-52/w3.ready.dispatched            |    2 +
+ .ufo/waves/round-52/w3/T52W3ConnShonen.md          |   16 +
+ .../w3/T52W3CritAdmission-c2-forged.stdout         |    9 +
+ .../w3/T52W3CritAdmission-c2-honest.stdout         |    9 +
+ .../T52W3CritAdmission-forged-rekey-monitor.json   | 1826 ++++++++++++++++
+ .../T52W3CritAdmission-honest-rekey-monitor.json   | 1892 ++++++++++++++++
+ .ufo/waves/round-52/w3/T52W3CritAdmission.md       |  140 ++
+ .ufo/waves/round-52/w3/T52W3CritRound26.md         |   58 +
+ .ufo/waves/round-52/w3/T52W3ExecC1Probe.md         |  199 ++
+ .ufo/waves/round-52/w3/T52W3ExecC1Probe.stdout     |   35 +
+ .ufo/waves/round-52/w3/T52W3ExecC1Probe/c3.stdout  |   31 +
+ .../w3/T52W3ExecC1Probe/registry-check.stdout      |   57 +
+ .ufo/waves/round-52/w3/T52W3ExecC1Probe/run.txt    |   34 +
+ .../round-52/w3/T52W3ExecC1Probe/selftest.stdout   |   10 +
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm-c2-base.out |    9 +
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm-c2-head.out |    9 +
+ .../w3/T52W3ExecNoHarm-c2-m6probe-reader.md        |    1 +
+ .../round-52/w3/T52W3ExecNoHarm-c2-m6probe.out     |    9 +
+ .../round-52/w3/T52W3ExecNoHarm-c2-selftest.out    |    9 +
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm-c2.out      |    9 +
+ .../round-52/w3/T52W3ExecNoHarm-census-root.out    |   17 +
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm-census.out  |   17 +
+ .../round-52/w3/T52W3ExecNoHarm-coldread-cand1.err |    0
+ .../round-52/w3/T52W3ExecNoHarm-coldread-cand1.out | 2269 ++++++++++++++++++++
+ .../round-52/w3/T52W3ExecNoHarm-m6probe-apply.py   |   30 +
+ .../round-52/w3/T52W3ExecNoHarm-noharm-base.err    |    0
+ .../round-52/w3/T52W3ExecNoHarm-noharm-base.out    |   11 +
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm-noharm.err  |    0
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm-noharm.out  |   11 +
+ .../round-52/w3/T52W3ExecNoHarm-rekey-probe.out    |   22 +
+ .../round-52/w3/T52W3ExecNoHarm-rekey-probe.py     |   28 +
+ .ufo/waves/round-52/w3/T52W3ExecNoHarm.md          |  321 +++
+ .ufo/waves/round-52/w3/T52W3MutRefresh.md          |   27 +
+ .ufo/waves/round-52/w3/T52W3Read01.json            |    7 +
+ .ufo/waves/round-52/w3/T52W3Read01.md              |   21 +
+ .ufo/waves/round-52/w3/T52W3Read02.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read02.md              |   15 +
+ .ufo/waves/round-52/w3/T52W3Read03.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read03.md              |   12 +
+ .ufo/waves/round-52/w3/T52W3Read04.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read04.md              |   12 +
+ .ufo/waves/round-52/w3/T52W3Read05-section.txt     |   11 +
+ .ufo/waves/round-52/w3/T52W3Read05.json            |    7 +
+ .ufo/waves/round-52/w3/T52W3Read05.md              |   36 +
+ .ufo/waves/round-52/w3/T52W3Read06.json            |   18 +
+ .ufo/waves/round-52/w3/T52W3Read06.md              |   21 +
+ .ufo/waves/round-52/w3/T52W3Read07.json            |   18 +
+ .ufo/waves/round-52/w3/T52W3Read07.md              |   10 +
+ .ufo/waves/round-52/w3/T52W3Read08.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read08.md              |   22 +
+ .ufo/waves/round-52/w3/T52W3Read09.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read09.md              |   19 +
+ .ufo/waves/round-52/w3/T52W3Read10.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read10.md              |   13 +
+ .ufo/waves/round-52/w3/T52W3Read11.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read11.md              |   21 +
+ .ufo/waves/round-52/w3/T52W3Read12.json            |   18 +
+ .ufo/waves/round-52/w3/T52W3Read12.md              |    9 +
+ .ufo/waves/round-52/w3/T52W3Read13.json            |   13 +
+ .ufo/waves/round-52/w3/T52W3Read13.md              |   33 +
+ .ufo/waves/round-52/w3/T52W3Read14.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read14.md              |   10 +
+ .ufo/waves/round-52/w3/T52W3Read15.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read15.md              |   23 +
+ .ufo/waves/round-52/w3/T52W3Read16.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read16.md              |    8 +
+ .ufo/waves/round-52/w3/T52W3Read17.json            |    1 +
+ .ufo/waves/round-52/w3/T52W3Read17.md              |    8 +
+ .ufo/waves/round-52/w3/T52W3Read19.json            |    7 +
+ .ufo/waves/round-52/w3/T52W3Read19.md              |   83 +
+ .ufo/waves/round-52/w3/T52W3RevApplied1.md         |   36 +
+ .ufo/waves/round-52/w3/T52W3RevApplied2.md         |   34 +
+ .ufo/waves/round-52/w3/T52W3RevApplied3.md         |   44 +
+ .ufo/waves/round-52/w3/T52W3RevApplied4.md         |   43 +
+ .ufo/waves/round-52/w3/T52W3RevGate.md             |   23 +
+ .ufo/waves/round-52/w3/T52W3RevQuality.md          |   55 +
+ .ufo/waves/round-52/w3/T52W3ScoutMisroot.md        |   81 +
+ .ufo/waves/round-52/w3/swarm-registry.json         |  334 +++
+ 80 files changed, 8295 insertions(+)
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone show 218bc6b5c25d6a3c57dd44600febd552f0167cee -- tools/registry-check.py
+commit 218bc6b5c25d6a3c57dd44600febd552f0167cee
+Author: tameshi-shokunin <tameshi@shokunin.local>
+Date:   Tue Oct 27 10:15:50 2026 -0300
+
+    round-53: fix pass — 21 T52 reader findings resolved in SKILL.md (dated milestones, qualified pointers, pin chains, role-as-stated); tools/ /tmp hardcodes honour TMPDIR; recipe+registry scratch docs name HYAKU_SCRATCH
+
+diff --git a/tools/registry-check.py b/tools/registry-check.py
+index 08ac9cd1..a03beb47 100755
+--- a/tools/registry-check.py
++++ b/tools/registry-check.py
+@@ -75,7 +75,7 @@ unreadable/invalid, root or rev missing, clone failure, --only/--tag miss) ·
+              `tameshi-registry-check-report-v1`, additive fields:
+              registry_sha256, rev_resolved, per-row stdout/stderr tails); the
+              human ROW/REGISTRY_CHECK lines move to stderr.
+---selftest   hermetic; fixtures only under /tmp, never touches the lane; its
++--selftest   hermetic; fixtures only under the scratch root (TMPDIR), never touches the lane; its
+              own git calls use the same scrubbed environment (a decoy
+              GIT_DIR must not move any fixture or canary HEAD).
+ 
+@@ -763,9 +763,9 @@ def clone_lane_at_rev(root, rev, sha):
+     fleet_root = os.path.dirname(root_real)
+     env = git_env()
+     try:
+-        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir="/tmp")
++        work = tempfile.mkdtemp(prefix="tameshi-registry-check-", dir=tempfile.gettempdir())
+     except OSError as exc:  # round-18 w2 CR47: an unusable /tmp is could-not-evaluate (2), never "differs" (1)
+-        raise RuntimeError(f"cannot create clone scratch under /tmp: {exc}") from exc
++        raise RuntimeError(f"cannot create clone scratch under the scratch root: {exc}") from exc
+     try:
+         fleet = os.path.join(work, "fleet")
+         os.mkdir(fleet)
+@@ -914,7 +914,7 @@ def print_human(report, stream=sys.stdout):
+ 
+ def selftest():
+     scratch = tempfile.mkdtemp(
+-        prefix="tameshi-r17-registry-check-selftest.", dir="/tmp"
++        prefix="tameshi-r17-registry-check-selftest.", dir=tempfile.gettempdir()
+     )
+     passed = 0
+     failed = []
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone ls-tree --name-only HEAD .ufo/evidence/round-21/coldread
+.ufo/evidence/round-21/coldread
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone ls-tree -r --name-only HEAD .ufo/evidence/round-53/after
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone log --format=%H %s -- .ufo/evidence/round-53/c1/measure.py .ufo/evidence/round-53/after
+7d8aaac676cbcb6379f57659e7c3c4c12150a815 round-53: amendment 6 — c1 multi-rekey-dir + sha-only reader binding; re-freeze before wave 2
+e62d99711a0dd5d92b83acb96dd53ff22b31cb75 round-53: amendment 5 — re-key scope extended to 30 headings (round's own edits' drift included); re-freeze
+b78fb700263ce4dd6415117a63dbfed17db89117 round-53: amendment 2 — c1 counter fails soft on absent round-53 evidence at measured rev; re-freeze
+a7ba4e3310465963b16542456f6e24ed7c675553 round-53: amendment 1 — c1 counter NUL-byte syntax repair (no predicate/target/control change); re-freeze
+cf872769ed8a06c7a6b9cb6d20de2b2a3ed5e365 round-53: freeze — C1 cold-read re-key repair + C2 tools scratch hygiene; contract, counters, no-harm, deciding run, controls
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone ls-tree -r --name-only HEAD .ufo/reports
+.ufo/reports/round-1/tameshi.md
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone merge-base --is-ancestor 6db1d220b337c35ff1e25bf9cfd74abc9db1498d HEAD
+
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel04/clone merge-base --is-ancestor 218bc6b5c25d6a3c57dd44600febd552f0167cee HEAD
+
+exit=0

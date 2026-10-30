@@ -1,0 +1,110 @@
+{
+  "seat": "T58W1RevFixOld",
+  "base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "axes": [
+    "calibration",
+    "evidence fidelity",
+    "scope preservation"
+  ],
+  "verdicts": {
+    "R54.7": {
+      "id": "R54.7",
+      "verdict": "fixed",
+      "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+      "evidence": [
+        {
+          "path": "SCORECARD.md",
+          "lines": [
+            2674,
+            2678
+          ],
+          "excerpt": "Old: \"the deletion lands in 7fa9a5e0\". Corrected: the file was **renamed** into\n`.ufo/waves/round-54/w2/T54W2Sent01-receipts/forged-reader.json` at `7fa9a5e`\n(`R100`); it still sits in the tree as the incident receipt. It can never\ncredit: its path fails the reader pattern and its `section_sha256` matches no\nsection at the content commit."
+        }
+      ],
+      "excerpt_absent_at_routed_at": true,
+      "reason": "SCORECARD erratum explicitly corrects deletion to rename and identifies the surviving incident receipt; blame attributes it to 9cf0146b."
+    },
+    "R54.9": {
+      "id": "R54.9",
+      "verdict": "fixed",
+      "commit": "9cf0146b94ddba12d454ebf7288ce6e5c5d535bb",
+      "evidence": [
+        {
+          "path": "SCORECARD.md",
+          "lines": [
+            2694,
+            2696
+          ],
+          "excerpt": "Corrected: `reviewers=5 attack=21/76 seats=76` (27.6 %) from\n`.ufo/waves/round-54/w1-registry.json`, and `staged=81` staged `.md` files under\n`merge/tameshi/knowledge` (read-only count of the source package)."
+        }
+      ],
+      "excerpt_absent_at_routed_at": true,
+      "reason": "SCORECARD erratum records five reviewers, 21/76=27.6%, and staged=81; registry independently confirms role mix and arithmetic."
+    },
+    "R55.2": {
+      "id": "R55.2",
+      "verdict": "open",
+      "commit": null,
+      "evidence": [
+        {
+          "path": "corpus/lessons/round-57.md",
+          "lines": [
+            22,
+            25
+          ],
+          "excerpt": "  `.ufo/waves/round-55/w1/T55W1ScribeSkill.md`. The report quotes the 9-mode run as\n  `total=1 C2_R55_PASS=false` (its line 148; receipt `c2-integrated.out:44`, `rev=08d64e946006`).\n  Its only `total=0` (line 157) is the earlier 8-mode run, `grammar=8/8 \u2026 total=0 C2_R55_PASS=true`,\n  labelled as earlier. The 9-mode run is `total=1`, verdict false. This line answers the item; the"
+        }
+      ],
+      "excerpt_absent_at_routed_at": true,
+      "reason": "The valid ca75c267 correction was replaced by adf87899: it now rebuts the scribe report, not the fleet report that made the false total=0 claim.",
+      "notes": "Current text correctly states the numeric receipt result, but misidentifies the offending report and denies the routed premise; do not credit the superseded correction as fixed-at-base."
+    },
+    "R56.2": {
+      "id": "R56.2",
+      "verdict": "fixed",
+      "commit": "870d9b987f14a046964018429662a238f2fe9e20",
+      "evidence": [
+        {
+          "path": "SKILL.md",
+          "lines": [
+            53,
+            53
+          ],
+          "excerpt": "  | a verdict receipt names another revision (a positive receipt gates identically) | refused unless its bytes equal the certified revision on the declared `--paths` surface; with no `--paths` the code is `RECEIPT_REV_MISMATCH` | `RECEIPT_REV_CONTENT_DRIFT` |"
+        },
+        {
+          "path": ".ufo/evidence/round-57/c2/measure.py",
+          "lines": [
+            438,
+            458
+          ],
+          "excerpt": "elif carried is not None and set(carried) == emitted:",
+          "notes": "build_cell_fixture at lines 298-331 runs the gate with --paths and receipt role verdict; lines 451-458 require exit 3 and exactly one matching emitted code."
+        }
+      ],
+      "excerpt_absent_at_routed_at": true,
+      "reason": "ca75c267 fixes the standing cell; 870d9b98 adds the counter comparing that exact cell with the code emitted by a verdict-role drift fixture."
+    }
+  },
+  "findings": [
+    {
+      "severity": "medium",
+      "id": "R55.2",
+      "path": "corpus/lessons/round-57.md",
+      "lines": [
+        19,
+        26
+      ],
+      "finding": "Correction changes the referent from the fleet round report to the scribe seat report. The original receipt correction in ca75c267 was removed by adf87899c70d616140a81185a8f9acbbdfb30392.",
+      "receipt": "r55-regression.txt"
+    }
+  ],
+  "verification_gaps": [
+    "LSP device unavailable: xd://lsp returned No such tool; text search is a fallback, not semantic proof.",
+    "No runtime counter or selftest executed; R56.2 is verified by canonical counter source and commit ancestry.",
+    "Staged-package total=81 is supported by the committed corrective record, not a fresh external package census.",
+    "Current fleet-report line 88 is supplementary; it is not asserted to be a base-tree artifact."
+  ],
+  "scratch_removed": true,
+  "tool_installs": []
+}

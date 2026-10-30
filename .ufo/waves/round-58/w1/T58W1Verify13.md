@@ -1,0 +1,9 @@
+# T58W1Verify13 — row verification
+
+Base: `2a32aa8228d5f86a85c81a923a3148bf792a9538` (detached scratch clone). I used `git show <base>:<path> | grep -n ...` to inspect the referenced tree; the clone reported `HEAD is now at 2a32aa82` and `git status --short` was empty. No code/tests were run and no tools were installed.
+
+- **R56.5 — open.** Command: `git show <base>:.ufo/evidence/round-56/control/BOOTSTRAP.txt | grep -n -E 'Generation 1|Generation 2|bootstrap|own-receipts-missing'`. Output lines 2–7 identify bootstrap Generation 1, note `CONTROLS_B 1/2 - CTL_POS_c2 scored own=own-receipts-missing`, and identify Generation 2. Repo search for `producer-provenance|bootstrap.*scored|controls\.sh` found the generation notes but no producer-provenance discriminator. Proposed round-58 row remains open pending that fix; planned commit is a round-58 fix intent, not an existing commit.
+- **R56.6 — fixed.** Command: `git show <base>:tools/registry.json | grep -n -A20 '"name": "receipt-gate-unresolvable-certified"'`. Output lines 1366–1385 show an active `kind: gate` row, exit 2, and `RECEIPT_REV_UNRESOLVABLE`. Same registry inspection showed the active receipt-gate accept and content-drift rows (lines 1310–1364). Resolving revision is the base commit.
+- **R56.7 — fixed.** Command: `git show <base>:corpus/lessons/round-56-verifier-spotcheck.md | grep -n 'D-CF1'`. Line 26 explicitly states QUALITY/SOURCES/knowledge grew between C0 and bind and clarifies the incorrect scope of the prior statement; line 136 retains the originating R56.7 item. Resolution is present at base.
+
+Scratch clone and directory were removed before handoff.

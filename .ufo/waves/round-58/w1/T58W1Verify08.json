@@ -1,0 +1,54 @@
+{
+  "seat": "T58W1Verify08",
+  "base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "rows": [
+    {
+      "id": "R54.2",
+      "status_at_base": "open",
+      "status_now_proposed": "open",
+      "commit": "round-58 correction commit intent: reconcile freeze pointer across SCORECARD and report",
+      "evidence": [
+        {"path": "corpus/lessons/round-54-verifier-spotcheck.md", "lines": "110-110", "excerpt": "**R54.2 — three different freeze pointers.** `SCORECARD.md:2564-2567` calls `7883e0e5` \"the freeze pointer the deciding run uses\""},
+        {"path": "corpus/lessons/round-54-verifier-spotcheck.md", "lines": "110-110", "excerpt": "The receipt says `freeze=077d431e` with 5 amendments. One pointer, everywhere."}
+      ],
+      "reason": "At base the spot-check records multiple contradictory pointers and the receipt's 077d431e pointer; no correction in the cited report passage resolves that inconsistency.",
+      "notes": "git show BASE:corpus/lessons/round-54-verifier-spotcheck.md | grep -n -A2 -B1 R54.2 showed the contradiction at line 110. The base file includes the defect statement itself."
+    },
+    {
+      "id": "R54.3",
+      "status_at_base": "open",
+      "status_now_proposed": "open",
+      "commit": "round-58 correction commit intent: correct SCORECARD cited before-counter total and disclosure wording",
+      "evidence": [
+        {"path": "corpus/lessons/round-54-verifier-spotcheck.md", "lines": "112-112", "excerpt": "`.ufo/evidence/round-54/before/c2.stdout`, but that receipt prints `total=13`"},
+        {"path": ".ufo/evidence/round-54/before/c2.stdout", "lines": "8-8", "excerpt": "C2_R54: rev=d33053f7552d tools=7 unusable_exit2=3 naming=7 empty_ok=7 usable_ok=7 tmp_mkdirs=0 docs=0 note=0 sources=0 total=13 C2_R54_PASS=false"}
+      ],
+      "reason": "The base lesson still reports the mismatch: SCORECARD states total=14 while the cited committed receipt has total=13; the claimed correction is still owed.",
+      "notes": "git show BASE:lesson | grep -n -A2 -B1 R54.3 exposed the open defect. git show BASE:before/c2.stdout | grep -n total= returned total=13."
+    },
+    {
+      "id": "R54.4",
+      "status_at_base": "open",
+      "status_now_proposed": "open",
+      "commit": "round-58 correction commit intent: replace stale c2 digest citation with freeze-pinned digest",
+      "evidence": [
+        {"path": "corpus/lessons/round-54-verifier-spotcheck.md", "lines": "114-114", "excerpt": "`49280fe5…` (c2). `d7749f84` is right; `49280fe5` is the **pre-amendment-4** blob"},
+        {"path": ".ufo/evidence/round-54/freeze.json", "lines": "9-9", "excerpt": "\"c2/measure.py\": \"8528ee8555da068519af4159f5f9e0efac8b29de88a53534a7043d7ec007e790\""}
+      ],
+      "reason": "At base the report passage still cites 49280fe5 as c2, while committed freeze.json pins the c2 counter to 8528ee85; report correction remains owed.",
+      "notes": "git show BASE:lesson | grep -n -A2 -B1 R54.4 showed stale citation; git show BASE:freeze.json | grep -n -E '077d431|8528ee85|c2/measure' showed the pinned digest."
+    },
+    {
+      "id": "R54.5",
+      "status_at_base": "open",
+      "status_now_proposed": "open",
+      "commit": "round-58 correction commit intent: reconcile report finding-count claims with committed reader artifacts and ledger",
+      "evidence": [
+        {"path": "corpus/lessons/round-54-verifier-spotcheck.md", "lines": "116-116", "excerpt": "`integrate/resolutions.json` is **12 section-entries / 25 findings**, with the ledger's `minor_gaps` summing to **25 over 12 entries**."},
+        {"path": "corpus/lessons/round-54-verifier-spotcheck.md", "lines": "241-244", "excerpt": "**R54.5 extended.** Three values now name the wave-1 finding count: report “25”, the fix-pass commit subject `99c3bc8` “26 wave-1 reader findings adjudicated and fixed”, and the committed `w1/*Read*.json` total **28**."}
+      ],
+      "reason": "The base lesson preserves the report/artifact count inconsistencies, explicitly including wave-1 25 versus 28 and wave-2 report 22/9 versus artifact and ledger 25/12.",
+      "notes": "git show BASE:lesson | grep -n -E 'resolutions.json|minor_gaps|99c3bc8|25 findings in 12 sections' showed the defect and extended count comparison. The defect asks for count re-derivation before correction."
+    }
+  ]
+}

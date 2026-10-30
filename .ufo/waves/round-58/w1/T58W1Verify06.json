@@ -1,0 +1,71 @@
+{
+  "seat": "T58W1Verify06",
+  "base": "2a32aa8228d5f86a85c81a923a3148bf792a9538",
+  "rows": [
+    {
+      "id": "R53.3",
+      "status_at_base": "fixed",
+      "status_now_proposed": "fixed",
+      "commit": "7fa9a5e0104bc181872401547987d6744f3b570d",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-54/control/controls-b.stdout",
+          "lines": "5",
+          "excerpt": "CONTROLS_B: 2/3 as pre-registered"
+        }
+      ],
+      "reason": "Round-54 phase-B receipt supplies the previously absent tally. git cat-file -e at routed_at 2ef0a5ad fails for this path; commit 7fa9a5e first adds the receipt.",
+      "notes": "Command: git show <base>:.ufo/evidence/round-54/control/controls-b.stdout; line 5 prints CONTROLS_B. Commit log shows 7fa9a5e adds the control receipt. Proposed closed row should cite this evidence, not claim all controls passed (the receipt is 2/3)."
+    },
+    {
+      "id": "R53.4",
+      "status_at_base": "open",
+      "status_now_proposed": "open",
+      "commit": "round-58 fix intent: re-anchor c2-counter-repaired.stdout to a committed revision and truthful counter state",
+      "evidence": [
+        {
+          "path": ".ufo/waves/round-53/w1/T53W1ExecTmpVerify-receipts/c2-counter-repaired.stdout",
+          "lines": "1",
+          "excerpt": "C2_R53: rev=9c6ef7bc80c0 tmp_hits=0 registry_selftest=[rc=0 SELFTEST: PASS (51 cases)] envdiff_selftest=[rc=0 ENVDIFF_SELFTEST: 9/9 pass] cr47=rc=1 docs=ok total=0 C2_R53_PASS=true"
+        }
+      ],
+      "reason": "",
+      "notes": "Command: git show <base>:<receipt> outputs the stale scratch revision and superseded cr47=rc=1 line. The row remains open at base; staged R57 corrections are not in the base tree. Planned round-58 action is to anchor the receipt to a committed revision and its actual state."
+    },
+    {
+      "id": "R53.5",
+      "status_at_base": "open",
+      "status_now_proposed": "open",
+      "commit": "round-58 fix intent: refresh verify-freeze receipt at final freeze and correct LOG.md freeze pointer",
+      "evidence": [
+        {
+          "path": ".ufo/evidence/round-53/verify-freeze.stdout",
+          "lines": "1",
+          "excerpt": "FREEZE e62d99711a0d files=8 amendments=5"
+        },
+        {
+          "path": "LOG.md",
+          "lines": "2468-2469",
+          "excerpt": "freeze `e62d9971` (amendments 1–5)"
+        }
+      ],
+      "reason": "",
+      "notes": "Commands: git show <base>:.ufo/evidence/round-53/verify-freeze.stdout prints amendments=5; git show <base>:LOG.md includes the e62d9971 amendments 1–5 pointer. Both contradict the routed finding's final freeze/amendment 7 and cf872769 correction."
+    },
+    {
+      "id": "R53.6",
+      "status_at_base": "fixed",
+      "status_now_proposed": "fixed",
+      "commit": "5b703c6ff3ff26634e52b3d8ac98a14d4eb6137e",
+      "evidence": [
+        {
+          "path": "corpus/knowledge/scratch-root-contract.md",
+          "lines": "11",
+          "excerpt": "| Arm | `TMPDIR` | Behaviour | Exit class |"
+        }
+      ],
+      "reason": "The fix-pass-2 commit added the shared caught ScratchRootUnusable exit-2 mapping across the four named tools; the round-54 contract note records the TMPDIR exit-class rule.",
+      "notes": "Commands: git log --format='%H %s' -- <four tools> identifies 5b703c6 as the fix-pass-2 commit; git show <base>:tools/{bash-witness-study,env-diff,evidence-disposition,pin-disposition}.py confirms strict_scratch_root raises ScratchRootUnusable and the entrypoints catch/map it (WITNESS_STUDY/ENVDIFF_SETUP/evidence-disposition/pin-disposition: could-not-evaluate). The note path did not exist at routed_at 2ef0a5ad; at base line 11 supplies the changed contract excerpt and the key token TMPDIR."
+    }
+  ]
+}

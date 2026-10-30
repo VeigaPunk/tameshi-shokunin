@@ -1,0 +1,14 @@
+# T58W1Verify07 — row verification
+
+Base: `2a32aa8228d5f86a85c81a923a3148bf792a9538`. I independently inspected the assigned records and tree in a shared scratch clone detached at that base. No lane content was edited; no tools were installed.
+
+## Commands and evidence
+
+Clone setup: `git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin "$S/clone"`; `git -C "$S/clone" checkout --detach 2a32aa8228d5f86a85c81a923a3148bf792a9538`.
+
+- **R53.7 — fixed.** `git show BASE:corpus/lessons/round-54.md | nl -ba` showed lines 124–126: “the binder records `read_rev` (the read commit, C0) and the pin revision (PIN) separately, in the trace's `rev_reason` and in `refresh-receipts.json`; the report states both.” `git log --all --format='%H %s' -S R53.7 -- ...` located `99c3bc88d704566197783f66b211ee0a830e0330`; commit subject says round-54 C1 fix pass and names the S275 page locator/run-path class, while the correction is present in its changed lesson. Proposed row cites that fixing commit.
+- **R53.8 — fixed.** Same `git show` output, lines 127–130, records the camera-ready quote on physical page 3 and corrects the `p. 4` cells in `corpus/SOURCES.md` and `corpus/knowledge/change-aware-resweep-cadence.md` to `p. 3 (physical)`. `git log -S R53.8` locates the same full resolving commit `99c3bc88d704566197783f66b211ee0a830e0330`.
+- **R53.9 — fixed.** `git -C "$S/clone" ls-tree -r --name-only BASE .ufo/waves/round-53` output lists all six named handoff files, including `w1-results.json`, `w2-results.json`, `T53W1ExecR523.md`, `T53W2CritClaims.md`, `T53W2ExecR523B.md`, and `T53W2RevW1Specialists.md`. `git log --all --format='%H %s' --diff-filter=A -- <each path>` returned `d33053f7552db4bd290c99a36979760f544c41ad` for each; its subject is “round-53: land wave receipts that were never committed.” Checking `.ufo/waves/round-53` at routed commit `2ef0a5ad429de7f204b0e8138b2f36dcbb32a626` against the base tree confirms the original report path was present but the six files were not yet added. Proposed evidence points to the now-tracked `w1-results.json` path; git tree listing is the evidence of its presence.
+- **R54.1 — fixed.** `git show BASE:SCORECARD.md | nl -ba` lines 2636–2640 explicitly correct the claim to `CTL_MISMATCH`, `CTL_POS_c1 expected=true actual=false`, and `CONTROLS_B: 2/3`, and identify the committed controls receipt. `git log -S R54.1 -- ...` finds `9cf0146b94ddba12d454ebf7288ce6e5c5d535bb`, whose commit subject explicitly includes the round-54 record corrections; the correction appears in the SCORECARD erratum at base. The source spot-check record was committed at routed revision `650987a0d6fc285b37f0f9e63a3aae864af9cd5a`.
+
+All four proposed states are `fixed` at base. The output JSON contains one row per assigned id, with resolving commit and evidence excerpts. Scratch clone deleted before handoff.

@@ -1,0 +1,100 @@
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel09/clone show 2a32aa8228d5f86a85c81a923a3148bf792a9538:.ufo/evidence/round-56/deciding-run.sh (display lines 114-127)
+114: # gate 0b (this round's C2): the lane's own receipts must pass the binding gate.
+115: # The receipts are read from the bytes committed at REV, never the worktree (F-3).
+116: mkdir -p "$SCR/rcpt"
+117: for f in controls-a.stdout controls-a.stdout.sha256 controls-b.stdout controls-b.stdout.sha256 frozen-surface.paths; do
+118:   git show "$REV:$E/control/$f" > "$SCR/rcpt/$f" || exit 2
+119: done
+120: python3 "$SCR/gate/gate.py" --lane "$LANE" --certified "$REV" \
+121:   --paths "$SCR/rcpt/frozen-surface.paths" \
+122:   --receipt "$SCR/rcpt/controls-a.stdout:control" \
+123:   --receipt "$SCR/rcpt/controls-b.stdout:positive" \
+124:   > "$OUT/receipt-gate.stdout" 2>&1
+125: echo $? > "$OUT/receipt-gate.exit"
+126: tail -1 "$OUT/receipt-gate.stdout"
+127: [ "$(cat "$OUT/receipt-gate.exit")" = 0 ] || { echo "DECIDING_REFUSED receipt-binding $(tail -1 "$OUT/receipt-gate.stdout")"; exit 3; }
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel09/clone show 2a32aa8228d5f86a85c81a923a3148bf792a9538:tools/receipt-revision-gate.py (display lines 125-160)
+125:     if not revs:
+126:         codes.append('RECEIPT_REV_ABSENT')
+127:         detail = detail or 'no rev= token'
+128:         return codes, detail, None
+129:     resolved = {}
+130:     for r in revs:
+131:         full = resolve(lane, r)
+132:         if full is None:
+133:             codes.append('RECEIPT_REV_UNRESOLVABLE')
+134:             detail = 'rev=%s' % r
+135:         else:
+136:             resolved[r] = full
+137:     if codes:
+138:         return codes, detail, revs
+139:     if role_name in ('positive', 'verdict'):
+140:         if len(revs) > 1:
+141:             codes.append('RECEIPT_REV_AMBIGUOUS')
+142:             return codes, 'revs=%s' % ','.join(revs), revs
+143:         full = resolved[revs[0]]
+144:         if full != certified:
+145:             if paths is None:
+146:                 codes.append('RECEIPT_REV_MISMATCH')
+147:                 detail = 'rev=%s certified=%s' % (revs[0], certified[:12])
+148:             else:
+149:                 drift = drifted_paths(lane, full, certified, paths)
+150:                 if drift:
+151:                     codes.append('RECEIPT_REV_CONTENT_DRIFT')
+152:                     detail = 'rev=%s drift=%s' % (revs[0], ','.join(drift[:6]))
+153:             # else: content-identical on the declared surface — accepted, and the
+154:             # line says so (role=positive, rev != certified but bytes equal).
+155:         return codes, detail, revs
+156:     for r, full in resolved.items():
+157:         if not is_ancestor(lane, full, certified):
+158:             codes.append('RECEIPT_CONTROL_NOT_ANCESTOR')
+159:             detail = 'rev=%s' % r
+160:     return codes, detail, revs
+exit=0
+
+$ git -C /fast/scratch/hyaku/tameshi-r58/T58W1Panel09/clone show 2a32aa8228d5f86a85c81a923a3148bf792a9538:corpus/QUALITY.md (display lines 1616-1657)
+1616: ### Criterion 107 — a certified receipt names the revision it was measured against, and the gate refuses the ones that do not
+1617: 
+1618: Every receipt a round certifies — a control, a positive control or a verdict — states in its
+1619: own bytes the revision it was measured against (`rev=<sha>` or `"rev": "<sha>"`), and the lane's
+1620: certification path runs `tools/receipt-revision-gate.py` over it. A receipt whose named revision
+1621: is content-identical to the certified revision on the surface the round declares with `--paths`
+1622: is accepted even when the two shas differ (the surface did not move); a receipt whose named
+1623: revision differs on that surface is refused `RECEIPT_REV_CONTENT_DRIFT`, one whose `rev=` does
+1624: not resolve in the lane is refused `RECEIPT_REV_UNRESOLVABLE`, one that names no revision at all
+1625: is refused `RECEIPT_REV_ABSENT`, and a receipt path that does not exist is refused
+1626: `RECEIPT_MISSING`. The rule is not satisfied by a record that cites a receipt in prose: the
+1627: receipt is refused or accepted on its own bytes, and a round that lands this rule also lands the
+1628: refusal of a receipt the lane already accepted. Distinct from criterion 86, which governs *when*
+1629: the content revision C is designated and what may lie between C and the landing tip; this
+1630: criterion governs the receipt's own binding, is enforced by a named tool with closed codes, and
+1631: is exercised on receipts accepted before the gate existed.
+1632: 
+1633: Check that can fail: over the real round-54 positive control
+1634: `.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout` — its only `rev=` is
+1635: `077d431e6996`, the round-54 freeze, while round 54 certified `c2108100` — run from any cwd:
+1636: 
+1637: ```
+1638: L=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+1639: python3 "$L/tools/receipt-revision-gate.py" \
+1640:   --lane "$L" --certified c21081008adbb6b6fe4e58a0aeec4831b30e318c \
+1641:   --paths "$L/.ufo/evidence/round-56/c2/red-before/round-54-surface.paths" \
+1642:   --receipt "$L/.ufo/evidence/round-56/c2/red-before/round-54-ctl-pos-c1.stdout:positive"
+1643: echo "exit=$?"
+1644: ```
+1645: 
+1646: It must print `code=RECEIPT_REV_CONTENT_DRIFT` on the `GATE REFUSED` line and
+1647: `codes=RECEIPT_REV_CONTENT_DRIFT verdict=REFUSED` on the summary line, and exit 3. The same
+1648: receipt with `--certified 077d431e69965fa4673cd006ab64f6fc387f9e15` — its own revision — must
+1649: print `verdict=PASS` and exit 0, so the refusal is a content comparison and not a constant. A
+1650: gate that passes this receipt, or that refuses it with a code other than the drift code, is the
+1651: failing instrument.
+1652: 
+1653: Lesson: `corpus/lessons/round-56.md` `## Gate` (the R55.5 disposition — round 55's deciding gate
+1654: could not compare the revision it certifies, and the round-54 control set the old path accepted
+1655: names `077d431e6996` on `CTL_POS_c1` and `7df0e0426c98` on `CTL_EXIT0` while the round measured
+1656: `c2108100`).
+1657: 
+exit=0
