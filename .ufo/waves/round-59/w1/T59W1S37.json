@@ -1,0 +1,68 @@
+{
+  "seat": "T59W1S37",
+  "round": 59,
+  "lane": "w1",
+  "item": "adversarial: candidate path option injection against frozen executor-source-pin gate design/counter",
+  "base": "b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a",
+  "freeze": "e9cc34bec3f0c670550552bcc962563e7ae3ca58",
+  "candidate_implementation_at_base": false,
+  "candidate_implementation_evidence": "tools/executor-source-pin.py absent at base (git ls-tree) and in git log --all; all candidate code here is scratch-only",
+  "scratch_only_candidates": {
+    "sound_reference": {"path": "stage/tools/executor-source-pin.py", "sha256": "03c70bc83332e6c57e835e9418d846e4a534dd18d855c2684a0c598fbd2209ef", "lane_commit": "09e1724c543ed2d3fec25a5ce11bba712ad06fac"},
+    "mutant_trust_removed": {"path": "mock-mutant.py", "sha256": "d0d402c1973b04a5d1c7825649a2849df4a7a33c3db0b6c7aa05de0a43552c44", "lane_commit": "17340dedc60bf99e3a899fadd8a16190e85d9cc8", "mutation": "bind(raw) returns raw path unchanged; no :(literal) and no canonical-spelling check"}
+  },
+  "frozen_counter_runs": [
+    {"candidate": "sound_reference", "rev": "272373949f87dcb146c87639e32b0548e6904190", "passed": "24/24", "pass": true, "receipt": "receipt-counter-pristine.txt"},
+    {"candidate": "mutant_trust_removed", "rev": "17340dedc60bf99e3a899fadd8a16190e85d9cc8", "passed": "24/24", "pass": true, "receipt": "receipt-counter-mutant.txt"},
+    {"candidate": "sound_reference_restored", "rev": "09e1724c543ed2d3fec25a5ce11bba712ad06fac", "passed": "24/24", "pass": true, "receipt": "receipt-counter-restored.txt"}
+  ],
+  "detector_battery": {
+    "frozen24_plus_11_probes": true,
+    "pristine": {"frozen24": "24/24", "battery": "11/11", "total": "35/35"},
+    "mutated": {"frozen24": "24/24", "battery": "9/11", "total": "33/35", "killed": ["b7/pathspec-top-shortform", "b7b/double-slash-norm"], "receipt": "receipt-detector-mutated.txt"},
+    "restored": {"frozen24": "24/24", "battery": "11/11", "total": "35/35", "receipt": "receipt-detector-restored.txt"},
+    "restoration_hash_match": true
+  },
+  "attacks": [
+    {"id": "A1", "surface": "pathspec short magic ':tools/runner.py'", "git_primitive_result": "ls-tree accepts, resolves to real blob", "sound_candidate": "exit 2 UNAVAILABLE", "mutant": "exit 0 BOUND when equal; exit 1 DRIFT when changed/missing", "verdict_flipped": false, "frozen_counter_sees": false},
+    {"id": "A2", "surface": "empty segment 'tools//runner.py'", "git_primitive_result": "ls-tree normalizes to tools/runner.py", "sound_candidate": "exit 2 UNAVAILABLE", "mutant": "exit 0 BOUND when equal; exit 1 DRIFT when changed/missing", "verdict_flipped": false, "frozen_counter_sees": false},
+    {"id": "A3", "surface": "dot segment spellings './tools/runner.py', 'tools/./runner.py', ':(top)tools/runner.py'", "git_primitive_result": "ls-tree normalizes or accepts top magic", "sound_candidate": "exit 2 UNAVAILABLE", "mutant": "exit 0 BOUND when equal; exit 1 DRIFT when changed/missing", "verdict_flipped": false, "frozen_counter_sees": false},
+    {"id": "A4", "surface": "absolute path '/tools/runner.py'", "git_primitive_result": "fatal: Invalid path, rc!=0", "sound_candidate": "exit 2", "mutant": "exit 2 (blocked by git, lookup returns None)", "verdict_flipped": false},
+    {"id": "A5", "surface": "parent traversal 'tools/../runner.py'", "git_primitive_result": "rev:path rejects; ls-tree yields no entry", "sound_candidate": "exit 2", "mutant": "exit 2", "verdict_flipped": false},
+    {"id": "A6", "surface": "icase/glob/exclude magic", "git_primitive_result": "ls-tree fatal: pathspec magic not supported by this command", "sound_candidate": "rejected by literal bind", "mutant": "rejected by git", "verdict_flipped": false},
+    {"id": "A7", "surface": "empty path ''", "git_primitive_result": "fatal: empty string is not a valid pathspec", "sound_candidate": "exit 2", "mutant": "exit 2", "verdict_flipped": false},
+    {"id": "A8", "surface": "tree as path 'tools'", "git_primitive_result": "ls-tree returns tree entry mode 040000", "sound_candidate": "exit 2 (non-blob)", "mutant": "exit 2 (non-blob)", "verdict_flipped": false},
+    {"id": "A9", "surface": "newline in path spoofing verdict line", "git_primitive_result": "literal filename", "sound_candidate": "die() repr-quotes path; no spoof line", "mutant": "die() repr-quotes path; no spoof line", "verdict_flipped": false},
+    {"id": "A10", "surface": "option-like --path values: '-runner.py' separate, '--path=-runner.py', '--path=--trusted'", "git_primitive_result": "argparse rejects separate form; '=' form reaches git after '--' as literal", "sound_candidate": "exit 2 bad args (separate) or exit 2 not a regular blob", "mutant": "exit 2 same; no git option interpretation observed", "verdict_flipped": false, "note": "frozen counter never exercises option-like PATH values"},
+    {"id": "A11", "surface": "option-like --trusted '-x' and ref refs/heads/-x", "git_primitive_result": "rev-parse on '-x^{commit}' fails; refs/heads/-x resolves", "sound_candidate": "trusted=-x exit 2; refs/heads/-x exit 0 with correct blob", "mutant": "same", "verdict_flipped": false},
+    {"id": "A12", "surface": "argparse bare error text on bad args", "observed": "default argparse writes usage and exit 2 with no EXECUTOR_SOURCE_UNAVAILABLE token unless wrapped", "contract_gap": "exit_map requires token class for exit 2; a plain argparse implementation emits none", "verdict_flipped": false}
+  ],
+  "survivor": {
+    "name": "non-canonical declared spelling accepted as equal",
+    "mutation": "bind returns raw path unchanged",
+    "frozen_counter_result": "24/24 PASS (survives)",
+    "verdict_flipped": false,
+    "inside_claim_boundary": "NOT demonstrated as a false verdict. Declared blob equality is still decided correctly for alias spellings: changed->1, missing->1, equal->0. The defect is canonicalization: non-canonical declared paths are accepted and reported BOUND. The frozen counter's four canonical paths and six classes cannot observe this, so the 24 count carries no evidence about it.",
+    "claim_enlargement": "none; no new capability claimed"
+  },
+  "smallest_sound_behavior": "Reject any --path that is not a canonical repo-relative POSIX literal (no leading ':' magic, no leading '/', no empty, '.', or '..' segment, no backslash) with exit 2 and EXECUTOR_SOURCE_UNAVAILABLE; resolve with ls-tree -z after '--' using ':(literal)' prefix; require exactly one regular blob (100644/100755) per side.",
+  "exact_cli_tests_proposed_not_in_frozen_counter": [
+    "python3 -I tools/executor-source-pin.py --repo R --trusted T --candidate T --path ':tools/runner.py' -> exit 2, token EXECUTOR_SOURCE_UNAVAILABLE",
+    "python3 -I tools/executor-source-pin.py --repo R --trusted T --candidate T --path 'tools//runner.py' -> exit 2, token EXECUTOR_SOURCE_UNAVAILABLE",
+    "python3 -I tools/executor-source-pin.py --repo R --trusted T --candidate T --path './tools/runner.py' -> exit 2, token EXECUTOR_SOURCE_UNAVAILABLE",
+    "python3 -I tools/executor-source-pin.py --repo R --trusted T --candidate T --path '/tools/runner.py' -> exit 2, token EXECUTOR_SOURCE_UNAVAILABLE",
+    "python3 -I tools/executor-source-pin.py --repo R --trusted T --candidate T --path 'tools/../runner.py' -> exit 2, token EXECUTOR_SOURCE_UNAVAILABLE",
+    "python3 -I tools/executor-source-pin.py --repo R --trusted T --candidate C --path 'tools/runner.py' -> exit 1, token EXECUTOR_SOURCE_DRIFT (control)"
+  ],
+  "tooling": {
+    "installed": [],
+    "used_preinstalled": {"git": "2.56.0", "python3": "3.14.8"},
+    "pacman": "not used"
+  },
+  "boundaries": {
+    "production_edited": false,
+    "git_mutations_outside_scratch": false,
+    "frozen_counter_run_on": "scratch lane only",
+    "scratch_deleted_before_yield": true
+  }
+}
