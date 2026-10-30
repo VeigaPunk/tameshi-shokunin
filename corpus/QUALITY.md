@@ -1786,9 +1786,11 @@ Lesson: `corpus/lessons/round-59.md` `## Mistakes` 3 (handoff addressed to a
 dead L1; captured-by: none).
 
 Falsifier that must fail: `.ufo/waves/round-59/w1.ready` names
-`"l1": "TameshiR59"`; `.ufo/watchdog.log` lines 1995–2002 record that
-attempt's `lane-dead-no-report` at 11:58 before `w1-results.json` existed, so
-the wave's completion message routed to a dead id.
+`"l1": "TameshiR59"`; the fleet repo's `.ufo/watchdog.log` lines 1995–2002
+record that attempt's `launch tameshi round=59 … attempt=1` (line 1995),
+`lane-dead-no-report tameshi round=59; retry same round` (line 2001) and the
+`attempt=2` relaunch (line 2002), so the wave's completion message routed to
+a dead id.
 
 ### Criterion 114 — every seat's structured result file is checked for presence and non-emptiness before review credit
 
@@ -1849,3 +1851,31 @@ and `git show 764d38f1c31a170c13ea48117a76b84f7dbe470b:tools/executor-source-pin
 | sed -n '249,256p'` prints the exit-1 arm the entry's table did not
 describe. The round-60 sweep receipt names every pointer it resolved and
 every pointer that drifted.
+
+### Criterion 117 — a freeze digests the frozen instrument; run-scoped receipts are recorded with their run parameters, and a digest mismatch is classified before a claim is scored
+
+A freeze digest set covers the INSTRUMENT it freezes (counter bytes, control
+sources, contract, plan, predicate text). A receipt produced by RUNNING that
+instrument is not digest-stable when the instrument varies its run (per-run
+nonce, shuffled order); such a receipt is recorded with its run parameters
+(revision, nonce, cell order) instead of being digested as an immutable byte
+string. When a digest check fails, the failure is classified before any claim
+is scored — instrument drift (the frozen bytes changed) or receipt re-run (the
+instrument is intact and only its outputs moved) — and the classification is
+committed with the verifier's output.
+
+Lesson: `corpus/lessons/round-60.md` `## Mistakes` 5 (class
+reference-drift), grounded in this round's own freeze: 10 of 10 frozen
+instrument digests still match while 7 nonce-bearing receipts differ from
+their frozen digests after a re-run at the certified revision
+(`.ufo/evidence/round-60/freeze-verify.json`, verdict
+`INSTRUMENT-OK (receipts re-run)`).
+
+Falsifier that must fail: the round-60 freeze digests 16 files of which 7
+are nonce-bearing receipts, so a naive re-verification of the freeze against
+the tree reports 7 mismatches and cannot tell a re-run from a tampered
+instrument — `python3 .ufo/evidence/round-60/freeze-verify.py --lane LANE
+--freeze .ufo/evidence/round-60/freeze.json --work WORKTREE` prints
+`FREEZE_VERIFY instrument=10/10 receipt=9/16 verdict=INSTRUMENT-OK
+(receipts re-run)` where the unclassified check would print only "7 files
+changed".

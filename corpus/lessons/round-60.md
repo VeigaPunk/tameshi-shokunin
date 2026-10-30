@@ -147,6 +147,20 @@ defects and is sized so a do-nothing control cannot reach it.
    cell failing (`.ufo/evidence/round-60/controls/v1-tool-red.out`), and the
    v2 tool maps the arm to `EXECUTOR_SOURCE_UNAVAILABLE`
    (`tools/executor-source-pin.py:249-266`).
+5. **A freeze that digests nonce-bearing receipts can never re-verify against
+   the tree (class: reference-drift).** Evidence: `.ufo/evidence/round-60/freeze.json`
+   digests 16 files, 7 of which are counter receipts whose bytes carry a
+   per-run nonce and a shuffled class order. After the control family was
+   re-run at the certified revision, a naive re-verification of the freeze
+   reports 7 mismatches and cannot distinguish a re-run receipt from a
+   tampered instrument. Captured-by: none — the freeze has no instrument/receipt
+   distinction to test. Fix: `.ufo/evidence/round-60/freeze-verify.py`
+   classifies the comparison and reports `FREEZE_VERIFY instrument=10/10
+   receipt=9/16 verdict=INSTRUMENT-OK (receipts re-run)`
+   (`.ufo/evidence/round-60/freeze-verify.json`): every frozen INSTRUMENT
+   digest still matches, and the pre-data receipt bytes remain recoverable
+   from the freeze commit (`git show da2ae6b361de2d6294c6324a02ae141ff6cb482f:.ufo/evidence/round-60/controls/ctl-fingerprint.out`).
+   Criterion 117 now requires the distinction.
 
 ## Verdicts
 
