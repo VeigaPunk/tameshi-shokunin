@@ -81,7 +81,7 @@ Status/recheck/used-by changes (old→new, append-only log):
 
 ## Wave record
 
-(completed at the round's close: wave sizes, role mix, dead seats, results paths)
+W1 (v2) 67 seats and W2 (v1) 40 seats settled before reporting: 107 total, no residual call. Results are `.ufo/waves/round-58/w1-results.json` and `w2-results.json`; missing terminal outputs are recorded below without inventing death errors.
 
 ## R51.5 — cross-domain handoff to kagi
 
@@ -140,4 +140,15 @@ Both waves settled: 67 + 40 = 107 registered seats; 15 W1 and 2 W2 terminal outp
 `considerthese/2026-10-28.md` proposal 2: “Counter-arm liveness check. For each frozen counter, list its arms and require one committed input per arm that moves that arm's tally away from zero. A passing control set did not reveal that round 53's re-key arm could never fire.”
 
 Mined as this lesson's successor-gate requirement, not claimed implemented: bind the executor independently before accepting an executed-arm tally. Evidence: W1 revenger's bent-runner forgery and W2 reproductions; `T58W2ScoutCT` records the C0 implementation sweep and why current within-round selftest arms are narrower than a standing counter-arm census.
+
+
+## Terminal admission stop — controls are not rerolled
+
+The single declared control generation at `3809b5951014c01a02af180e0a95cc8fe5ff2976` produced `CONTROLS_A: 10/10` and `CONTROLS_B: 1/2`. `CTL_POS_c1` failed because the cold-read bind shifted the line coordinates of R51.3's correction excerpt in `coldread/ledger.json`. The row locator is repaired for durable truth, but the failed positive receipt is retained and no second control generation is substituted. C1 therefore lacks certification this round even if a later direct counter reads zero.
+
+C2's positive control passed, but its frozen target is independently defeated by the bent executor. C2 is not admitted. C3's entry and source counts are measured separately. The round is an honest stop, not an admitted all-claims improvement.
+
+Bind evidence: the first two phase-1 attempts correctly refused dirty non-bind artifacts; neither guard was weakened. The third staged `17/17` readers, and phase2 at `3809b595` printed `BIND_TREE files=20 bad=0`, `pinned-changed=0`, `covered=64/64 score=8 box3=True`, exit0. Two inherited minor findings remain visible in the reader-resolution record.
+
+Oversized W2 command receipts are preserved losslessly: original 141327735-byte and 13989682-byte JSON streams have verified gzip carriers and SHA256 manifests at their original paths. `.ufo/waves/round-58/l1/compression.json` records byte counts and digests; nothing was silently truncated.
 
