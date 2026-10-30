@@ -1,0 +1,939 @@
+大语言模型时代的变异分析
+王博 北京交通大学
+
+演讲嘉宾
+
+王博
+北京交通大学计算机与信息技术学院讲师、硕士生导师，CCF专业会员、
+CCF系统软件专委执行委员、CCF开源发展委员会执行委员。分别于北京
+大学、中国科学技术大学和中南大学获得博士、硕士和学士学位。研究兴
+趣为软件测试与调试，已在ASE、ISSTA、TOSEM、软件学报等发表多篇
+论文。担任ASE、FSE、ICST、Internetware 等软件工程重要会议PC，
+担任TSE、TOSEM、TDSC、EMSE、JSS、ASEJ、IET Software、JSME、
+软件学报等多个期刊审稿人。获得ISSTA 2017 杰出论文奖，全国大学生
+系统能力大赛优秀指导教师和北京市高校优质教案。
+
+1.
+
+背景
+
+目录
+
+2.
+
+痛点
+
+3.
+
+解决思路
+
+CONTENTS
+
+4.
+
+具体实现
+
+5.
+
+总结与展望
+
+PART 01
+
+背景
+
+软件正确性至关重要
+
+欧空局 Ariane 5
+
+波音 737 Max 坠机
+
+海湾战争中爱国者飞弹
+
+7.23事故
+
+• 软件缺陷已经导致很多灾难性后果
+• 保障软件的正确性十分重要
+• 当我们说软件是正确的：程序的行为符合正确性规约 (specification)
+
+保障正确性的方法
+
+int foo(int a, int b) {
+return a + b;
+}
+
+1. 形式化方法
+
+Formal Method:
+→ correct
+
+输入域
+
+形式化方法成本很高
+
+2. 软件测试
+
+(a >= 0 && b <=0) ||
+(a <= 0 && b >=0) ||
+(a >= 0 && b >= 0 && a + b >= 0) ||
+(a <= 0 && b <= 0 && a + b <= 0)
+
+Testing:
+×
+
+×
+×
+
+×
+
+→ correct
+
+输入域
+
+测试是不完备的！
+
+foo(0, 1) = 1;
+foo(INT_MAX, 1) = ERROR;
+foo(INT_MAX - 1, 1) = INT_MAX ;
+foo(INT_MAX, INT_MIN) = -1;
+
+测试质量直接影响到软件质量
+• 核心问题是：我们如何度量测试的好坏？
+• 测试质量达标的系统才有一定的可信度
+• 测试集约减
+• 测试排序
+
+• 我们朴素的愿望：希望测试能发现真实缺陷
+• 但是在发现之前，真实的缺陷对于我们是未知的
+• “测试可以非常有效地显示bug存在，但却无法证明bug的不存在”
+
+• 我们可以使用一些指标，间接地度量测试质量
+• 测试覆盖
+• 变异测试：用人造缺陷发现率估计真实缺陷发现率
+
+变异测试概览
+程序
+
+生成变异体(mutant):
+变异算子(mutation operator)
+
+Mutants
+Mutants
+Mutants
+变异体
+
+每个变异体是原始程序的小型文法改动
+
+变异测试概览
+程序
+
+测试集
+
+生成变异体(mutant):
+变异算子(mutation operator)
+
+Mutants
+Mutants
+Mutants
+变异体
+
+Execute test suite
+Execute test suite
+执行测试
+
+被测试集杀死的变异
+的比例：
+变异分数(Mutation
+score)
+
+变异测试在软件测试中的发展
+• 变异测试自 1971 年被 DeMillo 和 Hamlet 提出以来，是软件测试中的重要方法
+• 修改位置：从一阶变异(first order)到高阶(higher-order)，支持修改多处
+• 在单元测试中：
+• 面向高级语言源码：C、Java、Python、JS…
+• 面向中间表示：Java bytecode, LLVM-IR
+• 从桌面应用到 Android、MPI、智能合约程序等
+
+• 从单元测试扩展到其他测试阶段：
+• 集成测试
+• 设计阶段（例如在基于模型的软件开发过程中针对设计FSM的变异）
+
+从变异测试到变异分析
+• 基于变异的缺陷自动定位（mutation-based fault localization）是变异测试的衍生技术
+• 缺陷自动定位：给定测试集（至少有一个未通过测试）和程序，返回程序中的语句出错可
+疑度分数。
+• 传统定位方法：基于测试覆盖信息对语句排序（spectrum-based fault localization）
+• 基于变异的方法：通过观察变异对测试结果的改变计算可疑度
+• 若一个变异使失败测试通过了，那更可能是变异了出错语句
+
+从变异测试到变异分析
+变异测试
+
+基于变异的缺陷定位
+
+程序自动修复
+
+软件产品线测试
+变异分析
+
+工具和标准程序集
+• 变异测试
+• C 语言:
+• Proteum (108 mutation operators)
+• Milu (Higher-order)
+• WinMut (IR-based)
+
+• Java 语言:
+• MuJava
+• Major [By Rene Just]
+• JavaLanch (IR-based) [By Zeller]
+• PITest (Commercial tool)
+
+• 标准测试集
+•
+
+Software-artifact Infrastructure Repository (somehow outdated)
+
+•
+
+Defects4J (Java)
+
+•
+
+ManyBugs (C)
+
+PART 02
+
+痛点
+
+挑战1：生成高质量的变异
+• 现有方法生成变异主要有两类
+• 基于规则的传统方法
+• PIT、Major、JavaLanche、AccMut
+• 生成变异过于简单，不考虑代码上下文，文本上与真实bug差别很大
+
+• 基于学习的方法
+• 训练模型，学习真实 Bug 的代码变换模式
+• DeepMutation [ICSME-19]、LEAM [ASE-22]
+• 训练数据集有限，生成大量错误变异
+
+挑战2：可扩展性较低
+• 阻碍变异分析走向工业实践的是可扩展性（Scalability）较低
+• 假如有 M 个变异，N 个测试
+• 变异分析的计算复杂度：O(M) + O(M×N)
+• 𝑇!"!#$ = ∑%∈' 𝑡())*,% + ∑%∈' 𝑡,"%-.$),% + ∑%∈' ∑/∈0 𝑡!)(!,%,/
+
+• 在实际规模的程序中，M 会很大
+
+挑战2：可扩展性较低
+• 以变异测试为例，如下一行源码产生二十多个变异
+
+挑战3：等价变异体
+• 等价变异体：变异后的程序与原始程序在功能上完全相同，即它
+们对所有可能的输入产生相同的输出。
+• 等价变异的危害：
+• 增加测试成本
+
+for (int i = 0; i < 10; i++)
+for (int i = 0; i != 10; i++)
+
+• 影响变异分数计算的精确度
+
+• 判断等价变异体是不可判定问题：不存在一个自动算法完美解决
+
+PART 03
+
+解决思路
+
+面向挑战1：大模型时代的变异生成
+• 大模型在代码理解和代码变换上出色的能力，为提升变异分析提
+供了新的方向
+• 大模型在程序修复上取得了显著的效果
+• buggy -> correct
+
+• 问题：大模型在变异分析上能否取得良好效果？
+
+面向挑战2：基于共享计算的加速
+• 变异分析执行过程中需要反复执行测试
+• 其中存在大量冗余计算
+• 我们可以尝试共享冗余计算进行加速
+
+PART 04
+
+具体实现
+
+基于大模型的变异生成
+• 大模型能否生成更接近真实bug的变异？
+• 有效性：
+• 语法正确
+• 变异有“揭错”能力
+
+• 自然性：
+• 符合一般的编程规范
+• 编码模式和习惯与真实代码一致
+
+• 变异足够多样，且有足够数量的变异被杀死
+• 避免生成等价变异
+• 生成的有足够比例的变异能被测试检测
+• 语义尽可能丰富
+
+基于大模型的变异生成：模型设置
+• 选用了 4 个模型
+• 包括开源模型和商用闭源模型（实验还在扩展中）
+
+• GPT-3.5-Turbo 和 GPT-4-Turbo 通过购买 API Token
+• 开源模型通过租用 2 台 双卡 3090 服务器
+
+基于大模型的变异生成：数据集
+• 面向 Java 语言（Java 是拥有最多 Baseline 的语言）
+• Defects4J v1.20 上 395 个真实的缺陷
+• ConDefects 上的 45 个没有数据泄露风险的缺陷
+
+基于大模型的变异生成：对比方法
+• 我们的对比方法涵盖了所有的 Java 最新变异生成方法
+• 基于规则
+• PIT [ISSTA-16]
+• Major [ISSTA-11]
+
+• 基于学习
+• LEAM [ASE-22]
+
+• 基于小规模的预训练模型
+• muBert [ICST-22]
+
+基于大模型的变异生成：Prompt设计
+
+为了避免数据泄露，选
+用了QuixBug中的6个真
+实缺陷作为 Few-shot
+Example
+
+基于大模型的变异生成：评估生成代价
+• 代价指标：
+• 时间代价（秒）
+• 平均生成1k个变异的代价
+
+基于大模型的变异生成：评估可用性
+• 机器学习方法不可避免地生成无用变异
+• 可用性指标：
+• 编译通过率
+• 无效变异率
+• 等价变异率（按95%置信度和5%误差幅度采样）
+
+基于大模型的变异生成：评估变换多样性
+• 变换多样性指标：
+• 变异是否引入新的 AST 节点类型 (例如，a + b -> a – b 没有引入新类
+型，但 a + b -> foo(a, b) 引入了方法调用)
+
+基于大模型的变异生成：评估变换多样性
+• 变换多样性指标：
+• 删除变异所占比例
+• 引入新的 AST 节点类型分布
+
+基于大模型的变异生成：与真实缺陷的语法相似度
+• 指标：
+• 变异与真实缺陷的 BLEU 分数
+• 变异与真实缺陷的 AST 编辑距离
+
+基于大模型的变异生成：与真实缺陷的语法相似度
+• 与真实缺陷的AST编辑距离
+
+基于大模型的变异生成：与真实缺陷的行为相似度
+• 行为相似度指标：
+• 真实缺陷检测率
+• 与真实缺陷耦合率
+• Ochiai 系数（语义相似度指标）
+
+基于大模型的变异生成：不同Prompt的影响
+• P1：默认prompt
+• P2：P1 移除few-shot example
+• P3：P2 移除方法 Context
+• P4：P1 + 添加方法对应的测试
+
+基于大模型的变异生成：不同模型的表现
+
+基于大模型的变异生成：导致不可编译变异的原因
+
+基于大模型的变异生成：不同上下文长度
+
+基于大模型的变异生成：不同的Few-shot Example
+
+基于大模型的变异生成：生成固定数量的变异
+• 如果要求生成同样数量的变异
+• 我们将所有工具生成的变异数限制为最少的一个（muBert）
+
+基于共享计算的加速：大模型时代变异分析效率依然不高
+Each mutant has a small
+Program
+
+foo(int a, int b, int c){
+int d = a + b;
+int e = d + c;
+return e;
+}
+
+syntactic change
+
+mutate
+
+foo(int a, int b, int c){
+int d = (a+1) + b;
+int e = d + c;
+return e;
+}
+M1
+
+foo(int a, int b, int c){
+int d = (++a) + b;
+int e = d + c;
+return e;
+}
+M2
+
+foo(int a, int b, int c){
+int d = a + b;
+int e = (++d) + c;
+return e;
+}
+M3
+
+a1.out
+
+a2.out
+
+a3.out
+
+pass/fail?
+
+pass/fail?
+
+pass/fail?
+
+compile
+Test suite
+void test_foo(){
+assert(foo(a,b,c) == RES);
+}
+
+execute
+
+analyze by the
+test results
+
+• test quality assessment → mutation score
+• fault localization → pass or fail
+
+基于共享计算的加速：标准变异分析中的冗余计算
+Cycles represent states, the
+numbers inside are id
+
+int d = a + b;
+int e = d + c;
+return e;
+int d = (a+1) + b;
+int e = d + c;
+return e;
+M1
+
+0
+
+0
+
+int d = (++a) + b;
+int e = d + c;
+return e;
+M2
+
+0
+
+int d = a + b;
+int e = (++d) + c;
+return e;
+M3
+
+0
+
+d=a+b
+
+d=(a+1)+b
+
+d=(++a)+b
+
+d=a+b
+
+1
+
+4
+
+7
+
+1
+
+e=d+c
+
+e=d+c
+
+e=d+c
+
+e=(++d)+c
+
+2
+
+5
+
+8
+
+5
+
+return e
+
+return e
+
+return e
+
+return e
+
+3
+
+Arrows represent state
+transitions by executing the
+label statement
+
+6
+
+9
+
+6
+
+There are a lot of redundant
+computation. For example,
+the execution from the
+beginning to the state 0
+
+基于共享计算的加速：分支流计算
+• Split-stream execution: fork at the first mutated statement [King, Offutt,
+computation
+1991][Tokumoto et al., 2016][Gopinath,The
+Jensen,
+Groce, 2016]
+The redundancy after
+int d = a + b;
+int e = d + c;
+return e;
+int d = (a+1) + b;
+int e = d + c;
+return e;
+M1
+int d = (++a) + b;
+int e = d + c;
+return e;
+M2
+int d = a + b;
+int e = (++d) + c;
+return e;
+M3
+
+Replace mutated
+statements with SSE
+interpreter in compile time.
+
+before the state 0 is
+shared
+d=a+b
+
+int d = interpret(a,b,ADD);
+int e = interpret(d,c,ADD);
+return e;
+Start with a process
+carrying all mutants
+The interpreter forks childprocesses when encounters
+a mutated statement.
+
+0
+
+fork
+
+d=(a+1)+b
+
+the first line is still alive
+
+1
+
+4
+
+e=d+c
+
+e=d+c
+
+2
+
+5
+
+return e
+
+return e
+
+3
+
+Ori
+
+6
+
+M1
+
+9
+
+M2
+
+6
+
+M3
+
+fork
+d=(++a)+b
+
+7
+
+e=d+c
+
+8
+
+return e
+
+fork
+d=a+b
+
+1
+
+e=(++d)+c
+
+5
+
+return e
+
+基于共享计算的加速：AccMut [ISSTA-17]
+• Equivalence Modulo States: Two mutants are equivalent modulo the current state if
+executing them leads to the same state from the current state [Wang
+et below
+al., 2017]
+The label
+is the
+executed expression
+inside interpreter
+
+Instrument as SSE
+
+M1, M2
+
+int d = interpret(a,b,ADD);
+int e = interpret(d,c,ADD);
+return e;
+M3
+
+The interpreter also carries
+all mutants
+It clusters the mutants of
+one statement by EMS, and
+forks new process for each
+group
+
+fork
+0
+fork
+
+interpret(a,b,ADD)
+d=a+b
+interpret(a,b,ADD)
+d=(a+1)+b
+
+1
+
+4
+
+interpret(d,c,ADD)
+5
+e=(++d)+c
+
+return e
+
+interpret(d,c,ADD)
+
+return e
+
+e=d+c
+interpret(d,c,ADD)
+e=d+c
+
+2
+
+5
+
+return e
+
+6
+
+M3
+
+3
+
+Ori
+
+6
+
+M1
+
+9
+
+M2
+
+fork
+interpret(a,b,ADD)
+d=(++a)+b
+
+7
+
+interpret(d,c,ADD)
+e=d+c
+
+8
+
+return e
+
+基于共享计算的加速：AccMut 依然存在大量冗余计算
+1. AccMut is unable to merge more mutants
+
+2. AccMut involves a lot of overhead
+
+fork
+0
+fork
+The interpreter
+invocations in a child
+process is useless
+M1 and M2 are split by the
+value of the variable a,
+however, which has no effect
+on the final result
+
+interpret(a,b,ADD)
+d=a+b
+interpret(a,b,ADD)
+d=(a+1)+b
+
+1
+
+4
+
+M3 is Split cause it
+is in a different line
+
+interpret(d,c,ADD)
+5
+e=(++d)+c
+
+return e
+
+interpret(d,c,ADD)
+
+return e
+
+e=d+c
+interpret(d,c,ADD)
+e=d+c
+
+2
+
+5
+
+return e
+
+6
+
+M3
+
+3
+
+Ori
+
+6
+
+M1
+
+9
+
+M2
+
+fork
+interpret(a,b,ADD)
+d=(++a)+b
+
+7
+
+interpret(d,c,ADD)
+e=d+c
+
+8
+
+return e
+
+基于共享计算的加速：WinMut [ASE-21]
+1. Enlarge analysis scope from a statement to a basic block
+
+Fewer processes
+
+2. Only compare the variables that may affect the final result
+
+Smaller overheads
+
+3. Avoid unnecessarily interpreting mutated statements
+Continuously interpret
+a basic block
+
+0
+
+interpret(a,b,ADD)
+
+1
+
+d=a+b
+d=(a+1)+b
+d=(++a)+b
+
+In the child process
+of a former mutant
+
+Only compare the
+variable e
+
+interpret(d,c,ADD)
+e=d+c
+e=(++d)+c
+
+2
+
+return e
+
+3
+
+Ori
+
+4
+
+M1, M2, M3
+
+fork
+return e
+
+Merge all the
+mutants in a
+single process
+
+Directly execute the origin code
+
+5
+
+d=a+b
+
+6
+
+e=d+c
+
+7
+
+return e
+
+9
+
+Avoid invoking
+the interpreter
+
+基于共享计算的加速：WinMut的实现
+• 在 LLVM-IR 基础上实现，即它是在中间表示级别实施变异分析
+• 变异算子涵盖当前所有中间表示级别分析的工具
+• 程序员透明的、内存上的 IO 库
+
+基于共享计算的加速：WinMut的实验对象程序
+
+基于共享计算的加速：WinMut的实验效果
+Total Run Time
+
+Total Process Number
+
+400
+
+5000000
+
+350
+
+4500000
+4000000
+
+300
+
+3500000
+
+250
+
+3000000
+
+200
+
+2500000
+
+150
+
+2000000
+
+100
+
+1500000
+1000000
+
+50
+
+500000
+
+0
+Time(hours)
+WinMut
+
+AccMut
+
+WinMut is faster than AccMut with an
+geometric average speed up of 5.57X.
+
+0
+WinMut
+
+AccMut
+
+WinMut uses 7.3% fewer processes than
+AccMut.
+
+基于共享计算的加速：下一步的WinMut-Turbo
+• 当前方法都是在尝试优化 Fork 之前的计算
+• 我们通过程序分析，可以优化 Fork 之后的计算
+• 如果我们确定 Fork 之后的子进程一定会影响测试结果，就及时
+终止
+• WinMut-Turbo：在WinMut基础上，进一步带来30%的加速
+
+PART 05
+
+总结和展望
+
+基于大模型的变异生成
+• 大模型在生成变异上有独特的优势
+• 最大的优势在于生成行为上接近真实bug的变异
+• 目前仍有很大提升空间
+• 使用prompt-engineering
+• 使用LLM微调
+• 探索多智能体在变异生成的应用
+
+面向大模型的复杂变异加速
+• 虽然相比于当前最新方法（SSE），已经累计加速 50x
+• 当前的加速方法有一定局限性
+• 仅能优化限定代码区间的简单变异
+• 面对大模型生成的复杂变异，如何进一步优化是未来工作重点
+
+THANKS
+
+

@@ -2797,3 +2797,25 @@ Standing calibration monitoring (not C1 admission):
 This supersedes the continuation's pre-bind 46/64 warning above. Reader
 provenance gaps and six marked minor findings remain limits on the score.
 No new capability row, coverage credit, promotion, or claim admission follows.
+
+## Round 58 — declared claims (2026-10-30; L1 TameshiR58, hyaku run 11, attempt 1)
+
+Base `2a32aa8228d5f86a85c81a923a3148bf792a9538` (clean; production ledger 49 rows; registry 145 rows).
+Contract `.ufo/evidence/round-58/contract.json`, frozen in the declared order (defects, keys, panel stub,
+counters, shell instruments, contract+freeze). Pre-freeze verification at the round-58 bytes:
+`C1_R58_SELFTEST: 110/110 pass` (exit 0) and `C2_R58_SELFTEST: 23/23 pass` (exit 0, includes the strict
+element-equality cases P7/P8 that land round-57 critique T57W3CritContract B2 before freeze).
+
+Stagnation nudge: every numeric axis sits at or above the saturation line 8 (calibration 8 at the round-21
+monitor's ceiling, depth 10 at cap, freshness 9) and no capability has entered the table within the window
+N=2 (last entry round 50), so the lowest-axis obligation is waived; C3 is the nudge-directed frontier move.
+
+| # | Claim | Type | Axis | Before (base) | Target | Counting command |
+|---|---|---|---|---|---|---|
+| C1 | every item of the frozen 51-item routed set (R50.1–R56.7) has one ledger row whose status the tree supports; old 49 rows unchanged; blind round-58 panel disagrees ≤5; ≥6 fixes carried by post-base commits | axis move (inherited round-57 debt) | calibration (surface: routed-defect dispositions) | ledger 49 rows, 0/51 of the set; counter at BASE+instruments overlay prints rows=0/51 PASS=false | `C1_R58_PASS=true` total=0 at one committed REV | `python3 .ufo/evidence/round-58/c1/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` |
+| C2 | three executed registry gate rows hold under strict element-equality code binding (bare code elements; exit-2 row names RECEIPT_REV_UNRESOLVABLE exactly), 3 gate mutants killed live, SKILL row + standing cell true | axis move (inherited; lands T57W3CritContract B2 pre-freeze) | operability (no numeric score) | refusal rows carry codes only as substrings; strict counter rows arm short → PASS=false | `C2_R58_PASS=true` total=0 at one committed REV | `python3 .ufo/evidence/round-58/c2/measure.py --lane LANE --rev REV --work EMPTY_DIR --explain` |
+| C3 | F9 (LLM-era mutant generation + equivalence) enters: admitted entry citing S286/S287 opened 2026-10-30; S288 supersedes S285's unreachable anchor; collision check + scratch census before append | frontier move (stagnation nudge) | coverage (frontier F9 open → entered) | 0 knowledge entries cite 2406.09843; no row for the arXiv paper or the dfcfw deck; F9 'no LLM-specific search run yet' | `grep -rl 2406.09843 corpus/knowledge | wc -l` → 1; rows S286–S288 present; census exit 0 | `grep -rl '2406.09843' corpus/knowledge | wc -l && grep -cE '^ {0,3}\| S(286|287|288) ' corpus/SOURCES.md` |
+
+Round shape: one v2 wave round-58-w1 (69 seats, ≥25% attack roles) then one v1 wave round-58-w2 after
+content lands (fresh attacks + the 17 cold-read re-readers the measured forecast prices: the draft overlay
+measures `lost=17 RED`, receipt `.ufo/waves/round-58/l1/forecast-precheck.stdout`).
