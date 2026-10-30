@@ -58,20 +58,20 @@
 set -euo pipefail
 
 LANE=${LANE:-/home/vgpnk/Projects/shokunin/tameshi-shokunin}
-FLOOR=${FLOOR:-5e3569969b532310d2b8a3d130901757a3df356b}
+FLOOR=${FLOOR:-2a32aa8228d5f86a85c81a923a3148bf792a9538}
 MON=$LANE/.ufo/evidence/round-21/coldread/measure.py
 PRECHECK=$LANE/.ufo/evidence/round-48/quality/coldread-precheck.sh
 BINDER=$LANE/.ufo/waves/round-55/w1/T55W1ExecReKeyDryBind-receipts/binder-r55.py
 LOSTREL=.ufo/evidence/round-58/c1/lost-headings-at-c0.json
 LOST=$LANE/$LOSTREL
 WAVES=${WAVES:-.ufo/waves/round-58/w2}
-LABEL=${LABEL:-'L1 TameshiR57 re-key (round 57)'}
+LABEL=${LABEL:-'L1 TameshiR58 re-key (round 58)'}
 RESOLUTIONS=${RESOLUTIONS:-/nonexistent/round-58-resolutions.json}
 C0=${C0:?set C0 to the content-final commit the readers read (full 40-hex)}
 PIN=${PIN:-$C0}
 BIND_REV=${BIND_REV:-}
 : "${HYAKU_SCRATCH:=/fast/scratch/hyaku}"
-W=${W:-$HYAKU_SCRATCH/tameshi-r57/L1-bind}
+W=${W:-$HYAKU_SCRATCH/tameshi-r58/L1-bind}
 mkdir -p "$W"
 
 # ---- 0. guards -----------------------------------------------------------------
