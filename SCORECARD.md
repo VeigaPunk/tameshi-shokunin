@@ -2913,3 +2913,23 @@ freshness 9, all ≥ saturation line 8); coverage/adjacency/operability are
 verdict-only axes this round (round-59 spot-check defect 5). No SKILL.md or
 PROVINCE.md edits planned; `tools/cold-read-forecast.py` prices the planned
 edits at 0 headings of 64.
+
+## Round 60 — measured claims (2026-10-30; L1 `TameshiR60`, attempt 1, fresh-start)
+
+| # | Claim | Type | Axis | Before | After | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R60-C1 | executor-source-pin capability re-certified on a discriminating counter (8 cells × 5 paths, one invocation per cell, per-run nonces, empty-blob + corrupt cells) and the tool's plumbing arm reconciled to exit 2 | capability re-certification (nudge-directed frontier move; sourced S290) | operability (verdict-only axis; no numeric score) | round-59 verdict: capability **not admitted** (honest stop) — the frozen counter passed a fingerprint cheat at 24/24, and the unfixed v1 tool scores `passed=7/8 C1_R60_PASS=false` under the round-60 counter (only the `corrupt` cell failing) | `passed=8/8 C1_R60_PASS=true`, exit 0; repeat run (other nonce, other order) 8/8; control family all `C1_R60_PASS=false` — do-nothing 0/8 · v1 7/8 · always-accept 3/8 · fingerprint 3/8 · sequence 3/8 · hash-only 3/8 · first-path-only 6/8 · empty-blob-unsound 4/8 | `python3 -I tools/executor-source-pin-measure.py --lane /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev <rev> --work <empty scratch dir>` | `da2ae6b361de2d6294c6324a02ae141ff6cb482f` (tool + counter), receipts `.ufo/evidence/round-60/` |
+| R60-C2 | round-59 routed defects and uncaptured mistakes become tree-checkable records | axis move (lowest verdict axis: calibration) | calibration (numeric score 8 unchanged; the round's work is dispositions, not a score move) | at base `9806562c7efc816bd979923e702ef39bc41cade7`: R59.* ledger rows 0 · QUALITY criteria citing the round-59 lesson 0 · SCORECARD annotation 0 (the do-nothing receipt) | R59.* ledger rows 8 (7 `fixed` with resolving receipts, R59.4 `open` with its reason) · QUALITY citations of `corpus/lessons/round-59.md` 8 · SCORECARD annotation 2 · cold-read precheck at the content revision `lost=0` (`cand_credited=50`) · pointer sweep 21/21 resolved at the final revision | `python3 -c "import json;d=json.load(open('corpus/routed-defects.json'));rows=[x for x in d['defects'] if x['id'].startswith('R59.')];print(len(rows), sum(1 for x in rows if x['status']=='fixed'))"` · `grep -c 'corpus/lessons/round-59\.md' corpus/QUALITY.md` · `grep -c 'not admitted (honest stop, closure round 59)' SCORECARD.md` | `e13e0324e048377d7ca5d296294f6f4089240aa0` |
+
+Falsification credit is limited to the two seats that ran (wave w1 settled 2/32;
+30 seats were cancelled by the host usage cap before spawning — see
+`corpus/lessons/round-60.md` `## Wave w1`). No axis is harmed: depth 10,
+calibration 8 and freshness 9 are unchanged, and the cold-read precheck shows
+no heading lost at the round's final revision. The capability row stays
+"lane demonstrated; admission pending" — the operator rules on admission.
+
+**Planned (round 61):** the counter's remaining honest limits are the
+fixture scope (one repo, one path-spelling set, a loose-object corrupt cell
+only) and the absent author-independent trust; a round-61 claim should either
+extend the counter's failure modes (packed object, promisor partial clone) or
+take the F11 boundary that this lane does not claim.
