@@ -1,0 +1,5 @@
+# Round 59 — executor-source pinning prerequisite
+
+One claim C1, operability capability: C1 operability capability: executor-source-pin gate passes exactly 24 independently executed committed-object fixtures (six classes times four path spellings), with a skipped-work and always-accept control failing.
+
+Base b83f1bfc7b302f22e89d9631ac7e6ac87ea78c2a. Target and kill rule fixed by `.ufo/evidence/round-59/contract.json` and `measure.py` before seats score. Missing tool counts zero. Counter uses independently constructed Git fixtures and public CLI; no tool self-reported count is credited. Always-accept and skipped-work controls must fail. Source comparison is not execution attestation; round-58 certification remains rejected. Stagnation nudge: depth10/calibration8/freshness9 >= saturation8, last capability round50, window2. New capability is the frontier move. All historical routed debts remain open unless evidence supports separate unclaimed correction. No SKILL edit planned; existing cold-read inputs remain unchanged. One v2 wave64 build/attack seats; L1 holds planner seat.
