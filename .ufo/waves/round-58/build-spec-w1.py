@@ -91,7 +91,7 @@ add('T58W1ExecC2Reg', 'executor',
     'C2 registry seat. In a scratch clone of the lane at base %s: (a) apply the bare-code patch - copy the patched registry draft /fast/scratch/hyaku/tameshi-r58/c0-drafts/registry-patched.json over the clone tools/registry.json and diff against the clone original to show the delta is exactly two added expect.stdout_contains elements ("RECEIPT_REV_CONTENT_DRIFT" on receipt-gate-content-drift, "RECEIPT_REV_UNRESOLVABLE" on receipt-gate-unresolvable-certified); (b) overlay the round-58 instruments (.ufo/evidence/round-58/ c1, c2, control, controls.sh, no-harm.sh, deciding-run.sh, contract.json, freeze.json) from the lane working tree into the clone, commit, and run python3 -I .ufo/evidence/round-58/c2/measure.py --lane <clone> --rev <clone head> --work <scratch work dir> --explain - expect total=0 PASS=true (this previews the round-58 after-state); (c) also run it WITHOUT the registry patch (restore the base registry, commit) to show the red-before: the rows arm must count >=1 shortfall and PASS=false; (d) run tools/registry-check.py at the patched clone for the three receipt-gate rows and report held/differs. Output %s/T58W1ExecC2Reg.json with all three counter lines verbatim.' % (BASE, W1),
     axes=['operability'], milestone='C2 strict red-before + registry patch')
 add('T58W1ExecInstr', 'executor',
-    'Instruments seat. In a scratch clone of the lane detached at the FREEZE commit (resolve it: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format="%H %s" -8; the freeze is the tip commit whose message starts "round-58: freeze"; the instruments .ufo/evidence/round-58/ are committed there): (a) python3 -I .ufo/evidence/round-58/c1/measure.py --selftest --work <scratch> (expect C1_R58_SELFTEST: 110/110 pass, exit 0); (b) python3 -I .ufo/evidence/round-58/c2/measure.py --selftest --work <scratch> (expect C2_R58_SELFTEST: 23/23 pass, exit 0); (c) bash -n on controls.sh, no-harm.sh, deciding-run.sh (syntax only, expect silence); (d) diff the round-58 copies against the round-57 originals (.ufo/evidence/round-57/c1/measure.py, c2/measure.py) and enumerate every semantic delta beyond the re-pin (BASE, paths, labels, the strict row_named_codes upgrade, selftest case additions) - flag ANY other behavioral change. Output %s/T58W1ExecInstr.json.' % (W1,),
+    'Instruments seat. In a scratch clone of the lane detached at the FREEZE commit (resolve it: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --format="%%H %%s" -8; the freeze is the tip commit whose message starts "round-58: freeze"; the instruments .ufo/evidence/round-58/ are committed there): (a) python3 -I .ufo/evidence/round-58/c1/measure.py --selftest --work <scratch> (expect C1_R58_SELFTEST: 110/110 pass, exit 0); (b) python3 -I .ufo/evidence/round-58/c2/measure.py --selftest --work <scratch> (expect C2_R58_SELFTEST: 23/23 pass, exit 0); (c) bash -n on controls.sh, no-harm.sh, deciding-run.sh (syntax only, expect silence); (d) diff the round-58 copies against the round-57 originals (.ufo/evidence/round-57/c1/measure.py, c2/measure.py) and enumerate every semantic delta beyond the re-pin (BASE, paths, labels, the strict row_named_codes upgrade, selftest case additions) - flag ANY other behavioral change. Output %s/T58W1ExecInstr.json.' % (W1,),
     axes=['calibration'], milestone='instrument selftests + diff audit')
 
 # ---- assimilation ops (2 executor seats) ----
@@ -142,7 +142,7 @@ add('T58W1RevengerC2', 'revenger',
     axes=['operability'], milestone='producer-provenance attack')
 for i, target in enumerate(['c1', 'c2']):
     add(f'T58W1Mut{i+1:02d}', 'mutation-tester',
-        f'Mutation seat for the round-58 {target} counter. In a scratch clone of the lane at the freeze/tip: apply 6 single-edit mutants to a COPY of .ufo/evidence/round-58/{target}/measure.py inside the clone (one behavioral edit each: flip a comparison, loosen a bound, weaken the strict matching, skip an arm, accept a malformed row, invert a verdict), run each mutated copy (selftest for behavior, and --lane <clone> --rev <rev> for measure behavior where feasible), and report killed/survived per mutant with the exact diffs and outputs. A survivor is a counter hole - name the input class that exploits it. Output %s/T58W1Mut%02d.json.' % (target.upper(), W1, i + 1),
+        f'Mutation seat for the round-58 {target} counter. In a scratch clone of the lane at the freeze/tip: apply 6 single-edit mutants to a COPY of .ufo/evidence/round-58/{target}/measure.py inside the clone (one behavioral edit each: flip a comparison, loosen a bound, weaken the strict matching, skip an arm, accept a malformed row, invert a verdict), run each mutated copy (selftest for behavior, and --lane <clone> --rev <rev> for measure behavior where feasible), and report killed/survived per mutant with the exact diffs and outputs. A survivor is a counter hole - name the input class that exploits it. Output {W1}/T58W1Mut{i+1:02d}.json.',
         axes=['calibration', 'operability'], milestone=f'{target} counter mutations')
 add('T58W1Mut03', 'mutation-tester',
     'Mutation seat for the round-58 ledger generator. In a scratch clone of the lane at base %s with the round-58 instruments overlaid from the tip working tree, run .ufo/evidence/round-58/control/gen_ledger.py in each documented mode (skip, fab, open, bulkopen, quote-file+quote) and score each generated ledger with the round-58 C1 counter: every mode must make the counter print PASS=false and trip its named arm (CTL_SKIP panel_over, CTL_FAB evidence_bad, CTL_OPEN open_unplanned, CTL_BULKOPEN panel_over, CTL_QUOTE fixed_bad). Report per-mode command + verdict term. Output %s/T58W1Mut03.json.' % (BASE, W1),
@@ -182,7 +182,7 @@ LABRATS = [
     ('shrinker selftest at tip', 'Run python3 -I tools/shrink-case.py --selftest in a scratch clone at tip; report the last line (the no-harm monitor expects " failed=0").'),
 ]
 for i, (ms, text) in enumerate(LABRATS):
-    add(f'T58W1Lab{i+1:02d}', 'labrat', 'Bounded probe (read-only; scratch clones only; no lane edits). %s Output %s/T58W1Lab%02d.json with command + output.' % (text, W1, i + 1),
+    add(f'T58W1Lab{i+1:02d}', 'executor', 'Bounded probe (read-only; scratch clones only; no lane edits). %s Output %s/T58W1Lab%02d.json with command + output.' % (text, W1, i + 1),
         axes=['operability'], milestone='probe: ' + ms)
 
 # ---- additional seats to reach 64 with genuine work ----
@@ -196,16 +196,16 @@ add('T58W1RevDisagree', 'reviewer',
     'Disagreement-budget reviewer. Read the OLD round-57 panel verdicts (.ufo/evidence/round-57/c1/panel.json) and the contract\'s disagreement budget (PANEL_ALLOWED=5 in .ufo/evidence/round-58/c1/measure.py). List every item where a fixed-at-base conclusion at the NEW base would contradict the old panel\'s "open" verdict, ranked by the strength of the committed evidence you can see at base (commands you ran). Recommend which <=5 disagreements the round should spend, and which items should stay open even if arguably fixed (weakest evidence). Output %s/T58W1RevDisagree.json.' % (W1,),
     axes=['calibration'], milestone='disagreement budget plan')
 
-assert len(ITEMS) == 69, len(ITEMS)
+assert len(ITEMS) == 67, len(ITEMS)
 from collections import Counter
 roles = Counter(i['role'] for i in ITEMS)
 attack = roles['reviewer'] + roles['critic'] + roles['mutation-tester'] + roles['labrat']
-print('roles:', dict(roles), 'attack:', attack, '/69 =', round(100 * attack / 69, 1), '%')
+print('roles:', dict(roles), 'attack:', attack, '/67 =', round(100 * attack / 67, 1), '%')
 
 spec = {
     'wave': 'round-58-w1',
     'reportDir': '.ufo/waves/round-58/w1',
-    'template': '/skill:godspeed\n' + GODSPEED,
+    'template': '/skill:godspeed\n' + GODSPEED + '\n\n## Your item\n\n{{item}}\n\nWork the item end to end, then write your report file and return your findings.\n',
     'context': CONTEXT,
     'items': ITEMS,
 }
