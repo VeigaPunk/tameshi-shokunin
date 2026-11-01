@@ -136,6 +136,25 @@ proposal, its cited-receipt-exists core already criterion 108/116 ground.
    `os.path.relpath`-derived; the live rekey commits carry the traces
    individually.
 
+4. **The RD5 defect class recurred in this round's own amendment script
+   (class: universal-newlines-rewrite; caught by the diff-stat review
+   before push).** Evidence: the pre-commit amendment that sharpened the
+   planned block's guard wording opened SCORECARD.md in text mode without
+   `newline=''` on the read side, so every CRLF became LF on the
+   byte-identical-content write back — commit `8616d47`'s diff-stat shows
+   SCORECARD.md 3202 insertions / 3131 deletions (the whole file), exactly
+   the RD5 rewrite shape the round's C1 exists to disclose. Captured-by:
+   the round's own landing review (the `git diff --stat` line; the
+   additivity instrument's `eol_rewrite_disclosed` would have flagged it).
+   Fix: byte-level restoration before anything was pushed (`b'
+' ->
+   b'
+'` over a verified CR-free file; content re-verified against the
+   base: verbatim prefix true, raw_old_only 0), the restored bytes land
+   with the rekey commit, and this lesson records it. The practice this
+   mines: every record-file write in this lane is a BINARY operation or it
+   is a rewrite; text-mode convenience is the RD5 class.
+
 ## What was actually executed
 
 - The L2 floor (one batched AgentSwarm call) has no surface on this host;
