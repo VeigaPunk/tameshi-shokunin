@@ -2933,3 +2933,55 @@ fixture scope (one repo, one path-spelling set, a loose-object corrupt cell
 only) and the absent author-independent trust; a round-61 claim should either
 extend the counter's failure modes (packed object, promisor partial clone) or
 take the F11 boundary that this lane does not claim.
+
+## Planned — round 60 attempt 2 (declared 2026-10-31, win32 host re-run round, frozen before data)
+
+Attempt 2 of round 60 (`zcode run14`, base `9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78`
+= origin/master). The dispatch host is a NEW Windows host; the old Linux
+host's invocation shape (`python3`, `/home/vgpnk`) does not exist here. The
+frozen round-60 instruments were spot-checked on THIS host before declaring:
+the v1 counter cannot produce a verdict here (red receipt
+`.ufo/evidence/round-60/win-host/red-v1-counter.err` — cp1252
+`UnicodeEncodeError` on the 日本語 fixture content under `-I`, which ignores
+`PYTHONUTF8`, plus a `PermissionError` cleanup crash on git-for-windows'
+read-only loose objects). Host probe: `.ufo/evidence/round-60/win-host/host-probe.txt`.
+Ruled out with reasons: re-running attempt-1's C1 counting command as a
+claim (cannot execute here — the r58/r59 rejection shape), extending the
+counter's failure modes this round (would stack a new predicate on an
+instrument the host cannot run; round-61 planned move, unchanged),
+re-litigating attempt-1's C2 counts (tree-checkable here with `python` for
+`python3`; their host scope becomes a C2 record instead).
+
+1. **C1 — operability, capability cross-host re-certification (sourced S292
+   + S073 re-opened).** The host-portable counter revision
+   `tools/executor-source-pin-measure-v2.py` — the frozen instrument's cell
+   design unchanged (8 shuffled class cells × 5 declared paths in ONE
+   invocation per cell, per-run nonces, empty-blob declared path, corrupt
+   cell expecting exit 2); only host-portability plumbing differs (explicit
+   UTF-8 fixture writes, `-X utf8` child invocation, `git update-index
+   --chmod=±x` exec-bit force, read-only-safe reset/corrupt/cleanup arms) —
+   run on `tools/executor-source-pin.py` v2 scores `passed=8/8
+   C1_R60V2_PASS=true` with exit 0 on this host, twice (two nonces, two
+   class orders), while every control arm scores `C1_R60V2_PASS=false` with
+   the same per-arm scores the frozen instrument produced on Linux:
+   do-nothing tool-absent 0/8, unfixed v1 tool 7/8 (corrupt only),
+   always-accept 3/8, fingerprint 3/8, sequence 3/8, hash-only 3/8,
+   first-path-only 6/8, empty-blob-unsound 4/8. The v1 counter bytes stay
+   frozen (new file, own freeze `.ufo/evidence/round-60/win-host/freeze-v2.json`).
+   Counting command: `python -I tools/executor-source-pin-measure-v2.py
+   --lane <lane> --rev <measured-rev> --work <empty scratch dir>`.
+2. **C2 — calibration, host-scope records.** The tree records which
+   measurements are host-scoped and what the real host surfaces are:
+   `corpus/QUALITY.md` gains `### Criterion 118` (host scope + instrument
+   revision named on cited counting commands and certification receipts)
+   citing lesson mistake 6; `SCORECARD.md` annotates attempt-1's R60-C1/C2
+   rows `counting command host-scoped (linux)`; `PROVINCE.md` carries a
+   dated correction recording the host-absent line-66 template path
+   (`recorded absent 2026-10-31`) and the real win32 surfaces;
+   `corpus/lessons/round-60.md` gains an `## Attempt 2` section (Gate:
+   S292 opened this round, S073 re-opened with a fresh win32 fetch and
+   used-by extended; mistake 6; win32 verdict record).
+
+Stagnation nudge premise unchanged from attempt 1 (scored axes 10/8/9, all
+at or above the line 8; no capability admission since round 50); coverage,
+adjacency and operability stay verdict-only axes.

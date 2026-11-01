@@ -1,0 +1,34 @@
+# host-probe — tameshi round 60 attempt 2 (win32 host, 2026-10-31)
+# transcript of the probes that sized the attempt-2 claims; each command
+# below was run on the dispatch host and its output recorded verbatim.
+
+$ python3 --version
+Python was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings > Apps > Advanced app settings > App execution aliases. (exit 49)
+# -> the 'python3' on PATH is the WindowsApps store stub: every counting
+#    command written as 'python3 ...' fails as-is on this host.
+
+$ python --version
+Python 3.13.15  (C:/Users/jpvei/AppData/Local/Programs/Python/Python313/python)
+
+$ python -c "import locale,sys; print(locale.getpreferredencoding(False), sys.flags.utf8_mode)"
+utf-8 1   # PYTHONUTF8=1 is set in the dispatch shell env
+
+$ python -c 'from pathlib import Path; ...symlink probe...'
+symlink: OK   # SeCreateSymbolicLinkPrivilege available (Developer Mode/admin)
+
+$ git --version; git config core.symlinks
+git version 2.55.0.windows.3
+false
+# -> git-for-windows: core.fileMode and core.symlinks both default false.
+
+$ python -I tools/executor-source-pin-measure.py --lane . --rev 9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78 --work <empty scratch>
+exit 1; stdout empty; stderr (receipt red-v1-counter.err):
+  UnicodeEncodeError: 'charmap' codec can't encode characters in position 21-23: character maps to <undefined>
+    File "...encodings/cp1252.py", line 19, in encode
+  ...finally-cleanup crash:
+  PermissionError: [WinError 5] Access is denied: '...\red1\fixture\.git\objects\65\16a3...'
+# -> two mechanisms: (1) under -I the interpreter ignores PYTHONUTF8 and
+#    writes fixtures with the locale codec (cp1252), which cannot encode
+#    the 日本語 fixture content; (2) shutil.rmtree cannot remove
+#    git-for-windows' read-only loose objects, so the --work cleanup arm
+#    fails and leaves residue.

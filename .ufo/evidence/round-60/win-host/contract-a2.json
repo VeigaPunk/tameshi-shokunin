@@ -1,0 +1,53 @@
+{
+  "schema": "tameshi-round-contract-v2",
+  "lane": "tameshi",
+  "round": 60,
+  "attempt": 2,
+  "declared_at": "2026-10-31",
+  "base": "9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78",
+  "base_state": "origin/master, clean tree; attempt-1 round-60 work is committed lane state; numeric axes depth 10, calibration 8, freshness 9 (all at/above saturation line 8); stagnation nudge active on scored axes",
+  "host": "win32 (MSYS/MINGW64 bash 5.3, git 2.55.0.windows.3 core.symlinks=false, python 3.13.15 native; 'python3' on PATH is the Microsoft Store stub and exits 49); host probe receipt .ufo/evidence/round-60/win-host/host-probe.txt",
+  "fresh_start": "attempt-2 continuation of the run-13 fresh-start round: last three rejected closures re-read (r57 honest-stop, r58 not-admitted, r59 honest-stop + spot-check routed defects 1-8); attempt-1 instruments spot-checked on THIS host before declaring; re-running attempt-1's C1 counting command as a claim was ruled out (its invocation shape cannot execute here)",
+  "claims": {
+    "C1": {
+      "axis": "operability",
+      "type": "capability-recertification-cross-host",
+      "sourced": ["S292", "S073"],
+      "sentence": "At the attempt-2 measured revision the host-portable counter revision tools/executor-source-pin-measure-v2.py (frozen instrument's cell design unchanged: 8 shuffled class cells x 5 declared paths in ONE invocation per cell, per-run nonce fixtures, shuffled order, empty-blob declared path, corrupt cell expecting exit 2; only host-portability plumbing differs) run on tools/executor-source-pin.py v2 scores passed=8/8 C1_R60V2_PASS=true with exit 0 on the win32 host, twice (two nonces, two class orders), while every control arm scores C1_R60V2_PASS=false with the same per-arm scores the frozen instrument produced on the Linux host: do-nothing tool-absent 0/8 (reason=tool-absent), unfixed v1 tool 7/8 (only the corrupt cell failing), always-accept 3/8, fingerprint 3/8, sequence 3/8, hash-only 3/8, first-path-only 6/8, empty-blob-unsound 4/8.",
+      "sources_note": "S292 (git-update-index --chmod, opened 2026-10-31) grounds the exec-bit index-mode force; S073 (cmdline docs page re-opened 2026-10-31, win32 fetch extract .ufo/evidence/round-60/win-host/sources/s073-cmdline-refetch.html, used-by extended) grounds the encoding fix: -I ignores all PYTHON* env vars, so -X utf8 is the portable route",
+      "counting_command": "python -I tools/executor-source-pin-measure-v2.py --lane <lane> --rev <measured-rev> --work <empty scratch dir>",
+      "pass_label": "C1_R60V2",
+      "cells": 8,
+      "declared_paths": 5,
+      "before": "no non-Linux certification receipt exists in the tree at base 9bc9b20b; the frozen v1 instrument cannot produce a verdict on this host (red receipt .ufo/evidence/round-60/win-host/red-v1-counter.err: UnicodeEncodeError cp1252 under -I + PermissionError cleanup)",
+      "kill_rule": "any change to the v2 counter's cells, class set, expected exits or PASS condition after the first scored run voids the claim (re-freeze + re-declare required); any control arm scoring 8/8 kills the counter and the claim honest-stops; a C1_R60V2_PASS=true receipt whose instrument digest does not match .ufo/evidence/round-60/win-host/freeze-v2.json defeats the claim",
+      "red_receipts": [
+        ".ufo/evidence/round-60/win-host/red-v1-counter.out",
+        ".ufo/evidence/round-60/win-host/red-v1-counter.err"
+      ]
+    },
+    "C2": {
+      "axis": "calibration",
+      "type": "axis-move",
+      "sourced": [],
+      "sentence": "The round's final tree records which measurements are host-scoped and what the real host surfaces are: corpus/QUALITY.md carries '### Criterion 118' (a cited counting command or certification receipt names its host scope and instrument revision; a command that cannot run on the current host is re-stated portably or annotated host-scoped) citing corpus/lessons/round-60.md mistake 6; SCORECARD.md annotates attempt-1's R60-C1/R60-C2 rows with the string 'counting command host-scoped (linux)'; PROVINCE.md carries a dated correction recording the host-absent template path from line 66 and the real win32 surfaces; corpus/lessons/round-60.md carries an '## Attempt 2' section with the Gate (S292 opened this round; S073 re-opened with a fresh win32 fetch and used-by extended), mistake 6, and the win32 verdict record.",
+      "counting_commands": [
+        "grep -c '### Criterion 118' corpus/QUALITY.md",
+        "grep -c 'counting command host-scoped (linux)' SCORECARD.md",
+        "grep -c 'recorded absent 2026-10-31' PROVINCE.md",
+        "grep -c '^## Attempt 2' corpus/lessons/round-60.md"
+      ],
+      "kill_rule": "any counting command ambiguous at adjudication kills the claim honest-stop; receipts that do not resolve at the final revision defeat the claim",
+      "do_nothing_control": "every counting command run at base 9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78 via git show scores zero; receipt recorded in the round report"
+    }
+  },
+  "no_harm_guards": {
+    "coldread_precheck": {
+      "command": "bash .ufo/evidence/round-48/quality/coldread-precheck.sh <lane> 9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78 <final-rev>",
+      "required": "lost=0"
+    },
+    "frozen_instruments": "attempt-1 freeze.json set unchanged (v1 counter bytes untouched; v2 counter is a new file with its own freeze .ufo/evidence/round-60/win-host/freeze-v2.json)",
+    "scope": "lane repo only; siblings, fleet repo, .ufo/state/, templates/, scripts/ read-only",
+    "scratch": "<workspace>/scratch/tameshi-r60/ deleted on exit"
+  }
+}
