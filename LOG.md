@@ -3020,3 +3020,23 @@ half remains open; proposals 2–5 unadopted); shokuknow unreachable.
 L1-only round (L2 floor surface absent on this host; the r60 L0 question
 stands). Gate: no fresh rejection this round — reject sample stated
 explicitly in the lesson (price-outs + the standing S293 W04 marker).
+
+Round-final shas: C1 `33cb4b0d627f1b06067bf002c256bc6da1eed962`; C2
+`b31e81456b9860a1bf5dddfa678cfd2df59149d9`; rekey
+`1763db52b42c7e0776a2d03b39dbf0db5d6adc59` (all pushed). Final receipts
+(`.ufo/evidence/round-64/win-host/`): `RECEIPT_EXISTS_SELFTEST: 4/4 pass`
+exit 0; demo sweep at the rekey tip `docs=2 paths=16 missing=0 extra=2`
+exit 0 (the 2 EXTRA lines name the fleet-root surfaces
+`.ufo/l0-questions.md` and `.ufo/reports/round-63/tameshi.md`);
+`rekey_batch` 0 → 49 → 62 (18/18/13/13), ledger 693 → 706; guard RED at
+`b31e8145` (`lost=13`, miss=0 vs the criterion-110 forecast) →
+`lost=0 ok` exit 0 at `1763db52` at both floors (round `d0baf616`,
+historic `8b0042bd` 46 → 64) + rev mode `credited=64/64`, probe 20/20
+everywhere; additivity base → `1763db52`: LOG.md `raw_old_only=0`
+prefix=true, SCORECARD.md `raw_old_only=0` prefix=true, ledger
+`raw_old_only=0` prefix=false (the disclosed mid-file insertion shape),
+`eol_rewrite_disclosed=false` everywhere. Census exit 0 at round start
+(154 rows) and at the content-final working tree (155 rows; the S295 row
+census-clean; the S293 W04 stands as the standing rejection's marker).
+Capability row `receipt-existence sweep` entered in the SCORECARD
+capabilities table.
