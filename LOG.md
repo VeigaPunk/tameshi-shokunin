@@ -3040,3 +3040,20 @@ prefix=true, SCORECARD.md `raw_old_only=0` prefix=true, ledger
 census-clean; the S293 W04 stands as the standing rejection's marker).
 Capability row `receipt-existence sweep` entered in the SCORECARD
 capabilities table.
+
+Round 65 (opened 2026-11-01, L1 TameshiR65, base `7d7f9ca8`): carry-in from
+the r64 non-author closure addressed FIRST, all status-neutral, before any
+claim work. (1) Empty tail commit `6876d746` — correction note of record
+(`.ufo/evidence/round-65/win-host/correction-note-r64-tail-commits.txt`):
+`git diff-tree --stat 6876d746` is empty; the commit carries no content and
+its subject names receipt bytes that landed only in `c7d28b19`
+(tip-confirmation.txt, +5 lines). (2) tip-confirmation.txt historic-floor
+line added by execution: the guard re-run at floor `8b0042bd` cand
+`6876d746` reads `lost=0 ok` exit 0 (receipt
+`.ufo/evidence/round-65/win-host/tipfix-hist-floor.txt`); the line is
+appended to the r64 receipt under a dated header naming the run's receipt.
+(3) live-B-red.txt receipt-completeness note appended (ASCII binary append;
+the full 13-heading LOST set is authoritative in live-B-red.json).
+Convention of record stated (lesson round-65; mechanically checked by C1's
+instrument): a commit naming receipt content carries the bytes; empty
+commits are never receipt carriers.

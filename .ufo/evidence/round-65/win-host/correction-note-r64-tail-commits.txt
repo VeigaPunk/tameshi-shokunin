@@ -1,0 +1,24 @@
+# correction note — r64 tail commits (round 65, 2026-11-01; status-neutral)
+
+The r64 non-author closure (7d7f9ca8) routed defect 1, correction of record:
+
+1. Commit 6876d7460c75af2dbfb74c08a12ce722dbcd07c3 ("round 64 R4:
+   post-landing tip-confirmation receipt (guard both floors, additivity
+   C->D, self-sweep at the receipts tip be76552d)") is an EMPTY commit:
+   `git diff-tree --stat 6876d746` prints nothing and its tree equals its
+   parent be76552d's tree. An empty commit carries no content.
+2. The receipt content its subject names landed only in the successor
+   c7d28b19e5f984d55c972e9423cd0c75a130f596 ("round 64 R5"), which added
+   .ufo/evidence/round-64/win-host/tip-confirmation.txt (+5 lines) — the
+   only content commit between 6876d746 and the round tip.
+3. Re-derivation commands (all on committed bytes):
+   git diff-tree --stat 6876d7460c75af2dbfb74c08a12ce722dbcd07c3   (empty)
+   git cat-file -e 6876d7460c75af2dbfb74c08a12ce722dbcd07c3:.ufo/evidence/round-64/win-host/tip-confirmation.txt
+     -> fatal: path ... exists on disk, but not in '6876d746'
+   git cat-file -e c7d28b19e5f984d55c972e9423cd0c75a130f596:.ufo/evidence/round-64/win-host/tip-confirmation.txt
+     -> exit 0
+4. Convention of record, stated round 65 (corpus/lessons/round-65.md,
+   checked mechanically by tools/receipt-commit-bind.py, C1): a commit whose
+   message names receipt content must carry those receipt bytes; receipts
+   land in the commit that names them; an empty commit is never a receipt
+   carrier. This round's own commits are swept under the same rule.
