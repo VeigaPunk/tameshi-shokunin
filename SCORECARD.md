@@ -3114,3 +3114,17 @@ below and in `corpus/lessons/round-61.md` (append-only) and
   quote and location are accurate. SOURCES.md is deliberately NOT edited
   this round (re-stale pricing, Planned above); this erratum and the r61
   lesson append are the corrections of record there.
+
+## Round 62 — measured claims (2026-11-01)
+
+| Claim | Verdict | After (measured) | Receipts | Measured commit |
+|---|---|---|---|---|
+| R62-C1 | verifies (measured) | `grep -c "probe_failed\|sampled.*< 1"`: base `ed3a66c2` → 0, work commit `6b15c943` → 4. `PROBE_ARMS: PASS (vacuous/base=ok vacuous/new=ok mismatch/base=ok mismatch/new=ok clean/new=ok)` — ARM-VACUOUS base exit 0 with `EQUIVALENCE floor_sampled=0 … cand_sampled=0 …` (the vacuous pass, red-before) vs guarded bytes exit 2 (`error=equivalence-probe sampled=0 mismatches=0`); ARM-MISMATCH exit 2 with `floor_mismatches=1` on BOTH byte versions (old gate `error=equivalence-mismatch`, new gate `error=equivalence-probe sampled=9 mismatches=1`); ARM-CLEAN `floor_mismatches=0 cand_mismatches=0`. Guard re-run on the real repo: `COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46 cand=6b15c943a73d cand_credited=64 lost=0 ok` + `EQUIVALENCE floor_sampled=20 floor_mismatches=0 cand_sampled=20 cand_mismatches=0`, exit 0 — the r61 verdict unchanged at the guarded tip (no harm) | `.ufo/evidence/round-62/win-host/probe-arms.{py,stdout,stderr}`, `guard-rerun.{out,json}`, `sources/s289-reaccess.out` + `s289-r62.headers` | tool bytes at `6b15c943a73dad797fd1b2d8a96f5683b2d79a51` (digest `892a045d…`); receipts land in the following commit |
+
+Calibration: 8 → 8 (at the lane-attainable cap; the axis verdict this
+round is **improved** — the no-harm instrument's probe went from
+documented-but-vacuous-pass-able to fail-closed in shipped bytes with a
+demonstrated red arm and an intact mismatch arm; the r61
+`probe-cannot-fail-empty` class is closed where it lives, in the code).
+RD2/RD3/RD4 corrections landed status-neutral (erratum above; no axis
+moved by them).

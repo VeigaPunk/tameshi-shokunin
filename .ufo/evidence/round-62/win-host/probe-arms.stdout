@@ -1,0 +1,25 @@
+FIXTURE rev1=61fac0da65bb rev2=e1364c5d58f0 (builder: r61 differential.build_repo)
+TOOL base sha256=3e09cace27da2acc859143052c7bd4a5f8f1825737932afb67223729ec0c2fce
+REAL-PROBE-EMPTY-CANDIDATES {'sampled': 0, 'mismatches': 0, 'detail': 'no candidates'}
+ARM-VACUOUS tool=base exit=0 VACUOUS-PASS (empty sample did not fail the run)
+  COLDREAD_PRECHECK floor=61fac0da65bb floor_credited=3 cand=61fac0da65bb cand_credited=3 lost=0 ok
+  EQUIVALENCE floor_sampled=0 floor_mismatches=0 cand_sampled=0 cand_mismatches=0
+TOOL new sha256=892a045d8b508214804e2b26b78c15b83aae65bdae4bd5bf022b8cb735f3b33e
+ARM-VACUOUS tool=new exit=2 GUARD-FIRED (fail-closed)
+  COLDREAD_PRECHECK floor=61fac0da65bb floor_credited=3 cand=61fac0da65bb cand_credited=3 lost=0 ok
+  EQUIVALENCE floor_sampled=0 floor_mismatches=0 cand_sampled=0 cand_mismatches=0
+ARM-MISMATCH tool=base tampered-key=SHONEN.md exit=2
+  COLDREAD_PRECHECK floor=61fac0da65bb floor_credited=3 cand=e1364c5d58f0 cand_credited=2 lost=1 RED
+  LOST ## Section A | drifted=inputs/one.txt
+  EQUIVALENCE floor_sampled=9 floor_mismatches=1 cand_sampled=9 cand_mismatches=0
+  [stderr] COLDREAD_PORTABLE error=equivalence-mismatch
+ARM-MISMATCH tool=new tampered-key=SHONEN.md exit=2
+  COLDREAD_PRECHECK floor=61fac0da65bb floor_credited=3 cand=e1364c5d58f0 cand_credited=2 lost=1 RED
+  LOST ## Section A | drifted=inputs/one.txt
+  EQUIVALENCE floor_sampled=9 floor_mismatches=1 cand_sampled=9 cand_mismatches=0
+  [stderr] COLDREAD_PORTABLE error=equivalence-probe sampled=9 mismatches=1
+ARM-CLEAN tool=new exit=1
+  COLDREAD_PRECHECK floor=61fac0da65bb floor_credited=3 cand=e1364c5d58f0 cand_credited=2 lost=1 RED
+  LOST ## Section A | drifted=inputs/one.txt
+  EQUIVALENCE floor_sampled=9 floor_mismatches=0 cand_sampled=9 cand_mismatches=0
+PROBE_ARMS: PASS (vacuous/base=ok vacuous/new=ok mismatch/base=ok mismatch/new=ok clean/new=ok)

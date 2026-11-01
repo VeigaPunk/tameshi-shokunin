@@ -2905,3 +2905,16 @@ date Sun, 01 Nov 2026 11:36:48 GMT; receipt under
 that moves the outcome) adopted as the arms design rule; shokuknow
 unreachable. L1-only round (L2 floor surface absent on this host; the r60
 L0 question stands).
+
+Round-final receipts (landed with the receipts commit): `PROBE_ARMS: PASS
+(vacuous/base=ok vacuous/new=ok mismatch/base=ok mismatch/new=ok
+clean/new=ok)` with the red-before line `ARM-VACUOUS tool=base exit=0
+VACUOUS-PASS (empty sample did not fail the run)` and the guarded
+`ARM-VACUOUS tool=new exit=2 GUARD-FIRED (fail-closed)`
+(`.ufo/evidence/round-62/win-host/probe-arms.stdout`; tool digests in-run:
+base `3e09cace…`, new `892a045d…`); guard re-run at the work commit
+`6b15c943a73d`: `COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46
+cand=6b15c943a73d cand_credited=64 lost=0 ok` + `EQUIVALENCE
+floor_sampled=20 floor_mismatches=0 cand_sampled=20 cand_mismatches=0`,
+exit 0 (`.ufo/evidence/round-62/win-host/guard-rerun.{out,json}`); counting
+greps 0 → 4.
