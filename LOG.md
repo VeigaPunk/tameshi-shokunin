@@ -2835,8 +2835,10 @@ pointer-premature-resolution (D1, captured by the r60 spot-check); 3
 host-scoped-receipt (D2, captured by the r60 spot-check); 4 number-drift
 (D3, captured by the r60 spot-check); 5 prose-spacing-drift (the re-read
 found "from33d03b7" and "the199-entry" in the round-21 registry section).
-Source: S293 (git-cat-file batch output framing) opened and mined; census
-exit 0 at round start and end. L1-only round: the batched-wave surface
+Source: S289 (git-cat-file) re-opened with the batch output framing quote
+(used-by extended old→new), after S293 was opened and immediately REJECTED
+as a within-scope duplicate (the URL was held as S289; the census W04
+catch + the S073/S103 precedent); census exit 0 at round start and end. L1-only round: the batched-wave surface
 named by MISSION.md does not exist on this host; routed at
 `.ufo/l0-questions.md` (tameshi | round-60, option (b) routing stands).
 
@@ -2851,3 +2853,11 @@ cand=72d36ae1aff7 cand_credited=64 lost=0 ok` + `EQUIVALENCE
 floor_sampled=20 floor_mismatches=0 cand_sampled=20 cand_mismatches=0`
 (`.ufo/evidence/round-61/win-host/precheck-final.{out,json}`;
 box3_full_page=true; 18.6 s for the pair).
+
+Same-round correction, carried honestly: the S293→rejected / S289→extended
+SOURCES correction staled batch 1's rekey pins (18 entries pinned SOURCES at
+the pre-correction bytes `19d7e996…`); batch 2 at the corrected bytes
+(traces-2) supersedes it. Both batches stay in the ledger (append-only); at
+the final tip the batch-1 entries read `input-drift:corpus/SOURCES.md` —
+non-crediting, non-vetoing, and true. The guard catching the lane's own
+record edit is the instrument working.

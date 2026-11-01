@@ -66,18 +66,34 @@ annotated host-scoped (criterion 118); the portable re-statements exist.
 
 - Sourced row opened this round (URL, access date, located quote, what it
   grounds):
-  - **S293** — Git `git-cat-file` documentation,
-    https://git-scm.com/docs/git-cat-file, fetched 2026-11-01 (HTTP date
-    Sun, 01 Nov 2026 09:03:03 GMT; 79,360 B; extract
+  - **S289 re-opened** — Git `git-cat-file` documentation,
+    https://git-scm.com/docs/git-cat-file (held since r59 for its
+    §DESCRIPTION/-t ground), re-fetched 2026-11-01 (HTTP date Sun,
+    01 Nov 2026 09:03:03 GMT; 79,360 B; extract
     `.ufo/evidence/round-61/win-host/sources/s293-cat-file-batch.html`).
-    Located quote (§Output, `--batch` without a custom format, 12 words):
-    "<oid> SP <type> SP <size> LF <contents> LF". It grounds the batched
-    reader's parser: the portable precheck reads exactly this framing per
-    `rev:path` spec, so the cache serves the same bytes the frozen
-    per-input spawns would have returned. `used-by`:
-    `corpus/lessons/round-61.md` (this section).
+    Located quote for the re-open (§Output, `--batch` without a custom
+    format, 12 words): "<oid> SP <type> SP <size> LF <contents> LF". It
+    grounds the batched reader's parser: the portable precheck reads
+    exactly this framing per `rev:path` spec, so the cache serves the same
+    bytes the frozen per-input spawns would have returned. `used-by`
+    old → new: `corpus/knowledge/executor-source-binding.md` →
+    `corpus/knowledge/executor-source-binding.md, corpus/lessons/round-61.md`.
+  - **S293 opened and REJECTED in the same round** — the same URL was
+    first appended as a new row (only the id was checked for collisions,
+    not the URL); the census flagged `W04 S293 duplicate url` and the row
+    is kept as a REJECTED row per CORPUS.md rule 2 ("a rejection is
+    evidence of taste"), with the S073/S103 precedent (r60 spot-check §6
+    agreed with re-using a held URL instead of duplicating it) as the
+    ruling. Consequence honestly carried: the day's FIRST rekey batch had
+    pinned `corpus/SOURCES.md` at the pre-correction bytes, so its 18
+    entries went stale when this correction landed; a SECOND batch at the
+    corrected bytes supersedes them — both batches stay in the ledger
+    (append-only), the superseded ones disclosed here and in the ledger
+    bullet. The guard caught the lane's own record edit; that is the
+    instrument working, and the correction is the round's craft.
 - Id collision check before the append: `grep -c 'S293' corpus/SOURCES.md`
-  → 0 (registry maximum was S292). The row carries no literal pipe (the
+  → 0 at write time (registry maximum was S292) — an insufficient check:
+  mistake 6 below records the class. The row carries no literal pipe (the
   census E01 lesson of r60).
 - Census: `bash scripts/sources-census.sh validate --root <fleet-root>
   tameshi` → exit 0 at round start (152 rows, 16 W04 + 1 W01, all
@@ -143,7 +159,20 @@ annotated host-scoped (criterion 118); the portable re-statements exist.
    SCORECARD.md` at `49ddecf1` → lines 2921 (R60-C1 row), 2922 (R60-C2
    row), 2978 (attempt-2 "What landed" sentence), 2994 (the R60a2-C2 row
    quoting the pattern itself)); the raw count 4 was correct throughout.
-5. **A full-page re-read can still find untouched prose drift years later
+5. **A row's URL, not just its id, must be checked against held rows
+   before appending (class: incomplete-collision-check).** Evidence: S293
+   was appended this round after `grep -c 'S293'` → 0, and the census
+   immediately flagged `W04 S293 duplicate url git-scm.com/docs/git-cat-file
+   across scopes` — the page was held as S289 (r59). Captured-by: the
+   census gate itself (the same round). Fix: S293 re-stated `rejected`
+   (kept as the rejection record), S289 re-opened with `used-by` extended
+   old → new (logged above), and the sourcery rule this lesson carries:
+   the pre-append check is `grep -c '<url-path>'` over the registry, not
+   the id. The rekey cost: the SOURCES correction staled batch 1's pins
+   and forced the superseding batch (Gate and Verdicts above) — the guard
+   pricing a one-line registry fix at an 18-entry rekey is the system
+   working as designed.
+6. **A full-page re-read can still find untouched prose drift years later
    (class: prose-spacing-drift).** Evidence: this round's genuine re-read
    of SKILL.md found two pre-existing spacing defects in the round-21
    registry section — "unchanged from33d03b7" and "retain the199-entry
@@ -179,18 +208,26 @@ annotated host-scoped (criterion 118); the portable re-statements exist.
   over discriminating cells). The batched form runs the frozen decision
   code unchanged; only `cat_file_blob`/`ls_tree_mode` are cache-backed
   with spawn fallback.
-- **C2, measured at the rekey commit (receipts land in the next commit —
-  receipt-after-subject ordering, the r60 precedent).** Before: 46/64
-  credited at base; the 18 uncredited sections all fail on
+- **C2, measured at the rekey commits (receipts land in the following
+  commit — receipt-after-subject ordering, the r60 precedent).** Before:
+  46/64 credited at base; the 18 uncredited sections all fail on
   `input-drift:` of r60-edited record files
   (`.ufo/evidence/round-61/win-host/rekey-plan.json`,
-  `union-plan.json`). After: 18 fresh entries (11,004 input pins), every
-  one commands_executed_count > 0 with a committed trace receipt whose
-  inputs equal the entry's, and the monitor re-run at the final revision:
-  `COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46 cand=<final>
-  cand_credited=64 lost=0 ok` + `box3_full_page=true` + `EQUIVALENCE …
-  mismatches=0` — the provisional r60 regression is fully restored and
-  the no-harm guard holds at the final revision.
+  `union-plan.json`). After: TWO batches, both landed (append-only):
+  batch 1 at `72d36ae1…` (18 entries, 11,004 input pins at the records
+  commit `19d7e996…`) measured
+  `COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46
+  cand=72d36ae1aff7 cand_credited=64 lost=0 ok` + `box3_full_page=true`
+  + `EQUIVALENCE … mismatches=0` (receipt `precheck-final.{out,json}`);
+  batch 1 was then superseded by the S293/S289 SOURCES correction
+  (Gate above) — its SOURCES pins went stale by the correction landing,
+  exactly the drift the guard exists to catch — and batch 2 at the
+  corrected bytes (18 entries, same unions, new trace receipts
+  `traces-2/`) re-established credit at the corrected tip; the batch-2
+  guard receipt lands with the receipts commit. The superseded batch-1
+  entries stay in the ledger as landed history, disclosed here; at the
+  final tip they read `input-drift:corpus/SOURCES.md` — non-crediting,
+  non-vetoing, and true.
 
 ## Next-round carry
 
