@@ -2861,3 +2861,12 @@ the pre-correction bytes `19d7e996…`); batch 2 at the corrected bytes
 the final tip the batch-1 entries read `input-drift:corpus/SOURCES.md` —
 non-crediting, non-vetoing, and true. The guard catching the lane's own
 record edit is the instrument working.
+
+Round-final shas: SOURCES correction `0a29e3cffe2bbb8a2e045b844de075813b9402a7`;
+rekey batch 2 `7a55de5a71a96ce2761f3c8c17f65635707ebaf8` (ledger 662 → 680;
+18 superseding entries pinning the corrected bytes); batch-2 guard verdict
+at that tip, receipt in the next commit:
+`COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46 cand=7a55de5a71a9
+cand_credited=64 lost=0 ok` + `EQUIVALENCE floor_sampled=20
+floor_mismatches=0 cand_sampled=20 cand_mismatches=0`
+(`.ufo/evidence/round-61/win-host/precheck-final-b2.{out,json}`).
