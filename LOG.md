@@ -3057,3 +3057,19 @@ the full 13-heading LOST set is authoritative in live-B-red.json).
 Convention of record stated (lesson round-65; mechanically checked by C1's
 instrument): a commit naming receipt content carries the bytes; empty
 commits are never receipt carriers.
+
+Round 65 claims declared frozen pre-data (SCORECARD planned block): C1
+(calibration, the lowest scored axis at 8; sourced on new row S296, opened
+this round) — the receipt-commit binding convention made mechanically
+checkable by tools/receipt-commit-bind.py; C2 (operability, verdict-only;
+capability; adopts considerthese 2026-10-28 proposal 1's byte-for-byte
+quoted-line half, the one assimilation this round) —
+tools/quoted-line-exists.py. Criterion-110 forecast measured in the
+scratch-clone rehearsal BEFORE the declaration (receipts
+`.ufo/evidence/round-65/win-host/rehearsal/`): the SOURCES edit stales
+exactly the 13 SOURCES-pinning sections (lost=13 RED at candidate
+`77d43995`, the same headings as the r63/r64 manifests; miss = 0 if the
+live work commit reproduces). Fresh-start duty re-performed (r58/r59/r60
+re-read; premise stale, r61–r64 admitted; ruled-out list in the lesson).
+Lesson round-65 landed (carry-in, fresh-start, claims, gate; 3 mistakes
+mined from the rehearsal, all fail-closed or pre-landing).
