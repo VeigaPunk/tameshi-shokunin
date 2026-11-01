@@ -1937,3 +1937,33 @@ prints `passed=1/8 C1_R60V2_PASS=false` while `git show
 c9723e59d0f517689cb61dd518cd9e0e58b9a2c1:.ufo/evidence/round-60/win-host/contract-a2.json | grep -c 'sequence 3/8'`
 prints `1` — the frozen pre-amendment sentence asserts a score the scored
 receipt at the same revision contradicts.
+
+### Criterion 120 — a described fix is grep-addressable in the shipped bytes, with the counting command in the claim
+
+When a record states that a fix "lands", that a gate "now requires" some
+behavior, or that bytes now implement a documented contract, the sentence
+carries a counting command against those bytes, and the command's output at
+the cited revision matches the claim. Prose describing a fix is not evidence
+that the bytes implement it. A fix described in prose whose counting command
+returns 0 at the claimed revision is a calibration defect (the
+documented-contract-not-in-bytes class) even if the fix lands later; until
+it lands, the record that claims it is false.
+
+Lesson: `corpus/lessons/round-62.md` `## Mistakes` 1 (class
+documented-contract-not-in-bytes; proposed there with the pricing that
+deferred the append to a round already paying a rekey — this is that
+round), grounded in the r61 probe-guard claim: the r61 report C1 bullet and
+`corpus/lessons/round-61.md` (lines 32, 123–124) described an exit-2 probe
+gate requiring `sampled >= 1` while the shipped bytes gated only on
+mismatches (`git show
+ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98:tools/coldread-precheck-portable.py | grep -c "probe_failed\|sampled.*< 1"`
+→ 0); the guard landed in r62 (`6b15c943a73dad797fd1b2d8a96f5683b2d79a51`)
+where the same grep reads 4.
+
+Falsifier that must fail: `git show
+ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98:corpus/lessons/round-61.md | sed -n '32p;123,124p'`
+carries the "any mismatch, or an empty sample, fails the run" /
+"requires sampled ≥ 1 and mismatches = 0" description while `git show
+ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98:tools/coldread-precheck-portable.py | grep -c "probe_failed\|sampled.*< 1"`
+prints `0` — a described fix with no grep-addressable presence where the
+description says it lives.

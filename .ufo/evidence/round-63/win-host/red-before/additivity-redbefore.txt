@@ -1,0 +1,22 @@
+# r63 red-before receipts (recorded 2026-11-01, before any r63 content lands; lane head 0b81e8f575627d8de2e3a9cf598d5360c42bfeb6)
+
+## C1 red-before: no additivity-receipt instrument exists at head
+$ git show 0b81e8f575627d8de2e3a9cf598d5360c42bfeb6:tools/additivity-receipt.py
+fatal: path 'tools/additivity-receipt.py' does not exist in '0b81e8f575627d8de2e3a9cf598d5360c42bfeb6'
+
+$ ls tools/ | grep -c additivity  (at worktree == head, pre-edit)
+0
+
+## C1 red-before: the r62 additivity receipts as stated measure 80/30 on raw committed bytes
+$ git show ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98:LOG.md | sort -u | comm -23 - <(git show 5721f7d5c872f3bf62b73c47bca2dc67015e06b0:LOG.md | sort -u) | wc -l  # LOG.md
+80
+$ git show ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98:SCORECARD.md | sort -u | comm -23 - <(git show 5721f7d5c872f3bf62b73c47bca2dc67015e06b0:SCORECARD.md | sort -u) | wc -l  # SCORECARD.md
+30
+
+## corrected-of-record content truth: CR-stripped old-only = 0 and verbatim prefix holds
+$ CR-stripped comm -23, LOG.md:
+0
+$ CR-stripped comm -23, SCORECARD.md:
+0
+$ LOG.md CR-stripped empty-dropped base content is verbatim prefix of tip:
+VERBATIM-PREFIX-OK

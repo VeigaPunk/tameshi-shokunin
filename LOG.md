@@ -2918,3 +2918,49 @@ cand=6b15c943a73d cand_credited=64 lost=0 ok` + `EQUIVALENCE
 floor_sampled=20 floor_mismatches=0 cand_sampled=20 cand_mismatches=0`,
 exit 0 (`.ufo/evidence/round-62/win-host/guard-rerun.{out,json}`); counting
 greps 0 → 4.
+
+## 2026-11-01 — round 63 (RD5 correction becomes a convention + instrument;
+the RD6 criterion lands through the rekey it waited for; L1 `TameshiR63`)
+
+Base `0b81e8f575627d8de2e3a9cf598d5360c42bfeb6`; the r62 spot-check read in
+full before declaring; the last three rejected closures re-read (fresh-start
+duty; r61/r62 admitted, premise stale, duty performed). Two claims:
+
+R63-C1 (calibration, lowest scored axis; closes routed defect RD5; sourced
+on new row S294) — the RD5 correction becomes a standing convention with an
+instrument: `tools/additivity-receipt.py` computes append-only receipts on
+committed bytes with the normalization declared (raw AND CR-normalized
+old-only/new-only, `eol_rewrite_disclosed`, verbatim prefix with empties
+dropped on both sides, append-only judged on the normalized comparison,
+`--require-raw` for rewrite-forbidden contexts). Before: the r62 receipts as
+stated measure 80/30 on raw committed bytes (work commit `6b15c943` rewrote
+the r61 tail blocks LF→CRLF + one inserted blank line; red-before receipt
+committed pre-data). After: selftest 5/5 (the r62 defect shape as a green
+arm — raw>0, norm=0, disclosed; ALTER/DELETE arms red exit 1); the r62 pair
+re-measured raw 79/29, normalized 0/0, prefix true, rewrite disclosed,
+exit 0; SCORECARD erratum is the correction of record. This round's own
+appends are binary appends in the file's own ending — no pre-existing byte
+touched.
+
+R63-C2 (operability, verdict-only; capability; closes routed defect RD6 +
+the RD4 registry-note site) — QUALITY Criterion 120 appended (a described
+fix is grep-addressable in the shipped bytes, with the counting command in
+the claim; the r62 mistake-1 proposal, landed in the round already paying a
+rekey); SOURCES.md: new row S294 (gitattributes documentation — end-of-line
+conversion is a declared per-path attribute layer; grounds the C1
+convention; 153 → 154) and the in-place repair "12 words" → "8 tokens" at
+the round-61 note (logged old → new). The record edits stale the cold-read
+credit; the r61 rebind run-book (analyze → union plan → manifest from
+genuine section re-reads → rebind) regenerates fresh input-keyed ledger
+entries with trace receipts and the monitor returns to `lost=0` at the tip.
+Capability row `monitored-record rekey run-book` enters the SCORECARD
+capabilities table (first demonstrated round 61; named run-book
+re-demonstrated on a QUALITY+SOURCES edit pair). Receipts land in the
+commit(s) following the work commit (receipt-after-subject ordering).
+
+Assimilation: considerthese 2026-10-28 proposal 1 (receipt-existence
+linter) considered and priced out this round (would compete with the rekey;
+its counting-command half is criterion 120's ground, its
+cited-receipt-exists half remains proposal); shokuknow unreachable.
+L1-only round (L2 floor surface absent on this host; the r60 L0 question
+stands).

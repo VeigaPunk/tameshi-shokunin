@@ -3128,3 +3128,76 @@ demonstrated red arm and an intact mismatch arm; the r61
 `probe-cannot-fail-empty` class is closed where it lives, in the code).
 RD2/RD3/RD4 corrections landed status-neutral (erratum above; no axis
 moved by them).
+
+## Planned — round 63 (declared 2026-11-01, frozen before data)
+
+The r62 closure admitted with one status-neutral routed defect (RD5,
+`corpus/lessons/round-62-verifier-spotcheck.md` §4/§8) plus the carried RD6;
+the spot-check was read in full before declaring, and the RD5 numbers were
+re-derived on committed bytes FIRST (red-before receipt
+`.ufo/evidence/round-63/win-host/red-before/additivity-redbefore.txt`).
+Fresh-start duty: the last three rejected closures (r58, r59, r60
+spot-checks) were re-read; r61 and r62 were admitted, so the premise is
+stale, but the duty was performed. Ruled out, with reasons: (a) the standing
+r59–r62 rulings — the frozen spawning precheck as-is (host-infeasible,
+~112 min/rev, five failed runs), no-harm claims from r60's substitute
+(cross-revision attribution unmeasured), counter-family extension (admission
+is an operator ruling), Linux counting commands (host-scoped, criterion
+118), capability admission of the r59 row (operator ruling); (b) any edit to
+`tools/coldread-precheck-portable.py` — the guarded digest `892a045d…` is
+pinned and any probe edit re-owes the probe-arms re-run (arm-liveness carry
+note); this round needs no probe change; (c) an UNpriced registry edit —
+this round pays the rekey deliberately (C2), so the QUALITY/SOURCES edits
+ride that payment instead of being ruled out as in r62; (d) building
+considerthese 2026-10-28 proposal 1 (receipt-existence linter) this round —
+real, but it would compete with the rekey for round scope; recorded as a
+proposal, not adopted (its cited-receipt-exists core is criterion 108/116
+ground).
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R63-C1 | the RD5 correction becomes a standing convention with an instrument: append-only receipts on line-ending-sensitive record files are computed on committed bytes with the normalization declared — `tools/additivity-receipt.py` (new) prints raw AND CR-normalized old-only/new-only counts, discloses a line-ending rewrite (`eol_rewrite_disclosed`), checks the verbatim-prefix property (empties dropped on both sides), judges append-only on the normalized comparison, and its selftest carries the r62 defect shape as a green arm (raw>0, norm=0, disclosed) plus red arms for content alteration and deletion; the RD5 correction row lands with re-measured receipts on the r62 pair | axis move (lowest scored axis; closes routed defect RD5; sourced on new row S294, opened this round: gitattributes — end-of-line conversion is a declared per-path attribute layer, and with no attributes + `core.autocrlf=false` this repo's blobs carry committed bytes verbatim, so byte comparisons must declare normalization) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move repairs receipt honesty — a receipt's stated command must reproduce its stated number, or state the normalization that reconciles it) | at head `0b81e8f5`: no instrument (`git show 0b81e8f5:tools/additivity-receipt.py` → path does not exist; `ls tools/ \| grep -c additivity` → 0) and the r62 receipts as stated measure 80 (LOG.md) / 30 (SCORECARD.md) old-only lines on raw committed bytes while the corrected content truth is 0/0 CR-stripped with a verbatim prefix (red-before receipt committed pre-data) | selftest `ADDITIVITY_SELFTEST: 5/5 pass` exit 0 (ARM-CLEAN-APPEND raw=0; ARM-EOL-REWRITE the r62 shape with raw>0 norm=0 disclosed; ARM-REQUIRE-RAW exit 1 on the same bytes; ARM-ALTER / ARM-DELETE exit 1); the r62 pair re-measured by the tool: raw_old_only 79/29, norm_cr_old_only 0/0, verbatim_prefix true, eol_rewrite_disclosed true, exit 0 (raw 80/30 vs 79/29 = the empty-line set-member difference, stated in the erratum below); this round's own record appends measure raw_old_only=0 (the rewrite is avoided, not normalized away) | `python -I tools/additivity-receipt.py --selftest`; `python -I tools/additivity-receipt.py --repo . --base ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98 --tip 5721f7d5c872f3bf62b73c47bca2dc67015e06b0 --file LOG.md --file SCORECARD.md` | the work commit (tool + erratum); receipts land in the following commit (receipt-after-subject ordering, the r61/r62 precedent) |
+| R63-C2 | the RD6 proposal lands through the payment it was waiting for: QUALITY Criterion 120 appended (a described fix is grep-addressable in the shipped bytes, with the counting command in the claim), the RD4 wrong count repaired at its registry-note site (SOURCES.md "12 words" → "8 tokens"), and new row S294 appended — the record edits stale the cold-read credit, and the r61 rebind run-book (analyze → union plan → manifest from genuine section re-reads → rebind) regenerates fresh input-keyed ledger entries with trace receipts, restoring the monitor | axis move + capability (operability, verdict-only; capability row `monitored-record rekey run-book` enters the table — first demonstrated round 61 as the batch rekeys, re-demonstrated this round on a QUALITY+SOURCES edit with the run-book named end to end; closes routed defect RD6) | operability (verdict-only axis; no numeric score — commands exist, run, and produce the stated outcome: the precheck verdict at the tip) | at head `0b81e8f5`: `git show 0b81e8f5:corpus/QUALITY.md \| grep -c "### Criterion 120"` → 0; registry rows 153; no receipt shows the rekey run-book executed for a QUALITY+SOURCES edit pair; at the post-edit pre-rekey revision the round-scoped guard (floor = the round base `0b81e8f5`) reads `cand_credited=51 lost=13 RED` with LOST lines whose input-drift lists name this round's edits `corpus/QUALITY.md` / `corpus/SOURCES.md` (plus record paths older entries already pinned), and rev mode reads `credited=51/64` (the guard catching the lane's own record edits; rehearsal receipt committed with the rekey; the historical-convention floor `8b0042bd` mode reads `lost=0` throughout and is not the stale-set detector) | criterion 120 grep → 1; registry rows 153 → 154; the ledger grows by the fresh entries (680 → 693) with trace receipts committed one file path each; the precheck at the final tip reads `cand_credited=64 lost=0 ok` exit 0 at BOTH floors (`0b81e8f5` and the historical `8b0042bd`) with the probe gate green (sampled ≥ 1, mismatches = 0) | the criterion/rows greps above on committed bytes; `python -c "import json;print(len(json.load(open('.ufo/evidence/round-21/coldread/ledger.json',encoding='utf-8'))['entries']))"`; `python -I tools/coldread-precheck-portable.py --repo . --floor 8b0042bde0ca59aac9a23a8a707cf0902183d081 --cand <tip> --work WORK` | the rekey commit (entries land); final precheck receipt at the receipts commit |
+
+## Erratum — round 62 routed defect RD5 (2026-11-01; re-measured pre-data)
+
+The r62 report's "Landed changes" section states: "Both commits verified
+additive on the record files: LOG.md 0 lines removed (e.g. `comm -23` old vs
+new sorted line sets → 0), SCORECARD.md 0 removed." As the r62 closure
+routed (RD5), that stated command on the raw committed bytes measures 80
+(LOG.md) and 30 (SCORECARD.md) old-only lines, not 0/0. This round
+re-derives and corrects of record:
+
+- **Cause (confirmed).** The r62 work commit `6b15c943` rewrote the r61 tail
+  blocks' line endings LF → CRLF in LOG.md and SCORECARD.md (and inserted
+  one blank line at LOG.md line 2). This repo carries no `.gitattributes`
+  (`git ls-tree 0b81e8f5 -- .gitattributes` → empty) and no text/eol
+  attribute applies to the record files (`git check-attr text eol --` →
+  unspecified) with `core.autocrlf=false` in the user config: committed blob
+  bytes are whatever was written, so an append that rewrites the file
+  normalizes pre-existing lines at the blob level.
+- **Content truth (unchanged).** CR-stripped old-only = 0 for both files,
+  and each file's CR-stripped, empty-dropped base content is a verbatim
+  prefix of its tip (re-verified this round; receipts
+  `.ufo/evidence/round-63/win-host/red-before/additivity-redbefore.txt`).
+  The r62 append-only claim holds at the content level; what failed was the
+  receipt's silence about normalization.
+- **Correction of record.** The r62 receipts read "0" only under CR
+  normalization that was not stated. Corrected statement: "both commits
+  append-only on committed bytes under declared CR normalization
+  (raw_old_only 80/30 → 0/0 normalized; rewrite disclosed; verbatim prefix
+  true)."
+- **Convention adopted (R63-C1).** Future append-only receipts on these
+  files are computed by `tools/additivity-receipt.py` on committed bytes and
+  print both counts plus `eol_rewrite_disclosed`; append-only is judged on
+  the normalized comparison; `--require-raw` exists for contexts that must
+  forbid rewrites. Count convention: the tool's raw_old_only (79/29) is one
+  line below the closure's sort-u count (80/30) because the inserted empty
+  line is not a content member — the empty line is itself part of the
+  rewrite disclosure.
+- **Practice for this round's own appends.** r63 appends to LOG.md,
+  SCORECARD.md, QUALITY.md and SOURCES.md are written as binary appends in
+  each file's own ending (CRLF), touching no pre-existing byte; the round's
+  receipts-commit run of the tool on the r63 pair is expected to read
+  `raw_old_only=0 eol_rewrite_disclosed=false` (checked when the receipts
+  land).
