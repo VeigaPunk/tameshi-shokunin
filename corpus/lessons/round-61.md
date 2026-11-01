@@ -241,3 +241,31 @@ annotated host-scoped (criterion 118); the portable re-statements exist.
   not a defect.
 - r60's routed L0 question (win32 wave surface) stands; the round-59
   capability row stays "lane demonstrated; admission pending".
+
+## Erratum — appended round 62 (2026-11-01; r61 verifier spot-check routed defects RD1–RD4)
+
+Appended only; the text above stands as written (lessons are append-only).
+All sites re-verified against committed bytes in round 62 before this
+append.
+
+- **RD1:** line 32 ("any mismatch, or an empty sample, fails the run") and
+  the mistake-1 fix (lines 123–124: "exit 2 `equivalence` guard requires
+  sampled ≥ 1 and mismatches = 0") described a gate absent from the shipped
+  bytes at this round's base (`git show ed3a66c2:tools/coldread-precheck-portable.py
+  | grep -c "probe_failed\|sampled.*< 1"` → 0; `main()` gated only on
+  `mismatches`). Fixed in round 62 (`probe_failed` gate on both measure
+  modes + fail-closed arms; `corpus/lessons/round-62.md`).
+- **RD2:** line 58 ("21 files") and line 134 ("the 21 first-family receipt
+  bytes") — the committed tree holds **20**
+  (`git ls-tree -r 19d7e996 | grep -c first-family/` → 20; also 20 at the
+  r62 base and tip). LOG, SCORECARD and the `19d7e996` commit subject carry
+  no count (re-verified; the spot-check's site list over-stated those).
+- **RD3:** the "2,215-line SKILL.md" figure (fleet r61 report) is 2,214
+  (`git show ed3a66c2:SKILL.md | wc -l` → 2214; same at base and pin).
+- **RD4:** line 75 labels the S289 re-open quote "12 words"; the quoted
+  framing "<oid> SP <type> SP <size> LF <contents> LF" is 8
+  whitespace-separated tokens. The same wrong label sits in the
+  `corpus/SOURCES.md` round-61 registry note (line 539), left unedited — a
+  registry byte change would re-stale the batch-2 rekey pins and owe an
+  18-section re-read rekey; the SCORECARD erratum and this append are the
+  corrections of record there.

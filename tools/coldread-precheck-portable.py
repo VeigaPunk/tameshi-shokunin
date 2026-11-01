@@ -21,8 +21,9 @@ and falls back to the frozen spawn implementation for any lookup the caches
 do not cover, so a cached answer and a spawned answer are indistinguishable
 to the frozen code. An equivalence probe re-derives a deterministic sample of
 lookups through the ORIGINAL spawn functions and fails the run on any
-mismatch (`EQUIVALENCE sampled=N mismatches=0`), so the receipt shows the
-caches returned exactly what git would have.
+mismatch or on an empty sample (`EQUIVALENCE sampled=N mismatches=0`; the
+exit-2 gate requires sampled >= 1 AND mismatches == 0), so the receipt
+shows the caches returned exactly what git would have.
 
 The prefetch is chunked and resumable: blob bytes are cached one JSON file
 per chunk under --work, a manifest records each chunk's spec count and file
@@ -267,6 +268,13 @@ def equivalence_probe(module, repo, rev, orig_blob, orig_mode, byte_cache,
             'mismatch_paths': mismatches[:5]}
 
 
+def probe_failed(probe):
+    """The probe contract gate (routed defect RD1, r61 spot-check): the run
+    may proceed only on a NON-EMPTY deterministic sample with ZERO
+    mismatches. An empty sample is a failure, never a vacuous pass."""
+    return bool(probe.get('mismatches')) or probe.get('sampled', 0) < 1
+
+
 def measure_rev(module, repo, rev, work, chunk_n, sample_n, seed):
     started = time.time()
     paths, ledger_raw = needed_paths(module, repo, rev)
@@ -346,7 +354,8 @@ def main(argv=None):
                'method': 'frozen decision code unchanged; only cat_file_blob '
                          'and ls_tree_mode are cache-backed batched equivalents '
                          'with spawn fallback; equivalence probe on a '
-                         'deterministic sample must report mismatches=0'}
+                         'deterministic sample must report sampled >= 1 and '
+                         'mismatches=0 (an empty sample fails the run)'}
     if a.rev:
         rev = module.resolve_commit(str(repo), a.rev)
         if rev is None:
@@ -359,7 +368,11 @@ def main(argv=None):
               % (rev[:12], m['sections_covered'], m['sections_total'],
                  m['elapsed_s'], m['probe']['sampled'],
                  m['probe']['mismatches']))
-        if m['probe']['mismatches']:
+        if probe_failed(m['probe']):
+            print('COLDREAD_PORTABLE error=equivalence-probe '
+                  'sampled=%d mismatches=%d'
+                  % (m['probe']['sampled'], m['probe']['mismatches']),
+                  file=sys.stderr)
             return 2
     elif a.floor and a.cand:
         floor_rev = module.resolve_commit(str(repo), a.floor)
@@ -383,9 +396,13 @@ def main(argv=None):
               'cand_sampled=%d cand_mismatches=%d'
               % (fm['probe']['sampled'], fm['probe']['mismatches'],
                  cm['probe']['sampled'], cm['probe']['mismatches']))
-        if fm['probe']['mismatches'] or cm['probe']['mismatches']:
-            print('COLDREAD_PORTABLE error=equivalence-mismatch',
-                  file=sys.stderr)
+        bad_probes = [p for p in (fm['probe'], cm['probe'])
+                      if probe_failed(p)]
+        if bad_probes:
+            for p in bad_probes:
+                print('COLDREAD_PORTABLE error=equivalence-probe '
+                      'sampled=%d mismatches=%d'
+                      % (p['sampled'], p['mismatches']), file=sys.stderr)
             return 2
         if a.out:
             Path(a.out).write_text(json.dumps(receipt, indent=1,

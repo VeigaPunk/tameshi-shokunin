@@ -2870,3 +2870,38 @@ at that tip, receipt in the next commit:
 cand_credited=64 lost=0 ok` + `EQUIVALENCE floor_sampled=20
 floor_mismatches=0 cand_sampled=20 cand_mismatches=0`
 (`.ufo/evidence/round-61/win-host/precheck-final-b2.{out,json}`).
+
+## 2026-11-01 — round 62 (routed-defect closure: the probe guard lands in
+the shipped bytes; RD1–RD4 errata; L1 `TameshiR62`)
+
+Base `ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98`; the r61 spot-check read in
+full before declaring; the last three rejected closures re-read (fresh-start
+duty; r61 was admitted, premise stale, duty performed). One claim:
+R62-C1 (calibration, sourced on held row S289 re-accessed) — the portable
+precheck's documented probe contract ("fails the run on any mismatch OR an
+empty sample") becomes true in the shipped bytes: a `probe_failed` gate
+(sampled ≥ 1 AND mismatches = 0) guards both measure modes. Before:
+`git show ed3a66c2:tools/coldread-precheck-portable.py | grep -c
+"probe_failed\|sampled.*< 1"` → 0 (spot-check RD1; the empty-sample half
+was prose only). Red-before committed: ARM-VACUOUS on the base bytes exits
+0 (vacuous pass). After: the same grep → 4; ARM-VACUOUS exits 2; the
+mismatch arm (tampered resume chunk + manifest sha) exits 2 on both byte
+versions; the clean arm reads mismatches=0; and the guard re-run on the
+real repo reads `lost=0 ok` at the work commit — receipts land in the
+following commit (receipt-after-subject ordering). Tool digest r61
+`3e09cace…` → r62 `892a045d8b508214804e2b26b78c15b83aae65bdae4bd5bf022b8cb735f3b33e`
+(r61 bytes preserved as-run in the r61 evidence dir). Errata RD2/RD3/RD4
+pinned (SCORECARD erratum + round-61 lesson append): the first-family
+landing is 20 files (lesson said 21 at two sites; LOG, SCORECARD and the
+`19d7e996` commit subject carry no count), SKILL.md is 2,214 lines (the
+fleet report said 2,215), the S289 re-open quote is 8 tokens (two sites
+said "12 words"). SOURCES registry not edited — any byte change re-stales
+the 18 batch-2 rekey pins and owes an 18-section re-read rekey; S289's
+source re-accessed instead: byte-identical re-fetch (79,360 B, sha256
+`624464ef7a3d64de06038200bff85ac09389a9d217d379dd660aa6b5165048d7`, HTTP
+date Sun, 01 Nov 2026 11:36:48 GMT; receipt under
+`.ufo/evidence/round-62/win-host/sources/`). Assimilation: considerthese
+2026-10-28 proposal 2 (counter-arm liveness: one committed input per arm
+that moves the outcome) adopted as the arms design rule; shokuknow
+unreachable. L1-only round (L2 floor surface absent on this host; the r60
+L0 question stands).

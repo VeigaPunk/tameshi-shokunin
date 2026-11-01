@@ -3053,3 +3053,64 @@ The R60a2-C1 row's "attempt-1 freeze still `instrument=10/10
 INSTRUMENT-OK`" now carries its win32-era receipt:
 `.ufo/evidence/round-61/win-host/freeze-a1-reverify.json` (r60 closure
 defect D2).
+
+## Planned — round 62 (declared 2026-11-01, frozen before data)
+
+The r61 closure admitted with four status-neutral routed defects (RD1–RD4,
+`corpus/lessons/round-61-verifier-spotcheck.md` §5), read in full before
+declaring. The last three rejected closures (r58, r59, r60 spot-checks)
+were re-read per the fresh-start duty; r61 was admitted, so the premise is
+stale, but the duty was performed and the r61 fresh-start rulings stand
+(frozen spawning precheck as-is: host-infeasible, ~112 min/rev, five failed
+runs; no-harm claims from r60's substitute: cross-revision attribution
+unmeasured; counter-family extension: admission is an operator ruling;
+Linux counting commands: host-scoped, criterion 118). Also ruled out this
+round: a new SOURCES row or ANY registry edit — a byte change to
+`corpus/SOURCES.md` re-stales the 18 batch-2 rekey pins and owes an
+18-section re-read rekey (the r61 carry note), and no correction this round
+requires a registry write; and a QUALITY.md criterion append for the mined
+mistake class — same monitored-record pricing, recorded as a proposal in
+`corpus/lessons/round-62.md` instead.
+
+| Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|
+| R62-C1 | close routed defect RD1 in the shipped bytes: the portable precheck's documented probe contract ("fails the run on any mismatch OR an empty sample" — r61 report C1 bullet; lesson lines 32, 123–124) becomes true — a `probe_failed` gate (`sampled >= 1 and mismatches == 0`) guards both measure modes, and fail-closed arms prove the probe can fail (arm-liveness rule adopted from considerthese 2026-10-28 proposal 2: every arm carries an input that moves the outcome) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move repairs the no-harm instrument's honesty — an empty-sample vacuous pass is the r61 `probe-cannot-fail-empty` defect class); sourced on held row S289, source re-accessed this round (byte-identical re-fetch; no registry edit — pricing above) | `git show ed3a66c2…:tools/coldread-precheck-portable.py \| grep -c "probe_failed\|sampled.*< 1"` → 0; red-before: ARM-VACUOUS on the base bytes exits 0 — the vacuous pass (committed receipt) | the same grep at the work commit → 4 (1 def + 2 call sites + 1 `sampled < 1`); ARM-VACUOUS on the guarded bytes exits 2; ARM-MISMATCH (tampered resume chunk + manifest sha) exits 2 with `mismatches=1` on BOTH byte versions; ARM-CLEAN mismatches=0 both revs; guard re-run on the real repo: `lost=0 ok`, sampled >= 1, mismatches=0, exit 0 | `python -I .ufo/evidence/round-62/win-host/probe-arms.py --lane LANE --tool-base BASE.py --tool-new NEW.py` → `PROBE_ARMS: PASS …`; `python -I tools/coldread-precheck-portable.py --repo . --floor 8b0042bde0ca59aac9a23a8a707cf0902183d081 --cand <work commit> --work WORK` | the work commit (this one); receipts land in the following commit (receipt-after-subject ordering, the r61 precedent) |
+
+RD2/RD3/RD4 corrections (status-neutral, carried with C1, not scored):
+number/word-count drift errata for the r61 record — pinned in the erratum
+below and in `corpus/lessons/round-61.md` (append-only) and
+`corpus/lessons/round-62.md`.
+
+## Erratum — round 61 routed defects RD1–RD4 (2026-11-01; sites re-verified against bytes this round)
+
+- **RD1 (probe-guard prose vs code).** The r61 report C1 bullet and
+  `corpus/lessons/round-61.md` (line 32; mistake-1 fix, lines 123–124)
+  state the probe "fails the run on any mismatch OR an empty sample" /
+  "exit 2 … requires sampled ≥ 1 and mismatches = 0". At base `ed3a66c2`
+  the shipped bytes implement only the mismatch half
+  (`grep -c "probe_failed\|sampled.*< 1"` → 0). Fixed this round
+  (R62-C1 above). Tool digest `3e09cace27da2acc859143052c7bd4a5f8f1825737932afb67223729ec0c2fce`
+  (the r61 capability-row digest) refers to the r61 bytes, preserved
+  as-run at `.ufo/evidence/round-61/win-host/coldread-precheck-portable.py`;
+  the guarded bytes digest is
+  `892a045d8b508214804e2b26b78c15b83aae65bdae4bd5bf022b8cb735f3b33e`.
+- **RD2 ("21 files" → 20).** `git ls-tree -r 19d7e996 | grep -c first-family/`
+  → 20 (also 20 at the r62 base and tip; none elsewhere). The wrong count
+  appears at `corpus/lessons/round-61.md:58` ("21 files") and `:134` ("the
+  21 first-family receipt bytes") and in the fleet r61 report ("D1
+  first-family receipts (21 files)"). Re-verified this round: LOG.md and
+  SCORECARD.md carry NO count (`grep -n "21 files\|21 first" LOG.md
+  SCORECARD.md` → no hits) and the `19d7e996` commit subject carries none —
+  the spot-check's RD2 site list over-stated those three; the receipts
+  themselves were genuine and resolving.
+- **RD3 ("2,215-line SKILL.md" → 2,214).** `git show ed3a66c2:SKILL.md | wc -l`
+  → 2214 (same at base `8b0042bd` and at pin `0a29e3cf`). The wrong number
+  appears only in the fleet r61 report ("the complete 2,215-line SKILL.md
+  read").
+- **RD4 ("12 words" → 8 tokens).** The S289 re-open quote
+  "<oid> SP <type> SP <size> LF <contents> LF" is 8 whitespace-separated
+  tokens. The wrong label appears at `corpus/lessons/round-61.md:75` and in
+  the `corpus/SOURCES.md` round-61 registry note (line 539); the row's
+  quote and location are accurate. SOURCES.md is deliberately NOT edited
+  this round (re-stale pricing, Planned above); this erratum and the r61
+  lesson append are the corrections of record there.
