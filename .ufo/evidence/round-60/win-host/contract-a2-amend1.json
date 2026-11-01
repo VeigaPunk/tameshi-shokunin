@@ -1,0 +1,48 @@
+{
+  "schema": "tameshi-round-contract-amendment-v1",
+  "lane": "tameshi",
+  "round": 60,
+  "attempt": 2,
+  "amendment": 1,
+  "declared_at": "2026-10-31",
+  "amends": ".ufo/evidence/round-60/win-host/contract-a2.json",
+  "reason": "The C1 sentence pinned every control arm's score as the Linux receipts' score ('sequence 3/8'), but the sequence control is ORDER-DEPENDENT BY DESIGN: it answers with a fixed exit cycle [0,0,1,1,2,1,0,2] keyed by call index while the counter shuffles the class order, so its score is a property of the order drawn, not of the host. Attempt-1's own record already said 'sequence 3/8 (3-5/8 across runs, order-shuffled)'. The first scored family on this host drew an order scoring 1/8 (.ufo/evidence/round-60/win-host/first-family/ctl-sequence.out) — still red, still within the control's design, and the claim sentence as written was false on that clause. This amendment re-states the C1 sentence with the sequence arm described honestly; the counter bytes, cells, class set, expected exits and PASS condition are UNCHANGED (the kill rule's re-freeze trigger is counter change, which did not happen; the sentence correction is frozen here before the second scored family runs). Analysis recorded with mistake 7 in corpus/lessons/round-60.md: the cycle can align with the shuffled expecteds on 3!*3!*2!/8! = 1/560 of orders, where the control would score 8/8 and kill the counter per the kill rule — a per-run hazard attempt-1's freeze also carried, stated here so the kill rule is priced honestly.",
+  "claims": {
+    "C1": {
+      "axis": "operability",
+      "type": "capability-recertification-cross-host",
+      "sourced": ["S292", "S073"],
+      "sentence": "At the attempt-2 measured revision the host-portable counter revision tools/executor-source-pin-measure-v2.py (frozen instrument's cell design unchanged: 8 shuffled class cells x 5 declared paths in ONE invocation per cell, per-run nonce fixtures, shuffled order, empty-blob declared path, corrupt cell expecting exit 2; only host-portability plumbing differs) run on tools/executor-source-pin.py v2 scores passed=8/8 C1_R60V2_PASS=true with exit 0 on the win32 host, twice (two nonces, two class orders), while every control arm scores C1_R60V2_PASS=false: do-nothing tool-absent 0/8 (reason=tool-absent), unfixed v1 tool 7/8 (only the corrupt cell failing), always-accept 3/8, fingerprint 3/8, hash-only 3/8, first-path-only 6/8, empty-blob-unsound 4/8 — each deterministic by the cell design — and sequence red with an order-dependent score (a fixed exit cycle against the shuffled expecteds; attempt-1's Linux receipts drew 3-5/8 across runs; this host's scored run drew 1/8; 8/8 is reachable on a 1/560 order alignment and kills the counter per the kill rule).",
+      "counting_command": "python -I tools/executor-source-pin-measure-v2.py --lane <lane> --rev <measured-rev> --work <empty scratch dir>",
+      "pass_label": "C1_R60V2",
+      "cells": 8,
+      "declared_paths": 5,
+      "before": "no non-Linux certification receipt exists in the tree at base 9bc9b20b; the frozen v1 instrument cannot produce a verdict on this host (red receipt .ufo/evidence/round-60/win-host/red-v1-counter.err: UnicodeEncodeError cp1252 under -I + PermissionError cleanup)",
+      "kill_rule": "any change to the v2 counter's cells, class set, expected exits or PASS condition after the first scored run voids the claim (re-freeze + re-declare required); any control arm scoring 8/8 kills the counter and the claim honest-stops; a C1_R60V2_PASS=true receipt whose instrument digest does not match .ufo/evidence/round-60/win-host/freeze-v2.json defeats the claim",
+      "scored_family": ".ufo/evidence/round-60/win-host/amend1/ (post-amendment); the first family .ufo/evidence/round-60/win-host/first-family/ at c9723e59d0f517689cb61dd518cd9e0e58b9a2c1 is the run that surfaced the over-specified sequence clause and is evidence, not the scored family"
+    },
+    "C2": {
+      "axis": "calibration",
+      "type": "axis-move",
+      "sourced": [],
+      "sentence": "(unchanged from contract-a2.json) The round's final tree records which measurements are host-scoped and what the real host surfaces are: corpus/QUALITY.md carries '### Criterion 118' (a cited counting command or certification receipt names its host scope and instrument revision; a command that cannot run on the current host is re-stated portably or annotated host-scoped) citing corpus/lessons/round-60.md mistake 6; SCORECARD.md annotates attempt-1's R60-C1/R60-C2 rows with the string 'counting command host-scoped (linux)'; PROVINCE.md carries a dated correction recording the host-absent template path from line 66 and the real win32 surfaces; corpus/lessons/round-60.md carries an '## Attempt 2' section with the Gate (S292 opened this round; S073 re-opened with a fresh win32 fetch and used-by extended), mistakes 6 and 7, and the win32 verdict record.",
+      "counting_commands": [
+        "grep -c '### Criterion 118' corpus/QUALITY.md",
+        "grep -c 'counting command host-scoped (linux)' SCORECARD.md",
+        "grep -c 'recorded absent 2026-10-31' PROVINCE.md",
+        "grep -c '^## Attempt 2' corpus/lessons/round-60.md"
+      ],
+      "kill_rule": "any counting command ambiguous at adjudication kills the claim honest-stop; receipts that do not resolve at the final revision defeat the claim",
+      "do_nothing_control": "every counting command run at base 9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78 via git show scores zero; receipt recorded in the round report"
+    }
+  },
+  "no_harm_guards": {
+    "coldread_precheck": {
+      "command": "bash .ufo/evidence/round-48/quality/coldread-precheck.sh <lane> 9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78 <final-rev>",
+      "required": "lost=0"
+    },
+    "frozen_instruments": "attempt-1 freeze.json set AND this attempt's freeze-v2.json set unchanged (contract-a2.json and plans/round-60-attempt2.plan.md stay byte-frozen; this amendment is a new file with its own freeze .ufo/evidence/round-60/win-host/freeze-amend1.json)",
+    "scope": "lane repo only; siblings, fleet repo, .ufo/state/, templates/, scripts/ read-only",
+    "scratch": "<workspace>/scratch/tameshi-r60/ deleted on exit"
+  }
+}
