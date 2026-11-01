@@ -2964,3 +2964,20 @@ its counting-command half is criterion 120's ground, its
 cited-receipt-exists half remains proposal); shokuknow unreachable.
 L1-only round (L2 floor surface absent on this host; the r60 L0 question
 stands).
+
+Round-final shas: work `8616d47ebbb825ecbe0e15be142d77946710a026`; rekey +
+restoration `a18c20f07bb830245940c5d0a52b19d772f1f126` (pushed). Final
+receipts: `ADDITIVITY_SELFTEST: 5/5 pass` exit 0; r62 pair re-measured
+LOG.md raw 79 / norm 0, SCORECARD.md raw 29 / norm 0, round-61 lesson 0/0,
+prefix true, rewrite disclosed (`.ufo/evidence/round-63/win-host/additivity/receipts.txt`);
+the r63 landed pair raw_old_only=0 on LOG.md, SCORECARD.md, QUALITY.md;
+mistake-4 receipt: `8616d47` SCORECARD raw_old_only=2388 norm=0 rewrite
+disclosed (caught pre-push, restored at `a18c20f0`). Guard:
+`COLDREAD_PORTABLE rev=a18c20f07bb8 credited=64/64` and `lost=0 ok` at both
+floors (`0b81e8f5` round base, `8b0042bd` historical), probe sampled=20
+mismatches=0, exit 0 (`.ufo/evidence/round-63/win-host/precheck-b.json`,
+`precheck-b-histfloor.json`, `precheck-rev-b.json`; red receipt at
+`8616d47`: `…/live-red.json`). Census exit 0 at round start and round end
+(`…/census-end.txt`; 153 -> 154 rows, warnings the same 17 W04 + 1 W01
+pre-existing set). Capability row `monitored-record rekey run-book` entered
+in the SCORECARD capabilities table.

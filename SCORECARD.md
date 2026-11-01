@@ -249,6 +249,7 @@ written and are superseded here:
 | callback-authoritative wave accounting | reconcile exact registered identities and terminal states while preserving failed seats' partial artifacts; reject mismatched totals and digest tampering | at11f55d64968778aaed07b001fc8b2480c38e1896: frozen counter8/8, actual146-seat replay66 completed/80 failed, wrong-count1/TOTAL_MISMATCH; `.ufo/evidence/round-22/final/verification.json`, S082 | round22; lane demonstrated, separate non-author admission pending |
 | executor-source pin gate | compare each verifier-declared executor source Git blob in a candidate commit to the same path in a verifier-supplied trusted commit; exit 0 bound, 1 drift, 2 unavailable | `python3 -I .ufo/evidence/round-59/measure.py --lane LANE --rev 93acc996cbb7bfed27112e797c9d2392ff4aa6b3 --work EMPTY_DIR` → `passed=24/24 C1_R59_PASS=true`; controls `.ufo/evidence/round-59/controls/` (always-accept 8/24, skipped-work 0/24) | round59; lane demonstrated; counter cheat-passable (fingerprint 24/24, Mistake 1 in `corpus/lessons/round-59.md`); **not admitted (honest stop, closure round 59)**. Round 60: re-certified on the installed discriminating counter `tools/executor-source-pin-measure.py` at `da2ae6b361de2d6294c6324a02ae141ff6cb482f` — `passed=8/8 C1_R60_PASS=true` (`.ufo/evidence/round-60/after/cert.out`), full cheat family red (`.ufo/evidence/round-60/controls/`); admission still an operator ruling |
 | host-feasible no-harm precheck | re-run the frozen round-48 coldread no-harm precheck to a verdict on the win32 host in seconds: the frozen decision code with its two per-input git plumbing functions batch-cached (spawn fallback + deterministic spawn-equivalence probe, chunked/resumable prefetch) | `python -I tools/coldread-precheck-portable.py --repo . --rev 8b0042bde0ca59aac9a23a8a707cf0902183d081 --work WORK` → `credited=46/64 elapsed=7.1s probe_sampled=20 probe_mismatches=0` (`.ufo/evidence/round-61/win-host/measure-base.out`); `DIFFERENTIAL: PASS` vs the frozen selector (`.ufo/evidence/round-61/win-host/differential.stdout`); S293 | round 61; lane demonstrated; execution form of the frozen instrument, not a replacement |
+| monitored-record rekey run-book | absorb a monitored-record edit (QUALITY/SOURCES/PROVINCE/README/pinned-tool bytes) in one round: project the staled cold-read sections, regenerate fresh input-keyed ledger entries re-reading every section and union input at the pin revision via git objects, land the trace receipts, and restore the monitor to `lost=0` — with the pre-landing scratch rehearsal and file-path-only commit discipline as run-book steps | `python .ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py --repo . --pin <rev> --plan .ufo/evidence/round-63/win-host/union-plan.json --manifest .ufo/evidence/round-63/win-host/rekey-manifest.json --traces-dir .ufo/evidence/round-63/rekey/traces --entries-out .ufo/evidence/round-63/win-host/entries-batch.json --merge-ledger` -> `REBIND OK sections=13 entries_added=13 ledger_before=680`; restore receipts `.ufo/evidence/round-63/win-host/precheck-b.json` (64/64, lost=0) | round 61 (batch rekeys); named run-book entered round 63 (re-demonstrated on a QUALITY+SOURCES pair) |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -3201,3 +3202,39 @@ re-derives and corrects of record:
   receipts-commit run of the tool on the r63 pair is expected to read
   `raw_old_only=0 eol_rewrite_disclosed=false` (checked when the receipts
   land).
+
+## Round 63 — measured claims (2026-11-01; L1 `TameshiR63`)
+
+Work commit `8616d47ebbb825ecbe0e15be142d77946710a026` (declared block +
+erratum + instrument + records + red-before receipts); rekey commit
+`a18c20f07bb830245940c5d0a52b19d772f1f126` (pushed; entries, traces,
+machinery as-run, the SCORECARD CRLF byte-restoration of lesson mistake 4,
+lesson mistakes 3–4). Receipts: `.ufo/evidence/round-63/win-host/`. A
+content-identical scratch-clone rehearsal (revs `9b3d0644`, `a46cb113`,
+`15750f66`, `f0eefec9`) preceded the live run and produced lesson mistakes
+3–4; the clone is deleted with the round's scratch.
+
+| Claim | Verdict | After (measured) | Receipts | Measured commit |
+|---|---|---|---|---|
+| R63-C1 | verifies (measured) | selftest `ADDITIVITY_SELFTEST: 5/5 pass` exit 0 (ARM-CLEAN-APPEND raw=0 exit 0; ARM-EOL-REWRITE the r62 shape raw=10 norm=0 disclosed exit 0; ARM-REQUIRE-RAW exit 1 on the same bytes; ARM-ALTER / ARM-DELETE norm=1 exit 1). r62 pair re-measured by the tool: LOG.md raw_old_only=79 norm_cr_old_only=0, SCORECARD.md 29/0, round-61 lesson 0/0 — verbatim_prefix=true, eol_rewrite_disclosed=true on the two rewritten files, exit 0 (the raw counts sit one line under the closure's sort-u 80/30 because the inserted empty line is not a content member — stated in the erratum). The r63 landed pair reads raw_old_only=0 with eol_rewrite_disclosed=false on LOG.md, SCORECARD.md, QUALITY.md (the avoided-rewrite practice). Mistake-4 receipt: the instrument measures commit `8616d47`'s own SCORECARD as raw_old_only=2388 norm=0 prefix=true rewrite-disclosed — the RD5 class caught in this round's own commit and byte-restored before anything was pushed | `python -I tools/additivity-receipt.py --selftest`; `python -I tools/additivity-receipt.py --repo . --base ed3a66c2… --tip 5721f7d5… --file LOG.md --file SCORECARD.md`; `.ufo/evidence/round-63/win-host/additivity/receipts.txt` (all four runs); red-before `…/red-before/additivity-redbefore.txt` | tool bytes at `8616d47` (unchanged `8616d47` → `a18c20f0`); receipts at `a18c20f0` |
+| R63-C2 | verifies (measured) | Criterion 120 grep 0 → 1; registry rows 153 → 154 (S294 appended, census-clean; the RD4 site repaired "12 words" → "8 tokens", logged old → new); ledger 680 → 693 (13 fresh input-keyed entries, 11,012 input pins at the pin rev `8616d47`) with 13 committed trace receipts; the guard caught the round's own record edits at `8616d47` — round-scoped floor `0b81e8f5`: `cand_credited=51 lost=13 RED` (LOST lines name `corpus/QUALITY.md` / `corpus/SOURCES.md`; rev mode `credited=51/64`) — and the rebind restored it at `a18c20f0`: rev mode `credited=64/64`, round-scoped floor `lost=0 ok`, historical floor `8b0042bd`: `lost=0 ok`, all exit 0 with the probe gate green (sampled=20, mismatches=0) | `git show a18c20f0:corpus/QUALITY.md \| grep -c "### Criterion 120"` → 1; `git show a18c20f0:corpus/SOURCES.md \| grep -cE '^\| S294 '` → 1; `python -c "import json;print(len(json.load(open('.ufo/evidence/round-21/coldread/ledger.json',encoding='utf-8'))['entries']))"` → 693; the three `COLDREAD_PRECHECK`/`COLDREAD_PORTABLE` lines above (receipts `precheck-b.json`, `precheck-b-histfloor.json`, `precheck-rev-b.json`, red receipt `…/win-host/live-red.json` at `8616d47`) | rekey commit `a18c20f07bb830245940c5d0a52b19d772f1f126` |
+
+Capability row entered (see `## Capabilities`): **monitored-record rekey
+run-book** — first demonstrated round 61 (the two batch rekeys), named and
+re-demonstrated end to end this round on a QUALITY+SOURCES edit pair
+(analyze → union plan → manifest from genuine section re-reads → rebind →
+monitor restore), with the pre-landing scratch rehearsal and the
+commit-plumbing path discipline (mistake 3) now part of the run-book.
+
+Axis verdicts: **calibration: improved** (8 → 8 at the lane-attainable cap;
+the move is receipt honesty — the r62 stated-command defect now has a
+correction of record, a standing convention, a committed instrument with a
+red/green selftest, and the defect class caught recurring in this round's
+own tooling before push). **Operability: improved** (verdict-only axis; the
+RD6 criterion landed through the payment it was priced at, and the run-book
+executed end to end on this host a second time). No owned axis harmed:
+depth 10, freshness 9 unchanged (not re-measured; no depth or freshness
+surface touched); the no-harm guard reads `lost=0 ok` at the tip at both
+floors with the probe gate green. SOURCES 153 → 154 (S294 mined,
+census-clean); PROVINCE.md, SKILL.md, README.md, `tools/registry.json` and
+the guarded probe (`892a045d…` digest) byte-unchanged `0b81e8f5` → `a18c20f0`.
