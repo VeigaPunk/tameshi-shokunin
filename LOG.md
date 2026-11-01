@@ -2839,3 +2839,15 @@ Source: S293 (git-cat-file batch output framing) opened and mined; census
 exit 0 at round start and end. L1-only round: the batched-wave surface
 named by MISSION.md does not exist on this host; routed at
 `.ufo/l0-questions.md` (tameshi | round-60, option (b) routing stands).
+
+Round-final measurements (recorded as they landed): landing commit
+`19d7e996b9c88e847d22bcddf467893941a1d242` (tool, receipts, S293, records);
+rekey commit `72d36ae1aff7f001f946c326f9143581efc40220` (ledger 644 → 662
+entries; 18 rekey receipts; pointer sweep re-run at the landing rev:
+`POINTER_SWEEP resolved=19/19 deferred=6/6 unresolved=none` — D1 closed);
+final guard verdict at the rekey commit, receipts in the next commit:
+`COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46
+cand=72d36ae1aff7 cand_credited=64 lost=0 ok` + `EQUIVALENCE
+floor_sampled=20 floor_mismatches=0 cand_sampled=20 cand_mismatches=0`
+(`.ufo/evidence/round-61/win-host/precheck-final.{out,json}`;
+box3_full_page=true; 18.6 s for the pair).
