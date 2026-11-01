@@ -2779,5 +2779,8 @@ and 7 (over-specified-predicate — a claim sentence pinned the
 order-dependent sequence arm at the Linux receipts' 3/8; this host drew
 1/8, still red; fix: amendment A1 re-stated the arm before the second
 scored family, criterion 119, and the 1/560 order-alignment kill hazard
-priced in writing). Sources: S292 admitted, S073 re-opened (registry
-149 → 152, census exit 0 before and after).
+priced in writing). Sources: S292 admitted, S073 re-opened with used-by extended (registry
+151 → 152; census exit 0 at round start, exit 1 on the first end run —
+`E01 S292 fields=12`: the row's located field carried the option's
+alternation notation `(+|-)x` whose literal pipe splits the census field —
+byte fixed, exit 0 after).

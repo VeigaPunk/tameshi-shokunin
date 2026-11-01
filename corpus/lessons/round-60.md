@@ -357,8 +357,15 @@ the content/mode the worktree can express (`git add` with
   recheck changed; only S073's `used-by` moved (old → new above).
 - Census: `bash scripts/sources-census.sh validate --root <fleet-root>
   tameshi` exit 0 at round start (151 rows, 16 W04 + 1 W01, all
-  pre-existing) and exit 0 at round end (152 rows, same warning set) —
-  outputs in the round report.
+  pre-existing). First end run: **exit 1 — `E01 S292 fields=12`**: the new
+  row's located field carried the git option's alternation notation
+  `--chmod=(+|-)x`, whose literal pipe splits the census `-F'|'` field
+  count. The byte was fixed to `--chmod=(+/-)x` (same notation, no pipe)
+  and the end run exits 0 (152 rows, warning set unchanged at 16 W04 +
+  1 W01; receipt `.ufo/evidence/round-60/win-host/amend1/census-end.stdout`).
+  The row landed at `c9723e59…` with the broken field and the fix lands
+  with the receipts — the census gate caught its own lane's row, which is
+  the gate working.
 
 ### What landed (attempt 2)
 
@@ -411,12 +418,16 @@ the content/mode the worktree can express (`git add` with
   admission is an operator ruling; this attempt widens the demonstration
   to a second host class and changes nothing about author-independence.
 - The falsification panel is again thin: the L2 surface named by
-  MISSION.md (AgentSwarm on the Kimi host) does not exist on this host;
-  the attempt to route ≥8 read-only verification seats through this host's
-  available batched subagent surface is recorded in the round report
-  (whatever its outcome). The claims rest on the committed instruments,
-  their ten-arm red family, two independent green runs, and the freeze
-  verifications.
+  MISSION.md (one batched AgentSwarm call on the Kimi host) does not exist
+  on this host, and the round's one batched wave (attempt-1's, 32 seats)
+  was settled 2/32 by the host usage cap, with every attack seat among the
+  30 cap-cancelled. This attempt did not re-roll a wave against that cap;
+  the host's available batched-subagent surface is gated on an explicit
+  operator request by its own contract, so the decision is routed to L0
+  (`.ufo/l0-questions.md`) and the claims rest on the committed
+  instruments, their ten-arm red family, two independent green runs, and
+  the freeze verifications — every receipt re-runnable by the closure
+  judge on this host.
 - The sequence control's 1/560 kill hazard (mistake 7) is a property of
   the round-60 counter family design, not new; it is now priced in
   writing.
