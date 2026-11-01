@@ -248,6 +248,7 @@ written and are superseded here:
 | hermetic env-differential probe | classify the raw exit/stdout/stderr tuple of nine pinned selftests under seven explicit profiles, separating repeat variation from environmental sensitivity | `python3 tools/env-diff.py --selftest` first actual9/9; real receipt `f5/receipt-initial.json` under `.ufo/evidence/round-21/` classifies9/9 (eight invariant, one raw-output-variable); `corpus/knowledge/hermetic-env-differential.md`, S079/S081 | round21; lane demonstrated, separate non-author admission pending |
 | callback-authoritative wave accounting | reconcile exact registered identities and terminal states while preserving failed seats' partial artifacts; reject mismatched totals and digest tampering | at11f55d64968778aaed07b001fc8b2480c38e1896: frozen counter8/8, actual146-seat replay66 completed/80 failed, wrong-count1/TOTAL_MISMATCH; `.ufo/evidence/round-22/final/verification.json`, S082 | round22; lane demonstrated, separate non-author admission pending |
 | executor-source pin gate | compare each verifier-declared executor source Git blob in a candidate commit to the same path in a verifier-supplied trusted commit; exit 0 bound, 1 drift, 2 unavailable | `python3 -I .ufo/evidence/round-59/measure.py --lane LANE --rev 93acc996cbb7bfed27112e797c9d2392ff4aa6b3 --work EMPTY_DIR` → `passed=24/24 C1_R59_PASS=true`; controls `.ufo/evidence/round-59/controls/` (always-accept 8/24, skipped-work 0/24) | round59; lane demonstrated; counter cheat-passable (fingerprint 24/24, Mistake 1 in `corpus/lessons/round-59.md`); **not admitted (honest stop, closure round 59)**. Round 60: re-certified on the installed discriminating counter `tools/executor-source-pin-measure.py` at `da2ae6b361de2d6294c6324a02ae141ff6cb482f` — `passed=8/8 C1_R60_PASS=true` (`.ufo/evidence/round-60/after/cert.out`), full cheat family red (`.ufo/evidence/round-60/controls/`); admission still an operator ruling |
+| host-feasible no-harm precheck | re-run the frozen round-48 coldread no-harm precheck to a verdict on the win32 host in seconds: the frozen decision code with its two per-input git plumbing functions batch-cached (spawn fallback + deterministic spawn-equivalence probe, chunked/resumable prefetch) | `python -I tools/coldread-precheck-portable.py --repo . --rev 8b0042bde0ca59aac9a23a8a707cf0902183d081 --work WORK` → `credited=46/64 elapsed=7.1s probe_sampled=20 probe_mismatches=0` (`.ufo/evidence/round-61/win-host/measure-base.out`); `DIFFERENTIAL: PASS` vs the frozen selector (`.ufo/evidence/round-61/win-host/differential.stdout`); S293 | round 61; lane demonstrated; execution form of the frozen instrument, not a replacement |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -3020,3 +3021,35 @@ sections recorded as fresh input-keyed ledger entries pinning post-edit
 hashes (with `tameshi-trace-inputs-v1` trace receipts), then the monitor
 re-run at the final revision until lost=0; a host-portable or bounded form
 of the monitor is round-61 design work.
+
+## Planned — round 61 (declared 2026-11-01, fresh-start round, frozen before data)
+
+Last three closures rejected (r58, r59, r60); the r60 verifier spot-check
+was read in full before declaring. The lane's own routed remedy (genuine
+re-reads → fresh input-keyed ledger entries → monitor re-run toward
+lost=0; host-portable monitor design) is claim C2; closure defects D1–D3
+land with it. Ruled out: re-running the frozen precheck as-is (host-
+infeasible, five failed runs); claiming no-harm from r60's substitute
+(cross-revision attribution unmeasured); extending the counter family
+(admission is an operator ruling); re-running attempt-1's Linux counting
+commands (host-scoped, annotated).
+
+| Claim | The move | Axis / claim type | Before | After (measured) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|
+| R61-C1 | the frozen no-harm precheck gains a host-portable batched execution form (`tools/coldread-precheck-portable.py`: frozen round-18 decision code unchanged; only `cat_file_blob`/`ls_tree_mode` cache-backed with spawn fallback; chunked/resumable prefetch; spawn-equivalence probe that fails empty) | operability (verdict-only axis); capability acquisition (sourced S293) | the frozen precheck cannot produce a verdict on this host: 75,889 inputs x ~151,778 spawns/rev x 0.044 s/spawn = ~112 min/rev, five failed runs (`.ufo/evidence/round-60/win-host/amend1/coldread-precheck.out`) | full base measure in 7.1 s, `credited=46/64 … probe_sampled=20 probe_mismatches=0` (`.ufo/evidence/round-61/win-host/measure-base.out`); frozen selector vs portable form byte-identical at two revisions over discriminating cells (input-drift, exec-bit, symlink input-not-blob, input-missing, no-ledger-entry) — `DIFFERENTIAL: PASS` (`differential.stdout`) | `python -I tools/coldread-precheck-portable.py --repo . --rev 8b0042bde0ca59aac9a23a8a707cf0902183d081 --work WORK` | this round's tool commit (tool digest `3e09cace27da2acc859143052c7bd4a5f8f1825737932afb67223729ec0c2fce`) |
+| R61-C2 | the r60 remedy: genuine re-reads of all 18 uncredited sections, fresh input-keyed ledger entries + committed trace receipts, monitor re-run toward lost=0; closure defects D1 (first-family receipts landed), D2 (win32-era attempt-1 freeze re-run receipt), D3 (number-drift erratum) land with it | calibration (numeric score 8 unchanged; the move is the no-harm guard, the discernment surface) | at base `8b0042bd…`: 46/64 credited; the 18 uncredited sections all fail on `input-drift:` of r60-edited record files (`rekey-plan.json`, `union-plan.json`); the r60 provisional regression (46 vs 50, cross-revision) on record | 18 fresh entries (11,004 input pins; every entry commands_executed_count>0 with a committed `tameshi-trace-inputs-v1` receipt whose inputs equal the entry's), then `COLDREAD_PRECHECK floor=8b0042bde0ca floor_credited=46 cand=<rekey rev> cand_credited=64 lost=0 ok` + `box3_full_page=true` + `EQUIVALENCE … mismatches=0` — the provisional r60 regression fully restored; receipts `.ufo/evidence/round-61/win-host/precheck-final.{out,json}`, rekey traces `.ufo/evidence/round-61/rekey/traces/` | `python -I tools/coldread-precheck-portable.py --repo . --floor 8b0042bde0ca59aac9a23a8a707cf0902183d081 --cand <rekey rev> --work WORK` | the rekey (ledger) commit; receipts land in the following commit (receipt-after-subject ordering, the r60 precedent) |
+
+Erratum (round 61; r60 closure defect D3, non-author spot-check §7): the
+R60a2-C1 row above reads "ten-arm red family"; both r60 contracts and the
+landed receipts declare and carry EIGHT control arms (do-nothing, v1 tool,
+always-accept, fingerprint, hash-only, first-path-only, empty-blob-unsound,
+sequence). The r60 report's decomposition of the C2 grep count 4 is wrong
+on its fourth item; the pinned decomposition at `49ddecf1`:
+`grep -n 'counting command host-scoped (linux)' SCORECARD.md` → :2921
+(R60-C1 row annotation), :2922 (R60-C2 row annotation), :2978 (the
+attempt-2 "What landed" sentence), :2994 (the R60a2-C2 row quoting the
+pattern itself — its own counting command). The raw count 4 was correct.
+The R60a2-C1 row's "attempt-1 freeze still `instrument=10/10
+INSTRUMENT-OK`" now carries its win32-era receipt:
+`.ufo/evidence/round-61/win-host/freeze-a1-reverify.json` (r60 closure
+defect D2).

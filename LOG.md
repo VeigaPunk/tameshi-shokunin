@@ -2801,3 +2801,41 @@ first obligation: genuine re-reads recorded as fresh input-keyed ledger
 entries (with trace receipts), then the monitor re-run at the final
 revision until lost=0; a host-portable or bounded monitor is round-61
 design work. Mistake 8 mined (host-infeasible-instrument).
+
+## 2026-11-01 — round 61 (the r60 remedy: genuine re-reads, host-feasible
+no-harm precheck, closure-defect dispositions; L1 `TameshiR61`)
+
+Base `8b0042bde0ca59aac9a23a8a707cf0902183d081`; the r60 verifier
+spot-check read in full before declaring; the last three rejected closures
+re-read. Claims: C1 operability — the frozen coldread precheck gains a
+host-portable batched execution form (`tools/coldread-precheck-portable.py`:
+frozen round-18 decision code unchanged; only `cat_file_blob`/
+`ls_tree_mode` cache-backed with spawn fallback; chunked/resumable;
+spawn-equivalence probe that fails empty), differential-validated against
+the frozen selector (`DIFFERENTIAL: PASS`) and measuring the base revision
+in 7.1 s with probe mismatches=0 (before: ~112 min/rev, five failed runs);
+C2 calibration — the remedy itself: 18 sections uncredited at base
+(46/64, all `input-drift:` of r60-edited record files) genuinely re-read
+in full by the L1, every recorded input re-read at the pin revision
+(11,004 pins), 18 fresh `tameshi-coldread-ledger-v2` entries with
+committed `tameshi-trace-inputs-v1` receipts, monitor re-run at the final
+revision → `lost=0 ok`, `cand_credited=64/64`, `box3_full_page=true` —
+the provisional r60 regression fully restored. Closure defects: D1 the 21
+first-family receipt bytes found intact in the worktree and committed
+(`.ufo/evidence/round-60/win-host/first-family/`) with a fresh pointer
+sweep at the landing revision; D2 the win32-era attempt-1 freeze re-run
+receipt committed (`freeze-a1-reverify.json`: instrument=10/10,
+INSTRUMENT-OK (receipts re-run)); D3 the number-drift erratum pinned in
+SCORECARD (eight arms, not ten; grep=4 decomposition pinned to :2921,
+:2922, :2978, :2994 at `49ddecf1`).
+
+Mistakes mined: 1 probe-cannot-fail-empty (the first batched run looked
+green on an empty mode map; the probe now fails on sampled=0); 2
+pointer-premature-resolution (D1, captured by the r60 spot-check); 3
+host-scoped-receipt (D2, captured by the r60 spot-check); 4 number-drift
+(D3, captured by the r60 spot-check); 5 prose-spacing-drift (the re-read
+found "from33d03b7" and "the199-entry" in the round-21 registry section).
+Source: S293 (git-cat-file batch output framing) opened and mined; census
+exit 0 at round start and end. L1-only round: the batched-wave surface
+named by MISSION.md does not exist on this host; routed at
+`.ufo/l0-questions.md` (tameshi | round-60, option (b) routing stands).
