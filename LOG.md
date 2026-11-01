@@ -2784,3 +2784,20 @@ priced in writing). Sources: S292 admitted, S073 re-opened with used-by extended
 `E01 S292 fields=12`: the row's located field carried the option's
 alternation notation `(+|-)x` whose literal pipe splits the census field —
 byte fixed, exit 0 after).
+
+No-harm arc (attempt 2, carried honestly): the frozen cold-read precheck is
+host-infeasible on win32 (75,889 ledger inputs x ~151,778 git spawns/rev x
+0.044 s/spawn measured = ~112 min/rev; five runs failed — status receipt
+`.ufo/evidence/round-60/win-host/amend1/coldread-precheck.out`). The
+lane-authored substitute (noharm-cand.py: frozen decision functions +
+proven-safe fail-fast short-circuit on changed input paths) measures 46 of
+64 sections credited at the attempt-2 cand against the frozen instrument's
+own 50 at b1ba0ebc (attempt-1's receipt) — a provisional drop of up to 4
+sections, attribution across attempt-1's unmeasured tail commits and
+attempt-2's records unmeasured here. **The attempt therefore does not
+self-admit**: C1 and C2 measure true, but the no-harm guard is unverified
+with a provisional regression on record. Remedy routed to round 61 as its
+first obligation: genuine re-reads recorded as fresh input-keyed ledger
+entries (with trace receipts), then the monitor re-run at the final
+revision until lost=0; a host-portable or bounded monitor is round-61
+design work. Mistake 8 mined (host-infeasible-instrument).

@@ -213,6 +213,22 @@ defects and is sized so a do-nothing control cannot reach it.
    3!·3!·2!/8! = 1/560 of orders; on such an order the control scores 8/8
    and kills the counter per the kill rule — a per-run hazard both
    attempt-1's and attempt-2's scored runs carried (neither drew it).
+8. **A no-harm monitor that cannot run on the host that edited the records
+   leaves record edits unpoliced (class: host-infeasible-instrument).**
+   Evidence: the round-48 precheck ran in minutes on the Linux host
+   (attempt-1 receipt `lost=0`), and on the win32 host it needs ~112
+   min/rev (75,889 recorded inputs x 2 git spawns per input per rev x
+   0.044 s per spawn, measured); five completion attempts failed (status
+   receipt `.ufo/evidence/round-60/win-host/amend1/coldread-precheck.out`),
+   so attempt-2's record edits went unpoliced until a lane-authored
+   substitute (noharm-cand.py: the frozen decision functions plus a
+   proven-safe fail-fast short-circuit on changed input paths) measured a
+   provisional 4-section credit drop. Captured-by: none — no criterion
+   required the lane's no-harm instrument to be host-portable or to have a
+   bounded fallback. Fix: the round-61 re-read obligation (see Honest
+   limits) plus the committed host-feasibility analysis (spawn-rate
+   measurement, ledger size, five run receipts); a portable or bounded
+   form of the monitor is round-61 design work, not claimed here.
 
 ## Wave w1 — what was actually executed, and what was not
 
@@ -431,6 +447,31 @@ the content/mode the worktree can express (`git add` with
 - The sequence control's 1/560 kill hazard (mistake 7) is a property of
   the round-60 counter family design, not new; it is now priced in
   writing.
+- **No-harm arc (attempt 2's own catch, honestly carried).** The frozen
+  no-harm instrument (round-48 precheck) cannot run on this host: the
+  round-21 ledger records 75,889 inputs, the monitor spawns ~151,778 git
+  processes per measured rev, and a spawn costs ~0.044 s here -> ~112
+  min/rev (status receipt
+  `.ufo/evidence/round-60/win-host/amend1/coldread-precheck.out`; five
+  runs attempted, none completed). In its place, noharm-cand.py ran the
+  frozen module's own decision functions with a proven-safe fail-fast
+  short-circuit on the changed input paths and measured **46 of 64
+  sections credited at the attempt-2 cand** against the frozen
+  instrument's own **50 credited at b1ba0ebc** (attempt-1's receipt) — a
+  provisional drop of up to 4 sections, attributable across attempt-1's
+  two unmeasured tail commits and attempt-2's record edits (PROVINCE,
+  QUALITY, SOURCES, SCORECARD, LOG are all ledger-recorded inputs), with
+  the split unmeasured here. Consequence, applied honestly: **this
+  attempt does not self-admit.** C1 and C2 measure true, but the no-harm
+  guard is unverified with a provisional regression on record, and a
+  trade anywhere is not an improvement. Remedy routed to round 61 as its
+  first obligation: genuine re-reads of the affected SKILL.md sections,
+  recorded as fresh input-keyed ledger entries pinning post-edit hashes
+  (schema `tameshi-coldread-ledger-v2`; entry requires
+  commands_executed_count>0 and a committed
+  `tameshi-trace-inputs-v1` trace receipt whose `inputs` match the
+  entry's), then a re-run of the monitor at the final revision until
+  lost=0. Mistake 8 records the class.
 - `python3`-spelled commands in historical records (attempt-1 receipts,
   freeze-verify/pointer-sweep usage lines) remain historical records; the
   portable spellings are in this lesson and the round report.

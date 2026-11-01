@@ -3001,6 +3001,22 @@ pre-data) re-stated the arm order-dependent-red and the scored family was
 re-run post-amendment at `ffa566024616…`. The counter bytes, cells, class
 set, expected exits and PASS condition never changed.
 
-No axis is harmed: depth 10, calibration 8, freshness 9 unchanged; the
-attempt appends to PROVINCE.md/QUALITY.md and adds new files (cold-read
-precheck at the final revision: `lost=0`, receipt in the round report).
+**No-harm guard: unverified — provisional regression on record; the
+attempt does not self-admit.** The frozen cold-read precheck is infeasible
+on this host (75,889 ledger inputs x ~151,778 git spawns/rev x 0.044
+s/spawn measured = ~112 min/rev; five runs failed — status receipt
+`.ufo/evidence/round-60/win-host/amend1/coldread-precheck.out`). The
+lane-authored substitute (noharm-cand.py: frozen decision functions +
+proven-safe short-circuit; receipt `noharm-cand.json`) measures **46 of 64
+sections credited at the attempt-2 cand** against the frozen instrument's
+own **50 at b1ba0ebc** (attempt-1's receipt) — a provisional drop of up to
+4 sections whose attribution across attempt-1's two unmeasured tail
+commits and attempt-2's record edits (PROVINCE/QUALITY/SOURCES/SCORECARD/
+LOG are all ledger-recorded inputs) is unmeasured here. Depth 10,
+calibration 8, freshness 9 are unchanged; the harm, if it lands as
+measured, is in cold-read credit (the discernment surface). **Round-61
+first obligation (planned):** genuine re-reads of the affected SKILL.md
+sections recorded as fresh input-keyed ledger entries pinning post-edit
+hashes (with `tameshi-trace-inputs-v1` trace receipts), then the monitor
+re-run at the final revision until lost=0; a host-portable or bounded form
+of the monitor is round-61 design work.

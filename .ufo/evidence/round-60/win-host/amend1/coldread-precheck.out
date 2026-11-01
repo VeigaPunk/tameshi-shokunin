@@ -1,0 +1,38 @@
+# coldread-precheck status receipt — round 60 attempt 2 (win32 host, 2026-10-31/11-01)
+#
+# The frozen no-harm instrument (.ufo/evidence/round-48/quality/coldread-precheck.sh
+# -> round-21 selector -> round-18 measure) did NOT complete on this host.
+#
+# Measured cause: the round-21 ledger records 75,889 inputs; the monitor
+# spawns two git processes per input per measured rev (~151,778 spawns/rev);
+# one git spawn costs ~0.044 s here (20-spawn sample: 0.87 s), so one rev
+# costs ~112 min and the floor->cand pair ~3.7 h. On the attempt-1 Linux
+# host the same instrument completed in minutes (receipt
+# .ufo/evidence/round-60/after/coldread-precheck-final.out, lost=0).
+#
+# Runs attempted:
+#  1. 20:00-20:35 killed after ~35 min still inside the floor measure
+#     (scratch coldread-precheck.326799/floor.json empty; faulthandler trace
+#     shows a cat-file spawn in input_failures).
+#  2. 20:34-21:0x re-run with stdin closed; killed inside the floor measure.
+#  3. noharm-prefetch.py (cache-backed) killed by the harness.
+#  4. noharm-prefetch2.py (cache-backed, both revs): prefetch completed
+#     (8,013 paths, 789 s) but the coldread phase was killed before any
+#     verdict printed.
+#  5. noharm-final.py (reduced-ledger, bounded): killed after ~80 min.
+#
+# In its place this attempt ran noharm-cand.py (the frozen module's own
+# decision functions with a proven-safe fail-fast short-circuit on the
+# floor->cand changed input paths; receipt noharm-cand.json):
+#   sections_credited(cand f0ec3a5b) = 46 of 64.
+# The frozen instrument's own attempt-1 receipt measured 50 credited —
+# at b1ba0ebc, NOT at this attempt's floor 9bc9b20b (two attempt-1 commits
+# after b1ba0ebc touched recorded inputs SCORECARD.md/LOG.md and were never
+# measured). The drop from 50 (b1ba0ebc) to 46 (f0ec3a5b) therefore spans
+# attempt-1's tail commits and attempt-2's records; the per-section split
+# is unmeasured on this host.
+#
+# Verdict carried to the closure and the next round: the no-harm guard is
+# UNVERIFIED on this host with a provisional 4-section regression on
+# record; the remedy (genuine re-reads recorded as fresh ledger entries
+# pinning post-edit input hashes) is the next round's first obligation.
