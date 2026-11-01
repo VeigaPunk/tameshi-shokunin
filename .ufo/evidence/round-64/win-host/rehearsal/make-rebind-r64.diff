@@ -1,0 +1,46 @@
+--- C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/tameshi-shokunin/.ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py	2026-11-01 07:48:09.023339700 -0800
++++ clone/.ufo/evidence/round-64/win-host/coldread-rekey-rebind-r64.py	2026-11-01 11:41:40.029683900 -0800
+@@ -1,5 +1,9 @@
+ #!/usr/bin/env python3
+-"""coldread-rekey-rebind.py — round-61 genuine re-read rekey (win32 host).
++"""coldread-rekey-rebind.py — round-64 genuine re-read rekey (win32 host;
++r61 run-book generation: the ledger's `rekey_round` field stays the
++run-book generation id 61, and the new `rekey_batch` field names the
++executing run — the r63 non-author closure's precision observation,
++landed in the shipped machinery this round).
+ 
+ For each section named in the union plan, this tool:
+ 
+@@ -134,7 +138,7 @@
+         if m is None:
+             failures.append('manifest-missing:%s' % heading)
+             continue
+-        trace_rel = '.ufo/evidence/round-63/rekey/traces/section-%02d.json' % sec_idx
++        trace_rel = '.ufo/evidence/round-64/rekey/traces/section-%02d.json' % sec_idx
+         trace_abs = repo / trace_rel
+         if a.resume and trace_abs.exists():
+             summary.append({'heading': heading, 'skipped': 'resume'})
+@@ -215,9 +219,10 @@
+             'live_lane_reads': {},
+             'dropped_home_count': 0,
+             'rekey': {
+-                'round': 63,
++                'round': 64,
++                'batch': 'r64-batch-1',
+                 'section': heading,
+-                'reader': 'L1 tameshi round 63 (win32 host); single-process '
++                'reader': 'L1 tameshi round 64 (win32 host); single-process '
+                           'batched git object reads (cat-file --batch), '
+                           'spawn-equivalence-probed',
+                 'commands_executed': cmds,
+@@ -249,8 +254,9 @@
+             'read_rev': pin,
+             'inputs': inputs,
+             'traces': [trace_rel],
+-            'carried_from': 'round-63 rekey of ledger entries %s' % (
++            'carried_from': 'round-64 rekey of ledger entries %s' % (
+                 json.dumps(sec['src_entries'])),
++            'rekey_batch': 'r64-batch-1',
+             'rekey_round': 61,
+         }
+         if m.get('minor_gap_note'):

@@ -3238,3 +3238,37 @@ surface touched); the no-harm guard reads `lost=0 ok` at the tip at both
 floors with the probe gate green. SOURCES 153 → 154 (S294 mined,
 census-clean); PROVINCE.md, SKILL.md, README.md, `tools/registry.json` and
 the guarded probe (`892a045d…` digest) byte-unchanged `0b81e8f5` → `a18c20f0`.
+## Planned — round 64 (declared 2026-11-01, frozen before data)
+
+The r63 closure (non-author verifier spot-check, `d0baf616` = the commit
+that landed it) admitted with two status-neutral carry-in observations; both
+are addressed this round and C1 is one of them. Fresh-start duty: the last
+three rejected closures (r58, r59, r60 spot-checks) re-read before
+declaring; the premise is stale (r61/r62/r63 admitted) but the duty was
+performed and the standing rulings honored (r58: certification/controls
+discipline; r59: cheat-discriminating counters, criterion 111; r60: the
+no-harm guard verified on this host — the portable precheck, digest
+`892a045d…`, ran at every measured rev below). Ruled out, with reasons
+(full detail in `corpus/lessons/round-64.md`): (a) any edit to
+`tools/coldread-precheck-portable.py` — guarded digest pinned, probe-arms
+re-run owed on any edit; the round-64 win-host copy is byte-identical
+(digest verified); (b) the standing r59–r62 rulings (frozen spawning
+precheck host-infeasible; counter-family extension an operator ruling;
+Linux counting commands host-scoped); (c) SKILL/QUALITY/README/PROVINCE
+edits — each extends the rekey payment; the measured pin sets (9 SKILL /
+6 QUALITY / 7 README / 13 SOURCES latest-entry pins, QUALITY ⊂ SOURCES,
+receipt `rehearsal/pin-sets.txt`) price this round's SOURCES edit at
+exactly one rekey; (d) a full-corpus receipt sweep over all lessons since
+round 1 — the tool exists after this round, the deciding demonstration is
+scoped to the newest round's records, and the whole-history sweep is
+declared future work here rather than a smuggled claim. Criterion 110
+forecast: the SOURCES edit is predicted (measured in the scratch-clone
+rehearsal BEFORE this declaration — receipts `rehearsal/rehearsal-B-guard.txt`,
+candidate `b5568919`) to lose exactly the 13 SOURCES-pinning sections
+(`lost=13 RED`), and the ledger edit alone to lose none (`lost=0 ok` at
+`37d1bca1`); miss = 0 if the live work commit reproduces it.
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R64-C1 | the ledger's run-book batch attribution becomes explicit, addressable, and self-recording: every run-book entry gains `rekey_batch` (insert-before pure insertions, CRLF — the field the r63 closure asked for), the convention is stated of record (`rekey_round` = run-book generation id 61; `rekey_batch` = executing run id), and the r64 rebind machinery itself emits `rekey_batch: r64-batch-1` on its fresh entries, so the next run-book run self-identifies; sourced on new row S295 (W3C PROV-DM — a derived record's provenance binds it to the activity that produced it and the generation event), opened this round | axis move (lowest scored axis; closes the r63 closure's carry-in observation 1; root cause located: `'rekey_round': 61` hardcoded in the as-run rebind, inherited r61 → r63 — lesson mistake 4) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move is record-attribution honesty: entries produced by one run-book execution become addressable as one batch, and the field that mislabeled them is corrected in data, convention and machinery) | at head `d0baf616`: run-book entries with a batch field → 0; the 49 entries carry only `rekey_round: 61` across read_revs `19d7e996…`/`0a29e3cf…`/`8616d47…` with no batch discriminator (18/18/13) | 49 entries carry `rekey_batch` (`r61-batch-1` 18, `r61-batch-2` 18, `r63-batch-1` 13), JSON valid, at the C1 commit; 62 with `r64-batch-1` 13 after the rekey commit; the ledger edit alone leaves the guard green (`lost=0 ok` — measured at rehearsal A; the frozen selector ignores the ledger as an input and no credited entry pins it); additivity `raw_old_only=0` at both edit points (pure insertions; `verbatim_prefix=false` disclosed — mid-file insertions) | `git show <rev>:.ufo/evidence/round-21/coldread/ledger.json \| grep -c '"rekey_batch"'` → 0 / 49 / 62; per-batch: `git show <rev>:<ledger> \| python -c "import json,sys,collections;d=json.load(sys.stdin);print(dict(collections.Counter(e.get('rekey_batch') for e in d['entries'] if e.get('rekey_batch'))))"`; the guard: `python -I tools/coldread-precheck-portable.py --repo . --floor d0baf616… --cand <C1 commit> --work WORK` | the C1 commit (declared work); receipts land in the following commit(s) |
+| R64-C2 | `tools/receipt-exists.py` (new): the cited-receipt-existence sweep on committed bytes — the half of considerthese 2026-10-28 proposal 1 that criterion 120's landing left open (the r63 carry note names it the top unadopted proposal; this round adopts it): named documents read at a pinned revision via `git show REV:path`, backtick-cited `.ufo/`+`tools/` paths extracted (line-scoped spans, disclosed skip rules), each resolved by `git cat-file -e REV:path` (blob or tree — the r53.2 cited-directory class), `--extra-root` resolving the lane's fleet-root-surface cites with a named filesystem check; 4-arm hermetic selftest; the SOURCES edits that carry the sourcing (new row S295, the S289 used-by re-open with a fresh located quote, the round note) stale the 13 SOURCES-pinning sections and the r61 rekey run-book (reused: the r63 as-run machinery re-driven at this round's constants, diff receipted) regenerates them as `r64-batch-1` with trace receipts and restores the monitor; capability row `receipt-existence sweep` enters the table | axis move + capability (operability, verdict-only; closes the considerthese proposal-1 cited-receipt-exists half; ground re-opened on held S289) | operability (verdict-only axis: the tool exists, runs on this host, its selftest passes, and its demonstration sweep runs on committed bytes at the tip) | at head `d0baf616`: `git show d0baf616:tools/receipt-exists.py` → path does not exist; `git ls-tree d0baf616 tools/ \| grep -c receipt-exists` → 0; registry rows 154; the proposal's cited-receipt-exists half unimplemented | selftest `RECEIPT_EXISTS_SELFTEST: 4/4 pass` exit 0; demonstration sweep at the tip on `corpus/lessons/round-63.md` + `corpus/lessons/round-63-verifier-spotcheck.md` → `docs=2 paths=16 missing=0 extra=2` exit 0 (the 2 EXTRA lines name the fleet-root surfaces `.ufo/l0-questions.md` and `.ufo/reports/round-63/tameshi.md` cited lane-relatively — the sweep catches the cross-surface class and names where each resolves); S295 grep → 1; registry rows 154 → 155; the precheck RED at the work commit (`lost=13`, matching the forecast, miss=0) and `lost=0 ok` exit 0 at both floors at the rekey commit and the tip | the greps above on committed bytes; `python -I tools/receipt-exists.py --selftest`; `python -I tools/receipt-exists.py --repo . --rev <tip> --doc corpus/lessons/round-63.md --doc corpus/lessons/round-63-verifier-spotcheck.md --extra-root <fleet-root>`; `python -I tools/coldread-precheck-portable.py --repo . --floor 8b0042bd… --cand <tip> --work WORK` | the work commit (tool + SOURCES edits); demo and guard receipts at the receipts commit |

@@ -2981,3 +2981,42 @@ mismatches=0, exit 0 (`.ufo/evidence/round-63/win-host/precheck-b.json`,
 (`…/census-end.txt`; 153 -> 154 rows, warnings the same 17 W04 + 1 W01
 pre-existing set). Capability row `monitored-record rekey run-book` entered
 in the SCORECARD capabilities table.
+## 2026-11-01 — round 64
+
+Base `d0baf616bb8a9fc1be6394e370e0f30a952470af`; the r63 spot-check read in
+full before declaring; the last three rejected closures re-read (fresh-start
+duty; premise stale, duty performed). Two claims:
+
+R64-C1 (calibration, lowest scored axis; closes the r63 closure's carry-in
+observation 1; sourced on new row S295 = W3C PROV-DM) — the ledger's
+run-book batch attribution becomes explicit and self-recording: every
+run-book entry gains `rekey_batch` (49 insert-before pure insertions:
+`r61-batch-1` 18, `r61-batch-2` 18, `r63-batch-1` 13), the convention of
+record fixes the field semantics (`rekey_round` = run-book generation id 61;
+`rekey_batch` = executing run id), and the r64 rebind machinery emits
+`rekey_batch: r64-batch-1` on its fresh entries. Root cause of the r63
+labeling located: `'rekey_round': 61` hardcoded in the as-run rebind tool
+(lesson mistake 4). The ledger edit alone leaves the guard green (measured;
+the frozen selector ignores the ledger as an input).
+
+R64-C2 (operability, verdict-only; capability; adopts considerthese
+2026-10-28 proposal 1's cited-receipt-exists half; ground re-opened on held
+S289 with a fresh located quote) — `tools/receipt-exists.py` (new): named
+docs read at a pinned rev via git objects, backtick-cited `.ufo/`+`tools/`
+paths resolved by `git cat-file -e REV:path`, disclosed skip rules,
+`--extra-root` for fleet-root-surface cites, 4-arm hermetic selftest; demo
+sweep on the r63 records (16 paths, missing=0, extra=2 — the sweep catches
+the cross-surface class and names where each path resolves). The SOURCES
+edits carrying the sourcing (S295 row; S289 used-by old → new, logged; the
+round-64 note) stale the 13 SOURCES-pinning sections (measured RED
+`lost=13`, matching the criterion-110 forecast, miss=0); the r61 rekey
+run-book (reused, machinery diff receipted) regenerates them as
+`r64-batch-1` with trace receipts and restores the monitor. Capability row
+`receipt-existence sweep` enters the SCORECARD capabilities table.
+
+Assimilation: considerthese 2026-10-28 proposal 1's cited-receipt-exists
+half ADOPTED and demonstrated this round (its byte-for-byte quoted-line
+half remains open; proposals 2–5 unadopted); shokuknow unreachable.
+L1-only round (L2 floor surface absent on this host; the r60 L0 question
+stands). Gate: no fresh rejection this round — reject sample stated
+explicitly in the lesson (price-outs + the standing S293 W04 marker).
