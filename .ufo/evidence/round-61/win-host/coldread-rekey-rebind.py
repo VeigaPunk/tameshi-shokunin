@@ -266,11 +266,20 @@ def main(argv=None):
             print('  ' + f)
         return 1
 
-    # append entries to the ledger textually (old bytes stay verbatim)
+    # append entries to the ledger textually (old bytes stay verbatim);
+    # the entries array closes right before the top-level "carried_from"
+    # key (1-space indent; entries' own carried_from lines carry three)
     if a.merge_ledger and new_entries:
         text = ledger_path.read_text(encoding='utf-8')
-        marker = '\n ]\n}\n'
-        idx = text.rindex(marker)
+        key = '\n "carried_from":'
+        if text.count(key) != 1:
+            print('REBIND error=ledger-merge-point-ambiguous', file=sys.stderr)
+            return 2
+        p = text.index(key)
+        idx = p - len('\n ],')
+        if text[idx:p] != '\n ],':
+            print('REBIND error=ledger-entries-close-not-found', file=sys.stderr)
+            return 2
         blocks = []
         for e in new_entries:
             j = json.dumps(e, indent=1, ensure_ascii=False)
