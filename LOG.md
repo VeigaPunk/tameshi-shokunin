@@ -2731,3 +2731,53 @@ classifies the re-run receipts (`INSTRUMENT-OK (receipts re-run)`).
 Sources: S290, S291 admitted (registry 149 → 151 rows, census exit 0 before
 and after); S103 `used-by` updated. F11's counter class is now held. Tools
 installed: none (pacman paused host-wide; no install was needed).
+
+
+## 2026-10-31 — round 60 attempt 2 (win32 host-portability re-run; L1 `TameshiR60a2`, `zcode run14`)
+
+Motivation: round 60 re-launched on a NEW Windows host at base
+`9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78`; the old Linux host does not
+exist. Attempt-1's receipts and counting commands are bound to that host's
+invocation shape, and its frozen instrument crashes before any verdict on
+this host (two mechanisms, receipt
+`.ufo/evidence/round-60/win-host/red-v1-counter.err`). The attempt makes
+the capability evidence host-portable and records the host-scope facts.
+
+Landed: host probe receipt; red-before receipt; `tools/executor-source-pin-measure-v2.py`
+(same cell design as the frozen counter — 8 shuffled class cells × 5
+declared paths in one invocation per cell, per-run nonces, corrupt cell
+expecting exit 2 — with host-portability plumbing only: explicit UTF-8
+fixture writes, `-X utf8` child invocation, `git update-index --chmod=±x`
+exec-bit force for `core.fileMode=false`, read-only-safe
+reset/corrupt/cleanup arms, ASCII-escaped receipts that name the producing
+instrument digest); contract, plan and freeze pre-data (`c9723e59`),
+amendment A1 pre-data (`ffa56602`); SOURCES S292 + S073 used-by; QUALITY
+criteria 118–119; lesson mistakes 6–7 and the `## Attempt 2` section;
+SCORECARD attempt-2 measured rows + host-scope annotations on attempt-1's
+rows; PROVINCE dated host correction — commits `c9723e59d0f517689cb61dd518cd9e0e58b9a2c1`,
+`ffa5660246163be6cb1497849692b43ef3e2bd9c`, and the round's final records
+and receipts commits.
+
+Measured: at `ffa5660246163be6cb1497849692b43ef3e2bd9c` the v2 counter
+scores `passed=8/8 C1_R60V2_PASS=true`, exit 0, twice (nonces
+`c42003b92a32fe13` ≠ `056cf07669067d49`, orders `esucmcue` ≠ `ueceusmc`,
+instrument digest `429cb204bb61…` = freeze-v2), and every control arm is
+red — do-nothing tool-absent 0/8, v1 tool 7/8 (corrupt only),
+always-accept 3/8, fingerprint 3/8, hash-only 3/8, first-path-only 6/8,
+empty-blob-unsound 4/8, sequence 1/8 (order-dependent draw; first family
+also drew 1/8) — `.ufo/evidence/round-60/win-host/amend1/`. Freeze
+verifications at the final tree: freeze-v2 `instrument=4/4 FROZEN-INTACT`,
+freeze-amend1 `1/1 FROZEN-INTACT`, attempt-1's freeze still
+`instrument=10/10 INSTRUMENT-OK (receipts re-run)` — no frozen byte was
+touched. C2 counting commands (portable forms) at the final revision:
+criterion 118 = 1, criterion 119 = 1, host-scope annotations = 3, province
+correction = 1, lesson `## Attempt 2` = 1 (all 0 at base via `git show`).
+
+Mistakes mined: 6 (host-scoped-instrument — an instrument and its counting
+command bound to their birth host; fix: portable revision + criterion 118)
+and 7 (over-specified-predicate — a claim sentence pinned the
+order-dependent sequence arm at the Linux receipts' 3/8; this host drew
+1/8, still red; fix: amendment A1 re-stated the arm before the second
+scored family, criterion 119, and the 1/560 order-alignment kill hazard
+priced in writing). Sources: S292 admitted, S073 re-opened (registry
+149 → 152, census exit 0 before and after).

@@ -1879,3 +1879,61 @@ instrument — `python3 .ufo/evidence/round-60/freeze-verify.py --lane LANE
 `FREEZE_VERIFY instrument=10/10 receipt=9/16 verdict=INSTRUMENT-OK
 (receipts re-run)` where the unclassified check would print only "7 files
 changed".
+
+### Criterion 118 — a cited counting command or certification receipt names its host scope and its instrument revision; a command that cannot run on the current host is re-stated portably or annotated host-scoped
+
+When a record (SCORECARD row, lesson, report) cites a counting command as
+measurement evidence, the record states the command's host scope: either the
+command runs against committed bytes on the current host (portable form, e.g.
+`python -c …`, `git show REV:path | …`), or it is annotated with the host it
+is scoped to and a re-statement or re-run receipt for the current host is
+named. A certification receipt names the instrument revision that produced
+it (pass label and instrument digest), so receipts from two instrument
+revisions are never confusable. A command that cannot execute at
+adjudication (interpreter name absent from PATH, absolute paths from a
+decommissioned host) with neither a portable re-statement nor a host-scope
+annotation is a calibration defect, not a formatting difference.
+
+Lesson: `corpus/lessons/round-60.md` `## Mistakes` 6 (class
+host-scoped-instrument), grounded in this round's own probe: attempt-1's C1
+counting command (`python3 -I tools/executor-source-pin-measure.py --lane
+/home/vgpnk/…`) cannot execute on the win32 dispatch host (`python3` on PATH
+is the Microsoft Store stub, exit 49; the lane path does not exist), and the
+frozen instrument it names cannot produce a verdict here
+(`.ufo/evidence/round-60/win-host/red-v1-counter.err`). The win32
+re-certification receipt carries its instrument digest
+(`C1_R60V2 … instrument=429cb204…`,
+`.ufo/evidence/round-60/win-host/amend1/cert.out`).
+
+Falsifier that must fail: at the attempt-1 landing revision
+(`9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78`) the SCORECARD R60-C1 counting
+command names `python3` and `/home/vgpnk` with no host-scope annotation and
+no portable re-statement — `git show
+9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78:SCORECARD.md | grep -c 'counting
+command host-scoped (linux)'` prints `0` — and `python3 --version` on the
+win32 dispatch host exits 49 without printing a version, so the cited
+command cannot be the adjudicator's measurement.
+
+### Criterion 119 — a claim sentence distinguishes deterministic control arms from order-dependent arms; a score pinned for an order-dependent arm carries its order-dependence, not a point value
+
+When a claim sentence reports per-arm control scores, an arm whose outcome
+depends on the run's randomized order (a fixed response cycle against
+shuffled inputs) is described as order-dependent with its observed draws and
+its kill-rule hazard priced; pinning it to a point value copied from one
+host's receipts makes the sentence false on the first order the next host
+draws, even when the arm is still red and the counter still discriminates.
+
+Lesson: `corpus/lessons/round-60.md` `## Mistakes` 7 (class
+over-specified-predicate), grounded in this round's own first scored family:
+the frozen contract-a2 sentence pinned `sequence 3/8` from the Linux
+receipts, the win32 draw scored 1/8
+(`.ufo/evidence/round-60/win-host/first-family/ctl-sequence.out`), and
+amendment A1 re-stated the arm as order-dependent-red before the second
+scored family ran (`.ufo/evidence/round-60/win-host/amend1/ctl-sequence.out`).
+
+Falsifier that must fail: `git show
+ffa5660246163be6cb1497849692b43ef3e2bd9c:.ufo/evidence/round-60/win-host/first-family/ctl-sequence.out | tail -1`
+prints `passed=1/8 C1_R60V2_PASS=false` while `git show
+c9723e59d0f517689cb61dd518cd9e0e58b9a2c1:.ufo/evidence/round-60/win-host/contract-a2.json | grep -c 'sequence 3/8'`
+prints `1` — the frozen pre-amendment sentence asserts a score the scored
+receipt at the same revision contradicts.

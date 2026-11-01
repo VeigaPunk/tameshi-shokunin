@@ -116,3 +116,30 @@ Appended; lines above are unchanged. The recorded mutation legs are now
 survivor recommendations travel in the round report. Line 101 above ("the
 eight recorded ledger legs") reads nine from round 26 on: `tools/mte-interop.py`
 now judges all nine.
+
+## Host correction — round 60 attempt 2 (2026-10-31)
+
+Appended; lines above are unchanged. The lane is dispatched again on a NEW
+host class (win32: MSYS/MINGW64 bash 5.3, git 2.55.0.windows.3, native
+CPython 3.13). Two line-1-47-era surfaces changed host, recorded here per
+the round contract's absent-surface rule:
+
+- Line 66's canonical template path
+  `/home/vgpnk/Projects/kimi-shokunin/templates/mint/PROVINCE.md:6-19` is
+  host-absent on this host (recorded absent 2026-10-31; the historical
+  reference stands as a record of where it was read, not a current path).
+- The old dispatch host's invocation shape (`/home/vgpnk/...`, `python3`,
+  `/fast/scratch`) is host-absent: `python3` on this host's PATH is the
+  Microsoft Store stub (exit 49, no version) and the real interpreter is
+  `python` (3.13.15). Portable counting commands use `python` and
+  repo-relative paths.
+
+Real surfaces on this host (probe receipt
+`.ufo/evidence/round-60/win-host/host-probe.txt`): this lane repo at
+`C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/tameshi-shokunin`
+(its committed fixtures are the lane's runnable surfaces); `git` with
+`core.symlinks=false` and `core.fileMode` defaulting false; symlinks
+creatable by the shell user (Developer Mode); `PYTHONUTF8=1` in the
+dispatch env, ignored under `-I`. Domain source trees of sibling lanes are
+read-only here exactly as on the old host; nothing in the Refuses lines
+changes.

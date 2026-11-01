@@ -162,6 +162,58 @@ defects and is sized so a do-nothing control cannot reach it.
    from the freeze commit (`git show da2ae6b361de2d6294c6324a02ae141ff6cb482f:.ufo/evidence/round-60/controls/ctl-fingerprint.out`).
    Criterion 117 now requires the distinction.
 
+6. **An instrument (and its counting command) can be bound to the dispatch
+   host it was born on (class: host-scoped-instrument).** Evidence: the
+   round-60 attempt-1 receipts and counting commands carry the old Linux
+   host's invocation shape (`python3`, `/home/vgpnk/...`), and on the win32
+   dispatch host `python3` is the Microsoft Store stub (exit 49, no
+   version) while the lane path does not exist — so attempt-1's C1 counting
+   command cannot execute at adjudication here, and the frozen instrument
+   itself crashes before any verdict
+   (`.ufo/evidence/round-60/win-host/red-v1-counter.err`):
+   `UnicodeEncodeError: 'charmap' codec can't encode characters` (under
+   `-I`, the interpreter ignores `PYTHONUTF8` — all `PYTHON*` env vars are
+   ignored in isolated mode per the S073 page — so fixture writes used the
+   locale codec cp1252, which cannot encode the 日本語 fixture content),
+   followed in the same receipt by `PermissionError: [WinError 5]` from
+   `shutil.rmtree` on git-for-windows' read-only loose objects (the
+   `--work` cleanup arm fails and leaves residue). Captured-by: none — no
+   criterion required a host-scope statement or a portable re-statement
+   before attempt 2 (criterion 118 is the fix). Fix: the host-portable
+   counter revision `tools/executor-source-pin-measure-v2.py` (same cells,
+   class set, expecteds, invocation shape and PASS design; only
+   host-portability plumbing differs), its own freeze
+   (`.ufo/evidence/round-60/win-host/freeze-v2.json`), portable counting
+   commands, and criterion 118. The v1 instrument bytes stay frozen
+   (`freeze-verify` at the attempt-2 tree: `instrument=10/10`,
+   `INSTRUMENT-OK (receipts re-run)`).
+7. **A claim sentence can pin a control arm's score when the arm is
+   order-dependent by design (class: over-specified-predicate).** Evidence:
+   the attempt-2 C1 sentence (frozen in
+   `.ufo/evidence/round-60/win-host/contract-a2.json`) pinned "sequence
+   3/8" copying the Linux receipts' modal score; the first scored family on
+   this host drew an order scoring **1/8**
+   (`.ufo/evidence/round-60/win-host/first-family/ctl-sequence.out`) — red,
+   within the control's design, and false to the sentence as written. The
+   sequence control answers with a fixed exit cycle `[0,0,1,1,2,1,0,2]`
+   keyed by call index while the counter shuffles the class order, so its
+   score is a property of the order drawn (attempt-1's own lesson already
+   said "3–5/8 across runs, order-shuffled"). Captured-by: none — nothing
+   required a sentence to distinguish deterministic arms from
+   order-dependent arms. Fix: amendment A1
+   (`.ufo/evidence/round-60/win-host/contract-a2-amend1.json`, frozen in
+   `freeze-amend1.json` before the second scored family) re-states the
+   sentence with the sequence arm described as order-dependent-red, the
+   scored family was re-run post-amendment at
+   `ffa5660246163be6cb1497849692b43ef3e2bd9c`
+   (`.ufo/evidence/round-60/win-host/amend1/`), and criterion 119 is
+   reserved for the rule (deterministic and order-dependent arms are named
+   as such in a claim sentence). Analysis recorded so the kill rule is
+   priced honestly: the cycle aligns with the shuffled expecteds on
+   3!·3!·2!/8! = 1/560 of orders; on such an order the control scores 8/8
+   and kills the counter per the kill rule — a per-run hazard both
+   attempt-1's and attempt-2's scored runs carried (neither drew it).
+
 ## Wave w1 — what was actually executed, and what was not
 
 The wave was handed off as ONE batched dispatch of **32 seats** (policy band
@@ -234,3 +286,140 @@ Two seat findings are adopted into the lane's records:
 - The counter's remaining honest limits: one fixture repo per run, one
   declared path spelling set, and no packed-object or promisor-partial
   failure modes (the `corrupt` cell deletes a loose object only).
+
+## Attempt 2 — win32 host-portability re-run (2026-10-31)
+
+L1 `TameshiR60a2` (attempt 2; `zcode run14`; the dispatch host is a NEW
+Windows host — the old Linux host `/home/vgpnk` does not exist here). Base
+`9bc9b20b5d6723a19d1b69c8edd7246f82ea3d78` (= origin/master; attempt-1's
+round-60 work is committed lane state). Contract
+`.ufo/evidence/round-60/win-host/contract-a2.json`; amendment A1
+`.ufo/evidence/round-60/win-host/contract-a2-amend1.json`; plan
+`plans/round-60-attempt2.plan.md`; counter revision
+`tools/executor-source-pin-measure-v2.py` (digest `429cb204bb61…`, frozen
+`.ufo/evidence/round-60/win-host/freeze-v2.json` pre-data); freeze verified
+at the final tree: `FREEZE_VERIFY instrument=4/4 receipt=2/2
+verdict=FROZEN-INTACT` (freeze-v2), `instrument=1/1 FROZEN-INTACT`
+(freeze-amend1), and attempt-1's freeze still `instrument=10/10
+INSTRUMENT-OK (receipts re-run)` — the v1 bytes were never touched.
+
+Fresh-start duty: the last three rejected closures (r57, r58, r59) and the
+round-59 spot-check were re-read before declaring; attempt-1's instruments
+were then spot-checked ON THIS HOST before any claim was declared. Ruled
+out: re-running attempt-1's C1 counting command as a claim (it cannot
+execute here — the r58/r59 rejection shape); extending the counter's
+failure modes this round (a new predicate on an instrument the host cannot
+run); re-litigating attempt-1's C2 counts (tree-checkable here with
+`python` for `python3`; their host scope became C2's record instead).
+
+Host facts (probe receipt `.ufo/evidence/round-60/win-host/host-probe.txt`):
+`python3` on PATH is the Microsoft Store stub (exit 49); `python` is
+3.13.15; `PYTHONUTF8=1` is set in the dispatch env but `-I` ignores it
+(S073 page, §-I: "All PYTHON* environment variables are ignored, too");
+symlinks are creatable (Developer Mode); git 2.55.0.windows.3 with
+`core.symlinks=false`. On this host the symlink cell's DRIFT is produced by
+the content/mode the worktree can express (`git add` with
+`core.symlinks=false`), not by a 120000 tree entry — the expected verdict
+(exit 1) is unchanged; the mechanism difference is recorded, not absorbed.
+
+### Gate (attempt 2)
+
+- Sourced rows opened or re-opened this round:
+  - **S292** (new) — Git `git-update-index` documentation,
+    https://git-scm.com/docs/git-update-index, fetched 2026-10-31 (HTTP
+    date Sun, 01 Nov 2026 02:28:15 GMT; 84,442 B; extract
+    `.ufo/evidence/round-60/win-host/sources/s292-update-index.html`).
+    Located quote (§Options, `--chmod=(+|-)x`, 8 words): "Set the execute
+    permissions on the updated files." It grounds the exec-bit cell's
+    index-mode force: with `core.fileMode=false` (the git-for-windows
+    default) a worktree chmod alone never reaches a commit and the
+    candidate would collapse to the trusted tree; `update-index --chmod=±x`
+    sets the mode the commit records. `used-by`:
+    `corpus/lessons/round-60.md` (this section).
+  - **S073** (re-opened, re-used — not duplicated; the lane's S103
+    precedent for a held URL) — Python command line and environment,
+    https://docs.python.org/3/using/cmdline.html, re-fetched 2026-10-31
+    (HTTP 200; 171,073 B; extract
+    `.ufo/evidence/round-60/win-host/sources/s073-cmdline-refetch.html`).
+    Located quotes (both ≤25 words): "-X utf8 enables the Python UTF-8
+    Mode." (§-X, 7 words) and "-I option can be used to run the script in
+    isolated mode … All PYTHON* environment variables are ignored, too."
+    (§-I, 24 words). They ground the two encoding halves of mistake 6: the
+    frozen instrument's `-I` discipline ignores `PYTHONUTF8`, so on win32
+    the locale codec (cp1252) decided fixture bytes; `-X utf8` is the
+    route that survives `-I`. `used-by` old → new:
+    `corpus/knowledge/guard-kill-closure.md` →
+    `corpus/knowledge/guard-kill-closure.md, corpus/lessons/round-60.md`.
+- Id collision check before the append: `grep -c 'S292' corpus/SOURCES.md`
+  → 0 (registry maximum was S291); the cmdline URL is already held as
+  S073, so no row was added for it (a second row would be a W04
+  within-scope duplicate; CORPUS.md rule 2). No existing row's status or
+  recheck changed; only S073's `used-by` moved (old → new above).
+- Census: `bash scripts/sources-census.sh validate --root <fleet-root>
+  tameshi` exit 0 at round start (151 rows, 16 W04 + 1 W01, all
+  pre-existing) and exit 0 at round end (152 rows, same warning set) —
+  outputs in the round report.
+
+### What landed (attempt 2)
+
+- `tools/executor-source-pin-measure-v2.py` — host-portable revision of the
+  frozen counter; deltas from the frozen instrument are plumbing only:
+  explicit UTF-8 fixture writes; `-X utf8` child invocation; `git
+  update-index --chmod=±x` exec-bit force after `git add -A`;
+  read-only-attribute-safe reset/corrupt-cell/cleanup arms; receipt JSON
+  ASCII-escaped; receipt lines name the producing instrument digest.
+- Amendment A1 after the first scored family (mistake 7): the C1 sentence's
+  sequence clause re-stated order-dependent-red; second scored family run
+  post-amendment.
+- C2 records: `corpus/QUALITY.md` criteria 118 (host scope + instrument
+  revision named) and 119 (deterministic vs order-dependent arms named in a
+  claim sentence); `SCORECARD.md` attempt-1 rows annotated `counting
+  command host-scoped (linux)` with the win32 re-statement pointer, plus
+  the attempt-2 measured rows; `PROVINCE.md` dated host correction
+  (line-66 template path recorded absent 2026-10-31; real win32 surfaces
+  named); portable re-statements of attempt-1's C2 counting commands in the
+  round report.
+
+### Verdicts (attempt 2)
+
+- **C1, measured.** At the measured revision
+  `ffa5660246163be6cb1497849692b43ef3e2bd9c`: `C1_R60V2 rev=ffa566024616…
+  passed=8/8 C1_R60V2_PASS=true`, exit 0, twice — nonces
+  `c42003b92a32fe13` ≠ `056cf07669067d49`, class orders `esucmcue` ≠
+  `ueceusmc`, instrument digest `429cb204bb61…` matching freeze-v2 —
+  `.ufo/evidence/round-60/win-host/amend1/cert{,-repeat}.out`. Controls,
+  every arm `C1_R60V2_PASS=false` (same directory): do-nothing
+  tool-absent 0/8 (`reason=tool-absent`) · v1 tool 7/8 (corrupt only —
+  the same red the Linux receipts show) · always-accept 3/8 · fingerprint
+  3/8 · hash-only 3/8 · first-path-only 6/8 · empty-blob-unsound 4/8 ·
+  sequence 1/8 (order-dependent draw; first family drew 1/8 at
+  `c9723e59…` too: `first-family/ctl-sequence.out`). The first family at
+  `c9723e59d0f517689cb61dd518cd9e0e58b9a2c1` is kept under
+  `first-family/` as the run that surfaced mistake 7.
+- **C2, measured.** Counting commands (portable forms, run at the final
+  revision): `grep -c '### Criterion 118' corpus/QUALITY.md` → 1;
+  `grep -c '### Criterion 119' corpus/QUALITY.md` → 1;
+  `grep -c 'counting command host-scoped (linux)' SCORECARD.md` → 2;
+  `grep -c 'recorded absent 2026-10-31' PROVINCE.md` → 1;
+  `grep -c '^## Attempt 2' corpus/lessons/round-60.md` → 1. All five at
+  base `9bc9b20b…` score 0 (`git show` pipes) — the do-nothing receipt is
+  in the round report.
+
+### Honest limits (attempt 2)
+
+- The capability row stays "lane demonstrated; admission pending" —
+  admission is an operator ruling; this attempt widens the demonstration
+  to a second host class and changes nothing about author-independence.
+- The falsification panel is again thin: the L2 surface named by
+  MISSION.md (AgentSwarm on the Kimi host) does not exist on this host;
+  the attempt to route ≥8 read-only verification seats through this host's
+  available batched subagent surface is recorded in the round report
+  (whatever its outcome). The claims rest on the committed instruments,
+  their ten-arm red family, two independent green runs, and the freeze
+  verifications.
+- The sequence control's 1/560 kill hazard (mistake 7) is a property of
+  the round-60 counter family design, not new; it is now priced in
+  writing.
+- `python3`-spelled commands in historical records (attempt-1 receipts,
+  freeze-verify/pointer-sweep usage lines) remain historical records; the
+  portable spellings are in this lesson and the round report.
