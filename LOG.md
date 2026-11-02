@@ -3331,3 +3331,27 @@ Successor instrument work (mined as lesson mistake 4): the sweep's
 backing relation needs a self-referential-backing exclusion — a receipt
 that quotes a MISSING line is the record of a miss, not backing for the
 figure; the raw-count invariant is only measurable under that exclusion.
+
+
+Round 68 declared (frozen pre-data, base `859a736d`): C1 calibration —
+the figure-attribution instrument (considerthese 2026-10-28 proposal 1's
+semantic half, the r67 lesson's named boundary; schema
+`tameshi-figure-attribution-v1`; standing manifest 3 real-history rows at
+`859a736d`; the anywhere-in-cited-set cheat family demonstrated on a
+committed control; selftest 7/7 rehearsed in `reh-figattn-selftest.txt`),
+C2 operability — the arm-liveness per-row scratch slot (a `{work}` arg
+literal → fresh mkdtemp per row, deleted with the run; selftest 5/5
+rehearsed in `reh-liveness-selftest.txt`; manifest 5 → 6 rows with the
+no-harm guard's RED arm `precheck-sources-red` at the guarded probe bytes
+over the committed r67 pair, lost>=13 exit 1), sourced on new row S299
+(Python shutil documentation, fetched 2026-11-02, extract
+`.ufo/evidence/round-68/win-host/sources/s299-shutil.html`; the tempfile
+candidate refused pre-staging as a within-scope duplicate of S279).
+Shared forecast: RED at the C2 work commit lost=13 cand_credited=51
+(rehearsed at the r67 pair, `reh-red-r68.out`, decoded equal in order to
+the r67 set, miss = 0, `reh-red-decode-r68.txt`), paid by the
+`r68-batch-1` rekey (ledger 745 → 758), guards green at both floors +
+rev mode. Census start exit 0 (receipt `census-start-r68.txt`; the
+pre-existing 17 W04 + 1 W01 set). Receipts:
+`.ufo/evidence/round-68/win-host/`. Round-final shas: declaration this
+commit, work commits next (receipts follow).

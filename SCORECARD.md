@@ -3691,3 +3691,66 @@ carries), `live-tip-guard-r67.out` (lost=0 ok, 64 → 64),
 `census-end-r67.txt` (fleet root, exit 0), `census-end-lanetip-r67.txt`
 (the lane-tip-shaped fleet root, 158 rows, exit 0). Successor sweep work
 (lesson mistake 4): a self-referential-backing exclusion.
+
+
+## Planned — round 68 (declared 2026-11-02, frozen before data)
+
+The r67 closure (non-author verifier spot-check, `859a736d` = the commit
+that landed it) ADMITTED round 67 clean: no routed defects; the
+machinery-diff figure note ("7 changed lines" vs the receipt's 6 changed
+pairs) was ruled constants-only substance, verified — no action. The
+round's claims, declared frozen:
+
+- **C1 (calibration, the lowest scored numeric axis at 8; capability
+  acquisition; adopts considerthese 2026-10-28 proposal 1's semantic
+  half — the figure-attribution instrument the r67 lesson named as the
+  successor calibration instrument, designed against the r59
+  cheat-family ruling).** `tools/figure-attribution.py` +
+  `tools/figure-attribution.json` (new; schema
+  `tameshi-figure-attribution-v1`): a record figure pinned to ONE named
+  receipt must be a byte substring of BOTH the record's committed bytes
+  and that receipt's committed bytes, both read from git objects at
+  pinned revisions (never a worktree); rows declare `expect`
+  attributed|misattributed so the standing red arm MEASURES
+  misattributed on every sweep; unresolvable inputs are setup exit 2
+  before any row effect; a zero-row manifest is refused exit 2. The
+  anywhere-in-cited-set relaxation is the cheat family it refuses by
+  construction, demonstrated on a committed control. Capability row
+  `figure-attribution check` enters the table.
+- **C2 (operability, verdict-only; sourced on new row S299, opened this
+  round — Python shutil documentation).** The arm-liveness checker
+  gains the per-row scratch slot the r67 lesson named as the
+  precondition (args literal `{work}` → a fresh mkdtemp directory per
+  row, deleted with the run together with the instrument extraction
+  directory via `shutil.rmtree(..., ignore_errors=True)`; S279 is
+  mkdtemp's caller-deletion duty, S299 the rmtree contract); selftest
+  4/4 → 5/5 (arm 5: the tally moves ONLY when the slot supplied the
+  directory); the manifest grows 5 → 6 rows with the no-harm guard's
+  RED arm — the last manifestable receipt-family arm without a
+  committed input — pinned at the guarded probe bytes over the
+  committed r67 pair; the capability row is synced append-only (the
+  r67 correction-4 precedent; old → new logged in the lesson).
+- Shared no-harm forecast: the SOURCES edit (one row + one tail note,
+  the r67 edit shape) is the round's only monitored-file change; the
+  live RED at the C2 work commit is forecast at `lost=13 RED` with
+  `cand_credited=51` — the SAME 13 headings as the r67 measured RED and
+  this round's rehearsal (decoded comparison `reh-red-decode-r68.txt`:
+  equal in order, miss = 0), paid by the `r68-batch-1` rekey (13 fresh
+  input-keyed entries; ledger 745 → 758) restoring `lost=0 ok` exit 0
+  at both floors plus rev mode 64/64 probe 20/20 (receipts
+  `live-green-r68.out`, `live-green-hist-r68.out`,
+  `live-revmode-r68.out`, `rebind-stdout-r68.txt`,
+  `figattn-selftest-r68.txt`, `arm-liveness-selftest-r68.txt`).
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R68-C1 | `tools/figure-attribution.py` + `tools/figure-attribution.json` (new): a record figure pinned to ONE named receipt must be a byte substring of BOTH the record's committed bytes and that receipt's committed bytes at pinned revisions; rows carry expect attributed or misattributed so the standing red arm measures its verdict every sweep; fail-closed setup exit 2, vacuous-manifest exit 2; standing manifest = 3 real-history rows at `859a736d` (the r66 stale selftest figure — the SCORECARD cells' figure vs the live receipt reading 7/7 — expect misattributed; the same figure vs its true carrier the preserved rehearsal receipt — expect attributed; the R67-correction figure vs the live receipt — expect attributed); the cheat family (anywhere-in-cited-set matching) demonstrated on a committed control that passes the exact red pair; capability row enters the table; adopts considerthese 2026-10-28 proposal 1's semantic half | axis move + capability (the r67 named boundary, executed; two new files only — no checker blob changes) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move is record-attribution honesty: the figure-misattribution class becomes a standing measured red arm instead of an inspection finding) | at base `859a736d`: `git ls-tree 859a736d tools/ \| grep -c figure-attribution` → 0 (no instrument exists; the r66 stale cells were caught by a human, R67 correction 1, not by any standing check); the scratch set-matcher passes the red pair — `CHEAT_ANYWHERE: found=1 cited=2 (set-matcher: pass=true)` (rehearsal receipt `reh-figattn-cheat.txt`) | selftest `FIGURE_ATTRIBUTION_SELFTEST: 7/7 pass` exit 0 (rehearsed pre-data, `reh-figattn-selftest.txt`; live receipt `figattn-selftest-r68.txt`); standing sweep `FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0` exit 0 with the red row reading expect=misattributed measured=misattributed ok (rehearsed, `reh-figattn-standings.txt`; live receipt `figattn-standings-r68.txt`); the control receipt lands under `controls/` beside the instrument verdict on the same pair; capability-row grep 0 → 1 | `python -I -X utf8 tools/figure-attribution.py --selftest`; `python -I -X utf8 tools/figure-attribution.py --repo . --manifest tools/figure-attribution.json`; `git show <rev>:SCORECARD.md \| grep -c figure-attribution check` | the C1 work commit (declared work); receipts land in the following commit(s) |
+| R68-C2 | `tools/arm-liveness.py` gains the per-row scratch slot the r67 lesson named as the precondition: args literal `{work}` → a fresh `tempfile.mkdtemp` directory per row, deleted with the run together with the instrument extraction directory (which earlier rounds leaked on disk) via `shutil.rmtree(..., ignore_errors=True)` in a finally; selftest 4/4 → 5/5 (arm 5: a toy-work instrument whose tally moves only when the slot supplied the directory — the slot itself under test); `tools/arm-liveness.json` grows 5 → 6 rows: `precheck-sources-red` — the no-harm guard's RED arm — pins `tools/coldread-precheck-portable.py` at `859a736d` (blob sha256 `892a045d…`, the guarded digest) over the committed pair floor `7362e15c` / cand `ab67ddd6`, tally lost expect ≥13 baseline 0 exit 1 (the r67 receipt `live-red-r67.out` is the pinned record); capability row synced append-only (selftest figure 4/4 → 5/5 and rows 3 → 6 at the r68 bytes, old → new in the lesson); sourced on new row S299 (Python shutil documentation), opened this round | axis move (closes the r67 lesson's priced-out item (f): the RED arm is manifestable only with a scratch slot) | operability (verdict-only axis: the checker change runs on this host, its grown selftest passes, and the standing manifest now re-executes every manifestable receipt-family red arm including the no-harm guard's, on committed bytes at pinned revisions) | at base `859a736d`: checker selftest `ARM_LIVENESS_SELFTEST: 4/4 pass` (the r66 receipt `live-selftest-liveness.txt`); manifest id-grep 5; no `{work}` literal in the checker bytes (no slot exists — the r67 lesson priced the precheck RED arm out for exactly this reason); the base 5-row sweep reads live at the r67 checker bytes (receipt `arm-live-standings-base-r68.txt`) | selftest `ARM_LIVENESS_SELFTEST: 5/5 pass` exit 0 (rehearsed, `reh-liveness-selftest.txt`; live receipt `arm-liveness-selftest-r68.txt`); standing sweep `ARM_LIVENESS: rows=6 live=6 dead=0` exit 0 with `ARM_LIVE precheck-sources-red tally=lost=13 exit=1` (rehearsed, `reh-liveness-standings.txt`; live receipt `arm-live-standings-r68.txt`; the row costs ~3 min on this host — the precheck's two monitor passes — recorded as cost profile in the lesson); manifest id-grep 5 → 6; S299 grep 0 → 1; registry rows 158 → 159 | `python -I tools/arm-liveness.py --selftest`; `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json`; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S299 '`; the `COLDREAD_PRECHECK` lines | the C2 work commit (checker + manifest + S299 row); receipts land in the following commit(s) |
+
+The C1 work commit carries only the two new files; the C2 work commit
+carries the checker, the manifest and the SOURCES row; neither needs
+the other (causally separable). Receipts land per the
+receipt-after-subject ordering; every commit message names only file
+tokens its tree carries; the round ends with a self-sweep of the round
+range (forecast: `findings=0` exit 0) and a carries-what-it-names
+diff-tree check of the tip before push.
