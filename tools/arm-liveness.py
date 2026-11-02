@@ -23,7 +23,12 @@ input cannot move its arm is ARM_DEAD: the declared red arm is dead.
 Manifest (`tools/arm-liveness.json`, schema `tameshi-arm-liveness-v1`):
   rows[]: id, instrument (repo path), instrument_rev (40-hex; the revision
   whose BYTES are run — pin the revision you verified against, not "tip"),
-  args (argv tail; the literal `{repo}` is replaced by the lane repo path),
+  args (argv tail; the literal `{repo}` is replaced by the lane repo path;
+  the literal `{work}` — round 68 — is replaced by a FRESH per-row scratch
+  directory created with tempfile.mkdtemp and deleted with the run,
+  so an instrument that requires a work path — the portable no-harm
+  precheck's `--work` — can be manifest-pinned without littering the
+  worktree or hard-coding a host path),
   tally (the summary field name, e.g. `findings`), expect_min (int),
   baseline (int, the do-nothing value), expect_exit (int), arm (one line
   naming the red arm and its committed input).
@@ -35,33 +40,46 @@ Verdict lines:
 Exit map: 0 = every row live; 1 = at least one row dead; 2 = usage/setup or
 a manifest with zero rows (fail-closed: an empty manifest proves nothing).
 
-The standing manifest's three rows are the receipt-family red arms with
+The standing manifest's rows are the receipt-family red arms with
 real-history committed inputs (the r64 empty-commit discrimination, the
 quoted-line records-ahead-of-receipts demonstration, the receipt-exists
-records-ahead-of-receipts demonstration at the r64 declaration revision).
-Their instrument revisions are pinned at the round-65 tip, so the rows stay
-reproducible regardless of later tool edits. The round-66 receipts
-demonstrate the dead-arm detector itself: a scratch manifest row pinning the
-FROZEN bind tool over the r65 pre-correction range expects findings>=1 and
-reads ARM_DEAD (findings=0) — the r65 blind spot, caught mechanically — and
-the same row re-pinned to the round-66 tool reads ARM_LIVE.
+records-ahead-of-receipts demonstration at the r64 declaration revision,
+the two r67 bind-range rows). Their instrument revisions are pinned at the
+round-65/66 tips, so the rows stay reproducible regardless of later tool
+edits. The round-66 receipts demonstrate the dead-arm detector itself: a
+scratch manifest row pinning the FROZEN bind tool over the r65
+pre-correction range expects findings>=1 and reads ARM_DEAD (findings=0) —
+the r65 blind spot, caught mechanically — and the same row re-pinned to the
+round-66 tool reads ARM_LIVE. Round 68 adds the no-harm guard's RED arm
+(the last manifestable receipt-family arm without a committed input): the
+precheck row runs the guarded portable probe at the committed r67 pair and
+must read lost>=13 exit 1 — the work slot supplies its required `--work`
+directory fresh per row and removes it with the run (mkdtemp's caller
+deletion duty, SOURCES S279; shutil.rmtree's ignore_errors contract,
+SOURCES S299), together with the per-row instrument extraction directory
+that earlier rounds leaked on disk.
 
 Selftest: `--selftest` builds a throwaway fixture repository under TMPDIR
-with git plumbing only, commits two toy counters (`toy-live.py` prints
-`findings=3`, exits 1; `toy-dead.py` prints `findings=0`, exits 0) and checks
-four arms:
+with git plumbing only, commits three toy counters (`toy-live.py` prints
+`findings=3`, exits 1; `toy-dead.py` prints `findings=0`, exits 0;
+`toy-work.py` prints `findings=5`, exits 1 ONLY when a `--work` directory
+is supplied, else `findings=0`, exits 0) and checks five arms:
   1. live — a manifest whose row pins toy-live.py expecting findings>=1
      reads ARM_LIVE, exit 0;
   2. dead — a manifest whose row pins toy-dead.py with the same expectation
      reads ARM_DEAD naming the row, exit 1;
   3. vacuous guard — a manifest with zero rows exits 2;
-  4. usage — missing flags exit 2.
+  4. usage — missing flags exit 2;
+  5. work slot — a row passing `--work {work}` reads ARM_LIVE
+     (findings=5): the tally moves only when the checker actually supplied
+     the fresh directory, so the slot is the thing under test.
 """
 
 import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -91,32 +109,43 @@ def check_row(repo, row, out):
     blob = run_git(repo, "show", "%s:%s" % (row["instrument_rev"],
                                             row["instrument"]))
     d = tempfile.mkdtemp(prefix="armlive-")
-    inst = os.path.join(d, os.path.basename(row["instrument"]))
-    with open(inst, "wb") as f:
-        f.write(blob)
-    argv = [sys.executable, "-I", inst]
-    argv += [a.replace("{repo}", str(repo)) for a in row["args"]]
-    p = subprocess.run(argv, capture_output=True, cwd=str(repo))
-    text = p.stdout.decode(errors="replace")
-    m = None
-    for m in re.finditer(re.escape(row["tally"]) + r"=(\d+)", text):
-        pass
-    count = int(m.group(1)) if m else None
-    live = (p.returncode == int(row.get("expect_exit", 0))
-            and count is not None
-            and count >= int(row.get("expect_min", 0))
-            and count > int(row.get("baseline", 0)))
-    if live:
-        out.write("ARM_LIVE %s tally=%s=%d exit=%d\n"
-                  % (rid, row["tally"], count, p.returncode))
-    else:
-        out.write("ARM_DEAD %s tally=%s=%s exit=%d expect=%s>=%s>baseline=%s "
-                  "exit=%s\n"
-                  % (rid, row["tally"],
-                     "unparsed" if count is None else str(count),
-                     p.returncode, row["tally"], row.get("expect_min"),
-                     row.get("baseline"), row.get("expect_exit")))
-    return live
+    work_dir = None
+    try:
+        inst = os.path.join(d, os.path.basename(row["instrument"]))
+        with open(inst, "wb") as f:
+            f.write(blob)
+        argv = [sys.executable, "-I", inst]
+        if any("{work}" in a for a in row["args"]):
+            work_dir = tempfile.mkdtemp(prefix="armlive-work-")
+            argv += [a.replace("{repo}", str(repo))
+                     .replace("{work}", work_dir) for a in row["args"]]
+        else:
+            argv += [a.replace("{repo}", str(repo)) for a in row["args"]]
+        p = subprocess.run(argv, capture_output=True, cwd=str(repo))
+        text = p.stdout.decode(errors="replace")
+        m = None
+        for m in re.finditer(re.escape(row["tally"]) + r"=(\d+)", text):
+            pass
+        count = int(m.group(1)) if m else None
+        live = (p.returncode == int(row.get("expect_exit", 0))
+                and count is not None
+                and count >= int(row.get("expect_min", 0))
+                and count > int(row.get("baseline", 0)))
+        if live:
+            out.write("ARM_LIVE %s tally=%s=%d exit=%d\n"
+                      % (rid, row["tally"], count, p.returncode))
+        else:
+            out.write("ARM_DEAD %s tally=%s=%s exit=%d expect=%s>=%s>baseline=%s "
+                      "exit=%s\n"
+                      % (rid, row["tally"],
+                         "unparsed" if count is None else str(count),
+                         p.returncode, row["tally"], row.get("expect_min"),
+                         row.get("baseline"), row.get("expect_exit")))
+        return live
+    finally:
+        if work_dir is not None:
+            shutil.rmtree(work_dir, ignore_errors=True)
+        shutil.rmtree(d, ignore_errors=True)
 
 
 def sweep(repo, manifest_path, out=sys.stdout):
@@ -150,11 +179,21 @@ TOY_LIVE = ("import sys\n"
 TOY_DEAD = ("import sys\n"
             "print('toy summary findings=0')\n"
             "sys.exit(0)\n")
+TOY_WORK = ("import os, sys\n"
+            "args = sys.argv[1:]\n"
+            "if '--work' in args:\n"
+            "    wk = args[args.index('--work') + 1]\n"
+            "    with open(os.path.join(wk, 'probe.txt'), 'w') as f:\n"
+            "        f.write('x')\n"
+            "    print('toy summary findings=5')\n"
+            "    sys.exit(1)\n"
+            "print('toy summary findings=0')\n"
+            "sys.exit(0)\n")
 
 
 def selftest(out=sys.stdout):
     ok = 0
-    total = 4
+    total = 5
     import io
     d = tempfile.mkdtemp(prefix="armlive-selftest-")
     try:
@@ -167,9 +206,12 @@ def selftest(out=sys.stdout):
                      inp=TOY_LIVE.encode()).decode().strip()
         b2 = run_git(fx, "hash-object", "-w", "--stdin",
                      inp=TOY_DEAD.encode()).decode().strip()
+        b3 = run_git(fx, "hash-object", "-w", "--stdin",
+                     inp=TOY_WORK.encode()).decode().strip()
         tree = run_git(fx, "mktree",
                        inp="100644 blob %s\ttoy-live.py\n"
-                           "100644 blob %s\ttoy-dead.py\n" % (b1, b2)
+                           "100644 blob %s\ttoy-dead.py\n"
+                           "100644 blob %s\ttoy-work.py\n" % (b1, b2, b3)
                        ).decode().strip()
         env = _env()
         r = subprocess.run(["git", "-C", fx, "commit-tree", tree, "-m", "toys"],
@@ -227,6 +269,19 @@ def selftest(out=sys.stdout):
             out.write("SELFTEST_ARM4 usage: PASS\n")
         else:
             out.write("SELFTEST_ARM4 usage: FAIL rc=%r\n" % r.returncode)
+        # arm 5: work slot — the tally moves only when {work} was supplied
+        buf = io.StringIO()
+        rc = sweep(fx, manifest("m5.json", [
+            {"id": "W1", "instrument": "toy-work.py", "instrument_rev": rev,
+             "args": ["--work", "{work}"], "tally": "findings",
+             "expect_min": 1, "baseline": 0, "expect_exit": 1}]),
+            out=buf)
+        if rc == 0 and "ARM_LIVE W1 tally=findings=5 exit=1" in buf.getvalue():
+            ok += 1
+            out.write("SELFTEST_ARM5 work-slot: PASS\n")
+        else:
+            out.write("SELFTEST_ARM5 work-slot: FAIL rc=%r\n%s\n"
+                      % (rc, buf.getvalue()))
     finally:
         import shutil
         shutil.rmtree(d, ignore_errors=True)
