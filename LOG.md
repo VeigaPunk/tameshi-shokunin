@@ -3420,3 +3420,41 @@ work commit lost=13 cand_credited=51 (rehearsed at the r67 pair,
 (receipt `census-start-r69.txt`; the pre-existing 17 W04 + 1 W01 set).
 Receipts: `.ufo/evidence/round-69/win-host/`. Round-final shas:
 declaration this commit, work commits next (receipts follow).
+
+
+Round 69 receipts: C1 verifies (selftest
+`QUOTED_LINE_EXISTS_SELFTEST: 5/5 pass` exit 0 — arm 5 the selfref red,
+`qline-selftest-r69.txt`; the four standing pairs re-swept at the
+exclusion bytes read totals byte-identical to the frozen receipts with
+the 46 false-carrier attributions re-pointed — 35 LOG + 11 SCORECARD at
+the r68 tip, the same at the r67 tip — `qline-carrier-r69.txt`; the r67
+erratum's carrier narrative corrected by measurement: no standing quote
+was ever solely miss-record-backed; unchanged instruments receipted:
+bind 7/7, receipt-exists 4/4, figure-attribution 7/7 + rows=3 met=3,
+arm-liveness 5/5 + rows=6 live=6 dead=0), C2 verifies (selftest
+`ANCHOR_DRIFT_SELFTEST: 5/5 pass`, `anchor-selftest-r69.txt`; the
+standing sweep `ANCHOR_DRIFT: rows=4 met=4 unexpected=0` exit 0,
+`anchor-standings-r69.txt`, with the r68 closure's routed defect as the
+measured red arm — `ANCHOR_ROW s299-anchor-as-written expect=absent
+measured=absent ok`; manifest id-grep 4; S300 mined, registry
+159 → 160); capability row `anchor-drift sweep` entered, the
+quoted-line capability row synced append-only (r65 figures stand at the
+r65 bytes; old → new in the lesson); shared no-harm: the RED at the C2
+SOURCES work commit reads lost=13 cand_credited=51 exit 1
+(`live-red-r69.out` + `red-receipt-r69.json`; decoded byte-equal in
+order to the r68 set and the rehearsal, miss = 0, `red-decode-r69.txt`
++ `reh-red-decode-r69.txt`, both sides utf-8) → the `r69-batch-1` rekey
+REBIND OK sections=13 entries_added=13 ledger_before=758
+(`rebind-stdout-r69.txt`; ledger 758 → 771; machinery constants-only
+diff `make-rebind-r69.diff`) → lost=0 ok exit 0 at BOTH floors at the
+rekey commit (`live-green-r69.out`: `434a96e4` 64 → 64;
+`live-green-hist-r69.out`: `8b0042bd` 46 → 64) + rev mode
+credited=64/64 probe 20/20 (`live-revmode-r69.out`); additivity
+raw_old_only=0 on SOURCES (`additivity-sources-r69.txt`, 2 new lines
+disclosed) and the ledger (`additivity-ledger-r69.txt`, 29 new lines
+disclosed). Round-final shas: declaration `5eb09e84`, C1 `baa63c45`,
+C2 SOURCES `cf5570d3`, C2 tool `d958326e`, rekey `b59ca7fe`, receipts
+this commit, tip receipts the next (all pushed). Assimilation: none
+this round (considerthese 2026-10-28 proposals 3–5 remain unadopted,
+at most one per round and none fits the routed work) — shokuknow
+unreachable.

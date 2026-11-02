@@ -255,6 +255,7 @@ written and are superseded here:
 | quoted-line receipt backability | check a record's quoted counter lines byte-for-byte against committed receipt bytes at a pinned rev: verdict-shaped backtick spans must be byte substrings of receipts the record itself cites (directory-cite expansion, unique-basename resolution, named `--extra-root` filesystem check for fleet-root surfaces); unbacked quotes named with exit 1; empty documents refused exit 2 | `python -I tools/quoted-line-exists.py --selftest` → `QUOTED_LINE_EXISTS_SELFTEST: 4/4 pass`; the r64-records demo at the tip → `quotes=16 backed=12 missing=4` exit 1 with all four named (`.ufo/evidence/round-65/win-host/live-quoted-demo.txt`, `live-quoted-explicit.txt`) | round 65 |
 | counter-arm liveness check | verify that every declared red arm of a frozen counter carries one committed input that MOVES its tally: a manifest row pins the instrument bytes at a revision, the committed input, the tally field, its do-nothing baseline and the expected move; the checker extracts the instrument from git objects (never a worktree), runs it `python -I` against the input, and marks the row `ARM_LIVE` only when the exit matches and the parsed tally ≥ expect_min and > baseline, else `ARM_DEAD`; an empty manifest is refused exit 2 | `python -I tools/arm-liveness.py --selftest` → `ARM_LIVENESS_SELFTEST: 4/4 pass`; the standing manifest → `rows=3 live=3 dead=0` exit 0; the dead-arm demo — a scratch manifest row pinning the FROZEN bind tool over `7d7f9ca8..87e95597` reads `ARM_DEAD … findings=0` exit 1, the same row re-pinned to the r66 tool reads `ARM_LIVE … findings=4` exit 0 (`.ufo/evidence/round-66/win-host/live-selftest-liveness.txt`, `live-liveness-standings.txt`, `live-demo-dead.txt`, `live-demo-live.txt`, the two `live-demo-manifest-*.json`) | round 66 |
 | figure-attribution check | verify that a record figure pinned to ONE named receipt lives in THAT receipt's committed bytes: a manifest row pins the doc bytes at a revision, the exact figure line and ONE receipt path at a revision, both read from git objects (never a worktree); rows carry an expectation (attributed or misattributed) so the standing red arm MEASURES misattributed on every sweep; unresolvable inputs are setup exit 2 before any effect, a zero-row manifest is refused exit 2; the anywhere-in-cited-set relaxation is the cheat family refused by construction — the committed control shows a set-matcher passing the exact pair the instrument flags | `python -I -X utf8 tools/figure-attribution.py --selftest` → `FIGURE_ATTRIBUTION_SELFTEST: 7/7 pass`; the standing manifest → `FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0` exit 0 with `FIGURE_ROW r66-stale-selftest-figure-red expect=misattributed measured=misattributed ok` (`.ufo/evidence/round-68/win-host/figattn-selftest-r68.txt`, `figattn-standings-r68.txt`, `controls/cheat-anywhere-passes-red.txt`, `controls/cheat-anywhere.py`) | round 68 |
+| anchor-drift sweep | verify that a held source row's anchor heading is still the heading the row's own pinned snapshot carries: a manifest row pins (snapshot path at a revision, the exact heading string the anchor cell names, expect present or absent), the snapshot blob is read from git objects at that revision (never a worktree), h1-h6 texts are parsed through an html.parser.HTMLParser subclass (entity-decoding, whitespace-normalized, trailing paragraph mark dropped) and the row verifies only when measured presence matches expectation; an expect=absent row MEASURES the drift on every sweep, never assumes it; unresolvable snapshots are setup exit 2 before any row effect, a zero-row manifest is refused exit 2 | `python -I -X utf8 tools/anchor-drift-sweep.py --selftest` → `ANCHOR_DRIFT_SELFTEST: 5/5 pass`; the standing manifest → `ANCHOR_DRIFT: rows=4 met=4 unexpected=0` exit 0 with `ANCHOR_ROW s299-anchor-as-written expect=absent measured=absent ok` — the r68 closure's routed defect standing as a measured red arm (`.ufo/evidence/round-69/win-host/anchor-selftest-r69.txt`, `anchor-standings-r69.txt`; SOURCES S300) | round 69 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -3894,3 +3895,77 @@ land per the receipt-after-subject ordering; every commit message names
 only file tokens its tree carries; the round ends with a self-sweep of
 the round range (forecast: findings=0 exit 0) and a carries-what-it-names
 diff-tree check of the tip before push.
+
+## Round 69 — measured claims (appended at the receipts commit, 2026-11-02)
+
+Declaration `5eb09e849568f493996df359fb40dea54a80cbd6` (corrections
+paragraph + planned block + lesson + LOG declared entry + S300 extract +
+census receipt + rehearsal receipts); work commits C1
+`baa63c452713c21762c21f092eea0a2e40930468` (the quoted-line
+self-referential-backing exclusion), C2 SOURCES
+`cf5570d37837c5eff16cc9013c07e58879e6f376` (row S300 + the round-69 tail
+note — the RED measured here), C2 tool
+`d958326ea469d7b598ddc983283688a4580d4842` (the anchor-drift sweep +
+manifest); rekey `b59ca7fe63522f8c91865d31089e8d4d622117fb` (the live RED
+paid: 13 fresh input-keyed entries as `r69-batch-1`, ledger 758 → 771,
+monitor restored at both floors). Receipts commit: this one.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R69-C1 | verifies (measured) | selftest `QUOTED_LINE_EXISTS_SELFTEST: 5/5 pass` exit 0 (`qline-selftest-r69.txt`; arm 5 the selfref red; rehearsed pre-data, `reh-qline-selftest.txt`); the four standing pairs re-swept at the exclusion bytes — totals byte-identical to the frozen receipts (missing 5/0 at the r68 tip, 5/0 at the r67 tip; backed 114/346 and 109/338) with the 46 false-carrier attributions re-pointed: 35 LOG + 11 SCORECARD at the r68 tip, the same at the r67 tip (`qline-carrier-r69.txt`; rehearsed pre-data, `reh-qline-carrier-diff.txt`) — the frozen checker named a receipt that merely records the quote's absence as the backing carrier for exactly those 46 quotes, and the r67 erratum's carrier narrative is corrected by measurement: no standing quote was ever solely miss-record-backed; unchanged standing instruments receipted at the r69 bytes: bind 7/7 (`bind-selftest-r69.txt`), receipt-exists 4/4 (`rexists-selftest-r69.txt`), figure-attribution 7/7 and rows=3 met=3 (`figattn-selftest-r69.txt`, `figattn-standings-r69.txt`), arm-liveness 5/5 and rows=6 live=6 dead=0 (`arm-liveness-selftest-r69.txt`, `arm-live-standings-r69.txt`) | `python -I -X utf8 tools/quoted-line-exists.py --selftest`; `python -I -X utf8 tools/quoted-line-exists.py --repo . --doc <rev>:LOG.md`; `git show <rev>:tools/quoted-line-exists.py \| grep -c MISS_RECORD_LINE` → 2 at the tip (the constant + the helper definition; anchored form) and `grep -c strip_miss_records` → 3 (helper + the two call sites) | C1 commit `baa63c45…`; receipts at the receipts commit |
+| R69-C2 | verifies (measured) | selftest `ANCHOR_DRIFT_SELFTEST: 5/5 pass` exit 0 (`anchor-selftest-r69.txt`; rehearsed, `reh-anchor-selftest.txt`); the standing sweep `ANCHOR_DRIFT: rows=4 met=4 unexpected=0` exit 0 with the red arm measured, not assumed: `ANCHOR_ROW s299-anchor-as-written expect=absent measured=absent ok` — the r68 closure's routed defect standing as a measured red arm, beside the true heading (expect=present measured=present), the page h1, and S300's own class heading on their pinned snapshots (`anchor-standings-r69.txt`; rehearsed 3 rows pre-data at the base revision, `reh-anchor-standings.txt`); manifest id-grep 4; the drift measurable pre-instrument: the cell's heading occurs 0 times in the pinned snapshot bytes, the page's heading 3 times; S300 grep 0 → 1; registry rows 159 → 160 | `python -I -X utf8 tools/anchor-drift-sweep.py --selftest`; `python -I -X utf8 tools/anchor-drift-sweep.py --repo . --manifest tools/anchor-drift-sweep.json`; `grep -c '"id"' tools/anchor-drift-sweep.json` → 4; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S300 '` | the C2 work commits `cf5570d3…` (SOURCES — the RED measured there) + `d958326e…` (tool + manifest); receipts at the receipts commit |
+
+Capability row entered (see `## Capabilities`): **anchor-drift sweep** —
+first working round 69 (the mid-file insertion is disclosed; additivity
+raw_old_only=0 on the file holds).
+
+**Quoted-line capability-row sync (append-only; the r67 correction-4
+precedent).** The `quoted-line receipt backability` row (round 65) carries
+the r65-era figures — selftest 4/4, the demo sweep at the r65 bytes — true
+at those bytes and unchanged there; at the round-69 checker bytes the same
+instrument reads selftest 5/5 with arm 5 the selfref red
+(`qline-selftest-r69.txt`) and the exclusion in its backing scans. Old →
+new logged in the round-69 lesson; the row above is not edited in place
+under the additivity discipline.
+
+Shared no-harm story (measured): the RED at the C2 SOURCES work commit
+`cf5570d3` reads `COLDREAD_PRECHECK floor=434a96e47d08 floor_credited=64
+cand=cf5570d37837 cand_credited=51 lost=13 RED` exit 1 (receipt
+`live-red-r69.out` with the JSON receipt `red-receipt-r69.json`; the 13
+LOST heading lines decode byte-equal in order to the r68 measured set AND
+to this round's rehearsal — miss = 0; receipt `red-decode-r69.txt` with
+the rehearsal twin `reh-red-decode-r69.txt`, both sides utf-8 per the
+codec discipline) — paid by the `r69-batch-1` rekey: REBIND OK
+sections=13 entries_added=13 ledger_before=758 (receipt
+`rebind-stdout-r69.txt`; ledger 758 → 771; machinery constants-only diff
+`make-rebind-r69.diff`, 10 changed pairs, every changed line
+constants-only: docstring round, trace path, batch id, carried_from,
+plus the batch and rekey_batch fields the r67/r68 as-run shape carries —
+disclosed) → lost=0 ok exit 0 at BOTH floors at the rekey commit
+`b59ca7fe` (receipt `live-green-r69.out`: round floor `434a96e4` 64 → 64;
+receipt `live-green-hist-r69.out`: historic `8b0042bd` 46 → 64) plus rev
+mode credited=64/64 probe 20/20 (receipt `live-revmode-r69.out`);
+additivity raw_old_only=0 on SOURCES (`434a96e4` → `cf5570d3`, 2 new
+lines disclosed — the mid-file row insertion + tail note,
+verbatim_prefix=false; receipt `additivity-sources-r69.txt`) and on the
+ledger (`cf5570d3` → `b59ca7fe`, 29 new lines disclosed — the mid-file
+entries-array insertion; receipt `additivity-ledger-r69.txt`); no owned
+axis harmed: depth 10, freshness 9, calibration 8 unchanged (no depth or
+freshness surface touched — PROVINCE.md, SKILL.md, README.md,
+corpus/QUALITY.md, tools/registry.json, SHONEN.md,
+tools/mutate-and-run.sh and the guarded probe
+`tools/coldread-precheck-portable.py` (blob sha256 `892a045d…`)
+blob-identical base → tip; the diff-tree check over those paths is empty
+and corpus/SOURCES.md is the only monitored file in the round's diffs,
+rekeyed; the C1 checker file is in no section's input union — verified
+against the r68 union plan's 7702 union paths pre-declaration).
+
+Tip receipts pinned here pre-data (they land at the tip receipts commit):
+the tip guards at both floors + rev (`live-tip-guard-r69.out`,
+`live-tip-guard-hist-r69.out`, `live-tip-revmode-r69.out`), the tip
+invariant sweeps (`qline-tip-log-r69.txt`, `qline-tip-scorecard-r69.txt`,
+`qline-green-round-69.txt`), the LOG/SCORECARD additivity pair
+(`additivity-logscorecard-r69.txt`), the round-range self-sweep
+(`tip-self-sweep-r69.txt` — forecast findings zero exit 0), and the
+census end receipts (`census-end-r69.txt` at the fleet root, exit 0;
+`census-end-lanetip-r69.txt` at the lane-tip shape, 160 rows).
