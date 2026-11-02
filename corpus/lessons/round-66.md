@@ -261,3 +261,38 @@ the pre-round tip). Each lands as its own commit with its own demonstration.
 - Pre-existing tree oddity, observed not absorbed: the root-level `C:` tree
   (blob-sha identical from before r58). Out of scope again this round
   (live-lane tree surgery); recorded for the operator.
+
+
+## Mistake 3 and the K1 correction (appended at the correction commit,
+## 2026-11-01 — self-caught by diff-tree inspection immediately after the
+## declaration commit, before any further stage ran)
+
+3. **The declaration commit's pathspec list silently lost 21 of its 27
+   paths (class: shell-var-pathspec-silent-noop; captured-by: `git
+   diff-tree -r --name-status 469cde0f <K1>` run immediately after the
+   commit — the mined r65 practice — which showed only the 6 literal
+   paths landed while every `$R`-expanded rehearsal-receipt pathspec
+   no-op'd).** Evidence: `b459653c49f262cc9a144d798410bfcb928e8758`
+   (the declaration commit) carries census-start.txt, the S297 extract +
+   headers, LOG, SCORECARD and the lesson — and NO rehearsal receipts —
+   while its message says "rehearsal receipts (RED lost=13 miss=0, ...)".
+   The r65 empty-commit class (a commit describing receipt content its
+   tree does not carry), one commit after the round that fixed the
+   instrument for it — caught this time by the practice mistake 4 mined,
+   before push-dependent stages ran. Root cause observable: the
+   `$R`-expanded pathspecs behaved as unset-variable expansions (leading
+   `/` stripped by the helper, then a missing-file no-op REMOVAL — the
+   helper's documented missing-on-disk-removes semantics), so the commit
+   was built without them and no error surfaced; the same expansion
+   verified correct in isolated test calls immediately after, so the
+   trigger is the invocation shell of that one call, recorded here as
+   undetermined-local-shell. The run-book practice mined: treecommit
+   pathspec lists are written as LITERAL paths, never shell variables,
+   and EVERY treecommit landing is verified with `git diff-tree -r
+   --name-status <parent> <new>` before the next stage. Fix: the
+   correction commit (this one) lands the 21 named receipt bytes; the
+   round's receipts then land at the stages that produce them. The
+   mechanical sweep is NOT tripped by this message (it names no file
+   tokens — the record-discipline rule it checks is basename-naming, not
+   prose description), and the record-level duty is met by this
+   correction landing the described bytes.
