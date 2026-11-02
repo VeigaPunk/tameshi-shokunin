@@ -3177,3 +3177,57 @@ appended to `corpus/lessons/round-66.md` by the same commit as routed; it
 was missing while three artifacts cited it. Before-state counting receipt:
 `corrections-before-greps.txt`; the round-66 lesson sweep that names its own
 stale pre-data figure: `qline-red-round-66.txt`.
+
+Round 67 (L1 `TameshiR67`, 2026-11-02, win32 host, base
+`7362e15c0a60e685f0dfadb920582619002e150a`) — declared frozen pre-data.
+Carry-in first: the four r66-closure routed record defects landed at the
+corrections commit `436b60c5` (status-neutral, append-only — the stale
+lines preserved and still flagged): lesson mistake row 4 appended to the
+round-66 lesson; the stale six-of-seven selftest figure corrected (the
+final bytes read seven-of-seven — receipt
+`.ufo/evidence/round-66/win-host/live-selftest-bind.txt`); the own-range
+receipt pointer corrected to the pinned `469cde0f..5d969f4e` range, both
+ranges re-run at the pinned checker bytes (receipts
+`bind-erratum-range-r67.txt`, `bind-own-range-r67.txt`); the
+dropped-from-the-tree wording corrected (b60ecab3 is an empty commit, tree
+byte-identical to its parent's); the registry-home sync note for the
+r65-era four-of-four capability-row citation. While measuring the
+before-state the round found and disclosed an instrument boundary: the
+stale cells are byte-backed by the r66 rehearsal receipt's preserved
+pre-correction bytes, so the standing quoted-line sweep cannot flag
+figure-misattribution — that semantic class stays inspection-caught and is
+named successor instrument work (declared pre-data in the lesson and the
+SCORECARD planned block, before any of this round's data). Claims: C1
+calibration, the lowest scored numeric axis at 8 — the corrections land
+append-only and verifiably, and the round's own appends add zero unbacked
+quotes and zero absent path cites (base receipts
+`corrections-before-greps.txt`, `qline-red-log-base.txt`,
+`qline-red-scorecard-base.txt`, `qline-red-round-66.txt`: LOG missing=40
+skipped=40 with 8 absent, SCORECARD missing=10 skipped=178 with 6 absent,
+round-66 lesson missing=2 skipped=7 with none absent; tip forecasts
+unchanged counts, lesson sweep exit 0). C2 operability, verdict-only,
+sourced on new row S298 (git-rev-list documentation, §DESCRIPTION first
+paragraph, fetched-page line 3330, 14 words: "List commits that are
+reachable by following the parent links from the given commit(s)") — the
+liveness manifest grows three rows to five with the bind checker's
+erratum-range red arm (the r65 vacuous-pass case over `7d7f9ca8..87e95597`)
+and own-range red arm (the r66 erratum over `469cde0f..5d969f4e`), pinned
+at `5541abaf`, real-history inputs only; standings forecast
+`rows=5 live=5 dead=0` (receipt `arm-live-standings-r67.txt`); no checker
+blob change. Shared no-harm forecast: the SOURCES edit (one row + one tail
+note, the r66 edit shape) drops exactly the 13 SOURCES-pinning sections —
+lost=13 RED exit 1 at the C2 work commit with cand_credited=51, the same
+13 headings byte-equal in order to the r66 set, miss = 0 required — paid
+by the r67-batch-1 rekey (13 fresh input-keyed entries, ledger 732 → 745),
+restoring lost=0 ok exit 0 at both floors (round `7362e15c` 64 → 64,
+historic `8b0042bd` 46 → 64) plus rev mode 64/64 probe 20/20; additivity
+raw_old_only=0 on every landed pair (SOURCES mid-file insertion disclosed,
+LOG/SCORECARD pure appends, ledger mid-file insertion disclosed); census
+exit 0 at both ends (receipts `census-start-r67.txt`,
+`census-end-r67.txt`); registry rows 157 → 158; round-range self-sweep
+forecast findings zero exit 0. The S298 fetch extract + headers and the
+round-start census receipt land with this entry; receipts follow per the
+receipt-after-subject ordering; every commit message names only file
+tokens its tree carries. L1-only round: the L2 floor (one batched
+AgentSwarm call) has no dispatch surface on this host — the r60 L0
+question (option (b)) stands unanswered, disclosed.

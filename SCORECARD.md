@@ -3556,3 +3556,60 @@ round as manifest-row demonstrations). Under the additivity discipline the
 registry home is append-only, so this note is the sync of record; the
 standing manifest rows that pin the checker's red arms on real history land
 this round as claim R67-C2.
+
+## Planned — round 67 (declared 2026-11-02, frozen before data)
+
+The r66 closure (non-author verifier spot-check, `7362e15c` = the commit
+that landed it) ADMITTED round 66 with four status-neutral routed record
+defects; they are this round's carry-in and landed FIRST as C1 (corrections
+commit `436b60c5`, before this declaration — the before-state is receipted
+at the base bytes). The round's claims, declared frozen:
+
+- **C1 (calibration, the lowest scored numeric axis at 8; the move is
+  record-attribution honesty).** The four carry-in corrections land
+  append-only and verifiably, and the round's own appends satisfy the
+  byte-backing discipline: the standing quoted-line sweep over LOG and
+  SCORECARD at the round tip reads EXACTLY the base missing and absent
+  counts, and the round-67 lesson sweeps clean from birth. The
+  instrument-boundary finding made while measuring the before-state is
+  declared here, before any data: the stale six-of-seven selftest cells
+  are NOT sweep-flagged (they are byte-backed by the r66 rehearsal
+  receipt's preserved pre-correction bytes
+  `.ufo/evidence/round-66/win-host/rehearsal/reh-selftest-bind.txt`) —
+  figure-misattribution is beyond byte-backing, stays inspection-caught,
+  and is named as successor instrument work rather than shipped as a
+  heuristic (r59's ruling).
+- **C2 (operability, verdict-only; sourced on new row S298, opened this
+  round).** The counter-arm liveness manifest grows its two declared
+  successor rows — the bind checker's erratum-range red arm (the r65
+  vacuous-pass case) and the bind checker's own-range red arm (the r66
+  self-caught erratum) — pinned at `5541abaf`, real-history committed
+  inputs, zero synthetic arms. S298 (git-rev-list documentation, §DESCRIPTION
+  first paragraph, fetched-page line 3330, 14 words: "List commits that
+  are reachable by following the parent links from the given commit(s)")
+  grounds the rows: rev-list enumerates COMMITS by parent links, so the
+  r65 erratum range's empty tip commit `87e95597` is in the sweep's walk
+  with its message — the exact reason the frozen scope (S297's
+  `--diff-filter=A` path set) could never see it.
+- Shared no-harm forecast: the SOURCES edit (one row + one tail note, the
+  r66 edit shape) is the round's only monitored-file change; the live RED
+  at the C2 work commit is forecast at `lost=13 RED` with
+  `cand_credited=51` — the SAME 13 headings as the r66 measured RED,
+  byte-equal in order, miss = 0 required — paid by the `r67-batch-1`
+  rekey (13 fresh input-keyed entries; ledger 732 → 745), restoring
+  `lost=0 ok` exit 0 at both floors plus rev mode 64/64 probe 20/20
+  (receipts `live-green-r67.out`, `live-green-hist-r67.out`,
+  `live-revmode-r67.out`, `rebind-stdout-r67.txt`,
+  `arm-liveness-selftest-r67.txt`).
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R67-C1 | the four r66-closure carry-in corrections land append-only (mistake row 4; the stale selftest figure; the own-range receipt pointer; the "dropped from the tree" wording + the registry-home sync note), and the round's own appends introduce zero unbacked quotes and zero absent path cites | axis move (record-attribution honesty; the routed defects fixed as append-only corrections of record, the instrument boundary disclosed pre-data) | calibration (numeric score 8 unchanged, at the lane-attainable cap) | at base `7362e15c` (receipts `corrections-before-greps.txt`, `qline-red-log-base.txt`, `qline-red-scorecard-base.txt`, `qline-red-round-66.txt`): mistake-row-4 grep 0; stale-figure greps 2 (SCORECARD) + 1 (LOG); correction markers 0; sweeps — LOG `missing=40 skipped=40` (8 absent), SCORECARD `missing=10 skipped=178` (6 absent), round-66 lesson `missing=2 skipped=7` (0 absent) | mistake-row-4 grep 1; SCORECARD correction markers 4; LOG corrections entry 1; tip sweeps — LOG `missing=40 skipped=40` and SCORECARD `missing=10 skipped=178` UNCHANGED (same absent counts), the round-67 lesson sweep exit 0 with zero missing and zero absent | `git show <rev>:corpus/lessons/round-66.md \| grep -cE '^4\. \*\*'`; `git show <rev>:SCORECARD.md \| grep -c 'R67 correction '`; `git show <rev>:LOG.md \| grep -c 'Round 67 corrections'`; `python -I -X utf8 tools/quoted-line-exists.py --repo . --doc <rev>:LOG.md` (+ SCORECARD.md, round-66.md, round-67.md) | corrections commit `436b60c5`; base receipts at the same commit; tip sweeps at the receipts tip |
+| R67-C2 | the liveness manifest grows 3 → 5 rows: `bind-erratum-range-red` (r65 vacuous-pass case, `7d7f9ca8..87e95597`) and `bind-own-range-red` (r66 own-range erratum, `469cde0f..5d969f4e`), instruments pinned at `5541abaf`, real-history inputs only; sourced on S298 | axis move + capability extension (the r66 manifest note's declared scope flip, executed; no checker blob change — rows are data) | operability (verdict-only axis: the rows pin standing red arms that must stay live) | at base `7362e15c`: `rows=3 live=3 dead=0` exit 0 (receipt `arm-live-standings-base-r67.txt`); manifest id-grep 3; the two red inputs verified at the pinned bytes (receipts `bind-erratum-range-r67.txt`: summary `commits=7 evidence=47 named=0 carried=0 spans=2 bare=8 findings=4` exit 1; `bind-own-range-r67.txt`: summary `commits=6 evidence=42 named=43 carried=22 spans=3 bare=47 findings=42` exit 1) | manifest id-grep 5; standing sweep `rows=5 live=5 dead=0` exit 0 with `ARM_LIVE bind-erratum-range-red tally=findings=4 exit=1` and `ARM_LIVE bind-own-range-red tally=findings=42 exit=1` (receipt `arm-live-standings-r67.txt`); checker selftest unchanged 4/4 | `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json`; `python -I tools/arm-liveness.py --selftest` | the C2 work commit (manifest + S298 row); receipts at the receipts tip |
+
+The corrections commit carries only corrections and their receipts; the C2
+work commit carries the manifest rows and the SOURCES row; neither needs
+the other (causally separable). Receipts land per the receipt-after-subject
+ordering; every commit message names only file tokens its tree carries; the
+round ends with a self-sweep of the round range (forecast: `findings=0`
+exit 0) and a carries-what-it-names diff-tree check of the tip before push.
