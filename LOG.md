@@ -3507,3 +3507,43 @@ guards green at both floors + rev mode. Census start exit 0 (receipt
 census-start-r70.txt; the pre-existing 17 W04 + 1 W01 set). Receipts:
 `.ufo/evidence/round-70/win-host/`. Round-final shas: declaration this
 commit, work commits next (receipts follow).
+Round 70 receipts: C1 verifies (selftest `COUNT_RECHECK_SELFTEST: 6/6
+pass` exit 0, `count-selftest-r70.txt`; the standing sweep
+`COUNT_RECHECK: rows=7 met=7 unexpected=0` exit 0 with both routed red
+arms reading drift printed=4 measured=0 ok, `count-standings-r70.txt`;
+manifest id-grep 7; S301 mined, registry 160 -> 161; capability row
+`printed-count recheck` entered), C2 verifies (the arm-liveness sweep
+`ARM_LIVENESS: rows=7 live=7 dead=0` exit 0 with `ARM_LIVE
+bind-r69-own-range-red tally=findings=2 exit=1`,
+`arm-live-standings-r70.txt`, selftest unchanged 5/5
+`arm-liveness-selftest-r70.txt`; the anchor-drift sweep
+`ANCHOR_DRIFT: rows=16 met=16 unexpected=0` exit 0 with the S299 red arm
+still measured expect=absent measured=absent ok,
+`anchor-standings-r70.txt`, checker selftest 5/5
+`anchor-selftest-r70.txt`; manifest id-greps 7 and 16); unchanged
+standing instruments receipted at the r70 bytes: bind 7/7
+(`bind-selftest-r70.txt`), receipt-exists 4/4 (`rexists-selftest-r70.txt`),
+figure-attribution 7/7 and rows=3 met=3 (`figattn-selftest-r70.txt`,
+`figattn-standings-r70.txt`), quoted-line 5/5 (`qline-selftest-r70.txt`);
+both capability rows synced append-only (r69-era figures stand at the r69
+bytes; old -> new in the lesson); shared no-harm: the RED at the C1
+SOURCES work commit reads lost=13 cand_credited=51 exit 1
+(`live-red-r70.out` + `red-receipt-r70.json`; decoded byte-equal in order
+to the r68 set, the r69 set and the rehearsal, miss = 0,
+`red-decode-r70.txt`) -> the `r70-batch-1` rekey REBIND OK sections=13
+entries_added=13 ledger_before=771 (`rebind-stdout-r70.txt`; ledger 771 ->
+784; machinery constants-only diff `make-rebind-r70.diff` - derived from
+the committed r67 as-run bytes, the r69 as-run script itself is not
+committed, its diff is; 7 changed pairs, all constants-only, disclosed) ->
+lost=0 ok exit 0 at BOTH floors at the rekey commit (`live-green-r70.out`:
+`0c2573d7` 64 -> 64; `live-green-hist-r70.out`: `8b0042bd` 46 -> 64) + rev
+mode credited=64/64 probe_sampled=20 probe_mismatches=0
+(`live-revmode-r70.out`); additivity raw_old_only=0 on SOURCES
+(`additivity-sources-r70.txt`, 2 new lines disclosed) and the ledger
+(`additivity-ledger-r70.txt`, 29 new lines disclosed). Round-final shas:
+declaration `b7f6f162`, C1 SOURCES `910a3c35`, C1 tool `3af968fa`, C2
+`6c4447ac`, rekey `44f61fba`, receipts this commit, tip receipts the next
+(all pushed). Assimilation: none this round (considerthese 2026-10-28
+proposals 3-5 remain unadopted, at most one per round and none fits the
+routed work; the count-recheck instrument is the closure-routed
+printed-count class, not a listed proposal) - shokuknow unreachable.

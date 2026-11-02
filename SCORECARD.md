@@ -256,6 +256,7 @@ written and are superseded here:
 | counter-arm liveness check | verify that every declared red arm of a frozen counter carries one committed input that MOVES its tally: a manifest row pins the instrument bytes at a revision, the committed input, the tally field, its do-nothing baseline and the expected move; the checker extracts the instrument from git objects (never a worktree), runs it `python -I` against the input, and marks the row `ARM_LIVE` only when the exit matches and the parsed tally ≥ expect_min and > baseline, else `ARM_DEAD`; an empty manifest is refused exit 2 | `python -I tools/arm-liveness.py --selftest` → `ARM_LIVENESS_SELFTEST: 4/4 pass`; the standing manifest → `rows=3 live=3 dead=0` exit 0; the dead-arm demo — a scratch manifest row pinning the FROZEN bind tool over `7d7f9ca8..87e95597` reads `ARM_DEAD … findings=0` exit 1, the same row re-pinned to the r66 tool reads `ARM_LIVE … findings=4` exit 0 (`.ufo/evidence/round-66/win-host/live-selftest-liveness.txt`, `live-liveness-standings.txt`, `live-demo-dead.txt`, `live-demo-live.txt`, the two `live-demo-manifest-*.json`) | round 66 |
 | figure-attribution check | verify that a record figure pinned to ONE named receipt lives in THAT receipt's committed bytes: a manifest row pins the doc bytes at a revision, the exact figure line and ONE receipt path at a revision, both read from git objects (never a worktree); rows carry an expectation (attributed or misattributed) so the standing red arm MEASURES misattributed on every sweep; unresolvable inputs are setup exit 2 before any effect, a zero-row manifest is refused exit 2; the anywhere-in-cited-set relaxation is the cheat family refused by construction — the committed control shows a set-matcher passing the exact pair the instrument flags | `python -I -X utf8 tools/figure-attribution.py --selftest` → `FIGURE_ATTRIBUTION_SELFTEST: 7/7 pass`; the standing manifest → `FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0` exit 0 with `FIGURE_ROW r66-stale-selftest-figure-red expect=misattributed measured=misattributed ok` (`.ufo/evidence/round-68/win-host/figattn-selftest-r68.txt`, `figattn-standings-r68.txt`, `controls/cheat-anywhere-passes-red.txt`, `controls/cheat-anywhere.py`) | round 68 |
 | anchor-drift sweep | verify that a held source row's anchor heading is still the heading the row's own pinned snapshot carries: a manifest row pins (snapshot path at a revision, the exact heading string the anchor cell names, expect present or absent), the snapshot blob is read from git objects at that revision (never a worktree), h1-h6 texts are parsed through an html.parser.HTMLParser subclass (entity-decoding, whitespace-normalized, trailing paragraph mark dropped) and the row verifies only when measured presence matches expectation; an expect=absent row MEASURES the drift on every sweep, never assumes it; unresolvable snapshots are setup exit 2 before any row effect, a zero-row manifest is refused exit 2 | `python -I -X utf8 tools/anchor-drift-sweep.py --selftest` → `ANCHOR_DRIFT_SELFTEST: 5/5 pass`; the standing manifest → `ANCHOR_DRIFT: rows=4 met=4 unexpected=0` exit 0 with `ANCHOR_ROW s299-anchor-as-written expect=absent measured=absent ok` — the r68 closure's routed defect standing as a measured red arm (`.ufo/evidence/round-69/win-host/anchor-selftest-r69.txt`, `anchor-standings-r69.txt`; SOURCES S300) | round 69 |
+| printed-count recheck | verify that a record's printed counting figure is still the count its named command produces at the revision the record names: a manifest row pins the record bytes at a revision, the exact record span that carries the figure, the printed integer and the counting command of record `git grep -c [-E] <pattern> <rev> -- <path>` (SOURCES S301: the --count contract; zero matches print nothing and exit 1, read as the count 0 - measured, disclosed); the span binding requires the span to be a byte substring of the record and the printed integer to occur in it as a delimited token; rows carry expect match or drift so the standing red arm MEASURES the drift on every sweep; unresolvable records are setup exit 2 before any row effect, a zero-row manifest is refused exit 2 | `python -I -X utf8 tools/count-recheck.py --selftest` → `COUNT_RECHECK_SELFTEST: 6/6 pass`; the standing manifest → `COUNT_RECHECK: rows=7 met=7 unexpected=0` exit 0 with both routed red arms reading `COUNT_ROW scorecard-r68corr-unanchored-r67tip expect=drift printed=4 measured=0 ok` and `COUNT_ROW lesson-r69-unanchored-r67tip expect=drift printed=4 measured=0 ok` (`.ufo/evidence/round-70/win-host/count-selftest-r70.txt`, `count-standings-r70.txt`; SOURCES S301) | round 70 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -4056,3 +4057,87 @@ land per the receipt-after-subject ordering; every commit message names
 only file tokens its tree carries; the round ends with a self-sweep of
 the round range (forecast: findings=0 exit 0) and a carries-what-it-names
 diff-tree check of the tip before push.
+## Round 70 - measured claims (appended at the receipts commit, 2026-11-02)
+
+Declaration `b7f6f1627121ae394ca588b3027bcf54983cea26` (corrections
+paragraph + planned block + lesson + LOG declared entry + S301 extract +
+census receipt + rehearsal receipts); work commits C1 SOURCES
+`910a3c354f3d4c036d2d7dba184884da0c21c5d8` (row S301 + the round-70 tail
+note - the RED measured here), C1 tool
+`3af968fa136e0fe212644cd3652731532cf1d5b0` (the count-recheck tool +
+manifest), C2 `6c4447ac3bb32fb5f7e0bb3d8c87261f9036ed73` (both manifests);
+rekey `44f61fba44527fa5b90a479cee08618ee8a8db3e` (the live RED paid: 13
+fresh input-keyed entries as `r70-batch-1`, ledger 771 -> 784, monitor
+restored at both floors). Receipts commit: this one.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R70-C1 | verifies (measured) | selftest `COUNT_RECHECK_SELFTEST: 6/6 pass` exit 0 (`count-selftest-r70.txt`; rehearsed pre-data, `reh-count-selftest.txt`); the standing sweep `COUNT_RECHECK: rows=7 met=7 unexpected=0` exit 0 with both red arms measured, not assumed: `COUNT_ROW scorecard-r68corr-unanchored-r67tip expect=drift printed=4 measured=0 ok` and `COUNT_ROW lesson-r69-unanchored-r67tip expect=drift printed=4 measured=0 ok` - the r69 closure's routed figures standing as measured red arms, beside the operative anchored greens (printed 0 measured 0 at `859a736d`, printed 1 measured 1 at `434a96e4`; `count-standings-r70.txt`); manifest id-grep 7; S301 grep 0 -> 1; registry rows 160 -> 161 | `python -I -X utf8 tools/count-recheck.py --selftest`; `python -I -X utf8 tools/count-recheck.py --repo . --manifest tools/count-recheck.json`; `grep -c '"id"' tools/count-recheck.json`; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S301 '` | C1 commits `910a3c35...` (SOURCES - the RED measured there) + `3af968fa...` (tool + manifest); receipts at the receipts commit |
+| R70-C2 | verifies (measured) | the arm-liveness standing sweep `ARM_LIVENESS: rows=7 live=7 dead=0` exit 0 with `ARM_LIVE bind-r69-own-range-red tally=findings=2 exit=1` - the r69 lesson mistake 5's carries-what-it-names class standing as a measured red arm (`arm-live-standings-r70.txt`; the checker selftest unchanged 5/5, `arm-liveness-selftest-r70.txt`); the anchor-drift standing sweep `ANCHOR_DRIFT: rows=16 met=16 unexpected=0` exit 0 with the S299 red arm still measured expect=absent measured=absent ok and the six successor snapshots resolving page h1 + anchor heading each (`anchor-standings-r70.txt`; the checker selftest 5/5, `anchor-selftest-r70.txt`); manifest id-greps 7 and 16 | `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json`; `python -I -X utf8 tools/anchor-drift-sweep.py --repo . --manifest tools/anchor-drift-sweep.json`; `grep -c '"id"' tools/anchor-drift-sweep.json` | C2 commit `6c4447ac...`; receipts at the receipts commit |
+
+Capability row entered (see `## Capabilities`): **printed-count
+recheck** - first working round 70 (the mid-file insertion is disclosed;
+additivity raw_old_only=0 on the file holds).
+
+**Arm-liveness capability-row sync (append-only; the r67 correction-4
+precedent).** The `counter-arm liveness check` row (round 66) carries the
+r66-era figures - selftest 4/4, standing manifest `rows=3 live=3
+dead=0` - true at those bytes and unchanged there; at the round-70
+manifest bytes the same instrument reads selftest 5/5 and the manifest
+`rows=7 live=7 dead=0` with the precheck RED arm and the new
+`bind-r69-own-range-red` row live (`arm-liveness-selftest-r70.txt`,
+`arm-live-standings-r70.txt`). Old -> new logged in the round-70 lesson;
+the row above is not edited in place under the additivity discipline.
+
+**Anchor-drift capability-row sync (append-only; the same precedent).**
+The `anchor-drift sweep` row (round 69) carries the r69-era figures -
+selftest 5/5, standing manifest `rows=4 met=4 unexpected=0` - true at the
+r69 bytes and unchanged there; at the round-70 manifest bytes the same
+instrument reads `rows=16 met=16 unexpected=0` with the S299 red arm
+still measured and the six successor snapshots resolving
+(`anchor-standings-r70.txt`). Old -> new logged in the round-70 lesson;
+the row above is not edited in place.
+
+Shared no-harm story (measured): the RED at the C1 SOURCES work commit
+`910a3c35` reads `COLDREAD_PRECHECK floor=0c2573d7a316 floor_credited=64
+cand=910a3c354f3d cand_credited=51 lost=13 RED` exit 1 (receipt
+`live-red-r70.out` with the JSON receipt `red-receipt-r70.json`; the 13
+LOST heading lines decode byte-equal in order to the r68 measured set,
+the r69 measured set AND this round's rehearsal - miss = 0; receipt
+`red-decode-r70.txt` with the rehearsal twin `reh-red-decode-r70.txt`) -
+paid by the `r70-batch-1` rekey: REBIND OK sections=13 entries_added=13
+ledger_before=771 (receipt `rebind-stdout-r70.txt`; ledger 771 -> 784;
+machinery constants-only diff `make-rebind-r70.diff`, 7 changed pairs,
+every changed line constants-only: docstring round, trace path, round /
+batch / carried_from / rekey_batch fields, and the stale round-64 reader
+string fixed to round 70 - the committed r67 as-run bytes are the diff
+base, disclosed) -> lost=0 ok exit 0 at BOTH floors at the rekey commit
+`44f61fba` (receipt `live-green-r70.out`: round floor `0c2573d7` 64 ->
+64; receipt `live-green-hist-r70.out`: historic `8b0042bd` 46 -> 64) plus
+rev mode credited=64/64 probe_sampled=20 probe_mismatches=0 (receipt
+`live-revmode-r70.out`); additivity raw_old_only=0 on SOURCES
+(`0c2573d7` -> `910a3c35`, 2 new lines disclosed - the mid-file row
+insertion + tail note, verbatim_prefix=false; receipt
+`additivity-sources-r70.txt`) and on the ledger (`910a3c35` ->
+`44f61fba`, 29 new lines disclosed - the mid-file entries-array
+insertion, verbatim_prefix=false; receipt `additivity-ledger-r70.txt`);
+no owned axis harmed: depth 10, freshness 9, calibration 8 unchanged (no
+depth or freshness surface touched - PROVINCE.md, SKILL.md, README.md,
+corpus/QUALITY.md, tools/registry.json, SHONEN.md,
+tools/mutate-and-run.sh and the guarded probe
+`tools/coldread-precheck-portable.py` (blob sha256 `892a045d...`)
+blob-identical base -> tip; the diff-tree check over those paths is empty
+and corpus/SOURCES.md is the only monitored file in the round's diffs,
+rekeyed; the round's tool files and manifests are in no section's input
+union - verified against the r69 union plan's 7702 union paths
+pre-declaration).
+
+Tip receipts pinned here pre-data (they land at the tip receipts commit):
+the tip guards at both floors + rev (`live-tip-guard-r70.out`,
+`live-tip-guard-hist-r70.out`, `live-tip-revmode-r70.out`), the tip
+invariant sweeps (`qline-tip-log-r70.txt`, `qline-tip-scorecard-r70.txt`,
+`qline-green-round-70.txt`), the LOG/SCORECARD additivity pair
+(`additivity-logscorecard-r70.txt`), the round-range self-sweep
+(`tip-self-sweep-r70.txt` - forecast findings zero exit 0), and the census
+end receipts (`census-end-r70.txt` at the fleet root, exit 0;
+`census-end-lanetip-r70.txt` at the lane-tip shape, 161 rows).
