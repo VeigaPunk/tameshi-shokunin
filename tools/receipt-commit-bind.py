@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""tools/receipt-commit-bind.py — bind receipt names in commit messages to the
+r"""tools/receipt-commit-bind.py — bind receipt names in commit messages to the
 commit bytes that carry them (round 65; the r64 non-author closure's routed
-defect 1 class, made checkable).
+defect 1 class, made checkable. Round 66: the candidates-scope arm — r65
+lesson mistake 5, routed to this round by the r65 non-author closure — the
+checker blob changes only in this round).
 
 Convention of record (stated in `corpus/lessons/round-65.md`): a commit whose
 message names receipt content must carry those receipt bytes; an empty commit
@@ -9,46 +11,97 @@ carries no content, so it can never satisfy a receipt claim made in its own
 message (git's own words, S296: "Usually recording a commit that has the exact
 same tree as its sole parent commit is a mistake" — the r64 tail commit
 6876d746 is the landed instance of the class: its subject names the
-tip-confirmation receipt, the bytes landed only in its successor c7d28b19).
+tip-confirmation receipt, the bytes landed only in its successor c7d28b19;
+the r65 tip commit 87e95597 is the second instance, empty while naming four
+receipts).
 
 Check (range sweep, git objects only — no worktree, no index):
 
   python -I tools/receipt-commit-bind.py --repo LANE --base REV --tip REV
 
-For every path ADDED in the range base..tip under `.ufo/evidence/` (the
-lane's evidence surface, `git diff-tree -r --diff-filter=A --name-only`),
-for every commit C in base..tip (oldest first): if C's raw message (%B)
-names the file, the file must exist in C's tree (`git ls-tree -r C -- path`,
-non-empty = carried).
+Three arms, all over every commit C in base..tip (oldest first):
 
-Name rule (disclosed, deterministic): the message names the file if it
-contains the basename WITH extension, or contains the basename WITHOUT
-extension as a delimited token (the characters immediately before and after
-are outside [A-Za-z0-9-]); the bare token must be at least 8 characters long,
-so generic short words never match.
+  Arm 1 (frozen, r65 — range-added candidates): for every path ADDED in the
+  range under `.ufo/evidence/` (`git diff-tree -r --diff-filter=A
+  --name-only`), if C's raw message (%B) names the file, the file must exist
+  in C's tree (`git ls-tree -r C -- path`, non-empty exact = carried).
+  Blind spot (r65 lesson mistake 5): a message naming an evidence path that
+  is added NOWHERE in the range never becomes a candidate, so the sweep can
+  read `named=0 findings=0` exit 0 on a genuinely defective range — the
+  vacuous pass receipted at `.ufo/evidence/round-65/win-host/
+  live-bind-erratum-sweep.txt` for `7d7f9ca8..87e95597`.
+
+  Arm 2 (round 66 — message spans): every full path span in C's message that
+  starts with `.ufo/evidence/` or `tools/` (disclosed rule below) must
+  resolve at C via `git cat-file -e C:<path>` (exit 0 = the blob or tree
+  exists at C — held registry row S289's `-e` semantics; the `<commit>:<path>`
+  object spelling is gitrevisions, held row S091). Naming a path that is
+  absent at the naming commit is itself a BIND_DEFECT.
+
+  Arm 3 (round 66 — the candidates-scope fix proper): every file-like token
+  in C's message (basename with a known receipt/tool extension — disclosed
+  extension list below) must resolve to at least one path anywhere in C's
+  tree (`git ls-tree -r --name-only C`, basename match). A token that
+  resolves nowhere is a BIND_DEFECT: the commit names content its tree does
+  not carry, whether or not the range ever adds it — this is the arm that
+  catches the 87e95597 shape on the live history (its message names
+  live-tip-guard.txt etc. by bare basename, and those files were added only
+  by the LATER commit ced05ce1, so arm 1 alone still reads findings=0 there).
+
+Name rule arm 1 (disclosed, deterministic, frozen r65): the message names the
+file if it contains the basename WITH extension, or contains the basename
+WITHOUT extension as a delimited token (the characters immediately before and
+after are outside [A-Za-z0-9-]); the bare token must be at least 8 characters
+long, so generic short words never match.
+
+Span rule arm 2 (disclosed, deterministic): a span is the longest match of
+`(?:\.ufo/evidence|tools)/[A-Za-z0-9_./-]+` in the message not preceded by
+[A-Za-z0-9_./-]; trailing characters in `.,;:!?"'` + backtick + `)` are
+stripped, and a span whose last segment is empty or ends in `...` is skipped
+(an ellipsis shape, not a path).
+
+Token rule arm 3 (disclosed, deterministic): a token is any match of
+`[A-Za-z0-9][A-Za-z0-9_-]*\.(txt|json|out|md|py|sh|log|err|diff|html|htm|
+csv|tsv|exit|stderr|stdout|yaml|yml|pdf|bin)` in the message; tokens inside
+arm-2 spans are the same arm-3 tokens (the span is checked exactly by arm 2,
+the basename must additionally resolve somewhere by arm 3).
 
 Output:
-  BIND_OK   <commit-short> carries <path>            (per naming-and-carrying commit)
-  BIND_DEFECT <commit-short> names <token> -> <path> not carried at that commit
-  RECEIPT_COMMIT_BIND: commits=N evidence=M named=K carried=K2 findings=F
+  BIND_OK   <commit-short> carries <path>            (arm 1, named+carried)
+  BIND_OK   <commit-short> carries-span <path>       (arm 2, resolves)
+  BIND_OK   <commit-short> resolves <token>          (arm 3, resolves)
+  BIND_DEFECT <commit-short> names <token> -> <path> not carried at that commit   (arm 1)
+  BIND_DEFECT <commit-short> names-span <path> -> absent at that commit           (arm 2)
+  BIND_DEFECT <commit-short> names-unknown <token> -> no tree path with that name at that commit (arm 3)
+  RECEIPT_COMMIT_BIND: commits=N evidence=M named=K carried=K2 spans=P bare=B findings=F
 
 Exit map: 0 = sweep ran, zero defects; 1 = sweep ran, defects found;
-2 = usage/setup error, INCLUDING a range that adds no evidence file at all
-(fail-closed: a vacuous pass is refused, an always-pass cheat has no input).
+2 = usage/setup error, INCLUDING a range with nothing to check at all —
+no evidence file added AND no message span AND no message token (fail-closed:
+a vacuous pass is refused, an always-pass cheat has no input).
 
 Selftest: `--selftest` builds a throwaway fixture repository under TMPDIR
 with git plumbing only (hash-object / mktree / commit-tree / update-ref;
-the index is never touched) and checks four arms:
+the index is never touched) and checks six arms:
   1. red/discrimination — an empty commit whose message names a receipt that
      a LATER commit carries (the 6876d746 shape) yields exactly that one
-     BIND_DEFECT and exit 1;
-  2. green — a commit that carries the receipt it names yields BIND_OK,
-     zero findings, exit 0;
-  3. vacuous guard — a range adding no evidence file exits 2;
-  4. usage — missing required flags exit 2.
-Arms 1 is the cheat-family discriminator: the always-pass cheat (never flag)
-fails arm 1, and the real-history sweep on the lane (the r64 round range) is
-the second, non-synthetic red arm recorded in the round receipts.
+     BIND_DEFECT and exit 1 (arm 1);
+  2. green — a commit that carries the receipt it names — by basename, token
+     and full span — yields BIND_OK lines, zero findings, exit 0;
+  3. vacuous guard — a range with no evidence file, no span and no token
+     exits 2;
+  4. usage — missing required flags exit 2;
+  5. red/nowhere-named — an empty commit whose message names `tip-guard.txt`
+     where no path of that name exists anywhere in the tree and the range
+     never adds it (the 87e95597 shape) yields the names-unknown BIND_DEFECT
+     and exit 1 (arm 3; arm 1 alone reads findings=0 on this fixture — the
+     blind spot, now closed);
+  6. red/span-absent — an empty commit whose message names the full span
+     `.ufo/evidence/win-host/tip-guard.txt` while nothing exists there yields
+     the names-span BIND_DEFECT and exit 1 (arm 2).
+Arms 1, 5 and 6 are the cheat-family discriminators: an always-pass cheat
+fails them, and the real-history sweeps recorded in the round receipts
+(r64 range, r65 pre-correction range) are the non-synthetic red arms.
 """
 
 import argparse
@@ -60,6 +113,12 @@ import os
 
 EVIDENCE_PREFIX = ".ufo/evidence/"
 MIN_TOKEN = 8
+SPAN_RE = re.compile(r"(?<![A-Za-z0-9_./-])((?:\.ufo/evidence|tools)/"
+                     r"[A-Za-z0-9_./-]+)")
+TOKEN_RE = re.compile(
+    r"[A-Za-z0-9][A-Za-z0-9_-]*\.(?:txt|json|out|md|py|sh|log|err|diff|"
+    r"html|htm|csv|tsv|exit|stderr|stdout|yaml|yml|pdf|bin)\b")
+SPAN_STRIP = ".,;:!?)\"'`"
 
 
 def run(repo, *args, binary=False, inp=None, check=True):
@@ -101,6 +160,24 @@ def message_names(message, token):
                      r"(?![A-Za-z0-9-])", message) is not None
 
 
+def message_spans(message):
+    spans = set()
+    for m in SPAN_RE.finditer(message):
+        s = m.group(1)
+        while s and s[-1] in SPAN_STRIP:
+            s = s[:-1]
+        if not s or s.endswith("/") or s.endswith("..."):
+            continue
+        if s.split("/")[-1] == "":
+            continue
+        spans.add(s)
+    return sorted(spans)
+
+
+def message_file_tokens(message):
+    return sorted(set(TOKEN_RE.findall(message)))
+
+
 def carried(repo, commit, path):
     out = run(repo, "ls-tree", "-r", "--name-only", commit, "--", path,
               check=False)
@@ -109,28 +186,51 @@ def carried(repo, commit, path):
     return any(line.strip() == path for line in out.splitlines())
 
 
+def object_exists(repo, commit, path):
+    r = subprocess.run(["git", "-C", str(repo), "cat-file", "-e",
+                        "%s:%s" % (commit, path)], capture_output=True)
+    return r.returncode == 0
+
+
+def tree_basenames(repo, commit):
+    out = run(repo, "ls-tree", "-r", "--name-only", commit)
+    names = set()
+    for line in out.splitlines():
+        line = line.strip()
+        if line:
+            names.add(line.rsplit("/", 1)[-1])
+    return names
+
+
 def sweep(repo, base, tip, out=sys.stdout):
     paths = added_evidence_paths(repo, base, tip)
-    if not paths:
-        out.write("RECEIPT_COMMIT_BIND error=empty-range "
-                  "no evidence files added in %s..%s\n" % (base[:9], tip[:9]))
-        return 2
     commits = commits_in_range(repo, base, tip)
+    msgs = {c: run(repo, "show", "-s", "--format=%B", c) for c in commits}
+    spans_all = {c: message_spans(msgs[c]) for c in commits}
+    tokens_all = {c: message_file_tokens(msgs[c]) for c in commits}
+    if not paths and not any(spans_all.values()) and not any(tokens_all.values()):
+        out.write("RECEIPT_COMMIT_BIND error=empty-range "
+                  "no evidence files added and no message spans or tokens "
+                  "in %s..%s\n" % (base[:9], tip[:9]))
+        return 2
     findings = 0
     named = 0
     carried_count = 0
-    per_commit_msgs = {}
-    for c in commits:
-        per_commit_msgs[c] = run(repo, "show", "-s", "--format=%B", c)
-    # pre-compute each path's carriers once (ls-tree per commit per path is
-    # fine for round-sized ranges; dedupe by (commit, path) result cache)
+    span_checks = 0
+    bare_checks = 0
     carry_cache = {}
     for c in commits:
         for p in paths:
             carry_cache[(c, p)] = carried(repo, c, p)
+    tree_names = {}
+    for c in commits:
+        tree_names[c] = tree_basenames(repo, c)
     for c in commits:
         short = c[:9]
-        msg = per_commit_msgs[c]
+        msg = msgs[c]
+        # arm 1 (frozen): range-added candidates named by basename/stem
+        # (frozen counting convention: one line per named path, the first
+        # matching token of that path names it)
         for p in paths:
             hit = None
             for tok in name_tokens(p):
@@ -147,9 +247,28 @@ def sweep(repo, base, tip, out=sys.stdout):
                 findings += 1
                 out.write("BIND_DEFECT %s names %s -> %s not carried at "
                           "that commit\n" % (short, hit, p))
+        # arm 2 (r66): full message spans resolve at the naming commit
+        for s in spans_all[c]:
+            span_checks += 1
+            if object_exists(repo, c, s):
+                out.write("BIND_OK %s carries-span %s\n" % (short, s))
+            else:
+                findings += 1
+                out.write("BIND_DEFECT %s names-span %s -> absent at that "
+                          "commit\n" % (short, s))
+        # arm 3 (r66): file-like tokens resolve somewhere in the tree
+        for t in tokens_all[c]:
+            bare_checks += 1
+            if t in tree_names[c]:
+                out.write("BIND_OK %s resolves %s\n" % (short, t))
+            else:
+                findings += 1
+                out.write("BIND_DEFECT %s names-unknown %s -> no tree path "
+                          "with that name at that commit\n" % (short, t))
     out.write("RECEIPT_COMMIT_BIND: commits=%d evidence=%d named=%d "
-              "carried=%d findings=%d\n" %
-              (len(commits), len(paths), named, carried_count, findings))
+              "carried=%d spans=%d bare=%d findings=%d\n" %
+              (len(commits), len(paths), named, carried_count,
+               span_checks, bare_checks, findings))
     return 1 if findings else 0
 
 
@@ -204,7 +323,7 @@ def build_fixture(d):
 
 def selftest(out=sys.stdout):
     ok = 0
-    total = 4
+    total = 6
     import io
     d = tempfile.mkdtemp(prefix="rcbind-selftest-")
     try:
@@ -221,7 +340,8 @@ def selftest(out=sys.stdout):
             out.write("SELFTEST_ARM1 red-discrimination: FAIL rc=%r\n%s\n"
                       % (rc, text))
         # arm 2: green — a commit on top of c2 that adds AND names another
-        # receipt it carries; the range tip..c3 names nothing not carried.
+        # receipt it carries — by basename, token and full span; the range
+        # tip..c3 names nothing not carried.
         buf = io.StringIO()
         fx2 = fx
         b3 = run(fx2, "hash-object", "-w", "--stdin",
@@ -238,20 +358,23 @@ def selftest(out=sys.stdout):
         t3 = run(fx2, "mktree",
                  inp="100644 blob %s\tseed.txt\n040000 tree %s\t.ufo\n" % (seed, evr)).strip()
         r = subprocess.run(["git", "-C", fx2, "commit-tree", t3, "-p", tip,
-                            "-m", "bar-receipt receipt appended and carried"],
+                            "-m", "bar-receipt.txt appended and carried at "
+                                  ".ufo/evidence/win-host/bar-receipt.txt"],
                            capture_output=True, env=_env(),
                            input=b"x")
         c3 = r.stdout.decode().strip()
         run(fx2, "update-ref", "refs/heads/master", c3)
         rc = sweep(fx2, tip, c3, out=buf)
         t2_ = buf.getvalue()
-        if rc == 0 and "findings=0" in t2_ and "BIND_OK" in t2_:
+        if (rc == 0 and "findings=0" in t2_ and "BIND_OK" in t2_
+                and "resolves bar-receipt.txt" in t2_
+                and "carries-span .ufo/evidence/win-host/bar-receipt.txt" in t2_):
             ok += 1
             out.write("SELFTEST_ARM2 green-carrying: PASS\n")
         else:
             out.write("SELFTEST_ARM2 green-carrying: FAIL rc=%r\n%s\n"
                       % (rc, t2_))
-        # arm 3: vacuous guard — a range adding no evidence file exits 2
+        # arm 3: vacuous guard — nothing to check exits 2
         b4 = run(fx2, "hash-object", "-w", "--stdin", inp="plain\n",
                  binary=False).strip()
         t4 = run(fx2, "mktree",
@@ -277,6 +400,46 @@ def selftest(out=sys.stdout):
             out.write("SELFTEST_ARM4 usage: PASS\n")
         else:
             out.write("SELFTEST_ARM4 usage: FAIL rc=%r\n" % r.returncode)
+        # arm 5: red/nowhere-named — the 87e95597 shape: an empty commit
+        # naming a file no path of which exists anywhere and the range never
+        # adds; arm 1 alone reads findings=0 here (the blind spot).
+        r = subprocess.run(["git", "-C", fx2, "commit-tree", t4, "-p", c4,
+                            "-m", "tip-guard receipt saved: tip-guard.txt "
+                                  "written"],
+                           capture_output=True, env=_env(), input=b"x")
+        c5 = r.stdout.decode().strip()
+        buf = io.StringIO()
+        rc = sweep(fx2, c4, c5, out=buf)
+        t5_ = buf.getvalue()
+        defects5 = [l for l in t5_.splitlines() if l.startswith("BIND_DEFECT")]
+        if (rc == 1 and len(defects5) == 1
+                and "names-unknown tip-guard.txt" in defects5[0]):
+            ok += 1
+            out.write("SELFTEST_ARM5 nowhere-named-red: PASS\n")
+        else:
+            out.write("SELFTEST_ARM5 nowhere-named-red: FAIL rc=%r\n%s\n"
+                      % (rc, t5_))
+        # arm 6: red/span-absent — an empty commit naming the full span of a
+        # path that exists nowhere (the span form of the 87e95597 shape).
+        r = subprocess.run(["git", "-C", fx2, "commit-tree", t4, "-p", c5,
+                            "-m", "receipt landed at "
+                                  "`.ufo/evidence/win-host/tip-guard.txt` "
+                                  "per the run"],
+                           capture_output=True, env=_env(), input=b"x")
+        c6 = r.stdout.decode().strip()
+        buf = io.StringIO()
+        rc = sweep(fx2, c5, c6, out=buf)
+        t6_ = buf.getvalue()
+        has_span_defect = any("names-span .ufo/evidence/win-host/"
+                              "tip-guard.txt" in l
+                              for l in t6_.splitlines()
+                              if l.startswith("BIND_DEFECT"))
+        if rc == 1 and has_span_defect:
+            ok += 1
+            out.write("SELFTEST_ARM6 span-absent-red: PASS\n")
+        else:
+            out.write("SELFTEST_ARM6 span-absent-red: FAIL rc=%r\n%s\n"
+                      % (rc, t6_))
     finally:
         import shutil
         shutil.rmtree(d, ignore_errors=True)
