@@ -355,3 +355,24 @@ does not read the slower sweep as a hung instrument.
   round).
 - Pre-existing tree oddity, observed not absorbed: the root-level `C:`
   tree. Out of scope again; recorded for the operator.
+4. **A receipt-generation command built with a relative path ran nothing
+   and drafted a false receipt (class: relative-path-in-receipt-command;
+   captured-by: reading the controls receipt's first draft before
+   landing it — the set-matcher line read a python Errno 2 and
+   `cheat rc=2` where the rehearsal had measured `CHEAT_ANYWHERE:
+   found=1 cited=2 (set-matcher: pass=true)`).** The controls receipt
+   for the cheat family was first generated with a `$PWD/../../..`
+   relative path that resolved outside the workspace; the receipt would
+   have landed a failed run as if it were the control. The same slip
+   recurred on the first ledger-additivity attempt (the tool path
+   resolved relative to the scratch cwd, `rc=2` with the receipt
+   containing only the traceback). Fix: both regenerated — the cheat
+   run with the absolute scratch path, the additivity run from the lane
+   cwd — and the landed bytes carry the true runs (`controls/
+   cheat-anywhere-passes-red.txt`: found=1, cheat rc=0;
+   `additivity-ledger-r68.txt`: `raw_old_only=0 ... rc=0`). The mined
+   practice: receipt-generation commands take absolute paths or run
+   from a pinned cwd, and a receipt whose verdict contradicts its
+   rehearsal is read before it is landed, never shipped. Both were
+   caught pre-landing by reading what the command had actually
+   produced — the appendix discipline the r66 K1b slip class needs.
