@@ -4155,3 +4155,13 @@ receipts follow at the tip receipts commit); the mined fix is the round-70
 lesson's mistake 4 (repo-relative paths only, and verify the landing with
 diff-tree before writing the message). A future bind-erratum manifest row may
 pin the `22807192` pair as its standing red arm (the r69 erratum precedent).
+**Receipts-repair erratum 2 (appended at the second repair commit;
+measured, the recurrence disclosure).** The receipts-repair commit above
+repeated the mistake it disclosed: its 20 receipt paths were relative to
+the caller's working directory, not repo-relative, and were silently
+dropped again (`6e6cf2f7` carried only LOG.md, SCORECARD.md and the
+lesson; its message names the 20 receipts; the range sweep ending there
+reads findings=39 - 19 at `22807192` + 20 at `6e6cf2f7`). The receipts
+land in THIS commit, repo-relative, the landing verified by diff-tree
+before push; the standing findings are disclosed, permanent landed
+history; the mined fix is the round-70 lesson's mistake 5.

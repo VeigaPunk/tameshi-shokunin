@@ -384,3 +384,22 @@ Census exit 0 at both ends; registry rows 160 → 161 (S301).
    `git diff-tree -r --name-status` BEFORE the commit message is written -
    the carries-what-it-names check runs on the landed tree, not on the
    intended one; the round's own C2 instrument class caught the round.
+
+5. **The first repair commit repeated mistake 4 (class:
+   recurrence-cwd-relative-not-repo-relative; captured-by: the post-commit
+   diff-tree check reading only LOG.md, SCORECARD.md and this lesson at
+   `6e6cf2f7` - the mined practice of mistake 4 applied one word wrong:
+   "repo-relative" executed as "relative to wherever the shell stands").**
+   The 20 receipt paths were passed as `fleet/tameshi-shokunin/.ufo/...`
+   from the workspace root; the helper resolves against the repo root and
+   silently dropped them again, so `6e6cf2f7`'s message names 20 receipts
+   its tree does not carry (findings=39 over the range ending there: 19 at
+   `22807192` + 20 at `6e6cf2f7`). Fix: disclosed in the second LOG and
+   SCORECARD errata and this mistake (all landing with the second repair
+   commit), the receipts land THERE repo-relative - the exact form the
+   declaration and rekey commits used - and the standing findings are
+   permanent disclosed history with the pair `22807192` + `6e6cf2f7` named
+   as future bind-erratum manifest-row red arms. The mined practice, now
+   with two teeth: repo-relative means relative to the --repo root, never
+   to the shell's cwd; and the landing check (diff-tree) runs on EVERY
+   commit before push, because a dropped path is silent by construction.

@@ -3565,3 +3565,20 @@ exactly as designed). The tip sweeps and the LOG/SCORECARD additivity pair
 measured the pre-erratum bytes at the receipts commit `22807192` (the r67
 tip-count precedent); this erratum and the SCORECARD erratum stay within the
 pure-append discipline the additivity receipts certify.
+Round 70 receipts-repair erratum 2 (appended at the second repair commit,
+measured - the recurrence disclosure the r66 own-range precedent demands).
+The first repair commit `6e6cf2f7` repeated the mistake it disclosed: its 20
+receipt paths were passed relative to the caller's working directory, not
+repo-relative, and the helper silently dropped them again - `6e6cf2f7`
+carried only LOG.md, SCORECARD.md and the lesson while its message named the
+20 receipts, so the range sweep ending there reads findings=39 (19 at
+`22807192` + 20 at `6e6cf2f7`, every one names-unknown). The first erratum's
+sentence "the receipts land in this commit" is corrected by this one: they
+land in THIS commit, passed repo-relative (the form the declaration and
+rekey commits used successfully), and the landing is verified by diff-tree
+before push. The standing findings (39 over the round range) are permanent
+landed history, disclosed; a future bind-erratum manifest row may pin the
+pair `22807192` + `6e6cf2f7` as its standing red arms. The fix is mined as
+the round-70 lesson's mistake 5 (recurrence: cwd-relative is not
+repo-relative; the landing check runs on the landed tree, every commit,
+before push).
