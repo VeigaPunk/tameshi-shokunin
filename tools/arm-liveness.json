@@ -1,6 +1,6 @@
 {
  "schema": "tameshi-arm-liveness-v1",
- "note": "Round 66; adopts considerthese 2026-10-28 proposal 2 (counter-arm liveness check), scoped to the receipt-family instruments' red arms with real-history committed inputs. Scope flip: the remaining registry instruments' arms enter as successor rounds pin and verify their inputs; a dead row (exit 1) means a declared red arm can no longer fire on its committed input and blocks the record-discipline claim it supports. Instrument revisions are pinned at the round-65 tip 469cde0fbfc9862493caba35016d5d6f6af98894 so rows stay reproducible across later tool edits; the quoted-line row omits --extra-root on purpose (the r65 closure measured quote stats and exit identical without it).",
+ "note": "Round 66; adopts considerthese 2026-10-28 proposal 2 (counter-arm liveness check), scoped to the receipt-family instruments' red arms with real-history committed inputs. Scope flip: the remaining registry instruments' arms enter as successor rounds pin and verify their inputs; a dead row (exit 1) means a declared red arm can no longer fire on its committed input and blocks the record-discipline claim it supports. Instrument revisions are pinned at the round-65 tip 469cde0fbfc9862493caba35016d5d6f6af98894 so rows stay reproducible across later tool edits; the quoted-line row omits --extra-root on purpose (the r65 closure measured quote stats and exit identical without it). Round 67: the two declared successor rows enter (the scope flip above, executed) — the bind checker's erratum-range red arm (the r65 vacuous-pass case) and own-range red arm (the r66 self-caught erratum), pinned at the round-66 corrected bytes 5541abaff6ed2057c97e6c1243135b1da7f9ed6d per the schema rule (pin the revision you verified against, not tip). The no-harm guard's RED arm is NOT manifestable yet: the checker has no per-row scratch-dir slot for the precheck's required --work, so a row would litter the worktree or hard-code a host path (a successor checker change first; r67 lesson). The additivity counter has no real-history red input to pin — manufacturing one would be synthetic (r59 ruling).",
  "rows": [
   {
    "id": "bind-r64-red",
@@ -40,6 +40,32 @@
    "baseline": 0,
    "expect_exit": 1,
    "arm": "doc-sweep red (r66, new input): the r64 lesson at its own declaration commit 33cb4b0d cites evidence receipts that land only in later commits — records ahead of receipts, missing>=1 (exit 1)"
+  },
+  {
+   "id": "bind-erratum-range-red",
+   "instrument": "tools/receipt-commit-bind.py",
+   "instrument_rev": "5541abaff6ed2057c97e6c1243135b1da7f9ed6d",
+   "args": ["--repo", "{repo}",
+            "--base", "7d7f9ca8044239ef5e99a6b0e007d1a7ac671ac2",
+            "--tip", "87e955975ff6f4fcfcc953ed8fe93ea37804b1df"],
+   "tally": "findings",
+   "expect_min": 4,
+   "baseline": 0,
+   "expect_exit": 1,
+   "arm": "arm 1+3 red (r66, corrected bytes): the r65 empty-commit erratum range — its empty tip commit 87e95597 names four receipts its tree does not carry; the frozen scope read findings=0 (the vacuous pass) and the corrected checker must read findings>=4 exit 1 (committed receipt .ufo/evidence/round-67/win-host/bind-erratum-range-r67.txt; the empty tip is enumerated by rev-list — SOURCES S298)"
+  },
+  {
+   "id": "bind-own-range-red",
+   "instrument": "tools/receipt-commit-bind.py",
+   "instrument_rev": "5541abaff6ed2057c97e6c1243135b1da7f9ed6d",
+   "args": ["--repo", "{repo}",
+            "--base", "469cde0fbfc9862493caba35016d5d6f6af98894",
+            "--tip", "5d969f4edbb6611014ec30e133c4b243e4dbf47e"],
+   "tally": "findings",
+   "expect_min": 42,
+   "baseline": 0,
+   "expect_exit": 1,
+   "arm": "arm 1+3 red (r66, self-caught in-round): the r66 own-range erratum — correction attempt b60ecab3 names 21 rehearsal receipts its tree does not carry, 42 defects total, all at b60ecab3; the standing sweep must keep flagging them (committed receipt .ufo/evidence/round-67/win-host/bind-own-range-r67.txt; summary byte-identical to the r66 receipt live-bind-own-range.txt)"
   }
  ]
 }
