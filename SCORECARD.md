@@ -3663,3 +3663,31 @@ blob-identical base → tip; `git diff-tree -r --name-status 7362e15c
 tools/registry.json SHONEN.md tools/mutate-and-run.sh
 tools/coldread-precheck-portable.py` is empty and corpus/SOURCES.md is the
 only monitored file in the round's diffs, rekeyed).
+
+**R67-C1 tip-count erratum (appended at the tip receipts commit, measured,
+not re-scoped — the r66 own-range precedent).** The measured rows above
+pinned the tip-invariant forecast ("the same missing and skipped counts
+with the same absent 8 and 6"). Measured at the tip: the absent counts
+hold EXACTLY (LOG 8, SCORECARD 6); the missing counts do not hold raw —
+LOG 40 → 5, SCORECARD 10 → 0 — because this round's landed base-sweep
+receipts (`qline-red-log-base.txt`, `qline-red-scorecard-base.txt`)
+themselves quote the base MISSING lines, so the previously-missing quotes
+became byte-backed by the record of their own missingness (quotes of 72
+chars or less; the 5 remaining LOG missing are the >72-char truncation
+escapes). The substantive invariant HOLDS, measured: tip-missing ⊆
+base-missing and every quote added this round is backed (LOG 109 → 114
+quotes with 69 → 109 backed; SCORECARD 326 → 337 quotes with 316 → 337
+backed) — the round's own appends introduced zero unbacked quotes and
+zero absent path cites; the round-67 lesson sweeps clean (receipt
+`qline-green-round-67.txt`: 16 quotes, 16 backed, missing 0, exit 0).
+Tip receipts at this commit: `qline-tip-log.txt`, `qline-tip-scorecard.txt`,
+`additivity-logscorecard-r67.txt` (LOG and SCORECARD pairs raw_old_only=0,
+verbatim_prefix=true — pure appends), `tip-self-sweep-r67.txt`
+(`commits=5 evidence=44 named=23 carried=23 spans=1 bare=25 findings=0`
+exit 0 — every round-67 commit message names only file tokens its tree
+carries), `live-tip-guard-r67.out` (lost=0 ok, 64 → 64),
+`live-tip-guard-hist-r67.out` (lost=0 ok, 46 → 64),
+`live-tip-revmode-r67.out` (credited=64/64, probe 20/20),
+`census-end-r67.txt` (fleet root, exit 0), `census-end-lanetip-r67.txt`
+(the lane-tip-shaped fleet root, 158 rows, exit 0). Successor sweep work
+(lesson mistake 4): a self-referential-backing exclusion.

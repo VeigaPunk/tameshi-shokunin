@@ -311,3 +311,42 @@ named=4, carried=4).
 - Pre-existing tree oddity, observed not absorbed: the root-level `C:`
   tree. Out of scope again (live-lane tree surgery); recorded for the
   operator.
+
+
+## Mistake 4 and the tip-count erratum (appended at the tip receipts
+## commit, 2026-11-02 — measured, not re-scoped: the r66 own-range
+## precedent)
+
+4. **The C1 tip-invariant forecast was pinned as raw-count equality and
+   the mechanism it assumed was wrong (class:
+   receipt-set-growth-nonmonotone-invariant; captured-by: the tip sweeps
+   `qline-tip-log.txt` / `qline-tip-scorecard.txt` at the tip receipts
+   commit — LOG missing 40 → 5, SCORECARD missing 10 → 0 against the
+   pinned "UNCHANGED").** The forecast in the Claims section expected the
+   tip sweeps to read LOG `missing=40 skipped=40` with the same 8 absent
+   and SCORECARD `missing=10 skipped=178` with the same 6 absent,
+   UNCHANGED. Measured: the absent counts hold EXACTLY (8 and 6); the
+   missing counts do not hold raw. Evidence and mechanism: landing this
+   round's base-sweep receipts (`qline-red-log-base.txt`,
+   `qline-red-scorecard-base.txt`) put the base sweep's own QUOTE MISSING
+   lines — which print the missing quote bytes — into the tip sweep's
+   cited-receipt set, so the previously-missing quotes became byte-backed
+   by the record of their own missingness; the instrument's backing
+   relation is monotone in cited bytes, so a raw-count invariant over a
+   growing cited set is not stable. The tool's 72-char print truncation
+   is exactly why the 5 remaining LOG missing stay missing (all five
+   quotes exceed 72 chars, so their bytes never appear contiguously in
+   the base receipt). Fix, measured in this same commit: the
+   decomposition replaces the raw-count equality — tip-missing ⊆
+   base-missing (LOG 5 of the base 40, SCORECARD none) and every quote
+   added this round is backed (LOG 109 → 114 quotes with 69 → 109
+   backed; SCORECARD 326 → 337 with 316 → 337), so the claim's
+   substantive invariant (the round's own appends introduce zero
+   unbacked quotes and zero absent path cites) HOLDS, and the round-67
+   lesson sweeps clean (`qline-green-round-67.txt`: 16 quotes, 16 backed,
+   exit 0). The erratum is disclosed in the LOG and the SCORECARD next to
+   the pinned forecasts, never rewritten. Successor sweep work: a
+   self-referential-backing exclusion — a receipt that quotes a MISSING
+   line records a miss, it does not back the figure; under that exclusion
+   the raw-count invariant becomes measurable and this mistake becomes a
+   red-arm test for it.

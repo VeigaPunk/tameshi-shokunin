@@ -3304,3 +3304,30 @@ rekey `5f86b8e6`, receipts this commit, tip receipts the next (all
 pushed). Assimilation: none this round (considerthese 2026-10-28
 proposals 3–5 remain unadopted, at most one per round and none fits the
 routed work) — shokuknow unreachable.
+
+Round 67 tip-count erratum (appended at the tip receipts commit, measured —
+the entry above pinned the C1 tip-invariant forecast "the same missing and
+skipped counts with the same absent 8 and 6"; the tip sweeps measured the
+absent counts EXACTLY (LOG 8, SCORECARD 6, unchanged) and the missing
+counts NOT unchanged — LOG 40 → 5, SCORECARD 10 → 0 — and the forecast is
+reported as measured, not re-scoped, the r66 own-range precedent). The
+measured decomposition: tip-missing ⊆ base-missing (LOG 5 of the base 40;
+SCORECARD none) and every quote added this round is backed (LOG quotes 109
+→ 114 with backed 69 → 109; SCORECARD quotes 326 → 337 with backed 316 →
+337) — the substantive invariant the claim declares (the round's own
+appends introduce zero unbacked quotes and zero absent path cites) HOLDS,
+measured. The mechanism, disclosed: landing this round's base-sweep
+receipts (`qline-red-log-base.txt`, `qline-red-scorecard-base.txt`) put
+the base sweep's own QUOTE MISSING lines — which print the missing quote
+bytes — into the tip sweep's cited-receipt set, so the previously-missing
+quotes became byte-backed by the record of their own missingness; the
+tool's 72-char print truncation is exactly why the 5 remaining LOG
+missing stay missing (all five quotes exceed 72 chars). Receipts:
+`qline-tip-log.txt` (LOG quotes=114 backed=109 missing=5 skipped=40,
+absent 8), `qline-tip-scorecard.txt` (SCORECARD quotes=337 backed=337
+missing=0 skipped=189, absent 6), `qline-green-round-67.txt` (the
+round-67 lesson: quotes=16 backed=16 missing=0 skipped=1, exit 0).
+Successor instrument work (mined as lesson mistake 4): the sweep's
+backing relation needs a self-referential-backing exclusion — a receipt
+that quotes a MISSING line is the record of a miss, not backing for the
+figure; the raw-count invariant is only measurable under that exclusion.
