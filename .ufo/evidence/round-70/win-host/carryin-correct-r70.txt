@@ -1,0 +1,42 @@
+carry-in corrections of record, round 70 - every figure re-run at the revision it names
+(r69 closure routed defects 1 and 2; every command run as argv stages over the lane repo's
+git objects, no shell; exit codes named; grep -c prints the count and exits 1 on zero)
+
+## Defect 1: the r68-defect-1 correction narrative's number drift
+command A (unanchored, as printed in the r69 narrative):
+  git show <rev>:SCORECARD.md | grep -c 'figure-attribution check'
+  859a736d -> 0 (exit 1)
+  94b0fd7b -> 0 (exit 1)
+  434a96e4 -> 4 (exit 0)
+  ec6852f3 -> 4 (exit 0)
+  e39f9ba0 -> 4 (exit 0)
+  0c2573d7 -> 5 (exit 0)
+command B (anchored, the command of record):
+  git show <rev>:SCORECARD.md | grep -cE '^\| figure-attribution check'
+  859a736d -> 0 (exit 1)
+  434a96e4 -> 1 (exit 0)
+  0c2573d7 -> 1 (exit 0)
+command B as the standing count-recheck instrument runs it:
+  git grep -cE '^\| figure-attribution check' <rev> -- SCORECARD.md
+  859a736d -> no output -> count 0 (exit 1; empty stdout with exit 1 reads count 0)
+  434a96e4 -> 434a96e4:SCORECARD.md:1 (exit 0)
+measured: unanchored 4 at the r68-tip candidates (434a96e4 / ec6852f3 / e39f9ba0) but 0 at BOTH
+r67-tip candidates (859a736d 'round-67 verifier spot-check', the hash the paragraph cites, and
+94b0fd7b 'round 67 tip receipts'); the tip 0c2573d7 reads 5 (the r69 appends added an occurrence).
+Anchored: 0 at 859a736d -> 1 at 434a96e4 - the operative anchored measurement in the same
+sentence verifies exactly; only the 'reads 4 at both tips' clause drifts.
+
+## Defect 2: the two count nits
+receipt files ADDED at the r69 receipts commit 89869bea under .ufo/evidence/round-69/win-host/:
+  git diff-tree -r --diff-filter=A --name-only 89869bea (count of round-69/win-host paths) -> 19
+rehearsal receipt files at the r69 declaration 5eb09e84:
+  git ls-tree -r --name-only 5eb09e84 (count of rehearsal paths) -> 18
+  at the base 0c2573d7 (HEAD): -> 18
+measured: 19 files added at 89869bea (the r69 report printed 20); 18 rehearsal files at 5eb09e84
+and at the base (the report printed 19). Both figures corrected here; the report file itself is
+fleet-repo committed history and is not edited in place.
+
+correction of record placement: this receipt + the r70 corrections paragraph (SCORECARD, appended)
++ the LOG erratum (appended) + corpus/lessons/round-70.md (carry-in section). The stale figures
+stand as the count-recheck instrument's measured red arms (tools/count-recheck.json rows
+scorecard-r68corr-unanchored-r67tip and lesson-r69-unanchored-r67tip, both reading drift ok).

@@ -3479,3 +3479,31 @@ arm. The tip sweeps and the LOG/SCORECARD additivity pair measured the
 pre-erratum bytes at the receipts commit `89869bea` (the r67 tip-count
 precedent); the LOG and SCORECARD appends above and this erratum stay
 within the pure-append discipline the additivity receipts certify.
+Round 70 declared: C1 calibration - the printed-count recheck (capability
+acquisition; tools/count-recheck.py + tools/count-recheck.json, schema
+tameshi-count-recheck-v1: a record's printed counting figure must still be
+the count its named command produces at the revision the record names;
+counting command of record git grep -c, sourced on new row S301, fetched
+2026-11-02, extract
+`.ufo/evidence/round-70/win-host/sources/s301-git-grep.html`; the r69
+closure's routed number-drift figures are the standing red arms - both
+reading drift printed=4 measured=0), C2 operability - the two standing
+manifests grow with their named successor rows, checker blobs unchanged:
+arm-liveness 6 -> 7 (bind-r69-own-range-red, the r69 lesson mistake 5's
+named successor, findings >=2 exit 1 over 434a96e4..89869bea) and
+anchor-drift 4 -> 16 (the r69 next-round carry: S289/S294/S295/S296/S297/
+S298 snapshots, h1 + anchor-heading rows, headings extracted from the
+pinned bytes; blob sha256 cross-checked against each row's recorded digest).
+Carry-in from the r69 closure, all three status-neutral, addressed this
+round: the number-drift correction (SCORECARD corrections paragraph + LOG
+erratum at the receipts commit + lesson carry-in +
+carryin-correct-r70.txt, the receipt the r69 report cited by directory
+only) and the two count nits (19 files added at 89869bea, not 20; 18
+rehearsal receipts at 5eb09e84, not 19). Shared forecast: RED at the C1
+SOURCES work commit lost=13 cand_credited=51 (rehearsed at the r69 pair,
+reh-red-r70.out, decoded equal in order to the r68 AND r69 sets, miss = 0,
+reh-red-decode-r70.txt), paid by the r70-batch-1 rekey (ledger 771 -> 784),
+guards green at both floors + rev mode. Census start exit 0 (receipt
+census-start-r70.txt; the pre-existing 17 W04 + 1 W01 set). Receipts:
+`.ufo/evidence/round-70/win-host/`. Round-final shas: declaration this
+commit, work commits next (receipts follow).

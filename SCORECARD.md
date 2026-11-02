@@ -3984,3 +3984,75 @@ LOG/SCORECARD additivity pair measured the pre-erratum bytes at the
 receipts commit `89869bea` (the r67 tip-count precedent); the erratum
 appends above stay within the pure-append discipline the additivity
 receipts certify.
+## Round-70 corrections - the r69 closure's routed record defects (declared 2026-11-02, appended at the declaration commit; status-neutral, append-only: the stale figures above are preserved and stay flagged by the standing count-recheck sweep)
+
+1. **Number drift in the r68-defect-1 correction narrative** (r69 spot-check routed defect 1): the r68-corrections paragraph above and the round-69 lesson print the unanchored command `grep -c 'figure-attribution check'` as reading "4 at both the r67 tip and the r68 tip"; measured at the r70 declaration: 4 at the r68-tip candidates (`434a96e4`, `ec6852f3`, `e39f9ba0`) - correct - but 0 at both r67-tip candidates (`859a736d`, the hash the paragraph cites, and `94b0fd7b`), and 5 at the r70 base `0c2573d7` (the r69 appends added an occurrence); the operative anchored measurement in the same sentence (0 at `859a736d` -> 1 at `434a96e4`) verifies exactly. Correction of record: this paragraph, the LOG erratum, the round-70 lesson carry-in, and the receipt re-running every printed command at the revision it names (`.ufo/evidence/round-70/win-host/carryin-correct-r70.txt` - the specific re-run output the r69 report cited by directory only). The stale figures stand as the count-recheck instrument's measured red arms (rows `scorecard-r68corr-unanchored-r67tip` and `lesson-r69-unanchored-r67tip`, both reading drift ok on every sweep).
+2. **Two count nits** (r69 spot-check routed defect 2, the r69 report's landed-changes table): "20 receipt files" at the R1 receipts commit - 19 files were added at `89869bea` under `.ufo/evidence/round-69/win-host/` (diff-tree --diff-filter=A); "19 rehearsal receipts" - 18 files exist under `rehearsal/` at `5eb09e84` and at the base. Neither figure is claim-bearing; both corrected here and in the same receipt (the counting commands and outputs are in its Defect-2 section).
+
+## Planned - round 70 (declared 2026-11-02, frozen before data)
+
+The r69 closure (non-author verifier spot-check, `0c2573d7` = the commit
+that landed it) ADMITTED round 69 clean: no routed defects barred
+admission; three status-neutral record defects routed to this round and are
+corrected above and in the LOG. The round's claims, declared frozen:
+
+- **C1 (calibration, the lowest scored numeric axis at 8; capability
+  acquisition; sourced on new row S301, opened this round - Git git-grep
+  documentation; the r69 closure's routed printed-count class, executed).**
+  `tools/count-recheck.py` + `tools/count-recheck.json` (new; schema
+  `tameshi-count-recheck-v1`): a record's printed counting figure must
+  still be the count its named command produces at the revision the record
+  names - a manifest row pins (the record bytes at a revision, the exact
+  record span carrying the figure, the printed integer, the counting
+  command of record `git grep -c [-E] <pattern> <rev> -- <path>`, S301's
+  --count contract); the span binding requires the pinned span to be a
+  byte substring of the record and the printed integer to occur in the
+  span as a delimited token; zero matches print nothing and exit 1, read
+  as the count 0 (measured, disclosed - the page carries no exit-status
+  section); unresolvable records are setup exit 2 before any row effect; a
+  zero-row manifest is refused exit 2; an expect=drift row MEASURES the
+  drift on every sweep. Standing manifest: seven rows - the two
+  routed-defect red arms (printed 4, recount 0 at `859a736d`, expect
+  drift) and five green arms pinning the operative anchored figures beside
+  them. Selftest 6/6 hermetic (match-met, drift-met, mismatch-caught,
+  span-absent, unresolvable, vacuous-usage); rehearsal sweep rows=7 met=7
+  with both red arms reading drift ok.
+- **C2 (operability, verdict-only): the two standing manifests grow with
+  their named successor rows, checker blobs unchanged.** (i)
+  `tools/arm-liveness.json` 6 -> 7 rows: `bind-r69-own-range-red` - the
+  r69 lesson mistake 5's named successor - pins the bind checker at
+  `5541abaf` (blob byte-identical at the base, verified) over the r69 own
+  range `434a96e4..89869bea`, tally findings expect >=2 exit 1 (the rekey
+  commit `b59ca7fe` names `red-decode-r69.txt` and `reh-red-decode-r69.txt`
+  one commit before they land). (ii) `tools/anchor-drift-sweep.json` 4 ->
+  16 rows: the r69 lesson's next-round carry executed - every held row
+  with a committed win-host snapshot extract whose bytes verify (S289's
+  page via the r61 re-open extract, S294-S298; each blob sha256 re-computed
+  against its recorded digest, all six match), two rows each: the page h1
+  and the page's own section heading the anchor cell locates, extracted
+  from the pinned bytes, never recalled; the S299 red arm stays; the
+  anchor-drift and arm-liveness capability rows sync append-only.
+- Shared no-harm forecast: the SOURCES edit (one row + one tail note, the
+  r67/r68/r69 edit shape) is the round's only monitored-file change; the
+  live RED at the C1 SOURCES work commit is forecast at lost=13 with
+  cand_credited=51 - the SAME 13 headings as the r68 AND r69 measured sets
+  and this round's rehearsal (decoded comparison `reh-red-decode-r70.txt`:
+  equal in order to both, miss = 0), paid by the `r70-batch-1` rekey (13
+  fresh input-keyed entries; ledger 771 -> 784) restoring lost=0 ok exit 0
+  at both floors plus rev mode 64/64 probe 20/20 (receipts
+  `live-green-r70.out`, `live-green-hist-r70.out`, `live-revmode-r70.out`,
+  `rebind-stdout-r70.txt`, `count-selftest-r70.txt`,
+  `anchor-standings-r70.txt`).
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R70-C1 | `tools/count-recheck.py` + `tools/count-recheck.json` (new; schema `tameshi-count-recheck-v1`): a record's printed counting figure must still be the count its named command produces at the revision the record names; manifest rows pin (record at a revision, the exact span carrying the figure, the printed integer, the counting command of record `git grep -c [-E] <pattern> <rev> -- <path>`); span binding (span byte-substring of the record, printed integer a delimited token in the span); zero matches = no output + exit 1 = count 0 (measured, disclosed); unresolvable records setup exit 2 before any row effect, zero-row manifest refused exit 2; an expect=drift row MEASURES the drift on every sweep; standing manifest 7 rows - the two routed red arms (scorecard-r68corr-unanchored-r67tip, lesson-r69-unanchored-r67tip: printed 4, recount 0 at `859a736d`) and five green anchored arms beside them; selftest 6/6 hermetic; capability row enters the table; sourced on new row S301 (Git git-grep documentation), opened this round | axis move + capability (the r69 closure's routed printed-count class made standing; two new files + the SOURCES row only - no checker blob changes) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move is record-figure honesty: the printed-count drift class becomes a standing measured red arm instead of a closure finding) | at base `0c2573d7`: `git ls-tree 0c2573d7 tools/ | grep -c count-recheck` -> 0 (no instrument exists; the drift was caught by the non-author closure re-running the printed command, not by any standing check); the drift measurable pre-instrument: the unanchored recount reads 0 at `859a736d` where both records print 4 (receipt `carryin-correct-r70.txt`); S301 anchored grep 0; registry rows 160 | selftest `COUNT_RECHECK_SELFTEST: 6/6 pass` exit 0 (rehearsed pre-data, `reh-count-selftest.txt`; live receipt `count-selftest-r70.txt`); standing sweep `COUNT_RECHECK: rows=7 met=7 unexpected=0` exit 0 with both red arms reading expect=drift printed=4 measured=0 ok (rehearsed, `reh-count-standings.txt`; live receipt `count-standings-r70.txt`); manifest id-grep -> 7; S301 grep 0 -> 1; registry rows 160 -> 161; capability-row anchored grep 0 -> 1 | `python -I -X utf8 tools/count-recheck.py --selftest`; `python -I -X utf8 tools/count-recheck.py --repo . --manifest tools/count-recheck.json`; `grep -c '"id"' tools/count-recheck.json`; `git show <rev>:corpus/SOURCES.md | grep -cE '^\| S301 '`; `git show <rev>:SCORECARD.md | grep -cE '^\| printed-count recheck'` | the C1 work commits (SOURCES first - the RED is measured there; tool + manifest follow); receipts land in the following commit(s) |
+| R70-C2 | the two standing manifests grow with their named successor rows, checker blobs unchanged: (i) `tools/arm-liveness.json` 6 -> 7 rows - `bind-r69-own-range-red`, the r69 lesson mistake 5's named successor: the bind checker pinned at `5541abaf` (blob byte-identical at the base, verified) over the r69 own range `434a96e4..89869bea`, tally findings expect >=2 exit 1 (the rekey commit `b59ca7fe` names `red-decode-r69.txt` and `reh-red-decode-r69.txt` one commit before they land); (ii) `tools/anchor-drift-sweep.json` 4 -> 16 rows - the r69 lesson's next-round carry: every held row with a committed win-host snapshot extract whose bytes verify (S289's page via the r61 re-open extract, S294-S298; blob sha256 re-computed at the base against each row's recorded digest, all six match), two rows each (page h1 + the section heading the anchor cell locates, extracted from the pinned bytes, never recalled; S295's Generation definition resolves to the page's own "5.1.3 Generation" heading, disclosed); the S299 red arm stays; capability rows sync append-only | axis move (the r69 lesson's two named successor works, executed; manifest data only - no checker blob changes) | operability (verdict-only axis: both standing sweeps re-measure their grown row sets on every run; the freshness score is NOT touched - the r45 operator-priced boundary held) | at base `0c2573d7`: `grep -c '"id"' tools/arm-liveness.json` -> 6; `grep -c '"id"' tools/anchor-drift-sweep.json` -> 4; `grep -c bind-r69 tools/arm-liveness.json` -> 0; the r69-range sweep reads findings=2 (receipt `tip-self-sweep-r69.txt`; re-measured `reh-bind-r69-range.txt`: commits=6 evidence=58 named=26 carried=25 spans=3 bare=27 findings=2, exit 1) | `ARM_LIVENESS: rows=7 live=7 dead=0` exit 0 with `ARM_LIVE bind-r69-own-range-red tally=findings=2 exit=1` (rehearsed, `reh-arm-live-standings-r70.txt`; live receipt `arm-live-standings-r70.txt`; checker selftest unchanged 5/5, `arm-liveness-selftest-r70.txt`); `ANCHOR_DRIFT: rows=16 met=16 unexpected=0` exit 0 with the red row expect=absent measured=absent ok (rehearsed, `reh-anchor-standings-r70.txt`; live receipt `anchor-standings-r70.txt`); manifest id-greps 7 and 16; both capability rows synced append-only (r69-era figures stand at the r69 bytes; old -> new in the lesson) | `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json`; `python -I -X utf8 tools/anchor-drift-sweep.py --repo . --manifest tools/anchor-drift-sweep.json`; `grep -c '"id"' tools/anchor-drift-sweep.json` | the C2 work commit (both manifests); receipts land in the following commit(s) |
+
+The C1 SOURCES work commit carries only corpus/SOURCES.md; the C1 tool
+work commit carries the two new files; the C2 work commit carries the two
+manifests; neither claim needs the other (causally separable). Receipts
+land per the receipt-after-subject ordering; every commit message names
+only file tokens its tree carries; the round ends with a self-sweep of
+the round range (forecast: findings=0 exit 0) and a carries-what-it-names
+diff-tree check of the tip before push.
