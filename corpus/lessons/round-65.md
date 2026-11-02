@@ -282,3 +282,42 @@ lands as its own commit with its own demonstration.
   root-level `C:` tree (blob-sha identical from before r58; an old-host
   NTFS accident). Out of scope to remove this round (tree surgery on the
   live lane); recorded here so a future round or the operator can price it.
+
+
+## Mistakes 4 and 5 (appended at the receipts tip, 2026-11-01 — found by
+## inspection before closure; both fail-closed or disclosed, none silent)
+
+4. **The tip-receipts commit repeated the exact class C1 checks (class:
+   receipts-named-not-carried; captured-by: root-tree/diff inspection
+   before closure).** Evidence: K7 `87e955975ff6f4fcfcc953ed8fe93ea37804b1df`
+   ("round 65 tip receipts…") names live-tip-guard.txt,
+   live-tip-guard-hist.txt, live-bind-full-range.txt and
+   live-additivity-final.txt but is an EMPTY commit — `git diff-tree
+   5740805d 87e95597` prints nothing; the four receipt files were written
+   to the scratch and never copied into the lane worktree before the
+   commit, so treecommit saw every path missing-on-disk and changed
+   nothing. The r64 routed defect's shape, reproduced by the very round
+   that shipped the checker for it — and NOT caught by the frozen sweep,
+   which is mistake 5. Fix: this commit lands the four named receipt
+   bytes plus the sweep receipt; the run-book practice mined: the run-book
+   must END with a self-sweep AND a carries-what-it-names check of its own
+   tip commit — a commit that names receipts verifies with
+   `git diff-tree <parent> <commit>` before pushing.
+5. **The frozen sweep rule has a blind spot for names of paths that exist
+   nowhere in the range (class: candidates-scope-blind-spot; captured-by:
+   the K7 incident — the sweep over `7d7f9ca8..87e95597` reads
+   `named=0 findings=0` exit 0 because live-tip-guard.txt was never ADDED
+   in the range, so the naming check never fired; receipt
+   `.ufo/evidence/round-65/win-host/live-bind-erratum-sweep.txt` records
+   that vacuous pass).** Evidence: the frozen rule's candidates are paths
+   ADDED in the range; a commit naming an evidence path that exists
+   nowhere in the range produces `named=0` — the checker's own vacuous
+   pass on a genuinely defective range. Fix, routed to round 66 as the
+   checker's next arm (NOT landed post-data this round — the counter is
+   not edited after its demos ran): also extract full `.ufo/evidence/…`
+   and `tools/…` path spans from each commit message and require
+   `git cat-file -e <commit>:<path>` for each, so naming a path that
+   exists nowhere is itself the flagged defect. The frozen demonstrations
+   stand as measured (the r64-range red arm, where the named file WAS
+   range-added; the r65-range clean sweep); this erratum names their
+   scope.

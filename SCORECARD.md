@@ -3384,3 +3384,26 @@ SOURCES 155 → 156 (S296 mined, census-clean); additivity `raw_old_only=0` on
 every landed pair (`live-additivity-battery.txt`: SOURCES mid-file insertion
 `verbatim_prefix=false` disclosed, LOG/SCORECARD pure appends
 `verbatim_prefix=true`, ledger mid-file `verbatim_prefix=false` disclosed).
+## Erratum — round 65 K7 (2026-11-01; appended at the receipts tip)
+
+The tip-receipts commit `87e955975ff6f4fcfcc953ed8fe93ea37804b1df` repeated
+the routed r64 defect shape: its message names four receipt files
+(live-tip-guard.txt, live-tip-guard-hist.txt, live-bind-full-range.txt,
+live-additivity-final.txt) while the commit is EMPTY — the files were
+written to the scratch and never copied into the lane worktree before the
+commit (`git diff-tree 5740805d 87e95597` prints nothing). Found by
+inspection before closure, NOT by the frozen sweep: the sweep over
+`7d7f9ca8..87e95597` reads `findings=0` (receipt
+`live-bind-erratum-sweep.txt`) because the frozen rule's candidates are
+range-added paths and the named files exist nowhere in the range — the
+checker's own vacuous pass on a genuinely defective range (lesson mistake
+5, routed to round 66 as the checker's next arm; NOT landed post-data this
+round). Correction: this commit lands the four named receipt bytes plus
+that sweep receipt. The R65-C1/R65-C2 measured rows above are unchanged —
+their receipts all landed with the commits that name them (K0, K2, K3, K4,
+K5, K6), the frozen demonstrations stand as measured (the r64-range red
+arm, where the named file WAS range-added), and the no-harm guard receipts
+(K5/K6) remain valid because this commit is evidence-only (no monitored
+file changes base → tip: `git diff-tree 7d7f9ca8 <this commit> --
+PROVINCE.md SKILL.md README.md corpus/QUALITY.md corpus/SOURCES.md
+tools/registry.json` is empty).

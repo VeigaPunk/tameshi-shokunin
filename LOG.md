@@ -3120,3 +3120,22 @@ SCORECARD (base → rekey tip) and the ledger (`3fa08b2c` → `6db7e2fc`).
 Census exit 0 at round start (155 rows) and at the content-final working
 tree (156 rows; the S296 row census-clean; the S293 W04 stands as the
 standing rejection's marker).
+
+Round 65 erratum (appended at the receipts tip): the tip-receipts commit
+`87e95597` named four receipt files it did not carry (empty commit — the
+scratch files were never copied into the worktree before committing), the
+exact class this round's C1 instrument checks. Found by inspection, not
+by the frozen sweep: over `7d7f9ca8..87e95597` the sweep reads
+`findings=0` (its candidates are range-added paths and the named files
+exist nowhere in the range — receipt
+`.ufo/evidence/round-65/win-host/live-bind-erratum-sweep.txt`), which is
+lesson mistake 5, routed to round 66 as the checker's next arm (message-
+extracted full paths × `git cat-file -e`), not landed post-data this
+round. Correction landed here: the four named receipt bytes
+(live-tip-guard.txt, live-tip-guard-hist.txt, live-bind-full-range.txt,
+live-additivity-final.txt — tip guards `lost=0 ok` exit 0 at both floors
+at cand `5740805d`; the as-frozen sweep over `7d7f9ca8..5740805d`
+`findings=0` exit 0; final additivity LOG `raw_old_only=0` prefix=true,
+SCORECARD `raw_old_only=0` prefix=false, the disclosed capability-row
+mid-file insertion). Lesson mistakes 4–5 mined. This commit is
+evidence-only: no monitored file changes base → tip.
