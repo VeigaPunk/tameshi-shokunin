@@ -3392,3 +3392,31 @@ C2 `dcd10cc5`, rekey `f694df16`, receipts this commit, tip receipts the
 next (all pushed). Assimilation: considerthese 2026-10-28 proposal 1's
 semantic half adopted (the figure-attribution instrument, C1; its
 byte-backing half landed r65) — shokuknow unreachable.
+
+
+Round 69 declared (frozen pre-data, base `434a96e4`): C1 calibration —
+the quoted-line self-referential-backing exclusion (r67 lesson mistake
+4's named successor; backing scans drop each cited receipt's own
+QUOTE MISSING lines in both the doc sweep and the explicit mode; selftest
+5/5 rehearsed in `reh-qline-selftest.txt`; the rehearsal carrier diff
+shows totals byte-identical at both recorded tips with 46 false-carrier
+attributions re-pointed, `reh-qline-carrier-diff.txt`, and corrects the
+r67 erratum's carrier narrative by measurement), C2 operability — the
+anchor-drift sweep (capability acquisition; a held row's anchor heading
+must still be the heading its pinned snapshot carries; headings parsed
+via an html.parser.HTMLParser subclass, sourced on new row S300, fetched
+2026-11-02, extract
+`.ufo/evidence/round-69/win-host/sources/s300-htmlparser.html`; the S299
+anchor drift is the standing red arm, expect=absent measured=absent).
+Carry-in from the r68 closure, both status-neutral, addressed this
+round: the anchored capability-row counting command is the command of
+record (SCORECARD correction paragraph + LOG erratum), and the S299
+anchor drift is corrected in the lesson, the SOURCES round-69 note, and
+the sweep's measured red arm. Shared forecast: RED at the C2 SOURCES
+work commit lost=13 cand_credited=51 (rehearsed at the r67 pair,
+`reh-red-r69.out`, decoded equal in order to the r68 set, miss = 0,
+`reh-red-decode-r69.txt`), paid by the `r69-batch-1` rekey (ledger
+758 → 771), guards green at both floors + rev mode. Census start exit 0
+(receipt `census-start-r69.txt`; the pre-existing 17 W04 + 1 W01 set).
+Receipts: `.ufo/evidence/round-69/win-host/`. Round-final shas:
+declaration this commit, work commits next (receipts follow).

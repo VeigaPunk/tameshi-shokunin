@@ -3830,3 +3830,67 @@ invariant sweeps (`qline-tip-log.txt`, `qline-tip-scorecard.txt`,
 census end receipts (`census-end-r68.txt` at the fleet root, exit 0;
 `census-end-lanetip-r68.txt` at the lane-tip-shaped fleet root, 159
 rows).
+
+## Round-69 corrections — the r68 closure's two routed record defects (declared 2026-11-02, appended at the declaration commit; status-neutral, append-only: the stale cells above are preserved and stay flagged by the standing quoted-line sweep)
+
+1. **Capability-row counting command** (r68 spot-check routed defect 1): the R68-C1 counting command as printed — the unanchored `git show <rev>:SCORECARD.md | grep -c 'figure-attribution check'` — reads 4 at both the r67 tip and the r68 tip (the claim, verdict and plan rows carry the phrase), so it cannot measure the capability row's entry. The command of record is the anchored form `git show <rev>:SCORECARD.md | grep -cE '^\| figure-attribution check'` — measured 0 at the r67 tip `859a736d` → 1 at the r68 tip `434a96e4` (= this round's base; both re-measured at the r69 declaration). Every counting command this round prints is an anchored form; the r69 capability-row command below cites its anchored form.
+2. **S299 anchor naming drift** (r68 spot-check routed defect 2): the S299 anchor cell names the section "Directory deletion operations"; the page's — snapshot and live agree — section heading is "Directory and files operations". The correction of record: `corpus/lessons/round-69.md` (the carry-in section), the round-69 SOURCES tail note (the next note touching S299), and the anchor-drift sweep's standing manifest — the drift carried as a measured red arm (s299-anchor-as-written, expect=absent) beside the true heading (s299-anchor-as-on-page, expect=present) on the same pinned snapshot. Rows are append-only; the anchor cell is not edited in place.
+
+## Planned — round 69 (declared 2026-11-02, frozen before data)
+
+The r68 closure (non-author verifier spot-check, `434a96e4` = the commit
+that landed it) ADMITTED round 68 clean: no routed defects barred
+admission; two status-neutral record defects routed to this round and are
+corrected above and in the LOG. The round's claims, declared frozen:
+
+- **C1 (calibration, the lowest scored numeric axis at 8; the r67 lesson
+  mistake 4's named successor work — the self-referential-backing
+  exclusion, executed).** `tools/quoted-line-exists.py` v2: the backing
+  scans (doc sweep and explicit receipt/quote mode) remove each cited
+  receipt's miss-record lines — the checker's own QUOTE MISSING output
+  lines, which print the missing span bytes — before the substring test;
+  a receipt that quotes a verdict line inside its own miss record is the
+  record of a miss, not backing for the figure. Selftest 4/4 → 5/5
+  (arm 5 the selfref red: a quote carried ONLY by a miss-record line
+  reads MISSING exit 1 while its genuinely-carried sibling stays backed
+  — the exclusion is the thing under test). The rehearsal carrier diff
+  pins the mechanism: totals byte-identical at both recorded tips, 46
+  false-carrier attributions re-pointed, and the r67 erratum's
+  miss-record-carrier narrative corrected by measurement (no standing
+  quote was ever solely miss-record-backed).
+- **C2 (operability, verdict-only; capability acquisition; sourced on
+  new row S300, opened this round — Python html.parser documentation).**
+  `tools/anchor-drift-sweep.py` + `tools/anchor-drift-sweep.json` (new;
+  schema `tameshi-anchor-drift-v1`): a held row's anchor heading must
+  still be the heading the row's own pinned snapshot carries; an
+  expect=absent row MEASURES the drift on every sweep; fail-closed setup
+  exit 2, zero-row manifest refused exit 2; headings parsed through an
+  html.parser.HTMLParser subclass (S300). Standing manifest: four rows —
+  the r68 routed defect as the measured red arm (S299's cell heading vs
+  its own pinned snapshot, expect absent), the true heading green, the
+  page h1 green, and S300's own class heading green. Capability row
+  `anchor-drift sweep` enters the table.
+- Shared no-harm forecast: the SOURCES edit (one row + one tail note,
+  the r67/r68 edit shape) is the round's only monitored-file change; the
+  live RED at the C2 SOURCES work commit is forecast at lost=13 with
+  cand_credited=51 — the SAME 13 headings as the r68 measured set and
+  this round's rehearsal (decoded comparison `reh-red-decode-r69.txt`:
+  equal in order, miss = 0), paid by the `r69-batch-1` rekey (13 fresh
+  input-keyed entries; ledger 758 → 771) restoring lost=0 ok exit 0 at
+  both floors plus rev mode 64/64 probe 20/20 (receipts
+  `live-green-r69.out`, `live-green-hist-r69.out`, `live-revmode-r69.out`,
+  `rebind-stdout-r69.txt`, `qline-selftest-r69.txt`,
+  `anchor-selftest-r69.txt`).
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R69-C1 | `tools/quoted-line-exists.py` v2 — the self-referential-backing exclusion: backing scans remove each cited receipt's miss-record lines (the checker's own QUOTE MISSING output lines, which print the missing span bytes) before the substring test, in both the doc sweep and the explicit receipt/quote mode; a receipt that quotes a verdict line inside its own miss record is the record of a miss, not backing for the figure (r67 lesson mistake 4's named successor); selftest 4/4 → 5/5, arm 5 the selfref red (a quote carried ONLY by a miss-record line reads MISSING exit 1 while its genuinely-carried sibling stays backed); the rehearsal carrier diff measured the mechanism before the declaration: totals byte-identical at both recorded tips (missing 5/0; backed 114/346 and 109/338) with 46 first-backing-receipt attributions re-pointed (35 LOG + 11 SCORECARD at the r68 tip, the same at the r67 tip) — and the r67 erratum's miss-record-carrier narrative corrected by measurement: no standing quote was ever solely miss-record-backed, the movement rode non-miss-record carriers | axis move (closes the r67 lesson's named successor work; one checker blob only — no monitored file, no manifest change: measured, no real-history tally-moving input exists for a manifest row, and manufacturing one would be synthetic, the r59 ruling) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move is record-honesty: the checker no longer attributes backing to a receipt that merely records the quote's absence, and the standing backing set is audited against the class — zero verdicts move) | at base `434a96e4`: `git show 434a96e4:tools/quoted-line-exists.py \| grep -c MISS_RECORD_LINE` → 0 (no exclusion exists); selftest 4/4 at the frozen bytes (`qline-selftest-r68.txt`); at the frozen bytes the r68-tip LOG sweep names a miss-record-only carrier for 35 of its 114 backed quotes and the SCORECARD sweep for 11 of its 346 (receipts `reh-qline-log-old.txt`, `reh-qline-sc-old.txt`; the r67-tip pair the same, `reh-qline-log-old-r67.txt`, `reh-qline-sc-old-r67.txt`) | selftest `QUOTED_LINE_EXISTS_SELFTEST: 5/5 pass` exit 0 (rehearsed pre-data, `reh-qline-selftest.txt`; live receipt `qline-selftest-r69.txt`); the four standing pairs re-swept at the exclusion bytes: totals byte-identical, 46 carriers re-pointed (receipt `qline-carrier-r69.txt`, the live twin of `reh-qline-carrier-diff.txt`); standing tip sweeps LOG missing=5 / SCORECARD missing=0 at the r69 bytes (`qline-tip-log-r69.txt`, `qline-tip-scorecard-r69.txt`); capability-row sync note appended (r65 figures stand at the r65 bytes; old → new in the lesson) | `python -I -X utf8 tools/quoted-line-exists.py --selftest`; `python -I -X utf8 tools/quoted-line-exists.py --repo . --doc <rev>:LOG.md`; `git show <rev>:tools/quoted-line-exists.py \| grep -c MISS_RECORD_LINE` | the C1 work commit (checker only); receipts land in the following commit(s) |
+| R69-C2 | `tools/anchor-drift-sweep.py` + `tools/anchor-drift-sweep.json` (new; schema `tameshi-anchor-drift-v1`): a held row's anchor heading must still be the heading the row's own pinned snapshot carries — a manifest row pins (snapshot path at a revision, the exact heading string the anchor cell names, expect present or absent); the snapshot blob is read from git objects (never a worktree); h1-h6 texts parsed through an html.parser.HTMLParser subclass (S300: the handler contract on start tags, end tags, text and other markup; convert_charrefs decodes entities), whitespace-normalized with the trailing paragraph mark dropped; a row verifies only when measured presence matches expectation, so an expect=absent row MEASURES the drift on every sweep; unresolvable snapshots setup exit 2 before any row effect, zero-row manifest refused exit 2; standing manifest 4 rows — the r68 routed defect as the measured red arm (s299-anchor-as-written: the cell heading "Directory deletion operations" vs the row's own pinned r68 snapshot, expect absent), the true heading green (s299-anchor-as-on-page), the page h1 green (s299-page-h1), S300's class heading green (s300-class-heading, pinned at the declaration revision); capability row enters the table; sourced on new row S300 (Python html.parser documentation), opened this round | axis move + capability (the r68 closure's routed defect 2 becomes a standing measured red arm; two new files + the SOURCES row only — no checker blob changes) | operability (verdict-only axis: the new instrument runs on this host, its selftest passes, and the standing sweep re-measures the anchor-drift class — the freshness score is NOT touched: the r45 counter stays operator-priced future work, the r68 pricing stands) | at base `434a96e4`: `git ls-tree 434a96e4 tools/ \| grep -c anchor-drift` → 0 (no instrument; the drift was caught by the non-author closure reading the page, not by any standing check); the drift measurable pre-instrument: the cell's heading occurs 0 times in the pinned snapshot bytes, the page's heading occurs 3 times (grep -cF on the S299 snapshot); S300 anchored grep 0; registry rows 159 | selftest `ANCHOR_DRIFT_SELFTEST: 5/5 pass` exit 0 (rehearsed, `reh-anchor-selftest.txt`; live receipt `anchor-selftest-r69.txt`); standing sweep `ANCHOR_DRIFT: rows=4 met=4 unexpected=0` exit 0 with the red row expect=absent measured=absent ok (rehearsed 3 rows pre-data at the base revision, `reh-anchor-standings.txt`; live receipt `anchor-standings-r69.txt`); manifest id-grep → 4; S300 grep 0 → 1; registry rows 159 → 160; capability-row anchored grep 0 → 1 | `python -I -X utf8 tools/anchor-drift-sweep.py --selftest`; `python -I -X utf8 tools/anchor-drift-sweep.py --repo . --manifest tools/anchor-drift-sweep.json`; `grep -c '"id"' tools/anchor-drift-sweep.json`; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S300 '`; `git show <rev>:SCORECARD.md \| grep -cE '^\| anchor-drift sweep'` | the C2 work commits (SOURCES first — the RED is measured there; tool + manifest follow); receipts land in the following commit(s) |
+
+The C1 work commit carries only the checker; the C2 SOURCES work commit
+carries only corpus/SOURCES.md; the C2 tool work commit carries the two
+new files; neither claim needs the other (causally separable). Receipts
+land per the receipt-after-subject ordering; every commit message names
+only file tokens its tree carries; the round ends with a self-sweep of
+the round range (forecast: findings=0 exit 0) and a carries-what-it-names
+diff-tree check of the tip before push.
