@@ -1,0 +1,45 @@
+{
+ "schema": "tameshi-arm-liveness-v1",
+ "note": "Round 66; adopts considerthese 2026-10-28 proposal 2 (counter-arm liveness check), scoped to the receipt-family instruments' red arms with real-history committed inputs. Scope flip: the remaining registry instruments' arms enter as successor rounds pin and verify their inputs; a dead row (exit 1) means a declared red arm can no longer fire on its committed input and blocks the record-discipline claim it supports. Instrument revisions are pinned at the round-65 tip 469cde0fbfc9862493caba35016d5d6f6af98894 so rows stay reproducible across later tool edits; the quoted-line row omits --extra-root on purpose (the r65 closure measured quote stats and exit identical without it).",
+ "rows": [
+  {
+   "id": "bind-r64-red",
+   "instrument": "tools/receipt-commit-bind.py",
+   "instrument_rev": "469cde0fbfc9862493caba35016d5d6f6af98894",
+   "args": ["--repo", "{repo}",
+            "--base", "d0baf616bb8a9fc1be6394e370e0f30a952470af",
+            "--tip", "c7d28b19e5f984d55c972e9423cd0c75a130f596"],
+   "tally": "findings",
+   "expect_min": 1,
+   "baseline": 0,
+   "expect_exit": 1,
+   "arm": "arm 1 red (r65, frozen): the r64 range's empty commit 6876d746 names the tip-confirmation receipt the range adds only at its successor c7d28b19 — the sweep must flag it (findings>=1, exit 1; committed receipt .ufo/evidence/round-65/win-host/live-bind-r64-range.txt)"
+  },
+  {
+   "id": "quoted-demo-red",
+   "instrument": "tools/quoted-line-exists.py",
+   "instrument_rev": "469cde0fbfc9862493caba35016d5d6f6af98894",
+   "args": ["--repo", "{repo}",
+            "--doc", "6db7e2fcfee6d00ac6fc18445a52eed42db43054:corpus/lessons/round-64.md",
+            "--doc", "6db7e2fcfee6d00ac6fc18445a52eed42db43054:corpus/lessons/round-64-verifier-spotcheck.md"],
+   "tally": "missing",
+   "expect_min": 4,
+   "baseline": 0,
+   "expect_exit": 1,
+   "arm": "doc-sweep red (r65, frozen): the r64 records at the rekey tip carry quotes=16 with backed=12 missing=4 — the four unbacked quotes are named (exit 1; committed receipt .ufo/evidence/round-65/win-host/live-quoted-demo.txt)"
+  },
+  {
+   "id": "rexists-declare-red",
+   "instrument": "tools/receipt-exists.py",
+   "instrument_rev": "469cde0fbfc9862493caba35016d5d6f6af98894",
+   "args": ["--repo", "{repo}",
+            "--rev", "33cb4b0d627f1b06067bf002c256bc6da1eed962",
+            "--doc", "corpus/lessons/round-64.md"],
+   "tally": "missing",
+   "expect_min": 1,
+   "baseline": 0,
+   "expect_exit": 1,
+   "arm": "doc-sweep red (r66, new input): the r64 lesson at its own declaration commit 33cb4b0d cites evidence receipts that land only in later commits — records ahead of receipts, missing>=1 (exit 1)"
+  }
+ ]
+}
