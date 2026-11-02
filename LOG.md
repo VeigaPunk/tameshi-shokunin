@@ -3458,3 +3458,24 @@ this commit, tip receipts the next (all pushed). Assimilation: none
 this round (considerthese 2026-10-28 proposals 3–5 remain unadopted,
 at most one per round and none fits the routed work) — shokuknow
 unreachable.
+
+
+Round 69 self-sweep erratum (appended at the tip receipts commit, measured
+— the r66 own-range and r67 tip-count precedents: the forecast is reported
+as measured, never re-scoped). The receipts entry above pinned the tip
+self-sweep forecast findings zero exit 0; the sweep measured findings=2
+exit 1 (`tip-self-sweep-r69.txt`: commits=6 evidence=58 named=26
+carried=25) — the rekey commit `b59ca7fe` names `red-decode-r69.txt` and
+`reh-red-decode-r69.txt` in its message one commit before they land (the
+receipts commit carries them), violating the carries-what-it-names rule
+(r66: the correction attempt that named 21 receipts its tree did not
+carry, 42 findings, left standing and flagged). The defect is disclosed,
+not rewritten: the commit is landed history; the round's own standing
+sweep caught it pre-push exactly as designed, the fix is mined as the
+round-69 lesson's mistake 5 (receipts named in a commit message land in
+that commit, or the message names them only after they exist), and a
+future bind-erratum manifest row may pin the pair as its standing red
+arm. The tip sweeps and the LOG/SCORECARD additivity pair measured the
+pre-erratum bytes at the receipts commit `89869bea` (the r67 tip-count
+precedent); the LOG and SCORECARD appends above and this erratum stay
+within the pure-append discipline the additivity receipts certify.

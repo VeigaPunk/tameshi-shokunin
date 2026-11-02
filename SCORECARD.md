@@ -3969,3 +3969,18 @@ invariant sweeps (`qline-tip-log-r69.txt`, `qline-tip-scorecard-r69.txt`,
 (`tip-self-sweep-r69.txt` — forecast findings zero exit 0), and the
 census end receipts (`census-end-r69.txt` at the fleet root, exit 0;
 `census-end-lanetip-r69.txt` at the lane-tip shape, 160 rows).
+
+**Tip-self-sweep erratum (appended at the tip receipts commit; measured,
+the r66 own-range and r67 tip-count precedents).** The tip receipts
+paragraph above pinned the self-sweep forecast findings zero exit 0; the
+sweep measured findings=2 exit 1 (receipt `tip-self-sweep-r69.txt`:
+commits=6 evidence=58 named=26 carried=25): the rekey commit's message
+names two receipts its tree does not carry (`red-decode-r69.txt`,
+`reh-red-decode-r69.txt` — they land at the receipts commit). Disclosed,
+not rewritten; the mined fix is the round-69 lesson's mistake 5 (a
+commit message names only tokens its tree carries — receipts named in a
+message land with or before that commit). The tip sweeps and the
+LOG/SCORECARD additivity pair measured the pre-erratum bytes at the
+receipts commit `89869bea` (the r67 tip-count precedent); the erratum
+appends above stay within the pure-append discipline the additivity
+receipts certify.

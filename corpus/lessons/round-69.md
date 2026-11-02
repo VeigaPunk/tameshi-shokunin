@@ -386,3 +386,23 @@ section. Census exit 0 at both ends; registry rows 159 → 160 (S300).
   is landed (r66).
 - Pre-existing tree oddity, observed not absorbed: the root-level `C:`
   tree. Out of scope again; recorded for the operator.
+
+
+5. **The rekey commit's message named two receipts one commit before they
+   land (class: message-names-future-receipts; captured-by: the round's
+   own self-sweep reading findings=2 exit 1 against the pinned findings=0
+   forecast — receipt `tip-self-sweep-r69.txt`: commits=6 evidence=58
+   named=26 carried=25).** The rekey commit `b59ca7fe`'s message names
+   `red-decode-r69.txt` and `reh-red-decode-r69.txt` (the decoded RED
+   comparisons), which land at the receipts commit — the
+   carries-what-it-names rule (r66 lesson; the r66 correction attempt's
+   own-range defect is the same class at 42 findings, left standing and
+   flagged by the standing sweep). Fix: disclosed in the LOG and the
+   SCORECARD at the tip receipts commit (the r67 tip-count erratum
+   precedent — the forecast reported as measured, never re-scoped), the
+   landed history stays, and the round-66 manifest pattern names the
+   pair as successor manifest-row work. The mined practice: the
+   carries-what-it-names rule applies at EACH commit — a receipt named
+   in a commit message exists in that commit's tree, or the message does
+   not name it; receipts land with or before the commit that names them,
+   never after.
