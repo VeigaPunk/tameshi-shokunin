@@ -3582,3 +3582,55 @@ pair `22807192` + `6e6cf2f7` as its standing red arms. The fix is mined as
 the round-70 lesson's mistake 5 (recurrence: cwd-relative is not
 repo-relative; the landing check runs on the landed tree, every commit,
 before push).
+
+Round 71 declared: C1 calibration - the line-pointer recheck (capability
+acquisition; tools/pointer-recheck.py + tools/pointer-recheck.json, schema
+tameshi-pointer-recheck-v1: a record's cited line pointer must still point
+at the content the record claims at the revisions the record names; span
+engine of record git cat-file blob <rev>:<path> piped through sed -n
+'START,ENDp', sourced on new row S302 - the GNU sed manual, fetched
+2026-11-02, extract
+`.ufo/evidence/round-71/win-host/sources/s302-sed.html`, held-page grep
+ran before the fetch; adopts considerthese 2026-10-28 proposal 5, the one
+assimilation this round; the standing red arms are real routed history -
+the r48 closure's routed line-pointer defect (lesson cites
+`corpus/SOURCES.md:140`/`:141` for S267/S268; those lines hold S265/S266,
+the rows sit at 142/143; expect=miss, measured) and the PROVINCE r16
+append's `:85-91` (leg 7 `js-round-gate` sits at 94, the ten-leg ledger
+at 88-97; expect=miss, measured; the stale cell stands append-only, the
+correction of record is the round-71 lesson), five green arms beside them
+- all rows pinned at the base `4ed9ce1c` whose bytes were verified
+pre-declaration), C2 operability - the standing arm-liveness manifest
+grows with its named successor rows, checker blob unchanged:
+arm-liveness 7 -> 9 (bind-r70-receipts-red findings >=19 exit 1 over
+0c2573d7..22807192 and bind-r70-repair1-red findings >=39 exit 1 over
+0c2573d7..6e6cf2f7 - the r70 lesson mistakes 4-5's named successors and
+the r70 spot-check's suggested carry, both re-measured this round at the
+disclosed figures before any row was authored; instrument pinned at
+`5541abaf`, blob `c3e6a88e...` byte-identical at the base). Rehearsals
+frozen pre-data at the declaration commit: pointer-recheck selftest 7/7
+(`reh-pointer-selftest.txt`) + standing sweep rows=8 met=8 unexpected=0
+with all three red arms ok (`reh-pointer-standings-r71.txt`); arm-liveness
+selftest 5/5 + standing sweep rows=9 live=9 dead=0 with both new arms
+firing at 19 and 39 (`reh-arm-live-standings-r71.txt`,
+`reh-arm-liveness-selftest-r71.txt`); the RED rehearsal at the r70
+measured pair reads lost=13 RED exit 1 (floor `0c2573d7` 64 credited,
+cand `910a3c35` 51; `reh-red-r71.out`), the 13 LOST headings decoded
+byte-equal in order to the r70 and r69 live sets, miss = 0
+(`reh-red-decode-r71.txt`); sed engine probe GNU sed 4.9 argv-spawnable,
+out-of-range span prints nothing (`reh-sed-probe.txt`); base measurements
+receipted (`base-measure-r71.txt`); the round's new files verified absent
+from the r70 union plan's 7702 unique union paths, SOURCES.md present -
+rekeyed (`reh-union-check-r71.txt`); census exit 0 at round start
+(`census-start-r71.txt`, the pre-existing 17 W04 + 1 W01 set). Work
+commits to follow: C1 SOURCES (the RED is measured there), C1 tool, C2
+manifest; then the `r71-batch-1` rekey from the committed r67 as-run bytes
+(constants-only diff `make-rebind-r71.diff`, 7 changed pairs, disclosed),
+forecast REBIND OK sections=13 entries_added=13 ledger_before=784,
+ledger 784 -> 797, greens at both floors + rev; receipts land per the
+receipt-after-subject ordering with repo-relative treecommit paths and
+diff-tree landing checks before every next stage (the r70 lesson
+mistakes 4-5 applied). L0 line appended (the r70 spot-check's routed
+L2-minimum prompt item; the r60 question stands; L1-only round,
+disclosed). Assimilation: considerthese 2026-10-28 proposal 5
+(stale-closure-pointer sweep) adopted as C1 - shokuknow unreachable.

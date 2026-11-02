@@ -1,0 +1,11 @@
+sed spawn probe under python subprocess argv (no shell), pre-declaration
+cmd: sed --version
+out: sed (GNU sed) 4.9  exit=0
+cmd: printf 'one
+ two-ish
+three
+' | sed -n '2,3p'   (argv stages, no shell)
+out: 'two-ish\nthree'  exit=0
+cmd: sed -n '9,12p' over a 3-line blob (out-of-range span)
+out: <empty stdout len=0>  exit=0  (measured: prints nothing, reads as a miss)
+exit=0

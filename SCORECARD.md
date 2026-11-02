@@ -4165,3 +4165,80 @@ reads findings=39 - 19 at `22807192` + 20 at `6e6cf2f7`). The receipts
 land in THIS commit, repo-relative, the landing verified by diff-tree
 before push; the standing findings are disclosed, permanent landed
 history; the mined fix is the round-70 lesson's mistake 5.
+## Planned - round 71 (declared 2026-11-02, frozen before data)
+
+The r70 closure (non-author verifier spot-check, `4ed9ce1c` = the commit
+that landed it) ADMITTED round 70 clean: no routed defects barred
+admission; three items carried - two operator-side (the SHONEN
+promotion-review note; the L2-minimum prompt item, an L0 line appended
+this round) and one lane carry executed this round as C2 (the
+bind-erratum manifest rows the spot-check called "a reasonable
+next-round carry"). The round's claims, declared frozen:
+
+- **C1 (calibration, the lowest scored numeric axis at 8; capability
+  acquisition; sourced on new row S302, opened this round - the GNU sed
+  manual; adopts considerthese 2026-10-28 proposal 5, the one
+  assimilation this round).**
+  `tools/pointer-recheck.py` + `tools/pointer-recheck.json` (new; schema
+  `tameshi-pointer-recheck-v1`): a record's cited line pointer must still
+  point at the content the record claims at the revisions the record
+  names - a manifest row pins (the record bytes at a revision, the exact
+  cited pointer token as it occurs in the record, the target path at a
+  revision, the 1-indexed inclusive line span, the needle - the content
+  the record claims the span carries); the span engine of record
+  `git cat-file blob <rev>:<path> | sed -n 'START,ENDp'` (S302's
+  inclusive address-range contract), argv stages only, sed load-bearing
+  (not spawnable = setup exit 2, never a silent fallback); span read from
+  git objects, never a worktree; a span past the last line prints nothing
+  (measured) and reads as a miss; needles match as UTF-8 bytes, mid-line
+  needles terminator-agnostic (selftest arm 5 measures CRLF); the pointer
+  binding requires the token in the record bytes, else the row is an
+  ERROR (the always-match cheat refused by construction);
+  expect=hit|miss rows so a standing red arm MEASURES the drift on every
+  sweep; unresolvable records/targets setup exit 2 before any row
+  effect; zero-row manifest refused exit 2. Standing manifest: eight
+  rows pinned at the base `4ed9ce1c` whose bytes were verified
+  pre-declaration - the two r48 red arms (the closure-routed
+  line-pointer defect: `corpus/SOURCES.md:140`/`:141` cited for
+  S267/S268; those lines hold S265/S266, the rows sit at 142/143), the
+  PROVINCE r16 red arm (`:85-91`; leg 7 `js-round-gate` sits at 94 - the
+  ten-leg ledger at 88-97; the stale cell stands append-only, the
+  correction of record is the round-71 lesson), and five green arms
+  beside them (the r48 erratum's corrected pointers 142/143, the
+  spotcheck's `142-143`, the verdict-table's `SCORECARD.md:13-14` and
+  `LOG.md:68`). Selftest 7/7 hermetic.
+- **C2 (operability, verdict-only): the standing arm-liveness manifest
+  grows with its named successor rows, checker blob unchanged.**
+  `tools/arm-liveness.json` 7 -> 9 rows: `bind-r70-receipts-red` - the
+  r70 lesson mistake 4's named successor and the r70 spot-check's
+  suggested carry - pins the bind checker at `5541abaf` (blob
+  byte-identical at the base, `c3e6a88e...`, verified) over the r70
+  range `0c2573d7..22807192`, tally findings expect >=19 exit 1; and
+  `bind-r70-repair1-red` - the r70 lesson mistake 5's named successor
+  (the recurrence) - over `0c2573d7..6e6cf2f7`, tally findings expect
+  >=39 exit 1; the arm-liveness capability row syncs append-only.
+- Shared no-harm forecast: the SOURCES edit (one row + one tail note,
+  the r67/r68/r69/r70 edit shape) is the round's only monitored-file
+  change; the live RED at the C1 SOURCES work commit is forecast at
+  lost=13 with cand_credited=51 - the SAME 13 headings as the r68, r69
+  AND r70 measured sets and this round's rehearsal (decoded comparison
+  `reh-red-decode-r71.txt`: equal in order to both reference sets, miss
+  = 0), paid by the `r71-batch-1` rekey (13 fresh input-keyed entries;
+  ledger 784 -> 797) restoring lost=0 ok exit 0 at BOTH floors plus rev
+  mode 64/64 probe 20/20 (receipts `live-green-r71.out`,
+  `live-green-hist-r71.out`, `live-revmode-r71.out`,
+  `rebind-stdout-r71.txt`, `pointer-selftest-r71.txt`,
+  `arm-live-standings-r71.txt`).
+
+| # | Claim | The move | Axis / claim type | Before | After (expected) | Counting command | Measured commit |
+|---|---|---|---|---|---|---|---|
+| R71-C1 | `tools/pointer-recheck.py` + `tools/pointer-recheck.json` (new; schema `tameshi-pointer-recheck-v1`): a record's cited line pointer must still point at the content the record claims at the revisions the record names; rows pin (record at a revision, exact pointer token, target at a revision, 1-indexed inclusive span, needle); span engine of record `git cat-file blob <rev>:<path> | sed -n 'START,ENDp'` (S302), argv stages only, sed load-bearing (not spawnable = setup exit 2); span past last line reads as a miss (measured); UTF-8 needle bytes, mid-line needles terminator-agnostic (CRLF arm measured); pointer binding (token must occur in the record bytes, else ERROR - always-match refused by construction); expect hit/miss so the standing red arm MEASURES the drift every sweep; setup exit 2 before any row effect, zero-row manifest refused exit 2; standing manifest 8 rows - the two r48 red arms + the PROVINCE r16 red arm (expect=miss, measured) and five green arms beside them; selftest 7/7 hermetic; capability row enters the table; sourced on new row S302 (GNU sed manual), opened this round; adopts considerthese 2026-10-28 proposal 5 | axis move + capability (the stale-line-pointer class - r48 closure-routed, proposal-5-named - made standing; two new files + the SOURCES row only - no checker blob changes) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move is record-pointer honesty: the stale-line-pointer class becomes a standing measured red arm instead of a spot-check finding) | at base `4ed9ce1c`: `git ls-tree 4ed9ce1c tools/ | grep -c pointer-recheck` -> 0 (no instrument exists; the r48 defect was caught by the non-author spot-check, and the PROVINCE `:85-91` drift was measured by no standing check); the drift measurable pre-instrument: the 85-91 span holds no `js-round-gate` line (grep -> 0) while line 94 does, line 140 holds no S267 row marker (grep -> 0) while 142 does (receipt `base-measure-r71.txt`); S302 anchored grep 0; registry rows 161 | selftest `POINTER_RECHECK_SELFTEST: 7/7 pass` exit 0 (rehearsed pre-data, `reh-pointer-selftest.txt`; live receipt `pointer-selftest-r71.txt`); standing sweep `POINTER_RECHECK: rows=8 met=8 unexpected=0` exit 0 with all three red arms reading expect=miss measured=miss ok (rehearsed, `reh-pointer-standings-r71.txt`; live receipt `pointer-standings-r71.txt`); manifest id-grep -> 8; S302 grep 0 -> 1; registry rows 161 -> 162; capability-row anchored grep 0 -> 1 | `python -I -X utf8 tools/pointer-recheck.py --selftest`; `python -I -X utf8 tools/pointer-recheck.py --repo . --manifest tools/pointer-recheck.json`; `grep -c '"id"' tools/pointer-recheck.json`; `git show <rev>:corpus/SOURCES.md | grep -cE '^\| S302 '`; `git show <rev>:SCORECARD.md | grep -cE '^\| line-pointer recheck'` | the C1 work commits (SOURCES first - the RED is measured there; tool + manifest follow); receipts land in the following commit(s) |
+| R71-C2 | the standing arm-liveness manifest grows with its named successor rows, checker blob unchanged: `tools/arm-liveness.json` 7 -> 9 rows - `bind-r70-receipts-red` (the r70 lesson mistake 4's named successor and the r70 spot-check's suggested carry): the bind checker pinned at `5541abaf` (blob byte-identical at the base `c3e6a88e...`, verified) over the r70 range `0c2573d7..22807192`, tally findings expect >=19 exit 1 (the receipts commit names 19 receipt files its tree does not carry - the helper silently dropped absolute paths); `bind-r70-repair1-red` (the r70 lesson mistake 5's named successor, the recurrence): over `0c2573d7..6e6cf2f7`, tally findings expect >=39 exit 1 (the first repair repeated the mistake cwd-relative, 20 more dropped); the arm-liveness capability row syncs append-only (old -> new in the lesson) | axis move (the r70 lesson mistakes 4-5's named successors, executed; manifest data only - no checker blob changes) | operability (verdict-only axis: the standing sweep re-measures its grown row set on every run; the freshness score is NOT touched - the r45 operator-priced boundary held) | at base `4ed9ce1c`: `git show 4ed9ce1c:tools/arm-liveness.json | grep -c '"id"'` -> 7; `git show 4ed9ce1c:tools/arm-liveness.json | grep -c bind-r70` -> 0; both range sweeps re-measured at their disclosed figures (`reh-bind-r70-receipts-range.txt` findings=19 exit 1; `reh-bind-r70-repair1-range.txt` findings=39 exit 1 - the r70 errata's numbers) | `ARM_LIVENESS: rows=9 live=9 dead=0` exit 0 with `ARM_LIVE bind-r70-receipts-red tally=findings=19 exit=1` and `ARM_LIVE bind-r70-repair1-red tally=findings=39 exit=1` (rehearsed, `reh-arm-live-standings-r71.txt`; live receipt `arm-live-standings-r71.txt`; checker selftest unchanged 5/5, `arm-liveness-selftest-r71.txt`); manifest id-grep -> 9; capability row synced append-only (r70-era figures stand at the r70 bytes; old -> new in the lesson) | `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json` | the C2 work commit (the manifest); receipts land in the following commit(s) |
+
+The C1 SOURCES work commit carries only corpus/SOURCES.md; the C1 tool
+work commit carries the two new files; the C2 work commit carries the one
+manifest; neither claim needs the other (causally separable). Receipts
+land per the receipt-after-subject ordering; every commit message names
+only file tokens its tree carries; the round ends with a self-sweep of
+the round range (forecast: findings=0 exit 0) and a carries-what-it-names
+diff-tree check of the tip before push.
