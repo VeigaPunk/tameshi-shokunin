@@ -3547,3 +3547,21 @@ declaration `b7f6f162`, C1 SOURCES `910a3c35`, C1 tool `3af968fa`, C2
 proposals 3-5 remain unadopted, at most one per round and none fits the
 routed work; the count-recheck instrument is the closure-routed
 printed-count class, not a listed proposal) - shokuknow unreachable.
+Round 70 self-sweep erratum (appended at the receipts-repair commit, measured
+- the r66 own-range, r67 tip-count and r69 findings=2 precedents: the forecast
+is reported as measured, never re-scoped). The receipts entry above landed the
+round receipts at commit `22807192` with its message naming 19 receipt files
+its tree does not carry: the treecommit helper takes repo-relative paths, and
+the 20 receipt paths were passed absolute, so the helper silently dropped them
+and the commit carried only LOG.md and SCORECARD.md - the round-range self-sweep
+reads commits=6 evidence=32 named=14 carried=14 spans=4 bare=37 findings=19
+exit 1, all 19 names-unknown defects at `22807192` (receipt `tip-self-sweep-r70.txt`,
+landing at the tip receipts commit). The defect is disclosed, not rewritten: the
+commit is landed history; the receipts land in this commit (receipt-after-subject
+ordering, enforced late); the fix is mined as the round-70 lesson's mistake 4
+(repo-relative paths only, and verify the landing with diff-tree BEFORE the
+message is written - the round's own standing sweep class caught it pre-push
+exactly as designed). The tip sweeps and the LOG/SCORECARD additivity pair
+measured the pre-erratum bytes at the receipts commit `22807192` (the r67
+tip-count precedent); this erratum and the SCORECARD erratum stay within the
+pure-append discipline the additivity receipts certify.

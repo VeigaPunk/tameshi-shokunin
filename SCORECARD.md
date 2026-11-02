@@ -4141,3 +4141,17 @@ invariant sweeps (`qline-tip-log-r70.txt`, `qline-tip-scorecard-r70.txt`,
 (`tip-self-sweep-r70.txt` - forecast findings zero exit 0), and the census
 end receipts (`census-end-r70.txt` at the fleet root, exit 0;
 `census-end-lanetip-r70.txt` at the lane-tip shape, 161 rows).
+**Tip-self-sweep erratum (appended at the receipts-repair commit; measured,
+the r66 own-range and r67 tip-count precedents).** The tip receipts paragraph
+above pinned the self-sweep forecast findings zero exit 0; the sweep measured
+findings=19 exit 1 (commits=6 evidence=32 named=14 carried=14 spans=4 bare=37
+findings=19, all at `22807192`): the receipts commit's message names 19
+receipts its tree does not carry - the 20 receipt paths were passed to the
+plumbing helper as absolute paths, which it silently drops (it takes
+repo-relative paths only), so `22807192` carried only LOG.md and
+SCORECARD.md. Disclosed, not rewritten; the receipts land in the
+receipts-repair commit with this erratum (the guards, sweeps and census
+receipts follow at the tip receipts commit); the mined fix is the round-70
+lesson's mistake 4 (repo-relative paths only, and verify the landing with
+diff-tree before writing the message). A future bind-erratum manifest row may
+pin the `22807192` pair as its standing red arm (the r69 erratum precedent).

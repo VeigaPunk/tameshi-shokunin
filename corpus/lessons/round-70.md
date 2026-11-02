@@ -364,3 +364,23 @@ Census exit 0 at both ends; registry rows 160 → 161 (S301).
   are fully landed (r65/r68, r66).
 - Pre-existing tree oddity, observed not absorbed: the root-level `C:`
   tree. Out of scope again; recorded for the operator.
+
+4. **The plumbing helper silently drops absolute paths (class:
+   absolute-paths-dropped-by-helper; captured-by: the round's own self-sweep
+   reading findings=19 exit 1 against the pinned findings=0 forecast - the
+   sweep reads commits=6 evidence=32 named=14 carried=14 spans=4 bare=37
+   findings=19, all names-unknown at the receipts commit `22807192`).** The
+   receipts commit's message named 19 receipt files its tree does not carry:
+   the 20 receipt paths were passed to treecommit as absolute paths; the
+   helper commits repo-relative paths and silently ignored the rest, so
+   `22807192` carried only LOG.md and SCORECARD.md while its message named
+   the receipts. Fix: disclosed in the LOG and the SCORECARD errata and this
+   mistake (all landing with the receipts-repair commit - the r66/r67/r69
+   erratum precedents: the forecast reported as measured, never re-scoped),
+   the receipts land with that commit, the landed history stays, and a
+   future bind-erratum manifest row may pin the `22807192` pair as its
+   standing red arm (the r69 mistake-5 pattern). The mined practice: pass
+   repo-relative paths ONLY, and verify the landing with
+   `git diff-tree -r --name-status` BEFORE the commit message is written -
+   the carries-what-it-names check runs on the landed tree, not on the
+   intended one; the round's own C2 instrument class caught the round.
