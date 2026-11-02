@@ -82,7 +82,7 @@ a vacuous pass is refused, an always-pass cheat has no input).
 
 Selftest: `--selftest` builds a throwaway fixture repository under TMPDIR
 with git plumbing only (hash-object / mktree / commit-tree / update-ref;
-the index is never touched) and checks six arms:
+the index is never touched) and checks seven arms:
   1. red/discrimination — an empty commit whose message names a receipt that
      a LATER commit carries (the 6876d746 shape) yields exactly that one
      BIND_DEFECT and exit 1 (arm 1);
@@ -98,7 +98,10 @@ the index is never touched) and checks six arms:
      blind spot, now closed);
   6. red/span-absent — an empty commit whose message names the full span
      `.ufo/evidence/win-host/tip-guard.txt` while nothing exists there yields
-     the names-span BIND_DEFECT and exit 1 (arm 2).
+     the names-span BIND_DEFECT and exit 1 (arm 2);
+  7. green/suffix-collision — a commit carrying `reh-bar-receipt.txt` and
+     naming it is NOT flagged for the distinct `bar-receipt.txt` (the
+     delimited-only name rule, mistake 5's class).
 Arms 1, 5 and 6 are the cheat-family discriminators: an always-pass cheat
 fails them, and the real-history sweeps recorded in the round receipts
 (r64 range, r65 pre-correction range) are the non-synthetic red arms.
@@ -152,10 +155,11 @@ def name_tokens(path):
 
 
 def message_names(message, token):
-    if token in message:
-        return True
-    if len(token) < MIN_TOKEN:
-        return False
+    # round 66 name rule v2: the token must appear DELIMITED (the characters
+    # immediately before and after are outside [A-Za-z0-9-]); a bare
+    # substring match is refused - "reh-rekey-manifest.json" in a message
+    # does not name the distinct range-added "rekey-manifest.json" (the
+    # suffix-collision class, mined as this round's mistake 5).
     return re.search(r"(?<![A-Za-z0-9-])" + re.escape(token) +
                      r"(?![A-Za-z0-9-])", message) is not None
 
@@ -323,7 +327,7 @@ def build_fixture(d):
 
 def selftest(out=sys.stdout):
     ok = 0
-    total = 6
+    total = 7
     import io
     d = tempfile.mkdtemp(prefix="rcbind-selftest-")
     try:
@@ -440,6 +444,33 @@ def selftest(out=sys.stdout):
         else:
             out.write("SELFTEST_ARM6 span-absent-red: FAIL rc=%r\n%s\n"
                       % (rc, t6_))
+        # arm 7: green/suffix-collision - a commit carrying
+        # .ufo/evidence/win-host/reh-bar-receipt.txt and naming it must NOT
+        # be flagged for the distinct bar-receipt.txt whose basename is a
+        # suffix of the carried one (mistake 5's class).
+        b5 = run(fx2, "hash-object", "-w", "--stdin",
+                 inp="prefixed receipt\n", binary=False).strip()
+        leaf5 = run(fx2, "mktree",
+                    inp="100644 blob %s\treh-bar-receipt.txt\n" % b5).strip()
+        ev5 = run(fx2, "mktree",
+                  inp="040000 tree %s\twin-host\n" % leaf5).strip()
+        evr5 = run(fx2, "mktree", inp="040000 tree %s\tevidence\n" % ev5).strip()
+        t5t = run(fx2, "mktree",
+                  inp="100644 blob %s\tseed.txt\n040000 tree %s\t.ufo\n"
+                      % (seed, evr5)).strip()
+        r = subprocess.run(["git", "-C", fx2, "commit-tree", t5t, "-p", c6,
+                            "-m", "reh-bar-receipt.txt appended and carried"],
+                           capture_output=True, env=_env(), input=b"x")
+        c7 = r.stdout.decode().strip()
+        buf = io.StringIO()
+        rc = sweep(fx2, c6, c7, out=buf)
+        t7_ = buf.getvalue()
+        if rc == 0 and "findings=0" in t7_ and "carries" in t7_:
+            ok += 1
+            out.write("SELFTEST_ARM7 suffix-collision-green: PASS\n")
+        else:
+            out.write("SELFTEST_ARM7 suffix-collision-green: FAIL rc=%r\n%s\n"
+                      % (rc, t7_))
     finally:
         import shutil
         shutil.rmtree(d, ignore_errors=True)

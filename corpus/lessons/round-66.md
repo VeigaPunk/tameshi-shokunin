@@ -296,3 +296,36 @@ the pre-round tip). Each lands as its own commit with its own demonstration.
    tokens — the record-discipline rule it checks is basename-naming, not
    prose description), and the record-level duty is met by this
    correction landing the described bytes.
+
+
+## Mistake 5 and the name-rule correction (appended before the receipts
+## commit, 2026-11-01 — found by the round's own sweep, fixed with its own
+## red/green and re-run receipts)
+
+5. **The frozen name rule's bare substring match fires on suffix
+   collisions (class: substring-name-suffix-collision; captured-by: the
+   round's own `469cde0f..5d969f4e` sweep, which read `findings=50` where
+   the genuine defect count is 42).** Evidence: K1c `d5ab10ff` carries
+   `reh-rekey-manifest.json` (and names it), while K4 adds the DISTINCT
+   file `rekey-manifest.json` — under the frozen rule (`if token in
+   message`) the carried file's name contains the candidate basename, so
+   K1c (and K1b) were flagged for "naming" `rekey-manifest.json`,
+   `rekey-summary.json`, `make-rebind-r66.diff` and `union-plan.json` —
+   four false findings at K1c and four at K1b, on top of the 42 genuine
+   K1b defects. Fix (the checker blob's second and final change this
+   round, receipted): name rule v2 — a token must appear DELIMITED
+   (characters immediately before/after outside [A-Za-z0-9-]); the bare
+   substring match is refused. Selftest 6/6 → 7/7 (new arm 7:
+   suffix-collision green — a commit carrying `reh-bar-receipt.txt` and
+   naming it is not flagged for `bar-receipt.txt`). Every sweep receipt
+   was re-run at the corrected bytes: the frozen-tool vacuous pass, the
+   `87e95597` range (findings=4), the r64 range (findings=1), the r65
+   clean range (findings=0) and the full r65 range (findings=8) are
+   byte-identical in their counts to the pre-correction runs — the
+   declared forecasts never relied on the substring path — and the
+   own-range sweep now reads exactly the 42 genuine K1b defects with
+   zero false findings. The practice mined: a name rule that accepts
+   substrings turns a carried file into a false witness against its
+   suffix-sibling; delimited matching is the rule the r65 lesson's
+   "delimited-token match" phrase already implied, and the round's own
+   history exercised it.
