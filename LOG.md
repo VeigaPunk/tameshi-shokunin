@@ -3073,3 +3073,50 @@ live work commit reproduces). Fresh-start duty re-performed (r58/r59/r60
 re-read; premise stale, r61–r64 admitted; ruled-out list in the lesson).
 Lesson round-65 landed (carry-in, fresh-start, claims, gate; 3 mistakes
 mined from the rehearsal, all fail-closed or pre-landing).
+
+Round 65 measured: C1 verifies — `RECEIPT_COMMIT_BIND_SELFTEST: 4/4` exit
+0; the r64-range sweep flags exactly the routed carry-in defect
+(`BIND_DEFECT 6876d7460 names tip-confirmation …`, findings=1 exit 1; the
+carrying commit `c7d28b19` reads `BIND_OK`), this round's own range
+sweeps clean (`findings=0` exit 0); S296 mined (registry 155 → 156,
+census-clean, start and end census exit 0). C2 verifies —
+`QUOTED_LINE_EXISTS_SELFTEST: 4/4` exit 0; the demonstration sweep on the
+r64 records reads `quotes=16 backed=12 missing=4` exit 1 with all four
+unbacked quotes named (one verifier re-derivation narration line in no
+committed receipt; three sha-abbreviated quote shapes) — the
+records-ahead-of-receipts class the adopted proposal targets, disclosed
+not retro-repaired; explicit mode green. No harm: the SOURCES edit staled
+exactly the forecast 13 sections (live RED `lost=13` at `3fa08b2c`, miss
+= 0) and the `r65-batch-1` rekey restored the monitor to `lost=0 ok` at
+both floors plus rev mode `64/64`, probe 20/20; additivity
+`raw_old_only=0` on every landed pair; PROVINCE/SKILL/README/registry/
+pinned probe/SHONEN/leg-ledger bytes unchanged `7d7f9ca8` → `6db7e2fc`.
+Capability rows entered: **commit-message receipt binding sweep**,
+**quoted-line receipt backability** (first working round 65; the
+capabilities-table mid-file insertions are disclosed).
+
+Assimilation: considerthese 2026-10-28 proposal 1's byte-for-byte
+quoted-line half ADOPTED and demonstrated this round (proposal 1 now
+fully adopted; proposals 2–5 unadopted); shokuknow unreachable.
+L1-only round (L2 floor surface absent on this host; the r60 L0 question
+stands). Gate: no fresh rejection this round — the one source opened
+(S296) was adopted; the price-out (pretty-formats page) and the standing
+S293 W04 marker are stated in the lesson.
+
+Round-final shas: carry-in `8fd65296ade85c802a22945fc2fbc2a8121f38f4`;
+declaration `142125293358df7df8543643a8bdc06cac1775bc`; C1
+`3b833293b1bf062c97f6169e650ddee42d2d5335`; C2
+`3fa08b2c66271989dbbe766720e54b19a911f1c6`; rekey
+`6db7e2fcfee6d00ac6fc18445a52eed42db43054` (all pushed). Final receipts
+(`.ufo/evidence/round-65/win-host/`): `RECEIPT_COMMIT_BIND_SELFTEST: 4/4
+pass` exit 0; `QUOTED_LINE_EXISTS_SELFTEST: 4/4 pass` exit 0;
+`live-bind-r64-range.txt` findings=1 exit 1 (the single BIND_DEFECT);
+`live-bind-r65-range.txt` findings=0 exit 0; `live-quoted-demo.txt`
+quotes=16 backed=12 missing=4 exit 1; guard RED `lost=13` miss=0 at
+`3fa08b2c` → `lost=0 ok` exit 0 at `6db7e2fc` at both floors (round
+`7d7f9ca8`, historic `8b0042bd` 46 → 64) + rev mode `credited=64/64`,
+probe 20/20 everywhere; additivity `raw_old_only=0` on SOURCES, LOG,
+SCORECARD (base → rekey tip) and the ledger (`3fa08b2c` → `6db7e2fc`).
+Census exit 0 at round start (155 rows) and at the content-final working
+tree (156 rows; the S296 row census-clean; the S293 W04 stands as the
+standing rejection's marker).
