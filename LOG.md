@@ -3634,3 +3634,60 @@ mistakes 4-5 applied). L0 line appended (the r70 spot-check's routed
 L2-minimum prompt item; the r60 question stands; L1-only round,
 disclosed). Assimilation: considerthese 2026-10-28 proposal 5
 (stale-closure-pointer sweep) adopted as C1 - shokuknow unreachable.
+
+Round 71 measured: C1 verifies - the line-pointer recheck (capability
+acquisition, first working round 71; the capability row enters the
+SCORECARD table, mid-file insertion disclosed, additivity raw_old_only=0
+holds): selftest `POINTER_RECHECK_SELFTEST: 7/7 pass` exit 0
+(`pointer-selftest-r71.txt`, the live run from the landed bytes; rehearsed
+pre-data `reh-pointer-selftest.txt`); the standing sweep
+`POINTER_RECHECK: rows=8 met=8 unexpected=0` exit 0 with all three red
+arms measured, not assumed - `POINTER_ROW lesson-r48-s267-pointer-140
+expect=miss measured=miss ok`, `POINTER_ROW lesson-r48-s268-pointer-141
+expect=miss measured=miss ok` (the r48 non-author closure's routed
+line-pointer defect: the lesson's Supersede rows cite
+`corpus/SOURCES.md:140`/`:141` for S267/S268; those lines hold S265/S266,
+the rows sit at 142/143, corrected by the lesson's own appended erratum -
+the stale cells stand append-only and the drift is measured on every
+sweep) and `POINTER_ROW province-r16-sevenleg-85-91 expect=miss
+measured=miss ok` (the PROVINCE round-16 append's `:85-91`: at the base
+lines 85-91 carry the ledger header plus legs 1-4 and leg 7
+`js-round-gate` sits at 94 - the ten-leg ledger at 88-97; disclosed this
+round with the correction of record in the round-71 lesson; a PROVINCE
+append is a monitored edit and is named successor work) - beside five
+green arms (the r48 erratum's corrected pointers hit at 142/143, the
+spotcheck's `142-143` hit, the verdict table's `SCORECARD.md:13-14` and
+`LOG.md:68` hit; `pointer-standings-r71.txt`). C2 verifies -
+`ARM_LIVENESS: rows=9 live=9 dead=0` exit 0 with `ARM_LIVE
+bind-r70-receipts-red tally=findings=19 exit=1` and `ARM_LIVE
+bind-r70-repair1-red tally=findings=39 exit=1` (the r70 lesson mistakes
+4-5's named successors and the r70 spot-check's suggested carry standing
+as measured red arms; `arm-live-standings-r71.txt`; the checker selftest
+unchanged 5/5, `arm-liveness-selftest-r71.txt`; manifest id-grep 9); the
+arm-liveness capability row synced append-only (r70-era figures stand at
+the r70 bytes; old -> new in the lesson and the SCORECARD sync
+paragraph). Unchanged standing instruments receipted at the r71 bytes: bind
+selftest 7/7 (`bind-selftest-r71.txt`), receipt-exists 4/4
+(`rexists-selftest-r71.txt`), figure-attribution 7/7 and rows=3 met=3
+(`figattn-selftest-r71.txt`, `figattn-standings-r71.txt`); the
+count-recheck, anchor-drift and quoted-line instruments are untouched
+this round (their receipts stand at the r70 bytes). Shared no-harm: the RED at the C1 SOURCES work commit
+reads lost=13 cand_credited=51 exit 1 (`live-red-r71.out` +
+`red-receipt-r71.json`; decoded byte-equal in order to the r68 set, the
+r69 set, the r70 set and the rehearsal, miss = 0, `red-decode-r71.txt`)
+-> the `r71-batch-1` rekey REBIND OK sections=13 entries_added=13
+ledger_before=784 (`rebind-stdout-r71.txt`; ledger 784 -> 797; machinery
+constants-only diff `make-rebind-r71.diff` - derived from the committed
+r67 as-run bytes, 7 changed pairs, all constants-only, disclosed) ->
+lost=0 ok exit 0 at BOTH floors at the rekey commit (`live-green-r71.out`:
+`4ed9ce1c` 64 -> 64; `live-green-hist-r71.out`: `8b0042bd` 46 -> 64) +
+rev mode credited=64/64 probe_sampled=20 probe_mismatches=0
+(`live-revmode-r71.out`); additivity raw_old_only=0 on SOURCES
+(`additivity-sources-r71.txt`, 2 new lines disclosed) and the ledger
+(`additivity-ledger-r71.txt`, 29 new lines disclosed). Round-final shas:
+declaration `0f554e16`, C1 SOURCES `1b9a0293`, C1 tool `8a50ed20`, C2
+`105ac918`, rekey `4f01e28c`, receipts this commit, tip receipts the
+next (all pushed). Assimilation: considerthese 2026-10-28 proposal 5
+(stale-closure-pointer sweep) adopted this round as C1 (at most one per
+round; proposals 3-4 remain unadopted, none fits the routed work) -
+shokuknow unreachable.
